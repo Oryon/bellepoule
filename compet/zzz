@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contest title="" backup="" stage="1">
+ <player_list>
+  <player ref="0x00000000" name="sss" first_name="sssssss" rating="0" attending="1" birth_year="0" licence="0" club="BETTON"/>
+  <player ref="0x00000001" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000002" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000003" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000004" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000005" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000006" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
+ </player_list>
+ <pool_list>
+  <pool>
+   <match_list>
+    <match player_A="0x00000000" player_B="0x00000001"/>
+    <match player_A="0x00000000" player_B="0x00000002"/>
+    <match player_A="0x00000000" player_B="0x00000003"/>
+    <match player_A="0x00000000" player_B="0x00000004"/>
+    <match player_A="0x00000000" player_B="0x00000005"/>
+    <match player_A="0x00000000" player_B="0x00000006"/>
+    <match player_A="0x00000001" player_B="0x00000002"/>
+    <match player_A="0x00000001" player_B="0x00000003"/>
+    <match player_A="0x00000001" player_B="0x00000004"/>
+    <match player_A="0x00000001" player_B="0x00000005"/>
+    <match player_A="0x00000001" player_B="0x00000006"/>
+    <match player_A="0x00000002" player_B="0x00000003"/>
+    <match player_A="0x00000002" player_B="0x00000004"/>
+    <match player_A="0x00000002" player_B="0x00000005"/>
+    <match player_A="0x00000002" player_B="0x00000006"/>
+    <match player_A="0x00000003" player_B="0x00000004"/>
+    <match player_A="0x00000003" player_B="0x00000005"/>
+    <match player_A="0x00000003" player_B="0x00000006"/>
+    <match player_A="0x00000004" player_B="0x00000005"/>
+    <match player_A="0x00000004" player_B="0x00000006"/>
+    <match player_A="0x00000005" player_B="0x00000006"/>
+   </match_list>
+  </pool>
+ </pool_list>
+</contest>

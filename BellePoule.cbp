@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="BellePoule" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-mms-bitfields" />
+			<Add option="-Wall" />
+			<Add directory="C:\MinGW\include" />
+			<Add directory="C:\MinGW\include\gtk-2.0" />
+			<Add directory="C:\MinGW\include\cairo" />
+			<Add directory="C:\MinGW\include\gdk" />
+			<Add directory="C:\MinGW\include\glib-2.0" />
+			<Add directory="C:\MinGW\lib\glib-2.0\include" />
+			<Add directory="C:\MinGW\include\pango-1.0" />
+			<Add directory="C:\MinGW\lib\gtk-2.0\include" />
+			<Add directory="C:\MinGW\include\atk-1.0" />
+		</Compiler>
+		<Linker>
+			<Add library="gtk-win32-2.0" />
+			<Add library="gobject-2.0" />
+			<Add library="glib-2.0" />
+			<Add library="glade-2.0" />
+			<Add library="xml2" />
+			<Add library="goocanvas" />
+			<Add library="gdk-win32-2.0" />
+			<Add library="atk-1.0" />
+			<Add library="gio-2.0" />
+			<Add library="gdk_pixbuf-2.0" />
+			<Add library="pangowin32-1.0" />
+			<Add library="gdi32" />
+			<Add library="pangocairo-1.0" />
+			<Add library="pango-1.0" />
+			<Add library="cairo" />
+			<Add library="gmodule-2.0" />
+			<Add library="intl" />
+			<Add directory="C:\MinGW\lib" />
+		</Linker>
+		<Unit filename="attribute.cpp" />
+		<Unit filename="attribute.hpp" />
+		<Unit filename="canvas_module.cpp" />
+		<Unit filename="canvas_module.hpp" />
+		<Unit filename="contest.cpp" />
+		<Unit filename="contest.hpp" />
+		<Unit filename="glade.cpp" />
+		<Unit filename="glade.hpp" />
+		<Unit filename="main.cpp" />
+		<Unit filename="match.cpp" />
+		<Unit filename="match.hpp" />
+		<Unit filename="module.cpp" />
+		<Unit filename="module.hpp" />
+		<Unit filename="object.cpp" />
+		<Unit filename="object.hpp" />
+		<Unit filename="player.cpp" />
+		<Unit filename="player.hpp" />
+		<Unit filename="players_base.cpp" />
+		<Unit filename="players_base.hpp" />
+		<Unit filename="players_list.cpp" />
+		<Unit filename="players_list.hpp" />
+		<Unit filename="pool.cpp" />
+		<Unit filename="pool.hpp" />
+		<Unit filename="pool_supervisor.cpp" />
+		<Unit filename="pool_supervisor.hpp" />
+		<Unit filename="pools_list.cpp" />
+		<Unit filename="pools_list.hpp" />
+		<Unit filename="schedule.cpp" />
+		<Unit filename="schedule.hpp" />
+		<Unit filename="score.cpp" />
+		<Unit filename="score.hpp" />
+		<Unit filename="stage.cpp" />
+		<Unit filename="stage.hpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

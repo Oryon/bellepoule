@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contest title="The big one" backup="" stage="1">
+ <player_list>
+  <player ref="0x00000000" name="1" first_name="" rating="1" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000001" name="2" first_name="" rating="2" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000002" name="3" first_name="" rating="3" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000003" name="4" first_name="" rating="4" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000004" name="5" first_name="" rating="5" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000005" name="6" first_name="" rating="6" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000006" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000007" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000008" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000009" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000000a" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000000b" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000000c" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000000d" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000000e" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000000f" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000010" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000011" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000012" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000013" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000014" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000015" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000016" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000017" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000018" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000019" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000001a" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000001b" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000001c" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000001d" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000001e" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000001f" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000020" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000021" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000022" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000023" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000024" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000025" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000026" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000027" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000028" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000029" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000002a" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000002b" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000002c" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000002d" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000002e" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000002f" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000030" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000031" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000032" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000033" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000034" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000035" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000036" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000037" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000038" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000039" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000003a" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000003b" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000003c" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000003d" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000003e" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000003f" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000040" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000041" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000042" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000043" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000044" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000045" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000046" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000047" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000048" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000049" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000004a" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000004b" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000004c" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000004d" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000004e" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x0000004f" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000050" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000051" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000052" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000053" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000054" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000055" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+  <player ref="0x00000056" name="7" first_name="" rating="7" attending="1" birth_year="0" licence="0" club=""/>
+ </player_list>
+ <pool_list>
+  <pool>
+   <match_list>
+    <match player_A="0x00000000" player_B="0x0000000b"/>
+    <match player_A="0x00000000" player_B="0x00000016"/>
+    <match player_A="0x00000000" player_B="0x00000021"/>
+    <match player_A="0x00000000" player_B="0x0000002c"/>
+    <match player_A="0x00000000" player_B="0x00000037"/>
+    <match player_A="0x00000000" player_B="0x00000042"/>
+    <match player_A="0x00000000" player_B="0x0000004d"/>
+    <match player_A="0x0000000b" player_B="0x00000016"/>
+    <match player_A="0x0000000b" player_B="0x00000021"/>
+    <match player_A="0x0000000b" player_B="0x0000002c"/>
+    <match player_A="0x0000000b" player_B="0x00000037"/>
+    <match player_A="0x0000000b" player_B="0x00000042"/>
+    <match player_A="0x0000000b" player_B="0x0000004d"/>
+    <match player_A="0x00000016" player_B="0x00000021"/>
+    <match player_A="0x00000016" player_B="0x0000002c"/>
+    <match player_A="0x00000016" player_B="0x00000037"/>
+    <match player_A="0x00000016" player_B="0x00000042"/>
+    <match player_A="0x00000016" player_B="0x0000004d"/>
+    <match player_A="0x00000021" player_B="0x0000002c"/>
+    <match player_A="0x00000021" player_B="0x00000037"/>
+    <match player_A="0x00000021" player_B="0x00000042"/>
+    <match player_A="0x00000021" player_B="0x0000004d"/>
+    <match player_A="0x0000002c" player_B="0x00000037"/>
+    <match player_A="0x0000002c" player_B="0x00000042"/>
+    <match player_A="0x0000002c" player_B="0x0000004d"/>
+    <match player_A="0x00000037" player_B="0x00000042"/>
+    <match player_A="0x00000037" player_B="0x0000004d"/>
+    <match player_A="0x00000042" player_B="0x0000004d"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000001" player_B="0x0000000c"/>
+    <match player_A="0x00000001" player_B="0x00000017"/>
+    <match player_A="0x00000001" player_B="0x00000022"/>
+    <match player_A="0x00000001" player_B="0x0000002d"/>
+    <match player_A="0x00000001" player_B="0x00000038"/>
+    <match player_A="0x00000001" player_B="0x00000043"/>
+    <match player_A="0x00000001" player_B="0x0000004e"/>
+    <match player_A="0x0000000c" player_B="0x00000017"/>
+    <match player_A="0x0000000c" player_B="0x00000022"/>
+    <match player_A="0x0000000c" player_B="0x0000002d"/>
+    <match player_A="0x0000000c" player_B="0x00000038"/>
+    <match player_A="0x0000000c" player_B="0x00000043"/>
+    <match player_A="0x0000000c" player_B="0x0000004e"/>
+    <match player_A="0x00000017" player_B="0x00000022"/>
+    <match player_A="0x00000017" player_B="0x0000002d"/>
+    <match player_A="0x00000017" player_B="0x00000038"/>
+    <match player_A="0x00000017" player_B="0x00000043"/>
+    <match player_A="0x00000017" player_B="0x0000004e"/>
+    <match player_A="0x00000022" player_B="0x0000002d"/>
+    <match player_A="0x00000022" player_B="0x00000038"/>
+    <match player_A="0x00000022" player_B="0x00000043"/>
+    <match player_A="0x00000022" player_B="0x0000004e"/>
+    <match player_A="0x0000002d" player_B="0x00000038"/>
+    <match player_A="0x0000002d" player_B="0x00000043"/>
+    <match player_A="0x0000002d" player_B="0x0000004e"/>
+    <match player_A="0x00000038" player_B="0x00000043"/>
+    <match player_A="0x00000038" player_B="0x0000004e"/>
+    <match player_A="0x00000043" player_B="0x0000004e"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000002" player_B="0x0000000d"/>
+    <match player_A="0x00000002" player_B="0x00000018"/>
+    <match player_A="0x00000002" player_B="0x00000023"/>
+    <match player_A="0x00000002" player_B="0x0000002e"/>
+    <match player_A="0x00000002" player_B="0x00000039"/>
+    <match player_A="0x00000002" player_B="0x00000044"/>
+    <match player_A="0x00000002" player_B="0x0000004f"/>
+    <match player_A="0x0000000d" player_B="0x00000018"/>
+    <match player_A="0x0000000d" player_B="0x00000023"/>
+    <match player_A="0x0000000d" player_B="0x0000002e"/>
+    <match player_A="0x0000000d" player_B="0x00000039"/>
+    <match player_A="0x0000000d" player_B="0x00000044"/>
+    <match player_A="0x0000000d" player_B="0x0000004f"/>
+    <match player_A="0x00000018" player_B="0x00000023"/>
+    <match player_A="0x00000018" player_B="0x0000002e"/>
+    <match player_A="0x00000018" player_B="0x00000039"/>
+    <match player_A="0x00000018" player_B="0x00000044"/>
+    <match player_A="0x00000018" player_B="0x0000004f"/>
+    <match player_A="0x00000023" player_B="0x0000002e"/>
+    <match player_A="0x00000023" player_B="0x00000039"/>
+    <match player_A="0x00000023" player_B="0x00000044"/>
+    <match player_A="0x00000023" player_B="0x0000004f"/>
+    <match player_A="0x0000002e" player_B="0x00000039"/>
+    <match player_A="0x0000002e" player_B="0x00000044"/>
+    <match player_A="0x0000002e" player_B="0x0000004f"/>
+    <match player_A="0x00000039" player_B="0x00000044"/>
+    <match player_A="0x00000039" player_B="0x0000004f"/>
+    <match player_A="0x00000044" player_B="0x0000004f"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000003" player_B="0x0000000e"/>
+    <match player_A="0x00000003" player_B="0x00000019"/>
+    <match player_A="0x00000003" player_B="0x00000024"/>
+    <match player_A="0x00000003" player_B="0x0000002f"/>
+    <match player_A="0x00000003" player_B="0x0000003a"/>
+    <match player_A="0x00000003" player_B="0x00000045"/>
+    <match player_A="0x00000003" player_B="0x00000050"/>
+    <match player_A="0x0000000e" player_B="0x00000019"/>
+    <match player_A="0x0000000e" player_B="0x00000024"/>
+    <match player_A="0x0000000e" player_B="0x0000002f"/>
+    <match player_A="0x0000000e" player_B="0x0000003a"/>
+    <match player_A="0x0000000e" player_B="0x00000045"/>
+    <match player_A="0x0000000e" player_B="0x00000050"/>
+    <match player_A="0x00000019" player_B="0x00000024"/>
+    <match player_A="0x00000019" player_B="0x0000002f"/>
+    <match player_A="0x00000019" player_B="0x0000003a"/>
+    <match player_A="0x00000019" player_B="0x00000045"/>
+    <match player_A="0x00000019" player_B="0x00000050"/>
+    <match player_A="0x00000024" player_B="0x0000002f"/>
+    <match player_A="0x00000024" player_B="0x0000003a"/>
+    <match player_A="0x00000024" player_B="0x00000045"/>
+    <match player_A="0x00000024" player_B="0x00000050"/>
+    <match player_A="0x0000002f" player_B="0x0000003a"/>
+    <match player_A="0x0000002f" player_B="0x00000045"/>
+    <match player_A="0x0000002f" player_B="0x00000050"/>
+    <match player_A="0x0000003a" player_B="0x00000045"/>
+    <match player_A="0x0000003a" player_B="0x00000050"/>
+    <match player_A="0x00000045" player_B="0x00000050"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000004" player_B="0x0000000f"/>
+    <match player_A="0x00000004" player_B="0x0000001a"/>
+    <match player_A="0x00000004" player_B="0x00000025"/>
+    <match player_A="0x00000004" player_B="0x00000030"/>
+    <match player_A="0x00000004" player_B="0x0000003b"/>
+    <match player_A="0x00000004" player_B="0x00000046"/>
+    <match player_A="0x00000004" player_B="0x00000051"/>
+    <match player_A="0x0000000f" player_B="0x0000001a"/>
+    <match player_A="0x0000000f" player_B="0x00000025"/>
+    <match player_A="0x0000000f" player_B="0x00000030"/>
+    <match player_A="0x0000000f" player_B="0x0000003b"/>
+    <match player_A="0x0000000f" player_B="0x00000046"/>
+    <match player_A="0x0000000f" player_B="0x00000051"/>
+    <match player_A="0x0000001a" player_B="0x00000025"/>
+    <match player_A="0x0000001a" player_B="0x00000030"/>
+    <match player_A="0x0000001a" player_B="0x0000003b"/>
+    <match player_A="0x0000001a" player_B="0x00000046"/>
+    <match player_A="0x0000001a" player_B="0x00000051"/>
+    <match player_A="0x00000025" player_B="0x00000030"/>
+    <match player_A="0x00000025" player_B="0x0000003b"/>
+    <match player_A="0x00000025" player_B="0x00000046"/>
+    <match player_A="0x00000025" player_B="0x00000051"/>
+    <match player_A="0x00000030" player_B="0x0000003b"/>
+    <match player_A="0x00000030" player_B="0x00000046"/>
+    <match player_A="0x00000030" player_B="0x00000051"/>
+    <match player_A="0x0000003b" player_B="0x00000046"/>
+    <match player_A="0x0000003b" player_B="0x00000051"/>
+    <match player_A="0x00000046" player_B="0x00000051"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000005" player_B="0x00000010"/>
+    <match player_A="0x00000005" player_B="0x0000001b"/>
+    <match player_A="0x00000005" player_B="0x00000026"/>
+    <match player_A="0x00000005" player_B="0x00000031"/>
+    <match player_A="0x00000005" player_B="0x0000003c"/>
+    <match player_A="0x00000005" player_B="0x00000047"/>
+    <match player_A="0x00000005" player_B="0x00000052"/>
+    <match player_A="0x00000010" player_B="0x0000001b"/>
+    <match player_A="0x00000010" player_B="0x00000026"/>
+    <match player_A="0x00000010" player_B="0x00000031"/>
+    <match player_A="0x00000010" player_B="0x0000003c"/>
+    <match player_A="0x00000010" player_B="0x00000047"/>
+    <match player_A="0x00000010" player_B="0x00000052"/>
+    <match player_A="0x0000001b" player_B="0x00000026"/>
+    <match player_A="0x0000001b" player_B="0x00000031"/>
+    <match player_A="0x0000001b" player_B="0x0000003c"/>
+    <match player_A="0x0000001b" player_B="0x00000047"/>
+    <match player_A="0x0000001b" player_B="0x00000052"/>
+    <match player_A="0x00000026" player_B="0x00000031"/>
+    <match player_A="0x00000026" player_B="0x0000003c"/>
+    <match player_A="0x00000026" player_B="0x00000047"/>
+    <match player_A="0x00000026" player_B="0x00000052"/>
+    <match player_A="0x00000031" player_B="0x0000003c"/>
+    <match player_A="0x00000031" player_B="0x00000047"/>
+    <match player_A="0x00000031" player_B="0x00000052"/>
+    <match player_A="0x0000003c" player_B="0x00000047"/>
+    <match player_A="0x0000003c" player_B="0x00000052"/>
+    <match player_A="0x00000047" player_B="0x00000052"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000006" player_B="0x00000011"/>
+    <match player_A="0x00000006" player_B="0x0000001c"/>
+    <match player_A="0x00000006" player_B="0x00000027"/>
+    <match player_A="0x00000006" player_B="0x00000032"/>
+    <match player_A="0x00000006" player_B="0x0000003d"/>
+    <match player_A="0x00000006" player_B="0x00000048"/>
+    <match player_A="0x00000006" player_B="0x00000053"/>
+    <match player_A="0x00000011" player_B="0x0000001c"/>
+    <match player_A="0x00000011" player_B="0x00000027"/>
+    <match player_A="0x00000011" player_B="0x00000032"/>
+    <match player_A="0x00000011" player_B="0x0000003d"/>
+    <match player_A="0x00000011" player_B="0x00000048"/>
+    <match player_A="0x00000011" player_B="0x00000053"/>
+    <match player_A="0x0000001c" player_B="0x00000027"/>
+    <match player_A="0x0000001c" player_B="0x00000032"/>
+    <match player_A="0x0000001c" player_B="0x0000003d"/>
+    <match player_A="0x0000001c" player_B="0x00000048"/>
+    <match player_A="0x0000001c" player_B="0x00000053"/>
+    <match player_A="0x00000027" player_B="0x00000032"/>
+    <match player_A="0x00000027" player_B="0x0000003d"/>
+    <match player_A="0x00000027" player_B="0x00000048"/>
+    <match player_A="0x00000027" player_B="0x00000053"/>
+    <match player_A="0x00000032" player_B="0x0000003d"/>
+    <match player_A="0x00000032" player_B="0x00000048"/>
+    <match player_A="0x00000032" player_B="0x00000053"/>
+    <match player_A="0x0000003d" player_B="0x00000048"/>
+    <match player_A="0x0000003d" player_B="0x00000053"/>
+    <match player_A="0x00000048" player_B="0x00000053"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000007" player_B="0x00000012"/>
+    <match player_A="0x00000007" player_B="0x0000001d"/>
+    <match player_A="0x00000007" player_B="0x00000028"/>
+    <match player_A="0x00000007" player_B="0x00000033"/>
+    <match player_A="0x00000007" player_B="0x0000003e"/>
+    <match player_A="0x00000007" player_B="0x00000049"/>
+    <match player_A="0x00000007" player_B="0x00000054"/>
+    <match player_A="0x00000012" player_B="0x0000001d"/>
+    <match player_A="0x00000012" player_B="0x00000028"/>
+    <match player_A="0x00000012" player_B="0x00000033"/>
+    <match player_A="0x00000012" player_B="0x0000003e"/>
+    <match player_A="0x00000012" player_B="0x00000049"/>
+    <match player_A="0x00000012" player_B="0x00000054"/>
+    <match player_A="0x0000001d" player_B="0x00000028"/>
+    <match player_A="0x0000001d" player_B="0x00000033"/>
+    <match player_A="0x0000001d" player_B="0x0000003e"/>
+    <match player_A="0x0000001d" player_B="0x00000049"/>
+    <match player_A="0x0000001d" player_B="0x00000054"/>
+    <match player_A="0x00000028" player_B="0x00000033"/>
+    <match player_A="0x00000028" player_B="0x0000003e"/>
+    <match player_A="0x00000028" player_B="0x00000049"/>
+    <match player_A="0x00000028" player_B="0x00000054"/>
+    <match player_A="0x00000033" player_B="0x0000003e"/>
+    <match player_A="0x00000033" player_B="0x00000049"/>
+    <match player_A="0x00000033" player_B="0x00000054"/>
+    <match player_A="0x0000003e" player_B="0x00000049"/>
+    <match player_A="0x0000003e" player_B="0x00000054"/>
+    <match player_A="0x00000049" player_B="0x00000054"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000008" player_B="0x00000013"/>
+    <match player_A="0x00000008" player_B="0x0000001e"/>
+    <match player_A="0x00000008" player_B="0x00000029"/>
+    <match player_A="0x00000008" player_B="0x00000034"/>
+    <match player_A="0x00000008" player_B="0x0000003f"/>
+    <match player_A="0x00000008" player_B="0x0000004a"/>
+    <match player_A="0x00000008" player_B="0x00000055"/>
+    <match player_A="0x00000013" player_B="0x0000001e"/>
+    <match player_A="0x00000013" player_B="0x00000029"/>
+    <match player_A="0x00000013" player_B="0x00000034"/>
+    <match player_A="0x00000013" player_B="0x0000003f"/>
+    <match player_A="0x00000013" player_B="0x0000004a"/>
+    <match player_A="0x00000013" player_B="0x00000055"/>
+    <match player_A="0x0000001e" player_B="0x00000029"/>
+    <match player_A="0x0000001e" player_B="0x00000034"/>
+    <match player_A="0x0000001e" player_B="0x0000003f"/>
+    <match player_A="0x0000001e" player_B="0x0000004a"/>
+    <match player_A="0x0000001e" player_B="0x00000055"/>
+    <match player_A="0x00000029" player_B="0x00000034"/>
+    <match player_A="0x00000029" player_B="0x0000003f"/>
+    <match player_A="0x00000029" player_B="0x0000004a"/>
+    <match player_A="0x00000029" player_B="0x00000055"/>
+    <match player_A="0x00000034" player_B="0x0000003f"/>
+    <match player_A="0x00000034" player_B="0x0000004a"/>
+    <match player_A="0x00000034" player_B="0x00000055"/>
+    <match player_A="0x0000003f" player_B="0x0000004a"/>
+    <match player_A="0x0000003f" player_B="0x00000055"/>
+    <match player_A="0x0000004a" player_B="0x00000055"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x00000009" player_B="0x00000014"/>
+    <match player_A="0x00000009" player_B="0x0000001f"/>
+    <match player_A="0x00000009" player_B="0x0000002a"/>
+    <match player_A="0x00000009" player_B="0x00000035"/>
+    <match player_A="0x00000009" player_B="0x00000040"/>
+    <match player_A="0x00000009" player_B="0x0000004b"/>
+    <match player_A="0x00000009" player_B="0x00000056"/>
+    <match player_A="0x00000014" player_B="0x0000001f"/>
+    <match player_A="0x00000014" player_B="0x0000002a"/>
+    <match player_A="0x00000014" player_B="0x00000035"/>
+    <match player_A="0x00000014" player_B="0x00000040"/>
+    <match player_A="0x00000014" player_B="0x0000004b"/>
+    <match player_A="0x00000014" player_B="0x00000056"/>
+    <match player_A="0x0000001f" player_B="0x0000002a"/>
+    <match player_A="0x0000001f" player_B="0x00000035"/>
+    <match player_A="0x0000001f" player_B="0x00000040"/>
+    <match player_A="0x0000001f" player_B="0x0000004b"/>
+    <match player_A="0x0000001f" player_B="0x00000056"/>
+    <match player_A="0x0000002a" player_B="0x00000035"/>
+    <match player_A="0x0000002a" player_B="0x00000040"/>
+    <match player_A="0x0000002a" player_B="0x0000004b"/>
+    <match player_A="0x0000002a" player_B="0x00000056"/>
+    <match player_A="0x00000035" player_B="0x00000040"/>
+    <match player_A="0x00000035" player_B="0x0000004b"/>
+    <match player_A="0x00000035" player_B="0x00000056"/>
+    <match player_A="0x00000040" player_B="0x0000004b"/>
+    <match player_A="0x00000040" player_B="0x00000056"/>
+    <match player_A="0x0000004b" player_B="0x00000056"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="0x0000000a" player_B="0x00000015"/>
+    <match player_A="0x0000000a" player_B="0x00000020"/>
+    <match player_A="0x0000000a" player_B="0x0000002b"/>
+    <match player_A="0x0000000a" player_B="0x00000036"/>
+    <match player_A="0x0000000a" player_B="0x00000041"/>
+    <match player_A="0x0000000a" player_B="0x0000004c"/>
+    <match player_A="0x00000015" player_B="0x00000020"/>
+    <match player_A="0x00000015" player_B="0x0000002b"/>
+    <match player_A="0x00000015" player_B="0x00000036"/>
+    <match player_A="0x00000015" player_B="0x00000041"/>
+    <match player_A="0x00000015" player_B="0x0000004c"/>
+    <match player_A="0x00000020" player_B="0x0000002b"/>
+    <match player_A="0x00000020" player_B="0x00000036"/>
+    <match player_A="0x00000020" player_B="0x00000041"/>
+    <match player_A="0x00000020" player_B="0x0000004c"/>
+    <match player_A="0x0000002b" player_B="0x00000036"/>
+    <match player_A="0x0000002b" player_B="0x00000041"/>
+    <match player_A="0x0000002b" player_B="0x0000004c"/>
+    <match player_A="0x00000036" player_B="0x00000041"/>
+    <match player_A="0x00000036" player_B="0x0000004c"/>
+    <match player_A="0x00000041" player_B="0x0000004c"/>
+   </match_list>
+  </pool>
+ </pool_list>
+</contest>
