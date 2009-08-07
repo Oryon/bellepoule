@@ -29,11 +29,10 @@ class Pool_c : public CanvasModule_c
      Pool_c (guint number);
     ~Pool_c ();
 
-    void  CreateMatches ();
-    void  AddPlayer     (Player_c *player);
-    void  RemovePlayer  (Player_c *player);
-    guint GetNbPlayers  ();
-    guint GetNumber     ();
+    void  AddPlayer    (Player_c *player);
+    void  RemovePlayer (Player_c *player);
+    guint GetNbPlayers ();
+    guint GetNumber    ();
 
     Player_c *GetPlayer (guint i);
 

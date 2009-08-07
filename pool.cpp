@@ -65,6 +65,7 @@ Pool_c::~Pool_c ()
     match = (Match_c *) g_slist_nth_data (_match_list, i);
     Object_c::Release (match);
   }
+  g_slist_free (_match_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -257,6 +258,18 @@ void Pool_c::AddPlayer (Player_c *player)
   if (g_slist_find (_player_list,
                     player) == NULL)
   {
+    for (guint i = 0; i < GetNbPlayers (); i++)
+    {
+      Player_c *current_player;
+      Match_c  *match;
+
+      current_player = GetPlayer (i);
+      match = new Match_c (player, current_player);
+
+      _match_list = g_slist_append (_match_list,
+                                    match);
+    }
+
     player->Retain ();
 
     _player_list = g_slist_append (_player_list,
@@ -266,19 +279,6 @@ void Pool_c::AddPlayer (Player_c *player)
                                            (GCompareDataFunc) Player_c::Compare,
                                            (void *) "rank");
 
-    for (guint i = 0; i < GetNbPlayers (); i++)
-    {
-      Player_c *current_player;
-
-      current_player = GetPlayer (i);
-      if (current_player != player)
-      {
-        Match_c *match = new Match_c (player, current_player);
-
-        _match_list = g_slist_append (_match_list,
-                                      match);
-      }
-    }
   }
 }
 
@@ -554,7 +554,7 @@ void Pool_c::OnPlugged ()
             goo_text = goo_canvas_text_new (root_item,
                                             ".",
                                             x, y, -1,
-                                            GTK_ANCHOR_WEST,
+                                            GTK_ANCHOR_CENTER,
                                             "font", "Sans 16",
                                             NULL);
             player->SetData ("Pool::Victories",  goo_text);
@@ -563,7 +563,7 @@ void Pool_c::OnPlugged ()
             goo_text = goo_canvas_text_new (root_item,
                                             ".",
                                             x, y, -1,
-                                            GTK_ANCHOR_WEST,
+                                            GTK_ANCHOR_CENTER,
                                             "font", "Sans 16",
                                             NULL);
             player->SetData ("Pool::TS",  goo_text);
@@ -572,7 +572,7 @@ void Pool_c::OnPlugged ()
             goo_text = goo_canvas_text_new (root_item,
                                             ".",
                                             x, y, -1,
-                                            GTK_ANCHOR_WEST,
+                                            GTK_ANCHOR_CENTER,
                                             "font", "Sans 16",
                                             NULL);
             player->SetData ("Pool::TD",  goo_text);
@@ -581,7 +581,7 @@ void Pool_c::OnPlugged ()
             goo_text = goo_canvas_text_new (root_item,
                                             ".",
                                             x, y, -1,
-                                            GTK_ANCHOR_WEST,
+                                            GTK_ANCHOR_CENTER,
                                             "font", "Sans 16",
                                             NULL);
             player->SetData ("Pool::Indice",  goo_text);
@@ -590,7 +590,7 @@ void Pool_c::OnPlugged ()
             goo_text = goo_canvas_text_new (root_item,
                                             ".",
                                             x, y, -1,
-                                            GTK_ANCHOR_WEST,
+                                            GTK_ANCHOR_CENTER,
                                             "font", "Sans 16",
                                             NULL);
             player->SetData ("Pool::Rank",  goo_text);
@@ -633,8 +633,7 @@ void Pool_c::RefreshDashBoard ()
     Player_c *player_a;
     guint     victories = 0;
     guint     ts        = 0;
-    guint     td        = 0;
-    guint     indice    = 0;
+    gint      td        = 0;
     guint     rank      = 0;
 
     player_a = GetPlayer (a);
@@ -648,9 +647,19 @@ void Pool_c::RefreshDashBoard ()
         Score_c  *score_a  = match->GetScore (player_a);
         Score_c  *score_b  = match->GetScore (player_b);
 
+        if (score_a->IsKnown ())
+        {
+          ts += score_a->Get ();
+        }
+
+        if (score_b->IsKnown ())
+        {
+          td -= score_b->Get ();
+        }
+
         if (   score_a->IsKnown ()
-               && score_b->IsKnown ()
-               && (score_a->Get () > score_b->Get ()))
+            && score_b->IsKnown ()
+            && (score_a->Get () > score_b->Get ()))
         {
           victories++;
         }
@@ -669,49 +678,32 @@ void Pool_c::RefreshDashBoard ()
       g_free (text);
 
       goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::TS"));
+      text = g_strdup_printf ("%d", ts);
       g_object_set (goo_text,
                     "text",
-                    "?", NULL);
+                    text, NULL);
+      g_free (text);
 
       goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::TD"));
+      text = g_strdup_printf ("%d", td);
       g_object_set (goo_text,
                     "text",
-                    "?", NULL);
+                    text, NULL);
+      g_free (text);
 
       goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::Indice"));
+      text = g_strdup_printf ("%+d", ts + td);
       g_object_set (goo_text,
                     "text",
-                    "?", NULL);
+                    text, NULL);
+      g_free (text);
 
       goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::Rank"));
+      text = g_strdup_printf (".");
       g_object_set (goo_text,
                     "text",
-                    "?", NULL);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Pool_c::CreateMatches ()
-{
-  guint nb_players = GetNbPlayers ();
-
-  for (guint i = 0; i < nb_players; i++)
-  {
-    Player_c *A;
-
-    A = GetPlayer (i);
-
-    for (guint j = i + 1; j < nb_players; j++)
-    {
-      Player_c *B;
-      Match_c  *match;
-
-      B = GetPlayer (j);
-
-      match = new Match_c (A, B);
-      _match_list = g_slist_append (_match_list,
-                                    match);
+                    text, NULL);
+      g_free (text);
     }
   }
 }
@@ -802,9 +794,7 @@ void Pool_c::Load (xmlNode       *xml_node,
           AddPlayer (B);
         }
 
-        match       = new Match_c (A, B);
-        _match_list = g_slist_append (_match_list,
-                                      match);
+        match = GetMatch (A, B);
 
         attr = (gchar *) xmlGetProp (n, BAD_CAST "score_A");
         if (attr)
