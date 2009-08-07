@@ -226,6 +226,8 @@ gboolean Pool_c::OnFocusOut (GtkWidget *widget)
                   "text",
                   input, NULL);
     match->SetScore (player, atoi (input));
+
+    RefreshDashBoard ();
   }
 
   return FALSE;
@@ -440,7 +442,7 @@ void Pool_c::OnPlugged ()
       }
     }
 
-    // Players
+    // Players (vertically)
     for (guint i = 0; i < nb_players; i++)
     {
       Player_c    *player;
@@ -459,7 +461,7 @@ void Pool_c::OnPlugged ()
                            NULL);
     }
 
-    // Players
+    // Players (horizontally)
     for (guint i = 0; i < nb_players; i++)
     {
       Player_c      *player;
@@ -480,6 +482,125 @@ void Pool_c::OnPlugged ()
       goo_canvas_item_rotate (goo_text, 315, x, y);
     }
 
+    // Dashboard
+    {
+      {
+        GooCanvasItem *goo_text;
+        gint           x, y;
+
+        x = table_x + +cell_w/2 + 5*cell_w;
+        y = table_y - 10;
+
+        goo_text = goo_canvas_text_new (root_item,
+                                        "Victories",
+                                        x, y, -1,
+                                        GTK_ANCHOR_WEST,
+                                        "font", "Sans 16",
+                                        NULL);
+        goo_canvas_item_rotate (goo_text, 315, x, y);
+        x += cell_w;
+
+        goo_text = goo_canvas_text_new (root_item,
+                                        "TS",
+                                        x, y, -1,
+                                        GTK_ANCHOR_WEST,
+                                        "font", "Sans 16",
+                                        NULL);
+        goo_canvas_item_rotate (goo_text, 315, x, y);
+        x += cell_w;
+
+        goo_text = goo_canvas_text_new (root_item,
+                                        "TD",
+                                        x, y, -1,
+                                        GTK_ANCHOR_WEST,
+                                        "font", "Sans 16",
+                                        NULL);
+        goo_canvas_item_rotate (goo_text, 315, x, y);
+        x += cell_w;
+
+        goo_text = goo_canvas_text_new (root_item,
+                                        "Indice",
+                                        x, y, -1,
+                                        GTK_ANCHOR_WEST,
+                                        "font", "Sans 16",
+                                        NULL);
+        goo_canvas_item_rotate (goo_text, 315, x, y);
+        x += cell_w;
+
+        goo_text = goo_canvas_text_new (root_item,
+                                        "Rank",
+                                        x, y, -1,
+                                        GTK_ANCHOR_WEST,
+                                        "font", "Sans 16",
+                                        NULL);
+        goo_canvas_item_rotate (goo_text, 315, x, y);
+        x += cell_w;
+      }
+
+      for (guint i = 0; i < nb_players; i++)
+      {
+        Player_c *player;
+
+        player = GetPlayer (i);
+
+        {
+          GooCanvasItem *goo_text;
+          gint           x, y;
+
+          x = table_x + cell_w/2 + 5*cell_w;
+          y = table_y + cell_h/2 + i*cell_h;
+
+          {
+            goo_text = goo_canvas_text_new (root_item,
+                                            ".",
+                                            x, y, -1,
+                                            GTK_ANCHOR_WEST,
+                                            "font", "Sans 16",
+                                            NULL);
+            player->SetData ("Pool::Victories",  goo_text);
+            x += cell_w;
+
+            goo_text = goo_canvas_text_new (root_item,
+                                            ".",
+                                            x, y, -1,
+                                            GTK_ANCHOR_WEST,
+                                            "font", "Sans 16",
+                                            NULL);
+            player->SetData ("Pool::TS",  goo_text);
+            x += cell_w;
+
+            goo_text = goo_canvas_text_new (root_item,
+                                            ".",
+                                            x, y, -1,
+                                            GTK_ANCHOR_WEST,
+                                            "font", "Sans 16",
+                                            NULL);
+            player->SetData ("Pool::TD",  goo_text);
+            x += cell_w;
+
+            goo_text = goo_canvas_text_new (root_item,
+                                            ".",
+                                            x, y, -1,
+                                            GTK_ANCHOR_WEST,
+                                            "font", "Sans 16",
+                                            NULL);
+            player->SetData ("Pool::Indice",  goo_text);
+            x += cell_w;
+
+            goo_text = goo_canvas_text_new (root_item,
+                                            ".",
+                                            x, y, -1,
+                                            GTK_ANCHOR_WEST,
+                                            "font", "Sans 16",
+                                            NULL);
+            player->SetData ("Pool::Rank",  goo_text);
+            x += cell_w;
+          }
+        }
+      }
+    }
+
+    // Name
     {
       GooCanvasBounds bounds;
 
@@ -497,6 +618,76 @@ void Pool_c::OnPlugged ()
     }
 
     UpdateSize ();
+  }
+
+  RefreshDashBoard ();
+}
+
+// --------------------------------------------------------------------------------
+void Pool_c::RefreshDashBoard ()
+{
+  guint nb_players = GetNbPlayers ();
+
+  for (guint a = 0; a < nb_players; a++)
+  {
+    Player_c *player_a;
+    guint     victories = 0;
+    guint     ts        = 0;
+    guint     td        = 0;
+    guint     indice    = 0;
+    guint     rank      = 0;
+
+    player_a = GetPlayer (a);
+
+    for (guint b = 0; b < nb_players; b++)
+    {
+      if (a != b)
+      {
+        Player_c *player_b = GetPlayer (b);
+        Match_c  *match    = GetMatch (player_a, player_b);
+        Score_c  *score_a  = match->GetScore (player_a);
+        Score_c  *score_b  = match->GetScore (player_b);
+
+        if (   score_a->IsKnown ()
+               && score_b->IsKnown ()
+               && (score_a->Get () > score_b->Get ()))
+        {
+          victories++;
+        }
+      }
+    }
+
+    {
+      GooCanvasItem *goo_text;
+      gchar         *text;
+
+      goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::Victories"));
+      text = g_strdup_printf ("%d", victories);
+      g_object_set (goo_text,
+                    "text",
+                    text, NULL);
+      g_free (text);
+
+      goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::TS"));
+      g_object_set (goo_text,
+                    "text",
+                    "?", NULL);
+
+      goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::TD"));
+      g_object_set (goo_text,
+                    "text",
+                    "?", NULL);
+
+      goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::Indice"));
+      g_object_set (goo_text,
+                    "text",
+                    "?", NULL);
+
+      goo_text = GOO_CANVAS_ITEM (player_a->GetData ("Pool::Rank"));
+      g_object_set (goo_text,
+                    "text",
+                    "?", NULL);
+    }
   }
 }
 

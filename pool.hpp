@@ -83,6 +83,8 @@ class Pool_c : public CanvasModule_c
 
     Match_c *GetMatch (Player_c *A,
                        Player_c *B);
+
+    void RefreshDashBoard ();
 };
 
 #endif
