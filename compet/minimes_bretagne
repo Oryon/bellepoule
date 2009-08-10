@@ -12,7 +12,7 @@
  <pool_list>
   <pool>
    <match_list>
-    <match player_A="19" score_A="4" player_B="2" score_B="1"/>
+    <match player_A="2" score_A="1" player_B="19" score_B="4"/>
     <match player_A="16" score_A="7" player_B="2" score_B="2"/>
     <match player_A="16" score_A="8" player_B="19" score_B="5"/>
     <match player_A="4" score_A="10" player_B="2" score_B="3"/>
@@ -22,7 +22,7 @@
   </pool>
   <pool>
    <match_list>
-    <match player_A="1" player_B="3"/>
+    <match player_A="3" player_B="1" score_B="1"/>
     <match player_A="0" player_B="3"/>
     <match player_A="0" player_B="1" score_B="33"/>
    </match_list>
