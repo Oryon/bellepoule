@@ -276,7 +276,6 @@ void PoolsList_c::CreatePools ()
         pool->AddPlayer (player);
       }
     }
-    pool->CreateMatches ();
   }
 }
 

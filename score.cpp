@@ -54,7 +54,7 @@ gchar *Score_c::GetImage ()
   }
   else
   {
-    image = g_strdup_printf (" ");
+    image = g_strdup_printf ("");
   }
 
   return image;
