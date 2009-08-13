@@ -17,15 +17,37 @@
 #ifndef stage_hpp
 #define stage_hpp
 
+#include <libxml/xmlwriter.h>
 #include <gtk/gtk.h>
 
-class Stage_c
+#include "object.hpp"
+#include "module.hpp"
+
+class PlayersBase_c;
+
+class Stage_c : public Object_c
 {
   public:
-    Stage_c (gchar *glade_file);
+    Stage_c (Module_c *owner,
+             Module_c *module,
+             gchar    *name);
+
+    void Save (xmlTextWriter *xml_writer);
+    void Load (xmlNode       *xml_node);
+
+    gchar *GetName ();
+
+    void Plug (GtkWidget *in);
+
+    void Lock ();
+
+  protected:
     virtual ~Stage_c ();
 
   private:
+    gchar    *_name;
+    Module_c *_module;
+    Module_c *_owner;
 };
 
 #endif

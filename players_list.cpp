@@ -162,11 +162,6 @@ void PlayersList_c::SetColumn (guint     id,
 // --------------------------------------------------------------------------------
 void PlayersList_c::OnPlugged ()
 {
-  _schedule->Subscribe (this,
-                        Schedule_c::CHECKIN,
-                        (Schedule_c::StageEvent_t) &PlayersList_c::OnCheckInEntered,
-                        (Schedule_c::StageEvent_t) &PlayersList_c::OnCheckInLeaved);
-
   // players tree view
   {
     _tree_view = _glade->GetWidget ("players_list");

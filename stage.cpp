@@ -16,14 +16,129 @@
 
 #include <stdlib.h>
 
+#include "pools_list.hpp"
+#include "pool_supervisor.hpp"
+
 #include "stage.hpp"
 
+#if 0
+  {
+    GtkWidget *note_book = _glade->GetWidget ("stage_notebook");
+
+    if (_schedule->GetCurrentStage () == Schedule_c::POOL_ALLOCATION)
+    {
+      _pools_list = new PoolsList_c (_players_base);
+
+      Plug (_pools_list,
+            _glade->GetWidget ("pools_list_hook"));
+
+      _players_base->Lock ();
+      _pools_list->Allocate ();
+    }
+    else if (_schedule->GetCurrentStage () == Schedule_c::POOL)
+    {
+      _pool_supervisor = new PoolSupervisor_c ();
+
+      Plug (_pool_supervisor,
+            _glade->GetWidget ("pool_hook"));
+
+      for (guint p = 0; p < _pools_list->GetNbPools (); p++)
+      {
+        _pool_supervisor->Manage (_pools_list->GetPool (p));
+      }
+
+      gtk_notebook_set_current_page  (GTK_NOTEBOOK (note_book),
+                                      1);
+    }
+  }
+#endif
+
+#if 0
+  {
+    GtkWidget *note_book = _glade->GetWidget ("stage_notebook");
+
+    if (_schedule->GetCurrentStage () == Schedule_c::CHECKIN)
+    {
+      Object_c::Release (_pools_list);
+      _pools_list = NULL;
+    }
+    else if (_schedule->GetCurrentStage () == Schedule_c::POOL_ALLOCATION)
+    {
+      Object_c::Release (_pool_supervisor);
+      _pool_supervisor = NULL;
+
+      gtk_notebook_set_current_page  (GTK_NOTEBOOK (note_book),
+                                      0);
+    }
+  }
+#endif
+
+#if 0
+    // Pools list
+    if (_schedule->GetCurrentStage () >= Schedule_c::POOL_ALLOCATION)
+    {
+      _pools_list = new PoolsList_c (_players_base);
+
+      Plug (_pools_list,
+            _glade->GetWidget ("pools_list_hook"));
+
+      _players_base->Lock ();
+      _pools_list->Load (doc);
+    }
+
+    // Pools
+    if (_schedule->GetCurrentStage () >= Schedule_c::POOL)
+    {
+      GtkWidget *note_book = _glade->GetWidget ("stage_notebook");
+
+      _pool_supervisor = new PoolSupervisor_c ();
+
+      Plug (_pool_supervisor,
+            _glade->GetWidget ("pool_hook"));
+
+      for (guint p = 0; p < _pools_list->GetNbPools (); p++)
+      {
+        _pool_supervisor->Manage (_pools_list->GetPool (p));
+      }
+
+      gtk_notebook_set_current_page  (GTK_NOTEBOOK (note_book),
+                                      1);
+    }
+#endif
+
 // --------------------------------------------------------------------------------
-Stage_c::Stage_c (gchar *glade_file)
+Stage_c::Stage_c (Module_c *owner,
+                  Module_c *module,
+                  gchar    *name)
 {
+  _name   = name;
+  _owner  = owner;
+  _module = module;
 }
 
 // --------------------------------------------------------------------------------
 Stage_c::~Stage_c ()
+{
+  Object_c::Release (_module);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Stage_c::GetName ()
+{
+  return _name;
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::Plug (GtkWidget *in)
+{
+  if (_module)
+  {
+    _owner->Plug (_module,
+                  in);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::Lock ()
 {
 }

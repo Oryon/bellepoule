@@ -23,7 +23,6 @@ Module_c::Module_c (gchar *glade_file,
                     gchar *root)
 {
   _glade        = new Glade_c (glade_file);
-  _schedule     = NULL;
   _plugged_list = NULL;
   _owner        = NULL;
 
@@ -66,10 +65,6 @@ Module_c::~Module_c ()
 
   UnPlug ();
 
-  if (_schedule)
-  {
-    _schedule->UnSubscribe (this);
-  }
   g_slist_free (_sensitive_widgets);
   Object_c::Release (_glade);
   g_object_unref (_root);
@@ -79,8 +74,6 @@ Module_c::~Module_c ()
 void Module_c::Plug (Module_c  *module,
                      GtkWidget *in)
 {
-  module->_schedule = _schedule;
-
   gtk_container_add (GTK_CONTAINER (in),
                      module->_root);
 
@@ -110,12 +103,6 @@ void Module_c::UnPlug ()
   }
 
   OnUnPlugged ();
-}
-
-// --------------------------------------------------------------------------------
-void Module_c::RegisterSchedule (Schedule_c *schedule)
-{
-  _schedule = schedule;
 }
 
 // --------------------------------------------------------------------------------

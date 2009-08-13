@@ -61,8 +61,6 @@ class Contest_c : public Module_c
     GtkWidget        *_properties_dlg;
     GtkWidget        *_formula_dlg;
     PlayersList_c    *_player_list;
-    PoolsList_c      *_pools_list;
-    PoolSupervisor_c *_pool_supervisor;
 
     Contest_c ();
 

@@ -20,8 +20,6 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "schedule.hpp"
-
 #include "pools_list.hpp"
 
 #define VALUE_INIT {0,{{0}}}
@@ -99,11 +97,6 @@ PoolsList_c::~PoolsList_c ()
 void PoolsList_c::OnPlugged ()
 {
   CanvasModule_c::OnPlugged ();
-
-  _schedule->Subscribe (this,
-                        Schedule_c::POOL_ALLOCATION,
-                        (Schedule_c::StageEvent_t) &PoolsList_c::OnPoolAllocationEntered,
-                        (Schedule_c::StageEvent_t) &PoolsList_c::OnPoolAllocationLeaved);
 }
 
 // --------------------------------------------------------------------------------
