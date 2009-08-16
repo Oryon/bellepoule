@@ -19,8 +19,10 @@
 #include "players_list.hpp"
 
 // --------------------------------------------------------------------------------
-PlayersList_c::PlayersList_c (PlayersBase_c *players_base)
-  : Module_c ("players_list.glade")
+PlayersList_c::PlayersList_c (gchar         *name,
+                              PlayersBase_c *players_base)
+: Stage_c (name),
+  Module_c ("players_list.glade")
 {
   _players_base = players_base;
 
@@ -193,17 +195,22 @@ void PlayersList_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::OnCheckInEntered ()
+void PlayersList_c::Enter ()
 {
   EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::OnCheckInLeaved ()
+void PlayersList_c::Lock ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Cancel ()
+{
 }
 
 // --------------------------------------------------------------------------------

@@ -25,8 +25,10 @@
 #define VALUE_INIT {0,{{0}}}
 
 // --------------------------------------------------------------------------------
-PoolsList_c::PoolsList_c (PlayersBase_c *players_base)
-  : CanvasModule_c ("pools_list.glade")
+PoolsList_c::PoolsList_c (gchar         *name,
+                          PlayersBase_c *players_base)
+: Stage_c (name),
+  CanvasModule_c ("pools_list.glade")
 {
   _players_base         = players_base;
   _present_players_list = NULL;
@@ -887,4 +889,21 @@ gboolean PoolsList_c::PresentPlayerFilter (Player_c *player)
   Attribute_c *attr = player->GetAttribute ("attending");
 
   return ((gboolean) attr->GetValue () == TRUE);
+}
+
+// --------------------------------------------------------------------------------
+void PoolsList_c::Enter ()
+{
+  EnableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolsList_c::Lock ()
+{
+  DisableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolsList_c::Cancel ()
+{
 }

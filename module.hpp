@@ -22,7 +22,7 @@
 #include "object.hpp"
 #include "glade.hpp"
 
-class Module_c : public Object_c
+class Module_c : public virtual Object_c
 {
   public:
     virtual ~Module_c ();
@@ -46,13 +46,14 @@ class Module_c : public Object_c
     void EnableSensitiveWidgets ();
     void DisableSensitiveWidgets ();
 
+    Module_c ();
+
   private:
     GtkWidget *_root;
     GSList    *_sensitive_widgets;
     GSList    *_plugged_list;
     Module_c  *_owner;
-
-    Module_c ();
+    gchar     *_name;
 };
 
 #endif

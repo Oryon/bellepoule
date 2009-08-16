@@ -23,6 +23,7 @@ Schedule_c::Schedule_c (GtkWidget *stage_name_widget,
                         GtkWidget *previous_widget,
                         GtkWidget *next_widget,
                         GtkWidget *notebook_widget)
+: Module_c (NULL)
 {
   _stage_name_widget = stage_name_widget;
   _previous_widget   = previous_widget;
@@ -37,8 +38,10 @@ Schedule_c::~Schedule_c ()
 {
   for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
-    Object_c::Release ((Stage_c *) g_list_nth_data (_stage_list,
-                                                    i));
+    Stage_c *stage;
+
+    stage = ((Stage_c *) g_list_nth_data (_stage_list,
+                                          i));
   }
   g_list_free (_stage_list);
 }
@@ -46,27 +49,52 @@ Schedule_c::~Schedule_c ()
 // --------------------------------------------------------------------------------
 void Schedule_c::Start ()
 {
+  gint current_position = g_list_position (_stage_list,
+                                           _current_stage);
+
   for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
-    Stage_c   *stage;
-    GtkWidget *viewport;
+    Stage_c   *stage    = (Stage_c *) g_list_nth_data (_stage_list, i);
+    Module_c  *module   = (Module_c *) dynamic_cast <Module_c *> (stage);
+    GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
 
-    stage = (Stage_c *) g_list_nth_data (_stage_list,
-                                         i);
-    viewport = gtk_viewport_new (NULL, NULL);
     gtk_notebook_append_page (GTK_NOTEBOOK (_notebook_widget),
                               viewport,
                               gtk_label_new (stage->GetName ()));
 
-    stage->Plug (viewport);
+    Plug (module,
+          viewport);
+
+    {
+      if (i <= current_position)
+      {
+        stage->Enter ();
+      }
+      if (i < current_position)
+      {
+        stage->Lock ();
+      }
+    }
   }
 
+  gtk_widget_show_all (_notebook_widget);
+  gtk_notebook_set_current_page  (GTK_NOTEBOOK (_notebook_widget),
+                                  current_position);
   SetCurrentStage (_current_stage);
 }
 
 // --------------------------------------------------------------------------------
 void Schedule_c::AddStage (Stage_c *stage)
 {
+  Stage_c *previous = NULL;
+
+  if (_stage_list)
+  {
+    previous = (Stage_c *) (g_list_last (_stage_list)->data);
+  }
+
+  stage->SetPrevious (previous);
+
   _stage_list = g_list_append (_stage_list,
                                stage);
 }
@@ -104,12 +132,8 @@ void Schedule_c::Load (xmlNode *xml_node)
   attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "stage");
   if (attr)
   {
-    guint  stage = atoi (attr);
-    GList *current_stage;
-
-    current_stage = g_list_nth (_stage_list,
-                                stage);
-    SetCurrentStage (current_stage);
+    _current_stage = g_list_nth (_stage_list,
+                                 atoi (attr));
   }
 }
 

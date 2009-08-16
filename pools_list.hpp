@@ -19,15 +19,16 @@
 
 #include <gtk/gtk.h>
 
+#include "stage.hpp"
 #include "canvas_module.hpp"
 #include "players_base.hpp"
 #include "pool.hpp"
 
-class PoolsList_c : public CanvasModule_c
+class PoolsList_c : public virtual Stage_c, public CanvasModule_c
 {
   public:
-     PoolsList_c (PlayersBase_c *players_base);
-    ~PoolsList_c ();
+     PoolsList_c (gchar *name,
+                  PlayersBase_c *players_base);
 
     void Load (xmlDoc *doc);
     void Save (xmlTextWriter *xml_writer);
@@ -42,6 +43,11 @@ class PoolsList_c : public CanvasModule_c
                                              gpointer  *data);
     static void On_Pool_Size_Combobox_Changed (GtkWidget *widget,
                                                gpointer  *data);
+
+  private:
+    void Enter ();
+    void Lock ();
+    void Cancel ();
 
   private:
     typedef struct
@@ -122,6 +128,8 @@ class PoolsList_c : public CanvasModule_c
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      Pool_c         *pool);
+
+    ~PoolsList_c ();
 };
 
 #endif

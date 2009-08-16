@@ -137,32 +137,18 @@ void Contest_c::InitInstance ()
   _players_base    = new PlayersBase_c ();
 
   {
-    Stage_c *stage;
-
     _schedule = new Schedule_c (_glade->GetWidget ("stage_entry"),
                                 _glade->GetWidget ("previous_stage_toolbutton"),
                                 _glade->GetWidget ("next_stage_toolbutton"),
                                 _glade->GetWidget ("schedule_notebook"));
 
-    stage = new Stage_c (this,
-                         new PlayersList_c (_players_base),
-                         "checkin");
-    _schedule->AddStage (stage);
+    _schedule->AddStage (new PlayersList_c ("checkin",
+                                            _players_base));
 
-    stage = new Stage_c (this,
-                         new PoolsList_c (_players_base),
-                         "pool allocation");
-    _schedule->AddStage (stage);
+    _schedule->AddStage (new PoolsList_c ("pool allocation",
+                                          _players_base));
 
-    stage = new Stage_c (this,
-                         new PoolSupervisor_c (),
-                         "pool");
-    _schedule->AddStage (stage);
-
-    stage = new Stage_c (this,
-                         NULL,
-                         "table");
-    _schedule->AddStage (stage);
+    _schedule->AddStage (new PoolSupervisor_c ("pool"));
   }
 
   // Properties dialog

@@ -107,19 +107,14 @@
 #endif
 
 // --------------------------------------------------------------------------------
-Stage_c::Stage_c (Module_c *owner,
-                  Module_c *module,
-                  gchar    *name)
+Stage_c::Stage_c (gchar *name)
 {
-  _name   = name;
-  _owner  = owner;
-  _module = module;
+  _name = name;
 }
 
 // --------------------------------------------------------------------------------
 Stage_c::~Stage_c ()
 {
-  Object_c::Release (_module);
 }
 
 // --------------------------------------------------------------------------------
@@ -129,16 +124,7 @@ gchar *Stage_c::GetName ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::Plug (GtkWidget *in)
+void Stage_c::SetPrevious (Stage_c *previous)
 {
-  if (_module)
-  {
-    _owner->Plug (_module,
-                  in);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Stage_c::Lock ()
-{
+  _previous = previous;
 }

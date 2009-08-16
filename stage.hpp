@@ -21,33 +21,28 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
-#include "module.hpp"
 
-class PlayersBase_c;
-
-class Stage_c : public Object_c
+class Stage_c : public virtual Object_c
 {
   public:
-    Stage_c (Module_c *owner,
-             Module_c *module,
-             gchar    *name);
-
-    void Save (xmlTextWriter *xml_writer);
-    void Load (xmlNode       *xml_node);
+    void SetPrevious (Stage_c *previous);
 
     gchar *GetName ();
 
-    void Plug (GtkWidget *in);
+    virtual void Enter () = 0;
 
-    void Lock ();
+    virtual void Lock () = 0;
+
+    virtual void Cancel () = 0;
 
   protected:
+    Stage_c (gchar *name);
+
     virtual ~Stage_c ();
 
   private:
-    gchar    *_name;
-    Module_c *_module;
-    Module_c *_owner;
+    Stage_c *_previous;
+    gchar   *_name;
 };
 
 #endif

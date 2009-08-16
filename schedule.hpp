@@ -19,9 +19,9 @@
 
 #include <libxml/xmlwriter.h>
 #include "stage.hpp"
-#include "object.hpp"
+#include "module.hpp"
 
-class Schedule_c : public Object_c
+class Schedule_c : public Module_c
 {
   public:
     typedef void (Object_c::*StageEvent_t) ();

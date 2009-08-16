@@ -21,8 +21,9 @@
 #include "pool_supervisor.hpp"
 
 // --------------------------------------------------------------------------------
-PoolSupervisor_c::PoolSupervisor_c ()
-  : Module_c ("pool.glade")
+PoolSupervisor_c::PoolSupervisor_c (gchar *name)
+  : Stage_c (name),
+  Module_c ("pool.glade")
 {
   _displayed_pool = NULL;
 
@@ -120,4 +121,21 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
   {
     _displayed_pool->Print ();
   }
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Enter ()
+{
+  EnableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Lock ()
+{
+  DisableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Cancel ()
+{
 }

@@ -22,33 +22,36 @@
 Module_c::Module_c (gchar *glade_file,
                     gchar *root)
 {
-  _glade        = new Glade_c (glade_file);
-  _plugged_list = NULL;
-  _owner        = NULL;
+  _plugged_list      = NULL;
+  _owner             = NULL;
+  _sensitive_widgets = NULL;
 
-  if (root)
+  if (glade_file)
   {
-    _root = _glade->GetWidget (root);
-  }
-  else
-  {
-    _root = _glade->GetRootWidget ();
-  }
+    _glade = new Glade_c (glade_file);
 
-  {
-    GtkWidget *parent = gtk_widget_get_parent (_root);
-
-    if (parent)
+    if (root)
     {
-      gtk_container_forall (GTK_CONTAINER (parent),
-                            (GtkCallback) g_object_ref,
-                            NULL);
-      gtk_container_remove (GTK_CONTAINER (parent),
-                            _root);
+      _root = _glade->GetWidget (root);
+    }
+    else
+    {
+      _root = _glade->GetRootWidget ();
+    }
+
+    {
+      GtkWidget *parent = gtk_widget_get_parent (_root);
+
+      if (parent)
+      {
+        gtk_container_forall (GTK_CONTAINER (parent),
+                              (GtkCallback) g_object_ref,
+                              NULL);
+        gtk_container_remove (GTK_CONTAINER (parent),
+                              _root);
+      }
     }
   }
-
-  _sensitive_widgets = NULL;
 }
 
 // --------------------------------------------------------------------------------
