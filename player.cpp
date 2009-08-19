@@ -57,6 +57,10 @@ void Player_c::SetAttributeValue (gchar *name,
 {
   Attribute_c *attr = GetAttribute (name);
 
+  if (attr == NULL)
+  {
+    attr = Attribute_c::New (name);
+  }
   attr->SetValue (value);
 }
 
@@ -66,6 +70,10 @@ void Player_c::SetAttributeValue (gchar *name,
 {
   Attribute_c *attr = GetAttribute (name);
 
+  if (attr == NULL)
+  {
+    attr = Attribute_c::New (name);
+  }
   attr->SetValue (value);
 }
 

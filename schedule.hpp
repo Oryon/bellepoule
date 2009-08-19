@@ -41,7 +41,7 @@ class Schedule_c : public Module_c
     void     PreviousStage   ();
 
     void     Save            (xmlTextWriter *xml_writer);
-    void     Load            (xmlNode       *xml_node);
+    void     Load            (xmlDoc        *doc);
 
   private:
     GtkWidget *_stage_name_widget;

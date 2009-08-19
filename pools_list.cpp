@@ -102,18 +102,6 @@ void PoolsList_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::OnPoolAllocationEntered ()
-{
-  EnableSensitiveWidgets ();
-}
-
-// --------------------------------------------------------------------------------
-void PoolsList_c::OnPoolAllocationLeaved ()
-{
-  DisableSensitiveWidgets ();
-}
-
-// --------------------------------------------------------------------------------
 void PoolsList_c::Load (xmlDoc *doc)
 {
   FillCombobox ();
@@ -147,8 +135,6 @@ void PoolsList_c::Load (xmlDoc *doc)
   }
 
   SetUpCombobox ();
-
-  Display ();
 }
 
 // --------------------------------------------------------------------------------
@@ -895,6 +881,9 @@ gboolean PoolsList_c::PresentPlayerFilter (Player_c *player)
 void PoolsList_c::Enter ()
 {
   EnableSensitiveWidgets ();
+
+  _players_base->Lock ();
+  Display ();
 }
 
 // --------------------------------------------------------------------------------

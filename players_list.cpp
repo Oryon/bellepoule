@@ -195,6 +195,16 @@ void PlayersList_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+void PlayersList_c::Load (xmlDoc *doc)
+{
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Save (xmlTextWriter *xml_writer)
+{
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList_c::Enter ()
 {
   EnableSensitiveWidgets ();

@@ -125,23 +125,28 @@ GooCanvasItem *CanvasModule_c::PutInTable (GooCanvasItem *table,
 // --------------------------------------------------------------------------------
 void CanvasModule_c::UpdateSize ()
 {
-  gdouble         w;
-  gdouble         h;
-  gdouble         padding;
-  GooCanvasBounds bounds;
+  GooCanvasBounds  bounds;
+  GooCanvasItem   *root = GetRootItem ();
 
-  goo_canvas_item_get_bounds (GetRootItem (),
-                              &bounds);
+  if (root)
+  {
+    gdouble w;
+    gdouble h;
+    gdouble padding;
 
-  w = bounds.x2 - bounds.x1;
-  h = bounds.y2 - bounds.y1;
-  g_object_get (G_OBJECT (_canvas),
-                "bounds-padding", &padding,
-                NULL);
+    goo_canvas_item_get_bounds (root,
+                                &bounds);
 
-  gtk_widget_set_size_request (GTK_WIDGET (_canvas),
-                               (gint) (w + 2*padding),
-                               (gint) (h + 2*padding));
+    w = bounds.x2 - bounds.x1;
+    h = bounds.y2 - bounds.y1;
+    g_object_get (G_OBJECT (_canvas),
+                  "bounds-padding", &padding,
+                  NULL);
+
+    gtk_widget_set_size_request (GTK_WIDGET (_canvas),
+                                 (gint) (w + 2*padding),
+                                 (gint) (h + 2*padding));
+  }
 }
 
 // --------------------------------------------------------------------------------

@@ -20,6 +20,10 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
+#include "players_list.hpp"
+#include "pool_supervisor.hpp"
+#include "pools_list.hpp"
+
 #include "contest.hpp"
 
 gchar *Contest_c::_NEW_CONTEST = NULL;
@@ -82,15 +86,13 @@ Contest_c::Contest_c (gchar *filename)
         {
           _backup = g_strdup (attr);
         }
-
-        _schedule->Load (xml_nodeset->nodeTab[0]);
       }
       xmlXPathFreeObject  (xml_object);
       xmlXPathFreeContext (xml_context);
     }
 
-    // Players
     _players_base->Load (doc);
+    _schedule->Load (doc);
 
     xmlFreeDoc (doc);
   }
@@ -104,8 +106,6 @@ Contest_c::~Contest_c ()
   g_free (_name);
   g_free (_filename);
   g_free (_backup);
-
-  Object_c::Release (_player_list);
 
   Object_c::Release (_players_base);
   Object_c::Release (_schedule);
@@ -302,11 +302,10 @@ void Contest_c::Save (gchar *filename)
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "backup",
                                      BAD_CAST _backup);
-        _schedule->Save (xml_writer);
       }
 
-      // Players
       _players_base->Save (xml_writer);
+      _schedule->Save (xml_writer);
 
       xmlTextWriterEndElement (xml_writer);
       xmlTextWriterEndDocument (xml_writer);

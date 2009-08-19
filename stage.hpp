@@ -27,6 +27,8 @@ class Stage_c : public virtual Object_c
   public:
     void SetPrevious (Stage_c *previous);
 
+    Stage_c *GetPreviousStage ();
+
     gchar *GetName ();
 
     virtual void Enter () = 0;
@@ -34,6 +36,10 @@ class Stage_c : public virtual Object_c
     virtual void Lock () = 0;
 
     virtual void Cancel () = 0;
+
+    virtual void Load (xmlDoc *doc) = 0;
+
+    virtual void Save (xmlTextWriter *xml_writer) = 0;
 
   protected:
     Stage_c (gchar *name);

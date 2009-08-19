@@ -86,8 +86,6 @@ class PoolsList_c : public virtual Stage_c, public CanvasModule_c
 
     void OnPlugged ();
     void OnComboboxChanged (GtkComboBox *cb);
-    void OnPoolAllocationEntered ();
-    void OnPoolAllocationLeaved ();
 
     gboolean OnButtonPress (GooCanvasItem  *item,
                             GooCanvasItem  *target,

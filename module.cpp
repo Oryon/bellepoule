@@ -25,6 +25,8 @@ Module_c::Module_c (gchar *glade_file,
   _plugged_list      = NULL;
   _owner             = NULL;
   _sensitive_widgets = NULL;
+  _root              = NULL;
+  _glade             = NULL;
 
   if (glade_file)
   {
@@ -64,11 +66,19 @@ Module_c::~Module_c ()
     module = (Module_c *) (g_slist_nth_data (_plugged_list, 0)),
     module->UnPlug ();
   }
-  g_slist_free (_plugged_list);
+
+  if (_plugged_list)
+  {
+    g_slist_free (_plugged_list);
+  }
 
   UnPlug ();
 
-  g_slist_free (_sensitive_widgets);
+  if (_sensitive_widgets)
+  {
+    g_slist_free (_sensitive_widgets);
+  }
+
   Object_c::Release (_glade);
   g_object_unref (_root);
 }
@@ -90,22 +100,25 @@ void Module_c::Plug (Module_c  *module,
 // --------------------------------------------------------------------------------
 void Module_c::UnPlug ()
 {
-  GtkWidget *parent = gtk_widget_get_parent (_root);
-
-  if (parent)
+  if (_root)
   {
-    gtk_container_remove (GTK_CONTAINER (parent),
-                          _root);
-  }
+    GtkWidget *parent = gtk_widget_get_parent (_root);
 
-  if (_owner)
-  {
-    _owner->_plugged_list = g_slist_remove (_owner->_plugged_list,
-                                            this);
-    _owner = NULL;
-  }
+    if (parent)
+    {
+      gtk_container_remove (GTK_CONTAINER (parent),
+                            _root);
+    }
 
-  OnUnPlugged ();
+    if (_owner)
+    {
+      _owner->_plugged_list = g_slist_remove (_owner->_plugged_list,
+                                              this);
+      _owner = NULL;
+    }
+
+    OnUnPlugged ();
+  }
 }
 
 // --------------------------------------------------------------------------------

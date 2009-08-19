@@ -47,6 +47,10 @@ class PlayersList_c : public virtual Stage_c, public Module_c
                     gchar    *attr,
                     gboolean  entry_is_text_based);
 
+    void Load (xmlDoc *doc);
+
+    void Save (xmlTextWriter *xml_writer);
+
     void SetSensitiveState (bool sensitive_value);
     void OnPlugged ();
     void OnCellEdited (gchar *path_string,

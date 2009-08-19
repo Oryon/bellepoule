@@ -22,12 +22,8 @@
 
 #include "module.hpp"
 #include "glade.hpp"
-#include "players_list.hpp"
 #include "players_base.hpp"
 #include "schedule.hpp"
-#include "pool.hpp"
-#include "pool_supervisor.hpp"
-#include "pools_list.hpp"
 
 class Contest_c : public Module_c
 {
@@ -53,22 +49,21 @@ class Contest_c : public Module_c
   private:
     static gchar *_NEW_CONTEST;
 
-    gchar            *_name;
-    gchar            *_filename;
-    gchar            *_backup;
-    PlayersBase_c    *_players_base;
-    Schedule_c       *_schedule;
-    GtkWidget        *_properties_dlg;
-    GtkWidget        *_formula_dlg;
-    PlayersList_c    *_player_list;
+    gchar         *_name;
+    gchar         *_filename;
+    gchar         *_backup;
+    PlayersBase_c *_players_base;
+    Schedule_c    *_schedule;
+    GtkWidget     *_properties_dlg;
+    GtkWidget     *_formula_dlg;
 
     Contest_c ();
 
-    void   InitInstance      ();
-    void   ReadProperties    ();
-    void   SetName           (gchar *name);
-    gchar *GetSaveFileName   (gchar *title);
-    void   Save              (gchar *filename);
+    void   InitInstance    ();
+    void   ReadProperties  ();
+    void   SetName         (gchar *name);
+    gchar *GetSaveFileName (gchar *title);
+    void   Save            (gchar *filename);
 };
 
 #endif

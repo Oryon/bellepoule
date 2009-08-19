@@ -73,39 +73,6 @@
   }
 #endif
 
-#if 0
-    // Pools list
-    if (_schedule->GetCurrentStage () >= Schedule_c::POOL_ALLOCATION)
-    {
-      _pools_list = new PoolsList_c (_players_base);
-
-      Plug (_pools_list,
-            _glade->GetWidget ("pools_list_hook"));
-
-      _players_base->Lock ();
-      _pools_list->Load (doc);
-    }
-
-    // Pools
-    if (_schedule->GetCurrentStage () >= Schedule_c::POOL)
-    {
-      GtkWidget *note_book = _glade->GetWidget ("stage_notebook");
-
-      _pool_supervisor = new PoolSupervisor_c ();
-
-      Plug (_pool_supervisor,
-            _glade->GetWidget ("pool_hook"));
-
-      for (guint p = 0; p < _pools_list->GetNbPools (); p++)
-      {
-        _pool_supervisor->Manage (_pools_list->GetPool (p));
-      }
-
-      gtk_notebook_set_current_page  (GTK_NOTEBOOK (note_book),
-                                      1);
-    }
-#endif
-
 // --------------------------------------------------------------------------------
 Stage_c::Stage_c (gchar *name)
 {
@@ -127,4 +94,10 @@ gchar *Stage_c::GetName ()
 void Stage_c::SetPrevious (Stage_c *previous)
 {
   _previous = previous;
+}
+
+// --------------------------------------------------------------------------------
+Stage_c *Stage_c::GetPreviousStage ()
+{
+  return _previous;
 }

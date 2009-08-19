@@ -14,6 +14,9 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
 #include <gtk/gtk.h>
 
 #include "schedule.hpp"
@@ -42,6 +45,7 @@ Schedule_c::~Schedule_c ()
 
     stage = ((Stage_c *) g_list_nth_data (_stage_list,
                                           i));
+    Object_c::Release (stage);
   }
   g_list_free (_stage_list);
 }
@@ -97,6 +101,10 @@ void Schedule_c::AddStage (Stage_c *stage)
 
   _stage_list = g_list_append (_stage_list,
                                stage);
+  if (previous == NULL)
+  {
+    _current_stage = _stage_list;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -119,21 +127,52 @@ void Schedule_c::PreviousStage ()
 // --------------------------------------------------------------------------------
 void Schedule_c::Save (xmlTextWriter *xml_writer)
 {
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST "schedule");
   xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "stage",
-                                     "%d", _current_stage);
+                                     BAD_CAST "current_stage",
+                                     "%d", g_list_position (_stage_list,
+                                                            _current_stage));
+  xmlTextWriterEndElement (xml_writer);
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    Stage_c *stage;
+
+    stage = ((Stage_c *) g_list_nth_data (_stage_list,
+                                          i));
+    stage->Save (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
-void Schedule_c::Load (xmlNode *xml_node)
+void Schedule_c::Load (xmlDoc *doc)
 {
-  gchar *attr;
+  xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+  xmlXPathObject  *xml_object;
+  xmlNodeSet      *xml_nodeset;
+  gchar           *attr;
 
-  attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "stage");
+  xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule", xml_context);
+  xml_nodeset = xml_object->nodesetval;
+
+  attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "current_stage");
   if (attr)
   {
     _current_stage = g_list_nth (_stage_list,
                                  atoi (attr));
+  }
+
+  xmlXPathFreeObject  (xml_object);
+  xmlXPathFreeContext (xml_context);
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    Stage_c *stage;
+
+    stage = ((Stage_c *) g_list_nth_data (_stage_list,
+                                          i));
+    stage->Load (doc);
   }
 }
 
@@ -142,33 +181,36 @@ void Schedule_c::SetCurrentStage (GList *stage)
 {
   _current_stage = stage;
 
-  if (g_list_previous (_current_stage) == NULL)
+  if (_current_stage)
   {
-    gtk_widget_set_sensitive (_previous_widget,
-                              false);
-  }
-  else
-  {
-    gtk_widget_set_sensitive (_previous_widget,
-                              true);
-  }
+    if (g_list_previous (_current_stage) == NULL)
+    {
+      gtk_widget_set_sensitive (_previous_widget,
+                                false);
+    }
+    else
+    {
+      gtk_widget_set_sensitive (_previous_widget,
+                                true);
+    }
 
-  if (g_list_next (_current_stage) == NULL)
-  {
-    gtk_widget_set_sensitive (_next_widget,
-                              false);
-  }
-  else
-  {
-    gtk_widget_set_sensitive (_next_widget,
-                              true);
-  }
+    if (g_list_next (_current_stage) == NULL)
+    {
+      gtk_widget_set_sensitive (_next_widget,
+                                false);
+    }
+    else
+    {
+      gtk_widget_set_sensitive (_next_widget,
+                                true);
+    }
 
-  {
-    Stage_c *stage = (Stage_c *) _current_stage->data;
+    {
+      Stage_c *stage = (Stage_c *) _current_stage->data;
 
-    gtk_entry_set_text (GTK_ENTRY (_stage_name_widget),
-                        stage->GetName ());
+      gtk_entry_set_text (GTK_ENTRY (_stage_name_widget),
+                          stage->GetName ());
+    }
   }
 }
 
