@@ -17,15 +17,38 @@
 #ifndef stage_hpp
 #define stage_hpp
 
+#include <libxml/xmlwriter.h>
 #include <gtk/gtk.h>
 
-class Stage_c
+#include "object.hpp"
+
+class Stage_c : public virtual Object_c
 {
   public:
-    Stage_c (gchar *glade_file);
+    void SetPrevious (Stage_c *previous);
+
+    Stage_c *GetPreviousStage ();
+
+    gchar *GetName ();
+
+    virtual void Enter () = 0;
+
+    virtual void Lock () = 0;
+
+    virtual void Cancel () = 0;
+
+    virtual void Load (xmlDoc *doc) = 0;
+
+    virtual void Save (xmlTextWriter *xml_writer) = 0;
+
+  protected:
+    Stage_c (gchar *name);
+
     virtual ~Stage_c ();
 
   private:
+    Stage_c *_previous;
+    gchar   *_name;
 };
 
 #endif

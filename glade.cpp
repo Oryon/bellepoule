@@ -22,26 +22,33 @@
 // --------------------------------------------------------------------------------
 Glade_c::Glade_c (gchar *file_name)
 {
-  _glade_xml = glade_xml_new (file_name,
-                              NULL,
-                              NULL);
-
-  if (_glade_xml == NULL)
+  if (file_name)
   {
-    gchar *spare_file_name = g_strdup_printf ("../../%s", file_name);
-
-    _glade_xml = glade_xml_new (spare_file_name,
+    _glade_xml = glade_xml_new (file_name,
                                 NULL,
                                 NULL);
-    g_free (spare_file_name);
 
     if (_glade_xml == NULL)
     {
-      gtk_main_quit ();
-    }
-  }
+      gchar *spare_file_name = g_strdup_printf ("../../%s", file_name);
 
-  glade_xml_signal_autoconnect (_glade_xml);
+      _glade_xml = glade_xml_new (spare_file_name,
+                                  NULL,
+                                  NULL);
+      g_free (spare_file_name);
+
+      if (_glade_xml == NULL)
+      {
+        gtk_main_quit ();
+      }
+    }
+
+    glade_xml_signal_autoconnect (_glade_xml);
+  }
+  else
+  {
+    _glade_xml = NULL;
+  }
 }
 
 // --------------------------------------------------------------------------------

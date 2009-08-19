@@ -22,16 +22,22 @@
 #include "module.hpp"
 #include "attribute.hpp"
 #include "players_base.hpp"
+#include "stage.hpp"
 
-class PlayersList_c : public Module_c
+class PlayersList_c : public virtual Stage_c, public Module_c
 {
   public:
-     PlayersList_c (PlayersBase_c *players_base);
-    ~PlayersList_c ();
+     PlayersList_c (gchar *name,
+                    PlayersBase_c *players_base);
 
   public:
     void on_add_player_button_clicked    ();
     void on_remove_player_button_clicked ();
+
+  private:
+    void Enter ();
+    void Lock ();
+    void Cancel ();
 
   private:
     GtkWidget     *_tree_view;
@@ -41,10 +47,12 @@ class PlayersList_c : public Module_c
                     gchar    *attr,
                     gboolean  entry_is_text_based);
 
+    void Load (xmlDoc *doc);
+
+    void Save (xmlTextWriter *xml_writer);
+
     void SetSensitiveState (bool sensitive_value);
     void OnPlugged ();
-    void OnCheckInEntered ();
-    void OnCheckInLeaved ();
     void OnCellEdited (gchar *path_string,
                        gchar *new_text,
                        gchar *attr_name);
@@ -60,6 +68,8 @@ class PlayersList_c : public Module_c
                                 gchar               *path_string,
                                 gchar               *new_text,
                                 gpointer             user_data);
+
+    ~PlayersList_c ();
 };
 
 #endif

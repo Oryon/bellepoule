@@ -20,6 +20,10 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
+#include "players_list.hpp"
+#include "pool_supervisor.hpp"
+#include "pools_list.hpp"
+
 #include "contest.hpp"
 
 gchar *Contest_c::_NEW_CONTEST = NULL;
@@ -82,49 +86,18 @@ Contest_c::Contest_c (gchar *filename)
         {
           _backup = g_strdup (attr);
         }
-
-        _schedule->Load (xml_nodeset->nodeTab[0]);
       }
       xmlXPathFreeObject  (xml_object);
       xmlXPathFreeContext (xml_context);
     }
 
-    // Players
     _players_base->Load (doc);
-
-    // Pools list
-    if (_schedule->GetCurrentStage () >= Schedule_c::POOL_ALLOCATION)
-    {
-      _pools_list = new PoolsList_c (_players_base);
-
-      Plug (_pools_list,
-            _glade->GetWidget ("pools_list_hook"));
-
-      _players_base->Lock ();
-      _pools_list->Load (doc);
-    }
-
-    // Pools
-    if (_schedule->GetCurrentStage () >= Schedule_c::POOL)
-    {
-      GtkWidget *note_book = _glade->GetWidget ("stage_notebook");
-
-      _pool_supervisor = new PoolSupervisor_c ();
-
-      Plug (_pool_supervisor,
-            _glade->GetWidget ("pool_hook"));
-
-      for (guint p = 0; p < _pools_list->GetNbPools (); p++)
-      {
-        _pool_supervisor->Manage (_pools_list->GetPool (p));
-      }
-
-      gtk_notebook_set_current_page  (GTK_NOTEBOOK (note_book),
-                                      1);
-    }
+    _schedule->Load (doc);
 
     xmlFreeDoc (doc);
   }
+
+  _schedule->Start ();
 }
 
 // --------------------------------------------------------------------------------
@@ -134,14 +107,8 @@ Contest_c::~Contest_c ()
   g_free (_filename);
   g_free (_backup);
 
-  Object_c::Release (_pools_list);
-  Object_c::Release (_pool_supervisor);
-  Object_c::Release (_player_list);
-
   Object_c::Release (_players_base);
   Object_c::Release (_schedule);
-
-  RegisterSchedule (NULL);
 
   gtk_widget_destroy (_properties_dlg);
   gtk_widget_destroy (_formula_dlg);
@@ -167,21 +134,22 @@ void Contest_c::InitInstance ()
   _name            = NULL;
   _filename        = NULL;
   _backup          = NULL;
-  _pools_list      = NULL;
-  _pool_supervisor = NULL;
   _players_base    = new PlayersBase_c ();
 
   {
     _schedule = new Schedule_c (_glade->GetWidget ("stage_entry"),
                                 _glade->GetWidget ("previous_stage_toolbutton"),
-                                _glade->GetWidget ("next_stage_toolbutton"));
+                                _glade->GetWidget ("next_stage_toolbutton"),
+                                _glade->GetWidget ("schedule_notebook"));
 
-    RegisterSchedule (_schedule);
+    _schedule->AddStage (new PlayersList_c ("checkin",
+                                            _players_base));
+
+    _schedule->AddStage (new PoolsList_c ("pool allocation",
+                                          _players_base));
+
+    _schedule->AddStage (new PoolSupervisor_c ("pool"));
   }
-
-  _player_list = new PlayersList_c (_players_base);
-  Plug (_player_list,
-        _glade->GetWidget ("players_list_hook"));
 
   // Properties dialog
   {
@@ -334,17 +302,10 @@ void Contest_c::Save (gchar *filename)
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "backup",
                                      BAD_CAST _backup);
-        _schedule->Save (xml_writer);
       }
 
-      // Players
       _players_base->Save (xml_writer);
-
-      // Pools
-      if (_pools_list)
-      {
-        _pools_list->Save (xml_writer);
-      }
+      _schedule->Save (xml_writer);
 
       xmlTextWriterEndElement (xml_writer);
       xmlTextWriterEndDocument (xml_writer);
@@ -474,24 +435,6 @@ extern "C" G_MODULE_EXPORT void on_previous_stage_toolbutton_clicked (GtkWidget 
 void Contest_c::on_previous_stage_toolbutton_clicked ()
 {
   _schedule->PreviousStage ();
-
-  {
-    GtkWidget *note_book = _glade->GetWidget ("stage_notebook");
-
-    if (_schedule->GetCurrentStage () == Schedule_c::CHECKIN)
-    {
-      Object_c::Release (_pools_list);
-      _pools_list = NULL;
-    }
-    else if (_schedule->GetCurrentStage () == Schedule_c::POOL_ALLOCATION)
-    {
-      Object_c::Release (_pool_supervisor);
-      _pool_supervisor = NULL;
-
-      gtk_notebook_set_current_page  (GTK_NOTEBOOK (note_book),
-                                      0);
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -508,36 +451,6 @@ extern "C" G_MODULE_EXPORT void on_next_stage_toolbutton_clicked (GtkWidget *wid
 void Contest_c::on_next_stage_toolbutton_clicked ()
 {
   _schedule->NextStage ();
-
-  {
-    GtkWidget *note_book = _glade->GetWidget ("stage_notebook");
-
-    if (_schedule->GetCurrentStage () == Schedule_c::POOL_ALLOCATION)
-    {
-      _pools_list = new PoolsList_c (_players_base);
-
-      Plug (_pools_list,
-            _glade->GetWidget ("pools_list_hook"));
-
-      _players_base->Lock ();
-      _pools_list->Allocate ();
-    }
-    else if (_schedule->GetCurrentStage () == Schedule_c::POOL)
-    {
-      _pool_supervisor = new PoolSupervisor_c ();
-
-      Plug (_pool_supervisor,
-            _glade->GetWidget ("pool_hook"));
-
-      for (guint p = 0; p < _pools_list->GetNbPools (); p++)
-      {
-        _pool_supervisor->Manage (_pools_list->GetPool (p));
-      }
-
-      gtk_notebook_set_current_page  (GTK_NOTEBOOK (note_book),
-                                      1);
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------

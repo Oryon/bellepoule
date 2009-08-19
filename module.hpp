@@ -20,22 +20,18 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
-#include "schedule.hpp"
 #include "glade.hpp"
 
-class Module_c : public Object_c
+class Module_c : public virtual Object_c
 {
   public:
     virtual ~Module_c ();
-
-    void RegisterSchedule (Schedule_c *schedule);
 
     void Plug (Module_c  *module,
                GtkWidget *in);
     void UnPlug ();
 
   protected:
-    Schedule_c *_schedule;
     Glade_c    *_glade;
 
     Module_c (gchar *glade_file,
@@ -50,13 +46,14 @@ class Module_c : public Object_c
     void EnableSensitiveWidgets ();
     void DisableSensitiveWidgets ();
 
+    Module_c ();
+
   private:
     GtkWidget *_root;
     GSList    *_sensitive_widgets;
     GSList    *_plugged_list;
     Module_c  *_owner;
-
-    Module_c ();
+    gchar     *_name;
 };
 
 #endif

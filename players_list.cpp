@@ -19,8 +19,10 @@
 #include "players_list.hpp"
 
 // --------------------------------------------------------------------------------
-PlayersList_c::PlayersList_c (PlayersBase_c *players_base)
-  : Module_c ("players_list.glade")
+PlayersList_c::PlayersList_c (gchar         *name,
+                              PlayersBase_c *players_base)
+: Stage_c (name),
+  Module_c ("players_list.glade")
 {
   _players_base = players_base;
 
@@ -162,11 +164,6 @@ void PlayersList_c::SetColumn (guint     id,
 // --------------------------------------------------------------------------------
 void PlayersList_c::OnPlugged ()
 {
-  _schedule->Subscribe (this,
-                        Schedule_c::CHECKIN,
-                        (Schedule_c::StageEvent_t) &PlayersList_c::OnCheckInEntered,
-                        (Schedule_c::StageEvent_t) &PlayersList_c::OnCheckInLeaved);
-
   // players tree view
   {
     _tree_view = _glade->GetWidget ("players_list");
@@ -198,17 +195,32 @@ void PlayersList_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::OnCheckInEntered ()
+void PlayersList_c::Load (xmlDoc *doc)
+{
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Save (xmlTextWriter *xml_writer)
+{
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Enter ()
 {
   EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::OnCheckInLeaved ()
+void PlayersList_c::Lock ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Cancel ()
+{
 }
 
 // --------------------------------------------------------------------------------

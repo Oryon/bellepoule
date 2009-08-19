@@ -18,62 +18,41 @@
 #define schedule_hpp
 
 #include <libxml/xmlwriter.h>
-#include "object.hpp"
+#include "stage.hpp"
+#include "module.hpp"
 
-class Schedule_c : public Object_c
+class Schedule_c : public Module_c
 {
   public:
-    typedef enum
-    {
-      CHECKIN,
-      POOL_ALLOCATION,
-      POOL,
-      TABLE,
-      OVER,
-
-      NB_STAGE
-    } stage_t;
-
     typedef void (Object_c::*StageEvent_t) ();
 
   public:
      Schedule_c (GtkWidget *stage_name_widget,
                  GtkWidget *previous_widget,
-                 GtkWidget *next_widget);
+                 GtkWidget *next_widget,
+                 GtkWidget *notebook_widget);
     ~Schedule_c ();
 
     void     Start           ();
 
+    void     AddStage        (Stage_c *stage);
+    void     RemoveStage     (Stage_c *stage);
     void     NextStage       ();
     void     PreviousStage   ();
-    stage_t  GetCurrentStage ();
 
     void     Save            (xmlTextWriter *xml_writer);
-    void     Load            (xmlNode       *xml_node);
-
-    void     Subscribe       (Object_c     *client,
-                              stage_t       stage,
-                              StageEvent_t  stage_entered,
-                              StageEvent_t  stage_leaved);
-    void     UnSubscribe     (Object_c *client);
+    void     Load            (xmlDoc        *doc);
 
   private:
-    typedef struct
-    {
-      Object_c     *client;
-      StageEvent_t  OnStageEntered;
-      StageEvent_t  OnStageLeaved;
-    } Subscriber_t;
-
-    stage_t    _current_stage;
-    GSList    *_subscriber[NB_STAGE];
     GtkWidget *_stage_name_widget;
     GtkWidget *_previous_widget;
     GtkWidget *_next_widget;
+    GtkWidget *_notebook_widget;
+    GList     *_stage_list;
+    GList     *_current_stage;
 
-    void   SetCurrentStage    (stage_t stage);
+    void   SetCurrentStage    (GList *stage);
     void   CancelCurrentStage ();
-    gchar *GetStageName       (stage_t stage);
 };
 
 #endif

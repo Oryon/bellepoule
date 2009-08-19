@@ -14,6 +14,9 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
 #include <gtk/gtk.h>
 
 #include "schedule.hpp"
@@ -21,224 +24,197 @@
 // --------------------------------------------------------------------------------
 Schedule_c::Schedule_c (GtkWidget *stage_name_widget,
                         GtkWidget *previous_widget,
-                        GtkWidget *next_widget)
+                        GtkWidget *next_widget,
+                        GtkWidget *notebook_widget)
+: Module_c (NULL)
 {
   _stage_name_widget = stage_name_widget;
   _previous_widget   = previous_widget;
   _next_widget       = next_widget;
-
-  for (gint i = 0; i < NB_STAGE; i++)
-  {
-    _subscriber[i] = NULL;
-  }
-
-  _current_stage = CHECKIN;
+  _notebook_widget   = notebook_widget;
+  _stage_list        = NULL;
+  _current_stage     = NULL;
 }
 
 // --------------------------------------------------------------------------------
 Schedule_c::~Schedule_c ()
 {
-  for (gint i = 0; i < NB_STAGE; i++)
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
-    g_slist_free (_subscriber[i]);
+    Stage_c *stage;
+
+    stage = ((Stage_c *) g_list_nth_data (_stage_list,
+                                          i));
+    Object_c::Release (stage);
   }
+  g_list_free (_stage_list);
 }
 
 // --------------------------------------------------------------------------------
 void Schedule_c::Start ()
 {
+  gint current_position = g_list_position (_stage_list,
+                                           _current_stage);
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    Stage_c   *stage    = (Stage_c *) g_list_nth_data (_stage_list, i);
+    Module_c  *module   = (Module_c *) dynamic_cast <Module_c *> (stage);
+    GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
+
+    gtk_notebook_append_page (GTK_NOTEBOOK (_notebook_widget),
+                              viewport,
+                              gtk_label_new (stage->GetName ()));
+
+    Plug (module,
+          viewport);
+
+    {
+      if (i <= current_position)
+      {
+        stage->Enter ();
+      }
+      if (i < current_position)
+      {
+        stage->Lock ();
+      }
+    }
+  }
+
+  gtk_widget_show_all (_notebook_widget);
+  gtk_notebook_set_current_page  (GTK_NOTEBOOK (_notebook_widget),
+                                  current_position);
   SetCurrentStage (_current_stage);
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::AddStage (Stage_c *stage)
+{
+  Stage_c *previous = NULL;
+
+  if (_stage_list)
+  {
+    previous = (Stage_c *) (g_list_last (_stage_list)->data);
+  }
+
+  stage->SetPrevious (previous);
+
+  _stage_list = g_list_append (_stage_list,
+                               stage);
+  if (previous == NULL)
+  {
+    _current_stage = _stage_list;
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::RemoveStage (Stage_c *stage)
+{
+  _stage_list = g_list_remove (_stage_list,
+                               stage);
 }
 
 // --------------------------------------------------------------------------------
 void Schedule_c::NextStage ()
 {
-  if (_current_stage < OVER)
-  {
-    SetCurrentStage ((stage_t) ((gint) (_current_stage) + 1));
-  }
 }
 
 // --------------------------------------------------------------------------------
 void Schedule_c::PreviousStage ()
 {
-  if (_current_stage > 0)
-  {
-    CancelCurrentStage ();
-    SetCurrentStage ((stage_t) ((gint) (_current_stage) - 1));
-  }
-}
-
-// --------------------------------------------------------------------------------
-Schedule_c::stage_t Schedule_c::GetCurrentStage ()
-{
-  return _current_stage;
 }
 
 // --------------------------------------------------------------------------------
 void Schedule_c::Save (xmlTextWriter *xml_writer)
 {
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST "schedule");
   xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "stage",
-                                     "%d", _current_stage);
+                                     BAD_CAST "current_stage",
+                                     "%d", g_list_position (_stage_list,
+                                                            _current_stage));
+  xmlTextWriterEndElement (xml_writer);
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    Stage_c *stage;
+
+    stage = ((Stage_c *) g_list_nth_data (_stage_list,
+                                          i));
+    stage->Save (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
-void Schedule_c::Load (xmlNode *xml_node)
+void Schedule_c::Load (xmlDoc *doc)
 {
-  gchar *attr;
+  xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+  xmlXPathObject  *xml_object;
+  xmlNodeSet      *xml_nodeset;
+  gchar           *attr;
 
-  attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "stage");
+  xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule", xml_context);
+  xml_nodeset = xml_object->nodesetval;
+
+  attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "current_stage");
   if (attr)
   {
-    stage_t stage = (stage_t) atoi (attr);
+    _current_stage = g_list_nth (_stage_list,
+                                 atoi (attr));
+  }
 
-    for (gint i = 0; i <= stage; i++)
-    {
-      SetCurrentStage ((stage_t) i);
-    }
+  xmlXPathFreeObject  (xml_object);
+  xmlXPathFreeContext (xml_context);
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    Stage_c *stage;
+
+    stage = ((Stage_c *) g_list_nth_data (_stage_list,
+                                          i));
+    stage->Load (doc);
   }
 }
 
 // --------------------------------------------------------------------------------
-gchar *Schedule_c::GetStageName (stage_t stage)
+void Schedule_c::SetCurrentStage (GList *stage)
 {
-  switch (stage)
-  {
-    case CHECKIN:
-      {
-        return "CHECKIN";
-      }
-      break;
-
-    case POOL:
-      {
-        return "POOL";
-      }
-      break;
-
-    case POOL_ALLOCATION:
-      {
-        return "POOL_ALLOCATION";
-      }
-      break;
-
-    case TABLE:
-      {
-        return "TABLE";
-      }
-      break;
-
-    case OVER:
-      {
-        return "OVER";
-      }
-      break;
-
-    default: break;
-  }
-  return "????";
-}
-
-// --------------------------------------------------------------------------------
-void Schedule_c::SetCurrentStage (stage_t stage)
-{
-  {
-    Object_c     *client;
-    Subscriber_t *subscriber;
-    StageEvent_t  cbk;
-
-    for (guint i = 0; i < g_slist_length (_subscriber[_current_stage]); i++)
-    {
-      subscriber = (Subscriber_t *) g_slist_nth_data (_subscriber[_current_stage], i);
-      client     = subscriber->client;
-
-      cbk = subscriber->OnStageLeaved;
-      (client->*cbk) ();
-    }
-
-    for (guint i = 0; i < g_slist_length (_subscriber[stage]); i++)
-    {
-      subscriber = (Subscriber_t *) g_slist_nth_data (_subscriber[stage], i);
-      client     = subscriber->client;
-
-      cbk = subscriber->OnStageEntered;
-      (client->*cbk) ();
-    }
-  }
-
   _current_stage = stage;
 
-  if (_current_stage == 0)
+  if (_current_stage)
   {
-    gtk_widget_set_sensitive (_previous_widget,
-                              false);
-  }
-  else
-  {
-    gtk_widget_set_sensitive (_previous_widget,
-                              true);
-  }
+    if (g_list_previous (_current_stage) == NULL)
+    {
+      gtk_widget_set_sensitive (_previous_widget,
+                                false);
+    }
+    else
+    {
+      gtk_widget_set_sensitive (_previous_widget,
+                                true);
+    }
 
-  if (_current_stage == NB_STAGE - 1)
-  {
-    gtk_widget_set_sensitive (_next_widget,
-                              false);
-  }
-  else
-  {
-    gtk_widget_set_sensitive (_next_widget,
-                              true);
-  }
+    if (g_list_next (_current_stage) == NULL)
+    {
+      gtk_widget_set_sensitive (_next_widget,
+                                false);
+    }
+    else
+    {
+      gtk_widget_set_sensitive (_next_widget,
+                                true);
+    }
 
-  gtk_entry_set_text (GTK_ENTRY (_stage_name_widget),
-                      GetStageName (_current_stage));
+    {
+      Stage_c *stage = (Stage_c *) _current_stage->data;
+
+      gtk_entry_set_text (GTK_ENTRY (_stage_name_widget),
+                          stage->GetName ());
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
 void Schedule_c::CancelCurrentStage ()
 {
-}
-
-// --------------------------------------------------------------------------------
-void Schedule_c::Subscribe (Object_c     *client,
-                            stage_t       stage,
-                            StageEvent_t  stage_entered,
-                            StageEvent_t  stage_leaved)
-{
-  Subscriber_t *subscriber_cbk = new Subscriber_t;
-
-  subscriber_cbk->client         = client;
-  subscriber_cbk->OnStageEntered = stage_entered;
-  subscriber_cbk->OnStageLeaved  = stage_leaved;
-
-  _subscriber[stage] = g_slist_append (_subscriber[stage],
-                                       subscriber_cbk);
-}
-
-// --------------------------------------------------------------------------------
-void Schedule_c::UnSubscribe (Object_c *client)
-{
-  for (gint i = 0; i < NB_STAGE; i++)
-  {
-    GSList *node = _subscriber[i];
-
-    while (node)
-    {
-      GSList       *next_node;
-      Subscriber_t *subscriber;
-
-      next_node = g_slist_next (node);
-
-      subscriber = (Subscriber_t *) node->data;
-      if (subscriber->client == client)
-      {
-        _subscriber[i] = g_slist_delete_link (_subscriber[i],
-                                              node);
-        delete subscriber;
-      }
-
-      node = next_node;
-    }
-  }
 }

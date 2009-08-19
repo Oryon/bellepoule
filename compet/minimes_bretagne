@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<contest title="minimes_bretagne" backup="" stage="2">
+<contest title="minimes_bretagne" backup="">
  <player_list>
   <player ref="2" name="guegan" first_name="baptiste" rating="51" rank="1" attending="1" club="BETTON" birth_year="0" licence="0"/>
   <player ref="3" name="brouard" first_name="simon" rating="81" rank="2" attending="1" club="St Grégoire" birth_year="1996" licence="123456"/>
@@ -9,10 +9,11 @@
   <player ref="0" name="le roux" first_name="gurvan" rating="339" rank="6" attending="1" club="" birth_year="0" licence="0"/>
   <player ref="4" name="fouchet" first_name="kevin" rating="339" rank="7" attending="1" club="" birth_year="0" licence="0"/>
  </player_list>
+ <schedule current_stage="2"/>
  <pool_list>
   <pool>
    <match_list>
-    <match player_A="2" score_A="1" player_B="19" score_B="4"/>
+    <match player_A="19" score_A="4" player_B="2" score_B="1"/>
     <match player_A="16" score_A="7" player_B="2" score_B="2"/>
     <match player_A="16" score_A="8" player_B="19" score_B="5"/>
     <match player_A="4" score_A="10" player_B="2" score_B="3"/>
@@ -22,7 +23,7 @@
   </pool>
   <pool>
    <match_list>
-    <match player_A="3" player_B="1" score_B="1"/>
+    <match player_A="1" score_A="1" player_B="3"/>
     <match player_A="0" player_B="3"/>
     <match player_A="0" player_B="1" score_B="33"/>
    </match_list>

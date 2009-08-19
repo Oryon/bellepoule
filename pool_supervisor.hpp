@@ -22,15 +22,21 @@
 #include "module.hpp"
 #include "pool.hpp"
 
-class PoolSupervisor_c : public Module_c
+class PoolSupervisor_c : public virtual Stage_c, public Module_c
 {
   public:
-    PoolSupervisor_c ();
-    ~PoolSupervisor_c ();
+    PoolSupervisor_c (gchar *name);
 
     void Manage (Pool_c *pool);
 
     void OnPrintPoolToolbuttonClicked ();
+
+  private:
+    void Load (xmlDoc *doc);
+    void Save (xmlTextWriter *xml_writer);
+    void Enter ();
+    void Lock ();
+    void Cancel ();
 
   private:
     static gboolean on_pool_selected (GtkWidget      *widget,
@@ -41,6 +47,8 @@ class PoolSupervisor_c : public Module_c
   private:
     GtkWidget *_menu_pool;
     Pool_c    *_displayed_pool;
+
+    ~PoolSupervisor_c ();
 };
 
 #endif

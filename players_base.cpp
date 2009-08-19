@@ -337,8 +337,11 @@ void PlayersBase_c::Update (Player_c *player)
 
     attr = player->GetAttribute (Attribute_c::GetNthAttributeName (i));
 
-    gtk_list_store_set (_store, &iter,
-                        i, attr->GetValue (), -1);
+    if (attr)
+    {
+      gtk_list_store_set (_store, &iter,
+                          i, attr->GetValue (), -1);
+    }
   }
 }
 

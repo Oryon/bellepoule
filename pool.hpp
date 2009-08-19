@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
+#include "stage.hpp"
 #include "canvas_module.hpp"
 #include "players_base.hpp"
 
@@ -27,7 +28,6 @@ class Pool_c : public CanvasModule_c
 {
   public:
      Pool_c (guint number);
-    ~Pool_c ();
 
     void  AddPlayer    (Player_c *player);
     void  RemovePlayer (Player_c *player);
@@ -84,6 +84,8 @@ class Pool_c : public CanvasModule_c
                        Player_c *B);
 
     void RefreshDashBoard ();
+
+    ~Pool_c ();
 };
 
 #endif
