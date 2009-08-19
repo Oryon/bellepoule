@@ -154,7 +154,7 @@ void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Lock ()
+void PoolSupervisor_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
 }

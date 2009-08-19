@@ -212,7 +212,7 @@ void PlayersList_c::Enter ()
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::Lock ()
+void PlayersList_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);

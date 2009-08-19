@@ -36,7 +36,7 @@ class PlayersList_c : public virtual Stage_c, public Module_c
 
   private:
     void Enter ();
-    void Lock ();
+    void OnLocked ();
     void Cancel ();
 
   private:

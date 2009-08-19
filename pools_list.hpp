@@ -46,7 +46,7 @@ class PoolsList_c : public virtual Stage_c, public CanvasModule_c
 
   private:
     void Enter ();
-    void Lock ();
+    void OnLocked ();
     void Cancel ();
 
   private:
