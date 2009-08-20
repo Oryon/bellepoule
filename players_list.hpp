@@ -38,7 +38,7 @@ class PlayersList_c : public virtual Stage_c, public Module_c
     void Enter ();
     void OnLocked ();
     void OnUnLocked ();
-    void Cancel ();
+    void Wipe ();
 
   private:
     GtkWidget     *_tree_view;

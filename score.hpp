@@ -33,6 +33,8 @@ class Score_c : public Object_c
 
     void Set (guint score);
 
+    void Clean ();
+
   private:
     gboolean  _is_known;
     guint     _score;

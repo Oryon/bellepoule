@@ -22,6 +22,8 @@
 #include "module.hpp"
 #include "pool.hpp"
 
+class PoolsList_c;
+
 class PoolSupervisor_c : public virtual Stage_c, public Module_c
 {
   public:
@@ -37,7 +39,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void Enter ();
     void OnLocked ();
     void OnUnLocked ();
-    void Cancel ();
+    void Wipe ();
 
   private:
     static gboolean on_pool_selected (GtkWidget      *widget,
@@ -46,8 +48,9 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void OnPoolSelected (Pool_c *pool);
 
   private:
-    GtkWidget *_menu_pool;
-    Pool_c    *_displayed_pool;
+    GtkWidget   *_menu_pool;
+    PoolsList_c *_pools_list;
+    Pool_c      *_displayed_pool;
 
     ~PoolSupervisor_c ();
 };

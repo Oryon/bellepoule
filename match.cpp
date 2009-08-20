@@ -39,6 +39,8 @@ Match_c::~Match_c ()
 {
   Object_c::Release (_A);
   Object_c::Release (_B);
+  Object_c::Release (_A_score);
+  Object_c::Release (_B_score);
 }
 
 // --------------------------------------------------------------------------------
@@ -132,4 +134,11 @@ void Match_c::Save (xmlTextWriter *xml_writer)
   }
 
   xmlTextWriterEndElement (xml_writer);
+}
+
+// --------------------------------------------------------------------------------
+void Match_c::CleanScore ()
+{
+  _A_score->Clean ();
+  _B_score->Clean ();
 }

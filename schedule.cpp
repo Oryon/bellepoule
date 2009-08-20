@@ -253,7 +253,7 @@ void Schedule_c::on_previous_stage_toolbutton_clicked ()
   Stage_c *stage;
 
   stage = (Stage_c *) _current_stage->data;
-  stage->Cancel ();
+  stage->Wipe ();
 
   SetCurrentStage (g_list_previous (_current_stage));
 

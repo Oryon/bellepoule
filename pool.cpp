@@ -832,3 +832,15 @@ void Pool_c::OnDrawPage (GtkPrintOperation *operation,
                               context,
                               page_nr);
 }
+
+// --------------------------------------------------------------------------------
+void Pool_c::ResetMatches ()
+{
+  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  {
+    Match_c *match;
+
+    match = (Match_c *) g_slist_nth_data (_match_list, i);
+    match->CleanScore ();
+  }
+}

@@ -45,6 +45,8 @@ class Match_c : public Object_c
 
     void Save (xmlTextWriter *xml_writer);
 
+    void CleanScore ();
+
   private:
     Player_c *_A;
     Player_c *_B;

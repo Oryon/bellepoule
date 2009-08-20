@@ -48,7 +48,7 @@ class PoolsList_c : public virtual Stage_c, public CanvasModule_c
     void Enter ();
     void OnLocked ();
     void OnUnLocked ();
-    void Cancel ();
+    void Wipe ();
 
   private:
     typedef struct
@@ -79,7 +79,6 @@ class PoolsList_c : public virtual Stage_c, public CanvasModule_c
     void CreatePools ();
     void SetUpCombobox ();
     void Display ();
-    void Wipe ();
     void FillPoolTable (Pool_c *pool);
     void FixUpTablesBounds ();
 

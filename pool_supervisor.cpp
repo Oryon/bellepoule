@@ -26,6 +26,7 @@ PoolSupervisor_c::PoolSupervisor_c (gchar *name)
   : Stage_c (name),
   Module_c ("pool.glade")
 {
+  _pools_list     = NULL;
   _displayed_pool = NULL;
 
   // Callbacks binding
@@ -43,6 +44,7 @@ PoolSupervisor_c::PoolSupervisor_c (gchar *name)
 // --------------------------------------------------------------------------------
 PoolSupervisor_c::~PoolSupervisor_c ()
 {
+  Object_c::Release (_pools_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -132,9 +134,11 @@ void PoolSupervisor_c::Enter ()
 
   if (pools_list)
   {
-    for (guint p = 0; p < pools_list->GetNbPools (); p++)
+    pools_list->Retain ();
+    _pools_list = pools_list;
+    for (guint p = 0; p < _pools_list->GetNbPools (); p++)
     {
-      Manage (pools_list->GetPool (p));
+      Manage (_pools_list->GetPool (p));
     }
   }
 }
@@ -162,6 +166,29 @@ void PoolSupervisor_c::OnUnLocked ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Cancel ()
+void PoolSupervisor_c::Wipe ()
 {
+  for (guint p = 0; p < _pools_list->GetNbPools (); p++)
+  {
+    Pool_c *pool;
+
+    pool = _pools_list->GetPool (p);
+
+    {
+      GtkWidget *menu_item;
+
+      menu_item = GTK_WIDGET (pool->GetData ("pool_supervisor::menu_item"));
+
+      gtk_container_remove (GTK_CONTAINER (_menu_pool),
+                            menu_item);
+    }
+
+    pool->ResetMatches ();
+  }
+
+  if (_displayed_pool)
+  {
+    _displayed_pool->UnPlug ();
+    _displayed_pool = NULL;
+  }
 }

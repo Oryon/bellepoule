@@ -902,8 +902,3 @@ void PoolsList_c::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
 }
-
-// --------------------------------------------------------------------------------
-void PoolsList_c::Cancel ()
-{
-}

@@ -39,7 +39,7 @@ class Stage_c : public virtual Object_c
 
     virtual void Enter ();
 
-    virtual void Cancel ();
+    virtual void Wipe ();
 
     virtual void Load (xmlDoc *doc);
 

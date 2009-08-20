@@ -225,7 +225,7 @@ void PlayersList_c::OnUnLocked ()
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::Cancel ()
+void PlayersList_c::Wipe ()
 {
 }
 
