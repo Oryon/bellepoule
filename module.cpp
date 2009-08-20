@@ -27,6 +27,7 @@ Module_c::Module_c (gchar *glade_file,
   _sensitive_widgets = NULL;
   _root              = NULL;
   _glade             = NULL;
+  _toolbar           = NULL;
 
   if (glade_file)
   {
@@ -41,18 +42,7 @@ Module_c::Module_c (gchar *glade_file,
       _root = _glade->GetRootWidget ();
     }
 
-    {
-      GtkWidget *parent = gtk_widget_get_parent (_root);
-
-      if (parent)
-      {
-        gtk_container_forall (GTK_CONTAINER (parent),
-                              (GtkCallback) g_object_ref,
-                              NULL);
-        gtk_container_remove (GTK_CONTAINER (parent),
-                              _root);
-      }
-    }
+    _glade->DetachFromParent (_root);
   }
 }
 
@@ -84,11 +74,14 @@ Module_c::~Module_c ()
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::Plug (Module_c  *module,
-                     GtkWidget *in)
+void Module_c::Plug (Module_c   *module,
+                     GtkWidget  *in,
+                     GtkToolbar *toolbar)
 {
   gtk_container_add (GTK_CONTAINER (in),
                      module->_root);
+
+  module->_toolbar = toolbar;
 
   module->OnPlugged ();
 
@@ -135,6 +128,12 @@ void Module_c::OnUnPlugged ()
 GtkWidget *Module_c::GetRootWidget ()
 {
   return _root;
+}
+
+// --------------------------------------------------------------------------------
+GtkToolbar *Module_c::GetToolbar ()
+{
+  return _toolbar;
 }
 
 // --------------------------------------------------------------------------------

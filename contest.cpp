@@ -137,10 +137,7 @@ void Contest_c::InitInstance ()
   _players_base    = new PlayersBase_c ();
 
   {
-    _schedule = new Schedule_c (_glade->GetWidget ("stage_entry"),
-                                _glade->GetWidget ("previous_stage_toolbutton"),
-                                _glade->GetWidget ("next_stage_toolbutton"),
-                                _glade->GetWidget ("schedule_notebook"));
+    _schedule = new Schedule_c ();
 
     _schedule->AddStage (new PlayersList_c ("checkin",
                                             _players_base));
@@ -149,6 +146,10 @@ void Contest_c::InitInstance ()
                                           _players_base));
 
     _schedule->AddStage (new PoolSupervisor_c ("pool"));
+
+    Plug (_schedule,
+          _glade->GetWidget ("schedule_viewport"),
+          GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
   }
 
   // Properties dialog
@@ -194,8 +195,6 @@ void Contest_c::InitInstance ()
     _glade->Bind ("save_toolbutton",           this);
     _glade->Bind ("properties_toolbutton",     this);
     _glade->Bind ("formula_toolbutton",        this);
-    _glade->Bind ("previous_stage_toolbutton", this);
-    _glade->Bind ("next_stage_toolbutton",     this);
 
     _glade->Bind ("backupfile_button",         this);
 
@@ -419,38 +418,6 @@ void Contest_c::on_formula_toolbutton_clicked ()
   {
   }
   gtk_widget_hide (_formula_dlg);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_previous_stage_toolbutton_clicked (GtkWidget *widget,
-                                                                      GdkEvent  *event,
-                                                                      gpointer  *data)
-{
-  Contest_c *c = (Contest_c *) g_object_get_data (G_OBJECT (widget),
-                                                  "instance");
-  c->on_previous_stage_toolbutton_clicked ();
-}
-
-// --------------------------------------------------------------------------------
-void Contest_c::on_previous_stage_toolbutton_clicked ()
-{
-  _schedule->PreviousStage ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_next_stage_toolbutton_clicked (GtkWidget *widget,
-                                                                  GdkEvent  *event,
-                                                                  gpointer  *data)
-{
-  Contest_c *c = (Contest_c *) g_object_get_data (G_OBJECT (widget),
-                                                  "instance");
-  c->on_next_stage_toolbutton_clicked ();
-}
-
-// --------------------------------------------------------------------------------
-void Contest_c::on_next_stage_toolbutton_clicked ()
-{
-  _schedule->NextStage ();
 }
 
 // --------------------------------------------------------------------------------

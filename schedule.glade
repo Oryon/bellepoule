@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
+<!--Generated with glade3 3.4.3 on Wed Aug 19 22:20:38 2009 -->
+<glade-interface>
+  <widget class="GtkWindow" id="window">
+    <child>
+      <widget class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <child>
+          <widget class="GtkToolbar" id="toolbar2">
+            <property name="visible">True</property>
+            <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
+            <child>
+              <widget class="GtkToolButton" id="previous_stage_toolbutton">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Phase précédente</property>
+                <property name="stock_id">gtk-go-back</property>
+                <signal name="clicked" handler="on_previous_stage_toolbutton_clicked"/>
+              </widget>
+              <packing>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkToolItem" id="stage_name_toolbutton">
+                <property name="visible">True</property>
+                <child>
+                  <widget class="GtkEntry" id="stage_entry">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="xalign">0.5</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkToolButton" id="next_stage_toolbutton">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Phase suivante</property>
+                <property name="stock_id">gtk-go-forward</property>
+                <signal name="clicked" handler="on_next_stage_toolbutton_clicked"/>
+              </widget>
+              <packing>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkNotebook" id="schedule_notebook">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">page 1</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</glade-interface>

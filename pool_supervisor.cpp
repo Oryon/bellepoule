@@ -127,18 +127,14 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Enter ()
 {
-  EnableSensitiveWidgets ();
+  GtkWidget   *note_book  = _glade->GetWidget ("stage_notebook");
+  PoolsList_c *pools_list = dynamic_cast <PoolsList_c *> (GetPreviousStage ());
 
+  if (pools_list)
   {
-    GtkWidget   *note_book  = _glade->GetWidget ("stage_notebook");
-    PoolsList_c *pools_list = dynamic_cast <PoolsList_c *> (GetPreviousStage ());
-
-    if (pools_list)
+    for (guint p = 0; p < pools_list->GetNbPools (); p++)
     {
-      for (guint p = 0; p < pools_list->GetNbPools (); p++)
-      {
-        Manage (pools_list->GetPool (p));
-      }
+      Manage (pools_list->GetPool (p));
     }
   }
 }
@@ -154,9 +150,15 @@ void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Lock ()
+void PoolSupervisor_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::OnUnLocked ()
+{
+  EnableSensitiveWidgets ();
 }
 
 // --------------------------------------------------------------------------------

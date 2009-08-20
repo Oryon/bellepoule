@@ -27,32 +27,29 @@ class Schedule_c : public Module_c
     typedef void (Object_c::*StageEvent_t) ();
 
   public:
-     Schedule_c (GtkWidget *stage_name_widget,
-                 GtkWidget *previous_widget,
-                 GtkWidget *next_widget,
-                 GtkWidget *notebook_widget);
-    ~Schedule_c ();
+     Schedule_c ();
 
-    void     Start           ();
+    void Start       ();
 
-    void     AddStage        (Stage_c *stage);
-    void     RemoveStage     (Stage_c *stage);
-    void     NextStage       ();
-    void     PreviousStage   ();
+    void AddStage    (Stage_c *stage);
+    void RemoveStage (Stage_c *stage);
 
-    void     Save            (xmlTextWriter *xml_writer);
-    void     Load            (xmlDoc        *doc);
+    void Save          (xmlTextWriter *xml_writer);
+    void Load          (xmlDoc        *doc);
+
+    void on_previous_stage_toolbutton_clicked ();
+    void on_next_stage_toolbutton_clicked     ();
 
   private:
-    GtkWidget *_stage_name_widget;
-    GtkWidget *_previous_widget;
-    GtkWidget *_next_widget;
-    GtkWidget *_notebook_widget;
-    GList     *_stage_list;
-    GList     *_current_stage;
+    GList *_stage_list;
+    GList *_current_stage;
 
     void   SetCurrentStage    (GList *stage);
     void   CancelCurrentStage ();
+
+  private:
+    ~Schedule_c ();
+    void OnPlugged ();
 };
 
 #endif

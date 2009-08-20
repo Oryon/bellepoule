@@ -26,10 +26,11 @@ class Glade_c : public Object_c
      Glade_c (gchar *file_name);
     ~Glade_c ();
 
-    GtkWidget *GetRootWidget ();
-    GtkWidget *GetWidget     (gchar *name);
-    void       Bind          (gchar *widget_name,
-                              void  *o);
+    GtkWidget *GetRootWidget    ();
+    GtkWidget *GetWidget        (gchar *name);
+    void       DetachFromParent (GtkWidget *widget);
+    void       Bind             (gchar *widget_name,
+                                 void  *o);
 
   private:
     GladeXML *_glade_xml;

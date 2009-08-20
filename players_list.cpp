@@ -207,15 +207,21 @@ void PlayersList_c::Save (xmlTextWriter *xml_writer)
 // --------------------------------------------------------------------------------
 void PlayersList_c::Enter ()
 {
-  EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::Lock ()
+void PlayersList_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::OnUnLocked ()
+{
+  EnableSensitiveWidgets ();
+  SetSensitiveState (TRUE);
 }
 
 // --------------------------------------------------------------------------------

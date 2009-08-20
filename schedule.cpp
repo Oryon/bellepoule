@@ -22,18 +22,15 @@
 #include "schedule.hpp"
 
 // --------------------------------------------------------------------------------
-Schedule_c::Schedule_c (GtkWidget *stage_name_widget,
-                        GtkWidget *previous_widget,
-                        GtkWidget *next_widget,
-                        GtkWidget *notebook_widget)
-: Module_c (NULL)
+Schedule_c::Schedule_c ()
+: Module_c ("schedule.glade",
+            "schedule_notebook")
 {
-  _stage_name_widget = stage_name_widget;
-  _previous_widget   = previous_widget;
-  _next_widget       = next_widget;
-  _notebook_widget   = notebook_widget;
-  _stage_list        = NULL;
-  _current_stage     = NULL;
+  _stage_list    = NULL;
+  _current_stage = NULL;
+
+  _glade->Bind ("previous_stage_toolbutton", this);
+  _glade->Bind ("next_stage_toolbutton",     this);
 }
 
 // --------------------------------------------------------------------------------
@@ -62,7 +59,7 @@ void Schedule_c::Start ()
     Module_c  *module   = (Module_c *) dynamic_cast <Module_c *> (stage);
     GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
 
-    gtk_notebook_append_page (GTK_NOTEBOOK (_notebook_widget),
+    gtk_notebook_append_page (GTK_NOTEBOOK (GetRootWidget ()),
                               viewport,
                               gtk_label_new (stage->GetName ()));
 
@@ -81,9 +78,7 @@ void Schedule_c::Start ()
     }
   }
 
-  gtk_widget_show_all (_notebook_widget);
-  gtk_notebook_set_current_page  (GTK_NOTEBOOK (_notebook_widget),
-                                  current_position);
+  gtk_widget_show_all (GetRootWidget ());
   SetCurrentStage (_current_stage);
 }
 
@@ -112,16 +107,6 @@ void Schedule_c::RemoveStage (Stage_c *stage)
 {
   _stage_list = g_list_remove (_stage_list,
                                stage);
-}
-
-// --------------------------------------------------------------------------------
-void Schedule_c::NextStage ()
-{
-}
-
-// --------------------------------------------------------------------------------
-void Schedule_c::PreviousStage ()
-{
 }
 
 // --------------------------------------------------------------------------------
@@ -185,36 +170,117 @@ void Schedule_c::SetCurrentStage (GList *stage)
   {
     if (g_list_previous (_current_stage) == NULL)
     {
-      gtk_widget_set_sensitive (_previous_widget,
+      gtk_widget_set_sensitive (_glade->GetWidget ("previous_stage_toolbutton"),
                                 false);
     }
     else
     {
-      gtk_widget_set_sensitive (_previous_widget,
+      gtk_widget_set_sensitive (_glade->GetWidget ("previous_stage_toolbutton"),
                                 true);
     }
 
     if (g_list_next (_current_stage) == NULL)
     {
-      gtk_widget_set_sensitive (_next_widget,
+      gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
                                 false);
     }
     else
     {
-      gtk_widget_set_sensitive (_next_widget,
+      gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
                                 true);
     }
 
     {
       Stage_c *stage = (Stage_c *) _current_stage->data;
 
-      gtk_entry_set_text (GTK_ENTRY (_stage_name_widget),
+      gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("stage_entry")),
                           stage->GetName ());
     }
+  }
+
+  {
+    gint current_position = g_list_position (_stage_list,
+                                             _current_stage);
+
+    gtk_notebook_set_current_page  (GTK_NOTEBOOK (GetRootWidget ()),
+                                    current_position);
   }
 }
 
 // --------------------------------------------------------------------------------
 void Schedule_c::CancelCurrentStage ()
 {
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::OnPlugged ()
+{
+  GtkToolbar *toolbar = GetToolbar ();
+  GtkWidget  *w;
+
+  w = _glade->GetWidget ("previous_stage_toolbutton");
+  _glade->DetachFromParent (w);
+  gtk_toolbar_insert (toolbar,
+                      GTK_TOOL_ITEM (w),
+                      -1);
+
+  w = _glade->GetWidget ("stage_name_toolbutton");
+  _glade->DetachFromParent (w);
+  gtk_toolbar_insert (toolbar,
+                      GTK_TOOL_ITEM (w),
+                      -1);
+
+  w = _glade->GetWidget ("next_stage_toolbutton");
+  _glade->DetachFromParent (w);
+  gtk_toolbar_insert (toolbar,
+                      GTK_TOOL_ITEM (w),
+                      -1);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_previous_stage_toolbutton_clicked (GtkWidget *widget,
+                                                                      GdkEvent  *event,
+                                                                      gpointer  *data)
+{
+  Schedule_c *s = (Schedule_c *) g_object_get_data (G_OBJECT (widget),
+                                                    "instance");
+  s->on_previous_stage_toolbutton_clicked ();
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::on_previous_stage_toolbutton_clicked ()
+{
+  Stage_c *stage;
+
+  stage = (Stage_c *) _current_stage->data;
+  stage->Cancel ();
+
+  SetCurrentStage (g_list_previous (_current_stage));
+
+  stage = (Stage_c *) _current_stage->data;
+  stage->UnLock ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_next_stage_toolbutton_clicked (GtkWidget *widget,
+                                                                  GdkEvent  *event,
+                                                                  gpointer  *data)
+{
+  Schedule_c *s = (Schedule_c *) g_object_get_data (G_OBJECT (widget),
+                                                    "instance");
+  s->on_next_stage_toolbutton_clicked ();
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::on_next_stage_toolbutton_clicked ()
+{
+  Stage_c *stage;
+
+  stage = (Stage_c *) _current_stage->data;
+  stage->Lock ();
+
+  SetCurrentStage (g_list_next (_current_stage));
+
+  stage = (Stage_c *) _current_stage->data;
+  stage->Enter ();
 }

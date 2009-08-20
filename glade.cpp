@@ -57,6 +57,21 @@ Glade_c::~Glade_c ()
 }
 
 // --------------------------------------------------------------------------------
+void Glade_c::DetachFromParent (GtkWidget *widget)
+{
+  GtkWidget *parent = gtk_widget_get_parent (widget);
+
+  if (parent)
+  {
+    gtk_container_forall (GTK_CONTAINER (parent),
+                          (GtkCallback) g_object_ref,
+                          NULL);
+    gtk_container_remove (GTK_CONTAINER (parent),
+                          widget);
+  }
+}
+
+// --------------------------------------------------------------------------------
 GtkWidget *Glade_c::GetWidget (gchar *name)
 {
   return glade_xml_get_widget (_glade_xml,

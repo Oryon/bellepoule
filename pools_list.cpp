@@ -332,6 +332,11 @@ gboolean PoolsList_c::OnButtonPress (GooCanvasItem  *item,
                                      GdkEventButton *event,
                                      Pool_c         *pool)
 {
+  if (Locked ())
+  {
+    return FALSE;
+  }
+
   if (   (event->button == 1)
          && (event->type == GDK_BUTTON_PRESS))
   {
@@ -887,9 +892,15 @@ void PoolsList_c::Enter ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::Lock ()
+void PoolsList_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolsList_c::OnUnLocked ()
+{
+  EnableSensitiveWidgets ();
 }
 
 // --------------------------------------------------------------------------------

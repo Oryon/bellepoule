@@ -27,8 +27,9 @@ class Module_c : public virtual Object_c
   public:
     virtual ~Module_c ();
 
-    void Plug (Module_c  *module,
-               GtkWidget *in);
+    void Plug (Module_c   *module,
+               GtkWidget  *in,
+               GtkToolbar *toolbar = NULL);
     void UnPlug ();
 
   protected:
@@ -41,6 +42,7 @@ class Module_c : public virtual Object_c
     virtual void OnUnPlugged ();
 
     GtkWidget *GetRootWidget ();
+    GtkToolbar *GetToolbar ();
 
     void AddSensitiveWidget (GtkWidget *w);
     void EnableSensitiveWidgets ();
@@ -49,11 +51,12 @@ class Module_c : public virtual Object_c
     Module_c ();
 
   private:
-    GtkWidget *_root;
-    GSList    *_sensitive_widgets;
-    GSList    *_plugged_list;
-    Module_c  *_owner;
-    gchar     *_name;
+    GtkWidget  *_root;
+    GtkToolbar *_toolbar;
+    GSList     *_sensitive_widgets;
+    GSList     *_plugged_list;
+    Module_c   *_owner;
+    gchar      *_name;
 };
 
 #endif

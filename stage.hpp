@@ -31,15 +31,19 @@ class Stage_c : public virtual Object_c
 
     gchar *GetName ();
 
-    virtual void Enter () = 0;
+    gboolean Locked ();
 
-    virtual void Lock () = 0;
+    void Lock ();
 
-    virtual void Cancel () = 0;
+    void UnLock ();
 
-    virtual void Load (xmlDoc *doc) = 0;
+    virtual void Enter ();
 
-    virtual void Save (xmlTextWriter *xml_writer) = 0;
+    virtual void Cancel ();
+
+    virtual void Load (xmlDoc *doc);
+
+    virtual void Save (xmlTextWriter *xml_writer);
 
   protected:
     Stage_c (gchar *name);
@@ -47,8 +51,12 @@ class Stage_c : public virtual Object_c
     virtual ~Stage_c ();
 
   private:
-    Stage_c *_previous;
-    gchar   *_name;
+    Stage_c  *_previous;
+    gchar    *_name;
+    gboolean  _locked;
+
+    virtual void OnLocked ();
+    virtual void OnUnLocked ();
 };
 
 #endif

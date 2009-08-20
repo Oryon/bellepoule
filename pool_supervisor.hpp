@@ -35,7 +35,8 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void Load (xmlDoc *doc);
     void Save (xmlTextWriter *xml_writer);
     void Enter ();
-    void Lock ();
+    void OnLocked ();
+    void OnUnLocked ();
     void Cancel ();
 
   private:

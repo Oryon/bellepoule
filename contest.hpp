@@ -38,8 +38,6 @@ class Contest_c : public Module_c
     void Save     ();
 
   public:
-    void on_previous_stage_toolbutton_clicked ();
-    void on_next_stage_toolbutton_clicked     ();
     void on_save_toolbutton_clicked           ();
     void on_properties_toolbutton_clicked     ();
     void on_formula_toolbutton_clicked        ();
