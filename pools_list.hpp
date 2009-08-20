@@ -33,8 +33,6 @@ class PoolsList_c : public virtual Stage_c, public CanvasModule_c
     void Load (xmlDoc *doc);
     void Save (xmlTextWriter *xml_writer);
 
-    void Allocate ();
-
     guint   GetNbPools ();
     Pool_c *GetPool    (guint index);
 

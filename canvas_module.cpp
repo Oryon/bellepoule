@@ -175,13 +175,18 @@ void CanvasModule_c::Wipe ()
 
   if (root_item)
   {
-    GooCanvasItem *table;
+    guint nb_child = goo_canvas_item_get_n_children (root_item);
 
-    table = goo_canvas_item_get_child (root_item,
-                                       0);
-    if (table)
+    for (guint i = 0; i < nb_child; i++)
     {
-      goo_canvas_item_remove (table);
+      GooCanvasItem *child;
+
+      child = goo_canvas_item_get_child (root_item,
+                                         0);
+      if (child)
+      {
+        goo_canvas_item_remove (child);
+      }
     }
   }
 }

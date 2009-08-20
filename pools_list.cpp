@@ -261,27 +261,6 @@ void PoolsList_c::CreatePools ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::Allocate ()
-{
-  FillCombobox ();
-
-  _nb_pools = _best_nb_pools;
-
-  if (_config_list)
-  {
-    Configuration *best_config;
-
-    best_config = (Configuration *) g_slist_nth_data (_config_list,
-                                                      _nb_pools - 1);
-    _pool_size = best_config->size;
-
-    CreatePools ();
-    SetUpCombobox ();
-    Display ();
-  }
-}
-
-// --------------------------------------------------------------------------------
 void PoolsList_c::SetUpCombobox ()
 {
   GtkWidget *w;
@@ -778,6 +757,7 @@ void PoolsList_c::Display ()
 void PoolsList_c::Wipe ()
 {
   CanvasModule_c::Wipe ();
+  _main_table = NULL;
 
   if (_list)
   {
@@ -888,6 +868,26 @@ void PoolsList_c::Enter ()
   EnableSensitiveWidgets ();
 
   _players_base->Lock ();
+
+  if (_list == NULL)
+  {
+    FillCombobox ();
+
+    _nb_pools = _best_nb_pools;
+
+    if (_config_list)
+    {
+      Configuration *best_config;
+
+      best_config = (Configuration *) g_slist_nth_data (_config_list,
+                                                        _nb_pools - 1);
+      _pool_size = best_config->size;
+
+      CreatePools ();
+      SetUpCombobox ();
+    }
+  }
+
   Display ();
 }
 
