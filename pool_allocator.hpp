@@ -14,8 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pools_list_hpp
-#define pools_list_hpp
+#ifndef pools_allocator_hpp
+#define pools_allocator_hpp
 
 #include <gtk/gtk.h>
 

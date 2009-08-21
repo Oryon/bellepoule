@@ -84,10 +84,10 @@
 		<Unit filename="players_list.hpp" />
 		<Unit filename="pool.cpp" />
 		<Unit filename="pool.hpp" />
+		<Unit filename="pool_allocator.cpp" />
+		<Unit filename="pool_allocator.hpp" />
 		<Unit filename="pool_supervisor.cpp" />
 		<Unit filename="pool_supervisor.hpp" />
-		<Unit filename="pools_list.cpp" />
-		<Unit filename="pools_list.hpp" />
 		<Unit filename="schedule.cpp" />
 		<Unit filename="schedule.hpp" />
 		<Unit filename="score.cpp" />

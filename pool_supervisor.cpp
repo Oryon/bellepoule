@@ -18,7 +18,7 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "pools_list.hpp"
+#include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 
 // --------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ PoolSupervisor_c::PoolSupervisor_c (gchar *name)
   : Stage_c (name),
   Module_c ("pool.glade")
 {
-  _pools_list     = NULL;
+  _pool_allocator = NULL;
   _displayed_pool = NULL;
 
   // Callbacks binding
@@ -44,7 +44,7 @@ PoolSupervisor_c::PoolSupervisor_c (gchar *name)
 // --------------------------------------------------------------------------------
 PoolSupervisor_c::~PoolSupervisor_c ()
 {
-  Object_c::Release (_pools_list);
+  Object_c::Release (_pool_allocator);
 }
 
 // --------------------------------------------------------------------------------
@@ -129,16 +129,15 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Enter ()
 {
-  GtkWidget   *note_book  = _glade->GetWidget ("stage_notebook");
-  PoolsList_c *pools_list = dynamic_cast <PoolsList_c *> (GetPreviousStage ());
+  PoolsList_c *pool_allocator = dynamic_cast <PoolsList_c *> (GetPreviousStage ());
 
-  if (pools_list)
+  if (pool_allocator)
   {
-    pools_list->Retain ();
-    _pools_list = pools_list;
-    for (guint p = 0; p < _pools_list->GetNbPools (); p++)
+    pool_allocator->Retain ();
+    _pool_allocator = pool_allocator;
+    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
     {
-      Manage (_pools_list->GetPool (p));
+      Manage (_pool_allocator->GetPool (p));
     }
   }
 }
@@ -168,11 +167,11 @@ void PoolSupervisor_c::OnUnLocked ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Wipe ()
 {
-  for (guint p = 0; p < _pools_list->GetNbPools (); p++)
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
     Pool_c *pool;
 
-    pool = _pools_list->GetPool (p);
+    pool = _pool_allocator->GetPool (p);
 
     {
       GtkWidget *menu_item;

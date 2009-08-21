@@ -49,7 +49,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
   private:
     GtkWidget   *_menu_pool;
-    PoolsList_c *_pools_list;
+    PoolsList_c *_pool_allocator;
     Pool_c      *_displayed_pool;
 
     ~PoolSupervisor_c ();

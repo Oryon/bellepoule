@@ -20,7 +20,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "pools_list.hpp"
+#include "pool_allocator.hpp"
 
 #define VALUE_INIT {0,{{0}}}
 
@@ -28,7 +28,7 @@
 PoolsList_c::PoolsList_c (gchar         *name,
                           PlayersBase_c *players_base)
 : Stage_c (name),
-  CanvasModule_c ("pools_list.glade")
+  CanvasModule_c ("pool_allocator.glade")
 {
   _players_base         = players_base;
   _present_players_list = NULL;
@@ -292,7 +292,7 @@ gboolean PoolsList_c::on_button_press (GooCanvasItem  *item,
                                        GdkEventButton *event,
                                        Pool_c         *pool)
 {
-  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pools_list");
+  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pool_allocator");
 
   if (pl)
   {
@@ -480,7 +480,7 @@ gboolean PoolsList_c::on_enter_notify (GooCanvasItem  *item,
                                        GdkEventButton *event,
                                        Pool_c         *pool)
 {
-  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pools_list");
+  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pool_allocator");
 
   if (pl)
   {
@@ -520,7 +520,7 @@ gboolean PoolsList_c::on_leave_notify (GooCanvasItem  *item,
                                        GdkEventButton *event,
                                        Pool_c         *pool)
 {
-  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pools_list");
+  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pool_allocator");
 
   if (pl)
   {
@@ -710,7 +710,7 @@ void PoolsList_c::FillPoolTable (Pool_c *pool)
     g_signal_connect (focus_rect, "leave_notify_event",
                       G_CALLBACK (on_leave_notify), pool);
 
-    pool->SetData ("PoolsList_c::pools_list",
+    pool->SetData ("PoolsList_c::pool_allocator",
                    this);
     pool->SetData ("PoolsList_c::focus_rectangle",
                    focus_rect);

@@ -53,7 +53,7 @@ void Schedule_c::Start ()
   gint current_position = g_list_position (_stage_list,
                                            _current_stage);
 
-  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  for (gint i = 0; i < g_list_length (_stage_list); i++)
   {
     Stage_c   *stage    = (Stage_c *) g_list_nth_data (_stage_list, i);
     Module_c  *module   = (Module_c *) dynamic_cast <Module_c *> (stage);

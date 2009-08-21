@@ -22,7 +22,7 @@
 
 #include "players_list.hpp"
 #include "pool_supervisor.hpp"
-#include "pools_list.hpp"
+#include "pool_allocator.hpp"
 
 #include "contest.hpp"
 
