@@ -142,8 +142,8 @@ void Contest_c::InitInstance ()
     _schedule->AddStage (new PlayersList_c ("checkin",
                                             _players_base));
 
-    _schedule->AddStage (new PoolsList_c ("pool allocation",
-                                          _players_base));
+    _schedule->AddStage (new PoolAllocator_c ("pool allocation",
+                                              _players_base));
 
     _schedule->AddStage (new PoolSupervisor_c ("pool"));
 

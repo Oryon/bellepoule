@@ -129,7 +129,7 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Enter ()
 {
-  PoolsList_c *pool_allocator = dynamic_cast <PoolsList_c *> (GetPreviousStage ());
+  PoolAllocator_c *pool_allocator = dynamic_cast <PoolAllocator_c *> (GetPreviousStage ());
 
   if (pool_allocator)
   {

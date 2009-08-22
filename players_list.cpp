@@ -215,6 +215,8 @@ void PlayersList_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
+  _players_base->Lock ();
+
 }
 
 // --------------------------------------------------------------------------------

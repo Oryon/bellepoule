@@ -24,11 +24,11 @@
 #include "players_base.hpp"
 #include "pool.hpp"
 
-class PoolsList_c : public virtual Stage_c, public CanvasModule_c
+class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
 {
   public:
-     PoolsList_c (gchar *name,
-                  PlayersBase_c *players_base);
+     PoolAllocator_c (gchar *name,
+                      PlayersBase_c *players_base);
 
     void Load (xmlDoc *doc);
     void Save (xmlTextWriter *xml_writer);
@@ -75,6 +75,7 @@ class PoolsList_c : public virtual Stage_c, public CanvasModule_c
 
     void FillCombobox ();
     void CreatePools ();
+    void DeletePools ();
     void SetUpCombobox ();
     void Display ();
     void FillPoolTable (Pool_c *pool);
@@ -108,14 +109,14 @@ class PoolsList_c : public virtual Stage_c, public CanvasModule_c
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      Pool_c         *pool);
-    static gboolean on_button_release (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       PoolsList_c    *pl);
-    static gboolean on_motion_notify (GooCanvasItem  *item,
-                                      GooCanvasItem  *target,
-                                      GdkEventButton *event,
-                                      PoolsList_c    *pl);
+    static gboolean on_button_release (GooCanvasItem   *item,
+                                       GooCanvasItem   *target,
+                                       GdkEventButton  *event,
+                                       PoolAllocator_c *pl);
+    static gboolean on_motion_notify (GooCanvasItem   *item,
+                                      GooCanvasItem   *target,
+                                      GdkEventButton  *event,
+                                      PoolAllocator_c *pl);
     static gboolean on_enter_notify (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
@@ -125,7 +126,7 @@ class PoolsList_c : public virtual Stage_c, public CanvasModule_c
                                      GdkEventButton *event,
                                      Pool_c         *pool);
 
-    ~PoolsList_c ();
+    ~PoolAllocator_c ();
 };
 
 #endif

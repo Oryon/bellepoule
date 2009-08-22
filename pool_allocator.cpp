@@ -25,8 +25,8 @@
 #define VALUE_INIT {0,{{0}}}
 
 // --------------------------------------------------------------------------------
-PoolsList_c::PoolsList_c (gchar         *name,
-                          PlayersBase_c *players_base)
+PoolAllocator_c::PoolAllocator_c (gchar         *name,
+                                  PlayersBase_c *players_base)
 : Stage_c (name),
   CanvasModule_c ("pool_allocator.glade")
 {
@@ -66,7 +66,7 @@ PoolsList_c::PoolsList_c (gchar         *name,
 }
 
 // --------------------------------------------------------------------------------
-PoolsList_c::~PoolsList_c ()
+PoolAllocator_c::~PoolAllocator_c ()
 {
   Wipe ();
 
@@ -96,13 +96,13 @@ PoolsList_c::~PoolsList_c ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::OnPlugged ()
+void PoolAllocator_c::OnPlugged ()
 {
   CanvasModule_c::OnPlugged ();
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::Load (xmlDoc *doc)
+void PoolAllocator_c::Load (xmlDoc *doc)
 {
   FillCombobox ();
 
@@ -138,7 +138,7 @@ void PoolsList_c::Load (xmlDoc *doc)
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::Save (xmlTextWriter *xml_writer)
+void PoolAllocator_c::Save (xmlTextWriter *xml_writer)
 {
   if (_list)
   {
@@ -156,7 +156,7 @@ void PoolsList_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::FillCombobox ()
+void PoolAllocator_c::FillCombobox ()
 {
   guint nb_players;
 
@@ -236,8 +236,10 @@ void PoolsList_c::FillCombobox ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::CreatePools ()
+void PoolAllocator_c::CreatePools ()
 {
+  DeletePools ();
+
   for (guint i = 0; i < _nb_pools; i++)
   {
     Pool_c *pool;
@@ -261,7 +263,7 @@ void PoolsList_c::CreatePools ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::SetUpCombobox ()
+void PoolAllocator_c::SetUpCombobox ()
 {
   GtkWidget *w;
 
@@ -287,12 +289,12 @@ void PoolsList_c::SetUpCombobox ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::on_button_press (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       Pool_c         *pool)
+gboolean PoolAllocator_c::on_button_press (GooCanvasItem  *item,
+                                           GooCanvasItem  *target,
+                                           GdkEventButton *event,
+                                           Pool_c         *pool)
 {
-  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pool_allocator");
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
 
   if (pl)
   {
@@ -306,10 +308,10 @@ gboolean PoolsList_c::on_button_press (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::OnButtonPress (GooCanvasItem  *item,
-                                     GooCanvasItem  *target,
-                                     GdkEventButton *event,
-                                     Pool_c         *pool)
+gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
+                                         GooCanvasItem  *target,
+                                         GdkEventButton *event,
+                                         Pool_c         *pool)
 {
   if (Locked ())
   {
@@ -320,7 +322,7 @@ gboolean PoolsList_c::OnButtonPress (GooCanvasItem  *item,
          && (event->type == GDK_BUTTON_PRESS))
   {
     _floating_player = (Player_c *) g_object_get_data (G_OBJECT (item),
-                                                       "PoolsList_c::player");
+                                                       "PoolAllocator_c::player");
 
     _drag_x = event->x;
     _drag_y = event->y;
@@ -390,10 +392,10 @@ gboolean PoolsList_c::OnButtonPress (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::on_button_release (GooCanvasItem  *item,
-                                         GooCanvasItem  *target,
-                                         GdkEventButton *event,
-                                         PoolsList_c    *pl)
+gboolean PoolAllocator_c::on_button_release (GooCanvasItem  *item,
+                                             GooCanvasItem  *target,
+                                             GdkEventButton *event,
+                                             PoolAllocator_c    *pl)
 {
   if (pl)
   {
@@ -406,9 +408,9 @@ gboolean PoolsList_c::on_button_release (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::OnButtonRelease (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event)
+gboolean PoolAllocator_c::OnButtonRelease (GooCanvasItem  *item,
+                                           GooCanvasItem  *target,
+                                           GdkEventButton *event)
 {
   if (_dragging)
   {
@@ -438,10 +440,10 @@ gboolean PoolsList_c::OnButtonRelease (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::on_motion_notify (GooCanvasItem  *item,
-                                        GooCanvasItem  *target,
-                                        GdkEventButton *event,
-                                        PoolsList_c    *pl)
+gboolean PoolAllocator_c::on_motion_notify (GooCanvasItem  *item,
+                                            GooCanvasItem  *target,
+                                            GdkEventButton *event,
+                                            PoolAllocator_c    *pl)
 {
   if (pl)
   {
@@ -454,9 +456,9 @@ gboolean PoolsList_c::on_motion_notify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::OnMotionNotify (GooCanvasItem  *item,
-                                      GooCanvasItem  *target,
-                                      GdkEventButton *event)
+gboolean PoolAllocator_c::OnMotionNotify (GooCanvasItem  *item,
+                                          GooCanvasItem  *target,
+                                          GdkEventButton *event)
 {
   if (_dragging && (event->state & GDK_BUTTON1_MASK))
   {
@@ -475,12 +477,12 @@ gboolean PoolsList_c::OnMotionNotify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::on_enter_notify (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       Pool_c         *pool)
+gboolean PoolAllocator_c::on_enter_notify (GooCanvasItem  *item,
+                                           GooCanvasItem  *target,
+                                           GdkEventButton *event,
+                                           Pool_c         *pool)
 {
-  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pool_allocator");
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
 
   if (pl)
   {
@@ -494,14 +496,14 @@ gboolean PoolsList_c::on_enter_notify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::OnEnterNotify (GooCanvasItem  *item,
-                                     GooCanvasItem  *target,
-                                     GdkEventButton *event,
-                                     Pool_c         *pool)
+gboolean PoolAllocator_c::OnEnterNotify (GooCanvasItem  *item,
+                                         GooCanvasItem  *target,
+                                         GdkEventButton *event,
+                                         Pool_c         *pool)
 {
   if (_dragging)
   {
-    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData ("PoolsList_c::focus_rectangle");
+    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData ("PoolAllocator_c::focus_rectangle");
 
     g_object_set (G_OBJECT (rect),
                   "stroke-color", "black",
@@ -515,12 +517,12 @@ gboolean PoolsList_c::OnEnterNotify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::on_leave_notify (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       Pool_c         *pool)
+gboolean PoolAllocator_c::on_leave_notify (GooCanvasItem  *item,
+                                           GooCanvasItem  *target,
+                                           GdkEventButton *event,
+                                           Pool_c         *pool)
 {
-  PoolsList_c *pl = (PoolsList_c*) pool->GetData ("PoolsList_c::pool_allocator");
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
 
   if (pl)
   {
@@ -534,14 +536,14 @@ gboolean PoolsList_c::on_leave_notify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::OnLeaveNotify (GooCanvasItem  *item,
-                                     GooCanvasItem  *target,
-                                     GdkEventButton *event,
-                                     Pool_c         *pool)
+gboolean PoolAllocator_c::OnLeaveNotify (GooCanvasItem  *item,
+                                         GooCanvasItem  *target,
+                                         GdkEventButton *event,
+                                         Pool_c         *pool)
 {
   if (_dragging)
   {
-    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData ("PoolsList_c::focus_rectangle");
+    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData ("PoolAllocator_c::focus_rectangle");
 
     g_object_set (G_OBJECT (rect),
                   "stroke-pattern", NULL,
@@ -555,7 +557,7 @@ gboolean PoolsList_c::OnLeaveNotify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::FixUpTablesBounds ()
+void PoolAllocator_c::FixUpTablesBounds ()
 {
   for (guint p = 0; p < g_slist_length (_list); p++)
   {
@@ -565,9 +567,9 @@ void PoolsList_c::FixUpTablesBounds ()
     GooCanvasItem   *table;
 
     pool = (Pool_c *) g_slist_nth_data (_list, p);
-    table = (GooCanvasItem *) pool->GetData ("PoolsList_c::table");
+    table = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::table");
 
-    focus_rect = (GooCanvasItem *) pool->GetData ("PoolsList_c::focus_rectangle");
+    focus_rect = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::focus_rectangle");
 
     goo_canvas_item_get_bounds (table,
                                 &bounds);
@@ -597,10 +599,10 @@ void PoolsList_c::FixUpTablesBounds ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::FillPoolTable (Pool_c *pool)
+void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 {
-  GooCanvasItem *table      = (GooCanvasItem *) pool->GetData ("PoolsList_c::table");
-  GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetData ("PoolsList_c::focus_rectangle");
+  GooCanvasItem *table      = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::table");
+  GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::focus_rectangle");
   GooCanvasItem *item;
 
   if (table)
@@ -630,7 +632,7 @@ void PoolsList_c::FillPoolTable (Pool_c *pool)
       PutInTable (_main_table, table,
                   row,
                   column);
-      pool->SetData ("PoolsList_c::table",
+      pool->SetData ("PoolAllocator_c::table",
                      table);
     }
   }
@@ -684,7 +686,7 @@ void PoolsList_c::FillPoolTable (Pool_c *pool)
                       "fill_color", "black",
                       NULL);
         g_object_set_data (G_OBJECT (item),
-                           "PoolsList_c::player",
+                           "PoolAllocator_c::player",
                            player);
 
         g_signal_connect (item, "button_press_event",
@@ -710,15 +712,15 @@ void PoolsList_c::FillPoolTable (Pool_c *pool)
     g_signal_connect (focus_rect, "leave_notify_event",
                       G_CALLBACK (on_leave_notify), pool);
 
-    pool->SetData ("PoolsList_c::pool_allocator",
+    pool->SetData ("PoolAllocator_c::pool_allocator",
                    this);
-    pool->SetData ("PoolsList_c::focus_rectangle",
+    pool->SetData ("PoolAllocator_c::focus_rectangle",
                    focus_rect);
   }
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::Display ()
+void PoolAllocator_c::Display ()
 {
   if (_main_table)
   {
@@ -754,11 +756,8 @@ void PoolsList_c::Display ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::Wipe ()
+void PoolAllocator_c::DeletePools ()
 {
-  CanvasModule_c::Wipe ();
-  _main_table = NULL;
-
   if (_list)
   {
     for (guint i = 0; i < g_slist_length (_list); i++)
@@ -768,78 +767,122 @@ void PoolsList_c::Wipe ()
       pool = (Pool_c *) g_slist_nth_data (_list, i);
       Object_c::Release (pool);
     }
+
+    g_slist_free (_list);
+    _list = NULL;
   }
 
-  g_slist_free (_list);
-  _list = NULL;
+  CanvasModule_c::Wipe ();
+  _main_table = NULL;
+
 }
 
 // --------------------------------------------------------------------------------
-guint PoolsList_c::GetNbPools ()
+void PoolAllocator_c::Wipe ()
+{
+  DeletePools ();
+
+  {
+    GtkComboBox *combo_box = GTK_COMBO_BOX (_glade->GetWidget ("pool_size_combobox"));
+
+    g_signal_handlers_block_by_func (G_OBJECT (combo_box),
+                                     (void *) On_Pool_Size_Combobox_Changed,
+                                     NULL);
+    for (guint i = 0; i < g_slist_length (_config_list); i++)
+    {
+      gtk_combo_box_remove_text (combo_box,
+                                 0);
+    }
+    g_signal_handlers_unblock_by_func (G_OBJECT (combo_box),
+                                       (void *) On_Pool_Size_Combobox_Changed,
+                                       NULL);
+  }
+
+  {
+    GtkComboBox *combo_box = GTK_COMBO_BOX (_glade->GetWidget ("nb_pools_combobox"));
+
+    g_signal_handlers_block_by_func (G_OBJECT (combo_box),
+                                     (void *) On_Nb_Pool_Combobox_Changed,
+                                     NULL);
+    for (guint i = 0; i < g_slist_length (_config_list); i++)
+    {
+      gtk_combo_box_remove_text (combo_box,
+                                 0);
+    }
+    g_signal_handlers_unblock_by_func (G_OBJECT (combo_box),
+                                       (void *) On_Nb_Pool_Combobox_Changed,
+                                       NULL);
+  }
+}
+
+// --------------------------------------------------------------------------------
+guint PoolAllocator_c::GetNbPools ()
 {
   return g_slist_length (_list);
 }
 
 // --------------------------------------------------------------------------------
-Pool_c *PoolsList_c::GetPool (guint index)
+Pool_c *PoolAllocator_c::GetPool (guint index)
 {
   return (Pool_c *) g_slist_nth_data (_list,
                                       index);
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::On_Pool_Size_Combobox_Changed (GtkWidget *widget,
-                                                 gpointer  *data)
+void PoolAllocator_c::On_Pool_Size_Combobox_Changed (GtkWidget *widget,
+                                                     gpointer  *data)
 {
-  PoolsList_c *pl = (PoolsList_c *) g_object_get_data (G_OBJECT (widget),
-                                                       "instance");
+  PoolAllocator_c *pl = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
+                                                               "instance");
   pl->OnComboboxChanged (GTK_COMBO_BOX (widget));
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::OnComboboxChanged (GtkComboBox *cb)
+void PoolAllocator_c::OnComboboxChanged (GtkComboBox *cb)
 {
-  guint config_index    = gtk_combo_box_get_active (cb);
+  gint config_index     = gtk_combo_box_get_active (cb);
   Configuration *config = (Configuration *) g_slist_nth_data (_config_list,
                                                               config_index);
 
+  if (config)
   {
-    GtkWidget *w;
+    {
+      GtkWidget *w;
 
-    w = _glade->GetWidget ("nb_pools_combobox");
-    g_signal_handlers_block_by_func (G_OBJECT (w),
-                                     (void *) On_Nb_Pool_Combobox_Changed,
-                                     NULL);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (w),
-                              config_index);
-    g_signal_handlers_unblock_by_func (G_OBJECT (w),
+      w = _glade->GetWidget ("nb_pools_combobox");
+      g_signal_handlers_block_by_func (G_OBJECT (w),
                                        (void *) On_Nb_Pool_Combobox_Changed,
                                        NULL);
+      gtk_combo_box_set_active (GTK_COMBO_BOX (w),
+                                config_index);
+      g_signal_handlers_unblock_by_func (G_OBJECT (w),
+                                         (void *) On_Nb_Pool_Combobox_Changed,
+                                         NULL);
 
-    w = _glade->GetWidget ("pool_size_combobox");
-    g_signal_handlers_block_by_func (G_OBJECT (w),
-                                     (void *) On_Pool_Size_Combobox_Changed,
-                                     NULL);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (w),
-                              config_index);
-    g_signal_handlers_unblock_by_func (G_OBJECT (w),
+      w = _glade->GetWidget ("pool_size_combobox");
+      g_signal_handlers_block_by_func (G_OBJECT (w),
                                        (void *) On_Pool_Size_Combobox_Changed,
                                        NULL);
+      gtk_combo_box_set_active (GTK_COMBO_BOX (w),
+                                config_index);
+      g_signal_handlers_unblock_by_func (G_OBJECT (w),
+                                         (void *) On_Pool_Size_Combobox_Changed,
+                                         NULL);
+    }
+
+    _pool_size = config->size;
+    _nb_pools  = config->nb_pool;
+
+    CreatePools ();
+    Display ();
   }
-
-  _pool_size = config->size;
-  _nb_pools  = config->nb_pool;
-
-  Wipe ();
-  CreatePools ();
-  Display ();
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::On_Nb_Pool_Combobox_Changed (GtkWidget *widget,
-                                               gpointer  *data)
+void PoolAllocator_c::On_Nb_Pool_Combobox_Changed (GtkWidget *widget,
+                                                   gpointer  *data)
 {
-  PoolsList_c *c = (PoolsList_c *) g_object_get_data (G_OBJECT (widget),
+  PoolAllocator_c *c = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
                                                       "instance");
   c->OnComboboxChanged (GTK_COMBO_BOX (widget));
 }
@@ -849,13 +892,13 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
                                                              GdkEvent  *event,
                                                              gpointer  *data)
 {
-  PoolsList_c *c = (PoolsList_c *) g_object_get_data (G_OBJECT (widget),
-                                                      "instance");
+  PoolAllocator_c *c = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
+                                                              "instance");
   c->Print ();
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolsList_c::PresentPlayerFilter (Player_c *player)
+gboolean PoolAllocator_c::PresentPlayerFilter (Player_c *player)
 {
   Attribute_c *attr = player->GetAttribute ("attending");
 
@@ -863,11 +906,9 @@ gboolean PoolsList_c::PresentPlayerFilter (Player_c *player)
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::Enter ()
+void PoolAllocator_c::Enter ()
 {
   EnableSensitiveWidgets ();
-
-  _players_base->Lock ();
 
   if (_list == NULL)
   {
@@ -892,13 +933,13 @@ void PoolsList_c::Enter ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::OnLocked ()
+void PoolAllocator_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
 }
 
 // --------------------------------------------------------------------------------
-void PoolsList_c::OnUnLocked ()
+void PoolAllocator_c::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
 }

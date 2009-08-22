@@ -22,7 +22,7 @@
 #include "module.hpp"
 #include "pool.hpp"
 
-class PoolsList_c;
+class PoolAllocator_c;
 
 class PoolSupervisor_c : public virtual Stage_c, public Module_c
 {
@@ -48,9 +48,9 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void OnPoolSelected (Pool_c *pool);
 
   private:
-    GtkWidget   *_menu_pool;
-    PoolsList_c *_pool_allocator;
-    Pool_c      *_displayed_pool;
+    GtkWidget       *_menu_pool;
+    PoolAllocator_c *_pool_allocator;
+    Pool_c          *_displayed_pool;
 
     ~PoolSupervisor_c ();
 };
