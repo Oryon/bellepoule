@@ -336,162 +336,167 @@ void Pool_c::OnPlugged ()
   CanvasModule_c::OnPlugged ();
 
   {
-    const gint     table_x = 0;
-    const gint     table_y = 0;
-    const guint    cell_w  = 40;
-    const guint    cell_h  = 40;
+    const guint    cell_w     = 40;
+    const guint    cell_h     = 40;
     guint          nb_players = GetNbPlayers ();
     GooCanvasItem *root_item  = GetRootItem ();
+    GooCanvasItem *grid_group = goo_canvas_group_new (root_item, NULL);
 
-    // Border
+    // Grid
     {
-      goo_canvas_rect_new (root_item,
-                           table_x, table_y,
-                           nb_players * cell_w, nb_players * cell_h,
-                           "line-width", 5.0,
-                           NULL);
-    }
-
-    // Cells
-    {
-      GooCanvasItem *previous_goo_rect = NULL;
-
-      for (guint i = 0; i < nb_players; i++)
+      // Border
       {
-        Player_c *A;
+        goo_canvas_rect_new (grid_group,
+                             0, 0,
+                             nb_players * cell_w, nb_players * cell_h,
+                             "line-width", 5.0,
+                             NULL);
+      }
 
-        A = GetPlayer (i);
+      // Cells
+      {
+        GooCanvasItem *previous_goo_rect = NULL;
 
-        for (guint j = 0; j < nb_players; j++)
+        for (guint i = 0; i < nb_players; i++)
         {
-          GooCanvasItem *goo_rect;
-          GooCanvasItem *goo_text;
-          gint           x, y;
+          Player_c *A;
 
-          x = table_x + j * cell_w;
-          y = table_y + i * cell_h;
+          A = GetPlayer (i);
 
-          goo_rect = goo_canvas_rect_new (root_item,
-                                          x, y,
-                                          cell_w, cell_h,
-                                          "line-width", 2.0,
-                                          NULL);
-
-          if (i != j)
+          for (guint j = 0; j < nb_players; j++)
           {
-            Player_c *B = GetPlayer (j);
-            Match_c  *match;
+            GooCanvasItem *goo_rect;
+            GooCanvasItem *goo_text;
+            gint           x, y;
 
-            match = GetMatch (A,
-                              B);
+            x = j * cell_w;
+            y = i * cell_h;
 
-            // Rect
+            goo_rect = goo_canvas_rect_new (grid_group,
+                                            x, y,
+                                            cell_w, cell_h,
+                                            "line-width", 2.0,
+                                            NULL);
+
+            if (i != j)
             {
-              g_object_set (goo_rect, "can-focus", TRUE, NULL);
-              g_object_set (goo_rect, "fill-color", "white", NULL);
+              Player_c *B = GetPlayer (j);
+              Match_c  *match;
 
-              g_signal_connect (goo_rect, "focus_in_event",
-                                G_CALLBACK (on_focus_in), this);
-              g_signal_connect (goo_rect, "button_press_event",
-                                G_CALLBACK (on_cell_button_press), goo_rect);
-            }
+              match = GetMatch (A,
+                                B);
 
-            // Text
-            {
-              Score_c *score       = match->GetScore (A);
-              gchar   *score_image = score->GetImage ();
-
-              goo_text = goo_canvas_text_new (root_item,
-                                              score_image,
-                                              x + cell_w / 2,
-                                              y + cell_h / 2,
-                                              -1,
-                                              GTK_ANCHOR_CENTER,
-                                              "font", "Sans bold 18px",
-                                              NULL);
-
-              g_object_set (goo_text, "can-focus", TRUE, NULL);
-              g_signal_connect (goo_text, "button_press_event",
-                                G_CALLBACK (on_cell_button_press), goo_rect);
-            }
-
-            // Data
-            {
-              g_object_set_data (G_OBJECT (goo_rect), "match",  match);
-              g_object_set_data (G_OBJECT (goo_rect), "player", A);
-              g_object_set_data (G_OBJECT (goo_rect), "goo_text", goo_text);
-              g_object_set_data (G_OBJECT (goo_rect), "x", (void *) (x + cell_w / 2));
-              g_object_set_data (G_OBJECT (goo_rect), "y", (void *) (y + cell_h / 2));
-              g_object_set_data (G_OBJECT (goo_rect), "w", (void *) (cell_w - 8));
-              g_object_set_data (G_OBJECT (goo_rect), "h", (void *) (cell_h - 8));
-              g_object_set_data (G_OBJECT (goo_rect), "next_rect",  NULL);
-
-              if (previous_goo_rect)
+              // Rect
               {
-                g_object_set_data (G_OBJECT (previous_goo_rect), "next_rect",  goo_rect);
-              }
-            }
+                g_object_set (goo_rect, "can-focus", TRUE, NULL);
+                g_object_set (goo_rect, "fill-color", "white", NULL);
 
-            previous_goo_rect = goo_rect;
-          }
-          else
-          {
-            g_object_set (goo_rect, "fill-color", "grey", NULL);
+                g_signal_connect (goo_rect, "focus_in_event",
+                                  G_CALLBACK (on_focus_in), this);
+                g_signal_connect (goo_rect, "button_press_event",
+                                  G_CALLBACK (on_cell_button_press), goo_rect);
+              }
+
+              // Text
+              {
+                Score_c *score       = match->GetScore (A);
+                gchar   *score_image = score->GetImage ();
+
+                goo_text = goo_canvas_text_new (grid_group,
+                                                score_image,
+                                                x + cell_w / 2,
+                                                y + cell_h / 2,
+                                                -1,
+                                                GTK_ANCHOR_CENTER,
+                                                "font", "Sans bold 18px",
+                                                NULL);
+
+                g_object_set (goo_text, "can-focus", TRUE, NULL);
+                g_signal_connect (goo_text, "button_press_event",
+                                  G_CALLBACK (on_cell_button_press), goo_rect);
+              }
+
+              // Data
+              {
+                g_object_set_data (G_OBJECT (goo_rect), "match",  match);
+                g_object_set_data (G_OBJECT (goo_rect), "player", A);
+                g_object_set_data (G_OBJECT (goo_rect), "goo_text", goo_text);
+                g_object_set_data (G_OBJECT (goo_rect), "x", (void *) (x + cell_w / 2));
+                g_object_set_data (G_OBJECT (goo_rect), "y", (void *) (y + cell_h / 2));
+                g_object_set_data (G_OBJECT (goo_rect), "w", (void *) (cell_w - 8));
+                g_object_set_data (G_OBJECT (goo_rect), "h", (void *) (cell_h - 8));
+                g_object_set_data (G_OBJECT (goo_rect), "next_rect",  NULL);
+
+                if (previous_goo_rect)
+                {
+                  g_object_set_data (G_OBJECT (previous_goo_rect), "next_rect",  goo_rect);
+                }
+              }
+
+              previous_goo_rect = goo_rect;
+            }
+            else
+            {
+              g_object_set (goo_rect, "fill-color", "grey", NULL);
+            }
           }
         }
       }
-    }
 
-    // Players (vertically)
-    for (guint i = 0; i < nb_players; i++)
-    {
-      Player_c    *player;
-      gint         x, y;
-      Attribute_c *attr;
+      // Players (vertically)
+      for (guint i = 0; i < nb_players; i++)
+      {
+        Player_c    *player;
+        gint         x, y;
+        Attribute_c *attr;
 
-      player = GetPlayer (i);
-      attr   = player->GetAttribute ("name");
-      x = table_x - 5;
-      y = table_y + cell_h / 2 + i * cell_h;
-      goo_canvas_text_new (root_item,
-                           (gchar *) attr->GetValue (),
-                           x, y, -1,
-                           GTK_ANCHOR_EAST,
-                           "font", "Sans 16",
-                           NULL);
-    }
+        player = GetPlayer (i);
+        attr   = player->GetAttribute ("name");
+        x = - 5;
+        y = cell_h / 2 + i * cell_h;
+        goo_canvas_text_new (grid_group,
+                             (gchar *) attr->GetValue (),
+                             x, y, -1,
+                             GTK_ANCHOR_EAST,
+                             "font", "Sans 16",
+                             NULL);
+      }
 
-    // Players (horizontally)
-    for (guint i = 0; i < nb_players; i++)
-    {
-      Player_c      *player;
-      GooCanvasItem *goo_text;
-      gint           x, y;
-      Attribute_c   *attr;
+      // Players (horizontally)
+      for (guint i = 0; i < nb_players; i++)
+      {
+        Player_c      *player;
+        GooCanvasItem *goo_text;
+        gint           x, y;
+        Attribute_c   *attr;
 
-      player = GetPlayer (i);
-      attr   = player->GetAttribute ("name");
-      x = table_x + cell_w / 2 + i * cell_w;;
-      y = table_y - 10;
-      goo_text = goo_canvas_text_new (root_item,
-                                      (gchar *) attr->GetValue (),
-                                      x, y, -1,
-                                      GTK_ANCHOR_WEST,
-                                      "font", "Sans 16",
-                                      NULL);
-      goo_canvas_item_rotate (goo_text, 315, x, y);
+        player = GetPlayer (i);
+        attr   = player->GetAttribute ("name");
+        x = cell_w / 2 + i * cell_w;;
+        y = - 10;
+        goo_text = goo_canvas_text_new (grid_group,
+                                        (gchar *) attr->GetValue (),
+                                        x, y, -1,
+                                        GTK_ANCHOR_WEST,
+                                        "font", "Sans 16",
+                                        NULL);
+        goo_canvas_item_rotate (goo_text, 315, x, y);
+      }
     }
 
     // Dashboard
     {
+      GooCanvasItem *dashboard_group = goo_canvas_group_new (root_item,
+                                                             NULL);
+
       {
         GooCanvasItem *goo_text;
         gint           x, y;
 
-        x = table_x + +cell_w/2 + 5*cell_w;
-        y = table_y - 10;
+        x = cell_w/2;
+        y = - 10;
 
-        goo_text = goo_canvas_text_new (root_item,
+        goo_text = goo_canvas_text_new (dashboard_group,
                                         "Victories",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -500,7 +505,7 @@ void Pool_c::OnPlugged ()
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (root_item,
+        goo_text = goo_canvas_text_new (dashboard_group,
                                         "TS",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -509,7 +514,7 @@ void Pool_c::OnPlugged ()
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (root_item,
+        goo_text = goo_canvas_text_new (dashboard_group,
                                         "TD",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -518,7 +523,7 @@ void Pool_c::OnPlugged ()
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (root_item,
+        goo_text = goo_canvas_text_new (dashboard_group,
                                         "Indice",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -527,7 +532,7 @@ void Pool_c::OnPlugged ()
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (root_item,
+        goo_text = goo_canvas_text_new (dashboard_group,
                                         "Rank",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -547,11 +552,11 @@ void Pool_c::OnPlugged ()
           GooCanvasItem *goo_text;
           gint           x, y;
 
-          x = table_x + cell_w/2 + 5*cell_w;
-          y = table_y + cell_h/2 + i*cell_h;
+          x = cell_w/2;
+          y = cell_h/2 + i*cell_h;
 
           {
-            goo_text = goo_canvas_text_new (root_item,
+            goo_text = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -560,7 +565,7 @@ void Pool_c::OnPlugged ()
             player->SetData ("Pool::Victories",  goo_text);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (root_item,
+            goo_text = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -569,7 +574,7 @@ void Pool_c::OnPlugged ()
             player->SetData ("Pool::TS",  goo_text);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (root_item,
+            goo_text = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -578,7 +583,7 @@ void Pool_c::OnPlugged ()
             player->SetData ("Pool::TD",  goo_text);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (root_item,
+            goo_text = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -587,7 +592,7 @@ void Pool_c::OnPlugged ()
             player->SetData ("Pool::Indice",  goo_text);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (root_item,
+            goo_text = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -597,6 +602,20 @@ void Pool_c::OnPlugged ()
             x += cell_w;
           }
         }
+      }
+
+      {
+        GooCanvasBounds grid_bounds;
+        GooCanvasBounds dashboard_bounds;
+
+        goo_canvas_item_get_bounds (grid_group,
+                                    &grid_bounds);
+        goo_canvas_item_get_bounds (dashboard_group,
+                                    &dashboard_bounds);
+
+        goo_canvas_item_translate (GOO_CANVAS_ITEM (dashboard_group),
+                                   grid_bounds.x2 - dashboard_bounds.x1,
+                                   0);
       }
     }
 
