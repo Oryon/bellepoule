@@ -678,9 +678,18 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
         attr = player->GetAttribute (Attribute_c::GetNthAttributeName (i, this));
 
-        item = PutInTable (table,
-                           p+1, i,
-                           attr->GetStringImage ());
+        if (attr)
+        {
+          item = PutInTable (table,
+                             p+1, i,
+                             attr->GetStringImage ());
+        }
+        else
+        {
+          item = PutInTable (table,
+                             p+1, i,
+                             "");
+        }
         g_object_set (G_OBJECT (item),
                       "font", "Sans 14px",
                       "fill_color", "black",

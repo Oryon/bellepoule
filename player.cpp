@@ -62,6 +62,9 @@ void Player_c::SetAttributeValue (gchar *name,
     attr = Attribute_c::New (name);
   }
   attr->SetValue (value);
+
+  SetData (attr->GetName (),
+           attr);
 }
 
 // --------------------------------------------------------------------------------
@@ -75,6 +78,9 @@ void Player_c::SetAttributeValue (gchar *name,
     attr = Attribute_c::New (name);
   }
   attr->SetValue (value);
+
+  SetData (attr->GetName (),
+           attr);
 }
 
 // --------------------------------------------------------------------------------
@@ -113,15 +119,11 @@ void Player_c::Load (xmlNode *xml_node)
 {
   for (guint i = 0; i < Attribute_c::GetNbAttributes (); i++)
   {
-    Attribute_c *attr;
+    gchar *attr_name;
 
-    attr = Attribute_c::New (Attribute_c::GetNthAttributeName (i));
-    if (attr)
-    {
-      attr->SetValue ((gchar *) xmlGetProp (xml_node, BAD_CAST attr->GetName ()));
-    }
-    SetData (attr->GetName (),
-             attr);
+    attr_name = Attribute_c::GetNthAttributeName (i);
+    SetAttributeValue (attr_name,
+                       (gchar *) xmlGetProp (xml_node, BAD_CAST attr_name));
   }
 
   {
