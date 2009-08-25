@@ -91,20 +91,38 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
                                    gboolean  is_active,
                                    gchar    *attr_name)
 {
-  Player_c *p = _players_base->GetPlayer (path_string);
+  GtkTreeSelection *selection      = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
+  GList            *selection_list;
 
-  if (is_active)
-  {
-    p->SetAttributeValue (attr_name,
-                          "0");
-  }
-  else
-  {
-    p->SetAttributeValue (attr_name,
-                          "1");
-  }
+  selection_list = gtk_tree_selection_get_selected_rows (selection,
+                                                         NULL);
 
-  _players_base->Update (p);
+  for (guint i = 0; i < g_list_length (selection_list); i++)
+  {
+    Player_c            *p;
+    GtkTreeRowReference *ref;
+
+    ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_store),
+                                      (GtkTreePath *) g_list_nth_data (selection_list, i));
+
+    p = _players_base->GetPlayerFromRef (ref);
+
+    if (p)
+    {
+      if (is_active)
+      {
+        p->SetAttributeValue (attr_name,
+                              "0");
+      }
+      else
+      {
+        p->SetAttributeValue (attr_name,
+                              "1");
+      }
+
+      _players_base->Update (p);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
