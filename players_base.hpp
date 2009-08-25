@@ -34,18 +34,18 @@ class PlayersBase_c : public Object_c
      PlayersBase_c ();
     ~PlayersBase_c ();
 
-    GtkTreeModel *GetTreeModel     ();
-    void          EnterPlayers     ();
-    void          RemoveSelection  (GtkTreeSelection *selection);
-    guint         GetNbPlayers     ();
-    Player_c     *GetPlayerFromRef (guint ref);
-    Player_c     *GetPlayer        (guint index);
-    Player_c     *GetPlayer        (const gchar *path_string);
-    void          Update           (Player_c *player);
-    void          Save             (xmlTextWriter *xml_writer);
-    void          Load             (xmlDoc        *doc);
-    void          Lock             ();
-    GSList       *CreateCustomList (CustomFilter filter);
+    GtkTreeModel *GetTreeModel      ();
+    void          EnterPlayers      ();
+    void          RemoveSelection   (GtkTreeSelection *selection);
+    guint         GetNbPlayers      ();
+    Player_c     *GetPlayerFromRef  (guint ref);
+    Player_c     *GetPlayer         (guint index);
+    Player_c     *GetPlayer         (const gchar *path_string);
+    void          Update            (Player_c *player);
+    void          Save              (xmlTextWriter *xml_writer);
+    void          Load              (xmlDoc        *doc);
+    void          Lock              ();
+    GSList       *CreateCustomList  (CustomFilter filter);
 
   public:
     void on_close_button_clicked ();
