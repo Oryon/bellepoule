@@ -99,13 +99,13 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
 
   for (guint i = 0; i < g_list_length (selection_list); i++)
   {
-    Player_c            *p;
-    GtkTreeRowReference *ref;
+    Player_c *p;
+    gchar    *path;
 
-    ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_store),
-                                      (GtkTreePath *) g_list_nth_data (selection_list, i));
-
-    p = _players_base->GetPlayerFromRef (ref);
+    path = gtk_tree_path_to_string ((GtkTreePath *) g_list_nth_data (selection_list,
+                                                              i));
+    p = _players_base->GetPlayer (path);
+    g_free (path);
 
     if (p)
     {
@@ -123,6 +123,9 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
       _players_base->Update (p);
     }
   }
+
+  g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
+  g_list_free    (selection_list);
 }
 
 // --------------------------------------------------------------------------------
