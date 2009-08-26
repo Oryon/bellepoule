@@ -69,30 +69,6 @@ PoolAllocator_c::PoolAllocator_c (gchar         *name,
 PoolAllocator_c::~PoolAllocator_c ()
 {
   Wipe ();
-
-  if (_present_players_list)
-  {
-    for (guint i = 0; i <  g_slist_length (_present_players_list); i++)
-    {
-      Player_c *p;
-
-      p = (Player_c *) g_slist_nth_data (_present_players_list, i);
-      p->Release ();
-    }
-    g_slist_free (_present_players_list);
-  }
-
-  if (_config_list)
-  {
-    for (guint i = 0; i < g_slist_length (_config_list); i++)
-    {
-      Configuration *config;
-
-      config = (Configuration *) g_slist_nth_data (_config_list, i);
-      g_free (config);
-    }
-    g_slist_free (_config_list);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -161,7 +137,7 @@ void PoolAllocator_c::FillCombobox ()
   guint nb_players;
 
   _present_players_list = _players_base->CreateCustomList (PresentPlayerFilter);
-  nb_players = g_slist_length (_present_players_list);
+  nb_players            = g_slist_length (_present_players_list);
 
   _best_nb_pools = 1;
 
@@ -174,7 +150,7 @@ void PoolAllocator_c::FillCombobox ()
       size = (nb_players + nb_pool - i) / nb_pool;
 
       if (   (size >= 3)
-             && (nb_pool * (size - 1) + i == nb_players))
+          && (nb_pool * (size - 1) + i == nb_players))
       {
         {
           Configuration *config = (Configuration *) g_malloc (sizeof (Configuration));
@@ -238,8 +214,6 @@ void PoolAllocator_c::FillCombobox ()
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::CreatePools ()
 {
-  DeletePools ();
-
   for (guint i = 0; i < _nb_pools; i++)
   {
     Pool_c *pool;
@@ -639,8 +613,17 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
   {
     guint          pool_size   = pool->GetNbPlayers ();
-    Configuration *best_config = (Configuration *) g_slist_nth_data (_config_list,
-                                                                     _nb_pools - 1);
+    Configuration *best_config;
+
+    for (guint i = 0; i < g_slist_length (_config_list); i ++)
+    {
+      best_config = (Configuration *) g_slist_nth_data (_config_list,
+                                                        i);
+      if (best_config->nb_pool == _nb_pools)
+      {
+        break;
+      }
+    }
 
     item = PutInTable (table,
                        0, 0,
@@ -783,7 +766,6 @@ void PoolAllocator_c::DeletePools ()
 
   CanvasModule_c::Wipe ();
   _main_table = NULL;
-
 }
 
 // --------------------------------------------------------------------------------
@@ -821,6 +803,32 @@ void PoolAllocator_c::Wipe ()
     g_signal_handlers_unblock_by_func (G_OBJECT (combo_box),
                                        (void *) On_Nb_Pool_Combobox_Changed,
                                        NULL);
+  }
+
+  if (_present_players_list)
+  {
+    for (guint i = 0; i <  g_slist_length (_present_players_list); i++)
+    {
+      Player_c *p;
+
+      p = (Player_c *) g_slist_nth_data (_present_players_list, i);
+      p->Release ();
+    }
+    g_slist_free (_present_players_list);
+    _present_players_list = NULL;
+  }
+
+  if (_config_list)
+  {
+    for (guint i = 0; i < g_slist_length (_config_list); i++)
+    {
+      Configuration *config;
+
+      config = (Configuration *) g_slist_nth_data (_config_list, i);
+      g_free (config);
+    }
+    g_slist_free (_config_list);
+    _config_list = NULL;
   }
 }
 
@@ -882,6 +890,7 @@ void PoolAllocator_c::OnComboboxChanged (GtkComboBox *cb)
     _pool_size = config->size;
     _nb_pools  = config->nb_pool;
 
+    DeletePools ();
     CreatePools ();
     Display ();
   }

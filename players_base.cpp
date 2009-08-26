@@ -200,6 +200,10 @@ void PlayersBase_c::on_add_button_clicked ()
     GtkEntry        *entry;
     GtkToggleButton *check_button;
 
+    str = g_strdup_printf ("%d\n", player->GetRef ());
+    player->SetAttributeValue ("ref", str);
+    g_free (str);
+
     entry = GTK_ENTRY (_glade->GetWidget ("name_entry"));
     str = (gchar *) gtk_entry_get_text (entry);
     player->SetAttributeValue ("name", str);
