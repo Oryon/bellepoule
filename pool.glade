@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Mon Jun 08 11:20:41 2009 -->
+<!--Generated with glade3 3.4.3 on Wed Aug 26 22:47:48 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="supervisor_window">
     <child>
@@ -9,7 +9,7 @@
         <child>
           <widget class="GtkToolbar" id="toolbar3">
             <property name="visible">True</property>
-            <property name="icon_size">0</property>
+            <property name="icon_size">GTK_ICON_SIZE_INVALID</property>
             <property name="icon_size_set">True</property>
             <child>
               <widget class="GtkMenuToolButton" id="pool_MenuToolButton">
@@ -53,19 +53,13 @@
   </widget>
   <widget class="GtkWindow" id="pool_window">
     <child>
-      <widget class="GtkViewport" id="pool_root">
+      <widget class="GtkScrolledWindow" id="canvas_scrolled_window">
         <property name="visible">True</property>
-        <property name="resize_mode">GTK_RESIZE_QUEUE</property>
+        <property name="can_focus">True</property>
+        <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+        <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
         <child>
-          <widget class="GtkScrolledWindow" id="canvas_scrolled_window">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-            <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-            <child>
-              <placeholder/>
-            </child>
-          </widget>
+          <placeholder/>
         </child>
       </widget>
     </child>

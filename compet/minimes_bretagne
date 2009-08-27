@@ -9,23 +9,31 @@
   <player ref="0" name="le roux" first_name="gurvan" rating="339" rank="6" attending="1" club="" birth_year="0" licence="0"/>
   <player ref="4" name="fouchet" first_name="kevin" rating="339" rank="7" attending="1" club="" birth_year="0" licence="0"/>
  </player_list>
- <schedule current_stage="2"/>
+ <schedule current_stage="1"/>
  <pool_list>
   <pool>
    <match_list>
-    <match player_A="19" score_A="4" player_B="2" score_B="1"/>
-    <match player_A="16" score_A="7" player_B="2" score_B="2"/>
-    <match player_A="16" score_A="8" player_B="19" score_B="5"/>
-    <match player_A="4" score_A="10" player_B="2" score_B="3"/>
-    <match player_A="4" score_A="11" player_B="19" score_B="6"/>
-    <match player_A="4" score_A="12" player_B="16" score_B="9"/>
-   </match_list>
-  </pool>
-  <pool>
-   <match_list>
-    <match player_A="1" score_A="1" player_B="3"/>
+    <match player_A="3" player_B="2"/>
+    <match player_A="19" player_B="2"/>
+    <match player_A="19" player_B="3"/>
+    <match player_A="1" player_B="2"/>
+    <match player_A="1" player_B="3"/>
+    <match player_A="1" player_B="19"/>
+    <match player_A="16" player_B="2"/>
+    <match player_A="16" player_B="3"/>
+    <match player_A="16" player_B="19"/>
+    <match player_A="16" player_B="1"/>
+    <match player_A="0" player_B="2"/>
     <match player_A="0" player_B="3"/>
-    <match player_A="0" player_B="1" score_B="33"/>
+    <match player_A="0" player_B="19"/>
+    <match player_A="0" player_B="1"/>
+    <match player_A="0" player_B="16"/>
+    <match player_A="4" player_B="2"/>
+    <match player_A="4" player_B="3"/>
+    <match player_A="4" player_B="19"/>
+    <match player_A="4" player_B="1"/>
+    <match player_A="4" player_B="16"/>
+    <match player_A="4" player_B="0"/>
    </match_list>
   </pool>
  </pool_list>

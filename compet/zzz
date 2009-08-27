@@ -1,38 +1,338 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<contest title="" backup="" stage="1">
+<contest title="" backup="">
  <player_list>
-  <player ref="0x00000000" name="sss" first_name="sssssss" rating="0" attending="1" birth_year="0" licence="0" club="BETTON"/>
-  <player ref="0x00000001" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
-  <player ref="0x00000002" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
-  <player ref="0x00000003" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
-  <player ref="0x00000004" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
-  <player ref="0x00000005" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
-  <player ref="0x00000006" name="" first_name="" rating="0" attending="1" birth_year="0" licence="0" club=""/>
+  <player name="" first_name="" rating="0" rank="1" attending="1"/>
+  <player name="" first_name="" rating="0" rank="2" attending="1"/>
+  <player name="" first_name="" rating="0" rank="3" attending="1"/>
+  <player name="" first_name="" rating="0" rank="4" attending="1"/>
+  <player name="" first_name="" rating="0" rank="5" attending="1"/>
+  <player name="" first_name="" rating="0" rank="6" attending="1"/>
+  <player name="" first_name="" rating="0" rank="7" attending="1"/>
+  <player name="" first_name="" rating="0" rank="8" attending="1"/>
+  <player name="" first_name="" rating="0" rank="9" attending="1"/>
+  <player name="" first_name="" rating="0" rank="10" attending="1"/>
+  <player name="" first_name="" rating="0" rank="11" attending="1"/>
+  <player name="" first_name="" rating="0" rank="12" attending="1"/>
+  <player name="" first_name="" rating="0" rank="13" attending="1"/>
+  <player name="" first_name="" rating="0" rank="14" attending="1"/>
+  <player name="" first_name="" rating="0" rank="15" attending="1"/>
+  <player name="" first_name="" rating="0" rank="16" attending="1"/>
+  <player name="" first_name="" rating="0" rank="17" attending="1"/>
+  <player name="" first_name="" rating="0" rank="18" attending="1"/>
+  <player name="" first_name="" rating="0" rank="19" attending="1"/>
+  <player name="" first_name="" rating="0" rank="20" attending="1"/>
+  <player name="" first_name="" rating="0" rank="21" attending="1"/>
+  <player name="" first_name="" rating="0" rank="22" attending="1"/>
+  <player name="" first_name="" rating="0" rank="23" attending="1"/>
+  <player name="" first_name="" rating="0" rank="24" attending="1"/>
+  <player name="" first_name="" rating="0" rank="25" attending="1"/>
+  <player name="" first_name="" rating="0" rank="26" attending="1"/>
+  <player name="" first_name="" rating="0" rank="27" attending="1"/>
+  <player name="" first_name="" rating="0" rank="28" attending="1"/>
+  <player name="" first_name="" rating="0" rank="29" attending="1"/>
+  <player name="" first_name="" rating="0" rank="30" attending="1"/>
+  <player name="" first_name="" rating="0" rank="31" attending="1"/>
+  <player name="" first_name="" rating="0" rank="32" attending="1"/>
+  <player name="" first_name="" rating="0" rank="33" attending="1"/>
+  <player name="" first_name="" rating="0" rank="34" attending="1"/>
+  <player name="" first_name="" rating="0" rank="35" attending="1"/>
+  <player name="" first_name="" rating="0" rank="36" attending="1"/>
+  <player name="" first_name="" rating="0" rank="37" attending="1"/>
+  <player name="" first_name="" rating="0" rank="38" attending="1"/>
+  <player name="" first_name="" rating="0" rank="39" attending="1"/>
+  <player name="" first_name="" rating="0" rank="40" attending="1"/>
+  <player name="" first_name="" rating="0" rank="41" attending="1"/>
+  <player name="" first_name="" rating="0" rank="42" attending="1"/>
+  <player name="" first_name="" rating="0" rank="43" attending="1"/>
+  <player name="" first_name="" rating="0" rank="44" attending="1"/>
+  <player name="" first_name="" rating="0" rank="45" attending="1"/>
+  <player name="" first_name="" rating="0" rank="46" attending="1"/>
+  <player name="" first_name="" rating="0" rank="47" attending="1"/>
+  <player name="" first_name="" rating="0" rank="48" attending="1"/>
+  <player name="" first_name="" rating="0" rank="49" attending="1"/>
+  <player name="" first_name="" rating="0" rank="50" attending="1"/>
+  <player name="" first_name="" rating="0" rank="51" attending="1"/>
+  <player name="" first_name="" rating="0" rank="52" attending="1"/>
+  <player name="" first_name="" rating="0" rank="53" attending="1"/>
+  <player name="" first_name="" rating="0" rank="54" attending="1"/>
+  <player name="" first_name="" rating="0" rank="55" attending="1"/>
+  <player name="" first_name="" rating="0" rank="56" attending="1"/>
+  <player name="" first_name="" rating="0" rank="57" attending="1"/>
+  <player name="" first_name="" rating="0" rank="58" attending="1"/>
+  <player name="" first_name="" rating="0" rank="59" attending="1"/>
+  <player name="" first_name="" rating="0" rank="60" attending="1"/>
+  <player name="" first_name="" rating="0" rank="61" attending="1"/>
+  <player name="" first_name="" rating="0" rank="62" attending="1"/>
+  <player name="" first_name="" rating="0" rank="63" attending="1"/>
+  <player name="" first_name="" rating="0" rank="64" attending="1"/>
+  <player name="" first_name="" rating="0" rank="65" attending="1"/>
+  <player name="" first_name="" rating="0" rank="66" attending="1"/>
+  <player name="" first_name="" rating="0" rank="67" attending="1"/>
+  <player name="" first_name="" rating="0" rank="68" attending="1"/>
+  <player name="" first_name="" rating="0" rank="69" attending="1"/>
+  <player name="" first_name="" rating="0" rank="70" attending="1"/>
+  <player name="" first_name="" rating="0" rank="71" attending="1"/>
+  <player name="" first_name="" rating="0" rank="72" attending="1"/>
+  <player name="" first_name="" rating="0" rank="73" attending="1"/>
+  <player name="" first_name="" rating="0" rank="74" attending="1"/>
  </player_list>
+ <schedule current_stage="1"/>
  <pool_list>
   <pool>
    <match_list>
-    <match player_A="0x00000000" player_B="0x00000001"/>
-    <match player_A="0x00000000" player_B="0x00000002"/>
-    <match player_A="0x00000000" player_B="0x00000003"/>
-    <match player_A="0x00000000" player_B="0x00000004"/>
-    <match player_A="0x00000000" player_B="0x00000005"/>
-    <match player_A="0x00000000" player_B="0x00000006"/>
-    <match player_A="0x00000001" player_B="0x00000002"/>
-    <match player_A="0x00000001" player_B="0x00000003"/>
-    <match player_A="0x00000001" player_B="0x00000004"/>
-    <match player_A="0x00000001" player_B="0x00000005"/>
-    <match player_A="0x00000001" player_B="0x00000006"/>
-    <match player_A="0x00000002" player_B="0x00000003"/>
-    <match player_A="0x00000002" player_B="0x00000004"/>
-    <match player_A="0x00000002" player_B="0x00000005"/>
-    <match player_A="0x00000002" player_B="0x00000006"/>
-    <match player_A="0x00000003" player_B="0x00000004"/>
-    <match player_A="0x00000003" player_B="0x00000005"/>
-    <match player_A="0x00000003" player_B="0x00000006"/>
-    <match player_A="0x00000004" player_B="0x00000005"/>
-    <match player_A="0x00000004" player_B="0x00000006"/>
-    <match player_A="0x00000005" player_B="0x00000006"/>
+    <match player_A="35" player_B="24"/>
+    <match player_A="46" player_B="24"/>
+    <match player_A="46" player_B="35"/>
+    <match player_A="57" player_B="24"/>
+    <match player_A="57" player_B="35"/>
+    <match player_A="57" player_B="46"/>
+    <match player_A="68" player_B="24"/>
+    <match player_A="68" player_B="35"/>
+    <match player_A="68" player_B="46"/>
+    <match player_A="68" player_B="57"/>
+    <match player_A="79" player_B="24"/>
+    <match player_A="79" player_B="35"/>
+    <match player_A="79" player_B="46"/>
+    <match player_A="79" player_B="57"/>
+    <match player_A="79" player_B="68"/>
+    <match player_A="90" player_B="24"/>
+    <match player_A="90" player_B="35"/>
+    <match player_A="90" player_B="46"/>
+    <match player_A="90" player_B="57"/>
+    <match player_A="90" player_B="68"/>
+    <match player_A="90" player_B="79"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="36" player_B="25"/>
+    <match player_A="47" player_B="25"/>
+    <match player_A="47" player_B="36"/>
+    <match player_A="58" player_B="25"/>
+    <match player_A="58" player_B="36"/>
+    <match player_A="58" player_B="47"/>
+    <match player_A="69" player_B="25"/>
+    <match player_A="69" player_B="36"/>
+    <match player_A="69" player_B="47"/>
+    <match player_A="69" player_B="58"/>
+    <match player_A="80" player_B="25"/>
+    <match player_A="80" player_B="36"/>
+    <match player_A="80" player_B="47"/>
+    <match player_A="80" player_B="58"/>
+    <match player_A="80" player_B="69"/>
+    <match player_A="91" player_B="25"/>
+    <match player_A="91" player_B="36"/>
+    <match player_A="91" player_B="47"/>
+    <match player_A="91" player_B="58"/>
+    <match player_A="91" player_B="69"/>
+    <match player_A="91" player_B="80"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="37" player_B="26"/>
+    <match player_A="48" player_B="26"/>
+    <match player_A="48" player_B="37"/>
+    <match player_A="59" player_B="26"/>
+    <match player_A="59" player_B="37"/>
+    <match player_A="59" player_B="48"/>
+    <match player_A="70" player_B="26"/>
+    <match player_A="70" player_B="37"/>
+    <match player_A="70" player_B="48"/>
+    <match player_A="70" player_B="59"/>
+    <match player_A="81" player_B="26"/>
+    <match player_A="81" player_B="37"/>
+    <match player_A="81" player_B="48"/>
+    <match player_A="81" player_B="59"/>
+    <match player_A="81" player_B="70"/>
+    <match player_A="92" player_B="26"/>
+    <match player_A="92" player_B="37"/>
+    <match player_A="92" player_B="48"/>
+    <match player_A="92" player_B="59"/>
+    <match player_A="92" player_B="70"/>
+    <match player_A="92" player_B="81"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="38" player_B="27"/>
+    <match player_A="49" player_B="27"/>
+    <match player_A="49" player_B="38"/>
+    <match player_A="60" player_B="27"/>
+    <match player_A="60" player_B="38"/>
+    <match player_A="60" player_B="49"/>
+    <match player_A="71" player_B="27"/>
+    <match player_A="71" player_B="38"/>
+    <match player_A="71" player_B="49"/>
+    <match player_A="71" player_B="60"/>
+    <match player_A="82" player_B="27"/>
+    <match player_A="82" player_B="38"/>
+    <match player_A="82" player_B="49"/>
+    <match player_A="82" player_B="60"/>
+    <match player_A="82" player_B="71"/>
+    <match player_A="93" player_B="27"/>
+    <match player_A="93" player_B="38"/>
+    <match player_A="93" player_B="49"/>
+    <match player_A="93" player_B="60"/>
+    <match player_A="93" player_B="71"/>
+    <match player_A="93" player_B="82"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="39" player_B="28"/>
+    <match player_A="50" player_B="28"/>
+    <match player_A="50" player_B="39"/>
+    <match player_A="61" player_B="28"/>
+    <match player_A="61" player_B="39"/>
+    <match player_A="61" player_B="50"/>
+    <match player_A="72" player_B="28"/>
+    <match player_A="72" player_B="39"/>
+    <match player_A="72" player_B="50"/>
+    <match player_A="72" player_B="61"/>
+    <match player_A="83" player_B="28"/>
+    <match player_A="83" player_B="39"/>
+    <match player_A="83" player_B="50"/>
+    <match player_A="83" player_B="61"/>
+    <match player_A="83" player_B="72"/>
+    <match player_A="94" player_B="28"/>
+    <match player_A="94" player_B="39"/>
+    <match player_A="94" player_B="50"/>
+    <match player_A="94" player_B="61"/>
+    <match player_A="94" player_B="72"/>
+    <match player_A="94" player_B="83"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="40" player_B="29"/>
+    <match player_A="51" player_B="29"/>
+    <match player_A="51" player_B="40"/>
+    <match player_A="62" player_B="29"/>
+    <match player_A="62" player_B="40"/>
+    <match player_A="62" player_B="51"/>
+    <match player_A="73" player_B="29"/>
+    <match player_A="73" player_B="40"/>
+    <match player_A="73" player_B="51"/>
+    <match player_A="73" player_B="62"/>
+    <match player_A="84" player_B="29"/>
+    <match player_A="84" player_B="40"/>
+    <match player_A="84" player_B="51"/>
+    <match player_A="84" player_B="62"/>
+    <match player_A="84" player_B="73"/>
+    <match player_A="95" player_B="29"/>
+    <match player_A="95" player_B="40"/>
+    <match player_A="95" player_B="51"/>
+    <match player_A="95" player_B="62"/>
+    <match player_A="95" player_B="73"/>
+    <match player_A="95" player_B="84"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="41" player_B="30"/>
+    <match player_A="52" player_B="30"/>
+    <match player_A="52" player_B="41"/>
+    <match player_A="63" player_B="30"/>
+    <match player_A="63" player_B="41"/>
+    <match player_A="63" player_B="52"/>
+    <match player_A="74" player_B="30"/>
+    <match player_A="74" player_B="41"/>
+    <match player_A="74" player_B="52"/>
+    <match player_A="74" player_B="63"/>
+    <match player_A="85" player_B="30"/>
+    <match player_A="85" player_B="41"/>
+    <match player_A="85" player_B="52"/>
+    <match player_A="85" player_B="63"/>
+    <match player_A="85" player_B="74"/>
+    <match player_A="96" player_B="30"/>
+    <match player_A="96" player_B="41"/>
+    <match player_A="96" player_B="52"/>
+    <match player_A="96" player_B="63"/>
+    <match player_A="96" player_B="74"/>
+    <match player_A="96" player_B="85"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="42" player_B="31"/>
+    <match player_A="53" player_B="31"/>
+    <match player_A="53" player_B="42"/>
+    <match player_A="64" player_B="31"/>
+    <match player_A="64" player_B="42"/>
+    <match player_A="64" player_B="53"/>
+    <match player_A="75" player_B="31"/>
+    <match player_A="75" player_B="42"/>
+    <match player_A="75" player_B="53"/>
+    <match player_A="75" player_B="64"/>
+    <match player_A="86" player_B="31"/>
+    <match player_A="86" player_B="42"/>
+    <match player_A="86" player_B="53"/>
+    <match player_A="86" player_B="64"/>
+    <match player_A="86" player_B="75"/>
+    <match player_A="97" player_B="31"/>
+    <match player_A="97" player_B="42"/>
+    <match player_A="97" player_B="53"/>
+    <match player_A="97" player_B="64"/>
+    <match player_A="97" player_B="75"/>
+    <match player_A="97" player_B="86"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="43" player_B="32"/>
+    <match player_A="54" player_B="32"/>
+    <match player_A="54" player_B="43"/>
+    <match player_A="65" player_B="32"/>
+    <match player_A="65" player_B="43"/>
+    <match player_A="65" player_B="54"/>
+    <match player_A="76" player_B="32"/>
+    <match player_A="76" player_B="43"/>
+    <match player_A="76" player_B="54"/>
+    <match player_A="76" player_B="65"/>
+    <match player_A="87" player_B="32"/>
+    <match player_A="87" player_B="43"/>
+    <match player_A="87" player_B="54"/>
+    <match player_A="87" player_B="65"/>
+    <match player_A="87" player_B="76"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="44" player_B="33"/>
+    <match player_A="55" player_B="33"/>
+    <match player_A="55" player_B="44"/>
+    <match player_A="66" player_B="33"/>
+    <match player_A="66" player_B="44"/>
+    <match player_A="66" player_B="55"/>
+    <match player_A="77" player_B="33"/>
+    <match player_A="77" player_B="44"/>
+    <match player_A="77" player_B="55"/>
+    <match player_A="77" player_B="66"/>
+    <match player_A="88" player_B="33"/>
+    <match player_A="88" player_B="44"/>
+    <match player_A="88" player_B="55"/>
+    <match player_A="88" player_B="66"/>
+    <match player_A="88" player_B="77"/>
+   </match_list>
+  </pool>
+  <pool>
+   <match_list>
+    <match player_A="45" player_B="34"/>
+    <match player_A="56" player_B="34"/>
+    <match player_A="56" player_B="45"/>
+    <match player_A="67" player_B="34"/>
+    <match player_A="67" player_B="45"/>
+    <match player_A="67" player_B="56"/>
+    <match player_A="78" player_B="34"/>
+    <match player_A="78" player_B="45"/>
+    <match player_A="78" player_B="56"/>
+    <match player_A="78" player_B="67"/>
+    <match player_A="89" player_B="34"/>
+    <match player_A="89" player_B="45"/>
+    <match player_A="89" player_B="56"/>
+    <match player_A="89" player_B="67"/>
+    <match player_A="89" player_B="78"/>
    </match_list>
   </pool>
  </pool_list>
