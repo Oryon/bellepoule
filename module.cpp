@@ -28,6 +28,7 @@ Module_c::Module_c (gchar *glade_file,
   _root              = NULL;
   _glade             = NULL;
   _toolbar           = NULL;
+  _displayed_attr    = NULL;
 
   if (glade_file)
   {
@@ -71,6 +72,45 @@ Module_c::~Module_c ()
 
   Object_c::Release (_glade);
   g_object_unref (_root);
+}
+
+// --------------------------------------------------------------------------------
+void Module_c::SelectAttributes ()
+{
+}
+
+// --------------------------------------------------------------------------------
+guint Module_c::GetNbAttributes ()
+{
+  if (_displayed_attr)
+  {
+    return g_slist_length (_displayed_attr);
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+// --------------------------------------------------------------------------------
+gchar *Module_c::GetAttribute (guint index)
+{
+  if (_displayed_attr)
+  {
+    return (gchar *) g_slist_nth_data (_displayed_attr,
+                                       index);
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Module_c::AddAttribute (gchar *name)
+{
+  _displayed_attr = g_slist_append (_displayed_attr,
+                                    name);
 }
 
 // --------------------------------------------------------------------------------

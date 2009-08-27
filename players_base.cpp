@@ -32,11 +32,7 @@ PlayersBase_c::PlayersBase_c ()
 
     for (guint i = 0; i < nb_attr; i++)
     {
-      gchar *name;
-
-      Attribute_c::GetNthAttribute (i,
-                                    &name,
-                                    &types[i]);
+      types[i] = Attribute_c::GetNthAttributeType (i);
     }
 
     _store = gtk_list_store_newv (nb_attr,

@@ -49,9 +49,8 @@ void Attribute_c::Add (GType  type,
 {
   Desc *desc = new (Desc);
 
-  desc->type        = type;
-  desc->name        = g_strdup (name);
-  desc->client_list = NULL;
+  desc->type = type;
+  desc->name = g_strdup (name);
 
   _list = g_slist_append (_list,
                           desc);
@@ -60,30 +59,20 @@ void Attribute_c::Add (GType  type,
 // --------------------------------------------------------------------------------
 Attribute_c::Desc *Attribute_c::GetDesc (gchar *name)
 {
-  for (guint i = 0; i < g_slist_length (_list); i++)
+  if (_list)
   {
-    Desc *desc;
-
-    desc = (Desc *) g_slist_nth_data (_list, i);
-    if (strcmp (desc->name, name) == 0)
+    for (guint i = 0; i < g_slist_length (_list); i++)
     {
-      return desc;
+      Desc *desc;
+
+      desc = (Desc *) g_slist_nth_data (_list, i);
+      if (strcmp (desc->name, name) == 0)
+      {
+        return desc;
+      }
     }
   }
   return NULL;
-}
-
-// --------------------------------------------------------------------------------
-void Attribute_c::AddClient (gchar    *name,
-                             Object_c *client)
-{
-  Desc *desc = GetDesc (name);
-
-  if (desc)
-  {
-    desc->client_list = g_slist_append (desc->client_list,
-                                        client);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -110,111 +99,76 @@ Attribute_c *Attribute_c::New (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-guint Attribute_c::GetNbAttributes (Object_c *client)
+guint Attribute_c::GetNbAttributes ()
 {
   if (_list)
   {
-    if (client == NULL)
-    {
-      return g_slist_length (_list);
-    }
-    else
-    {
-      guint nb = 0;
-
-      for (guint i = 0; i < g_slist_length (_list); i++)
-      {
-        Desc *desc;
-
-        desc = (Desc *) g_slist_nth_data (_list, i);
-        if (g_slist_find (desc->client_list, client))
-        {
-          nb++;
-        }
-      }
-      return nb;
-    }
+    return g_slist_length (_list);
   }
 
   return 0;
 }
 
 // --------------------------------------------------------------------------------
-gchar *Attribute_c::GetNthAttributeName (guint     nth,
-                                         Object_c *client)
+gchar *Attribute_c::GetNthAttributeName (guint nth)
 {
   if (_list)
   {
-    if (client == NULL)
-    {
-      Desc *desc = (Desc *) g_slist_nth_data (_list, nth);
+    Desc *desc = (Desc *) g_slist_nth_data (_list, nth);
 
-      return desc->name;
-    }
-    else
-    {
-      guint nb = 0;
-
-      for (guint i = 0; i < g_slist_length (_list); i++)
-      {
-        Desc *desc;
-
-        desc = (Desc *) g_slist_nth_data (_list, i);
-        if (g_slist_find (desc->client_list, client))
-        {
-          if (nb == nth)
-          {
-            return desc->name;
-          }
-          nb++;
-        }
-      }
-    }
+    return desc->name;
   }
 
   return NULL;
 }
 
 // --------------------------------------------------------------------------------
-void Attribute_c::GetNthAttribute (guint      nth,
-                                   gchar    **name,
-                                   GType     *type,
-                                   Object_c  *client)
+GType Attribute_c::GetNthAttributeType (guint nth)
 {
-  *name = NULL;
-  *type = G_TYPE_INT;
-
   if (_list)
   {
-    if (client == NULL)
-    {
-      Desc *desc = (Desc *) g_slist_nth_data (_list, nth);
+    Desc *desc = (Desc *) g_slist_nth_data (_list, nth);
 
-      *name = desc->name;
-      *type = desc->type;
+    return desc->type;
+  }
+
+  return G_TYPE_INT;
+}
+
+// --------------------------------------------------------------------------------
+GType Attribute_c::GetAttributeType (gchar *name)
+{
+  if (_list)
+  {
+    Desc *desc = GetDesc (name);
+
+    if (desc)
+    {
+      return desc->type;
     }
-    else
+  }
+
+  return G_TYPE_INT;
+}
+
+// --------------------------------------------------------------------------------
+guint Attribute_c::GetAttributeId (gchar *name)
+{
+  if (_list)
+  {
+    for (guint i = 0; i < g_slist_length (_list); i++)
     {
-      guint nb = 0;
+      Desc *desc;
 
-      for (guint i = 0; i < g_slist_length (_list); i++)
+      desc = (Desc *) g_slist_nth_data (_list, i);
+      if (strcmp (desc->name, name) == 0)
       {
-        Desc *desc;
-
-        desc = (Desc *) g_slist_nth_data (_list, i);
-        if (g_slist_find (desc->client_list, client))
-        {
-          if (nb == nth)
-          {
-            *name = desc->name;
-            *type = desc->type;
-            return;
-          }
-          nb++;
-        }
+        return i;
       }
     }
   }
+
+  return 0xFFFFFFFF;
 }
 
 // --------------------------------------------------------------------------------

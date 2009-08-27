@@ -32,6 +32,8 @@ class Module_c : public virtual Object_c
                GtkToolbar *toolbar = NULL);
     void UnPlug ();
 
+    void SelectAttributes ();
+
   protected:
     Glade_c    *_glade;
 
@@ -40,6 +42,10 @@ class Module_c : public virtual Object_c
 
     virtual void OnPlugged   ();
     virtual void OnUnPlugged ();
+
+    void AddAttribute (gchar *name);
+    guint GetNbAttributes ();
+    gchar *GetAttribute (guint index);
 
     GtkWidget *GetRootWidget ();
     GtkToolbar *GetToolbar ();
@@ -55,6 +61,7 @@ class Module_c : public virtual Object_c
     GtkToolbar *_toolbar;
     GSList     *_sensitive_widgets;
     GSList     *_plugged_list;
+    GSList     *_displayed_attr ;
     Module_c   *_owner;
     gchar      *_name;
 };

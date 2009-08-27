@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Wed Aug 26 22:47:48 2009 -->
+<!--Generated with glade3 3.4.3 on Thu Aug 27 21:32:51 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="supervisor_window">
     <child>
@@ -40,6 +40,7 @@
           <widget class="GtkViewport" id="pool_hook">
             <property name="visible">True</property>
             <property name="resize_mode">GTK_RESIZE_QUEUE</property>
+            <property name="shadow_type">GTK_SHADOW_NONE</property>
             <child>
               <placeholder/>
             </child>

@@ -43,7 +43,6 @@ class CanvasModule_c : public Module_c
 
     GooCanvas *GetCanvas ();
     GooCanvasItem *GetRootItem ();
-    void UpdateSize ();
     virtual void Wipe ();
     virtual void OnPlugged ();
     virtual void OnUnPlugged ();

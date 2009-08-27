@@ -56,12 +56,12 @@ PoolAllocator_c::PoolAllocator_c (gchar         *name,
   }
 
   {
-    Attribute_c::AddClient ("name",       this);
-    Attribute_c::AddClient ("first_name", this);
-    Attribute_c::AddClient ("rating",     this);
-    Attribute_c::AddClient ("rank",       this);
-    Attribute_c::AddClient ("club",       this);
-    Attribute_c::AddClient ("ref",        this);
+    AddAttribute ("name");
+    AddAttribute ("first_name");
+    AddAttribute ("rating");
+    AddAttribute ("rank");
+    AddAttribute ("club");
+    AddAttribute ("ref");
   }
 }
 
@@ -310,12 +310,12 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
       GooCanvasBounds  bounds;
       GString         *string = g_string_new ("");
 
-      for (guint i = 0; i < Attribute_c::GetNbAttributes (this); i++)
+      for (guint i = 0; i < GetNbAttributes (); i++)
       {
         Attribute_c *attr;
         gchar       *attr_name;
 
-        attr_name = Attribute_c::GetNthAttributeName (i, this);
+        attr_name = GetAttribute (i);
         attr = _floating_player->GetAttribute (attr_name);
         string = g_string_append (string,
                                   attr->GetStringImage ());
@@ -654,12 +654,12 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
     if (player)
     {
-      for (guint i = 0; i < Attribute_c::GetNbAttributes (this); i++)
+      for (guint i = 0; i < GetNbAttributes (); i++)
       {
         GooCanvasItem *item;
         Attribute_c   *attr;
 
-        attr = player->GetAttribute (Attribute_c::GetNthAttributeName (i, this));
+        attr = player->GetAttribute (GetAttribute (i));
 
         if (attr)
         {
@@ -743,8 +743,6 @@ void PoolAllocator_c::Display ()
       FillPoolTable (pool);
     }
   }
-
-  UpdateSize ();
 }
 
 // --------------------------------------------------------------------------------

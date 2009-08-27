@@ -34,8 +34,22 @@ PlayersList_c::PlayersList_c (gchar         *name,
 
   // Callbacks binding
   {
-    _glade->Bind ("add_player_button",    this);
-    _glade->Bind ("remove_player_button", this);
+    _glade->Bind ("add_player_button",        this);
+    _glade->Bind ("remove_player_button",     this);
+    _glade->Bind ("view_players_list_button", this);
+  }
+
+  // Player attributes to display
+  {
+    //AddAttribute ("ref");
+    AddAttribute ("attending");
+    AddAttribute ("name");
+    AddAttribute ("first_name");
+    AddAttribute ("rating");
+    AddAttribute ("rank");
+    AddAttribute ("club");
+    AddAttribute ("birth_year");
+    AddAttribute ("licence");
   }
 }
 
@@ -200,15 +214,15 @@ void PlayersList_c::OnPlugged ()
     gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
                              _players_base->GetTreeModel ());
 
-    for (guint i = 0; i < Attribute_c::GetNbAttributes (); i++)
+    for (guint i = 0; i < GetNbAttributes (); i++)
     {
       gchar *name;
       GType  type;
 
-      Attribute_c::GetNthAttribute (i,
-                                    &name,
-                                    &type);
-      SetColumn (i,
+      name = GetAttribute (i);
+      type = Attribute_c::GetAttributeType (name);
+
+      SetColumn (Attribute_c::GetAttributeId (name),
                  name,
                  type != G_TYPE_BOOLEAN);
     }
@@ -317,4 +331,14 @@ void PlayersList_c::on_remove_player_button_clicked ()
   GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
 
   _players_base->RemoveSelection (selection);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_view_players_list_button_clicked (GtkWidget *widget,
+                                                                     GdkEvent  *event,
+                                                                     gpointer  *data)
+{
+  PlayersList_c *c = (PlayersList_c *) g_object_get_data (G_OBJECT (widget),
+                                                          "instance");
+  c->SelectAttributes ();
 }

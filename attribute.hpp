@@ -28,18 +28,17 @@ class Attribute_c : public Object_c
     static void Add (GType  type,
                      gchar *name);
 
-    static guint GetNbAttributes (Object_c *client = NULL);
+    static guint GetNbAttributes ();
 
-    static gchar *GetNthAttributeName (guint     nth,
-                                       Object_c *client = NULL);
-    static void GetNthAttribute (guint      nth,
-                                 gchar    **name,
-                                 GType     *type,
-                                 Object_c  *client = NULL);
+    static gchar *GetNthAttributeName (guint nth);
 
-    static void AddClient (gchar    *name,
-                           Object_c *client);
+    static GType GetNthAttributeType (guint nth);
 
+    static GType GetAttributeType (gchar *name);
+
+    static guint GetAttributeId (gchar *name);
+
+  public:
     static Attribute_c *New (gchar *name);
 
     static gint Compare (Attribute_c *a, Attribute_c *b);
@@ -66,9 +65,8 @@ class Attribute_c : public Object_c
   private:
     struct Desc
     {
-      GType   type;
-      gchar  *name;
-      GSList *client_list;
+      GType  type;
+      gchar *name;
     };
 
     static GSList *_list;
