@@ -635,8 +635,6 @@ void Pool_c::OnPlugged ()
                            "fill_color", "medium blue",
                            NULL);
     }
-
-    UpdateSize ();
   }
 
   RefreshDashBoard ();

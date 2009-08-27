@@ -760,8 +760,6 @@ void PoolAllocator_c::Display ()
       FillPoolTable (pool);
     }
   }
-
-  UpdateSize ();
 }
 
 // --------------------------------------------------------------------------------
