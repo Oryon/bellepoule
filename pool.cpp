@@ -27,7 +27,7 @@
 // --------------------------------------------------------------------------------
 Pool_c::Pool_c (guint number)
   : CanvasModule_c ("pool.glade",
-                    "pool_root")
+                    "canvas_scrolled_window")
 {
   _number      = number;
   _player_list = NULL;
