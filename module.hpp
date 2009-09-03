@@ -43,10 +43,6 @@ class Module_c : public virtual Object_c
     virtual void OnPlugged   ();
     virtual void OnUnPlugged ();
 
-    void AddAttribute (gchar *name);
-    guint GetNbAttributes ();
-    gchar *GetAttribute (guint index);
-
     GtkWidget *GetRootWidget ();
     GtkToolbar *GetToolbar ();
 
@@ -54,16 +50,47 @@ class Module_c : public virtual Object_c
     void EnableSensitiveWidgets ();
     void DisableSensitiveWidgets ();
 
+    void ShowAttribute (gchar *name);
+    void HideAttribute (gchar *name);
+
     Module_c ();
 
   private:
-    GtkWidget  *_root;
-    GtkToolbar *_toolbar;
-    GSList     *_sensitive_widgets;
-    GSList     *_plugged_list;
-    GSList     *_displayed_attr ;
-    Module_c   *_owner;
-    gchar      *_name;
+    typedef enum
+    {
+      ATTR_VISIBILITY = 0,
+      ATTR_NAME,
+      NUM_COLS
+    } StoreColumn;
+
+    GtkWidget           *_root;
+    GtkToolbar          *_toolbar;
+    GSList              *_sensitive_widgets;
+    GSList              *_plugged_list;
+    Module_c            *_owner;
+    gchar               *_name;
+    GtkTreeModel        *_attr_filter_store;
+    GtkWidget           *_attr_filter_view;
+    GtkTreeRowReference *_inserted_ref;
+
+    static void OnAttrDeleted (GtkTreeModel *tree_model,
+                               GtkTreePath  *path,
+                               gpointer      user_data);
+    static void OnAttrInserted (GtkTreeModel *tree_model,
+                                GtkTreePath  *path,
+                                GtkTreeIter  *iter,
+                                gpointer      user_data);
+
+    virtual void OnAttrShown (gchar *attr_name,
+                              guint  index) {};
+
+    virtual void OnAttrHidden (gchar *attr_name) {};
+
+    static void on_cell_toggled (GtkCellRendererToggle *cell,
+                                 gchar                 *path_string,
+                                 gpointer               user_data);
+    void OnCellToggled (gchar    *path_string,
+                        gboolean  is_active);
 };
 
 #endif

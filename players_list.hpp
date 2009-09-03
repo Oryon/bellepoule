@@ -46,17 +46,26 @@ class PlayersList_c : public virtual Stage_c, public Module_c
 
     void SetColumn (guint     id,
                     gchar    *attr,
-                    gboolean  entry_is_text_based);
+                    gboolean  entry_is_text_based,
+                    gint      at);
 
     void Load (xmlDoc *doc);
 
     void Save (xmlTextWriter *xml_writer);
 
+    void OnAttrShown (gchar *attr_name,
+                      guint  index);
+
+    void OnAttrHidden (gchar *attr_name);
+
     void SetSensitiveState (bool sensitive_value);
+
     void OnPlugged ();
+
     void OnCellEdited (gchar *path_string,
                        gchar *new_text,
                        gchar *attr_name);
+
     void OnCellToggled (gchar    *path_string,
                         gboolean  is_active,
                         gchar    *attr_name);

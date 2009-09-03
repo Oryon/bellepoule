@@ -56,12 +56,12 @@ PoolAllocator_c::PoolAllocator_c (gchar         *name,
   }
 
   {
-    AddAttribute ("name");
-    AddAttribute ("first_name");
-    AddAttribute ("rating");
-    AddAttribute ("rank");
-    AddAttribute ("club");
-    AddAttribute ("ref");
+    ShowAttribute ("name");
+    ShowAttribute ("first_name");
+    ShowAttribute ("rating");
+    ShowAttribute ("rank");
+    ShowAttribute ("club");
+    ShowAttribute ("ref");
   }
 }
 
@@ -310,6 +310,7 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
       GooCanvasBounds  bounds;
       GString         *string = g_string_new ("");
 
+#if 0
       for (guint i = 0; i < GetNbAttributes (); i++)
       {
         Attribute_c *attr;
@@ -322,6 +323,7 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
         string = g_string_append (string,
                                   "  ");
       }
+#endif
 
       goo_canvas_item_get_bounds (item,
                                   &bounds);
@@ -654,6 +656,7 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
     if (player)
     {
+#if 0
       for (guint i = 0; i < GetNbAttributes (); i++)
       {
         GooCanvasItem *item;
@@ -684,6 +687,7 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
         g_signal_connect (item, "button_press_event",
                           G_CALLBACK (on_button_press), pool);
       }
+#endif
     }
   }
 

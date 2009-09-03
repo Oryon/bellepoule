@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <string.h>
+
 #include "schedule.hpp"
 
 #include "players_list.hpp"
@@ -41,15 +43,14 @@ PlayersList_c::PlayersList_c (gchar         *name,
 
   // Player attributes to display
   {
-    //AddAttribute ("ref");
-    AddAttribute ("attending");
-    AddAttribute ("name");
-    AddAttribute ("first_name");
-    AddAttribute ("rating");
-    AddAttribute ("rank");
-    AddAttribute ("club");
-    AddAttribute ("birth_year");
-    AddAttribute ("licence");
+    ShowAttribute ("attending");
+    ShowAttribute ("rank");
+    ShowAttribute ("name");
+    ShowAttribute ("first_name");
+    ShowAttribute ("club");
+    ShowAttribute ("birth_year");
+    ShowAttribute ("rating");
+    ShowAttribute ("licence");
   }
 }
 
@@ -143,9 +144,46 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
 }
 
 // --------------------------------------------------------------------------------
+void PlayersList_c::OnAttrShown (gchar *attr_name,
+                                 guint  index)
+{
+  GType type = Attribute_c::GetAttributeType (attr_name);
+
+  SetColumn (Attribute_c::GetAttributeId (attr_name),
+             attr_name,
+             type != G_TYPE_BOOLEAN,
+             index);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::OnAttrHidden (gchar *attr_name)
+{
+  GList *column_list = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
+
+  for (guint i = 0; i < g_list_length (column_list); i++)
+  {
+    GtkTreeViewColumn *column;
+
+    column = gtk_tree_view_get_column (GTK_TREE_VIEW (_tree_view),
+                                       i);
+    if (column)
+    {
+      const gchar *title = gtk_tree_view_column_get_title (column);
+
+      if (strcmp (title, attr_name) == 0)
+      {
+        gtk_tree_view_remove_column (GTK_TREE_VIEW (_tree_view),
+                                     column);
+      }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList_c::SetColumn (guint     id,
                                gchar    *attr_name,
-                               gboolean  entry_is_text_based)
+                               gboolean  entry_is_text_based,
+                               gint      at)
 {
   GtkTreeViewColumn *column;
   GtkCellRenderer   *renderer;
@@ -192,8 +230,9 @@ void PlayersList_c::SetColumn (guint     id,
   gtk_tree_view_column_set_sort_column_id (column,
                                            id);
 
-  gtk_tree_view_append_column (GTK_TREE_VIEW (_tree_view),
-                               column);
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (_tree_view),
+                               column,
+                               at);
 }
 
 // --------------------------------------------------------------------------------
@@ -213,19 +252,6 @@ void PlayersList_c::OnPlugged ()
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
                              _players_base->GetTreeModel ());
-
-    for (guint i = 0; i < GetNbAttributes (); i++)
-    {
-      gchar *name;
-      GType  type;
-
-      name = GetAttribute (i);
-      type = Attribute_c::GetAttributeType (name);
-
-      SetColumn (Attribute_c::GetAttributeId (name),
-                 name,
-                 type != G_TYPE_BOOLEAN);
-    }
   }
 }
 
