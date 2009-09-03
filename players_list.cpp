@@ -36,9 +36,9 @@ PlayersList_c::PlayersList_c (gchar         *name,
 
   // Callbacks binding
   {
-    _glade->Bind ("add_player_button",        this);
-    _glade->Bind ("remove_player_button",     this);
-    _glade->Bind ("view_players_list_button", this);
+    _glade->Bind ("add_player_button",          this);
+    _glade->Bind ("remove_player_button",       this);
+    _glade->Bind ("players_list_filter_button", this);
   }
 
   // Player attributes to display
@@ -364,9 +364,9 @@ void PlayersList_c::on_remove_player_button_clicked ()
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_view_players_list_button_clicked (GtkWidget *widget,
-                                                                     GdkEvent  *event,
-                                                                     gpointer  *data)
+extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget *widget,
+                                                                       GdkEvent  *event,
+                                                                       gpointer  *data)
 {
   PlayersList_c *c = (PlayersList_c *) g_object_get_data (G_OBJECT (widget),
                                                           "instance");

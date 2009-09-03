@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Wed Aug 26 22:52:57 2009 -->
+<!--Generated with glade3 3.4.3 on Thu Sep 03 23:19:21 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="window1">
     <child>
@@ -15,8 +15,20 @@
             <child>
               <widget class="GtkToolButton" id="print_toolbutton">
                 <property name="visible">True</property>
+                <property name="label" translatable="yes">Print</property>
                 <property name="stock_id">gtk-print</property>
                 <signal name="clicked" handler="on_print_toolbutton_clicked"/>
+              </widget>
+              <packing>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkToolButton" id="filter_button">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Filter</property>
+                <property name="stock_id">gtk-index</property>
+                <signal name="clicked" handler="on_filter_button_clicked"/>
               </widget>
               <packing>
                 <property name="homogeneous">True</property>

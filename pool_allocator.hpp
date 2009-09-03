@@ -84,6 +84,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     static gboolean PresentPlayerFilter (Player_c *player);
 
     void OnPlugged ();
+    void OnAttrListUpdated ();
     void OnComboboxChanged (GtkComboBox *cb);
 
     gboolean OnButtonPress (GooCanvasItem  *item,

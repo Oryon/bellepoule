@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Thu Aug 27 21:58:28 2009 -->
+<!--Generated with glade3 3.4.3 on Thu Sep 03 23:17:10 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="window">
     <child>
@@ -32,11 +32,11 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkToolButton" id="view_players_list_button">
+              <widget class="GtkToolButton" id="players_list_filter_button">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Vues</property>
+                <property name="label" translatable="yes">Filter</property>
                 <property name="stock_id">gtk-index</property>
-                <signal name="clicked" handler="on_view_players_list_button_clicked"/>
+                <signal name="clicked" handler="on_players_list_filter_button_clicked"/>
               </widget>
               <packing>
                 <property name="homogeneous">True</property>

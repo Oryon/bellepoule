@@ -53,6 +53,7 @@ PoolAllocator_c::PoolAllocator_c (gchar         *name,
     _glade->Bind ("print_toolbutton",   this);
     _glade->Bind ("nb_pools_combobox",  this);
     _glade->Bind ("pool_size_combobox", this);
+    _glade->Bind ("filter_button",      this);
   }
 
   {
@@ -654,15 +655,17 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
   {
     Player_c *player = pool->GetPlayer (p);
 
-    if (player)
+    if (player && _attr_list)
     {
-#if 0
-      for (guint i = 0; i < GetNbAttributes (); i++)
+      for (guint i = 0; i < g_slist_length (_attr_list); i++)
       {
         GooCanvasItem *item;
+        gchar         *attr_name;
         Attribute_c   *attr;
 
-        attr = player->GetAttribute (GetAttribute (i));
+        attr_name = (gchar *) g_slist_nth_data (_attr_list,
+                                                i);
+        attr = player->GetAttribute (attr_name);
 
         if (attr)
         {
@@ -687,7 +690,6 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
         g_signal_connect (item, "button_press_event",
                           G_CALLBACK (on_button_press), pool);
       }
-#endif
     }
   }
 
@@ -962,4 +964,26 @@ void PoolAllocator_c::OnLocked ()
 void PoolAllocator_c::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator_c::OnAttrListUpdated ()
+{
+  for (guint i = 0; i < g_slist_length (_list); i++)
+  {
+    Pool_c *pool;
+
+    pool = (Pool_c *) g_slist_nth_data (_list, i);
+    FillPoolTable (pool);
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_filter_button_clicked (GtkWidget *widget,
+                                                          GdkEvent  *event,
+                                                          gpointer  *data)
+{
+  PoolAllocator_c *p = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
+                                                              "instance");
+  p->SelectAttributes ();
 }
