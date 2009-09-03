@@ -35,7 +35,8 @@ class Module_c : public virtual Object_c
     void SelectAttributes ();
 
   protected:
-    Glade_c    *_glade;
+    Glade_c *_glade;
+    GSList  *_attr_list;
 
     Module_c (gchar *glade_file,
               gchar *root = NULL);
@@ -51,7 +52,6 @@ class Module_c : public virtual Object_c
     void DisableSensitiveWidgets ();
 
     void ShowAttribute (gchar *name);
-    void HideAttribute (gchar *name);
 
     Module_c ();
 
@@ -63,34 +63,25 @@ class Module_c : public virtual Object_c
       NUM_COLS
     } StoreColumn;
 
-    GtkWidget           *_root;
-    GtkToolbar          *_toolbar;
-    GSList              *_sensitive_widgets;
-    GSList              *_plugged_list;
-    Module_c            *_owner;
-    gchar               *_name;
-    GtkTreeModel        *_attr_filter_store;
-    GtkWidget           *_attr_filter_view;
-    GtkTreeRowReference *_inserted_ref;
+    GtkWidget    *_root;
+    GtkToolbar   *_toolbar;
+    GSList       *_sensitive_widgets;
+    GSList       *_plugged_list;
+    Module_c     *_owner;
+    gchar        *_name;
+    GtkTreeModel *_attr_filter_store;
+
+    void UpdateAttrList ();
 
     static void OnAttrDeleted (GtkTreeModel *tree_model,
                                GtkTreePath  *path,
                                gpointer      user_data);
-    static void OnAttrInserted (GtkTreeModel *tree_model,
-                                GtkTreePath  *path,
-                                GtkTreeIter  *iter,
-                                gpointer      user_data);
-
-    virtual void OnAttrShown (gchar *attr_name,
-                              guint  index) {};
-
-    virtual void OnAttrHidden (gchar *attr_name) {};
 
     static void on_cell_toggled (GtkCellRendererToggle *cell,
                                  gchar                 *path_string,
                                  gpointer               user_data);
-    void OnCellToggled (gchar    *path_string,
-                        gboolean  is_active);
+
+    virtual void OnAttrListUpdated () {};
 };
 
 #endif

@@ -53,10 +53,7 @@ class PlayersList_c : public virtual Stage_c, public Module_c
 
     void Save (xmlTextWriter *xml_writer);
 
-    void OnAttrShown (gchar *attr_name,
-                      guint  index);
-
-    void OnAttrHidden (gchar *attr_name);
+    void OnAttrListUpdated ();
 
     void SetSensitiveState (bool sensitive_value);
 

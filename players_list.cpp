@@ -144,37 +144,41 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::OnAttrShown (gchar *attr_name,
-                                 guint  index)
+void PlayersList_c::OnAttrListUpdated ()
 {
-  GType type = Attribute_c::GetAttributeType (attr_name);
-
-  SetColumn (Attribute_c::GetAttributeId (attr_name),
-             attr_name,
-             type != G_TYPE_BOOLEAN,
-             index);
-}
-
-// --------------------------------------------------------------------------------
-void PlayersList_c::OnAttrHidden (gchar *attr_name)
-{
-  GList *column_list = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
-
-  for (guint i = 0; i < g_list_length (column_list); i++)
   {
-    GtkTreeViewColumn *column;
+    GList *column_list = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
+    guint  nb_col      = g_list_length (column_list);
 
-    column = gtk_tree_view_get_column (GTK_TREE_VIEW (_tree_view),
-                                       i);
-    if (column)
+    for (guint i = 0; i < nb_col; i++)
     {
-      const gchar *title = gtk_tree_view_column_get_title (column);
+      GtkTreeViewColumn *column;
 
-      if (strcmp (title, attr_name) == 0)
+      column = gtk_tree_view_get_column (GTK_TREE_VIEW (_tree_view),
+                                         0);
+      if (column)
       {
         gtk_tree_view_remove_column (GTK_TREE_VIEW (_tree_view),
                                      column);
       }
+    }
+  }
+
+  if (_attr_list)
+  {
+    for (guint i = 0; i < g_slist_length (_attr_list); i++)
+    {
+      gchar *attr_name;
+      GType  type;
+
+      attr_name = (gchar *) g_slist_nth_data (_attr_list,
+                                              i);
+      type = Attribute_c::GetAttributeType (attr_name);
+
+      SetColumn (Attribute_c::GetAttributeId (attr_name),
+                 attr_name,
+                 type != G_TYPE_BOOLEAN,
+                 -1);
     }
   }
 }
