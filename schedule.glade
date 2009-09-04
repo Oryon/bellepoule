@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Wed Aug 19 22:20:38 2009 -->
+<!--Generated with glade3 3.4.3 on Fri Sep 04 23:21:40 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="window">
     <child>
@@ -61,13 +61,9 @@
               <placeholder/>
             </child>
             <child>
-              <widget class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">page 1</property>
-              </widget>
+              <placeholder/>
               <packing>
                 <property name="type">tab</property>
-                <property name="tab_fill">False</property>
               </packing>
             </child>
           </widget>
