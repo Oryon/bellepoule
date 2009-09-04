@@ -584,6 +584,11 @@ void PoolAllocator_c::FixUpTablesBounds ()
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 {
+  if (_main_table == NULL)
+  {
+    return;
+  }
+
   GooCanvasItem *table      = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::table");
   GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::focus_rectangle");
   GooCanvasItem *item;

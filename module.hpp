@@ -70,6 +70,7 @@ class Module_c : public virtual Object_c
     Module_c     *_owner;
     gchar        *_name;
     GtkTreeModel *_attr_filter_store;
+    GtkWidget    *_filter_window;
 
     void UpdateAttrList ();
 

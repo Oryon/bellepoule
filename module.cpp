@@ -32,6 +32,7 @@ Module_c::Module_c (gchar *glade_file,
   _glade             = NULL;
   _toolbar           = NULL;
   _attr_list         = NULL;
+  _filter_window     = NULL;
 
   if (glade_file)
   {
@@ -97,6 +98,11 @@ Module_c::~Module_c ()
   Object_c::Release (_glade);
   g_object_unref (_root);
 
+  if (_filter_window)
+  {
+    gtk_object_destroy (GTK_OBJECT (_filter_window));
+  }
+
   if (_attr_list)
   {
     g_slist_foreach (_attr_list,
@@ -121,43 +127,53 @@ void Module_c::OnAttrDeleted (GtkTreeModel *tree_model,
 // --------------------------------------------------------------------------------
 void Module_c::SelectAttributes ()
 {
-  GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-
+  if (_filter_window == NULL)
   {
-    GtkCellRenderer *renderer;
-    GtkWidget       *view     = gtk_tree_view_new ();
+    _filter_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
-    g_object_set (view,
-                  "reorderable", TRUE,
-                  "headers-visible", FALSE,
+    g_object_set (_filter_window,
+                  "transient-for", gtk_widget_get_parent_window (_filter_window),
+                  "destroy-with-parent", TRUE,
                   NULL);
+    g_signal_connect (_filter_window,
+                      "delete-event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
-    renderer = gtk_cell_renderer_toggle_new ();
-    g_object_set (renderer,
-                  "activatable", TRUE,
-                  NULL);
-    g_signal_connect (renderer,
-                      "toggled", G_CALLBACK (on_cell_toggled), this);
-    gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
-                                                 -1,
-                                                 "Visibility",
-                                                 renderer,
-                                                 "active", ATTR_VISIBILITY,
-                                                 NULL);
+    {
+      GtkCellRenderer *renderer;
+      GtkWidget       *view     = gtk_tree_view_new ();
 
-    renderer = gtk_cell_renderer_text_new ();
-    gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
-                                                 -1,
-                                                 "Name",
-                                                 renderer,
-                                                 "text", ATTR_NAME,
-                                                 NULL);
+      g_object_set (view,
+                    "reorderable", TRUE,
+                    "headers-visible", FALSE,
+                    NULL);
 
-    gtk_tree_view_set_model (GTK_TREE_VIEW (view), _attr_filter_store);
-    gtk_container_add (GTK_CONTAINER (window), view);
+      renderer = gtk_cell_renderer_toggle_new ();
+      g_object_set (renderer,
+                    "activatable", TRUE,
+                    NULL);
+      g_signal_connect (renderer,
+                        "toggled", G_CALLBACK (on_cell_toggled), this);
+      gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
+                                                   -1,
+                                                   "Visibility",
+                                                   renderer,
+                                                   "active", ATTR_VISIBILITY,
+                                                   NULL);
+
+      renderer = gtk_cell_renderer_text_new ();
+      gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
+                                                   -1,
+                                                   "Name",
+                                                   renderer,
+                                                   "text", ATTR_NAME,
+                                                   NULL);
+
+      gtk_tree_view_set_model (GTK_TREE_VIEW (view), _attr_filter_store);
+      gtk_container_add (GTK_CONTAINER (_filter_window), view);
+    }
   }
 
-  gtk_widget_show_all (window);
+  gtk_widget_show_all (_filter_window);
 }
 
 // --------------------------------------------------------------------------------
@@ -188,29 +204,54 @@ void Module_c::on_cell_toggled (GtkCellRendererToggle *cell,
 // --------------------------------------------------------------------------------
 void Module_c::ShowAttribute (gchar *name)
 {
-  GtkTreeIter iter;
-  bool        iter_is_valid;
+  GtkTreeIter  iter;
+  GtkTreeIter *sibling = NULL;
+  bool         iter_is_valid;
 
   iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_attr_filter_store),
                                                  &iter);
 
   while (iter_is_valid)
   {
+    bool   current_visibility;
     gchar *current_name;
 
     gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                         &iter,
+                        ATTR_VISIBILITY, &current_visibility,
                         ATTR_NAME, &current_name,
                         -1);
+
+    if (current_visibility == true)
+    {
+      if (sibling)
+      {
+        gtk_tree_iter_free (sibling);
+      }
+      sibling = gtk_tree_iter_copy (&iter);
+    }
+
     if (strcmp (current_name, name) == 0)
     {
       gtk_list_store_set (GTK_LIST_STORE (_attr_filter_store),
                           &iter,
                           ATTR_VISIBILITY, TRUE, -1);
+      gtk_list_store_move_before (GTK_LIST_STORE (_attr_filter_store),
+                                 &iter,
+                                 sibling);
+
+      _attr_list = g_slist_append (_attr_list,
+                                   g_strdup (current_name));
+      break;
     }
 
     iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_attr_filter_store),
                                               &iter);
+  }
+
+  if (sibling)
+  {
+    gtk_tree_iter_free (sibling);
   }
 }
 
