@@ -311,20 +311,26 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
       GooCanvasBounds  bounds;
       GString         *string = g_string_new ("");
 
-#if 0
-      for (guint i = 0; i < GetNbAttributes (); i++)
+      if (_floating_player && _attr_list)
       {
-        Attribute_c *attr;
-        gchar       *attr_name;
+        for (guint i = 0; i < g_slist_length (_attr_list); i++)
+        {
+          gchar       *attr_name;
+          Attribute_c *attr;
 
-        attr_name = GetAttribute (i);
-        attr = _floating_player->GetAttribute (attr_name);
-        string = g_string_append (string,
-                                  attr->GetStringImage ());
-        string = g_string_append (string,
-                                  "  ");
+          attr_name = (gchar *) g_slist_nth_data (_attr_list,
+                                                  i);
+          attr = _floating_player->GetAttribute (attr_name);
+
+          if (attr)
+          {
+            string = g_string_append (string,
+                                      attr->GetStringImage ());
+            string = g_string_append (string,
+                                      "  ");
+          }
+        }
       }
-#endif
 
       goo_canvas_item_get_bounds (item,
                                   &bounds);
