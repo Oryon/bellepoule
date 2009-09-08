@@ -57,7 +57,6 @@ void CanvasModule_c::OnPlugged ()
                   "bounds-padding", 10.0,
                   "bounds-from-origin", FALSE,
                   NULL);
-    GTK_WIDGET_SET_FLAGS (_canvas, GTK_CAN_FOCUS);
 
     gtk_container_add (GTK_CONTAINER (view_port), GTK_WIDGET (_canvas));
     gtk_widget_show (GTK_WIDGET (_canvas));

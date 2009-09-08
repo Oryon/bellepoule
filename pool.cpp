@@ -113,16 +113,8 @@ gboolean Pool_c::OnKeyPress (GtkWidget   *widget,
       Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (next_item), "match");
       Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (next_item), "player");
 
-      if (match->PlayerHasScore (player) == false)
-      {
-        goo_canvas_grab_focus (GetCanvas (),
-                               next_item);
-      }
-      else
-      {
-        goo_canvas_item_remove (_entry_item);
-        _entry_item = NULL;
-      }
+      goo_canvas_grab_focus (GetCanvas (),
+                             next_item);
     }
     else
     {

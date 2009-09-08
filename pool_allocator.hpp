@@ -69,8 +69,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     Pool_c        *_source_pool;
     Player_c      *_floating_player;
     GooCanvasItem *_main_table;
-    GtkListStore  *_pool_size_store;
-    GtkListStore  *_nb_pools_store;
+    GtkListStore  *_combobox_store;
 
     void FillCombobox ();
     void CreatePools ();
