@@ -106,21 +106,50 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
                                    gboolean  is_active,
                                    gchar    *attr_name)
 {
-  GtkTreeSelection *selection      = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
-  GList            *selection_list;
+  GtkTreePath      *toggeled_path = gtk_tree_path_new_from_string (path_string);
+  GtkTreeSelection *selection     = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
 
-  selection_list = gtk_tree_selection_get_selected_rows (selection,
-                                                         NULL);
-
-  for (guint i = 0; i < g_list_length (selection_list); i++)
+  if (gtk_tree_selection_path_is_selected (selection,
+                                           toggeled_path))
   {
-    Player_c *p;
-    gchar    *path;
+    GList *selection_list;
 
-    path = gtk_tree_path_to_string ((GtkTreePath *) g_list_nth_data (selection_list,
-                                                              i));
-    p = _players_base->GetPlayer (path);
-    g_free (path);
+    selection_list = gtk_tree_selection_get_selected_rows (selection,
+                                                           NULL);
+
+    for (guint i = 0; i < g_list_length (selection_list); i++)
+    {
+      Player_c *p;
+      gchar    *path;
+
+      path = gtk_tree_path_to_string ((GtkTreePath *) g_list_nth_data (selection_list,
+                                                                       i));
+      p = _players_base->GetPlayer (path);
+      g_free (path);
+
+      if (p)
+      {
+        if (is_active)
+        {
+          p->SetAttributeValue (attr_name,
+                                "0");
+        }
+        else
+        {
+          p->SetAttributeValue (attr_name,
+                                "1");
+        }
+
+        _players_base->Update (p);
+      }
+    }
+
+    g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
+    g_list_free    (selection_list);
+  }
+  else
+  {
+    Player_c *p = _players_base->GetPlayer (path_string);
 
     if (p)
     {
@@ -138,9 +167,7 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
       _players_base->Update (p);
     }
   }
-
-  g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
-  g_list_free    (selection_list);
+  gtk_tree_path_free (toggeled_path);
 }
 
 // --------------------------------------------------------------------------------
