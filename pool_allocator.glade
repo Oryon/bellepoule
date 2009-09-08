@@ -56,7 +56,7 @@
                 <child>
                   <widget class="GtkComboBox" id="nb_pools_combobox">
                     <property name="visible">True</property>
-                    <property name="items" translatable="yes"></property>
+                    <signal name="changed" handler="on_nb_pools_combobox_changed"/>
                   </widget>
                   <packing>
                     <property name="position">1</property>
@@ -81,7 +81,7 @@
                 <child>
                   <widget class="GtkComboBox" id="pool_size_combobox">
                     <property name="visible">True</property>
-                    <property name="items" translatable="yes"></property>
+                    <signal name="changed" handler="on_pool_size_combobox_changed"/>
                   </widget>
                   <packing>
                     <property name="position">1</property>
