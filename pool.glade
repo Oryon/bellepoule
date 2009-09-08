@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Thu Aug 27 21:32:51 2009 -->
+<!--Generated with glade3 3.4.3 on Fri Sep 04 23:07:52 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="supervisor_window">
     <child>
@@ -9,7 +9,7 @@
         <child>
           <widget class="GtkToolbar" id="toolbar3">
             <property name="visible">True</property>
-            <property name="icon_size">GTK_ICON_SIZE_INVALID</property>
+            <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
             <property name="icon_size_set">True</property>
             <child>
               <widget class="GtkMenuToolButton" id="pool_MenuToolButton">

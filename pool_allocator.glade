@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Tue Sep 08 11:41:21 2009 -->
+<!--Generated with glade3 3.4.3 on Fri Sep 04 23:10:01 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="window1">
     <child>
@@ -10,25 +10,25 @@
         <child>
           <widget class="GtkToolbar" id="toolbar2">
             <property name="visible">True</property>
-            <property name="icon_size">0</property>
+            <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
             <property name="icon_size_set">True</property>
             <child>
-              <widget class="GtkToolButton" id="print_toolbutton">
+              <widget class="GtkToolButton" id="filter_button">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Print</property>
-                <property name="stock_id">gtk-print</property>
-                <signal name="clicked" handler="on_print_toolbutton_clicked"/>
+                <property name="label" translatable="yes">Filtre</property>
+                <property name="stock_id">gtk-index</property>
+                <signal name="clicked" handler="on_filter_button_clicked"/>
               </widget>
               <packing>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkToolButton" id="filter_button">
+              <widget class="GtkToolButton" id="print_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Filter</property>
-                <property name="stock_id">gtk-index</property>
-                <signal name="clicked" handler="on_filter_button_clicked"/>
+                <property name="label" translatable="yes">Imprimer</property>
+                <property name="stock_id">gtk-print</property>
+                <signal name="clicked" handler="on_print_toolbutton_clicked"/>
               </widget>
               <packing>
                 <property name="homogeneous">True</property>

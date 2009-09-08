@@ -309,6 +309,15 @@ void PlayersList_c::OnLocked ()
   SetSensitiveState (FALSE);
   _players_base->Lock ();
 
+  _result = _players_base->CreateCustomList (PresentPlayerFilter);
+}
+
+// --------------------------------------------------------------------------------
+gboolean PlayersList_c::PresentPlayerFilter (Player_c *player)
+{
+  Attribute_c *attr = player->GetAttribute ("attending");
+
+  return ((gboolean) attr->GetValue () == TRUE);
 }
 
 // --------------------------------------------------------------------------------

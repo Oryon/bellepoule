@@ -37,6 +37,8 @@ class Stage_c : public virtual Object_c
 
     void UnLock ();
 
+    GSList *GetResult ();
+
     virtual void Enter ();
 
     virtual void Wipe ();
@@ -46,6 +48,8 @@ class Stage_c : public virtual Object_c
     virtual void Save (xmlTextWriter *xml_writer);
 
   protected:
+    GSList *_result;
+
     Stage_c (gchar *name);
 
     virtual ~Stage_c ();
@@ -55,8 +59,9 @@ class Stage_c : public virtual Object_c
     gchar    *_name;
     gboolean  _locked;
 
-    virtual void OnLocked ();
-    virtual void OnUnLocked ();
+    void FreeResult ();
+    virtual void OnLocked () {};
+    virtual void OnUnLocked () {};
 };
 
 #endif

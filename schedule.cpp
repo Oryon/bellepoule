@@ -50,36 +50,6 @@ Schedule_c::~Schedule_c ()
 // --------------------------------------------------------------------------------
 void Schedule_c::Start ()
 {
-  gint current_position = g_list_position (_stage_list,
-                                           _current_stage);
-
-  for (gint i = 0; i < g_list_length (_stage_list); i++)
-  {
-    Stage_c   *stage    = (Stage_c *) g_list_nth_data (_stage_list, i);
-    Module_c  *module   = (Module_c *) dynamic_cast <Module_c *> (stage);
-    GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
-
-    gtk_notebook_append_page (GTK_NOTEBOOK (GetRootWidget ()),
-                              viewport,
-                              gtk_label_new (stage->GetName ()));
-
-    Plug (module,
-          viewport);
-
-    {
-      if (i <= current_position)
-      {
-        stage->Enter ();
-      }
-      if (i < current_position)
-      {
-        stage->Lock ();
-      }
-    }
-  }
-
-  gtk_widget_show_all (GetRootWidget ());
-  SetCurrentStage (_current_stage);
 }
 
 // --------------------------------------------------------------------------------
@@ -151,14 +121,40 @@ void Schedule_c::Load (xmlDoc *doc)
   xmlXPathFreeObject  (xml_object);
   xmlXPathFreeContext (xml_context);
 
-  for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
-    Stage_c *stage;
+    Stage_c *previous_stage = NULL;
 
-    stage = ((Stage_c *) g_list_nth_data (_stage_list,
-                                          i));
-    stage->Load (doc);
+    for (guint i = 0; i < g_list_length (_stage_list); i++)
+    {
+      Stage_c *stage;
+
+      stage = ((Stage_c *) g_list_nth_data (_stage_list,
+                                            i));
+      if (previous_stage)
+      {
+        previous_stage->Lock ();
+      }
+
+      stage->Load (doc);
+
+      {
+        Module_c  *module   = (Module_c *) dynamic_cast <Module_c *> (stage);
+        GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
+
+        gtk_notebook_append_page (GTK_NOTEBOOK (GetRootWidget ()),
+                                  viewport,
+                                  gtk_label_new (stage->GetName ()));
+
+        Plug (module,
+              viewport);
+        stage->Enter ();
+      }
+      previous_stage = stage;
+    }
   }
+
+  gtk_widget_show_all (GetRootWidget ());
+  SetCurrentStage (_current_stage);
 }
 
 // --------------------------------------------------------------------------------
