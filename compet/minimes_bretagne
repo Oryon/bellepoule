@@ -9,7 +9,7 @@
   <player ref="0" name="le roux" first_name="gurvan" rating="339" rank="6" attending="1" club="" birth_year="0" licence="0"/>
   <player ref="4" name="fouchet" first_name="kevin" rating="339" rank="7" attending="1" club="" birth_year="0" licence="0"/>
  </player_list>
- <schedule current_stage="1"/>
+ <schedule current_stage="2"/>
  <pool_list>
   <pool>
    <match_list>

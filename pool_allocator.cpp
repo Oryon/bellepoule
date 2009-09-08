@@ -30,17 +30,17 @@ PoolAllocator_c::PoolAllocator_c (gchar         *name,
 : Stage_c (name),
   CanvasModule_c ("pool_allocator.glade")
 {
-  _players_base         = players_base;
-  _present_players_list = NULL;
-  _list                 = NULL;
-  _config_list          = NULL;
-  _nb_pools             = 0;
-  _pool_size            = 0;
-  _dragging             = false;
-  _target_pool          = NULL;
-  _floating_player      = NULL;
-  _drag_text            = NULL;
-  _main_table           = NULL;
+  _players_base    = players_base;
+  _list            = NULL;
+  _config_list     = NULL;
+  _nb_pools        = 0;
+  _pool_size       = 0;
+  _dragging        = false;
+  _target_pool     = NULL;
+  _floating_player = NULL;
+  _drag_text       = NULL;
+  _main_table      = NULL;
+  _attendees       = NULL;
 
   // Sensitive widgets
   {
@@ -135,10 +135,11 @@ void PoolAllocator_c::Save (xmlTextWriter *xml_writer)
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::FillCombobox ()
 {
-  guint nb_players;
+  guint    nb_players;
+  Stage_c *previous_stage = GetPreviousStage ();
 
-  _present_players_list = _players_base->CreateCustomList (PresentPlayerFilter);
-  nb_players            = g_slist_length (_present_players_list);
+  _attendees = previous_stage->GetResult ();
+  nb_players = g_slist_length (_attendees);
 
   _best_nb_pools = 1;
 
@@ -227,7 +228,7 @@ void PoolAllocator_c::CreatePools ()
     {
       Player_c *player;
 
-      player = (Player_c *) g_slist_nth_data (_present_players_list,
+      player = (Player_c *) g_slist_nth_data (_attendees,
                                               i + _nb_pools * j);
       if (player)
       {
@@ -820,19 +821,6 @@ void PoolAllocator_c::Wipe ()
                                        NULL);
   }
 
-  if (_present_players_list)
-  {
-    for (guint i = 0; i <  g_slist_length (_present_players_list); i++)
-    {
-      Player_c *p;
-
-      p = (Player_c *) g_slist_nth_data (_present_players_list, i);
-      p->Release ();
-    }
-    g_slist_free (_present_players_list);
-    _present_players_list = NULL;
-  }
-
   if (_config_list)
   {
     for (guint i = 0; i < g_slist_length (_config_list); i++)
@@ -928,14 +916,6 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
   PoolAllocator_c *c = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
                                                               "instance");
   c->Print ();
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator_c::PresentPlayerFilter (Player_c *player)
-{
-  Attribute_c *attr = player->GetAttribute ("attending");
-
-  return ((gboolean) attr->GetValue () == TRUE);
 }
 
 // --------------------------------------------------------------------------------

@@ -59,6 +59,8 @@ class PlayersList_c : public virtual Stage_c, public Module_c
 
     void OnPlugged ();
 
+    static gboolean PresentPlayerFilter (Player_c *player);
+
     void OnCellEdited (gchar *path_string,
                        gchar *new_text,
                        gchar *attr_name);

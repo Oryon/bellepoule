@@ -57,7 +57,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     } Configuration;
 
     PlayersBase_c *_players_base;
-    GSList        *_present_players_list;
+    GSList        *_attendees;
     GSList        *_list;
     GSList        *_config_list;
     guint          _pool_size;
@@ -80,8 +80,6 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     void Display ();
     void FillPoolTable (Pool_c *pool);
     void FixUpTablesBounds ();
-
-    static gboolean PresentPlayerFilter (Player_c *player);
 
     void OnPlugged ();
     void OnAttrListUpdated ();
