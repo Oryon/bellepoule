@@ -24,6 +24,11 @@
 
 #define VALUE_INIT {0,{{0}}}
 
+extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
+                                                             gpointer  *data);
+extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
+                                                               gpointer  *data);
+
 // --------------------------------------------------------------------------------
 PoolAllocator_c::PoolAllocator_c (gchar         *name,
                                   PlayersBase_c *players_base)
@@ -41,6 +46,52 @@ PoolAllocator_c::PoolAllocator_c (gchar         *name,
   _floating_player      = NULL;
   _drag_text            = NULL;
   _main_table           = NULL;
+
+  // Comboboxes
+  {
+    GtkComboBox  *size_combo     = GTK_COMBO_BOX (_glade->GetWidget ("pool_size_combobox"));
+    GtkComboBox  *nb_pools_combo = GTK_COMBO_BOX (_glade->GetWidget ("nb_pools_combobox"));
+
+    _pool_size_store = gtk_list_store_new (2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+    _nb_pools_store  = gtk_list_store_new (2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+
+    gtk_combo_box_set_model (size_combo,
+                             GTK_TREE_MODEL (_pool_size_store));
+    gtk_combo_box_set_model (nb_pools_combo,
+                             GTK_TREE_MODEL (_nb_pools_store));
+
+    {
+      GtkCellRenderer *renderer;
+
+      renderer = gtk_cell_renderer_pixbuf_new ();
+      gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (size_combo),
+                                  renderer, FALSE);
+      gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (size_combo), renderer,
+                                      "pixbuf", 0,
+                                      NULL);
+
+      renderer = gtk_cell_renderer_text_new ();
+      gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (size_combo),
+                                  renderer, TRUE);
+      gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (size_combo), renderer,
+                                      "text", 1,
+                                      NULL);
+
+      renderer = gtk_cell_renderer_pixbuf_new ();
+      gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (nb_pools_combo),
+                                  renderer, FALSE);
+      gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (nb_pools_combo), renderer,
+                                      "pixbuf", 0,
+                                      NULL);
+
+      renderer = gtk_cell_renderer_text_new ();
+      gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (nb_pools_combo),
+                                  renderer, TRUE);
+      gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (nb_pools_combo), renderer,
+                                      "text", 1,
+                                      NULL);
+    }
+  }
 
   // Sensitive widgets
   {
@@ -156,6 +207,7 @@ void PoolAllocator_c::FillCombobox ()
         {
           Configuration *config = (Configuration *) g_malloc (sizeof (Configuration));
           gchar         *combo_text;
+          GtkTreeIter    iter;
 
           config->size         = size;
           config->nb_pool      = nb_pool;
@@ -164,23 +216,33 @@ void PoolAllocator_c::FillCombobox ()
           _config_list = g_slist_append (_config_list,
                                          config);
 
-          if (i != 0)
           {
-            config->has_two_size = true;
-            combo_text = g_strdup_printf ("%d ou %d", size, size - 1);
-          }
-          else
-          {
-            combo_text = g_strdup_printf ("%d", size - 1);
-          }
-          gtk_combo_box_append_text (GTK_COMBO_BOX (_glade->GetWidget ("pool_size_combobox")),
-                                     combo_text);
-          g_free (combo_text);
+            if (i != 0)
+            {
+              config->has_two_size = true;
+              combo_text = g_strdup_printf ("%d ou %d", size, size - 1);
+            }
+            else
+            {
+              combo_text = g_strdup_printf ("%d", size - 1);
+            }
 
-          combo_text = g_strdup_printf ("%d", nb_pool);
-          gtk_combo_box_append_text (GTK_COMBO_BOX (_glade->GetWidget ("nb_pools_combobox")),
-                                     combo_text);
-          g_free (combo_text);
+            gtk_list_store_append (_pool_size_store, &iter);
+            gtk_list_store_set (_pool_size_store, &iter,
+                                1, combo_text,
+                                -1);
+
+            g_free (combo_text);
+          }
+
+          {
+            combo_text = g_strdup_printf ("%d", nb_pool);
+            gtk_list_store_append (_nb_pools_store, &iter);
+            gtk_list_store_set (_nb_pools_store, &iter,
+                                1, combo_text,
+                                -1);
+            g_free (combo_text);
+          }
 
           if (size >= 7)
           {
@@ -196,19 +258,30 @@ void PoolAllocator_c::FillCombobox ()
   }
 
   {
-    GtkWidget *w;
+    GtkTreeIter  iter;
+    GtkWidget   *cellview = gtk_cell_view_new ();
+    GdkPixbuf   *pixbuf   = gtk_widget_render_icon (cellview,
+                                                    GTK_STOCK_ABOUT,
+                                                    GTK_ICON_SIZE_BUTTON, NULL);
 
-    w = _glade->GetWidget ("pool_size_combobox");
-    g_signal_connect (G_OBJECT (w),
-                      "changed",
-                      G_CALLBACK (On_Pool_Size_Combobox_Changed),
-                      NULL);
+    gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_nb_pools_store),
+                                   &iter,
+                                   NULL,
+                                   _best_nb_pools - 1);
+    gtk_list_store_set (_nb_pools_store, &iter,
+                        0, pixbuf,
+                        -1);
 
-    w = _glade->GetWidget ("nb_pools_combobox");
-    g_signal_connect (G_OBJECT (w),
-                      "changed",
-                      G_CALLBACK (On_Nb_Pool_Combobox_Changed),
-                      NULL);
+    gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_pool_size_store),
+                                   &iter,
+                                   NULL,
+                                   _best_nb_pools - 1);
+    gtk_list_store_set (_pool_size_store, &iter,
+                        0, pixbuf,
+                        -1);
+
+    g_object_unref (pixbuf);
+    gtk_widget_destroy (cellview);
   }
 }
 
@@ -244,22 +317,22 @@ void PoolAllocator_c::SetUpCombobox ()
 
   w = _glade->GetWidget ("nb_pools_combobox");
   g_signal_handlers_block_by_func (G_OBJECT (w),
-                                   (void *) On_Nb_Pool_Combobox_Changed,
+                                   (void *) on_nb_pools_combobox_changed,
                                    NULL);
   gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                             _nb_pools - 1);
   g_signal_handlers_unblock_by_func (G_OBJECT (w),
-                                     (void *) On_Nb_Pool_Combobox_Changed,
+                                     (void *) on_nb_pools_combobox_changed,
                                      NULL);
 
   w = _glade->GetWidget ("pool_size_combobox");
   g_signal_handlers_block_by_func (G_OBJECT (w),
-                                   (void *) On_Pool_Size_Combobox_Changed,
+                                   (void *) on_pool_size_combobox_changed,
                                    NULL);
   gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                             _nb_pools - 1);
   g_signal_handlers_unblock_by_func (G_OBJECT (w),
-                                     (void *) On_Pool_Size_Combobox_Changed,
+                                     (void *) on_pool_size_combobox_changed,
                                      NULL);
 }
 
@@ -792,15 +865,11 @@ void PoolAllocator_c::Wipe ()
     GtkComboBox *combo_box = GTK_COMBO_BOX (_glade->GetWidget ("pool_size_combobox"));
 
     g_signal_handlers_block_by_func (G_OBJECT (combo_box),
-                                     (void *) On_Pool_Size_Combobox_Changed,
+                                     (void *) on_pool_size_combobox_changed,
                                      NULL);
-    for (guint i = 0; i < g_slist_length (_config_list); i++)
-    {
-      gtk_combo_box_remove_text (combo_box,
-                                 0);
-    }
+    gtk_list_store_clear (_pool_size_store);
     g_signal_handlers_unblock_by_func (G_OBJECT (combo_box),
-                                       (void *) On_Pool_Size_Combobox_Changed,
+                                       (void *) on_pool_size_combobox_changed,
                                        NULL);
   }
 
@@ -808,15 +877,11 @@ void PoolAllocator_c::Wipe ()
     GtkComboBox *combo_box = GTK_COMBO_BOX (_glade->GetWidget ("nb_pools_combobox"));
 
     g_signal_handlers_block_by_func (G_OBJECT (combo_box),
-                                     (void *) On_Nb_Pool_Combobox_Changed,
+                                     (void *) on_nb_pools_combobox_changed,
                                      NULL);
-    for (guint i = 0; i < g_slist_length (_config_list); i++)
-    {
-      gtk_combo_box_remove_text (combo_box,
-                                 0);
-    }
+    gtk_list_store_clear (_nb_pools_store);
     g_signal_handlers_unblock_by_func (G_OBJECT (combo_box),
-                                       (void *) On_Nb_Pool_Combobox_Changed,
+                                       (void *) on_nb_pools_combobox_changed,
                                        NULL);
   }
 
@@ -861,8 +926,8 @@ Pool_c *PoolAllocator_c::GetPool (guint index)
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator_c::On_Pool_Size_Combobox_Changed (GtkWidget *widget,
-                                                     gpointer  *data)
+extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
+                                                               gpointer  *data)
 {
   PoolAllocator_c *pl = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
                                                                "instance");
@@ -883,22 +948,22 @@ void PoolAllocator_c::OnComboboxChanged (GtkComboBox *cb)
 
       w = _glade->GetWidget ("nb_pools_combobox");
       g_signal_handlers_block_by_func (G_OBJECT (w),
-                                       (void *) On_Nb_Pool_Combobox_Changed,
+                                       (void *) on_nb_pools_combobox_changed,
                                        NULL);
       gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                 config_index);
       g_signal_handlers_unblock_by_func (G_OBJECT (w),
-                                         (void *) On_Nb_Pool_Combobox_Changed,
+                                         (void *) on_nb_pools_combobox_changed,
                                          NULL);
 
       w = _glade->GetWidget ("pool_size_combobox");
       g_signal_handlers_block_by_func (G_OBJECT (w),
-                                       (void *) On_Pool_Size_Combobox_Changed,
+                                       (void *) on_pool_size_combobox_changed,
                                        NULL);
       gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                 config_index);
       g_signal_handlers_unblock_by_func (G_OBJECT (w),
-                                         (void *) On_Pool_Size_Combobox_Changed,
+                                         (void *) on_pool_size_combobox_changed,
                                          NULL);
     }
 
@@ -912,8 +977,8 @@ void PoolAllocator_c::OnComboboxChanged (GtkComboBox *cb)
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator_c::On_Nb_Pool_Combobox_Changed (GtkWidget *widget,
-                                                   gpointer  *data)
+extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
+                                                             gpointer  *data)
 {
   PoolAllocator_c *c = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
                                                       "instance");

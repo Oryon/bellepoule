@@ -37,10 +37,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     Pool_c *GetPool    (guint index);
 
   public:
-    static void On_Nb_Pool_Combobox_Changed (GtkWidget *widget,
-                                             gpointer  *data);
-    static void On_Pool_Size_Combobox_Changed (GtkWidget *widget,
-                                               gpointer  *data);
+    void OnComboboxChanged (GtkComboBox *cb);
 
   private:
     void Enter ();
@@ -72,6 +69,8 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     Pool_c        *_source_pool;
     Player_c      *_floating_player;
     GooCanvasItem *_main_table;
+    GtkListStore  *_pool_size_store;
+    GtkListStore  *_nb_pools_store;
 
     void FillCombobox ();
     void CreatePools ();
@@ -85,7 +84,6 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
 
     void OnPlugged ();
     void OnAttrListUpdated ();
-    void OnComboboxChanged (GtkComboBox *cb);
 
     gboolean OnButtonPress (GooCanvasItem  *item,
                             GooCanvasItem  *target,
