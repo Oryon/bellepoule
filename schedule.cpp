@@ -48,27 +48,41 @@ Schedule_c::~Schedule_c ()
 }
 
 // --------------------------------------------------------------------------------
-void Schedule_c::Start ()
-{
-}
-
-// --------------------------------------------------------------------------------
 void Schedule_c::AddStage (Stage_c *stage)
 {
-  Stage_c *previous = NULL;
-
-  if (_stage_list)
+  if (stage)
   {
-    previous = (Stage_c *) (g_list_last (_stage_list)->data);
-  }
+    {
+      Stage_c *previous = NULL;
 
-  stage->SetPrevious (previous);
+      if (_stage_list)
+      {
+        previous = (Stage_c *) (g_list_last (_stage_list)->data);
+      }
 
-  _stage_list = g_list_append (_stage_list,
-                               stage);
-  if (previous == NULL)
-  {
-    _current_stage = _stage_list;
+      stage->SetPrevious (previous);
+
+      _stage_list = g_list_append (_stage_list,
+                                   stage);
+      if (previous == NULL)
+      {
+        _current_stage = _stage_list;
+      }
+    }
+
+    {
+      Module_c  *module   = (Module_c *) dynamic_cast <Module_c *> (stage);
+      GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
+      gchar     *name     = stage->GetFullName ();
+
+      gtk_notebook_append_page (GTK_NOTEBOOK (GetRootWidget ()),
+                                viewport,
+                                gtk_label_new (name));
+      g_free (name);
+
+      Plug (module,
+            viewport);
+    }
   }
 }
 
@@ -88,7 +102,6 @@ void Schedule_c::Save (xmlTextWriter *xml_writer)
                                      BAD_CAST "current_stage",
                                      "%d", g_list_position (_stage_list,
                                                             _current_stage));
-  xmlTextWriterEndElement (xml_writer);
 
   for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
@@ -98,6 +111,7 @@ void Schedule_c::Save (xmlTextWriter *xml_writer)
                                           i));
     stage->Save (xml_writer);
   }
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
@@ -105,56 +119,54 @@ void Schedule_c::Load (xmlDoc *doc)
 {
   xmlXPathContext *xml_context = xmlXPathNewContext (doc);
   xmlXPathObject  *xml_object;
-  xmlNodeSet      *xml_nodeset;
-  gchar           *attr;
+  guint            current_stage_index = 0;
+  Stage_c         *stage = (Stage_c *) g_list_nth_data (_stage_list,
+                                                        0);
 
-  xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule", xml_context);
-  xml_nodeset = xml_object->nodesetval;
-
-  attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "current_stage");
-  if (attr)
   {
-    _current_stage = g_list_nth (_stage_list,
-                                 atoi (attr));
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule", xml_context);
+    xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
+    char           *attr        = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0],
+                                                        BAD_CAST "current_stage");
+
+    if (attr)
+    {
+      current_stage_index = atoi (attr);
+    }
+
+    xmlXPathFreeObject  (xml_object);
   }
 
-  xmlXPathFreeObject  (xml_object);
+  {
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule/*", xml_context);
+    xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
+
+    for (gint i = 0; i < xml_nodeset->nodeNr; i++)
+    {
+      if (i < current_stage_index)
+      {
+        stage->Lock ();
+      }
+
+      stage = Stage_c::CreateInstance (xml_nodeset->nodeTab[i]);
+      if (stage)
+      {
+        gchar *attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[i],
+                                            BAD_CAST "name");
+        stage->SetName (attr);
+        AddStage (stage);
+        stage->Load (xml_nodeset->nodeTab[i]);
+      }
+    }
+
+    xmlXPathFreeObject  (xml_object);
+  }
+
   xmlXPathFreeContext (xml_context);
 
-  {
-    Stage_c *previous_stage = NULL;
-
-    for (guint i = 0; i < g_list_length (_stage_list); i++)
-    {
-      Stage_c *stage;
-
-      stage = ((Stage_c *) g_list_nth_data (_stage_list,
-                                            i));
-      if (previous_stage)
-      {
-        previous_stage->Lock ();
-      }
-
-      stage->Load (doc);
-
-      {
-        Module_c  *module   = (Module_c *) dynamic_cast <Module_c *> (stage);
-        GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
-
-        gtk_notebook_append_page (GTK_NOTEBOOK (GetRootWidget ()),
-                                  viewport,
-                                  gtk_label_new (stage->GetName ()));
-
-        Plug (module,
-              viewport);
-        stage->Enter ();
-      }
-      previous_stage = stage;
-    }
-  }
-
   gtk_widget_show_all (GetRootWidget ());
-  SetCurrentStage (_current_stage);
+  SetCurrentStage (g_list_nth (_stage_list,
+                               current_stage_index));
 }
 
 // --------------------------------------------------------------------------------

@@ -21,6 +21,8 @@
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 
+const gchar *PoolSupervisor_c::_class_name = "pool_stage";
+
 // --------------------------------------------------------------------------------
 PoolSupervisor_c::PoolSupervisor_c (gchar *name)
   : Stage_c (name),
@@ -48,6 +50,19 @@ PoolSupervisor_c::~PoolSupervisor_c ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolSupervisor_c::Init ()
+{
+  RegisterStageClass ("pool_stage",
+                      CreateInstance);
+}
+
+// --------------------------------------------------------------------------------
+Stage_c *PoolSupervisor_c::CreateInstance (xmlNode *xml_node)
+{
+  return new PoolSupervisor_c ("Pool");
+}
+
+// --------------------------------------------------------------------------------
 void PoolSupervisor_c::Manage (Pool_c *pool)
 {
   GtkWidget *menu_item = gtk_menu_item_new_with_label (pool->GetName ());
@@ -63,11 +78,6 @@ void PoolSupervisor_c::Manage (Pool_c *pool)
                      this);
   pool->SetData ("pool_supervisor::menu_item",
                  menu_item);
-
-  if (_displayed_pool == NULL)
-  {
-    OnPoolSelected (pool);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -129,12 +139,18 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Enter ()
 {
-  PoolAllocator_c *pool_allocator = dynamic_cast <PoolAllocator_c *> (GetPreviousStage ());
+  RetrievePools ();
+}
 
-  if (pool_allocator)
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::RetrievePools ()
+{
+  _pool_allocator = dynamic_cast <PoolAllocator_c *> (GetPreviousStage ());
+
+  if (_pool_allocator)
   {
-    pool_allocator->Retain ();
-    _pool_allocator = pool_allocator;
+    _pool_allocator->Retain ();
+
     for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
     {
       Manage (_pool_allocator->GetPool (p));
@@ -143,19 +159,84 @@ void PoolSupervisor_c::Enter ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Load (xmlDoc *doc)
+void PoolSupervisor_c::Load (xmlNode *xml_node)
 {
+  static guint current_pool_index = 0;
+  Stage_c *previous_stage = GetPreviousStage ();
+
+  if (_pool_allocator == NULL)
+  {
+    current_pool_index = 0;
+    RetrievePools ();
+  }
+
+  for (xmlNode *n = xml_node; n != NULL; n = n->next)
+  {
+    if (n->type == XML_ELEMENT_NODE)
+    {
+      if (strcmp ((char *) n->name, "match_list") == 0)
+      {
+        Pool_c *current_pool = _pool_allocator->GetPool (current_pool_index);
+
+        current_pool->Load (n->children,
+                            previous_stage->GetResult ());
+        current_pool_index++;
+
+        if (_displayed_pool == NULL)
+        {
+          OnPoolSelected (current_pool);
+        }
+      }
+      else if (strcmp ((char *) n->name, _class_name) != 0)
+      {
+        return;
+      }
+
+      Load (n->children);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
 {
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST _class_name);
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "name",
+                                     "%s", GetName ());
+
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (p);
+    pool->Save (xml_writer);
+  }
+
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
+
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (p);
+    for (guint i = 0; i < pool->GetNbPlayers (); i++)
+    {
+      Player_c *player;
+
+      player = pool->GetPlayer (i);
+
+      _result = g_slist_append (_result,
+                                player);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

@@ -41,9 +41,10 @@ class Pool_c : public CanvasModule_c
 
     void Save  (xmlTextWriter *xml_writer);
     void Load  (xmlNode       *xml_node,
-                PlayersBase_c *player_base);
+                GSList        *player_list);
 
   private:
+    guint32        _rand_seed;
     guint          _number;
     GSList        *_player_list;
     GooCanvasItem *_entry_item;
@@ -86,6 +87,9 @@ class Pool_c : public CanvasModule_c
 
     void RefreshDashBoard ();
 
+    static gint ComparePlayer (Player_c *A,
+                               Player_c *B,
+                               Pool_c   *pool);
     ~Pool_c ();
 };
 

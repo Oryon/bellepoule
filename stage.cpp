@@ -18,27 +18,51 @@
 
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
+#include "player.hpp"
 
 #include "stage.hpp"
 
+GData *Stage_c::_stage_base = NULL;
+
 // --------------------------------------------------------------------------------
-Stage_c::Stage_c (gchar *name)
+Stage_c::Stage_c (gchar *class_name)
 {
-  _name   = name;
-  _locked = false;
-  _result = NULL;
+  _name       = g_strdup ("");
+  _class_name = class_name;
+  _locked     = false;
+  _result     = NULL;
+  _previous   = NULL;
 }
 
 // --------------------------------------------------------------------------------
 Stage_c::~Stage_c ()
 {
   FreeResult ();
+  g_free (_name);
 }
 
 // --------------------------------------------------------------------------------
 gchar *Stage_c::GetName ()
 {
   return _name;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Stage_c::GetFullName ()
+{
+  return g_strdup_printf ("%s\n%s", _class_name, _name);
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::SetName (gchar *name)
+{
+  if (name)
+  {
+    g_free (_name);
+    _name = NULL;
+
+    _name = g_strdup (name);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -63,7 +87,6 @@ void Stage_c::FreeResult ()
 void Stage_c::Lock ()
 {
   _locked = true;
-  FreeResult ();
   OnLocked ();
 }
 
@@ -72,6 +95,7 @@ void Stage_c::UnLock ()
 {
   _locked = false;
   OnUnLocked ();
+  FreeResult ();
 }
 
 // --------------------------------------------------------------------------------
@@ -103,7 +127,7 @@ void Stage_c::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::Load (xmlDoc *doc)
+void Stage_c::Load (xmlNode *xml_node)
 {
 }
 
@@ -116,4 +140,53 @@ void Stage_c::Save (xmlTextWriter *xml_writer)
 GSList *Stage_c::GetResult ()
 {
   return _result;
+}
+
+// --------------------------------------------------------------------------------
+Player_c *Stage_c::GetPlayerFromRef (guint ref)
+{
+  for (guint p = 0; p < g_slist_length (_result); p++)
+  {
+    Player_c *player;
+
+    player = (Player_c *) g_slist_nth_data (_result,
+                                            p);
+    if (player->GetRef () == ref)
+    {
+      return player;
+    }
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::RegisterStageClass (const gchar *name,
+                                  Creator      creator)
+{
+  if (_stage_base == NULL)
+  {
+    g_datalist_init (&_stage_base);
+  }
+
+  g_datalist_set_data (&_stage_base,
+                       name,
+                       (void *) creator);
+}
+
+// --------------------------------------------------------------------------------
+Stage_c *Stage_c::CreateInstance (xmlNode *xml_node)
+{
+  if (xml_node)
+  {
+    Creator creator = (Creator) g_datalist_get_data (&_stage_base,
+                                                     (gchar *) xml_node->name);
+
+    if (creator)
+    {
+      return creator (xml_node);
+    }
+  }
+
+  return NULL;
 }

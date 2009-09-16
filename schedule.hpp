@@ -29,8 +29,6 @@ class Schedule_c : public Module_c
   public:
      Schedule_c ();
 
-    void Start       ();
-
     void AddStage    (Stage_c *stage);
     void RemoveStage (Stage_c *stage);
 
