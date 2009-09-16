@@ -407,8 +407,6 @@ GSList *PlayersBase_c::CreateCustomList (CustomFilter filter)
 
     if (filter (p) == TRUE)
     {
-      p->Retain ();
-
       custom_list = g_slist_append (custom_list,
                                     p);
     }

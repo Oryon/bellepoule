@@ -50,13 +50,15 @@ class Stage_c : public virtual Object_c
 
     Player_c *GetPlayerFromRef (guint ref);
 
-    virtual void Enter ();
+    virtual void Enter () {};
 
-    virtual void Wipe ();
+    virtual void Wipe () {};
 
-    virtual void Load (xmlNode *xml_node);
+    virtual void Load (xmlNode *xml_node) {};
 
-    virtual void Save (xmlTextWriter *xml_writer);
+    virtual void Save (xmlTextWriter *xml_writer) {};
+
+    virtual void Dump ();
 
     static void RegisterStageClass (const gchar *name,
                                     Creator      creator);

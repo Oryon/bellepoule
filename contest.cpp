@@ -105,8 +105,8 @@ Contest_c::~Contest_c ()
   g_free (_filename);
   g_free (_backup);
 
-  Object_c::Release (_players_base);
   Object_c::Release (_schedule);
+  Object_c::Release (_players_base);
 
   gtk_widget_destroy (_properties_dlg);
   gtk_widget_destroy (_formula_dlg);

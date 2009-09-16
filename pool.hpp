@@ -34,6 +34,7 @@ class Pool_c : public CanvasModule_c
     guint GetNbPlayers ();
     guint GetNumber    ();
     void  ResetMatches ();
+    void  Lock         ();
 
     Player_c *GetPlayer (guint i);
 
@@ -43,8 +44,14 @@ class Pool_c : public CanvasModule_c
     void Load  (xmlNode       *xml_node,
                 GSList        *player_list);
 
+    void SetRandSeed (guint32 seed);
+
+    static gint ComparePlayer (Player_c *A,
+                               Player_c *B,
+                               guint     client_seed);
+
   private:
-    guint32        _rand_seed;
+    guint          _rand_seed;
     guint          _number;
     GSList        *_player_list;
     GooCanvasItem *_entry_item;
@@ -85,11 +92,10 @@ class Pool_c : public CanvasModule_c
     Match_c *GetMatch (Player_c *A,
                        Player_c *B);
 
+    void RefreshScoreData ();
+
     void RefreshDashBoard ();
 
-    static gint ComparePlayer (Player_c *A,
-                               Player_c *B,
-                               Pool_c   *pool);
     ~Pool_c ();
 };
 

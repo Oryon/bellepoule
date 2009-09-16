@@ -68,19 +68,8 @@ void Stage_c::SetName (gchar *name)
 // --------------------------------------------------------------------------------
 void Stage_c::FreeResult ()
 {
-  for (guint i = 0; i <  g_slist_length (_result); i++)
-  {
-    Player_c *p;
-
-    p = (Player_c *) g_slist_nth_data (_result, i);
-    p->Release ();
-  }
-
-  if (_result)
-  {
-    g_slist_free (_result);
-    _result = NULL;
-  }
+  g_slist_free (_result);
+  _result = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -114,26 +103,6 @@ void Stage_c::SetPrevious (Stage_c *previous)
 Stage_c *Stage_c::GetPreviousStage ()
 {
   return _previous;
-}
-
-// --------------------------------------------------------------------------------
-void Stage_c::Enter ()
-{
-}
-
-// --------------------------------------------------------------------------------
-void Stage_c::Wipe ()
-{
-}
-
-// --------------------------------------------------------------------------------
-void Stage_c::Load (xmlNode *xml_node)
-{
-}
-
-// --------------------------------------------------------------------------------
-void Stage_c::Save (xmlTextWriter *xml_writer)
-{
 }
 
 // --------------------------------------------------------------------------------
@@ -189,4 +158,22 @@ Stage_c *Stage_c::CreateInstance (xmlNode *xml_node)
   }
 
   return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::Dump ()
+{
+  if (_result)
+  {
+    for (guint i = 0; i < g_slist_length (_result); i++)
+    {
+      Player_c    *player;
+      Attribute_c *attr;
+
+      player = (Player_c *) g_slist_nth_data (_result, i);
+      attr = player->GetAttribute ("name");
+
+      g_print ("%d >>> %s\n", i, attr->GetStringImage ());
+    }
+  }
 }

@@ -78,6 +78,7 @@ void PoolSupervisor_c::Manage (Pool_c *pool)
                      this);
   pool->SetData ("pool_supervisor::menu_item",
                  menu_item);
+  pool->SetRandSeed (0);
 }
 
 // --------------------------------------------------------------------------------
@@ -227,6 +228,7 @@ void PoolSupervisor_c::OnLocked ()
     Pool_c *pool;
 
     pool = _pool_allocator->GetPool (p);
+    pool->Lock ();
     for (guint i = 0; i < pool->GetNbPlayers (); i++)
     {
       Player_c *player;
@@ -237,6 +239,11 @@ void PoolSupervisor_c::OnLocked ()
                                 player);
     }
   }
+  Dump ();
+  _result = g_slist_sort_with_data (_result,
+                                    (GCompareDataFunc) Pool_c::ComparePlayer,
+                                    0);
+  Dump ();
 }
 
 // --------------------------------------------------------------------------------

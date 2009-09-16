@@ -24,9 +24,6 @@
 Match_c::Match_c  (Player_c *A,
                    Player_c *B)
 {
-  A->Retain ();
-  B->Retain ();
-
   _A = A;
   _B = B;
 
@@ -37,8 +34,6 @@ Match_c::Match_c  (Player_c *A,
 // --------------------------------------------------------------------------------
 Match_c::~Match_c ()
 {
-  Object_c::Release (_A);
-  Object_c::Release (_B);
   Object_c::Release (_A_score);
   Object_c::Release (_B_score);
 }
