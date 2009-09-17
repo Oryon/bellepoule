@@ -76,6 +76,10 @@ class Pool_c : public CanvasModule_c
                                         gpointer     user_data);
 
   private:
+    void GetNameItems (Player_c       *main_player,
+                       Match_c        *match,
+                       GooCanvasItem **v_item,
+                       GooCanvasItem **h_item);
     gboolean OnFocusIn  (GooCanvasItem *item);
     gboolean OnFocusOut (GtkWidget *widget);
     gboolean OnKeyPress (GtkWidget   *widget,

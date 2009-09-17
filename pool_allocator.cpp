@@ -739,7 +739,7 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
   {
     guint          pool_size   = pool->GetNbPlayers ();
-    Configuration *best_config;
+    Configuration *best_config = NULL;
 
     for (guint i = 0; i < g_slist_length (_config_list); i ++)
     {

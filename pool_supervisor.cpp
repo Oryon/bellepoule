@@ -239,11 +239,9 @@ void PoolSupervisor_c::OnLocked ()
                                 player);
     }
   }
-  Dump ();
   _result = g_slist_sort_with_data (_result,
                                     (GCompareDataFunc) Pool_c::ComparePlayer,
                                     0);
-  Dump ();
 }
 
 // --------------------------------------------------------------------------------

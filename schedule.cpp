@@ -118,7 +118,6 @@ void Schedule_c::Save (xmlTextWriter *xml_writer)
 void Schedule_c::Load (xmlDoc *doc)
 {
   xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-  xmlXPathObject  *xml_object;
   guint            current_stage_index = 0;
   Stage_c         *stage = (Stage_c *) g_list_nth_data (_stage_list,
                                                         0);
@@ -141,7 +140,7 @@ void Schedule_c::Load (xmlDoc *doc)
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule/*", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
-    for (gint i = 0; i < xml_nodeset->nodeNr; i++)
+    for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
     {
       if (i < current_stage_index)
       {
