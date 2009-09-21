@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Fri Sep 04 23:21:40 2009 -->
+<!--Generated with glade3 3.4.3 on Tue Sep 15 20:57:24 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="window">
     <child>
@@ -57,6 +57,7 @@
           <widget class="GtkNotebook" id="schedule_notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="homogeneous">True</property>
             <child>
               <placeholder/>
             </child>

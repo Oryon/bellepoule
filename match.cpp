@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
+#include <string.h>
 #include <goocanvas.h>
 
 #include "player.hpp"
@@ -22,23 +23,21 @@
 
 // --------------------------------------------------------------------------------
 Match_c::Match_c  (Player_c *A,
-                   Player_c *B)
+                   Player_c *B,
+                   guint     max_score)
 {
-  A->Retain ();
-  B->Retain ();
+  _max_score = max_score;
 
   _A = A;
   _B = B;
 
-  _A_score = new Score_c;
-  _B_score = new Score_c;
+  _A_score = new Score_c (max_score);
+  _B_score = new Score_c (max_score);
 }
 
 // --------------------------------------------------------------------------------
 Match_c::~Match_c ()
 {
-  Object_c::Release (_A);
-  Object_c::Release (_B);
   Object_c::Release (_A_score);
   Object_c::Release (_B_score);
 }
@@ -90,6 +89,46 @@ void Match_c::SetScore (Player_c *player,
   {
     _B_score->Set (score);
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Match_c::ScoreIsNumber (gchar *score)
+{
+  for (guint i = 0; i < strlen (score); i++)
+  {
+    if (g_ascii_isalpha (score[i]))
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Match_c::SetScore (Player_c *player,
+                            gchar    *score)
+{
+  if (score == NULL)
+  {
+    return false;
+  }
+
+  if (   (strlen (score) == 1)
+      && (g_ascii_toupper (score[0]) == 'V'))
+  {
+    SetScore (player,
+              _max_score);
+    return true;
+  }
+  else if (ScoreIsNumber (score) && (strlen (score) == (_max_score/10 + 1)))
+  {
+    SetScore (player,
+              atoi (score));
+    return true;
+  }
+
+  return false;
 }
 
 // --------------------------------------------------------------------------------

@@ -42,6 +42,9 @@ class Player_c : public Object_c
     void Save (xmlTextWriter *xml_writer);
     void Load (xmlNode       *xml_node);
 
+    static gint CompareWithRef (Player_c *player,
+                                guint     ref);
+
     static gint Compare (Player_c *a,
                          Player_c *b,
                          gchar    *attr_name);

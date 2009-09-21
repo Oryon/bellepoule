@@ -27,6 +27,8 @@ class PoolAllocator_c;
 class PoolSupervisor_c : public virtual Stage_c, public Module_c
 {
   public:
+    static void Init ();
+
     PoolSupervisor_c (gchar *name);
 
     void Manage (Pool_c *pool);
@@ -34,12 +36,13 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void OnPrintPoolToolbuttonClicked ();
 
   private:
-    void Load (xmlDoc *doc);
+    void Load (xmlNode *xml_node);
     void Save (xmlTextWriter *xml_writer);
     void Enter ();
     void OnLocked ();
     void OnUnLocked ();
     void Wipe ();
+    void RetrievePools ();
 
   private:
     static gboolean on_pool_selected (GtkWidget      *widget,
@@ -47,12 +50,18 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
                                       gpointer        user_data);
     void OnPoolSelected (Pool_c *pool);
 
+    static Stage_c *CreateInstance (xmlNode *xml_node);
+
   private:
+    static const gchar *_class_name;
+
     GtkWidget       *_menu_pool;
     PoolAllocator_c *_pool_allocator;
     Pool_c          *_displayed_pool;
 
     ~PoolSupervisor_c ();
+
+    void OnAttrListUpdated ();
 };
 
 #endif

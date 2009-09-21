@@ -46,6 +46,13 @@ gint Player_c::Compare (Player_c *a,
 }
 
 // --------------------------------------------------------------------------------
+gint Player_c::CompareWithRef (Player_c *player,
+                               guint     ref)
+{
+  return player->_ref - ref;
+}
+
+// --------------------------------------------------------------------------------
 Attribute_c *Player_c::GetAttribute (gchar *name)
 {
   return (Attribute_c*) GetData (name);

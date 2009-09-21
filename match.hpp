@@ -29,7 +29,8 @@ class Match_c : public Object_c
 {
   public:
     Match_c  (Player_c *A,
-              Player_c *B);
+              Player_c *B,
+              guint     max_score);
     ~Match_c ();
 
     Player_c *GetPlayerA ();
@@ -41,6 +42,8 @@ class Match_c : public Object_c
 
     void SetScore (Player_c *player, guint score);
 
+    gboolean SetScore (Player_c *player, gchar *score);
+
     Score_c *GetScore (Player_c *player);
 
     void Save (xmlTextWriter *xml_writer);
@@ -48,10 +51,13 @@ class Match_c : public Object_c
     void CleanScore ();
 
   private:
+    guint     _max_score;
     Player_c *_A;
     Player_c *_B;
     Score_c  *_A_score;
     Score_c  *_B_score;
+
+    gboolean ScoreIsNumber (gchar *score);
 };
 
 #endif

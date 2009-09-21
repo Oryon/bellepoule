@@ -22,14 +22,23 @@
 
 #include "object.hpp"
 
+class Player_c;
+
 class Stage_c : public virtual Object_c
 {
+  public:
+    typedef Stage_c * (*Creator) (xmlNode *xml_node);
+
   public:
     void SetPrevious (Stage_c *previous);
 
     Stage_c *GetPreviousStage ();
 
     gchar *GetName ();
+
+    gchar *GetFullName ();
+
+    void SetName (gchar *name);
 
     gboolean Locked ();
 
@@ -39,23 +48,35 @@ class Stage_c : public virtual Object_c
 
     GSList *GetResult ();
 
-    virtual void Enter ();
+    Player_c *GetPlayerFromRef (guint ref);
 
-    virtual void Wipe ();
+    virtual void Enter () {};
 
-    virtual void Load (xmlDoc *doc);
+    virtual void Wipe () {};
 
-    virtual void Save (xmlTextWriter *xml_writer);
+    virtual void Load (xmlNode *xml_node) {};
+
+    virtual void Save (xmlTextWriter *xml_writer) {};
+
+    virtual void Dump ();
+
+    static void RegisterStageClass (const gchar *name,
+                                    Creator      creator);
+
+    static Stage_c *CreateInstance (xmlNode *xml_node);
 
   protected:
     GSList *_result;
 
-    Stage_c (gchar *name);
+    Stage_c (gchar *class_name);
 
     virtual ~Stage_c ();
 
   private:
+    static GData *_stage_base;
+
     Stage_c  *_previous;
+    gchar    *_class_name;
     gchar    *_name;
     gboolean  _locked;
 

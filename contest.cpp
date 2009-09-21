@@ -34,8 +34,6 @@ Contest_c::Contest_c ()
 {
   InitInstance ();
 
-  _schedule->Start ();
-
   if (gtk_dialog_run (GTK_DIALOG (_properties_dlg)) == GTK_RESPONSE_ACCEPT)
   {
     ReadProperties ();
@@ -91,13 +89,13 @@ Contest_c::Contest_c (gchar *filename)
       xmlXPathFreeContext (xml_context);
     }
 
-    _players_base->Load (doc);
-    _schedule->Load (doc);
+    {
+      _players_base->Load (doc);
+      _schedule->Load     (doc);
+    }
 
     xmlFreeDoc (doc);
   }
-
-  _schedule->Start ();
 }
 
 // --------------------------------------------------------------------------------
@@ -107,8 +105,8 @@ Contest_c::~Contest_c ()
   g_free (_filename);
   g_free (_backup);
 
-  Object_c::Release (_players_base);
   Object_c::Release (_schedule);
+  Object_c::Release (_players_base);
 
   gtk_widget_destroy (_properties_dlg);
   gtk_widget_destroy (_formula_dlg);
@@ -131,25 +129,23 @@ Contest_c *Contest_c::Create ()
 // --------------------------------------------------------------------------------
 void Contest_c::InitInstance ()
 {
-  _name            = NULL;
-  _filename        = NULL;
-  _backup          = NULL;
-  _players_base    = new PlayersBase_c ();
+  _name     = NULL;
+  _filename = NULL;
+  _backup   = NULL;
 
   {
     _schedule = new Schedule_c ();
 
-    _schedule->AddStage (new PlayersList_c ("checkin",
-                                            _players_base));
-
-    _schedule->AddStage (new PoolAllocator_c ("pool allocation",
-                                              _players_base));
-
-    _schedule->AddStage (new PoolSupervisor_c ("pool"));
-
     Plug (_schedule,
           _glade->GetWidget ("schedule_viewport"),
           GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
+  }
+
+  {
+    _players_base = new PlayersBase_c ();
+
+    _schedule->AddStage (new PlayersList_c ("checkin",
+                                            _players_base));
   }
 
   // Properties dialog

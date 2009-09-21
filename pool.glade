@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Fri Sep 04 23:07:52 2009 -->
+<!--Generated with glade3 3.4.3 on Sun Sep 20 22:50:42 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="supervisor_window">
     <child>
@@ -16,6 +16,17 @@
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Poule 1</property>
                 <property name="stock_id">gtk-jump-to</property>
+              </widget>
+              <packing>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkToolButton" id="filter_pool_toolbutton">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Filtre</property>
+                <property name="stock_id">gtk-index</property>
+                <signal name="clicked" handler="on_filter_pool_toolbutton_clicked"/>
               </widget>
               <packing>
                 <property name="homogeneous">True</property>

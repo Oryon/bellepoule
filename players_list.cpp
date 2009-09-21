@@ -283,6 +283,9 @@ void PlayersList_c::OnPlugged ()
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
                              _players_base->GetTreeModel ());
+
+    gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
+                                     Attribute_c::GetAttributeId ("name"));
   }
 }
 

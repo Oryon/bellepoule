@@ -19,6 +19,8 @@
 
 #include "glade.hpp"
 #include "contest.hpp"
+#include "pool_allocator.hpp"
+#include "pool_supervisor.hpp"
 #include "attribute.hpp"
 
 static Glade_c *xml = NULL;
@@ -80,7 +82,10 @@ int main (int argc, char **argv)
     gtk_set_locale  ();
     gtk_init        (&argc, &argv);
     glade_init      ();
-    Contest_c::Init ();
+
+    Contest_c::Init        ();
+    PoolAllocator_c::Init  ();
+    PoolSupervisor_c::Init ();
   }
 
   {

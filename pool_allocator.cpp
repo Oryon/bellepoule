@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <string.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
@@ -36,14 +37,14 @@ extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
                                                                gpointer  *data);
 
+const gchar *PoolAllocator_c::_class_name = "pool_allocation_stage";
+
 // --------------------------------------------------------------------------------
-PoolAllocator_c::PoolAllocator_c (gchar         *name,
-                                  PlayersBase_c *players_base)
+PoolAllocator_c::PoolAllocator_c (gchar *name)
 : Stage_c (name),
   CanvasModule_c ("pool_allocator.glade")
 {
-  _players_base    = players_base;
-  _list            = NULL;
+  _pools_list      = NULL;
   _config_list     = NULL;
   _nb_pools        = 0;
   _pool_size       = 0;
@@ -130,73 +131,115 @@ PoolAllocator_c::~PoolAllocator_c ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator_c::Init ()
+{
+  RegisterStageClass (_class_name,
+                      CreateInstance);
+}
+
+// --------------------------------------------------------------------------------
 void PoolAllocator_c::OnPlugged ()
 {
   CanvasModule_c::OnPlugged ();
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator_c::Load (xmlDoc *doc)
+Stage_c *PoolAllocator_c::CreateInstance (xmlNode *xml_node)
 {
-  FillCombobox ();
+  return new PoolAllocator_c ("Pool allocation");
+}
 
+// --------------------------------------------------------------------------------
+void PoolAllocator_c::Load (xmlNode *xml_node)
+{
+  static Pool_c *current_pool   = NULL;
+  Stage_c       *previous_stage = GetPreviousStage ();
+
+  if (_attendees == NULL)
   {
-    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-    xmlXPathObject  *xml_object;
-    xmlNodeSet      *xml_nodeset;
+    _attendees = g_slist_copy (previous_stage->GetResult ());
+  }
 
-    xml_object  = xmlXPathEval (BAD_CAST "/contest/pool_list/*", xml_context);
-    xml_nodeset = xml_object->nodesetval;
-
-    for (_nb_pools = 0; _nb_pools < (guint) xml_object->nodesetval->nodeNr; _nb_pools++)
+  for (xmlNode *n = xml_node; n != NULL; n = n->next)
+  {
+    if (n->type == XML_ELEMENT_NODE)
     {
-      Pool_c *pool;
-
-      pool = new Pool_c (_nb_pools);
-      _list = g_slist_append (_list,
-                              pool);
-      pool->Load (xml_nodeset->nodeTab[_nb_pools],
-                  _players_base);
-
-      if (_nb_pools == 0)
+      if (strcmp ((char *) n->name, "player_list") == 0)
       {
-        _pool_size = pool->GetNbPlayers ();
+        current_pool = new Pool_c (_nb_pools+1);
+
+        _pools_list = g_slist_append (_pools_list,
+                                      current_pool);
+        _nb_pools++;
+      }
+      else if (strcmp ((char *) n->name, "player") == 0)
+      {
+        gchar *attr;
+
+        attr = (gchar *) xmlGetProp (n, BAD_CAST "ref");
+        if (attr)
+        {
+          Player_c *player = previous_stage->GetPlayerFromRef (atoi (attr));
+
+          if (player)
+          {
+            current_pool->AddPlayer (player);
+          }
+        }
+      }
+      else if (strcmp ((char *) n->name, _class_name) != 0)
+      {
+        FillCombobox ();
+        SetUpCombobox ();
+        Display ();
+        return;
       }
     }
 
-    xmlXPathFreeObject  (xml_object);
-    xmlXPathFreeContext (xml_context);
+    Load (n->children);
   }
-
-  SetUpCombobox ();
 }
 
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::Save (xmlTextWriter *xml_writer)
 {
-  if (_list)
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST _class_name);
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "name",
+                                     "%s", GetName ());
+  if (_pools_list)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "pool_list");
-    for (guint i = 0; i < g_slist_length (_list); i++)
+    for (guint i = 0; i < g_slist_length (_pools_list); i++)
     {
       Pool_c *pool;
 
-      pool = (Pool_c *) g_slist_nth_data (_list, i);
-      pool->Save (xml_writer);
+      pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST "player_list");
+      for (guint j = 0; j < pool->GetNbPlayers (); j++)
+      {
+        Player_c *player;
+
+        player = pool->GetPlayer (j);
+
+        xmlTextWriterStartElement (xml_writer,
+                                   BAD_CAST "player");
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "ref",
+                                           "%d", player->GetRef ());
+        xmlTextWriterEndElement (xml_writer);
+      }
+      xmlTextWriterEndElement (xml_writer);
     }
-    xmlTextWriterEndElement (xml_writer);
   }
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::FillCombobox ()
 {
-  guint    nb_players;
-  Stage_c *previous_stage = GetPreviousStage ();
-
-  _attendees = previous_stage->GetResult ();
-  nb_players = g_slist_length (_attendees);
+  guint nb_players = g_slist_length (_attendees);
 
   _best_nb_pools = 1;
 
@@ -268,13 +311,15 @@ void PoolAllocator_c::FillCombobox ()
                                                     GTK_STOCK_ABOUT,
                                                     GTK_ICON_SIZE_BUTTON, NULL);
 
-    gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_combobox_store),
-                                   &iter,
-                                   NULL,
-                                   _best_nb_pools - 1);
-    gtk_list_store_set (_combobox_store, &iter,
-                        BEST_PIXMAP_COL, pixbuf,
-                        -1);
+    if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_combobox_store),
+                                       &iter,
+                                       NULL,
+                                       _best_nb_pools - 1))
+    {
+      gtk_list_store_set (_combobox_store, &iter,
+                          BEST_PIXMAP_COL, pixbuf,
+                          -1);
+    }
 
     g_object_unref (pixbuf);
     gtk_widget_destroy (cellview);
@@ -289,8 +334,8 @@ void PoolAllocator_c::CreatePools ()
     Pool_c *pool;
 
     pool = new Pool_c (i);
-    _list = g_slist_append (_list,
-                            pool);
+    _pools_list = g_slist_append (_pools_list,
+                                  pool);
 
     for (guint j = 0; j < _pool_size; j++)
     {
@@ -611,14 +656,14 @@ gboolean PoolAllocator_c::OnLeaveNotify (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::FixUpTablesBounds ()
 {
-  for (guint p = 0; p < g_slist_length (_list); p++)
+  for (guint p = 0; p < g_slist_length (_pools_list); p++)
   {
     Pool_c          *pool;
     GooCanvasItem   *focus_rect;
     GooCanvasBounds  bounds;
     GooCanvasItem   *table;
 
-    pool = (Pool_c *) g_slist_nth_data (_list, p);
+    pool = (Pool_c *) g_slist_nth_data (_pools_list, p);
     table = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::table");
 
     focus_rect = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::focus_rectangle");
@@ -696,7 +741,7 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
   {
     guint          pool_size   = pool->GetNbPlayers ();
-    Configuration *best_config;
+    Configuration *best_config = NULL;
 
     for (guint i = 0; i < g_slist_length (_config_list); i ++)
     {
@@ -821,11 +866,11 @@ void PoolAllocator_c::Display ()
     g_signal_connect (root, "button_release_event",
                       G_CALLBACK (on_button_release), this);
 
-    for (guint i = 0; i < g_slist_length (_list); i++)
+    for (guint i = 0; i < g_slist_length (_pools_list); i++)
     {
       Pool_c *pool;
 
-      pool = (Pool_c *) g_slist_nth_data (_list, i);
+      pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
       FillPoolTable (pool);
     }
   }
@@ -834,18 +879,18 @@ void PoolAllocator_c::Display ()
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::DeletePools ()
 {
-  if (_list)
+  if (_pools_list)
   {
-    for (guint i = 0; i < g_slist_length (_list); i++)
+    for (guint i = 0; i < g_slist_length (_pools_list); i++)
     {
       Pool_c *pool;
 
-      pool = (Pool_c *) g_slist_nth_data (_list, i);
+      pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
       Object_c::Release (pool);
     }
 
-    g_slist_free (_list);
-    _list = NULL;
+    g_slist_free (_pools_list);
+    _pools_list = NULL;
   }
 
   CanvasModule_c::Wipe ();
@@ -887,18 +932,21 @@ void PoolAllocator_c::Wipe ()
     g_slist_free (_config_list);
     _config_list = NULL;
   }
+
+  g_slist_free (_attendees);
+  _attendees = NULL;
 }
 
 // --------------------------------------------------------------------------------
 guint PoolAllocator_c::GetNbPools ()
 {
-  return g_slist_length (_list);
+  return g_slist_length (_pools_list);
 }
 
 // --------------------------------------------------------------------------------
 Pool_c *PoolAllocator_c::GetPool (guint index)
 {
-  return (Pool_c *) g_slist_nth_data (_list,
+  return (Pool_c *) g_slist_nth_data (_pools_list,
                                       index);
 }
 
@@ -977,8 +1025,12 @@ void PoolAllocator_c::Enter ()
 {
   EnableSensitiveWidgets ();
 
-  if (_list == NULL)
+  if (_pools_list == NULL)
   {
+    Stage_c *previous_stage = GetPreviousStage ();
+
+    _attendees = g_slist_copy (previous_stage->GetResult ());
+
     FillCombobox ();
 
     _nb_pools = _best_nb_pools;
@@ -1003,6 +1055,8 @@ void PoolAllocator_c::Enter ()
 void PoolAllocator_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
+
+  _result = g_slist_copy (_attendees);
 }
 
 // --------------------------------------------------------------------------------
@@ -1014,11 +1068,11 @@ void PoolAllocator_c::OnUnLocked ()
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::OnAttrListUpdated ()
 {
-  for (guint i = 0; i < g_slist_length (_list); i++)
+  for (guint i = 0; i < g_slist_length (_pools_list); i++)
   {
     Pool_c *pool;
 
-    pool = (Pool_c *) g_slist_nth_data (_list, i);
+    pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
     FillPoolTable (pool);
   }
 }

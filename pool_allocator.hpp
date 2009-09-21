@@ -21,16 +21,15 @@
 
 #include "stage.hpp"
 #include "canvas_module.hpp"
-#include "players_base.hpp"
 #include "pool.hpp"
 
 class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
 {
   public:
-     PoolAllocator_c (gchar *name,
-                      PlayersBase_c *players_base);
+    static void Init ();
 
-    void Load (xmlDoc *doc);
+    PoolAllocator_c (gchar *name);
+
     void Save (xmlTextWriter *xml_writer);
 
     guint   GetNbPools ();
@@ -53,9 +52,10 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
       gboolean has_two_size;
     } Configuration;
 
-    PlayersBase_c *_players_base;
+    static const gchar *_class_name;
+
     GSList        *_attendees;
-    GSList        *_list;
+    GSList        *_pools_list;
     GSList        *_config_list;
     guint          _pool_size;
     guint          _nb_pools;
@@ -121,6 +121,10 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      Pool_c         *pool);
+
+    static Stage_c *CreateInstance (xmlNode *xml_node);
+
+    void Load (xmlNode *xml_node);
 
     ~PoolAllocator_c ();
 };
