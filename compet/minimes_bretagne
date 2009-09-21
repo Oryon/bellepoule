@@ -24,7 +24,7 @@
   </pool_allocation_stage>
   <pool_stage name="Round 1">
    <match_list>
-    <match player_A="19" score_A="5" player_B="2" score_B="1"/>
+    <match player_A="19" score_A="5" player_B="2" score_B="5"/>
     <match player_A="16" score_A="5" player_B="2" score_B="1"/>
     <match player_A="16" score_A="5" player_B="19" score_B="3"/>
    </match_list>

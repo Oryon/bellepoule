@@ -35,6 +35,7 @@ class Pool_c : public CanvasModule_c
     guint GetNumber    ();
     void  ResetMatches ();
     void  Lock         ();
+    void  SetMaxScore  (guint max_score);
 
     Player_c *GetPlayer (guint i);
 
@@ -51,6 +52,7 @@ class Pool_c : public CanvasModule_c
                                guint     client_seed);
 
   private:
+    guint          _max_score;
     guint          _rand_seed;
     guint          _number;
     GSList        *_player_list;
@@ -71,17 +73,20 @@ class Pool_c : public CanvasModule_c
     static gboolean on_focus_out (GtkWidget     *widget,
                                   GdkEventFocus *event,
                                   gpointer       user_data);
+    static void on_entry_changed (GtkEditable *editable,
+                                  gpointer     user_data);
     static gboolean on_key_press_event (GtkWidget   *widget,
                                         GdkEventKey *event,
                                         gpointer     user_data);
 
   private:
-    void GetNameItems (Player_c       *main_player,
-                       Match_c        *match,
-                       GooCanvasItem **v_item,
-                       GooCanvasItem **h_item);
+    void SetMatchColor (Match_c *match,
+                        gchar   *consistent_color,
+                        gchar   *unconsitentcolor);
+
     gboolean OnFocusIn  (GooCanvasItem *item);
     gboolean OnFocusOut (GtkWidget *widget);
+    void     OnEntryChanged (GtkWidget *widget);
     gboolean OnKeyPress (GtkWidget   *widget,
                          GdkEventKey *event);
 

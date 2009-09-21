@@ -33,7 +33,14 @@ PoolSupervisor_c::PoolSupervisor_c (gchar *name)
 
   // Callbacks binding
   {
-    _glade->Bind ("print_pool_toolbutton", this);
+    _glade->Bind ("print_pool_toolbutton",  this);
+    _glade->Bind ("filter_pool_toolbutton", this);
+  }
+
+  {
+    ShowAttribute ("name");
+    ShowAttribute ("first_name");
+    ShowAttribute ("club");
   }
 
   {
@@ -108,6 +115,7 @@ void PoolSupervisor_c::OnPoolSelected (Pool_c *pool)
   }
 
   {
+    pool->CloneFilterList (this);
     Plug (pool,
           _glade->GetWidget ("pool_hook"));
 
@@ -141,6 +149,8 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 void PoolSupervisor_c::Enter ()
 {
   RetrievePools ();
+
+  OnPoolSelected (_pool_allocator->GetPool (0));
 }
 
 // --------------------------------------------------------------------------------
@@ -276,4 +286,23 @@ void PoolSupervisor_c::Wipe ()
     _displayed_pool->UnPlug ();
     _displayed_pool = NULL;
   }
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::OnAttrListUpdated ()
+{
+  if (_displayed_pool)
+  {
+    OnPoolSelected (_displayed_pool);
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_filter_pool_toolbutton_clicked (GtkWidget *widget,
+                                                                   GdkEvent  *event,
+                                                                   gpointer  *data)
+{
+  PoolSupervisor_c *p = (PoolSupervisor_c *) g_object_get_data (G_OBJECT (widget),
+                                                                "instance");
+  p->SelectAttributes ();
 }

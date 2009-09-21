@@ -34,13 +34,9 @@ Pool_c::Pool_c (guint number)
   _match_list  = NULL;
   _entry_item  = NULL;
   _rand_seed   = 0;
+  _max_score   = 5;
 
   _name = g_strdup_printf ("pool #%02d", _number);
-
-  // Callbacks binding
-  {
-    _glade->Bind ("print_pool_toolbutton", this);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -63,6 +59,12 @@ Pool_c::~Pool_c ()
 }
 
 // --------------------------------------------------------------------------------
+void Pool_c::SetMaxScore (guint32 max_score)
+{
+  _max_score = max_score;
+}
+
+// --------------------------------------------------------------------------------
 void Pool_c::SetRandSeed (guint32 seed)
 {
   _rand_seed = seed;
@@ -81,6 +83,15 @@ gchar *Pool_c::GetName ()
 }
 
 // --------------------------------------------------------------------------------
+void Pool_c::on_entry_changed (GtkEditable *editable,
+                               gpointer     user_data)
+{
+  Pool_c *pool = (Pool_c *) user_data;
+
+  pool->OnEntryChanged (GTK_WIDGET (editable));
+}
+
+// --------------------------------------------------------------------------------
 gboolean Pool_c::on_key_press_event (GtkWidget   *widget,
                                      GdkEventKey *event,
                                      gpointer     user_data)
@@ -95,15 +106,43 @@ gboolean Pool_c::on_key_press_event (GtkWidget   *widget,
 gboolean Pool_c::OnKeyPress (GtkWidget   *widget,
                              GdkEventKey *event)
 {
-  if ((event->keyval >= GDK_0) && (event->keyval <= GDK_9))
+  if ((event->keyval == GDK_Return) || (event->keyval == GDK_Tab))
   {
-    return FALSE;
+    GooCanvasItem *next_item;
+
+    next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_rect");
+    if (next_item)
+    {
+      goo_canvas_grab_focus (GetCanvas (),
+                             next_item);
+    }
+    else
+    {
+      goo_canvas_item_remove (_entry_item);
+      _entry_item = NULL;
+    }
+
+    return TRUE;
   }
-  else if ((event->keyval == GDK_BackSpace) || (event->keyval == GDK_Delete))
+  else if (event->keyval == GDK_Escape)
   {
-    return FALSE;
+    goo_canvas_item_remove (_entry_item);
+    _entry_item = NULL;
+
+    return TRUE;
   }
-  else if ((event->keyval == GDK_Return) || (event->keyval == GDK_Tab))
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Pool_c::OnEntryChanged (GtkWidget *widget)
+{
+  Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (widget), "match");
+  Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (widget), "player");
+  gchar    *input  = (gchar *) gtk_entry_get_text (GTK_ENTRY (widget));
+
+  if (match->SetScore (player, input))
   {
     GooCanvasItem *next_item;
 
@@ -119,34 +158,51 @@ gboolean Pool_c::OnKeyPress (GtkWidget   *widget,
       _entry_item = NULL;
     }
   }
-  else if ((event->keyval == GDK_Escape) || (event->keyval == GDK_V))
-  {
-    goo_canvas_item_remove (_entry_item);
-    _entry_item = NULL;
-  }
-  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::GetNameItems (Player_c       *main_player,
-                           Match_c        *match,
-                           GooCanvasItem **v_item,
-                           GooCanvasItem **h_item)
+void Pool_c::SetMatchColor (Match_c *match,
+                            gchar   *consistent_color,
+                            gchar   *unconsitentcolor)
 {
-  Player_c *player_A = match->GetPlayerA ();
-  Player_c *player_B = match->GetPlayerB ();
+  GooCanvasItem *rect;
+  gchar         *color_A = consistent_color;
+  gchar         *color_B = consistent_color;
+  Player_c      *A       = match->GetPlayerA ();
+  Player_c      *B       = match->GetPlayerB ();
+  Score_c       *score_A = match->GetScore (A);
+  Score_c       *score_B = match->GetScore (B);
 
-  if (match->GetPlayerA () == main_player)
+  if (score_A->IsValid () == false)
   {
-    *v_item = (GooCanvasItem *) player_A->GetData ("Pool::VName");
-    *h_item = (GooCanvasItem *) player_B->GetData ("Pool::HName");
+    color_A = unconsitentcolor;
   }
-  else
+  if (score_B->IsValid () == false)
   {
-    *v_item = (GooCanvasItem *) player_B->GetData ("Pool::VName");
-    *h_item = (GooCanvasItem *) player_A->GetData ("Pool::HName");
+    color_B = unconsitentcolor;
   }
 
+  if (score_A->IsConsistentWith (score_B) == false)
+  {
+    color_A = unconsitentcolor;
+    color_B = unconsitentcolor;
+  }
+
+  rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_A");
+  if (rect)
+  {
+    g_object_set (rect,
+                  "fill-color", color_A,
+                  NULL);
+  }
+
+  rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_B");
+  if (rect)
+  {
+    g_object_set (rect,
+                  "fill-color", color_B,
+                  NULL);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -172,41 +228,9 @@ gboolean Pool_c::OnFocusIn (GooCanvasItem *item)
     _entry_item = NULL;
   }
 
-  // Score cells color
-  {
-    GooCanvasItem *rect;
-
-    rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_A");
-    g_object_set (rect,
-                  "fill-color", "SkyBlue",
-                  NULL);
-
-    rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_B");
-    g_object_set (rect,
-                  "fill-color", "SkyBlue",
-                  NULL);
-  }
-
-  // Player names Colors
-  {
-    GooCanvasItem *v_item;
-    GooCanvasItem *h_item;
-
-    GetNameItems (player,
-                  match,
-                  &v_item,
-                  &h_item);
-
-    g_object_set (v_item,
-                  "fill-color", "blue",
-                  "font", "Sans bold 18px",
-                  NULL);
-
-    g_object_set (h_item,
-                  "fill-color", "blue",
-                  "font", "Sans bold 18px",
-                  NULL);
-  }
+  SetMatchColor (match,
+                 "SkyBlue",
+                 "LightCoral");
 
   {
     gpointer next_rect   = g_object_get_data (G_OBJECT (item), "next_rect");
@@ -244,11 +268,13 @@ gboolean Pool_c::OnFocusIn (GooCanvasItem *item)
                                          NULL);
     gtk_widget_grab_focus (_gtk_entry);
 
+    g_signal_connect (GTK_ENTRY (_gtk_entry), "changed",
+                      G_CALLBACK (on_entry_changed), this);
     g_signal_connect (_gtk_entry, "key-press-event",
                       G_CALLBACK (on_key_press_event), this);
   }
 
-  return FALSE;
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -268,54 +294,24 @@ gboolean Pool_c::OnFocusOut (GtkWidget *widget)
   Player_c    *player = (Player_c *) g_object_get_data (G_OBJECT (widget), "player");
   const gchar *input  = gtk_entry_get_text (GTK_ENTRY (_gtk_entry));
 
-  {
-    GooCanvasItem *rect;
-
-    rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_A");
-    g_object_set (rect,
-                  "fill-color", "White",
-                  NULL);
-
-    rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_B");
-    g_object_set (rect,
-                  "fill-color", "White",
-                  NULL);
-  }
-
-  {
-    GooCanvasItem *v_item;
-    GooCanvasItem *h_item;
-
-    GetNameItems (player,
-                  match,
-                  &v_item,
-                  &h_item);
-
-    g_object_set (v_item,
-                  "fill-color", "dark",
-                  "font", "Sans 18px",
-                  NULL);
-
-    g_object_set (h_item,
-                  "fill-color", "dark",
-                  "font", "Sans 18px",
-                  NULL);
-  }
-
   if (input[0] != 0)
   {
     gpointer goo_text = g_object_get_data (G_OBJECT (widget), "goo_text");
 
     g_object_set (goo_text,
                   "text",
-                  input, NULL);
-    match->SetScore (player, atoi (input));
+                  g_ascii_strup (input, -1), NULL);
+    match->SetScore (player, (gchar *) input);
 
     RefreshScoreData ();
     RefreshDashBoard ();
   }
 
-  return FALSE;
+  SetMatchColor (match,
+                 "White",
+                 "MistyRose");
+
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -349,7 +345,9 @@ void Pool_c::AddPlayer (Player_c *player)
       Match_c  *match;
 
       current_player = GetPlayer (i);
-      match = new Match_c (player, current_player);
+      match = new Match_c (player,
+                           current_player,
+                           _max_score);
 
       _match_list = g_slist_append (_match_list,
                                     match);
@@ -452,6 +450,7 @@ void Pool_c::OnPlugged ()
                                             x, y,
                                             cell_w, cell_h,
                                             "line-width", 2.0,
+                                            "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                             NULL);
 
             if (i != j)
@@ -473,11 +472,11 @@ void Pool_c::OnPlugged ()
 
                 if (i < j)
                 {
-                  match->SetData ("Pool::goo_rect_A", goo_rect);
+                  match->SetData ("Pool::goo_rect_B", goo_rect);
                 }
                 else
                 {
-                  match->SetData ("Pool::goo_rect_B", goo_rect);
+                  match->SetData ("Pool::goo_rect_A", goo_rect);
                 }
               }
 
@@ -530,22 +529,39 @@ void Pool_c::OnPlugged ()
       // Players (vertically)
       for (guint i = 0; i < nb_players; i++)
       {
-        Player_c      *player;
-        GooCanvasItem *goo_text;
-        gint           x, y;
-        Attribute_c   *attr;
+        Player_c *player;
+        gint      x, y;
+        GString  *string = g_string_new ("");
 
         player = GetPlayer (i);
-        attr   = player->GetAttribute ("name");
         x = - 5;
         y = cell_h / 2 + i * cell_h;
-        goo_text = goo_canvas_text_new (grid_group,
-                                        (gchar *) attr->GetValue (),
-                                        x, y, -1,
-                                        GTK_ANCHOR_EAST,
-                                        "font", "Sans 18px",
-                                        NULL);
-        player->SetData ("Pool::VName", goo_text);
+
+        for (guint a = 0; a < g_slist_length (_attr_list); a++)
+        {
+          gchar       *attr_name;
+          Attribute_c *attr;
+
+          attr_name = (gchar *) g_slist_nth_data (_attr_list,
+                                                  a);
+          attr = player->GetAttribute (attr_name);
+
+          if (attr)
+          {
+            string = g_string_append (string,
+                                      attr->GetStringImage ());
+            string = g_string_append (string,
+                                      "  ");
+          }
+        }
+        goo_canvas_text_new (grid_group,
+                             string->str,
+                             x, y, -1,
+                             GTK_ANCHOR_EAST,
+                             "font", "Sans 18px",
+                             NULL);
+        g_string_free (string,
+                       TRUE);
       }
 
       // Players (horizontally)
@@ -554,21 +570,51 @@ void Pool_c::OnPlugged ()
         Player_c      *player;
         GooCanvasItem *goo_text;
         gint           x, y;
-        Attribute_c   *attr;
+        GString       *string = g_string_new ("");
 
         player = GetPlayer (i);
-        attr   = player->GetAttribute ("name");
         x = cell_w / 2 + i * cell_w;;
         y = - 10;
+
+        for (guint a = 0; a < g_slist_length (_attr_list); a++)
+        {
+          gchar       *attr_name;
+          Attribute_c *attr;
+
+          attr_name = (gchar *) g_slist_nth_data (_attr_list,
+                                                  a);
+          attr = player->GetAttribute (attr_name);
+
+          if (attr)
+          {
+            string = g_string_append (string,
+                                      attr->GetStringImage ());
+            string = g_string_append (string,
+                                      "  ");
+          }
+        }
         goo_text = goo_canvas_text_new (grid_group,
-                                        (gchar *) attr->GetValue (),
+                                        string->str,
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
                                         NULL);
+        g_string_free (string,
+                       TRUE);
         goo_canvas_item_rotate (goo_text, 315, x, y);
-        player->SetData ("Pool::HName", goo_text);
       }
+    }
+
+    // Higlight errors
+    for (guint i = 0; i < g_slist_length (_match_list); i++)
+    {
+      Match_c *match;
+
+      match = (Match_c *) g_slist_nth_data (_match_list,
+                                            i);
+      SetMatchColor (match,
+                     "White",
+                     "MistyRose");
     }
 
     // Dashboard
@@ -821,10 +867,12 @@ void Pool_c::RefreshScoreData ()
         }
 
         if (   score_a->IsKnown ()
-            && score_b->IsKnown ()
-            && (score_a->Get () > score_b->Get ()))
+            && score_b->IsKnown ())
         {
-          victories++;
+          if (score_a->Get () > score_b->Get ())
+          {
+            victories++;
+          }
         }
       }
     }
@@ -924,7 +972,7 @@ Match_c *Pool_c::GetMatch (Player_c *A,
 
     match = (Match_c *) g_slist_nth_data (_match_list, i);
     if (   match->HasPlayer (A)
-           && match->HasPlayer (B))
+        && match->HasPlayer (B))
     {
       return match;
     }

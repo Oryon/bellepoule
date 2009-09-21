@@ -390,3 +390,34 @@ void Module_c::UpdateAttrList ()
 
   OnAttrListUpdated ();
 }
+
+// --------------------------------------------------------------------------------
+void Module_c::CloneFilterList (Module_c *from)
+{
+  if (_attr_list)
+  {
+    g_slist_foreach (_attr_list,
+                     (GFunc) g_free,
+                     NULL);
+    g_slist_free (_attr_list);
+  }
+
+  _attr_list = NULL;
+
+  if (from->_attr_list)
+  {
+    for (guint i = 0; i < g_slist_length (from->_attr_list); i++)
+    {
+      gchar *attr;
+
+      attr = g_strdup ((gchar *) g_slist_nth_data (from->_attr_list,
+                                                   i));
+      _attr_list = g_slist_append (_attr_list,
+                                   attr);
+    }
+  }
+  else
+  {
+    _attr_list = NULL;
+  }
+}

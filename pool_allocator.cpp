@@ -311,13 +311,15 @@ void PoolAllocator_c::FillCombobox ()
                                                     GTK_STOCK_ABOUT,
                                                     GTK_ICON_SIZE_BUTTON, NULL);
 
-    gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_combobox_store),
-                                   &iter,
-                                   NULL,
-                                   _best_nb_pools - 1);
-    gtk_list_store_set (_combobox_store, &iter,
-                        BEST_PIXMAP_COL, pixbuf,
-                        -1);
+    if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_combobox_store),
+                                       &iter,
+                                       NULL,
+                                       _best_nb_pools - 1))
+    {
+      gtk_list_store_set (_combobox_store, &iter,
+                          BEST_PIXMAP_COL, pixbuf,
+                          -1);
+    }
 
     g_object_unref (pixbuf);
     gtk_widget_destroy (cellview);

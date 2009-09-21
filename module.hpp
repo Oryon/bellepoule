@@ -34,6 +34,8 @@ class Module_c : public virtual Object_c
 
     void SelectAttributes ();
 
+    void CloneFilterList (Module_c *from);
+
   protected:
     Glade_c *_glade;
     GSList  *_attr_list;

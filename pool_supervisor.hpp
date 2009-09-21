@@ -60,6 +60,8 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     Pool_c          *_displayed_pool;
 
     ~PoolSupervisor_c ();
+
+    void OnAttrListUpdated ();
 };
 
 #endif

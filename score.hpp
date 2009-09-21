@@ -22,7 +22,7 @@
 class Score_c : public Object_c
 {
   public:
-    Score_c  ();
+    Score_c  (guint max_score);
     ~Score_c ();
 
     gboolean IsKnown ();
@@ -35,8 +35,13 @@ class Score_c : public Object_c
 
     void Clean ();
 
+    gboolean IsValid ();
+
+    gboolean IsConsistentWith (Score_c *with);
+
   private:
     gboolean  _is_known;
+    guint     _max_score;
     guint     _score;
 };
 
