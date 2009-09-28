@@ -36,6 +36,8 @@ class Module_c : public virtual Object_c
 
     void CloneFilterList (Module_c *from);
 
+    GtkWidget *GetConfigWidget ();
+
   protected:
     Glade_c *_glade;
     GSList  *_attr_list;
@@ -73,6 +75,7 @@ class Module_c : public virtual Object_c
     gchar        *_name;
     GtkTreeModel *_attr_filter_store;
     GtkWidget    *_filter_window;
+    GtkWidget    *_config_widget;
 
     void UpdateAttrList ();
 

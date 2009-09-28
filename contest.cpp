@@ -26,8 +26,6 @@
 
 #include "contest.hpp"
 
-gchar *Contest_c::_NEW_CONTEST = NULL;
-
 // --------------------------------------------------------------------------------
 Contest_c::Contest_c ()
   : Module_c ("contest.glade")
@@ -40,11 +38,7 @@ Contest_c::Contest_c ()
   }
   gtk_widget_hide (_properties_dlg);
 
-  if (gtk_dialog_run (GTK_DIALOG (_formula_dlg)) == GTK_RESPONSE_ACCEPT)
-  {
-    ReadProperties ();
-  }
-  gtk_widget_hide (_formula_dlg);
+  _schedule->DisplayList ();
 }
 
 // --------------------------------------------------------------------------------
@@ -109,7 +103,6 @@ Contest_c::~Contest_c ()
   Object_c::Release (_players_base);
 
   gtk_widget_destroy (_properties_dlg);
-  gtk_widget_destroy (_formula_dlg);
 }
 
 // --------------------------------------------------------------------------------
@@ -152,7 +145,7 @@ void Contest_c::InitInstance ()
   {
     GtkWidget *content_area;
 
-    _properties_dlg = gtk_dialog_new_with_buttons (_NEW_CONTEST,
+    _properties_dlg = gtk_dialog_new_with_buttons ("New competition",
                                                    NULL,
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_STOCK_OK,
@@ -164,25 +157,6 @@ void Contest_c::InitInstance ()
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_properties_dlg));
 
     gtk_widget_reparent (_glade->GetWidget ("properties_dialog-vbox"),
-                         content_area);
-  }
-
-  // Formula dialog
-  {
-    GtkWidget *content_area;
-
-    _formula_dlg = gtk_dialog_new_with_buttons (_NEW_CONTEST,
-                                                NULL,
-                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                GTK_STOCK_OK,
-                                                GTK_RESPONSE_ACCEPT,
-                                                GTK_STOCK_CANCEL,
-                                                GTK_RESPONSE_REJECT,
-                                                NULL);
-
-    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_formula_dlg));
-
-    gtk_widget_reparent (_glade->GetWidget ("formula_dialog-vbox"),
                          content_area);
   }
 
@@ -201,11 +175,6 @@ void Contest_c::InitInstance ()
 // --------------------------------------------------------------------------------
 void Contest_c::Init ()
 {
-  _NEW_CONTEST = g_locale_to_utf8 ("Nouvelle compétition",
-                                   -1,
-                                   NULL,
-                                   NULL,
-                                   NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -410,10 +379,7 @@ extern "C" G_MODULE_EXPORT void on_formula_toolbutton_clicked (GtkWidget *widget
 // --------------------------------------------------------------------------------
 void Contest_c::on_formula_toolbutton_clicked ()
 {
-  if (gtk_dialog_run (GTK_DIALOG (_formula_dlg)) == GTK_RESPONSE_ACCEPT)
-  {
-  }
-  gtk_widget_hide (_formula_dlg);
+  _schedule->DisplayList ();
 }
 
 // --------------------------------------------------------------------------------

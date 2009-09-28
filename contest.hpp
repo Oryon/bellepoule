@@ -53,7 +53,6 @@ class Contest_c : public Module_c
     PlayersBase_c *_players_base;
     Schedule_c    *_schedule;
     GtkWidget     *_properties_dlg;
-    GtkWidget     *_formula_dlg;
 
     Contest_c ();
 

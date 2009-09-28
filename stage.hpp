@@ -34,6 +34,8 @@ class Stage_c : public virtual Object_c
 
     Stage_c *GetPreviousStage ();
 
+    gchar *GetClassName ();
+
     gchar *GetName ();
 
     gchar *GetFullName ();

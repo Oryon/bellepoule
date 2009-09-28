@@ -29,6 +29,8 @@ class Schedule_c : public Module_c
   public:
      Schedule_c ();
 
+    void DisplayList ();
+
     void AddStage    (Stage_c *stage);
     void RemoveStage (Stage_c *stage);
 
@@ -37,15 +39,24 @@ class Schedule_c : public Module_c
 
     void on_previous_stage_toolbutton_clicked ();
     void on_next_stage_toolbutton_clicked     ();
+    void on_stage_selected ();
 
   private:
-    GList *_stage_list;
-    GList *_current_stage;
+    GtkListStore *_list_store;
+    GList        *_stage_list;
+    GList        *_current_stage;
+    Module_c     *_selected_module;
 
     void   SetCurrentStage    (GList *stage);
     void   CancelCurrentStage ();
 
+    static void on_row_selected (GtkWidget *widget,
+                                 GdkEvent  *event,
+                                 gpointer  *data);
+
   private:
+    GtkWidget *_formula_dlg;
+
     ~Schedule_c ();
     void OnPlugged ();
 };

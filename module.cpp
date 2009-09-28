@@ -51,6 +51,17 @@ Module_c::Module_c (gchar *glade_file,
   }
 
   {
+    _config_widget = _glade->GetWidget ("stage_configuration");
+
+    if (_config_widget)
+    {
+      g_object_ref (_config_widget);
+      gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (_config_widget)),
+                                           _config_widget);
+    }
+  }
+
+  {
     GtkListStore  *store;
     GtkTreeIter    iter;
 
@@ -112,6 +123,13 @@ Module_c::~Module_c ()
   }
 
   g_object_unref (_attr_filter_store);
+  g_object_unref (_config_widget);
+}
+
+// --------------------------------------------------------------------------------
+GtkWidget *Module_c::GetConfigWidget ()
+{
+  return _config_widget;
 }
 
 // --------------------------------------------------------------------------------

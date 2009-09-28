@@ -40,7 +40,6 @@ PoolSupervisor_c::PoolSupervisor_c (gchar *name)
   {
     ShowAttribute ("name");
     ShowAttribute ("first_name");
-    ShowAttribute ("club");
   }
 
   {

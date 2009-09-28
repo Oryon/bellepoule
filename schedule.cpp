@@ -26,11 +26,49 @@ Schedule_c::Schedule_c ()
 : Module_c ("schedule.glade",
             "schedule_notebook")
 {
-  _stage_list    = NULL;
-  _current_stage = NULL;
+  _stage_list      = NULL;
+  _current_stage   = NULL;
+  _selected_module = NULL;
 
   _glade->Bind ("previous_stage_toolbutton", this);
   _glade->Bind ("next_stage_toolbutton",     this);
+  _glade->Bind ("formula_treeview",          this);
+
+  {
+    GtkWidget         *treeview = _glade->GetWidget ("formula_treeview");
+    GtkCellRenderer   *renderer = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *column   = gtk_tree_view_column_new_with_attributes ("Schedule",
+                                                                            renderer,
+                                                                            "text", 0,
+                                                                            0, NULL);
+
+    gtk_tree_view_append_column (GTK_TREE_VIEW (treeview),
+                                 column);
+
+    _list_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_UINT);
+
+    gtk_tree_view_set_model (GTK_TREE_VIEW (treeview),
+                             GTK_TREE_MODEL (_list_store));
+  }
+
+  // Formula dialog
+  {
+    GtkWidget *content_area;
+
+    _formula_dlg = gtk_dialog_new_with_buttons ("New competition",
+                                                NULL,
+                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_STOCK_OK,
+                                                GTK_RESPONSE_ACCEPT,
+                                                GTK_STOCK_CANCEL,
+                                                GTK_RESPONSE_REJECT,
+                                                NULL);
+
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_formula_dlg));
+
+    gtk_widget_reparent (_glade->GetWidget ("dialog-vbox"),
+                         content_area);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -45,6 +83,20 @@ Schedule_c::~Schedule_c ()
     Object_c::Release (stage);
   }
   g_list_free (_stage_list);
+
+  gtk_widget_destroy (_formula_dlg);
+
+  gtk_list_store_clear (_list_store);
+  g_object_unref (_list_store);
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::DisplayList ()
+{
+  if (gtk_dialog_run (GTK_DIALOG (_formula_dlg)) == GTK_RESPONSE_ACCEPT)
+  {
+  }
+  gtk_widget_hide (_formula_dlg);
 }
 
 // --------------------------------------------------------------------------------
@@ -64,6 +116,15 @@ void Schedule_c::AddStage (Stage_c *stage)
 
       _stage_list = g_list_append (_stage_list,
                                    stage);
+      {
+        GtkTreeIter  iter;
+
+        gtk_list_store_append (_list_store, &iter);
+        gtk_list_store_set (_list_store, &iter,
+                            0, stage->GetClassName (),
+                            1, stage, -1);
+      }
+
       if (previous == NULL)
       {
         _current_stage = _stage_list;
@@ -242,6 +303,61 @@ void Schedule_c::OnPlugged ()
   gtk_toolbar_insert (toolbar,
                       GTK_TOOL_ITEM (w),
                       -1);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_formula_treeview_cursor_changed (GtkWidget *widget,
+                                                                    gpointer  *data)
+{
+  Schedule_c *s = (Schedule_c *) g_object_get_data (G_OBJECT (widget),
+                                                    "instance");
+  s->on_stage_selected ();
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::on_stage_selected ()
+{
+  GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
+  GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
+  GList            *selection_list;
+
+  if (_selected_module)
+  {
+    gtk_container_remove (GTK_CONTAINER (_glade->GetWidget ("module_config_hook")),
+                          _selected_module->GetConfigWidget ());
+  }
+
+  selection_list = gtk_tree_selection_get_selected_rows (selection,
+                                                         NULL);
+  if (selection_list)
+  {
+    GtkTreeIter  iter;
+    Stage_c     *stage;
+    GtkTreePath *path = (GtkTreePath *) g_list_nth_data (selection_list,
+                                                         0);
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (_list_store),
+                             &iter,
+                             path);
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
+                        &iter,
+                        1, &stage, -1);
+
+    _selected_module = dynamic_cast <Module_c *> (stage);
+    if (_selected_module)
+    {
+      GtkWidget *config_w = _selected_module->GetConfigWidget ();
+
+      if (config_w)
+      {
+        gtk_container_add (GTK_CONTAINER (_glade->GetWidget ("module_config_hook")),
+                           config_w);
+      }
+    }
+
+    g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
+    g_list_free    (selection_list);
+  }
 }
 
 // --------------------------------------------------------------------------------
