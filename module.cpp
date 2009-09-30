@@ -36,7 +36,8 @@ Module_c::Module_c (gchar *glade_file,
 
   if (glade_file)
   {
-    _glade = new Glade_c (glade_file);
+    _glade = new Glade_c (glade_file,
+                          this);
 
     if (root)
     {

@@ -17,23 +17,22 @@
 #ifndef glade_hpp
 #define glade_hpp
 
-#include <glade/glade.h>
+#include <gtk/gtk.h>
 #include "object.hpp"
 
 class Glade_c : public Object_c
 {
   public:
-     Glade_c (gchar *file_name);
+     Glade_c (gchar    *file_name,
+              Object_c *owner);
     ~Glade_c ();
 
     GtkWidget *GetRootWidget    ();
     GtkWidget *GetWidget        (gchar *name);
     void       DetachFromParent (GtkWidget *widget);
-    void       Bind             (gchar *widget_name,
-                                 void  *o);
 
   private:
-    GladeXML *_glade_xml;
+    GtkBuilder *_glade_xml;
 };
 
 #endif

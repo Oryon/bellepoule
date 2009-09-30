@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <gtk/gtk.h>
-#include <glade/glade.h>
 
 #include "glade.hpp"
 #include "contest.hpp"
@@ -81,7 +80,6 @@ int main (int argc, char **argv)
   {
     gtk_set_locale  ();
     gtk_init        (&argc, &argv);
-    glade_init      ();
 
     Contest_c::Init        ();
     PoolAllocator_c::Init  ();
@@ -100,7 +98,8 @@ int main (int argc, char **argv)
     Attribute_c::Add (G_TYPE_STRING,  "licence");
   }
 
-  xml = new Glade_c ("main_frame.glade");
+  xml = new Glade_c ("main_frame.glade",
+                     NULL);
 
   {
     Contest_c *contest;

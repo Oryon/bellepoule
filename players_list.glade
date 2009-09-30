@@ -1,83 +1,89 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Fri Sep 04 23:07:38 2009 -->
-<glade-interface>
-  <widget class="GtkWindow" id="window">
+<?xml version="1.0"?>
+<interface>
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy toplevel-contextual -->
+  <object class="GtkWindow" id="window">
     <child>
-      <widget class="GtkVBox" id="root">
+      <object class="GtkVBox" id="root">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
-          <widget class="GtkToolbar" id="toolbar6">
+          <object class="GtkToolbar" id="toolbar6">
             <property name="visible">True</property>
-            <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
+            <property name="icon_size">0</property>
             <property name="icon_size_set">True</property>
             <child>
-              <widget class="GtkToolButton" id="add_player_button">
+              <object class="GtkToolButton" id="add_player_button">
                 <property name="visible">True</property>
                 <property name="stock_id">gtk-add</property>
                 <signal name="clicked" handler="on_add_player_button_clicked"/>
-              </widget>
+              </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkToolButton" id="remove_player_button">
+              <object class="GtkToolButton" id="remove_player_button">
                 <property name="visible">True</property>
                 <property name="stock_id">gtk-remove</property>
                 <signal name="clicked" handler="on_remove_player_button_clicked"/>
-              </widget>
+              </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkToolButton" id="players_list_filter_button">
+              <object class="GtkToolButton" id="players_list_filter_button">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Filtre</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_players_list_filter_button_clicked"/>
-              </widget>
+              </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkToolButton" id="toolbutton4">
+              <object class="GtkToolButton" id="toolbutton4">
                 <property name="visible">True</property>
                 <property name="stock_id">gtk-print</property>
-              </widget>
+              </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="expand">False</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkScrolledWindow" id="scrolledwindow3">
+          <object class="GtkScrolledWindow" id="scrolledwindow3">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-            <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-            <property name="shadow_type">GTK_SHADOW_ETCHED_OUT</property>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <property name="shadow_type">etched-out</property>
             <child>
-              <widget class="GtkTreeView" id="players_list">
+              <object class="GtkTreeView" id="players_list">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="reorderable">True</property>
                 <property name="rules_hint">True</property>
                 <property name="search_column">0</property>
-              </widget>
+              </object>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="position">1</property>
           </packing>
         </child>
-      </widget>
+      </object>
     </child>
-  </widget>
-</glade-interface>
+  </object>
+</interface>

@@ -36,11 +36,6 @@ Pool_c::Pool_c (guint number)
   _rand_seed   = 0;
 
   _name = g_strdup_printf ("pool #%02d", _number);
-
-  // Callbacks binding
-  {
-    _glade->Bind ("print_pool_toolbutton", this);
-  }
 }
 
 // --------------------------------------------------------------------------------

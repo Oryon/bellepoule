@@ -33,9 +33,9 @@ enum
 } ComboboxColumn;
 
 extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
-                                                             gpointer  *data);
+                                                              Object_c  *owner);
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
-                                                               gpointer  *data);
+                                                               Object_c  *owner);
 
 const gchar *PoolAllocator_c::_class_name = "pool_allocation_stage";
 
@@ -104,14 +104,6 @@ PoolAllocator_c::PoolAllocator_c (gchar *name)
   {
     AddSensitiveWidget (_glade->GetWidget ("nb_pools_combobox"));
     AddSensitiveWidget (_glade->GetWidget ("pool_size_combobox"));
-  }
-
-  // Callbacks binding
-  {
-    _glade->Bind ("print_toolbutton",   this);
-    _glade->Bind ("nb_pools_combobox",  this);
-    _glade->Bind ("pool_size_combobox", this);
-    _glade->Bind ("filter_button",      this);
   }
 
   {
@@ -950,10 +942,10 @@ Pool_c *PoolAllocator_c::GetPool (guint index)
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
-                                                               gpointer  *data)
+                                                               Object_c  *owner)
 {
-  PoolAllocator_c *pl = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
-                                                               "instance");
+  PoolAllocator_c *pl = dynamic_cast <PoolAllocator_c *> (owner);
+
   pl->OnComboboxChanged (GTK_COMBO_BOX (widget));
 }
 
@@ -1001,20 +993,19 @@ void PoolAllocator_c::OnComboboxChanged (GtkComboBox *cb)
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
-                                                             gpointer  *data)
+                                                              Object_c  *owner)
 {
-  PoolAllocator_c *c = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
-                                                      "instance");
+  PoolAllocator_c *c = dynamic_cast <PoolAllocator_c *> (owner);
+
   c->OnComboboxChanged (GTK_COMBO_BOX (widget));
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
-                                                             GdkEvent  *event,
-                                                             gpointer  *data)
+                                                             Object_c  *owner)
 {
-  PoolAllocator_c *c = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
-                                                              "instance");
+  PoolAllocator_c *c = dynamic_cast <PoolAllocator_c *> (owner);
+
   c->Print ();
 }
 
@@ -1077,10 +1068,9 @@ void PoolAllocator_c::OnAttrListUpdated ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_filter_button_clicked (GtkWidget *widget,
-                                                          GdkEvent  *event,
-                                                          gpointer  *data)
+                                                          Object_c  *owner)
 {
-  PoolAllocator_c *p = (PoolAllocator_c *) g_object_get_data (G_OBJECT (widget),
-                                                              "instance");
+  PoolAllocator_c *p = dynamic_cast <PoolAllocator_c *> (owner);
+
   p->SelectAttributes ();
 }

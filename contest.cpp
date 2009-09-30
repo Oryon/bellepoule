@@ -185,17 +185,6 @@ void Contest_c::InitInstance ()
     gtk_widget_reparent (_glade->GetWidget ("formula_dialog-vbox"),
                          content_area);
   }
-
-  // Callbacks binding
-  {
-    _glade->Bind ("save_toolbutton",           this);
-    _glade->Bind ("properties_toolbutton",     this);
-    _glade->Bind ("formula_toolbutton",        this);
-
-    _glade->Bind ("backupfile_button",         this);
-
-    _glade->Bind ("contest_close_button",      this);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -344,11 +333,10 @@ gchar *Contest_c::GetSaveFileName (gchar *title)
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_save_toolbutton_clicked (GtkWidget *widget,
-                                                            GdkEvent  *event,
-                                                            gpointer  *data)
+                                                            Object_c  *owner)
 {
-  Contest_c *c = (Contest_c *) g_object_get_data (G_OBJECT (widget),
-                                                  "instance");
+  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+
   c->on_save_toolbutton_clicked ();
 }
 
@@ -368,11 +356,10 @@ void Contest_c::on_save_toolbutton_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_properties_toolbutton_clicked (GtkWidget *widget,
-                                                                  GdkEvent  *event,
-                                                                  gpointer  *data)
+                                                                  Object_c  *owner)
 {
-  Contest_c *c = (Contest_c *) g_object_get_data (G_OBJECT (widget),
-                                                  "instance");
+  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+
   c->on_properties_toolbutton_clicked ();
 }
 
@@ -399,11 +386,10 @@ void Contest_c::on_properties_toolbutton_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_formula_toolbutton_clicked (GtkWidget *widget,
-                                                               GdkEvent  *event,
-                                                               gpointer  *data)
+                                                               Object_c  *owner)
 {
-  Contest_c *c = (Contest_c *) g_object_get_data (G_OBJECT (widget),
-                                                  "instance");
+  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+
   c->on_formula_toolbutton_clicked ();
 }
 
@@ -418,11 +404,10 @@ void Contest_c::on_formula_toolbutton_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_backupfile_button_clicked (GtkWidget *widget,
-                                                              GdkEvent  *event,
-                                                              gpointer  *data)
+                                                              Object_c  *owner)
 {
-  Contest_c *c = (Contest_c *) g_object_get_data (G_OBJECT (widget),
-                                                  "instance");
+  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+
   c->on_backupfile_button_clicked ();
 }
 
@@ -441,11 +426,10 @@ void Contest_c::on_backupfile_button_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_contest_close_button_clicked (GtkWidget *widget,
-                                                                 GdkEvent  *event,
-                                                                 gpointer  *data)
+                                                                 Object_c  *owner)
 {
-  Contest_c *c = (Contest_c *) g_object_get_data (G_OBJECT (widget),
-                                                  "instance");
+  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+
   c->on_contest_close_button_clicked ();
 }
 
