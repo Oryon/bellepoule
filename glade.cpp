@@ -14,36 +14,46 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <gtk/gtk.h>
-#include <glade/glade.h>
-
 #include "glade.hpp"
 
 // --------------------------------------------------------------------------------
-Glade_c::Glade_c (gchar *file_name)
+Glade_c::Glade_c (gchar    *file_name,
+                  Object_c *owner)
 {
   if (file_name)
   {
-    _glade_xml = glade_xml_new (file_name,
-                                NULL,
-                                NULL);
+    GError *error;
 
-    if (_glade_xml == NULL)
+    _glade_xml = gtk_builder_new ();
+
+    error = NULL;
+    gtk_builder_add_from_file (_glade_xml,
+                               file_name,
+                               &error);
+
+    if (error)
     {
       gchar *spare_file_name = g_strdup_printf ("../../%s", file_name);
 
-      _glade_xml = glade_xml_new (spare_file_name,
-                                  NULL,
-                                  NULL);
+      g_print (">> %s\n", error->message);
+      g_free (error);
+
+      error = NULL;
+      gtk_builder_add_from_file (_glade_xml,
+                                 spare_file_name,
+                                 &error);
       g_free (spare_file_name);
 
-      if (_glade_xml == NULL)
+      if (error)
       {
+        g_print (">> %s\n", error->message);
+        g_free (error);
+
         gtk_main_quit ();
       }
     }
-
-    glade_xml_signal_autoconnect (_glade_xml);
+    gtk_builder_connect_signals (_glade_xml,
+                                 owner);
   }
   else
   {
@@ -54,6 +64,10 @@ Glade_c::Glade_c (gchar *file_name)
 // --------------------------------------------------------------------------------
 Glade_c::~Glade_c ()
 {
+  if (_glade_xml)
+  {
+    g_object_unref (G_OBJECT (_glade_xml));
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -74,27 +88,13 @@ void Glade_c::DetachFromParent (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 GtkWidget *Glade_c::GetWidget (gchar *name)
 {
-  return glade_xml_get_widget (_glade_xml,
-                               name);
+  return GTK_WIDGET (gtk_builder_get_object (_glade_xml,
+                                             name));
 }
 
 // --------------------------------------------------------------------------------
 GtkWidget *Glade_c::GetRootWidget ()
 {
-  return glade_xml_get_widget (_glade_xml,
-                               "root");
-}
-
-// --------------------------------------------------------------------------------
-void Glade_c::Bind (gchar *widget_name,
-                    void  *o)
-{
-  GtkWidget *w = GetWidget (widget_name);
-
-  if (w)
-  {
-    g_object_set_data (G_OBJECT (w),
-                       "instance",
-                       o);
-  }
+  return GTK_WIDGET (gtk_builder_get_object (_glade_xml,
+                                             "root"));
 }

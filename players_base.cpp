@@ -22,7 +22,8 @@
 // --------------------------------------------------------------------------------
 PlayersBase_c::PlayersBase_c ()
 {
-  _glade = new Glade_c ("player.glade");
+  _glade = new Glade_c ("player.glade",
+                        this);
 
   _player_list = NULL;
 
@@ -37,11 +38,6 @@ PlayersBase_c::PlayersBase_c ()
 
     _store = gtk_list_store_newv (nb_attr,
                                   types);
-  }
-
-  {
-    _glade->Bind ("add_button",   this);
-    _glade->Bind ("close_button", this);
   }
 }
 
@@ -156,11 +152,10 @@ void PlayersBase_c::RemoveSelection (GtkTreeSelection *selection)
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_close_button_clicked (GtkWidget *widget,
-                                                         GdkEvent  *event,
-                                                         gpointer  *data)
+                                                         Object_c  *owner)
 {
-  PlayersBase_c *pb = (PlayersBase_c *) g_object_get_data (G_OBJECT (widget),
-                                                           "instance");
+  PlayersBase_c *pb = dynamic_cast <PlayersBase_c *> (owner);
+
   pb->on_close_button_clicked ();
 }
 
@@ -174,11 +169,10 @@ void PlayersBase_c::on_close_button_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_add_button_clicked (GtkWidget *widget,
-                                                       GdkEvent  *event,
-                                                       gpointer  *data)
+                                                       Object_c  *owner)
 {
-  PlayersBase_c *pb = (PlayersBase_c *) g_object_get_data (G_OBJECT (widget),
-                                                           "instance");
+  PlayersBase_c *pb = dynamic_cast <PlayersBase_c *> (owner);
+
   pb->on_add_button_clicked ();
 }
 

@@ -1,132 +1,130 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Mon Sep 28 22:32:06 2009 -->
-<glade-interface>
-  <widget class="GtkWindow" id="window1">
+<?xml version="1.0"?>
+<interface>
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy toplevel-contextual -->
+  <object class="GtkWindow" id="window1">
     <child>
-      <widget class="GtkVBox" id="root">
+      <object class="GtkVBox" id="root">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">8</property>
         <child>
-          <widget class="GtkToolbar" id="toolbar2">
+          <object class="GtkToolbar" id="toolbar2">
             <property name="visible">True</property>
-            <property name="icon_size">GTK_ICON_SIZE_SMALL_TOOLBAR</property>
+            <property name="icon_size">0</property>
             <property name="icon_size_set">True</property>
             <child>
-              <widget class="GtkToolButton" id="filter_button">
+              <object class="GtkToolButton" id="filter_button">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Filtre</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_filter_button_clicked"/>
-              </widget>
+              </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkToolButton" id="print_toolbutton">
+              <object class="GtkToolButton" id="print_toolbutton">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Imprimer</property>
                 <property name="stock_id">gtk-print</property>
                 <signal name="clicked" handler="on_print_toolbutton_clicked"/>
-              </widget>
+              </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="expand">False</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkHBox" id="hbox4">
+          <object class="GtkHBox" id="hbox4">
             <property name="visible">True</property>
             <property name="spacing">30</property>
             <child>
-              <widget class="GtkHBox" id="hbox5">
+              <object class="GtkHBox" id="hbox5">
                 <property name="visible">True</property>
                 <property name="spacing">5</property>
                 <child>
-                  <widget class="GtkLabel" id="label2">
+                  <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Nombre de poules</property>
-                  </widget>
+                  </object>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
                 <child>
-                  <widget class="GtkComboBox" id="nb_pools_combobox">
+                  <object class="GtkComboBox" id="nb_pools_combobox">
                     <property name="visible">True</property>
                     <signal name="changed" handler="on_nb_pools_combobox_changed"/>
-                  </widget>
+                  </object>
                   <packing>
                     <property name="position">1</property>
                   </packing>
                 </child>
-              </widget>
+              </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="padding">5</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkHBox" id="hbox6">
+              <object class="GtkHBox" id="hbox6">
                 <property name="visible">True</property>
                 <property name="spacing">5</property>
                 <child>
-                  <widget class="GtkLabel" id="label4">
+                  <object class="GtkLabel" id="label4">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Tireurs / poule</property>
-                  </widget>
+                  </object>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
                 <child>
-                  <widget class="GtkComboBox" id="pool_size_combobox">
+                  <object class="GtkComboBox" id="pool_size_combobox">
                     <property name="visible">True</property>
                     <signal name="changed" handler="on_pool_size_combobox_changed"/>
-                  </widget>
+                  </object>
                   <packing>
                     <property name="position">1</property>
                   </packing>
                 </child>
-              </widget>
+              </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="expand">False</property>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkScrolledWindow" id="canvas_scrolled_window">
+          <object class="GtkScrolledWindow" id="canvas_scrolled_window">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-            <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
             <child>
               <placeholder/>
             </child>
-          </widget>
+          </object>
           <packing>
             <property name="position">2</property>
           </packing>
         </child>
-      </widget>
+      </object>
     </child>
-  </widget>
-  <widget class="GtkWindow" id="window2">
-    <child>
-      <widget class="GtkVBox" id="stage_configuration">
-        <property name="visible">True</property>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </widget>
-    </child>
-  </widget>
-</glade-interface>
+  </object>
+</interface>

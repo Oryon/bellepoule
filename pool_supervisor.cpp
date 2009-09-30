@@ -31,17 +31,6 @@ PoolSupervisor_c::PoolSupervisor_c (gchar *name)
   _pool_allocator = NULL;
   _displayed_pool = NULL;
 
-  // Callbacks binding
-  {
-    _glade->Bind ("print_pool_toolbutton",  this);
-    _glade->Bind ("filter_pool_toolbutton", this);
-  }
-
-  {
-    ShowAttribute ("name");
-    ShowAttribute ("first_name");
-  }
-
   {
     _menu_pool = gtk_menu_new ();
     gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (_glade->GetWidget ("pool_MenuToolButton")),
@@ -127,11 +116,10 @@ void PoolSupervisor_c::OnPoolSelected (Pool_c *pool)
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_print_pool_toolbutton_clicked (GtkWidget *widget,
-                                                                  GdkEvent  *event,
-                                                                  gpointer  *data)
+                                                                  Object_c  *owner)
 {
-  PoolSupervisor_c *p = (PoolSupervisor_c *) g_object_get_data (G_OBJECT (widget),
-                                                                "instance");
+  PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
+
   p->OnPrintPoolToolbuttonClicked ();
 }
 

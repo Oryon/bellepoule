@@ -30,10 +30,6 @@ Schedule_c::Schedule_c ()
   _current_stage   = NULL;
   _selected_module = NULL;
 
-  _glade->Bind ("previous_stage_toolbutton", this);
-  _glade->Bind ("next_stage_toolbutton",     this);
-  _glade->Bind ("formula_treeview",          this);
-
   {
     GtkWidget         *treeview = _glade->GetWidget ("formula_treeview");
     GtkCellRenderer   *renderer = gtk_cell_renderer_text_new ();
@@ -362,11 +358,10 @@ void Schedule_c::on_stage_selected ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_previous_stage_toolbutton_clicked (GtkWidget *widget,
-                                                                      GdkEvent  *event,
-                                                                      gpointer  *data)
+                                                                      Object_c  *owner)
 {
-  Schedule_c *s = (Schedule_c *) g_object_get_data (G_OBJECT (widget),
-                                                    "instance");
+  Schedule_c *s = dynamic_cast <Schedule_c *> (owner);
+
   s->on_previous_stage_toolbutton_clicked ();
 }
 
@@ -386,11 +381,10 @@ void Schedule_c::on_previous_stage_toolbutton_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_next_stage_toolbutton_clicked (GtkWidget *widget,
-                                                                  GdkEvent  *event,
-                                                                  gpointer  *data)
+                                                                  Object_c  *owner)
 {
-  Schedule_c *s = (Schedule_c *) g_object_get_data (G_OBJECT (widget),
-                                                    "instance");
+  Schedule_c *s = dynamic_cast <Schedule_c *> (owner);
+
   s->on_next_stage_toolbutton_clicked ();
 }
 

@@ -34,13 +34,6 @@ PlayersList_c::PlayersList_c (gchar         *name,
     AddSensitiveWidget (_glade->GetWidget ("remove_player_button"));
   }
 
-  // Callbacks binding
-  {
-    _glade->Bind ("add_player_button",          this);
-    _glade->Bind ("remove_player_button",       this);
-    _glade->Bind ("players_list_filter_button", this);
-  }
-
   // Player attributes to display
   {
     ShowAttribute ("attending");
@@ -370,11 +363,10 @@ void PlayersList_c::SetSensitiveState (bool sensitive_value)
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
-                                                              GdkEvent  *event,
-                                                              gpointer  *data)
+                                                              Object_c  *owner)
 {
-  PlayersList_c *c = (PlayersList_c *) g_object_get_data (G_OBJECT (widget),
-                                                          "instance");
+  PlayersList_c *c = dynamic_cast <PlayersList_c *> (owner);
+
   c->on_add_player_button_clicked ();
 }
 
@@ -386,11 +378,10 @@ void PlayersList_c::on_add_player_button_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_remove_player_button_clicked (GtkWidget *widget,
-                                                                 GdkEvent  *event,
-                                                                 gpointer  *data)
+                                                                 Object_c  *owner)
 {
-  PlayersList_c *c = (PlayersList_c *) g_object_get_data (G_OBJECT (widget),
-                                                          "instance");
+  PlayersList_c *c = dynamic_cast <PlayersList_c *> (owner);
+
   c->on_remove_player_button_clicked ();
 }
 
@@ -404,10 +395,9 @@ void PlayersList_c::on_remove_player_button_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget *widget,
-                                                                       GdkEvent  *event,
-                                                                       gpointer  *data)
+                                                                       Object_c  *owner)
 {
-  PlayersList_c *c = (PlayersList_c *) g_object_get_data (G_OBJECT (widget),
-                                                          "instance");
+  PlayersList_c *c = dynamic_cast <PlayersList_c *> (owner);
+
   c->SelectAttributes ();
 }
