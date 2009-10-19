@@ -93,6 +93,13 @@ GtkWidget *Glade_c::GetWidget (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
+GObject *Glade_c::GetObject (gchar *name)
+{
+  return gtk_builder_get_object (_glade_xml,
+                                 name);
+}
+
+// --------------------------------------------------------------------------------
 GtkWidget *Glade_c::GetRootWidget ()
 {
   return GTK_WIDGET (gtk_builder_get_object (_glade_xml,

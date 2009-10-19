@@ -180,7 +180,12 @@ gchar *Attribute_c::GetName ()
 // --------------------------------------------------------------------------------
 gint Attribute_c::Compare (Attribute_c *a, Attribute_c *b)
 {
-  return a->CompareWith (b);
+  if (a)
+  {
+    return a->CompareWith (b);
+  }
+
+  return -1;
 }
 
 // --------------------------------------------------------------------------------
@@ -234,7 +239,12 @@ gchar *TextAttribute_c::GetStringImage ()
 // --------------------------------------------------------------------------------
 gint TextAttribute_c::CompareWith (Attribute_c *with)
 {
-  return (strcmp ((const gchar *) GetValue (), (const gchar *) with->GetValue ()));
+  if (with)
+  {
+    return (strcmp ((const gchar *) GetValue (), (const gchar *) with->GetValue ()));
+  }
+
+  return -1;
 }
 
 // --------------------------------------------------------------------------------
@@ -285,7 +295,12 @@ gchar *BooleanAttribute_c::GetStringImage ()
 // --------------------------------------------------------------------------------
 gint BooleanAttribute_c::CompareWith (Attribute_c *with)
 {
-  return ((guint) GetValue () - (guint) with->GetValue ());
+  if (with)
+  {
+    return ((guint) GetValue () - (guint) with->GetValue ());
+  }
+
+  return -1;
 }
 
 // --------------------------------------------------------------------------------
@@ -343,5 +358,10 @@ gchar *IntAttribute_c::GetStringImage ()
 // --------------------------------------------------------------------------------
 gint IntAttribute_c::CompareWith (Attribute_c *with)
 {
-  return ((guint) GetValue () - (guint) with->GetValue ());
+  if (with)
+  {
+    return ((guint) GetValue () - (guint) with->GetValue ());
+  }
+
+  return -1;
 }

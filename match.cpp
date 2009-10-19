@@ -43,6 +43,15 @@ Match_c::~Match_c ()
 }
 
 // --------------------------------------------------------------------------------
+void Match_c::SetMaxScore (guint max_score)
+{
+  _max_score = max_score;
+
+  _A_score->SetMaxScore (max_score);
+  _B_score->SetMaxScore (max_score);
+}
+
+// --------------------------------------------------------------------------------
 Player_c *Match_c::GetPlayerA ()
 {
   return _A;

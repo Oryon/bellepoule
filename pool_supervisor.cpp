@@ -26,15 +26,27 @@ const gchar *PoolSupervisor_c::_class_name = "pool_stage";
 // --------------------------------------------------------------------------------
 PoolSupervisor_c::PoolSupervisor_c (gchar *name)
   : Stage_c (name),
-  Module_c ("pool.glade")
+  Module_c ("pool_supervisor.glade")
 {
   _pool_allocator = NULL;
   _displayed_pool = NULL;
+  _max_score      = 5;
 
   {
     _menu_pool = gtk_menu_new ();
     gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (_glade->GetWidget ("pool_MenuToolButton")),
                                    _menu_pool);
+  }
+
+  // Sensitive widgets
+  {
+    AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
+    AddSensitiveWidget (_glade->GetWidget ("qualified_fencer_spinbutton"));
+  }
+
+  // Filter
+  {
+    ShowAttribute ("name");
   }
 }
 
@@ -47,12 +59,12 @@ PoolSupervisor_c::~PoolSupervisor_c ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Init ()
 {
-  RegisterStageClass ("pool_stage",
+  RegisterStageClass (_class_name,
                       CreateInstance);
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *PoolSupervisor_c::CreateInstance (xmlNode *xml_node)
+Stage_c *PoolSupervisor_c::CreateInstance ()
 {
   return new PoolSupervisor_c ("Pool");
 }
@@ -66,26 +78,28 @@ void PoolSupervisor_c::Manage (Pool_c *pool)
                          menu_item);
   gtk_widget_show (menu_item);
   g_signal_connect (menu_item, "button-release-event",
-                    G_CALLBACK (on_pool_selected), pool);
-
+                    G_CALLBACK (on_pool_selected), this);
   g_object_set_data (G_OBJECT (menu_item),
-                     "instance",
-                     this);
+                     "PoolSupervisor_c::pool",
+                     pool);
+
   pool->SetData ("pool_supervisor::menu_item",
                  menu_item);
   pool->SetRandSeed (0);
+  pool->SetMaxScore (_max_score);
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolSupervisor_c::on_pool_selected (GtkWidget      *widget,
-                                             GdkEventButton *event,
-                                             gpointer        user_data)
+gboolean PoolSupervisor_c::on_pool_selected (GtkWidget        *widget,
+                                             GdkEventButton   *event,
+                                             PoolSupervisor_c *owner)
 {
-  PoolSupervisor_c *p = (PoolSupervisor_c *) g_object_get_data (G_OBJECT (widget),
-                                                                "instance");
-  p->OnPoolSelected ((Pool_c *) user_data);
+  PoolSupervisor_c *p = owner;
 
-  return TRUE;
+  p->OnPoolSelected ((Pool_c *) g_object_get_data (G_OBJECT (widget),
+                                                   "PoolSupervisor_c::pool"));
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -276,6 +290,68 @@ void PoolSupervisor_c::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolSupervisor_c::ApplyConfig ()
+{
+  GtkWidget *max_score_w = _glade->GetWidget ("max_score_entry");
+
+  if (max_score_w)
+  {
+    gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (max_score_w));
+
+    if (str)
+    {
+      _max_score = atoi (str);
+
+      if (_pool_allocator)
+      {
+        for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+        {
+          Pool_c *pool;
+
+          pool = _pool_allocator->GetPool (p);
+          pool->SetMaxScore (_max_score);
+        }
+      }
+    }
+    if (_displayed_pool)
+    {
+      OnPoolSelected (_displayed_pool);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean PoolSupervisor_c::CheckInputProvider (Stage_c *provider)
+{
+  if (provider == NULL)
+  {
+    return false;
+  }
+  else
+  {
+    Stage_c::StageClass *provider_class = provider->GetClass ();
+
+    return (strcmp (provider_class->_name, PoolAllocator_c::_class_name) == 0);
+  }
+}
+
+// --------------------------------------------------------------------------------
+Stage_c *PoolSupervisor_c::GetInputProvider ()
+{
+  return Stage_c::CreateInstance (PoolAllocator_c::_class_name);
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::FillInConfig ()
+{
+  gchar *text = g_strdup_printf ("%d", _max_score);
+
+  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
+                      text);
+  g_free (text);
+}
+
+// --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnAttrListUpdated ()
 {
   if (_displayed_pool)
@@ -285,11 +361,10 @@ void PoolSupervisor_c::OnAttrListUpdated ()
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_filter_pool_toolbutton_clicked (GtkWidget *widget,
-                                                                   GdkEvent  *event,
-                                                                   gpointer  *data)
+extern "C" G_MODULE_EXPORT void on_pool_filter_toollbutton_clicked (GtkWidget *widget,
+                                                                    Object_c  *owner)
 {
-  PoolSupervisor_c *p = (PoolSupervisor_c *) g_object_get_data (G_OBJECT (widget),
-                                                                "instance");
+  PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
+
   p->SelectAttributes ();
 }

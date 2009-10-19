@@ -135,10 +135,12 @@ void Contest_c::InitInstance ()
   }
 
   {
-    _players_base = new PlayersBase_c ();
+    PlayersList_c *player_list = dynamic_cast <PlayersList_c *> (Stage_c::CreateInstance ("checkin"));
 
-    _schedule->AddStage (new PlayersList_c ("checkin",
-                                            _players_base));
+    _players_base = new PlayersBase_c ();
+    player_list->SetPlayerBase (_players_base);
+
+    _schedule->AddStage (player_list);
   }
 
   // Properties dialog

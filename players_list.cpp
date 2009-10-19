@@ -20,18 +20,20 @@
 
 #include "players_list.hpp"
 
+const gchar *PlayersList_c::_class_name = "checkin";
+
 // --------------------------------------------------------------------------------
-PlayersList_c::PlayersList_c (gchar         *name,
-                              PlayersBase_c *players_base)
+PlayersList_c::PlayersList_c (gchar *name)
 : Stage_c (name),
   Module_c ("players_list.glade")
 {
-  _players_base = players_base;
+  _players_base = NULL;
 
   // Sensitive widgets
   {
     AddSensitiveWidget (_glade->GetWidget ("add_player_button"));
     AddSensitiveWidget (_glade->GetWidget ("remove_player_button"));
+    AddSensitiveWidget (_glade->GetWidget ("import_toolbutton"));
   }
 
   // Player attributes to display
@@ -53,16 +55,23 @@ PlayersList_c::~PlayersList_c ()
 }
 
 // --------------------------------------------------------------------------------
+void PlayersList_c::Init ()
+{
+  RegisterStageClass (_class_name,
+                      CreateInstance);
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList_c::on_cell_edited (GtkCellRendererText *cell,
                                     gchar               *path_string,
                                     gchar               *new_text,
                                     gpointer             user_data)
 {
-  PlayersList_c *c = (PlayersList_c *) user_data;
+  PlayersList_c *p = (PlayersList_c *) user_data;
   gchar *attr_name = (gchar *) g_object_get_data (G_OBJECT (cell),
                                                   "PlayersList_c::attribute_name");
 
-  c->OnCellEdited (path_string,
+  p->OnCellEdited (path_string,
                    new_text,
                    attr_name);
 }
@@ -72,11 +81,11 @@ void PlayersList_c::on_cell_toggled (GtkCellRendererToggle *cell,
                                      gchar                 *path_string,
                                      gpointer               user_data)
 {
-  PlayersList_c *c = (PlayersList_c *) user_data;
+  PlayersList_c *p = (PlayersList_c *) user_data;
   gchar *attr_name = (gchar *) g_object_get_data (G_OBJECT (cell),
                                                   "PlayersList_c::attribute_name");
 
-  c->OnCellToggled (path_string,
+  p->OnCellToggled (path_string,
                     gtk_cell_renderer_toggle_get_active (cell),
                     attr_name);
 }
@@ -329,6 +338,116 @@ void PlayersList_c::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
+void PlayersList_c::SetPlayerBase (PlayersBase_c *players_base)
+{
+  _players_base = players_base;
+}
+
+// --------------------------------------------------------------------------------
+Stage_c *PlayersList_c::CreateInstance ()
+{
+  return new PlayersList_c ("Check in");
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Import ()
+{
+  GtkWidget *chooser;
+
+  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new ("Choose a FFE file (.cvs) ...",
+                                                     NULL,
+                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                     GTK_STOCK_CANCEL,
+                                                     GTK_RESPONSE_CANCEL,
+                                                     GTK_STOCK_OPEN,
+                                                     GTK_RESPONSE_ACCEPT,
+                                                     NULL));
+
+  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+  {
+    gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+    guint  nb_attr  = 0;
+    gchar *file;
+
+    {
+      gchar *raw_file;
+      gsize  length;
+      guint  j;
+
+      g_file_get_contents ((const gchar *) filename,
+                           &raw_file,
+                           &length,
+                           NULL);
+      length++;
+
+      file = (gchar *) g_malloc (length);
+
+      j = 0;
+      for (guint i = 0; i < length; i++)
+      {
+        if (raw_file[i] != '\r')
+        {
+          file[j] = raw_file[i];
+          j++;
+        }
+      }
+    }
+
+    g_print ("\n\n");
+    // Header
+    {
+      gchar **header_line = g_strsplit_set (file,
+                                            "\n",
+                                            0);
+
+      if (header_line)
+      {
+        gchar **header_attr = g_strsplit_set (header_line[0],
+                                              ";",
+                                              0);
+
+        if (header_attr)
+        {
+          for (guint i = 0; header_attr[i] != NULL; i++)
+          {
+            nb_attr++;
+          }
+          g_strfreev (header_attr);
+        }
+
+        g_strfreev (header_line);
+      }
+    }
+
+    // Fencers
+    {
+      gchar **tokens = g_strsplit_set (file,
+                                       ";\n",
+                                       0);
+
+      if (tokens)
+      {
+        Player_c *player = new Player_c;
+
+        for (guint i = nb_attr; tokens[i] != NULL; i += nb_attr)
+        {
+          player->SetAttributeValue ("name",       tokens[i]);
+          player->SetAttributeValue ("first_name", tokens[i+1]);
+
+          _players_base->Add (player);
+          player = new Player_c;
+        }
+        g_strfreev (tokens);
+      }
+    }
+
+    g_free (file);
+  }
+
+  gtk_widget_destroy (chooser);
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList_c::SetSensitiveState (bool sensitive_value)
 {
   GList *columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
@@ -365,9 +484,9 @@ void PlayersList_c::SetSensitiveState (bool sensitive_value)
 extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
                                                               Object_c  *owner)
 {
-  PlayersList_c *c = dynamic_cast <PlayersList_c *> (owner);
+  PlayersList_c *p = dynamic_cast <PlayersList_c *> (owner);
 
-  c->on_add_player_button_clicked ();
+  p->on_add_player_button_clicked ();
 }
 
 // --------------------------------------------------------------------------------
@@ -380,9 +499,9 @@ void PlayersList_c::on_add_player_button_clicked ()
 extern "C" G_MODULE_EXPORT void on_remove_player_button_clicked (GtkWidget *widget,
                                                                  Object_c  *owner)
 {
-  PlayersList_c *c = dynamic_cast <PlayersList_c *> (owner);
+  PlayersList_c *p = dynamic_cast <PlayersList_c *> (owner);
 
-  c->on_remove_player_button_clicked ();
+  p->on_remove_player_button_clicked ();
 }
 
 // --------------------------------------------------------------------------------
@@ -397,7 +516,16 @@ void PlayersList_c::on_remove_player_button_clicked ()
 extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget *widget,
                                                                        Object_c  *owner)
 {
-  PlayersList_c *c = dynamic_cast <PlayersList_c *> (owner);
+  PlayersList_c *p = dynamic_cast <PlayersList_c *> (owner);
 
-  c->SelectAttributes ();
+  p->SelectAttributes ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
+                                                              Object_c  *owner)
+{
+  PlayersList_c *p = dynamic_cast <PlayersList_c *> (owner);
+
+  p->Import ();
 }

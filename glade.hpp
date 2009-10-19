@@ -29,6 +29,7 @@ class Glade_c : public Object_c
 
     GtkWidget *GetRootWidget    ();
     GtkWidget *GetWidget        (gchar *name);
+    GObject   *GetObject        (gchar *name);
     void       DetachFromParent (GtkWidget *widget);
 
   private:

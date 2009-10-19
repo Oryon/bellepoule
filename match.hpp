@@ -50,6 +50,8 @@ class Match_c : public Object_c
 
     void CleanScore ();
 
+    void SetMaxScore (guint max_score);
+
   private:
     guint     _max_score;
     Player_c *_A;

@@ -39,6 +39,8 @@ class Score_c : public Object_c
 
     gboolean IsConsistentWith (Score_c *with);
 
+    void SetMaxScore (guint max_score);
+
   private:
     gboolean  _is_known;
     guint     _max_score;

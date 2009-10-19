@@ -27,12 +27,15 @@
 class PlayersList_c : public virtual Stage_c, public Module_c
 {
   public:
-     PlayersList_c (gchar *name,
-                    PlayersBase_c *players_base);
+    static void Init ();
+
+    PlayersList_c (gchar *name);
 
   public:
     void on_add_player_button_clicked    ();
     void on_remove_player_button_clicked ();
+    void Import ();
+    void SetPlayerBase (PlayersBase_c *players_base);
 
   private:
     void Enter ();
@@ -41,8 +44,12 @@ class PlayersList_c : public virtual Stage_c, public Module_c
     void Wipe ();
 
   private:
+    static const gchar *_class_name;
+
     GtkWidget     *_tree_view;
     PlayersBase_c *_players_base;
+
+    static Stage_c *CreateInstance ();
 
     void SetColumn (guint     id,
                     gchar    *attr,

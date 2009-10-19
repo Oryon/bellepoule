@@ -40,25 +40,33 @@ class Schedule_c : public Module_c
     void on_previous_stage_toolbutton_clicked ();
     void on_next_stage_toolbutton_clicked     ();
     void on_stage_selected ();
+    void on_stage_removed ();
 
   private:
     GtkListStore *_list_store;
     GList        *_stage_list;
-    GList        *_current_stage;
-    Module_c     *_selected_module;
+    guint         _current_stage;
 
-    void   SetCurrentStage    (GList *stage);
-    void   CancelCurrentStage ();
+    void      SetCurrentStage    (guint index);
+    void      CancelCurrentStage ();
+    Module_c *GetSelectedModule  ();
+
+    gint GetNotebookPageNum (Stage_c *stage);
 
     static void on_row_selected (GtkWidget *widget,
                                  GdkEvent  *event,
                                  gpointer  *data);
+
+    static gboolean on_new_stage_selected (GtkWidget      *widget,
+                                           GdkEventButton *event,
+                                           Schedule_c     *owner);
 
   private:
     GtkWidget *_formula_dlg;
 
     ~Schedule_c ();
     void OnPlugged ();
+    void PlugStage (Stage_c *stage);
 };
 
 #endif

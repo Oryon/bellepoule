@@ -106,3 +106,9 @@ gboolean Score_c::IsConsistentWith (Score_c *with)
 
   return true;
 }
+
+// --------------------------------------------------------------------------------
+void Score_c::SetMaxScore (guint max_score)
+{
+  _max_score = max_score;
+}

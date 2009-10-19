@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
@@ -22,16 +23,15 @@
 
 #include "stage.hpp"
 
-GData *Stage_c::_stage_base = NULL;
+GSList *Stage_c::_stage_base = NULL;
 
 // --------------------------------------------------------------------------------
 Stage_c::Stage_c (gchar *class_name)
 {
-  _name       = g_strdup ("");
-  _class_name = class_name;
-  _locked     = false;
-  _result     = NULL;
-  _previous   = NULL;
+  _name     = g_strdup ("");
+  _locked   = false;
+  _result   = NULL;
+  _previous = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -42,9 +42,9 @@ Stage_c::~Stage_c ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Stage_c::GetClassName ()
+const gchar *Stage_c::GetClassName ()
 {
-  return _class_name;
+  return _class->_name;
 }
 
 // --------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ gchar *Stage_c::GetName ()
 // --------------------------------------------------------------------------------
 gchar *Stage_c::GetFullName ()
 {
-  return g_strdup_printf ("%s\n%s", _class_name, _name);
+  return g_strdup_printf ("%s\n%s", _class->_name, _name);
 }
 
 // --------------------------------------------------------------------------------
@@ -100,6 +100,16 @@ gboolean Stage_c::Locked ()
 }
 
 // --------------------------------------------------------------------------------
+void Stage_c::ApplyConfig ()
+{
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::FillInConfig ()
+{
+}
+
+// --------------------------------------------------------------------------------
 void Stage_c::SetPrevious (Stage_c *previous)
 {
   _previous = previous;
@@ -139,14 +149,59 @@ Player_c *Stage_c::GetPlayerFromRef (guint ref)
 void Stage_c::RegisterStageClass (const gchar *name,
                                   Creator      creator)
 {
-  if (_stage_base == NULL)
-  {
-    g_datalist_init (&_stage_base);
-  }
+  StageClass *stage_class = new StageClass;
 
-  g_datalist_set_data (&_stage_base,
-                       name,
-                       (void *) creator);
+  stage_class->_name    = name;
+  stage_class->_creator = creator;
+
+  _stage_base = g_slist_append (_stage_base,
+                                (void *) stage_class);
+}
+
+// --------------------------------------------------------------------------------
+guint Stage_c::GetNbStageClass ()
+{
+  return g_slist_length (_stage_base);
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::GetStageClass (guint    index,
+                             gchar   **name,
+                             Creator *creator)
+{
+  StageClass *stage_class = (StageClass *) g_slist_nth_data (_stage_base,
+                                                             index);
+  if (stage_class)
+  {
+    *name    = (gchar *) stage_class->_name;
+    *creator = stage_class->_creator;
+  }
+}
+
+// --------------------------------------------------------------------------------
+Stage_c::StageClass *Stage_c::GetClass ()
+{
+  return _class;
+}
+
+// --------------------------------------------------------------------------------
+Stage_c::StageClass *Stage_c::GetClass (const gchar *name)
+{
+  if (name)
+  {
+    for (guint i = 0; i < g_slist_length (_stage_base); i++)
+    {
+      StageClass *stage_class;
+
+      stage_class = (StageClass *) g_slist_nth_data (_stage_base,
+                                                     i);
+      if (strcmp (name, stage_class->_name) == 0)
+      {
+        return stage_class;
+      }
+    }
+  }
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -154,15 +209,40 @@ Stage_c *Stage_c::CreateInstance (xmlNode *xml_node)
 {
   if (xml_node)
   {
-    Creator creator = (Creator) g_datalist_get_data (&_stage_base,
-                                                     (gchar *) xml_node->name);
-
-    if (creator)
-    {
-      return creator (xml_node);
-    }
+    return CreateInstance ((gchar *) xml_node->name);
   }
 
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+Stage_c *Stage_c::CreateInstance (const gchar *name)
+{
+  StageClass *stage_class = GetClass (name);
+
+  if (stage_class)
+  {
+    Stage_c *stage = stage_class->_creator ();
+
+    if (stage)
+    {
+      stage->_class = stage_class;
+    }
+    return stage;
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Stage_c::CheckInputProvider (Stage_c *provider)
+{
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+Stage_c *Stage_c::GetInputProvider ()
+{
   return NULL;
 }
 

@@ -36,6 +36,8 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     Pool_c *GetPool    (guint index);
 
   public:
+    static const gchar *_class_name;
+
     void OnComboboxChanged (GtkComboBox *cb);
 
   private:
@@ -51,8 +53,6 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
       guint    size;
       gboolean has_two_size;
     } Configuration;
-
-    static const gchar *_class_name;
 
     GSList        *_attendees;
     GSList        *_pools_list;
@@ -122,7 +122,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
                                      GdkEventButton *event,
                                      Pool_c         *pool);
 
-    static Stage_c *CreateInstance (xmlNode *xml_node);
+    static Stage_c *CreateInstance ();
 
     void Load (xmlNode *xml_node);
 

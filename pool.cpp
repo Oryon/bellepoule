@@ -62,6 +62,13 @@ Pool_c::~Pool_c ()
 void Pool_c::SetMaxScore (guint32 max_score)
 {
   _max_score = max_score;
+  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  {
+    Match_c *match;
+
+    match = (Match_c *) g_slist_nth_data (_match_list, i);
+    match->SetMaxScore (_max_score);
+  }
 }
 
 // --------------------------------------------------------------------------------

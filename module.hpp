@@ -38,6 +38,8 @@ class Module_c : public virtual Object_c
 
     GtkWidget *GetConfigWidget ();
 
+    GtkWidget *GetRootWidget ();
+
   protected:
     Glade_c *_glade;
     GSList  *_attr_list;
@@ -48,7 +50,6 @@ class Module_c : public virtual Object_c
     virtual void OnPlugged   ();
     virtual void OnUnPlugged ();
 
-    GtkWidget *GetRootWidget ();
     GtkToolbar *GetToolbar ();
 
     void AddSensitiveWidget (GtkWidget *w);
@@ -72,7 +73,6 @@ class Module_c : public virtual Object_c
     GSList       *_sensitive_widgets;
     GSList       *_plugged_list;
     Module_c     *_owner;
-    gchar        *_name;
     GtkTreeModel *_attr_filter_store;
     GtkWidget    *_filter_window;
     GtkWidget    *_config_widget;

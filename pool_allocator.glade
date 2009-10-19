@@ -11,8 +11,6 @@
         <child>
           <object class="GtkToolbar" id="toolbar2">
             <property name="visible">True</property>
-            <property name="icon_size">0</property>
-            <property name="icon_size_set">True</property>
             <child>
               <object class="GtkToolButton" id="filter_button">
                 <property name="visible">True</property>
@@ -63,7 +61,20 @@
                 <child>
                   <object class="GtkComboBox" id="nb_pools_combobox">
                     <property name="visible">True</property>
+                    <property name="model">combo_liststore</property>
                     <signal name="changed" handler="on_nb_pools_combobox_changed"/>
+                    <child>
+                      <object class="GtkCellRendererPixbuf" id="combo_icon_renderer"/>
+                      <attributes>
+                        <attribute name="stock-id">2</attribute>
+                      </attributes>
+                    </child>
+                    <child>
+                      <object class="GtkCellRendererText" id="combo_text_renderer"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
                   </object>
                   <packing>
                     <property name="position">1</property>
@@ -92,7 +103,20 @@
                 <child>
                   <object class="GtkComboBox" id="pool_size_combobox">
                     <property name="visible">True</property>
+                    <property name="model">combo_liststore</property>
                     <signal name="changed" handler="on_pool_size_combobox_changed"/>
+                    <child>
+                      <object class="GtkCellRendererPixbuf" id="cellrenderer1"/>
+                      <attributes>
+                        <attribute name="stock-id">2</attribute>
+                      </attributes>
+                    </child>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
                   </object>
                   <packing>
                     <property name="position">1</property>
@@ -126,5 +150,15 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="combo_liststore">
+    <columns>
+      <!-- column-name pool_size -->
+      <column type="gchararray"/>
+      <!-- column-name pool_number -->
+      <column type="gchararray"/>
+      <!-- column-name fie_icon -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>

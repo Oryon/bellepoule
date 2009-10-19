@@ -312,6 +312,33 @@ void PlayersBase_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
+void PlayersBase_c::Add (Player_c *player)
+{
+  GtkTreeIter iter;
+
+  gtk_list_store_append (_store, &iter);
+
+  {
+    gchar *str;
+
+    str = g_strdup_printf ("%d\n", player->GetRef ());
+    player->SetAttributeValue ("ref", str);
+    g_free (str);
+
+    player->SetAttributeValue ("attending", (guint) FALSE);
+  }
+
+  player->SetData ("PlayersBase_c::tree_row_ref",
+                   GetPlayerRowRef (&iter),
+                   (GDestroyNotify) gtk_tree_row_reference_free);
+
+  _player_list = g_slist_append (_player_list,
+                                 player);
+
+  Update (player);
+}
+
+// --------------------------------------------------------------------------------
 void PlayersBase_c::Update (Player_c *player)
 {
   GtkTreeRowReference *ref;

@@ -45,12 +45,17 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void RetrievePools ();
 
   private:
-    static gboolean on_pool_selected (GtkWidget      *widget,
-                                      GdkEventButton *event,
-                                      gpointer        user_data);
+    static gboolean on_pool_selected (GtkWidget        *widget,
+                                      GdkEventButton   *event,
+                                      PoolSupervisor_c *owner);
     void OnPoolSelected (Pool_c *pool);
 
-    static Stage_c *CreateInstance (xmlNode *xml_node);
+    static Stage_c *CreateInstance ();
+
+    void FillInConfig ();
+    void ApplyConfig ();
+    gboolean CheckInputProvider (Stage_c *provider);
+    Stage_c *GetInputProvider ();
 
   private:
     static const gchar *_class_name;
@@ -58,6 +63,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     GtkWidget       *_menu_pool;
     PoolAllocator_c *_pool_allocator;
     Pool_c          *_displayed_pool;
+    guint            _max_score;
 
     ~PoolSupervisor_c ();
 

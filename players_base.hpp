@@ -45,6 +45,7 @@ class PlayersBase_c : public Object_c
     void          Save              (xmlTextWriter *xml_writer);
     void          Load              (xmlDoc        *doc);
     void          Lock              ();
+    void          Add               (Player_c *player);
     GSList       *CreateCustomList  (CustomFilter filter);
 
   public:

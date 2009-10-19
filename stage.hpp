@@ -27,14 +27,20 @@ class Player_c;
 class Stage_c : public virtual Object_c
 {
   public:
-    typedef Stage_c * (*Creator) (xmlNode *xml_node);
+    typedef Stage_c * (*Creator) ();
+
+    struct StageClass
+    {
+      const gchar      *_name;
+      Stage_c::Creator  _creator;
+    };
 
   public:
     void SetPrevious (Stage_c *previous);
 
     Stage_c *GetPreviousStage ();
 
-    gchar *GetClassName ();
+    const gchar *GetClassName ();
 
     gchar *GetName ();
 
@@ -52,6 +58,8 @@ class Stage_c : public virtual Object_c
 
     Player_c *GetPlayerFromRef (guint ref);
 
+    StageClass *GetClass ();
+
     virtual void Enter () {};
 
     virtual void Wipe () {};
@@ -62,10 +70,26 @@ class Stage_c : public virtual Object_c
 
     virtual void Dump ();
 
+    virtual void ApplyConfig ();
+
+    virtual void FillInConfig ();
+
+    virtual gboolean CheckInputProvider (Stage_c *provider);
+
+    virtual Stage_c *GetInputProvider ();
+
     static void RegisterStageClass (const gchar *name,
                                     Creator      creator);
 
+    static guint  GetNbStageClass ();
+
+    static void GetStageClass (guint    index,
+                               gchar   **name,
+                               Creator *creator);
+
     static Stage_c *CreateInstance (xmlNode *xml_node);
+
+    static Stage_c *CreateInstance (const gchar *name);
 
   protected:
     GSList *_result;
@@ -75,16 +99,17 @@ class Stage_c : public virtual Object_c
     virtual ~Stage_c ();
 
   private:
-    static GData *_stage_base;
+    static GSList *_stage_base;
 
-    Stage_c  *_previous;
-    gchar    *_class_name;
-    gchar    *_name;
-    gboolean  _locked;
+    Stage_c    *_previous;
+    StageClass *_class;
+    gchar      *_name;
+    gboolean    _locked;
 
     void FreeResult ();
     virtual void OnLocked () {};
     virtual void OnUnLocked () {};
+    static StageClass *GetClass (const gchar *name);
 };
 
 #endif

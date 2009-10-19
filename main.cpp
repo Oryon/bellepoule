@@ -18,6 +18,7 @@
 
 #include "glade.hpp"
 #include "contest.hpp"
+#include "players_list.hpp"
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 #include "attribute.hpp"
@@ -35,6 +36,7 @@ extern "C" G_MODULE_EXPORT void on_main_window_delete_event (GtkWidget *w,
 extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
                                                           gpointer   data)
 {
+  // g_mem_profile ();
   GtkWidget *nb = xml->GetWidget ("notebook");
   Contest_c *contest;
 
@@ -43,6 +45,7 @@ extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
   {
     contest->AttachTo (GTK_NOTEBOOK (nb));
   }
+  // g_mem_profile ();
 }
 
 // --------------------------------------------------------------------------------
@@ -80,8 +83,10 @@ int main (int argc, char **argv)
   {
     gtk_set_locale  ();
     gtk_init        (&argc, &argv);
+    // g_mem_set_vtable (glib_mem_profiler_table);
 
     Contest_c::Init        ();
+    PlayersList_c::Init    ();
     PoolAllocator_c::Init  ();
     PoolSupervisor_c::Init ();
   }

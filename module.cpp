@@ -91,13 +91,8 @@ Module_c::~Module_c ()
   {
     Module_c *module;
 
-    module = (Module_c *) (g_slist_nth_data (_plugged_list, 0)),
+    module = (Module_c *) (g_slist_nth_data (_plugged_list, 0));
     module->UnPlug ();
-  }
-
-  if (_plugged_list)
-  {
-    g_slist_free (_plugged_list);
   }
 
   UnPlug ();
@@ -124,7 +119,11 @@ Module_c::~Module_c ()
   }
 
   g_object_unref (_attr_filter_store);
-  g_object_unref (_config_widget);
+
+  if (_config_widget)
+  {
+    g_object_unref (_config_widget);
+  }
 }
 
 // --------------------------------------------------------------------------------
