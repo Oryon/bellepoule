@@ -27,12 +27,21 @@ class Player_c;
 class Stage_c : public virtual Object_c
 {
   public:
-    typedef Stage_c * (*Creator) ();
+    struct StageClass;
+
+    typedef Stage_c * (*Creator) (StageClass *stage_class);
+
+    typedef enum
+    {
+      MANDATORY = 0x0001,
+      EDITABLE  = 0x0002
+    } Rights;
 
     struct StageClass
     {
-      const gchar      *_name;
-      Stage_c::Creator  _creator;
+      const gchar *_name;
+      Creator      _creator;
+      Rights       _rights;
     };
 
   public:
@@ -47,6 +56,8 @@ class Stage_c : public virtual Object_c
     gchar *GetFullName ();
 
     void SetName (gchar *name);
+
+    Rights GetRights ();
 
     gboolean Locked ();
 
@@ -74,18 +85,18 @@ class Stage_c : public virtual Object_c
 
     virtual void FillInConfig ();
 
-    virtual gboolean CheckInputProvider (Stage_c *provider);
-
     virtual Stage_c *GetInputProvider ();
 
     static void RegisterStageClass (const gchar *name,
-                                    Creator      creator);
+                                    Creator      creator,
+                                    guint        rights = 0);
 
     static guint  GetNbStageClass ();
 
     static void GetStageClass (guint    index,
                                gchar   **name,
-                               Creator *creator);
+                               Creator *creator,
+                               Rights  *rights);
 
     static Stage_c *CreateInstance (xmlNode *xml_node);
 
@@ -94,7 +105,7 @@ class Stage_c : public virtual Object_c
   protected:
     GSList *_result;
 
-    Stage_c (gchar *class_name);
+    Stage_c (StageClass *stage_class);
 
     virtual ~Stage_c ();
 
@@ -105,6 +116,7 @@ class Stage_c : public virtual Object_c
     StageClass *_class;
     gchar      *_name;
     gboolean    _locked;
+    StageClass *_stage_class;
 
     void FreeResult ();
     virtual void OnLocked () {};

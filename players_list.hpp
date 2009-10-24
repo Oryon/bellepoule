@@ -29,7 +29,7 @@ class PlayersList_c : public virtual Stage_c, public Module_c
   public:
     static void Init ();
 
-    PlayersList_c (gchar *name);
+    PlayersList_c (StageClass *stage_class);
 
   public:
     void on_add_player_button_clicked    ();
@@ -49,7 +49,7 @@ class PlayersList_c : public virtual Stage_c, public Module_c
     GtkWidget     *_tree_view;
     PlayersBase_c *_players_base;
 
-    static Stage_c *CreateInstance ();
+    static Stage_c *CreateInstance (StageClass *stage_class);
 
     void SetColumn (guint     id,
                     gchar    *attr,

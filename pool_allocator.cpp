@@ -40,8 +40,8 @@ extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget
 const gchar *PoolAllocator_c::_class_name = "pool_allocation_stage";
 
 // --------------------------------------------------------------------------------
-PoolAllocator_c::PoolAllocator_c (gchar *name)
-: Stage_c (name),
+PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
+: Stage_c (stage_class),
   CanvasModule_c ("pool_allocator.glade")
 {
   _pools_list      = NULL;
@@ -94,9 +94,9 @@ void PoolAllocator_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *PoolAllocator_c::CreateInstance ()
+Stage_c *PoolAllocator_c::CreateInstance (StageClass *stage_class)
 {
-  return new PoolAllocator_c ("Pool allocation");
+  return new PoolAllocator_c (stage_class);
 }
 
 // --------------------------------------------------------------------------------

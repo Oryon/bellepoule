@@ -23,8 +23,8 @@
 const gchar *PlayersList_c::_class_name = "checkin";
 
 // --------------------------------------------------------------------------------
-PlayersList_c::PlayersList_c (gchar *name)
-: Stage_c (name),
+PlayersList_c::PlayersList_c (StageClass *stage_class)
+: Stage_c (stage_class),
   Module_c ("players_list.glade")
 {
   _players_base = NULL;
@@ -58,7 +58,8 @@ PlayersList_c::~PlayersList_c ()
 void PlayersList_c::Init ()
 {
   RegisterStageClass (_class_name,
-                      CreateInstance);
+                      CreateInstance,
+                      MANDATORY | EDITABLE);
 }
 
 // --------------------------------------------------------------------------------
@@ -344,9 +345,9 @@ void PlayersList_c::SetPlayerBase (PlayersBase_c *players_base)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *PlayersList_c::CreateInstance ()
+Stage_c *PlayersList_c::CreateInstance (StageClass *stage_class)
 {
-  return new PlayersList_c ("Check in");
+  return new PlayersList_c (stage_class);
 }
 
 // --------------------------------------------------------------------------------

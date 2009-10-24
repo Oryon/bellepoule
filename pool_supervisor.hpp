@@ -29,7 +29,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
   public:
     static void Init ();
 
-    PoolSupervisor_c (gchar *name);
+    PoolSupervisor_c (StageClass *stage_class);
 
     void Manage (Pool_c *pool);
 
@@ -50,11 +50,10 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
                                       PoolSupervisor_c *owner);
     void OnPoolSelected (Pool_c *pool);
 
-    static Stage_c *CreateInstance ();
+    static Stage_c *CreateInstance (StageClass *stage_class);
 
     void FillInConfig ();
     void ApplyConfig ();
-    gboolean CheckInputProvider (Stage_c *provider);
     Stage_c *GetInputProvider ();
 
   private:

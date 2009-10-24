@@ -24,8 +24,8 @@
 const gchar *PoolSupervisor_c::_class_name = "pool_stage";
 
 // --------------------------------------------------------------------------------
-PoolSupervisor_c::PoolSupervisor_c (gchar *name)
-  : Stage_c (name),
+PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
+  : Stage_c (stage_class),
   Module_c ("pool_supervisor.glade")
 {
   _pool_allocator = NULL;
@@ -60,13 +60,14 @@ PoolSupervisor_c::~PoolSupervisor_c ()
 void PoolSupervisor_c::Init ()
 {
   RegisterStageClass (_class_name,
-                      CreateInstance);
+                      CreateInstance,
+                      EDITABLE);
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *PoolSupervisor_c::CreateInstance ()
+Stage_c *PoolSupervisor_c::CreateInstance (StageClass *stage_class)
 {
-  return new PoolSupervisor_c ("Pool");
+  return new PoolSupervisor_c (stage_class);
 }
 
 // --------------------------------------------------------------------------------
@@ -292,52 +293,60 @@ void PoolSupervisor_c::Wipe ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::ApplyConfig ()
 {
-  GtkWidget *max_score_w = _glade->GetWidget ("max_score_entry");
-
-  if (max_score_w)
   {
-    gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (max_score_w));
+    GtkWidget *name_w   = _glade->GetWidget ("name_entry");
+    gchar     *name     = (gchar *) gtk_entry_get_text (GTK_ENTRY (name_w));
+    Stage_c   *previous = GetPreviousStage ();
 
-    if (str)
+    SetName (name);
+    previous->SetName (name);
+  }
+
+  {
+    GtkWidget *max_score_w = _glade->GetWidget ("max_score_entry");
+
+    if (max_score_w)
     {
-      _max_score = atoi (str);
+      gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (max_score_w));
 
-      if (_pool_allocator)
+      if (str)
       {
-        for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-        {
-          Pool_c *pool;
+        _max_score = atoi (str);
 
-          pool = _pool_allocator->GetPool (p);
-          pool->SetMaxScore (_max_score);
+        if (_pool_allocator)
+        {
+          for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+          {
+            Pool_c *pool;
+
+            pool = _pool_allocator->GetPool (p);
+            pool->SetMaxScore (_max_score);
+          }
         }
       }
+      if (_displayed_pool)
+      {
+        OnPoolSelected (_displayed_pool);
+      }
     }
-    if (_displayed_pool)
-    {
-      OnPoolSelected (_displayed_pool);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolSupervisor_c::CheckInputProvider (Stage_c *provider)
-{
-  if (provider == NULL)
-  {
-    return false;
-  }
-  else
-  {
-    Stage_c::StageClass *provider_class = provider->GetClass ();
-
-    return (strcmp (provider_class->_name, PoolAllocator_c::_class_name) == 0);
   }
 }
 
 // --------------------------------------------------------------------------------
 Stage_c *PoolSupervisor_c::GetInputProvider ()
 {
+  Stage_c *previous = GetPreviousStage ();
+
+  if (previous)
+  {
+    Stage_c::StageClass *provider_class = previous->GetClass ();
+
+    if (strcmp (provider_class->_name, PoolAllocator_c::_class_name) == 0)
+    {
+      return previous;
+    }
+  }
+
   return Stage_c::CreateInstance (PoolAllocator_c::_class_name);
 }
 
@@ -349,6 +358,9 @@ void PoolSupervisor_c::FillInConfig ()
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
                       text);
   g_free (text);
+
+  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
+                      GetName ());
 }
 
 // --------------------------------------------------------------------------------

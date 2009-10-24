@@ -26,12 +26,13 @@
 GSList *Stage_c::_stage_base = NULL;
 
 // --------------------------------------------------------------------------------
-Stage_c::Stage_c (gchar *class_name)
+Stage_c::Stage_c (StageClass *stage_class)
 {
-  _name     = g_strdup ("");
-  _locked   = false;
-  _result   = NULL;
-  _previous = NULL;
+  _name        = g_strdup ("");
+  _locked      = false;
+  _result      = NULL;
+  _previous    = NULL;
+  _stage_class = stage_class;
 }
 
 // --------------------------------------------------------------------------------
@@ -147,12 +148,14 @@ Player_c *Stage_c::GetPlayerFromRef (guint ref)
 
 // --------------------------------------------------------------------------------
 void Stage_c::RegisterStageClass (const gchar *name,
-                                  Creator      creator)
+                                  Creator      creator,
+                                  guint        rights)
 {
   StageClass *stage_class = new StageClass;
 
   stage_class->_name    = name;
   stage_class->_creator = creator;
+  stage_class->_rights  = (Rights) rights;
 
   _stage_base = g_slist_append (_stage_base,
                                 (void *) stage_class);
@@ -167,7 +170,8 @@ guint Stage_c::GetNbStageClass ()
 // --------------------------------------------------------------------------------
 void Stage_c::GetStageClass (guint    index,
                              gchar   **name,
-                             Creator *creator)
+                             Creator *creator,
+                             Rights  *rights)
 {
   StageClass *stage_class = (StageClass *) g_slist_nth_data (_stage_base,
                                                              index);
@@ -175,6 +179,7 @@ void Stage_c::GetStageClass (guint    index,
   {
     *name    = (gchar *) stage_class->_name;
     *creator = stage_class->_creator;
+    *rights  = stage_class->_rights;
   }
 }
 
@@ -222,7 +227,7 @@ Stage_c *Stage_c::CreateInstance (const gchar *name)
 
   if (stage_class)
   {
-    Stage_c *stage = stage_class->_creator ();
+    Stage_c *stage = stage_class->_creator (stage_class);
 
     if (stage)
     {
@@ -235,15 +240,15 @@ Stage_c *Stage_c::CreateInstance (const gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Stage_c::CheckInputProvider (Stage_c *provider)
-{
-  return TRUE;
-}
-
-// --------------------------------------------------------------------------------
 Stage_c *Stage_c::GetInputProvider ()
 {
   return NULL;
+}
+
+// --------------------------------------------------------------------------------
+Stage_c::Rights Stage_c::GetRights ()
+{
+  return _stage_class->_rights;
 }
 
 // --------------------------------------------------------------------------------

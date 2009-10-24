@@ -28,7 +28,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
   public:
     static void Init ();
 
-    PoolAllocator_c (gchar *name);
+    PoolAllocator_c (StageClass *stage_class);
 
     void Save (xmlTextWriter *xml_writer);
 
@@ -122,7 +122,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
                                      GdkEventButton *event,
                                      Pool_c         *pool);
 
-    static Stage_c *CreateInstance ();
+    static Stage_c *CreateInstance (StageClass *stage_class);
 
     void Load (xmlNode *xml_node);
 

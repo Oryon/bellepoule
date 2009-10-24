@@ -53,6 +53,8 @@ class Schedule_c : public Module_c
 
     gint GetNotebookPageNum (Stage_c *stage);
 
+    void RefreshSensitivity ();
+
     static void on_row_selected (GtkWidget *widget,
                                  GdkEvent  *event,
                                  gpointer  *data);
