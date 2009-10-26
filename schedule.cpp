@@ -443,45 +443,39 @@ void Schedule_c::SetCurrentStage (guint index)
   gtk_notebook_set_current_page  (GTK_NOTEBOOK (GetRootWidget ()),
                                   _current_stage);
 
-  RefreshSensitivity ();
-}
-
-// --------------------------------------------------------------------------------
-void Schedule_c::RefreshSensitivity ()
-{
-  if (_current_stage == 0)
-  {
-    gtk_widget_set_sensitive (_glade->GetWidget ("previous_stage_toolbutton"),
-                              FALSE);
-  }
-  else
-  {
-    gtk_widget_set_sensitive (_glade->GetWidget ("previous_stage_toolbutton"),
-                              TRUE);
-  }
-
-  if (_current_stage >= g_list_length (_stage_list) - 1)
-  {
-    gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
-                              FALSE);
-  }
-  else
-  {
-    gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
-                              TRUE);
-  }
-
   {
     Stage_c *stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
 
     gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("stage_entry")),
                         stage->GetName ());
   }
+
+  RefreshSensitivity ();
 }
 
 // --------------------------------------------------------------------------------
-void Schedule_c::CancelCurrentStage ()
+void Schedule_c::RefreshSensitivity ()
 {
+  gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
+                            FALSE);
+  gtk_widget_set_sensitive (_glade->GetWidget ("previous_stage_toolbutton"),
+                            FALSE);
+  if (_current_stage > 0)
+  {
+    gtk_widget_set_sensitive (_glade->GetWidget ("previous_stage_toolbutton"),
+                              TRUE);
+  }
+
+  if (_current_stage < g_list_length (_stage_list) - 1)
+  {
+    Stage_c *next_stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage + 1);
+
+    if (next_stage->IsOver ())
+    {
+      gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
+                                TRUE);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -664,6 +658,7 @@ void Schedule_c::on_next_stage_toolbutton_clicked ()
 
   stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage+1);
   PlugStage (stage);
+  stage->Enter ();
 
   SetCurrentStage (_current_stage+1);
 }
@@ -686,8 +681,6 @@ void Schedule_c::PlugStage (Stage_c *stage)
         viewport);
 
   gtk_widget_show_all (GetRootWidget ());
-
-  stage->Enter ();
 }
 
 // --------------------------------------------------------------------------------

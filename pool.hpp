@@ -60,6 +60,7 @@ class Pool_c : public CanvasModule_c
     GtkWidget     *_gtk_entry;
     GSList        *_match_list;
     gchar         *_name;
+    gboolean       _is_over;
 
   private:
     static gboolean on_cell_button_press (GooCanvasItem  *item,

@@ -63,6 +63,12 @@ void PlayersList_c::Init ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean PlayersList_c::IsOver ()
+{
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList_c::on_cell_edited (GtkCellRendererText *cell,
                                     gchar               *path_string,
                                     gchar               *new_text,

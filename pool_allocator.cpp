@@ -141,6 +141,7 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
       {
         FillCombobox ();
         SetUpCombobox ();
+        Display ();
         return;
       }
     }

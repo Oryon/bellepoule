@@ -85,6 +85,8 @@ class Stage_c : public virtual Object_c
 
     virtual void FillInConfig ();
 
+    virtual gboolean IsOver ();
+
     virtual Stage_c *GetInputProvider ();
 
     static void RegisterStageClass (const gchar *name,

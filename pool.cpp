@@ -35,6 +35,7 @@ Pool_c::Pool_c (guint number)
   _entry_item  = NULL;
   _rand_seed   = 0;
   _max_score   = 5;
+  _is_over     = FALSE;
 
   _name = g_strdup_printf ("pool #%02d", _number);
 }
@@ -1017,6 +1018,8 @@ void Pool_c::Load (xmlNode *xml_node,
     return;
   }
 
+  _is_over = TRUE;
+
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
     if (n->type == XML_ELEMENT_NODE)
@@ -1054,16 +1057,25 @@ void Pool_c::Load (xmlNode *xml_node,
 
         match = GetMatch (A, B);
 
-        attr = (gchar *) xmlGetProp (n, BAD_CAST "score_A");
-        if (attr)
+        if (match)
         {
-          match->SetScore (A, atoi (attr));
-        }
+          attr = (gchar *) xmlGetProp (n, BAD_CAST "score_A");
+          if (attr)
+          {
+            match->SetScore (A, atoi (attr));
+          }
 
-        attr = (gchar *) xmlGetProp (n, BAD_CAST "score_B");
-        if (attr)
-        {
-          match->SetScore (B, atoi (attr));
+          attr = (gchar *) xmlGetProp (n, BAD_CAST "score_B");
+          if (attr)
+          {
+            match->SetScore (B, atoi (attr));
+          }
+
+            if (   (match->PlayerHasScore (A) == FALSE)
+                || (match->PlayerHasScore (B) == FALSE))
+            {
+              _is_over = FALSE;
+            }
         }
       }
 

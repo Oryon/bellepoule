@@ -48,7 +48,6 @@ class Schedule_c : public Module_c
     guint         _current_stage;
 
     void      SetCurrentStage    (guint index);
-    void      CancelCurrentStage ();
     Module_c *GetSelectedModule  ();
 
     gint GetNotebookPageNum (Stage_c *stage);

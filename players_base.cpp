@@ -53,6 +53,8 @@ PlayersBase_c::~PlayersBase_c ()
   }
 
   g_slist_free (_player_list);
+  gtk_list_store_clear (_store);
+  g_object_unref (_store);
   Object_c::Release (_glade);
 }
 
