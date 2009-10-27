@@ -27,6 +27,9 @@
 class Pool_c : public CanvasModule_c
 {
   public:
+    typedef void (*StatusCbk) (Pool_c *pool,
+                               void   *data);
+
     Pool_c (guint number);
 
     void  AddPlayer    (Player_c *player);
@@ -36,6 +39,11 @@ class Pool_c : public CanvasModule_c
     void  ResetMatches ();
     void  Lock         ();
     void  SetMaxScore  (guint max_score);
+    void  SetStatusCbk (StatusCbk  cbk,
+                        void      *data);
+
+    gboolean IsOver ();
+    gboolean HasError ();
 
     Player_c *GetPlayer (guint i);
 
@@ -61,6 +69,10 @@ class Pool_c : public CanvasModule_c
     GSList        *_match_list;
     gchar         *_name;
     gboolean       _is_over;
+    gboolean       _has_error;
+
+    void          *_status_cbk_data;
+    StatusCbk      _status_cbk;
 
   private:
     static gboolean on_cell_button_press (GooCanvasItem  *item,

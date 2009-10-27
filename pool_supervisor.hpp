@@ -35,6 +35,8 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
     void OnPrintPoolToolbuttonClicked ();
 
+    void OnPoolSelected (gint index);
+
   private:
     void Load (xmlNode *xml_node);
     void Save (xmlTextWriter *xml_writer);
@@ -45,9 +47,6 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void RetrievePools ();
 
   private:
-    static gboolean on_pool_selected (GtkWidget        *widget,
-                                      GdkEventButton   *event,
-                                      PoolSupervisor_c *owner);
     void OnPoolSelected (Pool_c *pool);
 
     static Stage_c *CreateInstance (StageClass *stage_class);
@@ -59,7 +58,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
   private:
     static const gchar *_class_name;
 
-    GtkWidget       *_menu_pool;
+    GtkListStore    *_pool_liststore;
     PoolAllocator_c *_pool_allocator;
     Pool_c          *_displayed_pool;
     guint            _max_score;
@@ -67,6 +66,9 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     ~PoolSupervisor_c ();
 
     void OnAttrListUpdated ();
+
+    static void OnPoolStatusUpdated (Pool_c           *pool,
+                                     PoolSupervisor_c *ps);
 };
 
 #endif

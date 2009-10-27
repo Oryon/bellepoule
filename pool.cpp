@@ -36,6 +36,10 @@ Pool_c::Pool_c (guint number)
   _rand_seed   = 0;
   _max_score   = 5;
   _is_over     = FALSE;
+  _has_error   = FALSE;
+
+  _status_cbk_data = NULL;
+  _status_cbk      = NULL;
 
   _name = g_strdup_printf ("pool #%02d", _number);
 }
@@ -57,6 +61,14 @@ Pool_c::~Pool_c ()
     Object_c::Release (match);
   }
   g_slist_free (_match_list);
+}
+
+// --------------------------------------------------------------------------------
+void Pool_c::SetStatusCbk (StatusCbk  cbk,
+                           void      *data)
+{
+  _status_cbk_data = data;
+  _status_cbk      = cbk;
 }
 
 // --------------------------------------------------------------------------------
@@ -846,6 +858,9 @@ void Pool_c::RefreshScoreData ()
   GSList *ranking    = NULL;
   guint   nb_players = GetNbPlayers ();
 
+  _is_over   = TRUE;
+  _has_error = FALSE;
+
   for (guint a = 0; a < nb_players; a++)
   {
     Player_c *player_a;
@@ -882,6 +897,18 @@ void Pool_c::RefreshScoreData ()
             victories++;
           }
         }
+        else
+        {
+          _is_over = FALSE;
+        }
+
+        if (   (score_a->IsValid () == false)
+            || (score_b->IsValid () == false)
+            || (score_a->IsConsistentWith (score_b) == false))
+        {
+          _is_over   = FALSE;
+          _has_error = TRUE;
+        }
       }
     }
 
@@ -912,6 +939,24 @@ void Pool_c::RefreshScoreData ()
   }
 
   g_slist_free (ranking);
+
+  if (_status_cbk)
+  {
+    _status_cbk (this,
+                 _status_cbk_data);
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Pool_c::IsOver ()
+{
+  return _is_over;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Pool_c::HasError ()
+{
+  return _has_error;
 }
 
 // --------------------------------------------------------------------------------
@@ -1015,6 +1060,12 @@ void Pool_c::Load (xmlNode *xml_node,
 {
   if (xml_node == NULL)
   {
+    if (_status_cbk)
+    {
+      _status_cbk (this,
+                   _status_cbk_data);
+    }
+
     return;
   }
 
@@ -1071,11 +1122,24 @@ void Pool_c::Load (xmlNode *xml_node,
             match->SetScore (B, atoi (attr));
           }
 
-            if (   (match->PlayerHasScore (A) == FALSE)
-                || (match->PlayerHasScore (B) == FALSE))
+          if (   (match->PlayerHasScore (A) == FALSE)
+                 || (match->PlayerHasScore (B) == FALSE))
+          {
+            _is_over = FALSE;
+          }
+
+          {
+            Score_c *score_A = match->GetScore (A);;
+            Score_c *score_B = match->GetScore (B);;
+
+            if (   (score_A->IsValid () == false)
+                || (score_B->IsValid () == false)
+                || (score_A->IsConsistentWith (score_B) == false))
             {
-              _is_over = FALSE;
+              _has_error = TRUE;
+              _is_over   = FALSE;
             }
+          }
         }
       }
 

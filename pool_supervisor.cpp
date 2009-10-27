@@ -23,6 +23,12 @@
 
 const gchar *PoolSupervisor_c::_class_name = "pool_stage";
 
+typedef enum
+{
+  NAME_COLUMN,
+  STATUS_COLUMN
+} ColumnId;
+
 // --------------------------------------------------------------------------------
 PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
   : Stage_c (stage_class),
@@ -32,11 +38,7 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
   _displayed_pool = NULL;
   _max_score      = 5;
 
-  {
-    _menu_pool = gtk_menu_new ();
-    gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (_glade->GetWidget ("pool_MenuToolButton")),
-                                   _menu_pool);
-  }
+  _pool_liststore = GTK_LIST_STORE (_glade->GetObject ("pool_liststore"));
 
   // Sensitive widgets
   {
@@ -54,6 +56,9 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
 PoolSupervisor_c::~PoolSupervisor_c ()
 {
   Object_c::Release (_pool_allocator);
+
+  gtk_list_store_clear (_pool_liststore);
+  g_object_unref (_pool_liststore);
 }
 
 // --------------------------------------------------------------------------------
@@ -73,48 +78,70 @@ Stage_c *PoolSupervisor_c::CreateInstance (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Manage (Pool_c *pool)
 {
-  GtkWidget *menu_item = gtk_menu_item_new_with_label (pool->GetName ());
+  GtkTreeIter iter;
 
-  gtk_menu_shell_append (GTK_MENU_SHELL (_menu_pool),
-                         menu_item);
-  gtk_widget_show (menu_item);
-  g_signal_connect (menu_item, "button-release-event",
-                    G_CALLBACK (on_pool_selected), this);
-  g_object_set_data (G_OBJECT (menu_item),
-                     "PoolSupervisor_c::pool",
-                     pool);
+  gtk_list_store_append (_pool_liststore,
+                         &iter);
 
-  pool->SetData ("pool_supervisor::menu_item",
-                 menu_item);
+  gtk_list_store_set (_pool_liststore, &iter,
+                      NAME_COLUMN, pool->GetName (),
+                      -1);
+
   pool->SetRandSeed (0);
   pool->SetMaxScore (_max_score);
+  pool->SetStatusCbk ((Pool_c::StatusCbk) OnPoolStatusUpdated,
+                      this);
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolSupervisor_c::on_pool_selected (GtkWidget        *widget,
-                                             GdkEventButton   *event,
-                                             PoolSupervisor_c *owner)
+void PoolSupervisor_c::OnPoolStatusUpdated (Pool_c           *pool,
+                                            PoolSupervisor_c *ps)
 {
-  PoolSupervisor_c *p = owner;
+  GtkTreeIter iter;
 
-  p->OnPoolSelected ((Pool_c *) g_object_get_data (G_OBJECT (widget),
-                                                   "PoolSupervisor_c::pool"));
+  if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (ps->_pool_liststore),
+                                     &iter,
+                                     NULL,
+                                     pool->GetNumber () - 1))
+  {
+    if (pool->IsOver ())
+    {
+      gtk_list_store_set (ps->_pool_liststore, &iter,
+                          STATUS_COLUMN, GTK_STOCK_APPLY,
+                          -1);
+    }
+    else if (pool->HasError ())
+    {
+      gtk_list_store_set (ps->_pool_liststore, &iter,
+                          STATUS_COLUMN, GTK_STOCK_DIALOG_WARNING,
+                          -1);
+    }
+    else
+    {
+      gtk_list_store_set (ps->_pool_liststore, &iter,
+                          STATUS_COLUMN, "",
+                          -1);
+    }
+  }
+}
 
-  return FALSE;
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::OnPoolSelected (gint index)
+{
+  if (index >= 0)
+  {
+    OnPoolSelected (_pool_allocator->GetPool (index));
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("pool_combobox")),
+                              index);
+  }
 }
 
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnPoolSelected (Pool_c *pool)
 {
-  GtkWidget *menu_item;
-
   if (_displayed_pool)
   {
     _displayed_pool->UnPlug ();
-
-    menu_item = GTK_WIDGET (_displayed_pool->GetData ("pool_supervisor::menu_item"));
-    gtk_widget_set_sensitive (menu_item,
-                              TRUE);
   }
 
   {
@@ -122,9 +149,6 @@ void PoolSupervisor_c::OnPoolSelected (Pool_c *pool)
     Plug (pool,
           _glade->GetWidget ("pool_hook"));
 
-    menu_item = GTK_WIDGET (pool->GetData ("pool_supervisor::menu_item"));
-    gtk_widget_set_sensitive (menu_item,
-                              FALSE);
     _displayed_pool = pool;
   }
 }
@@ -152,7 +176,7 @@ void PoolSupervisor_c::Enter ()
 {
   RetrievePools ();
 
-  OnPoolSelected (_pool_allocator->GetPool (0));
+  OnPoolSelected (0);
 }
 
 // --------------------------------------------------------------------------------
@@ -193,12 +217,13 @@ void PoolSupervisor_c::Load (xmlNode *xml_node)
 
         current_pool->Load (n->children,
                             previous_stage->GetResult ());
-        current_pool_index++;
 
-        if (_displayed_pool == NULL)
+        if (current_pool_index == 0)
         {
-          OnPoolSelected (current_pool);
+          OnPoolSelected (0);
         }
+
+        current_pool_index++;
       }
       else if (strcmp ((char *) n->name, _class_name) != 0)
       {
@@ -270,16 +295,6 @@ void PoolSupervisor_c::Wipe ()
     Pool_c *pool;
 
     pool = _pool_allocator->GetPool (p);
-
-    {
-      GtkWidget *menu_item;
-
-      menu_item = GTK_WIDGET (pool->GetData ("pool_supervisor::menu_item"));
-
-      gtk_container_remove (GTK_CONTAINER (_menu_pool),
-                            menu_item);
-    }
-
     pool->ResetMatches ();
   }
 
@@ -288,6 +303,8 @@ void PoolSupervisor_c::Wipe ()
     _displayed_pool->UnPlug ();
     _displayed_pool = NULL;
   }
+
+  gtk_list_store_clear (_pool_liststore);
 }
 
 // --------------------------------------------------------------------------------
@@ -379,4 +396,14 @@ extern "C" G_MODULE_EXPORT void on_pool_filter_toollbutton_clicked (GtkWidget *w
   PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
 
   p->SelectAttributes ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_pool_combobox_changed (GtkWidget *widget,
+                                                          Object_c  *owner)
+{
+  PoolSupervisor_c *p          = dynamic_cast <PoolSupervisor_c *> (owner);
+  gint              pool_index = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
+
+  p->OnPoolSelected (pool_index);
 }
