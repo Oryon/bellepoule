@@ -103,12 +103,14 @@ gchar *Pool_c::GetName ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::on_entry_changed (GtkEditable *editable,
-                               gpointer     user_data)
+gboolean Pool_c::on_entry_changed (GtkEditable *editable,
+                                   gpointer     user_data)
 {
   Pool_c *pool = (Pool_c *) user_data;
 
   pool->OnEntryChanged (GTK_WIDGET (editable));
+
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -314,14 +316,18 @@ gboolean Pool_c::OnFocusOut (GtkWidget *widget)
   Player_c    *player = (Player_c *) g_object_get_data (G_OBJECT (widget), "player");
   const gchar *input  = gtk_entry_get_text (GTK_ENTRY (_gtk_entry));
 
-  if (input[0] != 0)
   {
     gpointer goo_text = g_object_get_data (G_OBJECT (widget), "goo_text");
 
-    g_object_set (goo_text,
-                  "text",
-                  g_ascii_strup (input, -1), NULL);
     match->SetScore (player, (gchar *) input);
+
+    {
+      Score_c *score = match->GetScore (player);
+
+      g_object_set (goo_text,
+                    "text",
+                    score->GetImage (), NULL);
+    }
 
     RefreshScoreData ();
     RefreshDashBoard ();

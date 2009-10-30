@@ -54,6 +54,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void FillInConfig ();
     void ApplyConfig ();
     Stage_c *GetInputProvider ();
+    gboolean IsOver ();
 
   private:
     static const gchar *_class_name;

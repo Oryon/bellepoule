@@ -448,9 +448,19 @@ void Schedule_c::SetCurrentStage (guint index)
 
     gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("stage_entry")),
                         stage->GetName ());
+
+    stage->SetStatusCbk ((Stage_c::StatusCbk) OnStageStatusUpdated,
+                         this);
   }
 
   RefreshSensitivity ();
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::OnStageStatusUpdated (Stage_c    *stage,
+                                       Schedule_c *schedule)
+{
+  schedule->RefreshSensitivity ();
 }
 
 // --------------------------------------------------------------------------------
@@ -468,9 +478,9 @@ void Schedule_c::RefreshSensitivity ()
 
   if (_current_stage < g_list_length (_stage_list) - 1)
   {
-    Stage_c *next_stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage + 1);
+    Stage_c *stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
 
-    if (next_stage->IsOver ())
+    if (stage->IsOver ())
     {
       gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
                                 TRUE);

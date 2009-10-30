@@ -75,10 +75,17 @@ void Score_c::Clean ()
 }
 
 // --------------------------------------------------------------------------------
-void Score_c::Set (guint score)
+void Score_c::Set (gint score)
 {
-  _is_known = true;
-  _score    = score;
+  if (score < 0)
+  {
+    _is_known = false;
+  }
+  else
+  {
+    _is_known = true;
+    _score    = score;
+  }
 }
 
 // --------------------------------------------------------------------------------

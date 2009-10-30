@@ -276,7 +276,7 @@ void PoolAllocator_c::CreatePools ()
   {
     Pool_c *pool;
 
-    pool = new Pool_c (i);
+    pool = new Pool_c (i+1);
     _pools_list = g_slist_append (_pools_list,
                                   pool);
 

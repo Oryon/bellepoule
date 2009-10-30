@@ -33,6 +33,9 @@ Stage_c::Stage_c (StageClass *stage_class)
   _result      = NULL;
   _previous    = NULL;
   _stage_class = stage_class;
+
+  _status_cbk_data = NULL;
+  _status_cbk      = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -40,6 +43,24 @@ Stage_c::~Stage_c ()
 {
   FreeResult ();
   g_free (_name);
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::SetStatusCbk (StatusCbk  cbk,
+                            void      *data)
+{
+  _status_cbk_data = data;
+  _status_cbk      = cbk;
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::SignalStatusUpdate ()
+{
+  if (_status_cbk)
+  {
+    _status_cbk (this,
+                 _status_cbk_data);
+  }
 }
 
 // --------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ class Score_c : public Object_c
 
     gchar *GetImage ();
 
-    void Set (guint score);
+    void Set (gint score);
 
     void Clean ();
 

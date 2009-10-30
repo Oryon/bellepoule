@@ -31,6 +31,9 @@ class Stage_c : public virtual Object_c
 
     typedef Stage_c * (*Creator) (StageClass *stage_class);
 
+    typedef void (*StatusCbk) (Stage_c *stage,
+                               void    *data);
+
     typedef enum
     {
       MANDATORY = 0x0001,
@@ -70,6 +73,9 @@ class Stage_c : public virtual Object_c
     Player_c *GetPlayerFromRef (guint ref);
 
     StageClass *GetClass ();
+
+    void SetStatusCbk (StatusCbk  cbk,
+                       void      *data);
 
     virtual void Enter () {};
 
@@ -111,6 +117,8 @@ class Stage_c : public virtual Object_c
 
     virtual ~Stage_c ();
 
+    void SignalStatusUpdate ();
+
   private:
     static GSList *_stage_base;
 
@@ -119,6 +127,9 @@ class Stage_c : public virtual Object_c
     gchar      *_name;
     gboolean    _locked;
     StageClass *_stage_class;
+
+    void          *_status_cbk_data;
+    StatusCbk      _status_cbk;
 
     void FreeResult ();
     virtual void OnLocked () {};

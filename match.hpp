@@ -40,7 +40,7 @@ class Match_c : public Object_c
 
     gboolean PlayerHasScore (Player_c *player);
 
-    void SetScore (Player_c *player, guint score);
+    void SetScore (Player_c *player, gint score);
 
     gboolean SetScore (Player_c *player, gchar *score);
 

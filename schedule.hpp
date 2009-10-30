@@ -42,6 +42,9 @@ class Schedule_c : public Module_c
     void on_stage_selected ();
     void on_stage_removed ();
 
+  protected:
+    void RefreshSensitivity ();
+
   private:
     GtkListStore *_list_store;
     GList        *_stage_list;
@@ -52,7 +55,8 @@ class Schedule_c : public Module_c
 
     gint GetNotebookPageNum (Stage_c *stage);
 
-    void RefreshSensitivity ();
+    static void OnStageStatusUpdated (Stage_c    *stage,
+                                      Schedule_c *schedule);
 
     static void on_row_selected (GtkWidget *widget,
                                  GdkEvent  *event,

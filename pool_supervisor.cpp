@@ -123,6 +123,24 @@ void PoolSupervisor_c::OnPoolStatusUpdated (Pool_c           *pool,
                           -1);
     }
   }
+
+  ps->SignalStatusUpdate ();
+}
+
+// --------------------------------------------------------------------------------
+gboolean PoolSupervisor_c::IsOver ()
+{
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (p);
+    if (pool->IsOver () == FALSE)
+    {
+      return FALSE;
+    }
+  }
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -244,12 +262,15 @@ void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
                                      BAD_CAST "name",
                                      "%s", GetName ());
 
-  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+  if (_pool_allocator)
   {
-    Pool_c *pool;
+    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+    {
+      Pool_c *pool;
 
-    pool = _pool_allocator->GetPool (p);
-    pool->Save (xml_writer);
+      pool = _pool_allocator->GetPool (p);
+      pool->Save (xml_writer);
+    }
   }
 
   xmlTextWriterEndElement (xml_writer);

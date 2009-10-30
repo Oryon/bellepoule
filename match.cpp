@@ -88,7 +88,7 @@ gboolean Match_c::PlayerHasScore (Player_c *player)
 
 // --------------------------------------------------------------------------------
 void Match_c::SetScore (Player_c *player,
-                        guint     score)
+                        gint      score)
 {
   if (_A == player)
   {
@@ -120,11 +120,12 @@ gboolean Match_c::SetScore (Player_c *player,
 {
   if (score == NULL)
   {
+    SetScore (player,
+              -1);
     return false;
   }
-
-  if (   (strlen (score) == 1)
-      && (g_ascii_toupper (score[0]) == 'V'))
+  else if (   (strlen (score) == 1)
+           && (g_ascii_toupper (score[0]) == 'V'))
   {
     SetScore (player,
               _max_score);
@@ -137,6 +138,8 @@ gboolean Match_c::SetScore (Player_c *player,
     return true;
   }
 
+  SetScore (player,
+            -1);
   return false;
 }
 
