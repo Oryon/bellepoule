@@ -37,6 +37,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
 
   public:
     static const gchar *_class_name;
+    static const gchar *_xml_class_name;
 
     void OnComboboxChanged (GtkComboBox *cb);
 

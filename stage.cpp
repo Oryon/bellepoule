@@ -175,14 +175,16 @@ Player_c *Stage_c::GetPlayerFromRef (guint ref)
 
 // --------------------------------------------------------------------------------
 void Stage_c::RegisterStageClass (const gchar *name,
+                                  const gchar *xml_name,
                                   Creator      creator,
                                   guint        rights)
 {
   StageClass *stage_class = new StageClass;
 
-  stage_class->_name    = name;
-  stage_class->_creator = creator;
-  stage_class->_rights  = (Rights) rights;
+  stage_class->_name     = name;
+  stage_class->_xml_name = xml_name;
+  stage_class->_creator  = creator;
+  stage_class->_rights   = (Rights) rights;
 
   _stage_base = g_slist_append (_stage_base,
                                 (void *) stage_class);
@@ -196,7 +198,7 @@ guint Stage_c::GetNbStageClass ()
 
 // --------------------------------------------------------------------------------
 void Stage_c::GetStageClass (guint    index,
-                             gchar   **name,
+                             gchar   **xml_name,
                              Creator *creator,
                              Rights  *rights)
 {
@@ -204,9 +206,9 @@ void Stage_c::GetStageClass (guint    index,
                                                              index);
   if (stage_class)
   {
-    *name    = (gchar *) stage_class->_name;
-    *creator = stage_class->_creator;
-    *rights  = stage_class->_rights;
+    *xml_name = (gchar *) stage_class->_xml_name;
+    *creator  = stage_class->_creator;
+    *rights   = stage_class->_rights;
   }
 }
 
@@ -227,7 +229,7 @@ Stage_c::StageClass *Stage_c::GetClass (const gchar *name)
 
       stage_class = (StageClass *) g_slist_nth_data (_stage_base,
                                                      i);
-      if (strcmp (name, stage_class->_name) == 0)
+      if (strcmp (name, stage_class->_xml_name) == 0)
       {
         return stage_class;
       }

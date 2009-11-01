@@ -58,6 +58,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
   private:
     static const gchar *_class_name;
+    static const gchar *_xml_class_name;
 
     GtkListStore    *_pool_liststore;
     PoolAllocator_c *_pool_allocator;

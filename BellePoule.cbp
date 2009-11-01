@@ -92,8 +92,12 @@
 		<Unit filename="schedule.hpp" />
 		<Unit filename="score.cpp" />
 		<Unit filename="score.hpp" />
+		<Unit filename="splitting.cpp" />
+		<Unit filename="splitting.hpp" />
 		<Unit filename="stage.cpp" />
 		<Unit filename="stage.hpp" />
+		<Unit filename="table.cpp" />
+		<Unit filename="table.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

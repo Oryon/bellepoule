@@ -21,7 +21,8 @@
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 
-const gchar *PoolSupervisor_c::_class_name = "pool_stage";
+const gchar *PoolSupervisor_c::_class_name     = "pool";
+const gchar *PoolSupervisor_c::_xml_class_name = "pool_stage";
 
 typedef enum
 {
@@ -65,6 +66,7 @@ PoolSupervisor_c::~PoolSupervisor_c ()
 void PoolSupervisor_c::Init ()
 {
   RegisterStageClass (_class_name,
+                      _xml_class_name,
                       CreateInstance,
                       EDITABLE);
 }
@@ -243,7 +245,7 @@ void PoolSupervisor_c::Load (xmlNode *xml_node)
 
         current_pool_index++;
       }
-      else if (strcmp ((char *) n->name, _class_name) != 0)
+      else if (strcmp ((char *) n->name, _xml_class_name) != 0)
       {
         return;
       }
@@ -257,7 +259,7 @@ void PoolSupervisor_c::Load (xmlNode *xml_node)
 void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _class_name);
+                             BAD_CAST _xml_class_name);
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "name",
                                      "%s", GetName ());

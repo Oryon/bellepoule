@@ -583,9 +583,10 @@ void Schedule_c::on_stage_selected ()
 
         if (next)
         {
-          Stage_c *next_stage = (Stage_c *) next->data;
+          Stage_c *selected_stage = (Stage_c *) list->data;
+          Stage_c *next_stage     = (Stage_c *) next->data;
 
-          if (next_stage->Locked ())
+          if (selected_stage->Locked () || next_stage->Locked ())
           {
             gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("add_stage_toolbutton")),
                                       FALSE);

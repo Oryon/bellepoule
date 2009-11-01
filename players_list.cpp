@@ -20,7 +20,8 @@
 
 #include "players_list.hpp"
 
-const gchar *PlayersList_c::_class_name = "checkin";
+const gchar *PlayersList_c::_class_name     = "checkin";
+const gchar *PlayersList_c::_xml_class_name = "checkin";
 
 // --------------------------------------------------------------------------------
 PlayersList_c::PlayersList_c (StageClass *stage_class)
@@ -58,6 +59,7 @@ PlayersList_c::~PlayersList_c ()
 void PlayersList_c::Init ()
 {
   RegisterStageClass (_class_name,
+                      _xml_class_name,
                       CreateInstance,
                       MANDATORY | EDITABLE);
 }

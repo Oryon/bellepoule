@@ -37,7 +37,8 @@ extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
                                                                Object_c  *owner);
 
-const gchar *PoolAllocator_c::_class_name = "pool_allocation_stage";
+const gchar *PoolAllocator_c::_class_name     = "pool allocation";
+const gchar *PoolAllocator_c::_xml_class_name = "pool_allocation_stage";
 
 // --------------------------------------------------------------------------------
 PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
@@ -83,6 +84,7 @@ PoolAllocator_c::~PoolAllocator_c ()
 void PoolAllocator_c::Init ()
 {
   RegisterStageClass (_class_name,
+                      _xml_class_name,
                       CreateInstance);
 }
 
@@ -137,7 +139,7 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
           }
         }
       }
-      else if (strcmp ((char *) n->name, _class_name) != 0)
+      else if (strcmp ((char *) n->name, _xml_class_name) != 0)
       {
         FillCombobox ();
         SetUpCombobox ();
@@ -154,7 +156,7 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
 void PoolAllocator_c::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _class_name);
+                             BAD_CAST _xml_class_name);
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "name",
                                      "%s", GetName ());

@@ -9,7 +9,7 @@
   <player ref="0" name="le roux" first_name="gurvan" rating="339" rank="6" attending="1" club="" birth_year="0" licence="0"/>
   <player ref="4" name="fouchet" first_name="kevin" rating="339" rank="7" attending="1" club="" birth_year="0" licence="0"/>
  </player_list>
- <schedule current_stage="2">
+ <schedule current_stage="3">
   <pool_allocation_stage name="Tour No 1">
    <player_list>
     <player ref="2"/>
@@ -38,5 +38,6 @@
     <match player_A="0" score_A="3" player_B="1" score_B="1"/>
    </match_list>
   </pool_stage>
+  <table_stage name=""/>
  </schedule>
 </contest>

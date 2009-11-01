@@ -43,6 +43,7 @@ class Stage_c : public virtual Object_c
     struct StageClass
     {
       const gchar *_name;
+      const gchar *_xml_name;
       Creator      _creator;
       Rights       _rights;
     };
@@ -96,13 +97,14 @@ class Stage_c : public virtual Object_c
     virtual Stage_c *GetInputProvider ();
 
     static void RegisterStageClass (const gchar *name,
+                                    const gchar *xml_name,
                                     Creator      creator,
                                     guint        rights = 0);
 
     static guint  GetNbStageClass ();
 
     static void GetStageClass (guint    index,
-                               gchar   **name,
+                               gchar   **xml_name,
                                Creator *creator,
                                Rights  *rights);
 

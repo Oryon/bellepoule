@@ -21,6 +21,8 @@
 #include "players_list.hpp"
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
+#include "table.hpp"
+#include "splitting.hpp"
 #include "attribute.hpp"
 
 static Glade_c *xml = NULL;
@@ -89,6 +91,8 @@ int main (int argc, char **argv)
     PlayersList_c::Init    ();
     PoolAllocator_c::Init  ();
     PoolSupervisor_c::Init ();
+    Table::Init            ();
+    Splitting::Init        ();
   }
 
   {
