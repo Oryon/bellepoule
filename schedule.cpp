@@ -190,7 +190,8 @@ Module_c *Schedule_c::GetSelectedModule  ()
 }
 
 // --------------------------------------------------------------------------------
-void Schedule_c::AddStage (Stage_c *stage)
+void Schedule_c::AddStage (Stage_c *stage,
+                           gint     index)
 {
   if ((stage == NULL) || g_list_find (_stage_list, stage))
   {
@@ -205,31 +206,6 @@ void Schedule_c::AddStage (Stage_c *stage)
       previous = (Stage_c *) (g_list_last (_stage_list)->data);
     }
 
-    stage->SetPrevious (previous);
-
-    {
-      Stage_c *input_provider = stage->GetInputProvider ();
-
-      stage->SetData ("Schedule_c::attached_stage",
-                      input_provider);
-
-      if (input_provider)
-      {
-        AddStage (input_provider);
-        previous = input_provider;
-        stage->SetPrevious (previous);
-      }
-    }
-
-    _stage_list = g_list_append (_stage_list,
-                                 stage);
-
-    if ((previous == NULL) || previous->Locked ())
-    {
-      PlugStage (stage);
-      SetCurrentStage (0);
-    }
-
     if (stage->GetRights () & Stage_c::EDITABLE)
     {
       GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
@@ -240,22 +216,87 @@ void Schedule_c::AddStage (Stage_c *stage)
                                            NULL,
                                            &iter))
       {
+        gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
+                            &iter,
+                            STAGE_COLUMN, &previous,
+                            -1);
+
+        if (index == -1)
+        {
+          index = g_list_index (_stage_list,
+                                previous) + 1;
+        }
+
         gtk_list_store_insert_after (_list_store,
                                      &iter,
                                      &iter);
+
+        gtk_tree_selection_select_iter (selection,
+                                        &iter);
       }
       else
       {
         gtk_list_store_append (_list_store,
                                &iter);
       }
+
       gtk_list_store_set (_list_store, &iter,
                           NAME_COLUMN, stage->GetClassName (),
                           STAGE_COLUMN, stage, -1);
-      gtk_tree_selection_select_iter (selection,
-                                      &iter);
     }
+
+    stage->SetPrevious (previous);
+
+    _stage_list = g_list_insert (_stage_list,
+                                 stage,
+                                 index);
+
+    {
+      Stage_c *input_provider = stage->GetInputProvider ();
+
+      stage->SetData ("Schedule_c::attached_stage",
+                      input_provider);
+
+      if (   input_provider
+          && (g_list_find (_stage_list, input_provider) == NULL))
+      {
+        AddStage (input_provider,
+                  index);
+        input_provider->SetPrevious (previous);
+        previous = input_provider;
+        stage->SetPrevious (previous);
+      }
+    }
+
+    if ((previous == NULL) || previous->Locked ())
+    {
+      PlugStage (stage);
+      SetCurrentStage (0);
+    }
+
     RefreshSensitivity ();
+
+#if 0
+    for (guint i = 0; i < g_list_length (_stage_list); i++)
+    {
+      Stage_c *stage;
+      Stage_c *previous;
+
+      stage = ((Stage_c *) g_list_nth_data (_stage_list,
+                                            i));
+      previous = stage->GetPreviousStage ();
+      g_print (">> %s", stage->GetClassName ());
+      if (previous)
+      {
+      g_print (" / %s\n", previous->GetClassName ());
+      }
+      else
+      {
+      g_print ("\n");
+      }
+    }
+    g_print ("\n");
+#endif
   }
 }
 
@@ -445,9 +486,10 @@ void Schedule_c::SetCurrentStage (guint index)
 
   {
     Stage_c *stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
+    gchar   *name  = g_strdup_printf ("%s / %s", stage->GetClassName (), stage->GetName ());
 
     gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("stage_entry")),
-                        stage->GetName ());
+                        name);
 
     stage->SetStatusCbk ((Stage_c::StatusCbk) OnStageStatusUpdated,
                          this);

@@ -68,6 +68,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     ~PoolSupervisor_c ();
 
     void OnAttrListUpdated ();
+    void OnPlugged ();
 
     static void OnPoolStatusUpdated (Pool_c           *pool,
                                      PoolSupervisor_c *ps);

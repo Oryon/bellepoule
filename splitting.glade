@@ -141,14 +141,12 @@
     <widgets>
       <widget name="name_entry"/>
       <widget name="new_title_entry"/>
-      <widget name="qualified_fencer_spinbutton"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup">
     <widgets>
       <widget name="label4"/>
       <widget name="label2"/>
-      <widget name="label3"/>
     </widgets>
   </object>
 </interface>

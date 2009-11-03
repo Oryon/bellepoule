@@ -798,25 +798,28 @@ void PoolAllocator_c::Display ()
   {
     GooCanvasItem *root = GetRootItem ();
 
-    _main_table = goo_canvas_table_new (root,
-                                        "row-spacing",    20.0,
-                                        "column-spacing", 40.0,
-                                        NULL);
-
-    g_object_set (G_OBJECT (root),
-                  "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
-                  NULL);
-    g_signal_connect (root, "motion_notify_event",
-                      G_CALLBACK (on_motion_notify), this);
-    g_signal_connect (root, "button_release_event",
-                      G_CALLBACK (on_button_release), this);
-
-    for (guint i = 0; i < g_slist_length (_pools_list); i++)
+    if (root)
     {
-      Pool_c *pool;
+      _main_table = goo_canvas_table_new (root,
+                                          "row-spacing",    20.0,
+                                          "column-spacing", 40.0,
+                                          NULL);
 
-      pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
-      FillPoolTable (pool);
+      g_object_set (G_OBJECT (root),
+                    "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
+                    NULL);
+      g_signal_connect (root, "motion_notify_event",
+                        G_CALLBACK (on_motion_notify), this);
+      g_signal_connect (root, "button_release_event",
+                        G_CALLBACK (on_button_release), this);
+
+      for (guint i = 0; i < g_slist_length (_pools_list); i++)
+      {
+        Pool_c *pool;
+
+        pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
+        FillPoolTable (pool);
+      }
     }
   }
 }

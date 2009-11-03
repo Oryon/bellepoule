@@ -1,43 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<contest title="minimes_bretagne" backup="">
+<contest title="Ma première compet" backup="">
  <player_list>
-  <player ref="2" name="guegan" first_name="baptiste" rating="51" rank="1" attending="1" club="BETTON" birth_year="0" licence="0"/>
-  <player ref="3" name="brouard" first_name="simon" rating="81" rank="2" attending="1" club="St Grégoire" birth_year="1996" licence="123456"/>
-  <player ref="19" name="toto" first_name="titi" rating="81" rank="3" attending="1" club="" birth_year="0" licence="0"/>
-  <player ref="1" name="legrand" first_name="abraham" rating="104" rank="4" attending="1" club="" birth_year="0" licence="0"/>
-  <player ref="16" name="ddd" first_name="ddd" rating="104" rank="5" attending="1" club="" birth_year="0" licence="0"/>
-  <player ref="0" name="le roux" first_name="gurvan" rating="339" rank="6" attending="1" club="" birth_year="0" licence="0"/>
-  <player ref="4" name="fouchet" first_name="kevin" rating="339" rank="7" attending="1" club="" birth_year="0" licence="0"/>
+  <player ref="2" name="Tireur A" first_name="Alfred" rating="51" rank="1" attending="1" club="Betton" birth_year="0" licence="0"/>
+  <player ref="3" name="Tireur B" first_name="Simon" rating="81" rank="2" attending="1" club="St Grégoire" birth_year="1996" licence="123456"/>
+  <player ref="19" name="Tireur C" first_name="Gérard" rating="81" rank="3" attending="1" club="Dinard" birth_year="0" licence="0"/>
+  <player ref="1" name="Tireur D" first_name="Titi" rating="104" rank="4" attending="1" club="St Malo" birth_year="0" licence="0"/>
+  <player ref="16" name="Tireur E" first_name="Zoro" rating="104" rank="5" attending="1" club="Rennes" birth_year="0" licence="0"/>
+  <player ref="0" name="Tireur F" first_name="Zut" rating="339" rank="6" attending="1" club="" birth_year="0" licence="0"/>
+  <player ref="4" name="Tireur G" first_name="Machin" rating="339" rank="7" attending="1" club="" birth_year="0" licence="0"/>
  </player_list>
- <schedule current_stage="3">
+ <schedule current_stage="1">
   <pool_allocation_stage name="Tour No 1">
    <player_list>
     <player ref="2"/>
-    <player ref="19"/>
-    <player ref="16"/>
-    <player ref="4"/>
-   </player_list>
-   <player_list>
     <player ref="3"/>
+    <player ref="19"/>
     <player ref="1"/>
+    <player ref="16"/>
     <player ref="0"/>
+    <player ref="4"/>
    </player_list>
   </pool_allocation_stage>
   <pool_stage name="Tour No 1">
    <match_list>
-    <match player_A="19" score_A="1" player_B="2" score_B="5"/>
-    <match player_A="16" score_A="1" player_B="2" score_B="1"/>
-    <match player_A="16" score_A="1" player_B="19" score_B="1"/>
-    <match player_A="4" score_A="5" player_B="2" score_B="1"/>
-    <match player_A="4" score_A="5" player_B="19" score_B="1"/>
-    <match player_A="4" score_A="3" player_B="16" score_B="5"/>
-   </match_list>
-   <match_list>
-    <match player_A="1" score_A="5" player_B="3" score_B="4"/>
-    <match player_A="0" score_A="1" player_B="3" score_B="5"/>
-    <match player_A="0" score_A="3" player_B="1" score_B="1"/>
+    <match player_A="3" player_B="2"/>
+    <match player_A="19" player_B="2"/>
+    <match player_A="19" player_B="3"/>
+    <match player_A="1" player_B="2"/>
+    <match player_A="1" player_B="3"/>
+    <match player_A="1" player_B="19"/>
+    <match player_A="16" player_B="2"/>
+    <match player_A="16" player_B="3"/>
+    <match player_A="16" player_B="19"/>
+    <match player_A="16" player_B="1"/>
+    <match player_A="0" player_B="2"/>
+    <match player_A="0" player_B="3"/>
+    <match player_A="0" player_B="19"/>
+    <match player_A="0" player_B="1"/>
+    <match player_A="0" player_B="16"/>
+    <match player_A="4" player_B="2"/>
+    <match player_A="4" player_B="3"/>
+    <match player_A="4" player_B="19"/>
+    <match player_A="4" player_B="1"/>
+    <match player_A="4" player_B="16"/>
+    <match player_A="4" player_B="0"/>
    </match_list>
   </pool_stage>
-  <table_stage name=""/>
+  <splitting_stage name=""/>
+  <pool_allocation_stage name="Tour No 2"/>
+  <pool_stage name="Tour No 2"/>
  </schedule>
 </contest>

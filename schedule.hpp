@@ -31,7 +31,8 @@ class Schedule_c : public Module_c
 
     void DisplayList ();
 
-    void AddStage    (Stage_c *stage);
+    void AddStage    (Stage_c *stage,
+                      gint     index = -1);
     void RemoveStage (Stage_c *stage);
 
     void Save          (xmlTextWriter *xml_writer);
