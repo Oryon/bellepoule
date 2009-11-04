@@ -40,12 +40,13 @@ PlayersList_c::PlayersList_c (StageClass *stage_class)
   // Player attributes to display
   {
     ShowAttribute ("attending");
-    ShowAttribute ("rank");
+    ShowAttribute ("rating");
     ShowAttribute ("name");
     ShowAttribute ("first_name");
-    ShowAttribute ("club");
     ShowAttribute ("birth_year");
-    ShowAttribute ("rating");
+    ShowAttribute ("gender");
+    ShowAttribute ("club");
+    ShowAttribute ("country");
     ShowAttribute ("licence");
   }
 }
@@ -324,6 +325,13 @@ void PlayersList_c::OnLocked ()
   _players_base->Lock ();
 
   _result = _players_base->CreateCustomList (PresentPlayerFilter);
+  if (_result)
+  {
+    _result = g_slist_sort_with_data (_result,
+                                      (GCompareDataFunc) Player_c::Compare,
+                                      (void *) "rank");
+  }
+
 }
 
 // --------------------------------------------------------------------------------
@@ -363,7 +371,7 @@ void PlayersList_c::Import ()
 {
   GtkWidget *chooser;
 
-  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new ("Choose a FFE file (.cvs) ...",
+  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new ("Choose a FFE file (.FFF) ...",
                                                      NULL,
                                                      GTK_FILE_CHOOSER_ACTION_OPEN,
                                                      GTK_STOCK_CANCEL,
@@ -375,7 +383,6 @@ void PlayersList_c::Import ()
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
     gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-    guint  nb_attr  = 0;
     gchar *file;
 
     {
@@ -402,30 +409,101 @@ void PlayersList_c::Import ()
       }
     }
 
-    g_print ("\n\n");
+    if (strstr (filename, ".FFF"))
+    {
+      ImportFFF (file);
+    }
+    else
+    {
+      ImportCSV (file);
+    }
+
+    g_free (file);
+  }
+
+  gtk_widget_destroy (chooser);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::ImportFFF (gchar *file)
+{
+  gchar **lines = g_strsplit_set (file,
+                                  "\n",
+                                  0);
+
+  if (lines == NULL)
+  {
+    return;
+  }
+  else
+  {
+    // Header
+    // FFF;WIN;CLASSEMENT;FFE
+    // 08/11/2009;;;;
+
+    // Fencers
+    for (guint l = 2; lines[l] != NULL; l++)
+    {
+      gchar **tokens = g_strsplit_set (lines[l],
+                                       ",;",
+                                       0);
+
+      if (tokens && tokens[0])
+      {
+        Player_c *player = new Player_c;
+
+        player->SetAttributeValue ("name",       tokens[0]);
+        player->SetAttributeValue ("first_name", tokens[1]);
+        player->SetAttributeValue ("birth_year", tokens[2]);
+        player->SetAttributeValue ("gender",     tokens[3]);
+        player->SetAttributeValue ("country",    tokens[4]);
+        player->SetAttributeValue ("licence",    tokens[8]);
+        player->SetAttributeValue ("club",       tokens[10]);
+        if (*tokens[11])
+        {
+          player->SetAttributeValue ("rating",     tokens[11]);
+        }
+        _players_base->Add (player);
+
+        g_strfreev (tokens);
+      }
+    }
+
+    g_strfreev (lines);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::ImportCSV (gchar *file)
+{
+  guint nb_attr = 0;
+
+  gchar **header_line = g_strsplit_set (file,
+                                        "\n",
+                                        0);
+
+  if (header_line == NULL)
+  {
+    return;
+  }
+  else
+  {
     // Header
     {
-      gchar **header_line = g_strsplit_set (file,
-                                            "\n",
+      gchar **header_attr = g_strsplit_set (header_line[0],
+                                            ";",
                                             0);
 
-      if (header_line)
+      if (header_attr)
       {
-        gchar **header_attr = g_strsplit_set (header_line[0],
-                                              ";",
-                                              0);
-
-        if (header_attr)
+        for (guint i = 0; header_attr[i] != NULL; i++)
         {
-          for (guint i = 0; header_attr[i] != NULL; i++)
-          {
-            nb_attr++;
-          }
-          g_strfreev (header_attr);
+          nb_attr++;
         }
-
-        g_strfreev (header_line);
+        g_strfreev (header_attr);
       }
+
+      g_strfreev (header_line);
     }
 
     // Fencers
@@ -449,11 +527,7 @@ void PlayersList_c::Import ()
         g_strfreev (tokens);
       }
     }
-
-    g_free (file);
   }
-
-  gtk_widget_destroy (chooser);
 }
 
 // --------------------------------------------------------------------------------

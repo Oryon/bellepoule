@@ -148,7 +148,7 @@ gboolean PoolSupervisor_c::IsOver ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnPoolSelected (gint index)
 {
-  if ((index >= 0) && (_pool_allocator))
+  if ((index >= 0) && _pool_allocator)
   {
     OnPoolSelected (_pool_allocator->GetPool (index));
     gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("pool_combobox")),
@@ -204,7 +204,6 @@ void PoolSupervisor_c::Enter ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnPlugged ()
 {
-  OnPoolSelected (0);
 }
 
 // --------------------------------------------------------------------------------
@@ -246,6 +245,10 @@ void PoolSupervisor_c::Load (xmlNode *xml_node)
         current_pool->Load (n->children,
                             previous_stage->GetResult ());
 
+        if (current_pool_index == 0)
+        {
+          OnPoolSelected (0);
+        }
         current_pool_index++;
       }
       else if (strcmp ((char *) n->name, _xml_class_name) != 0)

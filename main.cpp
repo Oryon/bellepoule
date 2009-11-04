@@ -99,6 +99,8 @@ int main (int argc, char **argv)
     Attribute_c::Add (G_TYPE_INT,     "ref");
     Attribute_c::Add (G_TYPE_STRING,  "name");
     Attribute_c::Add (G_TYPE_STRING,  "first_name");
+    Attribute_c::Add (G_TYPE_STRING,  "gender");
+    Attribute_c::Add (G_TYPE_STRING,  "country");
     Attribute_c::Add (G_TYPE_INT,     "rating");
     Attribute_c::Add (G_TYPE_INT,     "rank");
     Attribute_c::Add (G_TYPE_BOOLEAN, "attending");

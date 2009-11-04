@@ -185,7 +185,7 @@ gint Attribute_c::Compare (Attribute_c *a, Attribute_c *b)
     return a->CompareWith (b);
   }
 
-  return -1;
+  return G_MAXINT;
 }
 
 // --------------------------------------------------------------------------------
@@ -363,5 +363,5 @@ gint IntAttribute_c::CompareWith (Attribute_c *with)
     return ((guint) GetValue () - (guint) with->GetValue ());
   }
 
-  return -1;
+  return G_MININT;
 }

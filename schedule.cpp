@@ -155,12 +155,18 @@ void Schedule_c::DisplayList ()
 
     for (guint i = 0; i < g_list_length (_stage_list); i++)
     {
+      GtkWidget *tab_widget;
+
       current_stage = (Stage_c *) g_list_nth_data (_stage_list,
                                                    i);
+      tab_widget = (GtkWidget *) current_stage->GetData ("Schedule_c::viewport_stage");
 
-      gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (GetRootWidget ()),
-                                       (GtkWidget *) current_stage->GetData ("Schedule_c::viewport_stage"),
-                                       current_stage->GetFullName ());
+      if (tab_widget)
+      {
+        gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (GetRootWidget ()),
+                                         (GtkWidget *) current_stage->GetData ("Schedule_c::viewport_stage"),
+                                         current_stage->GetFullName ());
+      }
     }
   }
   gtk_widget_hide (_formula_dlg);

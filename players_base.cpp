@@ -435,12 +435,5 @@ GSList *PlayersBase_c::CreateCustomList (CustomFilter filter)
     }
   }
 
-  if (custom_list)
-  {
-    custom_list = g_slist_sort_with_data (custom_list,
-                                          (GCompareDataFunc) Player_c::Compare,
-                                          (void *) "rank");
-  }
-
   return custom_list;
 }

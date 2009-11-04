@@ -61,6 +61,10 @@ class PlayersList_c : public virtual Stage_c, public Module_c
 
     void Save (xmlTextWriter *xml_writer);
 
+    void ImportFFF (gchar *file);
+
+    void ImportCSV (gchar *file);
+
     void OnAttrListUpdated ();
 
     void SetSensitiveState (bool sensitive_value);

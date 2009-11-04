@@ -62,6 +62,15 @@ void Table::OnPlugged ()
 // --------------------------------------------------------------------------------
 void Table::Display ()
 {
+  GooCanvasItem *root_item = GetRootItem ();
+
+  {
+    goo_canvas_rect_new (root_item,
+                         0, 0,
+                         50, 50,
+                         "line-width", 5.0,
+                         NULL);
+  }
 }
 
 // --------------------------------------------------------------------------------

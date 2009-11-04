@@ -65,12 +65,11 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
   }
 
   {
+    ShowAttribute ("rank");
+    ShowAttribute ("rating");
     ShowAttribute ("name");
     ShowAttribute ("first_name");
-    ShowAttribute ("rating");
-    ShowAttribute ("rank");
     ShowAttribute ("club");
-    ShowAttribute ("ref");
   }
 }
 
@@ -669,8 +668,8 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
     }
 
     {
-      guint row    = pool->GetNumber () % nb_rows;
-      guint column = pool->GetNumber () / nb_rows;
+      guint row    = (pool->GetNumber () - 1) % nb_rows;
+      guint column = (pool->GetNumber () - 1) / nb_rows;
 
       table = goo_canvas_table_new (_main_table,
                                     "row-spacing",    2.0,
