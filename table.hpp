@@ -19,8 +19,10 @@
 
 #include <gtk/gtk.h>
 
-#include "stage.hpp"
 #include "canvas_module.hpp"
+#include "match.hpp"
+
+#include "stage.hpp"
 
 class Table : public virtual Stage_c, public CanvasModule_c
 {
@@ -42,13 +44,40 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void Wipe ();
 
   private:
+    struct NodeData
+    {
+      guint          _expected_winner_rank;
+      guint          _level;
+      guint          _row;
+      Match_c       *_match;
+      GooCanvasItem *_canvas_table;
+    };
+
+    GNode         *_tree_root;
+    guint          _nb_levels;
+    GSList        *_attendees;
+    GooCanvasItem *_main_table;
+    guint          _max_score;
+
     void Display ();
+
     void OnPlugged ();
+
     void OnAttrListUpdated ();
+
+    void DrawAllConnectors ();
+
+    static gboolean DrawConnectors (GNode *node,
+                                    Table *table);
 
     static Stage_c *CreateInstance (StageClass *stage_class);
 
+    static gboolean FillInNode (GNode *node,
+                                Table *table);
+
     void Load (xmlNode *xml_node);
+
+    void AddFork (GNode *to);
 
     ~Table ();
 };

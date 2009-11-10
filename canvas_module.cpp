@@ -79,24 +79,44 @@ void CanvasModule_c::PutInTable (GooCanvasItem *table,
                                  guint          row,
                                  guint          column)
 {
-  GValue value = VALUE_INIT;
+  SetTableItemAttribute (item, "row", row);
+  SetTableItemAttribute (item, "column", column);
+  SetTableItemAttribute (item, "x-align", 0.0);
+  SetTableItemAttribute (item, "y-align", 0.0);
+}
 
-  g_value_init (&value, G_TYPE_UINT);
-  g_value_set_uint (&value, row);
-  goo_canvas_item_set_child_property (table, item, "row", &value);
+// --------------------------------------------------------------------------------
+void CanvasModule_c::SetTableItemAttribute (GooCanvasItem *item,
+                                            gchar         *attribute,
+                                            gdouble        value)
+{
+  GooCanvasItem *parent = goo_canvas_item_get_parent (item);
 
-  g_value_reset (&value);
-  g_value_set_uint (&value, column);
-  goo_canvas_item_set_child_property (table, item, "column", &value);
+  if (parent)
+  {
+    GValue gvalue = VALUE_INIT;
 
-  g_value_unset (&value);
-  g_value_init (&value, G_TYPE_DOUBLE);
-  g_value_set_double (&value, 0);
-  goo_canvas_item_set_child_property (table, item, "x-align", &value);
+    g_value_init (&gvalue, G_TYPE_DOUBLE);
+    g_value_set_double (&gvalue, value);
+    goo_canvas_item_set_child_property (parent, item, attribute, &gvalue);
+  }
+}
 
-  g_value_reset (&value);
-  g_value_set_double (&value, 0);
-  goo_canvas_item_set_child_property (table, item, "y-align", &value);
+// --------------------------------------------------------------------------------
+void CanvasModule_c::SetTableItemAttribute (GooCanvasItem *item,
+                                            gchar         *attribute,
+                                            guint          value)
+{
+  GooCanvasItem *parent = goo_canvas_item_get_parent (item);
+
+  if (parent)
+  {
+    GValue gvalue = VALUE_INIT;
+
+    g_value_init (&gvalue, G_TYPE_UINT);
+    g_value_set_uint (&gvalue, value);
+    goo_canvas_item_set_child_property (parent, item, attribute, &gvalue);
+  }
 }
 
 // --------------------------------------------------------------------------------

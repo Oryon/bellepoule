@@ -64,6 +64,27 @@ Player_c *Match_c::GetPlayerB ()
 }
 
 // --------------------------------------------------------------------------------
+Player_c *Match_c::GetWinner ()
+{
+  if (_A == NULL)
+  {
+    return _B;
+  }
+  else if (_B == NULL)
+  {
+    return _A;
+  }
+  else if (_A_score->Get () >= _B_score->Get ())
+  {
+    return _A;
+  }
+  else
+  {
+    return _B;
+  }
+}
+
+// --------------------------------------------------------------------------------
 gboolean Match_c::HasPlayer (Player_c *player)
 {
   return ((_A == player) || (_B == player));

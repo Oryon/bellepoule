@@ -35,6 +35,7 @@ class Match_c : public Object_c
 
     Player_c *GetPlayerA ();
     Player_c *GetPlayerB ();
+    Player_c *GetWinner  ();
 
     gboolean HasPlayer (Player_c *player);
 

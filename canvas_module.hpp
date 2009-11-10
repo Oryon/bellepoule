@@ -32,14 +32,23 @@ class CanvasModule_c : public Module_c
                     gchar *root = NULL);
     virtual ~CanvasModule_c ();
 
-    void PutInTable (GooCanvasItem *table,
-                     GooCanvasItem *item,
-                     guint          row,
-                     guint          column);
-    GooCanvasItem *PutInTable (GooCanvasItem *table,
-                               guint          row,
-                               guint          column,
-                               gchar         *text);
+    static void PutInTable (GooCanvasItem *table,
+                            GooCanvasItem *item,
+                            guint          row,
+                            guint          column);
+
+    static GooCanvasItem *PutInTable (GooCanvasItem *table,
+                                      guint          row,
+                                      guint          column,
+                                      gchar         *text);
+
+    static void SetTableItemAttribute (GooCanvasItem *item,
+                                       gchar         *attribute,
+                                       guint          value);
+
+    static void SetTableItemAttribute (GooCanvasItem *item,
+                                       gchar         *attribute,
+                                       gdouble        value);
 
     GooCanvas *GetCanvas ();
     GooCanvasItem *GetRootItem ();
