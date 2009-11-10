@@ -37,6 +37,8 @@ class Match_c : public Object_c
     Player_c *GetPlayerB ();
     Player_c *GetWinner  ();
 
+    void ManagePlayer (Player_c *player);
+
     gboolean HasPlayer (Player_c *player);
 
     gboolean PlayerHasScore (Player_c *player);

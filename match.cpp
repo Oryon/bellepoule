@@ -43,6 +43,19 @@ Match_c::~Match_c ()
 }
 
 // --------------------------------------------------------------------------------
+void Match_c::ManagePlayer (Player_c *player)
+{
+  if (_A == NULL)
+  {
+    _A = player;
+  }
+  else if (_B == NULL)
+  {
+    _B = player;
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Match_c::SetMaxScore (guint max_score)
 {
   _max_score = max_score;
