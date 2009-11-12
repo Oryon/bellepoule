@@ -23,6 +23,7 @@
 #include "stage.hpp"
 #include "canvas_module.hpp"
 #include "players_base.hpp"
+#include "score_collector.hpp"
 
 class Pool_c : public CanvasModule_c
 {
@@ -60,48 +61,23 @@ class Pool_c : public CanvasModule_c
                                guint     client_seed);
 
   private:
-    guint          _max_score;
-    guint          _rand_seed;
-    guint          _number;
-    GSList        *_player_list;
-    GooCanvasItem *_entry_item;
-    GtkWidget     *_gtk_entry;
-    GSList        *_match_list;
-    gchar         *_name;
-    gboolean       _is_over;
-    gboolean       _has_error;
+    guint           _max_score;
+    guint           _rand_seed;
+    guint           _number;
+    GSList         *_player_list;
+    ScoreCollector *_score_collector;
+    GSList         *_match_list;
+    gchar          *_name;
+    gboolean        _is_over;
+    gboolean        _has_error;
 
-    void          *_status_cbk_data;
-    StatusCbk      _status_cbk;
-
-  private:
-    static gboolean on_cell_button_press (GooCanvasItem  *item,
-                                          gboolean       *target,
-                                          GdkEventButton *event,
-                                          gpointer        data);
-    static gboolean on_focus_in (GooCanvasItem *item,
-                                 GooCanvasItem *target,
-                                 GdkEventFocus *event,
-                                 gpointer       data);
-    static gboolean on_focus_out (GtkWidget     *widget,
-                                  GdkEventFocus *event,
-                                  gpointer       user_data);
-    static gboolean  on_entry_changed (GtkEditable *editable,
-                                       gpointer     user_data);
-    static gboolean on_key_press_event (GtkWidget   *widget,
-                                        GdkEventKey *event,
-                                        gpointer     user_data);
+    void           *_status_cbk_data;
+    StatusCbk       _status_cbk;
 
   private:
     void SetMatchColor (Match_c *match,
                         gchar   *consistent_color,
                         gchar   *unconsitentcolor);
-
-    gboolean OnFocusIn  (GooCanvasItem *item);
-    gboolean OnFocusOut (GtkWidget *widget);
-    void     OnEntryChanged (GtkWidget *widget);
-    gboolean OnKeyPress (GtkWidget   *widget,
-                         GdkEventKey *event);
 
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
@@ -113,6 +89,8 @@ class Pool_c : public CanvasModule_c
 
     Match_c *GetMatch (Player_c *A,
                        Player_c *B);
+
+    static void OnNewScore (CanvasModule_c *client);
 
     void RefreshScoreData ();
 

@@ -32,7 +32,6 @@ Pool_c::Pool_c (guint number)
   _number      = number;
   _player_list = NULL;
   _match_list  = NULL;
-  _entry_item  = NULL;
   _rand_seed   = 0;
   _max_score   = 5;
   _is_over     = FALSE;
@@ -40,6 +39,8 @@ Pool_c::Pool_c (guint number)
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
+
+  _score_collector = NULL;
 
   _name = g_strdup_printf ("pool #%02d", _number);
 }
@@ -61,6 +62,8 @@ Pool_c::~Pool_c ()
     Object_c::Release (match);
   }
   g_slist_free (_match_list);
+
+  Object_c::Release (_score_collector);
 }
 
 // --------------------------------------------------------------------------------
@@ -100,86 +103,6 @@ guint Pool_c::GetNumber ()
 gchar *Pool_c::GetName ()
 {
   return _name;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Pool_c::on_entry_changed (GtkEditable *editable,
-                                   gpointer     user_data)
-{
-  Pool_c *pool = (Pool_c *) user_data;
-
-  pool->OnEntryChanged (GTK_WIDGET (editable));
-
-  return TRUE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Pool_c::on_key_press_event (GtkWidget   *widget,
-                                     GdkEventKey *event,
-                                     gpointer     user_data)
-{
-  Pool_c *pool = (Pool_c *) user_data;
-
-  return pool->OnKeyPress (widget,
-                           event);
-}
-
-// --------------------------------------------------------------------------------
-gboolean Pool_c::OnKeyPress (GtkWidget   *widget,
-                             GdkEventKey *event)
-{
-  if ((event->keyval == GDK_Return) || (event->keyval == GDK_Tab))
-  {
-    GooCanvasItem *next_item;
-
-    next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_rect");
-    if (next_item)
-    {
-      goo_canvas_grab_focus (GetCanvas (),
-                             next_item);
-    }
-    else
-    {
-      goo_canvas_item_remove (_entry_item);
-      _entry_item = NULL;
-    }
-
-    return TRUE;
-  }
-  else if (event->keyval == GDK_Escape)
-  {
-    goo_canvas_item_remove (_entry_item);
-    _entry_item = NULL;
-
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-void Pool_c::OnEntryChanged (GtkWidget *widget)
-{
-  Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (widget), "match");
-  Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (widget), "player");
-  gchar    *input  = (gchar *) gtk_entry_get_text (GTK_ENTRY (widget));
-
-  if (match->SetScore (player, input))
-  {
-    GooCanvasItem *next_item;
-
-    next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_rect");
-    if (next_item)
-    {
-      goo_canvas_grab_focus (GetCanvas (),
-                             next_item);
-    }
-    else
-    {
-      goo_canvas_item_remove (_entry_item);
-      _entry_item = NULL;
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -225,132 +148,6 @@ void Pool_c::SetMatchColor (Match_c *match,
                   "fill-color", color_B,
                   NULL);
   }
-}
-
-// --------------------------------------------------------------------------------
-gboolean Pool_c::on_focus_in (GooCanvasItem *item,
-                              GooCanvasItem *target,
-                              GdkEventFocus *event,
-                              gpointer       data)
-{
-  Pool_c *pool = (Pool_c *) data;
-
-  return pool->OnFocusIn (item);
-}
-
-// --------------------------------------------------------------------------------
-gboolean Pool_c::OnFocusIn (GooCanvasItem *item)
-{
-  Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (item), "match");
-  Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (item), "player");
-
-  if (_entry_item)
-  {
-    goo_canvas_item_remove (_entry_item);
-    _entry_item = NULL;
-  }
-
-  SetMatchColor (match,
-                 "SkyBlue",
-                 "LightCoral");
-
-  {
-    gpointer next_rect   = g_object_get_data (G_OBJECT (item), "next_rect");
-    gpointer goo_text    = g_object_get_data (G_OBJECT (item), "goo_text");
-    Score_c  *score      = match->GetScore (player);
-    gchar    *score_text = score->GetImage ();
-
-    _gtk_entry  = gtk_entry_new ();
-    gtk_entry_set_text (GTK_ENTRY (_gtk_entry),
-                        score_text);
-    g_free (score_text);
-
-    g_signal_connect (_gtk_entry, "focus-out-event",
-                      G_CALLBACK (on_focus_out), this);
-
-    g_object_set_data (G_OBJECT (_gtk_entry), "match",  match);
-    g_object_set_data (G_OBJECT (_gtk_entry), "player", player);
-    g_object_set_data (G_OBJECT (_gtk_entry), "goo_text", goo_text);
-    g_object_set_data (G_OBJECT (_gtk_entry), "next_rect", next_rect);
-  }
-
-  {
-    guint x = (guint) g_object_get_data (G_OBJECT (item), "x");
-    guint y = (guint) g_object_get_data (G_OBJECT (item), "y");
-    guint w = (guint) g_object_get_data (G_OBJECT (item), "w");
-    guint h = (guint) g_object_get_data (G_OBJECT (item), "h");
-
-    _entry_item = goo_canvas_widget_new (GetRootItem (),
-                                         _gtk_entry,
-                                         x,
-                                         y,
-                                         w,
-                                         h,
-                                         "anchor", GTK_ANCHOR_CENTER,
-                                         NULL);
-    gtk_widget_grab_focus (_gtk_entry);
-
-    g_signal_connect (GTK_ENTRY (_gtk_entry), "changed",
-                      G_CALLBACK (on_entry_changed), this);
-    g_signal_connect (_gtk_entry, "key-press-event",
-                      G_CALLBACK (on_key_press_event), this);
-  }
-
-  return TRUE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Pool_c::on_focus_out (GtkWidget     *widget,
-                               GdkEventFocus *event,
-                               gpointer       user_data)
-{
-  Pool_c *pool = (Pool_c *) user_data;
-
-  return pool->OnFocusOut (widget);
-}
-
-// --------------------------------------------------------------------------------
-gboolean Pool_c::OnFocusOut (GtkWidget *widget)
-{
-  Match_c     *match  = (Match_c *)  g_object_get_data (G_OBJECT (widget), "match");
-  Player_c    *player = (Player_c *) g_object_get_data (G_OBJECT (widget), "player");
-  const gchar *input  = gtk_entry_get_text (GTK_ENTRY (_gtk_entry));
-
-  {
-    gpointer goo_text = g_object_get_data (G_OBJECT (widget), "goo_text");
-
-    match->SetScore (player, (gchar *) input);
-
-    {
-      Score_c *score = match->GetScore (player);
-
-      g_object_set (goo_text,
-                    "text",
-                    score->GetImage (), NULL);
-    }
-
-    RefreshScoreData ();
-    RefreshDashBoard ();
-  }
-
-  SetMatchColor (match,
-                 "White",
-                 "MistyRose");
-
-  return TRUE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Pool_c::on_cell_button_press (GooCanvasItem  *item,
-                                       gboolean       *target,
-                                       GdkEventButton *event,
-                                       gpointer        data)
-{
-  GooCanvas *canvas = goo_canvas_item_get_canvas ((GooCanvasItem *) data);
-
-  goo_canvas_grab_focus (canvas, (GooCanvasItem *) data);
-
-  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -431,9 +228,23 @@ Player_c *Pool_c::GetPlayer (guint i)
 }
 
 // --------------------------------------------------------------------------------
+void Pool_c::OnNewScore (CanvasModule_c *client)
+{
+  Pool_c *pool = dynamic_cast <Pool_c *> (client);
+
+  pool->RefreshScoreData ();
+  pool->RefreshDashBoard ();
+}
+
+// --------------------------------------------------------------------------------
 void Pool_c::OnPlugged ()
 {
   CanvasModule_c::OnPlugged ();
+
+  Object_c::Release (_score_collector);
+  _score_collector = new ScoreCollector (GetCanvas (),
+                                         this,
+                                         (ScoreCollector::OnNewScore_cbk) &Pool_c::OnNewScore);
 
   {
     const guint    cell_w     = 40;
@@ -466,7 +277,7 @@ void Pool_c::OnPlugged ()
           for (guint j = 0; j < nb_players; j++)
           {
             GooCanvasItem *goo_rect;
-            GooCanvasItem *goo_text;
+            GooCanvasItem *score_text;
             gint           x, y;
 
             x = j * cell_w;
@@ -487,59 +298,42 @@ void Pool_c::OnPlugged ()
               match = GetMatch (A,
                                 B);
 
-              // Rect
-              {
-                g_object_set (goo_rect, "can-focus", TRUE, NULL);
-
-                g_signal_connect (goo_rect, "focus_in_event",
-                                  G_CALLBACK (on_focus_in), this);
-                g_signal_connect (goo_rect, "button_press_event",
-                                  G_CALLBACK (on_cell_button_press), goo_rect);
-
-                if (i < j)
-                {
-                  match->SetData ("Pool::goo_rect_B", goo_rect);
-                }
-                else
-                {
-                  match->SetData ("Pool::goo_rect_A", goo_rect);
-                }
-              }
-
               // Text
               {
                 Score_c *score       = match->GetScore (A);
                 gchar   *score_image = score->GetImage ();
 
-                goo_text = goo_canvas_text_new (grid_group,
-                                                score_image,
-                                                x + cell_w / 2,
-                                                y + cell_h / 2,
-                                                -1,
-                                                GTK_ANCHOR_CENTER,
-                                                "font", "Sans bold 18px",
-                                                NULL);
-
-                g_object_set (goo_text, "can-focus", TRUE, NULL);
-                g_signal_connect (goo_text, "button_press_event",
-                                  G_CALLBACK (on_cell_button_press), goo_rect);
+                score_text = goo_canvas_text_new (grid_group,
+                                                  score_image,
+                                                  x + cell_w / 2,
+                                                  y + cell_h / 2,
+                                                  -1,
+                                                  GTK_ANCHOR_CENTER,
+                                                  "font", "Sans bold 18px",
+                                                  NULL);
               }
 
-              // Data
+              if (i < j)
               {
-                g_object_set_data (G_OBJECT (goo_rect), "match",  match);
-                g_object_set_data (G_OBJECT (goo_rect), "player", A);
-                g_object_set_data (G_OBJECT (goo_rect), "goo_text", goo_text);
-                g_object_set_data (G_OBJECT (goo_rect), "x", (void *) (x + cell_w / 2));
-                g_object_set_data (G_OBJECT (goo_rect), "y", (void *) (y + cell_h / 2));
-                g_object_set_data (G_OBJECT (goo_rect), "w", (void *) (cell_w - 8));
-                g_object_set_data (G_OBJECT (goo_rect), "h", (void *) (cell_h - 8));
-                g_object_set_data (G_OBJECT (goo_rect), "next_rect",  NULL);
+                _score_collector->AddCollectingPoint (goo_rect,
+                                                      score_text,
+                                                      match,
+                                                      A,
+                                                      1);
+              }
+              else
+              {
+                _score_collector->AddCollectingPoint (goo_rect,
+                                                      score_text,
+                                                      match,
+                                                      A,
+                                                      0);
+              }
 
-                if (previous_goo_rect)
-                {
-                  g_object_set_data (G_OBJECT (previous_goo_rect), "next_rect",  goo_rect);
-                }
+              if (previous_goo_rect)
+              {
+                _score_collector->SetNextCollectingPoint (previous_goo_rect,
+                                                          goo_rect);
               }
 
               previous_goo_rect = goo_rect;

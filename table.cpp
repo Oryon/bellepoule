@@ -201,7 +201,7 @@ gboolean Table::DrawConnectors (GNode *node,
                              2,
                              bounds.x1 - _level_spacing/2, bounds.y2,
                              bounds.x2, bounds.y2,
-                             "line-width", 3.0,
+                             "line-width", 2.0,
                              NULL);
   }
   else if (   (G_NODE_IS_LEAF (node) == FALSE)
@@ -219,7 +219,7 @@ gboolean Table::DrawConnectors (GNode *node,
                              bounds.x1 - _level_spacing/2, bounds.y2,
                              parent_bounds.x1 - _level_spacing/2, bounds.y2,
                              parent_bounds.x1 - _level_spacing/2, parent_bounds.y2,
-                             "line-width", 3.0,
+                             "line-width", 2.0,
                              NULL);
   }
 
@@ -319,30 +319,31 @@ gboolean Table::FillInNode (GNode *node,
   {
     NodeData *parent_data = (NodeData *) parent->data;
 
+    {
+      GooCanvasItem *goo_rect = goo_canvas_rect_new (data->_canvas_table,
+                                                     0, 0,
+                                                     30, 30,
+                                                     "line-width", 2.0,
+                                                     "fill-color", "blue",
+                                                     "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
+                                                     NULL);
+
+      g_object_set (goo_rect, "can-focus", TRUE, NULL);
+
+      //g_signal_connect (goo_rect, "focus_in_event",
+                        //G_CALLBACK (on_focus_in), this);
+      //g_signal_connect (goo_rect, "button_press_event",
+                        //G_CALLBACK (on_cell_button_press), goo_rect);
+
+      PutInTable (data->_canvas_table,
+                  goo_rect,
+                  0,
+                  2);
+    }
     if (parent_data->_winner == NULL)
     {
       if (G_NODE_IS_LEAF (node) && (data->_winner))
       {
-        GooCanvasItem *item;
-        GtkWidget     *gtk_entry  = gtk_entry_new ();
-
-        gchar *toto = g_strdup_printf ("%d", data->_expected_winner_rank);
-        gtk_entry_set_text (GTK_ENTRY (gtk_entry),
-                            toto);
-        item = goo_canvas_widget_new (data->_canvas_table,
-                                      gtk_entry,
-                                      0,
-                                      0,
-                                      30,
-                                      30,
-                                      NULL);
-        g_free (toto);
-
-        PutInTable (data->_canvas_table,
-                    item,
-                    0,
-                    2);
-        SetTableItemAttribute (item, "y-align", 0.5);
       }
     }
   }
@@ -465,8 +466,6 @@ extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *wi
 void Table::Enter ()
 {
   EnableSensitiveWidgets ();
-
-  Display ();
 }
 
 // --------------------------------------------------------------------------------

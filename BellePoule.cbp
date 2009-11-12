@@ -92,6 +92,8 @@
 		<Unit filename="schedule.hpp" />
 		<Unit filename="score.cpp" />
 		<Unit filename="score.hpp" />
+		<Unit filename="score_collector.cpp" />
+		<Unit filename="score_collector.hpp" />
 		<Unit filename="splitting.cpp" />
 		<Unit filename="splitting.hpp" />
 		<Unit filename="stage.cpp" />

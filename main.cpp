@@ -114,14 +114,6 @@ int main (int argc, char **argv)
 
   {
     Contest_c *contest;
-    gchar     *filename = "compet/tableau";
-
-    contest = new Contest_c (filename);
-    contest->AttachTo (GTK_NOTEBOOK (xml->GetWidget ("notebook")));
-  }
-
-  {
-    Contest_c *contest;
     gchar     *filename = "compet/minimes_bretagne";
 
     contest = new Contest_c (filename);

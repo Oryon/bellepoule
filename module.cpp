@@ -288,8 +288,6 @@ void Module_c::Plug (Module_c   *module,
   _plugged_list = g_slist_append (_plugged_list,
                                   module);
   module->_owner = this;
-
-  module->UpdateAttrList ();
 }
 
 // --------------------------------------------------------------------------------
