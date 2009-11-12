@@ -21,6 +21,7 @@
 
 #include "canvas_module.hpp"
 #include "match.hpp"
+#include "score_collector.hpp"
 
 #include "stage.hpp"
 
@@ -56,11 +57,12 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     static const gdouble _level_spacing;
 
-    GNode         *_tree_root;
-    guint          _nb_levels;
-    GSList        *_attendees;
-    GooCanvasItem *_main_table;
-    guint          _max_score;
+    GNode          *_tree_root;
+    guint           _nb_levels;
+    GSList         *_attendees;
+    GooCanvasItem  *_main_table;
+    guint           _max_score;
+    ScoreCollector *_score_collector;
 
     void Display ();
 

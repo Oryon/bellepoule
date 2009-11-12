@@ -311,6 +311,7 @@ void Pool_c::OnPlugged ()
                                                   GTK_ANCHOR_CENTER,
                                                   "font", "Sans bold 18px",
                                                   NULL);
+                g_free (score_image);
               }
 
               if (i < j)

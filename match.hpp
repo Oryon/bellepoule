@@ -28,6 +28,8 @@ class Player_c;
 class Match_c : public Object_c
 {
   public:
+    Match_c  (guint max_score);
+
     Match_c  (Player_c *A,
               Player_c *B,
               guint     max_score);
@@ -37,7 +39,8 @@ class Match_c : public Object_c
     Player_c *GetPlayerB ();
     Player_c *GetWinner  ();
 
-    void ManagePlayer (Player_c *player);
+    void SetPlayerA (Player_c *player);
+    void SetPlayerB (Player_c *player);
 
     gboolean HasPlayer (Player_c *player);
 

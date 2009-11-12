@@ -26,11 +26,12 @@ ScoreCollector::ScoreCollector (GooCanvas      *canvas,
                                 CanvasModule_c *client,
                                 OnNewScore_cbk  on_new_score)
 {
-  _entry_item   = NULL;
-  _gtk_entry    = NULL;
-  _canvas       = canvas;
-  _client       = client;
-  _on_new_score = on_new_score;
+  _entry_item       = NULL;
+  _gtk_entry        = NULL;
+  _collecting_point = NULL;
+  _canvas           = canvas;
+  _client           = client;
+  _on_new_score     = on_new_score;
 }
 
 // --------------------------------------------------------------------------------
@@ -39,30 +40,33 @@ ScoreCollector::~ScoreCollector ()
 }
 
 // --------------------------------------------------------------------------------
+void ScoreCollector::AddCollectingTrigger (GooCanvasItem *trigger)
+{
+  if (trigger)
+  {
+    g_object_set (trigger, "can-focus", TRUE, NULL);
+
+    g_signal_connect (trigger, "button_press_event",
+                      G_CALLBACK (on_cell_button_press), _collecting_point);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
                                          GooCanvasItem *score_text,
                                          Match_c       *match,
                                          Player_c      *player,
-                                         guint          player_place)
+                                         guint          player_position)
 {
-  {
-    g_object_set (point, "can-focus", TRUE, NULL);
+  _collecting_point = point;
 
-    g_signal_connect (point, "focus_in_event",
-                      G_CALLBACK (on_focus_in), this);
-    g_signal_connect (point, "button_press_event",
-                      G_CALLBACK (on_cell_button_press), point);
-  }
+  AddCollectingTrigger (point);
+  AddCollectingTrigger (score_text);
 
+  g_signal_connect (point, "focus_in_event",
+                    G_CALLBACK (on_focus_in), this);
 
-  {
-    g_object_set (score_text, "can-focus", TRUE, NULL);
-
-    g_signal_connect (score_text, "button_press_event",
-                      G_CALLBACK (on_cell_button_press), point);
-  }
-
-  if (player_place == 0)
+  if (player_position == 0)
   {
     match->SetData ("Pool::goo_rect_A", point);
   }
@@ -259,7 +263,7 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
   {
     GooCanvasBounds bounds;
 
-    goo_canvas_item_get_bounds (goo_rect,
+    goo_canvas_item_get_bounds ((GooCanvasItem *) goo_rect,
                                 &bounds);
 
     {
@@ -311,6 +315,7 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
 
     match->SetScore (player, (gchar *) input);
 
+    if (score_text)
     {
       Score_c *score = match->GetScore (player);
 

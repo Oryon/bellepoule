@@ -22,6 +22,18 @@
 #include "match.hpp"
 
 // --------------------------------------------------------------------------------
+Match_c::Match_c (guint max_score)
+{
+  _max_score = max_score;
+
+  _A = 0;
+  _B = 0;
+
+  _A_score = new Score_c (max_score);
+  _B_score = new Score_c (max_score);
+}
+
+// --------------------------------------------------------------------------------
 Match_c::Match_c  (Player_c *A,
                    Player_c *B,
                    guint     max_score)
@@ -43,16 +55,15 @@ Match_c::~Match_c ()
 }
 
 // --------------------------------------------------------------------------------
-void Match_c::ManagePlayer (Player_c *player)
+void Match_c::SetPlayerA (Player_c *player)
 {
-  if (_A == NULL)
-  {
-    _A = player;
-  }
-  else if (_B == NULL)
-  {
-    _B = player;
-  }
+  _A = player;
+}
+
+// --------------------------------------------------------------------------------
+void Match_c::SetPlayerB (Player_c *player)
+{
+  _B = player;
 }
 
 // --------------------------------------------------------------------------------

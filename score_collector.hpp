@@ -39,7 +39,9 @@ class ScoreCollector : public Object_c
                              GooCanvasItem *score_text,
                              Match_c       *match,
                              Player_c      *player,
-                             guint          player_place);
+                             guint          player_position);
+
+    void AddCollectingTrigger (GooCanvasItem *trigger);
 
     void SetNextCollectingPoint (GooCanvasItem *to,
                                  GooCanvasItem *next);
@@ -47,6 +49,7 @@ class ScoreCollector : public Object_c
   private:
     GooCanvas      *_canvas;
     GooCanvasItem  *_entry_item;
+    GooCanvasItem  *_collecting_point;
     GtkWidget      *_gtk_entry;
     CanvasModule_c *_client;
     OnNewScore_cbk  _on_new_score;
