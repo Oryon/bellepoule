@@ -14,7 +14,7 @@
             <child>
               <object class="GtkToolButton" id="filter_button">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Filtre</property>
+                <property name="label" translatable="yes">Filter</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_filter_button_clicked"/>
               </object>
@@ -26,7 +26,7 @@
             <child>
               <object class="GtkToolButton" id="print_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Imprimer</property>
+                <property name="label" translatable="yes">Print</property>
                 <property name="stock_id">gtk-print</property>
                 <signal name="clicked" handler="on_print_toolbutton_clicked"/>
               </object>
@@ -52,7 +52,7 @@
                 <child>
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Nombre de poules</property>
+                    <property name="label" translatable="yes">Number of pools</property>
                   </object>
                   <packing>
                     <property name="position">0</property>
@@ -94,7 +94,7 @@
                 <child>
                   <object class="GtkLabel" id="label4">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Tireurs / poule</property>
+                    <property name="label" translatable="yes">Fencers / pool</property>
                   </object>
                   <packing>
                     <property name="position">0</property>

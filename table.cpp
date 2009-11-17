@@ -75,17 +75,28 @@ void Table::OnPlugged ()
 {
   CanvasModule_c::OnPlugged ();
 
-  Object_c::Release (_score_collector);
-  _score_collector = new ScoreCollector (GetCanvas (),
-                                         this,
-                                         NULL);
-
   Display ();
+}
+
+// --------------------------------------------------------------------------------
+void Table::OnNewScore (CanvasModule_c *client,
+                        Match_c        *match,
+                        Player_c       *player)
+{
+  Table *table = dynamic_cast <Table *> (client);
+
+  FillInNode ((GNode *) match->GetData ("Table::node"),
+              table);
 }
 
 // --------------------------------------------------------------------------------
 void Table::Display ()
 {
+  Object_c::Release (_score_collector);
+  _score_collector = new ScoreCollector (GetCanvas (),
+                                         this,
+                                         (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
+
   if (_main_table)
   {
     goo_canvas_item_remove (_main_table);
@@ -410,12 +421,28 @@ gboolean Table::FillInNode (GNode *node,
         SetTableItemAttribute (score_text, "y-align", 0.5);
       }
 
-      table->_score_collector->AddCollectingPoint (goo_rect,
-                                                   score_text,
-                                                   parent_data->_match,
-                                                   data->_winner,
-                                                   g_node_child_position (parent, node));
-      table->_score_collector->AddCollectingTrigger (edit_icon);
+      {
+        guint position = g_node_child_position (parent, node);
+
+        table->_score_collector->AddCollectingPoint (goo_rect,
+                                                     score_text,
+                                                     parent_data->_match,
+                                                     data->_winner,
+                                                     position);
+        table->_score_collector->AddCollectingTrigger (edit_icon);
+
+        if (position == 0)
+        {
+          parent_data->_match->SetData ("Table::player_A_rect", goo_rect);
+        }
+        else
+        {
+          table->_score_collector->SetNextCollectingPoint (goo_rect,
+                                                           (GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"));
+          table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"),
+                                                           goo_rect);
+        }
+      }
     }
 
     if (parent_data->_winner == NULL)
@@ -476,6 +503,7 @@ void Table::AddFork (GNode *to)
 
   data->_canvas_table = NULL;
   data->_match = new Match_c (_max_score);
+  data->_match->SetData ("Table::node", node);
 
   if ((to_data == NULL) || (data->_level > 1))
   {

@@ -4,7 +4,7 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkDialog" id="root">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Ajouter un tireur</property>
+    <property name="title" translatable="yes">Add a fencer</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
@@ -25,7 +25,7 @@
                 <child>
                   <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Nom</property>
+                    <property name="label" translatable="yes">Name</property>
                   </object>
                   <packing>
                     <property name="position">0</property>
@@ -34,7 +34,7 @@
                 <child>
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Pr&#xE9;nom</property>
+                    <property name="label" translatable="yes">First name</property>
                   </object>
                   <packing>
                     <property name="position">1</property>
@@ -43,7 +43,7 @@
                 <child>
                   <object class="GtkLabel" id="label3">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Cote</property>
+                    <property name="label" translatable="yes">Range</property>
                   </object>
                   <packing>
                     <property name="position">2</property>
@@ -52,7 +52,7 @@
                 <child>
                   <object class="GtkLabel" id="label4">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Pr&#xE9;sent</property>
+                    <property name="label" translatable="yes">Attending</property>
                   </object>
                   <packing>
                     <property name="position">3</property>
@@ -122,7 +122,7 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="add_button">
-                <property name="label" translatable="yes">Ajouter</property>
+                <property name="label" translatable="yes">Add</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -136,7 +136,7 @@
             </child>
             <child>
               <object class="GtkButton" id="close_button">
-                <property name="label" translatable="yes">Fermer</property>
+                <property name="label" translatable="yes">Close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

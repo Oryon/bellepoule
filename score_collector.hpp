@@ -28,7 +28,9 @@
 class ScoreCollector : public Object_c
 {
   public:
-    typedef void (*OnNewScore_cbk) (CanvasModule_c *client);
+    typedef void (*OnNewScore_cbk) (CanvasModule_c *client,
+                                    Match_c        *match,
+                                    Player_c       *player);
 
   public:
     ScoreCollector (GooCanvas      *canvas,

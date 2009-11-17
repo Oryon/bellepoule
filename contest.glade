@@ -17,7 +17,6 @@
                 <child>
                   <object class="GtkToolButton" id="save_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Enregistrer</property>
                     <property name="stock_id">gtk-save</property>
                     <signal name="clicked" handler="on_save_toolbutton_clicked"/>
                   </object>
@@ -29,7 +28,6 @@
                 <child>
                   <object class="GtkToolButton" id="properties_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Propri&#xE9;t&#xE9;s</property>
                     <property name="stock_id">gtk-properties</property>
                     <signal name="clicked" handler="on_properties_toolbutton_clicked"/>
                   </object>
@@ -49,7 +47,7 @@
                 <child>
                   <object class="GtkToolButton" id="formula_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Formule</property>
+                    <property name="label" translatable="yes">Formula</property>
                     <property name="stock_id">gtk-preferences</property>
                     <signal name="clicked" handler="on_formula_toolbutton_clicked"/>
                   </object>
@@ -84,7 +82,7 @@
             <child>
               <object class="GtkLabel" id="contest_label">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">page 1</property>
+                <property name="label" translatable="no">page 1</property>
               </object>
               <packing>
                 <property name="position">0</property>
@@ -120,7 +118,7 @@
   </object>
   <object class="GtkDialog" id="properties_dialog">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Nouvelle comp&#xE9;tition</property>
+    <property name="title" translatable="yes">New competition</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
@@ -167,7 +165,8 @@
                         <child>
                           <object class="GtkLabel" id="label1">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Titre</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Title</property>
                           </object>
                         </child>
                         <child>
@@ -183,7 +182,8 @@
                         <child>
                           <object class="GtkLabel" id="label8">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Organisateur</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Organizer</property>
                           </object>
                           <packing>
                             <property name="top_attach">1</property>
@@ -271,7 +271,8 @@
                         <child>
                           <object class="GtkLabel" id="label3">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Fichier de secours</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Backup file</property>
                           </object>
                           <packing>
                             <property name="top_attach">3</property>
@@ -281,6 +282,7 @@
                         <child>
                           <object class="GtkLabel" id="label13">
                             <property name="visible">True</property>
+                            <property name="xalign">0</property>
                             <property name="label" translatable="yes">Date</property>
                           </object>
                           <packing>
@@ -295,7 +297,7 @@
                 <child type="label">
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;G&#xE9;n&#xE9;ral&lt;/b&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Main&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </object>
                 </child>
@@ -323,13 +325,15 @@
                         <child>
                           <object class="GtkLabel" id="label15">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Arme</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Weapon</property>
                           </object>
                         </child>
                         <child>
                           <object class="GtkLabel" id="label16">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Sexe</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Gender</property>
                           </object>
                           <packing>
                             <property name="top_attach">1</property>
@@ -348,7 +352,8 @@
                         <child>
                           <object class="GtkLabel" id="label17">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Cat&#xE9;gorie</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Category</property>
                           </object>
                           <packing>
                             <property name="top_attach">2</property>
@@ -408,7 +413,7 @@
                 <child type="label">
                   <object class="GtkLabel" id="label14">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Type&lt;/b&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Details&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </object>
                 </child>
@@ -466,138 +471,6 @@
         </child>
         <child internal-child="action_area">
           <object class="GtkHButtonBox" id="dialog-action_area2">
-            <property name="visible">True</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkDialog" id="formula_dialog">
-    <property name="border_width">5</property>
-    <property name="window_position">center-on-parent</property>
-    <property name="type_hint">dialog</property>
-    <property name="has_separator">False</property>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="formula_dialog-vbox">
-        <property name="visible">True</property>
-        <property name="spacing">2</property>
-        <child>
-          <object class="GtkFrame" id="table_frame">
-            <property name="visible">True</property>
-            <property name="label_xalign">0</property>
-            <child>
-              <object class="GtkAlignment" id="alignment6">
-                <property name="visible">True</property>
-                <property name="left_padding">12</property>
-                <property name="right_padding">5</property>
-                <child>
-                  <object class="GtkTable" id="table7">
-                    <property name="visible">True</property>
-                    <property name="n_rows">3</property>
-                    <property name="n_columns">2</property>
-                    <property name="column_spacing">5</property>
-                    <property name="row_spacing">5</property>
-                    <child>
-                      <object class="GtkHBox" id="third_place_hbox">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkRadioButton" id="radiobutton1">
-                            <property name="label" translatable="yes">Ex aequo</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="radiobutton2">
-                            <property name="label" translatable="yes">D&#xE9;partag&#xE9;e</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="draw_indicator">True</property>
-                            <property name="group">radiobutton1</property>
-                          </object>
-                          <packing>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label27">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">Nombre de touches</property>
-                      </object>
-                      <packing>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkEntry" id="entry5">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="invisible_char">&#x25CF;</property>
-                        <property name="width_chars">2</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label26">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">3i&#xE8;me place</property>
-                      </object>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child type="label">
-              <object class="GtkLabel" id="label23">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;Tableaux&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area4">
             <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>

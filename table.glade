@@ -13,7 +13,7 @@
             <child>
               <object class="GtkToolButton" id="table_filter_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Filtre</property>
+                <property name="label" translatable="yes">Filter</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_table_filter_toolbutton_clicked"/>
               </object>

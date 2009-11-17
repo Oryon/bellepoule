@@ -326,7 +326,9 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
 
     if (_client && _on_new_score)
     {
-      _on_new_score (_client);
+      _on_new_score (_client,
+                     match,
+                     player);
     }
   }
 

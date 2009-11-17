@@ -13,7 +13,7 @@
             <child>
               <object class="GtkToolButton" id="previous_stage_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Phase pr&#xE9;c&#xE9;dente</property>
+                <property name="label" translatable="yes">Previous stage</property>
                 <property name="stock_id">gtk-go-back</property>
                 <signal name="clicked" handler="on_previous_stage_toolbutton_clicked"/>
               </object>
@@ -42,7 +42,7 @@
             <child>
               <object class="GtkToolButton" id="next_stage_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Phase suivante</property>
+                <property name="label" translatable="yes">Next stage</property>
                 <property name="stock_id">gtk-go-forward</property>
                 <signal name="clicked" handler="on_next_stage_toolbutton_clicked"/>
               </object>

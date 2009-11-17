@@ -52,7 +52,7 @@
                 <child>
                   <object class="GtkToolButton" id="pool_filter_toollbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Filtre</property>
+                    <property name="label" translatable="yes">Filter</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_pool_filter_toollbutton_clicked"/>
                   </object>

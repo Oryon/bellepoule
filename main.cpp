@@ -14,6 +14,9 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#define GETTEXT_PACKAGE "gtk20"
+#include <glib/gi18n-lib.h>
+
 #include <gtk/gtk.h>
 
 #include "glade.hpp"
@@ -56,7 +59,7 @@ extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
 {
   GtkWidget *chooser;
 
-  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new ("Choisissez un fichier ...",
+  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a competition file to open..."),
                                                      NULL,
                                                      GTK_FILE_CHOOSER_ACTION_OPEN,
                                                      GTK_STOCK_CANCEL,
@@ -81,10 +84,13 @@ extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
+  libintl_bindtextdomain ("BellePoule", "./locale");
+  libintl_bind_textdomain_codeset ("BellePoule", "UTF-8");
+  textdomain ("BellePoule");
+
   // Init
   {
-    gtk_set_locale  ();
-    gtk_init        (&argc, &argv);
+    gtk_init (&argc, &argv);
     // g_mem_set_vtable (glib_mem_profiler_table);
 
     Contest_c::Init        ();

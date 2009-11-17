@@ -13,7 +13,7 @@
             <child>
               <object class="GtkToolButton" id="splitting_filter_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Filtre</property>
+                <property name="label" translatable="yes">Filter</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_splitting_filter_toolbutton_clicked"/>
               </object>
@@ -170,7 +170,6 @@
     </widgets>
   </object>
   <object class="GtkTextBuffer" id="textbuffer1">
-    <property name="text" translatable="yes">S&#xE9;lectionner les tireurs &#xE0; extraire de la comp&#xE9;tition courante
-pour les injecter dans une nouvelle comp&#xE9;tition.</property>
+    <property name="text" translatable="yes">Select the fencers to move to a new competition.</property>
   </object>
 </interface>

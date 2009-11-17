@@ -3,7 +3,7 @@
   <!-- interface-requires gtk+ 2.6 -->
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="root">
-    <property name="title" translatable="yes">Comp&#xE9;tition</property>
+    <property name="title" translatable="yes">Competition</property>
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>

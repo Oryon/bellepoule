@@ -83,6 +83,10 @@ class Table : public virtual Stage_c, public CanvasModule_c
     static gboolean FillInNode (GNode *node,
                                 Table *table);
 
+    static void OnNewScore (CanvasModule_c *client,
+                            Match_c        *match,
+                            Player_c       *player);
+
     void Load (xmlNode *xml_node);
 
     void AddFork (GNode *to);
