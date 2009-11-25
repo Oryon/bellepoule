@@ -58,9 +58,8 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     GSList        *_attendees;
     GSList        *_pools_list;
     GSList        *_config_list;
-    guint          _pool_size;
-    guint          _nb_pools;
-    guint          _best_nb_pools;
+    Configuration *_best_config;
+    Configuration *_selected_config;
     GooCanvas     *_canvas;
     gboolean       _dragging;
     GooCanvasItem *_drag_text;

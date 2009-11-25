@@ -47,8 +47,7 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
 {
   _pools_list      = NULL;
   _config_list     = NULL;
-  _nb_pools        = 0;
-  _pool_size       = 0;
+  _selected_config = NULL;
   _dragging        = false;
   _target_pool     = NULL;
   _floating_player = NULL;
@@ -117,11 +116,12 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
     {
       if (strcmp ((char *) n->name, "player_list") == 0)
       {
-        current_pool = new Pool_c (_nb_pools+1);
+        guint number = g_slist_length (_pools_list);
+
+        current_pool = new Pool_c (number+1);
 
         _pools_list = g_slist_append (_pools_list,
                                       current_pool);
-        _nb_pools++;
       }
       else if (strcmp ((char *) n->name, "player") == 0)
       {
@@ -140,9 +140,23 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, _xml_class_name) != 0)
       {
+        guint nb_pool = g_slist_length (_pools_list);
+
         FillCombobox ();
+
+        for (guint i = 0; i < g_slist_length (_config_list); i++)
+        {
+          _selected_config = (Configuration *) g_slist_nth_data (_config_list,
+                                                                 nb_pool-1);
+          if (_selected_config->nb_pool == nb_pool)
+          {
+            break;
+          }
+        }
+
         SetUpCombobox ();
         Display ();
+
         return;
       }
     }
@@ -192,8 +206,7 @@ void PoolAllocator_c::FillCombobox ()
 {
   guint nb_players = g_slist_length (_attendees);
 
-  _best_nb_pools = 1;
-
+  _best_config = NULL;
   for (guint nb_pool = 1; nb_pool <= nb_players / 3; nb_pool++)
   {
     for (guint i = 0; i < nb_pool; i++)
@@ -242,9 +255,9 @@ void PoolAllocator_c::FillCombobox ()
             g_free (combo_text);
           }
 
-          if (size >= 7)
+          if ((size >= 7) || (_best_config == NULL))
           {
-            _best_nb_pools = nb_pool;
+            _best_config = config;
           }
         }
 
@@ -255,13 +268,18 @@ void PoolAllocator_c::FillCombobox ()
     }
   }
 
+  if (_best_config)
   {
-    GtkTreeIter  iter;
+    GtkTreeIter iter;
+    gint        best_index;
+
+    best_index = g_slist_index (_config_list,
+                                _best_config);
 
     if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_combobox_store),
                                        &iter,
                                        NULL,
-                                       _best_nb_pools - 1))
+                                       best_index))
     {
       gtk_list_store_set (_combobox_store, &iter,
                           BEST_PIXMAP_COL, GTK_STOCK_ABOUT,
@@ -273,7 +291,7 @@ void PoolAllocator_c::FillCombobox ()
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::CreatePools ()
 {
-  for (guint i = 0; i < _nb_pools; i++)
+  for (guint i = 0; i < _selected_config->nb_pool; i++)
   {
     Pool_c *pool;
 
@@ -281,12 +299,12 @@ void PoolAllocator_c::CreatePools ()
     _pools_list = g_slist_append (_pools_list,
                                   pool);
 
-    for (guint j = 0; j < _pool_size; j++)
+    for (guint j = 0; j < _selected_config->size; j++)
     {
       Player_c *player;
 
       player = (Player_c *) g_slist_nth_data (_attendees,
-                                              i + _nb_pools * j);
+                                              i + _selected_config->nb_pool * j);
       if (player)
       {
         pool->AddPlayer (player);
@@ -298,27 +316,34 @@ void PoolAllocator_c::CreatePools ()
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::SetUpCombobox ()
 {
-  GtkWidget *w;
+  if (_best_config)
+  {
+    GtkWidget *w;
+    gint       config_index;
 
-  w = _glade->GetWidget ("nb_pools_combobox");
-  g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                        (void *) on_nb_pools_combobox_changed,
-                                        (Object_c *) this);
-  gtk_combo_box_set_active (GTK_COMBO_BOX (w),
-                            _nb_pools - 1);
-  g_signal_connect (G_OBJECT (w), "changed",
-                    G_CALLBACK (on_nb_pools_combobox_changed),
-                    (Object_c *) this);
+    config_index = g_slist_index (_config_list,
+                                  _selected_config);
 
-  w = _glade->GetWidget ("pool_size_combobox");
-  g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                        (void *) on_pool_size_combobox_changed,
-                                        (Object_c *) this);
-  gtk_combo_box_set_active (GTK_COMBO_BOX (w),
-                            _nb_pools - 1);
-  g_signal_connect (G_OBJECT (w), "changed",
-                    G_CALLBACK (on_pool_size_combobox_changed),
-                    (Object_c *) this);
+    w = _glade->GetWidget ("nb_pools_combobox");
+    g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+                                          (void *) on_nb_pools_combobox_changed,
+                                          (Object_c *) this);
+    gtk_combo_box_set_active (GTK_COMBO_BOX (w),
+                              config_index);
+    g_signal_connect (G_OBJECT (w), "changed",
+                      G_CALLBACK (on_nb_pools_combobox_changed),
+                      (Object_c *) this);
+
+    w = _glade->GetWidget ("pool_size_combobox");
+    g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+                                          (void *) on_pool_size_combobox_changed,
+                                          (Object_c *) this);
+    gtk_combo_box_set_active (GTK_COMBO_BOX (w),
+                              config_index);
+    g_signal_connect (G_OBJECT (w), "changed",
+                      G_CALLBACK (on_pool_size_combobox_changed),
+                      (Object_c *) this);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -661,8 +686,8 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
     guint nb_rows;
 
     nb_columns = 2;
-    nb_rows = _nb_pools / nb_columns;
-    if (_nb_pools % nb_columns != 0)
+    nb_rows = _selected_config->nb_pool / nb_columns;
+    if (_selected_config->nb_pool % nb_columns != 0)
     {
       nb_rows++;
     }
@@ -691,7 +716,7 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
     {
       best_config = (Configuration *) g_slist_nth_data (_config_list,
                                                         i);
-      if (best_config->nb_pool == _nb_pools)
+      if (best_config->nb_pool == _selected_config->nb_pool)
       {
         break;
       }
@@ -939,8 +964,7 @@ void PoolAllocator_c::OnComboboxChanged (GtkComboBox *cb)
                         (Object_c *) this);
     }
 
-    _pool_size = config->size;
-    _nb_pools  = config->nb_pool;
+    _selected_config = config;
 
     DeletePools ();
     CreatePools ();
@@ -979,15 +1003,9 @@ void PoolAllocator_c::Enter ()
 
     FillCombobox ();
 
-    _nb_pools = _best_nb_pools;
-
-    if (_config_list)
+    if (_best_config)
     {
-      Configuration *best_config;
-
-      best_config = (Configuration *) g_slist_nth_data (_config_list,
-                                                        _nb_pools - 1);
-      _pool_size = best_config->size;
+      _selected_config = _best_config;
 
       CreatePools ();
       SetUpCombobox ();
