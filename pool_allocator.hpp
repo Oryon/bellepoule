@@ -80,7 +80,10 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     void FixUpTablesBounds ();
 
     void OnPlugged ();
+
     void OnAttrListUpdated ();
+
+    gboolean IsOver ();
 
     gboolean OnButtonPress (GooCanvasItem  *item,
                             GooCanvasItem  *target,

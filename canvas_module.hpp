@@ -37,10 +37,15 @@ class CanvasModule_c : public Module_c
                             guint          row,
                             guint          column);
 
-    static GooCanvasItem *PutInTable (GooCanvasItem *table,
-                                      guint          row,
-                                      guint          column,
-                                      gchar         *text);
+    static GooCanvasItem *PutTextInTable (GooCanvasItem *table,
+                                          gchar         *text,
+                                          guint          row,
+                                          guint          column);
+
+    static GooCanvasItem *PutStockIconInTable (GooCanvasItem *table,
+                                               gchar         *icon_name,
+                                               guint          row,
+                                               guint          column);
 
     static void SetTableItemAttribute (GooCanvasItem *item,
                                        gchar         *attribute,

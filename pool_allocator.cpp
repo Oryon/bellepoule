@@ -48,7 +48,7 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
   _pools_list      = NULL;
   _config_list     = NULL;
   _selected_config = NULL;
-  _dragging        = false;
+  _dragging        = FALSE;
   _target_pool     = NULL;
   _floating_player = NULL;
   _drag_text       = NULL;
@@ -225,7 +225,7 @@ void PoolAllocator_c::FillCombobox ()
 
           config->size         = size;
           config->nb_pool      = nb_pool;
-          config->has_two_size = false;
+          config->has_two_size = FALSE;
 
           _config_list = g_slist_append (_config_list,
                                          config);
@@ -233,7 +233,7 @@ void PoolAllocator_c::FillCombobox ()
           {
             if (i != 0)
             {
-              config->has_two_size = true;
+              config->has_two_size = TRUE;
               combo_text = g_strdup_printf ("%d ou %d", size, size - 1);
             }
             else
@@ -441,13 +441,14 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
       gdk_cursor_unref (fleur);
     }
 
-    _dragging = true;
+    _dragging = TRUE;
 
     _source_pool = pool;
 
     {
       pool->RemovePlayer (_floating_player);
       FillPoolTable (pool);
+      SignalStatusUpdate ();
       FixUpTablesBounds ();
     }
 
@@ -480,7 +481,7 @@ gboolean PoolAllocator_c::OnButtonRelease (GooCanvasItem  *item,
 {
   if (_dragging)
   {
-    _dragging = false;
+    _dragging = FALSE;
 
     goo_canvas_item_remove (_drag_text);
     _drag_text = NULL;
@@ -496,6 +497,7 @@ gboolean PoolAllocator_c::OnButtonRelease (GooCanvasItem  *item,
       _source_pool->AddPlayer (_floating_player);
       FillPoolTable (_source_pool);
     }
+    SignalStatusUpdate ();
 
     FixUpTablesBounds ();
 
@@ -700,47 +702,47 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
                                     "row-spacing",    2.0,
                                     "column-spacing", 4.0,
                                     NULL);
-      PutInTable (_main_table, table,
-                  row,
-                  column);
+      PutInTable (_main_table,
+                  table,
+                  row, column);
       pool->SetData ("PoolAllocator_c::table",
                      table);
     }
   }
 
   {
-    guint          pool_size   = pool->GetNbPlayers ();
-    Configuration *best_config = NULL;
+    guint pool_size           = pool->GetNbPlayers ();
+    GooCanvasItem *name_table = goo_canvas_table_new (table, NULL);
 
-    for (guint i = 0; i < g_slist_length (_config_list); i ++)
+    // Status icon
     {
-      best_config = (Configuration *) g_slist_nth_data (_config_list,
-                                                        i);
-      if (best_config->nb_pool == _selected_config->nb_pool)
+      gchar *icon_name;
+
+      if (   (pool_size == _selected_config->size - 1)
+          || (   _selected_config->has_two_size
+              && (pool_size == _selected_config->size) || (pool_size == _selected_config->size - 1)))
       {
-        break;
+        icon_name = GTK_STOCK_APPLY;
+        pool->SetData ("PoolAllocator_c::is_balanced", (void *) 1);
       }
+      else
+      {
+        icon_name = GTK_STOCK_DIALOG_WARNING;
+        pool->SetData ("PoolAllocator_c::is_balanced", 0);
+      }
+
+      PutStockIconInTable (name_table,
+                           icon_name,
+                           0, 0);
     }
 
-    item = PutInTable (table,
-                       0, 0,
-                       pool->GetName ());
-    g_object_set (G_OBJECT (item),
-                  "font", "Sans bold 18px",
-                  NULL);
-
-    if (   (pool_size == best_config->size - 1)
-        || (   best_config->has_two_size
-            && (pool_size == best_config->size) || (pool_size == best_config->size - 1)))
+    // Name
     {
+      item = PutTextInTable (name_table,
+                             pool->GetName (),
+                             0, 1);
       g_object_set (G_OBJECT (item),
-                    "fill_color", "medium blue",
-                    NULL);
-    }
-    else
-    {
-      g_object_set (G_OBJECT (item),
-                    "fill_color", "dark red",
+                    "font", "Sans bold 18px",
                     NULL);
     }
   }
@@ -763,15 +765,15 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
         if (attr)
         {
-          item = PutInTable (table,
-                             p+1, i,
-                             attr->GetStringImage ());
+          item = PutTextInTable (table,
+                                 attr->GetStringImage (),
+                                 p+1, i);
         }
         else
         {
-          item = PutInTable (table,
-                             p+1, i,
-                             "");
+          item = PutTextInTable (table,
+                                 "",
+                                 p+1, i);
         }
         g_object_set (G_OBJECT (item),
                       "font", "Sans 14px",
@@ -910,6 +912,23 @@ void PoolAllocator_c::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean PoolAllocator_c::IsOver ()
+{
+  for (guint i = 0; i < g_slist_length (_pools_list); i++)
+  {
+    Pool_c *pool;
+
+    pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
+
+    if (pool->GetData ("PoolAllocator_c::is_balanced") == 0)
+    {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
 guint PoolAllocator_c::GetNbPools ()
 {
   return g_slist_length (_pools_list);
@@ -969,6 +988,7 @@ void PoolAllocator_c::OnComboboxChanged (GtkComboBox *cb)
     DeletePools ();
     CreatePools ();
     Display ();
+    SignalStatusUpdate ();
   }
 }
 
@@ -1013,6 +1033,7 @@ void PoolAllocator_c::Enter ()
   }
 
   Display ();
+  SignalStatusUpdate ();
 }
 
 // --------------------------------------------------------------------------------

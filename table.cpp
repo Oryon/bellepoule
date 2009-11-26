@@ -146,10 +146,10 @@ void Table::Display ()
         {
           gchar *text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - l));
 
-          text_item = PutInTable (level_header,
-                                  1,
-                                  0,
-                                  text);
+          text_item = PutTextInTable (level_header,
+                                      text,
+                                      1,
+                                      0);
           g_object_set (G_OBJECT (text_item),
                         "font",       "Sans bold 18px",
                         "fill_color", "medium blue",
@@ -260,10 +260,10 @@ gboolean Table::FillInNode (GNode *node,
                                                 "column-spacing", _level_spacing,
                                                 NULL);
 
-    PutInTable (data->_canvas_table,
-                0,
-                1,
-                " ");
+    PutTextInTable (data->_canvas_table,
+                    " ",
+                    0,
+                    1);
     PutInTable (table->_main_table,
                 data->_canvas_table,
                 data->_row,
@@ -297,10 +297,10 @@ gboolean Table::FillInNode (GNode *node,
         }
       }
 
-      player_item = PutInTable (data->_canvas_table,
-                                0,
-                                1,
-                                string->str);
+      player_item = PutTextInTable (data->_canvas_table,
+                                    string->str,
+                                    0,
+                                    1);
       SetTableItemAttribute (player_item, "y-align", 0.5);
 
       g_string_free (string,
@@ -311,29 +311,11 @@ gboolean Table::FillInNode (GNode *node,
   if (   (G_NODE_IS_LEAF (node) == FALSE)
       && (data->_winner == FALSE))
   {
-    GooCanvasItem *item;
-    GtkWidget     *image = gtk_image_new ();
-    GdkPixbuf     *pixbuf;
-
-    g_object_ref_sink (image);
-    pixbuf = gtk_widget_render_icon (image,
-                                     GTK_STOCK_PRINT,
-                                     GTK_ICON_SIZE_BUTTON,
-                                     NULL);
-
-    item = goo_canvas_image_new (data->_canvas_table,
-                                 pixbuf,
-                                 0.0,
-                                 0.0,
-                                 NULL);
-
-    PutInTable (data->_canvas_table,
-                item,
-                0,
-                0);
+    GooCanvasItem *item = PutStockIconInTable (data->_canvas_table,
+                                               GTK_STOCK_PRINT,
+                                               0,
+                                               0);
     SetTableItemAttribute (item, "y-align", 0.5);
-
-    g_object_unref (image);
   }
 
   if (parent)
@@ -359,27 +341,10 @@ gboolean Table::FillInNode (GNode *node,
       // EDIT icon
       if (parent_data->_winner == NULL)
       {
-        GtkWidget *image = gtk_image_new ();
-        GdkPixbuf *pixbuf;
-
-        g_object_ref_sink (image);
-        pixbuf = gtk_widget_render_icon (image,
+        edit_icon = PutStockIconInTable (data->_canvas_table,
                                          GTK_STOCK_EDIT,
-                                         GTK_ICON_SIZE_BUTTON,
-                                         NULL);
-
-        edit_icon = goo_canvas_image_new (data->_canvas_table,
-                                          pixbuf,
-                                          0.0,
-                                          0.0,
-                                          NULL);
-
-        g_object_unref (image);
-
-        PutInTable (data->_canvas_table,
-                    edit_icon,
-                    0,
-                    2);
+                                         0,
+                                         2);
         SetTableItemAttribute (edit_icon, "y-align", 0.5);
       }
 

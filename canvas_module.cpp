@@ -120,10 +120,10 @@ void CanvasModule_c::SetTableItemAttribute (GooCanvasItem *item,
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *CanvasModule_c::PutInTable (GooCanvasItem *table,
-                                           guint          row,
-                                           guint          column,
-                                           gchar         *text)
+GooCanvasItem *CanvasModule_c::PutTextInTable (GooCanvasItem *table,
+                                               gchar         *text,
+                                               guint          row,
+                                               guint          column)
 {
   GooCanvasItem *item;
 
@@ -137,6 +137,37 @@ GooCanvasItem *CanvasModule_c::PutInTable (GooCanvasItem *table,
   PutInTable (table,
               item,
               row, column);
+
+  return item;
+}
+
+// --------------------------------------------------------------------------------
+GooCanvasItem *CanvasModule_c::PutStockIconInTable (GooCanvasItem *table,
+                                                    gchar         *icon_name,
+                                                    guint          row,
+                                                    guint          column)
+{
+  GooCanvasItem *item;
+  GtkWidget     *image = gtk_image_new ();
+  GdkPixbuf     *pixbuf;
+
+  g_object_ref_sink (image);
+  pixbuf = gtk_widget_render_icon (image,
+                                   icon_name,
+                                   GTK_ICON_SIZE_BUTTON,
+                                   NULL);
+
+  item = goo_canvas_image_new (table,
+                               pixbuf,
+                               0.0,
+                               0.0,
+                               NULL);
+
+  PutInTable (table,
+              item,
+              row, column);
+
+  g_object_unref (image);
 
   return item;
 }
