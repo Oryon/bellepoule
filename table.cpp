@@ -259,23 +259,20 @@ gboolean Table::FillInNode (GNode *node,
     data->_canvas_table = goo_canvas_table_new (table->_main_table,
                                                 "column-spacing", _level_spacing,
                                                 NULL);
-
-    PutTextInTable (data->_canvas_table,
-                    " ",
-                    0,
-                    1);
+    SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
+    SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
     PutInTable (table->_main_table,
                 data->_canvas_table,
                 data->_row,
                 data->_level);
   }
 
-  if (data->_winner)
   {
-    {
-      GooCanvasItem *player_item;
-      GString       *string = g_string_new ("");
+    GooCanvasItem *player_item;
+    GString       *string = g_string_new ("");
 
+    if (data->_winner)
+    {
       for (guint a = 0; a < g_slist_length (table->_attr_list); a++)
       {
         gchar       *attr_name;
@@ -296,16 +293,18 @@ gboolean Table::FillInNode (GNode *node,
                                     attr->GetStringImage ());
         }
       }
-
-      player_item = PutTextInTable (data->_canvas_table,
-                                    string->str,
-                                    0,
-                                    1);
-      SetTableItemAttribute (player_item, "y-align", 0.5);
-
-      g_string_free (string,
-                     TRUE);
     }
+
+    player_item = PutTextInTable (data->_canvas_table,
+                                  string->str,
+                                  0,
+                                  1);
+    SetTableItemAttribute (player_item, "y-align", 0.5);
+    SetTableItemAttribute (player_item, "x-expand", 1U);
+    SetTableItemAttribute (player_item, "x-fill", 1U);
+
+    g_string_free (string,
+                   TRUE);
   }
 
   if (   (G_NODE_IS_LEAF (node) == FALSE)

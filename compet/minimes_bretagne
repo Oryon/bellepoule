@@ -9,35 +9,41 @@
   <player ref="0" name="Tireur F" first_name="Zut" gender="??" country="??" rating="339" rank="6" attending="1" club="" birth_year="0" licence="0"/>
   <player ref="4" name="Tireur G" first_name="Machin" gender="??" country="??" rating="339" rank="7" attending="1" club="" birth_year="0" licence="0"/>
  </player_list>
- <schedule current_stage="1">
+ <schedule current_stage="3">
   <pool_allocation_stage name="">
    <player_list>
     <player ref="2"/>
-    <player ref="16"/>
-   </player_list>
-   <player_list>
     <player ref="3"/>
-    <player ref="0"/>
-    <player ref="4"/>
     <player ref="19"/>
     <player ref="1"/>
+    <player ref="16"/>
+    <player ref="0"/>
+    <player ref="4"/>
    </player_list>
   </pool_allocation_stage>
   <pool_stage name="">
    <match_list>
-    <match player_A="16" player_B="2"/>
-   </match_list>
-   <match_list>
-    <match player_A="0" player_B="3"/>
-    <match player_A="4" player_B="3"/>
-    <match player_A="4" player_B="0"/>
-    <match player_A="19" player_B="3"/>
-    <match player_A="19" player_B="0"/>
-    <match player_A="19" player_B="4"/>
-    <match player_A="1" player_B="3"/>
-    <match player_A="1" player_B="0"/>
-    <match player_A="1" player_B="4"/>
-    <match player_A="1" player_B="19"/>
+    <match player_A="3" score_A="1" player_B="2" score_B="1"/>
+    <match player_A="19" score_A="1" player_B="2" score_B="1"/>
+    <match player_A="19" score_A="1" player_B="3" score_B="1"/>
+    <match player_A="1" score_A="1" player_B="2" score_B="1"/>
+    <match player_A="1" score_A="1" player_B="3" score_B="1"/>
+    <match player_A="1" score_A="1" player_B="19" score_B="1"/>
+    <match player_A="16" score_A="1" player_B="2" score_B="1"/>
+    <match player_A="16" score_A="1" player_B="3" score_B="1"/>
+    <match player_A="16" score_A="1" player_B="19" score_B="1"/>
+    <match player_A="16" score_A="1" player_B="1" score_B="1"/>
+    <match player_A="0" score_A="1" player_B="2" score_B="1"/>
+    <match player_A="0" score_A="1" player_B="3" score_B="1"/>
+    <match player_A="0" score_A="1" player_B="19" score_B="1"/>
+    <match player_A="0" score_A="1" player_B="1" score_B="1"/>
+    <match player_A="0" score_A="1" player_B="16" score_B="1"/>
+    <match player_A="4" score_A="1" player_B="2" score_B="1"/>
+    <match player_A="4" score_A="1" player_B="3" score_B="1"/>
+    <match player_A="4" score_A="1" player_B="19" score_B="1"/>
+    <match player_A="4" score_A="1" player_B="1" score_B="1"/>
+    <match player_A="4" score_A="1" player_B="16" score_B="1"/>
+    <match player_A="4" score_A="1" player_B="0" score_B="1"/>
    </match_list>
   </pool_stage>
   <table_stage name=""/>
