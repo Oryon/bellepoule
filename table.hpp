@@ -51,8 +51,9 @@ class Table : public virtual Stage_c, public CanvasModule_c
       guint          _level;
       guint          _row;
       Match_c       *_match;
-      Player_c      *_winner;
       GooCanvasItem *_canvas_table;
+      GooCanvasItem *_player_item;
+      GooCanvasItem *_connector;
     };
 
     static const gdouble _level_spacing;
@@ -72,8 +73,8 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     void DrawAllConnectors ();
 
-    static gboolean DrawConnectors (GNode *node,
-                                    Table *table);
+    static gboolean DrawConnector (GNode *node,
+                                   Table *table);
 
     static gboolean WipeNode (GNode *node,
                               Table *table);

@@ -58,6 +58,7 @@ class CanvasModule_c : public Module_c
     GooCanvas *GetCanvas ();
     GooCanvasItem *GetRootItem ();
     virtual void Wipe ();
+    virtual void WipeItem (GooCanvasItem *from);
     virtual void OnPlugged ();
     virtual void OnUnPlugged ();
 

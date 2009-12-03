@@ -55,6 +55,7 @@ class ScoreCollector : public Object_c
     GtkWidget      *_gtk_entry;
     CanvasModule_c *_client;
     OnNewScore_cbk  _on_new_score;
+    gulong          _focus_out_handle;
 
     static gboolean on_cell_button_press (GooCanvasItem  *item,
                                           gboolean       *target,
@@ -76,6 +77,8 @@ class ScoreCollector : public Object_c
     void SetMatchColor (Match_c *match,
                         gchar   *consistent_color,
                         gchar   *unconsitentcolor);
+
+    void Stop ();
 
     gboolean OnFocusIn  (GooCanvasItem *goo_rect);
     gboolean OnFocusOut (GtkWidget *widget);

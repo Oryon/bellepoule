@@ -51,8 +51,6 @@ Table::Table (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
-  Wipe ();
-
   if (_tree_root)
   {
     g_node_destroy (_tree_root);
@@ -87,20 +85,18 @@ void Table::OnNewScore (CanvasModule_c *client,
 
   FillInNode ((GNode *) match->GetData ("Table::node"),
               table);
+  table->DrawAllConnectors ();
 }
 
 // --------------------------------------------------------------------------------
 void Table::Display ()
 {
+  Wipe ();
+
   Object_c::Release (_score_collector);
   _score_collector = new ScoreCollector (GetCanvas (),
                                          this,
                                          (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
-
-  if (_main_table)
-  {
-    goo_canvas_item_remove (_main_table);
-  }
 
   {
     GooCanvasItem *root = GetRootItem ();
@@ -138,18 +134,26 @@ void Table::Display ()
       for (gint l = _nb_levels; l > 0; l--)
       {
         GooCanvasItem *level_header;
-        GooCanvasItem *text_item;
 
         level_header = goo_canvas_table_new (_main_table,
                                              NULL);
 
+        PutStockIconInTable (level_header,
+                             GTK_STOCK_ADD,
+                             0, 0);
+
+        PutStockIconInTable (level_header,
+                             GTK_STOCK_APPLY,
+                             0, 1);
+
         {
-          gchar *text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - l));
+          GooCanvasItem *text_item;
+          gchar         *text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - l));
 
           text_item = PutTextInTable (level_header,
                                       text,
-                                      1,
-                                      0);
+                                      0,
+                                      2);
           g_object_set (G_OBJECT (text_item),
                         "font",       "Sans bold 18px",
                         "fill_color", "medium blue",
@@ -190,7 +194,7 @@ void Table::DrawAllConnectors ()
                    G_POST_ORDER,
                    G_TRAVERSE_ALL,
                    -1,
-                   (GNodeTraverseFunc) DrawConnectors,
+                   (GNodeTraverseFunc) DrawConnector,
                    this);
 }
 
@@ -200,33 +204,37 @@ gboolean Table::WipeNode (GNode *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  data->_canvas_table = NULL;
+  table->WipeItem (data->_player_item);
+
   return FALSE;
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::DrawConnectors (GNode *node,
-                                Table *table)
+gboolean Table::DrawConnector (GNode *node,
+                               Table *table)
 {
-  NodeData        *data = (NodeData *) node->data;
-  GooCanvasBounds  bounds;
+  NodeData        *data   = (NodeData *) node->data;
+  Player_c        *winner = data->_match->GetWinner ();
   GNode           *parent = node->parent;
+  GooCanvasBounds  bounds;
+
+  table->WipeItem (data->_connector);
 
   goo_canvas_item_get_bounds (data->_canvas_table,
                               &bounds);
 
   if (G_NODE_IS_ROOT (node))
   {
-    goo_canvas_polyline_new (table->GetRootItem (),
-                             FALSE,
-                             2,
-                             bounds.x1 - _level_spacing/2, bounds.y2,
-                             bounds.x2, bounds.y2,
-                             "line-width", 2.0,
-                             NULL);
+    data->_connector = goo_canvas_polyline_new (table->GetRootItem (),
+                                                FALSE,
+                                                2,
+                                                bounds.x1 - _level_spacing/2, bounds.y2,
+                                                bounds.x2, bounds.y2,
+                                                "line-width", 2.0,
+                                                NULL);
   }
   else if (   (G_NODE_IS_LEAF (node) == FALSE)
-           || (data->_winner))
+              || (winner))
   {
     NodeData        *parent_data = (NodeData *) parent->data;
     GooCanvasBounds  parent_bounds;
@@ -234,14 +242,14 @@ gboolean Table::DrawConnectors (GNode *node,
     goo_canvas_item_get_bounds (parent_data->_canvas_table,
                                 &parent_bounds);
 
-    goo_canvas_polyline_new (table->GetRootItem (),
-                             FALSE,
-                             3,
-                             bounds.x1 - _level_spacing/2, bounds.y2,
-                             parent_bounds.x1 - _level_spacing/2, bounds.y2,
-                             parent_bounds.x1 - _level_spacing/2, parent_bounds.y2,
-                             "line-width", 2.0,
-                             NULL);
+    data->_connector = goo_canvas_polyline_new (table->GetRootItem (),
+                                                FALSE,
+                                                3,
+                                                bounds.x1 - _level_spacing/2, bounds.y2,
+                                                parent_bounds.x1 - _level_spacing/2, bounds.y2,
+                                                parent_bounds.x1 - _level_spacing/2, parent_bounds.y2,
+                                                "line-width", 2.0,
+                                                NULL);
   }
 
   return FALSE;
@@ -253,6 +261,10 @@ gboolean Table::FillInNode (GNode *node,
 {
   GNode    *parent = node->parent;
   NodeData *data   = (NodeData *) node->data;
+  Player_c *winner = data->_match->GetWinner ();
+
+  WipeNode (node,
+            table);
 
   if (data->_canvas_table == NULL)
   {
@@ -268,10 +280,9 @@ gboolean Table::FillInNode (GNode *node,
   }
 
   {
-    GooCanvasItem *player_item;
-    GString       *string = g_string_new ("");
+    GString *string = g_string_new ("");
 
-    if (data->_winner)
+    if (winner)
     {
       for (guint a = 0; a < g_slist_length (table->_attr_list); a++)
       {
@@ -280,7 +291,7 @@ gboolean Table::FillInNode (GNode *node,
 
         attr_name = (gchar *) g_slist_nth_data (table->_attr_list,
                                                 a);
-        attr = data->_winner->GetAttribute (attr_name);
+        attr = winner->GetAttribute (attr_name);
 
         if (attr)
         {
@@ -295,20 +306,20 @@ gboolean Table::FillInNode (GNode *node,
       }
     }
 
-    player_item = PutTextInTable (data->_canvas_table,
-                                  string->str,
-                                  0,
-                                  1);
-    SetTableItemAttribute (player_item, "y-align", 0.5);
-    SetTableItemAttribute (player_item, "x-expand", 1U);
-    SetTableItemAttribute (player_item, "x-fill", 1U);
+    data->_player_item = PutTextInTable (data->_canvas_table,
+                                         string->str,
+                                         0,
+                                         1);
+    SetTableItemAttribute (data->_player_item, "y-align", 0.5);
+    SetTableItemAttribute (data->_player_item, "x-expand", 1U);
+    SetTableItemAttribute (data->_player_item, "x-fill", 1U);
 
     g_string_free (string,
                    TRUE);
   }
 
   if (   (G_NODE_IS_LEAF (node) == FALSE)
-      && (data->_winner == FALSE))
+      && (winner == NULL))
   {
     GooCanvasItem *item = PutStockIconInTable (data->_canvas_table,
                                                GTK_STOCK_PRINT,
@@ -324,21 +335,21 @@ gboolean Table::FillInNode (GNode *node,
 
     if (position == 0)
     {
-      parent_data->_match->SetPlayerA (data->_winner);
+      parent_data->_match->SetPlayerA (winner);
     }
     else
     {
-      parent_data->_match->SetPlayerB (data->_winner);
+      parent_data->_match->SetPlayerB (winner);
     }
 
-    if (data->_winner)
+    if (winner)
     {
-      GooCanvasItem *edit_icon;
+      GooCanvasItem *edit_icon = NULL;
       GooCanvasItem *goo_rect;
       GooCanvasItem *score_text;
 
       // EDIT icon
-      if (parent_data->_winner == NULL)
+      if (parent_data->_match->GetWinner () == NULL)
       {
         edit_icon = PutStockIconInTable (data->_canvas_table,
                                          GTK_STOCK_EDIT,
@@ -365,7 +376,7 @@ gboolean Table::FillInNode (GNode *node,
 
       // Text
       {
-        Score_c *score       = parent_data->_match->GetScore (data->_winner);
+        Score_c *score       = parent_data->_match->GetScore (winner);
         gchar   *score_image = score->GetImage ();
 
         score_text = goo_canvas_text_new (data->_canvas_table,
@@ -391,8 +402,9 @@ gboolean Table::FillInNode (GNode *node,
         table->_score_collector->AddCollectingPoint (goo_rect,
                                                      score_text,
                                                      parent_data->_match,
-                                                     data->_winner,
+                                                     winner,
                                                      position);
+        table->_score_collector->AddCollectingTrigger (data->_player_item);
         table->_score_collector->AddCollectingTrigger (edit_icon);
 
         if (position == 0)
@@ -409,9 +421,9 @@ gboolean Table::FillInNode (GNode *node,
       }
     }
 
-    if (parent_data->_winner == NULL)
+    if (parent_data->_match->GetWinner () == NULL)
     {
-      if (G_NODE_IS_LEAF (node) && (data->_winner))
+      if (G_NODE_IS_LEAF (node) && (winner))
       {
       }
     }
@@ -466,20 +478,20 @@ void Table::AddFork (GNode *to)
   }
 
   data->_canvas_table = NULL;
+  data->_player_item  = NULL;
+  data->_connector    = NULL;
   data->_match = new Match_c (_max_score);
   data->_match->SetData ("Table::node", node);
 
   if ((to_data == NULL) || (data->_level > 1))
   {
-    data->_winner = NULL;
-
     AddFork (node);
     AddFork (node);
   }
   else
   {
-    data->_winner =  (Player_c *) g_slist_nth_data (_attendees,
-                                                    data->_expected_winner_rank - 1);
+    data->_match->SetPlayerA ((Player_c *) g_slist_nth_data (_attendees,
+                                                             data->_expected_winner_rank - 1));
   }
 }
 
@@ -508,15 +520,17 @@ void Table::Save (xmlTextWriter *xml_writer)
 // --------------------------------------------------------------------------------
 void Table::Wipe ()
 {
+  if (_tree_root)
+  {
+    //g_node_traverse (_tree_root,
+                     //G_IN_ORDER,
+                     //G_TRAVERSE_ALL,
+                     //-1,
+                     //(GNodeTraverseFunc) WipeNode,
+                     //this);
+  }
+
   CanvasModule_c::Wipe ();
-
-  g_node_traverse (_tree_root,
-                   G_IN_ORDER,
-                   G_TRAVERSE_ALL,
-                   -1,
-                   (GNodeTraverseFunc) WipeNode,
-                   this);
-
   _main_table = NULL;
 }
 
@@ -550,7 +564,6 @@ void Table::OnUnLocked ()
 // --------------------------------------------------------------------------------
 void Table::OnAttrListUpdated ()
 {
-  Wipe ();
   Display ();
 }
 

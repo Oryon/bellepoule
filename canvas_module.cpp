@@ -194,23 +194,28 @@ GooCanvasItem *CanvasModule_c::GetRootItem ()
 // --------------------------------------------------------------------------------
 void CanvasModule_c::Wipe ()
 {
-  GooCanvasItem *root_item = GetRootItem ();
+  WipeItem (GetRootItem ());
+}
 
-  if (root_item)
+// --------------------------------------------------------------------------------
+void CanvasModule_c::WipeItem (GooCanvasItem *from)
+{
+  if (from)
   {
-    guint nb_child = goo_canvas_item_get_n_children (root_item);
+    guint nb_child = goo_canvas_item_get_n_children (from);
 
     for (guint i = 0; i < nb_child; i++)
     {
       GooCanvasItem *child;
 
-      child = goo_canvas_item_get_child (root_item,
+      child = goo_canvas_item_get_child (from,
                                          0);
       if (child)
       {
         goo_canvas_item_remove (child);
       }
     }
+    goo_canvas_item_remove (from);
   }
 }
 

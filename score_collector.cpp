@@ -105,27 +105,30 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
 {
   if ((event->keyval == GDK_Return) || (event->keyval == GDK_Tab))
   {
-    GooCanvasItem *next_item;
+    {
+      GooCanvasItem *next_item;
 
-    next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
-    if (next_item)
-    {
-      goo_canvas_grab_focus (_canvas,
-                             next_item);
-    }
-    else
-    {
-      goo_canvas_item_remove (_entry_item);
-      _entry_item = NULL;
+      next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
+      if (next_item)
+      {
+        goo_canvas_grab_focus (_canvas,
+                               next_item);
+      }
+      else
+      {
+        goo_canvas_grab_focus (_canvas,
+                               goo_canvas_get_root_item (_canvas));
+        Stop ();
+      }
     }
 
     return TRUE;
   }
   else if (event->keyval == GDK_Escape)
   {
-    goo_canvas_item_remove (_entry_item);
-    _entry_item = NULL;
-
+    goo_canvas_grab_focus (_canvas,
+                           goo_canvas_get_root_item (_canvas));
+    Stop ();
     return TRUE;
   }
 
@@ -141,19 +144,20 @@ void ScoreCollector::OnEntryChanged (GtkWidget *widget)
 
   if (match->SetScore (player, input))
   {
-    GooCanvasItem *next_item;
+      GooCanvasItem *next_item;
 
-    next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
-    if (next_item)
-    {
-      goo_canvas_grab_focus (_canvas,
-                             next_item);
-    }
-    else
-    {
-      goo_canvas_item_remove (_entry_item);
-      _entry_item = NULL;
-    }
+      next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
+      if (next_item)
+      {
+        goo_canvas_grab_focus (_canvas,
+                               next_item);
+      }
+      else
+      {
+        goo_canvas_grab_focus (_canvas,
+                               goo_canvas_get_root_item (_canvas));
+        Stop ();
+      }
   }
 }
 
@@ -230,11 +234,7 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
   Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (goo_rect), "match");
   Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (goo_rect), "player");
 
-  if (_entry_item)
-  {
-    goo_canvas_item_remove (_entry_item);
-    _entry_item = NULL;
-  }
+  Stop ();
 
   SetMatchColor (match,
                  "SkyBlue",
@@ -250,9 +250,6 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
     gtk_entry_set_text (GTK_ENTRY (_gtk_entry),
                         score_image);
     g_free (score_image);
-
-    g_signal_connect (_gtk_entry, "focus-out-event",
-                      G_CALLBACK (on_focus_out), this);
 
     g_object_set_data (G_OBJECT (_gtk_entry), "match",  match);
     g_object_set_data (G_OBJECT (_gtk_entry), "player", player);
@@ -288,6 +285,8 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
                       G_CALLBACK (on_entry_changed), this);
     g_signal_connect (_gtk_entry, "key-press-event",
                       G_CALLBACK (on_key_press_event), this);
+    _focus_out_handle = g_signal_connect (_gtk_entry, "focus-out-event",
+                                          G_CALLBACK (on_focus_out), this);
   }
 
   return TRUE;
@@ -350,4 +349,16 @@ gboolean ScoreCollector::on_cell_button_press (GooCanvasItem  *item,
   goo_canvas_grab_focus (canvas, goo_rect);
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::Stop ()
+{
+  if (_entry_item)
+  {
+    g_signal_handler_disconnect (_gtk_entry,
+                                 _focus_out_handle);
+    goo_canvas_item_remove (_entry_item);
+    _entry_item = NULL;
+  }
 }

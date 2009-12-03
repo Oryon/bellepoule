@@ -98,14 +98,27 @@ Player_c *Match_c::GetWinner ()
   {
     return _A;
   }
-  else if (_A_score->Get () >= _B_score->Get ())
+  else if (PlayerHasScore (_A) && PlayerHasScore (_B))
   {
-    return _A;
+    Score_c *score_A = GetScore (_A);
+    Score_c *score_B = GetScore (_B);
+
+    if (   score_A->IsValid ()
+        && score_B->IsValid ()
+        && score_A->IsConsistentWith (score_B))
+    {
+      if (_A_score->Get () >= _B_score->Get ())
+      {
+        return _A;
+      }
+      else
+      {
+        return _B;
+      }
+    }
   }
-  else
-  {
-    return _B;
-  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
