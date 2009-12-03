@@ -121,7 +121,7 @@ void PoolSupervisor_c::OnPoolStatusUpdated (Pool_c           *pool,
     else
     {
       gtk_list_store_set (ps->_pool_liststore, &iter,
-                          STATUS_COLUMN, "",
+                          STATUS_COLUMN, GTK_STOCK_EXECUTE,
                           -1);
     }
   }

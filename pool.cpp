@@ -72,6 +72,12 @@ void Pool_c::SetStatusCbk (StatusCbk  cbk,
 {
   _status_cbk_data = data;
   _status_cbk      = cbk;
+
+  if (_status_cbk)
+  {
+    _status_cbk (this,
+                 _status_cbk_data);
+  }
 }
 
 // --------------------------------------------------------------------------------

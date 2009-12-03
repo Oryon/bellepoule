@@ -91,12 +91,15 @@ Schedule_c::Schedule_c ()
 // --------------------------------------------------------------------------------
 Schedule_c::~Schedule_c ()
 {
-  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  guint nb_stages = g_list_length (_stage_list);
+
+  for (guint i = 0; i < nb_stages; i++)
   {
     Stage_c *stage;
 
     stage = ((Stage_c *) g_list_nth_data (_stage_list,
-                                          i));
+                                          nb_stages - i-1));
+    stage->Wipe ();
     Object_c::Release (stage);
   }
   g_list_free (_stage_list);
@@ -336,7 +339,7 @@ void Schedule_c::RemoveStage (Stage_c *stage)
       _stage_list = g_list_remove (_stage_list,
                                    stage);
 
-      if (_current_stage > g_list_length (_stage_list) - 1)
+      if (_current_stage >= gtk_notebook_get_n_pages (GTK_NOTEBOOK (GetRootWidget ())) - 1)
       {
         Stage_c *stage;
 

@@ -146,7 +146,7 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
         for (guint i = 0; i < g_slist_length (_config_list); i++)
         {
           _selected_config = (Configuration *) g_slist_nth_data (_config_list,
-                                                                 nb_pool-1);
+                                                                 i);
           if (_selected_config->nb_pool == nb_pool)
           {
             break;
