@@ -93,10 +93,11 @@ void Table::Display ()
 {
   Wipe ();
 
-  Object_c::Release (_score_collector);
-  _score_collector = new ScoreCollector (GetCanvas (),
-                                         this,
-                                         (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
+  if (_tree_root)
+  {
+    g_node_destroy (_tree_root);
+    _tree_root = NULL;
+  }
 
   {
     GooCanvasItem *root = GetRootItem ();
@@ -520,14 +521,11 @@ void Table::Save (xmlTextWriter *xml_writer)
 // --------------------------------------------------------------------------------
 void Table::Wipe ()
 {
-  if (_tree_root)
   {
-    //g_node_traverse (_tree_root,
-                     //G_IN_ORDER,
-                     //G_TRAVERSE_ALL,
-                     //-1,
-                     //(GNodeTraverseFunc) WipeNode,
-                     //this);
+    Object_c::Release (_score_collector);
+    _score_collector = new ScoreCollector (GetCanvas (),
+                                           this,
+                                           (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
   }
 
   CanvasModule_c::Wipe ();
