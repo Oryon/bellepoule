@@ -36,19 +36,14 @@ class Splitting : public virtual Stage_c, public CanvasModule_c
     static const gchar *_xml_class_name;
 
   private:
-    void Enter ();
     void OnLocked ();
     void OnUnLocked ();
     void Wipe ();
 
   private:
-    void Display ();
-    void OnPlugged ();
     void OnAttrListUpdated ();
 
     static Stage_c *CreateInstance (StageClass *stage_class);
-
-    void Load (xmlNode *xml_node);
 
     ~Splitting ();
 };

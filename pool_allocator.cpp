@@ -53,7 +53,6 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
   _floating_player = NULL;
   _drag_text       = NULL;
   _main_table      = NULL;
-  _attendees       = NULL;
 
   _combobox_store = GTK_LIST_STORE (_glade->GetObject ("combo_liststore"));
 
@@ -86,28 +85,72 @@ void PoolAllocator_c::Init ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator_c::OnPlugged ()
-{
-  CanvasModule_c::OnPlugged ();
-  Display ();
-}
-
-// --------------------------------------------------------------------------------
 Stage_c *PoolAllocator_c::CreateInstance (StageClass *stage_class)
 {
   return new PoolAllocator_c (stage_class);
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator_c::Display ()
+{
+  SetUpCombobox ();
+
+  if (_main_table)
+  {
+    goo_canvas_item_remove (_main_table);
+  }
+
+  {
+    GooCanvasItem *root = GetRootItem ();
+
+    if (root)
+    {
+      _main_table = goo_canvas_table_new (root,
+                                          "row-spacing",    20.0,
+                                          "column-spacing", 40.0,
+                                          NULL);
+
+      g_object_set (G_OBJECT (root),
+                    "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
+                    NULL);
+      g_signal_connect (root, "motion_notify_event",
+                        G_CALLBACK (on_motion_notify), this);
+      g_signal_connect (root, "button_release_event",
+                        G_CALLBACK (on_button_release), this);
+
+      for (guint i = 0; i < g_slist_length (_pools_list); i++)
+      {
+        Pool_c *pool;
+
+        pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
+        FillPoolTable (pool);
+      }
+    }
+  }
+
+  SignalStatusUpdate ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator_c::Garnish ()
+{
+  if (_pools_list == NULL)
+  {
+    FillCombobox ();
+
+    if (_best_config)
+    {
+      _selected_config = _best_config;
+
+      CreatePools ();
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PoolAllocator_c::Load (xmlNode *xml_node)
 {
-  static Pool_c *current_pool   = NULL;
-  Stage_c       *previous_stage = GetPreviousStage ();
-
-  if (_attendees == NULL)
-  {
-    _attendees = g_slist_copy (previous_stage->GetResult ());
-  }
+  static Pool_c *current_pool = NULL;
 
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
@@ -129,7 +172,7 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
         attr = (gchar *) xmlGetProp (n, BAD_CAST "ref");
         if (attr)
         {
-          Player_c *player = previous_stage->GetPlayerFromRef (atoi (attr));
+          Player_c *player = GetPlayerFromRef (atoi (attr));
 
           if (player)
           {
@@ -152,9 +195,6 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
             break;
           }
         }
-
-        SetUpCombobox ();
-        Display ();
 
         return;
       }
@@ -813,43 +853,6 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator_c::Display ()
-{
-  if (_main_table)
-  {
-    goo_canvas_item_remove (_main_table);
-  }
-
-  {
-    GooCanvasItem *root = GetRootItem ();
-
-    if (root)
-    {
-      _main_table = goo_canvas_table_new (root,
-                                          "row-spacing",    20.0,
-                                          "column-spacing", 40.0,
-                                          NULL);
-
-      g_object_set (G_OBJECT (root),
-                    "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
-                    NULL);
-      g_signal_connect (root, "motion_notify_event",
-                        G_CALLBACK (on_motion_notify), this);
-      g_signal_connect (root, "button_release_event",
-                        G_CALLBACK (on_button_release), this);
-
-      for (guint i = 0; i < g_slist_length (_pools_list); i++)
-      {
-        Pool_c *pool;
-
-        pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
-        FillPoolTable (pool);
-      }
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
 void PoolAllocator_c::DeletePools ()
 {
   if (_pools_list)
@@ -905,9 +908,6 @@ void PoolAllocator_c::Wipe ()
     g_slist_free (_config_list);
     _config_list = NULL;
   }
-
-  g_slist_free (_attendees);
-  _attendees = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -1007,32 +1007,6 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
   PoolAllocator_c *c = dynamic_cast <PoolAllocator_c *> (owner);
 
   c->Print ();
-}
-
-// --------------------------------------------------------------------------------
-void PoolAllocator_c::Enter ()
-{
-  EnableSensitiveWidgets ();
-
-  if (_pools_list == NULL)
-  {
-    Stage_c *previous_stage = GetPreviousStage ();
-
-    _attendees = g_slist_copy (previous_stage->GetResult ());
-
-    FillCombobox ();
-
-    if (_best_config)
-    {
-      _selected_config = _best_config;
-
-      CreatePools ();
-      SetUpCombobox ();
-    }
-  }
-
-  Display ();
-  SignalStatusUpdate ();
 }
 
 // --------------------------------------------------------------------------------

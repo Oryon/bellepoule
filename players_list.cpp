@@ -16,20 +16,20 @@
 
 #include <string.h>
 
+#include "attribute.hpp"
 #include "schedule.hpp"
+#include "player.hpp"
 
 #include "players_list.hpp"
 
 const gchar *PlayersList_c::_class_name     = "checkin";
-const gchar *PlayersList_c::_xml_class_name = "checkin";
+const gchar *PlayersList_c::_xml_class_name = "checkin_stage";
 
 // --------------------------------------------------------------------------------
 PlayersList_c::PlayersList_c (StageClass *stage_class)
 : Stage_c (stage_class),
   Module_c ("players_list.glade")
 {
-  _players_base = NULL;
-
   // Sensitive widgets
   {
     AddSensitiveWidget (_glade->GetWidget ("add_player_button"));
@@ -49,11 +49,55 @@ PlayersList_c::PlayersList_c (StageClass *stage_class)
     ShowAttribute ("country");
     ShowAttribute ("licence");
   }
+
+  {
+    guint nb_attr        = Attribute_c::GetNbAttributes ();
+    GType types[nb_attr];
+
+    for (guint i = 0; i < nb_attr; i++)
+    {
+      types[i] = Attribute_c::GetNthAttributeType (i);
+    }
+
+    _store = gtk_list_store_newv (nb_attr,
+                                  types);
+  }
+
+  _player_list = NULL;
+
+  {
+    _tree_view = _glade->GetWidget ("players_list");
+
+    g_object_set (_tree_view,
+                  "rules-hint",     TRUE,
+                  "rubber-banding", TRUE,
+                  NULL);
+
+    gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
+                                 GTK_SELECTION_MULTIPLE);
+
+    gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
+                             GTK_TREE_MODEL (_store));
+
+    gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
+                                     Attribute_c::GetAttributeId ("name"));
+  }
 }
 
 // --------------------------------------------------------------------------------
 PlayersList_c::~PlayersList_c ()
 {
+  for (guint i = 0; i <  g_slist_length (_player_list); i++)
+  {
+    Player_c *p;
+
+    p = (Player_c *) g_slist_nth_data (_player_list, i);
+    p->Release ();
+  }
+  g_slist_free (_player_list);
+
+  gtk_list_store_clear (_store);
+  g_object_unref (_store);
 }
 
 // --------------------------------------------------------------------------------
@@ -66,9 +110,167 @@ void PlayersList_c::Init ()
 }
 
 // --------------------------------------------------------------------------------
+Stage_c *PlayersList_c::CreateInstance (StageClass *stage_class)
+{
+  return new PlayersList_c (stage_class);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::OnPlugged ()
+{
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Load (xmlNode *xml_node)
+{
+  for (xmlNode *n = xml_node; n != NULL; n = n->next)
+  {
+    if (n->type == XML_ELEMENT_NODE)
+    {
+      if (strcmp ((char *) n->name, "player") == 0)
+      {
+        Player_c    *player = new Player_c;
+        GtkTreeIter  iter;
+
+        gtk_list_store_append (_store, &iter);
+
+        player->Load (n);
+
+        player->SetData ("PlayersList_c::tree_row_ref",
+                         GetPlayerRowRef (&iter),
+                         (GDestroyNotify) gtk_tree_row_reference_free);
+
+        _player_list = g_slist_append (_player_list,
+                                       player);
+
+        Update (player);
+      }
+      else if (strcmp ((char *) n->name, _xml_class_name) != 0)
+      {
+        return;
+      }
+    }
+    Load (n->children);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Save (xmlTextWriter *xml_writer)
+{
+  int result;
+
+  result = xmlTextWriterStartElement (xml_writer,
+                                      BAD_CAST _xml_class_name);
+
+  g_print ("    >> %d\n", g_slist_length (_player_list));
+  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  {
+    Player_c *p;
+
+    p = (Player_c *) g_slist_nth_data (_player_list, i);
+
+    if (p)
+    {
+      p->Save (xml_writer);
+    }
+  }
+
+  result = xmlTextWriterEndElement (xml_writer);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Display ()
+{
+  OnAttrListUpdated ();
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::OnLocked ()
+{
+  DisableSensitiveWidgets ();
+  SetSensitiveState (FALSE);
+
+  // Give a rank to each player
+  {
+    _player_list = g_slist_sort_with_data (_player_list,
+                                           (GCompareDataFunc) Player_c::Compare,
+                                           (void *) "rating");
+
+    for (guint i = 0; i <  g_slist_length (_player_list); i++)
+    {
+      Player_c *p;
+
+      p = (Player_c *) g_slist_nth_data (_player_list, i);
+      p->SetAttributeValue ("rank",
+                            i + 1);
+      Update (p);
+    }
+  }
+
+  _result = CreateCustomList (PresentPlayerFilter);
+  if (_result)
+  {
+    _result = g_slist_sort_with_data (_result,
+                                      (GCompareDataFunc) Player_c::Compare,
+                                      (void *) "rank");
+  }
+
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Update (Player_c *player)
+{
+  GtkTreeRowReference *ref;
+  GtkTreePath         *path;
+  GtkTreeIter          iter;
+
+  ref  = (GtkTreeRowReference *) player->GetData ("PlayersList_c::tree_row_ref");
+  path = gtk_tree_row_reference_get_path (ref);
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
+                           &iter,
+                           path);
+  gtk_tree_path_free (path);
+
+  for (guint i = 0; i < Attribute_c::GetNbAttributes (); i++)
+  {
+    Attribute_c *attr;
+
+    attr = player->GetAttribute (Attribute_c::GetNthAttributeName (i));
+
+    if (attr)
+    {
+      gtk_list_store_set (_store, &iter,
+                          i, attr->GetValue (), -1);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 gboolean PlayersList_c::IsOver ()
 {
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+GSList *PlayersList_c::CreateCustomList (CustomFilter filter)
+{
+  GSList *custom_list = NULL;
+
+  g_print (">> %d\n", g_slist_length (_player_list));
+  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  {
+    Player_c *p;
+
+    p = (Player_c *) g_slist_nth_data (_player_list, i);
+
+    if (filter (p) == TRUE)
+    {
+      custom_list = g_slist_append (custom_list,
+                                    p);
+    }
+  }
+
+  return custom_list;
 }
 
 // --------------------------------------------------------------------------------
@@ -105,12 +307,12 @@ void PlayersList_c::OnCellEdited (gchar *path_string,
                                   gchar *new_text,
                                   gchar *attr_name)
 {
-  Player_c *p = _players_base->GetPlayer (path_string);
+  Player_c *p = GetPlayer (path_string);
 
   p->SetAttributeValue (attr_name,
                         new_text);
 
-  _players_base->Update (p);
+  Update (p);
 }
 
 // --------------------------------------------------------------------------------
@@ -136,7 +338,7 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
 
       path = gtk_tree_path_to_string ((GtkTreePath *) g_list_nth_data (selection_list,
                                                                        i));
-      p = _players_base->GetPlayer (path);
+      p = GetPlayer (path);
       g_free (path);
 
       if (p)
@@ -152,7 +354,7 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
                                 "1");
         }
 
-        _players_base->Update (p);
+        Update (p);
       }
     }
 
@@ -161,7 +363,7 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
   }
   else
   {
-    Player_c *p = _players_base->GetPlayer (path_string);
+    Player_c *p = GetPlayer (path_string);
 
     if (p)
     {
@@ -176,7 +378,7 @@ void PlayersList_c::OnCellToggled (gchar    *path_string,
                               "1");
       }
 
-      _players_base->Update (p);
+      Update (p);
     }
   }
   gtk_tree_path_free (toggeled_path);
@@ -279,64 +481,6 @@ void PlayersList_c::SetColumn (guint     id,
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList_c::OnPlugged ()
-{
-  // players tree view
-  {
-    _tree_view = _glade->GetWidget ("players_list");
-
-    g_object_set (_tree_view,
-                  "rules-hint",     TRUE,
-                  "rubber-banding", TRUE,
-                  NULL);
-
-    gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
-                                 GTK_SELECTION_MULTIPLE);
-
-    gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
-                             _players_base->GetTreeModel ());
-
-    gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
-                                     Attribute_c::GetAttributeId ("name"));
-  }
-
-  OnAttrListUpdated ();
-}
-
-// --------------------------------------------------------------------------------
-void PlayersList_c::Load (xmlDoc *doc)
-{
-}
-
-// --------------------------------------------------------------------------------
-void PlayersList_c::Save (xmlTextWriter *xml_writer)
-{
-}
-
-// --------------------------------------------------------------------------------
-void PlayersList_c::Enter ()
-{
-  SetSensitiveState (TRUE);
-}
-
-// --------------------------------------------------------------------------------
-void PlayersList_c::OnLocked ()
-{
-  DisableSensitiveWidgets ();
-  SetSensitiveState (FALSE);
-  _players_base->Lock ();
-
-  _result = _players_base->CreateCustomList (PresentPlayerFilter);
-  if (_result)
-  {
-    _result = g_slist_sort_with_data (_result,
-                                      (GCompareDataFunc) Player_c::Compare,
-                                      (void *) "rank");
-  }
-
-}
-
-// --------------------------------------------------------------------------------
 gboolean PlayersList_c::PresentPlayerFilter (Player_c *player)
 {
   Attribute_c *attr = player->GetAttribute ("attending");
@@ -354,18 +498,6 @@ void PlayersList_c::OnUnLocked ()
 // --------------------------------------------------------------------------------
 void PlayersList_c::Wipe ()
 {
-}
-
-// --------------------------------------------------------------------------------
-void PlayersList_c::SetPlayerBase (PlayersBase_c *players_base)
-{
-  _players_base = players_base;
-}
-
-// --------------------------------------------------------------------------------
-Stage_c *PlayersList_c::CreateInstance (StageClass *stage_class)
-{
-  return new PlayersList_c (stage_class);
 }
 
 // --------------------------------------------------------------------------------
@@ -465,7 +597,7 @@ void PlayersList_c::ImportFFF (gchar *file)
         {
           player->SetAttributeValue ("rating",     tokens[11]);
         }
-        _players_base->Add (player);
+        Add (player);
 
         g_strfreev (tokens);
       }
@@ -523,7 +655,7 @@ void PlayersList_c::ImportCSV (gchar *file)
           player->SetAttributeValue ("name",       tokens[i]);
           player->SetAttributeValue ("first_name", tokens[i+1]);
 
-          _players_base->Add (player);
+          Add (player);
           player = new Player_c;
         }
         g_strfreev (tokens);
@@ -566,6 +698,193 @@ void PlayersList_c::SetSensitiveState (bool sensitive_value)
 }
 
 // --------------------------------------------------------------------------------
+GtkTreeRowReference *PlayersList_c::GetPlayerRowRef (GtkTreeIter *iter)
+{
+  GtkTreeRowReference *ref;
+  GtkTreePath         *path = gtk_tree_model_get_path (GTK_TREE_MODEL (_store),
+                                                       iter);
+
+  ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_store),
+                                    path);
+
+  gtk_tree_path_free (path);
+
+  return ref;
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::Add (Player_c *player)
+{
+  GtkTreeIter iter;
+
+  gtk_list_store_append (_store, &iter);
+
+  {
+    gchar *str;
+
+    str = g_strdup_printf ("%d\n", player->GetRef ());
+    player->SetAttributeValue ("ref", str);
+    g_free (str);
+
+    player->SetAttributeValue ("attending", (guint) FALSE);
+  }
+
+  player->SetData ("PlayersList_c::tree_row_ref",
+                   GetPlayerRowRef (&iter),
+                   (GDestroyNotify) gtk_tree_row_reference_free);
+
+  _player_list = g_slist_append (_player_list,
+                                 player);
+
+  Update (player);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::RemoveSelection (GtkTreeSelection *selection)
+{
+  GList *ref_list       = NULL;
+  GList *selection_list = NULL;
+
+  selection_list = gtk_tree_selection_get_selected_rows (selection,
+                                                         NULL);
+
+  for (guint i = 0; i < g_list_length (selection_list); i++)
+  {
+    GtkTreeRowReference *ref;
+
+    ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_store),
+                                      (GtkTreePath *) g_list_nth_data (selection_list, i));
+    ref_list = g_list_append (ref_list,
+                              ref);
+  }
+
+  for (guint i = 0; i < g_list_length (ref_list); i++)
+  {
+    GtkTreeRowReference *ref;
+    GtkTreePath         *selected_path;
+    GtkTreePath         *current_path;
+
+    ref = (GtkTreeRowReference *) g_list_nth_data (ref_list, i);
+    selected_path = gtk_tree_row_reference_get_path (ref);
+    gtk_tree_row_reference_free (ref);
+
+    for (guint i = 0; i <  g_slist_length (_player_list); i++)
+    {
+      Player_c *p;
+
+      p = (Player_c *) g_slist_nth_data (_player_list, i);
+      current_path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) p->GetData ("PlayersList_c::tree_row_ref"));
+
+      if (gtk_tree_path_compare (selected_path,
+                                 current_path) == 0)
+      {
+        GtkTreeIter iter;
+
+        gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
+                                 &iter,
+                                 selected_path);
+
+        gtk_list_store_remove (_store,
+                               &iter);
+
+        _player_list = g_slist_remove (_player_list,
+                                       p);
+        p->Release ();
+        break;
+      }
+      gtk_tree_path_free (current_path);
+    }
+    gtk_tree_path_free (selected_path);
+  }
+
+  g_list_free (ref_list);
+
+  g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
+  g_list_free    (selection_list);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::on_add_button_clicked ()
+{
+  Player_c    *player = new Player_c;
+  GtkTreeIter  iter;
+
+  gtk_list_store_append (_store, &iter);
+
+  {
+    gchar           *str;
+    gboolean         attending;
+    GtkEntry        *entry;
+    GtkToggleButton *check_button;
+
+    str = g_strdup_printf ("%d\n", player->GetRef ());
+    player->SetAttributeValue ("ref", str);
+    g_free (str);
+
+    entry = GTK_ENTRY (_glade->GetWidget ("name_entry"));
+    str = (gchar *) gtk_entry_get_text (entry);
+    player->SetAttributeValue ("name", str);
+    gtk_entry_set_text (entry, "");
+
+    entry = GTK_ENTRY (_glade->GetWidget ("first_name_entry"));
+    str = (gchar *) gtk_entry_get_text (entry);
+    player->SetAttributeValue ("first_name", str);
+    gtk_entry_set_text (entry, "");
+
+    entry = GTK_ENTRY (_glade->GetWidget ("rating_entry"));
+    str = (gchar *) gtk_entry_get_text (entry);
+    player->SetAttributeValue ("rating", str);
+    gtk_entry_set_text (entry, "");
+
+    check_button = GTK_TOGGLE_BUTTON (_glade->GetWidget ("attending_checkbutton"));
+    attending = gtk_toggle_button_get_active (check_button);
+    player->SetAttributeValue ("attending", attending);
+  }
+
+  gtk_widget_grab_focus (_glade->GetWidget ("name_entry"));
+
+  player->SetData ("PlayersList_c::tree_row_ref",
+                   GetPlayerRowRef (&iter),
+                   (GDestroyNotify) gtk_tree_row_reference_free);
+
+  _player_list = g_slist_append (_player_list,
+                                 player);
+
+  Update (player);
+}
+
+// --------------------------------------------------------------------------------
+Player_c *PlayersList_c::GetPlayer (const gchar *path_string)
+{
+  GtkTreePath *path;
+  Player_c    *result = NULL;
+
+  path = gtk_tree_path_new_from_string (path_string);
+  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  {
+    GtkTreeRowReference *current_ref;
+    GtkTreePath         *current_path;
+    Player_c            *p;
+
+    p = (Player_c *) g_slist_nth_data (_player_list, i);
+    current_ref = (GtkTreeRowReference *) p->GetData ("PlayersList_c::tree_row_ref");
+    current_path = gtk_tree_row_reference_get_path (current_ref);
+    if (gtk_tree_path_compare (path,
+                               current_path) == 0)
+    {
+      result = p;
+      gtk_tree_path_free (current_path);
+      break;
+    }
+
+    gtk_tree_path_free (current_path);
+  }
+  gtk_tree_path_free (path);
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
                                                               Object_c  *owner)
 {
@@ -577,7 +896,18 @@ extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void PlayersList_c::on_add_player_button_clicked ()
 {
-  _players_base->EnterPlayers ();
+  GtkWidget *w = _glade->GetWidget ("FillInForm");
+
+  if (w == NULL) return;
+  gtk_widget_show_all (w);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList_c::on_close_button_clicked ()
+{
+  GtkWidget *w = _glade->GetWidget ("FillInForm");
+
+  gtk_widget_hide (w);
 }
 
 // --------------------------------------------------------------------------------
@@ -594,7 +924,7 @@ void PlayersList_c::on_remove_player_button_clicked ()
 {
   GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
 
-  _players_base->RemoveSelection (selection);
+  RemoveSelection (selection);
 }
 
 // --------------------------------------------------------------------------------
@@ -613,4 +943,22 @@ extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
   PlayersList_c *p = dynamic_cast <PlayersList_c *> (owner);
 
   p->Import ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_add_button_clicked (GtkWidget *widget,
+                                                       Object_c  *owner)
+{
+  PlayersList_c *pl = dynamic_cast <PlayersList_c *> (owner);
+
+  pl->on_add_button_clicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_close_button_clicked (GtkWidget *widget,
+                                                         Object_c  *owner)
+{
+  PlayersList_c *pl = dynamic_cast <PlayersList_c *> (owner);
+
+  pl->on_close_button_clicked ();
 }

@@ -18,10 +18,11 @@
 #define players_list_hpp
 
 #include <gtk/gtk.h>
+#include <libxml/xmlwriter.h>
+#include <libxml/xpath.h>
 
 #include "module.hpp"
 #include "attribute.hpp"
-#include "players_base.hpp"
 #include "stage.hpp"
 
 class PlayersList_c : public virtual Stage_c, public Module_c
@@ -32,23 +33,27 @@ class PlayersList_c : public virtual Stage_c, public Module_c
     PlayersList_c (StageClass *stage_class);
 
   public:
-    void on_add_player_button_clicked    ();
+    void on_add_player_button_clicked ();
     void on_remove_player_button_clicked ();
+    void on_add_button_clicked ();
+    void on_close_button_clicked ();
+
     void Import ();
-    void SetPlayerBase (PlayersBase_c *players_base);
 
   private:
-    void Enter ();
     void OnLocked ();
     void OnUnLocked ();
     void Wipe ();
 
   private:
+    typedef gboolean (*CustomFilter) (Player_c *player);
+
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
-    GtkWidget     *_tree_view;
-    PlayersBase_c *_players_base;
+    GtkWidget    *_tree_view;
+    GtkListStore *_store;
+    GSList       *_player_list;
 
     static Stage_c *CreateInstance (StageClass *stage_class);
 
@@ -57,7 +62,7 @@ class PlayersList_c : public virtual Stage_c, public Module_c
                     gboolean  entry_is_text_based,
                     gint      at);
 
-    void Load (xmlDoc *doc);
+    void Load (xmlNode *xml_node);
 
     void Save (xmlTextWriter *xml_writer);
 
@@ -65,13 +70,27 @@ class PlayersList_c : public virtual Stage_c, public Module_c
 
     void ImportCSV (gchar *file);
 
+    void Add (Player_c *player);
+
+    void RemoveSelection (GtkTreeSelection *selection);
+
     void OnAttrListUpdated ();
 
     void SetSensitiveState (bool sensitive_value);
 
     void OnPlugged ();
 
+    void Display ();
+
+    void Update (Player_c *player);
+
+    GSList *CreateCustomList (CustomFilter filter);
+
     gboolean IsOver ();
+
+    GtkTreeRowReference *GetPlayerRowRef (GtkTreeIter *iter);
+
+    Player_c *GetPlayer (const gchar *path_string);
 
     static gboolean PresentPlayerFilter (Player_c *player);
 

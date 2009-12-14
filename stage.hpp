@@ -71,6 +71,8 @@ class Stage_c : public virtual Object_c
 
     GSList *GetResult ();
 
+    void RetrieveAttendees ();
+
     Player_c *GetPlayerFromRef (guint ref);
 
     StageClass *GetClass ();
@@ -78,9 +80,11 @@ class Stage_c : public virtual Object_c
     void SetStatusCbk (StatusCbk  cbk,
                        void      *data);
 
-    virtual void Enter () {};
-
     virtual void Wipe () {};
+
+    virtual void Display () {};
+
+    virtual void Garnish () {};
 
     virtual void Load (xmlNode *xml_node) {};
 
@@ -114,6 +118,7 @@ class Stage_c : public virtual Object_c
 
   protected:
     GSList *_result;
+    GSList *_attendees;
 
     Stage_c (StageClass *stage_class);
 

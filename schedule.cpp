@@ -72,7 +72,7 @@ Schedule_c::Schedule_c ()
                               &creator,
                               &rights);
 
-      if (rights == Stage_c::EDITABLE)
+      if (rights & Stage_c::EDITABLE)
       {
         menu_item = gtk_menu_item_new_with_label (name);
         g_signal_connect (menu_item, "button-release-event",
@@ -113,36 +113,69 @@ Schedule_c::~Schedule_c ()
 // --------------------------------------------------------------------------------
 void Schedule_c::DisplayList ()
 {
-  GtkTreeIter iter;
-  gboolean    iter_is_valid;
-
-  iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_list_store),
-                                                 &iter);
-  while (iter_is_valid)
+  if (_stage_list == NULL)
   {
-    Stage_c *current_stage;
-
-    gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
-                        &iter,
-                        STAGE_COLUMN, &current_stage, -1);
-    if (   current_stage->Locked ()
-        || (current_stage->GetRights () & Stage_c::MANDATORY))
+    for (guint i = 0; i < Stage_c::GetNbStageClass (); i++)
     {
-      gtk_list_store_set (_list_store, &iter,
-                          LOCK_COLUMN, GTK_STOCK_DIALOG_AUTHENTICATION,
-                          -1);
+      gchar            *name;
+      Stage_c::Creator  creator;
+      Stage_c::Rights   rights;
+
+      Stage_c::GetStageClass (i,
+                              &name,
+                              &creator,
+                              &rights);
+
+      if (rights & Stage_c::MANDATORY)
+      {
+        guint    nb_stages;
+        Stage_c *stage = Stage_c::CreateInstance (name);
+
+        AddStage (stage);
+        nb_stages = g_list_length (_stage_list);
+        if (nb_stages == 1)
+        {
+          PlugStage (stage);
+          stage->RetrieveAttendees ();
+          stage->Garnish ();
+          stage->Display ();
+        }
+      }
     }
-    else
+  }
+  else
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_list_store),
+                                                   &iter);
+    while (iter_is_valid)
     {
-      gtk_list_store_set (_list_store, &iter,
-                          LOCK_COLUMN, "",
-                          -1);
+      Stage_c *current_stage;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
+                          &iter,
+                          STAGE_COLUMN, &current_stage, -1);
+      if (   current_stage->Locked ()
+          || (current_stage->GetRights () & Stage_c::MANDATORY))
+      {
+        gtk_list_store_set (_list_store, &iter,
+                            LOCK_COLUMN, GTK_STOCK_DIALOG_AUTHENTICATION,
+                            -1);
+      }
+      else
+      {
+        gtk_list_store_set (_list_store, &iter,
+                            LOCK_COLUMN, "",
+                            -1);
+      }
+
+      current_stage->FillInConfig ();
+
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store),
+                                                &iter);
     }
-
-    current_stage->FillInConfig ();
-
-    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store),
-                                              &iter);
   }
 
   if (gtk_dialog_run (GTK_DIALOG (_formula_dlg)) == GTK_RESPONSE_ACCEPT)
@@ -277,12 +310,6 @@ void Schedule_c::AddStage (Stage_c *stage,
       }
     }
 
-    if ((previous == NULL) || previous->Locked ())
-    {
-      PlugStage (stage);
-      SetCurrentStage (0);
-    }
-
     RefreshSensitivity ();
 
 #if 0
@@ -336,10 +363,12 @@ void Schedule_c::RemoveStage (Stage_c *stage)
     }
 
     {
+      guint n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (GetRootWidget ()));
+
       _stage_list = g_list_remove (_stage_list,
                                    stage);
 
-      if (_current_stage >= gtk_notebook_get_n_pages (GTK_NOTEBOOK (GetRootWidget ())) - 1)
+      if ((n_pages > 0) && (_current_stage >= n_pages-1))
       {
         Stage_c *stage;
 
@@ -460,11 +489,6 @@ void Schedule_c::Load (xmlDoc *doc)
 
     for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
     {
-      if (i < current_stage_index)
-      {
-        stage->Lock ();
-      }
-
       stage = Stage_c::CreateInstance (xml_nodeset->nodeTab[i]);
       if (stage)
       {
@@ -472,7 +496,24 @@ void Schedule_c::Load (xmlDoc *doc)
                                             BAD_CAST "name");
         stage->SetName (attr);
         AddStage (stage);
+
+        if (i <= current_stage_index)
+        {
+          PlugStage (stage);
+        }
+
+        stage->RetrieveAttendees ();
         stage->Load (xml_nodeset->nodeTab[i]);
+
+        if (i <= current_stage_index)
+        {
+          stage->Display ();
+
+          if (i < current_stage_index)
+          {
+            stage->Lock ();
+          }
+        }
       }
     }
 
@@ -720,7 +761,9 @@ void Schedule_c::on_next_stage_toolbutton_clicked ()
 
   stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage+1);
   PlugStage (stage);
-  stage->Enter ();
+  stage->RetrieveAttendees ();
+  stage->Garnish ();
+  stage->Display ();
 
   SetCurrentStage (_current_stage+1);
 }

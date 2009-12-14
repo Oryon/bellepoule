@@ -20,10 +20,6 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "players_list.hpp"
-#include "pool_supervisor.hpp"
-#include "pool_allocator.hpp"
-
 #include "contest.hpp"
 
 // --------------------------------------------------------------------------------
@@ -83,10 +79,7 @@ Contest_c::Contest_c (gchar *filename)
       xmlXPathFreeContext (xml_context);
     }
 
-    {
-      _players_base->Load (doc);
-      _schedule->Load     (doc);
-    }
+    _schedule->Load (doc);
 
     xmlFreeDoc (doc);
   }
@@ -100,7 +93,6 @@ Contest_c::~Contest_c ()
   g_free (_backup);
 
   Object_c::Release (_schedule);
-  Object_c::Release (_players_base);
 
   gtk_widget_destroy (_properties_dlg);
 }
@@ -132,15 +124,6 @@ void Contest_c::InitInstance ()
     Plug (_schedule,
           _glade->GetWidget ("schedule_viewport"),
           GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
-  }
-
-  {
-    PlayersList_c *player_list = dynamic_cast <PlayersList_c *> (Stage_c::CreateInstance ("checkin"));
-
-    _players_base = new PlayersBase_c ();
-    player_list->SetPlayerBase (_players_base);
-
-    _schedule->AddStage (player_list);
   }
 
   // Properties dialog
@@ -259,7 +242,6 @@ void Contest_c::Save (gchar *filename)
                                      BAD_CAST _backup);
       }
 
-      _players_base->Save (xml_writer);
       _schedule->Save (xml_writer);
 
       xmlTextWriterEndElement (xml_writer);

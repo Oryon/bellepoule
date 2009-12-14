@@ -33,6 +33,7 @@ Stage_c::Stage_c (StageClass *stage_class)
   _result      = NULL;
   _previous    = NULL;
   _stage_class = stage_class;
+  _attendees   = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -150,19 +151,28 @@ Stage_c *Stage_c::GetPreviousStage ()
 }
 
 // --------------------------------------------------------------------------------
-GSList *Stage_c::GetResult ()
+void Stage_c::RetrieveAttendees ()
 {
-  return _result;
+  if (_attendees)
+  {
+    g_slist_free (_attendees);
+    _attendees = NULL;
+  }
+
+  if (_previous)
+  {
+    _attendees = g_slist_copy (_previous->_result);
+  }
 }
 
 // --------------------------------------------------------------------------------
 Player_c *Stage_c::GetPlayerFromRef (guint ref)
 {
-  for (guint p = 0; p < g_slist_length (_result); p++)
+  for (guint p = 0; p < g_slist_length (_attendees); p++)
   {
     Player_c *player;
 
-    player = (Player_c *) g_slist_nth_data (_result,
+    player = (Player_c *) g_slist_nth_data (_attendees,
                                             p);
     if (player->GetRef () == ref)
     {

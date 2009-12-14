@@ -50,7 +50,6 @@ class Contest_c : public Module_c
     gchar         *_name;
     gchar         *_filename;
     gchar         *_backup;
-    PlayersBase_c *_players_base;
     Schedule_c    *_schedule;
     GtkWidget     *_properties_dlg;
 

@@ -53,26 +53,9 @@ void Splitting::Init ()
 }
 
 // --------------------------------------------------------------------------------
-void Splitting::OnPlugged ()
-{
-  CanvasModule_c::OnPlugged ();
-  Display ();
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Display ()
-{
-}
-
-// --------------------------------------------------------------------------------
 Stage_c *Splitting::CreateInstance (StageClass *stage_class)
 {
   return new Splitting (stage_class);
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Load (xmlNode *xml_node)
-{
 }
 
 // --------------------------------------------------------------------------------
@@ -92,23 +75,6 @@ void Splitting::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_splitting_print_toolbutton_clicked (GtkWidget *widget,
-                                                                       Object_c  *owner)
-{
-  Splitting *t = dynamic_cast <Splitting *> (owner);
-
-  t->Print ();
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Enter ()
-{
-  EnableSensitiveWidgets ();
-
-  Display ();
-}
-
-// --------------------------------------------------------------------------------
 void Splitting::OnLocked ()
 {
   DisableSensitiveWidgets ();
@@ -118,6 +84,15 @@ void Splitting::OnLocked ()
 void Splitting::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_splitting_print_toolbutton_clicked (GtkWidget *widget,
+                                                                       Object_c  *owner)
+{
+  Splitting *t = dynamic_cast <Splitting *> (owner);
+
+  t->Print ();
 }
 
 // --------------------------------------------------------------------------------

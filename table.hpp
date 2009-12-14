@@ -32,14 +32,11 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     Table (StageClass *stage_class);
 
-    void Save (xmlTextWriter *xml_writer);
-
   public:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
   private:
-    void Enter ();
     void OnLocked ();
     void OnUnLocked ();
     void Wipe ();
@@ -60,14 +57,19 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     GNode          *_tree_root;
     guint           _nb_levels;
-    GSList         *_attendees;
     GooCanvasItem  *_main_table;
     guint           _max_score;
     ScoreCollector *_score_collector;
+    xmlTextWriter  *_xml_writer;
+    xmlNode        *_xml_node;
 
     void Display ();
 
-    void OnPlugged ();
+    void Garnish ();
+
+    void CreateTree ();
+
+    void DeleteTree ();
 
     void OnAttrListUpdated ();
 
@@ -84,13 +86,28 @@ class Table : public virtual Stage_c, public CanvasModule_c
     static gboolean FillInNode (GNode *node,
                                 Table *table);
 
+    static gboolean DeleteNode (GNode *node,
+                                Table *table);
+
+    static gboolean SaveNode (GNode *node,
+                              Table *table);
+
+    static gboolean LoadNode (GNode *node,
+                              Table *table);
+
     static void OnNewScore (CanvasModule_c *client,
                             Match_c        *match,
                             Player_c       *player);
 
+    void Save (xmlTextWriter *xml_writer);
+
     void Load (xmlNode *xml_node);
 
     void AddFork (GNode *to);
+
+    void FillInConfig ();
+
+    void ApplyConfig ();
 
     ~Table ();
 };

@@ -78,6 +78,135 @@ Stage_c *PoolSupervisor_c::CreateInstance (StageClass *stage_class)
 }
 
 // --------------------------------------------------------------------------------
+void PoolSupervisor_c::OnPlugged ()
+{
+  RetrievePools ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Display ()
+{
+  OnPoolSelected (0);
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Garnish ()
+{
+  _displayed_pool = _pool_allocator->GetPool (0);
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Load (xmlNode *xml_node)
+{
+  static guint current_pool_index = 0;
+
+  for (xmlNode *n = xml_node; n != NULL; n = n->next)
+  {
+    if (n->type == XML_ELEMENT_NODE)
+    {
+      if (strcmp ((char *) n->name, "match_list") == 0)
+      {
+        Pool_c *current_pool = _pool_allocator->GetPool (current_pool_index);
+
+        current_pool->Load (n->children,
+                            _attendees);
+
+        current_pool_index++;
+      }
+      else if (strcmp ((char *) n->name, _xml_class_name) != 0)
+      {
+        if (_pool_allocator)
+        {
+          _displayed_pool = _pool_allocator->GetPool (0);
+        }
+        current_pool_index = 0;
+        return;
+      }
+
+      Load (n->children);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
+{
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST _xml_class_name);
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "name",
+                                     "%s", GetName ());
+
+  if (_pool_allocator)
+  {
+    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+    {
+      Pool_c *pool;
+
+      pool = _pool_allocator->GetPool (p);
+      pool->Save (xml_writer);
+    }
+  }
+
+  xmlTextWriterEndElement (xml_writer);
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::OnLocked ()
+{
+  DisableSensitiveWidgets ();
+
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (p);
+    pool->Lock ();
+    for (guint i = 0; i < pool->GetNbPlayers (); i++)
+    {
+      Player_c *player;
+
+      player = pool->GetPlayer (i);
+
+      _result = g_slist_append (_result,
+                                player);
+    }
+  }
+  _result = g_slist_sort_with_data (_result,
+                                    (GCompareDataFunc) Pool_c::ComparePlayer,
+                                    0);
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::OnUnLocked ()
+{
+  EnableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Wipe ()
+{
+  if (_pool_allocator)
+  {
+    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+    {
+      Pool_c *pool;
+
+      pool = _pool_allocator->GetPool (p);
+      pool->ResetMatches ();
+    }
+
+    if (_displayed_pool)
+    {
+      _displayed_pool->UnPlug ();
+      _displayed_pool = NULL;
+    }
+
+    gtk_list_store_clear (_pool_liststore);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PoolSupervisor_c::Manage (Pool_c *pool)
 {
   GtkTreeIter iter;
@@ -194,19 +323,6 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Enter ()
-{
-  RetrievePools ();
-
-  OnPoolSelected (0);
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnPlugged ()
-{
-}
-
-// --------------------------------------------------------------------------------
 void PoolSupervisor_c::RetrievePools ()
 {
   _pool_allocator = dynamic_cast <PoolAllocator_c *> (GetPreviousStage ());
@@ -220,120 +336,6 @@ void PoolSupervisor_c::RetrievePools ()
       Manage (_pool_allocator->GetPool (p));
     }
   }
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor_c::Load (xmlNode *xml_node)
-{
-  static guint current_pool_index = 0;
-  Stage_c *previous_stage = GetPreviousStage ();
-
-  if (_pool_allocator == NULL)
-  {
-    current_pool_index = 0;
-    RetrievePools ();
-  }
-
-  for (xmlNode *n = xml_node; n != NULL; n = n->next)
-  {
-    if (n->type == XML_ELEMENT_NODE)
-    {
-      if (strcmp ((char *) n->name, "match_list") == 0)
-      {
-        Pool_c *current_pool = _pool_allocator->GetPool (current_pool_index);
-
-        current_pool->Load (n->children,
-                            previous_stage->GetResult ());
-
-        if (current_pool_index == 0)
-        {
-          OnPoolSelected (0);
-        }
-        current_pool_index++;
-      }
-      else if (strcmp ((char *) n->name, _xml_class_name) != 0)
-      {
-        return;
-      }
-
-      Load (n->children);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
-{
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _xml_class_name);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "name",
-                                     "%s", GetName ());
-
-  if (_pool_allocator)
-  {
-    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-    {
-      Pool_c *pool;
-
-      pool = _pool_allocator->GetPool (p);
-      pool->Save (xml_writer);
-    }
-  }
-
-  xmlTextWriterEndElement (xml_writer);
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnLocked ()
-{
-  DisableSensitiveWidgets ();
-
-  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-  {
-    Pool_c *pool;
-
-    pool = _pool_allocator->GetPool (p);
-    pool->Lock ();
-    for (guint i = 0; i < pool->GetNbPlayers (); i++)
-    {
-      Player_c *player;
-
-      player = pool->GetPlayer (i);
-
-      _result = g_slist_append (_result,
-                                player);
-    }
-  }
-  _result = g_slist_sort_with_data (_result,
-                                    (GCompareDataFunc) Pool_c::ComparePlayer,
-                                    0);
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnUnLocked ()
-{
-  EnableSensitiveWidgets ();
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor_c::Wipe ()
-{
-  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-  {
-    Pool_c *pool;
-
-    pool = _pool_allocator->GetPool (p);
-    pool->ResetMatches ();
-  }
-
-  if (_displayed_pool)
-  {
-    _displayed_pool->UnPlug ();
-    _displayed_pool = NULL;
-  }
-
-  gtk_list_store_clear (_pool_liststore);
 }
 
 // --------------------------------------------------------------------------------

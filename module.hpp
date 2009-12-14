@@ -47,8 +47,8 @@ class Module_c : public virtual Object_c
     Module_c (gchar *glade_file,
               gchar *root = NULL);
 
-    virtual void OnPlugged   ();
-    virtual void OnUnPlugged ();
+    virtual void OnPlugged   () {};
+    virtual void OnUnPlugged () {};
 
     GtkToolbar *GetToolbar ();
 

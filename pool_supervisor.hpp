@@ -38,9 +38,10 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void OnPoolSelected (gint index);
 
   private:
+    void Display ();
+    void Garnish ();
     void Load (xmlNode *xml_node);
     void Save (xmlTextWriter *xml_writer);
-    void Enter ();
     void OnLocked ();
     void OnUnLocked ();
     void Wipe ();

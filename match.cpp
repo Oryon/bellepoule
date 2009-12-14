@@ -176,29 +176,47 @@ gboolean Match_c::ScoreIsNumber (gchar *score)
 gboolean Match_c::SetScore (Player_c *player,
                             gchar    *score)
 {
-  if (score == NULL)
+  gboolean result = false;
+
+  if (score)
+  {
+    if (   (strlen (score) == 1)
+        && (g_ascii_toupper (score[0]) == 'V'))
+    {
+      SetScore (player,
+                _max_score);
+      result = true;
+    }
+    else if (ScoreIsNumber (score))
+    {
+      gchar *max_str        = g_strdup_printf ("%d", _max_score);
+      gchar *one_digit_more = g_strdup_printf ("%s0", score);
+
+      if (strlen (score) >= strlen (max_str))
+      {
+        SetScore (player,
+                  atoi (score));
+        result = true;
+      }
+      else if ((guint) atoi (one_digit_more) > _max_score)
+      {
+        SetScore (player,
+                  atoi (score));
+        result = true;
+      }
+
+      g_free (one_digit_more);
+      g_free (max_str);
+    }
+  }
+
+  if (result == FALSE)
   {
     SetScore (player,
               -1);
-    return false;
-  }
-  else if (   (strlen (score) == 1)
-           && (g_ascii_toupper (score[0]) == 'V'))
-  {
-    SetScore (player,
-              _max_score);
-    return true;
-  }
-  else if (ScoreIsNumber (score) && (strlen (score) == (_max_score/10 + 1)))
-  {
-    SetScore (player,
-              atoi (score));
-    return true;
   }
 
-  SetScore (player,
-            -1);
-  return false;
+  return result;
 }
 
 // --------------------------------------------------------------------------------
@@ -222,24 +240,30 @@ void Match_c::Save (xmlTextWriter *xml_writer)
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "match");
 
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "player_A",
-                                     "%d", _A->GetRef ());
-  if (_A_score->IsKnown ())
+  if (_A)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "score_A",
-                                       "%d", _A_score->Get ());
+                                       BAD_CAST "player_A",
+                                       "%d", _A->GetRef ());
+    if (_A_score->IsKnown ())
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "score_A",
+                                         "%d", _A_score->Get ());
+    }
   }
 
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "player_B",
-                                     "%d", _B->GetRef ());
-  if (_B_score->IsKnown ())
+  if (_B)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "score_B",
-                                       "%d", _B_score->Get ());
+                                       BAD_CAST "player_B",
+                                       "%d", _B->GetRef ());
+    if (_B_score->IsKnown ())
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "score_B",
+                                         "%d", _B_score->Get ());
+    }
   }
 
   xmlTextWriterEndElement (xml_writer);

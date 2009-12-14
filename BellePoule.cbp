@@ -29,8 +29,8 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-mms-bitfields" />
 			<Add option="-Wall" />
+			<Add option="-mms-bitfields" />
 			<Add directory="C:\MinGW\include" />
 			<Add directory="C:\MinGW\include\gtk-2.0" />
 			<Add directory="C:\MinGW\include\cairo" />
@@ -40,6 +40,7 @@
 			<Add directory="C:\MinGW\include\pango-1.0" />
 			<Add directory="C:\MinGW\lib\gtk-2.0\include" />
 			<Add directory="C:\MinGW\include\atk-1.0" />
+			<Add directory="C:\MinGW\include\goocanvas-0.13\goocanvas" />
 		</Compiler>
 		<Linker>
 			<Add library="gtk-win32-2.0" />
@@ -78,8 +79,6 @@
 		<Unit filename="object.hpp" />
 		<Unit filename="player.cpp" />
 		<Unit filename="player.hpp" />
-		<Unit filename="players_base.cpp" />
-		<Unit filename="players_base.hpp" />
 		<Unit filename="players_list.cpp" />
 		<Unit filename="players_list.hpp" />
 		<Unit filename="pool.cpp" />

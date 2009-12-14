@@ -42,7 +42,6 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     void OnComboboxChanged (GtkComboBox *cb);
 
   private:
-    void Enter ();
     void OnLocked ();
     void OnUnLocked ();
     void Wipe ();
@@ -55,7 +54,6 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
       gboolean has_two_size;
     } Configuration;
 
-    GSList        *_attendees;
     GSList        *_pools_list;
     GSList        *_config_list;
     Configuration *_best_config;
@@ -76,10 +74,9 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     void DeletePools ();
     void SetUpCombobox ();
     void Display ();
+    void Garnish ();
     void FillPoolTable (Pool_c *pool);
     void FixUpTablesBounds ();
-
-    void OnPlugged ();
 
     void OnAttrListUpdated ();
 

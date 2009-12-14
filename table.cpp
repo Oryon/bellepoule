@@ -39,7 +39,7 @@ Table::Table (StageClass *stage_class)
 
   _score_collector = NULL;
 
-  _max_score = 5;
+  _max_score = 10;
 
   {
     ShowAttribute ("rank");
@@ -51,11 +51,7 @@ Table::Table (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
-  if (_tree_root)
-  {
-    g_node_destroy (_tree_root);
-  }
-
+  DeleteTree ();
   Object_c::Release (_score_collector);
 }
 
@@ -69,11 +65,126 @@ void Table::Init ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnPlugged ()
+Stage_c *Table::CreateInstance (StageClass *stage_class)
 {
-  CanvasModule_c::OnPlugged ();
+  return new Table (stage_class);
+}
 
-  Display ();
+// --------------------------------------------------------------------------------
+void Table::Display ()
+{
+  Wipe ();
+
+  {
+    _main_table = goo_canvas_table_new (GetRootItem (),
+                                        "row-spacing",    10.0,
+                                        "column-spacing", _level_spacing,
+                                        NULL);
+
+    // Header
+    for (gint l = _nb_levels; l > 0; l--)
+    {
+      GooCanvasItem *level_header;
+
+      level_header = goo_canvas_table_new (_main_table,
+                                           NULL);
+
+      PutStockIconInTable (level_header,
+                           GTK_STOCK_ADD,
+                           0, 0);
+
+      PutStockIconInTable (level_header,
+                           GTK_STOCK_APPLY,
+                           0, 1);
+
+      {
+        GooCanvasItem *text_item;
+        gchar         *text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - l));
+
+        text_item = PutTextInTable (level_header,
+                                    text,
+                                    0,
+                                    2);
+        g_object_set (G_OBJECT (text_item),
+                      "font",       "Sans bold 18px",
+                      "fill_color", "medium blue",
+                      NULL);
+        g_free (text);
+      }
+
+      PutInTable (_main_table,
+                  level_header,
+                  0,
+                  l);
+      SetTableItemAttribute (level_header, "x-align", 0.5);
+    }
+
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) FillInNode,
+                     this);
+
+    DrawAllConnectors ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::Garnish ()
+{
+  DeleteTree ();
+  CreateTree ();
+}
+
+// --------------------------------------------------------------------------------
+void Table::Load (xmlNode *xml_node)
+{
+  if (_attendees)
+  {
+    CreateTree ();
+
+    if (_tree_root)
+    {
+      if (xml_node->type == XML_ELEMENT_NODE)
+      {
+        if (strcmp ((char *) xml_node->name, _xml_class_name) == 0)
+        {
+          _xml_node = xml_node->children->next;
+
+          g_node_traverse (_tree_root,
+                           G_POST_ORDER,
+                           G_TRAVERSE_ALL,
+                           -1,
+                           (GNodeTraverseFunc) LoadNode,
+                           this);
+        }
+      }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::Save (xmlTextWriter *xml_writer)
+{
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST _xml_class_name);
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "name",
+                                     "%s", GetName ());
+
+  if (_tree_root)
+  {
+    _xml_writer = xml_writer;
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) SaveNode,
+                     this);
+  }
+
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
@@ -89,103 +200,46 @@ void Table::OnNewScore (CanvasModule_c *client,
 }
 
 // --------------------------------------------------------------------------------
-void Table::Display ()
+void Table::DeleteTree ()
 {
-  Wipe ();
-
   if (_tree_root)
   {
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) DeleteNode,
+                     this);
+
     g_node_destroy (_tree_root);
     _tree_root = NULL;
   }
+}
 
+// --------------------------------------------------------------------------------
+void Table::CreateTree ()
+{
+  guint nb_players;
+
+  nb_players = g_slist_length (_attendees);
+
+  for (guint i = 0; i < 32; i++)
   {
-    GooCanvasItem *root = GetRootItem ();
-    guint          nb_players;
+    guint bit_cursor;
 
+    bit_cursor = 1;
+    bit_cursor = bit_cursor << i;
+    if (bit_cursor >= nb_players)
     {
-      Stage_c *previous_stage = GetPreviousStage ();
-
-      _attendees  = previous_stage->GetResult ();
-      nb_players = g_slist_length (_attendees);
-
-      for (guint i = 0; i < 32; i++)
-      {
-        guint bit_cursor;
-
-        bit_cursor = 1;
-        bit_cursor = bit_cursor << i;
-        if (bit_cursor >= nb_players)
-        {
-          _nb_levels = i++;
-          break;
-        }
-      }
-    }
-    _nb_levels++;
-
-    if (root)
-    {
-      _main_table = goo_canvas_table_new (root,
-                                          "row-spacing",    10.0,
-                                          "column-spacing", _level_spacing,
-                                          NULL);
-
-      // Header
-      for (gint l = _nb_levels; l > 0; l--)
-      {
-        GooCanvasItem *level_header;
-
-        level_header = goo_canvas_table_new (_main_table,
-                                             NULL);
-
-        PutStockIconInTable (level_header,
-                             GTK_STOCK_ADD,
-                             0, 0);
-
-        PutStockIconInTable (level_header,
-                             GTK_STOCK_APPLY,
-                             0, 1);
-
-        {
-          GooCanvasItem *text_item;
-          gchar         *text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - l));
-
-          text_item = PutTextInTable (level_header,
-                                      text,
-                                      0,
-                                      2);
-          g_object_set (G_OBJECT (text_item),
-                        "font",       "Sans bold 18px",
-                        "fill_color", "medium blue",
-                        NULL);
-          g_free (text);
-        }
-
-        PutInTable (_main_table,
-                    level_header,
-                    0,
-                    l);
-        SetTableItemAttribute (level_header, "x-align", 0.5);
-      }
-
-      // Recursively build the node tree
-      if (_tree_root == NULL)
-      {
-        AddFork (NULL);
-      }
-
-      // Fill in first level
-      g_node_traverse (_tree_root,
-                       G_POST_ORDER,
-                       G_TRAVERSE_ALL,
-                       -1,
-                       (GNodeTraverseFunc) FillInNode,
-                       this);
-
-      DrawAllConnectors ();
+      _nb_levels = i++;
+      break;
     }
   }
+
+  _nb_levels++;
+
+  DeleteTree ();
+  AddFork (NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -267,10 +321,9 @@ gboolean Table::FillInNode (GNode *node,
   WipeNode (node,
             table);
 
-  if (data->_canvas_table == NULL)
   {
     data->_canvas_table = goo_canvas_table_new (table->_main_table,
-                                                "column-spacing", _level_spacing,
+                                                "column-spacing", table->_level_spacing,
                                                 NULL);
     SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
     SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
@@ -375,7 +428,7 @@ gboolean Table::FillInNode (GNode *node,
         SetTableItemAttribute (goo_rect, "y-align", 0.5);
       }
 
-      // Text
+      // Score Text
       {
         Score_c *score       = parent_data->_match->GetScore (winner);
         gchar   *score_image = score->GetImage ();
@@ -434,6 +487,17 @@ gboolean Table::FillInNode (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
+gboolean Table::DeleteNode (GNode *node,
+                            Table *table)
+{
+  NodeData *data = (NodeData *) node->data;
+
+  Object_c::Release (data->_match);
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 void Table::AddFork (GNode *to)
 {
   NodeData *to_data = NULL;
@@ -481,6 +545,7 @@ void Table::AddFork (GNode *to)
   data->_canvas_table = NULL;
   data->_player_item  = NULL;
   data->_connector    = NULL;
+  data->_player_item  = NULL;
   data->_match = new Match_c (_max_score);
   data->_match->SetData ("Table::node", node);
 
@@ -497,25 +562,60 @@ void Table::AddFork (GNode *to)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Table::CreateInstance (StageClass *stage_class)
+gboolean Table::LoadNode (GNode *node,
+                          Table *table)
 {
-  return new Table (stage_class);
+  if (table->_xml_node && (table->_xml_node->type == XML_ELEMENT_NODE))
+  {
+    if (strcmp ((char *) table->_xml_node->name, "match") == 0)
+    {
+      gchar    *attr;
+      Player_c *player;
+      NodeData *data    = (NodeData *) node->data;
+
+      attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "player_A");
+      if (attr)
+      {
+        player = table->GetPlayerFromRef (atoi (attr));
+        data->_match->SetPlayerA (player);
+
+        attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_A");
+        if (attr)
+        {
+          data->_match->SetScore (player, atoi (attr));
+        }
+      }
+
+      attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "player_B");
+      if (attr)
+      {
+        player = table->GetPlayerFromRef (atoi (attr));
+        data->_match->SetPlayerB (player);
+
+        attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_B");
+        if (attr)
+        {
+          data->_match->SetScore (player, atoi (attr));
+        }
+      }
+    }
+
+    if (table->_xml_node) table->_xml_node = table->_xml_node->next;
+    if (table->_xml_node) table->_xml_node = table->_xml_node->next;
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
-void Table::Load (xmlNode *xml_node)
+gboolean Table::SaveNode (GNode *node,
+                          Table *table)
 {
-}
+  NodeData *data = (NodeData *) node->data;
 
-// --------------------------------------------------------------------------------
-void Table::Save (xmlTextWriter *xml_writer)
-{
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _xml_class_name);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "name",
-                                     "%s", GetName ());
-  xmlTextWriterEndElement (xml_writer);
+  data->_match->Save (table->_xml_writer);
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -542,12 +642,6 @@ extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *wi
 }
 
 // --------------------------------------------------------------------------------
-void Table::Enter ()
-{
-  EnableSensitiveWidgets ();
-}
-
-// --------------------------------------------------------------------------------
 void Table::OnLocked ()
 {
   DisableSensitiveWidgets ();
@@ -563,6 +657,46 @@ void Table::OnUnLocked ()
 void Table::OnAttrListUpdated ()
 {
   Display ();
+}
+
+// --------------------------------------------------------------------------------
+void Table::FillInConfig ()
+{
+  gchar *text = g_strdup_printf ("%d", _max_score);
+
+  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
+                      text);
+  g_free (text);
+
+  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
+                      GetName ());
+}
+
+// --------------------------------------------------------------------------------
+void Table::ApplyConfig ()
+{
+  {
+    GtkWidget *name_w = _glade->GetWidget ("name_entry");
+    gchar     *name   = (gchar *) gtk_entry_get_text (GTK_ENTRY (name_w));
+
+    SetName (name);
+  }
+
+  {
+    GtkWidget *max_score_w = _glade->GetWidget ("max_score_entry");
+
+    if (max_score_w)
+    {
+      gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (max_score_w));
+
+      if (str)
+      {
+        _max_score = atoi (str);
+
+        //pool->SetMaxScore (_max_score);
+      }
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
