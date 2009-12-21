@@ -139,6 +139,7 @@ void Schedule_c::DisplayList ()
           stage->RetrieveAttendees ();
           stage->Garnish ();
           stage->Display ();
+          stage->UnLock  ();
         }
       }
     }
@@ -513,6 +514,10 @@ void Schedule_c::Load (xmlDoc *doc)
           {
             stage->Lock ();
           }
+          else
+          {
+            stage->UnLock ();
+          }
         }
       }
     }
@@ -764,6 +769,7 @@ void Schedule_c::on_next_stage_toolbutton_clicked ()
   stage->RetrieveAttendees ();
   stage->Garnish ();
   stage->Display ();
+  stage->UnLock  ();
 
   SetCurrentStage (_current_stage+1);
 }

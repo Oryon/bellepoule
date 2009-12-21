@@ -162,7 +162,6 @@ void PlayersList_c::Save (xmlTextWriter *xml_writer)
   result = xmlTextWriterStartElement (xml_writer,
                                       BAD_CAST _xml_class_name);
 
-  g_print ("    >> %d\n", g_slist_length (_player_list));
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
     Player_c *p;
@@ -256,7 +255,6 @@ GSList *PlayersList_c::CreateCustomList (CustomFilter filter)
 {
   GSList *custom_list = NULL;
 
-  g_print (">> %d\n", g_slist_length (_player_list));
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
     Player_c *p;

@@ -118,14 +118,6 @@ int main (int argc, char **argv)
   xml = new Glade_c ("main_frame.glade",
                      NULL);
 
-  {
-    Contest_c *contest;
-    gchar     *filename = "compet/minimes_bretagne";
-
-    contest = new Contest_c (filename);
-    contest->AttachTo (GTK_NOTEBOOK (xml->GetWidget ("notebook")));
-  }
-
   // Show the main window
   {
     GtkWidget *w = xml->GetRootWidget ();
@@ -133,6 +125,16 @@ int main (int argc, char **argv)
     if (w == NULL) return 1;
     gtk_widget_show_all (w);
   }
+
+#ifdef DEBUG
+  {
+    Contest_c *contest;
+    gchar     *filename = "compet/minimes_bretagne";
+
+    contest = new Contest_c (filename);
+    contest->AttachTo (GTK_NOTEBOOK (xml->GetWidget ("notebook")));
+  }
+#endif
 
   gtk_main ();
 

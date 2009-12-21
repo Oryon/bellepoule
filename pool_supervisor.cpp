@@ -86,6 +86,7 @@ void PoolSupervisor_c::OnPlugged ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Display ()
 {
+  ToggleClassification (FALSE);
   OnPoolSelected (0);
 }
 
@@ -155,6 +156,10 @@ void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
 void PoolSupervisor_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
+  gtk_widget_set_sensitive (_glade->GetWidget ("classification_toggletoolbutton"),
+                            TRUE);
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton")),
+                                     FALSE);
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
@@ -181,6 +186,10 @@ void PoolSupervisor_c::OnLocked ()
 void PoolSupervisor_c::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton")),
+                                     FALSE);
+  gtk_widget_set_sensitive (_glade->GetWidget ("classification_toggletoolbutton"),
+                            FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -298,7 +307,7 @@ void PoolSupervisor_c::OnPoolSelected (Pool_c *pool)
   {
     pool->CloneFilterList (this);
     Plug (pool,
-          _glade->GetWidget ("pool_hook"));
+          _glade->GetWidget ("main_hook"));
 
     _displayed_pool = pool;
   }
@@ -437,4 +446,13 @@ extern "C" G_MODULE_EXPORT void on_pool_combobox_changed (GtkWidget *widget,
   gint              pool_index = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
 
   p->OnPoolSelected (pool_index);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_classification_toggletoolbutton_toggled (GtkWidget *widget,
+                                                                            Object_c  *owner)
+{
+  PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
+
+  p->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
 }

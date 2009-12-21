@@ -23,17 +23,18 @@ Glade_c::Glade_c (gchar    *file_name,
   if (file_name)
   {
     GError *error;
+    gchar  *path = g_strdup_printf ("glade/%s", file_name);
 
     _glade_xml = gtk_builder_new ();
 
     error = NULL;
     gtk_builder_add_from_file (_glade_xml,
-                               file_name,
+                               path,
                                &error);
 
     if (error)
     {
-      gchar *spare_file_name = g_strdup_printf ("../../%s", file_name);
+      gchar *spare_file_name = g_strdup_printf ("../../%s", path);
 
       g_print (">> %s\n", error->message);
       g_free (error);
@@ -52,6 +53,8 @@ Glade_c::Glade_c (gchar    *file_name,
         gtk_main_quit ();
       }
     }
+    g_free (path);
+
     gtk_builder_connect_signals (_glade_xml,
                                  owner);
   }

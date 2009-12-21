@@ -45,6 +45,8 @@ Contest_c::Contest_c (gchar *filename)
 
   _filename = g_strdup (filename);
 
+  if (g_file_test (_filename,
+                   G_FILE_TEST_IS_REGULAR))
   {
     xmlDoc *doc = xmlParseFile (filename);
 

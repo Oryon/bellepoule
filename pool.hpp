@@ -22,7 +22,6 @@
 
 #include "stage.hpp"
 #include "canvas_module.hpp"
-#include "players_base.hpp"
 #include "score_collector.hpp"
 
 class Pool_c : public CanvasModule_c

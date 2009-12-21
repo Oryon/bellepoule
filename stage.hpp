@@ -98,6 +98,8 @@ class Stage_c : public virtual Object_c
 
     virtual gboolean IsOver ();
 
+    virtual void ToggleClassification (gboolean classification_on);
+
     virtual Stage_c *GetInputProvider ();
 
     static void RegisterStageClass (const gchar *name,

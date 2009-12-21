@@ -291,6 +291,29 @@ Stage_c::Rights Stage_c::GetRights ()
 }
 
 // --------------------------------------------------------------------------------
+void Stage_c::ToggleClassification (gboolean classification_on)
+{
+  Module_c *module = dynamic_cast <Module_c *> (this);
+
+  if (module)
+  {
+    GtkWidget *main_w           = module->GetWidget ("main_hook");
+    GtkWidget *classification_w = module->GetWidget ("classification_hook");
+
+    if (classification_on)
+    {
+      gtk_widget_hide (main_w);
+      gtk_widget_show (classification_w);
+    }
+    else
+    {
+      gtk_widget_hide (classification_w);
+      gtk_widget_show (main_w);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Stage_c::Dump ()
 {
   if (_result)

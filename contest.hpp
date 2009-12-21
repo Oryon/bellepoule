@@ -22,7 +22,6 @@
 
 #include "module.hpp"
 #include "glade.hpp"
-#include "players_base.hpp"
 #include "schedule.hpp"
 
 class Contest_c : public Module_c

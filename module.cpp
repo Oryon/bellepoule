@@ -133,6 +133,12 @@ GtkWidget *Module_c::GetConfigWidget ()
 }
 
 // --------------------------------------------------------------------------------
+GtkWidget *Module_c::GetWidget (gchar *name)
+{
+  return _glade->GetWidget (name);
+}
+
+// --------------------------------------------------------------------------------
 void Module_c::OnAttrDeleted (GtkTreeModel *tree_model,
                               GtkTreePath  *path,
                               gpointer      user_data)
