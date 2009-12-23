@@ -140,21 +140,18 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
 {
   if ((event->keyval == GDK_Return) || (event->keyval == GDK_Tab))
   {
-    {
-      GooCanvasItem *next_item;
+    GooCanvasItem *next_item = GetNextItem (widget);
 
-      next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
-      if (next_item)
-      {
-        goo_canvas_grab_focus (_canvas,
-                               next_item);
-      }
-      else
-      {
-        goo_canvas_grab_focus (_canvas,
-                               goo_canvas_get_root_item (_canvas));
-        Stop ();
-      }
+    if (next_item)
+    {
+      goo_canvas_grab_focus (_canvas,
+                             next_item);
+    }
+    else
+    {
+      goo_canvas_grab_focus (_canvas,
+                             goo_canvas_get_root_item (_canvas));
+      Stop ();
     }
 
     return TRUE;
@@ -171,6 +168,26 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
 }
 
 // --------------------------------------------------------------------------------
+GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
+{
+  Match_c       *match     = (Match_c *) g_object_get_data (G_OBJECT (widget), "match");
+  GooCanvasItem *next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
+
+  if (next_item)
+  {
+    Match_c *next_match = (Match_c *) g_object_get_data (G_OBJECT (next_item), "match");
+
+    if (   (match == next_match)
+        && (match->GetWinner () != NULL))
+    {
+      return NULL;
+    }
+  }
+
+  return next_item;
+}
+
+// --------------------------------------------------------------------------------
 void ScoreCollector::OnEntryChanged (GtkWidget *widget)
 {
   Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (widget), "match");
@@ -179,20 +196,19 @@ void ScoreCollector::OnEntryChanged (GtkWidget *widget)
 
   if (match->SetScore (player, input))
   {
-      GooCanvasItem *next_item;
+    GooCanvasItem *next_item = GetNextItem (widget);
 
-      next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
-      if (next_item)
-      {
-        goo_canvas_grab_focus (_canvas,
-                               next_item);
-      }
-      else
-      {
-        goo_canvas_grab_focus (_canvas,
-                               goo_canvas_get_root_item (_canvas));
-        Stop ();
-      }
+    if (next_item)
+    {
+      goo_canvas_grab_focus (_canvas,
+                             next_item);
+    }
+    else
+    {
+      goo_canvas_grab_focus (_canvas,
+                             goo_canvas_get_root_item (_canvas));
+      Stop ();
+    }
   }
 }
 

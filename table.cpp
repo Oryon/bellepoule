@@ -62,11 +62,11 @@ Table::Table (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
-  DeleteTree ();
-  Object_c::Release (_score_collector);
-
   gtk_list_store_clear (_from_table_liststore);
   g_object_unref (_from_table_liststore);
+
+  DeleteTree ();
+  Object_c::Release (_score_collector);
 }
 
 // --------------------------------------------------------------------------------

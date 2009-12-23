@@ -97,6 +97,8 @@ class ScoreCollector : public Object_c
 
     void Stop ();
 
+    GooCanvasItem *GetNextItem (GtkWidget *widget);
+
     gboolean OnFocusIn  (GooCanvasItem *goo_rect);
     gboolean OnFocusOut (GtkWidget *widget);
     void     OnEntryChanged (GtkWidget *widget);
