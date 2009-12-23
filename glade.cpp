@@ -23,7 +23,7 @@ Glade_c::Glade_c (gchar    *file_name,
   if (file_name)
   {
     GError *error;
-    gchar  *path = g_strdup_printf ("glade/%s", file_name);
+    gchar  *path = g_strdup_printf ("./resources/glade/%s", file_name);
 
     _glade_xml = gtk_builder_new ();
 

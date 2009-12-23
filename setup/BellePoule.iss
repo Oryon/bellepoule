@@ -18,87 +18,127 @@ SolidCompression=yes
 ChangesEnvironment=yes
 
 [Registry]
-Root: HKCU; SubKey: "Environment\"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCU\Environment\,PATH};{app};{app}\lib"; Flags: createvalueifdoesntexist
+Root: HKCU; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCU\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnPathAlready(); Flags: preservestringtype;
 
 [Languages]
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
-[Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+;[Tasks]
+;Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+;Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+[Icons]
+Name: "{userstartmenu}\Programs\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"
+Name: "{userstartmenu}\Programs\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
+
+[Dirs]
+Name: "{app}\porting_layer"; Attribs: hidden
+Name: "{app}\resources"; Attribs: hidden
 
 [Files]
-Source: "F:\BellePoule\launchpad\trunk\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "F:\BellePoule\launchpad\trunk\locale\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\Exemples_Fichiers_BellePoule\exemple.csb"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\Exemples_Fichiers_FFE\CLS_SHM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
 
-Source: "F:\BellePoule\launchpad\trunk\glade\pool_supervisor.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "F:\BellePoule\launchpad\trunk\glade\table.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "F:\BellePoule\launchpad\trunk\glade\schedule.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "F:\BellePoule\launchpad\trunk\glade\players_list.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "F:\BellePoule\launchpad\trunk\glade\main_frame.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "F:\BellePoule\launchpad\trunk\glade\pool.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "F:\BellePoule\launchpad\trunk\glade\contest.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "F:\BellePoule\launchpad\trunk\glade\pool_allocator.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "F:\BellePoule\launchpad\trunk\glade\splitting.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\resources\translations\fr\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\pool_supervisor.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\table.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\schedule.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\players_list.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\main_frame.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\pool.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\contest.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\pool_allocator.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "G:\BellePoule\launchpad\trunk\resources\glade\splitting.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 
 ; GTK+ dependencies
 ; DLL
-Source: "C:\MinGW\bin\libcairo-2.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\jpeg62.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libtiff3.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpng12.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpng12-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgio-2.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\zlib1.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\intl.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libatk-1.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgdk-win32-2.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libglib-2.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgmodule-2.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgobject-2.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgthread-2.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpango-1.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpangoft2-1.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libxml2.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\iconv.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgoocanvas-3.dll"; DestDir: "{app}\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libcairo-2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\jpeg62.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libtiff3.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libpng12.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libpng12-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgio-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\zlib1.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\intl.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libatk-1.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgdk-win32-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libglib-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgmodule-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgobject-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgthread-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libpango-1.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libpangoft2-1.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libxml2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\iconv.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgoocanvas-3.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 
 ; .mo
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 
 ; theme
-Source: "C:\MinGW\etc\gtk-2.0\gtkrc"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion
-Source: "C:\MinGW\share\themes\Aurora\gtk-2.0\gtkrc"; DestDir: "{app}\share\themes\Aurora\gtk-2.0"; Flags: ignoreversion
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libaurora.dll"; DestDir: "{app}\lib\gtk-2.0\2.10.0\engines\"; Flags: ignoreversion
+Source: "C:\MinGW\etc\gtk-2.0\gtkrc"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion
+Source: "C:\MinGW\share\themes\Aurora\gtk-2.0\gtkrc"; DestDir: "{app}\porting_layer\share\themes\Aurora\gtk-2.0"; Flags: ignoreversion
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libaurora.dll"; DestDir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\engines\"; Flags: ignoreversion
 
 ;
-Source: "C:\MinGW\etc\gtk-2.0\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion
-Source: "C:\MinGW\etc\gtk-2.0\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion
-Source: "C:\MinGW\etc\pango\pango.modules"; Destdir: "{app}\etc\pango"
-Source: "C:\MinGW\etc\pango\pango.aliases"; Destdir: "{app}\etc\pango"
+Source: "C:\MinGW\etc\gtk-2.0\gdk-pixbuf.loaders"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion
+Source: "C:\MinGW\etc\gtk-2.0\gtk.immodules"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion
+Source: "C:\MinGW\etc\pango\pango.modules"; Destdir: "{app}\porting_layer\etc\pango"
+Source: "C:\MinGW\etc\pango\pango.aliases"; Destdir: "{app}\porting_layer\etc\pango"
 
 ; optional: let the user make the app look more Windows-like
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libwimp.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\engines"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libpixmap.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\engines"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-am-et.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-cedilla.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-cyrillic-translit.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ime.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-inuktitut.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ipa.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-multipress.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-thai.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-er.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-et.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-viqr.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libwimp.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\engines"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libpixmap.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\engines"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-am-et.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-cedilla.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-cyrillic-translit.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ime.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-inuktitut.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ipa.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-multipress.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-thai.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-er.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-et.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-viqr.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+
+[Code]
+function NotOnPathAlready(): Boolean;
+var
+  BinDir, Path: String;
+begin
+  Log('Checking if %PATH% is already up to date ');
+  if RegQueryStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', Path) then
+  begin // Successfully read the value
+    Log('HKCU\Environment\PATH = ' + Path);
+    BinDir := ExpandConstant('{app}\porting_layer');
+    Log('Looking for BellePoule\porting_layer dir in %PATH%: ' + BinDir + ' in ' + Path);
+    if Pos(LowerCase(BinDir), Lowercase(Path)) = 0 then
+    begin
+      Log('Update %PATH%');
+      Result := True;
+    end
+    else
+    begin
+      Log('No need to update %PATH%');
+      Result := False;
+    end
+  end
+  else // The key probably doesn't exist
+  begin
+    Log('Could not access HKCU\Environment\PATH so assume it is ok to add it');
+    Result := True;
+  end;
+end;
 
 [Run]
 Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: nowait postinstall skipifsilent

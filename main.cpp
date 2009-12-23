@@ -84,7 +84,7 @@ extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  libintl_bindtextdomain ("BellePoule", "./locale");
+  libintl_bindtextdomain ("BellePoule", "./resources/translations");
   libintl_bind_textdomain_codeset ("BellePoule", "UTF-8");
   textdomain ("BellePoule");
 
@@ -129,7 +129,7 @@ int main (int argc, char **argv)
 #ifdef DEBUG
   {
     Contest_c *contest;
-    gchar     *filename = "compet/minimes_bretagne";
+    gchar     *filename = "Exemples_Fichiers_BellePoule/minimes_bretagne";
 
     contest = new Contest_c (filename);
     contest->AttachTo (GTK_NOTEBOOK (xml->GetWidget ("notebook")));

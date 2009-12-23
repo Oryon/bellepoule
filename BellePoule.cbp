@@ -104,7 +104,7 @@
 			<code_completion />
 			<debugger>
 				<search_path add="system_sources" />
-				<search_path add="system_sources\gtk" />
+				<search_path add="G:\BellePoule\launchpad\trunk\system_sources\gtk" />
 			</debugger>
 		</Extensions>
 	</Project>
