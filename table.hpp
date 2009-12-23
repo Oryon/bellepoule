@@ -32,6 +32,8 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     Table (StageClass *stage_class);
 
+    void OnFromTableComboboxChanged ();
+
   public:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
@@ -50,6 +52,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
       Match_c       *_match;
       GooCanvasItem *_canvas_table;
       GooCanvasItem *_player_item;
+      GooCanvasItem *_print_item;
       GooCanvasItem *_connector;
     };
 
@@ -57,6 +60,8 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     GNode          *_tree_root;
     guint           _nb_levels;
+    GtkListStore   *_from_table_liststore;
+    guint           _nb_level_to_display;
     GooCanvasItem  *_main_table;
     guint           _max_score;
     ScoreCollector *_score_collector;
@@ -80,6 +85,9 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     static gboolean WipeNode (GNode *node,
                               Table *table);
+
+    static gboolean DeleteCanvasTable (GNode *node,
+                                       Table *table);
 
     static Stage_c *CreateInstance (StageClass *stage_class);
 

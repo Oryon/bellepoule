@@ -38,6 +38,7 @@ class Pool_c : public CanvasModule_c
     guint GetNumber    ();
     void  ResetMatches ();
     void  Lock         ();
+    void  UnLock       ();
     void  SetMaxScore  (guint max_score);
     void  SetStatusCbk (StatusCbk  cbk,
                         void      *data);
@@ -74,10 +75,6 @@ class Pool_c : public CanvasModule_c
     StatusCbk       _status_cbk;
 
   private:
-    void SetMatchColor (Match_c *match,
-                        gchar   *consistent_color,
-                        gchar   *unconsitentcolor);
-
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
     void OnDrawPage (GtkPrintOperation *operation,

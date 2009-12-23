@@ -58,10 +58,14 @@ class Match_c : public Object_c
 
     void SetMaxScore (guint max_score);
 
+    gboolean HasSinglePlayer ();
+
   private:
     guint     _max_score;
     Player_c *_A;
     Player_c *_B;
+    gboolean  _A_is_known;
+    gboolean  _B_is_known;
     Score_c  *_A_score;
     Score_c  *_B_score;
 

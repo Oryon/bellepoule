@@ -43,10 +43,22 @@ class ScoreCollector : public Object_c
                              Player_c      *player,
                              guint          player_position);
 
+    void RemoveCollectingPoints (Match_c *match);
+
+    void Lock ();
+
+    void UnLock ();
+
     void AddCollectingTrigger (GooCanvasItem *trigger);
 
     void SetNextCollectingPoint (GooCanvasItem *to,
                                  GooCanvasItem *next);
+
+    void SetConsistentColors (gchar *normal_color,
+                              gchar *focus_color);
+
+    void SetUnConsistentColors (gchar *normal_color,
+                                gchar *focus_colorg);
 
   private:
     GooCanvas      *_canvas;
@@ -55,7 +67,12 @@ class ScoreCollector : public Object_c
     GtkWidget      *_gtk_entry;
     CanvasModule_c *_client;
     OnNewScore_cbk  _on_new_score;
+    gboolean        _is_locked;
     gulong          _focus_out_handle;
+    gchar          *_consistent_focus_color;
+    gchar          *_consistent_normal_color;
+    gchar          *_unconsistent_focus_color;
+    gchar          *_unconsistent_normal_color;
 
     static gboolean on_cell_button_press (GooCanvasItem  *item,
                                           gboolean       *target,

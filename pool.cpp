@@ -112,51 +112,6 @@ gchar *Pool_c::GetName ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::SetMatchColor (Match_c *match,
-                            gchar   *consistent_color,
-                            gchar   *unconsitentcolor)
-{
-  GooCanvasItem *rect;
-  gchar         *color_A = consistent_color;
-  gchar         *color_B = consistent_color;
-  Player_c      *A       = match->GetPlayerA ();
-  Player_c      *B       = match->GetPlayerB ();
-  Score_c       *score_A = match->GetScore (A);
-  Score_c       *score_B = match->GetScore (B);
-
-  if (score_A->IsValid () == false)
-  {
-    color_A = unconsitentcolor;
-  }
-  if (score_B->IsValid () == false)
-  {
-    color_B = unconsitentcolor;
-  }
-
-  if (score_A->IsConsistentWith (score_B) == false)
-  {
-    color_A = unconsitentcolor;
-    color_B = unconsitentcolor;
-  }
-
-  rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_A");
-  if (rect)
-  {
-    g_object_set (rect,
-                  "fill-color", color_A,
-                  NULL);
-  }
-
-  rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_B");
-  if (rect)
-  {
-    g_object_set (rect,
-                  "fill-color", color_B,
-                  NULL);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Pool_c::AddPlayer (Player_c *player)
 {
   if (player == NULL)
@@ -247,10 +202,24 @@ void Pool_c::OnPlugged ()
 {
   CanvasModule_c::OnPlugged ();
 
-  Object_c::Release (_score_collector);
-  _score_collector = new ScoreCollector (GetCanvas (),
-                                         this,
-                                         (ScoreCollector::OnNewScore_cbk) &Pool_c::OnNewScore);
+  {
+    if (_score_collector)
+    {
+      for (guint i = 0; i < g_slist_length (_match_list); i++)
+      {
+        Match_c *match;
+
+        match = (Match_c *) g_slist_nth_data (_match_list, i);
+        _score_collector->RemoveCollectingPoints (match);
+      }
+
+      _score_collector->Release ();
+    }
+
+    _score_collector = new ScoreCollector (GetCanvas (),
+                                           this,
+                                           (ScoreCollector::OnNewScore_cbk) &Pool_c::OnNewScore);
+  }
 
   {
     const guint    cell_w     = 40;
@@ -432,18 +401,6 @@ void Pool_c::OnPlugged ()
       }
     }
 
-    // Higlight errors
-    for (guint i = 0; i < g_slist_length (_match_list); i++)
-    {
-      Match_c *match;
-
-      match = (Match_c *) g_slist_nth_data (_match_list,
-                                            i);
-      SetMatchColor (match,
-                     "White",
-                     "MistyRose");
-    }
-
     // Dashboard
     {
       GooCanvasItem *dashboard_group = goo_canvas_group_new (root_item,
@@ -592,7 +549,6 @@ void Pool_c::OnPlugged ()
                            -1,
                            GTK_ANCHOR_SW,
                            "font", "Sans bold 18",
-                           "fill_color", "medium blue",
                            NULL);
     }
   }
@@ -657,6 +613,13 @@ gint Pool_c::ComparePlayer (Player_c *A,
 void Pool_c::Lock ()
 {
   RefreshScoreData ();
+  _score_collector->Lock ();
+}
+
+// --------------------------------------------------------------------------------
+void Pool_c::UnLock ()
+{
+  _score_collector->UnLock ();
 }
 
 // --------------------------------------------------------------------------------

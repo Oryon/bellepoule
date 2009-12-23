@@ -32,12 +32,23 @@ ScoreCollector::ScoreCollector (GooCanvas      *canvas,
   _canvas           = canvas;
   _client           = client;
   _on_new_score     = on_new_score;
+  _is_locked        = FALSE;
+
+  _consistent_focus_color    = g_strdup ("SkyBlue");
+  _consistent_normal_color   = g_strdup ("White");
+  _unconsistent_focus_color  = g_strdup ("LightCoral");
+  _unconsistent_normal_color = g_strdup ("MistyRose");
 }
 
 // --------------------------------------------------------------------------------
 ScoreCollector::~ScoreCollector ()
 {
   Stop ();
+
+  g_free (_consistent_focus_color);
+  g_free (_consistent_normal_color);
+  g_free (_unconsistent_focus_color);
+  g_free (_unconsistent_normal_color);
 }
 
 // --------------------------------------------------------------------------------
@@ -69,17 +80,40 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
 
   if (player_position == 0)
   {
-    match->SetData ("Pool::goo_rect_A", point);
+    match->SetData ("ScoreCollector::goo_rect_A", point);
   }
   else
   {
-    match->SetData ("Pool::goo_rect_B", point);
+    match->SetData ("ScoreCollector::goo_rect_B", point);
   }
 
   g_object_set_data (G_OBJECT (point), "match",  match);
   g_object_set_data (G_OBJECT (point), "player", player);
   g_object_set_data (G_OBJECT (point), "score_text", score_text);
   g_object_set_data (G_OBJECT (point), "next_point",  NULL);
+
+  SetMatchColor (match,
+                 _consistent_normal_color,
+                 _unconsistent_normal_color);
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::RemoveCollectingPoints (Match_c *match)
+{
+  match->SetData ("ScoreCollector::goo_rect_A", NULL);
+  match->SetData ("ScoreCollector::goo_rect_B", NULL);
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::Lock ()
+{
+  _is_locked = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::UnLock ()
+{
+  _is_locked = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -190,7 +224,7 @@ void ScoreCollector::SetMatchColor (Match_c *match,
     color_B = unconsitentcolor;
   }
 
-  rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_A");
+  rect = (GooCanvasItem *) match->GetData ("ScoreCollector::goo_rect_A");
   if (rect)
   {
     g_object_set (rect,
@@ -198,7 +232,7 @@ void ScoreCollector::SetMatchColor (Match_c *match,
                   NULL);
   }
 
-  rect = (GooCanvasItem *) match->GetData ("Pool::goo_rect_B");
+  rect = (GooCanvasItem *) match->GetData ("ScoreCollector::goo_rect_B");
   if (rect)
   {
     g_object_set (rect,
@@ -232,62 +266,65 @@ gboolean ScoreCollector::on_focus_in (GooCanvasItem *goo_rect,
 // --------------------------------------------------------------------------------
 gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
 {
-  Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (goo_rect), "match");
-  Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (goo_rect), "player");
-
-  Stop ();
-
-  SetMatchColor (match,
-                 "SkyBlue",
-                 "LightCoral");
-
+  if (_is_locked == FALSE)
   {
-    gpointer next_point   = g_object_get_data (G_OBJECT (goo_rect), "next_point");
-    gpointer score_text   = g_object_get_data (G_OBJECT (goo_rect), "score_text");
-    Score_c  *score       = match->GetScore (player);
-    gchar    *score_image = score->GetImage ();
+    Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (goo_rect), "match");
+    Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (goo_rect), "player");
 
-    _gtk_entry  = gtk_entry_new ();
-    gtk_entry_set_text (GTK_ENTRY (_gtk_entry),
-                        score_image);
-    g_free (score_image);
+    Stop ();
 
-    g_object_set_data (G_OBJECT (_gtk_entry), "match",  match);
-    g_object_set_data (G_OBJECT (_gtk_entry), "player", player);
-    g_object_set_data (G_OBJECT (_gtk_entry), "score_text", score_text);
-    g_object_set_data (G_OBJECT (_gtk_entry), "next_point", next_point);
-  }
-
-  {
-    GooCanvasBounds bounds;
-
-    goo_canvas_item_get_bounds ((GooCanvasItem *) goo_rect,
-                                &bounds);
+    SetMatchColor (match,
+                   _consistent_focus_color,
+                   _unconsistent_focus_color);
 
     {
-      gdouble x = (bounds.x1 + bounds.x2) / 2;
-      gdouble y = (bounds.y1 + bounds.y2) / 2;
-      gdouble w = (bounds.x2 - bounds.x1) - 8;
-      gdouble h = (bounds.y2 - bounds.y1) - 8;
+      gpointer next_point   = g_object_get_data (G_OBJECT (goo_rect), "next_point");
+      gpointer score_text   = g_object_get_data (G_OBJECT (goo_rect), "score_text");
+      Score_c  *score       = match->GetScore (player);
+      gchar    *score_image = score->GetImage ();
 
-      _entry_item = goo_canvas_widget_new (goo_canvas_get_root_item (_canvas),
-                                           _gtk_entry,
-                                           x,
-                                           y,
-                                           w,
-                                           h,
-                                           "anchor", GTK_ANCHOR_CENTER,
-                                           NULL);
+      _gtk_entry  = gtk_entry_new ();
+      gtk_entry_set_text (GTK_ENTRY (_gtk_entry),
+                          score_image);
+      g_free (score_image);
+
+      g_object_set_data (G_OBJECT (_gtk_entry), "match",  match);
+      g_object_set_data (G_OBJECT (_gtk_entry), "player", player);
+      g_object_set_data (G_OBJECT (_gtk_entry), "score_text", score_text);
+      g_object_set_data (G_OBJECT (_gtk_entry), "next_point", next_point);
     }
 
-    gtk_widget_grab_focus (_gtk_entry);
+    {
+      GooCanvasBounds bounds;
 
-    g_signal_connect (GTK_ENTRY (_gtk_entry), "changed",
-                      G_CALLBACK (on_entry_changed), this);
-    g_signal_connect (_gtk_entry, "key-press-event",
-                      G_CALLBACK (on_key_press_event), this);
-    _focus_out_handle = g_signal_connect (_gtk_entry, "focus-out-event",
-                                          G_CALLBACK (on_focus_out), this);
+      goo_canvas_item_get_bounds ((GooCanvasItem *) goo_rect,
+                                  &bounds);
+
+      {
+        gdouble x = (bounds.x1 + bounds.x2) / 2;
+        gdouble y = (bounds.y1 + bounds.y2) / 2;
+        gdouble w = (bounds.x2 - bounds.x1) - 8;
+        gdouble h = (bounds.y2 - bounds.y1) - 8;
+
+        _entry_item = goo_canvas_widget_new (goo_canvas_get_root_item (_canvas),
+                                             _gtk_entry,
+                                             x,
+                                             y,
+                                             w,
+                                             h,
+                                             "anchor", GTK_ANCHOR_CENTER,
+                                             NULL);
+      }
+
+      gtk_widget_grab_focus (_gtk_entry);
+
+      g_signal_connect (GTK_ENTRY (_gtk_entry), "changed",
+                        G_CALLBACK (on_entry_changed), this);
+      g_signal_connect (_gtk_entry, "key-press-event",
+                        G_CALLBACK (on_key_press_event), this);
+      _focus_out_handle = g_signal_connect (_gtk_entry, "focus-out-event",
+                                            G_CALLBACK (on_focus_out), this);
+    }
   }
 
   return TRUE;
@@ -333,8 +370,8 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
   }
 
   SetMatchColor (match,
-                 "White",
-                 "MistyRose");
+                 _consistent_normal_color,
+                 _unconsistent_normal_color);
 
   return TRUE;
 }
@@ -362,4 +399,26 @@ void ScoreCollector::Stop ()
     goo_canvas_item_remove (_entry_item);
     _entry_item = NULL;
   }
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::SetConsistentColors (gchar *normal_color,
+                                          gchar *focus_color)
+{
+  g_free (_consistent_normal_color);
+  _consistent_normal_color = g_strdup (normal_color);
+
+  g_free (_consistent_focus_color);
+  _consistent_focus_color  = g_strdup (focus_color);
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::SetUnConsistentColors (gchar *normal_color,
+                                            gchar *focus_color)
+{
+  g_free (_unconsistent_normal_color);
+  _unconsistent_normal_color = g_strdup (normal_color);
+
+  g_free (_unconsistent_focus_color);
+  _unconsistent_focus_color  = g_strdup (focus_color);
 }

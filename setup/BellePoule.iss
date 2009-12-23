@@ -3,13 +3,13 @@
 
 [Setup]
 AppName=BellePoule
-AppVerName=test 0.1
+AppVerName=BellePoule 0.1
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
 AppUpdatesURL=http://betton.escrime.free.fr/
 DefaultDirName={pf}\BellePoule
-DefaultGroupName=test
+DefaultGroupName=BellePoule
 AllowNoIcons=yes
 LicenseFile=COPYING.txt
 OutputBaseFilename=setup
@@ -28,19 +28,19 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "G:\BellePoule\launchpad\trunk\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "G:\BellePoule\launchpad\trunk\locale\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\locale\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "G:\BellePoule\launchpad\trunk\glade\pool_supervisor.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\glade\table.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\glade\schedule.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\glade\players_list.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\glade\main_frame.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\glade\pool.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\glade\contest.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\glade\pool_allocator.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\glade\splitting.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\pool_supervisor.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\table.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\schedule.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\players_list.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\main_frame.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\pool.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\contest.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\pool_allocator.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
+Source: "F:\BellePoule\launchpad\trunk\glade\splitting.glade"; DestDir: "{app}\glade\"; Flags: ignoreversion
 
 ; GTK+ dependencies
 ; DLL

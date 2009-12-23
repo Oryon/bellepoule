@@ -26,8 +26,11 @@ Match_c::Match_c (guint max_score)
 {
   _max_score = max_score;
 
-  _A = 0;
-  _B = 0;
+  _A = NULL;
+  _B = NULL;
+
+  _A_is_known = FALSE;
+  _B_is_known = FALSE;
 
   _A_score = new Score_c (max_score);
   _B_score = new Score_c (max_score);
@@ -43,6 +46,9 @@ Match_c::Match_c  (Player_c *A,
   _A = A;
   _B = B;
 
+  _A_is_known = TRUE;
+  _B_is_known = TRUE;
+
   _A_score = new Score_c (max_score);
   _B_score = new Score_c (max_score);
 }
@@ -57,13 +63,15 @@ Match_c::~Match_c ()
 // --------------------------------------------------------------------------------
 void Match_c::SetPlayerA (Player_c *player)
 {
-  _A = player;
+  _A          = player;
+  _A_is_known = TRUE;
 }
 
 // --------------------------------------------------------------------------------
 void Match_c::SetPlayerB (Player_c *player)
 {
-  _B = player;
+  _B          = player;
+  _B_is_known = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -90,13 +98,15 @@ Player_c *Match_c::GetPlayerB ()
 // --------------------------------------------------------------------------------
 Player_c *Match_c::GetWinner ()
 {
-  if (_A == NULL)
-  {
-    return _B;
-  }
-  else if (_B == NULL)
+  if (   (_B == NULL)
+      && _B_is_known)
   {
     return _A;
+  }
+  else if (   (_A == NULL)
+           && _A_is_known)
+  {
+    return _B;
   }
   else if (PlayerHasScore (_A) && PlayerHasScore (_B))
   {
@@ -122,6 +132,13 @@ Player_c *Match_c::GetWinner ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Match_c::HasSinglePlayer ()
+{
+  return (   ((_A != NULL) && (_B == NULL))
+          || ((_B != NULL) && (_A == NULL)));
+}
+
+// --------------------------------------------------------------------------------
 gboolean Match_c::HasPlayer (Player_c *player)
 {
   return ((_A == player) || (_B == player));
@@ -130,17 +147,17 @@ gboolean Match_c::HasPlayer (Player_c *player)
 // --------------------------------------------------------------------------------
 gboolean Match_c::PlayerHasScore (Player_c *player)
 {
-  if (player == _A)
+  if (_A && (player == _A))
   {
     return (_A_score->IsKnown ());
   }
-  else if (player == _B)
+  else if (_B && (player == _B))
   {
     return (_B_score->IsKnown ());
   }
   else
   {
-    return false;
+    return FALSE;
   }
 }
 

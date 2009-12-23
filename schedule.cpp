@@ -484,6 +484,8 @@ void Schedule_c::Load (xmlDoc *doc)
     xmlXPathFreeObject  (xml_object);
   }
 
+  gtk_widget_show_all (GetRootWidget ());
+
   {
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule/*", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
@@ -527,7 +529,6 @@ void Schedule_c::Load (xmlDoc *doc)
 
   xmlXPathFreeContext (xml_context);
 
-  gtk_widget_show_all (GetRootWidget ());
   SetCurrentStage (current_stage_index);
 }
 
@@ -791,7 +792,7 @@ void Schedule_c::PlugStage (Stage_c *stage)
   Plug (module,
         viewport);
 
-  gtk_widget_show_all (GetRootWidget ());
+  gtk_widget_show_all (viewport);
 }
 
 // --------------------------------------------------------------------------------

@@ -30,6 +30,9 @@ typedef enum
   STATUS_COLUMN
 } ColumnId;
 
+extern "C" G_MODULE_EXPORT void on_pool_combobox_changed (GtkWidget *widget,
+                                                          Object_c  *owner);
+
 // --------------------------------------------------------------------------------
 PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
   : Stage_c (stage_class),
@@ -190,6 +193,13 @@ void PoolSupervisor_c::OnUnLocked ()
                                      FALSE);
   gtk_widget_set_sensitive (_glade->GetWidget ("classification_toggletoolbutton"),
                             FALSE);
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (p);
+    pool->UnLock ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -289,8 +299,15 @@ void PoolSupervisor_c::OnPoolSelected (gint index)
   if ((index >= 0) && _pool_allocator)
   {
     OnPoolSelected (_pool_allocator->GetPool (index));
+
+    g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_combobox"),
+                                          (void *) on_pool_combobox_changed,
+                                          (Object_c *) this);
     gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("pool_combobox")),
                               index);
+    g_signal_connect (_glade->GetWidget ("pool_combobox"), "changed",
+                      G_CALLBACK (on_pool_combobox_changed),
+                      (Object_c *) this);
   }
 }
 

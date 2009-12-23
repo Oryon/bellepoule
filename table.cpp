@@ -29,6 +29,15 @@ const gchar   *Table::_class_name     = "table";
 const gchar   *Table::_xml_class_name = "table_stage";
 const gdouble  Table::_level_spacing  = 10.0;
 
+typedef enum
+{
+  NAME_COLUMN,
+  STATUS_COLUMN
+} ColumnId;
+
+extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
+                                                                Object_c  *owner);
+
 // --------------------------------------------------------------------------------
 Table::Table (StageClass *stage_class)
 : Stage_c (stage_class),
@@ -46,6 +55,8 @@ Table::Table (StageClass *stage_class)
     ShowAttribute ("name");
     ShowAttribute ("club");
   }
+
+  _from_table_liststore = GTK_LIST_STORE (_glade->GetObject ("table_liststore"));
 }
 
 // --------------------------------------------------------------------------------
@@ -53,6 +64,9 @@ Table::~Table ()
 {
   DeleteTree ();
   Object_c::Release (_score_collector);
+
+  gtk_list_store_clear (_from_table_liststore);
+  g_object_unref (_from_table_liststore);
 }
 
 // --------------------------------------------------------------------------------
@@ -82,7 +96,7 @@ void Table::Display ()
                                         NULL);
 
     // Header
-    for (gint l = _nb_levels; l > 0; l--)
+    for (gint l = _nb_level_to_display; l > 0; l--)
     {
       GooCanvasItem *level_header;
 
@@ -90,24 +104,19 @@ void Table::Display ()
                                            NULL);
 
       PutStockIconInTable (level_header,
-                           GTK_STOCK_ADD,
-                           0, 0);
-
-      PutStockIconInTable (level_header,
                            GTK_STOCK_APPLY,
-                           0, 1);
+                           0, 0);
 
       {
         GooCanvasItem *text_item;
-        gchar         *text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - l));
+        gchar         *text = g_strdup_printf ("Tableau de %d", 1 << (_nb_level_to_display - l));
 
         text_item = PutTextInTable (level_header,
                                     text,
                                     0,
-                                    2);
+                                    1);
         g_object_set (G_OBJECT (text_item),
-                      "font",       "Sans bold 18px",
-                      "fill_color", "medium blue",
+                      "font", "Sans bold 18px",
                       NULL);
         g_free (text);
       }
@@ -122,7 +131,7 @@ void Table::Display ()
     g_node_traverse (_tree_root,
                      G_POST_ORDER,
                      G_TRAVERSE_ALL,
-                     -1,
+                     _nb_level_to_display,
                      (GNodeTraverseFunc) FillInNode,
                      this);
 
@@ -193,9 +202,13 @@ void Table::OnNewScore (CanvasModule_c *client,
                         Player_c       *player)
 {
   Table *table = dynamic_cast <Table *> (client);
+  GNode *node  = (GNode *) match->GetData ("Table::node");
 
-  FillInNode ((GNode *) match->GetData ("Table::node"),
+  FillInNode (node,
               table);
+  FillInNode (node->parent,
+              table);
+
   table->DrawAllConnectors ();
 }
 
@@ -237,9 +250,39 @@ void Table::CreateTree ()
   }
 
   _nb_levels++;
+  _nb_level_to_display = _nb_levels;
 
   DeleteTree ();
   AddFork (NULL);
+
+  {
+    g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
+                                          (void *) on_from_table_combobox_changed,
+                                          (Object_c *) this);
+    gtk_list_store_clear (_from_table_liststore);
+
+    for (guint i = 1; i <= _nb_levels; i++)
+    {
+      GtkTreeIter   iter;
+      gchar        *text;
+
+      gtk_list_store_append (_from_table_liststore,
+                             &iter);
+
+      text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - i));
+      gtk_list_store_set (_from_table_liststore, &iter,
+                          NAME_COLUMN, text,
+                          -1);
+      g_free (text);
+    }
+
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")),
+                              0);
+
+    g_signal_connect (_glade->GetWidget ("from_table_combobox"), "changed",
+                      G_CALLBACK (on_from_table_combobox_changed),
+                      (Object_c *) this);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -248,7 +291,7 @@ void Table::DrawAllConnectors ()
   g_node_traverse (_tree_root,
                    G_POST_ORDER,
                    G_TRAVERSE_ALL,
-                   -1,
+                   _nb_level_to_display,
                    (GNodeTraverseFunc) DrawConnector,
                    this);
 }
@@ -260,6 +303,28 @@ gboolean Table::WipeNode (GNode *node,
   NodeData *data = (NodeData *) node->data;
 
   table->WipeItem (data->_player_item);
+  data->_player_item = NULL;
+
+  table->WipeItem (data->_print_item);
+  data->_print_item = NULL;
+
+  table->WipeItem (data->_connector);
+  data->_connector = NULL;
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Table::DeleteCanvasTable (GNode *node,
+                                   Table *table)
+{
+  NodeData *data = (NodeData *) node->data;
+
+  WipeNode (node,
+            table);
+
+  table->WipeItem (data->_canvas_table);
+  data->_canvas_table = NULL;
 
   return FALSE;
 }
@@ -274,6 +339,7 @@ gboolean Table::DrawConnector (GNode *node,
   GooCanvasBounds  bounds;
 
   table->WipeItem (data->_connector);
+  data->_connector = NULL;
 
   goo_canvas_item_get_bounds (data->_canvas_table,
                               &bounds);
@@ -321,6 +387,7 @@ gboolean Table::FillInNode (GNode *node,
   WipeNode (node,
             table);
 
+  if (data->_canvas_table == NULL)
   {
     data->_canvas_table = goo_canvas_table_new (table->_main_table,
                                                 "column-spacing", table->_level_spacing,
@@ -330,7 +397,7 @@ gboolean Table::FillInNode (GNode *node,
     PutInTable (table->_main_table,
                 data->_canvas_table,
                 data->_row,
-                data->_level);
+                data->_level - (table->_nb_levels - table->_nb_level_to_display));
   }
 
   {
@@ -372,44 +439,34 @@ gboolean Table::FillInNode (GNode *node,
                    TRUE);
   }
 
-  if (   (G_NODE_IS_LEAF (node) == FALSE)
-      && (winner == NULL))
+  if (   (winner == NULL)
+      && (G_NODE_IS_LEAF (node) == FALSE)
+      && (data->_match->HasSinglePlayer () != TRUE))
   {
-    GooCanvasItem *item = PutStockIconInTable (data->_canvas_table,
-                                               GTK_STOCK_PRINT,
-                                               0,
-                                               0);
-    SetTableItemAttribute (item, "y-align", 0.5);
+    // Print Icon
+    data->_print_item = PutStockIconInTable (data->_canvas_table,
+                                             GTK_STOCK_PRINT,
+                                             0,
+                                             0);
+    SetTableItemAttribute (data->_print_item, "y-align", 0.5);
   }
 
   if (parent)
   {
-    NodeData *parent_data = (NodeData *) parent->data;
-    guint     position    = g_node_child_position (parent, node);
-
-    if (position == 0)
-    {
-      parent_data->_match->SetPlayerA (winner);
-    }
-    else
-    {
-      parent_data->_match->SetPlayerB (winner);
-    }
-
     if (winner)
     {
-      GooCanvasItem *edit_icon = NULL;
       GooCanvasItem *goo_rect;
       GooCanvasItem *score_text;
+      NodeData      *parent_data = (NodeData *) parent->data;
+      guint          position    = g_node_child_position (parent, node);
 
-      // EDIT icon
-      if (parent_data->_match->GetWinner () == NULL)
+      if (position == 0)
       {
-        edit_icon = PutStockIconInTable (data->_canvas_table,
-                                         GTK_STOCK_EDIT,
-                                         0,
-                                         2);
-        SetTableItemAttribute (edit_icon, "y-align", 0.5);
+        parent_data->_match->SetPlayerA (winner);
+      }
+      else
+      {
+        parent_data->_match->SetPlayerB (winner);
       }
 
       // Rectangle
@@ -424,7 +481,7 @@ gboolean Table::FillInNode (GNode *node,
         PutInTable (data->_canvas_table,
                     goo_rect,
                     0,
-                    3);
+                    2);
         SetTableItemAttribute (goo_rect, "y-align", 0.5);
       }
 
@@ -445,21 +502,20 @@ gboolean Table::FillInNode (GNode *node,
         PutInTable (data->_canvas_table,
                     score_text,
                     0,
-                    3);
+                    2);
         SetTableItemAttribute (score_text, "x-align", 0.5);
         SetTableItemAttribute (score_text, "y-align", 0.5);
       }
 
+      if (   (parent_data->_match->GetWinner () == NULL)
+          && (data->_match->HasSinglePlayer ()  != FALSE))
       {
-        guint position = g_node_child_position (parent, node);
-
         table->_score_collector->AddCollectingPoint (goo_rect,
                                                      score_text,
                                                      parent_data->_match,
                                                      winner,
                                                      position);
         table->_score_collector->AddCollectingTrigger (data->_player_item);
-        table->_score_collector->AddCollectingTrigger (edit_icon);
 
         if (position == 0)
         {
@@ -472,13 +528,6 @@ gboolean Table::FillInNode (GNode *node,
           table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"),
                                                            goo_rect);
         }
-      }
-    }
-
-    if (parent_data->_match->GetWinner () == NULL)
-    {
-      if (G_NODE_IS_LEAF (node) && (winner))
-      {
       }
     }
   }
@@ -544,8 +593,8 @@ void Table::AddFork (GNode *to)
 
   data->_canvas_table = NULL;
   data->_player_item  = NULL;
+  data->_print_item   = NULL;
   data->_connector    = NULL;
-  data->_player_item  = NULL;
   data->_match = new Match_c (_max_score);
   data->_match->SetData ("Table::node", node);
 
@@ -556,8 +605,11 @@ void Table::AddFork (GNode *to)
   }
   else
   {
-    data->_match->SetPlayerA ((Player_c *) g_slist_nth_data (_attendees,
-                                                             data->_expected_winner_rank - 1));
+    Player_c *player = (Player_c *) g_slist_nth_data (_attendees,
+                                                      data->_expected_winner_rank - 1);
+
+    data->_match->SetPlayerA (player);
+    data->_match->SetPlayerB (NULL);
   }
 }
 
@@ -626,7 +678,17 @@ void Table::Wipe ()
     _score_collector = new ScoreCollector (GetCanvas (),
                                            this,
                                            (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
+
+    _score_collector->SetConsistentColors ("LightGrey",
+                                           "SkyBlue");
   }
+
+  g_node_traverse (_tree_root,
+                   G_POST_ORDER,
+                   G_TRAVERSE_ALL,
+                   -1,
+                   (GNodeTraverseFunc) DeleteCanvasTable,
+                   this);
 
   CanvasModule_c::Wipe ();
   _main_table = NULL;
@@ -700,10 +762,27 @@ void Table::ApplyConfig ()
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnFromTableComboboxChanged ()
+{
+  _nb_level_to_display = _nb_levels - gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")));
+
+  Display ();
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object_c  *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
   t->SelectAttributes ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
+                                                                Object_c  *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->OnFromTableComboboxChanged ();
 }

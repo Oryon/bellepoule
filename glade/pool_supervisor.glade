@@ -237,16 +237,16 @@
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup">
     <widgets>
-      <widget name="label3"/>
-      <widget name="label2"/>
       <widget name="label4"/>
+      <widget name="label2"/>
+      <widget name="label3"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="qualified_fencer_spinbutton"/>
-      <widget name="max_score_entry"/>
       <widget name="name_entry"/>
+      <widget name="max_score_entry"/>
+      <widget name="qualified_fencer_spinbutton"/>
     </widgets>
   </object>
   <object class="GtkAdjustment" id="qualified_adjustment">
