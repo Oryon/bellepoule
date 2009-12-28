@@ -2,7 +2,7 @@
 <contest title="Ma première compet" backup="">
  <schedule current_stage="1">
   <checkin_stage>
-   <player ref="24" name="" first_name="" rating="0" rank="1" attending="1"/>
+   <player ref="24" name="" first_name="" gender="??" country="??" rating="0" rank="1" attending="1" club="??" birth_year="??" licence="??"/>
    <player ref="2" name="Tireur A" first_name="Alfred" gender="??" country="??" rating="51" rank="2" attending="1" club="Betton" birth_year="0" licence="0"/>
    <player ref="3" name="Tireur B" first_name="Simon" gender="??" country="??" rating="81" rank="3" attending="1" club="St Grégoire" birth_year="1996" licence="123456"/>
    <player ref="19" name="Tireur C" first_name="Gérard" gender="??" country="??" rating="81" rank="4" attending="1" club="Dinard" birth_year="0" licence="0"/>
@@ -11,6 +11,21 @@
    <player ref="0" name="Tireur F" first_name="Zut" gender="??" country="??" rating="339" rank="7" attending="1" club="" birth_year="0" licence="0"/>
    <player ref="4" name="Tireur G" first_name="Machin" gender="??" country="??" rating="339" rank="8" attending="1" club="" birth_year="0" licence="0"/>
   </checkin_stage>
+  <pool_allocation_stage name="">
+   <player_list>
+    <player ref="24"/>
+    <player ref="3"/>
+    <player ref="1"/>
+    <player ref="0"/>
+   </player_list>
+   <player_list>
+    <player ref="2"/>
+    <player ref="19"/>
+    <player ref="16"/>
+    <player ref="4"/>
+   </player_list>
+  </pool_allocation_stage>
+  <pool_stage name=""/>
   <table_stage name="">
    <match player_A="24"/>
    <match player_A="4"/>

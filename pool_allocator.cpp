@@ -386,6 +386,38 @@ void PoolAllocator_c::SetUpCombobox ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean PoolAllocator_c::on_enter_player (GooCanvasItem  *item,
+                                           GooCanvasItem  *target,
+                                           GdkEventButton *event,
+                                           Pool_c         *pool)
+{
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
+
+  if (pl)
+  {
+    pl->SetCursor (GDK_FLEUR);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean PoolAllocator_c::on_leave_player (GooCanvasItem  *item,
+                                           GooCanvasItem  *target,
+                                           GdkEventButton *event,
+                                           Pool_c         *pool)
+{
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
+
+  if (pl)
+  {
+    pl->ResetCursor ();
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 gboolean PoolAllocator_c::on_button_press (GooCanvasItem  *item,
                                            GooCanvasItem  *target,
                                            GdkEventButton *event,
@@ -471,17 +503,9 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
 
     }
 
-    {
-      GdkCursor *fleur;
-
-      fleur = gdk_cursor_new (GDK_FLEUR);
-      gdk_window_set_cursor (gtk_widget_get_window (GetRootWidget ()),
-                             fleur);
-      gdk_cursor_unref (fleur);
-    }
+    SetCursor (GDK_FLEUR);
 
     _dragging = TRUE;
-
     _source_pool = pool;
 
     {
@@ -541,6 +565,8 @@ gboolean PoolAllocator_c::OnButtonRelease (GooCanvasItem  *item,
     FixUpTablesBounds ();
 
     _floating_player = NULL;
+
+    ResetCursor ();
   }
 
   return TRUE;
@@ -578,6 +604,8 @@ gboolean PoolAllocator_c::OnMotionNotify (GooCanvasItem  *item,
 
     _drag_x = new_x;
     _drag_y = new_y;
+
+    SetCursor (GDK_FLEUR);
   }
 
   return TRUE;
@@ -824,6 +852,10 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
         g_signal_connect (item, "button_press_event",
                           G_CALLBACK (on_button_press), pool);
+        g_signal_connect (item, "enter_notify_event",
+                          G_CALLBACK (on_enter_player), pool);
+        g_signal_connect (item, "leave_notify_event",
+                          G_CALLBACK (on_leave_player), pool);
       }
     }
   }

@@ -101,6 +101,14 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
                             GdkEventButton *event,
                             Pool_c         *pool);
 
+    static gboolean on_enter_player (GooCanvasItem  *item,
+                                  GooCanvasItem  *target,
+                                  GdkEventButton *event,
+                                  Pool_c         *pool);
+    static gboolean on_leave_player (GooCanvasItem  *item,
+                                  GooCanvasItem  *target,
+                                  GdkEventButton *event,
+                                  Pool_c         *pool);
     static gboolean on_button_press (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,

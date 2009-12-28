@@ -60,6 +60,10 @@ class Module_c : public virtual Object_c
 
     void ShowAttribute (gchar *name);
 
+    void SetCursor (GdkCursorType cursor_type);
+
+    void ResetCursor ();
+
     Module_c ();
 
   private:

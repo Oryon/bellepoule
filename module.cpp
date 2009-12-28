@@ -433,3 +433,21 @@ void Module_c::CloneFilterList (Module_c *from)
     _attr_list = NULL;
   }
 }
+
+// --------------------------------------------------------------------------------
+void Module_c::SetCursor (GdkCursorType cursor_type)
+{
+  GdkCursor *cursor;
+
+  cursor = gdk_cursor_new (cursor_type);
+  gdk_window_set_cursor (gtk_widget_get_window (_root),
+                         cursor);
+  gdk_cursor_unref (cursor);
+}
+
+// --------------------------------------------------------------------------------
+void Module_c::ResetCursor ()
+{
+  gdk_window_set_cursor (gtk_widget_get_window (_root),
+                         NULL);
+}
