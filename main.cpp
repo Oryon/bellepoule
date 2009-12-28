@@ -126,15 +126,17 @@ int main (int argc, char **argv)
     gtk_widget_show_all (w);
   }
 
-#ifdef DEBUG
   {
     Contest_c *contest;
+#ifdef DEBUG
     gchar     *filename = "Exemples_Fichiers_BellePoule/minimes_bretagne";
+#else
+    gchar     *filename = "Exemples_Fichiers_BellePoule/exemple.csb";
+#endif
 
     contest = new Contest_c (filename);
     contest->AttachTo (GTK_NOTEBOOK (xml->GetWidget ("notebook")));
   }
-#endif
 
   gtk_main ();
 

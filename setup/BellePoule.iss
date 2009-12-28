@@ -36,22 +36,23 @@ Name: "{app}\porting_layer"; Attribs: hidden
 Name: "{app}\resources"; Attribs: hidden
 
 [Files]
-Source: "G:\BellePoule\launchpad\trunk\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "G:\BellePoule\launchpad\trunk\Exemples_Fichiers_BellePoule\exemple.csb"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\Exemples_Fichiers_FFE\CLS_SHM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
+Source: "..\Exemples_Fichiers_BellePoule\exemple.csb"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion
+Source: "..\Exemples_Fichiers_FFE\CLS_SHM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
+Source: "..\Exemples_Fichiers_FFE\CLS_EDM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
 
-Source: "G:\BellePoule\launchpad\trunk\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\resources\translations\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "..\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\resources\translations\fr\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\pool_supervisor.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\table.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\schedule.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\players_list.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\main_frame.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\pool.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\contest.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\pool_allocator.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "G:\BellePoule\launchpad\trunk\resources\glade\splitting.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\pool_supervisor.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\table.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\schedule.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\players_list.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\main_frame.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\pool.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\contest.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\pool_allocator.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\splitting.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 
 ; GTK+ dependencies
 ; DLL

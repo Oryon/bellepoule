@@ -369,7 +369,9 @@ void Schedule_c::RemoveStage (Stage_c *stage)
       _stage_list = g_list_remove (_stage_list,
                                    stage);
 
-      if ((n_pages > 0) && (_current_stage >= n_pages-1))
+      if (   (n_pages > 0)
+          && (_current_stage > 0)
+          && (_current_stage >= n_pages-1))
       {
         Stage_c *stage;
 

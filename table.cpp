@@ -389,15 +389,35 @@ gboolean Table::FillInNode (GNode *node,
 
   if (data->_canvas_table == NULL)
   {
+    guint row;
+    guint nb_missing_level = table->_nb_levels - table->_nb_level_to_display;
+
     data->_canvas_table = goo_canvas_table_new (table->_main_table,
                                                 "column-spacing", table->_level_spacing,
                                                 NULL);
     SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
     SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
+
+    if (parent == NULL)
+    {
+      row = 1 << (table->_nb_level_to_display - 1);
+    }
+    else
+    {
+      if (g_node_child_position (parent,
+                                 node) == 0)
+      {
+        row = data->_row >> nb_missing_level;
+      }
+      else
+      {
+        row = data->_row >> nb_missing_level;
+      }
+    }
     PutInTable (table->_main_table,
                 data->_canvas_table,
-                data->_row,
-                data->_level - (table->_nb_levels - table->_nb_level_to_display));
+                row,
+                data->_level - nb_missing_level);
   }
 
   {
