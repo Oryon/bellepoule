@@ -206,8 +206,12 @@ void Table::OnNewScore (CanvasModule_c *client,
 
   FillInNode (node,
               table);
-  FillInNode (node->parent,
-              table);
+
+  if (node->parent)
+  {
+    FillInNode (node->parent,
+                table);
+  }
 
   table->DrawAllConnectors ();
 }
@@ -333,44 +337,48 @@ gboolean Table::DeleteCanvasTable (GNode *node,
 gboolean Table::DrawConnector (GNode *node,
                                Table *table)
 {
-  NodeData        *data   = (NodeData *) node->data;
-  Player_c        *winner = data->_match->GetWinner ();
-  GNode           *parent = node->parent;
-  GooCanvasBounds  bounds;
+  NodeData *data = (NodeData *) node->data;
 
-  table->WipeItem (data->_connector);
-  data->_connector = NULL;
-
-  goo_canvas_item_get_bounds (data->_canvas_table,
-                              &bounds);
-
-  if (G_NODE_IS_ROOT (node))
+  if (data->_match)
   {
-    data->_connector = goo_canvas_polyline_new (table->GetRootItem (),
-                                                FALSE,
-                                                2,
-                                                bounds.x1 - _level_spacing/2, bounds.y2,
-                                                bounds.x2, bounds.y2,
-                                                "line-width", 2.0,
-                                                NULL);
-  }
-  else if (   (G_NODE_IS_LEAF (node) == FALSE)
-              || (winner))
-  {
-    NodeData        *parent_data = (NodeData *) parent->data;
-    GooCanvasBounds  parent_bounds;
+    Player_c        *winner = data->_match->GetWinner ();
+    GNode           *parent = node->parent;
+    GooCanvasBounds  bounds;
 
-    goo_canvas_item_get_bounds (parent_data->_canvas_table,
-                                &parent_bounds);
+    table->WipeItem (data->_connector);
+    data->_connector = NULL;
 
-    data->_connector = goo_canvas_polyline_new (table->GetRootItem (),
-                                                FALSE,
-                                                3,
-                                                bounds.x1 - _level_spacing/2, bounds.y2,
-                                                parent_bounds.x1 - _level_spacing/2, bounds.y2,
-                                                parent_bounds.x1 - _level_spacing/2, parent_bounds.y2,
-                                                "line-width", 2.0,
-                                                NULL);
+    goo_canvas_item_get_bounds (data->_canvas_table,
+                                &bounds);
+
+    if (G_NODE_IS_ROOT (node))
+    {
+      data->_connector = goo_canvas_polyline_new (table->GetRootItem (),
+                                                  FALSE,
+                                                  2,
+                                                  bounds.x1 - _level_spacing/2, bounds.y2,
+                                                  bounds.x2, bounds.y2,
+                                                  "line-width", 2.0,
+                                                  NULL);
+    }
+    else if (   (G_NODE_IS_LEAF (node) == FALSE)
+                || (winner))
+    {
+      NodeData        *parent_data = (NodeData *) parent->data;
+      GooCanvasBounds  parent_bounds;
+
+      goo_canvas_item_get_bounds (parent_data->_canvas_table,
+                                  &parent_bounds);
+
+      data->_connector = goo_canvas_polyline_new (table->GetRootItem (),
+                                                  FALSE,
+                                                  3,
+                                                  bounds.x1 - _level_spacing/2, bounds.y2,
+                                                  parent_bounds.x1 - _level_spacing/2, bounds.y2,
+                                                  parent_bounds.x1 - _level_spacing/2, parent_bounds.y2,
+                                                  "line-width", 2.0,
+                                                  NULL);
+    }
   }
 
   return FALSE;
@@ -382,171 +390,172 @@ gboolean Table::FillInNode (GNode *node,
 {
   GNode    *parent = node->parent;
   NodeData *data   = (NodeData *) node->data;
-  Player_c *winner = data->_match->GetWinner ();
 
-  WipeNode (node,
-            table);
-
-  if (data->_canvas_table == NULL)
+  if (data->_match)
   {
-    guint row;
-    guint nb_missing_level = table->_nb_levels - table->_nb_level_to_display;
+    Player_c *winner = data->_match->GetWinner ();
 
-    data->_canvas_table = goo_canvas_table_new (table->_main_table,
-                                                "column-spacing", table->_level_spacing,
-                                                NULL);
-    SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
-    SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
+    WipeNode (node,
+              table);
 
-    if (parent == NULL)
+    if (data->_canvas_table == NULL)
     {
-      row = 1 << (table->_nb_level_to_display - 1);
-    }
-    else
-    {
-      if (g_node_child_position (parent,
-                                 node) == 0)
+      guint row;
+      guint nb_missing_level = table->_nb_levels - table->_nb_level_to_display;
+
+      data->_canvas_table = goo_canvas_table_new (table->_main_table,
+                                                  "column-spacing", table->_level_spacing,
+                                                  NULL);
+      SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
+      SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
+
+      if (parent == NULL)
       {
-        row = data->_row >> nb_missing_level;
+        row = 1 << (table->_nb_level_to_display - 1);
       }
       else
       {
-        row = data->_row >> nb_missing_level;
-      }
-    }
-    PutInTable (table->_main_table,
-                data->_canvas_table,
-                row,
-                data->_level - nb_missing_level);
-  }
-
-  {
-    GString *string = g_string_new ("");
-
-    if (winner)
-    {
-      for (guint a = 0; a < g_slist_length (table->_attr_list); a++)
-      {
-        gchar       *attr_name;
-        Attribute_c *attr;
-
-        attr_name = (gchar *) g_slist_nth_data (table->_attr_list,
-                                                a);
-        attr = winner->GetAttribute (attr_name);
-
-        if (attr)
+        if (g_node_child_position (parent,
+                                   node) == 0)
         {
-          if (a > 0)
-          {
-            string = g_string_append (string,
-                                      "  ");
-          }
-          string = g_string_append (string,
-                                    attr->GetStringImage ());
-        }
-      }
-    }
-
-    data->_player_item = PutTextInTable (data->_canvas_table,
-                                         string->str,
-                                         0,
-                                         1);
-    SetTableItemAttribute (data->_player_item, "y-align", 0.5);
-    SetTableItemAttribute (data->_player_item, "x-expand", 1U);
-    SetTableItemAttribute (data->_player_item, "x-fill", 1U);
-
-    g_string_free (string,
-                   TRUE);
-  }
-
-  if (   (winner == NULL)
-      && (G_NODE_IS_LEAF (node) == FALSE)
-      && (data->_match->HasSinglePlayer () != TRUE))
-  {
-    // Print Icon
-    data->_print_item = PutStockIconInTable (data->_canvas_table,
-                                             GTK_STOCK_PRINT,
-                                             0,
-                                             0);
-    SetTableItemAttribute (data->_print_item, "y-align", 0.5);
-  }
-
-  if (parent)
-  {
-    if (winner)
-    {
-      GooCanvasItem *goo_rect;
-      GooCanvasItem *score_text;
-      NodeData      *parent_data = (NodeData *) parent->data;
-      guint          position    = g_node_child_position (parent, node);
-
-      if (position == 0)
-      {
-        parent_data->_match->SetPlayerA (winner);
-      }
-      else
-      {
-        parent_data->_match->SetPlayerB (winner);
-      }
-
-      // Rectangle
-      {
-        goo_rect = goo_canvas_rect_new (data->_canvas_table,
-                                        0, 0,
-                                        30.0, 30.0,
-                                        "line-width", 0.0,
-                                        "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
-                                        NULL);
-
-        PutInTable (data->_canvas_table,
-                    goo_rect,
-                    0,
-                    2);
-        SetTableItemAttribute (goo_rect, "y-align", 0.5);
-      }
-
-      // Score Text
-      {
-        Score_c *score       = parent_data->_match->GetScore (winner);
-        gchar   *score_image = score->GetImage ();
-
-        score_text = goo_canvas_text_new (data->_canvas_table,
-                                          score_image,
-                                          0, 0,
-                                          -1,
-                                          GTK_ANCHOR_CENTER,
-                                          "font", "Sans bold 18px",
-                                          NULL);
-        g_free (score_image);
-
-        PutInTable (data->_canvas_table,
-                    score_text,
-                    0,
-                    2);
-        SetTableItemAttribute (score_text, "x-align", 0.5);
-        SetTableItemAttribute (score_text, "y-align", 0.5);
-      }
-
-      if (   (parent_data->_match->GetWinner () == NULL)
-          && (data->_match->HasSinglePlayer ()  != FALSE))
-      {
-        table->_score_collector->AddCollectingPoint (goo_rect,
-                                                     score_text,
-                                                     parent_data->_match,
-                                                     winner,
-                                                     position);
-        table->_score_collector->AddCollectingTrigger (data->_player_item);
-
-        if (position == 0)
-        {
-          parent_data->_match->SetData ("Table::player_A_rect", goo_rect);
+          row = data->_row >> nb_missing_level;
         }
         else
         {
-          table->_score_collector->SetNextCollectingPoint (goo_rect,
-                                                           (GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"));
-          table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"),
-                                                           goo_rect);
+          row = data->_row >> nb_missing_level;
+        }
+      }
+      PutInTable (table->_main_table,
+                  data->_canvas_table,
+                  row,
+                  data->_level - nb_missing_level);
+    }
+
+    {
+      GString *string = g_string_new ("");
+
+      if (winner)
+      {
+        for (guint a = 0; a < g_slist_length (table->_attr_list); a++)
+        {
+          gchar       *attr_name;
+          Attribute_c *attr;
+
+          attr_name = (gchar *) g_slist_nth_data (table->_attr_list,
+                                                  a);
+          attr = winner->GetAttribute (attr_name);
+
+          if (attr)
+          {
+            if (a > 0)
+            {
+              string = g_string_append (string,
+                                        "  ");
+            }
+            string = g_string_append (string,
+                                      attr->GetStringImage ());
+          }
+        }
+      }
+
+      data->_player_item = PutTextInTable (data->_canvas_table,
+                                           string->str,
+                                           0,
+                                           1);
+      SetTableItemAttribute (data->_player_item, "y-align", 0.5);
+      SetTableItemAttribute (data->_player_item, "x-expand", 1U);
+      SetTableItemAttribute (data->_player_item, "x-fill", 1U);
+
+      g_string_free (string,
+                     TRUE);
+    }
+
+    if (winner == NULL)
+    {
+      // Print Icon
+      data->_print_item = PutStockIconInTable (data->_canvas_table,
+                                               GTK_STOCK_PRINT,
+                                               0,
+                                               0);
+      SetTableItemAttribute (data->_print_item, "y-align", 0.5);
+    }
+
+    if (parent)
+    {
+      if (winner)
+      {
+        GooCanvasItem *goo_rect;
+        GooCanvasItem *score_text;
+        NodeData      *parent_data = (NodeData *) parent->data;
+        guint          position    = g_node_child_position (parent, node);
+
+        if (position == 0)
+        {
+          parent_data->_match->SetPlayerA (winner);
+        }
+        else
+        {
+          parent_data->_match->SetPlayerB (winner);
+        }
+
+        // Rectangle
+        {
+          goo_rect = goo_canvas_rect_new (data->_canvas_table,
+                                          0, 0,
+                                          30.0, 30.0,
+                                          "line-width", 0.0,
+                                          "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
+                                          NULL);
+
+          PutInTable (data->_canvas_table,
+                      goo_rect,
+                      0,
+                      2);
+          SetTableItemAttribute (goo_rect, "y-align", 0.5);
+        }
+
+        // Score Text
+        {
+          Score_c *score       = parent_data->_match->GetScore (winner);
+          gchar   *score_image = score->GetImage ();
+
+          score_text = goo_canvas_text_new (data->_canvas_table,
+                                            score_image,
+                                            0, 0,
+                                            -1,
+                                            GTK_ANCHOR_CENTER,
+                                            "font", "Sans bold 18px",
+                                            NULL);
+          g_free (score_image);
+
+          PutInTable (data->_canvas_table,
+                      score_text,
+                      0,
+                      2);
+          SetTableItemAttribute (score_text, "x-align", 0.5);
+          SetTableItemAttribute (score_text, "y-align", 0.5);
+        }
+
+        if (parent_data->_match->GetWinner () == NULL)
+        {
+          table->_score_collector->AddCollectingPoint (goo_rect,
+                                                       score_text,
+                                                       parent_data->_match,
+                                                       winner,
+                                                       position);
+          table->_score_collector->AddCollectingTrigger (data->_player_item);
+
+          if (position == 0)
+          {
+            parent_data->_match->SetData ("Table::player_A_rect", goo_rect);
+          }
+          else
+          {
+            table->_score_collector->SetNextCollectingPoint (goo_rect,
+                                                             (GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"));
+            table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"),
+                                                             goo_rect);
+          }
         }
       }
     }
@@ -628,8 +637,25 @@ void Table::AddFork (GNode *to)
     Player_c *player = (Player_c *) g_slist_nth_data (_attendees,
                                                       data->_expected_winner_rank - 1);
 
-    data->_match->SetPlayerA (player);
-    data->_match->SetPlayerB (NULL);
+    if (player)
+    {
+      data->_match->SetPlayerA (player);
+      data->_match->SetPlayerB (NULL);
+    }
+    else
+    {
+      data->_match->Release ();
+      data->_match = NULL;
+
+      if (g_node_child_position (to, node) == 0)
+      {
+        to_data->_match->SetPlayerA (NULL);
+      }
+      else
+      {
+        to_data->_match->SetPlayerB (NULL);
+      }
+    }
   }
 }
 

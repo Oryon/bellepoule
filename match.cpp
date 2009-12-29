@@ -132,13 +132,6 @@ Player_c *Match_c::GetWinner ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match_c::HasSinglePlayer ()
-{
-  return (   ((_A != NULL) && (_B == NULL))
-          || ((_B != NULL) && (_A == NULL)));
-}
-
-// --------------------------------------------------------------------------------
 gboolean Match_c::HasPlayer (Player_c *player)
 {
   return ((_A == player) || (_B == player));

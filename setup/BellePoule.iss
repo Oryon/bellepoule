@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=BellePoule
-AppVerName=BellePoule 0.1
+AppVerName=BellePoule en version Beta0
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
@@ -28,8 +28,8 @@ Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 ;Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Icons]
-Name: "{userstartmenu}\Programs\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"
-Name: "{userstartmenu}\Programs\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
+Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"
+Name: "{userprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
 
 [Dirs]
 Name: "{app}\porting_layer"; Attribs: hidden

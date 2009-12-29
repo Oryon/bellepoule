@@ -47,6 +47,7 @@
               <object class="GtkTextView" id="textview1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="right_margin">6</property>
                 <property name="buffer">textbuffer1</property>
               </object>
               <packing>
@@ -159,17 +160,18 @@
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="new_title_entry"/>
       <widget name="name_entry"/>
+      <widget name="new_title_entry"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup">
     <widgets>
-      <widget name="label2"/>
       <widget name="label4"/>
+      <widget name="label2"/>
     </widgets>
   </object>
   <object class="GtkTextBuffer" id="textbuffer1">
-    <property name="text" translatable="yes">Select the fencers to move to a new competition.</property>
+    <property name="text" translatable="yes">Select the fencers to move to a new competition.
+          Not yet implemented :-(</property>
   </object>
 </interface>
