@@ -21,7 +21,7 @@
 
 #include "glade.hpp"
 #include "contest.hpp"
-#include "players_list.hpp"
+#include "checkin.hpp"
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 #include "table.hpp"
@@ -94,7 +94,7 @@ int main (int argc, char **argv)
     // g_mem_set_vtable (glib_mem_profiler_table);
 
     Contest_c::Init        ();
-    PlayersList_c::Init    ();
+    Checkin::Init          ();
     PoolAllocator_c::Init  ();
     PoolSupervisor_c::Init ();
     Table::Init            ();
