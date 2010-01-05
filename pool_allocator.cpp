@@ -1046,7 +1046,7 @@ void PoolAllocator_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
 
-  _result = g_slist_copy (_attendees);
+  SetResult (g_slist_copy (_attendees));
 }
 
 // --------------------------------------------------------------------------------

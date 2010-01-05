@@ -67,6 +67,10 @@
 		<Unit filename="attribute.hpp" />
 		<Unit filename="canvas_module.cpp" />
 		<Unit filename="canvas_module.hpp" />
+		<Unit filename="checkin.cpp" />
+		<Unit filename="checkin.hpp" />
+		<Unit filename="classification.cpp" />
+		<Unit filename="classification.hpp" />
 		<Unit filename="contest.cpp" />
 		<Unit filename="contest.hpp" />
 		<Unit filename="glade.cpp" />

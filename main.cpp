@@ -129,9 +129,9 @@ int main (int argc, char **argv)
   {
     Contest_c *contest;
 #ifdef DEBUG
-    gchar     *filename = "Exemples_Fichiers_BellePoule/minimes_bretagne";
+    gchar     *filename = "Exemples_Fichiers_BellePoule/minimes_bretagne.cotcot";
 #else
-    gchar     *filename = "Exemples_Fichiers_BellePoule/exemple.csb";
+    gchar     *filename = "Exemples_Fichiers_BellePoule/exemple.cotcot";
 #endif
 
     contest = new Contest_c (filename);

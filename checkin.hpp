@@ -66,6 +66,8 @@ class Checkin : public virtual Stage_c, public PlayersList
 
     gboolean IsOver ();
 
+    void UpdateRanking ();
+
     static gboolean PresentPlayerFilter (Player_c *player);
 
     ~Checkin ();

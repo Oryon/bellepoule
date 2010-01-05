@@ -25,16 +25,23 @@
 class PlayersList : public Module_c
 {
   public:
-    PlayersList (gchar *glade_file);
+    void Add (Player_c *player);
+
+    void Wipe ();
 
   protected:
+    static const guint NO_RIGHT   = 0x00000000;
+    static const guint SORTABLE   = 0x00000001;
+    static const guint MODIFIABLE = 0x00000002;
+
     GSList *_player_list;
 
     typedef gboolean (*CustomFilter) (Player_c *player);
 
-    ~PlayersList ();
+    PlayersList (gchar *glade_file,
+                 guint  rights = SORTABLE | MODIFIABLE);
 
-    void Add (Player_c *player);
+    ~PlayersList ();
 
     void RemoveSelection ();
 
@@ -49,6 +56,7 @@ class PlayersList : public Module_c
   private:
     GtkWidget    *_tree_view;
     GtkListStore *_store;
+    guint         _rights;
 
     void SetColumn (guint     id,
                     gchar    *attr,

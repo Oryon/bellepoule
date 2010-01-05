@@ -120,10 +120,7 @@
                 <property name="resize_mode">queue</property>
                 <property name="shadow_type">none</property>
                 <child>
-                  <object class="GtkLabel" id="label1">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Not yet implemented</property>
-                  </object>
+                  <placeholder/>
                 </child>
               </object>
               <packing>

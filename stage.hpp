@@ -23,6 +23,7 @@
 #include "object.hpp"
 
 class Player_c;
+class Classification;
 
 class Stage_c : public virtual Object_c
 {
@@ -119,7 +120,6 @@ class Stage_c : public virtual Object_c
     static Stage_c *CreateInstance (const gchar *name);
 
   protected:
-    GSList *_result;
     GSList *_attendees;
 
     Stage_c (StageClass *stage_class);
@@ -128,14 +128,18 @@ class Stage_c : public virtual Object_c
 
     void SignalStatusUpdate ();
 
+    void SetResult (GSList *result);
+
   private:
     static GSList *_stage_base;
 
-    Stage_c    *_previous;
-    StageClass *_class;
-    gchar      *_name;
-    gboolean    _locked;
-    StageClass *_stage_class;
+    Stage_c        *_previous;
+    StageClass     *_class;
+    gchar          *_name;
+    gboolean        _locked;
+    StageClass     *_stage_class;
+    GSList         *_result;
+    Classification *_classification;
 
     void          *_status_cbk_data;
     StatusCbk      _status_cbk;

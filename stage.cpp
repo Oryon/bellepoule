@@ -19,6 +19,7 @@
 
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
+#include "classification.hpp"
 #include "player.hpp"
 
 #include "stage.hpp"
@@ -28,12 +29,13 @@ GSList *Stage_c::_stage_base = NULL;
 // --------------------------------------------------------------------------------
 Stage_c::Stage_c (StageClass *stage_class)
 {
-  _name        = g_strdup ("");
-  _locked      = false;
-  _result      = NULL;
-  _previous    = NULL;
-  _stage_class = stage_class;
-  _attendees   = NULL;
+  _name            = g_strdup ("");
+  _locked          = false;
+  _result          = NULL;
+  _previous        = NULL;
+  _stage_class     = stage_class;
+  _attendees       = NULL;
+  _classification  = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -44,6 +46,8 @@ Stage_c::~Stage_c ()
 {
   FreeResult ();
   g_free (_name);
+
+  Release (_classification);
 }
 
 // --------------------------------------------------------------------------------
@@ -300,6 +304,7 @@ void Stage_c::ToggleClassification (gboolean classification_on)
     GtkWidget *main_w           = module->GetWidget ("main_hook");
     GtkWidget *classification_w = module->GetWidget ("classification_hook");
 
+
     if (classification_on)
     {
       gtk_widget_hide (main_w);
@@ -310,6 +315,37 @@ void Stage_c::ToggleClassification (gboolean classification_on)
       gtk_widget_hide (classification_w);
       gtk_widget_show (main_w);
     }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::SetResult (GSList *result)
+{
+  FreeResult ();
+  _result = result;
+
+  if (_classification == NULL)
+  {
+    Module_c  *module           = dynamic_cast <Module_c *> (this);
+    GtkWidget *classification_w = module->GetWidget ("classification_hook");
+
+    _classification   = new Classification ();
+    module->Plug (_classification,
+                  classification_w);
+  }
+
+  _classification->Wipe ();
+
+  for (guint i = 0; i < g_slist_length (_result); i ++)
+  {
+    Player_c *player;
+
+    player = (Player_c *) g_slist_nth_data (_result,
+                                            i);
+
+    player->SetAttributeValue ("rank",
+                               i + 1);
+    _classification->Add (player);
   }
 }
 

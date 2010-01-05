@@ -284,16 +284,19 @@ void Module_c::Plug (Module_c   *module,
                      GtkWidget  *in,
                      GtkToolbar *toolbar)
 {
-  gtk_container_add (GTK_CONTAINER (in),
-                     module->_root);
+  if (in)
+  {
+    gtk_container_add (GTK_CONTAINER (in),
+                       module->_root);
 
-  module->_toolbar = toolbar;
+    module->_toolbar = toolbar;
 
-  module->OnPlugged ();
+    module->OnPlugged ();
 
-  _plugged_list = g_slist_append (_plugged_list,
-                                  module);
-  module->_owner = this;
+    _plugged_list = g_slist_append (_plugged_list,
+                                    module);
+    module->_owner = this;
+  }
 }
 
 // --------------------------------------------------------------------------------

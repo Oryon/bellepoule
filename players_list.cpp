@@ -23,9 +23,12 @@
 #include "players_list.hpp"
 
 // --------------------------------------------------------------------------------
-  PlayersList::PlayersList (gchar *glade_file)
+  PlayersList::PlayersList (gchar *glade_file,
+                            guint  rights)
 : Module_c (glade_file)
 {
+  _rights = rights;
+
   {
     guint nb_attr        = Attribute_c::GetNbAttributes ();
     GType types[nb_attr];
@@ -63,16 +66,7 @@
 // --------------------------------------------------------------------------------
 PlayersList::~PlayersList ()
 {
-  for (guint i = 0; i <  g_slist_length (_player_list); i++)
-  {
-    Player_c *p;
-
-    p = (Player_c *) g_slist_nth_data (_player_list, i);
-    p->Release ();
-  }
-  g_slist_free (_player_list);
-
-  gtk_list_store_clear (_store);
+  Wipe ();
   g_object_unref (_store);
 }
 
@@ -289,11 +283,14 @@ void PlayersList::SetColumn (guint     id,
   {
     renderer = gtk_cell_renderer_text_new ();
 
-    g_object_set (renderer,
-                  "editable", TRUE,
-                  NULL);
-    g_signal_connect (renderer,
-                      "edited", G_CALLBACK (on_cell_edited), this);
+    if (_rights & MODIFIABLE)
+    {
+      g_object_set (renderer,
+                    "editable", TRUE,
+                    NULL);
+      g_signal_connect (renderer,
+                        "edited", G_CALLBACK (on_cell_edited), this);
+    }
 
     column = gtk_tree_view_column_new_with_attributes (attr_name,
                                                        renderer,
@@ -307,11 +304,15 @@ void PlayersList::SetColumn (guint     id,
   {
     renderer = gtk_cell_renderer_toggle_new ();
 
-    g_object_set (renderer,
-                  "activatable", TRUE,
-                  NULL);
-    g_signal_connect (renderer,
-                      "toggled", G_CALLBACK (on_cell_toggled), this);
+    if (_rights & MODIFIABLE)
+    {
+      g_object_set (renderer,
+                    "activatable", TRUE,
+                    NULL);
+      g_signal_connect (renderer,
+                        "toggled", G_CALLBACK (on_cell_toggled), this);
+    }
+
     column = gtk_tree_view_column_new_with_attributes (attr_name,
                                                        renderer,
                                                        "active", id,
@@ -324,8 +325,11 @@ void PlayersList::SetColumn (guint     id,
   g_object_set_data (G_OBJECT (renderer),
                      "PlayersList::attribute_name", attr_name);
 
-  gtk_tree_view_column_set_sort_column_id (column,
-                                           id);
+  if (_rights & SORTABLE)
+  {
+    gtk_tree_view_column_set_sort_column_id (column,
+                                             id);
+  }
 
   gtk_tree_view_insert_column (GTK_TREE_VIEW (_tree_view),
                                column,
@@ -335,34 +339,37 @@ void PlayersList::SetColumn (guint     id,
 // --------------------------------------------------------------------------------
 void PlayersList::SetSensitiveState (bool sensitive_value)
 {
-  GList *columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
-
-  for (guint c = 0; c < g_list_length (columns) ; c++)
+  if (_rights & MODIFIABLE)
   {
-    GList             *renderers;
-    GtkTreeViewColumn *column;
+    GList *columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
 
-    column = GTK_TREE_VIEW_COLUMN (g_list_nth_data (columns, c));
-    renderers = gtk_tree_view_column_get_cell_renderers (column);
-
-    for (guint r = 0; r < g_list_length (renderers) ; r++)
+    for (guint c = 0; c < g_list_length (columns) ; c++)
     {
-      GtkCellRenderer *renderer;
-      gchar           *sensitive_attribute;
+      GList             *renderers;
+      GtkTreeViewColumn *column;
 
-      renderer = GTK_CELL_RENDERER (g_list_nth_data (renderers, r));
+      column = GTK_TREE_VIEW_COLUMN (g_list_nth_data (columns, c));
+      renderers = gtk_tree_view_column_get_cell_renderers (column);
 
-      sensitive_attribute = (gchar *) g_object_get_data (G_OBJECT (renderer),
-                                                         "PlayersList::SensitiveAttribute");
-      g_object_set (renderer,
-                    sensitive_attribute, sensitive_value,
-                    NULL);
+      for (guint r = 0; r < g_list_length (renderers) ; r++)
+      {
+        GtkCellRenderer *renderer;
+        gchar           *sensitive_attribute;
+
+        renderer = GTK_CELL_RENDERER (g_list_nth_data (renderers, r));
+
+        sensitive_attribute = (gchar *) g_object_get_data (G_OBJECT (renderer),
+                                                           "PlayersList::SensitiveAttribute");
+        g_object_set (renderer,
+                      sensitive_attribute, sensitive_value,
+                      NULL);
+      }
+
+      g_list_free (renderers);
     }
 
-    g_list_free (renderers);
+    g_list_free (columns);
   }
-
-  g_list_free (columns);
 }
 
 // --------------------------------------------------------------------------------
@@ -390,7 +397,7 @@ void PlayersList::Add (Player_c *player)
   {
     gchar *str;
 
-    str = g_strdup_printf ("%d\n", player->GetRef ());
+    str = g_strdup_printf ("%d", player->GetRef ());
     player->SetAttributeValue ("ref", str);
     g_free (str);
   }
@@ -403,6 +410,15 @@ void PlayersList::Add (Player_c *player)
                                  player);
 
   Update (player);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::Wipe ()
+{
+  g_slist_free (_player_list);
+  _player_list = NULL;
+
+  gtk_list_store_clear (_store);
 }
 
 // --------------------------------------------------------------------------------

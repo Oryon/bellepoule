@@ -164,25 +164,30 @@ void PoolSupervisor_c::OnLocked ()
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton")),
                                      FALSE);
 
-  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool_c *pool;
+    GSList *result = NULL;
 
-    pool = _pool_allocator->GetPool (p);
-    pool->Lock ();
-    for (guint i = 0; i < pool->GetNbPlayers (); i++)
+    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
     {
-      Player_c *player;
+      Pool_c *pool;
 
-      player = pool->GetPlayer (i);
+      pool = _pool_allocator->GetPool (p);
+      pool->Lock ();
+      for (guint i = 0; i < pool->GetNbPlayers (); i++)
+      {
+        Player_c *player;
 
-      _result = g_slist_append (_result,
-                                player);
+        player = pool->GetPlayer (i);
+
+        result = g_slist_append (result,
+                                 player);
+      }
     }
+    result = g_slist_sort_with_data (result,
+                                     (GCompareDataFunc) Pool_c::ComparePlayer,
+                                     0);
+    SetResult (result);
   }
-  _result = g_slist_sort_with_data (_result,
-                                    (GCompareDataFunc) Pool_c::ComparePlayer,
-                                    0);
 }
 
 // --------------------------------------------------------------------------------

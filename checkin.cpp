@@ -28,7 +28,7 @@ const gchar *Checkin::_xml_class_name = "checkin_stage";
 // --------------------------------------------------------------------------------
 Checkin::Checkin (StageClass *stage_class)
 : Stage_c (stage_class),
-  PlayersList ("players_list.glade")
+  PlayersList ("checkin.glade")
 {
   // Sensitive widgets
   {
@@ -92,6 +92,7 @@ void Checkin::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, _xml_class_name) != 0)
       {
+        UpdateRanking ();
         return;
       }
     }
@@ -129,36 +130,40 @@ void Checkin::Display ()
 }
 
 // --------------------------------------------------------------------------------
+void Checkin::UpdateRanking ()
+{
+  _player_list = g_slist_sort_with_data (_player_list,
+                                         (GCompareDataFunc) Player_c::Compare,
+                                         (void *) "rating");
+
+  for (guint i = 0; i <  g_slist_length (_player_list); i++)
+  {
+    Player_c *p;
+
+    p = (Player_c *) g_slist_nth_data (_player_list, i);
+    p->SetAttributeValue ("rank",
+                          i + 1);
+    Update (p);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Checkin::OnLocked ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
 
-  // Give a rank to each player
   {
-    _player_list = g_slist_sort_with_data (_player_list,
-                                           (GCompareDataFunc) Player_c::Compare,
-                                           (void *) "rating");
+    GSList *result = CreateCustomList (PresentPlayerFilter);
 
-    for (guint i = 0; i <  g_slist_length (_player_list); i++)
+    if (result)
     {
-      Player_c *p;
-
-      p = (Player_c *) g_slist_nth_data (_player_list, i);
-      p->SetAttributeValue ("rank",
-                            i + 1);
-      Update (p);
+      result = g_slist_sort_with_data (result,
+                                       (GCompareDataFunc) Player_c::Compare,
+                                       (void *) "rank");
+      SetResult (result);
     }
   }
-
-  _result = CreateCustomList (PresentPlayerFilter);
-  if (_result)
-  {
-    _result = g_slist_sort_with_data (_result,
-                                      (GCompareDataFunc) Player_c::Compare,
-                                      (void *) "rank");
-  }
-
 }
 
 // --------------------------------------------------------------------------------
@@ -243,6 +248,8 @@ void Checkin::Import ()
   }
 
   gtk_widget_destroy (chooser);
+
+  UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------
@@ -390,6 +397,7 @@ void Checkin::on_add_button_clicked ()
   gtk_widget_grab_focus (_glade->GetWidget ("name_entry"));
 
   Add (player);
+  UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------

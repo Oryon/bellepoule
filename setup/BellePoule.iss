@@ -3,12 +3,13 @@
 
 [Setup]
 AppName=BellePoule
-AppVerName=BellePoule en version Beta0
+AppVerName=BellePoule version 0.1
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
 AppUpdatesURL=http://betton.escrime.free.fr/
-DefaultDirName={pf}\BellePoule
+UsePreviousAppDir=no
+DefaultDirName={code:GetInstallDir}\BellePoule
 DefaultGroupName=BellePoule
 AllowNoIcons=yes
 LicenseFile=COPYING.txt
@@ -38,7 +39,7 @@ Name: "{app}\resources"; Attribs: hidden
 [Files]
 Source: "..\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "..\Exemples_Fichiers_BellePoule\exemple.csb"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion
+Source: "..\Exemples_Fichiers_BellePoule\exemple.cotcot"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion
 Source: "..\Exemples_Fichiers_FFE\CLS_SHM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
 Source: "..\Exemples_Fichiers_FFE\CLS_EDM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
 
@@ -47,7 +48,8 @@ Source: "..\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app
 Source: "..\resources\glade\pool_supervisor.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\table.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\schedule.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\players_list.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\checkin.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\classification.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\main_frame.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\pool.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\contest.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
@@ -139,6 +141,22 @@ begin
     Log('Could not access HKCU\Environment\PATH so assume it is ok to add it');
     Result := True;
   end;
+end;
+
+function GetInstallDir(Param: String): String;
+var pfdir, tmpdir: string;
+begin
+  pfdir  := ExpandConstant('{pf}');
+  tmpdir := pfdir + '\MY_PROGRAM_TMP';
+
+  if CreateDir(tmpdir) then
+  begin
+    RemoveDir(tmpdir);
+    Result := pfdir;
+  end
+  else begin
+    Result := ExpandConstant('{userdesktop}');
+  end
 end;
 
 [Run]
