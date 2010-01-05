@@ -195,16 +195,47 @@ void Checkin::Wipe ()
 // --------------------------------------------------------------------------------
 void Checkin::Import ()
 {
-  GtkWidget *chooser;
+  GtkWidget *chooser = gtk_file_chooser_dialog_new ("Choose a fencers file to import ...",
+                                                    NULL,
+                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                    GTK_STOCK_CANCEL,
+                                                    GTK_RESPONSE_CANCEL,
+                                                    GTK_STOCK_OPEN,
+                                                    GTK_RESPONSE_ACCEPT,
+                                                    NULL);
 
-  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new ("Choose a FFE file (.FFF) ...",
-                                                     NULL,
-                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
-                                                     GTK_STOCK_CANCEL,
-                                                     GTK_RESPONSE_CANCEL,
-                                                     GTK_STOCK_OPEN,
-                                                     GTK_RESPONSE_ACCEPT,
-                                                     NULL));
+  {
+    GtkFileFilter *filter = gtk_file_filter_new ();
+
+    gtk_file_filter_set_name (filter,
+                              "All FFE files (.FFF)");
+    gtk_file_filter_add_pattern (filter,
+                                 "*.FFF");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                 filter);
+  }
+
+  {
+    GtkFileFilter *filter = gtk_file_filter_new ();
+
+    gtk_file_filter_set_name (filter,
+                              "All Excell files (.CSV)");
+    gtk_file_filter_add_pattern (filter,
+                                 "*.CSV");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                 filter);
+  }
+
+  {
+    GtkFileFilter *filter = gtk_file_filter_new ();
+
+    gtk_file_filter_set_name (filter,
+                              "All files");
+    gtk_file_filter_add_pattern (filter,
+                                 "*");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                 filter);
+  }
 
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {

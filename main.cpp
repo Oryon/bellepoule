@@ -57,16 +57,36 @@ extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
 extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
                                                            gpointer   data)
 {
-  GtkWidget *chooser;
+  GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a competition file to open..."),
+                                                    NULL,
+                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                    GTK_STOCK_CANCEL,
+                                                    GTK_RESPONSE_CANCEL,
+                                                    GTK_STOCK_OPEN,
+                                                    GTK_RESPONSE_ACCEPT,
+                                                    NULL);
 
-  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a competition file to open..."),
-                                                     NULL,
-                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
-                                                     GTK_STOCK_CANCEL,
-                                                     GTK_RESPONSE_CANCEL,
-                                                     GTK_STOCK_OPEN,
-                                                     GTK_RESPONSE_ACCEPT,
-                                                     NULL));
+  {
+    GtkFileFilter *filter = gtk_file_filter_new ();
+
+    gtk_file_filter_set_name (filter,
+                              "All BellePoule files (.cocot)");
+    gtk_file_filter_add_pattern (filter,
+                                 "*.cotcot");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                 filter);
+  }
+
+  {
+    GtkFileFilter *filter = gtk_file_filter_new ();
+
+    gtk_file_filter_set_name (filter,
+                              "All files");
+    gtk_file_filter_add_pattern (filter,
+                                 "*");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                 filter);
+  }
 
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
