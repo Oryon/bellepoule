@@ -34,7 +34,9 @@ class Contest_c : public Module_c
     static Contest_c *Create ();
 
     void AttachTo (GtkNotebook *to);
-    void Save     ();
+    void Save ();
+    gchar *GetFilename ();
+    void AddPlayer (Player_c *player);
 
   public:
     void on_save_toolbutton_clicked           ();

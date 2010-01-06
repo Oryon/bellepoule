@@ -38,6 +38,8 @@ class Schedule_c : public Module_c
     void Save          (xmlTextWriter *xml_writer);
     void Load          (xmlDoc        *doc);
 
+    Stage_c *GetStage (guint index);
+
     void on_previous_stage_toolbutton_clicked ();
     void on_next_stage_toolbutton_clicked     ();
     void on_stage_selected ();

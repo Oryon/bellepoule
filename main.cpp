@@ -19,87 +19,14 @@
 
 #include <gtk/gtk.h>
 
-#include "glade.hpp"
 #include "contest.hpp"
 #include "checkin.hpp"
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 #include "table.hpp"
 #include "splitting.hpp"
+#include "tournament.hpp"
 #include "attribute.hpp"
-
-static Glade_c *xml = NULL;
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_main_window_delete_event (GtkWidget *w,
-                                                             gpointer   data)
-{
-  gtk_main_quit ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
-                                                          gpointer   data)
-{
-  // g_mem_profile ();
-  GtkWidget *nb = xml->GetWidget ("notebook");
-  Contest_c *contest;
-
-  contest = Contest_c::Create ();
-  if (contest)
-  {
-    contest->AttachTo (GTK_NOTEBOOK (nb));
-  }
-  // g_mem_profile ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
-                                                           gpointer   data)
-{
-  GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a competition file to open..."),
-                                                    NULL,
-                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
-                                                    GTK_STOCK_CANCEL,
-                                                    GTK_RESPONSE_CANCEL,
-                                                    GTK_STOCK_OPEN,
-                                                    GTK_RESPONSE_ACCEPT,
-                                                    NULL);
-
-  {
-    GtkFileFilter *filter = gtk_file_filter_new ();
-
-    gtk_file_filter_set_name (filter,
-                              "All BellePoule files (.cocot)");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.cotcot");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                 filter);
-  }
-
-  {
-    GtkFileFilter *filter = gtk_file_filter_new ();
-
-    gtk_file_filter_set_name (filter,
-                              "All files");
-    gtk_file_filter_add_pattern (filter,
-                                 "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                 filter);
-  }
-
-  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
-  {
-    Contest_c *contest;
-    gchar     *filename;
-
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-    contest = new Contest_c (filename);
-    contest->AttachTo (GTK_NOTEBOOK (xml->GetWidget ("notebook")));
-  }
-
-  gtk_widget_destroy (chooser);
-}
 
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
@@ -135,27 +62,10 @@ int main (int argc, char **argv)
     Attribute_c::Add (G_TYPE_STRING,  "licence");
   }
 
-  xml = new Glade_c ("main_frame.glade",
-                     NULL);
-
-  // Show the main window
   {
-    GtkWidget *w = xml->GetRootWidget ();
+    Tournament *tournament = new Tournament ();
 
-    if (w == NULL) return 1;
-    gtk_widget_show_all (w);
-  }
-
-  {
-    Contest_c *contest;
-#ifdef DEBUG
-    gchar     *filename = "Exemples_Fichiers_BellePoule/minimes_bretagne.cotcot";
-#else
-    gchar     *filename = "Exemples_Fichiers_BellePoule/exemple.cotcot";
-#endif
-
-    contest = new Contest_c (filename);
-    contest->AttachTo (GTK_NOTEBOOK (xml->GetWidget ("notebook")));
+    Splitting::SetHostTournament (tournament);
   }
 
   gtk_main ();

@@ -14,11 +14,14 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <string.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
+
+#include "checkin.hpp"
 
 #include "contest.hpp"
 
@@ -43,7 +46,18 @@ Contest_c::Contest_c (gchar *filename)
 {
   InitInstance ();
 
-  _filename = g_strdup (filename);
+  if (g_path_is_absolute (filename) == FALSE)
+  {
+    gchar *current_dir = g_get_current_dir ();
+
+    _filename = g_build_filename (current_dir,
+                                  filename, NULL);
+    g_free (current_dir);
+  }
+  else
+  {
+    _filename = g_strdup (filename);
+  }
 
   if (g_file_test (_filename,
                    G_FILE_TEST_IS_REGULAR))
@@ -85,6 +99,10 @@ Contest_c::Contest_c (gchar *filename)
 
     xmlFreeDoc (doc);
   }
+  else
+  {
+    _schedule->DisplayList ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -97,6 +115,26 @@ Contest_c::~Contest_c ()
   Object_c::Release (_schedule);
 
   gtk_widget_destroy (_properties_dlg);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest_c::GetFilename ()
+{
+  return _filename;
+}
+
+// --------------------------------------------------------------------------------
+void Contest_c::AddPlayer (Player_c *player)
+{
+  if (_schedule)
+  {
+    Checkin *checkin = dynamic_cast <Checkin *> (_schedule->GetStage (0));
+
+    if (checkin)
+    {
+      checkin->Add (player);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -257,7 +295,6 @@ void Contest_c::Save (gchar *filename)
 // --------------------------------------------------------------------------------
 gchar *Contest_c::GetSaveFileName (gchar *title)
 {
-  //gchar     *name    = g_strdup_printf ("%s.%s", _name, "csb");
   GtkWidget *chooser;
   char      *filename = NULL;
 
@@ -272,13 +309,21 @@ gchar *Contest_c::GetSaveFileName (gchar *title)
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
                                                   true);
 
-  //gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (chooser),
-  //name);
-  //g_free (name);
-
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
     filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+
+    if (filename)
+    {
+      if (strcmp ((const char *) ".cotcot", (const char *) &filename[strlen (filename) - strlen (".cotcot")]) != 0)
+      {
+        gchar *with_suffix;
+
+        with_suffix = g_strdup_printf ("%s.cotcot", filename);
+        g_free (filename);
+        filename = with_suffix;
+      }
+    }
   }
 
   gtk_widget_destroy (chooser);

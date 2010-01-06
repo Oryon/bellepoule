@@ -104,6 +104,8 @@
 		<Unit filename="stage.hpp" />
 		<Unit filename="table.cpp" />
 		<Unit filename="table.hpp" />
+		<Unit filename="tournament.cpp" />
+		<Unit filename="tournament.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger>

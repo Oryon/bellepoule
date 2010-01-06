@@ -53,6 +53,8 @@ class PlayersList : public Module_c
 
     GSList *CreateCustomList (CustomFilter filter);
 
+    GSList *GetSelectedPlayers ();
+
   private:
     GtkWidget    *_tree_view;
     GtkListStore *_store;

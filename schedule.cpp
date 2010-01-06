@@ -111,6 +111,13 @@ Schedule_c::~Schedule_c ()
 }
 
 // --------------------------------------------------------------------------------
+Stage_c *Schedule_c::GetStage (guint index)
+{
+  return (Stage_c *) g_list_nth_data (_stage_list,
+                                      index);
+}
+
+// --------------------------------------------------------------------------------
 void Schedule_c::DisplayList ()
 {
   if (_stage_list == NULL)

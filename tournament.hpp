@@ -14,45 +14,34 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef splitting_hpp
-#define splitting_hpp
+#ifndef tournament_hpp
+#define tournament_hpp
 
 #include <gtk/gtk.h>
 
-#include "stage.hpp"
-#include "players_list.hpp"
+#include "module.hpp"
+#include "glade.hpp"
 
-class Tournament;
+class Contest_c;
 
-class Splitting : public virtual Stage_c, public PlayersList
+class Tournament : public Module_c
 {
   public:
+     Tournament ();
+    ~Tournament ();
+
     static void Init ();
 
-    static void SetHostTournament (Tournament *tournament);
+    void OnNew ();
 
-    Splitting (StageClass *stage_class);
+    void OnOpen ();
 
-    void Save (xmlTextWriter *xml_writer);
+    Contest_c *GetContest (gchar *filename);
 
-    void OnMove ();
-
-  public:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
+    void Manage (Contest_c *contest);
 
   private:
-    void OnLocked ();
-    void OnUnLocked ();
-    void Display ();
-    void Wipe ();
-
-  private:
-    static Tournament *_tournament;
-
-    static Stage_c *CreateInstance (StageClass *stage_class);
-
-    ~Splitting ();
+    GSList *_contest_list;
 };
 
 #endif
