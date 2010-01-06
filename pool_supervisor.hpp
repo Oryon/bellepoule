@@ -37,6 +37,8 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
     void OnPoolSelected (gint index);
 
+    void OnFilterClicked ();
+
   private:
     void Display ();
     void Garnish ();

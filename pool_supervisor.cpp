@@ -20,6 +20,7 @@
 
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
+#include "classification.hpp"
 
 const gchar *PoolSupervisor_c::_class_name     = "pool";
 const gchar *PoolSupervisor_c::_xml_class_name = "pool_stage";
@@ -347,7 +348,16 @@ extern "C" G_MODULE_EXPORT void on_print_pool_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 {
-  if (_displayed_pool)
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton"))))
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      classification->Print ();
+    }
+  }
+  else if (_displayed_pool)
   {
     _displayed_pool->Print ();
   }
@@ -452,12 +462,30 @@ void PoolSupervisor_c::OnAttrListUpdated ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolSupervisor_c::OnFilterClicked ()
+{
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton"))))
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      classification->SelectAttributes ();
+    }
+  }
+  else
+  {
+    SelectAttributes ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_pool_filter_toollbutton_clicked (GtkWidget *widget,
                                                                     Object_c  *owner)
 {
   PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
 
-  p->SelectAttributes ();
+  p->OnFilterClicked ();
 }
 
 // --------------------------------------------------------------------------------

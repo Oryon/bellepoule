@@ -42,6 +42,8 @@ class Module_c : public virtual Object_c
 
     GtkWidget *GetWidget (gchar *name);
 
+    virtual void Print () {};
+
   protected:
     Glade_c *_glade;
     GSList  *_attr_list;

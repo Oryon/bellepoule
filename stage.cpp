@@ -319,6 +319,12 @@ void Stage_c::ToggleClassification (gboolean classification_on)
 }
 
 // --------------------------------------------------------------------------------
+Classification *Stage_c::GetClassification ()
+{
+  return _classification;
+}
+
+// --------------------------------------------------------------------------------
 void Stage_c::SetResult (GSList *result)
 {
   FreeResult ();
@@ -329,7 +335,7 @@ void Stage_c::SetResult (GSList *result)
     Module_c  *module           = dynamic_cast <Module_c *> (this);
     GtkWidget *classification_w = module->GetWidget ("classification_hook");
 
-    _classification   = new Classification ();
+    _classification = new Classification ();
     module->Plug (_classification,
                   classification_w);
   }

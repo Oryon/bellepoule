@@ -130,6 +130,8 @@ class Stage_c : public virtual Object_c
 
     void SetResult (GSList *result);
 
+    Classification *GetClassification ();
+
   private:
     static GSList *_stage_base;
 
