@@ -92,6 +92,9 @@
 		<Unit filename="pool_allocator.hpp" />
 		<Unit filename="pool_supervisor.cpp" />
 		<Unit filename="pool_supervisor.hpp" />
+		<Unit filename="resource.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="schedule.cpp" />
 		<Unit filename="schedule.hpp" />
 		<Unit filename="score.cpp" />

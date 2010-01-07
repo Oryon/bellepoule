@@ -21,6 +21,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
+#include "tournament.hpp"
 #include "checkin.hpp"
 
 #include "contest.hpp"
@@ -37,6 +38,7 @@ Contest_c::Contest_c ()
   }
   gtk_widget_hide (_properties_dlg);
 
+  _schedule->CreateDefault ();
   _schedule->DisplayList ();
 }
 
@@ -101,13 +103,18 @@ Contest_c::Contest_c (gchar *filename)
   }
   else
   {
-    _schedule->DisplayList ();
+    _schedule->CreateDefault ();
   }
 }
 
 // --------------------------------------------------------------------------------
 Contest_c::~Contest_c ()
 {
+  if (_tournament)
+  {
+    _tournament->OnContestDeleted (this);
+  }
+
   g_free (_name);
   g_free (_filename);
   g_free (_backup);
@@ -154,9 +161,10 @@ Contest_c *Contest_c::Create ()
 // --------------------------------------------------------------------------------
 void Contest_c::InitInstance ()
 {
-  _name     = NULL;
-  _filename = NULL;
-  _backup   = NULL;
+  _name       = NULL;
+  _filename   = NULL;
+  _backup     = NULL;
+  _tournament = NULL;
 
   {
     _schedule = new Schedule_c ();
@@ -189,6 +197,12 @@ void Contest_c::InitInstance ()
 // --------------------------------------------------------------------------------
 void Contest_c::Init ()
 {
+}
+
+// --------------------------------------------------------------------------------
+void Contest_c::SetTournament (Tournament *tournament)
+{
+  _tournament = tournament;
 }
 
 // --------------------------------------------------------------------------------

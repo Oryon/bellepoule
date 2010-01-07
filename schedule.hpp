@@ -31,6 +31,8 @@ class Schedule_c : public Module_c
 
     void DisplayList ();
 
+    void CreateDefault ();
+
     void AddStage    (Stage_c *stage,
                       gint     index = -1);
     void RemoveStage (Stage_c *stage);

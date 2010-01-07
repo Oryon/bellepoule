@@ -24,6 +24,8 @@
 #include "glade.hpp"
 #include "schedule.hpp"
 
+class Tournament;
+
 class Contest_c : public Module_c
 {
   public:
@@ -37,6 +39,7 @@ class Contest_c : public Module_c
     void Save ();
     gchar *GetFilename ();
     void AddPlayer (Player_c *player);
+    void SetTournament (Tournament *tournament);
 
   public:
     void on_save_toolbutton_clicked           ();
@@ -53,6 +56,7 @@ class Contest_c : public Module_c
     gchar         *_backup;
     Schedule_c    *_schedule;
     GtkWidget     *_properties_dlg;
+    Tournament    *_tournament;
 
     Contest_c ();
 

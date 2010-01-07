@@ -16,6 +16,8 @@
 
 #include "glade.hpp"
 
+gchar *Glade_c::_path = NULL;
+
 // --------------------------------------------------------------------------------
 Glade_c::Glade_c (gchar    *file_name,
                   Object_c *owner)
@@ -23,7 +25,7 @@ Glade_c::Glade_c (gchar    *file_name,
   if (file_name)
   {
     GError *error;
-    gchar  *path = g_strdup_printf ("./resources/glade/%s", file_name);
+    gchar  *path = g_build_filename (_path, "resources", "glade", file_name, NULL);
 
     _glade_xml = gtk_builder_new ();
 
@@ -31,13 +33,11 @@ Glade_c::Glade_c (gchar    *file_name,
     gtk_builder_add_from_file (_glade_xml,
                                path,
                                &error);
+    g_free (path);
 
     if (error)
     {
-      gchar *spare_file_name = g_strdup_printf ("../../%s", path);
-
-      g_print (">> %s\n", error->message);
-      g_free (error);
+      gchar *spare_file_name = g_build_filename (_path, "..", "..", "resources", "glade", file_name, NULL);
 
       error = NULL;
       gtk_builder_add_from_file (_glade_xml,
@@ -53,7 +53,6 @@ Glade_c::Glade_c (gchar    *file_name,
         gtk_main_quit ();
       }
     }
-    g_free (path);
 
     gtk_builder_connect_signals (_glade_xml,
                                  owner);
@@ -71,6 +70,14 @@ Glade_c::~Glade_c ()
   {
     g_object_unref (G_OBJECT (_glade_xml));
   }
+
+  g_free (_path);
+}
+
+// --------------------------------------------------------------------------------
+void Glade_c::SetPath (gchar *path)
+{
+  _path = path;
 }
 
 // --------------------------------------------------------------------------------

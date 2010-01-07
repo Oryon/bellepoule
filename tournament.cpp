@@ -24,7 +24,7 @@
 #include "tournament.hpp"
 
 // --------------------------------------------------------------------------------
-Tournament::Tournament ()
+Tournament::Tournament (gchar *filename)
   : Module_c ("tournament.glade")
 {
   _contest_list = NULL;
@@ -36,9 +36,8 @@ Tournament::Tournament ()
     gtk_widget_show_all (w);
   }
 
+  if (filename == NULL)
   {
-    Contest_c *contest;
-    gchar     *filename;
     gchar     *current_dir = g_get_current_dir ();
 
     filename = g_build_filename (current_dir,
@@ -49,11 +48,16 @@ Tournament::Tournament ()
 #endif
                                  NULL);
     g_free (current_dir);
+  }
+
+  {
+    Contest_c *contest;
 
     contest = new Contest_c (filename);
     Manage (contest);
-    g_free (filename);
   }
+
+  g_free (filename);
 }
 
 // --------------------------------------------------------------------------------
@@ -69,8 +73,19 @@ void Tournament::Manage (Contest_c *contest)
     GtkWidget *nb = _glade->GetWidget ("notebook");
 
     contest->AttachTo (GTK_NOTEBOOK (nb));
+    contest->SetTournament (this);
 
     _contest_list = g_slist_append (_contest_list,
+                                    contest);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnContestDeleted (Contest_c *contest)
+{
+  if (_contest_list)
+  {
+    _contest_list = g_slist_remove (_contest_list,
                                     contest);
   }
 }

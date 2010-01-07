@@ -27,12 +27,15 @@ class Glade_c : public Object_c
               Object_c *owner);
     ~Glade_c ();
 
+    static void SetPath (gchar *path);
+
     GtkWidget *GetRootWidget    ();
     GtkWidget *GetWidget        (gchar *name);
     GObject   *GetObject        (gchar *name);
     void       DetachFromParent (GtkWidget *widget);
 
   private:
+    static gchar *_path;
     GtkBuilder *_glade_xml;
 };
 

@@ -21,6 +21,11 @@ ChangesEnvironment=yes
 [Registry]
 Root: HKCU; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCU\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnPathAlready(); Flags: preservestringtype;
 
+Root: HKCR; Subkey: ".cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BellePoule.exe,0"
+Root: HKCR; Subkey: "BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BellePoule.exe"" ""%1"""
+
 [Languages]
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
@@ -50,7 +55,7 @@ Source: "..\resources\glade\table.glade"; DestDir: "{app}\resources\glade\"; Fla
 Source: "..\resources\glade\schedule.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\checkin.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\classification.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\main_frame.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\tournament.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\pool.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\contest.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\pool_allocator.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion

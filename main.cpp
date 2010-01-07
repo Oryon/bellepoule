@@ -27,6 +27,7 @@
 #include "splitting.hpp"
 #include "tournament.hpp"
 #include "attribute.hpp"
+#include "glade.hpp"
 
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
@@ -48,6 +49,8 @@ int main (int argc, char **argv)
     Splitting::Init        ();
   }
 
+  Glade_c::SetPath (g_path_get_dirname (argv[0]));
+
   {
     Attribute_c::Add (G_TYPE_INT,     "ref");
     Attribute_c::Add (G_TYPE_STRING,  "name");
@@ -63,7 +66,16 @@ int main (int argc, char **argv)
   }
 
   {
-    Tournament *tournament = new Tournament ();
+    Tournament *tournament;
+
+    if (argc > 1)
+    {
+      tournament = new Tournament (g_strdup (argv[1]));
+    }
+    else
+    {
+      tournament = new Tournament (NULL);
+    }
 
     Splitting::SetHostTournament (tournament);
   }

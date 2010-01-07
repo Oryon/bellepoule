@@ -43,7 +43,7 @@ Schedule_c::Schedule_c ()
     GtkWidget *menu_pool = gtk_menu_new ();
     GtkWidget *content_area;
 
-    _formula_dlg = gtk_dialog_new_with_buttons ("New competition",
+    _formula_dlg = gtk_dialog_new_with_buttons ("Formula setup",
                                                 NULL,
                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                 GTK_STOCK_OK,
@@ -118,7 +118,7 @@ Stage_c *Schedule_c::GetStage (guint index)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule_c::DisplayList ()
+void Schedule_c::CreateDefault ()
 {
   if (_stage_list == NULL)
   {
@@ -151,7 +151,12 @@ void Schedule_c::DisplayList ()
       }
     }
   }
-  else
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::DisplayList ()
+{
+  if (_stage_list)
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid;

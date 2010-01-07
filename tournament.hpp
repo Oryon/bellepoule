@@ -27,7 +27,7 @@ class Contest_c;
 class Tournament : public Module_c
 {
   public:
-     Tournament ();
+     Tournament (gchar *filename);
     ~Tournament ();
 
     static void Init ();
@@ -39,6 +39,8 @@ class Tournament : public Module_c
     Contest_c *GetContest (gchar *filename);
 
     void Manage (Contest_c *contest);
+
+    void OnContestDeleted (Contest_c *contest);
 
   private:
     GSList *_contest_list;

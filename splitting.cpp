@@ -98,6 +98,7 @@ void Splitting::Save (xmlTextWriter *xml_writer)
 // --------------------------------------------------------------------------------
 void Splitting::Wipe ()
 {
+  PlayersList::Wipe ();
 }
 
 // --------------------------------------------------------------------------------
@@ -142,7 +143,7 @@ void Splitting::OnMove ()
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              "All BellePoule files (.cocot)");
+                              "All BellePoule files (.cotcot)");
     gtk_file_filter_add_pattern (filter,
                                  "*.cotcot");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
