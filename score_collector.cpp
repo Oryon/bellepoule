@@ -80,11 +80,11 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
 
   if (player_position == 0)
   {
-    match->SetData ("ScoreCollector::goo_rect_A", point);
+    match->SetData (this, "goo_rect_A", point);
   }
   else
   {
-    match->SetData ("ScoreCollector::goo_rect_B", point);
+    match->SetData (this, "goo_rect_B", point);
   }
 
   g_object_set_data (G_OBJECT (point), "match",  match);
@@ -100,8 +100,8 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
 // --------------------------------------------------------------------------------
 void ScoreCollector::RemoveCollectingPoints (Match_c *match)
 {
-  match->SetData ("ScoreCollector::goo_rect_A", NULL);
-  match->SetData ("ScoreCollector::goo_rect_B", NULL);
+  match->SetData (this, "goo_rect_A", NULL);
+  match->SetData (this, "goo_rect_B", NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -240,7 +240,7 @@ void ScoreCollector::SetMatchColor (Match_c *match,
     color_B = unconsitentcolor;
   }
 
-  rect = (GooCanvasItem *) match->GetData ("ScoreCollector::goo_rect_A");
+  rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
   if (rect)
   {
     g_object_set (rect,
@@ -248,7 +248,7 @@ void ScoreCollector::SetMatchColor (Match_c *match,
                   NULL);
   }
 
-  rect = (GooCanvasItem *) match->GetData ("ScoreCollector::goo_rect_B");
+  rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
   if (rect)
   {
     g_object_set (rect,

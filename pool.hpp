@@ -56,13 +56,16 @@ class Pool_c : public CanvasModule_c
 
     void SetRandSeed (guint32 seed);
 
+    void SetDataOwner (Object_c *owner);
+
     static gint ComparePlayer (Player_c *A,
                                Player_c *B,
-                               guint     client_seed);
+                               Pool_c   *pool);
 
   private:
     guint           _max_score;
     guint           _rand_seed;
+    Object_c       *_data_owner;
     guint           _number;
     GSList         *_player_list;
     ScoreCollector *_score_collector;

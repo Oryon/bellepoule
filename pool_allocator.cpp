@@ -391,7 +391,7 @@ gboolean PoolAllocator_c::on_enter_player (GooCanvasItem  *item,
                                            GdkEventButton *event,
                                            Pool_c         *pool)
 {
-  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -407,7 +407,7 @@ gboolean PoolAllocator_c::on_leave_player (GooCanvasItem  *item,
                                            GdkEventButton *event,
                                            Pool_c         *pool)
 {
-  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -423,7 +423,7 @@ gboolean PoolAllocator_c::on_button_press (GooCanvasItem  *item,
                                            GdkEventButton *event,
                                            Pool_c         *pool)
 {
-  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -617,7 +617,7 @@ gboolean PoolAllocator_c::on_enter_notify (GooCanvasItem  *item,
                                            GdkEventButton *event,
                                            Pool_c         *pool)
 {
-  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -638,7 +638,7 @@ gboolean PoolAllocator_c::OnEnterNotify (GooCanvasItem  *item,
 {
   if (_dragging)
   {
-    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData ("PoolAllocator_c::focus_rectangle");
+    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData (this, "focus_rectangle");
 
     g_object_set (G_OBJECT (rect),
                   "stroke-color", "black",
@@ -657,7 +657,7 @@ gboolean PoolAllocator_c::on_leave_notify (GooCanvasItem  *item,
                                            GdkEventButton *event,
                                            Pool_c         *pool)
 {
-  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData ("PoolAllocator_c::pool_allocator");
+  PoolAllocator_c *pl = (PoolAllocator_c*) pool->GetData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -678,7 +678,7 @@ gboolean PoolAllocator_c::OnLeaveNotify (GooCanvasItem  *item,
 {
   if (_dragging)
   {
-    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData ("PoolAllocator_c::focus_rectangle");
+    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData (this, "focus_rectangle");
 
     g_object_set (G_OBJECT (rect),
                   "stroke-pattern", NULL,
@@ -702,9 +702,9 @@ void PoolAllocator_c::FixUpTablesBounds ()
     GooCanvasItem   *table;
 
     pool = (Pool_c *) g_slist_nth_data (_pools_list, p);
-    table = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::table");
+    table = (GooCanvasItem *) pool->GetData (this, "table");
 
-    focus_rect = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::focus_rectangle");
+    focus_rect = (GooCanvasItem *) pool->GetData (this, "focus_rectangle");
 
     goo_canvas_item_get_bounds (table,
                                 &bounds);
@@ -741,8 +741,8 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
     return;
   }
 
-  GooCanvasItem *table      = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::table");
-  GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetData ("PoolAllocator_c::focus_rectangle");
+  GooCanvasItem *table      = (GooCanvasItem *) pool->GetData (this, "table");
+  GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetData (this, "focus_rectangle");
   GooCanvasItem *item;
 
   if (table)
@@ -772,7 +772,7 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
       PutInTable (_main_table,
                   table,
                   row, column);
-      pool->SetData ("PoolAllocator_c::table",
+      pool->SetData (this, "table",
                      table);
     }
   }
@@ -790,12 +790,12 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
               && (pool_size == _selected_config->size) || (pool_size == _selected_config->size - 1)))
       {
         icon_name = GTK_STOCK_APPLY;
-        pool->SetData ("PoolAllocator_c::is_balanced", (void *) 1);
+        pool->SetData (this, "is_balanced", (void *) 1);
       }
       else
       {
         icon_name = GTK_STOCK_DIALOG_WARNING;
-        pool->SetData ("PoolAllocator_c::is_balanced", 0);
+        pool->SetData (this, "is_balanced", 0);
       }
 
       PutStockIconInTable (name_table,
@@ -877,9 +877,9 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
     g_signal_connect (focus_rect, "leave_notify_event",
                       G_CALLBACK (on_leave_notify), pool);
 
-    pool->SetData ("PoolAllocator_c::pool_allocator",
+    pool->SetData (pool, "pool_allocator",
                    this);
-    pool->SetData ("PoolAllocator_c::focus_rectangle",
+    pool->SetData (this, "focus_rectangle",
                    focus_rect);
   }
 }
@@ -951,7 +951,7 @@ gboolean PoolAllocator_c::IsOver ()
 
     pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
 
-    if (pool->GetData ("PoolAllocator_c::is_balanced") == 0)
+    if (pool->GetData (this, "is_balanced") == 0)
     {
       return FALSE;
     }

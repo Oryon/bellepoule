@@ -208,12 +208,12 @@ void Schedule_c::DisplayList ()
 
       current_stage = (Stage_c *) g_list_nth_data (_stage_list,
                                                    i);
-      tab_widget = (GtkWidget *) current_stage->GetData ("Schedule_c::viewport_stage");
+      tab_widget = (GtkWidget *) current_stage->GetData (this, "viewport_stage");
 
       if (tab_widget)
       {
         gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (GetRootWidget ()),
-                                         (GtkWidget *) current_stage->GetData ("Schedule_c::viewport_stage"),
+                                         (GtkWidget *) current_stage->GetData (this, "viewport_stage"),
                                          current_stage->GetFullName ());
       }
     }
@@ -309,7 +309,7 @@ void Schedule_c::AddStage (Stage_c *stage,
     {
       Stage_c *input_provider = stage->GetInputProvider ();
 
-      stage->SetData ("Schedule_c::attached_stage",
+      stage->SetData (this, "attached_stage",
                       input_provider);
 
       if (   input_provider
@@ -731,7 +731,7 @@ extern "C" G_MODULE_EXPORT void on_previous_stage_toolbutton_clicked (GtkWidget 
 // --------------------------------------------------------------------------------
 gint Schedule_c::GetNotebookPageNum (Stage_c *stage)
 {
-  GtkWidget *viewport = (GtkWidget *) stage->GetData ("Schedule_c::viewport_stage");
+  GtkWidget *viewport = (GtkWidget *) stage->GetData (this, "viewport_stage");
 
   return gtk_notebook_page_num (GTK_NOTEBOOK (GetRootWidget ()),
                                 viewport);
@@ -796,7 +796,7 @@ void Schedule_c::PlugStage (Stage_c *stage)
   GtkWidget *viewport = gtk_viewport_new (NULL, NULL);
   gchar     *name     = stage->GetFullName ();
 
-  stage->SetData ("Schedule_c::viewport_stage",
+  stage->SetData (this, "viewport_stage",
                   viewport);
   gtk_notebook_append_page (GTK_NOTEBOOK (GetRootWidget ()),
                             viewport,
@@ -844,7 +844,7 @@ void Schedule_c::on_stage_removed ()
                           &iter,
                           STAGE_COLUMN, &stage, -1);
 
-      attached_stage = (Stage_c *) stage->GetData ("Schedule_c::attached_stage");
+      attached_stage = (Stage_c *) stage->GetData (this, "attached_stage");
 
       RemoveStage (stage);
       RemoveStage (attached_stage);

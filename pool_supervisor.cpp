@@ -186,7 +186,7 @@ void PoolSupervisor_c::OnLocked ()
     }
     result = g_slist_sort_with_data (result,
                                      (GCompareDataFunc) Pool_c::ComparePlayer,
-                                     0);
+                                     this);
     SetResult (result);
   }
 }
@@ -244,6 +244,7 @@ void PoolSupervisor_c::Manage (Pool_c *pool)
                       -1);
 
   pool->SetRandSeed (0);
+  pool->SetDataOwner (this);
   pool->SetMaxScore (_max_score);
   pool->SetStatusCbk ((Pool_c::StatusCbk) OnPoolStatusUpdated,
                       this);

@@ -202,7 +202,7 @@ void Table::OnNewScore (CanvasModule_c *client,
                         Player_c       *player)
 {
   Table *table = dynamic_cast <Table *> (client);
-  GNode *node  = (GNode *) match->GetData ("Table::node");
+  GNode *node  = (GNode *) match->GetData (table, "node");
 
   FillInNode (node,
               table);
@@ -547,13 +547,13 @@ gboolean Table::FillInNode (GNode *node,
 
           if (position == 0)
           {
-            parent_data->_match->SetData ("Table::player_A_rect", goo_rect);
+            parent_data->_match->SetData (table, "player_A_rect", goo_rect);
           }
           else
           {
             table->_score_collector->SetNextCollectingPoint (goo_rect,
-                                                             (GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"));
-            table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData ("Table::player_A_rect"),
+                                                             (GooCanvasItem *) parent_data->_match->GetData (table, "player_A_rect"));
+            table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (table, "player_A_rect"),
                                                              goo_rect);
           }
         }
@@ -625,7 +625,7 @@ void Table::AddFork (GNode *to)
   data->_print_item   = NULL;
   data->_connector    = NULL;
   data->_match = new Match_c (_max_score);
-  data->_match->SetData ("Table::node", node);
+  data->_match->SetData (this, "node", node);
 
   if ((to_data == NULL) || (data->_level > 1))
   {

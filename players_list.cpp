@@ -77,7 +77,7 @@ void PlayersList::Update (Player_c *player)
   GtkTreePath         *path;
   GtkTreeIter          iter;
 
-  ref  = (GtkTreeRowReference *) player->GetData ("PlayersList::tree_row_ref");
+  ref  = (GtkTreeRowReference *) player->GetData (this, "tree_row_ref");
   path = gtk_tree_row_reference_get_path (ref);
   gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
                            &iter,
@@ -433,7 +433,7 @@ void PlayersList::Add (Player_c *player)
     g_free (str);
   }
 
-  player->SetData ("PlayersList::tree_row_ref",
+  player->SetData (this, "tree_row_ref",
                    GetPlayerRowRef (&iter),
                    (GDestroyNotify) gtk_tree_row_reference_free);
 
@@ -488,7 +488,7 @@ void PlayersList::RemoveSelection ()
       Player_c *p;
 
       p = (Player_c *) g_slist_nth_data (_player_list, i);
-      current_path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) p->GetData ("PlayersList::tree_row_ref"));
+      current_path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) p->GetData (this, "tree_row_ref"));
 
       if (gtk_tree_path_compare (selected_path,
                                  current_path) == 0)
@@ -532,7 +532,7 @@ Player_c *PlayersList::GetPlayer (const gchar *path_string)
     Player_c            *p;
 
     p = (Player_c *) g_slist_nth_data (_player_list, i);
-    current_ref = (GtkTreeRowReference *) p->GetData ("PlayersList::tree_row_ref");
+    current_ref = (GtkTreeRowReference *) p->GetData (this, "tree_row_ref");
     current_path = gtk_tree_row_reference_get_path (current_ref);
     if (gtk_tree_path_compare (path,
                                current_path) == 0)

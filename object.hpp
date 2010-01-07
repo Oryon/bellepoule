@@ -24,11 +24,13 @@ class Object_c
   public:
      Object_c ();
 
-    void  SetData (gchar          *key,
-                   void           *data,
-                   GDestroyNotify  destroy_cbk = NULL);
+    void SetData (Object_c       *owner,
+                  gchar          *key,
+                  void           *data,
+                  GDestroyNotify  destroy_cbk = NULL);
 
-    void *GetData (gchar *key);
+    void *GetData (Object_c *owner,
+                   gchar    *key);
 
     void Retain ();
 

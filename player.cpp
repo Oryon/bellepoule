@@ -55,7 +55,7 @@ gint Player_c::CompareWithRef (Player_c *player,
 // --------------------------------------------------------------------------------
 Attribute_c *Player_c::GetAttribute (gchar *name)
 {
-  return (Attribute_c*) GetData (name);
+  return (Attribute_c*) GetData (this, name);
 }
 
 // --------------------------------------------------------------------------------
@@ -70,7 +70,8 @@ void Player_c::SetAttributeValue (gchar *name,
   }
   attr->SetValue (value);
 
-  SetData (attr->GetName (),
+  SetData (this,
+           attr->GetName (),
            attr);
 }
 
@@ -86,7 +87,8 @@ void Player_c::SetAttributeValue (gchar *name,
   }
   attr->SetValue (value);
 
-  SetData (attr->GetName (),
+  SetData (this,
+           attr->GetName (),
            attr);
 }
 

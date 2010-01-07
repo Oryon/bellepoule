@@ -68,19 +68,30 @@ void Object_c::Release (Object_c *object)
 }
 
 // --------------------------------------------------------------------------------
-void Object_c::SetData (gchar          *key,
+void Object_c::SetData (Object_c       *owner,
+                        gchar          *key,
                         void           *data,
                         GDestroyNotify  destroy_cbk)
 {
+  gchar *full_key = g_strdup_printf ("%x::%s", owner, key);
+
   g_datalist_set_data_full (&_datalist,
-                            key,
+                            full_key,
                             data,
                             destroy_cbk);
+  g_free (full_key);
 }
 
 // --------------------------------------------------------------------------------
-void *Object_c::GetData (gchar *key)
+void *Object_c::GetData (Object_c *owner,
+                         gchar    *key)
 {
-  return g_datalist_get_data (&_datalist,
-                              key);
+  void  *data;
+  gchar *full_key = g_strdup_printf ("%x::%s", owner, key);
+
+  data = g_datalist_get_data (&_datalist,
+                              full_key);
+  g_free (full_key);
+
+  return data;
 }
