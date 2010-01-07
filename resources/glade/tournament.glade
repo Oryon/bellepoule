@@ -98,14 +98,31 @@
           </packing>
         </child>
         <child>
-          <object class="GtkNotebook" id="notebook">
+          <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
             <child>
-              <placeholder/>
+              <object class="GtkImage" id="logo">
+                <property name="visible">True</property>
+                <property name="pixbuf">BellePoule.png</property>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
             </child>
-            <child type="tab">
-              <placeholder/>
+            <child>
+              <object class="GtkNotebook" id="notebook">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>

@@ -19,7 +19,7 @@ SolidCompression=yes
 ChangesEnvironment=yes
 
 [Registry]
-Root: HKCU; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCU\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnPathAlready(); Flags: preservestringtype;
+Root: HKCR; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCR\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnPathAlready(); Flags: preservestringtype;
 
 Root: HKCR; Subkey: ".cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey
@@ -50,6 +50,7 @@ Source: "..\Exemples_Fichiers_FFE\CLS_EDM.FFF"; DestDir: "{app}\Exemples_Fichier
 
 Source: "..\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\resources\translations\fr\LC_MESSAGES"; Flags: ignoreversion
 
+Source: "..\resources\glade\BellePoule.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\pool_supervisor.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\table.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\schedule.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion

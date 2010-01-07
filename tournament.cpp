@@ -34,30 +34,29 @@ Tournament::Tournament (gchar *filename)
     GtkWidget *w = _glade->GetRootWidget ();
 
     gtk_widget_show_all (w);
+    gtk_widget_hide (_glade->GetWidget ("notebook"));
   }
 
+#ifdef DEBUG
   if (filename == NULL)
   {
     gchar     *current_dir = g_get_current_dir ();
 
     filename = g_build_filename (current_dir,
-#ifdef DEBUG
                                  "Exemples_Fichiers_BellePoule", "minimes_bretagne.cotcot",
-#else
-                                 "Exemples_Fichiers_BellePoule", "exemple.cotcot",
-#endif
                                  NULL);
     g_free (current_dir);
   }
+#endif
 
+  if (filename)
   {
     Contest_c *contest;
 
     contest = new Contest_c (filename);
     Manage (contest);
+    g_free (filename);
   }
-
-  g_free (filename);
 }
 
 // --------------------------------------------------------------------------------
@@ -77,6 +76,11 @@ void Tournament::Manage (Contest_c *contest)
 
     _contest_list = g_slist_append (_contest_list,
                                     contest);
+    if (g_slist_length (_contest_list) == 1)
+    {
+      gtk_widget_show (_glade->GetWidget ("notebook"));
+      gtk_widget_hide (_glade->GetWidget ("logo"));
+    }
   }
 }
 
@@ -87,6 +91,11 @@ void Tournament::OnContestDeleted (Contest_c *contest)
   {
     _contest_list = g_slist_remove (_contest_list,
                                     contest);
+    if (g_slist_length (_contest_list) == 0)
+    {
+      gtk_widget_show (_glade->GetWidget ("logo"));
+      gtk_widget_hide (_glade->GetWidget ("notebook"));
+    }
   }
 }
 
