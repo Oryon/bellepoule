@@ -39,7 +39,6 @@ Contest_c::Contest_c ()
   gtk_widget_hide (_properties_dlg);
 
   _schedule->CreateDefault ();
-  _schedule->DisplayList ();
 }
 
 // --------------------------------------------------------------------------------

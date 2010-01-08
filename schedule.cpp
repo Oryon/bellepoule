@@ -122,33 +122,31 @@ void Schedule_c::CreateDefault ()
 {
   if (_stage_list == NULL)
   {
-    for (guint i = 0; i < Stage_c::GetNbStageClass (); i++)
+    Stage_c *stage;
+
+    stage = Stage_c::CreateInstance ("checkin_stage");
+    if (stage)
     {
-      gchar            *name;
-      Stage_c::Creator  creator;
-      Stage_c::Rights   rights;
-
-      Stage_c::GetStageClass (i,
-                              &name,
-                              &creator,
-                              &rights);
-
-      if (rights & Stage_c::MANDATORY)
+      AddStage (stage);
       {
-        guint    nb_stages;
-        Stage_c *stage = Stage_c::CreateInstance (name);
-
-        AddStage (stage);
-        nb_stages = g_list_length (_stage_list);
-        if (nb_stages == 1)
-        {
-          PlugStage (stage);
-          stage->RetrieveAttendees ();
-          stage->Garnish ();
-          stage->Display ();
-          stage->UnLock  ();
-        }
+        PlugStage (stage);
+        stage->RetrieveAttendees ();
+        stage->Garnish ();
+        stage->Display ();
+        stage->UnLock  ();
       }
+    }
+
+    stage = Stage_c::CreateInstance ("pool_stage");
+    if (stage)
+    {
+      AddStage (stage);
+    }
+
+    stage = Stage_c::CreateInstance ("table_stage");
+    if (stage)
+    {
+      AddStage (stage);
     }
   }
 }
