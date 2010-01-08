@@ -46,14 +46,18 @@ Splitting::Splitting (StageClass *stage_class)
   }
 
   {
-    ShowAttribute ("rank");
-    ShowAttribute ("name");
-    ShowAttribute ("first_name");
-    ShowAttribute ("birth_year");
-    ShowAttribute ("gender");
-    ShowAttribute ("club");
-    ShowAttribute ("country");
-    ShowAttribute ("licence");
+    Filter *filter = new Filter (this);
+
+    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("name");
+    filter->ShowAttribute ("first_name");
+    filter->ShowAttribute ("birth_year");
+    filter->ShowAttribute ("gender");
+    filter->ShowAttribute ("club");
+    filter->ShowAttribute ("country");
+    filter->ShowAttribute ("licence");
+
+    SetFilter (filter);
   }
 }
 

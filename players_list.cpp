@@ -282,21 +282,26 @@ void PlayersList::OnAttrListUpdated ()
     }
   }
 
-  if (_attr_list)
+  if (_filter)
   {
-    for (guint i = 0; i < g_slist_length (_attr_list); i++)
+    GSList *selected_attr = _filter->GetSelectedAttr ();
+
+    if (selected_attr)
     {
-      gchar *attr_name;
-      GType  type;
+      for (guint i = 0; i < g_slist_length (selected_attr); i++)
+      {
+        gchar *attr_name;
+        GType  type;
 
-      attr_name = (gchar *) g_slist_nth_data (_attr_list,
-                                              i);
-      type = Attribute_c::GetAttributeType (attr_name);
+        attr_name = (gchar *) g_slist_nth_data (selected_attr,
+                                                i);
+        type = Attribute_c::GetAttributeType (attr_name);
 
-      SetColumn (Attribute_c::GetAttributeId (attr_name),
-                 attr_name,
-                 type != G_TYPE_BOOLEAN,
-                 -1);
+        SetColumn (Attribute_c::GetAttributeId (attr_name),
+                   attr_name,
+                   type != G_TYPE_BOOLEAN,
+                   -1);
+      }
     }
   }
 }

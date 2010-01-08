@@ -237,6 +237,13 @@ void Pool_c::OnPlugged ()
 
     // Grid
     {
+      GSList *selected_attr = NULL;
+
+      if (_filter)
+      {
+        selected_attr = _filter->GetSelectedAttr ();
+      }
+
       // Border
       {
         goo_canvas_rect_new (grid_group,
@@ -340,12 +347,12 @@ void Pool_c::OnPlugged ()
         x = - 5;
         y = cell_h / 2 + i * cell_h;
 
-        for (guint a = 0; a < g_slist_length (_attr_list); a++)
+        for (guint a = 0; a < g_slist_length (selected_attr); a++)
         {
           gchar       *attr_name;
           Attribute_c *attr;
 
-          attr_name = (gchar *) g_slist_nth_data (_attr_list,
+          attr_name = (gchar *) g_slist_nth_data (selected_attr,
                                                   a);
           attr = player->GetAttribute (attr_name);
 
@@ -379,12 +386,12 @@ void Pool_c::OnPlugged ()
         x = cell_w / 2 + i * cell_w;;
         y = - 10;
 
-        for (guint a = 0; a < g_slist_length (_attr_list); a++)
+        for (guint a = 0; a < g_slist_length (selected_attr); a++)
         {
           gchar       *attr_name;
           Attribute_c *attr;
 
-          attr_name = (gchar *) g_slist_nth_data (_attr_list,
+          attr_name = (gchar *) g_slist_nth_data (selected_attr,
                                                   a);
           attr = player->GetAttribute (attr_name);
 

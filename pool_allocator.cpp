@@ -63,11 +63,15 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
   }
 
   {
-    ShowAttribute ("rank");
-    ShowAttribute ("rating");
-    ShowAttribute ("name");
-    ShowAttribute ("first_name");
-    ShowAttribute ("club");
+    Filter *filter = new Filter (this);
+
+    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("rating");
+    filter->ShowAttribute ("name");
+    filter->ShowAttribute ("first_name");
+    filter->ShowAttribute ("club");
+
+    SetFilter (filter);
   }
 }
 
@@ -464,15 +468,21 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
     {
       GooCanvasBounds  bounds;
       GString         *string = g_string_new ("");
+      GSList          *selected_attr = NULL;
 
-      if (_floating_player && _attr_list)
+      if (_filter)
       {
-        for (guint i = 0; i < g_slist_length (_attr_list); i++)
+        selected_attr = _filter->GetSelectedAttr ();
+      }
+
+      if (_floating_player && selected_attr)
+      {
+        for (guint i = 0; i < g_slist_length (selected_attr); i++)
         {
           gchar       *attr_name;
           Attribute_c *attr;
 
-          attr_name = (gchar *) g_slist_nth_data (_attr_list,
+          attr_name = (gchar *) g_slist_nth_data (selected_attr,
                                                   i);
           attr = _floating_player->GetAttribute (attr_name);
 
@@ -817,16 +827,22 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
   for (guint p = 0; p < pool->GetNbPlayers (); p++)
   {
     Player_c *player = pool->GetPlayer (p);
+    GSList   *selected_attr = NULL;
 
-    if (player && _attr_list)
+    if (_filter)
     {
-      for (guint i = 0; i < g_slist_length (_attr_list); i++)
+      selected_attr = _filter->GetSelectedAttr ();
+    }
+
+    if (player && selected_attr)
+    {
+      for (guint i = 0; i < g_slist_length (selected_attr); i++)
       {
         GooCanvasItem *item;
         gchar         *attr_name;
         Attribute_c   *attr;
 
-        attr_name = (gchar *) g_slist_nth_data (_attr_list,
+        attr_name = (gchar *) g_slist_nth_data (selected_attr,
                                                 i);
         attr = player->GetAttribute (attr_name);
 

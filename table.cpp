@@ -51,9 +51,13 @@ Table::Table (StageClass *stage_class)
   _max_score = 10;
 
   {
-    ShowAttribute ("rank");
-    ShowAttribute ("name");
-    ShowAttribute ("club");
+    Filter *filter = new Filter (this);
+
+    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("name");
+    filter->ShowAttribute ("club");
+
+    SetFilter (filter);
   }
 
   _from_table_liststore = GTK_LIST_STORE (_glade->GetObject ("table_liststore"));
@@ -436,12 +440,19 @@ gboolean Table::FillInNode (GNode *node,
 
       if (winner)
       {
-        for (guint a = 0; a < g_slist_length (table->_attr_list); a++)
+        GSList *selected_attr = NULL;
+
+        if (table->_filter)
+        {
+          selected_attr = table->_filter->GetSelectedAttr ();
+        }
+
+        for (guint a = 0; a < g_slist_length (selected_attr); a++)
         {
           gchar       *attr_name;
           Attribute_c *attr;
 
-          attr_name = (gchar *) g_slist_nth_data (table->_attr_list,
+          attr_name = (gchar *) g_slist_nth_data (selected_attr,
                                                   a);
           attr = winner->GetAttribute (attr_name);
 

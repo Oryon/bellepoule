@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "filter.hpp"
 #include "glade.hpp"
 
 class Module_c : public virtual Object_c
@@ -34,19 +35,21 @@ class Module_c : public virtual Object_c
 
     void SelectAttributes ();
 
-    void CloneFilterList (Module_c *from);
-
     GtkWidget *GetConfigWidget ();
 
     GtkWidget *GetRootWidget ();
 
     GtkWidget *GetWidget (gchar *name);
 
+    void SetFilter (Filter *filter);
+
     virtual void Print () {};
 
+    virtual void OnAttrListUpdated () {};
+
   protected:
+    Filter  *_filter;
     Glade_c *_glade;
-    GSList  *_attr_list;
 
     Module_c (gchar *glade_file,
               gchar *root = NULL);
@@ -60,8 +63,6 @@ class Module_c : public virtual Object_c
     void EnableSensitiveWidgets ();
     void DisableSensitiveWidgets ();
 
-    void ShowAttribute (gchar *name);
-
     void SetCursor (GdkCursorType cursor_type);
 
     void ResetCursor ();
@@ -69,33 +70,12 @@ class Module_c : public virtual Object_c
     Module_c ();
 
   private:
-    typedef enum
-    {
-      ATTR_VISIBILITY = 0,
-      ATTR_NAME,
-      NUM_COLS
-    } StoreColumn;
-
     GtkWidget    *_root;
     GtkToolbar   *_toolbar;
     GSList       *_sensitive_widgets;
     GSList       *_plugged_list;
     Module_c     *_owner;
-    GtkTreeModel *_attr_filter_store;
-    GtkWidget    *_filter_window;
     GtkWidget    *_config_widget;
-
-    void UpdateAttrList ();
-
-    static void OnAttrDeleted (GtkTreeModel *tree_model,
-                               GtkTreePath  *path,
-                               gpointer      user_data);
-
-    static void on_cell_toggled (GtkCellRendererToggle *cell,
-                                 gchar                 *path_string,
-                                 gpointer               user_data);
-
-    virtual void OnAttrListUpdated () {};
 };
 
 #endif

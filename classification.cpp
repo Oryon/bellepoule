@@ -28,10 +28,14 @@ Classification::Classification ()
 {
   // Player attributes to display
   {
-    ShowAttribute ("rank");
-    ShowAttribute ("name");
-    ShowAttribute ("first_name");
-    ShowAttribute ("club");
+    Filter *filter = new Filter (this);
+
+    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("name");
+    filter->ShowAttribute ("first_name");
+    filter->ShowAttribute ("club");
+
+    SetFilter (filter);
   }
 }
 

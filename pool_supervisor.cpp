@@ -53,7 +53,11 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
 
   // Filter
   {
-    ShowAttribute ("name");
+    Filter *filter = new Filter (this);
+
+    filter->ShowAttribute ("name");
+
+    SetFilter (filter);
   }
 }
 
@@ -245,6 +249,7 @@ void PoolSupervisor_c::Manage (Pool_c *pool)
 
   pool->SetRandSeed (0);
   pool->SetDataOwner (this);
+  pool->SetFilter (_filter);
   pool->SetMaxScore (_max_score);
   pool->SetStatusCbk ((Pool_c::StatusCbk) OnPoolStatusUpdated,
                       this);
@@ -329,7 +334,6 @@ void PoolSupervisor_c::OnPoolSelected (Pool_c *pool)
 
   if (pool)
   {
-    pool->CloneFilterList (this);
     Plug (pool,
           _glade->GetWidget ("main_hook"));
 
