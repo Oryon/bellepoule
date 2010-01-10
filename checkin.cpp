@@ -332,6 +332,7 @@ void Checkin::ImportFFF (gchar *file)
         player->SetAttributeValue ("country",    tokens[4]);
         player->SetAttributeValue ("licence",    tokens[8]);
         player->SetAttributeValue ("club",       tokens[10]);
+        player->SetAttributeValue ("exported",   (guint) FALSE);
         if (*tokens[11])
         {
           player->SetAttributeValue ("rating",     tokens[11]);
@@ -393,6 +394,7 @@ void Checkin::ImportCSV (gchar *file)
         {
           player->SetAttributeValue ("name",       tokens[i]);
           player->SetAttributeValue ("first_name", tokens[i+1]);
+          player->SetAttributeValue ("exported",   (guint) FALSE);
 
           Add (player);
           player = new Player_c;
@@ -436,6 +438,8 @@ void Checkin::on_add_button_clicked ()
     check_button = GTK_TOGGLE_BUTTON (_glade->GetWidget ("attending_checkbutton"));
     attending = gtk_toggle_button_get_active (check_button);
     player->SetAttributeValue ("attending", attending);
+
+    player->SetAttributeValue ("exported", (guint) FALSE);
   }
 
   gtk_widget_grab_focus (_glade->GetWidget ("name_entry"));

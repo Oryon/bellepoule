@@ -168,7 +168,7 @@ gint Attribute_c::Compare (Attribute_c *a, Attribute_c *b)
 TextAttribute_c::TextAttribute_c (AttributeDesc *desc)
   : Attribute_c (desc)
 {
-  _value = g_strdup ("??");
+  _value = g_strdup ("");
 }
 
 // --------------------------------------------------------------------------------

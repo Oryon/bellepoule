@@ -13,10 +13,9 @@
             <child>
               <object class="GtkToolButton" id="splitting_move_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Move to another
-competition</property>
+                <property name="label" translatable="yes">Move to...</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-jump-to</property>
+                <property name="icon_widget">image1</property>
                 <signal name="clicked" handler="on_splitting_move_toolbutton_clicked"/>
               </object>
               <packing>
@@ -151,16 +150,20 @@ competition</property>
       </object>
     </child>
   </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="pixbuf">splitting.png</property>
+  </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="new_title_entry"/>
       <widget name="name_entry"/>
+      <widget name="new_title_entry"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup">
     <widgets>
-      <widget name="label2"/>
       <widget name="label4"/>
+      <widget name="label2"/>
     </widgets>
   </object>
   <object class="GtkTextBuffer" id="textbuffer1">

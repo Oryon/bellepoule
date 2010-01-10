@@ -52,6 +52,8 @@ class Splitting : public virtual Stage_c, public PlayersList
 
     static Stage_c *CreateInstance (StageClass *stage_class);
 
+    static gboolean PresentPlayerFilter (Player_c *player);
+
     ~Splitting ();
 };
 

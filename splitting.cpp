@@ -25,6 +25,7 @@
 #include <libxml/xpath.h>
 
 #include "contest.hpp"
+#include "player.hpp"
 #include "tournament.hpp"
 
 #include "splitting.hpp"
@@ -132,6 +133,26 @@ void Splitting::Display ()
 void Splitting::OnLocked ()
 {
   DisableSensitiveWidgets ();
+
+  {
+    GSList *result = CreateCustomList (PresentPlayerFilter);
+
+    if (result)
+    {
+      result = g_slist_sort_with_data (result,
+                                       (GCompareDataFunc) Player_c::Compare,
+                                       (void *) "rank");
+      SetResult (result);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Splitting::PresentPlayerFilter (Player_c *player)
+{
+  Attribute_c *attr = player->GetAttribute ("exported");
+
+  return ((gboolean) attr->GetValue () == FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -207,11 +228,21 @@ void Splitting::OnMove ()
 
       for (guint i = 0; i < g_slist_length (selected_players); i++)
       {
-        Player_c *player;
+        Player_c    *player;
+        Attribute_c *attr;
 
         player = (Player_c *) g_slist_nth_data (selected_players,
                                                 i);
-        contest->AddPlayer (player);
+        attr = player->GetAttribute ("exported");
+
+        if (attr && attr->GetValue () == FALSE)
+        {
+          player->SetAttributeValue ("exported",
+                                     TRUE);
+          Update (player);
+
+          contest->AddPlayer (player);
+        }
       }
 
       g_slist_free (selected_players);
