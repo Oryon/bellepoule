@@ -53,7 +53,16 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
 
   // Filter
   {
-    Filter *filter = new Filter (this);
+    GSList *attr_list;
+    Filter *filter;
+
+    AttributeDesc::CreateList (&attr_list,
+                               "ref",
+                               "attending",
+                               "exported",
+                               NULL);
+    filter = new Filter (attr_list,
+                         this);
 
     filter->ShowAttribute ("name");
 

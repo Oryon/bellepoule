@@ -27,22 +27,9 @@
                             guint  rights)
 : Module_c (glade_file)
 {
-  _rights = rights;
-
-  {
-    guint nb_attr        = Attribute_c::GetNbAttributes ();
-    GType types[nb_attr];
-
-    for (guint i = 0; i < nb_attr; i++)
-    {
-      types[i] = Attribute_c::GetNthAttributeType (i);
-    }
-
-    _store = gtk_list_store_newv (nb_attr,
-                                  types);
-  }
-
+  _rights      = rights;
   _player_list = NULL;
+  _store       = NULL;
 
   {
     _tree_view = _glade->GetWidget ("players_list");
@@ -54,12 +41,6 @@
 
     gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
                                  GTK_SELECTION_MULTIPLE);
-
-    gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
-                             GTK_TREE_MODEL (_store));
-
-    gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
-                                     Attribute_c::GetAttributeId ("name"));
   }
 }
 
@@ -68,6 +49,37 @@ PlayersList::~PlayersList ()
 {
   Wipe ();
   g_object_unref (_store);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::SetFilter (Filter *filter)
+{
+  Module_c::SetFilter (filter);
+
+  if (_filter)
+  {
+    GSList *attr_list    = _filter->GetAttrList ();
+    guint nb_attr        = g_slist_length (attr_list);
+    GType types[nb_attr];
+
+    for (guint i = 0; i < nb_attr; i++)
+    {
+      AttributeDesc *desc;
+
+      desc = (AttributeDesc *) g_slist_nth_data (attr_list,
+                                                 i);
+      types[i] = desc->_type;
+    }
+
+    _store = gtk_list_store_newv (nb_attr,
+                                  types);
+
+    gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
+                             GTK_TREE_MODEL (_store));
+
+    gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
+                                     _filter->GetAttributeId ("name"));
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -84,16 +96,24 @@ void PlayersList::Update (Player_c *player)
                            path);
   gtk_tree_path_free (path);
 
-  for (guint i = 0; i < Attribute_c::GetNbAttributes (); i++)
+  if (_filter)
   {
-    Attribute_c *attr;
+    GSList *attr_list = _filter->GetAttrList ();
 
-    attr = player->GetAttribute (Attribute_c::GetNthAttributeName (i));
-
-    if (attr)
+    for (guint i = 0; i < g_slist_length (attr_list); i++)
     {
-      gtk_list_store_set (_store, &iter,
-                          i, attr->GetValue (), -1);
+      AttributeDesc *desc;
+      Attribute_c   *attr;
+
+      desc = (AttributeDesc *) g_slist_nth_data (attr_list,
+                                                 i);
+      attr = player->GetAttribute (desc->_name);
+
+      if (attr)
+      {
+        gtk_list_store_set (_store, &iter,
+                            i, attr->GetValue (), -1);
+      }
     }
   }
 }
@@ -284,22 +304,20 @@ void PlayersList::OnAttrListUpdated ()
 
   if (_filter)
   {
-    GSList *selected_attr = _filter->GetSelectedAttr ();
+    GSList *selected_attr = _filter->GetSelectedAttrList ();
 
     if (selected_attr)
     {
       for (guint i = 0; i < g_slist_length (selected_attr); i++)
       {
-        gchar *attr_name;
-        GType  type;
+        AttributeDesc *desc;
 
-        attr_name = (gchar *) g_slist_nth_data (selected_attr,
-                                                i);
-        type = Attribute_c::GetAttributeType (attr_name);
+        desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
+                                                   i);
 
-        SetColumn (Attribute_c::GetAttributeId (attr_name),
-                   attr_name,
-                   type != G_TYPE_BOOLEAN,
+        SetColumn (_filter->GetAttributeId (desc->_name),
+                   desc->_name,
+                   desc->_type != G_TYPE_BOOLEAN,
                    -1);
       }
     }

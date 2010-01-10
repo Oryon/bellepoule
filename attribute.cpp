@@ -19,162 +19,138 @@
 
 #include "attribute.hpp"
 
-GSList *Attribute_c::_list = NULL;
+GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
-Attribute_c::Attribute_c (gchar *name)
+AttributeDesc::AttributeDesc (GType  type,
+                              gchar *name)
 {
-  if (name)
+  _type = type;
+  _name = name;
+}
+
+// --------------------------------------------------------------------------------
+AttributeDesc::~AttributeDesc ()
+{
+  for (guint i = 0; i < g_slist_length (_list); i++)
   {
-    _name = g_strdup (name);
+    AttributeDesc *attr_desc;
+
+    attr_desc = (AttributeDesc *) g_slist_nth_data (_list,
+                                                    i);
+    attr_desc->Release ();
   }
-  else
+  g_slist_free (_list);
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::Declare (GType  type,
+                             gchar *name)
+{
+  AttributeDesc *attr = new AttributeDesc (type,
+                                           name);
+
+  _list = g_slist_append (_list,
+                          attr);
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::CreateList (GSList **list, ...)
+{
+  va_list  ap;
+  gchar   *name;
+
+  *list = g_slist_copy (_list);
+  va_start (ap, list);
+  while (name = va_arg (ap, char *))
   {
-    name = NULL;
+    for (guint i = 0; i < g_slist_length (*list); i++)
+    {
+      AttributeDesc *desc;
+
+      desc = (AttributeDesc *) g_slist_nth_data (*list,
+                                                 i);
+      if (strcmp (name, desc->_name) == 0)
+      {
+        *list = g_slist_remove (*list,
+                                desc);
+        break;
+      }
+    }
+  }
+  va_end(ap);
+}
+
+// --------------------------------------------------------------------------------
+AttributeDesc *AttributeDesc::GetDesc (gchar *name)
+{
+  for (guint i = 0; i < g_slist_length (_list); i++)
+  {
+    AttributeDesc *attr_desc;
+
+    attr_desc = (AttributeDesc *) g_slist_nth_data (_list,
+                                                    i);
+    if (strcmp (attr_desc->_name, name) == 0)
+    {
+      return attr_desc;
+    }
+  }
+
+  return NULL;
+}
+
+
+
+
+// --------------------------------------------------------------------------------
+Attribute_c::Attribute_c (AttributeDesc *desc)
+{
+  _desc = desc;
+  if (_desc)
+  {
+    _desc->Retain ();
   }
 }
 
 // --------------------------------------------------------------------------------
 Attribute_c::~Attribute_c ()
 {
-  if (_name)
-  {
-    g_free (_name);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Attribute_c::Add (GType  type,
-                       gchar *name)
-{
-  Desc *desc = new (Desc);
-
-  desc->type = type;
-  desc->name = g_strdup (name);
-
-  _list = g_slist_append (_list,
-                          desc);
-}
-
-// --------------------------------------------------------------------------------
-Attribute_c::Desc *Attribute_c::GetDesc (gchar *name)
-{
-  if (_list)
-  {
-    for (guint i = 0; i < g_slist_length (_list); i++)
-    {
-      Desc *desc;
-
-      desc = (Desc *) g_slist_nth_data (_list, i);
-      if (strcmp (desc->name, name) == 0)
-      {
-        return desc;
-      }
-    }
-  }
-  return NULL;
+  Object_c::Release (_desc);
 }
 
 // --------------------------------------------------------------------------------
 Attribute_c *Attribute_c::New (gchar *name)
 {
-  Desc *desc = GetDesc (name);
+  AttributeDesc *desc = AttributeDesc::GetDesc (name);
 
   if (desc)
   {
-    if (desc->type == G_TYPE_STRING)
+    if (desc->_type == G_TYPE_STRING)
     {
-      return new TextAttribute_c (name);
+      return new TextAttribute_c (desc);
     }
-    else if (desc->type == G_TYPE_BOOLEAN)
+    else if (desc->_type == G_TYPE_BOOLEAN)
     {
-      return new BooleanAttribute_c (name);
+      return new BooleanAttribute_c (desc);
     }
-    else if (desc->type == G_TYPE_INT)
+    else if (desc->_type == G_TYPE_INT)
     {
-      return new IntAttribute_c (name);
+      return new IntAttribute_c (desc);
     }
   }
   return NULL;
-}
-
-// --------------------------------------------------------------------------------
-guint Attribute_c::GetNbAttributes ()
-{
-  if (_list)
-  {
-    return g_slist_length (_list);
-  }
-
-  return 0;
-}
-
-// --------------------------------------------------------------------------------
-gchar *Attribute_c::GetNthAttributeName (guint nth)
-{
-  if (_list)
-  {
-    Desc *desc = (Desc *) g_slist_nth_data (_list, nth);
-
-    return desc->name;
-  }
-
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
-GType Attribute_c::GetNthAttributeType (guint nth)
-{
-  if (_list)
-  {
-    Desc *desc = (Desc *) g_slist_nth_data (_list, nth);
-
-    return desc->type;
-  }
-
-  return G_TYPE_INT;
-}
-
-// --------------------------------------------------------------------------------
-GType Attribute_c::GetAttributeType (gchar *name)
-{
-  if (_list)
-  {
-    Desc *desc = GetDesc (name);
-
-    if (desc)
-    {
-      return desc->type;
-    }
-  }
-
-  return G_TYPE_INT;
-}
-
-// --------------------------------------------------------------------------------
-guint Attribute_c::GetAttributeId (gchar *name)
-{
-  if (_list)
-  {
-    for (guint i = 0; i < g_slist_length (_list); i++)
-    {
-      Desc *desc;
-
-      desc = (Desc *) g_slist_nth_data (_list, i);
-      if (strcmp (desc->name, name) == 0)
-      {
-        return i;
-      }
-    }
-  }
-
-  return 0xFFFFFFFF;
 }
 
 // --------------------------------------------------------------------------------
 gchar *Attribute_c::GetName ()
 {
-  return _name;
+  return _desc->_name;
+}
+
+// --------------------------------------------------------------------------------
+GType Attribute_c::GetType ()
+{
+  return _desc->_type;
 }
 
 // --------------------------------------------------------------------------------
@@ -189,8 +165,8 @@ gint Attribute_c::Compare (Attribute_c *a, Attribute_c *b)
 }
 
 // --------------------------------------------------------------------------------
-TextAttribute_c::TextAttribute_c (gchar *name)
-  : Attribute_c (name)
+TextAttribute_c::TextAttribute_c (AttributeDesc *desc)
+  : Attribute_c (desc)
 {
   _value = g_strdup ("??");
 }
@@ -248,8 +224,8 @@ gint TextAttribute_c::CompareWith (Attribute_c *with)
 }
 
 // --------------------------------------------------------------------------------
-BooleanAttribute_c::BooleanAttribute_c (gchar *name)
-  : Attribute_c (name)
+BooleanAttribute_c::BooleanAttribute_c (AttributeDesc *desc)
+  : Attribute_c (desc)
 {
   _value = false;
 }
@@ -304,8 +280,8 @@ gint BooleanAttribute_c::CompareWith (Attribute_c *with)
 }
 
 // --------------------------------------------------------------------------------
-IntAttribute_c::IntAttribute_c (gchar *name)
-  : Attribute_c (name)
+IntAttribute_c::IntAttribute_c (AttributeDesc *desc)
+  : Attribute_c (desc)
 {
   _value = 0;
 }

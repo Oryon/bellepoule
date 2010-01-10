@@ -101,14 +101,22 @@ guint Player_c::GetRef ()
 // --------------------------------------------------------------------------------
 void Player_c::Save (xmlTextWriter *xml_writer)
 {
+  GSList *attr_list;
+
+  AttributeDesc::CreateList (&attr_list,
+                             NULL);
+
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "player");
 
-  for (guint i = 0; i < Attribute_c::GetNbAttributes (); i++)
+  for (guint i = 0; i < g_slist_length (attr_list ); i++)
   {
-    Attribute_c *attr;
+    AttributeDesc *desc;
+    Attribute_c   *attr;
 
-    attr = GetAttribute (Attribute_c::GetNthAttributeName (i));
+    desc = (AttributeDesc *) g_slist_nth_data (attr_list,
+                                               i);
+    attr = GetAttribute (desc->_name);
     if (attr)
     {
       gchar *xml_image = attr->GetStringImage ();
@@ -120,19 +128,26 @@ void Player_c::Save (xmlTextWriter *xml_writer)
     }
   }
 
+  g_slist_free (attr_list);
+
   xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
 void Player_c::Load (xmlNode *xml_node)
 {
-  for (guint i = 0; i < Attribute_c::GetNbAttributes (); i++)
-  {
-    gchar *attr_name;
+  GSList *attr_list;
 
-    attr_name = Attribute_c::GetNthAttributeName (i);
-    SetAttributeValue (attr_name,
-                       (gchar *) xmlGetProp (xml_node, BAD_CAST attr_name));
+  AttributeDesc::CreateList (&attr_list,
+                             NULL);
+  for (guint i = 0; i < g_slist_length (attr_list ); i++)
+  {
+    AttributeDesc *desc;
+
+    desc = (AttributeDesc *) g_slist_nth_data (attr_list,
+                                               i);
+    SetAttributeValue (desc->_name,
+                       (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_name));
   }
 
   {
@@ -147,4 +162,6 @@ void Player_c::Load (xmlNode *xml_node)
       }
     }
   }
+
+  g_slist_free (attr_list);
 }

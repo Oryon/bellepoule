@@ -17,27 +17,37 @@
 #ifndef attribute_hpp
 #define attribute_hpp
 
+#include <stdarg.h>
 #include <gtk/gtk.h>
 
 #include "object.hpp"
 
 // --------------------------------------------------------------------------------
-class Attribute_c : public Object_c
+class AttributeDesc : public Object_c
 {
   public:
-    static void Add (GType  type,
-                     gchar *name);
+    GType  _type;
+    gchar *_name;
 
-    static guint GetNbAttributes ();
+    static void Declare (GType  type,
+                         gchar *name);
 
-    static gchar *GetNthAttributeName (guint nth);
+    static void CreateList (GSList **list, ...);
 
-    static GType GetNthAttributeType (guint nth);
+    static AttributeDesc *GetDesc (gchar *name);
 
-    static GType GetAttributeType (gchar *name);
+  private:
+    static GSList *_list;
 
-    static guint GetAttributeId (gchar *name);
+    AttributeDesc (GType  type,
+                   gchar *name);
 
+    ~AttributeDesc ();
+};
+
+// --------------------------------------------------------------------------------
+class Attribute_c : public Object_c
+{
   public:
     static Attribute_c *New (gchar *name);
 
@@ -45,6 +55,8 @@ class Attribute_c : public Object_c
 
   public:
     gchar *GetName ();
+
+    GType GetType ();
 
     virtual void SetValue (gchar *value) = 0;
 
@@ -59,29 +71,18 @@ class Attribute_c : public Object_c
     virtual gint CompareWith (Attribute_c *with) = 0;
 
   protected:
-    Attribute_c (gchar *name);
+    Attribute_c (AttributeDesc *desc);
     virtual ~Attribute_c ();
 
   private:
-    struct Desc
-    {
-      GType  type;
-      gchar *name;
-    };
-
-    static GSList *_list;
-
-    gchar *_name;
-
-    static Desc *GetDesc (gchar *name);
-
+    AttributeDesc *_desc;
 };
 
 // --------------------------------------------------------------------------------
 class TextAttribute_c : public Attribute_c
 {
   public:
-     TextAttribute_c (gchar *name);
+     TextAttribute_c (AttributeDesc *desc);
 
     void *GetValue ();
 
@@ -106,7 +107,7 @@ class TextAttribute_c : public Attribute_c
 class BooleanAttribute_c : public Attribute_c
 {
   public:
-     BooleanAttribute_c (gchar *name);
+     BooleanAttribute_c (AttributeDesc *desc);
 
     void *GetValue ();
 
@@ -130,7 +131,7 @@ class BooleanAttribute_c : public Attribute_c
 class IntAttribute_c : public Attribute_c
 {
   public:
-     IntAttribute_c (gchar *name);
+     IntAttribute_c (AttributeDesc *desc);
 
     void *GetValue ();
 

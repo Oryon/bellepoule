@@ -51,7 +51,16 @@ Table::Table (StageClass *stage_class)
   _max_score = 10;
 
   {
-    Filter *filter = new Filter (this);
+    GSList *attr_list;
+    Filter *filter;
+
+    AttributeDesc::CreateList (&attr_list,
+                               "ref",
+                               "attending",
+                               "exported",
+                               NULL);
+    filter = new Filter (attr_list,
+                         this);
 
     filter->ShowAttribute ("rank");
     filter->ShowAttribute ("name");
@@ -444,17 +453,17 @@ gboolean Table::FillInNode (GNode *node,
 
         if (table->_filter)
         {
-          selected_attr = table->_filter->GetSelectedAttr ();
+          selected_attr = table->_filter->GetSelectedAttrList ();
         }
 
         for (guint a = 0; a < g_slist_length (selected_attr); a++)
         {
-          gchar       *attr_name;
-          Attribute_c *attr;
+          AttributeDesc *attr_desc;
+          Attribute_c   *attr;
 
-          attr_name = (gchar *) g_slist_nth_data (selected_attr,
-                                                  a);
-          attr = winner->GetAttribute (attr_name);
+          attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
+                                                          a);
+          attr = winner->GetAttribute (attr_desc->_name);
 
           if (attr)
           {
@@ -722,7 +731,10 @@ gboolean Table::SaveNode (GNode *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  data->_match->Save (table->_xml_writer);
+  if (data->_match)
+  {
+    data->_match->Save (table->_xml_writer);
+  }
 
   return FALSE;
 }

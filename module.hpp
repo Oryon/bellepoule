@@ -41,7 +41,7 @@ class Module_c : public virtual Object_c
 
     GtkWidget *GetWidget (gchar *name);
 
-    void SetFilter (Filter *filter);
+    virtual void SetFilter (Filter *filter);
 
     virtual void Print () {};
 

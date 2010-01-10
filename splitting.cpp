@@ -46,8 +46,17 @@ Splitting::Splitting (StageClass *stage_class)
   }
 
   {
-    Filter *filter = new Filter (this);
+    GSList *attr_list;
+    Filter *filter;
 
+    AttributeDesc::CreateList (&attr_list,
+                               "ref",
+                               "attending",
+                               NULL);
+    filter = new Filter (attr_list,
+                         this);
+
+    filter->ShowAttribute ("exported");
     filter->ShowAttribute ("rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");

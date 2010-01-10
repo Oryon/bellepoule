@@ -28,7 +28,16 @@ Classification::Classification ()
 {
   // Player attributes to display
   {
-    Filter *filter = new Filter (this);
+    GSList *attr_list;
+    Filter *filter;
+
+    AttributeDesc::CreateList (&attr_list,
+                               "ref",
+                               "attending",
+                               "exported",
+                               NULL);
+    filter = new Filter (attr_list,
+                         this);
 
     filter->ShowAttribute ("rank");
     filter->ShowAttribute ("name");

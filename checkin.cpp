@@ -40,7 +40,15 @@ Checkin::Checkin (StageClass *stage_class)
 
   // Player attributes to display
   {
-    Filter *filter = new Filter (this);
+    GSList *attr_list;
+    Filter *filter;
+
+    AttributeDesc::CreateList (&attr_list,
+                               "ref",
+                               "exported",
+                               NULL);
+    filter = new Filter (attr_list,
+                         this);
 
     filter->ShowAttribute ("attending");
     filter->ShowAttribute ("rating");

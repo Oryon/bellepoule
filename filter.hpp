@@ -26,7 +26,10 @@ class Module_c;
 class Filter : public virtual Object_c
 {
   public:
-    Filter (Module_c *owner);
+    Filter (GSList   *attr_list,
+            Module_c *owner);
+
+    void SetAttributeList (GSList *list);
 
     void ShowAttribute (gchar *name);
 
@@ -34,7 +37,12 @@ class Filter : public virtual Object_c
 
     void SelectAttributes ();
 
-    GSList *GetSelectedAttr ();
+    GSList *GetAttrList ();
+
+    GSList *GetSelectedAttrList ();
+
+    guint GetAttributeId (gchar *name);
+
 
   private:
     typedef enum
@@ -45,6 +53,7 @@ class Filter : public virtual Object_c
     } StoreColumn;
 
     Module_c     *_owner;
+    GSList       *_attr_list;
     GSList       *_selected_attr;
     GtkTreeModel *_attr_filter_store;
     GtkWidget    *_filter_window;

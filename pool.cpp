@@ -241,7 +241,7 @@ void Pool_c::OnPlugged ()
 
       if (_filter)
       {
-        selected_attr = _filter->GetSelectedAttr ();
+        selected_attr = _filter->GetSelectedAttrList ();
       }
 
       // Border
@@ -349,12 +349,12 @@ void Pool_c::OnPlugged ()
 
         for (guint a = 0; a < g_slist_length (selected_attr); a++)
         {
-          gchar       *attr_name;
-          Attribute_c *attr;
+          AttributeDesc *attr_desc;
+          Attribute_c   *attr;
 
-          attr_name = (gchar *) g_slist_nth_data (selected_attr,
-                                                  a);
-          attr = player->GetAttribute (attr_name);
+          attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
+                                                          a);
+          attr = player->GetAttribute (attr_desc->_name);
 
           if (attr)
           {
@@ -388,12 +388,12 @@ void Pool_c::OnPlugged ()
 
         for (guint a = 0; a < g_slist_length (selected_attr); a++)
         {
-          gchar       *attr_name;
-          Attribute_c *attr;
+          AttributeDesc *attr_desc;
+          Attribute_c   *attr;
 
-          attr_name = (gchar *) g_slist_nth_data (selected_attr,
-                                                  a);
-          attr = player->GetAttribute (attr_name);
+          attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
+                                                          a);
+          attr = player->GetAttribute (attr_desc->_name);
 
           if (attr)
           {

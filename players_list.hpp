@@ -55,6 +55,8 @@ class PlayersList : public Module_c
 
     GSList *GetSelectedPlayers ();
 
+    void SetFilter (Filter *filter);
+
   private:
     GtkWidget    *_tree_view;
     GtkListStore *_store;

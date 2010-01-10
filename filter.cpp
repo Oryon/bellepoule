@@ -23,10 +23,12 @@
 #include "filter.hpp"
 
 // --------------------------------------------------------------------------------
-Filter::Filter (Module_c *owner)
+Filter::Filter (GSList   *attr_list,
+                Module_c *owner)
 {
   _filter_window = NULL;
   _selected_attr = NULL;
+  _attr_list     = attr_list;
   _owner         = owner;
 
   {
@@ -35,11 +37,15 @@ Filter::Filter (Module_c *owner)
 
     store = gtk_list_store_new (NUM_COLS, G_TYPE_UINT, G_TYPE_STRING);
 
-    for (guint i = 0; i < Attribute_c::GetNbAttributes (); i++)
+    for (guint i = 0; i < g_slist_length (_attr_list); i++)
     {
+      AttributeDesc *desc;
+
+      desc = (AttributeDesc *) g_slist_nth_data (_attr_list,
+                                                 i);
       gtk_list_store_append (store, &iter);
       gtk_list_store_set (store, &iter,
-                          ATTR_NAME, Attribute_c::GetNthAttributeName (i),
+                          ATTR_NAME, desc->_name,
                           ATTR_VISIBILITY, FALSE,
                           -1);
     }
@@ -59,21 +65,48 @@ Filter::~Filter ()
     gtk_object_destroy (GTK_OBJECT (_filter_window));
   }
 
-  if (_selected_attr)
-  {
-    g_slist_foreach (_selected_attr,
-                     (GFunc) g_free,
-                     NULL);
-    g_slist_free (_selected_attr);
-  }
+  g_slist_free (_selected_attr);
+
+  g_slist_free (_attr_list);
 
   g_object_unref (_attr_filter_store);
 }
 
 // --------------------------------------------------------------------------------
-GSList *Filter::GetSelectedAttr ()
+guint Filter::GetAttributeId (gchar *name)
+{
+  if (_attr_list)
+  {
+    for (guint i = 0; i < g_slist_length (_attr_list); i++)
+    {
+      AttributeDesc *desc;
+
+      desc = (AttributeDesc *) g_slist_nth_data (_attr_list, i);
+      if (strcmp (desc->_name, name) == 0)
+      {
+        return i;
+      }
+    }
+  }
+
+  return 0xFFFFFFFF;
+}
+
+// --------------------------------------------------------------------------------
+GSList *Filter::GetAttrList ()
+{
+  return _attr_list;
+}
+
+// --------------------------------------------------------------------------------
+GSList *Filter::GetSelectedAttrList ()
 {
   return _selected_attr;
+}
+
+// --------------------------------------------------------------------------------
+void Filter::SetAttributeList (GSList *list)
+{
 }
 
 // --------------------------------------------------------------------------------
@@ -116,7 +149,7 @@ void Filter::ShowAttribute (gchar *name)
                                   sibling);
 
       _selected_attr = g_slist_append (_selected_attr,
-                                       g_strdup (current_name));
+                                       AttributeDesc::GetDesc (current_name));
       break;
     }
 
@@ -185,14 +218,8 @@ void Filter::SelectAttributes ()
 // --------------------------------------------------------------------------------
 void Filter::UpdateAttrList ()
 {
-  if (_selected_attr)
-  {
-    g_slist_foreach (_selected_attr,
-                     (GFunc) g_free,
-                     NULL);
-    g_slist_free (_selected_attr);
-    _selected_attr = NULL;
-  }
+  g_slist_free (_selected_attr);
+  _selected_attr = NULL;
 
   {
     GtkTreeIter iter;
@@ -215,7 +242,7 @@ void Filter::UpdateAttrList ()
       if (current_visibility == true)
       {
         _selected_attr = g_slist_append (_selected_attr,
-                                         current_name);
+                                         AttributeDesc::GetDesc (current_name));
       }
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_attr_filter_store),
