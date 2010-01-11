@@ -73,12 +73,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToggleToolButton" id="classification_toggletoolbutton">
+                  <object class="GtkToggleToolButton" id="pool_classification_toggletoolbutton">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Classification</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-justify-fill</property>
-                    <signal name="toggled" handler="on_classification_toggletoolbutton_toggled"/>
+                    <signal name="toggled" handler="on_pool_classification_toggletoolbutton_toggled"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -237,16 +237,16 @@
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup">
     <widgets>
-      <widget name="label3"/>
-      <widget name="label2"/>
       <widget name="label4"/>
+      <widget name="label2"/>
+      <widget name="label3"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="qualified_fencer_spinbutton"/>
-      <widget name="max_score_entry"/>
       <widget name="name_entry"/>
+      <widget name="max_score_entry"/>
+      <widget name="qualified_fencer_spinbutton"/>
     </widgets>
   </object>
   <object class="GtkAdjustment" id="qualified_adjustment">

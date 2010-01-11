@@ -43,8 +43,9 @@ Table::Table (StageClass *stage_class)
 : Stage_c (stage_class),
   CanvasModule_c ("table.glade")
 {
-  _main_table = NULL;
-  _tree_root  = NULL;
+  _main_table   = NULL;
+  _tree_root    = NULL;
+  _level_status = NULL;
 
   _score_collector = NULL;
 
@@ -80,6 +81,8 @@ Table::~Table ()
 
   DeleteTree ();
   Object_c::Release (_score_collector);
+
+  free (_level_status);
 }
 
 // --------------------------------------------------------------------------------
@@ -98,8 +101,53 @@ Stage_c *Table::CreateInstance (StageClass *stage_class)
 }
 
 // --------------------------------------------------------------------------------
+void Table::RefreshLevelStatus ()
+{
+  for (guint i = 0; i < _nb_levels; i ++)
+  {
+    _level_status[i]._is_over   = TRUE;
+    _level_status[i]._has_error = FALSE;
+    if (_level_status[i]._status_item)
+    {
+      goo_canvas_item_remove (_level_status[i]._status_item);
+      _level_status[i]._status_item = NULL;
+    }
+  }
+
+  g_node_traverse (_tree_root,
+                   G_POST_ORDER,
+                   G_TRAVERSE_ALL,
+                   _nb_level_to_display - 1,
+                   (GNodeTraverseFunc) UpdateLevelStatus,
+                   this);
+
+  for (guint i = 0; i < _nb_levels - 1; i ++)
+  {
+    if (_level_status[i]._has_error)
+    {
+      _level_status[i]._status_item = PutStockIconInTable (_level_status[i]._level_header,
+                                                           GTK_STOCK_DIALOG_WARNING,
+                                                           0, 0);
+    }
+    else if (_level_status[i]._is_over == TRUE)
+    {
+      _level_status[i]._status_item = PutStockIconInTable (_level_status[i]._level_header,
+                                                           GTK_STOCK_APPLY,
+                                                           0, 0);
+    }
+    else
+    {
+      _level_status[i]._status_item = PutStockIconInTable (_level_status[i]._level_header,
+                                                           GTK_STOCK_EXECUTE,
+                                                           0, 0);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Table::Display ()
 {
+  ToggleClassification (FALSE);
   Wipe ();
 
   {
@@ -109,22 +157,29 @@ void Table::Display ()
                                         NULL);
 
     // Header
-    for (gint l = _nb_level_to_display; l > 0; l--)
+    for (guint l = _nb_level_to_display; l > 0; l--)
     {
-      GooCanvasItem *level_header;
 
-      level_header = goo_canvas_table_new (_main_table,
-                                           NULL);
-
-      PutStockIconInTable (level_header,
-                           GTK_STOCK_APPLY,
-                           0, 0);
-
+      _level_status[l-1]._level_header = goo_canvas_table_new (_main_table,
+                                                               NULL);
       {
         GooCanvasItem *text_item;
-        gchar         *text = g_strdup_printf ("Tableau de %d", 1 << (_nb_level_to_display - l));
+        gchar         *text;
 
-        text_item = PutTextInTable (level_header,
+        if (l == _nb_level_to_display)
+        {
+          text = g_strdup_printf ("Final");
+        }
+        else if (l == _nb_level_to_display - 1)
+        {
+          text = g_strdup_printf ("Semi-final");
+        }
+        else
+        {
+          text = g_strdup_printf ("Tableau de %d", 1 << (_nb_level_to_display - l));
+        }
+
+        text_item = PutTextInTable (_level_status[l-1]._level_header,
                                     text,
                                     0,
                                     1);
@@ -135,10 +190,10 @@ void Table::Display ()
       }
 
       PutInTable (_main_table,
-                  level_header,
+                  _level_status[l-1]._level_header,
                   0,
                   l);
-      SetTableItemAttribute (level_header, "x-align", 0.5);
+      SetTableItemAttribute (_level_status[l-1]._level_header, "x-align", 0.5);
     }
 
     g_node_traverse (_tree_root,
@@ -148,6 +203,7 @@ void Table::Display ()
                      (GNodeTraverseFunc) FillInNode,
                      this);
 
+    RefreshLevelStatus ();
     DrawAllConnectors ();
   }
 }
@@ -226,6 +282,7 @@ void Table::OnNewScore (CanvasModule_c *client,
                 table);
   }
 
+  table->RefreshLevelStatus ();
   table->DrawAllConnectors ();
 }
 
@@ -268,6 +325,9 @@ void Table::CreateTree ()
 
   _nb_levels++;
   _nb_level_to_display = _nb_levels;
+
+  free (_level_status);
+  _level_status = (LevelStatus *) calloc (_nb_levels, sizeof (LevelStatus));
 
   DeleteTree ();
   AddFork (NULL);
@@ -342,6 +402,37 @@ gboolean Table::DeleteCanvasTable (GNode *node,
 
   table->WipeItem (data->_canvas_table);
   data->_canvas_table = NULL;
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Table::UpdateLevelStatus (GNode *node,
+                                   Table *table)
+{
+  NodeData *data = (NodeData *) node->data;
+
+  if (data->_match)
+  {
+    Player_c *winner = data->_match->GetWinner ();
+
+    if (winner == NULL)
+    {
+      Player_c *A       = data->_match->GetPlayerA ();
+      Player_c *B       = data->_match->GetPlayerB ();
+      Score_c  *score_A = data->_match->GetScore (A);
+      Score_c  *score_B = data->_match->GetScore (B);
+
+      if (   (score_A->IsValid () == FALSE)
+          || (score_B->IsValid () == FALSE)
+          || (score_A->IsConsistentWith (score_B) == FALSE))
+      {
+        table->_level_status[data->_level-2]._has_error = TRUE;
+      }
+
+      table->_level_status[data->_level-2]._is_over = FALSE;
+    }
+  }
 
   return FALSE;
 }
@@ -691,35 +782,38 @@ gboolean Table::LoadNode (GNode *node,
       Player_c *player;
       NodeData *data    = (NodeData *) node->data;
 
-      attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "player_A");
-      if (attr)
+      if (data->_match)
       {
-        player = table->GetPlayerFromRef (atoi (attr));
-        data->_match->SetPlayerA (player);
-
-        attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_A");
+        attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "player_A");
         if (attr)
         {
-          data->_match->SetScore (player, atoi (attr));
+          player = table->GetPlayerFromRef (atoi (attr));
+          data->_match->SetPlayerA (player);
+
+          attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_A");
+          if (attr)
+          {
+            data->_match->SetScore (player, atoi (attr));
+          }
         }
-      }
 
-      attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "player_B");
-      if (attr)
-      {
-        player = table->GetPlayerFromRef (atoi (attr));
-        data->_match->SetPlayerB (player);
-
-        attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_B");
+        attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "player_B");
         if (attr)
         {
-          data->_match->SetScore (player, atoi (attr));
+          player = table->GetPlayerFromRef (atoi (attr));
+          data->_match->SetPlayerB (player);
+
+          attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_B");
+          if (attr)
+          {
+            data->_match->SetScore (player, atoi (attr));
+          }
         }
+
+        if (table->_xml_node) table->_xml_node = table->_xml_node->next;
+        if (table->_xml_node) table->_xml_node = table->_xml_node->next;
       }
     }
-
-    if (table->_xml_node) table->_xml_node = table->_xml_node->next;
-    if (table->_xml_node) table->_xml_node = table->_xml_node->next;
   }
 
   return FALSE;
@@ -776,12 +870,20 @@ extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *wi
 void Table::OnLocked ()
 {
   DisableSensitiveWidgets ();
+  gtk_widget_set_sensitive (_glade->GetWidget ("table_classification_toggletoolbutton"),
+                            TRUE);
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")),
+                                     FALSE);
 }
 
 // --------------------------------------------------------------------------------
 void Table::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")),
+                                     FALSE);
+  gtk_widget_set_sensitive (_glade->GetWidget ("table_classification_toggletoolbutton"),
+                            FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -854,4 +956,13 @@ extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widge
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnFromTableComboboxChanged ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled (GtkWidget *widget,
+                                                                                  Object_c  *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
 }

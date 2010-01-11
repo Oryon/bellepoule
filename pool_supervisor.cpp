@@ -173,9 +173,9 @@ void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
 void PoolSupervisor_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
-  gtk_widget_set_sensitive (_glade->GetWidget ("classification_toggletoolbutton"),
+  gtk_widget_set_sensitive (_glade->GetWidget ("pool_classification_toggletoolbutton"),
                             TRUE);
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton")),
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton")),
                                      FALSE);
 
   {
@@ -208,9 +208,9 @@ void PoolSupervisor_c::OnLocked ()
 void PoolSupervisor_c::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton")),
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton")),
                                      FALSE);
-  gtk_widget_set_sensitive (_glade->GetWidget ("classification_toggletoolbutton"),
+  gtk_widget_set_sensitive (_glade->GetWidget ("pool_classification_toggletoolbutton"),
                             FALSE);
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
@@ -362,7 +362,7 @@ extern "C" G_MODULE_EXPORT void on_print_pool_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 {
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton"))))
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
   {
     Classification *classification = GetClassification ();
 
@@ -478,7 +478,7 @@ void PoolSupervisor_c::OnAttrListUpdated ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnFilterClicked ()
 {
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("classification_toggletoolbutton"))))
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
   {
     Classification *classification = GetClassification ();
 
@@ -513,8 +513,8 @@ extern "C" G_MODULE_EXPORT void on_pool_combobox_changed (GtkWidget *widget,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_classification_toggletoolbutton_toggled (GtkWidget *widget,
-                                                                            Object_c  *owner)
+extern "C" G_MODULE_EXPORT void on_pool_classification_toggletoolbutton_toggled (GtkWidget *widget,
+                                                                                 Object_c  *owner)
 {
   PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
 

@@ -44,6 +44,14 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void Wipe ();
 
   private:
+    struct LevelStatus
+    {
+      gboolean       _has_error;
+      guint          _is_over;
+      GooCanvasItem *_status_item;
+      GooCanvasItem *_level_header;
+    };
+
     struct NodeData
     {
       guint          _expected_winner_rank;
@@ -67,6 +75,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     ScoreCollector *_score_collector;
     xmlTextWriter  *_xml_writer;
     xmlNode        *_xml_node;
+    LevelStatus    *_level_status;
 
     void Display ();
 
@@ -79,6 +88,9 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void OnAttrListUpdated ();
 
     void DrawAllConnectors ();
+
+    static gboolean UpdateLevelStatus (GNode *node,
+                                       Table *table);
 
     static gboolean DrawConnector (GNode *node,
                                    Table *table);
@@ -116,6 +128,8 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void FillInConfig ();
 
     void ApplyConfig ();
+
+    void RefreshLevelStatus ();
 
     ~Table ();
 };
