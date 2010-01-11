@@ -89,6 +89,8 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     void DrawAllConnectors ();
 
+    gboolean IsOver ();
+
     static gboolean UpdateLevelStatus (GNode *node,
                                        Table *table);
 

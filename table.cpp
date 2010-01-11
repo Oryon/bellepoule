@@ -146,6 +146,7 @@ void Table::RefreshLevelStatus ()
       }
     }
   }
+  SignalStatusUpdate ();
 }
 
 // --------------------------------------------------------------------------------
@@ -215,6 +216,19 @@ void Table::Display ()
     RefreshLevelStatus ();
     DrawAllConnectors ();
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Table::IsOver ()
+{
+  NodeData *root_data = (NodeData *) _tree_root->data;
+
+  if (root_data->_match)
+  {
+    return (root_data->_match->GetWinner () != NULL);
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
