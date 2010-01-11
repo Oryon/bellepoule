@@ -121,25 +121,29 @@ void Table::RefreshLevelStatus ()
                    (GNodeTraverseFunc) UpdateLevelStatus,
                    this);
 
-  for (guint i = 0; i < _nb_levels - 1; i ++)
   {
-    if (_level_status[i]._has_error)
+    guint nb_missing_level = _nb_levels - _nb_level_to_display;
+
+    for (guint i = nb_missing_level; i < _nb_levels - 1; i ++)
     {
-      _level_status[i]._status_item = PutStockIconInTable (_level_status[i]._level_header,
-                                                           GTK_STOCK_DIALOG_WARNING,
-                                                           0, 0);
-    }
-    else if (_level_status[i]._is_over == TRUE)
-    {
-      _level_status[i]._status_item = PutStockIconInTable (_level_status[i]._level_header,
-                                                           GTK_STOCK_APPLY,
-                                                           0, 0);
-    }
-    else
-    {
-      _level_status[i]._status_item = PutStockIconInTable (_level_status[i]._level_header,
-                                                           GTK_STOCK_EXECUTE,
-                                                           0, 0);
+      if (_level_status[i]._has_error)
+      {
+        _level_status[i]._status_item = PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
+                                                             GTK_STOCK_DIALOG_WARNING,
+                                                             0, 0);
+      }
+      else if (_level_status[i]._is_over == TRUE)
+      {
+        _level_status[i]._status_item = PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
+                                                             GTK_STOCK_APPLY,
+                                                             0, 0);
+      }
+      else
+      {
+        _level_status[i]._status_item = PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
+                                                             GTK_STOCK_EXECUTE,
+                                                             0, 0);
+      }
     }
   }
 }
@@ -151,6 +155,8 @@ void Table::Display ()
   Wipe ();
 
   {
+    guint nb_missing_level = _nb_levels - _nb_level_to_display;
+
     _main_table = goo_canvas_table_new (GetRootItem (),
                                         "row-spacing",    10.0,
                                         "column-spacing", _level_spacing,
@@ -159,7 +165,6 @@ void Table::Display ()
     // Header
     for (guint l = _nb_level_to_display; l > 0; l--)
     {
-
       _level_status[l-1]._level_header = goo_canvas_table_new (_main_table,
                                                                NULL);
       {
@@ -168,9 +173,13 @@ void Table::Display ()
 
         if (l == _nb_level_to_display)
         {
-          text = g_strdup_printf ("Final");
+          text = g_strdup_printf ("");
         }
         else if (l == _nb_level_to_display - 1)
+        {
+          text = g_strdup_printf ("Final");
+        }
+        else if (l == _nb_level_to_display - 2)
         {
           text = g_strdup_printf ("Semi-final");
         }
