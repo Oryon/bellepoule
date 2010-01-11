@@ -76,6 +76,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     xmlTextWriter  *_xml_writer;
     xmlNode        *_xml_node;
     LevelStatus    *_level_status;
+    GSList         *_result_list;
 
     void Display ();
 
@@ -90,6 +91,9 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void DrawAllConnectors ();
 
     gboolean IsOver ();
+
+    static gboolean AddToClassification (GNode *node,
+                                         Table *table);
 
     static gboolean UpdateLevelStatus (GNode *node,
                                        Table *table);

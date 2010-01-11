@@ -174,7 +174,7 @@ void Table::Display ()
 
         if (l == _nb_level_to_display)
         {
-          text = g_strdup_printf ("");
+          text = g_strdup_printf ("Winner");
         }
         else if (l == _nb_level_to_display - 1)
         {
@@ -897,6 +897,19 @@ void Table::OnLocked ()
                             TRUE);
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")),
                                      FALSE);
+
+  {
+    _result_list = NULL;
+
+    g_node_traverse (_tree_root,
+                     G_LEVEL_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) AddToClassification,
+                     this);
+
+    SetResult (_result_list);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -907,6 +920,27 @@ void Table::OnUnLocked ()
                                      FALSE);
   gtk_widget_set_sensitive (_glade->GetWidget ("table_classification_toggletoolbutton"),
                             FALSE);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Table::AddToClassification (GNode *node,
+                                     Table *table)
+{
+  NodeData *data = (NodeData *) node->data;
+
+  if (data->_match)
+  {
+    Player_c *winner = data->_match->GetWinner ();
+
+    if (g_slist_find (table->_result_list,
+                      winner) == NULL)
+    {
+      table->_result_list = g_slist_append (table->_result_list,
+                                            winner);
+    }
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
