@@ -148,12 +148,21 @@ void Schedule_c::CreateDefault ()
     {
       AddStage (stage);
     }
+
+    stage = Stage_c::CreateInstance ("general_classification_stage");
+    if (stage)
+    {
+      AddStage (stage);
+    }
   }
 }
 
 // --------------------------------------------------------------------------------
 void Schedule_c::DisplayList ()
 {
+  gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("add_stage_toolbutton")),
+                            TRUE);
+
   if (_stage_list)
   {
     GtkTreeIter iter;
@@ -168,8 +177,7 @@ void Schedule_c::DisplayList ()
       gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                           &iter,
                           STAGE_COLUMN, &current_stage, -1);
-      if (   current_stage->Locked ()
-          || (current_stage->GetRights () & Stage_c::MANDATORY))
+      if (current_stage->Locked ())
       {
         gtk_list_store_set (_list_store, &iter,
                             LOCK_COLUMN, GTK_STOCK_DIALOG_AUTHENTICATION,
@@ -243,8 +251,38 @@ Module_c *Schedule_c::GetSelectedModule  ()
 }
 
 // --------------------------------------------------------------------------------
+void Schedule_c::AddStage (Stage_c *stage)
+{
+  Stage_c *last_stage = NULL;
+
+  if (_stage_list)
+  {
+    last_stage = (Stage_c *) (g_list_last (_stage_list)->data);
+  }
+
+  AddStage (stage,
+            last_stage);
+
+  {
+    Stage_c *input_provider = stage->GetInputProvider ();
+
+    if (input_provider)
+    {
+      if (input_provider && (last_stage != input_provider))
+      {
+        AddStage (input_provider,
+                  last_stage);
+      }
+
+      stage->SetData (this, "attached_stage",
+                      input_provider);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Schedule_c::AddStage (Stage_c *stage,
-                           gint     index)
+                           Stage_c *after)
 {
   if ((stage == NULL) || g_list_find (_stage_list, stage))
   {
@@ -252,40 +290,69 @@ void Schedule_c::AddStage (Stage_c *stage,
   }
   else
   {
-    Stage_c *previous = NULL;
-
-    if (_stage_list)
+    // Insert it in the global list
     {
-      previous = (Stage_c *) (g_list_last (_stage_list)->data);
+      Stage_c *next = NULL;
+
+      if (_stage_list == NULL)
+      {
+        _stage_list = g_list_append (_stage_list,
+                                     stage);
+      }
+      else
+      {
+        guint index;
+
+        if (after == NULL)
+        {
+          after = (Stage_c *) g_list_nth_data (_stage_list,
+                                               0);
+        }
+
+        index = g_list_index (_stage_list,
+                              after) + 1;
+        next = (Stage_c *) g_list_nth_data (_stage_list,
+                                            index);
+        _stage_list = g_list_insert (_stage_list,
+                                     stage,
+                                     index);
+      }
+
+      stage->SetPrevious (after);
+      if (next)
+      {
+        next->SetPrevious (stage);
+      }
     }
 
+    // Insert it in the formula list
     if (stage->GetRights () & Stage_c::EDITABLE)
     {
       GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
       GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
       GtkTreeIter       iter;
 
-      if (gtk_tree_selection_get_selected (selection,
-                                           NULL,
-                                           &iter))
+      if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_list_store),
+                                         &iter) == TRUE)
       {
-        gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
-                            &iter,
-                            STAGE_COLUMN, &previous,
-                            -1);
-
-        if (index == -1)
+        do
         {
-          index = g_list_index (_stage_list,
-                                previous) + 1;
-        }
+          Stage_c *current_stage;
 
-        gtk_list_store_insert_after (_list_store,
-                                     &iter,
-                                     &iter);
+          gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
+                              &iter,
+                              STAGE_COLUMN, &current_stage,
+                              -1);
 
-        gtk_tree_selection_select_iter (selection,
-                                        &iter);
+          if (current_stage == after)
+          {
+            gtk_list_store_insert_after (_list_store,
+                                         &iter,
+                                         &iter);
+            break;
+          }
+        } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store),
+                                           &iter) == TRUE);
       }
       else
       {
@@ -293,32 +360,11 @@ void Schedule_c::AddStage (Stage_c *stage,
                                &iter);
       }
 
+      gtk_tree_selection_select_iter (selection,
+                                      &iter);
       gtk_list_store_set (_list_store, &iter,
                           NAME_COLUMN, stage->GetClassName (),
                           STAGE_COLUMN, stage, -1);
-    }
-
-    stage->SetPrevious (previous);
-
-    _stage_list = g_list_insert (_stage_list,
-                                 stage,
-                                 index);
-
-    {
-      Stage_c *input_provider = stage->GetInputProvider ();
-
-      stage->SetData (this, "attached_stage",
-                      input_provider);
-
-      if (   input_provider
-          && (g_list_find (_stage_list, input_provider) == NULL))
-      {
-        AddStage (input_provider,
-                  index);
-        input_provider->SetPrevious (previous);
-        previous = input_provider;
-        stage->SetPrevious (previous);
-      }
     }
 
     RefreshSensitivity ();
@@ -505,11 +551,13 @@ void Schedule_c::Load (xmlDoc *doc)
     for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
     {
       stage = Stage_c::CreateInstance (xml_nodeset->nodeTab[i]);
+
       if (stage)
       {
         gchar *attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[i],
                                             BAD_CAST "name");
         stage->SetName (attr);
+
         AddStage (stage);
 
         if (i <= current_stage_index)
@@ -631,8 +679,42 @@ gboolean Schedule_c::on_new_stage_selected (GtkWidget      *widget,
   gchar *class_name = (gchar *) g_object_get_data (G_OBJECT (widget),
                                                    "Schedule_c::class_name");
   Stage_c *stage = Stage_c::CreateInstance (class_name);
+  Stage_c *after = NULL;
 
-  owner->AddStage (stage);
+  {
+    GtkWidget        *treeview  = owner->_glade->GetWidget ("formula_treeview");
+    GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
+    GtkTreeIter       iter;
+
+    if (gtk_tree_selection_get_selected (selection,
+                                         NULL,
+                                         &iter))
+    {
+      gtk_tree_model_get (GTK_TREE_MODEL (owner->_list_store),
+                          &iter,
+                          STAGE_COLUMN, &after,
+                          -1);
+    }
+  }
+  owner->AddStage (stage,
+                   after);
+
+  {
+    Stage_c *input_provider = stage->GetInputProvider ();
+
+    if (input_provider)
+    {
+      if (input_provider && (after != input_provider))
+      {
+        owner->AddStage (input_provider,
+                         after);
+      }
+
+      stage->SetData (owner, "attached_stage",
+                      input_provider);
+    }
+  }
+
   stage->FillInConfig ();
   owner->on_stage_selected ();
   return FALSE;
@@ -685,8 +767,7 @@ void Schedule_c::on_stage_selected ()
       gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("remove_stage_toolbutton")),
                                 TRUE);
 
-      if (   stage->Locked ()
-          || (stage->GetRights () & Stage_c::MANDATORY))
+      if (stage->Locked ())
       {
         GList *list = g_list_find (_stage_list, stage);
         GList *next = g_list_next (list);
@@ -710,7 +791,7 @@ void Schedule_c::on_stage_selected ()
     else
     {
       gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("add_stage_toolbutton")),
-                                FALSE);
+                                TRUE);
       gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("remove_stage_toolbutton")),
                                 FALSE);
     }

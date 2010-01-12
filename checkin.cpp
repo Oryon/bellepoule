@@ -75,7 +75,7 @@ void Checkin::Init ()
   RegisterStageClass (_class_name,
                       _xml_class_name,
                       CreateInstance,
-                      MANDATORY | EDITABLE);
+                      0);
 }
 
 // --------------------------------------------------------------------------------

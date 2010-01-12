@@ -34,7 +34,7 @@ class Schedule_c : public Module_c
     void CreateDefault ();
 
     void AddStage    (Stage_c *stage,
-                      gint     index = -1);
+                      Stage_c *after);
     void RemoveStage (Stage_c *stage);
 
     void Save          (xmlTextWriter *xml_writer);
@@ -59,6 +59,8 @@ class Schedule_c : public Module_c
     Module_c *GetSelectedModule  ();
 
     gint GetNotebookPageNum (Stage_c *stage);
+
+    void AddStage (Stage_c *stage);
 
     static void OnStageStatusUpdated (Stage_c    *stage,
                                       Schedule_c *schedule);

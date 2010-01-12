@@ -75,6 +75,8 @@
 		<Unit filename="contest.hpp" />
 		<Unit filename="filter.cpp" />
 		<Unit filename="filter.hpp" />
+		<Unit filename="general_classification.cpp" />
+		<Unit filename="general_classification.hpp" />
 		<Unit filename="glade.cpp" />
 		<Unit filename="glade.hpp" />
 		<Unit filename="main.cpp" />

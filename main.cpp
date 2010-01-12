@@ -27,6 +27,7 @@
 #include "splitting.hpp"
 #include "tournament.hpp"
 #include "attribute.hpp"
+#include "general_classification.hpp"
 #include "glade.hpp"
 
 // --------------------------------------------------------------------------------
@@ -41,12 +42,13 @@ int main (int argc, char **argv)
     gtk_init (&argc, &argv);
     // g_mem_set_vtable (glib_mem_profiler_table);
 
-    Contest_c::Init        ();
-    Checkin::Init          ();
-    PoolAllocator_c::Init  ();
-    PoolSupervisor_c::Init ();
-    Table::Init            ();
-    Splitting::Init        ();
+    Contest_c::Init             ();
+    Checkin::Init               ();
+    PoolAllocator_c::Init       ();
+    PoolSupervisor_c::Init      ();
+    Table::Init                 ();
+    GeneralClassification::Init ();
+    Splitting::Init             ();
   }
 
   Glade_c::SetPath (g_path_get_dirname (argv[0]));

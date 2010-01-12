@@ -37,8 +37,7 @@ class Stage_c : public virtual Object_c
 
     typedef enum
     {
-      MANDATORY = 0x0001,
-      EDITABLE  = 0x0002
+      EDITABLE  = 0x0001
     } Rights;
 
     struct StageClass
