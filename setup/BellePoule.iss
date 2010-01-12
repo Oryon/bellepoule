@@ -51,6 +51,7 @@ Source: "..\Exemples_Fichiers_FFE\CLS_EDM.FFF"; DestDir: "{app}\Exemples_Fichier
 Source: "..\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\resources\translations\fr\LC_MESSAGES"; Flags: ignoreversion
 
 Source: "..\resources\glade\BellePoule.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\splitting.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\pool_supervisor.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\table.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\schedule.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
@@ -61,6 +62,7 @@ Source: "..\resources\glade\pool.glade"; DestDir: "{app}\resources\glade\"; Flag
 Source: "..\resources\glade\contest.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\pool_allocator.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\splitting.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\general_classification.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 
 ; GTK+ dependencies
 ; DLL
