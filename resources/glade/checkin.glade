@@ -103,6 +103,7 @@
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
+    <signal name="key_press_event" handler="on_FillInForm_key_press_event"/>
     <signal name="close" handler="gtk_widget_hide"/>
     <signal name="delete_event" handler="gtk_widget_hide"/>
     <child internal-child="vbox">

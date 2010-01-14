@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <gdk/gdkkeysyms.h>
 #include <string.h>
 
 #include "attribute.hpp"
@@ -478,16 +479,25 @@ void Checkin::on_add_button_clicked ()
     {
       player->SetAttributeValue (attr_name,
                                  gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)));
+      if (attr_desc->_is_singular)
+      {
+        //gtk_entry_set_text (GTK_ENTRY (w), "");
+      }
     }
     else
     {
       player->SetAttributeValue (attr_name,
                                  (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
-      gtk_entry_set_text (GTK_ENTRY (w), "");
+
+      if (attr_desc->_is_singular)
+      {
+        gtk_entry_set_text (GTK_ENTRY (w), "");
+      }
     }
   }
 
-  gtk_widget_grab_focus (_glade->GetWidget ("name_entry"));
+  gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
+                                                        0));
 
   Add (player);
   UpdateRanking ();
@@ -555,16 +565,32 @@ extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
 extern "C" G_MODULE_EXPORT void on_add_button_clicked (GtkWidget *widget,
                                                        Object_c  *owner)
 {
-  Checkin *pl = dynamic_cast <Checkin *> (owner);
+  Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  pl->on_add_button_clicked ();
+  c->on_add_button_clicked ();
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_close_button_clicked (GtkWidget *widget,
                                                          Object_c  *owner)
 {
-  Checkin *pl = dynamic_cast <Checkin *> (owner); 
+  Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  pl->on_close_button_clicked (); 
+  c->on_close_button_clicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gboolean on_FillInForm_key_press_event (GtkWidget   *widget,
+                                                                   GdkEventKey *event,
+                                                                   Object_c    *owner)
+{
+  Checkin *c = dynamic_cast <Checkin *> (owner);
+
+  if (event->keyval == GDK_Return)
+  {
+    c->on_add_button_clicked ();
+    return TRUE;
+  }
+
+  return FALSE;
 }

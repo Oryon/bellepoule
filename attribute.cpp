@@ -22,11 +22,13 @@
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
-AttributeDesc::AttributeDesc (GType  type,
-                              gchar *name)
+AttributeDesc::AttributeDesc (GType     type,
+                              gchar    *name,
+                              gboolean  is_singular)
 {
-  _type = type;
-  _name = name;
+  _type        = type;
+  _name        = name;
+  _is_singular = is_singular;
 }
 
 // --------------------------------------------------------------------------------
@@ -44,11 +46,13 @@ AttributeDesc::~AttributeDesc ()
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::Declare (GType  type,
-                             gchar *name)
+void AttributeDesc::Declare (GType     type,
+                             gchar    *name,
+                             gboolean  is_singular)
 {
   AttributeDesc *attr = new AttributeDesc (type,
-                                           name);
+                                           name,
+                                           is_singular);
 
   _list = g_slist_append (_list,
                           attr);

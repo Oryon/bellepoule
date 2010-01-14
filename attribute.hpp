@@ -26,11 +26,13 @@
 class AttributeDesc : public Object_c
 {
   public:
-    GType  _type;
-    gchar *_name;
+    GType     _type;
+    gchar    *_name;
+    gboolean  _is_singular;
 
-    static void Declare (GType  type,
-                         gchar *name);
+    static void Declare (GType     type,
+                         gchar    *name,
+                         gboolean  is_singular);
 
     static void CreateList (GSList **list, ...);
 
@@ -39,8 +41,9 @@ class AttributeDesc : public Object_c
   private:
     static GSList *_list;
 
-    AttributeDesc (GType  type,
-                   gchar *name);
+    AttributeDesc (GType     type,
+                   gchar    *name,
+                   gboolean  is_singular);
 
     ~AttributeDesc ();
 };

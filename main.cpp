@@ -54,19 +54,19 @@ int main (int argc, char **argv)
   Glade_c::SetPath (g_path_get_dirname (argv[0]));
 
   {
-    AttributeDesc::Declare (G_TYPE_STRING,   "name");
-    AttributeDesc::Declare (G_TYPE_STRING,   "first_name");
-    AttributeDesc::Declare (G_TYPE_STRING,   "club");
-    AttributeDesc::Declare (G_TYPE_INT,      "rating");
-    AttributeDesc::Declare (G_TYPE_STRING,   "gender");
-    AttributeDesc::Declare (G_TYPE_STRING,   "country");
-    AttributeDesc::Declare (G_TYPE_STRING,   "birth_year");
-    AttributeDesc::Declare (G_TYPE_STRING,   "licence");
+    AttributeDesc::Declare (G_TYPE_STRING,   "name",       TRUE);
+    AttributeDesc::Declare (G_TYPE_STRING,   "first_name", TRUE);
+    AttributeDesc::Declare (G_TYPE_STRING,   "club",       FALSE);
+    AttributeDesc::Declare (G_TYPE_INT,      "rating",     TRUE);
+    AttributeDesc::Declare (G_TYPE_STRING,   "gender",     FALSE);
+    AttributeDesc::Declare (G_TYPE_STRING,   "country",    FALSE);
+    AttributeDesc::Declare (G_TYPE_STRING,   "birth_year", TRUE);
+    AttributeDesc::Declare (G_TYPE_STRING,   "licence",    TRUE);
 
-    AttributeDesc::Declare (G_TYPE_BOOLEAN,  "attending");
-    AttributeDesc::Declare (G_TYPE_INT,      "rank");
-    AttributeDesc::Declare (G_TYPE_INT,      "ref");
-    AttributeDesc::Declare (G_TYPE_BOOLEAN,  "exported");
+    AttributeDesc::Declare (G_TYPE_BOOLEAN,  "attending", FALSE);
+    AttributeDesc::Declare (G_TYPE_INT,      "rank",      TRUE);
+    AttributeDesc::Declare (G_TYPE_INT,      "ref",       TRUE);
+    AttributeDesc::Declare (G_TYPE_BOOLEAN,  "exported",  FALSE);
   }
 
   {
