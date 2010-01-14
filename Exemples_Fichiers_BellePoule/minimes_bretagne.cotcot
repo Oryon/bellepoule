@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contest title="ddddddddd" backup="">
- <schedule current_stage="3">
+ <schedule current_stage="0">
   <checkin_stage>
    <player ref="169" name="NOEL" first_name="Alexis" gender="M" country="FRA" rating="0" rank="1" attending="0" club="DINARD LAMES" birth_year="25/11/1990" licence="033058823035" exported="0"/>
    <player ref="142" name="BERTRAND" first_name="Antoine" gender="M" country="FRA" rating="0" rank="2" attending="0" club="QUIMPER EC" birth_year="19/12/1990" licence="034077823029" exported="0"/>
@@ -31,29 +31,17 @@
    <player ref="139" name="STEPHAN" first_name="Alexandre" gender="M" country="FRA" rating="1329" rank="27" attending="0" club="QUIMPER EC" birth_year="24/11/1990" licence="034066123029" exported="0"/>
    <player ref="141" name="LEBOURGEOIS" first_name="Kilian" gender="M" country="FRA" rating="1339" rank="28" attending="0" club="QUIMPER EC" birth_year="15/12/1989" licence="034070623029" exported="0"/>
    <player ref="153" name="LAUMAIN" first_name="Pierre erik" gender="M" country="FRA" rating="1355" rank="29" attending="0" club="ST MALO" birth_year="10/10/1989" licence="015089323035" exported="0"/>
-   <player ref="136" name="LEMOINE" first_name="Pierre" gender="M" country="FRA" rating="1365" rank="3" attending="1" club="DINAN EA" birth_year="23/05/1990" licence="007021023022" exported="0"/>
+   <player ref="136" name="LEMOINE" first_name="Pierre" gender="M" country="FRA" rating="1365" rank="2" attending="1" club="DINAN EA" birth_year="23/05/1990" licence="007021023022" exported="0"/>
    <player ref="138" name="JARAY" first_name="Ronan" gender="M" country="FRA" rating="1379" rank="31" attending="0" club="ST BRIEUC" birth_year="17/12/1989" licence="009057423022" exported="0"/>
    <player ref="168" name="HOBL" first_name="Benjamin" gender="M" country="FRA" rating="1389" rank="32" attending="0" club="DINARD LAMES" birth_year="10/09/1990" licence="033058423035" exported="0"/>
    <player ref="144" name="RESMOND" first_name="Antoine" gender="M" country="FRA" rating="1401" rank="33" attending="0" club="QUIMPER EC" birth_year="02/04/1991" licence="034082023029" exported="0"/>
    <player ref="154" name="DANIBO" first_name="Louis" gender="M" country="FRA" rating="1415" rank="34" attending="0" club="ST MALO" birth_year="10/10/1990" licence="015092623035" exported="0"/>
    <player ref="143" name="KERVROEDAN" first_name="William" gender="M" country="FRA" rating="1427" rank="35" attending="0" club="QUIMPER EC" birth_year="15/10/1991" licence="034078823029" exported="0"/>
-   <player ref="135" name="BONNOT" first_name="Robin" gender="M" country="FRA" rating="1436" rank="2" attending="1" club="DINAN EA" birth_year="14/05/1990" licence="007020223022" exported="0"/>
+   <player ref="135" name="BONNOT" first_name="Robin" gender="M" country="FRA" rating="1436" rank="3" attending="1" club="DINAN EA" birth_year="14/05/1990" licence="007020223022" exported="0"/>
    <player ref="156" name="LAVENANT" first_name="Joan" gender="M" country="FRA" rating="1436" rank="37" attending="0" club="ST MALO" birth_year="21/01/1991" licence="015117123035" exported="0"/>
   </checkin_stage>
-  <pool_allocation_stage name="">
-   <player_list>
-    <player ref="134"/>
-    <player ref="136"/>
-    <player ref="135"/>
-   </player_list>
-  </pool_allocation_stage>
-  <pool_stage name="">
-   <match_list>
-    <match player_A="136" score_A="2" player_B="134" score_B="2"/>
-    <match player_A="135" score_A="2" player_B="134" score_B="2"/>
-    <match player_A="135" score_A="2" player_B="136" score_B="2"/>
-   </match_list>
-  </pool_stage>
+  <pool_allocation_stage name=""/>
+  <pool_stage name=""/>
   <general_classification_stage/>
  </schedule>
 </contest>

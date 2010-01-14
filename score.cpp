@@ -103,10 +103,17 @@ gboolean Score_c::IsValid ()
 // --------------------------------------------------------------------------------
 gboolean Score_c::IsConsistentWith (Score_c *with)
 {
-  if (   IsKnown ()
-      && with->IsKnown ()
-      && (Get () >= _max_score)
-      && (with->Get () >= _max_score))
+  if (   (IsKnown ()       == FALSE)
+      || (with->IsKnown () == FALSE))
+  {
+    return TRUE;
+  }
+  else if (Get () == with->Get ())
+  {
+    return false;
+  }
+  else if (   (Get () >= _max_score)
+           && (with->Get () >= _max_score))
   {
     return false;
   }

@@ -73,6 +73,8 @@ class Pool_c : public CanvasModule_c
     gchar          *_name;
     gboolean        _is_over;
     gboolean        _has_error;
+    GooCanvasItem  *_title_table;
+    GooCanvasItem  *_status_item;
 
     void           *_status_cbk_data;
     StatusCbk       _status_cbk;

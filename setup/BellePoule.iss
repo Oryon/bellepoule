@@ -17,25 +17,41 @@ OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=yes
+ChangesAssociations=true
+PrivilegesRequired=none
+WizardImageFile=BellePoule.bmp
+WizardSmallImageFile=BellePoule_small.bmp
+;SetupIconFile=logo.ico
+
+[Tasks]
+Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icones de lancement :";
+Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la barre des tâches"; GroupDescription: "Icones de lancement :";
 
 [Registry]
-Root: HKCR; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCR\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnPathAlready(); Flags: preservestringtype;
+Root: HKCU; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCU\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnHKCUPathAlready(); Flags: preservestringtype noerror;
+Root: HKLM; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKLM\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnHKCRPathAlready(); Flags: preservestringtype noerror;
 
-Root: HKCR; Subkey: ".cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BellePoule.exe,0"
-Root: HKCR; Subkey: "BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BellePoule.exe"" ""%1"""
+Root: HKCU; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
+Root: HKCU; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
+Root: HKCU; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BellePoule.exe,0"; Flags: uninsdeletekey noerror
+Root: HKCU; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BellePoule.exe"" ""%1"""; Flags: uninsdeletekey noerror
+
+Root: HKLM; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
+Root: HKLM; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
+Root: HKLM; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BellePoule.exe,0"; Flags: uninsdeletekey noerror
+Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BellePoule.exe"" ""%1"""; Flags: uninsdeletekey noerror
 
 [Languages]
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
-
-;[Tasks]
-;Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-;Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+;LicenseFile: "license-French.txt"
 
 [Icons]
 Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"
 Name: "{userprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
+Name: "{commonprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"
+Name: "{commonprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
+Name: "{userdesktop}\BellePoule"; Filename: "{app}\BellePoule.exe"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filename: "{app}\BellePoule.exe"; Tasks: quicklaunchicon
 
 [Dirs]
 Name: "{app}\porting_layer"; Attribs: hidden
@@ -50,19 +66,8 @@ Source: "..\Exemples_Fichiers_FFE\CLS_EDM.FFF"; DestDir: "{app}\Exemples_Fichier
 
 Source: "..\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\resources\translations\fr\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "..\resources\glade\BellePoule.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\splitting.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\pool_supervisor.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\table.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\schedule.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\checkin.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\classification.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\tournament.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\pool.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\contest.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\pool_allocator.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\splitting.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\glade\general_classification.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\*.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\*.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 
 ; GTK+ dependencies
 ; DLL
@@ -123,34 +128,58 @@ Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-et.dll"; Destdir: "{app}\po
 Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-viqr.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
 
 [Code]
-function NotOnPathAlready(): Boolean;
+function NotOnHKCUPathAlready(): Boolean;
 var
   BinDir, Path: String;
 begin
-  Log('Checking if %PATH% is already up to date ');
   if RegQueryStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', Path) then
   begin // Successfully read the value
-    Log('HKCU\Environment\PATH = ' + Path);
     BinDir := ExpandConstant('{app}\porting_layer');
     Log('Looking for BellePoule\porting_layer dir in %PATH%: ' + BinDir + ' in ' + Path);
     if Pos(LowerCase(BinDir), Lowercase(Path)) = 0 then
     begin
-      Log('Update %PATH%');
+      Log('Update HKCU %PATH%');
       Result := True;
     end
     else
     begin
-      Log('No need to update %PATH%');
+      Log('No need to update HKCU %PATH%');
       Result := False;
     end
   end
   else // The key probably doesn't exist
   begin
-    Log('Could not access HKCU\Environment\PATH so assume it is ok to add it');
     Result := True;
   end;
 end;
 
+//////////////////////////////////////////
+function NotOnHKCRPathAlready(): Boolean;
+var
+  BinDir, Path: String;
+begin
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'Environment', 'Path', Path) then
+  begin // Successfully read the value
+    BinDir := ExpandConstant('{app}\porting_layer');
+    Log('Looking for BellePoule\porting_layer dir in %PATH%: ' + BinDir + ' in ' + Path);
+    if Pos(LowerCase(BinDir), Lowercase(Path)) = 0 then
+    begin
+      Log('Update HKLM %PATH%');
+      Result := True;
+    end
+    else
+    begin
+      Log('No need to update HKLM %PATH%');
+      Result := False;
+    end
+  end
+  else // The key probably doesn't exist
+  begin
+    Result := True;
+  end;
+end;
+
+//////////////////////////////////////////
 function GetInstallDir(Param: String): String;
 var pfdir, tmpdir: string;
 begin
@@ -168,4 +197,4 @@ begin
 end;
 
 [Run]
-Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent

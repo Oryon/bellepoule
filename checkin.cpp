@@ -62,6 +62,50 @@ Checkin::Checkin (StageClass *stage_class)
 
     SetFilter (filter);
   }
+
+  {
+    GSList *filter_list = _filter->GetAttrList ();
+
+    for (guint i = 0; i < g_slist_length (filter_list); i++)
+    {
+      GtkWidget     *box;
+      GtkWidget     *w;
+      AttributeDesc *attr_desc;
+
+      attr_desc = (AttributeDesc *) g_slist_nth_data (filter_list,
+                                                      i);
+
+      w = gtk_label_new (attr_desc->_name);
+      box = _glade->GetWidget ("title_vbox");
+      gtk_box_pack_start (GTK_BOX (box),
+                          w,
+                          TRUE,
+                          TRUE,
+                          0);
+      g_object_set (G_OBJECT (w),
+                    "xalign", 0.0,
+                    NULL);
+
+      if (attr_desc->_type == G_TYPE_BOOLEAN)
+      {
+        w = gtk_check_button_new ();
+      }
+      else
+      {
+        w = gtk_entry_new ();
+      }
+      box = GetWidget ("value_vbox");
+      gtk_box_pack_start (GTK_BOX (box),
+                          w,
+                          TRUE,
+                          TRUE,
+                          0);
+      g_object_set (G_OBJECT (w),
+                    "xalign", 0.0,
+                    NULL);
+      g_object_set_data (G_OBJECT (w), "Checkin::attribute_name", attr_desc->_name);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -408,38 +452,39 @@ void Checkin::ImportCSV (gchar *file)
 // --------------------------------------------------------------------------------
 void Checkin::on_add_button_clicked ()
 {
-  Player_c *player = new Player_c;
+  Player_c *player   = new Player_c;
+  GList    *children = gtk_container_get_children (GTK_CONTAINER (GetWidget ("value_vbox")));
 
   {
-    gchar           *str;
-    gboolean         attending;
-    GtkEntry        *entry;
-    GtkToggleButton *check_button;
-
-    str = g_strdup_printf ("%d\n", player->GetRef ());
+    gchar *str = g_strdup_printf ("%d\n", player->GetRef ());
     player->SetAttributeValue ("ref", str);
     g_free (str);
+  }
 
-    entry = GTK_ENTRY (_glade->GetWidget ("name_entry"));
-    str = (gchar *) gtk_entry_get_text (entry);
-    player->SetAttributeValue ("name", str);
-    gtk_entry_set_text (entry, "");
+  player->SetAttributeValue ("exported", (guint) FALSE);
 
-    entry = GTK_ENTRY (_glade->GetWidget ("first_name_entry"));
-    str = (gchar *) gtk_entry_get_text (entry);
-    player->SetAttributeValue ("first_name", str);
-    gtk_entry_set_text (entry, "");
+  for (guint i = 0; i < g_list_length (children); i ++)
+  {
+    GtkWidget       *w;
+    gchar           *attr_name;
+    AttributeDesc   *attr_desc;
 
-    entry = GTK_ENTRY (_glade->GetWidget ("rating_entry"));
-    str = (gchar *) gtk_entry_get_text (entry);
-    player->SetAttributeValue ("rating", str);
-    gtk_entry_set_text (entry, "");
+    w = (GtkWidget *) g_list_nth_data (children,
+                                       i);
+    attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "Checkin::attribute_name");
+    attr_desc = AttributeDesc::GetDesc (attr_name);
 
-    check_button = GTK_TOGGLE_BUTTON (_glade->GetWidget ("attending_checkbutton"));
-    attending = gtk_toggle_button_get_active (check_button);
-    player->SetAttributeValue ("attending", attending);
-
-    player->SetAttributeValue ("exported", (guint) FALSE);
+    if (attr_desc->_type == G_TYPE_BOOLEAN)
+    {
+      player->SetAttributeValue (attr_name,
+                                 gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)));
+    }
+    else
+    {
+      player->SetAttributeValue (attr_name,
+                                 (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
+      gtk_entry_set_text (GTK_ENTRY (w), "");
+    }
   }
 
   gtk_widget_grab_focus (_glade->GetWidget ("name_entry"));
@@ -462,16 +507,7 @@ void Checkin::on_add_player_button_clicked ()
 {
   GtkWidget *w = _glade->GetWidget ("FillInForm");
 
-  if (w == NULL) return;
   gtk_widget_show_all (w);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::on_close_button_clicked ()
-{
-  GtkWidget *w = _glade->GetWidget ("FillInForm");
-
-  gtk_widget_hide (w);
 }
 
 // --------------------------------------------------------------------------------
@@ -487,6 +523,14 @@ extern "C" G_MODULE_EXPORT void on_remove_player_button_clicked (GtkWidget *widg
 void Checkin::on_remove_player_button_clicked ()
 {
   RemoveSelection ();
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::on_close_button_clicked ()
+{
+  GtkWidget *w = _glade->GetWidget ("FillInForm");
+
+  gtk_widget_hide (w);
 }
 
 // --------------------------------------------------------------------------------
@@ -520,7 +564,7 @@ extern "C" G_MODULE_EXPORT void on_add_button_clicked (GtkWidget *widget,
 extern "C" G_MODULE_EXPORT void on_close_button_clicked (GtkWidget *widget,
                                                          Object_c  *owner)
 {
-  Checkin *pl = dynamic_cast <Checkin *> (owner);
+  Checkin *pl = dynamic_cast <Checkin *> (owner); 
 
-  pl->on_close_button_clicked ();
+  pl->on_close_button_clicked (); 
 }

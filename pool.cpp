@@ -37,6 +37,8 @@ Pool_c::Pool_c (guint number)
   _max_score   = 5;
   _is_over     = FALSE;
   _has_error   = FALSE;
+  _title_table = NULL;
+  _status_item = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -207,6 +209,9 @@ void Pool_c::OnNewScore (CanvasModule_c *client)
 // --------------------------------------------------------------------------------
 void Pool_c::OnPlugged ()
 {
+  _title_table = NULL;
+  _status_item = NULL;
+
   CanvasModule_c::OnPlugged ();
 
   {
@@ -552,18 +557,24 @@ void Pool_c::OnPlugged ()
 
     // Name
     {
-      GooCanvasBounds bounds;
+      GooCanvasBounds  bounds;
+      GooCanvasItem   *text_item;
+
+      _title_table = goo_canvas_table_new (root_item, NULL);
+      text_item = PutTextInTable (_title_table,
+                                  _name,
+                                  0,
+                                  1);
+      g_object_set (G_OBJECT (text_item),
+                    "font", "Sans bold 18px",
+                    NULL);
 
       goo_canvas_item_get_bounds (root_item,
                                   &bounds);
-      goo_canvas_text_new (root_item,
-                           _name,
-                           bounds.x1,
-                           bounds.y1,
-                           -1,
-                           GTK_ANCHOR_SW,
-                           "font", "Sans bold 18",
-                           NULL);
+
+      goo_canvas_item_translate (_title_table,
+                                 bounds.x1,
+                                 bounds.y1);
     }
   }
 
@@ -732,6 +743,34 @@ void Pool_c::RefreshScoreData ()
     _status_cbk (this,
                  _status_cbk_data);
   }
+
+  if (_title_table)
+  {
+    if (_status_item)
+    {
+      goo_canvas_item_remove (_status_item);
+      _status_item = NULL;
+    }
+
+    if (_is_over)
+    {
+      _status_item = PutStockIconInTable (_title_table,
+                                          GTK_STOCK_APPLY,
+                                          0, 0);
+    }
+    else if (_has_error)
+    {
+      _status_item = PutStockIconInTable (_title_table,
+                                          GTK_STOCK_DIALOG_WARNING,
+                                          0, 0);
+    }
+    else
+    {
+      _status_item = PutStockIconInTable (_title_table,
+                                          GTK_STOCK_EXECUTE,
+                                          0, 0);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -847,12 +886,6 @@ void Pool_c::Load (xmlNode *xml_node,
 {
   if (xml_node == NULL)
   {
-    if (_status_cbk)
-    {
-      _status_cbk (this,
-                   _status_cbk_data);
-    }
-
     return;
   }
 
