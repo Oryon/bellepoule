@@ -70,6 +70,9 @@ class Checkin : public virtual Stage_c, public PlayersList
 
     static gboolean PresentPlayerFilter (Player_c *player);
 
+    static void on_sensitive_state_toggled (GtkToggleButton *togglebutton,
+                                            GtkWidget       *w);
+
     ~Checkin ();
 };
 

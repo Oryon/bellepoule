@@ -54,19 +54,38 @@ int main (int argc, char **argv)
   Glade_c::SetPath (g_path_get_dirname (argv[0]));
 
   {
-    AttributeDesc::Declare (G_TYPE_STRING,   "name",       TRUE);
-    AttributeDesc::Declare (G_TYPE_STRING,   "first_name", TRUE);
-    AttributeDesc::Declare (G_TYPE_STRING,   "club",       FALSE);
-    AttributeDesc::Declare (G_TYPE_INT,      "rating",     TRUE);
-    AttributeDesc::Declare (G_TYPE_STRING,   "gender",     FALSE);
-    AttributeDesc::Declare (G_TYPE_STRING,   "country",    FALSE);
-    AttributeDesc::Declare (G_TYPE_STRING,   "birth_year", TRUE);
-    AttributeDesc::Declare (G_TYPE_STRING,   "licence",    TRUE);
+    AttributeDesc *desc;
 
-    AttributeDesc::Declare (G_TYPE_BOOLEAN,  "attending", FALSE);
-    AttributeDesc::Declare (G_TYPE_INT,      "rank",      TRUE);
-    AttributeDesc::Declare (G_TYPE_INT,      "ref",       TRUE);
-    AttributeDesc::Declare (G_TYPE_BOOLEAN,  "exported",  FALSE);
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "name");
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name");
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "club");
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rating");
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender");
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "country");
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_year");
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "licence");
+
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending");
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rank");
+    desc->_rights = AttributeDesc::PRIVATE;
+
+    desc = AttributeDesc::Declare (G_TYPE_INT, "ref");
+    desc->_rights = AttributeDesc::PRIVATE;
+
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported");
+    desc->_rights = AttributeDesc::PRIVATE;
   }
 
   {

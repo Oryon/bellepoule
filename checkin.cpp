@@ -69,42 +69,73 @@ Checkin::Checkin (StageClass *stage_class)
 
     for (guint i = 0; i < g_slist_length (filter_list); i++)
     {
-      GtkWidget     *box;
-      GtkWidget     *w;
       AttributeDesc *attr_desc;
 
       attr_desc = (AttributeDesc *) g_slist_nth_data (filter_list,
                                                       i);
 
-      w = gtk_label_new (attr_desc->_name);
-      box = _glade->GetWidget ("title_vbox");
-      gtk_box_pack_start (GTK_BOX (box),
-                          w,
-                          TRUE,
-                          TRUE,
-                          0);
-      g_object_set (G_OBJECT (w),
-                    "xalign", 0.0,
-                    NULL);
+      if (attr_desc->_rights == AttributeDesc::PUBLIC)
+      {
+        {
+          GtkWidget *w   = gtk_label_new (attr_desc->_name);
+          GtkWidget *box = _glade->GetWidget ("title_vbox");
 
-      if (attr_desc->_type == G_TYPE_BOOLEAN)
-      {
-        w = gtk_check_button_new ();
+          gtk_box_pack_start (GTK_BOX (box),
+                              w,
+                              TRUE,
+                              TRUE,
+                              0);
+          g_object_set (G_OBJECT (w),
+                        "xalign", 0.0,
+                        NULL);
+        }
+
+        {
+          GtkWidget *value_w = gtk_label_new (attr_desc->_name);
+
+          {
+            GtkWidget *box = GetWidget ("value_vbox");
+
+            if (attr_desc->_type == G_TYPE_BOOLEAN)
+            {
+              value_w = gtk_check_button_new ();
+            }
+            else
+            {
+              value_w = gtk_entry_new ();
+            }
+
+            gtk_box_pack_start (GTK_BOX (box),
+                                value_w,
+                                TRUE,
+                                TRUE,
+                                0);
+            g_object_set (G_OBJECT (value_w),
+                          "xalign", 0.0,
+                          NULL);
+            g_object_set_data (G_OBJECT (value_w), "attribute_name", attr_desc->_name);
+          }
+
+          {
+            GtkWidget *w   = gtk_check_button_new ();
+            GtkWidget *box = _glade->GetWidget ("check_vbox");
+
+            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
+                                          TRUE);
+            g_signal_connect (w, "toggled",
+                              G_CALLBACK (on_sensitive_state_toggled), value_w);
+
+            gtk_box_pack_start (GTK_BOX (box),
+                                w,
+                                TRUE,
+                                TRUE,
+                                0);
+            g_object_set (G_OBJECT (w),
+                          "xalign", 0.0,
+                          NULL);
+          }
+        }
       }
-      else
-      {
-        w = gtk_entry_new ();
-      }
-      box = GetWidget ("value_vbox");
-      gtk_box_pack_start (GTK_BOX (box),
-                          w,
-                          TRUE,
-                          TRUE,
-                          0);
-      g_object_set (G_OBJECT (w),
-                    "xalign", 0.0,
-                    NULL);
-      g_object_set_data (G_OBJECT (w), "Checkin::attribute_name", attr_desc->_name);
     }
   }
 }
@@ -472,16 +503,17 @@ void Checkin::on_add_button_clicked ()
 
     w = (GtkWidget *) g_list_nth_data (children,
                                        i);
-    attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "Checkin::attribute_name");
+    attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "attribute_name");
     attr_desc = AttributeDesc::GetDesc (attr_name);
 
     if (attr_desc->_type == G_TYPE_BOOLEAN)
     {
       player->SetAttributeValue (attr_name,
                                  gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)));
-      if (attr_desc->_is_singular)
+      if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
       {
-        //gtk_entry_set_text (GTK_ENTRY (w), "");
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
+                                      FALSE);
       }
     }
     else
@@ -489,7 +521,7 @@ void Checkin::on_add_button_clicked ()
       player->SetAttributeValue (attr_name,
                                  (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
 
-      if (attr_desc->_is_singular)
+      if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
       {
         gtk_entry_set_text (GTK_ENTRY (w), "");
       }
@@ -518,6 +550,22 @@ void Checkin::on_add_player_button_clicked ()
   GtkWidget *w = _glade->GetWidget ("FillInForm");
 
   gtk_widget_show_all (w);
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::on_sensitive_state_toggled (GtkToggleButton *togglebutton,
+                                          GtkWidget       *w)
+{
+  if (gtk_toggle_button_get_active (togglebutton))
+  {
+    gtk_widget_set_sensitive (w,
+                              TRUE);
+  }
+  else
+  {
+    gtk_widget_set_sensitive (w,
+                              FALSE);
+  }
 }
 
 // --------------------------------------------------------------------------------

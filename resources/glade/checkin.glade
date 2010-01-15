@@ -115,7 +115,7 @@
           <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
             <child>
-              <object class="GtkVBox" id="title_vbox">
+              <object class="GtkVBox" id="check_vbox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
@@ -127,7 +127,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkVBox" id="value_vbox">
+              <object class="GtkVBox" id="title_vbox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
@@ -136,6 +136,18 @@
               </object>
               <packing>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="value_vbox">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
