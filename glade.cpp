@@ -21,6 +21,7 @@ gchar *Glade_c::_path = NULL;
 // --------------------------------------------------------------------------------
 Glade_c::Glade_c (gchar    *file_name,
                   Object_c *owner)
+: Object_c ("Glade_c")
 {
   if (file_name)
   {

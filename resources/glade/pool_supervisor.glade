@@ -50,11 +50,11 @@
               <object class="GtkToolbar" id="toolbar3">
                 <property name="visible">True</property>
                 <child>
-                  <object class="GtkToolButton" id="pool_filter_toollbutton">
+                  <object class="GtkToolButton" id="pool_filter_toolbutton">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Filter</property>
                     <property name="stock_id">gtk-index</property>
-                    <signal name="clicked" handler="on_pool_filter_toollbutton_clicked"/>
+                    <signal name="clicked" handler="on_pool_filter_toolbutton_clicked"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -85,9 +85,29 @@
                     <property name="homogeneous">True</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkSeparatorToolItem" id="toolbutton1">
+                    <property name="visible">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="stuff_toolbutton">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Remplissage auto</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_name">gnome-devel</property>
+                    <signal name="clicked" handler="on_stuff_toolbutton_clicked"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="pack_type">end</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -237,16 +257,16 @@
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup">
     <widgets>
-      <widget name="label4"/>
-      <widget name="label2"/>
       <widget name="label3"/>
+      <widget name="label2"/>
+      <widget name="label4"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="name_entry"/>
-      <widget name="max_score_entry"/>
       <widget name="qualified_fencer_spinbutton"/>
+      <widget name="max_score_entry"/>
+      <widget name="name_entry"/>
     </widgets>
   </object>
   <object class="GtkAdjustment" id="qualified_adjustment">

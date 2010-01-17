@@ -39,6 +39,8 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
     void OnFilterClicked ();
 
+    void OnStuffClicked ();
+
   private:
     void Display ();
     void Garnish ();
@@ -75,6 +77,10 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
     static void OnPoolStatusUpdated (Pool_c           *pool,
                                      PoolSupervisor_c *ps);
+
+    static gint ComparePlayer (Player_c         *A,
+                               Player_c         *B,
+                               PoolSupervisor_c *pool_supervisor);
 };
 
 #endif

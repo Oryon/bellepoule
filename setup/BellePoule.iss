@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=BellePoule
-AppVerName=BellePoule version 0.1
+AppVerName=BellePoule version 0.17/01
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
@@ -50,8 +50,8 @@ Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; 
 Name: "{userprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
 Name: "{commonprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"
 Name: "{commonprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
-Name: "{userdesktop}\BellePoule"; Filename: "{app}\BellePoule.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filename: "{app}\BellePoule.exe"; Tasks: quicklaunchicon
+Name: "{userdesktop}\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"; Tasks: quicklaunchicon
 
 [Dirs]
 Name: "{app}\porting_layer"; Attribs: hidden

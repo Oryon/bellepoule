@@ -24,6 +24,7 @@ guint Player_c::_next_ref = 0;
 
 // --------------------------------------------------------------------------------
 Player_c::Player_c ()
+: Object_c ("Player_c")
 {
   _ref = _next_ref;
   _next_ref++;

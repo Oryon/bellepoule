@@ -25,6 +25,7 @@
 ScoreCollector::ScoreCollector (GooCanvas      *canvas,
                                 CanvasModule_c *client,
                                 OnNewScore_cbk  on_new_score)
+: Object_c ("ScoreCollector")
 {
   _entry_item       = NULL;
   _gtk_entry        = NULL;

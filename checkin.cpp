@@ -62,6 +62,7 @@ Checkin::Checkin (StageClass *stage_class)
     filter->ShowAttribute ("licence");
 
     SetFilter (filter);
+    filter->Release ();
   }
 
   {
@@ -136,7 +137,7 @@ Checkin::Checkin (StageClass *stage_class)
           }
         }
       }
-    }
+    };
   }
 }
 
@@ -178,6 +179,8 @@ void Checkin::Load (xmlNode *xml_node)
 
         player->Load (n);
         Add (player);
+
+        player->Release ();
       }
       else if (strcmp ((char *) n->name, _xml_class_name) != 0)
       {
@@ -414,6 +417,7 @@ void Checkin::ImportFFF (gchar *file)
           player->SetAttributeValue ("rating",     tokens[11]);
         }
         Add (player);
+        player->Release ();
 
         g_strfreev (tokens);
       }
@@ -464,16 +468,16 @@ void Checkin::ImportCSV (gchar *file)
 
       if (tokens)
       {
-        Player_c *player = new Player_c;
-
         for (guint i = nb_attr; tokens[i] != NULL; i += nb_attr)
         {
+          Player_c *player = new Player_c;
+
           player->SetAttributeValue ("name",       tokens[i]);
           player->SetAttributeValue ("first_name", tokens[i+1]);
           player->SetAttributeValue ("exported",   (guint) FALSE);
 
           Add (player);
-          player = new Player_c;
+          player->Release ();
         }
         g_strfreev (tokens);
       }
@@ -532,6 +536,7 @@ void Checkin::on_add_button_clicked ()
                                                         0));
 
   Add (player);
+  player->Release ();
   UpdateRanking ();
 }
 
@@ -550,6 +555,13 @@ void Checkin::on_add_player_button_clicked ()
   GtkWidget *w = _glade->GetWidget ("FillInForm");
 
   gtk_widget_show_all (w);
+
+  {
+    GList *children = gtk_container_get_children (GTK_CONTAINER (GetWidget ("value_vbox")));
+
+    gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
+                                                          0));
+  }
 }
 
 // --------------------------------------------------------------------------------

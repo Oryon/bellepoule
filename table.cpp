@@ -68,6 +68,7 @@ Table::Table (StageClass *stage_class)
     filter->ShowAttribute ("club");
 
     SetFilter (filter);
+    filter->Release ();
   }
 
   _from_table_liststore = GTK_LIST_STORE (_glade->GetObject ("table_liststore"));

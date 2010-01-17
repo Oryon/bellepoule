@@ -81,6 +81,7 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
     filter->ShowAttribute ("club");
 
     SetFilter (filter);
+    filter->Release ();
   }
 }
 

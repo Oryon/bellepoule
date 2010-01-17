@@ -446,6 +446,8 @@ void PlayersList::Add (Player_c *player)
 {
   GtkTreeIter iter;
 
+  player->Retain ();
+
   gtk_list_store_append (_store, &iter);
 
   {
@@ -469,6 +471,15 @@ void PlayersList::Add (Player_c *player)
 // --------------------------------------------------------------------------------
 void PlayersList::Wipe ()
 {
+  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  {
+    Player_c *player;
+
+    player = (Player_c *) g_slist_nth_data (_player_list,
+                                            i);
+    player->Release ();
+  }
+
   g_slist_free (_player_list);
   _player_list = NULL;
 

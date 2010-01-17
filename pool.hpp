@@ -58,9 +58,12 @@ class Pool_c : public CanvasModule_c
 
     void SetDataOwner (Object_c *owner);
 
+    void Stuff ();
+
     static gint ComparePlayer (Player_c *A,
                                Player_c *B,
-                               Pool_c   *pool);
+                               Object_c *data_owner,
+                               guint32   rand_seed);
 
   private:
     guint           _max_score;
@@ -75,11 +78,16 @@ class Pool_c : public CanvasModule_c
     gboolean        _has_error;
     GooCanvasItem  *_title_table;
     GooCanvasItem  *_status_item;
+    gboolean        _locked;
 
     void           *_status_cbk_data;
     StatusCbk       _status_cbk;
 
   private:
+    static gint _ComparePlayer (Player_c *A,
+                                Player_c *B,
+                                Pool_c   *pool);
+
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
     void OnDrawPage (GtkPrintOperation *operation,

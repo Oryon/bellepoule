@@ -24,6 +24,7 @@ GSList *AttributeDesc::_list = NULL;
 // --------------------------------------------------------------------------------
 AttributeDesc::AttributeDesc (GType  type,
                               gchar *name)
+: Object_c ("AttributeDesc")
 {
   _type       = type;
   _name       = name;
@@ -108,6 +109,7 @@ AttributeDesc *AttributeDesc::GetDesc (gchar *name)
 
 // --------------------------------------------------------------------------------
 Attribute_c::Attribute_c (AttributeDesc *desc)
+: Object_c ("Attribute_c")
 {
   _desc = desc;
   if (_desc)

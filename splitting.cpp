@@ -68,6 +68,7 @@ Splitting::Splitting (StageClass *stage_class)
     filter->ShowAttribute ("licence");
 
     SetFilter (filter);
+    filter->Release ();
   }
 }
 

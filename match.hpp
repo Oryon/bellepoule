@@ -33,7 +33,6 @@ class Match_c : public Object_c
     Match_c  (Player_c *A,
               Player_c *B,
               guint     max_score);
-    ~Match_c ();
 
     Player_c *GetPlayerA ();
     Player_c *GetPlayerB ();
@@ -68,6 +67,8 @@ class Match_c : public Object_c
     Score_c  *_B_score;
 
     gboolean ScoreIsNumber (gchar *score);
+
+    ~Match_c ();
 };
 
 #endif

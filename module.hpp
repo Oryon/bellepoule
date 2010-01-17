@@ -26,8 +26,6 @@
 class Module_c : public virtual Object_c
 {
   public:
-    virtual ~Module_c ();
-
     void Plug (Module_c   *module,
                GtkWidget  *in,
                GtkToolbar *toolbar = NULL);
@@ -67,7 +65,7 @@ class Module_c : public virtual Object_c
 
     void ResetCursor ();
 
-    Module_c ();
+    virtual ~Module_c ();
 
   private:
     GtkWidget    *_root;

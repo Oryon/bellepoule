@@ -49,6 +49,7 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
   {
     AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
     AddSensitiveWidget (_glade->GetWidget ("qualified_fencer_spinbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
   }
 
   // Filter
@@ -67,6 +68,7 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
     filter->ShowAttribute ("name");
 
     SetFilter (filter);
+    filter->Release ();
   }
 }
 
@@ -170,6 +172,17 @@ void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
+gint PoolSupervisor_c::ComparePlayer (Player_c         *A,
+                                      Player_c         *B,
+                                      PoolSupervisor_c *pool_supervisor)
+{
+  return Pool_c::ComparePlayer (A,
+                                B,
+                                pool_supervisor,
+                                0);
+}
+
+// --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
@@ -198,7 +211,7 @@ void PoolSupervisor_c::OnLocked ()
       }
     }
     result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) Pool_c::ComparePlayer,
+                                     (GCompareDataFunc) ComparePlayer,
                                      this);
     SetResult (result);
   }
@@ -219,6 +232,8 @@ void PoolSupervisor_c::OnUnLocked ()
     pool = _pool_allocator->GetPool (p);
     pool->UnLock ();
   }
+
+  OnAttrListUpdated ();
 }
 
 // --------------------------------------------------------------------------------
@@ -494,8 +509,31 @@ void PoolSupervisor_c::OnFilterClicked ()
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_pool_filter_toollbutton_clicked (GtkWidget *widget,
-                                                                    Object_c  *owner)
+void PoolSupervisor_c::OnStuffClicked ()
+{
+  for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (i);
+    pool->Stuff ();
+  }
+
+  OnAttrListUpdated ();
+
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (p);
+    OnPoolStatusUpdated (pool,
+                         this);
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_pool_filter_toolbutton_clicked (GtkWidget *widget,
+                                                                   Object_c  *owner)
 {
   PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
 
@@ -519,4 +557,13 @@ extern "C" G_MODULE_EXPORT void on_pool_classification_toggletoolbutton_toggled 
   PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
 
   p->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_stuff_toolbutton_clicked (GtkWidget *widget,
+                                                             Object_c  *owner)
+{
+  PoolSupervisor_c *ps = dynamic_cast <PoolSupervisor_c *> (owner);
+
+  ps->OnStuffClicked ();
 }

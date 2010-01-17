@@ -39,6 +39,7 @@ Pool_c::Pool_c (guint number)
   _has_error   = FALSE;
   _title_table = NULL;
   _status_item = NULL;
+  _locked      = FALSE;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -67,6 +68,41 @@ Pool_c::~Pool_c ()
   g_slist_free (_match_list);
 
   Object_c::Release (_score_collector);
+}
+
+// --------------------------------------------------------------------------------
+void Pool_c::Stuff ()
+{
+  GRand *rand = g_rand_new  ();
+
+  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  {
+    Match_c  *match;
+    Player_c *A;
+    Player_c *B;
+
+    match = (Match_c *) g_slist_nth_data (_match_list, i);
+
+    A = match->GetPlayerA ();
+    B = match->GetPlayerB ();
+
+    if (g_rand_boolean (rand))
+    {
+      match->SetScore (A, _max_score);
+      match->SetScore (B, g_random_int_range (0,
+                                              _max_score));
+    }
+    else
+    {
+      match->SetScore (A, g_random_int_range (0,
+                                              _max_score));
+      match->SetScore (B, _max_score);
+    }
+  }
+
+  g_rand_free (rand);
+
+  RefreshScoreData ();
 }
 
 // --------------------------------------------------------------------------------
@@ -214,24 +250,22 @@ void Pool_c::OnPlugged ()
 
   CanvasModule_c::OnPlugged ();
 
+  if (_score_collector)
   {
-    if (_score_collector)
+    for (guint i = 0; i < g_slist_length (_match_list); i++)
     {
-      for (guint i = 0; i < g_slist_length (_match_list); i++)
-      {
-        Match_c *match;
+      Match_c *match;
 
-        match = (Match_c *) g_slist_nth_data (_match_list, i);
-        _score_collector->RemoveCollectingPoints (match);
-      }
-
-      _score_collector->Release ();
+      match = (Match_c *) g_slist_nth_data (_match_list, i);
+      _score_collector->RemoveCollectingPoints (match);
     }
 
-    _score_collector = new ScoreCollector (GetCanvas (),
-                                           this,
-                                           (ScoreCollector::OnNewScore_cbk) &Pool_c::OnNewScore);
+    _score_collector->Release ();
   }
+
+  _score_collector = new ScoreCollector (GetCanvas (),
+                                         this,
+                                         (ScoreCollector::OnNewScore_cbk) &Pool_c::OnNewScore);
 
   {
     const guint    cell_w     = 40;
@@ -308,27 +342,30 @@ void Pool_c::OnPlugged ()
                 g_free (score_image);
               }
 
-              if (i < j)
+              if (_locked == FALSE)
               {
-                _score_collector->AddCollectingPoint (goo_rect,
-                                                      score_text,
-                                                      match,
-                                                      A,
-                                                      1);
-              }
-              else
-              {
-                _score_collector->AddCollectingPoint (goo_rect,
-                                                      score_text,
-                                                      match,
-                                                      A,
-                                                      0);
-              }
+                if (i < j)
+                {
+                  _score_collector->AddCollectingPoint (goo_rect,
+                                                        score_text,
+                                                        match,
+                                                        A,
+                                                        1);
+                }
+                else
+                {
+                  _score_collector->AddCollectingPoint (goo_rect,
+                                                        score_text,
+                                                        match,
+                                                        A,
+                                                        0);
+                }
 
-              if (previous_goo_rect)
-              {
-                _score_collector->SetNextCollectingPoint (previous_goo_rect,
-                                                          goo_rect);
+                if (previous_goo_rect)
+                {
+                  _score_collector->SetNextCollectingPoint (previous_goo_rect,
+                                                            goo_rect);
+                }
               }
 
               previous_goo_rect = goo_rect;
@@ -583,16 +620,28 @@ void Pool_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+gint Pool_c::_ComparePlayer (Player_c *A,
+                             Player_c *B,
+                             Pool_c   *pool)
+{
+  return ComparePlayer (A,
+                        B,
+                        pool->_data_owner,
+                        pool->_rand_seed);
+}
+
+// --------------------------------------------------------------------------------
 gint Pool_c::ComparePlayer (Player_c *A,
                             Player_c *B,
-                            Pool_c   *pool)
+                            Object_c *data_owner,
+                            guint32   rand_seed)
 {
-  guint victories_A = (guint) A->GetData (pool->_data_owner, "VictoriesIndice");
-  guint victories_B = (guint) B->GetData (pool->_data_owner, "VictoriesIndice");
-  gint  average_A   = (gint)  A->GetData (pool->_data_owner, "HitsAverage");
-  gint  average_B   = (gint)  B->GetData (pool->_data_owner, "HitsAverage");
-  guint HS_A        = (guint) A->GetData (pool->_data_owner, "HS");
-  guint HS_B        = (guint) B->GetData (pool->_data_owner, "HS");
+  guint victories_A = (guint) A->GetData (data_owner, "VictoriesIndice");
+  guint victories_B = (guint) B->GetData (data_owner, "VictoriesIndice");
+  gint  average_A   = (gint)  A->GetData (data_owner, "HitsAverage");
+  gint  average_B   = (gint)  B->GetData (data_owner, "HitsAverage");
+  guint HS_A        = (guint) A->GetData (data_owner, "HS");
+  guint HS_B        = (guint) B->GetData (data_owner, "HS");
 
   if (victories_B != victories_A)
   {
@@ -613,7 +662,7 @@ gint Pool_c::ComparePlayer (Player_c *A,
   {
     guint         ref_A  = A->GetRef ();
     guint         ref_B  = B->GetRef ();
-    const guint32 seed[] = {ref_A, ref_B, pool->_rand_seed};
+    const guint32 seed[] = {ref_A, ref_B, rand_seed};
     GRand        *rand   = g_rand_new ();
     gboolean      result;
 
@@ -637,13 +686,20 @@ gint Pool_c::ComparePlayer (Player_c *A,
 // --------------------------------------------------------------------------------
 void Pool_c::Lock ()
 {
+  _locked = TRUE;
+
   RefreshScoreData ();
-  _score_collector->Lock ();
+  if (_score_collector)
+  {
+    _score_collector->Lock ();
+  }
 }
 
 // --------------------------------------------------------------------------------
 void Pool_c::UnLock ()
 {
+  _locked = FALSE;
+
   if (_score_collector)
   {
     _score_collector->UnLock ();
@@ -721,7 +777,7 @@ void Pool_c::RefreshScoreData ()
   }
 
   ranking = g_slist_sort_with_data (ranking,
-                                    (GCompareDataFunc) ComparePlayer,
+                                    (GCompareDataFunc) _ComparePlayer,
                                     (void *) this);
 
   for (guint p = 0; p < nb_players; p++)

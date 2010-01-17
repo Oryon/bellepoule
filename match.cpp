@@ -23,6 +23,7 @@
 
 // --------------------------------------------------------------------------------
 Match_c::Match_c (guint max_score)
+: Object_c ("Match_c")
 {
   _max_score = max_score;
 
@@ -40,6 +41,7 @@ Match_c::Match_c (guint max_score)
 Match_c::Match_c  (Player_c *A,
                    Player_c *B,
                    guint     max_score)
+: Object_c ("Match_c")
 {
   _max_score = max_score;
 

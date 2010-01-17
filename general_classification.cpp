@@ -49,6 +49,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
     filter->ShowAttribute ("club");
 
     SetFilter (filter);
+    filter->Release ();
   }
 }
 

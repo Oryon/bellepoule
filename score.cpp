@@ -21,6 +21,7 @@
 
 // --------------------------------------------------------------------------------
 Score_c::Score_c  (guint max_score)
+: Object_c ("Score_c")
 {
   _score     = 0;
   _is_known  = false;

@@ -22,8 +22,6 @@
 class Object_c
 {
   public:
-     Object_c ();
-
     void SetData (Object_c       *owner,
                   gchar          *key,
                   void           *data,
@@ -36,14 +34,22 @@ class Object_c
 
     void Release ();
 
+    static void Dump ();
+
     static void Release (Object_c *object);
 
   protected:
     virtual ~Object_c ();
 
+    Object_c (gchar *class_name = NULL);
+
   private:
     GData *_datalist;
     guint  _ref_count;
+    gchar *_class_name;
+
+    static GList *_list;
+    static guint  _nb_objects;
 };
 
 #endif

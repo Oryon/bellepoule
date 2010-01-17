@@ -45,6 +45,7 @@ Classification::Classification ()
     filter->ShowAttribute ("club");
 
     SetFilter (filter);
+    filter->Release ();
   }
 }
 

@@ -25,6 +25,7 @@
 // --------------------------------------------------------------------------------
 Filter::Filter (GSList   *attr_list,
                 Module_c *owner)
+: Object_c ("Filter")
 {
   _filter_window = NULL;
   _selected_attr = NULL;

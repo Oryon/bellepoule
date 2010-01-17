@@ -87,6 +87,8 @@ Module_c::~Module_c ()
   {
     g_object_unref (_config_widget);
   }
+
+  Object_c::Release (_filter);
 }
 
 // --------------------------------------------------------------------------------
@@ -105,6 +107,11 @@ GtkWidget *Module_c::GetWidget (gchar *name)
 void Module_c::SetFilter (Filter *filter)
 {
   _filter = filter;
+
+  if (_filter)
+  {
+    _filter->Retain ();
+  }
 }
 
 // --------------------------------------------------------------------------------

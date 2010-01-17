@@ -121,6 +121,8 @@ Contest_c::~Contest_c ()
   Object_c::Release (_schedule);
 
   gtk_widget_destroy (_properties_dlg);
+
+  Object_c::Dump ();
 }
 
 // --------------------------------------------------------------------------------
@@ -160,6 +162,8 @@ Contest_c *Contest_c::Create ()
 // --------------------------------------------------------------------------------
 void Contest_c::InitInstance ()
 {
+  Object_c::Dump ();
+
   _name       = NULL;
   _filename   = NULL;
   _backup     = NULL;
