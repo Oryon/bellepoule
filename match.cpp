@@ -173,22 +173,29 @@ void Match_c::SetScore (Player_c *player,
 // --------------------------------------------------------------------------------
 gboolean Match_c::ScoreIsNumber (gchar *score)
 {
-  for (guint i = 0; i < strlen (score); i++)
+  guint len = strlen (score);
+
+  if (len == 0)
+  {
+    return FALSE;
+  }
+
+  for (guint i = 0; i < len; i++)
   {
     if (g_ascii_isalpha (score[i]))
     {
-      return false;
+      return FALSE;
     }
   }
 
-  return true;
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
 gboolean Match_c::SetScore (Player_c *player,
                             gchar    *score)
 {
-  gboolean result = false;
+  gboolean result = FALSE;
 
   if (score)
   {
@@ -197,35 +204,31 @@ gboolean Match_c::SetScore (Player_c *player,
     {
       SetScore (player,
                 _max_score);
-      result = true;
+      result = TRUE;
     }
     else if (ScoreIsNumber (score))
     {
       gchar *max_str        = g_strdup_printf ("%d", _max_score);
       gchar *one_digit_more = g_strdup_printf ("%s0", score);
 
+      SetScore (player,
+                atoi (score));
       if (strlen (score) >= strlen (max_str))
       {
-        SetScore (player,
-                  atoi (score));
-        result = true;
+        result = TRUE;
       }
       else if ((guint) atoi (one_digit_more) > _max_score)
       {
-        SetScore (player,
-                  atoi (score));
-        result = true;
+        result = TRUE;
+      }
+      else
+      {
+        result = FALSE;
       }
 
       g_free (one_digit_more);
       g_free (max_str);
     }
-  }
-
-  if (result == FALSE)
-  {
-    SetScore (player,
-              -1);
   }
 
   return result;

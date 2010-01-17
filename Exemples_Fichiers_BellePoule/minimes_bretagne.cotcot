@@ -58,6 +58,15 @@
     <match player_A="148" score_A="5" player_B="140" score_B="4"/>
    </match_list>
   </pool_stage>
+  <table_stage name="">
+   <match player_A="142"/>
+   <match player_A="169"/>
+   <match player_A="142" player_B="169"/>
+   <match player_A="140"/>
+   <match player_A="148"/>
+   <match player_A="140" player_B="148"/>
+   <match/>
+  </table_stage>
   <general_classification_stage/>
  </schedule>
 </contest>
