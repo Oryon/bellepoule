@@ -69,11 +69,16 @@ void Player_c::SetAttributeValue (gchar *name,
   {
     attr = Attribute_c::New (name);
   }
+  else
+  {
+    attr->Retain ();
+  }
   attr->SetValue (value);
 
   SetData (this,
            attr->GetName (),
-           attr);
+           attr,
+           (GDestroyNotify) Object_c::TryToRelease);
 }
 
 // --------------------------------------------------------------------------------
@@ -86,11 +91,16 @@ void Player_c::SetAttributeValue (gchar *name,
   {
     attr = Attribute_c::New (name);
   }
+  else
+  {
+    attr->Retain ();
+  }
   attr->SetValue (value);
 
   SetData (this,
            attr->GetName (),
-           attr);
+           attr,
+           (GDestroyNotify) Object_c::TryToRelease);
 }
 
 // --------------------------------------------------------------------------------

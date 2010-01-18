@@ -920,7 +920,7 @@ void PoolAllocator_c::DeletePools ()
       Pool_c *pool;
 
       pool = (Pool_c *) g_slist_nth_data (_pools_list, i);
-      Object_c::Release (pool);
+      Object_c::TryToRelease (pool);
     }
 
     g_slist_free (_pools_list);

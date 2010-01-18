@@ -80,7 +80,7 @@ Module_c::~Module_c ()
     g_slist_free (_sensitive_widgets);
   }
 
-  Object_c::Release (_glade);
+  Object_c::TryToRelease (_glade);
   g_object_unref (_root);
 
   if (_config_widget)
@@ -88,7 +88,7 @@ Module_c::~Module_c ()
     g_object_unref (_config_widget);
   }
 
-  Object_c::Release (_filter);
+  Object_c::TryToRelease (_filter);
 }
 
 // --------------------------------------------------------------------------------

@@ -36,7 +36,7 @@ class Object_c
 
     static void Dump ();
 
-    static void Release (Object_c *object);
+    static void TryToRelease (Object_c *object);
 
   protected:
     virtual ~Object_c ();

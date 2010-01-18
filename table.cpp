@@ -81,7 +81,7 @@ Table::~Table ()
   g_object_unref (_from_table_liststore);
 
   DeleteTree ();
-  Object_c::Release (_score_collector);
+  Object_c::TryToRelease (_score_collector);
 
   free (_level_status);
 }
@@ -705,7 +705,7 @@ gboolean Table::DeleteNode (GNode *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  Object_c::Release (data->_match);
+  Object_c::TryToRelease (data->_match);
 
   return FALSE;
 }
@@ -861,7 +861,7 @@ gboolean Table::SaveNode (GNode *node,
 void Table::Wipe ()
 {
   {
-    Object_c::Release (_score_collector);
+    Object_c::TryToRelease (_score_collector);
     _score_collector = new ScoreCollector (GetCanvas (),
                                            this,
                                            (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);

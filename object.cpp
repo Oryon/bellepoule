@@ -120,7 +120,7 @@ void Object_c::Release ()
 }
 
 // --------------------------------------------------------------------------------
-void Object_c::Release (Object_c *object)
+void Object_c::TryToRelease (Object_c *object)
 {
   if (object)
   {

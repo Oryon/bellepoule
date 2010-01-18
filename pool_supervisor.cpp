@@ -75,7 +75,7 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 PoolSupervisor_c::~PoolSupervisor_c ()
 {
-  Object_c::Release (_pool_allocator);
+  Object_c::TryToRelease (_pool_allocator);
 
   gtk_list_store_clear (_pool_liststore);
   g_object_unref (_pool_liststore);

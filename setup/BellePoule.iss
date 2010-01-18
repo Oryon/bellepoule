@@ -26,6 +26,7 @@ WizardSmallImageFile=BellePoule_small.bmp
 [Tasks]
 Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icones de lancement :";
 Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la barre des tâches"; GroupDescription: "Icones de lancement :";
+Name: downloadsources; Description: "Récupérer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
 
 [Registry]
 Root: HKCU; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCU\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnHKCUPathAlready(); Flags: preservestringtype noerror;
@@ -60,14 +61,23 @@ Name: "{app}\resources"; Attribs: hidden
 [Files]
 Source: "..\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
 
+;Exemple de fichiers
 Source: "..\Exemples_Fichiers_BellePoule\exemple.cotcot"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion
 Source: "..\Exemples_Fichiers_FFE\CLS_SHM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
 Source: "..\Exemples_Fichiers_FFE\CLS_EDM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
 
+;Traductions
 Source: "..\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\resources\translations\fr\LC_MESSAGES"; Flags: ignoreversion
 
+;Resources
 Source: "..\resources\glade\*.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\*.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+
+;Sources
+Source: "..\*.hpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
+Source: "..\*.cpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
+Source: "..\resource.rc"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
+Source: "..\resources\glade\*"; DestDir: "{app}\sources\resources\"; Tasks: downloadsources; Flags: ignoreversion
 
 ; GTK+ dependencies
 ; DLL

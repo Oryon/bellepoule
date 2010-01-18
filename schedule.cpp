@@ -100,7 +100,7 @@ Schedule_c::~Schedule_c ()
     stage = ((Stage_c *) g_list_nth_data (_stage_list,
                                           nb_stages - i-1));
     stage->Wipe ();
-    Object_c::Release (stage);
+    Object_c::TryToRelease (stage);
   }
   g_list_free (_stage_list);
 

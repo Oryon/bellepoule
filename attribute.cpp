@@ -121,7 +121,7 @@ Attribute_c::Attribute_c (AttributeDesc *desc)
 // --------------------------------------------------------------------------------
 Attribute_c::~Attribute_c ()
 {
-  Object_c::Release (_desc);
+  Object_c::TryToRelease (_desc);
 }
 
 // --------------------------------------------------------------------------------

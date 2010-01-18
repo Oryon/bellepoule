@@ -48,7 +48,7 @@ Stage_c::~Stage_c ()
   FreeResult ();
   g_free (_name);
 
-  Release (_classification);
+  TryToRelease (_classification);
 }
 
 // --------------------------------------------------------------------------------

@@ -118,7 +118,7 @@ Contest_c::~Contest_c ()
   g_free (_filename);
   g_free (_backup);
 
-  Object_c::Release (_schedule);
+  Object_c::TryToRelease (_schedule);
 
   gtk_widget_destroy (_properties_dlg);
 
@@ -152,7 +152,7 @@ Contest_c *Contest_c::Create ()
 
   if (contest->_name == NULL)
   {
-    Object_c::Release (contest);
+    Object_c::TryToRelease (contest);
     contest = NULL;
   }
 

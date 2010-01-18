@@ -63,11 +63,11 @@ Pool_c::~Pool_c ()
     Match_c *match;
 
     match = (Match_c *) g_slist_nth_data (_match_list, i);
-    Object_c::Release (match);
+    Object_c::TryToRelease (match);
   }
   g_slist_free (_match_list);
 
-  Object_c::Release (_score_collector);
+  Object_c::TryToRelease (_score_collector);
 }
 
 // --------------------------------------------------------------------------------

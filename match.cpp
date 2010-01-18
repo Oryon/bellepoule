@@ -58,8 +58,8 @@ Match_c::Match_c  (Player_c *A,
 // --------------------------------------------------------------------------------
 Match_c::~Match_c ()
 {
-  Object_c::Release (_A_score);
-  Object_c::Release (_B_score);
+  Object_c::TryToRelease (_A_score);
+  Object_c::TryToRelease (_B_score);
 }
 
 // --------------------------------------------------------------------------------
