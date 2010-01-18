@@ -36,6 +36,8 @@ class Tournament : public Module_c
 
     void OnOpen ();
 
+    void OnAbout ();
+
     Contest_c *GetContest (gchar *filename);
 
     void Manage (Contest_c *contest);

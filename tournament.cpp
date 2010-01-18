@@ -57,6 +57,13 @@ Tournament::Tournament (gchar *filename)
     Manage (contest);
     g_free (filename);
   }
+
+  {
+    //GtkWidget *w = _glade->GetWidget ("about_dialog");
+
+    //gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
+                                  //(const gchar *) ">> 0.17/01 <<");
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -175,6 +182,16 @@ void Tournament::OnOpen ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnAbout ()
+{
+  GtkWidget *w = _glade->GetWidget ("about_dialog");
+
+  gtk_dialog_run (GTK_DIALOG (w));
+
+  gtk_widget_hide (w);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_main_window_delete_event (GtkWidget *w,
                                                              gpointer   data)
 {
@@ -197,4 +214,13 @@ extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnOpen ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
+                                                           Object_c  *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnAbout ();
 }

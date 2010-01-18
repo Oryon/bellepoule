@@ -17,6 +17,10 @@
 #define GETTEXT_PACKAGE "gtk20"
 #include <glib/gi18n-lib.h>
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+
 #include <gtk/gtk.h>
 
 #include "contest.hpp"
@@ -29,6 +33,19 @@
 #include "attribute.hpp"
 #include "general_classification.hpp"
 #include "glade.hpp"
+
+// --------------------------------------------------------------------------------
+static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
+                                         const gchar    *link,
+                                         gpointer        data)
+{
+  ShellExecuteA (NULL,
+                 "open",
+                 link,
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+}
 
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
@@ -52,6 +69,10 @@ int main (int argc, char **argv)
   }
 
   Glade_c::SetPath (g_path_get_dirname (argv[0]));
+
+  gtk_about_dialog_set_url_hook (AboutDialogActivateLinkFunc,
+                                 NULL,
+                                 NULL);
 
   {
     AttributeDesc *desc;
