@@ -344,26 +344,37 @@ void PoolAllocator_c::FillCombobox ()
 // --------------------------------------------------------------------------------
 void PoolAllocator_c::CreatePools ()
 {
-  for (guint i = 0; i < _selected_config->nb_pool; i++)
+  Pool_c **pool_table;
+  guint    nb_pool = _selected_config->nb_pool;
+
+  pool_table = (Pool_c **) g_malloc (nb_pool * sizeof (Pool_c *));
+  for (guint i = 0; i < nb_pool; i++)
   {
-    Pool_c *pool;
-
-    pool = new Pool_c (i+1);
+    pool_table[i] = new Pool_c (i+1);
     _pools_list = g_slist_append (_pools_list,
-                                  pool);
-
-    for (guint j = 0; j < _selected_config->size; j++)
-    {
-      Player_c *player;
-
-      player = (Player_c *) g_slist_nth_data (_attendees,
-                                              i + _selected_config->nb_pool * j);
-      if (player)
-      {
-        pool->AddPlayer (player);
-      }
-    }
+                                  pool_table[i]);
   }
+
+  for (guint i = 0; i < g_slist_length (_attendees); i++)
+  {
+    Player_c *player;
+    Pool_c   *pool;
+
+    if (((i / nb_pool) % 2) == 0)
+    {
+      pool = pool_table[i%nb_pool];
+    }
+    else
+    {
+      pool = pool_table[nb_pool-1 - i%nb_pool];
+    }
+
+    player = (Player_c *) g_slist_nth_data (_attendees,
+                                            i);
+    pool->AddPlayer (player);
+  }
+
+  g_free (pool_table);
 }
 
 // --------------------------------------------------------------------------------

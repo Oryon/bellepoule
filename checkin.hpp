@@ -68,6 +68,9 @@ class Checkin : public virtual Stage_c, public PlayersList
 
     void UpdateRanking ();
 
+    static gint CompareRating (Player_c *a,
+                               Player_c *b);
+
     static gboolean PresentPlayerFilter (Player_c *player);
 
     static void on_sensitive_state_toggled (GtkToggleButton *togglebutton,
