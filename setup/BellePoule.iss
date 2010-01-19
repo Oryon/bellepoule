@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=BellePoule
-AppVerName=BellePoule version 0.17/01
+AppVerName=BellePoule version 0.18/01
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
@@ -91,7 +91,6 @@ Source: "C:\MinGW\bin\libgio-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Fla
 Source: "C:\MinGW\bin\zlib1.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\intl.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libatk-1.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libgdk-win32-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libglib-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libgmodule-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
@@ -104,6 +103,19 @@ Source: "C:\MinGW\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\porting_layer\li
 Source: "C:\MinGW\bin\libxml2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\iconv.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libgoocanvas-3.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\bzip2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\freetype6.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libcroco-0.6-3.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libfontconfig-1.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libfreetype-6.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgsf-1-114.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\librsvg-2-2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+
+;
+Source: "C:\MinGW\bin\gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
+Source: "reconfig.bat"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\loaders\*"; DestDir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\loaders"; Flags: ignoreversion
 
 ; .mo
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -136,6 +148,9 @@ Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-thai.dll"; Destdir: "{app}\por
 Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-er.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
 Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-et.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
 Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-viqr.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\immodules"
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}\porting_layer"
 
 [Code]
 function NotOnHKCUPathAlready(): Boolean;
@@ -207,4 +222,5 @@ begin
 end;
 
 [Run]
-Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+Filename: "{app}\porting_layer\bin\reconfig.bat";
+;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
