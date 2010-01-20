@@ -3,8 +3,8 @@
 
 [Setup]
 AppName=BellePoule
-AppVerName=BellePoule version 0.20/01
-OutputBaseFilename=setup0.2001
+AppVerName=BellePoule version 0.21/01
+OutputBaseFilename=setup0.2101
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/

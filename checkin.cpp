@@ -306,6 +306,8 @@ void Checkin::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
+
+  UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------

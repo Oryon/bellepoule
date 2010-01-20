@@ -137,7 +137,7 @@
     <property name="border_width">5</property>
     <property name="type_hint">normal</property>
     <property name="program_name">BellePoule</property>
-    <property name="version">0.20/01</property>
+    <property name="version">0.21/01</property>
     <property name="copyright" translatable="yes">Copyright (C) 2009 Yannick Le Roux.</property>
     <property name="comments" translatable="yes">Logiciel de gestion de tournois d'escrime.
 
@@ -819,7 +819,15 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 &lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;. </property>
-    <property name="authors">Yannick Le Roux</property>
+    <property name="authors">Sp&#xE9;cifications/Tests:
+  Yannick Le Roux
+  Pierre Moro
+  Michel Relet
+  Vincent R&#xE9;my
+  S&#xE9;bastien Vermandel
+
+Conception/Codage:
+  Yannick Le Roux</property>
     <property name="artists">S&#xE9;bastien Vermandel</property>
     <property name="logo">about.png</property>
     <signal name="close" handler="gtk_widget_hide"/>

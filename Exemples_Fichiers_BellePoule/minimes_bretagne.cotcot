@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contest title="" backup="">
  <schedule current_stage="0">
-  <checkin_stage/>
+  <checkin_stage>
+   <player name="A" first_name="" club="" rating="1" gender="" country="" birth_year="" licence="" attending="1" rank="1" ref="0" exported="0"/>
+   <player name="B" first_name="" club="" rating="2" gender="" country="" birth_year="" licence="" attending="1" rank="2" ref="1" exported="0"/>
+   <player name="D" first_name="" club="" rating="4" gender="" country="" birth_year="" licence="" attending="1" rank="3" ref="3" exported="0"/>
+   <player name="C" first_name="" club="" rating="3" gender="" country="" birth_year="" licence="" attending="1" rank="4" ref="2" exported="0"/>
+  </checkin_stage>
   <pool_allocation_stage name=""/>
   <pool_stage name=""/>
   <table_stage name=""/>
