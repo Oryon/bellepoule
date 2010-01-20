@@ -107,6 +107,14 @@ void PoolSupervisor_c::Display ()
 {
   ToggleClassification (FALSE);
   OnPoolSelected (0);
+
+  for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (i);
+    pool->SortMatches ();
+  }
 }
 
 // --------------------------------------------------------------------------------

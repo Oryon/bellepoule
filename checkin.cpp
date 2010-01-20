@@ -227,8 +227,17 @@ gint Checkin::CompareRating (Player_c *a,
 {
   Attribute_c *attr_a  = a->GetAttribute ("rating");
   Attribute_c *attr_b  = b->GetAttribute ("rating");
-  gint         value_a = (gint) attr_a->GetValue ();
-  gint         value_b = (gint) attr_b->GetValue ();
+  gint         value_a = 0;
+  gint         value_b = 0;
+
+  if (attr_a)
+  {
+    value_a = (gint) attr_a->GetValue ();
+  }
+  if (attr_b)
+  {
+    value_b = (gint) attr_b->GetValue ();
+  }
 
   if (value_a == 0)
   {
@@ -434,7 +443,11 @@ void Checkin::ImportFFF (gchar *file)
         player->SetAttributeValue ("exported",   (guint) FALSE);
         if (*tokens[11])
         {
-          player->SetAttributeValue ("rating",     tokens[11]);
+          player->SetAttributeValue ("rating", tokens[11]);
+        }
+        else
+        {
+          player->SetAttributeValue ("rating", (guint) 0);
         }
         Add (player);
         player->Release ();

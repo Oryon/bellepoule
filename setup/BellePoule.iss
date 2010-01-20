@@ -3,7 +3,8 @@
 
 [Setup]
 AppName=BellePoule
-AppVerName=BellePoule version 0.18/01
+AppVerName=BellePoule version 0.20/01
+OutputBaseFilename=setup0.2001
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
@@ -13,7 +14,6 @@ DefaultDirName={code:GetInstallDir}\BellePoule
 DefaultGroupName=BellePoule
 AllowNoIcons=yes
 LicenseFile=COPYING.txt
-OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=yes

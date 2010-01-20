@@ -37,6 +37,7 @@ class Pool_c : public CanvasModule_c
     guint GetNbPlayers ();
     guint GetNumber    ();
     void  ResetMatches ();
+    void  SortMatches  ();
     void  Lock         ();
     void  UnLock       ();
     void  SetMaxScore  (guint max_score);

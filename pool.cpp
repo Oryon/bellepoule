@@ -1054,3 +1054,8 @@ void Pool_c::ResetMatches ()
     match->CleanScore ();
   }
 }
+
+// --------------------------------------------------------------------------------
+void  Pool_c::SortMatches ()
+{
+}
