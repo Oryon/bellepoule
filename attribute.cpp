@@ -26,10 +26,11 @@ AttributeDesc::AttributeDesc (GType  type,
                               gchar *name)
 : Object_c ("AttributeDesc")
 {
-  _type       = type;
-  _name       = name;
-  _uniqueness = SINGULAR;
-  _rights     = PUBLIC;
+  _type         = type;
+  _name         = name;
+  _uniqueness   = SINGULAR;
+  _rights       = PUBLIC;
+  _compare_func = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -164,7 +165,14 @@ gint Attribute_c::Compare (Attribute_c *a, Attribute_c *b)
 {
   if (a)
   {
-    return a->CompareWith (b);
+    if (a->_desc->_compare_func)
+    {
+      return a->_desc->_compare_func (a, b);
+    }
+    else
+    {
+      return a->CompareWith (b);
+    }
   }
 
   return G_MAXINT;

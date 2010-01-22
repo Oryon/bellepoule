@@ -59,8 +59,8 @@ void PlayersList::SetFilter (Filter *filter)
   if (_filter)
   {
     GSList *attr_list    = _filter->GetAttrList ();
-    guint nb_attr        = g_slist_length (attr_list);
-    GType types[nb_attr];
+    guint  nb_attr       = g_slist_length (attr_list);
+    GType  types[nb_attr + 1];
 
     for (guint i = 0; i < nb_attr; i++)
     {
@@ -71,7 +71,9 @@ void PlayersList::SetFilter (Filter *filter)
       types[i] = desc->_type;
     }
 
-    _store = gtk_list_store_newv (nb_attr,
+    types[nb_attr] = G_TYPE_INT;
+
+    _store = gtk_list_store_newv (nb_attr+1,
                                   types);
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
@@ -115,6 +117,10 @@ void PlayersList::Update (Player_c *player)
                             i, attr->GetValue (), -1);
       }
     }
+
+    gtk_list_store_set (_store, &iter,
+                        gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
+                        player, -1);
   }
 }
 
@@ -325,6 +331,27 @@ void PlayersList::OnAttrListUpdated ()
 }
 
 // --------------------------------------------------------------------------------
+gint PlayersList::CompareIterator (GtkTreeModel *model,
+                                   GtkTreeIter  *a,
+                                   GtkTreeIter  *b,
+                                   gchar        *attr_name)
+{
+  Player_c *player_a;
+  Player_c *player_b;
+
+  gtk_tree_model_get (model, a,
+                      gtk_tree_model_get_n_columns (model) - 1,
+                      &player_a, -1);
+  gtk_tree_model_get (model, b,
+                      gtk_tree_model_get_n_columns (model) - 1,
+                      &player_b, -1);
+
+  return Player_c::Compare (player_a,
+                            player_b,
+                            attr_name);
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList::SetColumn (guint     id,
                              gchar    *attr_name,
                              gboolean  entry_is_text_based,
@@ -381,8 +408,19 @@ void PlayersList::SetColumn (guint     id,
 
   if (_rights & SORTABLE)
   {
+    AttributeDesc *attr_desc = AttributeDesc::GetDesc (attr_name);
+
     gtk_tree_view_column_set_sort_column_id (column,
                                              id);
+
+    //if (attr_desc->_compare_func != NULL)
+    {
+      gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
+                                       id,
+                                       (GtkTreeIterCompareFunc) CompareIterator,
+                                       attr_name,
+                                       NULL);
+    }
   }
 
   gtk_tree_view_insert_column (GTK_TREE_VIEW (_tree_view),

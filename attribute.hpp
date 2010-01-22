@@ -38,10 +38,11 @@ class AttributeDesc : public Object_c
       PRIVATE
     } Rights;
 
-    GType       _type;
-    gchar      *_name;
-    Uniqueness  _uniqueness;
-    Rights      _rights;
+    GType         _type;
+    gchar        *_name;
+    Uniqueness    _uniqueness;
+    Rights        _rights;
+    GCompareFunc  _compare_func;
 
     static AttributeDesc *Declare (GType  type,
                                    gchar *name);

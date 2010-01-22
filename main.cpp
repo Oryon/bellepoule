@@ -48,6 +48,34 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
 }
 
 // --------------------------------------------------------------------------------
+static gint CompareRating (Attribute_c *attr_a,
+                           Attribute_c *attr_b)
+{
+  gint value_a = 0;
+  gint value_b = 0;
+
+  if (attr_a)
+  {
+    value_a = (gint) attr_a->GetValue ();
+  }
+  if (attr_b)
+  {
+    value_b = (gint) attr_b->GetValue ();
+  }
+
+  if (value_a == 0)
+  {
+    value_a = G_MAXINT;
+  }
+  if (value_b == 0)
+  {
+    value_b = G_MAXINT;
+  }
+
+  return (value_a - value_b);
+}
+
+// --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
   libintl_bindtextdomain ("BellePoule", "./resources/translations");
@@ -85,6 +113,7 @@ int main (int argc, char **argv)
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "rating");
+    desc->_compare_func = (GCompareFunc) CompareRating;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "gender");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;

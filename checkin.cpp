@@ -222,40 +222,11 @@ void Checkin::Display ()
 }
 
 // --------------------------------------------------------------------------------
-gint Checkin::CompareRating (Player_c *a,
-                             Player_c *b)
-{
-  Attribute_c *attr_a  = a->GetAttribute ("rating");
-  Attribute_c *attr_b  = b->GetAttribute ("rating");
-  gint         value_a = 0;
-  gint         value_b = 0;
-
-  if (attr_a)
-  {
-    value_a = (gint) attr_a->GetValue ();
-  }
-  if (attr_b)
-  {
-    value_b = (gint) attr_b->GetValue ();
-  }
-
-  if (value_a == 0)
-  {
-    value_a = G_MAXINT;
-  }
-  if (value_b == 0)
-  {
-    value_b = G_MAXINT;
-  }
-
-  return (value_a - value_b);
-}
-
-// --------------------------------------------------------------------------------
 void Checkin::UpdateRanking ()
 {
-  _player_list = g_slist_sort (_player_list,
-                               (GCompareFunc) CompareRating);
+  _player_list = g_slist_sort_with_data (_player_list,
+                                         (GCompareDataFunc) Player_c::Compare,
+                                         (void *) "rating");
 
   for (guint i = 0; i <  g_slist_length (_player_list); i++)
   {

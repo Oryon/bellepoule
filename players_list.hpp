@@ -87,6 +87,11 @@ class PlayersList : public Module_c
                                 gchar               *path_string,
                                 gchar               *new_text,
                                 gpointer             user_data);
+
+    static gint CompareIterator (GtkTreeModel *model,
+                                 GtkTreeIter  *a,
+                                 GtkTreeIter  *b,
+                                 gchar        *attr_name);
 };
 
 #endif

@@ -182,8 +182,10 @@ void Pool_c::AddPlayer (Player_c *player)
                                     match);
     }
 
-    _player_list = g_slist_append (_player_list,
-                                   player);
+    _player_list = g_slist_insert_sorted_with_data (_player_list,
+                                                    player,
+                                                    (GCompareDataFunc) Player_c::Compare,
+                                                    (void *) "rank");
   }
 }
 
