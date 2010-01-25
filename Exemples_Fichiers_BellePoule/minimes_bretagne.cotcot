@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contest title="" backup="">
- <schedule current_stage="1">
+ <schedule current_stage="2">
   <checkin_stage>
    <player name="A" first_name="" club="" rating="1" gender="" country="" birth_year="" licence="" attending="1" rank="1" ref="0" exported="0"/>
    <player name="B" first_name="" club="" rating="2" gender="" country="" birth_year="" licence="" attending="1" rank="2" ref="1" exported="0"/>
@@ -15,7 +15,16 @@
     <player ref="3"/>
    </player_list>
   </pool_allocation_stage>
-  <pool_stage name=""/>
+  <pool_stage name="">
+   <match_list>
+    <match player_A="1" player_B="0"/>
+    <match player_A="2" player_B="0"/>
+    <match player_A="2" player_B="1"/>
+    <match player_A="3" player_B="0"/>
+    <match player_A="3" player_B="1"/>
+    <match player_A="3" player_B="2"/>
+   </match_list>
+  </pool_stage>
   <table_stage name=""/>
   <general_classification_stage/>
  </schedule>

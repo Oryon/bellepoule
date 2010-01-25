@@ -245,6 +245,39 @@ void Pool_c::OnNewScore (CanvasModule_c *client)
 }
 
 // --------------------------------------------------------------------------------
+GString *Pool_c::GetPlayerImage (Player_c *player)
+{
+  GString *image         = g_string_new ("");
+  GSList  *selected_attr = NULL;
+
+  if (_filter)
+  {
+    selected_attr = _filter->GetSelectedAttrList ();
+  }
+
+
+  for (guint a = 0; a < g_slist_length (selected_attr); a++)
+  {
+    AttributeDesc *attr_desc;
+    Attribute_c   *attr;
+
+    attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
+                                                    a);
+    attr = player->GetAttribute (attr_desc->_name);
+
+    if (attr)
+    {
+      image = g_string_append (image,
+                               attr->GetStringImage ());
+      image = g_string_append (image,
+                               "  ");
+    }
+  }
+
+  return image;
+}
+
+// --------------------------------------------------------------------------------
 void Pool_c::OnPlugged ()
 {
   _title_table = NULL;
@@ -278,13 +311,6 @@ void Pool_c::OnPlugged ()
 
     // Grid
     {
-      GSList *selected_attr = NULL;
-
-      if (_filter)
-      {
-        selected_attr = _filter->GetSelectedAttrList ();
-      }
-
       // Border
       {
         goo_canvas_rect_new (grid_group,
@@ -383,77 +409,41 @@ void Pool_c::OnPlugged ()
       // Players (vertically)
       for (guint i = 0; i < nb_players; i++)
       {
-        Player_c *player;
         gint      x, y;
-        GString  *string = g_string_new ("");
+        GString  *image;
 
-        player = GetPlayer (i);
         x = - 5;
         y = cell_h / 2 + i * cell_h;
+        image = GetPlayerImage (GetPlayer (i));
 
-        for (guint a = 0; a < g_slist_length (selected_attr); a++)
-        {
-          AttributeDesc *attr_desc;
-          Attribute_c   *attr;
-
-          attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                          a);
-          attr = player->GetAttribute (attr_desc->_name);
-
-          if (attr)
-          {
-            string = g_string_append (string,
-                                      attr->GetStringImage ());
-            string = g_string_append (string,
-                                      "  ");
-          }
-        }
         goo_canvas_text_new (grid_group,
-                             string->str,
+                             image->str,
                              x, y, -1,
                              GTK_ANCHOR_EAST,
                              "font", "Sans 18px",
                              NULL);
-        g_string_free (string,
+        g_string_free (image,
                        TRUE);
       }
 
       // Players (horizontally)
       for (guint i = 0; i < nb_players; i++)
       {
-        Player_c      *player;
         GooCanvasItem *goo_text;
         gint           x, y;
-        GString       *string = g_string_new ("");
+        GString       *image;
 
-        player = GetPlayer (i);
         x = cell_w / 2 + i * cell_w;;
         y = - 10;
+        image = GetPlayerImage (GetPlayer (i));
 
-        for (guint a = 0; a < g_slist_length (selected_attr); a++)
-        {
-          AttributeDesc *attr_desc;
-          Attribute_c   *attr;
-
-          attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                          a);
-          attr = player->GetAttribute (attr_desc->_name);
-
-          if (attr)
-          {
-            string = g_string_append (string,
-                                      attr->GetStringImage ());
-            string = g_string_append (string,
-                                      "  ");
-          }
-        }
         goo_text = goo_canvas_text_new (grid_group,
-                                        string->str,
+                                        image->str,
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
                                         NULL);
-        g_string_free (string,
+        g_string_free (image,
                        TRUE);
         goo_canvas_item_rotate (goo_text, 315, x, y);
       }
@@ -592,6 +582,109 @@ void Pool_c::OnPlugged ()
                                    grid_bounds.x2 - dashboard_bounds.x1 + cell_w,
                                    0);
       }
+    }
+
+    // Matches
+    {
+      GooCanvasBounds  bounds;
+      GooCanvasItem   *match_main_table;
+      GooCanvasItem   *text_item;
+      const guint      nb_column = 3;
+
+      goo_canvas_item_get_bounds (root_item,
+                                  &bounds);
+
+      match_main_table = goo_canvas_table_new (root_item,
+                                               "row-spacing", (gdouble) cell_h,
+                                               "column-spacing", (gdouble) cell_w/2, NULL);
+
+      for (guint m = 0; m < g_slist_length (_match_list); m++)
+      {
+        Match_c       *match;
+        GString       *image;
+        GooCanvasItem *match_table;
+
+        match_table = goo_canvas_table_new (match_main_table, NULL);
+
+        match = (Match_c *) g_slist_nth_data (_match_list,
+                                              m);
+
+        {
+          gchar *text = g_strdup_printf ("%d", m);
+
+          text_item = PutTextInTable (match_main_table,
+                                      text,
+                                      m/nb_column,
+                                      m%nb_column + 2*(m%nb_column));
+          g_object_set (G_OBJECT (text_item),
+                        "font", "Sans bold 18px",
+                        NULL);
+          SetTableItemAttribute (text_item, "y-align", 0.5);
+        }
+
+        {
+          image = GetPlayerImage (match->GetPlayerA ());
+          text_item = PutTextInTable (match_table,
+                                      image->str,
+                                      0,
+                                      0);
+          g_string_free (image,
+                         TRUE);
+          g_object_set (G_OBJECT (text_item),
+                        "font", "Sans bold 16px",
+                        NULL);
+          for (guint i = 0; i < _max_score; i++)
+          {
+            GooCanvasItem *rect = goo_canvas_rect_new (match_table,
+                                                       0.0, 0.0,
+                                                       10.0, 10.0,
+                                                       "stroke-color", "grey",
+                                                       "line-width", 1.0,
+                                                       NULL);
+            PutInTable (match_table,
+                        rect,
+                        0,
+                        i+1);
+            SetTableItemAttribute (rect, "y-align", 0.5);
+          }
+        }
+
+        {
+          image = GetPlayerImage (match->GetPlayerB ());
+          text_item = PutTextInTable (match_table,
+                                      image->str,
+                                      1,
+                                      0);
+          g_string_free (image,
+                         TRUE);
+          g_object_set (G_OBJECT (text_item),
+                        "font", "Sans bold 16px",
+                        NULL);
+
+          for (guint i = 0; i < _max_score; i++)
+          {
+            GooCanvasItem *rect = goo_canvas_rect_new (match_table,
+                                                       0.0, 0.0,
+                                                       10.0, 10.0,
+                                                       "stroke-color", "grey",
+                                                       "line-width", 1.0,
+                                                       NULL);
+
+            PutInTable (match_table,
+                        rect,
+                        1,
+                        i+1);
+            SetTableItemAttribute (rect, "y-align", 0.5);
+          }
+        }
+        PutInTable (match_main_table,
+                    match_table,
+                    m/nb_column,
+                    m%nb_column + 2*(m%nb_column) + 1);
+      }
+      goo_canvas_item_translate (match_main_table,
+                                 bounds.x1,
+                                 bounds.y2 + cell_h);
     }
 
     // Name

@@ -408,19 +408,14 @@ void PlayersList::SetColumn (guint     id,
 
   if (_rights & SORTABLE)
   {
-    AttributeDesc *attr_desc = AttributeDesc::GetDesc (attr_name);
-
     gtk_tree_view_column_set_sort_column_id (column,
                                              id);
 
-    //if (attr_desc->_compare_func != NULL)
-    {
-      gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
-                                       id,
-                                       (GtkTreeIterCompareFunc) CompareIterator,
-                                       attr_name,
-                                       NULL);
-    }
+    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
+                                     id,
+                                     (GtkTreeIterCompareFunc) CompareIterator,
+                                     attr_name,
+                                     NULL);
   }
 
   gtk_tree_view_insert_column (GTK_TREE_VIEW (_tree_view),

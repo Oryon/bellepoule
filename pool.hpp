@@ -106,6 +106,8 @@ class Pool_c : public CanvasModule_c
 
     void RefreshDashBoard ();
 
+    GString *GetPlayerImage (Player_c *player);
+
     ~Pool_c ();
 };
 
