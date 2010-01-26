@@ -269,6 +269,7 @@ void PoolAllocator_c::FillCombobox ()
       size = (nb_players + nb_pool - i) / nb_pool;
 
       if (   (size >= 3)
+          && (size <= 11)
           && (nb_pool * (size - 1) + i == nb_players))
       {
         {
@@ -314,7 +315,7 @@ void PoolAllocator_c::FillCombobox ()
           }
         }
 
-        // skip the other configuartions with the same size
+        // skip the other configurations with the same size
         nb_pool = (nb_players / (size - 1));
         break;
       }

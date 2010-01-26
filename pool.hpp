@@ -37,7 +37,7 @@ class Pool_c : public CanvasModule_c
     guint GetNbPlayers ();
     guint GetNumber    ();
     void  ResetMatches ();
-    void  SortMatches  ();
+    void  SortPlayers  ();
     void  Lock         ();
     void  UnLock       ();
     void  SetMaxScore  (guint max_score);
@@ -64,7 +64,8 @@ class Pool_c : public CanvasModule_c
     static gint ComparePlayer (Player_c *A,
                                Player_c *B,
                                Object_c *data_owner,
-                               guint32   rand_seed);
+                               guint32   rand_seed,
+                               gboolean  with_full_random = FALSE);
 
   private:
     guint           _max_score;
@@ -89,6 +90,10 @@ class Pool_c : public CanvasModule_c
                                 Player_c *B,
                                 Pool_c   *pool);
 
+    static gint _ComparePlayerWithFullRandom (Player_c *A,
+                                              Player_c *B,
+                                              Pool_c   *pool);
+
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
     void OnDrawPage (GtkPrintOperation *operation,
@@ -99,6 +104,8 @@ class Pool_c : public CanvasModule_c
 
     Match_c *GetMatch (Player_c *A,
                        Player_c *B);
+
+    Match_c *GetMatch (guint i);
 
     static void OnNewScore (CanvasModule_c *client);
 
@@ -112,4 +119,3 @@ class Pool_c : public CanvasModule_c
 };
 
 #endif
-

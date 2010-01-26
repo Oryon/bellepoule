@@ -22,6 +22,7 @@
 #include <cairo-pdf.h>
 
 #include "match.hpp"
+#include "pool_match_order.hpp"
 #include "pool.hpp"
 
 // --------------------------------------------------------------------------------
@@ -462,7 +463,7 @@ void Pool_c::OnPlugged ()
         y = - 10;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Victories",
+                                        "Victoires",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -471,7 +472,7 @@ void Pool_c::OnPlugged ()
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Scored",
+                                        "Vict./Matchs",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -480,7 +481,7 @@ void Pool_c::OnPlugged ()
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Received",
+                                        "T. données",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -489,7 +490,7 @@ void Pool_c::OnPlugged ()
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Average",
+                                        "T. reçues",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -498,7 +499,16 @@ void Pool_c::OnPlugged ()
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Rank",
+                                        "Moyenne",
+                                        x, y, -1,
+                                        GTK_ANCHOR_WEST,
+                                        "font", "Sans 18px",
+                                        NULL);
+        goo_canvas_item_rotate (goo_text, 315, x, y);
+        x += cell_w;
+
+        goo_text = goo_canvas_text_new (dashboard_group,
+                                        "Place",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -528,6 +538,15 @@ void Pool_c::OnPlugged ()
                                             "font", "Sans 18px",
                                             NULL);
             player->SetData (_data_owner, "VictoriesItem",  goo_text);
+            x += cell_w;
+
+            goo_text = goo_canvas_text_new (dashboard_group,
+                                            ".",
+                                            x, y, -1,
+                                            GTK_ANCHOR_CENTER,
+                                            "font", "Sans 18px",
+                                            NULL);
+            player->SetData (_data_owner, "VictoriesIndiceItem",  goo_text);
             x += cell_w;
 
             goo_text = goo_canvas_text_new (dashboard_group,
@@ -595,7 +614,7 @@ void Pool_c::OnPlugged ()
                                   &bounds);
 
       match_main_table = goo_canvas_table_new (root_item,
-                                               "row-spacing", (gdouble) cell_h,
+                                               "row-spacing", (gdouble) cell_h/2,
                                                "column-spacing", (gdouble) cell_w/2, NULL);
 
       for (guint m = 0; m < g_slist_length (_match_list); m++)
@@ -606,11 +625,10 @@ void Pool_c::OnPlugged ()
 
         match_table = goo_canvas_table_new (match_main_table, NULL);
 
-        match = (Match_c *) g_slist_nth_data (_match_list,
-                                              m);
+        match = GetMatch (m);
 
         {
-          gchar *text = g_strdup_printf ("%d", m);
+          gchar *text = g_strdup_printf ("%d", m+1);
 
           text_item = PutTextInTable (match_main_table,
                                       text,
@@ -630,9 +648,6 @@ void Pool_c::OnPlugged ()
                                       0);
           g_string_free (image,
                          TRUE);
-          g_object_set (G_OBJECT (text_item),
-                        "font", "Sans bold 16px",
-                        NULL);
           for (guint i = 0; i < _max_score; i++)
           {
             GooCanvasItem *rect = goo_canvas_rect_new (match_table,
@@ -657,9 +672,6 @@ void Pool_c::OnPlugged ()
                                       0);
           g_string_free (image,
                          TRUE);
-          g_object_set (G_OBJECT (text_item),
-                        "font", "Sans bold 16px",
-                        NULL);
 
           for (guint i = 0; i < _max_score; i++)
           {
@@ -722,33 +734,38 @@ gint Pool_c::_ComparePlayer (Player_c *A,
   return ComparePlayer (A,
                         B,
                         pool->_data_owner,
-                        pool->_rand_seed);
+                        pool->_rand_seed,
+                        FALSE);
 }
 
 // --------------------------------------------------------------------------------
 gint Pool_c::ComparePlayer (Player_c *A,
                             Player_c *B,
                             Object_c *data_owner,
-                            guint32   rand_seed)
+                            guint32   rand_seed,
+                            gboolean  with_full_random)
 {
-  guint victories_A = (guint) A->GetData (data_owner, "VictoriesIndice");
-  guint victories_B = (guint) B->GetData (data_owner, "VictoriesIndice");
-  gint  average_A   = (gint)  A->GetData (data_owner, "HitsAverage");
-  gint  average_B   = (gint)  B->GetData (data_owner, "HitsAverage");
-  guint HS_A        = (guint) A->GetData (data_owner, "HS");
-  guint HS_B        = (guint) B->GetData (data_owner, "HS");
+  if (with_full_random == FALSE)
+  {
+    guint victories_A = (guint) A->GetData (data_owner, "VictoriesIndice");
+    guint victories_B = (guint) B->GetData (data_owner, "VictoriesIndice");
+    gint  average_A   = (gint)  A->GetData (data_owner, "HitsAverage");
+    gint  average_B   = (gint)  B->GetData (data_owner, "HitsAverage");
+    guint HS_A        = (guint) A->GetData (data_owner, "HS");
+    guint HS_B        = (guint) B->GetData (data_owner, "HS");
 
-  if (victories_B != victories_A)
-  {
-    return victories_B - victories_A;
-  }
-  if (average_B != average_A)
-  {
-    return average_B - average_A;
-  }
-  else if (HS_B != HS_A)
-  {
-    return HS_B - HS_A;
+    if (victories_B != victories_A)
+    {
+      return victories_B - victories_A;
+    }
+    if (average_B != average_A)
+    {
+      return average_B - average_A;
+    }
+    else if (HS_B != HS_A)
+    {
+      return HS_B - HS_A;
+    }
   }
 
   // Return always the same random value for the given players
@@ -757,23 +774,22 @@ gint Pool_c::ComparePlayer (Player_c *A,
   {
     guint         ref_A  = A->GetRef ();
     guint         ref_B  = B->GetRef ();
-    const guint32 seed[] = {ref_A, ref_B, rand_seed};
-    GRand        *rand   = g_rand_new ();
-    gboolean      result;
+    const guint32 seed[] = {MIN (ref_A, ref_B), MAX (ref_A, ref_B), rand_seed};
+    GRand        *rand;
+    gint          result;
 
-    g_rand_set_seed_array (rand,
-                           seed,
-                           sizeof (seed) / sizeof (guint32));
-    result = g_rand_boolean (rand);
+    rand = g_rand_new_with_seed_array (seed,
+                                       sizeof (seed) / sizeof (guint32));
+    result = (gint) g_rand_int (rand);
     g_rand_free (rand);
 
-    if (result)
+    if (ref_A > ref_B)
     {
-      return 1;
+      return -result;
     }
     else
     {
-      return -1;
+      return result;
     }
   }
 }
@@ -950,6 +966,14 @@ void Pool_c::RefreshDashBoard ()
 
     player = GetPlayer (p);
 
+    value = (gint) player->GetData (_data_owner, "VictoriesIndice");
+    goo_text = GOO_CANVAS_ITEM (player->GetData (_data_owner, "VictoriesIndiceItem"));
+    text = g_strdup_printf ("%0.2f", (gdouble) value / 100.0);
+    g_object_set (goo_text,
+                  "text",
+                  text, NULL);
+    g_free (text);
+
     value = (gint) player->GetData (_data_owner, "Victories");
     goo_text = GOO_CANVAS_ITEM (player->GetData (_data_owner, "VictoriesItem"));
     text = g_strdup_printf ("%d", value);
@@ -968,7 +992,7 @@ void Pool_c::RefreshDashBoard ()
 
     value = (gint) player->GetData (_data_owner, "HR");
     goo_text = GOO_CANVAS_ITEM (player->GetData (_data_owner, "HRItem"));
-    text = g_strdup_printf ("%d", value);
+    text = g_strdup_printf ("%d", -value);
     g_object_set (goo_text,
                   "text",
                   text, NULL);
@@ -1009,6 +1033,21 @@ Match_c *Pool_c::GetMatch (Player_c *A,
   }
 
   return NULL;
+}
+
+// --------------------------------------------------------------------------------
+Match_c *Pool_c::GetMatch (guint i)
+{
+  PoolMatchOrder::PlayerPair *pair = PoolMatchOrder::GetPlayerPair (GetNbPlayers ());
+
+  if (pair)
+  {
+    Player_c *a = (Player_c *) g_slist_nth_data (_player_list, pair[i]._a-1);
+    Player_c *b = (Player_c *) g_slist_nth_data (_player_list, pair[i]._b-1);
+
+    return GetMatch (a,
+                     b);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1151,6 +1190,21 @@ void Pool_c::ResetMatches ()
 }
 
 // --------------------------------------------------------------------------------
-void  Pool_c::SortMatches ()
+gint Pool_c::_ComparePlayerWithFullRandom (Player_c *A,
+                                           Player_c *B,
+                                           Pool_c   *pool)
 {
+  return ComparePlayer (A,
+                        B,
+                        pool->_data_owner,
+                        pool->_rand_seed,
+                        TRUE);
+}
+
+// --------------------------------------------------------------------------------
+void  Pool_c::SortPlayers ()
+{
+  _player_list = g_slist_sort_with_data (_player_list,
+                                         (GCompareDataFunc) _ComparePlayerWithFullRandom,
+                                         (void *) this);
 }

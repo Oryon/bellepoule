@@ -1,30 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contest title="" backup="">
- <schedule current_stage="2">
+ <schedule current_stage="0">
   <checkin_stage>
    <player name="A" first_name="" club="" rating="1" gender="" country="" birth_year="" licence="" attending="1" rank="1" ref="0" exported="0"/>
    <player name="B" first_name="" club="" rating="2" gender="" country="" birth_year="" licence="" attending="1" rank="2" ref="1" exported="0"/>
    <player name="C" first_name="" club="" rating="3" gender="" country="" birth_year="" licence="" attending="1" rank="3" ref="2" exported="0"/>
-   <player name="D" first_name="" club="" rating="4" gender="" country="" birth_year="" licence="" attending="1" rank="4" ref="3" exported="0"/>
+   <player name="D" first_name="" club="" rating="4" gender="" country="" birth_year="" licence="" attending="0" rank="4" ref="3" exported="0"/>
   </checkin_stage>
-  <pool_allocation_stage name="">
-   <player_list>
-    <player ref="0"/>
-    <player ref="1"/>
-    <player ref="2"/>
-    <player ref="3"/>
-   </player_list>
-  </pool_allocation_stage>
-  <pool_stage name="">
-   <match_list>
-    <match player_A="1" player_B="0"/>
-    <match player_A="2" player_B="0"/>
-    <match player_A="2" player_B="1"/>
-    <match player_A="3" player_B="0"/>
-    <match player_A="3" player_B="1"/>
-    <match player_A="3" player_B="2"/>
-   </match_list>
-  </pool_stage>
+  <pool_allocation_stage name=""/>
+  <pool_stage name=""/>
   <table_stage name=""/>
   <general_classification_stage/>
  </schedule>

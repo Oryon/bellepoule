@@ -113,7 +113,7 @@ void PoolSupervisor_c::Display ()
     Pool_c *pool;
 
     pool = _pool_allocator->GetPool (i);
-    pool->SortMatches ();
+    pool->SortPlayers ();
   }
 }
 
