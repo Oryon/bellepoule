@@ -134,7 +134,7 @@ void Object_c::SetData (Object_c       *owner,
                         void           *data,
                         GDestroyNotify  destroy_cbk)
 {
-  gchar *full_key = g_strdup_printf ("%x::%s", owner, key);
+  gchar *full_key = g_strdup_printf ("%p::%s", owner, key);
 
   g_datalist_set_data_full (&_datalist,
                             full_key,
@@ -148,7 +148,7 @@ void *Object_c::GetData (Object_c *owner,
                          gchar    *key)
 {
   void  *data;
-  gchar *full_key = g_strdup_printf ("%x::%s", owner, key);
+  gchar *full_key = g_strdup_printf ("%p::%s", owner, key);
 
   data = g_datalist_get_data (&_datalist,
                               full_key);
@@ -161,6 +161,8 @@ void *Object_c::GetData (Object_c *owner,
 void Object_c::Dump ()
 {
   guint total = 0;
+
+  g_mem_profile ();
 
   g_print (">> %d\n", _nb_objects);
   for (guint i = 0; i < g_list_length (_list); i++)

@@ -110,7 +110,7 @@ void Table::RefreshLevelStatus ()
     _level_status[i]._has_error = FALSE;
     if (_level_status[i]._status_item)
     {
-      goo_canvas_item_remove (_level_status[i]._status_item);
+      WipeItem (_level_status[i]._status_item);
       _level_status[i]._status_item = NULL;
     }
   }
@@ -157,8 +157,6 @@ void Table::Display ()
   Wipe ();
 
   {
-    guint nb_missing_level = _nb_levels - _nb_level_to_display;
-
     _main_table = goo_canvas_table_new (GetRootItem (),
                                         "row-spacing",    10.0,
                                         "column-spacing", _level_spacing,
@@ -175,15 +173,15 @@ void Table::Display ()
 
         if (l == _nb_level_to_display)
         {
-          text = g_strdup_printf ("Winner");
+          text = g_strdup_printf ("Vainqueur");
         }
         else if (l == _nb_level_to_display - 1)
         {
-          text = g_strdup_printf ("Final");
+          text = g_strdup_printf ("Finale");
         }
         else if (l == _nb_level_to_display - 2)
         {
-          text = g_strdup_printf ("Semi-final");
+          text = g_strdup_printf ("Demi-final");
         }
         else
         {
@@ -403,13 +401,13 @@ gboolean Table::WipeNode (GNode *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  table->WipeItem (data->_player_item);
+  WipeItem (data->_player_item);
   data->_player_item = NULL;
 
-  table->WipeItem (data->_print_item);
+  WipeItem (data->_print_item);
   data->_print_item = NULL;
 
-  table->WipeItem (data->_connector);
+  WipeItem (data->_connector);
   data->_connector = NULL;
 
   return FALSE;
@@ -424,7 +422,7 @@ gboolean Table::DeleteCanvasTable (GNode *node,
   WipeNode (node,
             table);
 
-  table->WipeItem (data->_canvas_table);
+  WipeItem (data->_canvas_table);
   data->_canvas_table = NULL;
 
   return FALSE;
@@ -473,7 +471,7 @@ gboolean Table::DrawConnector (GNode *node,
     GNode           *parent = node->parent;
     GooCanvasBounds  bounds;
 
-    table->WipeItem (data->_connector);
+    WipeItem (data->_connector);
     data->_connector = NULL;
 
     goo_canvas_item_get_bounds (data->_canvas_table,
@@ -608,10 +606,10 @@ gboolean Table::FillInNode (GNode *node,
     if (winner == NULL)
     {
       // Print Icon
-      data->_print_item = PutStockIconInTable (data->_canvas_table,
-                                               GTK_STOCK_PRINT,
-                                               0,
-                                               0);
+      data->_print_item = table->PutStockIconInTable (data->_canvas_table,
+                                                      GTK_STOCK_PRINT,
+                                                      0,
+                                                      0);
       SetTableItemAttribute (data->_print_item, "y-align", 0.5);
     }
 
@@ -983,8 +981,6 @@ void Table::ApplyConfig ()
       if (str)
       {
         _max_score = atoi (str);
-
-        //pool->SetMaxScore (_max_score);
       }
     }
   }

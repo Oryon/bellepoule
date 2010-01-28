@@ -272,7 +272,7 @@ static PoolMatchOrder::PlayerPair *all_pool_pairs[12] =
 // --------------------------------------------------------------------------------
 PoolMatchOrder::PlayerPair *PoolMatchOrder::GetPlayerPair (guint pool_size)
 {
-  if (pool_size <= 7)
+  if (pool_size <= 11)
   {
     return all_pool_pairs[pool_size];
   }

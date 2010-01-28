@@ -94,6 +94,8 @@
 		<Unit filename="pool.hpp" />
 		<Unit filename="pool_allocator.cpp" />
 		<Unit filename="pool_allocator.hpp" />
+		<Unit filename="pool_match_order.cpp" />
+		<Unit filename="pool_match_order.hpp" />
 		<Unit filename="pool_supervisor.cpp" />
 		<Unit filename="pool_supervisor.hpp" />
 		<Unit filename="resource.rc">

@@ -148,26 +148,29 @@ GooCanvasItem *CanvasModule_c::PutStockIconInTable (GooCanvasItem *table,
                                                     guint          column)
 {
   GooCanvasItem *item;
-  GtkWidget     *image = gtk_image_new ();
   GdkPixbuf     *pixbuf;
 
-  g_object_ref_sink (image);
-  pixbuf = gtk_widget_render_icon (image,
-                                   icon_name,
-                                   GTK_ICON_SIZE_BUTTON,
-                                   NULL);
+  {
+    GtkWidget *image = gtk_image_new ();
+
+    g_object_ref_sink (image);
+    pixbuf = gtk_widget_render_icon (image,
+                                     icon_name,
+                                     GTK_ICON_SIZE_BUTTON,
+                                     NULL);
+    g_object_unref (image);
+  }
 
   item = goo_canvas_image_new (table,
                                pixbuf,
                                0.0,
                                0.0,
                                NULL);
+  g_object_unref (pixbuf);
 
   PutInTable (table,
               item,
               row, column);
-
-  g_object_unref (image);
 
   return item;
 }
@@ -194,28 +197,33 @@ GooCanvasItem *CanvasModule_c::GetRootItem ()
 // --------------------------------------------------------------------------------
 void CanvasModule_c::Wipe ()
 {
-  WipeItem (GetRootItem ());
-}
+  GooCanvasItem *root = GetRootItem ();
 
-// --------------------------------------------------------------------------------
-void CanvasModule_c::WipeItem (GooCanvasItem *from)
-{
-  if (from)
+  if (root)
   {
-    guint nb_child = goo_canvas_item_get_n_children (from);
+    guint nb_child = goo_canvas_item_get_n_children (root);
 
     for (guint i = 0; i < nb_child; i++)
     {
       GooCanvasItem *child;
 
-      child = goo_canvas_item_get_child (from,
+      child = goo_canvas_item_get_child (root,
                                          0);
       if (child)
       {
         goo_canvas_item_remove (child);
       }
     }
-    goo_canvas_item_remove (from);
+    goo_canvas_item_remove (root);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule_c::WipeItem (GooCanvasItem *item)
+{
+  if (item)
+  {
+    goo_canvas_item_remove (item);
   }
 }
 

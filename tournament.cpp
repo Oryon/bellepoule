@@ -127,11 +127,9 @@ Contest_c *Tournament::GetContest (gchar *filename)
 // --------------------------------------------------------------------------------
 void Tournament::OnNew ()
 {
-  // g_mem_profile ();
   Contest_c *contest = Contest_c::Create ();
 
   Manage (contest);
-  // g_mem_profile ();
 }
 
 // --------------------------------------------------------------------------------

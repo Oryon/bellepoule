@@ -45,6 +45,10 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                  NULL,
                  NULL,
                  SW_SHOWNORMAL);
+  //gtk_show_uri (NULL,
+                //link,
+                //GDK_CURRENT_TIME,
+                //NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -84,8 +88,9 @@ int main (int argc, char **argv)
 
   // Init
   {
-    gtk_init (&argc, &argv);
     // g_mem_set_vtable (glib_mem_profiler_table);
+
+    gtk_init (&argc, &argv);
 
     Contest_c::Init             ();
     Checkin::Init               ();

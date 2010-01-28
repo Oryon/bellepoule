@@ -1048,6 +1048,8 @@ Match_c *Pool_c::GetMatch (guint i)
     return GetMatch (a,
                      b);
   }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
