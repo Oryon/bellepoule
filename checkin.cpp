@@ -137,7 +137,7 @@ Checkin::Checkin (StageClass *stage_class)
           }
         }
       }
-    };
+    }
   }
 }
 

@@ -21,6 +21,8 @@
 
 #include "module.hpp"
 
+GKeyFile *Module_c::_config_file = NULL;
+
 // --------------------------------------------------------------------------------
 Module_c::Module_c (gchar *glade_file,
                     gchar *root)

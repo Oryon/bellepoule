@@ -49,6 +49,8 @@ class Module_c : public virtual Object_c
     Filter  *_filter;
     Glade_c *_glade;
 
+    static GKeyFile *_config_file;
+
     Module_c (gchar *glade_file,
               gchar *root = NULL);
 

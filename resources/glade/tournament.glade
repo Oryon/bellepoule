@@ -7,7 +7,7 @@
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>
-    <signal name="delete_event" handler="on_main_window_delete_event"/>
+    <signal name="delete_event" handler="on_root_delete_event"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -79,6 +79,20 @@
                   <object class="GtkMenu" id="menu3">
                     <property name="visible">True</property>
                     <child>
+                      <object class="GtkImageMenuItem" id="example_menuitem">
+                        <property name="label" translatable="yes">Ouvrir un exemple ...</property>
+                        <property name="visible">True</property>
+                        <property name="image">image1</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_example_menuitem_activate"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem2">
+                        <property name="visible">True</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="about_menuitem">
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
@@ -137,7 +151,7 @@
     <property name="border_width">5</property>
     <property name="type_hint">normal</property>
     <property name="program_name">BellePoule</property>
-    <property name="version">0.26/01</property>
+    <property name="version">0.01/02</property>
     <property name="copyright" translatable="yes">Copyright (C) 2009 Yannick Le Roux.</property>
     <property name="comments" translatable="yes">Logiciel de gestion de tournois d'escrime.
 
@@ -852,5 +866,9 @@ Conception/Codage:
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="stock">gtk-dialog-info</property>
   </object>
 </interface>

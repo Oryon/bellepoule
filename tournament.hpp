@@ -38,6 +38,8 @@ class Tournament : public Module_c
 
     void OnAbout ();
 
+    void OnOpenExample ();
+
     Contest_c *GetContest (gchar *filename);
 
     void Manage (Contest_c *contest);
@@ -46,6 +48,8 @@ class Tournament : public Module_c
 
   private:
     GSList *_contest_list;
+
+    void ReadConfiguration ();
 };
 
 #endif

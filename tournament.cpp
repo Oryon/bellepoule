@@ -29,6 +29,8 @@ Tournament::Tournament (gchar *filename)
 {
   _contest_list = NULL;
 
+  ReadConfiguration ();
+
   // Show the main window
   {
     GtkWidget *w = _glade->GetRootWidget ();
@@ -69,6 +71,50 @@ Tournament::Tournament (gchar *filename)
 // --------------------------------------------------------------------------------
 Tournament::~Tournament ()
 {
+  FILE *file;
+
+  {
+    gchar *file_path = g_strdup_printf ("%s/BellePoule/config.ini", g_get_user_config_dir ());
+
+    file = g_fopen (file_path,
+                    "w");
+    g_free (file_path);
+  }
+
+  if (file)
+  {
+    gsize  length;
+    gchar *config = g_key_file_to_data (_config_file,
+                                        &length,
+                                        NULL);
+
+    fwrite (config, sizeof (char), strlen (config), file);
+    g_free (config);
+
+    fclose (file);
+  }
+
+  g_key_file_free (_config_file);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::ReadConfiguration ()
+{
+  gchar *dir_path  = g_strdup_printf ("%s/BellePoule", g_get_user_config_dir ());
+  gchar *file_path = g_strdup_printf ("%s/config.ini", dir_path);
+
+  _config_file = g_key_file_new ();
+  if (g_key_file_load_from_file (_config_file,
+                             file_path,
+                             G_KEY_FILE_KEEP_COMMENTS,
+                             NULL) == FALSE)
+  {
+    g_mkdir_with_parents (dir_path,
+                          0700);
+  }
+
+  g_free (dir_path);
+  g_free (file_path);
 }
 
 // --------------------------------------------------------------------------------
@@ -166,14 +212,64 @@ void Tournament::OnOpen ()
                                  filter);
   }
 
+  {
+    gchar *prg_name = g_get_prgname ();
+
+    if (prg_name)
+    {
+      gchar *install_dirname = g_path_get_dirname (prg_name);
+
+      if (install_dirname)
+      {
+        gchar *example_dirname = g_strdup_printf ("%s/Exemples_Fichiers_BellePoule", install_dirname);
+
+        gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (chooser),
+                                              example_dirname,
+                                              NULL);
+        g_free (example_dirname);
+        g_free (install_dirname);
+      }
+    }
+  }
+
+  {
+    gchar *last_dirname = g_key_file_get_string (_config_file,
+                                                 "Competiton",
+                                                 "default_dir_name",
+                                                 NULL);
+    if (last_dirname)
+    {
+      gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
+                                           last_dirname);
+
+      g_free (last_dirname);
+    }
+  }
+
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    Contest_c *contest;
-    gchar     *filename;
+    gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-    contest = new Contest_c (filename);
-    Manage (contest);
+    if (filename)
+    {
+      {
+        gchar *dirname = g_path_get_dirname (filename);
+
+        g_key_file_set_string (_config_file,
+                               "Competiton",
+                               "default_dir_name",
+                               dirname);
+        g_free (dirname);
+      }
+
+      {
+        Contest_c *contest = new Contest_c (filename);
+
+        Manage (contest);
+      }
+
+      g_free (filename);
+    }
   }
 
   gtk_widget_destroy (chooser);
@@ -187,6 +283,33 @@ void Tournament::OnAbout ()
   gtk_dialog_run (GTK_DIALOG (w));
 
   gtk_widget_hide (w);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnOpenExample ()
+{
+  {
+    gchar *prg_name = g_get_prgname ();
+
+    if (prg_name)
+    {
+      gchar *install_dirname = g_path_get_dirname (prg_name);
+
+      if (install_dirname)
+      {
+        gchar *example_dirname = g_strdup_printf ("%s/Exemples_Fichiers_BellePoule", install_dirname);
+
+        g_key_file_set_string (_config_file,
+                               "Competiton",
+                               "default_dir_name",
+                               example_dirname);
+        g_free (example_dirname);
+        g_free (install_dirname);
+      }
+    }
+  }
+
+  OnOpen ();
 }
 
 // --------------------------------------------------------------------------------
@@ -221,4 +344,24 @@ extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnAbout ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_example_menuitem_activate (GtkWidget *w,
+                                                              Object_c  *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnOpenExample ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_root_delete_event (GtkWidget *w,
+                                                      GdkEvent  *event,
+                                                      Object_c  *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->Release ();
+  gtk_exit (0);
 }

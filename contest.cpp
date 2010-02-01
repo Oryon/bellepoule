@@ -21,10 +21,66 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+
 #include "tournament.hpp"
 #include "checkin.hpp"
 
 #include "contest.hpp"
+
+gchar *Contest_c::weapon_image[_nb_weapon] =
+{
+  "Sabre",
+  "Epée",
+  "Fleuret"
+};
+
+gchar *Contest_c::weapon_xml_image[_nb_weapon] =
+{
+  "S",
+  "E",
+  "F"
+};
+
+gchar *Contest_c::gender_image[_nb_gender] =
+{
+  "Masculin",
+  "Féminin",
+  "Mixte"
+};
+
+gchar *Contest_c::gender_xml_image[_nb_gender] =
+{
+  "M",
+  "F",
+  "FM"
+};
+
+gchar *Contest_c::category_image[_nb_category] =
+{
+  "Poussin",
+  "Pupille",
+  "Bejamin",
+  "Minime",
+  "Cadet",
+  "Junior",
+  "Senior",
+  "Vétéran"
+};
+
+gchar *Contest_c::category_xml_image[_nb_category] =
+{
+  "O",
+  "P",
+  "B",
+  "M",
+  "C",
+  "J",
+  "S",
+  "V"
+};
 
 // --------------------------------------------------------------------------------
 Contest_c::Contest_c ()
@@ -32,13 +88,26 @@ Contest_c::Contest_c ()
 {
   InitInstance ();
 
+  _name = g_key_file_get_string (_config_file,
+                                 "Competiton",
+                                 "default_name",
+                                 NULL);
+  _organizer = g_key_file_get_string (_config_file,
+                                      "Competiton",
+                                      "default_organizer",
+                                      NULL);
+  _web_site = g_key_file_get_string (_config_file,
+                                     "Competiton",
+                                     "default_web_site",
+                                     NULL);
+
+  FillInProperties ();
   if (gtk_dialog_run (GTK_DIALOG (_properties_dlg)) == GTK_RESPONSE_ACCEPT)
   {
     ReadProperties ();
+    _schedule->CreateDefault ();
   }
   gtk_widget_hide (_properties_dlg);
-
-  _schedule->CreateDefault ();
 }
 
 // --------------------------------------------------------------------------------
@@ -86,11 +155,73 @@ Contest_c::Contest_c (gchar *filename)
           SetName (g_strdup (attr));
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "backup");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "day");
         if (attr)
         {
-          _backup = g_strdup (attr);
+          _day = (guint) atoi (attr);
         }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "month");
+        if (attr)
+        {
+          _month = (guint) atoi (attr);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "weapon");
+        if (attr)
+        {
+          for (guint i = 0; i < _nb_weapon; i++)
+          {
+            if (strcmp (attr, weapon_xml_image[i]) == 0)
+            {
+              _weapon = i;
+            }
+          }
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "gender");
+        if (attr)
+        {
+          for (guint i = 0; i < _nb_gender; i++)
+          {
+            if (strcmp (attr, gender_xml_image[i]) == 0)
+            {
+              _gender = i;
+            }
+          }
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "category");
+        if (attr)
+        {
+          for (guint i = 0; i < _nb_category; i++)
+          {
+            if (strcmp (attr, category_xml_image[i]) == 0)
+            {
+              _category = i;
+            }
+          }
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "year");
+        if (attr)
+        {
+          _year = (guint) atoi (attr);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "organizer");
+        if (attr)
+        {
+          _organizer = g_strdup (attr);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "web_site");
+        if (attr)
+        {
+          _web_site = g_strdup (attr);
+        }
+
+        _has_properties = TRUE;
       }
       xmlXPathFreeObject  (xml_object);
       xmlXPathFreeContext (xml_context);
@@ -116,11 +247,14 @@ Contest_c::~Contest_c ()
 
   g_free (_name);
   g_free (_filename);
-  g_free (_backup);
+  g_free (_organizer);
+  g_free (_web_site);
 
   Object_c::TryToRelease (_schedule);
 
   gtk_widget_destroy (_properties_dlg);
+
+  gtk_widget_destroy (_calendar_dlg);
 
   Object_c::Dump ();
 }
@@ -148,9 +282,9 @@ void Contest_c::AddPlayer (Player_c *player)
 // --------------------------------------------------------------------------------
 Contest_c *Contest_c::Create ()
 {
-  Contest_c *contest = new Contest_c;
+  Contest_c *contest = new Contest_c ();
 
-  if (contest->_name == NULL)
+  if (contest->_has_properties == FALSE)
   {
     Object_c::TryToRelease (contest);
     contest = NULL;
@@ -164,10 +298,30 @@ void Contest_c::InitInstance ()
 {
   Object_c::Dump ();
 
-  _name       = NULL;
-  _filename   = NULL;
-  _backup     = NULL;
-  _tournament = NULL;
+  _name           = NULL;
+  _filename       = NULL;
+  _organizer      = NULL;
+  _web_site       = NULL;
+  _tournament     = NULL;
+  _weapon         = 0;
+  _category       = 0;
+  _gender         = 0;
+  _has_properties = FALSE;
+
+  {
+    GTimeVal  current_time;
+    GDate    *date         = g_date_new ();
+
+    g_get_current_time (&current_time);
+    g_date_set_time_val (date,
+                         &current_time);
+
+    _day   = g_date_get_day   (date);
+    _month = g_date_get_month (date);
+    _year  = g_date_get_year  (date);
+
+    g_date_free (date);
+  }
 
   {
     _schedule = new Schedule_c ();
@@ -177,11 +331,47 @@ void Contest_c::InitInstance ()
           GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
   }
 
+  {
+    GtkWidget *box = _glade->GetWidget ("weapon_box");
+
+    _weapon_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_weapon; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_weapon_combo), weapon_image[i]);
+    }
+    gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
+    gtk_widget_show (_weapon_combo);
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("gender_box");
+
+    _gender_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_gender; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_gender_combo), gender_image[i]);
+    }
+    gtk_container_add (GTK_CONTAINER (box), _gender_combo);
+    gtk_widget_show (_gender_combo);
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("category_box");
+
+    _category_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_category; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_category_combo), category_image[i]);
+    }
+    gtk_container_add (GTK_CONTAINER (box), _category_combo);
+    gtk_widget_show (_category_combo);
+  }
+
   // Properties dialog
   {
     GtkWidget *content_area;
 
-    _properties_dlg = gtk_dialog_new_with_buttons ("New competition",
+    _properties_dlg = gtk_dialog_new_with_buttons ("Nouvelle compétition",
                                                    NULL,
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_STOCK_OK,
@@ -193,6 +383,25 @@ void Contest_c::InitInstance ()
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_properties_dlg));
 
     gtk_widget_reparent (_glade->GetWidget ("properties_dialog-vbox"),
+                         content_area);
+  }
+
+  // Calendar dialog
+  {
+    GtkWidget *content_area;
+
+    _calendar_dlg = gtk_dialog_new_with_buttons ("Date de la compétition",
+                                                 NULL,
+                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                 GTK_STOCK_OK,
+                                                 GTK_RESPONSE_ACCEPT,
+                                                 GTK_STOCK_CANCEL,
+                                                 GTK_RESPONSE_REJECT,
+                                                 NULL);
+
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_calendar_dlg));
+
+    gtk_widget_reparent (_glade->GetWidget ("calendar"),
                          content_area);
   }
 }
@@ -209,34 +418,119 @@ void Contest_c::SetTournament (Tournament *tournament)
 }
 
 // --------------------------------------------------------------------------------
+void Contest_c::FillInDate (guint day,
+                            guint month,
+                            guint year)
+{
+  GDate *date = g_date_new ();
+  gchar  label[20];
+
+  g_date_set_day   (date, (GDateDay)   day);
+  g_date_set_month (date, (GDateMonth) month);
+  g_date_set_year  (date, (GDateYear)  year);
+
+  SetData (this, "day",   (void *) day);
+  SetData (this, "month", (void *) month);
+  SetData (this, "year",  (void *) year);
+
+  g_date_strftime (label,
+                   sizeof (label),
+                   "%x",
+                   date);
+  g_date_free (date);
+
+  gtk_button_set_label (GTK_BUTTON (_glade->GetWidget ("calendar_button")),
+                        label);
+
+  {
+    GtkCalendar *calendar = GTK_CALENDAR (_glade->GetWidget ("calendar"));
+
+    gtk_calendar_select_month (calendar,
+                               _month-1,
+                               _year);
+    gtk_calendar_select_day (calendar,
+                             _day);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest_c::FillInProperties ()
+{
+  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("title_entry")),
+                      _name);
+
+  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("organizer_entry")),
+                      _organizer);
+
+  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("web_site_entry")),
+                      _web_site);
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (_weapon_combo),
+                            _weapon);
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (_gender_combo),
+                            _gender);
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (_category_combo),
+                            _category);
+
+  FillInDate (_day,
+              _month,
+              _year);
+}
+
+// --------------------------------------------------------------------------------
 void Contest_c::ReadProperties ()
 {
   gchar    *str;
   GtkEntry *entry;
-  GtkLabel *label;
 
   entry = GTK_ENTRY (_glade->GetWidget ("title_entry"));
   str = (gchar *) gtk_entry_get_text (entry);
   SetName (g_strdup (str));
 
-  g_free (_backup);
-  label = GTK_LABEL (_glade->GetWidget ("backupfile_label"));
-  str = (gchar *) gtk_label_get_text (label);
-  _backup = NULL;
-  if (str[0] != 0)
+  entry = GTK_ENTRY (_glade->GetWidget ("organizer_entry"));
+  str = (gchar *) gtk_entry_get_text (entry);
+  g_free (_organizer);
+  _organizer = g_strdup (str);
+
+  entry = GTK_ENTRY (_glade->GetWidget ("web_site_entry"));
+  str = (gchar *) gtk_entry_get_text (entry);
+  g_free (_web_site);
+  _web_site = g_strdup (str);
+
+  _weapon   = gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo));
+  _gender   = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
+  _category = gtk_combo_box_get_active (GTK_COMBO_BOX (_category_combo));
+
+  _day   = (guint) GetData (this, "day");
+  _month = (guint) GetData (this, "month");
+  _year  = (guint) GetData (this, "year");
+
+  _has_properties = TRUE;
+
   {
-    _backup = g_strdup (str);
+    g_key_file_set_string (_config_file,
+                           "Competiton",
+                           "default_name",
+                           _name);
+
+    g_key_file_set_string (_config_file,
+                           "Competiton",
+                           "default_organizer",
+                           _organizer);
+
+    g_key_file_set_string (_config_file,
+                           "Competiton",
+                           "default_web_site",
+                           _web_site);
   }
 }
 
 // --------------------------------------------------------------------------------
 void Contest_c::SetName (gchar *name)
 {
-  if (_name)
-  {
-    g_free (_name);
-  }
-
+  g_free (_name);
   _name = name;
 
   {
@@ -268,7 +562,6 @@ void Contest_c::AttachTo (GtkNotebook *to)
 void Contest_c::Save ()
 {
   Save (_filename);
-  Save (_backup);
 }
 
 // --------------------------------------------------------------------------------
@@ -294,9 +587,30 @@ void Contest_c::Save (gchar *filename)
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "title",
                                      BAD_CAST _name);
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "day",
+                                           "%d", _day);
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "month",
+                                           "%d", _month);
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "year",
+                                           "%d", _year);
         xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "backup",
-                                     BAD_CAST _backup);
+                                     BAD_CAST "weapon",
+                                     BAD_CAST weapon_xml_image[_weapon]);
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "gender",
+                                     BAD_CAST gender_xml_image[_gender]);
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "category",
+                                     BAD_CAST category_xml_image[_category]);
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "organizer",
+                                     BAD_CAST _organizer);
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "web_site",
+                                     BAD_CAST _web_site);
       }
 
       _schedule->Save (xml_writer);
@@ -310,7 +624,8 @@ void Contest_c::Save (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest_c::GetSaveFileName (gchar *title)
+gchar *Contest_c::GetSaveFileName (gchar *title,
+                                   gchar *config_key)
 {
   GtkWidget *chooser;
   char      *filename = NULL;
@@ -326,12 +641,36 @@ gchar *Contest_c::GetSaveFileName (gchar *title)
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
                                                   true);
 
+  {
+    gchar *last_dirname = g_key_file_get_string (_config_file,
+                                                 "Competiton",
+                                                 config_key,
+                                                 NULL);
+    if (last_dirname)
+    {
+      gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
+                                           last_dirname);
+
+      g_free (last_dirname);
+    }
+  }
+
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
     filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
     if (filename)
     {
+      {
+        gchar *dirname = g_path_get_dirname (filename);
+
+        g_key_file_set_string (_config_file,
+                               "Competiton",
+                               config_key,
+                               dirname);
+        g_free (dirname);
+      }
+
       if (strcmp ((const char *) ".cotcot", (const char *) &filename[strlen (filename) - strlen (".cotcot")]) != 0)
       {
         gchar *with_suffix;
@@ -349,6 +688,28 @@ gchar *Contest_c::GetSaveFileName (gchar *title)
 }
 
 // --------------------------------------------------------------------------------
+void Contest_c::on_web_site_button_clicked ()
+{
+  GtkWidget *entry = _glade->GetWidget ("web_site_entry");
+
+  ShellExecuteA (NULL,
+                 "open",
+                 gtk_entry_get_text (GTK_ENTRY (entry)),
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_web_site_button_clicked (GtkWidget *widget,
+                                                            Object_c  *owner)
+{
+  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+
+  c->on_web_site_button_clicked ();
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_save_toolbutton_clicked (GtkWidget *widget,
                                                             Object_c  *owner)
 {
@@ -362,7 +723,8 @@ void Contest_c::on_save_toolbutton_clicked ()
 {
   if (_filename == NULL)
   {
-    _filename = GetSaveFileName ("Choisissez un fichier de sauvegarde ...");
+    _filename = GetSaveFileName ("Choisissez un fichier de sauvegarde ...",
+                                 "default_dir_name");
   }
 
   if (_filename)
@@ -383,17 +745,7 @@ extern "C" G_MODULE_EXPORT void on_properties_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void Contest_c::on_properties_toolbutton_clicked ()
 {
-  if (_name)
-  {
-    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("title_entry")),
-                        _name);
-  }
-  if (_backup)
-  {
-    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("backupfile_label")),
-                        _backup);
-  }
-
+  FillInProperties ();
   if (gtk_dialog_run (GTK_DIALOG (_properties_dlg)) == GTK_RESPONSE_ACCEPT)
   {
     ReadProperties ();
@@ -428,7 +780,8 @@ extern "C" G_MODULE_EXPORT void on_backupfile_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest_c::on_backupfile_button_clicked ()
 {
-  gchar *filename = GetSaveFileName ("Choisissez un fichier de secours ...");
+  gchar *filename = GetSaveFileName ("Choisissez un fichier de secours ...",
+                                     "default_backup_dir_name");
 
   if (filename)
   {
@@ -436,6 +789,36 @@ void Contest_c::on_backupfile_button_clicked ()
                         filename);
     g_free (filename);
   }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_calendar_button_clicked (GtkWidget *widget,
+                                                            Object_c  *owner)
+{
+  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+
+  c->on_calendar_button_clicked ();
+}
+
+// --------------------------------------------------------------------------------
+void Contest_c::on_calendar_button_clicked ()
+{
+  if (gtk_dialog_run (GTK_DIALOG (_calendar_dlg)) == GTK_RESPONSE_ACCEPT)
+  {
+    guint year;
+    guint month;
+    guint day;
+
+    gtk_calendar_get_date (GTK_CALENDAR (_glade->GetWidget ("calendar")),
+                           (guint *) &year,
+                           (guint *) &month,
+                           (guint *) &day);
+    month++;
+    FillInDate (day,
+                month,
+                year);
+  }
+  gtk_widget_hide (_calendar_dlg);
 }
 
 // --------------------------------------------------------------------------------
