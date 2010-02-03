@@ -1,10 +1,308 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contest title="Challenge du futur" day="31" month="1" year="2010" weapon="E" gender="FM" category="C" organizer="CS Betton" web_site="http://betton.escrime.free.fr">
- <schedule current_stage="0">
-  <checkin_stage/>
-  <pool_allocation_stage name=""/>
-  <pool_stage name=""/>
-  <table_stage name=""/>
+ <schedule current_stage="3">
+  <checkin_stage>
+   <player name="BROUARD" first_name="Gurvan" club="BETTON CP" rating="1003" gender="M" country="FRA" birth_year="31/01/1988" licence="010037623035" attending="1" rank="8" ref="14" exported="0"/>
+   <player name="ROLLIN" first_name="Benjamin" club="DINARD LAMES" rating="1030" gender="M" country="FRA" birth_year="13/05/1988" licence="033054523035" attending="1" rank="13" ref="29" exported="0"/>
+   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="M" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="10" ref="27" exported="0"/>
+   <player name="BOC HO" first_name="Maxime" club="DINARD LAMES" rating="1053" gender="M" country="FRA" birth_year="22/08/1988" licence="033057623035" attending="1" rank="12" ref="33" exported="0"/>
+   <player name="JACOPIN" first_name="Tangui" club="BETTON CP" rating="1089" gender="M" country="FRA" birth_year="19/09/1988" licence="010023623035" attending="1" rank="20" ref="11" exported="0"/>
+   <player name="BOTUHA" first_name="Tom" club="DINARD LAMES" rating="1103" gender="M" country="FRA" birth_year="03/05/1989" licence="033055923035" attending="1" rank="21" ref="30" exported="0"/>
+   <player name="GERARD" first_name="Vincent" club="ST GREGOIRE" rating="1113" gender="M" country="FRA" birth_year="28/07/1988" licence="029046223035" attending="1" rank="16" ref="26" exported="0"/>
+   <player name="ROGER" first_name="Edern" club="DINARD LAMES" rating="1126" gender="M" country="FRA" birth_year="19/02/1989" licence="033054423035" attending="1" rank="22" ref="28" exported="0"/>
+   <player name="LATREILLE" first_name="Baptiste" club="BETTON CP" rating="1139" gender="M" country="FRA" birth_year="19/02/1989" licence="010049923035" attending="1" rank="17" ref="16" exported="0"/>
+   <player name="DESMOULIN" first_name="Frank" club="ST GREGOIRE" rating="1152" gender="M" country="FRA" birth_year="14/03/1988" licence="029041123035" attending="1" rank="14" ref="23" exported="0"/>
+   <player name="GUEGAN" first_name="Simon" club="BETTON CP" rating="1166" gender="M" country="FRA" birth_year="17/11/1989" licence="010043923035" attending="1" rank="15" ref="15" exported="0"/>
+   <player name="CARESMEL" first_name="Tristan" club="DINAN EA" rating="1178" gender="M" country="FRA" birth_year="15/08/1988" licence="007015323022" attending="1" rank="36" ref="0" exported="0"/>
+   <player name="BESCOND" first_name="Nathan" club="DINARD LAMES" rating="1191" gender="M" country="FRA" birth_year="15/04/1990" licence="033057523035" attending="1" rank="25" ref="32" exported="0"/>
+   <player name="SAILLARD" first_name="Loic" club="ST GREGOIRE" rating="1206" gender="M" country="FRA" birth_year="10/02/1990" licence="029041623035" attending="1" rank="26" ref="24" exported="0"/>
+   <player name="DECHORGNAT" first_name="Pacome" club="ST GREGOIRE" rating="1218" gender="M" country="FRA" birth_year="26/05/1988" licence="029043123035" attending="1" rank="29" ref="25" exported="0"/>
+   <player name="LE ROUX" first_name="Abraham" club="BETTON CP" rating="1231" gender="M" country="FRA" birth_year="09/03/1990" licence="010031723035" attending="1" rank="31" ref="13" exported="0"/>
+   <player name="LEGRAND" first_name="Eliott" club="BETTON CP" rating="1242" gender="M" country="FRA" birth_year="10/08/1989" licence="010023723035" attending="1" rank="35" ref="12" exported="0"/>
+   <player name="THIRIET" first_name="Quentin" club="BETTON CP" rating="1257" gender="M" country="FRA" birth_year="06/05/1989" licence="010052523035" attending="1" rank="32" ref="17" exported="0"/>
+   <player name="GARNIER" first_name="Simon" club="DINARD LAMES" rating="1268" gender="M" country="FRA" birth_year="21/11/1990" licence="033056323035" attending="1" rank="27" ref="31" exported="0"/>
+   <player name="GUERIN" first_name="Erwan" club="DINARD LAMES" rating="1280" gender="M" country="FRA" birth_year="20/09/1990" licence="033062723035" attending="1" rank="30" ref="36" exported="0"/>
+   <player name="JOSSELIN" first_name="Lou" club="DINAN EA" rating="1293" gender="M" country="FRA" birth_year="24/04/1988" licence="007028623022" attending="1" rank="28" ref="3" exported="0"/>
+   <player name="TOURNIER" first_name="Antoine" club="ST MALO" rating="1306" gender="M" country="FRA" birth_year="03/08/1988" licence="015107923035" attending="1" rank="34" ref="21" exported="0"/>
+   <player name="LE BACCON" first_name="Alexandre" club="BETTON CP" rating="1319" gender="M" country="FRA" birth_year="18/05/1991" licence="010052623035" attending="1" rank="33" ref="18" exported="0"/>
+   <player name="STEPHAN" first_name="Alexandre" club="QUIMPER EC" rating="1329" gender="M" country="FRA" birth_year="24/11/1990" licence="034066123029" attending="1" rank="2" ref="5" exported="0"/>
+   <player name="LEBOURGEOIS" first_name="Kilian" club="QUIMPER EC" rating="1339" gender="M" country="FRA" birth_year="15/12/1989" licence="034070623029" attending="1" rank="37" ref="7" exported="0"/>
+   <player name="LAUMAIN" first_name="Pierre erik" club="ST MALO" rating="1355" gender="M" country="FRA" birth_year="10/10/1989" licence="015089323035" attending="1" rank="6" ref="19" exported="0"/>
+   <player name="LEMOINE" first_name="Pierre" club="DINAN EA" rating="1365" gender="M" country="FRA" birth_year="23/05/1990" licence="007021023022" attending="1" rank="5" ref="2" exported="0"/>
+   <player name="JARAY" first_name="Ronan" club="ST BRIEUC" rating="1379" gender="M" country="FRA" birth_year="17/12/1989" licence="009057423022" attending="1" rank="7" ref="4" exported="0"/>
+   <player name="HOBL" first_name="Benjamin" club="DINARD LAMES" rating="1389" gender="M" country="FRA" birth_year="10/09/1990" licence="033058423035" attending="1" rank="4" ref="34" exported="0"/>
+   <player name="RESMOND" first_name="Antoine" club="QUIMPER EC" rating="1401" gender="M" country="FRA" birth_year="02/04/1991" licence="034082023029" attending="1" rank="3" ref="10" exported="0"/>
+   <player name="DANIBO" first_name="Louis" club="ST MALO" rating="1415" gender="M" country="FRA" birth_year="10/10/1990" licence="015092623035" attending="1" rank="23" ref="20" exported="0"/>
+   <player name="KERVROEDAN" first_name="William" club="QUIMPER EC" rating="1427" gender="M" country="FRA" birth_year="15/10/1991" licence="034078823029" attending="1" rank="9" ref="9" exported="0"/>
+   <player name="BONNOT" first_name="Robin" club="DINAN EA" rating="1436" gender="M" country="FRA" birth_year="14/05/1990" licence="007020223022" attending="1" rank="11" ref="1" exported="0"/>
+   <player name="LAVENANT" first_name="Joan" club="ST MALO" rating="1436" gender="M" country="FRA" birth_year="21/01/1991" licence="015117123035" attending="1" rank="18" ref="22" exported="0"/>
+   <player name="LE GAL" first_name="Loic" club="QUIMPER EC" rating="0" gender="M" country="FRA" birth_year="23/09/1989" licence="034070523029" attending="1" rank="19" ref="6" exported="0"/>
+   <player name="BERTRAND" first_name="Antoine" club="QUIMPER EC" rating="0" gender="M" country="FRA" birth_year="19/12/1990" licence="034077823029" attending="1" rank="24" ref="8" exported="0"/>
+   <player name="NOEL" first_name="Alexis" club="DINARD LAMES" rating="0" gender="M" country="FRA" birth_year="25/11/1990" licence="033058823035" attending="1" rank="1" ref="35" exported="0"/>
+  </checkin_stage>
+  <pool_allocation_stage name="">
+   <player_list>
+    <player ref="8"/>
+    <player ref="14"/>
+    <player ref="5"/>
+    <player ref="32"/>
+    <player ref="0"/>
+    <player ref="35"/>
+    <player ref="7"/>
+   </player_list>
+   <player_list>
+    <player ref="15"/>
+    <player ref="29"/>
+    <player ref="24"/>
+    <player ref="6"/>
+    <player ref="19"/>
+    <player ref="18"/>
+   </player_list>
+   <player_list>
+    <player ref="21"/>
+    <player ref="2"/>
+    <player ref="25"/>
+    <player ref="22"/>
+    <player ref="23"/>
+    <player ref="27"/>
+   </player_list>
+   <player_list>
+    <player ref="16"/>
+    <player ref="33"/>
+    <player ref="4"/>
+    <player ref="13"/>
+    <player ref="3"/>
+    <player ref="1"/>
+   </player_list>
+   <player_list>
+    <player ref="11"/>
+    <player ref="28"/>
+    <player ref="34"/>
+    <player ref="36"/>
+    <player ref="12"/>
+    <player ref="9"/>
+   </player_list>
+   <player_list>
+    <player ref="30"/>
+    <player ref="20"/>
+    <player ref="10"/>
+    <player ref="31"/>
+    <player ref="26"/>
+    <player ref="17"/>
+   </player_list>
+  </pool_allocation_stage>
+  <pool_stage name="">
+   <match_list>
+    <match player_A="0" score_A="1" player_B="14" score_B="5"/>
+    <match player_A="32" score_A="0" player_B="14" score_B="5"/>
+    <match player_A="32" score_A="5" player_B="0" score_B="3"/>
+    <match player_A="5" score_A="5" player_B="14" score_B="2"/>
+    <match player_A="5" score_A="5" player_B="0" score_B="0"/>
+    <match player_A="5" score_A="5" player_B="32" score_B="2"/>
+    <match player_A="7" score_A="0" player_B="14" score_B="5"/>
+    <match player_A="7" score_A="3" player_B="0" score_B="5"/>
+    <match player_A="7" score_A="2" player_B="32" score_B="5"/>
+    <match player_A="7" score_A="3" player_B="5" score_B="5"/>
+    <match player_A="8" score_A="1" player_B="14" score_B="5"/>
+    <match player_A="8" score_A="5" player_B="0" score_B="0"/>
+    <match player_A="8" score_A="5" player_B="32" score_B="3"/>
+    <match player_A="8" score_A="0" player_B="5" score_B="5"/>
+    <match player_A="8" score_A="5" player_B="7" score_B="0"/>
+    <match player_A="35" score_A="5" player_B="14" score_B="1"/>
+    <match player_A="35" score_A="5" player_B="0" score_B="2"/>
+    <match player_A="35" score_A="5" player_B="32" score_B="0"/>
+    <match player_A="35" score_A="5" player_B="5" score_B="2"/>
+    <match player_A="35" score_A="5" player_B="7" score_B="1"/>
+    <match player_A="35" score_A="5" player_B="8" score_B="0"/>
+   </match_list>
+   <match_list>
+    <match player_A="15" score_A="5" player_B="29" score_B="4"/>
+    <match player_A="24" score_A="3" player_B="29" score_B="5"/>
+    <match player_A="24" score_A="0" player_B="15" score_B="5"/>
+    <match player_A="18" score_A="0" player_B="29" score_B="5"/>
+    <match player_A="18" score_A="3" player_B="15" score_B="5"/>
+    <match player_A="18" score_A="0" player_B="24" score_B="5"/>
+    <match player_A="19" score_A="3" player_B="29" score_B="5"/>
+    <match player_A="19" score_A="5" player_B="15" score_B="0"/>
+    <match player_A="19" score_A="5" player_B="24" score_B="4"/>
+    <match player_A="19" score_A="5" player_B="18" score_B="3"/>
+    <match player_A="6" score_A="5" player_B="29" score_B="0"/>
+    <match player_A="6" score_A="5" player_B="15" score_B="4"/>
+    <match player_A="6" score_A="5" player_B="24" score_B="4"/>
+    <match player_A="6" score_A="0" player_B="18" score_B="5"/>
+    <match player_A="6" score_A="4" player_B="19" score_B="5"/>
+   </match_list>
+   <match_list>
+    <match player_A="23" score_A="5" player_B="27" score_B="3"/>
+    <match player_A="25" score_A="2" player_B="27" score_B="5"/>
+    <match player_A="25" score_A="3" player_B="23" score_B="5"/>
+    <match player_A="21" score_A="2" player_B="27" score_B="5"/>
+    <match player_A="21" score_A="0" player_B="23" score_B="5"/>
+    <match player_A="21" score_A="4" player_B="25" score_B="5"/>
+    <match player_A="2" score_A="1" player_B="27" score_B="5"/>
+    <match player_A="2" score_A="5" player_B="23" score_B="1"/>
+    <match player_A="2" score_A="5" player_B="25" score_B="3"/>
+    <match player_A="2" score_A="5" player_B="21" score_B="2"/>
+    <match player_A="22" score_A="5" player_B="27" score_B="2"/>
+    <match player_A="22" score_A="5" player_B="23" score_B="3"/>
+    <match player_A="22" score_A="5" player_B="25" score_B="4"/>
+    <match player_A="22" score_A="4" player_B="21" score_B="5"/>
+    <match player_A="22" score_A="1" player_B="2" score_B="5"/>
+   </match_list>
+   <match_list>
+    <match player_A="16" score_A="5" player_B="33" score_B="4"/>
+    <match player_A="13" score_A="2" player_B="33" score_B="5"/>
+    <match player_A="13" score_A="3" player_B="16" score_B="5"/>
+    <match player_A="3" score_A="4" player_B="33" score_B="5"/>
+    <match player_A="3" score_A="2" player_B="16" score_B="5"/>
+    <match player_A="3" score_A="4" player_B="13" score_B="5"/>
+    <match player_A="4" score_A="2" player_B="33" score_B="5"/>
+    <match player_A="4" score_A="5" player_B="16" score_B="3"/>
+    <match player_A="4" score_A="5" player_B="13" score_B="3"/>
+    <match player_A="4" score_A="5" player_B="3" score_B="1"/>
+    <match player_A="1" score_A="5" player_B="33" score_B="2"/>
+    <match player_A="1" score_A="5" player_B="16" score_B="2"/>
+    <match player_A="1" score_A="5" player_B="13" score_B="3"/>
+    <match player_A="1" score_A="2" player_B="3" score_B="5"/>
+    <match player_A="1" score_A="4" player_B="4" score_B="5"/>
+   </match_list>
+   <match_list>
+    <match player_A="28" score_A="5" player_B="11" score_B="2"/>
+    <match player_A="12" score_A="3" player_B="11" score_B="5"/>
+    <match player_A="12" score_A="1" player_B="28" score_B="5"/>
+    <match player_A="36" score_A="2" player_B="11" score_B="5"/>
+    <match player_A="36" score_A="4" player_B="28" score_B="5"/>
+    <match player_A="36" score_A="1" player_B="12" score_B="5"/>
+    <match player_A="34" score_A="3" player_B="11" score_B="5"/>
+    <match player_A="34" score_A="5" player_B="28" score_B="0"/>
+    <match player_A="34" score_A="5" player_B="12" score_B="1"/>
+    <match player_A="34" score_A="5" player_B="36" score_B="3"/>
+    <match player_A="9" score_A="5" player_B="11" score_B="1"/>
+    <match player_A="9" score_A="5" player_B="28" score_B="1"/>
+    <match player_A="9" score_A="5" player_B="12" score_B="0"/>
+    <match player_A="9" score_A="2" player_B="36" score_B="5"/>
+    <match player_A="9" score_A="4" player_B="34" score_B="5"/>
+   </match_list>
+   <match_list>
+    <match player_A="26" score_A="5" player_B="30" score_B="2"/>
+    <match player_A="17" score_A="1" player_B="30" score_B="5"/>
+    <match player_A="17" score_A="1" player_B="26" score_B="5"/>
+    <match player_A="31" score_A="4" player_B="30" score_B="5"/>
+    <match player_A="31" score_A="3" player_B="26" score_B="5"/>
+    <match player_A="31" score_A="2" player_B="17" score_B="5"/>
+    <match player_A="10" score_A="4" player_B="30" score_B="5"/>
+    <match player_A="10" score_A="5" player_B="26" score_B="0"/>
+    <match player_A="10" score_A="5" player_B="17" score_B="3"/>
+    <match player_A="10" score_A="5" player_B="31" score_B="2"/>
+    <match player_A="20" score_A="5" player_B="30" score_B="1"/>
+    <match player_A="20" score_A="5" player_B="26" score_B="3"/>
+    <match player_A="20" score_A="5" player_B="17" score_B="3"/>
+    <match player_A="20" score_A="0" player_B="31" score_B="5"/>
+    <match player_A="20" score_A="0" player_B="10" score_B="5"/>
+   </match_list>
+  </pool_stage>
+  <table_stage name="">
+   <match player_A="35"/>
+   <match player_A="35"/>
+   <match player_A="18"/>
+   <match player_A="17"/>
+   <match player_A="18" player_B="17"/>
+   <match player_A="35"/>
+   <match player_A="16"/>
+   <match player_A="16"/>
+   <match player_A="26"/>
+   <match player_B="26"/>
+   <match player_A="16" player_B="26"/>
+   <match/>
+   <match player_A="9"/>
+   <match player_A="9"/>
+   <match player_A="8"/>
+   <match player_B="8"/>
+   <match player_A="9" player_B="8"/>
+   <match player_A="32"/>
+   <match player_A="32"/>
+   <match player_A="14"/>
+   <match player_B="14"/>
+   <match player_A="32" player_B="14"/>
+   <match/>
+   <match/>
+   <match player_A="2"/>
+   <match player_A="2"/>
+   <match player_A="7"/>
+   <match player_A="3"/>
+   <match player_A="7" player_B="3"/>
+   <match player_A="2"/>
+   <match player_A="30"/>
+   <match player_A="30"/>
+   <match player_A="33"/>
+   <match player_B="33"/>
+   <match player_A="30" player_B="33"/>
+   <match/>
+   <match player_A="29"/>
+   <match player_A="29"/>
+   <match player_A="11"/>
+   <match player_B="11"/>
+   <match player_A="29" player_B="11"/>
+   <match player_A="25"/>
+   <match player_A="0"/>
+   <match player_A="25" player_B="0"/>
+   <match player_A="34"/>
+   <match player_B="34"/>
+   <match player_B="34"/>
+   <match/>
+   <match/>
+   <match/>
+   <match player_A="10"/>
+   <match player_A="10"/>
+   <match player_A="12"/>
+   <match player_A="36"/>
+   <match player_A="12" player_B="36"/>
+   <match player_A="10"/>
+   <match player_A="6"/>
+   <match player_A="6"/>
+   <match player_A="23"/>
+   <match player_B="23"/>
+   <match player_A="6" player_B="23"/>
+   <match/>
+   <match player_A="1"/>
+   <match player_A="1"/>
+   <match player_A="28"/>
+   <match player_B="28"/>
+   <match player_A="1" player_B="28"/>
+   <match player_A="31"/>
+   <match player_A="31"/>
+   <match player_A="19"/>
+   <match player_B="19"/>
+   <match player_A="31" player_B="19"/>
+   <match/>
+   <match/>
+   <match player_A="4"/>
+   <match player_A="4"/>
+   <match player_A="24"/>
+   <match player_B="24"/>
+   <match player_A="4" player_B="24"/>
+   <match player_A="20"/>
+   <match player_A="20"/>
+   <match player_A="27"/>
+   <match player_B="27"/>
+   <match player_A="20" player_B="27"/>
+   <match/>
+   <match player_A="15"/>
+   <match player_A="15"/>
+   <match player_A="22"/>
+   <match player_B="22"/>
+   <match player_A="15" player_B="22"/>
+   <match player_A="13"/>
+   <match player_A="21"/>
+   <match player_A="13" player_B="21"/>
+   <match player_A="5"/>
+   <match player_B="5"/>
+   <match player_B="5"/>
+   <match/>
+   <match/>
+   <match/>
+   <match/>
+  </table_stage>
   <general_classification_stage/>
  </schedule>
 </contest>

@@ -105,12 +105,22 @@ void Tournament::ReadConfiguration ()
 
   _config_file = g_key_file_new ();
   if (g_key_file_load_from_file (_config_file,
-                             file_path,
-                             G_KEY_FILE_KEEP_COMMENTS,
-                             NULL) == FALSE)
+                                 file_path,
+                                 G_KEY_FILE_KEEP_COMMENTS,
+                                 NULL) == FALSE)
   {
     g_mkdir_with_parents (dir_path,
                           0700);
+
+    g_key_file_set_string (_config_file,
+                           "Competiton",
+                           "default_dir_name",
+                           g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
+
+    g_key_file_set_string (_config_file,
+                           "Checkin",
+                           "default_import_dir_name",
+                           g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
   }
 
   g_free (dir_path);
@@ -299,10 +309,6 @@ void Tournament::OnOpenExample ()
       {
         gchar *example_dirname = g_strdup_printf ("%s/Exemples_Fichiers_BellePoule", install_dirname);
 
-        g_key_file_set_string (_config_file,
-                               "Competiton",
-                               "default_dir_name",
-                               example_dirname);
         g_free (example_dirname);
         g_free (install_dirname);
       }

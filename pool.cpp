@@ -74,8 +74,6 @@ Pool_c::~Pool_c ()
 // --------------------------------------------------------------------------------
 void Pool_c::Stuff ()
 {
-  GRand *rand = g_rand_new  ();
-
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {
     Match_c  *match;
@@ -87,7 +85,7 @@ void Pool_c::Stuff ()
     A = match->GetPlayerA ();
     B = match->GetPlayerB ();
 
-    if (g_rand_boolean (rand))
+    if (g_random_boolean ())
     {
       match->SetScore (A, _max_score);
       match->SetScore (B, g_random_int_range (0,
@@ -100,8 +98,6 @@ void Pool_c::Stuff ()
       match->SetScore (B, _max_score);
     }
   }
-
-  g_rand_free (rand);
 
   RefreshScoreData ();
 }
@@ -499,7 +495,7 @@ void Pool_c::OnPlugged ()
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Moyenne",
+                                        "Indice",
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",

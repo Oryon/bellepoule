@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<contest title="exemple" backup="">
+<contest title="exemple" day="2" month="2" year="2010" weapon="S" gender="M" category="O" organizer="" web_site="">
  <schedule current_stage="2">
   <checkin_stage>
    <player name="BROUARD" first_name="Gurvan" club="BETTON CP" rating="1003" gender="M" country="FRA" birth_year="31/01/1988" licence="010037623035" attending="1" rank="1" ref="14" exported="0"/>
@@ -93,112 +93,112 @@
   </pool_allocation_stage>
   <pool_stage name="">
    <match_list>
-    <match player_A="0" score_A="0" player_B="14" score_B="5"/>
-    <match player_A="32" score_A="5" player_B="14" score_B="1"/>
-    <match player_A="32" score_A="2" player_B="0" score_B="5"/>
+    <match player_A="14" score_A="1" player_B="8" score_B="5"/>
     <match player_A="5" score_A="2" player_B="14" score_B="5"/>
-    <match player_A="5" score_A="5" player_B="0" score_B="4"/>
-    <match player_A="5" score_A="0" player_B="32" score_B="5"/>
+    <match player_A="5" score_A="1" player_B="8" score_B="5"/>
+    <match player_A="32" score_A="5" player_B="14" score_B="1"/>
+    <match player_A="32" score_A="5" player_B="5" score_B="0"/>
+    <match player_A="32" score_A="4" player_B="8" score_B="5"/>
+    <match player_A="6" score_A="5" player_B="14" score_B="4"/>
+    <match player_A="6" score_A="0" player_B="32" score_B="5"/>
+    <match player_A="6" score_A="0" player_B="5" score_B="5"/>
+    <match player_A="6" score_A="0" player_B="8" score_B="5"/>
+    <match player_A="0" score_A="0" player_B="14" score_B="5"/>
+    <match player_A="0" score_A="5" player_B="32" score_B="2"/>
+    <match player_A="0" score_A="4" player_B="5" score_B="5"/>
+    <match player_A="0" score_A="4" player_B="8" score_B="5"/>
+    <match player_A="0" score_A="4" player_B="6" score_B="5"/>
     <match player_A="7" score_A="4" player_B="14" score_B="5"/>
     <match player_A="7" score_A="5" player_B="0" score_B="4"/>
     <match player_A="7" score_A="2" player_B="32" score_B="5"/>
     <match player_A="7" score_A="5" player_B="5" score_B="3"/>
-    <match player_A="8" score_A="5" player_B="14" score_B="1"/>
-    <match player_A="8" score_A="5" player_B="0" score_B="4"/>
-    <match player_A="8" score_A="5" player_B="32" score_B="4"/>
-    <match player_A="8" score_A="5" player_B="5" score_B="1"/>
-    <match player_A="8" score_A="4" player_B="7" score_B="5"/>
-    <match player_A="6" score_A="5" player_B="14" score_B="4"/>
-    <match player_A="6" score_A="5" player_B="0" score_B="4"/>
-    <match player_A="6" score_A="0" player_B="32" score_B="5"/>
-    <match player_A="6" score_A="0" player_B="5" score_B="5"/>
-    <match player_A="6" score_A="0" player_B="7" score_B="5"/>
-    <match player_A="6" score_A="0" player_B="8" score_B="5"/>
+    <match player_A="7" score_A="5" player_B="8" score_B="4"/>
+    <match player_A="7" score_A="5" player_B="6" score_B="0"/>
    </match_list>
    <match_list>
-    <match player_A="15" score_A="0" player_B="29" score_B="5"/>
-    <match player_A="24" score_A="5" player_B="29" score_B="1"/>
-    <match player_A="24" score_A="1" player_B="15" score_B="5"/>
-    <match player_A="18" score_A="5" player_B="29" score_B="2"/>
-    <match player_A="18" score_A="0" player_B="15" score_B="5"/>
-    <match player_A="18" score_A="5" player_B="24" score_B="3"/>
-    <match player_A="19" score_A="2" player_B="29" score_B="5"/>
-    <match player_A="19" score_A="0" player_B="15" score_B="5"/>
-    <match player_A="19" score_A="1" player_B="24" score_B="5"/>
-    <match player_A="19" score_A="3" player_B="18" score_B="5"/>
-    <match player_A="35" score_A="2" player_B="29" score_B="5"/>
-    <match player_A="35" score_A="5" player_B="15" score_B="1"/>
-    <match player_A="35" score_A="5" player_B="24" score_B="4"/>
-    <match player_A="35" score_A="1" player_B="18" score_B="5"/>
-    <match player_A="35" score_A="2" player_B="19" score_B="5"/>
+    <match player_A="35" player_B="19"/>
+    <match player_A="18" player_B="19"/>
+    <match player_A="18" player_B="35"/>
+    <match player_A="15" player_B="18"/>
+    <match player_A="15" player_B="19"/>
+    <match player_A="15" player_B="35"/>
+    <match player_A="29" player_B="15"/>
+    <match player_A="29" player_B="18"/>
+    <match player_A="29" player_B="19"/>
+    <match player_A="29" player_B="35"/>
+    <match player_A="24" player_B="29"/>
+    <match player_A="24" player_B="15"/>
+    <match player_A="24" player_B="18"/>
+    <match player_A="24" player_B="19"/>
+    <match player_A="24" player_B="35"/>
    </match_list>
    <match_list>
-    <match player_A="23" score_A="3" player_B="27" score_B="5"/>
-    <match player_A="25" score_A="5" player_B="27" score_B="4"/>
-    <match player_A="25" score_A="4" player_B="23" score_B="5"/>
-    <match player_A="21" score_A="5" player_B="27" score_B="1"/>
-    <match player_A="21" score_A="1" player_B="23" score_B="5"/>
-    <match player_A="21" score_A="5" player_B="25" score_B="0"/>
-    <match player_A="2" score_A="3" player_B="27" score_B="5"/>
-    <match player_A="2" score_A="2" player_B="23" score_B="5"/>
-    <match player_A="2" score_A="2" player_B="25" score_B="5"/>
-    <match player_A="2" score_A="4" player_B="21" score_B="5"/>
-    <match player_A="22" score_A="4" player_B="27" score_B="5"/>
-    <match player_A="22" score_A="5" player_B="23" score_B="1"/>
-    <match player_A="22" score_A="5" player_B="25" score_B="4"/>
-    <match player_A="22" score_A="1" player_B="21" score_B="5"/>
-    <match player_A="22" score_A="1" player_B="2" score_B="5"/>
+    <match player_A="2" player_B="21"/>
+    <match player_A="25" player_B="21"/>
+    <match player_A="25" player_B="2"/>
+    <match player_A="22" player_B="25"/>
+    <match player_A="22" player_B="21"/>
+    <match player_A="22" player_B="2"/>
+    <match player_A="23" player_B="25"/>
+    <match player_A="23" player_B="21"/>
+    <match player_A="23" player_B="2"/>
+    <match player_A="23" player_B="22"/>
+    <match player_A="27" player_B="23"/>
+    <match player_A="27" player_B="25"/>
+    <match player_A="27" player_B="21"/>
+    <match player_A="27" player_B="2"/>
+    <match player_A="27" player_B="22"/>
    </match_list>
    <match_list>
-    <match player_A="16" score_A="4" player_B="33" score_B="5"/>
-    <match player_A="13" score_A="5" player_B="33" score_B="4"/>
-    <match player_A="13" score_A="2" player_B="16" score_B="5"/>
-    <match player_A="3" score_A="5" player_B="33" score_B="0"/>
-    <match player_A="3" score_A="4" player_B="16" score_B="5"/>
-    <match player_A="3" score_A="5" player_B="13" score_B="1"/>
-    <match player_A="4" score_A="4" player_B="33" score_B="5"/>
-    <match player_A="4" score_A="1" player_B="16" score_B="5"/>
-    <match player_A="4" score_A="3" player_B="13" score_B="5"/>
-    <match player_A="4" score_A="3" player_B="3" score_B="5"/>
-    <match player_A="1" score_A="2" player_B="33" score_B="5"/>
-    <match player_A="1" score_A="5" player_B="16" score_B="3"/>
-    <match player_A="1" score_A="5" player_B="13" score_B="1"/>
-    <match player_A="1" score_A="0" player_B="3" score_B="5"/>
-    <match player_A="1" score_A="4" player_B="4" score_B="5"/>
+    <match player_A="33" player_B="16"/>
+    <match player_A="4" player_B="33"/>
+    <match player_A="4" player_B="16"/>
+    <match player_A="13" player_B="33"/>
+    <match player_A="13" player_B="16"/>
+    <match player_A="13" player_B="4"/>
+    <match player_A="3" player_B="33"/>
+    <match player_A="3" player_B="16"/>
+    <match player_A="3" player_B="13"/>
+    <match player_A="3" player_B="4"/>
+    <match player_A="1" player_B="33"/>
+    <match player_A="1" player_B="16"/>
+    <match player_A="1" player_B="13"/>
+    <match player_A="1" player_B="3"/>
+    <match player_A="1" player_B="4"/>
    </match_list>
    <match_list>
-    <match player_A="28" score_A="2" player_B="11" score_B="5"/>
-    <match player_A="12" score_A="5" player_B="11" score_B="0"/>
-    <match player_A="12" score_A="2" player_B="28" score_B="5"/>
-    <match player_A="36" score_A="5" player_B="11" score_B="1"/>
-    <match player_A="36" score_A="3" player_B="28" score_B="5"/>
-    <match player_A="36" score_A="5" player_B="12" score_B="0"/>
-    <match player_A="34" score_A="2" player_B="11" score_B="5"/>
-    <match player_A="34" score_A="1" player_B="28" score_B="5"/>
-    <match player_A="34" score_A="0" player_B="12" score_B="5"/>
-    <match player_A="34" score_A="3" player_B="36" score_B="5"/>
-    <match player_A="9" score_A="1" player_B="11" score_B="5"/>
-    <match player_A="9" score_A="5" player_B="28" score_B="4"/>
-    <match player_A="9" score_A="5" player_B="12" score_B="1"/>
-    <match player_A="9" score_A="0" player_B="36" score_B="5"/>
-    <match player_A="9" score_A="1" player_B="34" score_B="5"/>
+    <match player_A="28" player_B="11"/>
+    <match player_A="34" player_B="11"/>
+    <match player_A="34" player_B="28"/>
+    <match player_A="36" player_B="11"/>
+    <match player_A="36" player_B="28"/>
+    <match player_A="36" player_B="34"/>
+    <match player_A="12" player_B="11"/>
+    <match player_A="12" player_B="28"/>
+    <match player_A="12" player_B="36"/>
+    <match player_A="12" player_B="34"/>
+    <match player_A="9" player_B="11"/>
+    <match player_A="9" player_B="28"/>
+    <match player_A="9" player_B="12"/>
+    <match player_A="9" player_B="36"/>
+    <match player_A="9" player_B="34"/>
    </match_list>
    <match_list>
-    <match player_A="26" score_A="3" player_B="30" score_B="5"/>
-    <match player_A="17" score_A="5" player_B="30" score_B="2"/>
-    <match player_A="17" score_A="4" player_B="26" score_B="5"/>
-    <match player_A="31" score_A="5" player_B="30" score_B="3"/>
-    <match player_A="31" score_A="2" player_B="26" score_B="5"/>
-    <match player_A="31" score_A="5" player_B="17" score_B="3"/>
-    <match player_A="10" score_A="0" player_B="30" score_B="5"/>
-    <match player_A="10" score_A="1" player_B="26" score_B="5"/>
-    <match player_A="10" score_A="1" player_B="17" score_B="5"/>
-    <match player_A="10" score_A="4" player_B="31" score_B="5"/>
-    <match player_A="20" score_A="0" player_B="30" score_B="5"/>
-    <match player_A="20" score_A="5" player_B="26" score_B="4"/>
-    <match player_A="20" score_A="5" player_B="17" score_B="1"/>
-    <match player_A="20" score_A="4" player_B="31" score_B="5"/>
-    <match player_A="20" score_A="2" player_B="10" score_B="5"/>
+    <match player_A="20" player_B="30"/>
+    <match player_A="10" player_B="30"/>
+    <match player_A="10" player_B="20"/>
+    <match player_A="31" player_B="30"/>
+    <match player_A="31" player_B="10"/>
+    <match player_A="31" player_B="20"/>
+    <match player_A="26" player_B="30"/>
+    <match player_A="26" player_B="31"/>
+    <match player_A="26" player_B="10"/>
+    <match player_A="26" player_B="20"/>
+    <match player_A="17" player_B="30"/>
+    <match player_A="17" player_B="26"/>
+    <match player_A="17" player_B="31"/>
+    <match player_A="17" player_B="10"/>
+    <match player_A="17" player_B="20"/>
    </match_list>
   </pool_stage>
   <table_stage name=""/>

@@ -402,13 +402,12 @@ gboolean Table::WipeNode (GNode *node,
   NodeData *data = (NodeData *) node->data;
 
   WipeItem (data->_player_item);
-  data->_player_item = NULL;
-
   WipeItem (data->_print_item);
-  data->_print_item = NULL;
-
   WipeItem (data->_connector);
-  data->_connector = NULL;
+
+  data->_connector   = NULL;
+  data->_player_item = NULL;
+  data->_print_item  = NULL;
 
   return FALSE;
 }
@@ -419,10 +418,10 @@ gboolean Table::DeleteCanvasTable (GNode *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  WipeNode (node,
-            table);
+  data->_player_item = NULL;
+  data->_print_item  = NULL;
+  data->_connector   = NULL;
 
-  WipeItem (data->_canvas_table);
   data->_canvas_table = NULL;
 
   return FALSE;
@@ -560,6 +559,9 @@ gboolean Table::FillInNode (GNode *node,
     {
       GString *string = g_string_new ("");
 
+      // g_string_append_printf (string,
+                              // "<<%d, %d>>", data->_row, data->_level);
+
       if (winner)
       {
         GSList *selected_attr = NULL;
@@ -582,11 +584,11 @@ gboolean Table::FillInNode (GNode *node,
           {
             if (a > 0)
             {
-              string = g_string_append (string,
-                                        "  ");
+              g_string_append (string,
+                               "  ");
             }
-            string = g_string_append (string,
-                                      attr->GetStringImage ());
+            g_string_append (string,
+                             attr->GetStringImage ());
           }
         }
       }
@@ -995,6 +997,76 @@ void Table::OnFromTableComboboxChanged ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Table::Stuff (GNode *node,
+                       Table *table)
+{
+  NodeData *data = (NodeData *) node->data;
+
+  if (   (data->_level == table->_level_filter)
+      && (data->_match))
+  {
+    Player_c *A = data->_match->GetPlayerA ();
+    Player_c *B = data->_match->GetPlayerB ();
+
+    if (A && B)
+    {
+      Player_c *winner;
+
+      if (g_random_boolean ())
+      {
+        data->_match->SetScore (A, table->_max_score);
+        data->_match->SetScore (B, g_random_int_range (0,
+                                                       table->_max_score));
+        winner = A;
+      }
+      else
+      {
+        data->_match->SetScore (A, g_random_int_range (0,
+                                                       table->_max_score));
+        data->_match->SetScore (B, table->_max_score);
+        winner = B;
+      }
+
+      {
+        GNode *parent = node->parent;
+
+        if (parent)
+        {
+          NodeData *parent_data = (NodeData *) parent->data;
+
+          if (g_node_child_position (parent, node) == 0)
+          {
+            parent_data->_match->SetPlayerA (winner);
+          }
+          else
+          {
+            parent_data->_match->SetPlayerB (winner);
+          }
+        }
+      }
+    }
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Table::OnStuffClicked ()
+{
+  for (_level_filter = 1; _level_filter <= _nb_levels; _level_filter++)
+  {
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_ALL,
+                     _nb_levels - _level_filter + 1,
+                     (GNodeTraverseFunc) Stuff,
+                     this);
+  }
+
+  OnAttrListUpdated ();
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object_c  *owner)
 {
@@ -1019,4 +1091,13 @@ extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled
   Table *t = dynamic_cast <Table *> (owner);
 
   t->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_table_stuff_toolbutton_clicked (GtkWidget *widget,
+                                                                   Object_c  *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->OnStuffClicked ();
 }

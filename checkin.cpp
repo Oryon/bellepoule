@@ -331,45 +331,93 @@ void Checkin::Import ()
                                  filter);
   }
 
+  {
+    gchar *prg_name = g_get_prgname ();
+
+    if (prg_name)
+    {
+      gchar *install_dirname = g_path_get_dirname (prg_name);
+
+      if (install_dirname)
+      {
+        gchar *example_dirname = g_strdup_printf ("%s/Exemples_Fichiers_FFE", install_dirname);
+
+        gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (chooser),
+                                              example_dirname,
+                                              NULL);
+        g_free (example_dirname);
+        g_free (install_dirname);
+      }
+    }
+  }
+
+  {
+    gchar *last_dirname = g_key_file_get_string (_config_file,
+                                                 "Checkin",
+                                                 "default_import_dir_name",
+                                                 NULL);
+    if (last_dirname)
+    {
+      gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
+                                           last_dirname);
+
+      g_free (last_dirname);
+    }
+  }
+
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
     gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-    gchar *file;
 
+    if (filename)
     {
-      gchar *raw_file;
-      gsize  length;
-      guint  j;
+      gchar *file;
 
-      g_file_get_contents ((const gchar *) filename,
-                           &raw_file,
-                           &length,
-                           NULL);
-      length++;
-
-      file = (gchar *) g_malloc (length);
-
-      j = 0;
-      for (guint i = 0; i < length; i++)
       {
-        if (raw_file[i] != '\r')
+        gchar *dirname = g_path_get_dirname (filename);
+
+        g_key_file_set_string (_config_file,
+                               "Checkin",
+                               "default_import_dir_name",
+                               dirname);
+        g_free (dirname);
+      }
+
+      {
+        gchar *raw_file;
+        gsize  length;
+        guint  j;
+
+        g_file_get_contents ((const gchar *) filename,
+                             &raw_file,
+                             &length,
+                             NULL);
+        length++;
+
+        file = (gchar *) g_malloc (length);
+
+        j = 0;
+        for (guint i = 0; i < length; i++)
         {
-          file[j] = raw_file[i];
-          j++;
+          if (raw_file[i] != '\r')
+          {
+            file[j] = raw_file[i];
+            j++;
+          }
         }
       }
-    }
 
-    if (strstr (filename, ".FFF"))
-    {
-      ImportFFF (file);
-    }
-    else
-    {
-      ImportCSV (file);
-    }
+      if (strstr (filename, ".FFF"))
+      {
+        ImportFFF (file);
+      }
+      else
+      {
+        ImportCSV (file);
+      }
 
-    g_free (file);
+      g_free (file);
+    }
   }
 
   gtk_widget_destroy (chooser);

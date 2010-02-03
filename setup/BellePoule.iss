@@ -128,6 +128,13 @@ Source: "C:\MinGW\etc\gtk-2.0\gtkrc"; DestDir: "{app}\porting_layer\etc\gtk-2.0"
 Source: "C:\MinGW\share\themes\Aurora\gtk-2.0\gtkrc"; DestDir: "{app}\porting_layer\share\themes\Aurora\gtk-2.0"; Flags: ignoreversion
 Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libaurora.dll"; DestDir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\engines\"; Flags: ignoreversion
 
+; icons
+Source: "C:\MinGW\share\icons\hicolor\index.theme"; DestDir: "{app}\porting_layer\share\icons\hicolor\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\16x16\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\24x24\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\32x32\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\48x48\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\48x48\apps\"; Flags: ignoreversion
+
 ;
 Source: "C:\MinGW\etc\gtk-2.0\gdk-pixbuf.loaders"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion
 Source: "C:\MinGW\etc\gtk-2.0\gtk.immodules"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion

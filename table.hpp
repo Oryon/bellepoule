@@ -33,6 +33,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     Table (StageClass *stage_class);
 
     void OnFromTableComboboxChanged ();
+    void OnStuffClicked ();
 
   public:
     static const gchar *_class_name;
@@ -68,6 +69,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     GNode          *_tree_root;
     guint           _nb_levels;
+    guint           _level_filter;
     GtkListStore   *_from_table_liststore;
     guint           _nb_level_to_display;
     GooCanvasItem  *_main_table;
@@ -91,6 +93,9 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void DrawAllConnectors ();
 
     gboolean IsOver ();
+
+    static gboolean Stuff (GNode *node,
+                           Table *table);
 
     static gboolean AddToClassification (GNode *node,
                                          Table *table);
