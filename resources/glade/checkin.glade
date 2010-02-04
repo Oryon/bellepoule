@@ -35,7 +35,7 @@
             <child>
               <object class="GtkToolButton" id="import_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Import FFE file</property>
+                <property name="label" translatable="yes">Importer fichier FFE</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-convert</property>
                 <signal name="clicked" handler="on_import_toolbutton_clicked"/>
@@ -48,7 +48,7 @@
             <child>
               <object class="GtkToolButton" id="players_list_filter_button">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Filter</property>
+                <property name="label" translatable="yes">Filtre</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_players_list_filter_button_clicked"/>
               </object>

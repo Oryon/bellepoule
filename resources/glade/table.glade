@@ -26,7 +26,7 @@
                         <child>
                           <object class="GtkLabel" id="label1">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Display from</property>
+                            <property name="label" translatable="yes">A partir de</property>
                           </object>
                           <packing>
                             <property name="position">0</property>
@@ -70,7 +70,7 @@
                 <child>
                   <object class="GtkToolButton" id="table_filter_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Filter</property>
+                    <property name="label" translatable="yes">Filtre</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_table_filter_toolbutton_clicked"/>
                   </object>
@@ -93,9 +93,9 @@
                 <child>
                   <object class="GtkToggleToolButton" id="table_classification_toggletoolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Classification</property>
+                    <property name="label" translatable="yes">Classement</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-justify-fill</property>
+                    <property name="icon_widget">score_image</property>
                     <signal name="toggled" handler="on_table_classification_toggletoolbutton_toggled"/>
                   </object>
                   <packing>
@@ -289,6 +289,10 @@
     <property name="step_increment">5</property>
     <property name="page_increment">10</property>
     <property name="page_size">10</property>
+  </object>
+  <object class="GtkImage" id="score_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">stock_scores.png</property>
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>

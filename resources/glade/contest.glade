@@ -47,7 +47,7 @@
                 <child>
                   <object class="GtkToolButton" id="formula_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Formula</property>
+                    <property name="label" translatable="yes">Formule</property>
                     <property name="stock_id">gtk-preferences</property>
                     <signal name="clicked" handler="on_formula_toolbutton_clicked"/>
                   </object>

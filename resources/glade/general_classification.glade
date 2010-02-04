@@ -13,7 +13,7 @@
             <child>
               <object class="GtkToolButton" id="players_list_filter_button">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Filter</property>
+                <property name="label" translatable="yes">Filtre</property>
                 <property name="stock_id">gtk-index</property>
               </object>
               <packing>

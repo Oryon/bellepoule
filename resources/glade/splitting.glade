@@ -13,7 +13,7 @@
             <child>
               <object class="GtkToolButton" id="splitting_move_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Move to...</property>
+                <property name="label" translatable="yes">D&#xE9;placer vers ...</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">image1</property>
                 <signal name="clicked" handler="on_splitting_move_toolbutton_clicked"/>
@@ -26,7 +26,7 @@
             <child>
               <object class="GtkToolButton" id="splitting_filter_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Filter</property>
+                <property name="label" translatable="yes">Filtre</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_splitting_filter_toolbutton_clicked"/>
               </object>
@@ -156,14 +156,14 @@
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="name_entry"/>
       <widget name="new_title_entry"/>
+      <widget name="name_entry"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup">
     <widgets>
-      <widget name="label4"/>
       <widget name="label2"/>
+      <widget name="label4"/>
     </widgets>
   </object>
   <object class="GtkTextBuffer" id="textbuffer1">
