@@ -671,7 +671,8 @@ gboolean Table::FillInNode (GNode *node,
           SetTableItemAttribute (score_text, "y-align", 0.5);
         }
 
-        if (parent_data->_match->GetWinner () == NULL)
+        if (   parent_data->_match->GetPlayerA ()
+            && parent_data->_match->GetPlayerB ())
         {
           table->_score_collector->AddCollectingPoint (goo_rect,
                                                        score_text,
