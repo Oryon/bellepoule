@@ -46,6 +46,7 @@ class Splitting : public virtual Stage_c, public PlayersList
     void OnUnLocked ();
     void Display ();
     void Wipe ();
+    GSList *GetCurrentClassification ();
 
   private:
     static Tournament *_tournament;

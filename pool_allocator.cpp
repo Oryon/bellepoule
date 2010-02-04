@@ -1083,8 +1083,12 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
 void PoolAllocator_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
+}
 
-  SetResult (g_slist_copy (_attendees));
+// --------------------------------------------------------------------------------
+GSList *PoolAllocator_c::GetCurrentClassification ()
+{
+  return g_slist_copy (_attendees);
 }
 
 // --------------------------------------------------------------------------------

@@ -190,8 +190,26 @@ void Module_c::EnableSensitiveWidgets ()
 {
   for (guint i = 0; i < g_slist_length (_sensitive_widgets); i++)
   {
-    gtk_widget_set_sensitive (GTK_WIDGET (g_slist_nth_data (_sensitive_widgets, i)),
-                              true);
+    GtkWidget *w;
+    guint      lock;
+
+    w = GTK_WIDGET (g_slist_nth_data (_sensitive_widgets, i));
+
+    lock = (guint) g_object_get_data (G_OBJECT (w),
+                                      "lock");
+    if (lock)
+    {
+      lock--;
+      g_object_set_data (G_OBJECT (w),
+                         "lock",
+                         (void *) lock);
+    }
+
+    if (lock == 0)
+    {
+      gtk_widget_set_sensitive (w,
+                                true);
+    }
   }
 }
 
@@ -200,8 +218,23 @@ void Module_c::DisableSensitiveWidgets ()
 {
   for (guint i = 0; i < g_slist_length (_sensitive_widgets); i++)
   {
-    gtk_widget_set_sensitive (GTK_WIDGET (g_slist_nth_data (_sensitive_widgets, i)),
-                              false);
+    GtkWidget *w;
+    guint      lock;
+
+    w = GTK_WIDGET (g_slist_nth_data (_sensitive_widgets, i));
+
+    lock = (guint) g_object_get_data (G_OBJECT (w),
+                                      "lock");
+    lock++;
+    g_object_set_data (G_OBJECT (w),
+                       "lock",
+                       (void *) lock);
+
+    if (lock == 1)
+    {
+      gtk_widget_set_sensitive (w,
+                                false);
+    }
   }
 }
 

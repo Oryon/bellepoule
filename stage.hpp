@@ -98,7 +98,7 @@ class Stage_c : public virtual Object_c
 
     virtual gboolean IsOver ();
 
-    virtual void ToggleClassification (gboolean classification_on);
+    void ToggleClassification (gboolean classification_on);
 
     virtual Stage_c *GetInputProvider ();
 
@@ -127,9 +127,11 @@ class Stage_c : public virtual Object_c
 
     void SignalStatusUpdate ();
 
-    void SetResult (GSList *result);
-
     Classification *GetClassification ();
+
+    virtual GSList *GetCurrentClassification () {return NULL;};
+
+    void LockOnClassification (GtkWidget *w);
 
   private:
     static GSList *_stage_base;
@@ -141,14 +143,18 @@ class Stage_c : public virtual Object_c
     StageClass     *_stage_class;
     GSList         *_result;
     Classification *_classification;
+    GSList          *_locked_on_classification;
 
     void          *_status_cbk_data;
     StatusCbk      _status_cbk;
 
+    void SetResult ();
     void FreeResult ();
     virtual void OnLocked () {};
     virtual void OnUnLocked () {};
     static StageClass *GetClass (const gchar *name);
+
+    void UpdateClassification (GSList *result);
 };
 
 #endif

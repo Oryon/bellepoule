@@ -34,6 +34,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     void OnFromTableComboboxChanged ();
     void OnStuffClicked ();
+    void OnInputToggled (GtkWidget *widget);
 
   public:
     static const gchar *_class_name;
@@ -42,6 +43,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
   private:
     void OnLocked ();
     void OnUnLocked ();
+    void OnPlugged ();
     void Wipe ();
 
   private:
@@ -93,6 +95,8 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void DrawAllConnectors ();
 
     gboolean IsOver ();
+
+    GSList *GetCurrentClassification ();
 
     static gboolean Stuff (GNode *node,
                            Table *table);

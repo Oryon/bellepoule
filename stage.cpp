@@ -38,6 +38,8 @@ Stage_c::Stage_c (StageClass *stage_class)
   _attendees       = NULL;
   _classification  = NULL;
 
+  _locked_on_classification = NULL;
+
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
 }
@@ -47,6 +49,11 @@ Stage_c::~Stage_c ()
 {
   FreeResult ();
   g_free (_name);
+
+  if (_locked_on_classification)
+  {
+    g_slist_free (_locked_on_classification);
+  }
 
   TryToRelease (_classification);
 }
@@ -111,6 +118,7 @@ void Stage_c::Lock ()
 {
   _locked = true;
   OnLocked ();
+  SetResult ();
 }
 
 // --------------------------------------------------------------------------------
@@ -305,16 +313,69 @@ void Stage_c::ToggleClassification (gboolean classification_on)
     GtkWidget *main_w           = module->GetWidget ("main_hook");
     GtkWidget *classification_w = module->GetWidget ("classification_hook");
 
-
     if (classification_on)
     {
+      if (_result == NULL)
+      {
+        GSList *result = GetCurrentClassification ();
+
+        UpdateClassification (result);
+        g_slist_free (result);
+      }
+
       gtk_widget_hide (main_w);
       gtk_widget_show (classification_w);
+
+      for (guint i = 0; i < g_slist_length (_locked_on_classification); i++)
+      {
+        GtkWidget *w;
+        guint      lock;
+
+        w = GTK_WIDGET (g_slist_nth_data (_locked_on_classification, i));
+
+        lock = (guint) g_object_get_data (G_OBJECT (w),
+                                          "lock");
+        lock++;
+        g_object_set_data (G_OBJECT (w),
+                           "lock",
+                           (void *) lock);
+
+        if (lock == 1)
+        {
+          gtk_widget_set_sensitive (w,
+                                    false);
+        }
+      }
+
     }
     else
     {
       gtk_widget_hide (classification_w);
       gtk_widget_show (main_w);
+
+      for (guint i = 0; i < g_slist_length (_locked_on_classification); i++)
+      {
+        GtkWidget *w;
+        guint      lock;
+
+        w = GTK_WIDGET (g_slist_nth_data (_locked_on_classification, i));
+
+        lock = (guint) g_object_get_data (G_OBJECT (w),
+                                          "lock");
+        if (lock)
+        {
+          lock--;
+          g_object_set_data (G_OBJECT (w),
+                             "lock",
+                             (void *) lock);
+        }
+
+        if (lock == 0)
+        {
+          gtk_widget_set_sensitive (w,
+                                    true);
+        }
+      }
     }
   }
 }
@@ -326,34 +387,52 @@ Classification *Stage_c::GetClassification ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SetResult (GSList *result)
+void Stage_c::UpdateClassification (GSList *result)
 {
+  Module_c  *module           = dynamic_cast <Module_c *> (this);
+  GtkWidget *classification_w = module->GetWidget ("classification_hook");
+
+  if (classification_w)
+  {
+    if (_classification == NULL)
+    {
+      _classification = new Classification ();
+      module->Plug (_classification,
+                    classification_w);
+    }
+
+    _classification->Wipe ();
+
+    for (guint i = 0; i < g_slist_length (result); i ++)
+    {
+      Player_c *player;
+
+      player = (Player_c *) g_slist_nth_data (result,
+                                              i);
+
+      player->SetAttributeValue ("rank",
+                                 i + 1);
+      _classification->Add (player);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::SetResult ()
+{
+  GSList *result = GetCurrentClassification ();
+
+  UpdateClassification (result);
+
   FreeResult ();
   _result = result;
+}
 
-  if (_classification == NULL)
-  {
-    Module_c  *module           = dynamic_cast <Module_c *> (this);
-    GtkWidget *classification_w = module->GetWidget ("classification_hook");
-
-    _classification = new Classification ();
-    module->Plug (_classification,
-                  classification_w);
-  }
-
-  _classification->Wipe ();
-
-  for (guint i = 0; i < g_slist_length (_result); i ++)
-  {
-    Player_c *player;
-
-    player = (Player_c *) g_slist_nth_data (_result,
-                                            i);
-
-    player->SetAttributeValue ("rank",
-                               i + 1);
-    _classification->Add (player);
-  }
+// --------------------------------------------------------------------------------
+void Stage_c::LockOnClassification (GtkWidget *w)
+{
+  _locked_on_classification = g_slist_append (_locked_on_classification,
+                                              w);
 }
 
 // --------------------------------------------------------------------------------

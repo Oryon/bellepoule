@@ -45,6 +45,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     void OnLocked ();
     void OnUnLocked ();
     void Wipe ();
+    GSList *GetCurrentClassification ();
 
   private:
     typedef struct

@@ -50,6 +50,9 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
     AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
     AddSensitiveWidget (_glade->GetWidget ("qualified_fencer_spinbutton"));
     AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
+
+    LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
+    LockOnClassification (_glade->GetWidget ("pool_combobox"));
   }
 
   // Filter
@@ -99,13 +102,15 @@ Stage_c *PoolSupervisor_c::CreateInstance (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnPlugged ()
 {
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton")),
+                                     FALSE);
+
   RetrievePools ();
 }
 
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Display ()
 {
-  ToggleClassification (FALSE);
   OnPoolSelected (0);
 
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
@@ -194,34 +199,13 @@ gint PoolSupervisor_c::ComparePlayer (Player_c         *A,
 void PoolSupervisor_c::OnLocked ()
 {
   DisableSensitiveWidgets ();
-  gtk_widget_set_sensitive (_glade->GetWidget ("pool_classification_toggletoolbutton"),
-                            TRUE);
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton")),
-                                     FALSE);
 
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    GSList *result = NULL;
+    Pool_c *pool;
 
-    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-    {
-      Pool_c *pool;
-
-      pool = _pool_allocator->GetPool (p);
-      pool->Lock ();
-      for (guint i = 0; i < pool->GetNbPlayers (); i++)
-      {
-        Player_c *player;
-
-        player = pool->GetPlayer (i);
-
-        result = g_slist_append (result,
-                                 player);
-      }
-    }
-    result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) ComparePlayer,
-                                     this);
-    SetResult (result);
+    pool = _pool_allocator->GetPool (p);
+    pool->Lock ();
   }
 }
 
@@ -229,10 +213,7 @@ void PoolSupervisor_c::OnLocked ()
 void PoolSupervisor_c::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton")),
-                                     FALSE);
-  gtk_widget_set_sensitive (_glade->GetWidget ("pool_classification_toggletoolbutton"),
-                            FALSE);
+
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
     Pool_c *pool;
@@ -537,6 +518,31 @@ void PoolSupervisor_c::OnStuffClicked ()
     OnPoolStatusUpdated (pool,
                          this);
   }
+}
+
+// --------------------------------------------------------------------------------
+GSList *PoolSupervisor_c::GetCurrentClassification ()
+{
+  GSList *result = NULL;
+
+  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+  {
+    Pool_c *pool;
+
+    pool = _pool_allocator->GetPool (p);
+    for (guint i = 0; i < pool->GetNbPlayers (); i++)
+    {
+      Player_c *player;
+
+      player = pool->GetPlayer (i);
+
+      result = g_slist_append (result,
+                               player);
+    }
+  }
+  return g_slist_sort_with_data (result,
+                                 (GCompareDataFunc) ComparePlayer,
+                                 this);
 }
 
 // --------------------------------------------------------------------------------

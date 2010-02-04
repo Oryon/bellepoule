@@ -52,6 +52,15 @@ Table::Table (StageClass *stage_class)
   _max_score = 10;
 
   {
+    AddSensitiveWidget (_glade->GetWidget ("input_toolbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("table_stuff_toolbutton"));
+
+    LockOnClassification (_glade->GetWidget ("from_vbox"));
+    LockOnClassification (_glade->GetWidget ("table_stuff_toolbutton"));
+    LockOnClassification (_glade->GetWidget ("input_toolbutton"));
+  }
+
+  {
     GSList *attr_list;
     Filter *filter;
 
@@ -127,24 +136,33 @@ void Table::RefreshLevelStatus ()
 
     for (guint i = nb_missing_level; i < _nb_levels - 1; i ++)
     {
+      GtkTreeIter  iter;
+      gchar       *icon;
+
       if (_level_status[i]._has_error)
       {
-        _level_status[i]._status_item = PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
-                                                             GTK_STOCK_DIALOG_WARNING,
-                                                             0, 0);
+        icon = GTK_STOCK_DIALOG_WARNING;
       }
       else if (_level_status[i]._is_over == TRUE)
       {
-        _level_status[i]._status_item = PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
-                                                             GTK_STOCK_APPLY,
-                                                             0, 0);
+        icon = GTK_STOCK_APPLY;
       }
       else
       {
-        _level_status[i]._status_item = PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
-                                                             GTK_STOCK_EXECUTE,
-                                                             0, 0);
+        icon = GTK_STOCK_EXECUTE;
       }
+
+      _level_status[i]._status_item = PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
+                                                           icon,
+                                                           0, 0);
+
+      gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_from_table_liststore),
+                                     &iter,
+                                     NULL,
+                                     i-nb_missing_level);
+      gtk_list_store_set (_from_table_liststore, &iter,
+                          STATUS_COLUMN, icon,
+                          -1);
     }
   }
   SignalStatusUpdate ();
@@ -153,7 +171,6 @@ void Table::RefreshLevelStatus ()
 // --------------------------------------------------------------------------------
 void Table::Display ()
 {
-  ToggleClassification (FALSE);
   Wipe ();
 
   {
@@ -360,7 +377,7 @@ void Table::CreateTree ()
                                           (Object_c *) this);
     gtk_list_store_clear (_from_table_liststore);
 
-    for (guint i = 1; i <= _nb_levels; i++)
+    for (guint i = 0; i < _nb_levels - 1; i++)
     {
       GtkTreeIter   iter;
       gchar        *text;
@@ -368,9 +385,10 @@ void Table::CreateTree ()
       gtk_list_store_append (_from_table_liststore,
                              &iter);
 
-      text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - i));
+      text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - i - 1));
       gtk_list_store_set (_from_table_liststore, &iter,
-                          NAME_COLUMN, text,
+                          STATUS_COLUMN, GTK_STOCK_EXECUTE,
+                          NAME_COLUMN,   text,
                           -1);
       g_free (text);
     }
@@ -892,36 +910,27 @@ extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *wi
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnLocked ()
+void Table::OnPlugged ()
 {
-  DisableSensitiveWidgets ();
-  gtk_widget_set_sensitive (_glade->GetWidget ("table_classification_toggletoolbutton"),
-                            TRUE);
+  CanvasModule_c::OnPlugged ();
+
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")),
                                      FALSE);
 
-  {
-    _result_list = NULL;
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
+                                     FALSE);
+}
 
-    g_node_traverse (_tree_root,
-                     G_LEVEL_ORDER,
-                     G_TRAVERSE_ALL,
-                     -1,
-                     (GNodeTraverseFunc) AddToClassification,
-                     this);
-
-    SetResult (_result_list);
-  }
+// --------------------------------------------------------------------------------
+void Table::OnLocked ()
+{
+  DisableSensitiveWidgets ();
 }
 
 // --------------------------------------------------------------------------------
 void Table::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")),
-                                     FALSE);
-  gtk_widget_set_sensitive (_glade->GetWidget ("table_classification_toggletoolbutton"),
-                            FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -1068,6 +1077,36 @@ void Table::OnStuffClicked ()
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnInputToggled (GtkWidget *widget)
+{
+  GtkWidget *input_box = _glade->GetWidget ("input_hbox");
+
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)))
+  {
+    gtk_widget_show (input_box);
+  }
+  else
+  {
+    gtk_widget_hide (input_box);
+  }
+}
+
+// --------------------------------------------------------------------------------
+GSList *Table::GetCurrentClassification ()
+{
+  _result_list = NULL;
+
+  g_node_traverse (_tree_root,
+                   G_LEVEL_ORDER,
+                   G_TRAVERSE_ALL,
+                   -1,
+                   (GNodeTraverseFunc) AddToClassification,
+                   this);
+
+  return _result_list;
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object_c  *owner)
 {
@@ -1101,4 +1140,13 @@ extern "C" G_MODULE_EXPORT void on_table_stuff_toolbutton_clicked (GtkWidget *wi
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnStuffClicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_input_toolbutton_toggled (GtkWidget *widget,
+                                                             Object_c  *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->OnInputToggled (widget);
 }

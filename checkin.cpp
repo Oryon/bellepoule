@@ -244,17 +244,22 @@ void Checkin::OnLocked ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
+}
 
+// --------------------------------------------------------------------------------
+GSList *Checkin::GetCurrentClassification ()
+{
+  GSList *result = CreateCustomList (PresentPlayerFilter);
+
+  if (result)
   {
-    GSList *result = CreateCustomList (PresentPlayerFilter);
-
-    if (result)
-    {
-      result = g_slist_sort_with_data (result,
-                                       (GCompareDataFunc) Player_c::Compare,
-                                       (void *) "rank");
-      SetResult (result);
-    }
+    return g_slist_sort_with_data (result,
+                                   (GCompareDataFunc) Player_c::Compare,
+                                   (void *) "rank");
+  }
+  else
+  {
+    return NULL;
   }
 }
 

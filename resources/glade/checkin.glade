@@ -13,6 +13,7 @@
             <child>
               <object class="GtkToolButton" id="add_player_button">
                 <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Affiche une fen&#xEA;tre permettant de saisir les attributs de nouveaux tireurs &#xE0; rajouter &#xE0; la comp&#xE9;tition.</property>
                 <property name="stock_id">gtk-add</property>
                 <signal name="clicked" handler="on_add_player_button_clicked"/>
               </object>
@@ -24,6 +25,7 @@
             <child>
               <object class="GtkToolButton" id="remove_player_button">
                 <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Supprime les tireurs s&#xE9;lectionn&#xE9;s de la comp&#xE9;tition.</property>
                 <property name="stock_id">gtk-remove</property>
                 <signal name="clicked" handler="on_remove_player_button_clicked"/>
               </object>
@@ -35,6 +37,8 @@
             <child>
               <object class="GtkToolButton" id="import_toolbutton">
                 <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Importe des tireurs dans la comp&#xE9;tition &#xE0; partir d'un fichier ".FFF".
+C'est le format des fichiers que fournit la F&#xE9;d&#xE9;ration Fran&#xE7;aise d'Escrime sur son site d'inscription en ligne.</property>
                 <property name="label" translatable="yes">Importer fichier FFE</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-convert</property>
@@ -48,6 +52,7 @@
             <child>
               <object class="GtkToolButton" id="players_list_filter_button">
                 <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Permet d'afficher et de masquer certaines donn&#xE9;es ainsi que de red&#xE9;finir leur ordre d'affichage.</property>
                 <property name="label" translatable="yes">Filtre</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_players_list_filter_button_clicked"/>
@@ -60,6 +65,7 @@
             <child>
               <object class="GtkToolButton" id="toolbutton4">
                 <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Imprime la liste des tireurs. </property>
                 <property name="stock_id">gtk-print</property>
               </object>
               <packing>
