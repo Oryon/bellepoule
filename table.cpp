@@ -943,8 +943,8 @@ gboolean Table::AddToClassification (GNode *node,
   {
     Player_c *winner = data->_match->GetWinner ();
 
-    if (g_slist_find (table->_result_list,
-                      winner) == NULL)
+    if (winner && g_slist_find (table->_result_list,
+                                winner) == NULL)
     {
       table->_result_list = g_slist_append (table->_result_list,
                                             winner);
