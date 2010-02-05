@@ -19,6 +19,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#include "version.h"
 #include "contest.hpp"
 
 #include "tournament.hpp"
@@ -61,10 +62,13 @@ Tournament::Tournament (gchar *filename)
   }
 
   {
-    //GtkWidget *w = _glade->GetWidget ("about_dialog");
+    GtkWidget *w       = _glade->GetWidget ("about_dialog");
+    gchar     *version = g_strdup_printf ("%s.%s/%s", VERSION, VERSION_DAY, VERSION_MONTH);
 
-    //gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
-                                  //(const gchar *) ">> 0.17/01 <<");
+    gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
+                                  (const gchar *) version);
+
+    g_free (version);
   }
 }
 
