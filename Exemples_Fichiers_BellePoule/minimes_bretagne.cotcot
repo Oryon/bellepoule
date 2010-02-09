@@ -69,8 +69,8 @@
    <match player_A="11"/>
    <match player_A="30"/>
    <match player_A="14"/>
-   <match player_A="30" player_B="14"/>
-   <match player_A="11"/>
+   <match player_A="30" score_A="10" player_B="14" score_B="3"/>
+   <match player_A="11" player_B="30"/>
    <match player_A="27"/>
    <match player_A="33"/>
    <match player_A="27" player_B="33"/>

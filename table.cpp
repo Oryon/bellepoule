@@ -83,8 +83,7 @@ Table::Table (StageClass *stage_class)
   }
 
   {
-    _quick_score_collector = new ScoreCollector (GetCanvas (),
-                                                 this,
+    _quick_score_collector = new ScoreCollector (this,
                                                  (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
 
     _quick_score_A = GetQuickScore ("fencerA_hook");
@@ -958,8 +957,7 @@ void Table::Wipe ()
 {
   {
     Object_c::TryToRelease (_score_collector);
-    _score_collector = new ScoreCollector (GetCanvas (),
-                                           this,
+    _score_collector = new ScoreCollector (this,
                                            (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
 
     _score_collector->SetConsistentColors ("LightGrey",

@@ -33,8 +33,7 @@ class ScoreCollector : public Object_c
                                     Player_c       *player);
 
   public:
-    ScoreCollector (GooCanvas      *canvas,
-                    CanvasModule_c *client,
+    ScoreCollector (CanvasModule_c *client,
                     OnNewScore_cbk  on_new_score);
 
     void AddCollectingPoint (GooCanvasItem *point,
@@ -66,7 +65,6 @@ class ScoreCollector : public Object_c
                                 gchar *focus_colorg);
 
   private:
-    GooCanvas      *_canvas;
     GooCanvasItem  *_entry_item;
     GooCanvasItem  *_collecting_point;
     GtkWidget      *_gtk_entry;

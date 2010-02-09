@@ -295,8 +295,7 @@ void Pool_c::OnPlugged ()
     _score_collector->Release ();
   }
 
-  _score_collector = new ScoreCollector (GetCanvas (),
-                                         this,
+  _score_collector = new ScoreCollector (this,
                                          (ScoreCollector::OnNewScore_cbk) &Pool_c::OnNewScore);
 
   {

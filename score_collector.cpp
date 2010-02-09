@@ -22,15 +22,13 @@
 #include "score_collector.hpp"
 
 // --------------------------------------------------------------------------------
-ScoreCollector::ScoreCollector (GooCanvas      *canvas,
-                                CanvasModule_c *client,
+ScoreCollector::ScoreCollector (CanvasModule_c *client,
                                 OnNewScore_cbk  on_new_score)
 : Object_c ("ScoreCollector")
 {
   _entry_item       = NULL;
   _gtk_entry        = NULL;
   _collecting_point = NULL;
-  _canvas           = canvas;
   _client           = client;
   _on_new_score     = on_new_score;
   _is_locked        = FALSE;
@@ -80,7 +78,7 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
                     G_CALLBACK (on_focus_in), this);
 
   g_object_set_data (G_OBJECT (point), "score_text", score_text);
-  g_object_set_data (G_OBJECT (point), "next_point",  NULL);
+  g_object_set_data (G_OBJECT (point), "next_point", NULL);
 
   SetMatch (point,
             match,
@@ -169,8 +167,11 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
     }
     else
     {
-      goo_canvas_grab_focus (_canvas,
-                             goo_canvas_get_root_item (_canvas));
+      GooCanvasItem *score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget),
+                                                                       "score_text");
+
+      goo_canvas_grab_focus (goo_canvas_item_get_canvas (score_text),
+                             score_text);
       Stop ();
     }
 
@@ -178,10 +179,11 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
   }
   else if (event->keyval == GDK_Escape)
   {
-    goo_canvas_grab_focus (_canvas,
-                           goo_canvas_get_root_item (_canvas));
-    //gdk_window_focus (gtk_widget_get_parent_window (widget),
-                      //gtk_get_current_event_time ());
+    GooCanvasItem *score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget),
+                                                                     "score_text");
+
+    goo_canvas_grab_focus (goo_canvas_item_get_canvas (score_text),
+                           score_text);
     Stop ();
     return TRUE;
   }
@@ -227,8 +229,11 @@ void ScoreCollector::OnEntryChanged (GtkWidget *widget)
     }
     else
     {
-      goo_canvas_grab_focus (_canvas,
-                             goo_canvas_get_root_item (_canvas));
+      GooCanvasItem *score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget),
+                                                                       "score_text");
+
+      goo_canvas_grab_focus (goo_canvas_item_get_canvas (score_text),
+                             score_text);
       Stop ();
     }
   }
