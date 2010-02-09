@@ -57,9 +57,9 @@ void ScoreCollector::AddCollectingTrigger (GooCanvasItem *trigger)
 {
   if (trigger)
   {
-    g_object_set (trigger, "can-focus", TRUE, NULL);
+    g_object_set (G_OBJECT (trigger), "can-focus", TRUE, NULL);
 
-    g_signal_connect (trigger, "button_press_event",
+    g_signal_connect (G_OBJECT (trigger), "button_press_event",
                       G_CALLBACK (on_cell_button_press), _collecting_point);
   }
 }
@@ -79,23 +79,39 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
   g_signal_connect (point, "focus_in_event",
                     G_CALLBACK (on_focus_in), this);
 
-  if (player_position == 0)
-  {
-    match->SetData (this, "goo_rect_A", point);
-  }
-  else
-  {
-    match->SetData (this, "goo_rect_B", point);
-  }
-
-  g_object_set_data (G_OBJECT (point), "match",  match);
-  g_object_set_data (G_OBJECT (point), "player", player);
   g_object_set_data (G_OBJECT (point), "score_text", score_text);
   g_object_set_data (G_OBJECT (point), "next_point",  NULL);
 
-  SetMatchColor (match,
-                 _consistent_normal_color,
-                 _unconsistent_normal_color);
+  SetMatch (point,
+            match,
+            player,
+            player_position);
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::SetMatch (GooCanvasItem *to_point,
+                               Match_c       *match,
+                               Player_c      *player,
+                               guint          player_position)
+{
+  if (match)
+  {
+    if (player_position == 0)
+    {
+      match->SetData (this, "goo_rect_A", to_point);
+    }
+    else
+    {
+      match->SetData (this, "goo_rect_B", to_point);
+    }
+
+    g_object_set_data (G_OBJECT (to_point), "match",  match);
+    g_object_set_data (G_OBJECT (to_point), "player", player);
+
+    SetMatchColor (match,
+                   _consistent_normal_color,
+                   _unconsistent_normal_color);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -121,7 +137,10 @@ void ScoreCollector::UnLock ()
 void ScoreCollector::SetNextCollectingPoint (GooCanvasItem *to,
                                              GooCanvasItem *next)
 {
-  g_object_set_data (G_OBJECT (to), "next_point",  next);
+  if (to)
+  {
+    g_object_set_data (G_OBJECT (to), "next_point",  next);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -145,7 +164,7 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
 
     if (next_item)
     {
-      goo_canvas_grab_focus (_canvas,
+      goo_canvas_grab_focus (goo_canvas_item_get_canvas (next_item),
                              next_item);
     }
     else
@@ -161,6 +180,8 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
   {
     goo_canvas_grab_focus (_canvas,
                            goo_canvas_get_root_item (_canvas));
+    //gdk_window_focus (gtk_widget_get_parent_window (widget),
+                      //gtk_get_current_event_time ());
     Stop ();
     return TRUE;
   }
@@ -201,7 +222,7 @@ void ScoreCollector::OnEntryChanged (GtkWidget *widget)
 
     if (next_item)
     {
-      goo_canvas_grab_focus (_canvas,
+      goo_canvas_grab_focus (goo_canvas_item_get_canvas (next_item),
                              next_item);
     }
     else
@@ -218,43 +239,46 @@ void ScoreCollector::SetMatchColor (Match_c *match,
                                     gchar   *consistent_color,
                                     gchar   *unconsitentcolor)
 {
-  GooCanvasItem *rect;
-  gchar         *color_A = consistent_color;
-  gchar         *color_B = consistent_color;
-  Player_c      *A       = match->GetPlayerA ();
-  Player_c      *B       = match->GetPlayerB ();
-  Score_c       *score_A = match->GetScore (A);
-  Score_c       *score_B = match->GetScore (B);
+  if (match)
+  {
+    GooCanvasItem *rect;
+    gchar         *color_A = consistent_color;
+    gchar         *color_B = consistent_color;
+    Player_c      *A       = match->GetPlayerA ();
+    Player_c      *B       = match->GetPlayerB ();
+    Score_c       *score_A = match->GetScore (A);
+    Score_c       *score_B = match->GetScore (B);
 
-  if (score_A->IsValid () == false)
-  {
-    color_A = unconsitentcolor;
-  }
-  if (score_B->IsValid () == false)
-  {
-    color_B = unconsitentcolor;
-  }
+    if (score_A->IsValid () == false)
+    {
+      color_A = unconsitentcolor;
+    }
+    if (score_B->IsValid () == false)
+    {
+      color_B = unconsitentcolor;
+    }
 
-  if (score_A->IsConsistentWith (score_B) == false)
-  {
-    color_A = unconsitentcolor;
-    color_B = unconsitentcolor;
-  }
+    if (score_A->IsConsistentWith (score_B) == false)
+    {
+      color_A = unconsitentcolor;
+      color_B = unconsitentcolor;
+    }
 
-  rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
-  if (rect)
-  {
-    g_object_set (rect,
-                  "fill-color", color_A,
-                  NULL);
-  }
+    rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
+    if (rect)
+    {
+      g_object_set (rect,
+                    "fill-color", color_A,
+                    NULL);
+    }
 
-  rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
-  if (rect)
-  {
-    g_object_set (rect,
-                  "fill-color", color_B,
-                  NULL);
+    rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
+    if (rect)
+    {
+      g_object_set (rect,
+                    "fill-color", color_B,
+                    NULL);
+    }
   }
 }
 
@@ -294,6 +318,7 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
                    _consistent_focus_color,
                    _unconsistent_focus_color);
 
+    if (match)
     {
       gpointer next_point   = g_object_get_data (G_OBJECT (goo_rect), "next_point");
       gpointer score_text   = g_object_get_data (G_OBJECT (goo_rect), "score_text");
@@ -323,7 +348,7 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
         gdouble w = (bounds.x2 - bounds.x1) - 8;
         gdouble h = (bounds.y2 - bounds.y1) - 8;
 
-        _entry_item = goo_canvas_widget_new (goo_canvas_get_root_item (_canvas),
+        _entry_item = goo_canvas_widget_new (goo_canvas_get_root_item (goo_canvas_item_get_canvas (goo_rect)),
                                              _gtk_entry,
                                              x,
                                              y,
@@ -399,9 +424,8 @@ gboolean ScoreCollector::on_cell_button_press (GooCanvasItem  *item,
                                                GdkEventButton *event,
                                                GooCanvasItem  *goo_rect)
 {
-  GooCanvas *canvas = goo_canvas_item_get_canvas (goo_rect);
-
-  goo_canvas_grab_focus (canvas, goo_rect);
+  goo_canvas_grab_focus (goo_canvas_item_get_canvas (goo_rect),
+                         goo_rect);
 
   return FALSE;
 }

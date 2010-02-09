@@ -20,6 +20,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "attribute.hpp"
 #include "player.hpp"
@@ -46,6 +47,7 @@ Table::Table (StageClass *stage_class)
   _main_table   = NULL;
   _tree_root    = NULL;
   _level_status = NULL;
+  _match_table  = NULL;
 
   _score_collector = NULL;
 
@@ -80,6 +82,20 @@ Table::Table (StageClass *stage_class)
     filter->Release ();
   }
 
+  {
+    _quick_score_collector = new ScoreCollector (GetCanvas (),
+                                                 this,
+                                                 (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
+
+    _quick_score_A = GetQuickScore ("fencerA_hook");
+    _quick_score_B = GetQuickScore ("fencerB_hook");
+
+    _quick_score_collector->SetNextCollectingPoint (_quick_score_A,
+                                                    _quick_score_B);
+    _quick_score_collector->SetNextCollectingPoint (_quick_score_B,
+                                                    _quick_score_A);
+  }
+
   _from_table_liststore = GTK_LIST_STORE (_glade->GetObject ("table_liststore"));
 }
 
@@ -92,7 +108,7 @@ Table::~Table ()
   DeleteTree ();
   Object_c::TryToRelease (_score_collector);
 
-  free (_level_status);
+  _quick_score_collector->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -102,6 +118,42 @@ void Table::Init ()
                       _xml_class_name,
                       CreateInstance,
                       EDITABLE);
+}
+
+// --------------------------------------------------------------------------------
+GooCanvasItem *Table::GetQuickScore (gchar *container)
+{
+  GtkWidget     *view_port = _glade->GetWidget (container);
+  GooCanvas     *canvas    = GOO_CANVAS (goo_canvas_new ());
+  GooCanvasItem *goo_rect;
+  GooCanvasItem *score_text;
+
+  gtk_container_add (GTK_CONTAINER (view_port),
+                     GTK_WIDGET (canvas));
+  gtk_widget_show (GTK_WIDGET (canvas));
+
+  goo_rect = goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
+                                  0, 0,
+                                  _score_rect_size, _score_rect_size,
+                                  "line-width", 2.0,
+                                  "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
+                                  NULL);
+
+  score_text = goo_canvas_text_new (goo_canvas_item_get_parent (goo_rect),
+                                    "",
+                                    _score_rect_size/2, _score_rect_size/2,
+                                    -1,
+                                    GTK_ANCHOR_CENTER,
+                                    "font", "Sans bold 18px",
+                                    NULL);
+
+  _quick_score_collector->AddCollectingPoint (goo_rect,
+                                              score_text,
+                                              NULL,
+                                              NULL,
+                                              0);
+
+  return goo_rect;
 }
 
 // --------------------------------------------------------------------------------
@@ -340,6 +392,18 @@ void Table::DeleteTree ()
     g_node_destroy (_tree_root);
     _tree_root = NULL;
   }
+
+  g_free (_level_status);
+
+  if (_match_table)
+  {
+    for (guint i = 0; i < (_nb_levels-1); i ++)
+    {
+      g_ptr_array_free (_match_table[i],
+                        FALSE);
+    }
+    g_free (_match_table);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -365,10 +429,17 @@ void Table::CreateTree ()
   _nb_levels++;
   _nb_level_to_display = _nb_levels;
 
-  free (_level_status);
-  _level_status = (LevelStatus *) calloc (_nb_levels, sizeof (LevelStatus));
+  _level_status = (LevelStatus *) g_malloc0 (_nb_levels * sizeof (LevelStatus));
 
-  DeleteTree ();
+  {
+    _match_table = (GPtrArray **) g_malloc ((_nb_levels-1) * sizeof (GPtrArray *));
+
+    for (guint i = 0; i < (_nb_levels-1); i ++)
+    {
+      _match_table[i] = g_ptr_array_new ();
+    }
+  }
+
   AddFork (NULL);
 
   {
@@ -400,6 +471,9 @@ void Table::CreateTree ()
                       G_CALLBACK (on_from_table_combobox_changed),
                       (Object_c *) this);
   }
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")),
+                            0);
 }
 
 // --------------------------------------------------------------------------------
@@ -655,7 +729,7 @@ gboolean Table::FillInNode (GNode *node,
         {
           goo_rect = goo_canvas_rect_new (data->_canvas_table,
                                           0, 0,
-                                          30.0, 30.0,
+                                          _score_rect_size, _score_rect_size,
                                           "line-width", 0.0,
                                           "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                           NULL);
@@ -783,6 +857,9 @@ void Table::AddFork (GNode *to)
 
   if ((to_data == NULL) || (data->_level > 1))
   {
+    g_ptr_array_add (_match_table[data->_level - 2],
+                     data->_match);
+
     AddFork (node);
     AddFork (node);
   }
@@ -1107,6 +1184,89 @@ GSList *Table::GetCurrentClassification ()
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnSearchChanged ()
+{
+  GtkWidget *entry = _glade->GetWidget ("search_entry");
+  guint      level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
+
+  if ((_nb_levels - level) > 11)
+  {
+    gtk_entry_set_max_length (GTK_ENTRY (entry), 4);
+  }
+  else if ((_nb_levels - level) > 8)
+  {
+    gtk_entry_set_max_length (GTK_ENTRY (entry), 3);
+  }
+  else if ((_nb_levels - level) > 5)
+  {
+    gtk_entry_set_max_length (GTK_ENTRY (entry), 2);
+  }
+  else
+  {
+    gtk_entry_set_max_length (GTK_ENTRY (entry), 1);
+  }
+
+  gtk_widget_hide (_glade->GetWidget ("fencerA_label"));
+  gtk_widget_hide (_glade->GetWidget ("fencerB_label"));
+
+  SearchMatch ();
+}
+
+// --------------------------------------------------------------------------------
+void Table::SearchMatch ()
+{
+  GtkWidget *search_entry = _glade->GetWidget ("search_entry");
+  guint      level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
+  GPtrArray *array = _match_table[level];
+  gchar     *input = (gchar *) gtk_entry_get_text (GTK_ENTRY (search_entry));
+
+  gtk_widget_modify_base (search_entry, GTK_STATE_NORMAL, NULL);
+
+  if (strlen (input))
+  {
+    guint index = atoi (input);
+
+    if (index < array->len)
+    {
+      Match_c  *match   = (Match_c *) g_ptr_array_index (array, index);
+      Player_c *playerA = match->GetPlayerA ();
+      Player_c *playerB = match->GetPlayerB ();
+
+      if (playerA && playerB)
+      {
+        Attribute_c *attr;
+
+        _quick_score_collector->SetMatch (_quick_score_A,
+                                          match,
+                                          playerA,
+                                          0);
+        attr = playerA->GetAttribute ("name");
+        gtk_widget_show (_glade->GetWidget ("fencerA_label"));
+        gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerA_label")),
+                            attr->GetStringImage ());
+
+
+        _quick_score_collector->SetMatch (_quick_score_B,
+                                          match,
+                                          playerB,
+                                          1);
+        attr = playerB->GetAttribute ("name");
+        gtk_widget_show (_glade->GetWidget ("fencerB_label"));
+        gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerB_label")),
+                            attr->GetStringImage ());
+        return;
+      }
+    }
+
+    {
+      static const GdkColor error_color = {0, 65535, 60000, 60000 };
+
+      gtk_widget_modify_base (search_entry, GTK_STATE_NORMAL, &error_color);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object_c  *owner)
 {
@@ -1149,4 +1309,13 @@ extern "C" G_MODULE_EXPORT void on_input_toolbutton_toggled (GtkWidget *widget,
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnInputToggled (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_search_changed (GtkWidget *widget,
+                                                   Object_c  *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->OnSearchChanged ();
 }

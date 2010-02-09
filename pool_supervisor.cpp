@@ -131,8 +131,14 @@ void PoolSupervisor_c::Garnish ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Load (xmlNode *xml_node)
 {
-  static guint current_pool_index = 0;
+  Load (xml_node,
+        0);
+}
 
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::Load (xmlNode *xml_node,
+                             guint    current_pool_index)
+{
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
     if (n->type == XML_ELEMENT_NODE)
@@ -152,11 +158,11 @@ void PoolSupervisor_c::Load (xmlNode *xml_node)
         {
           _displayed_pool = _pool_allocator->GetPool (0);
         }
-        current_pool_index = 0;
         return;
       }
 
-      Load (n->children);
+      Load (n->children,
+            current_pool_index);
     }
   }
 }

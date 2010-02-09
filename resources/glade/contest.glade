@@ -17,6 +17,7 @@
                 <child>
                   <object class="GtkToolButton" id="save_toolbutton">
                     <property name="visible">True</property>
+                    <property name="tooltip_text" translatable="yes">Sauvegarde l'&#xE9;tat courant de la comp&#xE9;tition.</property>
                     <property name="stock_id">gtk-save</property>
                     <signal name="clicked" handler="on_save_toolbutton_clicked"/>
                   </object>
@@ -28,6 +29,7 @@
                 <child>
                   <object class="GtkToolButton" id="properties_toolbutton">
                     <property name="visible">True</property>
+                    <property name="tooltip_text" translatable="yes">Permet de renseigner les caract&#xE9;ristiques de la comp&#xE9;tition.</property>
                     <property name="stock_id">gtk-properties</property>
                     <signal name="clicked" handler="on_properties_toolbutton_clicked"/>
                   </object>
@@ -47,6 +49,7 @@
                 <child>
                   <object class="GtkToolButton" id="formula_toolbutton">
                     <property name="visible">True</property>
+                    <property name="tooltip_text" translatable="yes">Permet de configurer la formule en d&#xE9;finissant l'encha&#xEE;nement des poules, tableaux et autres phases.</property>
                     <property name="label" translatable="yes">Formule</property>
                     <property name="stock_id">gtk-preferences</property>
                     <signal name="clicked" handler="on_formula_toolbutton_clicked"/>
@@ -118,7 +121,7 @@
   </object>
   <object class="GtkDialog" id="properties_dialog">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">New competition</property>
+    <property name="title" translatable="yes">Caract&#xE9;ristiques de la comp&#xE9;tition</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
@@ -263,6 +266,7 @@
                           <object class="GtkEntry" id="title_entry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Texte libre purement informatif.</property>
                             <property name="invisible_char">&#x25CF;</property>
                           </object>
                           <packing>
@@ -285,6 +289,7 @@
                           <object class="GtkEntry" id="organizer_entry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Texte libre purement informatif.</property>
                             <property name="invisible_char">&#x25CF;</property>
                           </object>
                           <packing>
@@ -298,6 +303,7 @@
                           <object class="GtkEntry" id="web_site_entry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Texte libre purement informatif.</property>
                             <property name="invisible_char">&#x25CF;</property>
                           </object>
                           <packing>
@@ -407,6 +413,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
                             <signal name="clicked" handler="on_calendar_button_clicked"/>
                           </object>
                           <packing>
@@ -421,6 +428,7 @@
                               <object class="GtkSpinButton" id="spinbutton1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -447,6 +455,7 @@
                               <object class="GtkSpinButton" id="spinbutton2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -474,6 +483,7 @@
                               <object class="GtkSpinButton" id="spinbutton3">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -500,6 +510,7 @@
                               <object class="GtkSpinButton" id="spinbutton4">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -527,6 +538,7 @@
                               <object class="GtkSpinButton" id="spinbutton5">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -553,6 +565,7 @@
                               <object class="GtkSpinButton" id="spinbutton6">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>

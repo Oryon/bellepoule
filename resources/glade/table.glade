@@ -148,36 +148,79 @@
           <object class="GtkHBox" id="input_hbox">
             <property name="no_show_all">True</property>
             <property name="border_width">4</property>
+            <property name="spacing">14</property>
             <child>
-              <object class="GtkTable" id="table1">
+              <object class="GtkFrame" id="frame1">
                 <property name="visible">True</property>
-                <property name="n_rows">2</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkComboBox" id="combobox1">
+                  <object class="GtkAspectFrame" id="aspectframe1">
                     <property name="visible">True</property>
-                    <property name="model">table_liststore</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
                     <child>
-                      <object class="GtkCellRendererPixbuf" id="cellrenderertext4"/>
-                      <attributes>
-                        <attribute name="stock-id">1</attribute>
-                      </attributes>
-                    </child>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext5"/>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
+                      <object class="GtkHBox" id="hbox3">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkComboBox" id="search_combobox">
+                            <property name="visible">True</property>
+                            <property name="model">table_liststore</property>
+                            <signal name="changed" handler="on_search_changed"/>
+                            <child>
+                              <object class="GtkCellRendererPixbuf" id="cellrenderertext4"/>
+                              <attributes>
+                                <attribute name="stock-id">1</attribute>
+                              </attributes>
+                            </child>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext5"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label3">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">   No</property>
+                            <attributes>
+                              <attribute name="weight" value="bold"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="search_entry">
+                            <property name="width_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="max_length">3</property>
+                            <property name="invisible_char">&#x25CF;</property>
+                            <property name="secondary_icon_activatable">True</property>
+                            <property name="secondary_icon_sensitive">True</property>
+                            <signal name="changed" handler="on_search_changed"/>
+                          </object>
+                          <packing>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                      </object>
                     </child>
                   </object>
                 </child>
-                <child>
-                  <object class="GtkComboBox" id="combobox2">
+                <child type="label">
+                  <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Match&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
                   </object>
-                  <packing>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -186,56 +229,79 @@
               </packing>
             </child>
             <child>
-              <object class="GtkTable" id="table2">
+              <object class="GtkFrame" id="score_frame">
                 <property name="visible">True</property>
-                <property name="n_rows">2</property>
-                <property name="n_columns">2</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">in</property>
                 <child>
+                  <object class="GtkTable" id="table2">
+                    <property name="visible">True</property>
+                    <property name="n_rows">2</property>
+                    <property name="n_columns">2</property>
+                    <property name="column_spacing">7</property>
+                    <property name="row_spacing">6</property>
+                    <child>
+                      <object class="GtkLabel" id="fencerA_label">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Tireur A</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="fencerB_label">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Tireur B</property>
+                      </object>
+                      <packing>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow" id="fencerA_hook">
+                        <property name="width_request">30</property>
+                        <property name="height_request">30</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="hscrollbar_policy">never</property>
+                        <property name="vscrollbar_policy">never</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow" id="fencerB_hook">
+                        <property name="width_request">30</property>
+                        <property name="height_request">30</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="hscrollbar_policy">never</property>
+                        <property name="vscrollbar_policy">never</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
                   <object class="GtkLabel" id="label4">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Tireur A</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Score&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
                   </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label5">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Tireur B</property>
-                  </object>
-                  <packing>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="entry1">
-                    <property name="width_request">30</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="max_length">2</property>
-                    <property name="invisible_char">&#x25CF;</property>
-                    <property name="xalign">0.5</property>
-                    <property name="caps_lock_warning">False</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="entry2">
-                    <property name="width_request">30</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
-                    <property name="text" translatable="yes">99</property>
-                    <property name="xalign">0.5</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -408,7 +474,7 @@
   </object>
   <object class="GtkImage" id="input_image">
     <property name="visible">True</property>
-    <property name="pixbuf">Gnome-Accessories-Text-Editor-32.png</property>
+    <property name="pixbuf">stock_task-assigned.png</property>
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>

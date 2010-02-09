@@ -35,6 +35,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void OnFromTableComboboxChanged ();
     void OnStuffClicked ();
     void OnInputToggled (GtkWidget *widget);
+    void OnSearchChanged ();
 
   public:
     static const gchar *_class_name;
@@ -47,6 +48,8 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void Wipe ();
 
   private:
+    static const gdouble _score_rect_size = 30.0;
+
     struct LevelStatus
     {
       gboolean       _has_error;
@@ -75,12 +78,20 @@ class Table : public virtual Stage_c, public CanvasModule_c
     GtkListStore   *_from_table_liststore;
     guint           _nb_level_to_display;
     GooCanvasItem  *_main_table;
+    GooCanvasItem  *_quick_score_A;
+    GooCanvasItem  *_quick_score_B;
     guint           _max_score;
     ScoreCollector *_score_collector;
+    ScoreCollector *_quick_score_collector;
     xmlTextWriter  *_xml_writer;
     xmlNode        *_xml_node;
     LevelStatus    *_level_status;
+    GPtrArray      **_match_table;
     GSList         *_result_list;
+
+    GooCanvasItem *GetQuickScore (gchar *container);
+
+    void SearchMatch ();
 
     void Display ();
 

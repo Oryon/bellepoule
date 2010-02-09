@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "sensitivity_trigger.hpp"
 
 class Player_c;
 class Classification;
@@ -136,14 +137,15 @@ class Stage_c : public virtual Object_c
   private:
     static GSList *_stage_base;
 
-    Stage_c        *_previous;
-    StageClass     *_class;
-    gchar          *_name;
-    gboolean        _locked;
-    StageClass     *_stage_class;
-    GSList         *_result;
-    Classification *_classification;
-    GSList          *_locked_on_classification;
+    Stage_c           *_previous;
+    StageClass        *_class;
+    gchar             *_name;
+    gboolean           _locked;
+    StageClass        *_stage_class;
+    GSList            *_result;
+    Classification    *_classification;
+    GSList             *_locked_on_classification;
+    SensitivityTrigger *_sensitivity_trigger;
 
     void          *_status_cbk_data;
     StatusCbk      _status_cbk;

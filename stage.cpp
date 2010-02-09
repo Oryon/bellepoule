@@ -38,7 +38,7 @@ Stage_c::Stage_c (StageClass *stage_class)
   _attendees       = NULL;
   _classification  = NULL;
 
-  _locked_on_classification = NULL;
+  _sensitivity_trigger = new SensitivityTrigger ();
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -50,10 +50,7 @@ Stage_c::~Stage_c ()
   FreeResult ();
   g_free (_name);
 
-  if (_locked_on_classification)
-  {
-    g_slist_free (_locked_on_classification);
-  }
+  _sensitivity_trigger->Release ();
 
   TryToRelease (_classification);
 }
@@ -326,56 +323,14 @@ void Stage_c::ToggleClassification (gboolean classification_on)
       gtk_widget_hide (main_w);
       gtk_widget_show (classification_w);
 
-      for (guint i = 0; i < g_slist_length (_locked_on_classification); i++)
-      {
-        GtkWidget *w;
-        guint      lock;
-
-        w = GTK_WIDGET (g_slist_nth_data (_locked_on_classification, i));
-
-        lock = (guint) g_object_get_data (G_OBJECT (w),
-                                          "lock");
-        lock++;
-        g_object_set_data (G_OBJECT (w),
-                           "lock",
-                           (void *) lock);
-
-        if (lock == 1)
-        {
-          gtk_widget_set_sensitive (w,
-                                    false);
-        }
-      }
-
+      _sensitivity_trigger->SwitchOff ();
     }
     else
     {
       gtk_widget_hide (classification_w);
       gtk_widget_show (main_w);
 
-      for (guint i = 0; i < g_slist_length (_locked_on_classification); i++)
-      {
-        GtkWidget *w;
-        guint      lock;
-
-        w = GTK_WIDGET (g_slist_nth_data (_locked_on_classification, i));
-
-        lock = (guint) g_object_get_data (G_OBJECT (w),
-                                          "lock");
-        if (lock)
-        {
-          lock--;
-          g_object_set_data (G_OBJECT (w),
-                             "lock",
-                             (void *) lock);
-        }
-
-        if (lock == 0)
-        {
-          gtk_widget_set_sensitive (w,
-                                    true);
-        }
-      }
+      _sensitivity_trigger->SwitchOn ();
     }
   }
 }
@@ -431,8 +386,7 @@ void Stage_c::SetResult ()
 // --------------------------------------------------------------------------------
 void Stage_c::LockOnClassification (GtkWidget *w)
 {
-  _locked_on_classification = g_slist_append (_locked_on_classification,
-                                              w);
+  _sensitivity_trigger->AddWidget (w);
 }
 
 // --------------------------------------------------------------------------------

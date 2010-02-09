@@ -43,6 +43,11 @@ class ScoreCollector : public Object_c
                              Player_c      *player,
                              guint          player_position);
 
+    void SetMatch (GooCanvasItem *to_point,
+                   Match_c       *match,
+                   Player_c      *player,
+                   guint          player_position);
+
     void RemoveCollectingPoints (Match_c *match);
 
     void Lock ();

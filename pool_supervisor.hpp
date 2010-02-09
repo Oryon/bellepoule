@@ -45,6 +45,8 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void Display ();
     void Garnish ();
     void Load (xmlNode *xml_node);
+    void Load (xmlNode *xml_node,
+               guint    current_pool_index);
     void Save (xmlTextWriter *xml_writer);
     void OnLocked ();
     void OnUnLocked ();

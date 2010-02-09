@@ -27,13 +27,14 @@ GKeyFile *Module_c::_config_file = NULL;
 Module_c::Module_c (gchar *glade_file,
                     gchar *root)
 {
-  _plugged_list      = NULL;
-  _owner             = NULL;
-  _sensitive_widgets = NULL;
-  _root              = NULL;
-  _glade             = NULL;
-  _toolbar           = NULL;
-  _filter            = NULL;
+  _plugged_list = NULL;
+  _owner        = NULL;
+  _root         = NULL;
+  _glade        = NULL;
+  _toolbar      = NULL;
+  _filter       = NULL;
+
+  _sensitivity_trigger = new SensitivityTrigger ();
 
   if (glade_file)
   {
@@ -77,10 +78,7 @@ Module_c::~Module_c ()
 
   UnPlug ();
 
-  if (_sensitive_widgets)
-  {
-    g_slist_free (_sensitive_widgets);
-  }
+  _sensitivity_trigger->Release ();
 
   Object_c::TryToRelease (_glade);
   g_object_unref (_root);
@@ -181,61 +179,19 @@ GtkToolbar *Module_c::GetToolbar ()
 // --------------------------------------------------------------------------------
 void Module_c::AddSensitiveWidget (GtkWidget *w)
 {
-  _sensitive_widgets = g_slist_append (_sensitive_widgets,
-                                       w);
+  _sensitivity_trigger->AddWidget (w);
 }
 
 // --------------------------------------------------------------------------------
 void Module_c::EnableSensitiveWidgets ()
 {
-  for (guint i = 0; i < g_slist_length (_sensitive_widgets); i++)
-  {
-    GtkWidget *w;
-    guint      lock;
-
-    w = GTK_WIDGET (g_slist_nth_data (_sensitive_widgets, i));
-
-    lock = (guint) g_object_get_data (G_OBJECT (w),
-                                      "lock");
-    if (lock)
-    {
-      lock--;
-      g_object_set_data (G_OBJECT (w),
-                         "lock",
-                         (void *) lock);
-    }
-
-    if (lock == 0)
-    {
-      gtk_widget_set_sensitive (w,
-                                true);
-    }
-  }
+  _sensitivity_trigger->SwitchOn ();
 }
 
 // --------------------------------------------------------------------------------
 void Module_c::DisableSensitiveWidgets ()
 {
-  for (guint i = 0; i < g_slist_length (_sensitive_widgets); i++)
-  {
-    GtkWidget *w;
-    guint      lock;
-
-    w = GTK_WIDGET (g_slist_nth_data (_sensitive_widgets, i));
-
-    lock = (guint) g_object_get_data (G_OBJECT (w),
-                                      "lock");
-    lock++;
-    g_object_set_data (G_OBJECT (w),
-                       "lock",
-                       (void *) lock);
-
-    if (lock == 1)
-    {
-      gtk_widget_set_sensitive (w,
-                                false);
-    }
-  }
+  _sensitivity_trigger->SwitchOff ();
 }
 
 // --------------------------------------------------------------------------------

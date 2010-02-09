@@ -107,6 +107,8 @@
 		<Unit filename="score.hpp" />
 		<Unit filename="score_collector.cpp" />
 		<Unit filename="score_collector.hpp" />
+		<Unit filename="sensitivity_trigger.cpp" />
+		<Unit filename="sensitivity_trigger.hpp" />
 		<Unit filename="splitting.cpp" />
 		<Unit filename="splitting.hpp" />
 		<Unit filename="stage.cpp" />
@@ -118,7 +120,7 @@
 		<Extensions>
 			<code_completion />
 			<debugger>
-				<search_path add="system_sources" />
+				<search_path add="G:\BellePoule\launchpad\trunk\system_sources" />
 				<search_path add="G:\BellePoule\launchpad\trunk\system_sources\gtk" />
 			</debugger>
 		</Extensions>

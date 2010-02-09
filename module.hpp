@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "sensitivity_trigger.hpp"
 #include "filter.hpp"
 #include "glade.hpp"
 
@@ -70,12 +71,12 @@ class Module_c : public virtual Object_c
     virtual ~Module_c ();
 
   private:
-    GtkWidget    *_root;
-    GtkToolbar   *_toolbar;
-    GSList       *_sensitive_widgets;
-    GSList       *_plugged_list;
-    Module_c     *_owner;
-    GtkWidget    *_config_widget;
+    GtkWidget          *_root;
+    GtkToolbar         *_toolbar;
+    SensitivityTrigger *_sensitivity_trigger;
+    GSList             *_plugged_list;
+    Module_c           *_owner;
+    GtkWidget          *_config_widget;
 };
 
 #endif
