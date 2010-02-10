@@ -107,9 +107,6 @@ void ScoreCollector::SetMatch (GooCanvasItem *to_point,
     g_object_set_data (G_OBJECT (to_point), "player", player);
 
     Refresh (match);
-    SetMatchColor (match,
-                   _consistent_normal_color,
-                   _unconsistent_normal_color);
   }
 }
 
@@ -136,6 +133,10 @@ void ScoreCollector::Refresh (Match_c *match)
     g_object_set (score_text,
                   "text",
                   score->GetImage (), NULL);
+
+    SetMatchColor (match,
+                   _consistent_normal_color,
+                   _unconsistent_normal_color);
   }
 }
 

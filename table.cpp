@@ -403,6 +403,7 @@ void Table::DeleteTree ()
   }
 
   g_free (_level_status);
+  _level_status = NULL;
 
   if (_match_table)
   {
@@ -412,6 +413,8 @@ void Table::DeleteTree ()
                         FALSE);
     }
     g_free (_match_table);
+
+    _match_table = NULL;
   }
 }
 
@@ -1194,11 +1197,11 @@ GSList *Table::GetCurrentClassification ()
 // --------------------------------------------------------------------------------
 void Table::OnSearchChanged ()
 {
-  if (_match_table)
-  {
-    GtkWidget *entry = _glade->GetWidget ("search_entry");
-    guint      level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
+  GtkWidget *entry = _glade->GetWidget ("search_entry");
+  gint       level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
 
+  if (level != -1)
+  {
     if ((_nb_levels - level) > 11)
     {
       gtk_entry_set_max_length (GTK_ENTRY (entry), 4);
@@ -1227,7 +1230,7 @@ void Table::OnSearchChanged ()
 void Table::SearchMatch ()
 {
   GtkWidget *search_entry = _glade->GetWidget ("search_entry");
-  guint      level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
+  gint       level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
   GPtrArray *array = _match_table[level];
   gchar     *input = (gchar *) gtk_entry_get_text (GTK_ENTRY (search_entry));
 
