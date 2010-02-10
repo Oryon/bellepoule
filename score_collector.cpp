@@ -106,10 +106,48 @@ void ScoreCollector::SetMatch (GooCanvasItem *to_point,
     g_object_set_data (G_OBJECT (to_point), "match",  match);
     g_object_set_data (G_OBJECT (to_point), "player", player);
 
+    Refresh (match);
     SetMatchColor (match,
                    _consistent_normal_color,
                    _unconsistent_normal_color);
   }
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::Refresh (Match_c *match)
+{
+  GooCanvasItem *goo_rect;
+
+  goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
+  if (match == (Match_c *) g_object_get_data (G_OBJECT (goo_rect), "match"))
+  {
+    GooCanvasItem *score_text;
+    Score_c       *score;
+
+    score      = match->GetScore (match->GetPlayerA ());
+    score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+    g_object_set (score_text,
+                  "text",
+                  score->GetImage (), NULL);
+
+    goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
+    score      = match->GetScore (match->GetPlayerB ());
+    score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+    g_object_set (score_text,
+                  "text",
+                  score->GetImage (), NULL);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void ScoreCollector::Wipe (GooCanvasItem *point)
+{
+  GooCanvasItem *score_text;
+
+  score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (point), "score_text");
+  g_object_set (score_text,
+                "text",
+                "", NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -410,7 +448,8 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
 
     if (_client && _on_new_score)
     {
-      _on_new_score (_client,
+      _on_new_score (this,
+                     _client,
                      match,
                      player);
     }

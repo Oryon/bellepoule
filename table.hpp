@@ -141,7 +141,8 @@ class Table : public virtual Stage_c, public CanvasModule_c
     static gboolean LoadNode (GNode *node,
                               Table *table);
 
-    static void OnNewScore (CanvasModule_c *client,
+    static void OnNewScore (ScoreCollector *score_collector,
+                            CanvasModule_c *client,
                             Match_c        *match,
                             Player_c       *player);
 

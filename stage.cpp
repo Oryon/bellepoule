@@ -121,9 +121,26 @@ void Stage_c::Lock ()
 // --------------------------------------------------------------------------------
 void Stage_c::UnLock ()
 {
+  FreeResult ();
+
+  // Reset the players rank
+  {
+    GSList *classification = GetCurrentClassification ();
+
+    for (guint i = 0; i < g_slist_length (classification); i ++)
+    {
+      Player_c *player;
+
+      player = (Player_c *) g_slist_nth_data (classification,
+                                              i);
+      player->SetAttributeValue ("rank",
+                                 i + 1);
+    }
+    g_slist_free (classification);
+  }
+
   _locked = false;
   OnUnLocked ();
-  FreeResult ();
 }
 
 // --------------------------------------------------------------------------------

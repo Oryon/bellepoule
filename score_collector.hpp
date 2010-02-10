@@ -28,7 +28,8 @@
 class ScoreCollector : public Object_c
 {
   public:
-    typedef void (*OnNewScore_cbk) (CanvasModule_c *client,
+    typedef void (*OnNewScore_cbk) (ScoreCollector *score_collector,
+                                    CanvasModule_c *client,
                                     Match_c        *match,
                                     Player_c       *player);
 
@@ -46,6 +47,10 @@ class ScoreCollector : public Object_c
                    Match_c       *match,
                    Player_c      *player,
                    guint          player_position);
+
+    void Refresh (Match_c *match);
+
+    void Wipe (GooCanvasItem *point);
 
     void RemoveCollectingPoints (Match_c *match);
 

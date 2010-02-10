@@ -134,7 +134,7 @@ GooCanvasItem *Table::GetQuickScore (gchar *container)
   goo_rect = goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
                                   0, 0,
                                   _score_rect_size, _score_rect_size,
-                                  "line-width", 2.0,
+                                  "line-width", 0.0,
                                   "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                   NULL);
 
@@ -356,7 +356,8 @@ void Table::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnNewScore (CanvasModule_c *client,
+void Table::OnNewScore (ScoreCollector *score_collector,
+                        CanvasModule_c *client,
                         Match_c        *match,
                         Player_c       *player)
 {
@@ -374,6 +375,15 @@ void Table::OnNewScore (CanvasModule_c *client,
 
   table->RefreshLevelStatus ();
   table->DrawAllConnectors ();
+
+  if (score_collector == table->_quick_score_collector)
+  {
+    table->_score_collector->Refresh (match);
+  }
+  else
+  {
+    table->_quick_score_collector->Refresh (match);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1184,30 +1194,33 @@ GSList *Table::GetCurrentClassification ()
 // --------------------------------------------------------------------------------
 void Table::OnSearchChanged ()
 {
-  GtkWidget *entry = _glade->GetWidget ("search_entry");
-  guint      level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
+  if (_match_table)
+  {
+    GtkWidget *entry = _glade->GetWidget ("search_entry");
+    guint      level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
 
-  if ((_nb_levels - level) > 11)
-  {
-    gtk_entry_set_max_length (GTK_ENTRY (entry), 4);
-  }
-  else if ((_nb_levels - level) > 8)
-  {
-    gtk_entry_set_max_length (GTK_ENTRY (entry), 3);
-  }
-  else if ((_nb_levels - level) > 5)
-  {
-    gtk_entry_set_max_length (GTK_ENTRY (entry), 2);
-  }
-  else
-  {
-    gtk_entry_set_max_length (GTK_ENTRY (entry), 1);
-  }
+    if ((_nb_levels - level) > 11)
+    {
+      gtk_entry_set_max_length (GTK_ENTRY (entry), 4);
+    }
+    else if ((_nb_levels - level) > 8)
+    {
+      gtk_entry_set_max_length (GTK_ENTRY (entry), 3);
+    }
+    else if ((_nb_levels - level) > 5)
+    {
+      gtk_entry_set_max_length (GTK_ENTRY (entry), 2);
+    }
+    else
+    {
+      gtk_entry_set_max_length (GTK_ENTRY (entry), 1);
+    }
 
-  gtk_widget_hide (_glade->GetWidget ("fencerA_label"));
-  gtk_widget_hide (_glade->GetWidget ("fencerB_label"));
+    gtk_widget_hide (_glade->GetWidget ("fencerA_label"));
+    gtk_widget_hide (_glade->GetWidget ("fencerB_label"));
 
-  SearchMatch ();
+    SearchMatch ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1260,6 +1273,9 @@ void Table::SearchMatch ()
       static const GdkColor error_color = {0, 65535, 60000, 60000 };
 
       gtk_widget_modify_base (search_entry, GTK_STATE_NORMAL, &error_color);
+
+      _quick_score_collector->Wipe (_quick_score_A);
+      _quick_score_collector->Wipe (_quick_score_B);
     }
   }
 }
