@@ -3,7 +3,7 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="root">
-    <property name="title" translatable="yes">Competition</property>
+    <property name="title" translatable="yes">BellePoule - Tournoi d'escrime</property>
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>
@@ -64,6 +64,7 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
+                        <signal name="button_press_event" handler="on_root_delete_event"/>
                       </object>
                     </child>
                   </object>

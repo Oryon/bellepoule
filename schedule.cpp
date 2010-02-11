@@ -43,7 +43,7 @@ Schedule_c::Schedule_c ()
     GtkWidget *menu_pool = gtk_menu_new ();
     GtkWidget *content_area;
 
-    _formula_dlg = gtk_dialog_new_with_buttons ("Formula setup",
+    _formula_dlg = gtk_dialog_new_with_buttons ("Formule",
                                                 NULL,
                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                 GTK_STOCK_OK,

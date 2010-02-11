@@ -233,7 +233,10 @@ Player_c *Pool_c::GetPlayer (guint i)
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::OnNewScore (CanvasModule_c *client)
+void Pool_c::OnNewScore (ScoreCollector *score_collector,
+                         CanvasModule_c *client,
+                         Match_c        *match,
+                         Player_c       *player)
 {
   Pool_c *pool = dynamic_cast <Pool_c *> (client);
 

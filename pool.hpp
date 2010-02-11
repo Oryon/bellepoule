@@ -107,7 +107,10 @@ class Pool_c : public CanvasModule_c
 
     Match_c *GetMatch (guint i);
 
-    static void OnNewScore (CanvasModule_c *client);
+    static void OnNewScore (ScoreCollector *score_collector,
+                            CanvasModule_c *client,
+                            Match_c        *match,
+                            Player_c       *player);
 
     void RefreshScoreData ();
 

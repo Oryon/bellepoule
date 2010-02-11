@@ -101,11 +101,11 @@ Table::Table (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
-  gtk_list_store_clear (_from_table_liststore);
-  g_object_unref (_from_table_liststore);
-
   DeleteTree ();
   Object_c::TryToRelease (_score_collector);
+
+  gtk_list_store_clear (_from_table_liststore);
+  g_object_unref (_from_table_liststore);
 
   _quick_score_collector->Release ();
 }
@@ -249,7 +249,7 @@ void Table::Display ()
         }
         else if (l == _nb_level_to_display - 2)
         {
-          text = g_strdup_printf ("Demi-final");
+          text = g_strdup_printf ("Demi-finale");
         }
         else
         {
@@ -389,6 +389,10 @@ void Table::OnNewScore (ScoreCollector *score_collector,
 // --------------------------------------------------------------------------------
 void Table::DeleteTree ()
 {
+  g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
+                                        (void *) on_from_table_combobox_changed,
+                                        (Object_c *) this);
+
   if (_tree_root)
   {
     g_node_traverse (_tree_root,
@@ -617,10 +621,11 @@ gboolean Table::DrawConnector (GNode *node,
 gboolean Table::FillInNode (GNode *node,
                             Table *table)
 {
-  GNode    *parent = node->parent;
-  NodeData *data   = (NodeData *) node->data;
+  GNode    *parent           = node->parent;
+  NodeData *data             = (NodeData *) node->data;
+  guint     nb_missing_level = table->_nb_levels - table->_nb_level_to_display;
 
-  if (data->_match)
+  if (data->_match && (data->_level > nb_missing_level))
   {
     Player_c *winner = data->_match->GetWinner ();
 
@@ -630,7 +635,6 @@ gboolean Table::FillInNode (GNode *node,
     if (data->_canvas_table == NULL)
     {
       guint row;
-      guint nb_missing_level = table->_nb_levels - table->_nb_level_to_display;
 
       data->_canvas_table = goo_canvas_table_new (table->_main_table,
                                                   "column-spacing", table->_level_spacing,
@@ -700,7 +704,7 @@ gboolean Table::FillInNode (GNode *node,
       data->_player_item = PutTextInTable (data->_canvas_table,
                                            string->str,
                                            0,
-                                           1);
+                                           2);
       SetTableItemAttribute (data->_player_item, "y-align", 0.5);
       SetTableItemAttribute (data->_player_item, "x-expand", 1U);
       SetTableItemAttribute (data->_player_item, "x-fill", 1U);
@@ -715,7 +719,7 @@ gboolean Table::FillInNode (GNode *node,
       data->_print_item = table->PutStockIconInTable (data->_canvas_table,
                                                       GTK_STOCK_PRINT,
                                                       0,
-                                                      0);
+                                                      1);
       SetTableItemAttribute (data->_print_item, "y-align", 0.5);
     }
 
@@ -749,7 +753,7 @@ gboolean Table::FillInNode (GNode *node,
           PutInTable (data->_canvas_table,
                       goo_rect,
                       0,
-                      2);
+                      3);
           SetTableItemAttribute (goo_rect, "y-align", 0.5);
         }
 
@@ -770,7 +774,7 @@ gboolean Table::FillInNode (GNode *node,
           PutInTable (data->_canvas_table,
                       score_text,
                       0,
-                      2);
+                      3);
           SetTableItemAttribute (score_text, "x-align", 0.5);
           SetTableItemAttribute (score_text, "y-align", 0.5);
         }
@@ -889,15 +893,17 @@ void Table::AddFork (GNode *to)
     {
       data->_match->Release ();
       data->_match = NULL;
+    }
 
-      if (g_node_child_position (to, node) == 0)
-      {
-        to_data->_match->SetPlayerA (NULL);
-      }
-      else
-      {
-        to_data->_match->SetPlayerB (NULL);
-      }
+    if (g_node_child_position (to, node) == 0)
+    {
+      to_data->_match->SetPlayerA (player);
+      to_data->_match->SetPlayerB (NULL);
+    }
+    else
+    {
+      to_data->_match->SetPlayerA (NULL);
+      to_data->_match->SetPlayerB (player);
     }
   }
 }
@@ -1013,12 +1019,25 @@ void Table::OnPlugged ()
 void Table::OnLocked ()
 {
   DisableSensitiveWidgets ();
+
+  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
+                                     FALSE);
+
+  if (_score_collector)
+  {
+    _score_collector->Lock ();
+  }
 }
 
 // --------------------------------------------------------------------------------
 void Table::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
+
+  if (_score_collector)
+  {
+    _score_collector->UnLock ();
+  }
 }
 
 // --------------------------------------------------------------------------------

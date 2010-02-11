@@ -113,30 +113,32 @@ void ScoreCollector::SetMatch (GooCanvasItem *to_point,
 // --------------------------------------------------------------------------------
 void ScoreCollector::Refresh (Match_c *match)
 {
-  GooCanvasItem *goo_rect;
+  GooCanvasItem *goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
 
-  goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
-  if (match == (Match_c *) g_object_get_data (G_OBJECT (goo_rect), "match"))
+  if (goo_rect)
   {
-    GooCanvasItem *score_text;
-    Score_c       *score;
+    if (match == (Match_c *) g_object_get_data (G_OBJECT (goo_rect), "match"))
+    {
+      GooCanvasItem *score_text;
+      Score_c       *score;
 
-    score      = match->GetScore (match->GetPlayerA ());
-    score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
-    g_object_set (score_text,
-                  "text",
-                  score->GetImage (), NULL);
+      score      = match->GetScore (match->GetPlayerA ());
+      score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+      g_object_set (score_text,
+                    "text",
+                    score->GetImage (), NULL);
 
-    goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
-    score      = match->GetScore (match->GetPlayerB ());
-    score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
-    g_object_set (score_text,
-                  "text",
-                  score->GetImage (), NULL);
+      goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
+      score      = match->GetScore (match->GetPlayerB ());
+      score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+      g_object_set (score_text,
+                    "text",
+                    score->GetImage (), NULL);
 
-    SetMatchColor (match,
-                   _consistent_normal_color,
-                   _unconsistent_normal_color);
+      SetMatchColor (match,
+                     _consistent_normal_color,
+                     _unconsistent_normal_color);
+    }
   }
 }
 
@@ -154,8 +156,11 @@ void ScoreCollector::Wipe (GooCanvasItem *point)
 // --------------------------------------------------------------------------------
 void ScoreCollector::RemoveCollectingPoints (Match_c *match)
 {
-  match->SetData (this, "goo_rect_A", NULL);
-  match->SetData (this, "goo_rect_B", NULL);
+  if (match)
+  {
+    match->SetData (this, "goo_rect_A", NULL);
+    match->SetData (this, "goo_rect_B", NULL);
+  }
 }
 
 // --------------------------------------------------------------------------------
