@@ -39,8 +39,14 @@ SensitivityTrigger::~SensitivityTrigger ()
 // --------------------------------------------------------------------------------
 void SensitivityTrigger::AddWidget (GtkWidget *w)
 {
-  _widget_list = g_slist_append (_widget_list,
-                                 w);
+  if (w)
+  {
+    _widget_list = g_slist_append (_widget_list,
+                                   w);
+
+    g_signal_connect (G_OBJECT (w), "realize",
+                      G_CALLBACK (on_realize), this);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -62,11 +68,20 @@ void SensitivityTrigger::SwitchOn ()
                          _data_key,
                          (void *) lock);
     }
+    else
+    {
+      g_print ("--------------------------\n");
+      g_print ("--------------------------\n");
+      g_print ("--------------------------\n");
+      g_print ("--------------------------\n");
+      g_print ("--------------------------\n");
+      g_print ("--------------------------\n");
+    }
 
     if (lock == 0)
     {
       gtk_widget_set_sensitive (w,
-                                true);
+                                TRUE);
     }
   }
 }
@@ -91,7 +106,31 @@ void SensitivityTrigger::SwitchOff ()
     if (lock == 1)
     {
       gtk_widget_set_sensitive (w,
-                                false);
+                                FALSE);
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+void SensitivityTrigger::SetSensitivity (GtkWidget *w)
+{
+  guint lock = (guint) g_object_get_data (G_OBJECT (w),
+                                          _data_key);
+  if (lock > 0)
+  {
+    gtk_widget_set_sensitive (w,
+                              FALSE);
+  }
+  else
+  {
+    gtk_widget_set_sensitive (w,
+                              TRUE);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void SensitivityTrigger::on_realize (GtkWidget          *widget,
+                                     SensitivityTrigger *trigger)
+{
+  trigger->SetSensitivity (widget);
 }

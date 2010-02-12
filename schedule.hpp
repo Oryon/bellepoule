@@ -42,6 +42,9 @@ class Schedule_c : public Module_c
 
     Stage_c *GetStage (guint index);
 
+    void SetScoreStuffingPolicy (gboolean allowed);
+    gboolean ScoreStuffingIsAllowed ();
+
     void on_previous_stage_toolbutton_clicked ();
     void on_next_stage_toolbutton_clicked     ();
     void on_stage_selected ();
@@ -54,6 +57,7 @@ class Schedule_c : public Module_c
     GtkListStore *_list_store;
     GList        *_stage_list;
     guint         _current_stage;
+    gboolean      _score_stuffing_allowed;
 
     void      SetCurrentStage    (guint index);
     Module_c *GetSelectedModule  ();

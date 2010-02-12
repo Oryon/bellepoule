@@ -97,6 +97,8 @@
                 <child>
                   <object class="GtkToolButton" id="stuff_toolbutton">
                     <property name="visible">True</property>
+                    <property name="tooltip_text" translatable="yes">Remplis tous les matchs de toutes les poules par des scores al&#xE9;atoires.
+Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de la comp&#xE9;tition.</property>
                     <property name="label" translatable="yes">Remplissage auto</property>
                     <property name="use_underline">True</property>
                     <property name="icon_name">gnome-devel</property>
@@ -262,16 +264,16 @@
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup">
     <widgets>
-      <widget name="label4"/>
-      <widget name="label2"/>
       <widget name="label3"/>
+      <widget name="label2"/>
+      <widget name="label4"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="name_entry"/>
-      <widget name="max_score_entry"/>
       <widget name="qualified_fencer_spinbutton"/>
+      <widget name="max_score_entry"/>
+      <widget name="name_entry"/>
     </widgets>
   </object>
   <object class="GtkAdjustment" id="qualified_adjustment">

@@ -323,13 +323,6 @@ void Tournament::OnOpenExample ()
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_main_window_delete_event (GtkWidget *w,
-                                                             gpointer   data)
-{
-  gtk_main_quit ();
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
                                                           Object_c  *owner)
 {
@@ -366,12 +359,33 @@ extern "C" G_MODULE_EXPORT void on_example_menuitem_activate (GtkWidget *w,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_root_delete_event (GtkWidget *w,
-                                                      GdkEvent  *event,
-                                                      Object_c  *owner)
+extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
+                                                          GdkEvent  *event,
+                                                          Object_c  *owner)
 {
-  Tournament *t = dynamic_cast <Tournament *> (owner);
+  GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                          GTK_DIALOG_MODAL,
+                                                          GTK_MESSAGE_QUESTION,
+                                                          GTK_BUTTONS_OK_CANCEL,
+                                                          "<b><big>Voulez-vous vraiment quitter BellePoule ?</big></b>");
 
-  t->Release ();
-  gtk_exit (0);
+  gtk_window_set_title (GTK_WINDOW (dialog),
+                        "Quitter BellePoule ?");
+
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                            "Toutes les compétitions non sauvegardées seront perdues.");
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  {
+    Tournament *t = dynamic_cast <Tournament *> (owner);
+
+    t->Release ();
+    gtk_main_quit ();
+  }
+  else
+  {
+    gtk_widget_destroy (dialog);
+  }
+
+  return TRUE;
 }

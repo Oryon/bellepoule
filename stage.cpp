@@ -38,7 +38,8 @@ Stage_c::Stage_c (StageClass *stage_class)
   _attendees       = NULL;
   _classification  = NULL;
 
-  _sensitivity_trigger = new SensitivityTrigger ();
+  _sensitivity_trigger    = new SensitivityTrigger ();
+  _score_stuffing_trigger = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -51,6 +52,7 @@ Stage_c::~Stage_c ()
   g_free (_name);
 
   _sensitivity_trigger->Release ();
+  TryToRelease (_score_stuffing_trigger);
 
   TryToRelease (_classification);
 }
@@ -404,6 +406,31 @@ void Stage_c::SetResult ()
 void Stage_c::LockOnClassification (GtkWidget *w)
 {
   _sensitivity_trigger->AddWidget (w);
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::SetScoreStuffingPolicy (gboolean allowed)
+{
+  if (_score_stuffing_trigger == NULL)
+  {
+    Module_c *module = dynamic_cast <Module_c *> (this);
+
+    if (module)
+    {
+      _score_stuffing_trigger = new SensitivityTrigger ();
+
+      _score_stuffing_trigger->AddWidget (module->GetWidget ("stuff_toolbutton"));
+    }
+  }
+
+  if (allowed)
+  {
+    _score_stuffing_trigger->SwitchOn ();
+  }
+  else
+  {
+    _score_stuffing_trigger->SwitchOff ();
+  }
 }
 
 // --------------------------------------------------------------------------------

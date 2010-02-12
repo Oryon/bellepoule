@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<contest title="Challenge du futur" day="31" month="1" year="2010" weapon="E" gender="FM" category="C" organizer="CS Betton" web_site="http://betton.escrime.free.fr">
- <schedule current_stage="3">
+<contest title="Challenge du futur" day="31" month="1" year="2010" weapon="E" gender="FM" category="C" organizer="CS Betton" web_site="http://betton.escrime.free.fr" score_stuffing="0">
+ <schedule current_stage="0">
   <checkin_stage>
-   <player name="BROUARD" first_name="Gurvan" club="BETTON CP" rating="1003" gender="M" country="FRA" birth_year="31/01/1988" licence="010037623035" attending="1" rank="4" ref="14" exported="0"/>
+   <player name="BROUARD" first_name="Gurvan" club="BETTON CP" rating="1003" gender="M" country="FRA" birth_year="31/01/1988" licence="010037623035" attending="1" rank="1" ref="14" exported="0"/>
    <player name="ROLLIN" first_name="Benjamin" club="DINARD LAMES" rating="1030" gender="M" country="FRA" birth_year="13/05/1988" licence="033054523035" attending="1" rank="2" ref="29" exported="0"/>
-   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="M" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="5" ref="27" exported="0"/>
-   <player name="BOC HO" first_name="Maxime" club="DINARD LAMES" rating="1053" gender="M" country="FRA" birth_year="22/08/1988" licence="033057623035" attending="1" rank="6" ref="33" exported="0"/>
-   <player name="JACOPIN" first_name="Tangui" club="BETTON CP" rating="1089" gender="M" country="FRA" birth_year="19/09/1988" licence="010023623035" attending="1" rank="1" ref="11" exported="0"/>
-   <player name="BOTUHA" first_name="Tom" club="DINARD LAMES" rating="1103" gender="M" country="FRA" birth_year="03/05/1989" licence="033055923035" attending="1" rank="3" ref="30" exported="0"/>
+   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="M" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="3" ref="27" exported="0"/>
+   <player name="BOC HO" first_name="Maxime" club="DINARD LAMES" rating="1053" gender="M" country="FRA" birth_year="22/08/1988" licence="033057623035" attending="1" rank="4" ref="33" exported="0"/>
+   <player name="JACOPIN" first_name="Tangui" club="BETTON CP" rating="1089" gender="M" country="FRA" birth_year="19/09/1988" licence="010023623035" attending="1" rank="5" ref="11" exported="0"/>
+   <player name="BOTUHA" first_name="Tom" club="DINARD LAMES" rating="1103" gender="M" country="FRA" birth_year="03/05/1989" licence="033055923035" attending="1" rank="6" ref="30" exported="0"/>
    <player name="GERARD" first_name="Vincent" club="ST GREGOIRE" rating="1113" gender="M" country="FRA" birth_year="28/07/1988" licence="029046223035" attending="0" rank="7" ref="26" exported="0"/>
    <player name="ROGER" first_name="Edern" club="DINARD LAMES" rating="1126" gender="M" country="FRA" birth_year="19/02/1989" licence="033054423035" attending="0" rank="8" ref="28" exported="0"/>
    <player name="LATREILLE" first_name="Baptiste" club="BETTON CP" rating="1139" gender="M" country="FRA" birth_year="19/02/1989" licence="010049923035" attending="0" rank="9" ref="16" exported="0"/>
@@ -40,30 +40,8 @@
    <player name="BERTRAND" first_name="Antoine" club="QUIMPER EC" rating="0" gender="M" country="FRA" birth_year="19/12/1990" licence="034077823029" attending="0" rank="36" ref="8" exported="0"/>
    <player name="NOEL" first_name="Alexis" club="DINARD LAMES" rating="0" gender="M" country="FRA" birth_year="25/11/1990" licence="033058823035" attending="0" rank="37" ref="35" exported="0"/>
   </checkin_stage>
-  <pool_allocation_stage name="">
-   <player_list>
-    <player ref="14"/>
-    <player ref="33"/>
-    <player ref="11"/>
-   </player_list>
-   <player_list>
-    <player ref="30"/>
-    <player ref="29"/>
-    <player ref="27"/>
-   </player_list>
-  </pool_allocation_stage>
-  <pool_stage name="">
-   <match_list>
-    <match player_A="33" score_A="2" player_B="14" score_B="5"/>
-    <match player_A="11" score_A="5" player_B="14" score_B="0"/>
-    <match player_A="11" score_A="5" player_B="33" score_B="3"/>
-   </match_list>
-   <match_list>
-    <match player_A="29" score_A="2" player_B="30" score_B="5"/>
-    <match player_A="27" score_A="1" player_B="29" score_B="5"/>
-    <match player_A="27" score_A="5" player_B="30" score_B="0"/>
-   </match_list>
-  </pool_stage>
+  <pool_allocation_stage name=""/>
+  <pool_stage name=""/>
   <table_stage name="">
    <match player_A="11"/>
    <match player_A="11"/>

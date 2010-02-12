@@ -81,6 +81,8 @@ class Stage_c : public virtual Object_c
     void SetStatusCbk (StatusCbk  cbk,
                        void      *data);
 
+    void SetScoreStuffingPolicy (gboolean allowed);
+
     virtual void Wipe () {};
 
     virtual void Display () {};
@@ -137,15 +139,16 @@ class Stage_c : public virtual Object_c
   private:
     static GSList *_stage_base;
 
-    Stage_c           *_previous;
-    StageClass        *_class;
-    gchar             *_name;
-    gboolean           _locked;
-    StageClass        *_stage_class;
-    GSList            *_result;
-    Classification    *_classification;
+    Stage_c            *_previous;
+    StageClass         *_class;
+    gchar              *_name;
+    gboolean            _locked;
+    StageClass         *_stage_class;
+    GSList             *_result;
+    Classification     *_classification;
     GSList             *_locked_on_classification;
     SensitivityTrigger *_sensitivity_trigger;
+    SensitivityTrigger *_score_stuffing_trigger;
 
     void          *_status_cbk_data;
     StatusCbk      _status_cbk;

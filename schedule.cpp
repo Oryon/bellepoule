@@ -36,6 +36,8 @@ Schedule_c::Schedule_c ()
   _stage_list    = NULL;
   _current_stage = 0;
 
+  _score_stuffing_allowed = FALSE;
+
   _list_store = GTK_LIST_STORE (_glade->GetObject ("stage_liststore"));
 
   // Formula dialog
@@ -133,7 +135,7 @@ void Schedule_c::CreateDefault ()
         stage->RetrieveAttendees ();
         stage->Garnish ();
         stage->Display ();
-        stage->UnLock  ();
+        //stage->UnLock  ();
       }
     }
 
@@ -155,6 +157,27 @@ void Schedule_c::CreateDefault ()
       AddStage (stage);
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+void Schedule_c::SetScoreStuffingPolicy (gboolean allowed)
+{
+  _score_stuffing_allowed = allowed;
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    Stage_c *current_stage;
+
+    current_stage = (Stage_c *) g_list_nth_data (_stage_list,
+                                                 i);
+    current_stage->SetScoreStuffingPolicy (_score_stuffing_allowed);
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Schedule_c::ScoreStuffingIsAllowed ()
+{
+  return _score_stuffing_allowed;
 }
 
 // --------------------------------------------------------------------------------
@@ -578,7 +601,7 @@ void Schedule_c::Load (xmlDoc *doc)
           }
           else
           {
-            stage->UnLock ();
+            //stage->UnLock ();
           }
         }
       }
@@ -819,26 +842,47 @@ gint Schedule_c::GetNotebookPageNum (Stage_c *stage)
 // --------------------------------------------------------------------------------
 void Schedule_c::on_previous_stage_toolbutton_clicked ()
 {
+  //GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                          //GTK_DIALOG_MODAL,
+                                                          //GTK_MESSAGE_QUESTION,
+                                                          //GTK_BUTTONS_OK_CANCEL,
+                                                          //"<b><big>Voulez-vous vraiment annuler la phase courante ?</b></big>");
+  GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                          GTK_DIALOG_MODAL,
+                                                          GTK_MESSAGE_QUESTION,
+                                                          GTK_BUTTONS_OK_CANCEL,
+                                                          "<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>");
+
+  gtk_window_set_title (GTK_WINDOW (dialog),
+                        "Revenir à la phase précédente ?");
+
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                            "Toutes les saisies de cette phase seront annulées.");
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {
-    Stage_c  *stage  = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
-    gint      page    = GetNotebookPageNum (stage);
-    Module_c *module = (Module_c *) dynamic_cast <Module_c *> (stage);
+    {
+      Stage_c  *stage  = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
+      gint      page    = GetNotebookPageNum (stage);
+      Module_c *module = (Module_c *) dynamic_cast <Module_c *> (stage);
 
-    stage->Wipe ();
-    module->UnPlug ();
+      stage->Wipe ();
+      module->UnPlug ();
 
-    gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
-                              page);
+      gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
+                                page);
+    }
+
+    {
+      Stage_c *stage;
+
+      SetCurrentStage (_current_stage-1);
+
+      stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
+      stage->UnLock ();
+    }
   }
-
-  {
-    Stage_c *stage;
-
-    SetCurrentStage (_current_stage-1);
-
-    stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
-    stage->UnLock ();
-  }
+  gtk_widget_destroy (dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -863,7 +907,7 @@ void Schedule_c::on_next_stage_toolbutton_clicked ()
   stage->RetrieveAttendees ();
   stage->Garnish ();
   stage->Display ();
-  stage->UnLock  ();
+  //stage->UnLock  ();
 
   SetCurrentStage (_current_stage+1);
 }

@@ -32,6 +32,11 @@ class SensitivityTrigger : public virtual Object_c
 
     void SwitchOff ();
 
+    static void on_realize (GtkWidget          *widget,
+                            SensitivityTrigger *trigger);
+
+    void SetSensitivity (GtkWidget *w);
+
   private:
     static const gchar *_data_key;
 

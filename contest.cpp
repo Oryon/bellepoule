@@ -104,8 +104,8 @@ Contest_c::Contest_c ()
   FillInProperties ();
   if (gtk_dialog_run (GTK_DIALOG (_properties_dlg)) == GTK_RESPONSE_ACCEPT)
   {
-    ReadProperties ();
     _schedule->CreateDefault ();
+    ReadProperties ();
   }
   gtk_widget_hide (_properties_dlg);
 }
@@ -132,7 +132,8 @@ Contest_c::Contest_c (gchar *filename)
   if (g_file_test (_filename,
                    G_FILE_TEST_IS_REGULAR))
   {
-    xmlDoc *doc = xmlParseFile (filename);
+    gboolean  score_stuffing_policy = FALSE;
+    xmlDoc   *doc                   = xmlParseFile (filename);
 
     xmlXPathInit ();
 
@@ -221,6 +222,12 @@ Contest_c::Contest_c (gchar *filename)
           _web_site = g_strdup (attr);
         }
 
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "score_stuffing");
+        if (attr)
+        {
+          score_stuffing_policy = (gboolean) atoi (attr);
+        }
+
         _has_properties = TRUE;
       }
       xmlXPathFreeObject  (xml_object);
@@ -228,6 +235,7 @@ Contest_c::Contest_c (gchar *filename)
     }
 
     _schedule->Load (doc);
+    _schedule->SetScoreStuffingPolicy (score_stuffing_policy);
 
     xmlFreeDoc (doc);
   }
@@ -474,6 +482,9 @@ void Contest_c::FillInProperties ()
   gtk_combo_box_set_active (GTK_COMBO_BOX (_category_combo),
                             _category);
 
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("allow_radiobutton")),
+                                _schedule->ScoreStuffingIsAllowed ());
+
   FillInDate (_day,
               _month,
               _year);
@@ -506,6 +517,15 @@ void Contest_c::ReadProperties ()
   _day   = (guint) GetData (this, "day");
   _month = (guint) GetData (this, "month");
   _year  = (guint) GetData (this, "year");
+
+  {
+    gboolean policy = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("allow_radiobutton")));
+
+    if (_schedule->ScoreStuffingIsAllowed () != policy)
+    {
+      _schedule->SetScoreStuffingPolicy (policy);
+    }
+  }
 
   _has_properties = TRUE;
 
@@ -611,6 +631,9 @@ void Contest_c::Save (gchar *filename)
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "web_site",
                                      BAD_CAST _web_site);
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "score_stuffing",
+                                           "%d", _schedule->ScoreStuffingIsAllowed ());
       }
 
       _schedule->Save (xml_writer);
@@ -833,5 +856,21 @@ extern "C" G_MODULE_EXPORT void on_contest_close_button_clicked (GtkWidget *widg
 // --------------------------------------------------------------------------------
 void Contest_c::on_contest_close_button_clicked ()
 {
-  Release ();
+  GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                          GTK_DIALOG_MODAL,
+                                                          GTK_MESSAGE_QUESTION,
+                                                          GTK_BUTTONS_OK_CANCEL,
+                                                          "<b><big>Voulez-vous vraiment fermer\n<big>«%s»</big> ?</big></b>", _name);
+
+  gtk_window_set_title (GTK_WINDOW (dialog),
+                        "Fermer la compétition ?");
+
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                            "Les saisies non sauvegardées seront perdues.");
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  {
+    Release ();
+  }
+  gtk_widget_destroy (dialog);
 }

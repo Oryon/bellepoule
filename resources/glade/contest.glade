@@ -137,6 +137,8 @@
             <property name="visible">True</property>
             <property name="n_rows">2</property>
             <property name="n_columns">2</property>
+            <property name="column_spacing">10</property>
+            <property name="row_spacing">10</property>
             <child>
               <object class="GtkFrame" id="type_frame">
                 <property name="visible">True</property>
@@ -604,7 +606,88 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkFrame" id="frame1">
+                <property name="visible">True</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkAlignment" id="alignment4">
+                    <property name="visible">True</property>
+                    <property name="yalign">0</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkTable" id="table4">
+                        <property name="visible">True</property>
+                        <property name="n_columns">2</property>
+                        <property name="column_spacing">8</property>
+                        <child>
+                          <object class="GtkLabel" id="label7">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Remplissage
+automatique
+des scores</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkVBox" id="vbox2">
+                            <property name="visible">True</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkRadioButton" id="allow_radiobutton">
+                                <property name="label" translatable="yes">Autoriser</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Rend actif le bouton de remplissage automatique des scores. Ca peut &#xE9;viter des saisies longues et laborieuses lors des s&#xE9;ances de prise en main de BellePoule.</property>
+                                <property name="image">image1</property>
+                                <property name="image_position">right</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="group">radiobutton2</property>
+                              </object>
+                              <packing>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="radiobutton2">
+                                <property name="label" translatable="yes">Interdire</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Rend inactif le bouton de remplissage automatique des scores.</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="group">allow_radiobutton</property>
+                              </object>
+                              <packing>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel" id="label3">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Scores&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+                <property name="y_options"></property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -704,5 +787,9 @@
     <property name="upper">59</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="stock">gtk-dialog-warning</property>
   </object>
 </interface>

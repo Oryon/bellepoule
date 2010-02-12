@@ -55,10 +55,10 @@ Table::Table (StageClass *stage_class)
 
   {
     AddSensitiveWidget (_glade->GetWidget ("input_toolbutton"));
-    AddSensitiveWidget (_glade->GetWidget ("table_stuff_toolbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
 
     LockOnClassification (_glade->GetWidget ("from_vbox"));
-    LockOnClassification (_glade->GetWidget ("table_stuff_toolbutton"));
+    LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
     LockOnClassification (_glade->GetWidget ("input_toolbutton"));
   }
 
