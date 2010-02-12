@@ -43,7 +43,7 @@ Tournament::Tournament (gchar *filename)
 #ifdef DEBUG
   if (filename == NULL)
   {
-    gchar     *current_dir = g_get_current_dir ();
+    gchar *current_dir = g_get_current_dir ();
 
     filename = g_build_filename (current_dir,
                                  "Exemples_Fichiers_BellePoule", "minimes_bretagne.cotcot",
@@ -193,7 +193,7 @@ void Tournament::OnNew ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnOpen ()
+void Tournament::OnOpen (gchar *current_folder)
 {
   GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a competition file to open..."),
                                                     NULL,
@@ -246,6 +246,12 @@ void Tournament::OnOpen ()
     }
   }
 
+  if (current_folder)
+  {
+    gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
+                                         current_folder);
+  }
+  else
   {
     gchar *last_dirname = g_key_file_get_string (_config_file,
                                                  "Competiton",
@@ -313,13 +319,12 @@ void Tournament::OnOpenExample ()
       {
         gchar *example_dirname = g_strdup_printf ("%s/Exemples_Fichiers_BellePoule", install_dirname);
 
+        OnOpen (example_dirname);
         g_free (example_dirname);
         g_free (install_dirname);
       }
     }
   }
-
-  OnOpen ();
 }
 
 // --------------------------------------------------------------------------------
