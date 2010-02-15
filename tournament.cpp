@@ -246,7 +246,8 @@ void Tournament::OnOpen (gchar *current_folder)
     }
   }
 
-  if (current_folder)
+  if (current_folder && (g_file_test (current_folder,
+                                      G_FILE_TEST_IS_DIR)))
   {
     gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
                                          current_folder);
@@ -257,7 +258,8 @@ void Tournament::OnOpen (gchar *current_folder)
                                                  "Competiton",
                                                  "default_dir_name",
                                                  NULL);
-    if (last_dirname)
+    if (last_dirname && (g_file_test (last_dirname,
+                                      G_FILE_TEST_IS_DIR)))
     {
       gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
                                            last_dirname);
@@ -328,6 +330,58 @@ void Tournament::OnOpenExample ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnRecent ()
+{
+  GtkWidget *dialog = gtk_recent_chooser_dialog_new ("Fichiers récemment ouverts",
+                                                     NULL,
+                                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                     GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                                     NULL);
+
+  {
+    GtkRecentFilter *filter = gtk_recent_filter_new ();
+
+    gtk_recent_filter_add_pattern (filter,
+                                   "*.cotcot");
+    gtk_recent_filter_set_name (filter,
+                                "Fichiers BellePoule");
+
+    gtk_recent_chooser_add_filter (GTK_RECENT_CHOOSER (dialog),
+                                   filter);
+  }
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+  {
+    GtkRecentInfo *info;
+
+    info = gtk_recent_chooser_get_current_item (GTK_RECENT_CHOOSER (dialog));
+
+    if (info)
+    {
+      {
+        gchar *dirname = g_path_get_dirname (gtk_recent_info_get_uri (info));
+
+        g_key_file_set_string (_config_file,
+                               "Competiton",
+                               "default_dir_name",
+                               dirname);
+        g_free (dirname);
+      }
+
+      {
+        Contest_c *contest = new Contest_c ((gchar *) gtk_recent_info_get_uri_display (info));
+
+        Manage (contest);
+      }
+
+      gtk_recent_info_unref (info);
+    }
+  }
+
+  gtk_widget_destroy (dialog);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
                                                           Object_c  *owner)
 {
@@ -393,4 +447,13 @@ extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
   }
 
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
+                                                             Object_c  *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnRecent ();
 }

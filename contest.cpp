@@ -238,10 +238,12 @@ Contest_c::Contest_c (gchar *filename)
     _schedule->SetScoreStuffingPolicy (score_stuffing_policy);
 
     xmlFreeDoc (doc);
-  }
-  else
-  {
-    _schedule->CreateDefault ();
+
+    {
+      GtkRecentManager *manager = gtk_recent_manager_get_default ();
+
+      gtk_recent_manager_add_item (manager, filename);
+    }
   }
 }
 
@@ -642,6 +644,12 @@ void Contest_c::Save (gchar *filename)
       xmlTextWriterEndDocument (xml_writer);
 
       xmlFreeTextWriter (xml_writer);
+
+      {
+        GtkRecentManager *manager = gtk_recent_manager_get_default ();
+
+        gtk_recent_manager_add_item (manager, filename);
+      }
     }
   }
 }

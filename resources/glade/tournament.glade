@@ -44,7 +44,17 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem3">
+                      <object class="GtkImageMenuItem" id="recent_menuitem">
+                        <property name="label" translatable="yes">R&#xE9;cemment ouvert</property>
+                        <property name="visible">True</property>
+                        <property name="image">image2</property>
+                        <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="activate" handler="on_recent_menuitem_activate"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="save_menuitem">
                         <property name="label">gtk-save</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
@@ -871,5 +881,10 @@ Conception/Codage:
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="stock">gtk-dialog-info</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="stock">gtk-directory</property>
+    <property name="icon-size">1</property>
   </object>
 </interface>

@@ -36,6 +36,8 @@ class Tournament : public Module_c
 
     void OnOpen (gchar *current_folder = NULL);
 
+    void OnRecent ();
+
     void OnAbout ();
 
     void OnOpenExample ();
