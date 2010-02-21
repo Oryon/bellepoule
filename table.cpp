@@ -149,8 +149,7 @@ GooCanvasItem *Table::GetQuickScore (gchar *container)
   _quick_score_collector->AddCollectingPoint (goo_rect,
                                               score_text,
                                               NULL,
-                                              NULL,
-                                              0);
+                                              NULL);
 
   return goo_rect;
 }
@@ -785,8 +784,7 @@ gboolean Table::FillInNode (GNode *node,
           table->_score_collector->AddCollectingPoint (goo_rect,
                                                        score_text,
                                                        parent_data->_match,
-                                                       winner,
-                                                       position);
+                                                       winner);
           table->_score_collector->AddCollectingTrigger (data->_player_item);
 
           if (position == 0)
@@ -1271,8 +1269,7 @@ void Table::SearchMatch ()
 
         _quick_score_collector->SetMatch (_quick_score_A,
                                           match,
-                                          playerA,
-                                          0);
+                                          playerA);
         attr = playerA->GetAttribute ("name");
         gtk_widget_show (_glade->GetWidget ("fencerA_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerA_label")),
@@ -1281,8 +1278,7 @@ void Table::SearchMatch ()
 
         _quick_score_collector->SetMatch (_quick_score_B,
                                           match,
-                                          playerB,
-                                          1);
+                                          playerB);
         attr = playerB->GetAttribute ("name");
         gtk_widget_show (_glade->GetWidget ("fencerB_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerB_label")),

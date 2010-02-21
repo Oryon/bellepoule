@@ -66,8 +66,7 @@ void ScoreCollector::AddCollectingTrigger (GooCanvasItem *trigger)
 void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
                                          GooCanvasItem *score_text,
                                          Match_c       *match,
-                                         Player_c      *player,
-                                         guint          player_position)
+                                         Player_c      *player)
 {
   _collecting_point = point;
 
@@ -82,19 +81,17 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
 
   SetMatch (point,
             match,
-            player,
-            player_position);
+            player);
 }
 
 // --------------------------------------------------------------------------------
 void ScoreCollector::SetMatch (GooCanvasItem *to_point,
                                Match_c       *match,
-                               Player_c      *player,
-                               guint          player_position)
+                               Player_c      *player)
 {
   if (match)
   {
-    if (player_position == 0)
+    if (match->GetPlayerA () == player)
     {
       match->SetData (this, "goo_rect_A", to_point);
     }
@@ -129,11 +126,14 @@ void ScoreCollector::Refresh (Match_c *match)
                     score->GetImage (), NULL);
 
       goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
-      score      = match->GetScore (match->GetPlayerB ());
-      score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
-      g_object_set (score_text,
-                    "text",
-                    score->GetImage (), NULL);
+      if (goo_rect)
+      {
+        score      = match->GetScore (match->GetPlayerB ());
+        score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+        g_object_set (score_text,
+                      "text",
+                      score->GetImage (), NULL);
+      }
 
       SetMatchColor (match,
                      _consistent_normal_color,

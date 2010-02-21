@@ -6,7 +6,7 @@
 [Setup]
 AppName=BellePoule
 AppVerName=BellePoule version {#VERSION}.{#VERSION_DAY}/{#VERSION_MONTH}
-OutputBaseFilename=setup{#VERSION}.{#VERSION_DAY}{#VERSION_MONTH}
+OutputBaseFilename=setup{#VERSION}_{#VERSION_DAY}{#VERSION_MONTH}
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/

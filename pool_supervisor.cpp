@@ -111,8 +111,6 @@ void PoolSupervisor_c::OnPlugged ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::Display ()
 {
-  OnPoolSelected (0);
-
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
   {
     Pool_c *pool;
@@ -120,6 +118,8 @@ void PoolSupervisor_c::Display ()
     pool = _pool_allocator->GetPool (i);
     pool->SortPlayers ();
   }
+
+  OnPoolSelected (0);
 }
 
 // --------------------------------------------------------------------------------
@@ -511,19 +511,11 @@ void PoolSupervisor_c::OnStuffClicked ()
     Pool_c *pool;
 
     pool = _pool_allocator->GetPool (i);
+    pool->ResetMatches ();
     pool->Stuff ();
   }
 
   OnAttrListUpdated ();
-
-  for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-  {
-    Pool_c *pool;
-
-    pool = _pool_allocator->GetPool (p);
-    OnPoolStatusUpdated (pool,
-                         this);
-  }
 }
 
 // --------------------------------------------------------------------------------

@@ -40,7 +40,10 @@ class Player_c : public Object_c
     guint  GetRef ();
 
     void Save (xmlTextWriter *xml_writer);
-    void Load (xmlNode       *xml_node);
+
+    void Load (xmlNode *xml_node);
+
+    gchar *GetName ();
 
     static gint CompareWithRef (Player_c *player,
                                 guint     ref);

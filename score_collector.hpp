@@ -40,13 +40,11 @@ class ScoreCollector : public Object_c
     void AddCollectingPoint (GooCanvasItem *point,
                              GooCanvasItem *score_text,
                              Match_c       *match,
-                             Player_c      *player,
-                             guint          player_position);
+                             Player_c      *player);
 
     void SetMatch (GooCanvasItem *to_point,
                    Match_c       *match,
-                   Player_c      *player,
-                   guint          player_position);
+                   Player_c      *player);
 
     void Refresh (Match_c *match);
 

@@ -79,22 +79,22 @@ void Pool_c::Stuff ()
     Match_c  *match;
     Player_c *A;
     Player_c *B;
+    gint      score;
 
     match = (Match_c *) g_slist_nth_data (_match_list, i);
-
-    A = match->GetPlayerA ();
-    B = match->GetPlayerB ();
+    A     = match->GetPlayerA ();
+    B     = match->GetPlayerB ();
+    score = g_random_int_range (0,
+                                _max_score);
 
     if (g_random_boolean ())
     {
       match->SetScore (A, _max_score);
-      match->SetScore (B, g_random_int_range (0,
-                                              _max_score));
+      match->SetScore (B, score);
     }
     else
     {
-      match->SetScore (A, g_random_int_range (0,
-                                              _max_score));
+      match->SetScore (A, score);
       match->SetScore (B, _max_score);
     }
   }
@@ -371,22 +371,10 @@ void Pool_c::OnPlugged ()
 
               if (_locked == FALSE)
               {
-                if (i < j)
-                {
-                  _score_collector->AddCollectingPoint (goo_rect,
-                                                        score_text,
-                                                        match,
-                                                        A,
-                                                        1);
-                }
-                else
-                {
-                  _score_collector->AddCollectingPoint (goo_rect,
-                                                        score_text,
-                                                        match,
-                                                        A,
-                                                        0);
-                }
+                _score_collector->AddCollectingPoint (goo_rect,
+                                                      score_text,
+                                                      match,
+                                                      A);
 
                 if (previous_goo_rect)
                 {
@@ -1187,6 +1175,7 @@ void Pool_c::ResetMatches ()
     match = (Match_c *) g_slist_nth_data (_match_list, i);
     match->CleanScore ();
   }
+  _is_over = FALSE;
 }
 
 // --------------------------------------------------------------------------------

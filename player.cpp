@@ -176,3 +176,11 @@ void Player_c::Load (xmlNode *xml_node)
 
   g_slist_free (attr_list);
 }
+
+// --------------------------------------------------------------------------------
+gchar *Player_c::GetName ()
+{
+  Attribute_c *attr = GetAttribute ("name");
+
+  return attr->GetStringImage ();
+}

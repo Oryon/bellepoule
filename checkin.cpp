@@ -294,7 +294,7 @@ void Checkin::Wipe ()
 // --------------------------------------------------------------------------------
 void Checkin::Import ()
 {
-  GtkWidget *chooser = gtk_file_chooser_dialog_new ("Choose a fencers file to import ...",
+  GtkWidget *chooser = gtk_file_chooser_dialog_new ("Choisissez un fichier de tireurs à importer ...",
                                                     NULL,
                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
                                                     GTK_STOCK_CANCEL,
@@ -386,6 +386,12 @@ void Checkin::Import ()
                                "default_import_dir_name",
                                dirname);
         g_free (dirname);
+      }
+
+      {
+        GtkRecentManager *manager = gtk_recent_manager_get_default ();
+
+        gtk_recent_manager_add_item (manager, filename);
       }
 
       {

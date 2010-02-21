@@ -135,7 +135,6 @@ void Schedule_c::CreateDefault ()
         stage->RetrieveAttendees ();
         stage->Garnish ();
         stage->Display ();
-        //stage->UnLock  ();
       }
     }
 
@@ -598,10 +597,6 @@ void Schedule_c::Load (xmlDoc *doc)
           if (i < current_stage_index)
           {
             stage->Lock ();
-          }
-          else
-          {
-            //stage->UnLock ();
           }
         }
       }
