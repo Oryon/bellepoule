@@ -48,7 +48,8 @@ class Filter : public virtual Object_c
     typedef enum
     {
       ATTR_VISIBILITY = 0,
-      ATTR_NAME,
+      ATTR_USER_NAME,
+      ATTR_XML_NAME,
       NUM_COLS
     } StoreColumn;
 

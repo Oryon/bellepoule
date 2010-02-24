@@ -506,7 +506,7 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
 
           attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                           i);
-          attr = _floating_player->GetAttribute (attr_desc->_name);
+          attr = _floating_player->GetAttribute (attr_desc->_xml_name);
 
           if (attr)
           {
@@ -866,7 +866,7 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
 
         attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                         i);
-        attr = player->GetAttribute (attr_desc->_name);
+        attr = player->GetAttribute (attr_desc->_xml_name);
 
         if (attr)
         {

@@ -36,7 +36,7 @@ Filter::Filter (GSList   *attr_list,
     GtkListStore  *store;
     GtkTreeIter    iter;
 
-    store = gtk_list_store_new (NUM_COLS, G_TYPE_UINT, G_TYPE_STRING);
+    store = gtk_list_store_new (NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING);
 
     for (guint i = 0; i < g_slist_length (_attr_list); i++)
     {
@@ -46,7 +46,8 @@ Filter::Filter (GSList   *attr_list,
                                                  i);
       gtk_list_store_append (store, &iter);
       gtk_list_store_set (store, &iter,
-                          ATTR_NAME, desc->_name,
+                          ATTR_USER_NAME, desc->_user_name,
+                          ATTR_XML_NAME, desc->_xml_name,
                           ATTR_VISIBILITY, FALSE,
                           -1);
     }
@@ -83,7 +84,7 @@ guint Filter::GetAttributeId (gchar *name)
       AttributeDesc *desc;
 
       desc = (AttributeDesc *) g_slist_nth_data (_attr_list, i);
-      if (strcmp (desc->_name, name) == 0)
+      if (strcmp (desc->_xml_name, name) == 0)
       {
         return i;
       }
@@ -128,7 +129,7 @@ void Filter::ShowAttribute (gchar *name)
     gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                         &iter,
                         ATTR_VISIBILITY, &current_visibility,
-                        ATTR_NAME, &current_name,
+                        ATTR_XML_NAME, &current_name,
                         -1);
 
     if (current_visibility == true)
@@ -205,7 +206,7 @@ void Filter::SelectAttributes ()
                                                    -1,
                                                    "Name",
                                                    renderer,
-                                                   "text", ATTR_NAME,
+                                                   "text", ATTR_USER_NAME,
                                                    NULL);
 
       gtk_tree_view_set_model (GTK_TREE_VIEW (view), _attr_filter_store);
@@ -237,7 +238,7 @@ void Filter::UpdateAttrList ()
       gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                           &iter,
                           ATTR_VISIBILITY, &current_visibility,
-                          ATTR_NAME, &current_name,
+                          ATTR_XML_NAME, &current_name,
                           -1);
 
       if (current_visibility == true)

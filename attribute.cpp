@@ -23,11 +23,13 @@ GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
 AttributeDesc::AttributeDesc (GType  type,
-                              gchar *name)
+                              gchar *xml_name,
+                              gchar *user_name)
 : Object_c ("AttributeDesc")
 {
   _type         = type;
-  _name         = name;
+  _xml_name     = xml_name;
+  _user_name    = user_name;
   _uniqueness   = SINGULAR;
   _rights       = PUBLIC;
   _compare_func = NULL;
@@ -49,10 +51,12 @@ AttributeDesc::~AttributeDesc ()
 
 // --------------------------------------------------------------------------------
 AttributeDesc *AttributeDesc::Declare (GType  type,
-                                       gchar *name)
+                                       gchar *xml_name,
+                                       gchar *user_name)
 {
   AttributeDesc *attr = new AttributeDesc (type,
-                                           name);
+                                           xml_name,
+                                           user_name);
 
   _list = g_slist_append (_list,
                           attr);
@@ -76,7 +80,7 @@ void AttributeDesc::CreateList (GSList **list, ...)
 
       desc = (AttributeDesc *) g_slist_nth_data (*list,
                                                  i);
-      if (strcmp (name, desc->_name) == 0)
+      if (strcmp (name, desc->_xml_name) == 0)
       {
         *list = g_slist_remove (*list,
                                 desc);
@@ -96,7 +100,7 @@ AttributeDesc *AttributeDesc::GetDesc (gchar *name)
 
     attr_desc = (AttributeDesc *) g_slist_nth_data (_list,
                                                     i);
-    if (strcmp (attr_desc->_name, name) == 0)
+    if (strcmp (attr_desc->_xml_name, name) == 0)
     {
       return attr_desc;
     }
@@ -151,7 +155,7 @@ Attribute_c *Attribute_c::New (gchar *name)
 // --------------------------------------------------------------------------------
 gchar *Attribute_c::GetName ()
 {
-  return _desc->_name;
+  return _desc->_xml_name;
 }
 
 // --------------------------------------------------------------------------------

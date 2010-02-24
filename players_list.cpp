@@ -109,7 +109,7 @@ void PlayersList::Update (Player_c *player)
 
       desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                  i);
-      attr = player->GetAttribute (desc->_name);
+      attr = player->GetAttribute (desc->_xml_name);
 
       if (attr)
       {
@@ -321,9 +321,8 @@ void PlayersList::OnAttrListUpdated ()
         desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                    i);
 
-        SetColumn (_filter->GetAttributeId (desc->_name),
-                   desc->_name,
-                   desc->_type != G_TYPE_BOOLEAN,
+        SetColumn (_filter->GetAttributeId (desc->_xml_name),
+                   desc,
                    -1);
       }
     }
@@ -352,15 +351,14 @@ gint PlayersList::CompareIterator (GtkTreeModel *model,
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::SetColumn (guint     id,
-                             gchar    *attr_name,
-                             gboolean  entry_is_text_based,
-                             gint      at)
+void PlayersList::SetColumn (guint          id,
+                             AttributeDesc *desc,
+                             gint           at)
 {
   GtkTreeViewColumn *column;
   GtkCellRenderer   *renderer;
 
-  if (entry_is_text_based)
+  if (desc->_type != G_TYPE_BOOLEAN)
   {
     renderer = gtk_cell_renderer_text_new ();
 
@@ -373,7 +371,7 @@ void PlayersList::SetColumn (guint     id,
                         "edited", G_CALLBACK (on_cell_edited), this);
     }
 
-    column = gtk_tree_view_column_new_with_attributes (attr_name,
+    column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                        renderer,
                                                        "text", id,
                                                        0,      NULL);
@@ -394,7 +392,7 @@ void PlayersList::SetColumn (guint     id,
                         "toggled", G_CALLBACK (on_cell_toggled), this);
     }
 
-    column = gtk_tree_view_column_new_with_attributes (attr_name,
+    column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                        renderer,
                                                        "active", id,
                                                        0,        NULL);
@@ -404,7 +402,7 @@ void PlayersList::SetColumn (guint     id,
   }
 
   g_object_set_data (G_OBJECT (renderer),
-                     "PlayersList::attribute_name", attr_name);
+                     "PlayersList::attribute_name", desc->_xml_name);
 
   if (_rights & SORTABLE)
   {
@@ -414,7 +412,7 @@ void PlayersList::SetColumn (guint     id,
     gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
                                      id,
                                      (GtkTreeIterCompareFunc) CompareIterator,
-                                     attr_name,
+                                     desc->_xml_name,
                                      NULL);
   }
 

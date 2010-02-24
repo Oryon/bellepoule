@@ -110,36 +110,36 @@ int main (int argc, char **argv)
   {
     AttributeDesc *desc;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "name");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "nom");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "prénom");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "club");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "club");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rating");
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "points");
     desc->_compare_func = (GCompareFunc) CompareRating;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "sexe");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "country");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "nation");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_year");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_year", "date naissance");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "licence");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "licence");
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending");
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "présence");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rank");
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rank", "place");
     desc->_rights = AttributeDesc::PRIVATE;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "ref");
+    desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ref");
     desc->_rights = AttributeDesc::PRIVATE;
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported");
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "exporté");
     desc->_rights = AttributeDesc::PRIVATE;
   }
 

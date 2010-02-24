@@ -78,7 +78,7 @@ Checkin::Checkin (StageClass *stage_class)
       if (attr_desc->_rights == AttributeDesc::PUBLIC)
       {
         {
-          GtkWidget *w   = gtk_label_new (attr_desc->_name);
+          GtkWidget *w   = gtk_label_new (attr_desc->_xml_name);
           GtkWidget *box = _glade->GetWidget ("title_vbox");
 
           gtk_box_pack_start (GTK_BOX (box),
@@ -92,7 +92,7 @@ Checkin::Checkin (StageClass *stage_class)
         }
 
         {
-          GtkWidget *value_w = gtk_label_new (attr_desc->_name);
+          GtkWidget *value_w = gtk_label_new (attr_desc->_xml_name);
 
           {
             GtkWidget *box = GetWidget ("value_vbox");
@@ -114,13 +114,16 @@ Checkin::Checkin (StageClass *stage_class)
             g_object_set (G_OBJECT (value_w),
                           "xalign", 0.0,
                           NULL);
-            g_object_set_data (G_OBJECT (value_w), "attribute_name", attr_desc->_name);
+            g_object_set_data (G_OBJECT (value_w), "attribute_name", attr_desc->_xml_name);
           }
 
           {
             GtkWidget *w   = gtk_check_button_new ();
             GtkWidget *box = _glade->GetWidget ("check_vbox");
 
+            gtk_widget_set_tooltip_text (w,
+                                         "Décochez cette case pour figer la valeur de l'attribut"
+                                         " et accélerer la navigation par la touche TAB.");
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
                                           TRUE);
             g_signal_connect (w, "toggled",
@@ -294,7 +297,7 @@ void Checkin::Wipe ()
 // --------------------------------------------------------------------------------
 void Checkin::Import ()
 {
-  GtkWidget *chooser = gtk_file_chooser_dialog_new ("Choisissez un fichier de tireurs � importer ...",
+  GtkWidget *chooser = gtk_file_chooser_dialog_new ("Choisissez un fichier de tireurs ? importer ...",
                                                     NULL,
                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
                                                     GTK_STOCK_CANCEL,

@@ -62,10 +62,9 @@ class PlayersList : public Module_c
     GtkListStore *_store;
     guint         _rights;
 
-    void SetColumn (guint     id,
-                    gchar    *attr,
-                    gboolean  entry_is_text_based,
-                    gint      at);
+    void SetColumn (guint          id,
+                    AttributeDesc *desc,
+                    gint           at);
 
     GtkTreeRowReference *GetPlayerRowRef (GtkTreeIter *iter);
 

@@ -39,13 +39,15 @@ class AttributeDesc : public Object_c
     } Rights;
 
     GType         _type;
-    gchar        *_name;
+    gchar        *_xml_name;
+    gchar        *_user_name;
     Uniqueness    _uniqueness;
     Rights        _rights;
     GCompareFunc  _compare_func;
 
     static AttributeDesc *Declare (GType  type,
-                                   gchar *name);
+                                   gchar *xml_name,
+                                   gchar *user_name);
 
     static void CreateList (GSList **list, ...);
 
@@ -55,7 +57,8 @@ class AttributeDesc : public Object_c
     static GSList *_list;
 
     AttributeDesc (GType  type,
-                   gchar *name);
+                   gchar *xml_name,
+                   gchar *user_name);
 
     ~AttributeDesc ();
 };

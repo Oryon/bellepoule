@@ -704,7 +704,7 @@ gboolean Table::FillInNode (GNode *node,
 
           attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                           a);
-          attr = winner->GetAttribute (attr_desc->_name);
+          attr = winner->GetAttribute (attr_desc->_xml_name);
 
           if (attr)
           {

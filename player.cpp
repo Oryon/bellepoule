@@ -127,7 +127,7 @@ void Player_c::Save (xmlTextWriter *xml_writer)
 
     desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                i);
-    attr = GetAttribute (desc->_name);
+    attr = GetAttribute (desc->_xml_name);
     if (attr)
     {
       gchar *xml_image = attr->GetStringImage ();
@@ -157,8 +157,8 @@ void Player_c::Load (xmlNode *xml_node)
 
     desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                i);
-    SetAttributeValue (desc->_name,
-                       (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_name));
+    SetAttributeValue (desc->_xml_name,
+                       (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_xml_name));
   }
 
   {

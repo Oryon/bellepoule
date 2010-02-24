@@ -263,7 +263,7 @@ GString *Pool_c::GetPlayerImage (Player_c *player)
 
     attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                     a);
-    attr = player->GetAttribute (attr_desc->_name);
+    attr = player->GetAttribute (attr_desc->_xml_name);
 
     if (attr)
     {
