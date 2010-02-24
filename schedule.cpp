@@ -553,12 +553,16 @@ void Schedule_c::Load (xmlDoc *doc)
   {
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
-    char           *attr        = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0],
-                                                        BAD_CAST "current_stage");
 
-    if (attr)
+    if (xml_object->nodesetval->nodeNr)
     {
-      current_stage_index = atoi (attr);
+      char *attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0],
+                                         BAD_CAST "current_stage");
+
+      if (attr)
+      {
+        current_stage_index = atoi (attr);
+      }
     }
 
     xmlXPathFreeObject  (xml_object);
@@ -602,7 +606,7 @@ void Schedule_c::Load (xmlDoc *doc)
       }
     }
 
-    xmlXPathFreeObject  (xml_object);
+    xmlXPathFreeObject (xml_object);
   }
 
   xmlXPathFreeContext (xml_context);
@@ -620,13 +624,17 @@ void Schedule_c::SetCurrentStage (guint index)
 
   {
     Stage_c *stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
-    gchar   *name  = g_strdup_printf ("%s / %s", stage->GetClassName (), stage->GetName ());
 
-    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("stage_entry")),
-                        name);
+    if (stage)
+    {
+      gchar *name = g_strdup_printf ("%s / %s", stage->GetClassName (), stage->GetName ());
 
-    stage->SetStatusCbk ((Stage_c::StatusCbk) OnStageStatusUpdated,
-                         this);
+      gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("stage_entry")),
+                          name);
+
+      stage->SetStatusCbk ((Stage_c::StatusCbk) OnStageStatusUpdated,
+                           this);
+    }
   }
 
   RefreshSensitivity ();
@@ -652,7 +660,8 @@ void Schedule_c::RefreshSensitivity ()
                               TRUE);
   }
 
-  if (_current_stage < g_list_length (_stage_list) - 1)
+  if (_stage_list
+      && (_current_stage < g_list_length (_stage_list) - 1))
   {
     Stage_c *stage = (Stage_c *) g_list_nth_data (_stage_list, _current_stage);
 

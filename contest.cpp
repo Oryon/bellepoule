@@ -129,15 +129,22 @@ Contest_c::Contest_c (gchar *filename)
     _filename = g_strdup (filename);
   }
 
+
   if (g_file_test (_filename,
                    G_FILE_TEST_IS_REGULAR))
   {
     gboolean  score_stuffing_policy = FALSE;
     xmlDoc   *doc                   = xmlParseFile (filename);
 
+    if (doc == NULL)
+    {
+      return;
+    }
+
     xmlXPathInit ();
 
     // Contest
+    if (doc)
     {
       xmlXPathContext *xml_context = xmlXPathNewContext (doc);
       xmlXPathObject  *xml_object;
