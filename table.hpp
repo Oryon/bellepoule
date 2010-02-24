@@ -35,7 +35,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void OnFromTableComboboxChanged ();
     void OnStuffClicked ();
     void OnInputToggled (GtkWidget *widget);
-    void OnSearchChanged ();
+    void OnSearchMatch ();
 
   public:
     static const gchar *_class_name;
@@ -76,6 +76,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     guint           _nb_levels;
     guint           _level_filter;
     GtkListStore   *_from_table_liststore;
+    GtkTreeStore   *_quick_search_treestore;
     guint           _nb_level_to_display;
     GooCanvasItem  *_main_table;
     GooCanvasItem  *_quick_score_A;
@@ -86,12 +87,9 @@ class Table : public virtual Stage_c, public CanvasModule_c
     xmlTextWriter  *_xml_writer;
     xmlNode        *_xml_node;
     LevelStatus    *_level_status;
-    GPtrArray      **_match_table;
     GSList         *_result_list;
 
     GooCanvasItem *GetQuickScore (gchar *container);
-
-    void SearchMatch ();
 
     void Display ();
 
@@ -157,6 +155,18 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void ApplyConfig ();
 
     void RefreshLevelStatus ();
+
+    gchar *GetLevelImage (guint level);
+
+    void SetPlayer (Match_c  *to_match,
+                    Player_c *player,
+                    guint     position);
+
+    static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
+                                                   GtkCellRenderer *cell,
+                                                   GtkTreeModel    *tree_model,
+                                                   GtkTreeIter     *iter,
+                                                   Table           *table);
 
     ~Table ();
 };

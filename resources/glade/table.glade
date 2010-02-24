@@ -30,7 +30,7 @@
                     <child>
                       <object class="GtkComboBox" id="from_table_combobox">
                         <property name="visible">True</property>
-                        <property name="model">table_liststore</property>
+                        <property name="model">from_liststore</property>
                         <signal name="changed" handler="on_from_table_combobox_changed"/>
                         <child>
                           <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
@@ -162,56 +162,24 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     <property name="label_xalign">0</property>
                     <property name="shadow_type">none</property>
                     <child>
-                      <object class="GtkHBox" id="hbox3">
+                      <object class="GtkComboBox" id="quick_search_combobox">
                         <property name="visible">True</property>
+                        <property name="model">match_treemodelfilter</property>
+                        <signal name="changed" handler="on_quick_search_combobox_changed"/>
                         <child>
-                          <object class="GtkComboBox" id="search_combobox">
-                            <property name="visible">True</property>
-                            <property name="model">table_liststore</property>
-                            <signal name="changed" handler="on_search_changed"/>
-                            <child>
-                              <object class="GtkCellRendererPixbuf" id="cellrenderertext4"/>
-                              <attributes>
-                                <attribute name="stock-id">1</attribute>
-                              </attributes>
-                            </child>
-                            <child>
-                              <object class="GtkCellRendererText" id="cellrenderertext5"/>
-                              <attributes>
-                                <attribute name="text">0</attribute>
-                              </attributes>
-                            </child>
+                          <object class="GtkCellRendererText" id="quick_search_path_renderertext">
+                            <property name="foreground_gdk">#00000000ffff</property>
+                            <property name="weight">1600</property>
                           </object>
-                          <packing>
-                            <property name="position">0</property>
-                          </packing>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label3">
-                            <property name="visible">True</property>
-                            <property name="label" translatable="yes">   No</property>
-                            <attributes>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="search_entry">
-                            <property name="width_request">40</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="max_length">3</property>
-                            <property name="invisible_char">&#x25CF;</property>
-                            <property name="secondary_icon_activatable">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
-                            <signal name="changed" handler="on_search_changed"/>
-                          </object>
-                          <packing>
-                            <property name="position">2</property>
-                          </packing>
+                          <object class="GtkCellRendererText" id="quick_search_renderertext"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
                         </child>
                       </object>
                     </child>
@@ -480,18 +448,33 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="name_entry"/>
-      <widget name="max_score_entry"/>
       <widget name="qualified_fencer_spinbutton"/>
+      <widget name="max_score_entry"/>
+      <widget name="name_entry"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup"/>
-  <object class="GtkListStore" id="table_liststore">
+  <object class="GtkListStore" id="from_liststore">
     <columns>
       <!-- column-name name -->
       <column type="gchararray"/>
-      <!-- column-name pixmap -->
+      <!-- column-name status_icon -->
       <column type="gchararray"/>
     </columns>
+  </object>
+  <object class="GtkTreeStore" id="match_treestore">
+    <columns>
+      <!-- column-name match_name -->
+      <column type="gchararray"/>
+      <!-- column-name match -->
+      <column type="gpointer"/>
+      <!-- column-name path -->
+      <column type="gchararray"/>
+      <!-- column-name visibility -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkTreeModelFilter" id="match_treemodelfilter">
+    <property name="child_model">match_treestore</property>
   </object>
 </interface>

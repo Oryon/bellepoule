@@ -32,9 +32,17 @@ const gdouble  Table::_level_spacing  = 10.0;
 
 typedef enum
 {
-  NAME_COLUMN,
-  STATUS_COLUMN
-} ColumnId;
+  FROM_NAME_COLUMN,
+  FROM_STATUS_COLUMN
+} FromColumnId;
+
+typedef enum
+{
+  QUICK_MATCH_NAME_COLUMN,
+  QUICK_MATCH_COLUMN,
+  QUICK_MATCH_PATH_COLUMN,
+  QUICK_MATCH_VISIBILITY_COLUMN
+} QuickSearchColumnId;
 
 extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
                                                                 Object_c  *owner);
@@ -47,7 +55,6 @@ Table::Table (StageClass *stage_class)
   _main_table   = NULL;
   _tree_root    = NULL;
   _level_status = NULL;
-  _match_table  = NULL;
 
   _score_collector = NULL;
 
@@ -95,7 +102,21 @@ Table::Table (StageClass *stage_class)
                                                     _quick_score_A);
   }
 
-  _from_table_liststore = GTK_LIST_STORE (_glade->GetObject ("table_liststore"));
+  _from_table_liststore   = GTK_LIST_STORE (_glade->GetObject ("from_liststore"));
+  _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
+
+  {
+    gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (_glade->GetWidget ("quick_search_combobox")),
+                                        (GtkCellRenderer *) _glade->GetWidget ("quick_search_renderertext"),
+                                        (GtkCellLayoutDataFunc) SetQuickSearchRendererSensitivity,
+                                        this, NULL);
+    gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (_glade->GetWidget ("quick_search_combobox")),
+                                        (GtkCellRenderer *) _glade->GetWidget ("quick_search_path_renderertext"),
+                                        (GtkCellLayoutDataFunc) SetQuickSearchRendererSensitivity,
+                                        this, NULL);
+    gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER (_glade->GetWidget ("match_treemodelfilter")),
+                                              QUICK_MATCH_VISIBILITY_COLUMN);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -107,6 +128,9 @@ Table::~Table ()
   gtk_list_store_clear (_from_table_liststore);
   g_object_unref (_from_table_liststore);
 
+  gtk_tree_store_clear (_quick_search_treestore);
+  g_object_unref (_quick_search_treestore);
+
   _quick_score_collector->Release ();
 }
 
@@ -117,6 +141,18 @@ void Table::Init ()
                       _xml_class_name,
                       CreateInstance,
                       EDITABLE);
+}
+
+// --------------------------------------------------------------------------------
+void Table::SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
+                                               GtkCellRenderer *cell,
+                                               GtkTreeModel    *tree_model,
+                                               GtkTreeIter     *iter,
+                                               Table           *table)
+{
+  gboolean sensitive = !gtk_tree_model_iter_has_child (tree_model, iter);
+
+  g_object_set (cell, "sensitive", sensitive, NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -211,7 +247,7 @@ void Table::RefreshLevelStatus ()
                                      NULL,
                                      i-nb_missing_level);
       gtk_list_store_set (_from_table_liststore, &iter,
-                          STATUS_COLUMN, icon,
+                          FROM_STATUS_COLUMN, icon,
                           -1);
     }
   }
@@ -236,24 +272,7 @@ void Table::Display ()
                                                                NULL);
       {
         GooCanvasItem *text_item;
-        gchar         *text;
-
-        if (l == _nb_level_to_display)
-        {
-          text = g_strdup_printf ("Vainqueur");
-        }
-        else if (l == _nb_level_to_display - 1)
-        {
-          text = g_strdup_printf ("Finale");
-        }
-        else if (l == _nb_level_to_display - 2)
-        {
-          text = g_strdup_printf ("Demi-finale");
-        }
-        else
-        {
-          text = g_strdup_printf ("Tableau de %d", 1 << (_nb_level_to_display - l));
-        }
+        gchar         *text = GetLevelImage (l + (_nb_levels - _nb_level_to_display));
 
         text_item = PutTextInTable (_level_status[l-1]._level_header,
                                     text,
@@ -372,9 +391,6 @@ void Table::OnNewScore (ScoreCollector *score_collector,
                 table);
   }
 
-  table->RefreshLevelStatus ();
-  table->DrawAllConnectors ();
-
   if (score_collector == table->_quick_score_collector)
   {
     table->_score_collector->Refresh (match);
@@ -383,6 +399,9 @@ void Table::OnNewScore (ScoreCollector *score_collector,
   {
     table->_quick_score_collector->Refresh (match);
   }
+
+  table->RefreshLevelStatus ();
+  table->DrawAllConnectors ();
 }
 
 // --------------------------------------------------------------------------------
@@ -407,18 +426,6 @@ void Table::DeleteTree ()
 
   g_free (_level_status);
   _level_status = NULL;
-
-  if (_match_table)
-  {
-    for (guint i = 0; i < (_nb_levels-1); i ++)
-    {
-      g_ptr_array_free (_match_table[i],
-                        FALSE);
-    }
-    g_free (_match_table);
-
-    _match_table = NULL;
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -446,15 +453,6 @@ void Table::CreateTree ()
 
   _level_status = (LevelStatus *) g_malloc0 (_nb_levels * sizeof (LevelStatus));
 
-  {
-    _match_table = (GPtrArray **) g_malloc ((_nb_levels-1) * sizeof (GPtrArray *));
-
-    for (guint i = 0; i < (_nb_levels-1); i ++)
-    {
-      _match_table[i] = g_ptr_array_new ();
-    }
-  }
-
   AddFork (NULL);
 
   {
@@ -471,10 +469,10 @@ void Table::CreateTree ()
       gtk_list_store_append (_from_table_liststore,
                              &iter);
 
-      text = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - i - 1));
+      text = GetLevelImage (i+1);
       gtk_list_store_set (_from_table_liststore, &iter,
-                          STATUS_COLUMN, GTK_STOCK_EXECUTE,
-                          NAME_COLUMN,   text,
+                          FROM_STATUS_COLUMN, GTK_STOCK_EXECUTE,
+                          FROM_NAME_COLUMN,   text,
                           -1);
       g_free (text);
     }
@@ -486,9 +484,6 @@ void Table::CreateTree ()
                       G_CALLBACK (on_from_table_combobox_changed),
                       (Object_c *) this);
   }
-
-  gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")),
-                            0);
 }
 
 // --------------------------------------------------------------------------------
@@ -731,14 +726,9 @@ gboolean Table::FillInNode (GNode *node,
         NodeData      *parent_data = (NodeData *) parent->data;
         guint          position    = g_node_child_position (parent, node);
 
-        if (position == 0)
-        {
-          parent_data->_match->SetPlayerA (winner);
-        }
-        else
-        {
-          parent_data->_match->SetPlayerB (winner);
-        }
+        table->SetPlayer (parent_data->_match,
+                          winner,
+                          position);
 
         // Rectangle
         {
@@ -871,8 +861,44 @@ void Table::AddFork (GNode *to)
 
   if ((to_data == NULL) || (data->_level > 1))
   {
-    g_ptr_array_add (_match_table[data->_level - 2],
-                     data->_match);
+    {
+      GtkTreeIter  table_iter;
+      GtkTreePath *path = gtk_tree_path_new_from_indices (_nb_levels - data->_level,
+                                                          -1);
+
+      if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
+                                   &table_iter,
+                                   path) == FALSE)
+      {
+        gchar *text = GetLevelImage (data->_level - 1);
+
+        gtk_tree_store_append (_quick_search_treestore,
+                               &table_iter,
+                               NULL);
+        gtk_tree_store_set (_quick_search_treestore, &table_iter,
+                            QUICK_MATCH_NAME_COLUMN, text,
+                            QUICK_MATCH_COLUMN, data->_match,
+                            QUICK_MATCH_VISIBILITY_COLUMN, 1,
+                            -1);
+        g_free (text);
+      }
+
+      gtk_tree_path_free (path);
+
+      {
+        GtkTreeIter  iter;
+        GtkTreePath *path;
+
+        gtk_tree_store_append (_quick_search_treestore,
+                               &iter,
+                               &table_iter);
+
+        path = gtk_tree_model_get_path (GTK_TREE_MODEL (_quick_search_treestore),
+                                        &iter);
+        data->_match->SetData (this,
+                               "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
+      }
+    }
 
     AddFork (node);
     AddFork (node);
@@ -924,7 +950,9 @@ gboolean Table::LoadNode (GNode *node,
         if (attr)
         {
           player = table->GetPlayerFromRef (atoi (attr));
-          data->_match->SetPlayerA (player);
+          table->SetPlayer (data->_match,
+                            player,
+                            0);
 
           attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_A");
           if (attr)
@@ -937,7 +965,9 @@ gboolean Table::LoadNode (GNode *node,
         if (attr)
         {
           player = table->GetPlayerFromRef (atoi (attr));
-          data->_match->SetPlayerB (player);
+          table->SetPlayer (data->_match,
+                            player,
+                            1);
 
           attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_B");
           if (attr)
@@ -1149,20 +1179,87 @@ gboolean Table::Stuff (GNode *node,
         {
           NodeData *parent_data = (NodeData *) parent->data;
 
-          if (g_node_child_position (parent, node) == 0)
-          {
-            parent_data->_match->SetPlayerA (winner);
-          }
-          else
-          {
-            parent_data->_match->SetPlayerB (winner);
-          }
+          table->SetPlayer (parent_data->_match,
+                            winner,
+                            g_node_child_position (parent, node));
         }
       }
     }
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Table::SetPlayer (Match_c  *to_match,
+                       Player_c *player,
+                       guint     position)
+{
+  if (position == 0)
+  {
+    to_match->SetPlayerA (player);
+  }
+  else
+  {
+    to_match->SetPlayerB (player);
+  }
+
+  {
+    GtkTreePath *path;
+    GtkTreeIter  iter;
+
+    path = (GtkTreePath *) to_match->GetData (this,
+                                              "quick_search_path");
+
+    if (   path
+        && gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
+                                    &iter,
+                                    path))
+    {
+      Player_c *A      = to_match->GetPlayerA ();
+      Player_c *B      = to_match->GetPlayerB ();
+      gchar    *A_name = NULL;
+      gchar    *B_name = NULL;
+
+      if (A)
+      {
+        Attribute_c *attr = A->GetAttribute ("name");
+
+        if (attr)
+        {
+          A_name = attr->GetStringImage ();
+        }
+      }
+
+      if (B)
+      {
+        Attribute_c *attr = B->GetAttribute ("name");
+
+        if (attr)
+        {
+          B_name = attr->GetStringImage ();
+        }
+      }
+
+      if (A_name && B_name)
+      {
+        gchar *path_string = gtk_tree_path_to_string (path);
+        gchar *name_string = g_strdup_printf ("%s / %s", A_name, B_name);
+
+        gtk_tree_store_set (_quick_search_treestore, &iter,
+                            QUICK_MATCH_PATH_COLUMN, path_string,
+                            QUICK_MATCH_NAME_COLUMN, name_string,
+                            QUICK_MATCH_COLUMN, to_match,
+                            QUICK_MATCH_VISIBILITY_COLUMN, 1,
+                            -1);
+        g_free (path_string);
+        g_free (name_string);
+      }
+
+      g_free (A_name);
+      g_free (B_name);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1212,54 +1309,22 @@ GSList *Table::GetCurrentClassification ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnSearchChanged ()
+void Table::OnSearchMatch ()
 {
-  GtkWidget *entry = _glade->GetWidget ("search_entry");
-  gint       level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
+  GtkTreeIter iter;
 
-  if (level != -1)
+  if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
+                                     &iter))
   {
-    if ((_nb_levels - level) > 11)
+    Match_c *match;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetWidget ("match_treemodelfilter")),
+                        &iter,
+                        QUICK_MATCH_COLUMN, &match,
+                        -1);
+
+    if (match)
     {
-      gtk_entry_set_max_length (GTK_ENTRY (entry), 4);
-    }
-    else if ((_nb_levels - level) > 8)
-    {
-      gtk_entry_set_max_length (GTK_ENTRY (entry), 3);
-    }
-    else if ((_nb_levels - level) > 5)
-    {
-      gtk_entry_set_max_length (GTK_ENTRY (entry), 2);
-    }
-    else
-    {
-      gtk_entry_set_max_length (GTK_ENTRY (entry), 1);
-    }
-
-    gtk_widget_hide (_glade->GetWidget ("fencerA_label"));
-    gtk_widget_hide (_glade->GetWidget ("fencerB_label"));
-
-    SearchMatch ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Table::SearchMatch ()
-{
-  GtkWidget *search_entry = _glade->GetWidget ("search_entry");
-  gint       level = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("search_combobox")));
-  GPtrArray *array = _match_table[level];
-  gchar     *input = (gchar *) gtk_entry_get_text (GTK_ENTRY (search_entry));
-
-  gtk_widget_modify_base (search_entry, GTK_STATE_NORMAL, NULL);
-
-  if (strlen (input))
-  {
-    guint index = atoi (input);
-
-    if (index < array->len)
-    {
-      Match_c  *match   = (Match_c *) g_ptr_array_index (array, index);
       Player_c *playerA = match->GetPlayerA ();
       Player_c *playerB = match->GetPlayerB ();
 
@@ -1286,16 +1351,38 @@ void Table::SearchMatch ()
         return;
       }
     }
-
-    {
-      static const GdkColor error_color = {0, 65535, 60000, 60000 };
-
-      gtk_widget_modify_base (search_entry, GTK_STATE_NORMAL, &error_color);
-
-      _quick_score_collector->Wipe (_quick_score_A);
-      _quick_score_collector->Wipe (_quick_score_B);
-    }
   }
+
+  gtk_widget_hide (_glade->GetWidget ("fencerA_label"));
+  gtk_widget_hide (_glade->GetWidget ("fencerB_label"));
+
+  _quick_score_collector->Wipe (_quick_score_A);
+  _quick_score_collector->Wipe (_quick_score_B);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Table::GetLevelImage (guint level)
+{
+  gchar *image;
+
+  if (level == _nb_levels)
+  {
+    image = g_strdup_printf ("Vainqueur");
+  }
+  else if (level == _nb_levels - 1)
+  {
+    image = g_strdup_printf ("Finale");
+  }
+  else if (level == _nb_levels - 2)
+  {
+    image = g_strdup_printf ("Demi-finale");
+  }
+  else
+  {
+    image = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - level));
+  }
+
+  return image;
 }
 
 // --------------------------------------------------------------------------------
@@ -1344,10 +1431,10 @@ extern "C" G_MODULE_EXPORT void on_input_toolbutton_toggled (GtkWidget *widget,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_search_changed (GtkWidget *widget,
-                                                   Object_c  *owner)
+extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *widget,
+                                                                  Object_c  *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
-  t->OnSearchChanged ();
+  t->OnSearchMatch ();
 }

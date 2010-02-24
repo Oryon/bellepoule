@@ -97,8 +97,8 @@ void Glade_c::DetachFromParent (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 GtkWidget *Glade_c::GetWidget (gchar *name)
 {
-  return GTK_WIDGET (gtk_builder_get_object (_glade_xml,
-                                             name));
+  return (GtkWidget *) (gtk_builder_get_object (_glade_xml,
+                                                name));
 }
 
 // --------------------------------------------------------------------------------
