@@ -659,6 +659,36 @@ gboolean Table::FillInNode (GNode *node,
     }
 
     {
+      guint number = (guint) data->_match->GetData (table, "number");
+
+      if (number)
+      {
+        gchar         *text        = g_strdup_printf ("No %d", number);
+        GooCanvasItem *number_item = PutTextInTable (data->_canvas_table,
+                                                     text,
+                                                     0,
+                                                     0);
+        SetTableItemAttribute (number_item, "y-align", 0.5);
+        g_object_set (number_item,
+                      "fill-color", "blue",
+                      "font", "Bold",
+                      NULL);
+        g_free (text);
+      }
+    }
+
+    if (   (winner == NULL)
+        && data->_match->GetPlayerA ()
+        && data->_match->GetPlayerB ())
+    {
+      data->_print_item = table->PutStockIconInTable (data->_canvas_table,
+                                                      GTK_STOCK_PRINT,
+                                                      0,
+                                                      1);
+      SetTableItemAttribute (data->_print_item, "y-align", 0.5);
+    }
+
+    {
       GString *string = g_string_new ("");
 
       // g_string_append_printf (string,
@@ -705,16 +735,6 @@ gboolean Table::FillInNode (GNode *node,
 
       g_string_free (string,
                      TRUE);
-    }
-
-    if (winner == NULL)
-    {
-      // Print Icon
-      data->_print_item = table->PutStockIconInTable (data->_canvas_table,
-                                                      GTK_STOCK_PRINT,
-                                                      0,
-                                                      1);
-      SetTableItemAttribute (data->_print_item, "y-align", 0.5);
     }
 
     if (parent)
@@ -863,31 +883,31 @@ void Table::AddFork (GNode *to)
   {
     {
       GtkTreeIter  table_iter;
+      gchar       *level_text = GetLevelImage (data->_level - 1);
       GtkTreePath *path = gtk_tree_path_new_from_indices (_nb_levels - data->_level,
                                                           -1);
+
+      data->_match->SetData (this,
+                             "level", level_text, g_free);
 
       if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
                                    &table_iter,
                                    path) == FALSE)
       {
-        gchar *text = GetLevelImage (data->_level - 1);
-
         gtk_tree_store_append (_quick_search_treestore,
                                &table_iter,
                                NULL);
         gtk_tree_store_set (_quick_search_treestore, &table_iter,
-                            QUICK_MATCH_NAME_COLUMN, text,
-                            QUICK_MATCH_COLUMN, data->_match,
+                            QUICK_MATCH_NAME_COLUMN, level_text,
                             QUICK_MATCH_VISIBILITY_COLUMN, 1,
                             -1);
-        g_free (text);
       }
 
       gtk_tree_path_free (path);
 
       {
         GtkTreeIter  iter;
-        GtkTreePath *path;
+        gint        *indices;
 
         gtk_tree_store_append (_quick_search_treestore,
                                &iter,
@@ -895,8 +915,12 @@ void Table::AddFork (GNode *to)
 
         path = gtk_tree_model_get_path (GTK_TREE_MODEL (_quick_search_treestore),
                                         &iter);
+        indices = gtk_tree_path_get_indices (path);
+
         data->_match->SetData (this,
                                "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
+        data->_match->SetData (this,
+                               "number", (void *) (indices[1]+1));
       }
     }
 
@@ -917,6 +941,8 @@ void Table::AddFork (GNode *to)
     {
       data->_match->Release ();
       data->_match = NULL;
+      to_data->_match->SetData (this,
+                                "number", 0);
     }
 
     if (g_node_child_position (to, node) == 0)
@@ -1243,9 +1269,11 @@ void Table::SetPlayer (Match_c  *to_match,
 
       if (A_name && B_name)
       {
-        gchar *path_string = gtk_tree_path_to_string (path);
         gchar *name_string = g_strdup_printf ("%s / %s", A_name, B_name);
+        guint  number      = (guint) to_match->GetData (this, "number");
+        gchar *path_string;
 
+        path_string = g_strdup_printf ("%s - No %d", (gchar *) to_match->GetData (this, "level"), number);
         gtk_tree_store_set (_quick_search_treestore, &iter,
                             QUICK_MATCH_PATH_COLUMN, path_string,
                             QUICK_MATCH_NAME_COLUMN, name_string,
