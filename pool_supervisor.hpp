@@ -76,6 +76,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
     void OnAttrListUpdated ();
     void OnPlugged ();
+    void OnUnPlugged ();
     GSList *GetCurrentClassification ();
 
     static void OnPoolStatusUpdated (Pool_c           *pool,

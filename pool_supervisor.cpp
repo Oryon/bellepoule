@@ -109,6 +109,13 @@ void PoolSupervisor_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolSupervisor_c::OnUnPlugged ()
+{
+  Object_c::TryToRelease (_pool_allocator);
+  _pool_allocator = NULL;
+}
+
+// --------------------------------------------------------------------------------
 void PoolSupervisor_c::Display ()
 {
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)

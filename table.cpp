@@ -104,6 +104,7 @@ Table::Table (StageClass *stage_class)
 
   _from_table_liststore   = GTK_LIST_STORE (_glade->GetObject ("from_liststore"));
   _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
+  _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("match_treemodelfilter"));
 
   {
     gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (_glade->GetWidget ("quick_search_combobox")),
@@ -114,7 +115,7 @@ Table::Table (StageClass *stage_class)
                                         (GtkCellRenderer *) _glade->GetWidget ("quick_search_path_renderertext"),
                                         (GtkCellLayoutDataFunc) SetQuickSearchRendererSensitivity,
                                         this, NULL);
-    gtk_tree_model_filter_set_visible_column (GTK_TREE_MODEL_FILTER (_glade->GetWidget ("match_treemodelfilter")),
+    gtk_tree_model_filter_set_visible_column (_quick_search_filter,
                                               QUICK_MATCH_VISIBILITY_COLUMN);
   }
 }
@@ -122,16 +123,9 @@ Table::Table (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
-  DeleteTree ();
-  Object_c::TryToRelease (_score_collector);
-
-  gtk_list_store_clear (_from_table_liststore);
   g_object_unref (_from_table_liststore);
-
-  gtk_tree_store_clear (_quick_search_treestore);
   g_object_unref (_quick_search_treestore);
-
-  _quick_score_collector->Release ();
+  g_object_unref (_quick_search_filter);
 }
 
 // --------------------------------------------------------------------------------
@@ -1070,6 +1064,24 @@ void Table::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnUnPlugged ()
+{
+  DeleteTree ();
+
+  Object_c::TryToRelease (_score_collector);
+  _score_collector = NULL;
+
+  Object_c::TryToRelease (_quick_score_collector);
+  _quick_score_collector = NULL;
+
+  gtk_list_store_clear (_from_table_liststore);
+  gtk_tree_store_clear (_quick_search_treestore);
+  gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
+
+  CanvasModule_c::OnPlugged ();
+}
+
+// --------------------------------------------------------------------------------
 void Table::OnLocked ()
 {
   DisableSensitiveWidgets ();
@@ -1346,7 +1358,7 @@ void Table::OnSearchMatch ()
   {
     Match_c *match;
 
-    gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetWidget ("match_treemodelfilter")),
+    gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
                         &iter,
                         QUICK_MATCH_COLUMN, &match,
                         -1);

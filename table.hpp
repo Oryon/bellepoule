@@ -45,6 +45,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     void OnLocked ();
     void OnUnLocked ();
     void OnPlugged ();
+    void OnUnPlugged ();
     void Wipe ();
 
   private:
@@ -72,22 +73,23 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     static const gdouble _level_spacing;
 
-    GNode          *_tree_root;
-    guint           _nb_levels;
-    guint           _level_filter;
-    GtkListStore   *_from_table_liststore;
-    GtkTreeStore   *_quick_search_treestore;
-    guint           _nb_level_to_display;
-    GooCanvasItem  *_main_table;
-    GooCanvasItem  *_quick_score_A;
-    GooCanvasItem  *_quick_score_B;
-    guint           _max_score;
-    ScoreCollector *_score_collector;
-    ScoreCollector *_quick_score_collector;
-    xmlTextWriter  *_xml_writer;
-    xmlNode        *_xml_node;
-    LevelStatus    *_level_status;
-    GSList         *_result_list;
+    GNode              *_tree_root;
+    guint               _nb_levels;
+    guint               _level_filter;
+    GtkListStore       *_from_table_liststore;
+    GtkTreeStore       *_quick_search_treestore;
+    GtkTreeModelFilter *_quick_search_filter;
+    guint               _nb_level_to_display;
+    GooCanvasItem      *_main_table;
+    GooCanvasItem      *_quick_score_A;
+    GooCanvasItem      *_quick_score_B;
+    guint               _max_score;
+    ScoreCollector     *_score_collector;
+    ScoreCollector     *_quick_score_collector;
+    xmlTextWriter      *_xml_writer;
+    xmlNode            *_xml_node;
+    LevelStatus        *_level_status;
+    GSList             *_result_list;
 
     GooCanvasItem *GetQuickScore (gchar *container);
 
