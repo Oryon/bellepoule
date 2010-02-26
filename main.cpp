@@ -116,20 +116,24 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "club");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->AddDiscreteValues ("resources/clubs_fra.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "points");
     desc->_compare_func = (GCompareFunc) CompareRating;
 
-    //desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "sexe");
-    //desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-
     desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "sexe");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_free_value_allowed = FALSE;
     desc->AddDiscreteValues ("M", "Masculin",
                              "F", "Féminin", NULL);
 
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "ligue", "ligue");
+    desc->AddDiscreteValues ("resources/ligues.txt");
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "nation");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->AddDiscreteValues ("resources/ioc_countries.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_year", "date naissance");
 

@@ -42,6 +42,7 @@ class AttributeDesc : public Object_c
     gchar        *_xml_name;
     gchar        *_user_name;
     Uniqueness    _uniqueness;
+    gboolean      _free_value_allowed;
     Rights        _rights;
     GCompareFunc  _compare_func;
 
@@ -53,16 +54,16 @@ class AttributeDesc : public Object_c
 
     static AttributeDesc *GetDesc (gchar *name);
 
-    void BindRenderer (GtkCellRenderer *renderer);
-
-    void BindCellLayout (GtkCellLayout   *layout,
-                         GtkCellRenderer *renderer);
+    void BindDiscreteValues (GObject         *object,
+                             GtkCellRenderer *renderer = NULL);
 
     gboolean HasDiscreteValue ();
 
     void AddDiscreteValues (gchar *first_xml_image,
                             gchar *first_user_image,
                             ...);
+
+    void AddDiscreteValues (gchar *file);
 
     gchar *GetXmlImage (gchar *user_image);
 

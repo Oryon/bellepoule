@@ -1,0 +1,30 @@
+Alsace;Alsace
+Aquitaine;Aquitaine
+Auvergne;Auvergne
+Basse Normandie;Basse Normandie
+Bourgogne;Bourgogne
+Bretagne;Bretagne
+Centre;Centre
+Champagne Ardennes;Champagne Ardennes
+Corse;Corse
+Cote d'Azur;Cote d'Azur
+Creteil;Creteil
+Dauphine Savoie;Dauphine Savoie
+Franche Comté;Franche Comté
+Guadeloupe;Guadeloupe
+Guyane;Guyane
+Haute Normandie;Haute Normandie
+La Réunion;La Réunion
+Languedoc Roussillon;Languedoc Roussillon
+Limousin;Limousin
+Lorraine;Lorraine
+Lyonnais;Lyonnais
+Martinique;Martinique
+Midi Pyrénées;Midi Pyrénées
+Nord Pas de Calais;Nord Pas de Calais
+Paris;Paris
+Pays de Loire;Pays de Loire
+Picardie;Picardie
+Poitou Charentes;Poitou Charentes
+Provence;Provence
+Versailles;Versailles

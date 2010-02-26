@@ -355,8 +355,8 @@ void PlayersList::SetColumn (guint          id,
                              AttributeDesc *desc,
                              gint           at)
 {
-  GtkTreeViewColumn *column;
-  GtkCellRenderer   *renderer;
+  GtkTreeViewColumn *column   = NULL;
+  GtkCellRenderer   *renderer = NULL;
 
   if (   (desc->_type == G_TYPE_STRING)
       || (desc->_type == G_TYPE_INT))
@@ -365,9 +365,9 @@ void PlayersList::SetColumn (guint          id,
     {
       renderer = gtk_cell_renderer_combo_new ();
       g_object_set (renderer,
-                    "has-entry", FALSE,
+                    "has-entry", desc->_free_value_allowed,
                     NULL);
-      desc->BindRenderer (renderer);
+      desc->BindDiscreteValues (G_OBJECT (renderer));
     }
     else
     {
@@ -413,24 +413,27 @@ void PlayersList::SetColumn (guint          id,
                        (void *) "activatable");
   }
 
-  g_object_set_data (G_OBJECT (renderer),
-                     "PlayersList::attribute_name", desc->_xml_name);
-
-  if (_rights & SORTABLE)
+  if (renderer && column)
   {
-    gtk_tree_view_column_set_sort_column_id (column,
-                                             id);
+    g_object_set_data (G_OBJECT (renderer),
+                       "PlayersList::attribute_name", desc->_xml_name);
 
-    gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
-                                     id,
-                                     (GtkTreeIterCompareFunc) CompareIterator,
-                                     desc->_xml_name,
-                                     NULL);
+    if (_rights & SORTABLE)
+    {
+      gtk_tree_view_column_set_sort_column_id (column,
+                                               id);
+
+      gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
+                                       id,
+                                       (GtkTreeIterCompareFunc) CompareIterator,
+                                       desc->_xml_name,
+                                       NULL);
+    }
+
+    gtk_tree_view_insert_column (GTK_TREE_VIEW (_tree_view),
+                                 column,
+                                 at);
   }
-
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (_tree_view),
-                               column,
-                               at);
 }
 
 // --------------------------------------------------------------------------------

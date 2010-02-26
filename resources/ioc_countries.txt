@@ -1,0 +1,205 @@
+AFG;Afghanistan
+AHO;Antilles néerlandaises
+ALB;Albanie
+ALG;Algérie
+AND;Andorre
+ANG;Angola
+ANT;Antigua-et-Barbuda
+ARG;Argentine
+ARM;Arménie
+ARU;Aruba
+ASA;Samoa américaines
+AUS;Australie
+AUT;Autriche
+AZE;Azerbaïdjan
+BAH;Bahamas
+BAN;Bangladesh
+BAR;Barbade
+BDI;Burundi
+BEL;Belgique
+BEN;Bénin
+BER;Bermudes
+BHU;Bhoutan
+BIH;Bosnie-Herzégovine
+BIZ;Belize
+BLR;Biélorussie
+BOL;Bolivie
+BOT;Botswana
+BRA;Brésil
+BRN;Bahreïn
+BRU;Brunei
+BUL;Bulgarie
+BUR;Burkina Faso
+CAF;République centrafricaine
+CAM;Cambodge
+CAN;Canada
+CAY;îles Caïmanes
+CGO;République du Congo
+CHA;Tchad
+CHI;Chili
+CHN;Chine
+CIV;Côte d'Ivoire
+CMR;Cameroun
+COD;République démocratique du Congo
+COK;Îles Cook
+COL;Colombie
+COM;Comores
+CPV;Cap-Vert
+CRC;Costa Rica
+CRO;Croatie
+CUB;Cuba
+CYP;Chypre
+CZE;République tchèque
+DEN;Danemark
+DJI;Djibouti
+DMA;Dominique
+DOM;République dominicaine
+ECU;Équateur
+EGY;Égypte
+ERI;Érythrée
+ESA;Salvador
+ESP;Espagne
+EST;Estonie
+ETH;Éthiopie
+FIJ;Fidji
+FIN;Finlande
+FRA;France
+FSM;Micronésie
+GAB;Gabon
+GAM;Gambie
+GBR;Grande-Bretagne
+GBS;Guinée-Bissau
+GEO;Géorgie
+GEQ;Guinée équatoriale
+GER;Allemagne
+GHA;Ghana
+GRE;Grèce
+GRN;Grenade
+GUA;Guatemala
+GUI;Guinée
+GUM;Guam
+GUY;Guyana
+HAI;Haïti
+HKG;Hong Kong
+HON;Honduras
+HUN;Hongrie
+INA;Indonésie
+IND;Inde
+IRI;Iran
+IRL;Irlande
+IRQ;Irak
+ISL;Islande
+ISR;Israël
+ISV;Îles Vierges américaines
+ITA;Italie
+IVB;Îles Vierges britanniques
+JAM;Jamaïque
+JOR;Jordanie
+JPN;Japon
+KAZ;Kazakhstan
+KEN;Kenya
+KGZ;Kirghizistan
+KIR;Kiribati
+KOR;Corée du Sud
+KSA;Arabie saoudite
+KUW;Koweït
+LAO;Laos
+LAT;Lettonie
+LBA;Libye
+LBR;Liberia
+LCA;Sainte-Lucie
+LES;Lesotho
+LIB;Liban
+LIE;Liechtenstein
+LTU;Lituanie
+LUX;Luxembourg
+MAD;Madagascar
+MAR;Maroc
+MAS;Malaisie
+MAW;Malawi
+MDA;Moldavie
+MDV;Maldives
+MEX;Mexique
+MGL;Mongolie
+MHL;Marshall
+MKD;Macédoine
+MLI;Mali
+MLT;Malte
+MNE;Monténégro
+MON;Monaco
+MOZ;Mozambique
+MRI;Maurice
+MTN;Mauritanie
+MYA;Birmanie
+NAM;Namibie
+NCA;Nicaragua
+NED;Pays-Bas
+NEP;Népal
+NGR;Nigeria
+NIG;Niger
+NOR;Norvège
+NRU;Nauru
+NZL;Nouvelle-Zélande
+OMA;Oman
+PAK;Pakistan
+PAN;Panamá
+PAR;Paraguay
+PER;Pérou
+PHI;Philippines
+PLE;Palestine
+PLW;Palaos
+PNG;Papouasie-Nouvelle-Guinée
+POL;Pologne
+POR;Portugal
+PRK;Corée du Nord
+PUR;Porto Rico
+QAT;Qatar
+ROU;Roumanie
+RSA;Afrique du Sud
+RUS;Russie
+RWA;Rwanda
+SAM;Samoa
+SEN;Sénégal
+SEY;Seychelles
+SIN;Singapour
+SKN;Saint-Christophe-et-Niévès
+SLE;Sierra Leone
+SLO;Slovénie
+SMR;Saint-Marin
+SOL;Salomon
+SOM;Somalie
+SRB;Serbie
+SRI;Sri Lanka
+STP;São Tomé-et-Principe
+SUD;Soudan
+SUI;Suisse
+SUR;Suriname
+SVK;Slovaquie
+SWE;Suède
+SWZ;Swaziland
+SYR;Syrie
+TAN;Tanzanie
+TGA;Tonga
+THA;Thaïlande
+TJK;Tadjikistan
+TKM;Turkménistan
+TLS;Timor oriental
+TOG;Togo
+TPE;Chinese Taipei
+TRI;Trinité-et-Tobago
+TUN;Tunisie
+TUR;Turquie
+TUV;Tuvalu
+UAE;Émirats arabes unis
+UGA;Ouganda
+UKR;Ukraine
+URU;Uruguay
+USA;États-Unis
+UZB;Ouzbékistan
+VAN;Vanuatu
+VEN;Venezuela
+VIE;Viêt Nam
+VIN;Saint-Vincent-et-les Grenadines
+YEM;Yémen
+ZAM;Zambie
+ZIM;Zimbabwe

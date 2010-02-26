@@ -74,6 +74,7 @@ Source: "..\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app
 ;Resources
 Source: "..\resources\glade\*.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\*.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\*.txt"; DestDir: "{app}\resources\"; Flags: ignoreversion
 
 ;Sources
 Source: "..\*.hpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
@@ -233,4 +234,6 @@ end;
 [Run]
 Filename: "{app}\porting_layer\bin\reconfig.bat";
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
+
 

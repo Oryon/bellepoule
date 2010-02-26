@@ -33,13 +33,14 @@ AttributeDesc::AttributeDesc (GType  type,
                               gchar *user_name)
 : Object_c ("AttributeDesc")
 {
-  _type           = type;
-  _xml_name       = xml_name;
-  _user_name      = user_name;
-  _uniqueness     = SINGULAR;
-  _rights         = PUBLIC;
-  _discrete_store = NULL;
-  _compare_func   = NULL;
+  _type               = type;
+  _xml_name           = xml_name;
+  _user_name          = user_name;
+  _uniqueness         = SINGULAR;
+  _free_value_allowed = TRUE;
+  _rights             = PUBLIC;
+  _discrete_store     = NULL;
+  _compare_func       = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -78,28 +79,25 @@ AttributeDesc *AttributeDesc::Declare (GType  type,
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::BindRenderer (GtkCellRenderer *renderer)
+void AttributeDesc::BindDiscreteValues (GObject         *object,
+                                        GtkCellRenderer *renderer)
 {
   if (_discrete_store)
   {
-    g_object_set (renderer,
-                  "model", _discrete_store,
-                  "text-column", DISCRETE_USER_IMAGE,
-                  NULL);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void AttributeDesc::BindCellLayout (GtkCellLayout   *layout,
-                                    GtkCellRenderer *renderer)
-{
-  if (_discrete_store)
-  {
-    g_object_set (layout,
+    g_object_set (object,
                   "model", _discrete_store,
                   NULL);
-    gtk_cell_layout_set_attributes (layout, renderer,
-                                    "text", DISCRETE_USER_IMAGE, NULL);
+    if (renderer)
+    {
+      gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (object), renderer,
+                                      "text", DISCRETE_USER_IMAGE, NULL);
+    }
+    else
+    {
+      g_object_set (object,
+                    "text-column", DISCRETE_USER_IMAGE,
+                    NULL);
+    }
   }
 }
 
@@ -161,32 +159,39 @@ gchar *AttributeDesc::GetUserImage (GtkTreeIter *iter)
 // --------------------------------------------------------------------------------
 gchar *AttributeDesc::GetUserImage (gchar *xml_image)
 {
-  if (_discrete_store)
+  if (xml_image)
   {
-    GtkTreeIter iter;
-    gboolean    iter_is_valid;
-
-    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_discrete_store),
-                                                   &iter);
-    while (iter_is_valid)
+    if (_discrete_store)
     {
-      gchar *current_xml_image;
-      gchar *current_user_image;
+      GtkTreeIter iter;
+      gboolean    iter_is_valid;
 
-      gtk_tree_model_get (GTK_TREE_MODEL (_discrete_store), &iter,
-                          DISCRETE_XML_IMAGE, &current_xml_image,
-                          DISCRETE_USER_IMAGE, &current_user_image,
-                          -1);
-      if (strcmp (current_xml_image, xml_image) == 0)
+      iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_discrete_store),
+                                                     &iter);
+      while (iter_is_valid)
       {
-        return g_strdup (current_user_image);
-      }
-      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_discrete_store),
-                                                &iter);
-    }
-  }
+        gchar *current_xml_image;
+        gchar *current_user_image;
 
-  return g_strdup (xml_image);
+        gtk_tree_model_get (GTK_TREE_MODEL (_discrete_store), &iter,
+                            DISCRETE_XML_IMAGE, &current_xml_image,
+                            DISCRETE_USER_IMAGE, &current_user_image,
+                            -1);
+        if (strcmp (current_xml_image, xml_image) == 0)
+        {
+          return g_strdup (current_user_image);
+        }
+        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_discrete_store),
+                                                  &iter);
+      }
+    }
+
+    return g_strdup (xml_image);
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -222,6 +227,44 @@ void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
       }
     }
     va_end (ap);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::AddDiscreteValues (gchar *file)
+{
+  if (_discrete_store == NULL)
+  {
+    _discrete_store = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+  }
+
+  {
+    gchar *raw_file;
+    gchar **tokens;
+
+    g_file_get_contents ((const gchar *) file,
+                         &raw_file,
+                         NULL,
+                         NULL);
+
+    tokens = g_strsplit_set (raw_file,
+                             ";\n",
+                             0);
+
+    if (tokens)
+    {
+      for (guint i = 0; (tokens[i] != NULL) && (*tokens[i] != 0); i+=2)
+      {
+        GtkTreeIter iter;
+
+        gtk_tree_store_append (_discrete_store, &iter, NULL);
+
+        gtk_tree_store_set (_discrete_store, &iter,
+                            DISCRETE_XML_IMAGE, tokens[i],
+                            DISCRETE_USER_IMAGE, tokens[i+1], -1);
+      }
+      g_strfreev (tokens);
+    }
   }
 }
 

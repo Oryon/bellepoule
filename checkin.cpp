@@ -58,6 +58,7 @@ Checkin::Checkin (StageClass *stage_class)
     filter->ShowAttribute ("birth_year");
     filter->ShowAttribute ("gender");
     filter->ShowAttribute ("club");
+    filter->ShowAttribute ("ligue");
     filter->ShowAttribute ("country");
     filter->ShowAttribute ("licence");
 
@@ -105,18 +106,53 @@ Checkin::Checkin (StageClass *stage_class)
             {
               if (attr_desc->HasDiscreteValue ())
               {
-                GtkCellRenderer *cell = gtk_cell_renderer_text_new ();
+                GtkCellRenderer    *cell;
+                GtkEntryCompletion *completion;
 
-                value_w = gtk_combo_box_new ();
-                gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), cell, TRUE);
-                attr_desc->BindCellLayout (GTK_CELL_LAYOUT (value_w), cell);
-                gtk_combo_box_set_active (GTK_COMBO_BOX (value_w),
-                                          0);
+                if (attr_desc->_free_value_allowed)
+                {
+                  value_w = gtk_combo_box_entry_new ();
+                  cell = NULL;
+                  completion = gtk_entry_completion_new ();
+                }
+                else
+                {
+                  value_w = gtk_combo_box_new ();
+                  cell = gtk_cell_renderer_text_new ();
+                  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), cell, TRUE);
+                  completion = NULL;
+                }
 
+                attr_desc->BindDiscreteValues (G_OBJECT (value_w),
+                                               cell);
+
+                if (completion)
+                {
+                  GtkEntry     *entry = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (value_w)));
+                  GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (value_w));
+
+                  gtk_entry_completion_set_model (completion,
+                                                  model);
+                  gtk_entry_completion_set_text_column (completion,
+                                                        1);
+                  gtk_entry_completion_set_inline_completion (completion,
+                                                              TRUE);
+                  gtk_entry_set_completion (entry,
+                                            completion);
+                  g_object_unref (completion);
+                }
+                else
+                {
+                  gtk_combo_box_set_active (GTK_COMBO_BOX (value_w),
+                                            0);
+                }
               }
               else
               {
                 value_w = gtk_entry_new ();
+                g_object_set (G_OBJECT (value_w),
+                              "xalign", 0.0,
+                              NULL);
               }
             }
 
@@ -125,9 +161,6 @@ Checkin::Checkin (StageClass *stage_class)
                                 TRUE,
                                 TRUE,
                                 0);
-            g_object_set (G_OBJECT (value_w),
-                          "xalign", 0.0,
-                          NULL);
             g_object_set_data (G_OBJECT (value_w), "attribute_name", attr_desc->_xml_name);
           }
 
@@ -606,16 +639,34 @@ void Checkin::on_add_button_clicked ()
     {
       if (attr_desc->HasDiscreteValue ())
       {
-        GtkTreeIter iter;
-
-        if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (w),
-                                           &iter))
+        if (attr_desc->_free_value_allowed)
         {
-          gchar *value = attr_desc->GetUserImage (&iter);
+          GtkEntry *entry = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (w)));
 
-          player->SetAttributeValue (attr_name,
-                                     value);
-          g_free (value);
+          if (entry)
+          {
+            player->SetAttributeValue (attr_name,
+                                       (gchar *) gtk_entry_get_text (GTK_ENTRY (entry)));
+
+            if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
+            {
+              gtk_entry_set_text (GTK_ENTRY (w), "");
+            }
+          }
+        }
+        else
+        {
+          GtkTreeIter iter;
+
+          if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (w),
+                                             &iter))
+          {
+            gchar *value = attr_desc->GetUserImage (&iter);
+
+            player->SetAttributeValue (attr_name,
+                                       value);
+            g_free (value);
+          }
         }
       }
       else
