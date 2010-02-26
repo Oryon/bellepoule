@@ -78,7 +78,7 @@ Checkin::Checkin (StageClass *stage_class)
       if (attr_desc->_rights == AttributeDesc::PUBLIC)
       {
         {
-          GtkWidget *w   = gtk_label_new (attr_desc->_xml_name);
+          GtkWidget *w   = gtk_label_new (attr_desc->_user_name);
           GtkWidget *box = _glade->GetWidget ("title_vbox");
 
           gtk_box_pack_start (GTK_BOX (box),
@@ -92,7 +92,7 @@ Checkin::Checkin (StageClass *stage_class)
         }
 
         {
-          GtkWidget *value_w = gtk_label_new (attr_desc->_xml_name);
+          GtkWidget *value_w;
 
           {
             GtkWidget *box = GetWidget ("value_vbox");
@@ -103,7 +103,21 @@ Checkin::Checkin (StageClass *stage_class)
             }
             else
             {
-              value_w = gtk_entry_new ();
+              if (attr_desc->HasDiscreteValue ())
+              {
+                GtkCellRenderer *cell = gtk_cell_renderer_text_new ();
+
+                value_w = gtk_combo_box_new ();
+                gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), cell, TRUE);
+                attr_desc->BindCellLayout (GTK_CELL_LAYOUT (value_w), cell);
+                gtk_combo_box_set_active (GTK_COMBO_BOX (value_w),
+                                          0);
+
+              }
+              else
+              {
+                value_w = gtk_entry_new ();
+              }
             }
 
             gtk_box_pack_start (GTK_BOX (box),
@@ -122,8 +136,8 @@ Checkin::Checkin (StageClass *stage_class)
             GtkWidget *box = _glade->GetWidget ("check_vbox");
 
             gtk_widget_set_tooltip_text (w,
-                                         "Décochez cette case pour figer la valeur de l'attribut"
-                                         " et accélerer la navigation par la touche TAB.");
+                                         "Décochez cette case pour accélerer la navigation. "
+                                         "Le champs correspondant sera ignoré lors des appuis sur la touche TAB.");
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
                                           TRUE);
             g_signal_connect (w, "toggled",
@@ -590,12 +604,29 @@ void Checkin::on_add_button_clicked ()
     }
     else
     {
-      player->SetAttributeValue (attr_name,
-                                 (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
-
-      if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
+      if (attr_desc->HasDiscreteValue ())
       {
-        gtk_entry_set_text (GTK_ENTRY (w), "");
+        GtkTreeIter iter;
+
+        if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (w),
+                                           &iter))
+        {
+          gchar *value = attr_desc->GetUserImage (&iter);
+
+          player->SetAttributeValue (attr_name,
+                                     value);
+          g_free (value);
+        }
+      }
+      else
+      {
+        player->SetAttributeValue (attr_name,
+                                   (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
+
+        if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
+        {
+          gtk_entry_set_text (GTK_ENTRY (w), "");
+        }
       }
     }
   }

@@ -1,50 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contest title="Challenge du futur" day="31" month="1" year="2010" weapon="E" gender="FM" category="C" organizer="CS Betton" web_site="http://betton.escrime.free.fr" score_stuffing="1">
- <schedule current_stage="3">
+ <schedule current_stage="0">
   <checkin_stage>
-   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="M" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="2" ref="27" exported="0"/>
-   <player name="AMUZU" first_name="Marvin" club="CHALONS CHAM" rating="1094" gender="M" country="FRA" birth_year="09/02/1991" licence="220510081796" attending="1" rank="1" ref="177" exported="0"/>
-   <player name="abcd" first_name="Lucas" club="DOUAI CE" rating="1242" gender="M" country="FRA" birth_year="16/08/1987" licence="130590250544" attending="1" rank="4" ref="135" exported="0"/>
-   <player name="ALGISI" first_name="Brice" club="LIVRY GARGAN" rating="1536" gender="M" country="FRA" birth_year="17/02/1981" licence="260931670470" attending="1" rank="5" ref="216" exported="0"/>
-   <player name="ADM" first_name="Cedric" club="LAON CE" rating="0" gender="M" country="FRA" birth_year="27/08/1981" licence="020020030182" attending="1" rank="3" ref="68" exported="0"/>
+   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="F" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="1" ref="27" exported="0"/>
+   <player name="AMUZU" first_name="Marvin" club="CHALONS CHAM" rating="1094" gender="M" country="FRA" birth_year="09/02/1991" licence="220510081796" attending="0" rank="2" ref="177" exported="0"/>
+   <player name="abcd" first_name="Lucas" club="DOUAI CE" rating="1242" gender="M" country="FRA" birth_year="16/08/1987" licence="130590250544" attending="1" rank="3" ref="135" exported="0"/>
+   <player name="ALGISI" first_name="Brice" club="LIVRY GARGAN" rating="1536" gender="F" country="FRA" birth_year="17/02/1981" licence="260931670470" attending="1" rank="4" ref="216" exported="0"/>
+   <player name="ADM" first_name="Cedric" club="LAON CE" rating="0" gender="F" country="FRA" birth_year="27/08/1981" licence="020020030182" attending="1" rank="5" ref="68" exported="0"/>
+   <player name="" first_name="" club="" rating="0" gender="F" country="" birth_year="" licence="" attending="0" rank="6" ref="218" exported="0"/>
+   <player name="" first_name="" club="" rating="0" gender="M" country="" birth_year="" licence="" attending="0" rank="7" ref="219" exported="0"/>
   </checkin_stage>
-  <table_stage name="">
-   <match player_A="27"/>
-   <match player_A="27"/>
-   <match player_A="68"/>
-   <match player_A="216"/>
-   <match player_A="68" score_A="10" player_B="216" score_B="2"/>
-   <match player_A="27" score_A="10" player_B="68" score_B="6"/>
-   <match player_A="135"/>
-   <match player_A="135"/>
-   <match player_A="177"/>
-   <match player_B="177"/>
-   <match player_A="135" score_A="1" player_B="177" score_B="10"/>
-   <match player_A="27" score_A="1" player_B="177" score_B="10"/>
-  </table_stage>
-  <pool_allocation_stage name="">
-   <player_list>
-    <player ref="27"/>
-    <player ref="177"/>
-    <player ref="68"/>
-    <player ref="135"/>
-    <player ref="216"/>
-   </player_list>
-  </pool_allocation_stage>
-  <pool_stage name="">
-   <match_list>
-    <match player_A="27" score_A="0" player_B="177" score_B="5"/>
-    <match player_A="68" score_A="5" player_B="177" score_B="1"/>
-    <match player_A="68" score_A="0" player_B="27" score_B="5"/>
-    <match player_A="135" score_A="5" player_B="177" score_B="2"/>
-    <match player_A="135" score_A="5" player_B="27" score_B="3"/>
-    <match player_A="135" score_A="2" player_B="68" score_B="5"/>
-    <match player_A="216" score_A="5" player_B="177" score_B="2"/>
-    <match player_A="216" score_A="5" player_B="27" score_B="1"/>
-    <match player_A="216" score_A="0" player_B="68" score_B="5"/>
-    <match player_A="216" score_A="5" player_B="135" score_B="2"/>
-   </match_list>
-  </pool_stage>
+  <table_stage name=""/>
+  <pool_allocation_stage name=""/>
+  <pool_stage name=""/>
   <general_classification_stage/>
  </schedule>
 </contest>

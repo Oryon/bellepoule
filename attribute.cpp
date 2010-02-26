@@ -19,6 +19,12 @@
 
 #include "attribute.hpp"
 
+typedef enum
+{
+  DISCRETE_XML_IMAGE,
+  DISCRETE_USER_IMAGE
+} DiscreteColumnId;
+
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
@@ -27,12 +33,13 @@ AttributeDesc::AttributeDesc (GType  type,
                               gchar *user_name)
 : Object_c ("AttributeDesc")
 {
-  _type         = type;
-  _xml_name     = xml_name;
-  _user_name    = user_name;
-  _uniqueness   = SINGULAR;
-  _rights       = PUBLIC;
-  _compare_func = NULL;
+  _type           = type;
+  _xml_name       = xml_name;
+  _user_name      = user_name;
+  _uniqueness     = SINGULAR;
+  _rights         = PUBLIC;
+  _discrete_store = NULL;
+  _compare_func   = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -47,6 +54,12 @@ AttributeDesc::~AttributeDesc ()
     attr_desc->Release ();
   }
   g_slist_free (_list);
+
+  if (_discrete_store)
+  {
+    gtk_tree_store_clear (_discrete_store);
+    g_object_unref (_discrete_store);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -54,14 +67,162 @@ AttributeDesc *AttributeDesc::Declare (GType  type,
                                        gchar *xml_name,
                                        gchar *user_name)
 {
-  AttributeDesc *attr = new AttributeDesc (type,
-                                           xml_name,
-                                           user_name);
+  AttributeDesc *attr_desc = new AttributeDesc (type,
+                                                xml_name,
+                                                user_name);
 
   _list = g_slist_append (_list,
-                          attr);
+                          attr_desc);
 
-  return attr;
+  return attr_desc;
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::BindRenderer (GtkCellRenderer *renderer)
+{
+  if (_discrete_store)
+  {
+    g_object_set (renderer,
+                  "model", _discrete_store,
+                  "text-column", DISCRETE_USER_IMAGE,
+                  NULL);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::BindCellLayout (GtkCellLayout   *layout,
+                                    GtkCellRenderer *renderer)
+{
+  if (_discrete_store)
+  {
+    g_object_set (layout,
+                  "model", _discrete_store,
+                  NULL);
+    gtk_cell_layout_set_attributes (layout, renderer,
+                                    "text", DISCRETE_USER_IMAGE, NULL);
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean AttributeDesc::HasDiscreteValue ()
+{
+  return (_discrete_store != NULL);
+}
+
+// --------------------------------------------------------------------------------
+gchar *AttributeDesc::GetXmlImage (gchar *user_image)
+{
+  if (_discrete_store)
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_discrete_store),
+                                                   &iter);
+    while (iter_is_valid)
+    {
+      gchar *current_xml_image;
+      gchar *current_user_image;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_discrete_store), &iter,
+                          DISCRETE_XML_IMAGE, &current_xml_image,
+                          DISCRETE_USER_IMAGE, &current_user_image,
+                          -1);
+      if (strcmp (current_user_image, user_image) == 0)
+      {
+        return g_strdup (current_xml_image);
+      }
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_discrete_store),
+                                                &iter);
+    }
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gchar *AttributeDesc::GetUserImage (GtkTreeIter *iter)
+{
+  if (_discrete_store)
+  {
+    gchar *image;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_discrete_store), iter,
+                        DISCRETE_USER_IMAGE, &image, -1);
+    if (image)
+    {
+      return g_strdup (image);
+    }
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gchar *AttributeDesc::GetUserImage (gchar *xml_image)
+{
+  if (_discrete_store)
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_discrete_store),
+                                                   &iter);
+    while (iter_is_valid)
+    {
+      gchar *current_xml_image;
+      gchar *current_user_image;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_discrete_store), &iter,
+                          DISCRETE_XML_IMAGE, &current_xml_image,
+                          DISCRETE_USER_IMAGE, &current_user_image,
+                          -1);
+      if (strcmp (current_xml_image, xml_image) == 0)
+      {
+        return g_strdup (current_user_image);
+      }
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_discrete_store),
+                                                &iter);
+    }
+  }
+
+  return g_strdup (xml_image);
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
+                                       gchar *first_user_image,
+                                       ...)
+{
+  if (_discrete_store == NULL)
+  {
+    _discrete_store = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+  }
+
+  {
+    va_list  ap;
+    gchar   *xml_image  = first_xml_image;
+    gchar   *user_image = first_user_image;
+
+    va_start (ap, first_user_image);
+    while (xml_image)
+    {
+      GtkTreeIter iter;
+
+      gtk_tree_store_append (_discrete_store, &iter, NULL);
+
+      gtk_tree_store_set (_discrete_store, &iter,
+                          DISCRETE_XML_IMAGE, xml_image,
+                          DISCRETE_USER_IMAGE, user_image, -1);
+
+      xml_image  = va_arg (ap, char *);
+      if (xml_image)
+      {
+        user_image = va_arg (ap, char *);
+      }
+    }
+    va_end (ap);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -71,6 +232,7 @@ void AttributeDesc::CreateList (GSList **list, ...)
   gchar   *name;
 
   *list = g_slist_copy (_list);
+
   va_start (ap, list);
   while (name = va_arg (ap, char *))
   {
@@ -88,7 +250,7 @@ void AttributeDesc::CreateList (GSList **list, ...)
       }
     }
   }
-  va_end(ap);
+  va_end (ap);
 }
 
 // --------------------------------------------------------------------------------
@@ -148,6 +310,10 @@ Attribute_c *Attribute_c::New (gchar *name)
     {
       return new IntAttribute_c (desc);
     }
+    else if (desc->_type == G_TYPE_ENUM)
+    {
+      return new TextAttribute_c (desc);
+    }
   }
   return NULL;
 }
@@ -156,6 +322,12 @@ Attribute_c *Attribute_c::New (gchar *name)
 gchar *Attribute_c::GetName ()
 {
   return _desc->_xml_name;
+}
+
+// --------------------------------------------------------------------------------
+AttributeDesc *Attribute_c::GetDesc ()
+{
+  return _desc;
 }
 
 // --------------------------------------------------------------------------------
@@ -225,7 +397,20 @@ gboolean TextAttribute_c::EntryIsTextBased ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *TextAttribute_c::GetStringImage ()
+gchar *TextAttribute_c::GetXmlImage ()
+{
+  gchar *image = _desc->GetXmlImage (_value);
+
+  if (image == NULL)
+  {
+    image = GetUserImage ();
+  }
+
+  return image;
+}
+
+// --------------------------------------------------------------------------------
+gchar *TextAttribute_c::GetUserImage ()
 {
   return g_strdup (_value);
 }
@@ -281,7 +466,13 @@ gboolean BooleanAttribute_c::EntryIsTextBased ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *BooleanAttribute_c::GetStringImage ()
+gchar *BooleanAttribute_c::GetXmlImage ()
+{
+  return GetUserImage ();
+}
+
+// --------------------------------------------------------------------------------
+gchar *BooleanAttribute_c::GetUserImage ()
 {
   return g_strdup_printf ("%d", _value);
 }
@@ -344,7 +535,13 @@ gboolean IntAttribute_c::EntryIsTextBased ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *IntAttribute_c::GetStringImage ()
+gchar *IntAttribute_c::GetXmlImage ()
+{
+  return GetUserImage ();
+}
+
+// --------------------------------------------------------------------------------
+gchar *IntAttribute_c::GetUserImage ()
 {
   return g_strdup_printf ("%d", _value);
 }

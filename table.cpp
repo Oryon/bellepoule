@@ -714,7 +714,7 @@ gboolean Table::FillInNode (GNode *node,
                                "  ");
             }
             g_string_append (string,
-                             attr->GetStringImage ());
+                             attr->GetUserImage ());
           }
         }
       }
@@ -1265,7 +1265,7 @@ void Table::SetPlayer (Match_c  *to_match,
 
         if (attr)
         {
-          A_name = attr->GetStringImage ();
+          A_name = attr->GetUserImage ();
         }
       }
 
@@ -1275,7 +1275,7 @@ void Table::SetPlayer (Match_c  *to_match,
 
         if (attr)
         {
-          B_name = attr->GetStringImage ();
+          B_name = attr->GetUserImage ();
         }
       }
 
@@ -1378,7 +1378,7 @@ void Table::OnSearchMatch ()
         attr = playerA->GetAttribute ("name");
         gtk_widget_show (_glade->GetWidget ("fencerA_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerA_label")),
-                            attr->GetStringImage ());
+                            attr->GetUserImage ());
 
 
         _quick_score_collector->SetMatch (_quick_score_B,
@@ -1387,7 +1387,7 @@ void Table::OnSearchMatch ()
         attr = playerB->GetAttribute ("name");
         gtk_widget_show (_glade->GetWidget ("fencerB_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerB_label")),
-                            attr->GetStringImage ());
+                            attr->GetUserImage ());
         return;
       }
     }

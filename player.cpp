@@ -73,7 +73,14 @@ void Player_c::SetAttributeValue (gchar *name,
   {
     attr->Retain ();
   }
-  attr->SetValue (value);
+
+  {
+    AttributeDesc *desc       = attr->GetDesc ();
+    gchar         *user_image = desc->GetUserImage (value);
+
+    attr->SetValue (user_image);
+    g_free (user_image);
+  }
 
   SetData (this,
            attr->GetName (),
@@ -130,7 +137,7 @@ void Player_c::Save (xmlTextWriter *xml_writer)
     attr = GetAttribute (desc->_xml_name);
     if (attr)
     {
-      gchar *xml_image = attr->GetStringImage ();
+      gchar *xml_image = attr->GetXmlImage ();
 
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST attr->GetName (),
@@ -182,5 +189,5 @@ gchar *Player_c::GetName ()
 {
   Attribute_c *attr = GetAttribute ("name");
 
-  return attr->GetStringImage ();
+  return attr->GetUserImage ();
 }

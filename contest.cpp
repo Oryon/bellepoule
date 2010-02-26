@@ -388,7 +388,7 @@ void Contest_c::InitInstance ()
   {
     GtkWidget *content_area;
 
-    _properties_dlg = gtk_dialog_new_with_buttons ("Caractéristiques de la compétition",
+    _properties_dlg = gtk_dialog_new_with_buttons ("Propriétés de la compétition",
                                                    NULL,
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_STOCK_OK,

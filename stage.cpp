@@ -446,7 +446,7 @@ void Stage_c::Dump ()
       player = (Player_c *) g_slist_nth_data (_result, i);
       attr = player->GetAttribute ("name");
 
-      g_print ("%d >>> %s\n", i, attr->GetStringImage ());
+      g_print ("%d >>> %s\n", i, attr->GetUserImage ());
     }
   }
 }

@@ -120,8 +120,13 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "points");
     desc->_compare_func = (GCompareFunc) CompareRating;
 
+    //desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "sexe");
+    //desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+
     desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "sexe");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->AddDiscreteValues ("M", "Masculin",
+                             "F", "Féminin", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "nation");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;

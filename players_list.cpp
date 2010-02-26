@@ -358,9 +358,21 @@ void PlayersList::SetColumn (guint          id,
   GtkTreeViewColumn *column;
   GtkCellRenderer   *renderer;
 
-  if (desc->_type != G_TYPE_BOOLEAN)
+  if (   (desc->_type == G_TYPE_STRING)
+      || (desc->_type == G_TYPE_INT))
   {
-    renderer = gtk_cell_renderer_text_new ();
+    if (desc->HasDiscreteValue ())
+    {
+      renderer = gtk_cell_renderer_combo_new ();
+      g_object_set (renderer,
+                    "has-entry", FALSE,
+                    NULL);
+      desc->BindRenderer (renderer);
+    }
+    else
+    {
+      renderer = gtk_cell_renderer_text_new ();
+    }
 
     if (_rights & MODIFIABLE)
     {
@@ -379,7 +391,7 @@ void PlayersList::SetColumn (guint          id,
                        "PlayersList::SensitiveAttribute",
                        (void *) "editable");
   }
-  else
+  else if (desc->_type == G_TYPE_BOOLEAN)
   {
     renderer = gtk_cell_renderer_toggle_new ();
 

@@ -511,7 +511,7 @@ gboolean PoolAllocator_c::OnButtonPress (GooCanvasItem  *item,
           if (attr)
           {
             string = g_string_append (string,
-                                      attr->GetStringImage ());
+                                      attr->GetUserImage ());
             string = g_string_append (string,
                                       "  ");
           }
@@ -871,7 +871,7 @@ void PoolAllocator_c::FillPoolTable (Pool_c *pool)
         if (attr)
         {
           item = PutTextInTable (table,
-                                 attr->GetStringImage (),
+                                 attr->GetUserImage (),
                                  p+1, i);
         }
         else

@@ -53,8 +53,26 @@ class AttributeDesc : public Object_c
 
     static AttributeDesc *GetDesc (gchar *name);
 
+    void BindRenderer (GtkCellRenderer *renderer);
+
+    void BindCellLayout (GtkCellLayout   *layout,
+                         GtkCellRenderer *renderer);
+
+    gboolean HasDiscreteValue ();
+
+    void AddDiscreteValues (gchar *first_xml_image,
+                            gchar *first_user_image,
+                            ...);
+
+    gchar *GetXmlImage (gchar *user_image);
+
+    gchar *GetUserImage (gchar *xml_image);
+
+    gchar *GetUserImage (GtkTreeIter *iter);
+
   private:
     static GSList *_list;
+    GtkTreeStore *_discrete_store;
 
     AttributeDesc (GType  type,
                    gchar *xml_name,
@@ -72,6 +90,8 @@ class Attribute_c : public Object_c
     static gint Compare (Attribute_c *a, Attribute_c *b);
 
   public:
+    AttributeDesc *GetDesc ();
+
     gchar *GetName ();
 
     GType GetType ();
@@ -84,16 +104,17 @@ class Attribute_c : public Object_c
 
     virtual gboolean EntryIsTextBased () = 0;
 
-    virtual gchar *GetStringImage () = 0;
+    virtual gchar *GetUserImage () = 0;
+
+    virtual gchar *GetXmlImage () = 0;
 
     virtual gint CompareWith (Attribute_c *with) = 0;
 
   protected:
+    AttributeDesc *_desc;
+
     Attribute_c (AttributeDesc *desc);
     virtual ~Attribute_c ();
-
-  private:
-    AttributeDesc *_desc;
 };
 
 // --------------------------------------------------------------------------------
@@ -115,7 +136,9 @@ class TextAttribute_c : public Attribute_c
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetStringImage ();
+    gchar *GetUserImage ();
+
+    gchar *GetXmlImage ();
 
     gint CompareWith (Attribute_c *with);
 };
@@ -140,7 +163,9 @@ class BooleanAttribute_c : public Attribute_c
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetStringImage ();
+    gchar *GetUserImage ();
+
+    gchar *GetXmlImage ();
 
     gint CompareWith (Attribute_c *with);
 };
@@ -164,7 +189,9 @@ class IntAttribute_c : public Attribute_c
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetStringImage ();
+    gchar *GetUserImage ();
+
+    gchar *GetXmlImage ();
 
     gint CompareWith (Attribute_c *with);
 };

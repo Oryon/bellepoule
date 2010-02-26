@@ -268,7 +268,7 @@ GString *Pool_c::GetPlayerImage (Player_c *player)
     if (attr)
     {
       image = g_string_append (image,
-                               attr->GetStringImage ());
+                               attr->GetUserImage ());
       image = g_string_append (image,
                                "  ");
     }
