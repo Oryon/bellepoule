@@ -245,10 +245,10 @@ void Checkin::Load (xmlNode *xml_node)
 // --------------------------------------------------------------------------------
 void Checkin::Save (xmlTextWriter *xml_writer)
 {
-  int result;
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST _xml_class_name);
 
-  result = xmlTextWriterStartElement (xml_writer,
-                                      BAD_CAST _xml_class_name);
+  Stage_c::SaveConfiguration (xml_writer);
 
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
@@ -262,7 +262,7 @@ void Checkin::Save (xmlTextWriter *xml_writer)
     }
   }
 
-  result = xmlTextWriterEndElement (xml_writer);
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------

@@ -148,7 +148,11 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     void Save (xmlTextWriter *xml_writer);
 
+    void SaveConfiguration (xmlTextWriter *xml_writer);
+
     void Load (xmlNode *xml_node);
+
+    void LoadConfiguration (xmlNode *xml_node);
 
     void AddFork (GNode *to);
 

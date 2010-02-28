@@ -99,10 +99,10 @@ void GeneralClassification::Display ()
 // --------------------------------------------------------------------------------
 void GeneralClassification::Save (xmlTextWriter *xml_writer)
 {
-  int result;
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST _xml_class_name);
 
-  result = xmlTextWriterStartElement (xml_writer,
-                                      BAD_CAST _xml_class_name);
+  Stage_c::SaveConfiguration (xml_writer);
 
-  result = xmlTextWriterEndElement (xml_writer);
+  xmlTextWriterEndElement (xml_writer);
 }

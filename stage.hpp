@@ -136,6 +136,10 @@ class Stage_c : public virtual Object_c
 
     void LockOnClassification (GtkWidget *w);
 
+    virtual void LoadConfiguration (xmlNode *xml_node);
+
+    virtual void SaveConfiguration (xmlTextWriter *xml_writer);
+
   private:
     static GSList *_stage_base;
 

@@ -31,8 +31,6 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
     PoolSupervisor_c (StageClass *stage_class);
 
-    void Manage (Pool_c *pool);
-
     void OnPrintPoolToolbuttonClicked ();
 
     void OnPoolSelected (gint index);
@@ -44,6 +42,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
   private:
     void Display ();
     void Garnish ();
+    void LoadConfiguration (xmlNode *xml_node);
     void Load (xmlNode *xml_node);
     void Load (xmlNode *xml_node,
                guint    current_pool_index);
@@ -52,6 +51,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void OnUnLocked ();
     void Wipe ();
     void RetrievePools ();
+    void Manage (Pool_c *pool);
 
   private:
     void OnPoolSelected (Pool_c *pool);
@@ -78,6 +78,8 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void OnPlugged ();
     void OnUnPlugged ();
     GSList *GetCurrentClassification ();
+
+    void SaveConfiguration (xmlTextWriter *xml_writer);
 
     static void OnPoolStatusUpdated (Pool_c           *pool,
                                      PoolSupervisor_c *ps);

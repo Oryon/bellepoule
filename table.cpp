@@ -318,8 +318,25 @@ void Table::Garnish ()
 }
 
 // --------------------------------------------------------------------------------
+void Table::LoadConfiguration (xmlNode *xml_node)
+{
+  Stage_c::LoadConfiguration (xml_node);
+
+  {
+    gchar *attr = (gchar *) xmlGetProp (xml_node,
+                                        BAD_CAST "max_score");
+    if (attr)
+    {
+      _max_score = (guint) atoi (attr);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Table::Load (xmlNode *xml_node)
 {
+  LoadConfiguration (xml_node);
+
   if (_attendees)
   {
     CreateTree ();
@@ -345,13 +362,22 @@ void Table::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
+void Table::SaveConfiguration (xmlTextWriter *xml_writer)
+{
+  Stage_c::SaveConfiguration (xml_writer);
+
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "max_score",
+                                     "%d", _max_score);
+}
+
+// --------------------------------------------------------------------------------
 void Table::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "name",
-                                     "%s", GetName ());
+
+  SaveConfiguration (xml_writer);
 
   if (_tree_root)
   {

@@ -580,10 +580,6 @@ void Schedule_c::Load (xmlDoc *doc)
 
       if (stage)
       {
-        gchar *attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[i],
-                                            BAD_CAST "name");
-        stage->SetName (attr);
-
         AddStage (stage);
 
         if (i <= current_stage_index)

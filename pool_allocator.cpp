@@ -223,9 +223,9 @@ void PoolAllocator_c::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "name",
-                                     "%s", GetName ());
+
+  Stage_c::SaveConfiguration (xml_writer);
+
   if (_pools_list)
   {
     for (guint i = 0; i < g_slist_length (_pools_list); i++)

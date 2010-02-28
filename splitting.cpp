@@ -104,9 +104,9 @@ void Splitting::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "name",
-                                     "%s", GetName ());
+
+  Stage_c::SaveConfiguration (xml_writer);
+
   xmlTextWriterEndElement (xml_writer);
 }
 

@@ -434,6 +434,22 @@ void Stage_c::SetScoreStuffingPolicy (gboolean allowed)
 }
 
 // --------------------------------------------------------------------------------
+void Stage_c::LoadConfiguration (xmlNode *xml_node)
+{
+  gchar *attr = (gchar *) xmlGetProp (xml_node,
+                                      BAD_CAST "name");
+  SetName (attr);
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::SaveConfiguration (xmlTextWriter *xml_writer)
+{
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "name",
+                                     "%s", GetName ());
+}
+
+// --------------------------------------------------------------------------------
 void Stage_c::Dump ()
 {
   if (_result)
