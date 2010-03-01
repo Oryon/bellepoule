@@ -19,6 +19,7 @@
 
 #include <gtk/gtk.h>
 
+#include "data.hpp"
 #include "stage.hpp"
 #include "canvas_module.hpp"
 #include "pool.hpp"
@@ -34,6 +35,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
 
     guint   GetNbPools ();
     Pool_c *GetPool    (guint index);
+    Data   *GetMaxScore ();
 
   public:
     static const gchar *_class_name;
@@ -69,6 +71,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     Player_c      *_floating_player;
     GooCanvasItem *_main_table;
     GtkListStore  *_combobox_store;
+    Data          *_max_score;
 
     void FillCombobox ();
     void CreatePools ();

@@ -20,12 +20,12 @@
 #include "score.hpp"
 
 // --------------------------------------------------------------------------------
-Score_c::Score_c  (guint max_score)
+Score_c::Score_c  (Data *max)
 : Object_c ("Score_c")
 {
   _score     = 0;
   _is_known  = false;
-  _max_score = max_score;
+  _max       = max;
 }
 
 // --------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ gchar *Score_c::GetImage ()
 
   if (_is_known)
   {
-    if (_score == _max_score)
+    if (_score == _max->_value)
     {
       image = g_strdup_printf ("V");
     }
@@ -93,7 +93,7 @@ void Score_c::Set (gint score)
 gboolean Score_c::IsValid ()
 {
   if (   IsKnown ()
-      && (_score > _max_score))
+      && (_score > _max->_value))
   {
     return false;
   }
@@ -113,17 +113,11 @@ gboolean Score_c::IsConsistentWith (Score_c *with)
   {
     return false;
   }
-  else if (   (Get () >= _max_score)
-           && (with->Get () >= _max_score))
+  else if (   (Get () >= _max->_value)
+           && (with->Get () >= _max->_value))
   {
     return false;
   }
 
   return true;
-}
-
-// --------------------------------------------------------------------------------
-void Score_c::SetMaxScore (guint max_score)
-{
-  _max_score = max_score;
 }

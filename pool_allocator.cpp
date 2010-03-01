@@ -54,6 +54,9 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
   _drag_text       = NULL;
   _main_table      = NULL;
 
+  _max_score = new Data ("max_score",
+                         5);
+
   _combobox_store = GTK_LIST_STORE (_glade->GetObject ("combo_liststore"));
 
   // Sensitive widgets
@@ -88,6 +91,7 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 PoolAllocator_c::~PoolAllocator_c ()
 {
+  _max_score->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -174,7 +178,8 @@ void PoolAllocator_c::Load (xmlNode *xml_node)
       {
         guint number = g_slist_length (_pools_list);
 
-        current_pool = new Pool_c (number+1);
+        current_pool = new Pool_c (_max_score,
+                                   number+1);
 
         _pools_list = g_slist_append (_pools_list,
                                       current_pool);
@@ -351,7 +356,8 @@ void PoolAllocator_c::CreatePools ()
   pool_table = (Pool_c **) g_malloc (nb_pool * sizeof (Pool_c *));
   for (guint i = 0; i < nb_pool; i++)
   {
-    pool_table[i] = new Pool_c (i+1);
+    pool_table[i] = new Pool_c (_max_score,
+                                i+1);
     _pools_list = g_slist_append (_pools_list,
                                   pool_table[i]);
   }
@@ -995,6 +1001,12 @@ gboolean PoolAllocator_c::IsOver ()
     }
   }
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+Data *PoolAllocator_c::GetMaxScore ()
+{
+  return _max_score;
 }
 
 // --------------------------------------------------------------------------------

@@ -41,7 +41,7 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
 {
   _pool_allocator = NULL;
   _displayed_pool = NULL;
-  _max_score      = 5;
+  _max_score      = NULL;
 
   _pool_liststore = GTK_LIST_STORE (_glade->GetObject ("pool_liststore"));
 
@@ -79,9 +79,6 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
 PoolSupervisor_c::~PoolSupervisor_c ()
 {
   Object_c::TryToRelease (_pool_allocator);
-
-  gtk_list_store_clear (_pool_liststore);
-  g_object_unref (_pool_liststore);
 }
 
 // --------------------------------------------------------------------------------
@@ -140,13 +137,9 @@ void PoolSupervisor_c::LoadConfiguration (xmlNode *xml_node)
 {
   Stage_c::LoadConfiguration (xml_node);
 
+  if (_max_score)
   {
-    gchar *attr = (gchar *) xmlGetProp (xml_node,
-                                        BAD_CAST "max_score");
-    if (attr)
-    {
-      _max_score = (guint) atoi (attr);
-    }
+    _max_score->Load (xml_node);
   }
 }
 
@@ -173,7 +166,6 @@ void PoolSupervisor_c::Load (xmlNode *xml_node,
 
         current_pool->Load (n->children,
                             _attendees);
-        current_pool->SetMaxScore (_max_score);
 
         current_pool_index++;
       }
@@ -197,9 +189,10 @@ void PoolSupervisor_c::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   Stage_c::SaveConfiguration (xml_writer);
 
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "max_score",
-                                     "%d", _max_score);
+  if (_max_score)
+  {
+    _max_score->Save (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -303,7 +296,6 @@ void PoolSupervisor_c::Manage (Pool_c *pool)
   pool->SetRandSeed (0);
   pool->SetDataOwner (this);
   pool->SetFilter (_filter);
-  pool->SetMaxScore (_max_score);
   pool->SetStatusCbk ((Pool_c::StatusCbk) OnPoolStatusUpdated,
                       this);
 }
@@ -430,6 +422,8 @@ void PoolSupervisor_c::RetrievePools ()
   {
     _pool_allocator->Retain ();
 
+    _max_score = _pool_allocator->GetMaxScore ();
+
     for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
     {
       Manage (_pool_allocator->GetPool (p));
@@ -458,19 +452,9 @@ void PoolSupervisor_c::ApplyConfig ()
 
       if (str)
       {
-        _max_score = atoi (str);
-
-        if (_pool_allocator)
-        {
-          for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-          {
-            Pool_c *pool;
-
-            pool = _pool_allocator->GetPool (p);
-            pool->SetMaxScore (_max_score);
-          }
-        }
+        _max_score->_value = atoi (str);
       }
+
       if (_displayed_pool)
       {
         OnPoolSelected (_displayed_pool);
@@ -500,7 +484,7 @@ Stage_c *PoolSupervisor_c::GetInputProvider ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::FillInConfig ()
 {
-  gchar *text = g_strdup_printf ("%d", _max_score);
+  gchar *text = g_strdup_printf ("%d", _max_score->_value);
 
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
                       text);

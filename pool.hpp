@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
+#include "data.hpp"
 #include "stage.hpp"
 #include "canvas_module.hpp"
 #include "score_collector.hpp"
@@ -30,7 +31,8 @@ class Pool_c : public CanvasModule_c
     typedef void (*StatusCbk) (Pool_c *pool,
                                void   *data);
 
-    Pool_c (guint number);
+    Pool_c (Data  *max_score,
+            guint  number);
 
     void  AddPlayer    (Player_c *player);
     void  RemovePlayer (Player_c *player);
@@ -40,7 +42,6 @@ class Pool_c : public CanvasModule_c
     void  SortPlayers  ();
     void  Lock         ();
     void  UnLock       ();
-    void  SetMaxScore  (guint max_score);
     void  SetStatusCbk (StatusCbk  cbk,
                         void      *data);
 
@@ -68,7 +69,7 @@ class Pool_c : public CanvasModule_c
                                gboolean  with_full_random = FALSE);
 
   private:
-    guint           _max_score;
+    Data           *_max_score;
     guint           _rand_seed;
     Object_c       *_data_owner;
     guint           _number;

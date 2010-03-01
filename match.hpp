@@ -22,17 +22,18 @@
 #include <goocanvas.h>
 
 #include "object.hpp"
+#include "data.hpp"
 #include "score.hpp"
 
 class Player_c;
 class Match_c : public Object_c
 {
   public:
-    Match_c  (guint max_score);
+    Match_c  (Data *max_score);
 
     Match_c  (Player_c *A,
               Player_c *B,
-              guint     max_score);
+              Data     *max_score);
 
     Player_c *GetPlayerA ();
     Player_c *GetPlayerB ();
@@ -55,10 +56,8 @@ class Match_c : public Object_c
 
     void CleanScore ();
 
-    void SetMaxScore (guint max_score);
-
   private:
-    guint     _max_score;
+    Data     *_max_score;
     Player_c *_A;
     Player_c *_B;
     gboolean  _A_is_known;

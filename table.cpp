@@ -58,7 +58,8 @@ Table::Table (StageClass *stage_class)
 
   _score_collector = NULL;
 
-  _max_score = 10;
+  _max_score = new Data ("max_score",
+                         10);
 
   {
     AddSensitiveWidget (_glade->GetWidget ("input_toolbutton"));
@@ -123,9 +124,12 @@ Table::Table (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
-  g_object_unref (_from_table_liststore);
-  g_object_unref (_quick_search_treestore);
-  g_object_unref (_quick_search_filter);
+  DeleteTree ();
+
+  Object_c::TryToRelease (_quick_score_collector);
+  Object_c::TryToRelease (_score_collector);
+
+  _max_score->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -322,13 +326,9 @@ void Table::LoadConfiguration (xmlNode *xml_node)
 {
   Stage_c::LoadConfiguration (xml_node);
 
+  if (_max_score)
   {
-    gchar *attr = (gchar *) xmlGetProp (xml_node,
-                                        BAD_CAST "max_score");
-    if (attr)
-    {
-      _max_score = (guint) atoi (attr);
-    }
+    _max_score->Load (xml_node);
   }
 }
 
@@ -366,9 +366,10 @@ void Table::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   Stage_c::SaveConfiguration (xml_writer);
 
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "max_score",
-                                     "%d", _max_score);
+  if (_max_score)
+  {
+    _max_score->Save (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -405,12 +406,6 @@ void Table::OnNewScore (ScoreCollector *score_collector,
   FillInNode (node,
               table);
 
-  if (node->parent)
-  {
-    FillInNode (node->parent,
-                table);
-  }
-
   if (score_collector == table->_quick_score_collector)
   {
     table->_score_collector->Refresh (match);
@@ -418,6 +413,12 @@ void Table::OnNewScore (ScoreCollector *score_collector,
   else
   {
     table->_quick_score_collector->Refresh (match);
+  }
+
+  if (node->parent)
+  {
+    FillInNode (node->parent,
+                table);
   }
 
   table->RefreshLevelStatus ();
@@ -808,25 +809,28 @@ gboolean Table::FillInNode (GNode *node,
           SetTableItemAttribute (score_text, "y-align", 0.5);
         }
 
-        if (   parent_data->_match->GetPlayerA ()
-            && parent_data->_match->GetPlayerB ())
         {
+          Player_c *A = parent_data->_match->GetPlayerA ();
+          Player_c *B = parent_data->_match->GetPlayerB ();
+
+          parent_data->_match->SetData (winner, "collecting_point", goo_rect);
+
           table->_score_collector->AddCollectingPoint (goo_rect,
                                                        score_text,
                                                        parent_data->_match,
                                                        winner);
           table->_score_collector->AddCollectingTrigger (data->_player_item);
 
-          if (position == 0)
+          if (A && B)
           {
-            parent_data->_match->SetData (table, "player_A_rect", goo_rect);
-          }
-          else
-          {
-            table->_score_collector->SetNextCollectingPoint (goo_rect,
-                                                             (GooCanvasItem *) parent_data->_match->GetData (table, "player_A_rect"));
-            table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (table, "player_A_rect"),
-                                                             goo_rect);
+            table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (A,
+                                                                                                             "collecting_point"),
+                                                             (GooCanvasItem *) parent_data->_match->GetData (B,
+                                                                                                             "collecting_point"));
+            table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (B,
+                                                                                                             "collecting_point"),
+                                                             (GooCanvasItem *) parent_data->_match->GetData (A,
+                                                                                                             "collecting_point"));
           }
         }
       }
@@ -1057,12 +1061,15 @@ void Table::Wipe ()
                                            "SkyBlue");
   }
 
-  g_node_traverse (_tree_root,
-                   G_POST_ORDER,
-                   G_TRAVERSE_ALL,
-                   -1,
-                   (GNodeTraverseFunc) DeleteCanvasTable,
-                   this);
+  if (_tree_root)
+  {
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) DeleteCanvasTable,
+                     this);
+  }
 
   CanvasModule_c::Wipe ();
   _main_table = NULL;
@@ -1162,7 +1169,7 @@ void Table::OnAttrListUpdated ()
 // --------------------------------------------------------------------------------
 void Table::FillInConfig ()
 {
-  gchar *text = g_strdup_printf ("%d", _max_score);
+  gchar *text = g_strdup_printf ("%d", _max_score->_value);
 
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
                       text);
@@ -1191,7 +1198,8 @@ void Table::ApplyConfig ()
 
       if (str)
       {
-        _max_score = atoi (str);
+        _max_score->_value = atoi (str);
+        OnAttrListUpdated ();
       }
     }
   }
@@ -1223,16 +1231,16 @@ gboolean Table::Stuff (GNode *node,
 
       if (g_random_boolean ())
       {
-        data->_match->SetScore (A, table->_max_score);
+        data->_match->SetScore (A, table->_max_score->_value);
         data->_match->SetScore (B, g_random_int_range (0,
-                                                       table->_max_score));
+                                                       table->_max_score->_value));
         winner = A;
       }
       else
       {
         data->_match->SetScore (A, g_random_int_range (0,
-                                                       table->_max_score));
-        data->_match->SetScore (B, table->_max_score);
+                                                       table->_max_score->_value));
+        data->_match->SetScore (B, table->_max_score->_value);
         winner = B;
       }
 

@@ -26,7 +26,8 @@
 #include "pool.hpp"
 
 // --------------------------------------------------------------------------------
-Pool_c::Pool_c (guint number)
+Pool_c::Pool_c (Data  *max_score,
+                guint  number)
   : CanvasModule_c ("pool.glade",
                     "canvas_scrolled_window")
 {
@@ -35,12 +36,12 @@ Pool_c::Pool_c (guint number)
   _match_list  = NULL;
   _rand_seed   = 0;
   _data_owner  = NULL;
-  _max_score   = 5;
   _is_over     = FALSE;
   _has_error   = FALSE;
   _title_table = NULL;
   _status_item = NULL;
   _locked      = FALSE;
+  _max_score   = max_score;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -85,17 +86,17 @@ void Pool_c::Stuff ()
     A     = match->GetPlayerA ();
     B     = match->GetPlayerB ();
     score = g_random_int_range (0,
-                                _max_score);
+                                _max_score->_value);
 
     if (g_random_boolean ())
     {
-      match->SetScore (A, _max_score);
+      match->SetScore (A, _max_score->_value);
       match->SetScore (B, score);
     }
     else
     {
       match->SetScore (A, score);
-      match->SetScore (B, _max_score);
+      match->SetScore (B, _max_score->_value);
     }
   }
 
@@ -113,19 +114,6 @@ void Pool_c::SetStatusCbk (StatusCbk  cbk,
   {
     _status_cbk (this,
                  _status_cbk_data);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Pool_c::SetMaxScore (guint32 max_score)
-{
-  _max_score = max_score;
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
-  {
-    Match_c *match;
-
-    match = (Match_c *) g_slist_nth_data (_match_list, i);
-    match->SetMaxScore (_max_score);
   }
 }
 
@@ -634,7 +622,7 @@ void Pool_c::OnPlugged ()
                                       0);
           g_string_free (image,
                          TRUE);
-          for (guint i = 0; i < _max_score; i++)
+          for (guint i = 0; i < _max_score->_value; i++)
           {
             GooCanvasItem *rect = goo_canvas_rect_new (match_table,
                                                        0.0, 0.0,
@@ -659,7 +647,7 @@ void Pool_c::OnPlugged ()
           g_string_free (image,
                          TRUE);
 
-          for (guint i = 0; i < _max_score; i++)
+          for (guint i = 0; i < _max_score->_value; i++)
           {
             GooCanvasItem *rect = goo_canvas_rect_new (match_table,
                                                        0.0, 0.0,

@@ -58,7 +58,6 @@ AttributeDesc::~AttributeDesc ()
 
   if (_discrete_store)
   {
-    gtk_tree_store_clear (_discrete_store);
     g_object_unref (_discrete_store);
   }
 }

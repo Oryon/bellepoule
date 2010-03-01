@@ -107,9 +107,6 @@ Schedule_c::~Schedule_c ()
   g_list_free (_stage_list);
 
   gtk_widget_destroy (_formula_dlg);
-
-  gtk_list_store_clear (_list_store);
-  g_object_unref (_list_store);
 }
 
 // --------------------------------------------------------------------------------

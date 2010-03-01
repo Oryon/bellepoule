@@ -22,7 +22,7 @@
 #include "match.hpp"
 
 // --------------------------------------------------------------------------------
-Match_c::Match_c (guint max_score)
+Match_c::Match_c (Data *max_score)
 : Object_c ("Match_c")
 {
   _max_score = max_score;
@@ -40,7 +40,7 @@ Match_c::Match_c (guint max_score)
 // --------------------------------------------------------------------------------
 Match_c::Match_c  (Player_c *A,
                    Player_c *B,
-                   guint     max_score)
+                   Data     *max_score)
 : Object_c ("Match_c")
 {
   _max_score = max_score;
@@ -74,15 +74,6 @@ void Match_c::SetPlayerB (Player_c *player)
 {
   _B          = player;
   _B_is_known = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-void Match_c::SetMaxScore (guint max_score)
-{
-  _max_score = max_score;
-
-  _A_score->SetMaxScore (max_score);
-  _B_score->SetMaxScore (max_score);
 }
 
 // --------------------------------------------------------------------------------
@@ -203,12 +194,12 @@ gboolean Match_c::SetScore (Player_c *player,
         && (g_ascii_toupper (score[0]) == 'V'))
     {
       SetScore (player,
-                _max_score);
+                _max_score->_value);
       result = TRUE;
     }
     else if (ScoreIsNumber (score))
     {
-      gchar *max_str        = g_strdup_printf ("%d", _max_score);
+      gchar *max_str        = g_strdup_printf ("%d", _max_score->_value);
       gchar *one_digit_more = g_strdup_printf ("%s0", score);
 
       SetScore (player,
@@ -217,7 +208,7 @@ gboolean Match_c::SetScore (Player_c *player,
       {
         result = TRUE;
       }
-      else if ((guint) atoi (one_digit_more) > _max_score)
+      else if ((guint) atoi (one_digit_more) > _max_score->_value)
       {
         result = TRUE;
       }

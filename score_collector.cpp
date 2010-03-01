@@ -181,7 +181,7 @@ void ScoreCollector::SetNextCollectingPoint (GooCanvasItem *to,
 {
   if (to)
   {
-    g_object_set_data (G_OBJECT (to), "next_point",  next);
+    g_object_set_data (G_OBJECT (to), "next_point", next);
   }
 }
 

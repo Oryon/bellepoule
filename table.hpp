@@ -19,6 +19,7 @@
 
 #include <gtk/gtk.h>
 
+#include "data.hpp"
 #include "canvas_module.hpp"
 #include "match.hpp"
 #include "score_collector.hpp"
@@ -83,7 +84,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     GooCanvasItem      *_main_table;
     GooCanvasItem      *_quick_score_A;
     GooCanvasItem      *_quick_score_B;
-    guint               _max_score;
+    Data               *_max_score;
     ScoreCollector     *_score_collector;
     ScoreCollector     *_quick_score_collector;
     xmlTextWriter      *_xml_writer;

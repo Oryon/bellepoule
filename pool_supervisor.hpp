@@ -19,6 +19,7 @@
 
 #include <gtk/gtk.h>
 
+#include "data.hpp"
 #include "module.hpp"
 #include "pool.hpp"
 
@@ -70,7 +71,7 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     GtkListStore    *_pool_liststore;
     PoolAllocator_c *_pool_allocator;
     Pool_c          *_displayed_pool;
-    guint            _max_score;
+    Data            *_max_score;
 
     ~PoolSupervisor_c ();
 

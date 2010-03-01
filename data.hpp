@@ -14,36 +14,30 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef score_hpp
-#define score_hpp
+#ifndef data_hpp
+#define data_hpp
+
+#include <gtk/gtk.h>
+#include <libxml/xmlwriter.h>
 
 #include "object.hpp"
-#include "data.hpp"
 
-class Score_c : public Object_c
+class Data : public Object_c
 {
   public:
-    Score_c  (Data *max);
-    ~Score_c ();
+    guint _value;
 
-    gboolean IsKnown ();
+    Data (gchar *xml_name,
+          guint  default_value);
 
-    guint Get ();
+    void Save (xmlTextWriter *xml_writer);
 
-    gchar *GetImage ();
-
-    void Set (gint score);
-
-    void Clean ();
-
-    gboolean IsValid ();
-
-    gboolean IsConsistentWith (Score_c *with);
+    void Load (xmlNode *xml_node);
 
   private:
-    gboolean   _is_known;
-    Data      *_max;
-    guint      _score;
+    gchar *_xml_name;
+
+    virtual ~Data ();
 };
 
 #endif
