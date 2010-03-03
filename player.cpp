@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "attribute.hpp"
 
@@ -28,11 +29,17 @@ Player_c::Player_c ()
 {
   _ref = _next_ref;
   _next_ref++;
+
+  _clients = NULL;
 }
 
 // --------------------------------------------------------------------------------
 Player_c::~Player_c ()
 {
+  g_slist_foreach (_clients,
+                   (GFunc) Object_c::TryToRelease,
+                   NULL);
+  g_slist_free (_clients);
 }
 
 // --------------------------------------------------------------------------------
@@ -60,6 +67,41 @@ Attribute_c *Player_c::GetAttribute (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
+void Player_c::SetChangeCbk (gchar    *attr_name,
+                             OnChange  change_cbk,
+                             void     *data)
+{
+  Client *client = new Client;
+
+  client->_attr_name  = attr_name;
+  client->_change_cbk = change_cbk;
+  client->_data       = data;
+
+  _clients = g_slist_append (_clients,
+                             client);
+}
+
+// --------------------------------------------------------------------------------
+void Player_c::NotifyChange (Attribute_c *attr)
+{
+  GSList *list = _clients;
+
+  while (list)
+  {
+    Client *client;
+
+    client = (Client *) list->data;
+    if (strcmp (client->_attr_name, attr->GetName ()) == 0)
+    {
+      client->_change_cbk (this,
+                           attr,
+                           client->_data);
+    }
+    list = g_slist_next (list);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Player_c::SetAttributeValue (gchar *name,
                                   gchar *value)
 {
@@ -68,10 +110,11 @@ void Player_c::SetAttributeValue (gchar *name,
   if (attr == NULL)
   {
     attr = Attribute_c::New (name);
-  }
-  else
-  {
-    attr->Retain ();
+
+    SetData (this,
+             attr->GetName (),
+             attr,
+             (GDestroyNotify) Object_c::TryToRelease);
   }
 
   {
@@ -82,10 +125,7 @@ void Player_c::SetAttributeValue (gchar *name,
     g_free (user_image);
   }
 
-  SetData (this,
-           attr->GetName (),
-           attr,
-           (GDestroyNotify) Object_c::TryToRelease);
+  NotifyChange (attr);
 }
 
 // --------------------------------------------------------------------------------
@@ -97,17 +137,19 @@ void Player_c::SetAttributeValue (gchar *name,
   if (attr == NULL)
   {
     attr = Attribute_c::New (name);
-  }
-  else
-  {
-    attr->Retain ();
-  }
-  attr->SetValue (value);
 
-  SetData (this,
-           attr->GetName (),
-           attr,
-           (GDestroyNotify) Object_c::TryToRelease);
+    SetData (this,
+             attr->GetName (),
+             attr,
+             (GDestroyNotify) Object_c::TryToRelease);
+  }
+  else if ((guint) attr->GetValue () == value)
+  {
+    return;
+  }
+
+  attr->SetValue (value);
+  NotifyChange (attr);
 }
 
 // --------------------------------------------------------------------------------

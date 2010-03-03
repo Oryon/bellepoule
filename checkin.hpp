@@ -21,6 +21,7 @@
 #include <libxml/xmlwriter.h>
 #include <libxml/xpath.h>
 
+#include "data.hpp"
 #include "module.hpp"
 #include "attribute.hpp"
 #include "stage.hpp"
@@ -50,6 +51,8 @@ class Checkin : public virtual Stage_c, public PlayersList
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
+    guint _attendings;
+
     static Stage_c *CreateInstance (StageClass *stage_class);
 
     void Load (xmlNode *xml_node);
@@ -68,7 +71,17 @@ class Checkin : public virtual Stage_c, public PlayersList
 
     void UpdateRanking ();
 
+    void MonitorAttending (Player_c *player);
+
+    void RefreshAttendingDisplay ();
+
     GSList *GetCurrentClassification ();
+
+    void OnPlayerRemoved (Player_c *player);
+
+    static void OnAttendingChanged (Player_c    *player,
+                                    Attribute_c *attr,
+                                    Checkin     *checkin);
 
     static gboolean PresentPlayerFilter (Player_c *player);
 

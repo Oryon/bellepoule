@@ -45,6 +45,7 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                  NULL,
                  NULL,
                  SW_SHOWNORMAL);
+
   //gtk_show_uri (NULL,
                 //link,
                 //GDK_CURRENT_TIME,
@@ -82,9 +83,21 @@ static gint CompareRating (Attribute_c *attr_a,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  libintl_bindtextdomain ("BellePoule", "./resources/translations");
-  libintl_bind_textdomain_codeset ("BellePoule", "UTF-8");
-  textdomain ("BellePoule");
+  gchar *path = g_path_get_dirname (argv[0]);
+
+  {
+#ifdef DEBUG
+    gchar *translation_path = g_strdup_printf ("%s/../../resources/translations", path);
+#else
+    gchar *translation_path = g_strdup_printf ("%s/resources/translations", path);
+#endif
+
+    libintl_bindtextdomain ("BellePoule", translation_path);
+    libintl_bind_textdomain_codeset ("BellePoule", "UTF-8");
+    textdomain ("BellePoule");
+
+    g_free (translation_path);
+  }
 
   // Init
   {
@@ -101,7 +114,7 @@ int main (int argc, char **argv)
     Splitting::Init             ();
   }
 
-  Glade_c::SetPath (g_path_get_dirname (argv[0]));
+  Glade_c::SetPath (path);
 
   gtk_about_dialog_set_url_hook (AboutDialogActivateLinkFunc,
                                  NULL,
@@ -157,7 +170,10 @@ int main (int argc, char **argv)
 
     if (argc > 1)
     {
-      tournament = new Tournament (g_strdup (argv[1]));
+      for (gint i = 1; i <= argc; i++)
+      {
+        tournament = new Tournament (g_strdup (argv[i]));
+      }
     }
     else
     {

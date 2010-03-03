@@ -66,6 +66,8 @@ Checkin::Checkin (StageClass *stage_class)
     filter->Release ();
   }
 
+  _attendings = 0;
+
   {
     GSList *filter_list = _filter->GetAttrList ();
 
@@ -228,12 +230,15 @@ void Checkin::Load (xmlNode *xml_node)
         Player_c *player = new Player_c;
 
         player->Load (n);
+
+        MonitorAttending (player);
         Add (player);
 
         player->Release ();
       }
       else if (strcmp ((char *) n->name, _xml_class_name) != 0)
       {
+        RefreshAttendingDisplay ();
         UpdateRanking ();
         return;
       }
@@ -531,6 +536,8 @@ void Checkin::ImportFFF (gchar *file)
         {
           player->SetAttributeValue ("rating", (guint) 0);
         }
+
+        MonitorAttending (player);
         Add (player);
         player->Release ();
 
@@ -539,6 +546,7 @@ void Checkin::ImportFFF (gchar *file)
     }
 
     g_strfreev (lines);
+    RefreshAttendingDisplay ();
   }
 }
 
@@ -587,14 +595,17 @@ void Checkin::ImportCSV (gchar *file)
         {
           Player_c *player = new Player_c;
 
+          player->SetAttributeValue ("attending",  (guint) FALSE);
           player->SetAttributeValue ("name",       tokens[i]);
           player->SetAttributeValue ("first_name", tokens[i+1]);
           player->SetAttributeValue ("exported",   (guint) FALSE);
 
+          MonitorAttending (player);
           Add (player);
           player->Release ();
         }
         g_strfreev (tokens);
+        RefreshAttendingDisplay ();
       }
     }
   }
@@ -685,9 +696,73 @@ void Checkin::on_add_button_clicked ()
   gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
                                                         0));
 
+  MonitorAttending (player);
   Add (player);
   player->Release ();
   UpdateRanking ();
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::MonitorAttending (Player_c *player)
+{
+  Attribute_c *attr = player->GetAttribute ("attending");
+
+  if (attr && ((gboolean) attr->GetValue () == TRUE))
+  {
+    _attendings++;
+  }
+
+  player->SetChangeCbk ("attending",
+                        (Player_c::OnChange) OnAttendingChanged,
+                        this);
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::OnPlayerRemoved (Player_c *player)
+{
+  Attribute_c *attr = player->GetAttribute ("attending");
+
+  if (attr && ((gboolean) attr->GetValue () == TRUE))
+  {
+    _attendings--;
+  }
+
+  RefreshAttendingDisplay ();
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::OnAttendingChanged (Player_c    *player,
+                                  Attribute_c *attr,
+                                  Checkin     *checkin)
+{
+  guint value = (guint) attr->GetValue ();
+
+  if (value == 1)
+  {
+    checkin->_attendings++;
+  }
+  else if (value == 0)
+  {
+    checkin->_attendings--;
+  }
+
+  checkin->RefreshAttendingDisplay ();
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::RefreshAttendingDisplay ()
+{
+  gchar *text;
+
+  text = g_strdup_printf ("%d", _attendings);
+  gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("attending_label")),
+                      text);
+  g_free (text);
+
+  text = g_strdup_printf ("%d", g_slist_length (_player_list) - _attendings);
+  gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("absent_label")),
+                      text);
+  g_free (text);
 }
 
 // --------------------------------------------------------------------------------

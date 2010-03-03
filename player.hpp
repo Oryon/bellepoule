@@ -27,6 +27,11 @@ class Match_c;
 class Player_c : public Object_c
 {
   public:
+    typedef void (*OnChange) (Player_c    *player,
+                              Attribute_c *attr,
+                              void        *data);
+
+  public:
      Player_c ();
 
     Attribute_c *GetAttribute (gchar *name);
@@ -45,6 +50,10 @@ class Player_c : public Object_c
 
     gchar *GetName ();
 
+    void SetChangeCbk (gchar    *attr_name,
+                       OnChange  change_cbk,
+                       void     *data);
+
     static gint CompareWithRef (Player_c *player,
                                 guint     ref);
 
@@ -53,6 +62,15 @@ class Player_c : public Object_c
                          gchar    *attr_name);
 
   private:
+    struct Client : public Object_c
+    {
+      gchar    *_attr_name;
+      OnChange  _change_cbk;
+      void     *_data;
+    };
+
+    GSList *_clients;
+
     static guint   _next_ref;
     static GSList *_attributes_model;
 
@@ -60,6 +78,8 @@ class Player_c : public Object_c
     guint   _ref;
 
     ~Player_c ();
+
+    void NotifyChange (Attribute_c *attr);
 };
 
 #endif

@@ -1,72 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contest title="Challenge du futur" day="31" month="1" year="2010" weapon="E" gender="FM" category="C" organizer="CS Betton" web_site="http://betton.escrime.free.fr" score_stuffing="1">
- <schedule current_stage="3">
+ <schedule current_stage="0">
   <checkin_stage name="">
-   <player name="BROUARD" first_name="Gurvan" club="BETTON CP" rating="1003" gender="M" ligue="" country="FRA" birth_year="31/01/1988" licence="010037623035" attending="1" rank="2" ref="14" exported="0"/>
-   <player name="ROLLIN" first_name="Benjamin" club="DINARD LAMES" rating="1030" gender="M" ligue="" country="FRA" birth_year="13/05/1988" licence="033054523035" attending="1" rank="1" ref="29" exported="0"/>
-   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="M" ligue="" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="4" ref="27" exported="0"/>
-   <player name="BOC HO" first_name="Maxime" club="DINARD LAMES" rating="1053" gender="M" ligue="" country="FRA" birth_year="22/08/1988" licence="033057623035" attending="1" rank="3" ref="33" exported="0"/>
-   <player name="JACOPIN" first_name="Tangui" club="BETTON CP" rating="1089" gender="M" ligue="" country="FRA" birth_year="19/09/1988" licence="010023623035" attending="0" rank="5" ref="11" exported="0"/>
-   <player name="BOTUHA" first_name="Tom" club="DINARD LAMES" rating="1103" gender="M" ligue="" country="FRA" birth_year="03/05/1989" licence="033055923035" attending="0" rank="6" ref="30" exported="0"/>
-   <player name="GERARD" first_name="Vincent" club="ST GREGOIRE" rating="1113" gender="M" ligue="" country="FRA" birth_year="28/07/1988" licence="029046223035" attending="0" rank="7" ref="26" exported="0"/>
-   <player name="ROGER" first_name="Edern" club="DINARD LAMES" rating="1126" gender="M" ligue="" country="FRA" birth_year="19/02/1989" licence="033054423035" attending="0" rank="8" ref="28" exported="0"/>
-   <player name="LATREILLE" first_name="Baptiste" club="BETTON CP" rating="1139" gender="M" ligue="" country="FRA" birth_year="19/02/1989" licence="010049923035" attending="0" rank="9" ref="16" exported="0"/>
-   <player name="DESMOULIN" first_name="Frank" club="ST GREGOIRE" rating="1152" gender="M" ligue="" country="FRA" birth_year="14/03/1988" licence="029041123035" attending="0" rank="10" ref="23" exported="0"/>
-   <player name="GUEGAN" first_name="Simon" club="BETTON CP" rating="1166" gender="M" ligue="" country="FRA" birth_year="17/11/1989" licence="010043923035" attending="0" rank="11" ref="15" exported="0"/>
-   <player name="CARESMEL" first_name="Tristan" club="DINAN EA" rating="1178" gender="M" ligue="" country="FRA" birth_year="15/08/1988" licence="007015323022" attending="0" rank="12" ref="0" exported="0"/>
-   <player name="BESCOND" first_name="Nathan" club="DINARD LAMES" rating="1191" gender="M" ligue="" country="FRA" birth_year="15/04/1990" licence="033057523035" attending="0" rank="13" ref="32" exported="0"/>
-   <player name="SAILLARD" first_name="Loic" club="ST GREGOIRE" rating="1206" gender="M" ligue="" country="FRA" birth_year="10/02/1990" licence="029041623035" attending="0" rank="14" ref="24" exported="0"/>
-   <player name="DECHORGNAT" first_name="Pacome" club="ST GREGOIRE" rating="1218" gender="M" ligue="" country="FRA" birth_year="26/05/1988" licence="029043123035" attending="0" rank="15" ref="25" exported="0"/>
-   <player name="LE ROUX" first_name="Abraham" club="BETTON CP" rating="1231" gender="M" ligue="" country="FRA" birth_year="09/03/1990" licence="010031723035" attending="0" rank="16" ref="13" exported="0"/>
-   <player name="LEGRAND" first_name="Eliott" club="BETTON CP" rating="1242" gender="M" ligue="" country="FRA" birth_year="10/08/1989" licence="010023723035" attending="0" rank="17" ref="12" exported="0"/>
-   <player name="THIRIET" first_name="Quentin" club="BETTON CP" rating="1257" gender="M" ligue="" country="FRA" birth_year="06/05/1989" licence="010052523035" attending="0" rank="18" ref="17" exported="0"/>
-   <player name="GARNIER" first_name="Simon" club="DINARD LAMES" rating="1268" gender="M" ligue="" country="FRA" birth_year="21/11/1990" licence="033056323035" attending="0" rank="19" ref="31" exported="0"/>
-   <player name="GUERIN" first_name="Erwan" club="DINARD LAMES" rating="1280" gender="M" ligue="" country="FRA" birth_year="20/09/1990" licence="033062723035" attending="0" rank="20" ref="36" exported="0"/>
-   <player name="JOSSELIN" first_name="Lou" club="DINAN EA" rating="1293" gender="M" ligue="" country="FRA" birth_year="24/04/1988" licence="007028623022" attending="0" rank="21" ref="3" exported="0"/>
-   <player name="TOURNIER" first_name="Antoine" club="ST MALO" rating="1306" gender="M" ligue="" country="FRA" birth_year="03/08/1988" licence="015107923035" attending="0" rank="22" ref="21" exported="0"/>
-   <player name="LE BACCON" first_name="Alexandre" club="BETTON CP" rating="1319" gender="M" ligue="" country="FRA" birth_year="18/05/1991" licence="010052623035" attending="0" rank="23" ref="18" exported="0"/>
-   <player name="STEPHAN" first_name="Alexandre" club="QUIMPER EC" rating="1329" gender="M" ligue="" country="FRA" birth_year="24/11/1990" licence="034066123029" attending="0" rank="24" ref="5" exported="0"/>
-   <player name="LEBOURGEOIS" first_name="Kilian" club="QUIMPER EC" rating="1339" gender="M" ligue="" country="FRA" birth_year="15/12/1989" licence="034070623029" attending="0" rank="25" ref="7" exported="0"/>
-   <player name="LAUMAIN" first_name="Pierre erik" club="ST MALO" rating="1355" gender="M" ligue="" country="FRA" birth_year="10/10/1989" licence="015089323035" attending="0" rank="26" ref="19" exported="0"/>
-   <player name="LEMOINE" first_name="Pierre" club="DINAN EA" rating="1365" gender="M" ligue="" country="FRA" birth_year="23/05/1990" licence="007021023022" attending="0" rank="27" ref="2" exported="0"/>
-   <player name="JARAY" first_name="Ronan" club="ST BRIEUC" rating="1379" gender="M" ligue="" country="FRA" birth_year="17/12/1989" licence="009057423022" attending="0" rank="28" ref="4" exported="0"/>
-   <player name="HOBL" first_name="Benjamin" club="DINARD LAMES" rating="1389" gender="M" ligue="" country="FRA" birth_year="10/09/1990" licence="033058423035" attending="0" rank="29" ref="34" exported="0"/>
-   <player name="RESMOND" first_name="Antoine" club="QUIMPER EC" rating="1401" gender="M" ligue="" country="FRA" birth_year="02/04/1991" licence="034082023029" attending="0" rank="30" ref="10" exported="0"/>
-   <player name="DANIBO" first_name="Louis" club="ST MALO" rating="1415" gender="M" ligue="" country="FRA" birth_year="10/10/1990" licence="015092623035" attending="0" rank="31" ref="20" exported="0"/>
-   <player name="KERVROEDAN" first_name="William" club="QUIMPER EC" rating="1427" gender="M" ligue="" country="FRA" birth_year="15/10/1991" licence="034078823029" attending="0" rank="32" ref="9" exported="0"/>
-   <player name="BONNOT" first_name="Robin" club="DINAN EA" rating="1436" gender="M" ligue="" country="FRA" birth_year="14/05/1990" licence="007020223022" attending="0" rank="33" ref="1" exported="0"/>
-   <player name="LAVENANT" first_name="Joan" club="ST MALO" rating="1436" gender="M" ligue="" country="FRA" birth_year="21/01/1991" licence="015117123035" attending="0" rank="34" ref="22" exported="0"/>
-   <player name="LE GAL" first_name="Loic" club="QUIMPER EC" rating="0" gender="M" ligue="" country="FRA" birth_year="23/09/1989" licence="034070523029" attending="0" rank="35" ref="6" exported="0"/>
-   <player name="BERTRAND" first_name="Antoine" club="QUIMPER EC" rating="0" gender="M" ligue="" country="FRA" birth_year="19/12/1990" licence="034077823029" attending="0" rank="36" ref="8" exported="0"/>
-   <player name="NOEL" first_name="Alexis" club="DINARD LAMES" rating="0" gender="M" ligue="" country="FRA" birth_year="25/11/1990" licence="033058823035" attending="0" rank="37" ref="35" exported="0"/>
+   <player name="BROUARD" first_name="Gurvan" club="BETTON CP" rating="1003" gender="M" ligue="" country="FRA" birth_year="31/01/1988" licence="010037623035" attending="1" rank="1" ref="1005" exported="0"/>
+   <player name="ROLLIN" first_name="Benjamin" club="DINARD LAMES" rating="1030" gender="M" ligue="" country="FRA" birth_year="13/05/1988" licence="033054523035" attending="1" rank="2" ref="1020" exported="0"/>
+   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="M" ligue="" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="3" ref="1018" exported="0"/>
+   <player name="BOC HO" first_name="Maxime" club="DINARD LAMES" rating="1053" gender="M" ligue="" country="FRA" birth_year="22/08/1988" licence="033057623035" attending="0" rank="4" ref="1024" exported="0"/>
+   <player name="JACOPIN" first_name="Tangui" club="BETTON CP" rating="1089" gender="M" ligue="" country="FRA" birth_year="19/09/1988" licence="010023623035" attending="0" rank="5" ref="1002" exported="0"/>
+   <player name="BOTUHA" first_name="Tom" club="DINARD LAMES" rating="1103" gender="M" ligue="" country="FRA" birth_year="03/05/1989" licence="033055923035" attending="0" rank="6" ref="1021" exported="0"/>
+   <player name="GERARD" first_name="Vincent" club="ST GREGOIRE" rating="1113" gender="M" ligue="" country="FRA" birth_year="28/07/1988" licence="029046223035" attending="0" rank="7" ref="1017" exported="0"/>
+   <player name="ROGER" first_name="Edern" club="DINARD LAMES" rating="1126" gender="M" ligue="" country="FRA" birth_year="19/02/1989" licence="033054423035" attending="0" rank="8" ref="1019" exported="0"/>
+   <player name="LATREILLE" first_name="Baptiste" club="BETTON CP" rating="1139" gender="M" ligue="" country="FRA" birth_year="19/02/1989" licence="010049923035" attending="0" rank="9" ref="1007" exported="0"/>
+   <player name="DESMOULIN" first_name="Frank" club="ST GREGOIRE" rating="1152" gender="M" ligue="" country="FRA" birth_year="14/03/1988" licence="029041123035" attending="0" rank="10" ref="1014" exported="0"/>
+   <player name="GUEGAN" first_name="Simon" club="BETTON CP" rating="1166" gender="M" ligue="" country="FRA" birth_year="17/11/1989" licence="010043923035" attending="0" rank="11" ref="1006" exported="0"/>
+   <player name="CARESMEL" first_name="Tristan" club="DINAN EA" rating="1178" gender="M" ligue="" country="FRA" birth_year="15/08/1988" licence="007015323022" attending="0" rank="12" ref="991" exported="0"/>
+   <player name="BESCOND" first_name="Nathan" club="DINARD LAMES" rating="1191" gender="M" ligue="" country="FRA" birth_year="15/04/1990" licence="033057523035" attending="0" rank="13" ref="1023" exported="0"/>
+   <player name="SAILLARD" first_name="Loic" club="ST GREGOIRE" rating="1206" gender="M" ligue="" country="FRA" birth_year="10/02/1990" licence="029041623035" attending="0" rank="14" ref="1015" exported="0"/>
+   <player name="DECHORGNAT" first_name="Pacome" club="ST GREGOIRE" rating="1218" gender="M" ligue="" country="FRA" birth_year="26/05/1988" licence="029043123035" attending="0" rank="15" ref="1016" exported="0"/>
+   <player name="LE ROUX" first_name="Abraham" club="BETTON CP" rating="1231" gender="M" ligue="" country="FRA" birth_year="09/03/1990" licence="010031723035" attending="0" rank="16" ref="1004" exported="0"/>
+   <player name="LEGRAND" first_name="Eliott" club="BETTON CP" rating="1242" gender="M" ligue="" country="FRA" birth_year="10/08/1989" licence="010023723035" attending="0" rank="17" ref="1003" exported="0"/>
+   <player name="THIRIET" first_name="Quentin" club="BETTON CP" rating="1257" gender="M" ligue="" country="FRA" birth_year="06/05/1989" licence="010052523035" attending="0" rank="18" ref="1008" exported="0"/>
+   <player name="GARNIER" first_name="Simon" club="DINARD LAMES" rating="1268" gender="M" ligue="" country="FRA" birth_year="21/11/1990" licence="033056323035" attending="0" rank="19" ref="1022" exported="0"/>
+   <player name="GUERIN" first_name="Erwan" club="DINARD LAMES" rating="1280" gender="M" ligue="" country="FRA" birth_year="20/09/1990" licence="033062723035" attending="0" rank="20" ref="1027" exported="0"/>
+   <player name="JOSSELIN" first_name="Lou" club="DINAN EA" rating="1293" gender="M" ligue="" country="FRA" birth_year="24/04/1988" licence="007028623022" attending="0" rank="21" ref="994" exported="0"/>
+   <player name="TOURNIER" first_name="Antoine" club="ST MALO" rating="1306" gender="M" ligue="" country="FRA" birth_year="03/08/1988" licence="015107923035" attending="0" rank="22" ref="1012" exported="0"/>
+   <player name="LE BACCON" first_name="Alexandre" club="BETTON CP" rating="1319" gender="M" ligue="" country="FRA" birth_year="18/05/1991" licence="010052623035" attending="0" rank="23" ref="1009" exported="0"/>
+   <player name="STEPHAN" first_name="Alexandre" club="QUIMPER EC" rating="1329" gender="M" ligue="" country="FRA" birth_year="24/11/1990" licence="034066123029" attending="0" rank="24" ref="996" exported="0"/>
+   <player name="LEBOURGEOIS" first_name="Kilian" club="QUIMPER EC" rating="1339" gender="M" ligue="" country="FRA" birth_year="15/12/1989" licence="034070623029" attending="0" rank="25" ref="998" exported="0"/>
+   <player name="LAUMAIN" first_name="Pierre erik" club="ST MALO" rating="1355" gender="M" ligue="" country="FRA" birth_year="10/10/1989" licence="015089323035" attending="0" rank="26" ref="1010" exported="0"/>
+   <player name="LEMOINE" first_name="Pierre" club="DINAN EA" rating="1365" gender="M" ligue="" country="FRA" birth_year="23/05/1990" licence="007021023022" attending="0" rank="27" ref="993" exported="0"/>
+   <player name="JARAY" first_name="Ronan" club="ST BRIEUC" rating="1379" gender="M" ligue="" country="FRA" birth_year="17/12/1989" licence="009057423022" attending="0" rank="28" ref="995" exported="0"/>
+   <player name="HOBL" first_name="Benjamin" club="DINARD LAMES" rating="1389" gender="M" ligue="" country="FRA" birth_year="10/09/1990" licence="033058423035" attending="0" rank="29" ref="1025" exported="0"/>
+   <player name="RESMOND" first_name="Antoine" club="QUIMPER EC" rating="1401" gender="M" ligue="" country="FRA" birth_year="02/04/1991" licence="034082023029" attending="0" rank="30" ref="1001" exported="0"/>
+   <player name="DANIBO" first_name="Louis" club="ST MALO" rating="1415" gender="M" ligue="" country="FRA" birth_year="10/10/1990" licence="015092623035" attending="0" rank="31" ref="1011" exported="0"/>
+   <player name="KERVROEDAN" first_name="William" club="QUIMPER EC" rating="1427" gender="M" ligue="" country="FRA" birth_year="15/10/1991" licence="034078823029" attending="0" rank="32" ref="1000" exported="0"/>
+   <player name="BONNOT" first_name="Robin" club="DINAN EA" rating="1436" gender="M" ligue="" country="FRA" birth_year="14/05/1990" licence="007020223022" attending="0" rank="33" ref="992" exported="0"/>
+   <player name="LAVENANT" first_name="Joan" club="ST MALO" rating="1436" gender="M" ligue="" country="FRA" birth_year="21/01/1991" licence="015117123035" attending="0" rank="34" ref="1013" exported="0"/>
+   <player name="LE GAL" first_name="Loic" club="QUIMPER EC" rating="0" gender="M" ligue="" country="FRA" birth_year="23/09/1989" licence="034070523029" attending="0" rank="35" ref="997" exported="0"/>
+   <player name="BERTRAND" first_name="Antoine" club="QUIMPER EC" rating="0" gender="M" ligue="" country="FRA" birth_year="19/12/1990" licence="034077823029" attending="0" rank="36" ref="999" exported="0"/>
+   <player name="NOEL" first_name="Alexis" club="DINARD LAMES" rating="0" gender="M" ligue="" country="FRA" birth_year="25/11/1990" licence="033058823035" attending="0" rank="37" ref="1026" exported="0"/>
   </checkin_stage>
-  <pool_allocation_stage name="">
-   <player_list>
-    <player ref="33"/>
-    <player ref="29"/>
-    <player ref="14"/>
-    <player ref="27"/>
-   </player_list>
-  </pool_allocation_stage>
-  <pool_stage name="toto" max_score="5">
-   <match_list>
-    <match player_A="29" score_A="5" player_B="33" score_B="1"/>
-    <match player_A="14" score_A="2" player_B="29" score_B="5"/>
-    <match player_A="14" score_A="5" player_B="33" score_B="1"/>
-    <match player_A="27" score_A="2" player_B="14" score_B="5"/>
-    <match player_A="27" score_A="4" player_B="29" score_B="5"/>
-    <match player_A="27" score_A="1" player_B="33" score_B="5"/>
-   </match_list>
-  </pool_stage>
-  <table_stage name="zutzut" max_score="5">
-   <match player_A="29"/>
-   <match player_A="27"/>
-   <match player_A="29" score_A="4" player_B="27" score_B="5"/>
-   <match player_A="33"/>
-   <match player_A="14"/>
-   <match player_A="33" score_A="5" player_B="14" score_B="2"/>
-   <match player_A="27" score_A="0" player_B="33" score_B="5"/>
-  </table_stage>
+  <pool_allocation_stage name=""/>
+  <pool_stage name="toto"/>
+  <table_stage name="zutzut" max_score="5"/>
   <general_classification_stage name=""/>
  </schedule>
 </contest>

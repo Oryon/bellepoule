@@ -813,24 +813,28 @@ gboolean Table::FillInNode (GNode *node,
           Player_c *A = parent_data->_match->GetPlayerA ();
           Player_c *B = parent_data->_match->GetPlayerB ();
 
-          parent_data->_match->SetData (winner, "collecting_point", goo_rect);
-
-          table->_score_collector->AddCollectingPoint (goo_rect,
-                                                       score_text,
-                                                       parent_data->_match,
-                                                       winner);
-          table->_score_collector->AddCollectingTrigger (data->_player_item);
-
-          if (A && B)
+          if (   (parent_data->_match->GetWinner () == NULL)
+              || ((A != NULL) && (B != NULL)))
           {
-            table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (A,
-                                                                                                             "collecting_point"),
-                                                             (GooCanvasItem *) parent_data->_match->GetData (B,
-                                                                                                             "collecting_point"));
-            table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (B,
-                                                                                                             "collecting_point"),
-                                                             (GooCanvasItem *) parent_data->_match->GetData (A,
-                                                                                                             "collecting_point"));
+            parent_data->_match->SetData (winner, "collecting_point", goo_rect);
+
+            table->_score_collector->AddCollectingPoint (goo_rect,
+                                                         score_text,
+                                                         parent_data->_match,
+                                                         winner);
+            table->_score_collector->AddCollectingTrigger (data->_player_item);
+
+            if (A && B)
+            {
+              table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (A,
+                                                                                                               "collecting_point"),
+                                                               (GooCanvasItem *) parent_data->_match->GetData (B,
+                                                                                                               "collecting_point"));
+              table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (B,
+                                                                                                               "collecting_point"),
+                                                               (GooCanvasItem *) parent_data->_match->GetData (A,
+                                                                                                               "collecting_point"));
+            }
           }
         }
       }
@@ -1103,9 +1107,6 @@ void Table::OnUnPlugged ()
 
   Object_c::TryToRelease (_score_collector);
   _score_collector = NULL;
-
-  Object_c::TryToRelease (_quick_score_collector);
-  _quick_score_collector = NULL;
 
   gtk_list_store_clear (_from_table_liststore);
   gtk_tree_store_clear (_quick_search_treestore);

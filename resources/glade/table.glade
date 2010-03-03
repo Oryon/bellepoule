@@ -431,9 +431,9 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup">
     <widgets>
-      <widget name="name_entry"/>
-      <widget name="max_score_entry"/>
       <widget name="qualified_fencer_spinbutton"/>
+      <widget name="max_score_entry"/>
+      <widget name="name_entry"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup"/>

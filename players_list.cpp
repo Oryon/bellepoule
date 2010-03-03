@@ -249,12 +249,12 @@ void PlayersList::OnCellToggled (gchar    *path_string,
         if (is_active)
         {
           p->SetAttributeValue (attr_name,
-                                "0");
+                                (guint) 0);
         }
         else
         {
           p->SetAttributeValue (attr_name,
-                                "1");
+                                1);
         }
 
         Update (p);
@@ -273,12 +273,12 @@ void PlayersList::OnCellToggled (gchar    *path_string,
       if (is_active)
       {
         p->SetAttributeValue (attr_name,
-                              "0");
+                              (guint) 0);
       }
       else
       {
         p->SetAttributeValue (attr_name,
-                              "1");
+                              1);
       }
 
       Update (p);
@@ -584,6 +584,7 @@ void PlayersList::RemoveSelection ()
 
         _player_list = g_slist_remove (_player_list,
                                        p);
+        OnPlayerRemoved (p);
         p->Release ();
         break;
       }

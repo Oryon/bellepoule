@@ -73,6 +73,8 @@
 		<Unit filename="classification.hpp" />
 		<Unit filename="contest.cpp" />
 		<Unit filename="contest.hpp" />
+		<Unit filename="data.cpp" />
+		<Unit filename="data.hpp" />
 		<Unit filename="filter.cpp" />
 		<Unit filename="filter.hpp" />
 		<Unit filename="general_classification.cpp" />

@@ -78,6 +78,8 @@ class PlayersList : public Module_c
                         gboolean  is_active,
                         gchar    *attr_name);
 
+    virtual void OnPlayerRemoved (Player_c *player) {};
+
     static void on_cell_toggled (GtkCellRendererToggle *cell,
                                  gchar                 *path_string,
                                  gpointer               user_data);
