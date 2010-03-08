@@ -76,9 +76,14 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     ~PoolSupervisor_c ();
 
     void OnAttrListUpdated ();
+
     void OnPlugged ();
+
     void OnUnPlugged ();
+
     GSList *GetCurrentClassification ();
+
+    void SetInputProvider (Stage_c *input_provider);
 
     void SaveConfiguration (xmlTextWriter *xml_writer);
 

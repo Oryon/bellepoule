@@ -132,8 +132,8 @@ void PoolSupervisor_c::OnPlugged ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::OnUnPlugged ()
 {
-  Object_c::TryToRelease (_pool_allocator);
-  _pool_allocator = NULL;
+  //Object_c::TryToRelease (_pool_allocator);
+  //_pool_allocator = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -440,14 +440,8 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor_c::RetrievePools ()
 {
-  _pool_allocator = dynamic_cast <PoolAllocator_c *> (GetPreviousStage ());
-
   if (_pool_allocator)
   {
-    _pool_allocator->Retain ();
-
-    _max_score = _pool_allocator->GetMaxScore ();
-
     for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
     {
       Manage (_pool_allocator->GetPool (p));
@@ -503,6 +497,20 @@ Stage_c *PoolSupervisor_c::GetInputProvider ()
   }
 
   return Stage_c::CreateInstance (PoolAllocator_c::_xml_class_name);
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor_c::SetInputProvider (Stage_c *input_provider)
+{
+  _pool_allocator = dynamic_cast <PoolAllocator_c *> (GetPreviousStage ());
+
+  if (_pool_allocator)
+  {
+    _pool_allocator->Retain ();
+    _max_score = _pool_allocator->GetMaxScore ();
+  }
+
+  Stage_c::SetInputProvider (input_provider);
 }
 
 // --------------------------------------------------------------------------------

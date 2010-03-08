@@ -38,6 +38,7 @@ Stage_c::Stage_c (StageClass *stage_class)
   _attendees             = NULL;
   _classification        = NULL;
   _classification_filter = NULL;
+  _input_provider        = NULL;
 
   _sensitivity_trigger    = new SensitivityTrigger ();
   _score_stuffing_trigger = NULL;
@@ -311,15 +312,21 @@ Stage_c *Stage_c::CreateInstance (const gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Stage_c::GetInputProvider ()
-{
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
 Stage_c::Rights Stage_c::GetRights ()
 {
   return _stage_class->_rights;
+}
+
+// --------------------------------------------------------------------------------
+void Stage_c::SetInputProvider (Stage_c *input_provider)
+{
+  _input_provider = input_provider;
+}
+
+// --------------------------------------------------------------------------------
+Stage_c *Stage_c::GetInputProvider ()
+{
+  return _input_provider;
 }
 
 // --------------------------------------------------------------------------------

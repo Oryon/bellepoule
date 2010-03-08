@@ -1225,7 +1225,10 @@ void Table::ApplyConfig ()
       if (str)
       {
         _max_score->_value = atoi (str);
-        OnAttrListUpdated ();
+        if (_main_table)
+        {
+          OnAttrListUpdated ();
+        }
       }
     }
   }

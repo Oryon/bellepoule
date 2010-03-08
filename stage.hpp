@@ -69,6 +69,10 @@ class Stage_c : public virtual Object_c
 
     void SetClassificationFilter (Filter *filter);
 
+    virtual void SetInputProvider (Stage_c *input_provider);
+
+    virtual Stage_c *GetInputProvider ();
+
     void Lock ();
 
     void UnLock ();
@@ -106,8 +110,6 @@ class Stage_c : public virtual Object_c
 
     void ToggleClassification (gboolean classification_on);
 
-    virtual Stage_c *GetInputProvider ();
-
     static void RegisterStageClass (const gchar *name,
                                     const gchar *xml_name,
                                     Creator      creator,
@@ -125,8 +127,9 @@ class Stage_c : public virtual Object_c
     static Stage_c *CreateInstance (const gchar *name);
 
   protected:
-    GSList *_attendees;
-    Filter *_classification_filter;
+    GSList  *_attendees;
+    Filter  *_classification_filter;
+    Stage_c *_input_provider;
 
     Stage_c (StageClass *stage_class);
 

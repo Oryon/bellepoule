@@ -281,22 +281,6 @@ void Schedule_c::AddStage (Stage_c *stage)
 
   AddStage (stage,
             last_stage);
-
-  {
-    Stage_c *input_provider = stage->GetInputProvider ();
-
-    if (input_provider)
-    {
-      if (input_provider && (last_stage != input_provider))
-      {
-        AddStage (input_provider,
-                  last_stage);
-      }
-
-      stage->SetData (this, "attached_stage",
-                      input_provider);
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -388,6 +372,19 @@ void Schedule_c::AddStage (Stage_c *stage,
 
     RefreshSensitivity ();
 
+    {
+      Stage_c *input_provider = stage->GetInputProvider ();
+
+      if (input_provider)
+      {
+        if (input_provider && (after != input_provider))
+        {
+          AddStage (input_provider,
+                    after);
+        }
+        stage->SetInputProvider (input_provider);
+      }
+    }
 #if 0
     for (guint i = 0; i < g_list_length (_stage_list); i++)
     {
@@ -719,22 +716,6 @@ gboolean Schedule_c::on_new_stage_selected (GtkWidget      *widget,
   owner->AddStage (stage,
                    after);
 
-  {
-    Stage_c *input_provider = stage->GetInputProvider ();
-
-    if (input_provider)
-    {
-      if (input_provider && (after != input_provider))
-      {
-        owner->AddStage (input_provider,
-                         after);
-      }
-
-      stage->SetData (owner, "attached_stage",
-                      input_provider);
-    }
-  }
-
   stage->FillInConfig ();
   owner->on_stage_selected ();
   return FALSE;
@@ -958,16 +939,16 @@ void Schedule_c::on_stage_removed ()
                                          &iter))
     {
       Stage_c *stage;
-      Stage_c *attached_stage;
+      Stage_c *input_provider;
 
       gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                           &iter,
                           STAGE_COLUMN, &stage, -1);
 
-      attached_stage = (Stage_c *) stage->GetData (this, "attached_stage");
+      input_provider = stage->GetInputProvider ();
 
       RemoveStage (stage);
-      RemoveStage (attached_stage);
+      RemoveStage (input_provider);
     }
 
     if (gtk_tree_selection_get_selected (selection,
