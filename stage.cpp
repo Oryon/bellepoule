@@ -30,13 +30,14 @@ GSList *Stage_c::_stage_base = NULL;
 Stage_c::Stage_c (StageClass *stage_class)
 : Object_c ("Stage_c")
 {
-  _name            = g_strdup ("");
-  _locked          = false;
-  _result          = NULL;
-  _previous        = NULL;
-  _stage_class     = stage_class;
-  _attendees       = NULL;
-  _classification  = NULL;
+  _name                  = g_strdup ("");
+  _locked                = false;
+  _result                = NULL;
+  _previous              = NULL;
+  _stage_class           = stage_class;
+  _attendees             = NULL;
+  _classification        = NULL;
+  _classification_filter = NULL;
 
   _sensitivity_trigger    = new SensitivityTrigger ();
   _score_stuffing_trigger = NULL;
@@ -55,6 +56,8 @@ Stage_c::~Stage_c ()
   TryToRelease (_score_stuffing_trigger);
 
   TryToRelease (_classification);
+
+  TryToRelease (_classification_filter);
 }
 
 // --------------------------------------------------------------------------------
@@ -361,6 +364,13 @@ Classification *Stage_c::GetClassification ()
 }
 
 // --------------------------------------------------------------------------------
+void Stage_c::SetClassificationFilter (Filter *filter)
+{
+  _classification_filter = filter;
+  _classification_filter->Retain ();
+}
+
+// --------------------------------------------------------------------------------
 void Stage_c::UpdateClassification (GSList *result)
 {
   Module_c  *module           = dynamic_cast <Module_c *> (this);
@@ -370,7 +380,9 @@ void Stage_c::UpdateClassification (GSList *result)
   {
     if (_classification == NULL)
     {
-      _classification = new Classification ();
+      _classification = new Classification (_classification_filter);
+
+      _classification->SetDataOwner (this);
       module->Plug (_classification,
                     classification_w);
     }

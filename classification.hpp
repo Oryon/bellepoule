@@ -25,7 +25,7 @@
 class Classification : public PlayersList
 {
   public:
-    Classification ();
+    Classification (Filter *filter);
 
   private:
     void OnPlugged ();

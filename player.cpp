@@ -61,9 +61,11 @@ gint Player_c::CompareWithRef (Player_c *player,
 }
 
 // --------------------------------------------------------------------------------
-Attribute_c *Player_c::GetAttribute (gchar *name)
+Attribute_c *Player_c::GetAttribute (gchar    *name,
+                                     Object_c *owner)
 {
-  return (Attribute_c*) GetData (this, name);
+  return (Attribute_c*) GetData (owner,
+                                 name);
 }
 
 // --------------------------------------------------------------------------------
@@ -102,16 +104,17 @@ void Player_c::NotifyChange (Attribute_c *attr)
 }
 
 // --------------------------------------------------------------------------------
-void Player_c::SetAttributeValue (gchar *name,
-                                  gchar *value)
+void Player_c::SetAttributeValue (gchar    *name,
+                                  gchar    *value,
+                                  Object_c *owner)
 {
-  Attribute_c *attr = GetAttribute (name);
+  Attribute_c *attr = GetAttribute (name, owner);
 
   if (attr == NULL)
   {
     attr = Attribute_c::New (name);
 
-    SetData (this,
+    SetData (owner,
              attr->GetName (),
              attr,
              (GDestroyNotify) Object_c::TryToRelease);
@@ -129,16 +132,17 @@ void Player_c::SetAttributeValue (gchar *name,
 }
 
 // --------------------------------------------------------------------------------
-void Player_c::SetAttributeValue (gchar *name,
-                                  guint  value)
+void Player_c::SetAttributeValue (gchar    *name,
+                                  guint     value,
+                                  Object_c *owner)
 {
-  Attribute_c *attr = GetAttribute (name);
+  Attribute_c *attr = GetAttribute (name, owner);
 
   if (attr == NULL)
   {
     attr = Attribute_c::New (name);
 
-    SetData (this,
+    SetData (owner,
              attr->GetName (),
              attr,
              (GDestroyNotify) Object_c::TryToRelease);
@@ -172,19 +176,22 @@ void Player_c::Save (xmlTextWriter *xml_writer)
   for (guint i = 0; i < g_slist_length (attr_list ); i++)
   {
     AttributeDesc *desc;
-    Attribute_c   *attr;
 
     desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                i);
-    attr = GetAttribute (desc->_xml_name);
-    if (attr)
+    if (desc->_persistency == AttributeDesc::PERSISTENT)
     {
-      gchar *xml_image = attr->GetXmlImage ();
+      Attribute_c *attr = GetAttribute (desc->_xml_name);
 
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST attr->GetName (),
-                                         xml_image);
-      g_free (xml_image);
+      if (attr)
+      {
+        gchar *xml_image = attr->GetXmlImage ();
+
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST attr->GetName (),
+                                           xml_image);
+        g_free (xml_image);
+      }
     }
   }
 
@@ -206,8 +213,16 @@ void Player_c::Load (xmlNode *xml_node)
 
     desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                i);
-    SetAttributeValue (desc->_xml_name,
-                       (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_xml_name));
+    if (desc->_persistency == AttributeDesc::PERSISTENT)
+    {
+      gchar *value = (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_xml_name);
+
+      if (value)
+      {
+        SetAttributeValue (desc->_xml_name,
+                           value);
+      }
+    }
   }
 
   {

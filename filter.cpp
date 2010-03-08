@@ -75,6 +75,12 @@ Filter::~Filter ()
 }
 
 // --------------------------------------------------------------------------------
+void Filter::SetOwner (Module_c *owner)
+{
+  _owner = owner;
+}
+
+// --------------------------------------------------------------------------------
 guint Filter::GetAttributeId (gchar *name)
 {
   if (_attr_list)
@@ -175,6 +181,7 @@ void Filter::SelectAttributes ()
     g_object_set (_filter_window,
                   "transient-for", gtk_widget_get_parent_window (_filter_window),
                   "destroy-with-parent", TRUE,
+                  "title", "Filtre",
                   NULL);
     g_signal_connect (_filter_window,
                       "delete-event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);

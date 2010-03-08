@@ -25,6 +25,7 @@
 
 class Player_c;
 class Classification;
+class Filter;
 
 class Stage_c : public virtual Object_c
 {
@@ -65,6 +66,8 @@ class Stage_c : public virtual Object_c
     Rights GetRights ();
 
     gboolean Locked ();
+
+    void SetClassificationFilter (Filter *filter);
 
     void Lock ();
 
@@ -123,6 +126,7 @@ class Stage_c : public virtual Object_c
 
   protected:
     GSList *_attendees;
+    Filter *_classification_filter;
 
     Stage_c (StageClass *stage_class);
 

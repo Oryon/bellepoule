@@ -34,6 +34,10 @@ class Module_c : public virtual Object_c
 
     void SelectAttributes ();
 
+    void SetDataOwner (Object_c *data_owner);
+
+    Object_c *GetDataOwner ();
+
     GtkWidget *GetConfigWidget ();
 
     GtkWidget *GetRootWidget ();
@@ -77,6 +81,7 @@ class Module_c : public virtual Object_c
     GSList             *_plugged_list;
     Module_c           *_owner;
     GtkWidget          *_config_widget;
+    Object_c           *_data_owner;
 };
 
 #endif

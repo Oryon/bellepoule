@@ -80,7 +80,9 @@ Source: "..\resources\*.txt"; DestDir: "{app}\resources\"; Flags: ignoreversion
 Source: "..\*.hpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
 Source: "..\*.cpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
 Source: "..\resource.rc"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
-Source: "..\resources\glade\*"; DestDir: "{app}\sources\resources\"; Tasks: downloadsources; Flags: ignoreversion
+Source: "..\resources\*.txt"; DestDir: "{app}\sources\resources"; Tasks: downloadsources; Flags: ignoreversion
+Source: "..\resources\glade\*.glade"; DestDir: "{app}\sources\resources\glade"; Tasks: downloadsources; Flags: ignoreversion
+Source: "..\resources\translations\*"; DestDir: "{app}\sources\resources\translations"; Tasks: downloadsources; Flags: ignoreversion recursesubdirs
 
 ; GTK+ dependencies
 ; DLL
@@ -234,6 +236,7 @@ end;
 [Run]
 Filename: "{app}\porting_layer\bin\reconfig.bat";
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

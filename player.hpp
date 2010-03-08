@@ -34,15 +34,18 @@ class Player_c : public Object_c
   public:
      Player_c ();
 
-    Attribute_c *GetAttribute (gchar *name);
+    Attribute_c *GetAttribute (gchar    *name,
+                               Object_c *owner = NULL);
 
-    void SetAttributeValue (gchar *name,
-                            gchar *value);
+    void SetAttributeValue (gchar    *name,
+                            gchar    *value,
+                            Object_c *owner = NULL);
 
-    void SetAttributeValue (gchar *name,
-                            guint  value);
+    void SetAttributeValue (gchar    *name,
+                            guint     value,
+                            Object_c *owner = NULL);
 
-    guint  GetRef ();
+    guint GetRef ();
 
     void Save (xmlTextWriter *xml_writer);
 

@@ -28,15 +28,17 @@ typedef enum
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
-AttributeDesc::AttributeDesc (GType  type,
-                              gchar *xml_name,
-                              gchar *user_name)
+AttributeDesc::AttributeDesc (GType        type,
+                              gchar       *xml_name,
+                              gchar       *user_name)
 : Object_c ("AttributeDesc")
 {
   _type               = type;
   _xml_name           = xml_name;
   _user_name          = user_name;
   _uniqueness         = SINGULAR;
+  _persistency        = PERSISTENT;
+  _scope              = GLOBAL;
   _free_value_allowed = TRUE;
   _rights             = PUBLIC;
   _discrete_store     = NULL;
@@ -46,14 +48,9 @@ AttributeDesc::AttributeDesc (GType  type,
 // --------------------------------------------------------------------------------
 AttributeDesc::~AttributeDesc ()
 {
-  for (guint i = 0; i < g_slist_length (_list); i++)
-  {
-    AttributeDesc *attr_desc;
-
-    attr_desc = (AttributeDesc *) g_slist_nth_data (_list,
-                                                    i);
-    attr_desc->Release ();
-  }
+  g_slist_foreach (_list,
+                   (GFunc) Object_c::TryToRelease,
+                   NULL);
   g_slist_free (_list);
 
   if (_discrete_store)

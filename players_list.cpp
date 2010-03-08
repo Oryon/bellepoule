@@ -109,7 +109,15 @@ void PlayersList::Update (Player_c *player)
 
       desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                  i);
-      attr = player->GetAttribute (desc->_xml_name);
+      if (desc->_scope == AttributeDesc::GLOBAL)
+      {
+        attr = player->GetAttribute (desc->_xml_name);
+      }
+      else
+      {
+        attr = player->GetAttribute (desc->_xml_name,
+                                     GetDataOwner ());
+      }
 
       if (attr)
       {
@@ -237,12 +245,16 @@ void PlayersList::OnCellToggled (gchar    *path_string,
     for (guint i = 0; i < g_list_length (selection_list); i++)
     {
       Player_c *p;
-      gchar    *path;
 
-      path = gtk_tree_path_to_string ((GtkTreePath *) g_list_nth_data (selection_list,
-                                                                       i));
-      p = GetPlayer (path);
-      g_free (path);
+      {
+        GtkTreePath *tree_path = (GtkTreePath *) g_list_nth_data (selection_list, i);
+        gchar       *path = gtk_tree_path_to_string (tree_path);
+
+        p = GetPlayer (path);
+
+        g_free (path);
+        gtk_tree_path_free (tree_path);
+      }
 
       if (p)
       {
@@ -261,8 +273,7 @@ void PlayersList::OnCellToggled (gchar    *path_string,
       }
     }
 
-    g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
-    g_list_free    (selection_list);
+    g_list_free (selection_list);
   }
   else
   {

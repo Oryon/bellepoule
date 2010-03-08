@@ -27,7 +27,7 @@ class Filter : public virtual Object_c
 {
   public:
     Filter (GSList   *attr_list,
-            Module_c *owner);
+            Module_c *owner = NULL);
 
     void SetAttributeList (GSList *list);
 
@@ -43,6 +43,7 @@ class Filter : public virtual Object_c
 
     guint GetAttributeId (gchar *name);
 
+    void SetOwner (Module_c *owner);
 
   private:
     typedef enum

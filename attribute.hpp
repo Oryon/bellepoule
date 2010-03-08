@@ -38,9 +38,23 @@ class AttributeDesc : public Object_c
       PRIVATE
     } Rights;
 
+    typedef enum
+    {
+      PERSISTENT,
+      NOT_PERSISTENT
+    } Persistency;
+
+    typedef enum
+    {
+      GLOBAL,
+      LOCAL
+    } Scope;
+
     GType         _type;
     gchar        *_xml_name;
     gchar        *_user_name;
+    Persistency   _persistency;
+    Scope         _scope;
     Uniqueness    _uniqueness;
     gboolean      _free_value_allowed;
     Rights        _rights;

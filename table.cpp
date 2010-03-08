@@ -78,6 +78,8 @@ Table::Table (StageClass *stage_class)
                                "ref",
                                "attending",
                                "exported",
+                               "victories_ratio",
+                               "indice",
                                NULL);
     filter = new Filter (attr_list,
                          this);
@@ -87,6 +89,29 @@ Table::Table (StageClass *stage_class)
     filter->ShowAttribute ("club");
 
     SetFilter (filter);
+    filter->Release ();
+  }
+
+  {
+    GSList *attr_list;
+    Filter *filter;
+
+    AttributeDesc::CreateList (&attr_list,
+                               "ref",
+                               "attending",
+                               "exported",
+                               "victories_ratio",
+                               "indice",
+                               NULL);
+    filter = new Filter (attr_list,
+                         this);
+
+    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("name");
+    filter->ShowAttribute ("first_name");
+    filter->ShowAttribute ("club");
+
+    SetClassificationFilter (filter);
     filter->Release ();
   }
 

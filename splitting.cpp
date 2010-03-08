@@ -53,6 +53,8 @@ Splitting::Splitting (StageClass *stage_class)
     AttributeDesc::CreateList (&attr_list,
                                "ref",
                                "attending",
+                               "victories_ratio",
+                               "indice",
                                NULL);
     filter = new Filter (attr_list,
                          this);

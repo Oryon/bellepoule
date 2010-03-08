@@ -29,6 +29,7 @@ Module_c::Module_c (gchar *glade_file,
 {
   _plugged_list = NULL;
   _owner        = NULL;
+  _data_owner   = this;
   _root         = NULL;
   _glade        = NULL;
   _toolbar      = NULL;
@@ -89,6 +90,18 @@ Module_c::~Module_c ()
   }
 
   Object_c::TryToRelease (_filter);
+}
+
+// --------------------------------------------------------------------------------
+void Module_c::SetDataOwner (Object_c *data_owner)
+{
+  _data_owner = data_owner;
+}
+
+// --------------------------------------------------------------------------------
+Object_c *Module_c::GetDataOwner ()
+{
+  return _data_owner;
 }
 
 // --------------------------------------------------------------------------------

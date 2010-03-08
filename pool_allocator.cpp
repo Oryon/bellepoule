@@ -73,6 +73,8 @@ PoolAllocator_c::PoolAllocator_c (StageClass *stage_class)
                                "ref",
                                "attending",
                                "exported",
+                               "victories_ratio",
+                               "indice",
                                NULL);
     filter = new Filter (attr_list,
                          this);

@@ -47,6 +47,8 @@ Checkin::Checkin (StageClass *stage_class)
     AttributeDesc::CreateList (&attr_list,
                                "ref",
                                "exported",
+                               "victories_ratio",
+                               "indice",
                                NULL);
     filter = new Filter (attr_list,
                          this);
