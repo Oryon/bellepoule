@@ -21,26 +21,26 @@
 #include "stage.hpp"
 #include "module.hpp"
 
-class Schedule_c : public Module_c
+class Schedule : public Module
 {
   public:
-    typedef void (Object_c::*StageEvent_t) ();
+    typedef void (Object::*StageEvent_t) ();
 
   public:
-     Schedule_c ();
+     Schedule ();
 
     void DisplayList ();
 
     void CreateDefault ();
 
-    void AddStage    (Stage_c *stage,
-                      Stage_c *after);
-    void RemoveStage (Stage_c *stage);
+    void AddStage    (Stage *stage,
+                      Stage *after);
+    void RemoveStage (Stage *stage);
 
     void Save          (xmlTextWriter *xml_writer);
     void Load          (xmlDoc        *doc);
 
-    Stage_c *GetStage (guint index);
+    Stage *GetStage (guint index);
 
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
@@ -59,15 +59,15 @@ class Schedule_c : public Module_c
     guint         _current_stage;
     gboolean      _score_stuffing_allowed;
 
-    void      SetCurrentStage    (guint index);
-    Module_c *GetSelectedModule  ();
+    void    SetCurrentStage    (guint index);
+    Module *GetSelectedModule  ();
 
-    gint GetNotebookPageNum (Stage_c *stage);
+    gint GetNotebookPageNum (Stage *stage);
 
-    void AddStage (Stage_c *stage);
+    void AddStage (Stage *stage);
 
-    static void OnStageStatusUpdated (Stage_c    *stage,
-                                      Schedule_c *schedule);
+    static void OnStageStatusUpdated (Stage    *stage,
+                                      Schedule *schedule);
 
     static void on_row_selected (GtkWidget *widget,
                                  GdkEvent  *event,
@@ -75,14 +75,14 @@ class Schedule_c : public Module_c
 
     static gboolean on_new_stage_selected (GtkWidget      *widget,
                                            GdkEventButton *event,
-                                           Schedule_c     *owner);
+                                           Schedule       *owner);
 
   private:
     GtkWidget *_formula_dlg;
 
-    ~Schedule_c ();
+    ~Schedule ();
     void OnPlugged ();
-    void PlugStage (Stage_c *stage);
+    void PlugStage (Stage *stage);
 };
 
 #endif

@@ -20,11 +20,11 @@
 #include "object.hpp"
 #include "data.hpp"
 
-class Score_c : public Object_c
+class Score : public Object
 {
   public:
-    Score_c  (Data *max);
-    ~Score_c ();
+    Score  (Data *max);
+    ~Score ();
 
     gboolean IsKnown ();
 
@@ -38,7 +38,7 @@ class Score_c : public Object_c
 
     gboolean IsValid ();
 
-    gboolean IsConsistentWith (Score_c *with);
+    gboolean IsConsistentWith (Score *with);
 
   private:
     gboolean   _is_known;

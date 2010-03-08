@@ -25,32 +25,32 @@
 #include "match.hpp"
 #include "player.hpp"
 
-class ScoreCollector : public Object_c
+class ScoreCollector : public Object
 {
   public:
     typedef void (*OnNewScore_cbk) (ScoreCollector *score_collector,
-                                    CanvasModule_c *client,
-                                    Match_c        *match,
-                                    Player_c       *player);
+                                    CanvasModule   *client,
+                                    Match          *match,
+                                    Player         *player);
 
   public:
-    ScoreCollector (CanvasModule_c *client,
+    ScoreCollector (CanvasModule   *client,
                     OnNewScore_cbk  on_new_score);
 
     void AddCollectingPoint (GooCanvasItem *point,
                              GooCanvasItem *score_text,
-                             Match_c       *match,
-                             Player_c      *player);
+                             Match         *match,
+                             Player        *player);
 
     void SetMatch (GooCanvasItem *to_point,
-                   Match_c       *match,
-                   Player_c      *player);
+                   Match         *match,
+                   Player        *player);
 
-    void Refresh (Match_c *match);
+    void Refresh (Match *match);
 
     void Wipe (GooCanvasItem *point);
 
-    void RemoveCollectingPoints (Match_c *match);
+    void RemoveCollectingPoints (Match *match);
 
     void Lock ();
 
@@ -71,7 +71,7 @@ class ScoreCollector : public Object_c
     GooCanvasItem  *_entry_item;
     GooCanvasItem  *_collecting_point;
     GtkWidget      *_gtk_entry;
-    CanvasModule_c *_client;
+    CanvasModule   *_client;
     OnNewScore_cbk  _on_new_score;
     gboolean        _is_locked;
     gulong          _focus_out_handle;
@@ -97,9 +97,9 @@ class ScoreCollector : public Object_c
                                         GdkEventKey *event,
                                         gpointer     user_data);
 
-    void SetMatchColor (Match_c *match,
-                        gchar   *consistent_color,
-                        gchar   *unconsitentcolor);
+    void SetMatchColor (Match *match,
+                        gchar *consistent_color,
+                        gchar *unconsitentcolor);
 
     void Stop ();
 

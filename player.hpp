@@ -23,27 +23,26 @@
 #include "attribute.hpp"
 #include "object.hpp"
 
-class Match_c;
-class Player_c : public Object_c
+class Player : public Object
 {
   public:
-    typedef void (*OnChange) (Player_c    *player,
-                              Attribute_c *attr,
-                              void        *data);
+    typedef void (*OnChange) (Player    *player,
+                              Attribute *attr,
+                              void      *data);
 
   public:
-     Player_c ();
+    Player ();
 
-    Attribute_c *GetAttribute (gchar    *name,
-                               Object_c *owner = NULL);
+    Attribute *GetAttribute (gchar  *name,
+                             Object *owner = NULL);
 
-    void SetAttributeValue (gchar    *name,
-                            gchar    *value,
-                            Object_c *owner = NULL);
+    void SetAttributeValue (gchar  *name,
+                            gchar  *value,
+                            Object *owner = NULL);
 
-    void SetAttributeValue (gchar    *name,
-                            guint     value,
-                            Object_c *owner = NULL);
+    void SetAttributeValue (gchar  *name,
+                            guint   value,
+                            Object *owner = NULL);
 
     guint GetRef ();
 
@@ -57,15 +56,15 @@ class Player_c : public Object_c
                        OnChange  change_cbk,
                        void     *data);
 
-    static gint CompareWithRef (Player_c *player,
-                                guint     ref);
+    static gint CompareWithRef (Player *player,
+                                guint   ref);
 
-    static gint Compare (Player_c *a,
-                         Player_c *b,
-                         gchar    *attr_name);
+    static gint Compare (Player *a,
+                         Player *b,
+                         gchar  *attr_name);
 
   private:
-    struct Client : public Object_c
+    struct Client : public Object
     {
       gchar    *_attr_name;
       OnChange  _change_cbk;
@@ -80,9 +79,9 @@ class Player_c : public Object_c
     GSList *_attributes;
     guint   _ref;
 
-    ~Player_c ();
+    ~Player ();
 
-    void NotifyChange (Attribute_c *attr);
+    void NotifyChange (Attribute *attr);
 };
 
 #endif

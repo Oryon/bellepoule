@@ -23,14 +23,14 @@
 #include "module.hpp"
 #include "pool.hpp"
 
-class PoolAllocator_c;
+class PoolAllocator;
 
-class PoolSupervisor_c : public virtual Stage_c, public Module_c
+class PoolSupervisor : public virtual Stage, public Module
 {
   public:
     static void Init ();
 
-    PoolSupervisor_c (StageClass *stage_class);
+    PoolSupervisor (StageClass *stage_class);
 
     void OnPrintPoolToolbuttonClicked ();
 
@@ -52,28 +52,28 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
     void OnUnLocked ();
     void Wipe ();
     void RetrievePools ();
-    void Manage (Pool_c *pool);
+    void Manage (Pool *pool);
 
   private:
-    void OnPoolSelected (Pool_c *pool);
+    void OnPoolSelected (Pool *pool);
 
-    static Stage_c *CreateInstance (StageClass *stage_class);
+    static Stage *CreateInstance (StageClass *stage_class);
 
     void FillInConfig ();
     void ApplyConfig ();
-    Stage_c *GetInputProvider ();
+    Stage *GetInputProvider ();
     gboolean IsOver ();
 
   private:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
-    GtkListStore    *_pool_liststore;
-    PoolAllocator_c *_pool_allocator;
-    Pool_c          *_displayed_pool;
-    Data            *_max_score;
+    GtkListStore  *_pool_liststore;
+    PoolAllocator *_pool_allocator;
+    Pool          *_displayed_pool;
+    Data          *_max_score;
 
-    ~PoolSupervisor_c ();
+    ~PoolSupervisor ();
 
     void OnAttrListUpdated ();
 
@@ -83,16 +83,16 @@ class PoolSupervisor_c : public virtual Stage_c, public Module_c
 
     GSList *GetCurrentClassification ();
 
-    void SetInputProvider (Stage_c *input_provider);
+    void SetInputProvider (Stage *input_provider);
 
     void SaveConfiguration (xmlTextWriter *xml_writer);
 
-    static void OnPoolStatusUpdated (Pool_c           *pool,
-                                     PoolSupervisor_c *ps);
+    static void OnPoolStatusUpdated (Pool           *pool,
+                                     PoolSupervisor *ps);
 
-    static gint ComparePlayer (Player_c         *A,
-                               Player_c         *B,
-                               PoolSupervisor_c *pool_supervisor);
+    static gint ComparePlayer (Player         *A,
+                               Player         *B,
+                               PoolSupervisor *pool_supervisor);
 };
 
 #endif

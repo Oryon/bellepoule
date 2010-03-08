@@ -45,12 +45,12 @@ typedef enum
 } QuickSearchColumnId;
 
 extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
-                                                                Object_c  *owner);
+                                                                Object    *owner);
 
 // --------------------------------------------------------------------------------
 Table::Table (StageClass *stage_class)
-: Stage_c (stage_class),
-  CanvasModule_c ("table.glade")
+: Stage (stage_class),
+  CanvasModule ("table.glade")
 {
   _main_table   = NULL;
   _tree_root    = NULL;
@@ -151,8 +151,8 @@ Table::~Table ()
 {
   DeleteTree ();
 
-  Object_c::TryToRelease (_quick_score_collector);
-  Object_c::TryToRelease (_score_collector);
+  Object::TryToRelease (_quick_score_collector);
+  Object::TryToRelease (_score_collector);
 
   _max_score->Release ();
 }
@@ -214,7 +214,7 @@ GooCanvasItem *Table::GetQuickScore (gchar *container)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Table::CreateInstance (StageClass *stage_class)
+Stage *Table::CreateInstance (StageClass *stage_class)
 {
   return new Table (stage_class);
 }
@@ -349,7 +349,7 @@ void Table::Garnish ()
 // --------------------------------------------------------------------------------
 void Table::LoadConfiguration (xmlNode *xml_node)
 {
-  Stage_c::LoadConfiguration (xml_node);
+  Stage::LoadConfiguration (xml_node);
 
   if (_max_score)
   {
@@ -389,7 +389,7 @@ void Table::Load (xmlNode *xml_node)
 // --------------------------------------------------------------------------------
 void Table::SaveConfiguration (xmlTextWriter *xml_writer)
 {
-  Stage_c::SaveConfiguration (xml_writer);
+  Stage::SaveConfiguration (xml_writer);
 
   if (_max_score)
   {
@@ -421,9 +421,9 @@ void Table::Save (xmlTextWriter *xml_writer)
 
 // --------------------------------------------------------------------------------
 void Table::OnNewScore (ScoreCollector *score_collector,
-                        CanvasModule_c *client,
-                        Match_c        *match,
-                        Player_c       *player)
+                        CanvasModule   *client,
+                        Match          *match,
+                        Player         *player)
 {
   Table *table = dynamic_cast <Table *> (client);
   GNode *node  = (GNode *) match->GetData (table, "node");
@@ -455,7 +455,7 @@ void Table::DeleteTree ()
 {
   g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
                                         (void *) on_from_table_combobox_changed,
-                                        (Object_c *) this);
+                                        (Object *) this);
 
   if (_tree_root)
   {
@@ -504,7 +504,7 @@ void Table::CreateTree ()
   {
     g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
                                           (void *) on_from_table_combobox_changed,
-                                          (Object_c *) this);
+                                          (Object *) this);
     gtk_list_store_clear (_from_table_liststore);
 
     for (guint i = 0; i < _nb_levels - 1; i++)
@@ -528,7 +528,7 @@ void Table::CreateTree ()
 
     g_signal_connect (_glade->GetWidget ("from_table_combobox"), "changed",
                       G_CALLBACK (on_from_table_combobox_changed),
-                      (Object_c *) this);
+                      (Object *) this);
   }
 }
 
@@ -583,14 +583,14 @@ gboolean Table::UpdateLevelStatus (GNode *node,
 
   if (data->_match)
   {
-    Player_c *winner = data->_match->GetWinner ();
+    Player *winner = data->_match->GetWinner ();
 
     if (winner == NULL)
     {
-      Player_c *A       = data->_match->GetPlayerA ();
-      Player_c *B       = data->_match->GetPlayerB ();
-      Score_c  *score_A = data->_match->GetScore (A);
-      Score_c  *score_B = data->_match->GetScore (B);
+      Player *A       = data->_match->GetPlayerA ();
+      Player *B       = data->_match->GetPlayerB ();
+      Score  *score_A = data->_match->GetScore (A);
+      Score  *score_B = data->_match->GetScore (B);
 
       if (   (score_A->IsValid () == FALSE)
           || (score_B->IsValid () == FALSE)
@@ -614,7 +614,7 @@ gboolean Table::DrawConnector (GNode *node,
 
   if (data->_match)
   {
-    Player_c        *winner = data->_match->GetWinner ();
+    Player          *winner = data->_match->GetWinner ();
     GNode           *parent = node->parent;
     GooCanvasBounds  bounds;
 
@@ -667,7 +667,7 @@ gboolean Table::FillInNode (GNode *node,
 
   if (data->_match && (data->_level > nb_missing_level))
   {
-    Player_c *winner = data->_match->GetWinner ();
+    Player *winner = data->_match->GetWinner ();
 
     WipeNode (node,
               table);
@@ -752,7 +752,7 @@ gboolean Table::FillInNode (GNode *node,
         for (guint a = 0; a < g_slist_length (selected_attr); a++)
         {
           AttributeDesc *attr_desc;
-          Attribute_c   *attr;
+          Attribute     *attr;
 
           attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                           a);
@@ -814,8 +814,8 @@ gboolean Table::FillInNode (GNode *node,
 
         // Score Text
         {
-          Score_c *score       = parent_data->_match->GetScore (winner);
-          gchar   *score_image = score->GetImage ();
+          Score *score       = parent_data->_match->GetScore (winner);
+          gchar *score_image = score->GetImage ();
 
           score_text = goo_canvas_text_new (data->_canvas_table,
                                             score_image,
@@ -835,8 +835,8 @@ gboolean Table::FillInNode (GNode *node,
         }
 
         {
-          Player_c *A = parent_data->_match->GetPlayerA ();
-          Player_c *B = parent_data->_match->GetPlayerB ();
+          Player *A = parent_data->_match->GetPlayerA ();
+          Player *B = parent_data->_match->GetPlayerB ();
 
           if (   (parent_data->_match->GetWinner () == NULL)
               || ((A != NULL) && (B != NULL)))
@@ -875,7 +875,7 @@ gboolean Table::DeleteNode (GNode *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  Object_c::TryToRelease (data->_match);
+  Object::TryToRelease (data->_match);
 
   return FALSE;
 }
@@ -929,7 +929,7 @@ void Table::AddFork (GNode *to)
   data->_player_item  = NULL;
   data->_print_item   = NULL;
   data->_connector    = NULL;
-  data->_match = new Match_c (_max_score);
+  data->_match = new Match (_max_score);
   data->_match->SetData (this, "node", node);
 
   if ((to_data == NULL) || (data->_level > 1))
@@ -982,8 +982,8 @@ void Table::AddFork (GNode *to)
   }
   else
   {
-    Player_c *player = (Player_c *) g_slist_nth_data (_attendees,
-                                                      data->_expected_winner_rank - 1);
+    Player *player = (Player *) g_slist_nth_data (_attendees,
+                                                  data->_expected_winner_rank - 1);
 
     if (player)
     {
@@ -1020,7 +1020,7 @@ gboolean Table::LoadNode (GNode *node,
     if (strcmp ((char *) table->_xml_node->name, "match") == 0)
     {
       gchar    *attr;
-      Player_c *player;
+      Player   *player;
       NodeData *data    = (NodeData *) node->data;
 
       if (data->_match)
@@ -1082,7 +1082,7 @@ gboolean Table::SaveNode (GNode *node,
 void Table::Wipe ()
 {
   {
-    Object_c::TryToRelease (_score_collector);
+    Object::TryToRelease (_score_collector);
     _score_collector = new ScoreCollector (this,
                                            (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
 
@@ -1100,13 +1100,13 @@ void Table::Wipe ()
                      this);
   }
 
-  CanvasModule_c::Wipe ();
+  CanvasModule::Wipe ();
   _main_table = NULL;
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *widget,
-                                                                   Object_c  *owner)
+                                                                   Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
@@ -1116,7 +1116,7 @@ extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *wi
 // --------------------------------------------------------------------------------
 void Table::OnPlugged ()
 {
-  CanvasModule_c::OnPlugged ();
+  CanvasModule::OnPlugged ();
 
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")),
                                      FALSE);
@@ -1130,14 +1130,14 @@ void Table::OnUnPlugged ()
 {
   DeleteTree ();
 
-  Object_c::TryToRelease (_score_collector);
+  Object::TryToRelease (_score_collector);
   _score_collector = NULL;
 
   gtk_list_store_clear (_from_table_liststore);
   gtk_tree_store_clear (_quick_search_treestore);
   gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
 
-  CanvasModule_c::OnPlugged ();
+  CanvasModule::OnPlugged ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1173,7 +1173,7 @@ gboolean Table::AddToClassification (GNode *node,
 
   if (data->_match)
   {
-    Player_c *winner = data->_match->GetWinner ();
+    Player *winner = data->_match->GetWinner ();
 
     if (winner && g_slist_find (table->_result_list,
                                 winner) == NULL)
@@ -1251,12 +1251,12 @@ gboolean Table::Stuff (GNode *node,
   if (   (data->_level == table->_level_filter)
       && (data->_match))
   {
-    Player_c *A = data->_match->GetPlayerA ();
-    Player_c *B = data->_match->GetPlayerB ();
+    Player *A = data->_match->GetPlayerA ();
+    Player *B = data->_match->GetPlayerB ();
 
     if (A && B)
     {
-      Player_c *winner;
+      Player *winner;
 
       if (g_random_boolean ())
       {
@@ -1292,9 +1292,9 @@ gboolean Table::Stuff (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-void Table::SetPlayer (Match_c  *to_match,
-                       Player_c *player,
-                       guint     position)
+void Table::SetPlayer (Match  *to_match,
+                       Player *player,
+                       guint   position)
 {
   if (position == 0)
   {
@@ -1317,14 +1317,14 @@ void Table::SetPlayer (Match_c  *to_match,
                                     &iter,
                                     path))
     {
-      Player_c *A      = to_match->GetPlayerA ();
-      Player_c *B      = to_match->GetPlayerB ();
-      gchar    *A_name = NULL;
-      gchar    *B_name = NULL;
+      Player *A      = to_match->GetPlayerA ();
+      Player *B      = to_match->GetPlayerB ();
+      gchar  *A_name = NULL;
+      gchar  *B_name = NULL;
 
       if (A)
       {
-        Attribute_c *attr = A->GetAttribute ("name");
+        Attribute *attr = A->GetAttribute ("name");
 
         if (attr)
         {
@@ -1334,7 +1334,7 @@ void Table::SetPlayer (Match_c  *to_match,
 
       if (B)
       {
-        Attribute_c *attr = B->GetAttribute ("name");
+        Attribute *attr = B->GetAttribute ("name");
 
         if (attr)
         {
@@ -1419,7 +1419,7 @@ void Table::OnSearchMatch ()
   if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
                                      &iter))
   {
-    Match_c *match;
+    Match *match;
 
     gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
                         &iter,
@@ -1428,12 +1428,12 @@ void Table::OnSearchMatch ()
 
     if (match)
     {
-      Player_c *playerA = match->GetPlayerA ();
-      Player_c *playerB = match->GetPlayerB ();
+      Player *playerA = match->GetPlayerA ();
+      Player *playerB = match->GetPlayerB ();
 
       if (playerA && playerB)
       {
-        Attribute_c *attr;
+        Attribute *attr;
 
         _quick_score_collector->SetMatch (_quick_score_A,
                                           match,
@@ -1490,7 +1490,7 @@ gchar *Table::GetLevelImage (guint level)
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
-                                                                    Object_c  *owner)
+                                                                    Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
@@ -1499,7 +1499,7 @@ extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *w
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
-                                                                Object_c  *owner)
+                                                                Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
@@ -1508,7 +1508,7 @@ extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widge
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled (GtkWidget *widget,
-                                                                                  Object_c  *owner)
+                                                                                  Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
@@ -1517,7 +1517,7 @@ extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_stuff_toolbutton_clicked (GtkWidget *widget,
-                                                                   Object_c  *owner)
+                                                                   Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
@@ -1526,7 +1526,7 @@ extern "C" G_MODULE_EXPORT void on_table_stuff_toolbutton_clicked (GtkWidget *wi
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_input_toolbutton_toggled (GtkWidget *widget,
-                                                             Object_c  *owner)
+                                                             Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
@@ -1535,7 +1535,7 @@ extern "C" G_MODULE_EXPORT void on_input_toolbutton_toggled (GtkWidget *widget,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *widget,
-                                                                  Object_c  *owner)
+                                                                  Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 

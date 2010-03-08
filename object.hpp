@@ -19,16 +19,16 @@
 
 #include <gtk/gtk.h>
 
-class Object_c
+class Object
 {
   public:
-    void SetData (Object_c       *owner,
+    void SetData (Object         *owner,
                   gchar          *key,
                   void           *data,
                   GDestroyNotify  destroy_cbk = NULL);
 
-    void *GetData (Object_c *owner,
-                   gchar    *key);
+    void *GetData (Object *owner,
+                   gchar  *key);
 
     void Retain ();
 
@@ -36,12 +36,12 @@ class Object_c
 
     static void Dump ();
 
-    static void TryToRelease (Object_c *object);
+    static void TryToRelease (Object *object);
 
   protected:
-    virtual ~Object_c ();
+    virtual ~Object ();
 
-    Object_c (gchar *class_name = NULL);
+    Object (gchar *class_name = NULL);
 
   private:
     GData *_datalist;

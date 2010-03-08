@@ -23,7 +23,7 @@
 #include "object.hpp"
 
 // --------------------------------------------------------------------------------
-class AttributeDesc : public Object_c
+class AttributeDesc : public Object
 {
   public:
     typedef enum
@@ -97,12 +97,12 @@ class AttributeDesc : public Object_c
 };
 
 // --------------------------------------------------------------------------------
-class Attribute_c : public Object_c
+class Attribute : public Object
 {
   public:
-    static Attribute_c *New (gchar *name);
+    static Attribute *New (gchar *name);
 
-    static gint Compare (Attribute_c *a, Attribute_c *b);
+    static gint Compare (Attribute *a, Attribute *b);
 
   public:
     AttributeDesc *GetDesc ();
@@ -123,27 +123,27 @@ class Attribute_c : public Object_c
 
     virtual gchar *GetXmlImage () = 0;
 
-    virtual gint CompareWith (Attribute_c *with) = 0;
+    virtual gint CompareWith (Attribute *with) = 0;
 
   protected:
     AttributeDesc *_desc;
 
-    Attribute_c (AttributeDesc *desc);
-    virtual ~Attribute_c ();
+    Attribute (AttributeDesc *desc);
+    virtual ~Attribute ();
 };
 
 // --------------------------------------------------------------------------------
-class TextAttribute_c : public Attribute_c
+class TextAttribute : public Attribute
 {
   public:
-     TextAttribute_c (AttributeDesc *desc);
+     TextAttribute (AttributeDesc *desc);
 
     void *GetValue ();
 
   private:
     gchar *_value;
 
-    virtual ~TextAttribute_c ();
+    virtual ~TextAttribute ();
 
     void SetValue (gchar *value);
 
@@ -155,22 +155,22 @@ class TextAttribute_c : public Attribute_c
 
     gchar *GetXmlImage ();
 
-    gint CompareWith (Attribute_c *with);
+    gint CompareWith (Attribute *with);
 };
 
 
 // --------------------------------------------------------------------------------
-class BooleanAttribute_c : public Attribute_c
+class BooleanAttribute : public Attribute
 {
   public:
-     BooleanAttribute_c (AttributeDesc *desc);
+     BooleanAttribute (AttributeDesc *desc);
 
     void *GetValue ();
 
   private:
     gboolean _value;
 
-    virtual ~BooleanAttribute_c ();
+    virtual ~BooleanAttribute ();
 
     void SetValue (gchar *value);
 
@@ -182,21 +182,21 @@ class BooleanAttribute_c : public Attribute_c
 
     gchar *GetXmlImage ();
 
-    gint CompareWith (Attribute_c *with);
+    gint CompareWith (Attribute *with);
 };
 
 // --------------------------------------------------------------------------------
-class IntAttribute_c : public Attribute_c
+class IntAttribute : public Attribute
 {
   public:
-     IntAttribute_c (AttributeDesc *desc);
+     IntAttribute (AttributeDesc *desc);
 
     void *GetValue ();
 
   private:
     guint _value;
 
-    virtual ~IntAttribute_c ();
+    virtual ~IntAttribute ();
 
     void SetValue (gchar *value);
 
@@ -208,7 +208,7 @@ class IntAttribute_c : public Attribute_c
 
     gchar *GetXmlImage ();
 
-    gint CompareWith (Attribute_c *with);
+    gint CompareWith (Attribute *with);
 };
 
 #endif

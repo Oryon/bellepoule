@@ -31,7 +31,7 @@ GSList *AttributeDesc::_list = NULL;
 AttributeDesc::AttributeDesc (GType        type,
                               gchar       *xml_name,
                               gchar       *user_name)
-: Object_c ("AttributeDesc")
+: Object ("AttributeDesc")
 {
   _type               = type;
   _xml_name           = xml_name;
@@ -49,7 +49,7 @@ AttributeDesc::AttributeDesc (GType        type,
 AttributeDesc::~AttributeDesc ()
 {
   g_slist_foreach (_list,
-                   (GFunc) Object_c::TryToRelease,
+                   (GFunc) Object::TryToRelease,
                    NULL);
   g_slist_free (_list);
 
@@ -314,8 +314,8 @@ AttributeDesc *AttributeDesc::GetDesc (gchar *name)
 
 
 // --------------------------------------------------------------------------------
-Attribute_c::Attribute_c (AttributeDesc *desc)
-: Object_c ("Attribute_c")
+Attribute::Attribute (AttributeDesc *desc)
+: Object ("Attribute")
 {
   _desc = desc;
   if (_desc)
@@ -325,13 +325,13 @@ Attribute_c::Attribute_c (AttributeDesc *desc)
 }
 
 // --------------------------------------------------------------------------------
-Attribute_c::~Attribute_c ()
+Attribute::~Attribute ()
 {
-  Object_c::TryToRelease (_desc);
+  Object::TryToRelease (_desc);
 }
 
 // --------------------------------------------------------------------------------
-Attribute_c *Attribute_c::New (gchar *name)
+Attribute *Attribute::New (gchar *name)
 {
   AttributeDesc *desc = AttributeDesc::GetDesc (name);
 
@@ -339,44 +339,44 @@ Attribute_c *Attribute_c::New (gchar *name)
   {
     if (desc->_type == G_TYPE_STRING)
     {
-      return new TextAttribute_c (desc);
+      return new TextAttribute (desc);
     }
     else if (desc->_type == G_TYPE_BOOLEAN)
     {
-      return new BooleanAttribute_c (desc);
+      return new BooleanAttribute (desc);
     }
     else if (desc->_type == G_TYPE_INT)
     {
-      return new IntAttribute_c (desc);
+      return new IntAttribute (desc);
     }
     else if (desc->_type == G_TYPE_ENUM)
     {
-      return new TextAttribute_c (desc);
+      return new TextAttribute (desc);
     }
   }
   return NULL;
 }
 
 // --------------------------------------------------------------------------------
-gchar *Attribute_c::GetName ()
+gchar *Attribute::GetName ()
 {
   return _desc->_xml_name;
 }
 
 // --------------------------------------------------------------------------------
-AttributeDesc *Attribute_c::GetDesc ()
+AttributeDesc *Attribute::GetDesc ()
 {
   return _desc;
 }
 
 // --------------------------------------------------------------------------------
-GType Attribute_c::GetType ()
+GType Attribute::GetType ()
 {
   return _desc->_type;
 }
 
 // --------------------------------------------------------------------------------
-gint Attribute_c::Compare (Attribute_c *a, Attribute_c *b)
+gint Attribute::Compare (Attribute *a, Attribute *b)
 {
   if (a)
   {
@@ -394,20 +394,20 @@ gint Attribute_c::Compare (Attribute_c *a, Attribute_c *b)
 }
 
 // --------------------------------------------------------------------------------
-TextAttribute_c::TextAttribute_c (AttributeDesc *desc)
-  : Attribute_c (desc)
+TextAttribute::TextAttribute (AttributeDesc *desc)
+  : Attribute (desc)
 {
   _value = g_strdup ("");
 }
 
 // --------------------------------------------------------------------------------
-TextAttribute_c::~TextAttribute_c ()
+TextAttribute::~TextAttribute ()
 {
   g_free (_value);
 }
 
 // --------------------------------------------------------------------------------
-void TextAttribute_c::SetValue (gchar *value)
+void TextAttribute::SetValue (gchar *value)
 {
   if (value)
   {
@@ -417,26 +417,26 @@ void TextAttribute_c::SetValue (gchar *value)
 }
 
 // --------------------------------------------------------------------------------
-void TextAttribute_c::SetValue (guint value)
+void TextAttribute::SetValue (guint value)
 {
   g_free (_value);
   _value = g_strdup_printf ("%d", value);
 }
 
 // --------------------------------------------------------------------------------
-void *TextAttribute_c::GetValue ()
+void *TextAttribute::GetValue ()
 {
   return _value;
 }
 
 // --------------------------------------------------------------------------------
-gboolean TextAttribute_c::EntryIsTextBased ()
+gboolean TextAttribute::EntryIsTextBased ()
 {
   return true;
 }
 
 // --------------------------------------------------------------------------------
-gchar *TextAttribute_c::GetXmlImage ()
+gchar *TextAttribute::GetXmlImage ()
 {
   gchar *image = _desc->GetXmlImage (_value);
 
@@ -449,13 +449,13 @@ gchar *TextAttribute_c::GetXmlImage ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *TextAttribute_c::GetUserImage ()
+gchar *TextAttribute::GetUserImage ()
 {
   return g_strdup (_value);
 }
 
 // --------------------------------------------------------------------------------
-gint TextAttribute_c::CompareWith (Attribute_c *with)
+gint TextAttribute::CompareWith (Attribute *with)
 {
   if (with)
   {
@@ -466,19 +466,19 @@ gint TextAttribute_c::CompareWith (Attribute_c *with)
 }
 
 // --------------------------------------------------------------------------------
-BooleanAttribute_c::BooleanAttribute_c (AttributeDesc *desc)
-  : Attribute_c (desc)
+BooleanAttribute::BooleanAttribute (AttributeDesc *desc)
+  : Attribute (desc)
 {
   _value = false;
 }
 
 // --------------------------------------------------------------------------------
-BooleanAttribute_c::~BooleanAttribute_c ()
+BooleanAttribute::~BooleanAttribute ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void BooleanAttribute_c::SetValue (gchar *value)
+void BooleanAttribute::SetValue (gchar *value)
 {
   if (value)
   {
@@ -487,37 +487,37 @@ void BooleanAttribute_c::SetValue (gchar *value)
 }
 
 // --------------------------------------------------------------------------------
-void BooleanAttribute_c::SetValue (guint value)
+void BooleanAttribute::SetValue (guint value)
 {
   _value = value;
 }
 
 // --------------------------------------------------------------------------------
-void *BooleanAttribute_c::GetValue ()
+void *BooleanAttribute::GetValue ()
 {
   return (void *) _value;
 }
 
 // --------------------------------------------------------------------------------
-gboolean BooleanAttribute_c::EntryIsTextBased ()
+gboolean BooleanAttribute::EntryIsTextBased ()
 {
   return false;
 }
 
 // --------------------------------------------------------------------------------
-gchar *BooleanAttribute_c::GetXmlImage ()
+gchar *BooleanAttribute::GetXmlImage ()
 {
   return GetUserImage ();
 }
 
 // --------------------------------------------------------------------------------
-gchar *BooleanAttribute_c::GetUserImage ()
+gchar *BooleanAttribute::GetUserImage ()
 {
   return g_strdup_printf ("%d", _value);
 }
 
 // --------------------------------------------------------------------------------
-gint BooleanAttribute_c::CompareWith (Attribute_c *with)
+gint BooleanAttribute::CompareWith (Attribute *with)
 {
   if (with)
   {
@@ -528,19 +528,19 @@ gint BooleanAttribute_c::CompareWith (Attribute_c *with)
 }
 
 // --------------------------------------------------------------------------------
-IntAttribute_c::IntAttribute_c (AttributeDesc *desc)
-  : Attribute_c (desc)
+IntAttribute::IntAttribute (AttributeDesc *desc)
+  : Attribute (desc)
 {
   _value = 0;
 }
 
 // --------------------------------------------------------------------------------
-IntAttribute_c::~IntAttribute_c ()
+IntAttribute::~IntAttribute ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void IntAttribute_c::SetValue (gchar *value)
+void IntAttribute::SetValue (gchar *value)
 {
   if (value)
   {
@@ -556,37 +556,37 @@ void IntAttribute_c::SetValue (gchar *value)
 }
 
 // --------------------------------------------------------------------------------
-void IntAttribute_c::SetValue (guint value)
+void IntAttribute::SetValue (guint value)
 {
   _value = value;
 }
 
 // --------------------------------------------------------------------------------
-void *IntAttribute_c::GetValue ()
+void *IntAttribute::GetValue ()
 {
   return (void *) _value;
 }
 
 // --------------------------------------------------------------------------------
-gboolean IntAttribute_c::EntryIsTextBased ()
+gboolean IntAttribute::EntryIsTextBased ()
 {
   return true;
 }
 
 // --------------------------------------------------------------------------------
-gchar *IntAttribute_c::GetXmlImage ()
+gchar *IntAttribute::GetXmlImage ()
 {
   return GetUserImage ();
 }
 
 // --------------------------------------------------------------------------------
-gchar *IntAttribute_c::GetUserImage ()
+gchar *IntAttribute::GetUserImage ()
 {
   return g_strdup_printf ("%d", _value);
 }
 
 // --------------------------------------------------------------------------------
-gint IntAttribute_c::CompareWith (Attribute_c *with)
+gint IntAttribute::CompareWith (Attribute *with)
 {
   if (with)
   {

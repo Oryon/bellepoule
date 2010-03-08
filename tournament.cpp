@@ -26,7 +26,7 @@
 
 // --------------------------------------------------------------------------------
 Tournament::Tournament (gchar *filename)
-  : Module_c ("tournament.glade")
+  : Module ("tournament.glade")
 {
   _contest_list = NULL;
 
@@ -54,9 +54,9 @@ Tournament::Tournament (gchar *filename)
 
   if (filename)
   {
-    Contest_c *contest;
+    Contest *contest;
 
-    contest = new Contest_c (filename);
+    contest = new Contest (filename);
     Manage (contest);
     g_free (filename);
   }
@@ -132,7 +132,7 @@ void Tournament::ReadConfiguration ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::Manage (Contest_c *contest)
+void Tournament::Manage (Contest *contest)
 {
   if (contest)
   {
@@ -152,7 +152,7 @@ void Tournament::Manage (Contest_c *contest)
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnContestDeleted (Contest_c *contest)
+void Tournament::OnContestDeleted (Contest *contest)
 {
   if (_contest_list)
   {
@@ -167,14 +167,14 @@ void Tournament::OnContestDeleted (Contest_c *contest)
 }
 
 // --------------------------------------------------------------------------------
-Contest_c *Tournament::GetContest (gchar *filename)
+Contest *Tournament::GetContest (gchar *filename)
 {
   for (guint i = 0; i < g_slist_length (_contest_list); i++)
   {
-    Contest_c *contest;
+    Contest *contest;
 
-    contest = (Contest_c *) g_slist_nth_data (_contest_list,
-                                              i);
+    contest = (Contest *) g_slist_nth_data (_contest_list,
+                                            i);
     if (strcmp (filename, contest->GetFilename ()) == 0)
     {
       return contest;
@@ -187,7 +187,7 @@ Contest_c *Tournament::GetContest (gchar *filename)
 // --------------------------------------------------------------------------------
 void Tournament::OnNew ()
 {
-  Contest_c *contest = Contest_c::Create ();
+  Contest *contest = Contest::Create ();
 
   Manage (contest);
 }
@@ -285,7 +285,7 @@ void Tournament::OnOpen (gchar *current_folder)
       }
 
       {
-        Contest_c *contest = new Contest_c (filename);
+        Contest *contest = new Contest (filename);
 
         Manage (contest);
       }
@@ -369,7 +369,7 @@ void Tournament::OnRecent ()
       }
 
       {
-        Contest_c *contest = new Contest_c ((gchar *) gtk_recent_info_get_uri_display (info));
+        Contest *contest = new Contest ((gchar *) gtk_recent_info_get_uri_display (info));
 
         Manage (contest);
       }
@@ -383,7 +383,7 @@ void Tournament::OnRecent ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
-                                                          Object_c  *owner)
+                                                          Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
@@ -392,7 +392,7 @@ extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
-                                                           Object_c  *owner)
+                                                           Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
@@ -401,7 +401,7 @@ extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
-                                                           Object_c  *owner)
+                                                           Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
@@ -410,7 +410,7 @@ extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_example_menuitem_activate (GtkWidget *w,
-                                                              Object_c  *owner)
+                                                              Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
@@ -420,7 +420,7 @@ extern "C" G_MODULE_EXPORT void on_example_menuitem_activate (GtkWidget *w,
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
                                                           GdkEvent  *event,
-                                                          Object_c  *owner)
+                                                          Object    *owner)
 {
   GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
                                                           GTK_DIALOG_MODAL,
@@ -451,7 +451,7 @@ extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
-                                                             Object_c  *owner)
+                                                             Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 

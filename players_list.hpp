@@ -22,10 +22,10 @@
 #include "module.hpp"
 #include "attribute.hpp"
 
-class PlayersList : public Module_c
+class PlayersList : public Module
 {
   public:
-    void Add (Player_c *player);
+    void Add (Player *player);
 
     void Wipe ();
 
@@ -36,7 +36,7 @@ class PlayersList : public Module_c
 
     GSList *_player_list;
 
-    typedef gboolean (*CustomFilter) (Player_c *player);
+    typedef gboolean (*CustomFilter) (Player *player);
 
     PlayersList (gchar *glade_file,
                  guint  rights = SORTABLE | MODIFIABLE);
@@ -49,7 +49,7 @@ class PlayersList : public Module_c
 
     void SetSensitiveState (bool sensitive_value);
 
-    void Update (Player_c *player);
+    void Update (Player *player);
 
     GSList *CreateCustomList (CustomFilter filter);
 
@@ -68,7 +68,7 @@ class PlayersList : public Module_c
 
     GtkTreeRowReference *GetPlayerRowRef (GtkTreeIter *iter);
 
-    Player_c *GetPlayer (const gchar *path_string);
+    Player *GetPlayer (const gchar *path_string);
 
     void OnCellEdited (gchar *path_string,
                        gchar *new_text,
@@ -78,7 +78,7 @@ class PlayersList : public Module_c
                         gboolean  is_active,
                         gchar    *attr_name);
 
-    virtual void OnPlayerRemoved (Player_c *player) {};
+    virtual void OnPlayerRemoved (Player *player) {};
 
     static void on_cell_toggled (GtkCellRendererToggle *cell,
                                  gchar                 *path_string,

@@ -22,8 +22,8 @@
 #include "pool_supervisor.hpp"
 #include "classification.hpp"
 
-const gchar *PoolSupervisor_c::_class_name     = "pool";
-const gchar *PoolSupervisor_c::_xml_class_name = "pool_stage";
+const gchar *PoolSupervisor::_class_name     = "pool";
+const gchar *PoolSupervisor::_xml_class_name = "pool_stage";
 
 typedef enum
 {
@@ -32,12 +32,12 @@ typedef enum
 } ColumnId;
 
 extern "C" G_MODULE_EXPORT void on_pool_combobox_changed (GtkWidget *widget,
-                                                          Object_c  *owner);
+                                                          Object    *owner);
 
 // --------------------------------------------------------------------------------
-PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
-  : Stage_c (stage_class),
-  Module_c ("pool_supervisor.glade")
+PoolSupervisor::PoolSupervisor (StageClass *stage_class)
+  : Stage (stage_class),
+  Module ("pool_supervisor.glade")
 {
   _pool_allocator = NULL;
   _displayed_pool = NULL;
@@ -99,14 +99,14 @@ PoolSupervisor_c::PoolSupervisor_c (StageClass *stage_class)
 }
 
 // --------------------------------------------------------------------------------
-PoolSupervisor_c::~PoolSupervisor_c ()
+PoolSupervisor::~PoolSupervisor ()
 {
-  Object_c::TryToRelease (_pool_allocator);
+  Object::TryToRelease (_pool_allocator);
   _classification_filter->Release ();
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Init ()
+void PoolSupervisor::Init ()
 {
   RegisterStageClass (_class_name,
                       _xml_class_name,
@@ -115,13 +115,13 @@ void PoolSupervisor_c::Init ()
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *PoolSupervisor_c::CreateInstance (StageClass *stage_class)
+Stage *PoolSupervisor::CreateInstance (StageClass *stage_class)
 {
-  return new PoolSupervisor_c (stage_class);
+  return new PoolSupervisor (stage_class);
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnPlugged ()
+void PoolSupervisor::OnPlugged ()
 {
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton")),
                                      FALSE);
@@ -130,18 +130,18 @@ void PoolSupervisor_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnUnPlugged ()
+void PoolSupervisor::OnUnPlugged ()
 {
-  //Object_c::TryToRelease (_pool_allocator);
+  //Object::TryToRelease (_pool_allocator);
   //_pool_allocator = NULL;
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Display ()
+void PoolSupervisor::Display ()
 {
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
   {
-    Pool_c *pool;
+    Pool *pool;
 
     pool = _pool_allocator->GetPool (i);
     pool->SortPlayers ();
@@ -151,15 +151,15 @@ void PoolSupervisor_c::Display ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Garnish ()
+void PoolSupervisor::Garnish ()
 {
   _displayed_pool = _pool_allocator->GetPool (0);
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::LoadConfiguration (xmlNode *xml_node)
+void PoolSupervisor::LoadConfiguration (xmlNode *xml_node)
 {
-  Stage_c::LoadConfiguration (xml_node);
+  Stage::LoadConfiguration (xml_node);
 
   if (_max_score)
   {
@@ -168,7 +168,7 @@ void PoolSupervisor_c::LoadConfiguration (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Load (xmlNode *xml_node)
+void PoolSupervisor::Load (xmlNode *xml_node)
 {
   LoadConfiguration (xml_node);
 
@@ -177,7 +177,7 @@ void PoolSupervisor_c::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Load (xmlNode *xml_node,
+void PoolSupervisor::Load (xmlNode *xml_node,
                              guint    current_pool_index)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
@@ -186,7 +186,7 @@ void PoolSupervisor_c::Load (xmlNode *xml_node,
     {
       if (strcmp ((char *) n->name, "match_list") == 0)
       {
-        Pool_c *current_pool = _pool_allocator->GetPool (current_pool_index);
+        Pool *current_pool = _pool_allocator->GetPool (current_pool_index);
 
         current_pool->Load (n->children,
                             _attendees);
@@ -209,9 +209,9 @@ void PoolSupervisor_c::Load (xmlNode *xml_node,
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::SaveConfiguration (xmlTextWriter *xml_writer)
+void PoolSupervisor::SaveConfiguration (xmlTextWriter *xml_writer)
 {
-  Stage_c::SaveConfiguration (xml_writer);
+  Stage::SaveConfiguration (xml_writer);
 
   if (_max_score)
   {
@@ -220,7 +220,7 @@ void PoolSupervisor_c::SaveConfiguration (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
+void PoolSupervisor::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
@@ -231,7 +231,7 @@ void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
   {
     for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
     {
-      Pool_c *pool;
+      Pool *pool;
 
       pool = _pool_allocator->GetPool (p);
       pool->Save (xml_writer);
@@ -242,24 +242,24 @@ void PoolSupervisor_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-gint PoolSupervisor_c::ComparePlayer (Player_c         *A,
-                                      Player_c         *B,
-                                      PoolSupervisor_c *pool_supervisor)
+gint PoolSupervisor::ComparePlayer (Player         *A,
+                                    Player         *B,
+                                    PoolSupervisor *pool_supervisor)
 {
-  return Pool_c::ComparePlayer (A,
-                                B,
-                                pool_supervisor,
-                                0);
+  return Pool::ComparePlayer (A,
+                              B,
+                              pool_supervisor,
+                              0);
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnLocked ()
+void PoolSupervisor::OnLocked ()
 {
   DisableSensitiveWidgets ();
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool_c *pool;
+    Pool *pool;
 
     pool = _pool_allocator->GetPool (p);
     pool->Lock ();
@@ -267,13 +267,13 @@ void PoolSupervisor_c::OnLocked ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnUnLocked ()
+void PoolSupervisor::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool_c *pool;
+    Pool *pool;
 
     pool = _pool_allocator->GetPool (p);
     pool->UnLock ();
@@ -283,13 +283,13 @@ void PoolSupervisor_c::OnUnLocked ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Wipe ()
+void PoolSupervisor::Wipe ()
 {
   if (_pool_allocator)
   {
     for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
     {
-      Pool_c *pool;
+      Pool *pool;
 
       pool = _pool_allocator->GetPool (p);
       pool->ResetMatches ();
@@ -306,7 +306,7 @@ void PoolSupervisor_c::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::Manage (Pool_c *pool)
+void PoolSupervisor::Manage (Pool *pool)
 {
   GtkTreeIter iter;
 
@@ -320,13 +320,13 @@ void PoolSupervisor_c::Manage (Pool_c *pool)
   pool->SetRandSeed (0);
   pool->SetDataOwner (this);
   pool->SetFilter (_filter);
-  pool->SetStatusCbk ((Pool_c::StatusCbk) OnPoolStatusUpdated,
+  pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                       this);
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnPoolStatusUpdated (Pool_c           *pool,
-                                            PoolSupervisor_c *ps)
+void PoolSupervisor::OnPoolStatusUpdated (Pool           *pool,
+                                          PoolSupervisor *ps)
 {
   GtkTreeIter iter;
 
@@ -359,11 +359,11 @@ void PoolSupervisor_c::OnPoolStatusUpdated (Pool_c           *pool,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolSupervisor_c::IsOver ()
+gboolean PoolSupervisor::IsOver ()
 {
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool_c *pool;
+    Pool *pool;
 
     pool = _pool_allocator->GetPool (p);
     if (pool->IsOver () == FALSE)
@@ -375,7 +375,7 @@ gboolean PoolSupervisor_c::IsOver ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnPoolSelected (gint index)
+void PoolSupervisor::OnPoolSelected (gint index)
 {
   if ((index >= 0) && _pool_allocator)
   {
@@ -383,17 +383,17 @@ void PoolSupervisor_c::OnPoolSelected (gint index)
 
     g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_combobox"),
                                           (void *) on_pool_combobox_changed,
-                                          (Object_c *) this);
+                                          (Object *) this);
     gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("pool_combobox")),
                               index);
     g_signal_connect (_glade->GetWidget ("pool_combobox"), "changed",
                       G_CALLBACK (on_pool_combobox_changed),
-                      (Object_c *) this);
+                      (Object *) this);
   }
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnPoolSelected (Pool_c *pool)
+void PoolSupervisor::OnPoolSelected (Pool *pool)
 {
   if (_displayed_pool)
   {
@@ -412,15 +412,15 @@ void PoolSupervisor_c::OnPoolSelected (Pool_c *pool)
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_print_pool_toolbutton_clicked (GtkWidget *widget,
-                                                                  Object_c  *owner)
+                                                                  Object    *owner)
 {
-  PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
+  PoolSupervisor *p = dynamic_cast <PoolSupervisor *> (owner);
 
   p->OnPrintPoolToolbuttonClicked ();
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
+void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 {
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
   {
@@ -438,7 +438,7 @@ void PoolSupervisor_c::OnPrintPoolToolbuttonClicked ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::RetrievePools ()
+void PoolSupervisor::RetrievePools ()
 {
   if (_pool_allocator)
   {
@@ -450,12 +450,12 @@ void PoolSupervisor_c::RetrievePools ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::ApplyConfig ()
+void PoolSupervisor::ApplyConfig ()
 {
   {
     GtkWidget *name_w   = _glade->GetWidget ("name_entry");
     gchar     *name     = (gchar *) gtk_entry_get_text (GTK_ENTRY (name_w));
-    Stage_c   *previous = GetPreviousStage ();
+    Stage     *previous = GetPreviousStage ();
 
     SetName (name);
     previous->SetName (name);
@@ -482,27 +482,27 @@ void PoolSupervisor_c::ApplyConfig ()
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *PoolSupervisor_c::GetInputProvider ()
+Stage *PoolSupervisor::GetInputProvider ()
 {
-  Stage_c *previous = GetPreviousStage ();
+  Stage *previous = GetPreviousStage ();
 
   if (previous)
   {
-    Stage_c::StageClass *provider_class = previous->GetClass ();
+    Stage::StageClass *provider_class = previous->GetClass ();
 
-    if (strcmp (provider_class->_name, PoolAllocator_c::_class_name) == 0)
+    if (strcmp (provider_class->_name, PoolAllocator::_class_name) == 0)
     {
       return previous;
     }
   }
 
-  return Stage_c::CreateInstance (PoolAllocator_c::_xml_class_name);
+  return Stage::CreateInstance (PoolAllocator::_xml_class_name);
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::SetInputProvider (Stage_c *input_provider)
+void PoolSupervisor::SetInputProvider (Stage *input_provider)
 {
-  _pool_allocator = dynamic_cast <PoolAllocator_c *> (GetPreviousStage ());
+  _pool_allocator = dynamic_cast <PoolAllocator *> (GetPreviousStage ());
 
   if (_pool_allocator)
   {
@@ -510,11 +510,11 @@ void PoolSupervisor_c::SetInputProvider (Stage_c *input_provider)
     _max_score = _pool_allocator->GetMaxScore ();
   }
 
-  Stage_c::SetInputProvider (input_provider);
+  Stage::SetInputProvider (input_provider);
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::FillInConfig ()
+void PoolSupervisor::FillInConfig ()
 {
   gchar *text = g_strdup_printf ("%d", _max_score->_value);
 
@@ -527,7 +527,7 @@ void PoolSupervisor_c::FillInConfig ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnAttrListUpdated ()
+void PoolSupervisor::OnAttrListUpdated ()
 {
   if (_displayed_pool)
   {
@@ -536,7 +536,7 @@ void PoolSupervisor_c::OnAttrListUpdated ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnFilterClicked ()
+void PoolSupervisor::OnFilterClicked ()
 {
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
   {
@@ -554,11 +554,11 @@ void PoolSupervisor_c::OnFilterClicked ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor_c::OnStuffClicked ()
+void PoolSupervisor::OnStuffClicked ()
 {
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
   {
-    Pool_c *pool;
+    Pool *pool;
 
     pool = _pool_allocator->GetPool (i);
     pool->ResetMatches ();
@@ -569,18 +569,18 @@ void PoolSupervisor_c::OnStuffClicked ()
 }
 
 // --------------------------------------------------------------------------------
-GSList *PoolSupervisor_c::GetCurrentClassification ()
+GSList *PoolSupervisor::GetCurrentClassification ()
 {
   GSList *result = NULL;
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool_c *pool;
+    Pool *pool;
 
     pool = _pool_allocator->GetPool (p);
     for (guint i = 0; i < pool->GetNbPlayers (); i++)
     {
-      Player_c *player;
+      Player *player;
 
       player = pool->GetPlayer (i);
 
@@ -595,37 +595,37 @@ GSList *PoolSupervisor_c::GetCurrentClassification ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_pool_filter_toolbutton_clicked (GtkWidget *widget,
-                                                                   Object_c  *owner)
+                                                                   Object    *owner)
 {
-  PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
+  PoolSupervisor *p = dynamic_cast <PoolSupervisor *> (owner);
 
   p->OnFilterClicked ();
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_pool_combobox_changed (GtkWidget *widget,
-                                                          Object_c  *owner)
+                                                          Object    *owner)
 {
-  PoolSupervisor_c *p          = dynamic_cast <PoolSupervisor_c *> (owner);
-  gint              pool_index = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
+  PoolSupervisor *p          = dynamic_cast <PoolSupervisor *> (owner);
+  gint            pool_index = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
 
   p->OnPoolSelected (pool_index);
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_pool_classification_toggletoolbutton_toggled (GtkWidget *widget,
-                                                                                 Object_c  *owner)
+                                                                                 Object    *owner)
 {
-  PoolSupervisor_c *p = dynamic_cast <PoolSupervisor_c *> (owner);
+  PoolSupervisor *p = dynamic_cast <PoolSupervisor *> (owner);
 
   p->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_stuff_toolbutton_clicked (GtkWidget *widget,
-                                                             Object_c  *owner)
+                                                             Object    *owner)
 {
-  PoolSupervisor_c *ps = dynamic_cast <PoolSupervisor_c *> (owner);
+  PoolSupervisor *ps = dynamic_cast <PoolSupervisor *> (owner);
 
   ps->OnStuffClicked ();
 }

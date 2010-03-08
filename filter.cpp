@@ -23,9 +23,9 @@
 #include "filter.hpp"
 
 // --------------------------------------------------------------------------------
-Filter::Filter (GSList   *attr_list,
-                Module_c *owner)
-: Object_c ("Filter")
+Filter::Filter (GSList *attr_list,
+                Module *owner)
+: Object ("Filter")
 {
   _filter_window = NULL;
   _selected_attr = NULL;
@@ -75,7 +75,7 @@ Filter::~Filter ()
 }
 
 // --------------------------------------------------------------------------------
-void Filter::SetOwner (Module_c *owner)
+void Filter::SetOwner (Module *owner)
 {
   _owner = owner;
 }

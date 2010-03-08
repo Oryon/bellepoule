@@ -25,7 +25,7 @@
 #include "attribute.hpp"
 #include "players_list.hpp"
 
-class GeneralClassification : public virtual Stage_c, public PlayersList
+class GeneralClassification : public virtual Stage, public PlayersList
 {
   public:
     static void Init ();
@@ -36,7 +36,7 @@ class GeneralClassification : public virtual Stage_c, public PlayersList
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
-    static Stage_c *CreateInstance (StageClass *stage_class);
+    static Stage *CreateInstance (StageClass *stage_class);
 
     void GeneralClassification::Save (xmlTextWriter *xml_writer);
 

@@ -25,32 +25,32 @@
 #include "data.hpp"
 #include "score.hpp"
 
-class Player_c;
-class Match_c : public Object_c
+class Player;
+class Match : public Object
 {
   public:
-    Match_c  (Data *max_score);
+    Match  (Data *max_score);
 
-    Match_c  (Player_c *A,
-              Player_c *B,
-              Data     *max_score);
+    Match  (Player *A,
+            Player *B,
+            Data   *max_score);
 
-    Player_c *GetPlayerA ();
-    Player_c *GetPlayerB ();
-    Player_c *GetWinner  ();
+    Player *GetPlayerA ();
+    Player *GetPlayerB ();
+    Player *GetWinner  ();
 
-    void SetPlayerA (Player_c *player);
-    void SetPlayerB (Player_c *player);
+    void SetPlayerA (Player *player);
+    void SetPlayerB (Player *player);
 
-    gboolean HasPlayer (Player_c *player);
+    gboolean HasPlayer (Player *player);
 
-    gboolean PlayerHasScore (Player_c *player);
+    gboolean PlayerHasScore (Player *player);
 
-    void SetScore (Player_c *player, gint score);
+    void SetScore (Player *player, gint score);
 
-    gboolean SetScore (Player_c *player, gchar *score);
+    gboolean SetScore (Player *player, gchar *score);
 
-    Score_c *GetScore (Player_c *player);
+    Score *GetScore (Player *player);
 
     void Save (xmlTextWriter *xml_writer);
 
@@ -58,16 +58,16 @@ class Match_c : public Object_c
 
   private:
     Data     *_max_score;
-    Player_c *_A;
-    Player_c *_B;
+    Player   *_A;
+    Player   *_B;
     gboolean  _A_is_known;
     gboolean  _B_is_known;
-    Score_c  *_A_score;
-    Score_c  *_B_score;
+    Score    *_A_score;
+    Score    *_B_score;
 
     gboolean ScoreIsNumber (gchar *score);
 
-    ~Match_c ();
+    ~Match ();
 };
 
 #endif

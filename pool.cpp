@@ -26,10 +26,10 @@
 #include "pool.hpp"
 
 // --------------------------------------------------------------------------------
-Pool_c::Pool_c (Data  *max_score,
-                guint  number)
-  : CanvasModule_c ("pool.glade",
-                    "canvas_scrolled_window")
+Pool::Pool (Data  *max_score,
+            guint  number)
+  : CanvasModule ("pool.glade",
+                  "canvas_scrolled_window")
 {
   _number      = number;
   _player_list = NULL;
@@ -51,7 +51,7 @@ Pool_c::Pool_c (Data  *max_score,
 }
 
 // --------------------------------------------------------------------------------
-Pool_c::~Pool_c ()
+Pool::~Pool ()
 {
   Wipe ();
 
@@ -61,27 +61,27 @@ Pool_c::~Pool_c ()
 
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {
-    Match_c *match;
+    Match *match;
 
-    match = (Match_c *) g_slist_nth_data (_match_list, i);
-    Object_c::TryToRelease (match);
+    match = (Match *) g_slist_nth_data (_match_list, i);
+    Object::TryToRelease (match);
   }
   g_slist_free (_match_list);
 
-  Object_c::TryToRelease (_score_collector);
+  Object::TryToRelease (_score_collector);
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::Stuff ()
+void Pool::Stuff ()
 {
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {
-    Match_c  *match;
-    Player_c *A;
-    Player_c *B;
-    gint      score;
+    Match  *match;
+    Player *A;
+    Player *B;
+    gint    score;
 
-    match = (Match_c *) g_slist_nth_data (_match_list, i);
+    match = (Match *) g_slist_nth_data (_match_list, i);
     A     = match->GetPlayerA ();
     B     = match->GetPlayerB ();
     score = g_random_int_range (0,
@@ -103,8 +103,8 @@ void Pool_c::Stuff ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::SetStatusCbk (StatusCbk  cbk,
-                           void      *data)
+void Pool::SetStatusCbk (StatusCbk  cbk,
+                         void      *data)
 {
   _status_cbk_data = data;
   _status_cbk      = cbk;
@@ -117,25 +117,25 @@ void Pool_c::SetStatusCbk (StatusCbk  cbk,
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::SetRandSeed (guint32 seed)
+void Pool::SetRandSeed (guint32 seed)
 {
   _rand_seed = seed;
 }
 
 // --------------------------------------------------------------------------------
-guint Pool_c::GetNumber ()
+guint Pool::GetNumber ()
 {
   return _number;
 }
 
 // --------------------------------------------------------------------------------
-gchar *Pool_c::GetName ()
+gchar *Pool::GetName ()
 {
   return _name;
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::AddPlayer (Player_c *player)
+void Pool::AddPlayer (Player *player)
 {
   if (player == NULL)
   {
@@ -148,13 +148,13 @@ void Pool_c::AddPlayer (Player_c *player)
   {
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Player_c *current_player;
-      Match_c  *match;
+      Player *current_player;
+      Match  *match;
 
       current_player = GetPlayer (i);
-      match = new Match_c (player,
-                           current_player,
-                           _max_score);
+      match = new Match (player,
+                         current_player,
+                         _max_score);
 
       _match_list = g_slist_append (_match_list,
                                     match);
@@ -162,13 +162,13 @@ void Pool_c::AddPlayer (Player_c *player)
 
     _player_list = g_slist_insert_sorted_with_data (_player_list,
                                                     player,
-                                                    (GCompareDataFunc) Player_c::Compare,
+                                                    (GCompareDataFunc) Player::Compare,
                                                     (void *) "rank");
   }
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::RemovePlayer (Player_c *player)
+void Pool::RemovePlayer (Player *player)
 {
   if (g_slist_find (_player_list,
                     player))
@@ -182,11 +182,11 @@ void Pool_c::RemovePlayer (Player_c *player)
       while (node)
       {
         GSList  *next_node;
-        Match_c *match;
+        Match   *match;
 
         next_node = g_slist_next (node);
 
-        match = (Match_c *) node->data;
+        match = (Match *) node->data;
         if (match->HasPlayer (player))
         {
           _match_list = g_slist_delete_link (_match_list,
@@ -201,32 +201,32 @@ void Pool_c::RemovePlayer (Player_c *player)
 }
 
 // --------------------------------------------------------------------------------
-guint Pool_c::GetNbPlayers ()
+guint Pool::GetNbPlayers ()
 {
   return g_slist_length (_player_list);
 }
 
 // --------------------------------------------------------------------------------
-Player_c *Pool_c::GetPlayer (guint i)
+Player *Pool::GetPlayer (guint i)
 {
-  return (Player_c *) g_slist_nth_data (_player_list,
-                                        i);
+  return (Player *) g_slist_nth_data (_player_list,
+                                      i);
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::OnNewScore (ScoreCollector *score_collector,
-                         CanvasModule_c *client,
-                         Match_c        *match,
-                         Player_c       *player)
+void Pool::OnNewScore (ScoreCollector *score_collector,
+                       CanvasModule   *client,
+                       Match          *match,
+                       Player         *player)
 {
-  Pool_c *pool = dynamic_cast <Pool_c *> (client);
+  Pool *pool = dynamic_cast <Pool *> (client);
 
   pool->RefreshScoreData ();
   pool->RefreshDashBoard ();
 }
 
 // --------------------------------------------------------------------------------
-GString *Pool_c::GetPlayerImage (Player_c *player)
+GString *Pool::GetPlayerImage (Player *player)
 {
   GString *image         = g_string_new ("");
   GSList  *selected_attr = NULL;
@@ -240,7 +240,7 @@ GString *Pool_c::GetPlayerImage (Player_c *player)
   for (guint a = 0; a < g_slist_length (selected_attr); a++)
   {
     AttributeDesc *attr_desc;
-    Attribute_c   *attr;
+    Attribute     *attr;
 
     attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                     a);
@@ -259,20 +259,20 @@ GString *Pool_c::GetPlayerImage (Player_c *player)
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::OnPlugged ()
+void Pool::OnPlugged ()
 {
   _title_table = NULL;
   _status_item = NULL;
 
-  CanvasModule_c::OnPlugged ();
+  CanvasModule::OnPlugged ();
 
   if (_score_collector)
   {
     for (guint i = 0; i < g_slist_length (_match_list); i++)
     {
-      Match_c *match;
+      Match *match;
 
-      match = (Match_c *) g_slist_nth_data (_match_list, i);
+      match = (Match *) g_slist_nth_data (_match_list, i);
       _score_collector->RemoveCollectingPoints (match);
     }
 
@@ -280,7 +280,7 @@ void Pool_c::OnPlugged ()
   }
 
   _score_collector = new ScoreCollector (this,
-                                         (ScoreCollector::OnNewScore_cbk) &Pool_c::OnNewScore);
+                                         (ScoreCollector::OnNewScore_cbk) &Pool::OnNewScore);
 
   {
     const guint    cell_w     = 40;
@@ -306,7 +306,7 @@ void Pool_c::OnPlugged ()
 
         for (guint i = 0; i < nb_players; i++)
         {
-          Player_c *A;
+          Player *A;
 
           A = GetPlayer (i);
 
@@ -328,16 +328,16 @@ void Pool_c::OnPlugged ()
 
             if (i != j)
             {
-              Player_c *B = GetPlayer (j);
-              Match_c  *match;
+              Player *B = GetPlayer (j);
+              Match  *match;
 
               match = GetMatch (A,
                                 B);
 
               // Text
               {
-                Score_c *score       = match->GetScore (A);
-                gchar   *score_image = score->GetImage ();
+                Score *score       = match->GetScore (A);
+                gchar *score_image = score->GetImage ();
 
                 score_text = goo_canvas_text_new (grid_group,
                                                   score_image,
@@ -486,7 +486,7 @@ void Pool_c::OnPlugged ()
 
       for (guint i = 0; i < nb_players; i++)
       {
-        Player_c *player;
+        Player *player;
 
         player = GetPlayer (i);
 
@@ -586,7 +586,7 @@ void Pool_c::OnPlugged ()
 
       for (guint m = 0; m < g_slist_length (_match_list); m++)
       {
-        Match_c       *match;
+        Match         *match;
         GString       *image;
         GooCanvasItem *match_table;
 
@@ -694,9 +694,9 @@ void Pool_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-gint Pool_c::_ComparePlayer (Player_c *A,
-                             Player_c *B,
-                             Pool_c   *pool)
+gint Pool::_ComparePlayer (Player *A,
+                           Player *B,
+                           Pool   *pool)
 {
   return ComparePlayer (A,
                         B,
@@ -706,11 +706,11 @@ gint Pool_c::_ComparePlayer (Player_c *A,
 }
 
 // --------------------------------------------------------------------------------
-gint Pool_c::ComparePlayer (Player_c *A,
-                            Player_c *B,
-                            Object_c *data_owner,
-                            guint32   rand_seed,
-                            gboolean  with_full_random)
+gint Pool::ComparePlayer (Player   *A,
+                          Player   *B,
+                          Object   *data_owner,
+                          guint32   rand_seed,
+                          gboolean  with_full_random)
 {
   if (with_full_random == FALSE)
   {
@@ -762,7 +762,7 @@ gint Pool_c::ComparePlayer (Player_c *A,
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::Lock ()
+void Pool::Lock ()
 {
   _locked = TRUE;
 
@@ -774,7 +774,7 @@ void Pool_c::Lock ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::UnLock ()
+void Pool::UnLock ()
 {
   _locked = FALSE;
 
@@ -785,7 +785,7 @@ void Pool_c::UnLock ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::RefreshScoreData ()
+void Pool::RefreshScoreData ()
 {
   GSList *ranking    = NULL;
   guint   nb_players = GetNbPlayers ();
@@ -795,10 +795,10 @@ void Pool_c::RefreshScoreData ()
 
   for (guint a = 0; a < nb_players; a++)
   {
-    Player_c *player_a;
-    guint     victories     = 0;
-    guint     hits_scored   = 0;
-    gint      hits_received = 0;
+    Player *player_a;
+    guint   victories     = 0;
+    guint   hits_scored   = 0;
+    gint    hits_received = 0;
 
     player_a = GetPlayer (a);
 
@@ -806,10 +806,10 @@ void Pool_c::RefreshScoreData ()
     {
       if (a != b)
       {
-        Player_c *player_b = GetPlayer (b);
-        Match_c  *match    = GetMatch (player_a, player_b);
-        Score_c  *score_a  = match->GetScore (player_a);
-        Score_c  *score_b  = match->GetScore (player_b);
+        Player *player_b = GetPlayer (b);
+        Match  *match    = GetMatch (player_a, player_b);
+        Score  *score_a  = match->GetScore (player_a);
+        Score  *score_b  = match->GetScore (player_b);
 
         if (score_a->IsKnown ())
         {
@@ -861,10 +861,10 @@ void Pool_c::RefreshScoreData ()
 
   for (guint p = 0; p < nb_players; p++)
   {
-    Player_c *player;
+    Player *player;
 
-    player = (Player_c *) g_slist_nth_data (ranking,
-                                            p);
+    player = (Player *) g_slist_nth_data (ranking,
+                                          p);
     if (player)
     {
       player->SetData (GetDataOwner (), "Rank", (void *) (p+1));
@@ -909,28 +909,28 @@ void Pool_c::RefreshScoreData ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Pool_c::IsOver ()
+gboolean Pool::IsOver ()
 {
   return _is_over;
 }
 
 // --------------------------------------------------------------------------------
-gboolean Pool_c::HasError ()
+gboolean Pool::HasError ()
 {
   return _has_error;
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::RefreshDashBoard ()
+void Pool::RefreshDashBoard ()
 {
   guint nb_players = GetNbPlayers ();
 
   for (guint p = 0; p < nb_players; p++)
   {
-    Player_c      *player;
+    Player        *player;
     GooCanvasItem *goo_text;
     gchar         *text;
-    Attribute_c   *attr;
+    Attribute     *attr;
     gint           value;
 
     player = GetPlayer (p);
@@ -986,14 +986,14 @@ void Pool_c::RefreshDashBoard ()
 }
 
 // --------------------------------------------------------------------------------
-Match_c *Pool_c::GetMatch (Player_c *A,
-                           Player_c *B)
+Match *Pool::GetMatch (Player *A,
+                       Player *B)
 {
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {
-    Match_c *match;
+    Match *match;
 
-    match = (Match_c *) g_slist_nth_data (_match_list, i);
+    match = (Match *) g_slist_nth_data (_match_list, i);
     if (   match->HasPlayer (A)
         && match->HasPlayer (B))
     {
@@ -1005,14 +1005,14 @@ Match_c *Pool_c::GetMatch (Player_c *A,
 }
 
 // --------------------------------------------------------------------------------
-Match_c *Pool_c::GetMatch (guint i)
+Match *Pool::GetMatch (guint i)
 {
   PoolMatchOrder::PlayerPair *pair = PoolMatchOrder::GetPlayerPair (GetNbPlayers ());
 
   if (pair)
   {
-    Player_c *a = (Player_c *) g_slist_nth_data (_player_list, pair[i]._a-1);
-    Player_c *b = (Player_c *) g_slist_nth_data (_player_list, pair[i]._b-1);
+    Player *a = (Player *) g_slist_nth_data (_player_list, pair[i]._a-1);
+    Player *b = (Player *) g_slist_nth_data (_player_list, pair[i]._b-1);
 
     return GetMatch (a,
                      b);
@@ -1022,16 +1022,16 @@ Match_c *Pool_c::GetMatch (guint i)
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::Save (xmlTextWriter *xml_writer)
+void Pool::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "match_list");
 
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {
-    Match_c *match;
+    Match *match;
 
-    match = (Match_c *) g_slist_nth_data (_match_list, i);
+    match = (Match *) g_slist_nth_data (_match_list, i);
     if (match)
     {
       match->Save (xml_writer);
@@ -1042,8 +1042,8 @@ void Pool_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::Load (xmlNode *xml_node,
-                   GSList  *player_list)
+void Pool::Load (xmlNode *xml_node,
+                 GSList  *player_list)
 {
   if (xml_node == NULL)
   {
@@ -1058,20 +1058,20 @@ void Pool_c::Load (xmlNode *xml_node,
     {
       if (strcmp ((char *) n->name, "match") == 0)
       {
-        gchar    *attr;
-        Match_c  *match;
-        Player_c *A      = NULL;
-        Player_c *B      = NULL;
+        gchar  *attr;
+        Match  *match;
+        Player *A      = NULL;
+        Player *B      = NULL;
 
         attr = (gchar *) xmlGetProp (n, BAD_CAST "player_A");
         if (attr)
         {
           GSList *node = g_slist_find_custom (player_list,
                                               (void *) strtol (attr, NULL, 10),
-                                              (GCompareFunc) Player_c::CompareWithRef);
+                                              (GCompareFunc) Player::CompareWithRef);
           if (node)
           {
-            A = (Player_c *) node->data;
+            A = (Player *) node->data;
           }
         }
 
@@ -1080,10 +1080,10 @@ void Pool_c::Load (xmlNode *xml_node,
         {
           GSList *node = g_slist_find_custom (player_list,
                                               (void *) strtol (attr, NULL, 10),
-                                              (GCompareFunc) Player_c::CompareWithRef);
+                                              (GCompareFunc) Player::CompareWithRef);
           if (node)
           {
-            B = (Player_c *) node->data;
+            B = (Player *) node->data;
           }
         }
 
@@ -1110,8 +1110,8 @@ void Pool_c::Load (xmlNode *xml_node,
           }
 
           {
-            Score_c *score_A = match->GetScore (A);;
-            Score_c *score_B = match->GetScore (B);;
+            Score *score_A = match->GetScore (A);;
+            Score *score_B = match->GetScore (B);;
 
             if (   (score_A->IsValid () == false)
                 || (score_B->IsValid () == false)
@@ -1131,40 +1131,40 @@ void Pool_c::Load (xmlNode *xml_node,
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::OnBeginPrint (GtkPrintOperation *operation,
-                           GtkPrintContext   *context)
+void Pool::OnBeginPrint (GtkPrintOperation *operation,
+                         GtkPrintContext   *context)
 {
-  CanvasModule_c::OnBeginPrint (operation,
-                                context);
+  CanvasModule::OnBeginPrint (operation,
+                              context);
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::OnDrawPage (GtkPrintOperation *operation,
-                         GtkPrintContext   *context,
-                         gint               page_nr)
+void Pool::OnDrawPage (GtkPrintOperation *operation,
+                       GtkPrintContext   *context,
+                       gint               page_nr)
 {
-  CanvasModule_c::OnDrawPage (operation,
-                              context,
-                              page_nr);
+  CanvasModule::OnDrawPage (operation,
+                            context,
+                            page_nr);
 }
 
 // --------------------------------------------------------------------------------
-void Pool_c::ResetMatches ()
+void Pool::ResetMatches ()
 {
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {
-    Match_c *match;
+    Match *match;
 
-    match = (Match_c *) g_slist_nth_data (_match_list, i);
+    match = (Match *) g_slist_nth_data (_match_list, i);
     match->CleanScore ();
   }
   _is_over = FALSE;
 }
 
 // --------------------------------------------------------------------------------
-gint Pool_c::_ComparePlayerWithFullRandom (Player_c *A,
-                                           Player_c *B,
-                                           Pool_c   *pool)
+gint Pool::_ComparePlayerWithFullRandom (Player *A,
+                                         Player *B,
+                                         Pool   *pool)
 {
   return ComparePlayer (A,
                         B,
@@ -1174,7 +1174,7 @@ gint Pool_c::_ComparePlayerWithFullRandom (Player_c *A,
 }
 
 // --------------------------------------------------------------------------------
-void  Pool_c::SortPlayers ()
+void  Pool::SortPlayers ()
 {
   _player_list = g_slist_sort_with_data (_player_list,
                                          (GCompareDataFunc) _ComparePlayerWithFullRandom,

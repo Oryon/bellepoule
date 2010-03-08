@@ -24,11 +24,11 @@
 
 #include "stage.hpp"
 
-GSList *Stage_c::_stage_base = NULL;
+GSList *Stage::_stage_base = NULL;
 
 // --------------------------------------------------------------------------------
-Stage_c::Stage_c (StageClass *stage_class)
-: Object_c ("Stage_c")
+Stage::Stage (StageClass *stage_class)
+: Object ("Stage")
 {
   _name                  = g_strdup ("");
   _locked                = false;
@@ -48,7 +48,7 @@ Stage_c::Stage_c (StageClass *stage_class)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c::~Stage_c ()
+Stage::~Stage ()
 {
   FreeResult ();
   g_free (_name);
@@ -62,7 +62,7 @@ Stage_c::~Stage_c ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SetStatusCbk (StatusCbk  cbk,
+void Stage::SetStatusCbk (StatusCbk  cbk,
                             void      *data)
 {
   _status_cbk_data = data;
@@ -70,7 +70,7 @@ void Stage_c::SetStatusCbk (StatusCbk  cbk,
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SignalStatusUpdate ()
+void Stage::SignalStatusUpdate ()
 {
   if (_status_cbk)
   {
@@ -80,25 +80,25 @@ void Stage_c::SignalStatusUpdate ()
 }
 
 // --------------------------------------------------------------------------------
-const gchar *Stage_c::GetClassName ()
+const gchar *Stage::GetClassName ()
 {
   return _class->_name;
 }
 
 // --------------------------------------------------------------------------------
-gchar *Stage_c::GetName ()
+gchar *Stage::GetName ()
 {
   return _name;
 }
 
 // --------------------------------------------------------------------------------
-gchar *Stage_c::GetFullName ()
+gchar *Stage::GetFullName ()
 {
   return g_strdup_printf ("%s\n%s", _class->_name, _name);
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SetName (gchar *name)
+void Stage::SetName (gchar *name)
 {
   if (name)
   {
@@ -110,14 +110,14 @@ void Stage_c::SetName (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::FreeResult ()
+void Stage::FreeResult ()
 {
   g_slist_free (_result);
   _result = NULL;
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::Lock ()
+void Stage::Lock ()
 {
   _locked = true;
   OnLocked ();
@@ -125,7 +125,7 @@ void Stage_c::Lock ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::UnLock ()
+void Stage::UnLock ()
 {
   FreeResult ();
 
@@ -135,10 +135,10 @@ void Stage_c::UnLock ()
 
     for (guint i = 0; i < g_slist_length (classification); i ++)
     {
-      Player_c *player;
+      Player *player;
 
-      player = (Player_c *) g_slist_nth_data (classification,
-                                              i);
+      player = (Player *) g_slist_nth_data (classification,
+                                            i);
       player->SetAttributeValue ("rank",
                                  i + 1);
     }
@@ -150,41 +150,41 @@ void Stage_c::UnLock ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Stage_c::Locked ()
+gboolean Stage::Locked ()
 {
   return _locked;
 }
 
 // --------------------------------------------------------------------------------
-gboolean Stage_c::IsOver ()
+gboolean Stage::IsOver ()
 {
   return TRUE;
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::ApplyConfig ()
+void Stage::ApplyConfig ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::FillInConfig ()
+void Stage::FillInConfig ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SetPrevious (Stage_c *previous)
+void Stage::SetPrevious (Stage *previous)
 {
   _previous = previous;
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Stage_c::GetPreviousStage ()
+Stage *Stage::GetPreviousStage ()
 {
   return _previous;
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::RetrieveAttendees ()
+void Stage::RetrieveAttendees ()
 {
   if (_attendees)
   {
@@ -199,14 +199,14 @@ void Stage_c::RetrieveAttendees ()
 }
 
 // --------------------------------------------------------------------------------
-Player_c *Stage_c::GetPlayerFromRef (guint ref)
+Player *Stage::GetPlayerFromRef (guint ref)
 {
   for (guint p = 0; p < g_slist_length (_attendees); p++)
   {
-    Player_c *player;
+    Player *player;
 
-    player = (Player_c *) g_slist_nth_data (_attendees,
-                                            p);
+    player = (Player *) g_slist_nth_data (_attendees,
+                                          p);
     if (player->GetRef () == ref)
     {
       return player;
@@ -217,10 +217,10 @@ Player_c *Stage_c::GetPlayerFromRef (guint ref)
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::RegisterStageClass (const gchar *name,
-                                  const gchar *xml_name,
-                                  Creator      creator,
-                                  guint        rights)
+void Stage::RegisterStageClass (const gchar *name,
+                                const gchar *xml_name,
+                                Creator      creator,
+                                guint        rights)
 {
   StageClass *stage_class = new StageClass;
 
@@ -234,16 +234,16 @@ void Stage_c::RegisterStageClass (const gchar *name,
 }
 
 // --------------------------------------------------------------------------------
-guint Stage_c::GetNbStageClass ()
+guint Stage::GetNbStageClass ()
 {
   return g_slist_length (_stage_base);
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::GetStageClass (guint    index,
-                             gchar   **xml_name,
-                             Creator *creator,
-                             Rights  *rights)
+void Stage::GetStageClass (guint    index,
+                           gchar   **xml_name,
+                           Creator *creator,
+                           Rights  *rights)
 {
   StageClass *stage_class = (StageClass *) g_slist_nth_data (_stage_base,
                                                              index);
@@ -256,13 +256,13 @@ void Stage_c::GetStageClass (guint    index,
 }
 
 // --------------------------------------------------------------------------------
-Stage_c::StageClass *Stage_c::GetClass ()
+Stage::StageClass *Stage::GetClass ()
 {
   return _class;
 }
 
 // --------------------------------------------------------------------------------
-Stage_c::StageClass *Stage_c::GetClass (const gchar *name)
+Stage::StageClass *Stage::GetClass (const gchar *name)
 {
   if (name)
   {
@@ -282,7 +282,7 @@ Stage_c::StageClass *Stage_c::GetClass (const gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Stage_c::CreateInstance (xmlNode *xml_node)
+Stage *Stage::CreateInstance (xmlNode *xml_node)
 {
   if (xml_node)
   {
@@ -293,13 +293,13 @@ Stage_c *Stage_c::CreateInstance (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Stage_c::CreateInstance (const gchar *name)
+Stage *Stage::CreateInstance (const gchar *name)
 {
   StageClass *stage_class = GetClass (name);
 
   if (stage_class)
   {
-    Stage_c *stage = stage_class->_creator (stage_class);
+    Stage *stage = stage_class->_creator (stage_class);
 
     if (stage)
     {
@@ -312,27 +312,27 @@ Stage_c *Stage_c::CreateInstance (const gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c::Rights Stage_c::GetRights ()
+Stage::Rights Stage::GetRights ()
 {
   return _stage_class->_rights;
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SetInputProvider (Stage_c *input_provider)
+void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Stage_c::GetInputProvider ()
+Stage *Stage::GetInputProvider ()
 {
   return _input_provider;
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::ToggleClassification (gboolean classification_on)
+void Stage::ToggleClassification (gboolean classification_on)
 {
-  Module_c *module = dynamic_cast <Module_c *> (this);
+  Module *module = dynamic_cast <Module *> (this);
 
   if (module)
   {
@@ -365,22 +365,22 @@ void Stage_c::ToggleClassification (gboolean classification_on)
 }
 
 // --------------------------------------------------------------------------------
-Classification *Stage_c::GetClassification ()
+Classification *Stage::GetClassification ()
 {
   return _classification;
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SetClassificationFilter (Filter *filter)
+void Stage::SetClassificationFilter (Filter *filter)
 {
   _classification_filter = filter;
   _classification_filter->Retain ();
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::UpdateClassification (GSList *result)
+void Stage::UpdateClassification (GSList *result)
 {
-  Module_c  *module           = dynamic_cast <Module_c *> (this);
+  Module    *module           = dynamic_cast <Module *> (this);
   GtkWidget *classification_w = module->GetWidget ("classification_hook");
 
   if (classification_w)
@@ -398,10 +398,10 @@ void Stage_c::UpdateClassification (GSList *result)
 
     for (guint i = 0; i < g_slist_length (result); i ++)
     {
-      Player_c *player;
+      Player *player;
 
-      player = (Player_c *) g_slist_nth_data (result,
-                                              i);
+      player = (Player *) g_slist_nth_data (result,
+                                            i);
 
       player->SetAttributeValue ("rank",
                                  i + 1);
@@ -411,7 +411,7 @@ void Stage_c::UpdateClassification (GSList *result)
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SetResult ()
+void Stage::SetResult ()
 {
   GSList *result = GetCurrentClassification ();
 
@@ -422,17 +422,17 @@ void Stage_c::SetResult ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::LockOnClassification (GtkWidget *w)
+void Stage::LockOnClassification (GtkWidget *w)
 {
   _sensitivity_trigger->AddWidget (w);
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SetScoreStuffingPolicy (gboolean allowed)
+void Stage::SetScoreStuffingPolicy (gboolean allowed)
 {
   if (_score_stuffing_trigger == NULL)
   {
-    Module_c *module = dynamic_cast <Module_c *> (this);
+    Module *module = dynamic_cast <Module *> (this);
 
     if (module)
     {
@@ -453,7 +453,7 @@ void Stage_c::SetScoreStuffingPolicy (gboolean allowed)
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::LoadConfiguration (xmlNode *xml_node)
+void Stage::LoadConfiguration (xmlNode *xml_node)
 {
   gchar *attr = (gchar *) xmlGetProp (xml_node,
                                       BAD_CAST "name");
@@ -461,7 +461,7 @@ void Stage_c::LoadConfiguration (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::SaveConfiguration (xmlTextWriter *xml_writer)
+void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "name",
@@ -469,16 +469,16 @@ void Stage_c::SaveConfiguration (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Stage_c::Dump ()
+void Stage::Dump ()
 {
   if (_result)
   {
     for (guint i = 0; i < g_slist_length (_result); i++)
     {
-      Player_c    *player;
-      Attribute_c *attr;
+      Player    *player;
+      Attribute *attr;
 
-      player = (Player_c *) g_slist_nth_data (_result, i);
+      player = (Player *) g_slist_nth_data (_result, i);
       attr = player->GetAttribute ("name");
 
       g_print ("%d >>> %s\n", i, attr->GetUserImage ());

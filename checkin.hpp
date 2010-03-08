@@ -27,7 +27,7 @@
 #include "stage.hpp"
 #include "players_list.hpp"
 
-class Checkin : public virtual Stage_c, public PlayersList
+class Checkin : public virtual Stage, public PlayersList
 {
   public:
     static void Init ();
@@ -53,7 +53,7 @@ class Checkin : public virtual Stage_c, public PlayersList
 
     guint _attendings;
 
-    static Stage_c *CreateInstance (StageClass *stage_class);
+    static Stage *CreateInstance (StageClass *stage_class);
 
     void Load (xmlNode *xml_node);
 
@@ -71,19 +71,19 @@ class Checkin : public virtual Stage_c, public PlayersList
 
     void UpdateRanking ();
 
-    void MonitorAttending (Player_c *player);
+    void MonitorAttending (Player *player);
 
     void RefreshAttendingDisplay ();
 
     GSList *GetCurrentClassification ();
 
-    void OnPlayerRemoved (Player_c *player);
+    void OnPlayerRemoved (Player *player);
 
-    static void OnAttendingChanged (Player_c    *player,
-                                    Attribute_c *attr,
-                                    Checkin     *checkin);
+    static void OnAttendingChanged (Player    *player,
+                                    Attribute *attr,
+                                    Checkin   *checkin);
 
-    static gboolean PresentPlayerFilter (Player_c *player);
+    static gboolean PresentPlayerFilter (Player *player);
 
     static void on_sensitive_state_toggled (GtkToggleButton *togglebutton,
                                             GtkWidget       *w);

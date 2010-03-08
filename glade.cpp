@@ -16,12 +16,12 @@
 
 #include "glade.hpp"
 
-gchar *Glade_c::_path = NULL;
+gchar *Glade::_path = NULL;
 
 // --------------------------------------------------------------------------------
-Glade_c::Glade_c (gchar    *file_name,
-                  Object_c *owner)
-: Object_c ("Glade_c")
+Glade::Glade (gchar  *file_name,
+                  Object *owner)
+: Object ("Glade")
 {
   if (file_name)
   {
@@ -65,7 +65,7 @@ Glade_c::Glade_c (gchar    *file_name,
 }
 
 // --------------------------------------------------------------------------------
-Glade_c::~Glade_c ()
+Glade::~Glade ()
 {
   if (_glade_xml)
   {
@@ -74,13 +74,13 @@ Glade_c::~Glade_c ()
 }
 
 // --------------------------------------------------------------------------------
-void Glade_c::SetPath (gchar *path)
+void Glade::SetPath (gchar *path)
 {
   _path = path;
 }
 
 // --------------------------------------------------------------------------------
-void Glade_c::DetachFromParent (GtkWidget *widget)
+void Glade::DetachFromParent (GtkWidget *widget)
 {
   GtkWidget *parent = gtk_widget_get_parent (widget);
 
@@ -95,21 +95,21 @@ void Glade_c::DetachFromParent (GtkWidget *widget)
 }
 
 // --------------------------------------------------------------------------------
-GtkWidget *Glade_c::GetWidget (gchar *name)
+GtkWidget *Glade::GetWidget (gchar *name)
 {
   return (GtkWidget *) (gtk_builder_get_object (_glade_xml,
                                                 name));
 }
 
 // --------------------------------------------------------------------------------
-GObject *Glade_c::GetObject (gchar *name)
+GObject *Glade::GetObject (gchar *name)
 {
   return gtk_builder_get_object (_glade_xml,
                                  name);
 }
 
 // --------------------------------------------------------------------------------
-GtkWidget *Glade_c::GetRootWidget ()
+GtkWidget *Glade::GetRootWidget ()
 {
   return GTK_WIDGET (gtk_builder_get_object (_glade_xml,
                                              "root"));

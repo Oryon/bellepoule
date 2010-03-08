@@ -25,17 +25,17 @@
 #include "canvas_module.hpp"
 #include "score_collector.hpp"
 
-class Pool_c : public CanvasModule_c
+class Pool : public CanvasModule
 {
   public:
-    typedef void (*StatusCbk) (Pool_c *pool,
-                               void   *data);
+    typedef void (*StatusCbk) (Pool *pool,
+                               void *data);
 
-    Pool_c (Data  *max_score,
-            guint  number);
+    Pool (Data  *max_score,
+          guint  number);
 
-    void  AddPlayer    (Player_c *player);
-    void  RemovePlayer (Player_c *player);
+    void  AddPlayer    (Player *player);
+    void  RemovePlayer (Player *player);
     guint GetNbPlayers ();
     guint GetNumber    ();
     void  ResetMatches ();
@@ -48,7 +48,7 @@ class Pool_c : public CanvasModule_c
     gboolean IsOver ();
     gboolean HasError ();
 
-    Player_c *GetPlayer (guint i);
+    Player *GetPlayer (guint i);
 
     gchar *GetName ();
 
@@ -60,9 +60,9 @@ class Pool_c : public CanvasModule_c
 
     void Stuff ();
 
-    static gint ComparePlayer (Player_c *A,
-                               Player_c *B,
-                               Object_c *data_owner,
+    static gint ComparePlayer (Player   *A,
+                               Player   *B,
+                               Object   *data_owner,
                                guint32   rand_seed,
                                gboolean  with_full_random = FALSE);
 
@@ -84,13 +84,13 @@ class Pool_c : public CanvasModule_c
     StatusCbk       _status_cbk;
 
   private:
-    static gint _ComparePlayer (Player_c *A,
-                                Player_c *B,
-                                Pool_c   *pool);
+    static gint _ComparePlayer (Player *A,
+                                Player *B,
+                                Pool   *pool);
 
-    static gint _ComparePlayerWithFullRandom (Player_c *A,
-                                              Player_c *B,
-                                              Pool_c   *pool);
+    static gint _ComparePlayerWithFullRandom (Player *A,
+                                              Player *B,
+                                              Pool   *pool);
 
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
@@ -100,23 +100,23 @@ class Pool_c : public CanvasModule_c
 
     void OnPlugged ();
 
-    Match_c *GetMatch (Player_c *A,
-                       Player_c *B);
+    Match *GetMatch (Player *A,
+                     Player *B);
 
-    Match_c *GetMatch (guint i);
+    Match *GetMatch (guint i);
 
     static void OnNewScore (ScoreCollector *score_collector,
-                            CanvasModule_c *client,
-                            Match_c        *match,
-                            Player_c       *player);
+                            CanvasModule   *client,
+                            Match          *match,
+                            Player         *player);
 
     void RefreshScoreData ();
 
     void RefreshDashBoard ();
 
-    GString *GetPlayerImage (Player_c *player);
+    GString *GetPlayerImage (Player *player);
 
-    ~Pool_c ();
+    ~Pool ();
 };
 
 #endif

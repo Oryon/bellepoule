@@ -22,9 +22,9 @@
 #include "module.hpp"
 #include "glade.hpp"
 
-class Contest_c;
+class Contest;
 
-class Tournament : public Module_c
+class Tournament : public Module
 {
   public:
      Tournament (gchar *filename);
@@ -42,11 +42,11 @@ class Tournament : public Module_c
 
     void OnOpenExample ();
 
-    Contest_c *GetContest (gchar *filename);
+    Contest *GetContest (gchar *filename);
 
-    void Manage (Contest_c *contest);
+    void Manage (Contest *contest);
 
-    void OnContestDeleted (Contest_c *contest);
+    void OnContestDeleted (Contest *contest);
 
   private:
     GSList *_contest_list;

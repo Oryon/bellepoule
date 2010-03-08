@@ -21,11 +21,11 @@
 
 #include "player.hpp"
 
-guint Player_c::_next_ref = 0;
+guint Player::_next_ref = 0;
 
 // --------------------------------------------------------------------------------
-Player_c::Player_c ()
-: Object_c ("Player_c")
+Player::Player ()
+: Object ("Player")
 {
   _ref = _next_ref;
   _next_ref++;
@@ -34,44 +34,44 @@ Player_c::Player_c ()
 }
 
 // --------------------------------------------------------------------------------
-Player_c::~Player_c ()
+Player::~Player ()
 {
   g_slist_foreach (_clients,
-                   (GFunc) Object_c::TryToRelease,
+                   (GFunc) Object::TryToRelease,
                    NULL);
   g_slist_free (_clients);
 }
 
 // --------------------------------------------------------------------------------
-gint Player_c::Compare (Player_c *a,
-                        Player_c *b,
-                        gchar    *attr_name)
+gint Player::Compare (Player *a,
+                      Player *b,
+                      gchar  *attr_name)
 {
-  Attribute_c *attr_a = a->GetAttribute (attr_name);
-  Attribute_c *attr_b = b->GetAttribute (attr_name);
+  Attribute *attr_a = a->GetAttribute (attr_name);
+  Attribute *attr_b = b->GetAttribute (attr_name);
 
-  return Attribute_c::Compare (attr_a, attr_b);
+  return Attribute::Compare (attr_a, attr_b);
 }
 
 // --------------------------------------------------------------------------------
-gint Player_c::CompareWithRef (Player_c *player,
-                               guint     ref)
+gint Player::CompareWithRef (Player *player,
+                             guint   ref)
 {
   return player->_ref - ref;
 }
 
 // --------------------------------------------------------------------------------
-Attribute_c *Player_c::GetAttribute (gchar    *name,
-                                     Object_c *owner)
+Attribute *Player::GetAttribute (gchar  *name,
+                                 Object *owner)
 {
-  return (Attribute_c*) GetData (owner,
-                                 name);
+  return (Attribute*) GetData (owner,
+                               name);
 }
 
 // --------------------------------------------------------------------------------
-void Player_c::SetChangeCbk (gchar    *attr_name,
-                             OnChange  change_cbk,
-                             void     *data)
+void Player::SetChangeCbk (gchar    *attr_name,
+                           OnChange  change_cbk,
+                           void     *data)
 {
   Client *client = new Client;
 
@@ -84,7 +84,7 @@ void Player_c::SetChangeCbk (gchar    *attr_name,
 }
 
 // --------------------------------------------------------------------------------
-void Player_c::NotifyChange (Attribute_c *attr)
+void Player::NotifyChange (Attribute *attr)
 {
   GSList *list = _clients;
 
@@ -104,20 +104,20 @@ void Player_c::NotifyChange (Attribute_c *attr)
 }
 
 // --------------------------------------------------------------------------------
-void Player_c::SetAttributeValue (gchar    *name,
-                                  gchar    *value,
-                                  Object_c *owner)
+void Player::SetAttributeValue (gchar  *name,
+                                gchar  *value,
+                                Object *owner)
 {
-  Attribute_c *attr = GetAttribute (name, owner);
+  Attribute *attr = GetAttribute (name, owner);
 
   if (attr == NULL)
   {
-    attr = Attribute_c::New (name);
+    attr = Attribute::New (name);
 
     SetData (owner,
              attr->GetName (),
              attr,
-             (GDestroyNotify) Object_c::TryToRelease);
+             (GDestroyNotify) Object::TryToRelease);
   }
 
   {
@@ -132,20 +132,20 @@ void Player_c::SetAttributeValue (gchar    *name,
 }
 
 // --------------------------------------------------------------------------------
-void Player_c::SetAttributeValue (gchar    *name,
-                                  guint     value,
-                                  Object_c *owner)
+void Player::SetAttributeValue (gchar  *name,
+                                guint   value,
+                                Object *owner)
 {
-  Attribute_c *attr = GetAttribute (name, owner);
+  Attribute *attr = GetAttribute (name, owner);
 
   if (attr == NULL)
   {
-    attr = Attribute_c::New (name);
+    attr = Attribute::New (name);
 
     SetData (owner,
              attr->GetName (),
              attr,
-             (GDestroyNotify) Object_c::TryToRelease);
+             (GDestroyNotify) Object::TryToRelease);
   }
   else if ((guint) attr->GetValue () == value)
   {
@@ -157,13 +157,13 @@ void Player_c::SetAttributeValue (gchar    *name,
 }
 
 // --------------------------------------------------------------------------------
-guint Player_c::GetRef ()
+guint Player::GetRef ()
 {
   return _ref;
 }
 
 // --------------------------------------------------------------------------------
-void Player_c::Save (xmlTextWriter *xml_writer)
+void Player::Save (xmlTextWriter *xml_writer)
 {
   GSList *attr_list;
 
@@ -181,7 +181,7 @@ void Player_c::Save (xmlTextWriter *xml_writer)
                                                i);
     if (desc->_persistency == AttributeDesc::PERSISTENT)
     {
-      Attribute_c *attr = GetAttribute (desc->_xml_name);
+      Attribute *attr = GetAttribute (desc->_xml_name);
 
       if (attr)
       {
@@ -201,7 +201,7 @@ void Player_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Player_c::Load (xmlNode *xml_node)
+void Player::Load (xmlNode *xml_node)
 {
   GSList *attr_list;
 
@@ -226,7 +226,7 @@ void Player_c::Load (xmlNode *xml_node)
   }
 
   {
-    Attribute_c *attr = GetAttribute ("ref");
+    Attribute *attr = GetAttribute ("ref");
 
     if (attr)
     {
@@ -242,9 +242,9 @@ void Player_c::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Player_c::GetName ()
+gchar *Player::GetName ()
 {
-  Attribute_c *attr = GetAttribute ("name");
+  Attribute *attr = GetAttribute ("name");
 
   return attr->GetUserImage ();
 }

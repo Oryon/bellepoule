@@ -20,12 +20,12 @@
 #include <gtk/gtk.h>
 #include "object.hpp"
 
-class Glade_c : public Object_c
+class Glade : public Object
 {
   public:
-     Glade_c (gchar    *file_name,
-              Object_c *owner);
-    ~Glade_c ();
+     Glade (gchar  *file_name,
+            Object *owner);
+    ~Glade ();
 
     static void SetPath (gchar *path);
 

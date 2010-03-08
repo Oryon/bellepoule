@@ -20,8 +20,8 @@
 #include "score.hpp"
 
 // --------------------------------------------------------------------------------
-Score_c::Score_c  (Data *max)
-: Object_c ("Score_c")
+Score::Score  (Data *max)
+: Object ("Score")
 {
   _score     = 0;
   _is_known  = false;
@@ -29,24 +29,24 @@ Score_c::Score_c  (Data *max)
 }
 
 // --------------------------------------------------------------------------------
-Score_c::~Score_c ()
+Score::~Score ()
 {
 }
 
 // --------------------------------------------------------------------------------
-gboolean Score_c::IsKnown ()
+gboolean Score::IsKnown ()
 {
   return _is_known;
 }
 
 // --------------------------------------------------------------------------------
-guint Score_c::Get ()
+guint Score::Get ()
 {
   return _score;
 }
 
 // --------------------------------------------------------------------------------
-gchar *Score_c::GetImage ()
+gchar *Score::GetImage ()
 {
   gchar *image;
 
@@ -70,13 +70,13 @@ gchar *Score_c::GetImage ()
 }
 
 // --------------------------------------------------------------------------------
-void Score_c::Clean ()
+void Score::Clean ()
 {
   _is_known = false;
 }
 
 // --------------------------------------------------------------------------------
-void Score_c::Set (gint score)
+void Score::Set (gint score)
 {
   if (score < 0)
   {
@@ -90,7 +90,7 @@ void Score_c::Set (gint score)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Score_c::IsValid ()
+gboolean Score::IsValid ()
 {
   if (   IsKnown ()
       && (_score > _max->_value))
@@ -102,7 +102,7 @@ gboolean Score_c::IsValid ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Score_c::IsConsistentWith (Score_c *with)
+gboolean Score::IsConsistentWith (Score *with)
 {
   if (   (IsKnown ()       == FALSE)
       || (with->IsKnown () == FALSE))

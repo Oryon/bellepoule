@@ -21,13 +21,13 @@
 
 #include "object.hpp"
 
-class Module_c;
+class Module;
 
-class Filter : public virtual Object_c
+class Filter : public virtual Object
 {
   public:
-    Filter (GSList   *attr_list,
-            Module_c *owner = NULL);
+    Filter (GSList *attr_list,
+            Module *owner = NULL);
 
     void SetAttributeList (GSList *list);
 
@@ -43,7 +43,7 @@ class Filter : public virtual Object_c
 
     guint GetAttributeId (gchar *name);
 
-    void SetOwner (Module_c *owner);
+    void SetOwner (Module *owner);
 
   private:
     typedef enum
@@ -54,7 +54,7 @@ class Filter : public virtual Object_c
       NUM_COLS
     } StoreColumn;
 
-    Module_c     *_owner;
+    Module       *_owner;
     GSList       *_attr_list;
     GSList       *_selected_attr;
     GtkTreeModel *_attr_filter_store;

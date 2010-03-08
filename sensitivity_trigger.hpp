@@ -21,7 +21,7 @@
 
 #include "object.hpp"
 
-class SensitivityTrigger : public virtual Object_c
+class SensitivityTrigger : public virtual Object
 {
   public:
     SensitivityTrigger ();

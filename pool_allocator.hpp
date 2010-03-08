@@ -24,18 +24,18 @@
 #include "canvas_module.hpp"
 #include "pool.hpp"
 
-class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
+class PoolAllocator : public virtual Stage, public CanvasModule
 {
   public:
     static void Init ();
 
-    PoolAllocator_c (StageClass *stage_class);
+    PoolAllocator (StageClass *stage_class);
 
     void Save (xmlTextWriter *xml_writer);
 
-    guint   GetNbPools ();
-    Pool_c *GetPool    (guint index);
-    Data   *GetMaxScore ();
+    guint  GetNbPools  ();
+    Pool  *GetPool     (guint index);
+    Data  *GetMaxScore ();
 
   public:
     static const gchar *_class_name;
@@ -66,9 +66,9 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     GooCanvasItem *_drag_text;
     gdouble        _drag_x;
     gdouble        _drag_y;
-    Pool_c        *_target_pool;
-    Pool_c        *_source_pool;
-    Player_c      *_floating_player;
+    Pool          *_target_pool;
+    Pool          *_source_pool;
+    Player        *_floating_player;
     GooCanvasItem *_main_table;
     GtkListStore  *_combobox_store;
     Data          *_max_score;
@@ -79,7 +79,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     void SetUpCombobox ();
     void Display ();
     void Garnish ();
-    void FillPoolTable (Pool_c *pool);
+    void FillPoolTable (Pool *pool);
     void FixUpTablesBounds ();
 
     void OnAttrListUpdated ();
@@ -89,7 +89,7 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     gboolean OnButtonPress (GooCanvasItem  *item,
                             GooCanvasItem  *target,
                             GdkEventButton *event,
-                            Pool_c         *pool);
+                            Pool           *pool);
     gboolean OnButtonRelease (GooCanvasItem  *item,
                               GooCanvasItem  *target,
                               GdkEventButton *event);
@@ -99,46 +99,46 @@ class PoolAllocator_c : public virtual Stage_c, public CanvasModule_c
     gboolean OnEnterNotify (GooCanvasItem  *item,
                             GooCanvasItem  *target,
                             GdkEventButton *event,
-                            Pool_c         *pool);
+                            Pool           *pool);
     gboolean OnLeaveNotify (GooCanvasItem  *item,
                             GooCanvasItem  *target,
                             GdkEventButton *event,
-                            Pool_c         *pool);
+                            Pool           *pool);
 
     static gboolean on_enter_player (GooCanvasItem  *item,
                                   GooCanvasItem  *target,
                                   GdkEventButton *event,
-                                  Pool_c         *pool);
+                                  Pool           *pool);
     static gboolean on_leave_player (GooCanvasItem  *item,
                                   GooCanvasItem  *target,
                                   GdkEventButton *event,
-                                  Pool_c         *pool);
+                                  Pool           *pool);
     static gboolean on_button_press (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
-                                     Pool_c         *pool);
-    static gboolean on_button_release (GooCanvasItem   *item,
-                                       GooCanvasItem   *target,
-                                       GdkEventButton  *event,
-                                       PoolAllocator_c *pl);
-    static gboolean on_motion_notify (GooCanvasItem   *item,
-                                      GooCanvasItem   *target,
-                                      GdkEventButton  *event,
-                                      PoolAllocator_c *pl);
+                                     Pool           *pool);
+    static gboolean on_button_release (GooCanvasItem  *item,
+                                       GooCanvasItem  *target,
+                                       GdkEventButton *event,
+                                       PoolAllocator  *pl);
+    static gboolean on_motion_notify (GooCanvasItem  *item,
+                                      GooCanvasItem  *target,
+                                      GdkEventButton *event,
+                                      PoolAllocator  *pl);
     static gboolean on_enter_notify (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
-                                     Pool_c         *pool);
+                                     Pool           *pool);
     static gboolean on_leave_notify (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
-                                     Pool_c         *pool);
+                                     Pool           *pool);
 
-    static Stage_c *CreateInstance (StageClass *stage_class);
+    static Stage *CreateInstance (StageClass *stage_class);
 
     void Load (xmlNode *xml_node);
 
-    ~PoolAllocator_c ();
+    ~PoolAllocator ();
 };
 
 #endif

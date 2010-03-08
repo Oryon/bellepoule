@@ -26,7 +26,7 @@
 
 #include "stage.hpp"
 
-class Table : public virtual Stage_c, public CanvasModule_c
+class Table : public virtual Stage, public CanvasModule
 {
   public:
     static void Init ();
@@ -65,7 +65,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
       guint          _expected_winner_rank;
       guint          _level;
       guint          _row;
-      Match_c       *_match;
+      Match         *_match;
       GooCanvasItem *_canvas_table;
       GooCanvasItem *_player_item;
       GooCanvasItem *_print_item;
@@ -128,7 +128,7 @@ class Table : public virtual Stage_c, public CanvasModule_c
     static gboolean DeleteCanvasTable (GNode *node,
                                        Table *table);
 
-    static Stage_c *CreateInstance (StageClass *stage_class);
+    static Stage *CreateInstance (StageClass *stage_class);
 
     static gboolean FillInNode (GNode *node,
                                 Table *table);
@@ -143,9 +143,9 @@ class Table : public virtual Stage_c, public CanvasModule_c
                               Table *table);
 
     static void OnNewScore (ScoreCollector *score_collector,
-                            CanvasModule_c *client,
-                            Match_c        *match,
-                            Player_c       *player);
+                            CanvasModule   *client,
+                            Match          *match,
+                            Player         *player);
 
     void Save (xmlTextWriter *xml_writer);
 
@@ -165,9 +165,9 @@ class Table : public virtual Stage_c, public CanvasModule_c
 
     gchar *GetLevelImage (guint level);
 
-    void SetPlayer (Match_c  *to_match,
-                    Player_c *player,
-                    guint     position);
+    void SetPlayer (Match  *to_match,
+                    Player *player,
+                    guint   position);
 
     static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
                                                    GtkCellRenderer *cell,

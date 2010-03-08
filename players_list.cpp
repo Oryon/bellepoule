@@ -25,7 +25,7 @@
 // --------------------------------------------------------------------------------
   PlayersList::PlayersList (gchar *glade_file,
                             guint  rights)
-: Module_c (glade_file)
+: Module (glade_file)
 {
   _rights      = rights;
   _player_list = NULL;
@@ -54,7 +54,7 @@ PlayersList::~PlayersList ()
 // --------------------------------------------------------------------------------
 void PlayersList::SetFilter (Filter *filter)
 {
-  Module_c::SetFilter (filter);
+  Module::SetFilter (filter);
 
   if (_filter)
   {
@@ -85,7 +85,7 @@ void PlayersList::SetFilter (Filter *filter)
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::Update (Player_c *player)
+void PlayersList::Update (Player *player)
 {
   GtkTreeRowReference *ref;
   GtkTreePath         *path;
@@ -105,7 +105,7 @@ void PlayersList::Update (Player_c *player)
     for (guint i = 0; i < g_slist_length (attr_list); i++)
     {
       AttributeDesc *desc;
-      Attribute_c   *attr;
+      Attribute     *attr;
 
       desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                  i);
@@ -139,9 +139,9 @@ GSList *PlayersList::CreateCustomList (CustomFilter filter)
 
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
-    Player_c *p;
+    Player *p;
 
-    p = (Player_c *) g_slist_nth_data (_player_list, i);
+    p = (Player *) g_slist_nth_data (_player_list, i);
 
     if (filter (p) == TRUE)
     {
@@ -187,7 +187,7 @@ void PlayersList::OnCellEdited (gchar *path_string,
                                 gchar *new_text,
                                 gchar *attr_name)
 {
-  Player_c *p = GetPlayer (path_string);
+  Player *p = GetPlayer (path_string);
 
   p->SetAttributeValue (attr_name,
                         new_text);
@@ -205,8 +205,8 @@ GSList *PlayersList::GetSelectedPlayers ()
 
   for (guint i = 0; i < g_list_length (selection_list); i++)
   {
-    Player_c *p;
-    gchar    *path;
+    Player *p;
+    gchar  *path;
 
     path = gtk_tree_path_to_string ((GtkTreePath *) g_list_nth_data (selection_list,
                                                                      i));
@@ -244,7 +244,7 @@ void PlayersList::OnCellToggled (gchar    *path_string,
 
     for (guint i = 0; i < g_list_length (selection_list); i++)
     {
-      Player_c *p;
+      Player *p;
 
       {
         GtkTreePath *tree_path = (GtkTreePath *) g_list_nth_data (selection_list, i);
@@ -277,7 +277,7 @@ void PlayersList::OnCellToggled (gchar    *path_string,
   }
   else
   {
-    Player_c *p = GetPlayer (path_string);
+    Player *p = GetPlayer (path_string);
 
     if (p)
     {
@@ -346,8 +346,8 @@ gint PlayersList::CompareIterator (GtkTreeModel *model,
                                    GtkTreeIter  *b,
                                    gchar        *attr_name)
 {
-  Player_c *player_a;
-  Player_c *player_b;
+  Player *player_a;
+  Player *player_b;
 
   gtk_tree_model_get (model, a,
                       gtk_tree_model_get_n_columns (model) - 1,
@@ -356,9 +356,9 @@ gint PlayersList::CompareIterator (GtkTreeModel *model,
                       gtk_tree_model_get_n_columns (model) - 1,
                       &player_b, -1);
 
-  return Player_c::Compare (player_a,
-                            player_b,
-                            attr_name);
+  return Player::Compare (player_a,
+                          player_b,
+                          attr_name);
 }
 
 // --------------------------------------------------------------------------------
@@ -499,7 +499,7 @@ GtkTreeRowReference *PlayersList::GetPlayerRowRef (GtkTreeIter *iter)
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::Add (Player_c *player)
+void PlayersList::Add (Player *player)
 {
   GtkTreeIter iter;
 
@@ -530,10 +530,10 @@ void PlayersList::Wipe ()
 {
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
-    Player_c *player;
+    Player *player;
 
-    player = (Player_c *) g_slist_nth_data (_player_list,
-                                            i);
+    player = (Player *) g_slist_nth_data (_player_list,
+                                          i);
     player->Release ();
   }
 
@@ -576,9 +576,9 @@ void PlayersList::RemoveSelection ()
 
     for (guint i = 0; i <  g_slist_length (_player_list); i++)
     {
-      Player_c *p;
+      Player *p;
 
-      p = (Player_c *) g_slist_nth_data (_player_list, i);
+      p = (Player *) g_slist_nth_data (_player_list, i);
       current_path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) p->GetData (this, "tree_row_ref"));
 
       if (gtk_tree_path_compare (selected_path,
@@ -611,19 +611,19 @@ void PlayersList::RemoveSelection ()
 }
 
 // --------------------------------------------------------------------------------
-Player_c *PlayersList::GetPlayer (const gchar *path_string)
+Player *PlayersList::GetPlayer (const gchar *path_string)
 {
   GtkTreePath *path;
-  Player_c    *result = NULL;
+  Player      *result = NULL;
 
   path = gtk_tree_path_new_from_string (path_string);
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
     GtkTreeRowReference *current_ref;
     GtkTreePath         *current_path;
-    Player_c            *p;
+    Player              *p;
 
-    p = (Player_c *) g_slist_nth_data (_player_list, i);
+    p = (Player *) g_slist_nth_data (_player_list, i);
     current_ref = (GtkTreeRowReference *) p->GetData (this, "tree_row_ref");
     current_path = gtk_tree_row_reference_get_path (current_ref);
     if (gtk_tree_path_compare (path,

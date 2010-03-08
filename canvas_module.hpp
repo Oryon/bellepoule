@@ -22,15 +22,15 @@
 
 #include "module.hpp"
 
-class CanvasModule_c : public Module_c
+class CanvasModule : public Module
 {
   public:
     void Print ();
 
   protected:
-    CanvasModule_c (gchar *glade_file,
-                    gchar *root = NULL);
-    virtual ~CanvasModule_c ();
+    CanvasModule (gchar *glade_file,
+                  gchar *root = NULL);
+    virtual ~CanvasModule ();
 
     static void PutInTable (GooCanvasItem *table,
                             GooCanvasItem *item,
@@ -82,19 +82,19 @@ class CanvasModule_c : public Module_c
 
     static void on_begin_print (GtkPrintOperation *operation,
                                 GtkPrintContext   *context,
-                                CanvasModule_c    *canvas);
+                                CanvasModule      *canvas);
     static gboolean on_preview (GtkPrintOperation        *operation,
                                 GtkPrintOperationPreview *preview,
                                 GtkPrintContext          *context,
                                 GtkWindow                *parent,
-                                CanvasModule_c           *canvas);
+                                CanvasModule             *canvas);
     static void on_draw_page (GtkPrintOperation *operation,
                               GtkPrintContext   *context,
                               gint               page_nr,
-                              CanvasModule_c    *canvas);
+                              CanvasModule      *canvas);
     static void on_end_print (GtkPrintOperation *operation,
                               GtkPrintContext   *context,
-                              CanvasModule_c    *canvas);
+                              CanvasModule      *canvas);
 };
 
 #endif

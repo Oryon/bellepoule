@@ -26,35 +26,35 @@
 
 #include "contest.hpp"
 
-gchar *Contest_c::weapon_image[_nb_weapon] =
+gchar *Contest::weapon_image[_nb_weapon] =
 {
   "Sabre",
   "Epée",
   "Fleuret"
 };
 
-gchar *Contest_c::weapon_xml_image[_nb_weapon] =
+gchar *Contest::weapon_xml_image[_nb_weapon] =
 {
   "S",
   "E",
   "F"
 };
 
-gchar *Contest_c::gender_image[_nb_gender] =
+gchar *Contest::gender_image[_nb_gender] =
 {
   "Masculin",
   "Féminin",
   "Mixte"
 };
 
-gchar *Contest_c::gender_xml_image[_nb_gender] =
+gchar *Contest::gender_xml_image[_nb_gender] =
 {
   "M",
   "F",
   "FM"
 };
 
-gchar *Contest_c::category_image[_nb_category] =
+gchar *Contest::category_image[_nb_category] =
 {
   "Poussin",
   "Pupille",
@@ -66,7 +66,7 @@ gchar *Contest_c::category_image[_nb_category] =
   "Vétéran"
 };
 
-gchar *Contest_c::category_xml_image[_nb_category] =
+gchar *Contest::category_xml_image[_nb_category] =
 {
   "O",
   "P",
@@ -79,8 +79,8 @@ gchar *Contest_c::category_xml_image[_nb_category] =
 };
 
 // --------------------------------------------------------------------------------
-Contest_c::Contest_c ()
-  : Module_c ("contest.glade")
+Contest::Contest ()
+  : Module ("contest.glade")
 {
   InitInstance ();
 
@@ -107,8 +107,8 @@ Contest_c::Contest_c ()
 }
 
 // --------------------------------------------------------------------------------
-Contest_c::Contest_c (gchar *filename)
-  : Module_c ("contest.glade")
+Contest::Contest (gchar *filename)
+  : Module ("contest.glade")
 {
   InitInstance ();
 
@@ -251,7 +251,7 @@ Contest_c::Contest_c (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-Contest_c::~Contest_c ()
+Contest::~Contest ()
 {
   if (_tournament)
   {
@@ -263,23 +263,23 @@ Contest_c::~Contest_c ()
   g_free (_organizer);
   g_free (_web_site);
 
-  Object_c::TryToRelease (_schedule);
+  Object::TryToRelease (_schedule);
 
   gtk_widget_destroy (_properties_dlg);
 
   gtk_widget_destroy (_calendar_dlg);
 
-  Object_c::Dump ();
+  Object::Dump ();
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest_c::GetFilename ()
+gchar *Contest::GetFilename ()
 {
   return _filename;
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::AddPlayer (Player_c *player)
+void Contest::AddPlayer (Player *player)
 {
   if (_schedule)
   {
@@ -293,13 +293,13 @@ void Contest_c::AddPlayer (Player_c *player)
 }
 
 // --------------------------------------------------------------------------------
-Contest_c *Contest_c::Create ()
+Contest *Contest::Create ()
 {
-  Contest_c *contest = new Contest_c ();
+  Contest *contest = new Contest ();
 
   if (contest->_has_properties == FALSE)
   {
-    Object_c::TryToRelease (contest);
+    Object::TryToRelease (contest);
     contest = NULL;
   }
 
@@ -307,9 +307,9 @@ Contest_c *Contest_c::Create ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::InitInstance ()
+void Contest::InitInstance ()
 {
-  Object_c::Dump ();
+  Object::Dump ();
 
   _name           = NULL;
   _filename       = NULL;
@@ -337,7 +337,7 @@ void Contest_c::InitInstance ()
   }
 
   {
-    _schedule = new Schedule_c ();
+    _schedule = new Schedule ();
 
     Plug (_schedule,
           _glade->GetWidget ("schedule_viewport"),
@@ -420,20 +420,20 @@ void Contest_c::InitInstance ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::Init ()
+void Contest::Init ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::SetTournament (Tournament *tournament)
+void Contest::SetTournament (Tournament *tournament)
 {
   _tournament = tournament;
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::FillInDate (guint day,
-                            guint month,
-                            guint year)
+void Contest::FillInDate (guint day,
+                          guint month,
+                          guint year)
 {
   GDate *date = g_date_new ();
   gchar  label[20];
@@ -467,7 +467,7 @@ void Contest_c::FillInDate (guint day,
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::FillInProperties ()
+void Contest::FillInProperties ()
 {
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("title_entry")),
                       _name);
@@ -496,7 +496,7 @@ void Contest_c::FillInProperties ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::ReadProperties ()
+void Contest::ReadProperties ()
 {
   gchar    *str;
   GtkEntry *entry;
@@ -553,7 +553,7 @@ void Contest_c::ReadProperties ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::SetName (gchar *name)
+void Contest::SetName (gchar *name)
 {
   g_free (_name);
   _name = name;
@@ -570,7 +570,7 @@ void Contest_c::SetName (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::AttachTo (GtkNotebook *to)
+void Contest::AttachTo (GtkNotebook *to)
 {
   GtkWidget *title = _glade->GetWidget ("notebook_title");
 
@@ -584,13 +584,13 @@ void Contest_c::AttachTo (GtkNotebook *to)
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::Save ()
+void Contest::Save ()
 {
   Save (_filename);
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::Save (gchar *filename)
+void Contest::Save (gchar *filename)
 {
   if (filename)
   {
@@ -658,8 +658,8 @@ void Contest_c::Save (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest_c::GetSaveFileName (gchar *title,
-                                   gchar *config_key)
+gchar *Contest::GetSaveFileName (gchar *title,
+                                 gchar *config_key)
 {
   GtkWidget *chooser;
   char      *filename = NULL;
@@ -722,7 +722,7 @@ gchar *Contest_c::GetSaveFileName (gchar *title,
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::on_web_site_button_clicked ()
+void Contest::on_web_site_button_clicked ()
 {
   GtkWidget *entry = _glade->GetWidget ("web_site_entry");
 
@@ -740,24 +740,24 @@ void Contest_c::on_web_site_button_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_web_site_button_clicked (GtkWidget *widget,
-                                                            Object_c  *owner)
+                                                            Object    *owner)
 {
-  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+  Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_web_site_button_clicked ();
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_save_toolbutton_clicked (GtkWidget *widget,
-                                                            Object_c  *owner)
+                                                            Object    *owner)
 {
-  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+  Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_save_toolbutton_clicked ();
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::on_save_toolbutton_clicked ()
+void Contest::on_save_toolbutton_clicked ()
 {
   if (_filename == NULL)
   {
@@ -773,15 +773,15 @@ void Contest_c::on_save_toolbutton_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_properties_toolbutton_clicked (GtkWidget *widget,
-                                                                  Object_c  *owner)
+                                                                  Object    *owner)
 {
-  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+  Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_properties_toolbutton_clicked ();
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::on_properties_toolbutton_clicked ()
+void Contest::on_properties_toolbutton_clicked ()
 {
   FillInProperties ();
   if (gtk_dialog_run (GTK_DIALOG (_properties_dlg)) == GTK_RESPONSE_ACCEPT)
@@ -793,30 +793,30 @@ void Contest_c::on_properties_toolbutton_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_formula_toolbutton_clicked (GtkWidget *widget,
-                                                               Object_c  *owner)
+                                                               Object    *owner)
 {
-  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+  Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_formula_toolbutton_clicked ();
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::on_formula_toolbutton_clicked ()
+void Contest::on_formula_toolbutton_clicked ()
 {
   _schedule->DisplayList ();
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_backupfile_button_clicked (GtkWidget *widget,
-                                                              Object_c  *owner)
+                                                              Object    *owner)
 {
-  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+  Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_backupfile_button_clicked ();
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::on_backupfile_button_clicked ()
+void Contest::on_backupfile_button_clicked ()
 {
   gchar *filename = GetSaveFileName ("Choisissez un fichier de secours ...",
                                      "default_backup_dir_name");
@@ -831,15 +831,15 @@ void Contest_c::on_backupfile_button_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_calendar_button_clicked (GtkWidget *widget,
-                                                            Object_c  *owner)
+                                                            Object    *owner)
 {
-  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+  Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_calendar_button_clicked ();
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::on_calendar_button_clicked ()
+void Contest::on_calendar_button_clicked ()
 {
   if (gtk_dialog_run (GTK_DIALOG (_calendar_dlg)) == GTK_RESPONSE_ACCEPT)
   {
@@ -861,15 +861,15 @@ void Contest_c::on_calendar_button_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_contest_close_button_clicked (GtkWidget *widget,
-                                                                 Object_c  *owner)
+                                                                 Object    *owner)
 {
-  Contest_c *c = dynamic_cast <Contest_c *> (owner);
+  Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_contest_close_button_clicked ();
 }
 
 // --------------------------------------------------------------------------------
-void Contest_c::on_contest_close_button_clicked ()
+void Contest::on_contest_close_button_clicked ()
 {
   GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
                                                           GTK_DIALOG_MODAL,

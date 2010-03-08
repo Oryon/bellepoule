@@ -22,9 +22,9 @@
 #include "score_collector.hpp"
 
 // --------------------------------------------------------------------------------
-ScoreCollector::ScoreCollector (CanvasModule_c *client,
+ScoreCollector::ScoreCollector (CanvasModule   *client,
                                 OnNewScore_cbk  on_new_score)
-: Object_c ("ScoreCollector")
+: Object ("ScoreCollector")
 {
   _entry_item       = NULL;
   _gtk_entry        = NULL;
@@ -65,8 +65,8 @@ void ScoreCollector::AddCollectingTrigger (GooCanvasItem *trigger)
 // --------------------------------------------------------------------------------
 void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
                                          GooCanvasItem *score_text,
-                                         Match_c       *match,
-                                         Player_c      *player)
+                                         Match         *match,
+                                         Player        *player)
 {
   _collecting_point = point;
 
@@ -86,8 +86,8 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
 
 // --------------------------------------------------------------------------------
 void ScoreCollector::SetMatch (GooCanvasItem *to_point,
-                               Match_c       *match,
-                               Player_c      *player)
+                               Match         *match,
+                               Player        *player)
 {
   if (match)
   {
@@ -108,16 +108,16 @@ void ScoreCollector::SetMatch (GooCanvasItem *to_point,
 }
 
 // --------------------------------------------------------------------------------
-void ScoreCollector::Refresh (Match_c *match)
+void ScoreCollector::Refresh (Match *match)
 {
   GooCanvasItem *goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
 
   if (goo_rect)
   {
-    if (match == (Match_c *) g_object_get_data (G_OBJECT (goo_rect), "match"))
+    if (match == (Match *) g_object_get_data (G_OBJECT (goo_rect), "match"))
     {
       GooCanvasItem *score_text;
-      Score_c       *score;
+      Score         *score;
 
       score      = match->GetScore (match->GetPlayerA ());
       score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
@@ -154,7 +154,7 @@ void ScoreCollector::Wipe (GooCanvasItem *point)
 }
 
 // --------------------------------------------------------------------------------
-void ScoreCollector::RemoveCollectingPoints (Match_c *match)
+void ScoreCollector::RemoveCollectingPoints (Match *match)
 {
   if (match)
   {
@@ -238,12 +238,12 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
 // --------------------------------------------------------------------------------
 GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
 {
-  Match_c       *match     = (Match_c *) g_object_get_data (G_OBJECT (widget), "match");
+  Match         *match     = (Match *) g_object_get_data (G_OBJECT (widget), "match");
   GooCanvasItem *next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
 
   if (next_item)
   {
-    Match_c *next_match = (Match_c *) g_object_get_data (G_OBJECT (next_item), "match");
+    Match *next_match = (Match *) g_object_get_data (G_OBJECT (next_item), "match");
 
     if (   (match == next_match)
         && (match->GetWinner () != NULL))
@@ -258,9 +258,9 @@ GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 void ScoreCollector::OnEntryChanged (GtkWidget *widget)
 {
-  Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (widget), "match");
-  Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (widget), "player");
-  gchar    *input  = (gchar *) gtk_entry_get_text (GTK_ENTRY (widget));
+  Match  *match  = (Match *)  g_object_get_data (G_OBJECT (widget), "match");
+  Player *player = (Player *) g_object_get_data (G_OBJECT (widget), "player");
+  gchar  *input  = (gchar *) gtk_entry_get_text (GTK_ENTRY (widget));
 
   if (match->SetScore (player, input))
   {
@@ -284,19 +284,19 @@ void ScoreCollector::OnEntryChanged (GtkWidget *widget)
 }
 
 // --------------------------------------------------------------------------------
-void ScoreCollector::SetMatchColor (Match_c *match,
-                                    gchar   *consistent_color,
-                                    gchar   *unconsitentcolor)
+void ScoreCollector::SetMatchColor (Match *match,
+                                    gchar *consistent_color,
+                                    gchar *unconsitentcolor)
 {
   if (match)
   {
     GooCanvasItem *rect;
     gchar         *color_A = consistent_color;
     gchar         *color_B = consistent_color;
-    Player_c      *A       = match->GetPlayerA ();
-    Player_c      *B       = match->GetPlayerB ();
-    Score_c       *score_A = match->GetScore (A);
-    Score_c       *score_B = match->GetScore (B);
+    Player        *A       = match->GetPlayerA ();
+    Player        *B       = match->GetPlayerB ();
+    Score         *score_A = match->GetScore (A);
+    Score         *score_B = match->GetScore (B);
 
     if (score_A->IsValid () == false)
     {
@@ -358,8 +358,8 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
 {
   if (_is_locked == FALSE)
   {
-    Match_c  *match  = (Match_c *)  g_object_get_data (G_OBJECT (goo_rect), "match");
-    Player_c *player = (Player_c *) g_object_get_data (G_OBJECT (goo_rect), "player");
+    Match  *match  = (Match *)  g_object_get_data (G_OBJECT (goo_rect), "match");
+    Player *player = (Player *) g_object_get_data (G_OBJECT (goo_rect), "player");
 
     Stop ();
 
@@ -371,7 +371,7 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
     {
       gpointer next_point   = g_object_get_data (G_OBJECT (goo_rect), "next_point");
       gpointer score_text   = g_object_get_data (G_OBJECT (goo_rect), "score_text");
-      Score_c  *score       = match->GetScore (player);
+      Score    *score       = match->GetScore (player);
       gchar    *score_image = score->GetImage ();
 
       _gtk_entry  = gtk_entry_new ();
@@ -434,8 +434,8 @@ gboolean ScoreCollector::on_focus_out (GtkWidget     *widget,
 // --------------------------------------------------------------------------------
 gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
 {
-  Match_c     *match  = (Match_c *)  g_object_get_data (G_OBJECT (widget), "match");
-  Player_c    *player = (Player_c *) g_object_get_data (G_OBJECT (widget), "player");
+  Match       *match  = (Match *)  g_object_get_data (G_OBJECT (widget), "match");
+  Player      *player = (Player *) g_object_get_data (G_OBJECT (widget), "player");
   const gchar *input  = gtk_entry_get_text (GTK_ENTRY (_gtk_entry));
 
   {
@@ -445,7 +445,7 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
 
     if (score_text)
     {
-      Score_c *score = match->GetScore (player);
+      Score *score = match->GetScore (player);
 
       g_object_set (score_text,
                     "text",

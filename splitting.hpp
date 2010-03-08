@@ -24,7 +24,7 @@
 
 class Tournament;
 
-class Splitting : public virtual Stage_c, public PlayersList
+class Splitting : public virtual Stage, public PlayersList
 {
   public:
     static void Init ();
@@ -51,9 +51,9 @@ class Splitting : public virtual Stage_c, public PlayersList
   private:
     static Tournament *_tournament;
 
-    static Stage_c *CreateInstance (StageClass *stage_class);
+    static Stage *CreateInstance (StageClass *stage_class);
 
-    static gboolean PresentPlayerFilter (Player_c *player);
+    static gboolean PresentPlayerFilter (Player *player);
 
     ~Splitting ();
 };

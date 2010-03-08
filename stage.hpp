@@ -23,19 +23,19 @@
 #include "object.hpp"
 #include "sensitivity_trigger.hpp"
 
-class Player_c;
+class Player;
 class Classification;
 class Filter;
 
-class Stage_c : public virtual Object_c
+class Stage : public virtual Object
 {
   public:
     struct StageClass;
 
-    typedef Stage_c * (*Creator) (StageClass *stage_class);
+    typedef Stage * (*Creator) (StageClass *stage_class);
 
-    typedef void (*StatusCbk) (Stage_c *stage,
-                               void    *data);
+    typedef void (*StatusCbk) (Stage *stage,
+                               void  *data);
 
     typedef enum
     {
@@ -51,9 +51,9 @@ class Stage_c : public virtual Object_c
     };
 
   public:
-    void SetPrevious (Stage_c *previous);
+    void SetPrevious (Stage *previous);
 
-    Stage_c *GetPreviousStage ();
+    Stage *GetPreviousStage ();
 
     const gchar *GetClassName ();
 
@@ -69,9 +69,9 @@ class Stage_c : public virtual Object_c
 
     void SetClassificationFilter (Filter *filter);
 
-    virtual void SetInputProvider (Stage_c *input_provider);
+    virtual void SetInputProvider (Stage *input_provider);
 
-    virtual Stage_c *GetInputProvider ();
+    virtual Stage *GetInputProvider ();
 
     void Lock ();
 
@@ -81,7 +81,7 @@ class Stage_c : public virtual Object_c
 
     void RetrieveAttendees ();
 
-    Player_c *GetPlayerFromRef (guint ref);
+    Player *GetPlayerFromRef (guint ref);
 
     StageClass *GetClass ();
 
@@ -122,18 +122,18 @@ class Stage_c : public virtual Object_c
                                Creator *creator,
                                Rights  *rights);
 
-    static Stage_c *CreateInstance (xmlNode *xml_node);
+    static Stage *CreateInstance (xmlNode *xml_node);
 
-    static Stage_c *CreateInstance (const gchar *name);
+    static Stage *CreateInstance (const gchar *name);
 
   protected:
-    GSList  *_attendees;
-    Filter  *_classification_filter;
-    Stage_c *_input_provider;
+    GSList *_attendees;
+    Filter *_classification_filter;
+    Stage  *_input_provider;
 
-    Stage_c (StageClass *stage_class);
+    Stage (StageClass *stage_class);
 
-    virtual ~Stage_c ();
+    virtual ~Stage ();
 
     void SignalStatusUpdate ();
 
@@ -150,7 +150,7 @@ class Stage_c : public virtual Object_c
   private:
     static GSList *_stage_base;
 
-    Stage_c            *_previous;
+    Stage              *_previous;
     StageClass         *_class;
     gchar              *_name;
     gboolean            _locked;

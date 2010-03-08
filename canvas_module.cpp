@@ -27,16 +27,16 @@
 #define VALUE_INIT {0,{{0}}}
 
 // --------------------------------------------------------------------------------
-CanvasModule_c::CanvasModule_c (gchar *glade_file,
-                                gchar *root)
-: Module_c (glade_file,
-            root)
+CanvasModule::CanvasModule (gchar *glade_file,
+                            gchar *root)
+: Module (glade_file,
+          root)
 {
   _canvas = NULL;
 }
 
 // --------------------------------------------------------------------------------
-CanvasModule_c::~CanvasModule_c ()
+CanvasModule::~CanvasModule ()
 {
   Wipe ();
 
@@ -44,7 +44,7 @@ CanvasModule_c::~CanvasModule_c ()
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::OnPlugged ()
+void CanvasModule::OnPlugged ()
 {
   if (_canvas == NULL)
   {
@@ -64,7 +64,7 @@ void CanvasModule_c::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::OnUnPlugged ()
+void CanvasModule::OnUnPlugged ()
 {
   if (_canvas)
   {
@@ -74,10 +74,10 @@ void CanvasModule_c::OnUnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::PutInTable (GooCanvasItem *table,
-                                 GooCanvasItem *item,
-                                 guint          row,
-                                 guint          column)
+void CanvasModule::PutInTable (GooCanvasItem *table,
+                               GooCanvasItem *item,
+                               guint          row,
+                               guint          column)
 {
   SetTableItemAttribute (item, "row", row);
   SetTableItemAttribute (item, "column", column);
@@ -86,9 +86,9 @@ void CanvasModule_c::PutInTable (GooCanvasItem *table,
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::SetTableItemAttribute (GooCanvasItem *item,
-                                            gchar         *attribute,
-                                            gdouble        value)
+void CanvasModule::SetTableItemAttribute (GooCanvasItem *item,
+                                          gchar         *attribute,
+                                          gdouble        value)
 {
   GooCanvasItem *parent = goo_canvas_item_get_parent (item);
 
@@ -103,9 +103,9 @@ void CanvasModule_c::SetTableItemAttribute (GooCanvasItem *item,
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::SetTableItemAttribute (GooCanvasItem *item,
-                                            gchar         *attribute,
-                                            guint          value)
+void CanvasModule::SetTableItemAttribute (GooCanvasItem *item,
+                                          gchar         *attribute,
+                                          guint          value)
 {
   GooCanvasItem *parent = goo_canvas_item_get_parent (item);
 
@@ -120,10 +120,10 @@ void CanvasModule_c::SetTableItemAttribute (GooCanvasItem *item,
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *CanvasModule_c::PutTextInTable (GooCanvasItem *table,
-                                               gchar         *text,
-                                               guint          row,
-                                               guint          column)
+GooCanvasItem *CanvasModule::PutTextInTable (GooCanvasItem *table,
+                                             gchar         *text,
+                                             guint          row,
+                                             guint          column)
 {
   GooCanvasItem *item;
 
@@ -142,10 +142,10 @@ GooCanvasItem *CanvasModule_c::PutTextInTable (GooCanvasItem *table,
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *CanvasModule_c::PutStockIconInTable (GooCanvasItem *table,
-                                                    gchar         *icon_name,
-                                                    guint          row,
-                                                    guint          column)
+GooCanvasItem *CanvasModule::PutStockIconInTable (GooCanvasItem *table,
+                                                  gchar         *icon_name,
+                                                  guint          row,
+                                                  guint          column)
 {
   GooCanvasItem *item;
   GdkPixbuf     *pixbuf;
@@ -176,13 +176,13 @@ GooCanvasItem *CanvasModule_c::PutStockIconInTable (GooCanvasItem *table,
 }
 
 // --------------------------------------------------------------------------------
-GooCanvas *CanvasModule_c::GetCanvas ()
+GooCanvas *CanvasModule::GetCanvas ()
 {
   return _canvas;
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *CanvasModule_c::GetRootItem ()
+GooCanvasItem *CanvasModule::GetRootItem ()
 {
   if (_canvas)
   {
@@ -195,7 +195,7 @@ GooCanvasItem *CanvasModule_c::GetRootItem ()
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::Wipe ()
+void CanvasModule::Wipe ()
 {
   GooCanvasItem *root = GetRootItem ();
 
@@ -219,7 +219,7 @@ void CanvasModule_c::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::WipeItem (GooCanvasItem *item)
+void CanvasModule::WipeItem (GooCanvasItem *item)
 {
   if (item)
   {
@@ -228,7 +228,7 @@ void CanvasModule_c::WipeItem (GooCanvasItem *item)
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::Print ()
+void CanvasModule::Print ()
 {
   GtkPrintOperation *operation;
   GtkPrintSettings  *settings;
@@ -278,8 +278,8 @@ void CanvasModule_c::Print ()
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::OnBeginPrint (GtkPrintOperation *operation,
-                                   GtkPrintContext   *context)
+void CanvasModule::OnBeginPrint (GtkPrintOperation *operation,
+                                 GtkPrintContext   *context)
 {
   GooCanvasBounds bounds;
   gdouble         canvas_w;
@@ -303,9 +303,9 @@ void CanvasModule_c::OnBeginPrint (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::OnDrawPage (GtkPrintOperation *operation,
-                                 GtkPrintContext   *context,
-                                 gint               page_nr)
+void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
+                               GtkPrintContext   *context,
+                               gint               page_nr)
 {
   GooCanvasBounds  bounds;
   gdouble          canvas_w;
@@ -360,34 +360,34 @@ void CanvasModule_c::OnDrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-gboolean CanvasModule_c::OnPreview (GtkPrintOperation        *operation,
-                                    GtkPrintOperationPreview *preview,
-                                    GtkPrintContext          *context,
-                                    GtkWindow                *parent)
+gboolean CanvasModule::OnPreview (GtkPrintOperation        *operation,
+                                  GtkPrintOperationPreview *preview,
+                                  GtkPrintContext          *context,
+                                  GtkWindow                *parent)
 {
   return TRUE;
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::OnEndPrint (GtkPrintOperation *operation,
-                                 GtkPrintContext   *context)
+void CanvasModule::OnEndPrint (GtkPrintOperation *operation,
+                               GtkPrintContext   *context)
 {
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::on_begin_print (GtkPrintOperation *operation,
-                                     GtkPrintContext   *context,
-                                     CanvasModule_c    *canvas)
+void CanvasModule::on_begin_print (GtkPrintOperation *operation,
+                                   GtkPrintContext   *context,
+                                   CanvasModule      *canvas)
 {
   canvas->OnBeginPrint (operation,
                         context);
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::on_draw_page (GtkPrintOperation *operation,
-                                   GtkPrintContext   *context,
-                                   gint               page_nr,
-                                   CanvasModule_c    *canvas)
+void CanvasModule::on_draw_page (GtkPrintOperation *operation,
+                                 GtkPrintContext   *context,
+                                 gint               page_nr,
+                                 CanvasModule      *canvas)
 {
   canvas->OnDrawPage (operation,
                       context,
@@ -395,11 +395,11 @@ void CanvasModule_c::on_draw_page (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-gboolean CanvasModule_c::on_preview (GtkPrintOperation        *operation,
-                                     GtkPrintOperationPreview *preview,
-                                     GtkPrintContext          *context,
-                                     GtkWindow                *parent,
-                                     CanvasModule_c           *canvas)
+gboolean CanvasModule::on_preview (GtkPrintOperation        *operation,
+                                   GtkPrintOperationPreview *preview,
+                                   GtkPrintContext          *context,
+                                   GtkWindow                *parent,
+                                   CanvasModule             *canvas)
 {
   return canvas->OnPreview (operation,
                             preview,
@@ -411,7 +411,7 @@ gboolean CanvasModule_c::on_preview (GtkPrintOperation        *operation,
   GtkWidget *window, *close, *page, *hbox, *vbox, *da;
   gdouble width, height;
   cairo_t *cr;
-  Pool_c *pool = (Pool_c *) user_data;
+  Pool *pool = (Pool *) user_data;
   GooCanvas *canvas = goo_canvas_item_get_canvas (pool->_root_item);
 
   settings = gtk_print_operation_get_print_settings (operation);
@@ -467,9 +467,9 @@ gboolean CanvasModule_c::on_preview (GtkPrintOperation        *operation,
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule_c::on_end_print (GtkPrintOperation *operation,
-                                   GtkPrintContext   *context,
-                                   CanvasModule_c    *canvas)
+void CanvasModule::on_end_print (GtkPrintOperation *operation,
+                                 GtkPrintContext   *context,
+                                 CanvasModule      *canvas)
 {
   canvas->OnEndPrint (operation,
                       context);

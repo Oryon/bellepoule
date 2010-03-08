@@ -22,8 +22,8 @@
 #include "match.hpp"
 
 // --------------------------------------------------------------------------------
-Match_c::Match_c (Data *max_score)
-: Object_c ("Match_c")
+Match::Match (Data *max_score)
+: Object ("Match")
 {
   _max_score = max_score;
 
@@ -33,15 +33,15 @@ Match_c::Match_c (Data *max_score)
   _A_is_known = FALSE;
   _B_is_known = FALSE;
 
-  _A_score = new Score_c (max_score);
-  _B_score = new Score_c (max_score);
+  _A_score = new Score (max_score);
+  _B_score = new Score (max_score);
 }
 
 // --------------------------------------------------------------------------------
-Match_c::Match_c  (Player_c *A,
-                   Player_c *B,
-                   Data     *max_score)
-: Object_c ("Match_c")
+Match::Match  (Player *A,
+               Player *B,
+               Data   *max_score)
+: Object ("Match")
 {
   _max_score = max_score;
 
@@ -51,45 +51,45 @@ Match_c::Match_c  (Player_c *A,
   _A_is_known = TRUE;
   _B_is_known = TRUE;
 
-  _A_score = new Score_c (max_score);
-  _B_score = new Score_c (max_score);
+  _A_score = new Score (max_score);
+  _B_score = new Score (max_score);
 }
 
 // --------------------------------------------------------------------------------
-Match_c::~Match_c ()
+Match::~Match ()
 {
-  Object_c::TryToRelease (_A_score);
-  Object_c::TryToRelease (_B_score);
+  Object::TryToRelease (_A_score);
+  Object::TryToRelease (_B_score);
 }
 
 // --------------------------------------------------------------------------------
-void Match_c::SetPlayerA (Player_c *player)
+void Match::SetPlayerA (Player *player)
 {
   _A          = player;
   _A_is_known = TRUE;
 }
 
 // --------------------------------------------------------------------------------
-void Match_c::SetPlayerB (Player_c *player)
+void Match::SetPlayerB (Player *player)
 {
   _B          = player;
   _B_is_known = TRUE;
 }
 
 // --------------------------------------------------------------------------------
-Player_c *Match_c::GetPlayerA ()
+Player *Match::GetPlayerA ()
 {
   return _A;
 }
 
 // --------------------------------------------------------------------------------
-Player_c *Match_c::GetPlayerB ()
+Player *Match::GetPlayerB ()
 {
   return _B;
 }
 
 // --------------------------------------------------------------------------------
-Player_c *Match_c::GetWinner ()
+Player *Match::GetWinner ()
 {
   if (   (_B == NULL)
       && _B_is_known)
@@ -103,8 +103,8 @@ Player_c *Match_c::GetWinner ()
   }
   else if (PlayerHasScore (_A) && PlayerHasScore (_B))
   {
-    Score_c *score_A = GetScore (_A);
-    Score_c *score_B = GetScore (_B);
+    Score *score_A = GetScore (_A);
+    Score *score_B = GetScore (_B);
 
     if (   score_A->IsValid ()
         && score_B->IsValid ()
@@ -125,13 +125,13 @@ Player_c *Match_c::GetWinner ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match_c::HasPlayer (Player_c *player)
+gboolean Match::HasPlayer (Player *player)
 {
   return ((_A == player) || (_B == player));
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match_c::PlayerHasScore (Player_c *player)
+gboolean Match::PlayerHasScore (Player *player)
 {
   if (_A && (player == _A))
   {
@@ -148,8 +148,8 @@ gboolean Match_c::PlayerHasScore (Player_c *player)
 }
 
 // --------------------------------------------------------------------------------
-void Match_c::SetScore (Player_c *player,
-                        gint      score)
+void Match::SetScore (Player *player,
+                      gint    score)
 {
   if (_A == player)
   {
@@ -162,7 +162,7 @@ void Match_c::SetScore (Player_c *player,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match_c::ScoreIsNumber (gchar *score)
+gboolean Match::ScoreIsNumber (gchar *score)
 {
   guint len = strlen (score);
 
@@ -183,8 +183,8 @@ gboolean Match_c::ScoreIsNumber (gchar *score)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match_c::SetScore (Player_c *player,
-                            gchar    *score)
+gboolean Match::SetScore (Player *player,
+                          gchar  *score)
 {
   gboolean result = FALSE;
 
@@ -226,7 +226,7 @@ gboolean Match_c::SetScore (Player_c *player,
 }
 
 // --------------------------------------------------------------------------------
-Score_c *Match_c::GetScore (Player_c *player)
+Score *Match::GetScore (Player *player)
 {
   if (_A == player)
   {
@@ -241,7 +241,7 @@ Score_c *Match_c::GetScore (Player_c *player)
 }
 
 // --------------------------------------------------------------------------------
-void Match_c::Save (xmlTextWriter *xml_writer)
+void Match::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "match");
@@ -276,7 +276,7 @@ void Match_c::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Match_c::CleanScore ()
+void Match::CleanScore ()
 {
   _A_score->Clean ();
   _B_score->Clean ();

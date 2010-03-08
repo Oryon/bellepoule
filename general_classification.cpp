@@ -26,7 +26,7 @@ const gchar *GeneralClassification::_xml_class_name = "general_classification_st
 
 // --------------------------------------------------------------------------------
 GeneralClassification::GeneralClassification (StageClass *stage_class)
-: Stage_c (stage_class),
+: Stage (stage_class),
   PlayersList ("general_classification.glade",
                NO_RIGHT)
 {
@@ -58,7 +58,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 GeneralClassification::~GeneralClassification ()
 {
-  Stage_c::Wipe ();
+  Stage::Wipe ();
 }
 
 // --------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void GeneralClassification::Init ()
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *GeneralClassification::CreateInstance (StageClass *stage_class)
+Stage *GeneralClassification::CreateInstance (StageClass *stage_class)
 {
   return new GeneralClassification (stage_class);
 }
@@ -89,10 +89,10 @@ void GeneralClassification::Display ()
 
   for (guint i = 0; i < g_slist_length (_attendees); i++)
   {
-    Player_c *player;
+    Player *player;
 
-    player = (Player_c *) g_slist_nth_data (_attendees,
-                                            i);
+    player = (Player *) g_slist_nth_data (_attendees,
+                                          i);
 
     Add (player);
   }
@@ -104,7 +104,7 @@ void GeneralClassification::Save (xmlTextWriter *xml_writer)
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
 
-  Stage_c::SaveConfiguration (xml_writer);
+  Stage::SaveConfiguration (xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
 }

@@ -53,8 +53,8 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
 }
 
 // --------------------------------------------------------------------------------
-static gint CompareRating (Attribute_c *attr_a,
-                           Attribute_c *attr_b)
+static gint CompareRating (Attribute *attr_a,
+                           Attribute *attr_b)
 {
   gint value_a = 0;
   gint value_b = 0;
@@ -105,16 +105,16 @@ int main (int argc, char **argv)
 
     gtk_init (&argc, &argv);
 
-    Contest_c::Init             ();
+    Contest::Init               ();
     Checkin::Init               ();
-    PoolAllocator_c::Init       ();
-    PoolSupervisor_c::Init      ();
+    PoolAllocator::Init         ();
+    PoolSupervisor::Init        ();
     Table::Init                 ();
     GeneralClassification::Init ();
     Splitting::Init             ();
   }
 
-  Glade_c::SetPath (path);
+  Glade::SetPath (path);
 
   gtk_about_dialog_set_url_hook (AboutDialogActivateLinkFunc,
                                  NULL,

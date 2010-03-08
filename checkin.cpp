@@ -29,7 +29,7 @@ const gchar *Checkin::_xml_class_name = "checkin_stage";
 
 // --------------------------------------------------------------------------------
 Checkin::Checkin (StageClass *stage_class)
-: Stage_c (stage_class),
+: Stage (stage_class),
   PlayersList ("checkin.glade")
 {
   // Sensitive widgets
@@ -210,7 +210,7 @@ void Checkin::Init ()
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Checkin::CreateInstance (StageClass *stage_class)
+Stage *Checkin::CreateInstance (StageClass *stage_class)
 {
   return new Checkin (stage_class);
 }
@@ -229,7 +229,7 @@ void Checkin::Load (xmlNode *xml_node)
     {
       if (strcmp ((char *) n->name, "player") == 0)
       {
-        Player_c *player = new Player_c;
+        Player *player = new Player;
 
         player->Load (n);
 
@@ -255,13 +255,13 @@ void Checkin::Save (xmlTextWriter *xml_writer)
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
 
-  Stage_c::SaveConfiguration (xml_writer);
+  Stage::SaveConfiguration (xml_writer);
 
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
-    Player_c *p;
+    Player *p;
 
-    p = (Player_c *) g_slist_nth_data (_player_list, i);
+    p = (Player *) g_slist_nth_data (_player_list, i);
 
     if (p)
     {
@@ -282,14 +282,14 @@ void Checkin::Display ()
 void Checkin::UpdateRanking ()
 {
   _player_list = g_slist_sort_with_data (_player_list,
-                                         (GCompareDataFunc) Player_c::Compare,
+                                         (GCompareDataFunc) Player::Compare,
                                          (void *) "rating");
 
   for (guint i = 0; i <  g_slist_length (_player_list); i++)
   {
-    Player_c *p;
+    Player *p;
 
-    p = (Player_c *) g_slist_nth_data (_player_list, i);
+    p = (Player *) g_slist_nth_data (_player_list, i);
     p->SetAttributeValue ("rank",
                           i + 1);
     Update (p);
@@ -311,7 +311,7 @@ GSList *Checkin::GetCurrentClassification ()
   if (result)
   {
     return g_slist_sort_with_data (result,
-                                   (GCompareDataFunc) Player_c::Compare,
+                                   (GCompareDataFunc) Player::Compare,
                                    (void *) "rank");
   }
   else
@@ -327,9 +327,9 @@ gboolean Checkin::IsOver ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Checkin::PresentPlayerFilter (Player_c *player)
+gboolean Checkin::PresentPlayerFilter (Player *player)
 {
-  Attribute_c *attr = player->GetAttribute ("attending");
+  Attribute *attr = player->GetAttribute ("attending");
 
   return ((gboolean) attr->GetValue () == TRUE);
 }
@@ -519,7 +519,7 @@ void Checkin::ImportFFF (gchar *file)
 
       if (tokens && tokens[0])
       {
-        Player_c *player = new Player_c;
+        Player *player = new Player;
 
         player->SetAttributeValue ("attending", (guint) FALSE);
         player->SetAttributeValue ("name",       tokens[0]);
@@ -595,7 +595,7 @@ void Checkin::ImportCSV (gchar *file)
       {
         for (guint i = nb_attr; tokens[i] != NULL; i += nb_attr)
         {
-          Player_c *player = new Player_c;
+          Player *player = new Player;
 
           player->SetAttributeValue ("attending",  (guint) FALSE);
           player->SetAttributeValue ("name",       tokens[i]);
@@ -616,8 +616,8 @@ void Checkin::ImportCSV (gchar *file)
 // --------------------------------------------------------------------------------
 void Checkin::on_add_button_clicked ()
 {
-  Player_c *player   = new Player_c;
-  GList    *children = gtk_container_get_children (GTK_CONTAINER (GetWidget ("value_vbox")));
+  Player *player   = new Player;
+  GList  *children = gtk_container_get_children (GTK_CONTAINER (GetWidget ("value_vbox")));
 
   {
     gchar *str = g_strdup_printf ("%d\n", player->GetRef ());
@@ -705,9 +705,9 @@ void Checkin::on_add_button_clicked ()
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::MonitorAttending (Player_c *player)
+void Checkin::MonitorAttending (Player *player)
 {
-  Attribute_c *attr = player->GetAttribute ("attending");
+  Attribute *attr = player->GetAttribute ("attending");
 
   if (attr && ((gboolean) attr->GetValue () == TRUE))
   {
@@ -715,14 +715,14 @@ void Checkin::MonitorAttending (Player_c *player)
   }
 
   player->SetChangeCbk ("attending",
-                        (Player_c::OnChange) OnAttendingChanged,
+                        (Player::OnChange) OnAttendingChanged,
                         this);
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::OnPlayerRemoved (Player_c *player)
+void Checkin::OnPlayerRemoved (Player *player)
 {
-  Attribute_c *attr = player->GetAttribute ("attending");
+  Attribute *attr = player->GetAttribute ("attending");
 
   if (attr && ((gboolean) attr->GetValue () == TRUE))
   {
@@ -733,9 +733,9 @@ void Checkin::OnPlayerRemoved (Player_c *player)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::OnAttendingChanged (Player_c    *player,
-                                  Attribute_c *attr,
-                                  Checkin     *checkin)
+void Checkin::OnAttendingChanged (Player    *player,
+                                  Attribute *attr,
+                                  Checkin   *checkin)
 {
   guint value = (guint) attr->GetValue ();
 
@@ -769,7 +769,7 @@ void Checkin::RefreshAttendingDisplay ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
-                                                              Object_c  *owner)
+                                                              Object    *owner)
 {
   Checkin *p = dynamic_cast <Checkin *> (owner);
 
@@ -809,7 +809,7 @@ void Checkin::on_sensitive_state_toggled (GtkToggleButton *togglebutton,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_remove_player_button_clicked (GtkWidget *widget,
-                                                                 Object_c  *owner)
+                                                                 Object    *owner)
 {
   Checkin *p = dynamic_cast <Checkin *> (owner);
 
@@ -832,7 +832,7 @@ void Checkin::on_close_button_clicked ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget *widget,
-                                                                       Object_c  *owner)
+                                                                       Object    *owner)
 {
   Checkin *p = dynamic_cast <Checkin *> (owner);
 
@@ -841,7 +841,7 @@ extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
-                                                              Object_c  *owner)
+                                                              Object    *owner)
 {
   Checkin *p = dynamic_cast <Checkin *> (owner);
 
@@ -850,7 +850,7 @@ extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_add_button_clicked (GtkWidget *widget,
-                                                       Object_c  *owner)
+                                                       Object    *owner)
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
@@ -859,7 +859,7 @@ extern "C" G_MODULE_EXPORT void on_add_button_clicked (GtkWidget *widget,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_close_button_clicked (GtkWidget *widget,
-                                                         Object_c  *owner)
+                                                         Object    *owner)
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
@@ -869,7 +869,7 @@ extern "C" G_MODULE_EXPORT void on_close_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT gboolean on_FillInForm_key_press_event (GtkWidget   *widget,
                                                                    GdkEventKey *event,
-                                                                   Object_c    *owner)
+                                                                   Object      *owner)
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 

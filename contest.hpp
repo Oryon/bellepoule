@@ -26,19 +26,19 @@
 
 class Tournament;
 
-class Contest_c : public Module_c
+class Contest : public Module
 {
   public:
-     Contest_c (gchar *filename);
-    ~Contest_c ();
+     Contest (gchar *filename);
+    ~Contest ();
 
     static void Init ();
-    static Contest_c *Create ();
+    static Contest *Create ();
 
     void AttachTo (GtkNotebook *to);
     void Save ();
     gchar *GetFilename ();
-    void AddPlayer (Player_c *player);
+    void AddPlayer (Player *player);
     void SetTournament (Tournament *tournament);
 
   public:
@@ -73,7 +73,7 @@ class Contest_c : public Module_c
     guint       _day;
     guint       _month;
     guint       _year;
-    Schedule_c *_schedule;
+    Schedule   *_schedule;
     GtkWidget  *_properties_dlg;
     GtkWidget  *_calendar_dlg;
     Tournament *_tournament;
@@ -83,7 +83,7 @@ class Contest_c : public Module_c
     GtkWidget *_gender_combo;
     GtkWidget *_category_combo;
 
-    Contest_c ();
+    Contest ();
 
     void   InitInstance     ();
     void   ReadProperties   ();

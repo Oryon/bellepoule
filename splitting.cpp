@@ -37,7 +37,7 @@ Tournament *Splitting::_tournament = NULL;
 
 // --------------------------------------------------------------------------------
 Splitting::Splitting (StageClass *stage_class)
-: Stage_c (stage_class),
+: Stage (stage_class),
   PlayersList ("splitting.glade",
                SORTABLE)
 {
@@ -96,7 +96,7 @@ void Splitting::SetHostTournament (Tournament *tournament)
 }
 
 // --------------------------------------------------------------------------------
-Stage_c *Splitting::CreateInstance (StageClass *stage_class)
+Stage *Splitting::CreateInstance (StageClass *stage_class)
 {
   return new Splitting (stage_class);
 }
@@ -107,7 +107,7 @@ void Splitting::Save (xmlTextWriter *xml_writer)
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
 
-  Stage_c::SaveConfiguration (xml_writer);
+  Stage::SaveConfiguration (xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
 }
@@ -123,10 +123,10 @@ void Splitting::Display ()
 {
   for (guint i = 0; i < g_slist_length (_attendees); i ++)
   {
-    Player_c *player;
+    Player *player;
 
-    player = (Player_c *) g_slist_nth_data (_attendees,
-                                            i);
+    player = (Player *) g_slist_nth_data (_attendees,
+                                          i);
     Add (player);
   }
   OnAttrListUpdated ();
@@ -146,16 +146,16 @@ GSList *Splitting::GetCurrentClassification ()
   if (result)
   {
     result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) Player_c::Compare,
+                                     (GCompareDataFunc) Player::Compare,
                                      (void *) "rank");
   }
   return result;
 }
 
 // --------------------------------------------------------------------------------
-gboolean Splitting::PresentPlayerFilter (Player_c *player)
+gboolean Splitting::PresentPlayerFilter (Player *player)
 {
-  Attribute_c *attr = player->GetAttribute ("exported");
+  Attribute *attr = player->GetAttribute ("exported");
 
   return ((gboolean) attr->GetValue () == FALSE);
 }
@@ -202,8 +202,8 @@ void Splitting::OnMove ()
 
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
   {
-    Contest_c *contest;
-    gchar     *filename;
+    Contest *contest;
+    gchar   *filename;
 
     filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
     gtk_widget_hide (chooser);
@@ -223,7 +223,7 @@ void Splitting::OnMove ()
     contest = _tournament->GetContest (filename);
     if (contest == NULL)
     {
-      contest = new Contest_c (filename);
+      contest = new Contest (filename);
       _tournament->Manage (contest);
       contest->Save ();
     }
@@ -233,11 +233,11 @@ void Splitting::OnMove ()
 
       for (guint i = 0; i < g_slist_length (selected_players); i++)
       {
-        Player_c    *player;
-        Attribute_c *attr;
+        Player    *player;
+        Attribute *attr;
 
-        player = (Player_c *) g_slist_nth_data (selected_players,
-                                                i);
+        player = (Player *) g_slist_nth_data (selected_players,
+                                              i);
         attr = player->GetAttribute ("exported");
 
         if (attr && attr->GetValue () == FALSE)
@@ -259,7 +259,7 @@ void Splitting::OnMove ()
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_splitting_print_toolbutton_clicked (GtkWidget *widget,
-                                                                       Object_c  *owner)
+                                                                       Object    *owner)
 {
   Splitting *s = dynamic_cast <Splitting *> (owner);
 
@@ -268,7 +268,7 @@ extern "C" G_MODULE_EXPORT void on_splitting_print_toolbutton_clicked (GtkWidget
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_splitting_filter_toolbutton_clicked (GtkWidget *widget,
-                                                                        Object_c  *owner)
+                                                                        Object    *owner)
 {
   Splitting *s = dynamic_cast <Splitting *> (owner);
 
@@ -277,7 +277,7 @@ extern "C" G_MODULE_EXPORT void on_splitting_filter_toolbutton_clicked (GtkWidge
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_splitting_move_toolbutton_clicked (GtkWidget *widget,
-                                                                      Object_c  *owner)
+                                                                      Object    *owner)
 {
   Splitting *s = dynamic_cast <Splitting *> (owner);
 

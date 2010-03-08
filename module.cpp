@@ -21,11 +21,11 @@
 
 #include "module.hpp"
 
-GKeyFile *Module_c::_config_file = NULL;
+GKeyFile *Module::_config_file = NULL;
 
 // --------------------------------------------------------------------------------
-Module_c::Module_c (gchar *glade_file,
-                    gchar *root)
+Module::Module (gchar *glade_file,
+                gchar *root)
 {
   _plugged_list = NULL;
   _owner        = NULL;
@@ -39,8 +39,8 @@ Module_c::Module_c (gchar *glade_file,
 
   if (glade_file)
   {
-    _glade = new Glade_c (glade_file,
-                          this);
+    _glade = new Glade (glade_file,
+                        this);
 
     if (root)
     {
@@ -67,13 +67,13 @@ Module_c::Module_c (gchar *glade_file,
 }
 
 // --------------------------------------------------------------------------------
-Module_c::~Module_c ()
+Module::~Module ()
 {
   while (_plugged_list)
   {
-    Module_c *module;
+    Module *module;
 
-    module = (Module_c *) (g_slist_nth_data (_plugged_list, 0));
+    module = (Module *) (g_slist_nth_data (_plugged_list, 0));
     module->UnPlug ();
   }
 
@@ -81,7 +81,7 @@ Module_c::~Module_c ()
 
   _sensitivity_trigger->Release ();
 
-  Object_c::TryToRelease (_glade);
+  Object::TryToRelease (_glade);
   g_object_unref (_root);
 
   if (_config_widget)
@@ -89,35 +89,35 @@ Module_c::~Module_c ()
     g_object_unref (_config_widget);
   }
 
-  Object_c::TryToRelease (_filter);
+  Object::TryToRelease (_filter);
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::SetDataOwner (Object_c *data_owner)
+void Module::SetDataOwner (Object *data_owner)
 {
   _data_owner = data_owner;
 }
 
 // --------------------------------------------------------------------------------
-Object_c *Module_c::GetDataOwner ()
+Object *Module::GetDataOwner ()
 {
   return _data_owner;
 }
 
 // --------------------------------------------------------------------------------
-GtkWidget *Module_c::GetConfigWidget ()
+GtkWidget *Module::GetConfigWidget ()
 {
   return _config_widget;
 }
 
 // --------------------------------------------------------------------------------
-GtkWidget *Module_c::GetWidget (gchar *name)
+GtkWidget *Module::GetWidget (gchar *name)
 {
   return _glade->GetWidget (name);
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::SetFilter (Filter *filter)
+void Module::SetFilter (Filter *filter)
 {
   _filter = filter;
 
@@ -128,15 +128,15 @@ void Module_c::SetFilter (Filter *filter)
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::SelectAttributes ()
+void Module::SelectAttributes ()
 {
   _filter->SelectAttributes ();
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::Plug (Module_c   *module,
-                     GtkWidget  *in,
-                     GtkToolbar *toolbar)
+void Module::Plug (Module     *module,
+                   GtkWidget  *in,
+                   GtkToolbar *toolbar)
 {
   if (in)
   {
@@ -154,7 +154,7 @@ void Module_c::Plug (Module_c   *module,
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::UnPlug ()
+void Module::UnPlug ()
 {
   if (_root)
   {
@@ -178,37 +178,37 @@ void Module_c::UnPlug ()
 }
 
 // --------------------------------------------------------------------------------
-GtkWidget *Module_c::GetRootWidget ()
+GtkWidget *Module::GetRootWidget ()
 {
   return _root;
 }
 
 // --------------------------------------------------------------------------------
-GtkToolbar *Module_c::GetToolbar ()
+GtkToolbar *Module::GetToolbar ()
 {
   return _toolbar;
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::AddSensitiveWidget (GtkWidget *w)
+void Module::AddSensitiveWidget (GtkWidget *w)
 {
   _sensitivity_trigger->AddWidget (w);
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::EnableSensitiveWidgets ()
+void Module::EnableSensitiveWidgets ()
 {
   _sensitivity_trigger->SwitchOn ();
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::DisableSensitiveWidgets ()
+void Module::DisableSensitiveWidgets ()
 {
   _sensitivity_trigger->SwitchOff ();
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::SetCursor (GdkCursorType cursor_type)
+void Module::SetCursor (GdkCursorType cursor_type)
 {
   GdkCursor *cursor;
 
@@ -219,7 +219,7 @@ void Module_c::SetCursor (GdkCursorType cursor_type)
 }
 
 // --------------------------------------------------------------------------------
-void Module_c::ResetCursor ()
+void Module::ResetCursor ()
 {
   gdk_window_set_cursor (gtk_widget_get_window (_root),
                          NULL);

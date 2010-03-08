@@ -18,8 +18,8 @@
 
 #include "object.hpp"
 
-guint Object_c::_nb_objects = 0;
-GList *Object_c::_list      = NULL;
+guint Object::_nb_objects = 0;
+GList *Object::_list      = NULL;
 
 struct ClassStatus
 {
@@ -28,7 +28,7 @@ struct ClassStatus
 };
 
 // --------------------------------------------------------------------------------
-Object_c::Object_c (gchar *class_name)
+Object::Object (gchar *class_name)
 {
   g_datalist_init (&_datalist);
   _ref_count = 1;
@@ -68,7 +68,7 @@ Object_c::Object_c (gchar *class_name)
 }
 
 // --------------------------------------------------------------------------------
-Object_c::~Object_c ()
+Object::~Object ()
 {
   if (_datalist)
   {
@@ -94,13 +94,13 @@ Object_c::~Object_c ()
 }
 
 // --------------------------------------------------------------------------------
-void Object_c::Retain ()
+void Object::Retain ()
 {
   _ref_count++;
 }
 
 // --------------------------------------------------------------------------------
-void Object_c::Release ()
+void Object::Release ()
 {
   if (_ref_count == 0)
   {
@@ -120,7 +120,7 @@ void Object_c::Release ()
 }
 
 // --------------------------------------------------------------------------------
-void Object_c::TryToRelease (Object_c *object)
+void Object::TryToRelease (Object *object)
 {
   if (object)
   {
@@ -129,10 +129,10 @@ void Object_c::TryToRelease (Object_c *object)
 }
 
 // --------------------------------------------------------------------------------
-void Object_c::SetData (Object_c       *owner,
-                        gchar          *key,
-                        void           *data,
-                        GDestroyNotify  destroy_cbk)
+void Object::SetData (Object         *owner,
+                      gchar          *key,
+                      void           *data,
+                      GDestroyNotify  destroy_cbk)
 {
   gchar *full_key = g_strdup_printf ("%p::%s", owner, key);
 
@@ -144,8 +144,8 @@ void Object_c::SetData (Object_c       *owner,
 }
 
 // --------------------------------------------------------------------------------
-void *Object_c::GetData (Object_c *owner,
-                         gchar    *key)
+void *Object::GetData (Object *owner,
+                       gchar  *key)
 {
   void  *data;
   gchar *full_key = g_strdup_printf ("%p::%s", owner, key);
@@ -158,7 +158,7 @@ void *Object_c::GetData (Object_c *owner,
 }
 
 // --------------------------------------------------------------------------------
-void Object_c::Dump ()
+void Object::Dump ()
 {
   guint total = 0;
 

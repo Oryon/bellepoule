@@ -24,19 +24,19 @@
 #include "filter.hpp"
 #include "glade.hpp"
 
-class Module_c : public virtual Object_c
+class Module : public virtual Object
 {
   public:
-    void Plug (Module_c   *module,
+    void Plug (Module     *module,
                GtkWidget  *in,
                GtkToolbar *toolbar = NULL);
     void UnPlug ();
 
     void SelectAttributes ();
 
-    void SetDataOwner (Object_c *data_owner);
+    void SetDataOwner (Object *data_owner);
 
-    Object_c *GetDataOwner ();
+    Object *GetDataOwner ();
 
     GtkWidget *GetConfigWidget ();
 
@@ -52,12 +52,12 @@ class Module_c : public virtual Object_c
 
   protected:
     Filter  *_filter;
-    Glade_c *_glade;
+    Glade   *_glade;
 
     static GKeyFile *_config_file;
 
-    Module_c (gchar *glade_file,
-              gchar *root = NULL);
+    Module (gchar *glade_file,
+            gchar *root = NULL);
 
     virtual void OnPlugged   () {};
     virtual void OnUnPlugged () {};
@@ -72,16 +72,16 @@ class Module_c : public virtual Object_c
 
     void ResetCursor ();
 
-    virtual ~Module_c ();
+    virtual ~Module ();
 
   private:
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;
     SensitivityTrigger *_sensitivity_trigger;
     GSList             *_plugged_list;
-    Module_c           *_owner;
+    Module             *_owner;
     GtkWidget          *_config_widget;
-    Object_c           *_data_owner;
+    Object             *_data_owner;
 };
 
 #endif

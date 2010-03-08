@@ -22,7 +22,7 @@
 
 #include "object.hpp"
 
-class Data : public Object_c
+class Data : public Object
 {
   public:
     guint _value;
