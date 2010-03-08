@@ -233,7 +233,7 @@ void Checkin::Load (xmlNode *xml_node)
 
         player->Load (n);
 
-        MonitorAttending (player);
+        Monitor (player);
         Add (player);
 
         player->Release ();
@@ -281,17 +281,31 @@ void Checkin::Display ()
 // --------------------------------------------------------------------------------
 void Checkin::UpdateRanking ()
 {
+  guint nb_player  = g_slist_length (_player_list);
+  guint nb_missing = 0;
+
   _player_list = g_slist_sort_with_data (_player_list,
                                          (GCompareDataFunc) Player::Compare,
                                          (void *) "rating");
 
-  for (guint i = 0; i <  g_slist_length (_player_list); i++)
+  for (guint i = 0; i < nb_player; i++)
   {
-    Player *p;
+    Player    *p;
+    Attribute *attr;
 
     p = (Player *) g_slist_nth_data (_player_list, i);
-    p->SetAttributeValue ("rank",
-                          i + 1);
+    attr = p->GetAttribute ("attending");
+    if ((gboolean) attr->GetValue ())
+    {
+      p->SetAttributeValue ("rank",
+                            i - nb_missing + 1);
+    }
+    else
+    {
+      p->SetAttributeValue ("rank",
+                            nb_player - nb_missing);
+      nb_missing++;
+    }
     Update (p);
   }
 }
@@ -539,7 +553,7 @@ void Checkin::ImportFFF (gchar *file)
           player->SetAttributeValue ("rating", (guint) 0);
         }
 
-        MonitorAttending (player);
+        Monitor (player);
         Add (player);
         player->Release ();
 
@@ -602,7 +616,7 @@ void Checkin::ImportCSV (gchar *file)
           player->SetAttributeValue ("first_name", tokens[i+1]);
           player->SetAttributeValue ("exported",   (guint) FALSE);
 
-          MonitorAttending (player);
+          Monitor (player);
           Add (player);
           player->Release ();
         }
@@ -698,24 +712,30 @@ void Checkin::on_add_button_clicked ()
   gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
                                                         0));
 
-  MonitorAttending (player);
+  Monitor (player);
   Add (player);
   player->Release ();
   UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::MonitorAttending (Player *player)
+void Checkin::Monitor (Player *player)
 {
-  Attribute *attr = player->GetAttribute ("attending");
-
-  if (attr && ((gboolean) attr->GetValue () == TRUE))
   {
-    _attendings++;
+    Attribute *attr = player->GetAttribute ("attending");
+
+    if (attr && ((gboolean) attr->GetValue () == TRUE))
+    {
+      _attendings++;
+    }
+
+    player->SetChangeCbk ("attending",
+                          (Player::OnChange) OnAttendingChanged,
+                          this);
   }
 
-  player->SetChangeCbk ("attending",
-                        (Player::OnChange) OnAttendingChanged,
+  player->SetChangeCbk ("rating",
+                        (Player::OnChange) OnRatingChanged,
                         this);
 }
 
@@ -749,6 +769,15 @@ void Checkin::OnAttendingChanged (Player    *player,
   }
 
   checkin->RefreshAttendingDisplay ();
+  checkin->UpdateRanking ();
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::OnRatingChanged (Player    *player,
+                               Attribute *attr,
+                               Checkin   *checkin)
+{
+  checkin->UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------

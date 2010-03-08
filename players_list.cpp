@@ -159,7 +159,7 @@ void PlayersList::on_cell_edited (GtkCellRendererText *cell,
                                   gchar               *new_text,
                                   gpointer             user_data)
 {
-  PlayersList *p = (PlayersList *) user_data;
+  PlayersList *p   = (PlayersList *) user_data;
   gchar *attr_name = (gchar *) g_object_get_data (G_OBJECT (cell),
                                                   "PlayersList::attribute_name");
 

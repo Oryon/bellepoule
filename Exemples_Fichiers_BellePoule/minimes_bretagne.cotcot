@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contest title="Challenge du futur" day="31" month="1" year="2010" weapon="E" gender="FM" category="C" organizer="CS Betton" web_site="http://betton.escrime.free.fr" score_stuffing="1">
- <schedule current_stage="2">
+ <schedule current_stage="0">
   <checkin_stage name="">
-   <player name="BROUARD" first_name="Gurvan" club="BETTON CP" rating="1003" gender="M" ligue="" country="FRA" birth_year="31/01/1988" licence="010037623035" attending="1" rank="3" ref="1005" exported="0"/>
+   <player name="BROUARD" first_name="Gurvan" club="BETTON CP" rating="1003" gender="M" ligue="" country="FRA" birth_year="31/01/1988" licence="010037623035" attending="1" rank="1" ref="1005" exported="0"/>
    <player name="ROLLIN" first_name="Benjamin" club="DINARD LAMES" rating="1030" gender="M" ligue="" country="FRA" birth_year="13/05/1988" licence="033054523035" attending="1" rank="2" ref="1020" exported="0"/>
-   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="M" ligue="" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="1" ref="1018" exported="0"/>
+   <player name="ANNIC" first_name="Tom" club="DINARD LAMES" rating="1053" gender="M" ligue="" country="FRA" birth_year="07/07/1988" licence="033047223035" attending="1" rank="3" ref="1018" exported="0"/>
    <player name="BOC HO" first_name="Maxime" club="DINARD LAMES" rating="1053" gender="M" ligue="" country="FRA" birth_year="22/08/1988" licence="033057623035" attending="0" rank="4" ref="1024" exported="0"/>
    <player name="JACOPIN" first_name="Tangui" club="BETTON CP" rating="1089" gender="M" ligue="" country="FRA" birth_year="19/09/1988" licence="010023623035" attending="0" rank="5" ref="1002" exported="0"/>
    <player name="BOTUHA" first_name="Tom" club="DINARD LAMES" rating="1103" gender="M" ligue="" country="FRA" birth_year="03/05/1989" licence="033055923035" attending="0" rank="6" ref="1021" exported="0"/>
@@ -40,20 +40,8 @@
    <player name="BERTRAND" first_name="Antoine" club="QUIMPER EC" rating="0" gender="M" ligue="" country="FRA" birth_year="19/12/1990" licence="034077823029" attending="0" rank="36" ref="999" exported="0"/>
    <player name="NOEL" first_name="Alexis" club="DINARD LAMES" rating="0" gender="M" ligue="" country="FRA" birth_year="25/11/1990" licence="033058823035" attending="0" rank="37" ref="1026" exported="0"/>
   </checkin_stage>
-  <pool_allocation_stage name="">
-   <player_list>
-    <player ref="1005"/>
-    <player ref="1020"/>
-    <player ref="1018"/>
-   </player_list>
-  </pool_allocation_stage>
-  <pool_stage name="toto" max_score="5">
-   <match_list>
-    <match player_A="1020" score_A="5" player_B="1005" score_B="4"/>
-    <match player_A="1018" score_A="1" player_B="1005" score_B="5"/>
-    <match player_A="1018" score_A="5" player_B="1020" score_B="4"/>
-   </match_list>
-  </pool_stage>
+  <pool_allocation_stage name=""/>
+  <pool_stage name="toto" max_score="5"/>
   <table_stage name="zutzut" max_score="5"/>
   <general_classification_stage name=""/>
  </schedule>
