@@ -71,6 +71,8 @@ class Checkin : public virtual Stage, public PlayersList
 
     void UpdateRanking ();
 
+    void OnListChanged ();
+
     void Monitor (Player *player);
 
     void RefreshAttendingDisplay ();
@@ -82,10 +84,6 @@ class Checkin : public virtual Stage, public PlayersList
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Checkin   *checkin);
-
-    static void OnRatingChanged (Player    *player,
-                                 Attribute *attr,
-                                 Checkin   *checkin);
 
     static gboolean PresentPlayerFilter (Player *player);
 

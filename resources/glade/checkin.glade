@@ -39,7 +39,7 @@
                     <child>
                       <object class="GtkLabel" id="attending_label">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">---</property>
+                        <property name="label" translatable="yes">9999</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                           <attribute name="foreground" value="#18722a3eb780"/>
@@ -53,7 +53,7 @@
                     <child>
                       <object class="GtkLabel" id="absent_label">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">---</property>
+                        <property name="label" translatable="yes">9999</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                           <attribute name="foreground" value="#d0a81caf1efa"/>

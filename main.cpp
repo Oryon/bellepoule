@@ -17,9 +17,9 @@
 #define GETTEXT_PACKAGE "gtk20"
 #include <glib/gi18n-lib.h>
 
-//#define WIN32_LEAN_AND_MEAN
-//#include <windows.h>
-//#include <shellapi.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
 
 #include <gtk/gtk.h>
 
@@ -39,17 +39,17 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                                          const gchar    *link,
                                          gpointer        data)
 {
-  //ShellExecuteA (NULL,
-                 //"open",
-                 //link,
-                 //NULL,
-                 //NULL,
-                 //SW_SHOWNORMAL);
+  ShellExecuteA (NULL,
+                 "open",
+                 link,
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
 
-  gtk_show_uri (NULL,
-                link,
-                GDK_CURRENT_TIME,
-                NULL);
+  //gtk_show_uri (NULL,
+                //link,
+                //GDK_CURRENT_TIME,
+                //NULL);
 }
 
 // --------------------------------------------------------------------------------

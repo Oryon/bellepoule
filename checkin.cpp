@@ -279,6 +279,12 @@ void Checkin::Display ()
 }
 
 // --------------------------------------------------------------------------------
+void Checkin::OnListChanged ()
+{
+  UpdateRanking ();
+}
+
+// --------------------------------------------------------------------------------
 void Checkin::UpdateRanking ()
 {
   guint nb_player  = g_slist_length (_player_list);
@@ -504,6 +510,7 @@ void Checkin::Import ()
 
   gtk_widget_destroy (chooser);
 
+  RefreshAttendingDisplay ();
   UpdateRanking ();
 }
 
@@ -562,7 +569,6 @@ void Checkin::ImportFFF (gchar *file)
     }
 
     g_strfreev (lines);
-    RefreshAttendingDisplay ();
   }
 }
 
@@ -621,7 +627,6 @@ void Checkin::ImportCSV (gchar *file)
           player->Release ();
         }
         g_strfreev (tokens);
-        RefreshAttendingDisplay ();
       }
     }
   }
@@ -715,6 +720,7 @@ void Checkin::on_add_button_clicked ()
   Monitor (player);
   Add (player);
   player->Release ();
+  RefreshAttendingDisplay ();
   UpdateRanking ();
 }
 
@@ -733,10 +739,6 @@ void Checkin::Monitor (Player *player)
                           (Player::OnChange) OnAttendingChanged,
                           this);
   }
-
-  player->SetChangeCbk ("rating",
-                        (Player::OnChange) OnRatingChanged,
-                        this);
 }
 
 // --------------------------------------------------------------------------------
@@ -748,7 +750,6 @@ void Checkin::OnPlayerRemoved (Player *player)
   {
     _attendings--;
   }
-
   RefreshAttendingDisplay ();
 }
 
@@ -769,15 +770,6 @@ void Checkin::OnAttendingChanged (Player    *player,
   }
 
   checkin->RefreshAttendingDisplay ();
-  checkin->UpdateRanking ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnRatingChanged (Player    *player,
-                               Attribute *attr,
-                               Checkin   *checkin)
-{
-  checkin->UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------

@@ -57,6 +57,8 @@ class PlayersList : public Module
 
     void SetFilter (Filter *filter);
 
+    virtual void OnListChanged () {};
+
   private:
     GtkWidget    *_tree_view;
     GtkListStore *_store;

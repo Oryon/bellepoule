@@ -193,6 +193,7 @@ void PlayersList::OnCellEdited (gchar *path_string,
                         new_text);
 
   Update (p);
+  OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------
@@ -296,6 +297,8 @@ void PlayersList::OnCellToggled (gchar    *path_string,
     }
   }
   gtk_tree_path_free (toggeled_path);
+
+  OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------
@@ -608,6 +611,8 @@ void PlayersList::RemoveSelection ()
 
   g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
   g_list_free    (selection_list);
+
+  OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------
