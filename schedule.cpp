@@ -25,7 +25,8 @@ typedef enum
 {
   NAME_COLUMN,
   LOCK_COLUMN,
-  STAGE_COLUMN
+  STAGE_COLUMN,
+  VISIBILITY_COLUMN
 } ColumnId;
 
 // --------------------------------------------------------------------------------
@@ -38,7 +39,13 @@ Schedule::Schedule ()
 
   _score_stuffing_allowed = FALSE;
 
-  _list_store = GTK_LIST_STORE (_glade->GetObject ("stage_liststore"));
+  {
+    _list_store        = GTK_LIST_STORE (_glade->GetObject ("stage_liststore"));
+    _list_store_filter = GTK_TREE_MODEL_FILTER (_glade->GetObject ("stage_liststore_filter"));
+
+    gtk_tree_model_filter_set_visible_column (_list_store_filter,
+                                              VISIBILITY_COLUMN);
+  }
 
   // Formula dialog
   {
@@ -70,9 +77,9 @@ Schedule::Schedule ()
       GtkWidget      *menu_item;
 
       Stage::GetStageClass (i,
-                              &name,
-                              &creator,
-                              &rights);
+                            &name,
+                            &creator,
+                            &rights);
 
       if (rights & Stage::EDITABLE)
       {
@@ -251,14 +258,18 @@ Module *Schedule::GetSelectedModule  ()
 {
   GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
   GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
-  GtkTreeIter       iter;
+  GtkTreeIter       filter_iter;
 
   if (gtk_tree_selection_get_selected (selection,
                                        NULL,
-                                       &iter))
+                                       &filter_iter))
   {
-    Stage *stage;
+    Stage       *stage;
+    GtkTreeIter  iter;
 
+    gtk_tree_model_filter_convert_iter_to_child_iter (_list_store_filter,
+                                                      &iter,
+                                                      &filter_iter);
     gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                         &iter,
                         STAGE_COLUMN, &stage, -1);
@@ -281,6 +292,20 @@ void Schedule::AddStage (Stage *stage)
 
   AddStage (stage,
             last_stage);
+
+  {
+    Stage *input_provider = stage->GetInputProvider ();
+
+    if (input_provider)
+    {
+      if (input_provider && (last_stage != input_provider))
+      {
+        AddStage (input_provider,
+                  last_stage);
+      }
+      stage->SetInputProvider (input_provider);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -329,7 +354,6 @@ void Schedule::AddStage (Stage *stage,
     }
 
     // Insert it in the formula list
-    if (stage->GetRights () & Stage::EDITABLE)
     {
       GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
       GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
@@ -363,28 +387,27 @@ void Schedule::AddStage (Stage *stage,
                                &iter);
       }
 
-      gtk_tree_selection_select_iter (selection,
-                                      &iter);
       gtk_list_store_set (_list_store, &iter,
                           NAME_COLUMN, stage->GetClassName (),
-                          STAGE_COLUMN, stage, -1);
+                          STAGE_COLUMN, stage,
+                          VISIBILITY_COLUMN, (stage->GetRights () & Stage::EDITABLE) != 0,
+                          -1);
+
+      {
+        GtkTreeIter filter_iter;
+
+        if (gtk_tree_model_filter_convert_child_iter_to_iter (_list_store_filter,
+                                                              &filter_iter,
+                                                              &iter))
+        {
+          gtk_tree_selection_select_iter (selection,
+                                          &filter_iter);
+        }
+      }
     }
 
     RefreshSensitivity ();
 
-    {
-      Stage *input_provider = stage->GetInputProvider ();
-
-      if (input_provider)
-      {
-        if (input_provider && (after != input_provider))
-        {
-          AddStage (input_provider,
-                    after);
-        }
-        stage->SetInputProvider (input_provider);
-      }
-    }
 #if 0
     for (guint i = 0; i < g_list_length (_stage_list); i++)
     {
@@ -466,7 +489,6 @@ void Schedule::RemoveStage (Stage *stage)
   {
     GtkTreeIter  iter;
     gboolean     iter_is_valid;
-    GtkTreePath *path_to_select;
 
     iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_list_store),
                                                    &iter);
@@ -479,8 +501,24 @@ void Schedule::RemoveStage (Stage *stage)
                           STAGE_COLUMN, &current_stage, -1);
       if (current_stage == stage)
       {
-        path_to_select = gtk_tree_model_get_path (GTK_TREE_MODEL (_list_store),
-                                                  &iter);
+        {
+          GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
+          GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
+          GtkTreeIter       filter_iter;
+
+          if (gtk_tree_model_filter_convert_child_iter_to_iter (_list_store_filter,
+                                                                &filter_iter,
+                                                                &iter))
+          {
+            if (gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store_filter),
+                                          &filter_iter))
+            {
+              gtk_tree_selection_select_iter (selection,
+                                              &filter_iter);
+              on_stage_selected ();
+            }
+          }
+        }
 
         gtk_list_store_remove (_list_store,
                                &iter);
@@ -489,28 +527,6 @@ void Schedule::RemoveStage (Stage *stage)
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store),
                                                 &iter);
-    }
-
-    if (iter_is_valid)
-    {
-      GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
-      GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
-
-      if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_list_store),
-                                   &iter,
-                                   path_to_select) == FALSE)
-      {
-        gtk_tree_path_prev (path_to_select);
-      }
-
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (_list_store),
-                               &iter,
-                               path_to_select);
-      gtk_tree_path_free (path_to_select);
-
-      gtk_tree_selection_select_iter (selection,
-                                      &iter);
-      on_stage_selected ();
     }
   }
   RefreshSensitivity ();
@@ -701,18 +717,36 @@ gboolean Schedule::on_new_stage_selected (GtkWidget      *widget,
   {
     GtkWidget        *treeview  = owner->_glade->GetWidget ("formula_treeview");
     GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
-    GtkTreeIter       iter;
+    GtkTreeIter       filter_iter;
 
     if (gtk_tree_selection_get_selected (selection,
                                          NULL,
-                                         &iter))
+                                         &filter_iter))
     {
+      GtkTreeIter iter;
+
+      gtk_tree_model_filter_convert_iter_to_child_iter (owner->_list_store_filter,
+                                                        &iter,
+                                                        &filter_iter);
       gtk_tree_model_get (GTK_TREE_MODEL (owner->_list_store),
                           &iter,
                           STAGE_COLUMN, &after,
                           -1);
     }
   }
+
+  {
+    Stage *input_provider = stage->GetInputProvider ();
+
+    if (input_provider)
+    {
+      owner->AddStage (input_provider,
+                       after);
+      stage->SetInputProvider (input_provider);
+      after = input_provider;
+    }
+  }
+
   owner->AddStage (stage,
                    after);
 
@@ -932,15 +966,19 @@ void Schedule::on_stage_removed ()
   {
     GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
     GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
-    GtkTreeIter       iter;
+    GtkTreeIter       filter_iter;
 
     if (gtk_tree_selection_get_selected (selection,
                                          NULL,
-                                         &iter))
+                                         &filter_iter))
     {
-      Stage *stage;
-      Stage *input_provider;
+      Stage       *stage;
+      Stage       *input_provider;
+      GtkTreeIter  iter;
 
+      gtk_tree_model_filter_convert_iter_to_child_iter (_list_store_filter,
+                                                        &iter,
+                                                        &filter_iter);
       gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                           &iter,
                           STAGE_COLUMN, &stage, -1);
@@ -953,15 +991,20 @@ void Schedule::on_stage_removed ()
 
     if (gtk_tree_selection_get_selected (selection,
                                          NULL,
-                                         &iter) == FALSE)
+                                         &filter_iter) == FALSE)
     {
-      gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_list_store),
-                                     &iter,
-                                     NULL,
-                                     g_list_length (_stage_list) - 1);
+      guint n = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (_list_store_filter),
+                                                NULL);
 
-      gtk_tree_selection_select_iter (selection,
-                                      &iter);
+      if (n)
+      {
+        gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_list_store_filter),
+                                       &filter_iter,
+                                       NULL,
+                                       n);
+        gtk_tree_selection_select_iter (selection,
+                                        &filter_iter);
+      }
     }
   }
 }

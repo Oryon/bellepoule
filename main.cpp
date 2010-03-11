@@ -171,6 +171,10 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_INT, "indice", "indice");
     desc->_persistency = AttributeDesc::NOT_PERSISTENT;
     desc->_scope       = AttributeDesc::LOCAL;
+
+    desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "Touches données");
+    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+    desc->_scope       = AttributeDesc::LOCAL;
   }
 
   {

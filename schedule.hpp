@@ -54,10 +54,11 @@ class Schedule : public Module
     void RefreshSensitivity ();
 
   private:
-    GtkListStore *_list_store;
-    GList        *_stage_list;
-    guint         _current_stage;
-    gboolean      _score_stuffing_allowed;
+    GtkListStore       *_list_store;
+    GtkTreeModelFilter *_list_store_filter;
+    GList              *_stage_list;
+    guint               _current_stage;
+    gboolean            _score_stuffing_allowed;
 
     void    SetCurrentStage    (guint index);
     Module *GetSelectedModule  ();

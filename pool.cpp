@@ -718,8 +718,8 @@ gint Pool::ComparePlayer (Player   *A,
     guint ratio_B   = (guint) B->GetAttribute ("victories_ratio", data_owner)->GetValue ();
     gint  average_A = (gint)  A->GetAttribute ("indice", data_owner)->GetValue ();
     gint  average_B = (gint)  B->GetAttribute ("indice", data_owner)->GetValue ();
-    guint HS_A      = (guint) A->GetData (data_owner, "HS");
-    guint HS_B      = (guint) B->GetData (data_owner, "HS");
+    guint HS_A      = (guint) A->GetAttribute ("HS", data_owner)->GetValue ();
+    guint HS_B      = (guint) B->GetAttribute ("HS", data_owner)->GetValue ();
 
     if (ratio_B != ratio_A)
     {
@@ -845,11 +845,11 @@ void Pool::RefreshScoreData ()
     }
 
     player_a->SetData (GetDataOwner (), "Victories", (void *) victories);
-    player_a->SetData (GetDataOwner (), "HS", (void *) hits_scored);
     player_a->SetData (GetDataOwner (), "HR", (void *) hits_received);
 
     player_a->SetAttributeValue ("victories_ratio", (victories*1000 / (GetNbPlayers ()-1)), GetDataOwner ());
     player_a->SetAttributeValue ("indice", hits_scored+hits_received, GetDataOwner ());
+    player_a->SetAttributeValue ("HS", hits_scored, GetDataOwner ());
 
     ranking = g_slist_append (ranking,
                               player_a);
@@ -951,9 +951,9 @@ void Pool::RefreshDashBoard ()
                   text, NULL);
     g_free (text);
 
-    value = (gint) player->GetData (GetDataOwner (), "HS");
+    attr = player->GetAttribute ("HS", GetDataOwner ());
     goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "HSItem"));
-    text = g_strdup_printf ("%d", value);
+    text = g_strdup_printf ("%d", (guint) attr->GetValue ());
     g_object_set (goo_text,
                   "text",
                   text, NULL);

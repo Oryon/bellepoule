@@ -93,6 +93,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
     _classification_filter->ShowAttribute ("club");
     _classification_filter->ShowAttribute ("victories_ratio");
     _classification_filter->ShowAttribute ("indice");
+    _classification_filter->ShowAttribute ("HS");
 
     SetClassificationFilter (_classification_filter);
   }
@@ -502,7 +503,7 @@ Stage *PoolSupervisor::GetInputProvider ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor::SetInputProvider (Stage *input_provider)
 {
-  _pool_allocator = dynamic_cast <PoolAllocator *> (GetPreviousStage ());
+  _pool_allocator = dynamic_cast <PoolAllocator *> (input_provider);
 
   if (_pool_allocator)
   {

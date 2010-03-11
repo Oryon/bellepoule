@@ -84,7 +84,12 @@
       <column type="gchararray"/>
       <!-- column-name stage -->
       <column type="gpointer"/>
+      <!-- column-name visibility -->
+      <column type="gboolean"/>
     </columns>
+  </object>
+  <object class="GtkTreeModelFilter" id="stage_liststore_filter">
+    <property name="child_model">stage_liststore</property>
   </object>
   <object class="GtkDialog" id="config_popup">
     <property name="border_width">5</property>
@@ -161,7 +166,7 @@
                       <object class="GtkTreeView" id="formula_treeview">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="model">stage_liststore</property>
+                        <property name="model">stage_liststore_filter</property>
                         <property name="headers_clickable">False</property>
                         <property name="search_column">0</property>
                         <signal name="cursor_changed" handler="on_formula_treeview_cursor_changed"/>
