@@ -129,22 +129,6 @@ void Stage::UnLock ()
 {
   FreeResult ();
 
-  // Reset the players rank
-  {
-    GSList *classification = GetCurrentClassification ();
-
-    for (guint i = 0; i < g_slist_length (classification); i ++)
-    {
-      Player *player;
-
-      player = (Player *) g_slist_nth_data (classification,
-                                            i);
-      player->SetAttributeValue ("rank",
-                                 i + 1);
-    }
-    g_slist_free (classification);
-  }
-
   _locked = false;
   OnUnLocked ();
 }
@@ -195,6 +179,21 @@ void Stage::RetrieveAttendees ()
   if (_previous)
   {
     _attendees = g_slist_copy (_previous->_result);
+
+    {
+      Player::AttributeId  attr_id ("previous_stage_rank", this);
+      GSList              *current = _attendees;
+
+      for (guint i = 0; current != NULL; i++)
+      {
+        Player *player;
+
+        player = (Player *) current->data;
+        player->SetAttributeValue (&attr_id,
+                                   i+1);
+        current = g_slist_next (current);
+      }
+    }
   }
 }
 
@@ -385,6 +384,8 @@ void Stage::UpdateClassification (GSList *result)
 
   if (classification_w)
   {
+    Player::AttributeId attr_id ("rank", this);
+
     if (_classification == NULL)
     {
       _classification = new Classification (_classification_filter);
@@ -403,7 +404,7 @@ void Stage::UpdateClassification (GSList *result)
       player = (Player *) g_slist_nth_data (result,
                                             i);
 
-      player->SetAttributeValue ("rank",
+      player->SetAttributeValue (&attr_id,
                                  i + 1);
       _classification->Add (player);
     }
@@ -475,13 +476,11 @@ void Stage::Dump ()
   {
     for (guint i = 0; i < g_slist_length (_result); i++)
     {
-      Player    *player;
-      Attribute *attr;
+      Player *player;
 
       player = (Player *) g_slist_nth_data (_result, i);
-      attr = player->GetAttribute ("name");
 
-      g_print ("%d >>> %s\n", i, attr->GetUserImage ());
+      g_print ("%d >>> %s\n", i, player->GetName ());
     }
   }
 }

@@ -145,9 +145,12 @@ GSList *Splitting::GetCurrentClassification ()
 
   if (result)
   {
+    Player::AttributeId attr_id ("rank",
+                                 this);
+
     result = g_slist_sort_with_data (result,
                                      (GCompareDataFunc) Player::Compare,
-                                     (void *) "rank");
+                                     &attr_id);
   }
   return result;
 }
@@ -155,7 +158,8 @@ GSList *Splitting::GetCurrentClassification ()
 // --------------------------------------------------------------------------------
 gboolean Splitting::PresentPlayerFilter (Player *player)
 {
-  Attribute *attr = player->GetAttribute ("exported");
+  Player::AttributeId  attr_id ("exported");
+  Attribute           *attr = player->GetAttribute (&attr_id);
 
   return ((gboolean) attr->GetValue () == FALSE);
 }
@@ -229,7 +233,8 @@ void Splitting::OnMove ()
     }
 
     {
-      GSList *selected_players = GetSelectedPlayers ();
+      GSList              *selected_players = GetSelectedPlayers ();
+      Player::AttributeId  attr_id ("exported");
 
       for (guint i = 0; i < g_slist_length (selected_players); i++)
       {
@@ -238,11 +243,11 @@ void Splitting::OnMove ()
 
         player = (Player *) g_slist_nth_data (selected_players,
                                               i);
-        attr = player->GetAttribute ("exported");
+        attr = player->GetAttribute (&attr_id);
 
         if (attr && attr->GetValue () == FALSE)
         {
-          player->SetAttributeValue ("exported",
+          player->SetAttributeValue (&attr_id,
                                      TRUE);
           Update (player);
 

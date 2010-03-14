@@ -21,6 +21,7 @@
 
 #include "module.hpp"
 #include "attribute.hpp"
+#include "player.hpp"
 
 class PlayersList : public Module
 {
@@ -72,13 +73,13 @@ class PlayersList : public Module
 
     Player *GetPlayer (const gchar *path_string);
 
-    void OnCellEdited (gchar *path_string,
-                       gchar *new_text,
-                       gchar *attr_name);
+    void OnCellEdited (gchar         *path_string,
+                       gchar         *new_text,
+                       AttributeDesc *desc);
 
-    void OnCellToggled (gchar    *path_string,
-                        gboolean  is_active,
-                        gchar    *attr_name);
+    void OnCellToggled (gchar         *path_string,
+                        gboolean       is_active,
+                        AttributeDesc *desc);
 
     virtual void OnPlayerRemoved (Player *player) {};
 
@@ -91,10 +92,10 @@ class PlayersList : public Module
                                 gchar               *new_text,
                                 gpointer             user_data);
 
-    static gint CompareIterator (GtkTreeModel *model,
-                                 GtkTreeIter  *a,
-                                 GtkTreeIter  *b,
-                                 gchar        *attr_name);
+    static gint CompareIterator (GtkTreeModel        *model,
+                                 GtkTreeIter         *a,
+                                 GtkTreeIter         *b,
+                                 Player::AttributeId *attr_id);
 };
 
 #endif

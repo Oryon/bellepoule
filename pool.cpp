@@ -146,6 +146,9 @@ void Pool::AddPlayer (Player *player)
          || (g_slist_find (_player_list,
                            player) == NULL))
   {
+    Player::AttributeId attr_id ("rank",
+                                 this);
+
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
       Player *current_player;
@@ -163,7 +166,7 @@ void Pool::AddPlayer (Player *player)
     _player_list = g_slist_insert_sorted_with_data (_player_list,
                                                     player,
                                                     (GCompareDataFunc) Player::Compare,
-                                                    (void *) "rank");
+                                                    &attr_id);
   }
 }
 
@@ -236,15 +239,17 @@ GString *Pool::GetPlayerImage (Player *player)
     selected_attr = _filter->GetSelectedAttrList ();
   }
 
-
   for (guint a = 0; a < g_slist_length (selected_attr); a++)
   {
-    AttributeDesc *attr_desc;
-    Attribute     *attr;
+    AttributeDesc       *attr_desc;
+    Attribute           *attr;
+    Player::AttributeId *attr_id;
 
     attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                     a);
-    attr = player->GetAttribute (attr_desc->_xml_name);
+    attr_id = new Player::AttributeId (attr_desc->_xml_name);
+    attr = player->GetAttribute (attr_id);
+    attr_id->Release ();
 
     if (attr)
     {
@@ -714,12 +719,31 @@ gint Pool::ComparePlayer (Player   *A,
 {
   if (with_full_random == FALSE)
   {
-    guint ratio_A   = (guint) A->GetAttribute ("victories_ratio", data_owner)->GetValue ();
-    guint ratio_B   = (guint) B->GetAttribute ("victories_ratio", data_owner)->GetValue ();
-    gint  average_A = (gint)  A->GetAttribute ("indice", data_owner)->GetValue ();
-    gint  average_B = (gint)  B->GetAttribute ("indice", data_owner)->GetValue ();
-    guint HS_A      = (guint) A->GetAttribute ("HS", data_owner)->GetValue ();
-    guint HS_B      = (guint) B->GetAttribute ("HS", data_owner)->GetValue ();
+    guint ratio_A;
+    guint ratio_B;
+    gint  average_A;
+    gint  average_B;
+    guint HS_A;
+    guint HS_B;
+    Player::AttributeId attr_id ("", data_owner);
+
+    attr_id._name = "victories_ratio";
+    ratio_A = (guint) A->GetAttribute (&attr_id)->GetValue ();
+
+    attr_id._name = "victories_ratio";
+    ratio_B = (guint) B->GetAttribute (&attr_id)->GetValue ();
+
+    attr_id._name = "indice";
+    average_A = (gint)  A->GetAttribute (&attr_id)->GetValue ();
+
+    attr_id._name = "indice";
+    average_B = (gint)  B->GetAttribute (&attr_id)->GetValue ();
+
+    attr_id._name = "HS";
+    HS_A = (guint) A->GetAttribute (&attr_id)->GetValue ();
+
+    attr_id._name = "HS";
+    HS_B = (guint) B->GetAttribute (&attr_id)->GetValue ();
 
     if (ratio_B != ratio_A)
     {
@@ -787,8 +811,9 @@ void Pool::UnLock ()
 // --------------------------------------------------------------------------------
 void Pool::RefreshScoreData ()
 {
-  GSList *ranking    = NULL;
-  guint   nb_players = GetNbPlayers ();
+  GSList             *ranking    = NULL;
+  guint               nb_players = GetNbPlayers ();
+  Player::AttributeId attr_id ("", GetDataOwner ());
 
   _is_over   = TRUE;
   _has_error = FALSE;
@@ -847,9 +872,12 @@ void Pool::RefreshScoreData ()
     player_a->SetData (GetDataOwner (), "Victories", (void *) victories);
     player_a->SetData (GetDataOwner (), "HR", (void *) hits_received);
 
-    player_a->SetAttributeValue ("victories_ratio", (victories*1000 / (GetNbPlayers ()-1)), GetDataOwner ());
-    player_a->SetAttributeValue ("indice", hits_scored+hits_received, GetDataOwner ());
-    player_a->SetAttributeValue ("HS", hits_scored, GetDataOwner ());
+    attr_id._name = "victories_ratio";
+    player_a->SetAttributeValue (&attr_id, (victories*1000 / (GetNbPlayers ()-1)));
+    attr_id._name = "indice";
+    player_a->SetAttributeValue (&attr_id, hits_scored+hits_received);
+    attr_id._name = "HS";
+    player_a->SetAttributeValue (&attr_id, hits_scored);
 
     ranking = g_slist_append (ranking,
                               player_a);
@@ -867,7 +895,7 @@ void Pool::RefreshScoreData ()
                                           p);
     if (player)
     {
-      player->SetData (GetDataOwner (), "Rank", (void *) (p+1));
+      player->SetData (this, "Rank", (void *) (p+1));
     }
   }
 
@@ -923,7 +951,8 @@ gboolean Pool::HasError ()
 // --------------------------------------------------------------------------------
 void Pool::RefreshDashBoard ()
 {
-  guint nb_players = GetNbPlayers ();
+  guint               nb_players = GetNbPlayers ();
+  Player::AttributeId attr_id ("", GetDataOwner ());
 
   for (guint p = 0; p < nb_players; p++)
   {
@@ -935,7 +964,8 @@ void Pool::RefreshDashBoard ()
 
     player = GetPlayer (p);
 
-    attr = player->GetAttribute ("victories_ratio", GetDataOwner ());
+    attr_id._name = "victories_ratio";
+    attr = player->GetAttribute (&attr_id);
     goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "VictoriesRatioItem"));
     text = g_strdup_printf ("%0.3f", (gdouble) ((guint) attr->GetValue ()) / 1000.0);
     g_object_set (goo_text,
@@ -951,7 +981,8 @@ void Pool::RefreshDashBoard ()
                   text, NULL);
     g_free (text);
 
-    attr = player->GetAttribute ("HS", GetDataOwner ());
+    attr_id._name = "HS";
+    attr = player->GetAttribute (&attr_id);
     goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "HSItem"));
     text = g_strdup_printf ("%d", (guint) attr->GetValue ());
     g_object_set (goo_text,
@@ -967,7 +998,8 @@ void Pool::RefreshDashBoard ()
                   text, NULL);
     g_free (text);
 
-    attr = player->GetAttribute ("indice", GetDataOwner ());
+    attr_id._name = "indice";
+    attr = player->GetAttribute (&attr_id);
     goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "IndiceItem"));
     text = g_strdup_printf ("%+d", (gint) attr->GetValue ());
     g_object_set (goo_text,
@@ -975,7 +1007,7 @@ void Pool::RefreshDashBoard ()
                   text, NULL);
     g_free (text);
 
-    value = (gint) player->GetData (GetDataOwner (), "Rank");
+    value = (gint) player->GetData (this, "Rank");
     goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "RankItem"));
     text = g_strdup_printf ("%d", value);
     g_object_set (goo_text,

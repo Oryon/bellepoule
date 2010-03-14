@@ -43,12 +43,26 @@ Player::~Player ()
 }
 
 // --------------------------------------------------------------------------------
-gint Player::Compare (Player *a,
-                      Player *b,
-                      gchar  *attr_name)
+Player::AttributeId *Player::AttributeId::CreateAttributeId (AttributeDesc *desc,
+                                                             Object        *owner)
 {
-  Attribute *attr_a = a->GetAttribute (attr_name);
-  Attribute *attr_b = b->GetAttribute (attr_name);
+  if (desc->_scope == AttributeDesc::GLOBAL)
+  {
+    return new Player::AttributeId (desc->_xml_name);
+  }
+  else
+  {
+    return new Player::AttributeId (desc->_xml_name, owner);
+  }
+}
+
+// --------------------------------------------------------------------------------
+gint Player::Compare (Player      *a,
+                      Player      *b,
+                      AttributeId *attr_id)
+{
+  Attribute *attr_a = a->GetAttribute (attr_id);
+  Attribute *attr_b = b->GetAttribute (attr_id);
 
   return Attribute::Compare (attr_a, attr_b);
 }
@@ -61,11 +75,10 @@ gint Player::CompareWithRef (Player *player,
 }
 
 // --------------------------------------------------------------------------------
-Attribute *Player::GetAttribute (gchar  *name,
-                                 Object *owner)
+Attribute *Player::GetAttribute (AttributeId *attr_id)
 {
-  return (Attribute*) GetData (owner,
-                               name);
+  return (Attribute*) GetData (attr_id->_owner,
+                               attr_id->_name);
 }
 
 // --------------------------------------------------------------------------------
@@ -104,18 +117,17 @@ void Player::NotifyChange (Attribute *attr)
 }
 
 // --------------------------------------------------------------------------------
-void Player::SetAttributeValue (gchar  *name,
-                                gchar  *value,
-                                Object *owner)
+void Player::SetAttributeValue (AttributeId *attr_id,
+                                gchar       *value)
 {
-  Attribute *attr = GetAttribute (name, owner);
+  Attribute *attr = GetAttribute (attr_id);
 
   if (attr == NULL)
   {
-    attr = Attribute::New (name);
+    attr = Attribute::New (attr_id->_name);
 
-    SetData (owner,
-             attr->GetName (),
+    SetData (attr_id->_owner,
+             attr_id->_name,
              attr,
              (GDestroyNotify) Object::TryToRelease);
   }
@@ -132,18 +144,17 @@ void Player::SetAttributeValue (gchar  *name,
 }
 
 // --------------------------------------------------------------------------------
-void Player::SetAttributeValue (gchar  *name,
-                                guint   value,
-                                Object *owner)
+void Player::SetAttributeValue (AttributeId *attr_id,
+                                guint        value)
 {
-  Attribute *attr = GetAttribute (name, owner);
+  Attribute *attr = GetAttribute (attr_id);
 
   if (attr == NULL)
   {
-    attr = Attribute::New (name);
+    attr = Attribute::New (attr_id->_name);
 
-    SetData (owner,
-             attr->GetName (),
+    SetData (attr_id->_owner,
+             attr_id->_name,
              attr,
              (GDestroyNotify) Object::TryToRelease);
   }
@@ -173,7 +184,7 @@ void Player::Save (xmlTextWriter *xml_writer)
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "player");
 
-  for (guint i = 0; i < g_slist_length (attr_list ); i++)
+  for (guint i = 0; i < g_slist_length (attr_list); i++)
   {
     AttributeDesc *desc;
 
@@ -181,7 +192,8 @@ void Player::Save (xmlTextWriter *xml_writer)
                                                i);
     if (desc->_persistency == AttributeDesc::PERSISTENT)
     {
-      Attribute *attr = GetAttribute (desc->_xml_name);
+      AttributeId  attr_id (desc->_xml_name);
+      Attribute   *attr = GetAttribute (&attr_id);
 
       if (attr)
       {
@@ -219,14 +231,17 @@ void Player::Load (xmlNode *xml_node)
 
       if (value)
       {
-        SetAttributeValue (desc->_xml_name,
+        AttributeId attr_id (desc->_xml_name);
+
+        SetAttributeValue (&attr_id,
                            value);
       }
     }
   }
 
   {
-    Attribute *attr = GetAttribute ("ref");
+    Player::AttributeId  attr_id ("ref");
+    Attribute           *attr = GetAttribute (&attr_id);
 
     if (attr)
     {
@@ -244,7 +259,8 @@ void Player::Load (xmlNode *xml_node)
 // --------------------------------------------------------------------------------
 gchar *Player::GetName ()
 {
-  Attribute *attr = GetAttribute ("name");
+  Player::AttributeId  attr_id ("name");
+  Attribute           *attr = GetAttribute (&attr_id);
 
   return attr->GetUserImage ();
 }

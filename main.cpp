@@ -156,7 +156,14 @@ int main (int argc, char **argv)
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "rank", "place");
-    desc->_rights = AttributeDesc::PRIVATE;
+    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+    desc->_rights      = AttributeDesc::PRIVATE;
+    desc->_scope       = AttributeDesc::LOCAL;
+
+    desc = AttributeDesc::Declare (G_TYPE_INT, "previous_stage_rank", "rang d'entrée");
+    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+    desc->_rights      = AttributeDesc::PRIVATE;
+    desc->_scope       = AttributeDesc::LOCAL;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ref");
     desc->_rights = AttributeDesc::PRIVATE;

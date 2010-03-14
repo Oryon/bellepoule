@@ -37,6 +37,7 @@ class Table : public virtual Stage, public CanvasModule
     void OnStuffClicked ();
     void OnInputToggled (GtkWidget *widget);
     void OnSearchMatch ();
+    void OnFilterClicked ();
 
   public:
     static const gchar *_class_name;
@@ -146,6 +147,10 @@ class Table : public virtual Stage, public CanvasModule
                             CanvasModule   *client,
                             Match          *match,
                             Player         *player);
+
+    static gint ComparePlayer (Player *A,
+                               Player *B,
+                               Table  *table);
 
     void Save (xmlTextWriter *xml_writer);
 

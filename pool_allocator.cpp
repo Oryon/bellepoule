@@ -75,11 +75,13 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "HS",
+                               "rank",
                                NULL);
     filter = new Filter (attr_list,
                          this);
 
-    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("rating");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
@@ -509,12 +511,15 @@ gboolean PoolAllocator::OnButtonPress (GooCanvasItem  *item,
       {
         for (guint i = 0; i < g_slist_length (selected_attr); i++)
         {
-          AttributeDesc *attr_desc;
-          Attribute     *attr;
+          AttributeDesc       *attr_desc;
+          Attribute           *attr;
+          Player::AttributeId *attr_id;
 
           attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                           i);
-          attr = _floating_player->GetAttribute (attr_desc->_xml_name);
+          attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+          attr = _floating_player->GetAttribute (attr_id);
+          attr_id->Release ();
 
           if (attr)
           {
@@ -868,13 +873,16 @@ void PoolAllocator::FillPoolTable (Pool *pool)
     {
       for (guint i = 0; i < g_slist_length (selected_attr); i++)
       {
-        GooCanvasItem *item;
-        AttributeDesc *attr_desc;
-        Attribute     *attr;
+        GooCanvasItem       *item;
+        AttributeDesc       *attr_desc;
+        Attribute           *attr;
+        Player::AttributeId *attr_id;
 
         attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                         i);
-        attr = player->GetAttribute (attr_desc->_xml_name);
+        attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+        attr = player->GetAttribute (attr_id);
+        attr_id->Release ();
 
         if (attr)
         {

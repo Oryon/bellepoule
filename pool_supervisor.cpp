@@ -66,6 +66,8 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "HS",
+                               "rank",
                                NULL);
     filter = new Filter (attr_list,
                          this);

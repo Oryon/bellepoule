@@ -104,25 +104,34 @@ void PlayersList::Update (Player *player)
 
     for (guint i = 0; i < g_slist_length (attr_list); i++)
     {
-      AttributeDesc *desc;
-      Attribute     *attr;
+      AttributeDesc       *desc;
+      Attribute           *attr;
+      Player::AttributeId *attr_id;
 
       desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                  i);
       if (desc->_scope == AttributeDesc::GLOBAL)
       {
-        attr = player->GetAttribute (desc->_xml_name);
+        attr_id = new Player::AttributeId (desc->_xml_name);
       }
       else
       {
-        attr = player->GetAttribute (desc->_xml_name,
-                                     GetDataOwner ());
+        attr_id = new Player::AttributeId (desc->_xml_name,
+                                           GetDataOwner ());
       }
+
+      attr = player->GetAttribute (attr_id);
+      attr_id->Release ();
 
       if (attr)
       {
         gtk_list_store_set (_store, &iter,
                             i, attr->GetValue (), -1);
+      }
+      else
+      {
+        gtk_list_store_set (_store, &iter,
+                            i, 0, -1);
       }
     }
 
@@ -159,13 +168,13 @@ void PlayersList::on_cell_edited (GtkCellRendererText *cell,
                                   gchar               *new_text,
                                   gpointer             user_data)
 {
-  PlayersList *p   = (PlayersList *) user_data;
-  gchar *attr_name = (gchar *) g_object_get_data (G_OBJECT (cell),
-                                                  "PlayersList::attribute_name");
+  PlayersList   *p    = (PlayersList *) user_data;
+  AttributeDesc *desc = (AttributeDesc *) g_object_get_data (G_OBJECT (cell),
+                                                             "PlayersList::attribute_desc");
 
   p->OnCellEdited (path_string,
                    new_text,
-                   attr_name);
+                   desc);
 }
 
 // --------------------------------------------------------------------------------
@@ -173,24 +182,26 @@ void PlayersList::on_cell_toggled (GtkCellRendererToggle *cell,
                                    gchar                 *path_string,
                                    gpointer               user_data)
 {
-  PlayersList *p = (PlayersList *) user_data;
-  gchar *attr_name = (gchar *) g_object_get_data (G_OBJECT (cell),
-                                                  "PlayersList::attribute_name");
+  PlayersList   *p    = (PlayersList *) user_data;
+  AttributeDesc *desc = (AttributeDesc *) g_object_get_data (G_OBJECT (cell),
+                                                             "PlayersList::attribute_desc");
 
   p->OnCellToggled (path_string,
                     gtk_cell_renderer_toggle_get_active (cell),
-                    attr_name);
+                    desc);
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::OnCellEdited (gchar *path_string,
-                                gchar *new_text,
-                                gchar *attr_name)
+void PlayersList::OnCellEdited (gchar         *path_string,
+                                gchar         *new_text,
+                                AttributeDesc *desc)
 {
-  Player *p = GetPlayer (path_string);
+  Player              *p       = GetPlayer (path_string);
+  Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, this);
 
-  p->SetAttributeValue (attr_name,
+  p->SetAttributeValue (attr_id,
                         new_text);
+  attr_id->Release ();
 
   Update (p);
   OnListChanged ();
@@ -228,9 +239,9 @@ GSList *PlayersList::GetSelectedPlayers ()
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::OnCellToggled (gchar    *path_string,
-                                 gboolean  is_active,
-                                 gchar    *attr_name)
+void PlayersList::OnCellToggled (gchar         *path_string,
+                                 gboolean       is_active,
+                                 AttributeDesc *desc)
 {
   GtkTreePath      *toggeled_path = gtk_tree_path_new_from_string (path_string);
   GtkTreeSelection *selection     = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
@@ -259,16 +270,19 @@ void PlayersList::OnCellToggled (gchar    *path_string,
 
       if (p)
       {
+        Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, this);
+
         if (is_active)
         {
-          p->SetAttributeValue (attr_name,
+          p->SetAttributeValue (attr_id,
                                 (guint) 0);
         }
         else
         {
-          p->SetAttributeValue (attr_name,
+          p->SetAttributeValue (attr_id,
                                 1);
         }
+        attr_id->Release ();
 
         Update (p);
       }
@@ -282,16 +296,19 @@ void PlayersList::OnCellToggled (gchar    *path_string,
 
     if (p)
     {
+      Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, this);
+
       if (is_active)
       {
-        p->SetAttributeValue (attr_name,
+        p->SetAttributeValue (attr_id,
                               (guint) 0);
       }
       else
       {
-        p->SetAttributeValue (attr_name,
+        p->SetAttributeValue (attr_id,
                               1);
       }
+      attr_id->Release ();
 
       Update (p);
     }
@@ -344,10 +361,10 @@ void PlayersList::OnAttrListUpdated ()
 }
 
 // --------------------------------------------------------------------------------
-gint PlayersList::CompareIterator (GtkTreeModel *model,
-                                   GtkTreeIter  *a,
-                                   GtkTreeIter  *b,
-                                   gchar        *attr_name)
+gint PlayersList::CompareIterator (GtkTreeModel        *model,
+                                   GtkTreeIter         *a,
+                                   GtkTreeIter         *b,
+                                   Player::AttributeId *attr_id)
 {
   Player *player_a;
   Player *player_b;
@@ -361,7 +378,7 @@ gint PlayersList::CompareIterator (GtkTreeModel *model,
 
   return Player::Compare (player_a,
                           player_b,
-                          attr_name);
+                          attr_id);
 }
 
 // --------------------------------------------------------------------------------
@@ -388,7 +405,7 @@ void PlayersList::SetColumn (guint          id,
       renderer = gtk_cell_renderer_text_new ();
     }
 
-    if (_rights & MODIFIABLE)
+    if ((_rights & MODIFIABLE) && (desc->_rights == AttributeDesc::PUBLIC))
     {
       g_object_set (renderer,
                     "editable", TRUE,
@@ -409,7 +426,7 @@ void PlayersList::SetColumn (guint          id,
   {
     renderer = gtk_cell_renderer_toggle_new ();
 
-    if (_rights & MODIFIABLE)
+    if ((_rights & MODIFIABLE) && (desc->_rights == AttributeDesc::PUBLIC))
     {
       g_object_set (renderer,
                     "activatable", TRUE,
@@ -430,18 +447,20 @@ void PlayersList::SetColumn (guint          id,
   if (renderer && column)
   {
     g_object_set_data (G_OBJECT (renderer),
-                       "PlayersList::attribute_name", desc->_xml_name);
+                       "PlayersList::attribute_desc", desc);
 
     if (_rights & SORTABLE)
     {
+      Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, this);
+
       gtk_tree_view_column_set_sort_column_id (column,
                                                id);
 
       gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
                                        id,
                                        (GtkTreeIterCompareFunc) CompareIterator,
-                                       desc->_xml_name,
-                                       NULL);
+                                       attr_id,
+                                       (GDestroyNotify) Object::TryToRelease);
     }
 
     gtk_tree_view_insert_column (GTK_TREE_VIEW (_tree_view),
@@ -511,10 +530,11 @@ void PlayersList::Add (Player *player)
   gtk_list_store_append (_store, &iter);
 
   {
-    gchar *str;
+    gchar               *str;
+    Player::AttributeId  attr_id ("ref");
 
     str = g_strdup_printf ("%d", player->GetRef ());
-    player->SetAttributeValue ("ref", str);
+    player->SetAttributeValue (&attr_id, str);
     g_free (str);
   }
 

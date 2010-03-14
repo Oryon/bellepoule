@@ -49,6 +49,8 @@ Checkin::Checkin (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "HS",
+                               "previous_stage_rank",
                                NULL);
     filter = new Filter (attr_list,
                          this);
@@ -287,28 +289,39 @@ void Checkin::OnListChanged ()
 // --------------------------------------------------------------------------------
 void Checkin::UpdateRanking ()
 {
-  guint nb_player  = g_slist_length (_player_list);
-  guint nb_missing = 0;
+  guint               nb_player  = g_slist_length (_player_list);
+  guint               nb_missing = 0;
+  Player::AttributeId attr_id ("rating");
 
   _player_list = g_slist_sort_with_data (_player_list,
                                          (GCompareDataFunc) Player::Compare,
-                                         (void *) "rating");
+                                         &attr_id);
 
   for (guint i = 0; i < nb_player; i++)
   {
     Player    *p;
-    Attribute *attr;
+    Attribute *attending;
 
     p = (Player *) g_slist_nth_data (_player_list, i);
-    attr = p->GetAttribute ("attending");
-    if ((gboolean) attr->GetValue ())
+
     {
-      p->SetAttributeValue ("rank",
+      Player::AttributeId attr_id ("attending");
+
+      attending = p->GetAttribute (&attr_id);
+    }
+
+    if ((gboolean) attending->GetValue ())
+    {
+      Player::AttributeId attr_id ("rank", this);
+
+      p->SetAttributeValue (&attr_id,
                             i - nb_missing + 1);
     }
     else
     {
-      p->SetAttributeValue ("rank",
+      Player::AttributeId attr_id ("rank", this);
+
+      p->SetAttributeValue (&attr_id,
                             nb_player - nb_missing);
       nb_missing++;
     }
@@ -330,9 +343,12 @@ GSList *Checkin::GetCurrentClassification ()
 
   if (result)
   {
+    Player::AttributeId attr_id ("rank",
+                                 this);
+
     return g_slist_sort_with_data (result,
                                    (GCompareDataFunc) Player::Compare,
-                                   (void *) "rank");
+                                   &attr_id);
   }
   else
   {
@@ -349,7 +365,8 @@ gboolean Checkin::IsOver ()
 // --------------------------------------------------------------------------------
 gboolean Checkin::PresentPlayerFilter (Player *player)
 {
-  Attribute *attr = player->GetAttribute ("attending");
+  Player::AttributeId  attr_id ("attending");
+  Attribute           *attr = player->GetAttribute (&attr_id);
 
   return ((gboolean) attr->GetValue () == TRUE);
 }
@@ -359,8 +376,6 @@ void Checkin::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
-
-  UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------
@@ -540,24 +555,47 @@ void Checkin::ImportFFF (gchar *file)
 
       if (tokens && tokens[0])
       {
-        Player *player = new Player;
+        Player              *player = new Player;
+        Player::AttributeId  attr_id ("");
 
-        player->SetAttributeValue ("attending", (guint) FALSE);
-        player->SetAttributeValue ("name",       tokens[0]);
-        player->SetAttributeValue ("first_name", tokens[1]);
-        player->SetAttributeValue ("birth_year", tokens[2]);
-        player->SetAttributeValue ("gender",     tokens[3]);
-        player->SetAttributeValue ("country",    tokens[4]);
-        player->SetAttributeValue ("licence",    tokens[8]);
-        player->SetAttributeValue ("club",       tokens[10]);
-        player->SetAttributeValue ("exported",   (guint) FALSE);
+        attr_id._name = "attending";
+        player->SetAttributeValue (&attr_id, (guint) FALSE);
+
+        attr_id._name = "name";
+        player->SetAttributeValue (&attr_id, tokens[0]);
+
+        attr_id._name = "first_name";
+        player->SetAttributeValue (&attr_id, tokens[1]);
+
+        attr_id._name = "birth_year";
+        player->SetAttributeValue (&attr_id, tokens[2]);
+
+        attr_id._name = "gender";
+        player->SetAttributeValue (&attr_id, tokens[3]);
+
+        attr_id._name = "country";
+        player->SetAttributeValue (&attr_id, tokens[4]);
+
+        attr_id._name = "licence";
+        player->SetAttributeValue (&attr_id, tokens[8]);
+
+        attr_id._name = "club";
+        player->SetAttributeValue (&attr_id, tokens[10]);
+
+        attr_id._name = "exported";
+        player->SetAttributeValue (&attr_id, (guint) FALSE);
+
         if (*tokens[11])
         {
-          player->SetAttributeValue ("rating", tokens[11]);
+          attr_id._name = "rating";
+          player->SetAttributeValue (&attr_id, tokens[11]);
+
         }
         else
         {
-          player->SetAttributeValue ("rating", (guint) 0);
+          attr_id._name = "rating";
+          player->SetAttributeValue (&attr_id, (guint) 0);
+
         }
 
         Monitor (player);
@@ -615,12 +653,21 @@ void Checkin::ImportCSV (gchar *file)
       {
         for (guint i = nb_attr; tokens[i] != NULL; i += nb_attr)
         {
-          Player *player = new Player;
+          Player              *player = new Player;
+          Player::AttributeId  attr_id ("");
 
-          player->SetAttributeValue ("attending",  (guint) FALSE);
-          player->SetAttributeValue ("name",       tokens[i]);
-          player->SetAttributeValue ("first_name", tokens[i+1]);
-          player->SetAttributeValue ("exported",   (guint) FALSE);
+          attr_id._name = "attending";
+          player->SetAttributeValue (&attr_id, (guint) FALSE);
+
+          attr_id._name = "name";
+          player->SetAttributeValue (&attr_id, tokens[i]);
+
+          attr_id._name = "first_name";
+          player->SetAttributeValue (&attr_id, tokens[i+1]);
+
+          attr_id._name = "exported";
+          player->SetAttributeValue (&attr_id, (guint) FALSE);
+
 
           Monitor (player);
           Add (player);
@@ -639,28 +686,37 @@ void Checkin::on_add_button_clicked ()
   GList  *children = gtk_container_get_children (GTK_CONTAINER (GetWidget ("value_vbox")));
 
   {
-    gchar *str = g_strdup_printf ("%d\n", player->GetRef ());
-    player->SetAttributeValue ("ref", str);
+    Player::AttributeId  attr_id ("ref");
+    gchar               *str = g_strdup_printf ("%d\n", player->GetRef ());
+
+    player->SetAttributeValue (&attr_id, str);
     g_free (str);
   }
 
-  player->SetAttributeValue ("exported", (guint) FALSE);
+  {
+    Player::AttributeId attr_id ("exported");
+
+    player->SetAttributeValue (&attr_id, (guint) FALSE);
+  }
 
   for (guint i = 0; i < g_list_length (children); i ++)
   {
-    GtkWidget       *w;
-    gchar           *attr_name;
-    AttributeDesc   *attr_desc;
+    GtkWidget           *w;
+    gchar               *attr_name;
+    AttributeDesc       *attr_desc;
+    Player::AttributeId *attr_id;
 
     w = (GtkWidget *) g_list_nth_data (children,
                                        i);
     attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "attribute_name");
     attr_desc = AttributeDesc::GetDesc (attr_name);
+    attr_id   = Player::AttributeId::CreateAttributeId (attr_desc, this);
 
     if (attr_desc->_type == G_TYPE_BOOLEAN)
     {
-      player->SetAttributeValue (attr_name,
+      player->SetAttributeValue (attr_id,
                                  gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)));
+
       if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
       {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
@@ -677,7 +733,7 @@ void Checkin::on_add_button_clicked ()
 
           if (entry)
           {
-            player->SetAttributeValue (attr_name,
+            player->SetAttributeValue (attr_id,
                                        (gchar *) gtk_entry_get_text (GTK_ENTRY (entry)));
 
             if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
@@ -695,7 +751,7 @@ void Checkin::on_add_button_clicked ()
           {
             gchar *value = attr_desc->GetUserImage (&iter);
 
-            player->SetAttributeValue (attr_name,
+            player->SetAttributeValue (attr_id,
                                        value);
             g_free (value);
           }
@@ -703,7 +759,7 @@ void Checkin::on_add_button_clicked ()
       }
       else
       {
-        player->SetAttributeValue (attr_name,
+        player->SetAttributeValue (attr_id,
                                    (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
 
         if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
@@ -712,6 +768,7 @@ void Checkin::on_add_button_clicked ()
         }
       }
     }
+    attr_id->Release ();
   }
 
   gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
@@ -728,7 +785,9 @@ void Checkin::on_add_button_clicked ()
 void Checkin::Monitor (Player *player)
 {
   {
-    Attribute *attr = player->GetAttribute ("attending");
+    Player::AttributeId attr_id ("attending");
+
+    Attribute *attr = player->GetAttribute (&attr_id);
 
     if (attr && ((gboolean) attr->GetValue () == TRUE))
     {
@@ -744,7 +803,8 @@ void Checkin::Monitor (Player *player)
 // --------------------------------------------------------------------------------
 void Checkin::OnPlayerRemoved (Player *player)
 {
-  Attribute *attr = player->GetAttribute ("attending");
+  Player::AttributeId  attr_id ("attending");
+  Attribute           *attr = player->GetAttribute (&attr_id);
 
   if (attr && ((gboolean) attr->GetValue () == TRUE))
   {

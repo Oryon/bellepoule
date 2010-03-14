@@ -24,6 +24,7 @@
 
 #include "attribute.hpp"
 #include "player.hpp"
+#include "classification.hpp"
 #include "table.hpp"
 
 const gchar   *Table::_class_name     = "table";
@@ -80,11 +81,12 @@ Table::Table (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "HS",
+                               "rank",
                                NULL);
     filter = new Filter (attr_list,
                          this);
 
-    filter->ShowAttribute ("rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("club");
 
@@ -102,6 +104,7 @@ Table::Table (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "HS",
                                NULL);
     filter = new Filter (attr_list,
                          this);
@@ -751,12 +754,15 @@ gboolean Table::FillInNode (GNode *node,
 
         for (guint a = 0; a < g_slist_length (selected_attr); a++)
         {
-          AttributeDesc *attr_desc;
-          Attribute     *attr;
+          AttributeDesc       *attr_desc;
+          Attribute           *attr;
+          Player::AttributeId *attr_id;
 
           attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                           a);
-          attr = winner->GetAttribute (attr_desc->_xml_name);
+          attr_id = Player::AttributeId::CreateAttributeId (attr_desc, table);
+          attr = winner->GetAttribute (attr_id);
+          attr_id->Release ();
 
           if (attr)
           {
@@ -1180,6 +1186,7 @@ gboolean Table::AddToClassification (GNode *node,
     {
       table->_result_list = g_slist_append (table->_result_list,
                                             winner);
+      winner->SetData (table, "level", (void *) data->_level);
     }
   }
 
@@ -1324,22 +1331,12 @@ void Table::SetPlayer (Match  *to_match,
 
       if (A)
       {
-        Attribute *attr = A->GetAttribute ("name");
-
-        if (attr)
-        {
-          A_name = attr->GetUserImage ();
-        }
+        A_name = A->GetName ();
       }
 
       if (B)
       {
-        Attribute *attr = B->GetAttribute ("name");
-
-        if (attr)
-        {
-          B_name = attr->GetUserImage ();
-        }
+        B_name = B->GetName ();
       }
 
       if (A_name && B_name)
@@ -1408,7 +1405,34 @@ GSList *Table::GetCurrentClassification ()
                    (GNodeTraverseFunc) AddToClassification,
                    this);
 
+  _result_list = g_slist_sort_with_data (_result_list,
+                                         (GCompareDataFunc) ComparePlayer,
+                                         (void *) this);
+
   return _result_list;
+}
+
+// --------------------------------------------------------------------------------
+gint Table::ComparePlayer (Player *A,
+                           Player *B,
+                           Table  *table)
+{
+  gint level_A = (gint) A->GetData (table, "level");
+  gint level_B = (gint) B->GetData (table, "level");
+
+  if (level_A != level_B)
+  {
+    return level_B - level_A;
+  }
+  else
+  {
+    Stage               *previous = table->GetPreviousStage ();
+    Player::AttributeId  attr_id ("rank", previous);
+
+    return Player::Compare (A,
+                            B,
+                            &attr_id);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1433,24 +1457,20 @@ void Table::OnSearchMatch ()
 
       if (playerA && playerB)
       {
-        Attribute *attr;
-
         _quick_score_collector->SetMatch (_quick_score_A,
                                           match,
                                           playerA);
-        attr = playerA->GetAttribute ("name");
         gtk_widget_show (_glade->GetWidget ("fencerA_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerA_label")),
-                            attr->GetUserImage ());
+                            playerA->GetName ());
 
 
         _quick_score_collector->SetMatch (_quick_score_B,
                                           match,
                                           playerB);
-        attr = playerB->GetAttribute ("name");
         gtk_widget_show (_glade->GetWidget ("fencerB_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerB_label")),
-                            attr->GetUserImage ());
+                            playerB->GetName ());
         return;
       }
     }
@@ -1489,12 +1509,30 @@ gchar *Table::GetLevelImage (guint level)
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnFilterClicked ()
+{
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      classification->SelectAttributes ();
+    }
+  }
+  else
+  {
+    SelectAttributes ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
-  t->SelectAttributes ();
+  t->OnFilterClicked ();
 }
 
 // --------------------------------------------------------------------------------

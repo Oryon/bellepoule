@@ -26,6 +26,23 @@
 class Player : public Object
 {
   public:
+    class AttributeId : public Object
+    {
+      public:
+        AttributeId (gchar  *name,
+                     Object *owner = NULL)
+        {
+          _name  = name;
+          _owner = owner;
+        }
+
+        static AttributeId *CreateAttributeId (AttributeDesc *desc,
+                                               Object        *owner);
+
+        gchar  *_name;
+        Object *_owner;
+    };
+
     typedef void (*OnChange) (Player    *player,
                               Attribute *attr,
                               void      *data);
@@ -33,16 +50,13 @@ class Player : public Object
   public:
     Player ();
 
-    Attribute *GetAttribute (gchar  *name,
-                             Object *owner = NULL);
+    Attribute *GetAttribute (AttributeId *attr_id);
 
-    void SetAttributeValue (gchar  *name,
-                            gchar  *value,
-                            Object *owner = NULL);
+    void SetAttributeValue (AttributeId *attr_id,
+                            gchar       *value);
 
-    void SetAttributeValue (gchar  *name,
-                            guint   value,
-                            Object *owner = NULL);
+    void SetAttributeValue (AttributeId *attr_id,
+                            guint        value);
 
     guint GetRef ();
 
@@ -59,9 +73,9 @@ class Player : public Object
     static gint CompareWithRef (Player *player,
                                 guint   ref);
 
-    static gint Compare (Player *a,
-                         Player *b,
-                         gchar  *attr_name);
+    static gint Compare (Player      *a,
+                         Player      *b,
+                         AttributeId *attr_id);
 
   private:
     struct Client : public Object
