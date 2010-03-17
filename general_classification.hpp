@@ -32,6 +32,8 @@ class GeneralClassification : public virtual Stage, public PlayersList
 
     GeneralClassification (StageClass *stage_class);
 
+    void OnFilterClicked ();
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
@@ -42,7 +44,7 @@ class GeneralClassification : public virtual Stage, public PlayersList
 
     void Display ();
 
-    void Wipe ();
+    GSList *GetCurrentClassification ();
 
     ~GeneralClassification ();
 };

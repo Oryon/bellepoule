@@ -11,10 +11,11 @@
           <object class="GtkToolbar" id="toolbar6">
             <property name="visible">True</property>
             <child>
-              <object class="GtkToolButton" id="players_list_filter_button">
+              <object class="GtkToolButton" id="general_classification_filter_button">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Filtre</property>
                 <property name="stock_id">gtk-index</property>
+                <signal name="clicked" handler="on_general_classification_filter_button_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -38,20 +39,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkScrolledWindow" id="scrolledwindow3">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
-            <property name="shadow_type">etched-out</property>
+          <object class="GtkViewport" id="classification_hook">
+            <property name="no_show_all">True</property>
+            <property name="resize_mode">queue</property>
+            <property name="shadow_type">none</property>
             <child>
-              <object class="GtkTreeView" id="players_list">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="reorderable">True</property>
-                <property name="rules_hint">True</property>
-                <property name="search_column">0</property>
-              </object>
+              <placeholder/>
             </child>
           </object>
           <packing>

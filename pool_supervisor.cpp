@@ -181,7 +181,7 @@ void PoolSupervisor::Load (xmlNode *xml_node)
 
 // --------------------------------------------------------------------------------
 void PoolSupervisor::Load (xmlNode *xml_node,
-                             guint    current_pool_index)
+                           guint    current_pool_index)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
@@ -193,6 +193,7 @@ void PoolSupervisor::Load (xmlNode *xml_node,
 
         current_pool->Load (n->children,
                             _attendees);
+        current_pool->RefreshScoreData ();
 
         current_pool_index++;
       }
@@ -296,6 +297,7 @@ void PoolSupervisor::Wipe ()
 
       pool = _pool_allocator->GetPool (p);
       pool->ResetMatches ();
+      pool->Wipe ();
     }
 
     if (_displayed_pool)
@@ -325,6 +327,7 @@ void PoolSupervisor::Manage (Pool *pool)
   pool->SetFilter (_filter);
   pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                       this);
+  pool->RefreshScoreData ();
 }
 
 // --------------------------------------------------------------------------------

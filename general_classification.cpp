@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "attribute.hpp"
+#include "classification.hpp"
 #include "player.hpp"
 
 #include "general_classification.hpp"
@@ -41,6 +42,8 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "HS",
+                               "previous_stage_rank",
                                NULL);
     filter = new Filter (attr_list,
                          this);
@@ -50,7 +53,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
 
-    SetFilter (filter);
+    SetClassificationFilter (filter);
     filter->Release ();
   }
 }
@@ -58,7 +61,6 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 GeneralClassification::~GeneralClassification ()
 {
-  Stage::Wipe ();
 }
 
 // --------------------------------------------------------------------------------
@@ -77,25 +79,15 @@ Stage *GeneralClassification::CreateInstance (StageClass *stage_class)
 }
 
 // --------------------------------------------------------------------------------
-void GeneralClassification::Wipe ()
+void GeneralClassification::Display ()
 {
-  PlayersList::Wipe ();
+  ToggleClassification (TRUE);
 }
 
 // --------------------------------------------------------------------------------
-void GeneralClassification::Display ()
+GSList *GeneralClassification::GetCurrentClassification ()
 {
-  OnAttrListUpdated ();
-
-  for (guint i = 0; i < g_slist_length (_attendees); i++)
-  {
-    Player *player;
-
-    player = (Player *) g_slist_nth_data (_attendees,
-                                          i);
-
-    Add (player);
-  }
+  return g_slist_copy (_attendees);
 }
 
 // --------------------------------------------------------------------------------
@@ -107,4 +99,24 @@ void GeneralClassification::Save (xmlTextWriter *xml_writer)
   Stage::SaveConfiguration (xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
+}
+
+// --------------------------------------------------------------------------------
+void GeneralClassification::OnFilterClicked ()
+{
+  Classification *classification = GetClassification ();
+
+  if (classification)
+  {
+    classification->SelectAttributes ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_general_classification_filter_button_clicked (GtkWidget *widget,
+                                                                                 Object    *owner)
+{
+  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+
+  g->OnFilterClicked ();
 }

@@ -48,9 +48,13 @@ class Pool : public CanvasModule
     gboolean IsOver ();
     gboolean HasError ();
 
+    void RefreshScoreData ();
+
     Player *GetPlayer (guint i);
 
     gchar *GetName ();
+
+    void Wipe ();
 
     void Save  (xmlTextWriter *xml_writer);
     void Load  (xmlNode       *xml_node,
@@ -109,8 +113,6 @@ class Pool : public CanvasModule
                             CanvasModule   *client,
                             Match          *match,
                             Player         *player);
-
-    void RefreshScoreData ();
 
     void RefreshDashBoard ();
 

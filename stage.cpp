@@ -348,7 +348,10 @@ void Stage::ToggleClassification (gboolean classification_on)
         g_slist_free (result);
       }
 
-      gtk_widget_hide (main_w);
+      if (main_w)
+      {
+        gtk_widget_hide (main_w);
+      }
       gtk_widget_show (classification_w);
 
       _sensitivity_trigger->SwitchOff ();
@@ -356,7 +359,10 @@ void Stage::ToggleClassification (gboolean classification_on)
     else
     {
       gtk_widget_hide (classification_w);
-      gtk_widget_show (main_w);
+      if (main_w)
+      {
+        gtk_widget_show (main_w);
+      }
 
       _sensitivity_trigger->SwitchOn ();
     }

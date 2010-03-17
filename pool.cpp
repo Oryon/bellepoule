@@ -72,6 +72,14 @@ Pool::~Pool ()
 }
 
 // --------------------------------------------------------------------------------
+void Pool::Wipe ()
+{
+  _title_table = NULL;
+
+  CanvasModule::Wipe ();
+}
+
+// --------------------------------------------------------------------------------
 void Pool::Stuff ()
 {
   for (guint i = 0; i < g_slist_length (_match_list); i++)
@@ -1191,6 +1199,8 @@ void Pool::ResetMatches ()
     match->CleanScore ();
   }
   _is_over = FALSE;
+
+  RefreshScoreData ();
 }
 
 // --------------------------------------------------------------------------------
