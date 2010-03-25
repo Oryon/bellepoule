@@ -50,6 +50,8 @@ class Player : public Object
   public:
     Player ();
 
+    Player *Duplicate ();
+
     Attribute *GetAttribute (AttributeId *attr_id);
 
     void SetAttributeValue (AttributeId *attr_id,
@@ -90,8 +92,7 @@ class Player : public Object
     static guint   _next_ref;
     static GSList *_attributes_model;
 
-    GSList *_attributes;
-    guint   _ref;
+    guint _ref;
 
     ~Player ();
 

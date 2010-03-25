@@ -169,7 +169,6 @@ int main (int argc, char **argv)
     desc->_rights = AttributeDesc::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "exporté");
-    desc->_rights = AttributeDesc::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "Vict./Matchs (‰)");
     desc->_persistency = AttributeDesc::NOT_PERSISTENT;

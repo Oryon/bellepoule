@@ -35,10 +35,13 @@ class Contest : public Module
     static void Init ();
     static Contest *Create ();
 
+    Contest *Duplicate ();
+
     void AttachTo (GtkNotebook *to);
     void Save ();
     gchar *GetFilename ();
-    void AddPlayer (Player *player);
+    void AddPlayer (Player *player,
+                    guint   rank);
     void SetTournament (Tournament *tournament);
 
   public:
@@ -77,24 +80,25 @@ class Contest : public Module
     GtkWidget  *_properties_dlg;
     GtkWidget  *_calendar_dlg;
     Tournament *_tournament;
-    gboolean    _has_properties;
+    gboolean    _derived;
 
-    GtkWidget *_weapon_combo;
-    GtkWidget *_gender_combo;
-    GtkWidget *_category_combo;
+    GtkWidget   *_weapon_combo;
+    GtkWidget   *_gender_combo;
+    GtkWidget   *_category_combo;
+    GtkNotebook *_notebook;
 
     Contest ();
 
-    void   InitInstance     ();
-    void   ReadProperties   ();
-    void   SetName          (gchar *name);
-    gchar *GetSaveFileName  (gchar *title,
-                             gchar *config_key);
-    void   Save             (gchar *filename);
-    void   FillInProperties ();
-    void   FillInDate       (guint day,
-                             guint month,
-                             guint year);
+    void   InitInstance      ();
+    void   ReadProperties    ();
+    void   DisplayProperties ();
+    gchar *GetSaveFileName   (gchar *title,
+                              gchar *config_key);
+    void   Save              (gchar *filename);
+    void   FillInProperties  ();
+    void   FillInDate        (guint day,
+                              guint month,
+                              guint year);
 };
 
 #endif

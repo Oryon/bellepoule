@@ -21,13 +21,15 @@
 #include "stage.hpp"
 #include "module.hpp"
 
+class Contest;
+
 class Schedule : public Module
 {
   public:
     typedef void (Object::*StageEvent_t) ();
 
   public:
-     Schedule ();
+     Schedule (Contest *contest);
 
     void DisplayList ();
 
@@ -59,6 +61,7 @@ class Schedule : public Module
     GList              *_stage_list;
     guint               _current_stage;
     gboolean            _score_stuffing_allowed;
+    Contest            *_contest;
 
     void    SetCurrentStage    (guint index);
     Module *GetSelectedModule  ();

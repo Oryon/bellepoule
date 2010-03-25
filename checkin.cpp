@@ -24,7 +24,7 @@
 
 #include "checkin.hpp"
 
-const gchar *Checkin::_class_name     = "checkin";
+const gchar *Checkin::_class_name     = "Appel";
 const gchar *Checkin::_xml_class_name = "checkin_stage";
 
 // --------------------------------------------------------------------------------
@@ -32,6 +32,8 @@ Checkin::Checkin (StageClass *stage_class)
 : Stage (stage_class),
   PlayersList ("checkin.glade")
 {
+  _use_initial_rank = FALSE;
+
   // Sensitive widgets
   {
     AddSensitiveWidget (_glade->GetWidget ("add_player_button"));
@@ -50,7 +52,6 @@ Checkin::Checkin (StageClass *stage_class)
                                "victories_ratio",
                                "indice",
                                "HS",
-                               "previous_stage_rank",
                                NULL);
     filter = new Filter (attr_list,
                          this);
@@ -223,6 +224,13 @@ void Checkin::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+void Checkin::Add (Player *player)
+{
+  Monitor (player);
+  PlayersList::Add (player);
+}
+
+// --------------------------------------------------------------------------------
 void Checkin::Load (xmlNode *xml_node)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
@@ -235,15 +243,12 @@ void Checkin::Load (xmlNode *xml_node)
 
         player->Load (n);
 
-        Monitor (player);
         Add (player);
-
         player->Release ();
       }
       else if (strcmp ((char *) n->name, _xml_class_name) != 0)
       {
-        RefreshAttendingDisplay ();
-        UpdateRanking ();
+        RefreshData ();
         return;
       }
     }
@@ -287,15 +292,35 @@ void Checkin::OnListChanged ()
 }
 
 // --------------------------------------------------------------------------------
+void Checkin::UseInitialRank ()
+{
+  _use_initial_rank = TRUE;
+}
+
+// --------------------------------------------------------------------------------
 void Checkin::UpdateRanking ()
 {
-  guint               nb_player  = g_slist_length (_player_list);
-  guint               nb_missing = 0;
-  Player::AttributeId attr_id ("rating");
+  guint nb_player  = g_slist_length (_player_list);
+  guint nb_missing = 0;
 
-  _player_list = g_slist_sort_with_data (_player_list,
-                                         (GCompareDataFunc) Player::Compare,
-                                         &attr_id);
+  {
+    Player::AttributeId *attr_id ;
+
+    if (_use_initial_rank)
+    {
+      attr_id = new Player::AttributeId ("previous_stage_rank",
+                                         this);
+    }
+    else
+    {
+      attr_id = new Player::AttributeId ("rating");
+    }
+
+    _player_list = g_slist_sort_with_data (_player_list,
+                                           (GCompareDataFunc) Player::Compare,
+                                           attr_id);
+    attr_id->Release ();
+  }
 
   for (guint i = 0; i < nb_player; i++)
   {
@@ -330,7 +355,7 @@ void Checkin::UpdateRanking ()
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::OnLocked ()
+void Checkin::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
@@ -525,8 +550,7 @@ void Checkin::Import ()
 
   gtk_widget_destroy (chooser);
 
-  RefreshAttendingDisplay ();
-  UpdateRanking ();
+  RefreshData ();
 }
 
 // --------------------------------------------------------------------------------
@@ -598,7 +622,6 @@ void Checkin::ImportFFF (gchar *file)
 
         }
 
-        Monitor (player);
         Add (player);
         player->Release ();
 
@@ -669,7 +692,6 @@ void Checkin::ImportCSV (gchar *file)
           player->SetAttributeValue (&attr_id, (guint) FALSE);
 
 
-          Monitor (player);
           Add (player);
           player->Release ();
         }
@@ -774,9 +796,14 @@ void Checkin::on_add_button_clicked ()
   gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
                                                         0));
 
-  Monitor (player);
   Add (player);
   player->Release ();
+  RefreshData ();
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::RefreshData ()
+{
   RefreshAttendingDisplay ();
   UpdateRanking ();
 }
@@ -784,20 +811,18 @@ void Checkin::on_add_button_clicked ()
 // --------------------------------------------------------------------------------
 void Checkin::Monitor (Player *player)
 {
+  Player::AttributeId attr_id ("attending");
+
+  Attribute *attr = player->GetAttribute (&attr_id);
+
+  if (attr && ((gboolean) attr->GetValue () == TRUE))
   {
-    Player::AttributeId attr_id ("attending");
-
-    Attribute *attr = player->GetAttribute (&attr_id);
-
-    if (attr && ((gboolean) attr->GetValue () == TRUE))
-    {
-      _attendings++;
-    }
-
-    player->SetChangeCbk ("attending",
-                          (Player::OnChange) OnAttendingChanged,
-                          this);
+    _attendings++;
   }
+
+  player->SetChangeCbk ("attending",
+                        (Player::OnChange) OnAttendingChanged,
+                        this);
 }
 
 // --------------------------------------------------------------------------------
@@ -810,7 +835,8 @@ void Checkin::OnPlayerRemoved (Player *player)
   {
     _attendings--;
   }
-  RefreshAttendingDisplay ();
+
+  RefreshData ();
 }
 
 // --------------------------------------------------------------------------------
@@ -829,7 +855,7 @@ void Checkin::OnAttendingChanged (Player    *player,
     checkin->_attendings--;
   }
 
-  checkin->RefreshAttendingDisplay ();
+  checkin->RefreshData ();
 }
 
 // --------------------------------------------------------------------------------

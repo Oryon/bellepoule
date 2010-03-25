@@ -43,6 +43,39 @@ Player::~Player ()
 }
 
 // --------------------------------------------------------------------------------
+Player *Player::Duplicate ()
+{
+  Player *player       = new Player ();
+  GSList *current_desc = AttributeDesc::GetList ();
+
+  while (current_desc)
+  {
+    AttributeDesc *desc;
+
+    desc = (AttributeDesc *) current_desc->data;
+    if (desc->_scope == AttributeDesc::GLOBAL)
+    {
+      AttributeId  attr_id (desc->_xml_name);
+      Attribute   *attr = GetAttribute (&attr_id);
+
+      if (attr)
+      {
+        Attribute *new_attr = attr->Duplicate ();
+
+        player->SetData (attr_id._owner,
+                         attr_id._name,
+                         new_attr,
+                         (GDestroyNotify) Object::TryToRelease);
+      }
+    }
+
+    current_desc = g_slist_next (current_desc);
+  }
+
+  return player;
+}
+
+// --------------------------------------------------------------------------------
 Player::AttributeId *Player::AttributeId::CreateAttributeId (AttributeDesc *desc,
                                                              Object        *owner)
 {

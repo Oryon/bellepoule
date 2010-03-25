@@ -48,7 +48,7 @@ class PoolSupervisor : public virtual Stage, public Module
     void Load (xmlNode *xml_node,
                guint    current_pool_index);
     void Save (xmlTextWriter *xml_writer);
-    void OnLocked ();
+    void OnLocked (Reason reason);
     void OnUnLocked ();
     void Wipe ();
     void RetrievePools ();

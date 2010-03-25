@@ -66,6 +66,8 @@ class AttributeDesc : public Object
 
     static void CreateList (GSList **list, ...);
 
+    static GSList *GetList ();
+
     static AttributeDesc *GetDesc (gchar *name);
 
     void BindDiscreteValues (GObject         *object,
@@ -125,6 +127,8 @@ class Attribute : public Object
 
     virtual gint CompareWith (Attribute *with) = 0;
 
+    virtual Attribute *Duplicate () = 0;
+
   protected:
     AttributeDesc *_desc;
 
@@ -156,6 +160,8 @@ class TextAttribute : public Attribute
     gchar *GetXmlImage ();
 
     gint CompareWith (Attribute *with);
+
+    Attribute *Duplicate ();
 };
 
 
@@ -183,6 +189,8 @@ class BooleanAttribute : public Attribute
     gchar *GetXmlImage ();
 
     gint CompareWith (Attribute *with);
+
+    Attribute *Duplicate ();
 };
 
 // --------------------------------------------------------------------------------
@@ -209,6 +217,8 @@ class IntAttribute : public Attribute
     gchar *GetXmlImage ();
 
     gint CompareWith (Attribute *with);
+
+    Attribute *Duplicate ();
 };
 
 #endif

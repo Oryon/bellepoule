@@ -23,6 +23,7 @@
 #include "players_list.hpp"
 
 class Tournament;
+class Contest;
 
 class Splitting : public virtual Stage, public PlayersList
 {
@@ -35,14 +36,12 @@ class Splitting : public virtual Stage, public PlayersList
 
     void Save (xmlTextWriter *xml_writer);
 
-    void OnMove ();
-
   public:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
   private:
-    void OnLocked ();
+    void OnLocked (Reason reason);
     void OnUnLocked ();
     void Display ();
     void Wipe ();
@@ -56,6 +55,8 @@ class Splitting : public virtual Stage, public PlayersList
     static gboolean PresentPlayerFilter (Player *player);
 
     ~Splitting ();
+
+    void Garnish ();
 };
 
 #endif

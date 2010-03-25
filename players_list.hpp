@@ -26,7 +26,7 @@
 class PlayersList : public Module
 {
   public:
-    void Add (Player *player);
+    virtual void Add (Player *player);
 
     void Wipe ();
 
@@ -57,6 +57,9 @@ class PlayersList : public Module
     GSList *GetSelectedPlayers ();
 
     void SetFilter (Filter *filter);
+
+    void SetAttributeRight (gchar    *name,
+                            gboolean  modifiable);
 
     virtual void OnListChanged () {};
 

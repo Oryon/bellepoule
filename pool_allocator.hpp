@@ -44,7 +44,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void OnComboboxChanged (GtkComboBox *cb);
 
   private:
-    void OnLocked ();
+    void OnLocked (Reason reason);
     void OnUnLocked ();
     void Wipe ();
     GSList *GetCurrentClassification ();

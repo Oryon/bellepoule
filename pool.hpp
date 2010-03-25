@@ -34,7 +34,7 @@ class Pool : public CanvasModule
     Pool (Data  *max_score,
           guint  number);
 
-    void  AddPlayer    (Player *player);
+    void  AddPlayer    (Player *player, Object *rank_owner);
     void  RemovePlayer (Player *player);
     guint GetNbPlayers ();
     guint GetNumber    ();

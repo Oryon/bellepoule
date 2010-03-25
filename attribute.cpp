@@ -293,6 +293,12 @@ void AttributeDesc::CreateList (GSList **list, ...)
 }
 
 // --------------------------------------------------------------------------------
+GSList *AttributeDesc::GetList ()
+{
+  return _list;
+}
+
+// --------------------------------------------------------------------------------
 AttributeDesc *AttributeDesc::GetDesc (gchar *name)
 {
   for (guint i = 0; i < g_slist_length (_list); i++)
@@ -466,6 +472,23 @@ gint TextAttribute::CompareWith (Attribute *with)
 }
 
 // --------------------------------------------------------------------------------
+Attribute *TextAttribute::Duplicate ()
+{
+  TextAttribute *attr = new TextAttribute (_desc);
+
+  if (_value)
+  {
+    attr->_value = g_strdup (_value);
+  }
+  else
+  {
+    attr->_value = NULL;
+  }
+
+  return attr;
+}
+
+// --------------------------------------------------------------------------------
 BooleanAttribute::BooleanAttribute (AttributeDesc *desc)
   : Attribute (desc)
 {
@@ -525,6 +548,16 @@ gint BooleanAttribute::CompareWith (Attribute *with)
   }
 
   return -1;
+}
+
+// --------------------------------------------------------------------------------
+Attribute *BooleanAttribute::Duplicate ()
+{
+  BooleanAttribute *attr = new BooleanAttribute (_desc);
+
+  attr->_value = _value;
+
+  return attr;
 }
 
 // --------------------------------------------------------------------------------
@@ -594,4 +627,14 @@ gint IntAttribute::CompareWith (Attribute *with)
   }
 
   return G_MININT;
+}
+
+// --------------------------------------------------------------------------------
+Attribute *IntAttribute::Duplicate ()
+{
+  IntAttribute *attr = new IntAttribute (_desc);
+
+  attr->_value = _value;
+
+  return attr;
 }

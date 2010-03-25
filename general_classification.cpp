@@ -22,7 +22,7 @@
 
 #include "general_classification.hpp"
 
-const gchar *GeneralClassification::_class_name     = "general_classification";
+const gchar *GeneralClassification::_class_name     = "Classement général";
 const gchar *GeneralClassification::_xml_class_name = "general_classification_stage";
 
 // --------------------------------------------------------------------------------

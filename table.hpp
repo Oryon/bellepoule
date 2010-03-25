@@ -44,7 +44,7 @@ class Table : public virtual Stage, public CanvasModule
     static const gchar *_xml_class_name;
 
   private:
-    void OnLocked ();
+    void OnLocked (Reason reason);
     void OnUnLocked ();
     void OnPlugged ();
     void OnUnPlugged ();

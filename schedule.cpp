@@ -30,12 +30,13 @@ typedef enum
 } ColumnId;
 
 // --------------------------------------------------------------------------------
-Schedule::Schedule ()
+Schedule::Schedule (Contest *contest)
 : Module ("schedule.glade",
           "schedule_notebook")
 {
   _stage_list    = NULL;
   _current_stage = 0;
+  _contest       = contest;
 
   _score_stuffing_allowed = FALSE;
 
@@ -71,24 +72,19 @@ Schedule::Schedule ()
 
     for (guint i = 0; i < Stage::GetNbStageClass (); i++)
     {
-      gchar          *name;
-      Stage::Creator  creator;
-      Stage::Rights   rights;
-      GtkWidget      *menu_item;
+      Stage::StageClass *stage_class;
+      GtkWidget         *menu_item;
 
-      Stage::GetStageClass (i,
-                            &name,
-                            &creator,
-                            &rights);
+      stage_class = Stage::GetClass (i);
 
-      if (rights & Stage::EDITABLE)
+      if (stage_class->_rights & Stage::EDITABLE)
       {
-        menu_item = gtk_menu_item_new_with_label (name);
+        menu_item = gtk_menu_item_new_with_label (stage_class->_name);
         g_signal_connect (menu_item, "button-release-event",
                           G_CALLBACK (on_new_stage_selected), this);
         g_object_set_data (G_OBJECT (menu_item),
                            "Schedule::class_name",
-                           (void *) name);
+                           (void *) stage_class->_xml_name);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu_pool),
                                menu_item);
         gtk_widget_show (menu_item);
@@ -318,6 +314,8 @@ void Schedule::AddStage (Stage *stage,
   }
   else
   {
+    stage->SetContest (_contest);
+
     // Insert it in the global list
     {
       Stage *next = NULL;
@@ -606,7 +604,7 @@ void Schedule::Load (xmlDoc *doc)
 
           if (i < current_stage_index)
           {
-            stage->Lock ();
+            stage->Lock (Stage::LOADING);
           }
         }
       }
@@ -912,14 +910,13 @@ void Schedule::on_next_stage_toolbutton_clicked ()
   Stage *stage;
 
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-  stage->Lock ();
+  stage->Lock (Stage::USER_ACTION);
 
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage+1);
   PlugStage (stage);
   stage->RetrieveAttendees ();
   stage->Garnish ();
   stage->Display ();
-  //stage->UnLock  ();
 
   SetCurrentStage (_current_stage+1);
 }

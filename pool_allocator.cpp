@@ -37,7 +37,7 @@ extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
                                                                Object    *owner);
 
-const gchar *PoolAllocator::_class_name     = "pool allocation";
+const gchar *PoolAllocator::_class_name     = "Composition poules";
 const gchar *PoolAllocator::_xml_class_name = "pool_allocation_stage";
 
 // --------------------------------------------------------------------------------
@@ -199,7 +199,8 @@ void PoolAllocator::Load (xmlNode *xml_node)
 
           if (player)
           {
-            current_pool->AddPlayer (player);
+            current_pool->AddPlayer (player,
+                                     this);
           }
         }
       }
@@ -382,7 +383,8 @@ void PoolAllocator::CreatePools ()
 
     player = (Player *) g_slist_nth_data (_attendees,
                                           i);
-    pool->AddPlayer (player);
+    pool->AddPlayer (player,
+                     this);
   }
 
   g_free (pool_table);
@@ -596,13 +598,15 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
 
     if (_target_pool)
     {
-      _target_pool->AddPlayer (_floating_player);
+      _target_pool->AddPlayer (_floating_player,
+                               this);
       FillPoolTable (_target_pool);
       _target_pool = NULL;
     }
     else
     {
-      _source_pool->AddPlayer (_floating_player);
+      _source_pool->AddPlayer (_floating_player,
+                               this);
       FillPoolTable (_source_pool);
     }
     SignalStatusUpdate ();
@@ -1102,7 +1106,7 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::OnLocked ()
+void PoolAllocator::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
 }

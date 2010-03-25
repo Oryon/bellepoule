@@ -26,6 +26,7 @@
 class Player;
 class Classification;
 class Filter;
+class Contest;
 
 class Stage : public virtual Object
 {
@@ -41,6 +42,12 @@ class Stage : public virtual Object
     {
       EDITABLE  = 0x0001
     } Rights;
+
+    typedef enum
+    {
+      USER_ACTION,
+      LOADING
+    } Reason;
 
     struct StageClass
     {
@@ -59,6 +66,8 @@ class Stage : public virtual Object
 
     gchar *GetName ();
 
+    void SetContest (Contest *contest);
+
     gchar *GetFullName ();
 
     void SetName (gchar *name);
@@ -73,7 +82,7 @@ class Stage : public virtual Object
 
     virtual Stage *GetInputProvider ();
 
-    void Lock ();
+    void Lock (Reason reason);
 
     void UnLock ();
 
@@ -117,19 +126,17 @@ class Stage : public virtual Object
 
     static guint  GetNbStageClass ();
 
-    static void GetStageClass (guint    index,
-                               gchar   **xml_name,
-                               Creator *creator,
-                               Rights  *rights);
+    static StageClass *GetClass (guint index);
 
     static Stage *CreateInstance (xmlNode *xml_node);
 
     static Stage *CreateInstance (const gchar *name);
 
   protected:
-    GSList *_attendees;
-    Filter *_classification_filter;
-    Stage  *_input_provider;
+    GSList  *_attendees;
+    Filter  *_classification_filter;
+    Stage   *_input_provider;
+    Contest *_contest;
 
     Stage (StageClass *stage_class);
 
@@ -161,12 +168,12 @@ class Stage : public virtual Object
     SensitivityTrigger *_sensitivity_trigger;
     SensitivityTrigger *_score_stuffing_trigger;
 
-    void          *_status_cbk_data;
-    StatusCbk      _status_cbk;
+    void      *_status_cbk_data;
+    StatusCbk  _status_cbk;
 
     void SetResult ();
     void FreeResult ();
-    virtual void OnLocked () {};
+    virtual void OnLocked (Reason reason) {};
     virtual void OnUnLocked () {};
     static StageClass *GetClass (const gchar *name);
 

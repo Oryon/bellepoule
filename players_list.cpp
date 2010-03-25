@@ -388,6 +388,8 @@ void PlayersList::SetColumn (guint          id,
 {
   GtkTreeViewColumn *column   = NULL;
   GtkCellRenderer   *renderer = NULL;
+  gboolean           attr_modifiable = (gboolean) desc->GetData (this,
+                                                                 "modifiable");
 
   if (   (desc->_type == G_TYPE_STRING)
       || (desc->_type == G_TYPE_INT))
@@ -405,11 +407,15 @@ void PlayersList::SetColumn (guint          id,
       renderer = gtk_cell_renderer_text_new ();
     }
 
-    if ((_rights & MODIFIABLE) && (desc->_rights == AttributeDesc::PUBLIC))
+    if (   (desc->_rights == AttributeDesc::PUBLIC)
+        && ((_rights & MODIFIABLE) || attr_modifiable))
     {
       g_object_set (renderer,
                     "editable", TRUE,
                     NULL);
+      g_object_set_data (G_OBJECT (renderer),
+                         "PlayersList::SensitiveAttribute",
+                         (void *) "editable");
       g_signal_connect (renderer,
                         "edited", G_CALLBACK (on_cell_edited), this);
     }
@@ -418,30 +424,28 @@ void PlayersList::SetColumn (guint          id,
                                                        renderer,
                                                        "text", id,
                                                        0,      NULL);
-    g_object_set_data (G_OBJECT (renderer),
-                       "PlayersList::SensitiveAttribute",
-                       (void *) "editable");
   }
   else if (desc->_type == G_TYPE_BOOLEAN)
   {
     renderer = gtk_cell_renderer_toggle_new ();
 
-    if ((_rights & MODIFIABLE) && (desc->_rights == AttributeDesc::PUBLIC))
+    if (   (desc->_rights == AttributeDesc::PUBLIC)
+        && ((_rights & MODIFIABLE) || attr_modifiable))
     {
       g_object_set (renderer,
                     "activatable", TRUE,
                     NULL);
       g_signal_connect (renderer,
                         "toggled", G_CALLBACK (on_cell_toggled), this);
+      g_object_set_data (G_OBJECT (renderer),
+                         "PlayersList::SensitiveAttribute",
+                         (void *) "activatable");
     }
 
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                        renderer,
                                                        "active", id,
                                                        0,        NULL);
-    g_object_set_data (G_OBJECT (renderer),
-                       "PlayersList::SensitiveAttribute",
-                       (void *) "activatable");
   }
 
   if (renderer && column)
@@ -470,9 +474,22 @@ void PlayersList::SetColumn (guint          id,
 }
 
 // --------------------------------------------------------------------------------
+void PlayersList::SetAttributeRight (gchar    *name,
+                                     gboolean  modifiable)
+{
+  AttributeDesc *desc = AttributeDesc::GetDesc (name);
+
+  if (desc)
+  {
+    desc->SetData (this,
+                   "modifiable",
+                   (void *) modifiable);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList::SetSensitiveState (bool sensitive_value)
 {
-  if (_rights & MODIFIABLE)
   {
     GList *columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
 

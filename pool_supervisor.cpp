@@ -22,7 +22,7 @@
 #include "pool_supervisor.hpp"
 #include "classification.hpp"
 
-const gchar *PoolSupervisor::_class_name     = "pool";
+const gchar *PoolSupervisor::_class_name     = "Poules";
 const gchar *PoolSupervisor::_xml_class_name = "pool_stage";
 
 typedef enum
@@ -257,7 +257,7 @@ gint PoolSupervisor::ComparePlayer (Player         *A,
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor::OnLocked ()
+void PoolSupervisor::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
 

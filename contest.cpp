@@ -87,27 +87,6 @@ Contest::Contest ()
   : Module ("contest.glade")
 {
   InitInstance ();
-
-  _name = g_key_file_get_string (_config_file,
-                                 "Competiton",
-                                 "default_name",
-                                 NULL);
-  _organizer = g_key_file_get_string (_config_file,
-                                      "Competiton",
-                                      "default_organizer",
-                                      NULL);
-  _web_site = g_key_file_get_string (_config_file,
-                                     "Competiton",
-                                     "default_web_site",
-                                     NULL);
-
-  FillInProperties ();
-  if (gtk_dialog_run (GTK_DIALOG (_properties_dlg)) == GTK_RESPONSE_ACCEPT)
-  {
-    _schedule->CreateDefault ();
-    ReadProperties ();
-  }
-  gtk_widget_hide (_properties_dlg);
 }
 
 // --------------------------------------------------------------------------------
@@ -160,7 +139,7 @@ Contest::Contest (gchar *filename)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "title");
         if (attr)
         {
-          SetName (g_strdup (attr));
+          _name = g_strdup (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "day");
@@ -234,8 +213,6 @@ Contest::Contest (gchar *filename)
         {
           score_stuffing_policy = (gboolean) atoi (attr);
         }
-
-        _has_properties = TRUE;
       }
       xmlXPathFreeObject  (xml_object);
       xmlXPathFreeContext (xml_context);
@@ -283,7 +260,8 @@ gchar *Contest::GetFilename ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::AddPlayer (Player *player)
+void Contest::AddPlayer (Player *player,
+                         guint   rank)
 {
   if (_schedule)
   {
@@ -291,7 +269,13 @@ void Contest::AddPlayer (Player *player)
 
     if (checkin)
     {
+      Player::AttributeId  rank_attr ("previous_stage_rank", checkin);
+
       checkin->Add (player);
+      player->SetAttributeValue (&rank_attr,
+                                 rank);
+      checkin->UseInitialRank ();
+      checkin->RefreshData ();
     }
   }
 }
@@ -301,11 +285,54 @@ Contest *Contest::Create ()
 {
   Contest *contest = new Contest ();
 
-  if (contest->_has_properties == FALSE)
+  contest->_name = g_key_file_get_string (_config_file,
+                                          "Competiton",
+                                          "default_name",
+                                          NULL);
+  contest->_organizer = g_key_file_get_string (_config_file,
+                                               "Competiton",
+                                               "default_organizer",
+                                               NULL);
+  contest->_web_site = g_key_file_get_string (_config_file,
+                                              "Competiton",
+                                              "default_web_site",
+                                              NULL);
+
+  contest->FillInProperties ();
+  if (gtk_dialog_run (GTK_DIALOG (contest->_properties_dlg)) == GTK_RESPONSE_ACCEPT)
+  {
+    contest->_schedule->CreateDefault ();
+    contest->ReadProperties ();
+  }
+  else
   {
     Object::TryToRelease (contest);
     contest = NULL;
   }
+
+  gtk_widget_hide (contest->_properties_dlg);
+
+  return contest;
+}
+
+// --------------------------------------------------------------------------------
+Contest *Contest::Duplicate ()
+{
+  Contest *contest = new Contest ();
+
+  contest->_schedule->CreateDefault ();
+  contest->_derived = TRUE;
+
+  contest->_name       = g_strdup (_name);
+  contest->_organizer  = g_strdup (_organizer);
+  contest->_web_site   = g_strdup (_web_site);
+  contest->_category   = _category;
+  contest->_weapon     = _weapon;
+  contest->_gender     = _gender;
+  contest->_day        = _day;
+  contest->_month      = _month;
+  contest->_year       = _year;
+  contest->_tournament = _tournament;
 
   return contest;
 }
@@ -315,15 +342,17 @@ void Contest::InitInstance ()
 {
   Object::Dump ();
 
-  _name           = NULL;
-  _filename       = NULL;
-  _organizer      = NULL;
-  _web_site       = NULL;
-  _tournament     = NULL;
-  _weapon         = 0;
-  _category       = 0;
-  _gender         = 0;
-  _has_properties = FALSE;
+  _notebook   = NULL;
+
+  _name       = NULL;
+  _filename   = NULL;
+  _organizer  = NULL;
+  _web_site   = NULL;
+  _tournament = NULL;
+  _weapon     = 0;
+  _category   = 0;
+  _gender     = 0;
+  _derived    = FALSE;
 
   {
     GTimeVal  current_time;
@@ -341,7 +370,7 @@ void Contest::InitInstance ()
   }
 
   {
-    _schedule = new Schedule ();
+    _schedule = new Schedule (this);
 
     Plug (_schedule,
           _glade->GetWidget ("schedule_viewport"),
@@ -507,7 +536,8 @@ void Contest::ReadProperties ()
 
   entry = GTK_ENTRY (_glade->GetWidget ("title_entry"));
   str = (gchar *) gtk_entry_get_text (entry);
-  SetName (g_strdup (str));
+  g_free (_name);
+  _name = g_strdup (str);
 
   entry = GTK_ENTRY (_glade->GetWidget ("organizer_entry"));
   str = (gchar *) gtk_entry_get_text (entry);
@@ -536,8 +566,6 @@ void Contest::ReadProperties ()
     }
   }
 
-  _has_properties = TRUE;
-
   {
     g_key_file_set_string (_config_file,
                            "Competiton",
@@ -554,22 +582,41 @@ void Contest::ReadProperties ()
                            "default_web_site",
                            _web_site);
   }
+
+  DisplayProperties ();
 }
 
 // --------------------------------------------------------------------------------
-void Contest::SetName (gchar *name)
+void Contest::DisplayProperties ()
 {
-  g_free (_name);
-  _name = name;
+  GtkWidget *w;
 
+  w = _glade->GetWidget ("contest_name_label");
+  if (w)
   {
-    GtkWidget *w = _glade->GetWidget ("contest_label");
+    gtk_label_set_text (GTK_LABEL (w),
+                        _name);
+  }
 
-    if (w)
-    {
-      gtk_label_set_text (GTK_LABEL (w),
-                          _name);
-    }
+  w = _glade->GetWidget ("contest_weapon_label");
+  if (w)
+  {
+    gtk_label_set_text (GTK_LABEL (w),
+                        weapon_image[_weapon]);
+  }
+
+  w = _glade->GetWidget ("contest_gender_label");
+  if (w)
+  {
+    gtk_label_set_text (GTK_LABEL (w),
+                        gender_image[_gender]);
+  }
+
+  w = _glade->GetWidget ("contest_category_label");
+  if (w)
+  {
+    gtk_label_set_text (GTK_LABEL (w),
+                        category_image[_category]);
   }
 }
 
@@ -578,13 +625,19 @@ void Contest::AttachTo (GtkNotebook *to)
 {
   GtkWidget *title = _glade->GetWidget ("notebook_title");
 
-  gtk_notebook_append_page (to,
+  _notebook = GTK_NOTEBOOK (to);
+
+  gtk_notebook_append_page (_notebook,
                             GetRootWidget (),
                             title);
   g_object_unref (title);
 
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (to),
-                                 -1);
+  if (_derived == FALSE)
+  {
+    gtk_notebook_set_current_page (_notebook,
+                                   -1);
+  }
+  DisplayProperties ();
 }
 
 // --------------------------------------------------------------------------------

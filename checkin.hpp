@@ -34,6 +34,12 @@ class Checkin : public virtual Stage, public PlayersList
 
     Checkin (StageClass *stage_class);
 
+    void RefreshData ();
+
+    void Add (Player *player);
+
+    void UseInitialRank ();
+
   public:
     void on_add_player_button_clicked ();
     void on_remove_player_button_clicked ();
@@ -43,7 +49,7 @@ class Checkin : public virtual Stage, public PlayersList
     void Import ();
 
   private:
-    void OnLocked ();
+    void OnLocked (Reason reason);
     void OnUnLocked ();
     void Wipe ();
 
@@ -52,6 +58,7 @@ class Checkin : public virtual Stage, public PlayersList
     static const gchar *_xml_class_name;
 
     guint _attendings;
+    gboolean _use_initial_rank;
 
     static Stage *CreateInstance (StageClass *stage_class);
 

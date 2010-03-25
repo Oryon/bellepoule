@@ -117,10 +117,10 @@ void Stage::FreeResult ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage::Lock ()
+void Stage::Lock (Reason reason)
 {
   _locked = true;
-  OnLocked ();
+  OnLocked (reason);
   SetResult ();
 }
 
@@ -239,19 +239,10 @@ guint Stage::GetNbStageClass ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage::GetStageClass (guint    index,
-                           gchar   **xml_name,
-                           Creator *creator,
-                           Rights  *rights)
+Stage::StageClass *Stage::GetClass (guint index)
 {
-  StageClass *stage_class = (StageClass *) g_slist_nth_data (_stage_base,
-                                                             index);
-  if (stage_class)
-  {
-    *xml_name = (gchar *) stage_class->_xml_name;
-    *creator  = stage_class->_creator;
-    *rights   = stage_class->_rights;
-  }
+  return (StageClass *) g_slist_nth_data (_stage_base,
+                                          index);
 }
 
 // --------------------------------------------------------------------------------
@@ -278,6 +269,12 @@ Stage::StageClass *Stage::GetClass (const gchar *name)
     }
   }
   return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Stage::SetContest (Contest *contest)
+{
+  _contest = contest;
 }
 
 // --------------------------------------------------------------------------------

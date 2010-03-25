@@ -27,7 +27,7 @@
 #include "classification.hpp"
 #include "table.hpp"
 
-const gchar   *Table::_class_name     = "table";
+const gchar   *Table::_class_name     = "Tableau";
 const gchar   *Table::_xml_class_name = "table_stage";
 const gdouble  Table::_level_spacing  = 10.0;
 
@@ -1147,7 +1147,7 @@ void Table::OnUnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnLocked ()
+void Table::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
 

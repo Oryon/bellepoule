@@ -143,7 +143,8 @@ gchar *Pool::GetName ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool::AddPlayer (Player *player)
+void Pool::AddPlayer (Player *player,
+                      Object *rank_owner)
 {
   if (player == NULL)
   {
@@ -155,7 +156,7 @@ void Pool::AddPlayer (Player *player)
                            player) == NULL))
   {
     Player::AttributeId attr_id ("rank",
-                                 this);
+                                 rank_owner);
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {

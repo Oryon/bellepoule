@@ -30,7 +30,7 @@
 
 #include "splitting.hpp"
 
-const gchar *Splitting::_class_name     = "splitting";
+const gchar *Splitting::_class_name     = "Scission";
 const gchar *Splitting::_xml_class_name = "splitting_stage";
 
 Tournament *Splitting::_tournament = NULL;
@@ -55,12 +55,13 @@ Splitting::Splitting (StageClass *stage_class)
                                "attending",
                                "victories_ratio",
                                "indice",
+                               "HS",
                                NULL);
     filter = new Filter (attr_list,
                          this);
 
     filter->ShowAttribute ("exported");
-    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("birth_year");
@@ -72,6 +73,9 @@ Splitting::Splitting (StageClass *stage_class)
     SetFilter (filter);
     filter->Release ();
   }
+
+  SetAttributeRight ("exported",
+                     TRUE);
 }
 
 // --------------------------------------------------------------------------------
@@ -87,6 +91,11 @@ void Splitting::Init ()
                       _xml_class_name,
                       CreateInstance,
                       EDITABLE);
+}
+
+// --------------------------------------------------------------------------------
+void Splitting::Garnish ()
+{
 }
 
 // --------------------------------------------------------------------------------
@@ -133,9 +142,39 @@ void Splitting::Display ()
 }
 
 // --------------------------------------------------------------------------------
-void Splitting::OnLocked ()
+void Splitting::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
+  SetSensitiveState (FALSE);
+
+  if (reason == USER_ACTION)
+  {
+    Contest             *contest = _contest->Duplicate ();
+    GSList              *current = _attendees;
+    Player::AttributeId  exported_attr ("exported");
+
+    _tournament->Manage (contest);
+
+    for (guint i = 0; current != NULL; i++)
+    {
+      Player    *player;
+      Attribute *attr;
+
+      player = (Player *) current->data;
+      attr   = player->GetAttribute (&exported_attr);
+      if ((gboolean) attr->GetValue () == TRUE)
+      {
+        Player *new_player = player->Duplicate ();
+
+        new_player->SetAttributeValue (&exported_attr,
+                                       (guint) FALSE);
+        contest->AddPlayer (new_player,
+                            i+1);
+      }
+
+      current = g_slist_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -168,98 +207,7 @@ gboolean Splitting::PresentPlayerFilter (Player *player)
 void Splitting::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::OnMove ()
-{
-  GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Create or select a competition file ..."),
-                                                    NULL,
-                                                    GTK_FILE_CHOOSER_ACTION_SAVE,
-                                                    GTK_STOCK_CANCEL,
-                                                    GTK_RESPONSE_CANCEL,
-                                                    GTK_STOCK_OPEN,
-                                                    GTK_RESPONSE_ACCEPT,
-                                                    NULL);
-
-  {
-    GtkFileFilter *filter = gtk_file_filter_new ();
-
-    gtk_file_filter_set_name (filter,
-                              "All BellePoule files (.cotcot)");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.cotcot");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                 filter);
-  }
-
-  {
-    GtkFileFilter *filter = gtk_file_filter_new ();
-
-    gtk_file_filter_set_name (filter,
-                              "All files");
-    gtk_file_filter_add_pattern (filter,
-                                 "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                 filter);
-  }
-
-  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
-  {
-    Contest *contest;
-    gchar   *filename;
-
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-    gtk_widget_hide (chooser);
-
-    if (filename)
-    {
-      if (strcmp ((const char *) ".cotcot", (const char *) &filename[strlen (filename) - strlen (".cotcot")]) != 0)
-      {
-        gchar *with_suffix;
-
-        with_suffix = g_strdup_printf ("%s.cotcot", filename);
-        g_free (filename);
-        filename = with_suffix;
-      }
-    }
-
-    contest = _tournament->GetContest (filename);
-    if (contest == NULL)
-    {
-      contest = new Contest (filename);
-      _tournament->Manage (contest);
-      contest->Save ();
-    }
-
-    {
-      GSList              *selected_players = GetSelectedPlayers ();
-      Player::AttributeId  attr_id ("exported");
-
-      for (guint i = 0; i < g_slist_length (selected_players); i++)
-      {
-        Player    *player;
-        Attribute *attr;
-
-        player = (Player *) g_slist_nth_data (selected_players,
-                                              i);
-        attr = player->GetAttribute (&attr_id);
-
-        if (attr && attr->GetValue () == FALSE)
-        {
-          player->SetAttributeValue (&attr_id,
-                                     TRUE);
-          Update (player);
-
-          contest->AddPlayer (player);
-        }
-      }
-
-      g_slist_free (selected_players);
-    }
-  }
-
-  gtk_widget_destroy (chooser);
+  SetSensitiveState (TRUE);
 }
 
 // --------------------------------------------------------------------------------
@@ -278,13 +226,4 @@ extern "C" G_MODULE_EXPORT void on_splitting_filter_toolbutton_clicked (GtkWidge
   Splitting *s = dynamic_cast <Splitting *> (owner);
 
   s->SelectAttributes ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_splitting_move_toolbutton_clicked (GtkWidget *widget,
-                                                                      Object    *owner)
-{
-  Splitting *s = dynamic_cast <Splitting *> (owner);
-
-  s->OnMove ();
 }

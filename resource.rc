@@ -1,1 +1,1 @@
-MAINICON  ICON  "logo.ico"
+EXE_ICON    ICON "resources/exe.ico"
