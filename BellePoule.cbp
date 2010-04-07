@@ -65,6 +65,8 @@
 		</Linker>
 		<Unit filename="attribute.cpp" />
 		<Unit filename="attribute.hpp" />
+		<Unit filename="canvas.cpp" />
+		<Unit filename="canvas.hpp" />
 		<Unit filename="canvas_module.cpp" />
 		<Unit filename="canvas_module.hpp" />
 		<Unit filename="checkin.cpp" />

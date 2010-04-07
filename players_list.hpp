@@ -64,6 +64,19 @@ class PlayersList : public Module
     virtual void OnListChanged () {};
 
   private:
+    void OnBeginPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
+    void OnDrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
+    gboolean OnPreview (GtkPrintOperation        *operation,
+                        GtkPrintOperationPreview *preview,
+                        GtkPrintContext          *context,
+                        GtkWindow                *parent);
+    void OnEndPrint (GtkPrintOperation *operation,
+                     GtkPrintContext   *context);
+
+  private:
     GtkWidget    *_tree_view;
     GtkListStore *_store;
     guint         _rights;

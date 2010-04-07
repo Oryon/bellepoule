@@ -611,22 +611,22 @@ void Pool::OnPlugged ()
         {
           gchar *text = g_strdup_printf ("%d", m+1);
 
-          text_item = PutTextInTable (match_main_table,
-                                      text,
-                                      m/nb_column,
-                                      m%nb_column + 2*(m%nb_column));
+          text_item = Canvas::PutTextInTable (match_main_table,
+                                              text,
+                                              m/nb_column,
+                                              m%nb_column + 2*(m%nb_column));
           g_object_set (G_OBJECT (text_item),
                         "font", "Sans bold 18px",
                         NULL);
-          SetTableItemAttribute (text_item, "y-align", 0.5);
+          Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
         }
 
         {
           image = GetPlayerImage (match->GetPlayerA ());
-          text_item = PutTextInTable (match_table,
-                                      image->str,
-                                      0,
-                                      0);
+          text_item = Canvas::PutTextInTable (match_table,
+                                              image->str,
+                                              0,
+                                              0);
           g_string_free (image,
                          TRUE);
           for (guint i = 0; i < _max_score->_value; i++)
@@ -637,20 +637,20 @@ void Pool::OnPlugged ()
                                                        "stroke-color", "grey",
                                                        "line-width", 1.0,
                                                        NULL);
-            PutInTable (match_table,
-                        rect,
-                        0,
-                        i+1);
-            SetTableItemAttribute (rect, "y-align", 0.5);
+            Canvas::PutInTable (match_table,
+                                rect,
+                                0,
+                                i+1);
+            Canvas::SetTableItemAttribute (rect, "y-align", 0.5);
           }
         }
 
         {
           image = GetPlayerImage (match->GetPlayerB ());
-          text_item = PutTextInTable (match_table,
-                                      image->str,
-                                      1,
-                                      0);
+          text_item = Canvas::PutTextInTable (match_table,
+                                              image->str,
+                                              1,
+                                              0);
           g_string_free (image,
                          TRUE);
 
@@ -663,17 +663,17 @@ void Pool::OnPlugged ()
                                                        "line-width", 1.0,
                                                        NULL);
 
-            PutInTable (match_table,
-                        rect,
-                        1,
-                        i+1);
-            SetTableItemAttribute (rect, "y-align", 0.5);
+            Canvas::PutInTable (match_table,
+                                rect,
+                                1,
+                                i+1);
+            Canvas::SetTableItemAttribute (rect, "y-align", 0.5);
           }
         }
-        PutInTable (match_main_table,
-                    match_table,
-                    m/nb_column,
-                    m%nb_column + 2*(m%nb_column) + 1);
+        Canvas::PutInTable (match_main_table,
+                            match_table,
+                            m/nb_column,
+                            m%nb_column + 2*(m%nb_column) + 1);
       }
       goo_canvas_item_translate (match_main_table,
                                  bounds.x1,
@@ -686,10 +686,10 @@ void Pool::OnPlugged ()
       GooCanvasItem   *text_item;
 
       _title_table = goo_canvas_table_new (root_item, NULL);
-      text_item = PutTextInTable (_title_table,
-                                  _name,
-                                  0,
-                                  1);
+      text_item = Canvas::PutTextInTable (_title_table,
+                                          _name,
+                                          0,
+                                          1);
       g_object_set (G_OBJECT (text_item),
                     "font", "Sans bold 18px",
                     NULL);
@@ -926,21 +926,21 @@ void Pool::RefreshScoreData ()
 
     if (_is_over)
     {
-      _status_item = PutStockIconInTable (_title_table,
-                                          GTK_STOCK_APPLY,
-                                          0, 0);
+      _status_item = Canvas::PutStockIconInTable (_title_table,
+                                                  GTK_STOCK_APPLY,
+                                                  0, 0);
     }
     else if (_has_error)
     {
-      _status_item = PutStockIconInTable (_title_table,
-                                          GTK_STOCK_DIALOG_WARNING,
-                                          0, 0);
+      _status_item = Canvas::PutStockIconInTable (_title_table,
+                                                  GTK_STOCK_DIALOG_WARNING,
+                                                  0, 0);
     }
     else
     {
-      _status_item = PutStockIconInTable (_title_table,
-                                          GTK_STOCK_EXECUTE,
-                                          0, 0);
+      _status_item = Canvas::PutStockIconInTable (_title_table,
+                                                  GTK_STOCK_EXECUTE,
+                                                  0, 0);
     }
   }
 }
@@ -1169,24 +1169,6 @@ void Pool::Load (xmlNode *xml_node,
             player_list);
     }
   }
-}
-
-// --------------------------------------------------------------------------------
-void Pool::OnBeginPrint (GtkPrintOperation *operation,
-                         GtkPrintContext   *context)
-{
-  CanvasModule::OnBeginPrint (operation,
-                              context);
-}
-
-// --------------------------------------------------------------------------------
-void Pool::OnDrawPage (GtkPrintOperation *operation,
-                       GtkPrintContext   *context,
-                       gint               page_nr)
-{
-  CanvasModule::OnDrawPage (operation,
-                            context,
-                            page_nr);
 }
 
 // --------------------------------------------------------------------------------

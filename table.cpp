@@ -264,9 +264,9 @@ void Table::RefreshLevelStatus ()
         icon = GTK_STOCK_EXECUTE;
       }
 
-      _level_status[i]._status_item = PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
-                                                           icon,
-                                                           0, 0);
+      _level_status[i]._status_item = Canvas::PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
+                                                                   icon,
+                                                                   0, 0);
 
       gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_from_table_liststore),
                                      &iter,
@@ -300,21 +300,21 @@ void Table::Display ()
         GooCanvasItem *text_item;
         gchar         *text = GetLevelImage (l + (_nb_levels - _nb_level_to_display));
 
-        text_item = PutTextInTable (_level_status[l-1]._level_header,
-                                    text,
-                                    0,
-                                    1);
+        text_item = Canvas::PutTextInTable (_level_status[l-1]._level_header,
+                                            text,
+                                            0,
+                                            1);
         g_object_set (G_OBJECT (text_item),
                       "font", "Sans bold 18px",
                       NULL);
         g_free (text);
       }
 
-      PutInTable (_main_table,
-                  _level_status[l-1]._level_header,
-                  0,
-                  l);
-      SetTableItemAttribute (_level_status[l-1]._level_header, "x-align", 0.5);
+      Canvas::PutInTable (_main_table,
+                          _level_status[l-1]._level_header,
+                          0,
+                          l);
+      Canvas::SetTableItemAttribute (_level_status[l-1]._level_header, "x-align", 0.5);
     }
 
     g_node_traverse (_tree_root,
@@ -682,8 +682,8 @@ gboolean Table::FillInNode (GNode *node,
       data->_canvas_table = goo_canvas_table_new (table->_main_table,
                                                   "column-spacing", table->_level_spacing,
                                                   NULL);
-      SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
-      SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
+      Canvas::SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
+      Canvas::SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
 
       if (parent == NULL)
       {
@@ -701,10 +701,10 @@ gboolean Table::FillInNode (GNode *node,
           row = data->_row >> nb_missing_level;
         }
       }
-      PutInTable (table->_main_table,
-                  data->_canvas_table,
-                  row,
-                  data->_level - nb_missing_level);
+      Canvas::PutInTable (table->_main_table,
+                          data->_canvas_table,
+                          row,
+                          data->_level - nb_missing_level);
     }
 
     {
@@ -713,11 +713,11 @@ gboolean Table::FillInNode (GNode *node,
       if (number)
       {
         gchar         *text        = g_strdup_printf ("No %d", number);
-        GooCanvasItem *number_item = PutTextInTable (data->_canvas_table,
-                                                     text,
-                                                     0,
-                                                     0);
-        SetTableItemAttribute (number_item, "y-align", 0.5);
+        GooCanvasItem *number_item = Canvas::PutTextInTable (data->_canvas_table,
+                                                             text,
+                                                             0,
+                                                             0);
+        Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
         g_object_set (number_item,
                       "fill-color", "blue",
                       "font", "Bold",
@@ -730,11 +730,11 @@ gboolean Table::FillInNode (GNode *node,
         && data->_match->GetPlayerA ()
         && data->_match->GetPlayerB ())
     {
-      data->_print_item = table->PutStockIconInTable (data->_canvas_table,
-                                                      GTK_STOCK_PRINT,
-                                                      0,
-                                                      1);
-      SetTableItemAttribute (data->_print_item, "y-align", 0.5);
+      data->_print_item = Canvas::PutStockIconInTable (data->_canvas_table,
+                                                       GTK_STOCK_PRINT,
+                                                       0,
+                                                       1);
+      Canvas::SetTableItemAttribute (data->_print_item, "y-align", 0.5);
     }
 
     {
@@ -777,13 +777,13 @@ gboolean Table::FillInNode (GNode *node,
         }
       }
 
-      data->_player_item = PutTextInTable (data->_canvas_table,
-                                           string->str,
-                                           0,
-                                           2);
-      SetTableItemAttribute (data->_player_item, "y-align", 0.5);
-      SetTableItemAttribute (data->_player_item, "x-expand", 1U);
-      SetTableItemAttribute (data->_player_item, "x-fill", 1U);
+      data->_player_item = Canvas::PutTextInTable (data->_canvas_table,
+                                                   string->str,
+                                                   0,
+                                                   2);
+      Canvas::SetTableItemAttribute (data->_player_item, "y-align", 0.5);
+      Canvas::SetTableItemAttribute (data->_player_item, "x-expand", 1U);
+      Canvas::SetTableItemAttribute (data->_player_item, "x-fill", 1U);
 
       g_string_free (string,
                      TRUE);
@@ -811,11 +811,11 @@ gboolean Table::FillInNode (GNode *node,
                                           "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                           NULL);
 
-          PutInTable (data->_canvas_table,
-                      goo_rect,
-                      0,
-                      3);
-          SetTableItemAttribute (goo_rect, "y-align", 0.5);
+          Canvas::PutInTable (data->_canvas_table,
+                              goo_rect,
+                              0,
+                              3);
+          Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
         }
 
         // Score Text
@@ -832,12 +832,12 @@ gboolean Table::FillInNode (GNode *node,
                                             NULL);
           g_free (score_image);
 
-          PutInTable (data->_canvas_table,
-                      score_text,
-                      0,
-                      3);
-          SetTableItemAttribute (score_text, "x-align", 0.5);
-          SetTableItemAttribute (score_text, "y-align", 0.5);
+          Canvas::PutInTable (data->_canvas_table,
+                              score_text,
+                              0,
+                              3);
+          Canvas::SetTableItemAttribute (score_text, "x-align", 0.5);
+          Canvas::SetTableItemAttribute (score_text, "y-align", 0.5);
         }
 
         {
@@ -1111,12 +1111,30 @@ void Table::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnPrintPoolToolbuttonClicked ()
+{
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      classification->Print ();
+    }
+  }
+  else
+  {
+    Print ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *widget,
                                                                    Object    *owner)
 {
   Table *t = dynamic_cast <Table *> (owner);
 
-  t->Print ();
+  t->OnPrintPoolToolbuttonClicked ();
 }
 
 // --------------------------------------------------------------------------------

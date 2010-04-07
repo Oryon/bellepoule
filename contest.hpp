@@ -66,6 +66,8 @@ class Contest : public Module
     static gchar *category_image[_nb_category];
     static gchar *category_xml_image[_nb_category];
 
+    static GList *_color_list;
+
     gchar      *_name;
     gchar      *_organizer;
     gchar      *_web_site;
@@ -81,6 +83,7 @@ class Contest : public Module
     GtkWidget  *_calendar_dlg;
     Tournament *_tournament;
     gboolean    _derived;
+    GList      *_color;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
@@ -99,6 +102,10 @@ class Contest : public Module
     void   FillInDate        (guint day,
                               guint month,
                               guint year);
+
+    void OnDrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
 };
 
 #endif

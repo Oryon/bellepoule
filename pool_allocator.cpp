@@ -818,9 +818,9 @@ void PoolAllocator::FillPoolTable (Pool *pool)
                                     "row-spacing",    2.0,
                                     "column-spacing", 4.0,
                                     NULL);
-      PutInTable (_main_table,
-                  table,
-                  row, column);
+      Canvas::PutInTable (_main_table,
+                          table,
+                          row, column);
       pool->SetData (this, "table",
                      table);
     }
@@ -847,16 +847,16 @@ void PoolAllocator::FillPoolTable (Pool *pool)
         pool->SetData (this, "is_balanced", 0);
       }
 
-      PutStockIconInTable (name_table,
-                           icon_name,
-                           0, 0);
+      Canvas::PutStockIconInTable (name_table,
+                                   icon_name,
+                                   0, 0);
     }
 
     // Name
     {
-      item = PutTextInTable (name_table,
-                             pool->GetName (),
-                             0, 1);
+      item = Canvas::PutTextInTable (name_table,
+                                     pool->GetName (),
+                                     0, 1);
       g_object_set (G_OBJECT (item),
                     "font", "Sans bold 18px",
                     NULL);
@@ -890,15 +890,15 @@ void PoolAllocator::FillPoolTable (Pool *pool)
 
         if (attr)
         {
-          item = PutTextInTable (table,
-                                 attr->GetUserImage (),
-                                 p+1, i);
+          item = Canvas::PutTextInTable (table,
+                                         attr->GetUserImage (),
+                                         p+1, i);
         }
         else
         {
-          item = PutTextInTable (table,
-                                 "",
-                                 p+1, i);
+          item = Canvas::PutTextInTable (table,
+                                         "",
+                                         p+1, i);
         }
         g_object_set (G_OBJECT (item),
                       "font", "Sans 14px",

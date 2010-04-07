@@ -96,12 +96,6 @@ class Pool : public CanvasModule
                                               Player *B,
                                               Pool   *pool);
 
-    void OnBeginPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
-    void OnDrawPage (GtkPrintOperation *operation,
-                     GtkPrintContext   *context,
-                     gint               page_nr);
-
     void OnPlugged ();
 
     Match *GetMatch (Player *A,

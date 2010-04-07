@@ -988,3 +988,12 @@ extern "C" G_MODULE_EXPORT gboolean on_FillInForm_key_press_event (GtkWidget   *
 
   return FALSE;
 }
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_checkin_print_toolbutton_clicked (GtkWidget *widget,
+                                                                     Object    *owner)
+{
+  Checkin *c = dynamic_cast <Checkin *> (owner);
+
+  c->Print ();
+}

@@ -1,205 +1,205 @@
 AFG;Afghanistan
-AHO;Antilles néerlandaises
+RSA;Afrique du Sud
 ALB;Albanie
 ALG;Algérie
+GER;Allemagne
 AND;Andorre
 ANG;Angola
 ANT;Antigua-et-Barbuda
+AHO;Antilles néerlandaises
+KSA;Arabie saoudite
 ARG;Argentine
 ARM;Arménie
 ARU;Aruba
-ASA;Samoa américaines
 AUS;Australie
 AUT;Autriche
 AZE;Azerbaïdjan
 BAH;Bahamas
+BRN;Bahreïn
 BAN;Bangladesh
 BAR;Barbade
-BDI;Burundi
 BEL;Belgique
-BEN;Bénin
+BIZ;Belize
 BER;Bermudes
 BHU;Bhoutan
-BIH;Bosnie-Herzégovine
-BIZ;Belize
+MYA;Birmanie
 BLR;Biélorussie
 BOL;Bolivie
+BIH;Bosnie-Herzégovine
 BOT;Botswana
-BRA;Brésil
-BRN;Bahreïn
 BRU;Brunei
+BRA;Brésil
 BUL;Bulgarie
 BUR;Burkina Faso
-CAF;République centrafricaine
+BDI;Burundi
+BEN;Bénin
 CAM;Cambodge
+CMR;Cameroun
 CAN;Canada
-CAY;îles Caïmanes
-CGO;République du Congo
-CHA;Tchad
+CPV;Cap-Vert
 CHI;Chili
 CHN;Chine
-CIV;Côte d'Ivoire
-CMR;Cameroun
-COD;République démocratique du Congo
-COK;Îles Cook
+TPE;Chinese Taipei
+CYP;Chypre
 COL;Colombie
 COM;Comores
-CPV;Cap-Vert
+PRK;Corée du Nord
+KOR;Corée du Sud
 CRC;Costa Rica
 CRO;Croatie
 CUB;Cuba
-CYP;Chypre
-CZE;République tchèque
+CIV;Côte d'Ivoire
 DEN;Danemark
 DJI;Djibouti
 DMA;Dominique
-DOM;République dominicaine
-ECU;Équateur
 EGY;Égypte
+UAE;Émirats arabes unis
+ECU;Équateur
 ERI;Érythrée
-ESA;Salvador
 ESP;Espagne
 EST;Estonie
+USA;États-Unis
 ETH;Éthiopie
 FIJ;Fidji
 FIN;Finlande
 FRA;France
-FSM;Micronésie
 GAB;Gabon
 GAM;Gambie
-GBR;Grande-Bretagne
-GBS;Guinée-Bissau
-GEO;Géorgie
-GEQ;Guinée équatoriale
-GER;Allemagne
 GHA;Ghana
-GRE;Grèce
+GBR;Grande-Bretagne
 GRN;Grenade
-GUA;Guatemala
-GUI;Guinée
+GRE;Grèce
 GUM;Guam
+GUA;Guatemala
+GEQ;Guinée équatoriale
+GBS;Guinée-Bissau
+GUI;Guinée
 GUY;Guyana
+GEO;Géorgie
 HAI;Haïti
-HKG;Hong Kong
 HON;Honduras
+HKG;Hong Kong
 HUN;Hongrie
-INA;Indonésie
+COK;Îles Cook
+ISV;Îles Vierges américaines
+IVB;Îles Vierges britanniques
+CAY;îles Caïmanes
 IND;Inde
+INA;Indonésie
+IRQ;Irak
 IRI;Iran
 IRL;Irlande
-IRQ;Irak
 ISL;Islande
 ISR;Israël
-ISV;Îles Vierges américaines
 ITA;Italie
-IVB;Îles Vierges britanniques
 JAM;Jamaïque
-JOR;Jordanie
 JPN;Japon
+JOR;Jordanie
 KAZ;Kazakhstan
 KEN;Kenya
 KGZ;Kirghizistan
 KIR;Kiribati
-KOR;Corée du Sud
-KSA;Arabie saoudite
 KUW;Koweït
 LAO;Laos
-LAT;Lettonie
-LBA;Libye
-LBR;Liberia
-LCA;Sainte-Lucie
 LES;Lesotho
+LAT;Lettonie
 LIB;Liban
+LBR;Liberia
+LBA;Libye
 LIE;Liechtenstein
 LTU;Lituanie
 LUX;Luxembourg
+MKD;Macédoine
 MAD;Madagascar
-MAR;Maroc
 MAS;Malaisie
 MAW;Malawi
-MDA;Moldavie
 MDV;Maldives
-MEX;Mexique
-MGL;Mongolie
-MHL;Marshall
-MKD;Macédoine
 MLI;Mali
 MLT;Malte
-MNE;Monténégro
-MON;Monaco
-MOZ;Mozambique
+MAR;Maroc
+MHL;Marshall
 MRI;Maurice
 MTN;Mauritanie
-MYA;Birmanie
+MEX;Mexique
+FSM;Micronésie
+MDA;Moldavie
+MON;Monaco
+MGL;Mongolie
+MNE;Monténégro
+MOZ;Mozambique
 NAM;Namibie
-NCA;Nicaragua
-NED;Pays-Bas
-NEP;Népal
-NGR;Nigeria
-NIG;Niger
-NOR;Norvège
 NRU;Nauru
+NCA;Nicaragua
+NIG;Niger
+NGR;Nigeria
+NOR;Norvège
 NZL;Nouvelle-Zélande
+NEP;Népal
 OMA;Oman
+UGA;Ouganda
+UZB;Ouzbékistan
 PAK;Pakistan
-PAN;Panamá
-PAR;Paraguay
-PER;Pérou
-PHI;Philippines
-PLE;Palestine
 PLW;Palaos
+PLE;Palestine
+PAN;Panamá
 PNG;Papouasie-Nouvelle-Guinée
+PAR;Paraguay
+NED;Pays-Bas
+PHI;Philippines
 POL;Pologne
-POR;Portugal
-PRK;Corée du Nord
 PUR;Porto Rico
+POR;Portugal
+PER;Pérou
 QAT;Qatar
 ROU;Roumanie
-RSA;Afrique du Sud
 RUS;Russie
 RWA;Rwanda
-SAM;Samoa
-SEN;Sénégal
-SEY;Seychelles
-SIN;Singapour
+CAF;République centrafricaine
+DOM;République dominicaine
+CGO;République du Congo
+COD;République démocratique du Congo
+CZE;République tchèque
 SKN;Saint-Christophe-et-Niévès
-SLE;Sierra Leone
-SLO;Slovénie
 SMR;Saint-Marin
+VIN;Saint-Vincent-et-les Grenadines
+LCA;Sainte-Lucie
 SOL;Salomon
-SOM;Somalie
+ESA;Salvador
+ASA;Samoa américaines
+SAM;Samoa
 SRB;Serbie
-SRI;Sri Lanka
-STP;São Tomé-et-Principe
+SEY;Seychelles
+SLE;Sierra Leone
+SIN;Singapour
+SVK;Slovaquie
+SLO;Slovénie
+SOM;Somalie
 SUD;Soudan
+SRI;Sri Lanka
 SUI;Suisse
 SUR;Suriname
-SVK;Slovaquie
 SWE;Suède
 SWZ;Swaziland
 SYR;Syrie
-TAN;Tanzanie
-TGA;Tonga
-THA;Thaïlande
+STP;São Tomé-et-Principe
+SEN;Sénégal
 TJK;Tadjikistan
-TKM;Turkménistan
+TAN;Tanzanie
+CHA;Tchad
+THA;Thaïlande
 TLS;Timor oriental
 TOG;Togo
-TPE;Chinese Taipei
+TGA;Tonga
 TRI;Trinité-et-Tobago
 TUN;Tunisie
+TKM;Turkménistan
 TUR;Turquie
 TUV;Tuvalu
-UAE;Émirats arabes unis
-UGA;Ouganda
 UKR;Ukraine
 URU;Uruguay
-USA;États-Unis
-UZB;Ouzbékistan
 VAN;Vanuatu
 VEN;Venezuela
 VIE;Viêt Nam
-VIN;Saint-Vincent-et-les Grenadines
 YEM;Yémen
 ZAM;Zambie
 ZIM;Zimbabwe

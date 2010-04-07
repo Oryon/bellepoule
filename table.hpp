@@ -38,6 +38,7 @@ class Table : public virtual Stage, public CanvasModule
     void OnInputToggled (GtkWidget *widget);
     void OnSearchMatch ();
     void OnFilterClicked ();
+    void OnPrintPoolToolbuttonClicked ();
 
   public:
     static const gchar *_class_name;

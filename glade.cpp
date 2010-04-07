@@ -20,7 +20,7 @@ gchar *Glade::_path = NULL;
 
 // --------------------------------------------------------------------------------
 Glade::Glade (gchar  *file_name,
-                  Object *owner)
+              Object *owner)
 : Object ("Glade")
 {
   if (file_name)

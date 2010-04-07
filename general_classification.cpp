@@ -120,3 +120,12 @@ extern "C" G_MODULE_EXPORT void on_general_classification_filter_button_clicked 
 
   g->OnFilterClicked ();
 }
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_general_classification_print_toolbutton_clicked (GtkWidget *widget,
+                                                                                    Object    *owner)
+{
+  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+
+  g->Print ();
+}

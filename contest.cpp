@@ -20,11 +20,13 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
+#include <goocanvas.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shellapi.h>
 
+#include "canvas.hpp"
 #include "tournament.hpp"
 #include "checkin.hpp"
 
@@ -81,6 +83,8 @@ gchar *Contest::category_xml_image[_nb_category] =
   "S",
   "V"
 };
+
+GList *Contest::_color_list = NULL;
 
 // --------------------------------------------------------------------------------
 Contest::Contest ()
@@ -303,14 +307,13 @@ Contest *Contest::Create ()
   {
     contest->_schedule->CreateDefault ();
     contest->ReadProperties ();
+    gtk_widget_hide (contest->_properties_dlg);
   }
   else
   {
     Object::TryToRelease (contest);
     contest = NULL;
   }
-
-  gtk_widget_hide (contest->_properties_dlg);
 
   return contest;
 }
@@ -455,6 +458,27 @@ void Contest::InitInstance ()
 // --------------------------------------------------------------------------------
 void Contest::Init ()
 {
+  GdkColor *color;
+
+  color = (GdkColor *) g_malloc (sizeof (color));
+  gdk_color_parse ("#EED680", color); // accent yellow
+  _color_list = g_list_append (_color_list, color);
+
+  color = (GdkColor *) g_malloc (sizeof (color));
+  gdk_color_parse ("#E0B6AF", color); // red hilight
+  _color_list = g_list_append (_color_list, color);
+
+  color = (GdkColor *) g_malloc (sizeof (color));
+  gdk_color_parse ("#ADA7C8", color); // purple hilight
+  _color_list = g_list_append (_color_list, color);
+
+  color = (GdkColor *) g_malloc (sizeof (color));
+  gdk_color_parse ("#83A67F", color); // green medium
+  _color_list = g_list_append (_color_list, color);
+
+  color = (GdkColor *) g_malloc (sizeof (color));
+  gdk_color_parse ("#DF421E", color); // accent red
+  _color_list = g_list_append (_color_list, color);
 }
 
 // --------------------------------------------------------------------------------
@@ -637,7 +661,27 @@ void Contest::AttachTo (GtkNotebook *to)
     gtk_notebook_set_current_page (_notebook,
                                    -1);
   }
+
   DisplayProperties ();
+
+  if (_color_list)
+  {
+    GtkWidget *tab = _glade->GetWidget ("eventbox");
+
+    _color = _color_list;
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_NORMAL,
+                          (GdkColor *) _color->data);
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_ACTIVE,
+                          (GdkColor *) _color->data);
+
+    _color_list = g_list_next (_color_list);
+    if (_color_list == NULL)
+    {
+      _color_list = g_list_first (_color);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -793,6 +837,62 @@ void Contest::on_web_site_button_clicked ()
                 //gtk_entry_get_text (GTK_ENTRY (entry)),
                 //GDK_CURRENT_TIME,
                 //NULL);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::OnDrawPage (GtkPrintOperation *operation,
+                          GtkPrintContext   *context,
+                          gint               page_nr)
+{
+  GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
+
+  goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
+                       0.0, 0.0,
+                       100.0, 6.0,
+                       "stroke-color", "grey",
+                       "fill-color", gdk_color_to_string ((GdkColor *) _color->data),
+                       "line-width", 0.3,
+                       NULL);
+
+  {
+    char *text = g_strdup_printf ("%s\n%s", _organizer, _name);
+
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         text,
+                         1.0, 3.0,
+                         -1.0,
+                         GTK_ANCHOR_W,
+                         "font", "Sans 2px", NULL);
+    g_free (text);
+  }
+
+  {
+    char *text = g_strdup_printf ("%s - %s - %s", weapon_image[_weapon],
+                                                   gender_image[_gender],
+                                                   category_image[_category]);
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         text,
+                         50.5, 3.5,
+                         -1.0,
+                         GTK_ANCHOR_CENTER,
+                         "fill-color", "black",
+                         "font", "Sans Bold 4px", NULL);
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         text,
+                         50.0, 3.0,
+                         -1.0,
+                         GTK_ANCHOR_CENTER,
+                         "fill-color", "white",
+                         "font", "Sans Bold 4px", NULL);
+    g_free (text);
+  }
+
+  goo_canvas_render (canvas,
+                     gtk_print_context_get_cairo_context (context),
+                     NULL,
+                     1.0);
+
+  gtk_widget_destroy (GTK_WIDGET (canvas));
 }
 
 // --------------------------------------------------------------------------------

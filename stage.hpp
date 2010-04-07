@@ -134,7 +134,6 @@ class Stage : public virtual Object
 
   protected:
     GSList  *_attendees;
-    Filter  *_classification_filter;
     Stage   *_input_provider;
     Contest *_contest;
 
@@ -167,6 +166,7 @@ class Stage : public virtual Object
     GSList             *_locked_on_classification;
     SensitivityTrigger *_sensitivity_trigger;
     SensitivityTrigger *_score_stuffing_trigger;
+    Filter             *_classification_filter;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;

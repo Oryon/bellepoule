@@ -224,3 +224,108 @@ void Module::ResetCursor ()
   gdk_window_set_cursor (gtk_widget_get_window (_root),
                          NULL);
 }
+
+// --------------------------------------------------------------------------------
+void Module::Print ()
+{
+  GtkPrintOperation *operation;
+  GtkPrintSettings  *settings;
+  GError            *error = NULL;
+
+  operation = gtk_print_operation_new ();
+
+  g_signal_connect (G_OBJECT (operation), "begin-print",
+                    G_CALLBACK (on_begin_print), this);
+  g_signal_connect (G_OBJECT (operation), "draw-page",
+                    G_CALLBACK (on_draw_page), this);
+  g_signal_connect (G_OBJECT (operation), "end-print",
+                    G_CALLBACK (on_end_print), this);
+  g_signal_connect (G_OBJECT (operation), "preview",
+                    G_CALLBACK (on_preview), this);
+
+  //gtk_print_operation_set_use_full_page (operation,
+  //TRUE);
+
+  //gtk_print_operation_set_unit (operation,
+  //GTK_UNIT_POINTS);
+
+  gtk_print_operation_run (operation,
+                           GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
+                           //GTK_PRINT_OPERATION_ACTION_PREVIEW,
+                           NULL,
+                           &error);
+
+  g_object_unref (operation);
+
+  if (error)
+  {
+    GtkWidget *dialog;
+
+    dialog = gtk_message_dialog_new (NULL,
+                                     GTK_DIALOG_DESTROY_WITH_PARENT,
+                                     GTK_MESSAGE_ERROR,
+                                     GTK_BUTTONS_CLOSE,
+                                     "%s", error->message);
+    g_error_free (error);
+
+    g_signal_connect (dialog, "response",
+                      G_CALLBACK (gtk_widget_destroy), NULL);
+
+    gtk_widget_show (dialog);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Module::OnDrawPage (GtkPrintOperation *operation,
+                         GtkPrintContext   *context,
+                         gint               page_nr)
+{
+  if (_owner)
+  {
+    _owner->OnDrawPage (operation,
+                        context,
+                        page_nr);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Module::on_begin_print (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             Module            *module)
+{
+  module->OnBeginPrint (operation,
+                        context);
+}
+
+// --------------------------------------------------------------------------------
+void Module::on_draw_page (GtkPrintOperation *operation,
+                           GtkPrintContext   *context,
+                           gint               page_nr,
+                           Module            *module)
+{
+  module->OnDrawPage (operation,
+                      context,
+                      page_nr);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Module::on_preview (GtkPrintOperation        *operation,
+                             GtkPrintOperationPreview *preview,
+                             GtkPrintContext          *context,
+                             GtkWindow                *parent,
+                             Module                   *module)
+{
+  return module->OnPreview (operation,
+                            preview,
+                            context,
+                            parent);
+}
+
+// --------------------------------------------------------------------------------
+void Module::on_end_print (GtkPrintOperation *operation,
+                           GtkPrintContext   *context,
+                           Module            *module)
+{
+  module->OnEndPrint (operation,
+                      context);
+}

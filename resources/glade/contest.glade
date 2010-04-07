@@ -83,61 +83,66 @@
           <object class="GtkHBox" id="notebook_title">
             <property name="visible">True</property>
             <child>
-              <object class="GtkVBox" id="vbox1">
+              <object class="GtkEventBox" id="eventbox">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkLabel" id="contest_name_label">
+                  <object class="GtkVBox" id="vbox1">
                     <property name="visible">True</property>
-                    <property name="label">page 1</property>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHBox" id="hbox1">
-                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkLabel" id="contest_weapon_label">
+                      <object class="GtkLabel" id="contest_name_label">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Sabre</property>
-                        <attributes>
-                          <attribute name="background" value="#b8b8bfbfc2c2"/>
-                        </attributes>
+                        <property name="label">page 1</property>
                       </object>
                       <packing>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="contest_gender_label">
+                      <object class="GtkHBox" id="hbox1">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Homme</property>
-                        <attributes>
-                          <attribute name="background" value="#b8b8bfbfc2c2"/>
-                        </attributes>
+                        <child>
+                          <object class="GtkLabel" id="contest_weapon_label">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Sabre</property>
+                            <attributes>
+                              <attribute name="weight" value="bold"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="contest_gender_label">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Homme</property>
+                            <attributes>
+                              <attribute name="weight" value="bold"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="contest_category_label">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Cadet</property>
+                            <attributes>
+                              <attribute name="weight" value="bold"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="position">1</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkLabel" id="contest_category_label">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">Cadet</property>
-                        <attributes>
-                          <attribute name="background" value="#b8b8bfbfc2c2"/>
-                        </attributes>
-                      </object>
-                      <packing>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
                   </object>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -170,6 +175,7 @@
           </object>
           <packing>
             <property name="tab_fill">False</property>
+            <property name="reorderable">True</property>
           </packing>
         </child>
       </object>

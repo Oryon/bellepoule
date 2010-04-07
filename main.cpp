@@ -81,6 +81,28 @@ static gint CompareRating (Attribute *attr_a,
 }
 
 // --------------------------------------------------------------------------------
+static gint CompareDate (Attribute *attr_a,
+                         Attribute *attr_b)
+{
+  GDate date_a;
+  GDate date_b;
+
+  if (attr_a)
+  {
+    g_date_set_parse (&date_a,
+                      (const gchar *) attr_a->GetValue ());
+  }
+  if (attr_b)
+  {
+    g_date_set_parse (&date_b,
+                      (const gchar *) attr_b->GetValue ());
+  }
+
+  return g_date_compare (&date_a,
+                         &date_b);
+}
+
+// --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
   gchar *path = g_path_get_dirname (argv[0]);
@@ -149,6 +171,7 @@ int main (int argc, char **argv)
     desc->AddDiscreteValues ("resources/ioc_countries.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_year", "date naissance");
+    desc->_compare_func = (GCompareFunc) CompareDate;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "licence");
 

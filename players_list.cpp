@@ -15,7 +15,9 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string.h>
+#include <goocanvas.h>
 
+#include "canvas.hpp"
 #include "attribute.hpp"
 #include "schedule.hpp"
 #include "player.hpp"
@@ -681,4 +683,114 @@ Player *PlayersList::GetPlayer (const gchar *path_string)
   gtk_tree_path_free (path);
 
   return result;
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
+                                GtkPrintContext   *context)
+{
+  gtk_print_operation_set_n_pages (operation,
+                                   1);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::OnDrawPage (GtkPrintOperation *operation,
+                              GtkPrintContext   *context,
+                              gint               page_nr)
+{
+  {
+    GSList        *current_player = _player_list;
+    GooCanvas     *canvas         = Canvas::CreatePrinterCanvas (context);
+    GooCanvasItem *table          = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
+                                                          "column-spacing", 2.0,
+                                                          NULL);
+
+    {
+      cairo_matrix_t matrix;
+
+      goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
+                                     &matrix);
+      cairo_matrix_translate (&matrix,
+                              1.0,
+                              7.0);
+      goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
+                                     &matrix);
+    }
+
+    for (guint i = 0; current_player != NULL; i++)
+    {
+      Player *player;
+
+      player = (Player *) current_player->data;
+      {
+        GSList *current_attr = _filter->GetSelectedAttrList ();
+
+        for (guint j = 0; current_attr != NULL; j++)
+        {
+          AttributeDesc       *desc;
+          Attribute           *attr;
+          Player::AttributeId *attr_id;
+
+          desc = (AttributeDesc *) current_attr->data;
+          if (desc->_scope == AttributeDesc::GLOBAL)
+          {
+            attr_id = new Player::AttributeId (desc->_xml_name);
+          }
+          else
+          {
+            attr_id = new Player::AttributeId (desc->_xml_name,
+                                               GetDataOwner ());
+          }
+
+          attr = player->GetAttribute (attr_id);
+          attr_id->Release ();
+
+          if (attr)
+          {
+            GooCanvasItem *text;
+
+            text = Canvas::PutTextInTable (table,
+                                           attr->GetUserImage (),
+                                           i,
+                                           j);
+            g_object_set (G_OBJECT (text),
+                          "font", "Sans 2px",
+                          NULL);
+          }
+          current_attr = g_slist_next (current_attr);
+        }
+      }
+
+      current_player = g_slist_next (current_player);
+    }
+
+    Canvas::FitToContext (goo_canvas_get_root_item (canvas),
+                          context);
+
+    goo_canvas_render (canvas,
+                       gtk_print_context_get_cairo_context (context),
+                       NULL,
+                       1.0);
+
+    gtk_widget_destroy (GTK_WIDGET (canvas));
+  }
+
+  Module::OnDrawPage (operation,
+                      context,
+                      page_nr);
+}
+
+// --------------------------------------------------------------------------------
+gboolean PlayersList::OnPreview (GtkPrintOperation        *operation,
+                                 GtkPrintOperationPreview *preview,
+                                 GtkPrintContext          *context,
+                                 GtkWindow                *parent)
+{
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::OnEndPrint (GtkPrintOperation *operation,
+                              GtkPrintContext   *context)
+{
 }

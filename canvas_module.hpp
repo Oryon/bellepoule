@@ -20,51 +20,26 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
+#include "canvas.hpp"
 #include "module.hpp"
 
 class CanvasModule : public Module
 {
-  public:
-    void Print ();
-
   protected:
     CanvasModule (gchar *glade_file,
                   gchar *root = NULL);
     virtual ~CanvasModule ();
 
-    static void PutInTable (GooCanvasItem *table,
-                            GooCanvasItem *item,
-                            guint          row,
-                            guint          column);
-
-    static GooCanvasItem *PutTextInTable (GooCanvasItem *table,
-                                          gchar         *text,
-                                          guint          row,
-                                          guint          column);
-
-    static GooCanvasItem *PutStockIconInTable (GooCanvasItem *table,
-                                               gchar         *icon_name,
-                                               guint          row,
-                                               guint          column);
-
-    static void SetTableItemAttribute (GooCanvasItem *item,
-                                       gchar         *attribute,
-                                       guint          value);
-
-    static void SetTableItemAttribute (GooCanvasItem *item,
-                                       gchar         *attribute,
-                                       gdouble        value);
-
-    GooCanvas *GetCanvas ();
-    GooCanvasItem *GetRootItem ();
     static void WipeItem (GooCanvasItem *item);
 
     virtual void Wipe ();
     virtual void OnPlugged ();
     virtual void OnUnPlugged ();
 
+    GooCanvas *GetCanvas ();
+    GooCanvasItem *GetRootItem ();
 
-  protected:
+  private:
     virtual void OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context);
     virtual void OnDrawPage (GtkPrintOperation *operation,
@@ -79,22 +54,6 @@ class CanvasModule : public Module
 
   private:
     GooCanvas *_canvas;
-
-    static void on_begin_print (GtkPrintOperation *operation,
-                                GtkPrintContext   *context,
-                                CanvasModule      *canvas);
-    static gboolean on_preview (GtkPrintOperation        *operation,
-                                GtkPrintOperationPreview *preview,
-                                GtkPrintContext          *context,
-                                GtkWindow                *parent,
-                                CanvasModule             *canvas);
-    static void on_draw_page (GtkPrintOperation *operation,
-                              GtkPrintContext   *context,
-                              gint               page_nr,
-                              CanvasModule      *canvas);
-    static void on_end_print (GtkPrintOperation *operation,
-                              GtkPrintContext   *context,
-                              CanvasModule      *canvas);
 };
 
 #endif

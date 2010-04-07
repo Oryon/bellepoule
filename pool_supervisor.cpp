@@ -81,23 +81,25 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
   // Classification filter
   {
     GSList *attr_list;
+    Filter *filter;
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
                                "attending",
                                "exported",
                                NULL);
-    _classification_filter = new Filter (attr_list);
+    filter = new Filter (attr_list);
 
-    _classification_filter->ShowAttribute ("rank");
-    _classification_filter->ShowAttribute ("name");
-    _classification_filter->ShowAttribute ("first_name");
-    _classification_filter->ShowAttribute ("club");
-    _classification_filter->ShowAttribute ("victories_ratio");
-    _classification_filter->ShowAttribute ("indice");
-    _classification_filter->ShowAttribute ("HS");
+    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("name");
+    filter->ShowAttribute ("first_name");
+    filter->ShowAttribute ("club");
+    filter->ShowAttribute ("victories_ratio");
+    filter->ShowAttribute ("indice");
+    filter->ShowAttribute ("HS");
 
-    SetClassificationFilter (_classification_filter);
+    SetClassificationFilter (filter);
+    filter->Release ();
   }
 }
 
@@ -105,7 +107,6 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 PoolSupervisor::~PoolSupervisor ()
 {
   Object::TryToRelease (_pool_allocator);
-  _classification_filter->Release ();
 }
 
 // --------------------------------------------------------------------------------

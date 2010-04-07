@@ -32,6 +32,8 @@ class Module : public virtual Object
                GtkToolbar *toolbar = NULL);
     void UnPlug ();
 
+    void Print ();
+
     void SelectAttributes ();
 
     void SetDataOwner (Object *data_owner);
@@ -45,8 +47,6 @@ class Module : public virtual Object
     GtkWidget *GetWidget (gchar *name);
 
     virtual void SetFilter (Filter *filter);
-
-    virtual void Print () {};
 
     virtual void OnAttrListUpdated () {};
 
@@ -74,6 +74,20 @@ class Module : public virtual Object
 
     virtual ~Module ();
 
+    virtual void OnDrawPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr);
+
+  private:
+    virtual void OnBeginPrint (GtkPrintOperation *operation,
+                               GtkPrintContext   *context) {};
+    virtual gboolean OnPreview (GtkPrintOperation        *operation,
+                                GtkPrintOperationPreview *preview,
+                                GtkPrintContext          *context,
+                                GtkWindow                *parent) {return TRUE;};
+    virtual void OnEndPrint (GtkPrintOperation *operation,
+                             GtkPrintContext   *context) {};
+
   private:
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;
@@ -82,6 +96,22 @@ class Module : public virtual Object
     Module             *_owner;
     GtkWidget          *_config_widget;
     Object             *_data_owner;
+
+    static void on_begin_print (GtkPrintOperation *operation,
+                                GtkPrintContext   *context,
+                                Module            *module);
+    static gboolean on_preview (GtkPrintOperation        *operation,
+                                GtkPrintOperationPreview *preview,
+                                GtkPrintContext          *context,
+                                GtkWindow                *parent,
+                                Module                   *module);
+    static void on_draw_page (GtkPrintOperation *operation,
+                              GtkPrintContext   *context,
+                              gint               page_nr,
+                              Module            *module);
+    static void on_end_print (GtkPrintOperation *operation,
+                              GtkPrintContext   *context,
+                              Module            *module);
 };
 
 #endif

@@ -24,8 +24,6 @@
 
 #include "canvas_module.hpp"
 
-#define VALUE_INIT {0,{{0}}}
-
 // --------------------------------------------------------------------------------
 CanvasModule::CanvasModule (gchar *glade_file,
                             gchar *root)
@@ -71,108 +69,6 @@ void CanvasModule::OnUnPlugged ()
     gtk_widget_destroy (GTK_WIDGET (_canvas));
     _canvas = NULL;
   }
-}
-
-// --------------------------------------------------------------------------------
-void CanvasModule::PutInTable (GooCanvasItem *table,
-                               GooCanvasItem *item,
-                               guint          row,
-                               guint          column)
-{
-  SetTableItemAttribute (item, "row", row);
-  SetTableItemAttribute (item, "column", column);
-  SetTableItemAttribute (item, "x-align", 0.0);
-  SetTableItemAttribute (item, "y-align", 0.0);
-}
-
-// --------------------------------------------------------------------------------
-void CanvasModule::SetTableItemAttribute (GooCanvasItem *item,
-                                          gchar         *attribute,
-                                          gdouble        value)
-{
-  GooCanvasItem *parent = goo_canvas_item_get_parent (item);
-
-  if (parent)
-  {
-    GValue gvalue = VALUE_INIT;
-
-    g_value_init (&gvalue, G_TYPE_DOUBLE);
-    g_value_set_double (&gvalue, value);
-    goo_canvas_item_set_child_property (parent, item, attribute, &gvalue);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void CanvasModule::SetTableItemAttribute (GooCanvasItem *item,
-                                          gchar         *attribute,
-                                          guint          value)
-{
-  GooCanvasItem *parent = goo_canvas_item_get_parent (item);
-
-  if (parent)
-  {
-    GValue gvalue = VALUE_INIT;
-
-    g_value_init (&gvalue, G_TYPE_UINT);
-    g_value_set_uint (&gvalue, value);
-    goo_canvas_item_set_child_property (parent, item, attribute, &gvalue);
-  }
-}
-
-// --------------------------------------------------------------------------------
-GooCanvasItem *CanvasModule::PutTextInTable (GooCanvasItem *table,
-                                             gchar         *text,
-                                             guint          row,
-                                             guint          column)
-{
-  GooCanvasItem *item;
-
-  item = goo_canvas_text_new (table,
-                              text,
-                              0, 0,
-                              -1,
-                              GTK_ANCHOR_NW,
-                              "font", "Sans 14px", NULL);
-
-  PutInTable (table,
-              item,
-              row, column);
-
-  return item;
-}
-
-// --------------------------------------------------------------------------------
-GooCanvasItem *CanvasModule::PutStockIconInTable (GooCanvasItem *table,
-                                                  gchar         *icon_name,
-                                                  guint          row,
-                                                  guint          column)
-{
-  GooCanvasItem *item;
-  GdkPixbuf     *pixbuf;
-
-  {
-    GtkWidget *image = gtk_image_new ();
-
-    g_object_ref_sink (image);
-    pixbuf = gtk_widget_render_icon (image,
-                                     icon_name,
-                                     GTK_ICON_SIZE_BUTTON,
-                                     NULL);
-    g_object_unref (image);
-  }
-
-  item = goo_canvas_image_new (table,
-                               pixbuf,
-                               0.0,
-                               0.0,
-                               NULL);
-  g_object_unref (pixbuf);
-
-  PutInTable (table,
-              item,
-              row, column);
-
-  return item;
 }
 
 // --------------------------------------------------------------------------------
@@ -228,56 +124,6 @@ void CanvasModule::WipeItem (GooCanvasItem *item)
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule::Print ()
-{
-  GtkPrintOperation *operation;
-  GtkPrintSettings  *settings;
-  GError            *error = NULL;
-
-  operation = gtk_print_operation_new ();
-
-  g_signal_connect (G_OBJECT (operation), "begin-print",
-                    G_CALLBACK (on_begin_print), this);
-  g_signal_connect (G_OBJECT (operation), "draw-page",
-                    G_CALLBACK (on_draw_page), this);
-  g_signal_connect (G_OBJECT (operation), "end-print",
-                    G_CALLBACK (on_end_print), this);
-  g_signal_connect (G_OBJECT (operation), "preview",
-                    G_CALLBACK (on_preview), this);
-
-  //gtk_print_operation_set_use_full_page (operation,
-  //TRUE);
-
-  //gtk_print_operation_set_unit (operation,
-  //GTK_UNIT_POINTS);
-
-  gtk_print_operation_run (operation,
-                           GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
-                           //GTK_PRINT_OPERATION_ACTION_PREVIEW,
-                           NULL,
-                           &error);
-
-  g_object_unref (operation);
-
-  if (error)
-  {
-    GtkWidget *dialog;
-
-    dialog = gtk_message_dialog_new (NULL,
-                                     GTK_DIALOG_DESTROY_WITH_PARENT,
-                                     GTK_MESSAGE_ERROR,
-                                     GTK_BUTTONS_CLOSE,
-                                     "%s", error->message);
-    g_error_free (error);
-
-    g_signal_connect (dialog, "response",
-                      G_CALLBACK (gtk_widget_destroy), NULL);
-
-    gtk_widget_show (dialog);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void CanvasModule::OnBeginPrint (GtkPrintOperation *operation,
                                  GtkPrintContext   *context)
 {
@@ -307,56 +153,67 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
                                GtkPrintContext   *context,
                                gint               page_nr)
 {
-  GooCanvasBounds  bounds;
-  gdouble          canvas_w;
-  gdouble          canvas_h;
-  gdouble          paper_w = gtk_print_context_get_width (context);
-  gdouble          paper_h = gtk_print_context_get_height (context);
-  cairo_t         *cr      = gtk_print_context_get_cairo_context (context);
-  gdouble          scale;
-
-  goo_canvas_item_get_bounds (GetRootItem (),
-                              &bounds);
-  canvas_w = bounds.x2 - bounds.x1;
-  canvas_h = bounds.y2 - bounds.y1;
-
-  // From canvas space -> printer space
+  if (GTK_WIDGET_DRAWABLE (GTK_WIDGET (_canvas)))
   {
-    gdouble canvas_dpi;
-    gdouble printer_dpi;
+    gdouble  scale;
+    gdouble  canvas_x;
+    gdouble  canvas_y;
+    gdouble  canvas_w;
+    gdouble  canvas_h;
+    gdouble  paper_w = gtk_print_context_get_width (context);
+    gdouble  paper_h = gtk_print_context_get_height (context);
+    cairo_t *cr      = gtk_print_context_get_cairo_context (context);;
 
-    g_object_get (G_OBJECT (GetCanvas ()),
-                  "resolution-x", &canvas_dpi,
-                  NULL);
-    printer_dpi = gtk_print_context_get_dpi_x (context);
+    cairo_save (cr);
+    {
+      GooCanvasBounds bounds;
 
-    scale = printer_dpi/canvas_dpi;
+      goo_canvas_item_get_bounds (GetRootItem (),
+                                  &bounds);
+      canvas_x = bounds.x1;
+      canvas_y = bounds.y1;
+      canvas_w = bounds.x2 - bounds.x1;
+      canvas_h = bounds.y2 - bounds.y1;
+    }
+
+    {
+      gdouble canvas_dpi;
+      gdouble printer_dpi;
+
+      g_object_get (G_OBJECT (GetCanvas ()),
+                    "resolution-x", &canvas_dpi,
+                    NULL);
+      printer_dpi = gtk_print_context_get_dpi_x (context);
+
+      scale = printer_dpi/canvas_dpi;
+    }
+
+    if (   (canvas_w * scale > paper_w)
+        || (canvas_h * scale > paper_h))
+    {
+      gdouble x_scale = paper_w / canvas_w;
+      gdouble y_scale = paper_h / canvas_h;
+
+      scale = MIN (x_scale, y_scale);
+    }
+
+    cairo_translate (cr,
+                     -canvas_x*scale,
+                     -canvas_y*scale + 7.0*paper_w/100.0);
+    cairo_scale (cr,
+                 scale,
+                 scale);
+
+    goo_canvas_render (GetCanvas (),
+                       cr,
+                       NULL,
+                       1.0);
+    cairo_restore (cr);
   }
 
-  if (   (canvas_w * scale > paper_w)
-      || (canvas_h * scale > paper_h))
-  {
-    gdouble x_scale = paper_w / canvas_w;
-    gdouble y_scale = paper_h / canvas_h;
-
-    scale = MIN (x_scale, y_scale);
-  }
-
-  cairo_translate (cr,
-                   -bounds.x1 * scale,
-                   -bounds.y1 * scale);
-
-  cairo_scale (cr,
-               scale,
-               scale);
-
-  goo_canvas_render (GetCanvas (),
-                     cr,
-                     NULL,
-                     1.0);
-
-  cairo_show_page (cr);
-  cairo_destroy (cr);
+  Module::OnDrawPage (operation,
+                      context,
+                      page_nr);
 }
 
 // --------------------------------------------------------------------------------
@@ -365,64 +222,26 @@ gboolean CanvasModule::OnPreview (GtkPrintOperation        *operation,
                                   GtkPrintContext          *context,
                                   GtkWindow                *parent)
 {
-  return TRUE;
-}
-
-// --------------------------------------------------------------------------------
-void CanvasModule::OnEndPrint (GtkPrintOperation *operation,
-                               GtkPrintContext   *context)
-{
-}
-
-// --------------------------------------------------------------------------------
-void CanvasModule::on_begin_print (GtkPrintOperation *operation,
-                                   GtkPrintContext   *context,
-                                   CanvasModule      *canvas)
-{
-  canvas->OnBeginPrint (operation,
-                        context);
-}
-
-// --------------------------------------------------------------------------------
-void CanvasModule::on_draw_page (GtkPrintOperation *operation,
-                                 GtkPrintContext   *context,
-                                 gint               page_nr,
-                                 CanvasModule      *canvas)
-{
-  canvas->OnDrawPage (operation,
-                      context,
-                      page_nr);
-}
-
-// --------------------------------------------------------------------------------
-gboolean CanvasModule::on_preview (GtkPrintOperation        *operation,
-                                   GtkPrintOperationPreview *preview,
-                                   GtkPrintContext          *context,
-                                   GtkWindow                *parent,
-                                   CanvasModule             *canvas)
-{
-  return canvas->OnPreview (operation,
-                            preview,
-                            context,
-                            parent);
-
-#if 0
   GtkPrintSettings *settings;
-  GtkWidget *window, *close, *page, *hbox, *vbox, *da;
-  gdouble width, height;
+  GtkWidget *window, *close, *page, *hbox, *vbox;
   cairo_t *cr;
-  Pool *pool = (Pool *) user_data;
-  GooCanvas *canvas = goo_canvas_item_get_canvas (pool->_root_item);
+
+  {
+    cairo_surface_t *surface;
+
+    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
+                                          300,
+                                          300);
+    cr = cairo_create (surface);
+  }
 
   settings = gtk_print_operation_get_print_settings (operation);
 
-  width = 200;
-  height = 300;
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  //gtk_window_set_transient_for (GTK_WINDOW (window), 
-  //GTK_WINDOW (main_window));
+
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (window), vbox);
+
   hbox = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), hbox,
                       FALSE, FALSE, 0);
@@ -432,26 +251,22 @@ gboolean CanvasModule::on_preview (GtkPrintOperation        *operation,
   close = gtk_button_new_from_stock (GTK_STOCK_CLOSE);
   gtk_box_pack_start (GTK_BOX (hbox), close, FALSE, FALSE, 0);
 
-  da = gtk_drawing_area_new ();
-  gtk_widget_set_size_request (GTK_WIDGET (da), width, height);
-  gtk_box_pack_start (GTK_BOX (vbox), da, TRUE, TRUE, 0);
+  gtk_print_context_set_cairo_context (context,
+                                       cr,
+                                       100.0,
+                                       100.0);
 
-  gtk_widget_set_double_buffered (da, FALSE);
-
-  gtk_widget_realize (da);
-
-  cr = gtk_print_context_get_cairo_context (context);
-  goo_canvas_render (canvas,
+  goo_canvas_render (_canvas,
                      cr,
                      NULL,
                      1.0);
 
   cairo_show_page (cr);
-  cairo_destroy (cr);
 
-  g_signal_connect (page, "value-changed", 
+#if 0
+  g_signal_connect (page, "value-changed",
                     G_CALLBACK (update_page), NULL);
-  g_signal_connect_swapped (close, "clicked", 
+  g_signal_connect_swapped (close, "clicked",
                             G_CALLBACK (gtk_widget_destroy), window);
 
   g_signal_connect (preview, "ready",
@@ -459,18 +274,17 @@ gboolean CanvasModule::on_preview (GtkPrintOperation        *operation,
   g_signal_connect (preview, "got-page-size",
                     G_CALLBACK (preview_got_page_size), NULL);
 
-  g_signal_connect (window, "destroy", 
+  g_signal_connect (window, "destroy",
                     G_CALLBACK (preview_destroy), NULL);
+#endif
 
   gtk_widget_show_all (window);
-#endif
+
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule::on_end_print (GtkPrintOperation *operation,
-                                 GtkPrintContext   *context,
-                                 CanvasModule      *canvas)
+void CanvasModule::OnEndPrint (GtkPrintOperation *operation,
+                               GtkPrintContext   *context)
 {
-  canvas->OnEndPrint (operation,
-                      context);
 }
