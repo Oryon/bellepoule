@@ -211,10 +211,7 @@ int main (int argc, char **argv)
 
     if (argc > 1)
     {
-      for (gint i = 1; i <= argc; i++)
-      {
-        tournament = new Tournament (g_strdup (argv[i]));
-      }
+      tournament = new Tournament (g_strdup (argv[1]));
     }
     else
     {

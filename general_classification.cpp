@@ -113,6 +113,17 @@ void GeneralClassification::OnFilterClicked ()
 }
 
 // --------------------------------------------------------------------------------
+void GeneralClassification::OnPrintPoolToolbuttonClicked ()
+{
+  Classification *classification = GetClassification ();
+
+  if (classification)
+  {
+    classification->Print ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_general_classification_filter_button_clicked (GtkWidget *widget,
                                                                                  Object    *owner)
 {
@@ -127,5 +138,5 @@ extern "C" G_MODULE_EXPORT void on_general_classification_print_toolbutton_click
 {
   GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-  g->Print ();
+  g->OnPrintPoolToolbuttonClicked ();
 }

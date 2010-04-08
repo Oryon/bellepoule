@@ -34,13 +34,15 @@ class GeneralClassification : public virtual Stage, public PlayersList
 
     void OnFilterClicked ();
 
+    void OnPrintPoolToolbuttonClicked ();
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
     static Stage *CreateInstance (StageClass *stage_class);
 
-    void GeneralClassification::Save (xmlTextWriter *xml_writer);
+    void Save (xmlTextWriter *xml_writer);
 
     void Display ();
 

@@ -460,23 +460,23 @@ void Contest::Init ()
 {
   GdkColor *color;
 
-  color = (GdkColor *) g_malloc (sizeof (color));
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#EED680", color); // accent yellow
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (color));
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#E0B6AF", color); // red hilight
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (color));
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#ADA7C8", color); // purple hilight
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (color));
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#83A67F", color); // green medium
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (color));
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#DF421E", color); // accent red
   _color_list = g_list_append (_color_list, color);
 }
