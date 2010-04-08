@@ -1119,12 +1119,12 @@ void Table::OnPrintPoolToolbuttonClicked ()
 
     if (classification)
     {
-      classification->Print ();
+      classification->Print ("Classement du tableau");
     }
   }
   else
   {
-    Print ();
+    Print ("Tableau");
   }
 }
 

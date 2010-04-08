@@ -226,13 +226,21 @@ void Module::ResetCursor ()
 }
 
 // --------------------------------------------------------------------------------
-void Module::Print ()
+void Module::Print (const gchar *job_name)
 {
   GtkPrintOperation *operation;
   GtkPrintSettings  *settings;
   GError            *error = NULL;
 
   operation = gtk_print_operation_new ();
+
+  {
+    gchar *full_name = g_strdup_printf ("BellePoule - %s", job_name);
+
+    gtk_print_operation_set_job_name (operation,
+                                      full_name);
+    g_free (full_name);
+  }
 
   g_signal_connect (G_OBJECT (operation), "begin-print",
                     G_CALLBACK (on_begin_print), this);

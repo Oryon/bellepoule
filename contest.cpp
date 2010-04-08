@@ -64,7 +64,7 @@ gchar *Contest::category_image[_nb_category] =
 {
   "Poussin",
   "Pupille",
-  "Bejamin",
+  "Benjamin",
   "Minime",
   "Cadet",
   "Junior",

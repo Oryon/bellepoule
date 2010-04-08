@@ -435,12 +435,12 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 
     if (classification)
     {
-      classification->Print ();
+      classification->Print ("Classement du tour de poule");
     }
   }
   else if (_displayed_pool)
   {
-    _displayed_pool->Print ();
+    _displayed_pool->Print ("Feuille de poule");
   }
 }
 

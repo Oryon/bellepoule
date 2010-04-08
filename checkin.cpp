@@ -995,5 +995,5 @@ extern "C" G_MODULE_EXPORT void on_checkin_print_toolbutton_clicked (GtkWidget *
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->Print ();
+  c->Print ("Liste des engagés");
 }

@@ -119,7 +119,7 @@ void GeneralClassification::OnPrintPoolToolbuttonClicked ()
 
   if (classification)
   {
-    classification->Print ();
+    classification->Print ("Classement général");
   }
 }
 

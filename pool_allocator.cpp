@@ -1102,7 +1102,7 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
 {
   PoolAllocator *c = dynamic_cast <PoolAllocator *> (owner);
 
-  c->Print ();
+  c->Print ("Répartition dans les poules");
 }
 
 // --------------------------------------------------------------------------------
