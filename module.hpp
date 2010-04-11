@@ -54,6 +54,9 @@ class Module : public virtual Object
     Filter  *_filter;
     Glade   *_glade;
 
+    static const gdouble PRINT_HEADER_HEIGHT = 10.0; // % of paper width
+    static const gdouble PRINT_FONT_HEIGHT   = 2.0;  // % of paper width
+
     static GKeyFile *_config_file;
 
     Module (gchar *glade_file,

@@ -125,6 +125,18 @@ int main (int argc, char **argv)
   {
     // g_mem_set_vtable (glib_mem_profiler_table);
 
+    gchar *prg_name = g_get_prgname ();
+
+    if (prg_name)
+    {
+      gchar *install_dirname = g_path_get_dirname (prg_name);
+      gchar *gtkrc;
+
+      gtkrc = g_strdup_printf ("%s/%s", install_dirname, "gtkrc");
+      gtk_rc_add_default_file (gtkrc);
+      g_free (gtkrc);
+    }
+
     gtk_init (&argc, &argv);
 
     Contest::Init               ();

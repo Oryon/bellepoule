@@ -686,11 +686,30 @@ Player *PlayersList::GetPlayer (const gchar *path_string)
 }
 
 // --------------------------------------------------------------------------------
+guint PlayersList::GetNbPlayerPerPage (GtkPrintContext *context)
+{
+  gdouble paper_w  = gtk_print_context_get_width (context);
+  gdouble paper_h  = gtk_print_context_get_height (context);
+  gdouble player_h = PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0;
+
+  return guint ((100.0*paper_h/paper_w - (PRINT_HEADER_HEIGHT+1.0+PRINT_FONT_HEIGHT))/player_h);
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context)
 {
+  guint nb_players  = g_slist_length (_player_list);
+  guint nb_per_page = GetNbPlayerPerPage (context);
+  guint nb_pages    = nb_players / nb_per_page;
+
+  if (nb_players % nb_per_page != 0)
+  {
+    nb_pages++;
+  }
+
   gtk_print_operation_set_n_pages (operation,
-                                   1);
+                                   nb_pages);
 }
 
 // --------------------------------------------------------------------------------
@@ -698,11 +717,20 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                               GtkPrintContext   *context,
                               gint               page_nr)
 {
+  cairo_t *cr = gtk_print_context_get_cairo_context (context);
+
+  Module::OnDrawPage (operation,
+                      context,
+                      page_nr);
+
+  cairo_save (cr);
   {
-    GSList        *current_player = _player_list;
+    guint          nb_per_page    = GetNbPlayerPerPage (context);
+    GSList        *current_player = g_slist_nth (_player_list, page_nr*nb_per_page);
     GooCanvas     *canvas         = Canvas::CreatePrinterCanvas (context);
     GooCanvasItem *table          = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
-                                                          "column-spacing", 2.0,
+                                                          "column-spacing", PRINT_FONT_HEIGHT,
+                                                          "row-spacing", PRINT_FONT_HEIGHT/3.0,
                                                           NULL);
 
     {
@@ -712,12 +740,37 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                                      &matrix);
       cairo_matrix_translate (&matrix,
                               1.0,
-                              7.0);
+                              PRINT_HEADER_HEIGHT+1.0);
       goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
                                      &matrix);
     }
 
-    for (guint i = 0; current_player != NULL; i++)
+    {
+      GSList *current_attr = _filter->GetSelectedAttrList ();
+
+      for (guint i = 0; current_attr != NULL; i++)
+      {
+        AttributeDesc *desc;
+
+        desc = (AttributeDesc *) current_attr->data;
+        if (desc)
+        {
+          GooCanvasItem *text;
+
+          text = Canvas::PutTextInTable (table,
+                                         desc->_user_name,
+                                         0,
+                                         i);
+          g_object_set (G_OBJECT (text),
+                        "font", "Sans Bold Italic 2px",
+                        NULL);
+          Canvas::SetTableItemAttribute (text, "x-align", 0.5);
+        }
+        current_attr = g_slist_next (current_attr);
+      }
+    }
+
+    for (guint i = 0; (i < nb_per_page) && (current_player != NULL); i++)
     {
       Player *player;
 
@@ -747,15 +800,42 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
 
           if (attr)
           {
-            GooCanvasItem *text;
+            GooCanvasItem *item;
 
-            text = Canvas::PutTextInTable (table,
-                                           attr->GetUserImage (),
-                                           i,
-                                           j);
-            g_object_set (G_OBJECT (text),
-                          "font", "Sans 2px",
-                          NULL);
+            if (desc->_type == G_TYPE_BOOLEAN)
+            {
+              if (attr->GetValue () != 0)
+              {
+                GooCanvasBounds bounds;
+                gdouble         h;
+                gdouble         paper_w = gtk_print_context_get_width (context);
+
+                item = Canvas::PutStockIconInTable (table,
+                                                    GTK_STOCK_APPLY,
+                                                    i+1, j);
+                goo_canvas_item_get_bounds (item,
+                                            &bounds);
+                h = bounds.y2-bounds.y1;
+
+                goo_canvas_item_set_simple_transform (item,
+                                                      0.0, 0.0,
+                                                      paper_w*(PRINT_FONT_HEIGHT/100.0)/h,
+                                                      0.0);
+              }
+            }
+            else
+            {
+              gchar *font = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+
+              item = Canvas::PutTextInTable (table,
+                                             attr->GetUserImage (),
+                                             i+1,
+                                             j);
+              g_object_set (G_OBJECT (item),
+                            "font", font,
+                            NULL);
+              g_free (font);
+            }
           }
           current_attr = g_slist_next (current_attr);
         }
@@ -768,16 +848,13 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                           context);
 
     goo_canvas_render (canvas,
-                       gtk_print_context_get_cairo_context (context),
+                       cr,
                        NULL,
                        1.0);
 
     gtk_widget_destroy (GTK_WIDGET (canvas));
   }
-
-  Module::OnDrawPage (operation,
-                      context,
-                      page_nr);
+  cairo_restore (cr);
 }
 
 // --------------------------------------------------------------------------------

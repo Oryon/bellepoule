@@ -234,6 +234,8 @@ void Module::Print (const gchar *job_name)
 
   operation = gtk_print_operation_new ();
 
+  g_object_set_data (G_OBJECT (operation), "job_name", (void *) job_name);
+
   {
     gchar *full_name = g_strdup_printf ("BellePoule - %s", job_name);
 

@@ -398,6 +398,14 @@ void Pool::OnPlugged ()
         y = cell_h / 2 + i * cell_h;
         image = GetPlayerImage (GetPlayer (i));
 
+        {
+          gchar *index = g_strdup_printf (" %d", i+1);
+
+          image = g_string_append (image,
+                                   index);
+          g_free (index);
+        }
+
         goo_canvas_text_new (grid_group,
                              image->str,
                              x, y, -1,
@@ -413,21 +421,19 @@ void Pool::OnPlugged ()
       {
         GooCanvasItem *goo_text;
         gint           x, y;
-        GString       *image;
+        gchar         *text;
 
         x = cell_w / 2 + i * cell_w;;
-        y = - 10;
-        image = GetPlayerImage (GetPlayer (i));
+        y = - 13;
+        text = g_strdup_printf ("%d", i+1);
 
         goo_text = goo_canvas_text_new (grid_group,
-                                        image->str,
+                                        text,
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
                                         NULL);
-        g_string_free (image,
-                       TRUE);
-        goo_canvas_item_rotate (goo_text, 315, x, y);
+        g_free (text);
       }
     }
 

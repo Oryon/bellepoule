@@ -821,6 +821,8 @@ void PoolAllocator::FillPoolTable (Pool *pool)
       Canvas::PutInTable (_main_table,
                           table,
                           row, column);
+      Canvas::SetTableItemAttribute (table, "x-expand", 1U);
+      Canvas::SetTableItemAttribute (table, "x-fill", 1U);
       pool->SetData (this, "table",
                      table);
     }

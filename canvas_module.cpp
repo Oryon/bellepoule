@@ -153,6 +153,13 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
                                GtkPrintContext   *context,
                                gint               page_nr)
 {
+  cairo_t *cr = gtk_print_context_get_cairo_context (context);
+
+  Module::OnDrawPage (operation,
+                      context,
+                      page_nr);
+
+  cairo_save (cr);
   if (GTK_WIDGET_DRAWABLE (GTK_WIDGET (_canvas)))
   {
     gdouble  scale;
@@ -162,9 +169,7 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
     gdouble  canvas_h;
     gdouble  paper_w = gtk_print_context_get_width (context);
     gdouble  paper_h = gtk_print_context_get_height (context);
-    cairo_t *cr      = gtk_print_context_get_cairo_context (context);;
 
-    cairo_save (cr);
     {
       GooCanvasBounds bounds;
 
@@ -199,7 +204,7 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
 
     cairo_translate (cr,
                      -canvas_x*scale,
-                     -canvas_y*scale + 7.0*paper_w/100.0);
+                     -canvas_y*scale + (PRINT_HEADER_HEIGHT+1.0)*paper_w/100.0);
     cairo_scale (cr,
                  scale,
                  scale);
@@ -208,12 +213,8 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
                        cr,
                        NULL,
                        1.0);
-    cairo_restore (cr);
   }
-
-  Module::OnDrawPage (operation,
-                      context,
-                      page_nr);
+  cairo_restore (cr);
 }
 
 // --------------------------------------------------------------------------------

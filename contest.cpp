@@ -848,7 +848,7 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
 
   goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
                        0.0, 0.0,
-                       100.0, 6.0,
+                       100.0, PRINT_HEADER_HEIGHT,
                        "stroke-color", "grey",
                        "fill-color", gdk_color_to_string ((GdkColor *) _color->data),
                        "line-width", 0.3,
@@ -885,6 +885,16 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                          "fill-color", "white",
                          "font", "Sans Bold 4px", NULL);
     g_free (text);
+  }
+
+  {
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         (const char *) g_object_get_data (G_OBJECT (operation), "job_name"),
+                         50.0, 7.5,
+                         -1.0,
+                         GTK_ANCHOR_CENTER,
+                         "fill-color", "black",
+                         "font", "Sans Bold 4px", NULL);
   }
 
   goo_canvas_render (canvas,

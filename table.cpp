@@ -782,8 +782,6 @@ gboolean Table::FillInNode (GNode *node,
                                                    0,
                                                    2);
       Canvas::SetTableItemAttribute (data->_player_item, "y-align", 0.5);
-      Canvas::SetTableItemAttribute (data->_player_item, "x-expand", 1U);
-      Canvas::SetTableItemAttribute (data->_player_item, "x-fill", 1U);
 
       g_string_free (string,
                      TRUE);

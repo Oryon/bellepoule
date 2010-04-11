@@ -41,7 +41,7 @@
 			<Add directory="C:\MinGW\include\pango-1.0" />
 			<Add directory="C:\MinGW\lib\gtk-2.0\include" />
 			<Add directory="C:\MinGW\include\atk-1.0" />
-			<Add directory="C:\MinGW\include\goocanvas-0.13\goocanvas" />
+			<Add directory="C:\MinGW\include\goocanvas-0.15\goocanvas" />
 		</Compiler>
 		<Linker>
 			<Add library="gtk-win32-2.0" />

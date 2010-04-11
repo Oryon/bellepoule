@@ -62,6 +62,7 @@ Name: "{app}\resources"; Attribs: hidden
 
 [Files]
 Source: "..\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "gtkrc"; DestDir: "{app}"; Flags: ignoreversion
 
 ;Exemple de fichiers
 Source: "..\Exemples_Fichiers_BellePoule\exemple.cotcot"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion

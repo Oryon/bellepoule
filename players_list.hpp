@@ -81,6 +81,8 @@ class PlayersList : public Module
     GtkListStore *_store;
     guint         _rights;
 
+    guint GetNbPlayerPerPage (GtkPrintContext *context);
+
     void SetColumn (guint          id,
                     AttributeDesc *desc,
                     gint           at);
