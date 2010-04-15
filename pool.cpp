@@ -47,7 +47,7 @@ Pool::Pool (Data  *max_score,
 
   _score_collector = NULL;
 
-  _name = g_strdup_printf ("pool #%02d", _number);
+  _name = g_strdup_printf ("Poule No %02d", _number);
 }
 
 // --------------------------------------------------------------------------------
@@ -680,6 +680,9 @@ void Pool::OnPlugged ()
                             match_table,
                             m/nb_column,
                             m%nb_column + 2*(m%nb_column) + 1);
+        Canvas::SetTableItemAttribute (match_table, "x-expand", 1U);
+        Canvas::SetTableItemAttribute (match_table, "x-fill", 1U);
+        Canvas::SetTableItemAttribute (match_table, "x-shrink", 1U);
       }
       goo_canvas_item_translate (match_main_table,
                                  bounds.x1,

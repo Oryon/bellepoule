@@ -39,6 +39,7 @@ class Table : public virtual Stage, public CanvasModule
     void OnSearchMatch ();
     void OnFilterClicked ();
     void OnPrintPoolToolbuttonClicked ();
+    void OnZoom (gdouble value);
 
   public:
     static const gchar *_class_name;

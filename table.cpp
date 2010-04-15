@@ -682,7 +682,7 @@ gboolean Table::FillInNode (GNode *node,
       data->_canvas_table = goo_canvas_table_new (table->_main_table,
                                                   "column-spacing", table->_level_spacing,
                                                   NULL);
-      Canvas::SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
+      //Canvas::SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
       Canvas::SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
 
       if (parent == NULL)
@@ -1145,6 +1145,7 @@ void Table::OnPlugged ()
 
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
                                      FALSE);
+
 }
 
 // --------------------------------------------------------------------------------
@@ -1543,6 +1544,13 @@ void Table::OnFilterClicked ()
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnZoom (gdouble value)
+{
+  goo_canvas_set_scale (GetCanvas (),
+                        value);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object    *owner)
 {
@@ -1594,4 +1602,14 @@ extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *wid
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnSearchMatch ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_zoom_scalebutton_value_changed (GtkWidget *widget,
+                                                                   gdouble    value,
+                                                                   Object    *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->OnZoom (value);
 }

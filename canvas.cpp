@@ -79,7 +79,7 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
                               0.0, 0.0,
                               -1.0,
                               GTK_ANCHOR_NW,
-                              "ellipsize", PANGO_ELLIPSIZE_END,
+                              //"ellipsize", PANGO_ELLIPSIZE_END,
                               "font", "Sans 14px", NULL);
   PutInTable (table,
               item,
@@ -87,6 +87,7 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
 
   SetTableItemAttribute (item, "x-expand", 1U);
   SetTableItemAttribute (item, "x-fill", 1U);
+  SetTableItemAttribute (item, "x-shrink", 1U);
 
   return item;
 }

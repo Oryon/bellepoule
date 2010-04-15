@@ -224,35 +224,6 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                 <property name="position">1</property>
               </packing>
             </child>
-            <child>
-              <object class="GtkHBox" id="hbox2">
-                <property name="visible">True</property>
-                <child>
-                  <object class="GtkLabel" id="label3">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">Qualified fencers (%)</property>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="qualified_fencer_spinbutton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
-                    <property name="adjustment">qualified_adjustment</property>
-                  </object>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="position">2</property>
-              </packing>
-            </child>
           </object>
         </child>
       </object>
@@ -262,28 +233,8 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
     <property name="visible">True</property>
     <property name="pixbuf">stock_scores.png</property>
   </object>
-  <object class="GtkSizeGroup" id="label_sizegroup">
-    <widgets>
-      <widget name="label3"/>
-      <widget name="label2"/>
-      <widget name="label4"/>
-    </widgets>
-  </object>
-  <object class="GtkSizeGroup" id="value_sizegroup">
-    <widgets>
-      <widget name="qualified_fencer_spinbutton"/>
-      <widget name="max_score_entry"/>
-      <widget name="name_entry"/>
-    </widgets>
-  </object>
-  <object class="GtkAdjustment" id="qualified_adjustment">
-    <property name="value">100</property>
-    <property name="lower">5</property>
-    <property name="upper">100</property>
-    <property name="step_increment">5</property>
-    <property name="page_increment">10</property>
-    <property name="page_size">10</property>
-  </object>
+  <object class="GtkSizeGroup" id="label_sizegroup"/>
+  <object class="GtkSizeGroup" id="value_sizegroup"/>
   <object class="GtkListStore" id="pool_liststore">
     <columns>
       <!-- column-name name -->

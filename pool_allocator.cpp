@@ -279,7 +279,7 @@ void PoolAllocator::FillCombobox ()
       size = (nb_players + nb_pool - i) / nb_pool;
 
       if (   (size >= 3)
-          && (size <= 11)
+          && (size <= 20)
           && (nb_pool * (size - 1) + i == nb_players))
       {
         {
@@ -790,9 +790,15 @@ void PoolAllocator::FillPoolTable (Pool *pool)
     return;
   }
 
+  GooCanvasItem *item;
   GooCanvasItem *table      = (GooCanvasItem *) pool->GetData (this, "table");
   GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetData (this, "focus_rectangle");
-  GooCanvasItem *item;
+  GSList *selected_attr     = NULL;
+
+  if (_filter)
+  {
+    selected_attr = _filter->GetSelectedAttrList ();
+  }
 
   if (table)
   {
@@ -821,7 +827,7 @@ void PoolAllocator::FillPoolTable (Pool *pool)
       Canvas::PutInTable (_main_table,
                           table,
                           row, column);
-      Canvas::SetTableItemAttribute (table, "x-expand", 1U);
+      //Canvas::SetTableItemAttribute (table, "x-expand", 1U);
       Canvas::SetTableItemAttribute (table, "x-fill", 1U);
       pool->SetData (this, "table",
                      table);
@@ -863,17 +869,18 @@ void PoolAllocator::FillPoolTable (Pool *pool)
                     "font", "Sans bold 18px",
                     NULL);
     }
+
+    Canvas::PutInTable (table,
+                        name_table,
+                        0, 0);
+    Canvas::SetTableItemAttribute (name_table, "columns", g_slist_length (selected_attr));
+    //Canvas::SetTableItemAttribute (name_table, "x-expand", 1U);
+    Canvas::SetTableItemAttribute (name_table, "x-fill", 1U);
   }
 
   for (guint p = 0; p < pool->GetNbPlayers (); p++)
   {
     Player *player = pool->GetPlayer (p);
-    GSList *selected_attr = NULL;
-
-    if (_filter)
-    {
-      selected_attr = _filter->GetSelectedAttrList ();
-    }
 
     if (player && selected_attr)
     {
