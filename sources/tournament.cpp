@@ -40,7 +40,7 @@ Tournament::Tournament (gchar *filename)
     gtk_widget_hide (_glade->GetWidget ("notebook"));
   }
 
-#ifdef DEBUG
+#if 0
   if (filename == NULL)
   {
     gchar *current_dir = g_get_current_dir ();

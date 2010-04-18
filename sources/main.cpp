@@ -132,7 +132,7 @@ int main (int argc, char **argv)
       gchar *install_dirname = g_path_get_dirname (prg_name);
       gchar *gtkrc;
 
-      gtkrc = g_strdup_printf ("%s/%s", install_dirname, "gtkrc");
+      gtkrc = g_strdup_printf ("%s/resources/gtkrc", install_dirname);
       gtk_rc_add_default_file (gtkrc);
       g_free (gtkrc);
     }

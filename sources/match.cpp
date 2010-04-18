@@ -33,6 +33,8 @@ Match::Match (Data *max_score)
   _A_is_known = FALSE;
   _B_is_known = FALSE;
 
+  _number = -1;
+
   _A_score = new Score (max_score);
   _B_score = new Score (max_score);
 }
@@ -50,6 +52,8 @@ Match::Match  (Player *A,
 
   _A_is_known = TRUE;
   _B_is_known = TRUE;
+
+  _number = -1;
 
   _A_score = new Score (max_score);
   _B_score = new Score (max_score);
@@ -280,4 +284,16 @@ void Match::CleanScore ()
 {
   _A_score->Clean ();
   _B_score->Clean ();
+}
+
+// --------------------------------------------------------------------------------
+void Match::SetNumber (gint number)
+{
+  _number = number;
+}
+
+// --------------------------------------------------------------------------------
+gint Match::GetNumber ()
+{
+  return _number;
 }

@@ -288,9 +288,20 @@ void Pool::OnPlugged ()
 
       match = (Match *) g_slist_nth_data (_match_list, i);
       _score_collector->RemoveCollectingPoints (match);
+
+      match = GetMatch (i);
+      match->SetNumber (i);
     }
 
     _score_collector->Release ();
+  }
+
+  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  {
+    Match *match;
+
+    match = GetMatch (i);
+    match->SetNumber (i+1);
   }
 
   _score_collector = new ScoreCollector (this,
@@ -345,8 +356,7 @@ void Pool::OnPlugged ()
               Player *B = GetPlayer (j);
               Match  *match;
 
-              match = GetMatch (A,
-                                B);
+              match = GetMatch (A, B);
 
               // Text
               {
@@ -615,7 +625,7 @@ void Pool::OnPlugged ()
         match = GetMatch (m);
 
         {
-          gchar *text = g_strdup_printf ("%d", m+1);
+          gchar *text = g_strdup_printf ("M%02d", match->GetNumber ());
 
           text_item = Canvas::PutTextInTable (match_main_table,
                                               text,

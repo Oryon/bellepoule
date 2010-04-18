@@ -1145,7 +1145,6 @@ void Table::OnPlugged ()
 
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
                                      FALSE);
-
 }
 
 // --------------------------------------------------------------------------------

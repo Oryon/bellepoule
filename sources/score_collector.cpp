@@ -118,21 +118,52 @@ void ScoreCollector::Refresh (Match *match)
     {
       GooCanvasItem *score_text;
       Score         *score;
+      gchar         *score_image;
 
-      score      = match->GetScore (match->GetPlayerA ());
-      score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
-      g_object_set (score_text,
-                    "text",
-                    score->GetImage (), NULL);
+      score       = match->GetScore (match->GetPlayerA ());
+      score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+      score_image = score->GetImage ();
+
+      if ((score_image[0] == 0) && (match->GetNumber () >= 0))
+      {
+        score_image = g_strdup_printf ("M%02d", match->GetNumber ());
+        g_object_set (score_text,
+                      "text", score_image,
+                      "fill-color", "GainsBoro",
+                      NULL);
+        g_free (score_image);
+      }
+      else
+      {
+        g_object_set (score_text,
+                      "text", score_image,
+                      "fill-color", "black",
+                      NULL);
+      }
 
       goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
       if (goo_rect)
       {
-        score      = match->GetScore (match->GetPlayerB ());
-        score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
-        g_object_set (score_text,
-                      "text",
-                      score->GetImage (), NULL);
+        score       = match->GetScore (match->GetPlayerB ());
+        score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
+        score_image = score->GetImage ();
+
+        if ((score_image[0] == 0) && (match->GetNumber () >= 0))
+        {
+          score_image = g_strdup_printf ("M%02d", match->GetNumber ());
+          g_object_set (score_text,
+                        "text", score_image,
+                        "fill-color", "GainsBoro",
+                        NULL);
+          g_free (score_image);
+        }
+        else
+        {
+          g_object_set (score_text,
+                        "text", score_image,
+                        "fill-color", "black",
+                        NULL);
+        }
       }
 
       SetMatchColor (match,
@@ -445,11 +476,25 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
 
     if (score_text)
     {
-      Score *score = match->GetScore (player);
+      Score *score       = match->GetScore (player);
+      gchar *score_image = score->GetImage ();
 
-      g_object_set (score_text,
-                    "text",
-                    score->GetImage (), NULL);
+      if ((score_image[0] == 0) && (match->GetNumber () >= 0))
+      {
+        score_image = g_strdup_printf ("M%02d", match->GetNumber ());
+        g_object_set (score_text,
+                      "text", score_image,
+                      "fill-color", "GainsBoro",
+                      NULL);
+        g_free (score_image);
+      }
+      else
+      {
+        g_object_set (score_text,
+                      "text", score_image,
+                      "fill-color", "black",
+                      NULL);
+      }
     }
 
     if (_client && _on_new_score)
