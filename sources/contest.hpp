@@ -36,6 +36,7 @@ class Contest : public Module
     static Contest *Create ();
 
     Contest *Duplicate ();
+    void LatchPlayerList ();
 
     void AttachTo (GtkNotebook *to);
     void Save ();

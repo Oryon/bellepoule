@@ -196,6 +196,8 @@ Checkin::Checkin (StageClass *stage_class)
       }
     }
   }
+
+  RefreshAttendingDisplay ();
 }
 
 // --------------------------------------------------------------------------------
@@ -248,7 +250,7 @@ void Checkin::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, _xml_class_name) != 0)
       {
-        RefreshData ();
+        OnListChanged ();
         return;
       }
     }
@@ -288,6 +290,7 @@ void Checkin::Display ()
 // --------------------------------------------------------------------------------
 void Checkin::OnListChanged ()
 {
+  RefreshAttendingDisplay ();
   UpdateRanking ();
 }
 
@@ -550,7 +553,7 @@ void Checkin::Import ()
 
   gtk_widget_destroy (chooser);
 
-  RefreshData ();
+  OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------
@@ -795,17 +798,10 @@ void Checkin::on_add_button_clicked ()
 
   gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
                                                         0));
-
   Add (player);
-  player->Release ();
-  RefreshData ();
-}
 
-// --------------------------------------------------------------------------------
-void Checkin::RefreshData ()
-{
-  RefreshAttendingDisplay ();
-  UpdateRanking ();
+  player->Release ();
+  OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------
@@ -835,8 +831,6 @@ void Checkin::OnPlayerRemoved (Player *player)
   {
     _attendings--;
   }
-
-  RefreshData ();
 }
 
 // --------------------------------------------------------------------------------
@@ -855,7 +849,7 @@ void Checkin::OnAttendingChanged (Player    *player,
     checkin->_attendings--;
   }
 
-  checkin->RefreshData ();
+  checkin->RefreshAttendingDisplay ();
 }
 
 // --------------------------------------------------------------------------------

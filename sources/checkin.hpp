@@ -34,11 +34,13 @@ class Checkin : public virtual Stage, public PlayersList
 
     Checkin (StageClass *stage_class);
 
-    void RefreshData ();
-
     void Add (Player *player);
 
     void UseInitialRank ();
+
+    void UpdateRanking ();
+
+    void OnListChanged ();
 
   public:
     void on_add_player_button_clicked ();
@@ -75,10 +77,6 @@ class Checkin : public virtual Stage, public PlayersList
     void Display ();
 
     gboolean IsOver ();
-
-    void UpdateRanking ();
-
-    void OnListChanged ();
 
     void Monitor (Player *player);
 

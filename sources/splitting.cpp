@@ -174,6 +174,7 @@ void Splitting::OnLocked (Reason reason)
 
       current = g_slist_next (current);
     }
+    contest->LatchPlayerList ();
   }
 }
 

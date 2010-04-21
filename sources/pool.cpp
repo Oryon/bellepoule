@@ -625,10 +625,8 @@ void Pool::OnPlugged ()
         match = GetMatch (m);
 
         {
-          gchar *text = g_strdup_printf ("M%02d", match->GetNumber ());
-
           text_item = Canvas::PutTextInTable (match_main_table,
-                                              text,
+                                              match->GetName (),
                                               m/nb_column,
                                               m%nb_column + 2*(m%nb_column));
           g_object_set (G_OBJECT (text_item),

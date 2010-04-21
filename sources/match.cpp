@@ -33,7 +33,7 @@ Match::Match (Data *max_score)
   _A_is_known = FALSE;
   _B_is_known = FALSE;
 
-  _number = -1;
+  _name = g_strdup ("");
 
   _A_score = new Score (max_score);
   _B_score = new Score (max_score);
@@ -53,7 +53,7 @@ Match::Match  (Player *A,
   _A_is_known = TRUE;
   _B_is_known = TRUE;
 
-  _number = -1;
+  _name = g_strdup ("");
 
   _A_score = new Score (max_score);
   _B_score = new Score (max_score);
@@ -64,6 +64,8 @@ Match::~Match ()
 {
   Object::TryToRelease (_A_score);
   Object::TryToRelease (_B_score);
+
+  g_free (_name);
 }
 
 // --------------------------------------------------------------------------------
@@ -289,11 +291,12 @@ void Match::CleanScore ()
 // --------------------------------------------------------------------------------
 void Match::SetNumber (gint number)
 {
-  _number = number;
+  g_free (_name);
+  _name = g_strdup_printf ("M%d", number);
 }
 
 // --------------------------------------------------------------------------------
-gint Match::GetNumber ()
+gchar *Match::GetName ()
 {
-  return _number;
+  return _name;
 }

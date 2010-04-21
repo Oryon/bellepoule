@@ -40,18 +40,6 @@ Tournament::Tournament (gchar *filename)
     gtk_widget_hide (_glade->GetWidget ("notebook"));
   }
 
-#if 0
-  if (filename == NULL)
-  {
-    gchar *current_dir = g_get_current_dir ();
-
-    filename = g_build_filename (current_dir,
-                                 "Exemples_Fichiers_BellePoule", "minimes_bretagne.cotcot",
-                                 NULL);
-    g_free (current_dir);
-  }
-#endif
-
   if (filename)
   {
     Contest *contest;
@@ -224,26 +212,6 @@ void Tournament::OnOpen (gchar *current_folder)
                                  "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                  filter);
-  }
-
-  {
-    gchar *prg_name = g_get_prgname ();
-
-    if (prg_name)
-    {
-      gchar *install_dirname = g_path_get_dirname (prg_name);
-
-      if (install_dirname)
-      {
-        gchar *example_dirname = g_strdup_printf ("%s/Exemples_Fichiers_BellePoule", install_dirname);
-
-        gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (chooser),
-                                              example_dirname,
-                                              NULL);
-        g_free (example_dirname);
-        g_free (install_dirname);
-      }
-    }
   }
 
   if (current_folder && (g_file_test (current_folder,

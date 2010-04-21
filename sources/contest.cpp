@@ -279,7 +279,6 @@ void Contest::AddPlayer (Player *player,
       player->SetAttributeValue (&rank_attr,
                                  rank);
       checkin->UseInitialRank ();
-      checkin->RefreshData ();
     }
   }
 }
@@ -338,6 +337,19 @@ Contest *Contest::Duplicate ()
   contest->_tournament = _tournament;
 
   return contest;
+}
+
+// --------------------------------------------------------------------------------
+void Contest::LatchPlayerList ()
+{
+  Checkin *checkin = dynamic_cast <Checkin *> (_schedule->GetStage (0));
+
+  if (checkin)
+  {
+    Player::AttributeId  rank_attr ("previous_stage_rank", checkin);
+
+    checkin->OnListChanged ();
+  }
 }
 
 // --------------------------------------------------------------------------------

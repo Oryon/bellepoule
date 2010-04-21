@@ -124,14 +124,12 @@ void ScoreCollector::Refresh (Match *match)
       score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
       score_image = score->GetImage ();
 
-      if ((score_image[0] == 0) && (match->GetNumber () >= 0))
+      if (score_image[0] == 0)
       {
-        score_image = g_strdup_printf ("M%02d", match->GetNumber ());
         g_object_set (score_text,
-                      "text", score_image,
+                      "text", match->GetName (),
                       "fill-color", "GainsBoro",
                       NULL);
-        g_free (score_image);
       }
       else
       {
@@ -148,14 +146,12 @@ void ScoreCollector::Refresh (Match *match)
         score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
         score_image = score->GetImage ();
 
-        if ((score_image[0] == 0) && (match->GetNumber () >= 0))
+        if (score_image[0] == 0)
         {
-          score_image = g_strdup_printf ("M%02d", match->GetNumber ());
           g_object_set (score_text,
-                        "text", score_image,
+                        "text", match->GetName (),
                         "fill-color", "GainsBoro",
                         NULL);
-          g_free (score_image);
         }
         else
         {
@@ -479,14 +475,12 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
       Score *score       = match->GetScore (player);
       gchar *score_image = score->GetImage ();
 
-      if ((score_image[0] == 0) && (match->GetNumber () >= 0))
+      if (score_image[0] == 0)
       {
-        score_image = g_strdup_printf ("M%02d", match->GetNumber ());
         g_object_set (score_text,
-                      "text", score_image,
+                      "text", match->GetName (),
                       "fill-color", "GainsBoro",
                       NULL);
-        g_free (score_image);
       }
       else
       {

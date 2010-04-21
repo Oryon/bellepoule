@@ -58,7 +58,7 @@ class Match : public Object
 
     void SetNumber (gint number);
 
-    gint GetNumber ();
+    gchar *GetName ();
 
   private:
     Data     *_max_score;
@@ -68,7 +68,7 @@ class Match : public Object
     gboolean  _B_is_known;
     Score    *_A_score;
     Score    *_B_score;
-    gint      _number;
+    gchar    *_name;
 
     gboolean ScoreIsNumber (gchar *score);
 

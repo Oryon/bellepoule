@@ -245,35 +245,22 @@ void PlayersList::OnCellToggled (gchar         *path_string,
                                  gboolean       is_active,
                                  AttributeDesc *desc)
 {
-  GtkTreePath      *toggeled_path = gtk_tree_path_new_from_string (path_string);
-  GtkTreeSelection *selection     = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
+  GtkTreePath         *toggeled_path    = gtk_tree_path_new_from_string (path_string);
+  GSList              *selected_players = GetSelectedPlayers ();
+  Player::AttributeId *attr_id          = Player::AttributeId::CreateAttributeId (desc, this);
 
-  if (gtk_tree_selection_path_is_selected (selection,
-                                           toggeled_path))
+  if (selected_players)
   {
-    GList *selection_list;
+    GSList *current_player = selected_players;
 
-    selection_list = gtk_tree_selection_get_selected_rows (selection,
-                                                           NULL);
-
-    for (guint i = 0; i < g_list_length (selection_list); i++)
+    while (current_player)
     {
       Player *p;
 
-      {
-        GtkTreePath *tree_path = (GtkTreePath *) g_list_nth_data (selection_list, i);
-        gchar       *path = gtk_tree_path_to_string (tree_path);
-
-        p = GetPlayer (path);
-
-        g_free (path);
-        gtk_tree_path_free (tree_path);
-      }
+      p = (Player *) current_player->data;
 
       if (p)
       {
-        Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, this);
-
         if (is_active)
         {
           p->SetAttributeValue (attr_id,
@@ -284,13 +271,13 @@ void PlayersList::OnCellToggled (gchar         *path_string,
           p->SetAttributeValue (attr_id,
                                 1);
         }
-        attr_id->Release ();
 
         Update (p);
       }
+      current_player = g_slist_next (current_player);
     }
 
-    g_list_free (selection_list);
+    g_slist_free (selected_players);
   }
   else
   {
@@ -298,8 +285,6 @@ void PlayersList::OnCellToggled (gchar         *path_string,
 
     if (p)
     {
-      Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, this);
-
       if (is_active)
       {
         p->SetAttributeValue (attr_id,
@@ -310,11 +295,11 @@ void PlayersList::OnCellToggled (gchar         *path_string,
         p->SetAttributeValue (attr_id,
                               1);
       }
-      attr_id->Release ();
 
       Update (p);
     }
   }
+  attr_id->Release ();
   gtk_tree_path_free (toggeled_path);
 
   OnListChanged ();

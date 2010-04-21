@@ -13,7 +13,7 @@
             <child>
               <object class="GtkToolButton" id="general_classification_filter_button">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Filtre</property>
+                <property name="label" translatable="yes">Données</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_general_classification_filter_button_clicked"/>
               </object>
