@@ -50,6 +50,9 @@ class Canvas
 
     static GooCanvas *CreatePrinterCanvas (GtkPrintContext *context);
 
+    static gdouble GetScaleToFit (GooCanvasItem   *item,
+                                  GtkPrintContext *context);
+
     static void FitToContext (GooCanvasItem   *item,
                               GtkPrintContext *context);
 };

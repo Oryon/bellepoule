@@ -18,6 +18,7 @@
 #define players_list_hpp
 
 #include <gtk/gtk.h>
+#include <goocanvas.h>
 
 #include "module.hpp"
 #include "attribute.hpp"
@@ -64,6 +65,15 @@ class PlayersList : public Module
     virtual void OnListChanged () {};
 
   private:
+    void PrintTableHeader (GooCanvasItem *table);
+    void PrintPlayer (GooCanvasItem   *table,
+                      GtkPrintContext *context,
+                      Player          *player,
+                      guint            row);
+    void GetPrintScale (GtkPrintContext *context,
+                        gdouble         *scale,
+                        gdouble         *w,
+                        gdouble         *h);
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
     void OnDrawPage (GtkPrintOperation *operation,
@@ -80,8 +90,9 @@ class PlayersList : public Module
     GtkWidget    *_tree_view;
     GtkListStore *_store;
     guint         _rights;
-
-    guint GetNbPlayerPerPage (GtkPrintContext *context);
+    guint         _nb_player_per_page;
+    gdouble       _print_scale;
+    guint         _nb_pages;
 
     void SetColumn (guint          id,
                     AttributeDesc *desc,

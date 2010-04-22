@@ -866,17 +866,12 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                        "line-width", 0.3,
                        NULL);
 
-  {
-    char *text = g_strdup_printf ("%s\n%s", _organizer, _name);
-
-    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                         text,
-                         1.0, 3.0,
-                         -1.0,
-                         GTK_ANCHOR_W,
-                         "font", "Sans 2px", NULL);
-    g_free (text);
-  }
+  goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                       _name,
+                       1.0, 3.0,
+                       -1.0,
+                       GTK_ANCHOR_W,
+                       "font", "Sans 2px", NULL);
 
   {
     char *text = g_strdup_printf ("%s - %s - %s", weapon_image[_weapon],

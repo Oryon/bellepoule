@@ -671,30 +671,207 @@ Player *PlayersList::GetPlayer (const gchar *path_string)
 }
 
 // --------------------------------------------------------------------------------
-guint PlayersList::GetNbPlayerPerPage (GtkPrintContext *context)
-{
-  gdouble paper_w  = gtk_print_context_get_width (context);
-  gdouble paper_h  = gtk_print_context_get_height (context);
-  gdouble player_h = PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0;
-
-  return guint ((100.0*paper_h/paper_w - (PRINT_HEADER_HEIGHT+1.0+PRINT_FONT_HEIGHT))/player_h);
-}
-
-// --------------------------------------------------------------------------------
 void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context)
 {
-  guint nb_players  = g_slist_length (_player_list);
-  guint nb_per_page = GetNbPlayerPerPage (context);
-  guint nb_pages    = nb_players / nb_per_page;
+  guint   nb_players  = g_slist_length (_player_list);
+  gdouble canvas_w;
+  gdouble canvas_h;
 
-  if (nb_players % nb_per_page != 0)
+  GetPrintScale (context,
+                 &_print_scale,
+                 &canvas_w,
+                 &canvas_h);
+
   {
-    nb_pages++;
+    gdouble paper_w   = gtk_print_context_get_width (context);
+    gdouble paper_h   = gtk_print_context_get_height (context);
+    gdouble free_area = (paper_h - (PRINT_HEADER_HEIGHT+1.0)*paper_w/100.0);
+
+    _nb_player_per_page = guint (nb_players * free_area/_print_scale / canvas_h) - 1;
   }
 
-  gtk_print_operation_set_n_pages (operation,
-                                   nb_pages);
+  {
+    _nb_pages = nb_players / _nb_player_per_page;
+
+    if (nb_players % _nb_player_per_page != 0)
+    {
+      _nb_pages++;
+    }
+
+    gtk_print_operation_set_n_pages (operation,
+                                     _nb_pages);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::PrintTableHeader (GooCanvasItem *table)
+{
+  GSList *current_attr = _filter->GetSelectedAttrList ();
+
+  for (guint i = 0; current_attr != NULL; i++)
+  {
+    AttributeDesc *desc;
+
+    desc = (AttributeDesc *) current_attr->data;
+    if (desc)
+    {
+      gchar         *font = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
+      GooCanvasItem *text;
+
+      text = Canvas::PutTextInTable (table,
+                                     desc->_user_name,
+                                     0,
+                                     i);
+      g_object_set (G_OBJECT (text),
+                    "font", font,
+                    NULL);
+      Canvas::SetTableItemAttribute (text, "x-align", 0.5);
+
+      g_free (font);
+    }
+    current_attr = g_slist_next (current_attr);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::PrintPlayer (GooCanvasItem   *table,
+                               GtkPrintContext *context,
+                               Player          *player,
+                               guint            row)
+{
+  GSList *current_attr = _filter->GetSelectedAttrList ();
+
+  for (guint j = 0; current_attr != NULL; j++)
+  {
+    AttributeDesc       *desc;
+    Attribute           *attr;
+    Player::AttributeId *attr_id;
+
+    desc = (AttributeDesc *) current_attr->data;
+    if (desc->_scope == AttributeDesc::GLOBAL)
+    {
+      attr_id = new Player::AttributeId (desc->_xml_name);
+    }
+    else
+    {
+      attr_id = new Player::AttributeId (desc->_xml_name,
+                                         GetDataOwner ());
+    }
+
+    attr = player->GetAttribute (attr_id);
+    attr_id->Release ();
+
+    if (attr)
+    {
+      GooCanvasItem *item;
+
+      if (desc->_type == G_TYPE_BOOLEAN)
+      {
+        if (attr->GetValue () != 0)
+        {
+          GooCanvasBounds bounds;
+          gdouble         h;
+          gdouble         paper_w = gtk_print_context_get_width (context);
+
+          item = Canvas::PutStockIconInTable (table,
+                                              GTK_STOCK_APPLY,
+                                              row, j);
+          goo_canvas_item_get_bounds (item,
+                                      &bounds);
+          h = bounds.y2-bounds.y1;
+
+          goo_canvas_item_set_simple_transform (item,
+                                                0.0, 0.0,
+                                                paper_w*(PRINT_FONT_HEIGHT/100.0)/h,
+                                                0.0);
+        }
+      }
+      else
+      {
+        gchar *font = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+
+        item = Canvas::PutTextInTable (table,
+                                       attr->GetUserImage (),
+                                       row,
+                                       j);
+        g_object_set (G_OBJECT (item),
+                      "font", font,
+                      NULL);
+        g_free (font);
+      }
+    }
+    current_attr = g_slist_next (current_attr);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::GetPrintScale (GtkPrintContext *context,
+                                 gdouble         *scale,
+                                 gdouble         *canvas_w,
+                                 gdouble         *canvas_h)
+{
+  GSList        *current_player;
+  GooCanvas     *canvas = Canvas::CreatePrinterCanvas (context);
+  GooCanvasItem *table  = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
+                                                "column-spacing", PRINT_FONT_HEIGHT,
+                                                "row-spacing", PRINT_FONT_HEIGHT/3.0,
+                                                NULL);
+
+  PrintTableHeader (table);
+
+  current_player = _player_list;
+  for (guint i = 0; current_player != NULL; i++)
+  {
+    Player *player;
+
+    player = (Player *) current_player->data;
+
+    PrintPlayer (table,
+                 context,
+                 player,
+                 i+1);
+
+    current_player = g_slist_next (current_player);
+  }
+
+  {
+    gdouble paper_w = gtk_print_context_get_width (context);
+
+    {
+      GooCanvasBounds bounds;
+
+      goo_canvas_item_get_bounds (goo_canvas_get_root_item (canvas),
+                                  &bounds);
+      *canvas_w = bounds.x2 - bounds.x1;
+      *canvas_h = bounds.y2 - bounds.y1;
+    }
+
+    {
+      gdouble canvas_dpi;
+      gdouble printer_dpi;
+
+      g_object_get (canvas,
+                    "resolution-x", &canvas_dpi,
+                    NULL);
+      printer_dpi = gtk_print_context_get_dpi_x (context);
+
+      *scale = printer_dpi/canvas_dpi;
+    }
+
+    if ((*canvas_w) * (*scale) > paper_w)
+    {
+      gdouble x_scale = *scale * paper_w/(*canvas_w);
+
+      *scale = x_scale;
+    }
+    else
+    {
+      *scale = 1.0;
+    }
+  }
+
+  gtk_widget_destroy (GTK_WIDGET (canvas));
 }
 
 // --------------------------------------------------------------------------------
@@ -708,10 +885,30 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                       context,
                       page_nr);
 
+  {
+    GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
+    char      *text   = g_strdup_printf ("Page %d/%d", page_nr+1, _nb_pages);
+
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         text,
+                         98.0, 9.0,
+                         -1.0,
+                         GTK_ANCHOR_SE,
+                         "fill-color", "black",
+                         "font", "Sans Bold 2px", NULL);
+    g_free (text);
+
+    goo_canvas_render (canvas,
+                       gtk_print_context_get_cairo_context (context),
+                       NULL,
+                       1.0);
+
+    gtk_widget_destroy (GTK_WIDGET (canvas));
+  }
+
   cairo_save (cr);
   {
-    guint          nb_per_page    = GetNbPlayerPerPage (context);
-    GSList        *current_player = g_slist_nth (_player_list, page_nr*nb_per_page);
+    GSList        *current_player = g_slist_nth (_player_list, page_nr*_nb_player_per_page);
     GooCanvas     *canvas         = Canvas::CreatePrinterCanvas (context);
     GooCanvasItem *table          = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
                                                           "column-spacing", PRINT_FONT_HEIGHT,
@@ -730,107 +927,35 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                                      &matrix);
     }
 
-    {
-      GSList *current_attr = _filter->GetSelectedAttrList ();
+    PrintTableHeader (table);
 
-      for (guint i = 0; current_attr != NULL; i++)
-      {
-        AttributeDesc *desc;
-
-        desc = (AttributeDesc *) current_attr->data;
-        if (desc)
-        {
-          GooCanvasItem *text;
-
-          text = Canvas::PutTextInTable (table,
-                                         desc->_user_name,
-                                         0,
-                                         i);
-          g_object_set (G_OBJECT (text),
-                        "font", "Sans Bold Italic 2px",
-                        NULL);
-          Canvas::SetTableItemAttribute (text, "x-align", 0.5);
-        }
-        current_attr = g_slist_next (current_attr);
-      }
-    }
-
-    for (guint i = 0; (i < nb_per_page) && (current_player != NULL); i++)
+    for (guint i = 0; (i < _nb_player_per_page) && (current_player != NULL); i++)
     {
       Player *player;
 
       player = (Player *) current_player->data;
-      {
-        GSList *current_attr = _filter->GetSelectedAttrList ();
 
-        for (guint j = 0; current_attr != NULL; j++)
-        {
-          AttributeDesc       *desc;
-          Attribute           *attr;
-          Player::AttributeId *attr_id;
-
-          desc = (AttributeDesc *) current_attr->data;
-          if (desc->_scope == AttributeDesc::GLOBAL)
-          {
-            attr_id = new Player::AttributeId (desc->_xml_name);
-          }
-          else
-          {
-            attr_id = new Player::AttributeId (desc->_xml_name,
-                                               GetDataOwner ());
-          }
-
-          attr = player->GetAttribute (attr_id);
-          attr_id->Release ();
-
-          if (attr)
-          {
-            GooCanvasItem *item;
-
-            if (desc->_type == G_TYPE_BOOLEAN)
-            {
-              if (attr->GetValue () != 0)
-              {
-                GooCanvasBounds bounds;
-                gdouble         h;
-                gdouble         paper_w = gtk_print_context_get_width (context);
-
-                item = Canvas::PutStockIconInTable (table,
-                                                    GTK_STOCK_APPLY,
-                                                    i+1, j);
-                goo_canvas_item_get_bounds (item,
-                                            &bounds);
-                h = bounds.y2-bounds.y1;
-
-                goo_canvas_item_set_simple_transform (item,
-                                                      0.0, 0.0,
-                                                      paper_w*(PRINT_FONT_HEIGHT/100.0)/h,
-                                                      0.0);
-              }
-            }
-            else
-            {
-              gchar *font = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
-
-              item = Canvas::PutTextInTable (table,
-                                             attr->GetUserImage (),
-                                             i+1,
-                                             j);
-              g_object_set (G_OBJECT (item),
-                            "font", font,
-                            NULL);
-              g_free (font);
-            }
-          }
-          current_attr = g_slist_next (current_attr);
-        }
-      }
+      PrintPlayer (table,
+                   context,
+                   player,
+                   i+1);
 
       current_player = g_slist_next (current_player);
     }
 
-    Canvas::FitToContext (goo_canvas_get_root_item (canvas),
-                          context);
+    if (_print_scale != 1.0)
+    {
+      cairo_matrix_t matrix;
+
+      goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
+                                     &matrix);
+      cairo_matrix_scale (&matrix,
+                          _print_scale,
+                          _print_scale);
+
+      goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
+                                     &matrix);
+    }
 
     goo_canvas_render (canvas,
                        cr,

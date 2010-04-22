@@ -229,7 +229,6 @@ void Module::ResetCursor ()
 void Module::Print (const gchar *job_name)
 {
   GtkPrintOperation *operation;
-  GtkPrintSettings  *settings;
   GError            *error = NULL;
 
   operation = gtk_print_operation_new ();

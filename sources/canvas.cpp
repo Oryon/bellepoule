@@ -154,15 +154,14 @@ GooCanvas *Canvas::CreatePrinterCanvas (GtkPrintContext *context)
 }
 
 // --------------------------------------------------------------------------------
-void Canvas::FitToContext (GooCanvasItem   *item,
-                           GtkPrintContext *context)
+gdouble Canvas::GetScaleToFit (GooCanvasItem   *item,
+                               GtkPrintContext *context)
 {
   gdouble    canvas_w;
   gdouble    canvas_h;
   gdouble    scale;
   GooCanvas *canvas  = goo_canvas_item_get_canvas (item);
   gdouble    paper_w = gtk_print_context_get_width (context);
-  gdouble    paper_h = gtk_print_context_get_height (context);
 
   {
     GooCanvasBounds bounds;
@@ -185,14 +184,29 @@ void Canvas::FitToContext (GooCanvasItem   *item,
     scale = printer_dpi/canvas_dpi;
   }
 
-  if (   (canvas_w*scale > paper_w)
-      || (canvas_h*scale > paper_h))
+  if (canvas_w*scale > paper_w)
+  {
+    gdouble x_scale = scale * paper_w/canvas_w;
+
+    scale = x_scale;
+  }
+  else
+  {
+    scale = 1.0;
+  }
+
+  return scale;
+}
+
+// --------------------------------------------------------------------------------
+void Canvas::FitToContext (GooCanvasItem   *item,
+                           GtkPrintContext *context)
+{
+  gdouble scale = GetScaleToFit (item, context);
+
+  if (scale != 1.0)
   {
     cairo_matrix_t matrix;
-    gdouble        x_scale = scale * paper_w/canvas_w;
-    gdouble        y_scale = scale * paper_h/canvas_h;
-
-    scale = MIN (x_scale, y_scale);
 
     goo_canvas_item_get_transform (item,
                                    &matrix);
