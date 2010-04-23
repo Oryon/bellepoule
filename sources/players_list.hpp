@@ -65,11 +65,13 @@ class PlayersList : public Module
     virtual void OnListChanged () {};
 
   private:
-    void PrintTableHeader (GooCanvasItem *table);
+    void PrintHeader (GooCanvasItem *root_item,
+                      gboolean       update_column_width);
     void PrintPlayer (GooCanvasItem   *table,
                       GtkPrintContext *context,
                       Player          *player,
-                      guint            row);
+                      guint            row,
+                      gboolean         update_column_width);
     void GetPrintScale (GtkPrintContext *context,
                         gdouble         *scale,
                         gdouble         *w,
@@ -93,6 +95,7 @@ class PlayersList : public Module
     guint         _nb_player_per_page;
     gdouble       _print_scale;
     guint         _nb_pages;
+    gdouble      *_column_width;
 
     void SetColumn (guint          id,
                     AttributeDesc *desc,

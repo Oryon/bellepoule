@@ -35,6 +35,11 @@ class Canvas
                                           guint          row,
                                           guint          column);
 
+    static GooCanvasItem *CreateIcon (GooCanvasItem *parent,
+                                      gchar         *icon_name,
+                                      gdouble        x,
+                                      gdouble        y);
+
     static GooCanvasItem *PutStockIconInTable (GooCanvasItem *table,
                                                gchar         *icon_name,
                                                guint          row,

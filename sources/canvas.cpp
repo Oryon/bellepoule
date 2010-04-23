@@ -26,10 +26,13 @@ void Canvas::PutInTable (GooCanvasItem *table,
                          guint          row,
                          guint          column)
 {
-  SetTableItemAttribute (item, "row", row);
-  SetTableItemAttribute (item, "column", column);
-  SetTableItemAttribute (item, "x-align", 0.0);
-  SetTableItemAttribute (item, "y-align", 0.0);
+  if (table)
+  {
+    SetTableItemAttribute (item, "row", row);
+    SetTableItemAttribute (item, "column", column);
+    SetTableItemAttribute (item, "x-align", 0.0);
+    SetTableItemAttribute (item, "y-align", 0.0);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -93,10 +96,10 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *Canvas::PutStockIconInTable (GooCanvasItem *table,
-                                            gchar         *icon_name,
-                                            guint          row,
-                                            guint          column)
+GooCanvasItem *Canvas::CreateIcon (GooCanvasItem *parent,
+                                   gchar         *icon_name,
+                                   gdouble        x,
+                                   gdouble        y)
 {
   GooCanvasItem *item;
   GdkPixbuf     *pixbuf;
@@ -112,12 +115,26 @@ GooCanvasItem *Canvas::PutStockIconInTable (GooCanvasItem *table,
     g_object_unref (image);
   }
 
-  item = goo_canvas_image_new (table,
+  item = goo_canvas_image_new (parent,
                                pixbuf,
-                               0.0,
-                               0.0,
+                               x,
+                               y,
                                NULL);
   g_object_unref (pixbuf);
+
+  return item;
+}
+
+// --------------------------------------------------------------------------------
+GooCanvasItem *Canvas::PutStockIconInTable (GooCanvasItem *table,
+                                            gchar         *icon_name,
+                                            guint          row,
+                                            guint          column)
+{
+  GooCanvasItem *item = CreateIcon (table,
+                                    icon_name,
+                                    0.0,
+                                    0.0);
 
   PutInTable (table,
               item,
