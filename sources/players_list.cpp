@@ -965,8 +965,7 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
 
   cairo_save (cr);
   {
-    GSList    *current_player = g_slist_nth (_player_list, page_nr*_nb_player_per_page);
-    GooCanvas *canvas         = Canvas::CreatePrinterCanvas (context);
+    GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
 
     {
       cairo_matrix_t matrix;
@@ -983,19 +982,32 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
     PrintHeader (goo_canvas_get_root_item (canvas),
                  FALSE);
 
-    for (guint i = 0; (i < _nb_player_per_page) && (current_player != NULL); i++)
     {
-      Player *player;
+      GtkTreeIter  iter;
+      gboolean     iter_is_valid;
 
-      player = (Player *) current_player->data;
+      iter_is_valid = gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_store),
+                                                     &iter,
+                                                     NULL,
+                                                     page_nr*_nb_player_per_page);
 
-      PrintPlayer (goo_canvas_get_root_item (canvas),
-                   context,
-                   player,
-                   i+1,
-                   FALSE);
+      for (guint i = 0; iter_is_valid && (i < _nb_player_per_page); i++)
+      {
+        Player *current_player;
 
-      current_player = g_slist_next (current_player);
+        gtk_tree_model_get (GTK_TREE_MODEL (_store), &iter,
+                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
+                            &current_player, -1);
+
+        PrintPlayer (goo_canvas_get_root_item (canvas),
+                     context,
+                     current_player,
+                     i+1,
+                     FALSE);
+
+        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_store),
+                                                  &iter);
+      }
     }
 
     if (_print_scale != 1.0)
