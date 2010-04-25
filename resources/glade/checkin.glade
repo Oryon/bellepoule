@@ -123,7 +123,7 @@
                 <child>
                   <object class="GtkToolButton" id="players_list_filter_button">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Données</property>
+                    <property name="label" translatable="yes">Donn&#xE9;es</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_players_list_filter_button_clicked"/>
                   </object>
@@ -293,15 +293,30 @@
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
-          <object class="GtkHBox" id="hbox1">
+          <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Quels tireurs voulez-vous imprimer ?</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                  <attribute name="size" value="300"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkVBox" id="vbox3">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkRadioButton" id="radiobutton3">
-                    <property name="label" translatable="yes">Pr&#xE9;sents</property>
+                    <property name="label" translatable="yes">Tous les pr&#xE9;sents</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -315,7 +330,7 @@
                 </child>
                 <child>
                   <object class="GtkRadioButton" id="radiobutton4">
-                    <property name="label" translatable="yes">Absents</property>
+                    <property name="label" translatable="yes">Tous les absents</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -329,80 +344,14 @@
                 </child>
               </object>
               <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkVBox" id="vbox1">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkViewport" id="viewport1">
-                    <property name="visible">True</property>
-                    <property name="resize_mode">queue</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHBox" id="hbox2">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkVBox" id="vbox2">
-                        <property name="visible">True</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkRadioButton" id="radiobutton2">
-                            <property name="label">gtk-orientation-portrait</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="use_stock">True</property>
-                            <property name="image_position">right</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
-                            <property name="group">radiobutton1</property>
-                          </object>
-                          <packing>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="radiobutton1">
-                            <property name="label">gtk-orientation-landscape</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="use_stock">True</property>
-                            <property name="image_position">right</property>
-                            <property name="draw_indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
+                <property name="expand">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
           </object>
           <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">1</property>
           </packing>
         </child>
