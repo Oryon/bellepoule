@@ -49,6 +49,7 @@ class Checkin : public virtual Stage, public PlayersList
     void on_close_button_clicked ();
 
     void Import ();
+    void Print (const gchar *job_name);
 
   private:
     void OnLocked (Reason reason);
@@ -59,8 +60,11 @@ class Checkin : public virtual Stage, public PlayersList
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
-    guint _attendings;
-    gboolean _use_initial_rank;
+    guint       _attendings;
+    gboolean    _use_initial_rank;
+    GtkWidget  *_print_dialog;
+    gboolean    _print_attending;
+    gboolean    _print_missing;
 
     static Stage *CreateInstance (StageClass *stage_class);
 
@@ -85,6 +89,8 @@ class Checkin : public virtual Stage, public PlayersList
     GSList *GetCurrentClassification ();
 
     void OnPlayerRemoved (Player *player);
+
+    gboolean PlayerIsPrintable (Player *player);
 
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,

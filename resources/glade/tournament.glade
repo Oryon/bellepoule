@@ -846,11 +846,16 @@ Public License instead of this License.  But first, please read
 &lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;. </property>
     <property name="authors">Sp&#xE9;cifications/Tests:
   Florence Blanchard
+  Emmanuel Chaix
   Yannick Le Roux
+  Jean-Pierre Mah&#xE9;
   Pierre Moro
   Michel Relet
   Vincent R&#xE9;my
   S&#xE9;bastien Vermandel
+
+Portage Linux
+  Emmanuel Chaix
 
 Conception/Codage:
   Yannick Le Roux</property>

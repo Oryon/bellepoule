@@ -872,6 +872,7 @@ void PlayersList::GetPrintScale (GtkPrintContext *context,
                                  gdouble         *canvas_h)
 {
   GSList    *current_player;
+  guint      nb_players = 0;
   GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
 
   PrintHeader (goo_canvas_get_root_item (canvas),
@@ -884,11 +885,15 @@ void PlayersList::GetPrintScale (GtkPrintContext *context,
 
     player = (Player *) current_player->data;
 
-    PrintPlayer (goo_canvas_get_root_item (canvas),
-                 context,
-                 player,
-                 i+1,
-                 TRUE);
+    if (PlayerIsPrintable (player))
+    {
+      PrintPlayer (goo_canvas_get_root_item (canvas),
+                   context,
+                   player,
+                   nb_players+1,
+                   TRUE);
+      nb_players++;
+    }
     current_player = g_slist_next (current_player);
   }
 
@@ -901,7 +906,7 @@ void PlayersList::GetPrintScale (GtkPrintContext *context,
         *canvas_w += _column_width[i];
       }
 
-      *canvas_h = g_slist_length (_player_list) * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0);
+      *canvas_h = nb_players * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0);
     }
 
     {
@@ -985,13 +990,14 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
     {
       GtkTreeIter  iter;
       gboolean     iter_is_valid;
+      guint        nb_players = 0;
 
       iter_is_valid = gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_store),
                                                      &iter,
                                                      NULL,
                                                      page_nr*_nb_player_per_page);
 
-      for (guint i = 0; iter_is_valid && (i < _nb_player_per_page); i++)
+      for (guint i = 0; iter_is_valid && (nb_players < _nb_player_per_page); i++)
       {
         Player *current_player;
 
@@ -999,11 +1005,15 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                             gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
                             &current_player, -1);
 
-        PrintPlayer (goo_canvas_get_root_item (canvas),
-                     context,
-                     current_player,
-                     i+1,
-                     FALSE);
+        if (PlayerIsPrintable (current_player))
+        {
+          PrintPlayer (goo_canvas_get_root_item (canvas),
+                       context,
+                       current_player,
+                       nb_players+1,
+                       FALSE);
+          nb_players++;
+        }
 
         iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_store),
                                                   &iter);
@@ -1048,4 +1058,10 @@ void PlayersList::OnEndPrint (GtkPrintOperation *operation,
                               GtkPrintContext   *context)
 {
   g_free (_column_width);
+}
+
+// --------------------------------------------------------------------------------
+gboolean PlayersList::PlayerIsPrintable (Player *player)
+{
+  return TRUE;
 }

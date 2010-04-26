@@ -105,6 +105,8 @@ class PlayersList : public Module
 
     Player *GetPlayer (const gchar *path_string);
 
+    virtual gboolean PlayerIsPrintable (Player *player);
+
     void OnCellEdited (gchar         *path_string,
                        gchar         *new_text,
                        AttributeDesc *desc);

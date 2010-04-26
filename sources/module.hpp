@@ -32,7 +32,7 @@ class Module : public virtual Object
                GtkToolbar *toolbar = NULL);
     void UnPlug ();
 
-    void Print (const gchar *job_name);
+    virtual void Print (const gchar *job_name);
 
     void SelectAttributes ();
 

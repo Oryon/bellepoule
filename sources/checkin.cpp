@@ -74,6 +74,24 @@ Checkin::Checkin (StageClass *stage_class)
   _attendings = 0;
 
   {
+    GtkWidget *content_area;
+
+    _print_dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                        GTK_MESSAGE_QUESTION,
+                                                        GTK_BUTTONS_OK_CANCEL,
+                                                        "<b><big>Quels tireurs voulez-vous imprimer ?</big></b>");
+
+    gtk_window_set_title (GTK_WINDOW (_print_dialog),
+                          "Impression de la liste des tireurs");
+
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
+
+    gtk_widget_reparent (_glade->GetWidget ("print_dialog-vbox"),
+                         content_area);
+  }
+
+  {
     GSList *filter_list = _filter->GetAttrList ();
 
     for (guint i = 0; i < g_slist_length (filter_list); i++)
@@ -203,6 +221,7 @@ Checkin::Checkin (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 Checkin::~Checkin ()
 {
+  gtk_widget_destroy (_print_dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -909,6 +928,53 @@ void Checkin::on_sensitive_state_toggled (GtkToggleButton *togglebutton,
 }
 
 // --------------------------------------------------------------------------------
+void Checkin::Print (const gchar *job_name)
+{
+  if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+  {
+    _print_attending = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("attending_checkbutton")));
+    _print_missing   = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("missing_checkbutton")));
+
+    if (_print_missing && _print_attending)
+    {
+      Module::Print ("Liste des inscrits");
+    }
+    else if ((_print_missing == FALSE) && _print_attending)
+    {
+      Module::Print ("Liste des présents");
+    }
+    else if ((_print_attending == FALSE) && _print_missing)
+    {
+      Module::Print ("Liste des absents");
+    }
+    else
+    {
+      Module::Print ("Liste des tireurs");
+    }
+  }
+  gtk_widget_hide (_print_dialog);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Checkin::PlayerIsPrintable (Player *player)
+{
+  Player::AttributeId  attr_id ("attending");
+  Attribute           *attr = player->GetAttribute (&attr_id);
+  gboolean             attending = (gboolean) attr->GetValue ();
+
+  if ((attending == TRUE) && (_print_attending == TRUE))
+  {
+    return TRUE;
+  }
+  else if ((attending == FALSE) && (_print_missing == TRUE))
+  {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_remove_player_button_clicked (GtkWidget *widget,
                                                                  Object    *owner)
 {
@@ -989,5 +1055,5 @@ extern "C" G_MODULE_EXPORT void on_checkin_print_toolbutton_clicked (GtkWidget *
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->Print ("Liste des engagés");
+  c->Print ("");
 }
