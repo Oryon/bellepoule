@@ -49,7 +49,7 @@ class PlayersList : public Module
 
     void OnAttrListUpdated ();
 
-    void SetSensitiveState (bool sensitive_value);
+    void SetSensitiveState (gboolean sensitive_value);
 
     void Update (Player *player);
 

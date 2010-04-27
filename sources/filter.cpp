@@ -36,7 +36,7 @@ Filter::Filter (GSList *attr_list,
     GtkListStore  *store;
     GtkTreeIter    iter;
 
-    store = gtk_list_store_new (NUM_COLS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING);
+    store = gtk_list_store_new (NUM_COLS, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING);
 
     for (guint i = 0; i < g_slist_length (_attr_list); i++)
     {
@@ -55,7 +55,7 @@ Filter::Filter (GSList *attr_list,
     g_signal_connect (G_OBJECT (store),
                       "row-deleted", G_CALLBACK (OnAttrDeleted), this);
 
-    _attr_filter_store = GTK_TREE_MODEL (store);
+    _attr_filter_store = store;
   }
 }
 
@@ -122,14 +122,14 @@ void Filter::ShowAttribute (gchar *name)
 {
   GtkTreeIter  iter;
   GtkTreeIter *sibling = NULL;
-  bool         iter_is_valid;
+  gboolean     iter_is_valid;
 
   iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_attr_filter_store),
                                                  &iter);
 
   while (iter_is_valid)
   {
-    bool   current_visibility;
+    gboolean   current_visibility;
     gchar *current_name;
 
     gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
@@ -138,7 +138,7 @@ void Filter::ShowAttribute (gchar *name)
                         ATTR_XML_NAME, &current_name,
                         -1);
 
-    if (current_visibility == true)
+    if (current_visibility == TRUE)
     {
       if (sibling)
       {
@@ -216,7 +216,7 @@ void Filter::SelectAttributes ()
                                                    "text", ATTR_USER_NAME,
                                                    NULL);
 
-      gtk_tree_view_set_model (GTK_TREE_VIEW (view), _attr_filter_store);
+      gtk_tree_view_set_model (GTK_TREE_VIEW (view), GTK_TREE_MODEL (_attr_filter_store));
       gtk_container_add (GTK_CONTAINER (_filter_window), view);
     }
   }
@@ -232,15 +232,15 @@ void Filter::UpdateAttrList ()
 
   {
     GtkTreeIter iter;
-    bool        iter_is_valid;
+    gboolean    iter_is_valid;
 
     iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_attr_filter_store),
                                                    &iter);
 
     while (iter_is_valid)
     {
-      gchar *current_name;
-      bool   current_visibility;
+      gchar     *current_name;
+      gboolean   current_visibility;
 
       gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                           &iter,
@@ -248,7 +248,7 @@ void Filter::UpdateAttrList ()
                           ATTR_XML_NAME, &current_name,
                           -1);
 
-      if (current_visibility == true)
+      if (current_visibility == TRUE)
       {
         _selected_attr = g_slist_append (_selected_attr,
                                          AttributeDesc::GetDesc (current_name));
@@ -296,4 +296,3 @@ void Filter::OnAttrDeleted (GtkTreeModel *tree_model,
 
   f->UpdateAttrList ();
 }
-

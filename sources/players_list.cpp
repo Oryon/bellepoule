@@ -475,7 +475,7 @@ void PlayersList::SetAttributeRight (gchar    *name,
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::SetSensitiveState (bool sensitive_value)
+void PlayersList::SetSensitiveState (gboolean sensitive_value)
 {
   {
     GList *columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));

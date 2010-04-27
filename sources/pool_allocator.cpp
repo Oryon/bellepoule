@@ -25,7 +25,7 @@
 
 #define VALUE_INIT {0,{{0}}}
 
-enum
+typedef enum
 {
   POOL_SIZE_COL,
   NB_POOLS_COL,
@@ -843,8 +843,8 @@ void PoolAllocator::FillPoolTable (Pool *pool)
       gchar *icon_name;
 
       if (   (pool_size == _selected_config->size - 1)
-          || (   _selected_config->has_two_size
-              && (pool_size == _selected_config->size) || (pool_size == _selected_config->size - 1)))
+          || ((   _selected_config->has_two_size
+              && (pool_size == _selected_config->size)) || (pool_size == _selected_config->size - 1)))
       {
         icon_name = GTK_STOCK_APPLY;
         pool->SetData (this, "is_balanced", (void *) 1);

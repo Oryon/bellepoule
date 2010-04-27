@@ -273,7 +273,7 @@ void AttributeDesc::CreateList (GSList **list, ...)
   *list = g_slist_copy (_list);
 
   va_start (ap, list);
-  while (name = va_arg (ap, char *))
+  while ( (name = va_arg (ap, char *)) )
   {
     for (guint i = 0; i < g_slist_length (*list); i++)
     {

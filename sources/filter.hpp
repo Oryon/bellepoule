@@ -57,7 +57,7 @@ class Filter : public virtual Object
     Module       *_owner;
     GSList       *_attr_list;
     GSList       *_selected_attr;
-    GtkTreeModel *_attr_filter_store;
+    GtkListStore *_attr_filter_store;
     GtkWidget    *_filter_window;
 
     virtual ~Filter ();
