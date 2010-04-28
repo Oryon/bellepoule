@@ -40,6 +40,7 @@ class Table : public virtual Stage, public CanvasModule
     void OnFilterClicked ();
     void OnPrintPoolToolbuttonClicked ();
     void OnZoom (gdouble value);
+    void Print (const gchar *job_name);
 
   public:
     static const gchar *_class_name;
@@ -94,6 +95,7 @@ class Table : public virtual Stage, public CanvasModule
     xmlNode            *_xml_node;
     LevelStatus        *_level_status;
     GSList             *_result_list;
+    GtkWidget          *_print_dialog;
 
     GooCanvasItem *GetQuickScore (gchar *container);
 

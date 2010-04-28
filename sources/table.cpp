@@ -119,6 +119,24 @@ Table::Table (StageClass *stage_class)
   }
 
   {
+    GtkWidget *content_area;
+
+    _print_dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                        GTK_MESSAGE_QUESTION,
+                                                        GTK_BUTTONS_OK_CANCEL,
+                                                        "<b><big>Que voulez-vous imprimer ?</big></b>");
+
+    gtk_window_set_title (GTK_WINDOW (_print_dialog),
+                          "Impression du tableau");
+
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
+
+    gtk_widget_reparent (_glade->GetWidget ("print_table_dialog-vbox"),
+                         content_area);
+  }
+
+  {
     _quick_score_collector = new ScoreCollector (this,
                                                  (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
 
@@ -158,6 +176,8 @@ Table::~Table ()
   Object::TryToRelease (_score_collector);
 
   _max_score->Release ();
+
+  gtk_widget_destroy (_print_dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -1122,7 +1142,7 @@ void Table::OnPrintPoolToolbuttonClicked ()
   }
   else
   {
-    Print ("Tableau");
+    Print ("");
   }
 }
 
@@ -1540,6 +1560,16 @@ void Table::OnFilterClicked ()
   {
     SelectAttributes ();
   }
+}
+
+// --------------------------------------------------------------------------------
+void Table::Print (const gchar *job_name)
+{
+  if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+  {
+    Module::Print ("Tableau");
+  }
+  gtk_widget_hide (_print_dialog);
 }
 
 // --------------------------------------------------------------------------------
