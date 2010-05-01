@@ -26,6 +26,7 @@ GKeyFile *Module::_config_file = NULL;
 // --------------------------------------------------------------------------------
 Module::Module (gchar *glade_file,
                 gchar *root)
+//: Object ("Module")
 {
   _plugged_list = NULL;
   _owner        = NULL;

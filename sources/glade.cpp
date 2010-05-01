@@ -25,31 +25,30 @@ Glade::Glade (gchar  *file_name,
 {
   if (file_name)
   {
-    GError *error;
+    GError *error = NULL;
     gchar  *path = g_build_filename (_path, "resources", "glade", file_name, NULL);
 
     _glade_xml = gtk_builder_new ();
 
-    error = NULL;
     gtk_builder_add_from_file (_glade_xml,
                                path,
                                &error);
     g_free (path);
 
-    if (error)
+    if (error != NULL)
     {
       gchar *spare_file_name = g_build_filename (_path, "..", "..", "resources", "glade", file_name, NULL);
 
-      error = NULL;
+      g_clear_error (&error);
       gtk_builder_add_from_file (_glade_xml,
                                  spare_file_name,
                                  &error);
       g_free (spare_file_name);
 
-      if (error)
+      if (error != NULL)
       {
         g_print ("<<%s>> %s\n", spare_file_name, error->message);
-        g_free (error);
+        g_clear_error (&error);
 
         gtk_main_quit ();
       }

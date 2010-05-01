@@ -22,9 +22,11 @@
 #include <libxml/xpath.h>
 #include <goocanvas.h>
 
+#ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shellapi.h>
+#endif
 
 #include "canvas.hpp"
 #include "tournament.hpp"
@@ -839,16 +841,19 @@ void Contest::on_web_site_button_clicked ()
 {
   GtkWidget *entry = _glade->GetWidget ("web_site_entry");
 
+#ifdef WINDOWS_TEMPORARY_PATCH
   ShellExecuteA (NULL,
                  "open",
                  gtk_entry_get_text (GTK_ENTRY (entry)),
                  NULL,
                  NULL,
                  SW_SHOWNORMAL);
-  //gtk_show_uri (NULL,
-                //gtk_entry_get_text (GTK_ENTRY (entry)),
-                //GDK_CURRENT_TIME,
-                //NULL);
+#else
+  gtk_show_uri (NULL,
+                gtk_entry_get_text (GTK_ENTRY (entry)),
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
 }
 
 // --------------------------------------------------------------------------------
