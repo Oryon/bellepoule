@@ -36,13 +36,16 @@
   {
     _tree_view = _glade->GetWidget ("players_list");
 
-    g_object_set (_tree_view,
-                  "rules-hint",     TRUE,
-                  "rubber-banding", TRUE,
-                  NULL);
+    if (_tree_view)
+    {
+      g_object_set (_tree_view,
+                    "rules-hint",     TRUE,
+                    "rubber-banding", TRUE,
+                    NULL);
 
-    gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
-                                 GTK_SELECTION_MULTIPLE);
+      gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
+                                   GTK_SELECTION_MULTIPLE);
+    }
   }
 }
 
@@ -50,7 +53,11 @@
 PlayersList::~PlayersList ()
 {
   Wipe ();
-  g_object_unref (_store);
+
+  if (_store)
+  {
+    g_object_unref (_store);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -567,7 +574,10 @@ void PlayersList::Wipe ()
   g_slist_free (_player_list);
   _player_list = NULL;
 
-  gtk_list_store_clear (_store);
+  if (_store)
+  {
+    gtk_list_store_clear (_store);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1042,15 +1052,6 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
     gtk_widget_destroy (GTK_WIDGET (canvas));
   }
   cairo_restore (cr);
-}
-
-// --------------------------------------------------------------------------------
-gboolean PlayersList::OnPreview (GtkPrintOperation        *operation,
-                                 GtkPrintOperationPreview *preview,
-                                 GtkPrintContext          *context,
-                                 GtkWindow                *parent)
-{
-  return TRUE;
 }
 
 // --------------------------------------------------------------------------------

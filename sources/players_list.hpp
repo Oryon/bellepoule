@@ -81,10 +81,6 @@ class PlayersList : public Module
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr);
-    gboolean OnPreview (GtkPrintOperation        *operation,
-                        GtkPrintOperationPreview *preview,
-                        GtkPrintContext          *context,
-                        GtkWindow                *parent);
     void OnEndPrint (GtkPrintOperation *operation,
                      GtkPrintContext   *context);
 
