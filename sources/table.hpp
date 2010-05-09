@@ -53,6 +53,12 @@ class Table : public virtual Stage, public CanvasModule
     void OnUnPlugged ();
     void Wipe ();
 
+    void OnBeginPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
+    void OnDrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
+
   private:
     static const gdouble _score_rect_size = 30.0;
 
@@ -95,6 +101,7 @@ class Table : public virtual Stage, public CanvasModule
     xmlNode            *_xml_node;
     LevelStatus        *_level_status;
     GSList             *_result_list;
+    GSList             *_match_to_print;
     GtkWidget          *_print_dialog;
 
     GooCanvasItem *GetQuickScore (gchar *container);

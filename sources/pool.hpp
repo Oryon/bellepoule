@@ -110,8 +110,6 @@ class Pool : public CanvasModule
 
     void RefreshDashBoard ();
 
-    GString *GetPlayerImage (Player *player);
-
     ~Pool ();
 };
 

@@ -863,6 +863,21 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
 {
   GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
 
+  {
+    cairo_matrix_t  own_matrix;
+    cairo_matrix_t  result_matrix;
+    cairo_matrix_t *operation_matrix = (cairo_matrix_t *) g_object_get_data (G_OBJECT (operation),
+                                                                             "operation_matrix");
+
+    goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
+                                   &own_matrix);
+    cairo_matrix_multiply (&result_matrix,
+                           operation_matrix,
+                           &own_matrix);
+    goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
+                                   &result_matrix);
+  }
+
   goo_canvas_rect_new (goo_canvas_get_root_item (canvas),
                        0.0, 0.0,
                        100.0, PRINT_HEADER_HEIGHT,

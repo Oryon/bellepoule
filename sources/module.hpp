@@ -24,6 +24,7 @@
 #include "filter.hpp"
 #include "glade.hpp"
 
+class Player;
 class Module : public virtual Object
 {
   public:
@@ -74,6 +75,8 @@ class Module : public virtual Object
     void SetCursor (GdkCursorType cursor_type);
 
     void ResetCursor ();
+
+    GString *GetPlayerImage (Player *player);
 
     virtual ~Module ();
 

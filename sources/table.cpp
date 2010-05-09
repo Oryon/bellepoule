@@ -1573,6 +1573,230 @@ void Table::Print (const gchar *job_name)
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnBeginPrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context)
+{
+  _match_to_print = NULL;
+
+  {
+    GtkTreeIter parent;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_quick_search_filter),
+                                                   &parent);
+    while (iter_is_valid)
+    {
+      GtkTreeIter iter;
+
+      iter_is_valid = gtk_tree_model_iter_children (GTK_TREE_MODEL (_quick_search_filter),
+                                                    &iter,
+                                                    &parent);
+      while (iter_is_valid)
+      {
+        Match *match;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
+                            &iter,
+                            QUICK_MATCH_COLUMN, &match,
+                            -1);
+        if (match)
+        {
+          _match_to_print = g_slist_append (_match_to_print,
+                                            match);
+        }
+        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
+                                                  &iter);
+      }
+
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
+                                                &parent);
+    }
+  }
+
+  {
+    guint nb_match;
+    guint nb_page;
+
+    nb_match = g_slist_length (_match_to_print);
+    nb_page  = nb_match/4;
+
+    if (nb_match%4 != 0)
+    {
+      nb_page++;
+    }
+
+    gtk_print_operation_set_n_pages (operation,
+                                     nb_page);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::OnDrawPage (GtkPrintOperation *operation,
+                        GtkPrintContext   *context,
+                        gint               page_nr)
+{
+  cairo_t   *cr      = gtk_print_context_get_cairo_context (context);
+  GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
+  gdouble    paper_w = gtk_print_context_get_width (context);
+  gdouble    paper_h = gtk_print_context_get_height (context);
+  GSList    *current_match;
+
+  cairo_save (cr);
+
+  current_match = g_slist_nth (_match_to_print,
+                               4*page_nr);
+  for (guint i = 0; current_match && (i < 4); i++)
+  {
+    GooCanvasItem *group;
+
+    group = goo_canvas_group_new (goo_canvas_get_root_item (canvas),
+                                  NULL);
+
+    {
+      cairo_matrix_t matrix;
+
+      cairo_matrix_init_translate (&matrix,
+                                   0.0,
+                                   i*25.0 * paper_h/paper_w);
+
+      g_object_set_data (G_OBJECT (operation), "operation_matrix", (void *) &matrix);
+
+      Module::OnDrawPage (operation,
+                          context,
+                          page_nr);
+    }
+
+    {
+      GString         *image;
+      Match           *match  = (Match *) current_match->data;
+      Player          *A      = match->GetPlayerA ();
+      Player          *B      = match->GetPlayerB ();
+      gdouble          offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 8.2);
+      gchar           *font   = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
+      GooCanvasItem   *item;
+      GooCanvasBounds  bounds;
+      gdouble          width;
+
+      image = GetPlayerImage (A);
+      item = goo_canvas_text_new (group,
+                                  image->str,
+                                  0.0,
+                                  0.0 + offset,
+                                  -1.0,
+                                  GTK_ANCHOR_W,
+                                  "font", font,
+                                  NULL);
+      g_string_free (image,
+                     TRUE);
+      goo_canvas_item_get_bounds (item,
+                                  &bounds);
+      width = bounds.x2 - bounds.x1;
+
+      image = GetPlayerImage (B);
+      item = goo_canvas_text_new (group,
+                                  image->str,
+                                  0.0,
+                                  7.5 + offset,
+                                  -1.0,
+                                  GTK_ANCHOR_W,
+                                  "font", font,
+                                  NULL);
+      g_string_free (image,
+                     TRUE);
+      goo_canvas_item_get_bounds (item,
+                                  &bounds);
+      if (width < bounds.x2 - bounds.x1)
+      {
+        width = bounds.x2 - bounds.x1;
+      }
+
+      {
+        gdouble x;
+
+        goo_canvas_convert_to_item_space (canvas,
+                                          item,
+                                          &x,
+                                          &width);
+      }
+
+      for (guint j = 0; j < _max_score->_value; j++)
+      {
+        gchar *number;
+
+        number = g_strdup_printf ("%d", j+1);
+        goo_canvas_text_new (group,
+                             number,
+                             width + j*2.5 + PRINT_FONT_HEIGHT/2,
+                             0.0 + offset,
+                             -1.0,
+                             GTK_ANCHOR_CENTER,
+                             "font", "Sans 1.5px",
+                             NULL);
+        goo_canvas_rect_new (group,
+                             width + j*2.5,
+                             0.0 + offset - PRINT_FONT_HEIGHT/2.0,
+                             PRINT_FONT_HEIGHT,
+                             PRINT_FONT_HEIGHT,
+                             "line-width", 0.25,
+                             NULL);
+
+        goo_canvas_text_new (group,
+                             number,
+                             width + j*2.5 + PRINT_FONT_HEIGHT/2,
+                             7.5 + offset,
+                             -1.0,
+                             GTK_ANCHOR_CENTER,
+                             "font", "Sans 1.5px",
+                             NULL);
+        goo_canvas_rect_new (group,
+                             width + j*2.5,
+                             7.5 + offset - PRINT_FONT_HEIGHT/2.0,
+                             PRINT_FONT_HEIGHT,
+                             PRINT_FONT_HEIGHT,
+                             "line-width", 0.25,
+                             NULL);
+
+        g_free (number);
+      }
+
+      {
+        gdouble score_size = 4.0;
+
+        goo_canvas_rect_new (group,
+                             width + _max_score->_value*2.5 + score_size,
+                             0.0 + offset - score_size/2.0,
+                             score_size,
+                             score_size,
+                             "line-width", 0.3,
+                             NULL);
+        goo_canvas_rect_new (group,
+                             width + _max_score->_value*2.5 + score_size,
+                             7.5 + offset - score_size/2.0,
+                             score_size,
+                             score_size,
+                             "line-width", 0.3,
+                             NULL);
+      }
+
+      g_free (font);
+    }
+
+    Canvas::FitToContext (group,
+                          context);
+
+    current_match = g_slist_next (current_match);
+  }
+
+  goo_canvas_render (canvas,
+                     cr,
+                     NULL,
+                     1.0);
+  gtk_widget_destroy (GTK_WIDGET (canvas));
+
+  cairo_restore (cr);
+}
+
+// --------------------------------------------------------------------------------
 void Table::OnZoom (gdouble value)
 {
   goo_canvas_set_scale (GetCanvas (),

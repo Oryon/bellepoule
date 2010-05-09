@@ -238,41 +238,6 @@ void Pool::OnNewScore (ScoreCollector *score_collector,
 }
 
 // --------------------------------------------------------------------------------
-GString *Pool::GetPlayerImage (Player *player)
-{
-  GString *image         = g_string_new ("");
-  GSList  *selected_attr = NULL;
-
-  if (_filter)
-  {
-    selected_attr = _filter->GetSelectedAttrList ();
-  }
-
-  for (guint a = 0; a < g_slist_length (selected_attr); a++)
-  {
-    AttributeDesc       *attr_desc;
-    Attribute           *attr;
-    Player::AttributeId *attr_id;
-
-    attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                    a);
-    attr_id = new Player::AttributeId (attr_desc->_xml_name);
-    attr = player->GetAttribute (attr_id);
-    attr_id->Release ();
-
-    if (attr)
-    {
-      image = g_string_append (image,
-                               attr->GetUserImage ());
-      image = g_string_append (image,
-                               "  ");
-    }
-  }
-
-  return image;
-}
-
-// --------------------------------------------------------------------------------
 void Pool::OnPlugged ()
 {
   _title_table = NULL;

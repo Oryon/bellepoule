@@ -223,13 +223,29 @@ void Canvas::FitToContext (GooCanvasItem   *item,
 
   if (scale != 1.0)
   {
-    cairo_matrix_t matrix;
+    cairo_matrix_t  matrix;
+    GooCanvasBounds bounds;
 
-    goo_canvas_item_get_transform (item,
-                                   &matrix);
+    if (goo_canvas_item_get_transform (item,
+                                       &matrix) == FALSE)
+    {
+      cairo_matrix_init_identity (&matrix);
+    }
+
+    goo_canvas_item_get_bounds (item,
+                                &bounds);
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
+                                      item,
+                                      &bounds.x1,
+                                      &bounds.y1);
+
     cairo_matrix_scale (&matrix,
                         scale,
                         scale);
+
+    cairo_matrix_translate (&matrix,
+                            0.0,
+                            bounds.y1/scale - bounds.y1);
     goo_canvas_item_set_transform (item,
                                    &matrix);
   }
