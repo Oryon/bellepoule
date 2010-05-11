@@ -144,6 +144,17 @@ void Object::SetData (Object         *owner,
 }
 
 // --------------------------------------------------------------------------------
+void Object::RemoveData (Object *owner,
+                         gchar  *key)
+{
+  gchar *full_key = g_strdup_printf ("%p::%s", owner, key);
+
+  g_datalist_remove_data (&_datalist,
+                          full_key);
+  g_free (full_key);
+}
+
+// --------------------------------------------------------------------------------
 void *Object::GetData (Object *owner,
                        gchar  *key)
 {

@@ -53,9 +53,10 @@ Table::Table (StageClass *stage_class)
 : Stage (stage_class),
   CanvasModule ("table.glade")
 {
-  _main_table   = NULL;
-  _tree_root    = NULL;
-  _level_status = NULL;
+  _main_table     = NULL;
+  _tree_root      = NULL;
+  _level_status   = NULL;
+  _match_to_print = NULL;
 
   _score_collector = NULL;
 
@@ -176,6 +177,11 @@ Table::~Table ()
   Object::TryToRelease (_score_collector);
 
   _max_score->Release ();
+
+  if (_match_to_print)
+  {
+    g_slist_free (_match_to_print);
+  }
 
   gtk_widget_destroy (_print_dialog);
 }
@@ -314,11 +320,15 @@ void Table::Display ()
     // Header
     for (guint l = _nb_level_to_display; l > 0; l--)
     {
+      guint level;
+
       _level_status[l-1]._level_header = goo_canvas_table_new (_main_table,
                                                                NULL);
+
+      level = l + (_nb_levels - _nb_level_to_display);
       {
         GooCanvasItem *text_item;
-        gchar         *text = GetLevelImage (l + (_nb_levels - _nb_level_to_display));
+        gchar         *text  = GetLevelImage (level);
 
         text_item = Canvas::PutTextInTable (_level_status[l-1]._level_header,
                                             text,
@@ -330,10 +340,25 @@ void Table::Display ()
         g_free (text);
       }
 
+      {
+        GooCanvasItem *print_item;
+
+        print_item = Canvas::PutStockIconInTable (_level_status[l-1]._level_header,
+                                                  GTK_STOCK_PRINT,
+                                                  1,
+                                                  1);
+        Canvas::SetTableItemAttribute (print_item, "x-align", 0.5);
+
+        g_object_set_data (G_OBJECT (print_item), "level_to-print", (void *) level);
+        g_signal_connect (print_item, "button-release-event",
+                          G_CALLBACK (OnPrintCanvasItemReleased), this);
+      }
+
       Canvas::PutInTable (_main_table,
                           _level_status[l-1]._level_header,
                           0,
                           l);
+
       Canvas::SetTableItemAttribute (_level_status[l-1]._level_header, "x-align", 0.5);
     }
 
@@ -728,21 +753,19 @@ gboolean Table::FillInNode (GNode *node,
     }
 
     {
-      guint number = (guint) data->_match->GetData (table, "number");
+      gchar *number = (gchar *) data->_match->GetData (table, "number");
 
       if (number)
       {
-        gchar         *text        = g_strdup_printf ("No %d", number);
         GooCanvasItem *number_item = Canvas::PutTextInTable (data->_canvas_table,
-                                                             text,
+                                                             number,
                                                              0,
                                                              0);
         Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
         g_object_set (number_item,
-                      "fill-color", "blue",
+                      "fill-color", "grey",
                       "font", "Bold",
                       NULL);
-        g_free (text);
       }
     }
 
@@ -960,12 +983,11 @@ void Table::AddFork (GNode *to)
   {
     {
       GtkTreeIter  table_iter;
-      gchar       *level_text = GetLevelImage (data->_level - 1);
       GtkTreePath *path = gtk_tree_path_new_from_indices (_nb_levels - data->_level,
                                                           -1);
 
       data->_match->SetData (this,
-                             "level", level_text, g_free);
+                             "level", (void *) (data->_level-1));
 
       if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
                                    &table_iter,
@@ -975,7 +997,7 @@ void Table::AddFork (GNode *to)
                                &table_iter,
                                NULL);
         gtk_tree_store_set (_quick_search_treestore, &table_iter,
-                            QUICK_MATCH_NAME_COLUMN, level_text,
+                            QUICK_MATCH_NAME_COLUMN, GetLevelImage (data->_level - 1),
                             QUICK_MATCH_VISIBILITY_COLUMN, 1,
                             -1);
       }
@@ -996,8 +1018,11 @@ void Table::AddFork (GNode *to)
 
         data->_match->SetData (this,
                                "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
+
         data->_match->SetData (this,
-                               "number", (void *) (indices[1]+1));
+                               "number",
+                               g_strdup_printf ("M%d.%d", 1 << (_nb_levels - data->_level + 1), indices[1]+1),
+                               g_free);
       }
     }
 
@@ -1018,8 +1043,8 @@ void Table::AddFork (GNode *to)
     {
       data->_match->Release ();
       data->_match = NULL;
-      to_data->_match->SetData (this,
-                                "number", 0);
+      to_data->_match->RemoveData (this,
+                                   "number");
     }
 
     if (g_node_child_position (to, node) == 0)
@@ -1129,7 +1154,7 @@ void Table::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnPrintPoolToolbuttonClicked ()
+void Table::OnPrint (GObject *from)
 {
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
   {
@@ -1140,10 +1165,67 @@ void Table::OnPrintPoolToolbuttonClicked ()
       classification->Print ("Classement du tableau");
     }
   }
-  else
+  else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
   {
-    Print ("");
+    GtkWidget *w              = _glade->GetWidget ("pending_radiobutton");
+    gboolean   all_sheet      = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+    guint      level_to_print = (guint) g_object_get_data (G_OBJECT (from), "level_to-print");
+
+    if (_match_to_print)
+    {
+      g_slist_free (_match_to_print);
+      _match_to_print = NULL;
+    }
+
+    {
+      GtkTreeIter parent;
+      gboolean    iter_is_valid;
+
+      iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_quick_search_filter),
+                                                     &parent);
+      while (iter_is_valid)
+      {
+        GtkTreeIter iter;
+
+        iter_is_valid = gtk_tree_model_iter_children (GTK_TREE_MODEL (_quick_search_filter),
+                                                      &iter,
+                                                      &parent);
+        while (iter_is_valid)
+        {
+          Match *match;
+
+          gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
+                              &iter,
+                              QUICK_MATCH_COLUMN, &match,
+                              -1);
+          if (match)
+          {
+            guint level = (guint) match->GetData (this, "level");
+
+            if ((level_to_print == 0) || (level_to_print == level))
+            {
+              gboolean already_printed = (gboolean) match->GetData (this, "printed");
+
+              if (all_sheet || (already_printed != TRUE))
+              {
+                _match_to_print = g_slist_prepend (_match_to_print,
+                                                   match);
+              }
+            }
+          }
+          iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
+                                                    &iter);
+        }
+
+        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
+                                                  &parent);
+      }
+    }
+
+    Print ("Feuille de match");
   }
+
+  gtk_widget_hide (_print_dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -1152,7 +1234,7 @@ extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *wi
 {
   Table *t = dynamic_cast <Table *> (owner);
 
-  t->OnPrintPoolToolbuttonClicked ();
+  t->OnPrint (G_OBJECT (widget));
 }
 
 // --------------------------------------------------------------------------------
@@ -1378,17 +1460,14 @@ void Table::SetPlayer (Match  *to_match,
       if (A_name && B_name)
       {
         gchar *name_string = g_strdup_printf ("%s / %s", A_name, B_name);
-        guint  number      = (guint) to_match->GetData (this, "number");
-        gchar *path_string;
+        gchar *number      = (gchar *) to_match->GetData (this, "number");
 
-        path_string = g_strdup_printf ("%s - No %d", (gchar *) to_match->GetData (this, "level"), number);
         gtk_tree_store_set (_quick_search_treestore, &iter,
-                            QUICK_MATCH_PATH_COLUMN, path_string,
+                            QUICK_MATCH_PATH_COLUMN, number,
                             QUICK_MATCH_NAME_COLUMN, name_string,
                             QUICK_MATCH_COLUMN, to_match,
                             QUICK_MATCH_VISIBILITY_COLUMN, 1,
                             -1);
-        g_free (path_string);
         g_free (name_string);
       }
 
@@ -1426,6 +1505,21 @@ void Table::OnInputToggled (GtkWidget *widget)
   else
   {
     gtk_widget_hide (input_box);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::OnMatchSheetToggled (GtkWidget *widget)
+{
+  GtkWidget *vbox = _glade->GetWidget ("match_sheet_vbox");
+
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
+  {
+    gtk_widget_set_sensitive (vbox, TRUE);
+  }
+  else
+  {
+    gtk_widget_set_sensitive (vbox, FALSE);
   }
 }
 
@@ -1563,71 +1657,22 @@ void Table::OnFilterClicked ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::Print (const gchar *job_name)
-{
-  if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
-  {
-    Module::Print ("Tableau");
-  }
-  gtk_widget_hide (_print_dialog);
-}
-
-// --------------------------------------------------------------------------------
 void Table::OnBeginPrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context)
 {
-  _match_to_print = NULL;
+  guint nb_match;
+  guint nb_page;
 
+  nb_match = g_slist_length (_match_to_print);
+  nb_page  = nb_match/4;
+
+  if (nb_match%4 != 0)
   {
-    GtkTreeIter parent;
-    gboolean    iter_is_valid;
-
-    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_quick_search_filter),
-                                                   &parent);
-    while (iter_is_valid)
-    {
-      GtkTreeIter iter;
-
-      iter_is_valid = gtk_tree_model_iter_children (GTK_TREE_MODEL (_quick_search_filter),
-                                                    &iter,
-                                                    &parent);
-      while (iter_is_valid)
-      {
-        Match *match;
-
-        gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
-                            &iter,
-                            QUICK_MATCH_COLUMN, &match,
-                            -1);
-        if (match)
-        {
-          _match_to_print = g_slist_append (_match_to_print,
-                                            match);
-        }
-        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
-                                                  &iter);
-      }
-
-      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
-                                                &parent);
-    }
+    nb_page++;
   }
 
-  {
-    guint nb_match;
-    guint nb_page;
-
-    nb_match = g_slist_length (_match_to_print);
-    nb_page  = nb_match/4;
-
-    if (nb_match%4 != 0)
-    {
-      nb_page++;
-    }
-
-    gtk_print_operation_set_n_pages (operation,
-                                     nb_page);
-  }
+  gtk_print_operation_set_n_pages (operation,
+                                   nb_page);
 }
 
 // --------------------------------------------------------------------------------
@@ -1667,47 +1712,84 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
     }
 
     {
-      GString         *image;
-      Match           *match  = (Match *) current_match->data;
-      Player          *A      = match->GetPlayerA ();
-      Player          *B      = match->GetPlayerB ();
-      gdouble          offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 8.2);
-      gchar           *font   = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
-      GooCanvasItem   *item;
-      GooCanvasBounds  bounds;
-      gdouble          width;
+      GString       *image;
+      Match         *match  = (Match *) current_match->data;
+      Player        *A      = match->GetPlayerA ();
+      Player        *B      = match->GetPlayerB ();
+      gdouble        offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
+      GooCanvasItem *item;
+      gdouble        name_width;
+      gchar         *match_number = g_strdup_printf ("Match %s", (const char *) match->GetData (this, "number"));
 
-      image = GetPlayerImage (A);
-      item = goo_canvas_text_new (group,
-                                  image->str,
-                                  0.0,
-                                  0.0 + offset,
-                                  -1.0,
-                                  GTK_ANCHOR_W,
-                                  "font", font,
-                                  NULL);
-      g_string_free (image,
-                     TRUE);
-      goo_canvas_item_get_bounds (item,
-                                  &bounds);
-      width = bounds.x2 - bounds.x1;
+      match->SetData (this, "printed", (void *) TRUE);
 
-      image = GetPlayerImage (B);
-      item = goo_canvas_text_new (group,
-                                  image->str,
-                                  0.0,
-                                  7.5 + offset,
-                                  -1.0,
-                                  GTK_ANCHOR_W,
-                                  "font", font,
-                                  NULL);
-      g_string_free (image,
-                     TRUE);
-      goo_canvas_item_get_bounds (item,
-                                  &bounds);
-      if (width < bounds.x2 - bounds.x1)
       {
-        width = bounds.x2 - bounds.x1;
+        gchar *font   = g_strdup_printf ("Sans Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
+        gchar *decimal = strchr (font, ',');
+
+        if (decimal)
+        {
+          *decimal = '.';
+        }
+
+        goo_canvas_text_new (group,
+                             match_number,
+                             0.0,
+                             0.0 + offset - 6.0,
+                             -1.0,
+                             GTK_ANCHOR_W,
+                             "fill-color", "grey",
+                             "font", font,
+                             NULL);
+        g_free (match_number);
+        g_free (font);
+      }
+
+      {
+        GooCanvasBounds  bounds;
+        gchar           *font = g_strdup_printf ("Sans Bold %fpx", PRINT_FONT_HEIGHT);
+        gchar *decimal = strchr (font, ',');
+
+        if (decimal)
+        {
+          *decimal = '.';
+        }
+
+        image = GetPlayerImage (A);
+        item = goo_canvas_text_new (group,
+                                    image->str,
+                                    0.0,
+                                    0.0 + offset,
+                                    -1.0,
+                                    GTK_ANCHOR_W,
+                                    "font", font,
+                                    NULL);
+        g_string_free (image,
+                       TRUE);
+        goo_canvas_item_get_bounds (item,
+                                    &bounds);
+        name_width = bounds.x2 - bounds.x1;
+
+        image = GetPlayerImage (B);
+        item = goo_canvas_text_new (group,
+                                    image->str,
+                                    0.0,
+                                    7.5 + offset,
+                                    -1.0,
+                                    GTK_ANCHOR_W,
+                                    "font", font,
+                                    NULL);
+        g_string_free (image,
+                       TRUE);
+
+        g_free (font);
+
+        goo_canvas_item_get_bounds (item,
+                                    &bounds);
+        if (name_width < bounds.x2 - bounds.x1)
+        {
+          name_width = bounds.x2 - bounds.x1;
+        }
       }
 
       {
@@ -1716,69 +1798,78 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
         goo_canvas_convert_to_item_space (canvas,
                                           item,
                                           &x,
-                                          &width);
+                                          &name_width);
       }
 
-      for (guint j = 0; j < _max_score->_value; j++)
       {
-        gchar *number;
+        gchar *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(PRINT_FONT_HEIGHT));
+        gchar *decimal = strchr (font, ',');
 
-        number = g_strdup_printf ("%d", j+1);
-        goo_canvas_text_new (group,
-                             number,
-                             width + j*2.5 + PRINT_FONT_HEIGHT/2,
-                             0.0 + offset,
-                             -1.0,
-                             GTK_ANCHOR_CENTER,
-                             "font", "Sans 1.5px",
-                             NULL);
-        goo_canvas_rect_new (group,
-                             width + j*2.5,
-                             0.0 + offset - PRINT_FONT_HEIGHT/2.0,
-                             PRINT_FONT_HEIGHT,
-                             PRINT_FONT_HEIGHT,
-                             "line-width", 0.25,
-                             NULL);
+        if (decimal)
+        {
+          *decimal = '.';
+        }
 
-        goo_canvas_text_new (group,
-                             number,
-                             width + j*2.5 + PRINT_FONT_HEIGHT/2,
-                             7.5 + offset,
-                             -1.0,
-                             GTK_ANCHOR_CENTER,
-                             "font", "Sans 1.5px",
-                             NULL);
-        goo_canvas_rect_new (group,
-                             width + j*2.5,
-                             7.5 + offset - PRINT_FONT_HEIGHT/2.0,
-                             PRINT_FONT_HEIGHT,
-                             PRINT_FONT_HEIGHT,
-                             "line-width", 0.25,
-                             NULL);
+        for (guint j = 0; j < _max_score->_value; j++)
+        {
+          gchar *number;
 
-        g_free (number);
+          number = g_strdup_printf ("%d", j+1);
+          goo_canvas_text_new (group,
+                               number,
+                               name_width + j*2.5 + PRINT_FONT_HEIGHT/2,
+                               0.0 + offset,
+                               -1.0,
+                               GTK_ANCHOR_CENTER,
+                               "font", font,
+                               NULL);
+          goo_canvas_rect_new (group,
+                               name_width + j*2.5,
+                               0.0 + offset - PRINT_FONT_HEIGHT/2.0,
+                               PRINT_FONT_HEIGHT,
+                               PRINT_FONT_HEIGHT,
+                               "line-width", 0.25,
+                               NULL);
+
+          goo_canvas_text_new (group,
+                               number,
+                               name_width + j*2.5 + PRINT_FONT_HEIGHT/2,
+                               7.5 + offset,
+                               -1.0,
+                               GTK_ANCHOR_CENTER,
+                               "font", font,
+                               NULL);
+          goo_canvas_rect_new (group,
+                               name_width + j*2.5,
+                               7.5 + offset - PRINT_FONT_HEIGHT/2.0,
+                               PRINT_FONT_HEIGHT,
+                               PRINT_FONT_HEIGHT,
+                               "line-width", 0.25,
+                               NULL);
+
+          g_free (number);
+        }
+        g_free (font);
       }
 
       {
         gdouble score_size = 4.0;
 
         goo_canvas_rect_new (group,
-                             width + _max_score->_value*2.5 + score_size,
+                             name_width + _max_score->_value*2.5 + score_size,
                              0.0 + offset - score_size/2.0,
                              score_size,
                              score_size,
                              "line-width", 0.3,
                              NULL);
         goo_canvas_rect_new (group,
-                             width + _max_score->_value*2.5 + score_size,
+                             name_width + _max_score->_value*2.5 + score_size,
                              7.5 + offset - score_size/2.0,
                              score_size,
                              score_size,
                              "line-width", 0.3,
                              NULL);
       }
-
-      g_free (font);
     }
 
     Canvas::FitToContext (group,
@@ -1801,6 +1892,17 @@ void Table::OnZoom (gdouble value)
 {
   goo_canvas_set_scale (GetCanvas (),
                         value);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Table::OnPrintCanvasItemReleased (GooCanvasItem  *item,
+                                           GooCanvasItem  *target_item,
+                                           GdkEventButton *event,
+                                           Table          *table)
+{
+  table->OnPrint (G_OBJECT (item));
+
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -1865,4 +1967,13 @@ extern "C" G_MODULE_EXPORT void on_zoom_scalebutton_value_changed (GtkWidget *wi
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnZoom (value);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *widget,
+                                                                    Object    *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->OnMatchSheetToggled (widget);
 }

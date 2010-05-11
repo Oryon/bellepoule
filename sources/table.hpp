@@ -36,11 +36,11 @@ class Table : public virtual Stage, public CanvasModule
     void OnFromTableComboboxChanged ();
     void OnStuffClicked ();
     void OnInputToggled (GtkWidget *widget);
+    void OnMatchSheetToggled (GtkWidget *widget);
     void OnSearchMatch ();
     void OnFilterClicked ();
-    void OnPrintPoolToolbuttonClicked ();
+    void OnPrint (GObject *from);
     void OnZoom (gdouble value);
-    void Print (const gchar *job_name);
 
   public:
     static const gchar *_class_name;
@@ -190,6 +190,11 @@ class Table : public virtual Stage, public CanvasModule
                                                    GtkTreeModel    *tree_model,
                                                    GtkTreeIter     *iter,
                                                    Table           *table);
+
+    static gboolean OnPrintCanvasItemReleased (GooCanvasItem  *item,
+                                               GooCanvasItem  *target_item,
+                                               GdkEventButton *event,
+                                               Table          *table);
 
     ~Table ();
 };

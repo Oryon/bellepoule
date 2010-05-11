@@ -30,6 +30,9 @@ class Object
     void *GetData (Object *owner,
                    gchar  *key);
 
+    void RemoveData (Object *owner,
+                     gchar  *key);
+
     void Retain ();
 
     void Release ();
