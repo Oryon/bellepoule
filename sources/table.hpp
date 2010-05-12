@@ -39,7 +39,7 @@ class Table : public virtual Stage, public CanvasModule
     void OnMatchSheetToggled (GtkWidget *widget);
     void OnSearchMatch ();
     void OnFilterClicked ();
-    void OnPrint (GObject *from);
+    void OnPrint ();
     void OnZoom (gdouble value);
 
   public:
@@ -103,6 +103,8 @@ class Table : public virtual Stage, public CanvasModule
     GSList             *_result_list;
     GSList             *_match_to_print;
     GtkWidget          *_print_dialog;
+    GtkWidget          *_level_print_dialog;
+    gboolean            _print_full_table;
 
     GooCanvasItem *GetQuickScore (gchar *container);
 
@@ -185,16 +187,24 @@ class Table : public virtual Stage, public CanvasModule
                     Player *player,
                     guint   position);
 
+    void LookForMatchToPrint (guint    level_to_print,
+                              gboolean all_sheet);
+
     static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
                                                    GtkCellRenderer *cell,
                                                    GtkTreeModel    *tree_model,
                                                    GtkTreeIter     *iter,
                                                    Table           *table);
 
-    static gboolean OnPrintCanvasItemReleased (GooCanvasItem  *item,
-                                               GooCanvasItem  *target_item,
-                                               GdkEventButton *event,
-                                               Table          *table);
+    static gboolean OnPrintLevel (GooCanvasItem  *item,
+                                  GooCanvasItem  *target_item,
+                                  GdkEventButton *event,
+                                  Table          *table);
+
+    static gboolean OnPrintMatch (GooCanvasItem  *item,
+                                  GooCanvasItem  *target_item,
+                                  GdkEventButton *event,
+                                  Table          *table);
 
     ~Table ();
 };

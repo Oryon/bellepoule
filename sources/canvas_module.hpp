@@ -39,7 +39,7 @@ class CanvasModule : public Module
     GooCanvas *GetCanvas ();
     GooCanvasItem *GetRootItem ();
 
-  private:
+  protected:
     virtual void OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context);
     virtual void OnDrawPage (GtkPrintOperation *operation,

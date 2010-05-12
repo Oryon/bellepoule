@@ -122,6 +122,21 @@ Table::Table (StageClass *stage_class)
   {
     GtkWidget *content_area;
 
+    _level_print_dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                              GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                              GTK_MESSAGE_QUESTION,
+                                                              GTK_BUTTONS_OK_CANCEL,
+                                                              "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>");
+
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_level_print_dialog));
+
+    gtk_widget_reparent (_glade->GetWidget ("print_level_dialog_vbox"),
+                         content_area);
+  }
+
+  {
+    GtkWidget *content_area;
+
     _print_dialog = gtk_message_dialog_new_with_markup (NULL,
                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                         GTK_MESSAGE_QUESTION,
@@ -184,6 +199,7 @@ Table::~Table ()
   }
 
   gtk_widget_destroy (_print_dialog);
+  gtk_widget_destroy (_level_print_dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -313,7 +329,6 @@ void Table::Display ()
 
   {
     _main_table = goo_canvas_table_new (GetRootItem (),
-                                        "row-spacing",    10.0,
                                         "column-spacing", _level_spacing,
                                         NULL);
 
@@ -349,9 +364,9 @@ void Table::Display ()
                                                   1);
         Canvas::SetTableItemAttribute (print_item, "x-align", 0.5);
 
-        g_object_set_data (G_OBJECT (print_item), "level_to-print", (void *) level);
+        g_object_set_data (G_OBJECT (print_item), "level_to_print", (void *) level);
         g_signal_connect (print_item, "button-release-event",
-                          G_CALLBACK (OnPrintCanvasItemReleased), this);
+                          G_CALLBACK (OnPrintLevel), this);
       }
 
       Canvas::PutInTable (_main_table,
@@ -775,9 +790,11 @@ gboolean Table::FillInNode (GNode *node,
     {
       data->_print_item = Canvas::PutStockIconInTable (data->_canvas_table,
                                                        GTK_STOCK_PRINT,
-                                                       0,
-                                                       1);
-      Canvas::SetTableItemAttribute (data->_print_item, "y-align", 0.5);
+                                                       1,
+                                                       0);
+      g_object_set_data (G_OBJECT (data->_print_item), "match_to_print", data->_match);
+      g_signal_connect (data->_print_item, "button-release-event",
+                        G_CALLBACK (OnPrintMatch), table);
     }
 
     {
@@ -1154,78 +1171,59 @@ void Table::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnPrint (GObject *from)
+void Table::LookForMatchToPrint (guint    level_to_print,
+                                 gboolean all_sheet)
 {
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  if (_match_to_print)
   {
-    Classification *classification = GetClassification ();
-
-    if (classification)
-    {
-      classification->Print ("Classement du tableau");
-    }
+    g_slist_free (_match_to_print);
+    _match_to_print = NULL;
   }
-  else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+
   {
-    GtkWidget *w              = _glade->GetWidget ("pending_radiobutton");
-    gboolean   all_sheet      = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
-    guint      level_to_print = (guint) g_object_get_data (G_OBJECT (from), "level_to-print");
+    GtkTreeIter parent;
+    gboolean    iter_is_valid;
 
-    if (_match_to_print)
+    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_quick_search_filter),
+                                                   &parent);
+    while (iter_is_valid)
     {
-      g_slist_free (_match_to_print);
-      _match_to_print = NULL;
-    }
+      GtkTreeIter iter;
 
-    {
-      GtkTreeIter parent;
-      gboolean    iter_is_valid;
-
-      iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_quick_search_filter),
-                                                     &parent);
+      iter_is_valid = gtk_tree_model_iter_children (GTK_TREE_MODEL (_quick_search_filter),
+                                                    &iter,
+                                                    &parent);
       while (iter_is_valid)
       {
-        GtkTreeIter iter;
+        Match *match;
 
-        iter_is_valid = gtk_tree_model_iter_children (GTK_TREE_MODEL (_quick_search_filter),
-                                                      &iter,
-                                                      &parent);
-        while (iter_is_valid)
+        gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
+                            &iter,
+                            QUICK_MATCH_COLUMN, &match,
+                            -1);
+        if (match)
         {
-          Match *match;
+          guint level = (guint) match->GetData (this, "level");
 
-          gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
-                              &iter,
-                              QUICK_MATCH_COLUMN, &match,
-                              -1);
-          if (match)
+          if ((level_to_print == 0) || (level_to_print == level))
           {
-            guint level = (guint) match->GetData (this, "level");
+            gboolean already_printed = (gboolean) match->GetData (this, "printed");
 
-            if ((level_to_print == 0) || (level_to_print == level))
+            if (all_sheet || (already_printed != TRUE))
             {
-              gboolean already_printed = (gboolean) match->GetData (this, "printed");
-
-              if (all_sheet || (already_printed != TRUE))
-              {
-                _match_to_print = g_slist_prepend (_match_to_print,
-                                                   match);
-              }
+              _match_to_print = g_slist_prepend (_match_to_print,
+                                                 match);
             }
           }
-          iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
-                                                    &iter);
         }
-
         iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
-                                                  &parent);
+                                                  &iter);
       }
+
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_quick_search_filter),
+                                                &parent);
     }
-
-    Print ("Feuille de match");
   }
-
-  gtk_widget_hide (_print_dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -1234,7 +1232,7 @@ extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *wi
 {
   Table *t = dynamic_cast <Table *> (owner);
 
-  t->OnPrint (G_OBJECT (widget));
+  t->OnPrint ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1660,19 +1658,27 @@ void Table::OnFilterClicked ()
 void Table::OnBeginPrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context)
 {
-  guint nb_match;
-  guint nb_page;
-
-  nb_match = g_slist_length (_match_to_print);
-  nb_page  = nb_match/4;
-
-  if (nb_match%4 != 0)
+  if (_print_full_table)
   {
-    nb_page++;
+    CanvasModule::OnBeginPrint (operation,
+                                context);
   }
+  else
+  {
+    guint nb_match;
+    guint nb_page;
 
-  gtk_print_operation_set_n_pages (operation,
-                                   nb_page);
+    nb_match = g_slist_length (_match_to_print);
+    nb_page  = nb_match/4;
+
+    if (nb_match%4 != 0)
+    {
+      nb_page++;
+    }
+
+    gtk_print_operation_set_n_pages (operation,
+                                     nb_page);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1680,211 +1686,222 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
                         GtkPrintContext   *context,
                         gint               page_nr)
 {
-  cairo_t   *cr      = gtk_print_context_get_cairo_context (context);
-  GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
-  gdouble    paper_w = gtk_print_context_get_width (context);
-  gdouble    paper_h = gtk_print_context_get_height (context);
-  GSList    *current_match;
-
-  cairo_save (cr);
-
-  current_match = g_slist_nth (_match_to_print,
-                               4*page_nr);
-  for (guint i = 0; current_match && (i < 4); i++)
+  if (_print_full_table)
   {
-    GooCanvasItem *group;
-
-    group = goo_canvas_group_new (goo_canvas_get_root_item (canvas),
-                                  NULL);
-
-    {
-      cairo_matrix_t matrix;
-
-      cairo_matrix_init_translate (&matrix,
-                                   0.0,
-                                   i*25.0 * paper_h/paper_w);
-
-      g_object_set_data (G_OBJECT (operation), "operation_matrix", (void *) &matrix);
-
-      Module::OnDrawPage (operation,
-                          context,
-                          page_nr);
-    }
-
-    {
-      GString       *image;
-      Match         *match  = (Match *) current_match->data;
-      Player        *A      = match->GetPlayerA ();
-      Player        *B      = match->GetPlayerB ();
-      gdouble        offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
-      GooCanvasItem *item;
-      gdouble        name_width;
-      gchar         *match_number = g_strdup_printf ("Match %s", (const char *) match->GetData (this, "number"));
-
-      match->SetData (this, "printed", (void *) TRUE);
-
-      {
-        gchar *font   = g_strdup_printf ("Sans Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
-        gchar *decimal = strchr (font, ',');
-
-        if (decimal)
-        {
-          *decimal = '.';
-        }
-
-        goo_canvas_text_new (group,
-                             match_number,
-                             0.0,
-                             0.0 + offset - 6.0,
-                             -1.0,
-                             GTK_ANCHOR_W,
-                             "fill-color", "grey",
-                             "font", font,
-                             NULL);
-        g_free (match_number);
-        g_free (font);
-      }
-
-      {
-        GooCanvasBounds  bounds;
-        gchar           *font = g_strdup_printf ("Sans Bold %fpx", PRINT_FONT_HEIGHT);
-        gchar *decimal = strchr (font, ',');
-
-        if (decimal)
-        {
-          *decimal = '.';
-        }
-
-        image = GetPlayerImage (A);
-        item = goo_canvas_text_new (group,
-                                    image->str,
-                                    0.0,
-                                    0.0 + offset,
-                                    -1.0,
-                                    GTK_ANCHOR_W,
-                                    "font", font,
-                                    NULL);
-        g_string_free (image,
-                       TRUE);
-        goo_canvas_item_get_bounds (item,
-                                    &bounds);
-        name_width = bounds.x2 - bounds.x1;
-
-        image = GetPlayerImage (B);
-        item = goo_canvas_text_new (group,
-                                    image->str,
-                                    0.0,
-                                    7.5 + offset,
-                                    -1.0,
-                                    GTK_ANCHOR_W,
-                                    "font", font,
-                                    NULL);
-        g_string_free (image,
-                       TRUE);
-
-        g_free (font);
-
-        goo_canvas_item_get_bounds (item,
-                                    &bounds);
-        if (name_width < bounds.x2 - bounds.x1)
-        {
-          name_width = bounds.x2 - bounds.x1;
-        }
-      }
-
-      {
-        gdouble x;
-
-        goo_canvas_convert_to_item_space (canvas,
-                                          item,
-                                          &x,
-                                          &name_width);
-      }
-
-      {
-        gchar *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(PRINT_FONT_HEIGHT));
-        gchar *decimal = strchr (font, ',');
-
-        if (decimal)
-        {
-          *decimal = '.';
-        }
-
-        for (guint j = 0; j < _max_score->_value; j++)
-        {
-          gchar *number;
-
-          number = g_strdup_printf ("%d", j+1);
-          goo_canvas_text_new (group,
-                               number,
-                               name_width + j*2.5 + PRINT_FONT_HEIGHT/2,
-                               0.0 + offset,
-                               -1.0,
-                               GTK_ANCHOR_CENTER,
-                               "font", font,
-                               NULL);
-          goo_canvas_rect_new (group,
-                               name_width + j*2.5,
-                               0.0 + offset - PRINT_FONT_HEIGHT/2.0,
-                               PRINT_FONT_HEIGHT,
-                               PRINT_FONT_HEIGHT,
-                               "line-width", 0.25,
-                               NULL);
-
-          goo_canvas_text_new (group,
-                               number,
-                               name_width + j*2.5 + PRINT_FONT_HEIGHT/2,
-                               7.5 + offset,
-                               -1.0,
-                               GTK_ANCHOR_CENTER,
-                               "font", font,
-                               NULL);
-          goo_canvas_rect_new (group,
-                               name_width + j*2.5,
-                               7.5 + offset - PRINT_FONT_HEIGHT/2.0,
-                               PRINT_FONT_HEIGHT,
-                               PRINT_FONT_HEIGHT,
-                               "line-width", 0.25,
-                               NULL);
-
-          g_free (number);
-        }
-        g_free (font);
-      }
-
-      {
-        gdouble score_size = 4.0;
-
-        goo_canvas_rect_new (group,
-                             name_width + _max_score->_value*2.5 + score_size,
-                             0.0 + offset - score_size/2.0,
-                             score_size,
-                             score_size,
-                             "line-width", 0.3,
-                             NULL);
-        goo_canvas_rect_new (group,
-                             name_width + _max_score->_value*2.5 + score_size,
-                             7.5 + offset - score_size/2.0,
-                             score_size,
-                             score_size,
-                             "line-width", 0.3,
-                             NULL);
-      }
-    }
-
-    Canvas::FitToContext (group,
-                          context);
-
-    current_match = g_slist_next (current_match);
+    CanvasModule::OnDrawPage (operation,
+                              context,
+                              page_nr);
   }
+  else
+  {
+    cairo_t   *cr      = gtk_print_context_get_cairo_context (context);
+    GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
+    gdouble    paper_w = gtk_print_context_get_width (context);
+    gdouble    paper_h = gtk_print_context_get_height (context);
+    GSList    *current_match;
 
-  goo_canvas_render (canvas,
-                     cr,
-                     NULL,
-                     1.0);
-  gtk_widget_destroy (GTK_WIDGET (canvas));
+    cairo_save (cr);
 
-  cairo_restore (cr);
+    current_match = g_slist_nth (_match_to_print,
+                                 4*page_nr);
+    for (guint i = 0; current_match && (i < 4); i++)
+    {
+      GooCanvasItem *group;
+
+      group = goo_canvas_group_new (goo_canvas_get_root_item (canvas),
+                                    NULL);
+
+      {
+        cairo_matrix_t matrix;
+
+        cairo_matrix_init_translate (&matrix,
+                                     0.0,
+                                     i*25.0 * paper_h/paper_w);
+
+        g_object_set_data (G_OBJECT (operation), "operation_matrix", (void *) &matrix);
+
+        Module::OnDrawPage (operation,
+                            context,
+                            page_nr);
+      }
+
+      {
+        GString       *image;
+        Match         *match  = (Match *) current_match->data;
+        Player        *A      = match->GetPlayerA ();
+        Player        *B      = match->GetPlayerB ();
+        gdouble        offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
+        GooCanvasItem *item;
+        gdouble        name_width;
+        gchar         *match_number = g_strdup_printf ("Match %s", (const char *) match->GetData (this, "number"));
+
+        match->SetData (this, "printed", (void *) TRUE);
+
+        {
+          gchar *font   = g_strdup_printf ("Sans Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
+          gchar *decimal = strchr (font, ',');
+
+          if (decimal)
+          {
+            *decimal = '.';
+          }
+
+          goo_canvas_text_new (group,
+                               match_number,
+                               0.0,
+                               0.0 + offset - 6.0,
+                               -1.0,
+                               GTK_ANCHOR_W,
+                               "fill-color", "grey",
+                               "font", font,
+                               NULL);
+          g_free (match_number);
+          g_free (font);
+        }
+
+        {
+          GooCanvasBounds  bounds;
+          gchar           *font = g_strdup_printf ("Sans Bold %fpx", PRINT_FONT_HEIGHT);
+          gchar *decimal = strchr (font, ',');
+
+          if (decimal)
+          {
+            *decimal = '.';
+          }
+
+          image = GetPlayerImage (A);
+          item = goo_canvas_text_new (group,
+                                      image->str,
+                                      0.0,
+                                      0.0 + offset,
+                                      -1.0,
+                                      GTK_ANCHOR_W,
+                                      "font", font,
+                                      NULL);
+          g_string_free (image,
+                         TRUE);
+          goo_canvas_item_get_bounds (item,
+                                      &bounds);
+          name_width = bounds.x2 - bounds.x1;
+
+          image = GetPlayerImage (B);
+          item = goo_canvas_text_new (group,
+                                      image->str,
+                                      0.0,
+                                      7.5 + offset,
+                                      -1.0,
+                                      GTK_ANCHOR_W,
+                                      "font", font,
+                                      NULL);
+          g_string_free (image,
+                         TRUE);
+
+          g_free (font);
+
+          goo_canvas_item_get_bounds (item,
+                                      &bounds);
+          if (name_width < bounds.x2 - bounds.x1)
+          {
+            name_width = bounds.x2 - bounds.x1;
+          }
+        }
+
+        {
+          gdouble x;
+
+          goo_canvas_convert_to_item_space (canvas,
+                                            item,
+                                            &x,
+                                            &name_width);
+        }
+
+        {
+          gchar *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(PRINT_FONT_HEIGHT));
+          gchar *decimal = strchr (font, ',');
+
+          if (decimal)
+          {
+            *decimal = '.';
+          }
+
+          for (guint j = 0; j < _max_score->_value; j++)
+          {
+            gchar *number;
+
+            number = g_strdup_printf ("%d", j+1);
+            goo_canvas_text_new (group,
+                                 number,
+                                 name_width + j*2.5 + PRINT_FONT_HEIGHT/2,
+                                 0.0 + offset,
+                                 -1.0,
+                                 GTK_ANCHOR_CENTER,
+                                 "font", font,
+                                 "fill-color", "grey",
+                                 NULL);
+            goo_canvas_rect_new (group,
+                                 name_width + j*2.5,
+                                 0.0 + offset - PRINT_FONT_HEIGHT/2.0,
+                                 PRINT_FONT_HEIGHT,
+                                 PRINT_FONT_HEIGHT,
+                                 "line-width", 0.25,
+                                 NULL);
+
+            goo_canvas_text_new (group,
+                                 number,
+                                 name_width + j*2.5 + PRINT_FONT_HEIGHT/2,
+                                 7.5 + offset,
+                                 -1.0,
+                                 GTK_ANCHOR_CENTER,
+                                 "font", font,
+                                 "fill-color", "grey",
+                                 NULL);
+            goo_canvas_rect_new (group,
+                                 name_width + j*2.5,
+                                 7.5 + offset - PRINT_FONT_HEIGHT/2.0,
+                                 PRINT_FONT_HEIGHT,
+                                 PRINT_FONT_HEIGHT,
+                                 "line-width", 0.25,
+                                 NULL);
+
+            g_free (number);
+          }
+          g_free (font);
+        }
+
+        {
+          gdouble score_size = 4.0;
+
+          goo_canvas_rect_new (group,
+                               name_width + _max_score->_value*2.5 + score_size,
+                               0.0 + offset - score_size/2.0,
+                               score_size,
+                               score_size,
+                               "line-width", 0.3,
+                               NULL);
+          goo_canvas_rect_new (group,
+                               name_width + _max_score->_value*2.5 + score_size,
+                               7.5 + offset - score_size/2.0,
+                               score_size,
+                               score_size,
+                               "line-width", 0.3,
+                               NULL);
+        }
+      }
+
+      Canvas::FitToContext (group,
+                            context);
+
+      current_match = g_slist_next (current_match);
+    }
+
+    goo_canvas_render (canvas,
+                       cr,
+                       NULL,
+                       1.0);
+    gtk_widget_destroy (GTK_WIDGET (canvas));
+
+    cairo_restore (cr);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1895,12 +1912,86 @@ void Table::OnZoom (gdouble value)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::OnPrintCanvasItemReleased (GooCanvasItem  *item,
-                                           GooCanvasItem  *target_item,
-                                           GdkEventButton *event,
-                                           Table          *table)
+void Table::OnPrint ()
 {
-  table->OnPrint (G_OBJECT (item));
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      classification->Print ("Classement du tableau");
+    }
+  }
+  else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+  {
+    GtkWidget *w = _glade->GetWidget ("table_radiobutton");
+
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+    {
+      _print_full_table = TRUE;
+      Print ("Tableau");
+    }
+    else
+    {
+      GtkWidget *w         = _glade->GetWidget ("pending_radiobutton");
+      gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+
+      LookForMatchToPrint (0,
+                           all_sheet);
+      _print_full_table = FALSE;
+      Print ("Feuille de match");
+    }
+  }
+
+  gtk_widget_hide (_print_dialog);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Table::OnPrintLevel (GooCanvasItem  *item,
+                              GooCanvasItem  *target_item,
+                              GdkEventButton *event,
+                              Table          *table)
+{
+  guint level_to_print = (guint) g_object_get_data (G_OBJECT (item), "level_to_print");
+  gchar *title         = g_strdup_printf ("%s : Impression des matchs", table->GetLevelImage (level_to_print));
+
+  gtk_window_set_title (GTK_WINDOW (table->_level_print_dialog),
+                        title);
+  g_free (title);
+
+  if (gtk_dialog_run (GTK_DIALOG (table->_level_print_dialog)) == GTK_RESPONSE_OK)
+  {
+    GtkWidget *w         = table->_glade->GetWidget ("level_pending_radiobutton");
+    gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+
+    table->LookForMatchToPrint (level_to_print,
+                                all_sheet);
+    table->_print_full_table = FALSE;
+    table->Print ("Feuille de match");
+  }
+
+  gtk_widget_hide (table->_level_print_dialog);
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Table::OnPrintMatch (GooCanvasItem  *item,
+                              GooCanvasItem  *target_item,
+                              GdkEventButton *event,
+                              Table          *table)
+{
+  if (table->_match_to_print)
+  {
+    g_slist_free (table->_match_to_print);
+    table->_match_to_print = NULL;
+  }
+
+  table->_match_to_print = g_slist_prepend (table->_match_to_print,
+                                            g_object_get_data (G_OBJECT (item), "match_to_print"));
+  table->_print_full_table = FALSE;
+  table->Print ("Feuille de match");
 
   return TRUE;
 }
