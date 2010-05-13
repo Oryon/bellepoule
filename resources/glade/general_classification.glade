@@ -6,14 +6,13 @@
     <child>
       <object class="GtkVBox" id="root">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkToolbar" id="toolbar6">
             <property name="visible">True</property>
             <child>
               <object class="GtkToolButton" id="general_classification_filter_button">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Données</property>
+                <property name="label" translatable="yes">Donn&#xE9;es</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_general_classification_filter_button_clicked"/>
               </object>

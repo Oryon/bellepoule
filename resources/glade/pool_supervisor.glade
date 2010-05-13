@@ -6,7 +6,6 @@
     <child>
       <object class="GtkVBox" id="root">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
@@ -52,7 +51,7 @@
                 <child>
                   <object class="GtkToolButton" id="pool_filter_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Données</property>
+                    <property name="label" translatable="yes">Donn&#xE9;es</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_pool_filter_toolbutton_clicked"/>
                   </object>
@@ -167,7 +166,6 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
         <child>
           <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <child>
               <object class="GtkHBox" id="hbox3">
                 <property name="visible">True</property>
@@ -197,7 +195,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox1">
+              <object class="GtkHBox" id="hbox4">
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkLabel" id="label2">

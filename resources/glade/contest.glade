@@ -10,7 +10,6 @@
         <child>
           <object class="GtkVBox" id="root">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <child>
               <object class="GtkToolbar" id="contest_toolbar">
                 <property name="visible">True</property>
@@ -88,7 +87,6 @@
                 <child>
                   <object class="GtkVBox" id="vbox1">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="contest_name_label">
                         <property name="visible">True</property>
@@ -192,7 +190,6 @@
     <child internal-child="vbox">
       <object class="GtkVBox" id="properties_dialog-vbox">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
           <object class="GtkTable" id="table1">
@@ -486,7 +483,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox1">
+                          <object class="GtkHBox" id="hbox4">
                             <property name="visible">True</property>
                             <child>
                               <object class="GtkSpinButton" id="spinbutton1">
@@ -694,7 +691,6 @@ des scores</property>
                         <child>
                           <object class="GtkVBox" id="vbox2">
                             <property name="visible">True</property>
-                            <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkRadioButton" id="allow_radiobutton">
                                 <property name="label" translatable="yes">Autoriser</property>
@@ -702,7 +698,7 @@ des scores</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Rend actif le bouton de remplissage automatique des scores. Ca peut &#xE9;viter des saisies longues et laborieuses lors des s&#xE9;ances de prise en main de BellePoule.</property>
-                                <property name="image">image1</property>
+                                <property name="image">image2</property>
                                 <property name="image_position">right</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">radiobutton2</property>
@@ -850,7 +846,7 @@ des scores</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
-  <object class="GtkImage" id="image1">
+  <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="stock">gtk-dialog-warning</property>
   </object>

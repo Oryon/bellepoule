@@ -6,7 +6,6 @@
     <child>
       <object class="GtkVBox" id="root">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">8</property>
         <child>
           <object class="GtkToolbar" id="toolbar2">
@@ -15,7 +14,7 @@
               <object class="GtkToolButton" id="filter_button">
                 <property name="visible">True</property>
                 <property name="tooltip_text" translatable="yes">Permet d'afficher et de masquer certaines donn&#xE9;es ainsi que de red&#xE9;finir leur ordre d'affichage.</property>
-                <property name="label" translatable="yes">Données</property>
+                <property name="label" translatable="yes">Donn&#xE9;es</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_filter_button_clicked"/>
               </object>
