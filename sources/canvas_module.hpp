@@ -36,6 +36,7 @@ class CanvasModule : public Module
     virtual void OnPlugged ();
     virtual void OnUnPlugged ();
 
+    GooCanvas *CreateCanvas ();
     GooCanvas *GetCanvas ();
     GooCanvasItem *GetRootItem ();
 

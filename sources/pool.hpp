@@ -64,6 +64,10 @@ class Pool : public CanvasModule
 
     void Stuff ();
 
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page_nr);
+
     static gint ComparePlayer (Player   *A,
                                Player   *B,
                                Object   *data_owner,
@@ -97,6 +101,8 @@ class Pool : public CanvasModule
                                               Pool   *pool);
 
     void OnPlugged ();
+
+    void Draw (GooCanvas *on_canvas);
 
     Match *GetMatch (Player *A,
                      Player *B);

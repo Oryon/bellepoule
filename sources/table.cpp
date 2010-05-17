@@ -1686,6 +1686,14 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
                         GtkPrintContext   *context,
                         gint               page_nr)
 {
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  {
+    Module::OnDrawPage (operation,
+                        context,
+                        page_nr);
+    return;
+  }
+
   if (_print_full_table)
   {
     CanvasModule::OnDrawPage (operation,

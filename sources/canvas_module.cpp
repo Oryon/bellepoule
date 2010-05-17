@@ -48,13 +48,7 @@ void CanvasModule::OnPlugged ()
   {
     GtkWidget *view_port = _glade->GetWidget ("canvas_scrolled_window");
 
-    _canvas = GOO_CANVAS (goo_canvas_new ());
-
-    g_object_set (G_OBJECT (_canvas),
-                  "automatic-bounds", TRUE,
-                  "bounds-padding", 10.0,
-                  "bounds-from-origin", FALSE,
-                  NULL);
+    _canvas = CreateCanvas ();
 
     gtk_container_add (GTK_CONTAINER (view_port), GTK_WIDGET (_canvas));
     gtk_widget_show (GTK_WIDGET (_canvas));
@@ -69,6 +63,20 @@ void CanvasModule::OnUnPlugged ()
     gtk_widget_destroy (GTK_WIDGET (_canvas));
     _canvas = NULL;
   }
+}
+
+// --------------------------------------------------------------------------------
+GooCanvas *CanvasModule::CreateCanvas ()
+{
+  GooCanvas *canvas = GOO_CANVAS (goo_canvas_new ());
+
+  g_object_set (G_OBJECT (canvas),
+                "automatic-bounds", TRUE,
+                "bounds-padding", 10.0,
+                "bounds-from-origin", FALSE,
+                NULL);
+
+  return canvas;
 }
 
 // --------------------------------------------------------------------------------
@@ -153,14 +161,22 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
                                GtkPrintContext   *context,
                                gint               page_nr)
 {
-  cairo_t *cr = gtk_print_context_get_cairo_context (context);
+  cairo_t   *cr     = gtk_print_context_get_cairo_context (context);
+  GooCanvas *canvas = (GooCanvas *) g_object_get_data (G_OBJECT (operation), "operation_canvas");
 
-  Module::OnDrawPage (operation,
-                      context,
-                      page_nr);
+
+  if (canvas == NULL)
+  {
+    canvas = _canvas;
+
+    Module::OnDrawPage (operation,
+                        context,
+                        page_nr);
+  }
 
   cairo_save (cr);
-  if (GTK_WIDGET_DRAWABLE (GTK_WIDGET (_canvas)))
+
+  //if (GTK_WIDGET_DRAWABLE (GTK_WIDGET (canvas)))
   {
     gdouble  scale;
     gdouble  canvas_x;
@@ -173,7 +189,7 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
     {
       GooCanvasBounds bounds;
 
-      goo_canvas_item_get_bounds (GetRootItem (),
+      goo_canvas_item_get_bounds (goo_canvas_get_root_item (canvas),
                                   &bounds);
       canvas_x = bounds.x1;
       canvas_y = bounds.y1;
@@ -185,7 +201,7 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
       gdouble canvas_dpi;
       gdouble printer_dpi;
 
-      g_object_get (G_OBJECT (GetCanvas ()),
+      g_object_get (G_OBJECT (canvas),
                     "resolution-x", &canvas_dpi,
                     NULL);
       printer_dpi = gtk_print_context_get_dpi_x (context);
@@ -209,7 +225,7 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
                  scale,
                  scale);
 
-    goo_canvas_render (GetCanvas (),
+    goo_canvas_render (canvas,
                        cr,
                        NULL,
                        1.0);

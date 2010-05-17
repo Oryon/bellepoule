@@ -238,12 +238,10 @@ void Pool::OnNewScore (ScoreCollector *score_collector,
 }
 
 // --------------------------------------------------------------------------------
-void Pool::OnPlugged ()
+void Pool::Draw (GooCanvas *on_canvas)
 {
   _title_table = NULL;
   _status_item = NULL;
-
-  CanvasModule::OnPlugged ();
 
   if (_score_collector)
   {
@@ -276,7 +274,7 @@ void Pool::OnPlugged ()
     const guint    cell_w     = 40;
     const guint    cell_h     = 40;
     guint          nb_players = GetNbPlayers ();
-    GooCanvasItem *root_item  = GetRootItem ();
+    GooCanvasItem *root_item  = goo_canvas_get_root_item (on_canvas);
     GooCanvasItem *grid_group = goo_canvas_group_new (root_item, NULL);
 
     // Grid
@@ -687,6 +685,30 @@ void Pool::OnPlugged ()
 
   RefreshScoreData ();
   RefreshDashBoard ();
+}
+
+// --------------------------------------------------------------------------------
+void Pool::DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr)
+{
+  GooCanvas *canvas = CreateCanvas ();
+
+  Draw (canvas);
+
+  g_object_set_data (G_OBJECT (operation), "operation_canvas", (void *) canvas);
+  CanvasModule::OnDrawPage (operation,
+                            context,
+                            page_nr);
+
+  gtk_widget_destroy (GTK_WIDGET (canvas));
+}
+
+// --------------------------------------------------------------------------------
+void Pool::OnPlugged ()
+{
+  CanvasModule::OnPlugged ();
+  Draw (GetCanvas ());
 }
 
 // --------------------------------------------------------------------------------

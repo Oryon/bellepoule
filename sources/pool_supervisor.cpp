@@ -78,6 +78,24 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
     filter->Release ();
   }
 
+  {
+    GtkWidget *content_area;
+
+    _print_dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                        GTK_MESSAGE_QUESTION,
+                                                        GTK_BUTTONS_OK_CANCEL,
+                                                        "<b><big>Quelles poules voulez-vous imprimer ?</big></b>");
+
+    gtk_window_set_title (GTK_WINDOW (_print_dialog),
+                          "Impression des feuilles de poule");
+
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
+
+    gtk_widget_reparent (_glade->GetWidget ("print_dialog-vbox"),
+                         content_area);
+  }
+
   // Classification filter
   {
     GSList *attr_list;
@@ -107,6 +125,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 PoolSupervisor::~PoolSupervisor ()
 {
   Object::TryToRelease (_pool_allocator);
+  gtk_widget_destroy (_print_dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -438,9 +457,64 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
       classification->Print ("Classement du tour de poule");
     }
   }
-  else if (_displayed_pool)
+  else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
   {
-    _displayed_pool->Print ("Feuille de poule");
+    GtkWidget *w = _glade->GetWidget ("all_pool_radiobutton");
+
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+    {
+      _print_all_pool = TRUE;
+    }
+    else
+    {
+      _print_all_pool = FALSE;
+    }
+
+    Print ("Feuille de poule");
+  }
+  gtk_widget_hide (_print_dialog);
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor::OnBeginPrint (GtkPrintOperation *operation,
+                                   GtkPrintContext   *context)
+{
+  if (_print_all_pool)
+  {
+    gtk_print_operation_set_n_pages (operation,
+                                     _pool_allocator->GetNbPools ());
+  }
+  else
+  {
+    gtk_print_operation_set_n_pages (operation,
+                                     1);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor::OnDrawPage (GtkPrintOperation *operation,
+                                 GtkPrintContext   *context,
+                                 gint               page_nr)
+{
+  Module::OnDrawPage (operation,
+                      context,
+                      page_nr);
+
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE)
+  {
+    Pool *pool;
+
+    if (_print_all_pool)
+    {
+      pool = _pool_allocator->GetPool (page_nr);
+    }
+    else
+    {
+      pool = _displayed_pool;
+    }
+    pool->DrawPage (operation,
+                    context,
+                    page_nr);
   }
 }
 

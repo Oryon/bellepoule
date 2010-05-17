@@ -72,6 +72,8 @@ class PoolSupervisor : public virtual Stage, public Module
     PoolAllocator *_pool_allocator;
     Pool          *_displayed_pool;
     Data          *_max_score;
+    GtkWidget     *_print_dialog;
+    gboolean       _print_all_pool;
 
     ~PoolSupervisor ();
 
@@ -86,6 +88,13 @@ class PoolSupervisor : public virtual Stage, public Module
     void SetInputProvider (Stage *input_provider);
 
     void SaveConfiguration (xmlTextWriter *xml_writer);
+
+    void OnBeginPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
+
+    void OnDrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
 
     static void OnPoolStatusUpdated (Pool           *pool,
                                      PoolSupervisor *ps);
