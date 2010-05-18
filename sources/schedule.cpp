@@ -315,6 +315,7 @@ void Schedule::AddStage (Stage *stage,
   else
   {
     stage->SetContest (_contest);
+    stage->SetScoreStuffingPolicy (_score_stuffing_allowed);
 
     // Insert it in the global list
     {

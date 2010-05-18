@@ -35,14 +35,14 @@ class SensitivityTrigger : public virtual Object
     static void on_realize (GtkWidget          *widget,
                             SensitivityTrigger *trigger);
 
-    void SetSensitivity (GtkWidget *w);
-
   private:
     static const gchar *_data_key;
 
     GSList *_widget_list;
 
     virtual ~SensitivityTrigger ();
+
+    void SetSensitivity (GtkWidget *w);
 };
 
 #endif

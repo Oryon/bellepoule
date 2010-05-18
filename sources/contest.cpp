@@ -93,6 +93,8 @@ Contest::Contest ()
   : Module ("contest.glade")
 {
   InitInstance ();
+
+  _schedule->SetScoreStuffingPolicy (FALSE);
 }
 
 // --------------------------------------------------------------------------------
