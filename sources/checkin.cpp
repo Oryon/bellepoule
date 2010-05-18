@@ -121,7 +121,7 @@ Checkin::Checkin (StageClass *stage_class)
           GtkWidget *value_w;
 
           {
-            GtkWidget *box = GetWidget ("value_vbox");
+            GtkWidget *box = _glade->GetWidget ("value_vbox");
 
             if (attr_desc->_type == G_TYPE_BOOLEAN)
             {
@@ -727,7 +727,7 @@ void Checkin::ImportCSV (gchar *file)
 void Checkin::on_add_button_clicked ()
 {
   Player *player   = new Player;
-  GList  *children = gtk_container_get_children (GTK_CONTAINER (GetWidget ("value_vbox")));
+  GList  *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
 
   {
     Player::AttributeId  attr_id ("ref");
@@ -904,7 +904,7 @@ void Checkin::on_add_player_button_clicked ()
   gtk_widget_show_all (w);
 
   {
-    GList *children = gtk_container_get_children (GTK_CONTAINER (GetWidget ("value_vbox")));
+    GList *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
 
     gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
                                                           0));

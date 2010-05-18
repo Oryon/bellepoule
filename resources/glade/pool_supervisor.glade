@@ -6,7 +6,6 @@
     <child>
       <object class="GtkVBox" id="root">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
@@ -167,7 +166,6 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
         <child>
           <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <child>
               <object class="GtkHBox" id="hbox3">
                 <property name="visible">True</property>
@@ -197,7 +195,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox1">
+              <object class="GtkHBox" id="hbox4">
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkLabel" id="label2">

@@ -6,7 +6,6 @@
     <child>
       <object class="GtkVBox" id="root">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
@@ -191,15 +190,13 @@
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
-          <object class="GtkHBox" id="hbox1">
+          <object class="GtkHBox" id="hbox2">
             <property name="visible">True</property>
             <child>
               <object class="GtkVBox" id="check_vbox">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -211,7 +208,6 @@
             <child>
               <object class="GtkVBox" id="title_vbox">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -223,7 +219,6 @@
             <child>
               <object class="GtkVBox" id="value_vbox">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -290,7 +285,6 @@
     <child internal-child="vbox">
       <object class="GtkVBox" id="print_dialog-vbox">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
           <object class="GtkAspectFrame" id="aspectframe1">
@@ -301,7 +295,6 @@
             <child>
               <object class="GtkVBox" id="vbox1">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkCheckButton" id="attending_checkbutton">
                     <property name="label" translatable="yes">Tous les pr&#xE9;sents</property>
@@ -340,7 +333,7 @@
           </packing>
         </child>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
+          <object class="GtkHButtonBox" id="dialog-action_area4">
             <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>
