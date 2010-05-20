@@ -52,6 +52,7 @@ class AttributeDesc : public Object
 
     GType         _type;
     gchar        *_xml_name;
+    gchar        *_code_name;
     gchar        *_user_name;
     Persistency   _persistency;
     Scope         _scope;
@@ -61,6 +62,7 @@ class AttributeDesc : public Object
     GCompareFunc  _compare_func;
 
     static AttributeDesc *Declare (GType  type,
+                                   gchar *code_name,
                                    gchar *xml_name,
                                    gchar *user_name);
 
@@ -92,6 +94,7 @@ class AttributeDesc : public Object
     GtkTreeStore *_discrete_store;
 
     AttributeDesc (GType  type,
+                   gchar *code_name,
                    gchar *xml_name,
                    gchar *user_name);
 
@@ -109,7 +112,9 @@ class Attribute : public Object
   public:
     AttributeDesc *GetDesc ();
 
-    gchar *GetName ();
+    gchar *GetCodeName ();
+
+    gchar *GetXmlName ();
 
     GType GetType ();
 

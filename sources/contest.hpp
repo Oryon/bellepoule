@@ -69,6 +69,8 @@ class Contest : public Module
 
     static GList *_color_list;
 
+    gchar      *_owner;
+    gchar      *_id;
     gchar      *_name;
     gchar      *_organizer;
     gchar      *_web_site;
@@ -79,6 +81,9 @@ class Contest : public Module
     guint       _day;
     guint       _month;
     guint       _year;
+    GTimeVal    _checkin_time;
+    GTimeVal    _scratch_time;
+    GTimeVal    _start_time;
     Schedule   *_schedule;
     GtkWidget  *_properties_dlg;
     GtkWidget  *_calendar_dlg;

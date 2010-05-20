@@ -94,6 +94,9 @@ Contest::Contest ()
 {
   InitInstance ();
 
+  _checkin_time.tv_sec  = 0;
+  _checkin_time.tv_usec = 0;
+
   _schedule->SetScoreStuffingPolicy (FALSE);
 }
 
@@ -137,32 +140,73 @@ Contest::Contest (gchar *filename)
       xmlXPathObject  *xml_object;
       xmlNodeSet      *xml_nodeset;
 
-      xml_object  = xmlXPathEval (BAD_CAST "/contest", xml_context);
+      xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
       xml_nodeset = xml_object->nodesetval;
 
       if (xml_object->nodesetval->nodeNr)
       {
         gchar *attr;
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "title");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Championnat");
+        if (attr)
+        {
+          _owner = g_strdup (attr);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
+        if (attr)
+        {
+          _id = g_strdup (attr);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "TitreLong");
         if (attr)
         {
           _name = g_strdup (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "day");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Date");
         if (attr)
         {
-          _day = (guint) atoi (attr);
+          if (strlen (attr) > 0)
+          {
+            gchar **date = g_strsplit (attr,
+                                       ".",
+                                       3);
+
+            if (date[0] && date[1] && date[2])
+            {
+              _day   = (guint) atoi (date[0]);
+              _month = (guint) atoi (date[1]);
+              _year  = (guint) atoi (date[2]);
+            }
+
+            g_strfreev (date);
+          }
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "month");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "checkin");
         if (attr)
         {
-          _month = (guint) atoi (attr);
+          g_time_val_from_iso8601 (attr,
+                                   &_checkin_time);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "weapon");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "scratch");
+        if (attr)
+        {
+          g_time_val_from_iso8601 (attr,
+                                   &_scratch_time);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "start");
+        if (attr)
+        {
+          g_time_val_from_iso8601 (attr,
+                                   &_start_time);
+        }
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Arme");
         if (attr)
         {
           for (guint i = 0; i < _nb_weapon; i++)
@@ -174,7 +218,7 @@ Contest::Contest (gchar *filename)
           }
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "gender");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Sexe");
         if (attr)
         {
           for (guint i = 0; i < _nb_gender; i++)
@@ -186,7 +230,7 @@ Contest::Contest (gchar *filename)
           }
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "category");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Categorie");
         if (attr)
         {
           for (guint i = 0; i < _nb_category; i++)
@@ -198,19 +242,13 @@ Contest::Contest (gchar *filename)
           }
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "year");
-        if (attr)
-        {
-          _year = (guint) atoi (attr);
-        }
-
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "organizer");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Organisateur");
         if (attr)
         {
           _organizer = g_strdup (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "web_site");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "URLorganisateur");
         if (attr)
         {
           _web_site = g_strdup (attr);
@@ -247,6 +285,8 @@ Contest::~Contest ()
     _tournament->OnContestDeleted (this);
   }
 
+  g_free (_owner);
+  g_free (_id);
   g_free (_name);
   g_free (_filename);
   g_free (_organizer);
@@ -329,6 +369,14 @@ Contest *Contest::Duplicate ()
   contest->_schedule->CreateDefault ();
   contest->_derived = TRUE;
 
+  if (_owner)
+  {
+    contest->_owner = g_strdup (_owner);
+  }
+  if (_id)
+  {
+    contest->_id = g_strdup (_id);
+  }
   contest->_name       = g_strdup (_name);
   contest->_organizer  = g_strdup (_organizer);
   contest->_web_site   = g_strdup (_web_site);
@@ -363,6 +411,8 @@ void Contest::InitInstance ()
 
   _notebook   = NULL;
 
+  _owner      = NULL;
+  _id         = NULL;
   _name       = NULL;
   _filename   = NULL;
   _organizer  = NULL;
@@ -722,36 +772,76 @@ void Contest::Save (gchar *filename)
                                   NULL,
                                   "UTF-8",
                                   NULL);
+      xmlTextWriterStartDTD (xml_writer,
+                             BAD_CAST "CompetitionIndividuelle",
+                             NULL,
+                             NULL);
+      xmlTextWriterEndDTD (xml_writer);
+
       xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "contest");
+                                 BAD_CAST "CompetitionIndividuelle");
 
       {
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "title",
-                                     BAD_CAST _name);
+        if (_owner)
+        {
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "Championnat",
+                                       BAD_CAST _owner);
+        }
+
+        if (_id)
+        {
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "ID",
+                                       BAD_CAST _id);
+        }
+#if 0
+        {
+          gchar *iso8601;
+
+          iso8601 = g_time_val_to_iso8601 (&_checkin_time);
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "checkin",
+                                       BAD_CAST iso8601);
+          g_free (iso8601);
+
+          iso8601 = g_time_val_to_iso8601 (&_scratch_time);
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "scratch",
+                                       BAD_CAST iso8601);
+          g_free (iso8601);
+
+          iso8601 = g_time_val_to_iso8601 (&_start_time);
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "start",
+                                       BAD_CAST iso8601);
+          g_free (iso8601);
+        }
+#endif
+
         xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "day",
-                                           "%d", _day);
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "month",
-                                           "%d", _month);
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "year",
+                                           BAD_CAST "Annee",
                                            "%d", _year);
         xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "weapon",
+                                     BAD_CAST "Arme",
                                      BAD_CAST weapon_xml_image[_weapon]);
         xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "gender",
+                                     BAD_CAST "Sexe",
                                      BAD_CAST gender_xml_image[_gender]);
         xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "category",
-                                     BAD_CAST category_xml_image[_category]);
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "organizer",
+                                     BAD_CAST "Organisateur",
                                      BAD_CAST _organizer);
         xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "web_site",
+                                     BAD_CAST "Categorie",
+                                     BAD_CAST category_xml_image[_category]);
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "Date",
+                                           "%02d.%02d.%d", _day, _month, _year);
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "TitreLong",
+                                     BAD_CAST _name);
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "URLorganisateur",
                                      BAD_CAST _web_site);
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "score_stuffing",

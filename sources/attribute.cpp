@@ -28,12 +28,14 @@ typedef enum
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
-AttributeDesc::AttributeDesc (GType        type,
-                              gchar       *xml_name,
-                              gchar       *user_name)
+AttributeDesc::AttributeDesc (GType  type,
+                              gchar *code_name,
+                              gchar *xml_name,
+                              gchar *user_name)
 : Object ("AttributeDesc")
 {
   _type               = type;
+  _code_name          = code_name;
   _xml_name           = xml_name;
   _user_name          = user_name;
   _uniqueness         = SINGULAR;
@@ -61,10 +63,12 @@ AttributeDesc::~AttributeDesc ()
 
 // --------------------------------------------------------------------------------
 AttributeDesc *AttributeDesc::Declare (GType  type,
+                                       gchar *code_name,
                                        gchar *xml_name,
                                        gchar *user_name)
 {
   AttributeDesc *attr_desc = new AttributeDesc (type,
+                                                code_name,
                                                 xml_name,
                                                 user_name);
 
@@ -281,7 +285,7 @@ void AttributeDesc::CreateList (GSList **list, ...)
 
       desc = (AttributeDesc *) g_slist_nth_data (*list,
                                                  i);
-      if (strcmp (name, desc->_xml_name) == 0)
+      if (strcmp (name, desc->_code_name) == 0)
       {
         *list = g_slist_remove (*list,
                                 desc);
@@ -307,7 +311,7 @@ AttributeDesc *AttributeDesc::GetDesc (gchar *name)
 
     attr_desc = (AttributeDesc *) g_slist_nth_data (_list,
                                                     i);
-    if (strcmp (attr_desc->_xml_name, name) == 0)
+    if (strcmp (attr_desc->_code_name, name) == 0)
     {
       return attr_desc;
     }
@@ -364,7 +368,13 @@ Attribute *Attribute::New (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Attribute::GetName ()
+gchar *Attribute::GetCodeName ()
+{
+  return _desc->_code_name;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Attribute::GetXmlName ()
 {
   return _desc->_xml_name;
 }

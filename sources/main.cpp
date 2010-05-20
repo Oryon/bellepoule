@@ -119,8 +119,6 @@ int main (int argc, char **argv)
     gchar *translation_path = g_strdup_printf ("%s/resources/translations", path);
 #endif
 
-//    libintl_bindtextdomain ("BellePoule", translation_path);
-//    libintl_bind_textdomain_codeset ("BellePoule", "UTF-8");
     bindtextdomain ("BellePoule", translation_path);
     bind_textdomain_codeset ("BellePoule", "UTF-8");
     textdomain ("BellePoule");
@@ -164,65 +162,68 @@ int main (int argc, char **argv)
   {
     AttributeDesc *desc;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "nom");
+    desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ID", "ref");
+    desc->_rights = AttributeDesc::PRIVATE;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "prénom");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", "nom");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "club");
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("resources/clubs_fra.txt");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "Prenom", "prénom");
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "points");
-    desc->_compare_func = (GCompareFunc) CompareRating;
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_date", "DateNaissance", "date naissance");
+    desc->_compare_func = (GCompareFunc) CompareDate;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "sexe");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "Sexe", "sexe");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->_free_value_allowed = FALSE;
     desc->AddDiscreteValues ("M", "Masculin",
                              "F", "Féminin", NULL);
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "ligue", "ligue");
-    desc->AddDiscreteValues ("resources/ligues.txt");
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "nation");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", "nation");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddDiscreteValues ("resources/ioc_countries.txt");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_year", "date naissance");
-    desc->_compare_func = (GCompareFunc) CompareDate;
-
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "licence");
-
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "présence");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "ligue", "Ligue", "ligue");
+    desc->AddDiscreteValues ("resources/ligues.txt");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rank", "place");
-    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-    desc->_rights      = AttributeDesc::PRIVATE;
-    desc->_scope       = AttributeDesc::LOCAL;
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", "club");
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->AddDiscreteValues ("resources/clubs_fra.txt");
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "previous_stage_rank", "rang d'entrée");
-    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-    desc->_rights      = AttributeDesc::PRIVATE;
-    desc->_scope       = AttributeDesc::LOCAL;
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", "licence");
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ref");
-    desc->_rights = AttributeDesc::PRIVATE;
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "rating", "points");
+    desc->_compare_func = (GCompareFunc) CompareRating;
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "exporté");
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "attending", "présence");
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "Vict./Matchs (‰)");
-    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-    desc->_scope       = AttributeDesc::LOCAL;
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "exported", "exporté");
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "indice", "indice");
-    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-    desc->_scope       = AttributeDesc::LOCAL;
+    // Not persistent data
+    {
+      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", "Vict./Matchs (‰)");
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::LOCAL;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "Touches données");
-    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
-    desc->_scope       = AttributeDesc::LOCAL;
+      desc = AttributeDesc::Declare (G_TYPE_INT, "indice", "indice", "indice");
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::LOCAL;
+
+      desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "HS", "Touches données");
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::LOCAL;
+
+      desc = AttributeDesc::Declare (G_TYPE_INT, "rank", "rank", "place");
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_rights      = AttributeDesc::PRIVATE;
+      desc->_scope       = AttributeDesc::LOCAL;
+
+      desc = AttributeDesc::Declare (G_TYPE_INT, "previous_stage_rank", "previous_stage_rank", "rang d'entrée");
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_rights      = AttributeDesc::PRIVATE;
+      desc->_scope       = AttributeDesc::LOCAL;
+    }
   }
 
   {

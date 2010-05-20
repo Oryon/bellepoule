@@ -64,7 +64,7 @@ Splitting::Splitting (StageClass *stage_class)
     filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
-    filter->ShowAttribute ("birth_year");
+    filter->ShowAttribute ("birth_date");
     filter->ShowAttribute ("gender");
     filter->ShowAttribute ("club");
     filter->ShowAttribute ("country");

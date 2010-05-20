@@ -121,11 +121,11 @@ void PlayersList::Update (Player *player)
                                                  i);
       if (desc->_scope == AttributeDesc::GLOBAL)
       {
-        attr_id = new Player::AttributeId (desc->_xml_name);
+        attr_id = new Player::AttributeId (desc->_code_name);
       }
       else
       {
-        attr_id = new Player::AttributeId (desc->_xml_name,
+        attr_id = new Player::AttributeId (desc->_code_name,
                                            GetDataOwner ());
       }
 
@@ -346,7 +346,7 @@ void PlayersList::OnAttrListUpdated ()
         desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                    i);
 
-        SetColumn (_filter->GetAttributeId (desc->_xml_name),
+        SetColumn (_filter->GetAttributeId (desc->_code_name),
                    desc,
                    -1);
       }
@@ -788,11 +788,11 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
     desc = (AttributeDesc *) current_attr->data;
     if (desc->_scope == AttributeDesc::GLOBAL)
     {
-      attr_id = new Player::AttributeId (desc->_xml_name);
+      attr_id = new Player::AttributeId (desc->_code_name);
     }
     else
     {
-      attr_id = new Player::AttributeId (desc->_xml_name,
+      attr_id = new Player::AttributeId (desc->_code_name,
                                          GetDataOwner ());
     }
 

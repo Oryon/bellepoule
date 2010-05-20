@@ -55,7 +55,7 @@ Player *Player::Duplicate ()
     desc = (AttributeDesc *) current_desc->data;
     if (desc->_scope == AttributeDesc::GLOBAL)
     {
-      AttributeId  attr_id (desc->_xml_name);
+      AttributeId  attr_id (desc->_code_name);
       Attribute   *attr = GetAttribute (&attr_id);
 
       if (attr)
@@ -81,11 +81,11 @@ Player::AttributeId *Player::AttributeId::CreateAttributeId (AttributeDesc *desc
 {
   if (desc->_scope == AttributeDesc::GLOBAL)
   {
-    return new Player::AttributeId (desc->_xml_name);
+    return new Player::AttributeId (desc->_code_name);
   }
   else
   {
-    return new Player::AttributeId (desc->_xml_name, owner);
+    return new Player::AttributeId (desc->_code_name, owner);
   }
 }
 
@@ -139,7 +139,7 @@ void Player::NotifyChange (Attribute *attr)
     Client *client;
 
     client = (Client *) list->data;
-    if (strcmp (client->_attr_name, attr->GetName ()) == 0)
+    if (strcmp (client->_attr_name, attr->GetCodeName ()) == 0)
     {
       client->_change_cbk (this,
                            attr,
@@ -215,7 +215,7 @@ void Player::Save (xmlTextWriter *xml_writer)
                              NULL);
 
   xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST "player");
+                             BAD_CAST "Tireur");
 
   for (guint i = 0; i < g_slist_length (attr_list); i++)
   {
@@ -225,7 +225,7 @@ void Player::Save (xmlTextWriter *xml_writer)
                                                i);
     if (desc->_persistency == AttributeDesc::PERSISTENT)
     {
-      AttributeId  attr_id (desc->_xml_name);
+      AttributeId  attr_id (desc->_code_name);
       Attribute   *attr = GetAttribute (&attr_id);
 
       if (attr)
@@ -233,7 +233,7 @@ void Player::Save (xmlTextWriter *xml_writer)
         gchar *xml_image = attr->GetXmlImage ();
 
         xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST attr->GetName (),
+                                           BAD_CAST attr->GetXmlName (),
                                            xml_image);
         g_free (xml_image);
       }
@@ -264,7 +264,7 @@ void Player::Load (xmlNode *xml_node)
 
       if (value)
       {
-        AttributeId attr_id (desc->_xml_name);
+        AttributeId attr_id (desc->_code_name);
 
         SetAttributeValue (&attr_id,
                            value);

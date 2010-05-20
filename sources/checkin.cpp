@@ -60,7 +60,7 @@ Checkin::Checkin (StageClass *stage_class)
     filter->ShowAttribute ("rating");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
-    filter->ShowAttribute ("birth_year");
+    filter->ShowAttribute ("birth_date");
     filter->ShowAttribute ("gender");
     filter->ShowAttribute ("club");
     filter->ShowAttribute ("ligue");
@@ -186,7 +186,7 @@ Checkin::Checkin (StageClass *stage_class)
                                 TRUE,
                                 TRUE,
                                 0);
-            g_object_set_data (G_OBJECT (value_w), "attribute_name", attr_desc->_xml_name);
+            g_object_set_data (G_OBJECT (value_w), "attribute_name", attr_desc->_code_name);
           }
 
           {
@@ -258,7 +258,7 @@ void Checkin::Load (xmlNode *xml_node)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "player") == 0)
+      if (strcmp ((char *) n->name, "Tireur") == 0)
       {
         Player *player = new Player;
 
@@ -613,7 +613,7 @@ void Checkin::ImportFFF (gchar *file)
         attr_id._name = "first_name";
         player->SetAttributeValue (&attr_id, tokens[1]);
 
-        attr_id._name = "birth_year";
+        attr_id._name = "birth_date";
         player->SetAttributeValue (&attr_id, tokens[2]);
 
         attr_id._name = "gender";

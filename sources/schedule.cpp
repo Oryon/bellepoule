@@ -560,7 +560,7 @@ void Schedule::Load (xmlDoc *doc)
                                                       0);
 
   {
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule", xml_context);
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/schedule", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
     if (xml_object->nodesetval->nodeNr)
@@ -580,7 +580,7 @@ void Schedule::Load (xmlDoc *doc)
   gtk_widget_show_all (GetRootWidget ());
 
   {
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/contest/schedule/*", xml_context);
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/schedule/*", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
     for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)

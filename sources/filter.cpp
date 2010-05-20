@@ -47,7 +47,7 @@ Filter::Filter (GSList *attr_list,
       gtk_list_store_append (store, &iter);
       gtk_list_store_set (store, &iter,
                           ATTR_USER_NAME, desc->_user_name,
-                          ATTR_XML_NAME, desc->_xml_name,
+                          ATTR_XML_NAME, desc->_code_name,
                           ATTR_VISIBILITY, FALSE,
                           -1);
     }
@@ -90,7 +90,7 @@ guint Filter::GetAttributeId (gchar *name)
       AttributeDesc *desc;
 
       desc = (AttributeDesc *) g_slist_nth_data (_attr_list, i);
-      if (strcmp (desc->_xml_name, name) == 0)
+      if (strcmp (desc->_code_name, name) == 0)
       {
         return i;
       }
