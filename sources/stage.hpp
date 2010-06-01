@@ -18,6 +18,9 @@
 #define stage_hpp
 
 #include <libxml/xmlwriter.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
 #include <gtk/gtk.h>
 
 #include "object.hpp"
@@ -72,11 +75,17 @@ class Stage : public virtual Object
 
     void SetName (gchar *name);
 
+    void SetId (guint id);
+
+    guint GetId ();
+
     Rights GetRights ();
 
     gboolean Locked ();
 
     void SetClassificationFilter (Filter *filter);
+
+    virtual const gchar *GetInputProviderClient ();
 
     virtual void SetInputProvider (Stage *input_provider);
 
@@ -90,7 +99,9 @@ class Stage : public virtual Object
 
     void RetrieveAttendees ();
 
-    Player *GetPlayerFromRef (guint ref);
+    void LoadAttendees (xmlNode *n);
+
+    virtual Player *GetPlayerFromRef (guint ref);
 
     StageClass *GetClass ();
 
@@ -106,6 +117,9 @@ class Stage : public virtual Object
     virtual void Garnish () {};
 
     virtual void Load (xmlNode *xml_node) {};
+
+    virtual void Load (xmlXPathContext *xml_context,
+                       gchar           *from_node) {};
 
     virtual void Save (xmlTextWriter *xml_writer) {};
 
@@ -153,12 +167,16 @@ class Stage : public virtual Object
 
     virtual void SaveConfiguration (xmlTextWriter *xml_writer);
 
+    virtual void SaveAttendees (xmlTextWriter *xml_writer);
+
   private:
     static GSList *_stage_base;
 
     Stage              *_previous;
+    Stage              *_next;
     StageClass         *_class;
     gchar              *_name;
+    guint               _id;
     gboolean            _locked;
     StageClass         *_stage_class;
     GSList             *_result;

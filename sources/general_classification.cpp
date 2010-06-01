@@ -23,7 +23,7 @@
 #include "general_classification.hpp"
 
 const gchar *GeneralClassification::_class_name     = "Classement général";
-const gchar *GeneralClassification::_xml_class_name = "general_classification_stage";
+const gchar *GeneralClassification::_xml_class_name = "ClassementGeneral";
 
 // --------------------------------------------------------------------------------
 GeneralClassification::GeneralClassification (StageClass *stage_class)
@@ -91,12 +91,38 @@ GSList *GeneralClassification::GetCurrentClassification ()
 }
 
 // --------------------------------------------------------------------------------
+void GeneralClassification::Load (xmlNode *xml_node)
+{
+  LoadConfiguration (xml_node);
+
+  for (xmlNode *n = xml_node; n != NULL; n = n->next)
+  {
+    if (n->type == XML_ELEMENT_NODE)
+    {
+      if (strcmp ((char *) xml_node->name, _xml_class_name) == 0)
+      {
+      }
+      else if (strcmp ((char *) n->name, "Tireur") == 0)
+      {
+        LoadAttendees (n);
+      }
+      else
+      {
+        return;
+      }
+    }
+    Load (n->children);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void GeneralClassification::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
 
-  Stage::SaveConfiguration (xml_writer);
+  SaveConfiguration (xml_writer);
+  SaveAttendees (xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
 }

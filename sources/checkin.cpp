@@ -252,6 +252,43 @@ void Checkin::Add (Player *player)
 }
 
 // --------------------------------------------------------------------------------
+Player *Checkin::GetPlayerFromRef (guint ref)
+{
+  GSList *current = _player_list;
+
+  while (current)
+  {
+    Player *player;
+
+    player = (Player *) current->data;
+    if (player->GetRef () == ref)
+    {
+      return player;
+    }
+
+    current = g_slist_next (current);
+  }
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::Load (xmlXPathContext *xml_context,
+                    gchar           *from_node)
+{
+  gchar          *path        = g_strdup_printf ("%s/Tireurs", from_node);
+  xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
+  xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
+
+  if (xml_object->nodesetval->nodeNr)
+  {
+    Load (xml_nodeset->nodeTab[0]);
+  }
+
+  g_free (path);
+  xmlXPathFreeObject (xml_object);
+}
+
+// --------------------------------------------------------------------------------
 void Checkin::Load (xmlNode *xml_node)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
@@ -267,7 +304,7 @@ void Checkin::Load (xmlNode *xml_node)
         Add (player);
         player->Release ();
       }
-      else if (strcmp ((char *) n->name, _xml_class_name) != 0)
+      else if (strcmp ((char *) n->name, "Tireurs") != 0)
       {
         OnListChanged ();
         return;
@@ -280,24 +317,32 @@ void Checkin::Load (xmlNode *xml_node)
 // --------------------------------------------------------------------------------
 void Checkin::Save (xmlTextWriter *xml_writer)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _xml_class_name);
-
-  Stage::SaveConfiguration (xml_writer);
-
-  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  // Players
   {
-    Player *p;
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST "Tireurs");
 
-    p = (Player *) g_slist_nth_data (_player_list, i);
-
-    if (p)
+    for (guint i = 0; i < g_slist_length (_player_list); i++)
     {
-      p->Save (xml_writer);
+      Player *p;
+
+      p = (Player *) g_slist_nth_data (_player_list, i);
+
+      if (p)
+      {
+        p->Save (xml_writer);
+      }
     }
+
+    xmlTextWriterEndElement (xml_writer);
   }
 
-  xmlTextWriterEndElement (xml_writer);
+  // Referees
+  {
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST "Arbitres");
+    xmlTextWriterEndElement (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -357,7 +402,7 @@ void Checkin::UpdateRanking ()
       attending = p->GetAttribute (&attr_id);
     }
 
-    if ((gboolean) attending->GetValue ())
+    if (attending && (gboolean) attending->GetValue ())
     {
       Player::AttributeId attr_id ("rank", this);
 
@@ -415,7 +460,7 @@ gboolean Checkin::PresentPlayerFilter (Player *player)
   Player::AttributeId  attr_id ("attending");
   Attribute           *attr = player->GetAttribute (&attr_id);
 
-  return ((gboolean) attr->GetValue () == TRUE);
+  return ((attr == NULL) || ((gboolean) attr->GetValue () == TRUE));
 }
 
 // --------------------------------------------------------------------------------

@@ -150,18 +150,7 @@ void PoolSupervisor::OnPlugged ()
                                      FALSE);
 
   RetrievePools ();
-}
 
-// --------------------------------------------------------------------------------
-void PoolSupervisor::OnUnPlugged ()
-{
-  //Object::TryToRelease (_pool_allocator);
-  //_pool_allocator = NULL;
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor::Display ()
-{
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
   {
     Pool *pool;
@@ -170,6 +159,23 @@ void PoolSupervisor::Display ()
     pool->SortPlayers ();
   }
 
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor::OnUnPlugged ()
+{
+  for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
+  {
+    Pool *pool;
+
+    pool = _pool_allocator->GetPool (i);
+    pool->ResetMatches ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor::Display ()
+{
   OnPoolSelected (0);
 }
 
@@ -177,92 +183,6 @@ void PoolSupervisor::Display ()
 void PoolSupervisor::Garnish ()
 {
   _displayed_pool = _pool_allocator->GetPool (0);
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor::LoadConfiguration (xmlNode *xml_node)
-{
-  Stage::LoadConfiguration (xml_node);
-
-  if (_max_score)
-  {
-    _max_score->Load (xml_node);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor::Load (xmlNode *xml_node)
-{
-  LoadConfiguration (xml_node);
-
-  Load (xml_node,
-        0);
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor::Load (xmlNode *xml_node,
-                           guint    current_pool_index)
-{
-  for (xmlNode *n = xml_node; n != NULL; n = n->next)
-  {
-    if (n->type == XML_ELEMENT_NODE)
-    {
-      if (strcmp ((char *) n->name, "match_list") == 0)
-      {
-        Pool *current_pool = _pool_allocator->GetPool (current_pool_index);
-
-        current_pool->Load (n->children,
-                            _attendees);
-        current_pool->RefreshScoreData ();
-
-        current_pool_index++;
-      }
-      else if (strcmp ((char *) n->name, _xml_class_name) != 0)
-      {
-        if (_pool_allocator)
-        {
-          _displayed_pool = _pool_allocator->GetPool (0);
-        }
-        return;
-      }
-
-      Load (n->children,
-            current_pool_index);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor::SaveConfiguration (xmlTextWriter *xml_writer)
-{
-  Stage::SaveConfiguration (xml_writer);
-
-  if (_max_score)
-  {
-    _max_score->Save (xml_writer);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void PoolSupervisor::Save (xmlTextWriter *xml_writer)
-{
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _xml_class_name);
-
-  SaveConfiguration (xml_writer);
-
-  if (_pool_allocator)
-  {
-    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-    {
-      Pool *pool;
-
-      pool = _pool_allocator->GetPool (p);
-      pool->Save (xml_writer);
-    }
-  }
-
-  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
@@ -316,7 +236,7 @@ void PoolSupervisor::Wipe ()
       Pool *pool;
 
       pool = _pool_allocator->GetPool (p);
-      pool->ResetMatches ();
+      pool->CleanScores ();
       pool->Wipe ();
     }
 
@@ -642,7 +562,7 @@ void PoolSupervisor::OnStuffClicked ()
     Pool *pool;
 
     pool = _pool_allocator->GetPool (i);
-    pool->ResetMatches ();
+    pool->CleanScores ();
     pool->Stuff ();
   }
 

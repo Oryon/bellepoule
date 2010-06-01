@@ -155,7 +155,7 @@ void Pool::AddPlayer (Player *player,
          || (g_slist_find (_player_list,
                            player) == NULL))
   {
-    Player::AttributeId attr_id ("rank",
+    Player::AttributeId attr_id ("previous_stage_rank",
                                  rank_owner);
 
     for (guint i = 0; i < GetNbPlayers (); i++)
@@ -251,20 +251,9 @@ void Pool::Draw (GooCanvas *on_canvas)
 
       match = (Match *) g_slist_nth_data (_match_list, i);
       _score_collector->RemoveCollectingPoints (match);
-
-      match = GetMatch (i);
-      match->SetNumber (i);
     }
 
     _score_collector->Release ();
-  }
-
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
-  {
-    Match *match;
-
-    match = GetMatch (i);
-    match->SetNumber (i+1);
   }
 
   _score_collector = new ScoreCollector (this,
@@ -1070,7 +1059,67 @@ Match *Pool::GetMatch (guint i)
 void Pool::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST "match_list");
+                             BAD_CAST "Poule");
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "ID",
+                                     "%d", _number);
+
+  {
+    GSList              *current = _player_list;
+    Player::AttributeId  attr_id ("", GetDataOwner ());
+    Attribute           *attr;
+
+    for (guint i = 0; current != NULL; i++)
+    {
+      Player *player;
+      guint   HS;
+      gint    indice;
+
+      player = (Player *) current->data;
+
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST "Tireur");
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "REF",
+                                         "%d", player->GetRef ());
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "NoDansLaPoule",
+                                         "%d", i+1);
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "NbVictoires",
+                                         "%d", (gint) player->GetData (GetDataOwner (),
+                                                                       "Victories"));
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "NbMatches",
+                                         "%d", g_slist_length (_player_list)-1);
+      attr_id._name = "HS";
+      attr = player->GetAttribute (&attr_id);
+      if (attr)
+      {
+        HS = (guint) player->GetAttribute (&attr_id)->GetValue ();
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "TD",
+                                           "%d", HS);
+        attr_id._name = "indice";
+        indice = (guint) player->GetAttribute (&attr_id)->GetValue ();
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "TR",
+                                           "%d", HS - indice);
+      }
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "RangPoule",
+                                         "%d", (gint) player->GetData (this,
+                                                                       "Rank"));
+      xmlTextWriterEndElement (xml_writer);
+      current = g_slist_next (current);
+    }
+  }
+
+  {
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST "Arbitre");
+    xmlTextWriterEndElement (xml_writer);
+  }
 
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {
@@ -1101,71 +1150,86 @@ void Pool::Load (xmlNode *xml_node,
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "match") == 0)
+      static xmlNode *A = NULL;
+      static xmlNode *B = NULL;
+
+      if (strcmp ((char *) n->name, "Match") == 0)
       {
-        gchar  *attr;
-        Match  *match;
-        Player *A      = NULL;
-        Player *B      = NULL;
-
-        attr = (gchar *) xmlGetProp (n, BAD_CAST "player_A");
-        if (attr)
+        A = NULL;
+        B = NULL;
+      }
+      else if (strcmp ((char *) n->name, "Tireur") == 0)
+      {
+        if (A == NULL)
         {
-          GSList *node = g_slist_find_custom (player_list,
-                                              (void *) strtol (attr, NULL, 10),
-                                              (GCompareFunc) Player::CompareWithRef);
-          if (node)
-          {
-            A = (Player *) node->data;
-          }
+          A = n;
         }
-
-        attr = (gchar *) xmlGetProp (n, BAD_CAST "player_B");
-        if (attr)
+        else
         {
-          GSList *node = g_slist_find_custom (player_list,
-                                              (void *) strtol (attr, NULL, 10),
-                                              (GCompareFunc) Player::CompareWithRef);
-          if (node)
+          gchar  *attr;
+          Player *player_A = NULL;
+          Player *player_B = NULL;
+          Match  *match;
+
+          B = n;
           {
-            B = (Player *) node->data;
-          }
-        }
+            GSList *node;
 
-        match = GetMatch (A, B);
-
-        if (match)
-        {
-          attr = (gchar *) xmlGetProp (n, BAD_CAST "score_A");
-          if (attr)
-          {
-            match->SetScore (A, atoi (attr));
-          }
-
-          attr = (gchar *) xmlGetProp (n, BAD_CAST "score_B");
-          if (attr)
-          {
-            match->SetScore (B, atoi (attr));
-          }
-
-          if (   (match->PlayerHasScore (A) == FALSE)
-                 || (match->PlayerHasScore (B) == FALSE))
-          {
-            _is_over = FALSE;
-          }
-
-          {
-            Score *score_A = match->GetScore (A);;
-            Score *score_B = match->GetScore (B);;
-
-            if (   (score_A->IsValid () == false)
-                || (score_B->IsValid () == false)
-                || (score_A->IsConsistentWith (score_B) == false))
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
+            node = g_slist_find_custom (player_list,
+                                        (void *) strtol (attr, NULL, 10),
+                                        (GCompareFunc) Player::CompareWithRef);
+            if (node)
             {
-              _has_error = TRUE;
-              _is_over   = FALSE;
+              player_A = (Player *) node->data;
+            }
+
+            attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
+            node = g_slist_find_custom (player_list,
+                                        (void *) strtol (attr, NULL, 10),
+                                        (GCompareFunc) Player::CompareWithRef);
+            if (node)
+            {
+              player_B = (Player *) node->data;
             }
           }
+
+          match = GetMatch (player_A, player_B);
+
+          if (match)
+          {
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "Score");
+            if (attr)
+            {
+              match->SetScore (player_A, atoi (attr));
+            }
+
+            attr = (gchar *) xmlGetProp (B, BAD_CAST "Score");
+            if (attr)
+            {
+              match->SetScore (player_B, atoi (attr));
+            }
+
+            if (   (match->PlayerHasScore (player_A) == FALSE)
+                   || (match->PlayerHasScore (player_B) == FALSE))
+            {
+              _is_over = FALSE;
+            }
+
+            {
+              Score *score_A = match->GetScore (player_A);
+              Score *score_B = match->GetScore (player_B);
+
+              if (   (score_A->IsValid () == false)
+                     || (score_B->IsValid () == false)
+                     || (score_A->IsConsistentWith (score_B) == false))
+              {
+                _has_error = TRUE;
+                _is_over   = FALSE;
+              }
+            }
+          }
+          return;
         }
       }
 
@@ -1176,7 +1240,7 @@ void Pool::Load (xmlNode *xml_node,
 }
 
 // --------------------------------------------------------------------------------
-void Pool::ResetMatches ()
+void Pool::CleanScores ()
 {
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {
@@ -1203,9 +1267,33 @@ gint Pool::_ComparePlayerWithFullRandom (Player *A,
 }
 
 // --------------------------------------------------------------------------------
-void  Pool::SortPlayers ()
+void Pool::SortPlayers ()
 {
   _player_list = g_slist_sort_with_data (_player_list,
                                          (GCompareDataFunc) _ComparePlayerWithFullRandom,
                                          (void *) this);
+
+  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  {
+    Match *match;
+
+    match = GetMatch (i);
+    match->SetNumber (i+1);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::ResetMatches ()
+{
+  _player_list = g_slist_sort_with_data (_player_list,
+                                         (GCompareDataFunc) Player::Compare,
+                                         (void *) this);
+
+  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  {
+    Match *match;
+
+    match = GetMatch (i);
+    match->SetNumber (0);
+  }
 }

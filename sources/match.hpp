@@ -58,6 +58,8 @@ class Match : public Object
 
     void SetNumber (gint number);
 
+    gint GetNumber ();
+
     gchar *GetName ();
 
   private:
@@ -69,6 +71,7 @@ class Match : public Object
     Score    *_A_score;
     Score    *_B_score;
     gchar    *_name;
+    guint     _number;
 
     gboolean ScoreIsNumber (gchar *score);
 

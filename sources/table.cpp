@@ -28,7 +28,7 @@
 #include "table.hpp"
 
 const gchar   *Table::_class_name     = "Tableau";
-const gchar   *Table::_xml_class_name = "table_stage";
+const gchar   *Table::_xml_class_name = "PhaseDeTableaux";
 const gdouble  Table::_level_spacing  = 10.0;
 
 typedef enum
@@ -57,10 +57,13 @@ Table::Table (StageClass *stage_class)
   _tree_root      = NULL;
   _level_status   = NULL;
   _match_to_print = NULL;
+  _nb_levels      = 0;
+
+  g_datalist_init (&_match_list);
 
   _score_collector = NULL;
 
-  _max_score = new Data ("max_score",
+  _max_score = new Data ("ScoreMax",
                          10);
 
   {
@@ -200,6 +203,11 @@ Table::~Table ()
 
   gtk_widget_destroy (_print_dialog);
   gtk_widget_destroy (_level_print_dialog);
+
+  if (_match_list)
+  {
+    g_datalist_clear (&_match_list);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -425,27 +433,50 @@ void Table::Load (xmlNode *xml_node)
 {
   LoadConfiguration (xml_node);
 
-  if (_attendees)
+  for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
-    CreateTree ();
+    static gchar *level;
 
-    if (_tree_root)
+    if (n->type == XML_ELEMENT_NODE)
     {
-      if (xml_node->type == XML_ELEMENT_NODE)
+      if (strcmp ((char *) xml_node->name, _xml_class_name) == 0)
       {
-        if (strcmp ((char *) xml_node->name, _xml_class_name) == 0)
+      }
+      else if (strcmp ((char *) n->name, "Tireur") == 0)
+      {
+        if (_tree_root == NULL)
         {
-          _xml_node = xml_node->children->next;
-
-          g_node_traverse (_tree_root,
-                           G_POST_ORDER,
-                           G_TRAVERSE_ALL,
-                           -1,
-                           (GNodeTraverseFunc) LoadNode,
-                           this);
+          LoadAttendees (n);
         }
       }
+      else if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
+      {
+        CreateTree ();
+      }
+      else if (strcmp ((char *) n->name, "Tableau") == 0)
+      {
+        level = (gchar *) xmlGetProp (n, BAD_CAST "Taille");
+      }
+      else if (strcmp ((char *) n->name, "Match") == 0)
+      {
+        gchar *attr   = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+        gchar *number = g_strdup_printf ("M%s.%s", level, attr);
+        Match *match  = (Match *) g_datalist_get_data (&_match_list,
+                                                       number);
+        g_free (number);
+
+        if (match)
+        {
+          LoadMatch (n,
+                     match);
+        }
+      }
+      else
+      {
+        return;
+      }
     }
+    Load (n->children);
   }
 }
 
@@ -467,18 +498,63 @@ void Table::Save (xmlTextWriter *xml_writer)
                              BAD_CAST _xml_class_name);
 
   SaveConfiguration (xml_writer);
+  SaveAttendees (xml_writer);
+
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST "SuiteDeTableaux");
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "ID",
+                                     "%s", "A");
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "Titre",
+                                     "%s", "");
+  if (_nb_levels)
+  {
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NbDeTableaux",
+                                       "%d", _nb_levels-1);
+  }
 
   if (_tree_root)
   {
-    _xml_writer = xml_writer;
-    g_node_traverse (_tree_root,
-                     G_POST_ORDER,
-                     G_TRAVERSE_ALL,
-                     -1,
-                     (GNodeTraverseFunc) SaveNode,
-                     this);
+    for (guint i = 1; i < _nb_levels; i++)
+    {
+      guint size;
+
+      size = 1 << (_nb_levels - i);
+
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST "Tableau");
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "ID",
+                                         "A%d", size);
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Titre",
+                                         "%s", GetLevelImage (i));
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Taille",
+                                         "%d", size);
+
+      for (guint m = 0; m < size; m++)
+      {
+        gchar *number;
+        Match *match;
+
+        number = g_strdup_printf ("M%d.%d", size, m);
+        match  = (Match *) g_datalist_get_data (&_match_list,
+                                                number);
+        if (match)
+        {
+          match->Save (xml_writer);
+        }
+        g_free (number);
+      }
+
+      xmlTextWriterEndElement (xml_writer);
+    }
   }
 
+  xmlTextWriterEndElement (xml_writer);
   xmlTextWriterEndElement (xml_writer);
 }
 
@@ -1036,10 +1112,19 @@ void Table::AddFork (GNode *to)
         data->_match->SetData (this,
                                "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
 
-        data->_match->SetData (this,
-                               "number",
-                               g_strdup_printf ("M%d.%d", 1 << (_nb_levels - data->_level + 1), indices[1]+1),
-                               g_free);
+        {
+          gchar *number = g_strdup_printf ("M%d.%d", 1 << (_nb_levels - data->_level + 1), indices[1]+1);
+
+          data->_match->SetNumber (indices[1]+1);
+          data->_match->SetData (this,
+                                 "number",
+                                 number,
+                                 g_free);
+
+          g_datalist_set_data (&_match_list,
+                               number,
+                               data->_match);
+        }
       }
     }
 
@@ -1060,6 +1145,9 @@ void Table::AddFork (GNode *to)
     {
       data->_match->Release ();
       data->_match = NULL;
+
+      g_datalist_remove_data (&_match_list,
+                              (gchar *) to_data->_match->GetData (this, "number"));
       to_data->_match->RemoveData (this,
                                    "number");
     }
@@ -1078,70 +1166,79 @@ void Table::AddFork (GNode *to)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::LoadNode (GNode *node,
-                          Table *table)
+void Table::LoadMatch (xmlNode *xml_node,
+                       Match   *match)
 {
-  if (table->_xml_node && (table->_xml_node->type == XML_ELEMENT_NODE))
+  for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
-    if (strcmp ((char *) table->_xml_node->name, "match") == 0)
+    if (n->type == XML_ELEMENT_NODE)
     {
-      gchar    *attr;
-      Player   *player;
-      NodeData *data    = (NodeData *) node->data;
+      static xmlNode *A = NULL;
+      static xmlNode *B = NULL;
 
-      if (data->_match)
+      if (strcmp ((char *) n->name, "Match") == 0)
       {
-        attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "player_A");
-        if (attr)
+        gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+
+        A = NULL;
+        B = NULL;
+        if ((attr == NULL) || (atoi (attr) != match->GetNumber ()))
         {
-          player = table->GetPlayerFromRef (atoi (attr));
-          table->SetPlayer (data->_match,
-                            player,
-                            0);
-
-          attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_A");
-          if (attr)
-          {
-            data->_match->SetScore (player, atoi (attr));
-          }
+          return;
         }
-
-        attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "player_B");
-        if (attr)
-        {
-          player = table->GetPlayerFromRef (atoi (attr));
-          table->SetPlayer (data->_match,
-                            player,
-                            1);
-
-          attr = (gchar *) xmlGetProp (table->_xml_node, BAD_CAST "score_B");
-          if (attr)
-          {
-            data->_match->SetScore (player, atoi (attr));
-          }
-        }
-
-        if (table->_xml_node) table->_xml_node = table->_xml_node->next;
-        if (table->_xml_node) table->_xml_node = table->_xml_node->next;
       }
+      else if (strcmp ((char *) n->name, "Arbitre") == 0)
+      {
+      }
+      else if (strcmp ((char *) n->name, "Tireur") == 0)
+      {
+        if (A == NULL)
+        {
+          A = n;
+        }
+        else
+        {
+          gchar  *attr;
+          Player *player;
+
+          B = n;
+
+          {
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
+            player = GetPlayerFromRef (atoi (attr));
+
+            SetPlayer (match,
+                       player,
+                       0);
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "Score");
+            if (attr)
+            {
+              match->SetScore (player, atoi (attr));
+            }
+          }
+
+          {
+            attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
+            player = GetPlayerFromRef (atoi (attr));
+
+            SetPlayer (match,
+                       player,
+                       1);
+            attr = (gchar *) xmlGetProp (B, BAD_CAST "Score");
+            if (attr)
+            {
+              match->SetScore (player, atoi (attr));
+            }
+          }
+          A = NULL;
+          B = NULL;
+          return;
+        }
+      }
+      LoadMatch (n->children,
+                 match);
     }
   }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Table::SaveNode (GNode *node,
-                          Table *table)
-{
-  NodeData *data = (NodeData *) node->data;
-
-  if (data->_match)
-  {
-    data->_match->Save (table->_xml_writer);
-  }
-
-  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

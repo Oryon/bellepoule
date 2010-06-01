@@ -43,11 +43,6 @@ class PoolSupervisor : public virtual Stage, public Module
   private:
     void Display ();
     void Garnish ();
-    void LoadConfiguration (xmlNode *xml_node);
-    void Load (xmlNode *xml_node);
-    void Load (xmlNode *xml_node,
-               guint    current_pool_index);
-    void Save (xmlTextWriter *xml_writer);
     void OnLocked (Reason reason);
     void OnUnLocked ();
     void Wipe ();
@@ -86,8 +81,6 @@ class PoolSupervisor : public virtual Stage, public Module
     GSList *GetCurrentClassification ();
 
     void SetInputProvider (Stage *input_provider);
-
-    void SaveConfiguration (xmlTextWriter *xml_writer);
 
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);

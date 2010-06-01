@@ -105,6 +105,7 @@ class Table : public virtual Stage, public CanvasModule
     GtkWidget          *_print_dialog;
     GtkWidget          *_level_print_dialog;
     gboolean            _print_full_table;
+    GData              *_match_list;
 
     GooCanvasItem *GetQuickScore (gchar *container);
 
@@ -121,6 +122,9 @@ class Table : public virtual Stage, public CanvasModule
     void DrawAllConnectors ();
 
     gboolean IsOver ();
+
+    void LoadMatch (xmlNode *xml_node,
+                    Match   *match);
 
     GSList *GetCurrentClassification ();
 
@@ -149,12 +153,6 @@ class Table : public virtual Stage, public CanvasModule
 
     static gboolean DeleteNode (GNode *node,
                                 Table *table);
-
-    static gboolean SaveNode (GNode *node,
-                              Table *table);
-
-    static gboolean LoadNode (GNode *node,
-                              Table *table);
 
     static void OnNewScore (ScoreCollector *score_collector,
                             CanvasModule   *client,

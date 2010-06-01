@@ -249,36 +249,72 @@ Score *Match::GetScore (Player *player)
 // --------------------------------------------------------------------------------
 void Match::Save (xmlTextWriter *xml_writer)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST "match");
-
-  if (_A)
+  if (_A && _B && _number)
   {
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST "Match");
     xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "player_A",
-                                       "%d", _A->GetRef ());
-    if (_A_score->IsKnown ())
-    {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "score_A",
-                                         "%d", _A_score->Get ());
-    }
-  }
+                                       BAD_CAST "ID",
+                                       "%d", _number);
 
-  if (_B)
-  {
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "player_B",
-                                       "%d", _B->GetRef ());
-    if (_B_score->IsKnown ())
+    if (_A)
     {
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST "Tireur");
       xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "score_B",
-                                         "%d", _B_score->Get ());
+                                         BAD_CAST "REF",
+                                         "%d", _A->GetRef ());
+      if (_A_score->IsKnown ())
+      {
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "Score",
+                                           "%d", _A_score->Get ());
+        if (GetWinner () == _A)
+        {
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "Statut",
+                                       BAD_CAST "V");
+        }
+        else
+        {
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "Statut",
+                                       BAD_CAST "D");
+        }
+      }
+      xmlTextWriterEndElement (xml_writer);
     }
-  }
 
-  xmlTextWriterEndElement (xml_writer);
+    if (_B)
+    {
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST "Tireur");
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "REF",
+                                         "%d", _B->GetRef ());
+      if (_B_score->IsKnown ())
+      {
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "Score",
+                                           "%d", _B_score->Get ());
+        if (GetWinner () == _B)
+        {
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "Statut",
+                                       BAD_CAST "V");
+        }
+        else
+        {
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST "Statut",
+                                       BAD_CAST "D");
+        }
+      }
+      xmlTextWriterEndElement (xml_writer);
+    }
+
+    xmlTextWriterEndElement (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -293,10 +329,18 @@ void Match::SetNumber (gint number)
 {
   g_free (_name);
   _name = g_strdup_printf ("M%d", number);
+
+  _number = number;
 }
 
 // --------------------------------------------------------------------------------
 gchar *Match::GetName ()
 {
   return _name;
+}
+
+// --------------------------------------------------------------------------------
+gint Match::GetNumber ()
+{
+  return _number;
 }

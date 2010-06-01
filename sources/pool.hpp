@@ -38,6 +38,7 @@ class Pool : public CanvasModule
     void  RemovePlayer (Player *player);
     guint GetNbPlayers ();
     guint GetNumber    ();
+    void  CleanScores  ();
     void  ResetMatches ();
     void  SortPlayers  ();
     void  Lock         ();

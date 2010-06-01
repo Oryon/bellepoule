@@ -6,6 +6,7 @@
     <child>
       <object class="GtkVBox" id="root">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
           <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
@@ -101,7 +102,8 @@
                 <child>
                   <object class="GtkToolButton" id="import_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Importer fichier FFE</property>
+                    <property name="tooltip_text" translatable="yes">FFF est le format sous lequel la F&#xE9;d&#xE9;ration Fran&#xE7;aise d'Escrime  fournit les listes de tireurs inscrits aux comp&#xE9;titions par l'interm&#xE9;diaire de son site internet. </property>
+                    <property name="label" translatable="yes">Importer fichier .FFF</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-convert</property>
                     <signal name="clicked" handler="on_import_toolbutton_clicked"/>

@@ -38,7 +38,7 @@ extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget
                                                                Object    *owner);
 
 const gchar *PoolAllocator::_class_name     = "Composition poules";
-const gchar *PoolAllocator::_xml_class_name = "pool_allocation_stage";
+const gchar *PoolAllocator::_xml_class_name = "TourDePoules";
 
 // --------------------------------------------------------------------------------
 PoolAllocator::PoolAllocator (StageClass *stage_class)
@@ -54,7 +54,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _drag_text       = NULL;
   _main_table      = NULL;
 
-  _max_score = new Data ("max_score",
+  _max_score = new Data ("ScoreMax",
                          5);
 
   _combobox_store = GTK_LIST_STORE (_glade->GetObject ("combo_liststore"));
@@ -110,6 +110,12 @@ void PoolAllocator::Init ()
 Stage *PoolAllocator::CreateInstance (StageClass *stage_class)
 {
   return new PoolAllocator (stage_class);
+}
+
+// --------------------------------------------------------------------------------
+const gchar *PoolAllocator::GetInputProviderClient ()
+{
+  return "pool_stage";
 }
 
 // --------------------------------------------------------------------------------
@@ -170,6 +176,28 @@ void PoolAllocator::Garnish ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
+{
+  Stage::LoadConfiguration (xml_node);
+
+  if (_max_score)
+  {
+    _max_score->Load (xml_node);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::SaveConfiguration (xmlTextWriter *xml_writer)
+{
+  Stage::SaveConfiguration (xml_writer);
+
+  if (_max_score)
+  {
+    _max_score->Save (xml_writer);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PoolAllocator::Load (xmlNode *xml_node)
 {
   static Pool *current_pool = NULL;
@@ -178,7 +206,12 @@ void PoolAllocator::Load (xmlNode *xml_node)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "player_list") == 0)
+      if (   (current_pool == NULL)
+          && strcmp ((char *) n->name, _xml_class_name) == 0)
+      {
+        LoadConfiguration (xml_node);
+      }
+      else if (strcmp ((char *) n->name, "Poule") == 0)
       {
         guint number = g_slist_length (_pools_list);
 
@@ -188,23 +221,38 @@ void PoolAllocator::Load (xmlNode *xml_node)
         _pools_list = g_slist_append (_pools_list,
                                       current_pool);
       }
-      else if (strcmp ((char *) n->name, "player") == 0)
+      else if (strcmp ((char *) n->name, "Tireur") == 0)
       {
-        gchar *attr;
-
-        attr = (gchar *) xmlGetProp (n, BAD_CAST "ref");
-        if (attr)
+        if (current_pool == NULL)
         {
-          Player *player = GetPlayerFromRef (atoi (attr));
+          LoadAttendees (n);
+        }
+        else
+        {
+          gchar *attr;
 
-          if (player)
+          attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+          if (attr)
           {
-            current_pool->AddPlayer (player,
-                                     this);
+            Player *player = GetPlayerFromRef (atoi (attr));
+
+            if (player)
+            {
+              current_pool->AddPlayer (player,
+                                       this);
+            }
           }
         }
       }
-      else if (strcmp ((char *) n->name, _xml_class_name) != 0)
+      else if (strcmp ((char *) n->name, "Match") == 0)
+      {
+        current_pool->Load (n,
+                            _attendees);
+      }
+      else if (strcmp ((char *) n->name, "Arbitre") == 0)
+      {
+      }
+      else
       {
         guint nb_pool = g_slist_length (_pools_list);
 
@@ -220,6 +268,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
           }
         }
 
+        current_pool = NULL;
         return;
       }
     }
@@ -234,33 +283,42 @@ void PoolAllocator::Save (xmlTextWriter *xml_writer)
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _xml_class_name);
 
-  Stage::SaveConfiguration (xml_writer);
+  SaveConfiguration (xml_writer);
 
   if (_pools_list)
   {
-    for (guint i = 0; i < g_slist_length (_pools_list); i++)
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NbDePoules",
+                                       "%d", g_slist_length (_pools_list));
+  }
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "PhaseSuivanteDesQualifies",
+                                     "%d", GetId ()+2);
+  if (_selected_config)
+  {
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NbQualifiesParPoule",
+                                       "%d", _selected_config->size);
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "NbQualifiesParIndice",
+                                       "%d", _selected_config->size);
+  }
+
+  Stage::SaveAttendees (xml_writer);
+
+  {
+    GSList *current = _pools_list;
+
+    while (current)
     {
       Pool *pool;
 
-      pool = (Pool *) g_slist_nth_data (_pools_list, i);
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "player_list");
-      for (guint j = 0; j < pool->GetNbPlayers (); j++)
-      {
-        Player *player;
-
-        player = pool->GetPlayer (j);
-
-        xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST "player");
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "ref",
-                                           "%d", player->GetRef ());
-        xmlTextWriterEndElement (xml_writer);
-      }
-      xmlTextWriterEndElement (xml_writer);
+      pool = (Pool *) current->data;
+      pool->Save (xml_writer);
+      current = g_slist_next (current);
     }
   }
+
   xmlTextWriterEndElement (xml_writer);
 }
 
@@ -880,7 +938,9 @@ void PoolAllocator::FillPoolTable (Pool *pool)
 
   for (guint p = 0; p < pool->GetNbPlayers (); p++)
   {
-    Player *player = pool->GetPlayer (p);
+    Player *player;
+
+    player = pool->GetPlayer (p);
 
     if (player && selected_attr)
     {
@@ -1005,7 +1065,8 @@ void PoolAllocator::Wipe ()
       g_free (config);
     }
     g_slist_free (_config_list);
-    _config_list = NULL;
+    _config_list     = NULL;
+    _selected_config = NULL;
   }
 }
 

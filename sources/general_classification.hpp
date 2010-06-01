@@ -42,6 +42,8 @@ class GeneralClassification : public virtual Stage, public PlayersList
 
     static Stage *CreateInstance (StageClass *stage_class);
 
+    void Load (xmlNode *xml_node);
+
     void Save (xmlTextWriter *xml_writer);
 
     void Display ();

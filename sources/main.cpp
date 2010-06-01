@@ -192,13 +192,13 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", "licence");
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "rating", "points");
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", "points");
     desc->_compare_func = (GCompareFunc) CompareRating;
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "attending", "présence");
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", "présence");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "exported", "exporté");
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", "exporté");
 
     // Not persistent data
     {

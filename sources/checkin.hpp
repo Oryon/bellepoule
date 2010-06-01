@@ -19,7 +19,6 @@
 
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
-#include <libxml/xpath.h>
 
 #include "data.hpp"
 #include "module.hpp"
@@ -70,6 +69,9 @@ class Checkin : public virtual Stage, public PlayersList
 
     void Load (xmlNode *xml_node);
 
+    void Load (xmlXPathContext *xml_context,
+               gchar           *from_node);
+
     void Save (xmlTextWriter *xml_writer);
 
     void ImportFFF (gchar *file);
@@ -87,6 +89,8 @@ class Checkin : public virtual Stage, public PlayersList
     void RefreshAttendingDisplay ();
 
     GSList *GetCurrentClassification ();
+
+    Player *GetPlayerFromRef (guint ref);
 
     void OnPlayerRemoved (Player *player);
 

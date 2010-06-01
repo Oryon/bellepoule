@@ -48,6 +48,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void OnUnLocked ();
     void Wipe ();
     GSList *GetCurrentClassification ();
+    void LoadConfiguration (xmlNode *xml_node);
+    void SaveConfiguration (xmlTextWriter *xml_writer);
 
   private:
     typedef struct
@@ -81,6 +83,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void Garnish ();
     void FillPoolTable (Pool *pool);
     void FixUpTablesBounds ();
+    const gchar *GetInputProviderClient ();
 
     void OnAttrListUpdated ();
 

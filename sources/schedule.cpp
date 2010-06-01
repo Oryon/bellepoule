@@ -144,17 +144,18 @@ void Schedule::CreateDefault ()
       AddStage (stage);
     }
 
-    stage = Stage::CreateInstance ("table_stage");
+    stage = Stage::CreateInstance ("PhaseDeTableaux");
     if (stage)
     {
       AddStage (stage);
     }
 
-    stage = Stage::CreateInstance ("general_classification_stage");
+    stage = Stage::CreateInstance ("ClassementGeneral");
     if (stage)
     {
       AddStage (stage);
     }
+    SetCurrentStage (0);
   }
 }
 
@@ -534,43 +535,55 @@ void Schedule::RemoveStage (Stage *stage)
 // --------------------------------------------------------------------------------
 void Schedule::Save (xmlTextWriter *xml_writer)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST "schedule");
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "current_stage",
-                                     "%d", _current_stage);
+  Stage *stage;
 
-  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  // Checkin - Player list
   {
-    Stage *stage;
-
     stage = ((Stage *) g_list_nth_data (_stage_list,
-                                        i));
+                                        0));
     stage->Save (xml_writer);
   }
+
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST "Phases");
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "PhaseEnCours",
+                                     "%d", _current_stage);
+
+  for (guint i = 1; i < g_list_length (_stage_list); i++)
+  {
+    stage = ((Stage *) g_list_nth_data (_stage_list,
+                                        i));
+    stage->SetId (i);
+    stage->Save (xml_writer);
+  }
+
   xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
 void Schedule::Load (xmlDoc *doc)
 {
-  xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-  guint            current_stage_index = 0;
-  Stage           *stage = (Stage *) g_list_nth_data (_stage_list,
-                                                      0);
+  xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
+  gint             current_stage_index = -1;
+  gboolean         display_all         = FALSE;
 
   {
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/schedule", xml_context);
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/Phases", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
     if (xml_object->nodesetval->nodeNr)
     {
       char *attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0],
-                                         BAD_CAST "current_stage");
+                                         BAD_CAST "PhaseEnCours");
 
       if (attr)
       {
         current_stage_index = atoi (attr);
+      }
+      else
+      {
+        display_all = TRUE;
       }
     }
 
@@ -579,36 +592,40 @@ void Schedule::Load (xmlDoc *doc)
 
   gtk_widget_show_all (GetRootWidget ());
 
+  // Checkin - Player list
   {
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/schedule/*", xml_context);
+    Stage *stage = Stage::CreateInstance ("checkin_stage");
+
+    if (stage)
+    {
+      AddStage  (stage);
+      PlugStage (stage);
+
+      stage->Load (xml_context,
+                   "/CompetitionIndividuelle");
+      stage->Display ();
+
+      if (display_all || (current_stage_index > 0))
+      {
+        stage->Lock (Stage::LOADING);
+      }
+    }
+  }
+
+  {
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/Phases/*", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
+    guint           nb_stage    = 1;
 
     for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
     {
+      Stage *stage;
+
       stage = Stage::CreateInstance (xml_nodeset->nodeTab[i]);
-
-      if (stage)
-      {
-        AddStage (stage);
-
-        if (i <= current_stage_index)
-        {
-          PlugStage (stage);
-        }
-
-        stage->RetrieveAttendees ();
-        stage->Load (xml_nodeset->nodeTab[i]);
-
-        if (i <= current_stage_index)
-        {
-          stage->Display ();
-
-          if (i < current_stage_index)
-          {
-            stage->Lock (Stage::LOADING);
-          }
-        }
-      }
+      LoadStage (stage,
+                 xml_nodeset->nodeTab[i],
+                 &nb_stage,
+                 current_stage_index);
     }
 
     xmlXPathFreeObject (xml_object);
@@ -617,6 +634,47 @@ void Schedule::Load (xmlDoc *doc)
   xmlXPathFreeContext (xml_context);
 
   SetCurrentStage (current_stage_index);
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::LoadStage (Stage   *stage,
+                          xmlNode *xml_node,
+                          guint   *nb_stage,
+                          gint     current_stage_index)
+{
+  if (stage)
+  {
+    gboolean display_all = (current_stage_index < 0);
+
+    AddStage (stage);
+    *nb_stage = *nb_stage + 1;
+
+    if (display_all || ((*nb_stage-1) <= (guint) current_stage_index))
+    {
+      PlugStage (stage);
+    }
+
+    stage->Load (xml_node);
+
+    if (display_all || ((*nb_stage-1) <= (guint) current_stage_index))
+    {
+      stage->Display ();
+
+      if (display_all || ((*nb_stage-1) < (guint) current_stage_index))
+      {
+        stage->Lock (Stage::LOADING);
+      }
+    }
+
+    {
+      Stage *input_provider_client = Stage::CreateInstance (stage->GetInputProviderClient ());
+
+      LoadStage (input_provider_client,
+                 xml_node,
+                 nb_stage,
+                 current_stage_index);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

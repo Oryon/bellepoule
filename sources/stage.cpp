@@ -34,6 +34,7 @@ Stage::Stage (StageClass *stage_class)
   _locked                = false;
   _result                = NULL;
   _previous              = NULL;
+  _next                  = NULL;
   _stage_class           = stage_class;
   _attendees             = NULL;
   _classification        = NULL;
@@ -110,6 +111,18 @@ void Stage::SetName (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
+void Stage::SetId (guint id)
+{
+  _id = id;
+}
+
+// --------------------------------------------------------------------------------
+guint Stage::GetId ()
+{
+  return _id;
+}
+
+// --------------------------------------------------------------------------------
 void Stage::FreeResult ()
 {
   g_slist_free (_result);
@@ -128,6 +141,12 @@ void Stage::Lock (Reason reason)
 void Stage::UnLock ()
 {
   FreeResult ();
+
+  if (_next)
+  {
+    g_slist_free (_next->_attendees);
+    _next->_attendees = NULL;
+  }
 
   _locked = false;
   OnUnLocked ();
@@ -159,6 +178,10 @@ void Stage::FillInConfig ()
 void Stage::SetPrevious (Stage *previous)
 {
   _previous = previous;
+  if (_previous)
+  {
+    _previous->_next = this;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -193,6 +216,47 @@ void Stage::RetrieveAttendees ()
                                    i+1);
         current = g_slist_next (current);
       }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage::LoadAttendees (xmlNode *n)
+{
+  gchar *attr;
+
+  attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+  if (attr)
+  {
+    Stage *first = this;
+
+    while (first->_previous)
+    {
+      first = first->_previous;
+    }
+
+    Player *player = first->GetPlayerFromRef (atoi (attr));
+
+    if (player)
+    {
+      Player::AttributeId attr_id ("previous_stage_rank", this);
+      gchar *attr =  (gchar *) xmlGetProp (n, BAD_CAST "RangInitial");
+
+      if (attr)
+      {
+        player->SetAttributeValue (&attr_id,
+                                   atoi (attr));
+      }
+      else
+      {
+        player->SetAttributeValue (&attr_id,
+                                   (guint) 0);
+      }
+
+      _attendees = g_slist_insert_sorted_with_data (_attendees,
+                                                    player,
+                                                    (GCompareDataFunc) Player::Compare,
+                                                    &attr_id);
     }
   }
 }
@@ -314,6 +378,12 @@ Stage::Rights Stage::GetRights ()
 }
 
 // --------------------------------------------------------------------------------
+const gchar *Stage::GetInputProviderClient ()
+{
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
@@ -387,7 +457,14 @@ void Stage::UpdateClassification (GSList *result)
 
   if (classification_w)
   {
-    Player::AttributeId attr_id ("rank", this);
+    Player::AttributeId *previous_attr_id = NULL;
+    Player::AttributeId *attr_id          = NULL;
+
+    if (_input_provider)
+    {
+      previous_attr_id = new Player::AttributeId ("rank", _previous);
+    }
+    attr_id = new Player::AttributeId ("rank", this);
 
     if (_classification == NULL)
     {
@@ -407,10 +484,18 @@ void Stage::UpdateClassification (GSList *result)
       player = (Player *) g_slist_nth_data (result,
                                             i);
 
-      player->SetAttributeValue (&attr_id,
+      if (previous_attr_id)
+      {
+        player->SetAttributeValue (previous_attr_id,
+                                   i + 1);
+      }
+      player->SetAttributeValue (attr_id,
                                  i + 1);
       _classification->Add (player);
     }
+
+    Object::TryToRelease (previous_attr_id);
+    Object::TryToRelease (attr_id);
   }
 }
 
@@ -460,7 +545,7 @@ void Stage::SetScoreStuffingPolicy (gboolean allowed)
 void Stage::LoadConfiguration (xmlNode *xml_node)
 {
   gchar *attr = (gchar *) xmlGetProp (xml_node,
-                                      BAD_CAST "name");
+                                      BAD_CAST "PhaseID");
   SetName (attr);
 }
 
@@ -468,8 +553,69 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
 void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "name",
+                                     BAD_CAST "PhaseID",
                                      "%s", GetName ());
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "ID",
+                                     "%d", _id);
+}
+
+// --------------------------------------------------------------------------------
+void Stage::SaveAttendees (xmlTextWriter *xml_writer)
+{
+  GSList *current = _attendees;
+
+  while (current)
+  {
+    Player    *player;
+    Attribute *rank;
+    Attribute *previous_stage_rank;
+
+    player = (Player *) current->data;
+
+    {
+      Player::AttributeId *rank_attr_id;
+      Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", this);
+
+      if (GetInputProviderClient ())
+      {
+        rank_attr_id = new Player::AttributeId ("rank", _next);
+      }
+      else
+      {
+        rank_attr_id = new Player::AttributeId ("rank", this);
+      }
+
+      rank                = player->GetAttribute (rank_attr_id);
+      previous_stage_rank = player->GetAttribute (&previous_rank_attr_id);
+
+      rank_attr_id->Release ();
+    }
+
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST "Tireur");
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "REF",
+                                       "%d", player->GetRef ());
+    if (previous_stage_rank)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "RangInitial",
+                                         "%d", (guint) previous_stage_rank->GetValue ());
+    }
+    if (rank)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "RangFinal",
+                                         "%d",(guint)  rank->GetValue ());
+    }
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "Statut",
+                                 BAD_CAST "Q");
+    xmlTextWriterEndElement (xml_writer);
+
+    current = g_slist_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------
