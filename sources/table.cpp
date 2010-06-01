@@ -1990,6 +1990,42 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
                                score_size,
                                "line-width", 0.3,
                                NULL);
+
+
+          goo_canvas_rect_new (group,
+                               name_width + _max_score->_value*2.5 + 2.5*score_size,
+                               0.0 + offset - score_size/2.0,
+                               score_size*5,
+                               score_size,
+                               "fill-color", "Grey85",
+                               "line-width", 0.0,
+                               NULL);
+          goo_canvas_text_new (group,
+                               "Signature",
+                               name_width + _max_score->_value*2.5 + 4.5*score_size,
+                               0.0 + offset,
+                               -1,
+                               GTK_ANCHOR_CENTER,
+                               "fill-color", "Grey95",
+                               "font", "Sans bold 3.5px",
+                               NULL);
+          goo_canvas_rect_new (group,
+                               name_width + _max_score->_value*2.5 + 2.5*score_size,
+                               7.5 + offset - score_size/2.0,
+                               score_size*5,
+                               score_size,
+                               "fill-color", "Grey85",
+                               "line-width", 0.0,
+                               NULL);
+          goo_canvas_text_new (group,
+                               "Signature",
+                               name_width + _max_score->_value*2.5 + 4.5*score_size,
+                               7.5 + offset,
+                               -1,
+                               GTK_ANCHOR_CENTER,
+                               "fill-color", "Grey95",
+                               "font", "Sans bold 3.5px",
+                               NULL);
         }
       }
 
@@ -2039,7 +2075,7 @@ void Table::OnPrint ()
     }
     else
     {
-      GtkWidget *w         = _glade->GetWidget ("pending_radiobutton");
+      GtkWidget *w         = _glade->GetWidget ("all_radiobutton");
       gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
 
       LookForMatchToPrint (0,

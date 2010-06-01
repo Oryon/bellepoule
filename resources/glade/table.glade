@@ -401,6 +401,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
     <child internal-child="vbox">
       <object class="GtkVBox" id="print_table_dialog-vbox">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
           <object class="GtkAspectFrame" id="aspectframe3">
@@ -411,6 +412,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
             <child>
               <object class="GtkVBox" id="vbox1">
                 <property name="visible">True</property>
+                <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkRadioButton" id="table_radiobutton">
                     <property name="label" translatable="yes">Le tableau</property>
@@ -428,6 +430,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                 <child>
                   <object class="GtkVBox" id="vbox2">
                     <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkRadioButton" id="match_sheet_radiobutton">
                         <property name="label" translatable="yes">Les feuilles de match</property>
@@ -452,12 +455,12 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkRadioButton" id="all_radiobutton">
-                                <property name="label" translatable="yes">En attente</property>
+                                <property name="label" translatable="yes">Toutes</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
+                                <property name="group">pending_radiobutton</property>
                               </object>
                               <packing>
                                 <property name="position">0</property>
@@ -465,10 +468,11 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                             </child>
                             <child>
                               <object class="GtkRadioButton" id="pending_radiobutton">
-                                <property name="label" translatable="yes">Toutes</property>
+                                <property name="label" translatable="yes">En attente</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">all_radiobutton</property>
                               </object>
@@ -555,7 +559,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">all_radiobutton</property>
+                    <property name="group">level_all_radiobutton</property>
                   </object>
                   <packing>
                     <property name="position">1</property>
