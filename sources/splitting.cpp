@@ -52,6 +52,7 @@ Splitting::Splitting (StageClass *stage_class)
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
+                               "final_rank",
                                "attending",
                                "victories_ratio",
                                "indice",

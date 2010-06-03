@@ -62,6 +62,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
+                               "final_rank",
                                "attending",
                                "exported",
                                "victories_ratio",
@@ -103,6 +104,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
+                               "final_rank",
                                "attending",
                                "exported",
                                NULL);

@@ -71,6 +71,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
+                               "final_rank",
                                "attending",
                                "exported",
                                "victories_ratio",

@@ -49,6 +49,7 @@ Checkin::Checkin (StageClass *stage_class)
     AttributeDesc::CreateList (&attr_list,
                                "ref",
                                "exported",
+                               "final_rank",
                                "victories_ratio",
                                "indice",
                                "HS",

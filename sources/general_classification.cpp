@@ -38,6 +38,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
+                               "final_rank",
                                "attending",
                                "exported",
                                "victories_ratio",
@@ -82,6 +83,23 @@ Stage *GeneralClassification::CreateInstance (StageClass *stage_class)
 void GeneralClassification::Display ()
 {
   ToggleClassification (TRUE);
+
+  {
+    GSList *current = _attendees;
+
+    for (guint i = 0; current != NULL; i++)
+    {
+      Player              *player;
+      Player::AttributeId  attr_id ("final_rank");
+
+      player = (Player *) current->data;
+
+      player->SetAttributeValue (&attr_id,
+                                 i);
+
+      current = g_slist_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

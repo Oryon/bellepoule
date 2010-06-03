@@ -81,6 +81,7 @@ Table::Table (StageClass *stage_class)
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
+                               "final_rank",
                                "attending",
                                "exported",
                                "victories_ratio",
@@ -104,6 +105,7 @@ Table::Table (StageClass *stage_class)
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
+                               "final_rank",
                                "attending",
                                "exported",
                                "victories_ratio",

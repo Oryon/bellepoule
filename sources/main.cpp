@@ -200,6 +200,8 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", "exporté");
 
+    desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", "classement");
+
     // Not persistent data
     {
       desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", "Vict./Matchs (‰)");
