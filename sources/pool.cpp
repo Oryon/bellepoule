@@ -238,7 +238,8 @@ void Pool::OnNewScore (ScoreCollector *score_collector,
 }
 
 // --------------------------------------------------------------------------------
-void Pool::Draw (GooCanvas *on_canvas)
+void Pool::Draw (GooCanvas *on_canvas,
+                 gboolean   print_for_referees)
 {
   _title_table = NULL;
   _status_item = NULL;
@@ -305,42 +306,45 @@ void Pool::Draw (GooCanvas *on_canvas)
 
             if (i != j)
             {
-              Player *B = GetPlayer (j);
-              Match  *match;
-
-              match = GetMatch (A, B);
-
-              // Text
+              if (print_for_referees == FALSE)
               {
-                Score *score       = match->GetScore (A);
-                gchar *score_image = score->GetImage ();
+                Player *B = GetPlayer (j);
+                Match  *match;
 
-                score_text = goo_canvas_text_new (grid_group,
-                                                  score_image,
-                                                  x + cell_w / 2,
-                                                  y + cell_h / 2,
-                                                  -1,
-                                                  GTK_ANCHOR_CENTER,
-                                                  "font", "Sans bold 18px",
-                                                  NULL);
-                g_free (score_image);
-              }
+                match = GetMatch (A, B);
 
-              if (_locked == FALSE)
-              {
-                _score_collector->AddCollectingPoint (goo_rect,
-                                                      score_text,
-                                                      match,
-                                                      A);
-
-                if (previous_goo_rect)
+                // Text
                 {
-                  _score_collector->SetNextCollectingPoint (previous_goo_rect,
-                                                            goo_rect);
-                }
-              }
+                  Score *score       = match->GetScore (A);
+                  gchar *score_image = score->GetImage ();
 
-              previous_goo_rect = goo_rect;
+                  score_text = goo_canvas_text_new (grid_group,
+                                                    score_image,
+                                                    x + cell_w / 2,
+                                                    y + cell_h / 2,
+                                                    -1,
+                                                    GTK_ANCHOR_CENTER,
+                                                    "font", "Sans bold 18px",
+                                                    NULL);
+                  g_free (score_image);
+                }
+
+                if (_locked == FALSE)
+                {
+                  _score_collector->AddCollectingPoint (goo_rect,
+                                                        score_text,
+                                                        match,
+                                                        A);
+
+                  if (previous_goo_rect)
+                  {
+                    _score_collector->SetNextCollectingPoint (previous_goo_rect,
+                                                              goo_rect);
+                  }
+                }
+
+                previous_goo_rect = goo_rect;
+              }
             }
             else
             {
@@ -397,9 +401,39 @@ void Pool::Draw (GooCanvas *on_canvas)
                                         NULL);
         g_free (text);
       }
+
+      if (print_for_referees)
+      {
+        GooCanvasBounds grid_bounds;
+
+        goo_canvas_item_get_bounds (grid_group,
+                                    &grid_bounds);
+
+        for (guint i = 0; i < nb_players; i++)
+        {
+          goo_canvas_rect_new (grid_group,
+                               grid_bounds.x2 + cell_w,
+                               i*cell_h + 2,
+                               cell_w*5,
+                               cell_h-4,
+                               "fill-color", "Grey85",
+                               "line-width", 0.0,
+                               NULL);
+          goo_canvas_text_new (grid_group,
+                               "Signature",
+                               grid_bounds.x2 + cell_w,
+                               cell_h * (i + (1.0/2.0)),
+                               -1,
+                               GTK_ANCHOR_W,
+                               "fill-color", "Grey95",
+                               "font", "Sans bold 30.0px",
+                               NULL);
+        }
+      }
     }
 
     // Dashboard
+    if (print_for_referees == FALSE)
     {
       GooCanvasItem *dashboard_group = goo_canvas_group_new (root_item,
                                                              NULL);
@@ -553,6 +587,7 @@ void Pool::Draw (GooCanvas *on_canvas)
     }
 
     // Matches
+    if (print_for_referees)
     {
       GooCanvasBounds  bounds;
       GooCanvasItem   *match_main_table;
@@ -672,8 +707,11 @@ void Pool::Draw (GooCanvas *on_canvas)
     }
   }
 
-  RefreshScoreData ();
-  RefreshDashBoard ();
+  if (print_for_referees == FALSE)
+  {
+    RefreshScoreData ();
+    RefreshDashBoard ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -681,9 +719,11 @@ void Pool::DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr)
 {
-  GooCanvas *canvas = CreateCanvas ();
+  GooCanvas *canvas             = CreateCanvas ();
+  gboolean   print_for_referees = (gboolean) g_object_get_data (G_OBJECT (operation), "print_for_referees");
 
-  Draw (canvas);
+  Draw (canvas,
+        print_for_referees);
 
   g_object_set_data (G_OBJECT (operation), "operation_canvas", (void *) canvas);
   CanvasModule::OnDrawPage (operation,
@@ -697,7 +737,8 @@ void Pool::DrawPage (GtkPrintOperation *operation,
 void Pool::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
-  Draw (GetCanvas ());
+  Draw (GetCanvas (),
+        FALSE);
 }
 
 // --------------------------------------------------------------------------------

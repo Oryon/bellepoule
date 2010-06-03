@@ -399,6 +399,19 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 void PoolSupervisor::OnBeginPrint (GtkPrintOperation *operation,
                                    GtkPrintContext   *context)
 {
+  {
+    GtkWidget *w = _glade->GetWidget ("for_referees_radiobutton");
+
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+    {
+      g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) TRUE);
+    }
+    else
+    {
+      g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) FALSE);
+    }
+  }
+
   if (_print_all_pool)
   {
     gtk_print_operation_set_n_pages (operation,
@@ -432,6 +445,7 @@ void PoolSupervisor::OnDrawPage (GtkPrintOperation *operation,
     {
       pool = _displayed_pool;
     }
+
     pool->DrawPage (operation,
                     context,
                     page_nr);

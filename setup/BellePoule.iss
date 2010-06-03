@@ -26,9 +26,9 @@ WizardSmallImageFile=BellePoule_small.bmp
 ;SetupIconFile=logo.ico
 
 [Tasks]
-Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icones de lancement :";
-Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la barre des tâches"; GroupDescription: "Icones de lancement :";
-Name: downloadsources; Description: "Récupérer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
+Name: desktopicon; Description: "Cr?er un icone sur le bureau"; GroupDescription: "Icones de lancement :";
+Name: quicklaunchicon; Description: "Cr?er une icone de lancement rapide dans la barre des t?ches"; GroupDescription: "Icones de lancement :";
+Name: downloadsources; Description: "R?cup?rer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
 
 [Registry]
 Root: HKCU; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCU\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnHKCUPathAlready(); Flags: preservestringtype noerror;
@@ -92,6 +92,7 @@ Source: "C:\MinGW\bin\libcairo-2.dll"; DestDir: "{app}\porting_layer\lib"; Flags
 Source: "C:\MinGW\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\jpeg62.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libtiff3.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libpng14-14.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libpng12.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libpng12-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libgio-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
@@ -120,7 +121,8 @@ Source: "C:\MinGW\bin\libgsf-1-114.dll"; DestDir: "{app}\porting_layer\lib"; Fla
 Source: "C:\MinGW\bin\librsvg-2-2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 
 ;
-Source: "C:\MinGW\bin\gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
+;Source: "C:\MinGW\bin\gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
+Source: "gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
 Source: "reconfig.bat"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
 Source: "C:\MinGW\lib\gtk-2.0\2.10.0\loaders\*"; DestDir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\loaders"; Flags: ignoreversion
 
@@ -238,6 +240,7 @@ end;
 [Run]
 Filename: "{app}\porting_layer\bin\reconfig.bat";
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

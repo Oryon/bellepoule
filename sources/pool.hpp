@@ -103,7 +103,8 @@ class Pool : public CanvasModule
 
     void OnPlugged ();
 
-    void Draw (GooCanvas *on_canvas);
+    void Draw (GooCanvas *on_canvas,
+               gboolean   print_for_referees);
 
     Match *GetMatch (Player *A,
                      Player *B);
