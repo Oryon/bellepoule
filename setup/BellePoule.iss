@@ -26,43 +26,44 @@ WizardSmallImageFile=BellePoule_small.bmp
 ;SetupIconFile=logo.ico
 
 [Tasks]
-Name: desktopicon; Description: "Cr?er un icone sur le bureau"; GroupDescription: "Icones de lancement :";
-Name: quicklaunchicon; Description: "Cr?er une icone de lancement rapide dans la barre des t?ches"; GroupDescription: "Icones de lancement :";
-Name: downloadsources; Description: "R?cup?rer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
+Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icones de lancement :";
+Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la barre des tâches"; GroupDescription: "Icones de lancement :";
+Name: downloadsources; Description: "Récupérer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
 
 [Registry]
-Root: HKCU; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKCU\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnHKCUPathAlready(); Flags: preservestringtype noerror;
-Root: HKLM; SubKey: "Environment"; ValueType: string; ValueName: "PATH"; ValueData: "{reg:HKLM\Environment\,PATH};{app}\porting_layer;{app}\porting_layer\lib"; Check: NotOnHKCRPathAlready(); Flags: preservestringtype noerror;
-
 Root: HKCU; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BellePoule.exe,0"; Flags: uninsdeletekey noerror
-Root: HKCU; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BellePoule.exe"" ""%1"""; Flags: uninsdeletekey noerror
+Root: HKCU; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BellePoule.bat"" ""%1"""; Flags: uninsdeletekey noerror
 
 Root: HKLM; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BellePoule.exe,0"; Flags: uninsdeletekey noerror
-Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BellePoule.exe"" ""%1"""; Flags: uninsdeletekey noerror
+Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BellePoule.bat"" ""%1"""; Flags: uninsdeletekey noerror
 
 [Languages]
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 ;LicenseFile: "license-French.txt"
 
 [Icons]
-Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"
+Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.bat"; WorkingDir: "{app}"; IconFilename: "{app}\BellePoule.exe"
 Name: "{userprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
-Name: "{commonprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"
+Name: "{commonprograms}\BellePoule\BellePoule"; Filename: "{app}\BellePoule.bat"; WorkingDir: "{app}"; IconFilename: "{app}\BellePoule.exe"
 Name: "{commonprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
-Name: "{userdesktop}\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filename: "{app}\BellePoule.exe"; WorkingDir: "{app}"; Tasks: quicklaunchicon
+Name: "{userdesktop}\BellePoule"; Filename: "{app}\BellePoule.bat"; WorkingDir: "{app}"; Tasks: desktopicon; IconFilename: "{app}\BellePoule.exe"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filename: "{app}\BellePoule.bat"; WorkingDir: "{app}"; Tasks: quicklaunchicon; IconFilename: "{app}\BellePoule.exe"
 
 [Dirs]
 Name: "{app}\porting_layer"; Attribs: hidden
 Name: "{app}\resources"; Attribs: hidden
 
 [Files]
+Source: "path_dependent_files\BellePoule.bat"; DestDir: "{app}"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\BellePoule.bat'), 'INSTALL_DIR', ExpandConstant('{app}'), 1)
 Source: "..\bin\Release\BellePoule.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "gtkrc"; DestDir: "{app}\resources"; Flags: ignoreversion
+Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\porting_layer\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
+Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\porting_layer\etc\gtk-2.0\gdk-pixbuf.loaders'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
+Source: "path_dependent_files\pango.modules"; DestDir: "{app}\porting_layer\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\porting_layer\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 
 ;Exemple de fichiers
 Source: "..\Exemples_Fichiers_BellePoule\exemple.cotcot"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion
@@ -120,12 +121,6 @@ Source: "C:\MinGW\bin\libfreetype-6.dll"; DestDir: "{app}\porting_layer\lib"; Fl
 Source: "C:\MinGW\bin\libgsf-1-114.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\librsvg-2-2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 
-;
-;Source: "C:\MinGW\bin\gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
-Source: "gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
-Source: "reconfig.bat"; DestDir: "{app}\porting_layer\bin"; Flags: ignoreversion
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\loaders\*"; DestDir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\loaders"; Flags: ignoreversion
-
 ; .mo
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -145,10 +140,10 @@ Source: "C:\MinGW\share\icons\hicolor\32x32\apps\gnome-devel.png"; DestDir: "{ap
 Source: "C:\MinGW\share\icons\hicolor\48x48\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\48x48\apps\"; Flags: ignoreversion
 
 ;
-Source: "C:\MinGW\etc\gtk-2.0\gdk-pixbuf.loaders"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion
-Source: "C:\MinGW\etc\gtk-2.0\gtk.immodules"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion
-Source: "C:\MinGW\etc\pango\pango.modules"; Destdir: "{app}\porting_layer\etc\pango"
 Source: "C:\MinGW\etc\pango\pango.aliases"; Destdir: "{app}\porting_layer\etc\pango"
+
+; loaders
+Source: "C:\MinGW\lib\gtk-2.0\2.10.0\loaders\*"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\loaders"
 
 ; optional: let the user make the app look more Windows-like
 Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libwimp.dll"; Destdir: "{app}\porting_layer\lib\gtk-2.0\2.10.0\engines"
@@ -169,57 +164,6 @@ Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-viqr.dll"; Destdir: "{app}\por
 Type: filesandordirs; Name: "{app}\porting_layer"
 
 [Code]
-function NotOnHKCUPathAlready(): Boolean;
-var
-  BinDir, Path: String;
-begin
-  if RegQueryStringValue(HKEY_CURRENT_USER, 'Environment', 'Path', Path) then
-  begin // Successfully read the value
-    BinDir := ExpandConstant('{app}\porting_layer');
-    Log('Looking for BellePoule\porting_layer dir in %PATH%: ' + BinDir + ' in ' + Path);
-    if Pos(LowerCase(BinDir), Lowercase(Path)) = 0 then
-    begin
-      Log('Update HKCU %PATH%');
-      Result := True;
-    end
-    else
-    begin
-      Log('No need to update HKCU %PATH%');
-      Result := False;
-    end
-  end
-  else // The key probably doesn't exist
-  begin
-    Result := True;
-  end;
-end;
-
-//////////////////////////////////////////
-function NotOnHKCRPathAlready(): Boolean;
-var
-  BinDir, Path: String;
-begin
-  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'Environment', 'Path', Path) then
-  begin // Successfully read the value
-    BinDir := ExpandConstant('{app}\porting_layer');
-    Log('Looking for BellePoule\porting_layer dir in %PATH%: ' + BinDir + ' in ' + Path);
-    if Pos(LowerCase(BinDir), Lowercase(Path)) = 0 then
-    begin
-      Log('Update HKLM %PATH%');
-      Result := True;
-    end
-    else
-    begin
-      Log('No need to update HKLM %PATH%');
-      Result := False;
-    end
-  end
-  else // The key probably doesn't exist
-  begin
-    Result := True;
-  end;
-end;
-
 //////////////////////////////////////////
 function GetInstallDir(Param: String): String;
 var pfdir, tmpdir: string;
@@ -237,22 +181,28 @@ begin
   end
 end;
 
+//////////////////////////////////////////
+procedure UpdatePath (const file: String; const what: String; const by: String; const dos_separator: Integer);
+var
+  i     : Integer;
+  lines : TArrayOfString;
+begin
+
+  begin
+   if dos_separator = 0
+    then StringChange(by, '\', '/');
+  end;
+
+  LoadStringsFromFile(file, lines);
+
+  for i := 0 to GetArrayLength(lines)-1 do
+    begin
+      StringChange(lines[i], what, by);
+    end;
+
+  SaveStringsToFile(file, lines, False);
+end;
+
 [Run]
-Filename: "{app}\porting_layer\bin\reconfig.bat";
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
