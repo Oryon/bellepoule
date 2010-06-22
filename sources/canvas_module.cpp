@@ -138,19 +138,11 @@ void CanvasModule::OnBeginPrint (GtkPrintOperation *operation,
   GooCanvasBounds bounds;
   gdouble         canvas_w;
   gdouble         canvas_h;
-  gdouble         paper_w = gtk_print_context_get_width (context);
-  gdouble         paper_h = gtk_print_context_get_height (context);
 
   goo_canvas_item_get_bounds (GetRootItem (),
                               &bounds);
   canvas_w = bounds.x2 -bounds.x1;
   canvas_h = bounds.y2 -bounds.y1;
-
-  {
-    cairo_t *cr;
-    gdouble  x_factor = paper_w / canvas_w;
-    gdouble  y_factor = paper_h / canvas_h;
-  }
 
   gtk_print_operation_set_n_pages (operation,
                                    1);

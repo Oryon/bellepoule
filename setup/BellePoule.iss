@@ -93,7 +93,7 @@ Source: "C:\MinGW\bin\libcairo-2.dll"; DestDir: "{app}\porting_layer\lib"; Flags
 Source: "C:\MinGW\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\jpeg62.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libtiff3.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpng14-14.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+;Source: "C:\MinGW\bin\libpng14-14.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libpng12.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libpng12-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libgio-2.0-0.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
@@ -205,4 +205,5 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
