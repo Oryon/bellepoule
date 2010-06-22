@@ -1324,11 +1324,16 @@ void Pool::SortPlayers ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool::ResetMatches ()
+void Pool::ResetMatches (Object *rank_owner)
 {
-  _player_list = g_slist_sort_with_data (_player_list,
-                                         (GCompareDataFunc) Player::Compare,
-                                         (void *) this);
+  {
+    Player::AttributeId attr_id ("previous_stage_rank",
+                                 rank_owner);
+
+    _player_list = g_slist_sort_with_data (_player_list,
+                                           (GCompareDataFunc) Player::Compare,
+                                           &attr_id);
+  }
 
   for (guint i = 0; i < g_slist_length (_match_list); i++)
   {

@@ -39,7 +39,7 @@ class Pool : public CanvasModule
     guint GetNbPlayers ();
     guint GetNumber    ();
     void  CleanScores  ();
-    void  ResetMatches ();
+    void  ResetMatches (Object *rank_owner);
     void  SortPlayers  ();
     void  Lock         ();
     void  UnLock       ();
