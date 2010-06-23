@@ -241,9 +241,6 @@ void Pool::OnNewScore (ScoreCollector *score_collector,
 void Pool::Draw (GooCanvas *on_canvas,
                  gboolean   print_for_referees)
 {
-  _title_table = NULL;
-  _status_item = NULL;
-
   if (_score_collector)
   {
     for (guint i = 0; i < g_slist_length (_match_list); i++)
@@ -722,8 +719,20 @@ void Pool::DrawPage (GtkPrintOperation *operation,
   GooCanvas *canvas             = CreateCanvas ();
   gboolean   print_for_referees = (gboolean) g_object_get_data (G_OBJECT (operation), "print_for_referees");
 
-  Draw (canvas,
-        print_for_referees);
+  {
+    GooCanvasItem *title_table = _title_table;
+    GooCanvasItem *status_item = _status_item;
+
+    title_table = NULL;
+    status_item = NULL;
+    Draw (canvas,
+          print_for_referees);
+
+    // Rétablissement des attributs dans leur état original.
+    // Pas terrible comme technique ! Trouver autre chose !
+    _title_table = title_table;
+    _status_item = status_item;
+  }
 
   g_object_set_data (G_OBJECT (operation), "operation_canvas", (void *) canvas);
   CanvasModule::OnDrawPage (operation,

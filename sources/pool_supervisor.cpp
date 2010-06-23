@@ -86,7 +86,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                         GTK_MESSAGE_QUESTION,
                                                         GTK_BUTTONS_OK_CANCEL,
-                                                        "<b><big>Quelles poules voulez-vous imprimer ?</big></b>");
+                                                        "<b><big>Imprimer ...</big></b>");
 
     gtk_window_set_title (GTK_WINDOW (_print_dialog),
                           "Impression des feuilles de poule");
