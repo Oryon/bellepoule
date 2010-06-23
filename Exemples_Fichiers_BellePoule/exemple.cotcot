@@ -26,7 +26,7 @@
   <Tireur ID="5" Nom="LAQUAINE DEPIROU" Prenom="Clara" DateNaissance="04/09/1987" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011160023035" Points="0" Presence="1" Exporte="0" Classement="10"/>
  </Tireurs>
  <Arbitres/>
- <Phases PhaseEnCours="2">
+ <Phases PhaseEnCours="1">
   <TourDePoules PhaseID="" ID="1" ScoreMax="5" NbDePoules="3" PhaseSuivanteDesQualifies="3" NbQualifiesParPoule="8" NbQualifiesParIndice="8">
    <Tireur REF="2" RangInitial="1" Statut="Q"/>
    <Tireur REF="6" RangInitial="2" Statut="Q"/>
@@ -51,313 +51,321 @@
    <Tireur REF="3" RangInitial="21" Statut="Q"/>
    <Tireur REF="5" RangInitial="22" Statut="Q"/>
    <Poule ID="1">
-    <Tireur REF="11" NoDansLaPoule="1" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="1"/>
-    <Tireur REF="14" NoDansLaPoule="2" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="2"/>
-    <Tireur REF="1" NoDansLaPoule="3" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="3"/>
-    <Tireur REF="2" NoDansLaPoule="4" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="4"/>
-    <Tireur REF="19" NoDansLaPoule="5" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="5"/>
-    <Tireur REF="16" NoDansLaPoule="6" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="6"/>
-    <Tireur REF="13" NoDansLaPoule="7" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="7"/>
+    <Tireur REF="2" NoDansLaPoule="1" NbVictoires="0" NbMatches="5" RangPoule="0"/>
+    <Tireur REF="11" NoDansLaPoule="2" NbVictoires="0" NbMatches="5" RangPoule="0"/>
+    <Tireur REF="13" NoDansLaPoule="3" NbVictoires="0" NbMatches="5" RangPoule="0"/>
+    <Tireur REF="14" NoDansLaPoule="4" NbVictoires="0" NbMatches="5" RangPoule="0"/>
+    <Tireur REF="1" NoDansLaPoule="5" NbVictoires="0" NbMatches="5" RangPoule="0"/>
+    <Tireur REF="19" NoDansLaPoule="6" NbVictoires="0" NbMatches="5" RangPoule="0"/>
     <Arbitre/>
-    <Match ID="1">
+    <Match ID="-1163005939">
      <Tireur REF="11"/>
      <Tireur REF="2"/>
     </Match>
-    <Match ID="21">
+    <Match ID="-1163005939">
      <Tireur REF="13"/>
      <Tireur REF="2"/>
     </Match>
-    <Match ID="4">
+    <Match ID="-1163005939">
      <Tireur REF="13"/>
      <Tireur REF="11"/>
     </Match>
-    <Match ID="17">
+    <Match ID="-1163005939">
      <Tireur REF="14"/>
      <Tireur REF="2"/>
     </Match>
-    <Match ID="20">
+    <Match ID="-1163005939">
      <Tireur REF="14"/>
      <Tireur REF="11"/>
     </Match>
-    <Match ID="14">
+    <Match ID="-1163005939">
      <Tireur REF="14"/>
      <Tireur REF="13"/>
     </Match>
-    <Match ID="9">
+    <Match ID="-1163005939">
      <Tireur REF="1"/>
      <Tireur REF="2"/>
     </Match>
-    <Match ID="12">
+    <Match ID="-1163005939">
      <Tireur REF="1"/>
      <Tireur REF="11"/>
     </Match>
-    <Match ID="18">
+    <Match ID="-1163005939">
      <Tireur REF="1"/>
      <Tireur REF="13"/>
     </Match>
-    <Match ID="6">
+    <Match ID="-1163005939">
      <Tireur REF="1"/>
      <Tireur REF="14"/>
     </Match>
-    <Match ID="5">
+    <Match ID="-1163005939">
      <Tireur REF="19"/>
      <Tireur REF="2"/>
     </Match>
-    <Match ID="8">
+    <Match ID="-1163005939">
      <Tireur REF="19"/>
      <Tireur REF="11"/>
     </Match>
-    <Match ID="11">
+    <Match ID="-1163005939">
      <Tireur REF="19"/>
      <Tireur REF="13"/>
     </Match>
-    <Match ID="2">
+    <Match ID="-1163005939">
      <Tireur REF="19"/>
      <Tireur REF="14"/>
     </Match>
-    <Match ID="15">
+    <Match ID="-1163005939">
      <Tireur REF="19"/>
      <Tireur REF="1"/>
-    </Match>
-    <Match ID="13">
-     <Tireur REF="16"/>
-     <Tireur REF="2"/>
-    </Match>
-    <Match ID="16">
-     <Tireur REF="16"/>
-     <Tireur REF="11"/>
-    </Match>
-    <Match ID="7">
-     <Tireur REF="16"/>
-     <Tireur REF="13"/>
-    </Match>
-    <Match ID="10">
-     <Tireur REF="16"/>
-     <Tireur REF="14"/>
-    </Match>
-    <Match ID="3">
-     <Tireur REF="16"/>
-     <Tireur REF="1"/>
-    </Match>
-    <Match ID="19">
-     <Tireur REF="16"/>
-     <Tireur REF="19"/>
     </Match>
    </Poule>
    <Poule ID="2">
-    <Tireur REF="7" NoDansLaPoule="1" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="1"/>
-    <Tireur REF="20" NoDansLaPoule="2" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="2"/>
-    <Tireur REF="15" NoDansLaPoule="3" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="3"/>
-    <Tireur REF="8" NoDansLaPoule="4" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="4"/>
-    <Tireur REF="6" NoDansLaPoule="5" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="5"/>
-    <Tireur REF="12" NoDansLaPoule="6" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="6"/>
-    <Tireur REF="9" NoDansLaPoule="7" NbVictoires="0" NbMatches="6" TD="0" TR="0" RangPoule="7"/>
+    <Tireur REF="20" NoDansLaPoule="1" NbVictoires="0" NbMatches="6" RangPoule="0"/>
+    <Tireur REF="15" NoDansLaPoule="2" NbVictoires="0" NbMatches="6" RangPoule="0"/>
+    <Tireur REF="9" NoDansLaPoule="3" NbVictoires="0" NbMatches="6" RangPoule="0"/>
+    <Tireur REF="7" NoDansLaPoule="4" NbVictoires="0" NbMatches="6" RangPoule="0"/>
+    <Tireur REF="12" NoDansLaPoule="5" NbVictoires="0" NbMatches="6" RangPoule="0"/>
+    <Tireur REF="8" NoDansLaPoule="6" NbVictoires="0" NbMatches="6" RangPoule="0"/>
+    <Tireur REF="5" NoDansLaPoule="7" NbVictoires="0" NbMatches="6" RangPoule="0"/>
     <Arbitre/>
-    <Match ID="2">
-     <Tireur REF="20"/>
-     <Tireur REF="6"/>
-    </Match>
-    <Match ID="15">
-     <Tireur REF="15"/>
-     <Tireur REF="6"/>
-    </Match>
-    <Match ID="6">
+    <Match ID="-1163005939">
      <Tireur REF="15"/>
      <Tireur REF="20"/>
     </Match>
-    <Match ID="11">
-     <Tireur REF="9"/>
-     <Tireur REF="6"/>
-    </Match>
-    <Match ID="14">
+    <Match ID="-1163005939">
      <Tireur REF="9"/>
      <Tireur REF="20"/>
     </Match>
-    <Match ID="18">
+    <Match ID="-1163005939">
      <Tireur REF="9"/>
      <Tireur REF="15"/>
     </Match>
-    <Match ID="8">
-     <Tireur REF="7"/>
-     <Tireur REF="6"/>
-    </Match>
-    <Match ID="20">
+    <Match ID="-1163005939">
      <Tireur REF="7"/>
      <Tireur REF="20"/>
     </Match>
-    <Match ID="12">
+    <Match ID="-1163005939">
      <Tireur REF="7"/>
      <Tireur REF="15"/>
     </Match>
-    <Match ID="4">
+    <Match ID="-1163005939">
      <Tireur REF="7"/>
      <Tireur REF="9"/>
     </Match>
-    <Match ID="19">
-     <Tireur REF="12"/>
-     <Tireur REF="6"/>
-    </Match>
-    <Match ID="10">
+    <Match ID="-1163005939">
      <Tireur REF="12"/>
      <Tireur REF="20"/>
     </Match>
-    <Match ID="3">
+    <Match ID="-1163005939">
      <Tireur REF="12"/>
      <Tireur REF="15"/>
     </Match>
-    <Match ID="7">
+    <Match ID="-1163005939">
      <Tireur REF="12"/>
      <Tireur REF="9"/>
     </Match>
-    <Match ID="16">
+    <Match ID="-1163005939">
      <Tireur REF="12"/>
      <Tireur REF="7"/>
     </Match>
-    <Match ID="5">
-     <Tireur REF="8"/>
-     <Tireur REF="6"/>
-    </Match>
-    <Match ID="17">
+    <Match ID="-1163005939">
      <Tireur REF="8"/>
      <Tireur REF="20"/>
     </Match>
-    <Match ID="9">
+    <Match ID="-1163005939">
      <Tireur REF="8"/>
      <Tireur REF="15"/>
     </Match>
-    <Match ID="21">
+    <Match ID="-1163005939">
      <Tireur REF="8"/>
      <Tireur REF="9"/>
     </Match>
-    <Match ID="1">
+    <Match ID="-1163005939">
      <Tireur REF="8"/>
      <Tireur REF="7"/>
     </Match>
-    <Match ID="13">
+    <Match ID="-1163005939">
      <Tireur REF="8"/>
      <Tireur REF="12"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="5"/>
+     <Tireur REF="20"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="5"/>
+     <Tireur REF="15"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="5"/>
+     <Tireur REF="9"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="5"/>
+     <Tireur REF="7"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="5"/>
+     <Tireur REF="12"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="5"/>
+     <Tireur REF="8"/>
     </Match>
    </Poule>
    <Poule ID="3">
-    <Tireur REF="10" NoDansLaPoule="1" NbVictoires="0" NbMatches="7" TD="0" TR="0" RangPoule="1"/>
-    <Tireur REF="0" NoDansLaPoule="2" NbVictoires="0" NbMatches="7" TD="0" TR="0" RangPoule="2"/>
-    <Tireur REF="17" NoDansLaPoule="3" NbVictoires="0" NbMatches="7" TD="0" TR="0" RangPoule="3"/>
-    <Tireur REF="21" NoDansLaPoule="4" NbVictoires="0" NbMatches="7" TD="0" TR="0" RangPoule="4"/>
-    <Tireur REF="5" NoDansLaPoule="5" NbVictoires="0" NbMatches="7" TD="0" TR="0" RangPoule="5"/>
-    <Tireur REF="4" NoDansLaPoule="6" NbVictoires="0" NbMatches="7" TD="0" TR="0" RangPoule="6"/>
-    <Tireur REF="3" NoDansLaPoule="7" NbVictoires="0" NbMatches="7" TD="0" TR="0" RangPoule="7"/>
-    <Tireur REF="18" NoDansLaPoule="8" NbVictoires="0" NbMatches="7" TD="0" TR="0" RangPoule="8"/>
+    <Tireur REF="6" NoDansLaPoule="1" NbVictoires="0" NbMatches="8" RangPoule="0"/>
+    <Tireur REF="0" NoDansLaPoule="2" NbVictoires="0" NbMatches="8" RangPoule="0"/>
+    <Tireur REF="4" NoDansLaPoule="3" NbVictoires="0" NbMatches="8" RangPoule="0"/>
+    <Tireur REF="21" NoDansLaPoule="4" NbVictoires="0" NbMatches="8" RangPoule="0"/>
+    <Tireur REF="17" NoDansLaPoule="5" NbVictoires="0" NbMatches="8" RangPoule="0"/>
+    <Tireur REF="10" NoDansLaPoule="6" NbVictoires="0" NbMatches="8" RangPoule="0"/>
+    <Tireur REF="18" NoDansLaPoule="7" NbVictoires="0" NbMatches="8" RangPoule="0"/>
+    <Tireur REF="16" NoDansLaPoule="8" NbVictoires="0" NbMatches="8" RangPoule="0"/>
+    <Tireur REF="3" NoDansLaPoule="9" NbVictoires="0" NbMatches="8" RangPoule="0"/>
     <Arbitre/>
-    <Match ID="22">
+    <Match ID="-1163005939">
      <Tireur REF="4"/>
      <Tireur REF="0"/>
     </Match>
-    <Match ID="13">
+    <Match ID="-1163005939">
      <Tireur REF="21"/>
      <Tireur REF="0"/>
     </Match>
-    <Match ID="25">
+    <Match ID="-1163005939">
      <Tireur REF="21"/>
      <Tireur REF="4"/>
     </Match>
-    <Match ID="1">
+    <Match ID="-1163005939">
      <Tireur REF="17"/>
      <Tireur REF="0"/>
     </Match>
-    <Match ID="16">
+    <Match ID="-1163005939">
      <Tireur REF="17"/>
      <Tireur REF="4"/>
     </Match>
-    <Match ID="6">
+    <Match ID="-1163005939">
      <Tireur REF="17"/>
      <Tireur REF="21"/>
     </Match>
-    <Match ID="5">
+    <Match ID="-1163005939">
      <Tireur REF="10"/>
      <Tireur REF="0"/>
     </Match>
-    <Match ID="19">
+    <Match ID="-1163005939">
      <Tireur REF="10"/>
      <Tireur REF="4"/>
     </Match>
-    <Match ID="9">
+    <Match ID="-1163005939">
      <Tireur REF="10"/>
      <Tireur REF="21"/>
     </Match>
-    <Match ID="28">
+    <Match ID="-1163005939">
      <Tireur REF="10"/>
      <Tireur REF="17"/>
     </Match>
-    <Match ID="17">
+    <Match ID="-1163005939">
      <Tireur REF="18"/>
      <Tireur REF="0"/>
     </Match>
-    <Match ID="4">
+    <Match ID="-1163005939">
      <Tireur REF="18"/>
      <Tireur REF="4"/>
     </Match>
-    <Match ID="21">
+    <Match ID="-1163005939">
      <Tireur REF="18"/>
      <Tireur REF="21"/>
     </Match>
-    <Match ID="11">
+    <Match ID="-1163005939">
      <Tireur REF="18"/>
      <Tireur REF="17"/>
     </Match>
-    <Match ID="14">
+    <Match ID="-1163005939">
      <Tireur REF="18"/>
      <Tireur REF="10"/>
     </Match>
-    <Match ID="27">
+    <Match ID="-1163005939">
      <Tireur REF="3"/>
      <Tireur REF="0"/>
     </Match>
-    <Match ID="12">
+    <Match ID="-1163005939">
      <Tireur REF="3"/>
      <Tireur REF="4"/>
     </Match>
-    <Match ID="3">
+    <Match ID="-1163005939">
      <Tireur REF="3"/>
      <Tireur REF="21"/>
     </Match>
-    <Match ID="20">
+    <Match ID="-1163005939">
      <Tireur REF="3"/>
      <Tireur REF="17"/>
     </Match>
-    <Match ID="24">
+    <Match ID="-1163005939">
      <Tireur REF="3"/>
      <Tireur REF="10"/>
     </Match>
-    <Match ID="8">
+    <Match ID="-1163005939">
      <Tireur REF="3"/>
      <Tireur REF="18"/>
     </Match>
-    <Match ID="10">
-     <Tireur REF="5"/>
+    <Match ID="-1163005939">
+     <Tireur REF="6"/>
      <Tireur REF="0"/>
     </Match>
-    <Match ID="7">
-     <Tireur REF="5"/>
+    <Match ID="-1163005939">
+     <Tireur REF="6"/>
      <Tireur REF="4"/>
     </Match>
-    <Match ID="18">
-     <Tireur REF="5"/>
+    <Match ID="-1163005939">
+     <Tireur REF="6"/>
      <Tireur REF="21"/>
     </Match>
-    <Match ID="23">
-     <Tireur REF="5"/>
+    <Match ID="-1163005939">
+     <Tireur REF="6"/>
      <Tireur REF="17"/>
     </Match>
-    <Match ID="2">
-     <Tireur REF="5"/>
+    <Match ID="-1163005939">
+     <Tireur REF="6"/>
      <Tireur REF="10"/>
     </Match>
-    <Match ID="26">
-     <Tireur REF="5"/>
+    <Match ID="-1163005939">
+     <Tireur REF="6"/>
      <Tireur REF="18"/>
     </Match>
-    <Match ID="15">
-     <Tireur REF="5"/>
+    <Match ID="-1163005939">
+     <Tireur REF="6"/>
+     <Tireur REF="3"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="16"/>
+     <Tireur REF="6"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="16"/>
+     <Tireur REF="0"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="16"/>
+     <Tireur REF="4"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="16"/>
+     <Tireur REF="21"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="16"/>
+     <Tireur REF="17"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="16"/>
+     <Tireur REF="10"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="16"/>
+     <Tireur REF="18"/>
+    </Match>
+    <Match ID="-1163005939">
+     <Tireur REF="16"/>
      <Tireur REF="3"/>
     </Match>
    </Poule>

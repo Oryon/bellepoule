@@ -265,6 +265,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
                                                                  i);
           if (_selected_config->nb_pool == nb_pool)
           {
+            SetOriginalPools ();
             break;
           }
         }
@@ -442,11 +443,41 @@ void PoolAllocator::CreatePools ()
 
     player = (Player *) g_slist_nth_data (_attendees,
                                           i);
+    player->SetData (this,
+                     "original_pool",
+                     (void *) pool->GetNumber ());
     pool->AddPlayer (player,
                      this);
   }
 
   g_free (pool_table);
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::SetOriginalPools ()
+{
+  guint nb_pool = _selected_config->nb_pool;
+
+  for (guint i = 0; i < g_slist_length (_attendees); i++)
+  {
+    Player *player;
+    guint   pool_number;
+
+    if (((i / nb_pool) % 2) == 0)
+    {
+      pool_number = i%nb_pool + 1;
+    }
+    else
+    {
+      pool_number = nb_pool - i%nb_pool;
+    }
+
+    player = (Player *) g_slist_nth_data (_attendees,
+                                          i);
+    player->SetData (this,
+                     "original_pool",
+                     (void *) pool_number);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -945,6 +976,12 @@ void PoolAllocator::FillPoolTable (Pool *pool)
 
     if (player && selected_attr)
     {
+      if ((guint) player->GetData (this, "original_pool") != pool->GetNumber ())
+      {
+        Canvas::PutStockIconInTable (table,
+                                     GTK_STOCK_REFRESH,
+                                     p+1, 0);
+      }
       for (guint i = 0; i < g_slist_length (selected_attr); i++)
       {
         GooCanvasItem       *item;
@@ -962,13 +999,13 @@ void PoolAllocator::FillPoolTable (Pool *pool)
         {
           item = Canvas::PutTextInTable (table,
                                          attr->GetUserImage (),
-                                         p+1, i);
+                                         p+1, i+1);
         }
         else
         {
           item = Canvas::PutTextInTable (table,
                                          "",
-                                         p+1, i);
+                                         p+1, i+1);
         }
         g_object_set (G_OBJECT (item),
                       "font", "Sans 14px",

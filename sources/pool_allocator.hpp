@@ -75,6 +75,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     GtkListStore  *_combobox_store;
     Data          *_max_score;
 
+    void SetOriginalPools ();
     void FillCombobox ();
     void CreatePools ();
     void DeletePools ();
