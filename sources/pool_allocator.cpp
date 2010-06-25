@@ -32,6 +32,12 @@ typedef enum
   BEST_PIXMAP_COL
 } ComboboxColumn;
 
+typedef enum
+{
+  SWAPPING_IMAGE,
+  SWAPPING_XML_IMAGE
+} SwappingColumn;
+
 extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
                                                               Object    *owner);
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
@@ -90,6 +96,39 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 
     SetFilter (filter);
     filter->Release ();
+  }
+
+  {
+    GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetObject ("swapping_liststore"));
+    GtkTreeIter   iter;
+    GSList       *attr           = _filter->GetAttrList ();
+
+    gtk_list_store_append (swapping_store, &iter);
+    gtk_list_store_set (swapping_store, &iter,
+                        SWAPPING_IMAGE, "Aucun",
+                        SWAPPING_XML_IMAGE, NULL,
+                        -1);
+
+    while (attr)
+    {
+      AttributeDesc *attr_desc;
+
+      attr_desc = (AttributeDesc *) attr->data;
+      if (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR)
+      {
+        gtk_list_store_append (swapping_store, &iter);
+
+        gtk_list_store_set (swapping_store, &iter,
+                            SWAPPING_IMAGE, attr_desc->_user_name,
+                            SWAPPING_XML_IMAGE, attr_desc->_xml_name,
+                            -1);
+      }
+
+      attr = g_slist_next (attr);
+    }
+
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetObject ("swapping_combobox")),
+                              0);
   }
 }
 

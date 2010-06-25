@@ -6,6 +6,7 @@
     <child>
       <object class="GtkVBox" id="root">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">8</property>
         <child>
           <object class="GtkToolbar" id="toolbar2">
@@ -128,6 +129,39 @@
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkHBox" id="hbox1">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkLabel" id="label1">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">D&#xE9;callage</property>
+                  </object>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="swapping_combobox">
+                    <property name="visible">True</property>
+                    <property name="model">swapping_liststore</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -158,6 +192,14 @@
       <!-- column-name pool_number -->
       <column type="gchararray"/>
       <!-- column-name fie_icon -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="swapping_liststore">
+    <columns>
+      <!-- column-name attribute_image -->
+      <column type="gchararray"/>
+      <!-- column-name attribute_xml_name -->
       <column type="gchararray"/>
     </columns>
   </object>
