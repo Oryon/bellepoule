@@ -155,6 +155,16 @@ void Object::RemoveData (Object *owner,
 }
 
 // --------------------------------------------------------------------------------
+void Object::RemoveAllData ()
+{
+  if (_datalist)
+  {
+    g_datalist_clear (&_datalist);
+    _datalist = NULL;
+  }
+}
+
+// --------------------------------------------------------------------------------
 void *Object::GetData (Object *owner,
                        gchar  *key)
 {

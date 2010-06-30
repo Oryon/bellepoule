@@ -35,7 +35,7 @@ typedef enum
 typedef enum
 {
   SWAPPING_IMAGE,
-  SWAPPING_XML_IMAGE
+  SWAPPING_CRITERIA
 } SwappingColumn;
 
 extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
@@ -59,6 +59,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _floating_player = NULL;
   _drag_text       = NULL;
   _main_table      = NULL;
+  _swapper         = new Swapper (this);
 
   _max_score = new Data ("ScoreMax",
                          5);
@@ -69,6 +70,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   {
     AddSensitiveWidget (_glade->GetWidget ("nb_pools_combobox"));
     AddSensitiveWidget (_glade->GetWidget ("pool_size_combobox"));
+    AddSensitiveWidget (_glade->GetWidget ("swapping_combobox"));
   }
 
   {
@@ -106,7 +108,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     gtk_list_store_append (swapping_store, &iter);
     gtk_list_store_set (swapping_store, &iter,
                         SWAPPING_IMAGE, "Aucun",
-                        SWAPPING_XML_IMAGE, NULL,
+                        SWAPPING_CRITERIA, NULL,
                         -1);
 
     while (attr)
@@ -120,7 +122,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 
         gtk_list_store_set (swapping_store, &iter,
                             SWAPPING_IMAGE, attr_desc->_user_name,
-                            SWAPPING_XML_IMAGE, attr_desc->_xml_name,
+                            SWAPPING_CRITERIA, attr_desc,
                             -1);
       }
 
@@ -136,6 +138,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 PoolAllocator::~PoolAllocator ()
 {
   _max_score->Release ();
+  _swapper->Release   ();
 }
 
 // --------------------------------------------------------------------------------
@@ -162,6 +165,8 @@ const gchar *PoolAllocator::GetInputProviderClient ()
 void PoolAllocator::Display ()
 {
   SetUpCombobox ();
+
+  _swapper->SetPlayerList (_attendees);
 
   if (_main_table)
   {
@@ -1181,6 +1186,48 @@ Pool *PoolAllocator::GetPool (guint index)
 {
   return (Pool *) g_slist_nth_data (_pools_list,
                                     index);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
+                                                              Object    *owner)
+{
+  PoolAllocator *pl = dynamic_cast <PoolAllocator *> (owner);
+
+  pl->OnSwappingComboboxChanged (GTK_COMBO_BOX (widget));
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
+{
+  if (_pools_list)
+  {
+    GtkTreeIter    iter;
+    AttributeDesc *criteria;
+
+    gtk_combo_box_get_active_iter (cb,
+                                   &iter);
+    gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore")),
+                        &iter,
+                        SWAPPING_CRITERIA, &criteria,
+                        -1);
+
+    DeletePools ();
+    CreatePools ();
+
+    if (criteria)
+    {
+      Player::AttributeId *attr_id = new Player::AttributeId (criteria->_code_name);
+
+      _swapper->SetCriteria (attr_id);
+      attr_id->Release ();
+
+      _swapper->Swap (_pools_list);
+    }
+
+    Display ();
+    SignalStatusUpdate ();
+  }
 }
 
 // --------------------------------------------------------------------------------

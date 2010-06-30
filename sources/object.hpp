@@ -46,6 +46,8 @@ class Object
 
     Object (gchar *class_name = NULL);
 
+    void RemoveAllData ();
+
   private:
     GData *_datalist;
     guint  _ref_count;

@@ -24,6 +24,7 @@
 #include "stage.hpp"
 #include "canvas_module.hpp"
 #include "score_collector.hpp"
+#include "player.hpp"
 
 class Pool : public CanvasModule
 {
@@ -52,6 +53,8 @@ class Pool : public CanvasModule
     void RefreshScoreData ();
 
     Player *GetPlayer (guint i);
+
+    gint GetPosition (Player *player);
 
     gchar *GetName ();
 

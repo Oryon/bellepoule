@@ -23,6 +23,7 @@
 #include "stage.hpp"
 #include "canvas_module.hpp"
 #include "pool.hpp"
+#include "swapper.hpp"
 
 class PoolAllocator : public virtual Stage, public CanvasModule
 {
@@ -42,6 +43,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     static const gchar *_xml_class_name;
 
     void OnComboboxChanged (GtkComboBox *cb);
+    void OnSwappingComboboxChanged (GtkComboBox *cb);
 
   private:
     void OnLocked (Reason reason);
@@ -74,6 +76,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     GooCanvasItem *_main_table;
     GtkListStore  *_combobox_store;
     Data          *_max_score;
+    Swapper       *_swapper;
 
     void SetOriginalPools ();
     void FillCombobox ();

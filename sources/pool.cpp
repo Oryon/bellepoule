@@ -176,7 +176,17 @@ void Pool::AddPlayer (Player *player,
                                                     player,
                                                     (GCompareDataFunc) Player::Compare,
                                                     &attr_id);
+    player->SetData (rank_owner,
+                     "Pool No",
+                     (void *) GetNumber ());
   }
+}
+
+// --------------------------------------------------------------------------------
+gint Pool::GetPosition (Player *player)
+{
+  return g_slist_index (_player_list,
+                        player);
 }
 
 // --------------------------------------------------------------------------------
@@ -1352,3 +1362,28 @@ void Pool::ResetMatches (Object *rank_owner)
     match->SetNumber (0);
   }
 }
+
+// --------------------------------------------------------------------------------
+#if 0
+GArray *Pool::AppendPlayersToSwap (GArray              *to,
+                                   Player::AttributeId *criteria)
+{
+  GSList *current_player = _player_list;
+
+  while (current_player)
+  {
+    Player    *player;
+    Attribute *attr;
+
+    player = (Player *) current_player->data;
+    attr = player->GetAttribute (criteria);
+
+    if (Attribute::Compare (attr, ) == 0)
+    {
+      to = g_array_append_val (to,
+                               player);
+    }
+    current_player = g_slist_next (current_player);
+  }
+}
+#endif
