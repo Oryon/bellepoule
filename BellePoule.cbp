@@ -119,6 +119,8 @@
 		<Unit filename="sources\splitting.hpp" />
 		<Unit filename="sources\stage.cpp" />
 		<Unit filename="sources\stage.hpp" />
+		<Unit filename="sources\swapper.cpp" />
+		<Unit filename="sources\swapper.hpp" />
 		<Unit filename="sources\table.cpp" />
 		<Unit filename="sources\table.hpp" />
 		<Unit filename="sources\tournament.cpp" />

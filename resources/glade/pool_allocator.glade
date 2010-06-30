@@ -145,6 +145,7 @@
                   <object class="GtkComboBox" id="swapping_combobox">
                     <property name="visible">True</property>
                     <property name="model">swapping_liststore</property>
+                    <signal name="changed" handler="on_swapping_combobox_changed"/>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext2"/>
                       <attributes>
@@ -199,8 +200,8 @@
     <columns>
       <!-- column-name attribute_image -->
       <column type="gchararray"/>
-      <!-- column-name attribute_xml_name -->
-      <column type="gchararray"/>
+      <!-- column-name criteria -->
+      <column type="gpointer"/>
     </columns>
   </object>
 </interface>
