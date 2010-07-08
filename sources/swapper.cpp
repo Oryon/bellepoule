@@ -203,9 +203,17 @@ gboolean Swapper::Swap (Player *playerA,
               && (value_usage_A->_pool_usage[pool_numberB-1]._nb < value_usage_B->_max1_by_pool))
           {
             pool_A->RemovePlayer  (playerA);
+            value_usage_A->_pool_usage[pool_numberA-1]._nb--;
+
             to_pool->RemovePlayer (playerB);
+            value_usage_B->_pool_usage[pool_numberB-1]._nb--;
+
             pool_A->AddPlayer  (playerB, _owner);
+            value_usage_A->_pool_usage[pool_numberB-1]._nb++;
+
             to_pool->AddPlayer (playerA, _owner);
+            value_usage_B->_pool_usage[pool_numberA-1]._nb++;
+
             result = TRUE;
           }
         }

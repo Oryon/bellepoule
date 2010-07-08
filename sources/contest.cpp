@@ -89,13 +89,87 @@ gchar *Contest::category_xml_image[_nb_category] =
 GList *Contest::_color_list = NULL;
 
 // --------------------------------------------------------------------------------
+Contest::Time::Time (gchar *name)
+{
+  _name = name;
+}
+
+// --------------------------------------------------------------------------------
+Contest::Time::~Time ()
+{
+}
+
+// --------------------------------------------------------------------------------
+void Contest::Time::Save (xmlTextWriter *xml_writer,
+                          gchar         *attr_name)
+{
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST attr_name,
+                                     "%02d:%02d", _hour, _minute);
+};
+
+// --------------------------------------------------------------------------------
+void Contest::Time::Load (gchar *attr)
+{
+  if (strlen (attr) > 0)
+  {
+    gchar **time = g_strsplit (attr,
+                               ":",
+                               2);
+
+    if (time[0] && time[1])
+    {
+      _hour   = (guint) atoi (time[0]);
+      _minute = (guint) atoi (time[1]);
+    }
+
+    g_strfreev (time);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::Time::ReadProperties (Glade *glade)
+{
+  gchar *button_name;
+
+  button_name = g_strdup_printf ("%s_hour_spinbutton", _name);
+  _hour = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (glade->GetWidget (button_name)));
+  g_free (button_name);
+
+  button_name = g_strdup_printf ("%s_minute_spinbutton", _name);
+  _minute = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (glade->GetWidget (button_name)));
+  g_free (button_name);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::Time::FillInProperties (Glade *glade)
+{
+  gchar *button_name;
+
+  button_name = g_strdup_printf ("%s_hour_spinbutton", _name);
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (glade->GetWidget (button_name)),
+                             _hour);
+  g_free (button_name);
+
+  button_name = g_strdup_printf ("%s_minute_spinbutton", _name);
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (glade->GetWidget (button_name)),
+                             _minute);
+  g_free (button_name);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::Time::Copy (Time *to)
+{
+  to->_name   = _name;
+  to->_hour   = _hour;
+  to->_minute = _minute;
+}
+
+// --------------------------------------------------------------------------------
 Contest::Contest ()
   : Module ("contest.glade")
 {
   InitInstance ();
-
-  _checkin_time.tv_sec  = 0;
-  _checkin_time.tv_usec = 0;
 
   _schedule->SetScoreStuffingPolicy (FALSE);
 }
@@ -185,25 +259,22 @@ Contest::Contest (gchar *filename)
           }
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "checkin");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Appel");
         if (attr)
         {
-          g_time_val_from_iso8601 (attr,
-                                   &_checkin_time);
+          _checkin_time->Load (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "scratch");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Scratch");
         if (attr)
         {
-          g_time_val_from_iso8601 (attr,
-                                   &_scratch_time);
+          _scratch_time->Load (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "start");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Début");
         if (attr)
         {
-          g_time_val_from_iso8601 (attr,
-                                   &_start_time);
+          _start_time->Load (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Arme");
@@ -291,6 +362,10 @@ Contest::~Contest ()
   g_free (_filename);
   g_free (_organizer);
   g_free (_web_site);
+
+  Object::TryToRelease (_checkin_time);
+  Object::TryToRelease (_scratch_time);
+  Object::TryToRelease (_start_time);
 
   Object::TryToRelease (_schedule);
 
@@ -388,6 +463,10 @@ Contest *Contest::Duplicate ()
   contest->_year       = _year;
   contest->_tournament = _tournament;
 
+  _checkin_time->Copy (contest->_checkin_time);
+  _scratch_time->Copy (contest->_scratch_time);
+  _start_time->Copy   (contest->_start_time);
+
   return contest;
 }
 
@@ -422,6 +501,10 @@ void Contest::InitInstance ()
   _category   = 0;
   _gender     = 0;
   _derived    = FALSE;
+
+  _checkin_time = new Time ("checkin");
+  _scratch_time = new Time ("scratch");
+  _start_time   = new Time ("start");
 
   {
     GTimeVal  current_time;
@@ -616,6 +699,10 @@ void Contest::FillInProperties ()
   FillInDate (_day,
               _month,
               _year);
+
+  _checkin_time->FillInProperties (_glade);
+  _scratch_time->FillInProperties (_glade);
+  _start_time->FillInProperties   (_glade);
 }
 
 // --------------------------------------------------------------------------------
@@ -646,6 +733,10 @@ void Contest::ReadProperties ()
   _day   = (guint) GetData (this, "day");
   _month = (guint) GetData (this, "month");
   _year  = (guint) GetData (this, "year");
+
+  _checkin_time->ReadProperties (_glade);
+  _scratch_time->ReadProperties (_glade);
+  _start_time->ReadProperties   (_glade);
 
   {
     gboolean policy = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("allow_radiobutton")));
@@ -795,29 +886,6 @@ void Contest::Save (gchar *filename)
                                        BAD_CAST "ID",
                                        BAD_CAST _id);
         }
-#if 0
-        {
-          gchar *iso8601;
-
-          iso8601 = g_time_val_to_iso8601 (&_checkin_time);
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "checkin",
-                                       BAD_CAST iso8601);
-          g_free (iso8601);
-
-          iso8601 = g_time_val_to_iso8601 (&_scratch_time);
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "scratch",
-                                       BAD_CAST iso8601);
-          g_free (iso8601);
-
-          iso8601 = g_time_val_to_iso8601 (&_start_time);
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "start",
-                                       BAD_CAST iso8601);
-          g_free (iso8601);
-        }
-#endif
 
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "Annee",
@@ -837,6 +905,21 @@ void Contest::Save (gchar *filename)
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "Date",
                                            "%02d.%02d.%d", _day, _month, _year);
+        if (_checkin_time)
+        {
+          _checkin_time->Save (xml_writer,
+                               "Appel");
+        }
+        if (_scratch_time)
+        {
+          _scratch_time->Save (xml_writer,
+                               "Scratch");
+        }
+        if (_start_time)
+        {
+          _start_time->Save   (xml_writer,
+                               "Début");
+        }
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "TitreLong",
                                      BAD_CAST _name);

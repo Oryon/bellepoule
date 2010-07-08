@@ -568,7 +568,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSpinButton" id="scratch_minute_pinbutton">
+                              <object class="GtkSpinButton" id="scratch_minute_spinbutton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>

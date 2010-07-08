@@ -55,6 +55,24 @@ class Contest : public Module
     void on_web_site_button_clicked       ();
 
   private:
+    struct Time : public Object
+    {
+      Time (gchar *name);
+
+      ~Time ();
+
+      void Load (gchar *attr);
+      void Save (xmlTextWriter *xml_writer,
+                 gchar         *attr_name);
+      void ReadProperties (Glade *glade);
+      void FillInProperties (Glade *glade);
+      void Copy (Time *to);
+
+      gchar *_name;
+      guint  _hour;
+      guint  _minute;
+    };
+
     static const guint _nb_weapon = 3;
     static gchar *weapon_image[_nb_weapon];
     static gchar *weapon_xml_image[_nb_weapon];
@@ -81,9 +99,9 @@ class Contest : public Module
     guint       _day;
     guint       _month;
     guint       _year;
-    GTimeVal    _checkin_time;
-    GTimeVal    _scratch_time;
-    GTimeVal    _start_time;
+    Time       *_checkin_time;
+    Time       *_scratch_time;
+    Time       *_start_time;
     Schedule   *_schedule;
     GtkWidget  *_properties_dlg;
     GtkWidget  *_calendar_dlg;

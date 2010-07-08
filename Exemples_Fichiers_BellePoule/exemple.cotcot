@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE CompetitionIndividuelle>
-<CompetitionIndividuelle Annee="2010" Arme="E" Sexe="F" Organisateur="CS Betton" Categorie="M" Date="31.05.2010" TitreLong="Challenge de france" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="1">
+<CompetitionIndividuelle Annee="2010" Arme="E" Sexe="F" Organisateur="CS Betton" Categorie="M" Date="31.05.2010" Appel="14:00" Scratch="15:15" Début="16:30" TitreLong="Challenge de france" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="1">
  <Tireurs>
   <Tireur ID="2" Nom="LE BASTARD" Prenom="Emma" DateNaissance="20/03/1988" Sexe="F" Nation="FRA" Club="GUINGAMP ARM" Licence="003015623022" Points="1012" Presence="1" Exporte="0" Classement="21"/>
   <Tireur ID="6" Nom="CONTAMINE" Prenom="Alice" DateNaissance="03/02/1988" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011165723035" Points="1045" Presence="1" Exporte="0" Classement="20"/>
