@@ -25,28 +25,6 @@
 class Swapper : public Object
 {
   public:
-    struct ValueUsage : Object
-    {
-      struct PoolUsage
-      {
-        guint _nb_max;
-        guint _nb;
-      };
-
-      ValueUsage (gchar *image,
-                 guint  nb_pool);
-
-      ~ValueUsage ();
-
-      gchar     *_image;
-      guint      _nb_similar;
-      guint      _max1_by_pool;
-      guint      _max2_by_pool;
-      guint      _nb_pool_with_max1;
-      guint      _nb_pool_with_max2;
-      PoolUsage *_pool_usage;
-    };
-
     Swapper (Object *owner);
 
     void SetCriteria (Player::AttributeId *criteria_id);
@@ -56,6 +34,20 @@ class Swapper : public Object
     void Swap (GSList *pools);
 
   private:
+    struct ValueUsage : Object
+    {
+      ValueUsage (gchar *image,
+                 guint  nb_pool);
+
+      ~ValueUsage ();
+
+      gchar *_image;
+      guint  _nb_similar;
+      guint  _max_by_pool;
+      guint  _nb_asymetric_pool;
+      guint *_in_pool;
+    };
+
     Player::AttributeId *_criteria_id;
     GSList              *_player_list;
     GArray              *_array;
@@ -69,6 +61,10 @@ class Swapper : public Object
     void FreeArray ();
 
     ValueUsage *GetValueUsage (gchar *value_image);
+
+    gboolean CanSwap (ValueUsage *value,
+                      guint       from_pool,
+                      guint       to_pool);
 
     gboolean Swap (Player *player,
                    Pool   *to_pool);

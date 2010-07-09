@@ -92,6 +92,8 @@ GList *Contest::_color_list = NULL;
 Contest::Time::Time (gchar *name)
 {
   _name = name;
+  _hour   = 12;
+  _minute = 0;
 }
 
 // --------------------------------------------------------------------------------

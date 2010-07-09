@@ -27,19 +27,14 @@ Swapper::ValueUsage::ValueUsage (gchar *image,
   _image      = image;
   _nb_similar = 1;
 
-  _pool_usage = (PoolUsage *) g_malloc0 (nb_pool * sizeof (PoolUsage));
-  for (guint i = 0; i < nb_pool; i++)
-  {
-    _pool_usage[i]._nb_max = 0;
-    _pool_usage[i]._nb     = 0;
-  }
+  _in_pool = (guint *) g_malloc0 (nb_pool * sizeof (guint));
 }
 
 // --------------------------------------------------------------------------------
 Swapper::ValueUsage::~ValueUsage ()
 {
   g_free (_image);
-  g_free (_pool_usage);
+  g_free (_in_pool);
 }
 
 // --------------------------------------------------------------------------------
@@ -120,6 +115,9 @@ void Swapper::Update ()
         gchar      *value_image = value->GetUserImage ();
         ValueUsage *value_usage = GetValueUsage (value_image);
 
+        // Number of players for a given value
+        // _array   ==> array holding all existing value usage
+        // position ==> array index where the value usage is located
         if (value_usage == NULL)
         {
           guint position;
@@ -144,13 +142,14 @@ void Swapper::Update ()
         {
           guint pool_nb = (guint) player->GetData (_owner, "Pool No");
 
-          value_usage->_pool_usage[pool_nb-1]._nb++;
+          value_usage->_in_pool[pool_nb-1]++;
         }
       }
 
       current_player = g_slist_next (current_player);
     }
 
+    // Max. value usage / pool
     for (guint i = 0; i < _array->len; i++)
     {
       Swapper::ValueUsage *value_usage;
@@ -159,13 +158,8 @@ void Swapper::Update ()
                                    Swapper::ValueUsage *,
                                    i);
 
-      value_usage->_max2_by_pool = 0;
-      value_usage->_max1_by_pool = value_usage->_nb_similar / nb_pool;
-      if (value_usage->_nb_similar % nb_pool)
-      {
-        value_usage->_max2_by_pool = value_usage->_max1_by_pool;
-        value_usage->_max1_by_pool++;
-      }
+      value_usage->_max_by_pool       = value_usage->_nb_similar / nb_pool;
+      value_usage->_nb_asymetric_pool = value_usage->_nb_similar % nb_pool;
     }
   }
 }
@@ -199,20 +193,20 @@ gboolean Swapper::Swap (Player *playerA,
           ValueUsage *value_usage_A = GetValueUsage (value_imageA);
           ValueUsage *value_usage_B = GetValueUsage (value_imageB);
 
-          if (   (value_usage_B->_pool_usage[pool_numberA-1]._nb < value_usage_A->_max1_by_pool)
-              && (value_usage_A->_pool_usage[pool_numberB-1]._nb < value_usage_B->_max1_by_pool))
+          if (   CanSwap (value_usage_B, pool_numberA, pool_numberB)
+              && CanSwap (value_usage_A, pool_numberB, pool_numberA))
           {
             pool_A->RemovePlayer  (playerA);
-            value_usage_A->_pool_usage[pool_numberA-1]._nb--;
+            value_usage_A->_in_pool[pool_numberA-1]--;
 
             to_pool->RemovePlayer (playerB);
-            value_usage_B->_pool_usage[pool_numberB-1]._nb--;
+            value_usage_B->_in_pool[pool_numberB-1]--;
 
             pool_A->AddPlayer  (playerB, _owner);
-            value_usage_A->_pool_usage[pool_numberB-1]._nb++;
+            value_usage_A->_in_pool[pool_numberB-1]++;
 
             to_pool->AddPlayer (playerA, _owner);
-            value_usage_B->_pool_usage[pool_numberA-1]._nb++;
+            value_usage_B->_in_pool[pool_numberA-1]++;
 
             result = TRUE;
           }
@@ -227,6 +221,51 @@ gboolean Swapper::Swap (Player *playerA,
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Swapper::CanSwap (ValueUsage *value,
+                           guint       to_pool,
+                           guint       from_pool)
+{
+  if (value->_in_pool[to_pool-1] >= value->_max_by_pool)
+  {
+    guint nb_pool      = g_slist_length (_pools);
+    guint nb_asymetric = 0;
+
+    for (guint p = 0; p < nb_pool; p++)
+    {
+      if (p == from_pool-1)
+      {
+        if (value->_in_pool[p] > value->_max_by_pool+1)
+        {
+          nb_asymetric++;
+        }
+      }
+      else if (p == to_pool-1)
+      {
+        if (value->_in_pool[p] > value->_max_by_pool)
+        {
+          return FALSE;
+        }
+        else if (value->_in_pool[p] == value->_max_by_pool-1)
+        {
+          nb_asymetric++;
+        }
+      }
+      else if (value->_in_pool[p] > value->_max_by_pool)
+      {
+        nb_asymetric++;
+      }
+
+      if (nb_asymetric > value->_nb_asymetric_pool)
+      {
+        return FALSE;
+      }
+    }
+  }
+
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
