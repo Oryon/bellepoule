@@ -76,6 +76,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     GooCanvasItem *_main_table;
     GtkListStore  *_combobox_store;
     Data          *_max_score;
+    Data          *_swapping;
+    AttributeDesc *_swapping_criteria;
     Swapper       *_swapper;
 
     void SetOriginalPools ();

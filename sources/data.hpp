@@ -25,17 +25,22 @@
 class Data : public Object
 {
   public:
-    guint _value;
+    guint  _value;
+    gchar *_string;
 
     Data (gchar *xml_name,
           guint  default_value);
+
+    Data (gchar *xml_name,
+          gchar *default_value);
 
     void Save (xmlTextWriter *xml_writer);
 
     void Load (xmlNode *xml_node);
 
   private:
-    gchar *_xml_name;
+    gchar    *_xml_name;
+    gboolean  _is_integer;
 
     virtual ~Data ();
 };

@@ -27,6 +27,18 @@ Data::Data (gchar *xml_name,
 {
   _xml_name = xml_name;
   _value    = default_value;
+
+  _is_integer = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+Data::Data (gchar *xml_name,
+            gchar *default_value)
+{
+  _xml_name = xml_name;
+  _string   = default_value;
+
+  _is_integer = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -37,18 +49,27 @@ Data::~Data ()
 // --------------------------------------------------------------------------------
 void Data::Load (xmlNode *xml_node)
 {
-  gchar *attr = (gchar *) xmlGetProp (xml_node,
-                                      BAD_CAST _xml_name);
-  if (attr)
+  _string = (gchar *) xmlGetProp (xml_node,
+                                  BAD_CAST _xml_name);
+  if (_string)
   {
-    _value = (guint) atoi (attr);
+    _value = (guint) atoi (_string);
   }
 }
 
 // --------------------------------------------------------------------------------
 void Data::Save (xmlTextWriter *xml_writer)
 {
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST _xml_name,
-                                     "%d", _value);
+  if (_is_integer)
+  {
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST _xml_name,
+                                       "%d", _value);
+  }
+  else if (_string)
+  {
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST _xml_name,
+                                       "%s", _string);
+  }
 }

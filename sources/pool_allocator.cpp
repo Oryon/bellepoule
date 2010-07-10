@@ -51,18 +51,22 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 : Stage (stage_class),
   CanvasModule ("pool_allocator.glade")
 {
-  _pools_list      = NULL;
-  _config_list     = NULL;
-  _selected_config = NULL;
-  _dragging        = FALSE;
-  _target_pool     = NULL;
-  _floating_player = NULL;
-  _drag_text       = NULL;
-  _main_table      = NULL;
-  _swapper         = new Swapper (this);
+  _pools_list        = NULL;
+  _config_list       = NULL;
+  _selected_config   = NULL;
+  _dragging          = FALSE;
+  _target_pool       = NULL;
+  _floating_player   = NULL;
+  _drag_text         = NULL;
+  _main_table        = NULL;
+  _swapping_criteria = NULL;
+  _swapper           = new Swapper (this);
 
   _max_score = new Data ("ScoreMax",
                          5);
+
+  _swapping = new Data ("Swapping",
+                        (gchar *) NULL);
 
   _combobox_store = GTK_LIST_STORE (_glade->GetObject ("combo_liststore"));
 
@@ -138,6 +142,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 PoolAllocator::~PoolAllocator ()
 {
   _max_score->Release ();
+  _swapping->Release  ();
   _swapper->Release   ();
 }
 
@@ -165,8 +170,6 @@ const gchar *PoolAllocator::GetInputProviderClient ()
 void PoolAllocator::Display ()
 {
   SetUpCombobox ();
-
-  _swapper->SetPlayerList (_attendees);
 
   if (_main_table)
   {
@@ -229,6 +232,42 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
   {
     _max_score->Load (xml_node);
   }
+
+  if (_swapping)
+  {
+    GtkTreeModel *model          = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
+    guint         criteria_index = 0;
+
+    _swapping->Load (xml_node);
+
+    if (_swapping->_string)
+    {
+      GtkTreeIter iter;
+      gboolean    iter_is_valid;
+
+      iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model),
+                                                     &iter);
+      for (guint i = 0; iter_is_valid; i++)
+      {
+        gchar         *image;
+        AttributeDesc *attr_desc;
+
+        gtk_tree_model_get (model, &iter,
+                            SWAPPING_IMAGE,    &image,
+                            SWAPPING_CRITERIA, &attr_desc,
+                            -1);
+        if (strcmp (image, _swapping->_string) == 0)
+        {
+          criteria_index = i;
+          break;
+        }
+        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (model),
+                                                  &iter);
+      }
+    }
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetObject ("swapping_combobox")),
+                              criteria_index);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -240,12 +279,18 @@ void PoolAllocator::SaveConfiguration (xmlTextWriter *xml_writer)
   {
     _max_score->Save (xml_writer);
   }
+
+  if (_swapping)
+  {
+    _swapping->Save (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
 void PoolAllocator::Load (xmlNode *xml_node)
 {
-  static Pool *current_pool = NULL;
+  static Pool  *current_pool = NULL;
+  static guint  nb_pool      = 0;
 
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
@@ -255,16 +300,51 @@ void PoolAllocator::Load (xmlNode *xml_node)
           && strcmp ((char *) n->name, _xml_class_name) == 0)
       {
         LoadConfiguration (xml_node);
+
+        {
+          gchar *string = (gchar *) xmlGetProp (xml_node,
+                                                BAD_CAST "NbDePoules");
+          if (string)
+          {
+            nb_pool = (guint) atoi (string);
+          }
+        }
       }
       else if (strcmp ((char *) n->name, "Poule") == 0)
       {
-        guint number = g_slist_length (_pools_list);
+        if (_config_list == NULL)
+        {
+          // Get the configuration
+          {
+            FillCombobox ();
 
-        current_pool = new Pool (_max_score,
-                                 number+1);
+            for (guint i = 0; i < g_slist_length (_config_list); i++)
+            {
+              _selected_config = (Configuration *) g_slist_nth_data (_config_list,
+                                                                     i);
+              if (_selected_config->nb_pool == nb_pool)
+              {
+                break;
+              }
+            }
+          }
 
-        _pools_list = g_slist_append (_pools_list,
-                                      current_pool);
+          // Assign players an original pool
+          {
+            CreatePools ();
+            DeletePools ();
+          }
+        }
+
+        {
+          guint number = g_slist_length (_pools_list);
+
+          current_pool = new Pool (_max_score,
+                                   number+1);
+
+          _pools_list = g_slist_append (_pools_list,
+                                        current_pool);
+        }
       }
       else if (strcmp ((char *) n->name, "Tireur") == 0)
       {
@@ -299,21 +379,6 @@ void PoolAllocator::Load (xmlNode *xml_node)
       }
       else
       {
-        guint nb_pool = g_slist_length (_pools_list);
-
-        FillCombobox ();
-
-        for (guint i = 0; i < g_slist_length (_config_list); i++)
-        {
-          _selected_config = (Configuration *) g_slist_nth_data (_config_list,
-                                                                 i);
-          if (_selected_config->nb_pool == nb_pool)
-          {
-            SetOriginalPools ();
-            break;
-          }
-        }
-
         current_pool = NULL;
         return;
       }
@@ -494,33 +559,37 @@ void PoolAllocator::CreatePools ()
                      this);
   }
 
-  g_free (pool_table);
+  if (_swapping_criteria)
+  {
+    Player::AttributeId *attr_id = new Player::AttributeId (_swapping_criteria->_code_name);
+
+    _swapper->SetPlayerList (_attendees);
+    _swapper->SetCriteria (attr_id);
+    attr_id->Release ();
+
+    _swapper->Swap (_pools_list);
+  }
+
+  SetOriginalPools ();
 }
 
 // --------------------------------------------------------------------------------
 void PoolAllocator::SetOriginalPools ()
 {
-  guint nb_pool = _selected_config->nb_pool;
-
-  for (guint i = 0; i < g_slist_length (_attendees); i++)
+  for (guint i = 0; i < g_slist_length (_pools_list); i++)
   {
-    Player *player;
-    guint   pool_number;
+    Pool *pool;
 
-    if (((i / nb_pool) % 2) == 0)
+    pool = (Pool *) g_slist_nth_data (_pools_list, i);
+    for (guint j = 0; j < pool->GetNbPlayers (); j++)
     {
-      pool_number = i%nb_pool + 1;
-    }
-    else
-    {
-      pool_number = nb_pool - i%nb_pool;
-    }
+      Player *player;
 
-    player = (Player *) g_slist_nth_data (_attendees,
-                                          i);
-    player->SetData (this,
-                     "original_pool",
-                     (void *) pool_number);
+      player = pool->GetPlayer (j);
+      player->SetData (this,
+                       "original_pool",
+                       (void *) (i+1));
+    }
   }
 }
 
@@ -1200,30 +1269,20 @@ extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
 {
+  GtkTreeIter iter;
+
+  gtk_combo_box_get_active_iter (cb,
+                                 &iter);
+  gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore")),
+                      &iter,
+                      SWAPPING_IMAGE, &_swapping->_string,
+                      SWAPPING_CRITERIA, &_swapping_criteria,
+                      -1);
+
   if (_pools_list)
   {
-    GtkTreeIter    iter;
-    AttributeDesc *criteria;
-
-    gtk_combo_box_get_active_iter (cb,
-                                   &iter);
-    gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore")),
-                        &iter,
-                        SWAPPING_CRITERIA, &criteria,
-                        -1);
-
     DeletePools ();
     CreatePools ();
-
-    if (criteria)
-    {
-      Player::AttributeId *attr_id = new Player::AttributeId (criteria->_code_name);
-
-      _swapper->SetCriteria (attr_id);
-      attr_id->Release ();
-
-      _swapper->Swap (_pools_list);
-    }
 
     Display ();
     SignalStatusUpdate ();
