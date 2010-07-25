@@ -313,7 +313,6 @@ void Pool::Draw (GooCanvas *on_canvas,
 
             if (i != j)
             {
-              if (print_for_referees == FALSE)
               {
                 Player *B = GetPlayer (j);
                 Match  *match;
@@ -322,9 +321,18 @@ void Pool::Draw (GooCanvas *on_canvas,
 
                 // Text
                 {
-                  Score *score       = match->GetScore (A);
-                  gchar *score_image = score->GetImage ();
+                  gchar *score_image;
 
+                  if (print_for_referees)
+                  {
+                    score_image = g_strdup (match->GetName ());
+                  }
+                  else
+                  {
+                    Score *score = match->GetScore (A);
+
+                    score_image = score->GetImage ();
+                  }
                   score_text = goo_canvas_text_new (grid_group,
                                                     score_image,
                                                     x + cell_w / 2,
@@ -333,10 +341,16 @@ void Pool::Draw (GooCanvas *on_canvas,
                                                     GTK_ANCHOR_CENTER,
                                                     "font", "Sans bold 18px",
                                                     NULL);
+                  if (print_for_referees)
+                  {
+                    g_object_set (score_text,
+                                  "fill-color", "Grey",
+                                  NULL);
+                  }
                   g_free (score_image);
                 }
 
-                if (_locked == FALSE)
+                if ((print_for_referees == FALSE) && (_locked == FALSE))
                 {
                   _score_collector->AddCollectingPoint (goo_rect,
                                                         score_text,
@@ -631,6 +645,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         {
           image = GetPlayerImage (match->GetPlayerA ());
+
           text_item = Canvas::PutTextInTable (match_table,
                                               image->str,
                                               0,
@@ -1362,28 +1377,3 @@ void Pool::ResetMatches (Object *rank_owner)
     match->SetNumber (0);
   }
 }
-
-// --------------------------------------------------------------------------------
-#if 0
-GArray *Pool::AppendPlayersToSwap (GArray              *to,
-                                   Player::AttributeId *criteria)
-{
-  GSList *current_player = _player_list;
-
-  while (current_player)
-  {
-    Player    *player;
-    Attribute *attr;
-
-    player = (Player *) current_player->data;
-    attr = player->GetAttribute (criteria);
-
-    if (Attribute::Compare (attr, ) == 0)
-    {
-      to = g_array_append_val (to,
-                               player);
-    }
-    current_player = g_slist_next (current_player);
-  }
-}
-#endif
