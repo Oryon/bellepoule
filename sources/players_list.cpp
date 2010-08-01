@@ -684,35 +684,38 @@ Player *PlayersList::GetPlayer (const gchar *path_string)
 void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context)
 {
-  guint   nb_players  = g_slist_length (_player_list);
-  gdouble canvas_w;
-  gdouble canvas_h;
-
-  _column_width = (gdouble *) g_malloc0 (g_slist_length (_filter->GetSelectedAttrList ()) * sizeof (gdouble));
-
-  GetPrintScale (context,
-                 &_print_scale,
-                 &canvas_w,
-                 &canvas_h);
-
+  if (_filter)
   {
-    gdouble paper_w   = gtk_print_context_get_width (context);
-    gdouble paper_h   = gtk_print_context_get_height (context);
-    gdouble free_area = (paper_h*100.0/paper_w - PRINT_HEADER_HEIGHT+2.0);
+    guint   nb_players  = g_slist_length (_player_list);
+    gdouble canvas_w;
+    gdouble canvas_h;
 
-    _nb_player_per_page = guint (nb_players * free_area/_print_scale / canvas_h) - 1;
-  }
+    _column_width = (gdouble *) g_malloc0 (g_slist_length (_filter->GetSelectedAttrList ()) * sizeof (gdouble));
 
-  {
-    _nb_pages = nb_players / _nb_player_per_page;
+    GetPrintScale (context,
+                   &_print_scale,
+                   &canvas_w,
+                   &canvas_h);
 
-    if (nb_players % _nb_player_per_page != 0)
     {
-      _nb_pages++;
+      gdouble paper_w   = gtk_print_context_get_width (context);
+      gdouble paper_h   = gtk_print_context_get_height (context);
+      gdouble free_area = (paper_h*100.0/paper_w - PRINT_HEADER_HEIGHT+2.0);
+
+      _nb_player_per_page = guint (nb_players * free_area/_print_scale / canvas_h) - 1;
     }
 
-    gtk_print_operation_set_n_pages (operation,
-                                     _nb_pages);
+    {
+      _nb_pages = nb_players / _nb_player_per_page;
+
+      if (nb_players % _nb_player_per_page != 0)
+      {
+        _nb_pages++;
+      }
+
+      gtk_print_operation_set_n_pages (operation,
+                                       _nb_pages);
+    }
   }
 }
 
@@ -951,107 +954,110 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                               GtkPrintContext   *context,
                               gint               page_nr)
 {
-  cairo_t *cr = gtk_print_context_get_cairo_context (context);
-
   Module::OnDrawPage (operation,
                       context,
                       page_nr);
 
+  if (_filter)
   {
-    GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
-    char      *text   = g_strdup_printf ("Page %d/%d", page_nr+1, _nb_pages);
-
-    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                         text,
-                         98.0, 9.0,
-                         -1.0,
-                         GTK_ANCHOR_SE,
-                         "fill-color", "black",
-                         "font", "Sans Bold 2px", NULL);
-    g_free (text);
-
-    goo_canvas_render (canvas,
-                       gtk_print_context_get_cairo_context (context),
-                       NULL,
-                       1.0);
-
-    gtk_widget_destroy (GTK_WIDGET (canvas));
-  }
-
-  cairo_save (cr);
-  {
-    GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
+    cairo_t *cr = gtk_print_context_get_cairo_context (context);
 
     {
-      cairo_matrix_t matrix;
+      GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
+      char      *text   = g_strdup_printf ("Page %d/%d", page_nr+1, _nb_pages);
 
-      goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
-                                     &matrix);
-      cairo_matrix_translate (&matrix,
-                              1.0,
-                              PRINT_HEADER_HEIGHT+2.0);
-      goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
-                                     &matrix);
+      goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                           text,
+                           98.0, 9.0,
+                           -1.0,
+                           GTK_ANCHOR_SE,
+                           "fill-color", "black",
+                           "font", "Sans Bold 2px", NULL);
+      g_free (text);
+
+      goo_canvas_render (canvas,
+                         gtk_print_context_get_cairo_context (context),
+                         NULL,
+                         1.0);
+
+      gtk_widget_destroy (GTK_WIDGET (canvas));
     }
 
-    PrintHeader (goo_canvas_get_root_item (canvas),
-                 FALSE);
-
+    cairo_save (cr);
     {
-      GtkTreeIter  iter;
-      gboolean     iter_is_valid;
-      guint        nb_players = 0;
+      GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
 
-      iter_is_valid = gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_store),
-                                                     &iter,
-                                                     NULL,
-                                                     page_nr*_nb_player_per_page);
-
-      for (guint i = 0; iter_is_valid && (nb_players < _nb_player_per_page); i++)
       {
-        Player *current_player;
+        cairo_matrix_t matrix;
 
-        gtk_tree_model_get (GTK_TREE_MODEL (_store), &iter,
-                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
-                            &current_player, -1);
-
-        if (PlayerIsPrintable (current_player))
-        {
-          PrintPlayer (goo_canvas_get_root_item (canvas),
-                       context,
-                       current_player,
-                       nb_players+1,
-                       FALSE);
-          nb_players++;
-        }
-
-        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_store),
-                                                  &iter);
+        goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
+                                       &matrix);
+        cairo_matrix_translate (&matrix,
+                                1.0,
+                                PRINT_HEADER_HEIGHT+2.0);
+        goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
+                                       &matrix);
       }
+
+      PrintHeader (goo_canvas_get_root_item (canvas),
+                   FALSE);
+
+      {
+        GtkTreeIter  iter;
+        gboolean     iter_is_valid;
+        guint        nb_players = 0;
+
+        iter_is_valid = gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_store),
+                                                       &iter,
+                                                       NULL,
+                                                       page_nr*_nb_player_per_page);
+
+        for (guint i = 0; iter_is_valid && (nb_players < _nb_player_per_page); i++)
+        {
+          Player *current_player;
+
+          gtk_tree_model_get (GTK_TREE_MODEL (_store), &iter,
+                              gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
+                              &current_player, -1);
+
+          if (PlayerIsPrintable (current_player))
+          {
+            PrintPlayer (goo_canvas_get_root_item (canvas),
+                         context,
+                         current_player,
+                         nb_players+1,
+                         FALSE);
+            nb_players++;
+          }
+
+          iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_store),
+                                                    &iter);
+        }
+      }
+
+      if (_print_scale != 1.0)
+      {
+        cairo_matrix_t matrix;
+
+        goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
+                                       &matrix);
+        cairo_matrix_scale (&matrix,
+                            _print_scale,
+                            _print_scale);
+
+        goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
+                                       &matrix);
+      }
+
+      goo_canvas_render (canvas,
+                         cr,
+                         NULL,
+                         1.0);
+
+      gtk_widget_destroy (GTK_WIDGET (canvas));
     }
-
-    if (_print_scale != 1.0)
-    {
-      cairo_matrix_t matrix;
-
-      goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
-                                     &matrix);
-      cairo_matrix_scale (&matrix,
-                          _print_scale,
-                          _print_scale);
-
-      goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
-                                     &matrix);
-    }
-
-    goo_canvas_render (canvas,
-                       cr,
-                       NULL,
-                       1.0);
-
-    gtk_widget_destroy (GTK_WIDGET (canvas));
+    cairo_restore (cr);
   }
-  cairo_restore (cr);
 }
 
 // --------------------------------------------------------------------------------
