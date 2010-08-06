@@ -36,6 +36,8 @@ class GeneralClassification : public virtual Stage, public PlayersList
 
     void OnPrintPoolToolbuttonClicked ();
 
+    void OnExportToolbuttonClicked ();
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;

@@ -54,6 +54,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
 
+    SetFilter (filter);
     SetClassificationFilter (filter);
     filter->Release ();
   }
@@ -168,6 +169,98 @@ void GeneralClassification::OnPrintPoolToolbuttonClicked ()
 }
 
 // --------------------------------------------------------------------------------
+void GeneralClassification::OnExportToolbuttonClicked ()
+{
+  char *filename = NULL;
+
+  {
+    GtkWidget *chooser;
+
+    chooser = GTK_WIDGET (gtk_file_chooser_dialog_new ("Choisissez un fichier de destination ...",
+                                                       GTK_WINDOW (_glade->GetRootWidget ()),
+                                                       GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                       GTK_STOCK_CANCEL,
+                                                       GTK_RESPONSE_CANCEL,
+                                                       GTK_STOCK_SAVE_AS,
+                                                       GTK_RESPONSE_ACCEPT,
+                                                       NULL));
+    gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
+                                                    true);
+
+    {
+      gchar *last_dirname = g_key_file_get_string (_config_file,
+                                                   "Competiton",
+                                                   "export_dir",
+                                                   NULL);
+      if (last_dirname == NULL)
+      {
+        last_dirname = g_key_file_get_string (_config_file,
+                                              "Competiton",
+                                              "default_dir_name",
+                                              NULL);
+      }
+      if (last_dirname)
+      {
+        gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
+                                             last_dirname);
+
+        g_free (last_dirname);
+      }
+    }
+
+    if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+    {
+      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+
+      if (filename)
+      {
+        {
+          gchar *dirname = g_path_get_dirname (filename);
+
+          g_key_file_set_string (_config_file,
+                                 "Competiton",
+                                 "export_dir",
+                                 dirname);
+          g_free (dirname);
+        }
+
+        if (strcmp ((const char *) ".csv", (const char *) &filename[strlen (filename) - strlen (".csv")]) != 0)
+        {
+          gchar *with_suffix;
+
+          with_suffix = g_strdup_printf ("%s.csv", filename);
+          g_free (filename);
+          filename = with_suffix;
+
+          {
+            gchar *dirname = g_path_get_dirname (filename);
+
+            g_key_file_set_string (_config_file,
+                                   "Competiton",
+                                   "export_dir",
+                                   dirname);
+            g_free (dirname);
+          }
+        }
+      }
+    }
+
+    gtk_widget_destroy (chooser);
+  }
+
+  if (filename)
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      classification->Dump (filename,
+                            _filter->GetAttrList ());
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_general_classification_filter_button_clicked (GtkWidget *widget,
                                                                                  Object    *owner)
 {
@@ -183,4 +276,13 @@ extern "C" G_MODULE_EXPORT void on_general_classification_print_toolbutton_click
   GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
   g->OnPrintPoolToolbuttonClicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_export_toolbutton_clicked (GtkWidget *widget,
+                                                              Object    *owner)
+{
+  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+
+  g->OnExportToolbuttonClicked ();
 }

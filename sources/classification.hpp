@@ -27,6 +27,9 @@ class Classification : public PlayersList
   public:
     Classification (Filter *filter);
 
+    void Dump (gchar  *filename,
+               GSList *attr_list);
+
   private:
     void OnPlugged ();
 
