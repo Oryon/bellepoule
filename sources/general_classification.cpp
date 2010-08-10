@@ -38,7 +38,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
 
     AttributeDesc::CreateList (&attr_list,
                                "ref",
-                               "final_rank",
+                               "rank",
                                "attending",
                                "exported",
                                "victories_ratio",
@@ -49,7 +49,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
     filter = new Filter (attr_list,
                          this);
 
-    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("final_rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
@@ -83,8 +83,6 @@ Stage *GeneralClassification::CreateInstance (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 void GeneralClassification::Display ()
 {
-  ToggleClassification (TRUE);
-
   {
     GSList *current = _attendees;
 
@@ -96,11 +94,13 @@ void GeneralClassification::Display ()
       player = (Player *) current->data;
 
       player->SetAttributeValue (&attr_id,
-                                 i);
+                                 i+1);
 
       current = g_slist_next (current);
     }
   }
+
+  ToggleClassification (TRUE);
 }
 
 // --------------------------------------------------------------------------------

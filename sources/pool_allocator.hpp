@@ -34,9 +34,10 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     void Save (xmlTextWriter *xml_writer);
 
-    guint  GetNbPools  ();
-    Pool  *GetPool     (guint index);
-    Data  *GetMaxScore ();
+    guint  GetNbPools      ();
+    Pool  *GetPool         (guint index);
+    Data  *GetMaxScore     ();
+    Data  *GetNbEliminated ();
 
   public:
     static const gchar *_class_name;
@@ -76,6 +77,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     GooCanvasItem *_main_table;
     GtkListStore  *_combobox_store;
     Data          *_max_score;
+    Data          *_nb_eliminated;
     Data          *_swapping;
     AttributeDesc *_swapping_criteria;
     Swapper       *_swapper;

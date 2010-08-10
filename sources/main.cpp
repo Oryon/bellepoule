@@ -165,6 +165,8 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ID", "ref");
     desc->_rights = AttributeDesc::PRIVATE;
 
+    desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", "classement");
+
     desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", "nom");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "Prenom", "prénom");
@@ -199,8 +201,6 @@ int main (int argc, char **argv)
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", "exporté");
-
-    desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", "classement");
 
     // Not persistent data
     {

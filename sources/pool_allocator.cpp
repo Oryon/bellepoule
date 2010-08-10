@@ -65,7 +65,10 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _max_score = new Data ("ScoreMax",
                          5);
 
-  _swapping = new Data ("Swapping",
+  _nb_eliminated = new Data ("NbElimines",
+                             (guint) 0);
+
+  _swapping = new Data ("Decalage",
                         (gchar *) NULL);
 
   _combobox_store = GTK_LIST_STORE (_glade->GetObject ("combo_liststore"));
@@ -141,9 +144,10 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 PoolAllocator::~PoolAllocator ()
 {
-  _max_score->Release ();
-  _swapping->Release  ();
-  _swapper->Release   ();
+  _max_score->Release     ();
+  _nb_eliminated->Release ();
+  _swapping->Release      ();
+  _swapper->Release       ();
 }
 
 // --------------------------------------------------------------------------------
@@ -233,6 +237,11 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
     _max_score->Load (xml_node);
   }
 
+  if (_nb_eliminated)
+  {
+    _nb_eliminated->Load (xml_node);
+  }
+
   if (_swapping)
   {
     GtkTreeModel *model          = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
@@ -278,6 +287,11 @@ void PoolAllocator::SaveConfiguration (xmlTextWriter *xml_writer)
   if (_max_score)
   {
     _max_score->Save (xml_writer);
+  }
+
+  if (_nb_eliminated)
+  {
+    _nb_eliminated->Save (xml_writer);
   }
 
   if (_swapping)
@@ -1242,6 +1256,12 @@ gboolean PoolAllocator::IsOver ()
 Data *PoolAllocator::GetMaxScore ()
 {
   return _max_score;
+}
+
+// --------------------------------------------------------------------------------
+Data *PoolAllocator::GetNbEliminated ()
+{
+  return _nb_eliminated;
 }
 
 // --------------------------------------------------------------------------------

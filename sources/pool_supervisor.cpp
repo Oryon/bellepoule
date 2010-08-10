@@ -42,13 +42,14 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
   _pool_allocator = NULL;
   _displayed_pool = NULL;
   _max_score      = NULL;
+  _nb_eliminated  = NULL;
 
   _pool_liststore = GTK_LIST_STORE (_glade->GetObject ("pool_liststore"));
 
   // Sensitive widgets
   {
     AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
-    AddSensitiveWidget (_glade->GetWidget ("qualified_fencer_spinbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("nb_eliminated_spinbutton"));
     AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
 
     LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
@@ -470,8 +471,8 @@ void PoolSupervisor::RetrievePools ()
 void PoolSupervisor::ApplyConfig ()
 {
   {
-    GtkWidget *name_w   = _glade->GetWidget ("name_entry");
-    gchar     *name     = (gchar *) gtk_entry_get_text (GTK_ENTRY (name_w));
+    GtkWidget *w        = _glade->GetWidget ("name_entry");
+    gchar     *name     = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
     Stage     *previous = GetPreviousStage ();
 
     SetName (name);
@@ -479,21 +480,30 @@ void PoolSupervisor::ApplyConfig ()
   }
 
   {
-    GtkWidget *max_score_w = _glade->GetWidget ("max_score_entry");
+    GtkWidget *w = _glade->GetWidget ("max_score_entry");
 
-    if (max_score_w)
+    if (w)
     {
-      gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (max_score_w));
+      gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
 
       if (str)
       {
         _max_score->_value = atoi (str);
-      }
 
-      if (_displayed_pool)
-      {
-        OnPoolSelected (_displayed_pool);
+        if (_displayed_pool)
+        {
+          OnPoolSelected (_displayed_pool);
+        }
       }
+    }
+  }
+
+  {
+    GtkWidget *w = _glade->GetWidget ("nb_eliminated_spinbutton");
+
+    if (w)
+    {
+      _nb_eliminated->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
     }
   }
 }
@@ -524,7 +534,8 @@ void PoolSupervisor::SetInputProvider (Stage *input_provider)
   if (_pool_allocator)
   {
     _pool_allocator->Retain ();
-    _max_score = _pool_allocator->GetMaxScore ();
+    _max_score     = _pool_allocator->GetMaxScore     ();
+    _nb_eliminated = _pool_allocator->GetNbEliminated ();
   }
 
   Stage::SetInputProvider (input_provider);
@@ -533,14 +544,19 @@ void PoolSupervisor::SetInputProvider (Stage *input_provider)
 // --------------------------------------------------------------------------------
 void PoolSupervisor::FillInConfig ()
 {
-  gchar *text = g_strdup_printf ("%d", _max_score->_value);
-
-  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
-                      text);
-  g_free (text);
-
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
                       GetName ());
+
+  {
+    gchar *text = g_strdup_printf ("%d", _max_score->_value);
+
+    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
+                        text);
+    g_free (text);
+  }
+
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (_glade->GetWidget ("nb_eliminated_spinbutton")),
+                             _nb_eliminated->_value);
 }
 
 // --------------------------------------------------------------------------------
@@ -601,13 +617,26 @@ GSList *PoolSupervisor::GetCurrentClassification ()
 
       player = pool->GetPlayer (i);
 
-      result = g_slist_append (result,
-                               player);
+      result = g_slist_prepend (result,
+                                player);
     }
   }
-  return g_slist_sort_with_data (result,
-                                 (GCompareDataFunc) ComparePlayer,
-                                 this);
+
+  result = g_slist_sort_with_data (result,
+                                   (GCompareDataFunc) ComparePlayer,
+                                   this);
+
+  {
+    guint nb_to_remove = _nb_eliminated->_value * g_slist_length (result) / 100;
+
+    for (guint i = 0; i < nb_to_remove; i++)
+    {
+      result = g_slist_delete_link (result,
+                                    g_slist_last (result));
+    }
+  }
+
+  return result;
 }
 
 // --------------------------------------------------------------------------------

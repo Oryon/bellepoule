@@ -67,6 +67,7 @@ class PoolSupervisor : public virtual Stage, public Module
     PoolAllocator *_pool_allocator;
     Pool          *_displayed_pool;
     Data          *_max_score;
+    Data          *_nb_eliminated;
     GtkWidget     *_print_dialog;
     gboolean       _print_all_pool;
 
