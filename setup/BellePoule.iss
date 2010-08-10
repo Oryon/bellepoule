@@ -66,9 +66,9 @@ Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\porting_layer
 Source: "path_dependent_files\pango.modules"; DestDir: "{app}\porting_layer\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\porting_layer\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 
 ;Exemple de fichiers
-Source: "..\Exemples_Fichiers_BellePoule\exemple.cotcot"; DestDir: "{app}\Exemples_Fichiers_BellePoule"; Flags: ignoreversion
-Source: "..\Exemples_Fichiers_FFE\CLS_SHM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
-Source: "..\Exemples_Fichiers_FFE\CLS_EDM.FFF"; DestDir: "{app}\Exemples_Fichiers_FFE"; Flags: ignoreversion
+Source: "..\Exemples\exemple.cotcot"; DestDir: "{app}\Exemples"; Flags: ignoreversion
+Source: "..\Exemples\CLS_SHM.FFF"; DestDir: "{app}\Exemples"; Flags: ignoreversion
+Source: "..\Exemples\CLS_EDM.FFF"; DestDir: "{app}\Exemples"; Flags: ignoreversion
 
 ;Traductions
 Source: "..\resources\translations\fr\LC_MESSAGES\BellePoule.mo"; DestDir: "{app}\resources\translations\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -205,5 +205,6 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 

@@ -530,7 +530,7 @@ void Checkin::Import ()
 
       if (install_dirname)
       {
-        gchar *example_dirname = g_strdup_printf ("%s/Exemples_Fichiers_FFE", install_dirname);
+        gchar *example_dirname = g_strdup_printf ("%s/Exemples", install_dirname);
 
         gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (chooser),
                                               example_dirname,

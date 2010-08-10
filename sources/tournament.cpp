@@ -287,7 +287,7 @@ void Tournament::OnOpenExample ()
 
       if (install_dirname)
       {
-        gchar *example_dirname = g_strdup_printf ("%s/Exemples_Fichiers_BellePoule", install_dirname);
+        gchar *example_dirname = g_strdup_printf ("%s/Exemples", install_dirname);
 
         OnOpen (example_dirname);
         g_free (example_dirname);
