@@ -546,7 +546,8 @@ void Checkin::Import ()
                                                  "Checkin",
                                                  "default_import_dir_name",
                                                  NULL);
-    if (last_dirname)
+    if (last_dirname && g_file_test (last_dirname,
+                                     G_FILE_TEST_IS_DIR))
     {
       gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
                                            last_dirname);

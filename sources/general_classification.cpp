@@ -208,6 +208,28 @@ void GeneralClassification::OnExportToolbuttonClicked ()
       }
     }
 
+    {
+      GtkFileFilter *filter = gtk_file_filter_new ();
+
+      gtk_file_filter_set_name (filter,
+                                "All Excell files (.CSV)");
+      gtk_file_filter_add_pattern (filter,
+                                   "*.CSV");
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                   filter);
+    }
+
+    {
+      GtkFileFilter *filter = gtk_file_filter_new ();
+
+      gtk_file_filter_set_name (filter,
+                                "All files");
+      gtk_file_filter_add_pattern (filter,
+                                   "*");
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                   filter);
+    }
+
     if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
