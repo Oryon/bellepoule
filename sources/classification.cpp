@@ -64,7 +64,7 @@ void Classification::Dump (gchar  *filename,
 
         if (attr_desc->_scope == AttributeDesc::GLOBAL)
         {
-          fprintf (file, "%s;", attr_desc->_user_name);
+          fprintf (file, "%s,", attr_desc->_user_name);
         }
 
         current_attr_desc = g_slist_next (current_attr_desc);
@@ -95,7 +95,7 @@ void Classification::Dump (gchar  *filename,
               fprintf (file, "%s", attr->GetUserImage ());
               g_free (image);
             }
-            fprintf (file, ";");
+            fprintf (file, ",");
           }
 
           current_attr_desc = g_slist_next (current_attr_desc);
