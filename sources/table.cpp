@@ -1759,8 +1759,45 @@ void Table::OnBeginPrint (GtkPrintOperation *operation,
 {
   if (_print_full_table)
   {
-    CanvasModule::OnBeginPrint (operation,
-                                context);
+    gdouble canvas_x;
+    gdouble canvas_y;
+    gdouble canvas_w;
+    gdouble canvas_h;
+    gdouble paper_w = gtk_print_context_get_width (context);
+    gdouble paper_h = gtk_print_context_get_height (context);
+
+    {
+      GooCanvasBounds bounds;
+
+      goo_canvas_item_get_bounds (GetRootItem (),
+                                  &bounds);
+      canvas_x = bounds.x1;
+      canvas_y = bounds.y1;
+      canvas_w = bounds.x2 - bounds.x1;
+      canvas_h = bounds.y2 - bounds.y1;
+    }
+
+    {
+      gdouble canvas_dpi;
+      gdouble printer_dpi;
+
+      g_object_get (G_OBJECT (GetCanvas ()),
+                    "resolution-x", &canvas_dpi,
+                    NULL);
+      printer_dpi = gtk_print_context_get_dpi_x (context);
+
+      _print_scale = printer_dpi/canvas_dpi;
+    }
+
+    if (   (canvas_w * _print_scale > paper_w)
+           || (canvas_h * _print_scale > paper_h))
+    {
+      _print_nb_x_pages = 1 + (guint) (canvas_w * _print_scale / paper_w);
+      _print_nb_y_pages = 1 + (guint) (canvas_h * _print_scale / paper_h);
+    }
+
+    gtk_print_operation_set_n_pages (operation,
+                                     _print_nb_x_pages * _print_nb_y_pages);
   }
   else
   {
@@ -1785,6 +1822,9 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
                         GtkPrintContext   *context,
                         gint               page_nr)
 {
+  gdouble paper_w = gtk_print_context_get_width  (context);
+  gdouble paper_h = gtk_print_context_get_height (context);
+
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
   {
     Module::OnDrawPage (operation,
@@ -1795,16 +1835,37 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
 
   if (_print_full_table)
   {
-    CanvasModule::OnDrawPage (operation,
-                              context,
-                              page_nr);
+    cairo_t         *cr     = gtk_print_context_get_cairo_context (context);
+    guint            x_page = page_nr % _print_nb_x_pages;
+    guint            y_page = page_nr / _print_nb_x_pages;
+    GooCanvasBounds  bounds;
+
+    cairo_save (cr);
+
+    bounds.x1 = paper_w*(x_page)   / _print_scale;
+    bounds.y1 = paper_h*(y_page)   / _print_scale;
+    bounds.x2 = paper_w*(x_page+1) / _print_scale;
+    bounds.y2 = paper_h*(y_page+1) / _print_scale;
+
+    cairo_scale (cr,
+                 _print_scale,
+                 _print_scale);
+
+    cairo_translate (cr,
+                     -bounds.x1,
+                     -bounds.y1);
+
+    goo_canvas_render (GetCanvas (),
+                       cr,
+                       &bounds,
+                       1.0);
+
+    cairo_restore (cr);
   }
   else
   {
     cairo_t   *cr      = gtk_print_context_get_cairo_context (context);
     GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
-    gdouble    paper_w = gtk_print_context_get_width (context);
-    gdouble    paper_h = gtk_print_context_get_height (context);
     GSList    *current_match;
 
     cairo_save (cr);

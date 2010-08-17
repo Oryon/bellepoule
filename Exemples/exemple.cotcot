@@ -26,7 +26,7 @@
   <Tireur ID="5" Classement="2" Nom="LAQUAINE DEPIROU" Prenom="Clara" DateNaissance="04/09/1987" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011160023035" Points="0" Presence="0" Exporte="0"/>
  </Tireurs>
  <Arbitres/>
- <Phases PhaseEnCours="4">
+ <Phases PhaseEnCours="3">
   <TourDePoules PhaseID="" ID="1" ScoreMax="5" NbElimines="0" Decalage="club" NbDePoules="1" PhaseSuivanteDesQualifies="3" NbQualifiesParPoule="11" NbQualifiesParIndice="11">
    <Tireur REF="2" RangInitial="1" RangFinal="1" Statut="Q"/>
    <Tireur REF="6" RangInitial="2" RangFinal="2" Statut="Q"/>
@@ -290,17 +290,6 @@
     </Tableau>
    </SuiteDeTableaux>
   </PhaseDeTableaux>
-  <ClassementGeneral PhaseID="" ID="4">
-   <Tireur REF="6" RangInitial="1" RangFinal="1" Statut="Q"/>
-   <Tireur REF="13" RangInitial="2" RangFinal="2" Statut="Q"/>
-   <Tireur REF="15" RangInitial="3" RangFinal="3" Statut="Q"/>
-   <Tireur REF="0" RangInitial="4" RangFinal="4" Statut="Q"/>
-   <Tireur REF="2" RangInitial="5" RangFinal="5" Statut="Q"/>
-   <Tireur REF="17" RangInitial="6" RangFinal="6" Statut="Q"/>
-   <Tireur REF="21" RangInitial="7" RangFinal="7" Statut="Q"/>
-   <Tireur REF="11" RangInitial="8" RangFinal="8" Statut="Q"/>
-   <Tireur REF="4" RangInitial="9" RangFinal="9" Statut="Q"/>
-   <Tireur REF="20" RangInitial="10" RangFinal="10" Statut="Q"/>
-  </ClassementGeneral>
+  <ClassementGeneral PhaseID="" ID="4"/>
  </Phases>
 </CompetitionIndividuelle>

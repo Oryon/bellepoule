@@ -105,6 +105,9 @@ class Table : public virtual Stage, public CanvasModule
     GtkWidget          *_print_dialog;
     GtkWidget          *_level_print_dialog;
     gboolean            _print_full_table;
+    gdouble             _print_scale;
+    guint               _print_nb_x_pages;
+    guint               _print_nb_y_pages;
     GData              *_match_list;
 
     GooCanvasItem *GetQuickScore (gchar *container);
