@@ -1763,8 +1763,9 @@ void Table::OnBeginPrint (GtkPrintOperation *operation,
     gdouble canvas_y;
     gdouble canvas_w;
     gdouble canvas_h;
-    gdouble paper_w = gtk_print_context_get_width (context);
-    gdouble paper_h = gtk_print_context_get_height (context);
+    gdouble paper_w  = gtk_print_context_get_width (context);
+    gdouble paper_h  = gtk_print_context_get_height (context);
+    gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
 
     {
       GooCanvasBounds bounds;
@@ -1793,7 +1794,7 @@ void Table::OnBeginPrint (GtkPrintOperation *operation,
            || (canvas_h * _print_scale > paper_h))
     {
       _print_nb_x_pages = 1 + (guint) (canvas_w * _print_scale / paper_w);
-      _print_nb_y_pages = 1 + (guint) (canvas_h * _print_scale / paper_h);
+      _print_nb_y_pages = 1 + (guint) ((canvas_h * _print_scale + header_h) / paper_h);
     }
 
     gtk_print_operation_set_n_pages (operation,
@@ -1835,25 +1836,47 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
 
   if (_print_full_table)
   {
-    cairo_t         *cr     = gtk_print_context_get_cairo_context (context);
-    guint            x_page = page_nr % _print_nb_x_pages;
-    guint            y_page = page_nr / _print_nb_x_pages;
+    cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
+    guint            x_page   = page_nr % _print_nb_x_pages;
+    guint            y_page   = page_nr / _print_nb_x_pages;
+    gdouble          header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
     GooCanvasBounds  bounds;
 
+    if (y_page == 0)
+    {
+      Module::OnDrawPage (operation,
+                          context,
+                          page_nr);
+    }
+
     cairo_save (cr);
+
+    cairo_scale (cr,
+                 _print_scale,
+                 _print_scale);
 
     bounds.x1 = paper_w*(x_page)   / _print_scale;
     bounds.y1 = paper_h*(y_page)   / _print_scale;
     bounds.x2 = paper_w*(x_page+1) / _print_scale;
     bounds.y2 = paper_h*(y_page+1) / _print_scale;
 
-    cairo_scale (cr,
-                 _print_scale,
-                 _print_scale);
+    if (y_page == 0)
+    {
+      cairo_translate (cr,
+                       -bounds.x1,
+                       header_h/_print_scale);
 
-    cairo_translate (cr,
-                     -bounds.x1,
-                     -bounds.y1);
+      bounds.y2 -= header_h/_print_scale;
+    }
+    else
+    {
+      cairo_translate (cr,
+                       -bounds.x1,
+                       (header_h - paper_h*(y_page)) / _print_scale);
+
+      bounds.y1 -= header_h/_print_scale;
+      bounds.y2 -= header_h/_print_scale;
+    }
 
     goo_canvas_render (GetCanvas (),
                        cr,
