@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#define GETTEXT_PACKAGE "gtk20"
+#include <glib/gi18n-lib.h>
 #include <string.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
@@ -27,7 +29,7 @@
 #include "classification.hpp"
 #include "table.hpp"
 
-const gchar   *Table::_class_name     = "Tableau";
+const gchar   *Table::_class_name     = N_("Tableau");
 const gchar   *Table::_xml_class_name = "PhaseDeTableaux";
 const gdouble  Table::_level_spacing  = 10.0;
 
@@ -215,7 +217,7 @@ Table::~Table ()
 // --------------------------------------------------------------------------------
 void Table::Init ()
 {
-  RegisterStageClass (_class_name,
+  RegisterStageClass (_(_class_name),
                       _xml_class_name,
                       CreateInstance,
                       EDITABLE);
@@ -453,7 +455,10 @@ void Table::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
       {
-        CreateTree ();
+        if (_attendees)
+        {
+          CreateTree ();
+        }
       }
       else if (strcmp ((char *) n->name, "Tableau") == 0)
       {
@@ -618,9 +623,7 @@ void Table::DeleteTree ()
 // --------------------------------------------------------------------------------
 void Table::CreateTree ()
 {
-  guint nb_players;
-
-  nb_players = g_slist_length (_attendees);
+  guint nb_players = g_slist_length (_attendees->GetShortList ());
 
   for (guint i = 0; i < 32; i++)
   {
@@ -1135,7 +1138,7 @@ void Table::AddFork (GNode *to)
   }
   else
   {
-    Player *player = (Player *) g_slist_nth_data (_attendees,
+    Player *player = (Player *) g_slist_nth_data (_attendees->GetShortList (),
                                                   data->_expected_winner_rank - 1);
 
     if (player)

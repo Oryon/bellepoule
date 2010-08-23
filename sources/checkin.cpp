@@ -253,26 +253,6 @@ void Checkin::Add (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-Player *Checkin::GetPlayerFromRef (guint ref)
-{
-  GSList *current = _player_list;
-
-  while (current)
-  {
-    Player *player;
-
-    player = (Player *) current->data;
-    if (player->GetRef () == ref)
-    {
-      return player;
-    }
-
-    current = g_slist_next (current);
-  }
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
 void Checkin::Load (xmlXPathContext *xml_context,
                     gchar           *from_node)
 {
@@ -284,6 +264,8 @@ void Checkin::Load (xmlXPathContext *xml_context,
   {
     Load (xml_nodeset->nodeTab[0]);
   }
+
+  _attendees = new Attendees ();
 
   g_free (path);
   xmlXPathFreeObject (xml_object);
@@ -439,14 +421,12 @@ GSList *Checkin::GetCurrentClassification ()
     Player::AttributeId attr_id ("rank",
                                  this);
 
-    return g_slist_sort_with_data (result,
-                                   (GCompareDataFunc) Player::Compare,
-                                   &attr_id);
+    result = g_slist_sort_with_data (result,
+                                     (GCompareDataFunc) Player::Compare,
+                                     &attr_id);
+    _attendees->SetGlobalList (result);
   }
-  else
-  {
-    return NULL;
-  }
+  return result;
 }
 
 // --------------------------------------------------------------------------------

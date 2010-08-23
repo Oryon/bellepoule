@@ -131,11 +131,13 @@ void Splitting::Wipe ()
 // --------------------------------------------------------------------------------
 void Splitting::Display ()
 {
-  for (guint i = 0; i < g_slist_length (_attendees); i ++)
+  GSList *shortlist = _attendees->GetShortList ();
+
+  for (guint i = 0; i < g_slist_length (shortlist); i ++)
   {
     Player *player;
 
-    player = (Player *) g_slist_nth_data (_attendees,
+    player = (Player *) g_slist_nth_data (shortlist,
                                           i);
     Add (player);
   }
@@ -151,7 +153,7 @@ void Splitting::OnLocked (Reason reason)
   if (reason == USER_ACTION)
   {
     Contest             *contest = _contest->Duplicate ();
-    GSList              *current = _attendees;
+    GSList              *current = _attendees->GetShortList ();
     Player::AttributeId  exported_attr ("exported");
 
     _tournament->Manage (contest);

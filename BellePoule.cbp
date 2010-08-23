@@ -65,6 +65,8 @@
 			<Add library="intl" />
 			<Add directory="C:\MinGW\lib" />
 		</Linker>
+		<Unit filename="sources\attendees.cpp" />
+		<Unit filename="sources\attendees.hpp" />
 		<Unit filename="sources\attribute.cpp" />
 		<Unit filename="sources\attribute.hpp" />
 		<Unit filename="sources\canvas.cpp" />

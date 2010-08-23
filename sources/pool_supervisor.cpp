@@ -626,17 +626,21 @@ GSList *PoolSupervisor::GetCurrentClassification ()
                                    (GCompareDataFunc) ComparePlayer,
                                    this);
 
-  {
-    guint nb_to_remove = _nb_eliminated->_value * g_slist_length (result) / 100;
-
-    for (guint i = 0; i < nb_to_remove; i++)
-    {
-      result = g_slist_delete_link (result,
-                                    g_slist_last (result));
-    }
-  }
-
   return result;
+}
+
+// --------------------------------------------------------------------------------
+GSList *PoolSupervisor::GetOutputShortlist ()
+{
+  GSList *shortlist    = Stage::GetOutputShortlist ();
+  guint   nb_to_remove = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+
+  for (guint i = 0; i < nb_to_remove; i++)
+  {
+    shortlist = g_slist_delete_link (shortlist,
+                                     g_slist_last (shortlist));
+  }
+  return shortlist;
 }
 
 // --------------------------------------------------------------------------------

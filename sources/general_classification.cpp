@@ -83,30 +83,23 @@ Stage *GeneralClassification::CreateInstance (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 void GeneralClassification::Display ()
 {
-  {
-    GSList *current = _attendees;
-
-    for (guint i = 0; current != NULL; i++)
-    {
-      Player              *player;
-      Player::AttributeId  attr_id ("final_rank");
-
-      player = (Player *) current->data;
-
-      player->SetAttributeValue (&attr_id,
-                                 i+1);
-
-      current = g_slist_next (current);
-    }
-  }
-
   ToggleClassification (TRUE);
 }
 
 // --------------------------------------------------------------------------------
 GSList *GeneralClassification::GetCurrentClassification ()
 {
-  return g_slist_copy (_attendees);
+  GSList *result = g_slist_copy (_attendees->GetGlobalList ());
+
+  if (result)
+  {
+    Player::AttributeId attr_id ("final_rank");
+
+    result = g_slist_sort_with_data (result,
+                                     (GCompareDataFunc) Player::Compare,
+                                     &attr_id);
+  }
+  return result;
 }
 
 // --------------------------------------------------------------------------------

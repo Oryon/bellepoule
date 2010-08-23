@@ -79,6 +79,8 @@ class PoolSupervisor : public virtual Stage, public Module
 
     void OnUnPlugged ();
 
+    GSList *GetOutputShortlist ();
+
     GSList *GetCurrentClassification ();
 
     void SetInputProvider (Stage *input_provider);

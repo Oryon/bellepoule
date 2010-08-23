@@ -90,8 +90,6 @@ class Checkin : public virtual Stage, public PlayersList
 
     GSList *GetCurrentClassification ();
 
-    Player *GetPlayerFromRef (guint ref);
-
     void OnPlayerRemoved (Player *player);
 
     gboolean PlayerIsPrintable (Player *player);

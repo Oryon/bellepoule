@@ -25,6 +25,7 @@
 
 #include "object.hpp"
 #include "sensitivity_trigger.hpp"
+#include "attendees.hpp"
 
 class Player;
 class Classification;
@@ -99,9 +100,11 @@ class Stage : public virtual Object
 
     void RetrieveAttendees ();
 
+    virtual GSList *GetOutputShortlist ();
+
     void LoadAttendees (xmlNode *n);
 
-    virtual Player *GetPlayerFromRef (guint ref);
+    Player *GetPlayerFromRef (guint ref);
 
     StageClass *GetClass ();
 
@@ -147,9 +150,9 @@ class Stage : public virtual Object
     static Stage *CreateInstance (const gchar *name);
 
   protected:
-    GSList  *_attendees;
-    Stage   *_input_provider;
-    Contest *_contest;
+    Attendees *_attendees;
+    Stage     *_input_provider;
+    Contest   *_contest;
 
     Stage (StageClass *stage_class);
 

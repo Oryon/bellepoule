@@ -386,7 +386,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
         current_pool->Load (n,
-                            _attendees);
+                            _attendees->GetShortList ());
       }
       else if (strcmp ((char *) n->name, "Arbitre") == 0)
       {
@@ -422,9 +422,6 @@ void PoolAllocator::Save (xmlTextWriter *xml_writer)
   if (_selected_config)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "NbQualifiesParPoule",
-                                       "%d", _selected_config->size);
-    xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "NbQualifiesParIndice",
                                        "%d", _selected_config->size);
   }
@@ -450,7 +447,7 @@ void PoolAllocator::Save (xmlTextWriter *xml_writer)
 // --------------------------------------------------------------------------------
 void PoolAllocator::FillCombobox ()
 {
-  guint nb_players = g_slist_length (_attendees);
+  guint nb_players = g_slist_length (_attendees->GetShortList ());
 
   _best_config = NULL;
   for (guint nb_pool = 1; nb_pool <= nb_players / 3; nb_pool++)
@@ -538,8 +535,9 @@ void PoolAllocator::FillCombobox ()
 // --------------------------------------------------------------------------------
 void PoolAllocator::CreatePools ()
 {
-  Pool  **pool_table;
-  guint   nb_pool = _selected_config->nb_pool;
+  Pool   **pool_table;
+  GSList  *shortlist = _attendees->GetShortList ();
+  guint    nb_pool   = _selected_config->nb_pool;
 
   pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
   for (guint i = 0; i < nb_pool; i++)
@@ -550,7 +548,7 @@ void PoolAllocator::CreatePools ()
                                   pool_table[i]);
   }
 
-  for (guint i = 0; i < g_slist_length (_attendees); i++)
+  for (guint i = 0; i < g_slist_length (shortlist); i++)
   {
     Player *player;
     Pool   *pool;
@@ -564,7 +562,7 @@ void PoolAllocator::CreatePools ()
       pool = pool_table[nb_pool-1 - i%nb_pool];
     }
 
-    player = (Player *) g_slist_nth_data (_attendees,
+    player = (Player *) g_slist_nth_data (shortlist,
                                           i);
     player->SetData (this,
                      "original_pool",
@@ -577,7 +575,7 @@ void PoolAllocator::CreatePools ()
   {
     Player::AttributeId *attr_id = new Player::AttributeId (_swapping_criteria->_code_name);
 
-    _swapper->SetPlayerList (_attendees);
+    _swapper->SetPlayerList (shortlist);
     _swapper->SetCriteria (attr_id);
     attr_id->Release ();
 
@@ -1387,7 +1385,7 @@ void PoolAllocator::OnLocked (Reason reason)
 // --------------------------------------------------------------------------------
 GSList *PoolAllocator::GetCurrentClassification ()
 {
-  return g_slist_copy (_attendees);
+  return g_slist_copy (_attendees->GetShortList ());
 }
 
 // --------------------------------------------------------------------------------
