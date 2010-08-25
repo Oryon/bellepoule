@@ -42,9 +42,13 @@ class Splitting : public virtual Stage, public PlayersList
 
   private:
     void OnLocked (Reason reason);
+
     void OnUnLocked ();
+
     void Display ();
+
     void Wipe ();
+
     GSList *GetCurrentClassification ();
 
   private:

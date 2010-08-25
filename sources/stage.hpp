@@ -102,8 +102,6 @@ class Stage : public virtual Object
 
     virtual GSList *GetOutputShortlist ();
 
-    void LoadAttendees (xmlNode *n);
-
     Player *GetPlayerFromRef (guint ref);
 
     StageClass *GetClass ();
@@ -119,7 +117,7 @@ class Stage : public virtual Object
 
     virtual void Garnish () {};
 
-    virtual void Load (xmlNode *xml_node) {};
+    virtual void Load (xmlNode *xml_node);
 
     virtual void Load (xmlXPathContext *xml_context,
                        gchar           *from_node) {};
@@ -171,6 +169,8 @@ class Stage : public virtual Object
     virtual void SaveConfiguration (xmlTextWriter *xml_writer);
 
     virtual void SaveAttendees (xmlTextWriter *xml_writer);
+
+    void LoadAttendees (xmlNode *n);
 
   private:
     static GSList *_stage_base;

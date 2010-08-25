@@ -672,11 +672,9 @@ void Schedule::LoadStage (Stage   *stage,
       if (input_provider_client)
       {
         LoadStage (input_provider_client,
-                   xml_node,
+                   NULL,
                    nb_stage,
                    current_stage_index);
-
-        input_provider_client->LoadAttendees (NULL);
       }
     }
   }

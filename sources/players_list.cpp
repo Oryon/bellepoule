@@ -252,39 +252,45 @@ void PlayersList::OnCellToggled (gchar         *path_string,
                                  gboolean       is_active,
                                  AttributeDesc *desc)
 {
-  GtkTreePath         *toggeled_path    = gtk_tree_path_new_from_string (path_string);
-  GSList              *selected_players = GetSelectedPlayers ();
-  Player::AttributeId *attr_id          = Player::AttributeId::CreateAttributeId (desc, this);
+  GtkTreePath         *toggeled_path = gtk_tree_path_new_from_string (path_string);
+  Player::AttributeId *attr_id       = Player::AttributeId::CreateAttributeId (desc,
+                                                                               this);
 
-  if (selected_players)
+  if (gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
+                                           toggeled_path))
   {
-    GSList *current_player = selected_players;
+    GSList *selected_players = GetSelectedPlayers ();
 
-    while (current_player)
+    if (selected_players)
     {
-      Player *p;
+      GSList *current_player = selected_players;
 
-      p = (Player *) current_player->data;
-
-      if (p)
+      while (current_player)
       {
-        if (is_active)
-        {
-          p->SetAttributeValue (attr_id,
-                                (guint) 0);
-        }
-        else
-        {
-          p->SetAttributeValue (attr_id,
-                                1);
-        }
+        Player *p;
 
-        Update (p);
+        p = (Player *) current_player->data;
+
+        if (p)
+        {
+          if (is_active)
+          {
+            p->SetAttributeValue (attr_id,
+                                  (guint) 0);
+          }
+          else
+          {
+            p->SetAttributeValue (attr_id,
+                                  1);
+          }
+
+          Update (p);
+        }
+        current_player = g_slist_next (current_player);
       }
-      current_player = g_slist_next (current_player);
-    }
 
-    g_slist_free (selected_players);
+      g_slist_free (selected_players);
+    }
   }
   else
   {

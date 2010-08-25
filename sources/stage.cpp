@@ -588,6 +588,12 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
+void Stage::Load (xmlNode *n)
+{
+  LoadAttendees (n);
+}
+
+// --------------------------------------------------------------------------------
 void Stage::SaveAttendees (xmlTextWriter *xml_writer)
 {
   if (_attendees)
