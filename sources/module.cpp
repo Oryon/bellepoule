@@ -230,32 +230,39 @@ void Module::ResetCursor ()
 // --------------------------------------------------------------------------------
 GString *Module::GetPlayerImage (Player *player)
 {
-  GString *image         = g_string_new ("");
-  GSList  *selected_attr = NULL;
+  GString *image = g_string_new ("");
 
-  if (_filter)
+  if (player)
   {
-    selected_attr = _filter->GetSelectedAttrList ();
-  }
+    GSList  *selected_attr = NULL;
 
-  for (guint a = 0; a < g_slist_length (selected_attr); a++)
-  {
-    AttributeDesc       *attr_desc;
-    Attribute           *attr;
-    Player::AttributeId *attr_id;
-
-    attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                    a);
-    attr_id = new Player::AttributeId (attr_desc->_code_name);
-    attr = player->GetAttribute (attr_id);
-    attr_id->Release ();
-
-    if (attr)
+    if (_filter)
     {
-      image = g_string_append (image,
-                               attr->GetUserImage ());
-      image = g_string_append (image,
-                               "  ");
+      selected_attr = _filter->GetSelectedAttrList ();
+    }
+
+    for (guint a = 0; a < g_slist_length (selected_attr); a++)
+    {
+      AttributeDesc       *attr_desc;
+      Attribute           *attr;
+      Player::AttributeId *attr_id;
+
+      attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
+                                                      a);
+      attr_id = new Player::AttributeId (attr_desc->_code_name);
+      attr = player->GetAttribute (attr_id);
+      attr_id->Release ();
+
+      if (attr)
+      {
+        if (a > 0)
+        {
+          image = g_string_append (image,
+                                   " - ");
+        }
+        image = g_string_append (image,
+                                 attr->GetUserImage ());
+      }
     }
   }
 

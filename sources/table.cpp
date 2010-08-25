@@ -879,44 +879,7 @@ gboolean Table::FillInNode (GNode *node,
     }
 
     {
-      GString *string = g_string_new ("");
-
-      // g_string_append_printf (string,
-                              // "<<%d, %d>>", data->_row, data->_level);
-
-      if (winner)
-      {
-        GSList *selected_attr = NULL;
-
-        if (table->_filter)
-        {
-          selected_attr = table->_filter->GetSelectedAttrList ();
-        }
-
-        for (guint a = 0; a < g_slist_length (selected_attr); a++)
-        {
-          AttributeDesc       *attr_desc;
-          Attribute           *attr;
-          Player::AttributeId *attr_id;
-
-          attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                          a);
-          attr_id = Player::AttributeId::CreateAttributeId (attr_desc, table);
-          attr = winner->GetAttribute (attr_id);
-          attr_id->Release ();
-
-          if (attr)
-          {
-            if (a > 0)
-            {
-              g_string_append (string,
-                               "  ");
-            }
-            g_string_append (string,
-                             attr->GetUserImage ());
-          }
-        }
-      }
+      GString *string = table->GetPlayerImage (winner);
 
       data->_player_item = Canvas::PutTextInTable (data->_canvas_table,
                                                    string->str,
