@@ -914,22 +914,17 @@ gint Schedule::GetNotebookPageNum (Stage *stage)
 // --------------------------------------------------------------------------------
 void Schedule::on_previous_stage_toolbutton_clicked ()
 {
-  //GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          //GTK_DIALOG_MODAL,
-                                                          //GTK_MESSAGE_QUESTION,
-                                                          //GTK_BUTTONS_OK_CANCEL,
-                                                          //"<b><big>Voulez-vous vraiment annuler la phase courante ?</b></big>");
   GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
                                                           GTK_DIALOG_MODAL,
                                                           GTK_MESSAGE_QUESTION,
                                                           GTK_BUTTONS_OK_CANCEL,
-                                                          "<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>");
+                                                          gettext ("<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>"));
 
   gtk_window_set_title (GTK_WINDOW (dialog),
-                        "Revenir à la phase précédente ?");
+                        gettext ("Revenir à la phase précédente ?"));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            "Toutes les saisies de cette phase seront annulées.");
+                                            gettext ("Toutes les saisies de cette phase seront annulées."));
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {

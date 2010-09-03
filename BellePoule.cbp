@@ -130,7 +130,9 @@
 		<Unit filename="sources\version.h" />
 		<Extensions>
 			<code_completion />
-			<debugger />
+			<debugger>
+				<search_path add="F:\BellePoule\launchpad\trunk\system_sources\MinGW\src\libintl\0.14.4\libintl-0.14.4-src" />
+			</debugger>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

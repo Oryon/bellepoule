@@ -17,6 +17,11 @@
 #define GETTEXT_PACKAGE "gtk20"
 #include <glib/gi18n-lib.h>
 
+#include <unistd.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -112,37 +117,41 @@ int main (int argc, char **argv)
 {
   gchar *path = g_path_get_dirname (argv[0]);
 
-  {
-#ifdef DEBUG
-    gchar *translation_path = g_strdup_printf ("%s/../../resources/translations", path);
-#else
-    gchar *translation_path = g_strdup_printf ("%s/resources/translations", path);
-#endif
-
-    bindtextdomain ("BellePoule", translation_path);
-    bind_textdomain_codeset ("BellePoule", "UTF-8");
-    textdomain ("BellePoule");
-
-    g_free (translation_path);
-  }
-
   // Init
   {
     // g_mem_set_vtable (glib_mem_profiler_table);
 
-    gchar *prg_name = g_get_prgname ();
-
-    if (prg_name)
     {
-      gchar *install_dirname = g_path_get_dirname (prg_name);
-      gchar *gtkrc;
+      gchar *install_dirname = g_get_current_dir ();
 
-      gtkrc = g_strdup_printf ("%s/resources/gtkrc", install_dirname);
-      gtk_rc_add_default_file (gtkrc);
-      g_free (gtkrc);
+      if (install_dirname)
+      {
+        gchar *gtkrc = g_build_filename (install_dirname, "resources", "gtkrc", NULL);
+
+        gtk_rc_add_default_file (gtkrc);
+        g_free (gtkrc);
+      }
+
+      gtk_init (&argc, &argv);
+
+      {
+        gchar  *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
+
+        //setlocale (LC_ALL, "");
+
+        g_setenv ("LANGUAGE",
+                  "en",
+                  TRUE);
+
+        bindtextdomain ("BellePoule", translation_path);
+        bind_textdomain_codeset ("BellePoule", "UTF-8");
+        textdomain ("BellePoule");
+
+        g_free (translation_path);
+      }
+
+      g_free (install_dirname);
     }
-
-    gtk_init (&argc, &argv);
 
     Contest::Init               ();
     Checkin::Init               ();
@@ -162,66 +171,66 @@ int main (int argc, char **argv)
   {
     AttributeDesc *desc;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ID", "ref");
+    desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ID", gettext ("ref"));
     desc->_rights = AttributeDesc::PRIVATE;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", "classement");
+    desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", gettext ("classement"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", "nom");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", gettext ("nom"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "Prenom", "prénom");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "Prenom", gettext ("prénom"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_date", "DateNaissance", "date naissance");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_date", "DateNaissance", gettext ("date naissance"));
     desc->_compare_func = (GCompareFunc) CompareDate;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "Sexe", "sexe");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "Sexe", gettext ("sexe"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->_free_value_allowed = FALSE;
-    desc->AddDiscreteValues ("M", "Masculin",
-                             "F", "Féminin", NULL);
+    desc->AddDiscreteValues ("M", gettext ("Masculin"),
+                             "F", gettext ("Féminin"), NULL);
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", "nation");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("nation"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddDiscreteValues ("resources/ioc_countries.txt");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "ligue", "Ligue", "ligue");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "ligue", "Ligue", gettext ("ligue"));
     desc->AddDiscreteValues ("resources/ligues.txt");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", "club");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddDiscreteValues ("resources/clubs_fra.txt");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", "licence");
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", "points");
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", gettext ("points"));
     desc->_compare_func = (GCompareFunc) CompareRating;
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", "présence");
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("présence"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", "exporté");
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exporté"));
 
     // Not persistent data
     {
-      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", "Vict./Matchs (‰)");
+      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", gettext ("Vict./Matchs (‰)"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "indice", "indice", "indice");
+      desc = AttributeDesc::Declare (G_TYPE_INT, "indice", "indice", gettext ("indice"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "HS", "Touches données");
+      desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "HS", gettext ("Touches données"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "rank", "rank", "place");
+      desc = AttributeDesc::Declare (G_TYPE_INT, "rank", "rank", gettext ("place"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "previous_stage_rank", "previous_stage_rank", "rang d'entrée");
+      desc = AttributeDesc::Declare (G_TYPE_INT, "previous_stage_rank", "previous_stage_rank", gettext ("rang d'entrée"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;

@@ -36,9 +36,9 @@
 
 gchar *Contest::weapon_image[_nb_weapon] =
 {
-  "Sabre",
-  "Epée",
-  "Fleuret"
+  N_ ("Sabre"),
+  N_ ("Epée"),
+  N_ ("Fleuret")
 };
 
 gchar *Contest::weapon_xml_image[_nb_weapon] =
@@ -50,9 +50,9 @@ gchar *Contest::weapon_xml_image[_nb_weapon] =
 
 gchar *Contest::gender_image[_nb_gender] =
 {
-  "Masculin",
-  "Féminin",
-  "Mixte"
+  N_ ("Masculin"),
+  N_ ("Féminin"),
+  N_ ("Mixte")
 };
 
 gchar *Contest::gender_xml_image[_nb_gender] =
@@ -64,14 +64,14 @@ gchar *Contest::gender_xml_image[_nb_gender] =
 
 gchar *Contest::category_image[_nb_category] =
 {
-  "Poussin",
-  "Pupille",
-  "Benjamin",
-  "Minime",
-  "Cadet",
-  "Junior",
-  "Senior",
-  "Vétéran"
+  N_ ("Poussin"),
+  N_ ("Pupille"),
+  N_ ("Benjamin"),
+  N_ ("Minime"),
+  N_ ("Cadet"),
+  N_ ("Junior"),
+  N_ ("Senior"),
+  N_ ("Vétéran")
 };
 
 gchar *Contest::category_xml_image[_nb_category] =
@@ -537,7 +537,7 @@ void Contest::InitInstance ()
     _weapon_combo = gtk_combo_box_new_text ();
     for (guint i = 0; i < _nb_weapon; i ++)
     {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_weapon_combo), weapon_image[i]);
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_weapon_combo), gettext (weapon_image[i]));
     }
     gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
     gtk_widget_show (_weapon_combo);
@@ -549,7 +549,7 @@ void Contest::InitInstance ()
     _gender_combo = gtk_combo_box_new_text ();
     for (guint i = 0; i < _nb_gender; i ++)
     {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_gender_combo), gender_image[i]);
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_gender_combo), gettext (gender_image[i]));
     }
     gtk_container_add (GTK_CONTAINER (box), _gender_combo);
     gtk_widget_show (_gender_combo);
@@ -561,7 +561,7 @@ void Contest::InitInstance ()
     _category_combo = gtk_combo_box_new_text ();
     for (guint i = 0; i < _nb_category; i ++)
     {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_category_combo), category_image[i]);
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_category_combo), gettext (category_image[i]));
     }
     gtk_container_add (GTK_CONTAINER (box), _category_combo);
     gtk_widget_show (_category_combo);
@@ -571,7 +571,7 @@ void Contest::InitInstance ()
   {
     GtkWidget *content_area;
 
-    _properties_dlg = gtk_dialog_new_with_buttons ("Propriétés de la compétition",
+    _properties_dlg = gtk_dialog_new_with_buttons (gettext ("Propriétés de la compétition"),
                                                    NULL,
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_STOCK_OK,
@@ -590,7 +590,7 @@ void Contest::InitInstance ()
   {
     GtkWidget *content_area;
 
-    _calendar_dlg = gtk_dialog_new_with_buttons ("Date de la compétition",
+    _calendar_dlg = gtk_dialog_new_with_buttons (gettext ("Date de la compétition"),
                                                  NULL,
                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
                                                  GTK_STOCK_OK,
@@ -785,21 +785,21 @@ void Contest::DisplayProperties ()
   if (w)
   {
     gtk_label_set_text (GTK_LABEL (w),
-                        weapon_image[_weapon]);
+                        gettext (weapon_image[_weapon]));
   }
 
   w = _glade->GetWidget ("contest_gender_label");
   if (w)
   {
     gtk_label_set_text (GTK_LABEL (w),
-                        gender_image[_gender]);
+                        gettext (gender_image[_gender]));
   }
 
   w = _glade->GetWidget ("contest_category_label");
   if (w)
   {
     gtk_label_set_text (GTK_LABEL (w),
-                        category_image[_category]);
+                        gettext (category_image[_category]));
   }
 }
 
@@ -846,6 +846,12 @@ void Contest::AttachTo (GtkNotebook *to)
 // --------------------------------------------------------------------------------
 void Contest::Save ()
 {
+  if (_filename == NULL)
+  {
+    _filename = GetSaveFileName (gettext ("Choisissez un fichier de sauvegarde ..."),
+                                 "default_dir_name");
+  }
+
   Save (_filename);
 }
 
@@ -956,7 +962,7 @@ gchar *Contest::GetSaveFileName (gchar *title,
   GtkWidget *chooser;
   char      *filename = NULL;
 
-  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new ("Choisissez un fichier de sauvegarde ...",
+  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choisissez un fichier de sauvegarde ..."),
                                                      GTK_WINDOW (_glade->GetRootWidget ()),
                                                      GTK_FILE_CHOOSER_ACTION_SAVE,
                                                      GTK_STOCK_CANCEL,
@@ -1074,9 +1080,9 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                        "font", "Sans 2px", NULL);
 
   {
-    char *text = g_strdup_printf ("%s - %s - %s", weapon_image[_weapon],
-                                                   gender_image[_gender],
-                                                   category_image[_category]);
+    char *text = g_strdup_printf ("%s - %s - %s", gettext (weapon_image[_weapon]),
+                                                   gettext (gender_image[_gender]),
+                                                   gettext (category_image[_category]));
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                          text,
                          50.5, 3.5,
@@ -1133,16 +1139,7 @@ extern "C" G_MODULE_EXPORT void on_save_toolbutton_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest::on_save_toolbutton_clicked ()
 {
-  if (_filename == NULL)
-  {
-    _filename = GetSaveFileName ("Choisissez un fichier de sauvegarde ...",
-                                 "default_dir_name");
-  }
-
-  if (_filename)
-  {
-    Save ();
-  }
+  Save ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1192,7 +1189,7 @@ extern "C" G_MODULE_EXPORT void on_backupfile_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest::on_backupfile_button_clicked ()
 {
-  gchar *filename = GetSaveFileName ("Choisissez un fichier de secours ...",
+  gchar *filename = GetSaveFileName (gettext ("Choisissez un fichier de secours ..."),
                                      "default_backup_dir_name");
 
   if (filename)
@@ -1249,13 +1246,13 @@ void Contest::on_contest_close_button_clicked ()
                                                           GTK_DIALOG_MODAL,
                                                           GTK_MESSAGE_QUESTION,
                                                           GTK_BUTTONS_OK_CANCEL,
-                                                          "<b><big>Voulez-vous vraiment fermer\n<big>«%s»</big> ?</big></b>", _name);
+                                                          gettext ("<b><big>Voulez-vous vraiment fermer\n<big>%s</big> ?</big></b>"), _name);
 
   gtk_window_set_title (GTK_WINDOW (dialog),
-                        "Fermer la compétition ?");
+                        gettext ("Fermer la compétition ?"));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            "Les saisies non sauvegardées seront perdues.");
+                                            gettext ("Les saisies non sauvegardées seront perdues."));
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {

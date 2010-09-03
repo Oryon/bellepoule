@@ -24,7 +24,7 @@
 
 #include "checkin.hpp"
 
-const gchar *Checkin::_class_name     = "Appel";
+const gchar *Checkin::_class_name     = N_("Appel");
 const gchar *Checkin::_xml_class_name = "checkin_stage";
 
 // --------------------------------------------------------------------------------
@@ -81,10 +81,10 @@ Checkin::Checkin (StageClass *stage_class)
                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                         GTK_MESSAGE_QUESTION,
                                                         GTK_BUTTONS_OK_CANCEL,
-                                                        "<b><big>Quels tireurs voulez-vous imprimer ?</big></b>");
+                                                        gettext ("<b><big>Quels tireurs voulez-vous imprimer ?</big></b>"));
 
     gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                          "Impression de la liste des tireurs");
+                          gettext ("Impression de la liste des tireurs"));
 
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
 
@@ -195,8 +195,7 @@ Checkin::Checkin (StageClass *stage_class)
             GtkWidget *box = _glade->GetWidget ("check_vbox");
 
             gtk_widget_set_tooltip_text (w,
-                                         "Décochez cette case pour accélerer la navigation. "
-                                         "Le champs correspondant sera ignoré lors des appuis sur la touche TAB.");
+                                         gettext ("Décochez cette case pour accélerer la navigation. Le champs correspondant sera ignoré lors des appuis sur la touche TAB."));
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
                                           TRUE);
             g_signal_connect (w, "toggled",
@@ -228,7 +227,7 @@ Checkin::~Checkin ()
 // --------------------------------------------------------------------------------
 void Checkin::Init ()
 {
-  RegisterStageClass (_class_name,
+  RegisterStageClass (gettext (_class_name),
                       _xml_class_name,
                       CreateInstance,
                       0);
@@ -459,7 +458,7 @@ void Checkin::Wipe ()
 // --------------------------------------------------------------------------------
 void Checkin::Import ()
 {
-  GtkWidget *chooser = gtk_file_chooser_dialog_new ("Choisissez un fichier de tireurs ? importer ...",
+  GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choisissez un fichier de tireurs à importer ..."),
                                                     NULL,
                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
                                                     GTK_STOCK_CANCEL,
@@ -472,7 +471,7 @@ void Checkin::Import ()
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              "All FFE files (.FFF)");
+                              gettext ("All FFE files (.FFF)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.FFF");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -483,7 +482,7 @@ void Checkin::Import ()
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              "All Excell files (.CSV)");
+                              gettext ("All Excell files (.CSV)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.CSV");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -494,7 +493,7 @@ void Checkin::Import ()
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              "All files");
+                              gettext ("All files"));
     gtk_file_filter_add_pattern (filter,
                                  "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -964,19 +963,19 @@ void Checkin::Print (const gchar *job_name)
 
     if (_print_missing && _print_attending)
     {
-      Module::Print ("Liste des inscrits");
+      Module::Print (gettext ("Liste des inscrits"));
     }
     else if ((_print_missing == FALSE) && _print_attending)
     {
-      Module::Print ("Liste des présents");
+      Module::Print (gettext ("Liste des présents"));
     }
     else if ((_print_attending == FALSE) && _print_missing)
     {
-      Module::Print ("Liste des absents");
+      Module::Print (gettext ("Liste des absents"));
     }
     else
     {
-      Module::Print ("Liste des tireurs");
+      Module::Print (gettext ("Liste des tireurs"));
     }
   }
   gtk_widget_hide (_print_dialog);

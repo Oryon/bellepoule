@@ -22,7 +22,7 @@
 #include "pool_supervisor.hpp"
 #include "classification.hpp"
 
-const gchar *PoolSupervisor::_class_name     = "Poules";
+const gchar *PoolSupervisor::_class_name     = N_ ("Poules");
 const gchar *PoolSupervisor::_xml_class_name = "pool_stage";
 
 typedef enum
@@ -87,10 +87,10 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                         GTK_MESSAGE_QUESTION,
                                                         GTK_BUTTONS_OK_CANCEL,
-                                                        "<b><big>Imprimer ...</big></b>");
+                                                        gettext ("<b><big>Imprimer ...</big></b>"));
 
     gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                          "Impression des feuilles de poule");
+                          gettext ("Impression des feuilles de poule"));
 
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
 
@@ -134,7 +134,7 @@ PoolSupervisor::~PoolSupervisor ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor::Init ()
 {
-  RegisterStageClass (_class_name,
+  RegisterStageClass (gettext (_class_name),
                       _xml_class_name,
                       CreateInstance,
                       EDITABLE);
@@ -377,7 +377,7 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 
     if (classification)
     {
-      classification->Print ("Classement du tour de poule");
+      classification->Print (gettext ("Classement du tour de poule"));
     }
   }
   else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
@@ -517,7 +517,7 @@ Stage *PoolSupervisor::GetInputProvider ()
   {
     Stage::StageClass *provider_class = previous->GetClass ();
 
-    if (strcmp (provider_class->_name, PoolAllocator::_class_name) == 0)
+    if (strcmp (provider_class->_xml_name, PoolAllocator::_xml_class_name) == 0)
     {
       return previous;
     }

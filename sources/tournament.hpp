@@ -42,6 +42,8 @@ class Tournament : public Module
 
     void OnOpenExample ();
 
+    void OnSave ();
+
     Contest *GetContest (gchar *filename);
 
     void Manage (Contest *contest);

@@ -47,7 +47,7 @@ Pool::Pool (Data  *max_score,
 
   _score_collector = NULL;
 
-  _name = g_strdup_printf ("Poule No %02d", _number);
+  _name = g_strdup_printf (gettext ("Poule No %02d"), _number);
 }
 
 // --------------------------------------------------------------------------------
@@ -441,7 +441,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                "line-width", 0.0,
                                NULL);
           goo_canvas_text_new (grid_group,
-                               "Signature",
+                               gettext ("Signature"),
                                grid_bounds.x2 + cell_w,
                                cell_h * (i + (1.0/2.0)),
                                -1,
@@ -467,7 +467,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         y = - 10;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Victoires",
+                                        gettext ("Victoires"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -476,7 +476,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Vict./Matchs",
+                                        gettext ("Vict./Matchs"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -485,7 +485,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "T. données",
+                                        gettext ("T. données"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -494,7 +494,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "T. reçues",
+                                        gettext ("T. reçues"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -503,7 +503,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Indice",
+                                        gettext ("Indice"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -512,7 +512,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        "Place",
+                                        gettext ("Place"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",

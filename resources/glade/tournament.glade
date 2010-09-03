@@ -11,6 +11,7 @@
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
           <object class="GtkMenuBar" id="menubar1">
             <property name="visible">True</property>
@@ -50,15 +51,6 @@
                         <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_recent_menuitem_activate"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="save_menuitem">
-                        <property name="label">gtk-save</property>
-                        <property name="visible">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <property name="accel_group">accelgroup1</property>
                       </object>
                     </child>
                     <child>
@@ -162,13 +154,13 @@
     <property name="type_hint">normal</property>
     <property name="program_name">BellePoule</property>
     <property name="version">0.01/02</property>
-    <property name="copyright" translatable="yes">Copyright (C) 2009 Yannick Le Roux.</property>
+    <property name="copyright">Copyright (C) 2009 Yannick Le Roux.</property>
     <property name="comments" translatable="yes">Logiciel de gestion de tournois d'escrime.
 
 
 </property>
     <property name="website">http://betton.escrime.free.fr/index.php/bellepoule</property>
-    <property name="website_label" translatable="yes">betton.escrime.free.fr</property>
+    <property name="website_label">betton.escrime.free.fr</property>
     <property name="license" translatable="yes">                GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
@@ -856,9 +848,12 @@ Public License instead of this License.  But first, please read
 Portage Linux
   Emmanuel Chaix
 
+Logo
+S&#xE9;bastien Vermandel
+
 Conception/Codage:
   Yannick Le Roux</property>
-    <property name="artists">S&#xE9;bastien Vermandel</property>
+    <property name="artists"></property>
     <property name="logo">about.png</property>
     <signal name="close" handler="gtk_widget_hide"/>
     <child internal-child="vbox">

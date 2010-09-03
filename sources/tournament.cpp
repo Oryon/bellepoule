@@ -14,8 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#define GETTEXT_PACKAGE "gtk20"
-#include <glib/gi18n-lib.h>
 #include <glib.h>
 #include <glib/gstdio.h>
 
@@ -183,7 +181,7 @@ void Tournament::OnNew ()
 // --------------------------------------------------------------------------------
 void Tournament::OnOpen (gchar *current_folder)
 {
-  GtkWidget *chooser = gtk_file_chooser_dialog_new (_("Choisissez un fichier de compétition à ouvrir ..."),
+  GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choisissez un fichier de compétition à ouvrir ..."),
                                                     NULL,
                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
                                                     GTK_STOCK_CANCEL,
@@ -196,7 +194,7 @@ void Tournament::OnOpen (gchar *current_folder)
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              _("Les fichiers BellePoule (.cocot)"));
+                              gettext ("Les fichiers BellePoule (.cocot)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.cotcot");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -207,7 +205,7 @@ void Tournament::OnOpen (gchar *current_folder)
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              _("Tous les fichiers"));
+                              gettext ("Tous les fichiers"));
     gtk_file_filter_add_pattern (filter,
                                  "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -266,6 +264,22 @@ void Tournament::OnOpen (gchar *current_folder)
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnSave ()
+{
+  GSList *current = _contest_list;
+
+  while (current)
+  {
+    Contest *contest;
+
+    contest = (Contest *) current->data;
+    contest->Save ();
+
+    current = g_slist_next (current);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnAbout ()
 {
   GtkWidget *w = _glade->GetWidget ("about_dialog");
@@ -300,7 +314,7 @@ void Tournament::OnOpenExample ()
 // --------------------------------------------------------------------------------
 void Tournament::OnRecent ()
 {
-  GtkWidget *dialog = gtk_recent_chooser_dialog_new (_("Fichiers récemment ouverts"),
+  GtkWidget *dialog = gtk_recent_chooser_dialog_new (gettext ("Fichiers récemment ouverts"),
                                                      NULL,
                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -312,7 +326,7 @@ void Tournament::OnRecent ()
     gtk_recent_filter_add_pattern (filter,
                                    "*.cotcot");
     gtk_recent_filter_set_name (filter,
-                                _("Fichiers BellePoule"));
+                                gettext ("Fichiers BellePoule"));
 
     gtk_recent_chooser_add_filter (GTK_RECENT_CHOOSER (dialog),
                                    filter);
@@ -368,6 +382,15 @@ extern "C" G_MODULE_EXPORT void on_open_menuitem_activate (GtkWidget *w,
 }
 
 // --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_save_menuitem_activate (GtkWidget *w,
+                                                           Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnSave ();
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
                                                            Object    *owner)
 {
@@ -394,13 +417,13 @@ extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
                                                           GTK_DIALOG_MODAL,
                                                           GTK_MESSAGE_QUESTION,
                                                           GTK_BUTTONS_OK_CANCEL,
-                                                          _("<b><big>Voulez-vous vraiment quitter BellePoule ?</big></b>"));
+                                                          gettext ("<b><big>Voulez-vous vraiment quitter BellePoule ?</big></b>"));
 
   gtk_window_set_title (GTK_WINDOW (dialog),
-                        _("Quitter BellePoule ?"));
+                        gettext ("Quitter BellePoule ?"));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            _("Toutes les compétitions non sauvegardées seront perdues."));
+                                            gettext ("Toutes les compétitions non sauvegardées seront perdues."));
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {

@@ -14,8 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#define GETTEXT_PACKAGE "gtk20"
-#include <glib/gi18n-lib.h>
 #include <string.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
@@ -133,7 +131,7 @@ Table::Table (StageClass *stage_class)
                                                               GTK_DIALOG_DESTROY_WITH_PARENT,
                                                               GTK_MESSAGE_QUESTION,
                                                               GTK_BUTTONS_OK_CANCEL,
-                                                              "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>");
+                                                              gettext ("<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"));
 
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_level_print_dialog));
 
@@ -148,10 +146,10 @@ Table::Table (StageClass *stage_class)
                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                         GTK_MESSAGE_QUESTION,
                                                         GTK_BUTTONS_OK_CANCEL,
-                                                        "<b><big>Que voulez-vous imprimer ?</big></b>");
+                                                        gettext ("<b><big>Que voulez-vous imprimer ?</big></b>"));
 
     gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                          "Impression du tableau");
+                          gettext ("Impression du tableau"));
 
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
 
@@ -217,7 +215,7 @@ Table::~Table ()
 // --------------------------------------------------------------------------------
 void Table::Init ()
 {
-  RegisterStageClass (_(_class_name),
+  RegisterStageClass (gettext (_class_name),
                       _xml_class_name,
                       CreateInstance,
                       EDITABLE);
@@ -1683,19 +1681,19 @@ gchar *Table::GetLevelImage (guint level)
 
   if (level == _nb_levels)
   {
-    image = g_strdup_printf ("Vainqueur");
+    image = g_strdup_printf (gettext ("Vainqueur"));
   }
   else if (level == _nb_levels - 1)
   {
-    image = g_strdup_printf ("Finale");
+    image = g_strdup_printf (gettext ("Finale"));
   }
   else if (level == _nb_levels - 2)
   {
-    image = g_strdup_printf ("Demi-finale");
+    image = g_strdup_printf (gettext ("Demi-finale"));
   }
   else
   {
-    image = g_strdup_printf ("Tableau de %d", 1 << (_nb_levels - level));
+    image = g_strdup_printf (gettext ("Tableau de %d"), 1 << (_nb_levels - level));
   }
 
   return image;
@@ -1890,7 +1888,7 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
         gdouble        offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
         GooCanvasItem *item;
         gdouble        name_width;
-        gchar         *match_number = g_strdup_printf ("Match %s", (const char *) match->GetData (this, "number"));
+        gchar         *match_number = g_strdup_printf (gettext ("Match %s"), (const char *) match->GetData (this, "number"));
 
         match->SetData (this, "printed", (void *) TRUE);
 
@@ -2053,7 +2051,7 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
                                "line-width", 0.0,
                                NULL);
           goo_canvas_text_new (group,
-                               "Signature",
+                               gettext ("Signature"),
                                name_width + _max_score->_value*2.5 + 4.5*score_size,
                                0.0 + offset,
                                -1,
@@ -2070,7 +2068,7 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
                                "line-width", 0.0,
                                NULL);
           goo_canvas_text_new (group,
-                               "Signature",
+                               gettext ("Signature"),
                                name_width + _max_score->_value*2.5 + 4.5*score_size,
                                7.5 + offset,
                                -1,
@@ -2113,7 +2111,7 @@ void Table::OnPrint ()
 
     if (classification)
     {
-      classification->Print ("Classement du tableau");
+      classification->Print (gettext ("Classement du tableau"));
     }
   }
   else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
@@ -2123,7 +2121,7 @@ void Table::OnPrint ()
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
       _print_full_table = TRUE;
-      Print ("Tableau");
+      Print (gettext ("Tableau"));
     }
     else
     {
@@ -2133,7 +2131,7 @@ void Table::OnPrint ()
       LookForMatchToPrint (0,
                            all_sheet);
       _print_full_table = FALSE;
-      Print ("Feuille de match");
+      Print (gettext ("Feuille de match"));
     }
   }
 
@@ -2147,7 +2145,7 @@ gboolean Table::OnPrintLevel (GooCanvasItem  *item,
                               Table          *table)
 {
   guint level_to_print = (guint) g_object_get_data (G_OBJECT (item), "level_to_print");
-  gchar *title         = g_strdup_printf ("%s : Impression des matchs", table->GetLevelImage (level_to_print));
+  gchar *title         = g_strdup_printf (gettext ("%s : Impression des matchs"), table->GetLevelImage (level_to_print));
 
   gtk_window_set_title (GTK_WINDOW (table->_level_print_dialog),
                         title);
@@ -2161,7 +2159,7 @@ gboolean Table::OnPrintLevel (GooCanvasItem  *item,
     table->LookForMatchToPrint (level_to_print,
                                 all_sheet);
     table->_print_full_table = FALSE;
-    table->Print ("Feuille de match");
+    table->Print (gettext ("Feuille de match"));
   }
 
   gtk_widget_hide (table->_level_print_dialog);
@@ -2184,7 +2182,7 @@ gboolean Table::OnPrintMatch (GooCanvasItem  *item,
   table->_match_to_print = g_slist_prepend (table->_match_to_print,
                                             g_object_get_data (G_OBJECT (item), "match_to_print"));
   table->_print_full_table = FALSE;
-  table->Print ("Feuille de match");
+  table->Print (gettext ("Feuille de match"));
 
   return TRUE;
 }

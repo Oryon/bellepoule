@@ -22,7 +22,7 @@
 
 #include "general_classification.hpp"
 
-const gchar *GeneralClassification::_class_name     = "Classement général";
+const gchar *GeneralClassification::_class_name     = N_ ("Classement général");
 const gchar *GeneralClassification::_xml_class_name = "ClassementGeneral";
 
 // --------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ GeneralClassification::~GeneralClassification ()
 // --------------------------------------------------------------------------------
 void GeneralClassification::Init ()
 {
-  RegisterStageClass (_class_name,
+  RegisterStageClass (gettext (_class_name),
                       _xml_class_name,
                       CreateInstance,
                       0);
@@ -157,7 +157,7 @@ void GeneralClassification::OnPrintPoolToolbuttonClicked ()
 
   if (classification)
   {
-    classification->Print ("Classement général");
+    classification->Print (gettext ("Classement général"));
   }
 }
 
@@ -169,7 +169,7 @@ void GeneralClassification::OnExportToolbuttonClicked ()
   {
     GtkWidget *chooser;
 
-    chooser = GTK_WIDGET (gtk_file_chooser_dialog_new ("Choisissez un fichier de destination ...",
+    chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choisissez un fichier de destination ..."),
                                                        GTK_WINDOW (_glade->GetRootWidget ()),
                                                        GTK_FILE_CHOOSER_ACTION_SAVE,
                                                        GTK_STOCK_CANCEL,
@@ -205,7 +205,7 @@ void GeneralClassification::OnExportToolbuttonClicked ()
       GtkFileFilter *filter = gtk_file_filter_new ();
 
       gtk_file_filter_set_name (filter,
-                                "All Excell files (.CSV)");
+                                gettext ("All Excell files (.CSV)"));
       gtk_file_filter_add_pattern (filter,
                                    "*.CSV");
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -216,7 +216,7 @@ void GeneralClassification::OnExportToolbuttonClicked ()
       GtkFileFilter *filter = gtk_file_filter_new ();
 
       gtk_file_filter_set_name (filter,
-                                "All files");
+                                gettext ("All files"));
       gtk_file_filter_add_pattern (filter,
                                    "*");
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),

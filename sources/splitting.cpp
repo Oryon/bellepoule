@@ -14,9 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#define GETTEXT_PACKAGE "gtk20"
-#include <glib/gi18n-lib.h>
-
 #include <string.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
@@ -30,7 +27,7 @@
 
 #include "splitting.hpp"
 
-const gchar *Splitting::_class_name     = "Scission";
+const gchar *Splitting::_class_name     = N_ ("Scission");
 const gchar *Splitting::_xml_class_name = "PointDeScission";
 
 Tournament *Splitting::_tournament = NULL;
@@ -88,7 +85,7 @@ Splitting::~Splitting ()
 // --------------------------------------------------------------------------------
 void Splitting::Init ()
 {
-  RegisterStageClass (_class_name,
+  RegisterStageClass (gettext (_class_name),
                       _xml_class_name,
                       CreateInstance,
                       EDITABLE);
