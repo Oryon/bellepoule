@@ -18,7 +18,7 @@
             <child>
               <object class="GtkMenuItem" id="menuitem1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_Fichier</property>
+                <property name="label" translatable="yes">Fichier</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu1">
@@ -75,7 +75,7 @@
             <child>
               <object class="GtkMenuItem" id="menuitem4">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Aid_e</property>
+                <property name="label" translatable="yes">Aide</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">
@@ -848,12 +848,9 @@ Public License instead of this License.  But first, please read
 Portage Linux
   Emmanuel Chaix
 
-Logo
-S&#xE9;bastien Vermandel
-
 Conception/Codage:
   Yannick Le Roux</property>
-    <property name="artists"></property>
+    <property name="artists">S&#xE9;bastien Vermandel</property>
     <property name="logo">about.png</property>
     <signal name="close" handler="gtk_widget_hide"/>
     <child internal-child="vbox">
