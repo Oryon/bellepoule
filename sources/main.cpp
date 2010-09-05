@@ -115,42 +115,35 @@ static gint CompareDate (Attribute *attr_a,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  gchar *path = g_path_get_dirname (argv[0]);
-
   // Init
   {
+    gchar *install_dirname = g_get_current_dir ();
     // g_mem_set_vtable (glib_mem_profiler_table);
 
+    if (install_dirname)
     {
-      gchar *install_dirname = g_get_current_dir ();
+      gchar *gtkrc = g_build_filename (install_dirname, "resources", "gtkrc", NULL);
 
-      if (install_dirname)
-      {
-        gchar *gtkrc = g_build_filename (install_dirname, "resources", "gtkrc", NULL);
+      gtk_rc_add_default_file (gtkrc);
+      g_free (gtkrc);
+    }
 
-        gtk_rc_add_default_file (gtkrc);
-        g_free (gtkrc);
-      }
+    gtk_init (&argc, &argv);
 
-      gtk_init (&argc, &argv);
+    {
+      gchar  *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
 
-      {
-        gchar  *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
+      setlocale (LC_ALL, "");
 
-        //setlocale (LC_ALL, "");
+      //g_setenv ("LANGUAGE",
+      //"en",
+      //TRUE);
 
-        g_setenv ("LANGUAGE",
-                  "en",
-                  TRUE);
+      bindtextdomain ("BellePoule", translation_path);
+      bind_textdomain_codeset ("BellePoule", "UTF-8");
+      textdomain ("BellePoule");
 
-        bindtextdomain ("BellePoule", translation_path);
-        bind_textdomain_codeset ("BellePoule", "UTF-8");
-        textdomain ("BellePoule");
-
-        g_free (translation_path);
-      }
-
-      g_free (install_dirname);
+      g_free (translation_path);
     }
 
     Contest::Init               ();
@@ -160,9 +153,11 @@ int main (int argc, char **argv)
     Table::Init                 ();
     GeneralClassification::Init ();
     Splitting::Init             ();
-  }
 
-  Glade::SetPath (path);
+    Glade::SetPath (install_dirname);
+
+    g_free (install_dirname);
+  }
 
   gtk_about_dialog_set_url_hook (AboutDialogActivateLinkFunc,
                                  NULL,

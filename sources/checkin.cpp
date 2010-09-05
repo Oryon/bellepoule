@@ -471,7 +471,7 @@ void Checkin::Import ()
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              gettext ("All FFE files (.FFF)"));
+                              gettext ("Tous les fichiers FFF (.FFF)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.FFF");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -482,7 +482,7 @@ void Checkin::Import ()
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              gettext ("All Excell files (.CSV)"));
+                              gettext ("Tous les fichiers Excel (.CSV)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.CSV");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -493,7 +493,7 @@ void Checkin::Import ()
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              gettext ("All files"));
+                              gettext ("Tous les fichiers"));
     gtk_file_filter_add_pattern (filter,
                                  "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),

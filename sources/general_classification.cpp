@@ -205,7 +205,7 @@ void GeneralClassification::OnExportToolbuttonClicked ()
       GtkFileFilter *filter = gtk_file_filter_new ();
 
       gtk_file_filter_set_name (filter,
-                                gettext ("All Excell files (.CSV)"));
+                                gettext ("Tous les fichiers Excel (.CSV)"));
       gtk_file_filter_add_pattern (filter,
                                    "*.CSV");
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -216,7 +216,7 @@ void GeneralClassification::OnExportToolbuttonClicked ()
       GtkFileFilter *filter = gtk_file_filter_new ();
 
       gtk_file_filter_set_name (filter,
-                                gettext ("All files"));
+                                gettext ("Tous les fichiers"));
       gtk_file_filter_add_pattern (filter,
                                    "*");
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
