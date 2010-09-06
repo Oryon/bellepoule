@@ -1,4 +1,4 @@
-# English (United Kingdom) translation for bellepoule
+# Breton translation for bellepoule
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the bellepoule package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
@@ -8,18 +8,18 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-09-03 11:57+0200\n"
-"PO-Revision-Date: 2010-09-05 20:22+0000\n"
+"PO-Revision-Date: 2010-09-05 20:36+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
-"Language-Team: English (United Kingdom) <en_GB@li.org>\n"
+"Language-Team: Breton <br@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-09-06 05:07+0000\n"
+"X-Launchpad-Export-Date: 2010-09-06 05:06+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../../sources/checkin.cpp:27 ../../resources/glade/contest.glade:442
 msgid "Appel"
-msgstr "Checkin"
+msgstr "tagadatagada"
 
 #: ../../sources/checkin.cpp:84
 msgid "<b><big>Quels tireurs voulez-vous imprimer ?</big></b>"
@@ -69,23 +69,23 @@ msgstr ""
 
 #: ../../sources/contest.cpp:39 ../../resources/glade/contest.glade:105
 msgid "Sabre"
-msgstr "Sabre"
+msgstr ""
 
 #: ../../sources/contest.cpp:40
 msgid "Epée"
-msgstr "Epée"
+msgstr ""
 
 #: ../../sources/contest.cpp:41
 msgid "Fleuret"
-msgstr "Foil"
+msgstr ""
 
 #: ../../sources/contest.cpp:53 ../../sources/main.cpp:189
 msgid "Masculin"
-msgstr "Male"
+msgstr ""
 
 #: ../../sources/contest.cpp:54 ../../sources/main.cpp:190
 msgid "Féminin"
-msgstr "Female"
+msgstr ""
 
 #: ../../sources/contest.cpp:55
 msgid "Mixte"
@@ -185,7 +185,7 @@ msgstr ""
 
 #: ../../sources/main.cpp:186
 msgid "sexe"
-msgstr "gender"
+msgstr ""
 
 #: ../../sources/main.cpp:192
 msgid "nation"
@@ -213,7 +213,7 @@ msgstr ""
 
 #: ../../sources/main.cpp:212
 msgid "exporté"
-msgstr "Exported"
+msgstr ""
 
 #: ../../sources/main.cpp:216
 msgid "Vict./Matchs (‰)"
@@ -238,7 +238,7 @@ msgstr ""
 #: ../../sources/pool.cpp:50
 #, c-format
 msgid "Poule No %02d"
-msgstr "Pool #%02d"
+msgstr ""
 
 #: ../../sources/pool.cpp:444 ../../sources/table.cpp:2054
 #: ../../sources/table.cpp:2071
@@ -279,11 +279,11 @@ msgstr ""
 
 #: ../../sources/pool_supervisor.cpp:25
 msgid "Poules"
-msgstr "Pools"
+msgstr ""
 
 #: ../../sources/pool_supervisor.cpp:90
 msgid "<b><big>Imprimer ...</big></b>"
-msgstr "<b><big>Print...</big></b>"
+msgstr ""
 
 #: ../../sources/pool_supervisor.cpp:93
 msgid "Impression des feuilles de poule"
@@ -755,7 +755,7 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:6
 msgid "BellePoule - Tournoi d'escrime"
-msgstr "BellePoule - Fencing tournament"
+msgstr ""
 
 #: ../../resources/glade/tournament.glade:21
 msgid "_Fichier"
