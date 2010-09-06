@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-03 11:57+0200\n"
+"POT-Creation-Date: 2010-09-06 16:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,19 +33,20 @@ msgid "Décochez cette case pour accélerer la navigation. Le champs corresponda
 msgstr ""
 
 #: ../../sources/checkin.cpp:461
-msgid "Choisissez un fichier de tireurs ? importer ..."
+msgid "Choisissez un fichier de tireurs à importer ..."
 msgstr ""
 
 #: ../../sources/checkin.cpp:474
-msgid "Tous Tous Tous Tous Tous (.FFF)"
+msgid "Tous les fichiers FFF (.FFF)"
 msgstr ""
 
 #: ../../sources/checkin.cpp:485 ../../sources/general_classification.cpp:208
-msgid "All Excell files (.CSV)"
+msgid "Tous les fichiers Excel (.CSV)"
 msgstr ""
 
 #: ../../sources/checkin.cpp:496 ../../sources/general_classification.cpp:219
-msgid "All files"
+#: ../../sources/tournament.cpp:208
+msgid "Tous les fichiers"
 msgstr ""
 
 #: ../../sources/checkin.cpp:966
@@ -76,11 +77,11 @@ msgstr ""
 msgid "Fleuret"
 msgstr ""
 
-#: ../../sources/contest.cpp:53 ../../sources/main.cpp:189
+#: ../../sources/contest.cpp:53 ../../sources/main.cpp:184
 msgid "Masculin"
 msgstr ""
 
-#: ../../sources/contest.cpp:54 ../../sources/main.cpp:190
+#: ../../sources/contest.cpp:54 ../../sources/main.cpp:185
 msgid "Féminin"
 msgstr ""
 
@@ -151,6 +152,10 @@ msgstr ""
 msgid "Les saisies non sauvegardées seront perdues."
 msgstr ""
 
+#: ../../sources/filter.cpp:184
+msgid "Filtre"
+msgstr ""
+
 #: ../../sources/general_classification.cpp:25
 #: ../../sources/general_classification.cpp:160
 msgid "Classement général"
@@ -160,75 +165,75 @@ msgstr ""
 msgid "Choisissez un fichier de destination ..."
 msgstr ""
 
-#: ../../sources/main.cpp:174
+#: ../../sources/main.cpp:169
 msgid "ref"
 msgstr ""
 
-#: ../../sources/main.cpp:177
+#: ../../sources/main.cpp:172
 msgid "classement"
 msgstr ""
 
-#: ../../sources/main.cpp:179
+#: ../../sources/main.cpp:174
 msgid "nom"
 msgstr ""
 
-#: ../../sources/main.cpp:181
+#: ../../sources/main.cpp:176
 msgid "prénom"
 msgstr ""
 
-#: ../../sources/main.cpp:183
+#: ../../sources/main.cpp:178
 msgid "date naissance"
 msgstr ""
 
-#: ../../sources/main.cpp:186
+#: ../../sources/main.cpp:181
 msgid "sexe"
 msgstr ""
 
-#: ../../sources/main.cpp:192
+#: ../../sources/main.cpp:187
 msgid "nation"
 msgstr ""
 
-#: ../../sources/main.cpp:196
+#: ../../sources/main.cpp:191
 msgid "ligue"
 msgstr ""
 
-#: ../../sources/main.cpp:200
+#: ../../sources/main.cpp:195
 msgid "club"
 msgstr ""
 
-#: ../../sources/main.cpp:204
+#: ../../sources/main.cpp:199
 msgid "licence"
 msgstr ""
 
-#: ../../sources/main.cpp:206
+#: ../../sources/main.cpp:201
 msgid "points"
 msgstr ""
 
-#: ../../sources/main.cpp:209
+#: ../../sources/main.cpp:204
 msgid "présence"
 msgstr ""
 
-#: ../../sources/main.cpp:212
+#: ../../sources/main.cpp:207
 msgid "exporté"
 msgstr ""
 
-#: ../../sources/main.cpp:216
+#: ../../sources/main.cpp:211
 msgid "Vict./Matchs (‰)"
 msgstr ""
 
-#: ../../sources/main.cpp:220
+#: ../../sources/main.cpp:215
 msgid "indice"
 msgstr ""
 
-#: ../../sources/main.cpp:224
+#: ../../sources/main.cpp:219
 msgid "Touches données"
 msgstr ""
 
-#: ../../sources/main.cpp:228
+#: ../../sources/main.cpp:223
 msgid "place"
 msgstr ""
 
-#: ../../sources/main.cpp:233
+#: ../../sources/main.cpp:228
 msgid "rang d'entrée"
 msgstr ""
 
@@ -366,10 +371,6 @@ msgstr ""
 msgid "Les fichiers BellePoule (.cocot)"
 msgstr ""
 
-#: ../../sources/tournament.cpp:208
-msgid "Tous les fichiers"
-msgstr ""
-
 #: ../../sources/tournament.cpp:317
 msgid "Fichiers récemment ouverts"
 msgstr ""
@@ -421,23 +422,14 @@ msgid "Données"
 msgstr ""
 
 #: ../../resources/glade/checkin.glade:185
-msgid "Add a fencer"
+msgid "Ajouter un tireur"
 msgstr ""
 
-#: ../../resources/glade/checkin.glade:243
-#: ../../resources/glade/schedule.glade:111
-msgid "Add"
-msgstr ""
-
-#: ../../resources/glade/checkin.glade:257
-msgid "Close"
-msgstr ""
-
-#: ../../resources/glade/checkin.glade:302
+#: ../../resources/glade/checkin.glade:304
 msgid "Tous les présents"
 msgstr ""
 
-#: ../../resources/glade/checkin.glade:317
+#: ../../resources/glade/checkin.glade:319
 msgid "Tous les absents"
 msgstr ""
 
@@ -665,6 +657,10 @@ msgstr ""
 msgid "Next stage"
 msgstr ""
 
+#: ../../resources/glade/schedule.glade:111
+msgid "Add"
+msgstr ""
+
 #: ../../resources/glade/schedule.glade:124
 msgid "Remove"
 msgstr ""
@@ -738,7 +734,7 @@ msgid "BellePoule - Tournoi d'escrime"
 msgstr ""
 
 #: ../../resources/glade/tournament.glade:21
-msgid "_Fichier"
+msgid "Fichier"
 msgstr ""
 
 #: ../../resources/glade/tournament.glade:48
@@ -746,15 +742,11 @@ msgid "Récemment ouvert"
 msgstr ""
 
 #: ../../resources/glade/tournament.glade:78
-msgid "Aid_e"
+msgid "Aide"
 msgstr ""
 
 #: ../../resources/glade/tournament.glade:85
 msgid "Ouvrir un exemple ..."
-msgstr ""
-
-#: ../../resources/glade/tournament.glade:157
-msgid "Copyright (C) 2009 Yannick Le Roux."
 msgstr ""
 
 #: ../../resources/glade/tournament.glade:158
@@ -762,10 +754,6 @@ msgid ""
 "Logiciel de gestion de tournois d'escrime.\n"
 "\n"
 "\n"
-msgstr ""
-
-#: ../../resources/glade/tournament.glade:163
-msgid "betton.escrime.free.fr"
 msgstr ""
 
 #: ../../resources/glade/tournament.glade:164
