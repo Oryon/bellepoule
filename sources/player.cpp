@@ -94,10 +94,21 @@ gint Player::Compare (Player      *a,
                       Player      *b,
                       AttributeId *attr_id)
 {
-  Attribute *attr_a = a->GetAttribute (attr_id);
-  Attribute *attr_b = b->GetAttribute (attr_id);
+  if (b == NULL)
+  {
+    return 1;
+  }
+  else if (a == NULL)
+  {
+    return -1;
+  }
+  else
+  {
+    Attribute *attr_a = a->GetAttribute (attr_id);
+    Attribute *attr_b = b->GetAttribute (attr_id);
 
-  return Attribute::Compare (attr_a, attr_b);
+    return Attribute::Compare (attr_a, attr_b);
+  }
 }
 
 // --------------------------------------------------------------------------------
