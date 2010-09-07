@@ -135,7 +135,7 @@
                 <child>
                   <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">D&#xE9;callage</property>
+                    <property name="label" translatable="yes">D&#xE9;calage</property>
                   </object>
                   <packing>
                     <property name="position">0</property>

@@ -169,7 +169,7 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_INT, "ref", "ID", gettext ("ref"));
     desc->_rights = AttributeDesc::PRIVATE;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", gettext ("classement"));
+    desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", gettext ("place"));
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", gettext ("nom"));
 
@@ -198,7 +198,7 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", gettext ("points"));
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Classement", gettext ("classement"));
     desc->_compare_func = (GCompareFunc) CompareRating;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("présence"));
