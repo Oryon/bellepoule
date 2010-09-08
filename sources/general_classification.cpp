@@ -37,7 +37,9 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
     Filter *filter;
 
     AttributeDesc::CreateList (&attr_list,
+#ifndef DEBUG
                                "ref",
+#endif
                                "rank",
                                "attending",
                                "exported",

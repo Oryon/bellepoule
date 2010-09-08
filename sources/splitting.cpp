@@ -48,7 +48,9 @@ Splitting::Splitting (StageClass *stage_class)
     Filter *filter;
 
     AttributeDesc::CreateList (&attr_list,
+#ifndef DEBUG
                                "ref",
+#endif
                                "final_rank",
                                "attending",
                                "victories_ratio",

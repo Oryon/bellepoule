@@ -47,8 +47,11 @@ Checkin::Checkin (StageClass *stage_class)
     Filter *filter;
 
     AttributeDesc::CreateList (&attr_list,
+#ifndef DEBUG
                                "ref",
+#endif
                                "exported",
+                               "previous_stage_rank",
                                "final_rank",
                                "victories_ratio",
                                "indice",
