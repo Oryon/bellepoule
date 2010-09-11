@@ -8,16 +8,20 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-09-06 16:40+0200\n"
-"PO-Revision-Date: 2010-09-06 14:03+0000\n"
-"Last-Translator: betonneuse <Unknown>\n"
+"PO-Revision-Date: 2010-09-09 14:21+0100\n"
+"Last-Translator: \n"
 "Language-Team: English (United Kingdom) <en_GB@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2010-09-07 04:56+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED KINGDOM\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
-#: ../../sources/checkin.cpp:27 ../../resources/glade/contest.glade:442
+#: ../../sources/checkin.cpp:27
+#: ../../resources/glade/contest.glade:442
 msgid "Appel"
 msgstr ""
 
@@ -30,9 +34,7 @@ msgid "Impression de la liste des tireurs"
 msgstr ""
 
 #: ../../sources/checkin.cpp:198
-msgid ""
-"Décochez cette case pour accélerer la navigation. Le champs correspondant "
-"sera ignoré lors des appuis sur la touche TAB."
+msgid "Décochez cette case pour accélerer la navigation. Le champs correspondant sera ignoré lors des appuis sur la touche TAB."
 msgstr ""
 
 #: ../../sources/checkin.cpp:461
@@ -43,11 +45,13 @@ msgstr ""
 msgid "Tous les fichiers FFF (.FFF)"
 msgstr ""
 
-#: ../../sources/checkin.cpp:485 ../../sources/general_classification.cpp:208
+#: ../../sources/checkin.cpp:485
+#: ../../sources/general_classification.cpp:208
 msgid "Tous les fichiers Excel (.CSV)"
 msgstr ""
 
-#: ../../sources/checkin.cpp:496 ../../sources/general_classification.cpp:219
+#: ../../sources/checkin.cpp:496
+#: ../../sources/general_classification.cpp:219
 #: ../../sources/tournament.cpp:208
 msgid "Tous les fichiers"
 msgstr ""
@@ -68,7 +72,8 @@ msgstr ""
 msgid "Liste des tireurs"
 msgstr ""
 
-#: ../../sources/contest.cpp:39 ../../resources/glade/contest.glade:105
+#: ../../sources/contest.cpp:39
+#: ../../resources/glade/contest.glade:105
 msgid "Sabre"
 msgstr "Sabre"
 
@@ -80,11 +85,13 @@ msgstr "Epée"
 msgid "Fleuret"
 msgstr "Foil"
 
-#: ../../sources/contest.cpp:53 ../../sources/main.cpp:184
+#: ../../sources/contest.cpp:53
+#: ../../sources/main.cpp:184
 msgid "Masculin"
 msgstr "Male"
 
-#: ../../sources/contest.cpp:54 ../../sources/main.cpp:185
+#: ../../sources/contest.cpp:54
+#: ../../sources/main.cpp:185
 msgid "Féminin"
 msgstr "Female"
 
@@ -108,7 +115,8 @@ msgstr ""
 msgid "Minime"
 msgstr ""
 
-#: ../../sources/contest.cpp:71 ../../resources/glade/contest.glade:129
+#: ../../sources/contest.cpp:71
+#: ../../resources/glade/contest.glade:129
 msgid "Cadet"
 msgstr ""
 
@@ -128,11 +136,13 @@ msgstr ""
 msgid "Propriétés de la compétition"
 msgstr ""
 
-#: ../../sources/contest.cpp:593 ../../resources/glade/contest.glade:778
+#: ../../sources/contest.cpp:593
+#: ../../resources/glade/contest.glade:778
 msgid "Date de la compétition"
 msgstr ""
 
-#: ../../sources/contest.cpp:851 ../../sources/contest.cpp:965
+#: ../../sources/contest.cpp:851
+#: ../../sources/contest.cpp:965
 msgid "Choisissez un fichier de sauvegarde ..."
 msgstr ""
 
@@ -245,7 +255,8 @@ msgstr ""
 msgid "Poule No %02d"
 msgstr "Pool #%02d"
 
-#: ../../sources/pool.cpp:444 ../../sources/table.cpp:2054
+#: ../../sources/pool.cpp:444
+#: ../../sources/table.cpp:2054
 #: ../../sources/table.cpp:2071
 msgid "Signature"
 msgstr ""
@@ -314,13 +325,13 @@ msgstr ""
 msgid "Scission"
 msgstr ""
 
-#: ../../sources/table.cpp:30 ../../sources/table.cpp:2124
+#: ../../sources/table.cpp:30
+#: ../../sources/table.cpp:2124
 msgid "Tableau"
 msgstr ""
 
 #: ../../sources/table.cpp:134
-msgid ""
-"<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
+msgid "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
 msgstr ""
 
 #: ../../sources/table.cpp:149
@@ -357,7 +368,8 @@ msgstr ""
 msgid "Classement du tableau"
 msgstr ""
 
-#: ../../sources/table.cpp:2134 ../../sources/table.cpp:2162
+#: ../../sources/table.cpp:2134
+#: ../../sources/table.cpp:2162
 #: ../../sources/table.cpp:2185
 msgid "Feuille de match"
 msgstr ""
@@ -409,10 +421,7 @@ msgid "9999"
 msgstr ""
 
 #: ../../resources/glade/checkin.glade:105
-msgid ""
-"FFF est le format sous lequel la Fédération Française d'Escrime  fournit les "
-"listes de tireurs inscrits aux compétitions par l'intermédiaire de son site "
-"internet. "
+msgid "FFF est le format sous lequel la Fédération Française d'Escrime  fournit les listes de tireurs inscrits aux compétitions par l'intermédiaire de son site internet. "
 msgstr ""
 
 #: ../../resources/glade/checkin.glade:106
@@ -449,9 +458,7 @@ msgid "Permet de renseigner les caractéristiques de la compétition."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:51
-msgid ""
-"Permet de configurer la formule en définissant l'enchaînement des poules, "
-"tableaux et autres phases."
+msgid "Permet de configurer la formule en définissant l'enchaînement des poules, tableaux et autres phases."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:52
@@ -527,9 +534,7 @@ msgstr ""
 #: ../../resources/glade/contest.glade:574
 #: ../../resources/glade/contest.glade:602
 #: ../../resources/glade/contest.glade:629
-msgid ""
-"Les informations de date et heures sont exploitées pour avertir par une "
-"alarme les organisateurs de l'éminence de de certains évènements."
+msgid "Les informations de date et heures sont exploitées pour avertir par une alarme les organisateurs de l'éminence de de certains évènements."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:509
@@ -554,10 +559,7 @@ msgid "Autoriser"
 msgstr ""
 
 #: ../../resources/glade/contest.glade:700
-msgid ""
-"Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-"des saisies longues et laborieuses lors des séances de prise en main de "
-"BellePoule."
+msgid "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter des saisies longues et laborieuses lors des séances de prise en main de BellePoule."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:712
@@ -573,9 +575,7 @@ msgid "<b>Scores</b>"
 msgstr ""
 
 #: ../../resources/glade/general_classification.glade:39
-msgid ""
-"Exporte le classement dans un fichier au format \".csv\" pour des tableurs "
-"du type Excel ou OpenOffice"
+msgid "Exporte le classement dans un fichier au format \".csv\" pour des tableurs du type Excel ou OpenOffice"
 msgstr ""
 
 #: ../../resources/glade/general_classification.glade:40
@@ -583,9 +583,7 @@ msgid "Exporter"
 msgstr ""
 
 #: ../../resources/glade/pool_allocator.glade:17
-msgid ""
-"Permet d'afficher et de masquer certaines données ainsi que de redéfinir "
-"leur ordre d'affichage."
+msgid "Permet d'afficher et de masquer certaines données ainsi que de redéfinir leur ordre d'affichage."
 msgstr ""
 
 #: ../../resources/glade/pool_allocator.glade:30
@@ -612,8 +610,7 @@ msgstr ""
 #: ../../resources/glade/pool_supervisor.glade:100
 msgid ""
 "Remplis tous les matchs de toutes les poules par des scores aléatoires.\n"
-"Pour activer/désactiver ce bouton, allez dans les propriétés de la "
-"compétition."
+"Pour activer/désactiver ce bouton, allez dans les propriétés de la compétition."
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:102
@@ -705,8 +702,7 @@ msgstr ""
 #: ../../resources/glade/table.glade:124
 msgid ""
 "Remplis tous les matchs du tableau par des scores aléatoires.\n"
-"Pour activer/désactiver ce bouton, allez dans les propriétés de la "
-"compétition."
+"Pour activer/désactiver ce bouton, allez dans les propriétés de la compétition."
 msgstr ""
 
 #: ../../resources/glade/table.glade:190
@@ -1433,8 +1429,7 @@ msgid ""
 "notice like this when it starts in an interactive mode:\n"
 "\n"
 "    <program>  Copyright (C) <year>  <name of author>\n"
-"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
-"w'.\n"
+"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
 "    This is free software, and you are welcome to redistribute it\n"
 "    under certain conditions; type `show c' for details.\n"
 "\n"
@@ -1442,8 +1437,7 @@ msgid ""
 "parts of the General Public License.  Of course, your program's commands\n"
 "might be different; for a GUI interface, you would use an \"about box\".\n"
 "\n"
-"  You should also get your employer (if you work as a programmer) or "
-"school,\n"
+"  You should also get your employer (if you work as a programmer) or school,\n"
 "if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
 "For more information on this, and how to apply and follow the GNU GPL, see\n"
 "<http://www.gnu.org/licenses/>.\n"
@@ -1455,3 +1449,4 @@ msgid ""
 "Public License instead of this License.  But first, please read\n"
 "<http://www.gnu.org/philosophy/why-not-lgpl.html>. "
 msgstr ""
+
