@@ -636,14 +636,26 @@ GSList *PoolSupervisor::GetCurrentClassification ()
 // --------------------------------------------------------------------------------
 GSList *PoolSupervisor::GetOutputShortlist ()
 {
-  GSList *shortlist    = Stage::GetOutputShortlist ();
-  guint   nb_to_remove = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+  GSList *shortlist         = Stage::GetOutputShortlist ();
+  guint   nb_to_remove      = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+  guint   rank              = g_slist_length (shortlist);
+  Player::AttributeId *attr = new Player::AttributeId ("final_rank");
 
   for (guint i = 0; i < nb_to_remove; i++)
   {
+    Player *player;
+
+    player = (Player *) shortlist->data;
+    player->SetAttributeValue (attr,
+                               rank);
+    g_print (">>> %s (%d)\n", player->GetName (), rank);
+    rank--;
+
     shortlist = g_slist_delete_link (shortlist,
                                      g_slist_last (shortlist));
   }
+  Object::TryToRelease (attr);
+
   return shortlist;
 }
 

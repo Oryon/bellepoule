@@ -239,6 +239,10 @@ void Player::Save (xmlTextWriter *xml_writer)
       AttributeId  attr_id (desc->_code_name);
       Attribute   *attr = GetAttribute (&attr_id);
 
+      if (strcmp (desc->_code_name, "final_rank") == 0)
+      {
+        g_print ("--> %s (%d)\n", GetName (), attr);
+      }
       if (attr)
       {
         gchar *xml_image = attr->GetXmlImage ();

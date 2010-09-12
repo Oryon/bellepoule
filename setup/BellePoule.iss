@@ -72,6 +72,8 @@ Source: "..\Exemples\CLS_EDM.FFF"; DestDir: "{app}\Exemples"; Flags: ignoreversi
 
 ;Traductions
 Source: "..\resources\translations\en\*"; DestDir: "{app}\resources\translations\en"; Flags: ignoreversion recursesubdirs
+Source: "..\resources\translations\de\*"; DestDir: "{app}\resources\translations\de"; Flags: ignoreversion recursesubdirs
+Source: "..\resources\translations\nl\*"; DestDir: "{app}\resources\translations\nl"; Flags: ignoreversion recursesubdirs
 
 ;Resources
 Source: "..\resources\glade\*.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
@@ -204,6 +206,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 
