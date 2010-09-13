@@ -182,14 +182,15 @@ void PoolAllocator::Display ()
     goo_canvas_item_remove (_main_table);
   }
 
+  _max_w = 0;
+  _max_h = 0;
+
   {
     GooCanvasItem *root = GetRootItem ();
 
     if (root)
     {
-      _main_table = goo_canvas_table_new (root,
-                                          "row-spacing",    20.0,
-                                          "column-spacing", 40.0,
+      _main_table = goo_canvas_group_new (root,
                                           NULL);
 
       g_object_set (G_OBJECT (root),
@@ -209,6 +210,7 @@ void PoolAllocator::Display ()
       }
     }
   }
+  FixUpTablesBounds ();
 
   SignalStatusUpdate ();
 }
@@ -826,8 +828,8 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
                                this);
       FillPoolTable (_source_pool);
     }
+    //OnAttrListUpdated ();
     SignalStatusUpdate ();
-
     FixUpTablesBounds ();
 
     _floating_player = NULL;
@@ -972,6 +974,30 @@ void PoolAllocator::FixUpTablesBounds ()
 
     focus_rect = (GooCanvasItem *) pool->GetData (this, "focus_rectangle");
 
+    {
+      guint nb_columns = 2;
+      guint nb_rows    = _selected_config->nb_pool / nb_columns;
+
+      if (_selected_config->nb_pool % nb_columns != 0)
+      {
+        nb_rows++;
+      }
+
+      {
+        guint row    = (pool->GetNumber () - 1) % nb_rows;
+        guint column = (pool->GetNumber () - 1) / nb_rows;
+
+        goo_canvas_item_get_bounds (table,
+                                    &bounds);
+        goo_canvas_item_translate (table,
+                                   -bounds.x1,
+                                   -bounds.y1);
+        goo_canvas_item_translate (table,
+                                   column * (_max_w + 40.0),
+                                   row * (_max_h + 20.0));
+      }
+    }
+
     goo_canvas_item_get_bounds (table,
                                 &bounds);
 
@@ -1023,32 +1049,12 @@ void PoolAllocator::FillPoolTable (Pool *pool)
   }
 
   {
-    guint nb_columns;
-    guint nb_rows;
-
-    nb_columns = 2;
-    nb_rows = _selected_config->nb_pool / nb_columns;
-    if (_selected_config->nb_pool % nb_columns != 0)
-    {
-      nb_rows++;
-    }
-
-    {
-      guint row    = (pool->GetNumber () - 1) % nb_rows;
-      guint column = (pool->GetNumber () - 1) / nb_rows;
-
-      table = goo_canvas_table_new (_main_table,
-                                    "row-spacing",    2.0,
-                                    "column-spacing", 4.0,
-                                    NULL);
-      Canvas::PutInTable (_main_table,
-                          table,
-                          row, column);
-      //Canvas::SetTableItemAttribute (table, "x-expand", 1U);
-      Canvas::SetTableItemAttribute (table, "x-fill", 1U);
-      pool->SetData (this, "table",
-                     table);
-    }
+    table = goo_canvas_table_new (_main_table,
+                                  "row-spacing",    2.0,
+                                  "column-spacing", 4.0,
+                                  NULL);
+    pool->SetData (this, "table",
+                   table);
   }
 
   {
@@ -1149,6 +1155,22 @@ void PoolAllocator::FillPoolTable (Pool *pool)
         g_signal_connect (item, "leave_notify_event",
                           G_CALLBACK (on_leave_player), pool);
       }
+    }
+  }
+
+  {
+    GooCanvasBounds bounds;
+
+    goo_canvas_item_get_bounds (table,
+                                &bounds);
+
+    if ((bounds.x2 - bounds.x1) > _max_w)
+    {
+      _max_w = bounds.x2 - bounds.x1;
+    }
+    if ((bounds.y2 - bounds.y1) > _max_h)
+    {
+      _max_h = bounds.y2 - bounds.y1;
     }
   }
 
@@ -1399,6 +1421,9 @@ void PoolAllocator::OnUnLocked ()
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnAttrListUpdated ()
 {
+  _max_w = 0;
+  _max_h = 0;
+
   for (guint i = 0; i < g_slist_length (_pools_list); i++)
   {
     Pool *pool;
@@ -1406,6 +1431,7 @@ void PoolAllocator::OnAttrListUpdated ()
     pool = (Pool *) g_slist_nth_data (_pools_list, i);
     FillPoolTable (pool);
   }
+  FixUpTablesBounds ();
 }
 
 // --------------------------------------------------------------------------------
