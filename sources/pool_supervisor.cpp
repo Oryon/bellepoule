@@ -44,6 +44,8 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
   _max_score      = NULL;
   _nb_eliminated  = NULL;
 
+  _single_owner = new Object ();
+
   _pool_liststore = GTK_LIST_STORE (_glade->GetObject ("pool_liststore"));
 
   // Sensitive widgets
@@ -126,6 +128,13 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
     SetClassificationFilter (filter);
     filter->Release ();
   }
+
+  {
+    Classification *classification = GetClassification ();
+
+    classification->SetSortFunction ((GtkTreeIterCompareFunc) CompareClassification,
+                                     this);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -133,6 +142,8 @@ PoolSupervisor::~PoolSupervisor ()
 {
   Object::TryToRelease (_pool_allocator);
   gtk_widget_destroy (_print_dialog);
+
+  _single_owner->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -184,6 +195,7 @@ void PoolSupervisor::OnUnPlugged ()
 void PoolSupervisor::Display ()
 {
   OnPoolSelected (0);
+  ToggleClassification (FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -193,14 +205,50 @@ void PoolSupervisor::Garnish ()
 }
 
 // --------------------------------------------------------------------------------
-gint PoolSupervisor::ComparePlayer (Player         *A,
-                                    Player         *B,
-                                    PoolSupervisor *pool_supervisor)
+gint PoolSupervisor::CompareSingleClassification (Player         *A,
+                                                  Player         *B,
+                                                  PoolSupervisor *pool_supervisor)
+{
+  return Pool::ComparePlayer (A,
+                              B,
+                              pool_supervisor->_single_owner,
+                              0);
+}
+
+// --------------------------------------------------------------------------------
+gint PoolSupervisor::CompareCombinedClassification (Player         *A,
+                                                    Player         *B,
+                                                    PoolSupervisor *pool_supervisor)
 {
   return Pool::ComparePlayer (A,
                               B,
                               pool_supervisor,
                               0);
+}
+
+// --------------------------------------------------------------------------------
+gint PoolSupervisor::CompareClassification (GtkTreeModel   *model,
+                                            GtkTreeIter    *a,
+                                            GtkTreeIter    *b,
+                                            PoolSupervisor *pool_supervisor)
+{
+  GtkWidget      *w              = pool_supervisor->_glade->GetWidget ("single_radiobutton");
+  Classification *classification = pool_supervisor->GetClassification ();
+  Player         *A              = classification->GetPlayer (model, a);
+  Player         *B              = classification->GetPlayer (model, b);
+
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+  {
+    return CompareSingleClassification (A,
+                                        B,
+                                        pool_supervisor);
+  }
+  else
+  {
+    return CompareCombinedClassification (A,
+                                          B,
+                                          pool_supervisor);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -269,8 +317,16 @@ void PoolSupervisor::Manage (Pool *pool)
                       NAME_COLUMN, pool->GetName (),
                       -1);
 
+  {
+    Stage          *previous_stage = GetPreviousStage ();
+    PoolSupervisor *previous_pool = dynamic_cast <PoolSupervisor *> (previous_stage->GetPreviousStage ());
+
+    pool->SetDataOwner (_single_owner,
+                        this,
+                        previous_pool);
+  }
+
   pool->SetRandSeed (0);
-  pool->SetDataOwner (this);
   pool->SetFilter (_filter);
   pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                       this);
@@ -626,8 +682,28 @@ GSList *PoolSupervisor::GetCurrentClassification ()
     }
   }
 
+  {
+    Player::AttributeId *attr_id = new Player::AttributeId ("rank", _single_owner);
+    GSList              *current;
+
+    result = g_slist_sort_with_data (result,
+                                     (GCompareDataFunc) CompareSingleClassification,
+                                     this);
+    current = result;
+    for (guint i = 0; current != NULL; i ++)
+    {
+      Player *player;
+
+      player = (Player *) current->data;
+
+      player->SetAttributeValue (attr_id,
+                                 i + 1);
+      current = g_slist_next (current);
+    }
+  }
+
   result = g_slist_sort_with_data (result,
-                                   (GCompareDataFunc) ComparePlayer,
+                                   (GCompareDataFunc) CompareCombinedClassification,
                                    this);
 
   return result;
@@ -636,27 +712,34 @@ GSList *PoolSupervisor::GetCurrentClassification ()
 // --------------------------------------------------------------------------------
 GSList *PoolSupervisor::GetOutputShortlist ()
 {
-  GSList *shortlist         = Stage::GetOutputShortlist ();
-  guint   nb_to_remove      = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
-  guint   rank              = g_slist_length (shortlist);
-  Player::AttributeId *attr = new Player::AttributeId ("final_rank");
+  GSList *shortlist    = Stage::GetOutputShortlist ();
+  guint   nb_to_remove = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
 
   for (guint i = 0; i < nb_to_remove; i++)
   {
-    Player *player;
-
-    player = (Player *) shortlist->data;
-    player->SetAttributeValue (attr,
-                               rank);
-    g_print (">>> %s (%d)\n", player->GetName (), rank);
-    rank--;
-
     shortlist = g_slist_delete_link (shortlist,
                                      g_slist_last (shortlist));
   }
-  Object::TryToRelease (attr);
 
   return shortlist;
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor::OnToggleSingleClassification (gboolean single_selected)
+{
+  Classification *classification = GetClassification ();
+
+  if (single_selected)
+  {
+    classification->SetDataOwner (_single_owner);
+  }
+  else
+  {
+    classification->SetDataOwner (this);
+  }
+
+  ToggleClassification (TRUE);
+  classification->SortDisplay ();
 }
 
 // --------------------------------------------------------------------------------
@@ -694,4 +777,13 @@ extern "C" G_MODULE_EXPORT void on_stuff_toolbutton_clicked (GtkWidget *widget,
   PoolSupervisor *ps = dynamic_cast <PoolSupervisor *> (owner);
 
   ps->OnStuffClicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_single_radiobutton_toggled (GtkWidget *widget,
+                                                               Object    *owner)
+{
+  PoolSupervisor *p = dynamic_cast <PoolSupervisor *> (owner);
+
+  p->OnToggleSingleClassification (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
 }

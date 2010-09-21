@@ -44,6 +44,9 @@ class Pool : public CanvasModule
     void  SortPlayers  ();
     void  Lock         ();
     void  UnLock       ();
+    void  SetDataOwner (Object *single_owner,
+                        Object *combined_owner,
+                        Object *combined_source_owner);
     void  SetStatusCbk (StatusCbk  cbk,
                         void      *data);
 
@@ -79,6 +82,8 @@ class Pool : public CanvasModule
                                gboolean  with_full_random = FALSE);
 
   private:
+    Object         *_single_owner;
+    Object         *_combined_source_owner;
     Data           *_max_score;
     guint           _rand_seed;
     guint           _number;
@@ -96,6 +101,12 @@ class Pool : public CanvasModule
     StatusCbk       _status_cbk;
 
   private:
+    typedef enum
+    {
+      AVERAGE,
+      SUM
+    } CombinedOperation;
+
     static gint _ComparePlayer (Player *A,
                                 Player *B,
                                 Pool   *pool);
@@ -120,6 +131,11 @@ class Pool : public CanvasModule
                             Player         *player);
 
     void RefreshDashBoard ();
+
+    void RefreshAttribute (Player            *player,
+                           gchar             *name,
+                           guint              value,
+                           CombinedOperation  operation);
 
     ~Pool ();
 };

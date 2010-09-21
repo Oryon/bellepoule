@@ -40,6 +40,8 @@ class PoolSupervisor : public virtual Stage, public Module
 
     void OnStuffClicked ();
 
+    void OnToggleSingleClassification (gboolean single_selected);
+
   private:
     void Display ();
     void Garnish ();
@@ -63,6 +65,7 @@ class PoolSupervisor : public virtual Stage, public Module
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
+    Object        *_single_owner;
     GtkListStore  *_pool_liststore;
     PoolAllocator *_pool_allocator;
     Pool          *_displayed_pool;
@@ -95,9 +98,18 @@ class PoolSupervisor : public virtual Stage, public Module
     static void OnPoolStatusUpdated (Pool           *pool,
                                      PoolSupervisor *ps);
 
-    static gint ComparePlayer (Player         *A,
-                               Player         *B,
-                               PoolSupervisor *pool_supervisor);
+    static gint CompareClassification (GtkTreeModel   *model,
+                                       GtkTreeIter    *a,
+                                       GtkTreeIter    *b,
+                                       PoolSupervisor *pool_supervisor);
+
+    static gint CompareSingleClassification (Player         *A,
+                                             Player         *B,
+                                             PoolSupervisor *pool_supervisor);
+
+    static gint CompareCombinedClassification (Player         *A,
+                                               Player         *B,
+                                               PoolSupervisor *pool_supervisor);
 };
 
 #endif

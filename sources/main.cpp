@@ -136,7 +136,7 @@ int main (int argc, char **argv)
       setlocale (LC_ALL, "");
 
       //g_setenv ("LANGUAGE",
-      //"en",
+      //"de",
       //TRUE);
 
       bindtextdomain ("BellePoule", translation_path);

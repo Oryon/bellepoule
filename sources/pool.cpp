@@ -143,6 +143,17 @@ gchar *Pool::GetName ()
 }
 
 // --------------------------------------------------------------------------------
+void Pool::SetDataOwner (Object *single_owner,
+                         Object *combined_owner,
+                         Object *combined_source_owner)
+{
+  Module::SetDataOwner (combined_owner);
+
+  _single_owner          = single_owner;
+  _combined_source_owner = combined_source_owner;
+}
+
+// --------------------------------------------------------------------------------
 void Pool::AddPlayer (Player *player,
                       Object *rank_owner)
 {
@@ -794,14 +805,22 @@ gint Pool::ComparePlayer (Player   *A,
                           guint32   rand_seed,
                           gboolean  with_full_random)
 {
-  if (with_full_random == FALSE)
+  if (B == NULL)
   {
-    guint ratio_A;
-    guint ratio_B;
-    gint  average_A;
-    gint  average_B;
-    guint HS_A;
-    guint HS_B;
+    return 1;
+  }
+  else if (A == NULL)
+  {
+    return -1;
+  }
+  else if (with_full_random == FALSE)
+  {
+    guint  ratio_A;
+    guint  ratio_B;
+    gint   average_A;
+    gint   average_B;
+    guint  HS_A;
+    guint  HS_B;
     Player::AttributeId attr_id ("", data_owner);
 
     attr_id._name = "victories_ratio";
@@ -836,9 +855,6 @@ gint Pool::ComparePlayer (Player   *A,
     }
   }
 
-  // Return always the same random value for the given players
-  // to avoid human manipulations. Without that, filling in the
-  // same result twice could modify the ranking.
   {
     guint         ref_A  = A->GetRef ();
     guint         ref_B  = B->GetRef ();
@@ -846,6 +862,9 @@ gint Pool::ComparePlayer (Player   *A,
     GRand        *rand;
     gint          result;
 
+    // Return always the same random value for the given players
+    // to avoid human manipulations. Without that, filling in the
+    // same result twice could modify the ranking.
     rand = g_rand_new_with_seed_array (seed,
                                        sizeof (seed) / sizeof (guint32));
     result = (gint) g_rand_int (rand);
@@ -888,9 +907,8 @@ void Pool::UnLock ()
 // --------------------------------------------------------------------------------
 void Pool::RefreshScoreData ()
 {
-  GSList             *ranking    = NULL;
-  guint               nb_players = GetNbPlayers ();
-  Player::AttributeId attr_id ("", GetDataOwner ());
+  GSList *ranking    = NULL;
+  guint   nb_players = GetNbPlayers ();
 
   _is_over   = TRUE;
   _has_error = FALSE;
@@ -949,12 +967,20 @@ void Pool::RefreshScoreData ()
     player_a->SetData (GetDataOwner (), "Victories", (void *) victories);
     player_a->SetData (GetDataOwner (), "HR", (void *) hits_received);
 
-    attr_id._name = "victories_ratio";
-    player_a->SetAttributeValue (&attr_id, (victories*1000 / (GetNbPlayers ()-1)));
-    attr_id._name = "indice";
-    player_a->SetAttributeValue (&attr_id, hits_scored+hits_received);
-    attr_id._name = "HS";
-    player_a->SetAttributeValue (&attr_id, hits_scored);
+    RefreshAttribute (player_a,
+                      "victories_ratio",
+                      (victories*1000 / (GetNbPlayers ()-1)),
+                      AVERAGE);
+
+    RefreshAttribute (player_a,
+                      "indice",
+                      hits_scored+hits_received,
+                      SUM);
+
+    RefreshAttribute (player_a,
+                      "HS",
+                      hits_scored,
+                      SUM);
 
     ranking = g_slist_append (ranking,
                               player_a);
@@ -1009,6 +1035,41 @@ void Pool::RefreshScoreData ()
       _status_item = Canvas::PutStockIconInTable (_title_table,
                                                   GTK_STOCK_EXECUTE,
                                                   0, 0);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::RefreshAttribute (Player            *player,
+                             gchar             *name,
+                             guint              value,
+                             CombinedOperation  operation)
+{
+  Player::AttributeId  single_attr_id  (name, _single_owner);
+  Player::AttributeId  combined_attr_id (name, GetDataOwner ());
+
+  player->SetAttributeValue (&single_attr_id,
+                             value);
+
+  if (_combined_source_owner == NULL)
+  {
+    player->SetAttributeValue (&combined_attr_id,
+                               value);
+  }
+  else
+  {
+    Player::AttributeId  source_attr_id (name, _combined_source_owner);
+    Attribute           *source_attr = player->GetAttribute (&source_attr_id);
+
+    if (operation == AVERAGE)
+    {
+      player->SetAttributeValue (&combined_attr_id,
+                                 ((guint) source_attr->GetValue () + value) / 2);
+    }
+    else
+    {
+      player->SetAttributeValue (&combined_attr_id,
+                                 (guint) source_attr->GetValue () + value);
     }
   }
 }

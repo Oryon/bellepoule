@@ -38,7 +38,6 @@ Stage::Stage (StageClass *stage_class)
   _stage_class           = stage_class;
   _attendees             = NULL;
   _classification        = NULL;
-  _classification_filter = NULL;
   _input_provider        = NULL;
 
   _sensitivity_trigger    = new SensitivityTrigger ();
@@ -58,7 +57,6 @@ Stage::~Stage ()
 
   TryToRelease (_score_stuffing_trigger);
   TryToRelease (_classification);
-  TryToRelease (_classification_filter);
   TryToRelease (_attendees);
 }
 
@@ -469,17 +467,30 @@ Classification *Stage::GetClassification ()
 // --------------------------------------------------------------------------------
 void Stage::SetClassificationFilter (Filter *filter)
 {
-  _classification_filter = filter;
-  _classification_filter->Retain ();
+  if (_classification == NULL)
+  {
+    Module *module = dynamic_cast <Module *> (this);
+    GtkWidget *classification_w = module->GetWidget ("classification_list_host");
+
+    if (classification_w == NULL)
+    {
+      classification_w = module->GetWidget ("classification_hook");
+    }
+
+    if (classification_w)
+    {
+      _classification = new Classification (filter);
+      _classification->SetDataOwner (this);
+      module->Plug (_classification,
+                    classification_w);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
 void Stage::UpdateClassification (GSList *result)
 {
-  Module    *module           = dynamic_cast <Module *> (this);
-  GtkWidget *classification_w = module->GetWidget ("classification_hook");
-
-  if (classification_w)
+  if (_classification)
   {
     Player::AttributeId *previous_attr_id   = NULL;
     Player::AttributeId *attr_id            = new Player::AttributeId ("rank", this);
@@ -488,15 +499,6 @@ void Stage::UpdateClassification (GSList *result)
     if (_input_provider)
     {
       previous_attr_id = new Player::AttributeId ("rank", _previous);
-    }
-
-    if (_classification == NULL)
-    {
-      _classification = new Classification (_classification_filter);
-
-      _classification->SetDataOwner (this);
-      module->Plug (_classification,
-                    classification_w);
     }
 
     _classification->Wipe ();

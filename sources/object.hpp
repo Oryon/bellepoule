@@ -24,6 +24,8 @@
 class Object
 {
   public:
+    Object (gchar *class_name = NULL);
+
     void SetData (Object         *owner,
                   gchar          *key,
                   void           *data,
@@ -45,8 +47,6 @@ class Object
 
   protected:
     virtual ~Object ();
-
-    Object (gchar *class_name = NULL);
 
     void RemoveAllData ();
 
