@@ -146,10 +146,11 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkRadioButton" id="combined_radiobutton">
-                        <property name="label" translatable="yes">Combined classification</property>
+                        <property name="label" translatable="yes">Classement combin&#xE9;</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="tooltip_text" translatable="yes">Le classement combinant le score de la poule plus ceux des poules pr&#xE9;c&#xE9;dentes.</property>
                         <property name="image">combined_score_image</property>
                         <property name="draw_indicator">False</property>
                         <property name="group">single_radiobutton</property>
@@ -162,10 +163,11 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="single_radiobutton">
-                        <property name="label" translatable="yes">Single classification</property>
+                        <property name="label" translatable="yes">Classement simple</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="tooltip_text" translatable="yes">Le classement de la poule sans tenir compte des pr&#xE9;c&#xE9;dentes.</property>
                         <property name="image">image1</property>
                         <property name="draw_indicator">False</property>
                         <property name="group">combined_radiobutton</property>

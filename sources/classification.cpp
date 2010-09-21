@@ -50,9 +50,6 @@ void Classification::SortDisplay ()
 {
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_store),
                                         1,
-                                        GTK_SORT_DESCENDING);
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_store),
-                                        1,
                                         GTK_SORT_ASCENDING);
 }
 

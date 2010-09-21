@@ -194,8 +194,13 @@ void PoolSupervisor::OnUnPlugged ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor::Display ()
 {
+  Classification *classification = GetClassification ();
+
   OnPoolSelected (0);
   ToggleClassification (FALSE);
+
+  classification->SetDataOwner (_single_owner);
+  classification->SortDisplay ();
 }
 
 // --------------------------------------------------------------------------------

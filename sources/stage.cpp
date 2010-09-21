@@ -436,6 +436,10 @@ void Stage::ToggleClassification (gboolean classification_on)
         UpdateClassification (result);
         g_slist_free (result);
       }
+      else
+      {
+        UpdateClassification (_result);
+      }
 
       if (main_w)
       {

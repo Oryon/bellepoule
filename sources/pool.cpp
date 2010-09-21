@@ -793,7 +793,7 @@ gint Pool::_ComparePlayer (Player *A,
 {
   return ComparePlayer (A,
                         B,
-                        pool->GetDataOwner (),
+                        pool->_single_owner,
                         pool->_rand_seed,
                         FALSE);
 }
@@ -1090,7 +1090,7 @@ gboolean Pool::HasError ()
 void Pool::RefreshDashBoard ()
 {
   guint               nb_players = GetNbPlayers ();
-  Player::AttributeId attr_id ("", GetDataOwner ());
+  Player::AttributeId attr_id ("", _single_owner);
 
   for (guint p = 0; p < nb_players; p++)
   {
@@ -1202,7 +1202,7 @@ void Pool::Save (xmlTextWriter *xml_writer)
 
   {
     GSList              *current = _player_list;
-    Player::AttributeId  attr_id ("", GetDataOwner ());
+    Player::AttributeId  attr_id ("", _single_owner);
     Attribute           *attr;
 
     for (guint i = 0; current != NULL; i++)
