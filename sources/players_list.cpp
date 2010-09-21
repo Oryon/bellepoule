@@ -366,19 +366,22 @@ gint PlayersList::CompareIterator (GtkTreeModel        *model,
                                    GtkTreeIter         *b,
                                    Player::AttributeId *attr_id)
 {
-  Player *player_a;
-  Player *player_b;
-
-  gtk_tree_model_get (model, a,
-                      gtk_tree_model_get_n_columns (model) - 1,
-                      &player_a, -1);
-  gtk_tree_model_get (model, b,
-                      gtk_tree_model_get_n_columns (model) - 1,
-                      &player_b, -1);
-
-  return Player::Compare (player_a,
-                          player_b,
+  return Player::Compare (GetPlayer (model, a),
+                          GetPlayer (model, b),
                           attr_id);
+}
+
+// --------------------------------------------------------------------------------
+Player *PlayersList::GetPlayer (GtkTreeModel *model,
+                                GtkTreeIter  *iter)
+{
+  Player *player;
+
+  gtk_tree_model_get (model, iter,
+                      gtk_tree_model_get_n_columns (model) - 1,
+                      &player, -1);
+
+  return player;
 }
 
 // --------------------------------------------------------------------------------
@@ -1022,9 +1025,7 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
         {
           Player *current_player;
 
-          gtk_tree_model_get (GTK_TREE_MODEL (_store), &iter,
-                              gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
-                              &current_player, -1);
+          current_player = GetPlayer (GTK_TREE_MODEL (_store), &iter);
 
           if (PlayerIsPrintable (current_player))
           {

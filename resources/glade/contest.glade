@@ -701,14 +701,14 @@ des scores</property>
                                 <property name="image">image2</property>
                                 <property name="image_position">right</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">radiobutton2</property>
+                                <property name="group">forbid_radiobutton</property>
                               </object>
                               <packing>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkRadioButton" id="radiobutton2">
+                              <object class="GtkRadioButton" id="forbid_radiobutton">
                                 <property name="label" translatable="yes">Interdire</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>

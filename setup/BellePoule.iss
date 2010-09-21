@@ -75,6 +75,21 @@ Source: "..\resources\translations\en\*"; DestDir: "{app}\resources\translations
 Source: "..\resources\translations\de\*"; DestDir: "{app}\resources\translations\de"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\translations\nl\*"; DestDir: "{app}\resources\translations\nl"; Flags: ignoreversion recursesubdirs
 
+Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "C:\MinGW\share\locale\nl\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\nl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\nl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\porting_layer\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\nl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\porting_layer\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "C:\MinGW\share\locale\de\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\de\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\de\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\porting_layer\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\de\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\porting_layer\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+
 ;Resources
 Source: "..\resources\glade\*.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\*.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
@@ -121,12 +136,6 @@ Source: "C:\MinGW\bin\libfontconfig-1.dll"; DestDir: "{app}\porting_layer\lib"; 
 Source: "C:\MinGW\bin\libfreetype-6.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libgsf-1-114.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\librsvg-2-2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
-
-; .mo
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 
 ; theme
 Source: "C:\MinGW\etc\gtk-2.0\gtkrc"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion
@@ -206,6 +215,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

@@ -30,6 +30,11 @@ class Classification : public PlayersList
     void Dump (gchar  *filename,
                GSList *attr_list);
 
+    void SortDisplay ();
+
+    void SetSortFunction (GtkTreeIterCompareFunc sort_func,
+                          gpointer               user_data);
+
   private:
     void OnPlugged ();
 

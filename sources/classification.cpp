@@ -46,6 +46,26 @@ void Classification::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+void Classification::SortDisplay ()
+{
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_store),
+                                        1,
+                                        GTK_SORT_ASCENDING);
+}
+
+// --------------------------------------------------------------------------------
+void Classification::SetSortFunction (GtkTreeIterCompareFunc sort_func,
+                                      gpointer               user_data)
+{
+  gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
+                                   1,
+                                   sort_func,
+                                   user_data,
+                                   NULL);
+  SortDisplay ();
+}
+
+// --------------------------------------------------------------------------------
 void Classification::Dump (gchar  *filename,
                            GSList *attr_list)
 {

@@ -47,11 +47,11 @@ class PlayersList : public Module
 
     void RemoveSelection ();
 
-    void OnAttrListUpdated ();
-
     void SetSensitiveState (gboolean sensitive_value);
 
     void Update (Player *player);
+
+    void OnAttrListUpdated ();
 
     GSList *CreateCustomList (CustomFilter filter);
 
@@ -63,6 +63,13 @@ class PlayersList : public Module
                             gboolean  modifiable);
 
     virtual void OnListChanged () {};
+
+  protected:
+    GtkListStore *_store;
+
+  public:
+    static Player *GetPlayer (GtkTreeModel *model,
+                              GtkTreeIter  *iter);
 
   private:
     void PrintHeader (GooCanvasItem *root_item,
@@ -86,7 +93,6 @@ class PlayersList : public Module
 
   private:
     GtkWidget    *_tree_view;
-    GtkListStore *_store;
     guint         _rights;
     guint         _nb_player_per_page;
     gdouble       _print_scale;

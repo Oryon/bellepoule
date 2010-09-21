@@ -138,12 +138,65 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
               </packing>
             </child>
             <child>
-              <object class="GtkViewport" id="classification_hook">
-                <property name="no_show_all">True</property>
-                <property name="resize_mode">queue</property>
-                <property name="shadow_type">none</property>
+              <object class="GtkVBox" id="classification_hook">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkHBox" id="hbox3">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkRadioButton" id="combined_radiobutton">
+                        <property name="label" translatable="yes">Classement combin&#xE9;</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="tooltip_text" translatable="yes">Le classement combinant le score de la poule plus ceux des poules pr&#xE9;c&#xE9;dentes.</property>
+                        <property name="image">combined_score_image</property>
+                        <property name="draw_indicator">False</property>
+                        <property name="group">single_radiobutton</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="single_radiobutton">
+                        <property name="label" translatable="yes">Classement simple</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="tooltip_text" translatable="yes">Le classement de la poule sans tenir compte des pr&#xE9;c&#xE9;dentes.</property>
+                        <property name="image">image1</property>
+                        <property name="draw_indicator">False</property>
+                        <property name="group">combined_radiobutton</property>
+                        <signal name="toggled" handler="on_single_radiobutton_toggled"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkViewport" id="classification_list_host">
+                    <property name="visible">True</property>
+                    <property name="resize_mode">queue</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -282,6 +335,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                         <property name="receives_default">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
+                        <property name="group">single_pool_radiobutton</property>
                       </object>
                       <packing>
                         <property name="position">0</property>
@@ -341,13 +395,14 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                         <property name="tooltip_text" translatable="yes">Contenu sp&#xE9;cialement con&#xE7;u pour les arbitres.</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
+                        <property name="group">for_display_radiobutton</property>
                       </object>
                       <packing>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkRadioButton" id="radiobutton2">
+                      <object class="GtkRadioButton" id="for_display_radiobutton">
                         <property name="label" translatable="yes">Pour affichage</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -395,6 +450,14 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkImage" id="combined_score_image">
+    <property name="visible">True</property>
+    <property name="pixbuf">stock_combined_scores.png</property>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="pixbuf">stock_scores.png</property>
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup"/>
   <object class="GtkSizeGroup" id="value_sizegroup"/>
