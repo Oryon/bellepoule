@@ -12,7 +12,7 @@
             <child>
               <object class="GtkToolButton" id="splitting_filter_toolbutton">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Donn&#xE9;es</property>
+                <property name="label" translatable="yes">Data</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_splitting_filter_toolbutton_clicked"/>
               </object>
@@ -117,7 +117,4 @@
     </widgets>
   </object>
   <object class="GtkTextBuffer" id="textbuffer1">
-    <property name="text" translatable="yes">Select the fencers to move to a new competition.
-          Not yet implemented :-(</property>
-  </object>
-</interface>
+    <property name="text" translatable="yes">Select the fencers to move to a new competition.</property>

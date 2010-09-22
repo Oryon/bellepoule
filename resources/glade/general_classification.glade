@@ -13,7 +13,7 @@
             <child>
               <object class="GtkToolButton" id="general_classification_filter_button">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Donn&#xE9;es</property>
+                <property name="label" translatable="yes">Data</property>
                 <property name="stock_id">gtk-index</property>
                 <signal name="clicked" handler="on_general_classification_filter_button_clicked"/>
               </object>
@@ -36,8 +36,8 @@
             <child>
               <object class="GtkToolButton" id="export_toolbutton">
                 <property name="visible">True</property>
-                <property name="tooltip_text" translatable="yes">Exporte le classement dans un fichier au format ".csv" pour des tableurs du type Excel ou OpenOffice</property>
-                <property name="label" translatable="yes">Exporter</property>
+                <property name="tooltip_text" translatable="yes">Export the general classification to a \".csv\" file that a spreadsheet like Excel or OpenOffice can open.</property>
+                <property name="label" translatable="yes">Export</property>
                 <property name="use_underline">True</property>
                 <property name="icon_widget">image1</property>
                 <signal name="clicked" handler="on_export_toolbutton_clicked"/>

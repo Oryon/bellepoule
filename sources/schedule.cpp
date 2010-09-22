@@ -918,13 +918,13 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
                                                           GTK_DIALOG_MODAL,
                                                           GTK_MESSAGE_QUESTION,
                                                           GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>"));
+                                                          gettext ("<b><big>Do you really want to cancel the current round?</big></b>"));
 
   gtk_window_set_title (GTK_WINDOW (dialog),
-                        gettext ("Revenir à la phase précédente ?"));
+                        gettext ("Go back to the previous round?"));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            gettext ("Toutes les saisies de cette phase seront annulées."));
+                                            gettext ("All the inputs of this round will be cancelled."));
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {

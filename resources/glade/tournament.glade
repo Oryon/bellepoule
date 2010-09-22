@@ -3,7 +3,7 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="root">
-    <property name="title" translatable="yes">BellePoule - Tournoi d'escrime</property>
+    <property name="title" translatable="yes">BellePoule - Fencing tournament</property>
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>
@@ -18,7 +18,7 @@
             <child>
               <object class="GtkMenuItem" id="menuitem1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Fichier</property>
+                <property name="label" translatable="yes">File</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu1">
@@ -45,7 +45,7 @@
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="recent_menuitem">
-                        <property name="label" translatable="yes">R&#xE9;cemment ouvert</property>
+                        <property name="label" translatable="yes">Recently opened</property>
                         <property name="visible">True</property>
                         <property name="image">image2</property>
                         <property name="use_stock">False</property>
@@ -75,14 +75,14 @@
             <child>
               <object class="GtkMenuItem" id="menuitem4">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Aide</property>
+                <property name="label" translatable="yes">Help</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="example_menuitem">
-                        <property name="label" translatable="yes">Ouvrir un exemple ...</property>
+                        <property name="label" translatable="yes">Open an example...</property>
                         <property name="visible">True</property>
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
@@ -155,8 +155,7 @@
     <property name="program_name">BellePoule</property>
     <property name="version">0.01/02</property>
     <property name="copyright">Copyright (C) 2009 Yannick Le Roux.</property>
-    <property name="comments" translatable="yes">Logiciel de gestion de tournois d'escrime.
-
+    <property name="comments" translatable="yes">Fencing tournament management software
 
 </property>
     <property name="website">http://betton.escrime.free.fr/index.php/bellepoule</property>
@@ -850,8 +849,8 @@ Portage Linux
 
 Conception/Codage:
   Yannick Le Roux</property>
-    <property name="translator_credits" translatable="yes">Marijn Somers (N&#xE9;erlandais)
-Julien Diaz (Allemand)</property>
+    <property name="translator_credits" translatable="yes">Marijn Somers (Dutch)
+Julien Diaz (german)</property>
     <property name="artists">S&#xE9;bastien Vermandel</property>
     <property name="logo">about.png</property>
     <signal name="close" handler="gtk_widget_hide"/>

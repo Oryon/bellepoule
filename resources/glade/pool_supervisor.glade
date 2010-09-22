@@ -52,7 +52,7 @@
                 <child>
                   <object class="GtkToolButton" id="pool_filter_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Donn&#xE9;es</property>
+                    <property name="label" translatable="yes">Data</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_pool_filter_toolbutton_clicked"/>
                   </object>
@@ -75,7 +75,7 @@
                 <child>
                   <object class="GtkToggleToolButton" id="pool_classification_toggletoolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Classement</property>
+                    <property name="label" translatable="yes">Classification</property>
                     <property name="use_underline">True</property>
                     <property name="icon_widget">score_image</property>
                     <signal name="toggled" handler="on_pool_classification_toggletoolbutton_toggled"/>
@@ -97,9 +97,9 @@
                 <child>
                   <object class="GtkToolButton" id="stuff_toolbutton">
                     <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Remplis tous les matchs de toutes les poules par des scores al&#xE9;atoires.
-Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de la comp&#xE9;tition.</property>
-                    <property name="label" translatable="yes">Remplissage auto</property>
+                    <property name="tooltip_text" translatable="yes">Fill in all the scores of all the pools randomly
+To activate/deactivate this button, go to the properties of the competition.</property>
+                    <property name="label" translatable="yes">Automatic stuffing</property>
                     <property name="use_underline">True</property>
                     <property name="icon_name">gnome-devel</property>
                     <signal name="clicked" handler="on_stuff_toolbutton_clicked"/>
@@ -146,7 +146,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkRadioButton" id="combined_radiobutton">
-                        <property name="label" translatable="yes">Classement combin&#xE9;</property>
+                        <property name="label" translatable="yes">Combined classification</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -163,7 +163,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="single_radiobutton">
-                        <property name="label" translatable="yes">Classement simple</property>
+                        <property name="label" translatable="yes">Single classification</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -269,7 +269,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">Nombre d'&#xE9;limin&#xE9;s (%)</property>
+                <property name="label" translatable="yes">Number of eliminated</property>
               </object>
               <packing>
                 <property name="top_attach">2</property>
@@ -280,7 +280,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
               <object class="GtkSpinButton" id="nb_eliminated_spinbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Le pourcentage d'&#xE9;limin&#xE9;s &#xE0; l'issu de cette phase.</property>
+                <property name="tooltip_text" translatable="yes">The rate of eliminated at the end of this round.</property>
                 <property name="max_length">3</property>
                 <property name="invisible_char">&#x25CF;</property>
                 <property name="adjustment">percent_adjustment</property>
@@ -329,7 +329,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkRadioButton" id="all_pool_radiobutton">
-                        <property name="label" translatable="yes">Toutes les poules</property>
+                        <property name="label" translatable="yes">All the pools</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -343,7 +343,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="single_pool_radiobutton">
-                        <property name="label" translatable="yes">Uniquement la poule s&#xE9;lectionn&#xE9;e</property>
+                        <property name="label" translatable="yes">Only the selected pool</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -361,7 +361,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
             <child type="label">
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;Quoi ?&lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;b&gt;What?&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
               </object>
             </child>
@@ -388,11 +388,11 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkRadioButton" id="for_referees_radiobutton">
-                        <property name="label" translatable="yes">Pour arbitrage</property>
+                        <property name="For arbitration" translatable="yes">Pour arbitrage</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="tooltip_text" translatable="yes">Contenu sp&#xE9;cialement con&#xE7;u pour les arbitres.</property>
+                        <property name="tooltip_text" translatable="yes">Content designed for the referees.</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">for_display_radiobutton</property>
@@ -403,7 +403,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="for_display_radiobutton">
-                        <property name="label" translatable="yes">Pour affichage</property>
+                        <property name="label" translatable="yes">For the bulletin board</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -421,7 +421,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
             <child type="label">
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;Pour quoi ?&lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;b&gt;For wath?&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
               </object>
             </child>

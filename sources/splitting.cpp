@@ -27,7 +27,7 @@
 
 #include "splitting.hpp"
 
-const gchar *Splitting::_class_name     = N_ ("Scission");
+const gchar *Splitting::_class_name     = N_ ("Split");
 const gchar *Splitting::_xml_class_name = "PointDeScission";
 
 Tournament *Splitting::_tournament = NULL;

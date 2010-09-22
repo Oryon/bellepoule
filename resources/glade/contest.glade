@@ -16,7 +16,7 @@
                 <child>
                   <object class="GtkToolButton" id="save_toolbutton">
                     <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Sauvegarde l'&#xE9;tat courant de la comp&#xE9;tition.</property>
+                    <property name="tooltip_text" translatable="yes">Save the current state of the competition.</property>
                     <property name="stock_id">gtk-save</property>
                     <signal name="clicked" handler="on_save_toolbutton_clicked"/>
                   </object>
@@ -49,7 +49,7 @@
                   <object class="GtkToolButton" id="formula_toolbutton">
                     <property name="visible">True</property>
                     <property name="tooltip_text" translatable="yes">Permet de configurer la formule en d&#xE9;finissant l'encha&#xEE;nement des poules, tableaux et autres phases.</property>
-                    <property name="label" translatable="yes">Formule</property>
+                    <property name="label" translatable="yes">Formula</property>
                     <property name="stock_id">gtk-preferences</property>
                     <signal name="clicked" handler="on_formula_toolbutton_clicked"/>
                   </object>
@@ -114,7 +114,7 @@
                         <child>
                           <object class="GtkLabel" id="contest_gender_label">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Homme</property>
+                            <property name="label" translatable="yes">Man</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>
@@ -126,7 +126,7 @@
                         <child>
                           <object class="GtkLabel" id="contest_category_label">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Cadet</property>
+                            <property name="label" translatable="yes">U16</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>
@@ -181,7 +181,7 @@
   </object>
   <object class="GtkDialog" id="properties_dialog">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Caract&#xE9;ristiques de la comp&#xE9;tition</property>
+    <property name="title" translatable="yes">Features of the competition</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
@@ -218,14 +218,14 @@
                           <object class="GtkLabel" id="label15">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Arme</property>
+                            <property name="label" translatable="yes">Weapon</property>
                           </object>
                         </child>
                         <child>
                           <object class="GtkLabel" id="label16">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Sexe</property>
+                            <property name="label" translatable="yes">Gender</property>
                           </object>
                           <packing>
                             <property name="top_attach">1</property>
@@ -236,7 +236,7 @@
                           <object class="GtkLabel" id="label17">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Categorie</property>
+                            <property name="label" translatable="yes">Category</property>
                           </object>
                           <packing>
                             <property name="top_attach">2</property>
@@ -327,7 +327,7 @@
                           <object class="GtkEntry" id="title_entry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="tooltip_text" translatable="yes">Texte libre purement informatif.</property>
+                            <property name="tooltip_text" translatable="yes">Free text for information purposes.</property>
                             <property name="invisible_char">&#x25CF;</property>
                           </object>
                           <packing>
@@ -339,7 +339,7 @@
                           <object class="GtkLabel" id="label8">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Organisateur</property>
+                            <property name="label" translatable="yes">Organizer</property>
                           </object>
                           <packing>
                             <property name="top_attach">1</property>
@@ -350,7 +350,7 @@
                           <object class="GtkEntry" id="organizer_entry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="tooltip_text" translatable="yes">Texte libre purement informatif.</property>
+                            <property name="tooltip_text" translatable="yes">Free text for information purposes.</property>
                             <property name="invisible_char">&#x25CF;</property>
                           </object>
                           <packing>
@@ -364,7 +364,7 @@
                           <object class="GtkEntry" id="web_site_entry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="tooltip_text" translatable="yes">Texte libre purement informatif.</property>
+                            <property name="tooltip_text" translatable="yes">Free text for information purposes.</property>
                             <property name="invisible_char">&#x25CF;</property>
                           </object>
                           <packing>
@@ -386,7 +386,7 @@
                               <object class="GtkLabel" id="web_site_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">Site web</property>
+                                <property name="label" translatable="yes">Web site</property>
                                 <attributes>
                                   <attribute name="underline" value="True"/>
                                   <attribute name="foreground" value="#00000000ffff"/>
@@ -439,7 +439,7 @@
                           <object class="GtkLabel" id="label12">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Appel</property>
+                            <property name="label" translatable="yes">Check-in</property>
                           </object>
                           <packing>
                             <property name="top_attach">1</property>
@@ -461,7 +461,7 @@
                           <object class="GtkLabel" id="label19">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">D&#xE9;but</property>
+                            <property name="label" translatable="yes">Start</property>
                           </object>
                           <packing>
                             <property name="top_attach">3</property>
@@ -474,7 +474,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
+                            <property name="tooltip_text" translatable="yes">Date and time are used to raise alarms to notify the organizer when events occur.</property>
                             <signal name="clicked" handler="on_calendar_button_clicked"/>
                           </object>
                           <packing>
@@ -489,7 +489,7 @@
                               <object class="GtkSpinButton" id="checkin_hour_spinbutton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
+                                <property name="tooltip_text" translatable="yes">Date and time are used to raise alarms to notify the organizer when events occur.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -516,7 +516,7 @@
                               <object class="GtkSpinButton" id="checkin_minute_spinbutton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
+                                <property name="tooltip_text" translatable="yes">Date and time are used to raise alarms to notify the organizer when events occur.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -544,7 +544,7 @@
                               <object class="GtkSpinButton" id="scratch_hour_spinbutton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
+                                <property name="tooltip_text" translatable="yes">Date and time are used to raise alarms to notify the organizer when events occur.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -571,7 +571,7 @@
                               <object class="GtkSpinButton" id="scratch_minute_spinbutton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
+                                <property name="tooltip_text" translatable="yes">Date and time are used to raise alarms to notify the organizer when events occur.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -599,7 +599,7 @@
                               <object class="GtkSpinButton" id="start_hour_spinbutton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
+                                <property name="tooltip_text" translatable="yes">Date and time are used to raise alarms to notify the organizer when events occur.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -626,7 +626,7 @@
                               <object class="GtkSpinButton" id="start_minute_spinbutton">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="tooltip_text" translatable="yes">Les informations de date et heures sont exploit&#xE9;es pour avertir par une alarme les organisateurs de l'&#xE9;minence de de certains &#xE9;v&#xE8;nements.</property>
+                                <property name="tooltip_text" translatable="yes">Date and time are used to raise alarms to notify the organizer when events occur.</property>
                                 <property name="max_length">2</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="width_chars">0</property>
@@ -654,7 +654,7 @@
                 <child type="label">
                   <object class="GtkLabel" id="label20">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Date / Horaires&lt;/b&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Date / Time&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </object>
                 </child>
@@ -683,9 +683,9 @@
                           <object class="GtkLabel" id="label7">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Remplissage
-automatique
-des scores</property>
+                            <property name="label" translatable="yes">Automatic
+score
+stuffing</property>
                           </object>
                         </child>
                         <child>
@@ -693,11 +693,11 @@ des scores</property>
                             <property name="visible">True</property>
                             <child>
                               <object class="GtkRadioButton" id="allow_radiobutton">
-                                <property name="label" translatable="yes">Autoriser</property>
+                                <property name="label" translatable="yes">Allow</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Rend actif le bouton de remplissage automatique des scores. Ca peut &#xE9;viter des saisies longues et laborieuses lors des s&#xE9;ances de prise en main de BellePoule.</property>
+                                <property name="tooltip_text" translatable="yes">Make the automatic score stuffing button available. I can save the user boring data captures during training sessions.</property>
                                 <property name="image">image2</property>
                                 <property name="image_position">right</property>
                                 <property name="draw_indicator">True</property>
@@ -709,11 +709,11 @@ des scores</property>
                             </child>
                             <child>
                               <object class="GtkRadioButton" id="forbid_radiobutton">
-                                <property name="label" translatable="yes">Interdire</property>
+                                <property name="label" translatable="yes">Forbid</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Rend inactif le bouton de remplissage automatique des scores.</property>
+                                <property name="tooltip_text" translatable="yes">Inhibit the automatic score stuffing button.</property>
                                 <property name="draw_indicator">True</property>
                                 <property name="group">allow_radiobutton</property>
                               </object>
@@ -775,7 +775,7 @@ des scores</property>
   <object class="GtkDialog" id="calendar_dialog">
     <property name="border_width">5</property>
     <property name="type">popup</property>
-    <property name="title" translatable="yes">Date de la comp&#xE9;tition</property>
+    <property name="title" translatable="yes">Date of competition</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>

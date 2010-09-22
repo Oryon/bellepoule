@@ -171,20 +171,21 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", gettext ("place"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", gettext ("nom"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", gettext ("last name"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "Prenom", gettext ("prénom"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "first_name", "Prenom", gettext ("first name"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_date", "DateNaissance", gettext ("date naissance"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "birth_date", "DateNaissance", gettext ("date of birth"));
+
     desc->_compare_func = (GCompareFunc) CompareDate;
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "Sexe", gettext ("sexe"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "Sexe", gettext ("gender"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->_free_value_allowed = FALSE;
-    desc->AddDiscreteValues ("M", gettext ("Masculin"),
-                             "F", gettext ("Féminin"), NULL);
+    desc->AddDiscreteValues ("M", gettext ("Male"),
+                             "F", gettext ("Female"), NULL);
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("nation"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddDiscreteValues ("resources/ioc_countries.txt");
 
@@ -198,17 +199,17 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", gettext ("classement"));
+    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", gettext ("ranking"));
     desc->_compare_func = (GCompareFunc) CompareRating;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("présence"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exporté"));
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
 
     // Not persistent data
     {
-      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", gettext ("Vict./Matchs (‰)"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", gettext ("Vict./Bouts (‰)"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
@@ -216,7 +217,7 @@ int main (int argc, char **argv)
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "HS", gettext ("Touches données"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "HS", "HS", gettext ("Hits scored"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 

@@ -47,7 +47,7 @@ Pool::Pool (Data  *max_score,
 
   _score_collector = NULL;
 
-  _name = g_strdup_printf (gettext ("Poule No %02d"), _number);
+  _name = g_strdup_printf (gettext ("Pool #%02d"), _number);
 }
 
 // --------------------------------------------------------------------------------
@@ -478,7 +478,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         y = - 10;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        gettext ("Victoires"),
+                                        gettext ("Victories"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -496,7 +496,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        gettext ("T. données"),
+                                        gettext ("H. scored"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -505,7 +505,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        gettext ("T. reçues"),
+                                        gettext ("H. recieved"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -514,7 +514,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        gettext ("Indice"),
+                                        gettext ("Index"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
