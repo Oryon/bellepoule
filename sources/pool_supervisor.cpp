@@ -22,7 +22,7 @@
 #include "pool_supervisor.hpp"
 #include "classification.hpp"
 
-const gchar *PoolSupervisor::_class_name     = N_ ("Poules");
+const gchar *PoolSupervisor::_class_name     = N_ ("Pools");
 const gchar *PoolSupervisor::_xml_class_name = "pool_stage";
 
 typedef enum
@@ -91,10 +91,10 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                         GTK_MESSAGE_QUESTION,
                                                         GTK_BUTTONS_OK_CANCEL,
-                                                        gettext ("<b><big>Imprimer ...</big></b>"));
+                                                        gettext ("<b><big>Print...</big></b>"));
 
     gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                          gettext ("Impression des feuilles de poule"));
+                          gettext ("Pool sheets printing"));
 
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
 
@@ -442,7 +442,7 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 
     if (classification)
     {
-      classification->Print (gettext ("Classement du tour de poule"));
+      classification->Print (gettext ("Pool round classification"));
     }
   }
   else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)

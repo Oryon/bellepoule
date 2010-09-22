@@ -38,7 +38,7 @@ gchar *Contest::weapon_image[_nb_weapon] =
 {
   N_ ("Sabre"),
   N_ ("Epée"),
-  N_ ("Fleuret")
+  N_ ("Foil")
 };
 
 gchar *Contest::weapon_xml_image[_nb_weapon] =
@@ -50,9 +50,9 @@ gchar *Contest::weapon_xml_image[_nb_weapon] =
 
 gchar *Contest::gender_image[_nb_gender] =
 {
-  N_ ("Masculin"),
-  N_ ("Féminin"),
-  N_ ("Mixte")
+  N_ ("Male"),
+  N_ ("Female"),
+  N_ ("Mixed")
 };
 
 gchar *Contest::gender_xml_image[_nb_gender] =
@@ -64,14 +64,14 @@ gchar *Contest::gender_xml_image[_nb_gender] =
 
 gchar *Contest::category_image[_nb_category] =
 {
-  N_ ("Poussin"),
-  N_ ("Pupille"),
-  N_ ("Benjamin"),
-  N_ ("Minime"),
-  N_ ("Cadet"),
-  N_ ("Junior"),
+  N_ ("U8"),
+  N_ ("U10"),
+  N_ ("U12"),
+  N_ ("U14"),
+  N_ ("U16"),
+  N_ ("U18"),
   N_ ("Senior"),
-  N_ ("Vétéran")
+  N_ ("Veteran")
 };
 
 gchar *Contest::category_xml_image[_nb_category] =
@@ -571,7 +571,7 @@ void Contest::InitInstance ()
   {
     GtkWidget *content_area;
 
-    _properties_dlg = gtk_dialog_new_with_buttons (gettext ("Propriétés de la compétition"),
+    _properties_dlg = gtk_dialog_new_with_buttons (gettext ("Competition properties"),
                                                    NULL,
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_STOCK_OK,
@@ -590,7 +590,7 @@ void Contest::InitInstance ()
   {
     GtkWidget *content_area;
 
-    _calendar_dlg = gtk_dialog_new_with_buttons (gettext ("Date de la compétition"),
+    _calendar_dlg = gtk_dialog_new_with_buttons (gettext ("Date of competition"),
                                                  NULL,
                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
                                                  GTK_STOCK_OK,
@@ -848,7 +848,7 @@ void Contest::Save ()
 {
   if (_filename == NULL)
   {
-    _filename = GetSaveFileName (gettext ("Choisissez un fichier de sauvegarde ..."),
+    _filename = GetSaveFileName (gettext ("Choose a file..."),
                                  "default_dir_name");
   }
 
@@ -962,7 +962,7 @@ gchar *Contest::GetSaveFileName (gchar *title,
   GtkWidget *chooser;
   char      *filename = NULL;
 
-  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choisissez un fichier de sauvegarde ..."),
+  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
                                                      GTK_WINDOW (_glade->GetRootWidget ()),
                                                      GTK_FILE_CHOOSER_ACTION_SAVE,
                                                      GTK_STOCK_CANCEL,
@@ -1189,7 +1189,7 @@ extern "C" G_MODULE_EXPORT void on_backupfile_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest::on_backupfile_button_clicked ()
 {
-  gchar *filename = GetSaveFileName (gettext ("Choisissez un fichier de secours ..."),
+  gchar *filename = GetSaveFileName (gettext ("Choose a backup file..."),
                                      "default_backup_dir_name");
 
   if (filename)
@@ -1246,13 +1246,14 @@ void Contest::on_contest_close_button_clicked ()
                                                           GTK_DIALOG_MODAL,
                                                           GTK_MESSAGE_QUESTION,
                                                           GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>Voulez-vous vraiment fermer\n<big>%s</big> ?</big></b>"), _name);
+                                                          gettext ("<b><big>Do you really want to close\n"
+                                                                   "<big>%s</big> ?</big></b>"), _name);
 
   gtk_window_set_title (GTK_WINDOW (dialog),
-                        gettext ("Fermer la compétition ?"));
+                        gettext ("Close the competition?"));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            gettext ("Les saisies non sauvegardées seront perdues."));
+                                            gettext ("Unsaved data will be lost."));
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {

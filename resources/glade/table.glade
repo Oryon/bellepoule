@@ -20,7 +20,7 @@
                     <child>
                       <object class="GtkLabel" id="label1">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">A partir de</property>
+                        <property name="label" translatable="yes">From</property>
                       </object>
                       <packing>
                         <property name="position">0</property>
@@ -63,7 +63,7 @@
                 <child>
                   <object class="GtkToolButton" id="table_filter_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Donn&#xE9;es</property>
+                    <property name="label" translatable="yes">Data</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_table_filter_toolbutton_clicked"/>
                   </object>
@@ -86,7 +86,7 @@
                 <child>
                   <object class="GtkToggleToolButton" id="table_classification_toggletoolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Classement</property>
+                    <property name="label" translatable="yes">Classification</property>
                     <property name="use_underline">True</property>
                     <property name="icon_widget">score_image</property>
                     <signal name="toggled" handler="on_table_classification_toggletoolbutton_toggled"/>
@@ -108,7 +108,7 @@
                 <child>
                   <object class="GtkToggleToolButton" id="input_toolbutton">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Saisir un match ...</property>
+                    <property name="label" translatable="yes">Fill in a match</property>
                     <property name="use_underline">True</property>
                     <property name="icon_widget">input_image</property>
                     <signal name="toggled" handler="on_input_toolbutton_toggled"/>
@@ -121,9 +121,9 @@
                 <child>
                   <object class="GtkToolButton" id="stuff_toolbutton">
                     <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Remplis tous les matchs du tableau par des scores al&#xE9;atoires.
-Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de la comp&#xE9;tition.</property>
-                    <property name="label" translatable="yes">Remplissage auto</property>
+                    <property name="tooltip_text" translatable="yes">Fill in all the scores randomly
+To activate/deactivate this button, go to the properties of the competition.</property>
+                    <property name="label" translatable="yes">Automatic stuffing</property>
                     <property name="use_underline">True</property>
                     <property name="icon_name">gnome-devel</property>
                     <signal name="clicked" handler="on_table_stuff_toolbutton_clicked"/>
@@ -213,14 +213,14 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                       <object class="GtkLabel" id="fencerA_label">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Tireur A</property>
+                        <property name="label" translatable="yes">A fencer</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkLabel" id="fencerB_label">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Tireur B</property>
+                        <property name="label" translatable="yes">B fencer</property>
                       </object>
                       <packing>
                         <property name="top_attach">1</property>
@@ -416,7 +416,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkRadioButton" id="table_radiobutton">
-                    <property name="label" translatable="yes">Le tableau</property>
+                    <property name="label" translatable="yes">The table</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -434,7 +434,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkRadioButton" id="match_sheet_radiobutton">
-                        <property name="label" translatable="yes">Les feuilles de match</property>
+                        <property name="label" translatable="yes">Score sheets</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -456,7 +456,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkRadioButton" id="all_radiobutton">
-                                <property name="label" translatable="yes">Toutes</property>
+                                <property name="label" translatable="yes">All</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -469,7 +469,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                             </child>
                             <child>
                               <object class="GtkRadioButton" id="pending_radiobutton">
-                                <property name="label" translatable="yes">En attente</property>
+                                <property name="label" translatable="yes">Pending</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -542,7 +542,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkRadioButton" id="level_all_radiobutton">
-                    <property name="label" translatable="yes">Les feuilles de match en attente</property>
+                    <property name="label" translatable="yes">The pending score sheets</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -555,7 +555,7 @@ Pour activer/d&#xE9;sactiver ce bouton, allez dans les propri&#xE9;t&#xE9;s de l
                 </child>
                 <child>
                   <object class="GtkRadioButton" id="level_pending_radiobutton">
-                    <property name="label" translatable="yes">Toutes les feuilles de match</property>
+                    <property name="label" translatable="yes">All the score sheets</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>

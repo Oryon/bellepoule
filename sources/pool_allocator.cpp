@@ -43,7 +43,7 @@ extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
                                                                Object    *owner);
 
-const gchar *PoolAllocator::_class_name     = N_ ("Composition poules");
+const gchar *PoolAllocator::_class_name     = N_ ("Pools arrangement");
 const gchar *PoolAllocator::_xml_class_name = "TourDePoules";
 
 // --------------------------------------------------------------------------------
@@ -1397,7 +1397,7 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
 {
   PoolAllocator *c = dynamic_cast <PoolAllocator *> (owner);
 
-  c->Print (gettext ("Répartition dans les poules"));
+  c->Print (gettext ("Pools allocation"));
 }
 
 // --------------------------------------------------------------------------------

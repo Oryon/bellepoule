@@ -135,7 +135,7 @@ Table::Table (StageClass *stage_class)
                                                               GTK_DIALOG_DESTROY_WITH_PARENT,
                                                               GTK_MESSAGE_QUESTION,
                                                               GTK_BUTTONS_OK_CANCEL,
-                                                              gettext ("<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"));
+                                                              gettext ("<b><big>Which score sheets of the selected table do you want to print?</big></b>"));
 
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_level_print_dialog));
 
@@ -150,10 +150,10 @@ Table::Table (StageClass *stage_class)
                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                         GTK_MESSAGE_QUESTION,
                                                         GTK_BUTTONS_OK_CANCEL,
-                                                        gettext ("<b><big>Que voulez-vous imprimer ?</big></b>"));
+                                                        gettext ("<b><big>What do you want to print?</big></b>"));
 
     gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                          gettext ("Impression du tableau"));
+                          gettext ("Table printing"));
 
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
 
@@ -1685,19 +1685,19 @@ gchar *Table::GetLevelImage (guint level)
 
   if (level == _nb_levels)
   {
-    image = g_strdup_printf (gettext ("Vainqueur"));
+    image = g_strdup_printf (gettext ("Winner"));
   }
   else if (level == _nb_levels - 1)
   {
-    image = g_strdup_printf (gettext ("Finale"));
+    image = g_strdup_printf (gettext ("Final"));
   }
   else if (level == _nb_levels - 2)
   {
-    image = g_strdup_printf (gettext ("Demi-finale"));
+    image = g_strdup_printf (gettext ("Semi-final"));
   }
   else
   {
-    image = g_strdup_printf (gettext ("Tableau de %d"), 1 << (_nb_levels - level));
+    image = g_strdup_printf (gettext ("Table of %d"), 1 << (_nb_levels - level));
   }
 
   return image;
@@ -2115,7 +2115,7 @@ void Table::OnPrint ()
 
     if (classification)
     {
-      classification->Print (gettext ("Classement du tableau"));
+      classification->Print (gettext ("Table round classification"));
     }
   }
   else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
@@ -2135,7 +2135,7 @@ void Table::OnPrint ()
       LookForMatchToPrint (0,
                            all_sheet);
       _print_full_table = FALSE;
-      Print (gettext ("Feuille de match"));
+      Print (gettext ("Score sheet"));
     }
   }
 
@@ -2149,7 +2149,7 @@ gboolean Table::OnPrintLevel (GooCanvasItem  *item,
                               Table          *table)
 {
   guint level_to_print = (guint) g_object_get_data (G_OBJECT (item), "level_to_print");
-  gchar *title         = g_strdup_printf (gettext ("%s : Impression des matchs"), table->GetLevelImage (level_to_print));
+  gchar *title         = g_strdup_printf (gettext ("%s: score sheets printing"), table->GetLevelImage (level_to_print));
 
   gtk_window_set_title (GTK_WINDOW (table->_level_print_dialog),
                         title);
@@ -2163,7 +2163,7 @@ gboolean Table::OnPrintLevel (GooCanvasItem  *item,
     table->LookForMatchToPrint (level_to_print,
                                 all_sheet);
     table->_print_full_table = FALSE;
-    table->Print (gettext ("Feuille de match"));
+    table->Print (gettext ("Score sheet"));
   }
 
   gtk_widget_hide (table->_level_print_dialog);
@@ -2186,7 +2186,7 @@ gboolean Table::OnPrintMatch (GooCanvasItem  *item,
   table->_match_to_print = g_slist_prepend (table->_match_to_print,
                                             g_object_get_data (G_OBJECT (item), "match_to_print"));
   table->_print_full_table = FALSE;
-  table->Print (gettext ("Feuille de match"));
+  table->Print (gettext ("Score sheet"));
 
   return TRUE;
 }

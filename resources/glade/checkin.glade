@@ -102,8 +102,8 @@
                 <child>
                   <object class="GtkToolButton" id="import_toolbutton">
                     <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">FFF est le format sous lequel la F&#xE9;d&#xE9;ration Fran&#xE7;aise d'Escrime  fournit les listes de tireurs inscrits aux comp&#xE9;titions par l'interm&#xE9;diaire de son site internet. </property>
-                    <property name="label" translatable="yes">Importer fichier .FFF</property>
+                    <property name="tooltip_text" translatable="yes">FFF (Fencing File Format) is a format specified by the FIE. It's used by the french federation to provide the competion organiser with the registered fencer list.</property>
+                    <property name="label" translatable="yes">Import .FFF file</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-convert</property>
                     <signal name="clicked" handler="on_import_toolbutton_clicked"/>
@@ -124,7 +124,7 @@
                 <child>
                   <object class="GtkToolButton" id="players_list_filter_button">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Donn&#xE9;es</property>
+                    <property name="label" translatable="yes">Data</property>
                     <property name="stock_id">gtk-index</property>
                     <signal name="clicked" handler="on_players_list_filter_button_clicked"/>
                   </object>
@@ -182,7 +182,7 @@
   </object>
   <object class="GtkDialog" id="FillInForm">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Ajouter un tireur</property>
+    <property name="title" translatable="yes">Add a fencer</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>

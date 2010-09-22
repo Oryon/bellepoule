@@ -181,7 +181,7 @@ void Tournament::OnNew ()
 // --------------------------------------------------------------------------------
 void Tournament::OnOpen (gchar *current_folder)
 {
-  GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choisissez un fichier de compétition à ouvrir ..."),
+  GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a competion file to open... "),
                                                     NULL,
                                                     GTK_FILE_CHOOSER_ACTION_OPEN,
                                                     GTK_STOCK_CANCEL,
@@ -194,7 +194,7 @@ void Tournament::OnOpen (gchar *current_folder)
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              gettext ("Les fichiers BellePoule (.cocot)"));
+                              gettext ("BellePoule files (.cotcot)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.cotcot");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -205,7 +205,7 @@ void Tournament::OnOpen (gchar *current_folder)
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              gettext ("Tous les fichiers"));
+                              gettext ("All files"));
     gtk_file_filter_add_pattern (filter,
                                  "*");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -314,7 +314,7 @@ void Tournament::OnOpenExample ()
 // --------------------------------------------------------------------------------
 void Tournament::OnRecent ()
 {
-  GtkWidget *dialog = gtk_recent_chooser_dialog_new (gettext ("Fichiers récemment ouverts"),
+  GtkWidget *dialog = gtk_recent_chooser_dialog_new (gettext ("Recently opened files"),
                                                      NULL,
                                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -326,7 +326,7 @@ void Tournament::OnRecent ()
     gtk_recent_filter_add_pattern (filter,
                                    "*.cotcot");
     gtk_recent_filter_set_name (filter,
-                                gettext ("Fichiers BellePoule"));
+                                gettext ("BellePoule files"));
 
     gtk_recent_chooser_add_filter (GTK_RECENT_CHOOSER (dialog),
                                    filter);
@@ -417,10 +417,10 @@ extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
                                                           GTK_DIALOG_MODAL,
                                                           GTK_MESSAGE_QUESTION,
                                                           GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>Voulez-vous vraiment quitter BellePoule ?</big></b>"));
+                                                          gettext ("<b><big>Do you really want to quit BellePoule</big></b>"));
 
   gtk_window_set_title (GTK_WINDOW (dialog),
-                        gettext ("Quitter BellePoule ?"));
+                        gettext ("Quit BellePoule?"));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                             gettext ("Toutes les compétitions non sauvegardées seront perdues."));
