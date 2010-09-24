@@ -97,13 +97,13 @@ void Pool::Stuff ()
 
     if (g_random_boolean ())
     {
-      match->SetScore (A, _max_score->_value);
-      match->SetScore (B, score);
+      match->SetScore (A, _max_score->_value, TRUE);
+      match->SetScore (B, score, FALSE);
     }
     else
     {
-      match->SetScore (A, score);
-      match->SetScore (B, _max_score->_value);
+      match->SetScore (A, score, FALSE);
+      match->SetScore (B, _max_score->_value, TRUE);
     }
   }
 
@@ -1334,16 +1334,31 @@ void Pool::Load (xmlNode *xml_node,
 
           if (match)
           {
+            gboolean is_the_best = FALSE;
+
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "Statut");
+            if (attr && attr[0] == 'V')
+            {
+              is_the_best = TRUE;
+            }
+
             attr = (gchar *) xmlGetProp (A, BAD_CAST "Score");
+
             if (attr)
             {
-              match->SetScore (player_A, atoi (attr));
+              match->SetScore (player_A, atoi (attr), is_the_best);
+            }
+
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "Statut");
+            if (attr && attr[0] == 'V')
+            {
+              is_the_best = TRUE;
             }
 
             attr = (gchar *) xmlGetProp (B, BAD_CAST "Score");
             if (attr)
             {
-              match->SetScore (player_B, atoi (attr));
+              match->SetScore (player_B, atoi (attr), is_the_best);
             }
 
             if (   (match->PlayerHasScore (player_A) == FALSE)

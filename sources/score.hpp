@@ -32,7 +32,8 @@ class Score : public Object
 
     gchar *GetImage ();
 
-    void Set (gint score);
+    void Set (gint     score,
+              gboolean is_the_best);
 
     void Clean ();
 
@@ -44,6 +45,7 @@ class Score : public Object
     gboolean   _is_known;
     Data      *_max;
     guint      _score;
+    gboolean   _is_the_best;
 };
 
 #endif

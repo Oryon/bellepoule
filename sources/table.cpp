@@ -1168,8 +1168,9 @@ void Table::LoadMatch (xmlNode *xml_node,
         }
         else
         {
-          gchar  *attr;
-          Player *player;
+          gchar    *attr;
+          Player   *player;
+          gboolean  is_the_best = FALSE;
 
           B = n;
 
@@ -1180,10 +1181,17 @@ void Table::LoadMatch (xmlNode *xml_node,
             SetPlayer (match,
                        player,
                        0);
+
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "Statut");
+            if (attr && attr[0] == 'V')
+            {
+              is_the_best = TRUE;
+            }
+
             attr = (gchar *) xmlGetProp (A, BAD_CAST "Score");
             if (attr)
             {
-              match->SetScore (player, atoi (attr));
+              match->SetScore (player, atoi (attr), is_the_best);
             }
           }
 
@@ -1194,10 +1202,17 @@ void Table::LoadMatch (xmlNode *xml_node,
             SetPlayer (match,
                        player,
                        1);
+
+            attr = (gchar *) xmlGetProp (A, BAD_CAST "Statut");
+            if (attr && attr[0] == 'V')
+            {
+              is_the_best = TRUE;
+            }
+
             attr = (gchar *) xmlGetProp (B, BAD_CAST "Score");
             if (attr)
             {
-              match->SetScore (player, atoi (attr));
+              match->SetScore (player, atoi (attr), is_the_best);
             }
           }
           A = NULL;
@@ -1450,16 +1465,16 @@ gboolean Table::Stuff (GNode *node,
 
       if (g_random_boolean ())
       {
-        data->_match->SetScore (A, table->_max_score->_value);
+        data->_match->SetScore (A, table->_max_score->_value, TRUE);
         data->_match->SetScore (B, g_random_int_range (0,
-                                                       table->_max_score->_value));
+                                                       table->_max_score->_value), FALSE);
         winner = A;
       }
       else
       {
         data->_match->SetScore (A, g_random_int_range (0,
-                                                       table->_max_score->_value));
-        data->_match->SetScore (B, table->_max_score->_value);
+                                                       table->_max_score->_value), FALSE);
+        data->_match->SetScore (B, table->_max_score->_value, TRUE);
         winner = B;
       }
 

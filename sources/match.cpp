@@ -154,16 +154,17 @@ gboolean Match::PlayerHasScore (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Match::SetScore (Player *player,
-                      gint    score)
+void Match::SetScore (Player   *player,
+                      gint      score,
+                      gboolean  is_the_best)
 {
   if (_A == player)
   {
-    _A_score->Set (score);
+    _A_score->Set (score, is_the_best);
   }
   else if (_B == player)
   {
-    _B_score->Set (score);
+    _B_score->Set (score, is_the_best);
   }
 }
 
@@ -200,31 +201,45 @@ gboolean Match::SetScore (Player *player,
         && (g_ascii_toupper (score[0]) == 'V'))
     {
       SetScore (player,
-                _max_score->_value);
+                _max_score->_value,
+                TRUE);
       result = TRUE;
     }
-    else if (ScoreIsNumber (score))
+    else
     {
-      gchar *max_str        = g_strdup_printf ("%d", _max_score->_value);
-      gchar *one_digit_more = g_strdup_printf ("%s0", score);
+      gchar    *score_value = score;
+      gboolean  is_the_best = FALSE;
 
-      SetScore (player,
-                atoi (score));
-      if (strlen (score) >= strlen (max_str))
+      if (   (strlen (score) > 1)
+          && (g_ascii_toupper (score[0]) == 'W'))
       {
-        result = TRUE;
-      }
-      else if ((guint) atoi (one_digit_more) > _max_score->_value)
-      {
-        result = TRUE;
-      }
-      else
-      {
-        result = FALSE;
+        score_value = &score[1];
       }
 
-      g_free (one_digit_more);
-      g_free (max_str);
+      if (ScoreIsNumber (score_value))
+      {
+        gchar *max_str        = g_strdup_printf ("%d", _max_score->_value);
+        gchar *one_digit_more = g_strdup_printf ("%s0", score_value);
+
+        SetScore (player,
+                  atoi (score_value),
+                  is_the_best);
+        if (strlen (score_value) >= strlen (max_str))
+        {
+          result = TRUE;
+        }
+        else if ((guint) atoi (one_digit_more) > _max_score->_value)
+        {
+          result = TRUE;
+        }
+        else
+        {
+          result = FALSE;
+        }
+
+        g_free (one_digit_more);
+        g_free (max_str);
+      }
     }
   }
 

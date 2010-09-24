@@ -46,7 +46,7 @@ class Match : public Object
 
     gboolean PlayerHasScore (Player *player);
 
-    void SetScore (Player *player, gint score);
+    void SetScore (Player *player, gint score, gboolean is_the_best);
 
     gboolean SetScore (Player *player, gchar *score);
 

@@ -23,9 +23,10 @@
 Score::Score  (Data *max)
 : Object ("Score")
 {
-  _score     = 0;
-  _is_known  = false;
-  _max       = max;
+  _score       = 0;
+  _is_known    = FALSE;
+  _max         = max;
+  _is_the_best = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -56,6 +57,10 @@ gchar *Score::GetImage ()
     {
       image = g_strdup_printf ("V");
     }
+    else if (_is_the_best)
+    {
+      image = g_strdup_printf ("V%d", _score);
+    }
     else
     {
       image = g_strdup_printf ("%d", _score);
@@ -72,20 +77,27 @@ gchar *Score::GetImage ()
 // --------------------------------------------------------------------------------
 void Score::Clean ()
 {
-  _is_known = false;
+  _is_known = FALSE;
 }
 
 // --------------------------------------------------------------------------------
-void Score::Set (gint score)
+void Score::Set (gint     score,
+                 gboolean is_the_best)
 {
   if (score < 0)
   {
-    _is_known = false;
+    _is_known    = FALSE;
+    _is_the_best = FALSE;
   }
   else
   {
-    _is_known = true;
-    _score    = score;
+    _is_known    = TRUE;
+    _score       = score;
+    _is_the_best = is_the_best;
+    if (_score == _max->_value)
+    {
+      _is_the_best = TRUE;
+    }
   }
 }
 
@@ -95,10 +107,10 @@ gboolean Score::IsValid ()
   if (   IsKnown ()
       && (_score > _max->_value))
   {
-    return false;
+    return FALSE;
   }
 
-  return true;
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -109,15 +121,23 @@ gboolean Score::IsConsistentWith (Score *with)
   {
     return TRUE;
   }
-  else if (Get () == with->Get ())
+  else if (_is_the_best == with->_is_the_best)
   {
-    return false;
+    return FALSE;
   }
-  else if (   (Get () >= _max->_value)
-           && (with->Get () >= _max->_value))
+  else if (_is_the_best && _score < with->_score)
   {
-    return false;
+    return FALSE;
+  }
+  else if (with->_is_the_best && with->_score < _score)
+  {
+    return FALSE;
+  }
+  else if (   (_score >= _max->_value)
+           && (with->_score >= _max->_value))
+  {
+    return FALSE;
   }
 
-  return true;
+  return TRUE;
 }
