@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-09-22 21:21+0100\n"
-"Last-Translator: Julien Diaz <Unknown>\n"
-"Language-Team:  <de@li.org>\n"
+"PO-Revision-Date: 2010-09-22 23:46+0000\n"
+"Last-Translator: betonniere <Unknown>\n"
+"Language-Team: <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-09-20 05:46+0000\n"
+"X-Launchpad-Export-Date: 2010-09-24 05:23+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
-"X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Language: German\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
 #: ../../sources/checkin.cpp:27
 #: ../../resources/glade/contest.glade:442
@@ -33,8 +33,13 @@ msgid "Fencer list printing"
 msgstr "Druck der Fechterliste"
 
 #: ../../sources/checkin.cpp:201
-msgid "Uncheck this box to quicken the data input. The corresponding field will be ignored on TAB key pressed."
-msgstr "Deaktivieren Sie dieses Kästchen, um die Navigation zu beschleunigen. Die entsprechenden Felder wird bei den Unterstützungen auf dem tab-Anschlag ignoriert."
+msgid ""
+"Uncheck this box to quicken the data input. The corresponding field will be "
+"ignored on TAB key pressed."
+msgstr ""
+"Deaktivieren Sie dieses Kästchen, um die Navigation zu beschleunigen. Die "
+"entsprechenden Felder wird bei den Unterstützungen auf dem tab-Anschlag "
+"ignoriert."
 
 #: ../../sources/checkin.cpp:464
 msgid "Choose a fencer file to import..."
@@ -150,7 +155,7 @@ msgid "Choose a backup file..."
 msgstr "Wählen Sie eine Schutzdatei ..."
 
 #: ../../sources/contest.cpp:1249
-#, c-format
+#, id-format
 msgid ""
 "<b><big>Do you really want to close\n"
 "<big>%s</big> ?</big></b>"
@@ -237,7 +242,7 @@ msgid "Vict./Bouts (‰)"
 msgstr "Siege/Gefechte (%)"
 
 #: ../../sources/main.cpp:215
-msgid "index"
+msgid "indice"
 msgstr "Trefferdifferenz"
 
 #: ../../sources/main.cpp:219
@@ -249,7 +254,7 @@ msgid "rang d'entrée"
 msgstr "Startplatz"
 
 #: ../../sources/pool.cpp:50
-#, c-format
+#, id-format
 msgid "Pool #%02d"
 msgstr "Rundennummer %02d"
 
@@ -309,7 +314,8 @@ msgstr "Rangfolge nach dem Vorrunde"
 
 #: ../../sources/schedule.cpp:921
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
+msgstr ""
+"<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
 
 #: ../../sources/schedule.cpp:924
 msgid "Go back to the previous round?"
@@ -329,8 +335,12 @@ msgid "Tableau"
 msgstr "Tabelle"
 
 #: ../../sources/table.cpp:138
-msgid "<b><big>Which score sheets of the selected table do you want to print?</big></b>"
-msgstr "<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie drucken?</big></b>"
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
+msgstr ""
+"<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie "
+"drucken?</big></b>"
 
 #: ../../sources/table.cpp:153
 msgid "<b><big>What do you want to print?</big></b>"
@@ -353,12 +363,12 @@ msgid "Semi-final"
 msgstr "Halbfinal"
 
 #: ../../sources/table.cpp:1700
-#, c-format
+#, id-format
 msgid "Table of %d"
 msgstr "letzte %d"
 
 #: ../../sources/table.cpp:1895
-#, c-format
+#, id-format
 msgid "Match %s"
 msgstr "Gefecht %s"
 
@@ -373,13 +383,13 @@ msgid "Score sheet"
 msgstr "Gefechtblatt"
 
 #: ../../sources/table.cpp:2152
-#, c-format
+#, id-format
 msgid "%s: score sheets printing"
 msgstr "%s : Druck der Gefechte"
 
 #: ../../sources/tournament.cpp:184
 msgid "Choose a competion file to open... "
-msgstr "Wählen Sie eine Turnierdatei zu öffnen ..."
+msgstr "Wählen Sie eine Turnierdatei zu öffnen ... "
 
 #: ../../sources/tournament.cpp:197
 msgid "BellePoule files (.cotcot)"
@@ -419,8 +429,13 @@ msgid "9999"
 msgstr "9999"
 
 #: ../../resources/glade/checkin.glade:105
-msgid "FFF (Fencing File Format) is a format specified by the FIE. It's used by the french federation to provide the competion organiser with the registered fencer list."
-msgstr "FFF ist das Format, unter dem der französischer Fechterbund die Listen von Fechtern liefert, die an das Turnier über ihr Netzstandort eingetragen sind. "
+msgid ""
+"FFF (Fencing File Format) is a format specified by the FIE. It's used by the "
+"french federation to provide the competion organiser with the registered "
+"fencer list."
+msgstr ""
+"FFF ist das Format, unter dem der französischer Fechterbund die Listen von "
+"Fechtern liefert, die an das Turnier über ihr Netzstandort eingetragen sind."
 
 #: ../../resources/glade/checkin.glade:106
 msgid "Import .FFF file"
@@ -456,8 +471,12 @@ msgid "Permet de renseigner les caractéristiques de la compétition."
 msgstr "Erlaubt, die Eigenschaften des Turniers zu informieren."
 
 #: ../../resources/glade/contest.glade:51
-msgid "Permet de configurer la formule en définissant l'enchaînement des poules, tableaux et autres phases."
-msgstr "Erlaubt, die Formel darzustellen, indem man die Verkettung der Runden, Tabellen und anderer Phasen definiert."
+msgid ""
+"Permet de configurer la formule en définissant l'enchaînement des poules, "
+"tableaux et autres phases."
+msgstr ""
+"Erlaubt, die Formel darzustellen, indem man die Verkettung der Runden, "
+"Tabellen und anderer Phasen definiert."
 
 #: ../../resources/glade/contest.glade:52
 msgid "Formula"
@@ -532,8 +551,12 @@ msgstr "31/03/2009"
 #: ../../resources/glade/contest.glade:574
 #: ../../resources/glade/contest.glade:602
 #: ../../resources/glade/contest.glade:629
-msgid "Date and time are used to raise alarms to notify the organizer when events occur."
-msgstr "Die Informationen von Datum und Stunden werden genutzt, um die Organisatoren vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu warnen."
+msgid ""
+"Date and time are used to raise alarms to notify the organizer when events "
+"occur."
+msgstr ""
+"Die Informationen von Datum und Stunden werden genutzt, um die Organisatoren "
+"vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu warnen."
 
 #: ../../resources/glade/contest.glade:509
 #: ../../resources/glade/contest.glade:564
@@ -560,8 +583,12 @@ msgid "Allow"
 msgstr "Erlauben"
 
 #: ../../resources/glade/contest.glade:700
-msgid "Make the automatic score stuffing button available. I can save the user boring data captures during training sessions."
-msgstr "Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann lange und mühselige Erfassungen während den Testen von BellePoule vermeiden."
+msgid ""
+"Make the automatic score stuffing button available. I can save the user "
+"boring data captures during training sessions."
+msgstr ""
+"Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann lange "
+"und mühselige Erfassungen während den Testen von BellePoule vermeiden."
 
 #: ../../resources/glade/contest.glade:712
 msgid "Forbid"
@@ -576,8 +603,12 @@ msgid "<b>Scores</b>"
 msgstr "<b>Punktestande</b>"
 
 #: ../../resources/glade/general_classification.glade:39
-msgid "Export the general classification to a \".csv\" file that a spreadsheet like Excel or OpenOffice can open."
-msgstr "Exportiert die Rangfolge in eine \".csv\" Datei-Format für Excel oder OpenOffice-Typ"
+msgid ""
+"Export the general classification to a \".csv\" file that a spreadsheet like "
+"Excel or OpenOffice can open."
+msgstr ""
+"Exportiert die Rangfolge in eine \".csv\" Datei-Format für Excel oder "
+"OpenOffice-Typ"
 
 #: ../../resources/glade/general_classification.glade:40
 msgid "Export"
@@ -585,7 +616,9 @@ msgstr "Exportieren"
 
 #: ../../resources/glade/pool_allocator.glade:17
 msgid "Mask or unmask some data type as well as define their display order."
-msgstr "Erlaubt, bestimmte Angaben anzuschlagen und zu maskieren sowie ihren Anschlagordnung zu definieren."
+msgstr ""
+"Erlaubt, bestimmte Angaben anzuschlagen und zu maskieren sowie ihren "
+"Anschlagordnung zu definieren."
 
 #: ../../resources/glade/pool_allocator.glade:30
 #: ../../resources/glade/schedule.glade:137
@@ -615,7 +648,8 @@ msgid ""
 "To activate/deactivate this button, go to the properties of the competition. "
 msgstr ""
 "Füllt alle Gefecht aller Runden durch Zufallsstände.\n"
-"Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des Turniers."
+"Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
+"Turniers. "
 
 #: ../../resources/glade/pool_supervisor.glade:102
 #: ../../resources/glade/table.glade:126
@@ -627,7 +661,9 @@ msgid "Combined classification"
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:153
-msgid "Le classement combinant le score de la poule plus ceux des poules précédentes."
+msgid ""
+"Le classement combinant le score de la poule plus ceux des poules "
+"précédentes."
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:166
@@ -721,7 +757,8 @@ msgid ""
 "To activate/deactivate this button, go to the properties of the competition. "
 msgstr ""
 "Füllt alle Gefecht der Tabelle durch Zufallsstände.\n"
-"Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des Turniers."
+"Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
+"Turniers. "
 
 #: ../../resources/glade/table.glade:190
 msgid "<b>Match</b>"
@@ -1450,7 +1487,8 @@ msgid ""
 "notice like this when it starts in an interactive mode:\n"
 "\n"
 "    <program>  Copyright (C) <year>  <name of author>\n"
-"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
+"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
+"w'.\n"
 "    This is free software, and you are welcome to redistribute it\n"
 "    under certain conditions; type `show c' for details.\n"
 "\n"
@@ -1458,7 +1496,8 @@ msgid ""
 "parts of the General Public License.  Of course, your program's commands\n"
 "might be different; for a GUI interface, you would use an \"about box\".\n"
 "\n"
-"  You should also get your employer (if you work as a programmer) or school,\n"
+"  You should also get your employer (if you work as a programmer) or "
+"school,\n"
 "if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
 "For more information on this, and how to apply and follow the GNU GPL, see\n"
 "<http://www.gnu.org/licenses/>.\n"
@@ -1473,9 +1512,12 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:853
 msgid ""
-"Marijn Somers (Néerlandais)\n"
-"Julien Diaz (Allemand)"
+"Marijn Somers (Dutch)\n"
+"Julien Diaz (German)"
 msgstr ""
 
-#~ msgid "points"
-#~ msgstr "Punkte"
+msgid "points"
+msgstr "Punkte"
+
+#~ msgid "index"
+#~ msgstr "Trefferdifferenz"
