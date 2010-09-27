@@ -443,7 +443,7 @@ Contest *Contest::Duplicate ()
 {
   Contest *contest = new Contest ();
 
-  contest->_schedule->CreateDefault ();
+  contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;
 
   if (_owner)

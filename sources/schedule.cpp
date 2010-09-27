@@ -120,7 +120,7 @@ Stage *Schedule::GetStage (guint index)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::CreateDefault ()
+void Schedule::CreateDefault (gboolean without_pools)
 {
   if (_stage_list == NULL)
   {
@@ -138,10 +138,13 @@ void Schedule::CreateDefault ()
       }
     }
 
-    stage = Stage::CreateInstance ("pool_stage");
-    if (stage)
+    if (without_pools == FALSE)
     {
-      AddStage (stage);
+      stage = Stage::CreateInstance ("pool_stage");
+      if (stage)
+      {
+        AddStage (stage);
+      }
     }
 
     stage = Stage::CreateInstance ("PhaseDeTableaux");
