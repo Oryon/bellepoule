@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-09-22 23:52+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2010-09-26 12:46+0000\n"
+"Last-Translator: Julien Diaz <Unknown>\n"
 "Language-Team: <en_GB@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-09-24 05:23+0000\n"
+"X-Launchpad-Export-Date: 2010-09-27 05:24+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -63,11 +63,11 @@ msgstr "Tous les fichiers"
 msgid "List of registered"
 msgstr "Liste des inscrits"
 
-#: ../../sources/checkin.cpp:973
+#: ../../sources/checkin.cpp:970
 msgid "Liste des présents"
-msgstr ""
+msgstr "Liste des présents"
 
-#: ../../sources/checkin.cpp:977
+#: ../../sources/checkin.cpp:974
 msgid "Liste des absents"
 msgstr ""
 
@@ -75,8 +75,7 @@ msgstr ""
 msgid "Fencer list"
 msgstr "Liste des tireurs"
 
-#: ../../sources/contest.cpp:39
-#: ../../resources/glade/contest.glade:105
+#: ../../sources/contest.cpp:39 ../../resources/glade/contest.glade:105
 msgid "Sabre"
 msgstr "Sabre"
 
@@ -187,7 +186,6 @@ msgstr "Choisissez un fichier de destination ..."
 msgid "ref"
 msgstr "ref"
 
-#: ../../sources/main.cpp:172
 #: ../../sources/main.cpp:223
 msgid "place"
 msgstr "place"
@@ -230,7 +228,7 @@ msgstr "classement"
 
 #: ../../sources/main.cpp:204
 msgid "présence"
-msgstr ""
+msgstr "présence"
 
 #: ../../sources/main.cpp:207
 msgid "exported"
@@ -257,9 +255,8 @@ msgstr ""
 msgid "Pool #%02d"
 msgstr "Poule No %02d"
 
-#: ../../sources/pool.cpp:455
-#: ../../sources/table.cpp:2058
-#: ../../sources/table.cpp:2075
+#: ../../sources/pool.cpp:444 ../../sources/table.cpp:2054
+#: ../../sources/table.cpp:2071
 msgid "Signature"
 msgstr "Signature"
 
@@ -267,7 +264,7 @@ msgstr "Signature"
 msgid "Victories"
 msgstr "Victoires"
 
-#: ../../sources/pool.cpp:490
+#: ../../sources/pool.cpp:479
 msgid "Vict./Matchs"
 msgstr "Vict./Matchs"
 
@@ -283,7 +280,7 @@ msgstr "T. reçues"
 msgid "Index"
 msgstr "Indice"
 
-#: ../../sources/pool.cpp:526
+#: ../../sources/pool.cpp:515
 msgid "Place"
 msgstr "Place"
 
@@ -327,8 +324,7 @@ msgstr "Toutes les saisies de cette phase seront annulées."
 msgid "Split"
 msgstr "Scission"
 
-#: ../../sources/table.cpp:30
-#: ../../sources/table.cpp:2128
+#: ../../sources/table.cpp:30 ../../sources/table.cpp:2124
 msgid "Tableau"
 msgstr ""
 
@@ -364,8 +360,8 @@ msgstr "Demi-finale"
 msgid "Table of %d"
 msgstr "Tableau de %d"
 
-#: ../../sources/table.cpp:1895
-#, id-format
+#: ../../sources/table.cpp:1891
+#, c-format
 msgid "Match %s"
 msgstr "Match %s"
 
@@ -410,7 +406,7 @@ msgstr "Quitter BellePoule ?"
 
 #: ../../sources/tournament.cpp:426
 msgid "Toutes les compétitions non sauvegardées seront perdues."
-msgstr ""
+msgstr "Toutes les compétitions non sauvegardées seront perdues."
 
 #: ../../resources/glade/checkin.glade:26
 msgid "Présents"
@@ -530,7 +526,7 @@ msgstr "Date"
 
 #: ../../resources/glade/contest.glade:453
 msgid "Scratch"
-msgstr ""
+msgstr "Scratch"
 
 #: ../../resources/glade/contest.glade:464
 msgid "Start"
@@ -552,7 +548,7 @@ msgid ""
 "occur."
 msgstr ""
 "Les informations de date et heures sont exploitées pour avertir par une "
-"alarme les organisateurs de l'éminence de de certains évènements."
+"alarme les organisateurs de l'imminence de certains évènements."
 
 #: ../../resources/glade/contest.glade:509
 #: ../../resources/glade/contest.glade:564
@@ -617,7 +613,6 @@ msgstr ""
 "Permet d'afficher et de masquer certaines données ainsi que de redéfinir "
 "leur ordre d'affichage."
 
-#: ../../resources/glade/pool_allocator.glade:30
 #: ../../resources/glade/schedule.glade:137
 msgid "Print"
 msgstr "Imprimer"
@@ -644,7 +639,7 @@ msgid ""
 "Fill in all the scores of all the pools randomly\n"
 "To activate/deactivate this button, go to the properties of the competition. "
 msgstr ""
-"Remplis tous les matchs de toutes les poules par des scores aléatoires.\n"
+"Remplit tous les matchs de toutes les poules par des scores aléatoires.\n"
 "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
 "compétition. "
 
@@ -671,13 +666,13 @@ msgstr "Classement simple"
 msgid "Le classement de la poule sans tenir compte des précédentes."
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:230
+#: ../../resources/glade/pool_supervisor.glade:177
 #: ../../resources/glade/splitting.glade:81
 #: ../../resources/glade/table.glade:358
 msgid "Name"
 msgstr "Name"
 
-#: ../../resources/glade/pool_supervisor.glade:237
+#: ../../resources/glade/pool_supervisor.glade:184
 #: ../../resources/glade/table.glade:347
 msgid "Max score"
 msgstr "Max score"
@@ -688,7 +683,7 @@ msgstr "Nombre d'éliminés (%)"
 
 #: ../../resources/glade/pool_supervisor.glade:283
 msgid "The rate of eliminated at the end of this round."
-msgstr "Le pourcentage d'éliminés à l'issu de cette phase."
+msgstr "Le pourcentage d'éliminés à l'issue de cette phase."
 
 #: ../../resources/glade/pool_supervisor.glade:332
 msgid "All the pools"
@@ -753,7 +748,7 @@ msgid ""
 "Fill in all the scores randomly\n"
 "To activate/deactivate this button, go to the properties of the competition. "
 msgstr ""
-"Remplis tous les matchs du tableau par des scores aléatoires.\n"
+"Remplit tous les matchs du tableau par des scores aléatoires.\n"
 "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
 "compétition. "
 
@@ -1515,5 +1510,16 @@ msgstr ""
 "Marijn Somers (Néerlandais)\n"
 "Julien Diaz (Allemand)"
 
+#: ../../sources/main.cpp:201
 msgid "points"
 msgstr "points"
+
+#~ msgid "Décallage"
+#~ msgstr "Décalage"
+
+#~ msgid ""
+#~ "Décochez cette case pour accélerer la navigation. Le champs correspondant "
+#~ "sera ignoré lors des appuis sur la touche TAB."
+#~ msgstr ""
+#~ "Décochez cette case pour accélerer la navigation. Le champ correspondant "
+#~ "sera ignoré lors des appuis sur la touche TAB."

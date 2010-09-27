@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-09-24 07:16+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2010-09-26 12:33+0000\n"
+"Last-Translator: Julien Diaz <Unknown>\n"
 "Language-Team: <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-09-25 05:25+0000\n"
+"X-Launchpad-Export-Date: 2010-09-27 05:24+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -64,11 +64,11 @@ msgstr "Alle Dateien"
 msgid "List of registered"
 msgstr "Anmeldeliste"
 
-#: ../../sources/checkin.cpp:973
+#: ../../sources/checkin.cpp:970
 msgid "Liste des présents"
 msgstr "Anwesendeliste"
 
-#: ../../sources/checkin.cpp:977
+#: ../../sources/checkin.cpp:974
 msgid "Liste des absents"
 msgstr "Abwesendeliste"
 
@@ -76,8 +76,7 @@ msgstr "Abwesendeliste"
 msgid "Fencer list"
 msgstr "Fechterliste"
 
-#: ../../sources/contest.cpp:39
-#: ../../resources/glade/contest.glade:105
+#: ../../sources/contest.cpp:39 ../../resources/glade/contest.glade:105
 msgid "Sabre"
 msgstr "Säbel"
 
@@ -188,7 +187,6 @@ msgstr "Wählen Sie eine Bestimmungsdatei"
 msgid "ref"
 msgstr "Ref"
 
-#: ../../sources/main.cpp:172
 #: ../../sources/main.cpp:223
 msgid "place"
 msgstr "Platz"
@@ -258,9 +256,8 @@ msgstr "Startplatz"
 msgid "Pool #%02d"
 msgstr "Rundennummer %02d"
 
-#: ../../sources/pool.cpp:455
-#: ../../sources/table.cpp:2058
-#: ../../sources/table.cpp:2075
+#: ../../sources/pool.cpp:444 ../../sources/table.cpp:2054
+#: ../../sources/table.cpp:2071
 msgid "Signature"
 msgstr "Unterschrift"
 
@@ -268,7 +265,7 @@ msgstr "Unterschrift"
 msgid "Victories"
 msgstr "Siege"
 
-#: ../../sources/pool.cpp:490
+#: ../../sources/pool.cpp:479
 msgid "Vict./Matchs"
 msgstr "Siege/Gefechte"
 
@@ -284,7 +281,7 @@ msgstr "T. erhalten"
 msgid "Index"
 msgstr "Trefferdifferenz"
 
-#: ../../sources/pool.cpp:526
+#: ../../sources/pool.cpp:515
 msgid "Place"
 msgstr "Platz"
 
@@ -306,7 +303,7 @@ msgstr "<b><big>Drucken ...</big></b>"
 
 #: ../../sources/pool_supervisor.cpp:97
 msgid "Pool sheets printing"
-msgstr "Druck der Rundetabellen"
+msgstr "Druck der Rundenzettels"
 
 #: ../../sources/pool_supervisor.cpp:445
 msgid "Pool round classification"
@@ -329,8 +326,7 @@ msgstr "Alle Erfassungen dieser Phase werden annulliert sein."
 msgid "Split"
 msgstr "Spaltung"
 
-#: ../../sources/table.cpp:30
-#: ../../sources/table.cpp:2128
+#: ../../sources/table.cpp:30 ../../sources/table.cpp:2124
 msgid "Tableau"
 msgstr "Tabelle"
 
@@ -367,8 +363,8 @@ msgstr "Halbfinal"
 msgid "Table of %d"
 msgstr "letzte %d"
 
-#: ../../sources/table.cpp:1895
-#, id-format
+#: ../../sources/table.cpp:1891
+#, c-format
 msgid "Match %s"
 msgstr "Gefecht %s"
 
@@ -620,7 +616,6 @@ msgstr ""
 "Erlaubt, bestimmte Angaben anzuschlagen und zu maskieren sowie ihren "
 "Anschlagordnung zu definieren."
 
-#: ../../resources/glade/pool_allocator.glade:30
 #: ../../resources/glade/schedule.glade:137
 msgid "Print"
 msgstr "Drucken"
@@ -658,29 +653,30 @@ msgstr "automatisches Füllen"
 
 #: ../../resources/glade/pool_supervisor.glade:149
 msgid "Combined classification"
-msgstr ""
+msgstr "Kombiniert Platzierung"
 
 #: ../../resources/glade/pool_supervisor.glade:153
 msgid ""
 "Le classement combinant le score de la poule plus ceux des poules "
 "précédentes."
-msgstr ""
+msgstr "Platzierung nach aller Vorrunden."
 
 #: ../../resources/glade/pool_supervisor.glade:166
 msgid "Single classification"
-msgstr ""
+msgstr "Platzierung nach der Runde"
 
 #: ../../resources/glade/pool_supervisor.glade:170
 msgid "Le classement de la poule sans tenir compte des précédentes."
 msgstr ""
+"Platzierung nach der Runde (ohne die vorhergehende Runden zu betrachten)"
 
-#: ../../resources/glade/pool_supervisor.glade:230
+#: ../../resources/glade/pool_supervisor.glade:177
 #: ../../resources/glade/splitting.glade:81
 #: ../../resources/glade/table.glade:358
 msgid "Name"
 msgstr "Name"
 
-#: ../../resources/glade/pool_supervisor.glade:237
+#: ../../resources/glade/pool_supervisor.glade:184
 #: ../../resources/glade/table.glade:347
 msgid "Max score"
 msgstr "Max Punktestand"
@@ -782,7 +778,7 @@ msgstr "Die Tabelle"
 
 #: ../../resources/glade/table.glade:437
 msgid "Score sheets"
-msgstr "Die Gefechtblätter"
+msgstr "Die Scorezettels"
 
 #: ../../resources/glade/table.glade:459
 msgid "All"
@@ -794,11 +790,11 @@ msgstr "In der Warteschleife"
 
 #: ../../resources/glade/table.glade:545
 msgid "The pending score sheets"
-msgstr "Gefechtblätter in der Warteschleife"
+msgstr "die Scorezerrels in der Warteschleife"
 
 #: ../../resources/glade/table.glade:558
 msgid "All the score sheets"
-msgstr "Alle Gefechtblätter"
+msgstr "Alle Scorezettels"
 
 #: ../../resources/glade/tournament.glade:6
 msgid "BellePoule - Fencing tournament"
@@ -1515,9 +1511,475 @@ msgid ""
 "Marijn Somers (Dutch)\n"
 "Julien Diaz (German)"
 msgstr ""
+"Marijn Somers (Niederländisch)\n"
+"Julien Diaz (Deutsch)"
 
+#: ../../sources/main.cpp:201
 msgid "points"
 msgstr "Punkte"
+
+#~ msgid "<b><big>Quels tireurs voulez-vous imprimer ?</big></b>"
+#~ msgstr "<b><big>Welche Fechter wollen Sie drucken?</big></b>"
+
+#~ msgid "Impression de la liste des tireurs"
+#~ msgstr "Druck der Fechterliste"
+
+#~ msgid "Appel"
+#~ msgstr "Aufruf"
+
+#~ msgid "Liste des inscrits"
+#~ msgstr "Anmeldeliste"
+
+#~ msgid "Pupille"
+#~ msgstr "D-Jugend"
+
+#~ msgid "Féminin"
+#~ msgstr "Damen"
+
+#~ msgid "Masculin"
+#~ msgstr "Herren"
+
+#~ msgid "Fleuret"
+#~ msgstr "Florett"
+
+#~ msgid "Poussin"
+#~ msgstr "D-Jugend"
+
+#~ msgid "Liste des tireurs"
+#~ msgstr "Fechterliste"
+
+#~ msgid "Vétéran"
+#~ msgstr "Senior"
+
+#~ msgid "Cadet"
+#~ msgstr "A-Jugend"
+
+#~ msgid "Minime"
+#~ msgstr "B-Jugend"
+
+#~ msgid "Benjamin"
+#~ msgstr "Schüler"
+
+#~ msgid "Junior"
+#~ msgstr "Junior"
+
+#~ msgid "prénom"
+#~ msgstr "Vorname"
+
+#~ msgid "nom"
+#~ msgstr "Name"
+
+#~ msgid "sexe"
+#~ msgstr "Geschlecht"
+
+#~ msgid "Victoires"
+#~ msgstr "Siege"
+
+#~ msgid "<b><big>Imprimer ...</big></b>"
+#~ msgstr "<b><big>Drucken ...</big></b>"
+
+#~ msgid "Finale"
+#~ msgstr "Final"
+
+#~ msgid "Vainqueur"
+#~ msgstr "Sieger"
+
+#~ msgid "Données"
+#~ msgstr "Daten"
+
+#~ msgid "Arme"
+#~ msgstr "Waffe"
+
+#~ msgid "Categorie"
+#~ msgstr "Kategorie"
+
+#~ msgid "Sexe"
+#~ msgstr "Geschlecht"
+
+#~ msgid "Homme"
+#~ msgstr "Herren"
+
+#~ msgid "Formule"
+#~ msgstr "Austragungsmodus"
+
+#~ msgid "Début"
+#~ msgstr "Anfang"
+
+#~ msgid "Interdire"
+#~ msgstr "Verbieten"
+
+#~ msgid "Imprimer"
+#~ msgstr "Drucken"
+
+#~ msgid "<b>Quoi ?</b>"
+#~ msgstr "<b>Was ?</b>"
+
+#~ msgid "<b>Pour quoi ?</b>"
+#~ msgstr "<b>Wofür ?</b>"
+
+#~ msgid "A partir de"
+#~ msgstr "Von"
+
+#~ msgid "Tireur A"
+#~ msgstr "Fechter A"
+
+#~ msgid "Toutes"
+#~ msgstr "Alle"
+
+#~ msgid "Tireur B"
+#~ msgstr "Fechter B"
+
+#~ msgid "Fichier"
+#~ msgstr "Datei"
+
+#~ msgid "BellePoule - Tournoi d'escrime"
+#~ msgstr "BellePoule - Fechtenturnier"
+
+#~ msgid "Aide"
+#~ msgstr "Hilfe"
+
+#~ msgid "nation"
+#~ msgstr "Nation"
+
+#~ msgid "date naissance"
+#~ msgstr "Geburtsdatum"
+
+#~ msgid "Tous les fichiers"
+#~ msgstr "Alle Dateien"
+
+#~ msgid "Tous les fichiers Excel (.CSV)"
+#~ msgstr "Alle Excel Dateien (.CSV)"
+
+#~ msgid "Tous les fichiers FFF (.FFF)"
+#~ msgstr "Alle FFF-Dateien (.FFF)"
+
+#~ msgid "Choisissez un fichier de sauvegarde ..."
+#~ msgstr "Wählen Sie eine Speicherndatei ..."
+
+#~ msgid "Propriétés de la compétition"
+#~ msgstr "Eigenschaften des Turniers"
+
+#~ msgid "Choisissez un fichier de secours ..."
+#~ msgstr "Wählen Sie eine Schutzdatei ..."
+
+#~ msgid "Date de la compétition"
+#~ msgstr "Datum des Turniers"
+
+#~ msgid "classement"
+#~ msgstr "Platzierung"
+
+#~ msgid "Choisissez un fichier de destination ..."
+#~ msgstr "Wählen Sie eine Bestimmungsdatei"
+
+#~ msgid "Classement général"
+#~ msgstr "Ergebnisliste"
+
+#, c-format
+#~ msgid ""
+#~ "<b><big>Voulez-vous vraiment fermer\n"
+#~ "<big>%s</big> ?</big></b>"
+#~ msgstr ""
+#~ "<b><big>Wollen Sie wirklich \n"
+#~ "<big>%s</big> schließen?</big></b>"
+
+#~ msgid "Fermer la compétition ?"
+#~ msgstr "Das Turnier schließen?"
+
+#~ msgid "Filtre"
+#~ msgstr "Filter"
+
+#~ msgid "Vict./Matchs (‰)"
+#~ msgstr "Siege/Gefechte (%)"
+
+#~ msgid "exporté"
+#~ msgstr "exportiert"
+
+#~ msgid "T. reçues"
+#~ msgstr "T. erhalten"
+
+#~ msgid "T. données"
+#~ msgstr "T. gegeben"
+
+#, c-format
+#~ msgid "Poule No %02d"
+#~ msgstr "Rundennummer %02d"
+
+#~ msgid "Touches données"
+#~ msgstr "Treffer gegeben"
+
+#~ msgid "Indice"
+#~ msgstr "Trefferdifferenz"
+
+#~ msgid "Répartition dans les poules"
+#~ msgstr "Verteilung in den Runden"
+
+#~ msgid "Composition poules"
+#~ msgstr "Zusammensetzung der Runden"
+
+#~ msgid "<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>"
+#~ msgstr ""
+#~ "<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
+
+#~ msgid "Revenir à la phase précédente ?"
+#~ msgstr "Zur vorhergehenden Phase zurückkommen ?"
+
+#~ msgid "Impression des feuilles de poule"
+#~ msgstr "Druck der Rundetabellen"
+
+#~ msgid "Poules"
+#~ msgstr "Runden"
+
+#, c-format
+#~ msgid "Tableau de %d"
+#~ msgstr "letzte %d"
+
+#~ msgid "Demi-finale"
+#~ msgstr "Halbfinal"
+
+#~ msgid "Impression du tableau"
+#~ msgstr "Druck der Tabelle"
+
+#~ msgid "<b><big>Que voulez-vous imprimer ?</big></b>"
+#~ msgstr "<b><big>Was wollen Sie drucken ?</big></b>"
+
+#~ msgid ""
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
+#~ msgstr ""
+#~ "<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie "
+#~ "drucken?</big></b>"
+
+#~ msgid "Scission"
+#~ msgstr "Spaltung"
+
+#, c-format
+#~ msgid "%s : Impression des matchs"
+#~ msgstr "%s : Druck der Gefechte"
+
+#~ msgid "Feuille de match"
+#~ msgstr "Gefechtblatt"
+
+#~ msgid "Classement du tableau"
+#~ msgstr "Rangfolge der Tabelle"
+
+#~ msgid "Fichiers BellePoule"
+#~ msgstr "Bellepoule-Dateien"
+
+#~ msgid "<b><big>Voulez-vous vraiment quitter BellePoule ?</big></b>"
+#~ msgstr "<b><big>Wollen Sie wirklich BellePoule schliessen?</big></b>"
+
+#~ msgid "Quitter BellePoule ?"
+#~ msgstr "Bellepoule schliessen ?"
+
+#~ msgid "Les fichiers BellePoule (.cocot)"
+#~ msgstr "Die BellePoule-Dateien (.cocot)"
+
+#~ msgid "Fichiers récemment ouverts"
+#~ msgstr "Kürzlich offene Dateien"
+
+#~ msgid "Importer fichier .FFF"
+#~ msgstr "FFF-Dateien importieren"
+
+#~ msgid "Ajouter un tireur"
+#~ msgstr "Einen Fechter hinzufügen"
+
+#~ msgid "Caractéristiques de la compétition"
+#~ msgstr "Eigenschaften der Turnier"
+
+#~ msgid "Site web"
+#~ msgstr "Netzstandort"
+
+#~ msgid "Exporter"
+#~ msgstr "Exportieren"
+
+#~ msgid "Nombre de poules"
+#~ msgstr "Zahl der Runden"
+
+#~ msgid "Tireurs / poules"
+#~ msgstr "Fechter pro Runde"
+
+#~ msgid "Classement"
+#~ msgstr "Rangfolge"
+
+#~ msgid "Toutes les poules"
+#~ msgstr "Alle Runde"
+
+#~ msgid "Toutes les feuilles de match"
+#~ msgstr "Alle Gefechtblätter"
+
+#~ msgid "Le tableau"
+#~ msgstr "Die Tabelle"
+
+#~ msgid "Les feuilles de match"
+#~ msgstr "Die Gefechtblätter"
+
+#~ msgid ""
+#~ "Décochez cette case pour accélerer la navigation. Le champs correspondant "
+#~ "sera ignoré lors des appuis sur la touche TAB."
+#~ msgstr ""
+#~ "Deaktivieren Sie dieses Kästchen, um die Navigation zu beschleunigen. Die "
+#~ "entsprechenden Felder wird bei den Unterstützungen auf dem tab-Anschlag "
+#~ "ignoriert."
+
+#~ msgid "Choisissez un fichier de tireurs à importer ..."
+#~ msgstr "Wählen Sie eine Fechterdatei zu importieren"
+
+#~ msgid "Mixte"
+#~ msgstr "Gemischt"
+
+#~ msgid "Sauvegarde l'état courant de la compétition."
+#~ msgstr "Speichert der laufende Stand des Turniers."
+
+#~ msgid "Choisissez un fichier de compétition à ouvrir ..."
+#~ msgstr "Wählen Sie eine Turnierdatei zu öffnen ..."
+
+#~ msgid "Texte libre purement informatif."
+#~ msgstr "Rein informierender freier Text."
+
+#~ msgid "Organisateur"
+#~ msgstr "Organisator"
+
+#~ msgid "Autoriser"
+#~ msgstr "Erlauben"
+
+#~ msgid "<b>Date / Horaires</b>"
+#~ msgstr "<b>Datum / Zeitplan</b>"
+
+#~ msgid "Décallage"
+#~ msgstr "Verschiebung"
+
+#~ msgid "Les saisies non sauvegardées seront perdues."
+#~ msgstr "Die nicht gespeicherte Daten werden verloren sein."
+
+#~ msgid "Toutes les saisies de cette phase seront annulées."
+#~ msgstr "Alle Erfassungen dieser Phase werden annulliert sein."
+
+#~ msgid ""
+#~ "Select the fencers to move to a new competition.\n"
+#~ "          Not yet implemented :-("
+#~ msgstr ""
+#~ "Wählen Sie die Fechter vor, sich auf ein neues Turnier zu bewegen.\n"
+#~ "          Noch nicht implementiert:-("
+
+#~ msgid "Next stage"
+#~ msgstr "folgende Etappe."
+
+#~ msgid "Previous stage"
+#~ msgstr "vorhergehende Etappe"
+
+#~ msgid "Le pourcentage d'éliminés à l'issu de cette phase."
+#~ msgstr "Der Prozentsatz von eliminiert am Ende dieser Phase."
+
+#~ msgid "Uniquement la poule sélectionnée"
+#~ msgstr "Nur die ausgewählte Runde"
+
+#~ msgid "Contenu spécialement conçu pour les arbitres."
+#~ msgstr "Enthalten besonders geplant für die Schiedsrichter."
+
+#~ msgid "Pour arbitrage"
+#~ msgstr "Fûr Schiedsgerichtsbarkeit"
+
+#~ msgid "Pour affichage"
+#~ msgstr "zu anschlagen"
+
+#~ msgid ""
+#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit les "
+#~ "listes de tireurs inscrits aux compétitions par l'intermédiaire de son site "
+#~ "internet. "
+#~ msgstr ""
+#~ "FFF ist das Format, unter dem der französischer Fechterbund die Listen von "
+#~ "Fechtern liefert, die an das Turnier über ihr Netzstandort eingetragen sind. "
+
+#~ msgid ""
+#~ "Les informations de date et heures sont exploitées pour avertir par une "
+#~ "alarme les organisateurs de l'éminence de de certains évènements."
+#~ msgstr ""
+#~ "Die Informationen von Datum und Stunden werden genutzt, um die Organisatoren "
+#~ "vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu warnen."
+
+#~ msgid "Classement du tour de poule"
+#~ msgstr "Rangfolge nach dem Vorrunde"
+
+#~ msgid "Nombre d'éliminés (%)"
+#~ msgstr "Anzahl von eliminiert (%)"
+
+#~ msgid "En attente"
+#~ msgstr "In der Warteschleife"
+
+#~ msgid "Les feuilles de match en attente"
+#~ msgstr "Gefechtblätter in der Warteschleife"
+
+#~ msgid ""
+#~ "Permet d'afficher et de masquer certaines données ainsi que de redéfinir "
+#~ "leur ordre d'affichage."
+#~ msgstr ""
+#~ "Erlaubt, bestimmte Angaben anzuschlagen und zu maskieren sowie ihren "
+#~ "Anschlagordnung zu definieren."
+
+#~ msgid "Saisir un match ..."
+#~ msgstr "Ein Gefecht zu erfassen"
+
+#~ msgid ""
+#~ "Remplis tous les matchs du tableau par des scores aléatoires.\n"
+#~ "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
+#~ "compétition."
+#~ msgstr ""
+#~ "Füllt alle Gefecht der Tabelle durch Zufallsstände.\n"
+#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
+#~ "Turniers."
+
+#~ msgid ""
+#~ "Remplis tous les matchs de toutes les poules par des scores aléatoires.\n"
+#~ "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
+#~ "compétition."
+#~ msgstr ""
+#~ "Füllt alle Gefecht aller Runden durch Zufallsstände.\n"
+#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
+#~ "Turniers."
+
+#~ msgid "Remplissage auto"
+#~ msgstr "automatisches Füllen"
+
+#~ msgid ""
+#~ "Exporte le classement dans un fichier au format \".csv\" pour des tableurs "
+#~ "du type Excel ou OpenOffice"
+#~ msgstr ""
+#~ "Exportiert die Rangfolge in eine \".csv\" Datei-Format für Excel oder "
+#~ "OpenOffice-Typ"
+
+#~ msgid "Récemment ouvert"
+#~ msgstr "kürzlich eröffnete"
+
+#~ msgid ""
+#~ "Remplissage\n"
+#~ "automatique\n"
+#~ "des scores"
+#~ msgstr ""
+#~ "Automatisches\n"
+#~ "Füllen\n"
+#~ "der Punktstände"
+
+#~ msgid "Rend inactif le bouton de remplissage automatique des scores."
+#~ msgstr "Unaktiviert des Knopf \"automatisches Füllen der Punktstände\"."
+
+#~ msgid ""
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
+#~ "des saisies longues et laborieuses lors des séances de prise en main de "
+#~ "BellePoule."
+#~ msgstr ""
+#~ "Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann lange "
+#~ "und mühselige Erfassungen während den Testen von BellePoule vermeiden."
+
+#~ msgid "Ouvrir un exemple ..."
+#~ msgstr "Ein Beispiel zu eröffnen"
+
+#~ msgid ""
+#~ "Logiciel de gestion de tournois d'escrime.\n"
+#~ "\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Fechtturnier Verwaltung Software.\n"
+#~ "\n"
+#~ "\n"
 
 #~ msgid "index"
 #~ msgstr "Trefferdifferenz"
