@@ -189,7 +189,7 @@ int main (int argc, char **argv)
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddDiscreteValues ("resources/ioc_countries.txt");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "ligue", "Ligue", gettext ("ligue"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "ligue", "Ligue", gettext ("league"));
     desc->AddDiscreteValues ("resources/ligues.txt");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
@@ -202,7 +202,7 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", gettext ("ranking"));
     desc->_compare_func = (GCompareFunc) CompareRating;
 
-    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("présence"));
+    desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
@@ -213,7 +213,7 @@ int main (int argc, char **argv)
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "indice", "indice", gettext ("indice"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "indice", "indice", gettext ("index"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
@@ -226,7 +226,7 @@ int main (int argc, char **argv)
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "previous_stage_rank", "previous_stage_rank", gettext ("rang d'entrée"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "previous_stage_rank", "previous_stage_rank", gettext ("Round start rank"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;

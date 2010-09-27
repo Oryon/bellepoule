@@ -39,6 +39,7 @@ Stage::Stage (StageClass *stage_class)
   _attendees             = NULL;
   _classification        = NULL;
   _input_provider        = NULL;
+  _classification_on     = FALSE;
 
   _sensitivity_trigger    = new SensitivityTrigger ();
   _score_stuffing_trigger = NULL;
@@ -447,7 +448,10 @@ void Stage::ToggleClassification (gboolean classification_on)
       }
       gtk_widget_show (classification_w);
 
-      _sensitivity_trigger->SwitchOff ();
+      if (_classification_on == FALSE)
+      {
+        _sensitivity_trigger->SwitchOff ();
+      }
     }
     else
     {
@@ -457,9 +461,14 @@ void Stage::ToggleClassification (gboolean classification_on)
         gtk_widget_show_all (main_w);
       }
 
-      _sensitivity_trigger->SwitchOn ();
+      if (_classification_on == TRUE)
+      {
+        _sensitivity_trigger->SwitchOn ();
+      }
     }
   }
+
+  _classification_on = classification_on;
 }
 
 // --------------------------------------------------------------------------------

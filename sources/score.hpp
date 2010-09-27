@@ -39,6 +39,8 @@ class Score : public Object
 
     gboolean IsValid ();
 
+    gboolean IsTheBest ();
+
     gboolean IsConsistentWith (Score *with);
 
   private:
