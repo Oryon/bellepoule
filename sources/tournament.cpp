@@ -423,7 +423,7 @@ extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
                         gettext ("Quit BellePoule?"));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            gettext ("Toutes les compétitions non sauvegardées seront perdues."));
+                                            gettext ("All the unsaved competions will be lost."));
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {

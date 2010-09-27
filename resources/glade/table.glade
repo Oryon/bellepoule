@@ -121,7 +121,7 @@
                 <child>
                   <object class="GtkToolButton" id="stuff_toolbutton">
                     <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Fill in all the scores randomly
+                    <property name="tooltip_text" translatable="yes">Fill in all the scores randomly.
 To activate/deactivate this button, go to the properties of the competition.</property>
                     <property name="label" translatable="yes">Automatic stuffing</property>
                     <property name="use_underline">True</property>

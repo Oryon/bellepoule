@@ -116,7 +116,15 @@ Player *Match::GetWinner ()
         && score_B->IsValid ()
         && score_A->IsConsistentWith (score_B))
     {
-      if (_A_score->Get () >= _B_score->Get ())
+      if (_A_score->Get () > _B_score->Get ())
+      {
+        return _A;
+      }
+      else if (_A_score->Get () < _B_score->Get ())
+      {
+        return _B;
+      }
+      else if (_A_score->IsTheBest ())
       {
         return _A;
       }
@@ -214,6 +222,7 @@ gboolean Match::SetScore (Player *player,
           && (g_ascii_toupper (score[0]) == 'W'))
       {
         score_value = &score[1];
+        is_the_best = TRUE;
       }
 
       if (ScoreIsNumber (score_value))

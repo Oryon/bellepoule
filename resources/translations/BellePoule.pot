@@ -58,11 +58,11 @@ msgid "List of registered"
 msgstr ""
 
 #: ../../sources/checkin.cpp:973
-msgid "Liste des présents"
+msgid "List of presents"
 msgstr ""
 
 #: ../../sources/checkin.cpp:977
-msgid "Liste des absents"
+msgid "List of absents"
 msgstr ""
 
 #: ../../sources/checkin.cpp:981
@@ -205,7 +205,7 @@ msgid "country"
 msgstr ""
 
 #: ../../sources/main.cpp:191
-msgid "ligue"
+msgid "league"
 msgstr ""
 
 #: ../../sources/main.cpp:195
@@ -221,7 +221,7 @@ msgid "ranking"
 msgstr ""
 
 #: ../../sources/main.cpp:204
-msgid "présence"
+msgid "presence"
 msgstr ""
 
 #: ../../sources/main.cpp:207
@@ -233,7 +233,7 @@ msgid "Vict./Bouts (‰)"
 msgstr ""
 
 #: ../../sources/main.cpp:215
-msgid "indice"
+msgid "index"
 msgstr ""
 
 #: ../../sources/main.cpp:219
@@ -241,7 +241,7 @@ msgid "Hits scored"
 msgstr ""
 
 #: ../../sources/main.cpp:228
-msgid "rang d'entrée"
+msgid "Round start rank"
 msgstr ""
 
 #: ../../sources/pool.cpp:50
@@ -321,7 +321,7 @@ msgstr ""
 
 #: ../../sources/table.cpp:30
 #: ../../sources/table.cpp:2128
-msgid "Tableau"
+msgid "Table"
 msgstr ""
 
 #: ../../sources/table.cpp:138
@@ -398,11 +398,11 @@ msgid "Quit BellePoule?"
 msgstr ""
 
 #: ../../sources/tournament.cpp:426
-msgid "Toutes les compétitions non sauvegardées seront perdues."
+msgid "All the unsaved competions will be lost."
 msgstr ""
 
 #: ../../resources/glade/checkin.glade:26
-msgid "Présents"
+msgid "Presents"
 msgstr ""
 
 #: ../../resources/glade/checkin.glade:32
@@ -436,11 +436,11 @@ msgid "Add a fencer"
 msgstr ""
 
 #: ../../resources/glade/checkin.glade:304
-msgid "Tous les présents"
+msgid "All the presents"
 msgstr ""
 
 #: ../../resources/glade/checkin.glade:319
-msgid "Tous les absents"
+msgid "All the absents"
 msgstr ""
 
 #: ../../resources/glade/contest.glade:19
@@ -452,7 +452,7 @@ msgid "Permet de renseigner les caractéristiques de la compétition."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:51
-msgid "Permet de configurer la formule en définissant l'enchaînement des poules, tableaux et autres phases."
+msgid "To specify the features of the competition."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:52
@@ -484,7 +484,7 @@ msgid "<b>Type</b>"
 msgstr ""
 
 #: ../../resources/glade/contest.glade:323
-msgid "Titre"
+msgid "Title"
 msgstr ""
 
 #: ../../resources/glade/contest.glade:330
@@ -502,7 +502,7 @@ msgid "Web site"
 msgstr ""
 
 #: ../../resources/glade/contest.glade:409
-msgid "<b>Généralités</b>"
+msgid "<b>Overviews</b>"
 msgstr ""
 
 #: ../../resources/glade/contest.glade:435
@@ -605,7 +605,7 @@ msgstr ""
 #: ../../resources/glade/pool_supervisor.glade:100
 msgid ""
 "Fill in all the scores of all the pools randomly\n"
-"To activate/deactivate this button, go to the properties of the competition. "
+"To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:102
@@ -618,7 +618,7 @@ msgid "Combined classification"
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:153
-msgid "Le classement combinant le score de la poule plus ceux des poules précédentes."
+msgid "The classification cumulating  the current score and the scores of the previous pool rounds."
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:166
@@ -626,7 +626,7 @@ msgid "Single classification"
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:170
-msgid "Le classement de la poule sans tenir compte des précédentes."
+msgid "The classification of the current round that doesn't take into account the scores of the previous rounds. "
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:230
@@ -673,7 +673,7 @@ msgid "For the bulletin board"
 msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:424
-msgid "<b>For wath?</b>"
+msgid "<b>For what?</b>"
 msgstr ""
 
 #: ../../resources/glade/schedule.glade:15
@@ -706,8 +706,8 @@ msgstr ""
 
 #: ../../resources/glade/table.glade:124
 msgid ""
-"Fill in all the scores randomly\n"
-"To activate/deactivate this button, go to the properties of the competition. "
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
 
 #: ../../resources/glade/table.glade:190

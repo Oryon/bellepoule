@@ -67,7 +67,7 @@ Checkin::Checkin (StageClass *stage_class)
     filter->ShowAttribute ("birth_date");
     filter->ShowAttribute ("gender");
     filter->ShowAttribute ("club");
-    filter->ShowAttribute ("ligue");
+    filter->ShowAttribute ("league");
     filter->ShowAttribute ("country");
     filter->ShowAttribute ("licence");
 
@@ -971,11 +971,11 @@ void Checkin::Print (const gchar *job_name)
     }
     else if ((_print_missing == FALSE) && _print_attending)
     {
-      Module::Print (gettext ("Liste des présents"));
+      Module::Print (gettext ("List of presents"));
     }
     else if ((_print_attending == FALSE) && _print_missing)
     {
-      Module::Print (gettext ("Liste des absents"));
+      Module::Print (gettext ("Lost of absents"));
     }
     else
     {

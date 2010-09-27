@@ -150,7 +150,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="tooltip_text" translatable="yes">Le classement combinant le score de la poule plus ceux des poules pr&#xE9;c&#xE9;dentes.</property>
+                        <property name="tooltip_text" translatable="yes">The classification cumulating  the current score and the scores of the previous pool rounds.</property>
                         <property name="image">combined_score_image</property>
                         <property name="draw_indicator">False</property>
                         <property name="group">single_radiobutton</property>
@@ -167,7 +167,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="tooltip_text" translatable="yes">Le classement de la poule sans tenir compte des pr&#xE9;c&#xE9;dentes.</property>
+                        <property name="tooltip_text" translatable="yes">The classification of the current round that doesn't take into account the scores of the previous rounds. </property>
                         <property name="image">image1</property>
                         <property name="draw_indicator">False</property>
                         <property name="group">combined_radiobutton</property>
@@ -388,7 +388,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkRadioButton" id="for_referees_radiobutton">
-                        <property name="For arbitration" translatable="yes">Pour arbitrage</property>
+                        <property name="label" translatable="yes">For arbitration</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -421,7 +421,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
             <child type="label">
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;For wath?&lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;b&gt;For what?&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
               </object>
             </child>

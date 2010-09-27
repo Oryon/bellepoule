@@ -324,21 +324,24 @@ void Swapper::Swap (GSList *pools)
         {
           Player    *player;
           Attribute *attr;
-          gchar     *user_image;
 
-          player     = pool->GetPlayer (p);
-          attr       = player->GetAttribute (_criteria_id);
-          user_image = attr->GetUserImage ();
-          if (strcmp (user_image, data->_image) == 0)
+          player = pool->GetPlayer (p);
+          attr   = player->GetAttribute (_criteria_id);
+          if (attr)
           {
-            nb_similar_value++;
-            if (nb_similar_value > nb_max)
+            gchar *user_image = attr->GetUserImage ();
+
+            if (strcmp (user_image, data->_image) == 0)
             {
-              players_to_swap = g_slist_prepend (players_to_swap,
-                                                 player);
+              nb_similar_value++;
+              if (nb_similar_value > nb_max)
+              {
+                players_to_swap = g_slist_prepend (players_to_swap,
+                                                   player);
+              }
             }
+            g_free (user_image);
           }
-          g_free (user_image);
         }
 
         current_pool = g_slist_next (current_pool);

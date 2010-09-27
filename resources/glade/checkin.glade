@@ -23,7 +23,7 @@
                     <child>
                       <object class="GtkLabel" id="label2">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Pr&#xE9;sents</property>
+                        <property name="label" translatable="yes">Presents</property>
                       </object>
                     </child>
                     <child>
@@ -301,7 +301,7 @@
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkCheckButton" id="attending_checkbutton">
-                    <property name="label" translatable="yes">Tous les pr&#xE9;sents</property>
+                    <property name="label" translatable="yes">All the presents</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -316,7 +316,7 @@
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="missing_checkbutton">
-                    <property name="label" translatable="yes">Tous les absents</property>
+                    <property name="label" translatable="yes">All the absents</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>

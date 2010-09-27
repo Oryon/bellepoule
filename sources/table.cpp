@@ -27,7 +27,7 @@
 #include "classification.hpp"
 #include "table.hpp"
 
-const gchar   *Table::_class_name     = N_("Tableau");
+const gchar   *Table::_class_name     = N_("Table");
 const gchar   *Table::_xml_class_name = "PhaseDeTableaux";
 const gdouble  Table::_level_spacing  = 10.0;
 
@@ -1170,11 +1170,12 @@ void Table::LoadMatch (xmlNode *xml_node,
         {
           gchar    *attr;
           Player   *player;
-          gboolean  is_the_best = FALSE;
 
           B = n;
 
           {
+            gboolean  is_the_best = FALSE;
+
             attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
             player = GetPlayerFromRef (atoi (attr));
 
@@ -1196,6 +1197,8 @@ void Table::LoadMatch (xmlNode *xml_node,
           }
 
           {
+            gboolean  is_the_best = FALSE;
+
             attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
             player = GetPlayerFromRef (atoi (attr));
 
@@ -1203,7 +1206,7 @@ void Table::LoadMatch (xmlNode *xml_node,
                        player,
                        1);
 
-            attr = (gchar *) xmlGetProp (A, BAD_CAST "Statut");
+            attr = (gchar *) xmlGetProp (B, BAD_CAST "Statut");
             if (attr && attr[0] == 'V')
             {
               is_the_best = TRUE;
@@ -2140,7 +2143,7 @@ void Table::OnPrint ()
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
       _print_full_table = TRUE;
-      Print (gettext ("Tableau"));
+      Print (gettext ("Table"));
     }
     else
     {
