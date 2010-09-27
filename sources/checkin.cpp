@@ -67,7 +67,7 @@ Checkin::Checkin (StageClass *stage_class)
     filter->ShowAttribute ("birth_date");
     filter->ShowAttribute ("gender");
     filter->ShowAttribute ("club");
-    filter->ShowAttribute ("ligue");
+    filter->ShowAttribute ("league");
     filter->ShowAttribute ("country");
     filter->ShowAttribute ("licence");
 

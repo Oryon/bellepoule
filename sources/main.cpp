@@ -189,7 +189,7 @@ int main (int argc, char **argv)
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddDiscreteValues ("resources/ioc_countries.txt");
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "ligue", "Ligue", gettext ("league"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
     desc->AddDiscreteValues ("resources/ligues.txt");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
