@@ -2,7 +2,7 @@ xgettext --default-domain=BellePoule\
          --output=BellePoule.pot\
          --from-code=UTF-8\
          --keyword=N_\
-         --no-wrap ../../sources/*cpp ../../resources/glade/*glade
+         ../../sources/*cpp ../../resources/glade/*glade
 
 #xgettext --join-existing\
          #--default-domain=BellePoule\

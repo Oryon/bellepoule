@@ -33,7 +33,7 @@ class Schedule : public Module
 
     void DisplayList ();
 
-    void CreateDefault ();
+    void CreateDefault (gboolean without_pools = FALSE);
 
     void AddStage    (Stage *stage,
                       Stage *after);

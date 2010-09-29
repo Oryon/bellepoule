@@ -467,12 +467,12 @@ msgid "Save the current state of the competition."
 msgstr "Speichert der laufende Stand des Turniers."
 
 #: ../../resources/glade/contest.glade:31
-msgid "Permet de renseigner les caractéristiques de la compétition."
+msgid "To specify the features of the competition."
 msgstr "Erlaubt, die Eigenschaften des Turniers zu informieren."
 
 #: ../../resources/glade/contest.glade:51
-msgid "To specify the features of the competition."
-msgstr "Erlaubt, die Eigenschaften des Turniers zu informieren."
+msgid "To configure the schedule of the competition in terms of pools, tables and other rounds."
+msgstr "Erlaubt, die Formel darzustellen, indem man die Verkettung der Runden, Tabellen und anderer Phasen definiert."
 
 #: ../../resources/glade/contest.glade:52
 msgid "Formula"
