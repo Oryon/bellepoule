@@ -448,11 +448,11 @@ msgid "Save the current state of the competition."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:31
-msgid "Permet de renseigner les caractéristiques de la compétition."
+msgid "To specify the features of the competition."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:51
-msgid "To specify the features of the competition."
+msgid "To configure the schedule of the competition in terms of pools, tables and other rounds."
 msgstr ""
 
 #: ../../resources/glade/contest.glade:52

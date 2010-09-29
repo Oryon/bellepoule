@@ -455,7 +455,7 @@ msgid "To specify the features of the competition."
 msgstr "Erlaubt, die Eigenschaften des Turniers zu informieren."
 
 #: ../../resources/glade/contest.glade:51
-msgid "Permet de configurer la formule en définissant l'enchaînement des poules, tableaux et autres phases."
+msgid "To configure the schedule of the competition in terms of pools, tables and other rounds."
 msgstr "Erlaubt, die Formel darzustellen, indem man die Verkettung der Runden, Tabellen und anderer Phasen definiert."
 
 #: ../../resources/glade/contest.glade:52

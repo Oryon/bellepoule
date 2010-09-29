@@ -455,7 +455,7 @@ msgid "To specify the features of the competition."
 msgstr "Toelaten te leren van de competitie eigenschappen"
 
 #: ../../resources/glade/contest.glade:51
-msgid "Permet de configurer la formule en définissant l'enchaînement des poules, tableaux et autres phases."
+msgid "To configure the schedule of the competition in terms of pools, tables and other rounds."
 msgstr "Toestaan de formule te configureren om de volgorde van poules, tableaus en andere fases te wijzigen"
 
 #: ../../resources/glade/contest.glade:52
