@@ -61,7 +61,6 @@ Checkin::Checkin (StageClass *stage_class)
                          this);
 
     filter->ShowAttribute ("attending");
-    filter->ShowAttribute ("rating");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("birth_date");
@@ -69,6 +68,7 @@ Checkin::Checkin (StageClass *stage_class)
     filter->ShowAttribute ("club");
     filter->ShowAttribute ("league");
     filter->ShowAttribute ("country");
+    filter->ShowAttribute ("rating");
     filter->ShowAttribute ("licence");
 
     SetFilter (filter);

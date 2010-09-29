@@ -249,7 +249,15 @@ GString *Module::GetPlayerImage (Player *player)
 
       attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
                                                       a);
-      attr_id = new Player::AttributeId (attr_desc->_code_name);
+      if (attr_desc->_scope == AttributeDesc::LOCAL)
+      {
+        attr_id = new Player::AttributeId (attr_desc->_code_name,
+                                           GetDataOwner ());
+      }
+      else
+      {
+        attr_id = new Player::AttributeId (attr_desc->_code_name);
+      }
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
