@@ -51,7 +51,7 @@ Checkin::Checkin (StageClass *stage_class)
                                "ref",
 #endif
                                "exported",
-                               "previous_stage_rank",
+                               "rank",
                                "final_rank",
                                "victories_ratio",
                                "indice",
@@ -61,7 +61,7 @@ Checkin::Checkin (StageClass *stage_class)
                          this);
 
     filter->ShowAttribute ("attending");
-    filter->ShowAttribute ("rank");
+    filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("birth_date");
@@ -389,21 +389,27 @@ void Checkin::UpdateRanking ()
       attending = p->GetAttribute (&attr_id);
     }
 
-    if (attending && (gboolean) attending->GetValue ())
     {
-      Player::AttributeId attr_id ("rank", this);
+      Player::AttributeId previous_rank_id ("previous_stage_rank", this);
+      Player::AttributeId rank_id          ("rank", this);
 
-      p->SetAttributeValue (&attr_id,
-                            i - nb_missing + 1);
+      if (attending && (gboolean) attending->GetValue ())
+      {
+        p->SetAttributeValue (&previous_rank_id,
+                              i - nb_missing + 1);
+        p->SetAttributeValue (&rank_id,
+                              i - nb_missing + 1);
+      }
+      else
+      {
+        p->SetAttributeValue (&previous_rank_id,
+                              nb_player - nb_missing);
+        p->SetAttributeValue (&rank_id,
+                              nb_player - nb_missing);
+        nb_missing++;
+      }
     }
-    else
-    {
-      Player::AttributeId attr_id ("rank", this);
 
-      p->SetAttributeValue (&attr_id,
-                            nb_player - nb_missing);
-      nb_missing++;
-    }
     Update (p);
   }
 }
