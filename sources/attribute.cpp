@@ -25,6 +25,7 @@ typedef enum
   DISCRETE_USER_IMAGE
 } DiscreteColumnId;
 
+gchar  *AttributeDesc::_path = NULL;
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
@@ -59,6 +60,12 @@ AttributeDesc::~AttributeDesc ()
   {
     g_object_unref (_discrete_store);
   }
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::SetPath (gchar *path)
+{
+  _path = g_strdup (path);
 }
 
 // --------------------------------------------------------------------------------
@@ -239,32 +246,40 @@ void AttributeDesc::AddDiscreteValues (gchar *file)
   }
 
   {
-    gchar *raw_file;
-    gchar **tokens;
+    gchar   *full_path = g_build_filename (_path, file, NULL);
+    gchar   *raw_file;
+    GError  *error = NULL;
 
-    g_file_get_contents ((const gchar *) file,
-                         &raw_file,
-                         NULL,
-                         NULL);
-
-    tokens = g_strsplit_set (raw_file,
-                             ";\n",
-                             0);
-
-    if (tokens)
+    if (g_file_get_contents ((const gchar *) full_path,
+                             &raw_file,
+                             NULL,
+                             &error) == FALSE)
     {
-      for (guint i = 0; (tokens[i] != NULL) && (*tokens[i] != 0); i+=2)
-      {
-        GtkTreeIter iter;
-
-        gtk_tree_store_append (_discrete_store, &iter, NULL);
-
-        gtk_tree_store_set (_discrete_store, &iter,
-                            DISCRETE_XML_IMAGE, tokens[i],
-                            DISCRETE_USER_IMAGE, tokens[i+1], -1);
-      }
-      g_strfreev (tokens);
+      g_print ("EEEE -> %s\n", error->message);
+      g_free (error);
     }
+    else
+    {
+      gchar  **tokens = g_strsplit_set (raw_file,
+                                        ";\n",
+                                        0);
+
+      if (tokens)
+      {
+        for (guint i = 0; (tokens[i] != NULL) && (*tokens[i] != 0); i+=2)
+        {
+          GtkTreeIter iter;
+
+          gtk_tree_store_append (_discrete_store, &iter, NULL);
+
+          gtk_tree_store_set (_discrete_store, &iter,
+                              DISCRETE_XML_IMAGE, tokens[i],
+                              DISCRETE_USER_IMAGE, tokens[i+1], -1);
+        }
+        g_strfreev (tokens);
+      }
+    }
+    g_free (full_path);
   }
 }
 

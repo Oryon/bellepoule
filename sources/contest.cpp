@@ -28,6 +28,7 @@
 #include <shellapi.h>
 #endif
 
+#include "version.h"
 #include "canvas.hpp"
 #include "tournament.hpp"
 #include "checkin.hpp"
@@ -871,6 +872,15 @@ void Contest::Save (gchar *filename)
                                   NULL,
                                   "UTF-8",
                                   NULL);
+
+      xmlTextWriterStartComment (xml_writer);
+      xmlTextWriterWriteFormatString (xml_writer, "\n");
+      xmlTextWriterWriteFormatString (xml_writer, "           By BellePoule (V%s.%s/%s)\n", VERSION, VERSION_DAY, VERSION_MONTH);
+      xmlTextWriterWriteFormatString (xml_writer, "             BETTON - since 2010\n");
+      xmlTextWriterWriteFormatString (xml_writer, "\n");
+      xmlTextWriterWriteFormatString (xml_writer, "   http://betton.escrime.free.fr/index.php/bellepoule\n");
+      xmlTextWriterEndComment (xml_writer);
+
       xmlTextWriterStartDTD (xml_writer,
                              BAD_CAST "CompetitionIndividuelle",
                              NULL,
