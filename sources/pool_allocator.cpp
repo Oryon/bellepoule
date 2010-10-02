@@ -448,69 +448,89 @@ void PoolAllocator::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::RegisterConfig (Configuration *config)
+{
+  if (config)
+  {
+    GtkTreeIter iter;
+
+    _config_list = g_slist_append (_config_list,
+                                   config);
+    gtk_list_store_append (_combobox_store, &iter);
+
+    {
+      gchar *nb_pool_text = g_strdup_printf ("%d", config->nb_pool);
+
+      gtk_list_store_set (_combobox_store, &iter,
+                          NB_POOLS_COL, nb_pool_text,
+                          -1);
+      g_free (nb_pool_text);
+    }
+
+    {
+      gchar *pool_size_text;
+
+      if (config->has_two_size)
+      {
+        pool_size_text = g_strdup_printf ("%d ou %d", config->size, config->size+1);
+      }
+      else
+      {
+        pool_size_text = g_strdup_printf ("%d", config->size);
+      }
+
+      gtk_list_store_set (_combobox_store, &iter,
+                          POOL_SIZE_COL, pool_size_text,
+                          -1);
+      g_free (pool_size_text);
+    }
+
+    if (   (config->size < 7)
+        || (config->size == 7) && (config->has_two_size == FALSE))
+    {
+      _best_config = config;
+    }
+
+    config = NULL;
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PoolAllocator::FillCombobox ()
 {
-  guint nb_players = g_slist_length (_attendees->GetShortList ());
+  guint          nb_players = g_slist_length (_attendees->GetShortList ());
+  Configuration *config     = NULL;
 
   _best_config = NULL;
-  for (guint nb_pool = 1; nb_pool <= nb_players / 3; nb_pool++)
+  for (unsigned int size = 3; size <= MIN (20, nb_players); size++)
   {
-    for (guint i = 0; i < nb_pool; i++)
+    if (nb_players%size == 0)
     {
-      guint size;
+      config = (Configuration *) g_malloc (sizeof (Configuration));
 
-      size = (nb_players + nb_pool - i) / nb_pool;
+      config->has_two_size = FALSE;
+      config->nb_pool      = nb_players/size;
+      config->size         = size;
 
-      if (   (size >= 3)
-          && (size <= 20)
-          && (nb_pool * (size - 1) + i == nb_players))
+      RegisterConfig (config);
+    }
+
+    if (   (nb_players%size != 0)
+        || ((size == 6) && (nb_players%7 != 0)))
+    {
+      for (unsigned int p = 1; p < nb_players/size; p++)
       {
+        if ((nb_players - size*p) % (size + 1) == 0)
         {
-          Configuration *config = (Configuration *) g_malloc (sizeof (Configuration));
-          gchar         *combo_text;
-          GtkTreeIter    iter;
+          config = (Configuration *) g_malloc (sizeof (Configuration));
 
+          config->has_two_size = TRUE;
+          config->nb_pool      = p + (nb_players - size*p) / (size + 1);
           config->size         = size;
-          config->nb_pool      = nb_pool;
-          config->has_two_size = FALSE;
 
-          _config_list = g_slist_append (_config_list,
-                                         config);
-          gtk_list_store_append (_combobox_store, &iter);
-          {
-            if (i != 0)
-            {
-              config->has_two_size = TRUE;
-              combo_text = g_strdup_printf ("%d ou %d", size, size - 1);
-            }
-            else
-            {
-              combo_text = g_strdup_printf ("%d", size - 1);
-            }
-
-            gtk_list_store_set (_combobox_store, &iter,
-                                POOL_SIZE_COL, combo_text,
-                                -1);
-            g_free (combo_text);
-          }
-
-          {
-            combo_text = g_strdup_printf ("%d", nb_pool);
-            gtk_list_store_set (_combobox_store, &iter,
-                                NB_POOLS_COL, combo_text,
-                                -1);
-            g_free (combo_text);
-          }
-
-          if ((size >= 7) || (_best_config == NULL))
-          {
-            _best_config = config;
-          }
+          RegisterConfig (config);
+          break;
         }
-
-        // skip the other configurations with the same size
-        nb_pool = (nb_players / (size - 1));
-        break;
       }
     }
   }
@@ -1064,9 +1084,9 @@ void PoolAllocator::FillPoolTable (Pool *pool)
     {
       gchar *icon_name;
 
-      if (   (pool_size == _selected_config->size - 1)
+      if (   (pool_size == _selected_config->size)
           || (   _selected_config->has_two_size
-              && ((pool_size == _selected_config->size)) || (pool_size == _selected_config->size - 1)))
+              && ((pool_size == _selected_config->size)) || (pool_size == _selected_config->size + 1)))
       {
         icon_name = GTK_STOCK_APPLY;
         pool->SetData (this, "is_balanced", (void *) 1);

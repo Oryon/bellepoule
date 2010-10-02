@@ -93,6 +93,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void Garnish ();
     void FillPoolTable (Pool *pool);
     void FixUpTablesBounds ();
+    void RegisterConfig (Configuration *config);
     const gchar *GetInputProviderClient ();
 
     void OnAttrListUpdated ();
