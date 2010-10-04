@@ -339,7 +339,10 @@ Contest::Contest (gchar *filename)
     }
 
     _schedule->Load (doc);
-    _schedule->SetScoreStuffingPolicy (score_stuffing_policy);
+    if (score_stuffing_policy)
+    {
+      _schedule->SetScoreStuffingPolicy (score_stuffing_policy);
+    }
 
     xmlFreeDoc (doc);
 

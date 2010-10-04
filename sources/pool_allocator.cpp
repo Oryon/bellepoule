@@ -498,11 +498,21 @@ void PoolAllocator::RegisterConfig (Configuration *config)
 // --------------------------------------------------------------------------------
 void PoolAllocator::FillCombobox ()
 {
-  guint          nb_players = g_slist_length (_attendees->GetShortList ());
-  Configuration *config     = NULL;
+  guint          nb_players    = g_slist_length (_attendees->GetShortList ());
+  Configuration *config        = NULL;
+  guint          max_pool_size;
+
+  if (nb_players%11 == 0)
+  {
+    max_pool_size = 11;
+  }
+  else
+  {
+    max_pool_size = 10;
+  }
 
   _best_config = NULL;
-  for (unsigned int size = 3; size <= MIN (20, nb_players); size++)
+  for (unsigned int size = 3; size <= MIN (max_pool_size, nb_players); size++)
   {
     if (nb_players%size == 0)
     {
