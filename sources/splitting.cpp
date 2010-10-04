@@ -52,6 +52,7 @@ Splitting::Splitting (StageClass *stage_class)
                                "ref",
 #endif
                                "final_rank",
+                               "rank",
                                "attending",
                                "victories_ratio",
                                "indice",
@@ -187,7 +188,7 @@ GSList *Splitting::GetCurrentClassification ()
 
   if (result)
   {
-    Player::AttributeId attr_id ("rank",
+    Player::AttributeId attr_id ("previous_stage_rank",
                                  this);
 
     result = g_slist_sort_with_data (result,

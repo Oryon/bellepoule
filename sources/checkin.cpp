@@ -39,6 +39,8 @@ Checkin::Checkin (StageClass *stage_class)
     AddSensitiveWidget (_glade->GetWidget ("add_player_button"));
     AddSensitiveWidget (_glade->GetWidget ("remove_player_button"));
     AddSensitiveWidget (_glade->GetWidget ("import_toolbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("all_present_button"));
+    AddSensitiveWidget (_glade->GetWidget ("all_absent_button"));
   }
 
   // Player attributes to display
@@ -51,7 +53,7 @@ Checkin::Checkin (StageClass *stage_class)
                                "ref",
 #endif
                                "exported",
-                               "previous_stage_rank",
+                               "rank",
                                "final_rank",
                                "victories_ratio",
                                "indice",
@@ -61,7 +63,7 @@ Checkin::Checkin (StageClass *stage_class)
                          this);
 
     filter->ShowAttribute ("attending");
-    filter->ShowAttribute ("rating");
+    filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("birth_date");
@@ -69,6 +71,7 @@ Checkin::Checkin (StageClass *stage_class)
     filter->ShowAttribute ("club");
     filter->ShowAttribute ("league");
     filter->ShowAttribute ("country");
+    filter->ShowAttribute ("rating");
     filter->ShowAttribute ("licence");
 
     SetFilter (filter);
@@ -388,21 +391,27 @@ void Checkin::UpdateRanking ()
       attending = p->GetAttribute (&attr_id);
     }
 
-    if (attending && (gboolean) attending->GetValue ())
     {
-      Player::AttributeId attr_id ("rank", this);
+      Player::AttributeId previous_rank_id ("previous_stage_rank", this);
+      Player::AttributeId rank_id          ("rank", this);
 
-      p->SetAttributeValue (&attr_id,
-                            i - nb_missing + 1);
+      if (attending && (gboolean) attending->GetValue ())
+      {
+        p->SetAttributeValue (&previous_rank_id,
+                              i - nb_missing + 1);
+        p->SetAttributeValue (&rank_id,
+                              i - nb_missing + 1);
+      }
+      else
+      {
+        p->SetAttributeValue (&previous_rank_id,
+                              nb_player - nb_missing);
+        p->SetAttributeValue (&rank_id,
+                              nb_player - nb_missing);
+        nb_missing++;
+      }
     }
-    else
-    {
-      Player::AttributeId attr_id ("rank", this);
 
-      p->SetAttributeValue (&attr_id,
-                            nb_player - nb_missing);
-      nb_missing++;
-    }
     Update (p);
   }
 }
@@ -1008,9 +1017,9 @@ gboolean Checkin::PlayerIsPrintable (Player *player)
 extern "C" G_MODULE_EXPORT void on_remove_player_button_clicked (GtkWidget *widget,
                                                                  Object    *owner)
 {
-  Checkin *p = dynamic_cast <Checkin *> (owner);
+  Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  p->on_remove_player_button_clicked ();
+  c->on_remove_player_button_clicked ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1028,21 +1037,45 @@ void Checkin::on_close_button_clicked ()
 }
 
 // --------------------------------------------------------------------------------
+void Checkin::ToggleAllPlayers (gboolean present)
+{
+  Player::AttributeId  attr_id ("attending");
+  GSList              *current_player = _player_list;
+
+  while (current_player)
+  {
+    Player *p;
+
+    p = (Player *) current_player->data;
+
+    if (p)
+    {
+      p->SetAttributeValue (&attr_id,
+                            (guint) present);
+
+      Update (p);
+    }
+    current_player = g_slist_next (current_player);
+  }
+  OnListChanged ();
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget *widget,
                                                                        Object    *owner)
 {
-  Checkin *p = dynamic_cast <Checkin *> (owner);
+  Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  p->SelectAttributes ();
+  c->SelectAttributes ();
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
                                                               Object    *owner)
 {
-  Checkin *p = dynamic_cast <Checkin *> (owner);
+  Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  p->Import ();
+  c->Import ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1086,4 +1119,22 @@ extern "C" G_MODULE_EXPORT void on_checkin_print_toolbutton_clicked (GtkWidget *
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
   c->Print ("");
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_all_present_button_clicked (GtkWidget *widget,
+                                                               Object    *owner)
+{
+  Checkin *c = dynamic_cast <Checkin *> (owner);
+
+  c->ToggleAllPlayers (TRUE);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_all_absent_button_clicked (GtkWidget *widget,
+                                                              Object    *owner)
+{
+  Checkin *c = dynamic_cast <Checkin *> (owner);
+
+  c->ToggleAllPlayers (FALSE);
 }

@@ -2,7 +2,7 @@
 #define table_hpp
 
 #define VERSION       "0"
-#define VERSION_DAY   "27"
-#define VERSION_MONTH "09"
+#define VERSION_DAY   "03"
+#define VERSION_MONTH "10"
 
 #endif

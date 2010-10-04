@@ -61,6 +61,8 @@ class AttributeDesc : public Object
     Rights        _rights;
     GCompareFunc  _compare_func;
 
+    static void SetPath (gchar *path);
+
     static AttributeDesc *Declare (GType  type,
                                    gchar *code_name,
                                    gchar *xml_name,
@@ -90,6 +92,7 @@ class AttributeDesc : public Object
     gchar *GetUserImage (GtkTreeIter *iter);
 
   private:
+    static gchar  *_path;
     static GSList *_list;
     GtkTreeStore *_discrete_store;
 
