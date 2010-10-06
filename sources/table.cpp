@@ -1670,20 +1670,26 @@ void Table::OnSearchMatch ()
 
       if (playerA && playerB)
       {
+        gchar *name;
+
+        name = playerA->GetName ();
         _quick_score_collector->SetMatch (_quick_score_A,
                                           match,
                                           playerA);
         gtk_widget_show (_glade->GetWidget ("fencerA_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerA_label")),
-                            playerA->GetName ());
+                            name);
+        g_free (name);
 
 
+        name = playerB->GetName ();
         _quick_score_collector->SetMatch (_quick_score_B,
                                           match,
                                           playerB);
         gtk_widget_show (_glade->GetWidget ("fencerB_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerB_label")),
-                            playerB->GetName ());
+                            name);
+        g_free (name);
         return;
       }
     }

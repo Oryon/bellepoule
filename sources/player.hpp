@@ -29,18 +29,20 @@ class Player : public Object
     class AttributeId : public Object
     {
       public:
-        AttributeId (gchar  *name,
-                     Object *owner = NULL)
+        AttributeId (gchar   *name,
+                     Object  *owner = NULL)
         {
-          _name  = name;
-          _owner = owner;
+          _name      = name;
+          _owner     = owner;
+          _rand_seed = 0;
         }
 
         static AttributeId *CreateAttributeId (AttributeDesc *desc,
                                                Object        *owner);
 
-        gchar  *_name;
-        Object *_owner;
+        gchar   *_name;
+        Object  *_owner;
+        guint32  _rand_seed;
     };
 
     typedef void (*OnChange) (Player    *player,

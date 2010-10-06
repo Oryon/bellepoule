@@ -86,6 +86,8 @@ class Checkin : public virtual Stage, public PlayersList
 
     gboolean IsOver ();
 
+    void UpdateChecksum ();
+
     void Monitor (Player *player);
 
     void RefreshAttendingDisplay ();

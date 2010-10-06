@@ -63,11 +63,10 @@ class Pool : public CanvasModule
 
     void Wipe ();
 
-    void Save  (xmlTextWriter *xml_writer);
-    void Load  (xmlNode       *xml_node,
-                GSList        *player_list);
+    void Save (xmlTextWriter *xml_writer);
 
-    void SetRandSeed (guint32 seed);
+    void Load (xmlNode *xml_node,
+               GSList  *player_list);
 
     void Stuff ();
 
@@ -85,7 +84,6 @@ class Pool : public CanvasModule
     Object         *_single_owner;
     Object         *_combined_source_owner;
     Data           *_max_score;
-    guint           _rand_seed;
     guint           _number;
     GSList         *_player_list;
     ScoreCollector *_score_collector;

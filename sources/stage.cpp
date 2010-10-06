@@ -110,6 +110,30 @@ void Stage::SetName (gchar *name)
 }
 
 // --------------------------------------------------------------------------------
+guint32 Stage::GetRandSeed ()
+{
+  Module *module = dynamic_cast <Module *> (this);
+
+  if (module)
+  {
+    return module->_rand_seed;
+  }
+
+  return 0;
+}
+
+// --------------------------------------------------------------------------------
+void Stage::SetRandSeed (guint32 rand_seed)
+{
+  Module *module = dynamic_cast <Module *> (this);
+
+  if (module)
+  {
+    module->_rand_seed = rand_seed;
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Stage::SetId (guint id)
 {
   _id = id;

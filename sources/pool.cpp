@@ -34,7 +34,6 @@ Pool::Pool (Data  *max_score,
   _number      = number;
   _player_list = NULL;
   _match_list  = NULL;
-  _rand_seed   = 0;
   _is_over     = FALSE;
   _has_error   = FALSE;
   _title_table = NULL;
@@ -122,12 +121,6 @@ void Pool::SetStatusCbk (StatusCbk  cbk,
     _status_cbk (this,
                  _status_cbk_data);
   }
-}
-
-// --------------------------------------------------------------------------------
-void Pool::SetRandSeed (guint32 seed)
-{
-  _rand_seed = seed;
 }
 
 // --------------------------------------------------------------------------------

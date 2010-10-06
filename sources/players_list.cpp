@@ -847,16 +847,18 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
       }
       else
       {
-        gchar *font = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+        gchar *font  = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+        gchar *image = attr->GetUserImage ();
 
         item = goo_canvas_text_new (root_item,
-                                    attr->GetUserImage (),
+                                    image,
                                     x,
                                     row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
                                     -1.0,
                                     GTK_ANCHOR_W,
                                     "font", font,
                                     NULL);
+        g_free (image);
         g_free (font);
 
         goo_canvas_item_get_bounds (item,

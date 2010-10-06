@@ -16,6 +16,7 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "attribute.hpp"
 #include "schedule.hpp"
@@ -354,13 +355,70 @@ void Checkin::UseInitialRank ()
 }
 
 // --------------------------------------------------------------------------------
+void Checkin::UpdateChecksum ()
+{
+  {
+    Player::AttributeId attr_id ("name");
+
+    _player_list = g_slist_sort_with_data (_player_list,
+                                           (GCompareDataFunc) Player::Compare,
+                                           &attr_id);
+  }
+
+  {
+    Player::AttributeId attr_id ("attending");
+    GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
+    GSList              *current_player = _player_list;
+
+    while (current_player)
+    {
+      Player *p;
+
+      p = (Player *) current_player->data;
+      if (p)
+      {
+        Attribute *attending;
+
+        attending = p->GetAttribute (&attr_id);
+        if (attending && (gboolean) attending->GetValue ())
+        {
+          gchar *name = p->GetName ();
+
+          name[0] = toupper (name[0]);
+          g_checksum_update (checksum,
+                             (guchar *) name,
+                             1);
+          g_free (name);
+        }
+      }
+      current_player = g_slist_next (current_player);
+    }
+
+    {
+      gchar short_checksum[9];
+
+      strncpy (short_checksum,
+               g_checksum_get_string (checksum),
+               sizeof (short_checksum));
+      short_checksum[8] = 0;
+
+      _rand_seed = strtol (short_checksum, NULL, 16);
+    }
+
+    g_checksum_free (checksum);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Checkin::UpdateRanking ()
 {
   guint nb_player  = g_slist_length (_player_list);
   guint nb_missing = 0;
 
+  UpdateChecksum ();
+
   {
-    Player::AttributeId *attr_id ;
+    Player::AttributeId *attr_id;
 
     if (_use_initial_rank)
     {
@@ -378,41 +436,46 @@ void Checkin::UpdateRanking ()
     attr_id->Release ();
   }
 
-  for (guint i = 0; i < nb_player; i++)
   {
-    Player    *p;
-    Attribute *attending;
+    GSList *current_player = _player_list;
 
-    p = (Player *) g_slist_nth_data (_player_list, i);
-
+    for (guint i = 0; current_player != NULL; i++)
     {
-      Player::AttributeId attr_id ("attending");
+      Player    *p;
+      Attribute *attending;
 
-      attending = p->GetAttribute (&attr_id);
-    }
+      p = (Player *) current_player->data;
 
-    {
-      Player::AttributeId previous_rank_id ("previous_stage_rank", this);
-      Player::AttributeId rank_id          ("rank", this);
-
-      if (attending && (gboolean) attending->GetValue ())
       {
-        p->SetAttributeValue (&previous_rank_id,
-                              i - nb_missing + 1);
-        p->SetAttributeValue (&rank_id,
-                              i - nb_missing + 1);
-      }
-      else
-      {
-        p->SetAttributeValue (&previous_rank_id,
-                              nb_player - nb_missing);
-        p->SetAttributeValue (&rank_id,
-                              nb_player - nb_missing);
-        nb_missing++;
-      }
-    }
+        Player::AttributeId attr_id ("attending");
 
-    Update (p);
+        attending = p->GetAttribute (&attr_id);
+      }
+
+      {
+        Player::AttributeId previous_rank_id ("previous_stage_rank", this);
+        Player::AttributeId rank_id          ("rank", this);
+
+        if (attending && (gboolean) attending->GetValue ())
+        {
+          p->SetAttributeValue (&previous_rank_id,
+                                i - nb_missing + 1);
+          p->SetAttributeValue (&rank_id,
+                                i - nb_missing + 1);
+        }
+        else
+        {
+          p->SetAttributeValue (&previous_rank_id,
+                                nb_player - nb_missing);
+          p->SetAttributeValue (&rank_id,
+                                nb_player - nb_missing);
+          nb_missing++;
+        }
+      }
+      Update (p);
+
+      current_player = g_slist_next (current_player);
+    }
   }
 }
 
