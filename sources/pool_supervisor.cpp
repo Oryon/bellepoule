@@ -217,7 +217,7 @@ gint PoolSupervisor::CompareSingleClassification (Player         *A,
   return Pool::ComparePlayer (A,
                               B,
                               pool_supervisor->_single_owner,
-                              _rand_seed);
+                              pool_supervisor->_rand_seed);
 }
 
 // --------------------------------------------------------------------------------
@@ -228,7 +228,7 @@ gint PoolSupervisor::CompareCombinedClassification (Player         *A,
   return Pool::ComparePlayer (A,
                               B,
                               pool_supervisor,
-                              _rand_seed);
+                              pool_supervisor->_rand_seed);
 }
 
 // --------------------------------------------------------------------------------

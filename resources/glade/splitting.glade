@@ -118,3 +118,5 @@
   </object>
   <object class="GtkTextBuffer" id="textbuffer1">
     <property name="text" translatable="yes">Select the fencers to move to a new competition.</property>
+  </object>
+</interface>

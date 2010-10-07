@@ -1047,7 +1047,7 @@ void Checkin::Print (const gchar *job_name)
     }
     else if ((_print_attending == FALSE) && _print_missing)
     {
-      Module::Print (gettext ("Lost of absents"));
+      Module::Print (gettext ("List of absents"));
     }
     else
     {

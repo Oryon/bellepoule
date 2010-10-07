@@ -155,7 +155,8 @@
     <property name="program_name">BellePoule</property>
     <property name="version">0.01/02</property>
     <property name="copyright">Copyright (C) 2009 Yannick Le Roux.</property>
-    <property name="comments" translatable="yes">Fencing tournament management software
+    <property name="comments" translatable="yes">Fencing tournament management software.
+
 
 </property>
     <property name="website">http://betton.escrime.free.fr/index.php/bellepoule</property>
@@ -850,7 +851,7 @@ Portage Linux
 Conception/Codage:
   Yannick Le Roux</property>
     <property name="translator_credits" translatable="yes">Marijn Somers (Dutch)
-Julien Diaz (german)</property>
+Julien Diaz (German)</property>
     <property name="artists">S&#xE9;bastien Vermandel</property>
     <property name="logo">about.png</property>
     <signal name="close" handler="gtk_widget_hide"/>
