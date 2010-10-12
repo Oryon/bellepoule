@@ -1,4 +1,4 @@
-# Arabic translation for bellepoule
+# Breton translation for bellepoule
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the bellepoule package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
@@ -8,9 +8,9 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-09-22 23:48+0000\n"
+"PO-Revision-Date: 2010-09-06 06:51+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
-"Language-Team: Arabic <ar@li.org>\n"
+"Language-Team: Breton <br@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -74,11 +74,11 @@ msgstr ""
 #: ../../sources/contest.cpp:39
 #: ../../resources/glade/contest.glade:105
 msgid "Sabre"
-msgstr "سابر"
+msgstr ""
 
 #: ../../sources/contest.cpp:40
 msgid "Epée"
-msgstr "إيبيه"
+msgstr ""
 
 #: ../../sources/contest.cpp:41
 msgid "Foil"
@@ -125,7 +125,7 @@ msgstr ""
 
 #: ../../sources/contest.cpp:73
 msgid "Senior"
-msgstr "عمومي"
+msgstr ""
 
 #: ../../sources/contest.cpp:74
 msgid "Veteran"
@@ -184,7 +184,7 @@ msgstr ""
 #: ../../sources/main.cpp:172
 #: ../../sources/main.cpp:223
 msgid "place"
-msgstr "المركز"
+msgstr ""
 
 #: ../../sources/main.cpp:174
 msgid "last name"
@@ -212,11 +212,11 @@ msgstr ""
 
 #: ../../sources/main.cpp:195
 msgid "club"
-msgstr "النادي"
+msgstr ""
 
 #: ../../sources/main.cpp:199
 msgid "licence"
-msgstr "بطاقة التسجيل"
+msgstr ""
 
 #: ../../sources/main.cpp:201
 msgid "ranking"
@@ -255,7 +255,7 @@ msgstr ""
 #: ../../sources/table.cpp:2058
 #: ../../sources/table.cpp:2075
 msgid "Signature"
-msgstr "التوقيع"
+msgstr ""
 
 #: ../../sources/pool.cpp:481
 msgid "Victories"
@@ -263,7 +263,7 @@ msgstr ""
 
 #: ../../sources/pool.cpp:490
 msgid "Vict./Matchs"
-msgstr "فوز/مباريات"
+msgstr ""
 
 #: ../../sources/pool.cpp:499
 msgid "H. scored"
@@ -279,7 +279,7 @@ msgstr ""
 
 #: ../../sources/pool.cpp:526
 msgid "Place"
-msgstr "المركز"
+msgstr ""
 
 #: ../../sources/pool_allocator.cpp:46
 msgid "Pools arrangement"
@@ -360,7 +360,7 @@ msgstr ""
 #: ../../sources/table.cpp:1895
 #, id-format
 msgid "Match %s"
-msgstr "مباراة %s"
+msgstr ""
 
 #: ../../sources/table.cpp:2118
 msgid "Table round classification"
@@ -490,7 +490,7 @@ msgstr ""
 
 #: ../../resources/glade/contest.glade:293
 msgid "<b>Type</b>"
-msgstr "<b>نوع</b>"
+msgstr ""
 
 #: ../../resources/glade/contest.glade:323
 msgid "Title"
@@ -546,7 +546,7 @@ msgstr ""
 #: ../../resources/glade/contest.glade:564
 #: ../../resources/glade/contest.glade:619
 msgid ":"
-msgstr ":"
+msgstr ""
 
 #: ../../resources/glade/contest.glade:657
 msgid "<b>Date / Time</b>"
@@ -579,7 +579,7 @@ msgstr ""
 
 #: ../../resources/glade/contest.glade:737
 msgid "<b>Scores</b>"
-msgstr "<b>النتائج</b>"
+msgstr ""
 
 #: ../../resources/glade/general_classification.glade:39
 msgid ""
@@ -1483,304 +1483,4 @@ msgid ""
 msgstr ""
 
 msgid "points"
-msgstr "نقاط"
-
-#~ msgid "Tous les fichiers"
-#~ msgstr "جميع الملفات"
-
-#~ msgid "<b><big>Quels tireurs voulez-vous imprimer ?</big></b>"
-#~ msgstr "<b><big>من هم اللاعبون الذين تريدون طباعتهم؟</big></b>"
-
-#~ msgid "Impression de la liste des tireurs"
-#~ msgstr "طباعة قائمة اللاعبين"
-
-#~ msgid "Appel"
-#~ msgstr "نداء"
-
-#~ msgid "Liste des inscrits"
-#~ msgstr "قائمة المسجلين"
-
-#~ msgid "Liste des présents"
-#~ msgstr "قائمة الحاضرين"
-
-#~ msgid ""
-#~ "Décochez cette case pour accélerer la navigation. Le champs correspondant "
-#~ "sera ignoré lors des appuis sur la touche TAB."
-#~ msgstr ""
-#~ "إزالة العلامة من هذه الخانة لتسريع الإبحار.سيتم تجاهل المجال الموافق عند "
-#~ "الضغط على زر TAB"
-
-#~ msgid "Tous les fichiers Excel (.CSV)"
-#~ msgstr "جميع ملفات  (Excel (.CSV"
-
-#~ msgid "Choisissez un fichier de tireurs à importer ..."
-#~ msgstr "اختر ملف اللاعبين الذي تريد تنزيله..."
-
-#~ msgid "Tous les fichiers FFF (.FFF)"
-#~ msgstr "جميع ملفات  FFF"
-
-#~ msgid "Poussin"
-#~ msgstr "تحت 9 سنوات"
-
-#~ msgid "Féminin"
-#~ msgstr "إناث"
-
-#~ msgid "Masculin"
-#~ msgstr "ذكور"
-
-#~ msgid "Fleuret"
-#~ msgstr "فلوريه"
-
-#~ msgid "Pupille"
-#~ msgstr "تحت 11 سنة"
-
-#~ msgid "Mixte"
-#~ msgstr "مختلط"
-
-#~ msgid "Liste des tireurs"
-#~ msgstr "قائمة اللاعبين"
-
-#~ msgid "Liste des absents"
-#~ msgstr "قائمة الغائبين"
-
-#~ msgid "Cadet"
-#~ msgstr "أشبال تحت 17 سنة"
-
-#~ msgid "Minime"
-#~ msgstr "تحت 15 سنة"
-
-#~ msgid "Propriétés de la compétition"
-#~ msgstr "خاصية البطولة"
-
-#~ msgid "Benjamin"
-#~ msgstr "تحت 13 سنة"
-
-#~ msgid "Vétéran"
-#~ msgstr "Vétéran"
-
-#~ msgid "Junior"
-#~ msgstr "ناشئين تحت 20 سنة"
-
-#~ msgid "Choisissez un fichier de secours ..."
-#~ msgstr "اختر ملف للإنقاذ"
-
-#~ msgid "Date de la compétition"
-#~ msgstr "تاريخ البطولة"
-
-#~ msgid "Choisissez un fichier de sauvegarde ..."
-#~ msgstr "اختر ملف للتخزين"
-
-#, c-format
-#~ msgid ""
-#~ "<b><big>Voulez-vous vraiment fermer\n"
-#~ "<big>%s</big> ?</big></b>"
-#~ msgstr ""
-#~ "b><big>هل تريد فعلا الغلق\n"
-#~ "<big>%s</big> ?</big></b>"
-
-#~ msgid "Fermer la compétition ?"
-#~ msgstr "غلق البطولة؟"
-
-#~ msgid "sexe"
-#~ msgstr "الجنس"
-
-#~ msgid "date naissance"
-#~ msgstr "تاريخ الميلاد"
-
-#~ msgid "ligue"
-#~ msgstr "الرابطة"
-
-#~ msgid "nation"
-#~ msgstr "البلد"
-
-#~ msgid "présence"
-#~ msgstr "حضور"
-
-#~ msgid "exporté"
-#~ msgstr "تصدير"
-
-#~ msgid "Vict./Matchs (‰)"
-#~ msgstr "فوز/مباريات (%)"
-
-#~ msgid "T. reçues"
-#~ msgstr "لمسات عليه"
-
-#~ msgid "T. données"
-#~ msgstr "لمسات له"
-
-#~ msgid "Victoires"
-#~ msgstr "فوز"
-
-#~ msgid "rang d'entrée"
-#~ msgstr "مركز الدخول"
-
-#~ msgid "indice"
-#~ msgstr "مؤشر"
-
-#~ msgid "Touches données"
-#~ msgstr "لمسات له"
-
-#~ msgid "Indice"
-#~ msgstr "مؤشر"
-
-#~ msgid "Répartition dans les poules"
-#~ msgstr "توزيع المجموعات"
-
-#~ msgid "Composition poules"
-#~ msgstr "تكوين المجموعات"
-
-#~ msgid "<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>"
-#~ msgstr "<b><big>هل تريد فعلا إلغاء الجملة الحالية?</big></b>"
-
-#~ msgid "Revenir à la phase précédente ?"
-#~ msgstr "الرجوع إلى الجملة السابقة؟"
-
-#~ msgid "Impression des feuilles de poule"
-#~ msgstr "طباعة أوراق المجموعات"
-
-#~ msgid "Classement du tour de poule"
-#~ msgstr "التصنيف بعد المجموعات"
-
-#~ msgid "Poules"
-#~ msgstr "المجموعات"
-
-#~ msgid "<b><big>Imprimer ...</big></b>"
-#~ msgstr "<b><big>طباعة...</big></b>"
-
-#~ msgid "Demi-finale"
-#~ msgstr "نصف النهائي"
-
-#~ msgid "Impression du tableau"
-#~ msgstr "طباعة الجدول"
-
-#~ msgid "<b><big>Que voulez-vous imprimer ?</big></b>"
-#~ msgstr "<b><big>ماذا تريد طباعة?</big></b>"
-
-#~ msgid "Finale"
-#~ msgstr "النهائي"
-
-#~ msgid "Vainqueur"
-#~ msgstr "الفائز"
-
-#~ msgid "Tableau"
-#~ msgstr "جدول"
-
-#~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
-#~ msgstr "<b><big>أي مباريات من الجدول المختار تريد طباعتها?</big></b>"
-
-#~ msgid "Toutes les saisies de cette phase seront annulées."
-#~ msgstr "سيوف يتم إلغاء جميع محتويات هذه الجملة."
-
-#~ msgid "Scission"
-#~ msgstr "اقتسام"
-
-#~ msgid "Feuille de match"
-#~ msgstr "ورقة المباراة"
-
-#~ msgid "Classement du tableau"
-#~ msgstr "تصنيف الجدول"
-
-#~ msgid "Quitter BellePoule ?"
-#~ msgstr "مغادرة BellePoule؟"
-
-#~ msgid "Fichiers BellePoule"
-#~ msgstr "ملفات BellePoule"
-
-#~ msgid "<b><big>Voulez-vous vraiment quitter BellePoule ?</big></b>"
-#~ msgstr "<b><big>هل تريد فعلا مغادرة  BellePoule؟</big></b>"
-
-#~ msgid "Choisissez un fichier de compétition à ouvrir ..."
-#~ msgstr "اختر ملف البطولة الذي تريد فتحه..."
-
-#~ msgid "Les fichiers BellePoule (.cocot)"
-#~ msgstr "ملفات BellePoule"
-
-#~ msgid "Fichiers récemment ouverts"
-#~ msgstr "الملفات المفتوحة حديثا"
-
-#~ msgid "Sauvegarde l'état courant de la compétition."
-#~ msgstr "تخزين البطولة في الوضع الحالي."
-
-#~ msgid "Arme"
-#~ msgstr "السلاح"
-
-#~ msgid "Categorie"
-#~ msgstr "فئة"
-
-#~ msgid "Sexe"
-#~ msgstr "الجنس"
-
-#~ msgid ""
-#~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
-#~ "tableaux et autres phases."
-#~ msgstr ""
-#~ "يمكنك من إدخال صيغة البطولة عبر تحديد تسلسل المجموعات و الجدول ...إلخ."
-
-#~ msgid "Homme"
-#~ msgstr "ذكور"
-
-#~ msgid "Formule"
-#~ msgstr "الصيغة"
-
-#~ msgid "Rend inactif le bouton de remplissage automatique des scores."
-#~ msgstr "يعطّل زر التعبئة الأوتوماتيكية للنتائج."
-
-#~ msgid "Interdire"
-#~ msgstr "ممنوع"
-
-#~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-#~ "des saisies longues et laborieuses lors des séances de prise en main de "
-#~ "BellePoule."
-#~ msgstr "يفعّل زر التعبئة الأوتوماتيكية للنتائج."
-
-#~ msgid "Autoriser"
-#~ msgstr "السماح"
-
-#~ msgid ""
-#~ "Remplissage\n"
-#~ "automatique\n"
-#~ "des scores"
-#~ msgstr ""
-#~ "تعبئة\n"
-#~ "أوتوماتيكية\n"
-#~ "للنتائج"
-
-#~ msgid "<b>Date / Horaires</b>"
-#~ msgstr "<b>تاريخ / توقيت</b>"
-
-#~ msgid "Classement général"
-#~ msgstr "التصنيف العام"
-
-#~ msgid "classement"
-#~ msgstr "تصنيف"
-
-#~ msgid "Choisissez un fichier de destination ..."
-#~ msgstr "اختر ملف وجهة..."
-
-#~ msgid "prénom"
-#~ msgstr "الإسم"
-
-#~ msgid "nom"
-#~ msgstr "اللقب"
-
-#~ msgid "Les saisies non sauvegardées seront perdues."
-#~ msgstr "المعطيات الغير مخزّنة سوف تفقد."
-
-#~ msgid "Filtre"
-#~ msgstr "مصفاة"
-
-#, c-format
-#~ msgid "%s : Impression des matchs"
-#~ msgstr "%s : طباعة المباريات"
-
-#~ msgid "Caractéristiques de la compétition"
-#~ msgstr "خصوصيات البطولة"
-
-#~ msgid "Permet de renseigner les caractéristiques de la compétition."
-#~ msgstr "يمكنك من إدخال معلومات البطولة."
-
-#, c-format
-#~ msgid "Tableau de %d"
-#~ msgstr "جدول %d"
+msgstr ""
