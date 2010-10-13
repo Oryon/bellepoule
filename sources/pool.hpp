@@ -29,6 +29,13 @@
 class Pool : public CanvasModule
 {
   public:
+    typedef enum
+    {
+      WITH_CALCULUS = 0x1,
+      WITH_RANDOM   = 0x2
+    } ComparisonPolicy;
+
+  public:
     typedef void (*StatusCbk) (Pool *pool,
                                void *data);
 
@@ -78,7 +85,7 @@ class Pool : public CanvasModule
                                Player   *B,
                                Object   *data_owner,
                                guint32   rand_seed,
-                               gboolean  with_full_random = FALSE);
+                               guint     comparison_policy);
 
   private:
     Object         *_single_owner;

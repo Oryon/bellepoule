@@ -217,7 +217,8 @@ gint PoolSupervisor::CompareSingleClassification (Player         *A,
   return Pool::ComparePlayer (A,
                               B,
                               pool_supervisor->_single_owner,
-                              pool_supervisor->_rand_seed);
+                              pool_supervisor->_rand_seed,
+                              Pool::WITH_CALCULUS | Pool::WITH_RANDOM);
 }
 
 // --------------------------------------------------------------------------------
@@ -228,7 +229,8 @@ gint PoolSupervisor::CompareCombinedClassification (Player         *A,
   return Pool::ComparePlayer (A,
                               B,
                               pool_supervisor,
-                              pool_supervisor->_rand_seed);
+                              pool_supervisor->_rand_seed,
+                              Pool::WITH_CALCULUS | Pool::WITH_RANDOM);
 }
 
 // --------------------------------------------------------------------------------
@@ -687,29 +689,57 @@ GSList *PoolSupervisor::GetCurrentClassification ()
     }
   }
 
-  {
-    Player::AttributeId *attr_id = new Player::AttributeId ("rank", _single_owner);
-    GSList              *current;
+  result = EvaluateClassification (result,
+                                   _single_owner,
+                                   (GCompareDataFunc) CompareSingleClassification);
 
-    result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) CompareSingleClassification,
-                                     this);
-    current = result;
-    for (guint i = 0; current != NULL; i ++)
-    {
-      Player *player;
+  return EvaluateClassification (result,
+                                 this,
+                                 (GCompareDataFunc) CompareCombinedClassification);
+}
 
-      player = (Player *) current->data;
+// --------------------------------------------------------------------------------
+GSList *PoolSupervisor::EvaluateClassification (GSList           *list,
+                                                Object           *rank_owner,
+                                                GCompareDataFunc  CompareFunction)
+{
+  Player::AttributeId *attr_id = new Player::AttributeId ("rank", rank_owner);
+  GSList              *result;
+  GSList              *current;
+  guint                previous_rank   = 0;
+  Player              *previous_player = NULL;
 
-      player->SetAttributeValue (attr_id,
-                                 i + 1);
-      current = g_slist_next (current);
-    }
-  }
-
-  result = g_slist_sort_with_data (result,
-                                   (GCompareDataFunc) CompareCombinedClassification,
+  result = g_slist_sort_with_data (list,
+                                   CompareFunction,
                                    this);
+  current = result;
+  for (guint i = 1; current; i++)
+  {
+    Player *player;
+
+    player = (Player *) current->data;
+
+    if (   previous_player
+        && (Pool::ComparePlayer (player,
+                                 previous_player,
+                                 rank_owner,
+                                 0,
+                                 Pool::WITH_CALCULUS) == 0))
+    {
+      player->SetAttributeValue (attr_id,
+                                 previous_rank);
+    }
+    else
+    {
+      player->SetAttributeValue (attr_id,
+                                 i);
+      previous_rank = i;
+    }
+
+    previous_player = player;
+    current = g_slist_next (current);
+  }
+  attr_id->Release ();
 
   return result;
 }

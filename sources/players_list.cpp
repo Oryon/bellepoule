@@ -366,6 +366,10 @@ gint PlayersList::CompareIterator (GtkTreeModel        *model,
                                    GtkTreeIter         *b,
                                    Player::AttributeId *attr_id)
 {
+  guint32 *rand_seed = (guint32 *) attr_id->GetData (NULL,
+                                                     "CompareIteratorRandSeed");
+
+  attr_id->MakeRandomReady (*rand_seed);
   return Player::Compare (GetPlayer (model, a),
                           GetPlayer (model, b),
                           attr_id);
@@ -463,6 +467,9 @@ void PlayersList::SetColumn (guint          id,
       gtk_tree_view_column_set_sort_column_id (column,
                                                id);
 
+      attr_id->SetData (NULL,
+                        "CompareIteratorRandSeed",
+                        &_rand_seed);
       gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
                                        id,
                                        (GtkTreeIterCompareFunc) CompareIterator,

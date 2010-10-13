@@ -612,7 +612,8 @@ void PoolAllocator::CreatePools ()
     _swapper->SetCriteria (attr_id);
     attr_id->Release ();
 
-    _swapper->Swap (_pools_list);
+    _swapper->Swap (_pools_list,
+                    _rand_seed);
   }
 
   SetOriginalPools ();

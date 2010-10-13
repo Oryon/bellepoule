@@ -104,10 +104,51 @@ gint Player::Compare (Player      *a,
   }
   else
   {
+    gint       result;
     Attribute *attr_a = a->GetAttribute (attr_id);
     Attribute *attr_b = b->GetAttribute (attr_id);
 
-    return Attribute::Compare (attr_a, attr_b);
+    result = Attribute::Compare (attr_a, attr_b);
+    if (result == 0)
+    {
+      if (attr_id->_rand_seed)
+      {
+        result = RandomCompare (a,
+                                b,
+                                attr_id->_rand_seed);
+      }
+    }
+
+    return result;
+  }
+}
+
+// --------------------------------------------------------------------------------
+gint Player::RandomCompare (Player  *A,
+                            Player  *B,
+                            guint32  rand_seed)
+{
+  guint          ref_A  = A->GetRef ();
+  guint          ref_B  = B->GetRef ();
+  const guint32  seed[] = {MIN (ref_A, ref_B), MAX (ref_A, ref_B), rand_seed};
+  GRand         *rand;
+  gint           result;
+
+  // Return always the same random value for the given players
+  // to avoid human manipulations. Without that, filling in the
+  // same result twice could modify the ranking.
+  rand = g_rand_new_with_seed_array (seed,
+                                     sizeof (seed) / sizeof (guint32));
+  result = (gint) g_rand_int (rand);
+  g_rand_free (rand);
+
+  if (ref_A > ref_B)
+  {
+    return -result;
+  }
+  else
+  {
+    return result;
   }
 }
 

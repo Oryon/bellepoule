@@ -37,6 +37,11 @@ class Player : public Object
           _rand_seed = 0;
         }
 
+        void MakeRandomReady (guint32 rand_seed)
+        {
+          _rand_seed = rand_seed;
+        };
+
         static AttributeId *CreateAttributeId (AttributeDesc *desc,
                                                Object        *owner);
 
@@ -80,6 +85,10 @@ class Player : public Object
     static gint Compare (Player      *a,
                          Player      *b,
                          AttributeId *attr_id);
+
+    static gint RandomCompare (Player  *A,
+                               Player  *B,
+                               guint32  rand_seed);
 
   private:
     struct Client : public Object

@@ -166,6 +166,10 @@ class Table : public virtual Stage, public CanvasModule
                                Player *B,
                                Table  *table);
 
+    gint ComparePreviousRankPlayer (Player  *A,
+                                    Player  *B,
+                                    guint32  rand_seed);
+
     void Save (xmlTextWriter *xml_writer);
 
     void SaveConfiguration (xmlTextWriter *xml_writer);

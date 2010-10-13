@@ -53,8 +53,8 @@ Checkin::Checkin (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "previous_stage_rank",
                                "exported",
-                               "rank",
                                "final_rank",
                                "victories_ratio",
                                "indice",
@@ -64,7 +64,7 @@ Checkin::Checkin (StageClass *stage_class)
                          this);
 
     filter->ShowAttribute ("attending");
-    filter->ShowAttribute ("previous_stage_rank");
+    filter->ShowAttribute ("rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("birth_date");
@@ -402,7 +402,7 @@ void Checkin::UpdateChecksum ()
                sizeof (short_checksum));
       short_checksum[8] = 0;
 
-      _rand_seed = strtol (short_checksum, NULL, 16);
+      _rand_seed = strtoul (short_checksum, NULL, 16);
     }
 
     g_checksum_free (checksum);
@@ -412,8 +412,7 @@ void Checkin::UpdateChecksum ()
 // --------------------------------------------------------------------------------
 void Checkin::UpdateRanking ()
 {
-  guint nb_player  = g_slist_length (_player_list);
-  guint nb_missing = 0;
+  guint nb_player = g_slist_length (_player_list);
 
   UpdateChecksum ();
 
@@ -430,6 +429,7 @@ void Checkin::UpdateRanking ()
       attr_id = new Player::AttributeId ("rating");
     }
 
+    attr_id->MakeRandomReady (_rand_seed);
     _player_list = g_slist_sort_with_data (_player_list,
                                            (GCompareDataFunc) Player::Compare,
                                            attr_id);
@@ -437,9 +437,12 @@ void Checkin::UpdateRanking ()
   }
 
   {
-    GSList *current_player = _player_list;
+    Player *previous_player = NULL;
+    GSList *current_player  = _player_list;
+    gint    previous_rank   = 0;
+    guint   nb_present      = 1;
 
-    for (guint i = 0; current_player != NULL; i++)
+    while (current_player)
     {
       Player    *p;
       Attribute *attending;
@@ -455,26 +458,40 @@ void Checkin::UpdateRanking ()
       {
         Player::AttributeId previous_rank_id ("previous_stage_rank", this);
         Player::AttributeId rank_id          ("rank", this);
+        Player::AttributeId rating_attr      ("rating");
 
         if (attending && (gboolean) attending->GetValue ())
         {
-          p->SetAttributeValue (&previous_rank_id,
-                                i - nb_missing + 1);
-          p->SetAttributeValue (&rank_id,
-                                i - nb_missing + 1);
+          if (   previous_player
+              && (Player::Compare (previous_player, p, &rating_attr) == 0))
+          {
+            p->SetAttributeValue (&previous_rank_id,
+                                  previous_rank);
+            p->SetAttributeValue (&rank_id,
+                                  previous_rank);
+          }
+          else
+          {
+            p->SetAttributeValue (&previous_rank_id,
+                                  nb_present);
+            p->SetAttributeValue (&rank_id,
+                                  nb_present);
+            previous_rank = nb_present;
+          }
+          previous_player = p;
+          nb_present++;
         }
         else
         {
           p->SetAttributeValue (&previous_rank_id,
-                                nb_player - nb_missing);
+                                nb_player);
           p->SetAttributeValue (&rank_id,
-                                nb_player - nb_missing);
-          nb_missing++;
+                                nb_player);
         }
       }
       Update (p);
 
-      current_player = g_slist_next (current_player);
+      current_player  = g_slist_next (current_player);
     }
   }
 }
@@ -493,12 +510,15 @@ GSList *Checkin::GetCurrentClassification ()
 
   if (result)
   {
-    Player::AttributeId attr_id ("rank",
-                                 this);
+    Player::AttributeId attr_id ("rank");
 
+    attr_id.MakeRandomReady (_rand_seed);
     result = g_slist_sort_with_data (result,
                                      (GCompareDataFunc) Player::Compare,
                                      &attr_id);
+
+    result = g_slist_reverse (result);
+
     _attendees->SetGlobalList (result);
   }
   return result;

@@ -176,6 +176,7 @@ void Pool::AddPlayer (Player *player,
                                     match);
     }
 
+    attr_id.MakeRandomReady (_rand_seed);
     _player_list = g_slist_insert_sorted_with_data (_player_list,
                                                     player,
                                                     (GCompareDataFunc) Player::Compare,
@@ -788,7 +789,7 @@ gint Pool::_ComparePlayer (Player *A,
                         B,
                         pool->_single_owner,
                         pool->_rand_seed,
-                        FALSE);
+                        WITH_CALCULUS | WITH_RANDOM);
 }
 
 // --------------------------------------------------------------------------------
@@ -796,7 +797,7 @@ gint Pool::ComparePlayer (Player   *A,
                           Player   *B,
                           Object   *data_owner,
                           guint32   rand_seed,
-                          gboolean  with_full_random)
+                          guint     comparison_policy)
 {
   if (B == NULL)
   {
@@ -806,7 +807,7 @@ gint Pool::ComparePlayer (Player   *A,
   {
     return -1;
   }
-  else if (with_full_random == FALSE)
+  else if (comparison_policy & WITH_CALCULUS)
   {
     guint  ratio_A;
     guint  ratio_B;
@@ -848,30 +849,14 @@ gint Pool::ComparePlayer (Player   *A,
     }
   }
 
+  if (comparison_policy & WITH_RANDOM)
   {
-    guint         ref_A  = A->GetRef ();
-    guint         ref_B  = B->GetRef ();
-    const guint32 seed[] = {MIN (ref_A, ref_B), MAX (ref_A, ref_B), rand_seed};
-    GRand        *rand;
-    gint          result;
-
-    // Return always the same random value for the given players
-    // to avoid human manipulations. Without that, filling in the
-    // same result twice could modify the ranking.
-    rand = g_rand_new_with_seed_array (seed,
-                                       sizeof (seed) / sizeof (guint32));
-    result = (gint) g_rand_int (rand);
-    g_rand_free (rand);
-
-    if (ref_A > ref_B)
-    {
-      return -result;
-    }
-    else
-    {
-      return result;
-    }
+    return Player::RandomCompare (A,
+                                  B,
+                                  rand_seed);
   }
+
+  return 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -983,15 +968,34 @@ void Pool::RefreshScoreData ()
                                     (GCompareDataFunc) _ComparePlayer,
                                     (void *) this);
 
-  for (guint p = 0; p < nb_players; p++)
   {
-    Player *player;
+    Player::AttributeId  victories_ratio_id ("victories_ratio", _single_owner);
+    Player::AttributeId  indice_id          ("indice", _single_owner);
+    Player::AttributeId  HS_id              ("HS", _single_owner);
+    GSList *current_player  = ranking;
+    Player *previous_player = NULL;
+    guint   previous_rank   = 0;
 
-    player = (Player *) g_slist_nth_data (ranking,
-                                          p);
-    if (player)
+    for (guint p = 1; current_player != NULL; p++)
     {
-      player->SetData (this, "Rank", (void *) (p+1));
+      Player *player;
+
+      player = (Player *) current_player->data;
+      if (   previous_player
+          && (Player::Compare (previous_player, player, &victories_ratio_id) == 0)
+          && (Player::Compare (previous_player, player, &indice_id) == 0)
+          && (Player::Compare (previous_player, player, &HS_id) == 0))
+      {
+          player->SetData (this, "Rank", (void *) (previous_rank));
+      }
+      else
+      {
+          player->SetData (this, "Rank", (void *) (p));
+          previous_rank = p;
+      }
+
+      previous_player = player;
+      current_player  = g_slist_next (current_player);
     }
   }
 
@@ -1413,7 +1417,7 @@ gint Pool::_ComparePlayerWithFullRandom (Player *A,
                         B,
                         pool->GetDataOwner (),
                         pool->_rand_seed,
-                        TRUE);
+                        WITH_RANDOM);
 }
 
 // --------------------------------------------------------------------------------
@@ -1439,6 +1443,7 @@ void Pool::ResetMatches (Object *rank_owner)
     Player::AttributeId attr_id ("previous_stage_rank",
                                  rank_owner);
 
+    attr_id.MakeRandomReady (_rand_seed);
     _player_list = g_slist_sort_with_data (_player_list,
                                            (GCompareDataFunc) Player::Compare,
                                            &attr_id);

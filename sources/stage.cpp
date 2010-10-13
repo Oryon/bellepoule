@@ -530,7 +530,7 @@ void Stage::UpdateClassification (GSList *result)
   if (_classification)
   {
     Player::AttributeId *previous_attr_id   = NULL;
-    Player::AttributeId *attr_id            = new Player::AttributeId ("rank", this);
+    Player::AttributeId *rank_attr_id       = new Player::AttributeId ("rank", this);
     Player::AttributeId *final_rank_attr_id = new Player::AttributeId ("final_rank");
 
     if (_input_provider)
@@ -540,27 +540,35 @@ void Stage::UpdateClassification (GSList *result)
 
     _classification->Wipe ();
 
-    for (guint i = 0; i < g_slist_length (result); i ++)
     {
-      Player *player;
+      GSList *current_player = result;
 
-      player = (Player *) g_slist_nth_data (result,
-                                            i);
-
-      if (previous_attr_id)
+      while (current_player)
       {
-        player->SetAttributeValue (previous_attr_id,
-                                   i + 1);
+        Player    *player;
+        Attribute *rank_attr;
+
+        player = (Player *) current_player->data;
+
+        rank_attr = player->GetAttribute (rank_attr_id);
+        if (rank_attr)
+        {
+          if (previous_attr_id)
+          {
+            player->SetAttributeValue (previous_attr_id,
+                                       (guint) rank_attr->GetValue ());
+          }
+          player->SetAttributeValue (final_rank_attr_id,
+                                     (guint) rank_attr->GetValue ());
+        }
+        _classification->Add (player);
+
+        current_player = g_slist_next (current_player);
       }
-      player->SetAttributeValue (attr_id,
-                                 i + 1);
-      player->SetAttributeValue (final_rank_attr_id,
-                                 i + 1);
-      _classification->Add (player);
     }
 
     Object::TryToRelease (previous_attr_id);
-    Object::TryToRelease (attr_id);
+    Object::TryToRelease (rank_attr_id);
     Object::TryToRelease (final_rank_attr_id);
   }
 }
