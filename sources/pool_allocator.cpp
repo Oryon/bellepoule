@@ -612,7 +612,8 @@ void PoolAllocator::CreatePools ()
     _swapper->SetCriteria (attr_id);
     attr_id->Release ();
 
-    _swapper->Swap (_pools_list);
+    _swapper->Swap (_pools_list,
+                    _rand_seed);
   }
 
   SetOriginalPools ();
@@ -773,10 +774,13 @@ gboolean PoolAllocator::OnButtonPress (GooCanvasItem  *item,
 
           if (attr)
           {
+            gchar *image = attr->GetUserImage ();
+
             string = g_string_append (string,
-                                      attr->GetUserImage ());
+                                      image);
             string = g_string_append (string,
                                       "  ");
+            g_free (image);
           }
         }
       }
@@ -1159,9 +1163,12 @@ void PoolAllocator::FillPoolTable (Pool *pool)
 
         if (attr)
         {
+          gchar *image = attr->GetUserImage ();
+
           item = Canvas::PutTextInTable (table,
-                                         attr->GetUserImage (),
+                                         image,
                                          p+1, i+1);
+          g_free (image);
         }
         else
         {

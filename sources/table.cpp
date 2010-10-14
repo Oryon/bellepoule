@@ -1610,7 +1610,6 @@ void Table::OnMatchSheetToggled (GtkWidget *widget)
 GSList *Table::GetCurrentClassification ()
 {
   _result_list = NULL;
-
   g_node_traverse (_tree_root,
                    G_LEVEL_ORDER,
                    G_TRAVERSE_ALL,
@@ -1622,13 +1621,54 @@ GSList *Table::GetCurrentClassification ()
                                          (GCompareDataFunc) ComparePlayer,
                                          (void *) this);
 
+  {
+    Player::AttributeId *attr_id = new Player::AttributeId ("rank", this);
+    GSList              *current;
+    guint                previous_rank   = 0;
+    Player              *previous_player = NULL;
+    guint32              rand_seed = _rand_seed;
+
+    _rand_seed = 0; // !!
+    current = _result_list;
+    for (guint i = 1; current; i++)
+    {
+      Player *player;
+
+      player = (Player *) current->data;
+
+      if (   previous_player
+          && (   (ComparePlayer (player,
+                                 previous_player,
+                                 this) == 0)
+              && (ComparePreviousRankPlayer (player,
+                                             previous_player,
+                                             0) == 0))
+          || (i == 3))
+      {
+        player->SetAttributeValue (attr_id,
+                                   previous_rank);
+      }
+      else
+      {
+        player->SetAttributeValue (attr_id,
+                                   i);
+        previous_rank = i;
+      }
+
+      previous_player = player;
+      current = g_slist_next (current);
+    }
+    attr_id->Release ();
+    _rand_seed = rand_seed; // !!
+  }
+
   return _result_list;
 }
 
 // --------------------------------------------------------------------------------
-gint Table::ComparePlayer (Player *A,
-                           Player *B,
-                           Table  *table)
+gint Table::ComparePlayer (Player  *A,
+                           Player  *B,
+                           Table   *table)
 {
   gint level_A = (gint) A->GetData (table, "level");
   gint level_B = (gint) B->GetData (table, "level");
@@ -1639,13 +1679,24 @@ gint Table::ComparePlayer (Player *A,
   }
   else
   {
-    Stage               *previous = table->GetPreviousStage ();
-    Player::AttributeId  attr_id ("rank", previous);
-
-    return Player::Compare (A,
-                            B,
-                            &attr_id);
+    return table->ComparePreviousRankPlayer (A,
+                                             B,
+                                             table->_rand_seed);
   }
+}
+
+// --------------------------------------------------------------------------------
+gint Table::ComparePreviousRankPlayer (Player  *A,
+                                       Player  *B,
+                                       guint32  rand_seed)
+{
+  Stage               *previous = GetPreviousStage ();
+  Player::AttributeId  attr_id ("rank", previous);
+
+  attr_id.MakeRandomReady (rand_seed);
+  return Player::Compare (A,
+                          B,
+                          &attr_id);
 }
 
 // --------------------------------------------------------------------------------
@@ -1670,20 +1721,26 @@ void Table::OnSearchMatch ()
 
       if (playerA && playerB)
       {
+        gchar *name;
+
+        name = playerA->GetName ();
         _quick_score_collector->SetMatch (_quick_score_A,
                                           match,
                                           playerA);
         gtk_widget_show (_glade->GetWidget ("fencerA_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerA_label")),
-                            playerA->GetName ());
+                            name);
+        g_free (name);
 
 
+        name = playerB->GetName ();
         _quick_score_collector->SetMatch (_quick_score_B,
                                           match,
                                           playerB);
         gtk_widget_show (_glade->GetWidget ("fencerB_label"));
         gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerB_label")),
-                            playerB->GetName ());
+                            name);
+        g_free (name);
         return;
       }
     }

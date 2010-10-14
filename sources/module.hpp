@@ -28,6 +28,8 @@ class Player;
 class Module : public virtual Object
 {
   public:
+    guint32  _rand_seed;
+
     void Plug (Module     *module,
                GtkWidget  *in,
                GtkToolbar *toolbar = NULL);

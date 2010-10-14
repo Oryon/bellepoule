@@ -29,6 +29,13 @@
 class Pool : public CanvasModule
 {
   public:
+    typedef enum
+    {
+      WITH_CALCULUS = 0x1,
+      WITH_RANDOM   = 0x2
+    } ComparisonPolicy;
+
+  public:
     typedef void (*StatusCbk) (Pool *pool,
                                void *data);
 
@@ -63,11 +70,10 @@ class Pool : public CanvasModule
 
     void Wipe ();
 
-    void Save  (xmlTextWriter *xml_writer);
-    void Load  (xmlNode       *xml_node,
-                GSList        *player_list);
+    void Save (xmlTextWriter *xml_writer);
 
-    void SetRandSeed (guint32 seed);
+    void Load (xmlNode *xml_node,
+               GSList  *player_list);
 
     void Stuff ();
 
@@ -79,13 +85,12 @@ class Pool : public CanvasModule
                                Player   *B,
                                Object   *data_owner,
                                guint32   rand_seed,
-                               gboolean  with_full_random = FALSE);
+                               guint     comparison_policy);
 
   private:
     Object         *_single_owner;
     Object         *_combined_source_owner;
     Data           *_max_score;
-    guint           _rand_seed;
     guint           _number;
     GSList         *_player_list;
     ScoreCollector *_score_collector;

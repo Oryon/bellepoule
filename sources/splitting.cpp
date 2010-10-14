@@ -191,6 +191,7 @@ GSList *Splitting::GetCurrentClassification ()
     Player::AttributeId attr_id ("previous_stage_rank",
                                  this);
 
+    attr_id.MakeRandomReady (_rand_seed);
     result = g_slist_sort_with_data (result,
                                      (GCompareDataFunc) Player::Compare,
                                      &attr_id);

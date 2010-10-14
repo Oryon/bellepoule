@@ -31,7 +31,8 @@ class Swapper : public Object
 
     void SetPlayerList (GSList *player_list);
 
-    void Swap (GSList *pools);
+    void Swap (GSList  *pools,
+               guint32  rand_seed);
 
   private:
     struct ValueUsage : Object

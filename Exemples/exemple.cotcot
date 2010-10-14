@@ -1,291 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-           By BellePoule (V0.03/10)
+           By BellePoule (V0.13/10)
              BETTON - since 2010
 
    http://betton.escrime.free.fr/index.php/bellepoule
 -->
 <!DOCTYPE CompetitionIndividuelle>
-<CompetitionIndividuelle Annee="2010" Arme="S" Sexe="M" Organisateur="CS Betton" Categorie="O" Date="03.10.2010" Appel="12:00" Scratch="12:00" Début="12:00" TitreLong="Challenge de france" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="0">
+<CompetitionIndividuelle Annee="2010" Arme="S" Sexe="M" Organisateur="CS Betton" Categorie="O" Date="03.10.2010" Appel="12:00" Scratch="12:00" Début="12:00" TitreLong="Challenge de france" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="1">
  <Tireurs>
-  <Tireur ID="202" Classement="102" Nom="GUSTIN" Prenom="Ronan" DateNaissance="17/08/1987" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750473592" Points="1001" Presence="1" Exporte="0"/>
-  <Tireur ID="203" Classement="194" Nom="ROBIN" Prenom="Richard" DateNaissance="28/12/1977" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750473750" Points="1002" Presence="1" Exporte="0"/>
-  <Tireur ID="273" Classement="188" Nom="BOUZAID" Prenom="Alexandre" DateNaissance="29/06/1981" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952101419" Points="1004" Presence="1" Exporte="0"/>
-  <Tireur ID="108" Classement="202" Nom="BOREL" Prenom="Yannick" DateNaissance="05/11/1988" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081713" Points="1005" Presence="1" Exporte="0"/>
-  <Tireur ID="178" Classement="148" Nom="DRAPIER" Prenom="Aurelien" DateNaissance="16/07/1980" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750311432" Points="1006" Presence="1" Exporte="0"/>
-  <Tireur ID="143" Classement="166" Nom="TREVEJO" Prenom="Ivan" DateNaissance="01/09/1971" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931611196" Points="1007" Presence="1" Exporte="0"/>
-  <Tireur ID="158" Classement="180" Nom="DELATTRE" Prenom="Benoit" DateNaissance="15/07/1976" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671368" Points="1008" Presence="1" Exporte="0"/>
-  <Tireur ID="209" Classement="29" Nom="MOUTOU" Prenom="Jeremy" DateNaissance="09/10/1984" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474086" Points="1009" Presence="1" Exporte="0"/>
-  <Tireur ID="125" Classement="269" Nom="FIGUET" Prenom="Noe" DateNaissance="17/11/1985" Sexe="M" Nation="FRA" Club="RODEZ AVEYRO" Licence="250120020507" Points="1010" Presence="1" Exporte="0"/>
-  <Tireur ID="187" Classement="112" Nom="PETITJEAN" Prenom="Aurelien" DateNaissance="20/07/1981" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750462784" Points="1011" Presence="1" Exporte="0"/>
-  <Tireur ID="240" Classement="12" Nom="SCHREPFER" Prenom="Clement" DateNaissance="21/07/1984" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922520535" Points="1012" Presence="1" Exporte="0"/>
-  <Tireur ID="265" Classement="276" Nom="JANVIER" Prenom="Benoit" DateNaissance="13/03/1978" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952100578" Points="1014" Presence="1" Exporte="0"/>
-  <Tireur ID="128" Classement="2" Nom="VABRE" Prenom="Guilhem" DateNaissance="07/12/1982" Sexe="M" Nation="FRA" Club="RODEZ AVEYRO" Licence="250120021063" Points="1015" Presence="1" Exporte="0"/>
-  <Tireur ID="96" Classement="270" Nom="BODET" Prenom="Adrien" DateNaissance="03/07/1984" Sexe="M" Nation="FRA" Club="ANGERS NDC" Licence="180490310057" Points="1016" Presence="1" Exporte="0"/>
-  <Tireur ID="207" Classement="145" Nom="RICHER" Prenom="Jeremy" DateNaissance="29/04/1987" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750473926" Points="1017" Presence="1" Exporte="0"/>
-  <Tireur ID="183" Classement="151" Nom="MELONIO" Prenom="Benoit" DateNaissance="27/08/1977" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750461323" Points="1018" Presence="1" Exporte="0"/>
-  <Tireur ID="107" Classement="33" Nom="LOISEAU" Prenom="Cedric" DateNaissance="19/11/1983" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081369" Points="1019" Presence="1" Exporte="0"/>
-  <Tireur ID="269" Classement="242" Nom="MAYA" Prenom="Vivien" DateNaissance="24/05/1988" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952101087" Points="1021" Presence="1" Exporte="0"/>
-  <Tireur ID="141" Classement="130" Nom="LUCENAY" Prenom="Laurent" DateNaissance="11/11/1972" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931611163" Points="1022" Presence="1" Exporte="0"/>
-  <Tireur ID="157" Classement="215" Nom="GOETZ" Prenom="Gregory" DateNaissance="09/01/1975" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671252" Points="1023" Presence="1" Exporte="0"/>
-  <Tireur ID="29" Classement="214" Nom="GUSTIN" Prenom="Yoann" DateNaissance="06/07/1976" Sexe="M" Nation="FRA" Club="DIJON ASPTT" Licence="090210010592" Points="1024" Presence="1" Exporte="0"/>
-  <Tireur ID="244" Classement="82" Nom="MORGADO" Prenom="Tiago" DateNaissance="28/01/1987" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922521090" Points="1026" Presence="1" Exporte="0"/>
-  <Tireur ID="54" Classement="79" Nom="FLEURY" Prenom="Guillaume" DateNaissance="28/02/1982" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590110763" Points="1027" Presence="1" Exporte="0"/>
-  <Tireur ID="114" Classement="177" Nom="FAVA" Prenom="Alex" DateNaissance="23/04/1989" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081892" Points="1028" Presence="1" Exporte="0"/>
-  <Tireur ID="174" Classement="230" Nom="PENSO" Prenom="Adrien" DateNaissance="19/02/1986" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750310519" Points="1029" Presence="1" Exporte="0"/>
-  <Tireur ID="249" Classement="257" Nom="MORAS" Prenom="Christophe" DateNaissance="11/10/1979" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922521831" Points="1030" Presence="1" Exporte="0"/>
-  <Tireur ID="162" Classement="252" Nom="MONPAYS" Prenom="Laurent" DateNaissance="02/06/1973" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671549" Points="1031" Presence="1" Exporte="0"/>
-  <Tireur ID="172" Classement="63" Nom="PICART" Prenom="Pierre albin" DateNaissance="27/06/1978" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750310330" Points="1032" Presence="1" Exporte="0"/>
-  <Tireur ID="61" Classement="155" Nom="DECOBECQ" Prenom="Ghislain" DateNaissance="28/11/1982" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590111158" Points="1033" Presence="1" Exporte="0"/>
-  <Tireur ID="135" Classement="235" Nom="MICHEL" Prenom="Lois" DateNaissance="18/07/1977" Sexe="M" Nation="FRA" Club="MELUN VDS" Licence="260770890837" Points="1034" Presence="1" Exporte="0"/>
-  <Tireur ID="232" Classement="263" Nom="BOISSEAU" Prenom="Guillaume" DateNaissance="03/03/1988" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780912220" Points="1036" Presence="1" Exporte="0"/>
-  <Tireur ID="80" Classement="69" Nom="JEUNET MANCY" Prenom="Gregory" DateNaissance="12/05/1983" Sexe="M" Nation="FRA" Club="VENISSIEUX" Licence="140690180551" Points="1038" Presence="1" Exporte="0"/>
-  <Tireur ID="106" Classement="181" Nom="DORCE" Prenom="Carl" DateNaissance="28/11/1981" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081129" Points="1039" Presence="1" Exporte="0"/>
-  <Tireur ID="124" Classement="6" Nom="BARDENET" Prenom="Alexandre" DateNaissance="26/05/1990" Sexe="M" Nation="FRA" Club="COLMAR SR" Licence="240680100904" Points="1040" Presence="1" Exporte="0"/>
-  <Tireur ID="175" Classement="18" Nom="ROUANET" Prenom="Pierre" DateNaissance="29/08/1981" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750310622" Points="1041" Presence="1" Exporte="0"/>
-  <Tireur ID="160" Classement="24" Nom="BUYSENS" Prenom="Alexandre" DateNaissance="03/11/1981" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671479" Points="1042" Presence="1" Exporte="0"/>
-  <Tireur ID="242" Classement="111" Nom="MOLIC" Prenom="Julien" DateNaissance="08/12/1987" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922520644" Points="1043" Presence="1" Exporte="0"/>
-  <Tireur ID="205" Classement="163" Nom="DELPEUCH" Prenom="Maximilien" DateNaissance="30/04/1977" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750473919" Points="1044" Presence="1" Exporte="0"/>
-  <Tireur ID="123" Classement="249" Nom="COMMARMOND" Prenom="Anthony" DateNaissance="09/04/1990" Sexe="M" Nation="FRA" Club="COLMAR SR" Licence="240680100903" Points="1045" Presence="1" Exporte="0"/>
-  <Tireur ID="76" Classement="31" Nom="LAPIERRE" Prenom="Herve" DateNaissance="27/10/1979" Sexe="M" Nation="FRA" Club="VENISSIEUX" Licence="140690180150" Points="1046" Presence="1" Exporte="0"/>
-  <Tireur ID="208" Classement="248" Nom="PORTES" Prenom="Pierre" DateNaissance="23/11/1986" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750473943" Points="1047" Presence="1" Exporte="0"/>
-  <Tireur ID="266" Classement="247" Nom="BOISSE" Prenom="Eric" DateNaissance="14/03/1980" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952100889" Points="1048" Presence="1" Exporte="0"/>
-  <Tireur ID="79" Classement="173" Nom="VIENNE" Prenom="Stephane" DateNaissance="13/12/1980" Sexe="M" Nation="FRA" Club="VENISSIEUX" Licence="140690180487" Points="1049" Presence="1" Exporte="0"/>
-  <Tireur ID="121" Classement="66" Nom="FRITSCH" Prenom="Vincent" DateNaissance="23/02/1972" Sexe="M" Nation="FRA" Club="COLMAR SR" Licence="240680100605" Points="1051" Presence="1" Exporte="0"/>
-  <Tireur ID="179" Classement="212" Nom="RONDIN" Prenom="Stephane" DateNaissance="20/04/1971" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750311489" Points="1052" Presence="1" Exporte="0"/>
-  <Tireur ID="186" Classement="203" Nom="CHATELUS" Prenom="Gautier" DateNaissance="17/08/1967" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750462617" Points="1053" Presence="1" Exporte="0"/>
-  <Tireur ID="150" Classement="135" Nom="KUSIAK" Prenom="Anthony" DateNaissance="08/01/1987" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931670812" Points="1054" Presence="1" Exporte="0"/>
-  <Tireur ID="93" Classement="76" Nom="JOUVE" Prenom="Stephane" DateNaissance="10/04/1971" Sexe="M" Nation="FRA" Club="EPINAL SE" Licence="170880190887" Points="1055" Presence="1" Exporte="0"/>
-  <Tireur ID="253" Classement="191" Nom="DOMANICO" Prenom="Alexandre" DateNaissance="14/10/1973" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922522772" Points="1056" Presence="1" Exporte="0"/>
-  <Tireur ID="225" Classement="61" Nom="FENOUL" Prenom="Frederic" DateNaissance="20/07/1979" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780911947" Points="1057" Presence="1" Exporte="0"/>
-  <Tireur ID="171" Classement="190" Nom="DALSACE" Prenom="David" DateNaissance="20/12/1974" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750310228" Points="1058" Presence="1" Exporte="0"/>
-  <Tireur ID="34" Classement="59" Nom="MIR" Prenom="Alexandre" DateNaissance="13/09/1985" Sexe="M" Nation="FRA" Club="NEVERS CE" Licence="090580271193" Points="1059" Presence="1" Exporte="0"/>
-  <Tireur ID="258" Classement="234" Nom="TOUSSAINT" Prenom="Gregory" DateNaissance="01/01/1986" Sexe="M" Nation="FRA" Club="BEAUMONT OIS" Licence="280952010265" Points="1060" Presence="1" Exporte="0"/>
-  <Tireur ID="206" Classement="253" Nom="PILLA" Prenom="Julien" DateNaissance="19/03/1983" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750473921" Points="1065" Presence="1" Exporte="0"/>
-  <Tireur ID="248" Classement="126" Nom="MARCHAL" Prenom="Virgile" DateNaissance="11/07/1990" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922521776" Points="1067" Presence="1" Exporte="0"/>
-  <Tireur ID="126" Classement="9" Nom="RAMIREZ" Prenom="Adrien" DateNaissance="25/05/1985" Sexe="M" Nation="FRA" Club="RODEZ AVEYRO" Licence="250120020509" Points="1068" Presence="1" Exporte="0"/>
-  <Tireur ID="250" Classement="227" Nom="DE LEOTARD" Prenom="Clement" DateNaissance="02/05/1989" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922522582" Points="1070" Presence="1" Exporte="0"/>
-  <Tireur ID="133" Classement="165" Nom="GOSSWILLER" Prenom="Franck" DateNaissance="25/08/1977" Sexe="M" Nation="FRA" Club="MELUN VDS" Licence="260770890210" Points="1072" Presence="1" Exporte="0"/>
-  <Tireur ID="241" Classement="264" Nom="MARIE ANNE" Prenom="Mickael" DateNaissance="26/04/1984" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922520545" Points="1073" Presence="1" Exporte="0"/>
-  <Tireur ID="142" Classement="5" Nom="COL" Prenom="Yannick" DateNaissance="10/02/1983" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931611195" Points="1074" Presence="1" Exporte="0"/>
-  <Tireur ID="252" Classement="54" Nom="SIEGEL" Prenom="Peter" DateNaissance="20/09/1990" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922522770" Points="1075" Presence="1" Exporte="0"/>
-  <Tireur ID="69" Classement="207" Nom="AUTRIQUE" Prenom="Pierre yves" DateNaissance="24/03/1989" Sexe="M" Nation="FRA" Club="DOUAI CE" Licence="130590250550" Points="1076" Presence="1" Exporte="0"/>
-  <Tireur ID="119" Classement="277" Nom="HEIMENDINGER" Prenom="Florian" DateNaissance="15/12/1990" Sexe="M" Nation="FRA" Club="COLMAR SR" Licence="240680100331" Points="1077" Presence="1" Exporte="0"/>
-  <Tireur ID="120" Classement="273" Nom="STOLZ" Prenom="Olivier" DateNaissance="02/05/1990" Sexe="M" Nation="FRA" Club="COLMAR SR" Licence="240680100342" Points="1079" Presence="1" Exporte="0"/>
-  <Tireur ID="228" Classement="131" Nom="COURTOIS" Prenom="Romain" DateNaissance="03/06/1989" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780912140" Points="1080" Presence="1" Exporte="0"/>
-  <Tireur ID="185" Classement="118" Nom="BROUSSOU" Prenom="Arnaud" DateNaissance="21/09/1980" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750462613" Points="1081" Presence="1" Exporte="0"/>
-  <Tireur ID="226" Classement="15" Nom="RODRIGUEZ" Prenom="Stephane" DateNaissance="09/11/1984" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780912103" Points="1083" Presence="1" Exporte="0"/>
-  <Tireur ID="229" Classement="229" Nom="FONSON" Prenom="Erwan" DateNaissance="16/02/1991" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780912142" Points="1084" Presence="1" Exporte="0"/>
-  <Tireur ID="90" Classement="127" Nom="CONRAD" Prenom="Christophe" DateNaissance="16/11/1966" Sexe="M" Nation="FRA" Club="THIONVILLE" Licence="170570170584" Points="1087" Presence="1" Exporte="0"/>
-  <Tireur ID="118" Classement="128" Nom="DECHRISTE" Prenom="Guillaume" DateNaissance="14/01/1989" Sexe="M" Nation="FRA" Club="COLMAR SR" Licence="240680100263" Points="1088" Presence="1" Exporte="0"/>
-  <Tireur ID="168" Classement="200" Nom="HERBERT" Prenom="Sebastien" DateNaissance="25/11/1986" Sexe="M" Nation="FRA" Club="PARIS CSPSE" Licence="270750210175" Points="1091" Presence="1" Exporte="0"/>
-  <Tireur ID="140" Classement="209" Nom="CAVANE" Prenom="Manfreid" DateNaissance="17/11/1989" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931610880" Points="1092" Presence="1" Exporte="0"/>
-  <Tireur ID="193" Classement="103" Nom="CHAPUIS" Prenom="Marc" DateNaissance="27/12/1983" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463331" Points="1093" Presence="1" Exporte="0"/>
-  <Tireur ID="110" Classement="41" Nom="AMUZU" Prenom="Marvin" DateNaissance="09/02/1991" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081796" Points="1094" Presence="1" Exporte="0"/>
-  <Tireur ID="254" Classement="98" Nom="DESBORDES" Prenom="Julien" DateNaissance="20/08/1991" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922522927" Points="1095" Presence="1" Exporte="0"/>
-  <Tireur ID="104" Classement="259" Nom="PARIS LECLERC" Prenom="Quentin" DateNaissance="16/02/1988" Sexe="M" Nation="FRA" Club="TROYES GYMNI" Licence="220100070457" Points="1097" Presence="1" Exporte="0"/>
-  <Tireur ID="270" Classement="44" Nom="PARPAITE" Prenom="Thibault" DateNaissance="24/01/1988" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952101143" Points="1098" Presence="1" Exporte="0"/>
-  <Tireur ID="51" Classement="36" Nom="BOCQUET" Prenom="Nicolas" DateNaissance="14/05/1984" Sexe="M" Nation="FRA" Club="LILLE VAUBAN" Licence="130590062056" Points="1099" Presence="1" Exporte="0"/>
-  <Tireur ID="227" Classement="10" Nom="ILLAC" Prenom="Adrien" DateNaissance="16/02/1982" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780912138" Points="1101" Presence="1" Exporte="0"/>
-  <Tireur ID="154" Classement="213" Nom="KUSIAK" Prenom="Joffrey" DateNaissance="06/11/1990" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671020" Points="1103" Presence="1" Exporte="0"/>
-  <Tireur ID="129" Classement="153" Nom="LARRIEU" Prenom="Guillaume" DateNaissance="04/09/1982" Sexe="M" Nation="FRA" Club="RAMONVILLE" Licence="250310091109" Points="1104" Presence="1" Exporte="0"/>
-  <Tireur ID="57" Classement="93" Nom="VAN HOVE" Prenom="Florent" DateNaissance="16/11/1988" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590110969" Points="1106" Presence="1" Exporte="0"/>
-  <Tireur ID="85" Classement="156" Nom="KILO" Prenom="Clayde" DateNaissance="14/10/1989" Sexe="M" Nation="FRA" Club="FORT DE F AE" Licence="159720010832" Points="1107" Presence="1" Exporte="0"/>
-  <Tireur ID="23" Classement="172" Nom="DIAZ" Prenom="Julien" DateNaissance="05/11/1978" Sexe="M" Nation="FRA" Club="PAU SECTION" Licence="040640211537" Points="1108" Presence="1" Exporte="0"/>
-  <Tireur ID="251" Classement="83" Nom="WALNER" Prenom="Alban" DateNaissance="23/01/1989" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922522769" Points="1109" Presence="1" Exporte="0"/>
-  <Tireur ID="115" Classement="75" Nom="LEMAIRE" Prenom="Johann" DateNaissance="25/08/1991" Sexe="M" Nation="FRA" Club="RENNES CSG" Licence="230350131777" Points="1115" Presence="1" Exporte="0"/>
-  <Tireur ID="243" Classement="152" Nom="LE TREUT" Prenom="Gildas" DateNaissance="31/01/1973" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922520879" Points="1116" Presence="1" Exporte="0"/>
-  <Tireur ID="277" Classement="204" Nom="DIEU" Prenom="Jame" DateNaissance="09/07/1979" Sexe="M" Nation="FRA" Club="VAUREAL" Licence="280952150108" Points="1117" Presence="1" Exporte="0"/>
-  <Tireur ID="88" Classement="196" Nom="JANIN" Prenom="Alexandre" DateNaissance="09/02/1981" Sexe="M" Nation="FRA" Club="PT A MOUSSON" Licence="170540070574" Points="1118" Presence="1" Exporte="0"/>
-  <Tireur ID="223" Classement="241" Nom="COMPERE" Prenom="Jean baptiste" DateNaissance="23/12/1988" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780910857" Points="1119" Presence="1" Exporte="0"/>
-  <Tireur ID="81" Classement="13" Nom="PARA" Prenom="Alexis" DateNaissance="23/11/1987" Sexe="M" Nation="FRA" Club="VENISSIEUX" Licence="140690180670" Points="1120" Presence="1" Exporte="0"/>
-  <Tireur ID="260" Classement="141" Nom="LANGLET" Prenom="Quentin" DateNaissance="31/03/1991" Sexe="M" Nation="FRA" Club="BEAUMONT OIS" Licence="280952010279" Points="1121" Presence="1" Exporte="0"/>
-  <Tireur ID="37" Classement="271" Nom="GRANET" Prenom="Julien" DateNaissance="27/09/1992" Sexe="M" Nation="FRA" Club="LE CREUSOT" Licence="090710131106" Points="1123" Presence="1" Exporte="0"/>
-  <Tireur ID="24" Classement="138" Nom="REMOUE" Prenom="Jean emmanuel" DateNaissance="10/07/1981" Sexe="M" Nation="FRA" Club="HEROUVILLE" Licence="050140080864" Points="1124" Presence="1" Exporte="0"/>
-  <Tireur ID="173" Classement="265" Nom="FEUILLATRE" Prenom="Raphael" DateNaissance="14/12/1971" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750310374" Points="1127" Presence="1" Exporte="0"/>
-  <Tireur ID="28" Classement="104" Nom="PRADON" Prenom="Emmanuel" DateNaissance="10/12/1965" Sexe="M" Nation="FRA" Club="ANNECY" Licence="080740050634" Points="1128" Presence="1" Exporte="0"/>
-  <Tireur ID="262" Classement="132" Nom="FRANCISCI" Prenom="Thomas" DateNaissance="16/12/1990" Sexe="M" Nation="FRA" Club="BEAUMONT OIS" Licence="280952010373" Points="1130" Presence="1" Exporte="0"/>
-  <Tireur ID="197" Classement="8" Nom="CHAIGNEAU TAQUECHEL" Prenom="Pierre philippe" DateNaissance="20/06/1979" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463513" Points="1131" Presence="1" Exporte="0"/>
-  <Tireur ID="276" Classement="258" Nom="MARIE" Prenom="Damien" DateNaissance="18/05/1991" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952102131" Points="1132" Presence="1" Exporte="0"/>
-  <Tireur ID="109" Classement="48" Nom="CROCHET" Prenom="Claude edouard" DateNaissance="07/08/1991" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081735" Points="1134" Presence="1" Exporte="0"/>
-  <Tireur ID="132" Classement="272" Nom="FOREST" Prenom="Michael" DateNaissance="11/10/1974" Sexe="M" Nation="FRA" Club="MELUN VDS" Licence="260770890209" Points="1136" Presence="1" Exporte="0"/>
-  <Tireur ID="261" Classement="71" Nom="PIEDELEU" Prenom="Benoit" DateNaissance="21/05/1987" Sexe="M" Nation="FRA" Club="BEAUMONT OIS" Licence="280952010350" Points="1138" Presence="1" Exporte="0"/>
-  <Tireur ID="130" Classement="34" Nom="GUINARD" Prenom="Antoine" DateNaissance="09/09/1987" Sexe="M" Nation="FRA" Club="RAMONVILLE" Licence="250310091110" Points="1139" Presence="1" Exporte="0"/>
-  <Tireur ID="176" Classement="115" Nom="LACHENAL" Prenom="Louis xavier" DateNaissance="15/06/1978" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750311086" Points="1140" Presence="1" Exporte="0"/>
-  <Tireur ID="210" Classement="162" Nom="JERENT" Prenom="Daniel" DateNaissance="04/06/1991" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474087" Points="1141" Presence="1" Exporte="0"/>
-  <Tireur ID="182" Classement="226" Nom="CELLI" Prenom="Gerard" DateNaissance="19/04/1956" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750460990" Points="1143" Presence="1" Exporte="0"/>
-  <Tireur ID="0" Classement="179" Nom="KARAM" Prenom="Georges" DateNaissance="30/10/1981" Sexe="M" Nation="FRA" Club="AIX UCE" Licence="010130022073" Points="1144" Presence="1" Exporte="0"/>
-  <Tireur ID="63" Classement="74" Nom="PRYEN" Prenom="Gregoire" DateNaissance="18/03/1986" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590111293" Points="1145" Presence="1" Exporte="0"/>
-  <Tireur ID="237" Classement="113" Nom="DUBESSY" Prenom="Romain" DateNaissance="22/12/1983" Sexe="M" Nation="FRA" Club="COURBEVOIE" Licence="280921460682" Points="1147" Presence="1" Exporte="0"/>
-  <Tireur ID="152" Classement="1" Nom="BERNERON" Prenom="Guillaume" DateNaissance="03/01/1973" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931670892" Points="1148" Presence="1" Exporte="0"/>
-  <Tireur ID="144" Classement="19" Nom="BONAVENTURE" Prenom="Theo" DateNaissance="18/05/1989" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931611217" Points="1153" Presence="1" Exporte="0"/>
-  <Tireur ID="111" Classement="161" Nom="OZIER" Prenom="Anthony" DateNaissance="23/09/1989" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081797" Points="1154" Presence="1" Exporte="0"/>
-  <Tireur ID="116" Classement="260" Nom="PROUVOST" Prenom="Mathieu" DateNaissance="12/08/1973" Sexe="M" Nation="FRA" Club="RENNES CSG" Licence="230350132164" Points="1156" Presence="1" Exporte="0"/>
-  <Tireur ID="38" Classement="243" Nom="VIGNARD" Prenom="Benoit" DateNaissance="21/03/1984" Sexe="M" Nation="FRA" Club="LE CREUSOT" Licence="090710131186" Points="1157" Presence="1" Exporte="0"/>
-  <Tireur ID="201" Classement="278" Nom="BOULANT" Prenom="Renaud" DateNaissance="13/01/1978" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463618" Points="1158" Presence="1" Exporte="0"/>
-  <Tireur ID="230" Classement="134" Nom="SMEYERS" Prenom="Eric" DateNaissance="28/11/1967" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780912214" Points="1159" Presence="1" Exporte="0"/>
-  <Tireur ID="153" Classement="77" Nom="CLEMENT" Prenom="Aurelien" DateNaissance="09/10/1989" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671006" Points="1161" Presence="1" Exporte="0"/>
-  <Tireur ID="238" Classement="67" Nom="FOUCO" Prenom="Jerome" DateNaissance="01/03/1969" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922520278" Points="1164" Presence="1" Exporte="0"/>
-  <Tireur ID="122" Classement="183" Nom="FOUILLARD" Prenom="Thierry" DateNaissance="20/02/1971" Sexe="M" Nation="FRA" Club="COLMAR SR" Licence="240680100614" Points="1165" Presence="1" Exporte="0"/>
-  <Tireur ID="264" Classement="275" Nom="LEROUX" Prenom="Laurent" DateNaissance="06/05/1977" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952100522" Points="1167" Presence="1" Exporte="0"/>
-  <Tireur ID="184" Classement="4" Nom="GUILBERT" Prenom="Olivier" DateNaissance="27/06/1963" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750461777" Points="1169" Presence="1" Exporte="0"/>
-  <Tireur ID="165" Classement="32" Nom="CLEORON" Prenom="Jonathan" DateNaissance="13/11/1988" Sexe="M" Nation="FRA" Club="ST MAUR VGA" Licence="260941951862" Points="1170" Presence="1" Exporte="0"/>
-  <Tireur ID="60" Classement="39" Nom="VANLAECKE" Prenom="Yoeri" DateNaissance="07/02/1977" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590111116" Points="1171" Presence="1" Exporte="0"/>
-  <Tireur ID="272" Classement="192" Nom="CARDOZE" Prenom="Etienne" DateNaissance="14/04/1965" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952101379" Points="1172" Presence="1" Exporte="0"/>
-  <Tireur ID="86" Classement="236" Nom="GENINI" Prenom="Waren" DateNaissance="28/01/1987" Sexe="M" Nation="FRA" Club="LUNEVILLE CE" Licence="170540030424" Points="1173" Presence="1" Exporte="0"/>
-  <Tireur ID="43" Classement="136" Nom="CHAMPION" Prenom="Sebastien" DateNaissance="03/01/1990" Sexe="M" Nation="FRA" Club="SOTTEVILLE" Licence="110760170280" Points="1174" Presence="1" Exporte="0"/>
-  <Tireur ID="66" Classement="38" Nom="CONGOS" Prenom="Sebastien" DateNaissance="17/10/1985" Sexe="M" Nation="FRA" Club="DOUAI CE" Licence="130590250328" Points="1176" Presence="1" Exporte="0"/>
-  <Tireur ID="257" Classement="97" Nom="HABABOU" Prenom="Julien" DateNaissance="28/09/1979" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922523175" Points="1182" Presence="1" Exporte="0"/>
-  <Tireur ID="199" Classement="55" Nom="SANCHEZ" Prenom="Etienne" DateNaissance="12/02/1986" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463535" Points="1185" Presence="1" Exporte="0"/>
-  <Tireur ID="11" Classement="238" Nom="PROFFIT" Prenom="Eric" DateNaissance="19/10/1974" Sexe="M" Nation="FRA" Club="CHANTILLY CE" Licence="020600240931" Points="1188" Presence="1" Exporte="0"/>
-  <Tireur ID="113" Classement="210" Nom="MARIAULT" Prenom="Nicolas" DateNaissance="09/02/1991" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081891" Points="1196" Presence="1" Exporte="0"/>
-  <Tireur ID="267" Classement="199" Nom="BREDEL" Prenom="Renaud" DateNaissance="03/02/1977" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952100987" Points="1197" Presence="1" Exporte="0"/>
-  <Tireur ID="274" Classement="147" Nom="CHERRIER" Prenom="Arthur" DateNaissance="07/03/1989" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952101555" Points="1198" Presence="1" Exporte="0"/>
-  <Tireur ID="145" Classement="25" Nom="LEFEBVRE" Prenom="Harold" DateNaissance="10/10/1977" Sexe="M" Nation="FRA" Club="BOBIGNY AC" Licence="260931620011" Points="1200" Presence="1" Exporte="0"/>
-  <Tireur ID="98" Classement="120" Nom="JOUAN" Prenom="Matthias" DateNaissance="30/05/1985" Sexe="M" Nation="FRA" Club="ANGERS NDC" Licence="180490310352" Points="1202" Presence="1" Exporte="0"/>
-  <Tireur ID="212" Classement="251" Nom="BONNAIRE" Prenom="Jonathan" DateNaissance="25/10/1991" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474287" Points="1207" Presence="1" Exporte="0"/>
-  <Tireur ID="40" Classement="62" Nom="GARNIER" Prenom="Pierrick" DateNaissance="24/07/1988" Sexe="M" Nation="FRA" Club="LE CREUSOT" Licence="090710131235" Points="1209" Presence="1" Exporte="0"/>
-  <Tireur ID="247" Classement="107" Nom="BAJKOW" Prenom="Sebastien" DateNaissance="29/08/1990" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922521522" Points="1213" Presence="1" Exporte="0"/>
-  <Tireur ID="25" Classement="186" Nom="DELAMOTTE" Prenom="Tristan" DateNaissance="13/01/1980" Sexe="M" Nation="FRA" Club="HEROUVILLE" Licence="050140080869" Points="1214" Presence="1" Exporte="0"/>
-  <Tireur ID="147" Classement="21" Nom="NGUYEN" Prenom="Remi" DateNaissance="15/05/1986" Sexe="M" Nation="FRA" Club="BONDY AS" Licence="260931630250" Points="1215" Presence="1" Exporte="0"/>
-  <Tireur ID="55" Classement="171" Nom="GEORGIADIS" Prenom="Vassilis" DateNaissance="20/02/1988" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590110767" Points="1216" Presence="1" Exporte="0"/>
-  <Tireur ID="246" Classement="51" Nom="LAISNEY" Prenom="Guillaume" DateNaissance="22/08/1990" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922521401" Points="1218" Presence="1" Exporte="0"/>
-  <Tireur ID="239" Classement="109" Nom="BEAUVALLET" Prenom="Jean charles" DateNaissance="26/03/1969" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922520497" Points="1219" Presence="1" Exporte="0"/>
-  <Tireur ID="105" Classement="123" Nom="LE PRADO" Prenom="Ken" DateNaissance="06/02/1982" Sexe="M" Nation="FRA" Club="TROYES GYMNI" Licence="220100070629" Points="1222" Presence="1" Exporte="0"/>
-  <Tireur ID="245" Classement="221" Nom="CRESPELLE" Prenom="Raphael" DateNaissance="16/02/1971" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922521274" Points="1226" Presence="1" Exporte="0"/>
-  <Tireur ID="47" Classement="197" Nom="DESCAMPS" Prenom="Antoine" DateNaissance="07/03/1989" Sexe="M" Nation="FRA" Club="GDE SYNTHE" Licence="130590040210" Points="1229" Presence="1" Exporte="0"/>
-  <Tireur ID="255" Classement="266" Nom="CLAESSENS" Prenom="Bart" DateNaissance="29/11/1979" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922522959" Points="1233" Presence="1" Exporte="0"/>
-  <Tireur ID="231" Classement="233" Nom="HOUSIEAUX" Prenom="Marc" DateNaissance="08/11/1988" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780912218" Points="1234" Presence="1" Exporte="0"/>
-  <Tireur ID="271" Classement="20" Nom="MAYA" Prenom="Sylvain" DateNaissance="16/01/1992" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952101244" Points="1235" Presence="1" Exporte="0"/>
-  <Tireur ID="67" Classement="223" Nom="VIDRIL" Prenom="Vianney" DateNaissance="19/04/1980" Sexe="M" Nation="FRA" Club="DOUAI CE" Licence="130590250455" Points="1236" Presence="1" Exporte="0"/>
-  <Tireur ID="46" Classement="16" Nom="BOULAY" Prenom="Olivier" DateNaissance="28/10/1973" Sexe="M" Nation="FRA" Club="BONSECOURS" Licence="110760210609" Points="1238" Presence="1" Exporte="0"/>
-  <Tireur ID="127" Classement="42" Nom="CARLES" Prenom="Tristan" DateNaissance="07/06/1987" Sexe="M" Nation="FRA" Club="RODEZ AVEYRO" Licence="250120020820" Points="1240" Presence="1" Exporte="0"/>
-  <Tireur ID="188" Classement="174" Nom="ZAKRZEWSKI" Prenom="John" DateNaissance="16/09/1982" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750462828" Points="1241" Presence="1" Exporte="0"/>
-  <Tireur ID="68" Classement="206" Nom="ABDELLAH" Prenom="Lucas" DateNaissance="16/08/1987" Sexe="M" Nation="FRA" Club="DOUAI CE" Licence="130590250544" Points="1242" Presence="1" Exporte="0"/>
-  <Tireur ID="196" Classement="205" Nom="DUPIN" Prenom="Nicolas" DateNaissance="30/07/1986" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463511" Points="1244" Presence="1" Exporte="0"/>
-  <Tireur ID="87" Classement="224" Nom="LALLEMENT" Prenom="Yann" DateNaissance="01/03/1979" Sexe="M" Nation="FRA" Club="PT A MOUSSON" Licence="170540070371" Points="1247" Presence="1" Exporte="0"/>
-  <Tireur ID="192" Classement="101" Nom="CHRISTOPHE" Prenom="Manuel" DateNaissance="11/03/1978" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463288" Points="1248" Presence="1" Exporte="0"/>
-  <Tireur ID="136" Classement="228" Nom="PETERS" Prenom="Alexandre" DateNaissance="14/04/1986" Sexe="M" Nation="FRA" Club="MELUN VDS" Licence="260770890847" Points="1252" Presence="1" Exporte="0"/>
-  <Tireur ID="45" Classement="217" Nom="DUBECHOT" Prenom="Nicolas" DateNaissance="03/05/1988" Sexe="M" Nation="FRA" Club="ROUEN CE" Licence="110760201523" Points="1254" Presence="1" Exporte="0"/>
-  <Tireur ID="139" Classement="139" Nom="DE LOOF" Prenom="Benjamin" DateNaissance="23/01/1988" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931610742" Points="1265" Presence="1" Exporte="0"/>
-  <Tireur ID="189" Classement="26" Nom="SAFFROY" Prenom="David" DateNaissance="17/07/1977" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750462962" Points="1268" Presence="1" Exporte="0"/>
-  <Tireur ID="97" Classement="11" Nom="EVENO" Prenom="Tanguy" DateNaissance="26/12/1988" Sexe="M" Nation="FRA" Club="ANGERS NDC" Licence="180490310289" Points="1269" Presence="1" Exporte="0"/>
-  <Tireur ID="83" Classement="23" Nom="HAYETTE" Prenom="Guillaume" DateNaissance="09/02/1984" Sexe="M" Nation="FRA" Club="CALUIRE" Licence="140690370325" Points="1270" Presence="1" Exporte="0"/>
-  <Tireur ID="224" Classement="43" Nom="POYET" Prenom="Goeffroy" DateNaissance="13/05/1989" Sexe="M" Nation="FRA" Club="LE CHESNAY" Licence="280780910963" Points="1272" Presence="1" Exporte="0"/>
-  <Tireur ID="167" Classement="218" Nom="LEGENDRE" Prenom="Stanislas" DateNaissance="06/07/1979" Sexe="M" Nation="FRA" Club="VINCENNES CE" Licence="260941981967" Points="1276" Presence="1" Exporte="0"/>
-  <Tireur ID="180" Classement="125" Nom="TURA" Prenom="Bruno" DateNaissance="16/04/1969" Sexe="M" Nation="FRA" Club="PARIS ASPTT" Licence="270750450029" Points="1278" Presence="1" Exporte="0"/>
-  <Tireur ID="213" Classement="140" Nom="CARNEAU" Prenom="Theo" DateNaissance="28/02/1992" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474288" Points="1280" Presence="1" Exporte="0"/>
-  <Tireur ID="156" Classement="225" Nom="BESNARD" Prenom="Cyril" DateNaissance="25/05/1978" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671239" Points="1283" Presence="1" Exporte="0"/>
-  <Tireur ID="42" Classement="7" Nom="POULAIN" Prenom="Baptiste" DateNaissance="16/11/1990" Sexe="M" Nation="FRA" Club="LE HAVRE CE" Licence="110760090788" Points="1284" Presence="1" Exporte="0"/>
-  <Tireur ID="268" Classement="50" Nom="LAMY" Prenom="Thibault" DateNaissance="17/01/1990" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952101061" Points="1286" Presence="1" Exporte="0"/>
-  <Tireur ID="155" Classement="117" Nom="BERTHELOMET" Prenom="Florian" DateNaissance="11/12/1990" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671092" Points="1288" Presence="1" Exporte="0"/>
-  <Tireur ID="151" Classement="14" Nom="BERNERON" Prenom="Jean francois" DateNaissance="15/07/1977" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931670891" Points="1290" Presence="1" Exporte="0"/>
-  <Tireur ID="195" Classement="142" Nom="TOUBOUL" Prenom="Frederic" DateNaissance="21/06/1974" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463401" Points="1292" Presence="1" Exporte="0"/>
-  <Tireur ID="39" Classement="119" Nom="PLATRET" Prenom="Bertrand" DateNaissance="13/05/1986" Sexe="M" Nation="FRA" Club="LE CREUSOT" Licence="090710131228" Points="1297" Presence="1" Exporte="0"/>
-  <Tireur ID="148" Classement="110" Nom="VERRIER" Prenom="Arnaud" DateNaissance="20/12/1984" Sexe="M" Nation="FRA" Club="BONDY AS" Licence="260931630668" Points="1298" Presence="1" Exporte="0"/>
-  <Tireur ID="191" Classement="195" Nom="LAILLIER" Prenom="Matthieu" DateNaissance="13/10/1988" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463160" Points="1305" Presence="1" Exporte="0"/>
-  <Tireur ID="26" Classement="157" Nom="ZERBIB" Prenom="Ken elie" DateNaissance="15/04/1993" Sexe="M" Nation="FRA" Club="GRENOBLE PAR" Licence="080380191206" Points="1306" Presence="1" Exporte="0"/>
-  <Tireur ID="10" Classement="53" Nom="BOISSEAU" Prenom="Arnaud" DateNaissance="16/09/1974" Sexe="M" Nation="FRA" Club="CHANTILLY CE" Licence="020600240479" Points="1307" Presence="1" Exporte="0"/>
-  <Tireur ID="95" Classement="72" Nom="MEREL" Prenom="Aurelien" DateNaissance="15/05/1985" Sexe="M" Nation="FRA" Club="NANTES ENM" Licence="180440040068" Points="1308" Presence="1" Exporte="0"/>
-  <Tireur ID="56" Classement="201" Nom="LEPOUTRE" Prenom="Quentin" DateNaissance="11/06/1988" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590110940" Points="1309" Presence="1" Exporte="0"/>
-  <Tireur ID="117" Classement="250" Nom="BEURET" Prenom="Maxime" DateNaissance="15/11/1989" Sexe="M" Nation="FRA" Club="STRASBOURG E" Licence="240670061814" Points="1310" Presence="1" Exporte="0"/>
-  <Tireur ID="74" Classement="91" Nom="GUILLUY" Prenom="Bastien" DateNaissance="17/05/1991" Sexe="M" Nation="FRA" Club="ARRAS CE" Licence="130620120716" Points="1311" Presence="1" Exporte="0"/>
-  <Tireur ID="99" Classement="244" Nom="BERTRAND" Prenom="Camille" DateNaissance="18/05/1988" Sexe="M" Nation="FRA" Club="ANGERS NDC" Licence="180490310639" Points="1312" Presence="1" Exporte="0"/>
-  <Tireur ID="77" Classement="73" Nom="TIVILLIER" Prenom="Aurelien" DateNaissance="19/05/1979" Sexe="M" Nation="FRA" Club="VENISSIEUX" Licence="140690180172" Points="1313" Presence="1" Exporte="0"/>
-  <Tireur ID="216" Classement="90" Nom="FOUSSARD" Prenom="Etienne" DateNaissance="31/01/1981" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474291" Points="1314" Presence="1" Exporte="0"/>
-  <Tireur ID="75" Classement="146" Nom="DESPREZ" Prenom="Christophe" DateNaissance="22/10/1979" Sexe="M" Nation="FRA" Club="ARRAS CE" Licence="130620121030" Points="1316" Presence="1" Exporte="0"/>
-  <Tireur ID="33" Classement="100" Nom="TARANOWSKI" Prenom="Lucas" DateNaissance="13/07/1993" Sexe="M" Nation="FRA" Club="NEVERS CE" Licence="090580270898" Points="1327" Presence="1" Exporte="0"/>
-  <Tireur ID="204" Classement="60" Nom="HAXAIRE" Prenom="Pierre" DateNaissance="02/04/1992" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750473917" Points="1330" Presence="1" Exporte="0"/>
-  <Tireur ID="64" Classement="80" Nom="RAVISE" Prenom="Antoine" DateNaissance="07/05/1984" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590111330" Points="1331" Presence="1" Exporte="0"/>
-  <Tireur ID="3" Classement="246" Nom="AUGER" Prenom="Niclolas" DateNaissance="20/06/1978" Sexe="M" Nation="FRA" Club="SOISSONS CE" Licence="020020060643" Points="1333" Presence="1" Exporte="0"/>
-  <Tireur ID="200" Classement="47" Nom="PATTE" Prenom="Christopher" DateNaissance="20/03/1990" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463572" Points="1335" Presence="1" Exporte="0"/>
-  <Tireur ID="256" Classement="193" Nom="BERTEAU" Prenom="Benjamin" DateNaissance="18/02/1988" Sexe="M" Nation="FRA" Club="LEVALLOIS" Licence="280922523147" Points="1337" Presence="1" Exporte="0"/>
-  <Tireur ID="222" Classement="22" Nom="LEGENDRE MASEGOSA" Prenom="Alexandre" DateNaissance="17/05/1979" Sexe="M" Nation="FRA" Club="CONFLANS PLM" Licence="280780890318" Points="1340" Presence="1" Exporte="0"/>
-  <Tireur ID="211" Classement="267" Nom="PEIGNET" Prenom="Frederic" DateNaissance="18/10/1988" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474285" Points="1342" Presence="1" Exporte="0"/>
-  <Tireur ID="198" Classement="114" Nom="DOIREAU" Prenom="Charles" DateNaissance="23/01/1987" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463527" Points="1344" Presence="1" Exporte="0"/>
-  <Tireur ID="235" Classement="105" Nom="LACORTE" Prenom="Camille" DateNaissance="28/09/1988" Sexe="M" Nation="FRA" Club="ST GENE BOIS" Licence="280912600002" Points="1346" Presence="1" Exporte="0"/>
-  <Tireur ID="215" Classement="198" Nom="MEGI" Prenom="Geoffrey" DateNaissance="04/10/1990" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474290" Points="1349" Presence="1" Exporte="0"/>
-  <Tireur ID="166" Classement="52" Nom="MICHEL" Prenom="Denis" DateNaissance="25/09/1973" Sexe="M" Nation="FRA" Club="ST MAUR VGA" Licence="260941951965" Points="1350" Presence="1" Exporte="0"/>
-  <Tireur ID="170" Classement="30" Nom="LAFFITTE" Prenom="Pierre" DateNaissance="11/03/1989" Sexe="M" Nation="FRA" Club="PARIS CSPSE" Licence="270750210338" Points="1366" Presence="1" Exporte="0"/>
-  <Tireur ID="164" Classement="182" Nom="PIOT" Prenom="Aymeric" DateNaissance="13/07/1975" Sexe="M" Nation="FRA" Club="ST MAUR VGA" Licence="260941951713" Points="1376" Presence="1" Exporte="0"/>
-  <Tireur ID="214" Classement="96" Nom="BOU" Prenom="Florian" DateNaissance="18/11/1990" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474289" Points="1377" Presence="1" Exporte="0"/>
-  <Tireur ID="102" Classement="95" Nom="MATHIOT" Prenom="Remi" DateNaissance="29/07/1984" Sexe="M" Nation="FRA" Club="RETHEL" Licence="220080020398" Points="1382" Presence="1" Exporte="0"/>
-  <Tireur ID="58" Classement="208" Nom="VANDENBERGHE" Prenom="Arthur" DateNaissance="19/01/1992" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590110977" Points="1390" Presence="1" Exporte="0"/>
-  <Tireur ID="15" Classement="168" Nom="LAVERNOT" Prenom="Florian" DateNaissance="03/02/1989" Sexe="M" Nation="FRA" Club="AMIENS CEAM" Licence="020800220956" Points="1392" Presence="1" Exporte="0"/>
-  <Tireur ID="181" Classement="144" Nom="GUILLO" Prenom="Nicolas" DateNaissance="30/03/1972" Sexe="M" Nation="FRA" Club="PARIS ASPTT" Licence="270750451416" Points="1393" Presence="1" Exporte="0"/>
-  <Tireur ID="12" Classement="17" Nom="BOCQUET" Prenom="Wilfreid" DateNaissance="20/12/1981" Sexe="M" Nation="FRA" Club="CHANTILLY CE" Licence="020600240980" Points="1394" Presence="1" Exporte="0"/>
-  <Tireur ID="91" Classement="143" Nom="LIEBGOTT" Prenom="Jeremy" DateNaissance="26/06/1984" Sexe="M" Nation="FRA" Club="THIONVILLE" Licence="170570170901" Points="1401" Presence="1" Exporte="0"/>
-  <Tireur ID="234" Classement="237" Nom="BERARD" Prenom="Jerome" DateNaissance="07/12/1976" Sexe="M" Nation="FRA" Club="BREUILLET" Licence="280912140892" Points="1404" Presence="1" Exporte="0"/>
-  <Tireur ID="59" Classement="239" Nom="LEPERS" Prenom="Leo" DateNaissance="03/03/1993" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590111068" Points="1408" Presence="1" Exporte="0"/>
-  <Tireur ID="72" Classement="216" Nom="HANICOTTE" Prenom="Sebastien" DateNaissance="15/10/1991" Sexe="M" Nation="FRA" Club="DOUAI CE" Licence="130590250773" Points="1413" Presence="1" Exporte="0"/>
-  <Tireur ID="2" Classement="108" Nom="DOINEL" Prenom="Anthony" DateNaissance="11/09/1970" Sexe="M" Nation="FRA" Club="SOISSONS CE" Licence="020020060524" Points="1433" Presence="1" Exporte="0"/>
-  <Tireur ID="146" Classement="219" Nom="BREDA" Prenom="Loic" DateNaissance="04/06/1981" Sexe="M" Nation="FRA" Club="BOBIGNY AC" Licence="260931620148" Points="1440" Presence="1" Exporte="0"/>
-  <Tireur ID="6" Classement="255" Nom="VIEILLE" Prenom="Gaetan" DateNaissance="22/07/1987" Sexe="M" Nation="FRA" Club="BEAUVAIS OUC" Licence="020600100859" Points="1448" Presence="1" Exporte="0"/>
-  <Tireur ID="236" Classement="64" Nom="GANCEL" Prenom="Cyprien" DateNaissance="14/05/1990" Sexe="M" Nation="FRA" Club="COLOMBES" Licence="280921450501" Points="1449" Presence="1" Exporte="0"/>
-  <Tireur ID="263" Classement="58" Nom="AUVRAY" Prenom="Arnaud" DateNaissance="11/02/1986" Sexe="M" Nation="FRA" Club="HERBLAY" Licence="280952070210" Points="1450" Presence="1" Exporte="0"/>
-  <Tireur ID="169" Classement="231" Nom="FOURT" Prenom="Olivier" DateNaissance="25/01/1979" Sexe="M" Nation="FRA" Club="PARIS CSPSE" Licence="270750210199" Points="1455" Presence="1" Exporte="0"/>
-  <Tireur ID="112" Classement="187" Nom="HAUTERVILLE" Prenom="Jonathan" DateNaissance="18/02/1992" Sexe="M" Nation="FRA" Club="CHALONS CHAM" Licence="220510081887" Points="1458" Presence="1" Exporte="0"/>
-  <Tireur ID="194" Classement="256" Nom="HOLYST" Prenom="Maurin" DateNaissance="09/11/1989" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750463375" Points="1463" Presence="1" Exporte="0"/>
-  <Tireur ID="163" Classement="184" Nom="MORANNE" Prenom="Didier" DateNaissance="01/07/1963" Sexe="M" Nation="FRA" Club="GAGNY USM" Licence="260932300355" Points="1465" Presence="1" Exporte="0"/>
-  <Tireur ID="161" Classement="185" Nom="LE GOFF" Prenom="Philippe" DateNaissance="31/10/1967" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671494" Points="1472" Presence="1" Exporte="0"/>
-  <Tireur ID="100" Classement="124" Nom="ROCCA" Prenom="Regis" DateNaissance="15/03/1979" Sexe="M" Nation="FRA" Club="CAGNES MER" Licence="190060280670" Points="1475" Presence="1" Exporte="0"/>
-  <Tireur ID="21" Classement="158" Nom="BEURET" Prenom="Jean guy" DateNaissance="06/08/1958" Sexe="M" Nation="FRA" Club="BESANCON RCE" Licence="030250011723" Points="1487" Presence="1" Exporte="0"/>
-  <Tireur ID="36" Classement="46" Nom="PLATRET" Prenom="Guy" DateNaissance="25/05/1946" Sexe="M" Nation="FRA" Club="LE CREUSOT" Licence="090710131010" Points="1495" Presence="1" Exporte="0"/>
-  <Tireur ID="13" Classement="178" Nom="POLOP FANS" Prenom="Kevin" DateNaissance="20/12/1992" Sexe="M" Nation="FRA" Club="BEAUVAIS ACA" Licence="020600250409" Points="1496" Presence="1" Exporte="0"/>
-  <Tireur ID="44" Classement="87" Nom="JOUEN" Prenom="Aurelien" DateNaissance="30/08/1983" Sexe="M" Nation="FRA" Club="SOTTEVILLE" Licence="110760170293" Points="1501" Presence="1" Exporte="0"/>
-  <Tireur ID="53" Classement="28" Nom="MIDAVAINE" Prenom="Vladimir" DateNaissance="15/10/1991" Sexe="M" Nation="FRA" Club="LILLE VAUBAN" Licence="130590062357" Points="1504" Presence="1" Exporte="0"/>
-  <Tireur ID="30" Classement="89" Nom="BRANGER" Prenom="Adrien" DateNaissance="17/09/1992" Sexe="M" Nation="FRA" Club="DIJON ASPTT" Licence="090210011395" Points="1524" Presence="1" Exporte="0"/>
-  <Tireur ID="78" Classement="106" Nom="DESLOIRES" Prenom="Florian" DateNaissance="27/03/1987" Sexe="M" Nation="FRA" Club="VENISSIEUX" Licence="140690180314" Points="1528" Presence="1" Exporte="0"/>
-  <Tireur ID="177" Classement="170" Nom="LARATO" Prenom="Fabrizio" DateNaissance="19/01/1976" Sexe="M" Nation="FRA" Club="PARIS GRP" Licence="270750311256" Points="1531" Presence="1" Exporte="0"/>
-  <Tireur ID="94" Classement="232" Nom="LE MEHAUTE" Prenom="Olivier" DateNaissance="23/04/1987" Sexe="M" Nation="FRA" Club="NANTES ENM" Licence="180440040016" Points="1534" Presence="1" Exporte="0"/>
-  <Tireur ID="149" Classement="150" Nom="ALGISI" Prenom="Brice" DateNaissance="17/02/1981" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931670470" Points="1536" Presence="1" Exporte="0"/>
-  <Tireur ID="219" Classement="94" Nom="BILGER" Prenom="Pierre" DateNaissance="29/01/1988" Sexe="M" Nation="FRA" Club="PARIS SCUF" Licence="270750490665" Points="1542" Presence="1" Exporte="0"/>
-  <Tireur ID="8" Classement="35" Nom="TAVERNY" Prenom="Sacha" DateNaissance="19/12/1990" Sexe="M" Nation="FRA" Club="SENLIS 3A" Licence="020600191020" Points="1548" Presence="1" Exporte="0"/>
-  <Tireur ID="218" Classement="211" Nom="LAVELLE" Prenom="Mathieu" DateNaissance="09/09/1971" Sexe="M" Nation="FRA" Club="PARIS SCUF" Licence="270750490584" Points="1552" Presence="1" Exporte="0"/>
-  <Tireur ID="82" Classement="159" Nom="FRIARD" Prenom="Guillaume" DateNaissance="20/01/1989" Sexe="M" Nation="FRA" Club="VENISSIEUX" Licence="140690180696" Points="1563" Presence="1" Exporte="0"/>
-  <Tireur ID="62" Classement="3" Nom="PIETON" Prenom="Clement" DateNaissance="08/03/1991" Sexe="M" Nation="FRA" Club="TOURCOING CI" Licence="130590111202" Points="1564" Presence="1" Exporte="0"/>
-  <Tireur ID="89" Classement="167" Nom="SCHWARTZ" Prenom="Marc" DateNaissance="05/05/1987" Sexe="M" Nation="FRA" Club="PT A MOUSSON" Licence="170540070668" Points="1565" Presence="1" Exporte="0"/>
-  <Tireur ID="5" Classement="49" Nom="MEUSNIER" Prenom="Thierry" DateNaissance="09/11/1964" Sexe="M" Nation="FRA" Club="BEAUVAIS OUC" Licence="020600100850" Points="1569" Presence="1" Exporte="0"/>
-  <Tireur ID="20" Classement="240" Nom="GUILLE" Prenom="Valentin" DateNaissance="27/12/1989" Sexe="M" Nation="FRA" Club="AMIENS CEAM" Licence="020800221461" Points="1588" Presence="1" Exporte="0"/>
-  <Tireur ID="7" Classement="86" Nom="TAVERNY" Prenom="Jean claude alexandre" DateNaissance="24/06/1957" Sexe="M" Nation="FRA" Club="SENLIS 3A" Licence="020600191019" Points="1598" Presence="1" Exporte="0"/>
-  <Tireur ID="131" Classement="254" Nom="BEDROSYAN" Prenom="Louis" DateNaissance="24/02/1978" Sexe="M" Nation="FRA" Club="VAL D EUROPE" Licence="260770880553" Points="1600" Presence="1" Exporte="0"/>
-  <Tireur ID="217" Classement="261" Nom="TRINCKVEL" Prenom="Pierre" DateNaissance="18/12/1991" Sexe="M" Nation="FRA" Club="PARIS LPR" Licence="270750474293" Points="1607" Presence="1" Exporte="0"/>
-  <Tireur ID="22" Classement="274" Nom="LENGAGNE" Prenom="Thibaud" DateNaissance="08/10/1988" Sexe="M" Nation="FRA" Club="BESANCON RCE" Licence="030250011777" Points="1616" Presence="1" Exporte="0"/>
-  <Tireur ID="134" Classement="245" Nom="CHARTIER" Prenom="Guillaume" DateNaissance="22/12/1977" Sexe="M" Nation="FRA" Club="MELUN VDS" Licence="260770890612" Points="1627" Presence="1" Exporte="0"/>
-  <Tireur ID="159" Classement="99" Nom="JANKOWSKI" Prenom="Patrice" DateNaissance="04/09/1966" Sexe="M" Nation="FRA" Club="LIVRY GARGAN" Licence="260931671408" Points="1638" Presence="1" Exporte="0"/>
-  <Tireur ID="101" Classement="149" Nom="MUSELLA" Prenom="Hugo" DateNaissance="03/10/1977" Sexe="M" Nation="FRA" Club="CAGNES MER" Licence="190060280673" Points="1648" Presence="1" Exporte="0"/>
-  <Tireur ID="1" Classement="45" Nom="ADAM" Prenom="Cedric" DateNaissance="27/08/1981" Sexe="M" Nation="FRA" Club="LAON CE" Licence="020020030182" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="4" Classement="220" Nom="LEMOINE" Prenom="Alexis" DateNaissance="15/04/1991" Sexe="M" Nation="FRA" Club="BEAUVAIS OUC" Licence="020600100741" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="9" Classement="154" Nom="LALOU" Prenom="Mickael" DateNaissance="11/05/1977" Sexe="M" Nation="FRA" Club="SENLIS 3A" Licence="020600191069" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="14" Classement="222" Nom="BOUCHE" Prenom="Stephane" DateNaissance="13/11/1968" Sexe="M" Nation="FRA" Club="AMIENS CEAM" Licence="020800220770" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="16" Classement="268" Nom="DURAND" Prenom="Olivier" DateNaissance="27/06/1975" Sexe="M" Nation="FRA" Club="AMIENS CEAM" Licence="020800221071" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="17" Classement="189" Nom="ZEGHOU" Prenom="Patrick" DateNaissance="12/01/1970" Sexe="M" Nation="FRA" Club="AMIENS CEAM" Licence="020800221144" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="18" Classement="57" Nom="LECOQUE" Prenom="Guillaume" DateNaissance="08/10/1974" Sexe="M" Nation="FRA" Club="AMIENS CEAM" Licence="020800221391" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="19" Classement="37" Nom="LENGAGNE" Prenom="Hugues" DateNaissance="19/08/1961" Sexe="M" Nation="FRA" Club="AMIENS CEAM" Licence="020800221408" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="27" Classement="70" Nom="DEUDON" Prenom="Antoine" DateNaissance="05/12/1973" Sexe="M" Nation="FRA" Club="GRENOBLE PAR" Licence="080380191355" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="31" Classement="84" Nom="LOUBIES" Prenom="Theo" DateNaissance="02/11/1992" Sexe="M" Nation="FRA" Club="DIJON ASPTT" Licence="090210011614" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="32" Classement="56" Nom="DENUZILLER" Prenom="Jeremy" DateNaissance="11/03/1989" Sexe="M" Nation="FRA" Club="DIJON ASPTT" Licence="090210012047" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="35" Classement="175" Nom="GARNIER" Prenom="Benoit" DateNaissance="09/01/1993" Sexe="M" Nation="FRA" Club="LE CREUSOT" Licence="090710130978" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="41" Classement="81" Nom="LESAGE" Prenom="Antoine" DateNaissance="02/03/1972" Sexe="M" Nation="FRA" Club="EVREUX JA" Licence="110270030704" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="48" Classement="176" Nom="TISON" Prenom="Renaud" DateNaissance="05/04/1983" Sexe="M" Nation="FRA" Club="LILLE VAUBAN" Licence="130590061066" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="49" Classement="85" Nom="CAUCHETEUR" Prenom="Nicolas" DateNaissance="30/12/1989" Sexe="M" Nation="FRA" Club="LILLE VAUBAN" Licence="130590061460" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="50" Classement="92" Nom="PEPERSTRAETE" Prenom="Clement" DateNaissance="30/09/1989" Sexe="M" Nation="FRA" Club="LILLE VAUBAN" Licence="130590061669" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="52" Classement="65" Nom="RAMTKE" Prenom="Sebastian" DateNaissance="25/07/1980" Sexe="M" Nation="FRA" Club="LILLE VAUBAN" Licence="130590062152" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="65" Classement="133" Nom="LESNIK" Prenom="Thomas" DateNaissance="09/07/1988" Sexe="M" Nation="FRA" Club="VALENCIENNES" Licence="130590200612" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="70" Classement="40" Nom="SPANNEUT" Prenom="Paul" DateNaissance="27/02/1992" Sexe="M" Nation="FRA" Club="DOUAI CE" Licence="130590250725" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="71" Classement="27" Nom="BOUTILLEUX" Prenom="Damien" DateNaissance="18/10/1968" Sexe="M" Nation="FRA" Club="DOUAI CE" Licence="130590250764" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="73" Classement="68" Nom="GUILLUY" Prenom="Eric" DateNaissance="03/11/1965" Sexe="M" Nation="FRA" Club="ARRAS CE" Licence="130620120427" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="84" Classement="137" Nom="SAINTE ROSE" Prenom="Thomas" DateNaissance="20/06/1992" Sexe="M" Nation="FRA" Club="FORT DE F AE" Licence="159720010411" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="92" Classement="164" Nom="STAGNI" Prenom="Geoffrey" DateNaissance="08/03/1984" Sexe="M" Nation="FRA" Club="THIONVILLE" Licence="170570171146" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="103" Classement="88" Nom="LEROND" Prenom="Thomas" DateNaissance="28/01/1986" Sexe="M" Nation="FRA" Club="TROYES GYMNI" Licence="220100070346" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="137" Classement="122" Nom="PRECETTI" Prenom="Cyrille" DateNaissance="17/06/1967" Sexe="M" Nation="FRA" Club="MELUN VDS" Licence="260770890852" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="138" Classement="78" Nom="LHOTELLERY" Prenom="Hubert" DateNaissance="29/01/1985" Sexe="M" Nation="FRA" Club="MELUN VDS" Licence="260770890863" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="190" Classement="116" Nom="MERLE" Prenom="Bruno" DateNaissance="08/03/1988" Sexe="M" Nation="FRA" Club="PARIS UC" Licence="270750462973" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="220" Classement="160" Nom="MARTIAL" Prenom="Julien" DateNaissance="09/03/1977" Sexe="M" Nation="FRA" Club="PARIS SCUF" Licence="270750490981" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="221" Classement="121" Nom="BEN SAID" Prenom="Marouane" DateNaissance="02/11/1983" Sexe="M" Nation="FRA" Club="PARIS QDS" Licence="270750510384" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="233" Classement="129" Nom="GALLON" Prenom="Josian" DateNaissance="07/11/1985" Sexe="M" Nation="FRA" Club="EVRY AS" Licence="280911180953" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="259" Classement="169" Nom="GUILBERT" Prenom="Maxence" DateNaissance="11/09/1989" Sexe="M" Nation="FRA" Club="BEAUMONT OIS" Licence="280952010276" Points="0" Presence="1" Exporte="0"/>
-  <Tireur ID="275" Classement="262" Nom="FONT" Prenom="Marc" DateNaissance="08/04/1981" Sexe="M" Nation="FRA" Club="ST GRATIEN" Licence="280952102126" Points="0" Presence="1" Exporte="0"/>
+  <Tireur ID="1401" Nom="LE BASTARD" Prenom="Emma" DateNaissance="20/03/1988" Sexe="F" Nation="FRA" Club="GUINGAMP ARM" Licence="003015623022" Points="1012" Presence="0" Exporte="0"/>
+  <Tireur ID="1405" Nom="CONTAMINE" Prenom="Alice" DateNaissance="03/02/1988" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011165723035" Points="1045" Presence="0" Exporte="0"/>
+  <Tireur ID="1403" Nom="BOURHIS" Prenom="Annouck" DateNaissance="21/03/1987" Sexe="F" Nation="FRA" Club="H-FINISTERE" Licence="006046423029" Points="1074" Presence="0" Exporte="0"/>
+  <Tireur ID="1399" Nom="MOY" Prenom="Anna" DateNaissance="09/11/1987" Sexe="F" Nation="FRA" Club="LANNION PTT" Licence="002057323022" Points="1074" Presence="0" Exporte="0"/>
+  <Tireur ID="1419" Nom="LE GOURRIEREC" Prenom="Laureline" DateNaissance="09/12/1988" Sexe="F" Nation="FRA" Club="VANNES CE" Licence="022122223056" Points="1117" Presence="0" Exporte="0"/>
+  <Tireur ID="1410" Nom="KALONJI" Prenom="Marie" DateNaissance="08/12/1989" Sexe="F" Nation="FRA" Club="RENNES CSG" Licence="013236023035" Points="1130" Presence="0" Exporte="0"/>
+  <Tireur ID="1412" Nom="SAILLARD" Prenom="Chloe" DateNaissance="06/12/1987" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015128223035" Points="1151" Presence="0" Exporte="0"/>
+  <Tireur ID="1414" Nom="DANIEL" Prenom="Margo" DateNaissance="22/09/1987" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020098523056" Points="1168" Presence="0" Exporte="0"/>
+  <Tireur ID="1420" Nom="GUEHO" Prenom="Flavie" DateNaissance="03/01/1988" Sexe="F" Nation="FRA" Club="AURAY ESCRIM" Licence="030040223056" Points="1185" Presence="0" Exporte="0"/>
+  <Tireur ID="1416" Nom="MORVAN" Prenom="Emilie" DateNaissance="29/10/1987" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020105723056" Points="1202" Presence="0" Exporte="0"/>
+  <Tireur ID="1408" Nom="MACHARD" Prenom="Manon" DateNaissance="06/09/1988" Sexe="F" Nation="FRA" Club="RENNES CSG" Licence="013219423035" Points="1222" Presence="0" Exporte="0"/>
+  <Tireur ID="1413" Nom="HERY" Prenom="Meline" DateNaissance="29/10/1987" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015137023035" Points="1240" Presence="0" Exporte="0"/>
+  <Tireur ID="1400" Nom="LE TRAON" Prenom="Coralie" DateNaissance="03/04/1988" Sexe="F" Nation="FRA" Club="LANNION PTT" Licence="002062423022" Points="1258" Presence="0" Exporte="0"/>
+  <Tireur ID="1406" Nom="HUBERT" Prenom="Aurore" DateNaissance="20/02/1989" Sexe="F" Nation="FRA" Club="ST MEEN LG" Licence="012014123035" Points="1274" Presence="0" Exporte="0"/>
+  <Tireur ID="1409" Nom="ETIENNE" Prenom="Adelaide" DateNaissance="04/02/1989" Sexe="F" Nation="FRA" Club="RENNES CSG" Licence="013225923035" Points="1294" Presence="0" Exporte="0"/>
+  <Tireur ID="1417" Nom="LELARGE" Prenom="Enora" DateNaissance="18/12/1989" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020107323056" Points="1312" Presence="0" Exporte="0"/>
+  <Tireur ID="1411" Nom="SOULABAILLE" Prenom="Anastasia" DateNaissance="11/08/1989" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015127223035" Points="1329" Presence="0" Exporte="0"/>
+  <Tireur ID="1418" Nom="GAUDIN" Prenom="Edith" DateNaissance="06/12/1987" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020112023056" Points="1349" Presence="0" Exporte="0"/>
+  <Tireur ID="1415" Nom="JULLIEN" Prenom="Lea" DateNaissance="21/12/1987" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020098623056" Points="1365" Presence="0" Exporte="0"/>
+  <Tireur ID="1407" Nom="LAURENS" Prenom="Maelle" DateNaissance="24/12/1988" Sexe="F" Nation="FRA" Club="ST MEEN LG" Licence="012017423035" Points="1380" Presence="0" Exporte="0"/>
+  <Tireur ID="1402" Nom="CHEVALLIER" Prenom="Leonie" DateNaissance="28/10/1988" Sexe="F" Nation="FRA" Club="DINAN EA" Licence="007022323022" Points="1410" Presence="0" Exporte="0"/>
+  <Tireur ID="1404" Nom="LAQUAINE DEPIROU" Prenom="Clara" DateNaissance="04/09/1987" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011160023035" Points="0" Presence="0" Exporte="0"/>
  </Tireurs>
  <Arbitres/>
  <Phases PhaseEnCours="0">

@@ -286,7 +286,8 @@ Swapper::ValueUsage *Swapper::GetValueUsage (gchar *value_image)
 }
 
 // --------------------------------------------------------------------------------
-void Swapper::Swap (GSList *pools)
+void Swapper::Swap (GSList  *pools,
+                    guint32  rand_seed)
 {
   GSList *players_to_swap = NULL;
 
@@ -353,6 +354,7 @@ void Swapper::Swap (GSList *pools)
     Player::AttributeId attr_id ("previous_stage_rank",
                                  _owner);
 
+    attr_id.MakeRandomReady (rand_seed);
     players_to_swap = g_slist_sort_with_data (players_to_swap,
                                               (GCompareDataFunc) Player::Compare,
                                               &attr_id);

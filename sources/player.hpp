@@ -29,18 +29,25 @@ class Player : public Object
     class AttributeId : public Object
     {
       public:
-        AttributeId (gchar  *name,
-                     Object *owner = NULL)
+        AttributeId (gchar   *name,
+                     Object  *owner = NULL)
         {
-          _name  = name;
-          _owner = owner;
+          _name      = name;
+          _owner     = owner;
+          _rand_seed = 0;
         }
+
+        void MakeRandomReady (guint32 rand_seed)
+        {
+          _rand_seed = rand_seed;
+        };
 
         static AttributeId *CreateAttributeId (AttributeDesc *desc,
                                                Object        *owner);
 
-        gchar  *_name;
-        Object *_owner;
+        gchar   *_name;
+        Object  *_owner;
+        guint32  _rand_seed;
     };
 
     typedef void (*OnChange) (Player    *player,
@@ -78,6 +85,10 @@ class Player : public Object
     static gint Compare (Player      *a,
                          Player      *b,
                          AttributeId *attr_id);
+
+    static gint RandomCompare (Player  *A,
+                               Player  *B,
+                               guint32  rand_seed);
 
   private:
     struct Client : public Object
