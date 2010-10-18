@@ -185,35 +185,39 @@ gboolean Swapper::Swap (Player *playerA,
         Attribute *attrA        = playerA->GetAttribute (_criteria_id);
         gchar     *value_imageA = attrA->GetUserImage ();
         Attribute *attrB        = playerB->GetAttribute (_criteria_id);
-        gchar     *value_imageB = attrB->GetUserImage ();
 
-        if (strcmp (value_imageA, value_imageB) != 0)
+        if (attrB)
         {
-          guint       pool_numberB  = to_pool->GetNumber ();
-          ValueUsage *value_usage_A = GetValueUsage (value_imageA);
-          ValueUsage *value_usage_B = GetValueUsage (value_imageB);
+          gchar *value_imageB = attrB->GetUserImage ();
 
-          if (   CanSwap (value_usage_B, pool_numberA, pool_numberB)
-              && CanSwap (value_usage_A, pool_numberB, pool_numberA))
+          if (strcmp (value_imageA, value_imageB) != 0)
           {
-            pool_A->RemovePlayer  (playerA);
-            value_usage_A->_in_pool[pool_numberA-1]--;
+            guint       pool_numberB  = to_pool->GetNumber ();
+            ValueUsage *value_usage_A = GetValueUsage (value_imageA);
+            ValueUsage *value_usage_B = GetValueUsage (value_imageB);
 
-            to_pool->RemovePlayer (playerB);
-            value_usage_B->_in_pool[pool_numberB-1]--;
+            if (   CanSwap (value_usage_B, pool_numberA, pool_numberB)
+                && CanSwap (value_usage_A, pool_numberB, pool_numberA))
+            {
+              pool_A->RemovePlayer  (playerA);
+              value_usage_A->_in_pool[pool_numberA-1]--;
 
-            pool_A->AddPlayer  (playerB, _owner);
-            value_usage_A->_in_pool[pool_numberB-1]++;
+              to_pool->RemovePlayer (playerB);
+              value_usage_B->_in_pool[pool_numberB-1]--;
 
-            to_pool->AddPlayer (playerA, _owner);
-            value_usage_B->_in_pool[pool_numberA-1]++;
+              pool_A->AddPlayer  (playerB, _owner);
+              value_usage_A->_in_pool[pool_numberB-1]++;
 
-            result = TRUE;
+              to_pool->AddPlayer (playerA, _owner);
+              value_usage_B->_in_pool[pool_numberA-1]++;
+
+              result = TRUE;
+            }
           }
+          g_free (value_imageB);
         }
 
         g_free (value_imageA);
-        g_free (value_imageB);
 
         return result;
       }
@@ -332,7 +336,7 @@ void Swapper::Swap (GSList  *pools,
           {
             gchar *user_image = attr->GetUserImage ();
 
-            if (strcmp (user_image, data->_image) == 0)
+            if (user_image && (strcmp (user_image, data->_image) == 0))
             {
               nb_similar_value++;
               if (nb_similar_value > nb_max)

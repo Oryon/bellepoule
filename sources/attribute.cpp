@@ -21,6 +21,7 @@
 
 typedef enum
 {
+  DISCRETE_CODE,
   DISCRETE_XML_IMAGE,
   DISCRETE_USER_IMAGE
 } DiscreteColumnId;
@@ -112,6 +113,37 @@ void AttributeDesc::BindDiscreteValues (GObject         *object,
 gboolean AttributeDesc::HasDiscreteValue ()
 {
   return (_discrete_store != NULL);
+}
+
+// --------------------------------------------------------------------------------
+void *AttributeDesc::GetDiscreteValue (guint from_code)
+{
+  if (_discrete_store)
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_discrete_store),
+                                                   &iter);
+    while (iter_is_valid)
+    {
+      guint  current_code;
+      gchar *current_user_image;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_discrete_store), &iter,
+                          DISCRETE_CODE, &current_code,
+                          DISCRETE_USER_IMAGE, &current_user_image,
+                          -1);
+      if (current_code == from_code)
+      {
+        return g_strdup (current_user_image);
+      }
+      iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_discrete_store),
+                                                &iter);
+    }
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -208,7 +240,7 @@ void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
 {
   if (_discrete_store == NULL)
   {
-    _discrete_store = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+    _discrete_store = gtk_tree_store_new (3, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING);
   }
 
   {
@@ -242,7 +274,7 @@ void AttributeDesc::AddDiscreteValues (gchar *file)
 {
   if (_discrete_store == NULL)
   {
-    _discrete_store = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+    _discrete_store = gtk_tree_store_new (3, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING);
   }
 
   {
@@ -260,21 +292,42 @@ void AttributeDesc::AddDiscreteValues (gchar *file)
     }
     else
     {
-      gchar  **tokens = g_strsplit_set (raw_file,
-                                        ";\n",
-                                        0);
+      guint nb_tokens = 1;
+      gchar  **tokens;
+
+      for (gchar *current = raw_file; current && (*current != '\n'); current++)
+      {
+        if (*current == ';')
+        {
+          nb_tokens++;
+        }
+      }
+
+      tokens = g_strsplit_set (raw_file,
+                                ";\n",
+                                0);
 
       if (tokens)
       {
-        for (guint i = 0; (tokens[i] != NULL) && (*tokens[i] != 0); i+=2)
+        for (guint i = 0; (tokens[i] != NULL) && (*tokens[i] != 0); i+=nb_tokens)
         {
           GtkTreeIter iter;
 
           gtk_tree_store_append (_discrete_store, &iter, NULL);
 
-          gtk_tree_store_set (_discrete_store, &iter,
-                              DISCRETE_XML_IMAGE, tokens[i],
-                              DISCRETE_USER_IMAGE, tokens[i+1], -1);
+          if (nb_tokens == 2)
+          {
+            gtk_tree_store_set (_discrete_store, &iter,
+                                DISCRETE_XML_IMAGE, tokens[i],
+                                DISCRETE_USER_IMAGE, tokens[i+1], -1);
+          }
+          else if (nb_tokens == 3)
+          {
+            gtk_tree_store_set (_discrete_store, &iter,
+                                DISCRETE_CODE, atoi (tokens[i]),
+                                DISCRETE_XML_IMAGE, tokens[i+1],
+                                DISCRETE_USER_IMAGE, tokens[i+2], -1);
+          }
         }
         g_strfreev (tokens);
       }

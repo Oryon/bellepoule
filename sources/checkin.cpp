@@ -747,6 +747,25 @@ void Checkin::ImportFFF (gchar *file)
         attr_id._name = "licence";
         player->SetAttributeValue (&attr_id, tokens[8]);
 
+        if (tokens[8] && strlen (tokens[8]) > 2)
+        {
+          AttributeDesc *league_desc = AttributeDesc::GetDesc ("league");
+
+          tokens[8][2] = 0;
+
+          if (league_desc)
+          {
+            gchar *league = (gchar *) league_desc->GetDiscreteValue (atoi (tokens[8]));
+
+            if (league)
+            {
+              attr_id._name = "league";
+              player->SetAttributeValue (&attr_id, league);
+              g_free (league);
+            }
+          }
+        }
+
         attr_id._name = "club";
         player->SetAttributeValue (&attr_id, tokens[10]);
 

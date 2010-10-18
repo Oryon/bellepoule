@@ -29,9 +29,10 @@
                             guint  rights)
 : Module (glade_file)
 {
-  _rights      = rights;
-  _player_list = NULL;
-  _store       = NULL;
+  _rights       = rights;
+  _player_list  = NULL;
+  _store        = NULL;
+  _column_width = NULL;
 
   {
     _tree_view = _glade->GetWidget ("players_list");
@@ -976,6 +977,11 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                       context,
                       page_nr);
 
+  if (_column_width == NULL)
+  {
+    return;
+  }
+
   if (_filter)
   {
     cairo_t *cr = gtk_print_context_get_cairo_context (context);
@@ -1081,6 +1087,7 @@ void PlayersList::OnEndPrint (GtkPrintOperation *operation,
                               GtkPrintContext   *context)
 {
   g_free (_column_width);
+  _column_width = NULL;
 }
 
 // --------------------------------------------------------------------------------

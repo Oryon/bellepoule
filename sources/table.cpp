@@ -1643,7 +1643,7 @@ GSList *Table::GetCurrentClassification ()
               && (ComparePreviousRankPlayer (player,
                                              previous_player,
                                              0) == 0))
-          || (i == 3))
+          || (i == 4))
       {
         player->SetAttributeValue (attr_id,
                                    previous_rank);

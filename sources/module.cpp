@@ -141,7 +141,7 @@ void Module::Plug (Module     *module,
                    GtkWidget  *in,
                    GtkToolbar *toolbar)
 {
-  if (in)
+  if (module && in)
   {
     gtk_container_add (GTK_CONTAINER (in),
                        module->_root);
