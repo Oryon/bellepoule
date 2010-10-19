@@ -20,40 +20,38 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "player.hpp"
 #include "attribute.hpp"
+
+class Pool;
 
 class Swapper : public Object
 {
   public:
-    Swapper (Object *owner);
+    Swapper (GSList *pools,
+             gchar  *criteria,
+             GSList *player_list);
 
-    void SetCriteria (Player::AttributeId *criteria_id);
-
-    void SetPlayerList (GSList *player_list);
-
-    void Swap (GSList  *pools,
-               guint32  rand_seed);
+    Player *GetNextPlayer (Pool *for_pool);
 
   private:
     struct ValueUsage : Object
-    {
-      ValueUsage (gchar *image,
-                 guint  nb_pool);
+  {
+    ValueUsage (gchar *image);
 
-      ~ValueUsage ();
+    ~ValueUsage ();
 
-      gchar *_image;
-      guint  _nb_similar;
-      guint  _max_by_pool;
-      guint  _nb_asymetric_pool;
-      guint *_in_pool;
-    };
+    gchar *_image;
+    guint  _nb_similar;
+    guint  _max_by_pool;
+    guint  _nb_asymetric_pools;
+  };
 
     Player::AttributeId *_criteria_id;
     GSList              *_player_list;
     GArray              *_array;
-    Object              *_owner;
     GSList              *_pools;
+    GSList              *_players_list;
 
     ~Swapper ();
 

@@ -15,36 +15,43 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string.h>
-#include "player.hpp"
 #include "pool.hpp"
 
 #include "swapper.hpp"
 
 // --------------------------------------------------------------------------------
-Swapper::ValueUsage::ValueUsage (gchar *image,
-                                 guint  nb_pool)
+Swapper::ValueUsage::ValueUsage (gchar *image)
 {
   _image      = image;
   _nb_similar = 1;
-
-  _in_pool = (guint *) g_malloc0 (nb_pool * sizeof (guint));
 }
 
 // --------------------------------------------------------------------------------
 Swapper::ValueUsage::~ValueUsage ()
 {
   g_free (_image);
-  g_free (_in_pool);
 }
 
 // --------------------------------------------------------------------------------
-Swapper::Swapper (Object *owner)
-  : Object ("Swapper")
+Swapper::Swapper (GSList *pools,
+                  gchar  *criteria,
+                  GSList *player_list)
+: Object ("Swapper")
 {
-  _player_list = NULL;
-  _criteria_id = NULL;
+  _player_list = g_slist_copy (player_list);
   _array       = NULL;
-  _owner       = owner;
+  _pools       = pools;
+
+  if (criteria)
+  {
+    _criteria_id = new Player::AttributeId (criteria);
+  }
+  else
+  {
+    _criteria_id = NULL;
+  }
+
+  Update ();
 }
 
 // --------------------------------------------------------------------------------
@@ -52,6 +59,11 @@ Swapper::~Swapper ()
 {
   Object::TryToRelease (_criteria_id);
   FreeArray ();
+
+  if (_player_list)
+  {
+    g_slist_free (_player_list);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -71,20 +83,6 @@ void Swapper::FreeArray ()
     g_array_free (_array, TRUE);
     _array = NULL;
   }
-}
-
-// --------------------------------------------------------------------------------
-void Swapper::SetCriteria (Player::AttributeId *criteria_id)
-{
-  Object::TryToRelease (_criteria_id);
-  _criteria_id = criteria_id;
-  _criteria_id->Retain ();
-}
-
-// --------------------------------------------------------------------------------
-void Swapper::SetPlayerList (GSList *player_list)
-{
-  _player_list = player_list;
 }
 
 // --------------------------------------------------------------------------------
@@ -122,9 +120,8 @@ void Swapper::Update ()
         {
           guint position;
 
-          value_usage = new ValueUsage (value_image,
-                                        nb_pool);
-          position = _array->len + 1;
+          value_usage = new ValueUsage (value_image);
+          position    = _array->len + 1;
           SetData (this,
                    value_image,
                    (void *) (position));
@@ -137,12 +134,6 @@ void Swapper::Update ()
         {
           value_usage->_nb_similar++;
           g_free (value_image);
-        }
-
-        {
-          guint pool_nb = (guint) player->GetData (_owner, "Pool No");
-
-          value_usage->_in_pool[pool_nb-1]++;
         }
       }
 
@@ -158,118 +149,10 @@ void Swapper::Update ()
                                    Swapper::ValueUsage *,
                                    i);
 
-      value_usage->_max_by_pool       = value_usage->_nb_similar / nb_pool;
-      value_usage->_nb_asymetric_pool = value_usage->_nb_similar % nb_pool;
+      value_usage->_max_by_pool        = value_usage->_nb_similar / nb_pool;
+      value_usage->_nb_asymetric_pools = value_usage->_nb_similar % nb_pool;
     }
   }
-}
-
-// --------------------------------------------------------------------------------
-gboolean Swapper::Swap (Player *playerA,
-                        Pool   *to_pool)
-{
-  guint pool_numberA = (guint) playerA->GetData (_owner, "Pool No");
-
-  if (to_pool->GetNumber () != pool_numberA)
-  {
-    Pool *pool_A   = (Pool *) g_slist_nth_data (_pools, pool_numberA-1);
-    gint  position = pool_A->GetPosition (playerA);
-
-    if (position > -1)
-    {
-      Player *playerB = to_pool->GetPlayer (position);
-
-      if (playerB)
-      {
-        gboolean   result       = FALSE;
-        Attribute *attrA        = playerA->GetAttribute (_criteria_id);
-        gchar     *value_imageA = attrA->GetUserImage ();
-        Attribute *attrB        = playerB->GetAttribute (_criteria_id);
-
-        if (attrB)
-        {
-          gchar *value_imageB = attrB->GetUserImage ();
-
-          if (strcmp (value_imageA, value_imageB) != 0)
-          {
-            guint       pool_numberB  = to_pool->GetNumber ();
-            ValueUsage *value_usage_A = GetValueUsage (value_imageA);
-            ValueUsage *value_usage_B = GetValueUsage (value_imageB);
-
-            if (   CanSwap (value_usage_B, pool_numberA, pool_numberB)
-                && CanSwap (value_usage_A, pool_numberB, pool_numberA))
-            {
-              pool_A->RemovePlayer  (playerA);
-              value_usage_A->_in_pool[pool_numberA-1]--;
-
-              to_pool->RemovePlayer (playerB);
-              value_usage_B->_in_pool[pool_numberB-1]--;
-
-              pool_A->AddPlayer  (playerB, _owner);
-              value_usage_A->_in_pool[pool_numberB-1]++;
-
-              to_pool->AddPlayer (playerA, _owner);
-              value_usage_B->_in_pool[pool_numberA-1]++;
-
-              result = TRUE;
-            }
-          }
-          g_free (value_imageB);
-        }
-
-        g_free (value_imageA);
-
-        return result;
-      }
-    }
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Swapper::CanSwap (ValueUsage *value,
-                           guint       to_pool,
-                           guint       from_pool)
-{
-  if (value->_in_pool[to_pool-1] >= value->_max_by_pool)
-  {
-    guint nb_pool      = g_slist_length (_pools);
-    guint nb_asymetric = 0;
-
-    for (guint p = 0; p < nb_pool; p++)
-    {
-      if (p == from_pool-1)
-      {
-        if (value->_in_pool[p] > value->_max_by_pool+1)
-        {
-          nb_asymetric++;
-        }
-      }
-      else if (p == to_pool-1)
-      {
-        if (value->_in_pool[p] > value->_max_by_pool)
-        {
-          return FALSE;
-        }
-        else if (value->_in_pool[p] == value->_max_by_pool-1)
-        {
-          nb_asymetric++;
-        }
-      }
-      else if (value->_in_pool[p] > value->_max_by_pool)
-      {
-        nb_asymetric++;
-      }
-
-      if (nb_asymetric > value->_nb_asymetric_pool)
-      {
-        return FALSE;
-      }
-    }
-  }
-
-  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -290,95 +173,76 @@ Swapper::ValueUsage *Swapper::GetValueUsage (gchar *value_image)
 }
 
 // --------------------------------------------------------------------------------
-void Swapper::Swap (GSList  *pools,
-                    guint32  rand_seed)
+Player *Swapper::GetNextPlayer (Pool *for_pool)
 {
-  GSList *players_to_swap = NULL;
+  GSList *current = _player_list;
+  GSList *result  = NULL;
 
-  _pools = pools;
-  Update ();
-
-  // Which players?
-  for (guint i = 0; i < _array->len; i++)
+  if (_criteria_id == NULL)
   {
-    Swapper::ValueUsage *data;
+    result = _player_list;
+  }
 
-    data = g_array_index (_array,
-                          Swapper::ValueUsage *,
-                          i);
-    if (data->_nb_similar > 1)
+  while (current && (result == NULL))
+  {
+    Attribute *attr;
+    Player    *player;
+
+    player = (Player *) current->data;
+    attr = player->GetAttribute (_criteria_id);
+    if (attr)
     {
-      GSList *current_pool = pools;
+      gchar *user_image = attr->GetUserImage ();
 
-      while (current_pool)
+      if (user_image == NULL)
       {
-        Pool  *pool;
-        guint  nb_similar_value;
-        guint  nb_max;
+        break;
+      }
+      else
+      {
+        ValueUsage *usage      = GetValueUsage (user_image);
+        guint       nb_similar = 0;
 
-        pool = (Pool *) current_pool->data;
-
-        nb_similar_value = 0;
-        nb_max           = data->_nb_similar / pool->GetNbPlayers ();
-        if (data->_nb_similar % pool->GetNbPlayers ())
+        for (guint p = 0; p < for_pool->GetNbPlayers (); p++)
         {
-          nb_max++;
-        }
-
-        for (guint p = 0; p < pool->GetNbPlayers (); p++)
-        {
-          Player    *player;
+          Player    *pool_player;
           Attribute *attr;
 
-          player = pool->GetPlayer (p);
-          attr   = player->GetAttribute (_criteria_id);
+          pool_player = for_pool->GetPlayer (p);
+          attr   = pool_player->GetAttribute (_criteria_id);
           if (attr)
           {
-            gchar *user_image = attr->GetUserImage ();
+            gchar *image = attr->GetUserImage ();
 
-            if (user_image && (strcmp (user_image, data->_image) == 0))
+            if (image && (strcmp (image, user_image) == 0))
             {
-              nb_similar_value++;
-              if (nb_similar_value > nb_max)
-              {
-                players_to_swap = g_slist_prepend (players_to_swap,
-                                                   player);
-              }
+              nb_similar++;
             }
-            g_free (user_image);
+            g_free (image);
           }
         }
 
-        current_pool = g_slist_next (current_pool);
-      }
-    }
-  }
-
-  {
-    Player::AttributeId attr_id ("previous_stage_rank",
-                                 _owner);
-
-    attr_id.MakeRandomReady (rand_seed);
-    players_to_swap = g_slist_sort_with_data (players_to_swap,
-                                              (GCompareDataFunc) Player::Compare,
-                                              &attr_id);
-
-    for (guint i = 0; i < g_slist_length (players_to_swap); i++)
-    {
-      Player *player;
-
-      player = (Player *) g_slist_nth_data (players_to_swap, i);
-      {
-        GSList *current_pool = pools;
-
-        while (   current_pool
-               && (Swap (player, (Pool *) current_pool->data) == FALSE))
+        if (nb_similar < usage->_max_by_pool)
         {
-          current_pool = g_slist_next (current_pool);
+          result = current;
+        }
+        else if (   (nb_similar == usage->_max_by_pool)
+                 && (usage->_nb_asymetric_pools > 0))
+        {
+          result = current;
+          usage->_nb_asymetric_pools--;
         }
       }
+      g_free (user_image);
     }
+    current = g_slist_next (current);
+  }
+  if (result == NULL)
+  {
+    result = _player_list;
   }
 
-  g_slist_free (players_to_swap);
+  _player_list = g_slist_remove_link (_player_list,
+                                      result);
+  return (Player *) result->data;
 }

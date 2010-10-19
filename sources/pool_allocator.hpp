@@ -23,7 +23,6 @@
 #include "stage.hpp"
 #include "canvas_module.hpp"
 #include "pool.hpp"
-#include "swapper.hpp"
 
 class PoolAllocator : public virtual Stage, public CanvasModule
 {
@@ -80,7 +79,6 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     Data          *_nb_eliminated;
     Data          *_swapping;
     AttributeDesc *_swapping_criteria;
-    Swapper       *_swapper;
     gdouble        _max_w;
     gdouble        _max_h;
 

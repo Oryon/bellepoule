@@ -21,6 +21,8 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
+#include "swapper.hpp"
+
 #include "pool_allocator.hpp"
 
 #define VALUE_INIT {0,{{0}}}
@@ -60,7 +62,6 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _drag_text         = NULL;
   _main_table        = NULL;
   _swapping_criteria = NULL;
-  _swapper           = new Swapper (this);
 
   _max_score = new Data ("ScoreMax",
                          5);
@@ -148,7 +149,6 @@ PoolAllocator::~PoolAllocator ()
   _max_score->Release     ();
   _nb_eliminated->Release ();
   _swapping->Release      ();
-  _swapper->Release       ();
 }
 
 // --------------------------------------------------------------------------------
@@ -581,39 +581,45 @@ void PoolAllocator::CreatePools ()
                                   pool_table[i]);
   }
 
-  for (guint i = 0; i < g_slist_length (shortlist); i++)
   {
-    Player *player;
-    Pool   *pool;
+    Swapper *swapper;
 
-    if (((i / nb_pool) % 2) == 0)
+    if (_swapping_criteria)
     {
-      pool = pool_table[i%nb_pool];
+      swapper = new Swapper (_pools_list,
+                             _swapping_criteria->_code_name,
+                             shortlist);
     }
     else
     {
-      pool = pool_table[nb_pool-1 - i%nb_pool];
+      swapper = new Swapper (_pools_list,
+                             NULL,
+                             shortlist);
     }
 
-    player = (Player *) g_slist_nth_data (shortlist,
-                                          i);
-    player->SetData (this,
-                     "original_pool",
-                     (void *) pool->GetNumber ());
-    pool->AddPlayer (player,
-                     this);
-  }
+    for (guint i = 0; i < g_slist_length (shortlist); i++)
+    {
+      Player *player;
+      Pool   *pool;
 
-  if (_swapping_criteria)
-  {
-    Player::AttributeId *attr_id = new Player::AttributeId (_swapping_criteria->_code_name);
+      if (((i / nb_pool) % 2) == 0)
+      {
+        pool = pool_table[i%nb_pool];
+      }
+      else
+      {
+        pool = pool_table[nb_pool-1 - i%nb_pool];
+      }
 
-    _swapper->SetPlayerList (shortlist);
-    _swapper->SetCriteria (attr_id);
-    attr_id->Release ();
+      player = swapper->GetNextPlayer (pool);
+      player->SetData (this,
+                       "original_pool",
+                       (void *) pool->GetNumber ());
+      pool->AddPlayer (player,
+                       this);
+    }
 
-    _swapper->Swap (_pools_list,
-                    _rand_seed);
+    swapper->Release ();
   }
 
   SetOriginalPools ();
