@@ -86,6 +86,10 @@ class PoolSupervisor : public virtual Stage, public Module
 
     GSList *GetCurrentClassification ();
 
+    GSList *EvaluateClassification (GSList           *list,
+                                    Object           *rank_owner,
+                                    GCompareDataFunc  CompareFunction);
+
     void SetInputProvider (Stage *input_provider);
 
     void OnBeginPrint (GtkPrintOperation *operation,

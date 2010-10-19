@@ -97,6 +97,7 @@ GSList *GeneralClassification::GetCurrentClassification ()
   {
     Player::AttributeId attr_id ("final_rank");
 
+    attr_id.MakeRandomReady (_rand_seed);
     result = g_slist_sort_with_data (result,
                                      (GCompareDataFunc) Player::Compare,
                                      &attr_id);

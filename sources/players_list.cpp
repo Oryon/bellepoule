@@ -29,9 +29,10 @@
                             guint  rights)
 : Module (glade_file)
 {
-  _rights      = rights;
-  _player_list = NULL;
-  _store       = NULL;
+  _rights       = rights;
+  _player_list  = NULL;
+  _store        = NULL;
+  _column_width = NULL;
 
   {
     _tree_view = _glade->GetWidget ("players_list");
@@ -366,6 +367,10 @@ gint PlayersList::CompareIterator (GtkTreeModel        *model,
                                    GtkTreeIter         *b,
                                    Player::AttributeId *attr_id)
 {
+  guint32 *rand_seed = (guint32 *) attr_id->GetData (NULL,
+                                                     "CompareIteratorRandSeed");
+
+  attr_id->MakeRandomReady (*rand_seed);
   return Player::Compare (GetPlayer (model, a),
                           GetPlayer (model, b),
                           attr_id);
@@ -463,6 +468,9 @@ void PlayersList::SetColumn (guint          id,
       gtk_tree_view_column_set_sort_column_id (column,
                                                id);
 
+      attr_id->SetData (NULL,
+                        "CompareIteratorRandSeed",
+                        &_rand_seed);
       gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
                                        id,
                                        (GtkTreeIterCompareFunc) CompareIterator,
@@ -847,16 +855,18 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
       }
       else
       {
-        gchar *font = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+        gchar *font  = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+        gchar *image = attr->GetUserImage ();
 
         item = goo_canvas_text_new (root_item,
-                                    attr->GetUserImage (),
+                                    image,
                                     x,
                                     row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
                                     -1.0,
                                     GTK_ANCHOR_W,
                                     "font", font,
                                     NULL);
+        g_free (image);
         g_free (font);
 
         goo_canvas_item_get_bounds (item,
@@ -967,6 +977,11 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                       context,
                       page_nr);
 
+  if (_column_width == NULL)
+  {
+    return;
+  }
+
   if (_filter)
   {
     cairo_t *cr = gtk_print_context_get_cairo_context (context);
@@ -1072,6 +1087,7 @@ void PlayersList::OnEndPrint (GtkPrintOperation *operation,
                               GtkPrintContext   *context)
 {
   g_free (_column_width);
+  _column_width = NULL;
 }
 
 // --------------------------------------------------------------------------------

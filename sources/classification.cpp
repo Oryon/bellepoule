@@ -112,7 +112,7 @@ void Classification::Dump (gchar  *filename,
             {
               gchar *image = attr->GetUserImage ();
 
-              fprintf (file, "%s", attr->GetUserImage ());
+              fprintf (file, "%s", image);
               g_free (image);
             }
             fprintf (file, ",");

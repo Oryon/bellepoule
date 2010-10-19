@@ -995,6 +995,15 @@ void Schedule::PlugStage (Stage *stage)
                             gtk_label_new (name));
   g_free (name);
 
+  {
+    Stage *previous = stage->GetPreviousStage ();
+
+    if (previous)
+    {
+      stage->SetRandSeed (previous->GetRandSeed ());
+    }
+  }
+
   Plug (module,
         viewport);
 

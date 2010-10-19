@@ -80,6 +80,10 @@ class Stage : public virtual Object
 
     guint GetId ();
 
+    guint32 GetRandSeed ();
+
+    void SetRandSeed (guint32 rand_seed);
+
     Rights GetRights ();
 
     gboolean Locked ();

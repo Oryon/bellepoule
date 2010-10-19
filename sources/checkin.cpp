@@ -16,6 +16,7 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "attribute.hpp"
 #include "schedule.hpp"
@@ -52,8 +53,8 @@ Checkin::Checkin (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "previous_stage_rank",
                                "exported",
-                               "rank",
                                "final_rank",
                                "victories_ratio",
                                "indice",
@@ -63,7 +64,7 @@ Checkin::Checkin (StageClass *stage_class)
                          this);
 
     filter->ShowAttribute ("attending");
-    filter->ShowAttribute ("previous_stage_rank");
+    filter->ShowAttribute ("rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("birth_date");
@@ -354,13 +355,69 @@ void Checkin::UseInitialRank ()
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::UpdateRanking ()
+void Checkin::UpdateChecksum ()
 {
-  guint nb_player  = g_slist_length (_player_list);
-  guint nb_missing = 0;
+  {
+    Player::AttributeId attr_id ("name");
+
+    _player_list = g_slist_sort_with_data (_player_list,
+                                           (GCompareDataFunc) Player::Compare,
+                                           &attr_id);
+  }
 
   {
-    Player::AttributeId *attr_id ;
+    Player::AttributeId attr_id ("attending");
+    GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
+    GSList              *current_player = _player_list;
+
+    while (current_player)
+    {
+      Player *p;
+
+      p = (Player *) current_player->data;
+      if (p)
+      {
+        Attribute *attending;
+
+        attending = p->GetAttribute (&attr_id);
+        if (attending && (gboolean) attending->GetValue ())
+        {
+          gchar *name = p->GetName ();
+
+          name[0] = toupper (name[0]);
+          g_checksum_update (checksum,
+                             (guchar *) name,
+                             1);
+          g_free (name);
+        }
+      }
+      current_player = g_slist_next (current_player);
+    }
+
+    {
+      gchar short_checksum[9];
+
+      strncpy (short_checksum,
+               g_checksum_get_string (checksum),
+               sizeof (short_checksum));
+      short_checksum[8] = 0;
+
+      _rand_seed = strtoul (short_checksum, NULL, 16);
+    }
+
+    g_checksum_free (checksum);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::UpdateRanking ()
+{
+  guint nb_player = g_slist_length (_player_list);
+
+  UpdateChecksum ();
+
+  {
+    Player::AttributeId *attr_id;
 
     if (_use_initial_rank)
     {
@@ -372,47 +429,70 @@ void Checkin::UpdateRanking ()
       attr_id = new Player::AttributeId ("rating");
     }
 
+    attr_id->MakeRandomReady (_rand_seed);
     _player_list = g_slist_sort_with_data (_player_list,
                                            (GCompareDataFunc) Player::Compare,
                                            attr_id);
     attr_id->Release ();
   }
 
-  for (guint i = 0; i < nb_player; i++)
   {
-    Player    *p;
-    Attribute *attending;
+    Player *previous_player = NULL;
+    GSList *current_player  = _player_list;
+    gint    previous_rank   = 0;
+    guint   nb_present      = 1;
 
-    p = (Player *) g_slist_nth_data (_player_list, i);
-
+    while (current_player)
     {
-      Player::AttributeId attr_id ("attending");
+      Player    *p;
+      Attribute *attending;
 
-      attending = p->GetAttribute (&attr_id);
-    }
+      p = (Player *) current_player->data;
 
-    {
-      Player::AttributeId previous_rank_id ("previous_stage_rank", this);
-      Player::AttributeId rank_id          ("rank", this);
-
-      if (attending && (gboolean) attending->GetValue ())
       {
-        p->SetAttributeValue (&previous_rank_id,
-                              i - nb_missing + 1);
-        p->SetAttributeValue (&rank_id,
-                              i - nb_missing + 1);
-      }
-      else
-      {
-        p->SetAttributeValue (&previous_rank_id,
-                              nb_player - nb_missing);
-        p->SetAttributeValue (&rank_id,
-                              nb_player - nb_missing);
-        nb_missing++;
-      }
-    }
+        Player::AttributeId attr_id ("attending");
 
-    Update (p);
+        attending = p->GetAttribute (&attr_id);
+      }
+
+      {
+        Player::AttributeId previous_rank_id ("previous_stage_rank", this);
+        Player::AttributeId rank_id          ("rank", this);
+        Player::AttributeId rating_attr      ("rating");
+
+        if (attending && (gboolean) attending->GetValue ())
+        {
+          if (   previous_player
+              && (Player::Compare (previous_player, p, &rating_attr) == 0))
+          {
+            p->SetAttributeValue (&previous_rank_id,
+                                  previous_rank);
+            p->SetAttributeValue (&rank_id,
+                                  previous_rank);
+          }
+          else
+          {
+            p->SetAttributeValue (&previous_rank_id,
+                                  nb_present);
+            p->SetAttributeValue (&rank_id,
+                                  nb_present);
+            previous_rank = nb_present;
+          }
+          previous_player = p;
+          nb_present++;
+        }
+        else
+        {
+          p->SetAttributeValue (&previous_rank_id,
+                                nb_player);
+          p->SetAttributeValue (&rank_id,
+                                nb_player);
+        }
+      }
+      Update (p);
+
+      current_player  = g_slist_next (current_player);
+    }
   }
 }
 
@@ -430,12 +510,15 @@ GSList *Checkin::GetCurrentClassification ()
 
   if (result)
   {
-    Player::AttributeId attr_id ("rank",
-                                 this);
+    Player::AttributeId attr_id ("rank");
 
+    attr_id.MakeRandomReady (_rand_seed);
     result = g_slist_sort_with_data (result,
                                      (GCompareDataFunc) Player::Compare,
                                      &attr_id);
+
+    result = g_slist_reverse (result);
+
     _attendees->SetGlobalList (result);
   }
   return result;
@@ -663,6 +746,25 @@ void Checkin::ImportFFF (gchar *file)
 
         attr_id._name = "licence";
         player->SetAttributeValue (&attr_id, tokens[8]);
+
+        if (tokens[8] && strlen (tokens[8]) > 2)
+        {
+          AttributeDesc *league_desc = AttributeDesc::GetDesc ("league");
+
+          tokens[8][2] = 0;
+
+          if (league_desc)
+          {
+            gchar *league = (gchar *) league_desc->GetDiscreteValue (atoi (tokens[8]));
+
+            if (league)
+            {
+              attr_id._name = "league";
+              player->SetAttributeValue (&attr_id, league);
+              g_free (league);
+            }
+          }
+        }
 
         attr_id._name = "club";
         player->SetAttributeValue (&attr_id, tokens[10]);
@@ -984,7 +1086,7 @@ void Checkin::Print (const gchar *job_name)
     }
     else if ((_print_attending == FALSE) && _print_missing)
     {
-      Module::Print (gettext ("Lost of absents"));
+      Module::Print (gettext ("List of absents"));
     }
     else
     {

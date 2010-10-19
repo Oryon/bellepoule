@@ -85,6 +85,8 @@ class AttributeDesc : public Object
 
     void AddDiscreteValues (gchar *file);
 
+    void *GetDiscreteValue (guint from_code);
+
     gchar *GetXmlImage (gchar *user_image);
 
     gchar *GetUserImage (gchar *xml_image);

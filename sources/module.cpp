@@ -36,6 +36,7 @@ Module::Module (gchar *glade_file,
   _glade        = NULL;
   _toolbar      = NULL;
   _filter       = NULL;
+  _rand_seed    = 0;
 
   _sensitivity_trigger = new SensitivityTrigger ();
 
@@ -140,7 +141,7 @@ void Module::Plug (Module     *module,
                    GtkWidget  *in,
                    GtkToolbar *toolbar)
 {
-  if (in)
+  if (module && in)
   {
     gtk_container_add (GTK_CONTAINER (in),
                        module->_root);
@@ -263,13 +264,16 @@ GString *Module::GetPlayerImage (Player *player)
 
       if (attr)
       {
+        gchar * attr_image = attr->GetUserImage ();
+
         if (a > 0)
         {
           image = g_string_append (image,
                                    " - ");
         }
         image = g_string_append (image,
-                                 attr->GetUserImage ());
+                                 attr_image);
+        g_free (attr_image);
       }
     }
   }
