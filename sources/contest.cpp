@@ -876,6 +876,12 @@ void Contest::Save (gchar *filename)
                                   "UTF-8",
                                   NULL);
 
+      xmlTextWriterStartDTD (xml_writer,
+                             BAD_CAST "CompetitionIndividuelle",
+                             NULL,
+                             NULL);
+      xmlTextWriterEndDTD (xml_writer);
+
       xmlTextWriterStartComment (xml_writer);
       xmlTextWriterWriteFormatString (xml_writer, "\n");
       xmlTextWriterWriteFormatString (xml_writer, "           By BellePoule (V%s.%s/%s)\n", VERSION, VERSION_DAY, VERSION_MONTH);
@@ -883,12 +889,6 @@ void Contest::Save (gchar *filename)
       xmlTextWriterWriteFormatString (xml_writer, "\n");
       xmlTextWriterWriteFormatString (xml_writer, "   http://betton.escrime.free.fr/index.php/bellepoule\n");
       xmlTextWriterEndComment (xml_writer);
-
-      xmlTextWriterStartDTD (xml_writer,
-                             BAD_CAST "CompetitionIndividuelle",
-                             NULL,
-                             NULL);
-      xmlTextWriterEndDTD (xml_writer);
 
       xmlTextWriterStartElement (xml_writer,
                                  BAD_CAST "CompetitionIndividuelle");
@@ -1084,13 +1084,6 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                        "fill-color", gdk_color_to_string ((GdkColor *) _color->data),
                        "line-width", 0.3,
                        NULL);
-
-  goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                       _name,
-                       1.0, 3.0,
-                       -1.0,
-                       GTK_ANCHOR_W,
-                       "font", "Sans 2px", NULL);
 
   {
     char *text = g_strdup_printf ("%s - %s - %s", gettext (weapon_image[_weapon]),
