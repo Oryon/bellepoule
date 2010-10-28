@@ -30,6 +30,50 @@ gchar  *AttributeDesc::_path = NULL;
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
+static gchar *GetUndivadableText (gchar *text)
+{
+  gchar *result = NULL;
+
+  if (text)
+  {
+    guint  nb_space = 0;
+
+    for (gchar *current = text; *current != 0; current++)
+    {
+      if (*current == ' ')
+      {
+        nb_space++;
+      }
+    }
+
+    result = (gchar *) g_malloc (strlen (text) + nb_space*2 +1);
+
+    {
+      gchar *current = result;
+
+      for (guint i = 0; text[i] != 0; i++)
+      {
+        if (text[i] == ' ')
+        {
+          // non breaking space
+          *current = 0xC2;
+          current++;
+          *current = 0xA0;
+        }
+        else
+        {
+          *current = text[i];
+        }
+        current++;
+      }
+      *current = 0;
+    }
+  }
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
 AttributeDesc::AttributeDesc (GType  type,
                               gchar *code_name,
                               gchar *xml_name,
@@ -225,7 +269,7 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image)
       }
     }
 
-    return g_strdup (xml_image);
+    return GetUndivadableText (xml_image);
   }
   else
   {
@@ -257,7 +301,7 @@ void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
 
       gtk_tree_store_set (_discrete_store, &iter,
                           DISCRETE_XML_IMAGE, xml_image,
-                          DISCRETE_USER_IMAGE, user_image, -1);
+                          DISCRETE_USER_IMAGE, GetUndivadableText (user_image), -1);
 
       xml_image  = va_arg (ap, char *);
       if (xml_image)
@@ -319,14 +363,14 @@ void AttributeDesc::AddDiscreteValues (gchar *file)
           {
             gtk_tree_store_set (_discrete_store, &iter,
                                 DISCRETE_XML_IMAGE, tokens[i],
-                                DISCRETE_USER_IMAGE, tokens[i+1], -1);
+                                DISCRETE_USER_IMAGE, GetUndivadableText (tokens[i+1]), -1);
           }
           else if (nb_tokens == 3)
           {
             gtk_tree_store_set (_discrete_store, &iter,
                                 DISCRETE_CODE, atoi (tokens[i]),
                                 DISCRETE_XML_IMAGE, tokens[i+1],
-                                DISCRETE_USER_IMAGE, tokens[i+2], -1);
+                                DISCRETE_USER_IMAGE, GetUndivadableText (tokens[i+2]), -1);
           }
         }
         g_strfreev (tokens);
@@ -496,7 +540,7 @@ void TextAttribute::SetValue (gchar *value)
   if (value)
   {
     g_free (_value);
-    _value = g_strdup (value);
+    _value = GetUndivadableText (value);
   }
 }
 

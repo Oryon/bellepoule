@@ -1360,10 +1360,15 @@ void PoolAllocator::OnBeginPrint (GtkPrintOperation *operation,
     guint nb_row_by_page = (guint) ((paper_h - header_h) / ((_max_h+20)*_print_scale));
     guint nb_row         = g_slist_length (_pools_list)/2;
 
+    if (g_slist_length (_pools_list) % 2 > 0)
+    {
+      nb_row++;
+    }
+
     _nb_page = nb_row/nb_row_by_page;
     _page_h  = nb_row_by_page * (_max_h+20)*_print_scale;
 
-    if ((nb_row % nb_row_by_page) != 0)
+    if (nb_row % nb_row_by_page != 0)
     {
       _nb_page++;
     }

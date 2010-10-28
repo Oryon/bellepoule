@@ -94,6 +94,7 @@ Table::Table (StageClass *stage_class)
     filter = new Filter (attr_list,
                          this);
 
+    filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("club");
 
