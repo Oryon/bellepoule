@@ -1317,6 +1317,126 @@ gboolean PoolAllocator::IsOver ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::OnBeginPrint (GtkPrintOperation *operation,
+                                  GtkPrintContext   *context)
+{
+  gdouble canvas_x;
+  gdouble canvas_y;
+  gdouble canvas_w;
+  gdouble canvas_h;
+  gdouble paper_w  = gtk_print_context_get_width (context);
+  gdouble paper_h  = gtk_print_context_get_height (context);
+  gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+
+  {
+    GooCanvasBounds bounds;
+
+    goo_canvas_item_get_bounds (GetRootItem (),
+                                &bounds);
+    canvas_x = bounds.x1;
+    canvas_y = bounds.y1;
+    canvas_w = bounds.x2 - bounds.x1;
+    canvas_h = bounds.y2 - bounds.y1;
+  }
+
+  {
+    gdouble canvas_dpi;
+    gdouble printer_dpi;
+
+    g_object_get (G_OBJECT (GetCanvas ()),
+                  "resolution-x", &canvas_dpi,
+                  NULL);
+    printer_dpi = gtk_print_context_get_dpi_x (context);
+
+    _print_scale = printer_dpi/canvas_dpi;
+  }
+
+  if (canvas_w * _print_scale > paper_w)
+  {
+    _print_scale = paper_w / canvas_w;
+  }
+
+  {
+    guint nb_row_by_page = (guint) ((paper_h - header_h) / ((_max_h+20)*_print_scale));
+    guint nb_row         = g_slist_length (_pools_list)/2;
+
+    if (g_slist_length (_pools_list) % 2 > 0)
+    {
+      nb_row++;
+    }
+
+    _nb_page = nb_row/nb_row_by_page;
+    _page_h  = nb_row_by_page * (_max_h+20)*_print_scale;
+
+    if (nb_row % nb_row_by_page != 0)
+    {
+      _nb_page++;
+    }
+
+    gtk_print_operation_set_n_pages (operation,
+                                     _nb_page);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
+                                GtkPrintContext   *context,
+                                gint               page_nr)
+{
+  gdouble paper_w = gtk_print_context_get_width  (context);
+  cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
+  gdouble          header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+  GooCanvasBounds  bounds;
+
+  Module::OnDrawPage (operation,
+                      context,
+                      page_nr);
+
+  {
+    GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
+    char      *text   = g_strdup_printf ("Page %d/%d", page_nr+1, _nb_page);
+
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         text,
+                         98.0, 9.0,
+                         -1.0,
+                         GTK_ANCHOR_SE,
+                         "fill-color", "black",
+                         "font", "Sans Bold 2px", NULL);
+    g_free (text);
+
+    goo_canvas_render (canvas,
+                       gtk_print_context_get_cairo_context (context),
+                       NULL,
+                       1.0);
+
+    gtk_widget_destroy (GTK_WIDGET (canvas));
+  }
+
+  cairo_save (cr);
+
+  cairo_scale (cr,
+               _print_scale,
+               _print_scale);
+
+  bounds.x1 = 0.0;
+  bounds.y1 = (page_nr*_page_h)/_print_scale;
+  bounds.x2 = paper_w/_print_scale;
+  bounds.y2 = ((page_nr+1)*_page_h)/_print_scale;
+
+  cairo_translate (cr,
+                   0.0,
+                   (header_h - (_page_h*page_nr))/_print_scale);
+
+  goo_canvas_render (GetCanvas (),
+                     cr,
+                     &bounds,
+                     1.0);
+
+  cairo_restore (cr);
+}
+
+// --------------------------------------------------------------------------------
 Data *PoolAllocator::GetMaxScore ()
 {
   return _max_score;

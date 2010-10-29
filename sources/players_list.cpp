@@ -86,11 +86,14 @@ void PlayersList::SetFilter (Filter *filter)
     _store = gtk_list_store_newv (nb_attr+1,
                                   types);
 
-    gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
-                             GTK_TREE_MODEL (_store));
+    if (_tree_view)
+    {
+      gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
+                               GTK_TREE_MODEL (_store));
 
-    gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
-                                     _filter->GetAttributeId ("name"));
+      gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
+                                       _filter->GetAttributeId ("name"));
+    }
   }
 }
 

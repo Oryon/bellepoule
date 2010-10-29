@@ -52,7 +52,11 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     GSList *GetCurrentClassification ();
     void LoadConfiguration (xmlNode *xml_node);
     void SaveConfiguration (xmlTextWriter *xml_writer);
-
+    void OnBeginPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
+    void OnDrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
   private:
     typedef struct
     {
@@ -81,6 +85,9 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     AttributeDesc *_swapping_criteria;
     gdouble        _max_w;
     gdouble        _max_h;
+    gdouble        _print_scale;
+    gdouble        _page_h;
+    guint          _nb_page;
 
     void SetOriginalPools ();
     void FillCombobox ();
