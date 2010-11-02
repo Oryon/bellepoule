@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-10-23 06:57+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2010-11-01 20:37+0000\n"
+"Last-Translator: Tina Schliemann <Unknown>\n"
 "Language-Team: <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-10-24 05:01+0000\n"
+"X-Launchpad-Export-Date: 2010-11-02 04:56+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -30,20 +30,19 @@ msgstr "<b><big>Welche Fechter wollen Sie drucken?</big></b>"
 
 #: ../../sources/checkin.cpp:90
 msgid "Fencer list printing"
-msgstr "Druck der Fechterliste"
+msgstr "Ausdruck der Teilnehmerliste"
 
 #: ../../sources/checkin.cpp:201
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
 msgstr ""
-"Deaktivieren Sie dieses Kästchen, um die Navigation zu beschleunigen. Die "
-"entsprechenden Felder wird bei den Unterstützungen auf dem tab-Anschlag "
-"ignoriert."
+"Um die Dateneingabe zu beschleunigen deaktiveren Sie diese Checkbox. Das "
+"entsprechende Feld wird bei der TAB-Navigation ignoriert."
 
 #: ../../sources/checkin.cpp:464
 msgid "Choose a fencer file to import..."
-msgstr "Wählen Sie eine Fechterdatei zu importieren"
+msgstr "Wählen Sie die zu importierende Datei..."
 
 #: ../../sources/checkin.cpp:477
 msgid "All FFF files (.FFF)"
@@ -105,36 +104,36 @@ msgstr "Gemischt"
 
 #: ../../sources/contest.cpp:67
 msgid "U8"
-msgstr "D-Jugend"
+msgstr "Schüler"
 
 #: ../../sources/contest.cpp:68
 msgid "U10"
-msgstr "D-Jugend"
+msgstr "Schüler"
 
 #: ../../sources/contest.cpp:69
 msgid "U12"
-msgstr "Schüler"
+msgstr "B-Jugend"
 
 #: ../../sources/contest.cpp:70
 msgid "U14"
-msgstr "B-Jugend"
+msgstr "A-Jugend"
 
 #: ../../sources/contest.cpp:71
 #: ../../resources/glade/contest.glade:129
 msgid "U16"
-msgstr "A-Jugend"
+msgstr "Junioren"
 
 #: ../../sources/contest.cpp:72
 msgid "U18"
-msgstr "Junior"
+msgstr "Aktive"
 
 #: ../../sources/contest.cpp:73
 msgid "Senior"
-msgstr "Aktive"
+msgstr "Senioren"
 
 #: ../../sources/contest.cpp:74
 msgid "Veteran"
-msgstr "Senior"
+msgstr "Senioren Sonderklasse"
 
 #: ../../sources/contest.cpp:574
 msgid "Competition properties"
@@ -148,11 +147,11 @@ msgstr "Datum des Turniers"
 #: ../../sources/contest.cpp:851
 #: ../../sources/contest.cpp:965
 msgid "Choose a file..."
-msgstr "Wählen Sie eine Speicherndatei ..."
+msgstr "Wählen Sie einen Speicherort..."
 
 #: ../../sources/contest.cpp:1192
 msgid "Choose a backup file..."
-msgstr "Wählen Sie eine Schutzdatei ..."
+msgstr "Wählen Sie eine Backup-Datei..."
 
 #: ../../sources/contest.cpp:1249
 #, id-format
@@ -169,7 +168,7 @@ msgstr "Das Turnier schließen?"
 
 #: ../../sources/contest.cpp:1255
 msgid "Unsaved data will be lost."
-msgstr "Die nicht gespeicherte Daten werden verloren sein."
+msgstr "Nicht gespeicherte Änderungen werden verworfen."
 
 #: ../../sources/filter.cpp:184
 msgid "Filter"
@@ -182,7 +181,7 @@ msgstr "Ergebnisliste"
 
 #: ../../sources/general_classification.cpp:174
 msgid "Choose a target file..."
-msgstr "Wählen Sie eine Bestimmungsdatei"
+msgstr "Wählen Sie die Zieldatei..."
 
 #: ../../sources/main.cpp:169
 msgid "ref"
@@ -219,7 +218,7 @@ msgstr "LV"
 
 #: ../../sources/main.cpp:195
 msgid "club"
-msgstr "Klub"
+msgstr "Verein"
 
 #: ../../sources/main.cpp:199
 msgid "licence"
@@ -239,7 +238,7 @@ msgstr "exportiert"
 
 #: ../../sources/main.cpp:211
 msgid "Vict./Bouts (‰)"
-msgstr "Siege/Gefechte (%)"
+msgstr "Siege/Wettkampf (‰)"
 
 #: ../../sources/main.cpp:215
 msgid "index"
@@ -306,11 +305,11 @@ msgstr "<b><big>Drucken ...</big></b>"
 
 #: ../../sources/pool_supervisor.cpp:97
 msgid "Pool sheets printing"
-msgstr "Druck der Rundenzettels"
+msgstr "Drucken der Rundenzettel"
 
 #: ../../sources/pool_supervisor.cpp:445
 msgid "Pool round classification"
-msgstr "Rangfolge nach dem Vorrunde"
+msgstr "Rangfolge nach der Vorrunde"
 
 #: ../../sources/schedule.cpp:921
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
@@ -319,11 +318,11 @@ msgstr ""
 
 #: ../../sources/schedule.cpp:924
 msgid "Go back to the previous round?"
-msgstr "Zur vorhergehenden Phase zurückkommen ?"
+msgstr "Zur vorrangegangener Runde zurückkehren?"
 
 #: ../../sources/schedule.cpp:927
 msgid "All the inputs of this round will be cancelled."
-msgstr "Alle Erfassungen dieser Phase werden annulliert sein."
+msgstr "Alle Eingaben dieser Runde werden verworfen."
 
 #: ../../sources/splitting.cpp:30
 msgid "Split"
@@ -365,7 +364,7 @@ msgstr "Halbfinale"
 #: ../../sources/table.cpp:1700
 #, id-format
 msgid "Table of %d"
-msgstr "letzte %d"
+msgstr "Letzte %d"
 
 #: ../../sources/table.cpp:1895
 #, id-format
@@ -374,7 +373,7 @@ msgstr "Gefecht %s"
 
 #: ../../sources/table.cpp:2118
 msgid "Table round classification"
-msgstr "Rangfolge der Tabelle"
+msgstr "Rangliste der Runde"
 
 #: ../../sources/table.cpp:2138
 #: ../../sources/table.cpp:2166
@@ -389,15 +388,15 @@ msgstr "%s : Druck der Gefechte"
 
 #: ../../sources/tournament.cpp:184
 msgid "Choose a competion file to open... "
-msgstr "Wählen Sie eine Turnierdatei zu öffnen ... "
+msgstr "Wählen Sie die zu öffnende Datei... "
 
 #: ../../sources/tournament.cpp:197
 msgid "BellePoule files (.cotcot)"
-msgstr "Die BellePoule-Dateien (.cocot)"
+msgstr "BellePoule-Dateien (.cotcot)"
 
 #: ../../sources/tournament.cpp:317
 msgid "Recently opened files"
-msgstr "Kürzlich offene Dateien"
+msgstr "Zuletzt geöffnete Dateien"
 
 #: ../../sources/tournament.cpp:329
 msgid "BellePoule files"
@@ -405,15 +404,15 @@ msgstr "Bellepoule-Dateien"
 
 #: ../../sources/tournament.cpp:420
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>Wollen Sie wirklich BellePoule schliessen?</big></b>"
+msgstr "<b><big>Wollen Sie wirklich BellePoule schließen?</big></b>"
 
 #: ../../sources/tournament.cpp:423
 msgid "Quit BellePoule?"
-msgstr "Bellepoule schliessen ?"
+msgstr "BellePoule schließen?"
 
 #: ../../sources/tournament.cpp:426
 msgid "All the unsaved competions will be lost."
-msgstr "Alle nicht gespeicherte Turniere werden verloren sein."
+msgstr "Alle nicht gespeicherten Änderungen werden verworfen."
 
 #: ../../resources/glade/checkin.glade:26
 msgid "Presents"
@@ -464,19 +463,17 @@ msgstr "Alle Abwesende"
 
 #: ../../resources/glade/contest.glade:19
 msgid "Save the current state of the competition."
-msgstr "Speichert der laufende Stand des Turniers."
+msgstr "Speichert den aktuellen Stand des Wettkampfs."
 
 #: ../../resources/glade/contest.glade:31
 msgid "To specify the features of the competition."
-msgstr "Erlaubt, die Eigenschaften des Turniers zu informieren."
+msgstr "Eigenschaften des Turniers festlegen."
 
 #: ../../resources/glade/contest.glade:51
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
-msgstr ""
-"Erlaubt, die Formel darzustellen, indem man die Verkettung der Runden, "
-"Tabellen und anderer Phasen definiert."
+msgstr "Festlegen des Modus nach Tabellen, Runden und Spaltung."
 
 #: ../../resources/glade/contest.glade:52
 msgid "Formula"
@@ -488,7 +485,7 @@ msgstr "Herren"
 
 #: ../../resources/glade/contest.glade:184
 msgid "Features of the competition"
-msgstr "Eigenschaften der Turnier"
+msgstr "Eigenschaften des Turniers"
 
 #: ../../resources/glade/contest.glade:221
 msgid "Weapon"
@@ -554,9 +551,7 @@ msgstr "31/03/2009"
 msgid ""
 "Date and time are used to raise alarms to notify the organizer when events "
 "occur."
-msgstr ""
-"Die Informationen von Datum und Stunden werden genutzt, um die Organisatoren "
-"vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu warnen."
+msgstr "Die Organisatoren werden bei Zeitüberschreitung gewarnt."
 
 #: ../../resources/glade/contest.glade:509
 #: ../../resources/glade/contest.glade:564
@@ -575,8 +570,8 @@ msgid ""
 "stuffing"
 msgstr ""
 "Automatisches\n"
-"Füllen\n"
-"der Punktstände"
+"Ausfüllen\n"
+"der Tabelle"
 
 #: ../../resources/glade/contest.glade:696
 msgid "Allow"
@@ -587,8 +582,8 @@ msgid ""
 "Make the automatic score stuffing button available. I can save the user "
 "boring data captures during training sessions."
 msgstr ""
-"Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann lange "
-"und mühselige Erfassungen während den Testen von BellePoule vermeiden."
+"Aktiviert den Knopf \"automatisches Ausfüllen der Tabelle\". Dies erspart "
+"lange und mühselige Eingaben während des Testens von BellePoule."
 
 #: ../../resources/glade/contest.glade:712
 msgid "Forbid"
@@ -596,19 +591,18 @@ msgstr "Verbieten"
 
 #: ../../resources/glade/contest.glade:716
 msgid "Inhibit the automatic score stuffing button."
-msgstr "Unaktiviert des Knopf \"automatisches Füllen der Punktstände\"."
+msgstr "Deaktiviert den Knopf \"automatisches Ausfüllen der Tabelle\"."
 
 #: ../../resources/glade/contest.glade:737
 msgid "<b>Scores</b>"
-msgstr "<b>Punktestande</b>"
+msgstr "Punktestand"
 
 #: ../../resources/glade/general_classification.glade:39
 msgid ""
 "Export the general classification to a \".csv\" file that a spreadsheet like "
 "Excel or OpenOffice can open."
 msgstr ""
-"Exportiert die Rangfolge in eine \".csv\" Datei-Format für Excel oder "
-"OpenOffice-Typ"
+"Exportiert die Rangfolge in eine \".csv\" Datei für Excel oder OpenOffice."
 
 #: ../../resources/glade/general_classification.glade:40
 msgid "Export"
@@ -616,9 +610,7 @@ msgstr "Exportieren"
 
 #: ../../resources/glade/pool_allocator.glade:17
 msgid "Mask or unmask some data type as well as define their display order."
-msgstr ""
-"Erlaubt, bestimmte Angaben anzuschlagen und zu maskieren sowie ihren "
-"Anschlagordnung zu definieren."
+msgstr "Auswahl der angezeigten Personendaten."
 
 #: ../../resources/glade/pool_allocator.glade:30
 #: ../../resources/glade/schedule.glade:137
@@ -640,7 +632,7 @@ msgstr "Verschiebung"
 #: ../../resources/glade/pool_supervisor.glade:78
 #: ../../resources/glade/table.glade:89
 msgid "Classification"
-msgstr "Rangfolge"
+msgstr "Rangliste"
 
 #: ../../resources/glade/pool_supervisor.glade:100
 msgid ""
@@ -648,34 +640,32 @@ msgid ""
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
 "Füllt alle Gefecht aller Runden durch Zufallsstände.\n"
-"Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
-"Turniers."
+"Diese Funktion in den Eigenschaften des Turniers aktivieren/deaktivieren."
 
 #: ../../resources/glade/pool_supervisor.glade:102
 #: ../../resources/glade/table.glade:126
 msgid "Automatic stuffing"
-msgstr "automatisches Füllen"
+msgstr "automatisches Ausfüllen"
 
 #: ../../resources/glade/pool_supervisor.glade:149
 msgid "Combined classification"
-msgstr "Kombiniert Platzierung"
+msgstr "Platzierung insgesamt"
 
 #: ../../resources/glade/pool_supervisor.glade:153
 msgid ""
 "The classification cumulating  the current score and the scores of the "
 "previous pool rounds."
-msgstr "Platzierung nach aller Vorrunden."
+msgstr "Platzierung unter Berücksichtigung aller Runden."
 
 #: ../../resources/glade/pool_supervisor.glade:166
 msgid "Single classification"
-msgstr "Platzierung nach der Runde"
+msgstr "Platzierung Runde"
 
 #: ../../resources/glade/pool_supervisor.glade:170
 msgid ""
 "The classification of the current round that doesn't take into account the "
 "scores of the previous rounds. "
-msgstr ""
-"Platzierung nach der Runde (ohne die vorhergehende Runden zu betrachten) "
+msgstr "Platzierung in der aktuellen Runde (ohne vorhergehende Ergebnisse) "
 
 #: ../../resources/glade/pool_supervisor.glade:230
 #: ../../resources/glade/splitting.glade:81
@@ -694,11 +684,11 @@ msgstr "Anzahl von eliminiert (%)"
 
 #: ../../resources/glade/pool_supervisor.glade:283
 msgid "The rate of eliminated at the end of this round."
-msgstr "Der Prozentsatz von eliminiert am Ende dieser Phase."
+msgstr "Prozentsatz der gewünschten Ausscheider am Ende dieser Phase."
 
 #: ../../resources/glade/pool_supervisor.glade:332
 msgid "All the pools"
-msgstr "Alle Runde"
+msgstr "Alle Runden"
 
 #: ../../resources/glade/pool_supervisor.glade:346
 msgid "Only the selected pool"
@@ -710,15 +700,15 @@ msgstr "<b>Was ?</b>"
 
 #: ../../resources/glade/pool_supervisor.glade:391
 msgid "For arbitration"
-msgstr "Fûr Schiedsgerichtsbarkeit"
+msgstr "Für die Kampfrichter"
 
 #: ../../resources/glade/pool_supervisor.glade:395
 msgid "Content designed for the referees."
-msgstr "Enthalten besonders geplant für die Schiedsrichter."
+msgstr "Rundenzettel für die Kampfrichter"
 
 #: ../../resources/glade/pool_supervisor.glade:406
 msgid "For the bulletin board"
-msgstr "zu anschlagen"
+msgstr "Aushang zur Teilnehmerinformation"
 
 #: ../../resources/glade/pool_supervisor.glade:424
 msgid "<b>For what?</b>"
@@ -726,11 +716,11 @@ msgstr "<b>Wofür ?</b>"
 
 #: ../../resources/glade/schedule.glade:15
 msgid "Previous round"
-msgstr "vorhergehende Etappe"
+msgstr "Letzte Runde"
 
 #: ../../resources/glade/schedule.glade:44
 msgid "Next round"
-msgstr "folgende Etappe."
+msgstr "Nächste Runde"
 
 #: ../../resources/glade/schedule.glade:111
 msgid "Add"
@@ -738,13 +728,12 @@ msgstr "Hinzufügen"
 
 #: ../../resources/glade/schedule.glade:124
 msgid "Remove"
-msgstr "entfernen"
+msgstr "Entfernen"
 
 #: ../../resources/glade/splitting.glade:120
 msgid "Select the fencers to move to a new competition."
 msgstr ""
-"Wählen Sie die Fechter vor, sich auf ein neues Turnier zu bewegen.\n"
-"          Noch nicht implementiert:-("
+"Wählen Sie die Fechter, die Sie in ein neues Turnier verschieben wollen."
 
 #: ../../resources/glade/table.glade:23
 msgid "From"
@@ -759,9 +748,8 @@ msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
-"Füllt alle Gefecht der Tabelle durch Zufallsstände.\n"
-"Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
-"Turniers."
+"Ausfüllen der Tabelle durch Zufallsergebnisse.\n"
+"Aktivieren/Deaktivieren der Funktion in den Turniereigenschaften."
 
 #: ../../resources/glade/table.glade:190
 msgid "<b>Match</b>"
@@ -785,7 +773,7 @@ msgstr "Die Tabelle"
 
 #: ../../resources/glade/table.glade:437
 msgid "Score sheets"
-msgstr "Die Scorezettels"
+msgstr "Gefechtstableau"
 
 #: ../../resources/glade/table.glade:459
 msgid "All"
@@ -793,19 +781,19 @@ msgstr "Alle"
 
 #: ../../resources/glade/table.glade:472
 msgid "Pending"
-msgstr "In der Warteschleife"
+msgstr "Offene"
 
 #: ../../resources/glade/table.glade:545
 msgid "The pending score sheets"
-msgstr "die Scorezerrels in der Warteschleife"
+msgstr "Offene Gefechtstableaus"
 
 #: ../../resources/glade/table.glade:558
 msgid "All the score sheets"
-msgstr "Alle Scorezettels"
+msgstr "Alle Gefechtstableaus"
 
 #: ../../resources/glade/tournament.glade:6
 msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - Fechtenturnier"
+msgstr "BellePoule - Fechtturnier"
 
 #: ../../resources/glade/tournament.glade:21
 msgid "File"
@@ -813,7 +801,7 @@ msgstr "Datei"
 
 #: ../../resources/glade/tournament.glade:48
 msgid "Recently opened"
-msgstr "kürzlich eröffnete"
+msgstr "Zuletzt verwendete"
 
 #: ../../resources/glade/tournament.glade:78
 msgid "Help"
@@ -821,7 +809,7 @@ msgstr "Hilfe"
 
 #: ../../resources/glade/tournament.glade:85
 msgid "Open an example..."
-msgstr "Ein Beispiel zu eröffnen"
+msgstr "Beispiel öffnen"
 
 #: ../../resources/glade/tournament.glade:158
 msgid ""
@@ -829,7 +817,7 @@ msgid ""
 "\n"
 "\n"
 msgstr ""
-"Fechtturnier Verwaltung Software.\n"
+"Fechtturnier Verwaltungs-Software.\n"
 "\n"
 "\n"
 
