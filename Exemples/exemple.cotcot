@@ -1,39 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CompetitionIndividuelle>
 <!--
-           By BellePoule (V0.13/10)
-             BETTON - since 2010
+           By BellePoule (V0.29/10)
 
    http://betton.escrime.free.fr/index.php/bellepoule
 -->
-<!DOCTYPE CompetitionIndividuelle>
 <CompetitionIndividuelle Annee="2010" Arme="S" Sexe="M" Organisateur="CS Betton" Categorie="O" Date="03.10.2010" Appel="12:00" Scratch="12:00" Début="12:00" TitreLong="Challenge de france" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="1">
  <Tireurs>
-  <Tireur ID="1401" Nom="LE BASTARD" Prenom="Emma" DateNaissance="20/03/1988" Sexe="F" Nation="FRA" Club="GUINGAMP ARM" Licence="003015623022" Points="1012" Presence="0" Exporte="0"/>
-  <Tireur ID="1405" Nom="CONTAMINE" Prenom="Alice" DateNaissance="03/02/1988" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011165723035" Points="1045" Presence="0" Exporte="0"/>
-  <Tireur ID="1403" Nom="BOURHIS" Prenom="Annouck" DateNaissance="21/03/1987" Sexe="F" Nation="FRA" Club="H-FINISTERE" Licence="006046423029" Points="1074" Presence="0" Exporte="0"/>
-  <Tireur ID="1399" Nom="MOY" Prenom="Anna" DateNaissance="09/11/1987" Sexe="F" Nation="FRA" Club="LANNION PTT" Licence="002057323022" Points="1074" Presence="0" Exporte="0"/>
-  <Tireur ID="1419" Nom="LE GOURRIEREC" Prenom="Laureline" DateNaissance="09/12/1988" Sexe="F" Nation="FRA" Club="VANNES CE" Licence="022122223056" Points="1117" Presence="0" Exporte="0"/>
+  <Tireur ID="1401" Nom="LE BASTARD" Prenom="Emma" DateNaissance="20/03/1988" Sexe="F" Nation="FRA" Club="GUINGAMP ARM" Licence="003015623022" Points="1012" Presence="1" Exporte="0"/>
+  <Tireur ID="1405" Nom="CONTAMINE" Prenom="Alice" DateNaissance="03/02/1988" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011165723035" Points="1045" Presence="1" Exporte="0"/>
+  <Tireur ID="1399" Nom="MOY" Prenom="Anna" DateNaissance="09/11/1987" Sexe="F" Nation="FRA" Club="LANNION PTT" Licence="002057323022" Points="1074" Presence="1" Exporte="0"/>
+  <Tireur ID="1403" Nom="BOURHIS" Prenom="Annouck" DateNaissance="21/03/1987" Sexe="F" Nation="FRA" Club="H-FINISTERE" Licence="006046423029" Points="1074" Presence="1" Exporte="0"/>
+  <Tireur ID="1419" Nom="LE GOURRIEREC" Prenom="Laureline" DateNaissance="09/12/1988" Sexe="F" Nation="FRA" Club="VANNES CE" Licence="022122223056" Points="1117" Presence="1" Exporte="0"/>
   <Tireur ID="1410" Nom="KALONJI" Prenom="Marie" DateNaissance="08/12/1989" Sexe="F" Nation="FRA" Club="RENNES CSG" Licence="013236023035" Points="1130" Presence="0" Exporte="0"/>
-  <Tireur ID="1412" Nom="SAILLARD" Prenom="Chloe" DateNaissance="06/12/1987" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015128223035" Points="1151" Presence="0" Exporte="0"/>
+  <Tireur ID="1412" Nom="SAILLARD" Prenom="Chloe" DateNaissance="06/12/1987" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015128223035" Points="1151" Presence="0" Exporte="0"/>
   <Tireur ID="1414" Nom="DANIEL" Prenom="Margo" DateNaissance="22/09/1987" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020098523056" Points="1168" Presence="0" Exporte="0"/>
   <Tireur ID="1420" Nom="GUEHO" Prenom="Flavie" DateNaissance="03/01/1988" Sexe="F" Nation="FRA" Club="AURAY ESCRIM" Licence="030040223056" Points="1185" Presence="0" Exporte="0"/>
   <Tireur ID="1416" Nom="MORVAN" Prenom="Emilie" DateNaissance="29/10/1987" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020105723056" Points="1202" Presence="0" Exporte="0"/>
   <Tireur ID="1408" Nom="MACHARD" Prenom="Manon" DateNaissance="06/09/1988" Sexe="F" Nation="FRA" Club="RENNES CSG" Licence="013219423035" Points="1222" Presence="0" Exporte="0"/>
-  <Tireur ID="1413" Nom="HERY" Prenom="Meline" DateNaissance="29/10/1987" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015137023035" Points="1240" Presence="0" Exporte="0"/>
-  <Tireur ID="1400" Nom="LE TRAON" Prenom="Coralie" DateNaissance="03/04/1988" Sexe="F" Nation="FRA" Club="LANNION PTT" Licence="002062423022" Points="1258" Presence="0" Exporte="0"/>
+  <Tireur ID="1413" Nom="HERY" Prenom="Meline" DateNaissance="29/10/1987" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015137023035" Points="1240" Presence="0" Exporte="0"/>
+  <Tireur ID="1400" Nom="LE TRAON" Prenom="Coralie" DateNaissance="03/04/1988" Sexe="F" Nation="FRA" Club="LANNION PTT" Licence="002062423022" Points="1258" Presence="0" Exporte="0"/>
   <Tireur ID="1406" Nom="HUBERT" Prenom="Aurore" DateNaissance="20/02/1989" Sexe="F" Nation="FRA" Club="ST MEEN LG" Licence="012014123035" Points="1274" Presence="0" Exporte="0"/>
   <Tireur ID="1409" Nom="ETIENNE" Prenom="Adelaide" DateNaissance="04/02/1989" Sexe="F" Nation="FRA" Club="RENNES CSG" Licence="013225923035" Points="1294" Presence="0" Exporte="0"/>
   <Tireur ID="1417" Nom="LELARGE" Prenom="Enora" DateNaissance="18/12/1989" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020107323056" Points="1312" Presence="0" Exporte="0"/>
-  <Tireur ID="1411" Nom="SOULABAILLE" Prenom="Anastasia" DateNaissance="11/08/1989" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015127223035" Points="1329" Presence="0" Exporte="0"/>
+  <Tireur ID="1411" Nom="SOULABAILLE" Prenom="Anastasia" DateNaissance="11/08/1989" Sexe="F" Nation="FRA" Club="ST MALO" Licence="015127223035" Points="1329" Presence="0" Exporte="0"/>
   <Tireur ID="1418" Nom="GAUDIN" Prenom="Edith" DateNaissance="06/12/1987" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020112023056" Points="1349" Presence="0" Exporte="0"/>
   <Tireur ID="1415" Nom="JULLIEN" Prenom="Lea" DateNaissance="21/12/1987" Sexe="F" Nation="FRA" Club="LORIENT SE" Licence="020098623056" Points="1365" Presence="0" Exporte="0"/>
   <Tireur ID="1407" Nom="LAURENS" Prenom="Maelle" DateNaissance="24/12/1988" Sexe="F" Nation="FRA" Club="ST MEEN LG" Licence="012017423035" Points="1380" Presence="0" Exporte="0"/>
   <Tireur ID="1402" Nom="CHEVALLIER" Prenom="Leonie" DateNaissance="28/10/1988" Sexe="F" Nation="FRA" Club="DINAN EA" Licence="007022323022" Points="1410" Presence="0" Exporte="0"/>
-  <Tireur ID="1404" Nom="LAQUAINE DEPIROU" Prenom="Clara" DateNaissance="04/09/1987" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011160023035" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="1404" Nom="LAQUAINE DEPIROU" Prenom="Clara" DateNaissance="04/09/1987" Sexe="F" Nation="FRA" Club="RENNES MCB" Licence="011160023035" Points="0" Presence="0" Exporte="0"/>
  </Tireurs>
  <Arbitres/>
- <Phases PhaseEnCours="0">
-  <TourDePoules PhaseID="" ID="1" ScoreMax="5" NbElimines="0" Decalage="Aucun" PhaseSuivanteDesQualifies="3"/>
+ <Phases PhaseEnCours="2">
+  <TourDePoules PhaseID="" ID="1" ScoreMax="5" NbElimines="0" Decalage="Aucun" NbDePoules="1" PhaseSuivanteDesQualifies="3" NbQualifiesParIndice="5">
+   <Tireur REF="1401" RangInitial="1" Statut="Q"/>
+   <Tireur REF="1405" RangInitial="2" Statut="Q"/>
+   <Tireur REF="1399" RangInitial="3" Statut="Q"/>
+   <Tireur REF="1403" RangInitial="4" Statut="Q"/>
+   <Tireur REF="1419" RangInitial="5" Statut="Q"/>
+   <Poule ID="1">
+    <Tireur REF="1399" NoDansLaPoule="1" NbVictoires="0" NbMatches="4" TD="0" TR="0" RangPoule="1"/>
+    <Tireur REF="1405" NoDansLaPoule="2" NbVictoires="0" NbMatches="4" TD="0" TR="0" RangPoule="1"/>
+    <Tireur REF="1403" NoDansLaPoule="3" NbVictoires="0" NbMatches="4" TD="0" TR="0" RangPoule="1"/>
+    <Tireur REF="1401" NoDansLaPoule="4" NbVictoires="0" NbMatches="4" TD="0" TR="0" RangPoule="1"/>
+    <Tireur REF="1419" NoDansLaPoule="5" NbVictoires="0" NbMatches="4" TD="0" TR="0" RangPoule="1"/>
+    <Arbitre/>
+    <Match ID="10">
+     <Tireur REF="1405"/>
+     <Tireur REF="1401"/>
+    </Match>
+    <Match ID="8">
+     <Tireur REF="1399"/>
+     <Tireur REF="1401"/>
+    </Match>
+    <Match ID="1">
+     <Tireur REF="1399"/>
+     <Tireur REF="1405"/>
+    </Match>
+    <Match ID="2">
+     <Tireur REF="1403"/>
+     <Tireur REF="1401"/>
+    </Match>
+    <Match ID="4">
+     <Tireur REF="1403"/>
+     <Tireur REF="1405"/>
+    </Match>
+    <Match ID="6">
+     <Tireur REF="1403"/>
+     <Tireur REF="1399"/>
+    </Match>
+    <Match ID="5">
+     <Tireur REF="1419"/>
+     <Tireur REF="1401"/>
+    </Match>
+    <Match ID="7">
+     <Tireur REF="1419"/>
+     <Tireur REF="1405"/>
+    </Match>
+    <Match ID="3">
+     <Tireur REF="1419"/>
+     <Tireur REF="1399"/>
+    </Match>
+    <Match ID="9">
+     <Tireur REF="1419"/>
+     <Tireur REF="1403"/>
+    </Match>
+   </Poule>
+  </TourDePoules>
   <PhaseDeTableaux PhaseID="" ID="3" ScoreMax="10">
    <SuiteDeTableaux ID="A" Titre=""/>
   </PhaseDeTableaux>

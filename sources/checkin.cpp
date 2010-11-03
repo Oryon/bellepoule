@@ -574,6 +574,7 @@ void Checkin::Import ()
                                  filter);
   }
 
+#if 0
   {
     GtkFileFilter *filter = gtk_file_filter_new ();
 
@@ -584,6 +585,7 @@ void Checkin::Import ()
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                  filter);
   }
+#endif
 
   {
     GtkFileFilter *filter = gtk_file_filter_new ();
@@ -679,6 +681,7 @@ void Checkin::Import ()
         }
       }
 
+#if 0
       if (strstr (filename, ".FFF"))
       {
         ImportFFF (file);
@@ -687,6 +690,9 @@ void Checkin::Import ()
       {
         ImportCSV (file);
       }
+#else
+      ImportFFF (file);
+#endif
 
       g_free (file);
     }
@@ -698,101 +704,162 @@ void Checkin::Import ()
 }
 
 // --------------------------------------------------------------------------------
+gchar *Checkin::ConvertToUtf8 (gchar *what)
+{
+  gsize   bytes_written;
+  GError *error = NULL;
+  gchar  *result;
+
+  result = g_convert (what,
+                      -1,
+                      "UTF-8",
+                      "ISO-8859-1",
+                      NULL,
+                      &bytes_written,
+                      &error);
+
+  if (error)
+  {
+    g_print ("<<ConvertToUtf8>> %s\n", error->message);
+    g_clear_error (&error);
+  }
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
 void Checkin::ImportFFF (gchar *file)
 {
-  gchar **lines = g_strsplit_set (file,
-                                  "\n",
-                                  0);
+  gchar *iso_8859_file = ConvertToUtf8 (file);
 
-  if (lines == NULL)
+  if (iso_8859_file)
   {
-    return;
-  }
-  else
-  {
-    // Header
-    // FFF;WIN;CLASSEMENT;FFE
-    // 08/11/2009;;;;
+    gchar **lines = g_strsplit_set (iso_8859_file,
+                                    "\n",
+                                    0);
 
-    // Fencers
-    for (guint l = 2; lines[l] != NULL; l++)
+    if (lines && lines[0] && lines[1])
     {
-      gchar **tokens = g_strsplit_set (lines[l],
-                                       ",;",
-                                       0);
+      // Header
+      // FFF;WIN;CLASSEMENT;FFE
+      // 08/11/2009;;;;
 
-      if (tokens && tokens[0])
+      // Fencers
+      for (guint l = 2; lines[l] != NULL; l++)
       {
-        Player              *player = new Player;
-        Player::AttributeId  attr_id ("");
+        gchar               **line;
+        Player               *player;
+        Player::AttributeId   attr_id ("");
 
-        attr_id._name = "attending";
-        player->SetAttributeValue (&attr_id, (guint) FALSE);
+        player = NULL;
+        line = g_strsplit_set (lines[l],
+                               ";",
+                               0);
 
-        attr_id._name = "name";
-        player->SetAttributeValue (&attr_id, tokens[0]);
-
-        attr_id._name = "first_name";
-        player->SetAttributeValue (&attr_id, tokens[1]);
-
-        attr_id._name = "birth_date";
-        player->SetAttributeValue (&attr_id, tokens[2]);
-
-        attr_id._name = "gender";
-        player->SetAttributeValue (&attr_id, tokens[3]);
-
-        attr_id._name = "country";
-        player->SetAttributeValue (&attr_id, tokens[4]);
-
-        attr_id._name = "licence";
-        player->SetAttributeValue (&attr_id, tokens[8]);
-
-        if (tokens[8] && strlen (tokens[8]) > 2)
+        // General
+        if (line && line[0])
         {
-          AttributeDesc *league_desc = AttributeDesc::GetDesc ("league");
+          gchar **tokens = g_strsplit_set (line[0],
+                                           ",",
+                                           0);
 
-          tokens[8][2] = 0;
+          player = new Player;
 
-          if (league_desc)
+          attr_id._name = "attending";
+          player->SetAttributeValue (&attr_id, (guint) FALSE);
+
+          if (tokens)
           {
-            gchar *league = (gchar *) league_desc->GetDiscreteValue (atoi (tokens[8]));
+            attr_id._name = "name";
+            player->SetAttributeValue (&attr_id, tokens[0]);
 
-            if (league)
-            {
-              attr_id._name = "league";
-              player->SetAttributeValue (&attr_id, league);
-              g_free (league);
-            }
+            attr_id._name = "first_name";
+            player->SetAttributeValue (&attr_id, tokens[1]);
+
+            attr_id._name = "birth_date";
+            player->SetAttributeValue (&attr_id, tokens[2]);
+
+            attr_id._name = "gender";
+            player->SetAttributeValue (&attr_id, tokens[3]);
+
+            attr_id._name = "country";
+            player->SetAttributeValue (&attr_id, tokens[4]);
+
+            g_strfreev (tokens);
           }
         }
 
-        attr_id._name = "club";
-        player->SetAttributeValue (&attr_id, tokens[10]);
-
-        attr_id._name = "exported";
-        player->SetAttributeValue (&attr_id, (guint) FALSE);
-
-        if (*tokens[11])
+        // FIE
+        if (player && line[1])
         {
-          attr_id._name = "rating";
-          player->SetAttributeValue (&attr_id, tokens[11]);
-
-        }
-        else
-        {
-          attr_id._name = "rating";
-          player->SetAttributeValue (&attr_id, (guint) 0);
-
         }
 
-        Add (player);
-        player->Release ();
+        // National federation
+        if (player && line[2])
+        {
+          gchar **tokens = g_strsplit_set (line[2],
+                                           ",",
+                                           0);
+          if (tokens)
+          {
+            attr_id._name = "licence";
+            player->SetAttributeValue (&attr_id, tokens[0]);
 
-        g_strfreev (tokens);
+            if (strlen (tokens[0]) > 2)
+            {
+              AttributeDesc *league_desc = AttributeDesc::GetDesc ("league");
+
+              tokens[0][2] = 0;
+
+              if (league_desc)
+              {
+                gchar *league = (gchar *) league_desc->GetDiscreteValue (atoi (tokens[0]));
+
+                if (league)
+                {
+                  attr_id._name = "league";
+                  player->SetAttributeValue (&attr_id, league);
+                  g_free (league);
+                }
+              }
+            }
+
+            attr_id._name = "club";
+            player->SetAttributeValue (&attr_id, tokens[2]);
+
+            attr_id._name = "exported";
+            player->SetAttributeValue (&attr_id, (guint) FALSE);
+
+            if (tokens[3] == NULL)
+            {
+              attr_id._name = "rating";
+              player->SetAttributeValue (&attr_id, (guint) 0);
+            }
+            else
+            {
+              attr_id._name = "rating";
+              player->SetAttributeValue (&attr_id, tokens[3]);
+            }
+
+            g_strfreev (tokens);
+          }
+        }
+
+        if (line)
+        {
+          if (player)
+          {
+            Add (player);
+            player->Release ();
+          }
+
+          g_strfreev (line);
+        }
       }
-    }
 
-    g_strfreev (lines);
+      g_strfreev (lines);
+    }
+    g_free (iso_8859_file);
   }
 }
 

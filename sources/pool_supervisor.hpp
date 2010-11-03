@@ -99,6 +99,9 @@ class PoolSupervisor : public virtual Stage, public Module
                      GtkPrintContext   *context,
                      gint               page_nr);
 
+    void OnEndPrint (GtkPrintOperation *operation,
+                     GtkPrintContext   *context);
+
     static void OnPoolStatusUpdated (Pool           *pool,
                                      PoolSupervisor *ps);
 
