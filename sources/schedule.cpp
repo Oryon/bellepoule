@@ -105,8 +105,17 @@ Schedule::~Schedule ()
     stage = ((Stage *) g_list_nth_data (_stage_list,
                                         nb_stages - i-1));
     stage->Wipe ();
+  }
+
+  for (guint i = 0; i < nb_stages; i++)
+  {
+    Stage *stage;
+
+    stage = ((Stage *) g_list_nth_data (_stage_list,
+                                        nb_stages - i-1));
     Object::TryToRelease (stage);
   }
+
   g_list_free (_stage_list);
 
   gtk_widget_destroy (_formula_dlg);
