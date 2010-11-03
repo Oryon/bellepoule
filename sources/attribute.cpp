@@ -295,13 +295,16 @@ void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
     va_start (ap, first_user_image);
     while (xml_image)
     {
-      GtkTreeIter iter;
+      GtkTreeIter  iter;
+      gchar       *undivadable_image;
 
       gtk_tree_store_append (_discrete_store, &iter, NULL);
 
+      undivadable_image = GetUndivadableText (user_image);
       gtk_tree_store_set (_discrete_store, &iter,
                           DISCRETE_XML_IMAGE, xml_image,
-                          DISCRETE_USER_IMAGE, GetUndivadableText (user_image), -1);
+                          DISCRETE_USER_IMAGE, undivadable_image, -1);
+      g_free (undivadable_image);
 
       xml_image  = va_arg (ap, char *);
       if (xml_image)
@@ -361,16 +364,22 @@ void AttributeDesc::AddDiscreteValues (gchar *file)
 
           if (nb_tokens == 2)
           {
+            gchar *undivadable_image = GetUndivadableText (tokens[i+1]);
+
             gtk_tree_store_set (_discrete_store, &iter,
                                 DISCRETE_XML_IMAGE, tokens[i],
-                                DISCRETE_USER_IMAGE, GetUndivadableText (tokens[i+1]), -1);
+                                DISCRETE_USER_IMAGE, undivadable_image, -1);
+            g_free (undivadable_image);
           }
           else if (nb_tokens == 3)
           {
+            gchar *undivadable_image = GetUndivadableText (tokens[i+2]);
+
             gtk_tree_store_set (_discrete_store, &iter,
                                 DISCRETE_CODE, atoi (tokens[i]),
                                 DISCRETE_XML_IMAGE, tokens[i+1],
-                                DISCRETE_USER_IMAGE, GetUndivadableText (tokens[i+2]), -1);
+                                DISCRETE_USER_IMAGE, undivadable_image, -1);
+            g_free (undivadable_image);
           }
         }
         g_strfreev (tokens);

@@ -98,6 +98,8 @@ class Checkin : public virtual Stage, public PlayersList
 
     gboolean PlayerIsPrintable (Player *player);
 
+    gchar *ConvertToUtf8 (gchar *what);
+
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Checkin   *checkin);

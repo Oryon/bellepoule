@@ -523,6 +523,13 @@ void PoolSupervisor::OnDrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
+void PoolSupervisor::OnEndPrint (GtkPrintOperation *operation,
+                                 GtkPrintContext   *context)
+{
+  OnAttrListUpdated ();
+}
+
+// --------------------------------------------------------------------------------
 void PoolSupervisor::RetrievePools ()
 {
   if (_pool_allocator)
