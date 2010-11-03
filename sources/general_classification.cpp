@@ -91,7 +91,27 @@ void GeneralClassification::Display ()
 // --------------------------------------------------------------------------------
 GSList *GeneralClassification::GetCurrentClassification ()
 {
-  GSList *result = g_slist_copy (_attendees->GetGlobalList ());
+  GSList *result = NULL;
+
+  {
+    GSList              *current = _attendees->GetGlobalList ();
+    Player::AttributeId  attr_id ("exported");
+
+    while (current)
+    {
+      Player    *player;
+      Attribute *attr;
+
+      player = (Player *) current->data;
+      attr   = player->GetAttribute (&attr_id);
+      if (attr && ((gboolean) attr->GetValue () == FALSE))
+      {
+        result = g_slist_prepend (result,
+                                  player);
+      }
+      current = g_slist_next (current);
+    }
+  }
 
   if (result)
   {
