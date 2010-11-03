@@ -41,9 +41,33 @@ Tournament::Tournament (gchar *filename)
   if (filename)
   {
     Contest *contest;
+    gchar   *utf8_name;
 
-    contest = new Contest (filename);
-    Manage (contest);
+    {
+      gsize   bytes_written;
+      GError *error = NULL;
+
+      utf8_name = g_convert (filename,
+                             -1,
+                             "UTF-8",
+                             "ISO-8859-1",
+                             NULL,
+                             &bytes_written,
+                             &error);
+
+      if (error)
+      {
+        g_print ("<<ConvertToUtf8>> %s\n", error->message);
+        g_clear_error (&error);
+      }
+    }
+
+    if (utf8_name)
+    {
+      contest = new Contest (utf8_name);
+      Manage (contest);
+      g_free (utf8_name);
+    }
     g_free (filename);
   }
 
