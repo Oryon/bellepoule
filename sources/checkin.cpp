@@ -412,28 +412,26 @@ void Checkin::UpdateChecksum ()
 // --------------------------------------------------------------------------------
 void Checkin::UpdateRanking ()
 {
-  guint nb_player = g_slist_length (_player_list);
+  guint                nb_player = g_slist_length (_player_list);
+  Player::AttributeId *rank_criteria_id;
 
   UpdateChecksum ();
 
   {
-    Player::AttributeId *attr_id;
-
     if (_use_initial_rank)
     {
-      attr_id = new Player::AttributeId ("previous_stage_rank",
+      rank_criteria_id = new Player::AttributeId ("previous_stage_rank",
                                          this);
     }
     else
     {
-      attr_id = new Player::AttributeId ("rating");
+      rank_criteria_id = new Player::AttributeId ("rating");
     }
 
-    attr_id->MakeRandomReady (_rand_seed);
+    rank_criteria_id->MakeRandomReady (_rand_seed);
     _player_list = g_slist_sort_with_data (_player_list,
                                            (GCompareDataFunc) Player::Compare,
-                                           attr_id);
-    attr_id->Release ();
+                                           rank_criteria_id);
   }
 
   {
@@ -458,12 +456,11 @@ void Checkin::UpdateRanking ()
       {
         Player::AttributeId previous_rank_id ("previous_stage_rank", this);
         Player::AttributeId rank_id          ("rank", this);
-        Player::AttributeId rating_attr      ("rating");
 
         if (attending && (gboolean) attending->GetValue ())
         {
           if (   previous_player
-              && (Player::Compare (previous_player, p, &rating_attr) == 0))
+              && (Player::Compare (previous_player, p, rank_criteria_id) == 0))
           {
             p->SetAttributeValue (&previous_rank_id,
                                   previous_rank);
@@ -494,6 +491,7 @@ void Checkin::UpdateRanking ()
       current_player  = g_slist_next (current_player);
     }
   }
+  rank_criteria_id->Release ();
 }
 
 // --------------------------------------------------------------------------------
