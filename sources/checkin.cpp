@@ -360,13 +360,14 @@ void Checkin::UpdateChecksum ()
   {
     Player::AttributeId attr_id ("name");
 
+    attr_id.MakeRandomReady (1);
     _player_list = g_slist_sort_with_data (_player_list,
                                            (GCompareDataFunc) Player::Compare,
                                            &attr_id);
   }
 
   {
-    Player::AttributeId attr_id ("attending");
+    Player::AttributeId  attr_id ("attending");
     GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
     GSList              *current_player = _player_list;
 

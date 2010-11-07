@@ -1189,6 +1189,14 @@ Match *Pool::GetMatch (guint i)
 }
 
 // --------------------------------------------------------------------------------
+gint Pool::CompareMatch (Match *a,
+                         Match *b,
+                         Pool  *pool)
+{
+  return g_slist_index (pool->_player_list, a->GetPlayerA ()) - g_slist_index (pool->_player_list, b->GetPlayerA ());
+}
+
+// --------------------------------------------------------------------------------
 void Pool::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
@@ -1254,14 +1262,26 @@ void Pool::Save (xmlTextWriter *xml_writer)
     xmlTextWriterEndElement (xml_writer);
   }
 
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  // To avoid the GREG pool display issue
+  // the order of the saved matchs must be consistent
+  // with the order of the players.
+  for (guint p1 = 0; p1 < g_slist_length (_player_list); p1++)
   {
-    Match *match;
+    Player *player_1;
 
-    match = (Match *) g_slist_nth_data (_match_list, i);
-    if (match)
+    player_1 = (Player *) g_slist_nth_data (_player_list, p1);
+    for (guint p2 = p1+1; p2 < g_slist_length (_player_list); p2++)
     {
-      match->Save (xml_writer);
+      Match  *match;
+      Player *player_2;
+
+      player_2 = (Player *) g_slist_nth_data (_player_list, p2);
+      match = GetMatch (player_1, player_2);
+      if (match)
+      {
+        match->SaveInOrder (xml_writer,
+                            player_1);
+      }
     }
   }
 

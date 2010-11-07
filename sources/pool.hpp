@@ -142,6 +142,10 @@ class Pool : public CanvasModule
                            guint              value,
                            CombinedOperation  operation);
 
+    static gint CompareMatch (Match *a,
+                              Match *b,
+                              Pool  *pool);
+
     ~Pool ();
 };
 
