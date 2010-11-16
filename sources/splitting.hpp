@@ -34,8 +34,6 @@ class Splitting : public virtual Stage, public PlayersList
 
     Splitting (StageClass *stage_class);
 
-    void Save (xmlTextWriter *xml_writer);
-
   public:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
@@ -51,6 +49,10 @@ class Splitting : public virtual Stage, public PlayersList
 
     GSList *GetCurrentClassification ();
 
+    void Save (xmlTextWriter *xml_writer);
+
+    void Load (xmlNode *xml_node);
+
   private:
     static Tournament *_tournament;
 
@@ -61,6 +63,8 @@ class Splitting : public virtual Stage, public PlayersList
     ~Splitting ();
 
     void Garnish ();
+
+    GSList *GetOutputShortlist ();
 };
 
 #endif

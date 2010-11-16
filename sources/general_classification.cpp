@@ -130,24 +130,7 @@ void GeneralClassification::Load (xmlNode *xml_node)
 {
   LoadConfiguration (xml_node);
 
-  for (xmlNode *n = xml_node; n != NULL; n = n->next)
-  {
-    if (n->type == XML_ELEMENT_NODE)
-    {
-      if (strcmp ((char *) xml_node->name, _xml_class_name) == 0)
-      {
-      }
-      else if (strcmp ((char *) n->name, "Tireur") == 0)
-      {
-        LoadAttendees (n);
-      }
-      else
-      {
-        return;
-      }
-    }
-    Load (n->children);
-  }
+  RetrieveAttendees ();
 }
 
 // --------------------------------------------------------------------------------
@@ -157,7 +140,6 @@ void GeneralClassification::Save (xmlTextWriter *xml_writer)
                              BAD_CAST _xml_class_name);
 
   SaveConfiguration (xml_writer);
-  SaveAttendees (xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
 }

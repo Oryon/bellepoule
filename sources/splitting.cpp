@@ -123,6 +123,14 @@ void Splitting::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
+void Splitting::Load (xmlNode *xml_node)
+{
+  LoadConfiguration (xml_node);
+
+  RetrieveAttendees ();
+}
+
+// --------------------------------------------------------------------------------
 void Splitting::Wipe ()
 {
   PlayersList::Wipe ();
@@ -183,6 +191,12 @@ void Splitting::OnLocked (Reason reason)
 
 // --------------------------------------------------------------------------------
 GSList *Splitting::GetCurrentClassification ()
+{
+  return g_slist_copy (_player_list);
+}
+
+// --------------------------------------------------------------------------------
+GSList *Splitting::GetOutputShortlist ()
 {
   GSList *result = CreateCustomList (PresentPlayerFilter);
 

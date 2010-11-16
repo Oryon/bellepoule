@@ -358,7 +358,7 @@ void Checkin::UseInitialRank ()
 void Checkin::UpdateChecksum ()
 {
   {
-    Player::AttributeId attr_id ("name");
+    Player::AttributeId attr_id ("ref");
 
     attr_id.MakeRandomReady (1);
     _player_list = g_slist_sort_with_data (_player_list,
