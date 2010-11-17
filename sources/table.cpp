@@ -86,6 +86,7 @@ Table::Table (StageClass *stage_class)
                                "final_rank",
                                "attending",
                                "exported",
+                               "status",
                                "victories_ratio",
                                "indice",
                                "HS",

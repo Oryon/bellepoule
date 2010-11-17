@@ -130,6 +130,10 @@ class Pool : public CanvasModule
 
     Match *GetMatch (guint i);
 
+    void DropPlayer (Player *player);
+
+    void RestorePlayer (Player *player);
+
     static void OnNewScore (ScoreCollector *score_collector,
                             CanvasModule   *client,
                             Match          *match,
@@ -145,6 +149,10 @@ class Pool : public CanvasModule
     static gint CompareMatch (Match *a,
                               Match *b,
                               Pool  *pool);
+
+    static void on_withdrawal_toggled (GtkToggleButton *togglebutton,
+                                       Pool            *pool);
+
 
     ~Pool ();
 };

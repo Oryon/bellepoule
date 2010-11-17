@@ -54,6 +54,7 @@ Splitting::Splitting (StageClass *stage_class)
                                "final_rank",
                                "rank",
                                "attending",
+                               "status",
                                "victories_ratio",
                                "indice",
                                "HS",

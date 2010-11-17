@@ -472,6 +472,15 @@ void Pool::Draw (GooCanvas *on_canvas,
         y = - 10;
 
         goo_text = goo_canvas_text_new (dashboard_group,
+                                        gettext ("Withdrawal"),
+                                        0.0, y, -1,
+                                        GTK_ANCHOR_WEST,
+                                        "font", "Sans 18px",
+                                        NULL);
+        goo_canvas_item_rotate (goo_text, 315, 0.0, y);
+        x += cell_w;
+
+        goo_text = goo_canvas_text_new (dashboard_group,
                                         gettext ("Victories"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -533,65 +542,81 @@ void Pool::Draw (GooCanvas *on_canvas,
         player = GetPlayer (i);
 
         {
-          GooCanvasItem *goo_text;
+          GooCanvasItem *goo_item;
           gint           x, y;
 
           x = cell_w/2;
           y = cell_h/2 + i*cell_h;
 
           {
-            goo_text = goo_canvas_text_new (dashboard_group,
-                                            ".",
-                                            x, y, -1,
-                                            GTK_ANCHOR_CENTER,
-                                            "font", "Sans 18px",
-                                            NULL);
-            player->SetData (GetDataOwner (), "VictoriesItem",  goo_text);
+            GtkWidget *w = gtk_check_button_new ();
+
+            g_object_set_data (G_OBJECT (w), "player",  player);
+            g_signal_connect (w, "toggled",
+                              G_CALLBACK (on_withdrawal_toggled), this);
+            goo_item = goo_canvas_widget_new (dashboard_group,
+                                              w,
+                                              x-cell_w/2,
+                                              y,
+                                              cell_w,
+                                              cell_h,
+                                              "anchor", GTK_ANCHOR_CENTER,
+                                              NULL);
+            player->SetData (GetDataOwner (), "WithdrawalItem",  goo_item);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "VictoriesRatioItem",  goo_text);
+            player->SetData (GetDataOwner (), "VictoriesItem",  goo_item);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "HSItem",  goo_text);
+            player->SetData (GetDataOwner (), "VictoriesRatioItem",  goo_item);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "HRItem",  goo_text);
+            player->SetData (GetDataOwner (), "HSItem",  goo_item);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "IndiceItem",  goo_text);
+            player->SetData (GetDataOwner (), "HRItem",  goo_item);
             x += cell_w;
 
-            goo_text = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_group,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "RankItem",  goo_text);
+            player->SetData (GetDataOwner (), "IndiceItem",  goo_item);
+            x += cell_w;
+
+            goo_item = goo_canvas_text_new (dashboard_group,
+                                            ".",
+                                            x, y, -1,
+                                            GTK_ANCHOR_CENTER,
+                                            "font", "Sans 18px",
+                                            NULL);
+            player->SetData (GetDataOwner (), "RankItem",  goo_item);
             x += cell_w;
           }
         }
@@ -607,7 +632,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                     &dashboard_bounds);
 
         goo_canvas_item_translate (GOO_CANVAS_ITEM (dashboard_group),
-                                   grid_bounds.x2 - dashboard_bounds.x1 + cell_w,
+                                   grid_bounds.x2 - dashboard_bounds.x1 + cell_w/2,
                                    0);
       }
     }
@@ -1475,5 +1500,31 @@ void Pool::ResetMatches (Object *rank_owner)
 
     match = GetMatch (i);
     match->SetNumber (0);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::DropPlayer (Player *player)
+{
+}
+
+// --------------------------------------------------------------------------------
+void Pool::RestorePlayer (Player *player)
+{
+}
+
+// --------------------------------------------------------------------------------
+void Pool::on_withdrawal_toggled (GtkToggleButton *togglebutton,
+                                  Pool            *pool)
+{
+  Player *player = (Player *) g_object_get_data (G_OBJECT (togglebutton), "player");
+
+  if (gtk_toggle_button_get_active (togglebutton))
+  {
+    pool->DropPlayer (player);
+  }
+  else
+  {
+    pool->RestorePlayer (player);
   }
 }

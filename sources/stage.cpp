@@ -229,7 +229,7 @@ void Stage::RetrieveAttendees ()
                                 shortlist);
 
     {
-      Player::AttributeId  attr_id ("previous_stage_rank", this);
+      Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", this);
       GSList              *current = shortlist;
 
       for (guint i = 0; current != NULL; i++)
@@ -237,8 +237,22 @@ void Stage::RetrieveAttendees ()
         Player *player;
 
         player = (Player *) current->data;
-        player->SetAttributeValue (&attr_id,
+        player->SetAttributeValue (&previous_rank_attr_id,
                                    i+1);
+        {
+          Player::AttributeId *status_attr_id;
+
+          status_attr_id = new Player::AttributeId ("status", _previous);
+          player->SetAttributeValue (status_attr_id,
+                                     "Q");
+
+          if (_previous->_classification)
+          {
+            status_attr_id = new Player::AttributeId ("status", _previous->_classification->GetDataOwner ());
+            player->SetAttributeValue (status_attr_id,
+                                       "Q");
+          }
+        }
         current = g_slist_next (current);
       }
     }
@@ -652,6 +666,7 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       Player    *player;
       Attribute *rank;
       Attribute *previous_stage_rank;
+      Attribute *status = NULL;
 
       player = (Player *) current->data;
 
@@ -674,6 +689,19 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
         rank_attr_id->Release ();
       }
 
+      if (_classification)
+      {
+        Player::AttributeId status_attr_id ("status", _classification->GetDataOwner ());
+
+        status = player->GetAttribute (&status_attr_id);
+      }
+      else if (_next && _next->_input_provider && _next->_classification)
+      {
+        Player::AttributeId status_attr_id ("status", _next->_classification->GetDataOwner ());
+
+        status = player->GetAttribute (&status_attr_id);
+      }
+
       xmlTextWriterStartElement (xml_writer,
                                  BAD_CAST "Tireur");
       xmlTextWriterWriteFormatAttribute (xml_writer,
@@ -689,11 +717,14 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       {
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "RangFinal",
-                                           "%d",(guint)  rank->GetValue ());
+                                           "%d", (guint)  rank->GetValue ());
       }
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST "Statut",
-                                   BAD_CAST "Q");
+      if (status)
+      {
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "Statut",
+                                           "%s", (gchar *)  status->GetXmlImage ());
+      }
       xmlTextWriterEndElement (xml_writer);
 
       current = g_slist_next (current);

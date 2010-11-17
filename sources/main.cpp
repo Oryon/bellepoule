@@ -207,6 +207,14 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
 
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "status", "Statut", gettext ("status"));
+    desc->_scope = AttributeDesc::LOCAL;
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"),
+                             "N", gettext ("Not qualified"),
+                             "A", gettext ("Withdrawal"),
+                             "E", gettext ("Excluded"),
+                             "F", gettext ("Forfeit"), NULL);
+
     // Not persistent data
     {
       desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", gettext ("Vict./Bouts (‰)"));

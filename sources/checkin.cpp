@@ -55,6 +55,7 @@ Checkin::Checkin (StageClass *stage_class)
 #endif
                                "previous_stage_rank",
                                "exported",
+                               "status",
                                "final_rank",
                                "victories_ratio",
                                "indice",

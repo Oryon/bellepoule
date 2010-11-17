@@ -70,6 +70,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                "final_rank",
                                "attending",
                                "exported",
+                               "status",
                                "victories_ratio",
                                "indice",
                                "HS",
@@ -754,13 +755,29 @@ GSList *PoolSupervisor::EvaluateClassification (GSList           *list,
 // --------------------------------------------------------------------------------
 GSList *PoolSupervisor::GetOutputShortlist ()
 {
-  GSList *shortlist    = Stage::GetOutputShortlist ();
-  guint   nb_to_remove = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+  GSList         *shortlist      = Stage::GetOutputShortlist ();
+  guint           nb_to_remove   = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+  Classification *classification = GetClassification ();
 
   for (guint i = 0; i < nb_to_remove; i++)
   {
+    Player::AttributeId *attr_id;
+    GSList              *current;
+    Player              *player;
+
+    current = g_slist_last (shortlist);
+    player = (Player *) current->data;
+
+    attr_id = new Player::AttributeId ("status", this);
+    player->SetAttributeValue (attr_id,
+                               "N");
+
+    attr_id = new Player::AttributeId ("status", classification->GetDataOwner ());
+    player->SetAttributeValue (attr_id,
+                               "N");
+
     shortlist = g_slist_delete_link (shortlist,
-                                     g_slist_last (shortlist));
+                                     current);
   }
 
   return shortlist;
