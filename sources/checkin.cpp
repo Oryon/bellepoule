@@ -52,6 +52,7 @@ Checkin::Checkin (StageClass *stage_class)
     AttributeDesc::CreateList (&attr_list,
 #ifndef DEBUG
                                "ref",
+                               "start_rank",
 #endif
                                "previous_stage_rank",
                                "exported",
@@ -281,17 +282,28 @@ void Checkin::Load (xmlXPathContext *xml_context,
 // --------------------------------------------------------------------------------
 void Checkin::Load (xmlNode *xml_node)
 {
+  Player::AttributeId start_rank_id    ("start_rank");
+  Player::AttributeId previous_rank_id ("previous_stage_rank", this);
+
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
       if (strcmp ((char *) n->name, "Tireur") == 0)
       {
-        Player *player = new Player;
+        Attribute *start_rank;
+        Player    *player = new Player;
 
         player->Load (n);
 
         Add (player);
+        start_rank = player->GetAttribute (&start_rank_id);
+        if (start_rank)
+        {
+          UseInitialRank ();
+          player->SetAttributeValue (&previous_rank_id,
+                                     (guint) start_rank->GetValue ());
+        }
         player->Release ();
       }
       else if (strcmp ((char *) n->name, "Tireurs") != 0)
@@ -358,15 +370,16 @@ void Checkin::UseInitialRank ()
 void Checkin::UpdateChecksum ()
 {
   {
-    Player::AttributeId attr_id ("name");
+    Player::AttributeId attr_id ("ref");
 
+    attr_id.MakeRandomReady (1);
     _player_list = g_slist_sort_with_data (_player_list,
                                            (GCompareDataFunc) Player::Compare,
                                            &attr_id);
   }
 
   {
-    Player::AttributeId attr_id ("attending");
+    Player::AttributeId  attr_id ("attending");
     GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
     GSList              *current_player = _player_list;
 
@@ -421,7 +434,7 @@ void Checkin::UpdateRanking ()
     if (_use_initial_rank)
     {
       rank_criteria_id = new Player::AttributeId ("previous_stage_rank",
-                                         this);
+                                                  this);
     }
     else
     {

@@ -83,6 +83,7 @@ Table::Table (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "start_rank",
                                "final_rank",
                                "attending",
                                "exported",
@@ -110,6 +111,7 @@ Table::Table (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "start_rank",
                                "final_rank",
                                "attending",
                                "exported",

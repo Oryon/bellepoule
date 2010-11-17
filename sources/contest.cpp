@@ -398,10 +398,13 @@ void Contest::AddPlayer (Player *player,
 
     if (checkin)
     {
-      Player::AttributeId  rank_attr ("previous_stage_rank", checkin);
+      Player::AttributeId  start_rank_attr    ("start_rank");
+      Player::AttributeId  previous_rank_attr ("previous_stage_rank", checkin);
 
       checkin->Add (player);
-      player->SetAttributeValue (&rank_attr,
+      player->SetAttributeValue (&start_rank_attr,
+                                 rank);
+      player->SetAttributeValue (&previous_rank_attr,
                                  rank);
       checkin->UseInitialRank ();
     }

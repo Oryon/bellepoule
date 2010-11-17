@@ -54,6 +54,10 @@ class Match : public Object
 
     void Save (xmlTextWriter *xml_writer);
 
+    // Workaround to avoid the GREG issue
+    void SaveInOrder (xmlTextWriter *xml_writer,
+                      Player        *first_player);
+
     void CleanScore ();
 
     void SetNumber (gint number);
@@ -74,6 +78,9 @@ class Match : public Object
     guint     _number;
 
     gboolean ScoreIsNumber (gchar *score);
+
+    void Save (xmlTextWriter *xml_writer,
+               Player        *player);
 
     ~Match ();
 };

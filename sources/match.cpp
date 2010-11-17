@@ -281,62 +281,77 @@ void Match::Save (xmlTextWriter *xml_writer)
                                        BAD_CAST "ID",
                                        "%d", _number);
 
-    if (_A)
+    Save (xml_writer,
+          _A);
+    Save (xml_writer,
+          _B);
+
+    xmlTextWriterEndElement (xml_writer);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Match::SaveInOrder (xmlTextWriter *xml_writer,
+                         Player        *first_player)
+{
+  if (_A && _B && _number)
+  {
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST "Match");
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "ID",
+                                       "%d", _number);
+
+    if (_A == first_player)
     {
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "Tireur");
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "REF",
-                                         "%d", _A->GetRef ());
-      if (_A_score->IsKnown ())
-      {
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "Score",
-                                           "%d", _A_score->Get ());
-        if (GetWinner () == _A)
-        {
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "Statut",
-                                       BAD_CAST "V");
-        }
-        else
-        {
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "Statut",
-                                       BAD_CAST "D");
-        }
-      }
-      xmlTextWriterEndElement (xml_writer);
+      Save (xml_writer,
+            _A);
+      Save (xml_writer,
+            _B);
+    }
+    else
+    {
+      Save (xml_writer,
+            _B);
+      Save (xml_writer,
+            _A);
     }
 
-    if (_B)
-    {
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "Tireur");
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "REF",
-                                         "%d", _B->GetRef ());
-      if (_B_score->IsKnown ())
-      {
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "Score",
-                                           "%d", _B_score->Get ());
-        if (GetWinner () == _B)
-        {
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "Statut",
-                                       BAD_CAST "V");
-        }
-        else
-        {
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "Statut",
-                                       BAD_CAST "D");
-        }
-      }
-      xmlTextWriterEndElement (xml_writer);
-    }
+    xmlTextWriterEndElement (xml_writer);
+  }
+}
 
+// --------------------------------------------------------------------------------
+void Match::Save (xmlTextWriter *xml_writer,
+                  Player        *player)
+{
+  if (player)
+  {
+    Score *score = GetScore (player);
+
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST "Tireur");
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "REF",
+                                       "%d", player->GetRef ());
+    if (score->IsKnown ())
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "Score",
+                                         "%d", score->Get ());
+      if (GetWinner () == player)
+      {
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "Statut",
+                                     BAD_CAST "V");
+      }
+      else
+      {
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "Statut",
+                                     BAD_CAST "D");
+      }
+    }
     xmlTextWriterEndElement (xml_writer);
   }
 }

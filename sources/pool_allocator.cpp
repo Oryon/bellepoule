@@ -89,6 +89,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "start_rank",
                                "final_rank",
                                "attending",
                                "exported",
