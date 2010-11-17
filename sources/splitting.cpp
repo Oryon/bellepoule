@@ -51,6 +51,7 @@ Splitting::Splitting (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "start_rank",
                                "final_rank",
                                "rank",
                                "attending",

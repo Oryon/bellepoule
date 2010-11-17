@@ -40,6 +40,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "start_rank",
                                "rank",
                                "attending",
                                "exported",

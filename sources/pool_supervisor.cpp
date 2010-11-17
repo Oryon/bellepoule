@@ -67,6 +67,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "start_rank",
                                "final_rank",
                                "attending",
                                "exported",
@@ -111,6 +112,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "start_rank",
                                "final_rank",
                                "attending",
                                "exported",
