@@ -294,21 +294,21 @@ void Stage::LoadAttendees (xmlNode *n)
 
   if (n)
   {
-    gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+    gchar *ref_attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
 
-    if (attr)
+    if (ref_attr)
     {
-      Player *player = GetPlayerFromRef (atoi (attr));
+      Player *player = GetPlayerFromRef (atoi (ref_attr));
 
       if (player)
       {
         Player::AttributeId attr_id ("previous_stage_rank", this);
-        gchar *attr =  (gchar *) xmlGetProp (n, BAD_CAST "RangInitial");
+        gchar *rank_attr =  (gchar *) xmlGetProp (n, BAD_CAST "RangInitial");
 
-        if (attr)
+        if (rank_attr)
         {
           player->SetAttributeValue (&attr_id,
-                                     atoi (attr));
+                                     atoi (rank_attr));
         }
         else
         {
