@@ -42,7 +42,6 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
   _pool_allocator = NULL;
   _displayed_pool = NULL;
   _max_score      = NULL;
-  _nb_eliminated  = NULL;
 
   _single_owner = new Object ();
 
@@ -547,6 +546,8 @@ void PoolSupervisor::RetrievePools ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor::ApplyConfig ()
 {
+  Stage::ApplyConfig ();
+
   {
     GtkWidget *w        = _glade->GetWidget ("name_entry");
     gchar     *name     = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
@@ -572,15 +573,6 @@ void PoolSupervisor::ApplyConfig ()
           OnPoolSelected (_displayed_pool);
         }
       }
-    }
-  }
-
-  {
-    GtkWidget *w = _glade->GetWidget ("nb_eliminated_spinbutton");
-
-    if (w)
-    {
-      _nb_eliminated->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
     }
   }
 }
@@ -612,7 +604,6 @@ void PoolSupervisor::SetInputProvider (Stage *input_provider)
   {
     _pool_allocator->Retain ();
     _max_score     = _pool_allocator->GetMaxScore     ();
-    _nb_eliminated = _pool_allocator->GetNbEliminated ();
   }
 
   Stage::SetInputProvider (input_provider);
@@ -621,6 +612,8 @@ void PoolSupervisor::SetInputProvider (Stage *input_provider)
 // --------------------------------------------------------------------------------
 void PoolSupervisor::FillInConfig ()
 {
+  Stage::FillInConfig ();
+
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
                       GetName ());
 
@@ -631,9 +624,6 @@ void PoolSupervisor::FillInConfig ()
                         text);
     g_free (text);
   }
-
-  gtk_spin_button_set_value (GTK_SPIN_BUTTON (_glade->GetWidget ("nb_eliminated_spinbutton")),
-                             _nb_eliminated->_value);
 }
 
 // --------------------------------------------------------------------------------
@@ -752,37 +742,6 @@ GSList *PoolSupervisor::EvaluateClassification (GSList           *list,
   attr_id->Release ();
 
   return result;
-}
-
-// --------------------------------------------------------------------------------
-GSList *PoolSupervisor::GetOutputShortlist ()
-{
-  GSList         *shortlist      = Stage::GetOutputShortlist ();
-  guint           nb_to_remove   = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
-  Classification *classification = GetClassification ();
-
-  for (guint i = 0; i < nb_to_remove; i++)
-  {
-    Player::AttributeId *attr_id;
-    GSList              *current;
-    Player              *player;
-
-    current = g_slist_last (shortlist);
-    player = (Player *) current->data;
-
-    attr_id = new Player::AttributeId ("status", this);
-    player->SetAttributeValue (attr_id,
-                               "N");
-
-    attr_id = new Player::AttributeId ("status", classification->GetDataOwner ());
-    player->SetAttributeValue (attr_id,
-                               "N");
-
-    shortlist = g_slist_delete_link (shortlist,
-                                     current);
-  }
-
-  return shortlist;
 }
 
 // --------------------------------------------------------------------------------

@@ -46,6 +46,9 @@ Stage::Stage (StageClass *stage_class)
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
+
+  _nb_eliminated = new Data ("NbElimines",
+                             (guint) 0);
 }
 
 // --------------------------------------------------------------------------------
@@ -59,6 +62,7 @@ Stage::~Stage ()
   TryToRelease (_score_stuffing_trigger);
   TryToRelease (_classification);
   TryToRelease (_attendees);
+  TryToRelease (_nb_eliminated);
 }
 
 // --------------------------------------------------------------------------------
@@ -190,11 +194,34 @@ gboolean Stage::IsOver ()
 // --------------------------------------------------------------------------------
 void Stage::ApplyConfig ()
 {
+  Module *module = dynamic_cast <Module *> (this);
+
+  if (module)
+  {
+    GtkWidget *w = module->GetWidget ("nb_eliminated_spinbutton");
+
+    if (w)
+    {
+      _nb_eliminated->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
 void Stage::FillInConfig ()
 {
+  Module *module = dynamic_cast <Module *> (this);
+
+  if (module)
+  {
+    GtkWidget *w = module->GetWidget ("nb_eliminated_spinbutton");
+
+    if (w)
+    {
+      gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+                                 _nb_eliminated->_value);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -266,14 +293,44 @@ void Stage::RetrieveAttendees ()
 // --------------------------------------------------------------------------------
 GSList *Stage::GetOutputShortlist ()
 {
+  GSList *shortlist = NULL;
+
   if (_result)
   {
-    return g_slist_copy (_result);
+    shortlist = g_slist_copy (_result);
   }
-  else
+
   {
-    return NULL;
+    Classification *classification = GetClassification ();
+
+    if (shortlist && classification)
+    {
+      guint nb_to_remove = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+
+      for (guint i = 0; i < nb_to_remove; i++)
+      {
+        Player::AttributeId *attr_id;
+        GSList              *current;
+        Player              *player;
+
+        current = g_slist_last (shortlist);
+        player = (Player *) current->data;
+
+        attr_id = new Player::AttributeId ("status", this);
+        player->SetAttributeValue (attr_id,
+                                   "N");
+
+        attr_id = new Player::AttributeId ("status", classification->GetDataOwner ());
+        player->SetAttributeValue (attr_id,
+                                   "N");
+
+        shortlist = g_slist_delete_link (shortlist,
+                                         current);
+      }
+    }
   }
+
+  return shortlist;
 }
 
 // --------------------------------------------------------------------------------
@@ -448,6 +505,10 @@ const gchar *Stage::GetInputProviderClient ()
 void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
+
+  TryToRelease (_nb_eliminated);
+  _nb_eliminated = input_provider->GetNbEliminated ();
+  _nb_eliminated->Retain ();
 }
 
 // --------------------------------------------------------------------------------
@@ -635,6 +696,11 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
   gchar *attr = (gchar *) xmlGetProp (xml_node,
                                       BAD_CAST "PhaseID");
   SetName (attr);
+
+  if (_nb_eliminated)
+  {
+    _nb_eliminated->Load (xml_node);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -646,6 +712,11 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
                                      "%d", _id);
+
+  if (_nb_eliminated)
+  {
+    _nb_eliminated->Save (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -730,6 +801,12 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       current = g_slist_next (current);
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+Data *Stage::GetNbEliminated ()
+{
+  return _nb_eliminated;
 }
 
 // --------------------------------------------------------------------------------

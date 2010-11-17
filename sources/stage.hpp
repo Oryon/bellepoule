@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "data.hpp"
 #include "sensitivity_trigger.hpp"
 #include "attendees.hpp"
 
@@ -136,6 +137,8 @@ class Stage : public virtual Object
 
     virtual gboolean IsOver ();
 
+    Data *GetNbEliminated ();
+
     void ToggleClassification (gboolean classification_on);
 
     static void RegisterStageClass (const gchar *name,
@@ -192,6 +195,7 @@ class Stage : public virtual Object
     SensitivityTrigger *_sensitivity_trigger;
     SensitivityTrigger *_score_stuffing_trigger;
     gboolean            _classification_on;
+    Data               *_nb_eliminated;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
