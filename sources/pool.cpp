@@ -1506,11 +1506,19 @@ void Pool::ResetMatches (Object *rank_owner)
 // --------------------------------------------------------------------------------
 void Pool::DropPlayer (Player *player)
 {
+  Player::AttributeId status_attr_id = Player::AttributeId ("status", GetDataOwner ());
+
+  player->SetAttributeValue (&status_attr_id,
+                             "A");
 }
 
 // --------------------------------------------------------------------------------
 void Pool::RestorePlayer (Player *player)
 {
+  Player::AttributeId status_attr_id = Player::AttributeId ("status", GetDataOwner ());
+
+  player->SetAttributeValue (&status_attr_id,
+                             "Q");
 }
 
 // --------------------------------------------------------------------------------

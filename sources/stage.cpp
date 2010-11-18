@@ -267,19 +267,12 @@ void Stage::RetrieveAttendees ()
         player->SetAttributeValue (&previous_rank_attr_id,
                                    i+1);
         {
-          Player::AttributeId *status_attr_id;
+          Player::AttributeId status_attr_id = Player::AttributeId ("status", this);
 
-          status_attr_id = new Player::AttributeId ("status", _previous);
-          player->SetAttributeValue (status_attr_id,
+          player->SetAttributeValue (&status_attr_id,
                                      "Q");
-
-          if (_previous->_classification)
-          {
-            status_attr_id = new Player::AttributeId ("status", _previous->_classification->GetDataOwner ());
-            player->SetAttributeValue (status_attr_id,
-                                       "Q");
-          }
         }
+
         current = g_slist_next (current);
       }
     }
@@ -293,40 +286,84 @@ void Stage::RetrieveAttendees ()
 // --------------------------------------------------------------------------------
 GSList *Stage::GetOutputShortlist ()
 {
-  GSList *shortlist = NULL;
+  GSList         *shortlist      = NULL;
+  Classification *classification = GetClassification ();
 
   if (_result)
   {
     shortlist = g_slist_copy (_result);
   }
 
+  if (shortlist && classification)
   {
-    Classification *classification = GetClassification ();
+    Module             *module          = dynamic_cast <Module *> (this);
+    guint               nb_to_remove    = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+    Player::AttributeId stage_attr_id   = Player::AttributeId ("status", module->GetDataOwner ());
+    Player::AttributeId classif_attr_id = Player::AttributeId ("status", classification->GetDataOwner ());
 
-    if (shortlist && classification)
+    // remove all of the withdrawalls and black cards
     {
-      guint nb_to_remove = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+      GSList *remove_list = NULL;
 
-      for (guint i = 0; i < nb_to_remove; i++)
+      for (guint i = 0; i < g_slist_length (shortlist); i++)
       {
-        Player::AttributeId *attr_id;
-        GSList              *current;
-        Player              *player;
+        Player *player;
 
-        current = g_slist_last (shortlist);
-        player = (Player *) current->data;
+        player = (Player *) g_slist_nth_data (shortlist, i);
+        {
+          Attribute *status_attr = player->GetAttribute (&stage_attr_id);
 
-        attr_id = new Player::AttributeId ("status", this);
-        player->SetAttributeValue (attr_id,
-                                   "N");
+          if (status_attr)
+          {
+            gchar *value = (gchar *) status_attr->GetValue ();
 
-        attr_id = new Player::AttributeId ("status", classification->GetDataOwner ());
-        player->SetAttributeValue (attr_id,
-                                   "N");
-
-        shortlist = g_slist_delete_link (shortlist,
-                                         current);
+            if (value && value[0] != 'Q')
+            {
+              remove_list = g_slist_prepend (remove_list,
+                                             (void *) player);
+            }
+          }
+        }
       }
+
+      for (guint i = 0; i < g_slist_length (remove_list); i++)
+      {
+        void *excluded;
+
+        excluded = g_slist_find (shortlist,
+                                 g_slist_nth_data (remove_list, i));
+        shortlist = g_slist_remove (shortlist,
+                                    excluded);
+      }
+
+      if (nb_to_remove > g_slist_length (remove_list))
+      {
+        nb_to_remove -= g_slist_length (remove_list);
+      }
+      else
+      {
+        nb_to_remove = 0;
+      }
+
+      g_slist_free (remove_list);
+    }
+
+    // remove the reamaing players to reach the quota
+    for (guint i = 0; i < nb_to_remove; i++)
+    {
+      GSList *current;
+      Player *player;
+
+      current = g_slist_last (shortlist);
+      player = (Player *) current->data;
+
+      player->SetAttributeValue (&stage_attr_id,
+                                 "N");
+      player->SetAttributeValue (&classif_attr_id,
+                                 "N");
+
+      shortlist = g_slist_delete_link (shortlist,
+                                       current);
     }
   }
 
@@ -371,6 +408,13 @@ void Stage::LoadAttendees (xmlNode *n)
         {
           player->SetAttributeValue (&attr_id,
                                      (guint) 0);
+        }
+
+        {
+          Player::AttributeId status_attr_id = Player::AttributeId ("status", this);
+
+          player->SetAttributeValue (&status_attr_id,
+                                     "Q");
         }
       }
     }
