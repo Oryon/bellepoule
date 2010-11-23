@@ -1,21 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE CompetitionIndividuelle>
 <!--
-           By BellePoule (V0.09/11)
+           By BellePoule (V0.23/11)
 
    http://betton.escrime.free.fr/index.php/bellepoule
 -->
-<CompetitionIndividuelle Annee="2010" Arme="S" Sexe="M" Organisateur="La Riposte" Categorie="O" Date="08.11.2010" Appel="12:00" Scratch="12:00" Début="12:00" TitreLong="Soirée départementale" URLorganisateur="http://la.riposte.pagesperso-orange.fr" score_stuffing="1">
+<CompetitionIndividuelle Annee="2010" Arme="S" Sexe="M" Organisateur="Betton" Categorie="M" Date="23.11.2010" Appel="14:00" Scratch="14:15" Début="14:30" TitreLong="H2016" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="0">
  <Tireurs>
-  <Tireur ID="1441" Classement="1" Nom="LE BASTARD" Prenom="Emma" DateNaissance="20/03/1988" Sexe="F" Nation="FRA" Club="GUINGAMP ARM" Licence="003015623022" Points="1012" Presence="1" Exporte="0"/>
-  <Tireur ID="1445" Classement="4" Nom="CONTAMINE" Prenom="Alice" DateNaissance="03/02/1988" Sexe="F" Nation="FRA" Ligue="PROVENCE" Club="RENNES MCB" Licence="011165723035" Points="1045" Presence="1" Exporte="0"/>
-  <Tireur ID="1439" Classement="3" Nom="MOY" Prenom="Anna" DateNaissance="09/11/1987" Sexe="F" Nation="FRA" Club="LANNION PTT" Licence="002057323022" Points="1074" Presence="1" Exporte="0"/>
+  <Tireur ID="82" Nom="DECHORGNAT" Prenom="Vincent" DateNaissance="28/5/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST GREGOIRE" Licence="230350290431" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="79" Nom="CARESMEL" Prenom="Robin" DateNaissance="14/8/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINAN EA" Licence="230220070153" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="86" Nom="GARNIER" Prenom="Nathan" DateNaissance="15/11/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330563" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="77" Nom="DESMOULIN" Prenom="Loic" DateNaissance="10/3/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST GREGOIRE" Licence="230350290411" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="92" Nom="LEBOURGEOIS" Prenom="Antoine" DateNaissance="19/12/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="QUIMPER EC" Licence="230290340706" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="73" Nom="BOTUHA" Prenom="Simon" DateNaissance="21/5/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330559" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="72" Nom="JACOPIN" Prenom="Eliott" DateNaissance="10/9/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100236" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="76" Nom="LATREILLE" Prenom="Quentin" DateNaissance="6/2/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100499" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="96" Nom="HOBL" Prenom="Alexis" DateNaissance="25/9/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330584" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="78" Nom="GUEGAN" Prenom="Baptiste" DateNaissance="19/11/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100439" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="84" Nom="LEGRAND" Prenom="Abraham" DateNaissance="9/8/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100237" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="68" Nom="BROUARD" Prenom="Simon" DateNaissance="17/1/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100376" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="93" Nom="LAUMAIN" Prenom="Louis" DateNaissance="10/10/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST MALO" Licence="230350150893" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="98" Nom="DANIBO" Prenom="Antoine" DateNaissance="3/10/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST MALO" Licence="230350150926" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="85" Nom="THIRIET" Prenom="Alexandre" DateNaissance="18/5/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100525" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="88" Nom="JOSSELIN" Prenom="Ronan" DateNaissance="17/4/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINAN EA" Licence="230220070286" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="80" Nom="BESCOND" Prenom="Maxime" DateNaissance="22/4/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330575" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="89" Nom="TOURNIER" Prenom="Joan" DateNaissance="21/8/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST MALO" Licence="230350151079" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="87" Nom="GUERIN" Prenom="Tristan" DateNaissance="15/9/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330627" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="81" Nom="SAILLARD" Prenom="Pacome" DateNaissance="26/2/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST GREGOIRE" Licence="230350290416" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="97" Nom="RESMOND" Prenom="Tangui" DateNaissance="19/4/1998" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="QUIMPER EC" Licence="230290340820" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="94" Nom="LEMOINE" Prenom="Lou" DateNaissance="24/5/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINAN EA" Licence="230220070210" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="83" Nom="LE ROUX" Prenom="Gurvan" DateNaissance="31/3/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100317" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="75" Nom="ROGER" Prenom="Benjamin" DateNaissance="13/2/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330544" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="90" Nom="LE BACCON" Prenom="Pierre Erik" DateNaissance="11/5/1998" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100526" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="69" Nom="ROLLIN" Prenom="Tom" DateNaissance="3/5/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330545" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="99" Nom="KERVROEDAN" Prenom="Antoine" DateNaissance="2/10/1998" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="QUIMPER EC" Licence="230290340788" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="70" Nom="ANNIC" Prenom="Edern" DateNaissance="19/7/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330472" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="91" Nom="STEPHAN" Prenom="Loic" DateNaissance="23/11/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="QUIMPER EC" Licence="230290340661" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="74" Nom="GERARD" Prenom="Tom" DateNaissance="7/7/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST GREGOIRE" Licence="230350290462" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="71" Nom="BOC HO" Prenom="Benjamin" DateNaissance="10/8/1995" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330576" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="95" Nom="JARAY" Prenom="Alexandre" DateNaissance="24/12/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST BRIEUC" Licence="230220090574" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="101" Nom="LAVENANT" Prenom="Frank" DateNaissance="14/1/1998" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="ST MALO" Licence="230350151171" Points="0" Presence="0" Exporte="0"/>
+  <Tireur ID="100" Nom="BONNOT" Prenom="Pierre" DateNaissance="23/5/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINAN EA" Licence="230220070202" Points="0" Presence="0" Exporte="0"/>
  </Tireurs>
  <Arbitres/>
  <Phases PhaseEnCours="0">
-  <TourDePoules PhaseID="" ID="1" ScoreMax="5" NbElimines="50" Decalage="Aucun" PhaseSuivanteDesQualifies="3"/>
+  <TourDePoules PhaseID="" ID="1" ScoreMax="5" NbElimines="0" Decalage="Aucun" PhaseSuivanteDesQualifies="3"/>
   <PhaseDeTableaux PhaseID="" ID="3" ScoreMax="10">
-   <SuiteDeTableaux ID="A" Titre="" NbDeTableaux="4"/>
+   <SuiteDeTableaux ID="A" Titre=""/>
   </PhaseDeTableaux>
   <ClassementGeneral PhaseID="" ID="4"/>
  </Phases>

@@ -129,6 +129,8 @@
               <object class="GtkNotebook" id="notebook">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="scrollable">True</property>
+                <property name="enable_popup">True</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -837,12 +839,17 @@ Public License instead of this License.  But first, please read
 &lt;http://www.gnu.org/philosophy/why-not-lgpl.html&gt;. </property>
     <property name="authors">Sp&#xE9;cifications/Tests:
   Florence Blanchard
+  Laurent Bonnot
   Emmanuel Chaix
+  Julien Diaz
+  Olivier Larcher
   Yannick Le Roux
   Jean-Pierre Mah&#xE9;
   Pierre Moro
   Michel Relet
   Vincent R&#xE9;my
+  Tina Schliemann
+  Claude Simonnot
   S&#xE9;bastien Vermandel
 
 Portage Linux
