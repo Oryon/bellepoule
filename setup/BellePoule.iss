@@ -75,6 +75,7 @@ Source: "..\resources\translations\fr\*"; DestDir: "{app}\resources\translations
 Source: "..\resources\translations\de\*"; DestDir: "{app}\resources\translations\de"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\translations\nl\*"; DestDir: "{app}\resources\translations\nl"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\translations\ru\*"; DestDir: "{app}\resources\translations\ru"; Flags: ignoreversion recursesubdirs
+Source: "..\resources\translations\ar\*"; DestDir: "{app}\resources\translations\ar"; Flags: ignoreversion recursesubdirs
 
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -216,6 +217,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 
