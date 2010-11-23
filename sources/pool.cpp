@@ -31,15 +31,16 @@ Pool::Pool (Data  *max_score,
   : CanvasModule ("pool.glade",
                   "canvas_scrolled_window")
 {
-  _number      = number;
-  _player_list = NULL;
-  _match_list  = NULL;
-  _is_over     = FALSE;
-  _has_error   = FALSE;
-  _title_table = NULL;
-  _status_item = NULL;
-  _locked      = FALSE;
-  _max_score   = max_score;
+  _number       = number;
+  _player_list  = NULL;
+  _match_list   = NULL;
+  _is_over      = FALSE;
+  _has_error    = FALSE;
+  _title_table  = NULL;
+  _status_item  = NULL;
+  _locked       = FALSE;
+  _max_score    = max_score;
+  _display_data = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -74,6 +75,26 @@ Pool::~Pool ()
 void Pool::Wipe ()
 {
   _title_table = NULL;
+  _status_item = NULL;
+
+  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  {
+    Player *player;
+    GSList *current;
+
+    player  = (Player *) g_slist_nth_data (_player_list, i);
+
+    current = _display_data;
+    while (current)
+    {
+      player->RemoveData (GetDataOwner (),
+                          (gchar *) current->data);
+
+      current = g_slist_next (current);
+    }
+    g_slist_free (_display_data);
+    _display_data = NULL;
+  }
 
   CanvasModule::Wipe ();
 }
@@ -562,7 +583,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                               cell_h,
                                               "anchor", GTK_ANCHOR_CENTER,
                                               NULL);
-            player->SetData (GetDataOwner (), "WithdrawalItem",  goo_item);
+            SetDisplayData (player, on_canvas, "WithdrawalItem", goo_item);
             x += cell_w;
 
             goo_item = goo_canvas_text_new (dashboard_group,
@@ -571,7 +592,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "VictoriesItem",  goo_item);
+            SetDisplayData (player, on_canvas, "VictoriesItem", goo_item);
             x += cell_w;
 
             goo_item = goo_canvas_text_new (dashboard_group,
@@ -580,7 +601,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "VictoriesRatioItem",  goo_item);
+            SetDisplayData (player, on_canvas, "VictoriesRatioItem", goo_item);
             x += cell_w;
 
             goo_item = goo_canvas_text_new (dashboard_group,
@@ -589,7 +610,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "HSItem",  goo_item);
+            SetDisplayData (player, on_canvas, "HSItem", goo_item);
             x += cell_w;
 
             goo_item = goo_canvas_text_new (dashboard_group,
@@ -598,7 +619,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "HRItem",  goo_item);
+            SetDisplayData (player, on_canvas, "HRItem", goo_item);
             x += cell_w;
 
             goo_item = goo_canvas_text_new (dashboard_group,
@@ -607,7 +628,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "IndiceItem",  goo_item);
+            SetDisplayData (player, on_canvas, "IndiceItem", goo_item);
             x += cell_w;
 
             goo_item = goo_canvas_text_new (dashboard_group,
@@ -616,7 +637,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                             GTK_ANCHOR_CENTER,
                                             "font", "Sans 18px",
                                             NULL);
-            player->SetData (GetDataOwner (), "RankItem",  goo_item);
+            SetDisplayData (player, on_canvas, "RankItem", goo_item);
             x += cell_w;
           }
         }
@@ -767,32 +788,31 @@ void Pool::Draw (GooCanvas *on_canvas,
 }
 
 // --------------------------------------------------------------------------------
+void Pool::SetDisplayData (Player    *player,
+                           GooCanvas *on_canvas,
+                           gchar     *name,
+                           void      *value)
+{
+  player->SetData (GetDataOwner (), name, value);
+
+  _display_data = g_slist_prepend (_display_data, name);
+}
+
+// --------------------------------------------------------------------------------
 void Pool::DrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr)
 {
-  GooCanvas *canvas             = CreateCanvas ();
-  gboolean   print_for_referees = (gboolean) g_object_get_data (G_OBJECT (operation), "print_for_referees");
+  GooCanvas *canvas = CreateCanvas ();
 
-  {
-    GooCanvasItem *title_table = _title_table;
-    GooCanvasItem *status_item = _status_item;
-
-    title_table = NULL;
-    status_item = NULL;
-    Draw (canvas,
-          print_for_referees);
-
-    // Rétablissement des attributs dans leur état original.
-    // Pas terrible comme technique ! Trouver autre chose !
-    _title_table = title_table;
-    _status_item = status_item;
-  }
+  Draw (canvas,
+        (gboolean) g_object_get_data (G_OBJECT (operation), "print_for_referees"));
 
   g_object_set_data (G_OBJECT (operation), "operation_canvas", (void *) canvas);
   CanvasModule::OnDrawPage (operation,
                             context,
                             page_nr);
+  Wipe ();
 
   gtk_widget_destroy (GTK_WIDGET (canvas));
 }
@@ -803,6 +823,13 @@ void Pool::OnPlugged ()
   CanvasModule::OnPlugged ();
   Draw (GetCanvas (),
         FALSE);
+}
+
+// --------------------------------------------------------------------------------
+void Pool::OnUnPlugged ()
+{
+  Wipe ();
+  CanvasModule::OnUnPlugged ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1121,59 +1148,84 @@ void Pool::RefreshDashBoard ()
     gchar         *text;
     Attribute     *attr;
     gint           value;
+    void          *data;
 
     player = GetPlayer (p);
 
     attr_id._name = "victories_ratio";
     attr = player->GetAttribute (&attr_id);
-    goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "VictoriesRatioItem"));
-    text = g_strdup_printf ("%0.3f", (gdouble) ((guint) attr->GetValue ()) / 1000.0);
-    g_object_set (goo_text,
-                  "text",
-                  text, NULL);
-    g_free (text);
+    data = player->GetData (GetDataOwner (), "VictoriesRatioItem");
+    if (data)
+    {
+      goo_text = GOO_CANVAS_ITEM (data);
+      text = g_strdup_printf ("%0.3f", (gdouble) ((guint) attr->GetValue ()) / 1000.0);
+      g_object_set (goo_text,
+                    "text",
+                    text, NULL);
+      g_free (text);
+    }
 
-    value = (gint) player->GetData (GetDataOwner (), "Victories");
-    goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "VictoriesItem"));
-    text = g_strdup_printf ("%d", value);
-    g_object_set (goo_text,
-                  "text",
-                  text, NULL);
-    g_free (text);
+    data = player->GetData (GetDataOwner (), "VictoriesItem");
+    if (data)
+    {
+      value = (gint) player->GetData (GetDataOwner (), "Victories");
+      goo_text = GOO_CANVAS_ITEM (data);
+      text = g_strdup_printf ("%d", value);
+      g_object_set (goo_text,
+                    "text",
+                    text, NULL);
+      g_free (text);
+    }
 
     attr_id._name = "HS";
     attr = player->GetAttribute (&attr_id);
-    goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "HSItem"));
-    text = g_strdup_printf ("%d", (guint) attr->GetValue ());
-    g_object_set (goo_text,
-                  "text",
-                  text, NULL);
-    g_free (text);
+    data = player->GetData (GetDataOwner (), "HSItem");
+    if (data)
+    {
+      goo_text = GOO_CANVAS_ITEM (data);
+      text = g_strdup_printf ("%d", (guint) attr->GetValue ());
+      g_object_set (goo_text,
+                    "text",
+                    text, NULL);
+      g_free (text);
+    }
 
-    value = (gint) player->GetData (GetDataOwner (), "HR");
-    goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "HRItem"));
-    text = g_strdup_printf ("%d", -value);
-    g_object_set (goo_text,
-                  "text",
-                  text, NULL);
-    g_free (text);
+    data = player->GetData (GetDataOwner (), "HRItem");
+    if (data)
+    {
+      value = (gint) player->GetData (GetDataOwner (), "HR");
+      goo_text = GOO_CANVAS_ITEM (data);
+      text = g_strdup_printf ("%d", -value);
+      g_object_set (goo_text,
+                    "text",
+                    text, NULL);
+      g_free (text);
+    }
 
     attr_id._name = "indice";
     attr = player->GetAttribute (&attr_id);
-    goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "IndiceItem"));
-    text = g_strdup_printf ("%+d", (gint) attr->GetValue ());
-    g_object_set (goo_text,
-                  "text",
-                  text, NULL);
-    g_free (text);
+    data = player->GetData (GetDataOwner (), "IndiceItem");
+    if (data)
+    {
+      goo_text = GOO_CANVAS_ITEM (data);
+      text = g_strdup_printf ("%+d", (gint) attr->GetValue ());
+      g_object_set (goo_text,
+                    "text",
+                    text, NULL);
+      g_free (text);
+    }
 
-    value = (gint) player->GetData (this, "Rank");
-    goo_text = GOO_CANVAS_ITEM (player->GetData (GetDataOwner (), "RankItem"));
-    text = g_strdup_printf ("%d", value);
-    g_object_set (goo_text,
-                  "text",
-                  text, NULL);
-    g_free (text);
+    data = player->GetData (GetDataOwner (), "RankItem");
+    if (data)
+    {
+      value = (gint) player->GetData (this, "Rank");
+      goo_text = GOO_CANVAS_ITEM (data);
+      text = g_strdup_printf ("%d", value);
+      g_object_set (goo_text,
+                    "text",
+                    text, NULL);
+      g_free (text);
+    }
   }
 }
 

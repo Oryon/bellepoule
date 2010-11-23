@@ -101,6 +101,7 @@ class Pool : public CanvasModule
     GooCanvasItem  *_title_table;
     GooCanvasItem  *_status_item;
     gboolean        _locked;
+    GSList         *_display_data;
 
     void           *_status_cbk_data;
     StatusCbk       _status_cbk;
@@ -121,6 +122,13 @@ class Pool : public CanvasModule
                                               Pool   *pool);
 
     void OnPlugged ();
+
+    void OnUnPlugged ();
+
+    void SetDisplayData (Player    *player,
+                         GooCanvas *on_canvas,
+                         gchar     *name,
+                         void      *value);
 
     void Draw (GooCanvas *on_canvas,
                gboolean   print_for_referees);
