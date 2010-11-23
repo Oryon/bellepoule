@@ -494,6 +494,11 @@ void PoolSupervisor::OnBeginPrint (GtkPrintOperation *operation,
     gtk_print_operation_set_n_pages (operation,
                                      1);
   }
+
+  if (_displayed_pool)
+  {
+    _displayed_pool->Wipe ();
+  }
 }
 
 // --------------------------------------------------------------------------------
