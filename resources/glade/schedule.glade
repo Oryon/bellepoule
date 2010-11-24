@@ -155,6 +155,7 @@
                       <object class="GtkTreeView" id="formula_treeview">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="model">stage_liststore_filter</property>
                         <property name="headers_clickable">False</property>
                         <property name="search_column">0</property>
                         <signal name="cursor_changed" handler="on_formula_treeview_cursor_changed"/>
