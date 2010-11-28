@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-11-26 08:04+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2010-11-26 22:18+0100\n"
+"Last-Translator: \n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,12 +31,8 @@ msgid "Fencer list printing"
 msgstr "Imprimiendo la lista de tiradores"
 
 #: ../../sources/checkin.cpp:201
-msgid ""
-"Uncheck this box to quicken the data input. The corresponding field will be "
-"ignored on TAB key pressed."
-msgstr ""
-"Desmarcar esta casilla para agilizar la entrada de datos. El campo "
-"correspondiente será ignorado al pulsar la tecla TAB."
+msgid "Uncheck this box to quicken the data input. The corresponding field will be ignored on TAB key pressed."
+msgstr "Desmarcar esta casilla para agilizar la entrada de datos. El campo correspondiente será ignorado al pulsar la tecla TAB."
 
 #: ../../sources/checkin.cpp:464
 msgid "Choose a fencer file to import..."
@@ -331,11 +327,8 @@ msgid "Table"
 msgstr "Tabla"
 
 #: ../../sources/table.cpp:138
-msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr ""
-"<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
+msgid "<b><big>Which score sheets of the selected table do you want to print?</big></b>"
+msgstr "<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
 
 #: ../../sources/table.cpp:153
 msgid "<b><big>What do you want to print?</big></b>"
@@ -424,14 +417,8 @@ msgid "9999"
 msgstr "9999"
 
 #: ../../resources/glade/checkin.glade:105
-msgid ""
-"FFF (Fencing File Format) is a format specified by the FIE. It's used by the "
-"french federation to provide the competion organiser with the registered "
-"fencer list."
-msgstr ""
-"FFF (Fencing File Format) es un formato especificado por la FIE. Es "
-"utilizado por la federación francesa para facilitar al organizador de "
-"competiciones la liste de los tiradores registrados."
+msgid "FFF (Fencing File Format) is a format specified by the FIE. It's used by the french federation to provide the competion organiser with the registered fencer list."
+msgstr "FFF (Fencing File Format) es un formato especificado por la FIE. Es utilizado por la federación francesa para facilitar al organizador de competiciones la liste de los tiradores registrados."
 
 #: ../../resources/glade/checkin.glade:106
 msgid "Import .FFF file"
@@ -467,12 +454,8 @@ msgid "To specify the features of the competition."
 msgstr "Especificar las características de la competición."
 
 #: ../../resources/glade/contest.glade:51
-msgid ""
-"To configure the schedule of the competition in terms of pools, tables and "
-"other rounds."
-msgstr ""
-"Configurar la programación de la competición en cuanto a pools, tablas y "
-"otras rondas."
+msgid "To configure the schedule of the competition in terms of pools, tables and other rounds."
+msgstr "Configurar la programación de la competición en cuanto a pools, tablas y otras rondas."
 
 #: ../../resources/glade/contest.glade:52
 msgid "Formula"
@@ -547,12 +530,8 @@ msgstr "31/03/2009"
 #: ../../resources/glade/contest.glade:574
 #: ../../resources/glade/contest.glade:602
 #: ../../resources/glade/contest.glade:629
-msgid ""
-"Date and time are used to raise alarms to notify the organizer when events "
-"occur."
-msgstr ""
-"Fecha y hora se usan para lanzar alarmas de notificación al organizador "
-"cuando ocurren eventos."
+msgid "Date and time are used to raise alarms to notify the organizer when events occur."
+msgstr "Fecha y hora se usan para lanzar alarmas de notificación al organizador cuando ocurren eventos."
 
 #: ../../resources/glade/contest.glade:509
 #: ../../resources/glade/contest.glade:564
@@ -579,12 +558,8 @@ msgid "Allow"
 msgstr "Permitir"
 
 #: ../../resources/glade/contest.glade:700
-msgid ""
-"Make the automatic score stuffing button available. I can save the user "
-"boring data captures during training sessions."
-msgstr ""
-"Permitir rellanar el marcador automaticamente. Permite ahorrar al usuario la "
-"entrada tediosa de datos durante las sesiones de entrenamiento."
+msgid "Make the automatic score stuffing button available. I can save the user boring data captures during training sessions."
+msgstr "Permitir rellanar el marcador automaticamente. Permite ahorrar al usuario la entrada tediosa de datos durante las sesiones de entrenamiento."
 
 #: ../../resources/glade/contest.glade:712
 msgid "Forbid"
@@ -599,12 +574,8 @@ msgid "<b>Scores</b>"
 msgstr "<b>Marcadores</b>"
 
 #: ../../resources/glade/general_classification.glade:39
-msgid ""
-"Export the general classification to a \".csv\" file that a spreadsheet like "
-"Excel or OpenOffice can open."
-msgstr ""
-"Exportar la clasificación general a un fichero \".csv\" que se pueda abrir "
-"con Excel o OpenOffice."
+msgid "Export the general classification to a \".csv\" file that a spreadsheet like Excel or OpenOffice can open."
+msgstr "Exportar la clasificación general a un fichero \".csv\" que se pueda abrir con Excel o OpenOffice."
 
 #: ../../resources/glade/general_classification.glade:40
 msgid "Export"
@@ -654,24 +625,16 @@ msgid "Combined classification"
 msgstr "Clasificación combinada"
 
 #: ../../resources/glade/pool_supervisor.glade:153
-msgid ""
-"The classification cumulating  the current score and the scores of the "
-"previous pool rounds."
-msgstr ""
-"La clasificación cumulando el marcador actual con los marcadores de las "
-"rondas de pool previas."
+msgid "The classification cumulating  the current score and the scores of the previous pool rounds."
+msgstr "La clasificación cumulando el marcador actual con los marcadores de las rondas de pool previas."
 
 #: ../../resources/glade/pool_supervisor.glade:166
 msgid "Single classification"
 msgstr "Clasificación simple"
 
 #: ../../resources/glade/pool_supervisor.glade:170
-msgid ""
-"The classification of the current round that doesn't take into account the "
-"scores of the previous rounds. "
-msgstr ""
-"La clasificación de la ronda actual no contempla los marcadores de las "
-"rondas previas. "
+msgid "The classification of the current round that doesn't take into account the scores of the previous rounds. "
+msgstr "La clasificación de la ronda actual no contempla los marcadores de las rondas previas. "
 
 #: ../../resources/glade/pool_supervisor.glade:230
 #: ../../resources/glade/splitting.glade:81
@@ -1483,8 +1446,7 @@ msgid ""
 "notice like this when it starts in an interactive mode:\n"
 "\n"
 "    <program>  Copyright (C) <year>  <name of author>\n"
-"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
-"w'.\n"
+"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
 "    This is free software, and you are welcome to redistribute it\n"
 "    under certain conditions; type `show c' for details.\n"
 "\n"
@@ -1492,8 +1454,7 @@ msgid ""
 "parts of the General Public License.  Of course, your program's commands\n"
 "might be different; for a GUI interface, you would use an \"about box\".\n"
 "\n"
-"  You should also get your employer (if you work as a programmer) or "
-"school,\n"
+"  You should also get your employer (if you work as a programmer) or school,\n"
 "if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
 "For more information on this, and how to apply and follow the GNU GPL, see\n"
 "<http://www.gnu.org/licenses/>.\n"
@@ -1516,3 +1477,4 @@ msgstr ""
 
 msgid "points"
 msgstr "puntos"
+
