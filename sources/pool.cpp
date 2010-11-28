@@ -583,7 +583,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                               cell_h,
                                               "anchor", GTK_ANCHOR_CENTER,
                                               NULL);
-            SetDisplayData (player, on_canvas, "WithdrawalItem", goo_item);
+            SetDisplayData (player, on_canvas, "WithdrawalItem", w);
             x += cell_w;
 
             goo_item = goo_canvas_text_new (dashboard_group,
@@ -1144,7 +1144,7 @@ void Pool::RefreshDashBoard ()
   for (guint p = 0; p < nb_players; p++)
   {
     Player        *player;
-    GooCanvasItem *goo_text;
+    GooCanvasItem *goo_item;
     gchar         *text;
     Attribute     *attr;
     gint           value;
@@ -1152,14 +1152,33 @@ void Pool::RefreshDashBoard ()
 
     player = GetPlayer (p);
 
+    {
+      Player::AttributeId attr_id ("status", GetDataOwner ());
+
+      attr = player->GetAttribute (&attr_id);
+      data = player->GetData (GetDataOwner (), "WithdrawalItem");
+      if (attr && data)
+      {
+        text = (gchar *) attr->GetValue ();
+        if (text[0] == 'Q')
+        {
+          gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (data), FALSE);
+        }
+        else
+        {
+          gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (data), TRUE);
+        }
+      }
+    }
+
     attr_id._name = "victories_ratio";
     attr = player->GetAttribute (&attr_id);
     data = player->GetData (GetDataOwner (), "VictoriesRatioItem");
     if (data)
     {
-      goo_text = GOO_CANVAS_ITEM (data);
+      goo_item = GOO_CANVAS_ITEM (data);
       text = g_strdup_printf ("%0.3f", (gdouble) ((guint) attr->GetValue ()) / 1000.0);
-      g_object_set (goo_text,
+      g_object_set (goo_item,
                     "text",
                     text, NULL);
       g_free (text);
@@ -1169,9 +1188,9 @@ void Pool::RefreshDashBoard ()
     if (data)
     {
       value = (gint) player->GetData (GetDataOwner (), "Victories");
-      goo_text = GOO_CANVAS_ITEM (data);
+      goo_item = GOO_CANVAS_ITEM (data);
       text = g_strdup_printf ("%d", value);
-      g_object_set (goo_text,
+      g_object_set (goo_item,
                     "text",
                     text, NULL);
       g_free (text);
@@ -1182,9 +1201,9 @@ void Pool::RefreshDashBoard ()
     data = player->GetData (GetDataOwner (), "HSItem");
     if (data)
     {
-      goo_text = GOO_CANVAS_ITEM (data);
+      goo_item = GOO_CANVAS_ITEM (data);
       text = g_strdup_printf ("%d", (guint) attr->GetValue ());
-      g_object_set (goo_text,
+      g_object_set (goo_item,
                     "text",
                     text, NULL);
       g_free (text);
@@ -1194,9 +1213,9 @@ void Pool::RefreshDashBoard ()
     if (data)
     {
       value = (gint) player->GetData (GetDataOwner (), "HR");
-      goo_text = GOO_CANVAS_ITEM (data);
+      goo_item = GOO_CANVAS_ITEM (data);
       text = g_strdup_printf ("%d", -value);
-      g_object_set (goo_text,
+      g_object_set (goo_item,
                     "text",
                     text, NULL);
       g_free (text);
@@ -1207,9 +1226,9 @@ void Pool::RefreshDashBoard ()
     data = player->GetData (GetDataOwner (), "IndiceItem");
     if (data)
     {
-      goo_text = GOO_CANVAS_ITEM (data);
+      goo_item = GOO_CANVAS_ITEM (data);
       text = g_strdup_printf ("%+d", (gint) attr->GetValue ());
-      g_object_set (goo_text,
+      g_object_set (goo_item,
                     "text",
                     text, NULL);
       g_free (text);
@@ -1219,9 +1238,9 @@ void Pool::RefreshDashBoard ()
     if (data)
     {
       value = (gint) player->GetData (this, "Rank");
-      goo_text = GOO_CANVAS_ITEM (data);
+      goo_item = GOO_CANVAS_ITEM (data);
       text = g_strdup_printf ("%d", value);
-      g_object_set (goo_text,
+      g_object_set (goo_item,
                     "text",
                     text, NULL);
       g_free (text);

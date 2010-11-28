@@ -177,6 +177,22 @@ void PoolSupervisor::OnPlugged ()
 
     pool = _pool_allocator->GetPool (i);
     pool->SortPlayers ();
+
+    for (guint p = 0; p < pool->GetNbPlayers (); p++)
+    {
+      Player::AttributeId  attr_id ("status");
+      Attribute           *status_attr;
+      Player              *player;
+
+      player = pool->GetPlayer (p);
+
+      attr_id._owner = GetPreviousStage ();
+      status_attr = player->GetAttribute (&attr_id);
+
+      attr_id._owner = this;
+      player->SetAttributeValue (&attr_id,
+                                 (gchar *) status_attr->GetValue ());
+    }
   }
 
 }

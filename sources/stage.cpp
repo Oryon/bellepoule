@@ -257,6 +257,7 @@ void Stage::RetrieveAttendees ()
 
     {
       Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", this);
+      Player::AttributeId  status_attr_id ("status", this);
       GSList              *current = shortlist;
 
       for (guint i = 0; current != NULL; i++)
@@ -264,14 +265,11 @@ void Stage::RetrieveAttendees ()
         Player *player;
 
         player = (Player *) current->data;
+
         player->SetAttributeValue (&previous_rank_attr_id,
                                    i+1);
-        {
-          Player::AttributeId status_attr_id = Player::AttributeId ("status", this);
-
-          player->SetAttributeValue (&status_attr_id,
-                                     "Q");
-        }
+        player->SetAttributeValue (&status_attr_id,
+                                   "Q");
 
         current = g_slist_next (current);
       }
@@ -396,25 +394,36 @@ void Stage::LoadAttendees (xmlNode *n)
 
       if (player)
       {
-        Player::AttributeId attr_id ("previous_stage_rank", this);
-        gchar *rank_attr =  (gchar *) xmlGetProp (n, BAD_CAST "RangInitial");
-
-        if (rank_attr)
         {
-          player->SetAttributeValue (&attr_id,
-                                     atoi (rank_attr));
+          Player::AttributeId attr_id ("previous_stage_rank", this);
+          gchar *rank_attr =  (gchar *) xmlGetProp (n, BAD_CAST "RangInitial");
+
+          if (rank_attr)
+          {
+            player->SetAttributeValue (&attr_id,
+                                       atoi (rank_attr));
+          }
+          else
+          {
+            player->SetAttributeValue (&attr_id,
+                                       (guint) 0);
+          }
         }
-        else
-        {
-          player->SetAttributeValue (&attr_id,
-                                     (guint) 0);
-        }
 
         {
-          Player::AttributeId status_attr_id = Player::AttributeId ("status", this);
+          Player::AttributeId attr_id ("status", this);
+          gchar *status_attr =  (gchar *) xmlGetProp (n, BAD_CAST "Statut");
 
-          player->SetAttributeValue (&status_attr_id,
-                                     "Q");
+          if (status_attr)
+          {
+            player->SetAttributeValue (&attr_id,
+                                       status_attr);
+          }
+          else
+          {
+            player->SetAttributeValue (&attr_id,
+                                       "Q");
+          }
         }
       }
     }
@@ -781,40 +790,32 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       Player    *player;
       Attribute *rank;
       Attribute *previous_stage_rank;
-      Attribute *status = NULL;
+      Attribute *status;
 
       player = (Player *) current->data;
 
       {
         Player::AttributeId *rank_attr_id;
+        Player::AttributeId *status_attr_id;
         Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", this);
 
         if (GetInputProviderClient ())
         {
-          rank_attr_id = new Player::AttributeId ("rank", _next);
+          rank_attr_id   = new Player::AttributeId ("rank", _next);
+          status_attr_id = new Player::AttributeId ("status", _next);
         }
         else
         {
-          rank_attr_id = new Player::AttributeId ("rank", this);
+          rank_attr_id   = new Player::AttributeId ("rank", this);
+          status_attr_id = new Player::AttributeId ("status", this);
         }
 
         rank                = player->GetAttribute (rank_attr_id);
         previous_stage_rank = player->GetAttribute (&previous_rank_attr_id);
+        status              = player->GetAttribute (status_attr_id);
 
         rank_attr_id->Release ();
-      }
-
-      if (_classification)
-      {
-        Player::AttributeId status_attr_id ("status", _classification->GetDataOwner ());
-
-        status = player->GetAttribute (&status_attr_id);
-      }
-      else if (_next && _next->_input_provider && _next->_classification)
-      {
-        Player::AttributeId status_attr_id ("status", _next->_classification->GetDataOwner ());
-
-        status = player->GetAttribute (&status_attr_id);
+        status_attr_id->Release ();
       }
 
       xmlTextWriterStartElement (xml_writer,
