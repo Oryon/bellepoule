@@ -268,7 +268,7 @@ GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
   Match         *match     = (Match *) g_object_get_data (G_OBJECT (widget), "match");
   GooCanvasItem *next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
 
-  if (next_item)
+  while (next_item)
   {
     Match *next_match = (Match *) g_object_get_data (G_OBJECT (next_item), "match");
 
@@ -277,6 +277,12 @@ GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
     {
       return NULL;
     }
+    else if (next_match->IsDropped () == FALSE)
+    {
+      return next_item;
+    }
+
+    next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (next_item), "next_point");
   }
 
   return next_item;
