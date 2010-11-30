@@ -217,13 +217,7 @@ void Player::SetAttributeValue (AttributeId *attr_id,
              (GDestroyNotify) Object::TryToRelease);
   }
 
-  {
-    AttributeDesc *desc       = attr->GetDesc ();
-    gchar         *user_image = desc->GetUserImage (value);
-
-    attr->SetValue (user_image);
-    g_free (user_image);
-  }
+  attr->SetValue (value);
 
   NotifyChange (attr);
 }

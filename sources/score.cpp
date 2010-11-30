@@ -25,6 +25,7 @@ Score::Score  (Data *max)
 {
   _score       = 0;
   _is_known    = FALSE;
+  _is_dropped  = FALSE;
   _max         = max;
   _is_the_best = FALSE;
 }
@@ -37,19 +38,26 @@ Score::~Score ()
 // --------------------------------------------------------------------------------
 gboolean Score::IsKnown ()
 {
-  return _is_known;
+  return _is_known || (_is_dropped == TRUE);
 }
 
 // --------------------------------------------------------------------------------
 gboolean Score::IsTheBest ()
 {
-  return _is_the_best;
+  return _is_the_best && (_is_dropped == FALSE);
 }
 
 // --------------------------------------------------------------------------------
 guint Score::Get ()
 {
-  return _score;
+  if (_is_dropped)
+  {
+    return 0;
+  }
+  else
+  {
+    return _score;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -57,7 +65,11 @@ gchar *Score::GetImage ()
 {
   gchar *image;
 
-  if (_is_known)
+  if (_is_dropped)
+  {
+    image = g_strdup_printf (" ");
+  }
+  else if (_is_known)
   {
     if (_score == _max->_value)
     {
@@ -83,7 +95,20 @@ gchar *Score::GetImage ()
 // --------------------------------------------------------------------------------
 void Score::Clean ()
 {
-  _is_known = FALSE;
+  _is_known   = FALSE;
+  _is_dropped = FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Score::Drop ()
+{
+  _is_dropped = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void Score::Restore ()
+{
+  _is_dropped = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -126,6 +151,9 @@ gboolean Score::IsConsistentWith (Score *with)
       || (with->IsKnown () == FALSE))
   {
     return TRUE;
+  }
+  else if (_is_dropped && with->_is_dropped)
+  {
   }
   else if (_is_the_best == with->_is_the_best)
   {

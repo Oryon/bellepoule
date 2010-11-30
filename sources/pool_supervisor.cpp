@@ -183,16 +183,29 @@ void PoolSupervisor::OnPlugged ()
       Player::AttributeId  attr_id ("status");
       Attribute           *status_attr;
       Player              *player;
+      gchar               *status;
 
       player = pool->GetPlayer (p);
 
       attr_id._owner = GetPreviousStage ();
       status_attr = player->GetAttribute (&attr_id);
 
+      status = (gchar *) status_attr->GetValue ();
+
       attr_id._owner = this;
       player->SetAttributeValue (&attr_id,
-                                 (gchar *) status_attr->GetValue ());
+                                 status);
+
+      if (   (status[0] == 'A')
+          || (status[0] == 'F')
+          || (status[0] == 'E'))
+      {
+        pool->DropPlayer (player,
+                          status);
+      }
     }
+
+    pool->RefreshScoreData ();
   }
 
 }
@@ -236,6 +249,7 @@ gint PoolSupervisor::CompareSingleClassification (Player         *A,
                               B,
                               pool_supervisor->_single_owner,
                               pool_supervisor->_rand_seed,
+                              pool_supervisor->GetDataOwner (),
                               Pool::WITH_CALCULUS | Pool::WITH_RANDOM);
 }
 
@@ -248,6 +262,7 @@ gint PoolSupervisor::CompareCombinedClassification (Player         *A,
                               B,
                               pool_supervisor,
                               pool_supervisor->_rand_seed,
+                              pool_supervisor->GetDataOwner (),
                               Pool::WITH_CALCULUS | Pool::WITH_RANDOM);
 }
 
@@ -355,7 +370,6 @@ void PoolSupervisor::Manage (Pool *pool)
   pool->SetFilter (_filter);
   pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                       this);
-  pool->RefreshScoreData ();
 }
 
 // --------------------------------------------------------------------------------
@@ -745,6 +759,7 @@ GSList *PoolSupervisor::EvaluateClassification (GSList           *list,
                                  previous_player,
                                  rank_owner,
                                  0,
+                                 GetDataOwner (),
                                  Pool::WITH_CALCULUS) == 0))
     {
       player->SetAttributeValue (attr_id,

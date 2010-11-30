@@ -575,20 +575,26 @@ gboolean TextAttribute::EntryIsTextBased ()
 // --------------------------------------------------------------------------------
 gchar *TextAttribute::GetXmlImage ()
 {
-  gchar *image = _desc->GetXmlImage (_value);
+  return g_strdup (_value);
+}
 
-  if (image == NULL)
-  {
-    image = GetUserImage ();
-  }
-
-  return image;
+// --------------------------------------------------------------------------------
+void *TextAttribute::GetListStoreValue ()
+{
+  return GetUserImage ();
 }
 
 // --------------------------------------------------------------------------------
 gchar *TextAttribute::GetUserImage ()
 {
-  return g_strdup (_value);
+  if (_desc->HasDiscreteValue ())
+  {
+    return _desc->GetUserImage (_value);
+  }
+  else
+  {
+    return g_strdup (_value);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -662,6 +668,12 @@ gboolean BooleanAttribute::EntryIsTextBased ()
 gchar *BooleanAttribute::GetXmlImage ()
 {
   return GetUserImage ();
+}
+
+// --------------------------------------------------------------------------------
+void *BooleanAttribute::GetListStoreValue ()
+{
+  return (void *) _value;
 }
 
 // --------------------------------------------------------------------------------
@@ -741,6 +753,12 @@ gboolean IntAttribute::EntryIsTextBased ()
 gchar *IntAttribute::GetXmlImage ()
 {
   return GetUserImage ();
+}
+
+// --------------------------------------------------------------------------------
+void *IntAttribute::GetListStoreValue ()
+{
+  return (void *) _value;
 }
 
 // --------------------------------------------------------------------------------

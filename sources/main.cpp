@@ -211,7 +211,7 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("status"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
     desc->_scope = AttributeDesc::GLOBAL;
     desc->AddDiscreteValues ("Q", gettext ("Qualified"),
                              "N", gettext ("Not qualified"),

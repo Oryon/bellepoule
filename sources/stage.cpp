@@ -175,6 +175,37 @@ void Stage::UnLock ()
     _next->_attendees = NULL;
   }
 
+  if (_attendees)
+  {
+    GSList *current = _attendees->GetShortList ();
+    Player::AttributeId  status_attr_id ("status", this);
+
+    for (guint i = 0; current != NULL; i++)
+    {
+      Player *player;
+
+      player = (Player *) current->data;
+
+      if (GetInputProviderClient ())
+      {
+        player->SetAttributeValue (&status_attr_id,
+                                   "Q");
+      }
+      else
+      {
+        Attribute *status = player->GetAttribute (&status_attr_id);
+
+        if (status && (* ((gchar *) status->GetValue ()) == 'N'))
+        {
+          player->SetAttributeValue (&status_attr_id,
+                                     "Q");
+        }
+      }
+
+      current = g_slist_next (current);
+    }
+  }
+
   _locked = false;
   OnUnLocked ();
 }
@@ -301,13 +332,13 @@ GSList *Stage::GetOutputShortlist ()
 
     // remove all of the withdrawalls and black cards
     {
-      GSList *remove_list = NULL;
+      GSList *current = g_slist_last (shortlist);
 
-      for (guint i = 0; i < g_slist_length (shortlist); i++)
+      while (current)
       {
         Player *player;
 
-        player = (Player *) g_slist_nth_data (shortlist, i);
+        player = (Player *) current->data;
         {
           Attribute *status_attr = player->GetAttribute (&stage_attr_id);
 
@@ -315,35 +346,24 @@ GSList *Stage::GetOutputShortlist ()
           {
             gchar *value = (gchar *) status_attr->GetValue ();
 
-            if (value && value[0] != 'Q')
+            if (value
+                && (value[0] != 'Q') && value[0] != 'N')
             {
-              remove_list = g_slist_prepend (remove_list,
-                                             (void *) player);
+              shortlist = g_slist_delete_link (shortlist,
+                                               current);
+              if (nb_to_remove > 0)
+              {
+                nb_to_remove--;
+              }
+            }
+            else
+            {
+              break;
             }
           }
         }
+        current = g_slist_last (shortlist);
       }
-
-      for (guint i = 0; i < g_slist_length (remove_list); i++)
-      {
-        void *excluded;
-
-        excluded = g_slist_find (shortlist,
-                                 g_slist_nth_data (remove_list, i));
-        shortlist = g_slist_remove (shortlist,
-                                    excluded);
-      }
-
-      if (nb_to_remove > g_slist_length (remove_list))
-      {
-        nb_to_remove -= g_slist_length (remove_list);
-      }
-      else
-      {
-        nb_to_remove = 0;
-      }
-
-      g_slist_free (remove_list);
     }
 
     // remove the reamaing players to reach the quota

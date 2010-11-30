@@ -135,6 +135,8 @@ class Attribute : public Object
 
     virtual gchar *GetXmlImage () = 0;
 
+    virtual void *GetListStoreValue () = 0;
+
     virtual gint CompareWith (Attribute *with) = 0;
 
     virtual Attribute *Duplicate () = 0;
@@ -169,6 +171,8 @@ class TextAttribute : public Attribute
 
     gchar *GetXmlImage ();
 
+    void *GetListStoreValue ();
+
     gint CompareWith (Attribute *with);
 
     Attribute *Duplicate ();
@@ -198,6 +202,8 @@ class BooleanAttribute : public Attribute
 
     gchar *GetXmlImage ();
 
+    void *GetListStoreValue ();
+
     gint CompareWith (Attribute *with);
 
     Attribute *Duplicate ();
@@ -225,6 +231,8 @@ class IntAttribute : public Attribute
     gchar *GetUserImage ();
 
     gchar *GetXmlImage ();
+
+    void *GetListStoreValue ();
 
     gint CompareWith (Attribute *with);
 

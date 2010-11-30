@@ -40,7 +40,14 @@ class Match : public Object
     Player *GetWinner  ();
 
     void SetPlayerA (Player *player);
+
     void SetPlayerB (Player *player);
+
+    void DropPlayer (Player *player);
+
+    gboolean IsDropped ();
+
+    void RestorePlayer (Player *player);
 
     gboolean HasPlayer (Player *player);
 
@@ -70,6 +77,8 @@ class Match : public Object
     Data     *_max_score;
     Player   *_A;
     Player   *_B;
+    gboolean  _A_is_dropped;
+    gboolean  _B_is_dropped;
     gboolean  _A_is_known;
     gboolean  _B_is_known;
     Score    *_A_score;
