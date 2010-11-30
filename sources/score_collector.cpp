@@ -321,7 +321,7 @@ void ScoreCollector::SetMatchColor (Match *match,
                                     gchar *consistent_color,
                                     gchar *unconsitentcolor)
 {
-  if (match)
+  if (match && (match->IsDropped () == FALSE))
   {
     GooCanvasItem *rect;
     gchar         *color_A = consistent_color;
@@ -331,27 +331,19 @@ void ScoreCollector::SetMatchColor (Match *match,
     Score         *score_A = match->GetScore (A);
     Score         *score_B = match->GetScore (B);
 
-    if (match->IsDropped ())
+    if (score_A->IsValid () == false)
     {
-        color_A = "Light Grey";
-        color_B = "Light Grey";
+      color_A = unconsitentcolor;
     }
-    else
+    if (score_B->IsValid () == false)
     {
-      if (score_A->IsValid () == false)
-      {
-        color_A = unconsitentcolor;
-      }
-      if (score_B->IsValid () == false)
-      {
-        color_B = unconsitentcolor;
-      }
+      color_B = unconsitentcolor;
+    }
 
-      if (score_A->IsConsistentWith (score_B) == false)
-      {
-        color_A = unconsitentcolor;
-        color_B = unconsitentcolor;
-      }
+    if (score_A->IsConsistentWith (score_B) == false)
+    {
+      color_A = unconsitentcolor;
+      color_B = unconsitentcolor;
     }
 
     rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");

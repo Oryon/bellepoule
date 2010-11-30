@@ -28,6 +28,12 @@
 class GeneralClassification : public virtual Stage, public PlayersList
 {
   public:
+    typedef enum
+    {
+      CSV,
+      FFF
+    } ExportType;
+
     static void Init ();
 
     GeneralClassification (StageClass *stage_class);
@@ -36,7 +42,7 @@ class GeneralClassification : public virtual Stage, public PlayersList
 
     void OnPrintPoolToolbuttonClicked ();
 
-    void OnExportToolbuttonClicked ();
+    void OnExportToolbuttonClicked (ExportType export_type);
 
   private:
     static const gchar *_class_name;

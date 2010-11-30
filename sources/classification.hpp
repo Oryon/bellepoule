@@ -27,8 +27,10 @@ class Classification : public PlayersList
   public:
     Classification (Filter *filter);
 
-    void Dump (gchar  *filename,
-               GSList *attr_list);
+    void DumpToCSV (gchar  *filename,
+                    GSList *attr_list);
+
+    void DumpToFFF (gchar  *filename);
 
     void SortDisplay ();
 
@@ -37,6 +39,10 @@ class Classification : public PlayersList
 
   private:
     void OnPlugged ();
+
+    void WriteFFFString (FILE   *file,
+                         Player *player,
+                         gchar  *attr_name);
 
     ~Classification ();
 };

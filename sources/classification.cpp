@@ -66,8 +66,8 @@ void Classification::SetSortFunction (GtkTreeIterCompareFunc sort_func,
 }
 
 // --------------------------------------------------------------------------------
-void Classification::Dump (gchar  *filename,
-                           GSList *attr_list)
+void Classification::DumpToCSV (gchar  *filename,
+                                GSList *attr_list)
 {
   FILE *file = g_fopen (filename, "w");
 
@@ -125,5 +125,135 @@ void Classification::Dump (gchar  *filename,
       current_player = g_slist_next (current_player);
     }
     fclose (file);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Classification::DumpToFFF (gchar  *filename)
+{
+  FILE *file = g_fopen (filename, "w");
+
+  if (file)
+  {
+    GSList *current_player = _player_list;
+
+    while (current_player)
+    {
+      Player *player;
+
+      player = (Player *) current_player->data;
+      {
+        // General
+        {
+          WriteFFFString (file,
+                          player,
+                          "name");
+          fprintf (file, ",");
+
+          WriteFFFString (file,
+                          player,
+                          "first_name");
+          fprintf (file, ",");
+
+          WriteFFFString (file,
+                          player,
+                          "birth_date");
+          fprintf (file, ",");
+
+          WriteFFFString (file,
+                          player,
+                          "gender");
+          fprintf (file, ",");
+
+          WriteFFFString (file,
+                          player,
+                          "country");
+          fprintf (file, ",");
+
+          fprintf (file, ";");
+        }
+
+        // FIE
+        {
+          fprintf (file, ",,;");
+        }
+
+        // National federation
+        {
+          WriteFFFString (file,
+                          player,
+                          "licence");
+          fprintf (file, ",");
+
+          WriteFFFString (file,
+                          player,
+                          "league");
+          fprintf (file, ",");
+
+          WriteFFFString (file,
+                          player,
+                          "club");
+          fprintf (file, ",");
+
+          WriteFFFString (file,
+                          player,
+                          "rating");
+          fprintf (file, ",");
+
+          fprintf (file, ",;");
+        }
+
+        // Results
+        {
+          WriteFFFString (file,
+                          player,
+                          "final_rank");
+          fprintf (file, ",");
+
+          //attr_id._name = "final_rank";
+          //attr = player->GetAttribute (&attr_id);
+          //fprintf (file, "%s,", attr->GetXmlImage ());
+          fprintf (file, "t");
+        }
+      }
+      fprintf (file, "\n");
+      current_player = g_slist_next (current_player);
+    }
+    fclose (file);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Classification::WriteFFFString (FILE   *file,
+                                     Player *player,
+                                     gchar  *attr_name)
+{
+  Player::AttributeId  attr_id (attr_name);
+  Attribute           *attr = player->GetAttribute (&attr_id);
+
+  if (attr)
+  {
+    gsize   bytes_written;
+    GError *error = NULL;
+    gchar  *result;
+
+    result = g_convert (attr->GetXmlImage (),
+                        -1,
+                        "ISO-8859-1",
+                        "UTF-8",
+                        NULL,
+                        &bytes_written,
+                        &error);
+
+    if (error)
+    {
+      g_print ("<<GetFFFString>> %s\n", error->message);
+      g_clear_error (&error);
+    }
+    else
+    {
+      fprintf (file, "%s", result);
+      g_free (result);
+    }
   }
 }

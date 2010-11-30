@@ -348,6 +348,11 @@ void Pool::Draw (GooCanvas *on_canvas,
 
                 match = GetMatch (A, B);
 
+                if (match->IsDropped ())
+                {
+                  g_object_set (goo_rect, "fill-color", "grey", NULL);
+                }
+
                 // Text
                 {
                   gchar *score_image;
@@ -1201,12 +1206,9 @@ void Pool::RefreshDashBoard ()
           if (   (text[0] == 'Q')
               || (text[0] == 'N'))
           {
-            if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (data)) != FALSE)
-            {
-              gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (data), FALSE);
-            }
+            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (data), FALSE);
           }
-          else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (data)) != TRUE)
+          else
           {
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (data), TRUE);
           }

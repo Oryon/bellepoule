@@ -168,7 +168,7 @@ void GeneralClassification::OnPrintPoolToolbuttonClicked ()
 }
 
 // --------------------------------------------------------------------------------
-void GeneralClassification::OnExportToolbuttonClicked ()
+void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
 {
   char *filename = NULL;
 
@@ -210,10 +210,21 @@ void GeneralClassification::OnExportToolbuttonClicked ()
     {
       GtkFileFilter *filter = gtk_file_filter_new ();
 
-      gtk_file_filter_set_name (filter,
-                                gettext ("All Excel files (.CSV)"));
-      gtk_file_filter_add_pattern (filter,
-                                   "*.CSV");
+      if (export_type == CSV)
+      {
+        gtk_file_filter_set_name (filter,
+                                  gettext ("All Excel files (.CSV)"));
+        gtk_file_filter_add_pattern (filter,
+                                     "*.CSV");
+      }
+      else
+      {
+        gtk_file_filter_set_name (filter,
+                                  gettext ("All FFF files (.FFF)"));
+        gtk_file_filter_add_pattern (filter,
+                                     "*.FFF");
+      }
+
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                    filter);
     }
@@ -235,6 +246,17 @@ void GeneralClassification::OnExportToolbuttonClicked ()
 
       if (filename)
       {
+        gchar *suffix;
+
+        if (export_type == CSV)
+        {
+          suffix = ".csv";
+        }
+        else
+        {
+          suffix = ".fff";
+        }
+
         {
           gchar *dirname = g_path_get_dirname (filename);
 
@@ -245,11 +267,11 @@ void GeneralClassification::OnExportToolbuttonClicked ()
           g_free (dirname);
         }
 
-        if (strcmp ((const char *) ".csv", (const char *) &filename[strlen (filename) - strlen (".csv")]) != 0)
+        if (strcmp ((const char *) suffix, (const char *) &filename[strlen (filename) - strlen (suffix)]) != 0)
         {
           gchar *with_suffix;
 
-          with_suffix = g_strdup_printf ("%s.csv", filename);
+          with_suffix = g_strdup_printf ("%s%s", filename, suffix);
           g_free (filename);
           filename = with_suffix;
 
@@ -275,8 +297,15 @@ void GeneralClassification::OnExportToolbuttonClicked ()
 
     if (classification)
     {
-      classification->Dump (filename,
-                            _filter->GetAttrList ());
+        if (export_type == CSV)
+        {
+          classification->DumpToCSV (filename,
+                                     _filter->GetAttrList ());
+        }
+        else
+        {
+          classification->DumpToFFF (filename);
+        }
     }
   }
 }
@@ -300,10 +329,19 @@ extern "C" G_MODULE_EXPORT void on_general_classification_print_toolbutton_click
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_export_toolbutton_clicked (GtkWidget *widget,
-                                                              Object    *owner)
+extern "C" G_MODULE_EXPORT void on_export_csv_toolbutton_clicked (GtkWidget *widget,
+                                                                  Object    *owner)
 {
   GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-  g->OnExportToolbuttonClicked ();
+  g->OnExportToolbuttonClicked (GeneralClassification::CSV);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_export_fff_toolbutton_clicked (GtkWidget *widget,
+                                                                  Object    *owner)
+{
+  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+
+  g->OnExportToolbuttonClicked (GeneralClassification::FFF);
 }
