@@ -304,7 +304,8 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
         }
         else
         {
-          classification->DumpToFFF (filename);
+          classification->DumpToFFF (filename,
+                                     _contest);
         }
     }
   }

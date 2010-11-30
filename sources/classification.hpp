@@ -22,6 +22,8 @@
 #include "attribute.hpp"
 #include "players_list.hpp"
 
+class Contest;
+
 class Classification : public PlayersList
 {
   public:
@@ -30,7 +32,8 @@ class Classification : public PlayersList
     void DumpToCSV (gchar  *filename,
                     GSList *attr_list);
 
-    void DumpToFFF (gchar  *filename);
+    void DumpToFFF (gchar   *filename,
+                    Contest *contest);
 
     void SortDisplay ();
 

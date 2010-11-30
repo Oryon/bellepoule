@@ -18,6 +18,7 @@
 #include <glib/gstdio.h>
 
 #include "attribute.hpp"
+#include "contest.hpp"
 #include "player.hpp"
 
 #include "classification.hpp"
@@ -129,13 +130,23 @@ void Classification::DumpToCSV (gchar  *filename,
 }
 
 // --------------------------------------------------------------------------------
-void Classification::DumpToFFF (gchar  *filename)
+void Classification::DumpToFFF (gchar   *filename,
+                                Contest *contest)
 {
   FILE *file = g_fopen (filename, "w");
 
   if (file)
   {
     GSList *current_player = _player_list;
+
+    fprintf (file, "FFF;WIN;competition;%s;individuel\n", contest->GetOrganizer ());
+    fprintf (file, "%s;%s;%s;%s;%s;%s\n",
+             contest->GetDate (),
+             contest->GetWeapon (),
+             contest->GetGender (),
+             contest->GetCategory (),
+             contest->GetName (),
+             contest->GetName ());
 
     while (current_player)
     {
