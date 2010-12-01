@@ -801,8 +801,16 @@ void Pool::Draw (GooCanvas *on_canvas,
     player = GetPlayer (i);
     w      = GTK_WIDGET (player->GetData (this, "check_button"));
 
-    g_signal_connect (w, "toggled",
-                      G_CALLBACK (on_withdrawal_toggled), this);
+    if (_locked)
+    {
+      gtk_widget_set_sensitive (w,
+                                FALSE);
+    }
+    else
+    {
+      g_signal_connect (w, "toggled",
+                        G_CALLBACK (on_withdrawal_toggled), this);
+    }
     player->RemoveData (this, "check_button");
   }
 }
@@ -952,6 +960,13 @@ void Pool::Lock ()
   {
     _score_collector->Lock ();
   }
+
+  if (_title_table)
+  {
+    Wipe ();
+    Draw (GetCanvas (),
+          FALSE);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -962,6 +977,13 @@ void Pool::UnLock ()
   if (_score_collector)
   {
     _score_collector->UnLock ();
+  }
+
+  if (_title_table)
+  {
+    Wipe ();
+    Draw (GetCanvas (),
+          FALSE);
   }
 }
 
