@@ -221,10 +221,19 @@ void Classification::DumpToFFF (gchar   *filename,
                           "final_rank");
           fprintf (file, ",");
 
-          //attr_id._name = "final_rank";
-          //attr = player->GetAttribute (&attr_id);
-          //fprintf (file, "%s,", attr->GetXmlImage ());
-          fprintf (file, "t");
+          {
+            Player::AttributeId  attr_id ("global_status");
+            Attribute           *attr = player->GetAttribute (&attr_id);
+
+            if (attr && (* ((gchar *) attr->GetValue ()) != 'Q'))
+            {
+              fprintf (file, "p");
+            }
+            else
+            {
+              fprintf (file, "t");
+            }
+          }
         }
       }
       fprintf (file, "\n");
