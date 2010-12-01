@@ -88,6 +88,6 @@
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
+    <property name="pixbuf">fff.png</property>
   </object>
 </interface>

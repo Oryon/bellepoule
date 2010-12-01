@@ -66,11 +66,12 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "status",
+                               "global_status",
                                "start_rank",
                                "final_rank",
                                "attending",
                                "exported",
-                               "status",
                                "victories_ratio",
                                "indice",
                                "HS",
@@ -112,6 +113,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "global_status",
                                "start_rank",
                                "final_rank",
                                "attending",
@@ -126,6 +128,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
     filter->ShowAttribute ("victories_ratio");
     filter->ShowAttribute ("indice");
     filter->ShowAttribute ("HS");
+    filter->ShowAttribute ("status");
 
     SetClassificationFilter (filter);
     filter->Release ();

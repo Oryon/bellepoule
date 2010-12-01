@@ -179,6 +179,7 @@ void Stage::UnLock ()
   {
     GSList *current = _attendees->GetShortList ();
     Player::AttributeId  status_attr_id ("status", this);
+    Player::AttributeId  global_status_attr_id ("global_status");
 
     for (guint i = 0; current != NULL; i++)
     {
@@ -190,6 +191,8 @@ void Stage::UnLock ()
       {
         player->SetAttributeValue (&status_attr_id,
                                    "Q");
+        player->SetAttributeValue (&global_status_attr_id,
+                                   "Q");
       }
       else
       {
@@ -198,6 +201,8 @@ void Stage::UnLock ()
         if (status && (* ((gchar *) status->GetValue ()) == 'N'))
         {
           player->SetAttributeValue (&status_attr_id,
+                                     "Q");
+          player->SetAttributeValue (&global_status_attr_id,
                                      "Q");
         }
       }
@@ -289,6 +294,7 @@ void Stage::RetrieveAttendees ()
     {
       Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", this);
       Player::AttributeId  status_attr_id ("status", this);
+      Player::AttributeId  global_status_attr_id ("global_status");
       GSList              *current = shortlist;
 
       for (guint i = 0; current != NULL; i++)
@@ -300,6 +306,8 @@ void Stage::RetrieveAttendees ()
         player->SetAttributeValue (&previous_rank_attr_id,
                                    i+1);
         player->SetAttributeValue (&status_attr_id,
+                                   "Q");
+        player->SetAttributeValue (&global_status_attr_id,
                                    "Q");
 
         current = g_slist_next (current);
@@ -327,8 +335,9 @@ GSList *Stage::GetOutputShortlist ()
   {
     Module             *module          = dynamic_cast <Module *> (this);
     guint               nb_to_remove    = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
-    Player::AttributeId stage_attr_id   = Player::AttributeId ("status", module->GetDataOwner ());
-    Player::AttributeId classif_attr_id = Player::AttributeId ("status", classification->GetDataOwner ());
+    Player::AttributeId stage_attr_id         ("status", module->GetDataOwner ());
+    Player::AttributeId classif_attr_id       ("status", classification->GetDataOwner ());
+    Player::AttributeId global_status_attr_id ("global_status");
 
     // remove all of the withdrawalls and black cards
     {
@@ -349,6 +358,8 @@ GSList *Stage::GetOutputShortlist ()
             if (value
                 && (value[0] != 'Q') && value[0] != 'N')
             {
+              player->SetAttributeValue (&global_status_attr_id,
+                                         value);
               shortlist = g_slist_delete_link (shortlist,
                                                current);
               if (nb_to_remove > 0)
@@ -378,6 +389,8 @@ GSList *Stage::GetOutputShortlist ()
       player->SetAttributeValue (&stage_attr_id,
                                  "N");
       player->SetAttributeValue (&classif_attr_id,
+                                 "N");
+      player->SetAttributeValue (&global_status_attr_id,
                                  "N");
 
       shortlist = g_slist_delete_link (shortlist,
@@ -431,17 +444,22 @@ void Stage::LoadAttendees (xmlNode *n)
         }
 
         {
-          Player::AttributeId attr_id ("status", this);
+          Player::AttributeId status_attr_id        ("status", this);
+          Player::AttributeId global_status_attr_id ("global_status");
           gchar *status_attr =  (gchar *) xmlGetProp (n, BAD_CAST "Statut");
 
           if (status_attr)
           {
-            player->SetAttributeValue (&attr_id,
+            player->SetAttributeValue (&status_attr_id,
+                                       status_attr);
+            player->SetAttributeValue (&global_status_attr_id,
                                        status_attr);
           }
           else
           {
-            player->SetAttributeValue (&attr_id,
+            player->SetAttributeValue (&status_attr_id,
+                                       "Q");
+            player->SetAttributeValue (&global_status_attr_id,
                                        "Q");
           }
         }

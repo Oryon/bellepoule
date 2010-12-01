@@ -83,11 +83,12 @@ Table::Table (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "status",
+                               "global_status",
                                "start_rank",
                                "final_rank",
                                "attending",
                                "exported",
-                               "status",
                                "victories_ratio",
                                "indice",
                                "HS",
@@ -112,6 +113,7 @@ Table::Table (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "global_status",
                                "start_rank",
                                "final_rank",
                                "attending",
@@ -127,6 +129,7 @@ Table::Table (StageClass *stage_class)
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
+    filter->ShowAttribute ("status");
 
     SetClassificationFilter (filter);
     filter->Release ();
