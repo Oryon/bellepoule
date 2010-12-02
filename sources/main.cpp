@@ -207,9 +207,27 @@ int main (int argc, char **argv)
     desc->_compare_func = (GCompareFunc) CompareRating;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness  = AttributeDesc::NOT_SINGULAR;
+    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
+    desc->_scope  = AttributeDesc::GLOBAL;
+    desc->_rights = AttributeDesc::PRIVATE;
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"),
+                             "N", gettext ("Not qualified"),
+                             "A", gettext ("Withdrawal"),
+                             "E", gettext ("Excluded"),
+                             "F", gettext ("Forfeit"), NULL);
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "status", "Statut", gettext ("status"));
+    desc->_scope = AttributeDesc::LOCAL;
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"),
+                             "N", gettext ("Not qualified"),
+                             "A", gettext ("Withdrawal"),
+                             "E", gettext ("Excluded"),
+                             "F", gettext ("Forfeit"), NULL);
 
     // Not persistent data
     {

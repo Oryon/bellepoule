@@ -54,6 +54,8 @@ Checkin::Checkin (StageClass *stage_class)
                                "ref",
                                "start_rank",
 #endif
+                               "status",
+                               "global_status",
                                "previous_stage_rank",
                                "exported",
                                "final_rank",
@@ -1076,15 +1078,20 @@ void Checkin::OnAttendingChanged (Player    *player,
                                   Attribute *attr,
                                   Checkin   *checkin)
 {
-  guint value = (guint) attr->GetValue ();
+  guint               value = (guint) attr->GetValue ();
+  Player::AttributeId global_status_attr_id ("global_status");
 
   if (value == 1)
   {
     checkin->_attendings++;
+    player->SetAttributeValue (&global_status_attr_id,
+                               "Q");
   }
   else if (value == 0)
   {
     checkin->_attendings--;
+    player->SetAttributeValue (&global_status_attr_id,
+                               "F");
   }
 
   checkin->RefreshAttendingDisplay ();

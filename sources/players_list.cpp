@@ -139,7 +139,7 @@ void PlayersList::Update (Player *player)
       if (attr)
       {
         gtk_list_store_set (_store, &iter,
-                            i, attr->GetValue (), -1);
+                            i, attr->GetListStoreValue (), -1);
       }
       else
       {

@@ -268,7 +268,7 @@ GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
   Match         *match     = (Match *) g_object_get_data (G_OBJECT (widget), "match");
   GooCanvasItem *next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget), "next_point");
 
-  if (next_item)
+  while (next_item)
   {
     Match *next_match = (Match *) g_object_get_data (G_OBJECT (next_item), "match");
 
@@ -277,6 +277,12 @@ GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
     {
       return NULL;
     }
+    else if (next_match->IsDropped () == FALSE)
+    {
+      return next_item;
+    }
+
+    next_item = (GooCanvasItem *) g_object_get_data (G_OBJECT (next_item), "next_point");
   }
 
   return next_item;
@@ -315,7 +321,7 @@ void ScoreCollector::SetMatchColor (Match *match,
                                     gchar *consistent_color,
                                     gchar *unconsitentcolor)
 {
-  if (match)
+  if (match && (match->IsDropped () == FALSE))
   {
     GooCanvasItem *rect;
     gchar         *color_A = consistent_color;
@@ -394,54 +400,56 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
                    _consistent_focus_color,
                    _unconsistent_focus_color);
 
-    if (match)
+    if (match && (match->IsDropped () == FALSE))
     {
-      gpointer next_point   = g_object_get_data (G_OBJECT (goo_rect), "next_point");
-      gpointer score_text   = g_object_get_data (G_OBJECT (goo_rect), "score_text");
-      Score    *score       = match->GetScore (player);
-      gchar    *score_image = score->GetImage ();
-
-      _gtk_entry  = gtk_entry_new ();
-      gtk_entry_set_text (GTK_ENTRY (_gtk_entry),
-                          score_image);
-      g_free (score_image);
-
-      g_object_set_data (G_OBJECT (_gtk_entry), "match",  match);
-      g_object_set_data (G_OBJECT (_gtk_entry), "player", player);
-      g_object_set_data (G_OBJECT (_gtk_entry), "score_text", score_text);
-      g_object_set_data (G_OBJECT (_gtk_entry), "next_point", next_point);
-    }
-
-    {
-      GooCanvasBounds bounds;
-
-      goo_canvas_item_get_bounds ((GooCanvasItem *) goo_rect,
-                                  &bounds);
-
       {
-        gdouble x = (bounds.x1 + bounds.x2) / 2;
-        gdouble y = (bounds.y1 + bounds.y2) / 2;
-        gdouble w = (bounds.x2 - bounds.x1) - 8;
-        gdouble h = (bounds.y2 - bounds.y1) - 8;
+        gpointer next_point   = g_object_get_data (G_OBJECT (goo_rect), "next_point");
+        gpointer score_text   = g_object_get_data (G_OBJECT (goo_rect), "score_text");
+        Score    *score       = match->GetScore (player);
+        gchar    *score_image = score->GetImage ();
 
-        _entry_item = goo_canvas_widget_new (goo_canvas_get_root_item (goo_canvas_item_get_canvas (goo_rect)),
-                                             _gtk_entry,
-                                             x,
-                                             y,
-                                             w,
-                                             h,
-                                             "anchor", GTK_ANCHOR_CENTER,
-                                             NULL);
+        _gtk_entry  = gtk_entry_new ();
+        gtk_entry_set_text (GTK_ENTRY (_gtk_entry),
+                            score_image);
+        g_free (score_image);
+
+        g_object_set_data (G_OBJECT (_gtk_entry), "match",  match);
+        g_object_set_data (G_OBJECT (_gtk_entry), "player", player);
+        g_object_set_data (G_OBJECT (_gtk_entry), "score_text", score_text);
+        g_object_set_data (G_OBJECT (_gtk_entry), "next_point", next_point);
       }
 
-      gtk_widget_grab_focus (_gtk_entry);
+      {
+        GooCanvasBounds bounds;
 
-      g_signal_connect (GTK_ENTRY (_gtk_entry), "changed",
-                        G_CALLBACK (on_entry_changed), this);
-      g_signal_connect (_gtk_entry, "key-press-event",
-                        G_CALLBACK (on_key_press_event), this);
-      _focus_out_handle = g_signal_connect (_gtk_entry, "focus-out-event",
-                                            G_CALLBACK (on_focus_out), this);
+        goo_canvas_item_get_bounds ((GooCanvasItem *) goo_rect,
+                                    &bounds);
+
+        {
+          gdouble x = (bounds.x1 + bounds.x2) / 2;
+          gdouble y = (bounds.y1 + bounds.y2) / 2;
+          gdouble w = (bounds.x2 - bounds.x1) - 8;
+          gdouble h = (bounds.y2 - bounds.y1) - 8;
+
+          _entry_item = goo_canvas_widget_new (goo_canvas_get_root_item (goo_canvas_item_get_canvas (goo_rect)),
+                                               _gtk_entry,
+                                               x,
+                                               y,
+                                               w,
+                                               h,
+                                               "anchor", GTK_ANCHOR_CENTER,
+                                               NULL);
+        }
+
+        gtk_widget_grab_focus (_gtk_entry);
+
+        g_signal_connect (GTK_ENTRY (_gtk_entry), "changed",
+                          G_CALLBACK (on_entry_changed), this);
+        g_signal_connect (_gtk_entry, "key-press-event",
+                          G_CALLBACK (on_key_press_event), this);
+        _focus_out_handle = g_signal_connect (_gtk_entry, "focus-out-event",
+                                              G_CALLBACK (on_focus_out), this);
+      }
     }
   }
 

@@ -42,20 +42,22 @@ class Pool : public CanvasModule
     Pool (Data  *max_score,
           guint  number);
 
-    void  AddPlayer    (Player *player, Object *rank_owner);
-    void  RemovePlayer (Player *player);
-    guint GetNbPlayers ();
-    guint GetNumber    ();
-    void  CleanScores  ();
-    void  ResetMatches (Object *rank_owner);
-    void  SortPlayers  ();
-    void  Lock         ();
-    void  UnLock       ();
-    void  SetDataOwner (Object *single_owner,
-                        Object *combined_owner,
-                        Object *combined_source_owner);
-    void  SetStatusCbk (StatusCbk  cbk,
-                        void      *data);
+    void  AddPlayer     (Player *player, Object *rank_owner);
+    void  RemovePlayer  (Player *player);
+    guint GetNbPlayers  ();
+    guint GetNumber     ();
+    void  DropPlayer    (Player *player, gchar *reason);
+    void  RestorePlayer (Player *player);
+    void  CleanScores   ();
+    void  ResetMatches  (Object *rank_owner);
+    void  SortPlayers   ();
+    void  Lock          ();
+    void  UnLock        ();
+    void  SetDataOwner  (Object *single_owner,
+                         Object *combined_owner,
+                         Object *combined_source_owner);
+    void  SetStatusCbk  (StatusCbk  cbk,
+                         void      *data);
 
     gboolean IsOver ();
     gboolean HasError ();
@@ -85,6 +87,7 @@ class Pool : public CanvasModule
                                Player   *B,
                                Object   *data_owner,
                                guint32   rand_seed,
+                               Object   *main_data_owner,
                                guint     comparison_policy);
 
   private:
@@ -102,6 +105,7 @@ class Pool : public CanvasModule
     GooCanvasItem  *_status_item;
     gboolean        _locked;
     GSList         *_display_data;
+    guint           _nb_drop;
 
     void           *_status_cbk_data;
     StatusCbk       _status_cbk;
@@ -153,6 +157,10 @@ class Pool : public CanvasModule
     static gint CompareMatch (Match *a,
                               Match *b,
                               Pool  *pool);
+
+    static void on_withdrawal_toggled (GtkToggleButton *togglebutton,
+                                       Pool            *pool);
+
 
     ~Pool ();
 };

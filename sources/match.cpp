@@ -69,6 +69,12 @@ Match::~Match ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Match::IsDropped ()
+{
+  return ((_A_is_dropped == TRUE) || (_B_is_dropped == TRUE));
+}
+
+// --------------------------------------------------------------------------------
 void Match::SetPlayerA (Player *player)
 {
   _A          = player;
@@ -92,6 +98,44 @@ Player *Match::GetPlayerA ()
 Player *Match::GetPlayerB ()
 {
   return _B;
+}
+
+// --------------------------------------------------------------------------------
+void Match::DropPlayer (Player *player)
+{
+  if (_A == player)
+  {
+    _A_is_dropped = TRUE;
+  }
+  else
+  {
+    _B_is_dropped = TRUE;
+  }
+
+  if (IsDropped ())
+  {
+    _A_score->Drop ();
+    _B_score->Drop ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Match::RestorePlayer (Player *player)
+{
+  if (_A == player)
+  {
+    _A_is_dropped = FALSE;
+  }
+  else if (_B == player)
+  {
+    _B_is_dropped = FALSE;
+  }
+
+  if (IsDropped () == FALSE)
+  {
+    _A_score->Restore ();
+    _B_score->Restore ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -359,6 +403,8 @@ void Match::Save (xmlTextWriter *xml_writer,
 // --------------------------------------------------------------------------------
 void Match::CleanScore ()
 {
+  _A_is_dropped = FALSE;
+  _B_is_dropped = FALSE;
   _A_score->Clean ();
   _B_score->Clean ();
 }

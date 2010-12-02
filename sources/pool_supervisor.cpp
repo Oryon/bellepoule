@@ -42,7 +42,6 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
   _pool_allocator = NULL;
   _displayed_pool = NULL;
   _max_score      = NULL;
-  _nb_eliminated  = NULL;
 
   _single_owner = new Object ();
 
@@ -67,6 +66,8 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "status",
+                               "global_status",
                                "start_rank",
                                "final_rank",
                                "attending",
@@ -112,6 +113,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "global_status",
                                "start_rank",
                                "final_rank",
                                "attending",
@@ -126,6 +128,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
     filter->ShowAttribute ("victories_ratio");
     filter->ShowAttribute ("indice");
     filter->ShowAttribute ("HS");
+    filter->ShowAttribute ("status");
 
     SetClassificationFilter (filter);
     filter->Release ();
@@ -177,6 +180,35 @@ void PoolSupervisor::OnPlugged ()
 
     pool = _pool_allocator->GetPool (i);
     pool->SortPlayers ();
+
+    for (guint p = 0; p < pool->GetNbPlayers (); p++)
+    {
+      Player::AttributeId  attr_id ("status");
+      Attribute           *status_attr;
+      Player              *player;
+      gchar               *status;
+
+      player = pool->GetPlayer (p);
+
+      attr_id._owner = GetPreviousStage ();
+      status_attr = player->GetAttribute (&attr_id);
+
+      status = (gchar *) status_attr->GetValue ();
+
+      attr_id._owner = this;
+      player->SetAttributeValue (&attr_id,
+                                 status);
+
+      if (   (status[0] == 'A')
+          || (status[0] == 'F')
+          || (status[0] == 'E'))
+      {
+        pool->DropPlayer (player,
+                          status);
+      }
+    }
+
+    pool->RefreshScoreData ();
   }
 
 }
@@ -220,6 +252,7 @@ gint PoolSupervisor::CompareSingleClassification (Player         *A,
                               B,
                               pool_supervisor->_single_owner,
                               pool_supervisor->_rand_seed,
+                              pool_supervisor->GetDataOwner (),
                               Pool::WITH_CALCULUS | Pool::WITH_RANDOM);
 }
 
@@ -232,6 +265,7 @@ gint PoolSupervisor::CompareCombinedClassification (Player         *A,
                               B,
                               pool_supervisor,
                               pool_supervisor->_rand_seed,
+                              pool_supervisor->GetDataOwner (),
                               Pool::WITH_CALCULUS | Pool::WITH_RANDOM);
 }
 
@@ -339,7 +373,6 @@ void PoolSupervisor::Manage (Pool *pool)
   pool->SetFilter (_filter);
   pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                       this);
-  pool->RefreshScoreData ();
 }
 
 // --------------------------------------------------------------------------------
@@ -551,6 +584,8 @@ void PoolSupervisor::RetrievePools ()
 // --------------------------------------------------------------------------------
 void PoolSupervisor::ApplyConfig ()
 {
+  Stage::ApplyConfig ();
+
   {
     GtkWidget *w        = _glade->GetWidget ("name_entry");
     gchar     *name     = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
@@ -576,15 +611,6 @@ void PoolSupervisor::ApplyConfig ()
           OnPoolSelected (_displayed_pool);
         }
       }
-    }
-  }
-
-  {
-    GtkWidget *w = _glade->GetWidget ("nb_eliminated_spinbutton");
-
-    if (w)
-    {
-      _nb_eliminated->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
     }
   }
 }
@@ -616,7 +642,6 @@ void PoolSupervisor::SetInputProvider (Stage *input_provider)
   {
     _pool_allocator->Retain ();
     _max_score     = _pool_allocator->GetMaxScore     ();
-    _nb_eliminated = _pool_allocator->GetNbEliminated ();
   }
 
   Stage::SetInputProvider (input_provider);
@@ -625,6 +650,8 @@ void PoolSupervisor::SetInputProvider (Stage *input_provider)
 // --------------------------------------------------------------------------------
 void PoolSupervisor::FillInConfig ()
 {
+  Stage::FillInConfig ();
+
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
                       GetName ());
 
@@ -635,9 +662,6 @@ void PoolSupervisor::FillInConfig ()
                         text);
     g_free (text);
   }
-
-  gtk_spin_button_set_value (GTK_SPIN_BUTTON (_glade->GetWidget ("nb_eliminated_spinbutton")),
-                             _nb_eliminated->_value);
 }
 
 // --------------------------------------------------------------------------------
@@ -738,6 +762,7 @@ GSList *PoolSupervisor::EvaluateClassification (GSList           *list,
                                  previous_player,
                                  rank_owner,
                                  0,
+                                 GetDataOwner (),
                                  Pool::WITH_CALCULUS) == 0))
     {
       player->SetAttributeValue (attr_id,
@@ -756,21 +781,6 @@ GSList *PoolSupervisor::EvaluateClassification (GSList           *list,
   attr_id->Release ();
 
   return result;
-}
-
-// --------------------------------------------------------------------------------
-GSList *PoolSupervisor::GetOutputShortlist ()
-{
-  GSList *shortlist    = Stage::GetOutputShortlist ();
-  guint   nb_to_remove = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
-
-  for (guint i = 0; i < nb_to_remove; i++)
-  {
-    shortlist = g_slist_delete_link (shortlist,
-                                     g_slist_last (shortlist));
-  }
-
-  return shortlist;
 }
 
 // --------------------------------------------------------------------------------

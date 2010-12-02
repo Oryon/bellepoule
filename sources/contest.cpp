@@ -1269,3 +1269,42 @@ void Contest::on_contest_close_button_clicked ()
   }
   gtk_widget_destroy (dialog);
 }
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetOrganizer ()
+{
+  return _organizer;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetWeapon ()
+{
+  return gettext (weapon_image[_weapon]);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetName ()
+{
+  return _name;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetGender ()
+{
+  return gender_xml_image[_gender];
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetCategory ()
+{
+  return gettext (category_image[_category]);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetDate ()
+{
+  static gchar date[] = "01/01/1970";
+
+  sprintf (date, "%02d/%02d/%02d", _day, _month, _year);
+  return date;
+}

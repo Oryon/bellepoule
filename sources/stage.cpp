@@ -46,6 +46,9 @@ Stage::Stage (StageClass *stage_class)
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
+
+  _nb_eliminated = new Data ("NbElimines",
+                             (guint) 0);
 }
 
 // --------------------------------------------------------------------------------
@@ -59,6 +62,7 @@ Stage::~Stage ()
   TryToRelease (_score_stuffing_trigger);
   TryToRelease (_classification);
   TryToRelease (_attendees);
+  TryToRelease (_nb_eliminated);
 }
 
 // --------------------------------------------------------------------------------
@@ -171,6 +175,42 @@ void Stage::UnLock ()
     _next->_attendees = NULL;
   }
 
+  if (_attendees)
+  {
+    GSList *current = _attendees->GetShortList ();
+    Player::AttributeId  status_attr_id ("status", this);
+    Player::AttributeId  global_status_attr_id ("global_status");
+
+    for (guint i = 0; current != NULL; i++)
+    {
+      Player *player;
+
+      player = (Player *) current->data;
+
+      if (GetInputProviderClient ())
+      {
+        player->SetAttributeValue (&status_attr_id,
+                                   "Q");
+        player->SetAttributeValue (&global_status_attr_id,
+                                   "Q");
+      }
+      else
+      {
+        Attribute *status = player->GetAttribute (&status_attr_id);
+
+        if (status && (* ((gchar *) status->GetValue ()) == 'N'))
+        {
+          player->SetAttributeValue (&status_attr_id,
+                                     "Q");
+          player->SetAttributeValue (&global_status_attr_id,
+                                     "Q");
+        }
+      }
+
+      current = g_slist_next (current);
+    }
+  }
+
   _locked = false;
   OnUnLocked ();
 }
@@ -190,11 +230,34 @@ gboolean Stage::IsOver ()
 // --------------------------------------------------------------------------------
 void Stage::ApplyConfig ()
 {
+  Module *module = dynamic_cast <Module *> (this);
+
+  if (module)
+  {
+    GtkWidget *w = module->GetWidget ("nb_eliminated_spinbutton");
+
+    if (w)
+    {
+      _nb_eliminated->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
 void Stage::FillInConfig ()
 {
+  Module *module = dynamic_cast <Module *> (this);
+
+  if (module)
+  {
+    GtkWidget *w = module->GetWidget ("nb_eliminated_spinbutton");
+
+    if (w)
+    {
+      gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+                                 _nb_eliminated->_value);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -229,7 +292,9 @@ void Stage::RetrieveAttendees ()
                                 shortlist);
 
     {
-      Player::AttributeId  attr_id ("previous_stage_rank", this);
+      Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", this);
+      Player::AttributeId  status_attr_id ("status", this);
+      Player::AttributeId  global_status_attr_id ("global_status");
       GSList              *current = shortlist;
 
       for (guint i = 0; current != NULL; i++)
@@ -237,8 +302,14 @@ void Stage::RetrieveAttendees ()
         Player *player;
 
         player = (Player *) current->data;
-        player->SetAttributeValue (&attr_id,
+
+        player->SetAttributeValue (&previous_rank_attr_id,
                                    i+1);
+        player->SetAttributeValue (&status_attr_id,
+                                   "Q");
+        player->SetAttributeValue (&global_status_attr_id,
+                                   "Q");
+
         current = g_slist_next (current);
       }
     }
@@ -252,14 +323,82 @@ void Stage::RetrieveAttendees ()
 // --------------------------------------------------------------------------------
 GSList *Stage::GetOutputShortlist ()
 {
+  GSList         *shortlist      = NULL;
+  Classification *classification = GetClassification ();
+
   if (_result)
   {
-    return g_slist_copy (_result);
+    shortlist = g_slist_copy (_result);
   }
-  else
+
+  if (shortlist && classification)
   {
-    return NULL;
+    Module             *module          = dynamic_cast <Module *> (this);
+    guint               nb_to_remove    = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+    Player::AttributeId stage_attr_id         ("status", module->GetDataOwner ());
+    Player::AttributeId classif_attr_id       ("status", classification->GetDataOwner ());
+    Player::AttributeId global_status_attr_id ("global_status");
+
+    // remove all of the withdrawalls and black cards
+    {
+      GSList *current = g_slist_last (shortlist);
+
+      while (current)
+      {
+        Player *player;
+
+        player = (Player *) current->data;
+        {
+          Attribute *status_attr = player->GetAttribute (&stage_attr_id);
+
+          if (status_attr)
+          {
+            gchar *value = (gchar *) status_attr->GetValue ();
+
+            if (value
+                && (value[0] != 'Q') && value[0] != 'N')
+            {
+              player->SetAttributeValue (&global_status_attr_id,
+                                         value);
+              shortlist = g_slist_delete_link (shortlist,
+                                               current);
+              if (nb_to_remove > 0)
+              {
+                nb_to_remove--;
+              }
+            }
+            else
+            {
+              break;
+            }
+          }
+        }
+        current = g_slist_last (shortlist);
+      }
+    }
+
+    // remove the reamaing players to reach the quota
+    for (guint i = 0; i < nb_to_remove; i++)
+    {
+      GSList *current;
+      Player *player;
+
+      current = g_slist_last (shortlist);
+      player = (Player *) current->data;
+
+      player->SetAttributeValue (&stage_attr_id,
+                                 "N");
+      player->SetAttributeValue (&classif_attr_id,
+                                 "N");
+      player->SetAttributeValue (&global_status_attr_id,
+                                 "N");
+
+      shortlist = g_slist_delete_link (shortlist,
+                                       current);
+    }
   }
+
+  return shortlist;
 }
 
 // --------------------------------------------------------------------------------
@@ -288,18 +427,41 @@ void Stage::LoadAttendees (xmlNode *n)
 
       if (player)
       {
-        Player::AttributeId attr_id ("previous_stage_rank", this);
-        gchar *rank_attr =  (gchar *) xmlGetProp (n, BAD_CAST "RangInitial");
+        {
+          Player::AttributeId attr_id ("previous_stage_rank", this);
+          gchar *rank_attr =  (gchar *) xmlGetProp (n, BAD_CAST "RangInitial");
 
-        if (rank_attr)
-        {
-          player->SetAttributeValue (&attr_id,
-                                     atoi (rank_attr));
+          if (rank_attr)
+          {
+            player->SetAttributeValue (&attr_id,
+                                       atoi (rank_attr));
+          }
+          else
+          {
+            player->SetAttributeValue (&attr_id,
+                                       (guint) 0);
+          }
         }
-        else
+
         {
-          player->SetAttributeValue (&attr_id,
-                                     (guint) 0);
+          Player::AttributeId status_attr_id        ("status", this);
+          Player::AttributeId global_status_attr_id ("global_status");
+          gchar *status_attr =  (gchar *) xmlGetProp (n, BAD_CAST "Statut");
+
+          if (status_attr)
+          {
+            player->SetAttributeValue (&status_attr_id,
+                                       status_attr);
+            player->SetAttributeValue (&global_status_attr_id,
+                                       status_attr);
+          }
+          else
+          {
+            player->SetAttributeValue (&status_attr_id,
+                                       "Q");
+            player->SetAttributeValue (&global_status_attr_id,
+                                       "Q");
+          }
         }
       }
     }
@@ -434,6 +596,10 @@ const gchar *Stage::GetInputProviderClient ()
 void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
+
+  TryToRelease (_nb_eliminated);
+  _nb_eliminated = input_provider->GetNbEliminated ();
+  _nb_eliminated->Retain ();
 }
 
 // --------------------------------------------------------------------------------
@@ -621,6 +787,11 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
   gchar *attr = (gchar *) xmlGetProp (xml_node,
                                       BAD_CAST "PhaseID");
   SetName (attr);
+
+  if (_nb_eliminated)
+  {
+    _nb_eliminated->Load (xml_node);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -632,6 +803,11 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
                                      "%d", _id);
+
+  if (_nb_eliminated)
+  {
+    _nb_eliminated->Save (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -652,26 +828,32 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       Player    *player;
       Attribute *rank;
       Attribute *previous_stage_rank;
+      Attribute *status;
 
       player = (Player *) current->data;
 
       {
         Player::AttributeId *rank_attr_id;
+        Player::AttributeId *status_attr_id;
         Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", this);
 
         if (GetInputProviderClient ())
         {
-          rank_attr_id = new Player::AttributeId ("rank", _next);
+          rank_attr_id   = new Player::AttributeId ("rank", _next);
+          status_attr_id = new Player::AttributeId ("status", _next);
         }
         else
         {
-          rank_attr_id = new Player::AttributeId ("rank", this);
+          rank_attr_id   = new Player::AttributeId ("rank", this);
+          status_attr_id = new Player::AttributeId ("status", this);
         }
 
         rank                = player->GetAttribute (rank_attr_id);
         previous_stage_rank = player->GetAttribute (&previous_rank_attr_id);
+        status              = player->GetAttribute (status_attr_id);
 
         rank_attr_id->Release ();
+        status_attr_id->Release ();
       }
 
       xmlTextWriterStartElement (xml_writer,
@@ -689,16 +871,25 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       {
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "RangFinal",
-                                           "%d",(guint)  rank->GetValue ());
+                                           "%d", (guint)  rank->GetValue ());
       }
-      xmlTextWriterWriteAttribute (xml_writer,
-                                   BAD_CAST "Statut",
-                                   BAD_CAST "Q");
+      if (status)
+      {
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "Statut",
+                                           "%s", (gchar *)  status->GetXmlImage ());
+      }
       xmlTextWriterEndElement (xml_writer);
 
       current = g_slist_next (current);
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+Data *Stage::GetNbEliminated ()
+{
+  return _nb_eliminated;
 }
 
 // --------------------------------------------------------------------------------

@@ -37,6 +37,10 @@ class Score : public Object
 
     void Clean ();
 
+    void Drop ();
+
+    void Restore ();
+
     gboolean IsValid ();
 
     gboolean IsTheBest ();
@@ -45,6 +49,7 @@ class Score : public Object
 
   private:
     gboolean   _is_known;
+    gboolean   _is_dropped;
     Data      *_max;
     guint      _score;
     gboolean   _is_the_best;

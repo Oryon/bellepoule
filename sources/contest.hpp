@@ -45,6 +45,13 @@ class Contest : public Module
                     guint   rank);
     void SetTournament (Tournament *tournament);
 
+    gchar *GetOrganizer ();
+    gchar *GetDate ();
+    gchar *GetWeapon ();
+    gchar *GetName ();
+    gchar *GetGender ();
+    gchar *GetCategory ();
+
   public:
     void on_save_toolbutton_clicked       ();
     void on_properties_toolbutton_clicked ();
