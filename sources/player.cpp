@@ -269,7 +269,8 @@ void Player::Save (xmlTextWriter *xml_writer)
 
     desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                i);
-    if (desc->_persistency == AttributeDesc::PERSISTENT)
+    if (   (desc->_persistency == AttributeDesc::PERSISTENT)
+        && (desc->_scope       == AttributeDesc::GLOBAL))
     {
       AttributeId  attr_id (desc->_code_name);
       Attribute   *attr = GetAttribute (&attr_id);
@@ -294,7 +295,8 @@ void Player::Save (xmlTextWriter *xml_writer)
 // --------------------------------------------------------------------------------
 void Player::Load (xmlNode *xml_node)
 {
-  GSList *attr_list;
+  GSList      *attr_list;
+  AttributeId attending_attr_id ("attending");
 
   AttributeDesc::CreateList (&attr_list,
                              NULL);
@@ -314,8 +316,28 @@ void Player::Load (xmlNode *xml_node)
 
         SetAttributeValue (&attr_id,
                            value);
+
+        if (strcmp (desc->_code_name, "global_status") == 0)
+        {
+          if (value[0] == 'F')
+          {
+            SetAttributeValue (&attending_attr_id,
+                               (guint) 0);
+          }
+          else
+          {
+            SetAttributeValue (&attending_attr_id,
+                               1);
+          }
+        }
       }
     }
+  }
+
+  if (GetAttribute (&attending_attr_id) == NULL)
+  {
+    SetAttributeValue (&attending_attr_id,
+                       (guint) 0);
   }
 
   {

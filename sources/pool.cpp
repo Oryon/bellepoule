@@ -915,17 +915,21 @@ gint Pool::ComparePlayer (Player   *A,
 
     attr_id._name = "status";
     attr_id._owner = main_data_owner;
-    status_A = (gchar *) A->GetAttribute (&attr_id)->GetValue ();
-    status_B = (gchar *) B->GetAttribute (&attr_id)->GetValue ();
+    if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
+    {
+      status_A = (gchar *) A->GetAttribute (&attr_id)->GetValue ();
+      status_B = (gchar *) B->GetAttribute (&attr_id)->GetValue ();
 
-    if ((status_A[0] == 'Q') && (status_A[0] != status_B[0]))
-    {
-      return -1;
+      if ((status_A[0] == 'Q') && (status_A[0] != status_B[0]))
+      {
+        return -1;
+      }
+      if ((status_B[0] == 'Q') && (status_B[0] != status_A[0]))
+      {
+        return 1;
+      }
     }
-    else if ((status_B[0] == 'Q') && (status_B[0] != status_A[0]))
-    {
-      return 1;
-    }
+
     if (ratio_B != ratio_A)
     {
       return ratio_B - ratio_A;
@@ -934,7 +938,7 @@ gint Pool::ComparePlayer (Player   *A,
     {
       return average_B - average_A;
     }
-    else if (HS_B != HS_A)
+    if (HS_B != HS_A)
     {
       return HS_B - HS_A;
     }

@@ -207,7 +207,8 @@ int main (int argc, char **argv)
     desc->_compare_func = (GCompareFunc) CompareRating;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness  = AttributeDesc::NOT_SINGULAR;
+    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
 
