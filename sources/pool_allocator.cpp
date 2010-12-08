@@ -22,6 +22,7 @@
 #include <libxml/xpath.h>
 
 #include "swapper.hpp"
+#include "pool_match_order.hpp"
 
 #include "pool_allocator.hpp"
 
@@ -491,13 +492,13 @@ void PoolAllocator::FillCombobox ()
   Configuration *config        = NULL;
   guint          max_pool_size;
 
-  if (nb_players%11 == 0)
+  if (nb_players%PoolMatchOrder::MAX_POOL_SIZE == 0)
   {
-    max_pool_size = 11;
+    max_pool_size = PoolMatchOrder::MAX_POOL_SIZE;
   }
   else
   {
-    max_pool_size = 10;
+    max_pool_size = PoolMatchOrder::MAX_POOL_SIZE-1;
   }
 
   _best_config = NULL;

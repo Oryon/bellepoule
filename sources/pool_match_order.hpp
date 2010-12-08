@@ -22,6 +22,8 @@
 class PoolMatchOrder
 {
   public:
+    static const guint MAX_POOL_SIZE = 17;
+
     struct PlayerPair
     {
       guint _a;

@@ -107,7 +107,7 @@ GSList *GeneralClassification::GetCurrentClassification ()
 
       player = (Player *) current->data;
       attr   = player->GetAttribute (&attr_id);
-      if (attr && ((gboolean) attr->GetValue () == FALSE))
+      if ((attr == NULL) || ((gboolean) attr->GetValue () == FALSE))
       {
         result = g_slist_prepend (result,
                                   player);

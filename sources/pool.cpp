@@ -297,8 +297,8 @@ void Pool::Draw (GooCanvas *on_canvas,
                                          (ScoreCollector::OnNewScore_cbk) &Pool::OnNewScore);
 
   {
-    const guint    cell_w     = 40;
-    const guint    cell_h     = 40;
+    const guint    cell_w     = 45;
+    const guint    cell_h     = 45;
     guint          nb_players = GetNbPlayers ();
     GooCanvasItem *root_item  = goo_canvas_get_root_item (on_canvas);
     GooCanvasItem *grid_group = goo_canvas_group_new (root_item, NULL);
@@ -592,6 +592,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                               NULL);
             SetDisplayData (player, on_canvas, "WithdrawalItem", w);
             x += cell_w;
+            gtk_widget_show (w);
 
             goo_item = goo_canvas_text_new (dashboard_group,
                                             ".",
@@ -671,7 +672,16 @@ void Pool::Draw (GooCanvas *on_canvas,
       GooCanvasBounds  bounds;
       GooCanvasItem   *match_main_table;
       GooCanvasItem   *text_item;
-      const guint      nb_column = 3;
+      guint            nb_column;
+
+      if (nb_players < 12)
+      {
+        nb_column = 3;
+      }
+      else
+      {
+        nb_column = 4;
+      }
 
       goo_canvas_item_get_bounds (root_item,
                                   &bounds);

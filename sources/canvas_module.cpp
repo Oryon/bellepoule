@@ -135,15 +135,6 @@ void CanvasModule::WipeItem (GooCanvasItem *item)
 void CanvasModule::OnBeginPrint (GtkPrintOperation *operation,
                                  GtkPrintContext   *context)
 {
-  GooCanvasBounds bounds;
-  gdouble         canvas_w;
-  gdouble         canvas_h;
-
-  goo_canvas_item_get_bounds (GetRootItem (),
-                              &bounds);
-  canvas_w = bounds.x2 -bounds.x1;
-  canvas_h = bounds.y2 -bounds.y1;
-
   gtk_print_operation_set_n_pages (operation,
                                    1);
 }
@@ -170,13 +161,15 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
 
   //if (GTK_WIDGET_DRAWABLE (GTK_WIDGET (canvas)))
   {
-    gdouble  scale;
-    gdouble  canvas_x;
-    gdouble  canvas_y;
-    gdouble  canvas_w;
-    gdouble  canvas_h;
-    gdouble  paper_w = gtk_print_context_get_width (context);
-    gdouble  paper_h = gtk_print_context_get_height (context);
+    gdouble scale;
+    gdouble canvas_x;
+    gdouble canvas_y;
+    gdouble canvas_w;
+    gdouble canvas_h;
+    gdouble paper_w  = gtk_print_context_get_width (context);
+    gdouble paper_h  = gtk_print_context_get_height (context);
+    gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+    gdouble footer_h = 2 * paper_w  / 100;
 
     {
       GooCanvasBounds bounds;
@@ -201,18 +194,18 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
       scale = printer_dpi/canvas_dpi;
     }
 
-    if (   (canvas_w * scale > paper_w)
-        || (canvas_h * scale > paper_h))
+    if (   (canvas_w*scale > paper_w)
+        || (canvas_h*scale + (header_h+footer_h) > paper_h))
     {
       gdouble x_scale = paper_w / canvas_w;
-      gdouble y_scale = paper_h / canvas_h;
+      gdouble y_scale = paper_h / (canvas_h + (header_h+footer_h)/scale);
 
       scale = MIN (x_scale, y_scale);
     }
 
     cairo_translate (cr,
                      -canvas_x*scale,
-                     -canvas_y*scale + (PRINT_HEADER_HEIGHT+1.0)*paper_w/100.0);
+                     -canvas_y*scale + header_h);
     cairo_scale (cr,
                  scale,
                  scale);

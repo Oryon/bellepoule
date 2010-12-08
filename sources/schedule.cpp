@@ -19,6 +19,7 @@
 #include <libxml/xpath.h>
 #include <gtk/gtk.h>
 
+#include "general_classification.hpp"
 #include "schedule.hpp"
 
 typedef enum
@@ -641,6 +642,27 @@ void Schedule::Load (xmlDoc *doc)
     }
 
     xmlXPathFreeObject (xml_object);
+
+    // Add a general classification stage
+    // for xml files generated with other
+    // tools than BellePoule
+    if (nb_stage > 0)
+    {
+      if (dynamic_cast <GeneralClassification *> (GetStage (nb_stage-1)) == NULL)
+      {
+        Stage *stage = Stage::CreateInstance ("ClassementGeneral");
+
+        if (stage)
+        {
+          AddStage (stage);
+          PlugStage (stage);
+          stage->RetrieveAttendees ();
+          stage->Garnish ();
+          stage->Display ();
+          current_stage_index = nb_stage;
+        }
+      }
+    }
   }
 
   xmlXPathFreeContext (xml_context);
