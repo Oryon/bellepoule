@@ -97,20 +97,33 @@ GSList *GeneralClassification::GetCurrentClassification ()
   GSList *result = NULL;
 
   {
-    GSList              *current = _attendees->GetGlobalList ();
-    Player::AttributeId  attr_id ("exported");
+    GSList *current = _attendees->GetGlobalList ();
 
     while (current)
     {
-      Player    *player;
-      Attribute *attr;
+      Player *player;
 
       player = (Player *) current->data;
-      attr   = player->GetAttribute (&attr_id);
-      if ((attr == NULL) || ((gboolean) attr->GetValue () == FALSE))
       {
-        result = g_slist_prepend (result,
-                                  player);
+        Player::AttributeId  exported_attr_id ("exported");
+        Attribute           *exported = player->GetAttribute (&exported_attr_id);
+
+        if ((exported == NULL) || ((gboolean) exported->GetValue () == FALSE))
+        {
+          Player::AttributeId  status_attr_id ("global_status");
+          Attribute           *status_attr = player->GetAttribute (&status_attr_id);
+
+          if (status_attr)
+          {
+            gchar *status = (gchar *) status_attr->GetValue ();
+
+            if (status && (*status != 'E'))
+            {
+              result = g_slist_prepend (result,
+                                        player);
+            }
+          }
+        }
       }
       current = g_slist_next (current);
     }

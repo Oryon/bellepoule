@@ -861,6 +861,7 @@ static PoolMatchOrder::PlayerPair pool_17_pairs[136] =
   {13, 9},
   {11, 8}};
 
+#if 0
 static PoolMatchOrder::PlayerPair pool_18_pairs[153] =
 { {1, 2},
   {3, 4},
@@ -1380,6 +1381,7 @@ static PoolMatchOrder::PlayerPair pool_20_pairs[190] =
   {3, 16},
   {7, 11},
   {17, 8}};
+#endif
 
 static PoolMatchOrder::PlayerPair *all_pool_pairs[PoolMatchOrder::MAX_POOL_SIZE+1] =
 {
