@@ -25,6 +25,13 @@
 #include "pool_match_order.hpp"
 #include "pool.hpp"
 
+typedef enum
+{
+  STATUS_IMAGE,
+  STATUS_CODE,
+  STATUS_PIXBUF
+} StatusColumn;
+
 // --------------------------------------------------------------------------------
 Pool::Pool (Data  *max_score,
             guint  number)
@@ -297,8 +304,8 @@ void Pool::Draw (GooCanvas *on_canvas,
                                          (ScoreCollector::OnNewScore_cbk) &Pool::OnNewScore);
 
   {
-    const guint    cell_w     = 40;
-    const guint    cell_h     = 40;
+    const guint    cell_w     = 45;
+    const guint    cell_h     = 45;
     guint          nb_players = GetNbPlayers ();
     GooCanvasItem *root_item  = goo_canvas_get_root_item (on_canvas);
     GooCanvasItem *grid_group = goo_canvas_group_new (root_item, NULL);
@@ -501,7 +508,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         y = - 10;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        gettext ("Withdrawal"),
+                                        gettext ("Status"),
                                         0.0, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -578,20 +585,30 @@ void Pool::Draw (GooCanvas *on_canvas,
           y = cell_h/2 + i*cell_h;
 
           {
-            GtkWidget *w = gtk_check_button_new ();
+            {
+              GtkTreeModel    *model = GTK_TREE_MODEL (_glade->GetObject ("status_liststore"));
+              GtkWidget       *w     = gtk_combo_box_new_with_model (model);
+              GtkCellRenderer *cell  = gtk_cell_renderer_pixbuf_new ();
 
-            g_object_set_data (G_OBJECT (w), "player",  player);
-            player->SetData (this, "check_button", w);
-            goo_item = goo_canvas_widget_new (dashboard_group,
-                                              w,
-                                              x-cell_w/2,
-                                              y,
-                                              cell_w,
-                                              cell_h,
-                                              "anchor", GTK_ANCHOR_CENTER,
+              gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
+              gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
+                                              cell, "pixbuf", STATUS_PIXBUF,
                                               NULL);
-            SetDisplayData (player, on_canvas, "WithdrawalItem", w);
-            x += cell_w;
+
+              g_object_set_data (G_OBJECT (w), "player",  player);
+              player->SetData (this, "check_button", w);
+              goo_item = goo_canvas_widget_new (dashboard_group,
+                                                w,
+                                                x-cell_w/2,
+                                                y,
+                                                cell_w*3/2,
+                                                cell_h*2/3,
+                                                "anchor", GTK_ANCHOR_CENTER,
+                                                NULL);
+              SetDisplayData (player, on_canvas, "StatusItem", w);
+              x += cell_w*3/2;
+              gtk_widget_show (w);
+            }
 
             goo_item = goo_canvas_text_new (dashboard_group,
                                             ".",
@@ -671,7 +688,16 @@ void Pool::Draw (GooCanvas *on_canvas,
       GooCanvasBounds  bounds;
       GooCanvasItem   *match_main_table;
       GooCanvasItem   *text_item;
-      const guint      nb_column = 3;
+      guint            nb_column;
+
+      if (nb_players < 12)
+      {
+        nb_column = 3;
+      }
+      else
+      {
+        nb_column = 4;
+      }
 
       goo_canvas_item_get_bounds (root_item,
                                   &bounds);
@@ -808,8 +834,8 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
     else
     {
-      g_signal_connect (w, "toggled",
-                        G_CALLBACK (on_withdrawal_toggled), this);
+      g_signal_connect (w, "changed",
+                        G_CALLBACK (on_status_changed), this);
     }
     player->RemoveData (this, "check_button");
   }
@@ -1225,18 +1251,31 @@ void Pool::RefreshDashBoard ()
         Player::AttributeId attr_id ("status", GetDataOwner ());
 
         attr = player->GetAttribute (&attr_id);
-        data = player->GetData (GetDataOwner (), "WithdrawalItem");
+        data = player->GetData (GetDataOwner (), "StatusItem");
         if (attr && data)
         {
+          GtkTreeIter  iter;
+          gboolean     iter_is_valid;
+          gchar       *code;
+
           text = (gchar *) attr->GetValue ();
-          if (   (text[0] == 'Q')
-              || (text[0] == 'N'))
+
+          iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_glade->GetObject ("status_liststore")),
+                                                         &iter);
+          for (guint i = 0; iter_is_valid; i++)
           {
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (data), FALSE);
-          }
-          else
-          {
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (data), TRUE);
+            gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("status_liststore")),
+                                &iter,
+                                STATUS_CODE, &code,
+                                -1);
+            if (strcmp (text, code) == 0)
+            {
+              gtk_combo_box_set_active_iter (GTK_COMBO_BOX (data),
+                                             &iter);
+              break;
+            }
+            iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_glade->GetObject ("status_liststore")),
+                                                      &iter);
           }
         }
       }
@@ -1708,18 +1747,33 @@ void Pool::RestorePlayer (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Pool::on_withdrawal_toggled (GtkToggleButton *togglebutton,
-                                  Pool            *pool)
+void Pool::OnStatusChanged (GtkComboBox *combo_box)
 {
-  Player *player = (Player *) g_object_get_data (G_OBJECT (togglebutton), "player");
+  Player      *player = (Player *) g_object_get_data (G_OBJECT (combo_box), "player");
+  GtkTreeIter  iter;
+  gchar       *code;
 
-  if (gtk_toggle_button_get_active (togglebutton))
+  gtk_combo_box_get_active_iter (combo_box,
+                                 &iter);
+  gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("status_liststore")),
+                      &iter,
+                      STATUS_CODE, &code,
+                      -1);
+
+  if (code && *code !='Q')
   {
-    pool->DropPlayer (player,
-                      "A");
+    DropPlayer (player,
+                code);
   }
   else
   {
-    pool->RestorePlayer (player);
+    RestorePlayer (player);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::on_status_changed (GtkComboBox *combo_box,
+                              Pool        *pool)
+{
+  pool->OnStatusChanged (combo_box);
 }

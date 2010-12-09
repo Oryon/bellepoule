@@ -15,4 +15,31 @@
       </object>
     </child>
   </object>
+  <object class="GtkListStore" id="status_liststore">
+    <columns>
+      <!-- column-name status_name -->
+      <column type="gchararray"/>
+      <!-- column-name status_code -->
+      <column type="gchararray"/>
+      <!-- column-name status_pixbuf -->
+      <column type="GdkPixbuf"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Withdrawal</col>
+        <col id="1" translatable="yes">A</col>
+        <col id="2">ambulance.png</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Black card</col>
+        <col id="1" translatable="yes">E</col>
+        <col id="2">black_card.png</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Normal</col>
+        <col id="1" translatable="yes">Q</col>
+        <col id="2">normal.png</col>
+      </row>
+    </data>
+  </object>
 </interface>

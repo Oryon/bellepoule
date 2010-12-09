@@ -137,7 +137,8 @@ void Classification::DumpToFFF (gchar   *filename,
 
   if (file)
   {
-    GSList *current_player = _player_list;
+    Player::AttributeId  attr_id ("global_status");
+    GSList              *current_player = _player_list;
 
     fprintf (file, "FFF;WIN;competition;%s;individuel\n", contest->GetOrganizer ());
     fprintf (file, "%s;%s;%s;%s;%s;%s\n",
@@ -150,9 +151,13 @@ void Classification::DumpToFFF (gchar   *filename,
 
     while (current_player)
     {
-      Player *player;
+      Player    *player;
+      Attribute *status_attr;
 
-      player = (Player *) current_player->data;
+      player      = (Player *) current_player->data;
+      status_attr = player->GetAttribute (&attr_id);
+
+      if ((status_attr == NULL) || (* ((gchar *) status_attr->GetValue ()) != 'E'))
       {
         // General
         {
@@ -221,22 +226,18 @@ void Classification::DumpToFFF (gchar   *filename,
                           "final_rank");
           fprintf (file, ",");
 
+          if (status_attr && (* ((gchar *) status_attr->GetValue ()) != 'Q'))
           {
-            Player::AttributeId  attr_id ("global_status");
-            Attribute           *attr = player->GetAttribute (&attr_id);
-
-            if (attr && (* ((gchar *) attr->GetValue ()) != 'Q'))
-            {
-              fprintf (file, "p");
-            }
-            else
-            {
-              fprintf (file, "t");
-            }
+            fprintf (file, "p");
+          }
+          else
+          {
+            fprintf (file, "t");
           }
         }
+
+        fprintf (file, "\n");
       }
-      fprintf (file, "\n");
       current_player = g_slist_next (current_player);
     }
     fclose (file);

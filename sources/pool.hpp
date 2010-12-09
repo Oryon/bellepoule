@@ -58,6 +58,7 @@ class Pool : public CanvasModule
                          Object *combined_source_owner);
     void  SetStatusCbk  (StatusCbk  cbk,
                          void      *data);
+    void OnStatusChanged (GtkComboBox *combo_box);
 
     gboolean IsOver ();
     gboolean HasError ();
@@ -158,8 +159,8 @@ class Pool : public CanvasModule
                               Match *b,
                               Pool  *pool);
 
-    static void on_withdrawal_toggled (GtkToggleButton *togglebutton,
-                                       Pool            *pool);
+    static void on_status_changed (GtkComboBox *combo_box,
+                                   Pool        *pool);
 
 
     ~Pool ();
