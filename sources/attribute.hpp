@@ -50,6 +50,14 @@ class AttributeDesc : public Object
       LOCAL
     } Scope;
 
+    typedef enum
+    {
+      DISCRETE_CODE,
+      DISCRETE_XML_IMAGE,
+      DISCRETE_USER_IMAGE,
+      DISCRETE_ICON
+    } DiscreteColumnId;
+
     GType         _type;
     gchar        *_xml_name;
     gchar        *_code_name;
@@ -60,6 +68,7 @@ class AttributeDesc : public Object
     gboolean      _free_value_allowed;
     Rights        _rights;
     GCompareFunc  _compare_func;
+    GtkTreeStore *_discrete_store;
 
     static void SetPath (gchar *path);
 
@@ -81,6 +90,7 @@ class AttributeDesc : public Object
 
     void AddDiscreteValues (gchar *first_xml_image,
                             gchar *first_user_image,
+                            gchar *first_icon,
                             ...);
 
     void AddDiscreteValues (gchar *file);
@@ -96,7 +106,6 @@ class AttributeDesc : public Object
   private:
     static gchar  *_path;
     static GSList *_list;
-    GtkTreeStore *_discrete_store;
 
     AttributeDesc (GType  type,
                    gchar *code_name,

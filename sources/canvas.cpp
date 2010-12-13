@@ -155,6 +155,27 @@ GooCanvasItem *Canvas::PutStockIconInTable (GooCanvasItem *table,
 }
 
 // --------------------------------------------------------------------------------
+GooCanvasItem *Canvas::PutIconInTable (GooCanvasItem *table,
+                                       gchar         *icon_name,
+                                       guint          row,
+                                       guint          column)
+{
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon_name, NULL);
+
+  GooCanvasItem *item = goo_canvas_image_new (table,
+                                              pixbuf,
+                                              0.0,
+                                              0.0,
+                                              NULL);
+
+  PutInTable (table,
+              item,
+              row, column);
+
+  return item;
+}
+
+// --------------------------------------------------------------------------------
 GooCanvas *Canvas::CreatePrinterCanvas (GtkPrintContext *context)
 {
   GooCanvas *canvas = GOO_CANVAS (goo_canvas_new ());

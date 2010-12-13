@@ -19,13 +19,6 @@
 
 #include "attribute.hpp"
 
-typedef enum
-{
-  DISCRETE_CODE,
-  DISCRETE_XML_IMAGE,
-  DISCRETE_USER_IMAGE
-} DiscreteColumnId;
-
 gchar  *AttributeDesc::_path = NULL;
 GSList *AttributeDesc::_list = NULL;
 
@@ -280,19 +273,24 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image)
 // --------------------------------------------------------------------------------
 void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
                                        gchar *first_user_image,
+                                       gchar *first_icon,
                                        ...)
 {
   if (_discrete_store == NULL)
   {
-    _discrete_store = gtk_tree_store_new (3, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING);
+    _discrete_store = gtk_tree_store_new (4, G_TYPE_UINT,
+                                             G_TYPE_STRING,
+                                             G_TYPE_STRING,
+                                             GDK_TYPE_PIXBUF);
   }
 
   {
     va_list  ap;
     gchar   *xml_image  = first_xml_image;
     gchar   *user_image = first_user_image;
+    gchar   *icon       = first_icon;
 
-    va_start (ap, first_user_image);
+    va_start (ap, first_icon);
     while (xml_image)
     {
       GtkTreeIter  iter;
@@ -302,14 +300,23 @@ void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
 
       undivadable_image = GetUndivadableText (user_image);
       gtk_tree_store_set (_discrete_store, &iter,
+                          DISCRETE_CODE, xml_image[0],
                           DISCRETE_XML_IMAGE, xml_image,
                           DISCRETE_USER_IMAGE, undivadable_image, -1);
+      if (*icon)
+      {
+        GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon, NULL);
+
+        gtk_tree_store_set (_discrete_store, &iter,
+                            DISCRETE_ICON, pixbuf, -1);
+      }
       g_free (undivadable_image);
 
       xml_image  = va_arg (ap, char *);
       if (xml_image)
       {
         user_image = va_arg (ap, char *);
+        icon       = va_arg (ap, char *);
       }
     }
     va_end (ap);
@@ -321,7 +328,10 @@ void AttributeDesc::AddDiscreteValues (gchar *file)
 {
   if (_discrete_store == NULL)
   {
-    _discrete_store = gtk_tree_store_new (3, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING);
+    _discrete_store = gtk_tree_store_new (4, G_TYPE_UINT,
+                                             G_TYPE_STRING,
+                                             G_TYPE_STRING,
+                                             GDK_TYPE_PIXBUF);
   }
 
   {
