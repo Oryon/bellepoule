@@ -131,6 +131,8 @@ class Table : public virtual Stage, public CanvasModule
 
     GSList *GetCurrentClassification ();
 
+    void OnStatusChanged (GtkComboBox *combo_box);
+
     static gboolean Stuff (GNode *node,
                            Table *table);
 
@@ -210,6 +212,9 @@ class Table : public virtual Stage, public CanvasModule
                                   GooCanvasItem  *target_item,
                                   GdkEventButton *event,
                                   Table          *table);
+
+    static void on_status_changed (GtkComboBox *combo_box,
+                                   Table       *table);
 
     ~Table ();
 };

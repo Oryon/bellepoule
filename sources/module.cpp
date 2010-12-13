@@ -22,7 +22,8 @@
 
 #include "module.hpp"
 
-GKeyFile *Module::_config_file = NULL;
+GKeyFile     *Module::_config_file  = NULL;
+GtkTreeModel *Module::_status_model = NULL;
 
 // --------------------------------------------------------------------------------
 Module::Module (gchar *glade_file,
@@ -393,4 +394,56 @@ void Module::on_end_print (GtkPrintOperation *operation,
 {
   module->OnEndPrint (operation,
                       context);
+}
+
+// --------------------------------------------------------------------------------
+GtkTreeModel *Module::GetStatusModel ()
+{
+  if (_status_model == NULL)
+  {
+    AttributeDesc *desc = AttributeDesc::GetDesc ("status");
+
+    if (desc)
+    {
+      GtkTreeIter  iter;
+      gboolean     iter_is_valid;
+
+      _status_model = GTK_TREE_MODEL (gtk_tree_store_new (4, G_TYPE_UINT,
+                                                          G_TYPE_STRING,
+                                                          G_TYPE_STRING,
+                                                          GDK_TYPE_PIXBUF));
+
+      iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (desc->_discrete_store),
+                                                     &iter);
+      for (guint i = 0; iter_is_valid; i++)
+      {
+        gchar     *xml_image;
+        gchar     *user_image;
+        GdkPixbuf *icon;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (desc->_discrete_store),
+                            &iter,
+                            AttributeDesc::DISCRETE_XML_IMAGE, &xml_image,
+                            AttributeDesc::DISCRETE_USER_IMAGE, &user_image,
+                            AttributeDesc::DISCRETE_ICON, &icon, -1);
+        if (   (strcmp ("Q", xml_image) == 0)
+            || (strcmp ("A", xml_image) == 0)
+            || (strcmp ("E", xml_image) == 0))
+        {
+          GtkTreeIter pool_iter;
+
+          gtk_tree_store_append (GTK_TREE_STORE (_status_model), &pool_iter, NULL);
+          gtk_tree_store_set (GTK_TREE_STORE (_status_model), &pool_iter,
+                              AttributeDesc::DISCRETE_XML_IMAGE, xml_image,
+                              AttributeDesc::DISCRETE_USER_IMAGE, user_image,
+                              AttributeDesc::DISCRETE_ICON, icon,
+                              -1);
+        }
+        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (desc->_discrete_store),
+                                                  &iter);
+      }
+    }
+  }
+
+  return _status_model;
 }

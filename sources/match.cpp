@@ -33,6 +33,9 @@ Match::Match (Data *max_score)
   _A_is_known = FALSE;
   _B_is_known = FALSE;
 
+  _A_is_dropped = FALSE;
+  _B_is_dropped = FALSE;
+
   _name = g_strdup ("");
 
   _A_score = new Score (max_score);
@@ -156,9 +159,20 @@ Player *Match::GetWinner ()
     Score *score_A = GetScore (_A);
     Score *score_B = GetScore (_B);
 
-    if (   score_A->IsValid ()
-        && score_B->IsValid ()
-        && score_A->IsConsistentWith (score_B))
+    if (IsDropped ())
+    {
+      if (_A_is_dropped)
+      {
+        return _B;
+      }
+      else
+      {
+        return _A;
+      }
+    }
+    else if (   score_A->IsValid ()
+             && score_B->IsValid ()
+             && score_A->IsConsistentWith (score_B))
     {
       if (_A_score->Get () > _B_score->Get ())
       {

@@ -25,13 +25,6 @@
 #include "pool_match_order.hpp"
 #include "pool.hpp"
 
-typedef enum
-{
-  STATUS_IMAGE,
-  STATUS_CODE,
-  STATUS_PIXBUF
-} StatusColumn;
-
 // --------------------------------------------------------------------------------
 Pool::Pool (Data  *max_score,
             guint  number)
@@ -507,14 +500,17 @@ void Pool::Draw (GooCanvas *on_canvas,
         x = cell_w/2;
         y = - 10;
 
-        goo_text = goo_canvas_text_new (dashboard_group,
-                                        gettext ("Status"),
-                                        0.0, y, -1,
-                                        GTK_ANCHOR_WEST,
-                                        "font", "Sans 18px",
-                                        NULL);
-        goo_canvas_item_rotate (goo_text, 315, 0.0, y);
-        x += cell_w;
+        if (GetCanvas () == on_canvas)
+        {
+          goo_text = goo_canvas_text_new (dashboard_group,
+                                          gettext ("Status"),
+                                          0.0, y, -1,
+                                          GTK_ANCHOR_WEST,
+                                          "font", "Sans 18px",
+                                          NULL);
+          goo_canvas_item_rotate (goo_text, 315, 0.0, y);
+          x += cell_w;
+        }
 
         goo_text = goo_canvas_text_new (dashboard_group,
                                         gettext ("Victories"),
@@ -585,18 +581,18 @@ void Pool::Draw (GooCanvas *on_canvas,
           y = cell_h/2 + i*cell_h;
 
           {
+            if (GetCanvas () == on_canvas)
             {
-              GtkTreeModel    *model = GTK_TREE_MODEL (_glade->GetObject ("status_liststore"));
-              GtkWidget       *w     = gtk_combo_box_new_with_model (model);
-              GtkCellRenderer *cell  = gtk_cell_renderer_pixbuf_new ();
+              GtkWidget       *w    = gtk_combo_box_new_with_model (GetStatusModel ());
+              GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
 
               gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
               gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
-                                              cell, "pixbuf", STATUS_PIXBUF,
+                                              cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
                                               NULL);
 
               g_object_set_data (G_OBJECT (w), "player",  player);
-              player->SetData (this, "check_button", w);
+              player->SetData (this, "combo_box", w);
               goo_item = goo_canvas_widget_new (dashboard_group,
                                                 w,
                                                 x-cell_w/2,
@@ -825,7 +821,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     GtkWidget *w;
 
     player = GetPlayer (i);
-    w      = GTK_WIDGET (player->GetData (this, "check_button"));
+    w      = GTK_WIDGET (player->GetData (this, "combo_box"));
 
     if (_locked)
     {
@@ -837,7 +833,7 @@ void Pool::Draw (GooCanvas *on_canvas,
       g_signal_connect (w, "changed",
                         G_CALLBACK (on_status_changed), this);
     }
-    player->RemoveData (this, "check_button");
+    player->RemoveData (this, "combo_box");
   }
 }
 
@@ -953,6 +949,24 @@ gint Pool::ComparePlayer (Player   *A,
       if ((status_B[0] == 'Q') && (status_B[0] != status_A[0]))
       {
         return 1;
+      }
+
+      if ((status_A[0] == 'E') && (status_A[0] != status_B[0]))
+      {
+        return 1;
+      }
+      if ((status_B[0] == 'E') && (status_B[0] != status_A[0]))
+      {
+        return -1;
+      }
+
+      if ((status_A[0] == 'A') && (status_A[0] != status_B[0]))
+      {
+        return 1;
+      }
+      if ((status_B[0] == 'A') && (status_B[0] != status_A[0]))
+      {
+        return -1;
       }
     }
 
@@ -1260,21 +1274,22 @@ void Pool::RefreshDashBoard ()
 
           text = (gchar *) attr->GetValue ();
 
-          iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_glade->GetObject ("status_liststore")),
+          iter_is_valid = gtk_tree_model_get_iter_first (GetStatusModel (),
                                                          &iter);
           for (guint i = 0; iter_is_valid; i++)
           {
-            gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("status_liststore")),
+            gtk_tree_model_get (GetStatusModel (),
                                 &iter,
-                                STATUS_CODE, &code,
+                                AttributeDesc::DISCRETE_XML_IMAGE, &code,
                                 -1);
             if (strcmp (text, code) == 0)
             {
               gtk_combo_box_set_active_iter (GTK_COMBO_BOX (data),
                                              &iter);
+
               break;
             }
-            iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_glade->GetObject ("status_liststore")),
+            iter_is_valid = gtk_tree_model_iter_next (GetStatusModel (),
                                                       &iter);
           }
         }
@@ -1755,9 +1770,9 @@ void Pool::OnStatusChanged (GtkComboBox *combo_box)
 
   gtk_combo_box_get_active_iter (combo_box,
                                  &iter);
-  gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("status_liststore")),
+  gtk_tree_model_get (GetStatusModel (),
                       &iter,
-                      STATUS_CODE, &code,
+                      AttributeDesc::DISCRETE_XML_IMAGE, &code,
                       -1);
 
   if (code && *code !='Q')

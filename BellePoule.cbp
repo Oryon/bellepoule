@@ -30,6 +30,17 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="Technicolor Debug">
+				<Option output="bin\Debug\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DDEBUG=1" />
+					<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />

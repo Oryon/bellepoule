@@ -182,8 +182,8 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "Sexe", gettext ("gender"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->_free_value_allowed = FALSE;
-    desc->AddDiscreteValues ("M", gettext ("Male"),
-                             "F", gettext ("Female"), NULL);
+    desc->AddDiscreteValues ("M", gettext ("Male"), "",
+                             "F", gettext ("Female"), "", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
@@ -215,19 +215,19 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
     desc->_scope  = AttributeDesc::GLOBAL;
     desc->_rights = AttributeDesc::PRIVATE;
-    desc->AddDiscreteValues ("Q", gettext ("Qualified"),
-                             "N", gettext ("Not qualified"),
-                             "A", gettext ("Withdrawal"),
-                             "E", gettext ("Excluded"),
-                             "F", gettext ("Forfeit"), NULL);
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "resources/glade/normal.png",
+                             "N", gettext ("Not qualified"), "resources/glade/normal.png",
+                             "A", gettext ("Withdrawal"), "resources/glade/ambulance.png",
+                             "E", gettext ("Excluded"), "resources/glade/black_card.png",
+                             "F", gettext ("Forfeit"), "resources/glade/normal.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "status", "Statut", gettext ("status"));
     desc->_scope = AttributeDesc::LOCAL;
-    desc->AddDiscreteValues ("Q", gettext ("Qualified"),
-                             "N", gettext ("Not qualified"),
-                             "A", gettext ("Withdrawal"),
-                             "E", gettext ("Excluded"),
-                             "F", gettext ("Forfeit"), NULL);
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "resources/glade/normal.png",
+                             "N", gettext ("Not qualified"), "resources/glade/normal.png",
+                             "A", gettext ("Withdrawal"), "resources/glade/ambulance.png",
+                             "E", gettext ("Excluded"), "resources/glade/black_card.png",
+                             "F", gettext ("Forfeit"), "resources/glade/normal.png", NULL);
 
     // Not persistent data
     {

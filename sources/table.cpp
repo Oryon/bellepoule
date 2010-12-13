@@ -377,6 +377,7 @@ void Table::Display ()
         g_free (text);
       }
 
+      if (level < _nb_levels)
       {
         GooCanvasItem *print_item;
 
@@ -888,6 +889,7 @@ gboolean Table::FillInNode (GNode *node,
                         G_CALLBACK (OnPrintMatch), table);
     }
 
+    if (winner)
     {
       GString *string = table->GetPlayerImage (winner);
 
@@ -899,6 +901,82 @@ gboolean Table::FillInNode (GNode *node,
 
       g_string_free (string,
                      TRUE);
+
+      {
+        GtkWidget       *w    = gtk_combo_box_new_with_model (table->GetStatusModel ());
+        GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
+        GooCanvasItem   *goo_item;
+
+        gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
+        gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
+                                        cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
+                                        NULL);
+
+        goo_item = goo_canvas_widget_new (data->_canvas_table,
+                                          w,
+                                          0.0,
+                                          0.0,
+                                          _score_rect_size*3.3/2.0,
+                                          _score_rect_size,
+                                          NULL);
+        Canvas::PutInTable (data->_canvas_table,
+                            goo_item,
+                            0, 3);
+
+        {
+          Player::AttributeId  attr_id ("status", table->GetDataOwner ());
+          Attribute           *attr = winner->GetAttribute (&attr_id);
+
+          if (attr)
+          {
+            GtkTreeIter  iter;
+            gboolean     iter_is_valid;
+            gchar       *code;
+            gchar       *text;
+
+            text = (gchar *) attr->GetValue ();
+
+            iter_is_valid = gtk_tree_model_get_iter_first (table->GetStatusModel (),
+                                                           &iter);
+            for (guint i = 0; iter_is_valid; i++)
+            {
+              gtk_tree_model_get (table->GetStatusModel (),
+                                  &iter,
+                                  AttributeDesc::DISCRETE_XML_IMAGE, &code,
+                                  -1);
+              if (strcmp (text, code) == 0)
+              {
+                gtk_combo_box_set_active_iter (GTK_COMBO_BOX (w),
+                                               &iter);
+
+                break;
+              }
+              iter_is_valid = gtk_tree_model_iter_next (table->GetStatusModel (),
+                                                        &iter);
+            }
+          }
+        }
+
+        if (table->Locked ())
+        {
+          gtk_widget_set_sensitive (w,
+                                    FALSE);
+        }
+        else
+        {
+          NodeData *parent_data;
+
+          if (parent)
+          {
+            parent_data = (NodeData *) parent->data;
+
+            g_object_set_data (G_OBJECT (w), "player_for_status", (void *) winner);
+            g_object_set_data (G_OBJECT (w), "match_for_status", (void *) parent_data->_match);
+            g_signal_connect (w, "changed",
+                              G_CALLBACK (on_status_changed), table);
+          }
+        }
+      }
     }
 
     if (parent)
@@ -926,7 +1004,7 @@ gboolean Table::FillInNode (GNode *node,
           Canvas::PutInTable (data->_canvas_table,
                               goo_rect,
                               0,
-                              3);
+                              4);
           Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
         }
 
@@ -947,7 +1025,7 @@ gboolean Table::FillInNode (GNode *node,
           Canvas::PutInTable (data->_canvas_table,
                               score_text,
                               0,
-                              3);
+                              4);
           Canvas::SetTableItemAttribute (score_text, "x-align", 0.5);
           Canvas::SetTableItemAttribute (score_text, "y-align", 0.5);
         }
@@ -2275,6 +2353,35 @@ gboolean Table::OnPrintMatch (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
+void Table::OnStatusChanged (GtkComboBox *combo_box)
+{
+  GtkTreeIter          iter;
+  gchar               *code;
+  Match               *match  = (Match *)  g_object_get_data (G_OBJECT (combo_box), "match_for_status");
+  Player              *player = (Player *) g_object_get_data (G_OBJECT (combo_box), "player_for_status");
+  Player::AttributeId  status_attr_id = Player::AttributeId ("status", GetDataOwner ());
+
+  gtk_combo_box_get_active_iter (combo_box,
+                                 &iter);
+  gtk_tree_model_get (GetStatusModel (),
+                      &iter,
+                      AttributeDesc::DISCRETE_XML_IMAGE, &code,
+                      -1);
+
+  player->SetAttributeValue (&status_attr_id,
+                             code);
+  if (code && *code !='Q')
+  {
+    match->DropPlayer (player);
+  }
+  else
+  {
+    match->RestorePlayer (player);
+  }
+  OnAttrListUpdated ();
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object    *owner)
 {
@@ -2345,4 +2452,11 @@ extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *w
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnMatchSheetToggled (widget);
+}
+
+// --------------------------------------------------------------------------------
+void Table::on_status_changed (GtkComboBox *combo_box,
+                               Table       *table)
+{
+  table->OnStatusChanged (combo_box);
 }

@@ -82,6 +82,8 @@ class Module : public virtual Object
 
     virtual ~Module ();
 
+    GtkTreeModel *GetStatusModel ();
+
     virtual void OnDrawPage (GtkPrintOperation *operation,
                              GtkPrintContext   *context,
                              gint               page_nr);
@@ -97,6 +99,8 @@ class Module : public virtual Object
                              GtkPrintContext   *context) {};
 
   private:
+    static GtkTreeModel *_status_model;
+
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;
     SensitivityTrigger *_sensitivity_trigger;
