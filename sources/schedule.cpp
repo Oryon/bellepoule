@@ -580,6 +580,7 @@ void Schedule::Load (xmlDoc *doc)
   xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
   gint             current_stage_index = -1;
   gboolean         display_all         = FALSE;
+  Stage           *checkin_stage       = Stage::CreateInstance ("checkin_stage");
 
   {
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/Phases", xml_context);
@@ -606,22 +607,18 @@ void Schedule::Load (xmlDoc *doc)
   gtk_widget_show_all (GetRootWidget ());
 
   // Checkin - Player list
+  if (checkin_stage)
   {
-    Stage *stage = Stage::CreateInstance ("checkin_stage");
+    AddStage  (checkin_stage);
+    PlugStage (checkin_stage);
 
-    if (stage)
+    checkin_stage->Load (xml_context,
+                         "/CompetitionIndividuelle");
+    checkin_stage->Display ();
+
+    if (display_all || (current_stage_index > 0))
     {
-      AddStage  (stage);
-      PlugStage (stage);
-
-      stage->Load (xml_context,
-                   "/CompetitionIndividuelle");
-      stage->Display ();
-
-      if (display_all || (current_stage_index > 0))
-      {
-        stage->Lock (Stage::LOADING);
-      }
+      checkin_stage->Lock (Stage::LOADING);
     }
   }
 
@@ -650,16 +647,30 @@ void Schedule::Load (xmlDoc *doc)
     {
       if (dynamic_cast <GeneralClassification *> (GetStage (nb_stage-1)) == NULL)
       {
-        Stage *stage = Stage::CreateInstance ("ClassementGeneral");
+        Stage *stage;
 
+        current_stage_index = nb_stage-1;
+        if (nb_stage == 1)
+        {
+          checkin_stage->UnLock ();
+
+          stage = Stage::CreateInstance ("pool_stage");
+          if (stage)
+          {
+            AddStage (stage);
+          }
+
+          stage = Stage::CreateInstance ("PhaseDeTableaux");
+          if (stage)
+          {
+            AddStage (stage);
+          }
+        }
+
+        stage = Stage::CreateInstance ("ClassementGeneral");
         if (stage)
         {
           AddStage (stage);
-          PlugStage (stage);
-          stage->RetrieveAttendees ();
-          stage->Garnish ();
-          stage->Display ();
-          current_stage_index = nb_stage;
         }
       }
     }
