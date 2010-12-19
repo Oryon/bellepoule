@@ -902,81 +902,6 @@ gboolean Table::FillInNode (GNode *node,
       g_string_free (string,
                      TRUE);
 
-      {
-        GtkWidget       *w    = gtk_combo_box_new_with_model (table->GetStatusModel ());
-        GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
-        GooCanvasItem   *goo_item;
-
-        gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
-        gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
-                                        cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
-                                        NULL);
-
-        goo_item = goo_canvas_widget_new (data->_canvas_table,
-                                          w,
-                                          0.0,
-                                          0.0,
-                                          _score_rect_size*3.3/2.0,
-                                          _score_rect_size,
-                                          NULL);
-        Canvas::PutInTable (data->_canvas_table,
-                            goo_item,
-                            0, 3);
-
-        {
-          Player::AttributeId  attr_id ("status", table->GetDataOwner ());
-          Attribute           *attr = winner->GetAttribute (&attr_id);
-
-          if (attr)
-          {
-            GtkTreeIter  iter;
-            gboolean     iter_is_valid;
-            gchar       *code;
-            gchar       *text;
-
-            text = (gchar *) attr->GetValue ();
-
-            iter_is_valid = gtk_tree_model_get_iter_first (table->GetStatusModel (),
-                                                           &iter);
-            for (guint i = 0; iter_is_valid; i++)
-            {
-              gtk_tree_model_get (table->GetStatusModel (),
-                                  &iter,
-                                  AttributeDesc::DISCRETE_XML_IMAGE, &code,
-                                  -1);
-              if (strcmp (text, code) == 0)
-              {
-                gtk_combo_box_set_active_iter (GTK_COMBO_BOX (w),
-                                               &iter);
-
-                break;
-              }
-              iter_is_valid = gtk_tree_model_iter_next (table->GetStatusModel (),
-                                                        &iter);
-            }
-          }
-        }
-
-        if (table->Locked ())
-        {
-          gtk_widget_set_sensitive (w,
-                                    FALSE);
-        }
-        else
-        {
-          NodeData *parent_data;
-
-          if (parent)
-          {
-            parent_data = (NodeData *) parent->data;
-
-            g_object_set_data (G_OBJECT (w), "player_for_status", (void *) winner);
-            g_object_set_data (G_OBJECT (w), "match_for_status", (void *) parent_data->_match);
-            g_signal_connect (w, "changed",
-                              G_CALLBACK (on_status_changed), table);
-          }
-        }
-      }
     }
 
     if (parent)
@@ -991,6 +916,92 @@ gboolean Table::FillInNode (GNode *node,
         table->SetPlayer (parent_data->_match,
                           winner,
                           position);
+
+        if (   (parent_data->_match->GetWinner () == NULL)
+            || (   parent_data->_match->GetPlayerA ()
+                && parent_data->_match->GetPlayerB ()))
+        {
+          GtkWidget       *w    = gtk_combo_box_new_with_model (table->GetStatusModel ());
+          GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
+          GooCanvasItem   *goo_item;
+
+          gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
+          gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
+                                          cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
+                                          NULL);
+
+          goo_item = goo_canvas_widget_new (data->_canvas_table,
+                                            w,
+                                            0.0,
+                                            0.0,
+                                            _score_rect_size*3.3/2.0,
+                                            _score_rect_size,
+                                            NULL);
+          Canvas::PutInTable (data->_canvas_table,
+                              goo_item,
+                              0, 3);
+
+          {
+            Player::AttributeId  attr_id ("status", table->GetDataOwner ());
+            Attribute           *attr = winner->GetAttribute (&attr_id);
+
+            if (attr)
+            {
+              GtkTreeIter  iter;
+              gboolean     iter_is_valid;
+              gchar       *code;
+              gchar       *text;
+
+              if (parent_data->_match->IsDropped () == FALSE)
+              {
+                text = "Q";
+              }
+              else
+              {
+                text = (gchar *) attr->GetValue ();
+              }
+
+              iter_is_valid = gtk_tree_model_get_iter_first (table->GetStatusModel (),
+                                                             &iter);
+              for (guint i = 0; iter_is_valid; i++)
+              {
+                gtk_tree_model_get (table->GetStatusModel (),
+                                    &iter,
+                                    AttributeDesc::DISCRETE_XML_IMAGE, &code,
+                                    -1);
+                if (strcmp (text, code) == 0)
+                {
+                  gtk_combo_box_set_active_iter (GTK_COMBO_BOX (w),
+                                                 &iter);
+
+                  break;
+                }
+                iter_is_valid = gtk_tree_model_iter_next (table->GetStatusModel (),
+                                                          &iter);
+              }
+            }
+          }
+
+          if (table->Locked ())
+          {
+            gtk_widget_set_sensitive (w,
+                                      FALSE);
+          }
+          else
+          {
+            NodeData *parent_data;
+
+            if (parent)
+            {
+              parent_data = (NodeData *) parent->data;
+
+              g_object_set_data (G_OBJECT (w), "player_for_status", (void *) winner);
+              g_object_set_data (G_OBJECT (w), "match_for_status", (void *) parent_data->_match);
+              g_signal_connect (w, "changed",
+                                G_CALLBACK (on_status_changed), table);
+            }
+          }
+        }
 
         // Rectangle
         {
@@ -1254,56 +1265,18 @@ void Table::LoadMatch (xmlNode *xml_node,
         }
         else
         {
-          gchar    *attr;
-          Player   *player;
+          Player *dropped = NULL;
 
           B = n;
 
+          LoadScore (A, match, 0, &dropped);
+          LoadScore (B, match, 1, &dropped);
+
+          if (dropped)
           {
-            gboolean  is_the_best = FALSE;
-
-            attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
-            player = GetPlayerFromRef (atoi (attr));
-
-            SetPlayer (match,
-                       player,
-                       0);
-
-            attr = (gchar *) xmlGetProp (A, BAD_CAST "Statut");
-            if (attr && attr[0] == 'V')
-            {
-              is_the_best = TRUE;
-            }
-
-            attr = (gchar *) xmlGetProp (A, BAD_CAST "Score");
-            if (attr)
-            {
-              match->SetScore (player, atoi (attr), is_the_best);
-            }
+            match->DropPlayer (dropped);
           }
 
-          {
-            gboolean  is_the_best = FALSE;
-
-            attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
-            player = GetPlayerFromRef (atoi (attr));
-
-            SetPlayer (match,
-                       player,
-                       1);
-
-            attr = (gchar *) xmlGetProp (B, BAD_CAST "Statut");
-            if (attr && attr[0] == 'V')
-            {
-              is_the_best = TRUE;
-            }
-
-            attr = (gchar *) xmlGetProp (B, BAD_CAST "Score");
-            if (attr)
-            {
-              match->SetScore (player, atoi (attr), is_the_best);
-            }
-          }
           A = NULL;
           B = NULL;
           return;
@@ -1311,6 +1284,45 @@ void Table::LoadMatch (xmlNode *xml_node,
       }
       LoadMatch (n->children,
                  match);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::LoadScore (xmlNode *xml_node,
+                       Match   *match,
+                       guint    player_index,
+                       Player  **dropped)
+{
+  gboolean  is_the_best = FALSE;
+  gchar    *attr        = (gchar *) xmlGetProp (xml_node, BAD_CAST "REF");
+  Player   *player      = GetPlayerFromRef (atoi (attr));
+
+  SetPlayer (match,
+             player,
+             player_index);
+
+  attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Statut");
+  if (attr && attr[0] == 'V')
+  {
+    is_the_best = TRUE;
+  }
+
+  attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Score");
+  if (attr)
+  {
+    match->SetScore (player, atoi (attr), is_the_best);
+
+    if (is_the_best == FALSE)
+    {
+      Player::AttributeId  attr_id ("status", GetDataOwner ());
+      Attribute           *attr   = player->GetAttribute (&attr_id);
+      gchar               *status = (gchar *) attr->GetValue ();
+
+      if (status && ((*status == 'E') || (*status == 'A')))
+      {
+        *dropped = player;
+      }
     }
   }
 }
@@ -1919,11 +1931,13 @@ void Table::OnBeginPrint (GtkPrintOperation *operation,
       _print_scale = printer_dpi/canvas_dpi;
     }
 
+    _print_nb_x_pages = 1;
+    _print_nb_y_pages = 1;
     if (   (canvas_w * _print_scale > paper_w)
            || (canvas_h * _print_scale > paper_h))
     {
-      _print_nb_x_pages = 1 + (guint) (canvas_w * _print_scale / paper_w);
-      _print_nb_y_pages = 1 + (guint) ((canvas_h * _print_scale + header_h) / paper_h);
+      _print_nb_x_pages += (guint) (canvas_w * _print_scale / paper_w);
+      _print_nb_y_pages += (guint) ((canvas_h * _print_scale + header_h) / paper_h);
     }
 
     gtk_print_operation_set_n_pages (operation,

@@ -169,8 +169,8 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                         <property name="receives_default">False</property>
                         <property name="tooltip_text" translatable="yes">The classification of the current round that doesn't take into account the scores of the previous rounds. </property>
                         <property name="image">image1</property>
+                        <property name="active">True</property>
                         <property name="draw_indicator">False</property>
-                        <property name="group">combined_radiobutton</property>
                         <signal name="toggled" handler="on_single_radiobutton_toggled"/>
                       </object>
                       <packing>
@@ -335,7 +335,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                         <property name="receives_default">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
-                        <property name="group">single_pool_radiobutton</property>
                       </object>
                       <packing>
                         <property name="position">0</property>
@@ -395,7 +394,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                         <property name="tooltip_text" translatable="yes">Content designed for the referees.</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
-                        <property name="group">for_display_radiobutton</property>
                       </object>
                       <packing>
                         <property name="position">0</property>

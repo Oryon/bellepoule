@@ -17,10 +17,18 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#ifdef WINDOWS_TEMPORARY_PATCH
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 #include "version.h"
 #include "contest.hpp"
 
 #include "tournament.hpp"
+
+gchar *Tournament::_path = NULL;
 
 // --------------------------------------------------------------------------------
 Tournament::Tournament (gchar *filename)
@@ -304,6 +312,12 @@ void Tournament::OnSave ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::SetPath (gchar *path)
+{
+  _path = g_strdup (path);
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnAbout ()
 {
   GtkWidget *w = _glade->GetWidget ("about_dialog");
@@ -314,23 +328,43 @@ void Tournament::OnAbout ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnOpenUserManual ()
+{
+  gchar *uri = g_build_filename (_path, "resources", "user_manual.pdf", NULL);
+
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecute (NULL,
+                "open",
+                uri,
+                NULL,
+                NULL,
+                SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                uri,
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+
+  g_free (uri);
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
+  gchar *prg_name = g_get_prgname ();
+
+  if (prg_name)
   {
-    gchar *prg_name = g_get_prgname ();
+    gchar *install_dirname = g_path_get_dirname (prg_name);
 
-    if (prg_name)
+    if (install_dirname)
     {
-      gchar *install_dirname = g_path_get_dirname (prg_name);
+      gchar *example_dirname = g_strdup_printf ("%s/Exemples", install_dirname);
 
-      if (install_dirname)
-      {
-        gchar *example_dirname = g_strdup_printf ("%s/Exemples", install_dirname);
-
-        OnOpen (example_dirname);
-        g_free (example_dirname);
-        g_free (install_dirname);
-      }
+      OnOpen (example_dirname);
+      g_free (example_dirname);
+      g_free (install_dirname);
     }
   }
 }
@@ -430,6 +464,15 @@ extern "C" G_MODULE_EXPORT void on_example_menuitem_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnOpenExample ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_user_manual_activate (GtkWidget *w,
+                                                         Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnOpenUserManual ();
 }
 
 // --------------------------------------------------------------------------------

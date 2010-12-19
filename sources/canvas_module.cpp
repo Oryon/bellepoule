@@ -51,7 +51,7 @@ void CanvasModule::OnPlugged ()
     _canvas = CreateCanvas ();
 
     gtk_container_add (GTK_CONTAINER (view_port), GTK_WIDGET (_canvas));
-    gtk_widget_show (GTK_WIDGET (_canvas));
+    gtk_widget_show_all (GTK_WIDGET (_canvas));
   }
 }
 

@@ -32,6 +32,8 @@ class Tournament : public Module
 
     static void Init ();
 
+    static void SetPath (gchar *path);
+
     void OnNew ();
 
     void OnOpen (gchar *current_folder = NULL);
@@ -42,6 +44,8 @@ class Tournament : public Module
 
     void OnOpenExample ();
 
+    void OnOpenUserManual ();
+
     void OnSave ();
 
     Contest *GetContest (gchar *filename);
@@ -51,6 +55,7 @@ class Tournament : public Module
     void OnContestDeleted (Contest *contest);
 
   private:
+    static gchar *_path;
     GSList *_contest_list;
 
     void ReadConfiguration ();
