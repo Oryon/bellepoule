@@ -31,8 +31,8 @@
 				</Linker>
 			</Target>
 			<Target title="Technicolor Debug">
-				<Option output="bin\Debug\BellePoule" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Debug\" />
+				<Option output="bin\TechnicolorDebug\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\TechnicolorDebug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>

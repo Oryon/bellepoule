@@ -558,61 +558,64 @@ void PoolAllocator::FillCombobox ()
 // --------------------------------------------------------------------------------
 void PoolAllocator::CreatePools ()
 {
-  Pool   **pool_table;
-  GSList  *shortlist = _attendees->GetShortList ();
-  guint    nb_pool   = _selected_config->nb_pool;
-
-  pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
-  for (guint i = 0; i < nb_pool; i++)
+  if (_selected_config)
   {
-    pool_table[i] = new Pool (_max_score,
-                              i+1);
-    _pools_list = g_slist_append (_pools_list,
-                                  pool_table[i]);
-  }
+    Pool   **pool_table;
+    GSList  *shortlist = _attendees->GetShortList ();
+    guint    nb_pool   = _selected_config->nb_pool;
 
-  {
-    Swapper *swapper;
-
-    if (_swapping_criteria)
+    pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
+    for (guint i = 0; i < nb_pool; i++)
     {
-      swapper = new Swapper (_pools_list,
-                             _swapping_criteria->_code_name,
-                             shortlist);
-    }
-    else
-    {
-      swapper = new Swapper (_pools_list,
-                             NULL,
-                             shortlist);
+      pool_table[i] = new Pool (_max_score,
+                                i+1);
+      _pools_list = g_slist_append (_pools_list,
+                                    pool_table[i]);
     }
 
-    for (guint i = 0; i < g_slist_length (shortlist); i++)
     {
-      Player *player;
-      Pool   *pool;
+      Swapper *swapper;
 
-      if (((i / nb_pool) % 2) == 0)
+      if (_swapping_criteria)
       {
-        pool = pool_table[i%nb_pool];
+        swapper = new Swapper (_pools_list,
+                               _swapping_criteria->_code_name,
+                               shortlist);
       }
       else
       {
-        pool = pool_table[nb_pool-1 - i%nb_pool];
+        swapper = new Swapper (_pools_list,
+                               NULL,
+                               shortlist);
       }
 
-      player = swapper->GetNextPlayer (pool);
-      player->SetData (this,
-                       "original_pool",
-                       (void *) pool->GetNumber ());
-      pool->AddPlayer (player,
-                       this);
+      for (guint i = 0; i < g_slist_length (shortlist); i++)
+      {
+        Player *player;
+        Pool   *pool;
+
+        if (((i / nb_pool) % 2) == 0)
+        {
+          pool = pool_table[i%nb_pool];
+        }
+        else
+        {
+          pool = pool_table[nb_pool-1 - i%nb_pool];
+        }
+
+        player = swapper->GetNextPlayer (pool);
+        player->SetData (this,
+                         "original_pool",
+                         (void *) pool->GetNumber ());
+        pool->AddPlayer (player,
+                         this);
+      }
+
+      swapper->Release ();
     }
 
-    swapper->Release ();
+    SetOriginalPools ();
   }
-
-  SetOriginalPools ();
 }
 
 // --------------------------------------------------------------------------------
@@ -991,6 +994,11 @@ gboolean PoolAllocator::OnLeaveNotify (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 void PoolAllocator::FixUpTablesBounds ()
 {
+  if (_selected_config == NULL)
+  {
+    return;
+  }
+
   for (guint p = 0; p < g_slist_length (_pools_list); p++)
   {
     Pool            *pool;
@@ -1091,6 +1099,7 @@ void PoolAllocator::FillPoolTable (Pool *pool)
     GooCanvasItem *name_table = goo_canvas_table_new (table, NULL);
 
     // Status icon
+    if (_selected_config)
     {
       gchar *icon_name;
 

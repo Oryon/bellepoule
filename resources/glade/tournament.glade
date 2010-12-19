@@ -90,6 +90,15 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem" id="user_manual">
+                        <property name="label" translatable="yes">User manual</property>
+                        <property name="visible">True</property>
+                        <property name="image">image3</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_user_manual_activate"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkSeparatorMenuItem" id="separatormenuitem2">
                         <property name="visible">True</property>
                       </object>
@@ -891,5 +900,9 @@ Julien Diaz (German)</property>
     <property name="visible">True</property>
     <property name="stock">gtk-directory</property>
     <property name="icon-size">1</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="stock">gtk-info</property>
   </object>
 </interface>

@@ -156,6 +156,7 @@ int main (int argc, char **argv)
 
     Glade::SetPath         (install_dirname);
     AttributeDesc::SetPath (install_dirname);
+    Tournament::SetPath    (install_dirname);
 
     g_free (install_dirname);
   }

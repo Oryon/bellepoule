@@ -475,7 +475,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                                 <property name="receives_default">False</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">all_radiobutton</property>
                               </object>
                               <packing>
                                 <property name="position">1</property>
@@ -546,7 +545,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -559,6 +557,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">level_all_radiobutton</property>
                   </object>

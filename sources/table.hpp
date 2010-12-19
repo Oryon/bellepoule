@@ -129,6 +129,11 @@ class Table : public virtual Stage, public CanvasModule
     void LoadMatch (xmlNode *xml_node,
                     Match   *match);
 
+    void LoadScore (xmlNode *xml_node,
+                    Match   *match,
+                    guint    player_index,
+                    Player  **dropped);
+
     GSList *GetCurrentClassification ();
 
     void OnStatusChanged (GtkComboBox *combo_box);

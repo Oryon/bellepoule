@@ -70,6 +70,9 @@ Source: "..\Exemples\exemple.cotcot"; DestDir: "{app}\Exemples"; Flags: ignoreve
 Source: "..\Exemples\CLS_SHM.FFF"; DestDir: "{app}\Exemples"; Flags: ignoreversion
 Source: "..\Exemples\CLS_EDM.FFF"; DestDir: "{app}\Exemples"; Flags: ignoreversion
 
+;Documentation
+Source: "..\resources\user_manual.pdf"; DestDir: "{app}\resources"; Flags: ignoreversion
+
 ;Traductions
 Source: "..\resources\translations\fr\*"; DestDir: "{app}\resources\translations\fr"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\translations\de\*"; DestDir: "{app}\resources\translations\de"; Flags: ignoreversion recursesubdirs
@@ -233,6 +236,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 
