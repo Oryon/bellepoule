@@ -37,10 +37,10 @@ class Schedule : public Module
 
     void AddStage    (Stage *stage,
                       Stage *after);
-    void RemoveStage (Stage *stage);
 
-    void Save      (xmlTextWriter *xml_writer);
-    void Load      (xmlDoc        *doc);
+    void Save (xmlTextWriter *xml_writer);
+
+    void Load (xmlDoc        *doc);
 
     Stage *GetStage (guint index);
 
@@ -69,6 +69,8 @@ class Schedule : public Module
     gint GetNotebookPageNum (Stage *stage);
 
     void AddStage (Stage *stage);
+
+    void RemoveStage (Stage *stage);
 
     void LoadStage (Stage   *stage,
                     xmlNode *xml_node,

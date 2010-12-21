@@ -450,15 +450,16 @@ void Schedule::RemoveStage (Stage *stage)
 {
   if (stage)
   {
-    gint   page    = GetNotebookPageNum (stage);
-    GList *current = g_list_find (_stage_list, stage);
-    GList *next    = g_list_next (current);
+    gint   page          = GetNotebookPageNum (stage);
+    GList *current       = g_list_find (_stage_list, stage);
+    gint   current_index = g_list_index (_stage_list, stage);
+    GList *next          = g_list_next (current);
 
     if (next)
     {
       Stage *next_stage = (Stage *) (next->data);
 
-      if (next)
+      if (next_stage)
       {
         Stage *previous_stage = NULL;
         GList *previous       = g_list_previous (current);
@@ -479,7 +480,7 @@ void Schedule::RemoveStage (Stage *stage)
 
       if (   (n_pages > 0)
           && (_current_stage > 0)
-          && (_current_stage >= n_pages-1))
+          && (_current_stage == (guint) current_index))
       {
         Stage *stage;
 
