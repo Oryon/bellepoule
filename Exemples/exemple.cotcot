@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE CompetitionIndividuelle>
 <!--
-           By BellePoule (V0.09/12)
+           By BellePoule (V0.19/12)
 
    http://betton.escrime.free.fr/index.php/bellepoule
 -->
@@ -46,8 +46,8 @@
   <Tireur ID="134" Classement="17" Nom="DUCRET" Prenom="Hugo" DateNaissance="22/05/1998" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330616" Points="0" Exporte="0" Statut="F"/>
  </Tireurs>
  <Arbitres/>
- <Phases PhaseEnCours="3">
-  <TourDePoules PhaseID="TourPoules1" ID="1" NbElimines="0" ScoreMax="5" NbDePoules="1" PhaseSuivanteDesQualifies="3" NbQualifiesParIndice="7">
+ <Phases PhaseEnCours="2">
+  <TourDePoules PhaseID="" ID="1" NbElimines="0" ScoreMax="5" NbDePoules="1" PhaseSuivanteDesQualifies="3" NbQualifiesParIndice="7">
    <Tireur REF="128" RangInitial="1" RangFinal="6" Statut="Q"/>
    <Tireur REF="120" RangInitial="2" RangFinal="1" Statut="Q"/>
    <Tireur REF="129" RangInitial="3" RangFinal="7" Statut="Q"/>
@@ -150,47 +150,7 @@
     </Match>
    </Poule>
   </TourDePoules>
-  <PhaseDeTableaux PhaseID="PhaseTableaux1" ID="3" NbElimines="0" ScoreMax="10">
-   <Tireur REF="120" RangInitial="1" Statut="Q"/>
-   <Tireur REF="113" RangInitial="2" Statut="Q"/>
-   <Tireur REF="112" RangInitial="3" Statut="A"/>
-   <Tireur REF="131" RangInitial="4" Statut="Q"/>
-   <Tireur REF="118" RangInitial="5" Statut="Q"/>
-   <Tireur REF="128" RangInitial="6" Statut="Q"/>
-   <Tireur REF="129" RangInitial="7" Statut="Q"/>
-   <SuiteDeTableaux ID="A" Titre="" NbDeTableaux="3">
-    <Tableau ID="A8" Titre="Tableau de 8" Taille="8">
-     <Match ID="2">
-      <Tireur REF="118" Score="10" Statut="V"/>
-      <Tireur REF="131" Score="1" Statut="D"/>
-     </Match>
-     <Match ID="3">
-      <Tireur REF="112" Score="10" Statut="V"/>
-      <Tireur REF="128" Score="2" Statut="D"/>
-     </Match>
-     <Match ID="4">
-      <Tireur REF="129" Score="5" Statut="D"/>
-      <Tireur REF="113" Score="10" Statut="V"/>
-     </Match>
-    </Tableau>
-    <Tableau ID="A4" Titre="Demi-finale" Taille="4">
-     <Match ID="1">
-      <Tireur REF="120" Score="5" Statut="D"/>
-      <Tireur REF="118" Score="10" Statut="V"/>
-     </Match>
-     <Match ID="2">
-      <Tireur REF="112" Score="0" Statut="D"/>
-      <Tireur REF="113" Score="0" Statut="V"/>
-     </Match>
-    </Tableau>
-    <Tableau ID="A2" Titre="Finale" Taille="2">
-     <Match ID="1">
-      <Tireur REF="118" Score="0" Statut="V"/>
-      <Tireur REF="113" Score="0" Statut="D"/>
-     </Match>
-    </Tableau>
-   </SuiteDeTableaux>
-  </PhaseDeTableaux>
-  <ClassementGeneral PhaseID="" ID="4" NbElimines="0"/>
+  <TourDePoules PhaseID="" ID="3" NbElimines="0" ScoreMax="5" Decalage="Aucun" PhaseSuivanteDesQualifies="5"/>
+  <ClassementGeneral PhaseID="" ID="5" NbElimines="0"/>
  </Phases>
 </CompetitionIndividuelle>
