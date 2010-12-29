@@ -540,7 +540,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        gettext ("H. recieved"),
+                                        gettext ("H. received"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
@@ -919,8 +919,6 @@ gint Pool::ComparePlayer (Player   *A,
     gint    average_B;
     guint   HS_A;
     guint   HS_B;
-    gchar  *status_A = NULL;
-    gchar  *status_B = NULL;
     Player::AttributeId attr_id ("", data_owner);
 
     attr_id._name = "victories_ratio";
@@ -939,8 +937,8 @@ gint Pool::ComparePlayer (Player   *A,
     attr_id._owner = main_data_owner;
     if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
     {
-      status_A = (gchar *) A->GetAttribute (&attr_id)->GetValue ();
-      status_B = (gchar *) B->GetAttribute (&attr_id)->GetValue ();
+      gchar *status_A = (gchar *) A->GetAttribute (&attr_id)->GetValue ();
+      gchar *status_B = (gchar *) B->GetAttribute (&attr_id)->GetValue ();
 
       if ((status_A[0] == 'Q') && (status_A[0] != status_B[0]))
       {

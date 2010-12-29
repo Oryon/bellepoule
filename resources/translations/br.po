@@ -270,7 +270,7 @@ msgid "H. scored"
 msgstr ""
 
 #: ../../sources/pool.cpp:508
-msgid "H. recieved"
+msgid "H. received"
 msgstr ""
 
 #: ../../sources/pool.cpp:517
@@ -565,7 +565,7 @@ msgstr ""
 
 #: ../../resources/glade/contest.glade:700
 msgid ""
-"Make the automatic score stuffing button available. I can save the user "
+"Make the automatic score stuffing button available. It can save the user "
 "boring data captures during training sessions."
 msgstr ""
 
@@ -1483,4 +1483,55 @@ msgid ""
 msgstr ""
 
 msgid "points"
+msgstr ""
+
+#: ../../sources/main.cpp:205
+msgid "start rank"
+msgstr ""
+
+#: ../../sources/main.cpp:215
+msgid "global status"
+msgstr ""
+
+#: ../../sources/main.cpp:218 ../../sources/main.cpp:226
+msgid "Qualified"
+msgstr ""
+
+#: ../../sources/main.cpp:219 ../../sources/main.cpp:227
+msgid "Not qualified"
+msgstr ""
+
+#: ../../sources/main.cpp:220 ../../sources/main.cpp:228
+msgid "Withdrawal"
+msgstr ""
+
+#: ../../sources/main.cpp:221 ../../sources/main.cpp:229
+msgid "Excluded"
+msgstr ""
+
+#: ../../sources/main.cpp:222 ../../sources/main.cpp:230
+msgid "Forfeit"
+msgstr ""
+
+#: ../../sources/main.cpp:224
+msgid "status"
+msgstr ""
+
+#: ../../sources/pool.cpp:506
+msgid "Status"
+msgstr ""
+
+#: ../../resources/glade/checkin.glade:80
+#: ../../resources/glade/checkin.glade:118
+msgid "all"
+msgstr ""
+
+#: ../../resources/glade/general_classification.glade:40
+msgid "Export to CSV"
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Export to FFF"
 msgstr ""

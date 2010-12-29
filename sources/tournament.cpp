@@ -81,7 +81,7 @@ Tournament::Tournament (gchar *filename)
 
   {
     GtkWidget *w       = _glade->GetWidget ("about_dialog");
-    gchar     *version = g_strdup_printf ("%s.%s/%s", VERSION, VERSION_DAY, VERSION_MONTH);
+    gchar     *version = g_strdup_printf ("V%s.%s%s", VERSION, VERSION_REVISION, VERSION_MATURITY);
 
     gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
                                   (const gchar *) version);

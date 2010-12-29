@@ -1768,19 +1768,38 @@ gint Table::ComparePlayer (Player  *A,
                            Player  *B,
                            Table   *table)
 {
-  gint level_A = (gint) A->GetData (table, "level");
-  gint level_B = (gint) B->GetData (table, "level");
+  {
+    Player::AttributeId attr_id ("status", table->GetDataOwner ());
 
-  if (level_A != level_B)
-  {
-    return level_B - level_A;
+    if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
+    {
+      gchar *status_A = (gchar *) A->GetAttribute (&attr_id)->GetValue ();
+      gchar *status_B = (gchar *) B->GetAttribute (&attr_id)->GetValue ();
+
+      if ((status_A[0] == 'E') && (status_A[0] != status_B[0]))
+      {
+        return 1;
+      }
+      if ((status_B[0] == 'E') && (status_B[0] != status_A[0]))
+      {
+        return -1;
+      }
+    }
   }
-  else
+
   {
-    return table->ComparePreviousRankPlayer (A,
-                                             B,
-                                             table->_rand_seed);
+    gint level_A = (gint) A->GetData (table, "level");
+    gint level_B = (gint) B->GetData (table, "level");
+
+    if (level_A != level_B)
+    {
+      return level_B - level_A;
+    }
   }
+
+  return table->ComparePreviousRankPlayer (A,
+                                           B,
+                                           table->_rand_seed);
 }
 
 // --------------------------------------------------------------------------------
