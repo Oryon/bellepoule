@@ -1510,3 +1510,9 @@ msgstr ""
 #: ../../resources/glade/general_classification.glade:40
 msgid "Export to CSV"
 msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Export to FFF"
+msgstr ""

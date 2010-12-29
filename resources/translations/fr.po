@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-12-29 21:48+0100\n"
+"PO-Revision-Date: 2010-12-29 21:59+0100\n"
 "Last-Translator: \n"
 "Language-Team:  <en_GB@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1529,4 +1529,10 @@ msgstr "tous"
 #: ../../resources/glade/general_classification.glade:40
 msgid "Export to CSV"
 msgstr "Exporter en CSV"
+
+msgid "User manual"
+msgstr "Manuel utilisateur"
+
+msgid "Export to FFF"
+msgstr "Exporter en FFF"
 
