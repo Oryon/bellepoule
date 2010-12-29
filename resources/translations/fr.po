@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-12-29 16:59+0100\n"
+"PO-Revision-Date: 2010-12-29 21:48+0100\n"
 "Last-Translator: \n"
 "Language-Team:  <en_GB@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1480,47 +1480,53 @@ msgstr ""
 msgid "points"
 msgstr "points"
 
-#~ msgid "Décallage"
-#~ msgstr "Décalage"
+#: ../../sources/main.cpp:205
+msgid "start rank"
+msgstr "rang de départ"
 
-#~ msgid ""
-#~ "Décochez cette case pour accélerer la navigation. Le champs correspondant "
-#~ "sera ignoré lors des appuis sur la touche TAB."
-#~ msgstr ""
-#~ "Décochez cette case pour accélerer la navigation. Le champ correspondant "
-#~ "sera ignoré lors des appuis sur la touche TAB."
+#: ../../sources/main.cpp:215
+msgid "global status"
+msgstr "statut global"
 
-#~ msgid "<b>For wath?</b>"
-#~ msgstr "<b>Pour quoi ?</b>"
+#: ../../sources/main.cpp:218
+#: ../../sources/main.cpp:226
+msgid "Qualified"
+msgstr "Qualifié"
 
-#~ msgid "Liste des présents"
-#~ msgstr "Liste des présents"
+#: ../../sources/main.cpp:219
+#: ../../sources/main.cpp:227
+msgid "Not qualified"
+msgstr "Eliminé"
 
-#~ msgid "présence"
-#~ msgstr "présence"
+#: ../../sources/main.cpp:220
+#: ../../sources/main.cpp:228
+msgid "Withdrawal"
+msgstr "Abandon"
 
-#~ msgid "Toutes les compétitions non sauvegardées seront perdues."
-#~ msgstr "Toutes les compétitions non sauvegardées seront perdues."
+#: ../../sources/main.cpp:221
+#: ../../sources/main.cpp:229
+msgid "Excluded"
+msgstr "Exclu"
 
-#~ msgid ""
-#~ "Fill in all the scores of all the pools randomly\n"
-#~ "To activate/deactivate this button, go to the properties of the competition. "
-#~ msgstr ""
-#~ "Remplit tous les matchs de toutes les poules par des scores aléatoires.\n"
-#~ "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
-#~ "compétition. "
+#: ../../sources/main.cpp:222
+#: ../../sources/main.cpp:230
+msgid "Forfeit"
+msgstr "Forfait"
 
-#~ msgid ""
-#~ "Fill in all the scores randomly\n"
-#~ "To activate/deactivate this button, go to the properties of the competition. "
-#~ msgstr ""
-#~ "Remplit tous les matchs du tableau par des scores aléatoires.\n"
-#~ "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
-#~ "compétition. "
+#: ../../sources/main.cpp:224
+msgid "status"
+msgstr "statut"
 
-#~ msgid ""
-#~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
-#~ "tableaux et autres phases."
-#~ msgstr ""
-#~ "To configure the schedule of the competition in terms of pools, tables and "
-#~ "other rounds."
+#: ../../sources/pool.cpp:506
+msgid "Status"
+msgstr "Statut"
+
+#: ../../resources/glade/checkin.glade:80
+#: ../../resources/glade/checkin.glade:118
+msgid "all"
+msgstr "tous"
+
+#: ../../resources/glade/general_classification.glade:40
+msgid "Export to CSV"
+msgstr "Exporter en CSV"
+
