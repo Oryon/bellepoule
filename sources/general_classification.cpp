@@ -40,6 +40,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "global_status",
                                "status",
                                "start_rank",
                                "rank",
@@ -57,7 +58,6 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
-    filter->ShowAttribute ("global_status");
 
     SetFilter (filter);
     SetClassificationFilter (filter);
