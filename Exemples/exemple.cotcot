@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE CompetitionIndividuelle>
 <!--
-           By BellePoule (V0.19/12)
+           By BellePoule (V1.0rc1)
 
    http://betton.escrime.free.fr/index.php/bellepoule
 -->
@@ -9,11 +9,11 @@
  <Tireurs>
   <Tireur ID="128" Classement="6" Nom="ROGER" Prenom="Benjamin" DateNaissance="13/02/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330544" Points="1006" Exporte="0" Statut="Q"/>
   <Tireur ID="120" Classement="1" Nom="LATREILLE" Prenom="Quentin" DateNaissance="06/02/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100499" Points="1021" Exporte="0" Statut="Q"/>
-  <Tireur ID="129" Classement="7" Nom="BOTUHA" Prenom="Simon" DateNaissance="21/05/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330559" Points="1038" Exporte="0" Statut="Q"/>
+  <Tireur ID="129" Classement="7" Nom="BOTUHA" Prenom="Simon" DateNaissance="21/05/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330559" Points="1038" Exporte="0" Statut="A"/>
   <Tireur ID="118" Classement="5" Nom="GUEGAN" Prenom="Baptiste" DateNaissance="19/11/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100439" Points="1039" Exporte="0" Statut="Q"/>
   <Tireur ID="113" Classement="2" Nom="LE ROUX" Prenom="Gurvan" DateNaissance="31/03/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100317" Points="1142" Exporte="0" Statut="Q"/>
-  <Tireur ID="131" Classement="4" Nom="BESCOND" Prenom="Maxime" DateNaissance="22/04/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330575" Points="1157" Exporte="0" Statut="Q"/>
-  <Tireur ID="112" Classement="3" Nom="LEGRAND" Prenom="Abraham" DateNaissance="09/08/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100237" Points="1163" Exporte="0" Statut="A"/>
+  <Tireur ID="131" Classement="4" Nom="BESCOND" Prenom="Maxime" DateNaissance="22/04/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330575" Points="1157" Exporte="0" Statut="E"/>
+  <Tireur ID="112" Classement="3" Nom="LEGRAND" Prenom="Abraham" DateNaissance="09/08/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100237" Points="1163" Exporte="0" Statut="Q"/>
   <Tireur ID="123" Classement="25" Nom="SAILLARD" Prenom="Pacome" DateNaissance="26/02/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100549" Points="1164" Exporte="0" Statut="F"/>
   <Tireur ID="108" Classement="36" Nom="STEPHAN" Prenom="Loic" DateNaissance="23/11/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="QUIMPER EC" Licence="230290340661" Points="1173" Exporte="0" Statut="F"/>
   <Tireur ID="132" Classement="22" Nom="HOBL" Prenom="Alexis" DateNaissance="25/09/1997" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330584" Points="1190" Exporte="0" Statut="F"/>
@@ -46,7 +46,7 @@
   <Tireur ID="134" Classement="17" Nom="DUCRET" Prenom="Hugo" DateNaissance="22/05/1998" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330616" Points="0" Exporte="0" Statut="F"/>
  </Tireurs>
  <Arbitres/>
- <Phases PhaseEnCours="2">
+ <Phases PhaseEnCours="3">
   <TourDePoules PhaseID="" ID="1" NbElimines="0" ScoreMax="5" NbDePoules="1" PhaseSuivanteDesQualifies="3" NbQualifiesParIndice="7">
    <Tireur REF="128" RangInitial="1" RangFinal="6" Statut="Q"/>
    <Tireur REF="120" RangInitial="2" RangFinal="1" Statut="Q"/>
@@ -150,7 +150,47 @@
     </Match>
    </Poule>
   </TourDePoules>
-  <TourDePoules PhaseID="" ID="3" NbElimines="0" ScoreMax="5" Decalage="Aucun" PhaseSuivanteDesQualifies="5"/>
-  <ClassementGeneral PhaseID="" ID="5" NbElimines="0"/>
+  <PhaseDeTableaux PhaseID="" ID="3" NbElimines="0" ScoreMax="10">
+   <Tireur REF="120" RangInitial="1" Statut="Q"/>
+   <Tireur REF="113" RangInitial="2" Statut="Q"/>
+   <Tireur REF="112" RangInitial="3" Statut="Q"/>
+   <Tireur REF="131" RangInitial="4" Statut="E"/>
+   <Tireur REF="118" RangInitial="5" Statut="Q"/>
+   <Tireur REF="128" RangInitial="6" Statut="Q"/>
+   <Tireur REF="129" RangInitial="7" Statut="A"/>
+   <SuiteDeTableaux ID="A" Titre="" NbDeTableaux="3">
+    <Tableau ID="A8" Titre="Tableau de 8" Taille="8">
+     <Match ID="2">
+      <Tireur REF="118" Score="0" Statut="V"/>
+      <Tireur REF="131" Score="0" Statut="D"/>
+     </Match>
+     <Match ID="3">
+      <Tireur REF="112" Score="10" Statut="V"/>
+      <Tireur REF="128" Score="7" Statut="D"/>
+     </Match>
+     <Match ID="4">
+      <Tireur REF="129" Score="0" Statut="D"/>
+      <Tireur REF="113" Score="0" Statut="V"/>
+     </Match>
+    </Tableau>
+    <Tableau ID="A4" Titre="Demi-finale" Taille="4">
+     <Match ID="1">
+      <Tireur REF="120" Score="0" Statut="D"/>
+      <Tireur REF="118" Score="10" Statut="V"/>
+     </Match>
+     <Match ID="2">
+      <Tireur REF="112" Score="10" Statut="V"/>
+      <Tireur REF="113" Score="5" Statut="D"/>
+     </Match>
+    </Tableau>
+    <Tableau ID="A2" Titre="Finale" Taille="2">
+     <Match ID="1">
+      <Tireur REF="118" Score="4" Statut="D"/>
+      <Tireur REF="112" Score="10" Statut="V"/>
+     </Match>
+    </Tableau>
+   </SuiteDeTableaux>
+  </PhaseDeTableaux>
+  <ClassementGeneral PhaseID="" ID="4" NbElimines="0"/>
  </Phases>
 </CompetitionIndividuelle>
