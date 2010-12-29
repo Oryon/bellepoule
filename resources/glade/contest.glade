@@ -699,7 +699,7 @@ stuffing</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="tooltip_text" translatable="yes">Make the automatic score stuffing button available. I can save the user boring data captures during training sessions.</property>
+                                <property name="tooltip_text" translatable="yes">Make the automatic score stuffing button available. It can save the user boring data captures during training sessions.</property>
                                 <property name="image">image2</property>
                                 <property name="image_position">right</property>
                                 <property name="draw_indicator">True</property>

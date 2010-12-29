@@ -5,8 +5,8 @@
 
 [Setup]
 AppName=BellePoule
-AppVerName=BellePoule version {#VERSION}.{#VERSION_DAY}/{#VERSION_MONTH}
-OutputBaseFilename=setup{#VERSION}_{#VERSION_DAY}{#VERSION_MONTH}
+AppVerName=BellePoule version {#VERSION}.{#VERSION_REVISION}{#VERSION_MATURITY}
+OutputBaseFilename=setup{#VERSION}_{#VERSION_REVISION}{#VERSION_MATURITY}
 AppPublisher=betton.escrime
 AppPublisherURL=http://betton.escrime.free.fr/
 AppSupportURL=http://betton.escrime.free.fr/
@@ -236,6 +236,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

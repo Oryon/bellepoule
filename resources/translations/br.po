@@ -270,7 +270,7 @@ msgid "H. scored"
 msgstr ""
 
 #: ../../sources/pool.cpp:508
-msgid "H. recieved"
+msgid "H. received"
 msgstr ""
 
 #: ../../sources/pool.cpp:517
@@ -565,7 +565,7 @@ msgstr ""
 
 #: ../../resources/glade/contest.glade:700
 msgid ""
-"Make the automatic score stuffing button available. I can save the user "
+"Make the automatic score stuffing button available. It can save the user "
 "boring data captures during training sessions."
 msgstr ""
 

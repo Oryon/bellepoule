@@ -540,7 +540,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x += cell_w;
 
         goo_text = goo_canvas_text_new (dashboard_group,
-                                        gettext ("H. recieved"),
+                                        gettext ("H. received"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
                                         "font", "Sans 18px",
