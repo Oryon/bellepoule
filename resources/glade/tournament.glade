@@ -867,7 +867,11 @@ Portage Linux
 Conception/Codage:
   Yannick Le Roux</property>
     <property name="translator_credits" translatable="yes">Marijn Somers (Dutch)
-Julien Diaz (German)</property>
+Julien Diaz (German)
+Tina Schliemann (German)
+Alexis Pigeon (Spanish)
+Mohamed Rebai (Arabic)
+Sergev Makhtanov (Russian)</property>
     <property name="artists">S&#xE9;bastien Vermandel</property>
     <property name="logo">about.png</property>
     <signal name="close" handler="gtk_widget_hide"/>

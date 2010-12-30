@@ -1460,7 +1460,11 @@ msgstr ""
 #: ../../resources/glade/tournament.glade:853
 msgid ""
 "Marijn Somers (Dutch)\n"
-"Julien Diaz (German)"
+"Julien Diaz (German)\n"
+"Tina Schliemann (German)\n"
+"Alexis Pigeon (Spanish)\n"
+"Mohamed Rebai (Arabic)\n"
+"Sergev Makhtanov (Russian)"
 msgstr ""
 
 msgid "points"
