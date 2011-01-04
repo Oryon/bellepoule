@@ -117,6 +117,9 @@ Source: "..\resources\glade\*.glade"; DestDir: "{app}\resources\glade\"; Flags: 
 Source: "..\resources\*.txt"; DestDir: "{app}\resources\"; Flags: ignoreversion
 Source: "..\resources\exe.ico"; DestDir: "{app}\resources\"; Flags: ignoreversion
 
+Source: "..\resources\fra\*"; DestDir: "{app}\resources\fra"; Flags: ignoreversion
+Source: "..\resources\ger\*"; DestDir: "{app}\resources\ger"; Flags: ignoreversion
+
 ;Sources
 Source: "..\BellePoule.cbp"; DestDir: "{app}"; Tasks: downloadsources; Flags: ignoreversion
 Source: "..\sources\*.hpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
@@ -236,6 +239,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

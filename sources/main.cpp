@@ -196,7 +196,7 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("resources/clubs_fra.txt");
+    desc->AddDiscreteValues ("resources/clubs.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 

@@ -91,6 +91,8 @@ class Match : public Object
     void Save (xmlTextWriter *xml_writer,
                Player        *player);
 
+    void Init (Data *max_score);
+
     ~Match ();
 };
 

@@ -25,6 +25,36 @@
 Match::Match (Data *max_score)
 : Object ("Match")
 {
+  Init (max_score);
+}
+
+// --------------------------------------------------------------------------------
+Match::Match  (Player *A,
+               Player *B,
+               Data   *max_score)
+: Object ("Match")
+{
+  Init (max_score);
+
+  _A = A;
+  _B = B;
+
+  _A_is_known = TRUE;
+  _B_is_known = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+Match::~Match ()
+{
+  Object::TryToRelease (_A_score);
+  Object::TryToRelease (_B_score);
+
+  g_free (_name);
+}
+
+// --------------------------------------------------------------------------------
+void Match::Init (Data *max_score)
+{
   _max_score = max_score;
 
   _A = NULL;
@@ -43,38 +73,9 @@ Match::Match (Data *max_score)
 }
 
 // --------------------------------------------------------------------------------
-Match::Match  (Player *A,
-               Player *B,
-               Data   *max_score)
-: Object ("Match")
-{
-  _max_score = max_score;
-
-  _A = A;
-  _B = B;
-
-  _A_is_known = TRUE;
-  _B_is_known = TRUE;
-
-  _name = g_strdup ("");
-
-  _A_score = new Score (max_score);
-  _B_score = new Score (max_score);
-}
-
-// --------------------------------------------------------------------------------
-Match::~Match ()
-{
-  Object::TryToRelease (_A_score);
-  Object::TryToRelease (_B_score);
-
-  g_free (_name);
-}
-
-// --------------------------------------------------------------------------------
 gboolean Match::IsDropped ()
 {
-  return ((_A_is_dropped == TRUE) || (_B_is_dropped == TRUE));
+  return (_A_is_dropped || _B_is_dropped);
 }
 
 // --------------------------------------------------------------------------------
