@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-12-29 23:51+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2011-01-03 09:02+0000\n"
+"Last-Translator: marijn somers <Unknown>\n"
 "Language-Team: <nl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-12-31 05:35+0000\n"
+"X-Launchpad-Export-Date: 2011-01-04 14:20+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -655,23 +655,27 @@ msgstr "Automatisch vullen"
 
 #: ../../resources/glade/pool_supervisor.glade:149
 msgid "Combined classification"
-msgstr ""
+msgstr "Gecombineerde classificatie"
 
 #: ../../resources/glade/pool_supervisor.glade:153
 msgid ""
 "The classification cumulating  the current score and the scores of the "
 "previous pool rounds."
 msgstr ""
+"De classificatie telt de huidige score en de scores van de vorige poule "
+"rondes op"
 
 #: ../../resources/glade/pool_supervisor.glade:166
 msgid "Single classification"
-msgstr ""
+msgstr "Enkele classificatie"
 
 #: ../../resources/glade/pool_supervisor.glade:170
 msgid ""
 "The classification of the current round that doesn't take into account the "
 "scores of the previous rounds. "
 msgstr ""
+"De classificatie van de huidige ronde neemt de scores van de vorige rondes "
+"niet mee "
 
 #: ../../resources/glade/pool_supervisor.glade:230
 #: ../../resources/glade/splitting.glade:81
@@ -790,7 +794,7 @@ msgstr "in afwachting"
 
 #: ../../resources/glade/table.glade:545
 msgid "The pending score sheets"
-msgstr ""
+msgstr "Wedstrijdformulieren in wacht"
 
 #: ../../resources/glade/table.glade:558
 msgid "All the score sheets"
@@ -1515,57 +1519,63 @@ msgid ""
 "Mohamed Rebai (Arabic)\n"
 "Sergev Makhtanov (Russian)\n"
 msgstr ""
+"Marijn Somers (Dutch)\n"
+"Julien Diaz (German)\n"
+"Tina Schliemann (German)\n"
+"Alexis Pigeon (Spanish)\n"
+"Mohamed Rebai (Arabic)\n"
+"Sergev Makhtanov (Russian)\n"
 
 #: ../../sources/main.cpp:205
 msgid "start rank"
-msgstr ""
+msgstr "start ranking"
 
 #: ../../sources/main.cpp:215
 msgid "global status"
-msgstr ""
+msgstr "globale status"
 
 #: ../../sources/main.cpp:218 ../../sources/main.cpp:226
 msgid "Qualified"
-msgstr ""
+msgstr "Gekwalificeerd"
 
 #: ../../sources/main.cpp:219 ../../sources/main.cpp:227
 msgid "Not qualified"
-msgstr ""
+msgstr "Niet gekwalificeerd"
 
 #: ../../sources/main.cpp:220 ../../sources/main.cpp:228
 msgid "Withdrawal"
-msgstr ""
+msgstr "Opgave"
 
 #: ../../sources/main.cpp:221 ../../sources/main.cpp:229
 msgid "Excluded"
-msgstr ""
+msgstr "Uitgesloten"
 
 #: ../../sources/main.cpp:222 ../../sources/main.cpp:230
 msgid "Forfeit"
-msgstr ""
+msgstr "Forfait"
 
 #: ../../sources/main.cpp:224
 msgid "status"
-msgstr ""
+msgstr "status"
 
 #: ../../sources/pool.cpp:506
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: ../../resources/glade/checkin.glade:80
 #: ../../resources/glade/checkin.glade:118
 msgid "all"
-msgstr ""
+msgstr "alle"
 
 #: ../../resources/glade/general_classification.glade:40
 msgid "Export to CSV"
-msgstr ""
+msgstr "Exporteer naar CSV"
 
 msgid "User manual"
-msgstr ""
+msgstr "Gebruikershandleiding"
 
 msgid "Export to FFF"
-msgstr ""
+msgstr "Exporteer naar FFF"
 
 #~ msgid "points"
 #~ msgstr "punten"
