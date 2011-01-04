@@ -1,0 +1,20 @@
+1;NORDBADISCHER FECHTERBUND;Nordbadischer Fechterbund
+2;SÜDBADISCHER FECHTERBUND;Südbadischer Fechterbund
+3;BAYERISCHER FECHTERVERBAND;Bayerischer Fechterverband
+4;BERLINER FECHTERBUND;Berliner Fechterbund
+5;BRANDENBURGER FECHTERBUNG;Brandenburger Fechterbund
+6;LANDESFACHVERBAND FECHTEN BREMEN;Landesfachverband Bremen
+7;HAMBURGER FECHTVERBAND;Hamburger Fechtverband
+8;HESSISCHER FECHTERVERBAND;Hessischer Fechterverband
+9;LANDESFECHTVERBAND MECKLENBURG-VORPOMMERN;Landesfechtverband Mecklenburg-Vorpommern
+10;FECHTERBUND MITTELRHEIN;Fechterbund Mittelrhein
+11;FECHTVERBAND NIEDERSACHSEN;Fechtverband Niedersachsen
+12;RHEINISCHER FECHTERBUND;Rheinischer Fechterbund
+13;FECHTERBUND SAAR;Fechterbund Saar
+14;SÄCHSISCHER FECHTVERBAND;Sächsischer Fechtverband
+15;FECHTERBUNG SACHSEN-ANHALT;Fechterbund Sachsen-Anhalt
+16;FECHTERBUND SCHLESWIG-HOLSTEIN;Fechterbund Schleswig-Holstein
+17;SÜDWESTDEUTSCHER FECHTVERBAND;Südwestdeutscher Fechtverband
+18;THÜRINGER FECHTVERBAND;Thüringer Fechtverband
+19;WESTFÄLISCHER FECHTERBUND;Westfälischer Fechterbund
+20;WÜRTTEMBERGISCHER FECHTERBUNG;Württembergischer Fechterbund
