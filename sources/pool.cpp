@@ -732,20 +732,9 @@ void Pool::Draw (GooCanvas *on_canvas,
                                               0);
           g_string_free (image,
                          TRUE);
-          for (guint i = 0; i < _max_score->_value; i++)
-          {
-            GooCanvasItem *rect = goo_canvas_rect_new (match_table,
-                                                       0.0, 0.0,
-                                                       10.0, 10.0,
-                                                       "stroke-color", "grey",
-                                                       "line-width", 1.0,
-                                                       NULL);
-            Canvas::PutInTable (match_table,
-                                rect,
-                                0,
-                                i+1);
-            Canvas::SetTableItemAttribute (rect, "y-align", 0.5);
-          }
+          match->DrawScoreCell (match_table,
+                                10,
+                                0);
         }
 
         {
@@ -757,21 +746,9 @@ void Pool::Draw (GooCanvas *on_canvas,
           g_string_free (image,
                          TRUE);
 
-          for (guint i = 0; i < _max_score->_value; i++)
-          {
-            GooCanvasItem *rect = goo_canvas_rect_new (match_table,
-                                                       0.0, 0.0,
-                                                       10.0, 10.0,
-                                                       "stroke-color", "grey",
-                                                       "line-width", 1.0,
-                                                       NULL);
-
-            Canvas::PutInTable (match_table,
-                                rect,
-                                1,
-                                i+1);
-            Canvas::SetTableItemAttribute (rect, "y-align", 0.5);
-          }
+          match->DrawScoreCell (match_table,
+                                10,
+                                1);
         }
         Canvas::PutInTable (match_main_table,
                             match_table,
