@@ -36,7 +36,7 @@ class Data : public Object
 
     void Save (xmlTextWriter *xml_writer);
 
-    void Load (xmlNode *xml_node);
+    gboolean Load (xmlNode *xml_node);
 
   private:
     gchar    *_xml_name;

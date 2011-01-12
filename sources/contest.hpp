@@ -20,6 +20,7 @@
 #include <libxml/xmlwriter.h>
 #include <gtk/gtk.h>
 
+#include "data.hpp"
 #include "module.hpp"
 #include "glade.hpp"
 #include "schedule.hpp"
@@ -114,7 +115,8 @@ class Contest : public Module
     GtkWidget  *_calendar_dlg;
     Tournament *_tournament;
     gboolean    _derived;
-    GList      *_color;
+    Data       *_color;
+    GdkColor   *_gdk_color;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
@@ -137,6 +139,8 @@ class Contest : public Module
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr);
+
+    void ChooseColor ();
 };
 
 #endif

@@ -47,14 +47,17 @@ Data::~Data ()
 }
 
 // --------------------------------------------------------------------------------
-void Data::Load (xmlNode *xml_node)
+gboolean Data::Load (xmlNode *xml_node)
 {
   _string = (gchar *) xmlGetProp (xml_node,
                                   BAD_CAST _xml_name);
   if (_string)
   {
     _value = (guint) atoi (_string);
+    return TRUE;
   }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
