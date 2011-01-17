@@ -177,8 +177,19 @@ void Module::UnPlug ()
       _owner = NULL;
     }
 
+    if (_filter)
+    {
+      _filter->UnPlug ();
+    }
+
     OnUnPlugged ();
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Module::IsPlugged ()
+{
+  return (gtk_widget_get_parent (_root) != NULL);
 }
 
 // --------------------------------------------------------------------------------

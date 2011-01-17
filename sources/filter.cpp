@@ -75,6 +75,15 @@ Filter::~Filter ()
 }
 
 // --------------------------------------------------------------------------------
+void Filter::UnPlug ()
+{
+  if (_filter_window)
+  {
+    // gtk_widget_hide_all (_filter_window);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Filter::SetOwner (Module *owner)
 {
   _owner = owner;
@@ -181,7 +190,7 @@ void Filter::SelectAttributes ()
     g_object_set (_filter_window,
                   "transient-for", gtk_widget_get_parent_window (_filter_window),
                   "destroy-with-parent", TRUE,
-                  "Filter", gettext ("Filter"),
+                  "title", gettext ("Data"),
                   NULL);
     g_signal_connect (_filter_window,
                       "delete-event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
@@ -259,7 +268,10 @@ void Filter::UpdateAttrList ()
     }
   }
 
-  _owner->OnAttrListUpdated ();
+  if (_owner->IsPlugged ())
+  {
+    _owner->OnAttrListUpdated ();
+  }
 }
 
 // --------------------------------------------------------------------------------

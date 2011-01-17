@@ -53,6 +53,8 @@ class Module : public virtual Object
 
     virtual void OnAttrListUpdated () {};
 
+    gboolean IsPlugged ();
+
   protected:
     Filter  *_filter;
     Glade   *_glade;

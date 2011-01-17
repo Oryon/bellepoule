@@ -45,6 +45,8 @@ class Filter : public virtual Object
 
     void SetOwner (Module *owner);
 
+    void UnPlug ();
+
   private:
     typedef enum
     {
