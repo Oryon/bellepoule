@@ -39,6 +39,11 @@ typedef enum
 
 typedef enum
 {
+  DISPLAY_NAME_COLUMN
+} DisplayColumnId;
+
+typedef enum
+{
   QUICK_MATCH_NAME_COLUMN,
   QUICK_MATCH_COLUMN,
   QUICK_MATCH_PATH_COLUMN,
@@ -183,6 +188,7 @@ Table::Table (StageClass *stage_class)
   }
 
   _from_table_liststore   = GTK_LIST_STORE (_glade->GetObject ("from_liststore"));
+  _display_treestore      = GTK_TREE_STORE (_glade->GetObject ("display_treestore"));
   _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
   _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("match_treemodelfilter"));
 
@@ -684,6 +690,46 @@ void Table::CreateTree ()
     g_signal_connect (_glade->GetWidget ("from_table_combobox"), "changed",
                       G_CALLBACK (on_from_table_combobox_changed),
                       (Object *) this);
+  }
+
+  {
+    gtk_tree_store_clear (_display_treestore);
+
+    FeedDisplayStore (1,
+                      _nb_levels-1,
+                      NULL);
+
+    gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("display_treeview")));
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::FeedDisplayStore (guint        from_place,
+                              guint        nb_levels,
+                              GtkTreeIter *parent)
+{
+  GtkTreeIter  iter;
+  gchar       *text = g_strdup_printf ("%d", from_place);
+
+  gtk_tree_store_append (_display_treestore,
+                         &iter,
+                         parent);
+
+  gtk_tree_store_set (_display_treestore, &iter,
+                      DISPLAY_NAME_COLUMN, text,
+                      -1);
+  g_free (text);
+
+  {
+    guint place_offset = 1;
+
+    for (guint i = 0; i < nb_levels-1; i++)
+    {
+      place_offset = place_offset << 1;
+      FeedDisplayStore (from_place + place_offset,
+                        i+1,
+                        &iter);
+    }
   }
 }
 
@@ -1439,6 +1485,7 @@ void Table::OnUnPlugged ()
   _score_collector = NULL;
 
   gtk_list_store_clear (_from_table_liststore);
+  gtk_tree_store_clear (_display_treestore);
   gtk_tree_store_clear (_quick_search_treestore);
   gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
 
@@ -1701,6 +1748,21 @@ void Table::OnMatchSheetToggled (GtkWidget *widget)
   else
   {
     gtk_widget_set_sensitive (vbox, FALSE);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::OnDisplayToggled (GtkWidget *widget)
+{
+  GtkWidget *vbox = _glade->GetWidget ("display_vbox");
+
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)))
+  {
+    gtk_widget_show (vbox);
+  }
+  else
+  {
+    gtk_widget_hide (vbox);
   }
 }
 
@@ -2485,6 +2547,15 @@ extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *w
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnMatchSheetToggled (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_display_toolbutton_toggled (GtkWidget *widget,
+                                                               Object    *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->OnDisplayToggled (widget);
 }
 
 // --------------------------------------------------------------------------------
