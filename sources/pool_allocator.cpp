@@ -1107,18 +1107,19 @@ void PoolAllocator::FillPoolTable (Pool *pool)
           || (   _selected_config->has_two_size
               && ((pool_size == _selected_config->size)) || (pool_size == _selected_config->size + 1)))
       {
-        icon_name = GTK_STOCK_APPLY;
+        icon_name = g_strdup (GTK_STOCK_APPLY);
         pool->SetData (this, "is_balanced", (void *) 1);
       }
       else
       {
-        icon_name = GTK_STOCK_DIALOG_WARNING;
+        icon_name = g_strdup (GTK_STOCK_DIALOG_WARNING);
         pool->SetData (this, "is_balanced", 0);
       }
 
       Canvas::PutStockIconInTable (name_table,
                                    icon_name,
                                    0, 0);
+      g_free (icon_name);
     }
 
     // Name

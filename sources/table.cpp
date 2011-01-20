@@ -29,6 +29,7 @@
 
 const gchar   *Table::_class_name     = N_("Table");
 const gchar   *Table::_xml_class_name = "PhaseDeTableaux";
+const gdouble  Table::_score_rect_size = 30.0;
 const gdouble  Table::_level_spacing  = 10.0;
 
 typedef enum
@@ -246,7 +247,7 @@ void Table::SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *Table::GetQuickScore (gchar *container)
+GooCanvasItem *Table::GetQuickScore (const gchar *container)
 {
   GtkWidget     *view_port = _glade->GetWidget (container);
   GooCanvas     *canvas    = GOO_CANVAS (goo_canvas_new ());
@@ -317,15 +318,15 @@ void Table::RefreshLevelStatus ()
 
       if (_level_status[i]._has_error)
       {
-        icon = GTK_STOCK_DIALOG_WARNING;
+        icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
       }
       else if (_level_status[i]._is_over == TRUE)
       {
-        icon = GTK_STOCK_APPLY;
+        icon = g_strdup (GTK_STOCK_APPLY);
       }
       else
       {
-        icon = GTK_STOCK_EXECUTE;
+        icon = g_strdup (GTK_STOCK_EXECUTE);
       }
 
       _level_status[i]._status_item = Canvas::PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
@@ -339,6 +340,7 @@ void Table::RefreshLevelStatus ()
       gtk_list_store_set (_from_table_liststore, &iter,
                           FROM_STATUS_COLUMN, icon,
                           -1);
+      g_free (icon);
     }
   }
   SignalStatusUpdate ();
@@ -954,7 +956,7 @@ gboolean Table::FillInNode (GNode *node,
 
               if (parent_data->_match->IsDropped () == FALSE)
               {
-                text = "Q";
+                text = (gchar *) "Q";
               }
               else
               {

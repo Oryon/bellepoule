@@ -72,28 +72,28 @@ class AttributeDesc : public Object
 
     static void SetPath (gchar *path);
 
-    static AttributeDesc *Declare (GType  type,
-                                   gchar *code_name,
-                                   gchar *xml_name,
-                                   gchar *user_name);
+    static AttributeDesc *Declare (GType        type,
+                                   const gchar *code_name,
+                                   const gchar *xml_name,
+                                   gchar       *user_name);
 
     static void CreateList (GSList **list, ...);
 
     static GSList *GetList ();
 
-    static AttributeDesc *GetDesc (gchar *name);
+    static AttributeDesc *GetDesc (const gchar *name);
 
     void BindDiscreteValues (GObject         *object,
                              GtkCellRenderer *renderer = NULL);
 
     gboolean HasDiscreteValue ();
 
-    void AddDiscreteValues (gchar *first_xml_image,
-                            gchar *first_user_image,
-                            gchar *first_icon,
+    void AddDiscreteValues (const gchar *first_xml_image,
+                            gchar       *first_user_image,
+                            const gchar *first_icon,
                             ...);
 
-    void AddDiscreteValues (gchar *file);
+    void AddDiscreteValues (const gchar *file);
 
     void *GetDiscreteValue (guint from_code);
 
@@ -107,10 +107,10 @@ class AttributeDesc : public Object
     static gchar  *_path;
     static GSList *_list;
 
-    AttributeDesc (GType  type,
-                   gchar *code_name,
-                   gchar *xml_name,
-                   gchar *user_name);
+    AttributeDesc (GType        type,
+                   const gchar *code_name,
+                   const gchar *xml_name,
+                   const gchar *user_name);
 
     ~AttributeDesc ();
 };
@@ -132,7 +132,7 @@ class Attribute : public Object
 
     GType GetType ();
 
-    virtual void SetValue (gchar *value) = 0;
+    virtual void SetValue (const gchar *value) = 0;
 
     virtual void SetValue (guint value) = 0;
 
@@ -170,7 +170,7 @@ class TextAttribute : public Attribute
 
     virtual ~TextAttribute ();
 
-    void SetValue (gchar *value);
+    void SetValue (const gchar *value);
 
     void SetValue (guint value);
 
@@ -201,7 +201,7 @@ class BooleanAttribute : public Attribute
 
     virtual ~BooleanAttribute ();
 
-    void SetValue (gchar *value);
+    void SetValue (const gchar *value);
 
     void SetValue (guint value);
 
@@ -231,7 +231,7 @@ class IntAttribute : public Attribute
 
     virtual ~IntAttribute ();
 
-    void SetValue (gchar *value);
+    void SetValue (const gchar *value);
 
     void SetValue (guint value);
 

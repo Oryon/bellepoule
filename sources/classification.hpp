@@ -43,9 +43,9 @@ class Classification : public PlayersList
   private:
     void OnPlugged ();
 
-    void WriteFFFString (FILE   *file,
-                         Player *player,
-                         gchar  *attr_name);
+    void WriteFFFString (FILE        *file,
+                         Player      *player,
+                         const gchar *attr_name);
 
     ~Classification ();
 };

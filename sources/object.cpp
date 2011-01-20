@@ -28,7 +28,7 @@ struct ClassStatus
 };
 
 // --------------------------------------------------------------------------------
-Object::Object (gchar *class_name)
+Object::Object (const gchar *class_name)
 {
   g_datalist_init (&_datalist);
   _ref_count = 1;
@@ -37,10 +37,12 @@ Object::Object (gchar *class_name)
 #ifdef DEBUG
   if (class_name == NULL)
   {
-    class_name = "anonymous";
+    _class_name = g_strdup ("anonymous");
   }
-
-  _class_name = class_name;
+  else
+  {
+    _class_name = g_strdup (class_name);
+  }
 
   for (guint i = 0; i < g_list_length (_list); i++)
   {
@@ -90,6 +92,9 @@ Object::~Object ()
       return;
     }
   }
+
+  g_free (_class_name);
+
 #endif
 }
 
@@ -130,11 +135,11 @@ void Object::TryToRelease (Object *object)
 
 // --------------------------------------------------------------------------------
 void Object::SetData (Object         *owner,
-                      gchar          *key,
+                      const gchar    *key,
                       void           *data,
                       GDestroyNotify  destroy_cbk)
 {
-  gchar *full_key = g_strdup_printf ("%p::%s", owner, key);
+  gchar *full_key = g_strdup_printf ("%p::%s", (void *) owner, key);
 
   g_datalist_set_data_full (&_datalist,
                             full_key,
@@ -144,10 +149,10 @@ void Object::SetData (Object         *owner,
 }
 
 // --------------------------------------------------------------------------------
-void Object::RemoveData (Object *owner,
-                         gchar  *key)
+void Object::RemoveData (Object      *owner,
+                         const gchar *key)
 {
-  gchar *full_key = g_strdup_printf ("%p::%s", owner, key);
+  gchar *full_key = g_strdup_printf ("%p::%s", (void *) owner, key);
 
   g_datalist_remove_data (&_datalist,
                           full_key);
@@ -165,11 +170,11 @@ void Object::RemoveAllData ()
 }
 
 // --------------------------------------------------------------------------------
-void *Object::GetData (Object *owner,
-                       gchar  *key)
+void *Object::GetData (Object      *owner,
+                       const gchar *key)
 {
   void  *data;
-  gchar *full_key = g_strdup_printf ("%p::%s", owner, key);
+  gchar *full_key = g_strdup_printf ("%p::%s", (void *) owner, key);
 
   data = g_datalist_get_data (&_datalist,
                               full_key);

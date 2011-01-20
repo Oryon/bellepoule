@@ -130,10 +130,10 @@ class Pool : public CanvasModule
 
     void OnUnPlugged ();
 
-    void SetDisplayData (Player    *player,
-                         GooCanvas *on_canvas,
-                         gchar     *name,
-                         void      *value);
+    void SetDisplayData (Player      *player,
+                         GooCanvas   *on_canvas,
+                         const gchar *name,
+                         void        *value);
 
     void Draw (GooCanvas *on_canvas,
                gboolean   print_for_referees);
@@ -151,7 +151,7 @@ class Pool : public CanvasModule
     void RefreshDashBoard ();
 
     void RefreshAttribute (Player            *player,
-                           gchar             *name,
+                           const gchar       *name,
                            guint              value,
                            CombinedOperation  operation);
 

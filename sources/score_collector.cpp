@@ -540,8 +540,8 @@ void ScoreCollector::Stop ()
 }
 
 // --------------------------------------------------------------------------------
-void ScoreCollector::SetConsistentColors (gchar *normal_color,
-                                          gchar *focus_color)
+void ScoreCollector::SetConsistentColors (const gchar *normal_color,
+                                          const gchar *focus_color)
 {
   g_free (_consistent_normal_color);
   _consistent_normal_color = g_strdup (normal_color);

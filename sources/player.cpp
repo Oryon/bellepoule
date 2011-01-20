@@ -167,13 +167,13 @@ Attribute *Player::GetAttribute (AttributeId *attr_id)
 }
 
 // --------------------------------------------------------------------------------
-void Player::SetChangeCbk (gchar    *attr_name,
-                           OnChange  change_cbk,
-                           void     *data)
+void Player::SetChangeCbk (const gchar *attr_name,
+                           OnChange     change_cbk,
+                           void        *data)
 {
   Client *client = new Client;
 
-  client->_attr_name  = attr_name;
+  client->_attr_name  = g_strdup (attr_name);
   client->_change_cbk = change_cbk;
   client->_data       = data;
 
@@ -203,7 +203,7 @@ void Player::NotifyChange (Attribute *attr)
 
 // --------------------------------------------------------------------------------
 void Player::SetAttributeValue (AttributeId *attr_id,
-                                gchar       *value)
+                                const gchar *value)
 {
   Attribute *attr = GetAttribute (attr_id);
 

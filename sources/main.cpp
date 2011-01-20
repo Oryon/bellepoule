@@ -40,6 +40,7 @@
 #include "attribute.hpp"
 #include "general_classification.hpp"
 #include "glade.hpp"
+#include "locale"
 
 // --------------------------------------------------------------------------------
 static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,

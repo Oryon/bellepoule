@@ -245,9 +245,9 @@ void Classification::DumpToFFF (gchar   *filename,
 }
 
 // --------------------------------------------------------------------------------
-void Classification::WriteFFFString (FILE   *file,
-                                     Player *player,
-                                     gchar  *attr_name)
+void Classification::WriteFFFString (FILE        *file,
+                                     Player      *player,
+                                     const gchar *attr_name)
 {
   Player::AttributeId  attr_id (attr_name);
   Attribute           *attr = player->GetAttribute (&attr_id);

@@ -24,18 +24,18 @@
 class Object
 {
   public:
-    Object (gchar *class_name = NULL);
+    Object (const gchar *class_name = NULL);
 
     void SetData (Object         *owner,
-                  gchar          *key,
+                  const gchar    *key,
                   void           *data,
                   GDestroyNotify  destroy_cbk = NULL);
 
-    void *GetData (Object *owner,
-                   gchar  *key);
+    void *GetData (Object      *owner,
+                   const gchar *key);
 
-    void RemoveData (Object *owner,
-                     gchar  *key);
+    void RemoveData (Object      *owner,
+                     const gchar *key);
 
     void Retain ();
 

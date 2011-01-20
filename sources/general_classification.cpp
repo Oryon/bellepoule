@@ -265,11 +265,11 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
 
         if (export_type == CSV)
         {
-          suffix = ".csv";
+          suffix = g_strdup (".csv");
         }
         else
         {
-          suffix = ".fff";
+          suffix = g_strdup (".fff");
         }
 
         {
@@ -300,6 +300,7 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
             g_free (dirname);
           }
         }
+        g_free (suffix);
       }
     }
 

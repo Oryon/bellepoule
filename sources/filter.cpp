@@ -81,7 +81,7 @@ void Filter::SetOwner (Module *owner)
 }
 
 // --------------------------------------------------------------------------------
-guint Filter::GetAttributeId (gchar *name)
+guint Filter::GetAttributeId (const gchar *name)
 {
   if (_attr_list)
   {
@@ -118,7 +118,7 @@ void Filter::SetAttributeList (GSList *list)
 }
 
 // --------------------------------------------------------------------------------
-void Filter::ShowAttribute (gchar *name)
+void Filter::ShowAttribute (const gchar *name)
 {
   GtkTreeIter  iter;
   GtkTreeIter *sibling = NULL;

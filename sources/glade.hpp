@@ -23,15 +23,15 @@
 class Glade : public Object
 {
   public:
-     Glade (gchar  *file_name,
-            Object *owner);
+     Glade (const gchar *file_name,
+            Object      *owner);
     ~Glade ();
 
     static void SetPath (gchar *path);
 
     GtkWidget *GetRootWidget    ();
-    GtkWidget *GetWidget        (gchar *name);
-    GObject   *GetObject        (gchar *name);
+    GtkWidget *GetWidget        (const gchar *name);
+    GObject   *GetObject        (const gchar *name);
     void       DetachFromParent (GtkWidget *widget);
 
   private:

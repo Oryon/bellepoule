@@ -25,8 +25,8 @@
 #include "canvas_module.hpp"
 
 // --------------------------------------------------------------------------------
-CanvasModule::CanvasModule (gchar *glade_file,
-                            gchar *root)
+CanvasModule::CanvasModule (const gchar *glade_file,
+                            const gchar *root)
 : Module (glade_file,
           root)
 {

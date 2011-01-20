@@ -23,7 +23,7 @@ gchar  *AttributeDesc::_path = NULL;
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
-static gchar *GetUndivadableText (gchar *text)
+static gchar *GetUndivadableText (const gchar *text)
 {
   gchar *result = NULL;
 
@@ -31,7 +31,7 @@ static gchar *GetUndivadableText (gchar *text)
   {
     guint  nb_space = 0;
 
-    for (gchar *current = text; *current != 0; current++)
+    for (gchar *current = (gchar *) text; *current != 0; current++)
     {
       if (*current == ' ')
       {
@@ -67,16 +67,16 @@ static gchar *GetUndivadableText (gchar *text)
 }
 
 // --------------------------------------------------------------------------------
-AttributeDesc::AttributeDesc (GType  type,
-                              gchar *code_name,
-                              gchar *xml_name,
-                              gchar *user_name)
+AttributeDesc::AttributeDesc (GType        type,
+                              const gchar *code_name,
+                              const gchar *xml_name,
+                              const gchar *user_name)
 : Object ("AttributeDesc")
 {
   _type               = type;
-  _code_name          = code_name;
-  _xml_name           = xml_name;
-  _user_name          = user_name;
+  _code_name          = g_strdup (code_name);
+  _xml_name           = g_strdup (xml_name);
+  _user_name          = g_strdup (user_name);
   _uniqueness         = SINGULAR;
   _persistency        = PERSISTENT;
   _scope              = GLOBAL;
@@ -98,6 +98,9 @@ AttributeDesc::~AttributeDesc ()
   {
     g_object_unref (_discrete_store);
   }
+  g_free (_code_name);
+  g_free (_xml_name);
+  g_free (_user_name);
 }
 
 // --------------------------------------------------------------------------------
@@ -107,10 +110,10 @@ void AttributeDesc::SetPath (gchar *path)
 }
 
 // --------------------------------------------------------------------------------
-AttributeDesc *AttributeDesc::Declare (GType  type,
-                                       gchar *code_name,
-                                       gchar *xml_name,
-                                       gchar *user_name)
+AttributeDesc *AttributeDesc::Declare (GType        type,
+                                       const gchar *code_name,
+                                       const gchar *xml_name,
+                                       gchar       *user_name)
 {
   AttributeDesc *attr_desc = new AttributeDesc (type,
                                                 code_name,
@@ -271,9 +274,9 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image)
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
-                                       gchar *first_user_image,
-                                       gchar *first_icon,
+void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
+                                       gchar       *first_user_image,
+                                       const gchar *first_icon,
                                        ...)
 {
   if (_discrete_store == NULL)
@@ -286,9 +289,9 @@ void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
 
   {
     va_list  ap;
-    gchar   *xml_image  = first_xml_image;
+    gchar   *xml_image  = g_strdup (first_xml_image);
     gchar   *user_image = first_user_image;
-    gchar   *icon       = first_icon;
+    gchar   *icon       = g_strdup (first_icon);
 
     va_start (ap, first_icon);
     while (xml_image)
@@ -324,7 +327,7 @@ void AttributeDesc::AddDiscreteValues (gchar *first_xml_image,
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::AddDiscreteValues (gchar *file)
+void AttributeDesc::AddDiscreteValues (const gchar *file)
 {
   if (_discrete_store == NULL)
   {
@@ -434,7 +437,7 @@ GSList *AttributeDesc::GetList ()
 }
 
 // --------------------------------------------------------------------------------
-AttributeDesc *AttributeDesc::GetDesc (gchar *name)
+AttributeDesc *AttributeDesc::GetDesc (const gchar *name)
 {
   for (guint i = 0; i < g_slist_length (_list); i++)
   {
@@ -554,7 +557,7 @@ TextAttribute::~TextAttribute ()
 }
 
 // --------------------------------------------------------------------------------
-void TextAttribute::SetValue (gchar *value)
+void TextAttribute::SetValue (const gchar *value)
 {
   if (value)
   {
@@ -648,7 +651,7 @@ BooleanAttribute::~BooleanAttribute ()
 }
 
 // --------------------------------------------------------------------------------
-void BooleanAttribute::SetValue (gchar *value)
+void BooleanAttribute::SetValue (const gchar *value)
 {
   if (value)
   {
@@ -726,7 +729,7 @@ IntAttribute::~IntAttribute ()
 }
 
 // --------------------------------------------------------------------------------
-void IntAttribute::SetValue (gchar *value)
+void IntAttribute::SetValue (const gchar *value)
 {
   if (value)
   {

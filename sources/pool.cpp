@@ -838,14 +838,14 @@ void Pool::Draw (GooCanvas *on_canvas,
 }
 
 // --------------------------------------------------------------------------------
-void Pool::SetDisplayData (Player    *player,
-                           GooCanvas *on_canvas,
-                           gchar     *name,
-                           void      *value)
+void Pool::SetDisplayData (Player      *player,
+                           GooCanvas   *on_canvas,
+                           const gchar *name,
+                           void        *value)
 {
   player->SetData (GetDataOwner (), name, value);
 
-  _display_data = g_slist_prepend (_display_data, name);
+  _display_data = g_slist_prepend (_display_data, (void *) name);
 }
 
 // --------------------------------------------------------------------------------
@@ -921,19 +921,19 @@ gint Pool::ComparePlayer (Player   *A,
     guint   HS_B;
     Player::AttributeId attr_id ("", data_owner);
 
-    attr_id._name = "victories_ratio";
+    attr_id._name = (gchar *) "victories_ratio";
     ratio_A = (guint) A->GetAttribute (&attr_id)->GetValue ();
     ratio_B = (guint) B->GetAttribute (&attr_id)->GetValue ();
 
-    attr_id._name = "indice";
+    attr_id._name = (gchar *) "indice";
     average_A = (gint)  A->GetAttribute (&attr_id)->GetValue ();
     average_B = (gint)  B->GetAttribute (&attr_id)->GetValue ();
 
-    attr_id._name = "HS";
+    attr_id._name = (gchar *) "HS";
     HS_A = (guint) A->GetAttribute (&attr_id)->GetValue ();
     HS_B = (guint) B->GetAttribute (&attr_id)->GetValue ();
 
-    attr_id._name = "status";
+    attr_id._name = (gchar *) "status";
     attr_id._owner = main_data_owner;
     if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
     {
@@ -1195,7 +1195,7 @@ void Pool::RefreshScoreData ()
 
 // --------------------------------------------------------------------------------
 void Pool::RefreshAttribute (Player            *player,
-                             gchar             *name,
+                             const gchar       *name,
                              guint              value,
                              CombinedOperation  operation)
 {
@@ -1293,7 +1293,7 @@ void Pool::RefreshDashBoard ()
         }
       }
 
-      attr_id._name = "victories_ratio";
+      attr_id._name = (gchar *) "victories_ratio";
       attr = player->GetAttribute (&attr_id);
       data = player->GetData (GetDataOwner (), "VictoriesRatioItem");
       if (data)
@@ -1318,7 +1318,7 @@ void Pool::RefreshDashBoard ()
         g_free (text);
       }
 
-      attr_id._name = "HS";
+      attr_id._name = (gchar *) "HS";
       attr = player->GetAttribute (&attr_id);
       data = player->GetData (GetDataOwner (), "HSItem");
       if (data)
@@ -1343,7 +1343,7 @@ void Pool::RefreshDashBoard ()
         g_free (text);
       }
 
-      attr_id._name = "indice";
+      attr_id._name = (gchar *) "indice";
       attr = player->GetAttribute (&attr_id);
       data = player->GetData (GetDataOwner (), "IndiceItem");
       if (data)
@@ -1452,7 +1452,7 @@ void Pool::Save (xmlTextWriter *xml_writer)
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NbMatches",
                                          "%d", GetNbPlayers ()-1);
-      attr_id._name = "HS";
+      attr_id._name = (gchar *) "HS";
       attr = player->GetAttribute (&attr_id);
       if (attr)
       {
@@ -1460,7 +1460,7 @@ void Pool::Save (xmlTextWriter *xml_writer)
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "TD",
                                            "%d", HS);
-        attr_id._name = "indice";
+        attr_id._name = (gchar *) "indice";
         indice = (guint) player->GetAttribute (&attr_id)->GetValue ();
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "TR",
