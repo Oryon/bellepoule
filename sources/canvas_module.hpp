@@ -26,8 +26,8 @@
 class CanvasModule : public Module
 {
   protected:
-    CanvasModule (gchar *glade_file,
-                  gchar *root = NULL);
+    CanvasModule (const gchar *glade_file,
+                  const gchar *root = NULL);
     virtual ~CanvasModule ();
 
     static void WipeItem (GooCanvasItem *item);

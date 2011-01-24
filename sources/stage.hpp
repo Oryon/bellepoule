@@ -125,7 +125,7 @@ class Stage : public virtual Object
     virtual void Load (xmlNode *xml_node);
 
     virtual void Load (xmlXPathContext *xml_context,
-                       gchar           *from_node) {};
+                       const gchar     *from_node) {};
 
     virtual void Save (xmlTextWriter *xml_writer) {};
 

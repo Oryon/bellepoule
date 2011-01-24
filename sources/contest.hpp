@@ -65,13 +65,13 @@ class Contest : public Module
   private:
     struct Time : public Object
     {
-      Time (gchar *name);
+      Time (const gchar *name);
 
       ~Time ();
 
       void Load (gchar *attr);
       void Save (xmlTextWriter *xml_writer,
-                 gchar         *attr_name);
+                 const gchar   *attr_name);
       void ReadProperties (Glade *glade);
       void FillInProperties (Glade *glade);
       void Copy (Time *to);
@@ -82,16 +82,16 @@ class Contest : public Module
     };
 
     static const guint _nb_weapon = 3;
-    static gchar *weapon_image[_nb_weapon];
-    static gchar *weapon_xml_image[_nb_weapon];
+    static const gchar *weapon_image[_nb_weapon];
+    static const gchar *weapon_xml_image[_nb_weapon];
 
     static const guint _nb_gender = 3;
-    static gchar *gender_image[_nb_gender];
-    static gchar *gender_xml_image[_nb_gender];
+    static const gchar *gender_image[_nb_gender];
+    static const gchar *gender_xml_image[_nb_gender];
 
     static const guint _nb_category = 8;
-    static gchar *category_image[_nb_category];
-    static gchar *category_xml_image[_nb_category];
+    static const gchar *category_image[_nb_category];
+    static const gchar *category_xml_image[_nb_category];
 
     static GList *_color_list;
 
@@ -128,8 +128,8 @@ class Contest : public Module
     void   InitInstance      ();
     void   ReadProperties    ();
     void   DisplayProperties ();
-    gchar *GetSaveFileName   (gchar *title,
-                              gchar *config_key);
+    gchar *GetSaveFileName   (gchar       *title,
+                              const gchar *config_key);
     void   Save              (gchar *filename);
     void   FillInProperties  ();
     void   FillInDate        (guint day,

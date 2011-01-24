@@ -31,7 +31,7 @@ class Filter : public virtual Object
 
     void SetAttributeList (GSList *list);
 
-    void ShowAttribute (gchar *name);
+    void ShowAttribute (const gchar *name);
 
     void UpdateAttrList ();
 
@@ -41,7 +41,7 @@ class Filter : public virtual Object
 
     GSList *GetSelectedAttrList ();
 
-    guint GetAttributeId (gchar *name);
+    guint GetAttributeId (const gchar *name);
 
     void SetOwner (Module *owner);
 

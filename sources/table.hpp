@@ -61,7 +61,7 @@ class Table : public virtual Stage, public CanvasModule
                      gint               page_nr);
 
   private:
-    static const gdouble _score_rect_size = 30.0;
+    static const gdouble _score_rect_size;
 
     struct LevelStatus
     {
@@ -112,7 +112,7 @@ class Table : public virtual Stage, public CanvasModule
     guint               _print_nb_y_pages;
     GData              *_match_list;
 
-    GooCanvasItem *GetQuickScore (gchar *container);
+    GooCanvasItem *GetQuickScore (const gchar *container);
 
     void Display ();
 

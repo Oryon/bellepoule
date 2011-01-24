@@ -72,7 +72,7 @@ class Checkin : public virtual Stage, public PlayersList
     void Load (xmlNode *xml_node);
 
     void Load (xmlXPathContext *xml_context,
-               gchar           *from_node);
+               const gchar     *from_node);
 
     void Save (xmlTextWriter *xml_writer);
 

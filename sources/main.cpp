@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+int swprintf (wchar_t *, size_t, const wchar_t *, ...);
+int vswprintf(wchar_t *, const wchar_t *, va_list);
+
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -40,6 +43,7 @@
 #include "attribute.hpp"
 #include "general_classification.hpp"
 #include "glade.hpp"
+#include "locale"
 
 // --------------------------------------------------------------------------------
 static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,

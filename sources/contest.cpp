@@ -35,35 +35,35 @@
 
 #include "contest.hpp"
 
-gchar *Contest::weapon_image[_nb_weapon] =
+const gchar *Contest::weapon_image[_nb_weapon] =
 {
   N_ ("Sabre"),
   N_ ("Epée"),
   N_ ("Foil")
 };
 
-gchar *Contest::weapon_xml_image[_nb_weapon] =
+const gchar *Contest::weapon_xml_image[_nb_weapon] =
 {
   "S",
   "E",
   "F"
 };
 
-gchar *Contest::gender_image[_nb_gender] =
+const gchar *Contest::gender_image[_nb_gender] =
 {
   N_ ("Male"),
   N_ ("Female"),
   N_ ("Mixed")
 };
 
-gchar *Contest::gender_xml_image[_nb_gender] =
+const gchar *Contest::gender_xml_image[_nb_gender] =
 {
   "M",
   "F",
   "FM"
 };
 
-gchar *Contest::category_image[_nb_category] =
+const gchar *Contest::category_image[_nb_category] =
 {
   N_ ("U8"),
   N_ ("U10"),
@@ -75,7 +75,7 @@ gchar *Contest::category_image[_nb_category] =
   N_ ("Veteran")
 };
 
-gchar *Contest::category_xml_image[_nb_category] =
+const gchar *Contest::category_xml_image[_nb_category] =
 {
   "O",
   "P",
@@ -90,9 +90,9 @@ gchar *Contest::category_xml_image[_nb_category] =
 GList *Contest::_color_list = NULL;
 
 // --------------------------------------------------------------------------------
-Contest::Time::Time (gchar *name)
+Contest::Time::Time (const gchar *name)
 {
-  _name = name;
+  _name = g_strdup (name);
   _hour   = 12;
   _minute = 0;
 }
@@ -104,12 +104,12 @@ Contest::Time::~Time ()
 
 // --------------------------------------------------------------------------------
 void Contest::Time::Save (xmlTextWriter *xml_writer,
-                          gchar         *attr_name)
+                          const gchar   *attr_name)
 {
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST attr_name,
                                      "%02d:%02d", _hour, _minute);
-};
+}
 
 // --------------------------------------------------------------------------------
 void Contest::Time::Load (gchar *attr)
@@ -1011,8 +1011,8 @@ void Contest::Save (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest::GetSaveFileName (gchar *title,
-                                 gchar *config_key)
+gchar *Contest::GetSaveFileName (gchar       *title,
+                                 const gchar *config_key)
 {
   GtkWidget *chooser;
   char      *filename = NULL;
@@ -1331,7 +1331,7 @@ gchar *Contest::GetName ()
 // --------------------------------------------------------------------------------
 gchar *Contest::GetGender ()
 {
-  return gender_xml_image[_gender];
+  return (char *) gender_xml_image[_gender];
 }
 
 // --------------------------------------------------------------------------------

@@ -61,8 +61,8 @@ class ScoreCollector : public Object
     void SetNextCollectingPoint (GooCanvasItem *to,
                                  GooCanvasItem *next);
 
-    void SetConsistentColors (gchar *normal_color,
-                              gchar *focus_color);
+    void SetConsistentColors (const gchar *normal_color,
+                              const gchar *focus_color);
 
     void SetUnConsistentColors (gchar *normal_color,
                                 gchar *focus_colorg);

@@ -264,7 +264,7 @@ void Checkin::Add (Player *player)
 
 // --------------------------------------------------------------------------------
 void Checkin::Load (xmlXPathContext *xml_context,
-                    gchar           *from_node)
+                    const gchar     *from_node)
 {
   gchar          *path        = g_strdup_printf ("%s/Tireurs", from_node);
   xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
@@ -778,24 +778,24 @@ void Checkin::ImportFFF (gchar *file)
 
           player = new Player;
 
-          attr_id._name = "attending";
+          attr_id._name = (gchar *) "attending";
           player->SetAttributeValue (&attr_id, (guint) FALSE);
 
           if (tokens)
           {
-            attr_id._name = "name";
+            attr_id._name = (gchar *) "name";
             player->SetAttributeValue (&attr_id, tokens[0]);
 
-            attr_id._name = "first_name";
+            attr_id._name = (gchar *) "first_name";
             player->SetAttributeValue (&attr_id, tokens[1]);
 
-            attr_id._name = "birth_date";
+            attr_id._name = (gchar *) "birth_date";
             player->SetAttributeValue (&attr_id, tokens[2]);
 
-            attr_id._name = "gender";
+            attr_id._name = (gchar *) "gender";
             player->SetAttributeValue (&attr_id, tokens[3]);
 
-            attr_id._name = "country";
+            attr_id._name = (gchar *) "country";
             player->SetAttributeValue (&attr_id, tokens[4]);
 
             g_strfreev (tokens);
@@ -815,7 +815,7 @@ void Checkin::ImportFFF (gchar *file)
                                            0);
           if (tokens)
           {
-            attr_id._name = "licence";
+            attr_id._name = (gchar *) "licence";
             player->SetAttributeValue (&attr_id, tokens[0]);
 
             if (strlen (tokens[0]) > 2)
@@ -830,27 +830,27 @@ void Checkin::ImportFFF (gchar *file)
 
                 if (league)
                 {
-                  attr_id._name = "league";
+                  attr_id._name = (gchar *) "league";
                   player->SetAttributeValue (&attr_id, league);
                   g_free (league);
                 }
               }
             }
 
-            attr_id._name = "club";
+            attr_id._name = (gchar *) "club";
             player->SetAttributeValue (&attr_id, tokens[2]);
 
-            attr_id._name = "exported";
+            attr_id._name = (gchar *) "exported";
             player->SetAttributeValue (&attr_id, (guint) FALSE);
 
             if (tokens[3] == NULL)
             {
-              attr_id._name = "rating";
+              attr_id._name = (gchar *) "rating";
               player->SetAttributeValue (&attr_id, (guint) 0);
             }
             else
             {
-              attr_id._name = "rating";
+              attr_id._name = (gchar *) "rating";
               player->SetAttributeValue (&attr_id, tokens[3]);
             }
 
@@ -922,16 +922,16 @@ void Checkin::ImportCSV (gchar *file)
           Player              *player = new Player;
           Player::AttributeId  attr_id ("");
 
-          attr_id._name = "attending";
+          attr_id._name = (gchar *) "attending";
           player->SetAttributeValue (&attr_id, (guint) FALSE);
 
-          attr_id._name = "name";
+          attr_id._name = (gchar *) "name";
           player->SetAttributeValue (&attr_id, tokens[i]);
 
-          attr_id._name = "first_name";
+          attr_id._name = (gchar *) "first_name";
           player->SetAttributeValue (&attr_id, tokens[i+1]);
 
-          attr_id._name = "exported";
+          attr_id._name = (gchar *) "exported";
           player->SetAttributeValue (&attr_id, (guint) FALSE);
 
 

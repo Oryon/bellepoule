@@ -777,7 +777,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
-          <object class="GtkAspectFrame" id="aspectframe1">
+          <object class="GtkAspectFrame" id="aspectframe4">
             <property name="visible">True</property>
             <property name="label_xalign">0</property>
             <property name="shadow_type">none</property>
