@@ -29,10 +29,10 @@ class Player : public Object
     class AttributeId : public Object
     {
       public:
-        AttributeId (gchar   *name,
-                     Object  *owner = NULL)
+        AttributeId (const gchar *name,
+                     Object      *owner = NULL)
         {
-          _name      = name;
+          _name      = g_strdup (name);
           _owner     = owner;
           _rand_seed = 0;
         }
@@ -62,7 +62,7 @@ class Player : public Object
     Attribute *GetAttribute (AttributeId *attr_id);
 
     void SetAttributeValue (AttributeId *attr_id,
-                            gchar       *value);
+                            const gchar *value);
 
     void SetAttributeValue (AttributeId *attr_id,
                             guint        value);
@@ -75,9 +75,9 @@ class Player : public Object
 
     gchar *GetName ();
 
-    void SetChangeCbk (gchar    *attr_name,
-                       OnChange  change_cbk,
-                       void     *data);
+    void SetChangeCbk (const gchar *attr_name,
+                       OnChange     change_cbk,
+                       void        *data);
 
     static gint CompareWithRef (Player *player,
                                 guint   ref);

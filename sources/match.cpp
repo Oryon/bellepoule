@@ -18,6 +18,7 @@
 #include <string.h>
 #include <goocanvas.h>
 
+#include "canvas.hpp"
 #include "player.hpp"
 #include "match.hpp"
 
@@ -443,4 +444,44 @@ gchar *Match::GetName ()
 gint Match::GetNumber ()
 {
   return _number;
+}
+
+// --------------------------------------------------------------------------------
+void Match::DrawScoreCell (GooCanvasItem *table,
+                           guint          size,
+                           guint          line)
+{
+  for (guint i = 0; i < _max_score->_value; i++)
+  {
+    {
+      GooCanvasItem *rect = goo_canvas_rect_new (table,
+                                                 0.0, 0.0,
+                                                 size, size,
+                                                 "stroke-color", "grey",
+                                                 "line-width", 1.0,
+                                                 NULL);
+
+      Canvas::PutInTable (table,
+                          rect,
+                          line,
+                          i+1);
+      Canvas::SetTableItemAttribute (rect, "y-align", 0.5);
+    }
+
+    {
+      GooCanvasItem *text_item;
+      gchar         *number = g_strdup_printf ("%d", i+1);
+
+      text_item = Canvas::PutTextInTable (table,
+                                          number,
+                                          line,
+                                          i+1);
+      g_object_set (G_OBJECT (text_item),
+                    "font", "Sans bold 12px",
+                    "fill-color", "grey",
+                    NULL);
+      Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
+      Canvas::SetTableItemAttribute (text_item, "x-align", 0.5);
+    }
+  }
 }

@@ -37,7 +37,7 @@ void Canvas::PutInTable (GooCanvasItem *table,
 
 // --------------------------------------------------------------------------------
 void Canvas::SetTableItemAttribute (GooCanvasItem *item,
-                                    gchar         *attribute,
+                                    const gchar   *attribute,
                                     gdouble        value)
 {
   GooCanvasItem *parent = goo_canvas_item_get_parent (item);
@@ -54,7 +54,7 @@ void Canvas::SetTableItemAttribute (GooCanvasItem *item,
 
 // --------------------------------------------------------------------------------
 void Canvas::SetTableItemAttribute (GooCanvasItem *item,
-                                    gchar         *attribute,
+                                    const gchar    *attribute,
                                     guint          value)
 {
   GooCanvasItem *parent = goo_canvas_item_get_parent (item);
@@ -71,7 +71,7 @@ void Canvas::SetTableItemAttribute (GooCanvasItem *item,
 
 // --------------------------------------------------------------------------------
 GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
-                                       gchar         *text,
+                                       const gchar   *text,
                                        guint          row,
                                        guint          column)
 {
@@ -108,7 +108,7 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
 
 // --------------------------------------------------------------------------------
 GooCanvasItem *Canvas::CreateIcon (GooCanvasItem *parent,
-                                   gchar         *icon_name,
+                                   const gchar   *icon_name,
                                    gdouble        x,
                                    gdouble        y)
 {
@@ -138,7 +138,7 @@ GooCanvasItem *Canvas::CreateIcon (GooCanvasItem *parent,
 
 // --------------------------------------------------------------------------------
 GooCanvasItem *Canvas::PutStockIconInTable (GooCanvasItem *table,
-                                            gchar         *icon_name,
+                                            const gchar   *icon_name,
                                             guint          row,
                                             guint          column)
 {

@@ -35,35 +35,35 @@
 
 #include "contest.hpp"
 
-gchar *Contest::weapon_image[_nb_weapon] =
+const gchar *Contest::weapon_image[_nb_weapon] =
 {
   N_ ("Sabre"),
   N_ ("Epée"),
   N_ ("Foil")
 };
 
-gchar *Contest::weapon_xml_image[_nb_weapon] =
+const gchar *Contest::weapon_xml_image[_nb_weapon] =
 {
   "S",
   "E",
   "F"
 };
 
-gchar *Contest::gender_image[_nb_gender] =
+const gchar *Contest::gender_image[_nb_gender] =
 {
   N_ ("Male"),
   N_ ("Female"),
   N_ ("Mixed")
 };
 
-gchar *Contest::gender_xml_image[_nb_gender] =
+const gchar *Contest::gender_xml_image[_nb_gender] =
 {
   "M",
   "F",
   "FM"
 };
 
-gchar *Contest::category_image[_nb_category] =
+const gchar *Contest::category_image[_nb_category] =
 {
   N_ ("U8"),
   N_ ("U10"),
@@ -75,7 +75,7 @@ gchar *Contest::category_image[_nb_category] =
   N_ ("Veteran")
 };
 
-gchar *Contest::category_xml_image[_nb_category] =
+const gchar *Contest::category_xml_image[_nb_category] =
 {
   "O",
   "P",
@@ -90,9 +90,9 @@ gchar *Contest::category_xml_image[_nb_category] =
 GList *Contest::_color_list = NULL;
 
 // --------------------------------------------------------------------------------
-Contest::Time::Time (gchar *name)
+Contest::Time::Time (const gchar *name)
 {
-  _name = name;
+  _name = g_strdup (name);
   _hour   = 12;
   _minute = 0;
 }
@@ -104,12 +104,12 @@ Contest::Time::~Time ()
 
 // --------------------------------------------------------------------------------
 void Contest::Time::Save (xmlTextWriter *xml_writer,
-                          gchar         *attr_name)
+                          const gchar   *attr_name)
 {
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST attr_name,
                                      "%02d:%02d", _hour, _minute);
-};
+}
 
 // --------------------------------------------------------------------------------
 void Contest::Time::Load (gchar *attr)
@@ -174,6 +174,8 @@ Contest::Contest ()
 {
   InitInstance ();
 
+  ChooseColor ();
+
   _schedule->SetScoreStuffingPolicy (FALSE);
 }
 
@@ -223,6 +225,16 @@ Contest::Contest (gchar *filename)
       if (xml_object->nodesetval->nodeNr)
       {
         gchar *attr;
+
+        if (_color->Load (xml_nodeset->nodeTab[0]))
+        {
+          _gdk_color = (GdkColor *) g_list_nth_data (_color_list,
+                                                     _color->_value);
+        }
+        else
+        {
+          ChooseColor ();
+        }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Championnat");
         if (attr)
@@ -515,6 +527,9 @@ void Contest::InitInstance ()
   _scratch_time = new Time ("scratch");
   _start_time   = new Time ("start");
 
+  _color = new Data ("Couleur",
+                     (guint) 0);
+
   {
     GTimeVal  current_time;
     GDate    *date         = g_date_new ();
@@ -611,6 +626,36 @@ void Contest::InitInstance ()
     gtk_widget_reparent (_glade->GetWidget ("calendar"),
                          content_area);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::ChooseColor ()
+{
+  gint color_to_use;
+
+  color_to_use = g_key_file_get_integer (_config_file,
+                                         "Competiton",
+                                         "color_to_use",
+                                         NULL);
+  if (color_to_use >= (gint) (g_list_length (_color_list)-1))
+  {
+    color_to_use = 0;
+  }
+
+  _color->_value = color_to_use;
+
+  color_to_use++;
+  if (color_to_use >= (gint) (g_list_length (_color_list)-1))
+  {
+    color_to_use = 0;
+  }
+  g_key_file_set_integer (_config_file,
+                          "Competiton",
+                          "color_to_use",
+                          color_to_use);
+
+  _gdk_color = (GdkColor *) g_list_nth_data (_color_list,
+                                             _color->_value);
 }
 
 // --------------------------------------------------------------------------------
@@ -830,23 +875,16 @@ void Contest::AttachTo (GtkNotebook *to)
 
   DisplayProperties ();
 
-  if (_color_list)
+  if (_gdk_color)
   {
     GtkWidget *tab = _glade->GetWidget ("eventbox");
 
-    _color = _color_list;
     gtk_widget_modify_bg (tab,
                           GTK_STATE_NORMAL,
-                          (GdkColor *) _color->data);
+                          _gdk_color);
     gtk_widget_modify_bg (tab,
                           GTK_STATE_ACTIVE,
-                          (GdkColor *) _color->data);
-
-    _color_list = g_list_next (_color_list);
-    if (_color_list == NULL)
-    {
-      _color_list = g_list_first (_color);
-    }
+                          _gdk_color);
   }
 }
 
@@ -896,6 +934,8 @@ void Contest::Save (gchar *filename)
                                  BAD_CAST "CompetitionIndividuelle");
 
       {
+        _color->Save (xml_writer);
+
         if (_owner)
         {
           xmlTextWriterWriteAttribute (xml_writer,
@@ -971,8 +1011,8 @@ void Contest::Save (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest::GetSaveFileName (gchar *title,
-                                 gchar *config_key)
+gchar *Contest::GetSaveFileName (gchar       *title,
+                                 const gchar *config_key)
 {
   GtkWidget *chooser;
   char      *filename = NULL;
@@ -1083,7 +1123,7 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                        0.0, 0.0,
                        100.0, PRINT_HEADER_HEIGHT,
                        "stroke-color", "grey",
-                       "fill-color", gdk_color_to_string ((GdkColor *) _color->data),
+                       "fill-color", gdk_color_to_string (_gdk_color),
                        "line-width", 0.3,
                        NULL);
 
@@ -1291,7 +1331,7 @@ gchar *Contest::GetName ()
 // --------------------------------------------------------------------------------
 gchar *Contest::GetGender ()
 {
-  return gender_xml_image[_gender];
+  return (char *) gender_xml_image[_gender];
 }
 
 // --------------------------------------------------------------------------------

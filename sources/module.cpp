@@ -22,12 +22,14 @@
 
 #include "module.hpp"
 
+const gdouble Module::PRINT_HEADER_HEIGHT = 10.0; // % of paper width
+const gdouble Module::PRINT_FONT_HEIGHT   = 2.0;  // % of paper width
 GKeyFile     *Module::_config_file  = NULL;
 GtkTreeModel *Module::_status_model = NULL;
 
 // --------------------------------------------------------------------------------
-Module::Module (gchar *glade_file,
-                gchar *root)
+Module::Module (const gchar *glade_file,
+                const gchar *root)
 //: Object ("Module")
 {
   _plugged_list = NULL;
@@ -115,7 +117,7 @@ GtkWidget *Module::GetConfigWidget ()
 }
 
 // --------------------------------------------------------------------------------
-GtkWidget *Module::GetWidget (gchar *name)
+GtkWidget *Module::GetWidget (const gchar *name)
 {
   return _glade->GetWidget (name);
 }
@@ -177,8 +179,19 @@ void Module::UnPlug ()
       _owner = NULL;
     }
 
+    if (_filter)
+    {
+      _filter->UnPlug ();
+    }
+
     OnUnPlugged ();
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Module::IsPlugged ()
+{
+  return (gtk_widget_get_parent (_root) != NULL);
 }
 
 // --------------------------------------------------------------------------------

@@ -31,12 +31,12 @@ class Canvas
                             guint          column);
 
     static GooCanvasItem *PutTextInTable (GooCanvasItem *table,
-                                          gchar         *text,
+                                          const gchar   *text,
                                           guint          row,
                                           guint          column);
 
     static GooCanvasItem *CreateIcon (GooCanvasItem *parent,
-                                      gchar         *icon_name,
+                                      const gchar   *icon_name,
                                       gdouble        x,
                                       gdouble        y);
 
@@ -46,16 +46,16 @@ class Canvas
                                           guint          column);
 
     static GooCanvasItem *PutStockIconInTable (GooCanvasItem *table,
-                                               gchar         *icon_name,
+                                               const gchar   *icon_name,
                                                guint          row,
                                                guint          column);
 
     static void SetTableItemAttribute (GooCanvasItem *item,
-                                       gchar         *attribute,
+                                       const gchar   *attribute,
                                        guint          value);
 
     static void SetTableItemAttribute (GooCanvasItem *item,
-                                       gchar         *attribute,
+                                       const gchar   *attribute,
                                        gdouble        value);
 
     static GooCanvas *CreatePrinterCanvas (GtkPrintContext *context);

@@ -25,8 +25,8 @@
 #include "players_list.hpp"
 
 // --------------------------------------------------------------------------------
-  PlayersList::PlayersList (gchar *glade_file,
-                            guint  rights)
+  PlayersList::PlayersList (const gchar *glade_file,
+                            guint        rights)
 : Module (glade_file)
 {
   _rights       = rights;
@@ -494,8 +494,8 @@ void PlayersList::SetColumn (guint          id,
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::SetAttributeRight (gchar    *name,
-                                     gboolean  modifiable)
+void PlayersList::SetAttributeRight (const gchar *name,
+                                     gboolean     modifiable)
 {
   AttributeDesc *desc = AttributeDesc::GetDesc (name);
 

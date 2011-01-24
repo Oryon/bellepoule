@@ -47,23 +47,25 @@ class Module : public virtual Object
 
     GtkWidget *GetRootWidget ();
 
-    GtkWidget *GetWidget (gchar *name);
+    GtkWidget *GetWidget (const gchar *name);
 
     virtual void SetFilter (Filter *filter);
 
     virtual void OnAttrListUpdated () {};
 
+    gboolean IsPlugged ();
+
   protected:
     Filter  *_filter;
     Glade   *_glade;
 
-    static const gdouble PRINT_HEADER_HEIGHT = 10.0; // % of paper width
-    static const gdouble PRINT_FONT_HEIGHT   = 2.0;  // % of paper width
+    static const gdouble PRINT_HEADER_HEIGHT;
+    static const gdouble PRINT_FONT_HEIGHT;
 
     static GKeyFile *_config_file;
 
-    Module (gchar *glade_file,
-            gchar *root = NULL);
+    Module (const gchar *glade_file,
+            const gchar *root = NULL);
 
     virtual void OnPlugged   () {};
     virtual void OnUnPlugged () {};

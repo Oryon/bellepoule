@@ -40,8 +40,8 @@ class PlayersList : public Module
 
     typedef gboolean (*CustomFilter) (Player *player);
 
-    PlayersList (gchar *glade_file,
-                 guint  rights = SORTABLE | MODIFIABLE);
+    PlayersList (const gchar *glade_file,
+                 guint        rights = SORTABLE | MODIFIABLE);
 
     ~PlayersList ();
 
@@ -59,8 +59,8 @@ class PlayersList : public Module
 
     void SetFilter (Filter *filter);
 
-    void SetAttributeRight (gchar    *name,
-                            gboolean  modifiable);
+    void SetAttributeRight (const gchar *name,
+                            gboolean     modifiable);
 
     virtual void OnListChanged () {};
 

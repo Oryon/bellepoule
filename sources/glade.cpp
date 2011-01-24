@@ -19,8 +19,8 @@
 gchar *Glade::_path = NULL;
 
 // --------------------------------------------------------------------------------
-Glade::Glade (gchar  *file_name,
-              Object *owner)
+Glade::Glade (const gchar *file_name,
+              Object      *owner)
 : Object ("Glade")
 {
   if (file_name)
@@ -33,6 +33,10 @@ Glade::Glade (gchar  *file_name,
     gtk_builder_add_from_file (_glade_xml,
                                path,
                                &error);
+    if (error != NULL)
+    {
+      g_print ("<<%s>> %s\n", path, error->message);
+    }
     g_free (path);
 
     if (error != NULL)
@@ -94,14 +98,14 @@ void Glade::DetachFromParent (GtkWidget *widget)
 }
 
 // --------------------------------------------------------------------------------
-GtkWidget *Glade::GetWidget (gchar *name)
+GtkWidget *Glade::GetWidget (const gchar *name)
 {
   return (GtkWidget *) (gtk_builder_get_object (_glade_xml,
                                                 name));
 }
 
 // --------------------------------------------------------------------------------
-GObject *Glade::GetObject (gchar *name)
+GObject *Glade::GetObject (const gchar *name)
 {
   return gtk_builder_get_object (_glade_xml,
                                  name);

@@ -22,20 +22,20 @@
 #include "data.hpp"
 
 // --------------------------------------------------------------------------------
-Data::Data (gchar *xml_name,
-            guint  default_value)
+Data::Data (const gchar *xml_name,
+            guint        default_value)
 {
-  _xml_name = xml_name;
+  _xml_name = g_strdup (xml_name);
   _value    = default_value;
 
   _is_integer = TRUE;
 }
 
 // --------------------------------------------------------------------------------
-Data::Data (gchar *xml_name,
-            gchar *default_value)
+Data::Data (const gchar *xml_name,
+            gchar       *default_value)
 {
-  _xml_name = xml_name;
+  _xml_name = g_strdup (xml_name);
   _string   = default_value;
 
   _is_integer = FALSE;
@@ -44,17 +44,21 @@ Data::Data (gchar *xml_name,
 // --------------------------------------------------------------------------------
 Data::~Data ()
 {
+    g_free (_xml_name);
 }
 
 // --------------------------------------------------------------------------------
-void Data::Load (xmlNode *xml_node)
+gboolean Data::Load (xmlNode *xml_node)
 {
   _string = (gchar *) xmlGetProp (xml_node,
                                   BAD_CAST _xml_name);
   if (_string)
   {
     _value = (guint) atoi (_string);
+    return TRUE;
   }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

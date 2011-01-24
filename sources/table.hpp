@@ -37,6 +37,7 @@ class Table : public virtual Stage, public CanvasModule
     void OnStuffClicked ();
     void OnInputToggled (GtkWidget *widget);
     void OnMatchSheetToggled (GtkWidget *widget);
+    void OnDisplayToggled (GtkWidget *widget);
     void OnSearchMatch ();
     void OnFilterClicked ();
     void OnPrint ();
@@ -60,7 +61,7 @@ class Table : public virtual Stage, public CanvasModule
                      gint               page_nr);
 
   private:
-    static const gdouble _score_rect_size = 30.0;
+    static const gdouble _score_rect_size;
 
     struct LevelStatus
     {
@@ -88,6 +89,7 @@ class Table : public virtual Stage, public CanvasModule
     guint               _nb_levels;
     guint               _level_filter;
     GtkListStore       *_from_table_liststore;
+    GtkTreeStore       *_display_treestore;
     GtkTreeStore       *_quick_search_treestore;
     GtkTreeModelFilter *_quick_search_filter;
     guint               _nb_level_to_display;
@@ -110,7 +112,7 @@ class Table : public virtual Stage, public CanvasModule
     guint               _print_nb_y_pages;
     GData              *_match_list;
 
-    GooCanvasItem *GetQuickScore (gchar *container);
+    GooCanvasItem *GetQuickScore (const gchar *container);
 
     void Display ();
 
@@ -192,6 +194,10 @@ class Table : public virtual Stage, public CanvasModule
     void ApplyConfig ();
 
     void RefreshLevelStatus ();
+
+    void FeedDisplayStore (guint        from_place,
+                           guint        nb_levels,
+                           GtkTreeIter *parent);
 
     gchar *GetLevelImage (guint level);
 

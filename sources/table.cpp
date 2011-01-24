@@ -29,6 +29,7 @@
 
 const gchar   *Table::_class_name     = N_("Table");
 const gchar   *Table::_xml_class_name = "PhaseDeTableaux";
+const gdouble  Table::_score_rect_size = 30.0;
 const gdouble  Table::_level_spacing  = 10.0;
 
 typedef enum
@@ -36,6 +37,11 @@ typedef enum
   FROM_NAME_COLUMN,
   FROM_STATUS_COLUMN
 } FromColumnId;
+
+typedef enum
+{
+  DISPLAY_NAME_COLUMN
+} DisplayColumnId;
 
 typedef enum
 {
@@ -183,6 +189,7 @@ Table::Table (StageClass *stage_class)
   }
 
   _from_table_liststore   = GTK_LIST_STORE (_glade->GetObject ("from_liststore"));
+  _display_treestore      = GTK_TREE_STORE (_glade->GetObject ("display_treestore"));
   _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
   _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("match_treemodelfilter"));
 
@@ -246,7 +253,7 @@ void Table::SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *Table::GetQuickScore (gchar *container)
+GooCanvasItem *Table::GetQuickScore (const gchar *container)
 {
   GtkWidget     *view_port = _glade->GetWidget (container);
   GooCanvas     *canvas    = GOO_CANVAS (goo_canvas_new ());
@@ -317,15 +324,15 @@ void Table::RefreshLevelStatus ()
 
       if (_level_status[i]._has_error)
       {
-        icon = GTK_STOCK_DIALOG_WARNING;
+        icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
       }
       else if (_level_status[i]._is_over == TRUE)
       {
-        icon = GTK_STOCK_APPLY;
+        icon = g_strdup (GTK_STOCK_APPLY);
       }
       else
       {
-        icon = GTK_STOCK_EXECUTE;
+        icon = g_strdup (GTK_STOCK_EXECUTE);
       }
 
       _level_status[i]._status_item = Canvas::PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
@@ -339,6 +346,7 @@ void Table::RefreshLevelStatus ()
       gtk_list_store_set (_from_table_liststore, &iter,
                           FROM_STATUS_COLUMN, icon,
                           -1);
+      g_free (icon);
     }
   }
   SignalStatusUpdate ();
@@ -685,6 +693,46 @@ void Table::CreateTree ()
                       G_CALLBACK (on_from_table_combobox_changed),
                       (Object *) this);
   }
+
+  {
+    gtk_tree_store_clear (_display_treestore);
+
+    FeedDisplayStore (1,
+                      _nb_levels-1,
+                      NULL);
+
+    gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("display_treeview")));
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::FeedDisplayStore (guint        from_place,
+                              guint        nb_levels,
+                              GtkTreeIter *parent)
+{
+  GtkTreeIter  iter;
+  gchar       *text = g_strdup_printf ("%d", from_place);
+
+  gtk_tree_store_append (_display_treestore,
+                         &iter,
+                         parent);
+
+  gtk_tree_store_set (_display_treestore, &iter,
+                      DISPLAY_NAME_COLUMN, text,
+                      -1);
+  g_free (text);
+
+  {
+    guint place_offset = 1;
+
+    for (guint i = 0; i < nb_levels-1; i++)
+    {
+      place_offset = place_offset << 1;
+      FeedDisplayStore (from_place + place_offset,
+                        i+1,
+                        &iter);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -954,7 +1002,7 @@ gboolean Table::FillInNode (GNode *node,
 
               if (parent_data->_match->IsDropped () == FALSE)
               {
-                text = "Q";
+                text = (gchar *) "Q";
               }
               else
               {
@@ -1439,6 +1487,7 @@ void Table::OnUnPlugged ()
   _score_collector = NULL;
 
   gtk_list_store_clear (_from_table_liststore);
+  gtk_tree_store_clear (_display_treestore);
   gtk_tree_store_clear (_quick_search_treestore);
   gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
 
@@ -1701,6 +1750,21 @@ void Table::OnMatchSheetToggled (GtkWidget *widget)
   else
   {
     gtk_widget_set_sensitive (vbox, FALSE);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::OnDisplayToggled (GtkWidget *widget)
+{
+  GtkWidget *vbox = _glade->GetWidget ("display_vbox");
+
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)))
+  {
+    gtk_widget_show (vbox);
+  }
+  else
+  {
+    gtk_widget_hide (vbox);
   }
 }
 
@@ -2485,6 +2549,15 @@ extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *w
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnMatchSheetToggled (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_display_toolbutton_toggled (GtkWidget *widget,
+                                                               Object    *owner)
+{
+  Table *t = dynamic_cast <Table *> (owner);
+
+  t->OnDisplayToggled (widget);
 }
 
 // --------------------------------------------------------------------------------
