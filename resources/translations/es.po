@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-12-31 05:35+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-02-01 04:48+0000\n"
+"X-Generator: Launchpad (build 12177)\n"
 
 #: ../../sources/checkin.cpp:27
 #: ../../resources/glade/contest.glade:442
@@ -1566,6 +1566,23 @@ msgstr ""
 
 msgid "Export to FFF"
 msgstr ""
+
+#~ msgid "H. recieved"
+#~ msgstr "T. recibidos"
+
+#~ msgid ""
+#~ "Make the automatic score stuffing button available. I can save the user "
+#~ "boring data captures during training sessions."
+#~ msgstr ""
+#~ "Permitir rellanar el marcador automaticamente. Permite ahorrar al usuario la "
+#~ "entrada tediosa de datos durante las sesiones de entrenamiento."
+
+#~ msgid ""
+#~ "Marijn Somers (Dutch)\n"
+#~ "Julien Diaz (German)"
+#~ msgstr ""
+#~ "Marijn Somers (Holandés)\n"
+#~ "Julien Diaz (Alemán)"
 
 #~ msgid "points"
 #~ msgstr "puntos"
