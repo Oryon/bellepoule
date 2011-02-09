@@ -1388,9 +1388,9 @@ void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
   gdouble          header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
   GooCanvasBounds  bounds;
 
-  Module::OnDrawPage (operation,
-                      context,
-                      page_nr);
+  DrawContainerPage (operation,
+                     context,
+                     page_nr);
 
   {
     GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);

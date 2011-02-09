@@ -47,6 +47,8 @@ Stage::Stage (StageClass *stage_class)
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
 
+  _max_score = NULL;
+
   _nb_eliminated = new Data ("NbElimines",
                              (guint) 0);
 }
@@ -225,6 +227,12 @@ gboolean Stage::Locked ()
 gboolean Stage::IsOver ()
 {
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+Data *Stage::GetMaxScore ()
+{
+  return _max_score;
 }
 
 // --------------------------------------------------------------------------------

@@ -37,7 +37,7 @@ int vswprintf(wchar_t *, const wchar_t *, va_list);
 #include "checkin.hpp"
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
-#include "table.hpp"
+#include "table_supervisor.hpp"
 #include "splitting.hpp"
 #include "tournament.hpp"
 #include "attribute.hpp"
@@ -154,7 +154,7 @@ int main (int argc, char **argv)
     Checkin::Init               ();
     PoolAllocator::Init         ();
     PoolSupervisor::Init        ();
-    Table::Init                 ();
+    TableSupervisor::Init       ();
     GeneralClassification::Init ();
     Splitting::Init             ();
 

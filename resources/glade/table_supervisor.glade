@@ -2,29 +2,6 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
-  <object class="GtkListStore" id="from_liststore">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name status_icon -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkTreeStore" id="match_treestore">
-    <columns>
-      <!-- column-name match_name -->
-      <column type="gchararray"/>
-      <!-- column-name match -->
-      <column type="gpointer"/>
-      <!-- column-name path -->
-      <column type="gchararray"/>
-      <!-- column-name visibility -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkTreeModelFilter" id="match_treemodelfilter">
-    <property name="child_model">match_treestore</property>
-  </object>
   <object class="GtkTreeStore" id="display_treestore">
     <columns>
       <!-- column-name table_name -->
@@ -166,7 +143,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                     <child>
                       <object class="GtkComboBox" id="quick_search_combobox">
                         <property name="visible">True</property>
-                        <property name="model">match_treemodelfilter</property>
                         <signal name="changed" handler="on_quick_search_combobox_changed"/>
                         <child>
                           <object class="GtkCellRendererText" id="quick_search_path_renderertext">
@@ -317,7 +293,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                         <child>
                           <object class="GtkComboBox" id="from_table_combobox">
                             <property name="visible">True</property>
-                            <property name="model">from_liststore</property>
                             <signal name="changed" handler="on_from_table_combobox_changed"/>
                             <child>
                               <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
@@ -392,15 +367,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                     <property name="resize_mode">queue</property>
                     <property name="shadow_type">none</property>
                     <child>
-                      <object class="GtkScrolledWindow" id="canvas_scrolled_window">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="hscrollbar_policy">automatic</property>
-                        <property name="vscrollbar_policy">automatic</property>
-                        <child>
-                          <placeholder/>
-                        </child>
-                      </object>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -643,201 +610,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
   <object class="GtkImage" id="input_image">
     <property name="visible">True</property>
     <property name="pixbuf">stock_task-assigned.png</property>
-  </object>
-  <object class="GtkDialog" id="print_table_dialog">
-    <property name="border_width">5</property>
-    <property name="type_hint">normal</property>
-    <property name="has_separator">False</property>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="print_table_dialog-vbox">
-        <property name="visible">True</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child>
-          <object class="GtkAspectFrame" id="aspectframe3">
-            <property name="visible">True</property>
-            <property name="label_xalign">0</property>
-            <property name="shadow_type">none</property>
-            <property name="xalign">0</property>
-            <child>
-              <object class="GtkVBox" id="vbox1">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkRadioButton" id="table_radiobutton">
-                    <property name="label" translatable="yes">The table</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="active">True</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkVBox" id="vbox2">
-                    <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkRadioButton" id="match_sheet_radiobutton">
-                        <property name="label" translatable="yes">Score sheets</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="draw_indicator">True</property>
-                        <signal name="toggled" handler="on_match_sheet_radiobutton_toggled"/>
-                      </object>
-                      <packing>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkAspectFrame" id="aspectframe2">
-                        <property name="visible">True</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
-                        <child>
-                          <object class="GtkVBox" id="match_sheet_vbox">
-                            <property name="visible">True</property>
-                            <property name="orientation">vertical</property>
-                            <child>
-                              <object class="GtkRadioButton" id="all_radiobutton">
-                                <property name="label" translatable="yes">All</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkRadioButton" id="pending_radiobutton">
-                                <property name="label" translatable="yes">Pending</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">False</property>
-                                <property name="active">True</property>
-                                <property name="draw_indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
-            <property name="visible">True</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkDialog" id="print_table_level_dialog">
-    <property name="border_width">5</property>
-    <property name="type_hint">normal</property>
-    <property name="has_separator">False</property>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="print_level_dialog_vbox">
-        <property name="visible">True</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child>
-          <object class="GtkAspectFrame" id="aspectframe4">
-            <property name="visible">True</property>
-            <property name="label_xalign">0</property>
-            <property name="shadow_type">none</property>
-            <property name="xalign">0</property>
-            <child>
-              <object class="GtkVBox" id="match_sheet_vbox1">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkRadioButton" id="level_all_radiobutton">
-                    <property name="label" translatable="yes">The pending score sheets</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkRadioButton" id="level_pending_radiobutton">
-                    <property name="label" translatable="yes">All the score sheets</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="active">True</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
-            <property name="visible">True</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup"/>
   <object class="GtkSizeGroup" id="label_sizegroup"/>

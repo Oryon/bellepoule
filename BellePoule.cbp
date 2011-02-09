@@ -43,9 +43,8 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-pedantic" />
 			<Add option="-Wall" />
-			<Add option="-mms-bitfields -Wno-long-long" />
+			<Add option="-mms-bitfields -std=c++98 -Wno-long-long" />
 			<Add directory="C:\MinGW\include" />
 			<Add directory="C:\MinGW\include\gtk-2.0" />
 			<Add directory="C:\MinGW\include\cairo" />
@@ -137,6 +136,8 @@
 		<Unit filename="sources\swapper.hpp" />
 		<Unit filename="sources\table.cpp" />
 		<Unit filename="sources\table.hpp" />
+		<Unit filename="sources\table_supervisor.cpp" />
+		<Unit filename="sources\table_supervisor.hpp" />
 		<Unit filename="sources\tournament.cpp" />
 		<Unit filename="sources\tournament.hpp" />
 		<Unit filename="sources\version.h" />
