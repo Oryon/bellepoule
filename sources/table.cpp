@@ -73,6 +73,7 @@ Table::Table (Stage *supervisor)
 
   g_datalist_init (&_match_list);
 
+  SetDataOwner (supervisor_module);
   _score_collector = NULL;
 
   _max_score = supervisor->GetMaxScore ();
@@ -1576,7 +1577,7 @@ GSList *Table::GetCurrentClassification ()
                                          (void *) this);
 
   {
-    Player::AttributeId *attr_id = new Player::AttributeId ("rank", this);
+    Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
     GSList              *current;
     guint                previous_rank   = 0;
     Player              *previous_player = NULL;
@@ -1755,14 +1756,15 @@ gchar *Table::GetLevelImage (guint level)
 void Table::OnBeginPrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context)
 {
+  gdouble paper_w  = gtk_print_context_get_width (context);
+  gdouble paper_h  = gtk_print_context_get_height (context);
+
   if (_print_full_table)
   {
     gdouble canvas_x;
     gdouble canvas_y;
     gdouble canvas_w;
     gdouble canvas_h;
-    gdouble paper_w  = gtk_print_context_get_width (context);
-    gdouble paper_h  = gtk_print_context_get_height (context);
     gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
 
     {
@@ -1805,10 +1807,19 @@ void Table::OnBeginPrint (GtkPrintOperation *operation,
     guint nb_match;
     guint nb_page;
 
-    nb_match = g_slist_length (_match_to_print);
-    nb_page  = nb_match/4;
+    if (paper_w > paper_h)
+    {
+      _nb_match_per_sheet = 2;
+    }
+    else
+    {
+      _nb_match_per_sheet = 4;
+    }
 
-    if (nb_match%4 != 0)
+    nb_match = g_slist_length (_match_to_print);
+    nb_page  = nb_match/_nb_match_per_sheet;
+
+    if (nb_match%_nb_match_per_sheet != 0)
     {
       nb_page++;
     }
@@ -1887,8 +1898,8 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
     cairo_save (cr);
 
     current_match = g_slist_nth (_match_to_print,
-                                 4*page_nr);
-    for (guint i = 0; current_match && (i < 4); i++)
+                                 _nb_match_per_sheet*page_nr);
+    for (guint i = 0; current_match && (i < _nb_match_per_sheet); i++)
     {
       GooCanvasItem *group;
 
@@ -1900,7 +1911,7 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
 
         cairo_matrix_init_translate (&matrix,
                                      0.0,
-                                     i*25.0 * paper_h/paper_w);
+                                     i*(100.0/_nb_match_per_sheet) * paper_h/paper_w);
 
         g_object_set_data (G_OBJECT (operation), "operation_matrix", (void *) &matrix);
 
@@ -1914,7 +1925,7 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
         Match         *match  = (Match *) current_match->data;
         Player        *A      = match->GetPlayerA ();
         Player        *B      = match->GetPlayerB ();
-        gdouble        offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
+        gdouble        offset = i * ((100.0/_nb_match_per_sheet) * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
         GooCanvasItem *item;
         gdouble        name_width;
         gchar         *match_number = g_strdup_printf (gettext ("Match %s"), (const char *) match->GetData (this, "number"));

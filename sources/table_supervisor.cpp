@@ -451,6 +451,7 @@ void TableSupervisor::OnDisplayToggled (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 GSList *TableSupervisor::GetCurrentClassification ()
 {
+  return toto->GetCurrentClassification ();
 }
 
 // --------------------------------------------------------------------------------

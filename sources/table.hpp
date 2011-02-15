@@ -59,6 +59,8 @@ class Table : public CanvasModule
 
     void UnLock ();
 
+    GSList *GetCurrentClassification ();
+
   private:
     void OnPlugged ();
     void OnUnPlugged ();
@@ -116,6 +118,7 @@ class Table : public CanvasModule
     GData              *_match_list;
     GSList             *_attendees;
     gboolean            _locked;
+    guint               _nb_match_per_sheet;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -141,8 +144,6 @@ class Table : public CanvasModule
                     Match   *match,
                     guint    player_index,
                     Player  **dropped);
-
-    GSList *GetCurrentClassification ();
 
     void OnStatusChanged (GtkComboBox *combo_box);
 
