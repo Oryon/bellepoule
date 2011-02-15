@@ -835,7 +835,7 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
 
       if (desc->_type == G_TYPE_BOOLEAN)
       {
-        if (attr->GetValue () != 0)
+        if (attr->GetUIntValue () != 0)
         {
           gdouble w;
           gdouble h;

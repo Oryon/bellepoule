@@ -198,7 +198,7 @@ void Stage::UnLock ()
       {
         Attribute *status = player->GetAttribute (&status_attr_id);
 
-        if (status && (* ((gchar *) status->GetValue ()) == 'N'))
+        if (status && (* (status->GetStrValue ()) == 'N'))
         {
           player->SetAttributeValue (&status_attr_id,
                                      "Q");
@@ -353,7 +353,7 @@ GSList *Stage::GetOutputShortlist ()
 
           if (status_attr)
           {
-            gchar *value = (gchar *) status_attr->GetValue ();
+            gchar *value = status_attr->GetStrValue ();
 
             if (value
                 && (value[0] != 'Q') && value[0] != 'N')
@@ -722,10 +722,10 @@ void Stage::UpdateClassification (GSList *result)
           if (previous_attr_id)
           {
             player->SetAttributeValue (previous_attr_id,
-                                       (guint) rank_attr->GetValue ());
+                                       rank_attr->GetUIntValue ());
           }
           player->SetAttributeValue (final_rank_attr_id,
-                                     (guint) rank_attr->GetValue ());
+                                     rank_attr->GetUIntValue ());
         }
         _classification->Add (player);
 
@@ -865,13 +865,13 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       {
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "RangInitial",
-                                           "%d", (guint) previous_stage_rank->GetValue ());
+                                           "%d", previous_stage_rank->GetUIntValue ());
       }
       if (rank)
       {
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "RangFinal",
-                                           "%d", (guint)  rank->GetValue ());
+                                           "%d", rank->GetUIntValue ());
       }
       if (status)
       {

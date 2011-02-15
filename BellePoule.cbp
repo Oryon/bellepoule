@@ -43,9 +43,8 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-pedantic" />
 			<Add option="-Wall" />
-			<Add option="-mms-bitfields -Wno-long-long" />
+			<Add option="-mms-bitfields -std=c++98 -Wno-long-long" />
 			<Add directory="C:\MinGW\include" />
 			<Add directory="C:\MinGW\include\gtk-2.0" />
 			<Add directory="C:\MinGW\include\cairo" />

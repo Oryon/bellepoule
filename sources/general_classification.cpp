@@ -108,14 +108,14 @@ GSList *GeneralClassification::GetCurrentClassification ()
         Player::AttributeId  exported_attr_id ("exported");
         Attribute           *exported = player->GetAttribute (&exported_attr_id);
 
-        if ((exported == NULL) || ((gboolean) exported->GetValue () == FALSE))
+        if ((exported == NULL) || (exported->GetUIntValue () == FALSE))
         {
           Player::AttributeId  status_attr_id ("global_status");
           Attribute           *status_attr = player->GetAttribute (&status_attr_id);
 
           if (status_attr)
           {
-            gchar *status = (gchar *) status_attr->GetValue ();
+            gchar *status = status_attr->GetStrValue ();
 
             if (status && (*status != 'E'))
             {

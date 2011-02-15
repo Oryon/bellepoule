@@ -1006,7 +1006,7 @@ gboolean Table::FillInNode (GNode *node,
               }
               else
               {
-                text = (gchar *) attr->GetValue ();
+                text = attr->GetStrValue ();
               }
 
               iter_is_valid = gtk_tree_model_get_iter_first (table->GetStatusModel (),
@@ -1365,7 +1365,7 @@ void Table::LoadScore (xmlNode *xml_node,
     {
       Player::AttributeId  attr_id ("status", GetDataOwner ());
       Attribute           *attr   = player->GetAttribute (&attr_id);
-      gchar               *status = (gchar *) attr->GetValue ();
+      gchar               *status = attr->GetStrValue ();
 
       if (status && ((*status == 'E') || (*status == 'A')))
       {
@@ -1837,8 +1837,8 @@ gint Table::ComparePlayer (Player  *A,
 
     if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
     {
-      gchar *status_A = (gchar *) A->GetAttribute (&attr_id)->GetValue ();
-      gchar *status_B = (gchar *) B->GetAttribute (&attr_id)->GetValue ();
+      gchar *status_A = A->GetAttribute (&attr_id)->GetStrValue ();
+      gchar *status_B = B->GetAttribute (&attr_id)->GetStrValue ();
 
       if ((status_A[0] == 'E') && (status_A[0] != status_B[0]))
       {

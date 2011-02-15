@@ -544,6 +544,27 @@ gint Attribute::Compare (Attribute *a, Attribute *b)
 }
 
 // --------------------------------------------------------------------------------
+char *Attribute::GetStrValue ()
+{
+  g_print ("**** Wrong call to GetStrValue ****\n");
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gint Attribute::GetIntValue ()
+{
+  g_print ("**** Wrong call to GetIntValue ****\n");
+  return 0;
+}
+
+// --------------------------------------------------------------------------------
+guint Attribute::GetUIntValue ()
+{
+  g_print ("**** Wrong call to GetUIntValue ****\n");
+  return 0;
+}
+
+// --------------------------------------------------------------------------------
 TextAttribute::TextAttribute (AttributeDesc *desc)
   : Attribute (desc)
 {
@@ -574,7 +595,7 @@ void TextAttribute::SetValue (guint value)
 }
 
 // --------------------------------------------------------------------------------
-void *TextAttribute::GetValue ()
+char *TextAttribute::GetStrValue ()
 {
   return _value;
 }
@@ -615,7 +636,7 @@ gint TextAttribute::CompareWith (Attribute *with)
 {
   if (with)
   {
-    return (strcmp ((const gchar *) GetValue (), (const gchar *) with->GetValue ()));
+    return (strcmp ((const gchar *) GetStrValue (), (const gchar *) with->GetStrValue ()));
   }
 
   return -1;
@@ -666,9 +687,9 @@ void BooleanAttribute::SetValue (guint value)
 }
 
 // --------------------------------------------------------------------------------
-void *BooleanAttribute::GetValue ()
+guint BooleanAttribute::GetUIntValue ()
 {
-  return (void *) _value;
+  return (guint) _value;
 }
 
 // --------------------------------------------------------------------------------
@@ -700,7 +721,7 @@ gint BooleanAttribute::CompareWith (Attribute *with)
 {
   if (with)
   {
-    return ((guint) GetValue () - (guint) with->GetValue ());
+    return (GetUIntValue () - with->GetUIntValue ());
   }
 
   return -1;
@@ -751,9 +772,15 @@ void IntAttribute::SetValue (guint value)
 }
 
 // --------------------------------------------------------------------------------
-void *IntAttribute::GetValue ()
+gint IntAttribute::GetIntValue ()
 {
-  return (void *) _value;
+  return (gint) _value;
+}
+
+// --------------------------------------------------------------------------------
+guint IntAttribute::GetUIntValue ()
+{
+  return _value;
 }
 
 // --------------------------------------------------------------------------------
@@ -785,7 +812,7 @@ gint IntAttribute::CompareWith (Attribute *with)
 {
   if (with)
   {
-    return ((guint) GetValue () - (guint) with->GetValue ());
+    return (GetUIntValue () - with->GetUIntValue ());
   }
 
   return G_MININT;
