@@ -78,7 +78,6 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     Player        *_floating_player;
     GooCanvasItem *_main_table;
     GtkListStore  *_combobox_store;
-    Data          *_max_score;
     Data          *_swapping;
     AttributeDesc *_swapping_criteria;
     gdouble        _max_w;

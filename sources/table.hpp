@@ -23,15 +23,19 @@
 #include "canvas_module.hpp"
 #include "match.hpp"
 #include "score_collector.hpp"
-
 #include "stage.hpp"
 
-class Table : public virtual Stage, public CanvasModule
+class Table : public CanvasModule
 {
   public:
-    static void Init ();
+    typedef void (*StatusCbk) (Table *table,
+                               void  *data);
+    Table (Stage *supervisor);
 
-    Table (StageClass *stage_class);
+    void SetStatusCbk (StatusCbk  cbk,
+                       void      *data);
+
+    void SetAttendees (GSList *attendees);
 
     void OnFromTableComboboxChanged ();
     void OnStuffClicked ();
@@ -39,26 +43,27 @@ class Table : public virtual Stage, public CanvasModule
     void OnMatchSheetToggled (GtkWidget *widget);
     void OnDisplayToggled (GtkWidget *widget);
     void OnSearchMatch ();
-    void OnFilterClicked ();
     void OnPrint ();
     void OnZoom (gdouble value);
-
-  public:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
-
-  private:
-    void OnLocked (Reason reason);
-    void OnUnLocked ();
-    void OnPlugged ();
-    void OnUnPlugged ();
-    void Wipe ();
-
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr);
+
+    void Wipe ();
+
+    void Display ();
+
+    void Lock ();
+
+    void UnLock ();
+
+    GSList *GetCurrentClassification ();
+
+  private:
+    void OnPlugged ();
+    void OnUnPlugged ();
 
   private:
     static const gdouble _score_rect_size;
@@ -85,11 +90,11 @@ class Table : public virtual Stage, public CanvasModule
 
     static const gdouble _level_spacing;
 
+    Stage              *_supervisor;
     GNode              *_tree_root;
     guint               _nb_levels;
     guint               _level_filter;
     GtkListStore       *_from_table_liststore;
-    GtkTreeStore       *_display_treestore;
     GtkTreeStore       *_quick_search_treestore;
     GtkTreeModelFilter *_quick_search_filter;
     guint               _nb_level_to_display;
@@ -111,12 +116,14 @@ class Table : public virtual Stage, public CanvasModule
     guint               _print_nb_x_pages;
     guint               _print_nb_y_pages;
     GData              *_match_list;
+    GSList             *_attendees;
+    gboolean            _locked;
+    guint               _nb_match_per_sheet;
+
+    void      *_status_cbk_data;
+    StatusCbk  _status_cbk;
 
     GooCanvasItem *GetQuickScore (const gchar *container);
-
-    void Display ();
-
-    void Garnish ();
 
     void CreateTree ();
 
@@ -125,6 +132,8 @@ class Table : public virtual Stage, public CanvasModule
     void OnAttrListUpdated ();
 
     void DrawAllConnectors ();
+
+    void Garnish ();
 
     gboolean IsOver ();
 
@@ -135,8 +144,6 @@ class Table : public virtual Stage, public CanvasModule
                     Match   *match,
                     guint    player_index,
                     Player  **dropped);
-
-    GSList *GetCurrentClassification ();
 
     void OnStatusChanged (GtkComboBox *combo_box);
 
@@ -157,8 +164,6 @@ class Table : public virtual Stage, public CanvasModule
 
     static gboolean DeleteCanvasTable (GNode *node,
                                        Table *table);
-
-    static Stage *CreateInstance (StageClass *stage_class);
 
     static gboolean FillInNode (GNode *node,
                                 Table *table);
@@ -185,19 +190,9 @@ class Table : public virtual Stage, public CanvasModule
 
     void Load (xmlNode *xml_node);
 
-    void LoadConfiguration (xmlNode *xml_node);
-
     void AddFork (GNode *to);
 
-    void FillInConfig ();
-
-    void ApplyConfig ();
-
     void RefreshLevelStatus ();
-
-    void FeedDisplayStore (guint        from_place,
-                           guint        nb_levels,
-                           GtkTreeIter *parent);
 
     gchar *GetLevelImage (guint level);
 
