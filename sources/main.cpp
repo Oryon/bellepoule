@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-int swprintf (wchar_t *, size_t, const wchar_t *, ...);
-int vswprintf(wchar_t *, const wchar_t *, va_list);
+extern "C" int swprintf (wchar_t *, size_t, const wchar_t *, ...);
+extern "C" int vswprintf(wchar_t *, const wchar_t *, va_list);
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -75,11 +75,11 @@ static gint CompareRating (Attribute *attr_a,
 
   if (attr_a)
   {
-    value_a = (gint) attr_a->GetValue ();
+    value_a = attr_a->GetIntValue ();
   }
   if (attr_b)
   {
-    value_b = (gint) attr_b->GetValue ();
+    value_b = attr_b->GetIntValue ();
   }
 
   if (value_a == 0)
@@ -104,12 +104,12 @@ static gint CompareDate (Attribute *attr_a,
   if (attr_a)
   {
     g_date_set_parse (&date_a,
-                      (const gchar *) attr_a->GetValue ());
+                      (const gchar *) attr_a->GetStrValue ());
   }
   if (attr_b)
   {
     g_date_set_parse (&date_b,
-                      (const gchar *) attr_b->GetValue ());
+                      (const gchar *) attr_b->GetStrValue ());
   }
 
   return g_date_compare (&date_a,

@@ -176,7 +176,7 @@ void Splitting::OnLocked (Reason reason)
 
       player = (Player *) current->data;
       attr   = player->GetAttribute (&exported_attr);
-      if ((gboolean) attr->GetValue () == TRUE)
+      if (attr->GetUIntValue () == TRUE)
       {
         Player *new_player = player->Duplicate ();
 
@@ -222,7 +222,7 @@ gboolean Splitting::PresentPlayerFilter (Player *player)
   Player::AttributeId  attr_id ("exported");
   Attribute           *attr = player->GetAttribute (&attr_id);
 
-  return ((gboolean) attr->GetValue () == FALSE);
+  return (attr->GetUIntValue () == FALSE);
 }
 
 // --------------------------------------------------------------------------------

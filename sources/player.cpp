@@ -237,7 +237,7 @@ void Player::SetAttributeValue (AttributeId *attr_id,
              attr,
              (GDestroyNotify) Object::TryToRelease);
   }
-  else if ((guint) attr->GetValue () == value)
+  else if (attr->GetUIntValue () == value)
   {
     return;
   }
@@ -346,7 +346,7 @@ void Player::Load (xmlNode *xml_node)
 
     if (attr)
     {
-      _ref = (guint) attr->GetValue ();
+      _ref = attr->GetUIntValue ();
       if (_ref > _next_ref)
       {
         _next_ref = _ref + 1;

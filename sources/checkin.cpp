@@ -304,7 +304,7 @@ void Checkin::Load (xmlNode *xml_node)
         {
           UseInitialRank ();
           player->SetAttributeValue (&previous_rank_id,
-                                     (guint) start_rank->GetValue ());
+                                     start_rank->GetUIntValue ());
         }
         player->Release ();
       }
@@ -395,7 +395,7 @@ void Checkin::UpdateChecksum ()
         Attribute *attending;
 
         attending = p->GetAttribute (&attr_id);
-        if (attending && (gboolean) attending->GetValue ())
+        if (attending && attending->GetUIntValue ())
         {
           gchar *name = p->GetName ();
 
@@ -472,7 +472,7 @@ void Checkin::UpdateRanking ()
         Player::AttributeId previous_rank_id ("previous_stage_rank", this);
         Player::AttributeId rank_id          ("rank", this);
 
-        if (attending && (gboolean) attending->GetValue ())
+        if (attending && attending->GetUIntValue ())
         {
           if (   previous_player
               && (Player::Compare (previous_player, p, rank_criteria_id) == 0))
@@ -549,7 +549,7 @@ gboolean Checkin::PresentPlayerFilter (Player *player)
   Player::AttributeId  attr_id ("attending");
   Attribute           *attr = player->GetAttribute (&attr_id);
 
-  return ((attr == NULL) || ((gboolean) attr->GetValue () == TRUE));
+  return ((attr == NULL) || (attr->GetUIntValue () == TRUE));
 }
 
 // --------------------------------------------------------------------------------
@@ -1051,7 +1051,7 @@ void Checkin::Monitor (Player *player)
 
   Attribute *attr = player->GetAttribute (&attr_id);
 
-  if (attr && ((gboolean) attr->GetValue () == TRUE))
+  if (attr && (attr->GetUIntValue () == TRUE))
   {
     _attendings++;
   }
@@ -1067,7 +1067,7 @@ void Checkin::OnPlayerRemoved (Player *player)
   Player::AttributeId  attr_id ("attending");
   Attribute           *attr = player->GetAttribute (&attr_id);
 
-  if (attr && ((gboolean) attr->GetValue () == TRUE))
+  if (attr && (attr->GetUIntValue () == TRUE))
   {
     _attendings--;
   }
@@ -1078,7 +1078,7 @@ void Checkin::OnAttendingChanged (Player    *player,
                                   Attribute *attr,
                                   Checkin   *checkin)
 {
-  guint               value = (guint) attr->GetValue ();
+  guint               value = attr->GetUIntValue ();
   Player::AttributeId global_status_attr_id ("global_status");
 
   if (value == 1)
@@ -1186,7 +1186,7 @@ gboolean Checkin::PlayerIsPrintable (Player *player)
 {
   Player::AttributeId  attr_id ("attending");
   Attribute           *attr = player->GetAttribute (&attr_id);
-  gboolean             attending = (gboolean) attr->GetValue ();
+  gboolean             attending = attr->GetUIntValue ();
 
   if ((attending == TRUE) && (_print_attending == TRUE))
   {

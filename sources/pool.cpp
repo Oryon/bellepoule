@@ -899,23 +899,23 @@ gint Pool::ComparePlayer (Player   *A,
     Player::AttributeId attr_id ("", data_owner);
 
     attr_id._name = (gchar *) "victories_ratio";
-    ratio_A = (guint) A->GetAttribute (&attr_id)->GetValue ();
-    ratio_B = (guint) B->GetAttribute (&attr_id)->GetValue ();
+    ratio_A = A->GetAttribute (&attr_id)->GetUIntValue ();
+    ratio_B = B->GetAttribute (&attr_id)->GetUIntValue ();
 
     attr_id._name = (gchar *) "indice";
-    average_A = (gint)  A->GetAttribute (&attr_id)->GetValue ();
-    average_B = (gint)  B->GetAttribute (&attr_id)->GetValue ();
+    average_A = A->GetAttribute (&attr_id)->GetIntValue ();
+    average_B = B->GetAttribute (&attr_id)->GetIntValue ();
 
     attr_id._name = (gchar *) "HS";
-    HS_A = (guint) A->GetAttribute (&attr_id)->GetValue ();
-    HS_B = (guint) B->GetAttribute (&attr_id)->GetValue ();
+    HS_A = A->GetAttribute (&attr_id)->GetUIntValue ();
+    HS_B = B->GetAttribute (&attr_id)->GetUIntValue ();
 
     attr_id._name = (gchar *) "status";
     attr_id._owner = main_data_owner;
     if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
     {
-      gchar *status_A = (gchar *) A->GetAttribute (&attr_id)->GetValue ();
-      gchar *status_B = (gchar *) B->GetAttribute (&attr_id)->GetValue ();
+      gchar *status_A = A->GetAttribute (&attr_id)->GetStrValue ();
+      gchar *status_B = B->GetAttribute (&attr_id)->GetStrValue ();
 
       if ((status_A[0] == 'Q') && (status_A[0] != status_B[0]))
       {
@@ -1195,12 +1195,12 @@ void Pool::RefreshAttribute (Player            *player,
     if (operation == AVERAGE)
     {
       player->SetAttributeValue (&combined_attr_id,
-                                 ((guint) source_attr->GetValue () + value) / 2);
+                                 (source_attr->GetUIntValue () + value) / 2);
     }
     else
     {
       player->SetAttributeValue (&combined_attr_id,
-                                 (guint) source_attr->GetValue () + value);
+                                 source_attr->GetUIntValue () + value);
     }
   }
 }
@@ -1247,7 +1247,7 @@ void Pool::RefreshDashBoard ()
           gboolean     iter_is_valid;
           gchar       *code;
 
-          text = (gchar *) attr->GetValue ();
+          text = attr->GetStrValue ();
 
           iter_is_valid = gtk_tree_model_get_iter_first (GetStatusModel (),
                                                          &iter);
@@ -1276,7 +1276,7 @@ void Pool::RefreshDashBoard ()
       if (data)
       {
         goo_item = GOO_CANVAS_ITEM (data);
-        text = g_strdup_printf ("%0.3f", (gdouble) ((guint) attr->GetValue ()) / 1000.0);
+        text = g_strdup_printf ("%0.3f", (gdouble) (attr->GetUIntValue ()) / 1000.0);
         g_object_set (goo_item,
                       "text",
                       text, NULL);
@@ -1301,7 +1301,7 @@ void Pool::RefreshDashBoard ()
       if (data)
       {
         goo_item = GOO_CANVAS_ITEM (data);
-        text = g_strdup_printf ("%d", (guint) attr->GetValue ());
+        text = g_strdup_printf ("%d", attr->GetUIntValue ());
         g_object_set (goo_item,
                       "text",
                       text, NULL);
@@ -1326,7 +1326,7 @@ void Pool::RefreshDashBoard ()
       if (data)
       {
         goo_item = GOO_CANVAS_ITEM (data);
-        text = g_strdup_printf ("%+d", (gint) attr->GetValue ());
+        text = g_strdup_printf ("%+d", attr->GetIntValue ());
         g_object_set (goo_item,
                       "text",
                       text, NULL);
@@ -1433,12 +1433,12 @@ void Pool::Save (xmlTextWriter *xml_writer)
       attr = player->GetAttribute (&attr_id);
       if (attr)
       {
-        HS = (guint) player->GetAttribute (&attr_id)->GetValue ();
+        HS = player->GetAttribute (&attr_id)->GetUIntValue ();
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "TD",
                                            "%d", HS);
         attr_id._name = (gchar *) "indice";
-        indice = (guint) player->GetAttribute (&attr_id)->GetValue ();
+        indice = player->GetAttribute (&attr_id)->GetUIntValue ();
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "TR",
                                            "%d", HS - indice);

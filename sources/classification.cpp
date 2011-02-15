@@ -157,7 +157,7 @@ void Classification::DumpToFFF (gchar   *filename,
       player      = (Player *) current_player->data;
       status_attr = player->GetAttribute (&attr_id);
 
-      if ((status_attr == NULL) || (* ((gchar *) status_attr->GetValue ()) != 'E'))
+      if ((status_attr == NULL) || (* (status_attr->GetStrValue ()) != 'E'))
       {
         // General
         {
@@ -226,7 +226,7 @@ void Classification::DumpToFFF (gchar   *filename,
                           "final_rank");
           fprintf (file, ",");
 
-          if (status_attr && (* ((gchar *) status_attr->GetValue ()) != 'Q'))
+          if (status_attr && (* (status_attr->GetStrValue ()) != 'Q'))
           {
             fprintf (file, "p");
           }

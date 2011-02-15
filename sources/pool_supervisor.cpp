@@ -194,7 +194,7 @@ void PoolSupervisor::OnPlugged ()
       attr_id._owner = GetPreviousStage ();
       status_attr = player->GetAttribute (&attr_id);
 
-      status = (gchar *) status_attr->GetValue ();
+      status = status_attr->GetStrValue ();
 
       attr_id._owner = this;
       player->SetAttributeValue (&attr_id,

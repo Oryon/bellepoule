@@ -136,7 +136,11 @@ class Attribute : public Object
 
     virtual void SetValue (guint value) = 0;
 
-    virtual void *GetValue () = 0;
+    virtual char *GetStrValue ();
+
+    virtual gint GetIntValue ();
+
+    virtual guint GetUIntValue ();
 
     virtual gboolean EntryIsTextBased () = 0;
 
@@ -163,7 +167,7 @@ class TextAttribute : public Attribute
   public:
      TextAttribute (AttributeDesc *desc);
 
-    void *GetValue ();
+    char *GetStrValue ();
 
   private:
     gchar *_value;
@@ -192,9 +196,9 @@ class TextAttribute : public Attribute
 class BooleanAttribute : public Attribute
 {
   public:
-     BooleanAttribute (AttributeDesc *desc);
+    BooleanAttribute (AttributeDesc *desc);
 
-    void *GetValue ();
+    guint GetUIntValue ();
 
   private:
     gboolean _value;
@@ -222,9 +226,11 @@ class BooleanAttribute : public Attribute
 class IntAttribute : public Attribute
 {
   public:
-     IntAttribute (AttributeDesc *desc);
+    IntAttribute (AttributeDesc *desc);
 
-    void *GetValue ();
+    gint GetIntValue ();
+
+    guint GetUIntValue ();
 
   private:
     guint _value;
