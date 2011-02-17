@@ -89,6 +89,8 @@ class Stage : public virtual Object
 
     gboolean Locked ();
 
+    Data *GetMaxScore ();
+
     void SetClassificationFilter (Filter *filter);
 
     virtual const gchar *GetInputProviderClient ();
@@ -158,6 +160,7 @@ class Stage : public virtual Object
     Attendees *_attendees;
     Stage     *_input_provider;
     Contest   *_contest;
+    Data      *_max_score;
 
     Stage (StageClass *stage_class);
 

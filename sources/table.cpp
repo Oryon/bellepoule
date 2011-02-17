@@ -27,8 +27,6 @@
 #include "classification.hpp"
 #include "table.hpp"
 
-const gchar   *Table::_class_name     = N_("Table");
-const gchar   *Table::_xml_class_name = "PhaseDeTableaux";
 const gdouble  Table::_score_rect_size = 30.0;
 const gdouble  Table::_level_spacing  = 10.0;
 
@@ -55,92 +53,29 @@ extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widge
                                                                 Object    *owner);
 
 // --------------------------------------------------------------------------------
-Table::Table (StageClass *stage_class)
-: Stage (stage_class),
-  CanvasModule ("table.glade")
+Table::Table (Stage *supervisor)
+: CanvasModule ("table.glade")
 {
+  Module *supervisor_module = dynamic_cast <Module *> (supervisor);
+
+  _supervisor     = supervisor;
+  _filter         = supervisor_module->GetFilter ();
   _main_table     = NULL;
   _tree_root      = NULL;
   _level_status   = NULL;
   _match_to_print = NULL;
   _nb_levels      = 0;
+  _locked         = FALSE;
+
+  _status_cbk_data = NULL;
+  _status_cbk      = NULL;
 
   g_datalist_init (&_match_list);
 
+  SetDataOwner (supervisor_module);
   _score_collector = NULL;
 
-  _max_score = new Data ("ScoreMax",
-                         10);
-
-  {
-    AddSensitiveWidget (_glade->GetWidget ("input_toolbutton"));
-    AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
-
-    LockOnClassification (_glade->GetWidget ("from_vbox"));
-    LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
-    LockOnClassification (_glade->GetWidget ("input_toolbutton"));
-  }
-
-  {
-    GSList *attr_list;
-    Filter *filter;
-
-    AttributeDesc::CreateList (&attr_list,
-#ifndef DEBUG
-                               "ref",
-#endif
-                               "status",
-                               "global_status",
-                               "start_rank",
-                               "final_rank",
-                               "attending",
-                               "exported",
-                               "victories_ratio",
-                               "indice",
-                               "HS",
-                               "rank",
-                               NULL);
-    filter = new Filter (attr_list,
-                         this);
-
-    filter->ShowAttribute ("previous_stage_rank");
-    filter->ShowAttribute ("name");
-    filter->ShowAttribute ("first_name");
-    filter->ShowAttribute ("club");
-
-    SetFilter (filter);
-    filter->Release ();
-  }
-
-  {
-    GSList *attr_list;
-    Filter *filter;
-
-    AttributeDesc::CreateList (&attr_list,
-#ifndef DEBUG
-                               "ref",
-#endif
-                               "global_status",
-                               "start_rank",
-                               "final_rank",
-                               "attending",
-                               "exported",
-                               "victories_ratio",
-                               "indice",
-                               "HS",
-                               NULL);
-    filter = new Filter (attr_list,
-                         this);
-
-    filter->ShowAttribute ("rank");
-    filter->ShowAttribute ("name");
-    filter->ShowAttribute ("first_name");
-    filter->ShowAttribute ("club");
-    filter->ShowAttribute ("status");
-
-    SetClassificationFilter (filter);
-    filter->Release ();
-  }
+  _max_score = supervisor->GetMaxScore ();
 
   {
     GtkWidget *content_area;
@@ -189,7 +124,6 @@ Table::Table (StageClass *stage_class)
   }
 
   _from_table_liststore   = GTK_LIST_STORE (_glade->GetObject ("from_liststore"));
-  _display_treestore      = GTK_TREE_STORE (_glade->GetObject ("display_treestore"));
   _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
   _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("match_treemodelfilter"));
 
@@ -215,8 +149,6 @@ Table::~Table ()
   Object::TryToRelease (_quick_score_collector);
   Object::TryToRelease (_score_collector);
 
-  _max_score->Release ();
-
   if (_match_to_print)
   {
     g_slist_free (_match_to_print);
@@ -232,12 +164,10 @@ Table::~Table ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::Init ()
+void Table::SetAttendees (GSList *attendees)
 {
-  RegisterStageClass (gettext (_class_name),
-                      _xml_class_name,
-                      CreateInstance,
-                      EDITABLE);
+  _attendees = attendees;
+  Garnish ();
 }
 
 // --------------------------------------------------------------------------------
@@ -285,12 +215,6 @@ GooCanvasItem *Table::GetQuickScore (const gchar *container)
                                               NULL);
 
   return goo_rect;
-}
-
-// --------------------------------------------------------------------------------
-Stage *Table::CreateInstance (StageClass *stage_class)
-{
-  return new Table (stage_class);
 }
 
 // --------------------------------------------------------------------------------
@@ -349,7 +273,26 @@ void Table::RefreshLevelStatus ()
       g_free (icon);
     }
   }
-  SignalStatusUpdate ();
+
+  if (_status_cbk)
+  {
+    _status_cbk (this,
+                 _status_cbk_data);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Table::SetStatusCbk (StatusCbk  cbk,
+                          void      *data)
+{
+  _status_cbk_data = data;
+  _status_cbk      = cbk;
+
+  if (_status_cbk)
+  {
+    _status_cbk (this,
+                 _status_cbk_data);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -441,45 +384,15 @@ void Table::Garnish ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::LoadConfiguration (xmlNode *xml_node)
-{
-  Stage::LoadConfiguration (xml_node);
-
-  if (_max_score)
-  {
-    _max_score->Load (xml_node);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Table::Load (xmlNode *xml_node)
 {
-  LoadConfiguration (xml_node);
-
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
     static gchar *level;
 
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) xml_node->name, _xml_class_name) == 0)
-      {
-      }
-      else if (strcmp ((char *) n->name, "Tireur") == 0)
-      {
-        if (_tree_root == NULL)
-        {
-          LoadAttendees (n);
-        }
-      }
-      else if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
-      {
-        if (_attendees)
-        {
-          CreateTree ();
-        }
-      }
-      else if (strcmp ((char *) n->name, "Tableau") == 0)
+      if (strcmp ((char *) n->name, "Tableau") == 0)
       {
         level = (gchar *) xmlGetProp (n, BAD_CAST "Taille");
       }
@@ -507,25 +420,8 @@ void Table::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void Table::SaveConfiguration (xmlTextWriter *xml_writer)
-{
-  Stage::SaveConfiguration (xml_writer);
-
-  if (_max_score)
-  {
-    _max_score->Save (xml_writer);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Table::Save (xmlTextWriter *xml_writer)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _xml_class_name);
-
-  SaveConfiguration (xml_writer);
-  SaveAttendees (xml_writer);
-
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "SuiteDeTableaux");
   xmlTextWriterWriteFormatAttribute (xml_writer,
@@ -579,9 +475,6 @@ void Table::Save (xmlTextWriter *xml_writer)
       xmlTextWriterEndElement (xml_writer);
     }
   }
-
-  xmlTextWriterEndElement (xml_writer);
-  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
@@ -642,7 +535,7 @@ void Table::DeleteTree ()
 // --------------------------------------------------------------------------------
 void Table::CreateTree ()
 {
-  guint nb_players = g_slist_length (_attendees->GetShortList ());
+  guint nb_players = g_slist_length (_attendees);
 
   for (guint i = 0; i < 32; i++)
   {
@@ -692,46 +585,6 @@ void Table::CreateTree ()
     g_signal_connect (_glade->GetWidget ("from_table_combobox"), "changed",
                       G_CALLBACK (on_from_table_combobox_changed),
                       (Object *) this);
-  }
-
-  {
-    gtk_tree_store_clear (_display_treestore);
-
-    FeedDisplayStore (1,
-                      _nb_levels-1,
-                      NULL);
-
-    gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("display_treeview")));
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Table::FeedDisplayStore (guint        from_place,
-                              guint        nb_levels,
-                              GtkTreeIter *parent)
-{
-  GtkTreeIter  iter;
-  gchar       *text = g_strdup_printf ("%d", from_place);
-
-  gtk_tree_store_append (_display_treestore,
-                         &iter,
-                         parent);
-
-  gtk_tree_store_set (_display_treestore, &iter,
-                      DISPLAY_NAME_COLUMN, text,
-                      -1);
-  g_free (text);
-
-  {
-    guint place_offset = 1;
-
-    for (guint i = 0; i < nb_levels-1; i++)
-    {
-      place_offset = place_offset << 1;
-      FeedDisplayStore (from_place + place_offset,
-                        i+1,
-                        &iter);
-    }
   }
 }
 
@@ -1030,7 +883,7 @@ gboolean Table::FillInNode (GNode *node,
             }
           }
 
-          if (table->Locked ())
+          if (table->_locked)
           {
             gtk_widget_set_sensitive (w,
                                       FALSE);
@@ -1248,7 +1101,7 @@ void Table::AddFork (GNode *to)
   }
   else
   {
-    Player *player = (Player *) g_slist_nth_data (_attendees->GetShortList (),
+    Player *player = (Player *) g_slist_nth_data (_attendees,
                                                   data->_expected_winner_rank - 1);
 
     if (player)
@@ -1344,7 +1197,7 @@ void Table::LoadScore (xmlNode *xml_node,
 {
   gboolean  is_the_best = FALSE;
   gchar    *attr        = (gchar *) xmlGetProp (xml_node, BAD_CAST "REF");
-  Player   *player      = GetPlayerFromRef (atoi (attr));
+  Player   *player      = _supervisor->GetPlayerFromRef (atoi (attr));
 
   SetPlayer (match,
              player,
@@ -1458,24 +1311,9 @@ void Table::LookForMatchToPrint (guint    level_to_print,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_table_print_toolbutton_clicked (GtkWidget *widget,
-                                                                   Object    *owner)
-{
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->OnPrint ();
-}
-
-// --------------------------------------------------------------------------------
 void Table::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
-
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")),
-                                     FALSE);
-
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
-                                     FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -1487,7 +1325,6 @@ void Table::OnUnPlugged ()
   _score_collector = NULL;
 
   gtk_list_store_clear (_from_table_liststore);
-  gtk_tree_store_clear (_display_treestore);
   gtk_tree_store_clear (_quick_search_treestore);
   gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
 
@@ -1495,12 +1332,9 @@ void Table::OnUnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnLocked (Reason reason)
+void Table::Lock ()
 {
-  DisableSensitiveWidgets ();
-
-  gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
-                                     FALSE);
+  _locked = TRUE;
 
   if (_score_collector)
   {
@@ -1509,9 +1343,9 @@ void Table::OnLocked (Reason reason)
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnUnLocked ()
+void Table::UnLock ()
 {
-  EnableSensitiveWidgets ();
+  _locked = FALSE;
 
   if (_score_collector)
   {
@@ -1545,48 +1379,6 @@ gboolean Table::AddToClassification (GNode *node,
 void Table::OnAttrListUpdated ()
 {
   Display ();
-}
-
-// --------------------------------------------------------------------------------
-void Table::FillInConfig ()
-{
-  gchar *text = g_strdup_printf ("%d", _max_score->_value);
-
-  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
-                      text);
-  g_free (text);
-
-  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
-                      GetName ());
-}
-
-// --------------------------------------------------------------------------------
-void Table::ApplyConfig ()
-{
-  {
-    GtkWidget *name_w = _glade->GetWidget ("name_entry");
-    gchar     *name   = (gchar *) gtk_entry_get_text (GTK_ENTRY (name_w));
-
-    SetName (name);
-  }
-
-  {
-    GtkWidget *max_score_w = _glade->GetWidget ("max_score_entry");
-
-    if (max_score_w)
-    {
-      gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (max_score_w));
-
-      if (str)
-      {
-        _max_score->_value = atoi (str);
-        if (_main_table)
-        {
-          OnAttrListUpdated ();
-        }
-      }
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1784,7 +1576,7 @@ GSList *Table::GetCurrentClassification ()
                                          (void *) this);
 
   {
-    Player::AttributeId *attr_id = new Player::AttributeId ("rank", this);
+    Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
     GSList              *current;
     guint                previous_rank   = 0;
     Player              *previous_player = NULL;
@@ -1871,7 +1663,7 @@ gint Table::ComparePreviousRankPlayer (Player  *A,
                                        Player  *B,
                                        guint32  rand_seed)
 {
-  Stage               *previous = GetPreviousStage ();
+  Stage               *previous = _supervisor->GetPreviousStage ();
   Player::AttributeId  attr_id ("rank", previous);
 
   attr_id.MakeRandomReady (rand_seed);
@@ -1960,35 +1752,18 @@ gchar *Table::GetLevelImage (guint level)
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnFilterClicked ()
-{
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
-  {
-    Classification *classification = GetClassification ();
-
-    if (classification)
-    {
-      classification->SelectAttributes ();
-    }
-  }
-  else
-  {
-    SelectAttributes ();
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Table::OnBeginPrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context)
 {
+  gdouble paper_w  = gtk_print_context_get_width (context);
+  gdouble paper_h  = gtk_print_context_get_height (context);
+
   if (_print_full_table)
   {
     gdouble canvas_x;
     gdouble canvas_y;
     gdouble canvas_w;
     gdouble canvas_h;
-    gdouble paper_w  = gtk_print_context_get_width (context);
-    gdouble paper_h  = gtk_print_context_get_height (context);
     gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
 
     {
@@ -2031,10 +1806,19 @@ void Table::OnBeginPrint (GtkPrintOperation *operation,
     guint nb_match;
     guint nb_page;
 
-    nb_match = g_slist_length (_match_to_print);
-    nb_page  = nb_match/4;
+    if (paper_w > paper_h)
+    {
+      _nb_match_per_sheet = 2;
+    }
+    else
+    {
+      _nb_match_per_sheet = 4;
+    }
 
-    if (nb_match%4 != 0)
+    nb_match = g_slist_length (_match_to_print);
+    nb_page  = nb_match/_nb_match_per_sheet;
+
+    if (nb_match%_nb_match_per_sheet != 0)
     {
       nb_page++;
     }
@@ -2049,16 +1833,9 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
                         GtkPrintContext   *context,
                         gint               page_nr)
 {
-  gdouble paper_w = gtk_print_context_get_width  (context);
-  gdouble paper_h = gtk_print_context_get_height (context);
-
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
-  {
-    Module::OnDrawPage (operation,
-                        context,
-                        page_nr);
-    return;
-  }
+  gdouble paper_w   = gtk_print_context_get_width  (context);
+  gdouble paper_h   = gtk_print_context_get_height (context);
+  Module *container = dynamic_cast <Module *> (_supervisor);
 
   if (_print_full_table)
   {
@@ -2070,9 +1847,9 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
 
     if (y_page == 0)
     {
-      Module::OnDrawPage (operation,
-                          context,
-                          page_nr);
+      container->DrawContainerPage (operation,
+                                    context,
+                                    page_nr);
     }
 
     cairo_save (cr);
@@ -2120,8 +1897,8 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
     cairo_save (cr);
 
     current_match = g_slist_nth (_match_to_print,
-                                 4*page_nr);
-    for (guint i = 0; current_match && (i < 4); i++)
+                                 _nb_match_per_sheet*page_nr);
+    for (guint i = 0; current_match && (i < _nb_match_per_sheet); i++)
     {
       GooCanvasItem *group;
 
@@ -2133,13 +1910,13 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
 
         cairo_matrix_init_translate (&matrix,
                                      0.0,
-                                     i*25.0 * paper_h/paper_w);
+                                     i*(100.0/_nb_match_per_sheet) * paper_h/paper_w);
 
         g_object_set_data (G_OBJECT (operation), "operation_matrix", (void *) &matrix);
 
-        Module::OnDrawPage (operation,
-                            context,
-                            page_nr);
+        container->DrawContainerPage (operation,
+                                      context,
+                                      page_nr);
       }
 
       {
@@ -2147,7 +1924,7 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
         Match         *match  = (Match *) current_match->data;
         Player        *A      = match->GetPlayerA ();
         Player        *B      = match->GetPlayerB ();
-        gdouble        offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
+        gdouble        offset = i * ((100.0/_nb_match_per_sheet) * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
         GooCanvasItem *item;
         gdouble        name_width;
         gchar         *match_number = g_strdup_printf (gettext ("Match %s"), (const char *) match->GetPtrData (this, "number"));
@@ -2367,16 +2144,7 @@ void Table::OnZoom (gdouble value)
 // --------------------------------------------------------------------------------
 void Table::OnPrint ()
 {
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
-  {
-    Classification *classification = GetClassification ();
-
-    if (classification)
-    {
-      classification->Print (gettext ("Table round classification"));
-    }
-  }
-  else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+  if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
   {
     GtkWidget *w = _glade->GetWidget ("table_radiobutton");
 
@@ -2479,67 +2247,10 @@ void Table::OnStatusChanged (GtkComboBox *combo_box)
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
-                                                                    Object    *owner)
+void Table::on_status_changed (GtkComboBox *combo_box,
+                               Table       *table)
 {
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->OnFilterClicked ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
-                                                                Object    *owner)
-{
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->OnFromTableComboboxChanged ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled (GtkWidget *widget,
-                                                                                  Object    *owner)
-{
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_table_stuff_toolbutton_clicked (GtkWidget *widget,
-                                                                   Object    *owner)
-{
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->OnStuffClicked ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_input_toolbutton_toggled (GtkWidget *widget,
-                                                             Object    *owner)
-{
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->OnInputToggled (widget);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *widget,
-                                                                  Object    *owner)
-{
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->OnSearchMatch ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_zoom_scalebutton_value_changed (GtkWidget *widget,
-                                                                   gdouble    value,
-                                                                   Object    *owner)
-{
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->OnZoom (value);
+  table->OnStatusChanged (combo_box);
 }
 
 // --------------------------------------------------------------------------------
@@ -2549,20 +2260,4 @@ extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *w
   Table *t = dynamic_cast <Table *> (owner);
 
   t->OnMatchSheetToggled (widget);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_display_toolbutton_toggled (GtkWidget *widget,
-                                                               Object    *owner)
-{
-  Table *t = dynamic_cast <Table *> (owner);
-
-  t->OnDisplayToggled (widget);
-}
-
-// --------------------------------------------------------------------------------
-void Table::on_status_changed (GtkComboBox *combo_box,
-                               Table       *table)
-{
-  table->OnStatusChanged (combo_box);
 }

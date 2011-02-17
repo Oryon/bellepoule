@@ -55,6 +55,12 @@ class Module : public virtual Object
 
     gboolean IsPlugged ();
 
+    Filter *GetFilter ();
+
+    void DrawContainerPage (GtkPrintOperation *operation,
+                            GtkPrintContext   *context,
+                            gint               page_nr);
+
   protected:
     Filter  *_filter;
     Glade   *_glade;
