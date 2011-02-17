@@ -250,12 +250,12 @@ void Schedule::DisplayList ()
 
       current_stage = (Stage *) g_list_nth_data (_stage_list,
                                                  i);
-      tab_widget = (GtkWidget *) current_stage->GetData (this, "viewport_stage");
+      tab_widget = (GtkWidget *) current_stage->GetPtrData (this, "viewport_stage");
 
       if (tab_widget)
       {
         gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (GetRootWidget ()),
-                                         (GtkWidget *) current_stage->GetData (this, "viewport_stage"),
+                                         (GtkWidget *) current_stage->GetPtrData (this, "viewport_stage"),
                                          current_stage->GetFullName ());
       }
     }
@@ -951,7 +951,7 @@ extern "C" G_MODULE_EXPORT void on_previous_stage_toolbutton_clicked (GtkWidget 
 // --------------------------------------------------------------------------------
 gint Schedule::GetNotebookPageNum (Stage *stage)
 {
-  GtkWidget *viewport = (GtkWidget *) stage->GetData (this, "viewport_stage");
+  GtkWidget *viewport = (GtkWidget *) stage->GetPtrData (this, "viewport_stage");
 
   return gtk_notebook_page_num (GTK_NOTEBOOK (GetRootWidget ()),
                                 viewport);

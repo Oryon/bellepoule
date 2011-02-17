@@ -798,7 +798,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     GtkWidget *w;
 
     player = GetPlayer (i);
-    w      = GTK_WIDGET (player->GetData (this, "combo_box"));
+    w      = GTK_WIDGET (player->GetPtrData (this, "combo_box"));
 
     if (_locked)
     {
@@ -1240,7 +1240,7 @@ void Pool::RefreshDashBoard ()
         Player::AttributeId attr_id ("status", GetDataOwner ());
 
         attr = player->GetAttribute (&attr_id);
-        data = player->GetData (GetDataOwner (), "StatusItem");
+        data = player->GetPtrData (GetDataOwner (), "StatusItem");
         if (attr && data)
         {
           GtkTreeIter  iter;
@@ -1272,7 +1272,7 @@ void Pool::RefreshDashBoard ()
 
       attr_id._name = (gchar *) "victories_ratio";
       attr = player->GetAttribute (&attr_id);
-      data = player->GetData (GetDataOwner (), "VictoriesRatioItem");
+      data = player->GetPtrData (GetDataOwner (), "VictoriesRatioItem");
       if (data)
       {
         goo_item = GOO_CANVAS_ITEM (data);
@@ -1283,10 +1283,10 @@ void Pool::RefreshDashBoard ()
         g_free (text);
       }
 
-      data = player->GetData (GetDataOwner (), "VictoriesItem");
+      data = player->GetPtrData (GetDataOwner (), "VictoriesItem");
       if (data)
       {
-        value = (gint) player->GetData (GetDataOwner (), "Victories");
+        value = player->GetIntData (GetDataOwner (), "Victories");
         goo_item = GOO_CANVAS_ITEM (data);
         text = g_strdup_printf ("%d", value);
         g_object_set (goo_item,
@@ -1297,7 +1297,7 @@ void Pool::RefreshDashBoard ()
 
       attr_id._name = (gchar *) "HS";
       attr = player->GetAttribute (&attr_id);
-      data = player->GetData (GetDataOwner (), "HSItem");
+      data = player->GetPtrData (GetDataOwner (), "HSItem");
       if (data)
       {
         goo_item = GOO_CANVAS_ITEM (data);
@@ -1308,10 +1308,10 @@ void Pool::RefreshDashBoard ()
         g_free (text);
       }
 
-      data = player->GetData (GetDataOwner (), "HRItem");
+      data = player->GetPtrData (GetDataOwner (), "HRItem");
       if (data)
       {
-        value = (gint) player->GetData (GetDataOwner (), "HR");
+        value = player->GetIntData (GetDataOwner (), "HR");
         goo_item = GOO_CANVAS_ITEM (data);
         text = g_strdup_printf ("%d", -value);
         g_object_set (goo_item,
@@ -1322,7 +1322,7 @@ void Pool::RefreshDashBoard ()
 
       attr_id._name = (gchar *) "indice";
       attr = player->GetAttribute (&attr_id);
-      data = player->GetData (GetDataOwner (), "IndiceItem");
+      data = player->GetPtrData (GetDataOwner (), "IndiceItem");
       if (data)
       {
         goo_item = GOO_CANVAS_ITEM (data);
@@ -1333,10 +1333,10 @@ void Pool::RefreshDashBoard ()
         g_free (text);
       }
 
-      data = player->GetData (GetDataOwner (), "RankItem");
+      data = player->GetPtrData (GetDataOwner (), "RankItem");
       if (data)
       {
-        value = (gint) player->GetData (this, "Rank");
+        value = player->GetIntData (this, "Rank");
         goo_item = GOO_CANVAS_ITEM (data);
         text = g_strdup_printf ("%d", value);
         g_object_set (goo_item,
@@ -1424,8 +1424,8 @@ void Pool::Save (xmlTextWriter *xml_writer)
                                          "%d", i+1);
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NbVictoires",
-                                         "%d", (gint) player->GetData (GetDataOwner (),
-                                                                       "Victories"));
+                                         "%d", player->GetIntData (GetDataOwner (),
+                                                                   "Victories"));
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NbMatches",
                                          "%d", GetNbPlayers ()-1);
@@ -1445,8 +1445,8 @@ void Pool::Save (xmlTextWriter *xml_writer)
       }
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "RangPoule",
-                                         "%d", (gint) player->GetData (this,
-                                                                       "Rank"));
+                                         "%d", player->GetIntData (this,
+                                                                   "Rank"));
       xmlTextWriterEndElement (xml_writer);
       current = g_slist_next (current);
     }

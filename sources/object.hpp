@@ -31,8 +31,14 @@ class Object
                   void           *data,
                   GDestroyNotify  destroy_cbk = NULL);
 
-    void *GetData (Object      *owner,
-                   const gchar *key);
+    void *GetPtrData (Object      *owner,
+                      const gchar *key);
+
+    guint GetUIntData (Object      *owner,
+                       const gchar *key);
+
+    gint GetIntData (Object      *owner,
+                     const gchar *key);
 
     void RemoveData (Object      *owner,
                      const gchar *key);

@@ -158,7 +158,7 @@ void Swapper::Update ()
 // --------------------------------------------------------------------------------
 Swapper::ValueUsage *Swapper::GetValueUsage (gchar *value_image)
 {
-  gint position = (guint) GetData (this, value_image);
+  gint position = GetUIntData (this, value_image);
 
   if (position && _array->len)
   {

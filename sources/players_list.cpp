@@ -104,7 +104,7 @@ void PlayersList::Update (Player *player)
   GtkTreePath         *path;
   GtkTreeIter          iter;
 
-  ref  = (GtkTreeRowReference *) player->GetData (this, "tree_row_ref");
+  ref  = (GtkTreeRowReference *) player->GetPtrData (this, "tree_row_ref");
   path = gtk_tree_row_reference_get_path (ref);
   gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
                            &iter,
@@ -370,8 +370,8 @@ gint PlayersList::CompareIterator (GtkTreeModel        *model,
                                    GtkTreeIter         *b,
                                    Player::AttributeId *attr_id)
 {
-  guint32 *rand_seed = (guint32 *) attr_id->GetData (NULL,
-                                                     "CompareIteratorRandSeed");
+  guint32 *rand_seed = (guint32 *) attr_id->GetPtrData (NULL,
+                                                        "CompareIteratorRandSeed");
 
   if (rand_seed)
   {
@@ -402,8 +402,8 @@ void PlayersList::SetColumn (guint          id,
 {
   GtkTreeViewColumn *column   = NULL;
   GtkCellRenderer   *renderer = NULL;
-  gboolean           attr_modifiable = (gboolean) desc->GetData (this,
-                                                                 "modifiable");
+  gboolean           attr_modifiable = desc->GetUIntData (this,
+                                                          "modifiable");
 
   if (   (desc->_type == G_TYPE_STRING)
       || (desc->_type == G_TYPE_INT))
@@ -642,7 +642,7 @@ void PlayersList::RemoveSelection ()
       Player *p;
 
       p = (Player *) g_slist_nth_data (_player_list, i);
-      current_path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) p->GetData (this, "tree_row_ref"));
+      current_path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) p->GetPtrData (this, "tree_row_ref"));
 
       if (gtk_tree_path_compare (selected_path,
                                  current_path) == 0)
@@ -689,7 +689,7 @@ Player *PlayersList::GetPlayer (const gchar *path_string)
     Player              *p;
 
     p = (Player *) g_slist_nth_data (_player_list, i);
-    current_ref = (GtkTreeRowReference *) p->GetData (this, "tree_row_ref");
+    current_ref = (GtkTreeRowReference *) p->GetPtrData (this, "tree_row_ref");
     current_path = gtk_tree_row_reference_get_path (current_ref);
     if (gtk_tree_path_compare (path,
                                current_path) == 0)

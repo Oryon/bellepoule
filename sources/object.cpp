@@ -170,8 +170,8 @@ void Object::RemoveAllData ()
 }
 
 // --------------------------------------------------------------------------------
-void *Object::GetData (Object      *owner,
-                       const gchar *key)
+void *Object::GetPtrData (Object      *owner,
+                          const gchar *key)
 {
   void  *data;
   gchar *full_key = g_strdup_printf ("%p::%s", (void *) owner, key);
@@ -181,6 +181,22 @@ void *Object::GetData (Object      *owner,
   g_free (full_key);
 
   return data;
+}
+
+// --------------------------------------------------------------------------------
+guint Object::GetUIntData (Object      *owner,
+                           const gchar *key)
+{
+  return GPOINTER_TO_UINT (GetPtrData (owner,
+                                       key));
+}
+
+// --------------------------------------------------------------------------------
+gint Object::GetIntData (Object      *owner,
+                         const gchar *key)
+{
+  return GPOINTER_TO_INT (GetPtrData (owner,
+                                      key));
 }
 
 // --------------------------------------------------------------------------------

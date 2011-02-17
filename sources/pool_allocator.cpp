@@ -677,7 +677,7 @@ gboolean PoolAllocator::on_enter_player (GooCanvasItem  *item,
                                          GdkEventButton *event,
                                          Pool           *pool)
 {
-  PoolAllocator *pl = (PoolAllocator*) pool->GetData (pool, "pool_allocator");
+  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -693,7 +693,7 @@ gboolean PoolAllocator::on_leave_player (GooCanvasItem  *item,
                                          GdkEventButton *event,
                                          Pool           *pool)
 {
-  PoolAllocator *pl = (PoolAllocator*) pool->GetData (pool, "pool_allocator");
+  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -709,7 +709,7 @@ gboolean PoolAllocator::on_button_press (GooCanvasItem  *item,
                                          GdkEventButton *event,
                                          Pool           *pool)
 {
-  PoolAllocator *pl = (PoolAllocator*) pool->GetData (pool, "pool_allocator");
+  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -917,7 +917,7 @@ gboolean PoolAllocator::on_enter_notify (GooCanvasItem  *item,
                                          GdkEventButton *event,
                                          Pool           *pool)
 {
-  PoolAllocator *pl = (PoolAllocator*) pool->GetData (pool, "pool_allocator");
+  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -938,7 +938,7 @@ gboolean PoolAllocator::OnEnterNotify (GooCanvasItem  *item,
 {
   if (_dragging)
   {
-    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData (this, "focus_rectangle");
+    GooCanvasItem *rect = (GooCanvasItem*) pool->GetPtrData (this, "focus_rectangle");
 
     g_object_set (G_OBJECT (rect),
                   "stroke-color", "black",
@@ -957,7 +957,7 @@ gboolean PoolAllocator::on_leave_notify (GooCanvasItem  *item,
                                          GdkEventButton *event,
                                          Pool           *pool)
 {
-  PoolAllocator *pl = (PoolAllocator*) pool->GetData (pool, "pool_allocator");
+  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
 
   if (pl)
   {
@@ -978,7 +978,7 @@ gboolean PoolAllocator::OnLeaveNotify (GooCanvasItem  *item,
 {
   if (_dragging)
   {
-    GooCanvasItem *rect = (GooCanvasItem*) pool->GetData (this, "focus_rectangle");
+    GooCanvasItem *rect = (GooCanvasItem*) pool->GetPtrData (this, "focus_rectangle");
 
     g_object_set (G_OBJECT (rect),
                   "stroke-pattern", NULL,
@@ -1007,9 +1007,9 @@ void PoolAllocator::FixUpTablesBounds ()
     GooCanvasItem   *table;
 
     pool = (Pool *) g_slist_nth_data (_pools_list, p);
-    table = (GooCanvasItem *) pool->GetData (this, "table");
+    table = (GooCanvasItem *) pool->GetPtrData (this, "table");
 
-    focus_rect = (GooCanvasItem *) pool->GetData (this, "focus_rectangle");
+    focus_rect = (GooCanvasItem *) pool->GetPtrData (this, "focus_rectangle");
 
     {
       guint nb_columns = 2;
@@ -1071,8 +1071,8 @@ void PoolAllocator::FillPoolTable (Pool *pool)
   }
 
   GooCanvasItem *item;
-  GooCanvasItem *table      = (GooCanvasItem *) pool->GetData (this, "table");
-  GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetData (this, "focus_rectangle");
+  GooCanvasItem *table      = (GooCanvasItem *) pool->GetPtrData (this, "table");
+  GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetPtrData (this, "focus_rectangle");
   GSList *selected_attr     = NULL;
 
   if (_filter)
@@ -1148,7 +1148,7 @@ void PoolAllocator::FillPoolTable (Pool *pool)
 
     if (player && selected_attr)
     {
-      if ((guint) player->GetData (this, "original_pool") != pool->GetNumber ())
+      if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())
       {
         Canvas::PutStockIconInTable (table,
                                      GTK_STOCK_REFRESH,
@@ -1308,7 +1308,7 @@ gboolean PoolAllocator::IsOver ()
 
     pool = (Pool *) g_slist_nth_data (_pools_list, i);
 
-    if (pool->GetData (this, "is_balanced") == 0)
+    if (pool->GetUIntData (this, "is_balanced") == 0)
     {
       return FALSE;
     }

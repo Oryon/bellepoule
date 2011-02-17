@@ -162,8 +162,8 @@ gint Player::CompareWithRef (Player *player,
 // --------------------------------------------------------------------------------
 Attribute *Player::GetAttribute (AttributeId *attr_id)
 {
-  return (Attribute*) GetData (attr_id->_owner,
-                               attr_id->_name);
+  return (Attribute*) GetPtrData (attr_id->_owner,
+                                  attr_id->_name);
 }
 
 // --------------------------------------------------------------------------------

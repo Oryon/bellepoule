@@ -784,9 +784,9 @@ void Contest::ReadProperties ()
   _gender   = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
   _category = gtk_combo_box_get_active (GTK_COMBO_BOX (_category_combo));
 
-  _day   = (guint) GetData (this, "day");
-  _month = (guint) GetData (this, "month");
-  _year  = (guint) GetData (this, "year");
+  _day   = GetUIntData (this, "day");
+  _month = GetUIntData (this, "month");
+  _year  = GetUIntData (this, "year");
 
   _checkin_time->ReadProperties (_glade);
   _scratch_time->ReadProperties (_glade);
