@@ -421,16 +421,7 @@ void TableSupervisor::OnStuffClicked ()
 // --------------------------------------------------------------------------------
 void TableSupervisor::OnInputToggled (GtkWidget *widget)
 {
-  GtkWidget *input_box = _glade->GetWidget ("input_hbox");
-
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)))
-  {
-    gtk_widget_show (input_box);
-  }
-  else
-  {
-    gtk_widget_hide (input_box);
-  }
+  toto->OnInputToggled (widget);
 }
 
 // --------------------------------------------------------------------------------
@@ -547,6 +538,7 @@ extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *wid
 {
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
+  toto->OnSearchMatch ();
 }
 
 // --------------------------------------------------------------------------------

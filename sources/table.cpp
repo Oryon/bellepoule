@@ -54,8 +54,7 @@ extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widge
 
 // --------------------------------------------------------------------------------
 Table::Table (Stage *supervisor)
-: CanvasModule ("table.glade",
-                "canvas_scrolled_window")
+: CanvasModule ("table.glade")
 {
   Module *supervisor_module = dynamic_cast <Module *> (supervisor);
 
