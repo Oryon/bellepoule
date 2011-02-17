@@ -110,7 +110,7 @@ void ScoreCollector::SetMatch (GooCanvasItem *to_point,
 // --------------------------------------------------------------------------------
 void ScoreCollector::Refresh (Match *match)
 {
-  GooCanvasItem *goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
+  GooCanvasItem *goo_rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_A");
 
   if (goo_rect)
   {
@@ -139,7 +139,7 @@ void ScoreCollector::Refresh (Match *match)
                       NULL);
       }
 
-      goo_rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
+      goo_rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_B");
       if (goo_rect)
       {
         score       = match->GetScore (match->GetPlayerB ());
@@ -346,7 +346,7 @@ void ScoreCollector::SetMatchColor (Match *match,
       color_B = unconsitentcolor;
     }
 
-    rect = (GooCanvasItem *) match->GetData (this, "goo_rect_A");
+    rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_A");
     if (rect)
     {
       g_object_set (rect,
@@ -354,7 +354,7 @@ void ScoreCollector::SetMatchColor (Match *match,
                     NULL);
     }
 
-    rect = (GooCanvasItem *) match->GetData (this, "goo_rect_B");
+    rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_B");
     if (rect)
     {
       g_object_set (rect,

@@ -591,7 +591,7 @@ void Table::OnNewScore (ScoreCollector *score_collector,
                         Player         *player)
 {
   Table *table = dynamic_cast <Table *> (client);
-  GNode *node  = (GNode *) match->GetData (table, "node");
+  GNode *node  = (GNode *) match->GetPtrData (table, "node");
 
   FillInNode (node,
               table);
@@ -908,7 +908,7 @@ gboolean Table::FillInNode (GNode *node,
     }
 
     {
-      gchar *number = (gchar *) data->_match->GetData (table, "number");
+      gchar *number = (gchar *) data->_match->GetPtrData (table, "number");
 
       if (number)
       {
@@ -1106,14 +1106,14 @@ gboolean Table::FillInNode (GNode *node,
 
             if (A && B)
             {
-              table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (A,
-                                                                                                               "collecting_point"),
-                                                               (GooCanvasItem *) parent_data->_match->GetData (B,
-                                                                                                               "collecting_point"));
-              table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetData (B,
-                                                                                                               "collecting_point"),
-                                                               (GooCanvasItem *) parent_data->_match->GetData (A,
-                                                                                                               "collecting_point"));
+              table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (A,
+                                                                                                                  "collecting_point"),
+                                                               (GooCanvasItem *) parent_data->_match->GetPtrData (B,
+                                                                                                                  "collecting_point"));
+              table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (B,
+                                                                                                                  "collecting_point"),
+                                                               (GooCanvasItem *) parent_data->_match->GetPtrData (A,
+                                                                                                                  "collecting_point"));
             }
           }
         }
@@ -1262,7 +1262,7 @@ void Table::AddFork (GNode *to)
       data->_match = NULL;
 
       g_datalist_remove_data (&_match_list,
-                              (gchar *) to_data->_match->GetData (this, "number"));
+                              (gchar *) to_data->_match->GetPtrData (this, "number"));
       to_data->_match->RemoveData (this,
                                    "number");
     }
@@ -1434,11 +1434,11 @@ void Table::LookForMatchToPrint (guint    level_to_print,
                             -1);
         if (match)
         {
-          guint level = (guint) match->GetData (this, "level");
+          guint level = match->GetUIntData (this, "level");
 
           if ((level_to_print == 0) || (level_to_print == level))
           {
-            gboolean already_printed = (gboolean) match->GetData (this, "printed");
+            gboolean already_printed = match->GetUIntData (this, "printed");
 
             if (all_sheet || (already_printed != TRUE))
             {
@@ -1664,8 +1664,8 @@ void Table::SetPlayer (Match  *to_match,
     GtkTreePath *path;
     GtkTreeIter  iter;
 
-    path = (GtkTreePath *) to_match->GetData (this,
-                                              "quick_search_path");
+    path = (GtkTreePath *) to_match->GetPtrData (this,
+                                                 "quick_search_path");
 
     if (   path
         && gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
@@ -1690,7 +1690,7 @@ void Table::SetPlayer (Match  *to_match,
       if (A_name && B_name)
       {
         gchar *name_string = g_strdup_printf ("%s / %s", A_name, B_name);
-        gchar *number      = (gchar *) to_match->GetData (this, "number");
+        gchar *number      = (gchar *) to_match->GetPtrData (this, "number");
 
         gtk_tree_store_set (_quick_search_treestore, &iter,
                             QUICK_MATCH_PATH_COLUMN, number,
@@ -1852,8 +1852,8 @@ gint Table::ComparePlayer (Player  *A,
   }
 
   {
-    gint level_A = (gint) A->GetData (table, "level");
-    gint level_B = (gint) B->GetData (table, "level");
+    gint level_A = A->GetIntData (table, "level");
+    gint level_B = B->GetIntData (table, "level");
 
     if (level_A != level_B)
     {
@@ -2150,7 +2150,7 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
         gdouble        offset = i * (25.0 * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
         GooCanvasItem *item;
         gdouble        name_width;
-        gchar         *match_number = g_strdup_printf (gettext ("Match %s"), (const char *) match->GetData (this, "number"));
+        gchar         *match_number = g_strdup_printf (gettext ("Match %s"), (const char *) match->GetPtrData (this, "number"));
 
         match->SetData (this, "printed", (void *) TRUE);
 
