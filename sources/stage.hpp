@@ -210,6 +210,10 @@ class Stage : public virtual Object
     static StageClass *GetClass (const gchar *name);
 
     void UpdateClassification (GSList *result);
+
+    void CheckInconsistency ();
+
+    Object *GetPlayerDataOwner ();
 };
 
 #endif

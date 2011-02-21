@@ -28,7 +28,7 @@
 #include "table.hpp"
 
 const gdouble  Table::_score_rect_size = 30.0;
-const gdouble  Table::_level_spacing  = 10.0;
+const gdouble  Table::_level_spacing   = 10.0;
 
 typedef enum
 {

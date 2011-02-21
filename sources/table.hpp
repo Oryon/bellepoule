@@ -61,6 +61,10 @@ class Table : public CanvasModule
 
     GSList *GetCurrentClassification ();
 
+    void Load (xmlNode *xml_node);
+
+    void Save (xmlTextWriter *xml_writer);
+
   private:
     void OnPlugged ();
     void OnUnPlugged ();
@@ -183,12 +187,6 @@ class Table : public CanvasModule
     gint ComparePreviousRankPlayer (Player  *A,
                                     Player  *B,
                                     guint32  rand_seed);
-
-    void Save (xmlTextWriter *xml_writer);
-
-    void SaveConfiguration (xmlTextWriter *xml_writer);
-
-    void Load (xmlNode *xml_node);
 
     void AddFork (GNode *to);
 

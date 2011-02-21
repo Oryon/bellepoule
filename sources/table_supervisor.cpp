@@ -212,8 +212,8 @@ void TableSupervisor::Garnish ()
   {
     toto = new Table (this);
 
-    toto->SetAttendees (_attendees->GetShortList ());
     toto->SetDataOwner (this);
+    toto->SetAttendees (_attendees->GetShortList ());
   }
 }
 
@@ -240,12 +240,27 @@ void TableSupervisor::Load (xmlNode *xml_node)
       if (strcmp ((char *) xml_node->name, _xml_class_name) == 0)
       {
       }
+      else if (strcmp ((char *) n->name, "Tireur") == 0)
+      {
+        LoadAttendees (n);
+      }
       else if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
       {
         if (_attendees)
         {
           CreateSubTables ();
+
+          {
+            toto = new Table (this);
+
+            toto->SetDataOwner (this);
+            toto->SetAttendees (_attendees->GetShortList ());
+          }
         }
+      }
+      else if (strcmp ((char *) n->name, "Tableau") == 0)
+      {
+        toto->Load (xml_node);
       }
       else
       {
@@ -274,7 +289,8 @@ void TableSupervisor::Save (xmlTextWriter *xml_writer)
                              BAD_CAST _xml_class_name);
 
   SaveConfiguration (xml_writer);
-  SaveAttendees (xml_writer);
+  SaveAttendees     (xml_writer);
+  toto->Save        (xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
 }
