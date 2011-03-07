@@ -43,6 +43,7 @@ class TableSupervisor : public virtual Stage, public Module
     void OnPrint ();
     void OnZoom (gdouble value);
     void OnDisplayTreeViewCursorChanged (GtkTreeView *treeview);
+    void OnSearchMatch ();
 
   public:
     static const gchar *_class_name;
@@ -56,20 +57,19 @@ class TableSupervisor : public virtual Stage, public Module
     void Wipe ();
 
   private:
-    GtkTreeStore       *_display_treestore;
+    GtkTreeStore       *_table_set_treestore;
     xmlTextWriter      *_xml_writer;
     xmlNode            *_xml_node;
     GSList             *_result_list;
-    gboolean            _print_full_table;
-    Table              *_displayed_table;
+    Table              *_displayed_table_set;
 
     void Display ();
 
     void Garnish ();
 
-    void CreateSubTables ();
+    void CreateTableSets ();
 
-    void DeleteSubTables ();
+    void DeleteTableSets ();
 
     void OnAttrListUpdated ();
 
@@ -79,14 +79,14 @@ class TableSupervisor : public virtual Stage, public Module
 
     static Stage *CreateInstance (StageClass *stage_class);
 
-    Table *GetTable (gchar *id);
+    Table *GetTableSet (gchar *id);
 
     void Save (xmlTextWriter *xml_writer);
 
-    static gboolean SaveTable (GtkTreeModel  *model,
-                               GtkTreePath   *path,
-                               GtkTreeIter   *iter,
-                               xmlTextWriter *xml_writer);
+    static gboolean SaveTableSet (GtkTreeModel  *model,
+                                  GtkTreePath   *path,
+                                  GtkTreeIter   *iter,
+                                  xmlTextWriter *xml_writer);
 
     void SaveConfiguration (xmlTextWriter *xml_writer);
 
@@ -102,12 +102,12 @@ class TableSupervisor : public virtual Stage, public Module
                            guint        nb_levels,
                            GtkTreeIter *parent);
 
-    void OnTableSelected (Table *table);
+    void OnTableSetSelected (Table *table_set);
 
-    static gboolean DeleteTable (GtkTreeModel *model,
-                                 GtkTreePath  *path,
-                                 GtkTreeIter  *iter,
-                                 gpointer      data);
+    static gboolean DeleteTableSet (GtkTreeModel *model,
+                                    GtkTreePath  *path,
+                                    GtkTreeIter  *iter,
+                                    gpointer      data);
 
     ~TableSupervisor ();
 };

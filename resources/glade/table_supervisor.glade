@@ -374,7 +374,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                 </child>
                 <child>
                   <object class="GtkRadioButton" id="radiobutton5">
-                    <property name="label" translatable="yes">Pour acc&#xE9;der au quota</property>
+                    <property name="label" translatable="yes">Pour acc&#xE9;der au quota des qualifi&#xE9;s</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
