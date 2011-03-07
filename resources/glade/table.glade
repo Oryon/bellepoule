@@ -381,4 +381,35 @@
   <object class="GtkTreeModelFilter" id="match_treemodelfilter">
     <property name="child_model">match_treestore</property>
   </object>
+  <object class="GtkWindow" id="window2">
+    <child>
+      <object class="GtkVBox" id="vbox3">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkComboBox" id="from_table_combobox">
+            <property name="visible">True</property>
+            <signal name="changed" handler="on_from_table_combobox_changed"/>
+            <child>
+              <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
+              <attributes>
+                <attribute name="stock-id">1</attribute>
+              </attributes>
+            </child>
+            <child>
+              <object class="GtkCellRendererText" id="cellrenderertext1"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
 </interface>

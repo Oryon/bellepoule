@@ -28,8 +28,6 @@
 #include "table.hpp"
 #include "table_supervisor.hpp"
 
-Table *toto = NULL;
-
 const gchar *TableSupervisor::_class_name     = N_("Table");
 const gchar *TableSupervisor::_xml_class_name = "PhaseDeTableaux";
 
@@ -41,7 +39,8 @@ typedef enum
 
 typedef enum
 {
-  DISPLAY_NAME_COLUMN
+  DISPLAY_NAME_COLUMN,
+  DISPLAY_TABLE_COLUMN
 } DisplayColumnId;
 
 extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
@@ -54,6 +53,8 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 {
   _max_score = new Data ("ScoreMax",
                          10);
+
+  _displayed_table = NULL;
 
   {
     AddSensitiveWidget (_glade->GetWidget ("input_toolbutton"));
@@ -156,9 +157,26 @@ void TableSupervisor::Display ()
 {
   Wipe ();
 
-  Plug (toto,
-        GetWidget ("main_hook"));
-  toto->Display ();
+  OnTableSelected (_displayed_table);
+}
+
+// --------------------------------------------------------------------------------
+void TableSupervisor::OnTableSelected (Table *table)
+{
+  if (_displayed_table)
+  {
+    _displayed_table->UnPlug ();
+    _displayed_table = NULL;
+  }
+
+  if (table)
+  {
+    Plug (table,
+          GetWidget ("main_hook"));
+    table->Display ();
+
+    _displayed_table = table;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -190,16 +208,72 @@ void TableSupervisor::CreateSubTables ()
     gtk_tree_store_clear (_display_treestore);
 
     FeedDisplayStore (1,
-                      nb_levels-1,
+                      nb_levels,
                       NULL);
 
     gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("display_treeview")));
+
   }
+
+  {
+    GtkTreeIter iter;
+
+    gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_display_treestore),
+                                   &iter);
+    gtk_tree_model_get (GTK_TREE_MODEL (_display_treestore), &iter,
+                        DISPLAY_TABLE_COLUMN, &_displayed_table,
+                        -1);
+
+    if (_displayed_table)
+    {
+      _displayed_table->SetAttendees (_attendees->GetShortList ());
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+Table *TableSupervisor::GetTable (gchar *id)
+{
+  GtkTreeIter  iter;
+  GtkTreePath *path = gtk_tree_path_new_from_string (id);
+  Table       *table = NULL;
+
+  if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_display_treestore),
+                               &iter,
+                               path))
+  {
+    gtk_tree_model_get (GTK_TREE_MODEL (_display_treestore), &iter,
+                        DISPLAY_TABLE_COLUMN, &table,
+                        -1);
+  }
+
+  gtk_tree_path_free (path);
+
+  return table;
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSupervisor::DeleteTable (GtkTreeModel *model,
+                                       GtkTreePath  *path,
+                                       GtkTreeIter  *iter,
+                                       gpointer      data)
+{
+  Table *table;
+
+  gtk_tree_model_get (model, iter,
+                      DISPLAY_TABLE_COLUMN, &table,
+                      -1);
+  table->Release ();
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
 void TableSupervisor::DeleteSubTables ()
 {
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_display_treestore),
+                          DeleteTable,
+                          NULL);
   gtk_tree_store_clear (_display_treestore);
 }
 
@@ -208,13 +282,6 @@ void TableSupervisor::Garnish ()
 {
   DeleteSubTables ();
   CreateSubTables ();
-
-  {
-    toto = new Table (this);
-
-    toto->SetDataOwner (this);
-    toto->SetAttendees (_attendees->GetShortList ());
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -243,24 +310,22 @@ void TableSupervisor::Load (xmlNode *xml_node)
       else if (strcmp ((char *) n->name, "Tireur") == 0)
       {
         LoadAttendees (n);
+        CreateSubTables ();
       }
       else if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
       {
-        if (_attendees)
+        Table *table;
+        gchar *prop = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+
+        table = GetTable (prop);
+        if (table)
         {
-          CreateSubTables ();
-
-          {
-            toto = new Table (this);
-
-            toto->SetDataOwner (this);
-            toto->SetAttendees (_attendees->GetShortList ());
-          }
+          table->Load (xml_node);
         }
       }
       else if (strcmp ((char *) n->name, "Tableau") == 0)
       {
-        toto->Load (xml_node);
+        //toto->Load (xml_node);
       }
       else
       {
@@ -290,9 +355,28 @@ void TableSupervisor::Save (xmlTextWriter *xml_writer)
 
   SaveConfiguration (xml_writer);
   SaveAttendees     (xml_writer);
-  toto->Save        (xml_writer);
+
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_display_treestore),
+                          (GtkTreeModelForeachFunc) SaveTable,
+                          xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSupervisor::SaveTable (GtkTreeModel  *model,
+                                     GtkTreePath   *path,
+                                     GtkTreeIter   *iter,
+                                     xmlTextWriter *xml_writer)
+{
+  Table *table;
+
+  gtk_tree_model_get (model, iter,
+                      DISPLAY_TABLE_COLUMN, &table,
+                      -1);
+  table->Save (xml_writer);
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -307,9 +391,22 @@ void TableSupervisor::FeedDisplayStore (guint        from_place,
                          &iter,
                          parent);
 
-  gtk_tree_store_set (_display_treestore, &iter,
-                      DISPLAY_NAME_COLUMN, text,
-                      -1);
+  {
+    GtkTreePath *path  = gtk_tree_model_get_path (GTK_TREE_MODEL (_display_treestore), &iter);
+    Table       *table = new Table (this,
+                                    gtk_tree_path_to_string (path),
+                                    _glade->GetWidget ("from_viewport"));
+
+    gtk_tree_path_free (path);
+
+    table->SetDataOwner (this);
+
+    gtk_tree_store_set (_display_treestore, &iter,
+                        DISPLAY_NAME_COLUMN, text,
+                        DISPLAY_TABLE_COLUMN, table,
+                        -1);
+  }
+
   g_free (text);
 
   {
@@ -328,7 +425,10 @@ void TableSupervisor::FeedDisplayStore (guint        from_place,
 // --------------------------------------------------------------------------------
 void TableSupervisor::Wipe ()
 {
-  toto->Wipe ();
+  if (_displayed_table)
+  {
+    _displayed_table->Wipe ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -364,7 +464,7 @@ void TableSupervisor::OnLocked (Reason reason)
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
                                      FALSE);
 
-  toto->Lock ();
+  //toto->Lock ();
 }
 
 // --------------------------------------------------------------------------------
@@ -372,7 +472,7 @@ void TableSupervisor::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
 
-  toto->UnLock ();
+  //toto->UnLock ();
 }
 
 // --------------------------------------------------------------------------------
@@ -430,14 +530,17 @@ void TableSupervisor::OnFromTableComboboxChanged ()
 // --------------------------------------------------------------------------------
 void TableSupervisor::OnStuffClicked ()
 {
-  toto->OnStuffClicked ();
+  //toto->OnStuffClicked ();
   OnAttrListUpdated ();
 }
 
 // --------------------------------------------------------------------------------
 void TableSupervisor::OnInputToggled (GtkWidget *widget)
 {
-  toto->OnInputToggled (widget);
+  if (_displayed_table)
+  {
+    _displayed_table->OnInputToggled (widget);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -458,7 +561,8 @@ void TableSupervisor::OnDisplayToggled (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 GSList *TableSupervisor::GetCurrentClassification ()
 {
-  return toto->GetCurrentClassification ();
+  //return toto->GetCurrentClassification ();
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -482,7 +586,35 @@ void TableSupervisor::OnFilterClicked ()
 // --------------------------------------------------------------------------------
 void TableSupervisor::OnZoom (gdouble value)
 {
-  toto->OnZoom (value);
+  if (_displayed_table)
+  {
+    _displayed_table->OnZoom (value);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void TableSupervisor::OnDisplayTreeViewCursorChanged (GtkTreeView *treeview)
+{
+  GtkTreePath *path;
+  GtkTreeIter  iter;
+  Table       *table;
+
+  gtk_tree_view_get_cursor (treeview,
+                            &path,
+                            NULL);
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (_display_treestore),
+                           &iter,
+                           path);
+  gtk_tree_path_free (path);
+
+  gtk_tree_model_get (GTK_TREE_MODEL (_display_treestore), &iter,
+                      DISPLAY_TABLE_COLUMN, &table,
+                      -1);
+
+  if (_displayed_table != table)
+  {
+    OnTableSelected (table);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -497,9 +629,9 @@ void TableSupervisor::OnPrint ()
       classification->Print (gettext ("Table round classification"));
     }
   }
-  else
+  else if (_displayed_table)
   {
-    toto->OnPrint ();
+    _displayed_table->OnPrint ();
   }
 }
 
@@ -554,7 +686,7 @@ extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *wid
 {
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
-  toto->OnSearchMatch ();
+  //toto->OnSearchMatch ();
 }
 
 // --------------------------------------------------------------------------------
@@ -574,4 +706,13 @@ extern "C" G_MODULE_EXPORT void on_display_toolbutton_toggled (GtkWidget *widget
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
   t->OnDisplayToggled (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_display_treeview_cursor_changed (GtkTreeView *treeview,
+                                                                    Object      *owner)
+{
+  TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
+
+  t->OnDisplayTreeViewCursorChanged (treeview);
 }

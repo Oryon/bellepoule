@@ -26,6 +26,8 @@
 
 #include "stage.hpp"
 
+class Table;
+
 class TableSupervisor : public virtual Stage, public Module
 {
   public:
@@ -40,6 +42,7 @@ class TableSupervisor : public virtual Stage, public Module
     void OnFilterClicked ();
     void OnPrint ();
     void OnZoom (gdouble value);
+    void OnDisplayTreeViewCursorChanged (GtkTreeView *treeview);
 
   public:
     static const gchar *_class_name;
@@ -58,6 +61,7 @@ class TableSupervisor : public virtual Stage, public Module
     xmlNode            *_xml_node;
     GSList             *_result_list;
     gboolean            _print_full_table;
+    Table              *_displayed_table;
 
     void Display ();
 
@@ -75,7 +79,14 @@ class TableSupervisor : public virtual Stage, public Module
 
     static Stage *CreateInstance (StageClass *stage_class);
 
+    Table *GetTable (gchar *id);
+
     void Save (xmlTextWriter *xml_writer);
+
+    static gboolean SaveTable (GtkTreeModel  *model,
+                               GtkTreePath   *path,
+                               GtkTreeIter   *iter,
+                               xmlTextWriter *xml_writer);
 
     void SaveConfiguration (xmlTextWriter *xml_writer);
 
@@ -90,6 +101,13 @@ class TableSupervisor : public virtual Stage, public Module
     void FeedDisplayStore (guint        from_place,
                            guint        nb_levels,
                            GtkTreeIter *parent);
+
+    void OnTableSelected (Table *table);
+
+    static gboolean DeleteTable (GtkTreeModel *model,
+                                 GtkTreePath  *path,
+                                 GtkTreeIter  *iter,
+                                 gpointer      data);
 
     ~TableSupervisor ();
 };

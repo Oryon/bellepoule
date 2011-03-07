@@ -27,8 +27,8 @@
 #include "classification.hpp"
 #include "table.hpp"
 
-const gdouble  Table::_score_rect_size = 30.0;
-const gdouble  Table::_level_spacing   = 10.0;
+const gdouble Table::_score_rect_size = 30.0;
+const gdouble Table::_level_spacing   = 10.0;
 
 typedef enum
 {
@@ -53,19 +53,24 @@ extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widge
                                                                 Object    *owner);
 
 // --------------------------------------------------------------------------------
-Table::Table (Stage *supervisor)
+Table::Table (Stage     *supervisor,
+              gchar     *id,
+              GtkWidget *control_container)
 : CanvasModule ("table.glade")
 {
   Module *supervisor_module = dynamic_cast <Module *> (supervisor);
 
-  _supervisor     = supervisor;
-  _filter         = supervisor_module->GetFilter ();
-  _main_table     = NULL;
-  _tree_root      = NULL;
-  _level_status   = NULL;
-  _match_to_print = NULL;
-  _nb_levels      = 0;
-  _locked         = FALSE;
+  _supervisor        = supervisor;
+  _filter            = supervisor_module->GetFilter ();
+  _control_container = control_container;
+  _main_table        = NULL;
+  _tree_root         = NULL;
+  _level_status      = NULL;
+  _match_to_print    = NULL;
+  _nb_levels         = 0;
+  _locked            = FALSE;
+  _id                = id;
+  _defeated_table    = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -123,6 +128,14 @@ Table::Table (Stage *supervisor)
                                                     _quick_score_A);
   }
 
+  {
+    _from_widget = _glade->GetWidget ("from_table_combobox");
+
+    g_object_ref (_from_widget);
+    gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (_from_widget)),
+                          _from_widget);
+  }
+
   _from_table_liststore   = GTK_LIST_STORE (_glade->GetObject ("from_liststore"));
   _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
   _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("match_treemodelfilter"));
@@ -149,6 +162,10 @@ Table::~Table ()
   Object::TryToRelease (_quick_score_collector);
   Object::TryToRelease (_score_collector);
 
+  gtk_list_store_clear (_from_table_liststore);
+  gtk_tree_store_clear (_quick_search_treestore);
+  gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
+
   if (_match_to_print)
   {
     g_slist_free (_match_to_print);
@@ -161,6 +178,11 @@ Table::~Table ()
   {
     g_datalist_clear (&_match_list);
   }
+
+  g_free (_id);
+  g_free (_defeated_table);
+
+  g_object_unref (_from_widget);
 }
 
 // --------------------------------------------------------------------------------
@@ -394,7 +416,12 @@ void Table::Load (xmlNode *xml_node)
     {
       if (strcmp ((char *) n->name, "Tableau") == 0)
       {
+        gchar *prop;
+
         level = (gchar *) xmlGetProp (n, BAD_CAST "Taille");
+
+        prop = (gchar *) xmlGetProp (n, BAD_CAST "DestinationDesElimines");
+        _defeated_table = g_strdup (prop);
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
@@ -426,7 +453,7 @@ void Table::Save (xmlTextWriter *xml_writer)
                              BAD_CAST "SuiteDeTableaux");
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
-                                     "%s", "A");
+                                     "%s", _id);
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "Titre",
                                      "%s", "");
@@ -456,6 +483,12 @@ void Table::Save (xmlTextWriter *xml_writer)
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "Taille",
                                          "%d", size);
+      if (_defeated_table)
+      {
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "DestinationDesElimines",
+                                           "%s", _defeated_table);
+      }
 
       for (guint m = 0; m < size; m++)
       {
@@ -475,6 +508,7 @@ void Table::Save (xmlTextWriter *xml_writer)
       xmlTextWriterEndElement (xml_writer);
     }
   }
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
@@ -1311,27 +1345,6 @@ void Table::LookForMatchToPrint (guint    level_to_print,
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnPlugged ()
-{
-  CanvasModule::OnPlugged ();
-}
-
-// --------------------------------------------------------------------------------
-void Table::OnUnPlugged ()
-{
-  DeleteTree ();
-
-  Object::TryToRelease (_score_collector);
-  _score_collector = NULL;
-
-  gtk_list_store_clear (_from_table_liststore);
-  gtk_tree_store_clear (_quick_search_treestore);
-  gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
-
-  CanvasModule::OnPlugged ();
-}
-
-// --------------------------------------------------------------------------------
 void Table::Lock ()
 {
   _locked = TRUE;
@@ -2139,6 +2152,25 @@ void Table::OnZoom (gdouble value)
 {
   goo_canvas_set_scale (GetCanvas (),
                         value);
+}
+
+// --------------------------------------------------------------------------------
+void Table::OnPlugged ()
+{
+  CanvasModule::OnPlugged ();
+  gtk_container_add (GTK_CONTAINER (_control_container),
+                     _from_widget);
+}
+
+// --------------------------------------------------------------------------------
+void Table::OnUnPlugged ()
+{
+  if (gtk_widget_get_parent (_from_widget))
+  {
+    gtk_container_remove (GTK_CONTAINER (_control_container),
+                          _from_widget);
+  }
+  CanvasModule::OnUnPlugged ();
 }
 
 // --------------------------------------------------------------------------------

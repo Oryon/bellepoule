@@ -30,7 +30,9 @@ class Table : public CanvasModule
   public:
     typedef void (*StatusCbk) (Table *table,
                                void  *data);
-    Table (Stage *supervisor);
+    Table (Stage     *supervisor,
+           gchar     *id,
+           GtkWidget *control_container);
 
     void SetStatusCbk (StatusCbk  cbk,
                        void      *data);
@@ -63,11 +65,7 @@ class Table : public CanvasModule
 
     void Load (xmlNode *xml_node);
 
-    void Save (xmlTextWriter *xml_writer);
-
-  private:
-    void OnPlugged ();
-    void OnUnPlugged ();
+    void Save (xmlTextWriter *xmlwriter);
 
   private:
     static const gdouble _score_rect_size;
@@ -115,6 +113,8 @@ class Table : public CanvasModule
     GSList             *_match_to_print;
     GtkWidget          *_print_dialog;
     GtkWidget          *_level_print_dialog;
+    GtkWidget          *_control_container;
+    GtkWidget          *_from_widget;
     gboolean            _print_full_table;
     gdouble             _print_scale;
     guint               _print_nb_x_pages;
@@ -123,11 +123,17 @@ class Table : public CanvasModule
     GSList             *_attendees;
     gboolean            _locked;
     guint               _nb_match_per_sheet;
+    gchar              *_defeated_table;
+    gchar              *_id;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
 
     GooCanvasItem *GetQuickScore (const gchar *container);
+
+    void OnPlugged ();
+
+    void OnUnPlugged ();
 
     void CreateTree ();
 

@@ -6,6 +6,8 @@
     <columns>
       <!-- column-name table_name -->
       <column type="gchararray"/>
+      <!-- column-name table -->
+      <column type="gpointer"/>
     </columns>
   </object>
   <object class="GtkWindow" id="window">
@@ -153,25 +155,14 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkComboBox" id="from_table_combobox">
+                          <object class="GtkViewport" id="from_viewport">
                             <property name="visible">True</property>
-                            <signal name="changed" handler="on_from_table_combobox_changed"/>
+                            <property name="resize_mode">queue</property>
                             <child>
-                              <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
-                              <attributes>
-                                <attribute name="stock-id">1</attribute>
-                              </attributes>
-                            </child>
-                            <child>
-                              <object class="GtkCellRendererText" id="cellrenderertext1"/>
-                              <attributes>
-                                <attribute name="text">0</attribute>
-                              </attributes>
+                              <placeholder/>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -197,6 +188,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                         <property name="model">display_treestore</property>
                         <property name="headers_clickable">False</property>
                         <property name="search_column">0</property>
+                        <signal name="cursor_changed" handler="on_display_treeview_cursor_changed"/>
                         <child>
                           <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                             <property name="title">Pour la place :</property>
