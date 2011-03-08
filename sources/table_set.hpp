@@ -14,8 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef table_hpp
-#define table_hpp
+#ifndef table_set_hpp
+#define table_set_hpp
 
 #include <gtk/gtk.h>
 

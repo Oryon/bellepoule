@@ -25,7 +25,7 @@
 #include "attribute.hpp"
 #include "player.hpp"
 #include "classification.hpp"
-#include "table.hpp"
+#include "table_set.hpp"
 
 const gdouble TableSet::_score_rect_size = 30.0;
 const gdouble TableSet::_level_spacing   = 10.0;

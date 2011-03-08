@@ -25,7 +25,7 @@
 #include "attribute.hpp"
 #include "player.hpp"
 #include "classification.hpp"
-#include "table.hpp"
+#include "table_set.hpp"
 #include "table_supervisor.hpp"
 
 const gchar *TableSupervisor::_class_name     = N_("Table");
