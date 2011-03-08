@@ -39,8 +39,8 @@ typedef enum
 
 typedef enum
 {
-  DISPLAY_NAME_COLUMN,
-  DISPLAY_TABLE_COLUMN
+  TABLE_SET_NAME_COLUMN,
+  TABLE_SET_TABLE_COLUMN
 } DisplayColumnId;
 
 extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
@@ -126,7 +126,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
     filter->Release ();
   }
 
-  _table_set_treestore = GTK_TREE_STORE (_glade->GetObject ("display_treestore"));
+  _table_set_treestore = GTK_TREE_STORE (_glade->GetObject ("table_set_treestore"));
 }
 
 // --------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ void TableSupervisor::Display ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSupervisor::OnTableSetSelected (Table *table)
+void TableSupervisor::OnTableSetSelected (TableSet *table_set)
 {
   if (_displayed_table_set)
   {
@@ -169,13 +169,13 @@ void TableSupervisor::OnTableSetSelected (Table *table)
     _displayed_table_set = NULL;
   }
 
-  if (table)
+  if (table_set)
   {
-    Plug (table,
+    Plug (table_set,
           GetWidget ("main_hook"));
-    table->Display ();
+    table_set->Display ();
 
-    _displayed_table_set = table;
+    _displayed_table_set = table_set;
   }
 }
 
@@ -207,11 +207,11 @@ void TableSupervisor::CreateTableSets ()
   {
     gtk_tree_store_clear (_table_set_treestore);
 
-    FeedDisplayStore (1,
-                      nb_levels,
-                      NULL);
+    FeedTableSetStore (1,
+                       nb_levels,
+                       NULL);
 
-    gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("display_treeview")));
+    gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")));
 
   }
 
@@ -221,7 +221,7 @@ void TableSupervisor::CreateTableSets ()
     gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
                                    &iter);
     gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                        DISPLAY_TABLE_COLUMN, &_displayed_table_set,
+                        TABLE_SET_TABLE_COLUMN, &_displayed_table_set,
                         -1);
 
     if (_displayed_table_set)
@@ -232,24 +232,24 @@ void TableSupervisor::CreateTableSets ()
 }
 
 // --------------------------------------------------------------------------------
-Table *TableSupervisor::GetTableSet (gchar *id)
+TableSet *TableSupervisor::GetTableSet (gchar *id)
 {
   GtkTreeIter  iter;
   GtkTreePath *path = gtk_tree_path_new_from_string (id);
-  Table       *table = NULL;
+  TableSet    *table_set = NULL;
 
   if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_treestore),
                                &iter,
                                path))
   {
     gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                        DISPLAY_TABLE_COLUMN, &table,
+                        TABLE_SET_TABLE_COLUMN, &table_set,
                         -1);
   }
 
   gtk_tree_path_free (path);
 
-  return table;
+  return table_set;
 }
 
 // --------------------------------------------------------------------------------
@@ -258,12 +258,12 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
                                           GtkTreeIter  *iter,
                                           gpointer      data)
 {
-  Table *table;
+  TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      DISPLAY_TABLE_COLUMN, &table,
+                      TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
-  table->Release ();
+  table_set->Release ();
 
   return FALSE;
 }
@@ -314,18 +314,14 @@ void TableSupervisor::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
       {
-        Table *table;
-        gchar *prop = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+        TableSet *table_set;
+        gchar    *prop = (gchar *) xmlGetProp (n, BAD_CAST "ID");
 
-        table = GetTableSet (prop);
-        if (table)
+        table_set = GetTableSet (prop);
+        if (table_set)
         {
-          table->Load (xml_node);
+          table_set->Load (xml_node);
         }
-      }
-      else if (strcmp ((char *) n->name, "Tableau") == 0)
-      {
-        //toto->Load (xml_node);
       }
       else
       {
@@ -369,20 +365,20 @@ gboolean TableSupervisor::SaveTableSet (GtkTreeModel  *model,
                                         GtkTreeIter   *iter,
                                         xmlTextWriter *xml_writer)
 {
-  Table *table;
+  TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      DISPLAY_TABLE_COLUMN, &table,
+                      TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
-  table->Save (xml_writer);
+  table_set->Save (xml_writer);
 
   return FALSE;
 }
 
 // --------------------------------------------------------------------------------
-void TableSupervisor::FeedDisplayStore (guint        from_place,
-                                        guint        nb_levels,
-                                        GtkTreeIter *parent)
+void TableSupervisor::FeedTableSetStore (guint        from_place,
+                                         guint        nb_levels,
+                                         GtkTreeIter *parent)
 {
   GtkTreeIter  iter;
   gchar       *text = g_strdup_printf ("%d", from_place);
@@ -393,17 +389,17 @@ void TableSupervisor::FeedDisplayStore (guint        from_place,
 
   {
     GtkTreePath *path  = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore), &iter);
-    Table       *table = new Table (this,
-                                    gtk_tree_path_to_string (path),
-                                    _glade->GetWidget ("from_viewport"));
+    TableSet    *table_set = new TableSet (this,
+                                           gtk_tree_path_to_string (path),
+                                           _glade->GetWidget ("from_viewport"));
 
     gtk_tree_path_free (path);
 
-    table->SetDataOwner (this);
+    table_set->SetDataOwner (this);
 
     gtk_tree_store_set (_table_set_treestore, &iter,
-                        DISPLAY_NAME_COLUMN, text,
-                        DISPLAY_TABLE_COLUMN, table,
+                        TABLE_SET_NAME_COLUMN, text,
+                        TABLE_SET_TABLE_COLUMN, table_set,
                         -1);
   }
 
@@ -415,9 +411,9 @@ void TableSupervisor::FeedDisplayStore (guint        from_place,
     for (guint i = 0; i < nb_levels-1; i++)
     {
       place_offset = place_offset << 1;
-      FeedDisplayStore (from_place + place_offset,
-                        i+1,
-                        &iter);
+      FeedTableSetStore (from_place + place_offset,
+                         i+1,
+                         &iter);
     }
   }
 }
@@ -593,11 +589,11 @@ void TableSupervisor::OnZoom (gdouble value)
 }
 
 // --------------------------------------------------------------------------------
-void TableSupervisor::OnDisplayTreeViewCursorChanged (GtkTreeView *treeview)
+void TableSupervisor::OnTableSetTreeViewCursorChanged (GtkTreeView *treeview)
 {
   GtkTreePath *path;
   GtkTreeIter  iter;
-  Table       *table;
+  TableSet    *table_set;
 
   gtk_tree_view_get_cursor (treeview,
                             &path,
@@ -608,12 +604,12 @@ void TableSupervisor::OnDisplayTreeViewCursorChanged (GtkTreeView *treeview)
   gtk_tree_path_free (path);
 
   gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                      DISPLAY_TABLE_COLUMN, &table,
+                      TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
 
-  if (_displayed_table_set != table)
+  if (_displayed_table_set != table_set)
   {
-    OnTableSetSelected (table);
+    OnTableSetSelected (table_set);
   }
 }
 
@@ -718,10 +714,10 @@ extern "C" G_MODULE_EXPORT void on_display_toolbutton_toggled (GtkWidget *widget
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_display_treeview_cursor_changed (GtkTreeView *treeview,
-                                                                    Object      *owner)
+extern "C" G_MODULE_EXPORT void on_table_set_treeview_cursor_changed (GtkTreeView *treeview,
+                                                                      Object      *owner)
 {
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
-  t->OnDisplayTreeViewCursorChanged (treeview);
+  t->OnTableSetTreeViewCursorChanged (treeview);
 }

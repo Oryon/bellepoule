@@ -27,8 +27,8 @@
 #include "classification.hpp"
 #include "table.hpp"
 
-const gdouble Table::_score_rect_size = 30.0;
-const gdouble Table::_level_spacing   = 10.0;
+const gdouble TableSet::_score_rect_size = 30.0;
+const gdouble TableSet::_level_spacing   = 10.0;
 
 typedef enum
 {
@@ -53,9 +53,9 @@ extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widge
                                                                 Object    *owner);
 
 // --------------------------------------------------------------------------------
-Table::Table (Stage     *supervisor,
-              gchar     *id,
-              GtkWidget *control_container)
+TableSet::TableSet (Stage     *supervisor,
+                    gchar     *id,
+                    GtkWidget *control_container)
 : CanvasModule ("table.glade")
 {
   Module *supervisor_module = dynamic_cast <Module *> (supervisor);
@@ -117,7 +117,7 @@ Table::Table (Stage     *supervisor,
 
   {
     _quick_score_collector = new ScoreCollector (this,
-                                                 (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
+                                                 (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore);
 
     _quick_score_A = GetQuickScore ("fencerA_hook");
     _quick_score_B = GetQuickScore ("fencerB_hook");
@@ -155,7 +155,7 @@ Table::Table (Stage     *supervisor,
 }
 
 // --------------------------------------------------------------------------------
-Table::~Table ()
+TableSet::~TableSet ()
 {
   DeleteTree ();
 
@@ -186,18 +186,18 @@ Table::~Table ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::SetAttendees (GSList *attendees)
+void TableSet::SetAttendees (GSList *attendees)
 {
   _attendees = attendees;
   Garnish ();
 }
 
 // --------------------------------------------------------------------------------
-void Table::SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
-                                               GtkCellRenderer *cell,
-                                               GtkTreeModel    *tree_model,
-                                               GtkTreeIter     *iter,
-                                               Table           *table)
+void TableSet::SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
+                                                  GtkCellRenderer *cell,
+                                                  GtkTreeModel    *tree_model,
+                                                  GtkTreeIter     *iter,
+                                                  TableSet        *table_set)
 {
   gboolean sensitive = !gtk_tree_model_iter_has_child (tree_model, iter);
 
@@ -205,7 +205,7 @@ void Table::SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *Table::GetQuickScore (const gchar *container)
+GooCanvasItem *TableSet::GetQuickScore (const gchar *container)
 {
   GtkWidget     *view_port = _glade->GetWidget (container);
   GooCanvas     *canvas    = GOO_CANVAS (goo_canvas_new ());
@@ -240,7 +240,7 @@ GooCanvasItem *Table::GetQuickScore (const gchar *container)
 }
 
 // --------------------------------------------------------------------------------
-void Table::RefreshLevelStatus ()
+void TableSet::RefreshLevelStatus ()
 {
   for (guint i = 0; i < _nb_levels; i ++)
   {
@@ -304,8 +304,8 @@ void Table::RefreshLevelStatus ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::SetStatusCbk (StatusCbk  cbk,
-                          void      *data)
+void TableSet::SetStatusCbk (StatusCbk  cbk,
+                             void      *data)
 {
   _status_cbk_data = data;
   _status_cbk      = cbk;
@@ -318,7 +318,7 @@ void Table::SetStatusCbk (StatusCbk  cbk,
 }
 
 // --------------------------------------------------------------------------------
-void Table::Display ()
+void TableSet::Display ()
 {
   Wipe ();
 
@@ -386,7 +386,7 @@ void Table::Display ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::IsOver ()
+gboolean TableSet::IsOver ()
 {
   NodeData *root_data = (NodeData *) _tree_root->data;
 
@@ -399,14 +399,14 @@ gboolean Table::IsOver ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::Garnish ()
+void TableSet::Garnish ()
 {
   DeleteTree ();
   CreateTree ();
 }
 
 // --------------------------------------------------------------------------------
-void Table::Load (xmlNode *xml_node)
+void TableSet::Load (xmlNode *xml_node)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
@@ -447,7 +447,7 @@ void Table::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void Table::Save (xmlTextWriter *xml_writer)
+void TableSet::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "SuiteDeTableaux");
@@ -512,38 +512,38 @@ void Table::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnNewScore (ScoreCollector *score_collector,
-                        CanvasModule   *client,
-                        Match          *match,
-                        Player         *player)
+void TableSet::OnNewScore (ScoreCollector *score_collector,
+                           CanvasModule   *client,
+                           Match          *match,
+                           Player         *player)
 {
-  Table *table = dynamic_cast <Table *> (client);
-  GNode *node  = (GNode *) match->GetPtrData (table, "node");
+  TableSet *table_set = dynamic_cast <TableSet *> (client);
+  GNode    *node      = (GNode *) match->GetPtrData (table_set, "node");
 
   FillInNode (node,
-              table);
+              table_set);
 
-  if (score_collector == table->_quick_score_collector)
+  if (score_collector == table_set->_quick_score_collector)
   {
-    table->_score_collector->Refresh (match);
+    table_set->_score_collector->Refresh (match);
   }
   else
   {
-    table->_quick_score_collector->Refresh (match);
+    table_set->_quick_score_collector->Refresh (match);
   }
 
   if (node->parent)
   {
     FillInNode (node->parent,
-                table);
+                table_set);
   }
 
-  table->RefreshLevelStatus ();
-  table->DrawAllConnectors ();
+  table_set->RefreshLevelStatus ();
+  table_set->DrawAllConnectors ();
 }
 
 // --------------------------------------------------------------------------------
-void Table::DeleteTree ()
+void TableSet::DeleteTree ()
 {
   g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
                                         (void *) on_from_table_combobox_changed,
@@ -567,7 +567,7 @@ void Table::DeleteTree ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::CreateTree ()
+void TableSet::CreateTree ()
 {
   guint nb_players = g_slist_length (_attendees);
 
@@ -623,7 +623,7 @@ void Table::CreateTree ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::DrawAllConnectors ()
+void TableSet::DrawAllConnectors ()
 {
   g_node_traverse (_tree_root,
                    G_POST_ORDER,
@@ -634,8 +634,8 @@ void Table::DrawAllConnectors ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::WipeNode (GNode *node,
-                          Table *table)
+gboolean TableSet::WipeNode (GNode    *node,
+                             TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
 
@@ -651,8 +651,8 @@ gboolean Table::WipeNode (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::DeleteCanvasTable (GNode *node,
-                                   Table *table)
+gboolean TableSet::DeleteCanvasTable (GNode    *node,
+                                      TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
 
@@ -666,8 +666,8 @@ gboolean Table::DeleteCanvasTable (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::UpdateLevelStatus (GNode *node,
-                                   Table *table)
+gboolean TableSet::UpdateLevelStatus (GNode    *node,
+                                      TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
 
@@ -683,13 +683,13 @@ gboolean Table::UpdateLevelStatus (GNode *node,
       Score  *score_B = data->_match->GetScore (B);
 
       if (   (score_A->IsValid () == FALSE)
-          || (score_B->IsValid () == FALSE)
-          || (score_A->IsConsistentWith (score_B) == FALSE))
+             || (score_B->IsValid () == FALSE)
+             || (score_A->IsConsistentWith (score_B) == FALSE))
       {
-        table->_level_status[data->_level-2]._has_error = TRUE;
+        table_set->_level_status[data->_level-2]._has_error = TRUE;
       }
 
-      table->_level_status[data->_level-2]._is_over = FALSE;
+      table_set->_level_status[data->_level-2]._is_over = FALSE;
     }
   }
 
@@ -697,8 +697,8 @@ gboolean Table::UpdateLevelStatus (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::DrawConnector (GNode *node,
-                               Table *table)
+gboolean TableSet::DrawConnector (GNode    *node,
+                                  TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
 
@@ -716,7 +716,7 @@ gboolean Table::DrawConnector (GNode *node,
 
     if (G_NODE_IS_ROOT (node))
     {
-      data->_connector = goo_canvas_polyline_new (table->GetRootItem (),
+      data->_connector = goo_canvas_polyline_new (table_set->GetRootItem (),
                                                   FALSE,
                                                   2,
                                                   bounds.x1 - _level_spacing/2, bounds.y2,
@@ -733,7 +733,7 @@ gboolean Table::DrawConnector (GNode *node,
       goo_canvas_item_get_bounds (parent_data->_canvas_table,
                                   &parent_bounds);
 
-      data->_connector = goo_canvas_polyline_new (table->GetRootItem (),
+      data->_connector = goo_canvas_polyline_new (table_set->GetRootItem (),
                                                   FALSE,
                                                   3,
                                                   bounds.x1 - _level_spacing/2, bounds.y2,
@@ -748,33 +748,33 @@ gboolean Table::DrawConnector (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::FillInNode (GNode *node,
-                            Table *table)
+gboolean TableSet::FillInNode (GNode    *node,
+                               TableSet *table_set)
 {
   GNode    *parent           = node->parent;
   NodeData *data             = (NodeData *) node->data;
-  guint     nb_missing_level = table->_nb_levels - table->_nb_level_to_display;
+  guint     nb_missing_level = table_set->_nb_levels - table_set->_nb_level_to_display;
 
   if (data->_match && (data->_level > nb_missing_level))
   {
     Player *winner = data->_match->GetWinner ();
 
     WipeNode (node,
-              table);
+              table_set);
 
     if (data->_canvas_table == NULL)
     {
       guint row;
 
-      data->_canvas_table = goo_canvas_table_new (table->_main_table,
-                                                  "column-spacing", table->_level_spacing,
+      data->_canvas_table = goo_canvas_table_new (table_set->_main_table,
+                                                  "column-spacing", table_set->_level_spacing,
                                                   NULL);
       //Canvas::SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
       Canvas::SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
 
       if (parent == NULL)
       {
-        row = 1 << (table->_nb_level_to_display - 1);
+        row = 1 << (table_set->_nb_level_to_display - 1);
       }
       else
       {
@@ -788,14 +788,14 @@ gboolean Table::FillInNode (GNode *node,
           row = data->_row >> nb_missing_level;
         }
       }
-      Canvas::PutInTable (table->_main_table,
+      Canvas::PutInTable (table_set->_main_table,
                           data->_canvas_table,
                           row,
                           data->_level - nb_missing_level);
     }
 
     {
-      gchar *number = (gchar *) data->_match->GetPtrData (table, "number");
+      gchar *number = (gchar *) data->_match->GetPtrData (table_set, "number");
 
       if (number)
       {
@@ -812,8 +812,8 @@ gboolean Table::FillInNode (GNode *node,
     }
 
     if (   (winner == NULL)
-        && data->_match->GetPlayerA ()
-        && data->_match->GetPlayerB ())
+           && data->_match->GetPlayerA ()
+           && data->_match->GetPlayerB ())
     {
       data->_print_item = Canvas::PutStockIconInTable (data->_canvas_table,
                                                        GTK_STOCK_PRINT,
@@ -821,12 +821,12 @@ gboolean Table::FillInNode (GNode *node,
                                                        0);
       g_object_set_data (G_OBJECT (data->_print_item), "match_to_print", data->_match);
       g_signal_connect (data->_print_item, "button-release-event",
-                        G_CALLBACK (OnPrintMatch), table);
+                        G_CALLBACK (OnPrintMatch), table_set);
     }
 
     if (winner)
     {
-      GString *string = table->GetPlayerImage (winner);
+      GString *string = table_set->GetPlayerImage (winner);
 
       data->_player_item = Canvas::PutTextInTable (data->_canvas_table,
                                                    string->str,
@@ -848,15 +848,15 @@ gboolean Table::FillInNode (GNode *node,
         NodeData      *parent_data = (NodeData *) parent->data;
         guint          position    = g_node_child_position (parent, node);
 
-        table->SetPlayer (parent_data->_match,
-                          winner,
-                          position);
+        table_set->SetPlayer (parent_data->_match,
+                              winner,
+                              position);
 
         if (   (parent_data->_match->GetWinner () == NULL)
-            || (   parent_data->_match->GetPlayerA ()
-                && parent_data->_match->GetPlayerB ()))
+               || (   parent_data->_match->GetPlayerA ()
+                      && parent_data->_match->GetPlayerB ()))
         {
-          GtkWidget       *w    = gtk_combo_box_new_with_model (table->GetStatusModel ());
+          GtkWidget       *w    = gtk_combo_box_new_with_model (table_set->GetStatusModel ());
           GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
           GooCanvasItem   *goo_item;
 
@@ -877,7 +877,7 @@ gboolean Table::FillInNode (GNode *node,
                               0, 3);
 
           {
-            Player::AttributeId  attr_id ("status", table->GetDataOwner ());
+            Player::AttributeId  attr_id ("status", table_set->GetDataOwner ());
             Attribute           *attr = winner->GetAttribute (&attr_id);
 
             if (attr)
@@ -896,11 +896,11 @@ gboolean Table::FillInNode (GNode *node,
                 text = attr->GetStrValue ();
               }
 
-              iter_is_valid = gtk_tree_model_get_iter_first (table->GetStatusModel (),
+              iter_is_valid = gtk_tree_model_get_iter_first (table_set->GetStatusModel (),
                                                              &iter);
               for (guint i = 0; iter_is_valid; i++)
               {
-                gtk_tree_model_get (table->GetStatusModel (),
+                gtk_tree_model_get (table_set->GetStatusModel (),
                                     &iter,
                                     AttributeDesc::DISCRETE_XML_IMAGE, &code,
                                     -1);
@@ -911,13 +911,13 @@ gboolean Table::FillInNode (GNode *node,
 
                   break;
                 }
-                iter_is_valid = gtk_tree_model_iter_next (table->GetStatusModel (),
+                iter_is_valid = gtk_tree_model_iter_next (table_set->GetStatusModel (),
                                                           &iter);
               }
             }
           }
 
-          if (table->_locked)
+          if (table_set->_locked)
           {
             gtk_widget_set_sensitive (w,
                                       FALSE);
@@ -933,7 +933,7 @@ gboolean Table::FillInNode (GNode *node,
               g_object_set_data (G_OBJECT (w), "player_for_status", (void *) winner);
               g_object_set_data (G_OBJECT (w), "match_for_status", (void *) parent_data->_match);
               g_signal_connect (w, "changed",
-                                G_CALLBACK (on_status_changed), table);
+                                G_CALLBACK (on_status_changed), table_set);
             }
           }
         }
@@ -981,26 +981,26 @@ gboolean Table::FillInNode (GNode *node,
           Player *B = parent_data->_match->GetPlayerB ();
 
           if (   (parent_data->_match->GetWinner () == NULL)
-              || ((A != NULL) && (B != NULL)))
+                 || ((A != NULL) && (B != NULL)))
           {
             parent_data->_match->SetData (winner, "collecting_point", goo_rect);
 
-            table->_score_collector->AddCollectingPoint (goo_rect,
-                                                         score_text,
-                                                         parent_data->_match,
-                                                         winner);
-            table->_score_collector->AddCollectingTrigger (data->_player_item);
+            table_set->_score_collector->AddCollectingPoint (goo_rect,
+                                                             score_text,
+                                                             parent_data->_match,
+                                                             winner);
+            table_set->_score_collector->AddCollectingTrigger (data->_player_item);
 
             if (A && B)
             {
-              table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (A,
-                                                                                                                  "collecting_point"),
-                                                               (GooCanvasItem *) parent_data->_match->GetPtrData (B,
-                                                                                                                  "collecting_point"));
-              table->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (B,
-                                                                                                                  "collecting_point"),
-                                                               (GooCanvasItem *) parent_data->_match->GetPtrData (A,
-                                                                                                                  "collecting_point"));
+              table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (A,
+                                                                                                                      "collecting_point"),
+                                                                   (GooCanvasItem *) parent_data->_match->GetPtrData (B,
+                                                                                                                      "collecting_point"));
+              table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (B,
+                                                                                                                      "collecting_point"),
+                                                                   (GooCanvasItem *) parent_data->_match->GetPtrData (A,
+                                                                                                                      "collecting_point"));
             }
           }
         }
@@ -1012,8 +1012,8 @@ gboolean Table::FillInNode (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::DeleteNode (GNode *node,
-                            Table *table)
+gboolean TableSet::DeleteNode (GNode    *node,
+                               TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
 
@@ -1023,7 +1023,7 @@ gboolean Table::DeleteNode (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-void Table::AddFork (GNode *to)
+void TableSet::AddFork (GNode *to)
 {
   NodeData *to_data = NULL;
   NodeData *data = new NodeData;
@@ -1062,7 +1062,7 @@ void Table::AddFork (GNode *to)
     else
     {
       data->_expected_winner_rank =    (1 << (_nb_levels - data->_level)) + 1
-                                     - to_data->_expected_winner_rank;
+        - to_data->_expected_winner_rank;
     }
     node = g_node_append_data (to, data);
   }
@@ -1168,8 +1168,8 @@ void Table::AddFork (GNode *to)
 }
 
 // --------------------------------------------------------------------------------
-void Table::LoadMatch (xmlNode *xml_node,
-                       Match   *match)
+void TableSet::LoadMatch (xmlNode *xml_node,
+                          Match   *match)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
@@ -1224,10 +1224,10 @@ void Table::LoadMatch (xmlNode *xml_node,
 }
 
 // --------------------------------------------------------------------------------
-void Table::LoadScore (xmlNode *xml_node,
-                       Match   *match,
-                       guint    player_index,
-                       Player  **dropped)
+void TableSet::LoadScore (xmlNode *xml_node,
+                          Match   *match,
+                          guint    player_index,
+                          Player  **dropped)
 {
   gboolean  is_the_best = FALSE;
   gchar    *attr        = (gchar *) xmlGetProp (xml_node, BAD_CAST "REF");
@@ -1263,12 +1263,12 @@ void Table::LoadScore (xmlNode *xml_node,
 }
 
 // --------------------------------------------------------------------------------
-void Table::Wipe ()
+void TableSet::Wipe ()
 {
   {
     Object::TryToRelease (_score_collector);
     _score_collector = new ScoreCollector (this,
-                                           (ScoreCollector::OnNewScore_cbk) &Table::OnNewScore);
+                                           (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore);
 
     _score_collector->SetConsistentColors ("LightGrey",
                                            "SkyBlue");
@@ -1289,8 +1289,8 @@ void Table::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::LookForMatchToPrint (guint    level_to_print,
-                                 gboolean all_sheet)
+void TableSet::LookForMatchToPrint (guint    level_to_print,
+                                    gboolean all_sheet)
 {
   if (_match_to_print)
   {
@@ -1345,7 +1345,7 @@ void Table::LookForMatchToPrint (guint    level_to_print,
 }
 
 // --------------------------------------------------------------------------------
-void Table::Lock ()
+void TableSet::Lock ()
 {
   _locked = TRUE;
 
@@ -1356,7 +1356,7 @@ void Table::Lock ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::UnLock ()
+void TableSet::UnLock ()
 {
   _locked = FALSE;
 
@@ -1367,8 +1367,8 @@ void Table::UnLock ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::AddToClassification (GNode *node,
-                                     Table *table)
+gboolean TableSet::AddToClassification (GNode    *node,
+                                        TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
 
@@ -1376,12 +1376,12 @@ gboolean Table::AddToClassification (GNode *node,
   {
     Player *winner = data->_match->GetWinner ();
 
-    if (winner && g_slist_find (table->_result_list,
+    if (winner && g_slist_find (table_set->_result_list,
                                 winner) == NULL)
     {
-      table->_result_list = g_slist_append (table->_result_list,
-                                            winner);
-      winner->SetData (table, "level", (void *) data->_level);
+      table_set->_result_list = g_slist_append (table_set->_result_list,
+                                                winner);
+      winner->SetData (table_set, "level", (void *) data->_level);
     }
   }
 
@@ -1389,13 +1389,13 @@ gboolean Table::AddToClassification (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnAttrListUpdated ()
+void TableSet::OnAttrListUpdated ()
 {
   Display ();
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnFromTableComboboxChanged ()
+void TableSet::OnFromTableComboboxChanged ()
 {
   _nb_level_to_display = _nb_levels - gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")));
 
@@ -1403,13 +1403,13 @@ void Table::OnFromTableComboboxChanged ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::Stuff (GNode *node,
-                       Table *table)
+gboolean TableSet::Stuff (GNode    *node,
+                          TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
 
-  if (   (data->_level == table->_level_filter)
-      && (data->_match))
+  if (   (data->_level == table_set->_level_filter)
+         && (data->_match))
   {
     Player *A = data->_match->GetPlayerA ();
     Player *B = data->_match->GetPlayerB ();
@@ -1420,16 +1420,16 @@ gboolean Table::Stuff (GNode *node,
 
       if (g_random_boolean ())
       {
-        data->_match->SetScore (A, table->_max_score->_value, TRUE);
+        data->_match->SetScore (A, table_set->_max_score->_value, TRUE);
         data->_match->SetScore (B, g_random_int_range (0,
-                                                       table->_max_score->_value), FALSE);
+                                                       table_set->_max_score->_value), FALSE);
         winner = A;
       }
       else
       {
         data->_match->SetScore (A, g_random_int_range (0,
-                                                       table->_max_score->_value), FALSE);
-        data->_match->SetScore (B, table->_max_score->_value, TRUE);
+                                                       table_set->_max_score->_value), FALSE);
+        data->_match->SetScore (B, table_set->_max_score->_value, TRUE);
         winner = B;
       }
 
@@ -1440,9 +1440,9 @@ gboolean Table::Stuff (GNode *node,
         {
           NodeData *parent_data = (NodeData *) parent->data;
 
-          table->SetPlayer (parent_data->_match,
-                            winner,
-                            g_node_child_position (parent, node));
+          table_set->SetPlayer (parent_data->_match,
+                                winner,
+                                g_node_child_position (parent, node));
         }
       }
     }
@@ -1452,9 +1452,9 @@ gboolean Table::Stuff (GNode *node,
 }
 
 // --------------------------------------------------------------------------------
-void Table::SetPlayer (Match  *to_match,
-                       Player *player,
-                       guint   position)
+void TableSet::SetPlayer (Match  *to_match,
+                          Player *player,
+                          guint   position)
 {
   if (position == 0)
   {
@@ -1473,9 +1473,9 @@ void Table::SetPlayer (Match  *to_match,
                                                  "quick_search_path");
 
     if (   path
-        && gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
-                                    &iter,
-                                    path))
+           && gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
+                                       &iter,
+                                       path))
     {
       Player *A      = to_match->GetPlayerA ();
       Player *B      = to_match->GetPlayerB ();
@@ -1513,7 +1513,7 @@ void Table::SetPlayer (Match  *to_match,
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnStuffClicked ()
+void TableSet::OnStuffClicked ()
 {
   for (_level_filter = 1; _level_filter <= _nb_levels; _level_filter++)
   {
@@ -1529,7 +1529,7 @@ void Table::OnStuffClicked ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnInputToggled (GtkWidget *widget)
+void TableSet::OnInputToggled (GtkWidget *widget)
 {
   GtkWidget *input_box = _glade->GetWidget ("input_hbox");
 
@@ -1544,7 +1544,7 @@ void Table::OnInputToggled (GtkWidget *widget)
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnMatchSheetToggled (GtkWidget *widget)
+void TableSet::OnMatchSheetToggled (GtkWidget *widget)
 {
   GtkWidget *vbox = _glade->GetWidget ("match_sheet_vbox");
 
@@ -1559,7 +1559,7 @@ void Table::OnMatchSheetToggled (GtkWidget *widget)
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnDisplayToggled (GtkWidget *widget)
+void TableSet::OnDisplayToggled (GtkWidget *widget)
 {
   GtkWidget *vbox = _glade->GetWidget ("display_vbox");
 
@@ -1574,7 +1574,7 @@ void Table::OnDisplayToggled (GtkWidget *widget)
 }
 
 // --------------------------------------------------------------------------------
-GSList *Table::GetCurrentClassification ()
+GSList *TableSet::GetCurrentClassification ()
 {
   _result_list = NULL;
   g_node_traverse (_tree_root,
@@ -1604,13 +1604,13 @@ GSList *Table::GetCurrentClassification ()
       player = (Player *) current->data;
 
       if (   previous_player
-          && (   (ComparePlayer (player,
-                                 previous_player,
-                                 this) == 0)
-              && (ComparePreviousRankPlayer (player,
-                                             previous_player,
-                                             0) == 0))
-          || (i == 4))
+             && (   (ComparePlayer (player,
+                                    previous_player,
+                                    this) == 0)
+                    && (ComparePreviousRankPlayer (player,
+                                                   previous_player,
+                                                   0) == 0))
+             || (i == 4))
       {
         player->SetAttributeValue (attr_id,
                                    previous_rank);
@@ -1633,12 +1633,12 @@ GSList *Table::GetCurrentClassification ()
 }
 
 // --------------------------------------------------------------------------------
-gint Table::ComparePlayer (Player  *A,
-                           Player  *B,
-                           Table   *table)
+gint TableSet::ComparePlayer (Player   *A,
+                              Player   *B,
+                              TableSet *table_set)
 {
   {
-    Player::AttributeId attr_id ("status", table->GetDataOwner ());
+    Player::AttributeId attr_id ("status", table_set->GetDataOwner ());
 
     if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
     {
@@ -1657,8 +1657,8 @@ gint Table::ComparePlayer (Player  *A,
   }
 
   {
-    gint level_A = A->GetIntData (table, "level");
-    gint level_B = B->GetIntData (table, "level");
+    gint level_A = A->GetIntData (table_set, "level");
+    gint level_B = B->GetIntData (table_set, "level");
 
     if (level_A != level_B)
     {
@@ -1666,15 +1666,15 @@ gint Table::ComparePlayer (Player  *A,
     }
   }
 
-  return table->ComparePreviousRankPlayer (A,
-                                           B,
-                                           table->_rand_seed);
+  return table_set->ComparePreviousRankPlayer (A,
+                                               B,
+                                               table_set->_rand_seed);
 }
 
 // --------------------------------------------------------------------------------
-gint Table::ComparePreviousRankPlayer (Player  *A,
-                                       Player  *B,
-                                       guint32  rand_seed)
+gint TableSet::ComparePreviousRankPlayer (Player  *A,
+                                          Player  *B,
+                                          guint32  rand_seed)
 {
   Stage               *previous = _supervisor->GetPreviousStage ();
   Player::AttributeId  attr_id ("rank", previous);
@@ -1686,7 +1686,7 @@ gint Table::ComparePreviousRankPlayer (Player  *A,
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnSearchMatch ()
+void TableSet::OnSearchMatch ()
 {
   GtkTreeIter iter;
 
@@ -1740,7 +1740,7 @@ void Table::OnSearchMatch ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Table::GetLevelImage (guint level)
+gchar *TableSet::GetLevelImage (guint level)
 {
   gchar *image;
 
@@ -1765,8 +1765,8 @@ gchar *Table::GetLevelImage (guint level)
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnBeginPrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context)
+void TableSet::OnBeginPrint (GtkPrintOperation *operation,
+                             GtkPrintContext   *context)
 {
   gdouble paper_w  = gtk_print_context_get_width (context);
   gdouble paper_h  = gtk_print_context_get_height (context);
@@ -1842,9 +1842,9 @@ void Table::OnBeginPrint (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnDrawPage (GtkPrintOperation *operation,
-                        GtkPrintContext   *context,
-                        gint               page_nr)
+void TableSet::OnDrawPage (GtkPrintOperation *operation,
+                           GtkPrintContext   *context,
+                           gint               page_nr)
 {
   gdouble paper_w   = gtk_print_context_get_width  (context);
   gdouble paper_h   = gtk_print_context_get_height (context);
@@ -2148,14 +2148,14 @@ void Table::OnDrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnZoom (gdouble value)
+void TableSet::OnZoom (gdouble value)
 {
   goo_canvas_set_scale (GetCanvas (),
                         value);
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnPlugged ()
+void TableSet::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
   gtk_container_add (GTK_CONTAINER (_control_container),
@@ -2163,7 +2163,7 @@ void Table::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnUnPlugged ()
+void TableSet::OnUnPlugged ()
 {
   if (gtk_widget_get_parent (_from_widget))
   {
@@ -2174,7 +2174,7 @@ void Table::OnUnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnPrint ()
+void TableSet::OnPrint ()
 {
   if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
   {
@@ -2201,56 +2201,56 @@ void Table::OnPrint ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::OnPrintLevel (GooCanvasItem  *item,
-                              GooCanvasItem  *target_item,
-                              GdkEventButton *event,
-                              Table          *table)
+gboolean TableSet::OnPrintLevel (GooCanvasItem  *item,
+                                 GooCanvasItem  *target_item,
+                                 GdkEventButton *event,
+                                 TableSet       *table_set)
 {
   guint level_to_print = (guint) g_object_get_data (G_OBJECT (item), "level_to_print");
-  gchar *title         = g_strdup_printf (gettext ("%s: score sheets printing"), table->GetLevelImage (level_to_print));
+  gchar *title         = g_strdup_printf (gettext ("%s: score sheets printing"), table_set->GetLevelImage (level_to_print));
 
-  gtk_window_set_title (GTK_WINDOW (table->_level_print_dialog),
+  gtk_window_set_title (GTK_WINDOW (table_set->_level_print_dialog),
                         title);
   g_free (title);
 
-  if (gtk_dialog_run (GTK_DIALOG (table->_level_print_dialog)) == GTK_RESPONSE_OK)
+  if (gtk_dialog_run (GTK_DIALOG (table_set->_level_print_dialog)) == GTK_RESPONSE_OK)
   {
-    GtkWidget *w         = table->_glade->GetWidget ("level_pending_radiobutton");
+    GtkWidget *w         = table_set->_glade->GetWidget ("level_pending_radiobutton");
     gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
 
-    table->LookForMatchToPrint (level_to_print,
-                                all_sheet);
-    table->_print_full_table = FALSE;
-    table->Print (gettext ("Score sheet"));
+    table_set->LookForMatchToPrint (level_to_print,
+                                    all_sheet);
+    table_set->_print_full_table = FALSE;
+    table_set->Print (gettext ("Score sheet"));
   }
 
-  gtk_widget_hide (table->_level_print_dialog);
+  gtk_widget_hide (table_set->_level_print_dialog);
 
   return TRUE;
 }
 
 // --------------------------------------------------------------------------------
-gboolean Table::OnPrintMatch (GooCanvasItem  *item,
-                              GooCanvasItem  *target_item,
-                              GdkEventButton *event,
-                              Table          *table)
+gboolean TableSet::OnPrintMatch (GooCanvasItem  *item,
+                                 GooCanvasItem  *target_item,
+                                 GdkEventButton *event,
+                                 TableSet       *table_set)
 {
-  if (table->_match_to_print)
+  if (table_set->_match_to_print)
   {
-    g_slist_free (table->_match_to_print);
-    table->_match_to_print = NULL;
+    g_slist_free (table_set->_match_to_print);
+    table_set->_match_to_print = NULL;
   }
 
-  table->_match_to_print = g_slist_prepend (table->_match_to_print,
-                                            g_object_get_data (G_OBJECT (item), "match_to_print"));
-  table->_print_full_table = FALSE;
-  table->Print (gettext ("Score sheet"));
+  table_set->_match_to_print = g_slist_prepend (table_set->_match_to_print,
+                                                g_object_get_data (G_OBJECT (item), "match_to_print"));
+  table_set->_print_full_table = FALSE;
+  table_set->Print (gettext ("Score sheet"));
 
   return TRUE;
 }
 
 // --------------------------------------------------------------------------------
-void Table::OnStatusChanged (GtkComboBox *combo_box)
+void TableSet::OnStatusChanged (GtkComboBox *combo_box)
 {
   GtkTreeIter          iter;
   gchar               *code;
@@ -2279,17 +2279,17 @@ void Table::OnStatusChanged (GtkComboBox *combo_box)
 }
 
 // --------------------------------------------------------------------------------
-void Table::on_status_changed (GtkComboBox *combo_box,
-                               Table       *table)
+void TableSet::on_status_changed (GtkComboBox *combo_box,
+                                  TableSet       *table_set)
 {
-  table->OnStatusChanged (combo_box);
+  table_set->OnStatusChanged (combo_box);
 }
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *widget,
                                                                     Object    *owner)
 {
-  Table *t = dynamic_cast <Table *> (owner);
+  TableSet *t = dynamic_cast <TableSet *> (owner);
 
   t->OnMatchSheetToggled (widget);
 }

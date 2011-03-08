@@ -26,7 +26,7 @@
 
 #include "stage.hpp"
 
-class Table;
+class TableSet;
 
 class TableSupervisor : public virtual Stage, public Module
 {
@@ -42,7 +42,7 @@ class TableSupervisor : public virtual Stage, public Module
     void OnFilterClicked ();
     void OnPrint ();
     void OnZoom (gdouble value);
-    void OnDisplayTreeViewCursorChanged (GtkTreeView *treeview);
+    void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
     void OnSearchMatch ();
 
   public:
@@ -61,7 +61,7 @@ class TableSupervisor : public virtual Stage, public Module
     xmlTextWriter      *_xml_writer;
     xmlNode            *_xml_node;
     GSList             *_result_list;
-    Table              *_displayed_table_set;
+    TableSet           *_displayed_table_set;
 
     void Display ();
 
@@ -79,7 +79,7 @@ class TableSupervisor : public virtual Stage, public Module
 
     static Stage *CreateInstance (StageClass *stage_class);
 
-    Table *GetTableSet (gchar *id);
+    TableSet *GetTableSet (gchar *id);
 
     void Save (xmlTextWriter *xml_writer);
 
@@ -98,11 +98,11 @@ class TableSupervisor : public virtual Stage, public Module
 
     void ApplyConfig ();
 
-    void FeedDisplayStore (guint        from_place,
-                           guint        nb_levels,
-                           GtkTreeIter *parent);
+    void FeedTableSetStore (guint        from_place,
+                            guint        nb_levels,
+                            GtkTreeIter *parent);
 
-    void OnTableSetSelected (Table *table_set);
+    void OnTableSetSelected (TableSet *table_set);
 
     static gboolean DeleteTableSet (GtkTreeModel *model,
                                     GtkTreePath  *path,

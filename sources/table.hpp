@@ -25,14 +25,14 @@
 #include "score_collector.hpp"
 #include "stage.hpp"
 
-class Table : public CanvasModule
+class TableSet : public CanvasModule
 {
   public:
-    typedef void (*StatusCbk) (Table *table,
-                               void  *data);
-    Table (Stage     *supervisor,
-           gchar     *id,
-           GtkWidget *control_container);
+    typedef void (*StatusCbk) (TableSet *table_set,
+                               void     *data);
+    TableSet (Stage     *supervisor,
+              gchar     *id,
+              GtkWidget *control_container);
 
     void SetStatusCbk (StatusCbk  cbk,
                        void      *data);
@@ -157,38 +157,38 @@ class Table : public CanvasModule
 
     void OnStatusChanged (GtkComboBox *combo_box);
 
-    static gboolean Stuff (GNode *node,
-                           Table *table);
+    static gboolean Stuff (GNode    *node,
+                           TableSet *table_set);
 
-    static gboolean AddToClassification (GNode *node,
-                                         Table *table);
+    static gboolean AddToClassification (GNode    *node,
+                                         TableSet *table_set);
 
-    static gboolean UpdateLevelStatus (GNode *node,
-                                       Table *table);
+    static gboolean UpdateLevelStatus (GNode    *node,
+                                       TableSet *table_set);
 
-    static gboolean DrawConnector (GNode *node,
-                                   Table *table);
+    static gboolean DrawConnector (GNode    *node,
+                                   TableSet *table_set);
 
-    static gboolean WipeNode (GNode *node,
-                              Table *table);
+    static gboolean WipeNode (GNode    *node,
+                              TableSet *table_set);
 
-    static gboolean DeleteCanvasTable (GNode *node,
-                                       Table *table);
+    static gboolean DeleteCanvasTable (GNode    *node,
+                                       TableSet *table_set);
 
-    static gboolean FillInNode (GNode *node,
-                                Table *table);
+    static gboolean FillInNode (GNode    *node,
+                                TableSet *table_set);
 
-    static gboolean DeleteNode (GNode *node,
-                                Table *table);
+    static gboolean DeleteNode (GNode    *node,
+                                TableSet *table_set);
 
     static void OnNewScore (ScoreCollector *score_collector,
                             CanvasModule   *client,
                             Match          *match,
                             Player         *player);
 
-    static gint ComparePlayer (Player *A,
-                               Player *B,
-                               Table  *table);
+    static gint ComparePlayer (Player    *A,
+                               Player    *B,
+                               TableSet  *table_set);
 
     gint ComparePreviousRankPlayer (Player  *A,
                                     Player  *B,
@@ -211,22 +211,22 @@ class Table : public CanvasModule
                                                    GtkCellRenderer *cell,
                                                    GtkTreeModel    *tree_model,
                                                    GtkTreeIter     *iter,
-                                                   Table           *table);
+                                                   TableSet        *table_set);
 
     static gboolean OnPrintLevel (GooCanvasItem  *item,
                                   GooCanvasItem  *target_item,
                                   GdkEventButton *event,
-                                  Table          *table);
+                                  TableSet       *table_set);
 
     static gboolean OnPrintMatch (GooCanvasItem  *item,
                                   GooCanvasItem  *target_item,
                                   GdkEventButton *event,
-                                  Table          *table);
+                                  TableSet       *table_set);
 
     static void on_status_changed (GtkComboBox *combo_box,
-                                   Table       *table);
+                                   TableSet    *table_set);
 
-    ~Table ();
+    ~TableSet ();
 };
 
 #endif

@@ -2,7 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
-  <object class="GtkTreeStore" id="display_treestore">
+  <object class="GtkTreeStore" id="table_set_treestore">
     <columns>
       <!-- column-name table_name -->
       <column type="gchararray"/>
@@ -182,13 +182,13 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                     <property name="hscrollbar_policy">never</property>
                     <property name="vscrollbar_policy">automatic</property>
                     <child>
-                      <object class="GtkTreeView" id="display_treeview">
+                      <object class="GtkTreeView" id="table_set_treeview">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="model">display_treestore</property>
+                        <property name="model">table_set_treestore</property>
                         <property name="headers_clickable">False</property>
                         <property name="search_column">0</property>
-                        <signal name="cursor_changed" handler="on_display_treeview_cursor_changed"/>
+                        <signal name="cursor_changed" handler="on_table_set_treeview_cursor_changed"/>
                         <child>
                           <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                             <property name="title">Pour la place :</property>
