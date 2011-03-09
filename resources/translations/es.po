@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2010-12-29 23:56+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2011-03-08 05:32+0000\n"
+"Last-Translator: Paulomorales <paulocmorales@hotmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-02-23 04:46+0000\n"
+"X-Launchpad-Export-Date: 2011-03-09 04:47+0000\n"
 "X-Generator: Launchpad (build 12351)\n"
 
 #: ../../sources/checkin.cpp:27
@@ -40,7 +40,7 @@ msgstr ""
 
 #: ../../sources/checkin.cpp:464
 msgid "Choose a fencer file to import..."
-msgstr "Elegir un fichero de tirador a importar..."
+msgstr "Elegir un archivo de esgrimistas a importar..."
 
 #: ../../sources/checkin.cpp:477
 msgid "All FFF files (.FFF)"
@@ -127,7 +127,7 @@ msgstr "M18"
 
 #: ../../sources/contest.cpp:73
 msgid "Senior"
-msgstr "Absoluta"
+msgstr "Mayor"
 
 #: ../../sources/contest.cpp:74
 msgid "Veteran"
@@ -145,7 +145,7 @@ msgstr "Fecha de la competición"
 #: ../../sources/contest.cpp:851
 #: ../../sources/contest.cpp:965
 msgid "Choose a file..."
-msgstr "Elegir un fichero..."
+msgstr "Elija un archivo..."
 
 #: ../../sources/contest.cpp:1192
 msgid "Choose a backup file..."
@@ -162,11 +162,11 @@ msgstr ""
 
 #: ../../sources/contest.cpp:1252
 msgid "Close the competition?"
-msgstr "¿Cerrar una competición?"
+msgstr "¿Cerrar la competencia?"
 
 #: ../../sources/contest.cpp:1255
 msgid "Unsaved data will be lost."
-msgstr "Los datos no guardados serán perdidos."
+msgstr "Los datos no guardados se perderán."
 
 #: ../../sources/filter.cpp:184
 msgid "Filter"
@@ -448,7 +448,7 @@ msgstr "Datos"
 
 #: ../../resources/glade/checkin.glade:185
 msgid "Add a fencer"
-msgstr "Añadir un tirador"
+msgstr "Añadir un esgrimista"
 
 #: ../../resources/glade/checkin.glade:304
 msgid "All the presents"
@@ -738,7 +738,7 @@ msgstr "Eliminar"
 
 #: ../../resources/glade/splitting.glade:120
 msgid "Select the fencers to move to a new competition."
-msgstr "Seleccionar los tiradores para mover a una nueva competición"
+msgstr "Seleccionar los esgrimistas para mover a una nueva competición"
 
 #: ../../resources/glade/table.glade:23
 msgid "From"
@@ -762,7 +762,7 @@ msgstr "<b>Asalto</b>"
 
 #: ../../resources/glade/table.glade:216
 msgid "A fencer"
-msgstr "Tirador A"
+msgstr "Esgrimista A"
 
 #: ../../resources/glade/table.glade:223
 msgid "B fencer"
@@ -1530,7 +1530,7 @@ msgstr ""
 
 #: ../../sources/main.cpp:219 ../../sources/main.cpp:227
 msgid "Not qualified"
-msgstr ""
+msgstr "No calificado"
 
 #: ../../sources/main.cpp:220 ../../sources/main.cpp:228
 msgid "Withdrawal"
@@ -1546,11 +1546,11 @@ msgstr ""
 
 #: ../../sources/main.cpp:224
 msgid "status"
-msgstr ""
+msgstr "estado"
 
 #: ../../sources/pool.cpp:506
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: ../../resources/glade/checkin.glade:80
 #: ../../resources/glade/checkin.glade:118
@@ -1559,7 +1559,7 @@ msgstr ""
 
 #: ../../resources/glade/general_classification.glade:40
 msgid "Export to CSV"
-msgstr ""
+msgstr "Exportar a CSV"
 
 msgid "User manual"
 msgstr ""
