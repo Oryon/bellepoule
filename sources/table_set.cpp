@@ -28,7 +28,7 @@
 #include "table_set.hpp"
 
 const gdouble TableSet::_score_rect_size = 30.0;
-const gdouble TableSet::_level_spacing   = 10.0;
+const gdouble TableSet::_table_spacing   = 10.0;
 
 typedef enum
 {
@@ -65,17 +65,14 @@ TableSet::TableSet (Stage     *supervisor,
   _control_container = control_container;
   _main_table        = NULL;
   _tree_root         = NULL;
-  _level_status      = NULL;
+  _tables            = NULL;
   _match_to_print    = NULL;
-  _nb_levels         = 0;
+  _nb_tables         = 0;
   _locked            = FALSE;
   _id                = id;
-  _defeated_table    = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
-
-  g_datalist_init (&_match_list);
 
   SetDataOwner (supervisor_module);
   _score_collector = NULL;
@@ -85,15 +82,15 @@ TableSet::TableSet (Stage     *supervisor,
   {
     GtkWidget *content_area;
 
-    _level_print_dialog = gtk_message_dialog_new_with_markup (NULL,
+    _table_print_dialog = gtk_message_dialog_new_with_markup (NULL,
                                                               GTK_DIALOG_DESTROY_WITH_PARENT,
                                                               GTK_MESSAGE_QUESTION,
                                                               GTK_BUTTONS_OK_CANCEL,
                                                               gettext ("<b><big>Which score sheets of the selected table do you want to print?</big></b>"));
 
-    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_level_print_dialog));
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_table_print_dialog));
 
-    gtk_widget_reparent (_glade->GetWidget ("print_level_dialog_vbox"),
+    gtk_widget_reparent (_glade->GetWidget ("print_table_dialog_vbox"),
                          content_area);
   }
 
@@ -172,15 +169,9 @@ TableSet::~TableSet ()
   }
 
   gtk_widget_destroy (_print_dialog);
-  gtk_widget_destroy (_level_print_dialog);
-
-  if (_match_list)
-  {
-    g_datalist_clear (&_match_list);
-  }
+  gtk_widget_destroy (_table_print_dialog);
 
   g_free (_id);
-  g_free (_defeated_table);
 
   g_object_unref (_from_widget);
 }
@@ -240,60 +231,61 @@ GooCanvasItem *TableSet::GetQuickScore (const gchar *container)
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::RefreshLevelStatus ()
+void TableSet::RefreshTableStatus ()
 {
-  for (guint i = 0; i < _nb_levels; i ++)
+  for (guint i = 0; i < _nb_tables; i ++)
   {
-    _level_status[i]._is_over   = TRUE;
-    _level_status[i]._has_error = FALSE;
-    if (_level_status[i]._status_item)
+    _tables[i]->_is_over   = TRUE;
+    _tables[i]->_has_error = FALSE;
+    if (_tables[i]->_status_item)
     {
-      WipeItem (_level_status[i]._status_item);
-      _level_status[i]._status_item = NULL;
+      WipeItem (_tables[i]->_status_item);
+      _tables[i]->_status_item = NULL;
     }
   }
 
   g_node_traverse (_tree_root,
                    G_POST_ORDER,
                    G_TRAVERSE_ALL,
-                   _nb_level_to_display - 1,
-                   (GNodeTraverseFunc) UpdateLevelStatus,
+                   -1,
+                   (GNodeTraverseFunc) UpdateTableStatus,
                    this);
 
+  for (guint t = 0; t < _nb_tables; t++)
   {
-    guint nb_missing_level = _nb_levels - _nb_level_to_display;
+    GtkTreeIter  iter;
+    gchar       *icon;
+    Table       *table = _tables[t];
 
-    for (guint i = nb_missing_level; i < _nb_levels - 1; i ++)
+    if (table->_has_error)
     {
-      GtkTreeIter  iter;
-      gchar       *icon;
-
-      if (_level_status[i]._has_error)
-      {
-        icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
-      }
-      else if (_level_status[i]._is_over == TRUE)
-      {
-        icon = g_strdup (GTK_STOCK_APPLY);
-      }
-      else
-      {
-        icon = g_strdup (GTK_STOCK_EXECUTE);
-      }
-
-      _level_status[i]._status_item = Canvas::PutStockIconInTable (_level_status[i-nb_missing_level]._level_header,
-                                                                   icon,
-                                                                   0, 0);
-
-      gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_from_table_liststore),
-                                     &iter,
-                                     NULL,
-                                     i-nb_missing_level);
-      gtk_list_store_set (_from_table_liststore, &iter,
-                          FROM_STATUS_COLUMN, icon,
-                          -1);
-      g_free (icon);
+      icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
     }
+    else if (table->_is_over == TRUE)
+    {
+      icon = g_strdup (GTK_STOCK_APPLY);
+    }
+    else
+    {
+      icon = g_strdup (GTK_STOCK_EXECUTE);
+    }
+
+    if (   table->IsDisplayed ()
+        && (table->GetSize () > 1))
+    {
+      table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
+                                                         icon,
+                                                         0, 0);
+    }
+
+    gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_from_table_liststore),
+                                   &iter,
+                                   NULL,
+                                   _nb_tables-t-1);
+    gtk_list_store_set (_from_table_liststore, &iter,
+                        FROM_STATUS_COLUMN, icon,
+                        -1);
+    g_free (icon);
   }
 
   if (_status_cbk)
@@ -324,63 +316,65 @@ void TableSet::Display ()
 
   {
     _main_table = goo_canvas_table_new (GetRootItem (),
-                                        "column-spacing", _level_spacing,
+                                        "column-spacing", _table_spacing,
                                         NULL);
 
     // Header
-    for (guint l = _nb_level_to_display; l > 0; l--)
+    for (guint t = 0; t < _nb_tables; t++)
     {
-      guint level;
+      Table *table = _tables[t];
 
-      _level_status[l-1]._level_header = goo_canvas_table_new (_main_table,
-                                                               NULL);
-
-      level = l + (_nb_levels - _nb_level_to_display);
+      if (table->IsDisplayed ())
       {
-        GooCanvasItem *text_item;
-        gchar         *text  = GetLevelImage (level);
+        table->_header_item = goo_canvas_table_new (_main_table,
+                                                    NULL);
 
-        text_item = Canvas::PutTextInTable (_level_status[l-1]._level_header,
-                                            text,
-                                            0,
-                                            1);
-        g_object_set (G_OBJECT (text_item),
-                      "font", "Sans bold 18px",
-                      NULL);
-        g_free (text);
+        {
+          GooCanvasItem *text_item;
+          gchar         *text  = table->GetImage ();
+
+          text_item = Canvas::PutTextInTable (table->_header_item,
+                                              text,
+                                              0,
+                                              1);
+          g_object_set (G_OBJECT (text_item),
+                        "font", "Sans bold 18px",
+                        NULL);
+          g_free (text);
+        }
+
+        if (table->GetSize () > 1)
+        {
+          GooCanvasItem *print_item;
+
+          print_item = Canvas::PutStockIconInTable (table->_header_item,
+                                                    GTK_STOCK_PRINT,
+                                                    1,
+                                                    1);
+          Canvas::SetTableItemAttribute (print_item, "x-align", 0.5);
+
+          g_object_set_data (G_OBJECT (print_item), "table_to_print", table);
+          g_signal_connect (print_item, "button-release-event",
+                            G_CALLBACK (OnPrintTable), this);
+        }
+
+        Canvas::PutInTable (_main_table,
+                            table->_header_item,
+                            0,
+                            table->GetColumn ());
+
+        Canvas::SetTableItemAttribute (table->_header_item, "x-align", 0.5);
       }
-
-      if (level < _nb_levels)
-      {
-        GooCanvasItem *print_item;
-
-        print_item = Canvas::PutStockIconInTable (_level_status[l-1]._level_header,
-                                                  GTK_STOCK_PRINT,
-                                                  1,
-                                                  1);
-        Canvas::SetTableItemAttribute (print_item, "x-align", 0.5);
-
-        g_object_set_data (G_OBJECT (print_item), "level_to_print", (void *) level);
-        g_signal_connect (print_item, "button-release-event",
-                          G_CALLBACK (OnPrintLevel), this);
-      }
-
-      Canvas::PutInTable (_main_table,
-                          _level_status[l-1]._level_header,
-                          0,
-                          l);
-
-      Canvas::SetTableItemAttribute (_level_status[l-1]._level_header, "x-align", 0.5);
     }
 
     g_node_traverse (_tree_root,
                      G_POST_ORDER,
                      G_TRAVERSE_ALL,
-                     _nb_level_to_display,
+                     -1,
                      (GNodeTraverseFunc) FillInNode,
                      this);
 
-    RefreshLevelStatus ();
+    RefreshTableStatus ();
     DrawAllConnectors ();
   }
 }
@@ -406,35 +400,44 @@ void TableSet::Garnish ()
 }
 
 // --------------------------------------------------------------------------------
+Table *TableSet::GetTable (guint size)
+{
+  for (guint t = 0; t < _nb_tables; t++)
+  {
+    if (_tables[t]->GetSize () == size)
+    {
+      return _tables[t];
+    }
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::Load (xmlNode *xml_node)
 {
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
-    static gchar *level;
+    static Table *table = NULL;
 
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "Tableau") == 0)
+      if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
+      {
+      }
+      else if (strcmp ((char *) n->name, "Tableau") == 0)
       {
         gchar *prop;
 
-        level = (gchar *) xmlGetProp (n, BAD_CAST "Taille");
-
-        prop = (gchar *) xmlGetProp (n, BAD_CAST "DestinationDesElimines");
-        _defeated_table = g_strdup (prop);
-      }
-      else if (strcmp ((char *) n->name, "Match") == 0)
-      {
-        gchar *attr   = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-        gchar *number = g_strdup_printf ("M%s.%s", level, attr);
-        Match *match  = (Match *) g_datalist_get_data (&_match_list,
-                                                       number);
-        g_free (number);
-
-        if (match)
+        prop = (gchar *) xmlGetProp (n, BAD_CAST "Taille");
+        if (prop)
         {
-          LoadMatch (n,
-                     match);
+          table = GetTable (atoi (prop));
+
+          if (table)
+          {
+            table->Load (n);
+          }
         }
       }
       else
@@ -457,55 +460,20 @@ void TableSet::Save (xmlTextWriter *xml_writer)
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "Titre",
                                      "%s", "");
-  if (_nb_levels)
+  if (_nb_tables)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "NbDeTableaux",
-                                       "%d", _nb_levels-1);
+                                       "%d", _nb_tables-1);
   }
 
   if (_tree_root)
   {
-    for (guint i = 1; i < _nb_levels; i++)
+    for (guint t = _nb_tables-1; t > 0; t--)
     {
-      guint size;
+      Table *table = _tables[t];
 
-      size = 1 << (_nb_levels - i);
-
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "Tableau");
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "ID",
-                                         "A%d", size);
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Titre",
-                                         "%s", GetLevelImage (i));
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Taille",
-                                         "%d", size);
-      if (_defeated_table)
-      {
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "DestinationDesElimines",
-                                           "%s", _defeated_table);
-      }
-
-      for (guint m = 0; m < size; m++)
-      {
-        gchar *number;
-        Match *match;
-
-        number = g_strdup_printf ("M%d.%d", size, m);
-        match  = (Match *) g_datalist_get_data (&_match_list,
-                                                number);
-        if (match)
-        {
-          match->Save (xml_writer);
-        }
-        g_free (number);
-      }
-
-      xmlTextWriterEndElement (xml_writer);
+      table->Save (xml_writer);
     }
   }
   xmlTextWriterEndElement (xml_writer);
@@ -538,7 +506,7 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
                 table_set);
   }
 
-  table_set->RefreshLevelStatus ();
+  table_set->RefreshTableStatus ();
   table_set->DrawAllConnectors ();
 }
 
@@ -562,8 +530,12 @@ void TableSet::DeleteTree ()
     _tree_root = NULL;
   }
 
-  g_free (_level_status);
-  _level_status = NULL;
+  for (guint i = 0; i < _nb_tables; i++)
+  {
+    _tables[i]->Release ();
+  }
+  g_free (_tables);
+  _tables = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -579,15 +551,41 @@ void TableSet::CreateTree ()
     bit_cursor = bit_cursor << i;
     if (bit_cursor >= nb_players)
     {
-      _nb_levels = i++;
+      _nb_tables = i++;
       break;
     }
   }
 
-  _nb_levels++;
-  _nb_level_to_display = _nb_levels;
+  _nb_tables++;
 
-  _level_status = (LevelStatus *) g_malloc0 (_nb_levels * sizeof (LevelStatus));
+  _tables = (Table **) g_malloc (_nb_tables * sizeof (Table *));
+  for (guint t = 0; t < _nb_tables; t++)
+  {
+    // Create the tables
+    {
+      _tables[t] = new Table (this,
+                              1 << t,
+                              _nb_tables - t-1);
+
+      if (t > 0)
+      {
+        _tables[t]->SetRightTable (_tables[t-1]);
+
+        // Add an entry for each table in the the quick search
+        {
+          GtkTreeIter table_iter;
+
+          gtk_tree_store_prepend (_quick_search_treestore,
+                                  &table_iter,
+                                  NULL);
+          gtk_tree_store_set (_quick_search_treestore, &table_iter,
+                              QUICK_MATCH_NAME_COLUMN, _tables[t]->GetImage (),
+                              QUICK_MATCH_VISIBILITY_COLUMN, 1,
+                              -1);
+        }
+      }
+    }
+  }
 
   AddFork (NULL);
 
@@ -597,15 +595,15 @@ void TableSet::CreateTree ()
                                           (Object *) this);
     gtk_list_store_clear (_from_table_liststore);
 
-    for (guint i = 0; i < _nb_levels - 1; i++)
+    for (guint t = 1; t < _nb_tables; t++)
     {
+      Table        *table = _tables[t];
+      gchar        *text = table->GetImage ();
       GtkTreeIter   iter;
-      gchar        *text;
 
-      gtk_list_store_append (_from_table_liststore,
-                             &iter);
+      gtk_list_store_prepend (_from_table_liststore,
+                              &iter);
 
-      text = GetLevelImage (i+1);
       gtk_list_store_set (_from_table_liststore, &iter,
                           FROM_STATUS_COLUMN, GTK_STOCK_EXECUTE,
                           FROM_NAME_COLUMN,   text,
@@ -628,7 +626,7 @@ void TableSet::DrawAllConnectors ()
   g_node_traverse (_tree_root,
                    G_POST_ORDER,
                    G_TRAVERSE_ALL,
-                   _nb_level_to_display,
+                   -1,
                    (GNodeTraverseFunc) DrawConnector,
                    this);
 }
@@ -666,12 +664,13 @@ gboolean TableSet::DeleteCanvasTable (GNode    *node,
 }
 
 // --------------------------------------------------------------------------------
-gboolean TableSet::UpdateLevelStatus (GNode    *node,
+gboolean TableSet::UpdateTableStatus (GNode    *node,
                                       TableSet *table_set)
 {
-  NodeData *data = (NodeData *) node->data;
+  NodeData *data       = (NodeData *) node->data;
+  Table    *left_table = data->_table->GetLeftTable ();
 
-  if (data->_match)
+  if (data->_match && left_table)
   {
     Player *winner = data->_match->GetWinner ();
 
@@ -686,10 +685,10 @@ gboolean TableSet::UpdateLevelStatus (GNode    *node,
              || (score_B->IsValid () == FALSE)
              || (score_A->IsConsistentWith (score_B) == FALSE))
       {
-        table_set->_level_status[data->_level-2]._has_error = TRUE;
+        left_table->_has_error = TRUE;
       }
 
-      table_set->_level_status[data->_level-2]._is_over = FALSE;
+      left_table->_is_over = FALSE;
     }
   }
 
@@ -702,7 +701,7 @@ gboolean TableSet::DrawConnector (GNode    *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  if (data->_match)
+  if (data->_table->IsDisplayed () && data->_match)
   {
     Player          *winner = data->_match->GetWinner ();
     GNode           *parent = node->parent;
@@ -719,7 +718,7 @@ gboolean TableSet::DrawConnector (GNode    *node,
       data->_connector = goo_canvas_polyline_new (table_set->GetRootItem (),
                                                   FALSE,
                                                   2,
-                                                  bounds.x1 - _level_spacing/2, bounds.y2,
+                                                  bounds.x1 - _table_spacing/2, bounds.y2,
                                                   bounds.x2, bounds.y2,
                                                   "line-width", 2.0,
                                                   NULL);
@@ -736,9 +735,9 @@ gboolean TableSet::DrawConnector (GNode    *node,
       data->_connector = goo_canvas_polyline_new (table_set->GetRootItem (),
                                                   FALSE,
                                                   3,
-                                                  bounds.x1 - _level_spacing/2, bounds.y2,
-                                                  parent_bounds.x1 - _level_spacing/2, bounds.y2,
-                                                  parent_bounds.x1 - _level_spacing/2, parent_bounds.y2,
+                                                  bounds.x1 - _table_spacing/2, bounds.y2,
+                                                  parent_bounds.x1 - _table_spacing/2, bounds.y2,
+                                                  parent_bounds.x1 - _table_spacing/2, parent_bounds.y2,
                                                   "line-width", 2.0,
                                                   NULL);
     }
@@ -751,11 +750,10 @@ gboolean TableSet::DrawConnector (GNode    *node,
 gboolean TableSet::FillInNode (GNode    *node,
                                TableSet *table_set)
 {
-  GNode    *parent           = node->parent;
-  NodeData *data             = (NodeData *) node->data;
-  guint     nb_missing_level = table_set->_nb_levels - table_set->_nb_level_to_display;
+  GNode    *parent = node->parent;
+  NodeData *data   = (NodeData *) node->data;
 
-  if (data->_match && (data->_level > nb_missing_level))
+  if (data->_match && data->_table->IsDisplayed ())
   {
     Player *winner = data->_match->GetWinner ();
 
@@ -764,34 +762,18 @@ gboolean TableSet::FillInNode (GNode    *node,
 
     if (data->_canvas_table == NULL)
     {
-      guint row;
+      guint row = data->_table->GetRow (data->_table_index) + 1;
 
       data->_canvas_table = goo_canvas_table_new (table_set->_main_table,
-                                                  "column-spacing", table_set->_level_spacing,
+                                                  "column-spacing", table_set->_table_spacing,
                                                   NULL);
-      //Canvas::SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
       Canvas::SetTableItemAttribute (data->_canvas_table, "x-fill", 1U);
+      //Canvas::SetTableItemAttribute (data->_canvas_table, "x-expand", 1U);
 
-      if (parent == NULL)
-      {
-        row = 1 << (table_set->_nb_level_to_display - 1);
-      }
-      else
-      {
-        if (g_node_child_position (parent,
-                                   node) == 0)
-        {
-          row = data->_row >> nb_missing_level;
-        }
-        else
-        {
-          row = data->_row >> nb_missing_level;
-        }
-      }
       Canvas::PutInTable (table_set->_main_table,
                           data->_canvas_table,
                           row,
-                          data->_level - nb_missing_level);
+                          data->_table->GetColumn ());
     }
 
     {
@@ -848,9 +830,9 @@ gboolean TableSet::FillInNode (GNode    *node,
         NodeData      *parent_data = (NodeData *) parent->data;
         guint          position    = g_node_child_position (parent, node);
 
-        table_set->SetPlayer (parent_data->_match,
-                              winner,
-                              position);
+        table_set->SetPlayerToMatch (parent_data->_match,
+                                     winner,
+                                     position);
 
         if (   (parent_data->_match->GetWinner () == NULL)
                || (   parent_data->_match->GetPlayerA ()
@@ -1025,9 +1007,10 @@ gboolean TableSet::DeleteNode (GNode    *node,
 // --------------------------------------------------------------------------------
 void TableSet::AddFork (GNode *to)
 {
-  NodeData *to_data = NULL;
-  NodeData *data = new NodeData;
   GNode    *node;
+  NodeData *to_data    = NULL;
+  NodeData *data       = new NodeData;
+  Table    *left_table;
 
   if (to)
   {
@@ -1037,22 +1020,22 @@ void TableSet::AddFork (GNode *to)
   if (to == NULL)
   {
     data->_expected_winner_rank = 1;
-    data->_level                = _nb_levels;
-    data->_row                  = 1 << (_nb_levels - 1);
+    data->_table                = _tables[0];
+    data->_table_index          = 0;
     node = g_node_new (data);
     _tree_root = node;
   }
   else
   {
-    data->_level = to_data->_level - 1;
+    data->_table = to_data->_table->GetLeftTable ();
 
     if (g_node_n_children (to) == 0)
     {
-      data->_row = to_data->_row - (1 << (data->_level - 1));
+      data->_table_index = to_data->_table_index*2;
     }
     else
     {
-      data->_row = to_data->_row + (1 << (data->_level - 1));
+      data->_table_index = to_data->_table_index*2 + 1;
     }
 
     if (g_node_n_children (to) != (to_data->_expected_winner_rank % 2))
@@ -1061,8 +1044,7 @@ void TableSet::AddFork (GNode *to)
     }
     else
     {
-      data->_expected_winner_rank =    (1 << (_nb_levels - data->_level)) + 1
-        - to_data->_expected_winner_rank;
+      data->_expected_winner_rank = (data->_table->GetSize () + 1) - to_data->_expected_winner_rank;
     }
     node = g_node_append_data (to, data);
   }
@@ -1074,61 +1056,55 @@ void TableSet::AddFork (GNode *to)
   data->_match = new Match (_max_score);
   data->_match->SetData (this, "node", node);
 
-  if ((to_data == NULL) || (data->_level > 1))
+  left_table = data->_table->GetLeftTable ();
+  if (left_table)
   {
+    GtkTreeIter table_iter;
+
+    // Get the table entry in the quick search
     {
-      GtkTreeIter  table_iter;
-      GtkTreePath *path = gtk_tree_path_new_from_indices (_nb_levels - data->_level,
+      GtkTreePath *path = gtk_tree_path_new_from_indices (data->_table->GetColumn () - 1,
                                                           -1);
 
-      data->_match->SetData (this,
-                             "level", (void *) (data->_level-1));
-
-      if (gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
-                                   &table_iter,
-                                   path) == FALSE)
-      {
-        gtk_tree_store_append (_quick_search_treestore,
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
                                &table_iter,
-                               NULL);
-        gtk_tree_store_set (_quick_search_treestore, &table_iter,
-                            QUICK_MATCH_NAME_COLUMN, GetLevelImage (data->_level - 1),
-                            QUICK_MATCH_VISIBILITY_COLUMN, 1,
-                            -1);
-      }
+                               path);
 
       gtk_tree_path_free (path);
+    }
+
+    // Add a sub entry for the match in the quick search
+    {
+      GtkTreeIter  iter;
+      gint        *indices;
+      GtkTreePath *path;
+
+      gtk_tree_store_append (_quick_search_treestore,
+                             &iter,
+                             &table_iter);
+
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (_quick_search_treestore),
+                                      &iter);
+      indices = gtk_tree_path_get_indices (path);
+
+      data->_match->SetData (this,
+                             "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
 
       {
-        GtkTreeIter  iter;
-        gint        *indices;
+        gchar *number = g_strdup_printf ("M%d.%d", data->_table->GetSize (), indices[1]+1);
 
-        gtk_tree_store_append (_quick_search_treestore,
-                               &iter,
-                               &table_iter);
-
-        path = gtk_tree_model_get_path (GTK_TREE_MODEL (_quick_search_treestore),
-                                        &iter);
-        indices = gtk_tree_path_get_indices (path);
-
+        data->_match->SetNumber (indices[1]+1);
         data->_match->SetData (this,
-                               "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
-
-        {
-          gchar *number = g_strdup_printf ("M%d.%d", 1 << (_nb_levels - data->_level + 1), indices[1]+1);
-
-          data->_match->SetNumber (indices[1]+1);
-          data->_match->SetData (this,
-                                 "number",
-                                 number,
-                                 g_free);
-
-          g_datalist_set_data (&_match_list,
+                               "number",
                                number,
-                               data->_match);
-        }
+                               g_free);
+
+        left_table->ManageMatch (data->_match);
       }
     }
+
+    data->_match->SetData (this,
+                           "table", data->_table->GetLeftTable ());
 
     AddFork (node);
     AddFork (node);
@@ -1145,11 +1121,10 @@ void TableSet::AddFork (GNode *to)
     }
     else
     {
+      data->_table->DropMatch (data->_match);
       data->_match->Release ();
       data->_match = NULL;
 
-      g_datalist_remove_data (&_match_list,
-                              (gchar *) to_data->_match->GetPtrData (this, "number"));
       to_data->_match->RemoveData (this,
                                    "number");
     }
@@ -1163,101 +1138,6 @@ void TableSet::AddFork (GNode *to)
     {
       to_data->_match->SetPlayerA (NULL);
       to_data->_match->SetPlayerB (player);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::LoadMatch (xmlNode *xml_node,
-                          Match   *match)
-{
-  for (xmlNode *n = xml_node; n != NULL; n = n->next)
-  {
-    if (n->type == XML_ELEMENT_NODE)
-    {
-      static xmlNode *A = NULL;
-      static xmlNode *B = NULL;
-
-      if (strcmp ((char *) n->name, "Match") == 0)
-      {
-        gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-
-        A = NULL;
-        B = NULL;
-        if ((attr == NULL) || (atoi (attr) != match->GetNumber ()))
-        {
-          return;
-        }
-      }
-      else if (strcmp ((char *) n->name, "Arbitre") == 0)
-      {
-      }
-      else if (strcmp ((char *) n->name, "Tireur") == 0)
-      {
-        if (A == NULL)
-        {
-          A = n;
-        }
-        else
-        {
-          Player *dropped = NULL;
-
-          B = n;
-
-          LoadScore (A, match, 0, &dropped);
-          LoadScore (B, match, 1, &dropped);
-
-          if (dropped)
-          {
-            match->DropPlayer (dropped);
-          }
-
-          A = NULL;
-          B = NULL;
-          return;
-        }
-      }
-      LoadMatch (n->children,
-                 match);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::LoadScore (xmlNode *xml_node,
-                          Match   *match,
-                          guint    player_index,
-                          Player  **dropped)
-{
-  gboolean  is_the_best = FALSE;
-  gchar    *attr        = (gchar *) xmlGetProp (xml_node, BAD_CAST "REF");
-  Player   *player      = _supervisor->GetPlayerFromRef (atoi (attr));
-
-  SetPlayer (match,
-             player,
-             player_index);
-
-  attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Statut");
-  if (attr && attr[0] == 'V')
-  {
-    is_the_best = TRUE;
-  }
-
-  attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Score");
-  if (attr)
-  {
-    match->SetScore (player, atoi (attr), is_the_best);
-
-    if (is_the_best == FALSE)
-    {
-      Player::AttributeId  attr_id ("status", GetDataOwner ());
-      Attribute           *attr   = player->GetAttribute (&attr_id);
-      gchar               *status = attr->GetStrValue ();
-
-      if (status && ((*status == 'E') || (*status == 'A')))
-      {
-        *dropped = player;
-      }
     }
   }
 }
@@ -1289,8 +1169,8 @@ void TableSet::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::LookForMatchToPrint (guint    level_to_print,
-                                    gboolean all_sheet)
+void TableSet::LookForMatchToPrint (Table    *table_to_print,
+                                    gboolean  all_sheet)
 {
   if (_match_to_print)
   {
@@ -1321,9 +1201,9 @@ void TableSet::LookForMatchToPrint (guint    level_to_print,
                             -1);
         if (match)
         {
-          guint level = match->GetUIntData (this, "level");
+          Table *table = (Table *) match->GetPtrData (this, "table");
 
-          if ((level_to_print == 0) || (level_to_print == level))
+          if ((table_to_print == NULL) || (table_to_print == table))
           {
             gboolean already_printed = match->GetUIntData (this, "printed");
 
@@ -1381,7 +1261,7 @@ gboolean TableSet::AddToClassification (GNode    *node,
     {
       table_set->_result_list = g_slist_append (table_set->_result_list,
                                                 winner);
-      winner->SetData (table_set, "level", (void *) data->_level);
+      winner->SetData (table_set, "table", (void *) data->_table);
     }
   }
 
@@ -1397,7 +1277,19 @@ void TableSet::OnAttrListUpdated ()
 // --------------------------------------------------------------------------------
 void TableSet::OnFromTableComboboxChanged ()
 {
-  _nb_level_to_display = _nb_levels - gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")));
+  guint nb_table_to_display = _nb_tables - gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")));
+
+  for (guint t = 0; t < _nb_tables; t++)
+  {
+    if (t < nb_table_to_display)
+    {
+      _tables[t]->Show (nb_table_to_display - t);
+    }
+    else
+    {
+      _tables[t]->Hide ();
+    }
+  }
 
   Display ();
 }
@@ -1408,8 +1300,8 @@ gboolean TableSet::Stuff (GNode    *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  if (   (data->_level == table_set->_level_filter)
-         && (data->_match))
+  if (   (data->_table == table_set->_tables[table_set->_table_to_stuff])
+      && (data->_match))
   {
     Player *A = data->_match->GetPlayerA ();
     Player *B = data->_match->GetPlayerB ();
@@ -1440,9 +1332,9 @@ gboolean TableSet::Stuff (GNode    *node,
         {
           NodeData *parent_data = (NodeData *) parent->data;
 
-          table_set->SetPlayer (parent_data->_match,
-                                winner,
-                                g_node_child_position (parent, node));
+          table_set->SetPlayerToMatch (parent_data->_match,
+                                       winner,
+                                       g_node_child_position (parent, node));
         }
       }
     }
@@ -1452,9 +1344,15 @@ gboolean TableSet::Stuff (GNode    *node,
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::SetPlayer (Match  *to_match,
-                          Player *player,
-                          guint   position)
+Player *TableSet::GetPlayerFromRef (guint ref)
+{
+  return _supervisor->GetPlayerFromRef (ref);
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::SetPlayerToMatch (Match  *to_match,
+                                 Player *player,
+                                 guint   position)
 {
   if (position == 0)
   {
@@ -1473,9 +1371,9 @@ void TableSet::SetPlayer (Match  *to_match,
                                                  "quick_search_path");
 
     if (   path
-           && gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
-                                       &iter,
-                                       path))
+        && gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
+                                    &iter,
+                                    path))
     {
       Player *A      = to_match->GetPlayerA ();
       Player *B      = to_match->GetPlayerB ();
@@ -1515,12 +1413,12 @@ void TableSet::SetPlayer (Match  *to_match,
 // --------------------------------------------------------------------------------
 void TableSet::OnStuffClicked ()
 {
-  for (_level_filter = 1; _level_filter <= _nb_levels; _level_filter++)
+  for (_table_to_stuff = 1; _table_to_stuff <= _nb_tables; _table_to_stuff++)
   {
     g_node_traverse (_tree_root,
                      G_POST_ORDER,
                      G_TRAVERSE_ALL,
-                     _nb_levels - _level_filter + 1,
+                     _nb_tables - _table_to_stuff + 1,
                      (GNodeTraverseFunc) Stuff,
                      this);
   }
@@ -1657,12 +1555,12 @@ gint TableSet::ComparePlayer (Player   *A,
   }
 
   {
-    gint level_A = A->GetIntData (table_set, "level");
-    gint level_B = B->GetIntData (table_set, "level");
+    gint table_A = A->GetIntData (table_set, "table");
+    gint table_B = B->GetIntData (table_set, "table");
 
-    if (level_A != level_B)
+    if (table_A != table_B)
     {
-      return level_B - level_A;
+      return table_B - table_A;
     }
   }
 
@@ -1737,31 +1635,6 @@ void TableSet::OnSearchMatch ()
 
   _quick_score_collector->Wipe (_quick_score_A);
   _quick_score_collector->Wipe (_quick_score_B);
-}
-
-// --------------------------------------------------------------------------------
-gchar *TableSet::GetLevelImage (guint level)
-{
-  gchar *image;
-
-  if (level == _nb_levels)
-  {
-    image = g_strdup_printf (gettext ("Winner"));
-  }
-  else if (level == _nb_levels - 1)
-  {
-    image = g_strdup_printf (gettext ("Final"));
-  }
-  else if (level == _nb_levels - 2)
-  {
-    image = g_strdup_printf (gettext ("Semi-final"));
-  }
-  else
-  {
-    image = g_strdup_printf (gettext ("Table of %d"), 1 << (_nb_levels - level));
-  }
-
-  return image;
 }
 
 // --------------------------------------------------------------------------------
@@ -2190,7 +2063,7 @@ void TableSet::OnPrint ()
       GtkWidget *w         = _glade->GetWidget ("all_radiobutton");
       gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
 
-      LookForMatchToPrint (0,
+      LookForMatchToPrint (NULL,
                            all_sheet);
       _print_full_table = FALSE;
       Print (gettext ("Score sheet"));
@@ -2201,30 +2074,30 @@ void TableSet::OnPrint ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean TableSet::OnPrintLevel (GooCanvasItem  *item,
+gboolean TableSet::OnPrintTable (GooCanvasItem  *item,
                                  GooCanvasItem  *target_item,
                                  GdkEventButton *event,
                                  TableSet       *table_set)
 {
-  guint level_to_print = (guint) g_object_get_data (G_OBJECT (item), "level_to_print");
-  gchar *title         = g_strdup_printf (gettext ("%s: score sheets printing"), table_set->GetLevelImage (level_to_print));
+  Table *table_to_print = (Table *) g_object_get_data (G_OBJECT (item), "table_to_print");
+  gchar *title          = g_strdup_printf (gettext ("%s: score sheets printing"), table_to_print->GetImage ());
 
-  gtk_window_set_title (GTK_WINDOW (table_set->_level_print_dialog),
+  gtk_window_set_title (GTK_WINDOW (table_set->_table_print_dialog),
                         title);
   g_free (title);
 
-  if (gtk_dialog_run (GTK_DIALOG (table_set->_level_print_dialog)) == GTK_RESPONSE_OK)
+  if (gtk_dialog_run (GTK_DIALOG (table_set->_table_print_dialog)) == GTK_RESPONSE_OK)
   {
-    GtkWidget *w         = table_set->_glade->GetWidget ("level_pending_radiobutton");
+    GtkWidget *w         = table_set->_glade->GetWidget ("table_pending_radiobutton");
     gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
 
-    table_set->LookForMatchToPrint (level_to_print,
+    table_set->LookForMatchToPrint (table_to_print,
                                     all_sheet);
     table_set->_print_full_table = FALSE;
     table_set->Print (gettext ("Score sheet"));
   }
 
-  gtk_widget_hide (table_set->_level_print_dialog);
+  gtk_widget_hide (table_set->_table_print_dialog);
 
   return TRUE;
 }
@@ -2292,4 +2165,22 @@ extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *w
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
   t->OnMatchSheetToggled (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
+                                                                Object    *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnFromTableComboboxChanged ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *widget,
+                                                                  Object    *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnSearchMatch ();
 }

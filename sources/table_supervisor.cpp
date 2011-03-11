@@ -304,7 +304,7 @@ void TableSupervisor::Load (xmlNode *xml_node)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) xml_node->name, _xml_class_name) == 0)
+      if (strcmp ((char *) n->name, _xml_class_name) == 0)
       {
       }
       else if (strcmp ((char *) n->name, "Tireur") == 0)
@@ -320,7 +320,7 @@ void TableSupervisor::Load (xmlNode *xml_node)
         table_set = GetTableSet (prop);
         if (table_set)
         {
-          table_set->Load (xml_node);
+          table_set->Load (n);
         }
       }
       else
@@ -518,12 +518,6 @@ void TableSupervisor::ApplyConfig ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSupervisor::OnFromTableComboboxChanged ()
-{
-  Display ();
-}
-
-// --------------------------------------------------------------------------------
 void TableSupervisor::OnStuffClicked ()
 {
   //toto->OnStuffClicked ();
@@ -632,30 +626,12 @@ void TableSupervisor::OnPrint ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSupervisor::OnSearchMatch ()
-{
-  if (_displayed_table_set)
-  {
-    _displayed_table_set->OnSearchMatch ();
-  }
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object    *owner)
 {
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
   t->OnFilterClicked ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
-                                                                Object    *owner)
-{
-  TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
-
-  t->OnFromTableComboboxChanged ();
 }
 
 // --------------------------------------------------------------------------------
@@ -683,15 +659,6 @@ extern "C" G_MODULE_EXPORT void on_input_toolbutton_toggled (GtkWidget *widget,
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
   t->OnInputToggled (widget);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *widget,
-                                                                  Object    *owner)
-{
-  TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
-
-  t->OnSearchMatch ();
 }
 
 // --------------------------------------------------------------------------------

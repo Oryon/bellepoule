@@ -45,7 +45,7 @@ class Stage : public virtual Object
 
     typedef enum
     {
-      EDITABLE  = 0x0001
+      EDITABLE = 0x0001
     } Rights;
 
     typedef enum

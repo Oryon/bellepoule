@@ -35,7 +35,6 @@ class TableSupervisor : public virtual Stage, public Module
 
     TableSupervisor (StageClass *stage_class);
 
-    void OnFromTableComboboxChanged ();
     void OnStuffClicked ();
     void OnInputToggled (GtkWidget *widget);
     void OnDisplayToggled (GtkWidget *widget);
@@ -43,7 +42,6 @@ class TableSupervisor : public virtual Stage, public Module
     void OnPrint ();
     void OnZoom (gdouble value);
     void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
-    void OnSearchMatch ();
 
   public:
     static const gchar *_class_name;

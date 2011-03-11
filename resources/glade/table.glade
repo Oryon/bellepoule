@@ -145,12 +145,12 @@
       </object>
     </child>
   </object>
-  <object class="GtkDialog" id="print_table_level_dialog">
+  <object class="GtkDialog" id="print_table_table_dialog">
     <property name="border_width">5</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="print_level_dialog_vbox">
+      <object class="GtkVBox" id="print_table_dialog_vbox">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
@@ -165,7 +165,7 @@
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkRadioButton" id="level_all_radiobutton">
+                  <object class="GtkRadioButton" id="table_all_radiobutton">
                     <property name="label" translatable="yes">The pending score sheets</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -177,7 +177,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="level_pending_radiobutton">
+                  <object class="GtkRadioButton" id="table_pending_radiobutton">
                     <property name="label" translatable="yes">All the score sheets</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -378,9 +378,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkTreeModelFilter" id="match_treemodelfilter">
-    <property name="child_model">match_treestore</property>
-  </object>
   <object class="GtkWindow" id="window2">
     <child>
       <object class="GtkVBox" id="vbox3">
@@ -389,6 +386,7 @@
         <child>
           <object class="GtkComboBox" id="from_table_combobox">
             <property name="visible">True</property>
+            <property name="model">from_liststore</property>
             <signal name="changed" handler="on_from_table_combobox_changed"/>
             <child>
               <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
@@ -411,5 +409,8 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkTreeModelFilter" id="match_treemodelfilter">
+    <property name="child_model">match_treestore</property>
   </object>
 </interface>
