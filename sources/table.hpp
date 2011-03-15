@@ -25,6 +25,7 @@
 #include "match.hpp"
 
 class TableSet;
+
 class Table : public Object
 {
   public:
@@ -60,11 +61,13 @@ class Table : public Object
 
     void DropMatch (Match *match);
 
+    GSList *GetLoosers ();
+
     gboolean       _has_error;
     guint          _is_over;
     GooCanvasItem *_status_item;
     GooCanvasItem *_header_item;
-    gchar         *_defeated_table;
+    TableSet      *_defeated_table;
 
   private:
     guint     _size;

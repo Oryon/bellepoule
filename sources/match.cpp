@@ -199,6 +199,23 @@ Player *Match::GetWinner ()
 }
 
 // --------------------------------------------------------------------------------
+Player *Match::GetLooser ()
+{
+  Player *winner = GetWinner ();
+
+  if (winner && winner == _A)
+  {
+    return _B;
+  }
+  else if (winner && winner == _B)
+  {
+    return _A;
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 gboolean Match::HasPlayer (Player *player)
 {
   return ((_A == player) || (_B == player));

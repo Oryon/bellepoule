@@ -27,6 +27,7 @@
 #include "stage.hpp"
 
 class TableSet;
+class Table;
 
 class TableSupervisor : public virtual Stage, public Module
 {
@@ -42,6 +43,8 @@ class TableSupervisor : public virtual Stage, public Module
     void OnPrint ();
     void OnZoom (gdouble value);
     void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
+    void OnTableOver (TableSet *table_set,
+                      Table    *table);
 
   public:
     static const gchar *_class_name;
@@ -97,7 +100,7 @@ class TableSupervisor : public virtual Stage, public Module
     void ApplyConfig ();
 
     void FeedTableSetStore (guint        from_place,
-                            guint        nb_levels,
+                            guint        nb_tables,
                             GtkTreeIter *parent);
 
     void OnTableSetSelected (TableSet *table_set);
@@ -107,6 +110,13 @@ class TableSupervisor : public virtual Stage, public Module
                                     GtkTreeIter  *iter,
                                     gpointer      data);
 
+    static gboolean StuffTableSet (GtkTreeModel *model,
+                                   GtkTreePath  *path,
+                                   GtkTreeIter  *iter,
+                                   gpointer      data);
+
+    static void OnTableSetStatusUpdated (TableSet        *table_set,
+                                         TableSupervisor *ts);
     ~TableSupervisor ();
 };
 

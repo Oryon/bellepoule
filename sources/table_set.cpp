@@ -25,6 +25,7 @@
 #include "attribute.hpp"
 #include "player.hpp"
 #include "classification.hpp"
+#include "table_supervisor.hpp"
 #include "table_set.hpp"
 
 const gdouble TableSet::_score_rect_size = 30.0;
@@ -53,9 +54,9 @@ extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widge
                                                                 Object    *owner);
 
 // --------------------------------------------------------------------------------
-TableSet::TableSet (Stage     *supervisor,
-                    gchar     *id,
-                    GtkWidget *control_container)
+TableSet::TableSet (TableSupervisor *supervisor,
+                    gchar           *id,
+                    GtkWidget       *control_container)
 : CanvasModule ("table.glade")
 {
   Module *supervisor_module = dynamic_cast <Module *> (supervisor);
@@ -70,6 +71,8 @@ TableSet::TableSet (Stage     *supervisor,
   _nb_tables         = 0;
   _locked            = FALSE;
   _id                = id;
+  _attendees         = NULL;
+  _name              = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -159,6 +162,10 @@ TableSet::~TableSet ()
   Object::TryToRelease (_quick_score_collector);
   Object::TryToRelease (_score_collector);
 
+  g_free (_name);
+
+  g_slist_free (_attendees);
+
   gtk_list_store_clear (_from_table_liststore);
   gtk_tree_store_clear (_quick_search_treestore);
   gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
@@ -233,65 +240,71 @@ GooCanvasItem *TableSet::GetQuickScore (const gchar *container)
 // --------------------------------------------------------------------------------
 void TableSet::RefreshTableStatus ()
 {
-  for (guint i = 0; i < _nb_tables; i ++)
+  if (_tree_root)
   {
-    _tables[i]->_is_over   = TRUE;
-    _tables[i]->_has_error = FALSE;
-    if (_tables[i]->_status_item)
+    for (guint i = 0; i < _nb_tables; i ++)
     {
-      WipeItem (_tables[i]->_status_item);
-      _tables[i]->_status_item = NULL;
-    }
-  }
-
-  g_node_traverse (_tree_root,
-                   G_POST_ORDER,
-                   G_TRAVERSE_ALL,
-                   -1,
-                   (GNodeTraverseFunc) UpdateTableStatus,
-                   this);
-
-  for (guint t = 0; t < _nb_tables; t++)
-  {
-    GtkTreeIter  iter;
-    gchar       *icon;
-    Table       *table = _tables[t];
-
-    if (table->_has_error)
-    {
-      icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
-    }
-    else if (table->_is_over == TRUE)
-    {
-      icon = g_strdup (GTK_STOCK_APPLY);
-    }
-    else
-    {
-      icon = g_strdup (GTK_STOCK_EXECUTE);
+      _tables[i]->_is_over   = TRUE;
+      _tables[i]->_has_error = FALSE;
+      if (_tables[i]->_status_item)
+      {
+        WipeItem (_tables[i]->_status_item);
+        _tables[i]->_status_item = NULL;
+      }
     }
 
-    if (   table->IsDisplayed ()
-        && (table->GetSize () > 1))
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) UpdateTableStatus,
+                     this);
+
+    for (guint t = 0; t < _nb_tables; t++)
     {
-      table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
-                                                         icon,
-                                                         0, 0);
+      GtkTreeIter  iter;
+      gchar       *icon;
+      Table       *table = _tables[t];
+
+      if (table->_has_error)
+      {
+        icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
+      }
+      else if (table->_is_over == TRUE)
+      {
+        icon = g_strdup (GTK_STOCK_APPLY);
+      }
+      else
+      {
+        icon = g_strdup (GTK_STOCK_EXECUTE);
+      }
+
+      if (   table->IsDisplayed ()
+             && (table->GetSize () > 1))
+      {
+        table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
+                                                           icon,
+                                                           0, 0);
+      }
+
+      if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_from_table_liststore),
+                                         &iter,
+                                         NULL,
+                                         _nb_tables-t-1) == TRUE)
+      {
+        gtk_list_store_set (_from_table_liststore, &iter,
+                            FROM_STATUS_COLUMN, icon,
+                            -1);
+      }
+
+      g_free (icon);
     }
 
-    gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_from_table_liststore),
-                                   &iter,
-                                   NULL,
-                                   _nb_tables-t-1);
-    gtk_list_store_set (_from_table_liststore, &iter,
-                        FROM_STATUS_COLUMN, icon,
-                        -1);
-    g_free (icon);
-  }
-
-  if (_status_cbk)
-  {
-    _status_cbk (this,
-                 _status_cbk_data);
+    if (_status_cbk)
+    {
+      _status_cbk (this,
+                   _status_cbk_data);
+    }
   }
 }
 
@@ -314,6 +327,7 @@ void TableSet::Display ()
 {
   Wipe ();
 
+  if (_tree_root)
   {
     _main_table = goo_canvas_table_new (GetRootItem (),
                                         "column-spacing", _table_spacing,
@@ -382,14 +396,29 @@ void TableSet::Display ()
 // --------------------------------------------------------------------------------
 gboolean TableSet::IsOver ()
 {
-  NodeData *root_data = (NodeData *) _tree_root->data;
-
-  if (root_data->_match)
+  if (_tree_root)
   {
-    return (root_data->_match->GetWinner () != NULL);
+    NodeData *root_data = (NodeData *) _tree_root->data;
+
+    if (root_data->_match)
+    {
+      return (root_data->_match->GetWinner () != NULL);
+    }
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::SetName (gchar *name)
+{
+  _name = g_strdup (name);
+}
+
+// --------------------------------------------------------------------------------
+gchar *TableSet::GetName ()
+{
+  return _name;
 }
 
 // --------------------------------------------------------------------------------
@@ -397,6 +426,12 @@ void TableSet::Garnish ()
 {
   DeleteTree ();
   CreateTree ();
+}
+
+// --------------------------------------------------------------------------------
+guint TableSet::GetNbTables ()
+{
+  return _nb_tables;
 }
 
 // --------------------------------------------------------------------------------
@@ -508,6 +543,16 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
 
   table_set->RefreshTableStatus ();
   table_set->DrawAllConnectors ();
+
+  {
+    Table *table = (Table *) match->GetPtrData (table_set, "table");
+
+    if (table->_is_over)
+    {
+      table_set->_supervisor->OnTableOver (table_set,
+                                           table);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -623,12 +668,15 @@ void TableSet::CreateTree ()
 // --------------------------------------------------------------------------------
 void TableSet::DrawAllConnectors ()
 {
-  g_node_traverse (_tree_root,
-                   G_POST_ORDER,
-                   G_TRAVERSE_ALL,
-                   -1,
-                   (GNodeTraverseFunc) DrawConnector,
-                   this);
+  if (_tree_root)
+  {
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) DrawConnector,
+                     this);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -645,6 +693,20 @@ gboolean TableSet::WipeNode (GNode    *node,
   data->_player_item = NULL;
   data->_print_item  = NULL;
 
+  {
+    GNode *parent = node->parent;
+
+    if (parent)
+    {
+      NodeData *parent_data = (NodeData *) parent->data;
+      Player   *player_A    = parent_data->_match->GetPlayerA ();
+      Player   *player_B    = parent_data->_match->GetPlayerB ();
+
+      parent_data->_match->RemoveData (player_A, "collecting_point");
+      parent_data->_match->RemoveData (player_B, "collecting_point");
+    }
+  }
+
   return FALSE;
 }
 
@@ -653,6 +715,8 @@ gboolean TableSet::DeleteCanvasTable (GNode    *node,
                                       TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
+
+  table_set->_score_collector->RemoveCollectingPoints (data->_match);
 
   data->_player_item = NULL;
   data->_print_item  = NULL;
@@ -1147,6 +1211,7 @@ void TableSet::Wipe ()
 {
   {
     Object::TryToRelease (_score_collector);
+
     _score_collector = new ScoreCollector (this,
                                            (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore);
 
@@ -1166,6 +1231,11 @@ void TableSet::Wipe ()
 
   CanvasModule::Wipe ();
   _main_table = NULL;
+
+  for (guint i = 0; i < _nb_tables; i ++)
+  {
+    _tables[i]->_status_item = NULL;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1261,7 +1331,9 @@ gboolean TableSet::AddToClassification (GNode    *node,
     {
       table_set->_result_list = g_slist_append (table_set->_result_list,
                                                 winner);
-      winner->SetData (table_set, "table", (void *) data->_table);
+      winner->SetData (table_set,
+                       "table",
+                       (void *) data->_table);
     }
   }
 
@@ -1413,17 +1485,20 @@ void TableSet::SetPlayerToMatch (Match  *to_match,
 // --------------------------------------------------------------------------------
 void TableSet::OnStuffClicked ()
 {
-  for (_table_to_stuff = 1; _table_to_stuff <= _nb_tables; _table_to_stuff++)
+  if (_tree_root)
   {
-    g_node_traverse (_tree_root,
-                     G_POST_ORDER,
-                     G_TRAVERSE_ALL,
-                     _nb_tables - _table_to_stuff + 1,
-                     (GNodeTraverseFunc) Stuff,
-                     this);
-  }
+    for (_table_to_stuff = _nb_tables-2; _table_to_stuff >= 0; _table_to_stuff--)
+    {
+      g_node_traverse (_tree_root,
+                       G_POST_ORDER,
+                       G_TRAVERSE_ALL,
+                       _table_to_stuff+1,
+                       (GNodeTraverseFunc) Stuff,
+                       this);
+    }
 
-  OnAttrListUpdated ();
+    OnAttrListUpdated ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1475,56 +1550,60 @@ void TableSet::OnDisplayToggled (GtkWidget *widget)
 GSList *TableSet::GetCurrentClassification ()
 {
   _result_list = NULL;
-  g_node_traverse (_tree_root,
-                   G_LEVEL_ORDER,
-                   G_TRAVERSE_ALL,
-                   -1,
-                   (GNodeTraverseFunc) AddToClassification,
-                   this);
 
-  _result_list = g_slist_sort_with_data (_result_list,
-                                         (GCompareDataFunc) ComparePlayer,
-                                         (void *) this);
-
+  if (_tree_root)
   {
-    Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
-    GSList              *current;
-    guint                previous_rank   = 0;
-    Player              *previous_player = NULL;
-    guint32              rand_seed = _rand_seed;
+    g_node_traverse (_tree_root,
+                     G_LEVEL_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) AddToClassification,
+                     this);
 
-    _rand_seed = 0; // !!
-    current = _result_list;
-    for (guint i = 1; current; i++)
+    _result_list = g_slist_sort_with_data (_result_list,
+                                           (GCompareDataFunc) ComparePlayer,
+                                           (void *) this);
+
     {
-      Player *player;
+      Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
+      GSList              *current;
+      guint                previous_rank   = 0;
+      Player              *previous_player = NULL;
+      guint32              rand_seed = _rand_seed;
 
-      player = (Player *) current->data;
-
-      if (   previous_player
-             && (   (ComparePlayer (player,
-                                    previous_player,
-                                    this) == 0)
-                    && (ComparePreviousRankPlayer (player,
-                                                   previous_player,
-                                                   0) == 0))
-             || (i == 4))
+      _rand_seed = 0; // !!
+      current = _result_list;
+      for (guint i = 1; current; i++)
       {
-        player->SetAttributeValue (attr_id,
-                                   previous_rank);
-      }
-      else
-      {
-        player->SetAttributeValue (attr_id,
-                                   i);
-        previous_rank = i;
-      }
+        Player *player;
 
-      previous_player = player;
-      current = g_slist_next (current);
+        player = (Player *) current->data;
+
+        if (   previous_player
+               && (   (ComparePlayer (player,
+                                      previous_player,
+                                      this) == 0)
+                      && (ComparePreviousRankPlayer (player,
+                                                     previous_player,
+                                                     0) == 0))
+               || (i == 4))
+        {
+          player->SetAttributeValue (attr_id,
+                                     previous_rank);
+        }
+        else
+        {
+          player->SetAttributeValue (attr_id,
+                                     i);
+          previous_rank = i;
+        }
+
+        previous_player = player;
+        current = g_slist_next (current);
+      }
+      attr_id->Release ();
+      _rand_seed = rand_seed; // !!
     }
-    attr_id->Release ();
-    _rand_seed = rand_seed; // !!
   }
 
   return _result_list;

@@ -38,6 +38,7 @@ class Match : public Object
     Player *GetPlayerA ();
     Player *GetPlayerB ();
     Player *GetWinner  ();
+    Player *GetLooser  ();
 
     void SetPlayerA (Player *player);
 

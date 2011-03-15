@@ -23,17 +23,19 @@
 #include "canvas_module.hpp"
 #include "match.hpp"
 #include "score_collector.hpp"
-#include "stage.hpp"
 #include "table.hpp"
+
+class TableSupervisor;
 
 class TableSet : public CanvasModule
 {
   public:
     typedef void (*StatusCbk) (TableSet *table_set,
                                void     *data);
-    TableSet (Stage     *supervisor,
-              gchar     *id,
-              GtkWidget *control_container);
+
+    TableSet (TableSupervisor *supervisor,
+              gchar           *id,
+              GtkWidget       *control_container);
 
     void SetStatusCbk (StatusCbk  cbk,
                        void      *data);
@@ -62,6 +64,8 @@ class TableSet : public CanvasModule
 
     void UnLock ();
 
+    gboolean IsOver ();
+
     GSList *GetCurrentClassification ();
 
     void Load (xmlNode *xml_node);
@@ -73,6 +77,12 @@ class TableSet : public CanvasModule
                            guint   position);
 
     Player *GetPlayerFromRef (guint ref);
+
+    guint GetNbTables ();
+
+    void SetName (gchar *name);
+
+    gchar *GetName ();
 
   private:
     static const gdouble _score_rect_size;
@@ -91,10 +101,11 @@ class TableSet : public CanvasModule
 
     static const gdouble _table_spacing;
 
-    Stage              *_supervisor;
+    gchar              *_name;
+    TableSupervisor    *_supervisor;
     GNode              *_tree_root;
     guint               _nb_tables;
-    guint               _table_to_stuff;
+    gint                _table_to_stuff;
     GtkListStore       *_from_table_liststore;
     GtkTreeStore       *_quick_search_treestore;
     GtkTreeModelFilter *_quick_search_filter;
@@ -142,8 +153,6 @@ class TableSet : public CanvasModule
     void Garnish ();
 
     Table *GetTable (guint size);
-
-    gboolean IsOver ();
 
     void OnStatusChanged (GtkComboBox *combo_box);
 

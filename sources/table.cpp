@@ -45,8 +45,6 @@ Table::Table (TableSet *table_set,
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
-  g_free (_defeated_table);
-
   if (_match_list)
   {
     g_slist_free (_match_list);
@@ -100,6 +98,25 @@ gint Table::CompareMatchNumber (Match *a,
 }
 
 // --------------------------------------------------------------------------------
+GSList *Table::GetLoosers ()
+{
+  GSList *loosers       = NULL;
+  GSList *current_match = _match_list;
+
+  while (current_match)
+  {
+    Match *match = (Match *) current_match->data;
+
+    loosers = g_slist_append (loosers,
+                              match->GetLooser ());
+
+    current_match = g_slist_next (current_match);
+  }
+
+  return loosers;
+}
+
+// --------------------------------------------------------------------------------
 void Table::ManageMatch (Match *match)
 {
   _match_list = g_slist_insert_sorted (_match_list,
@@ -125,8 +142,8 @@ void Table::Load (xmlNode *xml_node)
       {
         gchar *prop;
 
-        prop = (gchar *) xmlGetProp (n, BAD_CAST "DestinationDesElimines");
-        _defeated_table = g_strdup (prop);
+        //prop = (gchar *) xmlGetProp (n, BAD_CAST "DestinationDesElimines");
+        //_defeated_table = g_strdup (prop);
 
         _loaded = TRUE;
       }

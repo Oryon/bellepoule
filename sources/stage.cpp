@@ -69,7 +69,7 @@ Stage::~Stage ()
 
 // --------------------------------------------------------------------------------
 void Stage::SetStatusCbk (StatusCbk  cbk,
-                            void      *data)
+                          void      *data)
 {
   _status_cbk_data = data;
   _status_cbk      = cbk;

@@ -8,6 +8,8 @@
       <column type="gchararray"/>
       <!-- column-name table -->
       <column type="gpointer"/>
+      <!-- column-name status -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkWindow" id="window">
@@ -192,6 +194,12 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                         <child>
                           <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                             <property name="title">Pour la place :</property>
+                            <child>
+                              <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf1"/>
+                              <attributes>
+                                <attribute name="stock-id">2</attribute>
+                              </attributes>
+                            </child>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext2"/>
                               <attributes>
