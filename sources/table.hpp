@@ -67,7 +67,7 @@ class Table : public Object
     guint          _is_over;
     GooCanvasItem *_status_item;
     GooCanvasItem *_header_item;
-    TableSet      *_defeated_table;
+    gchar         *_defeated_table_set;
 
   private:
     guint     _size;

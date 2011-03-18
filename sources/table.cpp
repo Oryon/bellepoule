@@ -26,18 +26,18 @@ Table::Table (TableSet *table_set,
               guint     column)
   : Object ("table")
 {
-  _table_set      = table_set;
-  _size           = size;
-  _column         = column;
-  _left_table     = NULL;
-  _right_table    = NULL;
-  _has_error      = FALSE;
-  _is_over        = FALSE;
-  _status_item    = NULL;
-  _header_item    = NULL;
-  _defeated_table = NULL;
-  _is_displayed   = TRUE;
-  _loaded         = FALSE;
+  _table_set          = table_set;
+  _size               = size;
+  _column             = column;
+  _left_table         = NULL;
+  _right_table        = NULL;
+  _has_error          = FALSE;
+  _is_over            = FALSE;
+  _status_item        = NULL;
+  _header_item        = NULL;
+  _defeated_table_set = NULL;
+  _is_displayed       = TRUE;
+  _loaded             = FALSE;
 
   _match_list = NULL;
 }
@@ -45,6 +45,8 @@ Table::Table (TableSet *table_set,
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
+  g_free (_defeated_table_set);
+
   if (_match_list)
   {
     g_slist_free (_match_list);
@@ -105,11 +107,14 @@ GSList *Table::GetLoosers ()
 
   while (current_match)
   {
-    Match *match = (Match *) current_match->data;
+    Match *match   = (Match *) current_match->data;
+    Player *looser = match->GetLooser ();
 
-    loosers = g_slist_append (loosers,
-                              match->GetLooser ());
-
+    if (looser)
+    {
+      loosers = g_slist_append (loosers,
+                                looser);
+    }
     current_match = g_slist_next (current_match);
   }
 
@@ -143,7 +148,7 @@ void Table::Load (xmlNode *xml_node)
         gchar *prop;
 
         //prop = (gchar *) xmlGetProp (n, BAD_CAST "DestinationDesElimines");
-        //_defeated_table = g_strdup (prop);
+        //_defeated_table_set = g_strdup (prop);
 
         _loaded = TRUE;
       }
@@ -277,11 +282,11 @@ void Table::Save (xmlTextWriter *xml_writer)
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "Taille",
                                      "%d", _size);
-  if (_defeated_table)
+  if (_defeated_table_set)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "DestinationDesElimines",
-                                       "%s", _defeated_table);
+                                       "%s", _defeated_table_set);
   }
 
   {

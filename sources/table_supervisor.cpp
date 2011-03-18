@@ -88,7 +88,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
     filter = new Filter (attr_list,
                          this);
 
-    //filter->ShowAttribute ("previous_stage_rank");
+    filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("name");
     //filter->ShowAttribute ("first_name");
     //filter->ShowAttribute ("club");
@@ -183,27 +183,29 @@ void TableSupervisor::OnTableSetSelected (TableSet *table_set)
 // --------------------------------------------------------------------------------
 gboolean TableSupervisor::IsOver ()
 {
-  GtkTreeIter iter;
-  gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
-                                                             &iter);
+  _is_over = TRUE;
 
-  while (iter_is_valid)
-  {
-    TableSet *table_set;
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
+                          (GtkTreeModelForeachFunc) TableSetIsOver,
+                          this);
 
-    gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                        TABLE_SET_TABLE_COLUMN, &table_set,
-                        -1);
+  return _is_over;
+}
 
-    if (table_set->IsOver () == FALSE)
-    {
-      return FALSE;
-    }
+// --------------------------------------------------------------------------------
+gboolean TableSupervisor::TableSetIsOver (GtkTreeModel    *model,
+                                          GtkTreePath     *path,
+                                          GtkTreeIter     *iter,
+                                          TableSupervisor *ts)
+{
+  TableSet *table_set;
 
-    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_table_set_treestore), &iter);
-  }
+  gtk_tree_model_get (model, iter,
+                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      -1);
+  ts->_is_over &= table_set->IsOver ();
 
-  return TRUE;
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -338,10 +340,13 @@ void TableSupervisor::Load (xmlNode *xml_node)
         TableSet *table_set;
         gchar    *prop = (gchar *) xmlGetProp (n, BAD_CAST "ID");
 
-        table_set = GetTableSet (prop);
-        if (table_set)
+        if (prop)
         {
-          table_set->Load (n);
+          table_set = GetTableSet (prop);
+          if (table_set)
+          {
+            table_set->Load (n);
+          }
         }
       }
       else
@@ -476,18 +481,22 @@ void TableSupervisor::OnTableSetStatusUpdated (TableSet        *table_set,
                         TABLE_SET_STATUS_COLUMN, GTK_STOCK_APPLY,
                         -1);
   }
-#if 0
   else if (table_set->HasError ())
   {
     gtk_tree_store_set (ts->_table_set_treestore, &iter,
                         TABLE_SET_STATUS_COLUMN, GTK_STOCK_DIALOG_WARNING,
                         -1);
   }
-#endif
-  else
+  else if (table_set->GetNbTables () > 0)
   {
     gtk_tree_store_set (ts->_table_set_treestore, &iter,
                         TABLE_SET_STATUS_COLUMN, GTK_STOCK_EXECUTE,
+                        -1);
+  }
+  else
+  {
+    gtk_tree_store_set (ts->_table_set_treestore, &iter,
+                        TABLE_SET_STATUS_COLUMN, NULL,
                         -1);
   }
 
@@ -514,7 +523,7 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
     guint nb_subtable = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (_table_set_treestore),
                                                         &iter);
 
-    if (   (table->GetColumn () <= nb_subtable-1)
+    if (   (nb_subtable >= (table->GetColumn () + 1))
         && gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_table_set_treestore),
                                           &defeated_iter,
                                           &iter,
@@ -528,7 +537,24 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
 
       if (defeated_table_set)
       {
-        defeated_table_set->SetAttendees (table->GetLoosers ());
+        // Store its reference in the table it comes from
+        {
+          GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore),
+                                                       &defeated_iter);
+
+          table->_defeated_table_set = gtk_tree_path_to_string (path);
+          gtk_tree_path_free (path);
+        }
+
+        // Populate it
+        {
+          GSList *attendees = table->GetLoosers ();
+
+          attendees = g_slist_sort_with_data (attendees,
+                                              (GCompareDataFunc) TableSet::ComparePlayer,
+                                              defeated_table_set);
+          defeated_table_set->SetAttendees (attendees);
+        }
       }
     }
   }

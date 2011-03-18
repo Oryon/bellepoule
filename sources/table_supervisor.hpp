@@ -63,6 +63,7 @@ class TableSupervisor : public virtual Stage, public Module
     xmlNode            *_xml_node;
     GSList             *_result_list;
     TableSet           *_displayed_table_set;
+    gboolean            _is_over;
 
     void Display ();
 
@@ -104,6 +105,11 @@ class TableSupervisor : public virtual Stage, public Module
                             GtkTreeIter *parent);
 
     void OnTableSetSelected (TableSet *table_set);
+
+    static gboolean TableSetIsOver (GtkTreeModel    *model,
+                                    GtkTreePath     *path,
+                                    GtkTreeIter     *iter,
+                                    TableSupervisor *ts);
 
     static gboolean DeleteTableSet (GtkTreeModel *model,
                                     GtkTreePath  *path,

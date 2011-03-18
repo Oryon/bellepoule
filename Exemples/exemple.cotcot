@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE CompetitionIndividuelle>
 <!--
-           By BellePoule (V1.0rc1)
+           By BellePoule (V2.0beta1)
 
    http://betton.escrime.free.fr/index.php/bellepoule
 -->
-<CompetitionIndividuelle Annee="2010" Arme="S" Sexe="M" Organisateur="BETTON" Categorie="M" Date="05.12.2010" Appel="12:00" Scratch="12:00" Début="12:00" TitreLong="Sabre hommes" URLorganisateur="" score_stuffing="1">
+<CompetitionIndividuelle Couleur="2" Annee="2010" Arme="S" Sexe="M" Organisateur="BETTON" Categorie="M" Date="05.12.2010" Appel="12:00" Scratch="12:00" Début="12:00" TitreLong="Sabre hommes" URLorganisateur="" score_stuffing="1">
  <Tireurs>
   <Tireur ID="128" Classement="6" Nom="ROGER" Prenom="Benjamin" DateNaissance="13/02/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="DINARD LAMES" Licence="230350330544" Points="1006" Exporte="0" Statut="Q"/>
   <Tireur ID="120" Classement="1" Nom="LATREILLE" Prenom="Quentin" DateNaissance="06/02/1996" Sexe="M" Nation="FRA" Ligue="BRETAGNE" Club="BETTON CP" Licence="230350100499" Points="1021" Exporte="0" Statut="Q"/>
@@ -158,37 +158,52 @@
    <Tireur REF="118" RangInitial="5" Statut="Q"/>
    <Tireur REF="128" RangInitial="6" Statut="Q"/>
    <Tireur REF="129" RangInitial="7" Statut="A"/>
-   <SuiteDeTableaux ID="A" Titre="" NbDeTableaux="3">
-    <Tableau ID="A8" Titre="Tableau de 8" Taille="8">
+   <SuiteDeTableaux ID="0" Titre="" NbDeTableaux="3">
+    <Tableau ID="A8" Titre="Tableau de 8" Taille="8" DestinationDesElimines="0:1">
      <Match ID="2">
-      <Tireur REF="118" Score="0" Statut="V"/>
-      <Tireur REF="131" Score="0" Statut="D"/>
+      <Tireur REF="118" Score="8" Statut="D"/>
+      <Tireur REF="131" Score="10" Statut="V"/>
      </Match>
      <Match ID="3">
-      <Tireur REF="112" Score="10" Statut="V"/>
-      <Tireur REF="128" Score="7" Statut="D"/>
+      <Tireur REF="112" Score="9" Statut="D"/>
+      <Tireur REF="128" Score="10" Statut="V"/>
      </Match>
      <Match ID="4">
       <Tireur REF="129" Score="0" Statut="D"/>
       <Tireur REF="113" Score="0" Statut="V"/>
      </Match>
     </Tableau>
-    <Tableau ID="A4" Titre="Demi-finale" Taille="4">
+    <Tableau ID="A4" Titre="Demi-finale" Taille="4" DestinationDesElimines="0:0">
      <Match ID="1">
-      <Tireur REF="120" Score="0" Statut="D"/>
-      <Tireur REF="118" Score="10" Statut="V"/>
+      <Tireur REF="120" Score="0" Statut="V"/>
+      <Tireur REF="131" Score="0" Statut="D"/>
      </Match>
      <Match ID="2">
-      <Tireur REF="112" Score="10" Statut="V"/>
-      <Tireur REF="113" Score="5" Statut="D"/>
+      <Tireur REF="128" Score="10" Statut="V"/>
+      <Tireur REF="113" Score="7" Statut="D"/>
      </Match>
     </Tableau>
     <Tableau ID="A2" Titre="Finale" Taille="2">
      <Match ID="1">
-      <Tireur REF="118" Score="4" Statut="D"/>
-      <Tireur REF="112" Score="10" Statut="V"/>
+      <Tireur REF="120" Score="0" Statut="D"/>
+      <Tireur REF="128" Score="10" Statut="V"/>
      </Match>
     </Tableau>
+   </SuiteDeTableaux>
+   <SuiteDeTableaux ID="0:0" Titre="" NbDeTableaux="1">
+    <Tableau ID="A2" Titre="Finale" Taille="2">
+     <Match ID="1">
+      <Tireur REF="131"/>
+      <Tireur REF="113"/>
+     </Match>
+    </Tableau>
+   </SuiteDeTableaux>
+   <SuiteDeTableaux ID="0:1" Titre="" NbDeTableaux="2">
+    <Tableau ID="A4" Titre="Demi-finale" Taille="4" DestinationDesElimines="0:1:0"/>
+    <Tableau ID="A2" Titre="Finale" Taille="2"/>
+   </SuiteDeTableaux>
+   <SuiteDeTableaux ID="0:1:0" Titre="" NbDeTableaux="1">
+    <Tableau ID="A2" Titre="Finale" Taille="2"/>
    </SuiteDeTableaux>
   </PhaseDeTableaux>
   <ClassementGeneral PhaseID="" ID="4" NbElimines="0"/>

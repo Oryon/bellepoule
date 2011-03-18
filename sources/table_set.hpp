@@ -43,13 +43,21 @@ class TableSet : public CanvasModule
     void SetAttendees (GSList *attendees);
 
     void OnFromTableComboboxChanged ();
+
     void OnStuffClicked ();
+
     void OnInputToggled (GtkWidget *widget);
+
     void OnMatchSheetToggled (GtkWidget *widget);
+
     void OnDisplayToggled (GtkWidget *widget);
+
     void OnSearchMatch ();
+
     void OnPrint ();
+
     void OnZoom (gdouble value);
+
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
     void OnDrawPage (GtkPrintOperation *operation,
@@ -65,6 +73,8 @@ class TableSet : public CanvasModule
     void UnLock ();
 
     gboolean IsOver ();
+
+    gboolean HasError ();
 
     GSList *GetCurrentClassification ();
 
@@ -83,6 +93,10 @@ class TableSet : public CanvasModule
     void SetName (gchar *name);
 
     gchar *GetName ();
+
+    static gint ComparePlayer (Player    *A,
+                               Player    *B,
+                               TableSet  *table_set);
 
   private:
     static const gdouble _score_rect_size;
@@ -132,6 +146,8 @@ class TableSet : public CanvasModule
     gboolean            _locked;
     guint               _nb_match_per_sheet;
     gchar              *_id;
+    gboolean            _has_error;
+    gboolean            _is_over;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -184,10 +200,6 @@ class TableSet : public CanvasModule
                             CanvasModule   *client,
                             Match          *match,
                             Player         *player);
-
-    static gint ComparePlayer (Player    *A,
-                               Player    *B,
-                               TableSet  *table_set);
 
     gint ComparePreviousRankPlayer (Player  *A,
                                     Player  *B,

@@ -73,6 +73,8 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _id                = id;
   _attendees         = NULL;
   _name              = NULL;
+  _has_error         = FALSE;
+  _is_over           = FALSE;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -188,6 +190,7 @@ void TableSet::SetAttendees (GSList *attendees)
 {
   _attendees = attendees;
   Garnish ();
+  RefreshTableStatus ();
 }
 
 // --------------------------------------------------------------------------------
@@ -242,6 +245,9 @@ void TableSet::RefreshTableStatus ()
 {
   if (_tree_root)
   {
+    _has_error = FALSE;
+    _is_over   = TRUE;
+
     for (guint i = 0; i < _nb_tables; i ++)
     {
       _tables[i]->_is_over   = TRUE;
@@ -269,6 +275,8 @@ void TableSet::RefreshTableStatus ()
       if (table->_has_error)
       {
         icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
+        _has_error = TRUE;
+        _is_over   = FALSE;
       }
       else if (table->_is_over == TRUE)
       {
@@ -277,10 +285,12 @@ void TableSet::RefreshTableStatus ()
       else
       {
         icon = g_strdup (GTK_STOCK_EXECUTE);
+        _is_over = FALSE;
       }
 
-      if (   table->IsDisplayed ()
-             && (table->GetSize () > 1))
+      if (    IsPlugged ()
+           && table->IsDisplayed ()
+           && (table->GetSize () > 1))
       {
         table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
                                                            icon,
@@ -396,17 +406,12 @@ void TableSet::Display ()
 // --------------------------------------------------------------------------------
 gboolean TableSet::IsOver ()
 {
-  if (_tree_root)
-  {
-    NodeData *root_data = (NodeData *) _tree_root->data;
-
-    if (root_data->_match)
-    {
-      return (root_data->_match->GetWinner () != NULL);
-    }
-  }
-
-  return FALSE;
+  return _is_over;
+}
+// --------------------------------------------------------------------------------
+gboolean TableSet::HasError ()
+{
+  return _has_error;
 }
 
 // --------------------------------------------------------------------------------
@@ -693,20 +698,6 @@ gboolean TableSet::WipeNode (GNode    *node,
   data->_player_item = NULL;
   data->_print_item  = NULL;
 
-  {
-    GNode *parent = node->parent;
-
-    if (parent)
-    {
-      NodeData *parent_data = (NodeData *) parent->data;
-      Player   *player_A    = parent_data->_match->GetPlayerA ();
-      Player   *player_B    = parent_data->_match->GetPlayerB ();
-
-      parent_data->_match->RemoveData (player_A, "collecting_point");
-      parent_data->_match->RemoveData (player_B, "collecting_point");
-    }
-  }
-
   return FALSE;
 }
 
@@ -723,6 +714,21 @@ gboolean TableSet::DeleteCanvasTable (GNode    *node,
   data->_connector   = NULL;
 
   data->_canvas_table = NULL;
+
+  {
+    GNode *parent = node->parent;
+
+    if (parent)
+    {
+      NodeData *parent_data = (NodeData *) parent->data;
+
+      if (parent_data->_match)
+      {
+        parent_data->_match->RemoveData (table_set, "A_collecting_point");
+        parent_data->_match->RemoveData (table_set, "B_collecting_point");
+      }
+    }
+  }
 
   return FALSE;
 }
@@ -1027,9 +1033,16 @@ gboolean TableSet::FillInNode (GNode    *node,
           Player *B = parent_data->_match->GetPlayerB ();
 
           if (   (parent_data->_match->GetWinner () == NULL)
-                 || ((A != NULL) && (B != NULL)))
+              || ((A != NULL) && (B != NULL)))
           {
-            parent_data->_match->SetData (winner, "collecting_point", goo_rect);
+            if (winner == A)
+            {
+              parent_data->_match->SetData (table_set, "A_collecting_point", goo_rect);
+            }
+            if (winner == B)
+            {
+              parent_data->_match->SetData (table_set, "B_collecting_point", goo_rect);
+            }
 
             table_set->_score_collector->AddCollectingPoint (goo_rect,
                                                              score_text,
@@ -1039,14 +1052,14 @@ gboolean TableSet::FillInNode (GNode    *node,
 
             if (A && B)
             {
-              table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (A,
-                                                                                                                      "collecting_point"),
-                                                                   (GooCanvasItem *) parent_data->_match->GetPtrData (B,
-                                                                                                                      "collecting_point"));
-              table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (B,
-                                                                                                                      "collecting_point"),
-                                                                   (GooCanvasItem *) parent_data->_match->GetPtrData (A,
-                                                                                                                      "collecting_point"));
+              table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
+                                                                                                                      "A_collecting_point"),
+                                                                   (GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
+                                                                                                                      "B_collecting_point"));
+              table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
+                                                                                                                      "B_collecting_point"),
+                                                                   (GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
+                                                                                                                      "A_collecting_point"));
             }
           }
         }
@@ -1183,7 +1196,7 @@ void TableSet::AddFork (GNode *to)
       data->_match->SetPlayerA (player);
       data->_match->SetPlayerB (NULL);
     }
-    else
+    else if (to_data)
     {
       data->_table->DropMatch (data->_match);
       data->_match->Release ();
@@ -1193,15 +1206,16 @@ void TableSet::AddFork (GNode *to)
                                    "number");
     }
 
-    if (g_node_child_position (to, node) == 0)
+    if (to_data)
     {
-      to_data->_match->SetPlayerA (player);
-      to_data->_match->SetPlayerB (NULL);
-    }
-    else
-    {
-      to_data->_match->SetPlayerA (NULL);
-      to_data->_match->SetPlayerB (player);
+      if (g_node_child_position (to, node) == 0)
+      {
+        to_data->_match->SetPlayerA (player);
+      }
+      else
+      {
+        to_data->_match->SetPlayerB (player);
+      }
     }
   }
 }
@@ -1497,7 +1511,18 @@ void TableSet::OnStuffClicked ()
                        this);
     }
 
-    OnAttrListUpdated ();
+    RefreshTableStatus ();
+
+    for (guint t = 1; t < _nb_tables; t++)
+    {
+      Table *table = _tables[t];
+
+      if (table->_is_over)
+      {
+        _supervisor->OnTableOver (this,
+                                  table);
+      }
+    }
   }
 }
 
@@ -1614,6 +1639,15 @@ gint TableSet::ComparePlayer (Player   *A,
                               Player   *B,
                               TableSet *table_set)
 {
+  if (B == NULL)
+  {
+    return 1;
+  }
+  else if (A == NULL)
+  {
+    return -1;
+  }
+
   {
     Player::AttributeId attr_id ("status", table_set->GetDataOwner ());
 
