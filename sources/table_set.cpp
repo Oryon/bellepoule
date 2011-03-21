@@ -56,7 +56,8 @@ extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widge
 // --------------------------------------------------------------------------------
 TableSet::TableSet (TableSupervisor *supervisor,
                     gchar           *id,
-                    GtkWidget       *control_container)
+                    GtkWidget       *control_container,
+                    guint            first_place)
 : CanvasModule ("table.glade")
 {
   Module *supervisor_module = dynamic_cast <Module *> (supervisor);
@@ -75,6 +76,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _name              = NULL;
   _has_error         = FALSE;
   _is_over           = FALSE;
+  _first_place       = first_place;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -1598,20 +1600,20 @@ GSList *TableSet::GetCurrentClassification ()
 
       _rand_seed = 0; // !!
       current = _result_list;
-      for (guint i = 1; current; i++)
+      for (guint i = _first_place; current != NULL; i++)
       {
         Player *player;
 
         player = (Player *) current->data;
 
         if (   previous_player
-               && (   (ComparePlayer (player,
-                                      previous_player,
-                                      this) == 0)
-                      && (ComparePreviousRankPlayer (player,
-                                                     previous_player,
-                                                     0) == 0))
-               || (i == 4))
+            && (   (ComparePlayer (player,
+                                   previous_player,
+                                   this) == 0)
+                && (ComparePreviousRankPlayer (player,
+                                               previous_player,
+                                               0) == 0))
+             || (i == 4))
         {
           player->SetAttributeValue (attr_id,
                                      previous_rank);
@@ -1668,12 +1670,12 @@ gint TableSet::ComparePlayer (Player   *A,
   }
 
   {
-    gint table_A = A->GetIntData (table_set, "table");
-    gint table_B = B->GetIntData (table_set, "table");
+    Table *table_A = (Table *) A->GetPtrData (table_set, "table");
+    Table *table_B = (Table *) B->GetPtrData (table_set, "table");
 
     if (table_A != table_B)
     {
-      return table_B - table_A;
+      return table_B->GetColumn () - table_A->GetColumn ();
     }
   }
 

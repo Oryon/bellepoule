@@ -418,7 +418,8 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
 
     table_set = new TableSet (this,
                               gtk_tree_path_to_string (path),
-                              _glade->GetWidget ("from_viewport"));
+                              _glade->GetWidget ("from_viewport"),
+                              from_place);
 
     {
       gchar *text = g_strdup_printf ("Place #%d", from_place);
@@ -712,8 +713,40 @@ void TableSupervisor::OnDisplayToggled (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 GSList *TableSupervisor::GetCurrentClassification ()
 {
-  //return toto->GetCurrentClassification ();
-  return NULL;
+  _result = NULL;
+
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
+                          (GtkTreeModelForeachFunc) GetTableSetClassification,
+                          this);
+
+  return _result;
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSupervisor::GetTableSetClassification (GtkTreeModel    *model,
+                                                     GtkTreePath     *path,
+                                                     GtkTreeIter     *iter,
+                                                     TableSupervisor *ts)
+{
+  TableSet *table_set;
+  GSList   *current_result;
+
+  gtk_tree_model_get (model, iter,
+                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      -1);
+  current_result = table_set->GetCurrentClassification ();
+
+  for (guint i = 0; i < g_slist_length (current_result); i++)
+  {
+    Player *player = (Player *) g_slist_nth_data (current_result, i);
+
+    ts->_result = g_slist_remove (ts->_result,
+                                  player);
+    ts->_result = g_slist_append (ts->_result,
+                                  player);
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

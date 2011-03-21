@@ -35,7 +35,8 @@ class TableSet : public CanvasModule
 
     TableSet (TableSupervisor *supervisor,
               gchar           *id,
-              GtkWidget       *control_container);
+              GtkWidget       *control_container,
+              guint            first_place);
 
     void SetStatusCbk (StatusCbk  cbk,
                        void      *data);
@@ -148,6 +149,7 @@ class TableSet : public CanvasModule
     gchar              *_id;
     gboolean            _has_error;
     gboolean            _is_over;
+    guint               _first_place;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;

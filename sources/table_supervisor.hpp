@@ -58,12 +58,13 @@ class TableSupervisor : public virtual Stage, public Module
     void Wipe ();
 
   private:
-    GtkTreeStore       *_table_set_treestore;
-    xmlTextWriter      *_xml_writer;
-    xmlNode            *_xml_node;
-    GSList             *_result_list;
-    TableSet           *_displayed_table_set;
-    gboolean            _is_over;
+    GtkTreeStore  *_table_set_treestore;
+    xmlTextWriter *_xml_writer;
+    xmlNode       *_xml_node;
+    GSList        *_result_list;
+    TableSet      *_displayed_table_set;
+    gboolean       _is_over;
+    GSList        *_result;
 
     void Display ();
 
@@ -110,6 +111,11 @@ class TableSupervisor : public virtual Stage, public Module
                                     GtkTreePath     *path,
                                     GtkTreeIter     *iter,
                                     TableSupervisor *ts);
+
+    static gboolean GetTableSetClassification (GtkTreeModel    *model,
+                                               GtkTreePath     *path,
+                                               GtkTreeIter     *iter,
+                                               TableSupervisor *ts);
 
     static gboolean DeleteTableSet (GtkTreeModel *model,
                                     GtkTreePath  *path,
