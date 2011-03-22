@@ -1213,9 +1213,11 @@ void TableSet::AddFork (GNode *to)
       if (g_node_child_position (to, node) == 0)
       {
         to_data->_match->SetPlayerA (player);
+        to_data->_match->SetPlayerB (NULL);
       }
       else
       {
+        to_data->_match->SetPlayerA (NULL);
         to_data->_match->SetPlayerB (player);
       }
     }
@@ -1333,7 +1335,7 @@ void TableSet::UnLock ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean TableSet::AddToClassification (GNode    *node,
+gboolean TableSet::StartClassification (GNode    *node,
                                         TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
@@ -1348,8 +1350,28 @@ gboolean TableSet::AddToClassification (GNode    *node,
       table_set->_result_list = g_slist_append (table_set->_result_list,
                                                 winner);
       winner->SetData (table_set,
-                       "table",
+                       "best_table",
                        (void *) data->_table);
+    }
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSet::CloseClassification (GNode    *node,
+                                        TableSet *table_set)
+{
+  NodeData *data = (NodeData *) node->data;
+
+  if (data->_match)
+  {
+    Player *winner = data->_match->GetWinner ();
+
+    if (winner)
+    {
+      winner->RemoveData (table_set,
+                          "best_table");
     }
   }
 
@@ -1391,13 +1413,12 @@ gboolean TableSet::Stuff (GNode    *node,
   if (   (data->_table == table_set->_tables[table_set->_table_to_stuff])
       && (data->_match))
   {
-    Player *A = data->_match->GetPlayerA ();
-    Player *B = data->_match->GetPlayerB ();
+    Player *A      = data->_match->GetPlayerA ();
+    Player *B      = data->_match->GetPlayerB ();
+    Player *winner;
 
     if (A && B)
     {
-      Player *winner;
-
       if (g_random_boolean ())
       {
         data->_match->SetScore (A, table_set->_max_score->_value, TRUE);
@@ -1412,18 +1433,23 @@ gboolean TableSet::Stuff (GNode    *node,
         data->_match->SetScore (B, table_set->_max_score->_value, TRUE);
         winner = B;
       }
+    }
+    else
+    {
+      winner = data->_match->GetWinner ();
+    }
 
+    if (winner)
+    {
+      GNode *parent = node->parent;
+
+      if (parent)
       {
-        GNode *parent = node->parent;
+        NodeData *parent_data = (NodeData *) parent->data;
 
-        if (parent)
-        {
-          NodeData *parent_data = (NodeData *) parent->data;
-
-          table_set->SetPlayerToMatch (parent_data->_match,
-                                       winner,
-                                       g_node_child_position (parent, node));
-        }
+        table_set->SetPlayerToMatch (parent_data->_match,
+                                     winner,
+                                     g_node_child_position (parent, node));
       }
     }
   }
@@ -1503,12 +1529,12 @@ void TableSet::OnStuffClicked ()
 {
   if (_tree_root)
   {
-    for (_table_to_stuff = _nb_tables-2; _table_to_stuff >= 0; _table_to_stuff--)
+    for (_table_to_stuff = _nb_tables-1; _table_to_stuff >= 0; _table_to_stuff--)
     {
       g_node_traverse (_tree_root,
                        G_POST_ORDER,
                        G_TRAVERSE_ALL,
-                       _table_to_stuff+1,
+                       -1,
                        (GNodeTraverseFunc) Stuff,
                        this);
     }
@@ -1584,7 +1610,7 @@ GSList *TableSet::GetCurrentClassification ()
                      G_LEVEL_ORDER,
                      G_TRAVERSE_ALL,
                      -1,
-                     (GNodeTraverseFunc) AddToClassification,
+                     (GNodeTraverseFunc) StartClassification,
                      this);
 
     _result_list = g_slist_sort_with_data (_result_list,
@@ -1631,6 +1657,13 @@ GSList *TableSet::GetCurrentClassification ()
       attr_id->Release ();
       _rand_seed = rand_seed; // !!
     }
+
+    g_node_traverse (_tree_root,
+                     G_LEVEL_ORDER,
+                     G_TRAVERSE_ALL,
+                     -1,
+                     (GNodeTraverseFunc) CloseClassification,
+                     this);
   }
 
   return _result_list;
@@ -1670,8 +1703,8 @@ gint TableSet::ComparePlayer (Player   *A,
   }
 
   {
-    Table *table_A = (Table *) A->GetPtrData (table_set, "table");
-    Table *table_B = (Table *) B->GetPtrData (table_set, "table");
+    Table *table_A = (Table *) A->GetPtrData (table_set, "best_table");
+    Table *table_B = (Table *) B->GetPtrData (table_set, "best_table");
 
     if (table_A != table_B)
     {

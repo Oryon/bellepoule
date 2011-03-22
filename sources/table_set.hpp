@@ -177,7 +177,10 @@ class TableSet : public CanvasModule
     static gboolean Stuff (GNode    *node,
                            TableSet *table_set);
 
-    static gboolean AddToClassification (GNode    *node,
+    static gboolean StartClassification (GNode    *node,
+                                         TableSet *table_set);
+
+    static gboolean CloseClassification (GNode    *node,
                                          TableSet *table_set);
 
     static gboolean UpdateTableStatus (GNode    *node,
