@@ -77,6 +77,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _has_error         = FALSE;
   _is_over           = FALSE;
   _first_place       = first_place;
+  _loaded            = FALSE;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -458,14 +459,34 @@ Table *TableSet::GetTable (guint size)
 // --------------------------------------------------------------------------------
 void TableSet::Load (xmlNode *xml_node)
 {
+  LoadNode (xml_node);
+
+  RefreshTableStatus ();
+
+  for (guint t = 1; t < _nb_tables; t++)
+  {
+    Table *table = _tables[t];
+
+    if (table->_is_over)
+    {
+      _supervisor->OnTableOver (this,
+                                table);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::LoadNode (xmlNode *xml_node)
+{
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
     static Table *table = NULL;
 
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
+      if ((_loaded == FALSE) && (strcmp ((char *) n->name, "SuiteDeTableaux") == 0))
       {
+        _loaded = TRUE;
       }
       else if (strcmp ((char *) n->name, "Tableau") == 0)
       {
@@ -487,7 +508,7 @@ void TableSet::Load (xmlNode *xml_node)
         return;
       }
     }
-    Load (n->children);
+    LoadNode (n->children);
   }
 }
 
@@ -501,7 +522,7 @@ void TableSet::Save (xmlTextWriter *xml_writer)
                                      "%s", _id);
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "Titre",
-                                     "%s", "");
+                                     "%s", _name);
   if (_nb_tables)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
@@ -760,6 +781,7 @@ gboolean TableSet::UpdateTableStatus (GNode    *node,
         left_table->_has_error = TRUE;
       }
 
+      g_print ("#### %x\n", data->_match);
       left_table->_is_over = FALSE;
     }
   }
@@ -1197,6 +1219,20 @@ void TableSet::AddFork (GNode *to)
     {
       data->_match->SetPlayerA (player);
       data->_match->SetPlayerB (NULL);
+
+      if (to_data)
+      {
+        if (g_node_child_position (to, node) == 0)
+        {
+          to_data->_match->SetPlayerA (player);
+          to_data->_match->SetPlayerB (NULL);
+        }
+        else
+        {
+          to_data->_match->SetPlayerA (NULL);
+          to_data->_match->SetPlayerB (player);
+        }
+      }
     }
     else if (to_data)
     {
@@ -1206,19 +1242,19 @@ void TableSet::AddFork (GNode *to)
 
       to_data->_match->RemoveData (this,
                                    "number");
-    }
 
-    if (to_data)
-    {
       if (g_node_child_position (to, node) == 0)
       {
-        to_data->_match->SetPlayerA (player);
-        to_data->_match->SetPlayerB (NULL);
+        to_data->_match->SetPlayerA (NULL);
       }
       else
       {
-        to_data->_match->SetPlayerA (NULL);
-        to_data->_match->SetPlayerB (player);
+        GNode    *A_node = g_node_first_child (to);
+        NodeData *A_data = (NodeData *) A_node->data;
+
+        to_data->_match->SetPlayerA (A_data->_match->GetWinner ());
+        to_data->_match->SetPlayerB (NULL);
+        g_print ("======> %x %x\n", to_data->_match, to_data->_match->GetWinner ());
       }
     }
   }

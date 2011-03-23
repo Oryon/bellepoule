@@ -145,11 +145,6 @@ void Table::Load (xmlNode *xml_node)
     {
       if ((_loaded == FALSE) && (strcmp ((char *) n->name, "Tableau") == 0))
       {
-        gchar *prop;
-
-        //prop = (gchar *) xmlGetProp (n, BAD_CAST "DestinationDesElimines");
-        //_defeated_table_set = g_strdup (prop);
-
         _loaded = TRUE;
       }
       else if (strcmp ((char *) n->name, "Match") == 0)

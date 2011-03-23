@@ -149,6 +149,7 @@ class TableSet : public CanvasModule
     gchar              *_id;
     gboolean            _has_error;
     gboolean            _is_over;
+    gboolean            _loaded;
     guint               _first_place;
 
     void      *_status_cbk_data;
@@ -171,6 +172,8 @@ class TableSet : public CanvasModule
     void Garnish ();
 
     Table *GetTable (guint size);
+
+    void LoadNode (xmlNode *xml_node);
 
     void OnStatusChanged (GtkComboBox *combo_box);
 

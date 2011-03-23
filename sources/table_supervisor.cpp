@@ -90,8 +90,10 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 
     filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("name");
-    //filter->ShowAttribute ("first_name");
-    //filter->ShowAttribute ("club");
+#ifndef DEBUG
+    filter->ShowAttribute ("first_name");
+    filter->ShowAttribute ("club");
+#endif
 
     SetFilter (filter);
     filter->Release ();
@@ -333,12 +335,18 @@ void TableSupervisor::Load (xmlNode *xml_node)
       else if (strcmp ((char *) n->name, "Tireur") == 0)
       {
         LoadAttendees (n);
-        CreateTableSets ();
       }
       else if (strcmp ((char *) n->name, "SuiteDeTableaux") == 0)
       {
-        TableSet *table_set;
-        gchar    *prop = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+        GtkTreeIter  iter;
+        TableSet    *table_set;
+        gchar       *prop = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+
+        if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
+                                           &iter) == FALSE)
+        {
+          CreateTableSets ();
+        }
 
         if (prop)
         {
