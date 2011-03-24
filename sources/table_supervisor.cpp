@@ -213,45 +213,48 @@ gboolean TableSupervisor::TableSetIsOver (GtkTreeModel    *model,
 // --------------------------------------------------------------------------------
 void TableSupervisor::CreateTableSets ()
 {
-  guint nb_players = g_slist_length (_attendees->GetShortList ());
-  guint nb_tables  = 0;
-
-  for (guint i = 0; i < 32; i++)
+  if (_attendees)
   {
-    guint bit_cursor;
+    guint nb_players = g_slist_length (_attendees->GetShortList ());
+    guint nb_tables  = 0;
 
-    bit_cursor = 1;
-    bit_cursor = bit_cursor << i;
-    if (bit_cursor >= nb_players)
+    for (guint i = 0; i < 32; i++)
     {
-      nb_tables = i++;
-      break;
+      guint bit_cursor;
+
+      bit_cursor = 1;
+      bit_cursor = bit_cursor << i;
+      if (bit_cursor >= nb_players)
+      {
+        nb_tables = i++;
+        break;
+      }
     }
-  }
 
-  {
-    gtk_tree_store_clear (_table_set_treestore);
-
-    FeedTableSetStore (1,
-                       nb_tables,
-                       NULL);
-
-    gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")));
-
-  }
-
-  {
-    GtkTreeIter iter;
-
-    gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
-                                   &iter);
-    gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                        TABLE_SET_TABLE_COLUMN, &_displayed_table_set,
-                        -1);
-
-    if (_displayed_table_set)
     {
-      _displayed_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
+      gtk_tree_store_clear (_table_set_treestore);
+
+      FeedTableSetStore (1,
+                         nb_tables,
+                         NULL);
+
+      gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")));
+
+    }
+
+    {
+      GtkTreeIter iter;
+
+      gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
+                                     &iter);
+      gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
+                          TABLE_SET_TABLE_COLUMN, &_displayed_table_set,
+                          -1);
+
+      if (_displayed_table_set)
+      {
+        _displayed_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
+      }
     }
   }
 }
@@ -288,7 +291,7 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
   gtk_tree_model_get (model, iter,
                       TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
-  table_set->Release ();
+  //table_set->Release ();
 
   return FALSE;
 }
@@ -457,14 +460,19 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
   }
 
   {
+    guint nb_players   = g_slist_length (_attendees->GetShortList ());
     guint place_offset = 1;
 
     for (guint i = 0; i < nb_tables-1; i++)
     {
       place_offset = place_offset << 1;
-      FeedTableSetStore (from_place + place_offset,
-                         i+1,
-                         &iter);
+
+      if ((from_place+place_offset) < (nb_players))
+      {
+        FeedTableSetStore (from_place + place_offset,
+                           i+1,
+                           &iter);
+      }
     }
   }
 }
@@ -528,42 +536,37 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
     gtk_tree_path_free (path);
   }
 
+  if (   (table->GetColumn () <= (table_set->GetNbTables () - 3))
+      && gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_table_set_treestore),
+                                        &defeated_iter,
+                                        &iter,
+                                        table_set->GetNbTables () - table->GetColumn () - 3))
   {
-    guint nb_subtable = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (_table_set_treestore),
-                                                        &iter);
+    TableSet *defeated_table_set;
 
-    if (   (nb_subtable >= (table->GetColumn () + 1))
-        && gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_table_set_treestore),
-                                          &defeated_iter,
-                                          &iter,
-                                          nb_subtable - table->GetColumn () - 1))
+    gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &defeated_iter,
+                        TABLE_SET_TABLE_COLUMN, &defeated_table_set,
+                        -1);
+
+    if (defeated_table_set)
     {
-      TableSet *defeated_table_set;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &defeated_iter,
-                          TABLE_SET_TABLE_COLUMN, &defeated_table_set,
-                          -1);
-
-      if (defeated_table_set)
+      // Store its reference in the table it comes from
       {
-        // Store its reference in the table it comes from
-        {
-          GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore),
-                                                       &defeated_iter);
+        GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore),
+                                                     &defeated_iter);
 
-          table->_defeated_table_set = gtk_tree_path_to_string (path);
-          gtk_tree_path_free (path);
-        }
+        table->_defeated_table_set = gtk_tree_path_to_string (path);
+        gtk_tree_path_free (path);
+      }
 
-        // Populate it
-        {
-          GSList *attendees = table->GetLoosers ();
+      // Populate it
+      {
+        GSList *attendees = table->GetLoosers ();
 
-          attendees = g_slist_sort_with_data (attendees,
-                                              (GCompareDataFunc) TableSet::ComparePlayer,
-                                              defeated_table_set);
-          defeated_table_set->SetAttendees (attendees);
-        }
+        attendees = g_slist_sort_with_data (attendees,
+                                            (GCompareDataFunc) TableSet::ComparePlayer,
+                                            defeated_table_set);
+        defeated_table_set->SetAttendees (attendees);
       }
     }
   }
@@ -726,6 +729,14 @@ GSList *TableSupervisor::GetCurrentClassification ()
   gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
                           (GtkTreeModelForeachFunc) GetTableSetClassification,
                           this);
+
+  {
+    Player::AttributeId attr_id = Player::AttributeId ("rank", this);
+
+    _result = g_slist_sort_with_data (_result,
+                                      (GCompareDataFunc) Player::Compare,
+                                      &attr_id);
+  }
 
   return _result;
 }

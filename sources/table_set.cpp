@@ -169,11 +169,13 @@ TableSet::~TableSet ()
 
   g_free (_name);
 
-  g_slist_free (_attendees);
+  if (_attendees)
+  {
+    g_slist_free (_attendees);
+  }
 
   gtk_list_store_clear (_from_table_liststore);
   gtk_tree_store_clear (_quick_search_treestore);
-  gtk_tree_store_clear (GTK_TREE_STORE (_quick_search_filter));
 
   if (_match_to_print)
   {
@@ -608,7 +610,8 @@ void TableSet::DeleteTree ()
     _tables[i]->Release ();
   }
   g_free (_tables);
-  _tables = NULL;
+  _nb_tables = 0;
+  _tables    = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -781,7 +784,6 @@ gboolean TableSet::UpdateTableStatus (GNode    *node,
         left_table->_has_error = TRUE;
       }
 
-      g_print ("#### %x\n", data->_match);
       left_table->_is_over = FALSE;
     }
   }
@@ -1254,7 +1256,6 @@ void TableSet::AddFork (GNode *to)
 
         to_data->_match->SetPlayerA (A_data->_match->GetWinner ());
         to_data->_match->SetPlayerB (NULL);
-        g_print ("======> %x %x\n", to_data->_match, to_data->_match->GetWinner ());
       }
     }
   }

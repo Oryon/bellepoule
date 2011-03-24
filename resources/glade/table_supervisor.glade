@@ -339,6 +339,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                   <object class="GtkRadioButton" id="radiobutton1">
                     <property name="label" translatable="yes">Aucun</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="active">True</property>
@@ -354,9 +355,9 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                   <object class="GtkRadioButton" id="radiobutton4">
                     <property name="label" translatable="yes">Pour la 3i&#xE8;me place</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">radiobutton1</property>
                   </object>
@@ -374,7 +375,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                     <property name="receives_default">False</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">radiobutton1</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -386,9 +386,9 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                   <object class="GtkRadioButton" id="radiobutton5">
                     <property name="label" translatable="yes">Pour acc&#xE9;der au quota des qualifi&#xE9;s</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">radiobutton1</property>
                   </object>
