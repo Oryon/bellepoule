@@ -47,6 +47,8 @@ Stage::Stage (StageClass *stage_class)
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
 
+  _max_score = NULL;
+
   _nb_eliminated = new Data ("NbElimines",
                              (guint) 0);
 }
@@ -67,7 +69,7 @@ Stage::~Stage ()
 
 // --------------------------------------------------------------------------------
 void Stage::SetStatusCbk (StatusCbk  cbk,
-                            void      *data)
+                          void      *data)
 {
   _status_cbk_data = data;
   _status_cbk      = cbk;
@@ -178,8 +180,10 @@ void Stage::UnLock ()
   if (_attendees)
   {
     GSList *current = _attendees->GetShortList ();
-    Player::AttributeId  status_attr_id ("status", this);
+    Player::AttributeId  status_attr_id ("status", GetPlayerDataOwner ());
     Player::AttributeId  global_status_attr_id ("global_status");
+
+    CheckInconsistency ();
 
     for (guint i = 0; current != NULL; i++)
     {
@@ -225,6 +229,12 @@ gboolean Stage::Locked ()
 gboolean Stage::IsOver ()
 {
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+Data *Stage::GetMaxScore ()
+{
+  return _max_score;
 }
 
 // --------------------------------------------------------------------------------
@@ -292,10 +302,12 @@ void Stage::RetrieveAttendees ()
                                 shortlist);
 
     {
-      Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", this);
-      Player::AttributeId  status_attr_id ("status", this);
+      Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", GetPlayerDataOwner ());
+      Player::AttributeId  status_attr_id ("status", GetPlayerDataOwner ());
       Player::AttributeId  global_status_attr_id ("global_status");
       GSList              *current = shortlist;
+
+      CheckInconsistency ();
 
       for (guint i = 0; current != NULL; i++)
       {
@@ -333,9 +345,8 @@ GSList *Stage::GetOutputShortlist ()
 
   if (shortlist && classification)
   {
-    Module             *module          = dynamic_cast <Module *> (this);
     guint               nb_to_remove    = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
-    Player::AttributeId stage_attr_id         ("status", module->GetDataOwner ());
+    Player::AttributeId stage_attr_id         ("status", GetPlayerDataOwner ());
     Player::AttributeId classif_attr_id       ("status", classification->GetDataOwner ());
     Player::AttributeId global_status_attr_id ("global_status");
 
@@ -444,9 +455,11 @@ void Stage::LoadAttendees (xmlNode *n)
         }
 
         {
-          Player::AttributeId status_attr_id        ("status", this);
+          Player::AttributeId status_attr_id        ("status", GetPlayerDataOwner ());
           Player::AttributeId global_status_attr_id ("global_status");
           gchar *status_attr =  (gchar *) xmlGetProp (n, BAD_CAST "Statut");
+
+          CheckInconsistency ();
 
           if (status_attr)
           {
@@ -844,8 +857,10 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
         }
         else
         {
-          rank_attr_id   = new Player::AttributeId ("rank", this);
-          status_attr_id = new Player::AttributeId ("status", this);
+          rank_attr_id   = new Player::AttributeId ("rank", GetPlayerDataOwner ());
+          status_attr_id = new Player::AttributeId ("status", GetPlayerDataOwner ());
+
+          CheckInconsistency ();
         }
 
         rank                = player->GetAttribute (rank_attr_id);
@@ -905,5 +920,32 @@ void Stage::Dump ()
 
       g_print ("%d >>> %s\n", i, player->GetName ());
     }
+  }
+}
+
+// --------------------------------------------------------------------------------
+Object *Stage::GetPlayerDataOwner ()
+{
+  Module *module = dynamic_cast <Module *> (this);
+
+  return module->GetDataOwner ();
+}
+
+// --------------------------------------------------------------------------------
+void Stage::CheckInconsistency ()
+{
+  Module *module = dynamic_cast <Module *> (this);
+
+  if (this != module->GetDataOwner ())
+  {
+    printf ("##################""\n");
+    printf ("##################""\n");
+    printf ("##################""\n");
+    printf ("##################""\n");
+    printf ("##################""\n");
+    printf ("##################""\n");
+    printf ("##################""\n");
+    printf ("##################""\n");
+    printf ("##################""\n");
   }
 }

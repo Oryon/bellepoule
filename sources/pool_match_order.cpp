@@ -124,7 +124,7 @@ static PoolMatchOrder::PlayerPair pool_9_pairs[36] =
   {1, 2},
   {9, 3},
   {8, 4},
-  {7, 5},
+  {7, 2},
   {6, 1},
   {3, 2},
   {9, 4},

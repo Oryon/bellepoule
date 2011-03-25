@@ -47,14 +47,14 @@ class Object
 
     void Release ();
 
+    void RemoveAllData ();
+
     static void Dump ();
 
     static void TryToRelease (Object *object);
 
   protected:
     virtual ~Object ();
-
-    void RemoveAllData ();
 
   private:
     GData *_datalist;

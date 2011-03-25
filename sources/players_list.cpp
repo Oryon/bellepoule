@@ -982,9 +982,9 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
                               GtkPrintContext   *context,
                               gint               page_nr)
 {
-  Module::OnDrawPage (operation,
-                      context,
-                      page_nr);
+  DrawContainerPage (operation,
+                     context,
+                     page_nr);
 
   if (_column_width == NULL)
   {

@@ -18,115 +18,71 @@
 #define table_hpp
 
 #include <gtk/gtk.h>
+#include <goocanvas.h>
+#include <libxml/xmlwriter.h>
 
-#include "data.hpp"
-#include "canvas_module.hpp"
+#include "object.hpp"
 #include "match.hpp"
-#include "score_collector.hpp"
 
-#include "stage.hpp"
+class TableSet;
 
-class Table : public virtual Stage, public CanvasModule
+class Table : public Object
 {
   public:
-    static void Init ();
+    Table (TableSet *table_set,
+           guint     size,
+           guint     column);
 
-    Table (StageClass *stage_class);
+    gchar *GetImage ();
 
-    void OnFromTableComboboxChanged ();
-    void OnStuffClicked ();
-    void OnInputToggled (GtkWidget *widget);
-    void OnMatchSheetToggled (GtkWidget *widget);
-    void OnDisplayToggled (GtkWidget *widget);
-    void OnSearchMatch ();
-    void OnFilterClicked ();
-    void OnPrint ();
-    void OnZoom (gdouble value);
+    void SetRightTable (Table *right);
 
-  public:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
+    Table *GetRightTable ();
+
+    Table *GetLeftTable ();
+
+    guint GetSize ();
+
+    guint GetRow (guint for_index);
+
+    guint GetColumn ();
+
+    void Show (guint at_column);
+
+    void Hide ();
+
+    void Save (xmlTextWriter *xml_writer);
+
+    void Load (xmlNode *xml_node);
+
+    gboolean IsDisplayed ();
+
+    void ManageMatch (Match *match);
+
+    void DropMatch (Match *match);
+
+    GSList *GetLoosers ();
+
+    gboolean       _has_error;
+    guint          _is_over;
+    GooCanvasItem *_status_item;
+    GooCanvasItem *_header_item;
+    gchar         *_defeated_table_set;
 
   private:
-    void OnLocked (Reason reason);
-    void OnUnLocked ();
-    void OnPlugged ();
-    void OnUnPlugged ();
-    void Wipe ();
+    guint     _size;
+    guint     _column;
+    gboolean  _is_displayed;
+    Table    *_left_table;
+    Table    *_right_table;
+    GSList   *_match_list;
+    TableSet *_table_set;
+    gboolean  _loaded;
 
-    void OnBeginPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
-    void OnDrawPage (GtkPrintOperation *operation,
-                     GtkPrintContext   *context,
-                     gint               page_nr);
+    ~Table ();
 
-  private:
-    static const gdouble _score_rect_size;
-
-    struct LevelStatus
-    {
-      gboolean       _has_error;
-      guint          _is_over;
-      GooCanvasItem *_status_item;
-      GooCanvasItem *_level_header;
-    };
-
-    struct NodeData
-    {
-      guint          _expected_winner_rank;
-      guint          _level;
-      guint          _row;
-      Match         *_match;
-      GooCanvasItem *_canvas_table;
-      GooCanvasItem *_player_item;
-      GooCanvasItem *_print_item;
-      GooCanvasItem *_connector;
-    };
-
-    static const gdouble _level_spacing;
-
-    GNode              *_tree_root;
-    guint               _nb_levels;
-    guint               _level_filter;
-    GtkListStore       *_from_table_liststore;
-    GtkTreeStore       *_display_treestore;
-    GtkTreeStore       *_quick_search_treestore;
-    GtkTreeModelFilter *_quick_search_filter;
-    guint               _nb_level_to_display;
-    GooCanvasItem      *_main_table;
-    GooCanvasItem      *_quick_score_A;
-    GooCanvasItem      *_quick_score_B;
-    Data               *_max_score;
-    ScoreCollector     *_score_collector;
-    ScoreCollector     *_quick_score_collector;
-    xmlTextWriter      *_xml_writer;
-    xmlNode            *_xml_node;
-    LevelStatus        *_level_status;
-    GSList             *_result_list;
-    GSList             *_match_to_print;
-    GtkWidget          *_print_dialog;
-    GtkWidget          *_level_print_dialog;
-    gboolean            _print_full_table;
-    gdouble             _print_scale;
-    guint               _print_nb_x_pages;
-    guint               _print_nb_y_pages;
-    GData              *_match_list;
-
-    GooCanvasItem *GetQuickScore (const gchar *container);
-
-    void Display ();
-
-    void Garnish ();
-
-    void CreateTree ();
-
-    void DeleteTree ();
-
-    void OnAttrListUpdated ();
-
-    void DrawAllConnectors ();
-
-    gboolean IsOver ();
+    static gint Table::CompareMatchNumber (Match *a,
+                                           Match *b);
 
     void LoadMatch (xmlNode *xml_node,
                     Match   *match);
@@ -135,99 +91,6 @@ class Table : public virtual Stage, public CanvasModule
                     Match   *match,
                     guint    player_index,
                     Player  **dropped);
-
-    GSList *GetCurrentClassification ();
-
-    void OnStatusChanged (GtkComboBox *combo_box);
-
-    static gboolean Stuff (GNode *node,
-                           Table *table);
-
-    static gboolean AddToClassification (GNode *node,
-                                         Table *table);
-
-    static gboolean UpdateLevelStatus (GNode *node,
-                                       Table *table);
-
-    static gboolean DrawConnector (GNode *node,
-                                   Table *table);
-
-    static gboolean WipeNode (GNode *node,
-                              Table *table);
-
-    static gboolean DeleteCanvasTable (GNode *node,
-                                       Table *table);
-
-    static Stage *CreateInstance (StageClass *stage_class);
-
-    static gboolean FillInNode (GNode *node,
-                                Table *table);
-
-    static gboolean DeleteNode (GNode *node,
-                                Table *table);
-
-    static void OnNewScore (ScoreCollector *score_collector,
-                            CanvasModule   *client,
-                            Match          *match,
-                            Player         *player);
-
-    static gint ComparePlayer (Player *A,
-                               Player *B,
-                               Table  *table);
-
-    gint ComparePreviousRankPlayer (Player  *A,
-                                    Player  *B,
-                                    guint32  rand_seed);
-
-    void Save (xmlTextWriter *xml_writer);
-
-    void SaveConfiguration (xmlTextWriter *xml_writer);
-
-    void Load (xmlNode *xml_node);
-
-    void LoadConfiguration (xmlNode *xml_node);
-
-    void AddFork (GNode *to);
-
-    void FillInConfig ();
-
-    void ApplyConfig ();
-
-    void RefreshLevelStatus ();
-
-    void FeedDisplayStore (guint        from_place,
-                           guint        nb_levels,
-                           GtkTreeIter *parent);
-
-    gchar *GetLevelImage (guint level);
-
-    void SetPlayer (Match  *to_match,
-                    Player *player,
-                    guint   position);
-
-    void LookForMatchToPrint (guint    level_to_print,
-                              gboolean all_sheet);
-
-    static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
-                                                   GtkCellRenderer *cell,
-                                                   GtkTreeModel    *tree_model,
-                                                   GtkTreeIter     *iter,
-                                                   Table           *table);
-
-    static gboolean OnPrintLevel (GooCanvasItem  *item,
-                                  GooCanvasItem  *target_item,
-                                  GdkEventButton *event,
-                                  Table          *table);
-
-    static gboolean OnPrintMatch (GooCanvasItem  *item,
-                                  GooCanvasItem  *target_item,
-                                  GdkEventButton *event,
-                                  Table          *table);
-
-    static void on_status_changed (GtkComboBox *combo_box,
-                                   Table       *table);
-
-    ~Table ();
 };
 
 #endif
