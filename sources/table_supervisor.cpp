@@ -607,6 +607,30 @@ void TableSupervisor::OnUnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean TableSupervisor::ToggleTableSetLock (GtkTreeModel *model,
+                                              GtkTreePath  *path,
+                                              GtkTreeIter  *iter,
+                                              gboolean      data)
+{
+  TableSet *table_set;
+
+  gtk_tree_model_get (model, iter,
+                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      -1);
+
+  if (data)
+  {
+    table_set->Lock ();
+  }
+  else
+  {
+    table_set->UnLock ();
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 void TableSupervisor::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
@@ -614,7 +638,9 @@ void TableSupervisor::OnLocked (Reason reason)
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
                                      FALSE);
 
-  //toto->Lock ();
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
+                          (GtkTreeModelForeachFunc) ToggleTableSetLock,
+                          (void *) 1);
 }
 
 // --------------------------------------------------------------------------------
@@ -622,7 +648,9 @@ void TableSupervisor::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
 
-  //toto->UnLock ();
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
+                          (GtkTreeModelForeachFunc) ToggleTableSetLock,
+                          0);
 }
 
 // --------------------------------------------------------------------------------

@@ -127,6 +127,11 @@ class TableSupervisor : public virtual Stage, public Module
                                    GtkTreeIter  *iter,
                                    gpointer      data);
 
+    static gboolean ToggleTableSetLock (GtkTreeModel *model,
+                                        GtkTreePath  *path,
+                                        GtkTreeIter  *iter,
+                                        gboolean      data);
+
     static void OnTableSetStatusUpdated (TableSet        *table_set,
                                          TableSupervisor *ts);
     ~TableSupervisor ();
