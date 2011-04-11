@@ -271,8 +271,20 @@ void Classification::WriteFFFString (FILE        *file,
       g_print ("<<GetFFFString>> %s\n", error->message);
       g_clear_error (&error);
     }
-    else
+    else if (result)
     {
+      gchar *current = result;
+
+      while (*current)
+      {
+        // Workaround to avoid CLAS issue
+        if (*current == '\240')
+        {
+          *current = ' ';
+        }
+        current++;
+      }
+
       fprintf (file, "%s", result);
       g_free (result);
     }

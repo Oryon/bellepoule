@@ -809,6 +809,8 @@ void Pool::Draw (GooCanvas *on_canvas,
     {
       g_signal_connect (w, "changed",
                         G_CALLBACK (on_status_changed), this);
+      g_signal_connect (w, "scroll-event",
+                        G_CALLBACK (on_status_scrolled), this);
     }
     player->RemoveData (this, "combo_box");
   }
@@ -1680,21 +1682,37 @@ void Pool::DropPlayer (Player *player,
                        gchar  *reason)
 {
   Player::AttributeId status_attr_id = Player::AttributeId ("status", GetDataOwner ());
+  Attribute           *status_attr   = player->GetAttribute (&status_attr_id);
+  gboolean             dropped       = TRUE;
+
+  if (status_attr)
+  {
+    gchar *status = status_attr->GetStrValue ();
+
+    if (status && *status == 'Q')
+    {
+      dropped = FALSE;
+    }
+  }
 
   player->SetAttributeValue (&status_attr_id,
                              reason);
-  _nb_drop++;
 
-  for (guint i = 0; i < GetNbPlayers (); i++)
+  if (dropped == FALSE)
   {
-    Player *opponent;
+    _nb_drop++;
 
-    opponent = GetPlayer (i);
-    if (opponent != player)
+    for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Match *match = GetMatch (opponent, player);
+      Player *opponent;
 
-      match->DropPlayer (player);
+      opponent = GetPlayer (i);
+      if (opponent != player)
+      {
+        Match *match = GetMatch (opponent, player);
+
+        match->DropPlayer (player);
+      }
     }
   }
 
@@ -1710,21 +1728,36 @@ void Pool::DropPlayer (Player *player,
 void Pool::RestorePlayer (Player *player)
 {
   Player::AttributeId status_attr_id = Player::AttributeId ("status", GetDataOwner ());
+  Attribute           *status_attr   = player->GetAttribute (&status_attr_id);
+  gboolean             dropped       = TRUE;
+
+  if (status_attr)
+  {
+    gchar *status = status_attr->GetStrValue ();
+
+    if (status && (*status == 'Q'))
+    {
+      dropped = FALSE;
+    }
+  }
 
   player->SetAttributeValue (&status_attr_id,
                              "Q");
-  _nb_drop--;
-
-  for (guint i = 0; i < GetNbPlayers (); i++)
+  if (dropped)
   {
-    Player *opponent;
+    _nb_drop--;
 
-    opponent = GetPlayer (i);
-    if (opponent != player)
+    for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Match *match = GetMatch (opponent, player);
+      Player *opponent;
 
-      match->RestorePlayer (player);
+      opponent = GetPlayer (i);
+      if (opponent != player)
+      {
+        Match *match = GetMatch (opponent, player);
+
+        match->RestorePlayer (player);
+      }
     }
   }
 
@@ -1766,4 +1799,14 @@ void Pool::on_status_changed (GtkComboBox *combo_box,
                               Pool        *pool)
 {
   pool->OnStatusChanged (combo_box);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Pool::on_status_scrolled (GtkWidget *widget,
+                                   GdkEvent  *event,
+                                   gpointer   user_data)
+{
+  gtk_widget_event (gtk_widget_get_parent (widget),
+                    event);
+  return TRUE;
 }

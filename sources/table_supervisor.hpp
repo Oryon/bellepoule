@@ -58,13 +58,20 @@ class TableSupervisor : public virtual Stage, public Module
     void Wipe ();
 
   private:
-    GtkTreeStore  *_table_set_treestore;
-    xmlTextWriter *_xml_writer;
-    xmlNode       *_xml_node;
-    GSList        *_result_list;
-    TableSet      *_displayed_table_set;
-    gboolean       _is_over;
-    GSList        *_result;
+    static const guint NONE         = 0;
+    static const guint QUOTA        = 1;
+    static const guint THIRD_PLACES = 3;
+    static const guint ALL_PLACES   = 99;
+
+    GtkTreeStore       *_table_set_treestore;
+    GtkTreeModelFilter *_table_set_filter;
+    xmlTextWriter      *_xml_writer;
+    xmlNode            *_xml_node;
+    GSList             *_result_list;
+    TableSet           *_displayed_table_set;
+    gboolean            _is_over;
+    GSList             *_result;
+    Data               *_fenced_places;
 
     void Display ();
 
@@ -73,6 +80,8 @@ class TableSupervisor : public virtual Stage, public Module
     void CreateTableSets ();
 
     void DeleteTableSets ();
+
+    void SetTableSetsState ();
 
     void OnAttrListUpdated ();
 
@@ -131,6 +140,11 @@ class TableSupervisor : public virtual Stage, public Module
                                         GtkTreePath  *path,
                                         GtkTreeIter  *iter,
                                         gboolean      data);
+
+    static gboolean ActivateTableSet (GtkTreeModel    *model,
+                                      GtkTreePath     *path,
+                                      GtkTreeIter     *iter,
+                                      TableSupervisor *ts);
 
     static void OnTableSetStatusUpdated (TableSet        *table_set,
                                          TableSupervisor *ts);

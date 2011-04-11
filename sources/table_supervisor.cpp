@@ -41,7 +41,8 @@ typedef enum
 {
   TABLE_SET_NAME_COLUMN,
   TABLE_SET_TABLE_COLUMN,
-  TABLE_SET_STATUS_COLUMN
+  TABLE_SET_STATUS_COLUMN,
+  TABLE_SET_VISIBILITY_COLUMN
 } DisplayColumnId;
 
 extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
@@ -54,6 +55,9 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 {
   _max_score = new Data ("ScoreMax",
                          10);
+
+  _fenced_places = new Data ("PlacesTirees",
+                             (guint) NONE);
 
   _displayed_table_set = NULL;
 
@@ -130,6 +134,10 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
   }
 
   _table_set_treestore = GTK_TREE_STORE (_glade->GetObject ("table_set_treestore"));
+  _table_set_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("table_set_treemodelfilter"));
+
+  gtk_tree_model_filter_set_visible_column (_table_set_filter,
+                                            TABLE_SET_VISIBILITY_COLUMN);
 }
 
 // --------------------------------------------------------------------------------
@@ -237,9 +245,6 @@ void TableSupervisor::CreateTableSets ()
       FeedTableSetStore (1,
                          nb_tables,
                          NULL);
-
-      gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")));
-
     }
 
     {
@@ -257,6 +262,54 @@ void TableSupervisor::CreateTableSets ()
       }
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+void TableSupervisor::SetTableSetsState ()
+{
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
+                          (GtkTreeModelForeachFunc) ActivateTableSet,
+                          this);
+  gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")));
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSupervisor::ActivateTableSet (GtkTreeModel    *model,
+                                            GtkTreePath     *path,
+                                            GtkTreeIter     *iter,
+                                            TableSupervisor *ts)
+{
+  TableSet *table_set;
+  gboolean  visibility = FALSE;
+
+  gtk_tree_model_get (model, iter,
+                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      -1);
+
+  if (table_set->GetFirstPlace () == 1)
+  {
+    visibility = TRUE;
+  }
+  else if (ts->_fenced_places->_value == ALL_PLACES)
+  {
+    visibility = TRUE;
+  }
+  else if (ts->_fenced_places->_value == THIRD_PLACES)
+  {
+    if (table_set->GetFirstPlace () <= 3)
+    {
+      visibility = TRUE;
+    }
+  }
+  else if (ts->_fenced_places->_value == QUOTA)
+  {
+  }
+
+  gtk_tree_store_set (ts->_table_set_treestore, iter,
+                      TABLE_SET_VISIBILITY_COLUMN, visibility,
+                      -1);
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -308,8 +361,9 @@ void TableSupervisor::DeleteTableSets ()
 // --------------------------------------------------------------------------------
 void TableSupervisor::Garnish ()
 {
-  DeleteTableSets ();
-  CreateTableSets ();
+  DeleteTableSets   ();
+  CreateTableSets   ();
+  SetTableSetsState ();
 }
 
 // --------------------------------------------------------------------------------
@@ -320,6 +374,11 @@ void TableSupervisor::LoadConfiguration (xmlNode *xml_node)
   if (_max_score)
   {
     _max_score->Load (xml_node);
+  }
+
+  if (_fenced_places)
+  {
+    _fenced_places->Load (xml_node);
   }
 }
 
@@ -377,6 +436,11 @@ void TableSupervisor::SaveConfiguration (xmlTextWriter *xml_writer)
   if (_max_score)
   {
     _max_score->Save (xml_writer);
+  }
+
+  if (_fenced_places)
+  {
+    _fenced_places->Save (xml_writer);
   }
 }
 
@@ -456,6 +520,7 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
     gtk_tree_store_set (_table_set_treestore, &iter,
                         TABLE_SET_NAME_COLUMN, table_set->GetName (),
                         TABLE_SET_TABLE_COLUMN, table_set,
+                        TABLE_SET_VISIBILITY_COLUMN, 0,
                         -1);
   }
 
@@ -662,19 +727,46 @@ void TableSupervisor::OnAttrListUpdated ()
 // --------------------------------------------------------------------------------
 void TableSupervisor::FillInConfig ()
 {
-  gchar *text = g_strdup_printf ("%d", _max_score->_value);
+  Stage::FillInConfig ();
 
-  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
-                      text);
-  g_free (text);
+  {
+    gchar *text = g_strdup_printf ("%d", _max_score->_value);
 
-  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
-                      GetName ());
+    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
+                        text);
+    g_free (text);
+
+    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
+                        GetName ());
+
+    if (_fenced_places->_value == ALL_PLACES)
+    {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_places_radiobutton")),
+                                    TRUE);
+    }
+    else if (_fenced_places->_value == THIRD_PLACES)
+    {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton")),
+                                    TRUE);
+    }
+    else if (_fenced_places->_value == QUOTA)
+    {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("quota_radiobutton")),
+                                    TRUE);
+    }
+    else
+    {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("no_radiobutton")),
+                                    TRUE);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
 void TableSupervisor::ApplyConfig ()
 {
+  Stage::ApplyConfig ();
+
   {
     GtkWidget *name_w = _glade->GetWidget ("name_entry");
     gchar     *name   = (gchar *) gtk_entry_get_text (GTK_ENTRY (name_w));
@@ -697,6 +789,25 @@ void TableSupervisor::ApplyConfig ()
       }
     }
   }
+
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_places_radiobutton"))))
+  {
+    _fenced_places->_value = ALL_PLACES;
+  }
+  else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton"))))
+  {
+    _fenced_places->_value = THIRD_PLACES;
+  }
+  else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("quota_radiobutton"))))
+  {
+    _fenced_places->_value = QUOTA;
+  }
+  else
+  {
+    _fenced_places->_value = NONE;
+  }
+
+  SetTableSetsState ();
 }
 
 // --------------------------------------------------------------------------------

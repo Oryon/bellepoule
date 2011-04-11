@@ -1012,6 +1012,8 @@ gboolean TableSet::FillInNode (GNode    *node,
               g_object_set_data (G_OBJECT (w), "match_for_status", (void *) parent_data->_match);
               g_signal_connect (w, "changed",
                                 G_CALLBACK (on_status_changed), table_set);
+              g_signal_connect (w, "scroll-event",
+                                G_CALLBACK (on_status_scrolled), table_set);
             }
           }
         }
@@ -1707,6 +1709,12 @@ GSList *TableSet::GetCurrentClassification ()
 }
 
 // --------------------------------------------------------------------------------
+guint TableSet::GetFirstPlace ()
+{
+  return _first_place;
+}
+
+// --------------------------------------------------------------------------------
 gint TableSet::ComparePlayer (Player   *A,
                               Player   *B,
                               TableSet *table_set)
@@ -2366,4 +2374,15 @@ extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *wid
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
   t->OnSearchMatch ();
+}
+
+
+// --------------------------------------------------------------------------------
+gboolean TableSet::on_status_scrolled (GtkWidget *widget,
+                                       GdkEvent  *event,
+                                       gpointer   user_data)
+{
+  gtk_widget_event (gtk_widget_get_parent (widget),
+                    event);
+  return TRUE;
 }

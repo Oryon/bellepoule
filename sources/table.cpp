@@ -37,7 +37,7 @@ Table::Table (TableSet *table_set,
   _header_item        = NULL;
   _defeated_table_set = NULL;
   _is_displayed       = TRUE;
-  _loaded             = FALSE;
+  _activated          = FALSE;
 
   _match_list = NULL;
 }
@@ -57,6 +57,18 @@ Table::~Table ()
 guint Table::GetSize ()
 {
   return _size;
+}
+
+// --------------------------------------------------------------------------------
+void Table::Activate ()
+{
+  _activated = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void Table::Deactivate ()
+{
+  _activated = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -143,9 +155,9 @@ void Table::Load (xmlNode *xml_node)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if ((_loaded == FALSE) && (strcmp ((char *) n->name, "Tableau") == 0))
+      if ((_activated == FALSE) && (strcmp ((char *) n->name, "Tableau") == 0))
       {
-        _loaded = TRUE;
+        _activated = TRUE;
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
@@ -266,38 +278,41 @@ void Table::LoadScore (xmlNode *xml_node,
 // --------------------------------------------------------------------------------
 void Table::Save (xmlTextWriter *xml_writer)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST "Tableau");
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "ID",
-                                     "A%d", _size);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "Titre",
-                                     "%s", GetImage ());
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "Taille",
-                                     "%d", _size);
-  if (_defeated_table_set)
+  if (_activated)
   {
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST "Tableau");
     xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "DestinationDesElimines",
-                                       "%s", _defeated_table_set);
-  }
-
-  {
-    GSList *current_match = _match_list;
-
-    while (current_match)
+                                       BAD_CAST "ID",
+                                       "A%d", _size);
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "Titre",
+                                       "%s", GetImage ());
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "Taille",
+                                       "%d", _size);
+    if (_defeated_table_set)
     {
-      Match *match = (Match *) current_match->data;
-
-      match->Save (xml_writer);
-
-      current_match = g_slist_next (current_match);
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "DestinationDesElimines",
+                                         "%s", _defeated_table_set);
     }
-  }
 
-  xmlTextWriterEndElement (xml_writer);
+    {
+      GSList *current_match = _match_list;
+
+      while (current_match)
+      {
+        Match *match = (Match *) current_match->data;
+
+        match->Save (xml_writer);
+
+        current_match = g_slist_next (current_match);
+      }
+    }
+
+    xmlTextWriterEndElement (xml_writer);
+  }
 }
 
 // --------------------------------------------------------------------------------

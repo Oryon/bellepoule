@@ -162,6 +162,9 @@ class Pool : public CanvasModule
     static void on_status_changed (GtkComboBox *combo_box,
                                    Pool        *pool);
 
+    static gboolean on_status_scrolled (GtkWidget *widget,
+                                        GdkEvent  *event,
+                                        gpointer   user_data);
 
     ~Pool ();
 };

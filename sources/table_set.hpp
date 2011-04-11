@@ -95,6 +95,8 @@ class TableSet : public CanvasModule
 
     gchar *GetName ();
 
+    guint GetFirstPlace ();
+
     static gint ComparePlayer (Player    *A,
                                Player    *B,
                                TableSet  *table_set);
@@ -238,6 +240,10 @@ class TableSet : public CanvasModule
 
     static void on_status_changed (GtkComboBox *combo_box,
                                    TableSet    *table_set);
+
+    static gboolean on_status_scrolled (GtkWidget *widget,
+                                        GdkEvent  *event,
+                                        gpointer   user_data);
 
     ~TableSet ();
 };
