@@ -77,6 +77,7 @@
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Classification</property>
                     <property name="use_underline">True</property>
+                    <property name="icon_widget">score_image</property>
                     <signal name="toggled" handler="on_table_classification_toggletoolbutton_toggled"/>
                   </object>
                   <packing>
@@ -98,6 +99,7 @@
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Fill in a match</property>
                     <property name="use_underline">True</property>
+                    <property name="icon_widget">input_image</property>
                     <signal name="toggled" handler="on_input_toolbutton_toggled"/>
                   </object>
                   <packing>
