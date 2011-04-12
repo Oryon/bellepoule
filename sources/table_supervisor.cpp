@@ -195,7 +195,7 @@ gboolean TableSupervisor::IsOver ()
 {
   _is_over = TRUE;
 
-  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                           (GtkTreeModelForeachFunc) TableSetIsOver,
                           this);
 
@@ -248,20 +248,23 @@ void TableSupervisor::CreateTableSets ()
     }
 
     {
-      GtkTreeIter iter;
+      GtkTreeIter  iter;
+      TableSet    *first_table_set;
 
       gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
                                      &iter);
       gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                          TABLE_SET_TABLE_COLUMN, &_displayed_table_set,
+                          TABLE_SET_TABLE_COLUMN, &first_table_set,
                           -1);
 
-      if (_displayed_table_set)
+      if (first_table_set)
       {
-        _displayed_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
+        first_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
       }
     }
   }
+
+  SetTableSetsState ();
 }
 
 // --------------------------------------------------------------------------------
@@ -271,6 +274,25 @@ void TableSupervisor::SetTableSetsState ()
                           (GtkTreeModelForeachFunc) ActivateTableSet,
                           this);
   gtk_tree_view_expand_all (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")));
+
+  if (_displayed_table_set == NULL)
+  {
+    GtkTreeIter iter;
+    GtkTreePath *path;
+
+    gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
+                                   &iter);
+    path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore), &iter);
+
+    gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                              path,
+                              NULL,
+                              FALSE);
+
+    gtk_tree_path_free (path);
+  }
+
+  SignalStatusUpdate ();
 }
 
 // --------------------------------------------------------------------------------
@@ -308,6 +330,20 @@ gboolean TableSupervisor::ActivateTableSet (GtkTreeModel    *model,
   gtk_tree_store_set (ts->_table_set_treestore, iter,
                       TABLE_SET_VISIBILITY_COLUMN, visibility,
                       -1);
+
+  if (ts->_displayed_table_set && (visibility == FALSE))
+  {
+    TableSet *table_set;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (ts->_table_set_treestore), iter,
+                        TABLE_SET_TABLE_COLUMN, &table_set,
+                        -1);
+    if (ts->_displayed_table_set == table_set)
+    {
+      ts->_displayed_table_set->UnPlug ();
+      ts->_displayed_table_set = NULL;
+    }
+  }
 
   return FALSE;
 }
@@ -363,7 +399,6 @@ void TableSupervisor::Garnish ()
 {
   DeleteTableSets   ();
   CreateTableSets   ();
-  SetTableSetsState ();
 }
 
 // --------------------------------------------------------------------------------
@@ -453,7 +488,7 @@ void TableSupervisor::Save (xmlTextWriter *xml_writer)
   SaveConfiguration (xml_writer);
   SaveAttendees     (xml_writer);
 
-  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                           (GtkTreeModelForeachFunc) SaveTableSet,
                           xml_writer);
 
@@ -865,7 +900,7 @@ GSList *TableSupervisor::GetCurrentClassification ()
 {
   _result = NULL;
 
-  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
+  gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                           (GtkTreeModelForeachFunc) GetTableSetClassification,
                           this);
 

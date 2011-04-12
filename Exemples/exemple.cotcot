@@ -104,7 +104,7 @@
     </Match>
    </Poule>
   </TourDePoules>
-  <PhaseDeTableaux PhaseID="" ID="3" NbElimines="0" ScoreMax="10">
+  <PhaseDeTableaux PhaseID="" ID="3" NbElimines="0" ScoreMax="10" PlacesTirees="99">
    <Tireur REF="7" RangInitial="1" Statut="Q"/>
    <Tireur REF="5" RangInitial="2" Statut="Q"/>
    <Tireur REF="1" RangInitial="3" Statut="Q"/>
@@ -113,8 +113,8 @@
    <Tireur REF="0" RangInitial="6" Statut="Q"/>
    <Tireur REF="3" RangInitial="7" Statut="Q"/>
    <Tireur REF="4" RangInitial="8" Statut="Q"/>
-   <SuiteDeTableaux ID="0" Titre="" NbDeTableaux="3">
-    <Tableau ID="A8" Titre="Tableau de 8" Taille="8" DestinationDesElimines="0:1">
+   <SuiteDeTableaux ID="0" Titre="Place #1" NbDeTableaux="3">
+    <Tableau ID="A8" Titre="Table of 8" Taille="8" DestinationDesElimines="0:1">
      <Match ID="1">
       <Tireur REF="7" Score="1" Statut="D"/>
       <Tireur REF="4" Score="10" Statut="V"/>
@@ -132,7 +132,7 @@
       <Tireur REF="5" Score="10" Statut="V"/>
      </Match>
     </Tableau>
-    <Tableau ID="A4" Titre="Demi-finale" Taille="4" DestinationDesElimines="0:0">
+    <Tableau ID="A4" Titre="Semi-final" Taille="4" DestinationDesElimines="0:0">
      <Match ID="1">
       <Tireur REF="4" Score="10" Statut="V"/>
       <Tireur REF="6" Score="1" Statut="D"/>
@@ -142,23 +142,23 @@
       <Tireur REF="5" Score="10" Statut="V"/>
      </Match>
     </Tableau>
-    <Tableau ID="A2" Titre="Finale" Taille="2">
+    <Tableau ID="A2" Titre="Final" Taille="2">
      <Match ID="1">
       <Tireur REF="4" Score="5" Statut="D"/>
       <Tireur REF="5" Score="10" Statut="V"/>
      </Match>
     </Tableau>
    </SuiteDeTableaux>
-   <SuiteDeTableaux ID="0:0" Titre="" NbDeTableaux="1">
-    <Tableau ID="A2" Titre="Finale" Taille="2">
+   <SuiteDeTableaux ID="0:0" Titre="Place #3" NbDeTableaux="1">
+    <Tableau ID="A2" Titre="Final" Taille="2">
      <Match ID="1">
       <Tireur REF="1" Score="0" Statut="D"/>
       <Tireur REF="6" Score="10" Statut="V"/>
      </Match>
     </Tableau>
    </SuiteDeTableaux>
-   <SuiteDeTableaux ID="0:1" Titre="" NbDeTableaux="2">
-    <Tableau ID="A4" Titre="Demi-finale" Taille="4" DestinationDesElimines="0:1:0">
+   <SuiteDeTableaux ID="0:1" Titre="Place #5" NbDeTableaux="2">
+    <Tableau ID="A4" Titre="Semi-final" Taille="4" DestinationDesElimines="0:1:0">
      <Match ID="1">
       <Tireur REF="7" Score="0" Statut="D"/>
       <Tireur REF="3" Score="10" Statut="V"/>
@@ -168,15 +168,15 @@
       <Tireur REF="2" Score="8" Statut="D"/>
      </Match>
     </Tableau>
-    <Tableau ID="A2" Titre="Finale" Taille="2">
+    <Tableau ID="A2" Titre="Final" Taille="2">
      <Match ID="1">
       <Tireur REF="3" Score="7" Statut="D"/>
       <Tireur REF="0" Score="10" Statut="V"/>
      </Match>
     </Tableau>
    </SuiteDeTableaux>
-   <SuiteDeTableaux ID="0:1:0" Titre="" NbDeTableaux="1">
-    <Tableau ID="A2" Titre="Finale" Taille="2">
+   <SuiteDeTableaux ID="0:1:0" Titre="Place #7" NbDeTableaux="1">
+    <Tableau ID="A2" Titre="Final" Taille="2">
      <Match ID="1">
       <Tireur REF="7" Score="10" Statut="V"/>
       <Tireur REF="2" Score="9" Statut="D"/>
