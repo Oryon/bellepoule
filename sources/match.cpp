@@ -199,6 +199,23 @@ Player *Match::GetWinner ()
 }
 
 // --------------------------------------------------------------------------------
+Player *Match::GetLooser ()
+{
+  Player *winner = GetWinner ();
+
+  if (winner && winner == _A)
+  {
+    return _B;
+  }
+  else if (winner && winner == _B)
+  {
+    return _A;
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 gboolean Match::HasPlayer (Player *player)
 {
   return ((_A == player) || (_B == player));
@@ -457,7 +474,6 @@ void Match::DrawScoreCell (GooCanvasItem *table,
       GooCanvasItem *rect = goo_canvas_rect_new (table,
                                                  0.0, 0.0,
                                                  size, size,
-                                                 "stroke-color", "grey",
                                                  "line-width", 1.0,
                                                  NULL);
 
@@ -478,7 +494,6 @@ void Match::DrawScoreCell (GooCanvasItem *table,
                                           i+1);
       g_object_set (G_OBJECT (text_item),
                     "font", "Sans bold 12px",
-                    "fill-color", "grey",
                     NULL);
       Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
       Canvas::SetTableItemAttribute (text_item, "x-align", 0.5);

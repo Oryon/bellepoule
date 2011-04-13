@@ -140,6 +140,12 @@ void Module::SelectAttributes ()
 }
 
 // --------------------------------------------------------------------------------
+Filter *Module::GetFilter ()
+{
+  return _filter;
+}
+
+// --------------------------------------------------------------------------------
 void Module::Plug (Module     *module,
                    GtkWidget  *in,
                    GtkToolbar *toolbar)
@@ -358,6 +364,16 @@ void Module::Print (const gchar *job_name)
 void Module::OnDrawPage (GtkPrintOperation *operation,
                          GtkPrintContext   *context,
                          gint               page_nr)
+{
+  DrawContainerPage (operation,
+                     context,
+                     page_nr);
+}
+
+// --------------------------------------------------------------------------------
+void Module::DrawContainerPage (GtkPrintOperation *operation,
+                                GtkPrintContext   *context,
+                                gint               page_nr)
 {
   if (_owner)
   {

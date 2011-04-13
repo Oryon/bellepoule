@@ -136,6 +136,10 @@
 		<Unit filename="sources\swapper.hpp" />
 		<Unit filename="sources\table.cpp" />
 		<Unit filename="sources\table.hpp" />
+		<Unit filename="sources\table_set.cpp" />
+		<Unit filename="sources\table_set.hpp" />
+		<Unit filename="sources\table_supervisor.cpp" />
+		<Unit filename="sources\table_supervisor.hpp" />
 		<Unit filename="sources\tournament.cpp" />
 		<Unit filename="sources\tournament.hpp" />
 		<Unit filename="sources\version.h" />

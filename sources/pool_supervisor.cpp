@@ -540,9 +540,9 @@ void PoolSupervisor::OnDrawPage (GtkPrintOperation *operation,
                                  GtkPrintContext   *context,
                                  gint               page_nr)
 {
-  Module::OnDrawPage (operation,
-                      context,
-                      page_nr);
+  DrawContainerPage (operation,
+                     context,
+                     page_nr);
 
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE)
   {
@@ -642,7 +642,7 @@ void PoolSupervisor::SetInputProvider (Stage *input_provider)
   if (_pool_allocator)
   {
     _pool_allocator->Retain ();
-    _max_score     = _pool_allocator->GetMaxScore     ();
+    _max_score     = _pool_allocator->GetMaxScore ();
   }
 
   Stage::SetInputProvider (input_provider);

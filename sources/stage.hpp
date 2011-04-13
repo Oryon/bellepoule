@@ -45,7 +45,7 @@ class Stage : public virtual Object
 
     typedef enum
     {
-      EDITABLE  = 0x0001
+      EDITABLE = 0x0001
     } Rights;
 
     typedef enum
@@ -88,6 +88,8 @@ class Stage : public virtual Object
     Rights GetRights ();
 
     gboolean Locked ();
+
+    Data *GetMaxScore ();
 
     void SetClassificationFilter (Filter *filter);
 
@@ -158,6 +160,7 @@ class Stage : public virtual Object
     Attendees *_attendees;
     Stage     *_input_provider;
     Contest   *_contest;
+    Data      *_max_score;
 
     Stage (StageClass *stage_class);
 
@@ -207,6 +210,10 @@ class Stage : public virtual Object
     static StageClass *GetClass (const gchar *name);
 
     void UpdateClassification (GSList *result);
+
+    void CheckInconsistency ();
+
+    Object *GetPlayerDataOwner ();
 };
 
 #endif

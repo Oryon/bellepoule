@@ -69,7 +69,6 @@ class PoolSupervisor : public virtual Stage, public Module
     GtkListStore  *_pool_liststore;
     PoolAllocator *_pool_allocator;
     Pool          *_displayed_pool;
-    Data          *_max_score;
     GtkWidget     *_print_dialog;
     gboolean       _print_all_pool;
 
