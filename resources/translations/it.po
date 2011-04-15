@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2011-03-30 14:14+0000\n"
-"Last-Translator: Aureliano Martini <Unknown>\n"
+"PO-Revision-Date: 2011-04-14 13:54+0000\n"
+"Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-03-31 04:49+0000\n"
-"X-Generator: Launchpad (build 12559)\n"
+"X-Launchpad-Export-Date: 2011-04-15 05:27+0000\n"
+"X-Generator: Launchpad (build 12735)\n"
 
 #: ../../sources/checkin.cpp:27
 #: ../../resources/glade/contest.glade:442
@@ -31,7 +31,9 @@ msgid "Fencer list printing"
 msgstr "Stampa dell'elenco degli atleti"
 
 #: ../../sources/checkin.cpp:201
-msgid "Uncheck this box to quicken the data input. The corresponding field will be ignored on TAB key pressed."
+msgid ""
+"Uncheck this box to quicken the data input. The corresponding field will be "
+"ignored on TAB key pressed."
 msgstr ""
 "Disabilitare per una più rapida navigazione. Il campo corrispondente sarà "
 "ignorato dal tasto TAB."
@@ -421,7 +423,10 @@ msgid "9999"
 msgstr "9999"
 
 #: ../../resources/glade/checkin.glade:105
-msgid "FFF (Fencing File Format) is a format specified by the FIE. It's used by the french federation to provide the competion organiser with the registered fencer list."
+msgid ""
+"FFF (Fencing File Format) is a format specified by the FIE. It's used by the "
+"french federation to provide the competion organiser with the registered "
+"fencer list."
 msgstr ""
 "FFF (Fencing File Format) è un formato specifico della FIE per il "
 "salvataggio dei dati degli atleti."
@@ -460,7 +465,9 @@ msgid "To specify the features of the competition."
 msgstr "Configura le impostazioni della competizione."
 
 #: ../../resources/glade/contest.glade:51
-msgid "To configure the schedule of the competition in terms of pools, tables and other rounds."
+msgid ""
+"To configure the schedule of the competition in terms of pools, tables and "
+"other rounds."
 msgstr ""
 "Configura la formula della competizione (gironi, tabelloni ed altri turni)."
 
@@ -537,7 +544,9 @@ msgstr "31/03/2009"
 #: ../../resources/glade/contest.glade:574
 #: ../../resources/glade/contest.glade:602
 #: ../../resources/glade/contest.glade:629
-msgid "Date and time are used to raise alarms to notify the organizer when events occur."
+msgid ""
+"Date and time are used to raise alarms to notify the organizer when events "
+"occur."
 msgstr ""
 "Data ed orario permettono di avvisare l'organizzazione tramite messaggio."
 
@@ -566,7 +575,9 @@ msgid "Allow"
 msgstr "Consenti"
 
 #: ../../resources/glade/contest.glade:700
-msgid "Make the automatic score stuffing button available. It can save the user boring data captures during training sessions."
+msgid ""
+"Make the automatic score stuffing button available. It can save the user "
+"boring data captures during training sessions."
 msgstr ""
 "Abilita l'inserimento automatico (casuale) dei risultati per le sessioni di "
 "test del programma."
@@ -584,7 +595,9 @@ msgid "<b>Scores</b>"
 msgstr "<b>Risultati</b>"
 
 #: ../../resources/glade/general_classification.glade:39
-msgid "Export the general classification to a \".csv\" file that a spreadsheet like Excel or OpenOffice can open."
+msgid ""
+"Export the general classification to a \".csv\" file that a spreadsheet like "
+"Excel or OpenOffice can open."
 msgstr ""
 "Esporta la classifica generale in un documento \".csv\" per l'elaborazione "
 "con Excel o OpenOffice"
@@ -651,7 +664,9 @@ msgid "Single classification"
 msgstr "Classifica singola"
 
 #: ../../resources/glade/pool_supervisor.glade:170
-msgid "The classification of the current round that doesn't take into account the scores of the previous rounds. "
+msgid ""
+"The classification of the current round that doesn't take into account the "
+"scores of the previous rounds. "
 msgstr "La classifica è stabilita solo sui risultati di questo turno. "
 
 #: ../../resources/glade/pool_supervisor.glade:230
@@ -1464,7 +1479,8 @@ msgid ""
 "notice like this when it starts in an interactive mode:\n"
 "\n"
 "    <program>  Copyright (C) <year>  <name of author>\n"
-"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
+"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
+"w'.\n"
 "    This is free software, and you are welcome to redistribute it\n"
 "    under certain conditions; type `show c' for details.\n"
 "\n"
@@ -1472,7 +1488,8 @@ msgid ""
 "parts of the General Public License.  Of course, your program's commands\n"
 "might be different; for a GUI interface, you would use an \"about box\".\n"
 "\n"
-"  You should also get your employer (if you work as a programmer) or school,\n"
+"  You should also get your employer (if you work as a programmer) or "
+"school,\n"
 "if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
 "For more information on this, and how to apply and follow the GNU GPL, see\n"
 "<http://www.gnu.org/licenses/>.\n"
@@ -1492,7 +1509,6 @@ msgid ""
 "Tina Schliemann (German)\n"
 "Alexis Pigeon (Spanish)\n"
 "Mohamed Rebai (Arabic)\n"
-"Aureliano Martini (Italian)\n"
 "Sergev Makhtanov (Russian)\n"
 msgstr ""
 "Marijn Somers (Olandese)\n"
@@ -1511,28 +1527,23 @@ msgstr "Rango iniziale"
 msgid "global status"
 msgstr "Stato globale"
 
-#: ../../sources/main.cpp:218
-#: ../../sources/main.cpp:226
+#: ../../sources/main.cpp:218 ../../sources/main.cpp:226
 msgid "Qualified"
 msgstr "Qualificato"
 
-#: ../../sources/main.cpp:219
-#: ../../sources/main.cpp:227
+#: ../../sources/main.cpp:219 ../../sources/main.cpp:227
 msgid "Not qualified"
 msgstr "Non qualificato"
 
-#: ../../sources/main.cpp:220
-#: ../../sources/main.cpp:228
+#: ../../sources/main.cpp:220 ../../sources/main.cpp:228
 msgid "Withdrawal"
 msgstr "Abbandono"
 
-#: ../../sources/main.cpp:221
-#: ../../sources/main.cpp:229
+#: ../../sources/main.cpp:221 ../../sources/main.cpp:229
 msgid "Excluded"
 msgstr "Escluso"
 
-#: ../../sources/main.cpp:222
-#: ../../sources/main.cpp:230
+#: ../../sources/main.cpp:222 ../../sources/main.cpp:230
 msgid "Forfeit"
 msgstr "Forfait"
 
@@ -1559,3 +1570,19 @@ msgstr "Manuale dell'utente"
 msgid "Export to FFF"
 msgstr "Esporta in FFF"
 
+#~ msgid ""
+#~ "Marijn Somers (Dutch)\n"
+#~ "Julien Diaz (German)\n"
+#~ "Tina Schliemann (German)\n"
+#~ "Alexis Pigeon (Spanish)\n"
+#~ "Mohamed Rebai (Arabic)\n"
+#~ "Aureliano Martini (Italian)\n"
+#~ "Sergev Makhtanov (Russian)\n"
+#~ msgstr ""
+#~ "Marijn Somers (Olandese)\n"
+#~ "Julien Diaz (Tedesco)\n"
+#~ "Tina Schliemann (Tedesco)\n"
+#~ "Alexis Pigeon (Spagnolo)\n"
+#~ "Mohamed Rebai (Arabo)\n"
+#~ "Sergev Makhtanov (Russo)\n"
+#~ "Aureliano Martini (Italiano)\n"
