@@ -934,6 +934,7 @@ gboolean TableSet::FillInNode (GNode    *node,
                || (   parent_data->_match->GetPlayerA ()
                       && parent_data->_match->GetPlayerB ()))
         {
+#if 0
           GtkWidget       *w    = gtk_combo_box_new_with_model (table_set->GetStatusModel ());
           GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
           GooCanvasItem   *goo_item;
@@ -953,6 +954,7 @@ gboolean TableSet::FillInNode (GNode    *node,
           Canvas::PutInTable (data->_canvas_table,
                               goo_item,
                               0, 3);
+          gtk_widget_hide (w);
 
           {
             Player::AttributeId  attr_id ("status", table_set->GetDataOwner ());
@@ -1016,6 +1018,7 @@ gboolean TableSet::FillInNode (GNode    *node,
                                 G_CALLBACK (on_status_scrolled), table_set);
             }
           }
+#endif
         }
 
         // Rectangle
@@ -1032,6 +1035,18 @@ gboolean TableSet::FillInNode (GNode    *node,
                               0,
                               4);
           Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
+        }
+
+        // Status
+        {
+          GooCanvasItem *goo_item;
+
+          goo_item = Canvas::PutIconInTable (data->_canvas_table,
+                                             "resources/glade/arrow.png",
+                                             0,
+                                             4);
+          Canvas::SetTableItemAttribute (goo_item, "x-align", 1.0);
+          Canvas::SetTableItemAttribute (goo_item, "y-align", 0.0);
         }
 
         // Score Text
