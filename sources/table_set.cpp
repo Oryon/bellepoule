@@ -917,179 +917,128 @@ gboolean TableSet::FillInNode (GNode    *node,
 
     }
 
-    if (parent)
+    if (parent && winner)
     {
-      if (winner)
-      {
-        GooCanvasItem *goo_rect;
-        GooCanvasItem *score_text;
-        NodeData      *parent_data = (NodeData *) parent->data;
-        guint          position    = g_node_child_position (parent, node);
+      GooCanvasItem *goo_rect;
+      GooCanvasItem *score_text;
+      NodeData      *parent_data = (NodeData *) parent->data;
+      guint          position    = g_node_child_position (parent, node);
 
-        table_set->SetPlayerToMatch (parent_data->_match,
-                                     winner,
-                                     position);
+      table_set->SetPlayerToMatch (parent_data->_match,
+                                   winner,
+                                   position);
+
+      // Rectangle
+      {
+        goo_rect = goo_canvas_rect_new (data->_canvas_table,
+                                        0, 0,
+                                        _score_rect_size, _score_rect_size,
+                                        "line-width", 0.0,
+                                        "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
+                                        NULL);
+
+        Canvas::PutInTable (data->_canvas_table,
+                            goo_rect,
+                            0,
+                            3);
+        Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
+      }
+
+      // Status arrow
+      if (   (parent_data->_match->GetWinner () == NULL)
+             || (   parent_data->_match->GetPlayerA ()
+                    && parent_data->_match->GetPlayerB ()))
+      {
+        GooCanvasItem *goo_item;
+
+        goo_item = Canvas::PutIconInTable (data->_canvas_table,
+                                           "resources/glade/arrow.png",
+                                           0,
+                                           3);
+        Canvas::SetTableItemAttribute (goo_item, "x-align", 1.0);
+        Canvas::SetTableItemAttribute (goo_item, "y-align", 0.0);
+
+        g_object_set_data (G_OBJECT (goo_item), "TableSet::node", node);
+        g_signal_connect (goo_item, "button_press_event",
+                          G_CALLBACK (on_status_arrow_press), table_set);
+      }
+
+      // Score Text
+      {
+        Score *score       = parent_data->_match->GetScore (winner);
+        gchar *score_image = score->GetImage ();
+
+        score_text = goo_canvas_text_new (data->_canvas_table,
+                                          score_image,
+                                          0, 0,
+                                          -1,
+                                          GTK_ANCHOR_CENTER,
+                                          "font", "Sans bold 18px",
+                                          NULL);
+        g_free (score_image);
+
+        Canvas::PutInTable (data->_canvas_table,
+                            score_text,
+                            0,
+                            3);
+        Canvas::SetTableItemAttribute (score_text, "x-align", 0.5);
+        Canvas::SetTableItemAttribute (score_text, "y-align", 0.5);
+      }
+
+      {
+        Player *A = parent_data->_match->GetPlayerA ();
+        Player *B = parent_data->_match->GetPlayerB ();
 
         if (   (parent_data->_match->GetWinner () == NULL)
-               || (   parent_data->_match->GetPlayerA ()
-                      && parent_data->_match->GetPlayerB ()))
+               || ((A != NULL) && (B != NULL)))
         {
-          GtkWidget       *w    = gtk_combo_box_new_with_model (table_set->GetStatusModel ());
-          GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
-          GooCanvasItem   *goo_item;
-
-          gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
-          gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
-                                          cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
-                                          NULL);
-
-          goo_item = goo_canvas_widget_new (data->_canvas_table,
-                                            w,
-                                            0.0,
-                                            0.0,
-                                            _score_rect_size*3.3/2.0,
-                                            _score_rect_size,
-                                            NULL);
-          Canvas::PutInTable (data->_canvas_table,
-                              goo_item,
-                              0, 3);
-
+          if (winner == A)
           {
-            Player::AttributeId  attr_id ("status", table_set->GetDataOwner ());
-            Attribute           *attr = winner->GetAttribute (&attr_id);
-
-            if (attr)
-            {
-              GtkTreeIter  iter;
-              gboolean     iter_is_valid;
-              gchar       *code;
-              gchar       *text;
-
-              if (parent_data->_match->IsDropped () == FALSE)
-              {
-                text = (gchar *) "Q";
-              }
-              else
-              {
-                text = attr->GetStrValue ();
-              }
-
-              iter_is_valid = gtk_tree_model_get_iter_first (table_set->GetStatusModel (),
-                                                             &iter);
-              for (guint i = 0; iter_is_valid; i++)
-              {
-                gtk_tree_model_get (table_set->GetStatusModel (),
-                                    &iter,
-                                    AttributeDesc::DISCRETE_XML_IMAGE, &code,
-                                    -1);
-                if (strcmp (text, code) == 0)
-                {
-                  gtk_combo_box_set_active_iter (GTK_COMBO_BOX (w),
-                                                 &iter);
-
-                  break;
-                }
-                iter_is_valid = gtk_tree_model_iter_next (table_set->GetStatusModel (),
-                                                          &iter);
-              }
-            }
+            parent_data->_match->SetData (table_set, "A_collecting_point", goo_rect);
+          }
+          if (winner == B)
+          {
+            parent_data->_match->SetData (table_set, "B_collecting_point", goo_rect);
           }
 
-          if (table_set->_locked)
-          {
-            gtk_widget_set_sensitive (w,
-                                      FALSE);
-          }
-          else
-          {
-            NodeData *parent_data;
+          table_set->_score_collector->AddCollectingPoint (goo_rect,
+                                                           score_text,
+                                                           parent_data->_match,
+                                                           winner);
+          table_set->_score_collector->AddCollectingTrigger (data->_player_item);
 
-            if (parent)
-            {
-              parent_data = (NodeData *) parent->data;
-
-              g_object_set_data (G_OBJECT (w), "player_for_status", (void *) winner);
-              g_object_set_data (G_OBJECT (w), "match_for_status", (void *) parent_data->_match);
-              g_signal_connect (w, "changed",
-                                G_CALLBACK (on_status_changed), table_set);
-              g_signal_connect (w, "scroll-event",
-                                G_CALLBACK (on_status_scrolled), table_set);
-            }
+          if (A && B)
+          {
+            table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
+                                                                                                                    "A_collecting_point"),
+                                                                 (GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
+                                                                                                                    "B_collecting_point"));
+            table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
+                                                                                                                    "B_collecting_point"),
+                                                                 (GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
+                                                                                                                    "A_collecting_point"));
           }
         }
+      }
 
-        // Rectangle
+      // Status icon
+      if (parent_data->_match->IsDropped ())
+      {
+        Player::AttributeId  attr_id ("status", table_set->GetDataOwner ());
+        gchar               *status = winner->GetAttribute (&attr_id)->GetStrValue ();
+
+        if ((status[0] == 'E') || (status[0] == 'A'))
         {
-          goo_rect = goo_canvas_rect_new (data->_canvas_table,
-                                          0, 0,
-                                          _score_rect_size, _score_rect_size,
-                                          "line-width", 0.0,
-                                          "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
-                                          NULL);
+          AttributeDesc *attr_desc = AttributeDesc::GetDesc ("status");
+          GooCanvasItem *status_item;
 
-          Canvas::PutInTable (data->_canvas_table,
-                              goo_rect,
-                              0,
-                              4);
-          Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
-        }
+          status_item = Canvas::PutIconInTable (data->_canvas_table,
+                                                attr_desc->GetDiscreteIcon (status[0]),
+                                                0,
+                                                3);
 
-        // Score Text
-        {
-          Score *score       = parent_data->_match->GetScore (winner);
-          gchar *score_image = score->GetImage ();
-
-          score_text = goo_canvas_text_new (data->_canvas_table,
-                                            score_image,
-                                            0, 0,
-                                            -1,
-                                            GTK_ANCHOR_CENTER,
-                                            "font", "Sans bold 18px",
-                                            NULL);
-          g_free (score_image);
-
-          Canvas::PutInTable (data->_canvas_table,
-                              score_text,
-                              0,
-                              4);
-          Canvas::SetTableItemAttribute (score_text, "x-align", 0.5);
-          Canvas::SetTableItemAttribute (score_text, "y-align", 0.5);
-        }
-
-        {
-          Player *A = parent_data->_match->GetPlayerA ();
-          Player *B = parent_data->_match->GetPlayerB ();
-
-          if (   (parent_data->_match->GetWinner () == NULL)
-              || ((A != NULL) && (B != NULL)))
-          {
-            if (winner == A)
-            {
-              parent_data->_match->SetData (table_set, "A_collecting_point", goo_rect);
-            }
-            if (winner == B)
-            {
-              parent_data->_match->SetData (table_set, "B_collecting_point", goo_rect);
-            }
-
-            table_set->_score_collector->AddCollectingPoint (goo_rect,
-                                                             score_text,
-                                                             parent_data->_match,
-                                                             winner);
-            table_set->_score_collector->AddCollectingTrigger (data->_player_item);
-
-            if (A && B)
-            {
-              table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
-                                                                                                                      "A_collecting_point"),
-                                                                   (GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
-                                                                                                                      "B_collecting_point"));
-              table_set->_score_collector->SetNextCollectingPoint ((GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
-                                                                                                                      "B_collecting_point"),
-                                                                   (GooCanvasItem *) parent_data->_match->GetPtrData (table_set,
-                                                                                                                      "A_collecting_point"));
-            }
-          }
+          Canvas::SetTableItemAttribute (status_item, "x-align", 0.5);
+          Canvas::SetTableItemAttribute (status_item, "y-align", 0.5);
         }
       }
     }
@@ -2343,10 +2292,125 @@ void TableSet::OnStatusChanged (GtkComboBox *combo_box)
 }
 
 // --------------------------------------------------------------------------------
+gboolean TableSet::on_status_arrow_press (GooCanvasItem  *item,
+                                          GooCanvasItem  *target,
+                                          GdkEventButton *event,
+                                          TableSet       *table_set)
+{
+  if (   (event->button == 1)
+      && (event->type   == GDK_BUTTON_PRESS))
+  {
+    GtkWidget *combo;
+    NodeData  *data;
+    Player    *winner;
+    NodeData  *parent_data = NULL;
+
+    {
+      GNode *node = (GNode *) g_object_get_data (G_OBJECT (item), "TableSet::node");
+
+      if (node->parent)
+      {
+        parent_data = (NodeData *) node->parent->data;
+      }
+      data = (NodeData *) node->data;
+    }
+
+    winner = data->_match->GetWinner ();
+
+    {
+      GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
+
+      combo = gtk_combo_box_new_with_model (table_set->GetStatusModel ());
+
+      gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, FALSE);
+      gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo),
+                                      cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
+                                      NULL);
+
+      goo_canvas_widget_new (table_set->GetRootItem (),
+                             combo,
+                             event->x_root,
+                             event->y_root,
+                             _score_rect_size*3.3/2.0,
+                             _score_rect_size,
+                             NULL);
+      gtk_widget_grab_focus (combo);
+    }
+
+    {
+      Player::AttributeId  attr_id ("status", table_set->GetDataOwner ());
+      Attribute           *attr   = winner->GetAttribute (&attr_id);
+
+      if (attr)
+      {
+        GtkTreeIter  iter;
+        gboolean     iter_is_valid;
+        gchar       *code;
+        gchar       *text;
+
+        if (parent_data->_match->IsDropped () == FALSE)
+        {
+          text = (gchar *) "Q";
+        }
+        else
+        {
+          text = attr->GetStrValue ();
+        }
+
+        iter_is_valid = gtk_tree_model_get_iter_first (table_set->GetStatusModel (),
+                                                       &iter);
+        for (guint i = 0; iter_is_valid; i++)
+        {
+          gtk_tree_model_get (table_set->GetStatusModel (),
+                              &iter,
+                              AttributeDesc::DISCRETE_XML_IMAGE, &code,
+                              -1);
+          if (strcmp (text, code) == 0)
+          {
+            gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo),
+                                           &iter);
+
+            break;
+          }
+          iter_is_valid = gtk_tree_model_iter_next (table_set->GetStatusModel (),
+                                                    &iter);
+        }
+      }
+    }
+
+    if (parent_data)
+    {
+      g_object_set_data (G_OBJECT (combo), "player_for_status", (void *) winner);
+      g_object_set_data (G_OBJECT (combo), "match_for_status", (void *) parent_data->_match);
+      g_signal_connect (combo, "changed",
+                        G_CALLBACK (on_status_changed), table_set);
+      g_signal_connect (combo, "key-press-event",
+                        G_CALLBACK (on_status_key_press_event), table_set);
+    }
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::on_status_changed (GtkComboBox *combo_box,
-                                  TableSet       *table_set)
+                                  TableSet    *table_set)
 {
   table_set->OnStatusChanged (combo_box);
+  gtk_widget_destroy (GTK_WIDGET (combo_box));
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
+                                              GdkEventKey *event,
+                                              gpointer     user_data)
+{
+  if (event->keyval == GDK_Escape)
+  {
+    gtk_widget_destroy (GTK_WIDGET (widget));
+    return TRUE;
+  }
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -2374,15 +2438,4 @@ extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *wid
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
   t->OnSearchMatch ();
-}
-
-
-// --------------------------------------------------------------------------------
-gboolean TableSet::on_status_scrolled (GtkWidget *widget,
-                                       GdkEvent  *event,
-                                       gpointer   user_data)
-{
-  gtk_widget_event (gtk_widget_get_parent (widget),
-                    event);
-  return TRUE;
 }

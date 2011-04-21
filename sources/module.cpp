@@ -142,6 +142,10 @@ void Module::SelectAttributes ()
 // --------------------------------------------------------------------------------
 Filter *Module::GetFilter ()
 {
+  if (_filter)
+  {
+    _filter->Retain ();
+  }
   return _filter;
 }
 

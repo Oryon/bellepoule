@@ -91,6 +91,10 @@ class ScoreCollector : public Object
     static gboolean on_focus_out (GtkWidget     *widget,
                                   GdkEventFocus *event,
                                   gpointer       user_data);
+    static gboolean on_goocanvas_key_press_event (GooCanvasItem *item,
+                                                  GooCanvasItem *target_item,
+                                                  GdkEventKey   *event,
+                                                  ScoreCollector *score_collector);
     static gboolean  on_entry_changed (GtkEditable *editable,
                                        gpointer     user_data);
     static gboolean on_key_press_event (GtkWidget   *widget,

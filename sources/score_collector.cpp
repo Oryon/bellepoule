@@ -75,6 +75,8 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
 
   g_signal_connect (point, "focus_in_event",
                     G_CALLBACK (on_focus_in), this);
+  g_signal_connect (point, "key-press-event",
+                    G_CALLBACK (on_goocanvas_key_press_event), this);
 
   g_object_set_data (G_OBJECT (point), "score_text", score_text);
   g_object_set_data (G_OBJECT (point), "next_point", NULL);
@@ -321,7 +323,7 @@ void ScoreCollector::SetMatchColor (Match *match,
                                     gchar *consistent_color,
                                     gchar *unconsitentcolor)
 {
-  if (match && (match->IsDropped () == FALSE))
+  if (match)
   {
     GooCanvasItem *rect;
     gchar         *color_A = consistent_color;
@@ -513,6 +515,33 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
                  _unconsistent_normal_color);
 
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean ScoreCollector::on_goocanvas_key_press_event (GooCanvasItem  *item,
+                                                       GooCanvasItem  *target_item,
+                                                       GdkEventKey    *event,
+                                                       ScoreCollector *score_collector)
+{
+  if (event->keyval == GDK_Escape)
+  {
+    goo_canvas_grab_focus (goo_canvas_item_get_canvas (item),
+                           goo_canvas_get_root_item (goo_canvas_item_get_canvas (item)));
+    score_collector->Stop ();
+
+    {
+      Match *match = (Match *) g_object_get_data (G_OBJECT (item), "match");
+
+      if (match)
+      {
+        score_collector->SetMatchColor (match,
+                                        score_collector->_consistent_normal_color,
+                                        score_collector->_unconsistent_normal_color);
+      }
+    }
+    return TRUE;
+  }
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

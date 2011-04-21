@@ -45,9 +45,6 @@ typedef enum
   TABLE_SET_VISIBILITY_COLUMN
 } DisplayColumnId;
 
-extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
-                                                                Object    *owner);
-
 // --------------------------------------------------------------------------------
 TableSupervisor::TableSupervisor (StageClass *stage_class)
   : Stage (stage_class),
@@ -183,7 +180,7 @@ void TableSupervisor::OnTableSetSelected (TableSet *table_set)
   if (table_set)
   {
     Plug (table_set,
-          GetWidget ("main_hook"));
+          GetWidget ("table_set_hook"));
     table_set->Display ();
 
     _displayed_table_set = table_set;
@@ -380,7 +377,10 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
   gtk_tree_model_get (model, iter,
                       TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
-  //table_set->Release ();
+  if (table_set)
+  {
+    table_set->Release ();
+  }
 
   return FALSE;
 }
@@ -388,6 +388,12 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
 // --------------------------------------------------------------------------------
 void TableSupervisor::DeleteTableSets ()
 {
+  if (_displayed_table_set)
+  {
+    _displayed_table_set->UnPlug ();
+    _displayed_table_set = NULL;
+  }
+
   gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
                           DeleteTableSet,
                           NULL);
@@ -397,8 +403,8 @@ void TableSupervisor::DeleteTableSets ()
 // --------------------------------------------------------------------------------
 void TableSupervisor::Garnish ()
 {
-  DeleteTableSets   ();
-  CreateTableSets   ();
+  DeleteTableSets ();
+  CreateTableSets ();
 }
 
 // --------------------------------------------------------------------------------
@@ -528,7 +534,7 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
 
     table_set = new TableSet (this,
                               gtk_tree_path_to_string (path),
-                              _glade->GetWidget ("from_viewport"),
+                              _glade->GetWidget ("from_vbox"),
                               from_place);
 
     {
@@ -636,7 +642,7 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
     gtk_tree_path_free (path);
   }
 
-  if (   (table->GetColumn () <= (table_set->GetNbTables () - 3))
+  if (   (table_set->GetNbTables () >= (table->GetColumn () + 3))
       && gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_table_set_treestore),
                                         &defeated_iter,
                                         &iter,
@@ -1074,4 +1080,13 @@ extern "C" G_MODULE_EXPORT void on_table_set_treeview_cursor_changed (GtkTreeVie
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
   t->OnTableSetTreeViewCursorChanged (treeview);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_zoom_hscale_value_changed (GtkRange *range,
+                                                              Object   *owner)
+{
+  TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
+
+  t->OnZoom (gtk_range_get_value (range));
 }

@@ -241,9 +241,14 @@ class TableSet : public CanvasModule
     static void on_status_changed (GtkComboBox *combo_box,
                                    TableSet    *table_set);
 
-    static gboolean on_status_scrolled (GtkWidget *widget,
-                                        GdkEvent  *event,
-                                        gpointer   user_data);
+    static gboolean on_status_key_press_event (GtkWidget   *widget,
+                                               GdkEventKey *event,
+                                               gpointer     user_data);
+
+    static gboolean on_status_arrow_press (GooCanvasItem  *item,
+                                           GooCanvasItem  *target,
+                                           GdkEventButton *event,
+                                           TableSet       *table_set);
 
     ~TableSet ();
 };
