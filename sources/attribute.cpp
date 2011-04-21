@@ -156,7 +156,30 @@ gboolean AttributeDesc::HasDiscreteValue ()
 }
 
 // --------------------------------------------------------------------------------
-void *AttributeDesc::GetDiscreteValue (guint from_code)
+gchar *AttributeDesc::GetDiscreteUserImage (guint from_code)
+{
+  gchar *image = (gchar *) GetDiscreteData (from_code,
+                                            DISCRETE_USER_IMAGE);
+  if (image)
+  {
+    return g_strdup (image);
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
+// --------------------------------------------------------------------------------
+gchar *AttributeDesc::GetDiscreteIcon (guint from_code)
+{
+  return (gchar *) GetDiscreteData (from_code,
+                                    DISCRETE_ICON_NAME);
+}
+
+// --------------------------------------------------------------------------------
+void *AttributeDesc::GetDiscreteData (guint from_code,
+                                      guint column)
 {
   if (_discrete_store)
   {
@@ -168,15 +191,15 @@ void *AttributeDesc::GetDiscreteValue (guint from_code)
     while (iter_is_valid)
     {
       guint  current_code;
-      gchar *current_user_image;
+      void  *data;
 
       gtk_tree_model_get (GTK_TREE_MODEL (_discrete_store), &iter,
                           DISCRETE_CODE, &current_code,
-                          DISCRETE_USER_IMAGE, &current_user_image,
+                          column,        &data,
                           -1);
       if (current_code == from_code)
       {
-        return g_strdup (current_user_image);
+        return data;
       }
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_discrete_store),
                                                 &iter);
@@ -281,10 +304,11 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
 {
   if (_discrete_store == NULL)
   {
-    _discrete_store = gtk_tree_store_new (4, G_TYPE_UINT,
+    _discrete_store = gtk_tree_store_new (5, G_TYPE_UINT,
                                              G_TYPE_STRING,
                                              G_TYPE_STRING,
-                                             GDK_TYPE_PIXBUF);
+                                             GDK_TYPE_PIXBUF,
+                                             G_TYPE_STRING);
   }
 
   {
@@ -311,7 +335,8 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
         GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon, NULL);
 
         gtk_tree_store_set (_discrete_store, &iter,
-                            DISCRETE_ICON, pixbuf, -1);
+                            DISCRETE_ICON_NAME, icon,
+                            DISCRETE_ICON,      pixbuf, -1);
       }
       g_free (undivadable_image);
 

@@ -55,7 +55,8 @@ class AttributeDesc : public Object
       DISCRETE_CODE,
       DISCRETE_XML_IMAGE,
       DISCRETE_USER_IMAGE,
-      DISCRETE_ICON
+      DISCRETE_ICON,
+      DISCRETE_ICON_NAME
     } DiscreteColumnId;
 
     GType         _type;
@@ -95,7 +96,9 @@ class AttributeDesc : public Object
 
     void AddDiscreteValues (const gchar *file);
 
-    void *GetDiscreteValue (guint from_code);
+    gchar *GetDiscreteUserImage (guint from_code);
+
+    gchar *GetDiscreteIcon (guint from_code);
 
     gchar *GetXmlImage (gchar *user_image);
 
@@ -113,6 +116,9 @@ class AttributeDesc : public Object
                    const gchar *user_name);
 
     ~AttributeDesc ();
+
+    void *GetDiscreteData (guint from_code,
+                           guint column);
 };
 
 // --------------------------------------------------------------------------------

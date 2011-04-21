@@ -826,7 +826,7 @@ void Checkin::ImportFFF (gchar *file)
 
               if (league_desc)
               {
-                gchar *league = (gchar *) league_desc->GetDiscreteValue (atoi (tokens[0]));
+                gchar *league = league_desc->GetDiscreteUserImage (atoi (tokens[0]));
 
                 if (league)
                 {

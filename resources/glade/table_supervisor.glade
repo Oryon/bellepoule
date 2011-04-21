@@ -459,11 +459,11 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkVBox" id="vbox3">
+                  <object class="GtkVBox" id="main_hook">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkViewport" id="main_hook">
+                      <object class="GtkViewport" id="table_set_hook">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="resize_mode">queue</property>

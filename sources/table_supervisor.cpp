@@ -180,7 +180,7 @@ void TableSupervisor::OnTableSetSelected (TableSet *table_set)
   if (table_set)
   {
     Plug (table_set,
-          GetWidget ("main_hook"));
+          GetWidget ("table_set_hook"));
     table_set->Display ();
 
     _displayed_table_set = table_set;
@@ -377,7 +377,10 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
   gtk_tree_model_get (model, iter,
                       TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
-  //table_set->Release ();
+  if (table_set)
+  {
+    //table_set->Release ();
+  }
 
   return FALSE;
 }
@@ -385,6 +388,7 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
 // --------------------------------------------------------------------------------
 void TableSupervisor::DeleteTableSets ()
 {
+  _displayed_table_set = NULL;
   gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
                           DeleteTableSet,
                           NULL);
