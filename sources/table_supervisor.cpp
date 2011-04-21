@@ -379,7 +379,7 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
                       -1);
   if (table_set)
   {
-    //table_set->Release ();
+    table_set->Release ();
   }
 
   return FALSE;
@@ -388,7 +388,12 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
 // --------------------------------------------------------------------------------
 void TableSupervisor::DeleteTableSets ()
 {
-  _displayed_table_set = NULL;
+  if (_displayed_table_set)
+  {
+    _displayed_table_set->UnPlug ();
+    _displayed_table_set = NULL;
+  }
+
   gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_treestore),
                           DeleteTableSet,
                           NULL);
@@ -398,8 +403,8 @@ void TableSupervisor::DeleteTableSets ()
 // --------------------------------------------------------------------------------
 void TableSupervisor::Garnish ()
 {
-  DeleteTableSets   ();
-  CreateTableSets   ();
+  DeleteTableSets ();
+  CreateTableSets ();
 }
 
 // --------------------------------------------------------------------------------
