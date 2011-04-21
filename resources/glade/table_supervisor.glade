@@ -187,6 +187,9 @@
       <column type="gboolean"/>
     </columns>
   </object>
+  <object class="GtkTreeModelFilter" id="table_set_treemodelfilter">
+    <property name="child_model">table_set_treestore</property>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <child>
@@ -332,9 +335,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                 <property name="can_focus">False</property>
                 <property name="no_show_all">True</property>
                 <child>
-                  <placeholder/>
-                </child>
-                <child>
                   <object class="GtkViewport" id="viewport1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -370,7 +370,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="padding">8</property>
-                    <property name="position">1</property>
+                    <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
@@ -408,7 +408,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                               <object class="GtkTreeView" id="table_set_treeview">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="model">table_set_treestore</property>
+                                <property name="model">table_set_treemodelfilter</property>
                                 <property name="headers_visible">False</property>
                                 <property name="headers_clickable">False</property>
                                 <property name="search_column">0</property>
@@ -445,7 +445,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="position">2</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
               </object>
@@ -560,9 +560,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
     </child>
   </object>
   <object class="GtkSizeGroup" id="label_sizegroup"/>
-  <object class="GtkTreeModelFilter" id="table_set_treemodelfilter">
-    <property name="child_model">table_set_treestore</property>
-  </object>
   <object class="GtkSizeGroup" id="value_sizegroup"/>
   <object class="GtkAdjustment" id="zoom_adjustment">
     <property name="lower">0.10000000000000001</property>
