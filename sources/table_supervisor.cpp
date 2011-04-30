@@ -45,6 +45,9 @@ typedef enum
   TABLE_SET_VISIBILITY_COLUMN
 } DisplayColumnId;
 
+extern "C" G_MODULE_EXPORT void on_table_qualified_ratio_spinbutton_value_changed (GtkSpinButton *spinbutton,
+                                                                                   Object        *owner);
+
 // --------------------------------------------------------------------------------
 TableSupervisor::TableSupervisor (StageClass *stage_class)
   : Stage (stage_class),
@@ -60,6 +63,10 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 
   {
     AddSensitiveWidget (_glade->GetWidget ("input_toolbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("qualified_ratio_spinbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("nb_qualified_spinbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("classification_vbox"));
+    AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
     AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
 
     LockOnClassification (_glade->GetWidget ("from_vbox"));
@@ -236,27 +243,30 @@ void TableSupervisor::CreateTableSets ()
       }
     }
 
+    if (nb_tables > 0)
     {
-      gtk_tree_store_clear (_table_set_treestore);
-
-      FeedTableSetStore (1,
-                         nb_tables,
-                         NULL);
-    }
-
-    {
-      GtkTreeIter  iter;
-      TableSet    *first_table_set;
-
-      gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
-                                     &iter);
-      gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                          TABLE_SET_TABLE_COLUMN, &first_table_set,
-                          -1);
-
-      if (first_table_set)
       {
-        first_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
+        gtk_tree_store_clear (_table_set_treestore);
+
+        FeedTableSetStore (1,
+                           nb_tables,
+                           NULL);
+      }
+
+      {
+        GtkTreeIter  iter;
+        TableSet    *first_table_set;
+
+        gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
+                                       &iter);
+        gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
+                            TABLE_SET_TABLE_COLUMN, &first_table_set,
+                            -1);
+
+        if (first_table_set)
+        {
+          first_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
+        }
       }
     }
   }
@@ -412,11 +422,6 @@ void TableSupervisor::LoadConfiguration (xmlNode *xml_node)
 {
   Stage::LoadConfiguration (xml_node);
 
-  if (_max_score)
-  {
-    _max_score->Load (xml_node);
-  }
-
   if (_fenced_places)
   {
     _fenced_places->Load (xml_node);
@@ -473,11 +478,6 @@ void TableSupervisor::Load (xmlNode *xml_node)
 void TableSupervisor::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   Stage::SaveConfiguration (xml_writer);
-
-  if (_max_score)
-  {
-    _max_score->Save (xml_writer);
-  }
 
   if (_fenced_places)
   {
@@ -770,36 +770,25 @@ void TableSupervisor::FillInConfig ()
 {
   Stage::FillInConfig ();
 
+  if (_fenced_places->_value == ALL_PLACES)
   {
-    gchar *text = g_strdup_printf ("%d", _max_score->_value);
-
-    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("max_score_entry")),
-                        text);
-    g_free (text);
-
-    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("name_entry")),
-                        GetName ());
-
-    if (_fenced_places->_value == ALL_PLACES)
-    {
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_places_radiobutton")),
-                                    TRUE);
-    }
-    else if (_fenced_places->_value == THIRD_PLACES)
-    {
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton")),
-                                    TRUE);
-    }
-    else if (_fenced_places->_value == QUOTA)
-    {
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("quota_radiobutton")),
-                                    TRUE);
-    }
-    else
-    {
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("no_radiobutton")),
-                                    TRUE);
-    }
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_places_radiobutton")),
+                                  TRUE);
+  }
+  else if (_fenced_places->_value == THIRD_PLACES)
+  {
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton")),
+                                  TRUE);
+  }
+  else if (_fenced_places->_value == QUOTA)
+  {
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("quota_radiobutton")),
+                                  TRUE);
+  }
+  else
+  {
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("no_radiobutton")),
+                                  TRUE);
   }
 }
 
@@ -807,29 +796,6 @@ void TableSupervisor::FillInConfig ()
 void TableSupervisor::ApplyConfig ()
 {
   Stage::ApplyConfig ();
-
-  {
-    GtkWidget *name_w = _glade->GetWidget ("name_entry");
-    gchar     *name   = (gchar *) gtk_entry_get_text (GTK_ENTRY (name_w));
-
-    SetName (name);
-  }
-
-  {
-    GtkWidget *max_score_w = _glade->GetWidget ("max_score_entry");
-
-    if (max_score_w)
-    {
-      gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (max_score_w));
-
-      if (str)
-      {
-        _max_score->_value = atoi (str);
-
-        OnAttrListUpdated ();
-      }
-    }
-  }
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("all_places_radiobutton"))))
   {
@@ -848,6 +814,7 @@ void TableSupervisor::ApplyConfig ()
     _fenced_places->_value = NONE;
   }
 
+  OnAttrListUpdated ();
   SetTableSetsState ();
 }
 
@@ -1089,4 +1056,38 @@ extern "C" G_MODULE_EXPORT void on_zoom_hscale_value_changed (GtkRange *range,
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
   t->OnZoom (gtk_range_get_value (range));
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_table_nb_qualified_spinbutton_value_changed (GtkSpinButton *spinbutton,
+                                                                                Object        *owner)
+{
+  Module    *module = dynamic_cast <Module *> (owner);
+  Stage     *stage  = dynamic_cast <Stage *> (owner);
+  GtkWidget *w      = module->GetWidget ("qualified_ratio_spinbutton");
+
+  g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+                                        (void *) on_table_qualified_ratio_spinbutton_value_changed,
+                                        owner);
+  stage->OnNbQualifiedValueChanged (spinbutton);
+  g_signal_connect (G_OBJECT (w), "value-changed",
+                    G_CALLBACK (on_table_qualified_ratio_spinbutton_value_changed),
+                    owner);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_table_qualified_ratio_spinbutton_value_changed (GtkSpinButton *spinbutton,
+                                                                                   Object        *owner)
+{
+  Module    *module = dynamic_cast <Module *> (owner);
+  Stage     *stage  = dynamic_cast <Stage *> (owner);
+  GtkWidget *w      = module->GetWidget ("nb_qualified_spinbutton");
+
+  g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+                                        (void *) on_table_nb_qualified_spinbutton_value_changed,
+                                        owner);
+  stage->OnQualifiedRatioValueChanged (spinbutton);
+  g_signal_connect (G_OBJECT (w), "value-changed",
+                    G_CALLBACK (on_table_nb_qualified_spinbutton_value_changed),
+                    owner);
 }

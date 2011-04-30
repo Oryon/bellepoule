@@ -38,9 +38,16 @@ class Data : public Object
 
     gboolean Load (xmlNode *xml_node);
 
+    void Activate ();
+
+    void Deactivate ();
+
+    gboolean IsValid ();
+
   private:
     gchar    *_xml_name;
     gboolean  _is_integer;
+    gboolean  _valid;
 
     virtual ~Data ();
 };

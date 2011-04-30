@@ -27,6 +27,7 @@ Data::Data (const gchar *xml_name,
 {
   _xml_name = g_strdup (xml_name);
   _value    = default_value;
+  _valid    = TRUE;
 
   _is_integer = TRUE;
 }
@@ -37,6 +38,7 @@ Data::Data (const gchar *xml_name,
 {
   _xml_name = g_strdup (xml_name);
   _string   = default_value;
+  _valid    = TRUE;
 
   _is_integer = FALSE;
 }
@@ -76,4 +78,22 @@ void Data::Save (xmlTextWriter *xml_writer)
                                        BAD_CAST _xml_name,
                                        "%s", _string);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Data::Activate ()
+{
+  _valid = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void Data::Deactivate ()
+{
+  _valid = FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Data::IsValid ()
+{
+  return _valid;
 }

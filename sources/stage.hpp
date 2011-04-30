@@ -139,9 +139,11 @@ class Stage : public virtual Object
 
     virtual gboolean IsOver ();
 
-    Data *GetNbEliminated ();
-
     void ToggleClassification (gboolean classification_on);
+
+    void OnQualifiedRatioValueChanged (GtkSpinButton *spinbutton);
+
+    void OnNbQualifiedValueChanged (GtkSpinButton *spinbutton);
 
     static void RegisterStageClass (const gchar *name,
                                     const gchar *xml_name,
@@ -161,6 +163,8 @@ class Stage : public virtual Object
     Stage     *_input_provider;
     Contest   *_contest;
     Data      *_max_score;
+    Data      *_qualified_ratio;
+    Data      *_nb_qualified;
 
     Stage (StageClass *stage_class);
 
@@ -198,7 +202,6 @@ class Stage : public virtual Object
     SensitivityTrigger *_sensitivity_trigger;
     SensitivityTrigger *_score_stuffing_trigger;
     gboolean            _classification_on;
-    Data               *_nb_eliminated;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -214,6 +217,10 @@ class Stage : public virtual Object
     void CheckInconsistency ();
 
     Object *GetPlayerDataOwner ();
+
+    void ActivateNbQualified ();
+
+    void DeactivateNbQualified ();
 };
 
 #endif
