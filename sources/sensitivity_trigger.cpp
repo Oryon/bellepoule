@@ -59,8 +59,7 @@ void SensitivityTrigger::SwitchOn ()
 
     w = GTK_WIDGET (g_slist_nth_data (_widget_list, i));
 
-    lock = (guint) g_object_get_data (G_OBJECT (w),
-                                      _data_key);
+    lock = GPOINTER_TO_UINT(g_object_get_data (G_OBJECT (w), _data_key));
     if (lock)
     {
       lock--;
@@ -87,8 +86,7 @@ void SensitivityTrigger::SwitchOff ()
 
     w = GTK_WIDGET (g_slist_nth_data (_widget_list, i));
 
-    lock = (guint) g_object_get_data (G_OBJECT (w),
-                                      _data_key);
+    lock = GPOINTER_TO_UINT(g_object_get_data (G_OBJECT (w), _data_key));
     lock++;
     g_object_set_data (G_OBJECT (w),
                        _data_key,
@@ -105,8 +103,7 @@ void SensitivityTrigger::SwitchOff ()
 // --------------------------------------------------------------------------------
 void SensitivityTrigger::SetSensitivity (GtkWidget *w)
 {
-  guint lock = (guint) g_object_get_data (G_OBJECT (w),
-                                          _data_key);
+  guint lock = GPOINTER_TO_UINT(g_object_get_data (G_OBJECT (w), _data_key));
   if (lock > 0)
   {
     gtk_widget_set_sensitive (w,

@@ -1,5 +1,5 @@
-#ifndef table_hpp
-#define table_hpp
+#ifndef version_hpp
+#define version_hpp
 
 #define VERSION           "2"
 #define VERSION_REVISION  "0"
