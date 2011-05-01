@@ -739,11 +739,6 @@ void Schedule::SetCurrentStage (guint index)
 
     if (stage)
     {
-      gchar *name = g_strdup_printf ("%s / %s", stage->GetClassName (), stage->GetName ());
-
-      gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("stage_entry")),
-                          name);
-
       stage->SetStatusCbk ((Stage::StatusCbk) OnStageStatusUpdated,
                            this);
     }
@@ -792,12 +787,6 @@ void Schedule::OnPlugged ()
   GtkWidget  *w;
 
   w = _glade->GetWidget ("previous_stage_toolbutton");
-  _glade->DetachFromParent (w);
-  gtk_toolbar_insert (toolbar,
-                      GTK_TOOL_ITEM (w),
-                      -1);
-
-  w = _glade->GetWidget ("stage_name_toolbutton");
   _glade->DetachFromParent (w);
   gtk_toolbar_insert (toolbar,
                       GTK_TOOL_ITEM (w),
