@@ -49,8 +49,10 @@ Stage::Stage (StageClass *stage_class)
 
   _max_score = NULL;
 
-  _nb_eliminated = new Data ("NbElimines",
-                             (guint) 0);
+  _qualified_ratio = new Data ("RatioQualifies",
+                               (guint) 100);
+  _nb_qualified = new Data ("NbQualifies",
+                            (guint) 0);
 }
 
 // --------------------------------------------------------------------------------
@@ -64,7 +66,8 @@ Stage::~Stage ()
   TryToRelease (_score_stuffing_trigger);
   TryToRelease (_classification);
   TryToRelease (_attendees);
-  TryToRelease (_nb_eliminated);
+  TryToRelease (_qualified_ratio);
+  TryToRelease (_nb_qualified);
 }
 
 // --------------------------------------------------------------------------------
@@ -175,6 +178,8 @@ void Stage::UnLock ()
   {
     _next->_attendees->Release ();
     _next->_attendees = NULL;
+
+    _next->DeactivateNbQualified ();
   }
 
   if (_attendees)
@@ -244,11 +249,51 @@ void Stage::ApplyConfig ()
 
   if (module)
   {
-    GtkWidget *w = module->GetWidget ("nb_eliminated_spinbutton");
-
-    if (w)
     {
-      _nb_eliminated->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
+      GtkWidget *w = module->GetWidget ("name_entry");
+
+      if (w)
+      {
+        gchar *name = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
+
+        SetName (name);
+        if (_input_provider)
+        {
+          _input_provider->SetName (name);
+        }
+      }
+    }
+
+    {
+      GtkWidget *w = module->GetWidget ("max_score_entry");
+
+      if (w)
+      {
+        gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
+
+        if (str)
+        {
+          _max_score->_value = atoi (str);
+        }
+      }
+    }
+
+    {
+      GtkWidget *w = module->GetWidget ("qualified_ratio_spinbutton");
+
+      if (w)
+      {
+        _qualified_ratio->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
+      }
+    }
+
+    {
+      GtkWidget *w = module->GetWidget ("nb_qualified_spinbutton");
+
+      if (w)
+      {
+        _nb_qualified->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
+      }
     }
   }
 }
@@ -260,12 +305,107 @@ void Stage::FillInConfig ()
 
   if (module)
   {
-    GtkWidget *w = module->GetWidget ("nb_eliminated_spinbutton");
-
-    if (w)
     {
+      GtkWidget *w = module->GetWidget ("name_entry");
+
+      if (w)
+      {
+        gtk_entry_set_text (GTK_ENTRY (w),
+                            GetName ());
+      }
+    }
+
+    {
+      GtkWidget *w = module->GetWidget ("max_score_entry");
+
+      if (w)
+      {
+        gchar *text = g_strdup_printf ("%d", _max_score->_value);
+
+        gtk_entry_set_text (GTK_ENTRY (w),
+                            text);
+        g_free (text);
+      }
+    }
+
+    {
+      GtkWidget *w = module->GetWidget ("qualified_ratio_spinbutton");
+
+      if (w)
+      {
+        gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+                                   _qualified_ratio->_value);
+      }
+    }
+
+    {
+      GtkWidget *w = module->GetWidget ("nb_qualified_spinbutton");
+
+      if (w)
+      {
+        gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+                                   _nb_qualified->_value);
+      }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage::OnQualifiedRatioValueChanged (GtkSpinButton *spinbutton)
+{
+  Attendees *attendees;
+
+  if (_input_provider)
+  {
+    attendees = _input_provider->_attendees;
+  }
+  else
+  {
+    attendees = _attendees;
+  }
+
+  if (attendees && _nb_qualified->IsValid ())
+  {
+    GSList *shortlist = attendees->GetShortList ();
+
+    if (g_slist_length (shortlist))
+    {
+      Module    *module = dynamic_cast <Module *> (this);
+      GtkWidget *w      = module->GetWidget ("nb_qualified_spinbutton");
+      guint      value  = gtk_spin_button_get_value_as_int (spinbutton);
+
       gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
-                                 _nb_eliminated->_value);
+                                 value * g_slist_length (shortlist) / 100);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage::OnNbQualifiedValueChanged (GtkSpinButton *spinbutton)
+{
+  Attendees *attendees;
+
+  if (_input_provider)
+  {
+    attendees = _input_provider->_attendees;
+  }
+  else
+  {
+    attendees = _attendees;
+  }
+
+  if (attendees)
+  {
+    GSList *shortlist = attendees->GetShortList ();
+
+    if (g_slist_length (shortlist))
+    {
+      Module    *module = dynamic_cast <Module *> (this);
+      GtkWidget *w      = module->GetWidget ("qualified_ratio_spinbutton");
+      guint      value  = gtk_spin_button_get_value_as_int (spinbutton);
+
+      gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+                                 value * 100 / g_slist_length (shortlist));
     }
   }
 }
@@ -330,6 +470,8 @@ void Stage::RetrieveAttendees ()
   {
     _attendees = new Attendees ();
   }
+
+  ActivateNbQualified ();
 }
 
 // --------------------------------------------------------------------------------
@@ -345,7 +487,7 @@ GSList *Stage::GetOutputShortlist ()
 
   if (shortlist && classification)
   {
-    guint               nb_to_remove    = _nb_eliminated->_value * g_slist_length (shortlist) / 100;
+    guint               nb_to_remove    = g_slist_length (shortlist) - _nb_qualified->_value;
     Player::AttributeId stage_attr_id         ("status", GetPlayerDataOwner ());
     Player::AttributeId classif_attr_id       ("status", classification->GetDataOwner ());
     Player::AttributeId global_status_attr_id ("global_status");
@@ -413,6 +555,55 @@ GSList *Stage::GetOutputShortlist ()
 }
 
 // --------------------------------------------------------------------------------
+void Stage::ActivateNbQualified ()
+{
+  if (_input_provider == NULL)
+  {
+    GSList *shortlist = _attendees->GetShortList ();
+    Module *module;
+
+    if (GetInputProviderClient ())
+    {
+      module = dynamic_cast <Module *> (_next);
+    }
+    else
+    {
+      module = dynamic_cast <Module *> (this);
+    }
+
+    if (module)
+    {
+      GtkWidget *adjustment = module->GetWidget ("nb_qualified_adjustment");
+
+      if (adjustment)
+      {
+        gtk_adjustment_set_upper (GTK_ADJUSTMENT (adjustment),
+                                  (gdouble) g_slist_length (shortlist));
+      }
+    }
+
+    _nb_qualified->_value = _qualified_ratio->_value * g_slist_length (shortlist) / 100;
+    _nb_qualified->Activate ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage::DeactivateNbQualified ()
+{
+  Module    *module     = dynamic_cast <Module *> (this);
+  GtkWidget *adjustment = module->GetWidget ("nb_qualified_adjustment");
+
+  if (adjustment)
+  {
+    gtk_adjustment_set_upper (GTK_ADJUSTMENT (adjustment),
+                              0.0);
+  }
+
+  _nb_qualified->_value = 0;
+  _nb_qualified->Deactivate ();
+}
+
+// --------------------------------------------------------------------------------
 void Stage::LoadAttendees (xmlNode *n)
 {
   if (_attendees == NULL)
@@ -426,6 +617,8 @@ void Stage::LoadAttendees (xmlNode *n)
     {
       _attendees = new Attendees ();
     }
+
+    ActivateNbQualified ();
   }
 
   if (n)
@@ -568,7 +761,13 @@ Stage *Stage::CreateInstance (xmlNode *xml_node)
 {
   if (xml_node)
   {
-    return CreateInstance ((gchar *) xml_node->name);
+    Stage *stage = CreateInstance ((gchar *) xml_node->name);
+
+    if (stage)
+    {
+      stage->DeactivateNbQualified ();
+    }
+    return stage;
   }
 
   return NULL;
@@ -586,6 +785,7 @@ Stage *Stage::CreateInstance (const gchar *name)
     if (stage)
     {
       stage->_class = stage_class;
+      stage->DeactivateNbQualified ();
     }
     return stage;
   }
@@ -610,9 +810,13 @@ void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
 
-  TryToRelease (_nb_eliminated);
-  _nb_eliminated = input_provider->GetNbEliminated ();
-  _nb_eliminated->Retain ();
+  TryToRelease (_qualified_ratio);
+  _qualified_ratio = input_provider->_qualified_ratio;
+  _qualified_ratio->Retain ();
+
+  TryToRelease (_nb_qualified);
+  _nb_qualified = input_provider->_nb_qualified;
+  _nb_qualified->Retain ();
 }
 
 // --------------------------------------------------------------------------------
@@ -801,9 +1005,24 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
                                       BAD_CAST "PhaseID");
   SetName (attr);
 
-  if (_nb_eliminated)
+  if (_max_score)
   {
-    _nb_eliminated->Load (xml_node);
+    _max_score->Load (xml_node);
+  }
+
+  if (_qualified_ratio)
+  {
+    _qualified_ratio->Load (xml_node);
+  }
+
+  if (_nb_qualified)
+  {
+    _nb_qualified->Load (xml_node);
+  }
+
+  if (_input_provider)
+  {
+    _input_provider->ActivateNbQualified ();
   }
 }
 
@@ -817,9 +1036,19 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
                                      BAD_CAST "ID",
                                      "%d", _id);
 
-  if (_nb_eliminated)
+  if (_max_score)
   {
-    _nb_eliminated->Save (xml_writer);
+    _max_score->Save (xml_writer);
+  }
+
+  if (_qualified_ratio)
+  {
+    _qualified_ratio->Save (xml_writer);
+  }
+
+  if (_nb_qualified->IsValid ())
+  {
+    _nb_qualified->Save (xml_writer);
   }
 }
 
@@ -902,12 +1131,6 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-Data *Stage::GetNbEliminated ()
-{
-  return _nb_eliminated;
-}
-
-// --------------------------------------------------------------------------------
 void Stage::Dump ()
 {
   if (_result)
@@ -938,14 +1161,14 @@ void Stage::CheckInconsistency ()
 
   if (this != module->GetDataOwner ())
   {
-    printf ("##################""\n");
-    printf ("##################""\n");
-    printf ("##################""\n");
-    printf ("##################""\n");
-    printf ("##################""\n");
-    printf ("##################""\n");
-    printf ("##################""\n");
-    printf ("##################""\n");
-    printf ("##################""\n");
+    g_print ("##################""\n");
+    g_print ("##################""\n");
+    g_print ("##################""\n");
+    g_print ("##################""\n");
+    g_print ("##################""\n");
+    g_print ("##################""\n");
+    g_print ("##################""\n");
+    g_print ("##################""\n");
+    g_print ("##################""\n");
   }
 }

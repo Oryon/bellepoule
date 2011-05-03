@@ -61,10 +61,6 @@ class Table : public Object
 
     void DropMatch (Match *match);
 
-    void Activate ();
-
-    void Deactivate ();
-
     GSList *GetLoosers ();
 
     gboolean       _has_error;
@@ -81,7 +77,6 @@ class Table : public Object
     Table    *_right_table;
     GSList   *_match_list;
     TableSet *_table_set;
-    gboolean  _activated;
 
     ~Table ();
 

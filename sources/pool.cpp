@@ -835,7 +835,7 @@ void Pool::DrawPage (GtkPrintOperation *operation,
   GooCanvas *canvas = CreateCanvas ();
 
   Draw (canvas,
-        (gboolean) g_object_get_data (G_OBJECT (operation), "print_for_referees"));
+        (gboolean) GPOINTER_TO_INT(g_object_get_data (G_OBJECT (operation), "print_for_referees")));
 
   g_object_set_data (G_OBJECT (operation), "operation_canvas", (void *) canvas);
   CanvasModule::OnDrawPage (operation,

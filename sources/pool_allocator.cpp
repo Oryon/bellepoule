@@ -235,11 +235,6 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
 {
   Stage::LoadConfiguration (xml_node);
 
-  if (_max_score)
-  {
-    _max_score->Load (xml_node);
-  }
-
   if (_swapping)
   {
     GtkTreeModel *model          = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
@@ -281,11 +276,6 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
 void PoolAllocator::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   Stage::SaveConfiguration (xml_writer);
-
-  if (_max_score)
-  {
-    _max_score->Save (xml_writer);
-  }
 
   if (_swapping)
   {

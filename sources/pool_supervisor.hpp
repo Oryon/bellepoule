@@ -80,6 +80,8 @@ class PoolSupervisor : public virtual Stage, public Module
 
     void OnUnPlugged ();
 
+    void Load (xmlNode *xml_node);
+
     GSList *GetCurrentClassification ();
 
     GSList *EvaluateClassification (GSList           *list,
