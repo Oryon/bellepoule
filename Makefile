@@ -16,7 +16,7 @@ OPTS=-Wall -std=c++98 -pedantic
 OPTSDBG=$(OPTS) -g
 
 # Fichiers source à compiler et à linker, ATTENTION à mettre à jour la liste à chaque nouvelle version
-SRCS=attendees.cpp attribute.cpp canvas.cpp canvas_module.cpp checkin.cpp classification.cpp contest.cpp data.cpp filter.cpp general_classification.cpp glade.cpp main.cpp match.cpp module.cpp object.cpp player.cpp players_list.cpp pool_allocator.cpp pool.cpp pool_match_order.cpp pool_supervisor.cpp schedule.cpp score_collector.cpp score.cpp sensitivity_trigger.cpp splitting.cpp stage.cpp swapper.cpp table.cpp tournament.cpp
+SRCS=attendees.cpp attribute.cpp canvas.cpp canvas_module.cpp checkin.cpp classification.cpp contest.cpp data.cpp filter.cpp general_classification.cpp glade.cpp main.cpp match.cpp module.cpp object.cpp player.cpp players_list.cpp pool_allocator.cpp pool.cpp pool_match_order.cpp pool_supervisor.cpp schedule.cpp score_collector.cpp score.cpp sensitivity_trigger.cpp splitting.cpp stage.cpp swapper.cpp table.cpp tournament.cpp table_supervisor.cpp table_set.cpp
 OBJS=$(SRCS:.cpp=.o)
 
 # Nom du fichier exécutable à générer dans $(DBGDIR) et $(RLSDIR)
