@@ -22,8 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __MINGW32__ // MinGW defines several print functions differently (check for G_OS_WIN32 instead?)
 extern "C" int swprintf (wchar_t *, size_t, const wchar_t *, ...);
 extern "C" int vswprintf(wchar_t *, const wchar_t *, va_list);
+#endif // __MINGW32__
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
