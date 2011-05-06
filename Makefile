@@ -5,6 +5,12 @@ BINDIR=bin
 DBGDIR=$(BINDIR)/Debug
 RLSDIR=$(BINDIR)/Release
 
+# Define certain make variables in order to be more RPM friendly when using the 'install' target
+DESTDIR=
+prefix?=/usr/local
+bindir?=$(DESTDIR)/$(prefix)/bin
+CP=cp -p
+
 # Lancer les commandes suivantes dans un terminal pour voir les bibliothèques et options par défaut
 LIBS=`pkg-config --libs gtk+-2.0 gmodule-2.0 libxml-2.0 goocanvas`
 CFLAGS=`pkg-config --cflags gtk+-2.0 gmodule-2.0 libxml-2.0 goocanvas`
@@ -32,7 +38,11 @@ main: $(OBJS)
 	@mkdir -p $(OBJDIR)
 	@$(CC) -c $< -o $(OBJDIR)/$@ $(CFLAGS) $(OPTSDBG)
 
-.PHONY: clean
+.PHONY: clean install
+install: $(RLSDIR)/$(PROG)
+	@mkdir -p $(bindir)
+	@$(CP) $(RLSDIR)/$(PROG) $(bindir)
+
 clean:
 	@mkdir -p $(OBJDIR)
 	cd $(OBJDIR) && rm -f $(OBJS)
