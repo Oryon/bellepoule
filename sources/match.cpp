@@ -71,6 +71,8 @@ void Match::Init (Data *max_score)
 
   _A_score = new Score (max_score);
   _B_score = new Score (max_score);
+
+  _name_space = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -443,10 +445,19 @@ void Match::CleanScore ()
 }
 
 // --------------------------------------------------------------------------------
+void Match::SetNameSpace (const gchar *name_space)
+{
+  if (name_space)
+  {
+    _name_space = g_strdup (name_space);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Match::SetNumber (gint number)
 {
   g_free (_name);
-  _name = g_strdup_printf ("M%d", number);
+  _name = g_strdup_printf ("%s%d", _name_space, number);
 
   _number = number;
 }
