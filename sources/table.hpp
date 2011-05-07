@@ -73,6 +73,7 @@ class Table : public Object
     guint     _size;
     guint     _column;
     gboolean  _is_displayed;
+    gboolean  _loaded;
     Table    *_left_table;
     Table    *_right_table;
     GSList   *_match_list;

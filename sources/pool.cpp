@@ -195,6 +195,7 @@ void Pool::AddPlayer (Player *player,
       match = new Match (player,
                          current_player,
                          _max_score);
+      match->SetNameSpace ("M");
 
       _match_list = g_slist_append (_match_list,
                                     match);

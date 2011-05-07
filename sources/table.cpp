@@ -37,6 +37,7 @@ Table::Table (TableSet *table_set,
   _header_item        = NULL;
   _defeated_table_set = NULL;
   _is_displayed       = TRUE;
+  _loaded             = FALSE;
 
   _match_list = NULL;
 }
@@ -142,21 +143,30 @@ void Table::Load (xmlNode *xml_node)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "Tableau") == 0)
+      if ((_loaded == FALSE) && (strcmp ((char *) n->name, "Tableau") == 0))
       {
-        g_print ("coucou\n");
+        _loaded = TRUE;
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
-        gchar *attr   = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-        Match *match  = (Match *) g_slist_nth_data (_match_list,
-                                                    atoi (attr)-1);
+        gchar  *attr    = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+        GSList *current = _match_list;
+        gchar  *number  = g_strdup_printf ("%d.%s", GetSize (), attr);
 
-        if (match)
+        while (current)
         {
-          LoadMatch (n,
-                     match);
+          Match *match = (Match *) current->data;
+
+          if (strcmp (match->GetName (), number) == 0)
+          {
+            g_print ("%d >> %s\n", GetSize (), number);
+            LoadMatch (n,
+                       match);
+            break;
+          }
+          current = g_slist_next (current);
         }
+        g_free (number);
       }
       else
       {

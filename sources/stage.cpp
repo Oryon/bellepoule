@@ -179,7 +179,10 @@ void Stage::UnLock ()
     _next->_attendees->Release ();
     _next->_attendees = NULL;
 
-    _next->DeactivateNbQualified ();
+    if (GetInputProviderClient () == NULL)
+    {
+      _next->DeactivateNbQualified ();
+    }
   }
 
   if (_attendees)
@@ -590,13 +593,26 @@ void Stage::ActivateNbQualified ()
 // --------------------------------------------------------------------------------
 void Stage::DeactivateNbQualified ()
 {
-  Module    *module     = dynamic_cast <Module *> (this);
-  GtkWidget *adjustment = module->GetWidget ("nb_qualified_adjustment");
+  Module *module;
 
-  if (adjustment)
+  if (GetInputProviderClient ())
   {
-    gtk_adjustment_set_upper (GTK_ADJUSTMENT (adjustment),
-                              0.0);
+    module = dynamic_cast <Module *> (_next);
+  }
+  else
+  {
+    module = dynamic_cast <Module *> (this);
+  }
+
+  if (module)
+  {
+    GtkWidget *adjustment = module->GetWidget ("nb_qualified_adjustment");
+
+    if (adjustment)
+    {
+      gtk_adjustment_set_upper (GTK_ADJUSTMENT (adjustment),
+                                0.0);
+    }
   }
 
   _nb_qualified->_value = 0;
