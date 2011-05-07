@@ -81,8 +81,8 @@ class Table : public Object
 
     ~Table ();
 
-    static gint Table::CompareMatchNumber (Match *a,
-                                           Match *b);
+    static gint CompareMatchNumber (Match *a,
+    		                        Match *b);
 
     void LoadMatch (xmlNode *xml_node,
                     Match   *match);
