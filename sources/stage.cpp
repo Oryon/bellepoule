@@ -560,7 +560,7 @@ GSList *Stage::GetOutputShortlist ()
 // --------------------------------------------------------------------------------
 void Stage::ActivateNbQualified ()
 {
-  if (_input_provider == NULL)
+  if (_attendees && (_input_provider == NULL))
   {
     GSList *shortlist = _attendees->GetShortList ();
     Module *module;
