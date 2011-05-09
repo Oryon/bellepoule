@@ -24,6 +24,7 @@
 #endif
 
 #include "version.h"
+#include "utilities.hpp"
 #include "contest.hpp"
 
 #include "tournament.hpp"
@@ -330,7 +331,7 @@ void Tournament::OnAbout ()
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenUserManual ()
 {
-  gchar *uri = g_build_filename (_path, "resources", "user_manual.pdf", NULL);
+  gchar *uri = FindDataFile ("user_manual.pdf", NULL);
 
 #ifdef WINDOWS_TEMPORARY_PATCH
   ShellExecute (NULL,

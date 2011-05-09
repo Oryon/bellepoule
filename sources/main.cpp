@@ -45,6 +45,7 @@ extern "C" int vswprintf(wchar_t *, const wchar_t *, va_list);
 #include "attribute.hpp"
 #include "general_classification.hpp"
 #include "glade.hpp"
+#include "utilities.hpp"
 #include "locale"
 
 // --------------------------------------------------------------------------------
@@ -123,21 +124,20 @@ int main (int argc, char **argv)
 {
   // Init
   {
-    gchar *install_dirname = g_get_current_dir ();
     // g_mem_set_vtable (glib_mem_profiler_table);
 
-    if (install_dirname)
-    {
-      gchar *gtkrc = g_build_filename (install_dirname, "resources", "gtkrc", NULL);
-
-      gtk_rc_add_default_file (gtkrc);
-      g_free (gtkrc);
-    }
+	gchar *gtkrc = FindDataFile("gtkrc", NULL);
+	if (gtkrc)
+	{
+	      g_print("gtkrc: %s\n", gtkrc);
+	      gtk_rc_add_default_file (gtkrc);
+	      g_free (gtkrc);
+	}
 
     gtk_init (&argc, &argv);
 
     {
-      gchar  *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
+      gchar  *translation_path = FindDataDir("translations", NULL);
 
       setlocale (LC_ALL, "");
 
@@ -149,6 +149,7 @@ int main (int argc, char **argv)
       bind_textdomain_codeset ("BellePoule", "UTF-8");
       textdomain ("BellePoule");
 
+      g_print("Translation Path: %s\n", translation_path);
       g_free (translation_path);
     }
 
@@ -160,11 +161,15 @@ int main (int argc, char **argv)
     GeneralClassification::Init ();
     Splitting::Init             ();
 
-    Glade::SetPath         (install_dirname);
-    AttributeDesc::SetPath (install_dirname);
-    Tournament::SetPath    (install_dirname);
+    gchar *glade_path = FindDataDir("glade", NULL);
+    Glade::SetPath         (glade_path);
+    g_free(glade_path);
 
-    g_free (install_dirname);
+    gchar  *current_dir = g_get_current_dir ();
+    AttributeDesc::SetPath (current_dir);
+    Tournament::SetPath    (current_dir);
+
+    g_free (current_dir);
   }
 
   gtk_about_dialog_set_url_hook (AboutDialogActivateLinkFunc,
