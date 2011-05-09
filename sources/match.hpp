@@ -35,9 +35,14 @@ class Match : public Object
             Player *B,
             Data   *max_score);
 
+    void SetNameSpace (const gchar *name_space);
+
     Player *GetPlayerA ();
+
     Player *GetPlayerB ();
+
     Player *GetWinner  ();
+
     Player *GetLooser  ();
 
     void SetPlayerA (Player *player);
@@ -88,6 +93,7 @@ class Match : public Object
     gboolean  _B_is_known;
     Score    *_A_score;
     Score    *_B_score;
+    gchar    *_name_space;
     gchar    *_name;
     guint     _number;
 

@@ -873,12 +873,12 @@ gboolean TableSet::FillInNode (GNode    *node,
     }
 
     {
-      gchar *number = (gchar *) data->_match->GetPtrData (table_set, "number");
+      gchar *match_name = data->_match->GetName ();
 
-      if (number)
+      if (match_name[0])
       {
         GooCanvasItem *number_item = Canvas::PutTextInTable (data->_canvas_table,
-                                                             number,
+                                                             match_name,
                                                              0,
                                                              0);
         Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
@@ -1110,6 +1110,13 @@ void TableSet::AddFork (GNode *to)
   data->_match = new Match (_max_score);
   data->_match->SetData (this, "node", node);
 
+  {
+    gchar *name_space = g_strdup_printf ("%d.", data->_table->GetSize ()*2);
+
+    data->_match->SetNameSpace (name_space);
+    g_free (name_space);
+  }
+
   left_table = data->_table->GetLeftTable ();
   if (left_table)
   {
@@ -1144,17 +1151,9 @@ void TableSet::AddFork (GNode *to)
       data->_match->SetData (this,
                              "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
 
-      {
-        gchar *number = g_strdup_printf ("M%d.%d", data->_table->GetSize (), indices[1]+1);
+      data->_match->SetNumber (indices[1]+1);
 
-        data->_match->SetNumber (indices[1]+1);
-        data->_match->SetData (this,
-                               "number",
-                               number,
-                               g_free);
-
-        left_table->ManageMatch (data->_match);
-      }
+      left_table->ManageMatch (data->_match);
     }
 
     data->_match->SetData (this,
@@ -1192,9 +1191,6 @@ void TableSet::AddFork (GNode *to)
       data->_table->DropMatch (data->_match);
       data->_match->Release ();
       data->_match = NULL;
-
-      to_data->_match->RemoveData (this,
-                                   "number");
 
       if (g_node_child_position (to, node) == 0)
       {
@@ -1495,10 +1491,9 @@ void TableSet::SetPlayerToMatch (Match  *to_match,
       if (A_name && B_name)
       {
         gchar *name_string = g_strdup_printf ("%s / %s", A_name, B_name);
-        gchar *number      = (gchar *) to_match->GetPtrData (this, "number");
 
         gtk_tree_store_set (_quick_search_treestore, &iter,
-                            QUICK_MATCH_PATH_COLUMN, number,
+                            QUICK_MATCH_PATH_COLUMN, to_match->GetName (),
                             QUICK_MATCH_NAME_COLUMN, name_string,
                             QUICK_MATCH_COLUMN, to_match,
                             QUICK_MATCH_VISIBILITY_COLUMN, 1,
@@ -1955,7 +1950,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
         gdouble        offset = i * ((100.0/_nb_match_per_sheet) * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
         GooCanvasItem *item;
         gdouble        name_width;
-        gchar         *match_number = g_strdup_printf (gettext ("Match %s"), (const char *) match->GetPtrData (this, "number"));
+        gchar         *match_number = g_strdup_printf (gettext ("Match %s"), match->GetName ());
 
         match->SetData (this, "printed", (void *) TRUE);
 
