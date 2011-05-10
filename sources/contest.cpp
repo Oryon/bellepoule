@@ -1129,6 +1129,17 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                        NULL);
 
   {
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         _name,
+                         10.0, 0.8,
+                         20.0,
+                         GTK_ANCHOR_NORTH,
+                         "alignment", PANGO_ALIGN_CENTER,
+                         "fill-color", "black",
+                         "font", "Sans Bold 2.5px", NULL);
+  }
+
+  {
     char *text = g_strdup_printf ("%s - %s - %s", gettext (weapon_image[_weapon]),
                                                    gettext (gender_image[_gender]),
                                                    gettext (category_image[_category]));
@@ -1157,6 +1168,27 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                          GTK_ANCHOR_CENTER,
                          "fill-color", "black",
                          "font", "Sans Bold 4px", NULL);
+  }
+
+  if (_organizer)
+  {
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         _organizer,
+                         98.0, 2.0,
+                         -1.0,
+                         GTK_ANCHOR_EAST,
+                         "fill-color", "black",
+                         "font", "Sans Bold 2.5px", NULL);
+  }
+
+  {
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         GetDate (),
+                         98.0, 5.0,
+                         -1.0,
+                         GTK_ANCHOR_EAST,
+                         "fill-color", "black",
+                         "font", "Sans Bold 2.5px", NULL);
   }
 
   goo_canvas_render (canvas,

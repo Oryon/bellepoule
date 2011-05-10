@@ -2223,7 +2223,7 @@ gboolean TableSet::OnPrintTable (GooCanvasItem  *item,
 
   if (gtk_dialog_run (GTK_DIALOG (table_set->_table_print_dialog)) == GTK_RESPONSE_OK)
   {
-    GtkWidget *w         = table_set->_glade->GetWidget ("table_pending_radiobutton");
+    GtkWidget *w         = table_set->_glade->GetWidget ("table_all_radiobutton");
     gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
 
     table_set->LookForMatchToPrint (table_to_print,
