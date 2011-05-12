@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=BellePoule
+Comment=Run fencing tournaments
+Comment[fr]=logiciel de gestion de tournois d'escrime
+Exec=BellePoule
+Icon=BellePoule
+Terminal=false
+Type=Application
+Categories=GTK;Utility;

@@ -10,7 +10,7 @@ URL:            http://betton.escrime.free.fr/index.php/bellepoule
 Source0:        BellePoule-%{version}.beta5-r%{vcs_rev}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  gettext gtk2-devel glib2-devel libxml2-devel goocanvas-devel
+BuildRequires:  desktop-file-utils gettext gtk2-devel glib2-devel libxml2-devel goocanvas-devel
 Requires:       gtk2 glib2 libxml2 goocanvas
 
 %description
@@ -32,6 +32,7 @@ done
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT prefix=usr
 %find_lang %{name}
+desktop-file-install --dir=${RPM_BUILD_ROOT}%{_datadir}/applications %{name}.desktop
 
 %clean
 rm -rf $RPM_BUILD_ROOT

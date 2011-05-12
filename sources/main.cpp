@@ -199,15 +199,15 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("resources/ioc_countries.txt");
+    desc->AddDiscreteValues ("ioc_countries.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
-    desc->AddDiscreteValues ("resources/ligues.txt");
+    desc->AddDiscreteValues ("ligues.txt");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("resources/clubs.txt");
+    desc->AddDiscreteValues ("clubs.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
@@ -227,19 +227,19 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
     desc->_scope  = AttributeDesc::GLOBAL;
     desc->_rights = AttributeDesc::PRIVATE;
-    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "resources/glade/normal.png",
-                             "N", gettext ("Not qualified"), "resources/glade/normal.png",
-                             "A", gettext ("Withdrawal"), "resources/glade/ambulance.png",
-                             "E", gettext ("Excluded"), "resources/glade/black_card.png",
-                             "F", gettext ("Forfeit"), "resources/glade/normal.png", NULL);
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "glade/normal.png",
+                             "N", gettext ("Not qualified"), "glade/normal.png",
+                             "A", gettext ("Withdrawal"), "glade/ambulance.png",
+                             "E", gettext ("Excluded"), "glade/black_card.png",
+                             "F", gettext ("Forfeit"), "glade/normal.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "status", "Statut", gettext ("status"));
     desc->_scope = AttributeDesc::LOCAL;
-    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "resources/glade/normal.png",
-                             "N", gettext ("Not qualified"), "resources/glade/normal.png",
-                             "A", gettext ("Withdrawal"), "resources/glade/ambulance.png",
-                             "E", gettext ("Excluded"), "resources/glade/black_card.png",
-                             "F", gettext ("Forfeit"), "resources/glade/normal.png", NULL);
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "glade/normal.png",
+                             "N", gettext ("Not qualified"), "glade/normal.png",
+                             "A", gettext ("Withdrawal"), "glade/ambulance.png",
+                             "E", gettext ("Excluded"), "glade/black_card.png",
+                             "F", gettext ("Forfeit"), "glade/normal.png", NULL);
 
     // Not persistent data
     {

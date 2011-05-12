@@ -73,7 +73,7 @@ gchar * ScanDataDirs (const gchar *path_segment, GFileTest test)
 														path_segment, NULL);
 				if (!g_file_test(test_path, test))
 				{
-					// Not found.  Try a subdirectory fo the current directory
+					// Not found.  Try a subdirectory of the current directory
 					g_free(test_path);
 					test_path=NULL;
 					test_path = g_build_filename(program_dir,"resources",

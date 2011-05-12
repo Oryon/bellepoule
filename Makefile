@@ -18,7 +18,8 @@ endif
 DESTDIR=
 prefix?=/usr/local
 bindir?=$(DESTDIR)/$(prefix)/bin
-localedir?=$(DESTDIR)/$(prefix)/share/locale
+datadir?=$(DESTDIR)/$(prefix)/share
+localedir?=$(datadir)/locale
 CP=cp -p
 
 # Lancer les commandes suivantes dans un terminal pour voir les bibliothèques et options par défaut
@@ -48,18 +49,34 @@ main: $(OBJS)
 	@mkdir -p $(OBJDIR)
 	@$(CC) -c $< -o $(OBJDIR)/$@ $(CFLAGS) $(OPTSDBG)
 
-.PHONY: clean install tgz
+.PHONY: clean install tgz png_icons
+png_icons:
+	convert resources/exe.ico BellePoule.png
 
 tgz:
-	@bzr export --format tgz ${PROG}-${TGZNUM}.tgz
+	bzr export --format tgz ${PROG}-${TGZNUM}.tgz
 
 install: $(RLSDIR)/$(PROG)
-	@mkdir -p $(bindir)
-	@$(CP) $(RLSDIR)/$(PROG) $(bindir)
+	mkdir -p $(bindir)
+	$(CP) $(RLSDIR)/$(PROG) $(bindir)
 	for l in ar de es fr it nl ru ; do \
 	   mkdir -p $(localedir)/$$l/LC_MESSAGES ; \
 	   $(CP) resources/translations/$$l/LC_MESSAGES/BellePoule.mo $(localedir)/$$l/LC_MESSAGES/BellePoule.mo ; \
 	done
+	## install resources
+	mkdir -p $(datadir)/BellePoule
+	$(CP) resources/clubs.txt $(datadir)/BellePoule
+	$(CP) resources/ioc_countries.txt $(datadir)/BellePoule
+	$(CP) resources/ligues.txt $(datadir)/BellePoule
+	$(CP) resources/user_manual.pdf $(datadir)/BellePoule
+	$(CP) -r resources/glade $(datadir)/BellePoule
+	## install icons
+	mkdir -p $(datadir)/icons/hicolor/16x16/apps
+	mv BellePoule-0.png $(datadir)/icons/hicolor/16x16/apps/BellePoule.png
+	mkdir -p $(datadir)/icons/hicolor/32x32/apps
+	mv BellePoule-1.png $(datadir)/icons/hicolor/32x32/apps/BellePoule.png
+	mkdir -p $(datadir)/icons/hicolor/48x48/apps
+	mv BellePoule-2.png $(datadir)/icons/hicolor/48x48/apps/BellePoule.png
 
 clean:
 	@mkdir -p $(OBJDIR)
