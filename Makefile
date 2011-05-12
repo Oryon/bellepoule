@@ -56,9 +56,9 @@ tgz:
 install: $(RLSDIR)/$(PROG)
 	@mkdir -p $(bindir)
 	@$(CP) $(RLSDIR)/$(PROG) $(bindir)
-	for lll in ar de es fr it nl ru ; do \
-	   mkdir -p $(localedir)/$$lll/LC_MESSAGES ; \
-	   $(CP) resources/translations/$$lll/LC_MESSAGES/BellePoule.mo $(localedir)/$$lll/LC_MESSAGES/BellePoule.mo \
+	for l in ar de es fr it nl ru ; do \
+	   mkdir -p $(localedir)/$$l/LC_MESSAGES ; \
+	   $(CP) resources/translations/$$l/LC_MESSAGES/BellePoule.mo $(localedir)/$$l/LC_MESSAGES/BellePoule.mo ; \
 	done
 
 clean:
