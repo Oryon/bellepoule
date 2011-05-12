@@ -142,7 +142,7 @@ int main (int argc, char **argv)
       if (!translation_path)
       {
     	  // Not found.  Check the source tree
-    	  *translation_path = FindDataDir("translations", NULL);
+    	  translation_path = FindDataDir("translations", NULL);
       }
 
       setlocale (LC_ALL, "");

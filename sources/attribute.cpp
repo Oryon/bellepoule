@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 #include "attribute.hpp"
+#include "utilities.hpp"
 
 gchar  *AttributeDesc::_path = NULL;
 GSList *AttributeDesc::_list = NULL;
