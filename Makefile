@@ -18,6 +18,7 @@ endif
 DESTDIR=
 prefix?=/usr/local
 bindir?=$(DESTDIR)/$(prefix)/bin
+localedir?=$(DESTDIR)/$(prefix)/share/locale
 CP=cp -p
 
 # Lancer les commandes suivantes dans un terminal pour voir les bibliothèques et options par défaut
@@ -55,6 +56,10 @@ tgz:
 install: $(RLSDIR)/$(PROG)
 	@mkdir -p $(bindir)
 	@$(CP) $(RLSDIR)/$(PROG) $(bindir)
+	@for lll in ar de es fr it nl ru ; do \
+	   mkdir -p $(localedir)/$lll/LC_MESSAGES
+       $(CP) resources/translations/$lll/LC_MESSAGES/BellePoule.mo $(localedir)/$lll/LC_MESSAGES/BellePoule.mo \
+     done
 
 clean:
 	@mkdir -p $(OBJDIR)
