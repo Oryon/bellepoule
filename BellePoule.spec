@@ -1,16 +1,16 @@
-%define vcs_rev 268
+%define vcs_rev 269
 Name:           BellePoule
-Version:        1.92
-Release:        0.%{vcs_rev}%{?dist}
+Version:        2.0
+Release:        0.beta5.%{vcs_rev}%{?dist}
 Summary:        Fencing tournaments management software / Logiciel de gestion de tournois d'escrime.
 
 Group:          Applications/Productivity
 License:        GNU GPL v3
 URL:            http://betton.escrime.free.fr/index.php/bellepoule
-Source0:        BellePoule-%{version}-r%{vcs_rev}.tgz
+Source0:        BellePoule-%{version}.beta5-r%{vcs_rev}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  gtk2-devel glib2-devel libxml2-devel goocanvas-devel
+BuildRequires:  gettext gtk2-devel glib2-devel libxml2-devel goocanvas-devel
 Requires:       gtk2 glib2 libxml2 goocanvas
 
 %description
@@ -22,6 +22,10 @@ Requires:       gtk2 glib2 libxml2 goocanvas
 %build
 make %{?_smp_mflags}
 
+## compile all of the message files
+for lll in ar de es fr it nl ru ; do 
+  msgfmt --output-file=$lll/LC_MESSAGES/BellePoule.mo $lll.po
+done
 
 %install
 rm -rf $RPM_BUILD_ROOT
