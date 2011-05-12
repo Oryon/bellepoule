@@ -158,7 +158,7 @@ int main (int argc, char **argv)
       bind_textdomain_codeset ("BellePoule", "UTF-8");
       textdomain ("BellePoule");
 
-      g_print("Translation Path: %s\n", translation_path);
+      g_debug("Translation Path: %s\n", translation_path);
       g_free (translation_path);
     }
 
