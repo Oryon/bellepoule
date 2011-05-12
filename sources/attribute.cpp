@@ -50,9 +50,9 @@ static gchar *GetUndivadableText (const gchar *text)
         if (text[i] == ' ')
         {
           // non breaking space
-          *current = 0xC2;
+          *current = gchar(0xC2);
           current++;
-          *current = 0xA0;
+          *current = gchar(0xA0);
         }
         else
         {
