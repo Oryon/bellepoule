@@ -143,8 +143,9 @@ int main (int argc, char **argv)
       gchar  *translation_path = g_build_filename (current_dir, "resources", "translations", NULL);
 	  if (!g_file_test(translation_path, G_FILE_TEST_IS_DIR))
       {
+		  g_free(translation_path);
           // Try to find the system locale directory
-	      translation_path = g_build_filename ("usr", "share", "locale", NULL);
+	      translation_path = g_build_filename ("/usr", "share", "locale", NULL);
       }
 
       setlocale (LC_ALL, "");
