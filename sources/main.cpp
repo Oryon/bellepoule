@@ -122,6 +122,8 @@ static gint CompareDate (Attribute *attr_a,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
+  gchar  *current_dir = g_get_current_dir ();
+
   // Init
   {
     // g_mem_set_vtable (glib_mem_profiler_table);
@@ -137,12 +139,12 @@ int main (int argc, char **argv)
     gtk_init (&argc, &argv);
 
     {
-      // Look in the XDG defined locations for the translations
-      gchar  *translation_path = FindDataDir("locale", NULL);
-      if (!translation_path)
+      // Check the local tree for translations
+      gchar  *translation_path = g_build_filename (current_dir, "resources", "translations", NULL);
+	  if (!g_file_test(translation_path, G_FILE_TEST_IS_DIR))
       {
-    	  // Not found.  Check the source tree
-    	  translation_path = FindDataDir("translations", NULL);
+          // Try to find the system locale directory
+	      translation_path = g_build_filename ("usr", "share", "locale", NULL);
       }
 
       setlocale (LC_ALL, "");
@@ -171,7 +173,6 @@ int main (int argc, char **argv)
     Glade::SetPath         (glade_path);
     g_free(glade_path);
 
-    gchar  *current_dir = g_get_current_dir ();
     AttributeDesc::SetPath (current_dir);
     Tournament::SetPath    (current_dir);
 
