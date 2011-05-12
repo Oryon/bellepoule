@@ -137,7 +137,13 @@ int main (int argc, char **argv)
     gtk_init (&argc, &argv);
 
     {
-      gchar  *translation_path = FindDataDir("translations", NULL);
+      // Look in the XDG defined locations for the translations
+      gchar  *translation_path = FindDataDir("locale", NULL);
+      if (!translation_path)
+      {
+    	  // Not found.  Check the source tree
+    	  *translation_path = FindDataDir("translations", NULL);
+      }
 
       setlocale (LC_ALL, "");
 

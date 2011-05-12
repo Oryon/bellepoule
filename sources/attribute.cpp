@@ -363,7 +363,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *file)
   }
 
   {
-    gchar   *full_path = g_build_filename (_path, file, NULL);
+    gchar   *full_path = FindDataFile(file, NULL);
     gchar   *raw_file;
     GError  *error = NULL;
 

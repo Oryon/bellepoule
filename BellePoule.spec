@@ -10,7 +10,7 @@ URL:            http://betton.escrime.free.fr/index.php/bellepoule
 Source0:        BellePoule-%{version}.beta5-r%{vcs_rev}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  desktop-file-utils gettext gtk2-devel glib2-devel libxml2-devel goocanvas-devel
+BuildRequires:  ImageMagick desktop-file-utils gettext gtk2-devel glib2-devel libxml2-devel goocanvas-devel
 Requires:       gtk2 glib2 libxml2 goocanvas
 
 %description
@@ -21,6 +21,7 @@ Requires:       gtk2 glib2 libxml2 goocanvas
 
 %build
 make %{?_smp_mflags}
+make png_icons
 
 ## compile all of the message files
 cd resources/translations
@@ -40,12 +41,14 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/*
+%{_datadir}/%{name}
+%{_datadir}/applications/%{name}.desktop
+%{_datadir}/icons/hicolor/*/apps/BellePoule.png
 %doc Exemples setup/COPYING.txt
 
 %changelog
-* Mon May 9 2011 ajsfedora <ajsfedora@gmail.com> 1.92-0.268
-- Update to BellePoule-Fedora rev 277 (BellePoule trunk r268 with the XDM
-  utility functions applied
+* Thu May 12 2011 ajsfedora <ajsfedora@gmail.com> 2.0-0.beta5.269
+- Get .spec file ready to submit to Fedora
 
-* Mon Apr 18 2011 ajsfedora <ajsfedora@gmail.com> 2.0-0.92
+* Mon Apr 18 2011 ajsfedora <ajsfedora@gmail.com> 2.0-beta2
 - Initial .spec file
