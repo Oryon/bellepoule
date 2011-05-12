@@ -5,7 +5,16 @@ BINDIR=bin
 DBGDIR=$(BINDIR)/Debug
 RLSDIR=$(BINDIR)/Release
 
-# Define certain make variables in order to be more RPM friendly when using the 'install' target
+# Define certain make variables in order to be more RPM friendly
+REVNUM=$$(bzr revno lp:bellepoule)
+MAJOR=$$(egrep 'VERSION ' sources/version.h | sed -e 's=\(.*\"\)\([[:alnum:]]*\)\(\".*\)=\2=')
+MINOR=$$(egrep VERSION_REVISION sources/version.h | sed -e 's=\(.*\"\)\([[:alnum:]]*\)\(\".*\)=\2=')
+MATURITY=$$(egrep VERSION_MATURITY sources/version.h | sed -e 's=\(.*\"\)\([[:alnum:]]*\)\(\".*\)=\2=')
+ifndef MATURITY
+  TGZNUM=${MAJOR}.${MINOR}-r${REVNUM}
+else
+  TGZNUM=${MAJOR}.${MINOR}.${MATURITY}-r${REVNUM}
+endif
 DESTDIR=
 prefix?=/usr/local
 bindir?=$(DESTDIR)/$(prefix)/bin
@@ -38,7 +47,11 @@ main: $(OBJS)
 	@mkdir -p $(OBJDIR)
 	@$(CC) -c $< -o $(OBJDIR)/$@ $(CFLAGS) $(OPTSDBG)
 
-.PHONY: clean install
+.PHONY: clean install tgz
+
+tgz:
+	@bzr export --format tgz ${PROG}-${TGZNUM}.tgz
+
 install: $(RLSDIR)/$(PROG)
 	@mkdir -p $(bindir)
 	@$(CP) $(RLSDIR)/$(PROG) $(bindir)
