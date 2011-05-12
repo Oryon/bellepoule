@@ -17,7 +17,7 @@ Requires:       gtk2 glib2 libxml2 goocanvas
 
 
 %prep
-%setup -n BellePoule-%{version}-r%{vcs_rev}
+%setup -n BellePoule-%{version}.beta5-r%{vcs_rev}
 
 %build
 make %{?_smp_mflags}
