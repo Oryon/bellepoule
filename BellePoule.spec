@@ -23,20 +23,20 @@ Requires:       gtk2 glib2 libxml2 goocanvas
 make %{?_smp_mflags}
 
 ## compile all of the message files
+cd resources/translations
 for lll in ar de es fr it nl ru ; do 
   msgfmt --output-file=$lll/LC_MESSAGES/BellePoule.mo $lll.po
 done
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT bindir=%{_bindir}
-
+make install DESTDIR=$RPM_BUILD_ROOT prefix=usr
+%find_lang %{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-
-%files
+%files -f %{name}.lang
 %defattr(-,root,root,-)
 %{_bindir}/*
 %doc Exemples setup/COPYING.txt
