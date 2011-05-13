@@ -331,12 +331,15 @@ void Tournament::OnAbout ()
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenUserManual ()
 {
-  gchar *uri = FindDataFile ("user_manual.pdf", NULL);
+  gchar *file = FindDataFile ("user_manual.pdf", NULL);
+  gchar *uri = g_strconcat("file://", file, NULL);
+  g_debug("File location of user's manual: %s\n", file);
+  g_debug("URI for user's manual: %s\n", uri);
 
 #ifdef WINDOWS_TEMPORARY_PATCH
   ShellExecute (NULL,
                 "open",
-                uri,
+                file,
                 NULL,
                 NULL,
                 SW_SHOWNORMAL);
@@ -347,6 +350,7 @@ void Tournament::OnOpenUserManual ()
                 NULL);
 #endif
 
+  g_free (file);
   g_free (uri);
 }
 
