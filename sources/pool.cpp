@@ -302,6 +302,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     const guint    cell_h      = 45;
     guint          nb_players  = GetNbPlayers ();
     GooCanvasItem *root_item   = goo_canvas_get_root_item (on_canvas);
+    GooCanvasItem *title_group = goo_canvas_group_new (root_item, NULL);
     GooCanvasItem *grid_group  = goo_canvas_group_new (root_item, NULL);
     GooCanvasItem *grid_header = goo_canvas_group_new (grid_group, NULL);
 
@@ -309,7 +310,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     {
       GooCanvasItem *text_item;
 
-      _title_table = goo_canvas_table_new (root_item, NULL);
+      _title_table = goo_canvas_table_new (title_group, NULL);
       text_item = Canvas::PutTextInTable (_title_table,
                                           _name,
                                           0,
@@ -317,6 +318,64 @@ void Pool::Draw (GooCanvas *on_canvas,
       g_object_set (G_OBJECT (text_item),
                     "font", "Sans bold 18px",
                     NULL);
+    }
+
+    // Referee / Track
+    {
+      GooCanvasItem *referee_group = goo_canvas_group_new (title_group, NULL);
+      GooCanvasItem *track_group   = goo_canvas_group_new (title_group, NULL);
+
+      goo_canvas_rect_new (referee_group,
+                           0.0,
+                           0.0,
+                           cell_w*5,
+                           cell_h,
+                           "stroke-color", "Grey95",
+                           "line-width", 2.0,
+                           NULL);
+      goo_canvas_text_new (referee_group,
+                           gettext ("Referee"),
+                           0.0,
+                           0.0,
+                           -1,
+                           GTK_ANCHOR_W,
+                           "fill-color", "Black",
+                           "font", "Sans bold 30.0px",
+                           NULL);
+
+      Canvas::Align (referee_group,
+                     NULL,
+                     _title_table);
+      Canvas::Anchor (referee_group,
+                      NULL,
+                      _title_table,
+                      cell_w*5);
+
+      goo_canvas_rect_new (track_group,
+                           0.0,
+                           0.0,
+                           cell_w*5,
+                           cell_h,
+                           "stroke-color", "Grey95",
+                           "line-width", 2.0,
+                           NULL);
+      goo_canvas_text_new (track_group,
+                           gettext ("Piste"),
+                           0.0,
+                           0.0,
+                           -1,
+                           GTK_ANCHOR_W,
+                           "fill-color", "Black",
+                           "font", "Sans bold 30.0px",
+                           NULL);
+
+      Canvas::Align (track_group,
+                     NULL,
+                     referee_group);
+      Canvas::Anchor (track_group,
+                      NULL,
+                      referee_group,
+                      cell_w/2);
     }
 
     // Grid
@@ -472,27 +531,29 @@ void Pool::Draw (GooCanvas *on_canvas,
                                         NULL);
         g_free (text);
       }
+    }
+
+    // Dashboard
+    {
+      GooCanvasItem *dashboard_group  = goo_canvas_group_new (root_item, NULL);
+      GooCanvasItem *dashboard_body   = goo_canvas_group_new (dashboard_group, NULL);
 
       if (print_for_referees)
       {
-        GooCanvasBounds grid_bounds;
-
-        goo_canvas_item_get_bounds (grid_group,
-                                    &grid_bounds);
-
         for (guint i = 0; i < nb_players; i++)
         {
-          goo_canvas_rect_new (grid_group,
-                               grid_bounds.x2 + cell_w,
-                               i*cell_h + 2,
+          goo_canvas_rect_new (dashboard_body,
+                               0.0,
+                               i*cell_h,
                                cell_w*5,
-                               cell_h-4,
+                               cell_h,
                                "fill-color", "Grey85",
-                               "line-width", 0.0,
+                               "stroke-color", "White",
+                               "line-width", 2.0,
                                NULL);
-          goo_canvas_text_new (grid_group,
+          goo_canvas_text_new (dashboard_body,
                                gettext ("Signature"),
-                               grid_bounds.x2 + cell_w,
+                               0.0,
                                cell_h * (i + (1.0/2.0)),
                                -1,
                                GTK_ANCHOR_W,
@@ -501,16 +562,9 @@ void Pool::Draw (GooCanvas *on_canvas,
                                NULL);
         }
       }
-    }
-
-    // Dashboard
-    if (print_for_referees == FALSE)
-    {
-      GooCanvasItem *dashboard_group  = goo_canvas_group_new (root_item, NULL);
-      GooCanvasItem *dashboard_header = goo_canvas_group_new (dashboard_group, NULL);
-      GooCanvasItem *dashboard_body   = goo_canvas_group_new (dashboard_group, NULL);
-
+      else
       {
+        GooCanvasItem *dashboard_header = goo_canvas_group_new (dashboard_group, NULL);
         GooCanvasItem *goo_text;
         gint           x, y;
 
@@ -582,123 +636,132 @@ void Pool::Draw (GooCanvas *on_canvas,
                                         NULL);
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
-      }
 
-      for (guint i = 0; i < nb_players; i++)
-      {
-        Player *player;
-
-        player = GetPlayer (i);
-
+        for (guint i = 0; i < nb_players; i++)
         {
-          GooCanvasItem *goo_item;
-          gint           x, y;
+          Player *player;
 
-          x = cell_w/2;
-          y = cell_h/2 + i*cell_h;
+          player = GetPlayer (i);
 
           {
-            if (GetCanvas () == on_canvas)
+            GooCanvasItem *goo_item;
+            gint           x, y;
+
+            x = cell_w/2;
+            y = cell_h/2 + i*cell_h;
+
             {
-              GtkWidget       *w    = gtk_combo_box_new_with_model (GetStatusModel ());
-              GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
+              if (GetCanvas () == on_canvas)
+              {
+                GtkWidget       *w    = gtk_combo_box_new_with_model (GetStatusModel ());
+                GtkCellRenderer *cell = gtk_cell_renderer_pixbuf_new ();
 
-              gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
-              gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
-                                              cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
-                                              NULL);
-
-              g_object_set_data (G_OBJECT (w), "player",  player);
-              player->SetData (this, "combo_box", w);
-              goo_item = goo_canvas_widget_new (dashboard_body,
-                                                w,
-                                                x-cell_w/2,
-                                                y,
-                                                cell_w*3/2,
-                                                cell_h*2/3,
-                                                "anchor", GTK_ANCHOR_CENTER,
+                gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
+                gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
+                                                cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
                                                 NULL);
-              SetDisplayData (player, on_canvas, "StatusItem", w);
-              x += cell_w*3/2;
-              gtk_widget_show (w);
+
+                g_object_set_data (G_OBJECT (w), "player",  player);
+                player->SetData (this, "combo_box", w);
+                goo_item = goo_canvas_widget_new (dashboard_body,
+                                                  w,
+                                                  x-cell_w/2,
+                                                  y,
+                                                  cell_w*3/2,
+                                                  cell_h*2/3,
+                                                  "anchor", GTK_ANCHOR_CENTER,
+                                                  NULL);
+                SetDisplayData (player, on_canvas, "StatusItem", w);
+                x += cell_w*3/2;
+                gtk_widget_show (w);
+              }
+
+              goo_item = goo_canvas_text_new (dashboard_body,
+                                              ".",
+                                              x, y, -1,
+                                              GTK_ANCHOR_CENTER,
+                                              "font", "Sans 18px",
+                                              NULL);
+              SetDisplayData (player, on_canvas, "VictoriesItem", goo_item);
+              x += cell_w;
+
+              goo_item = goo_canvas_text_new (dashboard_body,
+                                              ".",
+                                              x, y, -1,
+                                              GTK_ANCHOR_CENTER,
+                                              "font", "Sans 18px",
+                                              NULL);
+              SetDisplayData (player, on_canvas, "VictoriesRatioItem", goo_item);
+              x += cell_w;
+
+              goo_item = goo_canvas_text_new (dashboard_body,
+                                              ".",
+                                              x, y, -1,
+                                              GTK_ANCHOR_CENTER,
+                                              "font", "Sans 18px",
+                                              NULL);
+              SetDisplayData (player, on_canvas, "HSItem", goo_item);
+              x += cell_w;
+
+              goo_item = goo_canvas_text_new (dashboard_body,
+                                              ".",
+                                              x, y, -1,
+                                              GTK_ANCHOR_CENTER,
+                                              "font", "Sans 18px",
+                                              NULL);
+              SetDisplayData (player, on_canvas, "HRItem", goo_item);
+              x += cell_w;
+
+              goo_item = goo_canvas_text_new (dashboard_body,
+                                              ".",
+                                              x, y, -1,
+                                              GTK_ANCHOR_CENTER,
+                                              "font", "Sans 18px",
+                                              NULL);
+              SetDisplayData (player, on_canvas, "IndiceItem", goo_item);
+              x += cell_w;
+
+              goo_item = goo_canvas_text_new (dashboard_body,
+                                              ".",
+                                              x, y, -1,
+                                              GTK_ANCHOR_CENTER,
+                                              "font", "Sans 18px",
+                                              NULL);
+              SetDisplayData (player, on_canvas, "RankItem", goo_item);
+              x += cell_w;
             }
-
-            goo_item = goo_canvas_text_new (dashboard_body,
-                                            ".",
-                                            x, y, -1,
-                                            GTK_ANCHOR_CENTER,
-                                            "font", "Sans 18px",
-                                            NULL);
-            SetDisplayData (player, on_canvas, "VictoriesItem", goo_item);
-            x += cell_w;
-
-            goo_item = goo_canvas_text_new (dashboard_body,
-                                            ".",
-                                            x, y, -1,
-                                            GTK_ANCHOR_CENTER,
-                                            "font", "Sans 18px",
-                                            NULL);
-            SetDisplayData (player, on_canvas, "VictoriesRatioItem", goo_item);
-            x += cell_w;
-
-            goo_item = goo_canvas_text_new (dashboard_body,
-                                            ".",
-                                            x, y, -1,
-                                            GTK_ANCHOR_CENTER,
-                                            "font", "Sans 18px",
-                                            NULL);
-            SetDisplayData (player, on_canvas, "HSItem", goo_item);
-            x += cell_w;
-
-            goo_item = goo_canvas_text_new (dashboard_body,
-                                            ".",
-                                            x, y, -1,
-                                            GTK_ANCHOR_CENTER,
-                                            "font", "Sans 18px",
-                                            NULL);
-            SetDisplayData (player, on_canvas, "HRItem", goo_item);
-            x += cell_w;
-
-            goo_item = goo_canvas_text_new (dashboard_body,
-                                            ".",
-                                            x, y, -1,
-                                            GTK_ANCHOR_CENTER,
-                                            "font", "Sans 18px",
-                                            NULL);
-            SetDisplayData (player, on_canvas, "IndiceItem", goo_item);
-            x += cell_w;
-
-            goo_item = goo_canvas_text_new (dashboard_body,
-                                            ".",
-                                            x, y, -1,
-                                            GTK_ANCHOR_CENTER,
-                                            "font", "Sans 18px",
-                                            NULL);
-            SetDisplayData (player, on_canvas, "RankItem", goo_item);
-            x += cell_w;
           }
         }
       }
 
       Canvas::Align (grid_group,
-                     _title_table,
-                     NULL);
+                     title_group,
+                     NULL,
+                     cell_h/2);
 
       Canvas::Anchor (dashboard_group,
-                      _title_table,
-                      NULL);
+                      title_group,
+                      NULL,
+                      cell_h);
 
       Canvas::Anchor (dashboard_group,
                       NULL,
                       grid_group,
                       cell_w/2);
 
+      if (print_for_referees)
+      {
+        Canvas::Align (grid_group,
+                       NULL,
+                       dashboard_body,
+                       -((gdouble) cell_h)/2.0);
+      }
+      else
       {
         GooCanvasBounds grid_header_bounds;
 
         goo_canvas_item_get_bounds (grid_header,
                                     &grid_header_bounds);
-
         Canvas::Align (grid_group,
                        NULL,
                        dashboard_body,
@@ -806,19 +869,22 @@ void Pool::Draw (GooCanvas *on_canvas,
       player = GetPlayer (i);
       w      = GTK_WIDGET (player->GetPtrData (this, "combo_box"));
 
-      if (_locked)
+      if (w)
       {
-        gtk_widget_set_sensitive (w,
-                                  FALSE);
+        if (_locked)
+        {
+          gtk_widget_set_sensitive (w,
+                                    FALSE);
+        }
+        else
+        {
+          g_signal_connect (w, "changed",
+                            G_CALLBACK (on_status_changed), this);
+          g_signal_connect (w, "scroll-event",
+                            G_CALLBACK (on_status_scrolled), this);
+        }
+        player->RemoveData (this, "combo_box");
       }
-      else
-      {
-        g_signal_connect (w, "changed",
-                          G_CALLBACK (on_status_changed), this);
-        g_signal_connect (w, "scroll-event",
-                          G_CALLBACK (on_status_scrolled), this);
-      }
-      player->RemoveData (this, "combo_box");
     }
   }
 }
