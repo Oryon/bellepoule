@@ -282,3 +282,69 @@ void Canvas::FitToContext (GooCanvasItem   *item,
                                    &matrix);
   }
 }
+
+// --------------------------------------------------------------------------------
+void Canvas::Anchor (GooCanvasItem *item,
+                     GooCanvasItem *to_bottom_of,
+                     GooCanvasItem *to_right_of,
+                     guint          space)
+{
+  GooCanvasBounds item_bounds;
+  GooCanvasBounds to_bounds;
+
+  goo_canvas_item_get_bounds (item,
+                              &item_bounds);
+
+  if (to_right_of)
+  {
+    goo_canvas_item_get_bounds (to_right_of,
+                                &to_bounds);
+
+    goo_canvas_item_translate (item,
+                               to_bounds.x2 - item_bounds.x1 + space,
+                               0);
+  }
+
+  if (to_bottom_of)
+  {
+    goo_canvas_item_get_bounds (to_bottom_of,
+                                &to_bounds);
+
+    goo_canvas_item_translate (item,
+                               0,
+                               to_bounds.y2 - item_bounds.y1 + space);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Canvas::Align (GooCanvasItem *item,
+                    GooCanvasItem *with_left_of,
+                    GooCanvasItem *with_top_of,
+                    gdouble        offset)
+{
+  GooCanvasBounds item_bounds;
+  GooCanvasBounds with_bounds;
+
+  goo_canvas_item_get_bounds (item,
+                              &item_bounds);
+
+  if (with_left_of)
+  {
+    goo_canvas_item_get_bounds (with_left_of,
+                                &with_bounds);
+
+    goo_canvas_item_translate (item,
+                               with_bounds.x1 - item_bounds.x1 + offset,
+                               0);
+  }
+
+  if (with_top_of)
+  {
+    goo_canvas_item_get_bounds (with_top_of,
+                                &with_bounds);
+
+    goo_canvas_item_translate (item,
+                               0,
+                               with_bounds.y1 - item_bounds.y1 + offset);
+  }
+}

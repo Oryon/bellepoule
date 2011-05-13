@@ -298,11 +298,26 @@ void Pool::Draw (GooCanvas *on_canvas,
                                          (ScoreCollector::OnNewScore_cbk) &Pool::OnNewScore);
 
   {
-    const guint    cell_w     = 45;
-    const guint    cell_h     = 45;
-    guint          nb_players = GetNbPlayers ();
-    GooCanvasItem *root_item  = goo_canvas_get_root_item (on_canvas);
-    GooCanvasItem *grid_group = goo_canvas_group_new (root_item, NULL);
+    const guint    cell_w      = 45;
+    const guint    cell_h      = 45;
+    guint          nb_players  = GetNbPlayers ();
+    GooCanvasItem *root_item   = goo_canvas_get_root_item (on_canvas);
+    GooCanvasItem *grid_group  = goo_canvas_group_new (root_item, NULL);
+    GooCanvasItem *grid_header = goo_canvas_group_new (grid_group, NULL);
+
+    // Name
+    {
+      GooCanvasItem *text_item;
+
+      _title_table = goo_canvas_table_new (root_item, NULL);
+      text_item = Canvas::PutTextInTable (_title_table,
+                                          _name,
+                                          0,
+                                          1);
+      g_object_set (G_OBJECT (text_item),
+                    "font", "Sans bold 18px",
+                    NULL);
+    }
 
     // Grid
     {
@@ -449,7 +464,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         y = - 13;
         text = g_strdup_printf ("%d", i+1);
 
-        goo_text = goo_canvas_text_new (grid_group,
+        goo_text = goo_canvas_text_new (grid_header,
                                         text,
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -491,19 +506,20 @@ void Pool::Draw (GooCanvas *on_canvas,
     // Dashboard
     if (print_for_referees == FALSE)
     {
-      GooCanvasItem *dashboard_group = goo_canvas_group_new (root_item,
-                                                             NULL);
+      GooCanvasItem *dashboard_group  = goo_canvas_group_new (root_item, NULL);
+      GooCanvasItem *dashboard_header = goo_canvas_group_new (dashboard_group, NULL);
+      GooCanvasItem *dashboard_body   = goo_canvas_group_new (dashboard_group, NULL);
 
       {
         GooCanvasItem *goo_text;
         gint           x, y;
 
         x = cell_w/2;
-        y = - 10;
+        y = -10;
 
         if (GetCanvas () == on_canvas)
         {
-          goo_text = goo_canvas_text_new (dashboard_group,
+          goo_text = goo_canvas_text_new (dashboard_header,
                                           gettext ("Status"),
                                           0.0, y, -1,
                                           GTK_ANCHOR_WEST,
@@ -513,7 +529,7 @@ void Pool::Draw (GooCanvas *on_canvas,
           x += cell_w;
         }
 
-        goo_text = goo_canvas_text_new (dashboard_group,
+        goo_text = goo_canvas_text_new (dashboard_header,
                                         gettext ("Victories"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -522,7 +538,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (dashboard_group,
+        goo_text = goo_canvas_text_new (dashboard_header,
                                         gettext ("Vict./Matchs"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -531,7 +547,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (dashboard_group,
+        goo_text = goo_canvas_text_new (dashboard_header,
                                         gettext ("H. scored"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -540,7 +556,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (dashboard_group,
+        goo_text = goo_canvas_text_new (dashboard_header,
                                         gettext ("H. received"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -549,7 +565,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (dashboard_group,
+        goo_text = goo_canvas_text_new (dashboard_header,
                                         gettext ("Index"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -558,7 +574,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         goo_canvas_item_rotate (goo_text, 315, x, y);
         x += cell_w;
 
-        goo_text = goo_canvas_text_new (dashboard_group,
+        goo_text = goo_canvas_text_new (dashboard_header,
                                         gettext ("Place"),
                                         x, y, -1,
                                         GTK_ANCHOR_WEST,
@@ -594,7 +610,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
               g_object_set_data (G_OBJECT (w), "player",  player);
               player->SetData (this, "combo_box", w);
-              goo_item = goo_canvas_widget_new (dashboard_group,
+              goo_item = goo_canvas_widget_new (dashboard_body,
                                                 w,
                                                 x-cell_w/2,
                                                 y,
@@ -607,7 +623,7 @@ void Pool::Draw (GooCanvas *on_canvas,
               gtk_widget_show (w);
             }
 
-            goo_item = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_body,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -616,7 +632,7 @@ void Pool::Draw (GooCanvas *on_canvas,
             SetDisplayData (player, on_canvas, "VictoriesItem", goo_item);
             x += cell_w;
 
-            goo_item = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_body,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -625,7 +641,7 @@ void Pool::Draw (GooCanvas *on_canvas,
             SetDisplayData (player, on_canvas, "VictoriesRatioItem", goo_item);
             x += cell_w;
 
-            goo_item = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_body,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -634,7 +650,7 @@ void Pool::Draw (GooCanvas *on_canvas,
             SetDisplayData (player, on_canvas, "HSItem", goo_item);
             x += cell_w;
 
-            goo_item = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_body,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -643,7 +659,7 @@ void Pool::Draw (GooCanvas *on_canvas,
             SetDisplayData (player, on_canvas, "HRItem", goo_item);
             x += cell_w;
 
-            goo_item = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_body,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -652,7 +668,7 @@ void Pool::Draw (GooCanvas *on_canvas,
             SetDisplayData (player, on_canvas, "IndiceItem", goo_item);
             x += cell_w;
 
-            goo_item = goo_canvas_text_new (dashboard_group,
+            goo_item = goo_canvas_text_new (dashboard_body,
                                             ".",
                                             x, y, -1,
                                             GTK_ANCHOR_CENTER,
@@ -664,28 +680,38 @@ void Pool::Draw (GooCanvas *on_canvas,
         }
       }
 
+      Canvas::Align (grid_group,
+                     _title_table,
+                     NULL);
+
+      Canvas::Anchor (dashboard_group,
+                      _title_table,
+                      NULL);
+
+      Canvas::Anchor (dashboard_group,
+                      NULL,
+                      grid_group,
+                      cell_w/2);
+
       {
-        GooCanvasBounds grid_bounds;
-        GooCanvasBounds dashboard_bounds;
+        GooCanvasBounds grid_header_bounds;
 
-        goo_canvas_item_get_bounds (grid_group,
-                                    &grid_bounds);
-        goo_canvas_item_get_bounds (dashboard_group,
-                                    &dashboard_bounds);
+        goo_canvas_item_get_bounds (grid_header,
+                                    &grid_header_bounds);
 
-        goo_canvas_item_translate (GOO_CANVAS_ITEM (dashboard_group),
-                                   grid_bounds.x2 - dashboard_bounds.x1 + cell_w/2,
-                                   0);
+        Canvas::Align (grid_group,
+                       NULL,
+                       dashboard_body,
+                       -((gdouble) cell_h)/4.0 - (grid_header_bounds.y2 - grid_header_bounds.y1));
       }
     }
 
     // Matches
     if (print_for_referees)
     {
-      GooCanvasBounds  bounds;
-      GooCanvasItem   *match_main_table;
-      GooCanvasItem   *text_item;
-      guint            nb_column;
+      GooCanvasItem *match_main_table;
+      GooCanvasItem *text_item;
+      guint          nb_column;
 
       if (nb_players < 12)
       {
@@ -695,9 +721,6 @@ void Pool::Draw (GooCanvas *on_canvas,
       {
         nb_column = 4;
       }
-
-      goo_canvas_item_get_bounds (root_item,
-                                  &bounds);
 
       match_main_table = goo_canvas_table_new (root_item,
                                                "row-spacing", (gdouble) cell_h/2,
@@ -759,31 +782,14 @@ void Pool::Draw (GooCanvas *on_canvas,
         Canvas::SetTableItemAttribute (match_table, "x-fill", 1U);
         Canvas::SetTableItemAttribute (match_table, "x-shrink", 1U);
       }
-      goo_canvas_item_translate (match_main_table,
-                                 bounds.x1,
-                                 bounds.y2 + cell_h);
-    }
 
-    // Name
-    {
-      GooCanvasBounds  bounds;
-      GooCanvasItem   *text_item;
-
-      _title_table = goo_canvas_table_new (root_item, NULL);
-      text_item = Canvas::PutTextInTable (_title_table,
-                                          _name,
-                                          0,
-                                          1);
-      g_object_set (G_OBJECT (text_item),
-                    "font", "Sans bold 18px",
-                    NULL);
-
-      goo_canvas_item_get_bounds (root_item,
-                                  &bounds);
-
-      goo_canvas_item_translate (_title_table,
-                                 bounds.x1,
-                                 bounds.y1);
+      Canvas::Anchor (match_main_table,
+                      grid_group,
+                      NULL,
+                      cell_w/2);
+      Canvas::Align (match_main_table,
+                     grid_group,
+                     NULL);
     }
   }
 
@@ -791,29 +797,29 @@ void Pool::Draw (GooCanvas *on_canvas,
   {
     RefreshScoreData ();
     RefreshDashBoard ();
-  }
 
-  for (guint i = 0; i < GetNbPlayers (); i++)
-  {
-    Player    *player;
-    GtkWidget *w;
-
-    player = GetPlayer (i);
-    w      = GTK_WIDGET (player->GetPtrData (this, "combo_box"));
-
-    if (_locked)
+    for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      gtk_widget_set_sensitive (w,
-                                FALSE);
+      Player    *player;
+      GtkWidget *w;
+
+      player = GetPlayer (i);
+      w      = GTK_WIDGET (player->GetPtrData (this, "combo_box"));
+
+      if (_locked)
+      {
+        gtk_widget_set_sensitive (w,
+                                  FALSE);
+      }
+      else
+      {
+        g_signal_connect (w, "changed",
+                          G_CALLBACK (on_status_changed), this);
+        g_signal_connect (w, "scroll-event",
+                          G_CALLBACK (on_status_scrolled), this);
+      }
+      player->RemoveData (this, "combo_box");
     }
-    else
-    {
-      g_signal_connect (w, "changed",
-                        G_CALLBACK (on_status_changed), this);
-      g_signal_connect (w, "scroll-event",
-                        G_CALLBACK (on_status_scrolled), this);
-    }
-    player->RemoveData (this, "combo_box");
   }
 }
 
