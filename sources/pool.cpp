@@ -343,10 +343,12 @@ void Pool::Draw (GooCanvas *on_canvas,
                            "font", "Sans bold 30.0px",
                            NULL);
 
-      Canvas::Align (referee_group,
+      Canvas::Align (on_canvas,
+                     referee_group,
                      NULL,
                      _title_table);
-      Canvas::Anchor (referee_group,
+      Canvas::Anchor (on_canvas,
+                      referee_group,
                       NULL,
                       _title_table,
                       cell_w*5);
@@ -369,10 +371,12 @@ void Pool::Draw (GooCanvas *on_canvas,
                            "font", "Sans bold 30.0px",
                            NULL);
 
-      Canvas::Align (track_group,
+      Canvas::Align (on_canvas,
+                     track_group,
                      NULL,
                      referee_group);
-      Canvas::Anchor (track_group,
+      Canvas::Anchor (on_canvas,
+                      track_group,
                       NULL,
                       referee_group,
                       cell_w/2);
@@ -734,24 +738,28 @@ void Pool::Draw (GooCanvas *on_canvas,
         }
       }
 
-      Canvas::Align (grid_group,
+      Canvas::Align (on_canvas,
+                     grid_group,
                      title_group,
                      NULL,
                      cell_h/2);
 
-      Canvas::Anchor (dashboard_group,
+      Canvas::Anchor (on_canvas,
+                      dashboard_group,
                       title_group,
                       NULL,
-                      cell_h);
+                      cell_h/2);
 
-      Canvas::Anchor (dashboard_group,
+      Canvas::Anchor (on_canvas,
+                      dashboard_group,
                       NULL,
                       grid_group,
                       cell_w/2);
 
       if (print_for_referees)
       {
-        Canvas::Align (grid_group,
+        Canvas::Align (on_canvas,
+                       grid_group,
                        NULL,
                        dashboard_body,
                        -((gdouble) cell_h)/2.0);
@@ -762,7 +770,8 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         goo_canvas_item_get_bounds (grid_header,
                                     &grid_header_bounds);
-        Canvas::Align (grid_group,
+        Canvas::Align (on_canvas,
+                       grid_group,
                        NULL,
                        dashboard_body,
                        -((gdouble) cell_h)/4.0 - (grid_header_bounds.y2 - grid_header_bounds.y1));
@@ -846,11 +855,13 @@ void Pool::Draw (GooCanvas *on_canvas,
         Canvas::SetTableItemAttribute (match_table, "x-shrink", 1U);
       }
 
-      Canvas::Anchor (match_main_table,
+      Canvas::Anchor (on_canvas,
+                      match_main_table,
                       grid_group,
                       NULL,
                       cell_w/2);
-      Canvas::Align (match_main_table,
+      Canvas::Align (on_canvas,
+                     match_main_table,
                      grid_group,
                      NULL);
     }

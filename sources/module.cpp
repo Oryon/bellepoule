@@ -288,7 +288,7 @@ GString *Module::GetPlayerImage (Player *player)
 
       if (attr)
       {
-        gchar * attr_image = attr->GetUserImage ();
+        gchar *attr_image = attr->GetUserImage ();
 
         if (a > 0)
         {
@@ -300,6 +300,9 @@ GString *Module::GetPlayerImage (Player *player)
         g_free (attr_image);
       }
     }
+
+    image = g_string_append (image,
+                             " \302\240\302\240");
   }
 
   return image;

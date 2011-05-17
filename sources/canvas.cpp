@@ -284,13 +284,16 @@ void Canvas::FitToContext (GooCanvasItem   *item,
 }
 
 // --------------------------------------------------------------------------------
-void Canvas::Anchor (GooCanvasItem *item,
+void Canvas::Anchor (GooCanvas     *canvas,
+                     GooCanvasItem *item,
                      GooCanvasItem *to_bottom_of,
                      GooCanvasItem *to_right_of,
                      guint          space)
 {
   GooCanvasBounds item_bounds;
   GooCanvasBounds to_bounds;
+  gdouble         dx;
+  gdouble         dy;
 
   goo_canvas_item_get_bounds (item,
                               &item_bounds);
@@ -300,8 +303,15 @@ void Canvas::Anchor (GooCanvasItem *item,
     goo_canvas_item_get_bounds (to_right_of,
                                 &to_bounds);
 
+    dx = to_bounds.x2 - item_bounds.x1 + space;
+    dy = 0;
+
+    goo_canvas_convert_to_item_space (canvas,
+                                      item,
+                                      &dx,
+                                      &dy);
     goo_canvas_item_translate (item,
-                               to_bounds.x2 - item_bounds.x1 + space,
+                               dx,
                                0);
   }
 
@@ -310,20 +320,30 @@ void Canvas::Anchor (GooCanvasItem *item,
     goo_canvas_item_get_bounds (to_bottom_of,
                                 &to_bounds);
 
+    dx = 0;
+    dy = to_bounds.y2 - item_bounds.y1 + space;
+
+    goo_canvas_convert_to_item_space (canvas,
+                                      item,
+                                      &dx,
+                                      &dy);
     goo_canvas_item_translate (item,
                                0,
-                               to_bounds.y2 - item_bounds.y1 + space);
+                               dy);
   }
 }
 
 // --------------------------------------------------------------------------------
-void Canvas::Align (GooCanvasItem *item,
+void Canvas::Align (GooCanvas     *canvas,
+                    GooCanvasItem *item,
                     GooCanvasItem *with_left_of,
                     GooCanvasItem *with_top_of,
                     gdouble        offset)
 {
   GooCanvasBounds item_bounds;
   GooCanvasBounds with_bounds;
+  gdouble         dx;
+  gdouble         dy;
 
   goo_canvas_item_get_bounds (item,
                               &item_bounds);
@@ -333,8 +353,15 @@ void Canvas::Align (GooCanvasItem *item,
     goo_canvas_item_get_bounds (with_left_of,
                                 &with_bounds);
 
+    dx = with_bounds.x1 - item_bounds.x1 + offset;
+    dy = 0;
+
+    goo_canvas_convert_to_item_space (canvas,
+                                      item,
+                                      &dx,
+                                      &dy);
     goo_canvas_item_translate (item,
-                               with_bounds.x1 - item_bounds.x1 + offset,
+                               dx,
                                0);
   }
 
@@ -343,8 +370,15 @@ void Canvas::Align (GooCanvasItem *item,
     goo_canvas_item_get_bounds (with_top_of,
                                 &with_bounds);
 
+    dx = 0;
+    dy = with_bounds.y1 - item_bounds.y1 + offset;
+
+    goo_canvas_convert_to_item_space (canvas,
+                                      item,
+                                      &dx,
+                                      &dy);
     goo_canvas_item_translate (item,
                                0,
-                               with_bounds.y1 - item_bounds.y1 + offset);
+                               dy);
   }
 }
