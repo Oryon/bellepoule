@@ -180,6 +180,7 @@ class TableSet : public CanvasModule
     void OnStatusChanged (GtkComboBox *combo_box);
 
     void DrawPlayerMatch (GooCanvasItem *table,
+                          Match         *match,
                           Player        *player,
                           guint          row);
 

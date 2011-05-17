@@ -284,8 +284,7 @@ void Canvas::FitToContext (GooCanvasItem   *item,
 }
 
 // --------------------------------------------------------------------------------
-void Canvas::Anchor (GooCanvas     *canvas,
-                     GooCanvasItem *item,
+void Canvas::Anchor (GooCanvasItem *item,
                      GooCanvasItem *to_bottom_of,
                      GooCanvasItem *to_right_of,
                      guint          space)
@@ -306,7 +305,7 @@ void Canvas::Anchor (GooCanvas     *canvas,
     dx = to_bounds.x2 - item_bounds.x1 + space;
     dy = 0;
 
-    goo_canvas_convert_to_item_space (canvas,
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
                                       item,
                                       &dx,
                                       &dy);
@@ -323,7 +322,7 @@ void Canvas::Anchor (GooCanvas     *canvas,
     dx = 0;
     dy = to_bounds.y2 - item_bounds.y1 + space;
 
-    goo_canvas_convert_to_item_space (canvas,
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
                                       item,
                                       &dx,
                                       &dy);
@@ -334,8 +333,7 @@ void Canvas::Anchor (GooCanvas     *canvas,
 }
 
 // --------------------------------------------------------------------------------
-void Canvas::Align (GooCanvas     *canvas,
-                    GooCanvasItem *item,
+void Canvas::Align (GooCanvasItem *item,
                     GooCanvasItem *with_left_of,
                     GooCanvasItem *with_top_of,
                     gdouble        offset)
@@ -356,7 +354,7 @@ void Canvas::Align (GooCanvas     *canvas,
     dx = with_bounds.x1 - item_bounds.x1 + offset;
     dy = 0;
 
-    goo_canvas_convert_to_item_space (canvas,
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
                                       item,
                                       &dx,
                                       &dy);
@@ -373,7 +371,7 @@ void Canvas::Align (GooCanvas     *canvas,
     dx = 0;
     dy = with_bounds.y1 - item_bounds.y1 + offset;
 
-    goo_canvas_convert_to_item_space (canvas,
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
                                       item,
                                       &dx,
                                       &dy);

@@ -343,12 +343,10 @@ void Pool::Draw (GooCanvas *on_canvas,
                            "font", "Sans bold 30.0px",
                            NULL);
 
-      Canvas::Align (on_canvas,
-                     referee_group,
+      Canvas::Align (referee_group,
                      NULL,
                      _title_table);
-      Canvas::Anchor (on_canvas,
-                      referee_group,
+      Canvas::Anchor (referee_group,
                       NULL,
                       _title_table,
                       cell_w*5);
@@ -371,12 +369,10 @@ void Pool::Draw (GooCanvas *on_canvas,
                            "font", "Sans bold 30.0px",
                            NULL);
 
-      Canvas::Align (on_canvas,
-                     track_group,
+      Canvas::Align (track_group,
                      NULL,
                      referee_group);
-      Canvas::Anchor (on_canvas,
-                      track_group,
+      Canvas::Anchor (track_group,
                       NULL,
                       referee_group,
                       cell_w/2);
@@ -738,28 +734,24 @@ void Pool::Draw (GooCanvas *on_canvas,
         }
       }
 
-      Canvas::Align (on_canvas,
-                     grid_group,
+      Canvas::Align (grid_group,
                      title_group,
                      NULL,
                      cell_h/2);
 
-      Canvas::Anchor (on_canvas,
-                      dashboard_group,
+      Canvas::Anchor (dashboard_group,
                       title_group,
                       NULL,
                       cell_h/2);
 
-      Canvas::Anchor (on_canvas,
-                      dashboard_group,
+      Canvas::Anchor (dashboard_group,
                       NULL,
                       grid_group,
                       cell_w/2);
 
       if (print_for_referees)
       {
-        Canvas::Align (on_canvas,
-                       grid_group,
+        Canvas::Align (grid_group,
                        NULL,
                        dashboard_body,
                        -((gdouble) cell_h)/2.0);
@@ -770,8 +762,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         goo_canvas_item_get_bounds (grid_header,
                                     &grid_header_bounds);
-        Canvas::Align (on_canvas,
-                       grid_group,
+        Canvas::Align (grid_group,
                        NULL,
                        dashboard_body,
                        -((gdouble) cell_h)/4.0 - (grid_header_bounds.y2 - grid_header_bounds.y1));
@@ -828,9 +819,17 @@ void Pool::Draw (GooCanvas *on_canvas,
                                               0);
           g_string_free (image,
                          TRUE);
-          match->DrawScoreCell (match_table,
-                                10,
-                                0);
+
+          {
+            GooCanvasItem *score_table = match->GetScoreTable (match_table,
+                                                               10);
+
+            Canvas::PutInTable (match_table,
+                                score_table,
+                                0,
+                                1);
+            Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+          }
         }
 
         {
@@ -842,26 +841,29 @@ void Pool::Draw (GooCanvas *on_canvas,
           g_string_free (image,
                          TRUE);
 
-          match->DrawScoreCell (match_table,
-                                10,
+          {
+            GooCanvasItem *score_table = match->GetScoreTable (match_table,
+                                                               10);
+
+            Canvas::PutInTable (match_table,
+                                score_table,
+                                1,
                                 1);
+            Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+          }
         }
+
         Canvas::PutInTable (match_main_table,
                             match_table,
                             m/nb_column,
                             m%nb_column + 2*(m%nb_column) + 1);
-        Canvas::SetTableItemAttribute (match_table, "x-expand", 1U);
-        Canvas::SetTableItemAttribute (match_table, "x-fill", 1U);
-        Canvas::SetTableItemAttribute (match_table, "x-shrink", 1U);
       }
 
-      Canvas::Anchor (on_canvas,
-                      match_main_table,
+      Canvas::Anchor (match_main_table,
                       grid_group,
                       NULL,
                       cell_w/2);
-      Canvas::Align (on_canvas,
-                     match_main_table,
+      Canvas::Align (match_main_table,
                      grid_group,
                      NULL);
     }

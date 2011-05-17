@@ -2001,8 +2001,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                                "font", font,
                                NULL);
 
-          Canvas::Align (canvas,
-                         referee_group,
+          Canvas::Align (referee_group,
                          NULL,
                          name_item);
 
@@ -2024,12 +2023,10 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                                "font", font,
                                NULL);
 
-          Canvas::Align (canvas,
-                         track_group,
+          Canvas::Align (track_group,
                          NULL,
                          referee_group);
-          Canvas::Anchor (canvas,
-                          track_group,
+          Canvas::Anchor (track_group,
                           NULL,
                           referee_group,
                           20);
@@ -2043,19 +2040,19 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                                                              NULL);
 
           DrawPlayerMatch (match_table,
+                           match,
                            A,
                            0);
           DrawPlayerMatch (match_table,
+                           match,
                            B,
                            1);
 
-          Canvas::Anchor (canvas,
-                          match_table,
+          Canvas::Anchor (match_table,
                           title_group,
                           NULL,
                           80);
-          Canvas::Align (canvas,
-                         match_table,
+          Canvas::Align (match_table,
                          title_group,
                          NULL);
         }
@@ -2081,6 +2078,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
 
 // --------------------------------------------------------------------------------
 void TableSet::DrawPlayerMatch (GooCanvasItem *table,
+                                Match         *match,
                                 Player        *player,
                                 guint          row)
 {
@@ -2110,55 +2108,15 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
     g_object_set (G_OBJECT (text_item),
                   "font", font,
                   "ellipsize", PANGO_ELLIPSIZE_NONE,
+                  "anchor", GTK_ANCHOR_WEST,
                   NULL);
     g_free (font);
   }
 
   // Score
   {
-    gchar         *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(PRINT_FONT_HEIGHT));
-    gchar         *decimal = strchr (font, ',');
-    GooCanvasItem *score_table = goo_canvas_table_new (table,
-                                                       "column-spacing", 0.2,
-                                                       NULL);
-
-    if (decimal)
-    {
-      *decimal = '.';
-    }
-
-    for (guint i = 0; i < _max_score->_value; i++)
-    {
-      gchar *number = g_strdup_printf ("%d", i+1);
-
-      text_item = Canvas::PutTextInTable (score_table,
-                                          number,
-                                          0,
-                                          i);
-      g_free (number);
-      Canvas::SetTableItemAttribute (text_item, "x-align", 0.5);
-      Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
-
-      g_object_set (G_OBJECT (text_item),
-                    "font", font,
-                    "anchor", GTK_ANCHOR_CENTER,
-                    NULL);
-
-      goo_rect = goo_canvas_rect_new (score_table,
-                                      0.0,
-                                      0.0,
-                                      PRINT_FONT_HEIGHT,
-                                      PRINT_FONT_HEIGHT,
-                                      "line-width", 0.25,
-                                      NULL);
-      Canvas::PutInTable (score_table,
-                          goo_rect,
-                          0,
-                          i);
-      Canvas::SetTableItemAttribute (goo_rect, "x-align", 0.5);
-      Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
-    }
-    g_free (font);
+    GooCanvasItem *score_table = match->GetScoreTable (table,
+                                                       PRINT_FONT_HEIGHT);
 
     Canvas::PutInTable (table,
                         score_table,
