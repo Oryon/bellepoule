@@ -31,6 +31,7 @@ class GeneralClassification : public virtual Stage, public PlayersList
     typedef enum
     {
       CSV,
+      PDF,
       FFF
     } ExportType;
 

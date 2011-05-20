@@ -680,6 +680,7 @@ void PoolSupervisor::OnStuffClicked ()
 void PoolSupervisor::Load (xmlNode *xml_node)
 {
   LoadConfiguration (xml_node);
+  LoadAttendees (NULL);
 }
 
 // --------------------------------------------------------------------------------

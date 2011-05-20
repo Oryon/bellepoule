@@ -232,12 +232,19 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
         gtk_file_filter_add_pattern (filter,
                                      "*.CSV");
       }
-      else
+      else if (export_type == FFF)
       {
         gtk_file_filter_set_name (filter,
                                   gettext ("All FFF files (.FFF)"));
         gtk_file_filter_add_pattern (filter,
                                      "*.FFF");
+      }
+      else if (export_type == PDF)
+      {
+        gtk_file_filter_set_name (filter,
+                                  gettext ("All FFF files (.PDF)"));
+        gtk_file_filter_add_pattern (filter,
+                                     "*.PDF");
       }
 
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -267,9 +274,13 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
         {
           suffix = g_strdup (".csv");
         }
-        else
+        else if (export_type == FFF)
         {
           suffix = g_strdup (".fff");
+        }
+        else if (export_type == PDF)
+        {
+          suffix = g_strdup (".pdf");
         }
 
         {
@@ -318,10 +329,15 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
           classification->DumpToCSV (filename,
                                      _filter->GetAttrList ());
         }
-        else
+        else if (export_type == FFF)
         {
           classification->DumpToFFF (filename,
                                      _contest);
+        }
+        if (export_type == PDF)
+        {
+          classification->Print ("General classification",
+                                 filename);
         }
     }
   }
@@ -361,4 +377,13 @@ extern "C" G_MODULE_EXPORT void on_export_fff_toolbutton_clicked (GtkWidget *wid
   GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
   g->OnExportToolbuttonClicked (GeneralClassification::FFF);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_export_pdf_toolbutton_clicked (GtkWidget *widget,
+                                                                  Object    *owner)
+{
+  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+
+  g->OnExportToolbuttonClicked (GeneralClassification::PDF);
 }
