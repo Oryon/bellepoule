@@ -778,7 +778,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
 
     // Matches
-    //if (print_for_referees)
+    if (print_for_referees)
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;
@@ -819,14 +819,23 @@ void Pool::Draw (GooCanvas *on_canvas,
         }
 
         {
-          image = GetPlayerImage (match->GetPlayerA ());
+          Player *player   = match->GetPlayerA ();
+          image            = GetPlayerImage (player);
+          gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
+                                              g_slist_index (_sorted_player_list, player) + 1,
+                                              image->str);
 
-          text_item = Canvas::PutTextInTable (match_table,
-                                              image->str,
-                                              0,
-                                              0);
           g_string_free (image,
                          TRUE);
+
+          text_item = Canvas::PutTextInTable (match_table,
+                                              position,
+                                              0,
+                                              0);
+          g_object_set (G_OBJECT (text_item),
+                        "use-markup", TRUE,
+                        NULL);
+          g_free (position);
 
           {
             GooCanvasItem *score_table = match->GetScoreTable (match_table,
@@ -842,13 +851,23 @@ void Pool::Draw (GooCanvas *on_canvas,
         }
 
         {
-          image = GetPlayerImage (match->GetPlayerB ());
-          text_item = Canvas::PutTextInTable (match_table,
-                                              image->str,
-                                              1,
-                                              0);
+          Player *player   = match->GetPlayerB ();
+          image            = GetPlayerImage (player);
+          gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
+                                              g_slist_index (_sorted_player_list, player) + 1,
+                                              image->str);
+
           g_string_free (image,
                          TRUE);
+
+          text_item = Canvas::PutTextInTable (match_table,
+                                              position,
+                                              1,
+                                              0);
+          g_object_set (G_OBJECT (text_item),
+                        "use-markup", TRUE,
+                        NULL);
+          g_free (position);
 
           {
             GooCanvasItem *score_table = match->GetScoreTable (match_table,
