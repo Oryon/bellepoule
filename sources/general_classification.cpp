@@ -268,7 +268,7 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
 
       if (filename)
       {
-        gchar *suffix;
+        gchar *suffix = NULL;
 
         if (export_type == CSV)
         {
