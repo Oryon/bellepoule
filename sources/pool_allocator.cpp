@@ -63,6 +63,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _drag_text         = NULL;
   _main_table        = NULL;
   _swapping_criteria = NULL;
+  _loaded            = FALSE;
 
   _max_score = new Data ("ScoreMax",
                          5);
@@ -293,7 +294,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (   (current_pool == NULL)
+      if (   (_loaded == FALSE)
           && strcmp ((char *) n->name, _xml_class_name) == 0)
       {
         LoadConfiguration (xml_node);
@@ -306,6 +307,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
             nb_pool = (guint) atoi (string);
           }
         }
+        _loaded = TRUE;
       }
       else if (strcmp ((char *) n->name, "Poule") == 0)
       {
