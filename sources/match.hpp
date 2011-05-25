@@ -79,9 +79,8 @@ class Match : public Object
 
     gchar *GetName ();
 
-    void DrawScoreCell (GooCanvasItem *table,
-                        guint          size,
-                        guint          line);
+    GooCanvasItem *GetScoreTable (GooCanvasItem *parent,
+                                  gdouble        size);
 
   private:
     Data     *_max_score;

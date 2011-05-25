@@ -366,13 +366,15 @@ void PoolAllocator::Load (xmlNode *xml_node)
           }
         }
       }
+      else if (strcmp ((char *) n->name, "Arbitre") == 0)
+      {
+      }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
         current_pool->Load (n,
                             _attendees->GetShortList ());
-      }
-      else if (strcmp ((char *) n->name, "Arbitre") == 0)
-      {
+        current_pool = NULL;
+        return;
       }
       else
       {

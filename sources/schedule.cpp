@@ -584,7 +584,7 @@ void Schedule::Load (xmlDoc *doc)
   Stage           *checkin_stage       = Stage::CreateInstance ("checkin_stage");
 
   {
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/Phases", xml_context);
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle/Phases", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
     if (xml_object->nodesetval->nodeNr)
@@ -614,7 +614,7 @@ void Schedule::Load (xmlDoc *doc)
     PlugStage (checkin_stage);
 
     checkin_stage->Load (xml_context,
-                         "/CompetitionIndividuelle");
+                         "/BaseCompetitionIndividuelle");
     checkin_stage->Display ();
 
     if (display_all || (current_stage_index > 0))
@@ -624,7 +624,7 @@ void Schedule::Load (xmlDoc *doc)
   }
 
   {
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/Phases/*", xml_context);
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle/Phases/*", xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
     guint           nb_stage    = 1;
 

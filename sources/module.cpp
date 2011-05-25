@@ -288,7 +288,7 @@ GString *Module::GetPlayerImage (Player *player)
 
       if (attr)
       {
-        gchar * attr_image = attr->GetUserImage ();
+        gchar *attr_image = attr->GetUserImage ();
 
         if (a > 0)
         {
@@ -300,13 +300,17 @@ GString *Module::GetPlayerImage (Player *player)
         g_free (attr_image);
       }
     }
+
+    image = g_string_append (image,
+                             " \302\240\302\240");
   }
 
   return image;
 }
 
 // --------------------------------------------------------------------------------
-void Module::Print (const gchar *job_name)
+void Module::Print (const gchar *job_name,
+                    const gchar *filename)
 {
   GtkPrintOperation *operation;
   GError            *error = NULL;
@@ -332,17 +336,22 @@ void Module::Print (const gchar *job_name)
   g_signal_connect (G_OBJECT (operation), "preview",
                     G_CALLBACK (on_preview), this);
 
-  //gtk_print_operation_set_use_full_page (operation,
-  //TRUE);
-
-  //gtk_print_operation_set_unit (operation,
-  //GTK_UNIT_POINTS);
-
-  gtk_print_operation_run (operation,
-                           GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
-                           //GTK_PRINT_OPERATION_ACTION_PREVIEW,
-                           NULL,
-                           &error);
+  if (filename)
+  {
+    gtk_print_operation_set_export_filename (operation,
+                                             filename);
+    gtk_print_operation_run (operation,
+                             GTK_PRINT_OPERATION_ACTION_EXPORT,
+                             NULL,
+                             &error);
+  }
+  else
+  {
+    gtk_print_operation_run (operation,
+                             GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
+                             NULL,
+                             &error);
+  }
 
   g_object_unref (operation);
 

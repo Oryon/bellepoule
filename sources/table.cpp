@@ -159,7 +159,6 @@ void Table::Load (xmlNode *xml_node)
 
           if (strcmp (match->GetName (), number) == 0)
           {
-            g_print ("%d >> %s\n", GetSize (), number);
             LoadMatch (n,
                        match);
             break;

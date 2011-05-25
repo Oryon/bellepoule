@@ -123,7 +123,15 @@ int main (int argc, char **argv)
 {
   // Init
   {
-    gchar *install_dirname = g_get_current_dir ();
+    gchar *install_dirname = NULL;
+
+#ifdef G_OS_WIN32
+    install_dirname = g_get_current_dir ();
+#else
+    // Linux or other system
+    install_dirname = g_strdup ("/usr/share/BellePoule");
+#endif
+
     // g_mem_set_vtable (glib_mem_profiler_table);
 
     if (install_dirname)
