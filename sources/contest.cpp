@@ -219,7 +219,14 @@ Contest::Contest (gchar *filename)
       xmlXPathObject  *xml_object;
       xmlNodeSet      *xml_nodeset;
 
-      xml_object  = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle", xml_context);
+      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
+
+      if (xml_object->nodesetval->nodeNr == 0)
+      {
+        xmlXPathFreeObject (xml_object);
+        xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle", xml_context);
+      }
+
       xml_nodeset = xml_object->nodesetval;
 
       if (xml_object->nodesetval->nodeNr)
@@ -254,7 +261,11 @@ Contest::Contest (gchar *filename)
           _name = g_strdup (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "DateDebut");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Date");
+        if (attr == NULL)
+        {
+          attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "DateDebut");
+        }
         if (attr)
         {
           if (strlen (attr) > 0)
@@ -919,7 +930,7 @@ void Contest::Save (gchar *filename)
                                   NULL);
 
       xmlTextWriterStartDTD (xml_writer,
-                             BAD_CAST "BaseCompetitionIndividuelle",
+                             BAD_CAST "CompetitionIndividuelle",
                              NULL,
                              NULL);
       xmlTextWriterEndDTD (xml_writer);
@@ -932,7 +943,7 @@ void Contest::Save (gchar *filename)
       xmlTextWriterEndComment (xml_writer);
 
       xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "BaseCompetitionIndividuelle");
+                                 BAD_CAST "CompetitionIndividuelle");
 
       {
         _color->Save (xml_writer);
@@ -967,7 +978,7 @@ void Contest::Save (gchar *filename)
                                      BAD_CAST "Categorie",
                                      BAD_CAST category_xml_image[_category]);
         xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "DateDebut",
+                                           BAD_CAST "Date",
                                            "%02d.%02d.%d", _day, _month, _year);
         if (_checkin_time)
         {

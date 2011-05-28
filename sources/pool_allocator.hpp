@@ -85,6 +85,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     gdouble        _print_scale;
     gdouble        _page_h;
     guint          _nb_page;
+    gboolean       _loaded;
 
     void SetOriginalPools ();
     void FillCombobox ();
