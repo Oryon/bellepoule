@@ -219,7 +219,14 @@ Contest::Contest (gchar *filename)
       xmlXPathObject  *xml_object;
       xmlNodeSet      *xml_nodeset;
 
-      xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
+      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
+
+      if (xml_object->nodesetval->nodeNr == 0)
+      {
+        xmlXPathFreeObject (xml_object);
+        xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle", xml_context);
+      }
+
       xml_nodeset = xml_object->nodesetval;
 
       if (xml_object->nodesetval->nodeNr)
@@ -255,6 +262,10 @@ Contest::Contest (gchar *filename)
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Date");
+        if (attr == NULL)
+        {
+          attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "DateDebut");
+        }
         if (attr)
         {
           if (strlen (attr) > 0)
@@ -527,8 +538,9 @@ void Contest::InitInstance ()
   _scratch_time = new Time ("scratch");
   _start_time   = new Time ("start");
 
-  _color = new Data ("Couleur",
-                     (guint) 0);
+  _gdk_color = NULL;
+  _color     = new Data ("Couleur",
+                         (guint) 0);
 
   {
     GTimeVal  current_time;
@@ -1128,6 +1140,17 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                        NULL);
 
   {
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         _name,
+                         10.0, 0.8,
+                         20.0,
+                         GTK_ANCHOR_NORTH,
+                         "alignment", PANGO_ALIGN_CENTER,
+                         "fill-color", "black",
+                         "font", "Sans Bold 2.5px", NULL);
+  }
+
+  {
     char *text = g_strdup_printf ("%s - %s - %s", gettext (weapon_image[_weapon]),
                                                    gettext (gender_image[_gender]),
                                                    gettext (category_image[_category]));
@@ -1156,6 +1179,27 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                          GTK_ANCHOR_CENTER,
                          "fill-color", "black",
                          "font", "Sans Bold 4px", NULL);
+  }
+
+  if (_organizer)
+  {
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         _organizer,
+                         98.0, 2.0,
+                         -1.0,
+                         GTK_ANCHOR_EAST,
+                         "fill-color", "black",
+                         "font", "Sans Bold 2.5px", NULL);
+  }
+
+  {
+    goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                         GetDate (),
+                         98.0, 5.0,
+                         -1.0,
+                         GTK_ANCHOR_EAST,
+                         "fill-color", "black",
+                         "font", "Sans Bold 2.5px", NULL);
   }
 
   goo_canvas_render (canvas,

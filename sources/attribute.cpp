@@ -18,7 +18,6 @@
 #include <stdlib.h>
 
 #include "attribute.hpp"
-#include "utilities.hpp"
 
 gchar  *AttributeDesc::_path = NULL;
 GSList *AttributeDesc::_list = NULL;
@@ -50,9 +49,9 @@ static gchar *GetUndivadableText (const gchar *text)
         if (text[i] == ' ')
         {
           // non breaking space
-          *current = gchar(0xC2);
+          *current = 0xC2;
           current++;
-          *current = gchar(0xA0);
+          *current = 0xA0;
         }
         else
         {
@@ -364,7 +363,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *file)
   }
 
   {
-    gchar   *full_path = FindDataFile(file, NULL);
+    gchar   *full_path = g_build_filename (_path, file, NULL);
     gchar   *raw_file;
     GError  *error = NULL;
 

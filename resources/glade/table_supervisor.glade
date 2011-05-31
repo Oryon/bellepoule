@@ -80,7 +80,7 @@ classement
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="n_rows">2</property>
-                    <property name="n_columns">2</property>
+                    <property name="n_columns">3</property>
                     <property name="column_spacing">10</property>
                     <child>
                       <object class="GtkSpinButton" id="nb_qualified_spinbutton">
@@ -151,6 +151,27 @@ classement
                       </object>
                       <packing>
                         <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label8">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Modifiable après le début
+du tour de tableau.</property>
+                        <attributes>
+                          <attribute name="style" value="italic"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="right_attach">3</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
                       </packing>
                     </child>
                   </object>
@@ -327,9 +348,6 @@ classement
       <!-- column-name visibility -->
       <column type="gboolean"/>
     </columns>
-  </object>
-  <object class="GtkTreeModelFilter" id="table_set_treemodelfilter">
-    <property name="child_model">table_set_treestore</property>
   </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
@@ -705,6 +723,9 @@ To activate/deactivate this button, go to the properties of the competition.</pr
     <property name="upper">100</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkTreeModelFilter" id="table_set_treemodelfilter">
+    <property name="child_model">table_set_treestore</property>
   </object>
   <object class="GtkSizeGroup" id="value_sizegroup"/>
   <object class="GtkAdjustment" id="zoom_adjustment">

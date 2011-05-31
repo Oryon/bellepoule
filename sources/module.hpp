@@ -35,7 +35,8 @@ class Module : public virtual Object
                GtkToolbar *toolbar = NULL);
     void UnPlug ();
 
-    virtual void Print (const gchar *job_name);
+    virtual void Print (const gchar *job_name,
+                        const gchar *filename = NULL);
 
     void SelectAttributes ();
 

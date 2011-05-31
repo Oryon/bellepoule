@@ -582,11 +582,20 @@ void Schedule::Load (xmlDoc *doc)
   gint             current_stage_index = -1;
   gboolean         display_all         = FALSE;
   Stage           *checkin_stage       = Stage::CreateInstance ("checkin_stage");
+  gchar           *xml_key_word        = "/CompetitionIndividuelle";
 
   {
+    xmlNodeSet     *xml_nodeset;
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/Phases", xml_context);
-    xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
+    if (xml_object->nodesetval->nodeNr == 0)
+    {
+      xmlXPathFreeObject (xml_object);
+      xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle/Phases", xml_context);
+      xml_key_word = "/BaseCompetitionIndividuelle";
+    }
+
+    xml_nodeset = xml_object->nodesetval;
     if (xml_object->nodesetval->nodeNr)
     {
       char *attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0],
@@ -614,7 +623,7 @@ void Schedule::Load (xmlDoc *doc)
     PlugStage (checkin_stage);
 
     checkin_stage->Load (xml_context,
-                         "/CompetitionIndividuelle");
+                         xml_key_word);
     checkin_stage->Display ();
 
     if (display_all || (current_stage_index > 0))
@@ -624,10 +633,12 @@ void Schedule::Load (xmlDoc *doc)
   }
 
   {
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/Phases/*", xml_context);
+    gchar          *path        = g_strdup_printf ("/%s/Phases/*", xml_key_word);
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
     guint           nb_stage    = 1;
 
+    g_free (path);
     for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
     {
       Stage *stage;

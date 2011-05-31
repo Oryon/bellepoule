@@ -282,3 +282,101 @@ void Canvas::FitToContext (GooCanvasItem   *item,
                                    &matrix);
   }
 }
+
+// --------------------------------------------------------------------------------
+void Canvas::Anchor (GooCanvasItem *item,
+                     GooCanvasItem *to_bottom_of,
+                     GooCanvasItem *to_right_of,
+                     guint          space)
+{
+  GooCanvasBounds item_bounds;
+  GooCanvasBounds to_bounds;
+  gdouble         dx;
+  gdouble         dy;
+
+  goo_canvas_item_get_bounds (item,
+                              &item_bounds);
+
+  if (to_right_of)
+  {
+    goo_canvas_item_get_bounds (to_right_of,
+                                &to_bounds);
+
+    dx = to_bounds.x2 - item_bounds.x1 + space;
+    dy = 0;
+
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
+                                      item,
+                                      &dx,
+                                      &dy);
+    goo_canvas_item_translate (item,
+                               dx,
+                               0);
+  }
+
+  if (to_bottom_of)
+  {
+    goo_canvas_item_get_bounds (to_bottom_of,
+                                &to_bounds);
+
+    dx = 0;
+    dy = to_bounds.y2 - item_bounds.y1 + space;
+
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
+                                      item,
+                                      &dx,
+                                      &dy);
+    goo_canvas_item_translate (item,
+                               0,
+                               dy);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Canvas::Align (GooCanvasItem *item,
+                    GooCanvasItem *with_left_of,
+                    GooCanvasItem *with_top_of,
+                    gdouble        offset)
+{
+  GooCanvasBounds item_bounds;
+  GooCanvasBounds with_bounds;
+  gdouble         dx;
+  gdouble         dy;
+
+  goo_canvas_item_get_bounds (item,
+                              &item_bounds);
+
+  if (with_left_of)
+  {
+    goo_canvas_item_get_bounds (with_left_of,
+                                &with_bounds);
+
+    dx = with_bounds.x1 - item_bounds.x1 + offset;
+    dy = 0;
+
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
+                                      item,
+                                      &dx,
+                                      &dy);
+    goo_canvas_item_translate (item,
+                               dx,
+                               0);
+  }
+
+  if (with_top_of)
+  {
+    goo_canvas_item_get_bounds (with_top_of,
+                                &with_bounds);
+
+    dx = 0;
+    dy = with_bounds.y1 - item_bounds.y1 + offset;
+
+    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
+                                      item,
+                                      &dx,
+                                      &dy);
+    goo_canvas_item_translate (item,
+                               0,
+                               dy);
+  }
+}

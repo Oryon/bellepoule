@@ -67,8 +67,6 @@ class Pool : public CanvasModule
 
     Player *GetPlayer (guint i);
 
-    gint GetPosition (Player *player);
-
     gchar *GetName ();
 
     void Wipe ();
@@ -97,6 +95,7 @@ class Pool : public CanvasModule
     Data           *_max_score;
     guint           _number;
     GSList         *_player_list;
+    GSList         *_sorted_player_list;
     ScoreCollector *_score_collector;
     GSList         *_match_list;
     gchar          *_name;
@@ -129,6 +128,9 @@ class Pool : public CanvasModule
     void OnPlugged ();
 
     void OnUnPlugged ();
+
+    Player *GetPlayer (guint   i,
+                       GSList *in_list);
 
     void SetDisplayData (Player      *player,
                          GooCanvas   *on_canvas,

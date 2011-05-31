@@ -45,7 +45,6 @@ extern "C" int vswprintf(wchar_t *, const wchar_t *, va_list);
 #include "attribute.hpp"
 #include "general_classification.hpp"
 #include "glade.hpp"
-#include "utilities.hpp"
 #include "locale"
 
 // --------------------------------------------------------------------------------
@@ -122,31 +121,31 @@ static gint CompareDate (Attribute *attr_a,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  gchar  *current_dir = g_get_current_dir ();
-
   // Init
   {
+    gchar *install_dirname = NULL;
+
+#ifdef G_OS_WIN32
+    install_dirname = g_get_current_dir ();
+#else
+    // Linux or other system
+    install_dirname = g_strdup ("/usr/share/BellePoule");
+#endif
+
     // g_mem_set_vtable (glib_mem_profiler_table);
 
-	gchar *gtkrc = FindDataFile("gtkrc", NULL);
-	if (gtkrc)
-	{
-	      g_print("gtkrc: %s\n", gtkrc);
-	      gtk_rc_add_default_file (gtkrc);
-	      g_free (gtkrc);
-	}
+    if (install_dirname)
+    {
+      gchar *gtkrc = g_build_filename (install_dirname, "resources", "gtkrc", NULL);
+
+      gtk_rc_add_default_file (gtkrc);
+      g_free (gtkrc);
+    }
 
     gtk_init (&argc, &argv);
 
     {
-      // Check the local tree for translations
-      gchar  *translation_path = g_build_filename (current_dir, "resources", "translations", NULL);
-	  if (!g_file_test(translation_path, G_FILE_TEST_IS_DIR))
-      {
-		  g_free(translation_path);
-          // Try to find the system locale directory
-	      translation_path = g_build_filename ("/usr", "share", "locale", NULL);
-      }
+      gchar  *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
 
       setlocale (LC_ALL, "");
 
@@ -158,7 +157,6 @@ int main (int argc, char **argv)
       bind_textdomain_codeset ("BellePoule", "UTF-8");
       textdomain ("BellePoule");
 
-      g_debug("Translation Path: %s\n", translation_path);
       g_free (translation_path);
     }
 
@@ -170,14 +168,11 @@ int main (int argc, char **argv)
     GeneralClassification::Init ();
     Splitting::Init             ();
 
-    gchar *glade_path = FindDataDir("glade", NULL);
-    Glade::SetPath         (glade_path);
-    g_free(glade_path);
+    Glade::SetPath         (install_dirname);
+    AttributeDesc::SetPath (install_dirname);
+    Tournament::SetPath    (install_dirname);
 
-    AttributeDesc::SetPath (current_dir);
-    Tournament::SetPath    (current_dir);
-
-    g_free (current_dir);
+    g_free (install_dirname);
   }
 
   gtk_about_dialog_set_url_hook (AboutDialogActivateLinkFunc,
@@ -207,15 +202,15 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("ioc_countries.txt");
+    desc->AddDiscreteValues ("resources/ioc_countries.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
-    desc->AddDiscreteValues ("ligues.txt");
+    desc->AddDiscreteValues ("resources/ligues.txt");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("clubs.txt");
+    desc->AddDiscreteValues ("resources/clubs.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
@@ -235,19 +230,19 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
     desc->_scope  = AttributeDesc::GLOBAL;
     desc->_rights = AttributeDesc::PRIVATE;
-    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "glade/normal.png",
-                             "N", gettext ("Not qualified"), "glade/normal.png",
-                             "A", gettext ("Withdrawal"), "glade/ambulance.png",
-                             "E", gettext ("Excluded"), "glade/black_card.png",
-                             "F", gettext ("Forfeit"), "glade/normal.png", NULL);
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "resources/glade/normal.png",
+                             "N", gettext ("Not qualified"), "resources/glade/normal.png",
+                             "A", gettext ("Withdrawal"), "resources/glade/ambulance.png",
+                             "E", gettext ("Excluded"), "resources/glade/black_card.png",
+                             "F", gettext ("Forfeit"), "resources/glade/normal.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "status", "Statut", gettext ("status"));
     desc->_scope = AttributeDesc::LOCAL;
-    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "glade/normal.png",
-                             "N", gettext ("Not qualified"), "glade/normal.png",
-                             "A", gettext ("Withdrawal"), "glade/ambulance.png",
-                             "E", gettext ("Excluded"), "glade/black_card.png",
-                             "F", gettext ("Forfeit"), "glade/normal.png", NULL);
+    desc->AddDiscreteValues ("Q", gettext ("Qualified"), "resources/glade/normal.png",
+                             "N", gettext ("Not qualified"), "resources/glade/normal.png",
+                             "A", gettext ("Withdrawal"), "resources/glade/ambulance.png",
+                             "E", gettext ("Excluded"), "resources/glade/black_card.png",
+                             "F", gettext ("Forfeit"), "resources/glade/normal.png", NULL);
 
     // Not persistent data
     {

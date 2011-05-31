@@ -58,6 +58,16 @@ class Canvas
                                        const gchar   *attribute,
                                        gdouble        value);
 
+    static void Anchor (GooCanvasItem *item,
+                        GooCanvasItem *to_bottom_of,
+                        GooCanvasItem *to_right_of,
+                        guint          space = 0);
+
+    static void Align (GooCanvasItem *item,
+                       GooCanvasItem *with_left_of,
+                       GooCanvasItem *with_top_of,
+                       gdouble        offset = 0.0);
+
     static GooCanvas *CreatePrinterCanvas (GtkPrintContext *context);
 
     static gdouble GetScaleToFit (GooCanvasItem   *item,

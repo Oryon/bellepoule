@@ -1923,10 +1923,10 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                                  _nb_match_per_sheet*page_nr);
     for (guint i = 0; current_match && (i < _nb_match_per_sheet); i++)
     {
-      GooCanvasItem *group;
+      GooCanvasItem *match_group;
 
-      group = goo_canvas_group_new (goo_canvas_get_root_item (canvas),
-                                    NULL);
+      match_group = goo_canvas_group_new (goo_canvas_get_root_item (canvas),
+                                          NULL);
 
       {
         cairo_matrix_t matrix;
@@ -1943,203 +1943,124 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
       }
 
       {
-        GString       *image;
         Match         *match  = (Match *) current_match->data;
         Player        *A      = match->GetPlayerA ();
         Player        *B      = match->GetPlayerB ();
-        gdouble        offset = i * ((100.0/_nb_match_per_sheet) * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
-        GooCanvasItem *item;
-        gdouble        name_width;
-        gchar         *match_number = g_strdup_printf (gettext ("Match %s"), match->GetName ());
+        GooCanvasItem *name_item;
+        GooCanvasItem *title_group = goo_canvas_group_new (match_group, NULL);
+        gchar         *font        = g_strdup_printf ("Sans Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
+
+        {
+          gchar *decimal = strchr (font, ',');
+
+          if (decimal)
+          {
+            *decimal = '.';
+          }
+        }
 
         match->SetData (this, "printed", (void *) TRUE);
 
+        // Match ID
         {
-          gchar *font   = g_strdup_printf ("Sans Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
-          gchar *decimal = strchr (font, ',');
+          gdouble  offset       = i * ((100.0/_nb_match_per_sheet) * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
+          gchar   *match_number = g_strdup_printf (gettext ("Match %s"), match->GetName ());
 
-          if (decimal)
-          {
-            *decimal = '.';
-          }
+          name_item = goo_canvas_text_new (title_group,
+                                           match_number,
+                                           0.0,
+                                           offset - 6.0,
+                                           -1.0,
+                                           GTK_ANCHOR_W,
+                                           "fill-color", "grey",
+                                           "font", font,
+                                           NULL);
+          g_free (match_number);
+        }
 
-          goo_canvas_text_new (group,
-                               match_number,
+        // Referee / Track
+        {
+          GooCanvasItem *referee_group = goo_canvas_group_new (title_group, NULL);
+          GooCanvasItem *track_group   = goo_canvas_group_new (title_group, NULL);
+
+          goo_canvas_rect_new (referee_group,
+                               30.0,
                                0.0,
-                               0.0 + offset - 6.0,
-                               -1.0,
+                               35.0,
+                               6.0,
+                               "stroke-color", "Grey95",
+                               "line-width", 0.2,
+                               NULL);
+          goo_canvas_text_new (referee_group,
+                               gettext ("Referee"),
+                               30.0,
+                               0.0,
+                               -1,
                                GTK_ANCHOR_W,
-                               "fill-color", "grey",
+                               "fill-color", "Black",
                                "font", font,
                                NULL);
-          g_free (match_number);
-          g_free (font);
-        }
 
-        {
-          GooCanvasBounds  bounds;
-          gchar           *font = g_strdup_printf ("Sans Bold %fpx", PRINT_FONT_HEIGHT);
-          gchar *decimal = strchr (font, ',');
+          Canvas::Align (referee_group,
+                         NULL,
+                         name_item);
 
-          if (decimal)
-          {
-            *decimal = '.';
-          }
-
-          image = GetPlayerImage (A);
-          item = goo_canvas_text_new (group,
-                                      image->str,
-                                      0.0,
-                                      0.0 + offset,
-                                      -1.0,
-                                      GTK_ANCHOR_W,
-                                      "font", font,
-                                      NULL);
-          g_string_free (image,
-                         TRUE);
-          goo_canvas_item_get_bounds (item,
-                                      &bounds);
-          name_width = bounds.x2 - bounds.x1;
-
-          image = GetPlayerImage (B);
-          item = goo_canvas_text_new (group,
-                                      image->str,
-                                      0.0,
-                                      7.5 + offset,
-                                      -1.0,
-                                      GTK_ANCHOR_W,
-                                      "font", font,
-                                      NULL);
-          g_string_free (image,
-                         TRUE);
-
-          g_free (font);
-
-          goo_canvas_item_get_bounds (item,
-                                      &bounds);
-          if (name_width < bounds.x2 - bounds.x1)
-          {
-            name_width = bounds.x2 - bounds.x1;
-          }
-        }
-
-        {
-          gdouble x;
-
-          goo_canvas_convert_to_item_space (canvas,
-                                            item,
-                                            &x,
-                                            &name_width);
-        }
-
-        {
-          gchar *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(PRINT_FONT_HEIGHT));
-          gchar *decimal = strchr (font, ',');
-
-          if (decimal)
-          {
-            *decimal = '.';
-          }
-
-          for (guint j = 0; j < _max_score->_value; j++)
-          {
-            gchar *number;
-
-            number = g_strdup_printf ("%d", j+1);
-            goo_canvas_text_new (group,
-                                 number,
-                                 name_width + j*2.5 + PRINT_FONT_HEIGHT/2,
-                                 0.0 + offset,
-                                 -1.0,
-                                 GTK_ANCHOR_CENTER,
-                                 "font", font,
-                                 NULL);
-            goo_canvas_rect_new (group,
-                                 name_width + j*2.5,
-                                 0.0 + offset - PRINT_FONT_HEIGHT/2.0,
-                                 PRINT_FONT_HEIGHT,
-                                 PRINT_FONT_HEIGHT,
-                                 "line-width", 0.25,
-                                 NULL);
-
-            goo_canvas_text_new (group,
-                                 number,
-                                 name_width + j*2.5 + PRINT_FONT_HEIGHT/2,
-                                 7.5 + offset,
-                                 -1.0,
-                                 GTK_ANCHOR_CENTER,
-                                 "font", font,
-                                 NULL);
-            goo_canvas_rect_new (group,
-                                 name_width + j*2.5,
-                                 7.5 + offset - PRINT_FONT_HEIGHT/2.0,
-                                 PRINT_FONT_HEIGHT,
-                                 PRINT_FONT_HEIGHT,
-                                 "line-width", 0.25,
-                                 NULL);
-
-            g_free (number);
-          }
-          g_free (font);
-        }
-
-        {
-          gdouble score_size = 4.0;
-
-          goo_canvas_rect_new (group,
-                               name_width + _max_score->_value*2.5 + score_size,
-                               0.0 + offset - score_size/2.0,
-                               score_size,
-                               score_size,
-                               "line-width", 0.3,
+          goo_canvas_rect_new (track_group,
+                               0.0,
+                               0.0,
+                               35.0,
+                               6.0,
+                               "stroke-color", "Grey95",
+                               "line-width", 0.2,
                                NULL);
-          goo_canvas_rect_new (group,
-                               name_width + _max_score->_value*2.5 + score_size,
-                               7.5 + offset - score_size/2.0,
-                               score_size,
-                               score_size,
-                               "line-width", 0.3,
-                               NULL);
-
-
-          goo_canvas_rect_new (group,
-                               name_width + _max_score->_value*2.5 + 2.5*score_size,
-                               0.0 + offset - score_size/2.0,
-                               score_size*5,
-                               score_size,
-                               "fill-color", "Grey85",
-                               "line-width", 0.0,
-                               NULL);
-          goo_canvas_text_new (group,
-                               gettext ("Signature"),
-                               name_width + _max_score->_value*2.5 + 4.5*score_size,
-                               0.0 + offset,
+          goo_canvas_text_new (track_group,
+                               gettext ("Piste"),
+                               0.0,
+                               0.0,
                                -1,
-                               GTK_ANCHOR_CENTER,
-                               "fill-color", "Grey95",
-                               "font", "Sans bold 3.5px",
+                               GTK_ANCHOR_W,
+                               "fill-color", "Black",
+                               "font", font,
                                NULL);
-          goo_canvas_rect_new (group,
-                               name_width + _max_score->_value*2.5 + 2.5*score_size,
-                               7.5 + offset - score_size/2.0,
-                               score_size*5,
-                               score_size,
-                               "fill-color", "Grey85",
-                               "line-width", 0.0,
-                               NULL);
-          goo_canvas_text_new (group,
-                               gettext ("Signature"),
-                               name_width + _max_score->_value*2.5 + 4.5*score_size,
-                               7.5 + offset,
-                               -1,
-                               GTK_ANCHOR_CENTER,
-                               "fill-color", "Grey95",
-                               "font", "Sans bold 3.5px",
-                               NULL);
+
+          Canvas::Align (track_group,
+                         NULL,
+                         referee_group);
+          Canvas::Anchor (track_group,
+                          NULL,
+                          referee_group,
+                          20);
         }
+
+        // Matchs
+        {
+          GooCanvasItem *match_table = goo_canvas_table_new (match_group,
+                                                             "column-spacing", 1.0,
+                                                             "row-spacing",    2.0,
+                                                             NULL);
+
+          DrawPlayerMatch (match_table,
+                           match,
+                           A,
+                           0);
+          DrawPlayerMatch (match_table,
+                           match,
+                           B,
+                           1);
+
+          Canvas::Anchor (match_table,
+                          title_group,
+                          NULL,
+                          80);
+          Canvas::Align (match_table,
+                         title_group,
+                         NULL);
+        }
+
+        g_free (font);
       }
 
-      Canvas::FitToContext (group,
+      Canvas::FitToContext (match_group,
                             context);
 
       current_match = g_slist_next (current_match);
@@ -2152,6 +2073,97 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
     gtk_widget_destroy (GTK_WIDGET (canvas));
 
     cairo_restore (cr);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::DrawPlayerMatch (GooCanvasItem *table,
+                                Match         *match,
+                                Player        *player,
+                                guint          row)
+{
+  GooCanvasItem *text_item;
+  GooCanvasItem *goo_rect;
+
+  // Name
+  {
+    GString *image;
+    gchar   *font = g_strdup_printf ("Sans Bold %fpx", PRINT_FONT_HEIGHT);
+    gchar   *decimal = strchr (font, ',');
+
+    if (decimal)
+    {
+      *decimal = '.';
+    }
+
+    image     = GetPlayerImage (player);
+    text_item = Canvas::PutTextInTable (table,
+                                        image->str,
+                                        row,
+                                        0);
+    g_string_free (image,
+                   TRUE);
+    Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
+
+    g_object_set (G_OBJECT (text_item),
+                  "font", font,
+                  "ellipsize", PANGO_ELLIPSIZE_NONE,
+                  "anchor", GTK_ANCHOR_WEST,
+                  NULL);
+    g_free (font);
+  }
+
+  // Score
+  {
+    GooCanvasItem *score_table = match->GetScoreTable (table,
+                                                       PRINT_FONT_HEIGHT);
+
+    Canvas::PutInTable (table,
+                        score_table,
+                        row,
+                        1);
+    Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+  }
+
+  {
+    gdouble score_size = 4.0;
+
+    goo_rect = goo_canvas_rect_new (table,
+                                    0.0,
+                                    0.0,
+                                    score_size,
+                                    score_size,
+                                    "line-width", 0.3,
+                                    NULL);
+    Canvas::PutInTable (table,
+                        goo_rect,
+                        row,
+                        2);
+    Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
+
+    goo_rect = goo_canvas_rect_new (table,
+                                    0.0,
+                                    0.0,
+                                    score_size*5,
+                                    score_size,
+                                    "fill-color", "Grey85",
+                                    "line-width", 0.0,
+                                    NULL);
+    Canvas::PutInTable (table,
+                        goo_rect,
+                        row,
+                        3);
+    Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
+
+    text_item = Canvas::PutTextInTable (table,
+                                        gettext ("Signature"),
+                                        row,
+                                        3);
+    Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
+    g_object_set (G_OBJECT (text_item),
+                  "font", "Sans bold 3.5px",
+                  "fill-color", "Grey95",
+                  NULL);
   }
 }
 
@@ -2223,7 +2235,7 @@ gboolean TableSet::OnPrintTable (GooCanvasItem  *item,
 
   if (gtk_dialog_run (GTK_DIALOG (table_set->_table_print_dialog)) == GTK_RESPONSE_OK)
   {
-    GtkWidget *w         = table_set->_glade->GetWidget ("table_pending_radiobutton");
+    GtkWidget *w         = table_set->_glade->GetWidget ("table_all_radiobutton");
     gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
 
     table_set->LookForMatchToPrint (table_to_print,

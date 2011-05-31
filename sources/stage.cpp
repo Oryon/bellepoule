@@ -560,7 +560,7 @@ GSList *Stage::GetOutputShortlist ()
 // --------------------------------------------------------------------------------
 void Stage::ActivateNbQualified ()
 {
-  if (_input_provider == NULL)
+  if (_attendees && (_input_provider == NULL))
   {
     GSList *shortlist = _attendees->GetShortList ();
     Module *module;
@@ -1018,7 +1018,7 @@ void Stage::SetScoreStuffingPolicy (gboolean allowed)
 void Stage::LoadConfiguration (xmlNode *xml_node)
 {
   gchar *attr = (gchar *) xmlGetProp (xml_node,
-                                      BAD_CAST "PhaseID");
+                                      BAD_CAST "ID");
   SetName (attr);
 
   if (_max_score)
@@ -1047,10 +1047,10 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "PhaseID",
-                                     "%s", GetName ());
+                                     "%d", _id);
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
-                                     "%d", _id);
+                                     "%s", GetName ());
 
   if (_max_score)
   {

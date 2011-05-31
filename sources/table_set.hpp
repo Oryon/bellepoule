@@ -179,6 +179,11 @@ class TableSet : public CanvasModule
 
     void OnStatusChanged (GtkComboBox *combo_box);
 
+    void DrawPlayerMatch (GooCanvasItem *table,
+                          Match         *match,
+                          Player        *player,
+                          guint          row);
+
     static gboolean Stuff (GNode    *node,
                            TableSet *table_set);
 
