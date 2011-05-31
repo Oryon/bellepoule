@@ -225,7 +225,7 @@ void PoolSupervisor::OnUnPlugged ()
     Pool *pool;
 
     pool = _pool_allocator->GetPool (i);
-    pool->ResetMatches (GetPreviousStage ());
+    pool->DeleteMatches ();
   }
 }
 
