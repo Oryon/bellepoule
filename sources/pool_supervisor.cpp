@@ -180,10 +180,7 @@ void PoolSupervisor::OnPlugged ()
 
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
   {
-    Pool *pool;
-
-    pool = _pool_allocator->GetPool (i);
-    pool->SortPlayers ();
+    Pool *pool = _pool_allocator->GetPool (i);
 
     for (guint p = 0; p < pool->GetNbPlayers (); p++)
     {

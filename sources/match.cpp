@@ -42,6 +42,8 @@ Match::Match  (Player *A,
 
   _A_is_known = TRUE;
   _B_is_known = TRUE;
+
+  _number = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -51,6 +53,7 @@ Match::~Match ()
   Object::TryToRelease (_B_score);
 
   g_free (_name);
+  g_free (_name_space);
 }
 
 // --------------------------------------------------------------------------------
@@ -67,12 +70,11 @@ void Match::Init (Data *max_score)
   _A_is_dropped = FALSE;
   _B_is_dropped = FALSE;
 
-  _name = g_strdup ("");
+  _name       = g_strdup ("");
+  _name_space = g_strdup ("");
 
   _A_score = new Score (max_score);
   _B_score = new Score (max_score);
-
-  _name_space = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -447,19 +449,20 @@ void Match::CleanScore ()
 // --------------------------------------------------------------------------------
 void Match::SetNameSpace (const gchar *name_space)
 {
-  if (name_space)
-  {
-    _name_space = g_strdup (name_space);
-  }
+  g_free (_name_space);
+  _name_space = g_strdup (name_space);
+
+  g_free (_name);
+  _name = g_strdup_printf ("%s%d", _name_space, _number);
 }
 
 // --------------------------------------------------------------------------------
 void Match::SetNumber (gint number)
 {
-  g_free (_name);
-  _name = g_strdup_printf ("%s%d", _name_space, number);
-
   _number = number;
+
+  g_free (_name);
+  _name = g_strdup_printf ("%s%d", _name_space, _number);
 }
 
 // --------------------------------------------------------------------------------

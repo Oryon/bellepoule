@@ -51,7 +51,6 @@ class Pool : public CanvasModule
     void  RestorePlayer (Player *player);
     void  CleanScores   ();
     void  DeleteMatches ();
-    void  SortPlayers   ();
     void  Lock          ();
     void  UnLock        ();
     void  SetDataOwner  (Object *single_owner,
@@ -129,6 +128,8 @@ class Pool : public CanvasModule
     void OnPlugged ();
 
     void OnUnPlugged ();
+
+    void SortPlayers ();
 
     Player *GetPlayer (guint   i,
                        GSList *in_list);

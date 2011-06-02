@@ -210,6 +210,8 @@ void Pool::RemovePlayer (Player *player)
 // --------------------------------------------------------------------------------
 void Pool::CreateMatches (Object *rank_owner)
 {
+  SortPlayers ();
+
   if (_match_list == NULL)
   {
     {
@@ -222,21 +224,27 @@ void Pool::CreateMatches (Object *rank_owner)
                                              &attr_id);
     }
 
-    for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Player *base_player = GetPlayer (i, _player_list);
+      guint                       nb_players = GetNbPlayers ();
+      guint                       nb_matches = (nb_players*nb_players - nb_players) / 2;
+      PoolMatchOrder::PlayerPair *pair       = PoolMatchOrder::GetPlayerPair (nb_players);
 
-      for (guint j = i+1; j < GetNbPlayers (); j++)
+      if (pair)
       {
-        Player *current_player = GetPlayer (j, _player_list);
+        for (guint i = 0; i < nb_matches; i++)
+        {
+          Player *a = (Player *) g_slist_nth_data (_sorted_player_list, pair[i]._a-1);
+          Player *b = (Player *) g_slist_nth_data (_sorted_player_list, pair[i]._b-1);
 
-        Match *match = new Match (base_player,
-                                  current_player,
-                                  _max_score);
-        match->SetNameSpace ("M");
+          Match *match = new Match (a,
+                                    b,
+                                    _max_score);
+          match->SetNameSpace ("M");
+          match->SetNumber (i+1);
 
-        _match_list = g_slist_append (_match_list,
-                                      match);
+          _match_list = g_slist_append (_match_list,
+                                        match);
+        }
       }
     }
   }
@@ -1785,13 +1793,6 @@ void Pool::SortPlayers ()
   _sorted_player_list = g_slist_sort_with_data (_sorted_player_list,
                                                 (GCompareDataFunc) _ComparePlayerWithFullRandom,
                                                 (void *) this);
-
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
-  {
-    Match *match = GetMatch (i);
-
-    match->SetNumber (i+1);
-  }
 }
 
 // --------------------------------------------------------------------------------
