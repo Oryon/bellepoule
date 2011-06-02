@@ -321,6 +321,7 @@ void TableSet::RefreshTableStatus ()
                    _status_cbk_data);
     }
   }
+  MakeDirty ();
 }
 
 // --------------------------------------------------------------------------------
@@ -875,7 +876,7 @@ gboolean TableSet::FillInNode (GNode    *node,
     {
       gchar *match_name = data->_match->GetName ();
 
-      if (match_name[0])
+      if (match_name)
       {
         GooCanvasItem *number_item = Canvas::PutTextInTable (data->_canvas_table,
                                                              match_name,

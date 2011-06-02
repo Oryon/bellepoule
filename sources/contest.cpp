@@ -375,6 +375,9 @@ Contest::Contest (gchar *filename)
       gtk_recent_manager_add_item (manager, filename);
     }
   }
+
+  gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
+                            FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -671,6 +674,13 @@ void Contest::ChooseColor ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::MakeDirty ()
+{
+  gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
+                            TRUE);
+}
+
+// --------------------------------------------------------------------------------
 void Contest::Init ()
 {
   GdkColor *color;
@@ -910,6 +920,9 @@ void Contest::Save ()
   }
 
   Save (_filename);
+
+  gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
+                            FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -1250,6 +1263,7 @@ void Contest::on_properties_toolbutton_clicked ()
   if (gtk_dialog_run (GTK_DIALOG (_properties_dlg)) == GTK_RESPONSE_ACCEPT)
   {
     ReadProperties ();
+    MakeDirty ();
   }
   gtk_widget_hide (_properties_dlg);
 }

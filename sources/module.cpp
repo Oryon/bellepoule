@@ -237,9 +237,8 @@ void Module::DisableSensitiveWidgets ()
 // --------------------------------------------------------------------------------
 void Module::SetCursor (GdkCursorType cursor_type)
 {
-  GdkCursor *cursor;
+  GdkCursor *cursor = gdk_cursor_new (cursor_type);
 
-  cursor = gdk_cursor_new (cursor_type);
   gdk_window_set_cursor (gtk_widget_get_window (_root),
                          cursor);
   gdk_cursor_unref (cursor);
@@ -393,6 +392,15 @@ void Module::DrawContainerPage (GtkPrintOperation *operation,
     _owner->OnDrawPage (operation,
                         context,
                         page_nr);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Module::MakeDirty ()
+{
+  if (_owner)
+  {
+    _owner->MakeDirty ();
   }
 }
 

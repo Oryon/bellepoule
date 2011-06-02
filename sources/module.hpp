@@ -97,6 +97,8 @@ class Module : public virtual Object
                              GtkPrintContext   *context,
                              gint               page_nr);
 
+    virtual void MakeDirty ();
+
   private:
     virtual void OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context) {};

@@ -42,8 +42,6 @@ Match::Match  (Player *A,
 
   _A_is_known = TRUE;
   _B_is_known = TRUE;
-
-  _number = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -72,6 +70,8 @@ void Match::Init (Data *max_score)
 
   _name       = g_strdup ("");
   _name_space = g_strdup ("");
+
+  _number = 0;
 
   _A_score = new Score (max_score);
   _B_score = new Score (max_score);
@@ -468,7 +468,14 @@ void Match::SetNumber (gint number)
 // --------------------------------------------------------------------------------
 gchar *Match::GetName ()
 {
-  return _name;
+  if (_number)
+  {
+    return _name;
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 // --------------------------------------------------------------------------------
