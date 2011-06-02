@@ -43,14 +43,14 @@ class Pool : public CanvasModule
           guint  number);
 
     void  AddPlayer     (Player *player, Object *rank_owner);
+    void  CreateMatches (Object *rank_owner);
     void  RemovePlayer  (Player *player);
     guint GetNbPlayers  ();
     guint GetNumber     ();
     void  DropPlayer    (Player *player, gchar *reason);
     void  RestorePlayer (Player *player);
     void  CleanScores   ();
-    void  ResetMatches  (Object *rank_owner);
-    void  SortPlayers   ();
+    void  DeleteMatches ();
     void  Lock          ();
     void  UnLock        ();
     void  SetDataOwner  (Object *single_owner,
@@ -128,6 +128,8 @@ class Pool : public CanvasModule
     void OnPlugged ();
 
     void OnUnPlugged ();
+
+    void SortPlayers ();
 
     Player *GetPlayer (guint   i,
                        GSList *in_list);

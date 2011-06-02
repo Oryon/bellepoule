@@ -3,7 +3,7 @@
 
 #define VERSION           "2"
 #define VERSION_REVISION  "0"
-#define VERSION_MATURITY  "beta10"
+#define VERSION_MATURITY  "beta11"
 #define VERSION_DAY       "19"
 #define VERSION_MONTH     "12"
 

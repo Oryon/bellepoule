@@ -63,14 +63,7 @@ Pool::~Pool ()
 
   g_slist_free (_sorted_player_list);
 
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
-  {
-    Match *match;
-
-    match = (Match *) g_slist_nth_data (_match_list, i);
-    Object::TryToRelease (match);
-  }
-  g_slist_free (_match_list);
+  DeleteMatches ();
 
   Object::TryToRelease (_score_collector);
 }
@@ -200,22 +193,6 @@ void Pool::AddPlayer (Player *player,
                                                       (GCompareDataFunc) Player::Compare,
                                                       &attr_id);
     }
-
-    for (guint i = 0; i < GetNbPlayers (); i++)
-    {
-      Player *current_player = GetPlayer (i, _player_list);
-
-      if (current_player != player)
-      {
-        Match *match = new Match (player,
-                                  current_player,
-                                  _max_score);
-        match->SetNameSpace ("M");
-
-        _match_list = g_slist_append (_match_list,
-                                      match);
-      }
-    }
   }
 }
 
@@ -227,26 +204,47 @@ void Pool::RemovePlayer (Player *player)
   {
     _player_list = g_slist_remove (_player_list,
                                    player);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::CreateMatches (Object *rank_owner)
+{
+  SortPlayers ();
+
+  if (_match_list == NULL)
+  {
+    {
+      Player::AttributeId attr_id ("previous_stage_rank",
+                                   rank_owner);
+      attr_id.MakeRandomReady (_rand_seed);
+
+      _player_list = g_slist_sort_with_data (_player_list,
+                                             (GCompareDataFunc) Player::Compare,
+                                             &attr_id);
+    }
 
     {
-      GSList *node = _match_list;
+      guint                       nb_players = GetNbPlayers ();
+      guint                       nb_matches = (nb_players*nb_players - nb_players) / 2;
+      PoolMatchOrder::PlayerPair *pair       = PoolMatchOrder::GetPlayerPair (nb_players);
 
-      while (node)
+      if (pair)
       {
-        GSList  *next_node;
-        Match   *match;
-
-        next_node = g_slist_next (node);
-
-        match = (Match *) node->data;
-        if (match->HasPlayer (player))
+        for (guint i = 0; i < nb_matches; i++)
         {
-          _match_list = g_slist_delete_link (_match_list,
-                                             node);
-          match->Release ();
-        }
+          Player *a = (Player *) g_slist_nth_data (_sorted_player_list, pair[i]._a-1);
+          Player *b = (Player *) g_slist_nth_data (_sorted_player_list, pair[i]._b-1);
 
-        node = next_node;
+          Match *match = new Match (a,
+                                    b,
+                                    _max_score);
+          match->SetNameSpace ("M");
+          match->SetNumber (i+1);
+
+          _match_list = g_slist_append (_match_list,
+                                        match);
+        }
       }
     }
   }
@@ -778,7 +776,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
 
     // Matches
-    if (print_for_referees)
+    //if (print_for_referees)
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;
@@ -1286,6 +1284,8 @@ void Pool::RefreshScoreData ()
                                                   0, 0);
     }
   }
+
+  MakeDirty ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1470,15 +1470,18 @@ void Pool::RefreshDashBoard ()
 Match *Pool::GetMatch (Player *A,
                        Player *B)
 {
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  if (_match_list)
   {
-    Match *match;
-
-    match = (Match *) g_slist_nth_data (_match_list, i);
-    if (   match->HasPlayer (A)
-        && match->HasPlayer (B))
+    for (guint i = 0; i < g_slist_length (_match_list); i++)
     {
-      return match;
+      Match *match;
+
+      match = (Match *) g_slist_nth_data (_match_list, i);
+      if (   match->HasPlayer (A)
+             && match->HasPlayer (B))
+      {
+        return match;
+      }
     }
   }
 
@@ -1513,14 +1516,26 @@ gint Pool::CompareMatch (Match *a,
 // --------------------------------------------------------------------------------
 void Pool::Save (xmlTextWriter *xml_writer)
 {
+  GSList *working_list;
+
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "Poule");
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
                                      "%d", _number);
 
+  // To avoid the GREG pool display issue
+  if (_sorted_player_list)
   {
-    GSList              *current = _player_list;
+    working_list = _sorted_player_list;
+  }
+  else
+  {
+    working_list = _player_list;
+  }
+
+  {
+    GSList              *current = working_list;
     Player::AttributeId  attr_id ("", _single_owner);
     Attribute           *attr;
 
@@ -1539,7 +1554,7 @@ void Pool::Save (xmlTextWriter *xml_writer)
                                          "%d", player->GetRef ());
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NoDansLaPoule",
-                                         "%d", g_slist_index (_sorted_player_list,
+                                         "%d", g_slist_index (working_list,
                                                               player) + 1);
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NbVictoires",
@@ -1582,11 +1597,11 @@ void Pool::Save (xmlTextWriter *xml_writer)
   // with the order of the players.
   for (guint p1 = 0; p1 < GetNbPlayers (); p1++)
   {
-    Player *player_1 = (Player *) g_slist_nth_data (_player_list, p1);
+    Player *player_1 = (Player *) g_slist_nth_data (_sorted_player_list, p1);
 
     for (guint p2 = p1+1; p2 < GetNbPlayers (); p2++)
     {
-      Player *player_2 = (Player *) g_slist_nth_data (_player_list, p2);
+      Player *player_2 = (Player *) g_slist_nth_data (_sorted_player_list, p2);
       Match  *match    = GetMatch (player_1, player_2);
 
       if (match)
@@ -1664,19 +1679,17 @@ void Pool::Load (xmlNode *xml_node,
           {
             // Because of the GREG issue, the position of the players
             // in the match are potentially modified in the saved file.
-            // Consequently, at the loading the initial potion has to be recovered.
+            // Consequently, at the loading the initial position has to be recovered.
+            if (player_A != match->GetPlayerA ())
             {
-              if (player_A != match->GetPlayerA ())
-              {
-                Player  *p = player_B;
-                xmlNode *n = B;
+              Player  *p = player_B;
+              xmlNode *n = B;
 
-                player_B = player_A;
-                player_A = p;
+              player_B = player_A;
+              player_A = p;
 
-                B = A;
-                A = n;
-              }
+              B = A;
+              A = n;
             }
 
             {
@@ -1753,7 +1766,10 @@ void Pool::CleanScores ()
   }
   _is_over = FALSE;
 
-  RefreshScoreData ();
+  if (_match_list)
+  {
+    RefreshScoreData ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1779,25 +1795,23 @@ void Pool::SortPlayers ()
   _sorted_player_list = g_slist_sort_with_data (_sorted_player_list,
                                                 (GCompareDataFunc) _ComparePlayerWithFullRandom,
                                                 (void *) this);
-
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
-  {
-    Match *match;
-
-    match = GetMatch (i);
-    match->SetNumber (i+1);
-  }
 }
 
 // --------------------------------------------------------------------------------
-void Pool::ResetMatches (Object *rank_owner)
+void Pool::DeleteMatches ()
 {
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  if (_match_list)
   {
-    Match *match;
+    for (guint i = 0; i < g_slist_length (_match_list); i++)
+    {
+      Match *match;
 
-    match = GetMatch (i);
-    match->SetNumber (0);
+      match = (Match *) g_slist_nth_data (_match_list, i);
+      Object::TryToRelease (match);
+    }
+
+    g_slist_free (_match_list);
+    _match_list = NULL;
   }
 }
 
