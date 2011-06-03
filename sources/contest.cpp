@@ -523,6 +523,8 @@ void Contest::InitInstance ()
 {
   Object::Dump ();
 
+  _save_timeout_id = 0;
+
   _notebook   = NULL;
 
   _owner      = NULL;
@@ -674,10 +676,31 @@ void Contest::ChooseColor ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Contest::OnSaveTimeout (Contest *contest)
+{
+  if (contest->_filename)
+  {
+    contest->Save ();
+  }
+
+  contest->_save_timeout_id = 0;
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 void Contest::MakeDirty ()
 {
   gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
                             TRUE);
+
+  if (_save_timeout_id > 0)
+  {
+    g_source_remove (_save_timeout_id);
+  }
+
+  _save_timeout_id = g_timeout_add_seconds (5,
+                                            (GSourceFunc) OnSaveTimeout,
+                                            this);
 }
 
 // --------------------------------------------------------------------------------
@@ -920,9 +943,6 @@ void Contest::Save ()
   }
 
   Save (_filename);
-
-  gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
-                            FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -1032,6 +1052,9 @@ void Contest::Save (gchar *filename)
         gtk_recent_manager_add_item (manager, filename);
       }
     }
+
+    gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
+                              FALSE);
   }
 }
 
@@ -1054,6 +1077,28 @@ gchar *Contest::GetSaveFileName (gchar       *title,
                                                   true);
 
   {
+    GtkFileFilter *filter = gtk_file_filter_new ();
+
+    gtk_file_filter_set_name (filter,
+                              gettext ("BellePoule files (.cotcot)"));
+    gtk_file_filter_add_pattern (filter,
+                                 "*.cotcot");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                 filter);
+  }
+
+  {
+    GtkFileFilter *filter = gtk_file_filter_new ();
+
+    gtk_file_filter_set_name (filter,
+                              gettext ("All files"));
+    gtk_file_filter_add_pattern (filter,
+                                 "*");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                 filter);
+  }
+
+  {
     gchar *last_dirname = g_key_file_get_string (_config_file,
                                                  "Competiton",
                                                  config_key,
@@ -1065,6 +1110,14 @@ gchar *Contest::GetSaveFileName (gchar       *title,
 
       g_free (last_dirname);
     }
+  }
+
+  {
+    char *name = GetDefaultFileName ();
+
+    gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (chooser),
+                                       name);
+    g_free (name);
   }
 
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
@@ -1384,6 +1437,15 @@ gchar *Contest::GetWeapon ()
 gchar *Contest::GetName ()
 {
   return _name;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetDefaultFileName ()
+{
+  return g_strdup_printf ("%s-%s-%s-%s", _name,
+                          gettext (weapon_image[_weapon]),
+                          gettext (gender_image[_gender]),
+                          gettext (category_image[_category]));
 }
 
 // --------------------------------------------------------------------------------

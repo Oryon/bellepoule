@@ -50,6 +50,7 @@ class Contest : public Module
     gchar *GetDate ();
     gchar *GetWeapon ();
     gchar *GetName ();
+    gchar *GetDefaultFileName ();
     gchar *GetGender ();
     gchar *GetCategory ();
 
@@ -117,6 +118,7 @@ class Contest : public Module
     gboolean    _derived;
     Data       *_color;
     GdkColor   *_gdk_color;
+    guint       _save_timeout_id;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
@@ -143,6 +145,8 @@ class Contest : public Module
     void ChooseColor ();
 
     void MakeDirty ();
+
+    static gboolean OnSaveTimeout (Contest *contest);
 };
 
 #endif
