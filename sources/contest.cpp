@@ -378,6 +378,10 @@ Contest::Contest (gchar *filename)
 
   gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
                             FALSE);
+  if (_save_timeout_id > 0)
+  {
+    g_source_remove (_save_timeout_id);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -406,6 +410,11 @@ Contest::~Contest ()
   gtk_widget_destroy (_calendar_dlg);
 
   Object::Dump ();
+
+  if (_save_timeout_id > 0)
+  {
+    g_source_remove (_save_timeout_id);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1401,24 +1410,8 @@ extern "C" G_MODULE_EXPORT void on_contest_close_button_clicked (GtkWidget *widg
 // --------------------------------------------------------------------------------
 void Contest::on_contest_close_button_clicked ()
 {
-  GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          GTK_DIALOG_MODAL,
-                                                          GTK_MESSAGE_QUESTION,
-                                                          GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>Do you really want to close\n"
-                                                                   "<big>%s</big> ?</big></b>"), _name);
-
-  gtk_window_set_title (GTK_WINDOW (dialog),
-                        gettext ("Close the competition?"));
-
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            gettext ("Unsaved data will be lost."));
-
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
-  {
-    Release ();
-  }
-  gtk_widget_destroy (dialog);
+  Save ();
+  Release ();
 }
 
 // --------------------------------------------------------------------------------
