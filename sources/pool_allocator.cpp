@@ -373,6 +373,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
+        current_pool->CreateMatches (this);
         current_pool->Load (n,
                             _attendees->GetShortList ());
         current_pool = NULL;
@@ -606,28 +607,6 @@ void PoolAllocator::CreatePools ()
       }
 
       swapper->Release ();
-    }
-
-    SetOriginalPools ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void PoolAllocator::SetOriginalPools ()
-{
-  for (guint i = 0; i < g_slist_length (_pools_list); i++)
-  {
-    Pool *pool;
-
-    pool = (Pool *) g_slist_nth_data (_pools_list, i);
-    for (guint j = 0; j < pool->GetNbPlayers (); j++)
-    {
-      Player *player;
-
-      player = pool->GetPlayer (j);
-      player->SetData (this,
-                       "original_pool",
-                       (void *) (i+1));
     }
   }
 }
@@ -1554,6 +1533,14 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
 void PoolAllocator::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
+
+  for (guint i = 0; i < g_slist_length (_pools_list); i++)
+  {
+    Pool *pool;
+
+    pool = (Pool *) g_slist_nth_data (_pools_list, i);
+    pool->CreateMatches (this);
+  }
 }
 
 // --------------------------------------------------------------------------------

@@ -62,7 +62,7 @@ class PlayersList : public Module
     void SetAttributeRight (const gchar *name,
                             gboolean     modifiable);
 
-    virtual void OnListChanged () {};
+    virtual void OnListChanged ();
 
   protected:
     GtkListStore *_store;

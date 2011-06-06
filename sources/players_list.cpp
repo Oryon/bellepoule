@@ -676,6 +676,12 @@ void PlayersList::RemoveSelection ()
 }
 
 // --------------------------------------------------------------------------------
+void PlayersList::OnListChanged ()
+{
+  MakeDirty ();
+}
+
+// --------------------------------------------------------------------------------
 Player *PlayersList::GetPlayer (const gchar *path_string)
 {
   GtkTreePath *path;

@@ -141,6 +141,8 @@ class Contest : public Module
                      gint               page_nr);
 
     void ChooseColor ();
+
+    void MakeDirty ();
 };
 
 #endif

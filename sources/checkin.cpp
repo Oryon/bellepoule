@@ -360,6 +360,7 @@ void Checkin::OnListChanged ()
 {
   RefreshAttendingDisplay ();
   UpdateRanking ();
+  MakeDirty ();
 }
 
 // --------------------------------------------------------------------------------

@@ -260,6 +260,7 @@ void Schedule::DisplayList ()
       }
     }
   }
+  MakeDirty ();
   gtk_widget_hide (_formula_dlg);
 }
 
@@ -994,6 +995,8 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
       stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
       stage->UnLock ();
     }
+
+    MakeDirty ();
   }
   gtk_widget_destroy (dialog);
 }
@@ -1022,6 +1025,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
   stage->Display ();
 
   SetCurrentStage (_current_stage+1);
+  MakeDirty ();
 }
 
 // --------------------------------------------------------------------------------
