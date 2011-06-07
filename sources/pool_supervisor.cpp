@@ -177,41 +177,6 @@ void PoolSupervisor::OnPlugged ()
                                      FALSE);
 
   RetrievePools ();
-
-  for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
-  {
-    Pool *pool = _pool_allocator->GetPool (i);
-
-    for (guint p = 0; p < pool->GetNbPlayers (); p++)
-    {
-      Player::AttributeId  attr_id ("status");
-      Attribute           *status_attr;
-      Player              *player;
-      gchar               *status;
-
-      player = pool->GetPlayer (p);
-
-      attr_id._owner = GetPreviousStage ();
-      status_attr = player->GetAttribute (&attr_id);
-
-      status = status_attr->GetStrValue ();
-
-      attr_id._owner = this;
-      player->SetAttributeValue (&attr_id,
-                                 status);
-
-      if (   (status[0] == 'A')
-          || (status[0] == 'F')
-          || (status[0] == 'E'))
-      {
-        pool->DropPlayer (player,
-                          status);
-      }
-    }
-
-    pool->RefreshScoreData ();
-  }
-
 }
 
 // --------------------------------------------------------------------------------
@@ -219,9 +184,8 @@ void PoolSupervisor::OnUnPlugged ()
 {
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
   {
-    Pool *pool;
+    Pool *pool = _pool_allocator->GetPool (i);
 
-    pool = _pool_allocator->GetPool (i);
     pool->DeleteMatches ();
   }
 }
@@ -369,6 +333,7 @@ void PoolSupervisor::Manage (Pool *pool)
                         this,
                         previous_pool);
   }
+  pool->CopyPlayersStatus (_pool_allocator);
 
   pool->_rand_seed = _rand_seed;
   pool->SetFilter (_filter);

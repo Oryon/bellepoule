@@ -59,6 +59,7 @@ class Pool : public CanvasModule
     void  SetStatusCbk  (StatusCbk  cbk,
                          void      *data);
     void OnStatusChanged (GtkComboBox *combo_box);
+    void CopyPlayersStatus (Object *from);
 
     gboolean IsOver ();
     gboolean HasError ();
