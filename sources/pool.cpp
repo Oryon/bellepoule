@@ -251,6 +251,37 @@ void Pool::CreateMatches (Object *rank_owner)
 }
 
 // --------------------------------------------------------------------------------
+void Pool::CopyPlayersStatus (Object *from)
+{
+  for (guint p = 0; p < GetNbPlayers (); p++)
+  {
+    Player::AttributeId  attr_id ("status");
+    Attribute           *status_attr;
+    Player              *player;
+    gchar               *status;
+
+    player = GetPlayer (p);
+    RestorePlayer (player);
+
+    attr_id._owner = from;
+    status_attr = player->GetAttribute (&attr_id);
+
+    status = status_attr->GetStrValue ();
+
+    if (   (status[0] == 'A')
+        || (status[0] == 'F')
+        || (status[0] == 'E'))
+    {
+      DropPlayer (player,
+                  status);
+    }
+  }
+
+  RefreshScoreData ();
+  RefreshDashBoard ();
+}
+
+// --------------------------------------------------------------------------------
 guint Pool::GetNbPlayers ()
 {
   return g_slist_length (_player_list);
@@ -465,7 +496,9 @@ void Pool::Draw (GooCanvas *on_canvas,
                   g_free (score_image);
                 }
 
-                if ((print_for_referees == FALSE) && (_locked == FALSE))
+                if (   (print_for_referees == FALSE)
+                    && (_locked == FALSE)
+                    && (match->IsDropped () == FALSE))
                 {
                   _score_collector->AddCollectingPoint (goo_rect,
                                                         score_text,
@@ -776,7 +809,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
 
     // Matches
-    //if (print_for_referees)
+    if (print_for_referees)
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;
@@ -897,11 +930,11 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
   }
 
+  RefreshScoreData ();
+  RefreshDashBoard ();
+
   if (print_for_referees == FALSE)
   {
-    RefreshScoreData ();
-    RefreshDashBoard ();
-
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
       Player    *player;
@@ -1819,24 +1852,24 @@ void Pool::DeleteMatches ()
 void Pool::DropPlayer (Player *player,
                        gchar  *reason)
 {
-  Player::AttributeId status_attr_id = Player::AttributeId ("status", GetDataOwner ());
-  Attribute           *status_attr   = player->GetAttribute (&status_attr_id);
-  gboolean             dropped       = TRUE;
+  Player::AttributeId status_attr_id   = Player::AttributeId ("status", GetDataOwner ());
+  Attribute           *status_attr     = player->GetAttribute (&status_attr_id);
+  gboolean             already_dropped = FALSE;
 
   if (status_attr)
   {
     gchar *status = status_attr->GetStrValue ();
 
-    if (status && *status == 'Q')
+    if (status && *status != 'Q')
     {
-      dropped = FALSE;
+      already_dropped = TRUE;
     }
   }
 
   player->SetAttributeValue (&status_attr_id,
                              reason);
 
-  if (dropped == FALSE)
+  if (already_dropped == FALSE)
   {
     _nb_drop++;
 
@@ -1867,15 +1900,15 @@ void Pool::RestorePlayer (Player *player)
 {
   Player::AttributeId status_attr_id = Player::AttributeId ("status", GetDataOwner ());
   Attribute           *status_attr   = player->GetAttribute (&status_attr_id);
-  gboolean             dropped       = TRUE;
+  gboolean             dropped       = FALSE;
 
   if (status_attr)
   {
     gchar *status = status_attr->GetStrValue ();
 
-    if (status && (*status == 'Q'))
+    if (status && (*status != 'Q'))
     {
-      dropped = FALSE;
+      dropped = TRUE;
     }
   }
 

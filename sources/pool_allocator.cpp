@@ -786,6 +786,7 @@ gboolean PoolAllocator::OnButtonPress (GooCanvasItem  *item,
       FixUpTablesBounds ();
     }
 
+    MakeDirty ();
     return TRUE;
   }
 
@@ -840,6 +841,7 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
     _floating_player = NULL;
 
     ResetCursor ();
+    MakeDirty ();
   }
 
   return TRUE;
@@ -1457,6 +1459,7 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
 
     Display ();
     SignalStatusUpdate ();
+    MakeDirty ();
   }
 }
 
@@ -1508,6 +1511,7 @@ void PoolAllocator::OnComboboxChanged (GtkComboBox *cb)
     CreatePools ();
     Display ();
     SignalStatusUpdate ();
+    MakeDirty ();
   }
 }
 
@@ -1536,9 +1540,8 @@ void PoolAllocator::OnLocked (Reason reason)
 
   for (guint i = 0; i < g_slist_length (_pools_list); i++)
   {
-    Pool *pool;
+    Pool *pool = (Pool *) g_slist_nth_data (_pools_list, i);
 
-    pool = (Pool *) g_slist_nth_data (_pools_list, i);
     pool->CreateMatches (this);
   }
 }

@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "attribute.hpp"
+#include "contest.hpp"
 #include "classification.hpp"
 #include "player.hpp"
 
@@ -200,6 +201,14 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
                                                        NULL));
     gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
                                                     true);
+    {
+      char *name = _contest->GetDefaultFileName ();
+
+      gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (chooser),
+                                         name);
+      g_free (name);
+    }
+
 
     {
       gchar *last_dirname = g_key_file_get_string (_config_file,
@@ -242,7 +251,7 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
       else if (export_type == PDF)
       {
         gtk_file_filter_set_name (filter,
-                                  gettext ("All FFF files (.PDF)"));
+                                  gettext ("All PDF files (.PDF)"));
         gtk_file_filter_add_pattern (filter,
                                      "*.PDF");
       }
