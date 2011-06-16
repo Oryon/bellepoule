@@ -106,6 +106,11 @@ class Module : public virtual Object
                                 GtkPrintOperationPreview *preview,
                                 GtkPrintContext          *context,
                                 GtkWindow                *parent) {return TRUE;};
+    virtual void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
+                                       GtkPrintContext          *context,
+                                       GtkPageSetup             *page_setup) {};
+    virtual void OnPreviewReady (GtkPrintOperationPreview *preview,
+                                 GtkPrintContext          *context) {};
     virtual void OnEndPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context) {};
 
@@ -135,6 +140,14 @@ class Module : public virtual Object
     static void on_end_print (GtkPrintOperation *operation,
                               GtkPrintContext   *context,
                               Module            *module);
+    static void on_preview_got_page_size (GtkPrintOperationPreview *preview,
+                                          GtkPrintContext          *context,
+                                          GtkPageSetup             *page_setup,
+                                          Module                   *module);
+    static void on_preview_ready (GtkPrintOperationPreview *preview,
+                                  GtkPrintContext          *context,
+                                  Module                   *module);
+
 };
 
 #endif

@@ -61,9 +61,22 @@ class TableSet : public CanvasModule
 
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
+
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr);
+
+    gboolean OnPreview (GtkPrintOperation        *operation,
+                        GtkPrintOperationPreview *preview,
+                        GtkPrintContext          *context,
+                        GtkWindow                *parent);
+
+    void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
+                               GtkPrintContext          *context,
+                               GtkPageSetup             *page_setup);
+
+    void OnPreviewReady (GtkPrintOperationPreview *preview,
+                         GtkPrintContext          *context);
 
     void Wipe ();
 
@@ -138,6 +151,7 @@ class TableSet : public CanvasModule
     GSList             *_result_list;
     GSList             *_match_to_print;
     GtkWidget          *_print_dialog;
+    GtkWidget          *_preview_dialog;
     GtkWidget          *_table_print_dialog;
     GtkWidget          *_control_container;
     GtkWidget          *_from_widget;

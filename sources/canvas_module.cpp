@@ -271,13 +271,6 @@ gboolean CanvasModule::OnPreview (GtkPrintOperation        *operation,
   g_signal_connect_swapped (close, "clicked",
                             G_CALLBACK (gtk_widget_destroy), window);
 
-  g_signal_connect (preview, "ready",
-                    G_CALLBACK (preview_ready), NULL);
-  g_signal_connect (preview, "got-page-size",
-                    G_CALLBACK (preview_got_page_size), NULL);
-
-  g_signal_connect (window, "destroy",
-                    G_CALLBACK (preview_destroy), NULL);
 #endif
 
   gtk_widget_show_all (window);

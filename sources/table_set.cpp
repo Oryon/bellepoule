@@ -100,6 +100,9 @@ TableSet::TableSet (TableSupervisor *supervisor,
 
     gtk_widget_reparent (_glade->GetWidget ("print_table_dialog_vbox"),
                          content_area);
+
+    gtk_widget_set_sensitive (_glade->GetWidget ("match_sheet_vbox"),
+                              FALSE);
   }
 
   {
@@ -117,6 +120,24 @@ TableSet::TableSet (TableSupervisor *supervisor,
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
 
     gtk_widget_reparent (_glade->GetWidget ("print_table_dialog-vbox"),
+                         content_area);
+  }
+
+  {
+    GtkWidget *content_area;
+
+    _preview_dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                          GTK_MESSAGE_QUESTION,
+                                                          GTK_BUTTONS_OK_CANCEL,
+                                                          gettext ("<b><big>What do you want to print?</big></b>"));
+
+    gtk_window_set_title (GTK_WINDOW (_preview_dialog),
+                          gettext ("Table printing"));
+
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_preview_dialog));
+
+    gtk_widget_reparent (_glade->GetWidget ("preview_dialog-vbox"),
                          content_area);
   }
 
@@ -183,6 +204,7 @@ TableSet::~TableSet ()
   }
 
   gtk_widget_destroy (_print_dialog);
+  gtk_widget_destroy (_preview_dialog);
   gtk_widget_destroy (_table_print_dialog);
 
   g_free (_id);
@@ -1850,6 +1872,109 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
     gtk_print_operation_set_n_pages (operation,
                                      nb_page);
   }
+}
+
+// --------------------------------------------------------------------------------
+static gboolean preview_expose (GtkWidget                *drawing_area,
+                                GdkEventExpose           *event,
+                                GtkPrintOperationPreview *preview)
+{
+  GtkPrintContext *context = (GtkPrintContext *) g_object_get_data (G_OBJECT (preview), "preview_context");
+  cairo_t         *cr      = gdk_cairo_create (drawing_area->window);
+
+  gtk_print_context_set_cairo_context (context,
+                                       cr,
+                                       96.0,
+                                       96.0);
+  cairo_destroy (cr);
+
+  gdk_window_clear (drawing_area->window);
+
+  gtk_print_operation_preview_render_page (preview,
+                                           0);
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
+                              GtkPrintOperationPreview *preview,
+                              GtkPrintContext          *context,
+                              GtkWindow                *parent)
+{
+  GtkWidget *drawing_area = _glade->GetWidget ("preview_drawingarea");
+
+  {
+    gtk_widget_set_size_request (GTK_WIDGET (drawing_area), 210, 290);
+
+    g_signal_connect (drawing_area, "expose_event",
+                      G_CALLBACK (preview_expose),
+                      preview);
+  }
+
+  g_object_set_data (G_OBJECT (preview), "preview_context", context);
+
+  {
+    cairo_t *cr      = goo_canvas_create_cairo_context (GetCanvas ());
+    gdouble  canvas_dpi;
+
+    g_object_get (G_OBJECT (GetCanvas ()),
+                  "resolution-x", &canvas_dpi,
+                  NULL);
+
+    gtk_print_context_set_cairo_context (context,
+                                         cr,
+                                         canvas_dpi,
+                                         canvas_dpi);
+    cairo_destroy (cr);
+  }
+
+  gtk_widget_hide (_print_dialog);
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
+                               GtkPrintContext          *context)
+{
+  if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
+  {
+  }
+
+#if 0
+  {
+    GtkWidget *view_port  = _glade->GetWidget ("preview_viewport");
+    GtkWidget *canvas     = gtk_bin_get_child (GTK_BIN (view_port));
+
+    gtk_widget_destroy (canvas);
+  }
+#endif
+
+  gtk_print_operation_preview_end_preview (preview);
+  gtk_widget_hide (_preview_dialog);
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
+                                     GtkPrintContext          *context,
+                                     GtkPageSetup             *page_setup)
+{
+#if 0
+  GtkWidget *view_port      = _glade->GetWidget ("preview_viewport");
+  GooCanvas *preview_canvas = Canvas::CreatePrinterCanvas (context);
+  cairo_t   *cr             = goo_canvas_create_cairo_context (preview_canvas);
+
+  gtk_container_add (GTK_CONTAINER (view_port), GTK_WIDGET (preview_canvas));
+  gtk_widget_show_all (GTK_WIDGET (preview_canvas));
+
+  gtk_print_context_set_cairo_context (context,
+                                       cr,
+                                       72,
+                                       72);
+
+  cairo_destroy (cr);
+#endif
 }
 
 // --------------------------------------------------------------------------------

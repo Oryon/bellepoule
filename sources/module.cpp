@@ -334,6 +334,10 @@ void Module::Print (const gchar *job_name,
                     G_CALLBACK (on_end_print), this);
   g_signal_connect (G_OBJECT (operation), "preview",
                     G_CALLBACK (on_preview), this);
+  g_signal_connect (G_OBJECT (operation), "ready",
+                    G_CALLBACK (on_preview_ready), this);
+  g_signal_connect (G_OBJECT (operation), "got-page-size",
+                    G_CALLBACK (on_preview_got_page_size), this);
 
   if (filename)
   {
@@ -347,7 +351,8 @@ void Module::Print (const gchar *job_name,
   else
   {
     gtk_print_operation_run (operation,
-                             GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
+                             GTK_PRINT_OPERATION_ACTION_PREVIEW,
+                             //GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
                              NULL,
                              &error);
   }
@@ -435,6 +440,26 @@ gboolean Module::on_preview (GtkPrintOperation        *operation,
                             preview,
                             context,
                             parent);
+}
+
+// --------------------------------------------------------------------------------
+void Module::on_preview_ready (GtkPrintOperationPreview *preview,
+                               GtkPrintContext          *context,
+                               Module                   *module)
+{
+  module->OnPreviewReady (preview,
+                          context);
+}
+
+// --------------------------------------------------------------------------------
+void Module::on_preview_got_page_size (GtkPrintOperationPreview *preview,
+                                       GtkPrintContext          *context,
+                                       GtkPageSetup             *page_setup,
+                                       Module                   *module)
+{
+  module->OnPreviewGotPageSize (preview,
+                                context,
+                                page_setup);
 }
 
 // --------------------------------------------------------------------------------

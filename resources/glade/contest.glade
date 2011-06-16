@@ -2,6 +2,24 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkListStore" id="FavoriteFTP">
+    <columns>
+      <!-- column-name icon -->
+      <column type="gchararray"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">"escrime_info.jpg"</col>
+        <col id="1" translatable="yes">Escrime Info</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">escrime_info.jpg</col>
+        <col id="1" translatable="yes">Unknown</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkDialog" id="calendar_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -872,7 +890,7 @@ stuffing</property>
                           <object class="GtkLabel" id="label25">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">&lt;b&gt;Backup&lt;/b&gt;</property>
+                            <property name="label" translatable="yes">&lt;b&gt;Backup location&lt;/b&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                         </child>
@@ -901,6 +919,37 @@ stuffing</property>
                                 <property name="n_columns">2</property>
                                 <property name="column_spacing">5</property>
                                 <property name="row_spacing">5</property>
+                                <child>
+                                  <object class="GtkComboBoxEntry" id="comboboxentry1">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="model">FavoriteFTP</property>
+                                    <child>
+                                      <object class="GtkCellRendererPixbuf" id="cellrenderertext1"/>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                                      <attributes>
+                                        <attribute name="text">1</attribute>
+                                      </attributes>
+                                    </child>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">●</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                  </packing>
+                                </child>
                                 <child>
                                   <object class="GtkLabel" id="label21">
                                     <property name="visible">True</property>
@@ -1043,21 +1092,25 @@ stuffing</property>
   </object>
   <object class="GtkAdjustment" id="scratch_hour_adjustment">
     <property name="upper">24</property>
+    <property name="value">12</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
   <object class="GtkAdjustment" id="scratch_minute_adjustment">
     <property name="upper">59</property>
+    <property name="value">15</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
   <object class="GtkAdjustment" id="start_hour_adjustment">
     <property name="upper">24</property>
+    <property name="value">12</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
   <object class="GtkAdjustment" id="start_minute_adjustment">
     <property name="upper">59</property>
+    <property name="value">30</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
