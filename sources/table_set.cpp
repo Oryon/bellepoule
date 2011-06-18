@@ -126,14 +126,12 @@ TableSet::TableSet (TableSupervisor *supervisor,
   {
     GtkWidget *content_area;
 
-    _preview_dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                          GTK_MESSAGE_QUESTION,
-                                                          GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>What do you want to print?</big></b>"));
-
-    gtk_window_set_title (GTK_WINDOW (_preview_dialog),
-                          gettext ("Table printing"));
+    _preview_dialog = gtk_dialog_new_with_buttons (gettext ("Table printing"),
+                                                   NULL,
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_STOCK_PRINT,  GTK_RESPONSE_OK,
+                                                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                   NULL);
 
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_preview_dialog));
 
@@ -1798,12 +1796,44 @@ void TableSet::OnSearchMatch ()
 }
 
 // --------------------------------------------------------------------------------
+void TableSet::OnPrinterSettingClicked (GtkWidget *widget)
+{
+  GtkPrintOperation *operation      = (GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation");
+  GtkPrintSettings  *print_settings = gtk_print_operation_get_print_settings (operation);
+  GtkPageSetup      *page_setup;
+  GtkPageSetup      *new_page_setup;
+
+
+  page_setup = gtk_page_setup_new_from_key_file (_config_file,
+                                                 "page_setup",
+                                                 NULL);
+
+  new_page_setup = gtk_print_run_page_setup_dialog (GTK_WINDOW (gtk_widget_get_toplevel (widget)),
+                                                    page_setup,
+                                                    print_settings);
+
+  if (new_page_setup)
+  {
+    gtk_page_setup_to_key_file (new_page_setup,
+                                _config_file,
+                                "page_setup");
+  }
+
+  if (page_setup)
+  {
+    g_object_unref (page_setup);
+  }
+  page_setup = new_page_setup;
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context)
 {
   gdouble paper_w  = gtk_print_context_get_width (context);
   gdouble paper_h  = gtk_print_context_get_height (context);
 
+  g_print ("OnBeginPrint\n");
   if (_print_full_table)
   {
     gdouble canvas_x;
@@ -1875,13 +1905,14 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-static gboolean preview_expose (GtkWidget                *drawing_area,
-                                GdkEventExpose           *event,
-                                GtkPrintOperationPreview *preview)
+gboolean TableSet::on_preview_expose (GtkWidget      *drawing_area,
+                                      GdkEventExpose *event,
+                                      TableSet       *ts)
 {
-  GtkPrintContext *context = (GtkPrintContext *) g_object_get_data (G_OBJECT (preview), "preview_context");
+  GtkPrintContext *context = (GtkPrintContext *) g_object_get_data (G_OBJECT (ts->_preview), "preview_context");
   cairo_t         *cr      = gdk_cairo_create (drawing_area->window);
 
+  g_print ("preview_expose\n");
   gtk_print_context_set_cairo_context (context,
                                        cr,
                                        96.0,
@@ -1890,10 +1921,16 @@ static gboolean preview_expose (GtkWidget                *drawing_area,
 
   gdk_window_clear (drawing_area->window);
 
-  gtk_print_operation_preview_render_page (preview,
+  gtk_print_operation_preview_render_page (ts->_preview,
                                            0);
 
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::OnPreviewClicked (GtkWidget *widget)
+{
+  Print (NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -1904,15 +1941,19 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
 {
   GtkWidget *drawing_area = _glade->GetWidget ("preview_drawingarea");
 
+  g_print ("OnPreview\n");
+  _preview = preview;
+
   {
     gtk_widget_set_size_request (GTK_WIDGET (drawing_area), 210, 290);
 
     g_signal_connect (drawing_area, "expose_event",
-                      G_CALLBACK (preview_expose),
-                      preview);
+                      G_CALLBACK (on_preview_expose),
+                      this);
   }
 
-  g_object_set_data (G_OBJECT (preview), "preview_context", context);
+  g_object_set_data (G_OBJECT (preview), "preview_context",   context);
+  g_object_set_data (G_OBJECT (preview), "preview_operation", operation);
 
   {
     cairo_t *cr      = goo_canvas_create_cairo_context (GetCanvas ());
@@ -1938,6 +1979,7 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
 void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
                                GtkPrintContext          *context)
 {
+  g_print ("OnPreviewReady\n");
   if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
   {
   }
@@ -1960,6 +2002,7 @@ void TableSet::OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
                                      GtkPrintContext          *context,
                                      GtkPageSetup             *page_setup)
 {
+  g_print ("OnPreviewGotPageSize\n");
 #if 0
   GtkWidget *view_port      = _glade->GetWidget ("preview_viewport");
   GooCanvas *preview_canvas = Canvas::CreatePrinterCanvas (context);
@@ -1986,6 +2029,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
   gdouble paper_h   = gtk_print_context_get_height (context);
   Module *container = dynamic_cast <Module *> (_supervisor);
 
+  g_print ("OnDrawPage\n");
   if (_print_full_table)
   {
     cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
@@ -2571,4 +2615,22 @@ extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *wid
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
   t->OnSearchMatch ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_printer_setting_button_clicked (GtkWidget *widget,
+                                                                   Object    *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnPrinterSettingClicked (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_preview_button_clicked (GtkWidget *widget,
+                                                           Object    *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnPreviewClicked (widget);
 }
