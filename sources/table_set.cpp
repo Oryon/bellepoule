@@ -1980,6 +1980,7 @@ void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
                                GtkPrintContext          *context)
 {
   g_print ("OnPreviewReady\n");
+
   if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
   {
   }

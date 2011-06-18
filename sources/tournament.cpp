@@ -85,8 +85,42 @@ Tournament::Tournament (gchar *filename)
 
     gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
                                   (const gchar *) version);
-
     g_free (version);
+  }
+
+  {
+    GtkWidget   *w         = _glade->GetWidget ("about_dialog");
+    const gchar *authors[] = {"Florence Blanchard",
+                            "Laurent Bonnot",
+                            "Emmanuel Chaix",
+                            "Julien Diaz",
+                            "Olivier Larcher",
+                            "Yannick Le Roux",
+                            "Jean-Pierre Mahé",
+                            "Pierre Moro",
+                            "Killian Poulet",
+                            "Michel Relet",
+                            "Vincent Rémy",
+                            "Tina Schliemann",
+                            "Claude Simonnot",
+                            "Sébastien Vermandel",
+                            NULL};
+
+    gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (w),
+                                  authors);
+  }
+
+  {
+    GtkWidget *w           = _glade->GetWidget ("about_dialog");
+    gchar     *translators = g_strdup_printf ("Julien Diaz      (German)\n"
+                                              "Tina Schliemann  (German)\n"
+                                              "Alexis Pigeon    (Spanish)\n"
+                                              "Mohamed Rebai    (Arabic)\n"
+                                              "Sergev Makhtanov (Russian)");
+
+    gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (w),
+                                             translators);
+    g_free (translators);
   }
 }
 
