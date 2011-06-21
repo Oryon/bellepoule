@@ -172,6 +172,7 @@ class TableSet : public CanvasModule
     gboolean                  _loaded;
     guint                     _first_place;
     GtkPrintOperationPreview *_preview;
+    GtkWidget                *_current_preview_area;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;

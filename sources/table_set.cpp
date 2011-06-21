@@ -1830,10 +1830,9 @@ void TableSet::OnPrinterSettingClicked (GtkWidget *widget)
 void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context)
 {
-  gdouble paper_w  = gtk_print_context_get_width (context);
-  gdouble paper_h  = gtk_print_context_get_height (context);
+  gdouble paper_w = gtk_print_context_get_width  (context);
+  gdouble paper_h = gtk_print_context_get_height (context);
 
-  g_print ("OnBeginPrint\n");
   if (_print_full_table)
   {
     gdouble canvas_x;
@@ -1909,20 +1908,13 @@ gboolean TableSet::on_preview_expose (GtkWidget      *drawing_area,
                                       GdkEventExpose *event,
                                       TableSet       *ts)
 {
-  GtkPrintContext *context = (GtkPrintContext *) g_object_get_data (G_OBJECT (ts->_preview), "preview_context");
-  cairo_t         *cr      = gdk_cairo_create (drawing_area->window);
-
-  g_print ("preview_expose\n");
-  gtk_print_context_set_cairo_context (context,
-                                       cr,
-                                       96.0,
-                                       96.0);
-  cairo_destroy (cr);
+  guint page_number = (guint) g_object_get_data (G_OBJECT (drawing_area), "page_number");
 
   gdk_window_clear (drawing_area->window);
 
+  ts->_current_preview_area = drawing_area;
   gtk_print_operation_preview_render_page (ts->_preview,
-                                           0);
+                                           page_number-1);
 
   return TRUE;
 }
@@ -1930,7 +1922,22 @@ gboolean TableSet::on_preview_expose (GtkWidget      *drawing_area,
 // --------------------------------------------------------------------------------
 void TableSet::OnPreviewClicked (GtkWidget *widget)
 {
-  Print (NULL);
+    GtkWidget *w = _glade->GetWidget ("table_radiobutton");
+
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+    {
+      _print_full_table = TRUE;
+    }
+    else
+    {
+      GtkWidget *w         = _glade->GetWidget ("all_radiobutton");
+      gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+
+      LookForMatchToPrint (NULL,
+                           all_sheet);
+      _print_full_table = FALSE;
+    }
+    Print (NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -1939,24 +1946,13 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
                               GtkPrintContext          *context,
                               GtkWindow                *parent)
 {
-  GtkWidget *drawing_area = _glade->GetWidget ("preview_drawingarea");
-
-  g_print ("OnPreview\n");
   _preview = preview;
-
-  {
-    gtk_widget_set_size_request (GTK_WIDGET (drawing_area), 210, 290);
-
-    g_signal_connect (drawing_area, "expose_event",
-                      G_CALLBACK (on_preview_expose),
-                      this);
-  }
 
   g_object_set_data (G_OBJECT (preview), "preview_context",   context);
   g_object_set_data (G_OBJECT (preview), "preview_operation", operation);
 
   {
-    cairo_t *cr      = goo_canvas_create_cairo_context (GetCanvas ());
+    cairo_t *cr = goo_canvas_create_cairo_context (GetCanvas ());
     gdouble  canvas_dpi;
 
     g_object_get (G_OBJECT (GetCanvas ()),
@@ -1979,7 +1975,49 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
 void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
                                GtkPrintContext          *context)
 {
-  g_print ("OnPreviewReady\n");
+  {
+    gdouble    paper_w        = gtk_print_context_get_width  (context);
+    gdouble    paper_h        = gtk_print_context_get_height (context);
+    guint      spacing        = 5;
+    guint      drawing_w      = 200;
+    guint      drawing_h      = drawing_w*paper_h/paper_w;
+    GtkWidget *preview_layout = _glade->GetWidget ("preview_layout");
+
+    g_object_set (G_OBJECT (preview_layout),
+                  "width",  _print_nb_x_pages*(drawing_w+spacing),
+                  "height", _print_nb_y_pages*(drawing_h+spacing),
+                  NULL);
+
+    for (guint x = 0; x < _print_nb_x_pages; x++)
+    {
+      for (guint y = 0; y < _print_nb_y_pages; y++)
+      {
+        GtkWidget *drawing_area = gtk_drawing_area_new ();
+        GdkColor   bg_color;
+
+        gdk_color_parse ("#FFFFFF", &bg_color);
+        gtk_widget_modify_bg (drawing_area,
+                              GTK_STATE_NORMAL,
+                              &bg_color);
+
+        gtk_widget_set_size_request (GTK_WIDGET (drawing_area),
+                                     drawing_w,
+                                     drawing_h);
+
+        gtk_layout_put (GTK_LAYOUT (preview_layout),
+                        drawing_area,
+                        x*(drawing_w+spacing),
+                        y*(drawing_h+spacing));
+
+        g_object_set_data (G_OBJECT (drawing_area), "page_number", (void *) (y*_print_nb_x_pages + (x+1)));
+        g_signal_connect (drawing_area, "expose_event",
+                          G_CALLBACK (on_preview_expose),
+                          this);
+
+        gtk_widget_show_all (drawing_area);
+      }
+    }
+  }
 
   if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
   {
@@ -2003,22 +2041,25 @@ void TableSet::OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
                                      GtkPrintContext          *context,
                                      GtkPageSetup             *page_setup)
 {
-  g_print ("OnPreviewGotPageSize\n");
-#if 0
-  GtkWidget *view_port      = _glade->GetWidget ("preview_viewport");
-  GooCanvas *preview_canvas = Canvas::CreatePrinterCanvas (context);
-  cairo_t   *cr             = goo_canvas_create_cairo_context (preview_canvas);
+  cairo_t      *cr         = gdk_cairo_create (_current_preview_area->window);
+  GtkPaperSize *paper_size = gtk_page_setup_get_paper_size (page_setup);
+  gdouble       paper_w    = gtk_paper_size_get_width (paper_size, GTK_UNIT_POINTS);
+  gdouble       canvas_dpi;
+  gdouble       drawing_dpi;
 
-  gtk_container_add (GTK_CONTAINER (view_port), GTK_WIDGET (preview_canvas));
-  gtk_widget_show_all (GTK_WIDGET (preview_canvas));
+  g_object_get (G_OBJECT (GetCanvas ()),
+                "resolution-x", &canvas_dpi,
+                NULL);
+
+  drawing_dpi = 200.0 * canvas_dpi / paper_w;
+
+  _print_scale = drawing_dpi/canvas_dpi;
 
   gtk_print_context_set_cairo_context (context,
                                        cr,
-                                       72,
-                                       72);
-
+                                       drawing_dpi,
+                                       drawing_dpi);
   cairo_destroy (cr);
-#endif
 }
 
 // --------------------------------------------------------------------------------
@@ -2030,7 +2071,6 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
   gdouble paper_h   = gtk_print_context_get_height (context);
   Module *container = dynamic_cast <Module *> (_supervisor);
 
-  g_print ("OnDrawPage\n");
   if (_print_full_table)
   {
     cairo_t         *cr       = gtk_print_context_get_cairo_context (context);

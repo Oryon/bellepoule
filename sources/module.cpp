@@ -347,10 +347,10 @@ void Module::Print (const gchar *job_name,
                     G_CALLBACK (on_draw_page), this);
   g_signal_connect (G_OBJECT (operation), "end-print",
                     G_CALLBACK (on_end_print), this);
-  g_signal_connect (G_OBJECT (operation), "preview",
-                    G_CALLBACK (on_preview), this);
   g_signal_connect (G_OBJECT (operation), "ready",
                     G_CALLBACK (on_preview_ready), this);
+  g_signal_connect (G_OBJECT (operation), "preview",
+                    G_CALLBACK (on_preview), this);
   g_signal_connect (G_OBJECT (operation), "got-page-size",
                     G_CALLBACK (on_preview_got_page_size), this);
 

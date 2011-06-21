@@ -91,20 +91,21 @@ Tournament::Tournament (gchar *filename)
   {
     GtkWidget   *w         = _glade->GetWidget ("about_dialog");
     const gchar *authors[] = {"Florence Blanchard",
-                            "Laurent Bonnot",
-                            "Emmanuel Chaix",
-                            "Julien Diaz",
-                            "Olivier Larcher",
-                            "Yannick Le Roux",
-                            "Jean-Pierre Mahé",
-                            "Pierre Moro",
-                            "Killian Poulet",
-                            "Michel Relet",
-                            "Vincent Rémy",
-                            "Tina Schliemann",
-                            "Claude Simonnot",
-                            "Sébastien Vermandel",
-                            NULL};
+                              "Laurent Bonnot",
+                              "Tony (ajs New Mexico)",
+                              "Emmanuel Chaix",
+                              "Julien Diaz",
+                              "Olivier Larcher",
+                              "Yannick Le Roux",
+                              "Jean-Pierre Mahé",
+                              "Pierre Moro",
+                              "Killian Poulet",
+                              "Michel Relet",
+                              "Vincent Rémy",
+                              "Tina Schliemann",
+                              "Claude Simonnot",
+                              "Sébastien Vermandel",
+                              NULL};
 
     gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (w),
                                   authors);
@@ -112,11 +113,13 @@ Tournament::Tournament (gchar *filename)
 
   {
     GtkWidget *w           = _glade->GetWidget ("about_dialog");
-    gchar     *translators = g_strdup_printf ("Julien Diaz      (German)\n"
-                                              "Tina Schliemann  (German)\n"
-                                              "Alexis Pigeon    (Spanish)\n"
-                                              "Mohamed Rebai    (Arabic)\n"
-                                              "Sergev Makhtanov (Russian)");
+    gchar     *translators = g_strdup_printf ("Julien Diaz       (German)\n"
+                                              "Tina Schliemann   (German)\n"
+                                              "Aureliano Martini (Italian)\n"
+                                              "Marijn Somers     (Dutch)\n"
+                                              "Alexis Pigeon     (Spanish)\n"
+                                              "Mohamed Rebai     (Arabic)\n"
+                                              "Sergev Makhtanov  (Russian)");
 
     gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (w),
                                              translators);

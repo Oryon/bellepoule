@@ -118,11 +118,11 @@
                 <property name="hscrollbar_policy">automatic</property>
                 <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkDrawingArea" id="preview_drawingarea">
-                    <property name="width_request">100</property>
-                    <property name="height_request">80</property>
+                  <object class="GtkLayout" id="preview_layout">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="width">800</property>
+                    <property name="height">1200</property>
                   </object>
                 </child>
               </object>
