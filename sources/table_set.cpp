@@ -2021,6 +2021,7 @@ void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
 
   if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
   {
+    Print ("Table");
   }
 
 #if 0
@@ -2050,6 +2051,8 @@ void TableSet::OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
   g_object_get (G_OBJECT (GetCanvas ()),
                 "resolution-x", &canvas_dpi,
                 NULL);
+
+  paper_w = paper_w * canvas_dpi / 72.0;
 
   drawing_dpi = 200.0 * canvas_dpi / paper_w;
 
