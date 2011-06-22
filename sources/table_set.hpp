@@ -160,6 +160,7 @@ class TableSet : public CanvasModule
     GtkWidget                *_control_container;
     GtkWidget                *_from_widget;
     gboolean                  _print_full_table;
+    gdouble                   _printer_dpi_adaptation;
     gdouble                   _print_scale;
     guint                     _print_nb_x_pages;
     guint                     _print_nb_y_pages;
@@ -246,6 +247,8 @@ class TableSet : public CanvasModule
 
     void LookForMatchToPrint (Table    *table_to_print,
                               gboolean  all_sheet);
+
+    void ConfigurePreviewLayout (GtkPrintContext *context);
 
     static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
                                                    GtkCellRenderer *cell,

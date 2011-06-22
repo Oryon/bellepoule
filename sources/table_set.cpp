@@ -78,6 +78,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _is_over           = FALSE;
   _first_place       = first_place;
   _loaded            = FALSE;
+  _print_scale       = 2.0;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -1839,6 +1840,7 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
     gdouble canvas_y;
     gdouble canvas_w;
     gdouble canvas_h;
+    gdouble global_scale = _print_scale;
     gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
 
     {
@@ -1861,16 +1863,18 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                     NULL);
       printer_dpi = gtk_print_context_get_dpi_x (context);
 
-      _print_scale = printer_dpi/canvas_dpi;
+      _printer_dpi_adaptation = printer_dpi/canvas_dpi;
     }
+
+    global_scale *= _printer_dpi_adaptation;
 
     _print_nb_x_pages = 1;
     _print_nb_y_pages = 1;
-    if (   (canvas_w * _print_scale > paper_w)
-           || (canvas_h * _print_scale > paper_h))
+    if (   (canvas_w * global_scale > paper_w)
+           || (canvas_h * global_scale > paper_h))
     {
-      _print_nb_x_pages += (guint) (canvas_w * _print_scale / paper_w);
-      _print_nb_y_pages += (guint) ((canvas_h * _print_scale + header_h) / paper_h);
+      _print_nb_x_pages += (guint) (canvas_w * global_scale / paper_w);
+      _print_nb_y_pages += (guint) ((canvas_h * global_scale + header_h) / paper_h);
     }
 
     gtk_print_operation_set_n_pages (operation,
@@ -1948,7 +1952,6 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
 {
   _preview = preview;
 
-  g_object_set_data (G_OBJECT (preview), "preview_context",   context);
   g_object_set_data (G_OBJECT (preview), "preview_operation", operation);
 
   {
@@ -1972,66 +1975,72 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
 }
 
 // --------------------------------------------------------------------------------
+void TableSet::ConfigurePreviewLayout (GtkPrintContext *context)
+{
+  GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+  GtkWidget *preview_layout  = gtk_layout_new (NULL, NULL);
+  gdouble    paper_w         = gtk_print_context_get_width  (context);
+  gdouble    paper_h         = gtk_print_context_get_height (context);
+  guint      spacing         = 5;
+  guint      drawing_w       = 200;
+  guint      drawing_h       = drawing_w*paper_h/paper_w;
+
+  gtk_container_add (GTK_CONTAINER (scrolled_window),
+                     preview_layout);
+
+  g_object_set (G_OBJECT (preview_layout),
+                "width",  _print_nb_x_pages*(drawing_w+spacing),
+                "height", _print_nb_y_pages*(drawing_h+spacing),
+                NULL);
+
+  for (guint x = 0; x < _print_nb_x_pages; x++)
+  {
+    for (guint y = 0; y < _print_nb_y_pages; y++)
+    {
+      GtkWidget *drawing_area = gtk_drawing_area_new ();
+      GdkColor   bg_color;
+
+      gdk_color_parse ("#FFFFFF", &bg_color);
+      gtk_widget_modify_bg (drawing_area,
+                            GTK_STATE_NORMAL,
+                            &bg_color);
+
+      gtk_widget_set_size_request (GTK_WIDGET (drawing_area),
+                                   drawing_w,
+                                   drawing_h);
+
+      gtk_layout_put (GTK_LAYOUT (preview_layout),
+                      drawing_area,
+                      x*(drawing_w+spacing),
+                      y*(drawing_h+spacing));
+
+      g_object_set_data (G_OBJECT (drawing_area), "page_number", (void *) (y*_print_nb_x_pages + (x+1)));
+      g_signal_connect (drawing_area, "expose_event",
+                        G_CALLBACK (on_preview_expose),
+                        this);
+    }
+  }
+
+  gtk_widget_show_all (preview_layout);
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
                                GtkPrintContext          *context)
 {
-  {
-    gdouble    paper_w        = gtk_print_context_get_width  (context);
-    gdouble    paper_h        = gtk_print_context_get_height (context);
-    guint      spacing        = 5;
-    guint      drawing_w      = 200;
-    guint      drawing_h      = drawing_w*paper_h/paper_w;
-    GtkWidget *preview_layout = _glade->GetWidget ("preview_layout");
-
-    g_object_set (G_OBJECT (preview_layout),
-                  "width",  _print_nb_x_pages*(drawing_w+spacing),
-                  "height", _print_nb_y_pages*(drawing_h+spacing),
-                  NULL);
-
-    for (guint x = 0; x < _print_nb_x_pages; x++)
-    {
-      for (guint y = 0; y < _print_nb_y_pages; y++)
-      {
-        GtkWidget *drawing_area = gtk_drawing_area_new ();
-        GdkColor   bg_color;
-
-        gdk_color_parse ("#FFFFFF", &bg_color);
-        gtk_widget_modify_bg (drawing_area,
-                              GTK_STATE_NORMAL,
-                              &bg_color);
-
-        gtk_widget_set_size_request (GTK_WIDGET (drawing_area),
-                                     drawing_w,
-                                     drawing_h);
-
-        gtk_layout_put (GTK_LAYOUT (preview_layout),
-                        drawing_area,
-                        x*(drawing_w+spacing),
-                        y*(drawing_h+spacing));
-
-        g_object_set_data (G_OBJECT (drawing_area), "page_number", (void *) (y*_print_nb_x_pages + (x+1)));
-        g_signal_connect (drawing_area, "expose_event",
-                          G_CALLBACK (on_preview_expose),
-                          this);
-
-        gtk_widget_show_all (drawing_area);
-      }
-    }
-  }
+  ConfigurePreviewLayout (context);
 
   if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
   {
     Print ("Table");
   }
 
-#if 0
   {
-    GtkWidget *view_port  = _glade->GetWidget ("preview_viewport");
-    GtkWidget *canvas     = gtk_bin_get_child (GTK_BIN (view_port));
+    GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+    GtkWidget *preview_layout  = gtk_bin_get_child (GTK_BIN (scrolled_window));
 
-    gtk_widget_destroy (canvas);
+    gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
   }
-#endif
 
   gtk_print_operation_preview_end_preview (preview);
   gtk_widget_hide (_preview_dialog);
@@ -2056,7 +2065,7 @@ void TableSet::OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
 
   drawing_dpi = 200.0 * canvas_dpi / paper_w;
 
-  _print_scale = drawing_dpi/canvas_dpi;
+  _printer_dpi_adaptation = drawing_dpi/canvas_dpi;
 
   gtk_print_context_set_cairo_context (context,
                                        cr,
@@ -2076,10 +2085,11 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
 
   if (_print_full_table)
   {
-    cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
-    guint            x_page   = page_nr % _print_nb_x_pages;
-    guint            y_page   = page_nr / _print_nb_x_pages;
-    gdouble          header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+    cairo_t         *cr           = gtk_print_context_get_cairo_context (context);
+    guint            x_page       = page_nr % _print_nb_x_pages;
+    guint            y_page       = page_nr / _print_nb_x_pages;
+    gdouble          header_h     = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+    gdouble          global_scale = _printer_dpi_adaptation * _print_scale;
     GooCanvasBounds  bounds;
 
     if (y_page == 0)
@@ -2092,30 +2102,30 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
     cairo_save (cr);
 
     cairo_scale (cr,
-                 _print_scale,
-                 _print_scale);
+                 global_scale,
+                 global_scale);
 
-    bounds.x1 = paper_w*(x_page)   / _print_scale;
-    bounds.y1 = paper_h*(y_page)   / _print_scale;
-    bounds.x2 = paper_w*(x_page+1) / _print_scale;
-    bounds.y2 = paper_h*(y_page+1) / _print_scale;
+    bounds.x1 = paper_w*(x_page)   / global_scale;
+    bounds.y1 = paper_h*(y_page)   / global_scale;
+    bounds.x2 = paper_w*(x_page+1) / global_scale;
+    bounds.y2 = paper_h*(y_page+1) / global_scale;
 
     if (y_page == 0)
     {
       cairo_translate (cr,
                        -bounds.x1,
-                       header_h/_print_scale);
+                       header_h/global_scale);
 
-      bounds.y2 -= header_h/_print_scale;
+      bounds.y2 -= header_h/global_scale;
     }
     else
     {
       cairo_translate (cr,
                        -bounds.x1,
-                       (header_h - paper_h*(y_page)) / _print_scale);
+                       (header_h - paper_h*(y_page)) / global_scale);
 
-      bounds.y1 -= header_h/_print_scale;
-      bounds.y2 -= header_h/_print_scale;
+      bounds.y1 -= header_h/global_scale;
+      bounds.y2 -= header_h/global_scale;
     }
 
     goo_canvas_render (GetCanvas (),
