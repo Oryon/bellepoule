@@ -78,7 +78,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _is_over           = FALSE;
   _first_place       = first_place;
   _loaded            = FALSE;
-  _print_scale       = 2.0;
+  _print_scale       = 1.0;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -1827,6 +1827,9 @@ void TableSet::OnPrinterSettingClicked (GtkWidget *widget)
   page_setup = new_page_setup;
 }
 
+GtkPrintOperation *__operation;
+GtkPrintContext   *__context;
+
 // --------------------------------------------------------------------------------
 void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context)
@@ -1834,6 +1837,8 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
   gdouble paper_w = gtk_print_context_get_width  (context);
   gdouble paper_h = gtk_print_context_get_height (context);
 
+  __operation = operation;
+  __context   = context;
   if (_print_full_table)
   {
     gdouble canvas_x;
@@ -1924,24 +1929,25 @@ gboolean TableSet::on_preview_expose (GtkWidget      *drawing_area,
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::OnPreviewClicked (GtkWidget *widget)
+void TableSet::OnPreviewClicked ()
 {
-    GtkWidget *w = _glade->GetWidget ("table_radiobutton");
+  GtkWidget *w = _glade->GetWidget ("table_radiobutton");
 
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
-    {
-      _print_full_table = TRUE;
-    }
-    else
-    {
-      GtkWidget *w         = _glade->GetWidget ("all_radiobutton");
-      gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+  {
+    _print_full_table = TRUE;
+  }
+  else
+  {
+    GtkWidget *w         = _glade->GetWidget ("all_radiobutton");
+    gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
 
-      LookForMatchToPrint (NULL,
-                           all_sheet);
-      _print_full_table = FALSE;
-    }
-    Print (NULL);
+    LookForMatchToPrint (NULL,
+                         all_sheet);
+    _print_full_table = FALSE;
+  }
+
+  Print (NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -1952,7 +1958,8 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
 {
   _preview = preview;
 
-  g_object_set_data (G_OBJECT (preview), "preview_operation", operation);
+  g_object_set_data (G_OBJECT (_preview), "preview_operation", operation);
+  g_object_set_data (G_OBJECT (_preview), "preview_context",   context);
 
   {
     cairo_t *cr = goo_canvas_create_cairo_context (GetCanvas ());
@@ -1969,8 +1976,6 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
     cairo_destroy (cr);
   }
 
-  gtk_widget_hide (_print_dialog);
-
   return TRUE;
 }
 
@@ -1983,8 +1988,19 @@ void TableSet::ConfigurePreviewLayout (GtkPrintContext *context)
   gdouble    paper_h         = gtk_print_context_get_height (context);
   guint      spacing         = 5;
   guint      drawing_w       = 200;
-  guint      drawing_h       = drawing_w*paper_h/paper_w;
+  guint      drawing_h       = (guint) (drawing_w*paper_h/paper_w);
 
+  {
+    GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+
+    preview_layout = gtk_bin_get_child (GTK_BIN (scrolled_window));
+    if (preview_layout)
+    {
+      gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
+    }
+  }
+
+  preview_layout = gtk_layout_new (NULL, NULL);
   gtk_container_add (GTK_CONTAINER (scrolled_window),
                      preview_layout);
 
@@ -2032,6 +2048,7 @@ void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
 
   if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
   {
+    gtk_widget_hide (_print_dialog);
     Print ("Table");
   }
 
@@ -2632,6 +2649,17 @@ void TableSet::on_status_changed (GtkComboBox *combo_box,
 }
 
 // --------------------------------------------------------------------------------
+void TableSet::OnPrinScaleChanged (gdouble value)
+{
+  _print_scale = value / 100.0;
+
+  OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
+                (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+
+  ConfigurePreviewLayout ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+}
+
+// --------------------------------------------------------------------------------
 gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
                                               GdkEventKey *event,
                                               gpointer     user_data)
@@ -2686,5 +2714,14 @@ extern "C" G_MODULE_EXPORT void on_preview_button_clicked (GtkWidget *widget,
 {
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
-  t->OnPreviewClicked (widget);
+  t->OnPreviewClicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_print_hscale_value_changed (GtkRange *range,
+                                                               Object   *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnPrinScaleChanged (gtk_range_get_value (range));
 }

@@ -68,7 +68,7 @@ class TableSet : public CanvasModule
                      GtkPrintContext   *context,
                      gint               page_nr);
 
-    void OnPreviewClicked (GtkWidget *widget);
+    void OnPreviewClicked ();
 
     gboolean OnPreview (GtkPrintOperation        *operation,
                         GtkPrintOperationPreview *preview,
@@ -81,6 +81,8 @@ class TableSet : public CanvasModule
 
     void OnPreviewReady (GtkPrintOperationPreview *preview,
                          GtkPrintContext          *context);
+
+    void OnPrinScaleChanged (gdouble value);
 
     void Wipe ();
 
