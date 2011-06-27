@@ -35,8 +35,9 @@ class Module : public virtual Object
                GtkToolbar *toolbar = NULL);
     void UnPlug ();
 
-    virtual void Print (const gchar *job_name,
-                        const gchar *filename = NULL);
+    virtual void Print (const gchar  *job_name,
+                        const gchar  *filename = NULL,
+                        GtkPageSetup *page_setup = NULL);
 
     void SelectAttributes ();
 
@@ -63,8 +64,8 @@ class Module : public virtual Object
                             gint               page_nr);
 
   protected:
-    Filter  *_filter;
-    Glade   *_glade;
+    Filter *_filter;
+    Glade  *_glade;
 
     static const gdouble PRINT_HEADER_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;

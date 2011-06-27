@@ -82,7 +82,7 @@ class Table : public Object
     ~Table ();
 
     static gint CompareMatchNumber (Match *a,
-    		                        Match *b);
+                                    Match *b);
 
     void LoadMatch (xmlNode *xml_node,
                     Match   *match);

@@ -32,14 +32,14 @@ Module::Module (const gchar *glade_file,
                 const gchar *root)
 //: Object ("Module")
 {
-  _plugged_list = NULL;
-  _owner        = NULL;
-  _data_owner   = this;
-  _root         = NULL;
-  _glade        = NULL;
-  _toolbar      = NULL;
-  _filter       = NULL;
-  _rand_seed    = 0;
+  _plugged_list   = NULL;
+  _owner          = NULL;
+  _data_owner     = this;
+  _root           = NULL;
+  _glade          = NULL;
+  _toolbar        = NULL;
+  _filter         = NULL;
+  _rand_seed      = 0;
 
   _sensitivity_trigger = new SensitivityTrigger ();
 
@@ -308,11 +308,11 @@ GString *Module::GetPlayerImage (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Module::Print (const gchar *job_name,
-                    const gchar *filename)
+void Module::Print (const gchar  *job_name,
+                    const gchar  *filename,
+                    GtkPageSetup *page_setup)
 {
   GtkPrintOperationResult  res;
-  GtkPrintSettings        *settings;
   GError                  *error     = NULL;
   GtkPrintOperation       *operation = gtk_print_operation_new ();
 
@@ -330,14 +330,22 @@ void Module::Print (const gchar *job_name,
   }
 
   {
-    settings = gtk_print_settings_new_from_key_file (_config_file,
-                                                     "page_setup",
-                                                     NULL);
-    if (settings)
+    GtkPrintSettings *print_settings = gtk_print_settings_new_from_key_file (_config_file,
+                                                                             "print_settings",
+                                                                             NULL);
+
+    if (print_settings)
     {
+      if (page_setup)
+      {
+        gtk_print_operation_set_default_page_setup (operation,
+                                                    page_setup);
+        gtk_print_settings_set_orientation  (print_settings,
+                                             gtk_page_setup_get_orientation (page_setup));
+      }
       gtk_print_operation_set_print_settings (operation,
-                                              settings);
-      g_object_unref (settings);
+                                              print_settings);
+      g_object_unref (print_settings);
     }
   }
 
@@ -380,14 +388,16 @@ void Module::Print (const gchar *job_name,
 
   if (res == GTK_PRINT_OPERATION_RESULT_APPLY)
   {
-    settings = gtk_print_operation_get_print_settings (operation);
-    gtk_print_settings_to_key_file (settings,
-                                    _config_file,
-                                    "print_settings");
+    GtkPrintSettings *print_settings = gtk_print_operation_get_print_settings (operation);
+
+    if (print_settings)
+    {
+      gtk_print_settings_to_key_file (print_settings,
+                                      _config_file,
+                                      "print_settings");
+      g_object_unref (print_settings);
+    }
   }
-
-
-  g_object_unref (operation);
 
   if (error)
   {

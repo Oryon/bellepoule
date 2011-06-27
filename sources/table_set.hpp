@@ -55,8 +55,6 @@ class TableSet : public CanvasModule
 
     void OnSearchMatch ();
 
-    void OnPrinterSettingClicked (GtkWidget *widget);
-
     void OnPrint ();
 
     void OnZoom (gdouble value);
