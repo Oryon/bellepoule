@@ -1916,9 +1916,7 @@ void TableSet::OnPreviewClicked ()
 
   {
     GtkWidget    *orientation_w = _glade->GetWidget ("portrait_radiobutton");
-    GtkPageSetup *page_setup = gtk_page_setup_new_from_key_file (_config_file,
-                                                                 "page_setup",
-                                                                 NULL);
+    GtkPageSetup *page_setup    = gtk_page_setup_new ();
 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (orientation_w)))
     {
@@ -2462,9 +2460,7 @@ void TableSet::OnPrint ()
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
       GtkWidget    *orientation_w = _glade->GetWidget ("portrait_radiobutton");
-      GtkPageSetup *page_setup = gtk_page_setup_new_from_key_file (_config_file,
-                                                                   "page_setup",
-                                                                   NULL);
+      GtkPageSetup *page_setup    = gtk_page_setup_new ();
 
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (orientation_w)))
       {

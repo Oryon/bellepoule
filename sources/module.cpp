@@ -334,19 +334,21 @@ void Module::Print (const gchar  *job_name,
                                                                              "print_settings",
                                                                              NULL);
 
-    if (print_settings)
+    if (print_settings == NULL)
     {
-      if (page_setup)
-      {
-        gtk_print_operation_set_default_page_setup (operation,
-                                                    page_setup);
-        gtk_print_settings_set_orientation  (print_settings,
-                                             gtk_page_setup_get_orientation (page_setup));
-      }
-      gtk_print_operation_set_print_settings (operation,
-                                              print_settings);
-      g_object_unref (print_settings);
+      print_settings = gtk_print_settings_new ();
     }
+
+    if (page_setup)
+    {
+      gtk_print_operation_set_default_page_setup (operation,
+                                                  page_setup);
+      gtk_print_settings_set_orientation  (print_settings,
+                                           gtk_page_setup_get_orientation (page_setup));
+    }
+    gtk_print_operation_set_print_settings (operation,
+                                            print_settings);
+    g_object_unref (print_settings);
   }
 
   g_signal_connect (G_OBJECT (operation), "begin-print",
