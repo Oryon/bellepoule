@@ -10,9 +10,6 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkTreeModelFilter" id="match_treemodelfilter">
-    <property name="child_model">match_treestore</property>
-  </object>
   <object class="GtkTreeStore" id="match_treestore">
     <columns>
       <!-- column-name match_name -->
@@ -24,6 +21,9 @@
       <!-- column-name visibility -->
       <column type="gboolean"/>
     </columns>
+  </object>
+  <object class="GtkTreeModelFilter" id="match_treemodelfilter">
+    <property name="child_model">match_treestore</property>
   </object>
   <object class="GtkDialog" id="print_preview_dialog">
     <property name="can_focus">False</property>
