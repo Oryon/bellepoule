@@ -26,6 +26,8 @@
 #include "score_collector.hpp"
 #include "player.hpp"
 
+class PoolMatchOrder;
+
 class Pool : public CanvasModule
 {
   public:
@@ -39,8 +41,9 @@ class Pool : public CanvasModule
     typedef void (*StatusCbk) (Pool *pool,
                                void *data);
 
-    Pool (Data  *max_score,
-          guint  number);
+    Pool (Data           *max_score,
+          guint           number,
+          PoolMatchOrder *match_order);
 
     void  AddPlayer     (Player *player, Object *rank_owner);
     void  CreateMatches (Object *rank_owner);
@@ -107,6 +110,7 @@ class Pool : public CanvasModule
     gboolean        _locked;
     GSList         *_display_data;
     guint           _nb_drop;
+    PoolMatchOrder *_match_order;
 
     void           *_status_cbk_data;
     StatusCbk       _status_cbk;

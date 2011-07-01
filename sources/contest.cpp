@@ -39,14 +39,16 @@ const gchar *Contest::weapon_image[_nb_weapon] =
 {
   N_ ("Sabre"),
   N_ ("Epée"),
-  N_ ("Foil")
+  N_ ("Foil"),
+  N_ ("Kendo")
 };
 
 const gchar *Contest::weapon_xml_image[_nb_weapon] =
 {
   "S",
   "E",
-  "F"
+  "F",
+  "K"
 };
 
 const gchar *Contest::gender_image[_nb_gender] =
@@ -1424,6 +1426,12 @@ gchar *Contest::GetOrganizer ()
 gchar *Contest::GetWeapon ()
 {
   return gettext (weapon_image[_weapon]);
+}
+
+// --------------------------------------------------------------------------------
+gchar Contest::GetWeaponCode ()
+{
+  return *weapon_xml_image[_weapon];
 }
 
 // --------------------------------------------------------------------------------

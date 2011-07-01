@@ -22,6 +22,7 @@
 #include <libxml/xpath.h>
 
 #include "swapper.hpp"
+#include "contest.hpp"
 #include "pool_match_order.hpp"
 
 #include "pool_allocator.hpp"
@@ -336,10 +337,13 @@ void PoolAllocator::Load (xmlNode *xml_node)
         }
 
         {
-          guint number = g_slist_length (_pools_list);
+          guint           number      = g_slist_length (_pools_list);
+          PoolMatchOrder *match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
 
           current_pool = new Pool (_max_score,
-                                   number+1);
+                                   number+1,
+                                   match_order);
+          match_order->Release ();
 
           _pools_list = g_slist_append (_pools_list,
                                         current_pool);
@@ -483,17 +487,22 @@ void PoolAllocator::RegisterConfig (Configuration *config)
 // --------------------------------------------------------------------------------
 void PoolAllocator::FillCombobox ()
 {
-  guint          nb_players    = g_slist_length (_attendees->GetShortList ());
-  Configuration *config        = NULL;
-  guint          max_pool_size;
+  guint           nb_players    = g_slist_length (_attendees->GetShortList ());
+  Configuration  *config        = NULL;
+  guint           max_pool_size;
 
-  if (nb_players%PoolMatchOrder::MAX_POOL_SIZE == 0)
   {
-    max_pool_size = PoolMatchOrder::MAX_POOL_SIZE;
-  }
-  else
-  {
-    max_pool_size = PoolMatchOrder::MAX_POOL_SIZE-1;
+    PoolMatchOrder *pool_match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
+
+    if (nb_players % pool_match_order->GetMaxPoolSize () == 0)
+    {
+      max_pool_size = pool_match_order->GetMaxPoolSize ();
+    }
+    else
+    {
+      max_pool_size = pool_match_order->GetMaxPoolSize () -1;
+    }
+    pool_match_order->Release ();
   }
 
   _best_config = NULL;
@@ -555,15 +564,17 @@ void PoolAllocator::CreatePools ()
 {
   if (_selected_config)
   {
-    Pool   **pool_table;
-    GSList  *shortlist = _attendees->GetShortList ();
-    guint    nb_pool   = _selected_config->nb_pool;
+    Pool          **pool_table;
+    GSList         *shortlist   = _attendees->GetShortList ();
+    guint           nb_pool     = _selected_config->nb_pool;
+    PoolMatchOrder *match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
 
     pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
     for (guint i = 0; i < nb_pool; i++)
     {
       pool_table[i] = new Pool (_max_score,
-                                i+1);
+                                i+1,
+                                match_order);
       _pools_list = g_slist_append (_pools_list,
                                     pool_table[i]);
     }
@@ -608,6 +619,8 @@ void PoolAllocator::CreatePools ()
 
       swapper->Release ();
     }
+
+    match_order->Release ();
   }
 }
 

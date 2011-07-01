@@ -18,11 +18,14 @@
 #define pool_match_order_hpp
 
 #include <gtk/gtk.h>
+#include "object.hpp"
 
-class PoolMatchOrder
+class PoolMatchOrder : public Object
 {
   public:
-    static const guint MAX_POOL_SIZE = 17;
+    PoolMatchOrder (gchar weapon_code);
+
+    guint GetMaxPoolSize ();
 
     struct PlayerPair
     {
@@ -30,7 +33,12 @@ class PoolMatchOrder
       guint _b;
     };
 
-    static PlayerPair *GetPlayerPair (guint pool_size);
+    PlayerPair *GetPlayerPair (guint pool_size);
+
+  private:
+    PlayerPair **_all_pool_pairs;
+
+    ~PoolMatchOrder ();
 };
 
 #endif

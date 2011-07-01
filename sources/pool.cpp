@@ -26,8 +26,9 @@
 #include "pool.hpp"
 
 // --------------------------------------------------------------------------------
-Pool::Pool (Data  *max_score,
-            guint  number)
+Pool::Pool (Data           *max_score,
+            guint           number,
+            PoolMatchOrder *match_order)
   : CanvasModule ("pool.glade",
                   "canvas_scrolled_window")
 {
@@ -43,6 +44,9 @@ Pool::Pool (Data  *max_score,
   _max_score          = max_score;
   _display_data       = NULL;
   _nb_drop            = 0;
+
+  _match_order = match_order;
+  _match_order->Retain ();
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -66,6 +70,8 @@ Pool::~Pool ()
   DeleteMatches ();
 
   Object::TryToRelease (_score_collector);
+
+  _match_order->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -227,7 +233,7 @@ void Pool::CreateMatches (Object *rank_owner)
     {
       guint                       nb_players = GetNbPlayers ();
       guint                       nb_matches = (nb_players*nb_players - nb_players) / 2;
-      PoolMatchOrder::PlayerPair *pair       = PoolMatchOrder::GetPlayerPair (nb_players);
+      PoolMatchOrder::PlayerPair *pair       = _match_order->GetPlayerPair (nb_players);
 
       if (pair)
       {
@@ -809,7 +815,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
 
     // Matches
-    if (print_for_referees)
+    //if (print_for_referees)
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;
@@ -1524,7 +1530,7 @@ Match *Pool::GetMatch (Player *A,
 // --------------------------------------------------------------------------------
 Match *Pool::GetMatch (guint i)
 {
-  PoolMatchOrder::PlayerPair *pair = PoolMatchOrder::GetPlayerPair (GetNbPlayers ());
+  PoolMatchOrder::PlayerPair *pair = _match_order->GetPlayerPair (GetNbPlayers ());
 
   if (pair)
   {
