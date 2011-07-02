@@ -16,12 +16,19 @@
 
 #include "pool_match_order.hpp"
 
-static PoolMatchOrder::PlayerPair pool_3_pairs[3] =
+static const guint MAX_POOL_SIZE = 17;
+
+static PoolMatchOrder::PlayerPair pool_3_kendo_pairs[3] =
+{ {1, 2},
+  {1, 3},
+  {2, 3}};
+
+static PoolMatchOrder::PlayerPair pool_3_fencing_pairs[3] =
 { {2, 3},
   {1, 3},
   {1, 2}};
 
-static PoolMatchOrder::PlayerPair pool_4_pairs[6] =
+static PoolMatchOrder::PlayerPair pool_4_fencing_pairs[6] =
 { {1, 4},
   {2, 3},
   {1, 3},
@@ -29,7 +36,7 @@ static PoolMatchOrder::PlayerPair pool_4_pairs[6] =
   {3, 4},
   {1, 2}};
 
-static PoolMatchOrder::PlayerPair pool_5_pairs[10] =
+static PoolMatchOrder::PlayerPair pool_5_fencing_pairs[10] =
 { {1, 2},
   {3, 4},
   {5, 1},
@@ -41,7 +48,7 @@ static PoolMatchOrder::PlayerPair pool_5_pairs[10] =
   {3, 5},
   {4, 2}};
 
-static PoolMatchOrder::PlayerPair pool_6_pairs[15] =
+static PoolMatchOrder::PlayerPair pool_6_fencing_pairs[15] =
 { {1, 2},
   {4, 5},
   {2, 3},
@@ -58,7 +65,7 @@ static PoolMatchOrder::PlayerPair pool_6_pairs[15] =
   {3, 4},
   {6, 2}};
 
-static PoolMatchOrder::PlayerPair pool_7_pairs[21] =
+static PoolMatchOrder::PlayerPair pool_7_fencing_pairs[21] =
 { {1, 4},
   {2, 5},
   {3, 6},
@@ -81,7 +88,7 @@ static PoolMatchOrder::PlayerPair pool_7_pairs[21] =
   {1, 2},
   {4, 7}};
 
-static PoolMatchOrder::PlayerPair pool_8_pairs[28] =
+static PoolMatchOrder::PlayerPair pool_8_fencing_pairs[28] =
 { {2, 3},
   {1, 5},
   {7, 4},
@@ -111,7 +118,7 @@ static PoolMatchOrder::PlayerPair pool_8_pairs[28] =
   {7, 2},
   {1, 3}};
 
-static PoolMatchOrder::PlayerPair pool_9_pairs[36] =
+static PoolMatchOrder::PlayerPair pool_9_fencing_pairs[36] =
 { {1, 9},
   {2, 8},
   {3, 7},
@@ -149,7 +156,7 @@ static PoolMatchOrder::PlayerPair pool_9_pairs[36] =
   {5, 7},
   {9, 8}};
 
-static PoolMatchOrder::PlayerPair pool_10_pairs[45] =
+static PoolMatchOrder::PlayerPair pool_10_fencing_pairs[45] =
 { {1, 4},
   {6, 9},
   {2, 5},
@@ -196,7 +203,7 @@ static PoolMatchOrder::PlayerPair pool_10_pairs[45] =
   {5, 7},
   {1, 10}};
 
-static PoolMatchOrder::PlayerPair pool_11_pairs[55] =
+static PoolMatchOrder::PlayerPair pool_11_fencing_pairs[55] =
 { {1, 2},
   {7, 8},
   {4, 5},
@@ -253,7 +260,7 @@ static PoolMatchOrder::PlayerPair pool_11_pairs[55] =
   {10, 5},
   {6, 11}};
 
-static PoolMatchOrder::PlayerPair pool_12_pairs[66] =
+static PoolMatchOrder::PlayerPair pool_12_fencing_pairs[66] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -321,7 +328,7 @@ static PoolMatchOrder::PlayerPair pool_12_pairs[66] =
   {4, 12},
   {11, 2}};
 
-static PoolMatchOrder::PlayerPair pool_13_pairs[78] =
+static PoolMatchOrder::PlayerPair pool_13_fencing_pairs[78] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -401,7 +408,7 @@ static PoolMatchOrder::PlayerPair pool_13_pairs[78] =
   {7, 10},
   {12, 13}};
 
-static PoolMatchOrder::PlayerPair pool_14_pairs[91] =
+static PoolMatchOrder::PlayerPair pool_14_fencing_pairs[91] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -494,7 +501,7 @@ static PoolMatchOrder::PlayerPair pool_14_pairs[91] =
   {9, 14},
   {8, 10}};
 
-static PoolMatchOrder::PlayerPair pool_15_pairs[105] =
+static PoolMatchOrder::PlayerPair pool_15_fencing_pairs[105] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -601,7 +608,7 @@ static PoolMatchOrder::PlayerPair pool_15_pairs[105] =
   {14, 10},
   {15, 11}};
 
-static PoolMatchOrder::PlayerPair pool_16_pairs[120] =
+static PoolMatchOrder::PlayerPair pool_16_fencing_pairs[120] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -723,7 +730,7 @@ static PoolMatchOrder::PlayerPair pool_16_pairs[120] =
   {7, 10},
   {8, 9}};
 
-static PoolMatchOrder::PlayerPair pool_17_pairs[136] =
+static PoolMatchOrder::PlayerPair pool_17_fencing_pairs[136] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -862,7 +869,7 @@ static PoolMatchOrder::PlayerPair pool_17_pairs[136] =
   {11, 8}};
 
 #if 0
-static PoolMatchOrder::PlayerPair pool_18_pairs[153] =
+static PoolMatchOrder::PlayerPair pool_18_fencing_pairs[153] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -1017,7 +1024,7 @@ static PoolMatchOrder::PlayerPair pool_18_pairs[153] =
   {13, 17},
   {18, 15}};
 
-static PoolMatchOrder::PlayerPair pool_19_pairs[171] =
+static PoolMatchOrder::PlayerPair pool_19_fencing_pairs[171] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -1190,7 +1197,7 @@ static PoolMatchOrder::PlayerPair pool_19_pairs[171] =
   {17, 19},
   {11, 18}};
 
-static PoolMatchOrder::PlayerPair pool_20_pairs[190] =
+static PoolMatchOrder::PlayerPair pool_20_fencing_pairs[190] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -1383,37 +1390,86 @@ static PoolMatchOrder::PlayerPair pool_20_pairs[190] =
   {17, 8}};
 #endif
 
-static PoolMatchOrder::PlayerPair *all_pool_pairs[PoolMatchOrder::MAX_POOL_SIZE+1] =
+static PoolMatchOrder::PlayerPair *fencing_pairs[MAX_POOL_SIZE+1] =
 {
   NULL,
   NULL,
   NULL,
-  pool_3_pairs,
-  pool_4_pairs,
-  pool_5_pairs,
-  pool_6_pairs,
-  pool_7_pairs,
-  pool_8_pairs,
-  pool_9_pairs,
-  pool_10_pairs,
-  pool_11_pairs,
-  pool_12_pairs,
-  pool_13_pairs,
-  pool_14_pairs,
-  pool_15_pairs,
-  pool_16_pairs,
-  pool_17_pairs
-  //pool_18_pairs,
-  //pool_19_pairs,
-  //pool_20_pairs
+  pool_3_fencing_pairs,
+  pool_4_fencing_pairs,
+  pool_5_fencing_pairs,
+  pool_6_fencing_pairs,
+  pool_7_fencing_pairs,
+  pool_8_fencing_pairs,
+  pool_9_fencing_pairs,
+  pool_10_fencing_pairs,
+  pool_11_fencing_pairs,
+  pool_12_fencing_pairs,
+  pool_13_fencing_pairs,
+  pool_14_fencing_pairs,
+  pool_15_fencing_pairs,
+  pool_16_fencing_pairs,
+  pool_17_fencing_pairs
+  //pool_18_fencing_pairs,
+  //pool_19_fencing_pairs,
+  //pool_20_fencing_pairs
 };
+
+static PoolMatchOrder::PlayerPair *kendo_pairs[MAX_POOL_SIZE+1] =
+{
+  NULL,
+  NULL,
+  NULL,
+  pool_3_kendo_pairs,
+  pool_4_fencing_pairs,
+  pool_5_fencing_pairs,
+  pool_6_fencing_pairs,
+  pool_7_fencing_pairs,
+  pool_8_fencing_pairs,
+  pool_9_fencing_pairs,
+  pool_10_fencing_pairs,
+  pool_11_fencing_pairs,
+  pool_12_fencing_pairs,
+  pool_13_fencing_pairs,
+  pool_14_fencing_pairs,
+  pool_15_fencing_pairs,
+  pool_16_fencing_pairs,
+  pool_17_fencing_pairs
+  //pool_18_fencing_pairs,
+  //pool_19_fencing_pairs,
+  //pool_20_fencing_pairs
+};
+
+// --------------------------------------------------------------------------------
+PoolMatchOrder::PoolMatchOrder (gchar weapon_code)
+{
+  if (weapon_code == 'K')
+  {
+    _all_pool_pairs = kendo_pairs;
+  }
+  else
+  {
+    _all_pool_pairs = fencing_pairs;
+  }
+}
+
+// --------------------------------------------------------------------------------
+PoolMatchOrder::~PoolMatchOrder ()
+{
+}
+
+// --------------------------------------------------------------------------------
+guint PoolMatchOrder::GetMaxPoolSize ()
+{
+  return MAX_POOL_SIZE;
+}
 
 // --------------------------------------------------------------------------------
 PoolMatchOrder::PlayerPair *PoolMatchOrder::GetPlayerPair (guint pool_size)
 {
   if (pool_size <= MAX_POOL_SIZE)
   {
-    return all_pool_pairs[pool_size];
+    return _all_pool_pairs[pool_size];
   }
   else
   {

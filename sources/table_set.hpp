@@ -61,9 +61,26 @@ class TableSet : public CanvasModule
 
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
+
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr);
+
+    void OnPreviewClicked ();
+
+    gboolean OnPreview (GtkPrintOperation        *operation,
+                        GtkPrintOperationPreview *preview,
+                        GtkPrintContext          *context,
+                        GtkWindow                *parent);
+
+    void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
+                               GtkPrintContext          *context,
+                               GtkPageSetup             *page_setup);
+
+    void OnPreviewReady (GtkPrintOperationPreview *preview,
+                         GtkPrintContext          *context);
+
+    void OnPrinScaleChanged (gdouble value);
 
     void Wipe ();
 
@@ -118,41 +135,45 @@ class TableSet : public CanvasModule
 
     static const gdouble _table_spacing;
 
-    gchar              *_name;
-    TableSupervisor    *_supervisor;
-    GNode              *_tree_root;
-    guint               _nb_tables;
-    gint                _table_to_stuff;
-    GtkListStore       *_from_table_liststore;
-    GtkTreeStore       *_quick_search_treestore;
-    GtkTreeModelFilter *_quick_search_filter;
-    GooCanvasItem      *_main_table;
-    GooCanvasItem      *_quick_score_A;
-    GooCanvasItem      *_quick_score_B;
-    Data               *_max_score;
-    ScoreCollector     *_score_collector;
-    ScoreCollector     *_quick_score_collector;
-    xmlTextWriter      *_xml_writer;
-    xmlNode            *_xml_node;
-    Table              **_tables;
-    GSList             *_result_list;
-    GSList             *_match_to_print;
-    GtkWidget          *_print_dialog;
-    GtkWidget          *_table_print_dialog;
-    GtkWidget          *_control_container;
-    GtkWidget          *_from_widget;
-    gboolean            _print_full_table;
-    gdouble             _print_scale;
-    guint               _print_nb_x_pages;
-    guint               _print_nb_y_pages;
-    GSList             *_attendees;
-    gboolean            _locked;
-    guint               _nb_match_per_sheet;
-    gchar              *_id;
-    gboolean            _has_error;
-    gboolean            _is_over;
-    gboolean            _loaded;
-    guint               _first_place;
+    gchar                    *_name;
+    TableSupervisor          *_supervisor;
+    GNode                    *_tree_root;
+    guint                     _nb_tables;
+    gint                      _table_to_stuff;
+    GtkListStore             *_from_table_liststore;
+    GtkTreeStore             *_quick_search_treestore;
+    GtkTreeModelFilter       *_quick_search_filter;
+    GooCanvasItem            *_main_table;
+    GooCanvasItem            *_quick_score_A;
+    GooCanvasItem            *_quick_score_B;
+    Data                     *_max_score;
+    ScoreCollector           *_score_collector;
+    ScoreCollector           *_quick_score_collector;
+    xmlTextWriter            *_xml_writer;
+    xmlNode                  *_xml_node;
+    Table                    **_tables;
+    GSList                   *_result_list;
+    GSList                   *_match_to_print;
+    GtkWidget                *_print_dialog;
+    GtkWidget                *_preview_dialog;
+    GtkWidget                *_table_print_dialog;
+    GtkWidget                *_control_container;
+    GtkWidget                *_from_widget;
+    gboolean                  _print_full_table;
+    gdouble                   _printer_dpi_adaptation;
+    gdouble                   _print_scale;
+    guint                     _print_nb_x_pages;
+    guint                     _print_nb_y_pages;
+    GSList                   *_attendees;
+    gboolean                  _locked;
+    guint                     _nb_match_per_sheet;
+    gchar                    *_id;
+    gboolean                  _has_error;
+    gboolean                  _is_over;
+    gboolean                  _loaded;
+    guint                     _first_place;
+    GtkPrintOperationPreview *_preview;
+    GtkWidget                *_current_preview_area;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -227,6 +248,8 @@ class TableSet : public CanvasModule
     void LookForMatchToPrint (Table    *table_to_print,
                               gboolean  all_sheet);
 
+    void ConfigurePreviewLayout (GtkPrintContext *context);
+
     static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
                                                    GtkCellRenderer *cell,
                                                    GtkTreeModel    *tree_model,
@@ -254,6 +277,10 @@ class TableSet : public CanvasModule
                                            GooCanvasItem  *target,
                                            GdkEventButton *event,
                                            TableSet       *table_set);
+
+    static gboolean on_preview_expose (GtkWidget      *drawing_area,
+                                       GdkEventExpose *event,
+                                       TableSet       *ts);
 
     ~TableSet ();
 };

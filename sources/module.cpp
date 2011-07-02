@@ -32,14 +32,14 @@ Module::Module (const gchar *glade_file,
                 const gchar *root)
 //: Object ("Module")
 {
-  _plugged_list = NULL;
-  _owner        = NULL;
-  _data_owner   = this;
-  _root         = NULL;
-  _glade        = NULL;
-  _toolbar      = NULL;
-  _filter       = NULL;
-  _rand_seed    = 0;
+  _plugged_list   = NULL;
+  _owner          = NULL;
+  _data_owner     = this;
+  _root           = NULL;
+  _glade          = NULL;
+  _toolbar        = NULL;
+  _filter         = NULL;
+  _rand_seed      = 0;
 
   _sensitivity_trigger = new SensitivityTrigger ();
 
@@ -308,15 +308,18 @@ GString *Module::GetPlayerImage (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Module::Print (const gchar *job_name,
-                    const gchar *filename)
+void Module::Print (const gchar  *job_name,
+                    const gchar  *filename,
+                    GtkPageSetup *page_setup)
 {
-  GtkPrintOperation *operation;
-  GError            *error = NULL;
+  GtkPrintOperationResult  res;
+  GError                  *error     = NULL;
+  GtkPrintOperation       *operation = gtk_print_operation_new ();
 
-  operation = gtk_print_operation_new ();
-
-  g_object_set_data (G_OBJECT (operation), "job_name", (void *) job_name);
+  if (job_name)
+  {
+    g_object_set_data (G_OBJECT (operation), "job_name", (void *) job_name);
+  }
 
   {
     gchar *full_name = g_strdup_printf ("BellePoule - %s", job_name);
@@ -326,33 +329,77 @@ void Module::Print (const gchar *job_name,
     g_free (full_name);
   }
 
+  {
+    GtkPrintSettings *print_settings = gtk_print_settings_new_from_key_file (_config_file,
+                                                                             "print_settings",
+                                                                             NULL);
+
+    if (print_settings == NULL)
+    {
+      print_settings = gtk_print_settings_new ();
+    }
+
+    if (page_setup)
+    {
+      gtk_print_operation_set_default_page_setup (operation,
+                                                  page_setup);
+      gtk_print_settings_set_orientation  (print_settings,
+                                           gtk_page_setup_get_orientation (page_setup));
+    }
+    gtk_print_operation_set_print_settings (operation,
+                                            print_settings);
+    g_object_unref (print_settings);
+  }
+
   g_signal_connect (G_OBJECT (operation), "begin-print",
                     G_CALLBACK (on_begin_print), this);
   g_signal_connect (G_OBJECT (operation), "draw-page",
                     G_CALLBACK (on_draw_page), this);
   g_signal_connect (G_OBJECT (operation), "end-print",
                     G_CALLBACK (on_end_print), this);
+  g_signal_connect (G_OBJECT (operation), "ready",
+                    G_CALLBACK (on_preview_ready), this);
   g_signal_connect (G_OBJECT (operation), "preview",
                     G_CALLBACK (on_preview), this);
+  g_signal_connect (G_OBJECT (operation), "got-page-size",
+                    G_CALLBACK (on_preview_got_page_size), this);
 
   if (filename)
   {
     gtk_print_operation_set_export_filename (operation,
                                              filename);
-    gtk_print_operation_run (operation,
-                             GTK_PRINT_OPERATION_ACTION_EXPORT,
-                             NULL,
-                             &error);
+    res = gtk_print_operation_run (operation,
+                                   GTK_PRINT_OPERATION_ACTION_EXPORT,
+                                   NULL,
+                                   &error);
+  }
+  else if (job_name)
+  {
+    res = gtk_print_operation_run (operation,
+                                   GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
+                                   NULL,
+                                   &error);
   }
   else
   {
-    gtk_print_operation_run (operation,
-                             GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
-                             NULL,
-                             &error);
+    res = gtk_print_operation_run (operation,
+                                   GTK_PRINT_OPERATION_ACTION_PREVIEW,
+                                   NULL,
+                                   &error);
   }
 
-  g_object_unref (operation);
+  if (res == GTK_PRINT_OPERATION_RESULT_APPLY)
+  {
+    GtkPrintSettings *print_settings = gtk_print_operation_get_print_settings (operation);
+
+    if (print_settings)
+    {
+      gtk_print_settings_to_key_file (print_settings,
+                                      _config_file,
+                                      "print_settings");
+      g_object_unref (print_settings);
+    }
+  }
 
   if (error)
   {
@@ -435,6 +482,26 @@ gboolean Module::on_preview (GtkPrintOperation        *operation,
                             preview,
                             context,
                             parent);
+}
+
+// --------------------------------------------------------------------------------
+void Module::on_preview_ready (GtkPrintOperationPreview *preview,
+                               GtkPrintContext          *context,
+                               Module                   *module)
+{
+  module->OnPreviewReady (preview,
+                          context);
+}
+
+// --------------------------------------------------------------------------------
+void Module::on_preview_got_page_size (GtkPrintOperationPreview *preview,
+                                       GtkPrintContext          *context,
+                                       GtkPageSetup             *page_setup,
+                                       Module                   *module)
+{
+  module->OnPreviewGotPageSize (preview,
+                                context,
+                                page_setup);
 }
 
 // --------------------------------------------------------------------------------

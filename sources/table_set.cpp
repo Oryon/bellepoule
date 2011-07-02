@@ -78,6 +78,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _is_over           = FALSE;
   _first_place       = first_place;
   _loaded            = FALSE;
+  _print_scale       = 1.0;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -100,6 +101,9 @@ TableSet::TableSet (TableSupervisor *supervisor,
 
     gtk_widget_reparent (_glade->GetWidget ("print_table_dialog_vbox"),
                          content_area);
+
+    gtk_widget_set_sensitive (_glade->GetWidget ("match_sheet_vbox"),
+                              FALSE);
   }
 
   {
@@ -117,6 +121,22 @@ TableSet::TableSet (TableSupervisor *supervisor,
     content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
 
     gtk_widget_reparent (_glade->GetWidget ("print_table_dialog-vbox"),
+                         content_area);
+  }
+
+  {
+    GtkWidget *content_area;
+
+    _preview_dialog = gtk_dialog_new_with_buttons (gettext ("Table printing"),
+                                                   NULL,
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                   GTK_STOCK_PRINT,  GTK_RESPONSE_OK,
+                                                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                   NULL);
+
+    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_preview_dialog));
+
+    gtk_widget_reparent (_glade->GetWidget ("preview_dialog-vbox"),
                          content_area);
   }
 
@@ -183,6 +203,7 @@ TableSet::~TableSet ()
   }
 
   gtk_widget_destroy (_print_dialog);
+  gtk_widget_destroy (_preview_dialog);
   gtk_widget_destroy (_table_print_dialog);
 
   g_free (_id);
@@ -1556,15 +1577,18 @@ void TableSet::OnInputToggled (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 void TableSet::OnMatchSheetToggled (GtkWidget *widget)
 {
-  GtkWidget *vbox = _glade->GetWidget ("match_sheet_vbox");
+  GtkWidget *match_vbox = _glade->GetWidget ("match_sheet_vbox");
+  GtkWidget *table_vbox = _glade->GetWidget ("full_table_vbox");
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
   {
-    gtk_widget_set_sensitive (vbox, TRUE);
+    gtk_widget_set_sensitive (table_vbox, FALSE);
+    gtk_widget_set_sensitive (match_vbox, TRUE);
   }
   else
   {
-    gtk_widget_set_sensitive (vbox, FALSE);
+    gtk_widget_set_sensitive (table_vbox, TRUE);
+    gtk_widget_set_sensitive (match_vbox, FALSE);
   }
 }
 
@@ -1779,8 +1803,8 @@ void TableSet::OnSearchMatch ()
 void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context)
 {
-  gdouble paper_w  = gtk_print_context_get_width (context);
-  gdouble paper_h  = gtk_print_context_get_height (context);
+  gdouble paper_w = gtk_print_context_get_width  (context);
+  gdouble paper_h = gtk_print_context_get_height (context);
 
   if (_print_full_table)
   {
@@ -1788,6 +1812,7 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
     gdouble canvas_y;
     gdouble canvas_w;
     gdouble canvas_h;
+    gdouble global_scale = _print_scale;
     gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
 
     {
@@ -1810,16 +1835,18 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                     NULL);
       printer_dpi = gtk_print_context_get_dpi_x (context);
 
-      _print_scale = printer_dpi/canvas_dpi;
+      _printer_dpi_adaptation = printer_dpi/canvas_dpi;
     }
+
+    global_scale *= _printer_dpi_adaptation;
 
     _print_nb_x_pages = 1;
     _print_nb_y_pages = 1;
-    if (   (canvas_w * _print_scale > paper_w)
-           || (canvas_h * _print_scale > paper_h))
+    if (   (canvas_w * global_scale > paper_w)
+           || (canvas_h * global_scale > paper_h))
     {
-      _print_nb_x_pages += (guint) (canvas_w * _print_scale / paper_w);
-      _print_nb_y_pages += (guint) ((canvas_h * _print_scale + header_h) / paper_h);
+      _print_nb_x_pages += (guint) (canvas_w * global_scale / paper_w);
+      _print_nb_y_pages += (guint) ((canvas_h * global_scale + header_h) / paper_h);
     }
 
     gtk_print_operation_set_n_pages (operation,
@@ -1853,6 +1880,234 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
+gboolean TableSet::on_preview_expose (GtkWidget      *drawing_area,
+                                      GdkEventExpose *event,
+                                      TableSet       *ts)
+{
+  guint page_number = (guint) g_object_get_data (G_OBJECT (drawing_area), "page_number");
+
+  gdk_window_clear (drawing_area->window);
+
+  ts->_current_preview_area = drawing_area;
+  gtk_print_operation_preview_render_page (ts->_preview,
+                                           page_number-1);
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::OnPreviewClicked ()
+{
+  GtkWidget *w = _glade->GetWidget ("table_radiobutton");
+
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+  {
+    _print_full_table = TRUE;
+  }
+  else
+  {
+    GtkWidget *all_w     = _glade->GetWidget ("all_radiobutton");
+    gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (all_w));
+
+    LookForMatchToPrint (NULL,
+                         all_sheet);
+    _print_full_table = FALSE;
+  }
+
+  {
+    GtkWidget    *orientation_w = _glade->GetWidget ("portrait_radiobutton");
+    GtkPageSetup *page_setup    = gtk_page_setup_new ();
+
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (orientation_w)))
+    {
+      gtk_page_setup_set_orientation (page_setup,
+                                      GTK_PAGE_ORIENTATION_PORTRAIT);
+    }
+    else
+    {
+      gtk_page_setup_set_orientation (page_setup,
+                                      GTK_PAGE_ORIENTATION_LANDSCAPE);
+    }
+
+    Print (NULL,
+           NULL,
+           page_setup);
+  }
+
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
+                              GtkPrintOperationPreview *preview,
+                              GtkPrintContext          *context,
+                              GtkWindow                *parent)
+{
+  _preview = preview;
+
+  g_object_set_data (G_OBJECT (_preview), "preview_operation", operation);
+  g_object_set_data (G_OBJECT (_preview), "preview_context",   context);
+
+  {
+    cairo_t *cr = goo_canvas_create_cairo_context (GetCanvas ());
+    gdouble  canvas_dpi;
+
+    g_object_get (G_OBJECT (GetCanvas ()),
+                  "resolution-x", &canvas_dpi,
+                  NULL);
+
+    gtk_print_context_set_cairo_context (context,
+                                         cr,
+                                         canvas_dpi,
+                                         canvas_dpi);
+    cairo_destroy (cr);
+  }
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::ConfigurePreviewLayout (GtkPrintContext *context)
+{
+  GtkWidget    *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+  GtkWidget    *preview_layout  = gtk_layout_new (NULL, NULL);
+  GtkPageSetup *page_setup      = gtk_print_context_get_page_setup (context);
+  gdouble       paper_w         = gtk_print_context_get_width  (context);
+  gdouble       paper_h         = gtk_print_context_get_height (context);
+  guint         spacing         = 5;
+  guint         drawing_w;
+  guint         drawing_h;
+
+  if (gtk_page_setup_get_orientation (page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
+  {
+    drawing_h = 200;
+    drawing_w = (guint) (drawing_h*paper_w/paper_h);
+  }
+  else
+  {
+    drawing_w = 200;
+    drawing_h = (guint) (drawing_w*paper_h/paper_w);
+  }
+
+  {
+    GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+
+    preview_layout = gtk_bin_get_child (GTK_BIN (scrolled_window));
+    if (preview_layout)
+    {
+      gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
+    }
+  }
+
+  preview_layout = gtk_layout_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (scrolled_window),
+                     preview_layout);
+
+  g_object_set (G_OBJECT (preview_layout),
+                "width",  _print_nb_x_pages*(drawing_w+spacing),
+                "height", _print_nb_y_pages*(drawing_h+spacing),
+                NULL);
+
+  for (guint x = 0; x < _print_nb_x_pages; x++)
+  {
+    for (guint y = 0; y < _print_nb_y_pages; y++)
+    {
+      GtkWidget *drawing_area = gtk_drawing_area_new ();
+      GdkColor   bg_color;
+
+      gdk_color_parse ("#FFFFFF", &bg_color);
+      gtk_widget_modify_bg (drawing_area,
+                            GTK_STATE_NORMAL,
+                            &bg_color);
+
+      gtk_widget_set_size_request (GTK_WIDGET (drawing_area),
+                                   drawing_w,
+                                   drawing_h);
+
+      gtk_layout_put (GTK_LAYOUT (preview_layout),
+                      drawing_area,
+                      x*(drawing_w+spacing),
+                      y*(drawing_h+spacing));
+
+      g_object_set_data (G_OBJECT (drawing_area), "page_number", (void *) (y*_print_nb_x_pages + (x+1)));
+      g_signal_connect (drawing_area, "expose_event",
+                        G_CALLBACK (on_preview_expose),
+                        this);
+    }
+  }
+
+  gtk_widget_show_all (preview_layout);
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
+                               GtkPrintContext          *context)
+{
+  ConfigurePreviewLayout (context);
+
+  if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
+  {
+    GtkPrintOperation *operation  = (GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation");
+    GtkPageSetup      *page_setup = gtk_print_operation_get_default_page_setup (operation);
+
+    gtk_widget_hide (_print_dialog);
+    Print (gettext ("Table"),
+           NULL,
+           page_setup);
+  }
+
+  {
+    GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+    GtkWidget *preview_layout  = gtk_bin_get_child (GTK_BIN (scrolled_window));
+
+    gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
+  }
+
+  gtk_print_operation_preview_end_preview (preview);
+  gtk_widget_hide (_preview_dialog);
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
+                                     GtkPrintContext          *context,
+                                     GtkPageSetup             *page_setup)
+{
+  cairo_t      *cr         = gdk_cairo_create (_current_preview_area->window);
+  GtkPaperSize *paper_size = gtk_page_setup_get_paper_size (page_setup);
+  gdouble       canvas_dpi;
+  gdouble       drawing_dpi;
+
+  g_object_get (G_OBJECT (GetCanvas ()),
+                "resolution-x", &canvas_dpi,
+                NULL);
+
+  if (gtk_page_setup_get_orientation (page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
+  {
+    cairo_translate (cr,
+                     0.0,
+                     200.0);
+    cairo_rotate (cr,
+                  -G_PI_2);
+
+  }
+
+  {
+    gdouble paper_w = gtk_paper_size_get_width  (paper_size, GTK_UNIT_POINTS);
+
+    paper_w     = paper_w * canvas_dpi / 72.0;
+    drawing_dpi = 200.0 * canvas_dpi / paper_w;
+  }
+
+  _printer_dpi_adaptation = drawing_dpi/canvas_dpi;
+
+  gtk_print_context_set_cairo_context (context,
+                                       cr,
+                                       drawing_dpi,
+                                       drawing_dpi);
+
+  cairo_destroy (cr);
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::OnDrawPage (GtkPrintOperation *operation,
                            GtkPrintContext   *context,
                            gint               page_nr)
@@ -1863,10 +2118,11 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
 
   if (_print_full_table)
   {
-    cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
-    guint            x_page   = page_nr % _print_nb_x_pages;
-    guint            y_page   = page_nr / _print_nb_x_pages;
-    gdouble          header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+    cairo_t         *cr           = gtk_print_context_get_cairo_context (context);
+    guint            x_page       = page_nr % _print_nb_x_pages;
+    guint            y_page       = page_nr / _print_nb_x_pages;
+    gdouble          header_h     = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+    gdouble          global_scale = _printer_dpi_adaptation * _print_scale;
     GooCanvasBounds  bounds;
 
     if (y_page == 0)
@@ -1879,30 +2135,30 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
     cairo_save (cr);
 
     cairo_scale (cr,
-                 _print_scale,
-                 _print_scale);
+                 global_scale,
+                 global_scale);
 
-    bounds.x1 = paper_w*(x_page)   / _print_scale;
-    bounds.y1 = paper_h*(y_page)   / _print_scale;
-    bounds.x2 = paper_w*(x_page+1) / _print_scale;
-    bounds.y2 = paper_h*(y_page+1) / _print_scale;
+    bounds.x1 = paper_w*(x_page)   / global_scale;
+    bounds.y1 = paper_h*(y_page)   / global_scale;
+    bounds.x2 = paper_w*(x_page+1) / global_scale;
+    bounds.y2 = paper_h*(y_page+1) / global_scale;
 
     if (y_page == 0)
     {
       cairo_translate (cr,
                        -bounds.x1,
-                       header_h/_print_scale);
+                       header_h/global_scale);
 
-      bounds.y2 -= header_h/_print_scale;
+      bounds.y2 -= header_h/global_scale;
     }
     else
     {
       cairo_translate (cr,
                        -bounds.x1,
-                       (header_h - paper_h*(y_page)) / _print_scale);
+                       (header_h - paper_h*(y_page)) / global_scale);
 
-      bounds.y1 -= header_h/_print_scale;
-      bounds.y2 -= header_h/_print_scale;
+      bounds.y1 -= header_h/global_scale;
+      bounds.y2 -= header_h/global_scale;
     }
 
     goo_canvas_render (GetCanvas (),
@@ -2203,8 +2459,25 @@ void TableSet::OnPrint ()
 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
+      GtkWidget    *orientation_w = _glade->GetWidget ("portrait_radiobutton");
+      GtkPageSetup *page_setup    = gtk_page_setup_new ();
+
+      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (orientation_w)))
+      {
+        gtk_page_setup_set_orientation (page_setup,
+                                        GTK_PAGE_ORIENTATION_PORTRAIT);
+      }
+      else
+      {
+        gtk_page_setup_set_orientation (page_setup,
+                                        GTK_PAGE_ORIENTATION_LANDSCAPE);
+      }
+
       _print_full_table = TRUE;
-      Print (gettext ("Table"));
+
+      Print (gettext ("Table"),
+             NULL,
+             page_setup);
     }
     else
     {
@@ -2409,6 +2682,17 @@ void TableSet::on_status_changed (GtkComboBox *combo_box,
 }
 
 // --------------------------------------------------------------------------------
+void TableSet::OnPrinScaleChanged (gdouble value)
+{
+  _print_scale = value / 100.0;
+
+  OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
+                (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+
+  ConfigurePreviewLayout ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+}
+
+// --------------------------------------------------------------------------------
 gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
                                               GdkEventKey *event,
                                               gpointer     user_data)
@@ -2446,4 +2730,22 @@ extern "C" G_MODULE_EXPORT void on_quick_search_combobox_changed (GtkWidget *wid
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
   t->OnSearchMatch ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_preview_button_clicked (GtkWidget *widget,
+                                                           Object    *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnPreviewClicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_print_hscale_value_changed (GtkRange *range,
+                                                               Object   *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnPrinScaleChanged (gtk_range_get_value (range));
 }

@@ -49,6 +49,7 @@ class Contest : public Module
     gchar *GetOrganizer ();
     gchar *GetDate ();
     gchar *GetWeapon ();
+    gchar  GetWeaponCode ();
     gchar *GetName ();
     gchar *GetDefaultFileName ();
     gchar *GetGender ();
@@ -82,7 +83,7 @@ class Contest : public Module
       guint  _minute;
     };
 
-    static const guint _nb_weapon = 3;
+    static const guint _nb_weapon = 4;
     static const gchar *weapon_image[_nb_weapon];
     static const gchar *weapon_xml_image[_nb_weapon];
 

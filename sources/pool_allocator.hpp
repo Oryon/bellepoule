@@ -22,6 +22,7 @@
 #include "data.hpp"
 #include "stage.hpp"
 #include "canvas_module.hpp"
+#include "pool_match_order.hpp"
 #include "pool.hpp"
 
 class PoolAllocator : public virtual Stage, public CanvasModule
