@@ -214,8 +214,6 @@ class Stage : public virtual Object
 
     void UpdateClassification (GSList *result);
 
-    void CheckInconsistency ();
-
     Object *GetPlayerDataOwner ();
 
     void ActivateNbQualified ();

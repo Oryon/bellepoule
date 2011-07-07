@@ -103,7 +103,8 @@ Checkin::Checkin (StageClass *stage_class)
   }
 
   {
-    GSList *filter_list = _filter->GetAttrList ();
+    GSList      *filter_list = _filter->GetAttrList ();
+    GtkComboBox *selector_w  = NULL;
 
     for (guint i = 0; i < g_slist_length (filter_list); i++)
     {
@@ -159,8 +160,16 @@ Checkin::Checkin (StageClass *stage_class)
                   completion = NULL;
                 }
 
+                if (attr_desc->_is_selector)
+                {
+                  selector_w = GTK_COMBO_BOX (value_w);
+                  g_signal_connect (value_w, "changed",
+                                    G_CALLBACK (AttributeDesc::RefilterSelector), attr_desc);
+                }
+
                 attr_desc->BindDiscreteValues (G_OBJECT (value_w),
-                                               cell);
+                                               cell,
+                                               selector_w);
 
                 if (completion)
                 {
@@ -170,7 +179,7 @@ Checkin::Checkin (StageClass *stage_class)
                   gtk_entry_completion_set_model (completion,
                                                   model);
                   gtk_entry_completion_set_text_column (completion,
-                                                        1);
+                                                        AttributeDesc::DISCRETE_USER_IMAGE);
                   gtk_entry_completion_set_inline_completion (completion,
                                                               TRUE);
                   gtk_entry_set_completion (entry,

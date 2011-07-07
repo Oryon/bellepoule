@@ -56,7 +56,8 @@ class AttributeDesc : public Object
       DISCRETE_XML_IMAGE,
       DISCRETE_USER_IMAGE,
       DISCRETE_ICON,
-      DISCRETE_ICON_NAME
+      DISCRETE_ICON_NAME,
+      DISCRETE_SELECTOR
     } DiscreteColumnId;
 
     GType         _type;
@@ -69,7 +70,8 @@ class AttributeDesc : public Object
     gboolean      _free_value_allowed;
     Rights        _rights;
     GCompareFunc  _compare_func;
-    GtkTreeStore *_discrete_store;
+    GtkTreeModel *_discrete_model;
+    gboolean      _is_selector;
 
     static void SetPath (gchar *path);
 
@@ -85,7 +87,8 @@ class AttributeDesc : public Object
     static AttributeDesc *GetDesc (const gchar *name);
 
     void BindDiscreteValues (GObject         *object,
-                             GtkCellRenderer *renderer = NULL);
+                             GtkCellRenderer *renderer = NULL,
+                             GtkComboBox     *selector = NULL);
 
     gboolean HasDiscreteValue ();
 
@@ -93,6 +96,8 @@ class AttributeDesc : public Object
                             gchar       *first_user_image,
                             const gchar *first_icon,
                             ...);
+
+    void AddDiscreteValueSelector (const gchar *file);
 
     void AddDiscreteValues (const gchar *file);
 
@@ -106,9 +111,13 @@ class AttributeDesc : public Object
 
     gchar *GetUserImage (GtkTreeIter *iter);
 
+    static void RefilterSelector (GtkComboBox   *togglebutton,
+                                  AttributeDesc *desc);
+
   private:
     static gchar  *_path;
     static GSList *_list;
+    gboolean       _has_selector;
 
     AttributeDesc (GType        type,
                    const gchar *code_name,
@@ -117,8 +126,15 @@ class AttributeDesc : public Object
 
     ~AttributeDesc ();
 
+    static gboolean DiscreteFilter (GtkTreeModel *model,
+                                    GtkTreeIter  *iter,
+                                    GtkComboBox  *selector);
+
     void *GetDiscreteData (guint from_code,
                            guint column);
+
+    void AddDiscreteValues (const gchar *file,
+                            const gchar *selector);
 };
 
 // --------------------------------------------------------------------------------
