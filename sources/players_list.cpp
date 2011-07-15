@@ -29,10 +29,11 @@
                             guint        rights)
 : Module (glade_file)
 {
-  _rights       = rights;
-  _player_list  = NULL;
-  _store        = NULL;
-  _column_width = NULL;
+  _rights          = rights;
+  _player_list     = NULL;
+  _store           = NULL;
+  _column_width    = NULL;
+  _selector_column = -1;
 
   {
     _tree_view = _glade->GetWidget ("players_list");
@@ -79,6 +80,11 @@ void PlayersList::SetFilter (Filter *filter)
       desc = (AttributeDesc *) g_slist_nth_data (attr_list,
                                                  i);
       types[i] = desc->_type;
+
+      if (desc->_is_selector)
+      {
+        _selector_column = i;
+      }
     }
 
     types[nb_attr] = G_TYPE_INT;
@@ -396,6 +402,29 @@ Player *PlayersList::GetPlayer (GtkTreeModel *model,
 }
 
 // --------------------------------------------------------------------------------
+void PlayersList::OnDiscreteEditingStarted (GtkCellRenderer *renderer,
+                                            GtkCellEditable *editable,
+                                            gchar           *path,
+                                            AttributeDesc   *desc)
+{
+  GtkEntryCompletion *completion = gtk_entry_completion_new ();
+
+  {
+    GtkTreeModel *model = desc->_discrete_model;
+
+    gtk_entry_completion_set_model (completion,
+                                    model);
+    gtk_entry_completion_set_text_column (completion,
+                                          AttributeDesc::DISCRETE_USER_IMAGE);
+    gtk_entry_completion_set_inline_completion (completion,
+                                                TRUE);
+    gtk_entry_set_completion (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (editable))),
+                              completion);
+    g_object_unref (completion);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PlayersList::SetColumn (guint          id,
                              AttributeDesc *desc,
                              gint           at)
@@ -414,7 +443,7 @@ void PlayersList::SetColumn (guint          id,
       g_object_set (renderer,
                     "has-entry", desc->_free_value_allowed,
                     NULL);
-      desc->BindDiscreteValues (G_OBJECT (renderer));
+      desc->BindDiscreteValues (renderer);
     }
     else
     {
@@ -432,6 +461,12 @@ void PlayersList::SetColumn (guint          id,
                          (void *) "editable");
       g_signal_connect (renderer,
                         "edited", G_CALLBACK (on_cell_edited), this);
+
+      if (renderer)
+      {
+        g_signal_connect (renderer,
+                          "editing-started", G_CALLBACK (OnDiscreteEditingStarted), desc);
+      }
     }
 
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,

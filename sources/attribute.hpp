@@ -72,6 +72,7 @@ class AttributeDesc : public Object
     GCompareFunc  _compare_func;
     GtkTreeModel *_discrete_model;
     gboolean      _is_selector;
+    gboolean      _has_selector;
 
     static void SetPath (gchar *path);
 
@@ -87,8 +88,10 @@ class AttributeDesc : public Object
     static AttributeDesc *GetDesc (const gchar *name);
 
     void BindDiscreteValues (GObject         *object,
-                             GtkCellRenderer *renderer = NULL,
-                             GtkComboBox     *selector = NULL);
+                             GtkCellRenderer *renderer,
+                             GtkComboBox     *selector);
+
+    void BindDiscreteValues (GtkCellRenderer *renderer);
 
     gboolean HasDiscreteValue ();
 
@@ -111,13 +114,12 @@ class AttributeDesc : public Object
 
     gchar *GetUserImage (GtkTreeIter *iter);
 
-    static void RefilterSelector (GtkComboBox   *togglebutton,
-                                  AttributeDesc *desc);
+    static void Refilter (GtkComboBox *selector,
+                          void        *data);
 
   private:
     static gchar  *_path;
     static GSList *_list;
-    gboolean       _has_selector;
 
     AttributeDesc (GType        type,
                    const gchar *code_name,
@@ -126,9 +128,9 @@ class AttributeDesc : public Object
 
     ~AttributeDesc ();
 
-    static gboolean DiscreteFilter (GtkTreeModel *model,
-                                    GtkTreeIter  *iter,
-                                    GtkComboBox  *selector);
+    static gboolean DiscreteFilterForCombobox (GtkTreeModel *model,
+                                               GtkTreeIter  *iter,
+                                               GtkComboBox  *selector);
 
     void *GetDiscreteData (guint from_code,
                            guint column);

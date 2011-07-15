@@ -97,6 +97,7 @@ class PlayersList : public Module
     guint         _nb_player_per_page;
     gdouble       _print_scale;
     guint         _nb_pages;
+    gint          _selector_column;
     gdouble      *_column_width;
 
     void SetColumn (guint          id,
@@ -132,6 +133,11 @@ class PlayersList : public Module
                                  GtkTreeIter         *a,
                                  GtkTreeIter         *b,
                                  Player::AttributeId *attr_id);
+
+    static void OnDiscreteEditingStarted (GtkCellRenderer *renderer,
+                                          GtkCellEditable *editable,
+                                          gchar           *path,
+                                          AttributeDesc   *desc);
 };
 
 #endif

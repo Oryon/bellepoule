@@ -100,6 +100,17 @@ class Checkin : public virtual Stage, public PlayersList
 
     gchar *ConvertToUtf8 (gchar *what);
 
+    static void SetSelectorValue (GtkComboBox *combo_box,
+                                  const gchar *value);
+
+    static gboolean OnSelectorChanged (GtkEntryCompletion *widget,
+                                       GtkTreeModel       *model,
+                                       GtkTreeIter        *iter,
+                                       GtkComboBox        *combobox);
+
+    static void OnSelectorEntryActivate (GtkEntry    *widget,
+                                         GtkComboBox *combobox);
+
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Checkin   *checkin);

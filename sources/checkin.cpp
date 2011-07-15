@@ -164,7 +164,7 @@ Checkin::Checkin (StageClass *stage_class)
                 {
                   selector_w = GTK_COMBO_BOX (value_w);
                   g_signal_connect (value_w, "changed",
-                                    G_CALLBACK (AttributeDesc::RefilterSelector), attr_desc);
+                                    G_CALLBACK (AttributeDesc::Refilter), value_w);
                 }
 
                 attr_desc->BindDiscreteValues (G_OBJECT (value_w),
@@ -185,6 +185,15 @@ Checkin::Checkin (StageClass *stage_class)
                   gtk_entry_set_completion (entry,
                                             completion);
                   g_object_unref (completion);
+
+                  if (attr_desc->_is_selector)
+                  {
+                    g_signal_connect (G_OBJECT (completion), "match-selected",
+                                      G_CALLBACK (OnSelectorChanged), value_w);
+
+                    g_signal_connect (G_OBJECT (entry), "activate",
+                                      G_CALLBACK (OnSelectorEntryActivate), value_w);
+                  }
                 }
                 else
                 {
@@ -1255,6 +1264,71 @@ void Checkin::ToggleAllPlayers (gboolean present)
     current_player = g_slist_next (current_player);
   }
   OnListChanged ();
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::SetSelectorValue (GtkComboBox *combo_box,
+                                const gchar *value)
+{
+  GtkTreeModel *model = gtk_combo_box_get_model (combo_box);
+
+  if (value && model)
+  {
+    GtkTreeIter  iter;
+    gboolean     iter_is_valid;
+    gchar       *case_value = g_utf8_casefold (value, -1);
+
+    iter_is_valid = gtk_tree_model_get_iter_first (model,
+                                                   &iter);
+
+    while (iter_is_valid)
+    {
+      gchar *current_value;
+      gchar *case_current_value;
+
+      gtk_tree_model_get (model, &iter,
+                          AttributeDesc::DISCRETE_USER_IMAGE, &current_value,
+                          -1);
+      case_current_value = g_utf8_casefold (current_value, -1);
+      if (current_value && (g_ascii_strcasecmp (case_current_value, case_value) == 0))
+      {
+        g_free (case_current_value);
+        gtk_combo_box_set_active_iter (combo_box,
+                                       &iter);
+        break;
+      }
+
+      g_free (case_current_value);
+      iter_is_valid = gtk_tree_model_iter_next (model,
+                                                &iter);
+    }
+
+    g_free (case_value);
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Checkin::OnSelectorChanged (GtkEntryCompletion *widget,
+                                     GtkTreeModel       *model,
+                                     GtkTreeIter        *iter,
+                                     GtkComboBox        *combobox)
+{
+  gchar *value;
+
+  gtk_tree_model_get (model, iter,
+                      AttributeDesc::DISCRETE_USER_IMAGE, &value,
+                      -1);
+  SetSelectorValue (combobox,
+                    value);
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::OnSelectorEntryActivate (GtkEntry    *widget,
+                                       GtkComboBox *combobox)
+{
+  SetSelectorValue (combobox,
+                    gtk_entry_get_text (widget));
 }
 
 // --------------------------------------------------------------------------------

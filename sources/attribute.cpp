@@ -129,9 +129,9 @@ AttributeDesc *AttributeDesc::Declare (GType        type,
 }
 
 // --------------------------------------------------------------------------------
-gboolean AttributeDesc::DiscreteFilter (GtkTreeModel *model,
-                                        GtkTreeIter  *iter,
-                                        GtkComboBox  *selector)
+gboolean AttributeDesc::DiscreteFilterForCombobox (GtkTreeModel *model,
+                                                   GtkTreeIter  *iter,
+                                                   GtkComboBox  *selector)
 {
   gchar    *country;
   gchar    *selector_country = NULL;
@@ -180,27 +180,30 @@ void AttributeDesc::BindDiscreteValues (GObject         *object,
                                                         NULL);
 
       gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter),
-                                              (GtkTreeModelFilterVisibleFunc) DiscreteFilter,
+                                              (GtkTreeModelFilterVisibleFunc) DiscreteFilterForCombobox,
                                               selector,
                                               NULL);
-
-      g_object_unref (_discrete_model);
-      _discrete_model = filter;
 
       if (selector)
       {
         GSList *selector_clients = (GSList *) g_object_get_data (G_OBJECT (selector), "selector_clients");
 
         selector_clients = g_slist_prepend (selector_clients,
-                                            _discrete_model);
+                                            filter);
         g_object_set_data (G_OBJECT (selector),
                            "selector_clients", selector_clients);
       }
+      g_object_set (object,
+                    "model", filter,
+                    NULL);
+      g_object_unref (filter);
     }
-
-    g_object_set (object,
-                  "model", _discrete_model,
-                  NULL);
+    else
+    {
+      g_object_set (object,
+                    "model", _discrete_model,
+                    NULL);
+    }
 
     if (renderer)
     {
@@ -217,10 +220,22 @@ void AttributeDesc::BindDiscreteValues (GObject         *object,
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::RefilterSelector (GtkComboBox   *togglebutton,
-                                      AttributeDesc *desc)
+void AttributeDesc::BindDiscreteValues (GtkCellRenderer *renderer)
 {
-  GSList *selector_clients = (GSList *) g_object_get_data (G_OBJECT (togglebutton), "selector_clients");
+  if (_discrete_model)
+  {
+    g_object_set (G_OBJECT (renderer),
+                  "model",       _discrete_model,
+                  "text-column", DISCRETE_USER_IMAGE,
+                  NULL);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::Refilter (GtkComboBox *selector,
+                              void        *data)
+{
+  GSList *selector_clients = (GSList *) g_object_get_data (G_OBJECT (selector), "selector_clients");
 
   while (selector_clients)
   {
