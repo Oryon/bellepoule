@@ -53,7 +53,6 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                                          gpointer        data)
 {
 #ifdef WINDOWS_TEMPORARY_PATCH
-  g_print (">>>>>>>>>>>>>>>>>>>>>>\n");
   ShellExecuteA (NULL,
                  "open",
                  link,
@@ -202,15 +201,15 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("resources/ioc_countries.txt");
+    desc->AddDiscreteValueSelector ("ioc_countries.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
-    desc->AddDiscreteValues ("resources/ligues.txt");
+    desc->AddDiscreteValues ("ligues.txt");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("resources/clubs.txt");
+    desc->AddDiscreteValues ("clubs.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 

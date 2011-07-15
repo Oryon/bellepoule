@@ -530,7 +530,7 @@ GtkTreeModel *Module::GetStatusModel ()
                                                           G_TYPE_STRING,
                                                           GDK_TYPE_PIXBUF));
 
-      iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (desc->_discrete_store),
+      iter_is_valid = gtk_tree_model_get_iter_first (desc->_discrete_model,
                                                      &iter);
       for (guint i = 0; iter_is_valid; i++)
       {
@@ -538,7 +538,7 @@ GtkTreeModel *Module::GetStatusModel ()
         gchar     *user_image;
         GdkPixbuf *icon;
 
-        gtk_tree_model_get (GTK_TREE_MODEL (desc->_discrete_store),
+        gtk_tree_model_get (desc->_discrete_model,
                             &iter,
                             AttributeDesc::DISCRETE_XML_IMAGE, &xml_image,
                             AttributeDesc::DISCRETE_USER_IMAGE, &user_image,
@@ -556,7 +556,7 @@ GtkTreeModel *Module::GetStatusModel ()
                               AttributeDesc::DISCRETE_ICON, icon,
                               -1);
         }
-        iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (desc->_discrete_store),
+        iter_is_valid = gtk_tree_model_iter_next (desc->_discrete_model,
                                                   &iter);
       }
     }

@@ -191,8 +191,6 @@ void Stage::UnLock ()
     Player::AttributeId  status_attr_id ("status", GetPlayerDataOwner ());
     Player::AttributeId  global_status_attr_id ("global_status");
 
-    CheckInconsistency ();
-
     for (guint i = 0; current != NULL; i++)
     {
       Player *player;
@@ -450,8 +448,6 @@ void Stage::RetrieveAttendees ()
       Player::AttributeId  global_status_attr_id ("global_status");
       GSList              *current = shortlist;
 
-      CheckInconsistency ();
-
       for (guint i = 0; current != NULL; i++)
       {
         Player *player;
@@ -667,8 +663,6 @@ void Stage::LoadAttendees (xmlNode *n)
           Player::AttributeId status_attr_id        ("status", GetPlayerDataOwner ());
           Player::AttributeId global_status_attr_id ("global_status");
           gchar *status_attr =  (gchar *) xmlGetProp (n, BAD_CAST "Statut");
-
-          CheckInconsistency ();
 
           if (status_attr)
           {
@@ -1104,8 +1098,6 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
         {
           rank_attr_id   = new Player::AttributeId ("rank", GetPlayerDataOwner ());
           status_attr_id = new Player::AttributeId ("status", GetPlayerDataOwner ());
-
-          CheckInconsistency ();
         }
 
         rank                = player->GetAttribute (rank_attr_id);
@@ -1168,23 +1160,4 @@ Object *Stage::GetPlayerDataOwner ()
   Module *module = dynamic_cast <Module *> (this);
 
   return module->GetDataOwner ();
-}
-
-// --------------------------------------------------------------------------------
-void Stage::CheckInconsistency ()
-{
-  Module *module = dynamic_cast <Module *> (this);
-
-  if (this != module->GetDataOwner ())
-  {
-    g_print ("##################""\n");
-    g_print ("##################""\n");
-    g_print ("##################""\n");
-    g_print ("##################""\n");
-    g_print ("##################""\n");
-    g_print ("##################""\n");
-    g_print ("##################""\n");
-    g_print ("##################""\n");
-    g_print ("##################""\n");
-  }
 }

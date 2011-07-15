@@ -23,7 +23,7 @@ ChangesAssociations=true
 PrivilegesRequired=none
 WizardImageFile=BellePoule.bmp
 WizardSmallImageFile=BellePoule_small.bmp
-;SetupIconFile=logo.ico
+SetupIconFile=setup_logo.ico
 
 [Tasks]
 Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icones de lancement :";
@@ -123,8 +123,8 @@ Source: "..\resources\glade\*.glade"; DestDir: "{app}\resources\glade\"; Flags: 
 Source: "..\resources\*.txt"; DestDir: "{app}\resources\"; Flags: ignoreversion
 Source: "..\resources\exe.ico"; DestDir: "{app}\resources\"; Flags: ignoreversion
 
-Source: "..\resources\fra\*"; DestDir: "{app}\resources\fra"; Flags: ignoreversion
-Source: "..\resources\ger\*"; DestDir: "{app}\resources\ger"; Flags: ignoreversion
+Source: "..\resources\data\fra\*"; DestDir: "{app}\resources\data\fra\"; Flags: ignoreversion
+Source: "..\resources\data\ger\*"; DestDir: "{app}\resources\data\ger\"; Flags: ignoreversion
 
 ;Sources
 Source: "..\BellePoule.cbp"; DestDir: "{app}"; Tasks: downloadsources; Flags: ignoreversion
@@ -245,6 +245,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 
