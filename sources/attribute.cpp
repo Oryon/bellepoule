@@ -19,7 +19,6 @@
 
 #include "attribute.hpp"
 
-gchar  *AttributeDesc::_path = NULL;
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
@@ -103,12 +102,6 @@ AttributeDesc::~AttributeDesc ()
   g_free (_code_name);
   g_free (_xml_name);
   g_free (_user_name);
-}
-
-// --------------------------------------------------------------------------------
-void AttributeDesc::SetPath (gchar *path)
-{
-  _path = g_strdup (path);
 }
 
 // --------------------------------------------------------------------------------
@@ -452,7 +445,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
 // --------------------------------------------------------------------------------
 void AttributeDesc::AddDiscreteValueSelector (const gchar *file)
 {
-  gchar *path = g_build_filename (_path, "resources", file, NULL);
+  gchar *path = g_build_filename (_program_path, "resources", file, NULL);
 
   _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (6, G_TYPE_UINT,
                                                         G_TYPE_STRING,
@@ -472,7 +465,7 @@ void AttributeDesc::AddDiscreteValueSelector (const gchar *file)
 // --------------------------------------------------------------------------------
 void AttributeDesc::AddDiscreteValues (const gchar *file)
 {
-  gchar        *dir_path = g_build_filename (_path, "resources", "data", NULL);
+  gchar        *dir_path = g_build_filename (_program_path, "resources", "data", NULL);
   GDir         *dir      = g_dir_open       (dir_path, 0,  NULL);
   const gchar  *country  = g_dir_read_name  (dir);
 

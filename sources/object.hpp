@@ -53,7 +53,11 @@ class Object
 
     static void TryToRelease (Object *object);
 
+    static void SetProgramPath (gchar *path);
+
   protected:
+    static gchar *_program_path;
+
     virtual ~Object ();
 
   private:

@@ -16,6 +16,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <curl/curl.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -28,8 +29,6 @@
 
 #include "tournament.hpp"
 
-gchar *Tournament::_path = NULL;
-
 // --------------------------------------------------------------------------------
 Tournament::Tournament (gchar *filename)
   : Module ("tournament.glade")
@@ -37,6 +36,8 @@ Tournament::Tournament (gchar *filename)
   _contest_list = NULL;
 
   ReadConfiguration ();
+
+  curl_global_init (CURL_GLOBAL_ALL);
 
   // Show the main window
   {
@@ -154,6 +155,8 @@ Tournament::~Tournament ()
   }
 
   g_key_file_free (_config_file);
+
+  curl_global_cleanup ();
 }
 
 // --------------------------------------------------------------------------------
@@ -349,12 +352,6 @@ void Tournament::OnSave ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::SetPath (gchar *path)
-{
-  _path = g_strdup (path);
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::OnAbout ()
 {
   GtkWidget *w = _glade->GetWidget ("about_dialog");
@@ -367,7 +364,7 @@ void Tournament::OnAbout ()
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenUserManual ()
 {
-  gchar *uri = g_build_filename (_path, "resources", "user_manual.pdf", NULL);
+  gchar *uri = g_build_filename (_program_path, "resources", "user_manual.pdf", NULL);
 
 #ifdef WINDOWS_TEMPORARY_PATCH
   ShellExecute (NULL,

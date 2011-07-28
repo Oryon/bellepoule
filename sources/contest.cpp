@@ -15,6 +15,11 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string.h>
+#include <curl/curl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
@@ -34,6 +39,15 @@
 #include "checkin.hpp"
 
 #include "contest.hpp"
+
+typedef enum
+{
+  FTP_NAME_COL,
+  FTP_PIXBUF_COL,
+  FTP_URL_COL,
+  FTP_USER_COL,
+  FTP_PASSWD_COL,
+} FTPColumn;
 
 const gchar *Contest::weapon_image[_nb_weapon] =
 {
@@ -654,6 +668,25 @@ void Contest::InitInstance ()
     gtk_widget_reparent (_glade->GetWidget ("calendar"),
                          content_area);
   }
+
+  // FTP repository
+  {
+    GtkListStore *model  = GTK_LIST_STORE (_glade->GetWidget ("FavoriteFTP"));
+    gchar        *path   = g_build_filename (_program_path, "resources", "glade", "escrime_info.jpg", NULL);
+    GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+    GtkTreeIter   iter;
+
+    g_free (path);
+    gtk_list_store_append (model, &iter);
+    gtk_list_store_set (model, &iter,
+                        FTP_NAME_COL,   "<b><big>Escrime Info  </big></b>",
+                        FTP_PIXBUF_COL, pixbuf,
+                        FTP_URL_COL,    "ftp://www.escrime-info.com/web",
+                        FTP_USER_COL,   "belle_poule",
+                        FTP_PASSWD_COL, "tH3MF8huHX",
+                        -1);
+    g_object_unref (pixbuf);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -945,6 +978,55 @@ void Contest::AttachTo (GtkNotebook *to)
 }
 
 // --------------------------------------------------------------------------------
+static size_t read_callback (void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+  return fread (ptr, size, nmemb, stream);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::Publish ()
+{
+  if (_filename)
+  {
+    CURL *curl = curl_easy_init ();
+
+    if (curl)
+    {
+      gchar      *base_name  = g_path_get_basename (_filename);
+      gchar      *url        = g_strdup_printf ("ftp://www.escrime-info.com/web/%s", base_name);
+      FILE       *file       = fopen (_filename, "rb");
+      curl_off_t  file_size;
+
+      g_free (base_name);
+
+      {
+        struct stat file_info;
+
+        if (stat (_filename, &file_info))
+        {
+          g_print ("Couldnt open '%s': %s\n", _filename, strerror (errno));
+          return;
+        }
+        file_size = (curl_off_t) file_info.st_size;
+      }
+
+      curl_easy_setopt (curl, CURLOPT_READFUNCTION,     read_callback);
+      curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
+      curl_easy_setopt (curl, CURLOPT_URL,              url);
+      curl_easy_setopt (curl, CURLOPT_USERPWD,          "belle_poule:tH3MF8huHX");
+      curl_easy_setopt (curl, CURLOPT_READDATA,         file);
+      curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) file_size);
+
+      curl_easy_perform (curl);
+
+      curl_easy_cleanup (curl);
+      fclose (file);
+      g_free (url);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Contest::Save ()
 {
   if (_filename == NULL)
@@ -954,6 +1036,7 @@ void Contest::Save ()
   }
 
   Save (_filename);
+  Publish ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1468,4 +1551,45 @@ gchar *Contest::GetDate ()
 
   sprintf (date, "%02d/%02d/%02d", _day, _month, _year);
   return date;
+}
+
+// --------------------------------------------------------------------------------
+void Contest::on_ftp_changed (GtkComboBox *widget)
+{
+  GtkTreeIter iter;
+
+  if (gtk_combo_box_get_active_iter (widget,
+                                     &iter))
+  {
+    gchar *url;
+    gchar *user;
+    gchar *passwd;
+
+    gtk_tree_model_get (gtk_combo_box_get_model (widget),
+                        &iter,
+                        FTP_URL_COL,    &url,
+                        FTP_USER_COL,   &user,
+                        FTP_PASSWD_COL, &passwd,
+                        -1);
+
+    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("url_entry")),
+                        url);
+    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("user_entry")),
+                        user);
+    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry")),
+                        passwd);
+
+    g_free (url);
+    g_free (user);
+    g_free (passwd);
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_ftp_comboboxentry_changed (GtkComboBox *widget,
+                                                              Object      *owner)
+{
+  Contest *c = dynamic_cast <Contest *> (owner);
+
+  c->on_ftp_changed (widget);
 }
