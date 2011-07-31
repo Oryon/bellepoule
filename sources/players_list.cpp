@@ -410,7 +410,11 @@ void PlayersList::OnDiscreteEditingStarted (GtkCellRenderer *renderer,
   GtkEntryCompletion *completion = gtk_entry_completion_new ();
 
   {
-    GtkTreeModel *model = desc->_discrete_model;
+    GtkTreeModel *model;
+
+    g_object_get (renderer,
+                  "model", &model,
+                  NULL);
 
     gtk_entry_completion_set_model (completion,
                                     model);
@@ -418,6 +422,9 @@ void PlayersList::OnDiscreteEditingStarted (GtkCellRenderer *renderer,
                                           AttributeDesc::DISCRETE_USER_IMAGE);
     gtk_entry_completion_set_inline_completion (completion,
                                                 TRUE);
+    g_object_set (G_OBJECT (completion),
+                  "popup-set-width", FALSE,
+                  NULL);
     gtk_entry_set_completion (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (editable))),
                               completion);
     g_object_unref (completion);

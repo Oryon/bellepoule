@@ -4,21 +4,17 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkListStore" id="FavoriteFTP">
     <columns>
-      <!-- column-name icon -->
-      <column type="gchararray"/>
       <!-- column-name name -->
       <column type="gchararray"/>
+      <!-- column-name icon -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name url -->
+      <column type="gchararray"/>
+      <!-- column-name user -->
+      <column type="gchararray"/>
+      <!-- column-name passwd -->
+      <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">"escrime_info.jpg"</col>
-        <col id="1" translatable="yes">Escrime Info</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">escrime_info.jpg</col>
-        <col id="1" translatable="yes">Unknown</col>
-      </row>
-    </data>
   </object>
   <object class="GtkDialog" id="calendar_dialog">
     <property name="can_focus">False</property>
@@ -950,37 +946,6 @@ stuffing</property>
                                 <property name="column_spacing">5</property>
                                 <property name="row_spacing">5</property>
                                 <child>
-                                  <object class="GtkComboBoxEntry" id="comboboxentry1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="model">FavoriteFTP</property>
-                                    <child>
-                                      <object class="GtkCellRendererPixbuf" id="cellrenderertext1"/>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
-                                      <attributes>
-                                        <attribute name="text">1</attribute>
-                                      </attributes>
-                                    </child>
-                                    <child internal-child="entry">
-                                      <object class="GtkEntry" id="comboboxentry-entry">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="invisible_char">●</property>
-                                        <property name="primary_icon_activatable">False</property>
-                                        <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="right_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="label21">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -1013,23 +978,7 @@ stuffing</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry" id="entry1">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="invisible_char">●</property>
-                                    <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_activatable">False</property>
-                                    <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left_attach">1</property>
-                                    <property name="right_attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkEntry" id="entry2">
+                                  <object class="GtkEntry" id="user_entry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="invisible_char">●</property>
@@ -1047,9 +996,10 @@ stuffing</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry" id="entry3">
+                                  <object class="GtkEntry" id="passwd_entry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
+                                    <property name="visibility">False</property>
                                     <property name="invisible_char">●</property>
                                     <property name="invisible_char_set">True</property>
                                     <property name="primary_icon_activatable">False</property>
@@ -1062,6 +1012,41 @@ stuffing</property>
                                     <property name="right_attach">2</property>
                                     <property name="top_attach">2</property>
                                     <property name="bottom_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxEntry" id="ftp_comboboxentry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="model">FavoriteFTP</property>
+                                    <signal name="changed" handler="on_ftp_comboboxentry_changed" swapped="no"/>
+                                    <child>
+                                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                                      <attributes>
+                                        <attribute name="markup">0</attribute>
+                                      </attributes>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf"/>
+                                      <attributes>
+                                        <attribute name="pixbuf">1</attribute>
+                                      </attributes>
+                                    </child>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="url_entry">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">●</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
                                   </packing>
                                 </child>
                               </object>

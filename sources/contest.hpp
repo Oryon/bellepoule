@@ -41,6 +41,7 @@ class Contest : public Module
 
     void AttachTo (GtkNotebook *to);
     void Save ();
+    void Publish ();
     gchar *GetFilename ();
     void AddPlayer (Player *player,
                     guint   rank);
@@ -63,6 +64,7 @@ class Contest : public Module
     void on_contest_close_button_clicked  ();
     void on_calendar_button_clicked       ();
     void on_web_site_button_clicked       ();
+    void on_ftp_changed                   (GtkComboBox *widget);
 
   private:
     struct Time : public Object
@@ -77,6 +79,7 @@ class Contest : public Module
       void ReadProperties (Glade *glade);
       void FillInProperties (Glade *glade);
       void Copy (Time *to);
+      gboolean IsEqualTo (Time *to);
 
       gchar *_name;
       guint  _hour;

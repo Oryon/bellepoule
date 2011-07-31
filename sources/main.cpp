@@ -159,6 +159,8 @@ int main (int argc, char **argv)
       g_free (translation_path);
     }
 
+    Object::SetProgramPath (install_dirname);
+
     Contest::Init               ();
     Checkin::Init               ();
     PoolAllocator::Init         ();
@@ -166,10 +168,6 @@ int main (int argc, char **argv)
     TableSupervisor::Init       ();
     GeneralClassification::Init ();
     Splitting::Init             ();
-
-    Glade::SetPath         (install_dirname);
-    AttributeDesc::SetPath (install_dirname);
-    Tournament::SetPath    (install_dirname);
 
     g_free (install_dirname);
   }

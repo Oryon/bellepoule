@@ -74,6 +74,22 @@
 			<Add library="cairo" />
 			<Add library="gmodule-2.0" />
 			<Add library="intl" />
+			<Add library="curl" />
+			<Add library="ws2_32" />
+			<Add library="ssh2" />
+			<Add library="libz" />
+			<Add library="libzdll" />
+			<Add library="libcurl" />
+			<Add library="libcurldll" />
+			<Add library="libeay32" />
+			<Add library="libidn" />
+			<Add library="libidn.dll" />
+			<Add library="librtmp" />
+			<Add library="libssh2" />
+			<Add library="libssh2dll" />
+			<Add library="libssl" />
+			<Add library="libssl32" />
+			<Add library="libcrypto" />
 			<Add directory="C:\MinGW\lib" />
 		</Linker>
 		<Unit filename="sources\attendees.cpp" />

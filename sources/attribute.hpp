@@ -74,8 +74,6 @@ class AttributeDesc : public Object
     gboolean      _is_selector;
     gboolean      _has_selector;
 
-    static void SetPath (gchar *path);
-
     static AttributeDesc *Declare (GType        type,
                                    const gchar *code_name,
                                    const gchar *xml_name,
@@ -118,7 +116,6 @@ class AttributeDesc : public Object
                           void        *data);
 
   private:
-    static gchar  *_path;
     static GSList *_list;
 
     AttributeDesc (GType        type,

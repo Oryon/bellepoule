@@ -182,6 +182,9 @@ Checkin::Checkin (StageClass *stage_class)
                                                         AttributeDesc::DISCRETE_USER_IMAGE);
                   gtk_entry_completion_set_inline_completion (completion,
                                                               TRUE);
+                  g_object_set (G_OBJECT (completion),
+                                "popup-set-width", FALSE,
+                                NULL);
                   gtk_entry_set_completion (entry,
                                             completion);
                   g_object_unref (completion);

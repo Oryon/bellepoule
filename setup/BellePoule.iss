@@ -119,6 +119,7 @@ Source: "C:\MinGW\share\locale\it\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{a
 
 ;Resources
 Source: "..\resources\glade\*.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
+Source: "..\resources\glade\*.jpg"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\*.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\*.txt"; DestDir: "{app}\resources\"; Flags: ignoreversion
 Source: "..\resources\exe.ico"; DestDir: "{app}\resources\"; Flags: ignoreversion
@@ -166,6 +167,14 @@ Source: "C:\MinGW\bin\libfontconfig-1.dll"; DestDir: "{app}\porting_layer\lib"; 
 Source: "C:\MinGW\bin\libfreetype-6.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libgsf-1-114.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 Source: "C:\MinGW\bin\librsvg-2-2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+
+Source: "C:\MinGW\bin\libcurl.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libssh2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libeay32.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libidn-11.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\librtmp.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libssh2.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libssl32.dll"; DestDir: "{app}\porting_layer\lib"; Flags: ignoreversion
 
 ; theme
 Source: "C:\MinGW\etc\gtk-2.0\gtkrc"; DestDir: "{app}\porting_layer\etc\gtk-2.0"; Flags: ignoreversion
@@ -245,6 +254,8 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
+
 
 
 

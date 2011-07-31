@@ -18,8 +18,9 @@
 
 #include "object.hpp"
 
-guint Object::_nb_objects = 0;
-GList *Object::_list      = NULL;
+guint  Object::_nb_objects   = 0;
+GList *Object::_list         = NULL;
+gchar *Object::_program_path = NULL;
 
 struct ClassStatus
 {
@@ -96,6 +97,12 @@ Object::~Object ()
   g_free (_class_name);
 
 #endif
+}
+
+// --------------------------------------------------------------------------------
+void Object::SetProgramPath (gchar *path)
+{
+  _program_path = g_strdup (path);
 }
 
 // --------------------------------------------------------------------------------
