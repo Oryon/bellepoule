@@ -185,6 +185,13 @@ void Contest::Time::Copy (Time *to)
 }
 
 // --------------------------------------------------------------------------------
+gboolean Contest::Time::IsEqualTo (Time *to)
+{
+  return (   (to->_hour   == _hour)
+          && (to->_minute == _minute));
+}
+
+// --------------------------------------------------------------------------------
 Contest::Contest ()
   : Module ("contest.glade")
 {
@@ -984,44 +991,95 @@ static size_t read_callback (void *ptr, size_t size, size_t nmemb, FILE *stream)
 }
 
 // --------------------------------------------------------------------------------
+static int OnUpLoadTrace (CURL          *handle,
+                          curl_infotype  type,
+                          char          *data,
+                          size_t         size,
+                          Contest       *contest)
+{
+  if (type == CURLINFO_TEXT)
+  {
+    g_print ("FTP Upload: %s", data);
+  }
+
+  return 0;
+}
+
+// --------------------------------------------------------------------------------
 void Contest::Publish ()
 {
+  if (_schedule->ScoreStuffingIsAllowed ())
+  {
+    return;
+  }
+  //if (_checkin_time->IsEqualTo (_scratch_time))
+  //{
+    //return;
+  //}
+  //if (_scratch_time->IsEqualTo (_start_time))
+  //{
+    //return;
+  //}
+
   if (_filename)
   {
-    CURL *curl = curl_easy_init ();
+    CURL  *curl         = curl_easy_init ();
+    const gchar *url    = gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry")));
+    const gchar *user   = gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry")));
+    const gchar *passwd = gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry")));
 
     if (curl)
     {
-      gchar      *base_name  = g_path_get_basename (_filename);
-      gchar      *url        = g_strdup_printf ("ftp://www.escrime-info.com/web/%s", base_name);
-      FILE       *file       = fopen (_filename, "rb");
-      curl_off_t  file_size;
-
-      g_free (base_name);
-
+      if (url)
       {
-        struct stat file_info;
+        gchar      *base_name  = g_path_get_basename (_filename);
+        gchar      *full_url   = g_strdup_printf ("%s/%s", url, base_name);
+        FILE       *file       = fopen (_filename, "rb");
+        curl_off_t  file_size;
 
-        if (stat (_filename, &file_info))
+        g_free (base_name);
+
         {
-          g_print ("Couldnt open '%s': %s\n", _filename, strerror (errno));
-          return;
+          struct stat file_info;
+
+          if (stat (_filename, &file_info))
+          {
+            g_print ("Couldnt open '%s': %s\n", _filename, strerror (errno));
+            return;
+          }
+          file_size = (curl_off_t) file_info.st_size;
         }
-        file_size = (curl_off_t) file_info.st_size;
+
+        curl_easy_setopt (curl, CURLOPT_READFUNCTION,  read_callback);
+        curl_easy_setopt (curl, CURLOPT_UPLOAD,        1L);
+        curl_easy_setopt (curl, CURLOPT_URL,           full_url);
+        curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION, OnUpLoadTrace);
+        curl_easy_setopt (curl, CURLOPT_DEBUGDATA,     this);
+        curl_easy_setopt (curl, CURLOPT_VERBOSE,       1L);
+
+        if (user && passwd)
+        {
+          gchar *opt = g_strdup_printf ("%s:%s", user, passwd);
+
+          curl_easy_setopt (curl, CURLOPT_USERPWD, "belle_poule:tH3MF8huHX");
+          g_free (opt);
+        }
+        curl_easy_setopt (curl, CURLOPT_READDATA,         file);
+        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) file_size);
+
+        {
+          CURLcode result = curl_easy_perform (curl);
+
+          if (result != CURLE_OK)
+          {
+            g_print (curl_easy_strerror (result));
+          }
+        }
+
+        fclose (file);
+        g_free (full_url);
       }
-
-      curl_easy_setopt (curl, CURLOPT_READFUNCTION,     read_callback);
-      curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
-      curl_easy_setopt (curl, CURLOPT_URL,              url);
-      curl_easy_setopt (curl, CURLOPT_USERPWD,          "belle_poule:tH3MF8huHX");
-      curl_easy_setopt (curl, CURLOPT_READDATA,         file);
-      curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) file_size);
-
-      curl_easy_perform (curl);
-
       curl_easy_cleanup (curl);
-      fclose (file);
-      g_free (url);
     }
   }
 }

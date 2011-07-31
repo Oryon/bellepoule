@@ -79,6 +79,7 @@ class Contest : public Module
       void ReadProperties (Glade *glade);
       void FillInProperties (Glade *glade);
       void Copy (Time *to);
+      gboolean IsEqualTo (Time *to);
 
       gchar *_name;
       guint  _hour;
