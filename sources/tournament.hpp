@@ -46,16 +46,22 @@ class Tournament : public Module
 
     void OnSave ();
 
+    void OnBackupfileLocation ();
+
     Contest *GetContest (gchar *filename);
 
     void Manage (Contest *contest);
 
     void OnContestDeleted (Contest *contest);
 
+    const gchar *GetBackupLocation ();
+
   private:
     GSList *_contest_list;
 
     void ReadConfiguration ();
+
+    void SetBackupLocation (gchar *location);
 };
 
 #endif

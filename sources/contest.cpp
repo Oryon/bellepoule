@@ -15,7 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string.h>
-#include <curl/curl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -37,6 +36,7 @@
 #include "canvas.hpp"
 #include "tournament.hpp"
 #include "checkin.hpp"
+#include "upload.hpp"
 
 #include "contest.hpp"
 
@@ -985,32 +985,16 @@ void Contest::AttachTo (GtkNotebook *to)
 }
 
 // --------------------------------------------------------------------------------
-static size_t read_callback (void *ptr, size_t size, size_t nmemb, FILE *stream)
-{
-  return fread (ptr, size, nmemb, stream);
-}
-
-// --------------------------------------------------------------------------------
-static int OnUpLoadTrace (CURL          *handle,
-                          curl_infotype  type,
-                          char          *data,
-                          size_t         size,
-                          Contest       *contest)
-{
-  if (type == CURLINFO_TEXT)
-  {
-    g_print ("FTP Upload: %s", data);
-  }
-
-  return 0;
-}
-
-// --------------------------------------------------------------------------------
 void Contest::Publish ()
 {
-  if (_schedule->ScoreStuffingIsAllowed ())
+  if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
-    return;
+    Upload *upload = new Upload (_filename,
+                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
+                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+
+    upload->Start ();
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
   //{
@@ -1020,68 +1004,6 @@ void Contest::Publish ()
   //{
     //return;
   //}
-
-  if (_filename)
-  {
-    CURL  *curl         = curl_easy_init ();
-    const gchar *url    = gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry")));
-    const gchar *user   = gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry")));
-    const gchar *passwd = gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry")));
-
-    if (curl)
-    {
-      if (url)
-      {
-        gchar      *base_name  = g_path_get_basename (_filename);
-        gchar      *full_url   = g_strdup_printf ("%s/%s", url, base_name);
-        FILE       *file       = fopen (_filename, "rb");
-        curl_off_t  file_size;
-
-        g_free (base_name);
-
-        {
-          struct stat file_info;
-
-          if (stat (_filename, &file_info))
-          {
-            g_print ("Couldnt open '%s': %s\n", _filename, strerror (errno));
-            return;
-          }
-          file_size = (curl_off_t) file_info.st_size;
-        }
-
-        curl_easy_setopt (curl, CURLOPT_READFUNCTION,  read_callback);
-        curl_easy_setopt (curl, CURLOPT_UPLOAD,        1L);
-        curl_easy_setopt (curl, CURLOPT_URL,           full_url);
-        curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION, OnUpLoadTrace);
-        curl_easy_setopt (curl, CURLOPT_DEBUGDATA,     this);
-        curl_easy_setopt (curl, CURLOPT_VERBOSE,       1L);
-
-        if (user && passwd)
-        {
-          gchar *opt = g_strdup_printf ("%s:%s", user, passwd);
-
-          curl_easy_setopt (curl, CURLOPT_USERPWD, "belle_poule:tH3MF8huHX");
-          g_free (opt);
-        }
-        curl_easy_setopt (curl, CURLOPT_READDATA,         file);
-        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) file_size);
-
-        {
-          CURLcode result = curl_easy_perform (curl);
-
-          if (result != CURLE_OK)
-          {
-            g_print (curl_easy_strerror (result));
-          }
-        }
-
-        fclose (file);
-        g_free (full_url);
-      }
-      curl_easy_cleanup (curl);
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1093,8 +1015,26 @@ void Contest::Save ()
                                  "default_dir_name");
   }
 
-  Save (_filename);
-  Publish ();
+  if (_filename)
+  {
+    Save (_filename);
+
+    {
+      const gchar *location = _tournament->GetBackupLocation ();
+
+      if (location)
+      {
+        gchar *base_name   = g_path_get_basename (_filename);
+        gchar *backup_file = g_build_filename (location, base_name, NULL);
+
+        Save (backup_file);
+        g_free (base_name);
+        g_free (backup_file);
+      }
+    }
+
+    Publish ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1486,29 +1426,6 @@ extern "C" G_MODULE_EXPORT void on_formula_toolbutton_clicked (GtkWidget *widget
 void Contest::on_formula_toolbutton_clicked ()
 {
   _schedule->DisplayList ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_backupfile_button_clicked (GtkWidget *widget,
-                                                              Object    *owner)
-{
-  Contest *c = dynamic_cast <Contest *> (owner);
-
-  c->on_backupfile_button_clicked ();
-}
-
-// --------------------------------------------------------------------------------
-void Contest::on_backupfile_button_clicked ()
-{
-  gchar *filename = GetSaveFileName (gettext ("Choose a backup file..."),
-                                     "default_backup_dir_name");
-
-  if (filename)
-  {
-    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("backupfile_label")),
-                        filename);
-    g_free (filename);
-  }
 }
 
 // --------------------------------------------------------------------------------

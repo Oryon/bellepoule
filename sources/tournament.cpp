@@ -185,6 +185,15 @@ void Tournament::ReadConfiguration ()
                            g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
   }
 
+  {
+    gchar *last_backup = g_key_file_get_string (_config_file,
+                                                "Tournament",
+                                                "backup_location",
+                                                NULL);
+    SetBackupLocation (last_backup);
+    g_free (last_backup);
+  }
+
   g_free (dir_path);
   g_free (file_path);
 }
@@ -456,6 +465,74 @@ void Tournament::OnRecent ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnBackupfileLocation ()
+{
+  GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a backup files location..."),
+                                                                GTK_WINDOW (_glade->GetRootWidget ()),
+                                                                GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                                                                GTK_STOCK_CANCEL,
+                                                                GTK_RESPONSE_CANCEL,
+                                                                GTK_STOCK_APPLY,
+                                                                GTK_RESPONSE_ACCEPT,
+                                                                NULL));
+
+  {
+    gchar *last_location = g_key_file_get_string (_config_file,
+                                                  "Tournament",
+                                                  "backup_location",
+                                                  NULL);
+    if (last_location)
+    {
+      gtk_file_chooser_select_uri (GTK_FILE_CHOOSER (chooser),
+                                   last_location);
+
+      g_free (last_location);
+    }
+  }
+
+  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+  {
+    gchar *foldername = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (chooser));
+
+    if (foldername)
+    {
+      g_key_file_set_string (_config_file,
+                             "Tournament",
+                             "backup_location",
+                             foldername);
+      SetBackupLocation (foldername);
+      g_free (foldername);
+    }
+  }
+
+  gtk_widget_destroy (chooser);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::SetBackupLocation (gchar *location)
+{
+  gchar *readable_name = g_uri_unescape_string (location,
+                                                NULL);
+
+  gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("backup_location_menuitem")),
+                           readable_name);
+  g_free (readable_name);
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Tournament::GetBackupLocation ()
+{
+  if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (_glade->GetWidget ("activate_radiomenuitem"))))
+  {
+    return gtk_menu_item_get_label (GTK_MENU_ITEM (_glade->GetWidget ("backup_location_menuitem")));
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
                                                           Object    *owner)
 {
@@ -548,4 +625,13 @@ extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnRecent ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_backup_location_menuitem_activate (GtkWidget *widget,
+                                                                      Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnBackupfileLocation ();
 }

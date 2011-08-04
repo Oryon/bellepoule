@@ -124,6 +124,8 @@ int main (int argc, char **argv)
   {
     gchar *install_dirname = NULL;
 
+    g_thread_init (NULL);
+
 #ifdef G_OS_WIN32
     install_dirname = g_get_current_dir ();
 #else
