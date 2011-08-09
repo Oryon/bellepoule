@@ -226,6 +226,7 @@ Contest::Contest (gchar *filename)
                    G_FILE_TEST_IS_REGULAR))
   {
     gboolean  score_stuffing_policy = FALSE;
+    gboolean  need_post_processing  = FALSE;
     xmlDoc   *doc                   = xmlParseFile (filename);
 
     if (doc == NULL)
@@ -248,6 +249,8 @@ Contest::Contest (gchar *filename)
       {
         xmlXPathFreeObject (xml_object);
         xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle", xml_context);
+
+        need_post_processing = TRUE;
       }
 
       xml_nodeset = xml_object->nodesetval;
@@ -391,6 +394,13 @@ Contest::Contest (gchar *filename)
     }
 
     xmlFreeDoc (doc);
+
+    if (need_post_processing)
+    {
+      Checkin *checkin = dynamic_cast <Checkin *> (_schedule->GetStage (0));
+
+      checkin->ConvertFromBaseToResult ();
+    }
 
     {
       GtkRecentManager *manager = gtk_recent_manager_get_default ();

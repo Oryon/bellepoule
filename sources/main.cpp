@@ -68,8 +68,8 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
 }
 
 // --------------------------------------------------------------------------------
-static gint CompareRating (Attribute *attr_a,
-                           Attribute *attr_b)
+static gint CompareRanking (Attribute *attr_a,
+                            Attribute *attr_b)
 {
   gint value_a = 0;
   gint value_b = 0;
@@ -213,12 +213,12 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", gettext ("ranking"));
-    desc->_compare_func = (GCompareFunc) CompareRating;
+    desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));
+    desc->_compare_func = (GCompareFunc) CompareRanking;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "start_rank", "RangInitial", gettext ("start rank"));
     desc->_rights       = AttributeDesc::PRIVATE;
-    desc->_compare_func = (GCompareFunc) CompareRating;
+    desc->_compare_func = (GCompareFunc) CompareRanking;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
     desc->_uniqueness  = AttributeDesc::NOT_SINGULAR;

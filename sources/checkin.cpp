@@ -75,7 +75,7 @@ Checkin::Checkin (StageClass *stage_class)
     filter->ShowAttribute ("club");
     filter->ShowAttribute ("league");
     filter->ShowAttribute ("country");
-    filter->ShowAttribute ("rating");
+    filter->ShowAttribute ("ranking");
     filter->ShowAttribute ("licence");
 
     SetFilter (filter);
@@ -349,9 +349,7 @@ void Checkin::Save (xmlTextWriter *xml_writer)
 
     for (guint i = 0; i < g_slist_length (_player_list); i++)
     {
-      Player *p;
-
-      p = (Player *) g_slist_nth_data (_player_list, i);
+      Player *p = (Player *) g_slist_nth_data (_player_list, i);
 
       if (p)
       {
@@ -388,6 +386,37 @@ void Checkin::OnListChanged ()
 void Checkin::UseInitialRank ()
 {
   _use_initial_rank = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::ConvertFromBaseToResult ()
+{
+  // This method aims to deal with the strange FIE xml specification.
+  // Two different file formats are used. One for preparation one for result.
+  // Both are almost similar except that they use a same keyword ("classement")
+  // for a different meanning.
+
+  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  {
+    Player *p = (Player *) g_slist_nth_data (_player_list, i);
+
+    if (p)
+    {
+      Player::AttributeId  place_attr_id ("final_rank");
+      Attribute           *final_rank  = p->GetAttribute (&place_attr_id);
+
+      if (final_rank)
+      {
+        Player::AttributeId ranking_attr_id ("ranking");
+
+        p->SetAttributeValue (&ranking_attr_id,
+                              final_rank->GetUIntValue ());
+        p->SetAttributeValue (&place_attr_id,
+                              1);
+      }
+    }
+  }
+  UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------
@@ -462,7 +491,7 @@ void Checkin::UpdateRanking ()
     }
     else
     {
-      rank_criteria_id = new Player::AttributeId ("rating");
+      rank_criteria_id = new Player::AttributeId ("ranking");
     }
 
     rank_criteria_id->MakeRandomReady (_rand_seed);
@@ -867,12 +896,12 @@ void Checkin::ImportFFF (gchar *file)
 
             if (tokens[3] == NULL)
             {
-              attr_id._name = (gchar *) "rating";
+              attr_id._name = (gchar *) "ranking";
               player->SetAttributeValue (&attr_id, (guint) 0);
             }
             else
             {
-              attr_id._name = (gchar *) "rating";
+              attr_id._name = (gchar *) "ranking";
               player->SetAttributeValue (&attr_id, tokens[3]);
             }
 

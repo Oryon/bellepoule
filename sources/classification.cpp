@@ -213,7 +213,7 @@ void Classification::DumpToFFF (gchar   *filename,
 
           WriteFFFString (file,
                           player,
-                          "rating");
+                          "ranking");
           fprintf (file, ",");
 
           fprintf (file, ",;");

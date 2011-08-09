@@ -286,6 +286,17 @@ void Tournament::OnOpen (gchar *current_folder)
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
+                              gettext ("FFE files (.xml)"));
+    gtk_file_filter_add_pattern (filter,
+                                 "*.xml");
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                 filter);
+  }
+
+  {
+    GtkFileFilter *filter = gtk_file_filter_new ();
+
+    gtk_file_filter_set_name (filter,
                               gettext ("All files"));
     gtk_file_filter_add_pattern (filter,
                                  "*");
