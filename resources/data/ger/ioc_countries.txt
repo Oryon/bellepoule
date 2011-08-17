@@ -1,9 +1,0 @@
-AHO;Niederländische Antillen
-BOH;Böhmen
-GRL;Grönland
-ROM;Rumänien
-SCG;Serbien und Montenegro
-SMY;Smyrna
-TCH;Tschechoslowakei
-URS;Sowjetunion
-YUG;Jugoslawien
