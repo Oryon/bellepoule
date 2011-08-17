@@ -1,32 +1,32 @@
-ALSACE;;;24
-AQUITAINE;;;4
-AUVERGNE;;;6
-BASSE-NORMANDIE;;;5
-BOURGOGNE;;;9
-BRETAGNE;;;23
-CENTRE;;;20
-CHAMPAGNE-ARDENNE;;;22
-CORSE;;;7
-COTE D'AZUR;;;19
-CRETEIL;;;26
-DAUPHINE-SAVOIE;;;8
-FRANCHE-COMTE;;;3
-GUADELOUPE;;;10
-GUYANE;;;12
-HAUTE-NORMANDIE;;;11
-LA REUNION;;;29
-LANGUEDOC-ROUSSILLON;;;16
-LIMOUSIN;;;30
-LORRAINE;;;17
-LYONNAIS;;;14
-MARTINIQUE;;;15
-MIDI-PYRENEES;;;25
-NORD-PAS DE CALAIS;;;13
-NOUVELLE CALEDONIE;;;31
-PARIS;;;27
-PARIS (F.F.E.);;;99
-PAYS DE LA LOIRE;;;18
-PICARDIE;;;2
-POITOU-CHARENTES;;;21
-PROVENCE;;;1
-VERSAILLES;;;28
+Alsace;;;24
+Aquitaine;;;4
+Auvergne;;;6
+Basse-Normandie;;;5
+Bourgogne;;;9
+Bretagne;;;23
+Centre;;;20
+Champagne-Ardenne;;;22
+Corse;;;7
+Cote D'azur;;;19
+Creteil;;;26
+Dauphine-Savoie;;;8
+Franche-Comte;;;3
+Guadeloupe;;;10
+Guyane;;;12
+Haute-Normandie;;;11
+La reunion;;;29
+Languedoc-Roussillon;;;16
+Limousin;;;30
+Lorraine;;;17
+Lyonnais;;;14
+Martinique;;;15
+Midi-Pyrenees;;;25
+Nord-Pas De calais;;;13
+Nouvelle Caledonie;;;31
+Paris;;;27
+Paris (F.F.E.);;;99
+Pays De la Loire;;;18
+Picardie;;;2
+Poitou-Charentes;;;21
+Provence;;;1
+Versailles;;;28
