@@ -105,6 +105,21 @@ AttributeDesc::~AttributeDesc ()
 }
 
 // --------------------------------------------------------------------------------
+const gchar *AttributeDesc::GetTranslation (const gchar *domain,
+                                            const gchar *text)
+{
+  if (domain)
+  {
+    return (dgettext (domain,
+                      text));
+  }
+  else
+  {
+    return text;
+  }
+}
+
+// --------------------------------------------------------------------------------
 AttributeDesc *AttributeDesc::Declare (GType        type,
                                        const gchar *code_name,
                                        const gchar *xml_name,
@@ -528,6 +543,32 @@ void AttributeDesc::AddDiscreteValues (const gchar *file,
 
       if (tokens)
       {
+        gchar *textdomain = NULL;
+
+        {
+          gchar *dirname = g_path_get_dirname (file);
+
+          if (dirname)
+          {
+            gchar *translations = g_build_filename (dirname, "translations", NULL);
+
+            if (g_file_test (translations, G_FILE_TEST_IS_DIR))
+            {
+              gchar *sufix;
+
+              textdomain = g_path_get_basename (file);
+
+              sufix = strchr (textdomain, '.');
+              if (sufix)
+              {
+                *sufix = 0;
+              }
+            }
+
+            g_free (dirname);
+          }
+        }
+
         for (guint i = 0; (tokens[i] != NULL) && (*tokens[i] != 0); i+=nb_tokens)
         {
           GtkTreeIter iter;
@@ -557,13 +598,9 @@ void AttributeDesc::AddDiscreteValues (const gchar *file,
               if (*tokens[i+1] != 0)
               {
                 g_free (undivadable_text);
-                undivadable_text = GetUndivadableText (tokens[i+1]);
+                undivadable_text = GetUndivadableText (GetTranslation (textdomain,
+                                                                       tokens[i+1]));
               }
-
-              // TODO:
-              // gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-              // DISCRETE_USER_IMAGE, undivadable_text,
-              // -1);
             }
 
             // Long name
@@ -571,7 +608,8 @@ void AttributeDesc::AddDiscreteValues (const gchar *file,
               if (*tokens[i+2] != 0)
               {
                 g_free (undivadable_text);
-                undivadable_text = GetUndivadableText (tokens[i+2]);
+                undivadable_text = GetUndivadableText (GetTranslation (textdomain,
+                                                                       tokens[i+2]));
               }
 
               gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
@@ -590,6 +628,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *file,
           }
         }
         g_strfreev (tokens);
+        g_free (textdomain);
       }
     }
   }

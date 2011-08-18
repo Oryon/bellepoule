@@ -146,19 +146,31 @@ int main (int argc, char **argv)
     gtk_init (&argc, &argv);
 
     {
-      gchar  *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
-
       setlocale (LC_ALL, "");
 
       //g_setenv ("LANGUAGE",
       //"de",
       //TRUE);
 
-      bindtextdomain ("BellePoule", translation_path);
-      bind_textdomain_codeset ("BellePoule", "UTF-8");
-      textdomain ("BellePoule");
+      {
+        gchar *translation_path = g_build_filename (install_dirname, "resources", "countries", "translations", NULL);
 
-      g_free (translation_path);
+        bindtextdomain ("countries", translation_path);
+        bind_textdomain_codeset ("countries", "UTF-8");
+
+        g_free (translation_path);
+      }
+
+      {
+        gchar *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
+
+        bindtextdomain ("BellePoule", translation_path);
+        bind_textdomain_codeset ("BellePoule", "UTF-8");
+
+        g_free (translation_path);
+      }
+
+      textdomain ("BellePoule");
     }
 
     Object::SetProgramPath (install_dirname);
@@ -201,7 +213,7 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValueSelector ("ioc_countries.txt");
+    desc->AddDiscreteValueSelector ("countries/countries.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
     desc->AddDiscreteValues ("ligues.txt");
