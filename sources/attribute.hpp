@@ -134,6 +134,9 @@ class AttributeDesc : public Object
 
     void AddDiscreteValues (const gchar *file,
                             const gchar *selector);
+
+    const gchar *GetTranslation (const gchar *domain,
+                                 const gchar *text);
 };
 
 // --------------------------------------------------------------------------------

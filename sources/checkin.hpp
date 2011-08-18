@@ -41,6 +41,8 @@ class Checkin : public virtual Stage, public PlayersList
 
     void OnListChanged ();
 
+    void ConvertFromBaseToResult ();
+
   public:
     void on_add_player_button_clicked ();
     void on_remove_player_button_clicked ();

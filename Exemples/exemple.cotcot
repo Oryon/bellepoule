@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CompetitionIndividuelle>
+<!--
+           By BellePoule (V2.0beta16)
+
+   http://betton.escrime.free.fr/index.php/bellepoule
+-->
+<CompetitionIndividuelle Couleur="0" Annee="2010" Arme="S" Sexe="M" Organisateur="CS Betton" Categorie="M" Date="07.11.2010" Appel="12:00" Scratch="12:00" Début="12:00" TitreLong="H2016" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="0">
+ <Tireurs>
+  <Tireur ID="29" Nom="ROGER" Prenom="Benjamin" DateNaissance="13/02/1996" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330544" Ranking="1006" Exporte="0" Statut="Q"/>
+  <Tireur ID="21" Nom="LATREILLE" Prenom="Quentin" DateNaissance="06/02/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100499" Ranking="1021" Exporte="0" Statut="Q"/>
+  <Tireur ID="30" Nom="BOTUHA" Prenom="Simon" DateNaissance="21/05/1996" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330559" Ranking="1038" Exporte="0" Statut="Q"/>
+  <Tireur ID="19" Nom="GUEGAN" Prenom="Baptiste" DateNaissance="19/11/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100439" Ranking="1039" Exporte="0" Statut="Q"/>
+  <Tireur ID="14" Nom="LE ROUX" Prenom="Gurvan" DateNaissance="31/03/1997" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100317" Ranking="1142" Exporte="0" Statut="Q"/>
+  <Tireur ID="32" Nom="BESCOND" Prenom="Maxime" DateNaissance="22/04/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330575" Ranking="1157" Exporte="0" Statut="Q"/>
+  <Tireur ID="13" Nom="LEGRAND" Prenom="Abraham" DateNaissance="09/08/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100237" Ranking="1163" Exporte="0" Statut="Q"/>
+  <Tireur ID="24" Nom="SAILLARD" Prenom="Pacome" DateNaissance="26/02/1997" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100549" Ranking="1164" Exporte="0" Statut="Q"/>
+  <Tireur ID="9" Nom="STEPHAN" Prenom="Loic" DateNaissance="23/11/1997" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290340661" Ranking="1173" Exporte="0" Statut="Q"/>
+  <Tireur ID="33" Nom="HOBL" Prenom="Alexis" DateNaissance="25/09/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330584" Ranking="1190" Exporte="0" Statut="Q"/>
+  <Tireur ID="25" Nom="LAUMAIN" Prenom="Louis" DateNaissance="10/10/1996" Sexe="M" Nation="FRA" Club="ST MALO" Licence="230350150893" Ranking="1193" Exporte="0" Statut="Q"/>
+  <Tireur ID="10" Nom="LEBOURGEOIS" Prenom="Antoine" DateNaissance="19/12/1996" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290340706" Ranking="1194" Exporte="0" Statut="Q"/>
+  <Tireur ID="23" Nom="LE BACCON" Prenom="Pierre erik" DateNaissance="11/05/1998" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100526" Ranking="1201" Exporte="0" Statut="Q"/>
+  <Tireur ID="36" Nom="GUERIN" Prenom="Tristan" DateNaissance="15/09/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330627" Ranking="1206" Exporte="0" Statut="Q"/>
+  <Tireur ID="31" Nom="GARNIER" Prenom="Nathan" DateNaissance="15/11/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330563" Ranking="1215" Exporte="0" Statut="Q"/>
+  <Tireur ID="2" Nom="JARAY" Prenom="Alexandre" DateNaissance="24/12/1996" Sexe="M" Nation="FRA" Club="ST BRIEUC" Licence="230220090574" Ranking="1220" Exporte="0" Statut="Q"/>
+  <Tireur ID="1" Nom="LEMOINE" Prenom="Lou" DateNaissance="24/05/1997" Sexe="M" Nation="FRA" Club="DINAN EA" Licence="230220070210" Ranking="1261" Exporte="0" Statut="Q"/>
+  <Tireur ID="11" Nom="RESMOND" Prenom="Tangui" DateNaissance="19/04/1998" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290340820" Ranking="1278" Exporte="0" Statut="Q"/>
+  <Tireur ID="26" Nom="DANIBO" Prenom="Antoine" DateNaissance="03/10/1997" Sexe="M" Nation="FRA" Club="ST MALO" Licence="230350150926" Ranking="1289" Exporte="0" Statut="Q"/>
+  <Tireur ID="0" Nom="BONNOT" Prenom="Pierre" DateNaissance="23/05/1997" Sexe="M" Nation="FRA" Club="DINAN EA" Licence="230220070202" Ranking="1308" Exporte="0" Statut="Q"/>
+  <Tireur ID="15" Nom="JARDIN" Prenom="Nathan" DateNaissance="17/02/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100343" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="6" Nom="LE REUN" Prenom="Etienne" DateNaissance="12/06/1999" Sexe="M" Nation="FRA" Club="BREST RAPIER" Licence="230290050957" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="27" Nom="QUEMERAIS" Prenom="Primael" DateNaissance="14/03/1999" Sexe="M" Nation="FRA" Club="ST GREGOIRE" Licence="230350290465" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="7" Nom="TANGUY" Prenom="Quentin" DateNaissance="22/05/1998" Sexe="M" Nation="FRA" Club="BREST RAPIER" Licence="230290050984" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="3" Nom="LE LOARER" Prenom="Gwendal" DateNaissance="31/05/1997" Sexe="M" Nation="FRA" Club="ST BRIEUC" Licence="230220090765" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="34" Nom="LALLEMAND" Prenom="Marin" DateNaissance="06/09/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330585" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="28" Nom="KELLER" Prenom="Maxime" DateNaissance="08/01/1999" Sexe="M" Nation="FRA" Club="ST GREGOIRE" Licence="230350290477" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="5" Nom="CARLO" Prenom="Maxime" DateNaissance="29/12/1999" Sexe="M" Nation="FRA" Club="ST BRIEUC" Licence="230220090866" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="35" Nom="DUCRET" Prenom="Hugo" DateNaissance="22/05/1998" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330616" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="12" Nom="LE GAL" Prenom="Killian" DateNaissance="15/09/1996" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290341021" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="8" Nom="CONAN" Prenom="Baptiste" DateNaissance="23/06/1998" Sexe="M" Nation="FRA" Club="BREST RAPIER" Licence="230290050993" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="4" Nom="DANIEL" Prenom="Corentin" DateNaissance="09/04/1996" Sexe="M" Nation="FRA" Club="ST BRIEUC" Licence="230220090792" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="18" Nom="BROCHAIN" Prenom="Pierre" DateNaissance="17/11/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100410" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="20" Nom="GUEGAN" Prenom="Thibault" DateNaissance="18/05/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100456" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="22" Nom="THEBAULT" Prenom="Quentin" DateNaissance="21/11/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100516" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="16" Nom="BIDAN" Prenom="Yoann" DateNaissance="18/10/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100348" Ranking="0" Exporte="0" Statut="Q"/>
+  <Tireur ID="17" Nom="DRAZIC" Prenom="Matthieu" DateNaissance="10/06/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100395" Ranking="0" Exporte="0" Statut="Q"/>
+ </Tireurs>
+ <Arbitres/>
+ <Phases PhaseEnCours="0">
+  <TourDePoules PhaseID="1" ID="" ScoreMax="5" RatioQualifies="100" Decalage="Aucun" PhaseSuivanteDesQualifies="3"/>
+  <PhaseDeTableaux PhaseID="3" ID="" ScoreMax="10" RatioQualifies="100" PlacesTirees="0"/>
+  <ClassementGeneral PhaseID="4" ID="" RatioQualifies="100"/>
+ </Phases>
+</CompetitionIndividuelle>

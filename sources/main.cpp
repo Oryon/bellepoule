@@ -68,8 +68,8 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
 }
 
 // --------------------------------------------------------------------------------
-static gint CompareRating (Attribute *attr_a,
-                           Attribute *attr_b)
+static gint CompareRanking (Attribute *attr_a,
+                            Attribute *attr_b)
 {
   gint value_a = 0;
   gint value_b = 0;
@@ -124,6 +124,8 @@ int main (int argc, char **argv)
   {
     gchar *install_dirname = NULL;
 
+    g_thread_init (NULL);
+
 #ifdef G_OS_WIN32
     install_dirname = g_get_current_dir ();
 #else
@@ -144,19 +146,31 @@ int main (int argc, char **argv)
     gtk_init (&argc, &argv);
 
     {
-      gchar  *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
-
       setlocale (LC_ALL, "");
 
       //g_setenv ("LANGUAGE",
       //"de",
       //TRUE);
 
-      bindtextdomain ("BellePoule", translation_path);
-      bind_textdomain_codeset ("BellePoule", "UTF-8");
-      textdomain ("BellePoule");
+      {
+        gchar *translation_path = g_build_filename (install_dirname, "resources", "countries", "translations", NULL);
 
-      g_free (translation_path);
+        bindtextdomain ("countries", translation_path);
+        bind_textdomain_codeset ("countries", "UTF-8");
+
+        g_free (translation_path);
+      }
+
+      {
+        gchar *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
+
+        bindtextdomain ("BellePoule", translation_path);
+        bind_textdomain_codeset ("BellePoule", "UTF-8");
+
+        g_free (translation_path);
+      }
+
+      textdomain ("BellePoule");
     }
 
     Object::SetProgramPath (install_dirname);
@@ -199,7 +213,7 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValueSelector ("ioc_countries.txt");
+    desc->AddDiscreteValueSelector ("countries/countries.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
     desc->AddDiscreteValues ("ligues.txt");
@@ -211,12 +225,12 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "rating", "Points", gettext ("ranking"));
-    desc->_compare_func = (GCompareFunc) CompareRating;
+    desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));
+    desc->_compare_func = (GCompareFunc) CompareRanking;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "start_rank", "RangInitial", gettext ("start rank"));
     desc->_rights       = AttributeDesc::PRIVATE;
-    desc->_compare_func = (GCompareFunc) CompareRating;
+    desc->_compare_func = (GCompareFunc) CompareRanking;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
     desc->_uniqueness  = AttributeDesc::NOT_SINGULAR;

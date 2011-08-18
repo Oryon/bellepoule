@@ -121,11 +121,10 @@ Source: "C:\MinGW\share\locale\it\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{a
 Source: "..\resources\glade\*.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\*.jpg"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
 Source: "..\resources\glade\*.glade"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion
-Source: "..\resources\*.txt"; DestDir: "{app}\resources\"; Flags: ignoreversion
+Source: "..\resources\countries\*"; DestDir: "{app}\resources\countries\"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\exe.ico"; DestDir: "{app}\resources\"; Flags: ignoreversion
 
-Source: "..\resources\data\fra\*"; DestDir: "{app}\resources\data\fra\"; Flags: ignoreversion
-Source: "..\resources\data\ger\*"; DestDir: "{app}\resources\data\ger\"; Flags: ignoreversion
+Source: "..\resources\data\*"; DestDir: "{app}\resources\data\"; Flags: ignoreversion  recursesubdirs
 
 ;Sources
 Source: "..\BellePoule.cbp"; DestDir: "{app}"; Tasks: downloadsources; Flags: ignoreversion

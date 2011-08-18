@@ -1,0 +1,290 @@
+Alabama
+  Vestavia;            Birmingham Fencing Club
+
+Arizona
+  Rimrock;             Arizona Fencing Ghylde
+  Phoenix;             Phoenix Falcons Fencing Club
+  Buckeye;             Southwest Fencing Club
+  Phoenix;             Three Swords Fencing Academy
+
+Arkansas
+  Bentonville;         Northwest Arkansas Fencing Center
+  Bentonville;         Northwest Arkansas Fencing Foundation
+
+California
+  San Jose;            Almaden Fencing Academy
+  Rialto;              Arrowhead Fencing Club
+  Los Angeles;         Avant Garde Fencers Club
+  Stanford;            Cardinal Fencing Club
+  Palm Desert;         College Of The Desert
+  Davis;               Davis Fencing Academy
+  Stockton;            Delta Fencing Center
+  Palm Desert;         Desert Fencing Academy
+  Santa Rosa;          En Garde Fencing - California
+  Encinitas;           Encinitas Fencing Academy
+  Milpitas;            Fremont Fencers
+  Fresno;              Fresno Fencing Academy
+  Placentia;           Gryphon Fencing
+  Palmdale;            Guerra Fencing Studio
+  San Francisco;       Halberstadt Fencers Club
+  Carmichael;          Hristov-Csikany Fencers LLC
+  Oakland;             Las Positas Fencing Cente
+  Glendora;            Lasd Fencing
+  Mountain View;       Le Club Touche'
+  San Rafael;          Marin Fencing Academy LLC
+  Mill Valley;         Marin Pentathlon Club
+  Penn Valley;         Nevada County Fencing Club
+  San Carlos;          Peninsula Fencing Academy
+  Santa Barbara;       Presidio Fencing Club
+  Rancho Cordova;      Sacramento Saber Fencing LLC
+  Tustin;              Salle Du Jour
+  San Francisco;       San Francisco Fencers' Club
+  Los Altos;           Silicon Valley Fencing Center
+  San Diego;           Spartak
+  El Cerrito;          Sport Fencing Center
+  Burbank;             Swordplay Fencing Inc.
+  San Diego;           Team Touche Fencing Center
+  San Diego;           The Cabrillo Academy Of The Sword
+  Palmdale;            Thrust Fencing Studio
+
+Colorado
+  Littleton;           Fencing Academy Of Denver
+  Colorado Springs;    Front Range Fencing Club
+  Centennial;          South Denver Fencing Academy
+
+Connecticut
+  Danbury;             Candlewood Fencing Center
+  Fairfield;           Fairfield Fencing Academy
+  Bloomfield;          Farmington Valley Fencing
+  Wilton;              Wilton Fencing Academy
+
+Florida
+  Winter Springs;      D'Alerta Fencing Academy
+  Palm Harbor;         En Garde Fencers
+  Miami;               Epee Miami Fencing Club
+  Hollywood;           Hollywood Sabre
+  Jacksonville;        Jacksonville Fencing Club
+  Miami;               Miami Fencing Club
+  Tallahassee;         North Florida Fencing Academy
+  Fort Lauderdale;     Sabre Outreach Network
+  Boca Raton;          South Florida Fencing Club
+  Longwood;            Stoccata Fencing Academy & Club
+  Port St. Lucie;      Treasure Coast Fencing Academy
+  Pompano Beach;       Tropical Knights Fencing
+
+Georgia
+  Atlanta;             Athletic Club Northeast
+  Atlanta;             Yellow Jacket Fencing Club
+
+Idaho
+  Meridian;            Boise Fencing Club
+
+Illinois
+  Lake Barrington;     Barrington Fencing Club
+  O'Fallon;            Eagle Fencing Academy
+  Lombard;             Fencing Sports Club
+  Palatine;            Illinois Fencers Club
+  Arlington Heights;   Midwest Fencing Academy
+  Naperville;          Naperville Fencing Club
+  Deerfield;           Northwestern University NCAA
+  Champaign;           The Point Fencing Club
+  Homewood;            Tinley Park Fencing Club
+
+Indiana
+  Zionville;           Firebird Fencing Academy
+  Indianapolis;        Indysabre
+  Madison;             Madison Blades
+  Merrillville;        Northwest Indiana Fencing
+  Fort Wayne;          Summit City Fencing Club
+
+Iowa
+  West Des Moines;     Des Moines Fencing Club
+  Iowa City;           Iowa City Fencing Center
+
+Kansas
+  Overland Park;       Fencing Athletic Club Of KC
+  Leawood;             Heartland Fencing Academy
+  Salina;              Kanza Fencing Club
+
+Kentucky
+  Louisville;          Louisville Fencing Center
+  Louisville;          Louisville Metro Fencing Concord Inc
+  Ft. Wright;          NKY Fencing Academy
+
+Louisiana
+  Metairie;            Mobetes
+  Metairie;            New Orleans Fencer's Club
+
+Maine
+  Belgrade;            Belgrade Community Fencing Club
+
+Maryland
+  Damascus;            Chevy Chase Fencing Club
+  Silver Spring;       DC Fencers Club
+  Bowie;               Half Shell Fencing Club
+  Abingdon;            Maryland Fencing Club
+  Rockville;           Rockville Fencing Academy
+
+Massachusetts
+  Waltham;             Boston Fencing Club
+  Hyannis;             Buzzards Bay Fencing Club
+  Salem;               Cambridge Fencing Center
+  Marlborough;         Cross Roads Fencing Center
+  Burlington;          Guard Up! Family Swordsman
+  Oak Bluffs;          Martha's Vineyard Fencing
+  Peabody;             New England Fencing Alliance
+  North Billerica;     Prise De Fer Fencing Club
+  Northampton;         Riverside Fencing Club
+
+Michigan
+  Saginaw;             Fencing Alliance Of Sagin
+  Grand Blanc;         Genesee Fencing Club
+  Leslie;              Great Lakes Sword Club
+  Grosse Pointe;       Grosse Pointe Condottiere
+  East Lansing;        Michigan State University Fencing Club
+  Troy;                Renaissance Fencing Club
+  Sanford;             Three Rivers Fencing Club
+
+Minnesota
+  Minneapolis;         Minnesota Sword Club
+  Saint Paul;          Minnesota Sword Play
+
+Mississippi
+  Water Valley;        Oxford Fencers Club
+
+Missouri
+  Saint Louis;         Academy Fencing Club
+  Wentzville;          Buccaneer Blades Fencing
+
+Nevada
+  Las Vegas;           Fencing Academy Of Nevada
+  Reno;                High Desert Fencing Alliance
+
+New Jersey
+  Red Bank;            Altitude School Of Fencing
+  Eatontown;           Atlantic Fencing Academy
+  Lambertville;        Bucks County Academy Of Fencing
+  Lebanon;             Clinton Fencing Club
+  East Brunswick;      Escrimeur
+  Cherry Hill;         Fencing Academy Of South
+  Freehold;            Freehold Fencing Academy
+  Fair Lawn;           Gutkovskiy Fencing Academ
+  Highland Park;       Hub City Fencing Academy
+  Morris Plains;       Lilov Fencing Academy
+  Oxford;              Long Valley Fencers Club
+  Somerville;          Maestro Fencing Club
+  Bridgewater;         Medeo Fencing Club
+  Paramus;             Modified Academy Of Fencing
+  Randolph;            Morris Fencing Club
+  Hillsborough;        Mr. Ma Fencing, U.S.A.
+  Hillsborough;        Princeton-Hillsborough Ym
+  Woodcliff Lake;      Riverknoll Fencing Club
+  Morristown;          South Mountain Martial Arts
+
+New Mexico
+  Albuquerque;         Duke City Fencing
+
+New York
+  Staten Island;       Bergen Fencing Club
+  Brooklyn;            Brooklyn Fencing Center
+  Brooklyn;            Cambridge Fencing Club
+  Huntington;          Empire Fencing Club
+  Batavia;             En Garde Batavia
+  New York;            Fencers Club Inc.
+  Buffalo;             Fencing Center Of Buffalo
+  Plainview;           Island Fencing Center
+  Amherst;             Les Amis Fencing Club
+  Coram;               Long Island Fencing Club
+  New York;            Manhattan Fencing Center
+  Brooklyn;            New York Fencing Academia
+  Rochester;           Rochester Fencing Club
+  Staten Island;       Staten Island Fencing Center
+  Poughkeepsie;        The Phoenix Center
+  Poughkeepsie;        Vassar College Fencing Cl
+
+North Carolina
+  Fayetteville;        All-American Fencing Academy
+  Apex;                Apex Fencing Academy
+  Durham;              Mid-South Fencers' Club
+
+Ohio
+  Dayton;              American Fencing Academy Of Dayton
+  Amelia;              Cincinnati Fencing Club
+  Dublin;              Fencing Alliance Of Ohio
+  North Royalton;      Hooked On Fencing
+  Newark;              Knights Of The Old Code
+  Toledo;              Toledo Blades Fencing
+  Strongsville;        Two Ravens Fencing School
+
+Oklahoma
+  Edmond;              Oklahoma Sport Fencing
+  Oklahoma City;       Redlands Fencing Center
+  Portland;            Oregon Fencing Alliance
+
+Pennsylviania
+  Hatfield;            Bucks County Academy Of Fencing- West
+  Carlisle;            Carlisle Fencing Club
+  State College;       Central Pennsylvania Fencing Association
+  Philadelphia;        Fencing Academy Of Philad
+  Jamison;             Liberty Fencing Club
+  Bryn Mawr;           Main Line Blades
+  Philadelphia;        Mt. Airy Fencers Club
+  Pittsburgh;          North Hills Fencing Club
+  State College;       Penn State Fencing Club
+  Pittsburgh;          Pittsburgh Fencing Associ
+  Pittsburgh;          Three Rivers Fencing Center
+  Philadelphia;        Wallingford-Swarthmore Panthers
+
+Rhode Island
+  North Smithfield;    Blackstone Valley Fencing Academy
+  Lincoln;             Ocean State Fencing Club
+  Warren;              Rhode Island Fencing Acad
+
+South Carolina
+  Columbia;            Columbia Fencers' Club
+  Piedmont;            Foothills Fencing Academy
+
+Texas
+  Houston;             Academy Of Fencing
+  San Antonio;         Alamo Fencing Academy
+  Houston;             Alliance Fencing Academy
+  Amarillo;            Amarillo Competitive Fencing Association
+  Houston;             Bayou City Fencing Academy
+  League City;         Clear Lake Fencing Club
+  N. Richland Hills;   Cutting Edge Fencing Club
+  Dallas;              Dallas Fencers Club
+  Houston;             Fencing Club At The U. Of Houston
+  Houston;             Fort Bend Fencing Academy
+  Galveston;           Galveston Fencing Club
+  Southlake;           Gold Blade Fencing Center
+  Dallas;              La Reunion Fencing Academ
+  Mckinney;            North Texas Fencing Alliance
+  San Antonio;         Olympian Fencing Club
+  Houston;             Rice University Fencing Club
+  Austin;              Round Rock Fencing Club
+  Houston;             Salle Mauro
+  Houston;             Spirit Of Youth Fencing Foundation
+  College Station;     Texas A&M University Fencing
+  Austin;              Texas Fencing Academy
+  Abilene;             Texas Martial Arts Center
+  The Woodlands;       Woodlands Fencing Academy
+
+Vermont
+  Norwich;             Upper Valley Fencing Club
+  Westford;            Westford Sports Center
+
+Virginia
+  Arlington;           Arlington Fencers' Club
+  Chantilly;           Fairfax Fencers Club
+  Lorton;              George Mason University Fencing Club
+  Springfield;         National Fencing Foundation Of Washington DC
+  Alexandria;          Olde Town Fencing Club
+  Woodbridge;          Ronin Fencing Foundation
+  Williamsburg;        Shaker Fencing Institute
+  Springfield;         Virginia Academy Of Fencing
+  Blacksburg;          Virginia Tech Fencing Club
+
+Washington
+  Bellingham;          Bellingham Bay Fencing Association
+  Tacoma;              Metro Tacoma Fencing Club
+  Auburn;              Washington Fencing Academy

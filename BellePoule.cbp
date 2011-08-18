@@ -60,6 +60,7 @@
 			<Add library="gtk-win32-2.0" />
 			<Add library="gobject-2.0" />
 			<Add library="glib-2.0" />
+			<Add library="libgthread-2.0" />
 			<Add library="glade-2.0" />
 			<Add library="xml2" />
 			<Add library="goocanvas" />
@@ -158,6 +159,8 @@
 		<Unit filename="sources\table_supervisor.hpp" />
 		<Unit filename="sources\tournament.cpp" />
 		<Unit filename="sources\tournament.hpp" />
+		<Unit filename="sources\upload.cpp" />
+		<Unit filename="sources\upload.hpp" />
 		<Unit filename="sources\version.h" />
 		<Extensions>
 			<code_completion />
