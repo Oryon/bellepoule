@@ -1049,8 +1049,10 @@ void Checkin::on_add_button_clicked ()
 
           if (entry)
           {
+            const gchar *xml_image = attr_desc->GetDiscreteXmlImage (gtk_entry_get_text (GTK_ENTRY (entry)));
+
             player->SetAttributeValue (attr_id,
-                                       (gchar *) gtk_entry_get_text (GTK_ENTRY (entry)));
+                                       xml_image);
 
             if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
             {
@@ -1065,7 +1067,7 @@ void Checkin::on_add_button_clicked ()
           if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (w),
                                              &iter))
           {
-            gchar *value = attr_desc->GetUserImage (&iter);
+            gchar *value = attr_desc->GetXmlImage (&iter);
 
             player->SetAttributeValue (attr_id,
                                        value);

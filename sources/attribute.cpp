@@ -261,6 +261,36 @@ gboolean AttributeDesc::HasDiscreteValue ()
 }
 
 // --------------------------------------------------------------------------------
+const gchar *AttributeDesc::GetDiscreteXmlImage (const gchar *from_user_image)
+{
+  if (_discrete_model)
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (_discrete_model,
+                                                   &iter);
+    while (iter_is_valid)
+    {
+      gchar *current_image;
+      gchar *xml_image;
+
+      gtk_tree_model_get (_discrete_model,     &iter,
+                          DISCRETE_USER_IMAGE, (void *) &current_image,
+                          DISCRETE_XML_IMAGE,  (void *) &xml_image,
+                          -1);
+      if (strcmp (current_image, from_user_image) == 0)
+      {
+        return xml_image;
+      }
+      iter_is_valid = gtk_tree_model_iter_next (_discrete_model,
+                                                &iter);
+    }
+  }
+  return from_user_image;
+}
+
+// --------------------------------------------------------------------------------
 gchar *AttributeDesc::GetDiscreteUserImage (guint from_code)
 {
   gchar *image = (gchar *) GetDiscreteData (from_code,
@@ -354,6 +384,24 @@ gchar *AttributeDesc::GetUserImage (GtkTreeIter *iter)
 
     gtk_tree_model_get (_discrete_model, iter,
                         DISCRETE_USER_IMAGE, &image, -1);
+    if (image)
+    {
+      return g_strdup (image);
+    }
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gchar *AttributeDesc::GetXmlImage (GtkTreeIter *iter)
+{
+  if (_discrete_model)
+  {
+    gchar *image;
+
+    gtk_tree_model_get (_discrete_model, iter,
+                        DISCRETE_XML_IMAGE, &image, -1);
     if (image)
     {
       return g_strdup (image);
