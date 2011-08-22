@@ -215,11 +215,12 @@ void PlayersList::OnCellEdited (gchar         *path_string,
                                 gchar         *new_text,
                                 AttributeDesc *desc)
 {
-  Player              *p       = GetPlayer (path_string);
-  Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, this);
+  Player              *p         = GetPlayer (path_string);
+  Player::AttributeId *attr_id   = Player::AttributeId::CreateAttributeId (desc, this);
+  const gchar         *xml_image = desc->GetDiscreteXmlImage (new_text);
 
   p->SetAttributeValue (attr_id,
-                        new_text);
+                        xml_image);
   attr_id->Release ();
 
   Update (p);
@@ -469,7 +470,8 @@ void PlayersList::SetColumn (guint          id,
       g_signal_connect (renderer,
                         "edited", G_CALLBACK (on_cell_edited), this);
 
-      if (renderer)
+      if (   (desc->HasDiscreteValue ())
+          && (desc->_free_value_allowed))
       {
         g_signal_connect (renderer,
                           "editing-started", G_CALLBACK (OnDiscreteEditingStarted), desc);

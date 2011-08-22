@@ -102,6 +102,8 @@ class AttributeDesc : public Object
 
     void AddDiscreteValues (const gchar *file);
 
+    const gchar *GetDiscreteXmlImage (const gchar *from_user_image);
+
     gchar *GetDiscreteUserImage (guint from_code);
 
     gchar *GetDiscreteIcon (guint from_code);
@@ -111,6 +113,8 @@ class AttributeDesc : public Object
     gchar *GetUserImage (gchar *xml_image);
 
     gchar *GetUserImage (GtkTreeIter *iter);
+
+    gchar *GetXmlImage (GtkTreeIter *iter);
 
     static void Refilter (GtkComboBox *selector,
                           void        *data);
