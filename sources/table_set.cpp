@@ -1929,9 +1929,8 @@ void TableSet::OnPreviewClicked ()
                                       GTK_PAGE_ORIENTATION_LANDSCAPE);
     }
 
-    Print (NULL,
-           NULL,
-           page_setup);
+    PrintPreview (gettext ("Table"),
+                  page_setup);
   }
 
 }
@@ -2051,7 +2050,6 @@ void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
 
     gtk_widget_hide (_print_dialog);
     Print (gettext ("Table"),
-           NULL,
            page_setup);
   }
 
@@ -2476,7 +2474,6 @@ void TableSet::OnPrint ()
       _print_full_table = TRUE;
 
       Print (gettext ("Table"),
-             NULL,
              page_setup);
     }
     else

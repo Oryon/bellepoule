@@ -35,9 +35,14 @@ class Module : public virtual Object
                GtkToolbar *toolbar = NULL);
     void UnPlug ();
 
-    virtual void Print (const gchar  *job_name,
-                        const gchar  *filename = NULL,
-                        GtkPageSetup *page_setup = NULL);
+    void Print (const gchar  *job_name,
+                GtkPageSetup *page_setup = NULL);
+
+    void PrintPDF (const gchar  *job_name,
+                   const gchar  *filename);
+
+    void PrintPreview (const gchar  *job_name,
+                       GtkPageSetup *page_setup);
 
     void SelectAttributes ();
 
@@ -125,6 +130,11 @@ class Module : public virtual Object
     Module             *_owner;
     GtkWidget          *_config_widget;
     Object             *_data_owner;
+
+    void Print (const gchar             *job_name,
+                const gchar             *filename,
+                GtkPageSetup            *page_setup,
+                GtkPrintOperationAction  action);
 
     static void on_begin_print (GtkPrintOperation *operation,
                                 GtkPrintContext   *context,

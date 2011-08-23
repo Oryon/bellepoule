@@ -309,8 +309,39 @@ GString *Module::GetPlayerImage (Player *player)
 
 // --------------------------------------------------------------------------------
 void Module::Print (const gchar  *job_name,
-                    const gchar  *filename,
                     GtkPageSetup *page_setup)
+{
+  Print (job_name,
+         NULL,
+         page_setup,
+         GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG);
+}
+
+// --------------------------------------------------------------------------------
+void Module::PrintPDF (const gchar  *job_name,
+                       const gchar  *filename)
+{
+  Print (job_name,
+         filename,
+         NULL,
+         GTK_PRINT_OPERATION_ACTION_EXPORT);
+}
+
+// --------------------------------------------------------------------------------
+void Module::PrintPreview (const gchar  *job_name,
+                           GtkPageSetup *page_setup)
+{
+  Print (job_name,
+         NULL,
+         page_setup,
+         GTK_PRINT_OPERATION_ACTION_PREVIEW);
+}
+
+// --------------------------------------------------------------------------------
+void Module::Print (const gchar             *job_name,
+                    const gchar             *filename,
+                    GtkPageSetup            *page_setup,
+                    GtkPrintOperationAction  action)
 {
   GtkPrintOperationResult  res;
   GError                  *error     = NULL;
@@ -368,25 +399,12 @@ void Module::Print (const gchar  *job_name,
   {
     gtk_print_operation_set_export_filename (operation,
                                              filename);
-    res = gtk_print_operation_run (operation,
-                                   GTK_PRINT_OPERATION_ACTION_EXPORT,
-                                   NULL,
-                                   &error);
   }
-  else if (job_name)
-  {
-    res = gtk_print_operation_run (operation,
-                                   GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
-                                   NULL,
-                                   &error);
-  }
-  else
-  {
-    res = gtk_print_operation_run (operation,
-                                   GTK_PRINT_OPERATION_ACTION_PREVIEW,
-                                   NULL,
-                                   &error);
-  }
+
+  res = gtk_print_operation_run (operation,
+                                 action,
+                                 NULL,
+                                 &error);
 
   if (res == GTK_PRINT_OPERATION_RESULT_APPLY)
   {

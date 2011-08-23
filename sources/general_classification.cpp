@@ -345,8 +345,8 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
         }
         if (export_type == PDF)
         {
-          classification->Print ("General classification",
-                                 filename);
+          classification->PrintPDF ("General classification",
+                                    filename);
         }
     }
   }
