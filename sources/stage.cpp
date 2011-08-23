@@ -97,13 +97,20 @@ const gchar *Stage::GetClassName ()
 // --------------------------------------------------------------------------------
 gchar *Stage::GetName ()
 {
-  return _name;
+  if (_input_provider)
+  {
+    return _input_provider->_name;
+  }
+  else
+  {
+    return _name;
+  }
 }
 
 // --------------------------------------------------------------------------------
 gchar *Stage::GetFullName ()
 {
-  return g_strdup_printf ("%s\n%s", _class->_name, _name);
+  return g_strdup_printf ("%s\n%s", _class->_name, GetName ());
 }
 
 // --------------------------------------------------------------------------------
@@ -111,10 +118,14 @@ void Stage::SetName (gchar *name)
 {
   if (name)
   {
-    g_free (_name);
-    _name = NULL;
-
-    _name = g_strdup (name);
+    if (_input_provider)
+    {
+      _input_provider->_name = g_strdup (name);
+    }
+    else
+    {
+      _name = g_strdup (name);
+    }
   }
 }
 
@@ -258,10 +269,6 @@ void Stage::ApplyConfig ()
         gchar *name = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
 
         SetName (name);
-        if (_input_provider)
-        {
-          _input_provider->SetName (name);
-        }
       }
     }
 

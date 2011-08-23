@@ -73,7 +73,6 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _locked            = FALSE;
   _id                = id;
   _attendees         = NULL;
-  _name              = NULL;
   _has_error         = FALSE;
   _is_over           = FALSE;
   _first_place       = first_place;
@@ -87,6 +86,8 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _score_collector = NULL;
 
   _max_score = supervisor->GetMaxScore ();
+
+  _name = g_strdup_printf ("Place #%d", first_place);
 
   {
     GtkWidget *content_area;
@@ -439,12 +440,6 @@ gboolean TableSet::IsOver ()
 gboolean TableSet::HasError ()
 {
   return _has_error;
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::SetName (gchar *name)
-{
-  _name = g_strdup (name);
 }
 
 // --------------------------------------------------------------------------------

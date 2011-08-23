@@ -538,13 +538,6 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
                               from_place);
 
     {
-      gchar *text = g_strdup_printf ("Place #%d", from_place);
-
-      table_set->SetName (text);
-      g_free (text);
-    }
-
-    {
       GtkTreeRowReference *ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_table_set_treestore),
                                                              path);
       table_set->SetData (this, "tree_row_ref",

@@ -94,6 +94,7 @@ class Schedule : public Module
     ~Schedule ();
     void OnPlugged ();
     void PlugStage (Stage *stage);
+    void RefreshStageName (Stage *stage);
 };
 
 #endif

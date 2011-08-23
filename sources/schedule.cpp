@@ -246,22 +246,26 @@ void Schedule::DisplayList ()
 
     for (guint i = 0; i < g_list_length (_stage_list); i++)
     {
-      GtkWidget *tab_widget;
-
       current_stage = (Stage *) g_list_nth_data (_stage_list,
                                                  i);
-      tab_widget = (GtkWidget *) current_stage->GetPtrData (this, "viewport_stage");
-
-      if (tab_widget)
-      {
-        gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (GetRootWidget ()),
-                                         (GtkWidget *) current_stage->GetPtrData (this, "viewport_stage"),
-                                         current_stage->GetFullName ());
-      }
+      RefreshStageName (current_stage);
     }
   }
   MakeDirty ();
   gtk_widget_hide (_formula_dlg);
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::RefreshStageName (Stage *stage)
+{
+  GtkWidget *tab_widget = GTK_WIDGET (stage->GetPtrData (this, "viewport_stage"));
+
+  if (tab_widget)
+  {
+    gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (GetRootWidget ()),
+                                     tab_widget,
+                                     stage->GetFullName ());
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -713,6 +717,7 @@ void Schedule::LoadStage (Stage   *stage,
     }
 
     stage->Load (xml_node);
+    RefreshStageName (stage);
 
     if (display_all || ((*nb_stage-1) <= (guint) current_stage_index))
     {

@@ -108,8 +108,6 @@ class TableSet : public CanvasModule
 
     guint GetNbTables ();
 
-    void SetName (gchar *name);
-
     gchar *GetName ();
 
     guint GetFirstPlace ();
