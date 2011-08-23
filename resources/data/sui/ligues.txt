@@ -1,0 +1,17 @@
+Aargau;;;1
+Basel;;;2
+Bern;;;3
+Fribourg;;;4
+Genève;;;5
+Luzern;;;6
+Neuchâtel;;;7
+Schaffhausen;;;8
+Schwyz;;;9
+Solothurn;;;10
+St. Gallen;;;11
+Ticino;;;12
+Thurgau;;;13
+Valais;;;14
+Vaud;;;15
+Zug;;;16
+Zürich;;;17
