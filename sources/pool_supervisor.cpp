@@ -439,13 +439,16 @@ extern "C" G_MODULE_EXPORT void on_print_pool_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 {
+  gchar *title;
+
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
   {
     Classification *classification = GetClassification ();
 
     if (classification)
     {
-      classification->Print (gettext ("Pool round classification"));
+      title = g_strdup_printf ("%s - %s", gettext ("Pools classification"), GetName ());
+      classification->Print (title);
     }
   }
   else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
@@ -461,8 +464,10 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
       _print_all_pool = FALSE;
     }
 
-    Print ("Feuille de poule");
+    title = g_strdup_printf ("%s - %s", gettext ("Pools"), GetName ());
+    Print (GetName ());
   }
+  g_free (title);
   gtk_widget_hide (_print_dialog);
 }
 

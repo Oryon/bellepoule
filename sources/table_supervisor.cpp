@@ -969,7 +969,11 @@ void TableSupervisor::OnPrint ()
 
     if (classification)
     {
-      classification->Print (gettext ("Table round classification"));
+      gchar *title = g_strdup_printf ("%s - %s", gettext ("Table classification"),
+                                      GetName ());
+
+      classification->Print (title);
+      g_free (title);
     }
   }
   else if (_displayed_table_set)

@@ -87,7 +87,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
 
   _max_score = supervisor->GetMaxScore ();
 
-  _name = g_strdup_printf ("Place #%d", first_place);
+  _short_name = g_strdup_printf ("%s%d", gettext ("Place #"), first_place);
 
   {
     GtkWidget *content_area;
@@ -143,7 +143,8 @@ TableSet::TableSet (TableSupervisor *supervisor,
 
   {
     _quick_score_collector = new ScoreCollector (this,
-                                                 (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore);
+                                                 (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore,
+                                                 FALSE);
 
     _quick_score_A = GetQuickScore ("fencerA_hook");
     _quick_score_B = GetQuickScore ("fencerB_hook");
@@ -188,7 +189,7 @@ TableSet::~TableSet ()
   Object::TryToRelease (_quick_score_collector);
   Object::TryToRelease (_score_collector);
 
-  g_free (_name);
+  g_free (_short_name);
 
   if (_attendees)
   {
@@ -445,7 +446,7 @@ gboolean TableSet::HasError ()
 // --------------------------------------------------------------------------------
 gchar *TableSet::GetName ()
 {
-  return _name;
+  return gettext (_short_name);
 }
 
 // --------------------------------------------------------------------------------
@@ -541,7 +542,7 @@ void TableSet::Save (xmlTextWriter *xml_writer)
                                      "%s", _id);
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "Titre",
-                                     "%s", _name);
+                                     "%s", _short_name);
   if (_nb_tables)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
@@ -1128,7 +1129,7 @@ void TableSet::AddFork (GNode *to)
   data->_match->SetData (this, "node", node);
 
   {
-    gchar *name_space = g_strdup_printf ("%d.", data->_table->GetSize ()*2);
+    gchar *name_space = g_strdup_printf ("%d-%d.", _first_place, data->_table->GetSize ()*2);
 
     data->_match->SetNameSpace (name_space);
     g_free (name_space);
@@ -1232,7 +1233,8 @@ void TableSet::Wipe ()
     Object::TryToRelease (_score_collector);
 
     _score_collector = new ScoreCollector (this,
-                                           (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore);
+                                           (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore,
+                                           FALSE);
 
     _score_collector->SetConsistentColors ("LightGrey",
                                            "SkyBlue");
@@ -1912,6 +1914,7 @@ void TableSet::OnPreviewClicked ()
   {
     GtkWidget    *orientation_w = _glade->GetWidget ("portrait_radiobutton");
     GtkPageSetup *page_setup    = gtk_page_setup_new ();
+    gchar        *print_name    = GetPrintName ();
 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (orientation_w)))
     {
@@ -1924,8 +1927,9 @@ void TableSet::OnPreviewClicked ()
                                       GTK_PAGE_ORIENTATION_LANDSCAPE);
     }
 
-    PrintPreview (gettext ("Table"),
+    PrintPreview (print_name,
                   page_setup);
+    g_free (print_name);
   }
 
 }
@@ -2042,10 +2046,12 @@ void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
   {
     GtkPrintOperation *operation  = (GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation");
     GtkPageSetup      *page_setup = gtk_print_operation_get_default_page_setup (operation);
+    gchar             *print_name = GetPrintName ();
 
     gtk_widget_hide (_print_dialog);
-    Print (gettext ("Table"),
+    Print (print_name,
            page_setup);
+    g_free (print_name);
   }
 
   {
@@ -2327,6 +2333,28 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
+gchar *TableSet::GetPrintName ()
+{
+  gchar *supervisor_name = _supervisor->GetName ();
+
+  if (supervisor_name && *supervisor_name)
+  {
+    return g_strdup_printf ("%s - %s - %s%d",
+                            gettext ("Table"),
+                            _supervisor->GetName (),
+                            gettext ("Place #"),
+                            _first_place);
+  }
+  else
+  {
+    return g_strdup_printf ("%s - %s%d",
+                            gettext ("Table"),
+                            gettext ("Place #"),
+                            _first_place);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::DrawPlayerMatch (GooCanvasItem *table,
                                 Match         *match,
                                 Player        *player,
@@ -2448,7 +2476,8 @@ void TableSet::OnPrint ()
 {
   if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
   {
-    GtkWidget *w = _glade->GetWidget ("table_radiobutton");
+    GtkWidget *w          = _glade->GetWidget ("table_radiobutton");
+    gchar     *print_name = GetPrintName ();
 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
@@ -2468,7 +2497,7 @@ void TableSet::OnPrint ()
 
       _print_full_table = TRUE;
 
-      Print (gettext ("Table"),
+      Print (print_name,
              page_setup);
     }
     else
@@ -2479,8 +2508,9 @@ void TableSet::OnPrint ()
       LookForMatchToPrint (NULL,
                            all_sheet);
       _print_full_table = FALSE;
-      Print (gettext ("Score sheet"));
+      Print (print_name);
     }
+    g_free (print_name);
   }
 
   gtk_widget_hide (_print_dialog);
@@ -2501,13 +2531,15 @@ gboolean TableSet::OnPrintTable (GooCanvasItem  *item,
 
   if (gtk_dialog_run (GTK_DIALOG (table_set->_table_print_dialog)) == GTK_RESPONSE_OK)
   {
-    GtkWidget *w         = table_set->_glade->GetWidget ("table_all_radiobutton");
-    gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+    GtkWidget *w          = table_set->_glade->GetWidget ("table_all_radiobutton");
+    gboolean   all_sheet  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+    gchar     *print_name = table_set->GetPrintName ();
 
     table_set->LookForMatchToPrint (table_to_print,
                                     all_sheet);
     table_set->_print_full_table = FALSE;
-    table_set->Print (gettext ("Score sheet"));
+    table_set->Print (print_name);
+    g_free (print_name);
   }
 
   gtk_widget_hide (table_set->_table_print_dialog);
@@ -2521,6 +2553,8 @@ gboolean TableSet::OnPrintMatch (GooCanvasItem  *item,
                                  GdkEventButton *event,
                                  TableSet       *table_set)
 {
+  gchar *print_name = table_set->GetPrintName ();
+
   if (table_set->_match_to_print)
   {
     g_slist_free (table_set->_match_to_print);
@@ -2530,7 +2564,8 @@ gboolean TableSet::OnPrintMatch (GooCanvasItem  *item,
   table_set->_match_to_print = g_slist_prepend (table_set->_match_to_print,
                                                 g_object_get_data (G_OBJECT (item), "match_to_print"));
   table_set->_print_full_table = FALSE;
-  table_set->Print (gettext ("Score sheet"));
+  table_set->Print (print_name);
+  g_free (print_name);
 
   return TRUE;
 }

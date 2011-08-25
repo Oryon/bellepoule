@@ -156,12 +156,18 @@ void Table::Load (xmlNode *xml_node)
         while (current)
         {
           Match *match = (Match *) current->data;
+          gchar *id = match->GetName ();
 
-          if (strcmp (match->GetName (), number) == 0)
+          id = strstr (id, "-");
+          if (id)
           {
-            LoadMatch (n,
-                       match);
-            break;
+            id++;
+            if (strcmp (id, number) == 0)
+            {
+              LoadMatch (n,
+                         match);
+              break;
+            }
           }
           current = g_slist_next (current);
         }
