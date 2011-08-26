@@ -465,7 +465,7 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
     }
 
     title = g_strdup_printf ("%s - %s", gettext ("Pools"), GetName ());
-    Print (GetName ());
+    Print (title);
   }
   g_free (title);
   gtk_widget_hide (_print_dialog);
