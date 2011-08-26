@@ -95,9 +95,10 @@ void Pool::Wipe ()
 
       current = g_slist_next (current);
     }
-    g_slist_free (_display_data);
-    _display_data = NULL;
   }
+
+  g_slist_free (_display_data);
+  _display_data = NULL;
 
   CanvasModule::Wipe ();
 }
@@ -815,7 +816,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
 
     // Matches
-    //if (print_for_referees)
+    if (print_for_referees)
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;
@@ -936,8 +937,11 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
   }
 
-  RefreshScoreData ();
-  RefreshDashBoard ();
+  if (print_for_referees == FALSE)
+  {
+    RefreshScoreData ();
+    RefreshDashBoard ();
+  }
 
   if (print_for_referees == FALSE)
   {

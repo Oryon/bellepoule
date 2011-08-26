@@ -23,15 +23,17 @@
 
 // --------------------------------------------------------------------------------
 ScoreCollector::ScoreCollector (CanvasModule   *client,
-                                OnNewScore_cbk  on_new_score)
+                                OnNewScore_cbk  on_new_score,
+                                gboolean        display_match_name)
 : Object ("ScoreCollector")
 {
-  _entry_item       = NULL;
-  _gtk_entry        = NULL;
-  _collecting_point = NULL;
-  _client           = client;
-  _on_new_score     = on_new_score;
-  _is_locked        = FALSE;
+  _entry_item         = NULL;
+  _gtk_entry          = NULL;
+  _collecting_point   = NULL;
+  _client             = client;
+  _on_new_score       = on_new_score;
+  _is_locked          = FALSE;
+  _display_match_name = display_match_name;
 
   _consistent_focus_color    = g_strdup ("SkyBlue");
   _consistent_normal_color   = g_strdup ("White");
@@ -128,10 +130,13 @@ void ScoreCollector::Refresh (Match *match)
 
       if (score_image[0] == 0)
       {
-        g_object_set (score_text,
-                      "text", match->GetName (),
-                      "fill-color", "GainsBoro",
-                      NULL);
+        if (_display_match_name)
+        {
+          g_object_set (score_text,
+                        "text", match->GetName (),
+                        "fill-color", "GainsBoro",
+                        NULL);
+        }
       }
       else
       {
@@ -150,10 +155,13 @@ void ScoreCollector::Refresh (Match *match)
 
         if (score_image[0] == 0)
         {
-          g_object_set (score_text,
-                        "text", match->GetName (),
-                        "fill-color", "GainsBoro",
-                        NULL);
+          if (_display_match_name)
+          {
+            g_object_set (score_text,
+                          "text", match->GetName (),
+                          "fill-color", "GainsBoro",
+                          NULL);
+          }
         }
         else
         {
@@ -487,10 +495,13 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
 
       if (score_image[0] == 0)
       {
-        g_object_set (score_text,
-                      "text", match->GetName (),
-                      "fill-color", "GainsBoro",
-                      NULL);
+        if (_display_match_name)
+        {
+          g_object_set (score_text,
+                        "text", match->GetName (),
+                        "fill-color", "GainsBoro",
+                        NULL);
+        }
       }
       else
       {

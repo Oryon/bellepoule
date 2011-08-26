@@ -1541,9 +1541,11 @@ extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
 extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
                                                              Object    *owner)
 {
-  PoolAllocator *c = dynamic_cast <PoolAllocator *> (owner);
+  PoolAllocator *pa = dynamic_cast <PoolAllocator *> (owner);
+  gchar         *title = g_strdup_printf ("%s %s", gettext ("Allocation"), pa->GetName ());
 
-  c->Print (gettext ("Pools allocation"));
+  pa->Print (title);
+  g_free (title);
 }
 
 // --------------------------------------------------------------------------------

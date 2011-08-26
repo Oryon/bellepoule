@@ -108,8 +108,6 @@ class TableSet : public CanvasModule
 
     guint GetNbTables ();
 
-    void SetName (gchar *name);
-
     gchar *GetName ();
 
     guint GetFirstPlace ();
@@ -135,7 +133,7 @@ class TableSet : public CanvasModule
 
     static const gdouble _table_spacing;
 
-    gchar                    *_name;
+    gchar                    *_short_name;
     TableSupervisor          *_supervisor;
     GNode                    *_tree_root;
     guint                     _nb_tables;
@@ -249,6 +247,8 @@ class TableSet : public CanvasModule
                               gboolean  all_sheet);
 
     void ConfigurePreviewLayout (GtkPrintContext *context);
+
+    gchar *GetPrintName ();
 
     static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
                                                    GtkCellRenderer *cell,

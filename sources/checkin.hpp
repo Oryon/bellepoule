@@ -49,10 +49,10 @@ class Checkin : public virtual Stage, public PlayersList
     void on_add_button_clicked ();
     void on_close_button_clicked ();
 
-    void ToggleAllPlayers (gboolean present);
+    void OnToggleAllPlayers (gboolean present);
 
-    void Import ();
-    void Print (const gchar *job_name);
+    void OnImport ();
+    void OnPrint ();
 
   private:
     void OnLocked (Reason reason);

@@ -35,7 +35,8 @@ class ScoreCollector : public Object
 
   public:
     ScoreCollector (CanvasModule   *client,
-                    OnNewScore_cbk  on_new_score);
+                    OnNewScore_cbk  on_new_score,
+                    gboolean        display_match_name = TRUE);
 
     void AddCollectingPoint (GooCanvasItem *point,
                              GooCanvasItem *score_text,
@@ -79,6 +80,7 @@ class ScoreCollector : public Object
     gchar          *_consistent_normal_color;
     gchar          *_unconsistent_focus_color;
     gchar          *_unconsistent_normal_color;
+    gboolean        _display_match_name;
 
     static gboolean on_cell_button_press (GooCanvasItem  *item,
                                           gboolean       *target,

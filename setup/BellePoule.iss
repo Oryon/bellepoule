@@ -28,7 +28,7 @@ SetupIconFile=setup_logo.ico
 [Tasks]
 Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icones de lancement :";
 Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la barre des tâches"; GroupDescription: "Icones de lancement :";
-Name: downloadsources; Description: "Récupérer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
+;Name: downloadsources; Description: "Récupérer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
@@ -127,11 +127,11 @@ Source: "..\resources\exe.ico"; DestDir: "{app}\resources\"; Flags: ignoreversio
 Source: "..\resources\data\*"; DestDir: "{app}\resources\data\"; Flags: ignoreversion  recursesubdirs
 
 ;Sources
-Source: "..\BellePoule.cbp"; DestDir: "{app}"; Tasks: downloadsources; Flags: ignoreversion
-Source: "..\sources\*.hpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
-Source: "..\sources\*.h"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
-Source: "..\sources\*.cpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
-Source: "..\sources\resource.rc"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
+;Source: "..\BellePoule.cbp"; DestDir: "{app}"; Tasks: downloadsources; Flags: ignoreversion
+;Source: "..\sources\*.hpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
+;Source: "..\sources\*.h"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
+;Source: "..\sources\*.cpp"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
+;Source: "..\sources\resource.rc"; DestDir: "{app}\sources\"; Tasks: downloadsources; Flags: ignoreversion
 
 ; GTK+ dependencies
 ; DLL
@@ -253,6 +253,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

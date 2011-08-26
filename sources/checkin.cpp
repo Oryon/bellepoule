@@ -616,7 +616,7 @@ void Checkin::Wipe ()
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Import ()
+void Checkin::OnImport ()
 {
   GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a fencer file to import..."),
                                                     NULL,
@@ -1207,7 +1207,7 @@ void Checkin::on_sensitive_state_toggled (GtkToggleButton *togglebutton,
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Print (const gchar *job_name)
+void Checkin::OnPrint ()
 {
   if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
   {
@@ -1216,19 +1216,19 @@ void Checkin::Print (const gchar *job_name)
 
     if (_print_missing && _print_attending)
     {
-      Module::Print (gettext ("List of registered"));
+      Print (gettext ("List of registered"));
     }
     else if ((_print_missing == FALSE) && _print_attending)
     {
-      Module::Print (gettext ("List of presents"));
+      Print (gettext ("List of presents"));
     }
     else if ((_print_attending == FALSE) && _print_missing)
     {
-      Module::Print (gettext ("List of absents"));
+      Print (gettext ("List of absents"));
     }
     else
     {
-      Module::Print (gettext ("Fencer list"));
+      Print (gettext ("Fencer list"));
     }
   }
   gtk_widget_hide (_print_dialog);
@@ -1277,7 +1277,7 @@ void Checkin::on_close_button_clicked ()
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::ToggleAllPlayers (gboolean present)
+void Checkin::OnToggleAllPlayers (gboolean present)
 {
   Player::AttributeId  attr_id ("attending");
   GSList              *current_player = _player_list;
@@ -1380,7 +1380,7 @@ extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->Import ();
+  c->OnImport ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1423,7 +1423,7 @@ extern "C" G_MODULE_EXPORT void on_checkin_print_toolbutton_clicked (GtkWidget *
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->Print ("");
+  c->OnPrint ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1432,7 +1432,7 @@ extern "C" G_MODULE_EXPORT void on_all_present_button_clicked (GtkWidget *widget
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->ToggleAllPlayers (TRUE);
+  c->OnToggleAllPlayers (TRUE);
 }
 
 // --------------------------------------------------------------------------------
@@ -1441,5 +1441,5 @@ extern "C" G_MODULE_EXPORT void on_all_absent_button_clicked (GtkWidget *widget,
 {
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->ToggleAllPlayers (FALSE);
+  c->OnToggleAllPlayers (FALSE);
 }
