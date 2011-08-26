@@ -112,8 +112,11 @@ GSList *Table::GetLoosers ()
 
     if (looser)
     {
-      loosers = g_slist_append (loosers,
-                                looser);
+      if (match->IsDropped () == FALSE)
+      {
+        loosers = g_slist_append (loosers,
+                                  looser);
+      }
     }
     current_match = g_slist_next (current_match);
   }

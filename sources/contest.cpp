@@ -409,8 +409,18 @@ Contest::Contest (gchar *filename)
     }
   }
 
-  gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
-                            FALSE);
+  if (g_str_has_suffix (_filename,
+                        ".cotcot") == FALSE)
+  {
+    g_free (_filename);
+    _filename = NULL;
+  }
+  else
+  {
+    gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
+                              FALSE);
+  }
+
   if (_save_timeout_id > 0)
   {
     g_source_remove (_save_timeout_id);

@@ -439,7 +439,7 @@ extern "C" G_MODULE_EXPORT void on_print_pool_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 {
-  gchar *title;
+  gchar *title = NULL;
 
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
   {
