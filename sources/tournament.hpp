@@ -56,6 +56,8 @@ class Tournament : public Module
 
     const gchar *GetBackupLocation ();
 
+    void OnActivateBackup ();
+
   private:
     GSList *_contest_list;
 

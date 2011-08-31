@@ -848,6 +848,7 @@ Public License instead of this License.  But first, please read
                                 <property name="label" translatable="yes">Activate</property>
                                 <property name="use_underline">True</property>
                                 <property name="draw_as_radio">True</property>
+                                <signal name="toggled" handler="on_activate_radiomenuitem_toggled" swapped="no"/>
                               </object>
                             </child>
                             <child>

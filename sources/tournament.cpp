@@ -522,8 +522,9 @@ void Tournament::OnBackupfileLocation ()
 // --------------------------------------------------------------------------------
 void Tournament::SetBackupLocation (gchar *location)
 {
-  gchar *readable_name = g_uri_unescape_string (location,
-                                                NULL);
+  gchar *readable_name = g_filename_from_uri (location,
+                                              NULL,
+                                              NULL);
 
   gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("backup_location_menuitem")),
                            readable_name);
@@ -535,11 +536,22 @@ const gchar *Tournament::GetBackupLocation ()
 {
   if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (_glade->GetWidget ("activate_radiomenuitem"))))
   {
-    return gtk_menu_item_get_label (GTK_MENU_ITEM (_glade->GetWidget ("backup_location_menuitem")));
+    const gchar *location = gtk_menu_item_get_label (GTK_MENU_ITEM (_glade->GetWidget ("backup_location_menuitem")));
+
+    if (g_file_test (location, G_FILE_TEST_IS_DIR))
+    {
+      return location;
+    }
   }
-  else
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnActivateBackup ()
+{
+  if (GetBackupLocation () == NULL)
   {
-    return NULL;
+    OnBackupfileLocation ();
   }
 }
 
@@ -645,4 +657,16 @@ extern "C" G_MODULE_EXPORT void on_backup_location_menuitem_activate (GtkWidget 
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnBackupfileLocation ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_activate_radiomenuitem_toggled (GtkCheckMenuItem *checkmenuitem,
+                                                                   Object           *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  if (gtk_check_menu_item_get_active (checkmenuitem))
+  {
+    t->OnActivateBackup ();
+  }
 }
