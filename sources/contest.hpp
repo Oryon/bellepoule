@@ -103,6 +103,7 @@ class Contest : public Module
     gchar      *_id;
     gchar      *_name;
     gchar      *_organizer;
+    gchar      *_location;
     gchar      *_web_site;
     guint       _category;
     gchar      *_filename;

@@ -377,6 +377,12 @@ Contest::Contest (gchar *filename)
           _web_site = g_strdup (attr);
         }
 
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Lieu");
+        if (attr)
+        {
+          _location = g_strdup (attr);
+        }
+
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "score_stuffing");
         if (attr)
         {
@@ -441,6 +447,7 @@ Contest::~Contest ()
   g_free (_filename);
   g_free (_organizer);
   g_free (_web_site);
+  g_free (_location);
 
   Object::TryToRelease (_checkin_time);
   Object::TryToRelease (_scratch_time);
@@ -506,6 +513,10 @@ Contest *Contest::Create ()
                                               "Competiton",
                                               "default_web_site",
                                               NULL);
+  contest->_location = g_key_file_get_string (_config_file,
+                                              "Competiton",
+                                              "default_location",
+                                              NULL);
 
   contest->FillInProperties ();
   if (gtk_dialog_run (GTK_DIALOG (contest->_properties_dlg)) == GTK_RESPONSE_ACCEPT)
@@ -542,6 +553,7 @@ Contest *Contest::Duplicate ()
   contest->_name       = g_strdup (_name);
   contest->_organizer  = g_strdup (_organizer);
   contest->_web_site   = g_strdup (_web_site);
+  contest->_location   = g_strdup (_location);
   contest->_category   = _category;
   contest->_weapon     = _weapon;
   contest->_gender     = _gender;
@@ -585,6 +597,7 @@ void Contest::InitInstance ()
   _filename   = NULL;
   _organizer  = NULL;
   _web_site   = NULL;
+  _location   = NULL;
   _tournament = NULL;
   _weapon     = 0;
   _category   = 0;
@@ -854,6 +867,9 @@ void Contest::FillInProperties ()
   gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("web_site_entry")),
                       _web_site);
 
+  gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("location_entry")),
+                      _location);
+
   gtk_combo_box_set_active (GTK_COMBO_BOX (_weapon_combo),
                             _weapon);
 
@@ -896,6 +912,11 @@ void Contest::ReadProperties ()
   g_free (_web_site);
   _web_site = g_strdup (str);
 
+  entry = GTK_ENTRY (_glade->GetWidget ("location_entry"));
+  str = (gchar *) gtk_entry_get_text (entry);
+  g_free (_location);
+  _location = g_strdup (str);
+
   _weapon   = gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo));
   _gender   = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
   _category = gtk_combo_box_get_active (GTK_COMBO_BOX (_category_combo));
@@ -932,6 +953,11 @@ void Contest::ReadProperties ()
                            "Competiton",
                            "default_web_site",
                            _web_site);
+
+    g_key_file_set_string (_config_file,
+                           "Competiton",
+                           "default_location",
+                           _location);
   }
 
   DisplayProperties ();
@@ -1149,6 +1175,9 @@ void Contest::Save (gchar *filename)
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "score_stuffing",
                                            "%d", _schedule->ScoreStuffingIsAllowed ());
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "Lieu",
+                                     BAD_CAST _location);
       }
 
       _schedule->Save (xml_writer);
