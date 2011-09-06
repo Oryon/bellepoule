@@ -116,8 +116,6 @@ class Contest : public Module
     Time       *_scratch_time;
     Time       *_start_time;
     Schedule   *_schedule;
-    GtkWidget  *_properties_dlg;
-    GtkWidget  *_calendar_dlg;
     Tournament *_tournament;
     gboolean    _derived;
     Data       *_color;

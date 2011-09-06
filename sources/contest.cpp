@@ -46,7 +46,7 @@ typedef enum
   FTP_PIXBUF_COL,
   FTP_URL_COL,
   FTP_USER_COL,
-  FTP_PASSWD_COL,
+  FTP_PASSWD_COL
 } FTPColumn;
 
 const gchar *Contest::weapon_image[_nb_weapon] =
@@ -455,10 +455,6 @@ Contest::~Contest ()
 
   Object::TryToRelease (_schedule);
 
-  gtk_widget_destroy (_properties_dlg);
-
-  gtk_widget_destroy (_calendar_dlg);
-
   Object::Dump ();
 
   if (_save_timeout_id > 0)
@@ -519,16 +515,22 @@ Contest *Contest::Create ()
                                               NULL);
 
   contest->FillInProperties ();
-  if (gtk_dialog_run (GTK_DIALOG (contest->_properties_dlg)) == GTK_RESPONSE_ACCEPT)
+
   {
-    contest->_schedule->CreateDefault ();
-    contest->ReadProperties ();
-    gtk_widget_hide (contest->_properties_dlg);
-  }
-  else
-  {
-    Object::TryToRelease (contest);
-    contest = NULL;
+    GtkWidget *dialog = contest->_glade->GetWidget ("properties_dialog");
+
+    if (gtk_dialog_run (GTK_DIALOG (dialog)) == TRUE)
+    {
+      contest->_schedule->CreateDefault ();
+      contest->ReadProperties ();
+      gtk_widget_hide (dialog);
+    }
+    else
+    {
+      gtk_widget_hide (dialog);
+      Object::TryToRelease (contest);
+      contest = NULL;
+    }
   }
 
   return contest;
@@ -669,44 +671,6 @@ void Contest::InitInstance ()
     }
     gtk_container_add (GTK_CONTAINER (box), _category_combo);
     gtk_widget_show (_category_combo);
-  }
-
-  // Properties dialog
-  {
-    GtkWidget *content_area;
-
-    _properties_dlg = gtk_dialog_new_with_buttons (gettext ("Competition properties"),
-                                                   NULL,
-                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                   GTK_STOCK_OK,
-                                                   GTK_RESPONSE_ACCEPT,
-                                                   GTK_STOCK_CANCEL,
-                                                   GTK_RESPONSE_REJECT,
-                                                   NULL);
-
-    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_properties_dlg));
-
-    gtk_widget_reparent (_glade->GetWidget ("properties_dialog-vbox"),
-                         content_area);
-  }
-
-  // Calendar dialog
-  {
-    GtkWidget *content_area;
-
-    _calendar_dlg = gtk_dialog_new_with_buttons (gettext ("Date of competition"),
-                                                 NULL,
-                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                 GTK_STOCK_OK,
-                                                 GTK_RESPONSE_ACCEPT,
-                                                 GTK_STOCK_CANCEL,
-                                                 GTK_RESPONSE_REJECT,
-                                                 NULL);
-
-    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_calendar_dlg));
-
-    gtk_widget_reparent (_glade->GetWidget ("calendar"),
-                         content_area);
   }
 
   // FTP repository
@@ -1453,13 +1417,15 @@ extern "C" G_MODULE_EXPORT void on_properties_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void Contest::on_properties_toolbutton_clicked ()
 {
+  GtkWidget *dialog = _glade->GetWidget ("properties_dialog");
+
   FillInProperties ();
-  if (gtk_dialog_run (GTK_DIALOG (_properties_dlg)) == GTK_RESPONSE_ACCEPT)
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == TRUE)
   {
     ReadProperties ();
     MakeDirty ();
   }
-  gtk_widget_hide (_properties_dlg);
+  gtk_widget_hide (dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -1489,7 +1455,9 @@ extern "C" G_MODULE_EXPORT void on_calendar_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest::on_calendar_button_clicked ()
 {
-  if (gtk_dialog_run (GTK_DIALOG (_calendar_dlg)) == GTK_RESPONSE_ACCEPT)
+  GtkWidget *dialog = _glade->GetWidget ("calendar_dialog");
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == TRUE)
   {
     guint year;
     guint month;
@@ -1504,7 +1472,7 @@ void Contest::on_calendar_button_clicked ()
                 month,
                 year);
   }
-  gtk_widget_hide (_calendar_dlg);
+  gtk_widget_hide (dialog);
 }
 
 // --------------------------------------------------------------------------------

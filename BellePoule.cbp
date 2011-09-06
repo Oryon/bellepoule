@@ -43,8 +43,16 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-Wshadow" />
+			<Add option="-Winit-self" />
+			<Add option="-Wcast-align" />
+			<Add option="-Wunreachable-code" />
+			<Add option="-Wswitch-enum" />
+			<Add option="-Wswitch-default" />
+			<Add option="-std=c++98" />
+			<Add option="-Wextra" />
 			<Add option="-Wall" />
-			<Add option="-mms-bitfields -std=c++98 -Wno-long-long" />
+			<Add option="-mms-bitfields -Wno-long-long -Wno-unused-parameter -Wno-shadow" />
 			<Add directory="C:\MinGW\include" />
 			<Add directory="C:\MinGW\include\gtk-2.0" />
 			<Add directory="C:\MinGW\include\cairo" />
