@@ -103,6 +103,7 @@ class Contest : public Module
     gchar      *_id;
     gchar      *_name;
     gchar      *_organizer;
+    gchar      *_location;
     gchar      *_web_site;
     guint       _category;
     gchar      *_filename;
@@ -115,8 +116,6 @@ class Contest : public Module
     Time       *_scratch_time;
     Time       *_start_time;
     Schedule   *_schedule;
-    GtkWidget  *_properties_dlg;
-    GtkWidget  *_calendar_dlg;
     Tournament *_tournament;
     gboolean    _derived;
     Data       *_color;
