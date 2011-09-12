@@ -522,13 +522,16 @@ void Tournament::OnBackupfileLocation ()
 // --------------------------------------------------------------------------------
 void Tournament::SetBackupLocation (gchar *location)
 {
-  gchar *readable_name = g_filename_from_uri (location,
-                                              NULL,
-                                              NULL);
+  if (location)
+  {
+    gchar *readable_name = g_filename_from_uri (location,
+                                                NULL,
+                                                NULL);
 
-  gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("backup_location_menuitem")),
-                           readable_name);
-  g_free (readable_name);
+    gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("backup_location_menuitem")),
+                             readable_name);
+    g_free (readable_name);
+  }
 }
 
 // --------------------------------------------------------------------------------
