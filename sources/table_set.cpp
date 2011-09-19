@@ -73,6 +73,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _locked            = FALSE;
   _id                = id;
   _attendees         = NULL;
+  _withdrawals       = NULL;
   _has_error         = FALSE;
   _is_over           = FALSE;
   _first_place       = first_place;
@@ -191,18 +192,13 @@ TableSet::~TableSet ()
 
   g_free (_short_name);
 
-  if (_attendees)
-  {
-    g_slist_free (_attendees);
-  }
+  g_slist_free (_attendees);
+  g_slist_free (_withdrawals);
 
   gtk_list_store_clear (_from_table_liststore);
   gtk_tree_store_clear (_quick_search_treestore);
 
-  if (_match_to_print)
-  {
-    g_slist_free (_match_to_print);
-  }
+  g_slist_free (_match_to_print);
 
   gtk_widget_destroy (_print_dialog);
   gtk_widget_destroy (_preview_dialog);
@@ -214,11 +210,47 @@ TableSet::~TableSet ()
 }
 
 // --------------------------------------------------------------------------------
+gchar *TableSet::GetId ()
+{
+  return _id;
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::SetAttendees (GSList *attendees)
 {
+  g_slist_free (_attendees);
   _attendees = attendees;
+
+  for (guint i = 0; i < _nb_tables; i ++)
+  {
+    Table *table = _tables[i];
+
+    if (table->_defeated_table_set)
+    {
+      table->_defeated_table_set->SetAttendees (NULL, NULL);
+    }
+  }
+
   Garnish ();
+  Display ();
   RefreshTableStatus ();
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::SetAttendees (GSList *attendees,
+                             GSList *withdrawals)
+{
+  attendees = g_slist_sort_with_data (attendees,
+                                      (GCompareDataFunc) TableSet::ComparePlayer,
+                                      this);
+
+  withdrawals = g_slist_sort_with_data (withdrawals,
+                                        (GCompareDataFunc) TableSet::ComparePlayer,
+                                        this);
+  g_slist_free (_withdrawals);
+  _withdrawals = withdrawals;
+
+  SetAttendees (attendees);
 }
 
 // --------------------------------------------------------------------------------
@@ -337,12 +369,12 @@ void TableSet::RefreshTableStatus ()
 
       g_free (icon);
     }
+  }
 
-    if (_status_cbk)
-    {
-      _status_cbk (this,
-                   _status_cbk_data);
-    }
+  if (_status_cbk)
+  {
+    _status_cbk (this,
+                 _status_cbk_data);
   }
   MakeDirty ();
 }
@@ -437,6 +469,7 @@ gboolean TableSet::IsOver ()
 {
   return _is_over;
 }
+
 // --------------------------------------------------------------------------------
 gboolean TableSet::HasError ()
 {
@@ -630,6 +663,7 @@ void TableSet::DeleteTree ()
   g_free (_tables);
   _nb_tables = 0;
   _tables    = NULL;
+  _is_over   = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -1263,11 +1297,8 @@ void TableSet::Wipe ()
 void TableSet::LookForMatchToPrint (Table    *table_to_print,
                                     gboolean  all_sheet)
 {
-  if (_match_to_print)
-  {
-    g_slist_free (_match_to_print);
-    _match_to_print = NULL;
-  }
+  g_slist_free (_match_to_print);
+  _match_to_print = NULL;
 
   {
     GtkTreeIter parent;
@@ -1605,6 +1636,12 @@ void TableSet::OnDisplayToggled (GtkWidget *widget)
 }
 
 // --------------------------------------------------------------------------------
+gboolean TableSet::PlaceIsFenced (guint place)
+{
+  return (place != 4);
+}
+
+// --------------------------------------------------------------------------------
 GSList *TableSet::GetCurrentClassification ()
 {
   _result_list = NULL;
@@ -1618,10 +1655,16 @@ GSList *TableSet::GetCurrentClassification ()
                      (GNodeTraverseFunc) StartClassification,
                      this);
 
-    _result_list = g_slist_sort_with_data (_result_list,
-                                           (GCompareDataFunc) ComparePlayer,
-                                           (void *) this);
+    // Sort the list and complete it with the withdrawals
+    {
+      _result_list = g_slist_sort_with_data (_result_list,
+                                             (GCompareDataFunc) ComparePlayer,
+                                             (void *) this);
+      _result_list = g_slist_concat (_result_list,
+                                     g_slist_copy (_withdrawals));
+    }
 
+    // Give a place number to each fencer
     {
       Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
       GSList              *current;
@@ -1644,7 +1687,7 @@ GSList *TableSet::GetCurrentClassification ()
                 && (ComparePreviousRankPlayer (player,
                                                previous_player,
                                                0) == 0))
-             || (i == 4))
+             || (PlaceIsFenced (i) == FALSE))
         {
           player->SetAttributeValue (attr_id,
                                      previous_rank);
@@ -1702,11 +1745,13 @@ gint TableSet::ComparePlayer (Player   *A,
       gchar *status_A = A->GetAttribute (&attr_id)->GetStrValue ();
       gchar *status_B = B->GetAttribute (&attr_id)->GetStrValue ();
 
-      if ((status_A[0] == 'E') && (status_A[0] != status_B[0]))
+      if (   ((status_A[0] == 'E') || (status_A[0] == 'A'))
+          && (status_A[0] != status_B[0]))
       {
         return 1;
       }
-      if ((status_B[0] == 'E') && (status_B[0] != status_A[0]))
+      if (   ((status_B[0] == 'E') || (status_B[0] == 'A'))
+          && (status_B[0] != status_A[0]))
       {
         return -1;
       }
@@ -2555,11 +2600,8 @@ gboolean TableSet::OnPrintMatch (GooCanvasItem  *item,
 {
   gchar *print_name = table_set->GetPrintName ();
 
-  if (table_set->_match_to_print)
-  {
-    g_slist_free (table_set->_match_to_print);
-    table_set->_match_to_print = NULL;
-  }
+  g_slist_free (table_set->_match_to_print);
+  table_set->_match_to_print = NULL;
 
   table_set->_match_to_print = g_slist_prepend (table_set->_match_to_print,
                                                 g_object_get_data (G_OBJECT (item), "match_to_print"));
@@ -2596,7 +2638,18 @@ void TableSet::OnStatusChanged (GtkComboBox *combo_box)
   {
     match->RestorePlayer (player);
   }
+
   OnAttrListUpdated ();
+
+  {
+    Table *table = (Table *) match->GetPtrData (this, "table");
+
+    if (table->_is_over)
+    {
+      _supervisor->OnTableOver (this,
+                                table);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

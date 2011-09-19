@@ -44,10 +44,7 @@ Attendees::Attendees  (Attendees *from,
 // --------------------------------------------------------------------------------
 Attendees::~Attendees ()
 {
-  if (_shortlist)
-  {
-    g_slist_free (_shortlist);
-  }
+  g_slist_free (_shortlist);
 }
 
 // --------------------------------------------------------------------------------

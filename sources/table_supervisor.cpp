@@ -650,22 +650,20 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
     if (defeated_table_set)
     {
       // Store its reference in the table it comes from
-      {
-        GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore),
-                                                     &defeated_iter);
-
-        table->_defeated_table_set = gtk_tree_path_to_string (path);
-        gtk_tree_path_free (path);
-      }
+      table->_defeated_table_set = defeated_table_set;
 
       // Populate it
       {
-        GSList *attendees = table->GetLoosers ();
+        GSList *loosers;
+        GSList *withdrawals;
+        GSList *blackcardeds;
 
-        attendees = g_slist_sort_with_data (attendees,
-                                            (GCompareDataFunc) TableSet::ComparePlayer,
-                                            defeated_table_set);
-        defeated_table_set->SetAttendees (attendees);
+        table->GetLoosers (&loosers,
+                           &withdrawals,
+                           &blackcardeds);
+
+        defeated_table_set->SetAttendees (loosers,
+                                          withdrawals);
       }
     }
   }

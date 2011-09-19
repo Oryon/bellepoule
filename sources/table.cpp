@@ -45,12 +45,7 @@ Table::Table (TableSet *table_set,
 // --------------------------------------------------------------------------------
 Table::~Table ()
 {
-  g_free (_defeated_table_set);
-
-  if (_match_list)
-  {
-    g_slist_free (_match_list);
-  }
+  g_slist_free (_match_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -100,28 +95,51 @@ gint Table::CompareMatchNumber (Match *a,
 }
 
 // --------------------------------------------------------------------------------
-GSList *Table::GetLoosers ()
+void Table::GetLoosers (GSList **loosers,
+                        GSList **withdrawals,
+                        GSList **blackcardeds)
 {
-  GSList *loosers       = NULL;
   GSList *current_match = _match_list;
+
+  *loosers      = NULL;
+  *withdrawals  = NULL;
+  *blackcardeds = NULL;
 
   while (current_match)
   {
-    Match *match   = (Match *) current_match->data;
+    Match  *match  = (Match *) current_match->data;
     Player *looser = match->GetLooser ();
 
     if (looser)
     {
       if (match->IsDropped () == FALSE)
       {
-        loosers = g_slist_append (loosers,
-                                  looser);
+        *loosers = g_slist_append (*loosers,
+                                   looser);
+      }
+      else
+      {
+        Player::AttributeId  attr_id ("status", _table_set->GetDataOwner ());
+        Attribute           *attr   = looser->GetAttribute (&attr_id);
+        gchar               *status = attr->GetStrValue ();
+
+        if (status)
+        {
+          if (*status == 'A')
+          {
+            *withdrawals = g_slist_append (*withdrawals,
+                                           looser);
+          }
+          if (*status == 'E')
+          {
+            *blackcardeds = g_slist_append (*blackcardeds,
+                                            looser);
+          }
+        }
       }
     }
     current_match = g_slist_next (current_match);
   }
-
-  return loosers;
 }
 
 // --------------------------------------------------------------------------------
@@ -298,7 +316,7 @@ void Table::Save (xmlTextWriter *xml_writer)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "DestinationDesElimines",
-                                       "%s", _defeated_table_set);
+                                       "%s", _defeated_table_set->GetId ());
   }
 
   {

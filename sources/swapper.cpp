@@ -60,10 +60,7 @@ Swapper::~Swapper ()
   Object::TryToRelease (_criteria_id);
   FreeArray ();
 
-  if (_player_list)
-  {
-    g_slist_free (_player_list);
-  }
+  g_slist_free (_player_list);
 }
 
 // --------------------------------------------------------------------------------
