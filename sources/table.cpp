@@ -101,9 +101,9 @@ void Table::GetLoosers (GSList **loosers,
 {
   GSList *current_match = _match_list;
 
-  *loosers      = NULL;
-  *withdrawals  = NULL;
-  *blackcardeds = NULL;
+  if (loosers)      *loosers      = NULL;
+  if (withdrawals)  *withdrawals  = NULL;
+  if (blackcardeds) *blackcardeds = NULL;
 
   while (current_match)
   {
@@ -114,8 +114,11 @@ void Table::GetLoosers (GSList **loosers,
     {
       if (match->IsDropped () == FALSE)
       {
-        *loosers = g_slist_append (*loosers,
-                                   looser);
+        if (looser)
+        {
+          *loosers = g_slist_append (*loosers,
+                                     looser);
+        }
       }
       else
       {
@@ -125,12 +128,12 @@ void Table::GetLoosers (GSList **loosers,
 
         if (status)
         {
-          if (*status == 'A')
+          if (withdrawals && (*status == 'A'))
           {
             *withdrawals = g_slist_append (*withdrawals,
                                            looser);
           }
-          if (*status == 'E')
+          if (blackcardeds && (*status == 'E'))
           {
             *blackcardeds = g_slist_append (*blackcardeds,
                                             looser);

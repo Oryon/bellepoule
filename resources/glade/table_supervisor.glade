@@ -646,7 +646,7 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHScale" id="hscale1">
+                          <object class="GtkHScale" id="zoom_scale">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="adjustment">zoom_adjustment</property>

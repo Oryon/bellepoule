@@ -79,6 +79,8 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _first_place       = first_place;
   _loaded            = FALSE;
   _print_scale       = 1.0;
+  _zoom_factor       = 1.0;
+  _is_active         = FALSE;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -213,6 +215,18 @@ TableSet::~TableSet ()
 gchar *TableSet::GetId ()
 {
   return _id;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::Activate ()
+{
+  _is_active = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::DeActivate ()
+{
+  _is_active = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -1638,7 +1652,18 @@ void TableSet::OnDisplayToggled (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 gboolean TableSet::PlaceIsFenced (guint place)
 {
-  return (place != 4);
+  if (place == 4)
+  {
+    if (_nb_tables > 2)
+    {
+      Table *table = _tables[2];
+
+      return (   table->_defeated_table_set
+              && (table->_defeated_table_set->_is_active == TRUE));
+    }
+  }
+
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -1761,6 +1786,12 @@ gint TableSet::ComparePlayer (Player   *A,
   {
     Table *table_A = (Table *) A->GetPtrData (table_set, "best_table");
     Table *table_B = (Table *) B->GetPtrData (table_set, "best_table");
+
+    if ((table_A == NULL) || (table_B == NULL))
+    {
+      g_print ("%d >> %s\n", table_set->_first_place, A->GetName ());
+      g_print ("%d >> %s\n", table_set->_first_place, B->GetName ());
+    }
 
     if (table_A != table_B)
     {
@@ -2495,6 +2526,14 @@ void TableSet::OnZoom (gdouble value)
 {
   goo_canvas_set_scale (GetCanvas (),
                         value);
+  _zoom_factor = value;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::RestoreZoomFactor (GtkScale *scale)
+{
+  gtk_range_set_value (GTK_RANGE (scale), _zoom_factor);
+  OnZoom (_zoom_factor);
 }
 
 // --------------------------------------------------------------------------------

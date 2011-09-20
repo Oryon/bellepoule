@@ -189,6 +189,7 @@ void TableSupervisor::OnTableSetSelected (TableSet *table_set)
     Plug (table_set,
           GetWidget ("table_set_hook"));
     table_set->Display ();
+    table_set->RestoreZoomFactor (GTK_SCALE (_glade->GetWidget ("zoom_scale")));
 
     _displayed_table_set = table_set;
   }
@@ -338,13 +339,17 @@ gboolean TableSupervisor::ActivateTableSet (GtkTreeModel    *model,
                       TABLE_SET_VISIBILITY_COLUMN, visibility,
                       -1);
 
+  if (visibility)
+  {
+    table_set->Activate ();
+  }
+  else
+  {
+    table_set->DeActivate ();
+  }
+
   if (ts->_displayed_table_set && (visibility == FALSE))
   {
-    TableSet *table_set;
-
-    gtk_tree_model_get (GTK_TREE_MODEL (ts->_table_set_treestore), iter,
-                        TABLE_SET_TABLE_COLUMN, &table_set,
-                        -1);
     if (ts->_displayed_table_set == table_set)
     {
       ts->_displayed_table_set->UnPlug ();

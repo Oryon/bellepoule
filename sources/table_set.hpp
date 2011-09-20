@@ -117,6 +117,12 @@ class TableSet : public CanvasModule
 
     gchar *GetId ();
 
+    void RestoreZoomFactor (GtkScale *scale);
+
+    void Activate ();
+
+    void DeActivate ();
+
   private:
     static const gdouble _score_rect_size;
 
@@ -174,6 +180,8 @@ class TableSet : public CanvasModule
     guint                     _first_place;
     GtkPrintOperationPreview *_preview;
     GtkWidget                *_current_preview_area;
+    gdouble                   _zoom_factor;
+    gboolean                  _is_active;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
