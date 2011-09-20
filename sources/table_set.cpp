@@ -1743,6 +1743,24 @@ GSList *TableSet::GetCurrentClassification ()
 }
 
 // --------------------------------------------------------------------------------
+GSList *TableSet::GetBlackcardeds ()
+{
+  GSList *blackcardeds = NULL;
+
+  for (guint i = 0; i < _nb_tables; i++)
+  {
+    GSList *current;
+
+    _tables[i]->GetLoosers (NULL,
+                            NULL,
+                            &current);
+    blackcardeds = g_slist_concat (blackcardeds,
+                                   current);
+  }
+  return blackcardeds;
+}
+
+// --------------------------------------------------------------------------------
 guint TableSet::GetFirstPlace ()
 {
   return _first_place;
@@ -1787,15 +1805,12 @@ gint TableSet::ComparePlayer (Player   *A,
     Table *table_A = (Table *) A->GetPtrData (table_set, "best_table");
     Table *table_B = (Table *) B->GetPtrData (table_set, "best_table");
 
-    if ((table_A == NULL) || (table_B == NULL))
+    if (table_A && table_B)
     {
-      g_print ("%d >> %s\n", table_set->_first_place, A->GetName ());
-      g_print ("%d >> %s\n", table_set->_first_place, B->GetName ());
-    }
-
-    if (table_A != table_B)
-    {
-      return table_B->GetColumn () - table_A->GetColumn ();
+      if (table_A != table_B)
+      {
+        return table_B->GetColumn () - table_A->GetColumn ();
+      }
     }
   }
 

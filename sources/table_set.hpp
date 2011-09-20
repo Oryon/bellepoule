@@ -123,6 +123,8 @@ class TableSet : public CanvasModule
 
     void DeActivate ();
 
+    GSList *GetBlackcardeds ();
+
   private:
     static const gdouble _score_rect_size;
 

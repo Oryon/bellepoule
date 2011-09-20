@@ -661,11 +661,10 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
       {
         GSList *loosers;
         GSList *withdrawals;
-        GSList *blackcardeds;
 
         table->GetLoosers (&loosers,
                            &withdrawals,
-                           &blackcardeds);
+                           NULL);
 
         defeated_table_set->SetAttendees (loosers,
                                           withdrawals);
@@ -867,7 +866,8 @@ void TableSupervisor::OnDisplayToggled (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 GSList *TableSupervisor::GetCurrentClassification ()
 {
-  _result = NULL;
+  _result       = NULL;
+  _blackcardeds = NULL;
 
   gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                           (GtkTreeModelForeachFunc) GetTableSetClassification,
@@ -880,6 +880,10 @@ GSList *TableSupervisor::GetCurrentClassification ()
                                       (GCompareDataFunc) Player::Compare,
                                       &attr_id);
   }
+
+  _result = g_slist_concat (_result,
+                            _blackcardeds);
+  _blackcardeds = NULL;
 
   return _result;
 }
@@ -906,6 +910,25 @@ gboolean TableSupervisor::GetTableSetClassification (GtkTreeModel    *model,
                                   player);
     ts->_result = g_slist_append (ts->_result,
                                   player);
+  }
+
+  {
+    GSList *blacardeds = table_set->GetBlackcardeds ();
+
+    for (guint i = 0; i < g_slist_length (blacardeds); i++)
+    {
+      Player *player = (Player *) g_slist_nth_data (blacardeds, i);
+
+      g_print (">>>>>>> %s\n", player->GetName ());
+      if (g_slist_find (ts->_blackcardeds, player) == NULL)
+      {
+        ts->_blackcardeds = g_slist_prepend (ts->_blackcardeds,
+                                             player);
+      }
+      ts->_result = g_slist_remove (ts->_result,
+                                    player);
+    }
+    g_slist_free (blacardeds);
   }
 
   return FALSE;

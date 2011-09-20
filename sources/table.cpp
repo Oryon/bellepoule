@@ -107,36 +107,40 @@ void Table::GetLoosers (GSList **loosers,
 
   while (current_match)
   {
-    Match  *match  = (Match *) current_match->data;
-    Player *looser = match->GetLooser ();
+    Match *match = (Match *) current_match->data;
 
-    if (looser)
+    if (match)
     {
-      if (match->IsDropped () == FALSE)
-      {
-        if (looser)
-        {
-          *loosers = g_slist_append (*loosers,
-                                     looser);
-        }
-      }
-      else
-      {
-        Player::AttributeId  attr_id ("status", _table_set->GetDataOwner ());
-        Attribute           *attr   = looser->GetAttribute (&attr_id);
-        gchar               *status = attr->GetStrValue ();
+      Player *looser = match->GetLooser ();
 
-        if (status)
+      if (looser)
+      {
+        if (match->IsDropped () == FALSE)
         {
-          if (withdrawals && (*status == 'A'))
+          if (loosers)
           {
-            *withdrawals = g_slist_append (*withdrawals,
-                                           looser);
+            *loosers = g_slist_append (*loosers,
+                                       looser);
           }
-          if (blackcardeds && (*status == 'E'))
+        }
+        else
+        {
+          Player::AttributeId  attr_id ("status", _table_set->GetDataOwner ());
+          Attribute           *attr   = looser->GetAttribute (&attr_id);
+          gchar               *status = attr->GetStrValue ();
+
+          if (status)
           {
-            *blackcardeds = g_slist_append (*blackcardeds,
-                                            looser);
+            if (withdrawals && (*status == 'A'))
+            {
+              *withdrawals = g_slist_append (*withdrawals,
+                                             looser);
+            }
+            if (blackcardeds && (*status == 'E'))
+            {
+              *blackcardeds = g_slist_append (*blackcardeds,
+                                              looser);
+            }
           }
         }
       }

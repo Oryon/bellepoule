@@ -70,6 +70,7 @@ class TableSupervisor : public virtual Stage, public Module
     TableSet           *_displayed_table_set;
     gboolean            _is_over;
     GSList             *_result;
+    GSList             *_blackcardeds;
     Data               *_fenced_places;
 
     void Display ();
