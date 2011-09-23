@@ -43,6 +43,9 @@ class TableSet : public CanvasModule
 
     void SetAttendees (GSList *attendees);
 
+    void SetAttendees (GSList *attendees,
+                       GSList *withdrawals);
+
     void OnFromTableComboboxChanged ();
 
     void OnStuffClicked ();
@@ -112,9 +115,15 @@ class TableSet : public CanvasModule
 
     guint GetFirstPlace ();
 
-    static gint ComparePlayer (Player    *A,
-                               Player    *B,
-                               TableSet  *table_set);
+    gchar *GetId ();
+
+    void RestoreZoomFactor (GtkScale *scale);
+
+    void Activate ();
+
+    void DeActivate ();
+
+    GSList *GetBlackcardeds ();
 
   private:
     static const gdouble _score_rect_size;
@@ -163,6 +172,7 @@ class TableSet : public CanvasModule
     guint                     _print_nb_x_pages;
     guint                     _print_nb_y_pages;
     GSList                   *_attendees;
+    GSList                   *_withdrawals;
     gboolean                  _locked;
     guint                     _nb_match_per_sheet;
     gchar                    *_id;
@@ -172,6 +182,8 @@ class TableSet : public CanvasModule
     guint                     _first_place;
     GtkPrintOperationPreview *_preview;
     GtkWidget                *_current_preview_area;
+    gdouble                   _zoom_factor;
+    gboolean                  _is_active;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -249,6 +261,12 @@ class TableSet : public CanvasModule
     void ConfigurePreviewLayout (GtkPrintContext *context);
 
     gchar *GetPrintName ();
+
+    gboolean PlaceIsFenced (guint place);
+
+    static gint ComparePlayer (Player    *A,
+                               Player    *B,
+                               TableSet  *table_set);
 
     static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
                                                    GtkCellRenderer *cell,

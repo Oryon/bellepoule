@@ -1,14 +1,16 @@
-xgettext --default-domain=BellePoule\
-         --output=BellePoule.pot\
+#!/bin/tcsh
+#xgettext --default-domain=BellePoule\
+         #--output=BellePoule.pot\
+         #--from-code=UTF-8\
+         #--keyword=N_\
+         #../../sources/*cpp ../../resources/glade/*glade
+
+foreach file (`\ls *.po *pot`)
+echo generating $file ...
+xgettext --join-existing\
+         --default-domain=BellePoule\
+         --output=$file\
          --from-code=UTF-8\
          --keyword=N_\
          ../../sources/*cpp ../../resources/glade/*glade
-
-#xgettext --join-existing\
-         #--default-domain=BellePoule\
-         #--output=en.po\
-         #--from-code=UTF-8\
-         #--keyword=N_\
-         #--no-wrap ../../sources/*cpp ../../resources/glade/*glade
-
-msgfmt --output-file=en/LC_MESSAGES/BellePoule.mo en_GB.po
+end

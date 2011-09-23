@@ -30,10 +30,7 @@ SensitivityTrigger::SensitivityTrigger ()
 // --------------------------------------------------------------------------------
 SensitivityTrigger::~SensitivityTrigger ()
 {
-  if (_widget_list)
-  {
-    g_slist_free (_widget_list);
-  }
+  g_slist_free (_widget_list);
 }
 
 // --------------------------------------------------------------------------------

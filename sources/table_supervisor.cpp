@@ -189,6 +189,7 @@ void TableSupervisor::OnTableSetSelected (TableSet *table_set)
     Plug (table_set,
           GetWidget ("table_set_hook"));
     table_set->Display ();
+    table_set->RestoreZoomFactor (GTK_SCALE (_glade->GetWidget ("zoom_scale")));
 
     _displayed_table_set = table_set;
   }
@@ -338,13 +339,17 @@ gboolean TableSupervisor::ActivateTableSet (GtkTreeModel    *model,
                       TABLE_SET_VISIBILITY_COLUMN, visibility,
                       -1);
 
+  if (visibility)
+  {
+    table_set->Activate ();
+  }
+  else
+  {
+    table_set->DeActivate ();
+  }
+
   if (ts->_displayed_table_set && (visibility == FALSE))
   {
-    TableSet *table_set;
-
-    gtk_tree_model_get (GTK_TREE_MODEL (ts->_table_set_treestore), iter,
-                        TABLE_SET_TABLE_COLUMN, &table_set,
-                        -1);
     if (ts->_displayed_table_set == table_set)
     {
       ts->_displayed_table_set->UnPlug ();
@@ -650,22 +655,19 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
     if (defeated_table_set)
     {
       // Store its reference in the table it comes from
-      {
-        GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore),
-                                                     &defeated_iter);
-
-        table->_defeated_table_set = gtk_tree_path_to_string (path);
-        gtk_tree_path_free (path);
-      }
+      table->_defeated_table_set = defeated_table_set;
 
       // Populate it
       {
-        GSList *attendees = table->GetLoosers ();
+        GSList *loosers;
+        GSList *withdrawals;
 
-        attendees = g_slist_sort_with_data (attendees,
-                                            (GCompareDataFunc) TableSet::ComparePlayer,
-                                            defeated_table_set);
-        defeated_table_set->SetAttendees (attendees);
+        table->GetLoosers (&loosers,
+                           &withdrawals,
+                           NULL);
+
+        defeated_table_set->SetAttendees (loosers,
+                                          withdrawals);
       }
     }
   }
@@ -864,7 +866,8 @@ void TableSupervisor::OnDisplayToggled (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 GSList *TableSupervisor::GetCurrentClassification ()
 {
-  _result = NULL;
+  _result       = NULL;
+  _blackcardeds = NULL;
 
   gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                           (GtkTreeModelForeachFunc) GetTableSetClassification,
@@ -877,6 +880,10 @@ GSList *TableSupervisor::GetCurrentClassification ()
                                       (GCompareDataFunc) Player::Compare,
                                       &attr_id);
   }
+
+  _result = g_slist_concat (_result,
+                            _blackcardeds);
+  _blackcardeds = NULL;
 
   return _result;
 }
@@ -903,6 +910,24 @@ gboolean TableSupervisor::GetTableSetClassification (GtkTreeModel    *model,
                                   player);
     ts->_result = g_slist_append (ts->_result,
                                   player);
+  }
+
+  {
+    GSList *blacardeds = table_set->GetBlackcardeds ();
+
+    for (guint i = 0; i < g_slist_length (blacardeds); i++)
+    {
+      Player *player = (Player *) g_slist_nth_data (blacardeds, i);
+
+      if (g_slist_find (ts->_blackcardeds, player) == NULL)
+      {
+        ts->_blackcardeds = g_slist_prepend (ts->_blackcardeds,
+                                             player);
+      }
+      ts->_result = g_slist_remove (ts->_result,
+                                    player);
+    }
+    g_slist_free (blacardeds);
   }
 
   return FALSE;

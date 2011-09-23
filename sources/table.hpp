@@ -61,13 +61,15 @@ class Table : public Object
 
     void DropMatch (Match *match);
 
-    GSList *GetLoosers ();
+    void GetLoosers (GSList **loosers,
+                     GSList **withdrawals,
+                     GSList **blackcardeds);
 
     gboolean       _has_error;
     guint          _is_over;
     GooCanvasItem *_status_item;
     GooCanvasItem *_header_item;
-    gchar         *_defeated_table_set;
+    TableSet      *_defeated_table_set;
 
   private:
     guint     _size;

@@ -67,10 +67,10 @@ class TableSupervisor : public virtual Stage, public Module
     GtkTreeModelFilter *_table_set_filter;
     xmlTextWriter      *_xml_writer;
     xmlNode            *_xml_node;
-    GSList             *_result_list;
     TableSet           *_displayed_table_set;
     gboolean            _is_over;
     GSList             *_result;
+    GSList             *_blackcardeds;
     Data               *_fenced_places;
 
     void Display ();
