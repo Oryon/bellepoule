@@ -1,38 +1,34 @@
-# German translation for bellepoule
-# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
-# This file is distributed under the same license as the bellepoule package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: bellepoule\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-22 08:32+0200\n"
-"PO-Revision-Date: 2011-09-01 18:50+0000\n"
-"Last-Translator: Julien Diaz <Unknown>\n"
-"Language-Team: <de@li.org>\n"
+"POT-Creation-Date: 2011-09-22 18:22+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-09-02 04:48+0000\n"
-"X-Generator: Launchpad (build 13830)\n"
-"X-Poedit-Language: German\n"
-"X-Poedit-SourceCharset: utf-8\n"
 
-#: ../../sources/checkin.cpp:27
-#: ../../resources/glade/contest.glade:442
+#: ../../sources/checkin.cpp:28 ../../resources/glade/contest.glade:514
 msgid "Check-in"
 msgstr "Aufruf"
 
-#: ../../sources/checkin.cpp:87
+#: ../../sources/checkin.cpp:94
 msgid "<b><big>Which fencers do you want to print?</big></b>"
 msgstr "<b><big>Welche Fechter wollen Sie drucken?</big></b>"
 
-#: ../../sources/checkin.cpp:90
+#: ../../sources/checkin.cpp:97
 msgid "Fencer list printing"
 msgstr "Ausdruck der Teilnehmerliste"
 
-#: ../../sources/checkin.cpp:201
+#: ../../sources/checkin.cpp:229
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
@@ -40,121 +36,111 @@ msgstr ""
 "Um die Dateneingabe zu beschleunigen deaktiveren Sie diese Checkbox. Das "
 "entsprechende Feld wird bei der TAB-Navigation ignoriert."
 
-#: ../../sources/checkin.cpp:464
+#: ../../sources/checkin.cpp:621
 msgid "Choose a fencer file to import..."
 msgstr "Wählen Sie die zu importierende Datei..."
 
-#: ../../sources/checkin.cpp:477
+#: ../../sources/checkin.cpp:634 ../../sources/general_classification.cpp:247
 msgid "All FFF files (.FFF)"
 msgstr "Alle FFF-Dateien (.FFF)"
 
-#: ../../sources/checkin.cpp:488
-#: ../../sources/general_classification.cpp:210
+#: ../../sources/checkin.cpp:646 ../../sources/general_classification.cpp:240
 msgid "All Excel files (.CSV)"
 msgstr "Alle Excel Dateien (.CSV)"
 
-#: ../../sources/checkin.cpp:499
-#: ../../sources/general_classification.cpp:221
-#: ../../sources/tournament.cpp:208
+#: ../../sources/checkin.cpp:658 ../../sources/contest.cpp:1199
+#: ../../sources/general_classification.cpp:267
+#: ../../sources/tournament.cpp:300
 msgid "All files"
 msgstr "Alle Dateien"
 
-#: ../../sources/checkin.cpp:969
+#: ../../sources/checkin.cpp:1219
 msgid "List of registered"
 msgstr "Anmeldeliste"
 
-#: ../../sources/checkin.cpp:973
+#: ../../sources/checkin.cpp:1223
 msgid "List of presents"
 msgstr "Anwesendeliste"
 
-#: ../../sources/checkin.cpp:977
+#: ../../sources/checkin.cpp:1227
 msgid "List of absents"
 msgstr "Abwesendeliste"
 
-#: ../../sources/checkin.cpp:981
+#: ../../sources/checkin.cpp:1231
 msgid "Fencer list"
 msgstr "Fechterliste"
 
-#: ../../sources/contest.cpp:39
-#: ../../resources/glade/contest.glade:105
+#: ../../sources/contest.cpp:54 ../../resources/glade/contest.glade:1251
 msgid "Sabre"
 msgstr "Säbel"
 
-#: ../../sources/contest.cpp:40
+#: ../../sources/contest.cpp:55
 msgid "Epée"
 msgstr "Degen"
 
-#: ../../sources/contest.cpp:41
+#: ../../sources/contest.cpp:56
 msgid "Foil"
 msgstr "Florett"
 
-#: ../../sources/contest.cpp:53
-#: ../../sources/main.cpp:184
+#: ../../sources/contest.cpp:70 ../../sources/main.cpp:206
 msgid "Male"
 msgstr "Herren"
 
-#: ../../sources/contest.cpp:54
-#: ../../sources/main.cpp:185
+#: ../../sources/contest.cpp:71 ../../sources/main.cpp:207
 msgid "Female"
 msgstr "Damen"
 
-#: ../../sources/contest.cpp:55
+#: ../../sources/contest.cpp:72
 msgid "Mixed"
 msgstr "Gemischt"
 
-#: ../../sources/contest.cpp:67
+#: ../../sources/contest.cpp:84
 msgid "U8"
 msgstr "Schüler"
 
-#: ../../sources/contest.cpp:68
+#: ../../sources/contest.cpp:85
 msgid "U10"
 msgstr "Schüler"
 
-#: ../../sources/contest.cpp:69
+#: ../../sources/contest.cpp:86
 msgid "U12"
 msgstr "B-Jugend"
 
-#: ../../sources/contest.cpp:70
+#: ../../sources/contest.cpp:87
 msgid "U14"
 msgstr "A-Jugend"
 
-#: ../../sources/contest.cpp:71
-#: ../../resources/glade/contest.glade:129
+#: ../../sources/contest.cpp:88 ../../resources/glade/contest.glade:1281
 msgid "U16"
 msgstr "Junioren"
 
-#: ../../sources/contest.cpp:72
+#: ../../sources/contest.cpp:89
 msgid "U18"
 msgstr "Aktive"
 
-#: ../../sources/contest.cpp:73
+#: ../../sources/contest.cpp:90
 msgid "Senior"
 msgstr "Senioren"
 
-#: ../../sources/contest.cpp:74
+#: ../../sources/contest.cpp:91
 msgid "Veteran"
 msgstr "Senioren Sonderklasse"
 
-#: ../../sources/contest.cpp:574
+#: ../../resources/glade/contest.glade:124
 msgid "Competition properties"
 msgstr "Eigenschaften des Turniers"
 
-#: ../../sources/contest.cpp:593
-#: ../../resources/glade/contest.glade:778
+#: ../../resources/glade/contest.glade:22
 msgid "Date of competition"
 msgstr "Datum des Turniers"
 
-#: ../../sources/contest.cpp:851
-#: ../../sources/contest.cpp:965
+#: ../../sources/contest.cpp:1024 ../../sources/contest.cpp:1173
 msgid "Choose a file..."
 msgstr "Wählen Sie einen Speicherort..."
 
-#: ../../sources/contest.cpp:1192
 msgid "Choose a backup file..."
 msgstr "Wählen Sie eine Backup-Datei..."
 
-#: ../../sources/contest.cpp:1249
-#, id-format
 msgid ""
 "<b><big>Do you really want to close\n"
 "<big>%s</big> ?</big></b>"
@@ -162,165 +148,156 @@ msgstr ""
 "<b><big>Wollen Sie wirklich \n"
 "<big>%s</big> schließen?</big></b>"
 
-#: ../../sources/contest.cpp:1252
 msgid "Close the competition?"
 msgstr "Das Turnier schließen?"
 
-#: ../../sources/contest.cpp:1255
 msgid "Unsaved data will be lost."
 msgstr "Nicht gespeicherte Änderungen werden verworfen."
 
-#: ../../sources/filter.cpp:184
 msgid "Filter"
 msgstr "Filter"
 
-#: ../../sources/general_classification.cpp:25
-#: ../../sources/general_classification.cpp:162
+#: ../../sources/general_classification.cpp:26
+#: ../../sources/general_classification.cpp:182
 msgid "General classification"
 msgstr "Ergebnisliste"
 
-#: ../../sources/general_classification.cpp:174
+#: ../../sources/general_classification.cpp:194
 msgid "Choose a target file..."
 msgstr "Wählen Sie die Zieldatei..."
 
-#: ../../sources/main.cpp:169
+#: ../../sources/main.cpp:191
 msgid "ref"
 msgstr "Ref"
 
-#: ../../sources/main.cpp:172
-#: ../../sources/main.cpp:223
+#: ../../sources/main.cpp:194 ../../sources/main.cpp:267
 msgid "place"
 msgstr "Platz"
 
-#: ../../sources/main.cpp:174
+#: ../../sources/main.cpp:196
 msgid "last name"
 msgstr "Name"
 
-#: ../../sources/main.cpp:176
+#: ../../sources/main.cpp:198
 msgid "first name"
 msgstr "Vorname"
 
-#: ../../sources/main.cpp:178
+#: ../../sources/main.cpp:200
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
-#: ../../sources/main.cpp:181
+#: ../../sources/main.cpp:203
 msgid "gender"
 msgstr "Geschlecht"
 
-#: ../../sources/main.cpp:187
+#: ../../sources/main.cpp:209
 msgid "country"
 msgstr "Nation"
 
-#: ../../sources/main.cpp:191
+#: ../../sources/main.cpp:213
 msgid "league"
 msgstr "LV"
 
-#: ../../sources/main.cpp:195
+#: ../../sources/main.cpp:217
 msgid "club"
 msgstr "Verein"
 
-#: ../../sources/main.cpp:199
+#: ../../sources/main.cpp:221
 msgid "licence"
 msgstr "Lizenz"
 
-#: ../../sources/main.cpp:201
+#: ../../sources/main.cpp:223
 msgid "ranking"
 msgstr "Platzierung"
 
-#: ../../sources/main.cpp:204
+#: ../../sources/main.cpp:230
 msgid "presence"
 msgstr "Anwesenheit"
 
-#: ../../sources/main.cpp:207
+#: ../../sources/main.cpp:234
 msgid "exported"
 msgstr "exportiert"
 
-#: ../../sources/main.cpp:211
+#: ../../sources/main.cpp:255
 msgid "Vict./Bouts (‰)"
 msgstr "Siege/Wettkampf (‰)"
 
-#: ../../sources/main.cpp:215
+#: ../../sources/main.cpp:259
 msgid "index"
 msgstr "Trefferdifferenz"
 
-#: ../../sources/main.cpp:219
+#: ../../sources/main.cpp:263
 msgid "Hits scored"
 msgstr "Treffer gegeben"
 
-#: ../../sources/main.cpp:228
+#: ../../sources/main.cpp:272
 msgid "Round start rank"
 msgstr "Startplatz"
 
-#: ../../sources/pool.cpp:50
-#, id-format
+#: ../../sources/pool.cpp:56
+#, c-format
 msgid "Pool #%02d"
 msgstr "Rundennummer %02d"
 
-#: ../../sources/pool.cpp:455
-#: ../../sources/table.cpp:2058
-#: ../../sources/table.cpp:2075
+#: ../../sources/pool.cpp:601 ../../sources/table_set.cpp:2528
 msgid "Signature"
 msgstr "Unterschrift"
 
-#: ../../sources/pool.cpp:481
+#: ../../sources/pool.cpp:633
 msgid "Victories"
 msgstr "Siege"
 
-#: ../../sources/pool.cpp:490
+#: ../../sources/pool.cpp:642
 msgid "Vict./Matchs"
 msgstr "Siege/Gefechte"
 
-#: ../../sources/pool.cpp:499
+#: ../../sources/pool.cpp:651
 msgid "H. scored"
 msgstr "T. gegeben"
 
-#: ../../sources/pool.cpp:508
+#: ../../sources/pool.cpp:660
 msgid "H. received"
 msgstr "T. erhalten"
 
-#: ../../sources/pool.cpp:517
+#: ../../sources/pool.cpp:669
 msgid "Index"
 msgstr "Trefferdifferenz"
 
-#: ../../sources/pool.cpp:526
+#: ../../sources/pool.cpp:678
 msgid "Place"
 msgstr "Platz"
 
-#: ../../sources/pool_allocator.cpp:46
+#: ../../sources/pool_allocator.cpp:50
 msgid "Pools arrangement"
 msgstr "Zusammensetzung der Runden"
 
-#: ../../sources/pool_allocator.cpp:1400
 msgid "Pools allocation"
 msgstr "Verteilung in den Runden"
 
-#: ../../sources/pool_supervisor.cpp:25
+#: ../../sources/pool_supervisor.cpp:25 ../../sources/pool_supervisor.cpp:467
 msgid "Pools"
 msgstr "Runden"
 
-#: ../../sources/pool_supervisor.cpp:94
+#: ../../sources/pool_supervisor.cpp:100
 msgid "<b><big>Print...</big></b>"
 msgstr "<b><big>Drucken ...</big></b>"
 
-#: ../../sources/pool_supervisor.cpp:97
+#: ../../sources/pool_supervisor.cpp:103
 msgid "Pool sheets printing"
 msgstr "Drucken der Rundenzettel"
 
-#: ../../sources/pool_supervisor.cpp:445
 msgid "Pool round classification"
 msgstr "Rangfolge nach der Vorrunde"
 
-#: ../../sources/schedule.cpp:921
+#: ../../sources/schedule.cpp:973
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr ""
-"<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
+msgstr "<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
 
-#: ../../sources/schedule.cpp:924
+#: ../../sources/schedule.cpp:976
 msgid "Go back to the previous round?"
 msgstr "Zur vorrangegangener Runde zurückkehren?"
 
-#: ../../sources/schedule.cpp:927
+#: ../../sources/schedule.cpp:979
 msgid "All the inputs of this round will be cancelled."
 msgstr "Alle Eingaben dieser Runde werden verworfen."
 
@@ -328,89 +305,86 @@ msgstr "Alle Eingaben dieser Runde werden verworfen."
 msgid "Split"
 msgstr "Spaltung"
 
-#: ../../sources/table.cpp:30
-#: ../../sources/table.cpp:2128
+#: ../../sources/table_set.cpp:2434 ../../sources/table_set.cpp:2442
+#: ../../sources/table_supervisor.cpp:31
+#: ../../resources/glade/table_supervisor.glade:358
 msgid "Table"
 msgstr "Tabelle"
 
-#: ../../sources/table.cpp:138
+#: ../../sources/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
-"<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie "
-"drucken?</big></b>"
+"<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie drucken?</big></"
+"b>"
 
-#: ../../sources/table.cpp:153
+#: ../../sources/table_set.cpp:120
 msgid "<b><big>What do you want to print?</big></b>"
 msgstr "<b><big>Was wollen Sie drucken ?</big></b>"
 
-#: ../../sources/table.cpp:156
+#: ../../sources/table_set.cpp:123 ../../sources/table_set.cpp:134
 msgid "Table printing"
 msgstr "Druck der Tabelle"
 
-#: ../../sources/table.cpp:1688
+#: ../../sources/table.cpp:386
 msgid "Winner"
 msgstr "Sieger"
 
-#: ../../sources/table.cpp:1692
+#: ../../sources/table.cpp:390
 msgid "Final"
 msgstr "Finale"
 
-#: ../../sources/table.cpp:1696
+#: ../../sources/table.cpp:394
 msgid "Semi-final"
 msgstr "Halbfinale"
 
-#: ../../sources/table.cpp:1700
-#, id-format
+#: ../../sources/table.cpp:398
+#, c-format
 msgid "Table of %d"
 msgstr "Letzte %d"
 
-#: ../../sources/table.cpp:1895
-#, id-format
+#: ../../sources/table_set.cpp:2314
+#, c-format
 msgid "Match %s"
 msgstr "Gefecht %s"
 
-#: ../../sources/table.cpp:2118
 msgid "Table round classification"
 msgstr "Rangliste der Runde"
 
-#: ../../sources/table.cpp:2138
-#: ../../sources/table.cpp:2166
-#: ../../sources/table.cpp:2189
 msgid "Score sheet"
 msgstr "Gefechtblatt"
 
-#: ../../sources/table.cpp:2152
-#, id-format
+#: ../../sources/table_set.cpp:2625
+#, c-format
 msgid "%s: score sheets printing"
 msgstr "%s : Druck der Gefechte"
 
-#: ../../sources/tournament.cpp:184
+#: ../../sources/tournament.cpp:265
 msgid "Choose a competion file to open... "
 msgstr "Wählen Sie die zu öffnende Datei... "
 
-#: ../../sources/tournament.cpp:197
+#: ../../sources/contest.cpp:1188 ../../sources/tournament.cpp:278
 msgid "BellePoule files (.cotcot)"
 msgstr "BellePoule-Dateien (.cotcot)"
 
-#: ../../sources/tournament.cpp:317
+#: ../../sources/tournament.cpp:429
 msgid "Recently opened files"
 msgstr "Zuletzt geöffnete Dateien"
 
-#: ../../sources/tournament.cpp:329
+#: ../../sources/tournament.cpp:441
 msgid "BellePoule files"
 msgstr "Bellepoule-Dateien"
 
-#: ../../sources/tournament.cpp:420
+#: ../../sources/tournament.cpp:624
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
 msgstr "<b><big>Wollen Sie wirklich BellePoule schließen?</big></b>"
 
-#: ../../sources/tournament.cpp:423
+#: ../../sources/tournament.cpp:627
 msgid "Quit BellePoule?"
 msgstr "BellePoule schließen?"
 
-#: ../../sources/tournament.cpp:426
+#: ../../sources/tournament.cpp:630
 msgid "All the unsaved competions will be lost."
 msgstr "Alle nicht gespeicherten Änderungen werden verworfen."
 
@@ -422,12 +396,12 @@ msgstr "Anwesende"
 msgid "Absents"
 msgstr "Abwesende"
 
-#: ../../resources/glade/checkin.glade:42
-#: ../../resources/glade/checkin.glade:56
+#: ../../resources/glade/checkin.glade:43
+#: ../../resources/glade/checkin.glade:138
 msgid "9999"
 msgstr "9999"
 
-#: ../../resources/glade/checkin.glade:105
+#: ../../resources/glade/checkin.glade:185
 msgid ""
 "FFF (Fencing File Format) is a format specified by the FIE. It's used by the "
 "french federation to provide the competion organiser with the registered "
@@ -436,134 +410,123 @@ msgstr ""
 "FFF ist das Format, unter dem der französischer Fechterbund die Listen von "
 "Fechtern liefert, die an das Turnier über ihr Netzstandort eingetragen sind."
 
-#: ../../resources/glade/checkin.glade:106
+#: ../../resources/glade/checkin.glade:186
 msgid "Import .FFF file"
 msgstr "FFF-Dateien importieren"
 
-#: ../../resources/glade/checkin.glade:127
-#: ../../resources/glade/general_classification.glade:16
+#: ../../sources/filter.cpp:193 ../../resources/glade/checkin.glade:207
+#: ../../resources/glade/general_classification.glade:35
 #: ../../resources/glade/pool_allocator.glade:18
-#: ../../resources/glade/pool_supervisor.glade:55
+#: ../../resources/glade/pool_supervisor.glade:485
 #: ../../resources/glade/splitting.glade:15
-#: ../../resources/glade/table.glade:66
+#: ../../resources/glade/table_supervisor.glade:397
 msgid "Data"
 msgstr "Daten"
 
-#: ../../resources/glade/checkin.glade:185
+#: ../../resources/glade/checkin.glade:265
 msgid "Add a fencer"
 msgstr "Einen Fechter hinzufügen"
 
-#: ../../resources/glade/checkin.glade:304
+#: ../../resources/glade/checkin.glade:384
 msgid "All the presents"
 msgstr "Alle Anwesende"
 
-#: ../../resources/glade/checkin.glade:319
+#: ../../resources/glade/checkin.glade:399
 msgid "All the absents"
 msgstr "Alle Abwesende"
 
-#: ../../resources/glade/contest.glade:19
+#: ../../resources/glade/contest.glade:1147
 msgid "Save the current state of the competition."
 msgstr "Speichert den aktuellen Stand des Wettkampfs."
 
-#: ../../resources/glade/contest.glade:31
+#: ../../resources/glade/contest.glade:1161
 msgid "To specify the features of the competition."
 msgstr "Eigenschaften des Turniers festlegen."
 
-#: ../../resources/glade/contest.glade:51
+#: ../../resources/glade/contest.glade:1184
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
 msgstr "Festlegen des Modus nach Tabellen, Runden und Spaltung."
 
-#: ../../resources/glade/contest.glade:52
+#: ../../resources/glade/contest.glade:1186
 msgid "Formula"
 msgstr "Austragungsmodus"
 
-#: ../../resources/glade/contest.glade:117
+#: ../../resources/glade/contest.glade:1266
 msgid "Man"
 msgstr "Herren"
 
-#: ../../resources/glade/contest.glade:184
 msgid "Features of the competition"
 msgstr "Eigenschaften des Turniers"
 
-#: ../../resources/glade/contest.glade:221
+#: ../../resources/glade/contest.glade:226
 msgid "Weapon"
 msgstr "Waffe"
 
-#: ../../resources/glade/contest.glade:228
+#: ../../resources/glade/contest.glade:234
 msgid "Gender"
 msgstr "Geschlecht"
 
-#: ../../resources/glade/contest.glade:239
+#: ../../resources/glade/contest.glade:246
 msgid "Category"
 msgstr "Kategorie"
 
-#: ../../resources/glade/contest.glade:293
+#: ../../resources/glade/contest.glade:304
 msgid "<b>Type</b>"
 msgstr "<b>Typ</b>"
 
-#: ../../resources/glade/contest.glade:323
+#: ../../resources/glade/contest.glade:342
 msgid "Title"
 msgstr "Titel"
 
-#: ../../resources/glade/contest.glade:330
-#: ../../resources/glade/contest.glade:353
-#: ../../resources/glade/contest.glade:367
 msgid "Free text for information purposes."
 msgstr "Rein informierender freier Text."
 
-#: ../../resources/glade/contest.glade:342
+#: ../../resources/glade/contest.glade:366
 msgid "Organizer"
 msgstr "Organisator"
 
-#: ../../resources/glade/contest.glade:389
+#: ../../resources/glade/contest.glade:423
 msgid "Web site"
 msgstr "Netzstandort"
 
-#: ../../resources/glade/contest.glade:409
+#: ../../resources/glade/contest.glade:474
 msgid "<b>Overviews</b>"
 msgstr "<b>Allgemeine Anmerkungen</b>"
 
-#: ../../resources/glade/contest.glade:435
+#: ../../resources/glade/contest.glade:506
 msgid "Date"
 msgstr "Datum"
 
-#: ../../resources/glade/contest.glade:453
+#: ../../resources/glade/contest.glade:526
 msgid "Scratch"
 msgstr "Streichtermin"
 
-#: ../../resources/glade/contest.glade:464
+#: ../../resources/glade/contest.glade:538
 msgid "Start"
 msgstr "Anfang"
 
-#: ../../resources/glade/contest.glade:473
+#: ../../resources/glade/contest.glade:547
 msgid "31/03/2009"
 msgstr "31/03/2009"
 
-#: ../../resources/glade/contest.glade:477
-#: ../../resources/glade/contest.glade:492
-#: ../../resources/glade/contest.glade:519
-#: ../../resources/glade/contest.glade:547
-#: ../../resources/glade/contest.glade:574
-#: ../../resources/glade/contest.glade:602
-#: ../../resources/glade/contest.glade:629
 msgid ""
 "Date and time are used to raise alarms to notify the organizer when events "
 "occur."
 msgstr "Die Organisatoren werden bei Zeitüberschreitung gewarnt."
 
-#: ../../resources/glade/contest.glade:509
-#: ../../resources/glade/contest.glade:564
-#: ../../resources/glade/contest.glade:619
+#: ../../resources/glade/contest.glade:591
+#: ../../resources/glade/contest.glade:662
+#: ../../resources/glade/contest.glade:733
 msgid ":"
 msgstr ":"
 
-#: ../../resources/glade/contest.glade:657
+#: ../../resources/glade/contest.glade:780
 msgid "<b>Date / Time</b>"
 msgstr "<b>Datum / Zeitplan</b>"
 
-#: ../../resources/glade/contest.glade:686
+#: ../../resources/glade/contest.glade:858
 msgid ""
 "Automatic\n"
 "score\n"
@@ -573,11 +536,10 @@ msgstr ""
 "Ausfüllen\n"
 "der Tabelle"
 
-#: ../../resources/glade/contest.glade:696
+#: ../../resources/glade/contest.glade:813
 msgid "Allow"
 msgstr "Erlauben"
 
-#: ../../resources/glade/contest.glade:700
 msgid ""
 "Make the automatic score stuffing button available. It can save the user "
 "boring data captures during training sessions."
@@ -585,26 +547,23 @@ msgstr ""
 "Aktiviert den Knopf \"automatisches Ausfüllen der Tabelle\". Dies erspart "
 "lange und mühselige Eingaben während des Testens von BellePoule."
 
-#: ../../resources/glade/contest.glade:712
+#: ../../resources/glade/contest.glade:831
 msgid "Forbid"
 msgstr "Verbieten"
 
-#: ../../resources/glade/contest.glade:716
 msgid "Inhibit the automatic score stuffing button."
 msgstr "Deaktiviert den Knopf \"automatisches Ausfüllen der Tabelle\"."
 
-#: ../../resources/glade/contest.glade:737
+#: ../../resources/glade/contest.glade:874
 msgid "<b>Scores</b>"
 msgstr "Punktestand"
 
-#: ../../resources/glade/general_classification.glade:39
+#: ../../resources/glade/general_classification.glade:61
 msgid ""
-"Export the general classification to a \".csv\" file that a spreadsheet like "
+"Export the general classification to a .csv file that a spreadsheet like "
 "Excel or OpenOffice can open."
-msgstr ""
-"Exportiert die Rangfolge in eine \".csv\" Datei für Excel oder OpenOffice."
+msgstr "Exportiert die Rangfolge in eine .csv Datei für Excel oder OpenOffice."
 
-#: ../../resources/glade/general_classification.glade:40
 msgid "Export"
 msgstr "Exportieren"
 
@@ -613,7 +572,6 @@ msgid "Mask or unmask some data type as well as define their display order."
 msgstr "Auswahl der angezeigten Personendaten."
 
 #: ../../resources/glade/pool_allocator.glade:30
-#: ../../resources/glade/schedule.glade:137
 msgid "Print"
 msgstr "Drucken"
 
@@ -629,12 +587,12 @@ msgstr "Fechter pro Runde"
 msgid "Swapping"
 msgstr "Verschiebung"
 
-#: ../../resources/glade/pool_supervisor.glade:78
-#: ../../resources/glade/table.glade:89
+#: ../../resources/glade/pool_supervisor.glade:512
+#: ../../resources/glade/table_supervisor.glade:372
 msgid "Classification"
 msgstr "Rangliste"
 
-#: ../../resources/glade/pool_supervisor.glade:100
+#: ../../resources/glade/pool_supervisor.glade:536
 msgid ""
 "Fill in all the scores of all the pools randomly\n"
 "To activate/deactivate this button, go to the properties of the competition."
@@ -642,91 +600,89 @@ msgstr ""
 "Füllt alle Gefecht aller Runden durch Zufallsstände.\n"
 "Diese Funktion in den Eigenschaften des Turniers aktivieren/deaktivieren."
 
-#: ../../resources/glade/pool_supervisor.glade:102
-#: ../../resources/glade/table.glade:126
+#: ../../resources/glade/pool_supervisor.glade:539
+#: ../../resources/glade/table_supervisor.glade:451
 msgid "Automatic stuffing"
 msgstr "automatisches Ausfüllen"
 
-#: ../../resources/glade/pool_supervisor.glade:149
+#: ../../resources/glade/pool_supervisor.glade:593
 msgid "Combined classification"
 msgstr "Platzierung insgesamt"
 
-#: ../../resources/glade/pool_supervisor.glade:153
+#: ../../resources/glade/pool_supervisor.glade:597
 msgid ""
 "The classification cumulating  the current score and the scores of the "
 "previous pool rounds."
 msgstr "Platzierung unter Berücksichtigung aller Runden."
 
-#: ../../resources/glade/pool_supervisor.glade:166
+#: ../../resources/glade/pool_supervisor.glade:611
 msgid "Single classification"
 msgstr "Platzierung Runde"
 
-#: ../../resources/glade/pool_supervisor.glade:170
+#: ../../resources/glade/pool_supervisor.glade:615
 msgid ""
 "The classification of the current round that doesn't take into account the "
 "scores of the previous rounds. "
 msgstr "Platzierung in der aktuellen Runde (ohne vorhergehende Ergebnisse) "
 
-#: ../../resources/glade/pool_supervisor.glade:230
+#: ../../resources/glade/pool_supervisor.glade:31
 #: ../../resources/glade/splitting.glade:81
-#: ../../resources/glade/table.glade:358
+#: ../../resources/glade/table_supervisor.glade:39
 msgid "Name"
 msgstr "Name"
 
-#: ../../resources/glade/pool_supervisor.glade:237
-#: ../../resources/glade/table.glade:347
+#: ../../resources/glade/pool_supervisor.glade:42
+#: ../../resources/glade/table_supervisor.glade:26
 msgid "Max score"
 msgstr "Max Punktestand"
 
-#: ../../resources/glade/pool_supervisor.glade:272
 msgid "Number of eliminated"
 msgstr "Anzahl gewünschter Ausscheider (%)"
 
-#: ../../resources/glade/pool_supervisor.glade:283
 msgid "The rate of eliminated at the end of this round."
 msgstr "Prozentsatz der gewünschten Ausscheider am Ende dieser Phase."
 
-#: ../../resources/glade/pool_supervisor.glade:332
+#: ../../resources/glade/pool_supervisor.glade:294
 msgid "All the pools"
 msgstr "Alle Runden"
 
-#: ../../resources/glade/pool_supervisor.glade:346
+#: ../../resources/glade/pool_supervisor.glade:310
 msgid "Only the selected pool"
 msgstr "Nur die ausgewählte Runde"
 
-#: ../../resources/glade/pool_supervisor.glade:364
+#: ../../resources/glade/pool_supervisor.glade:332
 msgid "<b>What?</b>"
 msgstr "<b>Was ?</b>"
 
-#: ../../resources/glade/pool_supervisor.glade:391
+#: ../../resources/glade/pool_supervisor.glade:362
 msgid "For arbitration"
 msgstr "Für die Kampfrichter"
 
-#: ../../resources/glade/pool_supervisor.glade:395
+#: ../../resources/glade/pool_supervisor.glade:366
 msgid "Content designed for the referees."
 msgstr "Rundenzettel für die Kampfrichter"
 
-#: ../../resources/glade/pool_supervisor.glade:406
+#: ../../resources/glade/pool_supervisor.glade:379
 msgid "For the bulletin board"
 msgstr "Aushang zur Teilnehmerinformation"
 
-#: ../../resources/glade/pool_supervisor.glade:424
+#: ../../resources/glade/pool_supervisor.glade:401
 msgid "<b>For what?</b>"
 msgstr "<b>Wofür ?</b>"
 
-#: ../../resources/glade/schedule.glade:15
+#: ../../resources/glade/schedule.glade:213
 msgid "Previous round"
 msgstr "Letzte Runde"
 
-#: ../../resources/glade/schedule.glade:44
+#: ../../resources/glade/schedule.glade:227
 msgid "Next round"
 msgstr "Nächste Runde"
 
-#: ../../resources/glade/schedule.glade:111
+#: ../../resources/glade/schedule.glade:47
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: ../../resources/glade/schedule.glade:124
+#: ../../resources/glade/schedule.glade:62
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -735,15 +691,15 @@ msgid "Select the fencers to move to a new competition."
 msgstr ""
 "Wählen Sie die Fechter, die Sie in ein neues Turnier verschieben wollen."
 
-#: ../../resources/glade/table.glade:23
+#: ../../resources/glade/table_supervisor.glade:498
 msgid "From"
 msgstr "Von"
 
-#: ../../resources/glade/table.glade:111
+#: ../../resources/glade/table_supervisor.glade:434
 msgid "Fill in a match"
 msgstr "Ein Gefecht auswählen"
 
-#: ../../resources/glade/table.glade:124
+#: ../../resources/glade/table_supervisor.glade:448
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
@@ -751,67 +707,68 @@ msgstr ""
 "Ausfüllen der Tabelle durch Zufallsergebnisse.\n"
 "Aktivieren/Deaktivieren der Funktion in den Turniereigenschaften."
 
-#: ../../resources/glade/table.glade:190
+#: ../../resources/glade/table.glade:521
 msgid "<b>Match</b>"
 msgstr "<b>Gefecht</b>"
 
-#: ../../resources/glade/table.glade:216
+#: ../../resources/glade/table.glade:551
 msgid "A fencer"
 msgstr "Fechter A"
 
-#: ../../resources/glade/table.glade:223
+#: ../../resources/glade/table.glade:559
 msgid "B fencer"
 msgstr "Fechter B"
 
-#: ../../resources/glade/table.glade:271
+#: ../../resources/glade/table.glade:608
 msgid "<b>Score</b>"
 msgstr "<b>Punktestand</b>"
 
-#: ../../resources/glade/table.glade:419
+#: ../../resources/glade/table.glade:184
 msgid "The table"
 msgstr "Die Tabelle"
 
-#: ../../resources/glade/table.glade:437
+#: ../../resources/glade/table.glade:301
 msgid "Score sheets"
 msgstr "Gefechtstableau"
 
-#: ../../resources/glade/table.glade:459
+#: ../../resources/glade/table.glade:327
+#: ../../resources/glade/table_supervisor.glade:228
 msgid "All"
 msgstr "Alle"
 
-#: ../../resources/glade/table.glade:472
+#: ../../resources/glade/table.glade:343
 msgid "Pending"
 msgstr "Offene"
 
-#: ../../resources/glade/table.glade:545
+#: ../../resources/glade/table.glade:441
 msgid "The pending score sheets"
 msgstr "Offene Gefechtstableaus"
 
-#: ../../resources/glade/table.glade:558
+#: ../../resources/glade/table.glade:426
 msgid "All the score sheets"
 msgstr "Alle Gefechtstableaus"
 
-#: ../../resources/glade/tournament.glade:6
+#: ../../resources/glade/tournament.glade:747
 msgid "BellePoule - Fencing tournament"
 msgstr "BellePoule - Fechtturnier"
 
-#: ../../resources/glade/tournament.glade:21
+#: ../../resources/glade/tournament.glade:765
 msgid "File"
 msgstr "Datei"
 
-#: ../../resources/glade/tournament.glade:48
+#: ../../resources/glade/tournament.glade:797
 msgid "Recently opened"
 msgstr "Zuletzt verwendete"
 
-#: ../../resources/glade/tournament.glade:78
+#: ../../resources/glade/tournament.glade:898
 msgid "Help"
 msgstr "Hilfe"
 
-#: ../../resources/glade/tournament.glade:85
+#: ../../resources/glade/tournament.glade:906
 msgid "Open an example..."
 msgstr "Beispiel öffnen"
 
-#: ../../resources/glade/tournament.glade:158
+#: ../../resources/glade/tournament.glade:12
 msgid ""
 "Fencing tournament management software.\n"
 "\n"
@@ -821,1363 +778,6 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../../resources/glade/tournament.glade:164
-msgid ""
-"                GNU GENERAL PUBLIC LICENSE\n"
-"                       Version 3, 29 June 2007\n"
-"\n"
-" Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>\n"
-" Everyone is permitted to copy and distribute verbatim copies\n"
-" of this license document, but changing it is not allowed.\n"
-"\n"
-"                            Preamble\n"
-"\n"
-"  The GNU General Public License is a free, copyleft license for\n"
-"software and other kinds of works.\n"
-"\n"
-"  The licenses for most software and other practical works are designed\n"
-"to take away your freedom to share and change the works.  By contrast,\n"
-"the GNU General Public License is intended to guarantee your freedom to\n"
-"share and change all versions of a program--to make sure it remains free\n"
-"software for all its users.  We, the Free Software Foundation, use the\n"
-"GNU General Public License for most of our software; it applies also to\n"
-"any other work released this way by its authors.  You can apply it to\n"
-"your programs, too.\n"
-"\n"
-"  When we speak of free software, we are referring to freedom, not\n"
-"price.  Our General Public Licenses are designed to make sure that you\n"
-"have the freedom to distribute copies of free software (and charge for\n"
-"them if you wish), that you receive source code or can get it if you\n"
-"want it, that you can change the software or use pieces of it in new\n"
-"free programs, and that you know you can do these things.\n"
-"\n"
-"  To protect your rights, we need to prevent others from denying you\n"
-"these rights or asking you to surrender the rights.  Therefore, you have\n"
-"certain responsibilities if you distribute copies of the software, or if\n"
-"you modify it: responsibilities to respect the freedom of others.\n"
-"\n"
-"  For example, if you distribute copies of such a program, whether\n"
-"gratis or for a fee, you must pass on to the recipients the same\n"
-"freedoms that you received.  You must make sure that they, too, receive\n"
-"or can get the source code.  And you must show them these terms so they\n"
-"know their rights.\n"
-"\n"
-"  Developers that use the GNU GPL protect your rights with two steps:\n"
-"(1) assert copyright on the software, and (2) offer you this License\n"
-"giving you legal permission to copy, distribute and/or modify it.\n"
-"\n"
-"  For the developers' and authors' protection, the GPL clearly explains\n"
-"that there is no warranty for this free software.  For both users' and\n"
-"authors' sake, the GPL requires that modified versions be marked as\n"
-"changed, so that their problems will not be attributed erroneously to\n"
-"authors of previous versions.\n"
-"\n"
-"  Some devices are designed to deny users access to install or run\n"
-"modified versions of the software inside them, although the manufacturer\n"
-"can do so.  This is fundamentally incompatible with the aim of\n"
-"protecting users' freedom to change the software.  The systematic\n"
-"pattern of such abuse occurs in the area of products for individuals to\n"
-"use, which is precisely where it is most unacceptable.  Therefore, we\n"
-"have designed this version of the GPL to prohibit the practice for those\n"
-"products.  If such problems arise substantially in other domains, we\n"
-"stand ready to extend this provision to those domains in future versions\n"
-"of the GPL, as needed to protect the freedom of users.\n"
-"\n"
-"  Finally, every program is threatened constantly by software patents.\n"
-"States should not allow patents to restrict development and use of\n"
-"software on general-purpose computers, but in those that do, we wish to\n"
-"avoid the special danger that patents applied to a free program could\n"
-"make it effectively proprietary.  To prevent this, the GPL assures that\n"
-"patents cannot be used to render the program non-free.\n"
-"\n"
-"  The precise terms and conditions for copying, distribution and\n"
-"modification follow.\n"
-"\n"
-"                       TERMS AND CONDITIONS\n"
-"\n"
-"  0. Definitions.\n"
-"\n"
-"  \"This License\" refers to version 3 of the GNU General Public License.\n"
-"\n"
-"  \"Copyright\" also means copyright-like laws that apply to other kinds of\n"
-"works, such as semiconductor masks.\n"
-"\n"
-"  \"The Program\" refers to any copyrightable work licensed under this\n"
-"License.  Each licensee is addressed as \"you\".  \"Licensees\" and\n"
-"\"recipients\" may be individuals or organizations.\n"
-"\n"
-"  To \"modify\" a work means to copy from or adapt all or part of the work\n"
-"in a fashion requiring copyright permission, other than the making of an\n"
-"exact copy.  The resulting work is called a \"modified version\" of the\n"
-"earlier work or a work \"based on\" the earlier work.\n"
-"\n"
-"  A \"covered work\" means either the unmodified Program or a work based\n"
-"on the Program.\n"
-"\n"
-"  To \"propagate\" a work means to do anything with it that, without\n"
-"permission, would make you directly or secondarily liable for\n"
-"infringement under applicable copyright law, except executing it on a\n"
-"computer or modifying a private copy.  Propagation includes copying,\n"
-"distribution (with or without modification), making available to the\n"
-"public, and in some countries other activities as well.\n"
-"\n"
-"  To \"convey\" a work means any kind of propagation that enables other\n"
-"parties to make or receive copies.  Mere interaction with a user through\n"
-"a computer network, with no transfer of a copy, is not conveying.\n"
-"\n"
-"  An interactive user interface displays \"Appropriate Legal Notices\"\n"
-"to the extent that it includes a convenient and prominently visible\n"
-"feature that (1) displays an appropriate copyright notice, and (2)\n"
-"tells the user that there is no warranty for the work (except to the\n"
-"extent that warranties are provided), that licensees may convey the\n"
-"work under this License, and how to view a copy of this License.  If\n"
-"the interface presents a list of user commands or options, such as a\n"
-"menu, a prominent item in the list meets this criterion.\n"
-"\n"
-"  1. Source Code.\n"
-"\n"
-"  The \"source code\" for a work means the preferred form of the work\n"
-"for making modifications to it.  \"Object code\" means any non-source\n"
-"form of a work.\n"
-"\n"
-"  A \"Standard Interface\" means an interface that either is an official\n"
-"standard defined by a recognized standards body, or, in the case of\n"
-"interfaces specified for a particular programming language, one that\n"
-"is widely used among developers working in that language.\n"
-"\n"
-"  The \"System Libraries\" of an executable work include anything, other\n"
-"than the work as a whole, that (a) is included in the normal form of\n"
-"packaging a Major Component, but which is not part of that Major\n"
-"Component, and (b) serves only to enable use of the work with that\n"
-"Major Component, or to implement a Standard Interface for which an\n"
-"implementation is available to the public in source code form.  A\n"
-"\"Major Component\", in this context, means a major essential component\n"
-"(kernel, window system, and so on) of the specific operating system\n"
-"(if any) on which the executable work runs, or a compiler used to\n"
-"produce the work, or an object code interpreter used to run it.\n"
-"\n"
-"  The \"Corresponding Source\" for a work in object code form means all\n"
-"the source code needed to generate, install, and (for an executable\n"
-"work) run the object code and to modify the work, including scripts to\n"
-"control those activities.  However, it does not include the work's\n"
-"System Libraries, or general-purpose tools or generally available free\n"
-"programs which are used unmodified in performing those activities but\n"
-"which are not part of the work.  For example, Corresponding Source\n"
-"includes interface definition files associated with source files for\n"
-"the work, and the source code for shared libraries and dynamically\n"
-"linked subprograms that the work is specifically designed to require,\n"
-"such as by intimate data communication or control flow between those\n"
-"subprograms and other parts of the work.\n"
-"\n"
-"  The Corresponding Source need not include anything that users\n"
-"can regenerate automatically from other parts of the Corresponding\n"
-"Source.\n"
-"\n"
-"  The Corresponding Source for a work in source code form is that\n"
-"same work.\n"
-"\n"
-"  2. Basic Permissions.\n"
-"\n"
-"  All rights granted under this License are granted for the term of\n"
-"copyright on the Program, and are irrevocable provided the stated\n"
-"conditions are met.  This License explicitly affirms your unlimited\n"
-"permission to run the unmodified Program.  The output from running a\n"
-"covered work is covered by this License only if the output, given its\n"
-"content, constitutes a covered work.  This License acknowledges your\n"
-"rights of fair use or other equivalent, as provided by copyright law.\n"
-"\n"
-"  You may make, run and propagate covered works that you do not\n"
-"convey, without conditions so long as your license otherwise remains\n"
-"in force.  You may convey covered works to others for the sole purpose\n"
-"of having them make modifications exclusively for you, or provide you\n"
-"with facilities for running those works, provided that you comply with\n"
-"the terms of this License in conveying all material for which you do\n"
-"not control copyright.  Those thus making or running the covered works\n"
-"for you must do so exclusively on your behalf, under your direction\n"
-"and control, on terms that prohibit them from making any copies of\n"
-"your copyrighted material outside their relationship with you.\n"
-"\n"
-"  Conveying under any other circumstances is permitted solely under\n"
-"the conditions stated below.  Sublicensing is not allowed; section 10\n"
-"makes it unnecessary.\n"
-"\n"
-"  3. Protecting Users' Legal Rights From Anti-Circumvention Law.\n"
-"\n"
-"  No covered work shall be deemed part of an effective technological\n"
-"measure under any applicable law fulfilling obligations under article\n"
-"11 of the WIPO copyright treaty adopted on 20 December 1996, or\n"
-"similar laws prohibiting or restricting circumvention of such\n"
-"measures.\n"
-"\n"
-"  When you convey a covered work, you waive any legal power to forbid\n"
-"circumvention of technological measures to the extent such circumvention\n"
-"is effected by exercising rights under this License with respect to\n"
-"the covered work, and you disclaim any intention to limit operation or\n"
-"modification of the work as a means of enforcing, against the work's\n"
-"users, your or third parties' legal rights to forbid circumvention of\n"
-"technological measures.\n"
-"\n"
-"  4. Conveying Verbatim Copies.\n"
-"\n"
-"  You may convey verbatim copies of the Program's source code as you\n"
-"receive it, in any medium, provided that you conspicuously and\n"
-"appropriately publish on each copy an appropriate copyright notice;\n"
-"keep intact all notices stating that this License and any\n"
-"non-permissive terms added in accord with section 7 apply to the code;\n"
-"keep intact all notices of the absence of any warranty; and give all\n"
-"recipients a copy of this License along with the Program.\n"
-"\n"
-"  You may charge any price or no price for each copy that you convey,\n"
-"and you may offer support or warranty protection for a fee.\n"
-"\n"
-"  5. Conveying Modified Source Versions.\n"
-"\n"
-"  You may convey a work based on the Program, or the modifications to\n"
-"produce it from the Program, in the form of source code under the\n"
-"terms of section 4, provided that you also meet all of these conditions:\n"
-"\n"
-"    a) The work must carry prominent notices stating that you modified\n"
-"    it, and giving a relevant date.\n"
-"\n"
-"    b) The work must carry prominent notices stating that it is\n"
-"    released under this License and any conditions added under section\n"
-"    7.  This requirement modifies the requirement in section 4 to\n"
-"    \"keep intact all notices\".\n"
-"\n"
-"    c) You must license the entire work, as a whole, under this\n"
-"    License to anyone who comes into possession of a copy.  This\n"
-"    License will therefore apply, along with any applicable section 7\n"
-"    additional terms, to the whole of the work, and all its parts,\n"
-"    regardless of how they are packaged.  This License gives no\n"
-"    permission to license the work in any other way, but it does not\n"
-"    invalidate such permission if you have separately received it.\n"
-"\n"
-"    d) If the work has interactive user interfaces, each must display\n"
-"    Appropriate Legal Notices; however, if the Program has interactive\n"
-"    interfaces that do not display Appropriate Legal Notices, your\n"
-"    work need not make them do so.\n"
-"\n"
-"  A compilation of a covered work with other separate and independent\n"
-"works, which are not by their nature extensions of the covered work,\n"
-"and which are not combined with it such as to form a larger program,\n"
-"in or on a volume of a storage or distribution medium, is called an\n"
-"\"aggregate\" if the compilation and its resulting copyright are not\n"
-"used to limit the access or legal rights of the compilation's users\n"
-"beyond what the individual works permit.  Inclusion of a covered work\n"
-"in an aggregate does not cause this License to apply to the other\n"
-"parts of the aggregate.\n"
-"\n"
-"  6. Conveying Non-Source Forms.\n"
-"\n"
-"  You may convey a covered work in object code form under the terms\n"
-"of sections 4 and 5, provided that you also convey the\n"
-"machine-readable Corresponding Source under the terms of this License,\n"
-"in one of these ways:\n"
-"\n"
-"    a) Convey the object code in, or embodied in, a physical product\n"
-"    (including a physical distribution medium), accompanied by the\n"
-"    Corresponding Source fixed on a durable physical medium\n"
-"    customarily used for software interchange.\n"
-"\n"
-"    b) Convey the object code in, or embodied in, a physical product\n"
-"    (including a physical distribution medium), accompanied by a\n"
-"    written offer, valid for at least three years and valid for as\n"
-"    long as you offer spare parts or customer support for that product\n"
-"    model, to give anyone who possesses the object code either (1) a\n"
-"    copy of the Corresponding Source for all the software in the\n"
-"    product that is covered by this License, on a durable physical\n"
-"    medium customarily used for software interchange, for a price no\n"
-"    more than your reasonable cost of physically performing this\n"
-"    conveying of source, or (2) access to copy the\n"
-"    Corresponding Source from a network server at no charge.\n"
-"\n"
-"    c) Convey individual copies of the object code with a copy of the\n"
-"    written offer to provide the Corresponding Source.  This\n"
-"    alternative is allowed only occasionally and noncommercially, and\n"
-"    only if you received the object code with such an offer, in accord\n"
-"    with subsection 6b.\n"
-"\n"
-"    d) Convey the object code by offering access from a designated\n"
-"    place (gratis or for a charge), and offer equivalent access to the\n"
-"    Corresponding Source in the same way through the same place at no\n"
-"    further charge.  You need not require recipients to copy the\n"
-"    Corresponding Source along with the object code.  If the place to\n"
-"    copy the object code is a network server, the Corresponding Source\n"
-"    may be on a different server (operated by you or a third party)\n"
-"    that supports equivalent copying facilities, provided you maintain\n"
-"    clear directions next to the object code saying where to find the\n"
-"    Corresponding Source.  Regardless of what server hosts the\n"
-"    Corresponding Source, you remain obligated to ensure that it is\n"
-"    available for as long as needed to satisfy these requirements.\n"
-"\n"
-"    e) Convey the object code using peer-to-peer transmission, provided\n"
-"    you inform other peers where the object code and Corresponding\n"
-"    Source of the work are being offered to the general public at no\n"
-"    charge under subsection 6d.\n"
-"\n"
-"  A separable portion of the object code, whose source code is excluded\n"
-"from the Corresponding Source as a System Library, need not be\n"
-"included in conveying the object code work.\n"
-"\n"
-"  A \"User Product\" is either (1) a \"consumer product\", which means any\n"
-"tangible personal property which is normally used for personal, family,\n"
-"or household purposes, or (2) anything designed or sold for incorporation\n"
-"into a dwelling.  In determining whether a product is a consumer product,\n"
-"doubtful cases shall be resolved in favor of coverage.  For a particular\n"
-"product received by a particular user, \"normally used\" refers to a\n"
-"typical or common use of that class of product, regardless of the status\n"
-"of the particular user or of the way in which the particular user\n"
-"actually uses, or expects or is expected to use, the product.  A product\n"
-"is a consumer product regardless of whether the product has substantial\n"
-"commercial, industrial or non-consumer uses, unless such uses represent\n"
-"the only significant mode of use of the product.\n"
-"\n"
-"  \"Installation Information\" for a User Product means any methods,\n"
-"procedures, authorization keys, or other information required to install\n"
-"and execute modified versions of a covered work in that User Product from\n"
-"a modified version of its Corresponding Source.  The information must\n"
-"suffice to ensure that the continued functioning of the modified object\n"
-"code is in no case prevented or interfered with solely because\n"
-"modification has been made.\n"
-"\n"
-"  If you convey an object code work under this section in, or with, or\n"
-"specifically for use in, a User Product, and the conveying occurs as\n"
-"part of a transaction in which the right of possession and use of the\n"
-"User Product is transferred to the recipient in perpetuity or for a\n"
-"fixed term (regardless of how the transaction is characterized), the\n"
-"Corresponding Source conveyed under this section must be accompanied\n"
-"by the Installation Information.  But this requirement does not apply\n"
-"if neither you nor any third party retains the ability to install\n"
-"modified object code on the User Product (for example, the work has\n"
-"been installed in ROM).\n"
-"\n"
-"  The requirement to provide Installation Information does not include a\n"
-"requirement to continue to provide support service, warranty, or updates\n"
-"for a work that has been modified or installed by the recipient, or for\n"
-"the User Product in which it has been modified or installed.  Access to a\n"
-"network may be denied when the modification itself materially and\n"
-"adversely affects the operation of the network or violates the rules and\n"
-"protocols for communication across the network.\n"
-"\n"
-"  Corresponding Source conveyed, and Installation Information provided,\n"
-"in accord with this section must be in a format that is publicly\n"
-"documented (and with an implementation available to the public in\n"
-"source code form), and must require no special password or key for\n"
-"unpacking, reading or copying.\n"
-"\n"
-"  7. Additional Terms.\n"
-"\n"
-"  \"Additional permissions\" are terms that supplement the terms of this\n"
-"License by making exceptions from one or more of its conditions.\n"
-"Additional permissions that are applicable to the entire Program shall\n"
-"be treated as though they were included in this License, to the extent\n"
-"that they are valid under applicable law.  If additional permissions\n"
-"apply only to part of the Program, that part may be used separately\n"
-"under those permissions, but the entire Program remains governed by\n"
-"this License without regard to the additional permissions.\n"
-"\n"
-"  When you convey a copy of a covered work, you may at your option\n"
-"remove any additional permissions from that copy, or from any part of\n"
-"it.  (Additional permissions may be written to require their own\n"
-"removal in certain cases when you modify the work.)  You may place\n"
-"additional permissions on material, added by you to a covered work,\n"
-"for which you have or can give appropriate copyright permission.\n"
-"\n"
-"  Notwithstanding any other provision of this License, for material you\n"
-"add to a covered work, you may (if authorized by the copyright holders of\n"
-"that material) supplement the terms of this License with terms:\n"
-"\n"
-"    a) Disclaiming warranty or limiting liability differently from the\n"
-"    terms of sections 15 and 16 of this License; or\n"
-"\n"
-"    b) Requiring preservation of specified reasonable legal notices or\n"
-"    author attributions in that material or in the Appropriate Legal\n"
-"    Notices displayed by works containing it; or\n"
-"\n"
-"    c) Prohibiting misrepresentation of the origin of that material, or\n"
-"    requiring that modified versions of such material be marked in\n"
-"    reasonable ways as different from the original version; or\n"
-"\n"
-"    d) Limiting the use for publicity purposes of names of licensors or\n"
-"    authors of the material; or\n"
-"\n"
-"    e) Declining to grant rights under trademark law for use of some\n"
-"    trade names, trademarks, or service marks; or\n"
-"\n"
-"    f) Requiring indemnification of licensors and authors of that\n"
-"    material by anyone who conveys the material (or modified versions of\n"
-"    it) with contractual assumptions of liability to the recipient, for\n"
-"    any liability that these contractual assumptions directly impose on\n"
-"    those licensors and authors.\n"
-"\n"
-"  All other non-permissive additional terms are considered \"further\n"
-"restrictions\" within the meaning of section 10.  If the Program as you\n"
-"received it, or any part of it, contains a notice stating that it is\n"
-"governed by this License along with a term that is a further\n"
-"restriction, you may remove that term.  If a license document contains\n"
-"a further restriction but permits relicensing or conveying under this\n"
-"License, you may add to a covered work material governed by the terms\n"
-"of that license document, provided that the further restriction does\n"
-"not survive such relicensing or conveying.\n"
-"\n"
-"  If you add terms to a covered work in accord with this section, you\n"
-"must place, in the relevant source files, a statement of the\n"
-"additional terms that apply to those files, or a notice indicating\n"
-"where to find the applicable terms.\n"
-"\n"
-"  Additional terms, permissive or non-permissive, may be stated in the\n"
-"form of a separately written license, or stated as exceptions;\n"
-"the above requirements apply either way.\n"
-"\n"
-"  8. Termination.\n"
-"\n"
-"  You may not propagate or modify a covered work except as expressly\n"
-"provided under this License.  Any attempt otherwise to propagate or\n"
-"modify it is void, and will automatically terminate your rights under\n"
-"this License (including any patent licenses granted under the third\n"
-"paragraph of section 11).\n"
-"\n"
-"  However, if you cease all violation of this License, then your\n"
-"license from a particular copyright holder is reinstated (a)\n"
-"provisionally, unless and until the copyright holder explicitly and\n"
-"finally terminates your license, and (b) permanently, if the copyright\n"
-"holder fails to notify you of the violation by some reasonable means\n"
-"prior to 60 days after the cessation.\n"
-"\n"
-"  Moreover, your license from a particular copyright holder is\n"
-"reinstated permanently if the copyright holder notifies you of the\n"
-"violation by some reasonable means, this is the first time you have\n"
-"received notice of violation of this License (for any work) from that\n"
-"copyright holder, and you cure the violation prior to 30 days after\n"
-"your receipt of the notice.\n"
-"\n"
-"  Termination of your rights under this section does not terminate the\n"
-"licenses of parties who have received copies or rights from you under\n"
-"this License.  If your rights have been terminated and not permanently\n"
-"reinstated, you do not qualify to receive new licenses for the same\n"
-"material under section 10.\n"
-"\n"
-"  9. Acceptance Not Required for Having Copies.\n"
-"\n"
-"  You are not required to accept this License in order to receive or\n"
-"run a copy of the Program.  Ancillary propagation of a covered work\n"
-"occurring solely as a consequence of using peer-to-peer transmission\n"
-"to receive a copy likewise does not require acceptance.  However,\n"
-"nothing other than this License grants you permission to propagate or\n"
-"modify any covered work.  These actions infringe copyright if you do\n"
-"not accept this License.  Therefore, by modifying or propagating a\n"
-"covered work, you indicate your acceptance of this License to do so.\n"
-"\n"
-"  10. Automatic Licensing of Downstream Recipients.\n"
-"\n"
-"  Each time you convey a covered work, the recipient automatically\n"
-"receives a license from the original licensors, to run, modify and\n"
-"propagate that work, subject to this License.  You are not responsible\n"
-"for enforcing compliance by third parties with this License.\n"
-"\n"
-"  An \"entity transaction\" is a transaction transferring control of an\n"
-"organization, or substantially all assets of one, or subdividing an\n"
-"organization, or merging organizations.  If propagation of a covered\n"
-"work results from an entity transaction, each party to that\n"
-"transaction who receives a copy of the work also receives whatever\n"
-"licenses to the work the party's predecessor in interest had or could\n"
-"give under the previous paragraph, plus a right to possession of the\n"
-"Corresponding Source of the work from the predecessor in interest, if\n"
-"the predecessor has it or can get it with reasonable efforts.\n"
-"\n"
-"  You may not impose any further restrictions on the exercise of the\n"
-"rights granted or affirmed under this License.  For example, you may\n"
-"not impose a license fee, royalty, or other charge for exercise of\n"
-"rights granted under this License, and you may not initiate litigation\n"
-"(including a cross-claim or counterclaim in a lawsuit) alleging that\n"
-"any patent claim is infringed by making, using, selling, offering for\n"
-"sale, or importing the Program or any portion of it.\n"
-"\n"
-"  11. Patents.\n"
-"\n"
-"  A \"contributor\" is a copyright holder who authorizes use under this\n"
-"License of the Program or a work on which the Program is based.  The\n"
-"work thus licensed is called the contributor's \"contributor version\".\n"
-"\n"
-"  A contributor's \"essential patent claims\" are all patent claims\n"
-"owned or controlled by the contributor, whether already acquired or\n"
-"hereafter acquired, that would be infringed by some manner, permitted\n"
-"by this License, of making, using, or selling its contributor version,\n"
-"but do not include claims that would be infringed only as a\n"
-"consequence of further modification of the contributor version.  For\n"
-"purposes of this definition, \"control\" includes the right to grant\n"
-"patent sublicenses in a manner consistent with the requirements of\n"
-"this License.\n"
-"\n"
-"  Each contributor grants you a non-exclusive, worldwide, royalty-free\n"
-"patent license under the contributor's essential patent claims, to\n"
-"make, use, sell, offer for sale, import and otherwise run, modify and\n"
-"propagate the contents of its contributor version.\n"
-"\n"
-"  In the following three paragraphs, a \"patent license\" is any express\n"
-"agreement or commitment, however denominated, not to enforce a patent\n"
-"(such as an express permission to practice a patent or covenant not to\n"
-"sue for patent infringement).  To \"grant\" such a patent license to a\n"
-"party means to make such an agreement or commitment not to enforce a\n"
-"patent against the party.\n"
-"\n"
-"  If you convey a covered work, knowingly relying on a patent license,\n"
-"and the Corresponding Source of the work is not available for anyone\n"
-"to copy, free of charge and under the terms of this License, through a\n"
-"publicly available network server or other readily accessible means,\n"
-"then you must either (1) cause the Corresponding Source to be so\n"
-"available, or (2) arrange to deprive yourself of the benefit of the\n"
-"patent license for this particular work, or (3) arrange, in a manner\n"
-"consistent with the requirements of this License, to extend the patent\n"
-"license to downstream recipients.  \"Knowingly relying\" means you have\n"
-"actual knowledge that, but for the patent license, your conveying the\n"
-"covered work in a country, or your recipient's use of the covered work\n"
-"in a country, would infringe one or more identifiable patents in that\n"
-"country that you have reason to believe are valid.\n"
-"\n"
-"  If, pursuant to or in connection with a single transaction or\n"
-"arrangement, you convey, or propagate by procuring conveyance of, a\n"
-"covered work, and grant a patent license to some of the parties\n"
-"receiving the covered work authorizing them to use, propagate, modify\n"
-"or convey a specific copy of the covered work, then the patent license\n"
-"you grant is automatically extended to all recipients of the covered\n"
-"work and works based on it.\n"
-"\n"
-"  A patent license is \"discriminatory\" if it does not include within\n"
-"the scope of its coverage, prohibits the exercise of, or is\n"
-"conditioned on the non-exercise of one or more of the rights that are\n"
-"specifically granted under this License.  You may not convey a covered\n"
-"work if you are a party to an arrangement with a third party that is\n"
-"in the business of distributing software, under which you make payment\n"
-"to the third party based on the extent of your activity of conveying\n"
-"the work, and under which the third party grants, to any of the\n"
-"parties who would receive the covered work from you, a discriminatory\n"
-"patent license (a) in connection with copies of the covered work\n"
-"conveyed by you (or copies made from those copies), or (b) primarily\n"
-"for and in connection with specific products or compilations that\n"
-"contain the covered work, unless you entered into that arrangement,\n"
-"or that patent license was granted, prior to 28 March 2007.\n"
-"\n"
-"  Nothing in this License shall be construed as excluding or limiting\n"
-"any implied license or other defenses to infringement that may\n"
-"otherwise be available to you under applicable patent law.\n"
-"\n"
-"  12. No Surrender of Others' Freedom.\n"
-"\n"
-"  If conditions are imposed on you (whether by court order, agreement or\n"
-"otherwise) that contradict the conditions of this License, they do not\n"
-"excuse you from the conditions of this License.  If you cannot convey a\n"
-"covered work so as to satisfy simultaneously your obligations under this\n"
-"License and any other pertinent obligations, then as a consequence you may\n"
-"not convey it at all.  For example, if you agree to terms that obligate you\n"
-"to collect a royalty for further conveying from those to whom you convey\n"
-"the Program, the only way you could satisfy both those terms and this\n"
-"License would be to refrain entirely from conveying the Program.\n"
-"\n"
-"  13. Use with the GNU Affero General Public License.\n"
-"\n"
-"  Notwithstanding any other provision of this License, you have\n"
-"permission to link or combine any covered work with a work licensed\n"
-"under version 3 of the GNU Affero General Public License into a single\n"
-"combined work, and to convey the resulting work.  The terms of this\n"
-"License will continue to apply to the part which is the covered work,\n"
-"but the special requirements of the GNU Affero General Public License,\n"
-"section 13, concerning interaction through a network will apply to the\n"
-"combination as such.\n"
-"\n"
-"  14. Revised Versions of this License.\n"
-"\n"
-"  The Free Software Foundation may publish revised and/or new versions of\n"
-"the GNU General Public License from time to time.  Such new versions will\n"
-"be similar in spirit to the present version, but may differ in detail to\n"
-"address new problems or concerns.\n"
-"\n"
-"  Each version is given a distinguishing version number.  If the\n"
-"Program specifies that a certain numbered version of the GNU General\n"
-"Public License \"or any later version\" applies to it, you have the\n"
-"option of following the terms and conditions either of that numbered\n"
-"version or of any later version published by the Free Software\n"
-"Foundation.  If the Program does not specify a version number of the\n"
-"GNU General Public License, you may choose any version ever published\n"
-"by the Free Software Foundation.\n"
-"\n"
-"  If the Program specifies that a proxy can decide which future\n"
-"versions of the GNU General Public License can be used, that proxy's\n"
-"public statement of acceptance of a version permanently authorizes you\n"
-"to choose that version for the Program.\n"
-"\n"
-"  Later license versions may give you additional or different\n"
-"permissions.  However, no additional obligations are imposed on any\n"
-"author or copyright holder as a result of your choosing to follow a\n"
-"later version.\n"
-"\n"
-"  15. Disclaimer of Warranty.\n"
-"\n"
-"  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"
-"APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n"
-"HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY\n"
-"OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,\n"
-"THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
-"PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\n"
-"IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\n"
-"ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n"
-"\n"
-"  16. Limitation of Liability.\n"
-"\n"
-"  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n"
-"WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS\n"
-"THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY\n"
-"GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE\n"
-"USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF\n"
-"DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD\n"
-"PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),\n"
-"EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF\n"
-"SUCH DAMAGES.\n"
-"\n"
-"  17. Interpretation of Sections 15 and 16.\n"
-"\n"
-"  If the disclaimer of warranty and limitation of liability provided\n"
-"above cannot be given local legal effect according to their terms,\n"
-"reviewing courts shall apply local law that most closely approximates\n"
-"an absolute waiver of all civil liability in connection with the\n"
-"Program, unless a warranty or assumption of liability accompanies a\n"
-"copy of the Program in return for a fee.\n"
-"\n"
-"                     END OF TERMS AND CONDITIONS\n"
-"\n"
-"            How to Apply These Terms to Your New Programs\n"
-"\n"
-"  If you develop a new program, and you want it to be of the greatest\n"
-"possible use to the public, the best way to achieve this is to make it\n"
-"free software which everyone can redistribute and change under these terms.\n"
-"\n"
-"  To do so, attach the following notices to the program.  It is safest\n"
-"to attach them to the start of each source file to most effectively\n"
-"state the exclusion of warranty; and each file should have at least\n"
-"the \"copyright\" line and a pointer to where the full notice is found.\n"
-"\n"
-"    <one line to give the program's name and a brief idea of what it does.>\n"
-"    Copyright (C) <year>  <name of author>\n"
-"\n"
-"    This program is free software: you can redistribute it and/or modify\n"
-"    it under the terms of the GNU General Public License as published by\n"
-"    the Free Software Foundation, either version 3 of the License, or\n"
-"    (at your option) any later version.\n"
-"\n"
-"    This program is distributed in the hope that it will be useful,\n"
-"    but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-"    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-"    GNU General Public License for more details.\n"
-"\n"
-"    You should have received a copy of the GNU General Public License\n"
-"    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
-"\n"
-"Also add information on how to contact you by electronic and paper mail.\n"
-"\n"
-"  If the program does terminal interaction, make it output a short\n"
-"notice like this when it starts in an interactive mode:\n"
-"\n"
-"    <program>  Copyright (C) <year>  <name of author>\n"
-"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
-"w'.\n"
-"    This is free software, and you are welcome to redistribute it\n"
-"    under certain conditions; type `show c' for details.\n"
-"\n"
-"The hypothetical commands `show w' and `show c' should show the appropriate\n"
-"parts of the General Public License.  Of course, your program's commands\n"
-"might be different; for a GUI interface, you would use an \"about box\".\n"
-"\n"
-"  You should also get your employer (if you work as a programmer) or "
-"school,\n"
-"if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
-"For more information on this, and how to apply and follow the GNU GPL, see\n"
-"<http://www.gnu.org/licenses/>.\n"
-"\n"
-"  The GNU General Public License does not permit incorporating your program\n"
-"into proprietary programs.  If your program is a subroutine library, you\n"
-"may consider it more useful to permit linking proprietary applications with\n"
-"the library.  If this is what you want to do, use the GNU Lesser General\n"
-"Public License instead of this License.  But first, please read\n"
-"<http://www.gnu.org/philosophy/why-not-lgpl.html>. "
-msgstr ""
-"                GNU GENERAL PUBLIC LICENSE\n"
-"                       Version 3, 29 June 2007\n"
-"\n"
-" Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>\n"
-" Everyone is permitted to copy and distribute verbatim copies\n"
-" of this license document, but changing it is not allowed.\n"
-"\n"
-"                            Preamble\n"
-"\n"
-"  The GNU General Public License is a free, copyleft license for\n"
-"software and other kinds of works.\n"
-"\n"
-"  The licenses for most software and other practical works are designed\n"
-"to take away your freedom to share and change the works.  By contrast,\n"
-"the GNU General Public License is intended to guarantee your freedom to\n"
-"share and change all versions of a program--to make sure it remains free\n"
-"software for all its users.  We, the Free Software Foundation, use the\n"
-"GNU General Public License for most of our software; it applies also to\n"
-"any other work released this way by its authors.  You can apply it to\n"
-"your programs, too.\n"
-"\n"
-"  When we speak of free software, we are referring to freedom, not\n"
-"price.  Our General Public Licenses are designed to make sure that you\n"
-"have the freedom to distribute copies of free software (and charge for\n"
-"them if you wish), that you receive source code or can get it if you\n"
-"want it, that you can change the software or use pieces of it in new\n"
-"free programs, and that you know you can do these things.\n"
-"\n"
-"  To protect your rights, we need to prevent others from denying you\n"
-"these rights or asking you to surrender the rights.  Therefore, you have\n"
-"certain responsibilities if you distribute copies of the software, or if\n"
-"you modify it: responsibilities to respect the freedom of others.\n"
-"\n"
-"  For example, if you distribute copies of such a program, whether\n"
-"gratis or for a fee, you must pass on to the recipients the same\n"
-"freedoms that you received.  You must make sure that they, too, receive\n"
-"or can get the source code.  And you must show them these terms so they\n"
-"know their rights.\n"
-"\n"
-"  Developers that use the GNU GPL protect your rights with two steps:\n"
-"(1) assert copyright on the software, and (2) offer you this License\n"
-"giving you legal permission to copy, distribute and/or modify it.\n"
-"\n"
-"  For the developers' and authors' protection, the GPL clearly explains\n"
-"that there is no warranty for this free software.  For both users' and\n"
-"authors' sake, the GPL requires that modified versions be marked as\n"
-"changed, so that their problems will not be attributed erroneously to\n"
-"authors of previous versions.\n"
-"\n"
-"  Some devices are designed to deny users access to install or run\n"
-"modified versions of the software inside them, although the manufacturer\n"
-"can do so.  This is fundamentally incompatible with the aim of\n"
-"protecting users' freedom to change the software.  The systematic\n"
-"pattern of such abuse occurs in the area of products for individuals to\n"
-"use, which is precisely where it is most unacceptable.  Therefore, we\n"
-"have designed this version of the GPL to prohibit the practice for those\n"
-"products.  If such problems arise substantially in other domains, we\n"
-"stand ready to extend this provision to those domains in future versions\n"
-"of the GPL, as needed to protect the freedom of users.\n"
-"\n"
-"  Finally, every program is threatened constantly by software patents.\n"
-"States should not allow patents to restrict development and use of\n"
-"software on general-purpose computers, but in those that do, we wish to\n"
-"avoid the special danger that patents applied to a free program could\n"
-"make it effectively proprietary.  To prevent this, the GPL assures that\n"
-"patents cannot be used to render the program non-free.\n"
-"\n"
-"  The precise terms and conditions for copying, distribution and\n"
-"modification follow.\n"
-"\n"
-"                       TERMS AND CONDITIONS\n"
-"\n"
-"  0. Definitions.\n"
-"\n"
-"  \"This License\" refers to version 3 of the GNU General Public License.\n"
-"\n"
-"  \"Copyright\" also means copyright-like laws that apply to other kinds of\n"
-"works, such as semiconductor masks.\n"
-"\n"
-"  \"The Program\" refers to any copyrightable work licensed under this\n"
-"License.  Each licensee is addressed as \"you\".  \"Licensees\" and\n"
-"\"recipients\" may be individuals or organizations.\n"
-"\n"
-"  To \"modify\" a work means to copy from or adapt all or part of the work\n"
-"in a fashion requiring copyright permission, other than the making of an\n"
-"exact copy.  The resulting work is called a \"modified version\" of the\n"
-"earlier work or a work \"based on\" the earlier work.\n"
-"\n"
-"  A \"covered work\" means either the unmodified Program or a work based\n"
-"on the Program.\n"
-"\n"
-"  To \"propagate\" a work means to do anything with it that, without\n"
-"permission, would make you directly or secondarily liable for\n"
-"infringement under applicable copyright law, except executing it on a\n"
-"computer or modifying a private copy.  Propagation includes copying,\n"
-"distribution (with or without modification), making available to the\n"
-"public, and in some countries other activities as well.\n"
-"\n"
-"  To \"convey\" a work means any kind of propagation that enables other\n"
-"parties to make or receive copies.  Mere interaction with a user through\n"
-"a computer network, with no transfer of a copy, is not conveying.\n"
-"\n"
-"  An interactive user interface displays \"Appropriate Legal Notices\"\n"
-"to the extent that it includes a convenient and prominently visible\n"
-"feature that (1) displays an appropriate copyright notice, and (2)\n"
-"tells the user that there is no warranty for the work (except to the\n"
-"extent that warranties are provided), that licensees may convey the\n"
-"work under this License, and how to view a copy of this License.  If\n"
-"the interface presents a list of user commands or options, such as a\n"
-"menu, a prominent item in the list meets this criterion.\n"
-"\n"
-"  1. Source Code.\n"
-"\n"
-"  The \"source code\" for a work means the preferred form of the work\n"
-"for making modifications to it.  \"Object code\" means any non-source\n"
-"form of a work.\n"
-"\n"
-"  A \"Standard Interface\" means an interface that either is an official\n"
-"standard defined by a recognized standards body, or, in the case of\n"
-"interfaces specified for a particular programming language, one that\n"
-"is widely used among developers working in that language.\n"
-"\n"
-"  The \"System Libraries\" of an executable work include anything, other\n"
-"than the work as a whole, that (a) is included in the normal form of\n"
-"packaging a Major Component, but which is not part of that Major\n"
-"Component, and (b) serves only to enable use of the work with that\n"
-"Major Component, or to implement a Standard Interface for which an\n"
-"implementation is available to the public in source code form.  A\n"
-"\"Major Component\", in this context, means a major essential component\n"
-"(kernel, window system, and so on) of the specific operating system\n"
-"(if any) on which the executable work runs, or a compiler used to\n"
-"produce the work, or an object code interpreter used to run it.\n"
-"\n"
-"  The \"Corresponding Source\" for a work in object code form means all\n"
-"the source code needed to generate, install, and (for an executable\n"
-"work) run the object code and to modify the work, including scripts to\n"
-"control those activities.  However, it does not include the work's\n"
-"System Libraries, or general-purpose tools or generally available free\n"
-"programs which are used unmodified in performing those activities but\n"
-"which are not part of the work.  For example, Corresponding Source\n"
-"includes interface definition files associated with source files for\n"
-"the work, and the source code for shared libraries and dynamically\n"
-"linked subprograms that the work is specifically designed to require,\n"
-"such as by intimate data communication or control flow between those\n"
-"subprograms and other parts of the work.\n"
-"\n"
-"  The Corresponding Source need not include anything that users\n"
-"can regenerate automatically from other parts of the Corresponding\n"
-"Source.\n"
-"\n"
-"  The Corresponding Source for a work in source code form is that\n"
-"same work.\n"
-"\n"
-"  2. Basic Permissions.\n"
-"\n"
-"  All rights granted under this License are granted for the term of\n"
-"copyright on the Program, and are irrevocable provided the stated\n"
-"conditions are met.  This License explicitly affirms your unlimited\n"
-"permission to run the unmodified Program.  The output from running a\n"
-"covered work is covered by this License only if the output, given its\n"
-"content, constitutes a covered work.  This License acknowledges your\n"
-"rights of fair use or other equivalent, as provided by copyright law.\n"
-"\n"
-"  You may make, run and propagate covered works that you do not\n"
-"convey, without conditions so long as your license otherwise remains\n"
-"in force.  You may convey covered works to others for the sole purpose\n"
-"of having them make modifications exclusively for you, or provide you\n"
-"with facilities for running those works, provided that you comply with\n"
-"the terms of this License in conveying all material for which you do\n"
-"not control copyright.  Those thus making or running the covered works\n"
-"for you must do so exclusively on your behalf, under your direction\n"
-"and control, on terms that prohibit them from making any copies of\n"
-"your copyrighted material outside their relationship with you.\n"
-"\n"
-"  Conveying under any other circumstances is permitted solely under\n"
-"the conditions stated below.  Sublicensing is not allowed; section 10\n"
-"makes it unnecessary.\n"
-"\n"
-"  3. Protecting Users' Legal Rights From Anti-Circumvention Law.\n"
-"\n"
-"  No covered work shall be deemed part of an effective technological\n"
-"measure under any applicable law fulfilling obligations under article\n"
-"11 of the WIPO copyright treaty adopted on 20 December 1996, or\n"
-"similar laws prohibiting or restricting circumvention of such\n"
-"measures.\n"
-"\n"
-"  When you convey a covered work, you waive any legal power to forbid\n"
-"circumvention of technological measures to the extent such circumvention\n"
-"is effected by exercising rights under this License with respect to\n"
-"the covered work, and you disclaim any intention to limit operation or\n"
-"modification of the work as a means of enforcing, against the work's\n"
-"users, your or third parties' legal rights to forbid circumvention of\n"
-"technological measures.\n"
-"\n"
-"  4. Conveying Verbatim Copies.\n"
-"\n"
-"  You may convey verbatim copies of the Program's source code as you\n"
-"receive it, in any medium, provided that you conspicuously and\n"
-"appropriately publish on each copy an appropriate copyright notice;\n"
-"keep intact all notices stating that this License and any\n"
-"non-permissive terms added in accord with section 7 apply to the code;\n"
-"keep intact all notices of the absence of any warranty; and give all\n"
-"recipients a copy of this License along with the Program.\n"
-"\n"
-"  You may charge any price or no price for each copy that you convey,\n"
-"and you may offer support or warranty protection for a fee.\n"
-"\n"
-"  5. Conveying Modified Source Versions.\n"
-"\n"
-"  You may convey a work based on the Program, or the modifications to\n"
-"produce it from the Program, in the form of source code under the\n"
-"terms of section 4, provided that you also meet all of these conditions:\n"
-"\n"
-"    a) The work must carry prominent notices stating that you modified\n"
-"    it, and giving a relevant date.\n"
-"\n"
-"    b) The work must carry prominent notices stating that it is\n"
-"    released under this License and any conditions added under section\n"
-"    7.  This requirement modifies the requirement in section 4 to\n"
-"    \"keep intact all notices\".\n"
-"\n"
-"    c) You must license the entire work, as a whole, under this\n"
-"    License to anyone who comes into possession of a copy.  This\n"
-"    License will therefore apply, along with any applicable section 7\n"
-"    additional terms, to the whole of the work, and all its parts,\n"
-"    regardless of how they are packaged.  This License gives no\n"
-"    permission to license the work in any other way, but it does not\n"
-"    invalidate such permission if you have separately received it.\n"
-"\n"
-"    d) If the work has interactive user interfaces, each must display\n"
-"    Appropriate Legal Notices; however, if the Program has interactive\n"
-"    interfaces that do not display Appropriate Legal Notices, your\n"
-"    work need not make them do so.\n"
-"\n"
-"  A compilation of a covered work with other separate and independent\n"
-"works, which are not by their nature extensions of the covered work,\n"
-"and which are not combined with it such as to form a larger program,\n"
-"in or on a volume of a storage or distribution medium, is called an\n"
-"\"aggregate\" if the compilation and its resulting copyright are not\n"
-"used to limit the access or legal rights of the compilation's users\n"
-"beyond what the individual works permit.  Inclusion of a covered work\n"
-"in an aggregate does not cause this License to apply to the other\n"
-"parts of the aggregate.\n"
-"\n"
-"  6. Conveying Non-Source Forms.\n"
-"\n"
-"  You may convey a covered work in object code form under the terms\n"
-"of sections 4 and 5, provided that you also convey the\n"
-"machine-readable Corresponding Source under the terms of this License,\n"
-"in one of these ways:\n"
-"\n"
-"    a) Convey the object code in, or embodied in, a physical product\n"
-"    (including a physical distribution medium), accompanied by the\n"
-"    Corresponding Source fixed on a durable physical medium\n"
-"    customarily used for software interchange.\n"
-"\n"
-"    b) Convey the object code in, or embodied in, a physical product\n"
-"    (including a physical distribution medium), accompanied by a\n"
-"    written offer, valid for at least three years and valid for as\n"
-"    long as you offer spare parts or customer support for that product\n"
-"    model, to give anyone who possesses the object code either (1) a\n"
-"    copy of the Corresponding Source for all the software in the\n"
-"    product that is covered by this License, on a durable physical\n"
-"    medium customarily used for software interchange, for a price no\n"
-"    more than your reasonable cost of physically performing this\n"
-"    conveying of source, or (2) access to copy the\n"
-"    Corresponding Source from a network server at no charge.\n"
-"\n"
-"    c) Convey individual copies of the object code with a copy of the\n"
-"    written offer to provide the Corresponding Source.  This\n"
-"    alternative is allowed only occasionally and noncommercially, and\n"
-"    only if you received the object code with such an offer, in accord\n"
-"    with subsection 6b.\n"
-"\n"
-"    d) Convey the object code by offering access from a designated\n"
-"    place (gratis or for a charge), and offer equivalent access to the\n"
-"    Corresponding Source in the same way through the same place at no\n"
-"    further charge.  You need not require recipients to copy the\n"
-"    Corresponding Source along with the object code.  If the place to\n"
-"    copy the object code is a network server, the Corresponding Source\n"
-"    may be on a different server (operated by you or a third party)\n"
-"    that supports equivalent copying facilities, provided you maintain\n"
-"    clear directions next to the object code saying where to find the\n"
-"    Corresponding Source.  Regardless of what server hosts the\n"
-"    Corresponding Source, you remain obligated to ensure that it is\n"
-"    available for as long as needed to satisfy these requirements.\n"
-"\n"
-"    e) Convey the object code using peer-to-peer transmission, provided\n"
-"    you inform other peers where the object code and Corresponding\n"
-"    Source of the work are being offered to the general public at no\n"
-"    charge under subsection 6d.\n"
-"\n"
-"  A separable portion of the object code, whose source code is excluded\n"
-"from the Corresponding Source as a System Library, need not be\n"
-"included in conveying the object code work.\n"
-"\n"
-"  A \"User Product\" is either (1) a \"consumer product\", which means any\n"
-"tangible personal property which is normally used for personal, family,\n"
-"or household purposes, or (2) anything designed or sold for incorporation\n"
-"into a dwelling.  In determining whether a product is a consumer product,\n"
-"doubtful cases shall be resolved in favor of coverage.  For a particular\n"
-"product received by a particular user, \"normally used\" refers to a\n"
-"typical or common use of that class of product, regardless of the status\n"
-"of the particular user or of the way in which the particular user\n"
-"actually uses, or expects or is expected to use, the product.  A product\n"
-"is a consumer product regardless of whether the product has substantial\n"
-"commercial, industrial or non-consumer uses, unless such uses represent\n"
-"the only significant mode of use of the product.\n"
-"\n"
-"  \"Installation Information\" for a User Product means any methods,\n"
-"procedures, authorization keys, or other information required to install\n"
-"and execute modified versions of a covered work in that User Product from\n"
-"a modified version of its Corresponding Source.  The information must\n"
-"suffice to ensure that the continued functioning of the modified object\n"
-"code is in no case prevented or interfered with solely because\n"
-"modification has been made.\n"
-"\n"
-"  If you convey an object code work under this section in, or with, or\n"
-"specifically for use in, a User Product, and the conveying occurs as\n"
-"part of a transaction in which the right of possession and use of the\n"
-"User Product is transferred to the recipient in perpetuity or for a\n"
-"fixed term (regardless of how the transaction is characterized), the\n"
-"Corresponding Source conveyed under this section must be accompanied\n"
-"by the Installation Information.  But this requirement does not apply\n"
-"if neither you nor any third party retains the ability to install\n"
-"modified object code on the User Product (for example, the work has\n"
-"been installed in ROM).\n"
-"\n"
-"  The requirement to provide Installation Information does not include a\n"
-"requirement to continue to provide support service, warranty, or updates\n"
-"for a work that has been modified or installed by the recipient, or for\n"
-"the User Product in which it has been modified or installed.  Access to a\n"
-"network may be denied when the modification itself materially and\n"
-"adversely affects the operation of the network or violates the rules and\n"
-"protocols for communication across the network.\n"
-"\n"
-"  Corresponding Source conveyed, and Installation Information provided,\n"
-"in accord with this section must be in a format that is publicly\n"
-"documented (and with an implementation available to the public in\n"
-"source code form), and must require no special password or key for\n"
-"unpacking, reading or copying.\n"
-"\n"
-"  7. Additional Terms.\n"
-"\n"
-"  \"Additional permissions\" are terms that supplement the terms of this\n"
-"License by making exceptions from one or more of its conditions.\n"
-"Additional permissions that are applicable to the entire Program shall\n"
-"be treated as though they were included in this License, to the extent\n"
-"that they are valid under applicable law.  If additional permissions\n"
-"apply only to part of the Program, that part may be used separately\n"
-"under those permissions, but the entire Program remains governed by\n"
-"this License without regard to the additional permissions.\n"
-"\n"
-"  When you convey a copy of a covered work, you may at your option\n"
-"remove any additional permissions from that copy, or from any part of\n"
-"it.  (Additional permissions may be written to require their own\n"
-"removal in certain cases when you modify the work.)  You may place\n"
-"additional permissions on material, added by you to a covered work,\n"
-"for which you have or can give appropriate copyright permission.\n"
-"\n"
-"  Notwithstanding any other provision of this License, for material you\n"
-"add to a covered work, you may (if authorized by the copyright holders of\n"
-"that material) supplement the terms of this License with terms:\n"
-"\n"
-"    a) Disclaiming warranty or limiting liability differently from the\n"
-"    terms of sections 15 and 16 of this License; or\n"
-"\n"
-"    b) Requiring preservation of specified reasonable legal notices or\n"
-"    author attributions in that material or in the Appropriate Legal\n"
-"    Notices displayed by works containing it; or\n"
-"\n"
-"    c) Prohibiting misrepresentation of the origin of that material, or\n"
-"    requiring that modified versions of such material be marked in\n"
-"    reasonable ways as different from the original version; or\n"
-"\n"
-"    d) Limiting the use for publicity purposes of names of licensors or\n"
-"    authors of the material; or\n"
-"\n"
-"    e) Declining to grant rights under trademark law for use of some\n"
-"    trade names, trademarks, or service marks; or\n"
-"\n"
-"    f) Requiring indemnification of licensors and authors of that\n"
-"    material by anyone who conveys the material (or modified versions of\n"
-"    it) with contractual assumptions of liability to the recipient, for\n"
-"    any liability that these contractual assumptions directly impose on\n"
-"    those licensors and authors.\n"
-"\n"
-"  All other non-permissive additional terms are considered \"further\n"
-"restrictions\" within the meaning of section 10.  If the Program as you\n"
-"received it, or any part of it, contains a notice stating that it is\n"
-"governed by this License along with a term that is a further\n"
-"restriction, you may remove that term.  If a license document contains\n"
-"a further restriction but permits relicensing or conveying under this\n"
-"License, you may add to a covered work material governed by the terms\n"
-"of that license document, provided that the further restriction does\n"
-"not survive such relicensing or conveying.\n"
-"\n"
-"  If you add terms to a covered work in accord with this section, you\n"
-"must place, in the relevant source files, a statement of the\n"
-"additional terms that apply to those files, or a notice indicating\n"
-"where to find the applicable terms.\n"
-"\n"
-"  Additional terms, permissive or non-permissive, may be stated in the\n"
-"form of a separately written license, or stated as exceptions;\n"
-"the above requirements apply either way.\n"
-"\n"
-"  8. Termination.\n"
-"\n"
-"  You may not propagate or modify a covered work except as expressly\n"
-"provided under this License.  Any attempt otherwise to propagate or\n"
-"modify it is void, and will automatically terminate your rights under\n"
-"this License (including any patent licenses granted under the third\n"
-"paragraph of section 11).\n"
-"\n"
-"  However, if you cease all violation of this License, then your\n"
-"license from a particular copyright holder is reinstated (a)\n"
-"provisionally, unless and until the copyright holder explicitly and\n"
-"finally terminates your license, and (b) permanently, if the copyright\n"
-"holder fails to notify you of the violation by some reasonable means\n"
-"prior to 60 days after the cessation.\n"
-"\n"
-"  Moreover, your license from a particular copyright holder is\n"
-"reinstated permanently if the copyright holder notifies you of the\n"
-"violation by some reasonable means, this is the first time you have\n"
-"received notice of violation of this License (for any work) from that\n"
-"copyright holder, and you cure the violation prior to 30 days after\n"
-"your receipt of the notice.\n"
-"\n"
-"  Termination of your rights under this section does not terminate the\n"
-"licenses of parties who have received copies or rights from you under\n"
-"this License.  If your rights have been terminated and not permanently\n"
-"reinstated, you do not qualify to receive new licenses for the same\n"
-"material under section 10.\n"
-"\n"
-"  9. Acceptance Not Required for Having Copies.\n"
-"\n"
-"  You are not required to accept this License in order to receive or\n"
-"run a copy of the Program.  Ancillary propagation of a covered work\n"
-"occurring solely as a consequence of using peer-to-peer transmission\n"
-"to receive a copy likewise does not require acceptance.  However,\n"
-"nothing other than this License grants you permission to propagate or\n"
-"modify any covered work.  These actions infringe copyright if you do\n"
-"not accept this License.  Therefore, by modifying or propagating a\n"
-"covered work, you indicate your acceptance of this License to do so.\n"
-"\n"
-"  10. Automatic Licensing of Downstream Recipients.\n"
-"\n"
-"  Each time you convey a covered work, the recipient automatically\n"
-"receives a license from the original licensors, to run, modify and\n"
-"propagate that work, subject to this License.  You are not responsible\n"
-"for enforcing compliance by third parties with this License.\n"
-"\n"
-"  An \"entity transaction\" is a transaction transferring control of an\n"
-"organization, or substantially all assets of one, or subdividing an\n"
-"organization, or merging organizations.  If propagation of a covered\n"
-"work results from an entity transaction, each party to that\n"
-"transaction who receives a copy of the work also receives whatever\n"
-"licenses to the work the party's predecessor in interest had or could\n"
-"give under the previous paragraph, plus a right to possession of the\n"
-"Corresponding Source of the work from the predecessor in interest, if\n"
-"the predecessor has it or can get it with reasonable efforts.\n"
-"\n"
-"  You may not impose any further restrictions on the exercise of the\n"
-"rights granted or affirmed under this License.  For example, you may\n"
-"not impose a license fee, royalty, or other charge for exercise of\n"
-"rights granted under this License, and you may not initiate litigation\n"
-"(including a cross-claim or counterclaim in a lawsuit) alleging that\n"
-"any patent claim is infringed by making, using, selling, offering for\n"
-"sale, or importing the Program or any portion of it.\n"
-"\n"
-"  11. Patents.\n"
-"\n"
-"  A \"contributor\" is a copyright holder who authorizes use under this\n"
-"License of the Program or a work on which the Program is based.  The\n"
-"work thus licensed is called the contributor's \"contributor version\".\n"
-"\n"
-"  A contributor's \"essential patent claims\" are all patent claims\n"
-"owned or controlled by the contributor, whether already acquired or\n"
-"hereafter acquired, that would be infringed by some manner, permitted\n"
-"by this License, of making, using, or selling its contributor version,\n"
-"but do not include claims that would be infringed only as a\n"
-"consequence of further modification of the contributor version.  For\n"
-"purposes of this definition, \"control\" includes the right to grant\n"
-"patent sublicenses in a manner consistent with the requirements of\n"
-"this License.\n"
-"\n"
-"  Each contributor grants you a non-exclusive, worldwide, royalty-free\n"
-"patent license under the contributor's essential patent claims, to\n"
-"make, use, sell, offer for sale, import and otherwise run, modify and\n"
-"propagate the contents of its contributor version.\n"
-"\n"
-"  In the following three paragraphs, a \"patent license\" is any express\n"
-"agreement or commitment, however denominated, not to enforce a patent\n"
-"(such as an express permission to practice a patent or covenant not to\n"
-"sue for patent infringement).  To \"grant\" such a patent license to a\n"
-"party means to make such an agreement or commitment not to enforce a\n"
-"patent against the party.\n"
-"\n"
-"  If you convey a covered work, knowingly relying on a patent license,\n"
-"and the Corresponding Source of the work is not available for anyone\n"
-"to copy, free of charge and under the terms of this License, through a\n"
-"publicly available network server or other readily accessible means,\n"
-"then you must either (1) cause the Corresponding Source to be so\n"
-"available, or (2) arrange to deprive yourself of the benefit of the\n"
-"patent license for this particular work, or (3) arrange, in a manner\n"
-"consistent with the requirements of this License, to extend the patent\n"
-"license to downstream recipients.  \"Knowingly relying\" means you have\n"
-"actual knowledge that, but for the patent license, your conveying the\n"
-"covered work in a country, or your recipient's use of the covered work\n"
-"in a country, would infringe one or more identifiable patents in that\n"
-"country that you have reason to believe are valid.\n"
-"\n"
-"  If, pursuant to or in connection with a single transaction or\n"
-"arrangement, you convey, or propagate by procuring conveyance of, a\n"
-"covered work, and grant a patent license to some of the parties\n"
-"receiving the covered work authorizing them to use, propagate, modify\n"
-"or convey a specific copy of the covered work, then the patent license\n"
-"you grant is automatically extended to all recipients of the covered\n"
-"work and works based on it.\n"
-"\n"
-"  A patent license is \"discriminatory\" if it does not include within\n"
-"the scope of its coverage, prohibits the exercise of, or is\n"
-"conditioned on the non-exercise of one or more of the rights that are\n"
-"specifically granted under this License.  You may not convey a covered\n"
-"work if you are a party to an arrangement with a third party that is\n"
-"in the business of distributing software, under which you make payment\n"
-"to the third party based on the extent of your activity of conveying\n"
-"the work, and under which the third party grants, to any of the\n"
-"parties who would receive the covered work from you, a discriminatory\n"
-"patent license (a) in connection with copies of the covered work\n"
-"conveyed by you (or copies made from those copies), or (b) primarily\n"
-"for and in connection with specific products or compilations that\n"
-"contain the covered work, unless you entered into that arrangement,\n"
-"or that patent license was granted, prior to 28 March 2007.\n"
-"\n"
-"  Nothing in this License shall be construed as excluding or limiting\n"
-"any implied license or other defenses to infringement that may\n"
-"otherwise be available to you under applicable patent law.\n"
-"\n"
-"  12. No Surrender of Others' Freedom.\n"
-"\n"
-"  If conditions are imposed on you (whether by court order, agreement or\n"
-"otherwise) that contradict the conditions of this License, they do not\n"
-"excuse you from the conditions of this License.  If you cannot convey a\n"
-"covered work so as to satisfy simultaneously your obligations under this\n"
-"License and any other pertinent obligations, then as a consequence you may\n"
-"not convey it at all.  For example, if you agree to terms that obligate you\n"
-"to collect a royalty for further conveying from those to whom you convey\n"
-"the Program, the only way you could satisfy both those terms and this\n"
-"License would be to refrain entirely from conveying the Program.\n"
-"\n"
-"  13. Use with the GNU Affero General Public License.\n"
-"\n"
-"  Notwithstanding any other provision of this License, you have\n"
-"permission to link or combine any covered work with a work licensed\n"
-"under version 3 of the GNU Affero General Public License into a single\n"
-"combined work, and to convey the resulting work.  The terms of this\n"
-"License will continue to apply to the part which is the covered work,\n"
-"but the special requirements of the GNU Affero General Public License,\n"
-"section 13, concerning interaction through a network will apply to the\n"
-"combination as such.\n"
-"\n"
-"  14. Revised Versions of this License.\n"
-"\n"
-"  The Free Software Foundation may publish revised and/or new versions of\n"
-"the GNU General Public License from time to time.  Such new versions will\n"
-"be similar in spirit to the present version, but may differ in detail to\n"
-"address new problems or concerns.\n"
-"\n"
-"  Each version is given a distinguishing version number.  If the\n"
-"Program specifies that a certain numbered version of the GNU General\n"
-"Public License \"or any later version\" applies to it, you have the\n"
-"option of following the terms and conditions either of that numbered\n"
-"version or of any later version published by the Free Software\n"
-"Foundation.  If the Program does not specify a version number of the\n"
-"GNU General Public License, you may choose any version ever published\n"
-"by the Free Software Foundation.\n"
-"\n"
-"  If the Program specifies that a proxy can decide which future\n"
-"versions of the GNU General Public License can be used, that proxy's\n"
-"public statement of acceptance of a version permanently authorizes you\n"
-"to choose that version for the Program.\n"
-"\n"
-"  Later license versions may give you additional or different\n"
-"permissions.  However, no additional obligations are imposed on any\n"
-"author or copyright holder as a result of your choosing to follow a\n"
-"later version.\n"
-"\n"
-"  15. Disclaimer of Warranty.\n"
-"\n"
-"  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"
-"APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n"
-"HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY\n"
-"OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,\n"
-"THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
-"PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\n"
-"IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\n"
-"ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n"
-"\n"
-"  16. Limitation of Liability.\n"
-"\n"
-"  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n"
-"WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS\n"
-"THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY\n"
-"GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE\n"
-"USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF\n"
-"DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD\n"
-"PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),\n"
-"EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF\n"
-"SUCH DAMAGES.\n"
-"\n"
-"  17. Interpretation of Sections 15 and 16.\n"
-"\n"
-"  If the disclaimer of warranty and limitation of liability provided\n"
-"above cannot be given local legal effect according to their terms,\n"
-"reviewing courts shall apply local law that most closely approximates\n"
-"an absolute waiver of all civil liability in connection with the\n"
-"Program, unless a warranty or assumption of liability accompanies a\n"
-"copy of the Program in return for a fee.\n"
-"\n"
-"                     END OF TERMS AND CONDITIONS\n"
-"\n"
-"            How to Apply These Terms to Your New Programs\n"
-"\n"
-"  If you develop a new program, and you want it to be of the greatest\n"
-"possible use to the public, the best way to achieve this is to make it\n"
-"free software which everyone can redistribute and change under these terms.\n"
-"\n"
-"  To do so, attach the following notices to the program.  It is safest\n"
-"to attach them to the start of each source file to most effectively\n"
-"state the exclusion of warranty; and each file should have at least\n"
-"the \"copyright\" line and a pointer to where the full notice is found.\n"
-"\n"
-"    <one line to give the program's name and a brief idea of what it does.>\n"
-"    Copyright (C) <year>  <name of author>\n"
-"\n"
-"    This program is free software: you can redistribute it and/or modify\n"
-"    it under the terms of the GNU General Public License as published by\n"
-"    the Free Software Foundation, either version 3 of the License, or\n"
-"    (at your option) any later version.\n"
-"\n"
-"    This program is distributed in the hope that it will be useful,\n"
-"    but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-"    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-"    GNU General Public License for more details.\n"
-"\n"
-"    You should have received a copy of the GNU General Public License\n"
-"    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
-"\n"
-"Also add information on how to contact you by electronic and paper mail.\n"
-"\n"
-"  If the program does terminal interaction, make it output a short\n"
-"notice like this when it starts in an interactive mode:\n"
-"\n"
-"    <program>  Copyright (C) <year>  <name of author>\n"
-"    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
-"w'.\n"
-"    This is free software, and you are welcome to redistribute it\n"
-"    under certain conditions; type `show c' for details.\n"
-"\n"
-"The hypothetical commands `show w' and `show c' should show the appropriate\n"
-"parts of the General Public License.  Of course, your program's commands\n"
-"might be different; for a GUI interface, you would use an \"about box\".\n"
-"\n"
-"  You should also get your employer (if you work as a programmer) or "
-"school,\n"
-"if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
-"For more information on this, and how to apply and follow the GNU GPL, see\n"
-"<http://www.gnu.org/licenses/>.\n"
-"\n"
-"  The GNU General Public License does not permit incorporating your program\n"
-"into proprietary programs.  If your program is a subroutine library, you\n"
-"may consider it more useful to permit linking proprietary applications with\n"
-"the library.  If this is what you want to do, use the GNU Lesser General\n"
-"Public License instead of this License.  But first, please read\n"
-"<http://www.gnu.org/philosophy/why-not-lgpl.html>. "
-
-#: ../../resources/glade/tournament.glade:853
 msgid ""
 "Marijn Somers (Dutch)\n"
 "Julien Diaz (German)\n"
@@ -2193,39 +793,41 @@ msgstr ""
 "Mohamed Rebai (Arabisch)\n"
 "Sergev Makhtanov (Russian)\n"
 
-#: ../../sources/main.cpp:205
+#: ../../sources/main.cpp:226
 msgid "start rank"
 msgstr "Start Rang"
 
-#: ../../sources/main.cpp:215
+#: ../../sources/main.cpp:236
 msgid "global status"
 msgstr "global Status"
 
-#: ../../sources/main.cpp:218 ../../sources/main.cpp:226
+#: ../../sources/main.cpp:239 ../../sources/main.cpp:247
+#: ../../resources/glade/pool_supervisor.glade:55
+#: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
 msgstr "Qualifiziert"
 
-#: ../../sources/main.cpp:219 ../../sources/main.cpp:227
+#: ../../sources/main.cpp:240 ../../sources/main.cpp:248
 msgid "Not qualified"
 msgstr "Nicht qualifiziert"
 
-#: ../../sources/main.cpp:220 ../../sources/main.cpp:228
+#: ../../sources/main.cpp:241 ../../sources/main.cpp:249
 msgid "Withdrawal"
 msgstr "Abhebung"
 
-#: ../../sources/main.cpp:221 ../../sources/main.cpp:229
+#: ../../sources/main.cpp:242 ../../sources/main.cpp:250
 msgid "Excluded"
 msgstr "Ausgeschlossen"
 
-#: ../../sources/main.cpp:222 ../../sources/main.cpp:230
+#: ../../sources/main.cpp:243 ../../sources/main.cpp:251
 msgid "Forfeit"
 msgstr "Abhebung"
 
-#: ../../sources/main.cpp:224
+#: ../../sources/main.cpp:245
 msgid "status"
 msgstr "Status"
 
-#: ../../sources/pool.cpp:506
+#: ../../sources/pool.cpp:623
 msgid "Status"
 msgstr "Status"
 
@@ -2234,527 +836,154 @@ msgstr "Status"
 msgid "all"
 msgstr "Alle"
 
-#: ../../resources/glade/general_classification.glade:40
+#: ../../resources/glade/general_classification.glade:63
 msgid "Export to CSV"
 msgstr "Exportiere in eine CSV Datei"
 
+#: ../../resources/glade/tournament.glade:917
 msgid "User manual"
 msgstr "Benutzerhandbuch"
 
+#: ../../resources/glade/general_classification.glade:78
 msgid "Export to FFF"
 msgstr "Exportiere in eine FFF Datei"
 
-#~ msgid "<b><big>Quels tireurs voulez-vous imprimer ?</big></b>"
-#~ msgstr "<b><big>Welche Fechter wollen Sie drucken?</big></b>"
-
-#~ msgid "Impression de la liste des tireurs"
-#~ msgstr "Druck der Fechterliste"
-
-#~ msgid "Appel"
-#~ msgstr "Aufruf"
-
-#~ msgid "Liste des inscrits"
-#~ msgstr "Anmeldeliste"
-
-#~ msgid "Liste des présents"
-#~ msgstr "Anwesendeliste"
-
-#~ msgid "Pupille"
-#~ msgstr "D-Jugend"
-
-#~ msgid "Féminin"
-#~ msgstr "Damen"
-
-#~ msgid "Masculin"
-#~ msgstr "Herren"
-
-#~ msgid "Fleuret"
-#~ msgstr "Florett"
-
-#~ msgid "Poussin"
-#~ msgstr "D-Jugend"
-
-#~ msgid "Liste des tireurs"
-#~ msgstr "Fechterliste"
-
-#~ msgid "Liste des absents"
-#~ msgstr "Abwesendeliste"
-
-#~ msgid "Vétéran"
-#~ msgstr "Senior"
-
-#~ msgid "Cadet"
-#~ msgstr "A-Jugend"
-
-#~ msgid "Minime"
-#~ msgstr "B-Jugend"
-
-#~ msgid "Benjamin"
-#~ msgstr "Schüler"
-
-#~ msgid "Junior"
-#~ msgstr "Junior"
-
-#~ msgid "prénom"
-#~ msgstr "Vorname"
-
-#~ msgid "nom"
-#~ msgstr "Name"
-
-#~ msgid "sexe"
-#~ msgstr "Geschlecht"
-
-#~ msgid "points"
-#~ msgstr "Punkte"
-
-#~ msgid "présence"
-#~ msgstr "Anwesenheit"
-
-#~ msgid "Victoires"
-#~ msgstr "Siege"
-
-#~ msgid "<b><big>Imprimer ...</big></b>"
-#~ msgstr "<b><big>Drucken ...</big></b>"
-
-#~ msgid "Vainqueur"
-#~ msgstr "Sieger"
-
-#~ msgid "Données"
-#~ msgstr "Daten"
-
-#~ msgid "Tous les présents"
-#~ msgstr "Alle Anwesende"
-
-#~ msgid "Tous les absents"
-#~ msgstr "Alle Abwesende"
-
-#~ msgid "Présents"
-#~ msgstr "Anwesende"
-
-#~ msgid "Arme"
-#~ msgstr "Waffe"
-
-#~ msgid "Categorie"
-#~ msgstr "Kategorie"
-
-#~ msgid "Sexe"
-#~ msgstr "Geschlecht"
-
-#~ msgid "Homme"
-#~ msgstr "Herren"
-
-#~ msgid "Formule"
-#~ msgstr "Austragungsmodus"
-
-#~ msgid "Début"
-#~ msgstr "Anfang"
-
-#~ msgid "Titre"
-#~ msgstr "Titel"
-
-#~ msgid "Interdire"
-#~ msgstr "Verbieten"
-
-#~ msgid "Imprimer"
-#~ msgstr "Drucken"
-
-#~ msgid "<b>Quoi ?</b>"
-#~ msgstr "<b>Was ?</b>"
-
-#~ msgid "<b>Pour quoi ?</b>"
-#~ msgstr "<b>Wofür ?</b>"
-
-#~ msgid "A partir de"
-#~ msgstr "Von"
-
-#~ msgid "Tireur A"
-#~ msgstr "Fechter A"
-
-#~ msgid "Toutes"
-#~ msgstr "Alle"
-
-#~ msgid "Tireur B"
-#~ msgstr "Fechter B"
-
-#~ msgid "Fichier"
-#~ msgstr "Datei"
-
-#~ msgid "BellePoule - Tournoi d'escrime"
-#~ msgstr "BellePoule - Fechtenturnier"
-
-#~ msgid "Aide"
-#~ msgstr "Hilfe"
-
-#~ msgid "nation"
-#~ msgstr "Nation"
-
-#~ msgid "date naissance"
-#~ msgstr "Geburtsdatum"
-
-#~ msgid "Tous les fichiers"
-#~ msgstr "Alle Dateien"
-
-#~ msgid "Tous les fichiers Excel (.CSV)"
-#~ msgstr "Alle Excel Dateien (.CSV)"
-
-#~ msgid "Tous les fichiers FFF (.FFF)"
-#~ msgstr "Alle FFF-Dateien (.FFF)"
-
-#~ msgid "Choisissez un fichier de sauvegarde ..."
-#~ msgstr "Wählen Sie eine Speicherndatei ..."
-
-#~ msgid "Propriétés de la compétition"
-#~ msgstr "Eigenschaften des Turniers"
-
-#~ msgid "Choisissez un fichier de secours ..."
-#~ msgstr "Wählen Sie eine Schutzdatei ..."
-
-#~ msgid "Date de la compétition"
-#~ msgstr "Datum des Turniers"
-
-#~ msgid "classement"
-#~ msgstr "Platzierung"
-
-#~ msgid "Choisissez un fichier de destination ..."
-#~ msgstr "Wählen Sie eine Bestimmungsdatei"
-
-#~ msgid "Classement général"
-#~ msgstr "Ergebnisliste"
-
-#, c-format
-#~ msgid ""
-#~ "<b><big>Voulez-vous vraiment fermer\n"
-#~ "<big>%s</big> ?</big></b>"
-#~ msgstr ""
-#~ "<b><big>Wollen Sie wirklich \n"
-#~ "<big>%s</big> schließen?</big></b>"
-
-#~ msgid "Fermer la compétition ?"
-#~ msgstr "Das Turnier schließen?"
-
-#~ msgid "Filtre"
-#~ msgstr "Filter"
-
-#~ msgid "Vict./Matchs (‰)"
-#~ msgstr "Siege/Gefechte (%)"
-
-#~ msgid "exporté"
-#~ msgstr "exportiert"
-
-#~ msgid "T. reçues"
-#~ msgstr "T. erhalten"
-
-#~ msgid "T. données"
-#~ msgstr "T. gegeben"
-
-#, c-format
-#~ msgid "Poule No %02d"
-#~ msgstr "Rundennummer %02d"
-
-#~ msgid "rang d'entrée"
-#~ msgstr "Startplatz"
-
-#~ msgid "indice"
-#~ msgstr "Trefferdifferenz"
-
-#~ msgid "Touches données"
-#~ msgstr "Treffer gegeben"
-
-#~ msgid "Indice"
-#~ msgstr "Trefferdifferenz"
-
-#~ msgid "Répartition dans les poules"
-#~ msgstr "Verteilung in den Runden"
-
-#~ msgid "Composition poules"
-#~ msgstr "Zusammensetzung der Runden"
-
-#~ msgid "<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>"
-#~ msgstr ""
-#~ "<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
-
-#~ msgid "Revenir à la phase précédente ?"
-#~ msgstr "Zur vorhergehenden Phase zurückkommen ?"
-
-#~ msgid "Impression des feuilles de poule"
-#~ msgstr "Druck der Rundetabellen"
-
-#~ msgid "Poules"
-#~ msgstr "Runden"
-
-#, c-format
-#~ msgid "Tableau de %d"
-#~ msgstr "letzte %d"
-
-#~ msgid "Impression du tableau"
-#~ msgstr "Druck der Tabelle"
-
-#~ msgid "<b><big>Que voulez-vous imprimer ?</big></b>"
-#~ msgstr "<b><big>Was wollen Sie drucken ?</big></b>"
-
-#~ msgid "Tableau"
-#~ msgstr "Tabelle"
-
-#~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
-#~ msgstr ""
-#~ "<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie "
-#~ "drucken?</big></b>"
-
-#~ msgid "Scission"
-#~ msgstr "Spaltung"
-
-#, c-format
-#~ msgid "%s : Impression des matchs"
-#~ msgstr "%s : Druck der Gefechte"
-
-#~ msgid "Feuille de match"
-#~ msgstr "Gefechtblatt"
-
-#~ msgid "Classement du tableau"
-#~ msgstr "Rangfolge der Tabelle"
-
-#~ msgid "Fichiers BellePoule"
-#~ msgstr "Bellepoule-Dateien"
-
-#~ msgid "<b><big>Voulez-vous vraiment quitter BellePoule ?</big></b>"
-#~ msgstr "<b><big>Wollen Sie wirklich BellePoule schliessen?</big></b>"
-
-#~ msgid "Quitter BellePoule ?"
-#~ msgstr "Bellepoule schliessen ?"
-
-#~ msgid "Les fichiers BellePoule (.cocot)"
-#~ msgstr "Die BellePoule-Dateien (.cocot)"
-
-#~ msgid "Fichiers récemment ouverts"
-#~ msgstr "Kürzlich offene Dateien"
-
-#~ msgid "Importer fichier .FFF"
-#~ msgstr "FFF-Dateien importieren"
-
-#~ msgid "Ajouter un tireur"
-#~ msgstr "Einen Fechter hinzufügen"
-
-#~ msgid "Caractéristiques de la compétition"
-#~ msgstr "Eigenschaften der Turnier"
-
-#~ msgid "Site web"
-#~ msgstr "Netzstandort"
-
-#~ msgid "<b>Généralités</b>"
-#~ msgstr "<b>Allgemeine Anmerkungen</b>"
-
-#~ msgid "Exporter"
-#~ msgstr "Exportieren"
-
-#~ msgid "Nombre de poules"
-#~ msgstr "Zahl der Runden"
-
-#~ msgid "Tireurs / poules"
-#~ msgstr "Fechter pro Runde"
-
-#~ msgid "Classement"
-#~ msgstr "Rangfolge"
-
-#~ msgid "Toutes les poules"
-#~ msgstr "Alle Runde"
-
-#~ msgid "Toutes les feuilles de match"
-#~ msgstr "Alle Gefechtblätter"
-
-#~ msgid "Le tableau"
-#~ msgstr "Die Tabelle"
-
-#~ msgid "Les feuilles de match"
-#~ msgstr "Die Gefechtblätter"
-
-#~ msgid ""
-#~ "Décochez cette case pour accélerer la navigation. Le champs correspondant "
-#~ "sera ignoré lors des appuis sur la touche TAB."
-#~ msgstr ""
-#~ "Deaktivieren Sie dieses Kästchen, um die Navigation zu beschleunigen. Die "
-#~ "entsprechenden Felder wird bei den Unterstützungen auf dem tab-Anschlag "
-#~ "ignoriert."
-
-#~ msgid "Choisissez un fichier de tireurs à importer ..."
-#~ msgstr "Wählen Sie eine Fechterdatei zu importieren"
-
-#~ msgid "Mixte"
-#~ msgstr "Gemischt"
-
-#~ msgid "Sauvegarde l'état courant de la compétition."
-#~ msgstr "Speichert der laufende Stand des Turniers."
-
-#~ msgid "Choisissez un fichier de compétition à ouvrir ..."
-#~ msgstr "Wählen Sie eine Turnierdatei zu öffnen ..."
-
-#~ msgid ""
-#~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
-#~ "tableaux et autres phases."
-#~ msgstr ""
-#~ "Erlaubt, die Formel darzustellen, indem man die Verkettung der Runden, "
-#~ "Tabellen und anderer Phasen definiert."
-
-#~ msgid "Permet de renseigner les caractéristiques de la compétition."
-#~ msgstr "Erlaubt, die Eigenschaften des Turniers zu informieren."
-
-#~ msgid "Texte libre purement informatif."
-#~ msgstr "Rein informierender freier Text."
-
-#~ msgid "Organisateur"
-#~ msgstr "Organisator"
-
-#~ msgid "Autoriser"
-#~ msgstr "Erlauben"
-
-#~ msgid "<b>Date / Horaires</b>"
-#~ msgstr "<b>Datum / Zeitplan</b>"
-
-#~ msgid "Décallage"
-#~ msgstr "Verschiebung"
-
-#~ msgid "Les saisies non sauvegardées seront perdues."
-#~ msgstr "Die nicht gespeicherte Daten werden verloren sein."
-
-#~ msgid "Toutes les compétitions non sauvegardées seront perdues."
-#~ msgstr "Alle nicht gespeicherte Turniere werden verloren sein."
-
-#~ msgid "Toutes les saisies de cette phase seront annulées."
-#~ msgstr "Alle Erfassungen dieser Phase werden annulliert sein."
-
-#~ msgid ""
-#~ "Select the fencers to move to a new competition.\n"
-#~ "          Not yet implemented :-("
-#~ msgstr ""
-#~ "Wählen Sie die Fechter vor, sich auf ein neues Turnier zu bewegen.\n"
-#~ "          Noch nicht implementiert:-("
-
-#~ msgid "Next stage"
-#~ msgstr "folgende Etappe."
-
-#~ msgid "Previous stage"
-#~ msgstr "vorhergehende Etappe"
-
-#~ msgid "Le pourcentage d'éliminés à l'issu de cette phase."
-#~ msgstr "Der Prozentsatz von eliminiert am Ende dieser Phase."
-
-#~ msgid "Uniquement la poule sélectionnée"
-#~ msgstr "Nur die ausgewählte Runde"
-
-#~ msgid "Contenu spécialement conçu pour les arbitres."
-#~ msgstr "Enthalten besonders geplant für die Schiedsrichter."
-
-#~ msgid "Pour arbitrage"
-#~ msgstr "Fûr Schiedsgerichtsbarkeit"
-
-#~ msgid "Pour affichage"
-#~ msgstr "zu anschlagen"
-
-#~ msgid ""
-#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit les "
-#~ "listes de tireurs inscrits aux compétitions par l'intermédiaire de son site "
-#~ "internet. "
-#~ msgstr ""
-#~ "FFF ist das Format, unter dem der französischer Fechterbund die Listen von "
-#~ "Fechtern liefert, die an das Turnier über ihr Netzstandort eingetragen sind. "
-
-#~ msgid ""
-#~ "Les informations de date et heures sont exploitées pour avertir par une "
-#~ "alarme les organisateurs de l'éminence de de certains évènements."
-#~ msgstr ""
-#~ "Die Informationen von Datum und Stunden werden genutzt, um die Organisatoren "
-#~ "vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu warnen."
-
-#~ msgid "ligue"
-#~ msgstr "LV"
-
-#~ msgid "Classement du tour de poule"
-#~ msgstr "Rangfolge nach dem Vorrunde"
-
-#~ msgid "Nombre d'éliminés (%)"
-#~ msgstr "Anzahl von eliminiert (%)"
-
-#~ msgid "En attente"
-#~ msgstr "In der Warteschleife"
-
-#~ msgid "Les feuilles de match en attente"
-#~ msgstr "Gefechtblätter in der Warteschleife"
-
-#~ msgid ""
-#~ "Permet d'afficher et de masquer certaines données ainsi que de redéfinir "
-#~ "leur ordre d'affichage."
-#~ msgstr ""
-#~ "Erlaubt, bestimmte Angaben anzuschlagen und zu maskieren sowie ihren "
-#~ "Anschlagordnung zu definieren."
-
-#~ msgid ""
-#~ "Remplis tous les matchs du tableau par des scores aléatoires.\n"
-#~ "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
-#~ "compétition."
-#~ msgstr ""
-#~ "Füllt alle Gefecht der Tabelle durch Zufallsstände.\n"
-#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
-#~ "Turniers."
-
-#~ msgid ""
-#~ "Remplis tous les matchs de toutes les poules par des scores aléatoires.\n"
-#~ "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
-#~ "compétition."
-#~ msgstr ""
-#~ "Füllt alle Gefecht aller Runden durch Zufallsstände.\n"
-#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
-#~ "Turniers."
-
-#~ msgid "Remplissage auto"
-#~ msgstr "automatisches Füllen"
-
-#~ msgid ""
-#~ "Exporte le classement dans un fichier au format \".csv\" pour des tableurs "
-#~ "du type Excel ou OpenOffice"
-#~ msgstr ""
-#~ "Exportiert die Rangfolge in eine \".csv\" Datei-Format für Excel oder "
-#~ "OpenOffice-Typ"
-
-#~ msgid "Récemment ouvert"
-#~ msgstr "kürzlich eröffnete"
-
-#~ msgid ""
-#~ "Remplissage\n"
-#~ "automatique\n"
-#~ "des scores"
-#~ msgstr ""
-#~ "Automatisches\n"
-#~ "Füllen\n"
-#~ "der Punktstände"
-
-#~ msgid "Rend inactif le bouton de remplissage automatique des scores."
-#~ msgstr "Unaktiviert des Knopf \"automatisches Füllen der Punktstände\"."
-
-#~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-#~ "des saisies longues et laborieuses lors des séances de prise en main de "
-#~ "BellePoule."
-#~ msgstr ""
-#~ "Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann lange "
-#~ "und mühselige Erfassungen während den Testen von BellePoule vermeiden."
-
-#~ msgid "Ouvrir un exemple ..."
-#~ msgstr "Ein Beispiel zu eröffnen"
-
-#~ msgid ""
-#~ "Logiciel de gestion de tournois d'escrime.\n"
-#~ "\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Fechtturnier Verwaltung Software.\n"
-#~ "\n"
-#~ "\n"
-
-#~ msgid "Demi-finale"
-#~ msgstr "Halbfinale"
-
-#~ msgid "Finale"
-#~ msgstr "Finale"
-
-#~ msgid "Saisir un match ..."
-#~ msgstr "Ein Gefecht auswählen"
+#: ../../sources/contest.cpp:57
+msgid "Kendo"
+msgstr ""
+
+#: ../../sources/general_classification.cpp:254
+msgid "All PDF files (.PDF)"
+msgstr ""
+
+#: ../../sources/pool_allocator.cpp:1545
+msgid "Allocation"
+msgstr ""
+
+#: ../../sources/pool.cpp:381 ../../sources/table_set.cpp:2342
+msgid "Referee"
+msgstr ""
+
+#: ../../sources/pool.cpp:407 ../../sources/table_set.cpp:2364
+msgid "Piste"
+msgstr ""
+
+#: ../../sources/pool_supervisor.cpp:450
+msgid "Pools classification"
+msgstr ""
+
+#: ../../sources/table_set.cpp:93 ../../sources/table_set.cpp:2436
+#: ../../sources/table_set.cpp:2443
+msgid "Place #"
+msgstr ""
+
+#: ../../sources/table_supervisor.cpp:997
+msgid "Table classification"
+msgstr ""
+
+#: ../../sources/tournament.cpp:289
+msgid "FFE files (.xml)"
+msgstr ""
+
+#: ../../sources/tournament.cpp:481
+msgid "Choose a backup files location..."
+msgstr ""
+
+#: ../../resources/glade/contest.glade:441
+msgid "Location"
+msgstr ""
+
+#: ../../resources/glade/contest.glade:895
+msgid "Event"
+msgstr ""
+
+#: ../../resources/glade/contest.glade:943
+msgid "FTP server"
+msgstr ""
+
+#: ../../resources/glade/contest.glade:951
+msgid "User"
+msgstr ""
+
+#: ../../resources/glade/contest.glade:963
+msgid "Password"
+msgstr ""
+
+#: ../../resources/glade/contest.glade:1050
+msgid "<b>Publisher URL</b>"
+msgstr ""
+
+#: ../../resources/glade/contest.glade:1070
+#: ../../resources/glade/contest.glade:1084
+msgid "Publication"
+msgstr ""
+
+#: ../../resources/glade/general_classification.glade:93
+msgid "Export to PDF"
+msgstr ""
+
+#: ../../resources/glade/pool_supervisor.glade:79
+#: ../../resources/glade/table_supervisor.glade:113
+msgid "Number"
+msgstr ""
+
+#: ../../resources/glade/pool_supervisor.glade:114
+#: ../../resources/glade/table_supervisor.glade:148
+msgid "%"
+msgstr ""
+
+#: ../../resources/glade/pool_supervisor.glade:149
+msgid ""
+"Locked until\n"
+"the begining of the pools."
+msgstr ""
+
+#: ../../resources/glade/schedule.glade:122
+msgid "<b>Schedule</b>"
+msgstr ""
+
+#: ../../resources/glade/schedule.glade:155
+msgid "<b>Parameters</b>"
+msgstr ""
+
+#: ../../resources/glade/table_supervisor.glade:51
+msgid "Fenced places"
+msgstr ""
+
+#: ../../resources/glade/table_supervisor.glade:159
+msgid ""
+"Locked until\n"
+"the begining of the table."
+msgstr ""
+
+#: ../../resources/glade/table_supervisor.glade:196
+msgid "None"
+msgstr ""
+
+#: ../../resources/glade/table_supervisor.glade:212
+msgid "Third place"
+msgstr ""
+
+#: ../../resources/glade/table_supervisor.glade:536
+msgid "For place"
+msgstr ""
+
+#: ../../resources/glade/table_supervisor.glade:635
+msgid "Zoom"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:815
+msgid "Backup"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:827
+msgid "Backup files location..."
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:848
+msgid "Activate"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:859
+msgid "Deactivate"
+msgstr ""
