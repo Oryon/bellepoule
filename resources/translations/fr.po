@@ -3,20 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-22 18:22+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2011-09-23 22:06+0000\n"
+"Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-09-14 04:50+0000\n"
-"X-Generator: Launchpad (build 13921)\n"
+"X-Launchpad-Export-Date: 2011-09-24 05:02+0000\n"
+"X-Generator: Launchpad (build 14012)\n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -317,8 +316,8 @@ msgstr "Tableau"
 
 #: ../../sources/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 msgstr ""
 "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
 
@@ -1003,3 +1002,32 @@ msgstr ""
 #: ../../resources/glade/tournament.glade:859
 msgid "Deactivate"
 msgstr ""
+
+#~ msgid "Décallage"
+#~ msgstr "Décalage"
+
+#~ msgid ""
+#~ "Décochez cette case pour accélerer la navigation. Le champs correspondant "
+#~ "sera ignoré lors des appuis sur la touche TAB."
+#~ msgstr ""
+#~ "Décochez cette case pour accélerer la navigation. Le champ correspondant "
+#~ "sera ignoré lors des appuis sur la touche TAB."
+
+#~ msgid "points"
+#~ msgstr "points"
+
+#~ msgid "Liste des présents"
+#~ msgstr "Liste des présents"
+
+#~ msgid "présence"
+#~ msgstr "présence"
+
+#~ msgid "Toutes les compétitions non sauvegardées seront perdues."
+#~ msgstr "Toutes les compétitions non sauvegardées seront perdues."
+
+#~ msgid ""
+#~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
+#~ "tableaux et autres phases."
+#~ msgstr ""
+#~ "To configure the schedule of the competition in terms of pools, tables and "
+#~ "other rounds."
