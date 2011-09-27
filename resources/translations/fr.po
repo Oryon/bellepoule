@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-22 18:22+0200\n"
-"PO-Revision-Date: 2011-09-25 16:53+0000\n"
+"PO-Revision-Date: 2011-09-26 19:49+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-09-26 04:48+0000\n"
-"X-Generator: Launchpad (build 14012)\n"
+"X-Launchpad-Export-Date: 2011-09-27 04:51+0000\n"
+"X-Generator: Launchpad (build 14028)\n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -644,12 +644,12 @@ msgstr "Le classement de la poule sans tenir compte des précédentes. "
 #: ../../resources/glade/splitting.glade:81
 #: ../../resources/glade/table_supervisor.glade:39
 msgid "Name"
-msgstr "Name"
+msgstr "Nom"
 
 #: ../../resources/glade/pool_supervisor.glade:42
 #: ../../resources/glade/table_supervisor.glade:26
 msgid "Max score"
-msgstr "Max score"
+msgstr "Score max"
 
 msgid "Number of eliminated"
 msgstr "Nombre d'éliminés (%)"
@@ -820,7 +820,7 @@ msgstr "statut global"
 #: ../../resources/glade/pool_supervisor.glade:55
 #: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
-msgstr "Qualifié"
+msgstr "Qualifiés"
 
 #: ../../sources/main.cpp:240 ../../sources/main.cpp:248
 msgid "Not qualified"
