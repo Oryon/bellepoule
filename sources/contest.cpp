@@ -323,7 +323,7 @@ Contest::Contest (gchar *filename)
           _scratch_time->Load (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Début");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Debut");
         if (attr)
         {
           _start_time->Load (attr);
@@ -1128,7 +1128,7 @@ void Contest::Save (gchar *filename)
         if (_start_time)
         {
           _start_time->Save   (xml_writer,
-                               "Début");
+                               "Debut");
         }
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "TitreLong",
