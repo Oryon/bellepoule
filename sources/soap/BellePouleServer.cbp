@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="belle_poule" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\belle_poule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DWIN32" />
+					<Add directory="soap" />
+					<Add directory="output" />
+				</Compiler>
+				<Linker>
+					<Add library="m" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\belle_poule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Technicolor Debug">
+				<Option output="bin\TechnicolorDebug\belle_poule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\TechnicolorDebug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DDEBUG=1" />
+					<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wshadow" />
+			<Add option="-Winit-self" />
+			<Add option="-Wcast-align" />
+			<Add option="-Wunreachable-code" />
+			<Add option="-Wswitch-enum" />
+			<Add option="-Wswitch-default" />
+			<Add option="-std=c++98" />
+			<Add option="-Wextra" />
+			<Add option="-Wall" />
+			<Add option="-mms-bitfields -Wno-long-long -Wno-unused-parameter -Wno-shadow" />
+			<Add option="-DWIN32" />
+			<Add option="-D_DEBUG_" />
+			<Add directory="C:\MinGW\include" />
+			<Add directory="C:\MinGW\include\gtk-2.0" />
+			<Add directory="C:\MinGW\include\cairo" />
+			<Add directory="C:\MinGW\include\gdk" />
+			<Add directory="C:\MinGW\include\glib-2.0" />
+			<Add directory="C:\MinGW\lib\glib-2.0\include" />
+			<Add directory="C:\MinGW\include\pango-1.0" />
+			<Add directory="C:\MinGW\lib\gtk-2.0\include" />
+			<Add directory="C:\MinGW\include\atk-1.0" />
+			<Add directory="C:\MinGW\include\goocanvas-0.15\goocanvas" />
+			<Add directory="soap" />
+			<Add directory="output" />
+		</Compiler>
+		<Linker>
+			<Add library="gtk-win32-2.0" />
+			<Add library="gobject-2.0" />
+			<Add library="glib-2.0" />
+			<Add library="libgthread-2.0" />
+			<Add library="glade-2.0" />
+			<Add library="xml2" />
+			<Add library="goocanvas" />
+			<Add library="gdk-win32-2.0" />
+			<Add library="atk-1.0" />
+			<Add library="gio-2.0" />
+			<Add library="gdk_pixbuf-2.0" />
+			<Add library="pangowin32-1.0" />
+			<Add library="gdi32" />
+			<Add library="pangocairo-1.0" />
+			<Add library="pango-1.0" />
+			<Add library="cairo" />
+			<Add library="gmodule-2.0" />
+			<Add library="intl" />
+			<Add library="curl" />
+			<Add library="ws2_32" />
+			<Add library="ssh2" />
+			<Add library="libz" />
+			<Add library="libzdll" />
+			<Add library="libcurl" />
+			<Add library="libcurldll" />
+			<Add library="libeay32" />
+			<Add library="libidn" />
+			<Add library="libidn.dll" />
+			<Add library="librtmp" />
+			<Add library="libssh2" />
+			<Add library="libssh2dll" />
+			<Add library="libssl" />
+			<Add library="libssl32" />
+			<Add library="libcrypto" />
+			<Add directory="C:\MinGW\lib" />
+		</Linker>
+		<Unit filename="belle_poule.cpp" />
+		<Unit filename="output\BellePoule.h" />
+		<Unit filename="output\soapBellePouleService.cpp" />
+		<Unit filename="output\soapBellePouleService.h" />
+		<Unit filename="output\soapC.cpp" />
+		<Unit filename="output\soapH.h" />
+		<Unit filename="output\soapStub.h" />
+		<Unit filename="soap\stdsoap2.cpp" />
+		<Unit filename="soap\stdsoap2.h" />
+		<Extensions>
+			<code_completion />
+			<debugger>
+				<search_path add="F:\BellePoule\launchpad\trunk\system_sources\MinGW\src\libintl\0.14.4\libintl-0.14.4-src" />
+			</debugger>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
