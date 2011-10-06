@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions name="mon_cs"
- xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
- xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xmlns:xsd="http://www.w3.org/2001/XMLSchema"
- xmlns:ns="urn:BellePoule"
- xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
- xmlns:MIME="http://schemas.xmlsoap.org/wsdl/mime/"
- xmlns:DIME="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/"
- xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
- xmlns="http://schemas.xmlsoap.org/wsdl/">
+<definitions name="BellePoule"
+   xmlns="http://schemas.xmlsoap.org/wsdl/"
+   targetNamespace="http://location/BellePoule.wsdl"
+   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+   xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+   xmlns:tns="http://location/BellePoule.wsdl"
+   xmlns:ns="urn:BellePoule">
 
 <types>
+   <schema
+      xmlns="http://www.w3.org/2000/10/XMLSchema"
+      targetNamespace="urn:BellePoule"
+      xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+      xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
+      <complexType name="MatchResult">
+         <sequence>
+           <element name="fencerA_id"    type="xsd:unsignedInt"/>
+           <element name="fencerB_id"    type="xsd:unsignedInt"/>
+           <element name="fencerA_score" type="xsd:unsignedInt"/>
+           <element name="fencerB_score" type="xsd:unsignedInt"/>
+         </sequence>
+      </complexType>
+   </schema>
 </types>
 
 <message name="SetMatchResultRequest">
- <part name="competition_id" type="xsd:unsignedInt"/>
- <part name="round_id"       type="xsd:unsignedInt"/>
- <part name="match_id"       type="xsd:unsignedInt"/>
- <part name="fencerA_id"     type="xsd:unsignedInt"/>
- <part name="fencerB_id"     type="xsd:unsignedInt"/>
- <part name="fencerA_score"  type="xsd:unsignedInt"/>
- <part name="fencerB_score"  type="xsd:unsignedInt"/>
-</message>
-
-<message name="SetMatchResultResponse">
- <part name="" type="xsd:int"/>
+  <part name="competition_id" type="xsd:unsignedInt"/>
+  <part name="round_id"       type="xsd:unsignedInt"/>
+  <part name="match_id"       type="xsd:unsignedInt"/>
+  <part name="match_result"   type="ns:MatchResult"/>
 </message>
 
 <portType name="BellePoulePortType">
- <operation name="SetMatchResult">
-  <input message="tns:SetMatchResultRequest"/>
-  <output message="tns:SetMatchResultResponse"/>
- </operation>
+   <operation name="SetMatchResult">
+      <input message="tns:SetMatchResultRequest"/>
+   </operation>
 </portType>
 
 <binding name="BellePoule" type="tns:BellePoulePortType">
- <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
- <operation name="SetMatchResult">
-  <SOAP:operation style="rpc" soapAction=""/>
-  <input>
-     <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-  </input>
-  <output>
-     <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-  </output>
- </operation>
+   <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+   <operation name="SetMatchResult">
+      <SOAP:operation soapAction=""/>
+      <input>
+         <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+   </operation>
 </binding>
 
 <service name="BellePoule">
- <documentation>test of gSoap</documentation>
- <port name="BellePoule" binding="tns:BellePoule">
-  <SOAP:address location="http://127.0.0.1"/>
- </port>
+   <port name="BellePoulePort" binding="tns:BellePoule">
+      <SOAP:address location="http://127.0.0.1"/>
+   </port>
 </service>
 
 </definitions>
