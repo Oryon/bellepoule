@@ -115,7 +115,6 @@
 		<Unit filename="output\soapBellePouleService.h" />
 		<Unit filename="output\soapC.cpp" />
 		<Unit filename="output\soapH.h" />
-		<Unit filename="output\soapStub.h" />
 		<Unit filename="soap\stdsoap2.cpp" />
 		<Unit filename="soap\stdsoap2.h" />
 		<Extensions>

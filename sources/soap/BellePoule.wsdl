@@ -1,59 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions name="BellePoule"
-   xmlns="http://schemas.xmlsoap.org/wsdl/"
-   targetNamespace="http://location/BellePoule.wsdl"
-   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-   xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
-   xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
-   xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
-   xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
-   xmlns:tns="http://location/BellePoule.wsdl"
-   xmlns:ns="urn:BellePoule">
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  targetNamespace="http://location/BellePoule.wsdl"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+  xmlns:tns="http://location/BellePoule.wsdl"
+  xmlns:ns="urn:BellePoule">
 
-<types>
-   <schema
+  <types>
+    <schema
       xmlns="http://www.w3.org/2000/10/XMLSchema"
       targetNamespace="urn:BellePoule"
       xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
       xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
       <complexType name="MatchResult">
-         <sequence>
-           <element name="fencerA_id"    type="xsd:unsignedInt"/>
-           <element name="fencerB_id"    type="xsd:unsignedInt"/>
-           <element name="fencerA_score" type="xsd:unsignedInt"/>
-           <element name="fencerB_score" type="xsd:unsignedInt"/>
-         </sequence>
+        <sequence>
+          <element name="fencerAId"    type="xsd:unsignedInt"/>
+          <element name="fencerBId"    type="xsd:unsignedInt"/>
+          <element name="fencerAScore" type="xsd:unsignedInt"/>
+          <element name="fencerBScore" type="xsd:unsignedInt"/>
+        </sequence>
       </complexType>
-   </schema>
-</types>
+    </schema>
+  </types>
 
-<message name="SetMatchResultRequest">
-  <part name="competition_id" type="xsd:unsignedInt"/>
-  <part name="round_id"       type="xsd:unsignedInt"/>
-  <part name="match_id"       type="xsd:unsignedInt"/>
-  <part name="match_result"   type="ns:MatchResult"/>
-</message>
+  <!-- ************** SetMatchResult ********************** -->
+  <message name="SetMatchResultRequest">
+    <part name="competitionId" type="xsd:unsignedInt"/>
+    <part name="roundId"       type="xsd:unsignedInt"/>
+    <part name="matchId"       type="xsd:unsignedInt"/>
+    <part name="result"        type="ns:MatchResult"/>
+  </message>
 
-<portType name="BellePoulePortType">
-   <operation name="SetMatchResult">
-      <input message="tns:SetMatchResultRequest"/>
-   </operation>
-</portType>
+  <message name="RequestStatus">
+    <part name="" type="xsd:int"/>
+  </message>
 
-<binding name="BellePoule" type="tns:BellePoulePortType">
-   <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-   <operation name="SetMatchResult">
-      <SOAP:operation soapAction=""/>
+  <!-- ************* GetPlayerData ************************ -->
+  <message name="GetPlayerDataRequest">
+    <part name="CompetitionId" type="xsd:unsignedInt"/>
+    <part name="PlayerId"      type="xsd:unsignedInt"/>
+    <part name="DataName"      type="xsd:string"/>
+  </message>
+
+  <message name="GetPlayerDataResponse">
+    <part name="Data" type="xsd:string"/>
+  </message>
+
+  <!-- ************* GetCompetitionData ************************ -->
+  <message name="GetCompetitionDataRequest">
+    <part name="CompetitionId" type="xsd:unsignedInt"/>
+    <part name="DataName"      type="xsd:string"/>
+  </message>
+
+  <message name="GetCompetitionDataResponse">
+    <part name="Data" type="xsd:string"/>
+  </message>
+
+  <!-- **************************************************** -->
+  <portType name="BellePoulePortType">
+    <operation name="SetMatchResult">
+      <input  message="tns:SetMatchResultRequest"/>
+      <output message="tns:RequestStatus"/>
+    </operation>
+
+    <operation name="GetPlayerData">
+      <input  message="tns:GetPlayerDataRequest"/>
+      <output message="tns:GetPlayerDataResponse"/>
+    </operation>
+
+    <operation name="GetCompetitionData">
+      <input  message="tns:GetCompetitionDataRequest"/>
+      <output message="tns:GetCompetitionDataResponse"/>
+    </operation>
+  </portType>
+
+  <binding name="BellePoule" type="tns:BellePoulePortType">
+    <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="SetMatchResult">
+      <SOAP:operation style="rpc" soapAction=""/>
       <input>
-         <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
-   </operation>
-</binding>
+      <output>
+        <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
 
-<service name="BellePoule">
-   <port name="BellePoulePort" binding="tns:BellePoule">
+    <operation name="GetPlayerData">
+      <SOAP:operation style="rpc" soapAction=""/>
+      <input>
+        <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+
+    <operation name="GetCompetitionData">
+      <SOAP:operation style="rpc" soapAction=""/>
+      <input>
+        <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <SOAP:body use="encoded" namespace="urn:BellePoule" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="BellePoule">
+    <port name="BellePoulePort" binding="tns:BellePoule">
       <SOAP:address location="http://127.0.0.1"/>
-   </port>
-</service>
+    </port>
+  </service>
 
 </definitions>
