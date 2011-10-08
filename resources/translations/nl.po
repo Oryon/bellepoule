@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-22 18:22+0200\n"
-"PO-Revision-Date: 2011-09-23 22:06+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2011-10-07 13:59+0000\n"
+"Last-Translator: werner huysmans <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-09-24 05:02+0000\n"
-"X-Generator: Launchpad (build 14012)\n"
+"X-Launchpad-Export-Date: 2011-10-08 05:19+0000\n"
+"X-Generator: Launchpad (build 14110)\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: ../../sources/checkin.cpp:28 ../../resources/glade/contest.glade:514
@@ -62,11 +62,11 @@ msgstr "Inschrijvingslijst"
 
 #: ../../sources/checkin.cpp:1223
 msgid "List of presents"
-msgstr "Presentielijst"
+msgstr "aanwezigheidslijst"
 
 #: ../../sources/checkin.cpp:1227
 msgid "List of absents"
-msgstr "absentielijst"
+msgstr "lijst van de afwezigen"
 
 #: ../../sources/checkin.cpp:1231
 msgid "Fencer list"
@@ -86,7 +86,7 @@ msgstr "Floret"
 
 #: ../../sources/contest.cpp:70 ../../sources/main.cpp:206
 msgid "Male"
-msgstr "Mannelijk"
+msgstr "mannelijk"
 
 #: ../../sources/contest.cpp:71 ../../sources/main.cpp:207
 msgid "Female"
@@ -94,7 +94,7 @@ msgstr "Vrouwelijk"
 
 #: ../../sources/contest.cpp:72
 msgid "Mixed"
-msgstr "gemixt"
+msgstr "Gemengd"
 
 #: ../../sources/contest.cpp:84
 msgid "U8"
@@ -190,7 +190,7 @@ msgstr "Geboortedatum"
 
 #: ../../sources/main.cpp:203
 msgid "gender"
-msgstr "Sex"
+msgstr "geslacht"
 
 #: ../../sources/main.cpp:209
 msgid "country"
@@ -230,7 +230,7 @@ msgstr "index"
 
 #: ../../sources/main.cpp:263
 msgid "Hits scored"
-msgstr "Touches gezet"
+msgstr "treffers gezet"
 
 #: ../../sources/main.cpp:272
 msgid "Round start rank"
@@ -259,7 +259,7 @@ msgstr "Gezette treffers"
 
 #: ../../sources/pool.cpp:660
 msgid "H. received"
-msgstr "Touches gekregen"
+msgstr "treffers gekregen"
 
 #: ../../sources/pool.cpp:669
 msgid "Index"
@@ -360,7 +360,7 @@ msgstr "Westrijdblad"
 #: ../../sources/table_set.cpp:2625
 #, c-format
 msgid "%s: score sheets printing"
-msgstr "%s : wedstrijdoverzicht"
+msgstr "%s : printen wedstrijdblad"
 
 #: ../../sources/tournament.cpp:265
 msgid "Choose a competion file to open... "
@@ -423,7 +423,7 @@ msgstr ".FFF bestand importeren"
 #: ../../resources/glade/splitting.glade:15
 #: ../../resources/glade/table_supervisor.glade:397
 msgid "Data"
-msgstr "Gegeven"
+msgstr "Data"
 
 #: ../../resources/glade/checkin.glade:265
 msgid "Add a fencer"
@@ -443,7 +443,7 @@ msgstr "Huidige staat van de competitie opslaan"
 
 #: ../../resources/glade/contest.glade:1161
 msgid "To specify the features of the competition."
-msgstr "Toelaten te leren van de competitie eigenschappen"
+msgstr "De kenmerken van de competitie specificeren"
 
 #: ../../resources/glade/contest.glade:1184
 msgid ""
@@ -485,7 +485,7 @@ msgid "Title"
 msgstr "Titel"
 
 msgid "Free text for information purposes."
-msgstr "Vrije informatieve tekst"
+msgstr "vrije tekt voor informatie doeleinden"
 
 #: ../../resources/glade/contest.glade:366
 msgid "Organizer"
@@ -497,7 +497,7 @@ msgstr "website"
 
 #: ../../resources/glade/contest.glade:474
 msgid "<b>Overviews</b>"
-msgstr "<b>Algemeen</b>"
+msgstr "Overzicht"
 
 #: ../../resources/glade/contest.glade:506
 msgid "Date"
@@ -505,11 +505,11 @@ msgstr "Datum"
 
 #: ../../resources/glade/contest.glade:526
 msgid "Scratch"
-msgstr "Leeg"
+msgstr "Scratch"
 
 #: ../../resources/glade/contest.glade:538
 msgid "Start"
-msgstr "Debuut"
+msgstr "Start"
 
 #: ../../resources/glade/contest.glade:547
 msgid "31/03/2009"
@@ -595,7 +595,7 @@ msgstr "Schermers / Poules"
 
 #: ../../resources/glade/pool_allocator.glade:138
 msgid "Swapping"
-msgstr "Bezig met swappen"
+msgstr "Spreiding"
 
 #: ../../resources/glade/pool_supervisor.glade:512
 #: ../../resources/glade/table_supervisor.glade:372
@@ -691,7 +691,7 @@ msgstr "Vorige stap"
 
 #: ../../resources/glade/schedule.glade:227
 msgid "Next round"
-msgstr "Volgende stage"
+msgstr "volgende stap"
 
 #: ../../resources/glade/schedule.glade:47
 msgid "Add"
@@ -864,143 +864,147 @@ msgstr "Exporteer naar FFF"
 
 #: ../../sources/contest.cpp:57
 msgid "Kendo"
-msgstr ""
+msgstr "kendo"
 
 #: ../../sources/general_classification.cpp:254
 msgid "All PDF files (.PDF)"
-msgstr ""
+msgstr "alle PDF files(.PDF)"
 
 #: ../../sources/pool_allocator.cpp:1545
 msgid "Allocation"
-msgstr ""
+msgstr "Toewijzing"
 
 #: ../../sources/pool.cpp:381 ../../sources/table_set.cpp:2342
 msgid "Referee"
-msgstr ""
+msgstr "scheidsrechter"
 
 #: ../../sources/pool.cpp:407 ../../sources/table_set.cpp:2364
 msgid "Piste"
-msgstr ""
+msgstr "loper"
 
 #: ../../sources/pool_supervisor.cpp:450
 msgid "Pools classification"
-msgstr ""
+msgstr "poule rangschikking"
 
 #: ../../sources/table_set.cpp:93 ../../sources/table_set.cpp:2436
 #: ../../sources/table_set.cpp:2443
 msgid "Place #"
-msgstr ""
+msgstr "plaats #"
 
 #: ../../sources/table_supervisor.cpp:997
 msgid "Table classification"
-msgstr ""
+msgstr "tableau rangschikking"
 
 #: ../../sources/tournament.cpp:289
 msgid "FFE files (.xml)"
-msgstr ""
+msgstr "FFE files (.xml)"
 
 #: ../../sources/tournament.cpp:481
 msgid "Choose a backup files location..."
-msgstr ""
+msgstr "Kies een backup bestandslocatie"
 
 #: ../../resources/glade/contest.glade:441
 msgid "Location"
-msgstr ""
+msgstr "Plaats"
 
 #: ../../resources/glade/contest.glade:895
 msgid "Event"
-msgstr ""
+msgstr "Gebeurtenis"
 
 #: ../../resources/glade/contest.glade:943
 msgid "FTP server"
-msgstr ""
+msgstr "FTP server"
 
 #: ../../resources/glade/contest.glade:951
 msgid "User"
-msgstr ""
+msgstr "Gebruiker"
 
 #: ../../resources/glade/contest.glade:963
 msgid "Password"
-msgstr ""
+msgstr "Paswoord"
 
 #: ../../resources/glade/contest.glade:1050
 msgid "<b>Publisher URL</b>"
-msgstr ""
+msgstr "<b>Publisher URL</b>"
 
 #: ../../resources/glade/contest.glade:1070
 #: ../../resources/glade/contest.glade:1084
 msgid "Publication"
-msgstr ""
+msgstr "Publicatie"
 
 #: ../../resources/glade/general_classification.glade:93
 msgid "Export to PDF"
-msgstr ""
+msgstr "Exporteren naar PDF"
 
 #: ../../resources/glade/pool_supervisor.glade:79
 #: ../../resources/glade/table_supervisor.glade:113
 msgid "Number"
-msgstr ""
+msgstr "Aantal"
 
 #: ../../resources/glade/pool_supervisor.glade:114
 #: ../../resources/glade/table_supervisor.glade:148
 msgid "%"
-msgstr ""
+msgstr "%"
 
 #: ../../resources/glade/pool_supervisor.glade:149
 msgid ""
 "Locked until\n"
 "the begining of the pools."
 msgstr ""
+"geblokkeerd \n"
+"tot de start van de poules"
 
 #: ../../resources/glade/schedule.glade:122
 msgid "<b>Schedule</b>"
-msgstr ""
+msgstr "<b>Planning</b>"
 
 #: ../../resources/glade/schedule.glade:155
 msgid "<b>Parameters</b>"
-msgstr ""
+msgstr "<b>Parameters</b>"
 
 #: ../../resources/glade/table_supervisor.glade:51
 msgid "Fenced places"
-msgstr ""
+msgstr "geschermde plaatsen"
 
 #: ../../resources/glade/table_supervisor.glade:159
 msgid ""
 "Locked until\n"
 "the begining of the table."
 msgstr ""
+"geblokkeerd tot\n"
+"de start van de tableau"
 
 #: ../../resources/glade/table_supervisor.glade:196
 msgid "None"
-msgstr ""
+msgstr "Geen"
 
 #: ../../resources/glade/table_supervisor.glade:212
 msgid "Third place"
-msgstr ""
+msgstr "derde plaats"
 
 #: ../../resources/glade/table_supervisor.glade:536
 msgid "For place"
-msgstr ""
+msgstr "voor plaats"
 
 #: ../../resources/glade/table_supervisor.glade:635
 msgid "Zoom"
-msgstr ""
+msgstr "Zoom"
 
 #: ../../resources/glade/tournament.glade:815
 msgid "Backup"
-msgstr ""
+msgstr "Backup"
 
 #: ../../resources/glade/tournament.glade:827
 msgid "Backup files location..."
-msgstr ""
+msgstr "locatie backup bestanden"
 
 #: ../../resources/glade/tournament.glade:848
 msgid "Activate"
-msgstr ""
+msgstr "Activeer"
 
 #: ../../resources/glade/tournament.glade:859
 msgid "Deactivate"
-msgstr ""
+msgstr "Deaktiveren"
 
 #~ msgid "Tous les fichiers"
 #~ msgstr "Alle bestanden"
