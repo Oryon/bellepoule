@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE CompetitionIndividuelle>
 <!--
-           By BellePoule (V2.0beta21)
+           By BellePoule (V2.0rc4)
 
    http://betton.escrime.free.fr/index.php/bellepoule
 -->
-<CompetitionIndividuelle Couleur="0" Annee="2010" Arme="S" Sexe="M" Organisateur="CS Betton" Categorie="M" Date="07.11.2010" Appel="12:00" Scratch="12:00" Début="12:00" TitreLong="H2016" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="1" Lieu="">
+<CompetitionIndividuelle Couleur="0" Annee="2010" Arme="S" Sexe="M" Organisateur="CS Betton" Categorie="M" Date="07.11.2010" Appel="12:00" Scratch="12:00" Debut="12:00" TitreLong="H2016" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="1" Lieu="">
  <Tireurs>
-  <Tireur ID="29" Nom="ROGER" Prenom="Benjamin" DateNaissance="13/02/1996" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330544" Ranking="1006" Exporte="0" Statut="Q"/>
-  <Tireur ID="21" Nom="LATREILLE" Prenom="Quentin" DateNaissance="06/02/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100499" Ranking="1021" Exporte="0" Statut="Q"/>
-  <Tireur ID="30" Nom="BOTUHA" Prenom="Simon" DateNaissance="21/05/1996" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330559" Ranking="1038" Exporte="0" Statut="Q"/>
-  <Tireur ID="19" Nom="GUEGAN" Prenom="Baptiste" DateNaissance="19/11/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100439" Ranking="1039" Exporte="0" Statut="Q"/>
+  <Tireur ID="29" Classement="3" Nom="ROGER" Prenom="Benjamin" DateNaissance="13/02/1996" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330544" Ranking="1006" Exporte="0" Statut="Q"/>
+  <Tireur ID="21" Classement="4" Nom="LATREILLE" Prenom="Quentin" DateNaissance="06/02/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100499" Ranking="1021" Exporte="0" Statut="A"/>
+  <Tireur ID="30" Classement="2" Nom="BOTUHA" Prenom="Simon" DateNaissance="21/05/1996" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330559" Ranking="1038" Exporte="0" Statut="Q"/>
+  <Tireur ID="19" Classement="1" Nom="GUEGAN" Prenom="Baptiste" DateNaissance="19/11/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100439" Ranking="1039" Exporte="0" Statut="Q"/>
   <Tireur ID="14" Nom="LE ROUX" Prenom="Gurvan" DateNaissance="31/03/1997" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100317" Ranking="1142" Exporte="0" Statut="F"/>
   <Tireur ID="32" Nom="BESCOND" Prenom="Maxime" DateNaissance="22/04/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330575" Ranking="1157" Exporte="0" Statut="F"/>
   <Tireur ID="13" Nom="LEGRAND" Prenom="Abraham" DateNaissance="09/08/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100237" Ranking="1163" Exporte="0" Statut="F"/>
@@ -46,12 +46,12 @@
   <Tireur ID="27" Nom="QUEMERAIS" Prenom="Primael" DateNaissance="14/03/1999" Sexe="M" Nation="FRA" Club="ST GREGOIRE" Licence="230350290465" Ranking="0" Exporte="0" Statut="F"/>
  </Tireurs>
  <Arbitres/>
- <Phases PhaseEnCours="2">
+ <Phases PhaseEnCours="4">
   <TourDePoules PhaseID="1" ID="" ScoreMax="5" RatioQualifies="100" NbQualifies="4" Decalage="Aucun" NbDePoules="1" PhaseSuivanteDesQualifies="3" NbQualifiesParIndice="4">
-   <Tireur REF="29" RangInitial="1" Statut="Q"/>
-   <Tireur REF="21" RangInitial="2" Statut="A"/>
-   <Tireur REF="30" RangInitial="3" Statut="Q"/>
-   <Tireur REF="19" RangInitial="4" Statut="Q"/>
+   <Tireur REF="29" RangInitial="1" RangFinal="2" Statut="Q"/>
+   <Tireur REF="21" RangInitial="2" RangFinal="4" Statut="A"/>
+   <Tireur REF="30" RangInitial="3" RangFinal="3" Statut="Q"/>
+   <Tireur REF="19" RangInitial="4" RangFinal="1" Statut="Q"/>
    <Poule ID="1">
     <Tireur REF="21" NoDansLaPoule="1" NbVictoires="0" NbMatches="3" TD="0" TR="0" RangPoule="4"/>
     <Tireur REF="30" NoDansLaPoule="2" NbVictoires="0" NbMatches="3" TD="5" TR="10" RangPoule="3"/>
@@ -84,7 +84,25 @@
     </Match>
    </Poule>
   </TourDePoules>
-  <PhaseDeTableaux PhaseID="3" ID="" ScoreMax="10" RatioQualifies="100" PlacesTirees="0"/>
-  <ClassementGeneral PhaseID="4" ID="" RatioQualifies="100" NbQualifies="0"/>
+  <PhaseDeTableaux PhaseID="3" ID="" ScoreMax="10" RatioQualifies="100" NbQualifies="3" PlacesTirees="0">
+   <Tireur REF="19" RangInitial="1" RangFinal="1" Statut="Q"/>
+   <Tireur REF="29" RangInitial="2" RangFinal="3" Statut="Q"/>
+   <Tireur REF="30" RangInitial="3" RangFinal="2" Statut="Q"/>
+   <SuiteDeTableaux ID="0" Titre="Plaats #1" NbDeTableaux="2">
+    <Tableau ID="A4" Titre="Halve finale" Taille="4">
+     <Match ID="2">
+      <Tireur REF="30" Score="10" Statut="V"/>
+      <Tireur REF="29" Score="2" Statut="D"/>
+     </Match>
+    </Tableau>
+    <Tableau ID="A2" Titre="Finale" Taille="2">
+     <Match ID="1">
+      <Tireur REF="19" Score="10" Statut="V"/>
+      <Tireur REF="30" Score="9" Statut="D"/>
+     </Match>
+    </Tableau>
+   </SuiteDeTableaux>
+  </PhaseDeTableaux>
+  <ClassementGeneral PhaseID="4" ID="" RatioQualifies="100" NbQualifies="3"/>
  </Phases>
 </CompetitionIndividuelle>
