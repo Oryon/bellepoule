@@ -19,8 +19,8 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "pool_allocator.hpp"
-#include "pool_supervisor.hpp"
 #include "classification.hpp"
+#include "pool_supervisor.hpp"
 
 const gchar *PoolSupervisor::_class_name     = N_ ("Pools");
 const gchar *PoolSupervisor::_xml_class_name = "pool_stage";
@@ -746,6 +746,44 @@ void PoolSupervisor::OnToggleSingleClassification (gboolean single_selected)
 }
 
 // --------------------------------------------------------------------------------
+#include "soapScoringSystemProxy.h"
+void PoolSupervisor::OnScoreDeviceClicked ()
+{
+  ScoringSystemProxy  scoring_system;
+  gchar              *server;
+
+  {
+    GtkWidget *entry  = _glade->GetWidget ("referee_url_entry");
+    gchar     *url    = (gchar *) gtk_entry_get_text (GTK_ENTRY (entry));
+
+    server = g_strdup_printf ("%s:8080", url);
+
+    scoring_system.soap_endpoint = server;
+  }
+
+  // Player data
+  {
+    int status;
+
+    if (scoring_system.SetPoolMatchs (111,
+                                      222,
+                                      333,
+                                      444,
+                                      555,
+                                      status) != SOAP_OK)
+    {
+      scoring_system.soap_stream_fault (std::cerr);
+    }
+    else
+    {
+      printf ("=== > SetPoolMatchs\n");
+    }
+  }
+
+  g_free (server);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_pool_filter_toolbutton_clicked (GtkWidget *widget,
                                                                    Object    *owner)
 {
@@ -780,6 +818,15 @@ extern "C" G_MODULE_EXPORT void on_stuff_toolbutton_clicked (GtkWidget *widget,
   PoolSupervisor *ps = dynamic_cast <PoolSupervisor *> (owner);
 
   ps->OnStuffClicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_score_device_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+{
+  PoolSupervisor *ps = dynamic_cast <PoolSupervisor *> (owner);
+
+  ps->OnScoreDeviceClicked ();
 }
 
 // --------------------------------------------------------------------------------

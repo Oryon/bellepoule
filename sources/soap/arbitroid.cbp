@@ -108,6 +108,8 @@
 		<Unit filename="output\soapBellePouleProxy.h" />
 		<Unit filename="output\soapC.cpp" />
 		<Unit filename="output\soapH.h" />
+		<Unit filename="output\soapScoringSystemService.cpp" />
+		<Unit filename="output\soapScoringSystemService.h" />
 		<Unit filename="output\soapStub.h" />
 		<Unit filename="soap\stdsoap2.cpp" />
 		<Unit filename="soap\stdsoap2.h" />

@@ -1,14 +1,18 @@
 #include <sstream>
 #include <iostream>
+#include <windows.h>
 
 #include "soapBellePouleProxy.h"
 #include "BellePoule.nsmap"
+
+#include "soapScoringSystemService.h"
 
 const char server[] = "http://127.0.0.1:8080";
 //const char server[] = "http://192.168.0.10:8080";
 
 int main (int argc, char *argv[])
 {
+#if 0
   BellePouleProxy belle_poule;
 
   belle_poule.soap_endpoint = server;
@@ -48,7 +52,7 @@ int main (int argc, char *argv[])
 
   // Match result
   {
-    soap2__MatchResult match_result;
+    soap1__MatchResult match_result;
     int                status;
 
     match_result.fencerAId = 888;
@@ -65,4 +69,23 @@ int main (int argc, char *argv[])
       belle_poule.soap_stream_fault (std::cerr);
     }
   }
+#endif
+
+  {
+    ScoringSystemService scoring_system;
+
+    scoring_system.run (8080);
+    Sleep (10000);
+  }
+}
+
+int ScoringSystemService::SetPoolMatchs (unsigned int  competitionId,
+                                         unsigned int  roundId,
+                                         unsigned int  matchId,
+                                         unsigned int  fencerAId,
+                                         unsigned int  fencerBId,
+                                         int          &status)
+{
+  printf ("Feuille de match\n");
+  return SOAP_OK;
 }

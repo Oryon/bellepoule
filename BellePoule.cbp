@@ -14,7 +14,6 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-DDEBUG=1" />
-					<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
 					<Add directory="sources\soap\soap" />
 					<Add directory="sources\soap\output" />
 				</Compiler>
@@ -26,7 +25,6 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -40,7 +38,6 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-DDEBUG=1" />
-					<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
 				</Compiler>
 			</Target>
 		</Build>
@@ -55,6 +52,7 @@
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-mms-bitfields -Wno-long-long -Wno-unused-parameter -Wno-shadow" />
+			<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
 			<Add option="-DWIN32" />
 			<Add directory="C:\MinGW\include" />
 			<Add directory="C:\MinGW\include\gtk-2.0" />
@@ -66,6 +64,8 @@
 			<Add directory="C:\MinGW\lib\gtk-2.0\include" />
 			<Add directory="C:\MinGW\include\atk-1.0" />
 			<Add directory="C:\MinGW\include\goocanvas-0.15\goocanvas" />
+			<Add directory="sources\soap\output" />
+			<Add directory="sources\soap\soap" />
 		</Compiler>
 		<Linker>
 			<Add library="gtk-win32-2.0" />
@@ -132,6 +132,8 @@
 		<Unit filename="sources\match.hpp" />
 		<Unit filename="sources\module.cpp" />
 		<Unit filename="sources\module.hpp" />
+		<Unit filename="sources\network.cpp" />
+		<Unit filename="sources\network.hpp" />
 		<Unit filename="sources\object.cpp" />
 		<Unit filename="sources\object.hpp" />
 		<Unit filename="sources\player.cpp" />
@@ -162,6 +164,8 @@
 		<Unit filename="sources\soap\output\soapBellePouleService.h" />
 		<Unit filename="sources\soap\output\soapC.cpp" />
 		<Unit filename="sources\soap\output\soapH.h" />
+		<Unit filename="sources\soap\output\soapScoringSystemProxy.cpp" />
+		<Unit filename="sources\soap\output\soapScoringSystemProxy.h" />
 		<Unit filename="sources\soap\soap\stdsoap2.cpp" />
 		<Unit filename="sources\soap\soap\stdsoap2.h" />
 		<Unit filename="sources\splitting.cpp" />

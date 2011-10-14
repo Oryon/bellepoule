@@ -42,6 +42,8 @@ class PoolSupervisor : public virtual Stage, public Module
 
     void OnToggleSingleClassification (gboolean single_selected);
 
+    void OnScoreDeviceClicked ();
+
   private:
     void Display ();
     void Garnish ();

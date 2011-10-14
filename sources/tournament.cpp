@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "BellePoule.nsmap"
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <curl/curl.h>
@@ -129,7 +128,7 @@ Tournament::Tournament (gchar *filename)
     g_free (translators);
   }
 
-  BellePouleService::run (8080);
+  _network = new Network ();
 }
 
 // --------------------------------------------------------------------------------
@@ -161,6 +160,8 @@ Tournament::~Tournament ()
   g_key_file_free (_config_file);
 
   curl_global_cleanup ();
+
+  _network->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -676,31 +677,4 @@ extern "C" G_MODULE_EXPORT void on_activate_radiomenuitem_toggled (GtkCheckMenuI
   {
     t->OnActivateBackup ();
   }
-}
-
-// --------------------------------------------------------------------------------
-int BellePouleService::GetCompetitionData (unsigned int   competition_id,
-                                           char          *data_name,
-                                           char         *&competition_data)
-{
-  return SOAP_OK;
-}
-
-// --------------------------------------------------------------------------------
-int BellePouleService::GetPlayerData (unsigned int   CompetitionId,
-                                      unsigned int   PlayerId,
-                                      char          *DataName,
-                                      char         *&player_data)
-{
-  return SOAP_OK;
-}
-
-// --------------------------------------------------------------------------------
-int BellePouleService::SetMatchResult (unsigned int        competition_id,
-                                       unsigned int        round_id,
-                                       unsigned int        match_id,
-                                       soap2__MatchResult *result,
-                                       int                &status)
-{
-  return SOAP_OK;
 }
