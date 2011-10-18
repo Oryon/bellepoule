@@ -35,7 +35,7 @@ int BellePouleService::GetPlayerData (unsigned int   CompetitionId,
 int BellePouleService::SetMatchResult (unsigned int        competition_id,
                                        unsigned int        round_id,
                                        unsigned int        match_id,
-                                       soap2__MatchResult *result,
+                                       soap1__MatchResult *result,
                                        int                &status)
 {
   status = 0;

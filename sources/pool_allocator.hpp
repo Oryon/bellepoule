@@ -34,9 +34,9 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     void Save (xmlTextWriter *xml_writer);
 
-    guint  GetNbPools      ();
-    Pool  *GetPool         (guint index);
-    Data  *GetMaxScore     ();
+    guint  GetNbPools  ();
+    Pool  *GetPool     (guint index);
+    Data  *GetMaxScore ();
 
   public:
     static const gchar *_class_name;
@@ -60,9 +60,9 @@ class PoolAllocator : public virtual Stage, public CanvasModule
   private:
     typedef struct
     {
-      guint    nb_pool;
-      guint    size;
-      gboolean has_two_size;
+      guint _nb_pool;
+      guint _size;
+      guint _nb_overloaded;
     } Configuration;
 
     GSList        *_pools_list;

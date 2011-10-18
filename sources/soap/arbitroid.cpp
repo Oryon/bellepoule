@@ -12,7 +12,7 @@ const char server[] = "http://127.0.0.1:8080";
 
 int main (int argc, char *argv[])
 {
-#if 0
+#if 1
   BellePouleProxy belle_poule;
 
   belle_poule.soap_endpoint = server;
@@ -69,14 +69,14 @@ int main (int argc, char *argv[])
       belle_poule.soap_stream_fault (std::cerr);
     }
   }
-#endif
-
+#else
   {
     ScoringSystemService scoring_system;
 
     scoring_system.run (8080);
     Sleep (10000);
   }
+#endif
 }
 
 int ScoringSystemService::SetPoolMatchs (unsigned int  competitionId,

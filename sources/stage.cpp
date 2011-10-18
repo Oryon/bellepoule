@@ -435,6 +435,12 @@ Stage *Stage::GetPreviousStage ()
 }
 
 // --------------------------------------------------------------------------------
+Stage *Stage::GetNextStage ()
+{
+  return _next;
+}
+
+// --------------------------------------------------------------------------------
 void Stage::RetrieveAttendees ()
 {
   if (_attendees)

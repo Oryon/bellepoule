@@ -149,8 +149,8 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 PoolAllocator::~PoolAllocator ()
 {
-  _max_score->Release     ();
-  _swapping->Release      ();
+  _max_score->Release ();
+  _swapping->Release  ();
 }
 
 // --------------------------------------------------------------------------------
@@ -322,7 +322,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
             {
               _selected_config = (Configuration *) g_slist_nth_data (_config_list,
                                                                      i);
-              if (_selected_config->nb_pool == nb_pool)
+              if (_selected_config->_nb_pool == nb_pool)
               {
                 break;
               }
@@ -415,7 +415,7 @@ void PoolAllocator::Save (xmlTextWriter *xml_writer)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "NbQualifiesParIndice",
-                                       "%d", _selected_config->size);
+                                       "%d", _selected_config->_size);
   }
 
   Stage::SaveAttendees (xml_writer);
@@ -448,7 +448,7 @@ void PoolAllocator::RegisterConfig (Configuration *config)
     gtk_list_store_append (_combobox_store, &iter);
 
     {
-      gchar *nb_pool_text = g_strdup_printf ("%d", config->nb_pool);
+      gchar *nb_pool_text = g_strdup_printf ("%d", config->_nb_pool);
 
       gtk_list_store_set (_combobox_store, &iter,
                           NB_POOLS_COL, nb_pool_text,
@@ -459,13 +459,13 @@ void PoolAllocator::RegisterConfig (Configuration *config)
     {
       gchar *pool_size_text;
 
-      if (config->has_two_size)
+      if (config->_nb_overloaded)
       {
-        pool_size_text = g_strdup_printf ("%d ou %d", config->size, config->size+1);
+        pool_size_text = g_strdup_printf ("%d ou %d", config->_size, config->_size+1);
       }
       else
       {
-        pool_size_text = g_strdup_printf ("%d", config->size);
+        pool_size_text = g_strdup_printf ("%d", config->_size);
       }
 
       gtk_list_store_set (_combobox_store, &iter,
@@ -474,8 +474,8 @@ void PoolAllocator::RegisterConfig (Configuration *config)
       g_free (pool_size_text);
     }
 
-    if (   (config->size < 7)
-        || (config->size == 7) && (config->has_two_size == FALSE))
+    if (   (config->_size < 7)
+        || (config->_size == 7) && (config->_nb_overloaded == 0))
     {
       _best_config = config;
     }
@@ -512,9 +512,9 @@ void PoolAllocator::FillCombobox ()
     {
       config = (Configuration *) g_malloc (sizeof (Configuration));
 
-      config->has_two_size = FALSE;
-      config->nb_pool      = nb_players/size;
-      config->size         = size;
+      config->_nb_pool       = nb_players/size;
+      config->_size          = size;
+      config->_nb_overloaded = 0;
 
       RegisterConfig (config);
     }
@@ -528,9 +528,9 @@ void PoolAllocator::FillCombobox ()
         {
           config = (Configuration *) g_malloc (sizeof (Configuration));
 
-          config->has_two_size = TRUE;
-          config->nb_pool      = p + (nb_players - size*p) / (size + 1);
-          config->size         = size;
+          config->_nb_pool       = p + (nb_players - size*p) / (size + 1);
+          config->_size          = size;
+          config->_nb_overloaded = (nb_players - size*p) / (size+1);
 
           RegisterConfig (config);
           break;
@@ -566,7 +566,7 @@ void PoolAllocator::CreatePools ()
   {
     Pool          **pool_table;
     GSList         *shortlist   = _attendees->GetShortList ();
-    guint           nb_pool     = _selected_config->nb_pool;
+    guint           nb_pool     = _selected_config->_nb_pool;
     PoolMatchOrder *match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
 
     pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
@@ -580,9 +580,21 @@ void PoolAllocator::CreatePools ()
     }
 
     {
-      Swapper *swapper;
+      Swapper  *swapper;
+      gboolean  seeding_balanced;
 
-      if (_swapping_criteria)
+      {
+        Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+        if (GetNextStage ())
+        {
+          GtkWidget *w = next_stage->GetWidget ("balanced_radiobutton");
+
+          seeding_balanced = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+        }
+      }
+
+      if (_swapping_criteria && seeding_balanced)
       {
         swapper = new Swapper (_pools_list,
                                _swapping_criteria->_code_name,
@@ -600,13 +612,41 @@ void PoolAllocator::CreatePools ()
         Player *player;
         Pool   *pool;
 
-        if (((i / nb_pool) % 2) == 0)
+        if (seeding_balanced)
         {
-          pool = pool_table[i%nb_pool];
+          if (((i / nb_pool) % 2) == 0)
+          {
+            pool = pool_table[i%nb_pool];
+          }
+          else
+          {
+            pool = pool_table[nb_pool-1 - i%nb_pool];
+          }
         }
         else
         {
-          pool = pool_table[nb_pool-1 - i%nb_pool];
+          if (i == 0)
+          {
+            pool = pool_table[0];
+          }
+          if (_selected_config->_nb_overloaded)
+          {
+            if (pool->GetNumber () <= _selected_config->_nb_overloaded)
+            {
+              if (pool->GetNbPlayers () >= _selected_config->_size+1)
+              {
+                pool = pool_table[pool->GetNumber ()];
+              }
+            }
+            else if (pool->GetNbPlayers () >= _selected_config->_size)
+            {
+              pool = pool_table[pool->GetNumber ()];
+            }
+          }
+          else if (pool->GetNbPlayers () >= _selected_config->_size)
+          {
+            pool = pool_table[pool->GetNumber ()];
+          }
         }
 
         player = swapper->GetNextPlayer (pool);
@@ -1001,9 +1041,9 @@ void PoolAllocator::FixUpTablesBounds ()
 
     {
       guint nb_columns = 2;
-      guint nb_rows    = _selected_config->nb_pool / nb_columns;
+      guint nb_rows    = _selected_config->_nb_pool / nb_columns;
 
-      if (_selected_config->nb_pool % nb_columns != 0)
+      if (_selected_config->_nb_pool % nb_columns != 0)
       {
         nb_rows++;
       }
@@ -1091,9 +1131,9 @@ void PoolAllocator::FillPoolTable (Pool *pool)
     {
       gchar *icon_name;
 
-      if (   (pool_size == _selected_config->size)
-          || (   _selected_config->has_two_size
-              && ((pool_size == _selected_config->size)) || (pool_size == _selected_config->size + 1)))
+      if (   (pool_size == _selected_config->_size)
+          || (   _selected_config->_nb_overloaded
+              && ((pool_size == _selected_config->_size)) || (pool_size == _selected_config->_size + 1)))
       {
         icon_name = g_strdup (GTK_STOCK_APPLY);
         pool->SetData (this, "is_balanced", (void *) 1);

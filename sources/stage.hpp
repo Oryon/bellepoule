@@ -67,6 +67,8 @@ class Stage : public virtual Object
 
     Stage *GetPreviousStage ();
 
+    Stage *GetNextStage ();
+
     const gchar *GetClassName ();
 
     gchar *GetName ();

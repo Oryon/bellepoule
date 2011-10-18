@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ScoringSystem"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  targetNamespace="http://location/ScoringSystem.wsdl"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+  xmlns:tns="http://location/ScoringSystem.wsdl"
+  xmlns:ns="urn:ScoringSystem">
+
+  <types>
+    <schema
+      xmlns="http://www.w3.org/2000/10/XMLSchema"
+      targetNamespace="urn:ScoringSystem"
+      xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+      xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
+      <complexType name="MatchResult">
+        <sequence>
+          <element name="fencerAId"    type="xsd:unsignedInt"/>
+          <element name="fencerBId"    type="xsd:unsignedInt"/>
+          <element name="fencerAScore" type="xsd:unsignedInt"/>
+          <element name="fencerBScore" type="xsd:unsignedInt"/>
+        </sequence>
+      </complexType>
+    </schema>
+  </types>
+
+  <!-- ************** SetPoolMatchs ********************** -->
+  <message name="SetPoolMatchsRequest">
+    <part name="competitionId" type="xsd:unsignedInt"/>
+    <part name="roundId"       type="xsd:unsignedInt"/>
+    <part name="matchId"       type="xsd:unsignedInt"/>
+    <part name="fencerAId"     type="xsd:unsignedInt"/>
+    <part name="fencerBId"     type="xsd:unsignedInt"/>
+  </message>
+
+  <message name="RequestStatus">
+    <part name="" type="xsd:int"/>
+  </message>
+
+  <!-- **************************************************** -->
+  <portType name="ScoringSystemPortType">
+    <operation name="SetPoolMatchs">
+      <input  message="tns:SetPoolMatchsRequest"/>
+      <output message="tns:RequestStatus"/>
+    </operation>
+  </portType>
+
+  <binding name="ScoringSystem" type="tns:ScoringSystemPortType">
+    <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="SetPoolMatchs">
+      <SOAP:operation style="rpc" soapAction=""/>
+      <input>
+        <SOAP:body use="encoded" namespace="urn:ScoringSystem" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <SOAP:body use="encoded" namespace="urn:ScoringSystem" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="ScoringSystem">
+    <port name="ScoringSystemPort" binding="tns:ScoringSystem">
+      <SOAP:address location="http://127.0.0.1"/>
+    </port>
+  </service>
+
+</definitions>
