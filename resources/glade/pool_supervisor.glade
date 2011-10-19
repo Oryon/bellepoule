@@ -258,7 +258,7 @@ the begining of the pools.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkRadioButton" id="radiobutton2">
+                      <object class="GtkRadioButton" id="strength_radiobutton">
                         <property name="label" translatable="yes">Grouped by strength</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>

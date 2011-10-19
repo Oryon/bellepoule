@@ -589,7 +589,7 @@ void PoolSupervisor::SetInputProvider (Stage *input_provider)
   if (_pool_allocator)
   {
     _pool_allocator->Retain ();
-    _max_score     = _pool_allocator->GetMaxScore ();
+    _max_score = _pool_allocator->GetMaxScore ();
   }
 
   Stage::SetInputProvider (input_provider);

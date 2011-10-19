@@ -69,6 +69,9 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _max_score = new Data ("ScoreMax",
                          5);
 
+  _seeding_balanced = new Data ("RepartitionEquilibre",
+                                TRUE);
+
   _swapping = new Data ("Decalage",
                         (gchar *) NULL);
 
@@ -149,8 +152,9 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 PoolAllocator::~PoolAllocator ()
 {
-  _max_score->Release ();
-  _swapping->Release  ();
+  _max_score->Release        ();
+  _swapping->Release         ();
+  _seeding_balanced->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -233,9 +237,63 @@ void PoolAllocator::Garnish ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::ApplyConfig ()
+{
+  Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+  if (next_stage)
+  {
+    GtkWidget *w = next_stage->GetWidget ("balanced_radiobutton");
+
+    if (w)
+    {
+      _seeding_balanced->_value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+    }
+
+    DeletePools ();
+    CreatePools ();
+    Display ();
+    SignalStatusUpdate ();
+    MakeDirty ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::FillInConfig ()
+{
+  Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+  if (next_stage)
+  {
+    GtkWidget *w;
+
+    if (_seeding_balanced->_value)
+    {
+      w = next_stage->GetWidget ("balanced_radiobutton");
+    }
+    else
+    {
+      w = next_stage->GetWidget ("strength_radiobutton");
+    }
+
+    if (w)
+    {
+      printf (">>>> %d\n", _seeding_balanced->_value);
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
+                                    TRUE);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
 {
   Stage::LoadConfiguration (xml_node);
+
+  if (_seeding_balanced)
+  {
+    _seeding_balanced->Load (xml_node);
+  }
 
   if (_swapping)
   {
@@ -278,6 +336,11 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
 void PoolAllocator::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   Stage::SaveConfiguration (xml_writer);
+
+  if (_seeding_balanced)
+  {
+    _seeding_balanced->Save (xml_writer);
+  }
 
   if (_swapping)
   {
@@ -580,21 +643,9 @@ void PoolAllocator::CreatePools ()
     }
 
     {
-      Swapper  *swapper;
-      gboolean  seeding_balanced;
+      Swapper *swapper;
 
-      {
-        Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
-
-        if (GetNextStage ())
-        {
-          GtkWidget *w = next_stage->GetWidget ("balanced_radiobutton");
-
-          seeding_balanced = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
-        }
-      }
-
-      if (_swapping_criteria && seeding_balanced)
+      if (_swapping_criteria && _seeding_balanced->_value)
       {
         swapper = new Swapper (_pools_list,
                                _swapping_criteria->_code_name,
@@ -612,7 +663,7 @@ void PoolAllocator::CreatePools ()
         Player *player;
         Pool   *pool;
 
-        if (seeding_balanced)
+        if (_seeding_balanced->_value)
         {
           if (((i / nb_pool) % 2) == 0)
           {

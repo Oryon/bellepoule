@@ -286,18 +286,21 @@ void TableSupervisor::SetTableSetsState ()
   if (_displayed_table_set == NULL)
   {
     GtkTreeIter iter;
-    GtkTreePath *path;
 
-    gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
-                                   &iter);
-    path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore), &iter);
+    if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
+                                       &iter))
+    {
+      GtkTreePath *path;
 
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
-                              path,
-                              NULL,
-                              FALSE);
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore), &iter);
 
-    gtk_tree_path_free (path);
+      gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                                path,
+                                NULL,
+                                FALSE);
+
+      gtk_tree_path_free (path);
+    }
   }
 
   SignalStatusUpdate ();
@@ -775,11 +778,6 @@ void TableSupervisor::FillInConfig ()
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton")),
                                   TRUE);
   }
-  else if (_fenced_places->_value == QUOTA)
-  {
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("quota_radiobutton")),
-                                  TRUE);
-  }
   else
   {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("no_radiobutton")),
@@ -799,10 +797,6 @@ void TableSupervisor::ApplyConfig ()
   else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton"))))
   {
     _fenced_places->_value = THIRD_PLACES;
-  }
-  else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("quota_radiobutton"))))
-  {
-    _fenced_places->_value = QUOTA;
   }
   else
   {

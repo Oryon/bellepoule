@@ -80,6 +80,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     GooCanvasItem *_main_table;
     GtkListStore  *_combobox_store;
     Data          *_swapping;
+    Data          *_seeding_balanced;
     AttributeDesc *_swapping_criteria;
     gdouble        _max_w;
     gdouble        _max_h;
@@ -154,6 +155,10 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     static Stage *CreateInstance (StageClass *stage_class);
 
     void Load (xmlNode *xml_node);
+
+    void ApplyConfig ();
+
+    void FillInConfig ();
 
     ~PoolAllocator ();
 };
