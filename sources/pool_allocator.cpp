@@ -82,6 +82,8 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     AddSensitiveWidget (_glade->GetWidget ("nb_pools_combobox"));
     AddSensitiveWidget (_glade->GetWidget ("pool_size_combobox"));
     AddSensitiveWidget (_glade->GetWidget ("swapping_combobox"));
+
+    _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_combobox"));
   }
 
   {
@@ -247,7 +249,21 @@ void PoolAllocator::ApplyConfig ()
 
     if (w)
     {
-      _seeding_balanced->_value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+      guint seeding_is_balanced = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+
+      if (_seeding_balanced->_value != seeding_is_balanced)
+      {
+        _seeding_balanced->_value = seeding_is_balanced;
+
+        if (seeding_is_balanced)
+        {
+          _swapping_sensitivity_trigger.SwitchOn ();
+        }
+        else
+        {
+          _swapping_sensitivity_trigger.SwitchOff ();
+        }
+      }
     }
 
     DeletePools ();
@@ -278,7 +294,6 @@ void PoolAllocator::FillInConfig ()
 
     if (w)
     {
-      printf (">>>> %d\n", _seeding_balanced->_value);
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
                                     TRUE);
     }
@@ -293,6 +308,11 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
   if (_seeding_balanced)
   {
     _seeding_balanced->Load (xml_node);
+
+    if (_seeding_balanced->_value == FALSE)
+    {
+      _swapping_sensitivity_trigger.SwitchOff ();
+    }
   }
 
   if (_swapping)

@@ -125,7 +125,7 @@ class Module : public virtual Object
 
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;
-    SensitivityTrigger *_sensitivity_trigger;
+    SensitivityTrigger  _sensitivity_trigger;
     GSList             *_plugged_list;
     Module             *_owner;
     GtkWidget          *_config_widget;

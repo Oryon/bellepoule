@@ -176,12 +176,18 @@ void PoolSupervisor::OnPlugged ()
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton")),
                                      FALSE);
 
+  gtk_widget_set_sensitive (_glade->GetWidget ("seeding_viewport"),
+                            FALSE);
+
   RetrievePools ();
 }
 
 // --------------------------------------------------------------------------------
 void PoolSupervisor::OnUnPlugged ()
 {
+  gtk_widget_set_sensitive (_glade->GetWidget ("seeding_viewport"),
+                            TRUE);
+
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
   {
     Pool *pool = _pool_allocator->GetPool (i);

@@ -234,7 +234,7 @@ the begining of the pools.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkViewport" id="viewport5">
+              <object class="GtkViewport" id="seeding_viewport">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>

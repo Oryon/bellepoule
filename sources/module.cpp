@@ -41,8 +41,6 @@ Module::Module (const gchar *glade_file,
   _filter         = NULL;
   _rand_seed      = 0;
 
-  _sensitivity_trigger = new SensitivityTrigger ();
-
   if (glade_file)
   {
     _glade = new Glade (glade_file,
@@ -84,8 +82,6 @@ Module::~Module ()
   }
 
   UnPlug ();
-
-  _sensitivity_trigger->Release ();
 
   Object::TryToRelease (_glade);
   g_object_unref (_root);
@@ -219,19 +215,19 @@ GtkToolbar *Module::GetToolbar ()
 // --------------------------------------------------------------------------------
 void Module::AddSensitiveWidget (GtkWidget *w)
 {
-  _sensitivity_trigger->AddWidget (w);
+  _sensitivity_trigger.AddWidget (w);
 }
 
 // --------------------------------------------------------------------------------
 void Module::EnableSensitiveWidgets ()
 {
-  _sensitivity_trigger->SwitchOn ();
+  _sensitivity_trigger.SwitchOn ();
 }
 
 // --------------------------------------------------------------------------------
 void Module::DisableSensitiveWidgets ()
 {
-  _sensitivity_trigger->SwitchOff ();
+  _sensitivity_trigger.SwitchOff ();
 }
 
 // --------------------------------------------------------------------------------
