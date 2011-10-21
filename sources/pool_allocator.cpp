@@ -46,6 +46,8 @@ extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
                                                               Object    *owner);
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
                                                                Object    *owner);
+extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
+                                                              Object    *owner);
 
 const gchar *PoolAllocator::_class_name     = N_ ("Pools arrangement");
 const gchar *PoolAllocator::_xml_class_name = "TourDePoules";
@@ -262,6 +264,15 @@ void PoolAllocator::ApplyConfig ()
         else
         {
           _swapping_sensitivity_trigger.SwitchOff ();
+
+          if (_swapping_criteria)
+          {
+            GtkWidget *w = _glade->GetWidget ("swapping_combobox");
+
+            gtk_combo_box_set_active (GTK_COMBO_BOX (w),
+                                      0);
+            return;
+          }
         }
       }
     }
@@ -331,14 +342,13 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
                                                      &iter);
       for (guint i = 0; iter_is_valid; i++)
       {
-        gchar         *image;
         AttributeDesc *attr_desc;
 
         gtk_tree_model_get (model, &iter,
-                            SWAPPING_IMAGE,    &image,
                             SWAPPING_CRITERIA, &attr_desc,
                             -1);
-        if (strcmp (image, _swapping->_string) == 0)
+        if (   ((attr_desc == NULL) && strcmp (_swapping->_string, "Aucun") == 0)
+            || (attr_desc && (strcmp (attr_desc->_code_name, _swapping->_string) == 0)))
         {
           criteria_index = i;
           break;
@@ -1572,9 +1582,17 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
                                  &iter);
   gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore")),
                       &iter,
-                      SWAPPING_IMAGE, &_swapping->_string,
                       SWAPPING_CRITERIA, &_swapping_criteria,
                       -1);
+
+  if (_swapping_criteria)
+  {
+    _swapping->_string = _swapping_criteria->_code_name;
+  }
+  else
+  {
+    _swapping->_string = "Aucun";
+  }
 
   if (_pools_list)
   {
