@@ -437,6 +437,9 @@ void Tournament::OnRecent ()
                                                      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                      NULL);
 
+  gtk_recent_chooser_set_show_tips  (GTK_RECENT_CHOOSER (dialog),
+                                     TRUE);
+
   {
     GtkRecentFilter *filter = gtk_recent_filter_new ();
 

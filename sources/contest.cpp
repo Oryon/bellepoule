@@ -1030,6 +1030,12 @@ void Contest::Save ()
     Save (_filename);
 
     {
+      GtkRecentManager *manager = gtk_recent_manager_get_default ();
+
+      gtk_recent_manager_add_item (manager, _filename);
+    }
+
+    {
       const gchar *location = _tournament->GetBackupLocation ();
 
       if (location)
@@ -1150,12 +1156,6 @@ void Contest::Save (gchar *filename)
       xmlTextWriterEndDocument (xml_writer);
 
       xmlFreeTextWriter (xml_writer);
-
-      {
-        GtkRecentManager *manager = gtk_recent_manager_get_default ();
-
-        gtk_recent_manager_add_item (manager, filename);
-      }
     }
 
     gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
