@@ -696,6 +696,8 @@ void TableSet::CreateTree ()
 
   _nb_tables++;
 
+  gtk_tree_store_clear (_quick_search_treestore);
+
   _tables = (Table **) g_malloc (_nb_tables * sizeof (Table *));
   for (guint t = 0; t < _nb_tables; t++)
   {
