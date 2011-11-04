@@ -128,21 +128,16 @@ void ScoreCollector::Refresh (Match *match)
       score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
       score_image = score->GetImage ();
 
-      if (score_image[0] == 0)
-      {
-        if (_display_match_name)
-        {
-          g_object_set (score_text,
-                        "text", match->GetName (),
-                        "fill-color", "GainsBoro",
-                        NULL);
-        }
-      }
-      else
+      g_object_set (score_text,
+                    "text", score_image,
+                    "fill-color", "black",
+                    NULL);
+      if (   (score_image[0] == 0)
+          && (_display_match_name))
       {
         g_object_set (score_text,
-                      "text", score_image,
-                      "fill-color", "black",
+                      "text", match->GetName (),
+                      "fill-color", "GainsBoro",
                       NULL);
       }
 
@@ -153,21 +148,16 @@ void ScoreCollector::Refresh (Match *match)
         score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
         score_image = score->GetImage ();
 
-        if (score_image[0] == 0)
-        {
-          if (_display_match_name)
-          {
-            g_object_set (score_text,
-                          "text", match->GetName (),
-                          "fill-color", "GainsBoro",
-                          NULL);
-          }
-        }
-        else
+        g_object_set (score_text,
+                      "text", score_image,
+                      "fill-color", "black",
+                      NULL);
+        if (   (score_image[0] == 0)
+            && (_display_match_name))
         {
           g_object_set (score_text,
-                        "text", score_image,
-                        "fill-color", "black",
+                        "text", match->GetName (),
+                        "fill-color", "GainsBoro",
                         NULL);
         }
       }
@@ -185,9 +175,12 @@ void ScoreCollector::Wipe (GooCanvasItem *point)
   GooCanvasItem *score_text;
 
   score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (point), "score_text");
-  g_object_set (score_text,
-                "text",
-                "", NULL);
+  if (score_text)
+  {
+    g_object_set (score_text,
+                  "text",
+                  "", NULL);
+  }
 }
 
 // --------------------------------------------------------------------------------
