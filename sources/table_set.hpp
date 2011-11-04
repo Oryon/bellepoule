@@ -135,8 +135,6 @@ class TableSet : public CanvasModule
       guint          _table_index;
       Match         *_match;
       GooCanvasItem *_canvas_table;
-      GooCanvasItem *_player_item;
-      GooCanvasItem *_print_item;
       GooCanvasItem *_connector;
     };
 

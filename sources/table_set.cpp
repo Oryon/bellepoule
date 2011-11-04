@@ -254,10 +254,6 @@ void TableSet::SetAttendees (GSList *attendees)
 void TableSet::SetAttendees (GSList *attendees,
                              GSList *withdrawals)
 {
-  attendees = g_slist_sort_with_data (attendees,
-                                      (GCompareDataFunc) TableSet::ComparePlayer,
-                                      this);
-
   withdrawals = g_slist_sort_with_data (withdrawals,
                                         (GCompareDataFunc) TableSet::ComparePlayer,
                                         this);
@@ -782,13 +778,11 @@ gboolean TableSet::WipeNode (GNode    *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  WipeItem (data->_player_item);
-  WipeItem (data->_print_item);
   WipeItem (data->_connector);
+  data->_connector = NULL;
 
-  data->_connector   = NULL;
-  data->_player_item = NULL;
-  data->_print_item  = NULL;
+  WipeItem (data->_canvas_table);
+  data->_canvas_table = NULL;
 
   return FALSE;
 }
@@ -801,10 +795,7 @@ gboolean TableSet::DeleteCanvasTable (GNode    *node,
 
   table_set->_score_collector->RemoveCollectingPoints (data->_match);
 
-  data->_player_item = NULL;
-  data->_print_item  = NULL;
-  data->_connector   = NULL;
-
+  data->_connector    = NULL;
   data->_canvas_table = NULL;
 
   {
@@ -917,12 +908,12 @@ gboolean TableSet::FillInNode (GNode    *node,
 
   if (data->_match && data->_table->IsDisplayed ())
   {
-    Player *winner = data->_match->GetWinner ();
+    Player        *winner = data->_match->GetWinner ();
+    GooCanvasItem *player_item = NULL;
 
     WipeNode (node,
               table_set);
 
-    if (data->_canvas_table == NULL)
     {
       guint row = data->_table->GetRow (data->_table_index) + 1;
 
@@ -959,12 +950,12 @@ gboolean TableSet::FillInNode (GNode    *node,
            && data->_match->GetPlayerA ()
            && data->_match->GetPlayerB ())
     {
-      data->_print_item = Canvas::PutStockIconInTable (data->_canvas_table,
-                                                       GTK_STOCK_PRINT,
-                                                       1,
-                                                       0);
-      g_object_set_data (G_OBJECT (data->_print_item), "match_to_print", data->_match);
-      g_signal_connect (data->_print_item, "button-release-event",
+      GooCanvasItem *print_item = Canvas::PutStockIconInTable (data->_canvas_table,
+                                                               GTK_STOCK_PRINT,
+                                                               1,
+                                                               0);
+      g_object_set_data (G_OBJECT (print_item), "match_to_print", data->_match);
+      g_signal_connect (print_item, "button-release-event",
                         G_CALLBACK (OnPrintMatch), table_set);
     }
 
@@ -972,11 +963,11 @@ gboolean TableSet::FillInNode (GNode    *node,
     {
       GString *string = table_set->GetPlayerImage (winner);
 
-      data->_player_item = Canvas::PutTextInTable (data->_canvas_table,
-                                                   string->str,
-                                                   0,
-                                                   2);
-      Canvas::SetTableItemAttribute (data->_player_item, "y-align", 0.5);
+      player_item = Canvas::PutTextInTable (data->_canvas_table,
+                                            string->str,
+                                            0,
+                                            2);
+      Canvas::SetTableItemAttribute (player_item, "y-align", 0.5);
 
       g_string_free (string,
                      TRUE);
@@ -1071,7 +1062,7 @@ gboolean TableSet::FillInNode (GNode    *node,
                                                            score_text,
                                                            parent_data->_match,
                                                            winner);
-          table_set->_score_collector->AddCollectingTrigger (data->_player_item);
+          table_set->_score_collector->AddCollectingTrigger (player_item);
 
           if (A && B)
           {
@@ -1170,8 +1161,6 @@ void TableSet::AddFork (GNode *to)
   }
 
   data->_canvas_table = NULL;
-  data->_player_item  = NULL;
-  data->_print_item   = NULL;
   data->_connector    = NULL;
   data->_match = new Match (_max_score);
   data->_match->SetData (this, "node", node);
@@ -1230,8 +1219,18 @@ void TableSet::AddFork (GNode *to)
   }
   else
   {
-    Player *player = (Player *) g_slist_nth_data (_attendees,
-                                                  data->_expected_winner_rank - 1);
+    Player *player;
+
+    if (_first_place == 1)
+    {
+      player = (Player *) g_slist_nth_data (_attendees,
+                                            data->_expected_winner_rank - 1);
+    }
+    else
+    {
+      player = (Player *) g_slist_nth_data (_attendees,
+                                            data->_table_index);
+    }
 
     if (player)
     {

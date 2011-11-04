@@ -643,11 +643,11 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
     gtk_tree_path_free (path);
   }
 
-  if (   (table_set->GetNbTables () >= (table->GetColumn () + 3))
+  if (   (table_set->GetNbTables () >= (table->GetNumber () + 3))
       && gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_table_set_treestore),
                                         &defeated_iter,
                                         &iter,
-                                        table_set->GetNbTables () - table->GetColumn () - 3))
+                                        table_set->GetNbTables () - table->GetNumber () - 3))
   {
     TableSet *defeated_table_set;
 
