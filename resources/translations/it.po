@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-22 18:22+0200\n"
-"PO-Revision-Date: 2011-09-26 08:22+0000\n"
+"PO-Revision-Date: 2011-11-06 13:56+0000\n"
 "Last-Translator: Aureliano Martini <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-10-22 05:03+0000\n"
-"X-Generator: Launchpad (build 14170)\n"
+"X-Launchpad-Export-Date: 2011-11-07 05:49+0000\n"
+"X-Generator: Launchpad (build 14231)\n"
 
 #: ../../sources/checkin.cpp:28 ../../resources/glade/contest.glade:514
 msgid "Check-in"
@@ -957,7 +957,7 @@ msgstr "<b>Parametri</b>"
 
 #: ../../resources/glade/table_supervisor.glade:51
 msgid "Fenced places"
-msgstr ""
+msgstr "Ranghi combattuti"
 
 #: ../../resources/glade/table_supervisor.glade:159
 msgid ""
