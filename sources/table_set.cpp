@@ -1181,7 +1181,7 @@ void TableSet::AddFork (GNode *to)
 
     // Get the table entry in the quick search
     {
-      GtkTreePath *path = gtk_tree_path_new_from_indices (data->_table->GetColumn () - 1,
+      GtkTreePath *path = gtk_tree_path_new_from_indices (data->_table->GetNumber () - 1,
                                                           -1);
 
       gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
@@ -1813,7 +1813,7 @@ gint TableSet::ComparePlayer (Player   *A,
     {
       if (table_A != table_B)
       {
-        return table_B->GetColumn () - table_A->GetColumn ();
+        return table_B->GetNumber () - table_A->GetNumber ();
       }
     }
   }
@@ -1828,8 +1828,7 @@ gint TableSet::ComparePreviousRankPlayer (Player  *A,
                                           Player  *B,
                                           guint32  rand_seed)
 {
-  Stage               *previous = _supervisor->GetPreviousStage ();
-  Player::AttributeId  attr_id ("rank", previous);
+  Player::AttributeId attr_id ("previous_stage_rank", GetDataOwner ());
 
   attr_id.MakeRandomReady (rand_seed);
   return Player::Compare (A,
