@@ -574,7 +574,11 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
     {
       place_offset = place_offset << 1;
 
-      if ((from_place+place_offset) < (nb_players))
+      if ((i == nb_tables-2) && (place_offset << 1) > nb_players)
+      {
+        break;
+      }
+      else if ((from_place+place_offset) < nb_players)
       {
         FeedTableSetStore (from_place + place_offset,
                            i+1,

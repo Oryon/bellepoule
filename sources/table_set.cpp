@@ -1268,8 +1268,11 @@ void TableSet::AddFork (GNode *to)
         GNode    *A_node = g_node_first_child (to);
         NodeData *A_data = (NodeData *) A_node->data;
 
-        to_data->_match->SetPlayerA (A_data->_match->GetWinner ());
-        to_data->_match->SetPlayerB (NULL);
+        if (A_data->_match)
+        {
+          to_data->_match->SetPlayerA (A_data->_match->GetWinner ());
+          to_data->_match->SetPlayerB (NULL);
+        }
       }
     }
   }
