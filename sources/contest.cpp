@@ -1179,7 +1179,7 @@ gchar *Contest::GetSaveFileName (gchar       *title,
                                                      GTK_RESPONSE_ACCEPT,
                                                      NULL));
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
-                                                  true);
+                                                  TRUE);
 
   {
     GtkFileFilter *filter = gtk_file_filter_new ();
@@ -1231,24 +1231,13 @@ gchar *Contest::GetSaveFileName (gchar       *title,
 
     if (filename)
     {
-      {
-        gchar *dirname = g_path_get_dirname (filename);
+      gchar *dirname = g_path_get_dirname (filename);
 
-        g_key_file_set_string (_config_file,
-                               "Competiton",
-                               config_key,
-                               dirname);
-        g_free (dirname);
-      }
-
-      if (strcmp ((const char *) ".cotcot", (const char *) &filename[strlen (filename) - strlen (".cotcot")]) != 0)
-      {
-        gchar *with_suffix;
-
-        with_suffix = g_strdup_printf ("%s.cotcot", filename);
-        g_free (filename);
-        filename = with_suffix;
-      }
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             config_key,
+                             dirname);
+      g_free (dirname);
     }
   }
 
@@ -1518,7 +1507,7 @@ gchar *Contest::GetName ()
 // --------------------------------------------------------------------------------
 gchar *Contest::GetDefaultFileName ()
 {
-  return g_strdup_printf ("%s-%s-%s-%s", _name,
+  return g_strdup_printf ("%s-%s-%s-%s.cotcot", _name,
                           gettext (weapon_image[_weapon]),
                           gettext (gender_image[_gender]),
                           gettext (category_image[_category]));
