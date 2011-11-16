@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-22 18:22+0200\n"
-"PO-Revision-Date: 2011-11-06 13:56+0000\n"
+"PO-Revision-Date: 2011-11-15 11:57+0000\n"
 "Last-Translator: Aureliano Martini <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-11-07 05:49+0000\n"
-"X-Generator: Launchpad (build 14231)\n"
+"X-Launchpad-Export-Date: 2011-11-16 05:24+0000\n"
+"X-Generator: Launchpad (build 14291)\n"
 
 #: ../../sources/checkin.cpp:28 ../../resources/glade/contest.glade:514
 msgid "Check-in"
@@ -129,11 +129,11 @@ msgstr "Master"
 
 #: ../../resources/glade/contest.glade:124
 msgid "Competition properties"
-msgstr "Proprietà della competizione"
+msgstr "Proprietà della gara"
 
 #: ../../resources/glade/contest.glade:22
 msgid "Date of competition"
-msgstr "Data della competizione"
+msgstr "Data della prova"
 
 #: ../../sources/contest.cpp:1024 ../../sources/contest.cpp:1173
 msgid "Choose a file..."
@@ -150,7 +150,7 @@ msgstr ""
 "<big>%s</big>?</big></b>"
 
 msgid "Close the competition?"
-msgstr "Chiudere la competizione?"
+msgstr "Chiudere la prova?"
 
 msgid "Unsaved data will be lost."
 msgstr "Le modifiche non salvate andranno perse."
@@ -250,7 +250,7 @@ msgstr "Vittorie"
 
 #: ../../sources/pool.cpp:642
 msgid "Vict./Matchs"
-msgstr "Vict./Ass."
+msgstr "Vict./Matchs"
 
 #: ../../sources/pool.cpp:651
 msgid "H. scored"
@@ -346,7 +346,7 @@ msgstr "Tabellone di %d"
 #: ../../sources/table_set.cpp:2314
 #, c-format
 msgid "Match %s"
-msgstr "Assalto %s"
+msgstr "Match %s"
 
 msgid "Table round classification"
 msgstr "Classifica di tabellone"
@@ -361,7 +361,7 @@ msgstr "%s: stampa degli assalti"
 
 #: ../../sources/tournament.cpp:265
 msgid "Choose a competion file to open... "
-msgstr "Aprire il documento di competizione... "
+msgstr "Scegliere una prova da visualizzare... "
 
 #: ../../sources/contest.cpp:1188 ../../sources/tournament.cpp:278
 msgid "BellePoule files (.cotcot)"
@@ -436,18 +436,17 @@ msgstr "Tutti gli assenti"
 
 #: ../../resources/glade/contest.glade:1147
 msgid "Save the current state of the competition."
-msgstr "Salvataggio dello stato della competizione"
+msgstr "Salva lo stato della prova"
 
 #: ../../resources/glade/contest.glade:1161
 msgid "To specify the features of the competition."
-msgstr "Configura le impostazioni della competizione."
+msgstr "Configura le impostazioni della prova"
 
 #: ../../resources/glade/contest.glade:1184
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
-msgstr ""
-"Configura la formula della competizione (gironi, tabelloni ed altri turni)."
+msgstr "Configura la formula della prova (gironi, tabelloni ed altri turni)."
 
 #: ../../resources/glade/contest.glade:1186
 msgid "Formula"
@@ -458,7 +457,7 @@ msgid "Man"
 msgstr "Uomo"
 
 msgid "Features of the competition"
-msgstr "Impostazioni della competizione"
+msgstr "Impostazioni della prova"
 
 #: ../../resources/glade/contest.glade:226
 msgid "Weapon"
@@ -602,8 +601,8 @@ msgid ""
 "Fill in all the scores of all the pools randomly\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
-"Inserisci casualmente i risultati.\n"
-"Attivare o disattivare questa opzione nelle impostazioni della competizione."
+"Inserisci risultati casuali.\n"
+"Attivare o disattivare questa opzione nelle impostazioni della prova."
 
 #: ../../resources/glade/pool_supervisor.glade:539
 #: ../../resources/glade/table_supervisor.glade:451
@@ -695,7 +694,7 @@ msgstr "Rimuovi"
 
 #: ../../resources/glade/splitting.glade:120
 msgid "Select the fencers to move to a new competition."
-msgstr "Selezionare i tiratori da muovere verso la nuova competizione"
+msgstr "Selezionare i tiratori da muovere verso la nuova prova"
 
 #: ../../resources/glade/table_supervisor.glade:498
 msgid "From"
@@ -703,19 +702,19 @@ msgstr "Da"
 
 #: ../../resources/glade/table_supervisor.glade:434
 msgid "Fill in a match"
-msgstr "Inserire un assalto"
+msgstr "Inserire un match"
 
 #: ../../resources/glade/table_supervisor.glade:448
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
-"Inserisci casualmente i risultati.\n"
-"Attivare o disattivare questa opzione nelle impostazioni della competizione."
+"Inserisci risultati casuali.\n"
+"Attivare o disattivare questa opzione nelle impostazioni della prova."
 
 #: ../../resources/glade/table.glade:521
 msgid "<b>Match</b>"
-msgstr "<b>Assalto</b>"
+msgstr "<b>Match</b>"
 
 #: ../../resources/glade/table.glade:551
 msgid "A fencer"
