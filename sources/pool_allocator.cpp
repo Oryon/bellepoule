@@ -104,6 +104,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                "rank",
                                NULL);
@@ -277,11 +278,14 @@ void PoolAllocator::ApplyConfig ()
       }
     }
 
-    DeletePools ();
-    CreatePools ();
-    Display ();
-    SignalStatusUpdate ();
-    MakeDirty ();
+    if (Locked () == FALSE)
+    {
+      DeletePools ();
+      CreatePools ();
+      Display ();
+      SignalStatusUpdate ();
+      MakeDirty ();
+    }
   }
 }
 
@@ -1549,6 +1553,12 @@ void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
 Data *PoolAllocator::GetMaxScore ()
 {
   return _max_score;
+}
+
+// --------------------------------------------------------------------------------
+gboolean PoolAllocator::SeedingIsBalanced ()
+{
+  return (_seeding_balanced->_value == 1);
 }
 
 // --------------------------------------------------------------------------------

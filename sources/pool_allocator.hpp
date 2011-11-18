@@ -34,9 +34,13 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     void Save (xmlTextWriter *xml_writer);
 
-    guint  GetNbPools  ();
-    Pool  *GetPool     (guint index);
-    Data  *GetMaxScore ();
+    guint GetNbPools ();
+
+    Pool *GetPool (guint index);
+
+    Data *GetMaxScore ();
+
+    gboolean SeedingIsBalanced ();
 
   public:
     static const gchar *_class_name;

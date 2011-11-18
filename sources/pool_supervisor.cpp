@@ -77,6 +77,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                "rank",
                                NULL);
@@ -129,8 +130,9 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
-    filter->ShowAttribute ("victories_ratio");
+    filter->ShowAttribute ("pool_nr");
     filter->ShowAttribute ("indice");
+    filter->ShowAttribute ("victories_ratio");
     filter->ShowAttribute ("HS");
     filter->ShowAttribute ("status");
 
@@ -179,6 +181,19 @@ void PoolSupervisor::OnPlugged ()
   gtk_widget_set_sensitive (_glade->GetWidget ("seeding_viewport"),
                             FALSE);
 
+  {
+    Classification *classification = GetClassification ();
+
+    if (_pool_allocator->SeedingIsBalanced ())
+    {
+      classification->EnableSorting ();
+    }
+    else
+    {
+      classification->DisableSorting ();
+    }
+  }
+
   RetrievePools ();
 }
 
@@ -219,12 +234,19 @@ gint PoolSupervisor::CompareSingleClassification (Player         *A,
                                                   Player         *B,
                                                   PoolSupervisor *pool_supervisor)
 {
+  guint policy = Pool::WITH_CALCULUS | Pool::WITH_RANDOM;
+
+  if (pool_supervisor->_pool_allocator->SeedingIsBalanced () == FALSE)
+  {
+    policy |= Pool::WITH_POOL_NR;
+  }
+
   return Pool::ComparePlayer (A,
                               B,
                               pool_supervisor->_single_owner,
                               pool_supervisor->_rand_seed,
                               pool_supervisor->GetDataOwner (),
-                              Pool::WITH_CALCULUS | Pool::WITH_RANDOM);
+                              policy);
 }
 
 // --------------------------------------------------------------------------------
@@ -232,12 +254,19 @@ gint PoolSupervisor::CompareCombinedClassification (Player         *A,
                                                     Player         *B,
                                                     PoolSupervisor *pool_supervisor)
 {
+  guint policy = Pool::WITH_CALCULUS | Pool::WITH_RANDOM;
+
+  if (pool_supervisor->_pool_allocator->SeedingIsBalanced () == FALSE)
+  {
+    policy |= Pool::WITH_POOL_NR;
+  }
+
   return Pool::ComparePlayer (A,
                               B,
                               pool_supervisor,
                               pool_supervisor->_rand_seed,
                               pool_supervisor->GetDataOwner (),
-                              Pool::WITH_CALCULUS | Pool::WITH_RANDOM);
+                              policy);
 }
 
 // --------------------------------------------------------------------------------
@@ -662,14 +691,11 @@ GSList *PoolSupervisor::GetCurrentClassification ()
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool *pool;
+    Pool *pool = _pool_allocator->GetPool (p);
 
-    pool = _pool_allocator->GetPool (p);
     for (guint i = 0; i < pool->GetNbPlayers (); i++)
     {
-      Player *player;
-
-      player = pool->GetPlayer (i);
+      Player *player = pool->GetPlayer (i);
 
       result = g_slist_prepend (result,
                                 player);
@@ -696,15 +722,21 @@ GSList *PoolSupervisor::EvaluateClassification (GSList           *list,
   guint                previous_rank   = 0;
   Player              *previous_player = NULL;
 
-  result = g_slist_sort_with_data (list,
-                                   CompareFunction,
-                                   this);
+  if (CompareFunction)
+  {
+    result = g_slist_sort_with_data (list,
+                                     CompareFunction,
+                                     this);
+  }
+  else
+  {
+    result = list;
+  }
+
   current = result;
   for (guint i = 1; current; i++)
   {
-    Player *player;
-
-    player = (Player *) current->data;
+    Player *player = (Player *) current->data;
 
     if (   previous_player
         && (Pool::ComparePlayer (player,

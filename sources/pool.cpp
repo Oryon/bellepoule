@@ -171,6 +171,23 @@ void Pool::SetDataOwner (Object *single_owner,
   _combined_source_owner = combined_source_owner;
 
   _nb_drop = 0;
+
+  {
+    Player::AttributeId  single_attr_id  ("pool_nr", _single_owner);
+    Player::AttributeId  combined_attr_id ("pool_nr", GetDataOwner ());
+    GSList              *current = _player_list;
+
+    while (current)
+    {
+      Player *player = (Player *) current->data;
+
+      player->SetAttributeValue (&single_attr_id,
+                                 _number);
+      player->SetAttributeValue (&combined_attr_id,
+                                 _number);
+      current = g_slist_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -461,66 +478,62 @@ void Pool::Draw (GooCanvas *on_canvas,
 
             if (i != j)
             {
+              Player *B     = GetPlayer (j, _sorted_player_list);
+              Match  *match = GetMatch (A, B);
+
+              if (match->IsDropped ())
               {
-                Player *B = GetPlayer (j, _sorted_player_list);
-                Match  *match;
-
-                match = GetMatch (A, B);
-
-                if (match->IsDropped ())
-                {
-                  g_object_set (goo_rect, "fill-color", "grey", NULL);
-                }
-
-                // Text
-                {
-                  gchar *score_image;
-
-                  if (print_for_referees)
-                  {
-                    score_image = g_strdup (match->GetName ());
-                  }
-                  else
-                  {
-                    Score *score = match->GetScore (A);
-
-                    score_image = score->GetImage ();
-                  }
-                  score_text = goo_canvas_text_new (grid_group,
-                                                    score_image,
-                                                    x + cell_w / 2,
-                                                    y + cell_h / 2,
-                                                    -1,
-                                                    GTK_ANCHOR_CENTER,
-                                                    "font", "Sans bold 18px",
-                                                    NULL);
-                  if (print_for_referees)
-                  {
-                    g_object_set (score_text,
-                                  "fill-color", "Grey",
-                                  NULL);
-                  }
-                  g_free (score_image);
-                }
-
-                if (   (print_for_referees == FALSE)
-                    && (_locked == FALSE)
-                    && (match->IsDropped () == FALSE))
-                {
-                  _score_collector->AddCollectingPoint (goo_rect,
-                                                        score_text,
-                                                        match,
-                                                        A);
-
-                  if (previous_goo_rect)
-                  {
-                    _score_collector->SetNextCollectingPoint (previous_goo_rect,
-                                                              goo_rect);
-                  }
-                }
-
-                previous_goo_rect = goo_rect;
+                g_object_set (goo_rect, "fill-color", "grey", NULL);
               }
+
+              // Text
+              {
+                gchar *score_image;
+
+                if (print_for_referees)
+                {
+                  score_image = g_strdup (match->GetName ());
+                }
+                else
+                {
+                  Score *score = match->GetScore (A);
+
+                  score_image = score->GetImage ();
+                }
+                score_text = goo_canvas_text_new (grid_group,
+                                                  score_image,
+                                                  x + cell_w / 2,
+                                                  y + cell_h / 2,
+                                                  -1,
+                                                  GTK_ANCHOR_CENTER,
+                                                  "font", "Sans bold 18px",
+                                                  NULL);
+                if (print_for_referees)
+                {
+                  g_object_set (score_text,
+                                "fill-color", "Grey",
+                                NULL);
+                }
+                g_free (score_image);
+              }
+
+              if (   (print_for_referees == FALSE)
+                  && (_locked == FALSE)
+                  && (match->IsDropped () == FALSE))
+              {
+                _score_collector->AddCollectingPoint (goo_rect,
+                                                      score_text,
+                                                      match,
+                                                      A);
+
+                if (previous_goo_rect)
+                {
+                  _score_collector->SetNextCollectingPoint (previous_goo_rect,
+                                                            goo_rect);
+                }
+              }
+
+              previous_goo_rect = goo_rect;
             }
             else
             {
@@ -1049,6 +1062,8 @@ gint Pool::ComparePlayer (Player   *A,
   }
   else if (comparison_policy & WITH_CALCULUS)
   {
+    guint   pool_nr_A;
+    guint   pool_nr_B;
     guint   ratio_A;
     guint   ratio_B;
     gint    average_A;
@@ -1056,6 +1071,10 @@ gint Pool::ComparePlayer (Player   *A,
     guint   HS_A;
     guint   HS_B;
     Player::AttributeId attr_id ("", data_owner);
+
+    attr_id._name = (gchar *) "pool_nr";
+    pool_nr_A = A->GetAttribute (&attr_id)->GetUIntValue ();
+    pool_nr_B = B->GetAttribute (&attr_id)->GetUIntValue ();
 
     attr_id._name = (gchar *) "victories_ratio";
     ratio_A = A->GetAttribute (&attr_id)->GetUIntValue ();
@@ -1104,6 +1123,13 @@ gint Pool::ComparePlayer (Player   *A,
       }
     }
 
+    if (comparison_policy & WITH_POOL_NR)
+    {
+      if (pool_nr_B != pool_nr_A)
+      {
+        return pool_nr_A - pool_nr_B;
+      }
+    }
     if (ratio_B != ratio_A)
     {
       return ratio_B - ratio_A;

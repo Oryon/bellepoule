@@ -90,6 +90,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                "rank",
                                NULL);
@@ -122,6 +123,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                NULL);
     filter = new Filter (attr_list,

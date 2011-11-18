@@ -49,6 +49,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                "previous_stage_rank",
                                NULL);

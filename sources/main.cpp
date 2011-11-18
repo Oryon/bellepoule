@@ -252,6 +252,10 @@ int main (int argc, char **argv)
 
     // Not persistent data
     {
+      desc = AttributeDesc::Declare (G_TYPE_INT, "pool_nr", "pool_nr", gettext ("pool #"));
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::LOCAL;
+
       desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", gettext ("Vict./Bouts (‰)"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
