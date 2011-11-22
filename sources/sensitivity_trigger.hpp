@@ -26,6 +26,8 @@ class SensitivityTrigger : public virtual Object
   public:
     SensitivityTrigger ();
 
+    virtual ~SensitivityTrigger ();
+
     void AddWidget (GtkWidget *w);
 
     void SwitchOn ();
@@ -39,8 +41,6 @@ class SensitivityTrigger : public virtual Object
     static const gchar *_data_key;
 
     GSList *_widget_list;
-
-    virtual ~SensitivityTrigger ();
 
     void SetSensitivity (GtkWidget *w);
 };

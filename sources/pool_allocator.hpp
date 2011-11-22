@@ -22,6 +22,7 @@
 #include "data.hpp"
 #include "stage.hpp"
 #include "canvas_module.hpp"
+#include "players_list.hpp"
 #include "pool_match_order.hpp"
 #include "pool.hpp"
 
@@ -34,9 +35,13 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     void Save (xmlTextWriter *xml_writer);
 
-    guint  GetNbPools  ();
-    Pool  *GetPool     (guint index);
-    Data  *GetMaxScore ();
+    guint GetNbPools ();
+
+    Pool *GetPool (guint index);
+
+    Data *GetMaxScore ();
+
+    gboolean SeedingIsBalanced ();
 
   public:
     static const gchar *_class_name;
@@ -44,6 +49,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     void OnComboboxChanged (GtkComboBox *cb);
     void OnSwappingComboboxChanged (GtkComboBox *cb);
+    void OnFencerListToggled (gboolean toggled);
 
   private:
     void OnLocked (Reason reason);
@@ -65,28 +71,31 @@ class PoolAllocator : public virtual Stage, public CanvasModule
       guint _nb_overloaded;
     } Configuration;
 
-    GSList        *_pools_list;
-    GSList        *_config_list;
-    Configuration *_best_config;
-    Configuration *_selected_config;
-    GooCanvas     *_canvas;
-    gboolean       _dragging;
-    GooCanvasItem *_drag_text;
-    gdouble        _drag_x;
-    gdouble        _drag_y;
-    Pool          *_target_pool;
-    Pool          *_source_pool;
-    Player        *_floating_player;
-    GooCanvasItem *_main_table;
-    GtkListStore  *_combobox_store;
-    Data          *_swapping;
-    AttributeDesc *_swapping_criteria;
-    gdouble        _max_w;
-    gdouble        _max_h;
-    gdouble        _print_scale;
-    gdouble        _page_h;
-    guint          _nb_page;
-    gboolean       _loaded;
+    GSList             *_pools_list;
+    GSList             *_config_list;
+    Configuration      *_best_config;
+    Configuration      *_selected_config;
+    GooCanvas          *_canvas;
+    gboolean            _dragging;
+    GooCanvasItem      *_drag_text;
+    gdouble             _drag_x;
+    gdouble             _drag_y;
+    Pool               *_target_pool;
+    Pool               *_source_pool;
+    Player             *_floating_player;
+    GooCanvasItem      *_main_table;
+    GtkListStore       *_combobox_store;
+    Data               *_swapping;
+    Data               *_seeding_balanced;
+    AttributeDesc      *_swapping_criteria;
+    gdouble             _max_w;
+    gdouble             _max_h;
+    gdouble             _print_scale;
+    gdouble             _page_h;
+    guint               _nb_page;
+    gboolean            _loaded;
+    SensitivityTrigger  _swapping_sensitivity_trigger;
+    PlayersList        *_fencer_list;
 
     void FillCombobox ();
     void CreatePools ();
@@ -154,6 +163,10 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     static Stage *CreateInstance (StageClass *stage_class);
 
     void Load (xmlNode *xml_node);
+
+    void ApplyConfig ();
+
+    void FillInConfig ();
 
     ~PoolAllocator ();
 };

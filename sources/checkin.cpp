@@ -61,6 +61,7 @@ Checkin::Checkin (StageClass *stage_class)
                                "final_rank",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                NULL);
     filter = new Filter (attr_list,

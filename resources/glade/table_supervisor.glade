@@ -365,21 +365,6 @@ the begining of the table.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToggleToolButton" id="table_classification_toggletoolbutton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Classification</property>
-                    <property name="use_underline">True</property>
-                    <property name="icon_widget">score_image</property>
-                    <signal name="toggled" handler="on_table_classification_toggletoolbutton_toggled" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkSeparatorToolItem" id="toolbutton2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -410,6 +395,32 @@ the begining of the table.</property>
                     <property name="use_action_appearance">False</property>
                     <property name="stock_id">gtk-print</property>
                     <signal name="clicked" handler="on_table_print_toolbutton_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparatorToolItem" id="toolbutton3">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleToolButton" id="table_classification_toggletoolbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Classification</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_widget">score_image</property>
+                    <signal name="toggled" handler="on_table_classification_toggletoolbutton_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

@@ -81,6 +81,7 @@ Source: "..\resources\translations\ru\*"; DestDir: "{app}\resources\translations
 Source: "..\resources\translations\ar\*"; DestDir: "{app}\resources\translations\ar"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\translations\es\*"; DestDir: "{app}\resources\translations\es"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\translations\it\*"; DestDir: "{app}\resources\translations\it"; Flags: ignoreversion recursesubdirs
+Source: "..\resources\translations\ko\*"; DestDir: "{app}\resources\translations\ko"; Flags: ignoreversion recursesubdirs
 
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -116,6 +117,11 @@ Source: "C:\MinGW\share\locale\it\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting
 Source: "C:\MinGW\share\locale\it\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\it\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\porting_layer\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\it\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\porting_layer\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "C:\MinGW\share\locale\ko\LC_MESSAGES\atk10.mo"; DestDir: "{app}\porting_layer\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\ko\LC_MESSAGES\glib20.mo"; DestDir: "{app}\porting_layer\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\ko\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\porting_layer\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\ko\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\porting_layer\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
 
 ;Resources
 Source: "..\resources\glade\*.png"; DestDir: "{app}\resources\glade\"; Flags: ignoreversion

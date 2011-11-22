@@ -46,6 +46,8 @@ extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
                                                               Object    *owner);
 extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
                                                                Object    *owner);
+extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
+                                                              Object    *owner);
 
 const gchar *PoolAllocator::_class_name     = N_ ("Pools arrangement");
 const gchar *PoolAllocator::_xml_class_name = "TourDePoules";
@@ -69,6 +71,9 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _max_score = new Data ("ScoreMax",
                          5);
 
+  _seeding_balanced = new Data ("RepartitionEquilibre",
+                                TRUE);
+
   _swapping = new Data ("Decalage",
                         (gchar *) NULL);
 
@@ -79,6 +84,8 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     AddSensitiveWidget (_glade->GetWidget ("nb_pools_combobox"));
     AddSensitiveWidget (_glade->GetWidget ("pool_size_combobox"));
     AddSensitiveWidget (_glade->GetWidget ("swapping_combobox"));
+
+    _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_combobox"));
   }
 
   {
@@ -97,6 +104,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                "rank",
                                NULL);
@@ -144,13 +152,21 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetObject ("swapping_combobox")),
                               0);
   }
+
+  {
+    _fencer_list = new PlayersList ("classification.glade",
+                                    PlayersList::SORTABLE);
+    Plug (_fencer_list,
+          _glade->GetWidget ("fencer_list_hook"));
+  }
 }
 
 // --------------------------------------------------------------------------------
 PoolAllocator::~PoolAllocator ()
 {
-  _max_score->Release ();
-  _swapping->Release  ();
+  _max_score->Release        ();
+  _swapping->Release         ();
+  _seeding_balanced->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -176,6 +192,8 @@ const gchar *PoolAllocator::GetInputProviderClient ()
 // --------------------------------------------------------------------------------
 void PoolAllocator::Display ()
 {
+  OnFencerListToggled (FALSE);
+
   SetUpCombobox ();
 
   if (_main_table)
@@ -233,9 +251,93 @@ void PoolAllocator::Garnish ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::ApplyConfig ()
+{
+  Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+  if (next_stage)
+  {
+    GtkWidget *w = next_stage->GetWidget ("balanced_radiobutton");
+
+    if (w)
+    {
+      guint seeding_is_balanced = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+
+      if (_seeding_balanced->_value != seeding_is_balanced)
+      {
+        _seeding_balanced->_value = seeding_is_balanced;
+
+        if (seeding_is_balanced)
+        {
+          _swapping_sensitivity_trigger.SwitchOn ();
+        }
+        else
+        {
+          _swapping_sensitivity_trigger.SwitchOff ();
+
+          if (_swapping_criteria)
+          {
+            GtkWidget *w = _glade->GetWidget ("swapping_combobox");
+
+            gtk_combo_box_set_active (GTK_COMBO_BOX (w),
+                                      0);
+            return;
+          }
+        }
+      }
+    }
+
+    if (Locked () == FALSE)
+    {
+      DeletePools ();
+      CreatePools ();
+      Display ();
+      SignalStatusUpdate ();
+      MakeDirty ();
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::FillInConfig ()
+{
+  Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+  if (next_stage)
+  {
+    GtkWidget *w;
+
+    if (_seeding_balanced->_value)
+    {
+      w = next_stage->GetWidget ("balanced_radiobutton");
+    }
+    else
+    {
+      w = next_stage->GetWidget ("strength_radiobutton");
+    }
+
+    if (w)
+    {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
+                                    TRUE);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
 {
   Stage::LoadConfiguration (xml_node);
+
+  if (_seeding_balanced)
+  {
+    _seeding_balanced->Load (xml_node);
+
+    if (_seeding_balanced->_value == FALSE)
+    {
+      _swapping_sensitivity_trigger.SwitchOff ();
+    }
+  }
 
   if (_swapping)
   {
@@ -253,14 +355,13 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
                                                      &iter);
       for (guint i = 0; iter_is_valid; i++)
       {
-        gchar         *image;
         AttributeDesc *attr_desc;
 
         gtk_tree_model_get (model, &iter,
-                            SWAPPING_IMAGE,    &image,
                             SWAPPING_CRITERIA, &attr_desc,
                             -1);
-        if (strcmp (image, _swapping->_string) == 0)
+        if (   ((attr_desc == NULL) && strcmp (_swapping->_string, "Aucun") == 0)
+            || (attr_desc && (strcmp (attr_desc->_code_name, _swapping->_string) == 0)))
         {
           criteria_index = i;
           break;
@@ -278,6 +379,11 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
 void PoolAllocator::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   Stage::SaveConfiguration (xml_writer);
+
+  if (_seeding_balanced)
+  {
+    _seeding_balanced->Save (xml_writer);
+  }
 
   if (_swapping)
   {
@@ -580,21 +686,9 @@ void PoolAllocator::CreatePools ()
     }
 
     {
-      Swapper  *swapper;
-      gboolean  seeding_balanced;
+      Swapper *swapper;
 
-      {
-        Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
-
-        if (GetNextStage ())
-        {
-          GtkWidget *w = next_stage->GetWidget ("balanced_radiobutton");
-
-          seeding_balanced = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
-        }
-      }
-
-      if (_swapping_criteria && seeding_balanced)
+      if (_swapping_criteria && _seeding_balanced->_value)
       {
         swapper = new Swapper (_pools_list,
                                _swapping_criteria->_code_name,
@@ -612,7 +706,7 @@ void PoolAllocator::CreatePools ()
         Player *player;
         Pool   *pool;
 
-        if (seeding_balanced)
+        if (_seeding_balanced->_value)
         {
           if (((i / nb_pool) % 2) == 0)
           {
@@ -1471,6 +1565,12 @@ Data *PoolAllocator::GetMaxScore ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean PoolAllocator::SeedingIsBalanced ()
+{
+  return (_seeding_balanced->_value == 1);
+}
+
+// --------------------------------------------------------------------------------
 guint PoolAllocator::GetNbPools ()
 {
   return g_slist_length (_pools_list);
@@ -1501,9 +1601,17 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
                                  &iter);
   gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore")),
                       &iter,
-                      SWAPPING_IMAGE, &_swapping->_string,
                       SWAPPING_CRITERIA, &_swapping_criteria,
                       -1);
+
+  if (_swapping_criteria)
+  {
+    _swapping->_string = _swapping_criteria->_code_name;
+  }
+  else
+  {
+    _swapping->_string = "Aucun";
+  }
 
   if (_pools_list)
   {
@@ -1636,4 +1744,37 @@ extern "C" G_MODULE_EXPORT void on_filter_button_clicked (GtkWidget *widget,
   PoolAllocator *p = dynamic_cast <PoolAllocator *> (owner);
 
   p->SelectAttributes ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnFencerListToggled (gboolean toggled)
+{
+  GtkWidget *main_w        = GetWidget ("main_hook");
+  GtkWidget *fencer_list_w = GetWidget ("fencer_list_hook");
+
+  if (toggled)
+  {
+    if (main_w)
+    {
+      gtk_widget_hide_all (main_w);
+    }
+    gtk_widget_show (fencer_list_w);
+  }
+  else
+  {
+    gtk_widget_hide (fencer_list_w);
+    if (main_w)
+    {
+      gtk_widget_show_all (main_w);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_fencer_list_toggled (GtkToggleToolButton *widget,
+                                                        Object              *owner)
+{
+  PoolAllocator *p = dynamic_cast <PoolAllocator *> (owner);
+
+  p->OnFencerListToggled (gtk_toggle_tool_button_get_active (widget));
 }

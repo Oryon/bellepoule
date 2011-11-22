@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-22 18:22+0200\n"
-"PO-Revision-Date: 2011-11-15 11:57+0000\n"
-"Last-Translator: Aureliano Martini <Unknown>\n"
+"PO-Revision-Date: 2011-11-22 18:32+0100\n"
+"Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,7 +17,8 @@ msgstr ""
 "X-Launchpad-Export-Date: 2011-11-16 05:24+0000\n"
 "X-Generator: Launchpad (build 14291)\n"
 
-#: ../../sources/checkin.cpp:28 ../../resources/glade/contest.glade:514
+#: ../../sources/checkin.cpp:28
+#: ../../resources/glade/contest.glade:514
 msgid "Check-in"
 msgstr "Appello"
 
@@ -30,26 +31,25 @@ msgid "Fencer list printing"
 msgstr "Stampa dell'elenco degli atleti"
 
 #: ../../sources/checkin.cpp:229
-msgid ""
-"Uncheck this box to quicken the data input. The corresponding field will be "
-"ignored on TAB key pressed."
-msgstr ""
-"Disabilitare per una più rapida navigazione. Il campo corrispondente sarà "
-"ignorato dal tasto TAB."
+msgid "Uncheck this box to quicken the data input. The corresponding field will be ignored on TAB key pressed."
+msgstr "Disabilitare per una più rapida navigazione. Il campo corrispondente sarà ignorato dal tasto TAB."
 
 #: ../../sources/checkin.cpp:621
 msgid "Choose a fencer file to import..."
 msgstr "Scegliere il documento da importare..."
 
-#: ../../sources/checkin.cpp:634 ../../sources/general_classification.cpp:247
+#: ../../sources/checkin.cpp:634
+#: ../../sources/general_classification.cpp:247
 msgid "All FFF files (.FFF)"
 msgstr "Documenti .FFF"
 
-#: ../../sources/checkin.cpp:646 ../../sources/general_classification.cpp:240
+#: ../../sources/checkin.cpp:646
+#: ../../sources/general_classification.cpp:240
 msgid "All Excel files (.CSV)"
 msgstr "Documenti Excel (.CSV)"
 
-#: ../../sources/checkin.cpp:658 ../../sources/contest.cpp:1199
+#: ../../sources/checkin.cpp:658
+#: ../../sources/contest.cpp:1199
 #: ../../sources/general_classification.cpp:267
 #: ../../sources/tournament.cpp:300
 msgid "All files"
@@ -71,7 +71,8 @@ msgstr "Elenco degli assenti"
 msgid "Fencer list"
 msgstr "Elenco degli atleti"
 
-#: ../../sources/contest.cpp:54 ../../resources/glade/contest.glade:1251
+#: ../../sources/contest.cpp:54
+#: ../../resources/glade/contest.glade:1251
 msgid "Sabre"
 msgstr "Sciabola"
 
@@ -83,11 +84,13 @@ msgstr "Spada"
 msgid "Foil"
 msgstr "Fioretto"
 
-#: ../../sources/contest.cpp:70 ../../sources/main.cpp:206
+#: ../../sources/contest.cpp:70
+#: ../../sources/main.cpp:206
 msgid "Male"
 msgstr "Maschile"
 
-#: ../../sources/contest.cpp:71 ../../sources/main.cpp:207
+#: ../../sources/contest.cpp:71
+#: ../../sources/main.cpp:207
 msgid "Female"
 msgstr "Femminile"
 
@@ -111,7 +114,8 @@ msgstr "Giovanissimi/e"
 msgid "U14"
 msgstr "Allievi/e"
 
-#: ../../sources/contest.cpp:88 ../../resources/glade/contest.glade:1281
+#: ../../sources/contest.cpp:88
+#: ../../resources/glade/contest.glade:1281
 msgid "U16"
 msgstr "Cadetti/e"
 
@@ -135,7 +139,8 @@ msgstr "Proprietà della gara"
 msgid "Date of competition"
 msgstr "Data della prova"
 
-#: ../../sources/contest.cpp:1024 ../../sources/contest.cpp:1173
+#: ../../sources/contest.cpp:1024
+#: ../../sources/contest.cpp:1173
 msgid "Choose a file..."
 msgstr "Scegli un file..."
 
@@ -171,7 +176,8 @@ msgstr "Scegliere un documento"
 msgid "ref"
 msgstr "ref"
 
-#: ../../sources/main.cpp:194 ../../sources/main.cpp:267
+#: ../../sources/main.cpp:194
+#: ../../sources/main.cpp:267
 msgid "place"
 msgstr "posto"
 
@@ -240,7 +246,8 @@ msgstr "Rango iniziale"
 msgid "Pool #%02d"
 msgstr "Girone #%02d"
 
-#: ../../sources/pool.cpp:601 ../../sources/table_set.cpp:2528
+#: ../../sources/pool.cpp:601
+#: ../../sources/table_set.cpp:2528
 msgid "Signature"
 msgstr "Firma"
 
@@ -275,7 +282,8 @@ msgstr "Composizione dei gironi"
 msgid "Pools allocation"
 msgstr "Ripartizione nei gironi"
 
-#: ../../sources/pool_supervisor.cpp:25 ../../sources/pool_supervisor.cpp:467
+#: ../../sources/pool_supervisor.cpp:25
+#: ../../sources/pool_supervisor.cpp:467
 msgid "Pools"
 msgstr "Girone"
 
@@ -306,23 +314,23 @@ msgstr "Tutti i dati di questo turno saranno cancellati."
 msgid "Split"
 msgstr "Divisione"
 
-#: ../../sources/table_set.cpp:2434 ../../sources/table_set.cpp:2442
+#: ../../sources/table_set.cpp:2434
+#: ../../sources/table_set.cpp:2442
 #: ../../sources/table_supervisor.cpp:31
 #: ../../resources/glade/table_supervisor.glade:358
 msgid "Table"
 msgstr "Tabellone"
 
 #: ../../sources/table_set.cpp:102
-msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+msgid "<b><big>Which score sheets of the selected table do you want to print?</big></b>"
 msgstr "<b><big>Quali assalti stampare?</big></b>"
 
 #: ../../sources/table_set.cpp:120
 msgid "<b><big>What do you want to print?</big></b>"
 msgstr "<b><big>Cosa stampare?</big></b>"
 
-#: ../../sources/table_set.cpp:123 ../../sources/table_set.cpp:134
+#: ../../sources/table_set.cpp:123
+#: ../../sources/table_set.cpp:134
 msgid "Table printing"
 msgstr "Stampa del tabellone"
 
@@ -363,7 +371,8 @@ msgstr "%s: stampa degli assalti"
 msgid "Choose a competion file to open... "
 msgstr "Scegliere una prova da visualizzare... "
 
-#: ../../sources/contest.cpp:1188 ../../sources/tournament.cpp:278
+#: ../../sources/contest.cpp:1188
+#: ../../sources/tournament.cpp:278
 msgid "BellePoule files (.cotcot)"
 msgstr "Documento BellePoule (.cotcot)"
 
@@ -401,19 +410,15 @@ msgid "9999"
 msgstr "9999"
 
 #: ../../resources/glade/checkin.glade:185
-msgid ""
-"FFF (Fencing File Format) is a format specified by the FIE. It's used by the "
-"french federation to provide the competion organiser with the registered "
-"fencer list."
-msgstr ""
-"FFF (Fencing File Format) è un formato specifico della FIE per il "
-"salvataggio dei dati degli atleti."
+msgid "FFF (Fencing File Format) is a format specified by the FIE. It's used by the french federation to provide the competion organiser with the registered fencer list."
+msgstr "FFF (Fencing File Format) è un formato specifico della FIE per il salvataggio dei dati degli atleti."
 
 #: ../../resources/glade/checkin.glade:186
 msgid "Import .FFF file"
 msgstr "Importa documento .FFF"
 
-#: ../../sources/filter.cpp:193 ../../resources/glade/checkin.glade:207
+#: ../../sources/filter.cpp:193
+#: ../../resources/glade/checkin.glade:207
 #: ../../resources/glade/general_classification.glade:35
 #: ../../resources/glade/pool_allocator.glade:18
 #: ../../resources/glade/pool_supervisor.glade:485
@@ -443,9 +448,7 @@ msgid "To specify the features of the competition."
 msgstr "Configura le impostazioni della prova"
 
 #: ../../resources/glade/contest.glade:1184
-msgid ""
-"To configure the schedule of the competition in terms of pools, tables and "
-"other rounds."
+msgid "To configure the schedule of the competition in terms of pools, tables and other rounds."
 msgstr "Configura la formula della prova (gironi, tabelloni ed altri turni)."
 
 #: ../../resources/glade/contest.glade:1186
@@ -510,11 +513,8 @@ msgstr "Inizio"
 msgid "31/03/2009"
 msgstr "31/03/2009"
 
-msgid ""
-"Date and time are used to raise alarms to notify the organizer when events "
-"occur."
-msgstr ""
-"Data ed orario permettono di avvisare l'organizzazione tramite messaggio."
+msgid "Date and time are used to raise alarms to notify the organizer when events occur."
+msgstr "Data ed orario permettono di avvisare l'organizzazione tramite messaggio."
 
 #: ../../resources/glade/contest.glade:591
 #: ../../resources/glade/contest.glade:662
@@ -540,12 +540,8 @@ msgstr ""
 msgid "Allow"
 msgstr "Consenti"
 
-msgid ""
-"Make the automatic score stuffing button available. It can save the user "
-"boring data captures during training sessions."
-msgstr ""
-"Abilita l'inserimento automatico (casuale) dei risultati per le sessioni di "
-"test del programma."
+msgid "Make the automatic score stuffing button available. It can save the user boring data captures during training sessions."
+msgstr "Abilita l'inserimento automatico (casuale) dei risultati per le sessioni di test del programma."
 
 #: ../../resources/glade/contest.glade:831
 msgid "Forbid"
@@ -559,21 +555,15 @@ msgid "<b>Scores</b>"
 msgstr "<b>Risultati</b>"
 
 #: ../../resources/glade/general_classification.glade:61
-msgid ""
-"Export the general classification to a .csv file that a spreadsheet like "
-"Excel or OpenOffice can open."
-msgstr ""
-"Esporta la classifica generale in un documento .csv per l'elaborazione con "
-"Excel o OpenOffice"
+msgid "Export the general classification to a .csv file that a spreadsheet like Excel or OpenOffice can open."
+msgstr "Esporta la classifica generale in un documento .csv per l'elaborazione con Excel o OpenOffice"
 
 msgid "Export"
 msgstr "Esporta"
 
 #: ../../resources/glade/pool_allocator.glade:17
 msgid "Mask or unmask some data type as well as define their display order."
-msgstr ""
-"Visualizza o nascondi alcune dati e modifica il loro ordine di "
-"visualizzazione."
+msgstr "Visualizza o nascondi alcune dati e modifica il loro ordine di visualizzazione."
 
 #: ../../resources/glade/pool_allocator.glade:30
 msgid "Print"
@@ -614,21 +604,15 @@ msgid "Combined classification"
 msgstr "Classifica combinata"
 
 #: ../../resources/glade/pool_supervisor.glade:597
-msgid ""
-"The classification cumulating  the current score and the scores of the "
-"previous pool rounds."
-msgstr ""
-"La classifica combinata somma il risultato di questo turno a quello del "
-"turno precedente."
+msgid "The classification cumulating  the current score and the scores of the previous pool rounds."
+msgstr "La classifica combinata somma il risultato di questo turno a quello del turno precedente."
 
 #: ../../resources/glade/pool_supervisor.glade:611
 msgid "Single classification"
 msgstr "Classifica singola"
 
 #: ../../resources/glade/pool_supervisor.glade:615
-msgid ""
-"The classification of the current round that doesn't take into account the "
-"scores of the previous rounds. "
+msgid "The classification of the current round that doesn't take into account the scores of the previous rounds. "
 msgstr "La classifica è stabilita solo sui risultati di questo turno. "
 
 #: ../../resources/glade/pool_supervisor.glade:31
@@ -807,25 +791,30 @@ msgstr "Rango iniziale"
 msgid "global status"
 msgstr "Stato globale"
 
-#: ../../sources/main.cpp:239 ../../sources/main.cpp:247
+#: ../../sources/main.cpp:239
+#: ../../sources/main.cpp:247
 #: ../../resources/glade/pool_supervisor.glade:55
 #: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
 msgstr "Qualificato"
 
-#: ../../sources/main.cpp:240 ../../sources/main.cpp:248
+#: ../../sources/main.cpp:240
+#: ../../sources/main.cpp:248
 msgid "Not qualified"
 msgstr "Non qualificato"
 
-#: ../../sources/main.cpp:241 ../../sources/main.cpp:249
+#: ../../sources/main.cpp:241
+#: ../../sources/main.cpp:249
 msgid "Withdrawal"
 msgstr "Abbandono"
 
-#: ../../sources/main.cpp:242 ../../sources/main.cpp:250
+#: ../../sources/main.cpp:242
+#: ../../sources/main.cpp:250
 msgid "Excluded"
 msgstr "Escluso"
 
-#: ../../sources/main.cpp:243 ../../sources/main.cpp:251
+#: ../../sources/main.cpp:243
+#: ../../sources/main.cpp:251
 msgid "Forfeit"
 msgstr "Forfait"
 
@@ -866,11 +855,13 @@ msgstr "Tutti i documenti PDF (.PDF)"
 msgid "Allocation"
 msgstr "Ripartizione"
 
-#: ../../sources/pool.cpp:381 ../../sources/table_set.cpp:2342
+#: ../../sources/pool.cpp:381
+#: ../../sources/table_set.cpp:2342
 msgid "Referee"
 msgstr "Arbitro"
 
-#: ../../sources/pool.cpp:407 ../../sources/table_set.cpp:2364
+#: ../../sources/pool.cpp:407
+#: ../../sources/table_set.cpp:2364
 msgid "Piste"
 msgstr "Pedana"
 
@@ -878,7 +869,8 @@ msgstr "Pedana"
 msgid "Pools classification"
 msgstr "Classifica dei gironi"
 
-#: ../../sources/table_set.cpp:93 ../../sources/table_set.cpp:2436
+#: ../../sources/table_set.cpp:93
+#: ../../sources/table_set.cpp:2436
 #: ../../sources/table_set.cpp:2443
 msgid "Place #"
 msgstr "Rango #"
@@ -997,3 +989,4 @@ msgstr "Attiva"
 #: ../../resources/glade/tournament.glade:859
 msgid "Deactivate"
 msgstr "Disattiva"
+

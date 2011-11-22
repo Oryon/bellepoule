@@ -33,8 +33,9 @@ class Pool : public CanvasModule
   public:
     typedef enum
     {
-      WITH_CALCULUS = 0x1,
-      WITH_RANDOM   = 0x2
+      WITH_POOL_NR  = 0x1,
+      WITH_CALCULUS = 0x2,
+      WITH_RANDOM   = 0x4
     } ComparisonPolicy;
 
   public:

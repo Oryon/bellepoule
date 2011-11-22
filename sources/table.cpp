@@ -23,12 +23,13 @@
 // --------------------------------------------------------------------------------
 Table::Table (TableSet *table_set,
               guint     size,
-              guint     column)
+              guint     number)
   : Object ("table")
 {
   _table_set          = table_set;
   _size               = size;
-  _column             = column;
+  _number             = number;
+  _column             = number;
   _left_table         = NULL;
   _right_table        = NULL;
   _has_error          = FALSE;
@@ -349,6 +350,12 @@ guint Table::GetRow (guint for_index)
   guint delta_row       = (2 << _column);
 
   return first_index_row + for_index*delta_row;
+}
+
+// --------------------------------------------------------------------------------
+guint Table::GetNumber ()
+{
+  return _number;
 }
 
 // --------------------------------------------------------------------------------

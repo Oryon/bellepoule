@@ -254,10 +254,6 @@ void TableSet::SetAttendees (GSList *attendees)
 void TableSet::SetAttendees (GSList *attendees,
                              GSList *withdrawals)
 {
-  attendees = g_slist_sort_with_data (attendees,
-                                      (GCompareDataFunc) TableSet::ComparePlayer,
-                                      this);
-
   withdrawals = g_slist_sort_with_data (withdrawals,
                                         (GCompareDataFunc) TableSet::ComparePlayer,
                                         this);
@@ -700,6 +696,8 @@ void TableSet::CreateTree ()
 
   _nb_tables++;
 
+  gtk_tree_store_clear (_quick_search_treestore);
+
   _tables = (Table **) g_malloc (_nb_tables * sizeof (Table *));
   for (guint t = 0; t < _nb_tables; t++)
   {
@@ -782,13 +780,11 @@ gboolean TableSet::WipeNode (GNode    *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  WipeItem (data->_player_item);
-  WipeItem (data->_print_item);
   WipeItem (data->_connector);
+  data->_connector = NULL;
 
-  data->_connector   = NULL;
-  data->_player_item = NULL;
-  data->_print_item  = NULL;
+  WipeItem (data->_canvas_table);
+  data->_canvas_table = NULL;
 
   return FALSE;
 }
@@ -801,10 +797,7 @@ gboolean TableSet::DeleteCanvasTable (GNode    *node,
 
   table_set->_score_collector->RemoveCollectingPoints (data->_match);
 
-  data->_player_item = NULL;
-  data->_print_item  = NULL;
-  data->_connector   = NULL;
-
+  data->_connector    = NULL;
   data->_canvas_table = NULL;
 
   {
@@ -917,12 +910,12 @@ gboolean TableSet::FillInNode (GNode    *node,
 
   if (data->_match && data->_table->IsDisplayed ())
   {
-    Player *winner = data->_match->GetWinner ();
+    Player        *winner = data->_match->GetWinner ();
+    GooCanvasItem *player_item = NULL;
 
     WipeNode (node,
               table_set);
 
-    if (data->_canvas_table == NULL)
     {
       guint row = data->_table->GetRow (data->_table_index) + 1;
 
@@ -959,12 +952,12 @@ gboolean TableSet::FillInNode (GNode    *node,
            && data->_match->GetPlayerA ()
            && data->_match->GetPlayerB ())
     {
-      data->_print_item = Canvas::PutStockIconInTable (data->_canvas_table,
-                                                       GTK_STOCK_PRINT,
-                                                       1,
-                                                       0);
-      g_object_set_data (G_OBJECT (data->_print_item), "match_to_print", data->_match);
-      g_signal_connect (data->_print_item, "button-release-event",
+      GooCanvasItem *print_item = Canvas::PutStockIconInTable (data->_canvas_table,
+                                                               GTK_STOCK_PRINT,
+                                                               1,
+                                                               0);
+      g_object_set_data (G_OBJECT (print_item), "match_to_print", data->_match);
+      g_signal_connect (print_item, "button-release-event",
                         G_CALLBACK (OnPrintMatch), table_set);
     }
 
@@ -972,11 +965,11 @@ gboolean TableSet::FillInNode (GNode    *node,
     {
       GString *string = table_set->GetPlayerImage (winner);
 
-      data->_player_item = Canvas::PutTextInTable (data->_canvas_table,
-                                                   string->str,
-                                                   0,
-                                                   2);
-      Canvas::SetTableItemAttribute (data->_player_item, "y-align", 0.5);
+      player_item = Canvas::PutTextInTable (data->_canvas_table,
+                                            string->str,
+                                            0,
+                                            2);
+      Canvas::SetTableItemAttribute (player_item, "y-align", 0.5);
 
       g_string_free (string,
                      TRUE);
@@ -1071,7 +1064,7 @@ gboolean TableSet::FillInNode (GNode    *node,
                                                            score_text,
                                                            parent_data->_match,
                                                            winner);
-          table_set->_score_collector->AddCollectingTrigger (data->_player_item);
+          table_set->_score_collector->AddCollectingTrigger (player_item);
 
           if (A && B)
           {
@@ -1170,8 +1163,6 @@ void TableSet::AddFork (GNode *to)
   }
 
   data->_canvas_table = NULL;
-  data->_player_item  = NULL;
-  data->_print_item   = NULL;
   data->_connector    = NULL;
   data->_match = new Match (_max_score);
   data->_match->SetData (this, "node", node);
@@ -1190,7 +1181,7 @@ void TableSet::AddFork (GNode *to)
 
     // Get the table entry in the quick search
     {
-      GtkTreePath *path = gtk_tree_path_new_from_indices (data->_table->GetColumn () - 1,
+      GtkTreePath *path = gtk_tree_path_new_from_indices (data->_table->GetNumber () - 1,
                                                           -1);
 
       gtk_tree_model_get_iter (GTK_TREE_MODEL (_quick_search_treestore),
@@ -1230,8 +1221,18 @@ void TableSet::AddFork (GNode *to)
   }
   else
   {
-    Player *player = (Player *) g_slist_nth_data (_attendees,
-                                                  data->_expected_winner_rank - 1);
+    Player *player;
+
+    if (_first_place == 1)
+    {
+      player = (Player *) g_slist_nth_data (_attendees,
+                                            data->_expected_winner_rank - 1);
+    }
+    else
+    {
+      player = (Player *) g_slist_nth_data (_attendees,
+                                            data->_table_index);
+    }
 
     if (player)
     {
@@ -1267,8 +1268,11 @@ void TableSet::AddFork (GNode *to)
         GNode    *A_node = g_node_first_child (to);
         NodeData *A_data = (NodeData *) A_node->data;
 
-        to_data->_match->SetPlayerA (A_data->_match->GetWinner ());
-        to_data->_match->SetPlayerB (NULL);
+        if (A_data->_match)
+        {
+          to_data->_match->SetPlayerA (A_data->_match->GetWinner ());
+          to_data->_match->SetPlayerB (NULL);
+        }
       }
     }
   }
@@ -1809,7 +1813,7 @@ gint TableSet::ComparePlayer (Player   *A,
     {
       if (table_A != table_B)
       {
-        return table_B->GetColumn () - table_A->GetColumn ();
+        return table_B->GetNumber () - table_A->GetNumber ();
       }
     }
   }
@@ -1824,8 +1828,7 @@ gint TableSet::ComparePreviousRankPlayer (Player  *A,
                                           Player  *B,
                                           guint32  rand_seed)
 {
-  Stage               *previous = _supervisor->GetPreviousStage ();
-  Player::AttributeId  attr_id ("rank", previous);
+  Player::AttributeId attr_id ("previous_stage_rank", GetDataOwner ());
 
   attr_id.MakeRandomReady (rand_seed);
   return Player::Compare (A,

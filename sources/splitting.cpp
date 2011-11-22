@@ -59,6 +59,7 @@ Splitting::Splitting (StageClass *stage_class)
                                "attending",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                NULL);
     filter = new Filter (attr_list,

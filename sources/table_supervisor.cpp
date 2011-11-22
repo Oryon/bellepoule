@@ -90,6 +90,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                "rank",
                                NULL);
@@ -122,12 +123,16 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
                                "exported",
                                "victories_ratio",
                                "indice",
+                               "pool_nr",
                                "HS",
                                NULL);
     filter = new Filter (attr_list,
                          this);
 
     filter->ShowAttribute ("rank");
+#ifdef DEBUG
+    filter->ShowAttribute ("previous_stage_rank");
+#endif
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
@@ -286,18 +291,21 @@ void TableSupervisor::SetTableSetsState ()
   if (_displayed_table_set == NULL)
   {
     GtkTreeIter iter;
-    GtkTreePath *path;
 
-    gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
-                                   &iter);
-    path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore), &iter);
+    if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
+                                       &iter))
+    {
+      GtkTreePath *path;
 
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
-                              path,
-                              NULL,
-                              FALSE);
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (_table_set_treestore), &iter);
 
-    gtk_tree_path_free (path);
+      gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                                path,
+                                NULL,
+                                FALSE);
+
+      gtk_tree_path_free (path);
+    }
   }
 
   SignalStatusUpdate ();
@@ -571,7 +579,11 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
     {
       place_offset = place_offset << 1;
 
-      if ((from_place+place_offset) < (nb_players))
+      if ((i == nb_tables-2) && (place_offset << 1) > nb_players)
+      {
+        break;
+      }
+      else if ((from_place+place_offset) < nb_players)
       {
         FeedTableSetStore (from_place + place_offset,
                            i+1,
@@ -640,11 +652,11 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
     gtk_tree_path_free (path);
   }
 
-  if (   (table_set->GetNbTables () >= (table->GetColumn () + 3))
+  if (   (table_set->GetNbTables () >= (table->GetNumber () + 3))
       && gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_table_set_treestore),
                                         &defeated_iter,
                                         &iter,
-                                        table_set->GetNbTables () - table->GetColumn () - 3))
+                                        table_set->GetNbTables () - table->GetNumber () - 3))
   {
     TableSet *defeated_table_set;
 
@@ -775,11 +787,6 @@ void TableSupervisor::FillInConfig ()
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton")),
                                   TRUE);
   }
-  else if (_fenced_places->_value == QUOTA)
-  {
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("quota_radiobutton")),
-                                  TRUE);
-  }
   else
   {
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("no_radiobutton")),
@@ -799,10 +806,6 @@ void TableSupervisor::ApplyConfig ()
   else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("third_place_radiobutton"))))
   {
     _fenced_places->_value = THIRD_PLACES;
-  }
-  else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("quota_radiobutton"))))
-  {
-    _fenced_places->_value = QUOTA;
   }
   else
   {
@@ -1017,12 +1020,12 @@ extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *w
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled (GtkWidget *widget,
-                                                                                  Object    *owner)
+extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled (GtkToggleToolButton *widget,
+                                                                                  Object              *owner)
 {
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
-  t->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
+  t->ToggleClassification (gtk_toggle_tool_button_get_active (widget));
 }
 
 // --------------------------------------------------------------------------------

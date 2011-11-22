@@ -201,7 +201,7 @@ class Stage : public virtual Object
     GSList             *_result;
     Classification     *_classification;
     GSList             *_locked_on_classification;
-    SensitivityTrigger *_sensitivity_trigger;
+    SensitivityTrigger  _sensitivity_trigger;
     SensitivityTrigger *_score_stuffing_trigger;
     gboolean            _classification_on;
 

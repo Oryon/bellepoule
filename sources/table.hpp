@@ -31,7 +31,7 @@ class Table : public Object
   public:
     Table (TableSet *table_set,
            guint     size,
-           guint     column);
+           guint     number);
 
     gchar *GetImage ();
 
@@ -46,6 +46,8 @@ class Table : public Object
     guint GetRow (guint for_index);
 
     guint GetColumn ();
+
+    guint GetNumber ();
 
     void Show (guint at_column);
 
@@ -73,6 +75,7 @@ class Table : public Object
 
   private:
     guint     _size;
+    guint     _number;
     guint     _column;
     gboolean  _is_displayed;
     gboolean  _loaded;
