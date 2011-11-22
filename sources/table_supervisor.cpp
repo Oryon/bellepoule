@@ -1020,12 +1020,12 @@ extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *w
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled (GtkWidget *widget,
-                                                                                  Object    *owner)
+extern "C" G_MODULE_EXPORT void on_table_classification_toggletoolbutton_toggled (GtkToggleToolButton *widget,
+                                                                                  Object              *owner)
 {
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
-  t->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
+  t->ToggleClassification (gtk_toggle_tool_button_get_active (widget));
 }
 
 // --------------------------------------------------------------------------------

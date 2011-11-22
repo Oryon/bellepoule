@@ -612,6 +612,17 @@ the begining of the pools.</property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkSeparatorToolItem" id="toolbutton4">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkToggleToolButton" id="pool_classification_toggletoolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>

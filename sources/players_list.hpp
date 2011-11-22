@@ -27,21 +27,24 @@
 class PlayersList : public Module
 {
   public:
+    static Player *GetPlayer (GtkTreeModel *model,
+                              GtkTreeIter  *iter);
+
+    PlayersList (const gchar *glade_file,
+                 guint        rights = SORTABLE | MODIFIABLE);
+
     virtual void Add (Player *player);
 
     void Wipe ();
 
-  protected:
     static const guint NO_RIGHT   = 0x00000000;
     static const guint SORTABLE   = 0x00000001;
     static const guint MODIFIABLE = 0x00000002;
 
+  protected:
     GSList *_player_list;
 
     typedef gboolean (*CustomFilter) (Player *player);
-
-    PlayersList (const gchar *glade_file,
-                 guint        rights = SORTABLE | MODIFIABLE);
 
     ~PlayersList ();
 
@@ -66,10 +69,6 @@ class PlayersList : public Module
 
   protected:
     GtkListStore *_store;
-
-  public:
-    static Player *GetPlayer (GtkTreeModel *model,
-                              GtkTreeIter  *iter);
 
   private:
     void PrintHeader (GooCanvasItem *root_item,

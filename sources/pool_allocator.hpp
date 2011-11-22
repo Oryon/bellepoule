@@ -22,6 +22,7 @@
 #include "data.hpp"
 #include "stage.hpp"
 #include "canvas_module.hpp"
+#include "players_list.hpp"
 #include "pool_match_order.hpp"
 #include "pool.hpp"
 
@@ -48,6 +49,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     void OnComboboxChanged (GtkComboBox *cb);
     void OnSwappingComboboxChanged (GtkComboBox *cb);
+    void OnFencerListToggled (gboolean toggled);
 
   private:
     void OnLocked (Reason reason);
@@ -93,6 +95,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     guint               _nb_page;
     gboolean            _loaded;
     SensitivityTrigger  _swapping_sensitivity_trigger;
+    PlayersList        *_fencer_list;
 
     void FillCombobox ();
     void CreatePools ();

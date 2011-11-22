@@ -840,12 +840,12 @@ extern "C" G_MODULE_EXPORT void on_pool_combobox_changed (GtkWidget *widget,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_pool_classification_toggletoolbutton_toggled (GtkWidget *widget,
-                                                                                 Object    *owner)
+extern "C" G_MODULE_EXPORT void on_pool_classification_toggletoolbutton_toggled (GtkToggleToolButton *widget,
+                                                                                 Object              *owner)
 {
   PoolSupervisor *p = dynamic_cast <PoolSupervisor *> (owner);
 
-  p->ToggleClassification (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (widget)));
+  p->ToggleClassification (gtk_toggle_tool_button_get_active (widget));
 }
 
 // --------------------------------------------------------------------------------

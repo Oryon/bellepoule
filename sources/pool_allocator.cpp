@@ -152,6 +152,13 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetObject ("swapping_combobox")),
                               0);
   }
+
+  {
+    _fencer_list = new PlayersList ("classification.glade",
+                                    PlayersList::SORTABLE);
+    Plug (_fencer_list,
+          _glade->GetWidget ("fencer_list_hook"));
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -185,6 +192,8 @@ const gchar *PoolAllocator::GetInputProviderClient ()
 // --------------------------------------------------------------------------------
 void PoolAllocator::Display ()
 {
+  OnFencerListToggled (FALSE);
+
   SetUpCombobox ();
 
   if (_main_table)
@@ -1735,4 +1744,37 @@ extern "C" G_MODULE_EXPORT void on_filter_button_clicked (GtkWidget *widget,
   PoolAllocator *p = dynamic_cast <PoolAllocator *> (owner);
 
   p->SelectAttributes ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnFencerListToggled (gboolean toggled)
+{
+  GtkWidget *main_w        = GetWidget ("main_hook");
+  GtkWidget *fencer_list_w = GetWidget ("fencer_list_hook");
+
+  if (toggled)
+  {
+    if (main_w)
+    {
+      gtk_widget_hide_all (main_w);
+    }
+    gtk_widget_show (fencer_list_w);
+  }
+  else
+  {
+    gtk_widget_hide (fencer_list_w);
+    if (main_w)
+    {
+      gtk_widget_show_all (main_w);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_fencer_list_toggled (GtkToggleToolButton *widget,
+                                                        Object              *owner)
+{
+  PoolAllocator *p = dynamic_cast <PoolAllocator *> (owner);
+
+  p->OnFencerListToggled (gtk_toggle_tool_button_get_active (widget));
 }
