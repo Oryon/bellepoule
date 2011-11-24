@@ -1,0 +1,626 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: countries\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-09-22 08:32+0200\n"
+"PO-Revision-Date: 2011-11-24 22:28+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: korean\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+
+msgid "Afghanistan"
+msgstr "아프가니스탄"
+
+msgid "Albania"
+msgstr "알바니아"
+
+msgid "Algeria"
+msgstr "알제리"
+
+msgid "Andorra"
+msgstr "안도라"
+
+msgid "Angola"
+msgstr "앙골라"
+
+msgid "Antigua and Barbuda"
+msgstr "앤티가"
+
+msgid "Argentina"
+msgstr "아르헨티나"
+
+msgid "Armenia"
+msgstr "아르메니아"
+
+msgid "Aruba"
+msgstr "아루바"
+
+msgid "American Samoa"
+msgstr "아메리칸사모아"
+
+msgid "Australia"
+msgstr "오스트레일리아"
+
+msgid "Austria"
+msgstr "오스트리아"
+
+msgid "Azerbaijan"
+msgstr "아제르바이잔"
+
+msgid "Bahamas"
+msgstr "바하마"
+
+msgid "Bangladesh"
+msgstr "방글라데시"
+
+msgid "Barbados"
+msgstr "바베이도스"
+
+msgid "Burundi"
+msgstr "부룬디"
+
+msgid "Belgium"
+msgstr "벨기에"
+
+msgid "Benin"
+msgstr "베냉"
+
+msgid "Bermuda"
+msgstr "버뮤다"
+
+msgid "Bhutan"
+msgstr "부탄"
+
+msgid "Bosnia and Herzegovina"
+msgstr "보스니아"
+
+msgid "Belize"
+msgstr "벨리즈"
+
+msgid "Belarus"
+msgstr "벨라루스"
+
+msgid "Bolivia"
+msgstr "볼리비아"
+
+msgid "Botswana"
+msgstr "보츠와나"
+
+msgid "Brazil"
+msgstr "브라질"
+
+msgid "Bahrain"
+msgstr "바레인"
+
+msgid "Brunei"
+msgstr "브루나이"
+
+msgid "Bulgaria"
+msgstr "불가리아"
+
+msgid "Burkina Faso"
+msgstr "부르키나파소"
+
+msgid "Central African Republic"
+msgstr "중앙아프리카"
+
+msgid "Cambodia"
+msgstr "캄보디아"
+
+msgid "Canada"
+msgstr "캐나다"
+
+msgid "Cayman Islands"
+msgstr "케이맨"
+
+msgid "Congo"
+msgstr "콩고"
+
+msgid "Chad"
+msgstr "차드"
+
+msgid "Chile"
+msgstr "칠레"
+
+msgid "China"
+msgstr "중화인민공화국"
+
+msgid "Côte d'Ivoire"
+msgstr "코트디부아르"
+
+msgid "Cameroon"
+msgstr "카메룬"
+
+msgid "DR Congo"
+msgstr "콩고"
+
+msgid "Cook Islands"
+msgstr "쿡"
+
+msgid "Colombia"
+msgstr "콜롬비아"
+
+msgid "Comoros"
+msgstr "코모로"
+
+msgid "Cape Verde"
+msgstr "카보베르데"
+
+msgid "Costa Rica"
+msgstr "코스타리카"
+
+msgid "Croatia"
+msgstr "크로아티아"
+
+msgid "Cuba"
+msgstr "쿠바"
+
+msgid "Cyprus"
+msgstr "키프로스"
+
+msgid "Czech Republic"
+msgstr "체코"
+
+msgid "Denmark"
+msgstr "덴마크"
+
+msgid "Djibouti"
+msgstr "지부티"
+
+msgid "Dominica"
+msgstr "도미니카"
+
+msgid "Dominican Republic"
+msgstr "도미니카"
+
+msgid "Ecuador"
+msgstr "에콰도르"
+
+msgid "Egypt"
+msgstr "이집트"
+
+msgid "Eritrea"
+msgstr "에리트레아"
+
+msgid "El Salvador"
+msgstr "엘살바도르"
+
+msgid "Spain"
+msgstr "스페인"
+
+msgid "Estonia"
+msgstr "에스토니아"
+
+msgid "Ethiopia"
+msgstr "에티오피아"
+
+msgid "Fiji"
+msgstr "피지"
+
+msgid "Finland"
+msgstr "핀란드"
+
+msgid "France"
+msgstr "프랑스"
+
+msgid "Micronesia"
+msgstr "미크로네시아"
+
+msgid "Gabon"
+msgstr "가봉"
+
+msgid "Gambia"
+msgstr "감비아"
+
+msgid "Great Britain"
+msgstr "영국"
+
+msgid "Guinea-Bissau"
+msgstr "기니비사우"
+
+msgid "Georgia"
+msgstr "조지아"
+
+msgid "Equatorial Guinea"
+msgstr "적도"
+
+msgid "Germany"
+msgstr "독일"
+
+msgid "Ghana"
+msgstr "가나"
+
+msgid "Greece"
+msgstr "그리스"
+
+msgid "Grenada"
+msgstr "그레나다"
+
+msgid "Guatemala"
+msgstr "과테말라"
+
+msgid "Guinea"
+msgstr "기니"
+
+msgid "Guam"
+msgstr "괌"
+
+msgid "Guyana"
+msgstr "가이아나"
+
+msgid "Haiti"
+msgstr "아이티"
+
+msgid "Hong Kong"
+msgstr "홍콩"
+
+msgid "Honduras"
+msgstr "온두라스"
+
+msgid "Hungary"
+msgstr "헝가리"
+
+msgid "Indonesia"
+msgstr "인도네시아"
+
+msgid "India"
+msgstr "인도"
+
+msgid "Iran"
+msgstr "이란"
+
+msgid "Ireland"
+msgstr "아일랜드"
+
+msgid "Iraq"
+msgstr "이라크"
+
+msgid "Iceland"
+msgstr "아이슬란드"
+
+msgid "Israel"
+msgstr "이스라엘"
+
+msgid "Virgin Islands"
+msgstr "미국령"
+
+msgid "Italy"
+msgstr "이탈리아"
+
+msgid "British Virgin Islands"
+msgstr "영국령"
+
+msgid "Jamaica"
+msgstr "자메이카"
+
+msgid "Jordan"
+msgstr "요르단"
+
+msgid "Japan"
+msgstr "일본"
+
+msgid "Kazakhstan"
+msgstr "카자흐스탄"
+
+msgid "Kenya"
+msgstr "케냐"
+
+msgid "Kyrgyzstan"
+msgstr "키르기스스탄"
+
+msgid "Kiribati"
+msgstr "키리바시"
+
+msgid "South Korea"
+msgstr "대한민국"
+
+msgid "Saudi Arabia"
+msgstr "사우디아라비아"
+
+msgid "Kuwait"
+msgstr "쿠웨이트"
+
+msgid "Laos"
+msgstr "라오스"
+
+msgid "Latvia"
+msgstr "라트비아"
+
+msgid "Libya"
+msgstr "리비아"
+
+msgid "Liberia"
+msgstr "라이베리아"
+
+msgid "Saint Lucia"
+msgstr "세인트루시아"
+
+msgid "Lesotho"
+msgstr "레소토"
+
+msgid "Lebanon"
+msgstr "레바논"
+
+msgid "Liechtenstein"
+msgstr "리히텐슈타인"
+
+msgid "Lithuania"
+msgstr "리투아니아"
+
+msgid "Luxembourg"
+msgstr "룩셈부르크"
+
+msgid "Madagascar"
+msgstr "마다가스카르"
+
+msgid "Morocco"
+msgstr "모로코"
+
+msgid "Malaysia"
+msgstr "말레이시아"
+
+msgid "Malawi"
+msgstr "말라위"
+
+msgid "Moldova"
+msgstr "몰도바"
+
+msgid "Maldives"
+msgstr "몰디브"
+
+msgid "Mexico"
+msgstr "멕시코"
+
+msgid "Mongolia"
+msgstr "마셜"
+
+msgid "Marshall Islands"
+msgstr "마셜 제도"
+
+msgid "Macedonia"
+msgstr "마케도니아 공화국"
+
+msgid "Mali"
+msgstr "말리"
+
+msgid "Malta"
+msgstr "몰타"
+
+msgid "Montenegro"
+msgstr "몬테네그로"
+
+msgid "Monaco"
+msgstr "모나코"
+
+msgid "Mozambique"
+msgstr "모잠비크"
+
+msgid "Mauritius"
+msgstr "모리셔스"
+
+msgid "Mauritania"
+msgstr "모리타니"
+
+msgid "Myanmar"
+msgstr "미얀마"
+
+msgid "Namibia"
+msgstr "나미비아"
+
+msgid "Nicaragua"
+msgstr "니카라과"
+
+msgid "Netherlands"
+msgstr "네덜란드"
+
+msgid "Nepal"
+msgstr "네팔"
+
+msgid "Nigeria"
+msgstr "나이지리아"
+
+msgid "Niger"
+msgstr "니제르"
+
+msgid "Norway"
+msgstr "노르웨이"
+
+msgid "Nauru"
+msgstr "나우루"
+
+msgid "New Zealand"
+msgstr "뉴질랜드"
+
+msgid "Oman"
+msgstr "오만"
+
+msgid "Pakistan"
+msgstr "파키스탄"
+
+msgid "Panama"
+msgstr "파나마"
+
+msgid "Paraguay"
+msgstr "파라과이"
+
+msgid "Peru"
+msgstr "페루"
+
+msgid "Philippines"
+msgstr "필리핀"
+
+msgid "Palestine"
+msgstr "팔레스타인"
+
+msgid "Palau"
+msgstr "팔라우"
+
+msgid "Papua New Guinea"
+msgstr "파푸아"
+
+msgid "Poland"
+msgstr "폴란드"
+
+msgid "Portugal"
+msgstr "포르투갈"
+
+msgid "North Korea"
+msgstr "조선민주주의인민공화국"
+
+msgid "Puerto Rico"
+msgstr "푸에르토리코"
+
+msgid "Qatar"
+msgstr "카타르"
+
+msgid "Romania"
+msgstr "루마니아"
+
+msgid "South Africa"
+msgstr "남아프리카 공화국"
+
+msgid "Russia"
+msgstr "러시아"
+
+msgid "Rwanda"
+msgstr "르완다"
+
+msgid "Samoa"
+msgstr "사모아"
+
+msgid "Senegal"
+msgstr "세네갈"
+
+msgid "Seychelles"
+msgstr "세이셸"
+
+msgid "Singapore"
+msgstr "싱가포르"
+
+msgid "Saint Kitts and Nevis"
+msgstr "세인트키츠 네비스"
+
+msgid "Sierra Leone"
+msgstr "시에라리온"
+
+msgid "Slovenia"
+msgstr "슬로베니아"
+
+msgid "San Marino"
+msgstr "산마리노"
+
+msgid "Solomon Islands"
+msgstr "솔로몬"
+
+msgid "Somalia"
+msgstr "소말리아"
+
+msgid "Serbia"
+msgstr "세르비아"
+
+msgid "Sri Lanka"
+msgstr "스리랑카"
+
+msgid "São Tomé and Príncipe"
+msgstr "상투메"
+
+msgid "Sudan"
+msgstr "수단"
+
+msgid "Switzerland"
+msgstr "스위스"
+
+msgid "Suriname"
+msgstr "수리남"
+
+msgid "Slovakia"
+msgstr "슬로바키아"
+
+msgid "Sweden"
+msgstr "스웨덴"
+
+msgid "Swaziland"
+msgstr "스와질란드"
+
+msgid "Syria"
+msgstr "시리아"
+
+msgid "Tanzania"
+msgstr "탄자니아"
+
+msgid "Tonga"
+msgstr "통가"
+
+msgid "Thailand"
+msgstr "타이"
+
+msgid "Tajikistan"
+msgstr "타지키스탄"
+
+msgid "Turkmenistan"
+msgstr "투르크메니스탄"
+
+msgid "Timor-Leste"
+msgstr "동티모르"
+
+msgid "Togo"
+msgstr "토고"
+
+msgid "Chinese Taipei"
+msgstr "중화 타이베이"
+
+msgid "Trinidad and Tobago"
+msgstr "트리니다드"
+
+msgid "Tunisia"
+msgstr "튀니지"
+
+msgid "Turkey"
+msgstr "터키"
+
+msgid "Tuvalu"
+msgstr "투발루"
+
+msgid "United Arab Emirates"
+msgstr "아랍에미리트"
+
+msgid "Uganda"
+msgstr "우간다"
+
+msgid "Ukraine"
+msgstr "우크라이나"
+
+msgid "Uruguay"
+msgstr "우루과이"
+
+msgid "United States"
+msgstr "미국"
+
+msgid "Uzbekistan"
+msgstr "우즈베키스탄"
+
+msgid "Vanuatu"
+msgstr "바누아투"
+
+msgid "Venezuela"
+msgstr "베네수엘라"
+
+msgid "Vietnam"
+msgstr "베트남"
+
+msgid "Saint Vincent and the Grenadines"
+msgstr "세인트빈센트"
+
+msgid "Yemen"
+msgstr "예멘"
+
+msgid "Zambia"
+msgstr "잠비아"
+
+msgid "Zimbabwe"
+msgstr "짐바브웨"
+
