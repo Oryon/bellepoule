@@ -314,17 +314,17 @@ void Table::Save (xmlTextWriter *xml_writer)
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
                                      "A%d", _size);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "Titre",
-                                     "%s", GetImage ());
+  xmlTextWriterWriteAttribute (xml_writer,
+                               BAD_CAST "Titre",
+                               BAD_CAST GetImage ());
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "Taille",
                                      "%d", _size);
   if (_defeated_table_set)
   {
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "DestinationDesElimines",
-                                       "%s", _defeated_table_set->GetId ());
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "DestinationDesElimines",
+                                 BAD_CAST _defeated_table_set->GetId ());
   }
 
   {

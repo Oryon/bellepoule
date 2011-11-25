@@ -74,9 +74,9 @@ void Data::Save (xmlTextWriter *xml_writer)
   }
   else if (_string)
   {
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST _xml_name,
-                                       "%s", _string);
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST _xml_name,
+                                 BAD_CAST _string);
   }
 }
 

@@ -279,9 +279,9 @@ void Player::Save (xmlTextWriter *xml_writer)
       {
         gchar *xml_image = attr->GetXmlImage ();
 
-        xmlTextWriterWriteFormatAttribute (xml_writer,
+        xmlTextWriterWriteAttribute (xml_writer,
                                            BAD_CAST attr->GetXmlName (),
-                                           xml_image);
+                                           BAD_CAST xml_image);
         g_free (xml_image);
       }
     }

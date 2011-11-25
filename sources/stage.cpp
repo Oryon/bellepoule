@@ -1052,9 +1052,9 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "PhaseID",
                                      "%d", _id);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "ID",
-                                     "%s", GetName ());
+  xmlTextWriterWriteAttribute (xml_writer,
+                               BAD_CAST "ID",
+                               BAD_CAST GetName ());
 
   if (_max_score)
   {
@@ -1137,9 +1137,9 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       }
       if (status)
       {
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "Statut",
-                                           "%s", (gchar *)  status->GetXmlImage ());
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "Statut",
+                                     BAD_CAST status->GetXmlImage ());
       }
       xmlTextWriterEndElement (xml_writer);
 
