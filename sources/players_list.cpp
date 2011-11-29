@@ -123,25 +123,11 @@ void PlayersList::Update (Player *player)
 
     for (guint i = 0; i < g_slist_length (attr_list); i++)
     {
-      AttributeDesc       *desc;
-      Attribute           *attr;
-      Player::AttributeId *attr_id;
+      AttributeDesc       *desc    = (AttributeDesc *) g_slist_nth_data (attr_list, i);
+      Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
+      Attribute           *attr    = player->GetAttribute (attr_id);
 
-      desc = (AttributeDesc *) g_slist_nth_data (attr_list,
-                                                 i);
-      if (desc->_scope == AttributeDesc::GLOBAL)
-      {
-        attr_id = new Player::AttributeId (desc->_code_name);
-      }
-      else
-      {
-        attr_id = new Player::AttributeId (desc->_code_name,
-                                           GetDataOwner ());
-      }
-
-      attr = player->GetAttribute (attr_id);
       attr_id->Release ();
-
       if (attr)
       {
         gtk_list_store_set (_store, &iter,
@@ -216,7 +202,7 @@ void PlayersList::OnCellEdited (gchar         *path_string,
                                 AttributeDesc *desc)
 {
   Player              *p         = GetPlayer (path_string);
-  Player::AttributeId *attr_id   = Player::AttributeId::CreateAttributeId (desc, this);
+  Player::AttributeId *attr_id   = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
   const gchar         *xml_image = desc->GetDiscreteXmlImage (new_text);
 
   p->SetAttributeValue (attr_id,
@@ -265,7 +251,7 @@ void PlayersList::OnCellToggled (gchar         *path_string,
 {
   GtkTreePath         *toggeled_path = gtk_tree_path_new_from_string (path_string);
   Player::AttributeId *attr_id       = Player::AttributeId::CreateAttributeId (desc,
-                                                                               this);
+                                                                               GetDataOwner ());
 
   if (gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
                                            toggeled_path))
@@ -513,7 +499,7 @@ void PlayersList::SetColumn (guint          id,
 
     if (_rights & SORTABLE)
     {
-      Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, this);
+      Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
 
       gtk_tree_view_column_set_sort_column_id (column,
                                                id);
@@ -860,24 +846,11 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
 
   for (guint j = 0; current_attr != NULL; j++)
   {
-    AttributeDesc       *desc;
-    Attribute           *attr;
-    Player::AttributeId *attr_id;
+    AttributeDesc       *desc    = (AttributeDesc *) current_attr->data;
+    Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
+    Attribute           *attr    = player->GetAttribute (attr_id);
 
-    desc = (AttributeDesc *) current_attr->data;
-    if (desc->_scope == AttributeDesc::GLOBAL)
-    {
-      attr_id = new Player::AttributeId (desc->_code_name);
-    }
-    else
-    {
-      attr_id = new Player::AttributeId (desc->_code_name,
-                                         GetDataOwner ());
-    }
-
-    attr = player->GetAttribute (attr_id);
     attr_id->Release ();
-
     if (attr)
     {
       GooCanvasItem   *item;

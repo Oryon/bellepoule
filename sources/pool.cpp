@@ -203,13 +203,15 @@ void Pool::AddPlayer (Player *player,
          || (g_slist_find (_player_list,
                            player) == NULL))
   {
-    player->SetData (rank_owner,
-                     "Pool No",
-                     (void *) GetNumber ());
+    {
+      Player::AttributeId attr_id ("pool_nr", rank_owner);
+
+      player->SetAttributeValue (&attr_id,
+                                 GetNumber ());
+    }
 
     {
-      Player::AttributeId attr_id ("previous_stage_rank",
-                                   rank_owner);
+      Player::AttributeId attr_id ("previous_stage_rank", rank_owner);
 
       attr_id.MakeRandomReady (_rand_seed);
       _player_list = g_slist_insert_sorted_with_data (_player_list,

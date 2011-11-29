@@ -143,9 +143,9 @@ int main (int argc, char **argv)
     {
       setlocale (LC_ALL, "");
 
-      g_setenv ("LANGUAGE",
-      "ko",
-      TRUE);
+      //g_setenv ("LANGUAGE",
+      //"ko",
+      //TRUE);
 
       {
         gchar *translation_path = g_build_filename (install_dirname, "resources", "countries", "translations", NULL);

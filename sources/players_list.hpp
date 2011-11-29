@@ -37,6 +37,12 @@ class PlayersList : public Module
 
     void Wipe ();
 
+    void SetFilter (Filter *filter);
+
+    void OnAttrListUpdated ();
+
+    void Update (Player *player);
+
     static const guint NO_RIGHT   = 0x00000000;
     static const guint SORTABLE   = 0x00000001;
     static const guint MODIFIABLE = 0x00000002;
@@ -52,15 +58,9 @@ class PlayersList : public Module
 
     void SetSensitiveState (gboolean sensitive_value);
 
-    void Update (Player *player);
-
-    void OnAttrListUpdated ();
-
     GSList *CreateCustomList (CustomFilter filter);
 
     GSList *GetSelectedPlayers ();
-
-    void SetFilter (Filter *filter);
 
     void SetAttributeRight (const gchar *name,
                             gboolean     modifiable);
