@@ -124,6 +124,8 @@
 		<Unit filename="sources\ecosystem.hpp" />
 		<Unit filename="sources\filter.cpp" />
 		<Unit filename="sources\filter.hpp" />
+		<Unit filename="sources\form.cpp" />
+		<Unit filename="sources\form.hpp" />
 		<Unit filename="sources\general_classification.cpp" />
 		<Unit filename="sources\general_classification.hpp" />
 		<Unit filename="sources\glade.cpp" />

@@ -25,6 +25,7 @@
 #include "attribute.hpp"
 #include "stage.hpp"
 #include "players_list.hpp"
+#include "form.hpp"
 
 class Checkin : public virtual Stage, public PlayersList
 {
@@ -46,8 +47,6 @@ class Checkin : public virtual Stage, public PlayersList
   public:
     void on_add_player_button_clicked ();
     void on_remove_player_button_clicked ();
-    void on_add_button_clicked ();
-    void on_close_button_clicked ();
 
     void OnToggleAllPlayers (gboolean present);
 
@@ -63,6 +62,7 @@ class Checkin : public virtual Stage, public PlayersList
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
+    Form       *_form;
     guint       _attendings;
     gboolean    _use_initial_rank;
     GtkWidget  *_print_dialog;
@@ -86,6 +86,8 @@ class Checkin : public virtual Stage, public PlayersList
 
     void Display ();
 
+    void OnAddPlayer (Player *player);
+
     gboolean IsOver ();
 
     void UpdateChecksum ();
@@ -102,25 +104,11 @@ class Checkin : public virtual Stage, public PlayersList
 
     gchar *ConvertToUtf8 (gchar *what);
 
-    static void SetSelectorValue (GtkComboBox *combo_box,
-                                  const gchar *value);
-
-    static gboolean OnSelectorChanged (GtkEntryCompletion *widget,
-                                       GtkTreeModel       *model,
-                                       GtkTreeIter        *iter,
-                                       GtkComboBox        *combobox);
-
-    static void OnSelectorEntryActivate (GtkEntry    *widget,
-                                         GtkComboBox *combobox);
-
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Checkin   *checkin);
 
     static gboolean PresentPlayerFilter (Player *player);
-
-    static void on_sensitive_state_toggled (GtkToggleButton *togglebutton,
-                                            GtkWidget       *w);
 
     ~Checkin ();
 };
