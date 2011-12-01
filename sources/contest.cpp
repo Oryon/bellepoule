@@ -453,6 +453,8 @@ Contest::~Contest ()
   Object::TryToRelease (_scratch_time);
   Object::TryToRelease (_start_time);
 
+  Object::TryToRelease (_referees_list);
+
   Object::TryToRelease (_schedule);
 
   Object::Dump ();
@@ -613,6 +615,17 @@ void Contest::InitInstance ()
   _gdk_color = NULL;
   _color     = new Data ("Couleur",
                          (guint) 0);
+
+  {
+    _referees_list = new Checkin (NULL,
+                                  "referees.glade");
+    Plug (_referees_list,
+          _glade->GetWidget ("referees_viewport"),
+          NULL);
+    gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
+                            0);
+    _referee_pane_position = -1;
+  }
 
   {
     GTimeVal  current_time;
@@ -1371,6 +1384,25 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
+void Contest::on_referees_toolbutton_toggled (GtkToggleToolButton *w)
+{
+  GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
+
+  if (gtk_toggle_tool_button_get_active (w))
+  {
+    gtk_paned_set_position (paned,
+                            _referee_pane_position);
+  }
+  else
+  {
+    _referee_pane_position = gtk_paned_get_position (paned);
+    gtk_paned_set_position (paned,
+                            0);
+  }
+
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_web_site_button_clicked (GtkWidget *widget,
                                                             Object    *owner)
 {
@@ -1573,4 +1605,13 @@ extern "C" G_MODULE_EXPORT void on_ftp_comboboxentry_changed (GtkComboBox *widge
   Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_ftp_changed (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_referees_toolbutton_toggled (GtkToggleToolButton *widget,
+                                                                Object              *owner)
+{
+  Contest *c = dynamic_cast <Contest *> (owner);
+
+  c->on_referees_toolbutton_toggled (widget);
 }

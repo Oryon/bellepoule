@@ -26,6 +26,7 @@
 #include "schedule.hpp"
 
 class Tournament;
+class Checkin;
 
 class Contest : public Module
 {
@@ -64,6 +65,7 @@ class Contest : public Module
     void on_calendar_button_clicked       ();
     void on_web_site_button_clicked       ();
     void on_ftp_changed                   (GtkComboBox *widget);
+    void on_referees_toolbutton_toggled   (GtkToggleToolButton *w);
 
   private:
     struct Time : public Object
@@ -99,28 +101,30 @@ class Contest : public Module
 
     static GList *_color_list;
 
-    gchar      *_owner;
-    gchar      *_id;
-    gchar      *_name;
-    gchar      *_organizer;
-    gchar      *_location;
-    gchar      *_web_site;
-    guint       _category;
-    gchar      *_filename;
-    guint       _weapon;
-    guint       _gender;
-    guint       _day;
-    guint       _month;
-    guint       _year;
-    Time       *_checkin_time;
-    Time       *_scratch_time;
-    Time       *_start_time;
-    Schedule   *_schedule;
-    Tournament *_tournament;
-    gboolean    _derived;
-    Data       *_color;
-    GdkColor   *_gdk_color;
-    guint       _save_timeout_id;
+    gchar        *_owner;
+    gchar        *_id;
+    gchar        *_name;
+    gchar        *_organizer;
+    gchar        *_location;
+    gchar        *_web_site;
+    guint         _category;
+    gchar        *_filename;
+    guint         _weapon;
+    guint         _gender;
+    guint         _day;
+    guint         _month;
+    guint         _year;
+    Time         *_checkin_time;
+    Time         *_scratch_time;
+    Time         *_start_time;
+    Schedule     *_schedule;
+    Tournament   *_tournament;
+    gboolean      _derived;
+    Data         *_color;
+    GdkColor     *_gdk_color;
+    guint         _save_timeout_id;
+    Checkin      *_referees_list;
+    gint          _referee_pane_position;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;

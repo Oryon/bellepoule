@@ -32,7 +32,8 @@ class Checkin : public virtual Stage, public PlayersList
   public:
     static void Init ();
 
-    Checkin (StageClass *stage_class);
+    Checkin (StageClass  *stage_class,
+             const gchar *glade_file = "checkin.glade");
 
     void Add (Player *player);
 

@@ -29,9 +29,10 @@ const gchar *Checkin::_class_name     = N_("Check-in");
 const gchar *Checkin::_xml_class_name = "checkin_stage";
 
 // --------------------------------------------------------------------------------
-Checkin::Checkin (StageClass *stage_class)
+Checkin::Checkin (StageClass  *stage_class,
+                  const gchar *glade_file)
 : Stage (stage_class),
-  PlayersList ("checkin.glade")
+  PlayersList (glade_file)
 {
   _use_initial_rank = FALSE;
 
