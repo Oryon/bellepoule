@@ -52,6 +52,12 @@ class AttributeDesc : public Object
 
     typedef enum
     {
+      TEXTUAL,
+      GRAPHICAL
+    } Represenation;
+
+    typedef enum
+    {
       DISCRETE_CODE,
       DISCRETE_XML_IMAGE,
       DISCRETE_USER_IMAGE,
@@ -67,6 +73,7 @@ class AttributeDesc : public Object
     Persistency   _persistency;
     Scope         _scope;
     Uniqueness    _uniqueness;
+    Represenation _representation;
     gboolean      _free_value_allowed;
     Rights        _rights;
     GCompareFunc  _compare_func;

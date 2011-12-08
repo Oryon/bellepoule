@@ -22,6 +22,7 @@
 #include "module.hpp"
 
 class Contest;
+class Checkin;
 
 class Schedule : public Module
 {
@@ -38,9 +39,11 @@ class Schedule : public Module
     void AddStage    (Stage *stage,
                       Stage *after);
 
-    void Save (xmlTextWriter *xml_writer);
+    void Save (xmlTextWriter *xml_writer,
+               Checkin       *referees);
 
-    void Load (xmlDoc        *doc);
+    void Load (xmlDoc  *doc,
+               Checkin *referees);
 
     Stage *GetStage (guint index);
 

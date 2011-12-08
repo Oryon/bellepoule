@@ -25,71 +25,15 @@
 
 #include "checkin.hpp"
 
-const gchar *Checkin::_class_name     = N_("Check-in");
-const gchar *Checkin::_xml_class_name = "checkin_stage";
-
 // --------------------------------------------------------------------------------
-Checkin::Checkin (StageClass  *stage_class,
-                  const gchar *glade_file)
-: Stage (stage_class),
-  PlayersList (glade_file)
+Checkin::Checkin (const gchar *glade,
+                  const gchar *player_tag)
+: PlayersList (glade)
 {
-  _use_initial_rank = FALSE;
-
-  // Sensitive widgets
-  {
-    AddSensitiveWidget (_glade->GetWidget ("add_player_button"));
-    AddSensitiveWidget (_glade->GetWidget ("remove_player_button"));
-    AddSensitiveWidget (_glade->GetWidget ("import_toolbutton"));
-    AddSensitiveWidget (_glade->GetWidget ("all_present_button"));
-    AddSensitiveWidget (_glade->GetWidget ("all_absent_button"));
-  }
-
-  // Player attributes to display
-  {
-    GSList *attr_list;
-    Filter *filter;
-
-    AttributeDesc::CreateList (&attr_list,
-#ifndef DEBUG
-                               "ref",
-                               "start_rank",
-#endif
-                               "status",
-                               "global_status",
-                               "previous_stage_rank",
-                               "exported",
-                               "final_rank",
-                               "victories_ratio",
-                               "indice",
-                               "pool_nr",
-                               "HS",
-                               NULL);
-    filter = new Filter (attr_list,
-                         this);
-
-    filter->ShowAttribute ("attending");
-    filter->ShowAttribute ("rank");
-    filter->ShowAttribute ("name");
-    filter->ShowAttribute ("first_name");
-    filter->ShowAttribute ("birth_date");
-    filter->ShowAttribute ("gender");
-    filter->ShowAttribute ("club");
-    filter->ShowAttribute ("league");
-    filter->ShowAttribute ("country");
-    filter->ShowAttribute ("ranking");
-    filter->ShowAttribute ("licence");
-
-    SetFilter (filter);
-
-    _form = new Form (filter,
-                      this,
-                      (Form::AddPlayerCbk) &Checkin::OnAddPlayer);
-
-    filter->Release ();
-  }
-
-  _attendings = 0;
+  _form        = NULL;
+  _attendings  = 0;
+  _player_tag  = player_tag;
+  _players_tag = g_strdup_printf ("%ss", _player_tag);
 
   {
     GtkWidget *content_area;
@@ -118,26 +62,16 @@ Checkin::~Checkin ()
   gtk_widget_destroy (_print_dialog);
 
   _form->Release ();
+
+  g_free (_players_tag);
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Init ()
+void Checkin::CreateForm (Filter *filter)
 {
-  RegisterStageClass (gettext (_class_name),
-                      _xml_class_name,
-                      CreateInstance,
-                      0);
-}
-
-// --------------------------------------------------------------------------------
-Stage *Checkin::CreateInstance (StageClass *stage_class)
-{
-  return new Checkin (stage_class);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnPlugged ()
-{
+  _form = new Form (filter,
+                    this,
+                    (Form::AddPlayerCbk) &Checkin::OnAddPlayer);
 }
 
 // --------------------------------------------------------------------------------
@@ -148,117 +82,55 @@ void Checkin::Add (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Load (xmlXPathContext *xml_context,
-                    const gchar     *from_node)
+void Checkin::LoadList (xmlXPathContext *xml_context,
+                        const gchar     *from_node)
 {
-  gchar          *path        = g_strdup_printf ("%s/Tireurs", from_node);
+  gchar          *path        = g_strdup_printf ("%s/%ss", from_node, _player_tag);
   xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
   xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
   if (xml_object->nodesetval->nodeNr)
   {
-    Load (xml_nodeset->nodeTab[0]);
+    LoadList (xml_nodeset->nodeTab[0]);
   }
-
-  _attendees = new Attendees ();
 
   g_free (path);
   xmlXPathFreeObject (xml_object);
+
+  OnLoaded ();
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Load (xmlNode *xml_node)
+void Checkin::LoadList (xmlNode *xml_node)
 {
-  Player::AttributeId start_rank_id    ("start_rank");
-  Player::AttributeId previous_rank_id ("previous_stage_rank", this);
-
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "Tireur") == 0)
+      if (strcmp ((char *) n->name, _player_tag) == 0)
       {
-        Attribute *start_rank;
-        Player    *player = new Player;
+        Player *player = new Player;
 
         player->Load (n);
-
         Add (player);
-        start_rank = player->GetAttribute (&start_rank_id);
-        if (start_rank)
-        {
-          UseInitialRank ();
-          player->SetAttributeValue (&previous_rank_id,
-                                     start_rank->GetUIntValue ());
-        }
+        OnPlayerLoaded (player);
         player->Release ();
       }
-      else if (strcmp ((char *) n->name, "Tireurs") != 0)
+      else if (strcmp ((char *) n->name, _players_tag) != 0)
       {
         OnListChanged ();
         return;
       }
     }
-    Load (n->children);
+    LoadList (n->children);
   }
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Save (xmlTextWriter *xml_writer)
+void Checkin::SaveList (xmlTextWriter *xml_writer)
 {
-  // Players
-  {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Tireurs");
-
-    for (guint i = 0; i < g_slist_length (_player_list); i++)
-    {
-      Player *p = (Player *) g_slist_nth_data (_player_list, i);
-
-      if (p)
-      {
-        p->Save (xml_writer);
-      }
-    }
-
-    xmlTextWriterEndElement (xml_writer);
-  }
-
-  // Referees
-  {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Arbitres");
-    xmlTextWriterEndElement (xml_writer);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::Display ()
-{
-  OnAttrListUpdated ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnListChanged ()
-{
-  RefreshAttendingDisplay ();
-  UpdateRanking ();
-  MakeDirty ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::UseInitialRank ()
-{
-  _use_initial_rank = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::ConvertFromBaseToResult ()
-{
-  // This method aims to deal with the strange FIE xml specification.
-  // Two different file formats are used. One for preparation one for result.
-  // Both are almost similar except that they use a same keyword ("classement")
-  // for a different meanning.
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST _players_tag);
 
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
@@ -266,196 +138,19 @@ void Checkin::ConvertFromBaseToResult ()
 
     if (p)
     {
-      Player::AttributeId  place_attr_id ("final_rank");
-      Attribute           *final_rank  = p->GetAttribute (&place_attr_id);
-
-      if (final_rank)
-      {
-        Player::AttributeId ranking_attr_id ("ranking");
-
-        p->SetAttributeValue (&ranking_attr_id,
-                              final_rank->GetUIntValue ());
-        p->SetAttributeValue (&place_attr_id,
-                              1);
-      }
+      p->Save (xml_writer,
+               _player_tag);
     }
   }
-  UpdateRanking ();
+
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::UpdateChecksum ()
+void Checkin::OnListChanged ()
 {
-  {
-    Player::AttributeId attr_id ("ref");
-
-    attr_id.MakeRandomReady (1);
-    _player_list = g_slist_sort_with_data (_player_list,
-                                           (GCompareDataFunc) Player::Compare,
-                                           &attr_id);
-  }
-
-  {
-    Player::AttributeId  attr_id ("attending");
-    GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
-    GSList              *current_player = _player_list;
-
-    while (current_player)
-    {
-      Player *p;
-
-      p = (Player *) current_player->data;
-      if (p)
-      {
-        Attribute *attending;
-
-        attending = p->GetAttribute (&attr_id);
-        if (attending && attending->GetUIntValue ())
-        {
-          gchar *name = p->GetName ();
-
-          name[0] = toupper (name[0]);
-          g_checksum_update (checksum,
-                             (guchar *) name,
-                             1);
-          g_free (name);
-        }
-      }
-      current_player = g_slist_next (current_player);
-    }
-
-    {
-      gchar short_checksum[9];
-
-      strncpy (short_checksum,
-               g_checksum_get_string (checksum),
-               sizeof (short_checksum));
-      short_checksum[8] = 0;
-
-      _rand_seed = strtoul (short_checksum, NULL, 16);
-    }
-
-    g_checksum_free (checksum);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::UpdateRanking ()
-{
-  guint                nb_player = g_slist_length (_player_list);
-  Player::AttributeId *rank_criteria_id;
-
-  UpdateChecksum ();
-
-  {
-    if (_use_initial_rank)
-    {
-      rank_criteria_id = new Player::AttributeId ("previous_stage_rank",
-                                                  this);
-    }
-    else
-    {
-      rank_criteria_id = new Player::AttributeId ("ranking");
-    }
-
-    rank_criteria_id->MakeRandomReady (_rand_seed);
-    _player_list = g_slist_sort_with_data (_player_list,
-                                           (GCompareDataFunc) Player::Compare,
-                                           rank_criteria_id);
-  }
-
-  {
-    Player *previous_player = NULL;
-    GSList *current_player  = _player_list;
-    gint    previous_rank   = 0;
-    guint   nb_present      = 1;
-
-    while (current_player)
-    {
-      Player    *p;
-      Attribute *attending;
-
-      p = (Player *) current_player->data;
-
-      {
-        Player::AttributeId attr_id ("attending");
-
-        attending = p->GetAttribute (&attr_id);
-      }
-
-      {
-        Player::AttributeId previous_rank_id ("previous_stage_rank", this);
-        Player::AttributeId rank_id          ("rank", this);
-
-        if (attending && attending->GetUIntValue ())
-        {
-          if (   previous_player
-              && (Player::Compare (previous_player, p, rank_criteria_id) == 0))
-          {
-            p->SetAttributeValue (&previous_rank_id,
-                                  previous_rank);
-            p->SetAttributeValue (&rank_id,
-                                  previous_rank);
-          }
-          else
-          {
-            p->SetAttributeValue (&previous_rank_id,
-                                  nb_present);
-            p->SetAttributeValue (&rank_id,
-                                  nb_present);
-            previous_rank = nb_present;
-          }
-          previous_player = p;
-          nb_present++;
-        }
-        else
-        {
-          p->SetAttributeValue (&previous_rank_id,
-                                nb_player);
-          p->SetAttributeValue (&rank_id,
-                                nb_player);
-        }
-      }
-      Update (p);
-
-      current_player  = g_slist_next (current_player);
-    }
-  }
-  rank_criteria_id->Release ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnLocked (Reason reason)
-{
-  DisableSensitiveWidgets ();
-  SetSensitiveState (FALSE);
-}
-
-// --------------------------------------------------------------------------------
-GSList *Checkin::GetCurrentClassification ()
-{
-  GSList *result = CreateCustomList (PresentPlayerFilter);
-
-  if (result)
-  {
-    Player::AttributeId attr_id ("rank");
-
-    attr_id.MakeRandomReady (_rand_seed);
-    result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) Player::Compare,
-                                     &attr_id);
-
-    result = g_slist_reverse (result);
-
-    _attendees->SetGlobalList (result);
-  }
-  return result;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Checkin::IsOver ()
-{
-  return TRUE;
+  RefreshAttendingDisplay ();
+  MakeDirty ();
 }
 
 // --------------------------------------------------------------------------------
@@ -465,18 +160,6 @@ gboolean Checkin::PresentPlayerFilter (Player *player)
   Attribute           *attr = player->GetAttribute (&attr_id);
 
   return ((attr == NULL) || (attr->GetUIntValue () == TRUE));
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnUnLocked ()
-{
-  EnableSensitiveWidgets ();
-  SetSensitiveState (TRUE);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::Wipe ()
-{
 }
 
 // --------------------------------------------------------------------------------
@@ -609,18 +292,8 @@ void Checkin::OnImport ()
         }
       }
 
-#if 0
-      if (strstr (filename, ".FFF"))
-      {
-        ImportFFF (file);
-      }
-      else
-      {
-        ImportCSV (file);
-      }
-#else
       ImportFFF (file);
-#endif
+      // ImportCSV (file);
 
       g_free (file);
     }
@@ -881,6 +554,12 @@ void Checkin::Monitor (Player *player)
   player->SetChangeCbk ("attending",
                         (Player::OnChange) OnAttendingChanged,
                         this);
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::OnPlugged ()
+{
+  OnAttrListUpdated ();
 }
 
 // --------------------------------------------------------------------------------

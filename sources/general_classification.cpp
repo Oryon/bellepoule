@@ -41,6 +41,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "participation_rate",
                                "global_status",
                                "status",
                                "start_rank",
