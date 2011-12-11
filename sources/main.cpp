@@ -141,11 +141,17 @@ int main (int argc, char **argv)
     gtk_init (&argc, &argv);
 
     {
-      setlocale (LC_ALL, "");
+      Object::SetProgramPath (install_dirname);
 
-      //g_setenv ("LANGUAGE",
-      //"ko",
-      //TRUE);
+      Tournament::Init ();
+
+      {
+        setlocale (LC_ALL, "");
+
+        g_setenv ("LANGUAGE",
+                  Tournament::GetUserLanguage (),
+                  TRUE);
+      }
 
       {
         gchar *translation_path = g_build_filename (install_dirname, "resources", "countries", "translations", NULL);
@@ -167,8 +173,6 @@ int main (int argc, char **argv)
 
       textdomain ("BellePoule");
     }
-
-    Object::SetProgramPath (install_dirname);
 
     Contest::Init               ();
     CheckinSupervisor::Init     ();
