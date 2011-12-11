@@ -35,9 +35,9 @@ Tournament::Tournament (gchar *filename)
 {
   _contest_list = NULL;
 
-  ReadConfiguration ();
-
   curl_global_init (CURL_GLOBAL_ALL);
+
+  EnumerateLanguages ();
 
   // Show the main window
   {
@@ -129,6 +129,15 @@ Tournament::Tournament (gchar *filename)
     g_free (translators);
   }
 
+  {
+    gchar *last_backup = g_key_file_get_string (_config_file,
+                                                "Tournament",
+                                                "backup_location",
+                                                NULL);
+    SetBackupLocation (last_backup);
+    g_free (last_backup);
+  }
+
   _network = new Network ();
 }
 
@@ -166,7 +175,7 @@ Tournament::~Tournament ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::ReadConfiguration ()
+void Tournament::Init ()
 {
   gchar *dir_path  = g_strdup_printf ("%s/BellePoule", g_get_user_config_dir ());
   gchar *file_path = g_strdup_printf ("%s/config.ini", dir_path);
@@ -191,17 +200,63 @@ void Tournament::ReadConfiguration ()
                            g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
   }
 
-  {
-    gchar *last_backup = g_key_file_get_string (_config_file,
-                                                "Tournament",
-                                                "backup_location",
-                                                NULL);
-    SetBackupLocation (last_backup);
-    g_free (last_backup);
-  }
-
   g_free (dir_path);
   g_free (file_path);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::EnumerateLanguages ()
+{
+  GSList       *group    = NULL;
+  gchar        *dir_path = g_build_filename (_program_path, "resources", "translations", NULL);
+  GDir         *dir      = g_dir_open       (dir_path, 0,  NULL);
+  const gchar  *locale   = g_dir_read_name  (dir);
+  gchar *last_language   = g_key_file_get_string (_config_file,
+                                                  "Tournament",
+                                                  "interface_language",
+                                                  NULL);
+  while (locale)
+  {
+    gchar *full_path = g_build_filename (dir_path, locale, NULL);
+
+    if (g_file_test (full_path, G_FILE_TEST_IS_DIR))
+    {
+      GtkWidget *item;
+      gchar     *locale_code = g_strdup (locale);
+
+      item  = gtk_radio_menu_item_new_with_label (group, locale_code);
+      group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
+
+      gtk_menu_shell_append (GTK_MENU_SHELL (_glade->GetWidget ("locale_menu")),
+                             item);
+      g_signal_connect (item, "toggled",
+                        G_CALLBACK (OnLocaleToggled), (void *)
+                        locale_code);
+      if (last_language && strcmp (last_language, locale_code) == 0)
+      {
+        gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("locale_menuitem")),
+                                 locale_code);
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
+                                        TRUE);
+      }
+      gtk_widget_show (item);
+    }
+    g_free (full_path);
+
+    locale = g_dir_read_name (dir);
+  }
+
+  g_dir_close (dir);
+  g_free (dir_path);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Tournament::GetUserLanguage ()
+{
+  return g_key_file_get_string (_config_file,
+                                "Tournament",
+                                "interface_language",
+                                NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -564,6 +619,23 @@ void Tournament::OnActivateBackup ()
   if (GetBackupLocation () == NULL)
   {
     OnBackupfileLocation ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
+                                  gchar            *locale)
+{
+  if (gtk_check_menu_item_get_active (checkmenuitem))
+  {
+    g_setenv ("LANGUAGE",
+              locale,
+              TRUE);
+
+    g_key_file_set_string (_config_file,
+                           "Tournament",
+                           "interface_language",
+                           locale);
   }
 }
 

@@ -203,13 +203,15 @@ void Pool::AddPlayer (Player *player,
          || (g_slist_find (_player_list,
                            player) == NULL))
   {
-    player->SetData (rank_owner,
-                     "Pool No",
-                     (void *) GetNumber ());
+    {
+      Player::AttributeId attr_id ("pool_nr", rank_owner);
+
+      player->SetAttributeValue (&attr_id,
+                                 GetNumber ());
+    }
 
     {
-      Player::AttributeId attr_id ("previous_stage_rank",
-                                   rank_owner);
+      Player::AttributeId attr_id ("previous_stage_rank", rank_owner);
 
       attr_id.MakeRandomReady (_rand_seed);
       _player_list = g_slist_insert_sorted_with_data (_player_list,
@@ -1585,26 +1587,14 @@ gint Pool::CompareMatch (Match *a,
 // --------------------------------------------------------------------------------
 void Pool::Save (xmlTextWriter *xml_writer)
 {
-  GSList *working_list;
-
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "Poule");
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
                                      "%d", _number);
 
-  // To avoid the GREG pool display issue
-  if (_sorted_player_list)
   {
-    working_list = _sorted_player_list;
-  }
-  else
-  {
-    working_list = _player_list;
-  }
-
-  {
-    GSList              *current = working_list;
+    GSList              *current = _sorted_player_list;
     Player::AttributeId  attr_id ("", _single_owner);
     Attribute           *attr;
 
@@ -1623,7 +1613,7 @@ void Pool::Save (xmlTextWriter *xml_writer)
                                          "%d", player->GetRef ());
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NoDansLaPoule",
-                                         "%d", g_slist_index (working_list,
+                                         "%d", g_slist_index (_sorted_player_list,
                                                               player) + 1);
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NbVictoires",
@@ -1661,23 +1651,15 @@ void Pool::Save (xmlTextWriter *xml_writer)
     xmlTextWriterEndElement (xml_writer);
   }
 
-  // To avoid the GREG pool display issue
-  // the order of the saved matchs must be consistent
-  // with the order of the players.
-  for (guint p1 = 0; p1 < GetNbPlayers (); p1++)
   {
-    Player *player_1 = (Player *) g_slist_nth_data (_sorted_player_list, p1);
+    GSList *current = _match_list;
 
-    for (guint p2 = p1+1; p2 < GetNbPlayers (); p2++)
+    while (current)
     {
-      Player *player_2 = (Player *) g_slist_nth_data (_sorted_player_list, p2);
-      Match  *match    = GetMatch (player_1, player_2);
+      Match *match = (Match *) current->data;
 
-      if (match)
-      {
-        match->SaveInOrder (xml_writer,
-                            player_1);
-      }
+      match->Save (xml_writer);
+      current = g_slist_next (current);
     }
   }
 
@@ -1746,8 +1728,8 @@ void Pool::Load (xmlNode *xml_node,
           match = GetMatch (player_A, player_B);
           if (match)
           {
-            // Because of the GREG issue, the position of the players
-            // in the match are potentially modified in the saved file.
+            // XML files may have been generated from another software
+            // where the matchs are potentially stored in a different order
             // Consequently, at the loading the initial position has to be recovered.
             if (player_A != match->GetPlayerA ())
             {
@@ -1911,9 +1893,8 @@ void Pool::DropPlayer (Player *player,
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Player *opponent;
+      Player *opponent = GetPlayer (i, _sorted_player_list);
 
-      opponent = GetPlayer (i, _sorted_player_list);
       if (opponent != player)
       {
         Match *match = GetMatch (opponent, player);
@@ -1956,9 +1937,8 @@ void Pool::RestorePlayer (Player *player)
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Player *opponent;
+      Player *opponent = GetPlayer (i, _sorted_player_list);
 
-      opponent = GetPlayer (i, _sorted_player_list);
       if (opponent != player)
       {
         Match *match = GetMatch (opponent, player);

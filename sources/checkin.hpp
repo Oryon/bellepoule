@@ -23,106 +23,76 @@
 #include "data.hpp"
 #include "module.hpp"
 #include "attribute.hpp"
-#include "stage.hpp"
 #include "players_list.hpp"
+#include "form.hpp"
 
-class Checkin : public virtual Stage, public PlayersList
+class Checkin : public PlayersList
 {
   public:
-    static void Init ();
-
-    Checkin (StageClass *stage_class);
+    Checkin (const gchar *glade,
+             const gchar *player_tag);
 
     void Add (Player *player);
 
-    void UseInitialRank ();
+    void LoadList (xmlNode *xml_node);
 
-    void UpdateRanking ();
+    void LoadList (xmlXPathContext *xml_context,
+                   const gchar     *from_node);
 
-    void OnListChanged ();
-
-    void ConvertFromBaseToResult ();
+    void SaveList (xmlTextWriter *xml_writer);
 
   public:
     void on_add_player_button_clicked ();
     void on_remove_player_button_clicked ();
-    void on_add_button_clicked ();
-    void on_close_button_clicked ();
 
     void OnToggleAllPlayers (gboolean present);
 
     void OnImport ();
     void OnPrint ();
 
-  private:
-    void OnLocked (Reason reason);
-    void OnUnLocked ();
-    void Wipe ();
+  protected:
+    ~Checkin ();
+
+    static gboolean PresentPlayerFilter (Player *player);
+
+    virtual void OnListChanged ();
+
+    void CreateForm (Filter *filter);
 
   private:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
+    Form        *_form;
+    guint        _attendings;
+    GtkWidget   *_print_dialog;
+    gboolean     _print_attending;
+    gboolean     _print_missing;
+    const gchar *_player_tag;
+    gchar       *_players_tag;
 
-    guint       _attendings;
-    gboolean    _use_initial_rank;
-    GtkWidget  *_print_dialog;
-    gboolean    _print_attending;
-    gboolean    _print_missing;
+    virtual void OnLoaded () {};
 
-    static Stage *CreateInstance (StageClass *stage_class);
-
-    void Load (xmlNode *xml_node);
-
-    void Load (xmlXPathContext *xml_context,
-               const gchar     *from_node);
-
-    void Save (xmlTextWriter *xml_writer);
+    virtual void OnPlayerLoaded (Player *player) {};
 
     void ImportFFF (gchar *file);
 
     void ImportCSV (gchar *file);
 
-    void OnPlugged ();
-
-    void Display ();
-
-    gboolean IsOver ();
-
-    void UpdateChecksum ();
+    void OnAddPlayer (Player *player);
 
     void Monitor (Player *player);
 
     void RefreshAttendingDisplay ();
 
-    GSList *GetCurrentClassification ();
-
     void OnPlayerRemoved (Player *player);
+
+    void OnPlugged ();
 
     gboolean PlayerIsPrintable (Player *player);
 
     gchar *ConvertToUtf8 (gchar *what);
 
-    static void SetSelectorValue (GtkComboBox *combo_box,
-                                  const gchar *value);
-
-    static gboolean OnSelectorChanged (GtkEntryCompletion *widget,
-                                       GtkTreeModel       *model,
-                                       GtkTreeIter        *iter,
-                                       GtkComboBox        *combobox);
-
-    static void OnSelectorEntryActivate (GtkEntry    *widget,
-                                         GtkComboBox *combobox);
-
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Checkin   *checkin);
-
-    static gboolean PresentPlayerFilter (Player *player);
-
-    static void on_sensitive_state_toggled (GtkToggleButton *togglebutton,
-                                            GtkWidget       *w);
-
-    ~Checkin ();
 };
 
 #endif

@@ -580,12 +580,12 @@ void TableSet::Save (xmlTextWriter *xml_writer)
 {
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "SuiteDeTableaux");
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "ID",
-                                     "%s", _id);
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "Titre",
-                                     "%s", _short_name);
+  xmlTextWriterWriteAttribute (xml_writer,
+                               BAD_CAST "ID",
+                               BAD_CAST _id);
+  xmlTextWriterWriteAttribute (xml_writer,
+                               BAD_CAST "Titre",
+                               BAD_CAST _short_name);
   if (_nb_tables)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,

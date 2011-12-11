@@ -193,6 +193,11 @@ Source: "C:\MinGW\share\icons\hicolor\24x24\apps\gnome-devel.png"; DestDir: "{ap
 Source: "C:\MinGW\share\icons\hicolor\32x32\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
 Source: "C:\MinGW\share\icons\hicolor\48x48\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\48x48\apps\"; Flags: ignoreversion
 
+Source: "C:\MinGW\share\icons\hicolor\16x16\apps\preferences-desktop-theme.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\24x24\apps\preferences-desktop-theme.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\32x32\apps\preferences-desktop-theme.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\scalable\apps\preferences-desktop-theme.svg"; DestDir: "{app}\porting_layer\share\icons\hicolor\scalable\apps\"; Flags: ignoreversion
+
 ;
 Source: "C:\MinGW\etc\pango\pango.aliases"; Destdir: "{app}\porting_layer\etc\pango"
 
@@ -259,6 +264,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

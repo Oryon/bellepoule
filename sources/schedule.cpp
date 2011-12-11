@@ -20,6 +20,8 @@
 #include <gtk/gtk.h>
 
 #include "general_classification.hpp"
+#include "checkin.hpp"
+
 #include "schedule.hpp"
 
 typedef enum
@@ -552,7 +554,8 @@ void Schedule::RemoveStage (Stage *stage)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::Save (xmlTextWriter *xml_writer)
+void Schedule::Save (xmlTextWriter *xml_writer,
+                     Checkin       *referees)
 {
   Stage *stage;
 
@@ -562,6 +565,9 @@ void Schedule::Save (xmlTextWriter *xml_writer)
                                         0));
     stage->Save (xml_writer);
   }
+
+  // Referees
+  referees->SaveList (xml_writer);
 
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "Phases");
@@ -581,7 +587,8 @@ void Schedule::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::Load (xmlDoc *doc)
+void Schedule::Load (xmlDoc  *doc,
+                     Checkin *referees)
 {
   xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
   gint             current_stage_index = -1;
@@ -636,6 +643,9 @@ void Schedule::Load (xmlDoc *doc)
       checkin_stage->Lock (Stage::LOADING);
     }
   }
+
+  referees->LoadList (xml_context,
+                      xml_key_word);
 
   {
     gchar          *path        = g_strdup_printf ("/%s/Phases/*", xml_key_word);

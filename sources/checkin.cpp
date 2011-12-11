@@ -25,65 +25,15 @@
 
 #include "checkin.hpp"
 
-const gchar *Checkin::_class_name     = N_("Check-in");
-const gchar *Checkin::_xml_class_name = "checkin_stage";
-
 // --------------------------------------------------------------------------------
-Checkin::Checkin (StageClass *stage_class)
-: Stage (stage_class),
-  PlayersList ("checkin.glade")
+Checkin::Checkin (const gchar *glade,
+                  const gchar *player_tag)
+: PlayersList (glade)
 {
-  _use_initial_rank = FALSE;
-
-  // Sensitive widgets
-  {
-    AddSensitiveWidget (_glade->GetWidget ("add_player_button"));
-    AddSensitiveWidget (_glade->GetWidget ("remove_player_button"));
-    AddSensitiveWidget (_glade->GetWidget ("import_toolbutton"));
-    AddSensitiveWidget (_glade->GetWidget ("all_present_button"));
-    AddSensitiveWidget (_glade->GetWidget ("all_absent_button"));
-  }
-
-  // Player attributes to display
-  {
-    GSList *attr_list;
-    Filter *filter;
-
-    AttributeDesc::CreateList (&attr_list,
-#ifndef DEBUG
-                               "ref",
-                               "start_rank",
-#endif
-                               "status",
-                               "global_status",
-                               "previous_stage_rank",
-                               "exported",
-                               "final_rank",
-                               "victories_ratio",
-                               "indice",
-                               "pool_nr",
-                               "HS",
-                               NULL);
-    filter = new Filter (attr_list,
-                         this);
-
-    filter->ShowAttribute ("attending");
-    filter->ShowAttribute ("rank");
-    filter->ShowAttribute ("name");
-    filter->ShowAttribute ("first_name");
-    filter->ShowAttribute ("birth_date");
-    filter->ShowAttribute ("gender");
-    filter->ShowAttribute ("club");
-    filter->ShowAttribute ("league");
-    filter->ShowAttribute ("country");
-    filter->ShowAttribute ("ranking");
-    filter->ShowAttribute ("licence");
-
-    SetFilter (filter);
-    filter->Release ();
-  }
-
-  _attendings = 0;
+  _form        = NULL;
+  _attendings  = 0;
+  _player_tag  = player_tag;
+  _players_tag = g_strdup_printf ("%ss", _player_tag);
 
   {
     GtkWidget *content_area;
@@ -103,151 +53,6 @@ Checkin::Checkin (StageClass *stage_class)
                          content_area);
   }
 
-  {
-    GSList      *filter_list = _filter->GetAttrList ();
-    GtkComboBox *selector_w  = NULL;
-
-    for (guint i = 0; i < g_slist_length (filter_list); i++)
-    {
-      AttributeDesc *attr_desc;
-
-      attr_desc = (AttributeDesc *) g_slist_nth_data (filter_list,
-                                                      i);
-
-      if (attr_desc->_rights == AttributeDesc::PUBLIC)
-      {
-        {
-          GtkWidget *w   = gtk_label_new (attr_desc->_user_name);
-          GtkWidget *box = _glade->GetWidget ("title_vbox");
-
-          gtk_box_pack_start (GTK_BOX (box),
-                              w,
-                              TRUE,
-                              TRUE,
-                              0);
-          g_object_set (G_OBJECT (w),
-                        "xalign", 0.0,
-                        NULL);
-        }
-
-        {
-          GtkWidget *value_w;
-
-          {
-            GtkWidget *box = _glade->GetWidget ("value_vbox");
-
-            if (attr_desc->_type == G_TYPE_BOOLEAN)
-            {
-              value_w = gtk_check_button_new ();
-            }
-            else
-            {
-              if (attr_desc->HasDiscreteValue ())
-              {
-                GtkCellRenderer    *cell;
-                GtkEntryCompletion *completion;
-
-                if (attr_desc->_free_value_allowed)
-                {
-                  value_w = gtk_combo_box_entry_new ();
-                  cell = NULL;
-                  completion = gtk_entry_completion_new ();
-                }
-                else
-                {
-                  value_w = gtk_combo_box_new ();
-                  cell = gtk_cell_renderer_text_new ();
-                  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), cell, TRUE);
-                  completion = NULL;
-                }
-
-                if (attr_desc->_is_selector)
-                {
-                  selector_w = GTK_COMBO_BOX (value_w);
-                  g_signal_connect (value_w, "changed",
-                                    G_CALLBACK (AttributeDesc::Refilter), value_w);
-                }
-
-                attr_desc->BindDiscreteValues (G_OBJECT (value_w),
-                                               cell,
-                                               selector_w);
-
-                if (completion)
-                {
-                  GtkEntry     *entry = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (value_w)));
-                  GtkTreeModel *model = gtk_combo_box_get_model (GTK_COMBO_BOX (value_w));
-
-                  gtk_entry_completion_set_model (completion,
-                                                  model);
-                  gtk_entry_completion_set_text_column (completion,
-                                                        AttributeDesc::DISCRETE_USER_IMAGE);
-                  gtk_entry_completion_set_inline_completion (completion,
-                                                              TRUE);
-                  g_object_set (G_OBJECT (completion),
-                                "popup-set-width", FALSE,
-                                NULL);
-                  gtk_entry_set_completion (entry,
-                                            completion);
-                  g_object_unref (completion);
-
-                  if (attr_desc->_is_selector)
-                  {
-                    g_signal_connect (G_OBJECT (completion), "match-selected",
-                                      G_CALLBACK (OnSelectorChanged), value_w);
-
-                    g_signal_connect (G_OBJECT (entry), "activate",
-                                      G_CALLBACK (OnSelectorEntryActivate), value_w);
-                  }
-                }
-                else
-                {
-                  gtk_combo_box_set_active (GTK_COMBO_BOX (value_w),
-                                            0);
-                }
-              }
-              else
-              {
-                value_w = gtk_entry_new ();
-                g_object_set (G_OBJECT (value_w),
-                              "xalign", 0.0,
-                              NULL);
-              }
-            }
-
-            gtk_box_pack_start (GTK_BOX (box),
-                                value_w,
-                                TRUE,
-                                TRUE,
-                                0);
-            g_object_set_data (G_OBJECT (value_w), "attribute_name", attr_desc->_code_name);
-          }
-
-          {
-            GtkWidget *w   = gtk_check_button_new ();
-            GtkWidget *box = _glade->GetWidget ("check_vbox");
-
-            gtk_widget_set_tooltip_text (w,
-                                         gettext ("Uncheck this box to quicken the data input. The corresponding field will be "
-                                                  "ignored on TAB key pressed."));
-            gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
-                                          TRUE);
-            g_signal_connect (w, "toggled",
-                              G_CALLBACK (on_sensitive_state_toggled), value_w);
-
-            gtk_box_pack_start (GTK_BOX (box),
-                                w,
-                                TRUE,
-                                TRUE,
-                                0);
-            g_object_set (G_OBJECT (w),
-                          "xalign", 0.0,
-                          NULL);
-          }
-        }
-      }
-    }
-  }
-
   RefreshAttendingDisplay ();
 }
 
@@ -255,26 +60,18 @@ Checkin::Checkin (StageClass *stage_class)
 Checkin::~Checkin ()
 {
   gtk_widget_destroy (_print_dialog);
+
+  _form->Release ();
+
+  g_free (_players_tag);
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Init ()
+void Checkin::CreateForm (Filter *filter)
 {
-  RegisterStageClass (gettext (_class_name),
-                      _xml_class_name,
-                      CreateInstance,
-                      0);
-}
-
-// --------------------------------------------------------------------------------
-Stage *Checkin::CreateInstance (StageClass *stage_class)
-{
-  return new Checkin (stage_class);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnPlugged ()
-{
+  _form = new Form (filter,
+                    this,
+                    (Form::AddPlayerCbk) &Checkin::OnAddPlayer);
 }
 
 // --------------------------------------------------------------------------------
@@ -285,117 +82,55 @@ void Checkin::Add (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Load (xmlXPathContext *xml_context,
-                    const gchar     *from_node)
+void Checkin::LoadList (xmlXPathContext *xml_context,
+                        const gchar     *from_node)
 {
-  gchar          *path        = g_strdup_printf ("%s/Tireurs", from_node);
+  gchar          *path        = g_strdup_printf ("%s/%ss", from_node, _player_tag);
   xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
   xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
   if (xml_object->nodesetval->nodeNr)
   {
-    Load (xml_nodeset->nodeTab[0]);
+    LoadList (xml_nodeset->nodeTab[0]);
   }
-
-  _attendees = new Attendees ();
 
   g_free (path);
   xmlXPathFreeObject (xml_object);
+
+  OnLoaded ();
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Load (xmlNode *xml_node)
+void Checkin::LoadList (xmlNode *xml_node)
 {
-  Player::AttributeId start_rank_id    ("start_rank");
-  Player::AttributeId previous_rank_id ("previous_stage_rank", this);
-
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
     if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, "Tireur") == 0)
+      if (strcmp ((char *) n->name, _player_tag) == 0)
       {
-        Attribute *start_rank;
-        Player    *player = new Player;
+        Player *player = new Player;
 
         player->Load (n);
-
         Add (player);
-        start_rank = player->GetAttribute (&start_rank_id);
-        if (start_rank)
-        {
-          UseInitialRank ();
-          player->SetAttributeValue (&previous_rank_id,
-                                     start_rank->GetUIntValue ());
-        }
+        OnPlayerLoaded (player);
         player->Release ();
       }
-      else if (strcmp ((char *) n->name, "Tireurs") != 0)
+      else if (strcmp ((char *) n->name, _players_tag) != 0)
       {
         OnListChanged ();
         return;
       }
     }
-    Load (n->children);
+    LoadList (n->children);
   }
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::Save (xmlTextWriter *xml_writer)
+void Checkin::SaveList (xmlTextWriter *xml_writer)
 {
-  // Players
-  {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Tireurs");
-
-    for (guint i = 0; i < g_slist_length (_player_list); i++)
-    {
-      Player *p = (Player *) g_slist_nth_data (_player_list, i);
-
-      if (p)
-      {
-        p->Save (xml_writer);
-      }
-    }
-
-    xmlTextWriterEndElement (xml_writer);
-  }
-
-  // Referees
-  {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Arbitres");
-    xmlTextWriterEndElement (xml_writer);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::Display ()
-{
-  OnAttrListUpdated ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnListChanged ()
-{
-  RefreshAttendingDisplay ();
-  UpdateRanking ();
-  MakeDirty ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::UseInitialRank ()
-{
-  _use_initial_rank = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::ConvertFromBaseToResult ()
-{
-  // This method aims to deal with the strange FIE xml specification.
-  // Two different file formats are used. One for preparation one for result.
-  // Both are almost similar except that they use a same keyword ("classement")
-  // for a different meanning.
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST _players_tag);
 
   for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
@@ -403,196 +138,19 @@ void Checkin::ConvertFromBaseToResult ()
 
     if (p)
     {
-      Player::AttributeId  place_attr_id ("final_rank");
-      Attribute           *final_rank  = p->GetAttribute (&place_attr_id);
-
-      if (final_rank)
-      {
-        Player::AttributeId ranking_attr_id ("ranking");
-
-        p->SetAttributeValue (&ranking_attr_id,
-                              final_rank->GetUIntValue ());
-        p->SetAttributeValue (&place_attr_id,
-                              1);
-      }
+      p->Save (xml_writer,
+               _player_tag);
     }
   }
-  UpdateRanking ();
+
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::UpdateChecksum ()
+void Checkin::OnListChanged ()
 {
-  {
-    Player::AttributeId attr_id ("ref");
-
-    attr_id.MakeRandomReady (1);
-    _player_list = g_slist_sort_with_data (_player_list,
-                                           (GCompareDataFunc) Player::Compare,
-                                           &attr_id);
-  }
-
-  {
-    Player::AttributeId  attr_id ("attending");
-    GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
-    GSList              *current_player = _player_list;
-
-    while (current_player)
-    {
-      Player *p;
-
-      p = (Player *) current_player->data;
-      if (p)
-      {
-        Attribute *attending;
-
-        attending = p->GetAttribute (&attr_id);
-        if (attending && attending->GetUIntValue ())
-        {
-          gchar *name = p->GetName ();
-
-          name[0] = toupper (name[0]);
-          g_checksum_update (checksum,
-                             (guchar *) name,
-                             1);
-          g_free (name);
-        }
-      }
-      current_player = g_slist_next (current_player);
-    }
-
-    {
-      gchar short_checksum[9];
-
-      strncpy (short_checksum,
-               g_checksum_get_string (checksum),
-               sizeof (short_checksum));
-      short_checksum[8] = 0;
-
-      _rand_seed = strtoul (short_checksum, NULL, 16);
-    }
-
-    g_checksum_free (checksum);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::UpdateRanking ()
-{
-  guint                nb_player = g_slist_length (_player_list);
-  Player::AttributeId *rank_criteria_id;
-
-  UpdateChecksum ();
-
-  {
-    if (_use_initial_rank)
-    {
-      rank_criteria_id = new Player::AttributeId ("previous_stage_rank",
-                                                  this);
-    }
-    else
-    {
-      rank_criteria_id = new Player::AttributeId ("ranking");
-    }
-
-    rank_criteria_id->MakeRandomReady (_rand_seed);
-    _player_list = g_slist_sort_with_data (_player_list,
-                                           (GCompareDataFunc) Player::Compare,
-                                           rank_criteria_id);
-  }
-
-  {
-    Player *previous_player = NULL;
-    GSList *current_player  = _player_list;
-    gint    previous_rank   = 0;
-    guint   nb_present      = 1;
-
-    while (current_player)
-    {
-      Player    *p;
-      Attribute *attending;
-
-      p = (Player *) current_player->data;
-
-      {
-        Player::AttributeId attr_id ("attending");
-
-        attending = p->GetAttribute (&attr_id);
-      }
-
-      {
-        Player::AttributeId previous_rank_id ("previous_stage_rank", this);
-        Player::AttributeId rank_id          ("rank", this);
-
-        if (attending && attending->GetUIntValue ())
-        {
-          if (   previous_player
-              && (Player::Compare (previous_player, p, rank_criteria_id) == 0))
-          {
-            p->SetAttributeValue (&previous_rank_id,
-                                  previous_rank);
-            p->SetAttributeValue (&rank_id,
-                                  previous_rank);
-          }
-          else
-          {
-            p->SetAttributeValue (&previous_rank_id,
-                                  nb_present);
-            p->SetAttributeValue (&rank_id,
-                                  nb_present);
-            previous_rank = nb_present;
-          }
-          previous_player = p;
-          nb_present++;
-        }
-        else
-        {
-          p->SetAttributeValue (&previous_rank_id,
-                                nb_player);
-          p->SetAttributeValue (&rank_id,
-                                nb_player);
-        }
-      }
-      Update (p);
-
-      current_player  = g_slist_next (current_player);
-    }
-  }
-  rank_criteria_id->Release ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnLocked (Reason reason)
-{
-  DisableSensitiveWidgets ();
-  SetSensitiveState (FALSE);
-}
-
-// --------------------------------------------------------------------------------
-GSList *Checkin::GetCurrentClassification ()
-{
-  GSList *result = CreateCustomList (PresentPlayerFilter);
-
-  if (result)
-  {
-    Player::AttributeId attr_id ("rank");
-
-    attr_id.MakeRandomReady (_rand_seed);
-    result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) Player::Compare,
-                                     &attr_id);
-
-    result = g_slist_reverse (result);
-
-    _attendees->SetGlobalList (result);
-  }
-  return result;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Checkin::IsOver ()
-{
-  return TRUE;
+  RefreshAttendingDisplay ();
+  MakeDirty ();
 }
 
 // --------------------------------------------------------------------------------
@@ -602,18 +160,6 @@ gboolean Checkin::PresentPlayerFilter (Player *player)
   Attribute           *attr = player->GetAttribute (&attr_id);
 
   return ((attr == NULL) || (attr->GetUIntValue () == TRUE));
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnUnLocked ()
-{
-  EnableSensitiveWidgets ();
-  SetSensitiveState (TRUE);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::Wipe ()
-{
 }
 
 // --------------------------------------------------------------------------------
@@ -746,18 +292,8 @@ void Checkin::OnImport ()
         }
       }
 
-#if 0
-      if (strstr (filename, ".FFF"))
-      {
-        ImportFFF (file);
-      }
-      else
-      {
-        ImportCSV (file);
-      }
-#else
       ImportFFF (file);
-#endif
+      // ImportCSV (file);
 
       g_free (file);
     }
@@ -997,104 +533,9 @@ void Checkin::ImportCSV (gchar *file)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::on_add_button_clicked ()
+void Checkin::OnAddPlayer (Player *player)
 {
-  Player *player   = new Player;
-  GList  *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
-
-  {
-    Player::AttributeId  attr_id ("ref");
-    gchar               *str = g_strdup_printf ("%d\n", player->GetRef ());
-
-    player->SetAttributeValue (&attr_id, str);
-    g_free (str);
-  }
-
-  {
-    Player::AttributeId attr_id ("exported");
-
-    player->SetAttributeValue (&attr_id, (guint) FALSE);
-  }
-
-  for (guint i = 0; i < g_list_length (children); i ++)
-  {
-    GtkWidget           *w;
-    gchar               *attr_name;
-    AttributeDesc       *attr_desc;
-    Player::AttributeId *attr_id;
-
-    w = (GtkWidget *) g_list_nth_data (children,
-                                       i);
-    attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "attribute_name");
-    attr_desc = AttributeDesc::GetDesc (attr_name);
-    attr_id   = Player::AttributeId::CreateAttributeId (attr_desc, this);
-
-    if (attr_desc->_type == G_TYPE_BOOLEAN)
-    {
-      player->SetAttributeValue (attr_id,
-                                 gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)));
-
-      if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
-      {
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
-                                      FALSE);
-      }
-    }
-    else
-    {
-      if (attr_desc->HasDiscreteValue ())
-      {
-        if (attr_desc->_free_value_allowed)
-        {
-          GtkEntry *entry = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (w)));
-
-          if (entry)
-          {
-            const gchar *xml_image = attr_desc->GetDiscreteXmlImage (gtk_entry_get_text (GTK_ENTRY (entry)));
-
-            player->SetAttributeValue (attr_id,
-                                       xml_image);
-
-            if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
-            {
-              gtk_entry_set_text (GTK_ENTRY (w), "");
-            }
-          }
-        }
-        else
-        {
-          GtkTreeIter iter;
-
-          if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (w),
-                                             &iter))
-          {
-            gchar *value = attr_desc->GetXmlImage (&iter);
-
-            player->SetAttributeValue (attr_id,
-                                       value);
-            g_free (value);
-          }
-        }
-      }
-      else
-      {
-        player->SetAttributeValue (attr_id,
-                                   (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
-
-        if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
-        {
-          gtk_entry_set_text (GTK_ENTRY (w), "");
-        }
-      }
-    }
-    attr_id->Release ();
-  }
-
-  gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
-                                                        0));
   Add (player);
-
-  player->Release ();
   OnListChanged ();
 }
 
@@ -1113,6 +554,12 @@ void Checkin::Monitor (Player *player)
   player->SetChangeCbk ("attending",
                         (Player::OnChange) OnAttendingChanged,
                         this);
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::OnPlugged ()
+{
+  OnAttrListUpdated ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1179,32 +626,7 @@ extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Checkin::on_add_player_button_clicked ()
 {
-  GtkWidget *w = _glade->GetWidget ("FillInForm");
-
-  gtk_widget_show_all (w);
-
-  {
-    GList *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
-
-    gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
-                                                          0));
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::on_sensitive_state_toggled (GtkToggleButton *togglebutton,
-                                          GtkWidget       *w)
-{
-  if (gtk_toggle_button_get_active (togglebutton))
-  {
-    gtk_widget_set_sensitive (w,
-                              TRUE);
-  }
-  else
-  {
-    gtk_widget_set_sensitive (w,
-                              FALSE);
-  }
+  _form->Show ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1270,14 +692,6 @@ void Checkin::on_remove_player_button_clicked ()
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::on_close_button_clicked ()
-{
-  GtkWidget *w = _glade->GetWidget ("FillInForm");
-
-  gtk_widget_hide (w);
-}
-
-// --------------------------------------------------------------------------------
 void Checkin::OnToggleAllPlayers (gboolean present)
 {
   Player::AttributeId  attr_id ("attending");
@@ -1302,71 +716,6 @@ void Checkin::OnToggleAllPlayers (gboolean present)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::SetSelectorValue (GtkComboBox *combo_box,
-                                const gchar *value)
-{
-  GtkTreeModel *model = gtk_combo_box_get_model (combo_box);
-
-  if (value && model)
-  {
-    GtkTreeIter  iter;
-    gboolean     iter_is_valid;
-    gchar       *case_value = g_utf8_casefold (value, -1);
-
-    iter_is_valid = gtk_tree_model_get_iter_first (model,
-                                                   &iter);
-
-    while (iter_is_valid)
-    {
-      gchar *current_value;
-      gchar *case_current_value;
-
-      gtk_tree_model_get (model, &iter,
-                          AttributeDesc::DISCRETE_USER_IMAGE, &current_value,
-                          -1);
-      case_current_value = g_utf8_casefold (current_value, -1);
-      if (current_value && (g_ascii_strcasecmp (case_current_value, case_value) == 0))
-      {
-        g_free (case_current_value);
-        gtk_combo_box_set_active_iter (combo_box,
-                                       &iter);
-        break;
-      }
-
-      g_free (case_current_value);
-      iter_is_valid = gtk_tree_model_iter_next (model,
-                                                &iter);
-    }
-
-    g_free (case_value);
-  }
-}
-
-// --------------------------------------------------------------------------------
-gboolean Checkin::OnSelectorChanged (GtkEntryCompletion *widget,
-                                     GtkTreeModel       *model,
-                                     GtkTreeIter        *iter,
-                                     GtkComboBox        *combobox)
-{
-  gchar *value;
-
-  gtk_tree_model_get (model, iter,
-                      AttributeDesc::DISCRETE_USER_IMAGE, &value,
-                      -1);
-  SetSelectorValue (combobox,
-                    value);
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnSelectorEntryActivate (GtkEntry    *widget,
-                                       GtkComboBox *combobox)
-{
-  SetSelectorValue (combobox,
-                    gtk_entry_get_text (widget));
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget *widget,
                                                                        Object    *owner)
 {
@@ -1382,40 +731,6 @@ extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
   Checkin *c = dynamic_cast <Checkin *> (owner);
 
   c->OnImport ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_add_button_clicked (GtkWidget *widget,
-                                                       Object    *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
-
-  c->on_add_button_clicked ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_close_button_clicked (GtkWidget *widget,
-                                                         Object    *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
-
-  c->on_close_button_clicked ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT gboolean on_FillInForm_key_press_event (GtkWidget   *widget,
-                                                                   GdkEventKey *event,
-                                                                   Object      *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
-
-  if (event->keyval == GDK_Return)
-  {
-    c->on_add_button_clicked ();
-    return TRUE;
-  }
-
-  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

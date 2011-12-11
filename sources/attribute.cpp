@@ -77,6 +77,7 @@ AttributeDesc::AttributeDesc (GType        type,
   _xml_name              = g_strdup (xml_name);
   _user_name             = g_strdup (user_name);
   _uniqueness            = SINGULAR;
+  _representation        = TEXTUAL;
   _persistency           = PERSISTENT;
   _scope                 = GLOBAL;
   _free_value_allowed    = TRUE;

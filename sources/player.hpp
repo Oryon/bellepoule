@@ -69,7 +69,8 @@ class Player : public Object
 
     guint GetRef ();
 
-    void Save (xmlTextWriter *xml_writer);
+    void Save (xmlTextWriter *xml_writer,
+               const gchar   *player_tag);
 
     void Load (xmlNode *xml_node);
 

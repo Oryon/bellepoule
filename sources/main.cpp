@@ -31,7 +31,7 @@
 #include <gtk/gtk.h>
 
 #include "contest.hpp"
-#include "checkin.hpp"
+#include "checkin_supervisor.hpp"
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 #include "table_supervisor.hpp"
@@ -141,11 +141,17 @@ int main (int argc, char **argv)
     gtk_init (&argc, &argv);
 
     {
-      setlocale (LC_ALL, "");
+      Object::SetProgramPath (install_dirname);
 
-      g_setenv ("LANGUAGE",
-      "ko",
-      TRUE);
+      Tournament::Init ();
+
+      {
+        setlocale (LC_ALL, "");
+
+        g_setenv ("LANGUAGE",
+                  Tournament::GetUserLanguage (),
+                  TRUE);
+      }
 
       {
         gchar *translation_path = g_build_filename (install_dirname, "resources", "countries", "translations", NULL);
@@ -168,10 +174,8 @@ int main (int argc, char **argv)
       textdomain ("BellePoule");
     }
 
-    Object::SetProgramPath (install_dirname);
-
     Contest::Init               ();
-    Checkin::Init               ();
+    CheckinSupervisor::Init     ();
     PoolAllocator::Init         ();
     PoolSupervisor::Init        ();
     TableSupervisor::Init       ();
@@ -219,6 +223,11 @@ int main (int argc, char **argv)
     desc->AddDiscreteValues ("clubs.txt");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "smartphone", "SmartPhone", gettext ("smartphone"));
+
+    desc = AttributeDesc::Declare (G_TYPE_INT, "participation_rate", "Activite", gettext ("participation rate"));
+    desc->_representation = AttributeDesc::GRAPHICAL;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));
     desc->_compare_func = (GCompareFunc) CompareRanking;

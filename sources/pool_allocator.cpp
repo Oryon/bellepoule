@@ -96,6 +96,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "participation_rate",
                                "status",
                                "global_status",
                                "start_rank",
@@ -156,6 +157,39 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   {
     _fencer_list = new PlayersList ("classification.glade",
                                     PlayersList::SORTABLE);
+    {
+      GSList *attr_list;
+      Filter *filter;
+
+      AttributeDesc::CreateList (&attr_list,
+#ifndef DEBUG
+                                 "ref",
+#endif
+                                 "participation_rate",
+                                 "status",
+                                 "global_status",
+                                 "start_rank",
+                                 "final_rank",
+                                 "attending",
+                                 "exported",
+                                 "victories_ratio",
+                                 "indice",
+                                 "HS",
+                                 "rank",
+                                 NULL);
+      filter = new Filter (attr_list,
+                           this);
+
+      filter->ShowAttribute ("name");
+      filter->ShowAttribute ("first_name");
+      filter->ShowAttribute ("club");
+      filter->ShowAttribute ("pool_nr");
+
+      _fencer_list->SetFilter    (filter);
+      _fencer_list->SetDataOwner (this);
+      filter->Release ();
+    }
+
     Plug (_fencer_list,
           _glade->GetWidget ("fencer_list_hook"));
   }
@@ -167,6 +201,7 @@ PoolAllocator::~PoolAllocator ()
   _max_score->Release        ();
   _swapping->Release         ();
   _seeding_balanced->Release ();
+  _fencer_list->Release      ();
 }
 
 // --------------------------------------------------------------------------------
@@ -192,9 +227,13 @@ const gchar *PoolAllocator::GetInputProviderClient ()
 // --------------------------------------------------------------------------------
 void PoolAllocator::Display ()
 {
-  OnFencerListToggled (FALSE);
-
   SetUpCombobox ();
+
+  {
+    OnFencerListToggled (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("fencer_list"))));
+
+    PopulateFencerList ();
+  }
 
   if (_main_table)
   {
@@ -239,7 +278,7 @@ void PoolAllocator::Garnish ()
 {
   if (_pools_list == NULL)
   {
-    FillCombobox ();
+    Setup ();
 
     if (_best_config)
     {
@@ -422,7 +461,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
         {
           // Get the configuration
           {
-            FillCombobox ();
+            Setup ();
 
             for (guint i = 0; i < g_slist_length (_config_list); i++)
             {
@@ -591,7 +630,7 @@ void PoolAllocator::RegisterConfig (Configuration *config)
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::FillCombobox ()
+void PoolAllocator::Setup ()
 {
   guint           nb_players    = g_slist_length (_attendees->GetShortList ());
   Configuration  *config        = NULL;
@@ -662,6 +701,23 @@ void PoolAllocator::FillCombobox ()
                           BEST_PIXMAP_COL, GTK_STOCK_ABOUT,
                           -1);
     }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::PopulateFencerList ()
+{
+  if (_attendees)
+  {
+    GSList *current_player = _attendees->GetShortList ();
+
+    _fencer_list->Wipe ();
+    while (current_player)
+    {
+      _fencer_list->Add ((Player *) current_player->data);
+      current_player = g_slist_next (current_player);
+    }
+    _fencer_list->OnAttrListUpdated ();
   }
 }
 
@@ -985,6 +1041,7 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
     SignalStatusUpdate ();
     FixUpTablesBounds ();
 
+    _fencer_list->Update (_floating_player);
     _floating_player = NULL;
 
     ResetCursor ();

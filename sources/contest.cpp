@@ -36,6 +36,8 @@
 #include "canvas.hpp"
 #include "tournament.hpp"
 #include "checkin.hpp"
+#include "referees_list.hpp"
+#include "checkin_supervisor.hpp"
 #include "upload.hpp"
 
 #include "contest.hpp"
@@ -393,7 +395,9 @@ Contest::Contest (gchar *filename)
       xmlXPathFreeContext (xml_context);
     }
 
-    _schedule->Load (doc);
+    _schedule->Load (doc,
+                     _referees_list);
+
     if (score_stuffing_policy)
     {
       _schedule->SetScoreStuffingPolicy (score_stuffing_policy);
@@ -403,7 +407,7 @@ Contest::Contest (gchar *filename)
 
     if (need_post_processing)
     {
-      Checkin *checkin = dynamic_cast <Checkin *> (_schedule->GetStage (0));
+      CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
 
       checkin->ConvertFromBaseToResult ();
     }
@@ -453,6 +457,8 @@ Contest::~Contest ()
   Object::TryToRelease (_scratch_time);
   Object::TryToRelease (_start_time);
 
+  Object::TryToRelease (_referees_list);
+
   Object::TryToRelease (_schedule);
 
   Object::Dump ();
@@ -475,7 +481,7 @@ void Contest::AddPlayer (Player *player,
 {
   if (_schedule)
   {
-    Checkin *checkin = dynamic_cast <Checkin *> (_schedule->GetStage (0));
+    CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
 
     if (checkin)
     {
@@ -574,7 +580,7 @@ Contest *Contest::Duplicate ()
 // --------------------------------------------------------------------------------
 void Contest::LatchPlayerList ()
 {
-  Checkin *checkin = dynamic_cast <Checkin *> (_schedule->GetStage (0));
+  CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
 
   if (checkin)
   {
@@ -613,6 +619,17 @@ void Contest::InitInstance ()
   _gdk_color = NULL;
   _color     = new Data ("Couleur",
                          (guint) 0);
+
+  {
+    _referees_list = new RefereesList ();
+    Plug (_referees_list,
+          _glade->GetWidget ("referees_viewport"),
+          NULL);
+
+    gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
+                            0);
+    _referee_pane_position = -1;
+  }
 
   {
     GTimeVal  current_time;
@@ -1008,11 +1025,11 @@ void Contest::Publish ()
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
   //{
-    //return;
+  //return;
   //}
   //if (_scratch_time->IsEqualTo (_start_time))
   //{
-    //return;
+  //return;
   //}
 }
 
@@ -1150,7 +1167,8 @@ void Contest::Save (gchar *filename)
                                      BAD_CAST _location);
       }
 
-      _schedule->Save (xml_writer);
+      _schedule->Save (xml_writer,
+                       _referees_list);
 
       xmlTextWriterEndElement (xml_writer);
       xmlTextWriterEndDocument (xml_writer);
@@ -1312,8 +1330,8 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
 
   {
     char *text = g_strdup_printf ("%s - %s - %s", gettext (weapon_image[_weapon]),
-                                                   gettext (gender_image[_gender]),
-                                                   gettext (category_image[_category]));
+                                  gettext (gender_image[_gender]),
+                                  gettext (category_image[_category]));
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                          text,
                          50.5, 3.5,
@@ -1368,6 +1386,25 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                      1.0);
 
   gtk_widget_destroy (GTK_WIDGET (canvas));
+}
+
+// --------------------------------------------------------------------------------
+void Contest::on_referees_toolbutton_toggled (GtkToggleToolButton *w)
+{
+  GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
+
+  if (gtk_toggle_tool_button_get_active (w))
+  {
+    gtk_paned_set_position (paned,
+                            _referee_pane_position);
+  }
+  else
+  {
+    _referee_pane_position = gtk_paned_get_position (paned);
+    gtk_paned_set_position (paned,
+                            0);
+  }
+
 }
 
 // --------------------------------------------------------------------------------
@@ -1573,4 +1610,13 @@ extern "C" G_MODULE_EXPORT void on_ftp_comboboxentry_changed (GtkComboBox *widge
   Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_ftp_changed (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_referees_toolbutton_toggled (GtkToggleToolButton *widget,
+                                                                Object              *owner)
+{
+  Contest *c = dynamic_cast <Contest *> (owner);
+
+  c->on_referees_toolbutton_toggled (widget);
 }

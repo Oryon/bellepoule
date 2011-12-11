@@ -12,6 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wunreachable-code" />
 					<Add option="-g" />
 					<Add option="-DDEBUG=1" />
 					<Add directory="sources\soap\soap" />
@@ -36,6 +37,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wunreachable-code" />
 					<Add option="-g" />
 					<Add option="-DDEBUG=1" />
 				</Compiler>
@@ -45,7 +47,6 @@
 			<Add option="-Wshadow" />
 			<Add option="-Winit-self" />
 			<Add option="-Wcast-align" />
-			<Add option="-Wunreachable-code" />
 			<Add option="-Wswitch-enum" />
 			<Add option="-Wswitch-default" />
 			<Add option="-std=c++98" />
@@ -114,15 +115,18 @@
 		<Unit filename="sources\canvas_module.hpp" />
 		<Unit filename="sources\checkin.cpp" />
 		<Unit filename="sources\checkin.hpp" />
+		<Unit filename="sources\checkin_supervisor.cpp" />
+		<Unit filename="sources\checkin_supervisor.hpp" />
 		<Unit filename="sources\classification.cpp" />
 		<Unit filename="sources\classification.hpp" />
 		<Unit filename="sources\contest.cpp" />
 		<Unit filename="sources\contest.hpp" />
 		<Unit filename="sources\data.cpp" />
 		<Unit filename="sources\data.hpp" />
-		<Unit filename="sources\ecosystem.hpp" />
 		<Unit filename="sources\filter.cpp" />
 		<Unit filename="sources\filter.hpp" />
+		<Unit filename="sources\form.cpp" />
+		<Unit filename="sources\form.hpp" />
 		<Unit filename="sources\general_classification.cpp" />
 		<Unit filename="sources\general_classification.hpp" />
 		<Unit filename="sources\glade.cpp" />
@@ -148,6 +152,8 @@
 		<Unit filename="sources\pool_match_order.hpp" />
 		<Unit filename="sources\pool_supervisor.cpp" />
 		<Unit filename="sources\pool_supervisor.hpp" />
+		<Unit filename="sources\referees_list.cpp" />
+		<Unit filename="sources\referees_list.hpp" />
 		<Unit filename="sources\resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>

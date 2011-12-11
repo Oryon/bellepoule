@@ -29,6 +29,7 @@ class Tournament : public Module
 {
   public:
      Tournament (gchar *filename);
+
     ~Tournament ();
 
     static void Init ();
@@ -46,6 +47,8 @@ class Tournament : public Module
     void OnOpenUserManual ();
 
     void OnSave ();
+
+    static gchar *GetUserLanguage ();
 
     void OnBackupfileLocation ();
 
@@ -70,9 +73,12 @@ class Tournament : public Module
     GSList  *_contest_list;
     Network *_network;
 
-    void ReadConfiguration ();
-
     void SetBackupLocation (gchar *location);
+
+    void EnumerateLanguages ();
+
+    static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
+                                 gchar            *locale);
 };
 
 #endif

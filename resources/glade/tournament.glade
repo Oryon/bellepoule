@@ -15,7 +15,7 @@
 </property>
     <property name="website">http://betton.escrime.free.fr/index.php/bellepoule</property>
     <property name="website_label">betton.escrime.free.fr</property>
-    <property name="license" translatable="no">                GNU GENERAL PUBLIC LICENSE
+    <property name="license">                GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
  Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt;
@@ -742,6 +742,11 @@ Public License instead of this License.  But first, please read
     <property name="can_focus">False</property>
     <property name="stock">gtk-directory</property>
   </object>
+  <object class="GtkImage" id="image6">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">preferences-desktop-locale</property>
+  </object>
   <object class="GtkWindow" id="root">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">BellePoule - Fencing tournament</property>
@@ -891,10 +896,26 @@ Public License instead of this License.  But first, please read
               </object>
             </child>
             <child>
+              <object class="GtkImageMenuItem" id="locale_menuitem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">image6</property>
+                <property name="use_stock">False</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="locale_menu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
               <object class="GtkMenuItem" id="menuitem4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
+                <property name="right_justified">True</property>
                 <property name="label" translatable="yes">Help</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">

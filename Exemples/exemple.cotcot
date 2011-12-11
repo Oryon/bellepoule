@@ -1,108 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE CompetitionIndividuelle>
 <!--
-           By BellePoule (V2.0rc4)
+           By BellePoule (V3.0alpha2)
 
    http://betton.escrime.free.fr/index.php/bellepoule
 -->
-<CompetitionIndividuelle Couleur="0" Annee="2010" Arme="S" Sexe="M" Organisateur="CS Betton" Categorie="M" Date="07.11.2010" Appel="12:00" Scratch="12:00" Debut="12:00" TitreLong="H2016" URLorganisateur="http://betton.escrime.free.fr" score_stuffing="1" Lieu="">
+<CompetitionIndividuelle Couleur="1" Championnat="FFE" ID="406" Annee="2011" Arme="S" Sexe="M" Organisateur="" Categorie="J" Date="17.12.2011" Appel="12:00" Scratch="12:00" Debut="12:00" TitreLong="Circuit National" URLorganisateur="" score_stuffing="0" Lieu="">
  <Tireurs>
-  <Tireur ID="29" Classement="3" Nom="ROGER" Prenom="Benjamin" DateNaissance="13/02/1996" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330544" Ranking="1006" Exporte="0" Statut="Q"/>
-  <Tireur ID="21" Classement="4" Nom="LATREILLE" Prenom="Quentin" DateNaissance="06/02/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100499" Ranking="1021" Exporte="0" Statut="A"/>
-  <Tireur ID="30" Classement="2" Nom="BOTUHA" Prenom="Simon" DateNaissance="21/05/1996" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330559" Ranking="1038" Exporte="0" Statut="Q"/>
-  <Tireur ID="19" Classement="1" Nom="GUEGAN" Prenom="Baptiste" DateNaissance="19/11/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100439" Ranking="1039" Exporte="0" Statut="Q"/>
-  <Tireur ID="14" Nom="LE ROUX" Prenom="Gurvan" DateNaissance="31/03/1997" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100317" Ranking="1142" Exporte="0" Statut="F"/>
-  <Tireur ID="32" Nom="BESCOND" Prenom="Maxime" DateNaissance="22/04/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330575" Ranking="1157" Exporte="0" Statut="F"/>
-  <Tireur ID="13" Nom="LEGRAND" Prenom="Abraham" DateNaissance="09/08/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100237" Ranking="1163" Exporte="0" Statut="F"/>
-  <Tireur ID="24" Nom="SAILLARD" Prenom="Pacome" DateNaissance="26/02/1997" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100549" Ranking="1164" Exporte="0" Statut="F"/>
-  <Tireur ID="9" Nom="STEPHAN" Prenom="Loic" DateNaissance="23/11/1997" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290340661" Ranking="1173" Exporte="0" Statut="F"/>
-  <Tireur ID="33" Nom="HOBL" Prenom="Alexis" DateNaissance="25/09/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330584" Ranking="1190" Exporte="0" Statut="F"/>
-  <Tireur ID="25" Nom="LAUMAIN" Prenom="Louis" DateNaissance="10/10/1996" Sexe="M" Nation="FRA" Club="ST MALO" Licence="230350150893" Ranking="1193" Exporte="0" Statut="F"/>
-  <Tireur ID="10" Nom="LEBOURGEOIS" Prenom="Antoine" DateNaissance="19/12/1996" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290340706" Ranking="1194" Exporte="0" Statut="F"/>
-  <Tireur ID="23" Nom="LE BACCON" Prenom="Pierre erik" DateNaissance="11/05/1998" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100526" Ranking="1201" Exporte="0" Statut="F"/>
-  <Tireur ID="36" Nom="GUERIN" Prenom="Tristan" DateNaissance="15/09/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330627" Ranking="1206" Exporte="0" Statut="F"/>
-  <Tireur ID="31" Nom="GARNIER" Prenom="Nathan" DateNaissance="15/11/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330563" Ranking="1215" Exporte="0" Statut="F"/>
-  <Tireur ID="2" Nom="JARAY" Prenom="Alexandre" DateNaissance="24/12/1996" Sexe="M" Nation="FRA" Club="ST BRIEUC" Licence="230220090574" Ranking="1220" Exporte="0" Statut="F"/>
-  <Tireur ID="1" Nom="LEMOINE" Prenom="Lou" DateNaissance="24/05/1997" Sexe="M" Nation="FRA" Club="DINAN EA" Licence="230220070210" Ranking="1261" Exporte="0" Statut="F"/>
-  <Tireur ID="11" Nom="RESMOND" Prenom="Tangui" DateNaissance="19/04/1998" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290340820" Ranking="1278" Exporte="0" Statut="F"/>
-  <Tireur ID="26" Nom="DANIBO" Prenom="Antoine" DateNaissance="03/10/1997" Sexe="M" Nation="FRA" Club="ST MALO" Licence="230350150926" Ranking="1289" Exporte="0" Statut="F"/>
-  <Tireur ID="0" Nom="BONNOT" Prenom="Pierre" DateNaissance="23/05/1997" Sexe="M" Nation="FRA" Club="DINAN EA" Licence="230220070202" Ranking="1308" Exporte="0" Statut="F"/>
-  <Tireur ID="16" Nom="BIDAN" Prenom="Yoann" DateNaissance="18/10/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100348" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="12" Nom="LE GAL" Prenom="Killian" DateNaissance="15/09/1996" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290341021" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="28" Nom="KELLER" Prenom="Maxime" DateNaissance="08/01/1999" Sexe="M" Nation="FRA" Club="ST GREGOIRE" Licence="230350290477" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="4" Nom="DANIEL" Prenom="Corentin" DateNaissance="09/04/1996" Sexe="M" Nation="FRA" Club="ST BRIEUC" Licence="230220090792" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="22" Nom="THEBAULT" Prenom="Quentin" DateNaissance="21/11/1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100516" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="6" Nom="LE REUN" Prenom="Etienne" DateNaissance="12/06/1999" Sexe="M" Nation="FRA" Club="BREST RAPIER" Licence="230290050957" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="20" Nom="GUEGAN" Prenom="Thibault" DateNaissance="18/05/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100456" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="17" Nom="DRAZIC" Prenom="Matthieu" DateNaissance="10/06/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100395" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="35" Nom="DUCRET" Prenom="Hugo" DateNaissance="22/05/1998" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330616" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="34" Nom="LALLEMAND" Prenom="Marin" DateNaissance="06/09/1997" Sexe="M" Nation="FRA" Club="DINARD LAMES" Licence="230350330585" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="15" Nom="JARDIN" Prenom="Nathan" DateNaissance="17/02/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100343" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="3" Nom="LE LOARER" Prenom="Gwendal" DateNaissance="31/05/1997" Sexe="M" Nation="FRA" Club="ST BRIEUC" Licence="230220090765" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="7" Nom="TANGUY" Prenom="Quentin" DateNaissance="22/05/1998" Sexe="M" Nation="FRA" Club="BREST RAPIER" Licence="230290050984" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="8" Nom="CONAN" Prenom="Baptiste" DateNaissance="23/06/1998" Sexe="M" Nation="FRA" Club="BREST RAPIER" Licence="230290050993" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="5" Nom="CARLO" Prenom="Maxime" DateNaissance="29/12/1999" Sexe="M" Nation="FRA" Club="ST BRIEUC" Licence="230220090866" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="18" Nom="BROCHAIN" Prenom="Pierre" DateNaissance="17/11/1999" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100410" Ranking="0" Exporte="0" Statut="F"/>
-  <Tireur ID="27" Nom="QUEMERAIS" Prenom="Primael" DateNaissance="14/03/1999" Sexe="M" Nation="FRA" Club="ST GREGOIRE" Licence="230350290465" Ranking="0" Exporte="0" Statut="F"/>
+  <Tireur ID="226999" Classement="1" Nom="SEITZ" Prenom="Tom" DateNaissance="31.05.1994" Sexe="M" Nation="FRA" Club="PARIS USM" Licence="270750360766" Ranking="1010"/>
+  <Tireur ID="302770" Classement="1" Nom="RENAULDON" Prenom="Jules" DateNaissance="12.10.1995" Sexe="M" Nation="FRA" Club="PARIS USM" Licence="270750360982" Ranking="1016"/>
+  <Tireur ID="221564" Classement="1" Nom="MARTIN" Prenom="Paul" DateNaissance="28.07.1994" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450231448" Ranking="1018"/>
+  <Tireur ID="227462" Classement="1" Nom="BROUSSE" Prenom="Quentin" DateNaissance="03.09.1993" Sexe="M" Nation="FRA" Club="KREMLIN CSA" Licence="260941860506" Ranking="1019"/>
+  <Tireur ID="275875" Classement="1" Nom="HARENDARCZYK" Prenom="Bastien" DateNaissance="21.06.1995" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931611073" Ranking="1022"/>
+  <Tireur ID="215042" Classement="1" Nom="LAURENCE" Prenom="Tristan" DateNaissance="11.11.1992" Sexe="M" Nation="FRA" Club="GISORS 3A" Licence="110270040840" Ranking="1024"/>
+  <Tireur ID="222936" Classement="1" Nom="LEPAGNOL" Prenom="Arthur" DateNaissance="02.03.1994" Sexe="M" Nation="FRA" Club="REIMS CE" Licence="220510102300" Ranking="1025"/>
+  <Tireur ID="210707" Classement="1" Nom="DESBORDES" Prenom="Alexandre" DateNaissance="26.07.1993" Sexe="M" Nation="FRA" Club="PAU SECTION" Licence="040640211715" Ranking="1026"/>
+  <Tireur ID="226704" Classement="1" Nom="FIGUERAS" Prenom="Manuel" DateNaissance="05.08.1995" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931610968" Ranking="1027"/>
+  <Tireur ID="412381" Classement="1" Nom="JETUR" Prenom="Francois" DateNaissance="08.09.1993" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450232688" Ranking="1028"/>
+  <Tireur ID="300241" Classement="1" Nom="DUBOIS" Prenom="Maxime" DateNaissance="01.11.1994" Sexe="M" Nation="FRA" Club="JOUE TOURS" Licence="200370170863" Ranking="1032"/>
+  <Tireur ID="221574" Classement="1" Nom="OLIVEROS" Prenom="Gautier" DateNaissance="15.05.1994" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450231538" Ranking="1033"/>
+  <Tireur ID="247932" Classement="1" Nom="MINNE" Prenom="Jean" DateNaissance="21.05.1995" Sexe="M" Nation="FRA" Club="ROUBAIX CE" Licence="130590100823" Ranking="1036"/>
+  <Tireur ID="227468" Classement="1" Nom="BONNET" Prenom="Martin" DateNaissance="27.12.1994" Sexe="M" Nation="FRA" Club="KREMLIN CSA" Licence="260941860535" Ranking="1037"/>
+  <Tireur ID="215994" Classement="1" Nom="LORIDAN" Prenom="Clement" DateNaissance="28.09.1994" Sexe="M" Nation="FRA" Club="ROUBAIX CE" Licence="130590100753" Ranking="1040"/>
+  <Tireur ID="221577" Classement="1" Nom="SOYER--MALHERBE" Prenom="Thibault" DateNaissance="15.01.1992" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450231554" Ranking="1042"/>
+  <Tireur ID="227472" Classement="1" Nom="FABRE" Prenom="Mehdi" DateNaissance="01.09.1994" Sexe="M" Nation="FRA" Club="KREMLIN CSA" Licence="260941860547" Ranking="1043"/>
+  <Tireur ID="226666" Classement="1" Nom="DHERBILLY" Prenom="Pierre alexandre" DateNaissance="04.03.1992" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931610774" Ranking="1044"/>
+  <Tireur ID="251908" Classement="1" Nom="PETITJEAN" Prenom="Martin" DateNaissance="12.04.1994" Sexe="M" Nation="FRA" Club="REIMS CE" Licence="220510102110" Ranking="1045"/>
+  <Tireur ID="255733" Classement="1" Nom="JAMMARON" Prenom="Nicolas" DateNaissance="01.07.1995" Sexe="M" Nation="FRA" Club="PARIS USM" Licence="270750360608" Ranking="1046"/>
+  <Tireur ID="295944" Classement="1" Nom="FALCO" Prenom="Bastien" DateNaissance="20.12.1994" Sexe="M" Nation="FRA" Club="SALON EC" Licence="010130050375" Ranking="1048"/>
+  <Tireur ID="247907" Classement="1" Nom="CHEMIERE" Prenom="Romain" DateNaissance="21.01.1994" Sexe="M" Nation="FRA" Club="ROUBAIX CE" Licence="130590100798" Ranking="1049"/>
+  <Tireur ID="236157" Classement="1" Nom="BELOT" Prenom="Nicolas" DateNaissance="24.04.1995" Sexe="M" Nation="FRA" Club="PAU SECTION" Licence="040640211277" Ranking="1050"/>
+  <Tireur ID="211200" Classement="1" Nom="CHEVALIER" Prenom="Kevin" DateNaissance="01.04.1992" Sexe="M" Nation="FRA" Club="PAU SECTION" Licence="040640211085" Ranking="1053"/>
+  <Tireur ID="227529" Classement="1" Nom="CHAPUIS" Prenom="Allan" DateNaissance="25.03.1996" Sexe="M" Nation="FRA" Club="PARIS USM" Licence="270750360887" Ranking="1054"/>
+  <Tireur ID="244878" Classement="1" Nom="LATREILLE" Prenom="Quentin" DateNaissance="06.02.1996" Sexe="M" Nation="FRA" Club="BETTON CP" Licence="230350100499" Ranking="1061"/>
+  <Tireur ID="221571" Classement="1" Nom="GUILLEMET" Prenom="Gabin" DateNaissance="30.12.1994" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450231528" Ranking="1062"/>
+  <Tireur ID="226692" Classement="1" Nom="LACROIX" Prenom="Jordan" DateNaissance="28.04.1994" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931610934" Ranking="1064"/>
+  <Tireur ID="239470" Classement="1" Nom="HAMMAMY" Prenom="Renaud" DateNaissance="07.01.1994" Sexe="M" Nation="FRA" Club="JOUE TOURS" Licence="200370170767" Ranking="1065"/>
+  <Tireur ID="252729" Classement="1" Nom="BROUARD" Prenom="Simon" DateNaissance="17.01.1995" Sexe="M" Nation="FRA" Club="ST GREGOIRE" Licence="230350290523" Ranking="1066"/>
+  <Tireur ID="211228" Classement="1" Nom="CAMBEILH" Prenom="Clement" DateNaissance="14.11.1995" Sexe="M" Nation="FRA" Club="PAU SECTION" Licence="040640211217" Ranking="1069"/>
+  <Tireur ID="215051" Classement="1" Nom="LEMERCIER" Prenom="Quentin" DateNaissance="02.06.1994" Sexe="M" Nation="FRA" Club="GOURNAY" Licence="110760080181" Ranking="1072"/>
+  <Tireur ID="224215" Classement="1" Nom="THOMAS" Prenom="Clement" DateNaissance="15.05.1994" Sexe="M" Nation="FRA" Club="QUIMPER EC" Licence="230290340390" Ranking="1079"/>
+  <Tireur ID="214959" Classement="1" Nom="FABIENNE" Prenom="Benoit" DateNaissance="25.05.1995" Sexe="M" Nation="FRA" Club="GISORS 3A" Licence="110270040656" Ranking="1080"/>
+  <Tireur ID="292077" Classement="1" Nom="MOUILLESEAUX" Prenom="David" DateNaissance="04.04.1994" Sexe="M" Nation="FRA" Club="AURILLAC CE" Licence="060150090275" Ranking="1087"/>
+  <Tireur ID="267787" Classement="1" Nom="BERTRAND" Prenom="Mathieu" DateNaissance="14.02.1994" Sexe="M" Nation="FRA" Club="ARBOIS CEATO" Licence="030390160168" Ranking="1090"/>
+  <Tireur ID="263629" Classement="1" Nom="ALBRECHT" Prenom="Tom" DateNaissance="22.10.1996" Sexe="M" Nation="FRA" Club="JOUE TOURS" Licence="200370171057" Ranking="1091"/>
+  <Tireur ID="222619" Classement="1" Nom="SAUSSURE COULANGES" Prenom="Benoit" DateNaissance="10.11.1993" Sexe="M" Nation="FRA" Club="SEDAN CE" Licence="220080030285" Ranking="1092"/>
+  <Tireur ID="221615" Classement="1" Nom="MEGDOUD" Prenom="Kerryl" DateNaissance="11.11.1994" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450231750" Ranking="1094"/>
+  <Tireur ID="214373" Classement="1" Nom="DUGUET" Prenom="Etienne" DateNaissance="13.09.1994" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450232695" Ranking="1095"/>
+  <Tireur ID="214960" Classement="1" Nom="FERRET" Prenom="Alexis" DateNaissance="24.04.1993" Sexe="M" Nation="FRA" Club="GISORS 3A" Licence="110270040657" Ranking="1101"/>
+  <Tireur ID="239595" Classement="1" Nom="BOURY" Prenom="Quentin" DateNaissance="10.08.1996" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450231905" Ranking="1107"/>
+  <Tireur ID="338894" Classement="1" Nom="CLOGENSON" Prenom="Bastien" DateNaissance="05.08.1994" Sexe="M" Nation="FRA" Club="GISORS 3A" Licence="110270040867" Ranking="1115"/>
+  <Tireur ID="324659" Classement="1" Nom="ARMINGAUD" Prenom="Antonin" DateNaissance="24.08.1995" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450232338" Ranking="1116"/>
+  <Tireur ID="215057" Classement="1" Nom="MOINET" Prenom="Matthias" DateNaissance="25.04.1994" Sexe="M" Nation="FRA" Club="GOURNAY" Licence="110760080196" Ranking="1116"/>
+  <Tireur ID="222003" Classement="1" Nom="MAURICE" Prenom="Benjamin" DateNaissance="14.02.1992" Sexe="M" Nation="FRA" Club="ORLEANS CE" Licence="200450232277" Ranking="1118"/>
+  <Tireur ID="274801" Classement="1" Nom="LONGFIER" Prenom="Romain" DateNaissance="18.05.1996" Sexe="M" Nation="FRA" Club="GISORS 3A" Licence="110270040754" Ranking="1119"/>
+  <Tireur ID="340542" Classement="1" Nom="SCHNEIDER" Prenom="Baptiste" DateNaissance="15.04.1994" Sexe="M" Nation="FRA" Club="HERRLISHEIM" Licence="240680160105" Ranking="0"/>
+  <Tireur ID="215980" Classement="1" Nom="BENLAMRI" Prenom="Amir" DateNaissance="28.03.1996" Sexe="M" Nation="FRA" Club="ROUBAIX CE" Licence="130590100956" Ranking="0"/>
+  <Tireur ID="228228" Classement="1" Nom="MAUNOURY" Prenom="Laurent" DateNaissance="04.05.1994" Sexe="M" Nation="FRA" Club="AULNAY CE" Licence="260931611236" Ranking="0"/>
+  <Tireur ID="260685" Classement="1" Nom="DE ZUTTERE" Prenom="Thibaud" DateNaissance="01.07.1996" Sexe="M" Nation="FRA" Club="GISORS 3A" Licence="110270041040" Ranking="0"/>
+  <Tireur ID="296471" Classement="1" Nom="ALBANESE" Prenom="Benjamin" DateNaissance="18.04.1996" Sexe="M" Nation="FRA" Club="HERRLISHEIM" Licence="240680160067" Ranking="0"/>
+  <Tireur ID="258698" Classement="1" Nom="FRANCOU" Prenom="Amaury" DateNaissance="10.08.1996" Sexe="M" Nation="FRA" Club="SALON EC" Licence="010130050176" Ranking="0"/>
  </Tireurs>
- <Arbitres/>
- <Phases PhaseEnCours="4">
-  <TourDePoules PhaseID="1" ID="" ScoreMax="5" RatioQualifies="100" NbQualifies="4" Decalage="Aucun" NbDePoules="1" PhaseSuivanteDesQualifies="3" NbQualifiesParIndice="4">
-   <Tireur REF="29" RangInitial="1" RangFinal="2" Statut="Q"/>
-   <Tireur REF="21" RangInitial="2" RangFinal="4" Statut="A"/>
-   <Tireur REF="30" RangInitial="3" RangFinal="3" Statut="Q"/>
-   <Tireur REF="19" RangInitial="4" RangFinal="1" Statut="Q"/>
-   <Poule ID="1">
-    <Tireur REF="21" NoDansLaPoule="1" NbVictoires="0" NbMatches="3" TD="0" TR="0" RangPoule="4"/>
-    <Tireur REF="30" NoDansLaPoule="2" NbVictoires="0" NbMatches="3" TD="5" TR="10" RangPoule="3"/>
-    <Tireur REF="19" NoDansLaPoule="3" NbVictoires="2" NbMatches="3" TD="10" TR="5" RangPoule="1"/>
-    <Tireur REF="29" NoDansLaPoule="4" NbVictoires="1" NbMatches="3" TD="6" TR="6" RangPoule="2"/>
-    <Arbitre/>
-    <Match ID="6">
-     <Tireur REF="21" Score="0" Statut="D"/>
-     <Tireur REF="30" Score="0" Statut="V"/>
-    </Match>
-    <Match ID="3">
-     <Tireur REF="21" Score="0" Statut="D"/>
-     <Tireur REF="19" Score="0" Statut="V"/>
-    </Match>
-    <Match ID="1">
-     <Tireur REF="21" Score="0" Statut="D"/>
-     <Tireur REF="29" Score="0" Statut="V"/>
-    </Match>
-    <Match ID="2">
-     <Tireur REF="30" Score="4" Statut="D"/>
-     <Tireur REF="19" Score="5" Statut="V"/>
-    </Match>
-    <Match ID="4">
-     <Tireur REF="30" Score="1" Statut="D"/>
-     <Tireur REF="29" Score="5" Statut="V"/>
-    </Match>
-    <Match ID="5">
-     <Tireur REF="19" Score="5" Statut="V"/>
-     <Tireur REF="29" Score="1" Statut="D"/>
-    </Match>
-   </Poule>
-  </TourDePoules>
-  <PhaseDeTableaux PhaseID="3" ID="" ScoreMax="10" RatioQualifies="100" NbQualifies="3" PlacesTirees="0">
-   <Tireur REF="19" RangInitial="1" RangFinal="1" Statut="Q"/>
-   <Tireur REF="29" RangInitial="2" RangFinal="3" Statut="Q"/>
-   <Tireur REF="30" RangInitial="3" RangFinal="2" Statut="Q"/>
-   <SuiteDeTableaux ID="0" Titre="Plaats #1" NbDeTableaux="2">
-    <Tableau ID="A4" Titre="Halve finale" Taille="4">
-     <Match ID="2">
-      <Tireur REF="30" Score="10" Statut="V"/>
-      <Tireur REF="29" Score="2" Statut="D"/>
-     </Match>
-    </Tableau>
-    <Tableau ID="A2" Titre="Finale" Taille="2">
-     <Match ID="1">
-      <Tireur REF="19" Score="10" Statut="V"/>
-      <Tireur REF="30" Score="9" Statut="D"/>
-     </Match>
-    </Tableau>
-   </SuiteDeTableaux>
-  </PhaseDeTableaux>
-  <ClassementGeneral PhaseID="4" ID="" RatioQualifies="100" NbQualifies="3"/>
+ <Arbitres>
+  <Arbitre ID="219368" Nom="PACAULT" Prenom="Yvon" DateNaissance="18.09.1956" Sexe="M" Nation="FRA" Ligue="AQUITAINE" Licence="040640211660"/>
+  <Arbitre ID="213888" Nom="ROUSSET" Prenom="Nicolas" DateNaissance="07.07.1988" Sexe="M" Nation="FRA" Ligue="BOURGOGNE" Licence="090210011412"/>
+  <Arbitre ID="214928" Nom="FIHUE" Prenom="Lysiane" DateNaissance="09.04.1991" Sexe="F" Nation="FRA" Ligue="HAUTE-NORMANDIE" Licence="110270040551"/>
+  <Arbitre ID="215946" Nom="SCHAFIER" Prenom="Maxime" DateNaissance="20.07.1985" Sexe="M" Nation="FRA" Ligue="NORD-PAS DE CALAIS" Licence="130590100754"/>
+  <Arbitre ID="221419" Nom="FROMET" Prenom="Joris" DateNaissance="23.02.1986" Sexe="M" Nation="FRA" Ligue="CENTRE" Licence="200370170377" Statut="F"/>
+  <Arbitre ID="217862" Nom="JAMMES" Prenom="Alizee" DateNaissance="05.04.1988" Sexe="F" Nation="FRA" Ligue="CENTRE" Licence="200450232738"/>
+  <Arbitre ID="225731" Nom="LECLERC" Prenom="Franck" DateNaissance="28.09.1962" Sexe="M" Nation="FRA" Ligue="MIDI-PYRENEES" Licence="250650240017"/>
+  <Arbitre ID="297535" Nom="HARENDARCZYK" Prenom="Richard" DateNaissance="18.04.1969" Sexe="M" Nation="FRA" Ligue="CRETEIL" Licence="260931611113"/>
+  <Arbitre ID="227443" Nom="GARNERET" Prenom="Xavier" DateNaissance="11.11.1986" Sexe="M" Nation="FRA" Ligue="CRETEIL" Licence="260941860499"/>
+  <Arbitre ID="229440" Nom="FARINES" Prenom="Emmanuel" DateNaissance="27.12.1972" Sexe="M" Nation="FRA" Ligue="PARIS" Licence="270750360248"/>
+ </Arbitres>
+ <Phases PhaseEnCours="0">
+  <TourDePoules PhaseID="1" ID="" ScoreMax="5" RatioQualifies="100" RepartitionEquilibre="1" Decalage="Aucun" PhaseSuivanteDesQualifies="3"/>
+  <PhaseDeTableaux PhaseID="3" ID="" ScoreMax="10" RatioQualifies="100" PlacesTirees="0"/>
+  <ClassementGeneral PhaseID="4" ID="" RatioQualifies="100"/>
  </Phases>
 </CompetitionIndividuelle>

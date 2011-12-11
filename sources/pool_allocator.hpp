@@ -97,7 +97,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     SensitivityTrigger  _swapping_sensitivity_trigger;
     PlayersList        *_fencer_list;
 
-    void FillCombobox ();
+    void Setup ();
+    void PopulateFencerList ();
     void CreatePools ();
     void DeletePools ();
     void SetUpCombobox ();

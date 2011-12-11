@@ -253,7 +253,8 @@ guint Player::GetRef ()
 }
 
 // --------------------------------------------------------------------------------
-void Player::Save (xmlTextWriter *xml_writer)
+void Player::Save (xmlTextWriter *xml_writer,
+                   const gchar   *player_tag)
 {
   GSList *attr_list;
 
@@ -261,7 +262,7 @@ void Player::Save (xmlTextWriter *xml_writer)
                              NULL);
 
   xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST "Tireur");
+                             BAD_CAST player_tag);
 
   for (guint i = 0; i < g_slist_length (attr_list); i++)
   {
@@ -279,9 +280,9 @@ void Player::Save (xmlTextWriter *xml_writer)
       {
         gchar *xml_image = attr->GetXmlImage ();
 
-        xmlTextWriterWriteFormatAttribute (xml_writer,
+        xmlTextWriterWriteAttribute (xml_writer,
                                            BAD_CAST attr->GetXmlName (),
-                                           xml_image);
+                                           BAD_CAST xml_image);
         g_free (xml_image);
       }
     }
