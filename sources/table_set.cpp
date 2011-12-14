@@ -1792,12 +1792,12 @@ gint TableSet::ComparePlayer (Player   *A,
       gchar *status_A = A->GetAttribute (&attr_id)->GetStrValue ();
       gchar *status_B = B->GetAttribute (&attr_id)->GetStrValue ();
 
-      if (   ((status_A[0] == 'E') || (status_A[0] == 'A'))
+      if (   (status_A[0] == 'E')
           && (status_A[0] != status_B[0]))
       {
         return 1;
       }
-      if (   ((status_B[0] == 'E') || (status_B[0] == 'A'))
+      if (   (status_B[0] == 'E')
           && (status_B[0] != status_A[0]))
       {
         return -1;

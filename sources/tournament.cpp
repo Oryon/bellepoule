@@ -207,47 +207,84 @@ void Tournament::Init ()
 // --------------------------------------------------------------------------------
 void Tournament::EnumerateLanguages ()
 {
-  GSList       *group    = NULL;
-  gchar        *dir_path = g_build_filename (_program_path, "resources", "translations", NULL);
-  GDir         *dir      = g_dir_open       (dir_path, 0,  NULL);
-  const gchar  *locale   = g_dir_read_name  (dir);
-  gchar *last_language   = g_key_file_get_string (_config_file,
-                                                  "Tournament",
-                                                  "interface_language",
-                                                  NULL);
-  while (locale)
+  gchar  *contents;
+  GSList *group        = NULL;
+  gchar  *filename     = g_build_filename (_program_path, "resources", "translations", "index.txt", NULL);
+  gchar  *last_setting = g_key_file_get_string (_config_file,
+                                                "Tournament",
+                                                "interface_language",
+                                                NULL);
+
+  if (g_file_get_contents (filename,
+                           &contents,
+                           NULL,
+                           NULL) == TRUE)
   {
-    gchar *full_path = g_build_filename (dir_path, locale, NULL);
+    gchar **lines = g_strsplit_set (contents, "\n", 0);
 
-    if (g_file_test (full_path, G_FILE_TEST_IS_DIR))
+    if (lines)
     {
-      GtkWidget *item;
-      gchar     *locale_code = g_strdup (locale);
+      const gchar *env    = g_getenv ("LANGUAGE");
+      gchar *original_env = NULL;
 
-      item  = gtk_radio_menu_item_new_with_label (group, locale_code);
-      group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
-
-      gtk_menu_shell_append (GTK_MENU_SHELL (_glade->GetWidget ("locale_menu")),
-                             item);
-      g_signal_connect (item, "toggled",
-                        G_CALLBACK (OnLocaleToggled), (void *)
-                        locale_code);
-      if (last_language && strcmp (last_language, locale_code) == 0)
+      if (env)
       {
-        gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("locale_menuitem")),
-                                 locale_code);
-        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
-                                        TRUE);
+        original_env = g_strdup (env);
       }
-      gtk_widget_show (item);
-    }
-    g_free (full_path);
 
-    locale = g_dir_read_name (dir);
+      for (guint l = 0; lines[l] && lines[l][0]; l++)
+      {
+        gchar **tokens = g_strsplit_set (lines[l], ";", 0);
+
+        if (tokens)
+        {
+          GtkWidget *item;
+
+          g_setenv ("LANGUAGE",
+                    tokens[0],
+                    TRUE);
+
+          g_strdelimit (tokens[1],
+                        "\n\r",
+                        '\0');
+
+          item  = gtk_radio_menu_item_new_with_label (group, tokens[1]);
+          group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
+
+          gtk_menu_shell_append (GTK_MENU_SHELL (_glade->GetWidget ("locale_menu")),
+                                 item);
+          gtk_widget_set_tooltip_markup (item,
+                                         gettext ("Restart BellePoule for this change to take effect"));
+
+          g_signal_connect (item, "toggled",
+                            G_CALLBACK (OnLocaleToggled), (void *)
+                            tokens[0]);
+          if (last_setting && strcmp (last_setting, tokens[0]) == 0)
+          {
+            gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("locale_menuitem")),
+                                     tokens[0]);
+            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
+                                            TRUE);
+          }
+          gtk_widget_show (item);
+        }
+      }
+
+      if (original_env)
+      {
+        g_setenv ("LANGUAGE",
+                  original_env,
+                  TRUE);
+        g_free (original_env);
+      }
+      else
+      {
+        g_unsetenv ("LANGUAGE");
+      }
+    }
   }
 
-  g_dir_close (dir);
-  g_free (dir_path);
+  g_free (filename);
 }
 
 // --------------------------------------------------------------------------------
@@ -628,10 +665,6 @@ void Tournament::OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
 {
   if (gtk_check_menu_item_get_active (checkmenuitem))
   {
-    g_setenv ("LANGUAGE",
-              locale,
-              TRUE);
-
     g_key_file_set_string (_config_file,
                            "Tournament",
                            "interface_language",
