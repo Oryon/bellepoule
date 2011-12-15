@@ -97,6 +97,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
                                "ref",
 #endif
                                "participation_rate",
+                               "level",
                                "status",
                                "global_status",
                                "start_rank",
@@ -166,6 +167,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
                                  "ref",
 #endif
                                  "participation_rate",
+                                 "level",
                                  "status",
                                  "global_status",
                                  "start_rank",

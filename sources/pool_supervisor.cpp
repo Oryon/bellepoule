@@ -70,6 +70,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                "ref",
 #endif
                                "participation_rate",
+                               "level",
                                "status",
                                "global_status",
                                "start_rank",
@@ -120,6 +121,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                "ref",
 #endif
                                "participation_rate",
+                               "level",
                                "global_status",
                                "start_rank",
                                "final_rank",

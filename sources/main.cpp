@@ -228,6 +228,10 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "participation_rate", "Activite", gettext ("participation rate"));
     desc->_representation = AttributeDesc::GRAPHICAL;
+    desc->_rights         = AttributeDesc::PRIVATE;
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "level", "Categorie", gettext ("level"));
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));
     desc->_compare_func = (GCompareFunc) CompareRanking;
