@@ -31,7 +31,7 @@ class Checkin;
 class Contest : public Module
 {
   public:
-     Contest (gchar *filename);
+     Contest (const gchar *filename);
     ~Contest ();
 
     static void Init ();

@@ -27,6 +27,8 @@ class RefereesList : public Checkin
   public:
     RefereesList ();
 
+    void OnPrintRadioButtonToggled (GtkWidget *widget);
+
   protected:
     ~RefereesList ();
 

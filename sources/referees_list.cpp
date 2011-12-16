@@ -79,3 +79,21 @@ RefereesList::RefereesList ()
 RefereesList::~RefereesList ()
 {
 }
+
+// --------------------------------------------------------------------------------
+void RefereesList::OnPrintRadioButtonToggled (GtkWidget *widget)
+{
+  GtkWidget *w = _glade->GetWidget ("list_alignment");
+
+  gtk_widget_set_sensitive (w,
+                            gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_print_radiobutton_toggled (GtkWidget *widget,
+                                                              Object    *owner)
+{
+  RefereesList *r = dynamic_cast <RefereesList *> (owner);
+
+  r->OnPrintRadioButtonToggled (widget);
+}

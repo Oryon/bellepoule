@@ -49,8 +49,7 @@ Tournament::Tournament (gchar *filename)
 
   if (filename)
   {
-    Contest *contest;
-    gchar   *utf8_name;
+    gchar *utf8_name;
 
     {
       gsize   bytes_written;
@@ -71,12 +70,9 @@ Tournament::Tournament (gchar *filename)
       }
     }
 
-    if (utf8_name)
-    {
-      contest = new Contest (utf8_name);
-      Manage (contest);
-      g_free (utf8_name);
-    }
+    OpenContest (utf8_name);
+    g_free (utf8_name);
+
     g_free (filename);
   }
 
@@ -117,7 +113,7 @@ Tournament::Tournament (gchar *filename)
     gchar     *translators = g_strdup_printf ("Julien Diaz       (German)\n"
                                               "Tina Schliemann   (German)\n"
                                               "Aureliano Martini (Italian)\n"
-                                              "Jihwan Cho        (Korean\n"
+                                              "Jihwan Cho        (Korean)\n"
                                               "Marijn Somers     (Dutch)\n"
                                               "Werner Huysmans   (Dutch)\n"
                                               "Alexis Pigeon     (Spanish)\n"
@@ -136,6 +132,27 @@ Tournament::Tournament (gchar *filename)
                                                 NULL);
     SetBackupLocation (last_backup);
     g_free (last_backup);
+  }
+
+  {
+    GtkWidget     *main_window = GTK_WIDGET (_glade->GetWidget ("root"));
+    GtkTargetList *target_list;
+
+    gtk_drag_dest_set (main_window,
+                       GtkDestDefaults (GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP),
+                       NULL,
+                       0,
+                       GDK_ACTION_COPY);
+
+    target_list = gtk_drag_dest_get_target_list (main_window);
+
+    if (target_list == NULL)
+    {
+      target_list = gtk_target_list_new (NULL, 0);
+      gtk_drag_dest_set_target_list (main_window, target_list);
+      gtk_target_list_unref (target_list);
+    }
+    gtk_target_list_add_uri_targets (target_list, 100);
   }
 
   _network = new Network ();
@@ -428,26 +445,8 @@ void Tournament::OnOpen (gchar *current_folder)
   {
     gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
-    if (filename)
-    {
-      {
-        gchar *dirname = g_path_get_dirname (filename);
-
-        g_key_file_set_string (_config_file,
-                               "Competiton",
-                               "default_dir_name",
-                               dirname);
-        g_free (dirname);
-      }
-
-      {
-        Contest *contest = new Contest (filename);
-
-        Manage (contest);
-      }
-
-      g_free (filename);
-    }
+    OpenContest (filename);
+    g_free (filename);
   }
 
   gtk_widget_destroy (chooser);
@@ -502,6 +501,30 @@ void Tournament::OnOpenUserManual ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OpenContest (const gchar *uri)
+{
+  if (uri)
+  {
+    g_print (">> %s\n", uri);
+    {
+      gchar *dirname = g_path_get_dirname (uri);
+
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_dir_name",
+                             dirname);
+      g_free (dirname);
+    }
+
+    {
+      Contest *contest = new Contest (uri);
+
+      Manage (contest);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
   gchar *prg_name = g_get_prgname ();
@@ -553,21 +576,7 @@ void Tournament::OnRecent ()
 
     if (info)
     {
-      {
-        gchar *dirname = g_path_get_dirname (gtk_recent_info_get_uri (info));
-
-        g_key_file_set_string (_config_file,
-                               "Competiton",
-                               "default_dir_name",
-                               dirname);
-        g_free (dirname);
-      }
-
-      {
-        Contest *contest = new Contest ((gchar *) gtk_recent_info_get_uri_display (info));
-
-        Manage (contest);
-      }
+      OpenContest (gtk_recent_info_get_uri_display (info));
 
       gtk_recent_info_unref (info);
     }
@@ -785,5 +794,34 @@ extern "C" G_MODULE_EXPORT void on_activate_radiomenuitem_toggled (GtkCheckMenuI
   if (gtk_check_menu_item_get_active (checkmenuitem))
   {
     t->OnActivateBackup ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_root_drag_data_received (GtkWidget        *widget,
+                                                            GdkDragContext   *context,
+                                                            gint              x,
+                                                            gint              y,
+                                                            GtkSelectionData *selection_data,
+                                                            guint             info,
+                                                            guint             timestamp,
+                                                            Object           *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  if (info == 100)
+  {
+    gchar **uris = g_uri_list_extract_uris ((gchar *) gtk_selection_data_get_data (selection_data));
+
+    for (guint i = 0; uris[i] != NULL; i++)
+    {
+      gchar *filename = g_filename_from_uri (uris[i],
+                                             NULL,
+                                             NULL);
+
+      t->OpenContest (filename);
+      g_free (filename);
+    }
+    g_strfreev (uris);
   }
 }

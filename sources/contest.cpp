@@ -205,7 +205,7 @@ Contest::Contest ()
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest (gchar *filename)
+Contest::Contest (const gchar *filename)
   : Module ("contest.glade")
 {
   InitInstance ();
