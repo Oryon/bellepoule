@@ -505,7 +505,8 @@ void Tournament::OpenContest (const gchar *uri)
 {
   if (uri)
   {
-    g_print (">> %s\n", uri);
+    SetCursor (GDK_WATCH);
+
     {
       gchar *dirname = g_path_get_dirname (uri);
 
@@ -520,6 +521,13 @@ void Tournament::OpenContest (const gchar *uri)
       Contest *contest = new Contest (uri);
 
       Manage (contest);
+    }
+
+    ResetCursor ();
+
+    while (gtk_events_pending ())
+    {
+      gtk_main_iteration ();
     }
   }
 }
