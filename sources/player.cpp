@@ -24,11 +24,13 @@
 guint Player::_next_ref = 0;
 
 // --------------------------------------------------------------------------------
-Player::Player ()
+Player::Player (PlayerType player_type)
 : Object ("Player")
 {
   _ref = _next_ref;
   _next_ref++;
+
+  _player_type = player_type;
 
   _clients = NULL;
 }
@@ -43,9 +45,15 @@ Player::~Player ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Player::IsFencer ()
+{
+  return _player_type == FENCER;
+}
+
+// --------------------------------------------------------------------------------
 Player *Player::Duplicate ()
 {
-  Player *player       = new Player ();
+  Player *player       = new Player (_player_type);
   GSList *current_desc = AttributeDesc::GetList ();
 
   while (current_desc)

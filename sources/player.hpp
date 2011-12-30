@@ -55,7 +55,15 @@ class Player : public Object
                               void      *data);
 
   public:
-    Player ();
+    typedef enum
+    {
+      FENCER,
+      REFEREE
+    } PlayerType;
+
+    Player (PlayerType player_type);
+
+    gboolean IsFencer ();
 
     Player *Duplicate ();
 
@@ -104,7 +112,8 @@ class Player : public Object
     static guint   _next_ref;
     static GSList *_attributes_model;
 
-    guint _ref;
+    guint      _ref;
+    PlayerType _player_type;
 
     ~Player ();
 

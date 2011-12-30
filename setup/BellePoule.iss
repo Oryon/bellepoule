@@ -74,6 +74,8 @@ Source: "..\Exemples\CLS_EDM.FFF"; DestDir: "{app}\Exemples"; Flags: ignoreversi
 Source: "..\resources\user_manual.pdf"; DestDir: "{app}\resources"; Flags: ignoreversion
 
 ;Traductions
+Source: "..\resources\translations\index.txt"; DestDir: "{app}\resources\translations"; Flags: ignoreversion
+
 Source: "..\resources\translations\fr\*"; DestDir: "{app}\resources\translations\fr"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\translations\de\*"; DestDir: "{app}\resources\translations\de"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\translations\nl\*"; DestDir: "{app}\resources\translations\nl"; Flags: ignoreversion recursesubdirs
@@ -188,6 +190,7 @@ Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libaurora.dll"; DestDir: "{app}\por
 
 ; icons
 Source: "C:\MinGW\share\icons\hicolor\index.theme"; DestDir: "{app}\porting_layer\share\icons\hicolor\"; Flags: ignoreversion
+
 Source: "C:\MinGW\share\icons\hicolor\16x16\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
 Source: "C:\MinGW\share\icons\hicolor\24x24\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
 Source: "C:\MinGW\share\icons\hicolor\32x32\apps\gnome-devel.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
@@ -196,7 +199,10 @@ Source: "C:\MinGW\share\icons\hicolor\48x48\apps\gnome-devel.png"; DestDir: "{ap
 Source: "C:\MinGW\share\icons\hicolor\16x16\apps\preferences-desktop-theme.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
 Source: "C:\MinGW\share\icons\hicolor\24x24\apps\preferences-desktop-theme.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
 Source: "C:\MinGW\share\icons\hicolor\32x32\apps\preferences-desktop-theme.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\scalable\apps\preferences-desktop-theme.svg"; DestDir: "{app}\porting_layer\share\icons\hicolor\scalable\apps\"; Flags: ignoreversion
+
+Source: "C:\MinGW\share\icons\hicolor\16x16\apps\preferences-desktop-locale.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\24x24\apps\preferences-desktop-locale.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
+Source: "C:\MinGW\share\icons\hicolor\32x32\apps\preferences-desktop-locale.png"; DestDir: "{app}\porting_layer\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
 
 ;
 Source: "C:\MinGW\etc\pango\pango.aliases"; Destdir: "{app}\porting_layer\etc\pango"
@@ -264,6 +270,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

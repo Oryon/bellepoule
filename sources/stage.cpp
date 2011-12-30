@@ -649,7 +649,7 @@ void Stage::LoadAttendees (xmlNode *n)
 
     if (ref_attr)
     {
-      Player *player = GetPlayerFromRef (atoi (ref_attr));
+      Player *player = GetFencerFromRef (atoi (ref_attr));
 
       if (player)
       {
@@ -695,20 +695,19 @@ void Stage::LoadAttendees (xmlNode *n)
 }
 
 // --------------------------------------------------------------------------------
-Player *Stage::GetPlayerFromRef (guint ref)
+Player *Stage::GetFencerFromRef (guint ref)
 {
-  GSList *shortlist = _attendees->GetShortList ();
+  GSList *current = _attendees->GetShortList ();
 
-  for (guint p = 0; p < g_slist_length (shortlist); p++)
+  while (current)
   {
-    Player *player;
+    Player *player = (Player *) current->data;
 
-    player = (Player *) g_slist_nth_data (shortlist,
-                                          p);
     if (player->GetRef () == ref)
     {
       return player;
     }
+    current = g_slist_next (current);
   }
 
   return NULL;
@@ -864,7 +863,7 @@ void Stage::ToggleClassification (gboolean classification_on)
         UpdateClassification (result);
         g_slist_free (result);
       }
-      else
+      else if (_locked == FALSE)
       {
         UpdateClassification (_result);
       }

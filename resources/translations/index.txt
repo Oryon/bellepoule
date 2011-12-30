@@ -1,0 +1,9 @@
+ar;العربية
+de;Deutsch
+en;English
+es;Español
+fr;Français
+it;Italiano
+ko;한국어
+nl;Nederlands
+ru;Русский

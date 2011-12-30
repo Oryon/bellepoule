@@ -27,6 +27,11 @@ const gdouble Module::PRINT_FONT_HEIGHT   = 2.0;  // % of paper width
 GKeyFile     *Module::_config_file  = NULL;
 GtkTreeModel *Module::_status_model = NULL;
 
+GtkTargetEntry Module::_dnd_target_list[] =
+{
+  {"REFEREE", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET, Module::INT_TARGET}
+};
+
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,
                 const gchar *root)
@@ -92,6 +97,167 @@ Module::~Module ()
   }
 
   Object::TryToRelease (_filter);
+}
+
+// --------------------------------------------------------------------------------
+void Module::DragDataGet (GtkWidget        *widget,
+                          GdkDragContext   *drag_context,
+                          GtkSelectionData *data,
+                          guint             info,
+                          guint             time,
+                          Module           *owner)
+{
+  owner->OnDragDataGet (widget,
+                        drag_context,
+                        data,
+                        info,
+                        time);
+}
+
+// --------------------------------------------------------------------------------
+void Module::OnDragDataGet (GtkWidget        *widget,
+                            GdkDragContext   *drag_context,
+                            GtkSelectionData *data,
+                            guint             info,
+                            guint             time)
+{
+}
+
+// --------------------------------------------------------------------------------
+gboolean Module::DragDrop (GtkWidget      *widget,
+                           GdkDragContext *drag_context,
+                           gint            x,
+                           gint            y,
+                           guint           time,
+                           Module         *owner)
+{
+  return owner->OnDragDrop (widget,
+                            drag_context,
+                            x,
+                            y,
+                            time);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Module::OnDragDrop (GtkWidget      *widget,
+                             GdkDragContext *drag_context,
+                             gint            x,
+                             gint            y,
+                             guint           time)
+{
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Module::DragMotion (GtkWidget      *widget,
+                             GdkDragContext *drag_context,
+                             gint            x,
+                             gint            y,
+                             guint           time,
+                             Module         *owner)
+{
+  return owner->OnDragMotion (widget,
+                              drag_context,
+                              x,
+                              y,
+                              time);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Module::OnDragMotion (GtkWidget      *widget,
+                               GdkDragContext *drag_context,
+                               gint            x,
+                               gint            y,
+                               guint           time)
+{
+  gdk_drag_status  (drag_context,
+                    (GdkDragAction) 0,
+                    time);
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Module::DragLeave (GtkWidget      *widget,
+                        GdkDragContext *drag_context,
+                        guint           time,
+                        Module         *owner)
+{
+  owner->OnDragLeave (widget,
+                      drag_context,
+                      time);
+}
+
+// --------------------------------------------------------------------------------
+void Module::OnDragLeave (GtkWidget      *widget,
+                          GdkDragContext *drag_context,
+                          guint           time)
+{
+}
+
+// --------------------------------------------------------------------------------
+void Module::DragDataReceived (GtkWidget        *widget,
+                               GdkDragContext   *drag_context,
+                               gint              x,
+                               gint              y,
+                               GtkSelectionData *data,
+                               guint             info,
+                               guint             time,
+                               Module           *owner)
+{
+  owner->OnDragDataReceived (widget,
+                             drag_context,
+                             x,
+                             y,
+                             data,
+                             info,
+                             time);
+}
+
+// --------------------------------------------------------------------------------
+void Module::OnDragDataReceived (GtkWidget        *widget,
+                                 GdkDragContext   *drag_context,
+                                 gint              x,
+                                 gint              y,
+                                 GtkSelectionData *data,
+                                 guint             info,
+                                 guint             time)
+{
+}
+
+// --------------------------------------------------------------------------------
+void Module::SetDndSource (GtkWidget *widget)
+{
+  gtk_drag_source_set (widget,
+                       GDK_MODIFIER_MASK,
+                       _dnd_target_list,
+                       sizeof (_dnd_target_list) / sizeof (_dnd_target_list[0]),
+                       GDK_ACTION_COPY);
+
+  gtk_drag_source_add_text_targets (widget);
+
+  g_signal_connect (widget, "drag-data-get",
+                    G_CALLBACK (DragDataGet), this);
+}
+
+// --------------------------------------------------------------------------------
+void Module::SetDndDest (GtkWidget *widget)
+{
+  gtk_drag_dest_set (widget,
+                     (GtkDestDefaults) 0,
+                     _dnd_target_list,
+                     sizeof (_dnd_target_list) / sizeof (_dnd_target_list[0]),
+                     GDK_ACTION_COPY);
+
+  gtk_drag_dest_add_text_targets (widget);
+
+  g_signal_connect (widget, "drag-motion",
+                    G_CALLBACK (DragMotion), this);
+  g_signal_connect (widget, "drag-leave",
+                    G_CALLBACK (DragLeave), this);
+  g_signal_connect (widget, "drag-drop",
+                    G_CALLBACK (DragDrop), this);
+  g_signal_connect (widget, "drag-data-received",
+                    G_CALLBACK (DragDataReceived), this);
 }
 
 // --------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ class Checkin;
 class Contest : public Module
 {
   public:
-     Contest (gchar *filename);
+     Contest (const gchar *filename);
     ~Contest ();
 
     static void Init ();
@@ -47,6 +47,7 @@ class Contest : public Module
     void AddPlayer (Player *player,
                     guint   rank);
     void SetTournament (Tournament *tournament);
+    Player *GetRefereeFromRef (guint ref);
 
     gchar *GetOrganizer ();
     gchar *GetDate ();

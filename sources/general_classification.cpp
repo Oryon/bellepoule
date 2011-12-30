@@ -42,6 +42,7 @@ GeneralClassification::GeneralClassification (StageClass *stage_class)
                                "ref",
 #endif
                                "participation_rate",
+                               "level",
                                "global_status",
                                "status",
                                "start_rank",

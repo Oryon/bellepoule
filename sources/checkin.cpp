@@ -71,6 +71,7 @@ void Checkin::CreateForm (Filter *filter)
 {
   _form = new Form (filter,
                     this,
+                    GetPlayerType (),
                     (Form::AddPlayerCbk) &Checkin::OnAddPlayer);
 }
 
@@ -109,7 +110,7 @@ void Checkin::LoadList (xmlNode *xml_node)
     {
       if (strcmp ((char *) n->name, _player_tag) == 0)
       {
-        Player *player = new Player;
+        Player *player = new Player (GetPlayerType ());
 
         player->Load (n);
         Add (player);
@@ -364,7 +365,7 @@ void Checkin::ImportFFF (gchar *file)
                                            ",",
                                            0);
 
-          player = new Player;
+          player = new Player (GetPlayerType ());
 
           attr_id._name = (gchar *) "attending";
           player->SetAttributeValue (&attr_id, (guint) FALSE);
@@ -507,7 +508,7 @@ void Checkin::ImportCSV (gchar *file)
       {
         for (guint i = nb_attr; tokens[i] != NULL; i += nb_attr)
         {
-          Player              *player = new Player;
+          Player              *player = new Player (GetPlayerType ());
           Player::AttributeId  attr_id ("");
 
           attr_id._name = (gchar *) "attending";
@@ -713,6 +714,19 @@ void Checkin::OnToggleAllPlayers (gboolean present)
     current_player = g_slist_next (current_player);
   }
   OnListChanged ();
+}
+
+// --------------------------------------------------------------------------------
+Player::PlayerType Checkin::GetPlayerType ()
+{
+  if (strcmp (_player_tag, "Arbitre") == 0)
+  {
+    return Player::REFEREE;
+  }
+  else
+  {
+    return Player::FENCER;
+  }
 }
 
 // --------------------------------------------------------------------------------

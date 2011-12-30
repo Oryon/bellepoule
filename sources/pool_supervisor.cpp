@@ -70,6 +70,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                "ref",
 #endif
                                "participation_rate",
+                               "level",
                                "status",
                                "global_status",
                                "start_rank",
@@ -120,6 +121,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
                                "ref",
 #endif
                                "participation_rate",
+                               "level",
                                "global_status",
                                "start_rank",
                                "final_rank",
@@ -693,14 +695,16 @@ GSList *PoolSupervisor::GetCurrentClassification ()
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool *pool = _pool_allocator->GetPool (p);
+    Pool   *pool           = _pool_allocator->GetPool (p);
+    GSList *current_player = pool->GetFencerList ();
 
-    for (guint i = 0; i < pool->GetNbPlayers (); i++)
+    while (current_player)
     {
-      Player *player = pool->GetPlayer (i);
+      Player *player = (Player *) current_player->data;
 
       result = g_slist_prepend (result,
                                 player);
+      current_player = g_slist_next (current_player);
     }
   }
 

@@ -275,7 +275,7 @@ void Table::LoadScore (xmlNode *xml_node,
 {
   gboolean  is_the_best = FALSE;
   gchar    *attr        = (gchar *) xmlGetProp (xml_node, BAD_CAST "REF");
-  Player   *player      = _table_set->GetPlayerFromRef (atoi (attr));
+  Player   *player      = _table_set->GetFencerFromRef (atoi (attr));
 
   _table_set->SetPlayerToMatch (match,
                                 player,

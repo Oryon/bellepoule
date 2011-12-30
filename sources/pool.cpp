@@ -33,8 +33,9 @@ Pool::Pool (Data           *max_score,
                   "canvas_scrolled_window")
 {
   _number             = number;
-  _player_list        = NULL;
-  _sorted_player_list = NULL;
+  _fencer_list        = NULL;
+  _referee_list       = NULL;
+  _sorted_fencer_list = NULL;
   _match_list         = NULL;
   _is_over            = FALSE;
   _has_error          = FALSE;
@@ -63,9 +64,11 @@ Pool::~Pool ()
 
   g_free (_name);
 
-  g_slist_free (_player_list);
+  g_slist_free (_fencer_list);
 
-  g_slist_free (_sorted_player_list);
+  g_slist_free (_referee_list);
+
+  g_slist_free (_sorted_fencer_list);
 
   DeleteMatches ();
 
@@ -85,7 +88,7 @@ void Pool::Wipe ()
     Player *player;
     GSList *current;
 
-    player  = (Player *) g_slist_nth_data (_player_list, i);
+    player  = (Player *) g_slist_nth_data (_fencer_list, i);
 
     current = _display_data;
     while (current)
@@ -175,7 +178,7 @@ void Pool::SetDataOwner (Object *single_owner,
   {
     Player::AttributeId  single_attr_id  ("pool_nr", _single_owner);
     Player::AttributeId  combined_attr_id ("pool_nr", GetDataOwner ());
-    GSList              *current = _player_list;
+    GSList              *current = _fencer_list;
 
     while (current)
     {
@@ -191,7 +194,24 @@ void Pool::SetDataOwner (Object *single_owner,
 }
 
 // --------------------------------------------------------------------------------
-void Pool::AddPlayer (Player *player,
+void Pool::AddReferee (Player *player)
+{
+  if (player == NULL)
+  {
+    return;
+  }
+
+  if (   (_referee_list == NULL)
+         || (g_slist_find (_referee_list,
+                           player) == NULL))
+  {
+    _referee_list = g_slist_prepend (_referee_list,
+                                     player);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::AddFencer (Player *player,
                       Object *rank_owner)
 {
   if (player == NULL)
@@ -199,8 +219,8 @@ void Pool::AddPlayer (Player *player,
     return;
   }
 
-  if (   (_player_list == NULL)
-         || (g_slist_find (_player_list,
+  if (   (_fencer_list == NULL)
+         || (g_slist_find (_fencer_list,
                            player) == NULL))
   {
     {
@@ -214,7 +234,7 @@ void Pool::AddPlayer (Player *player,
       Player::AttributeId attr_id ("previous_stage_rank", rank_owner);
 
       attr_id.MakeRandomReady (_rand_seed);
-      _player_list = g_slist_insert_sorted_with_data (_player_list,
+      _fencer_list = g_slist_insert_sorted_with_data (_fencer_list,
                                                       player,
                                                       (GCompareDataFunc) Player::Compare,
                                                       &attr_id);
@@ -225,10 +245,10 @@ void Pool::AddPlayer (Player *player,
 // --------------------------------------------------------------------------------
 void Pool::RemovePlayer (Player *player)
 {
-  if (g_slist_find (_player_list,
+  if (g_slist_find (_fencer_list,
                     player))
   {
-    _player_list = g_slist_remove (_player_list,
+    _fencer_list = g_slist_remove (_fencer_list,
                                    player);
   }
 }
@@ -245,7 +265,7 @@ void Pool::CreateMatches (Object *rank_owner)
                                    rank_owner);
       attr_id.MakeRandomReady (_rand_seed);
 
-      _player_list = g_slist_sort_with_data (_player_list,
+      _fencer_list = g_slist_sort_with_data (_fencer_list,
                                              (GCompareDataFunc) Player::Compare,
                                              &attr_id);
     }
@@ -259,8 +279,8 @@ void Pool::CreateMatches (Object *rank_owner)
       {
         for (guint i = 0; i < nb_matches; i++)
         {
-          Player *a = (Player *) g_slist_nth_data (_sorted_player_list, pair[i]._a-1);
-          Player *b = (Player *) g_slist_nth_data (_sorted_player_list, pair[i]._b-1);
+          Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._a-1);
+          Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._b-1);
 
           Match *match = new Match (a,
                                     b,
@@ -286,7 +306,7 @@ void Pool::CopyPlayersStatus (Object *from)
     Player              *player;
     gchar               *status;
 
-    player = GetPlayer (p);
+    player = (Player *) g_slist_nth_data (_fencer_list, p);
     RestorePlayer (player);
 
     attr_id._owner = from;
@@ -310,14 +330,19 @@ void Pool::CopyPlayersStatus (Object *from)
 // --------------------------------------------------------------------------------
 guint Pool::GetNbPlayers ()
 {
-  return g_slist_length (_player_list);
+  return g_slist_length (_fencer_list);
 }
 
 // --------------------------------------------------------------------------------
-Player *Pool::GetPlayer (guint i)
+GSList *Pool::GetFencerList ()
 {
-  return (Player *) g_slist_nth_data (_player_list,
-                                      i);
+  return _fencer_list;
+}
+
+// --------------------------------------------------------------------------------
+GSList *Pool::GetRefereeList ()
+{
+  return _referee_list;
 }
 
 // --------------------------------------------------------------------------------
@@ -393,7 +418,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                            0.0,
                            cell_w*5,
                            cell_h,
-                           "stroke-color", "Grey95",
+                           "stroke-color", "Grey",
                            "line-width", 2.0,
                            NULL);
       goo_canvas_text_new (referee_group,
@@ -402,8 +427,17 @@ void Pool::Draw (GooCanvas *on_canvas,
                            0.0,
                            -1,
                            GTK_ANCHOR_W,
-                           "fill-color", "Black",
+                           "fill-color", "Grey",
                            "font", "Sans bold 30.0px",
+                           NULL);
+      goo_canvas_text_new (referee_group,
+                           gettext ("Referee"),
+                           5.0,
+                           cell_h/2.0,
+                           -1,
+                           GTK_ANCHOR_W,
+                           "fill-color", "Black",
+                           "font", "Sans bold 25.0px",
                            NULL);
 
       Canvas::Align (referee_group,
@@ -419,7 +453,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                            0.0,
                            cell_w*5,
                            cell_h,
-                           "stroke-color", "Grey95",
+                           "stroke-color", "Grey",
                            "line-width", 2.0,
                            NULL);
       goo_canvas_text_new (track_group,
@@ -428,7 +462,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                            0.0,
                            -1,
                            GTK_ANCHOR_W,
-                           "fill-color", "Black",
+                           "fill-color", "Grey",
                            "font", "Sans bold 30.0px",
                            NULL);
 
@@ -460,7 +494,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         {
           Player *A;
 
-          A = GetPlayer (i, _sorted_player_list);
+          A = GetPlayer (i, _sorted_fencer_list);
 
           for (guint j = 0; j < nb_players; j++)
           {
@@ -480,7 +514,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
             if (i != j)
             {
-              Player *B     = GetPlayer (j, _sorted_player_list);
+              Player *B     = GetPlayer (j, _sorted_fencer_list);
               Match  *match = GetMatch (A, B);
 
               if (match->IsDropped ())
@@ -553,7 +587,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         x = - 5;
         y = cell_h / 2 + i * cell_h;
-        image = GetPlayerImage (GetPlayer (i, _sorted_player_list));
+        image = GetPlayerImage (GetPlayer (i, _sorted_fencer_list));
 
         {
           gchar *index = g_strdup_printf (" %d", i+1);
@@ -702,7 +736,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         {
           Player *player;
 
-          player = GetPlayer (i, _sorted_player_list);
+          player = GetPlayer (i, _sorted_fencer_list);
 
           {
             GooCanvasItem *goo_item;
@@ -875,7 +909,7 @@ void Pool::Draw (GooCanvas *on_canvas,
           Player *player   = match->GetPlayerA ();
           image            = GetPlayerImage (player);
           gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
-                                              g_slist_index (_sorted_player_list, player) + 1,
+                                              g_slist_index (_sorted_fencer_list, player) + 1,
                                               image->str);
 
           g_string_free (image,
@@ -907,7 +941,7 @@ void Pool::Draw (GooCanvas *on_canvas,
           Player *player   = match->GetPlayerB ();
           image            = GetPlayerImage (player);
           gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
-                                              g_slist_index (_sorted_player_list, player) + 1,
+                                              g_slist_index (_sorted_fencer_list, player) + 1,
                                               image->str);
 
           g_string_free (image,
@@ -965,7 +999,7 @@ void Pool::Draw (GooCanvas *on_canvas,
       Player    *player;
       GtkWidget *w;
 
-      player = GetPlayer (i, _sorted_player_list);
+      player = GetPlayer (i, _sorted_fencer_list);
       w      = GTK_WIDGET (player->GetPtrData (this, "combo_box"));
 
       if (w)
@@ -1209,13 +1243,13 @@ void Pool::RefreshScoreData ()
     guint   hits_scored   = 0;
     gint    hits_received = 0;
 
-    player_a = GetPlayer (a, _sorted_player_list);
+    player_a = GetPlayer (a, _sorted_fencer_list);
 
     for (guint b = 0; b < nb_players; b++)
     {
       if (a != b)
       {
-        Player *player_b = GetPlayer (b, _sorted_player_list);
+        Player *player_b = GetPlayer (b, _sorted_fencer_list);
         Match  *match    = GetMatch (player_a, player_b);
         Score  *score_a  = match->GetScore (player_a);
         Score  *score_b  = match->GetScore (player_b);
@@ -1423,7 +1457,7 @@ void Pool::RefreshDashBoard ()
       gint           value;
       void          *data;
 
-      player = GetPlayer (p, _sorted_player_list);
+      player = GetPlayer (p, _sorted_fencer_list);
 
       {
         Player::AttributeId attr_id ("status", GetDataOwner ());
@@ -1566,8 +1600,8 @@ Match *Pool::GetMatch (guint i)
 
   if (pair)
   {
-    Player *a = (Player *) g_slist_nth_data (_sorted_player_list, pair[i]._a-1);
-    Player *b = (Player *) g_slist_nth_data (_sorted_player_list, pair[i]._b-1);
+    Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._a-1);
+    Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._b-1);
 
     return GetMatch (a,
                      b);
@@ -1581,20 +1615,31 @@ gint Pool::CompareMatch (Match *a,
                          Match *b,
                          Pool  *pool)
 {
-  return g_slist_index (pool->_sorted_player_list, a->GetPlayerA ()) - g_slist_index (pool->_sorted_player_list, b->GetPlayerA ());
+  return g_slist_index (pool->_sorted_fencer_list, a->GetPlayerA ()) - g_slist_index (pool->_sorted_fencer_list, b->GetPlayerA ());
 }
 
 // --------------------------------------------------------------------------------
 void Pool::Save (xmlTextWriter *xml_writer)
 {
+  GSList *working_list;
+
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST "Poule");
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
                                      "%d", _number);
 
+  if (_sorted_fencer_list)
   {
-    GSList              *current = _sorted_player_list;
+    working_list = _sorted_fencer_list;
+  }
+  else
+  {
+    working_list = _fencer_list;
+  }
+
+  {
+    GSList              *current = working_list;
     Player::AttributeId  attr_id ("", _single_owner);
     Attribute           *attr;
 
@@ -1613,7 +1658,7 @@ void Pool::Save (xmlTextWriter *xml_writer)
                                          "%d", player->GetRef ());
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NoDansLaPoule",
-                                         "%d", g_slist_index (_sorted_player_list,
+                                         "%d", g_slist_index (working_list,
                                                               player) + 1);
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "NbVictoires",
@@ -1839,11 +1884,11 @@ gint Pool::_ComparePlayerWithFullRandom (Player *A,
 // --------------------------------------------------------------------------------
 void Pool::SortPlayers ()
 {
-  g_slist_free (_sorted_player_list);
+  g_slist_free (_sorted_fencer_list);
 
-  _sorted_player_list = g_slist_copy (_player_list);
+  _sorted_fencer_list = g_slist_copy (_fencer_list);
 
-  _sorted_player_list = g_slist_sort_with_data (_sorted_player_list,
+  _sorted_fencer_list = g_slist_sort_with_data (_sorted_fencer_list,
                                                 (GCompareDataFunc) _ComparePlayerWithFullRandom,
                                                 (void *) this);
 }
@@ -1893,7 +1938,7 @@ void Pool::DropPlayer (Player *player,
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Player *opponent = GetPlayer (i, _sorted_player_list);
+      Player *opponent = GetPlayer (i, _sorted_fencer_list);
 
       if (opponent != player)
       {
@@ -1937,7 +1982,7 @@ void Pool::RestorePlayer (Player *player)
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Player *opponent = GetPlayer (i, _sorted_player_list);
+      Player *opponent = GetPlayer (i, _sorted_fencer_list);
 
       if (opponent != player)
       {

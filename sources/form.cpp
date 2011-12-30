@@ -23,13 +23,16 @@
 #include "form.hpp"
 
 // --------------------------------------------------------------------------------
-Form::Form (Filter       *filter,
-            Module       *client,
-            AddPlayerCbk  add_player_cbk)
+Form::Form (Filter             *filter,
+            Module             *client,
+            Player::PlayerType  player_type,
+            AddPlayerCbk        add_player_cbk)
 : Module ("form.glade")
 {
   _client         = client;
   _add_player_cbk = add_player_cbk;
+
+  _player_type = player_type;
 
   _filter = filter;
   _filter->Retain ();
@@ -254,7 +257,7 @@ void Form::OnSelectorEntryActivate (GtkEntry    *widget,
 // --------------------------------------------------------------------------------
 void Form::OnAddButtonClicked ()
 {
-  Player *player   = new Player;
+  Player *player   = new Player (_player_type);
   GList  *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
 
   {

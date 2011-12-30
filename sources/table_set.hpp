@@ -107,7 +107,7 @@ class TableSet : public CanvasModule
                            Player *player,
                            guint   position);
 
-    Player *GetPlayerFromRef (guint ref);
+    Player *GetFencerFromRef (guint ref);
 
     guint GetNbTables ();
 

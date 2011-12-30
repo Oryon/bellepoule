@@ -205,7 +205,7 @@ Contest::Contest ()
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest (gchar *filename)
+Contest::Contest (const gchar *filename)
   : Module ("contest.glade")
 {
   InitInstance ();
@@ -711,6 +711,25 @@ void Contest::InitInstance ()
 }
 
 // --------------------------------------------------------------------------------
+Player *Contest::GetRefereeFromRef (guint ref)
+{
+  GSList *current = _referees_list->GetList ();
+
+  while (current)
+  {
+    Player *player = (Player *) current->data;
+
+    if (player->GetRef () == ref)
+    {
+      return player;
+    }
+    current = g_slist_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 void Contest::ChooseColor ()
 {
   gint color_to_use;
@@ -981,20 +1000,26 @@ void Contest::DisplayProperties ()
 // --------------------------------------------------------------------------------
 void Contest::AttachTo (GtkNotebook *to)
 {
-  GtkWidget *title = _glade->GetWidget ("notebook_title");
-
   _notebook = GTK_NOTEBOOK (to);
 
-  gtk_notebook_append_page (_notebook,
-                            GetRootWidget (),
-                            title);
-  g_object_unref (title);
+  {
+    GtkWidget *title = _glade->GetWidget ("notebook_title");
+
+    gtk_notebook_append_page (_notebook,
+                              GetRootWidget (),
+                              title);
+    g_object_unref (title);
+  }
 
   if (_derived == FALSE)
   {
     gtk_notebook_set_current_page (_notebook,
                                    -1);
   }
+
+  gtk_notebook_set_tab_reorderable (_notebook,
+                                    GetRootWidget (),
+                                    TRUE);
 
   DisplayProperties ();
 

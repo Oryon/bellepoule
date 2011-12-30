@@ -52,6 +52,7 @@ Splitting::Splitting (StageClass *stage_class)
                                "ref",
 #endif
                                "participation_rate",
+                               "level",
                                "status",
                                "global_status",
                                "start_rank",

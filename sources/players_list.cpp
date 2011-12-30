@@ -41,8 +41,8 @@
     if (_tree_view)
     {
       g_object_set (_tree_view,
-                    "rules-hint",     TRUE,
-                    "rubber-banding", TRUE,
+                    "rules-hint",  TRUE,
+                    "reorderable", FALSE,
                     NULL);
 
       gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
@@ -144,6 +144,12 @@ void PlayersList::Update (Player *player)
                         gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
                         player, -1);
   }
+}
+
+// --------------------------------------------------------------------------------
+GSList *PlayersList::GetList ()
+{
+  return _player_list;
 }
 
 // --------------------------------------------------------------------------------
