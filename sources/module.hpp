@@ -28,7 +28,7 @@ class Player;
 class Module : public virtual Object
 {
   public:
-    guint32  _rand_seed;
+    guint32 _rand_seed;
 
     void Plug (Module     *module,
                GtkWidget  *in,
@@ -69,6 +69,14 @@ class Module : public virtual Object
                             gint               page_nr);
 
   protected:
+    typedef enum
+    {
+      STRING_TARGET,
+      INT_TARGET,
+
+      DND_TARGET_NB
+    } DndTarget;
+
     Filter *_filter;
     Glade  *_glade;
 
@@ -105,6 +113,10 @@ class Module : public virtual Object
 
     virtual void MakeDirty ();
 
+    void SetDndSource (GtkWidget *widget);
+
+    void SetDndDest (GtkWidget *widget);
+
   private:
     virtual void OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context) {};
@@ -121,7 +133,8 @@ class Module : public virtual Object
                              GtkPrintContext   *context) {};
 
   private:
-    static GtkTreeModel *_status_model;
+    static GtkTreeModel   *_status_model;
+    static GtkTargetEntry  _dnd_target_list[];
 
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;
@@ -159,6 +172,66 @@ class Module : public virtual Object
                                   GtkPrintContext          *context,
                                   Module                   *module);
 
+  private:
+    static void DragDataGet (GtkWidget        *widget,
+                             GdkDragContext   *drag_context,
+                             GtkSelectionData *data,
+                             guint             info,
+                             guint             time,
+                             Module           *owner);
+    virtual void OnDragDataGet (GtkWidget        *widget,
+                                GdkDragContext   *drag_context,
+                                GtkSelectionData *data,
+                                guint             info,
+                                guint             time);
+
+    static gboolean DragMotion (GtkWidget      *widget,
+                                GdkDragContext *drag_context,
+                                gint            x,
+                                gint            y,
+                                guint           time,
+                                Module         *owner);
+    virtual gboolean OnDragMotion (GtkWidget      *widget,
+                                   GdkDragContext *drag_context,
+                                   gint            x,
+                                   gint            y,
+                                   guint           time);
+
+    static void DragLeave (GtkWidget      *widget,
+                           GdkDragContext *drag_context,
+                           guint           time,
+                           Module         *owner);
+    virtual void OnDragLeave (GtkWidget      *widget,
+                              GdkDragContext *drag_context,
+                              guint           time);
+
+    static gboolean DragDrop (GtkWidget      *widget,
+                              GdkDragContext *drag_context,
+                              gint            x,
+                              gint            y,
+                              guint           time,
+                              Module         *owner);
+    virtual gboolean OnDragDrop (GtkWidget      *widget,
+                                 GdkDragContext *drag_context,
+                                 gint            x,
+                                 gint            y,
+                                 guint           time);
+
+    static void DragDataReceived (GtkWidget        *widget,
+                                  GdkDragContext   *drag_context,
+                                  gint              x,
+                                  gint              y,
+                                  GtkSelectionData *data,
+                                  guint             info,
+                                  guint             time,
+                                  Module           *owner);
+    virtual void OnDragDataReceived (GtkWidget        *widget,
+                                     GdkDragContext   *drag_context,
+                                     gint              x,
+                                     gint              y,
+                                     GtkSelectionData *data,
+                                     guint             info,
+                                     guint             time);
 };
 
 #endif

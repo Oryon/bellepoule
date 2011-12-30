@@ -711,6 +711,25 @@ void Contest::InitInstance ()
 }
 
 // --------------------------------------------------------------------------------
+Player *Contest::GetRefereeFromRef (guint ref)
+{
+  GSList *current = _referees_list->GetList ();
+
+  while (current)
+  {
+    Player *player = (Player *) current->data;
+
+    if (player->GetRef () == ref)
+    {
+      return player;
+    }
+    current = g_slist_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 void Contest::ChooseColor ()
 {
   gint color_to_use;

@@ -73,11 +73,38 @@ RefereesList::RefereesList ()
     CreateForm (filter);
     filter->Release ();
   }
+
+  {
+    SetDndSource (_tree_view);
+    gtk_drag_source_set_icon_name (_tree_view,
+                                   "preferences-desktop-theme");
+  }
 }
 
 // --------------------------------------------------------------------------------
 RefereesList::~RefereesList ()
 {
+}
+
+// --------------------------------------------------------------------------------
+void RefereesList::OnDragDataGet (GtkWidget        *widget,
+                                  GdkDragContext   *drag_context,
+                                  GtkSelectionData *data,
+                                  guint             info,
+                                  guint             time)
+{
+  if (info == INT_TARGET)
+  {
+    GSList  *selected    = GetSelectedPlayers ();
+    Player  *referee     = (Player *) selected->data;
+    guint32  referee_ref = referee->GetRef ();
+
+    gtk_selection_data_set (data,
+                            data->target,
+                            32,
+                            (guchar *) &referee_ref,
+                            sizeof (referee_ref));
+  }
 }
 
 // --------------------------------------------------------------------------------

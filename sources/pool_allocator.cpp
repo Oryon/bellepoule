@@ -227,6 +227,145 @@ const gchar *PoolAllocator::GetInputProviderClient ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::OnPlugged ()
+{
+  CanvasModule::OnPlugged ();
+
+  SetDndDest (GTK_WIDGET (GetCanvas ()));
+}
+
+// --------------------------------------------------------------------------------
+gboolean PoolAllocator::OnDragMotion (GtkWidget      *widget,
+                                      GdkDragContext *drag_context,
+                                      gint            x,
+                                      gint            y,
+                                      guint           time)
+{
+  GooCanvasItem *focus_rect;
+  GSList        *current = _pools_list;
+
+  while (current)
+  {
+    GooCanvasBounds  bounds;
+    Pool            *pool = (Pool *) current->data;
+
+    focus_rect = (GooCanvasItem *) pool->GetPtrData (this, "focus_rectangle");
+    goo_canvas_item_get_bounds (focus_rect,
+                                &bounds);
+
+    if (   (x > bounds.x1) && (x < bounds.x2)
+        && (y > bounds.y1) && (y < bounds.y2))
+    {
+      Focus (pool);
+      gdk_drag_status  (drag_context,
+                        GDK_ACTION_COPY,
+                        time);
+      return TRUE;
+    }
+
+    current = g_slist_next (current);
+  }
+
+  Unfocus ();
+
+  gdk_drag_status  (drag_context,
+                    (GdkDragAction) 0,
+                    time);
+
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean PoolAllocator::OnDragDrop (GtkWidget      *widget,
+                                    GdkDragContext *drag_context,
+                                    gint            x,
+                                    gint            y,
+                                    guint           time)
+{
+  if (_target_pool)
+  {
+    if (drag_context->targets)
+    {
+      GdkAtom  target_type;
+
+      target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
+                                                          0));
+
+      gtk_drag_get_data (widget,
+                         drag_context,
+                         target_type,
+                         time);
+
+    }
+
+    Unfocus ();
+    return TRUE;
+  }
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnDragDataReceived (GtkWidget        *widget,
+                                        GdkDragContext   *drag_context,
+                                        gint              x,
+                                        gint              y,
+                                        GtkSelectionData *data,
+                                        guint             info,
+                                        guint             time)
+{
+  gboolean result = FALSE;
+
+  if (data && (data->length >= 0))
+  {
+    if (info == INT_TARGET)
+    {
+      guint32 *referee_ref = (guint32 *) data->data;
+      Player  *player      = _contest->GetRefereeFromRef (*referee_ref);
+
+      if (player)
+      {
+        Player::AttributeId  attr_id  ("attending");
+        Attribute           *attr = player->GetAttribute (&attr_id);
+
+        if (attr && (attr->GetUIntValue () == TRUE))
+        {
+          _target_pool->AddReferee (player);
+
+          FillPoolTable (_target_pool);
+          FixUpTablesBounds ();
+          MakeDirty ();
+
+          result = TRUE;
+        }
+      }
+    }
+  }
+
+  gtk_drag_finish (drag_context,
+                   result,
+                   FALSE,
+                   time);
+
+  _target_pool = NULL;
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnDragLeave (GtkWidget      *widget,
+                                 GdkDragContext *drag_context,
+                                 guint           time)
+{
+  if (_target_pool)
+  {
+    // Let it available for DragDrop
+    Pool *target = _target_pool;
+
+    Unfocus ();
+    _target_pool = target;
+  }
+}
+
+// --------------------------------------------------------------------------------
 void PoolAllocator::Display ()
 {
   SetUpCombobox ();
@@ -509,11 +648,11 @@ void PoolAllocator::Load (xmlNode *xml_node)
           attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
           if (attr)
           {
-            Player *player = GetPlayerFromRef (atoi (attr));
+            Player *player = GetFencerFromRef (atoi (attr));
 
             if (player)
             {
-              current_pool->AddPlayer (player,
+              current_pool->AddFencer (player,
                                        this);
             }
           }
@@ -805,7 +944,7 @@ void PoolAllocator::CreatePools ()
         player->SetData (this,
                          "original_pool",
                          (void *) pool->GetNumber ());
-        pool->AddPlayer (player,
+        pool->AddFencer (player,
                          this);
       }
 
@@ -1028,14 +1167,14 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
 
     if (_target_pool)
     {
-      _target_pool->AddPlayer (_floating_player,
+      _target_pool->AddFencer (_floating_player,
                                this);
       FillPoolTable (_target_pool);
       _target_pool = NULL;
     }
     else
     {
-      _source_pool->AddPlayer (_floating_player,
+      _source_pool->AddFencer (_floating_player,
                                this);
       FillPoolTable (_source_pool);
     }
@@ -1119,14 +1258,7 @@ gboolean PoolAllocator::OnEnterNotify (GooCanvasItem  *item,
 {
   if (_dragging)
   {
-    GooCanvasItem *rect = (GooCanvasItem*) pool->GetPtrData (this, "focus_rectangle");
-
-    g_object_set (G_OBJECT (rect),
-                  "stroke-color", "black",
-                  NULL);
-
-    _target_pool = pool;
-
+    Focus (pool);
     return TRUE;
   }
   return FALSE;
@@ -1159,14 +1291,7 @@ gboolean PoolAllocator::OnLeaveNotify (GooCanvasItem  *item,
 {
   if (_dragging)
   {
-    GooCanvasItem *rect = (GooCanvasItem*) pool->GetPtrData (this, "focus_rectangle");
-
-    g_object_set (G_OBJECT (rect),
-                  "stroke-pattern", NULL,
-                  NULL);
-
-    _target_pool = NULL;
-
+    Unfocus ();
     return TRUE;
   }
   return FALSE;
@@ -1321,62 +1446,45 @@ void PoolAllocator::FillPoolTable (Pool *pool)
     Canvas::SetTableItemAttribute (name_table, "x-fill", 1U);
   }
 
-  for (guint p = 0; p < pool->GetNbPlayers (); p++)
+  if (selected_attr)
   {
-    Player *player;
+    guint p = 0;
 
-    player = pool->GetPlayer (p);
-
-    if (player && selected_attr)
+    // Referees
     {
-      if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())
+      GSList *current = pool->GetRefereeList ();
+
+      while (current)
       {
-        Canvas::PutStockIconInTable (table,
-                                     GTK_STOCK_REFRESH,
-                                     p+1, 0);
+        Player *player = (Player *) current->data;
+
+        DisplayPlayer (player,
+                       p,
+                       table,
+                       pool,
+                       selected_attr);
+        p++;
+
+        current = g_slist_next (current);
       }
-      for (guint i = 0; i < g_slist_length (selected_attr); i++)
+    }
+
+    // Fencers
+    {
+      GSList *current = pool->GetFencerList ();
+
+      while (current)
       {
-        GooCanvasItem       *item;
-        AttributeDesc       *attr_desc;
-        Attribute           *attr;
-        Player::AttributeId *attr_id;
+        Player *player = (Player *) current->data;
 
-        attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                        i);
-        attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
-        attr = player->GetAttribute (attr_id);
-        attr_id->Release ();
+        DisplayPlayer (player,
+                       p,
+                       table,
+                       pool,
+                       selected_attr);
+        p++;
 
-        if (attr)
-        {
-          gchar *image = attr->GetUserImage ();
-
-          item = Canvas::PutTextInTable (table,
-                                         image,
-                                         p+1, i+1);
-          g_free (image);
-        }
-        else
-        {
-          item = Canvas::PutTextInTable (table,
-                                         "",
-                                         p+1, i+1);
-        }
-        g_object_set (G_OBJECT (item),
-                      "font", "Sans 14px",
-                      "fill_color", "black",
-                      NULL);
-        g_object_set_data (G_OBJECT (item),
-                           "PoolAllocator::player",
-                           player);
-
-        g_signal_connect (item, "button_press_event",
-                          G_CALLBACK (on_button_press), pool);
-        g_signal_connect (item, "enter_notify_event",
-                          G_CALLBACK (on_enter_player), pool);
-        g_signal_connect (item, "leave_notify_event",
-                          G_CALLBACK (on_leave_player), pool);
+        current = g_slist_next (current);
       }
     }
   }
@@ -1418,6 +1526,74 @@ void PoolAllocator::FillPoolTable (Pool *pool)
                    this);
     pool->SetData (this, "focus_rectangle",
                    focus_rect);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::DisplayPlayer (Player        *player,
+                                   guint          indice,
+                                   GooCanvasItem *table,
+                                   Pool          *pool,
+                                   GSList        *selected_attr)
+{
+  if (player)
+  {
+    if (player->IsFencer () == FALSE)
+    {
+      Canvas::PutStockIconInTable (table,
+                                   GTK_STOCK_ABOUT,
+                                   indice+1, 0);
+    }
+    else if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())
+    {
+      Canvas::PutStockIconInTable (table,
+                                   GTK_STOCK_REFRESH,
+                                   indice+1, 0);
+    }
+
+    for (guint i = 0; i < g_slist_length (selected_attr); i++)
+    {
+      GooCanvasItem       *item;
+      AttributeDesc       *attr_desc;
+      Attribute           *attr;
+      Player::AttributeId *attr_id;
+
+      attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
+                                                      i);
+      attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+      attr = player->GetAttribute (attr_id);
+      attr_id->Release ();
+
+      if (attr)
+      {
+        gchar *image = attr->GetUserImage ();
+
+        item = Canvas::PutTextInTable (table,
+                                       image,
+                                       indice+1, i+1);
+        g_free (image);
+      }
+      else
+      {
+        item = Canvas::PutTextInTable (table,
+                                       " ",
+                                       indice+1, i+1);
+      }
+      g_object_set (G_OBJECT (item),
+                    "font", "Sans 14px",
+                    "fill_color", "black",
+                    NULL);
+      g_object_set_data (G_OBJECT (item),
+                         "PoolAllocator::player",
+                         player);
+
+      g_signal_connect (item, "button_press_event",
+                        G_CALLBACK (on_button_press), pool);
+      g_signal_connect (item, "enter_notify_event",
+                        G_CALLBACK (on_enter_player), pool);
+      g_signal_connect (item, "leave_notify_event",
+                        G_CALLBACK (on_leave_player), pool);
+    }
   }
 }
 
@@ -1778,6 +1954,31 @@ GSList *PoolAllocator::GetCurrentClassification ()
 void PoolAllocator::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::Focus (Pool *pool)
+{
+  GooCanvasItem *rect = (GooCanvasItem*) pool->GetPtrData (this, "focus_rectangle");
+
+  g_object_set (G_OBJECT (rect),
+                "stroke-color", "black",
+                NULL);
+  _target_pool = pool;
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::Unfocus ()
+{
+  if (_target_pool)
+  {
+    GooCanvasItem *rect = (GooCanvasItem*) _target_pool->GetPtrData (this, "focus_rectangle");
+
+    g_object_set (G_OBJECT (rect),
+                  "stroke-pattern", NULL,
+                  NULL);
+    _target_pool = NULL;
+  }
 }
 
 // --------------------------------------------------------------------------------

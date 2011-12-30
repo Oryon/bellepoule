@@ -47,6 +47,7 @@ class Contest : public Module
     void AddPlayer (Player *player,
                     guint   rank);
     void SetTournament (Tournament *tournament);
+    Player *GetRefereeFromRef (guint ref);
 
     gchar *GetOrganizer ();
     gchar *GetDate ();

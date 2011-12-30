@@ -63,6 +63,32 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr);
+
+    gboolean OnDragMotion (GtkWidget      *widget,
+                           GdkDragContext *drag_context,
+                           gint            x,
+                           gint            y,
+                           guint           time);
+    gboolean OnDragDrop (GtkWidget      *widget,
+                         GdkDragContext *drag_context,
+                         gint            x,
+                         gint            y,
+                         guint           time);
+    void OnDragLeave (GtkWidget      *widget,
+                      GdkDragContext *drag_context,
+                      guint           time);
+    void OnDragDataReceived (GtkWidget        *widget,
+                             GdkDragContext   *drag_context,
+                             gint              x,
+                             gint              y,
+                             GtkSelectionData *data,
+                             guint             info,
+                             guint             time);
+
+
+    void Focus   (Pool *pool);
+    void Unfocus ();
+
   private:
     typedef struct
     {
@@ -96,6 +122,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     gboolean            _loaded;
     SensitivityTrigger  _swapping_sensitivity_trigger;
     PlayersList        *_fencer_list;
+    GtkTargetList      *_dnd_target_list;
 
     void Setup ();
     void PopulateFencerList ();
@@ -105,6 +132,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void Display ();
     void Garnish ();
     void FillPoolTable (Pool *pool);
+    void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, Pool *pool, GSList *selected_attr);
     void FixUpTablesBounds ();
     void RegisterConfig (Configuration *config);
     const gchar *GetInputProviderClient ();
@@ -160,6 +188,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      Pool           *pool);
+
+    void OnPlugged ();
 
     static Stage *CreateInstance (StageClass *stage_class);
 

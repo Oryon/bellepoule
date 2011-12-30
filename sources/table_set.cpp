@@ -1510,9 +1510,9 @@ gboolean TableSet::Stuff (GNode    *node,
 }
 
 // --------------------------------------------------------------------------------
-Player *TableSet::GetPlayerFromRef (guint ref)
+Player *TableSet::GetFencerFromRef (guint ref)
 {
-  return _supervisor->GetPlayerFromRef (ref);
+  return _supervisor->GetFencerFromRef (ref);
 }
 
 // --------------------------------------------------------------------------------

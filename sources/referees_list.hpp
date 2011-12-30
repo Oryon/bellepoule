@@ -36,6 +36,12 @@ class RefereesList : public Checkin
     void ImportFFF (gchar *file);
 
     void ImportCSV (gchar *file);
+
+    void OnDragDataGet (GtkWidget        *widget,
+                        GdkDragContext   *drag_context,
+                        GtkSelectionData *data,
+                        guint             info,
+                        guint             time);
 };
 
 #endif

@@ -46,7 +46,8 @@ class Pool : public CanvasModule
           guint           number,
           PoolMatchOrder *match_order);
 
-    void  AddPlayer     (Player *player, Object *rank_owner);
+    void  AddFencer     (Player *player, Object *rank_owner);
+    void  AddReferee    (Player *player);
     void  CreateMatches (Object *rank_owner);
     void  RemovePlayer  (Player *player);
     guint GetNbPlayers  ();
@@ -70,8 +71,6 @@ class Pool : public CanvasModule
 
     void RefreshScoreData ();
 
-    Player *GetPlayer (guint i);
-
     gchar *GetName ();
 
     void Wipe ();
@@ -87,6 +86,10 @@ class Pool : public CanvasModule
                    GtkPrintContext   *context,
                    gint               page_nr);
 
+    GSList *GetFencerList ();
+
+    GSList *GetRefereeList ();
+
     static gint ComparePlayer (Player   *A,
                                Player   *B,
                                Object   *data_owner,
@@ -99,8 +102,9 @@ class Pool : public CanvasModule
     Object         *_combined_source_owner;
     Data           *_max_score;
     guint           _number;
-    GSList         *_player_list;
-    GSList         *_sorted_player_list;
+    GSList         *_fencer_list;
+    GSList         *_sorted_fencer_list;
+    GSList         *_referee_list;
     ScoreCollector *_score_collector;
     GSList         *_match_list;
     gchar          *_name;

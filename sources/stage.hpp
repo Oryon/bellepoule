@@ -111,7 +111,7 @@ class Stage : public virtual Object
 
     virtual GSList *GetOutputShortlist ();
 
-    Player *GetPlayerFromRef (guint ref);
+    Player *GetFencerFromRef (guint ref);
 
     StageClass *GetClass ();
 

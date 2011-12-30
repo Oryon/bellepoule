@@ -29,9 +29,10 @@ class Form : public Module
   public:
     typedef void (Module::*AddPlayerCbk) (Player *player);
 
-    Form (Filter       *filter,
-          Module       *client,
-          AddPlayerCbk  add_player_cbk);
+    Form (Filter             *filter,
+          Module             *client,
+          Player::PlayerType  player_type,
+          AddPlayerCbk        add_player_cbk);
 
     void Show ();
 
@@ -42,9 +43,10 @@ class Form : public Module
     void OnCloseButtonClicked ();
 
   private:
-    Filter       *_filter;
-    Module       *_client;
-    AddPlayerCbk  _add_player_cbk;
+    Filter             *_filter;
+    Module             *_client;
+    Player::PlayerType  _player_type;
+    AddPlayerCbk        _add_player_cbk;
 
     ~Form ();
 

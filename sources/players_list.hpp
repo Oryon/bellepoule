@@ -43,12 +43,15 @@ class PlayersList : public Module
 
     void Update (Player *player);
 
+    GSList *GetList ();
+
     static const guint NO_RIGHT   = 0x00000000;
     static const guint SORTABLE   = 0x00000001;
     static const guint MODIFIABLE = 0x00000002;
 
   protected:
-    GSList *_player_list;
+    GtkWidget *_tree_view;
+    GSList    *_player_list;
 
     typedef gboolean (*CustomFilter) (Player *player);
 
@@ -91,7 +94,6 @@ class PlayersList : public Module
                      GtkPrintContext   *context);
 
   private:
-    GtkWidget    *_tree_view;
     guint         _rights;
     guint         _nb_player_per_page;
     gdouble       _print_scale;

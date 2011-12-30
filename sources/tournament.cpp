@@ -139,7 +139,7 @@ Tournament::Tournament (gchar *filename)
     GtkTargetList *target_list;
 
     gtk_drag_dest_set (main_window,
-                       GtkDestDefaults (GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP),
+                       GTK_DEST_DEFAULT_ALL,
                        NULL,
                        0,
                        GDK_ACTION_COPY);

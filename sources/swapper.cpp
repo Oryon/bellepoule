@@ -202,11 +202,10 @@ Player *Swapper::GetNextPlayer (Pool *for_pool)
 
         for (guint p = 0; p < for_pool->GetNbPlayers (); p++)
         {
-          Player    *pool_player;
-          Attribute *attr;
+          GSList    *fencer_list = for_pool->GetFencerList ();
+          Player    *pool_player = (Player *) g_slist_nth_data (fencer_list, p);
+          Attribute *attr        = pool_player->GetAttribute (_criteria_id);
 
-          pool_player = for_pool->GetPlayer (p);
-          attr   = pool_player->GetAttribute (_criteria_id);
           if (attr)
           {
             gchar *image = attr->GetUserImage ();

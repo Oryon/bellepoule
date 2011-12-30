@@ -90,6 +90,8 @@ class Checkin : public PlayersList
 
     gchar *ConvertToUtf8 (gchar *what);
 
+    Player::PlayerType GetPlayerType ();
+
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Checkin   *checkin);
