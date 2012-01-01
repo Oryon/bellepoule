@@ -243,6 +243,19 @@ gboolean PoolAllocator::OnDragMotion (GtkWidget      *widget,
 {
   GooCanvasItem *focus_rect;
   GSList        *current = _pools_list;
+  gdouble        vvalue;
+  gdouble        hvalue;
+
+  {
+    GtkWidget     *window = _glade->GetWidget ("canvas_scrolled_window");
+    GtkAdjustment *adjustment;
+
+    adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (window));
+    hvalue     = gtk_adjustment_get_value (adjustment);
+
+    adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (window));
+    vvalue     = gtk_adjustment_get_value (adjustment);
+  }
 
   while (current)
   {
@@ -253,8 +266,8 @@ gboolean PoolAllocator::OnDragMotion (GtkWidget      *widget,
     goo_canvas_item_get_bounds (focus_rect,
                                 &bounds);
 
-    if (   (x > bounds.x1) && (x < bounds.x2)
-        && (y > bounds.y1) && (y < bounds.y2))
+    if (   (x > bounds.x1-hvalue) && (x < bounds.x2-hvalue)
+        && (y > bounds.y1-vvalue) && (y < bounds.y2-vvalue))
     {
       Focus (pool);
       gdk_drag_status  (drag_context,
@@ -643,9 +656,8 @@ void PoolAllocator::Load (xmlNode *xml_node)
         }
         else
         {
-          gchar *attr;
+          gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
 
-          attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
           if (attr)
           {
             Player *player = GetFencerFromRef (atoi (attr));
@@ -660,6 +672,17 @@ void PoolAllocator::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, "Arbitre") == 0)
       {
+        gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+
+        if (attr)
+        {
+          Player *player = _contest->GetRefereeFromRef (atoi (attr));
+
+          if (player)
+          {
+            current_pool->AddReferee (player);
+          }
+        }
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
@@ -1124,7 +1147,15 @@ gboolean PoolAllocator::OnButtonPress (GooCanvasItem  *item,
     _source_pool = pool;
 
     {
-      pool->RemovePlayer (_floating_player);
+      if (_floating_player->IsFencer ())
+      {
+        pool->RemoveFencer (_floating_player);
+      }
+      else
+      {
+        pool->RemoveReferee (_floating_player);
+      }
+
       FillPoolTable (pool);
       SignalStatusUpdate ();
       FixUpTablesBounds ();
@@ -1167,15 +1198,29 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
 
     if (_target_pool)
     {
-      _target_pool->AddFencer (_floating_player,
-                               this);
+      if (_floating_player->IsFencer ())
+      {
+        _target_pool->AddFencer (_floating_player,
+                                 this);
+      }
+      else
+      {
+        _target_pool->AddReferee (_floating_player);
+      }
       FillPoolTable (_target_pool);
       _target_pool = NULL;
     }
     else
     {
-      _source_pool->AddFencer (_floating_player,
-                               this);
+      if (_floating_player->IsFencer ())
+      {
+        _source_pool->AddFencer (_floating_player,
+                                 this);
+      }
+      else
+      {
+        _source_pool->AddReferee (_floating_player);
+      }
       FillPoolTable (_source_pool);
     }
     //OnAttrListUpdated ();
@@ -1540,9 +1585,9 @@ void PoolAllocator::DisplayPlayer (Player        *player,
   {
     if (player->IsFencer () == FALSE)
     {
-      Canvas::PutStockIconInTable (table,
-                                   GTK_STOCK_ABOUT,
-                                   indice+1, 0);
+      Canvas::PutIconInTable (table,
+                              "resources/glade/referee.png",
+                              indice+1, 0);
     }
     else if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())
     {
@@ -1579,10 +1624,22 @@ void PoolAllocator::DisplayPlayer (Player        *player,
                                        " ",
                                        indice+1, i+1);
       }
-      g_object_set (G_OBJECT (item),
-                    "font", "Sans 14px",
-                    "fill_color", "black",
-                    NULL);
+
+      if (player->IsFencer ())
+      {
+        g_object_set (G_OBJECT (item),
+                      "font", "Sans 14px",
+                      "fill_color", "black",
+                      NULL);
+      }
+      else
+      {
+        g_object_set (G_OBJECT (item),
+                      "font", "Sans Bold Italic 14px",
+                      "fill_color", "black",
+                      NULL);
+      }
+
       g_object_set_data (G_OBJECT (item),
                          "PoolAllocator::player",
                          player);
