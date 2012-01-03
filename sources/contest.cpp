@@ -738,7 +738,7 @@ void Contest::ChooseColor ()
                                          "Competiton",
                                          "color_to_use",
                                          NULL);
-  if (color_to_use >= (gint) (g_list_length (_color_list)-1))
+  if (color_to_use >= (gint) (g_list_length (_color_list)))
   {
     color_to_use = 0;
   }
@@ -746,7 +746,7 @@ void Contest::ChooseColor ()
   _color->_value = color_to_use;
 
   color_to_use++;
-  if (color_to_use >= (gint) (g_list_length (_color_list)-1))
+  if (color_to_use >= (gint) (g_list_length (_color_list)))
   {
     color_to_use = 0;
   }
@@ -805,11 +805,19 @@ void Contest::Init ()
   _color_list = g_list_append (_color_list, color);
 
   color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  gdk_color_parse ("#9DB8D2", color); // blue hilight
+  _color_list = g_list_append (_color_list, color);
+
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#83A67F", color); // green medium
   _color_list = g_list_append (_color_list, color);
 
   color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#DF421E", color); // accent red
+  _color_list = g_list_append (_color_list, color);
+
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  gdk_color_parse ("#826647", color); // Basic 3D hilight
   _color_list = g_list_append (_color_list, color);
 }
 
