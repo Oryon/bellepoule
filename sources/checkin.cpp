@@ -367,9 +367,6 @@ void Checkin::ImportFFF (gchar *file)
 
           player = new Player (GetPlayerType ());
 
-          attr_id._name = (gchar *) "attending";
-          player->SetAttributeValue (&attr_id, (guint) FALSE);
-
           if (tokens)
           {
             attr_id._name = (gchar *) "name";
@@ -428,9 +425,6 @@ void Checkin::ImportFFF (gchar *file)
 
             attr_id._name = (gchar *) "club";
             player->SetAttributeValue (&attr_id, tokens[2]);
-
-            attr_id._name = (gchar *) "exported";
-            player->SetAttributeValue (&attr_id, (guint) FALSE);
 
             if (tokens[3] == NULL)
             {
@@ -511,18 +505,11 @@ void Checkin::ImportCSV (gchar *file)
           Player              *player = new Player (GetPlayerType ());
           Player::AttributeId  attr_id ("");
 
-          attr_id._name = (gchar *) "attending";
-          player->SetAttributeValue (&attr_id, (guint) FALSE);
-
           attr_id._name = (gchar *) "name";
           player->SetAttributeValue (&attr_id, tokens[i]);
 
           attr_id._name = (gchar *) "first_name";
           player->SetAttributeValue (&attr_id, tokens[i+1]);
-
-          attr_id._name = (gchar *) "exported";
-          player->SetAttributeValue (&attr_id, (guint) FALSE);
-
 
           Add (player);
           player->Release ();

@@ -443,6 +443,15 @@ void PlayersList::SetColumn (guint          id,
                                                        "value", id,
                                                        0,       NULL);
   }
+  else if (   (desc->_type           == G_TYPE_STRING)
+           && (desc->_representation == AttributeDesc::GRAPHICAL))
+  {
+    renderer = gtk_cell_renderer_pixbuf_new ();
+    column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
+                                                       renderer,
+                                                       "stock-id", id,
+                                                       0,          NULL);
+  }
   else if (   (desc->_type == G_TYPE_STRING)
            || (desc->_type == G_TYPE_INT))
   {

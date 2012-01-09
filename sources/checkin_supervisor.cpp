@@ -54,6 +54,7 @@ CheckinSupervisor::CheckinSupervisor (StageClass  *stage_class)
                                "ref",
                                "start_rank",
 #endif
+                               "availability",
                                "participation_rate",
                                "level",
                                "status",

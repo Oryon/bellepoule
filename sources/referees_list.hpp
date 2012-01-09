@@ -37,6 +37,16 @@ class RefereesList : public Checkin
 
     void ImportCSV (gchar *file);
 
+    void Monitor (Player *player);
+
+    static void OnAvailabilityChanged (Player    *player,
+                                       Attribute *attr,
+                                       Checkin   *checkin);
+
+    static void OnAttendingChanged (Player    *player,
+                                    Attribute *attr,
+                                    Checkin   *checkin);
+
     void OnDragDataGet (GtkWidget        *widget,
                         GdkDragContext   *drag_context,
                         GtkSelectionData *data,

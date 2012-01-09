@@ -57,6 +57,8 @@ class Checkin : public PlayersList
 
     virtual void OnListChanged ();
 
+    virtual void Monitor (Player *player);
+
     void CreateForm (Filter *filter);
 
   private:
@@ -77,8 +79,6 @@ class Checkin : public PlayersList
     void ImportCSV (gchar *file);
 
     void OnAddPlayer (Player *player);
-
-    void Monitor (Player *player);
 
     void RefreshAttendingDisplay ();
 

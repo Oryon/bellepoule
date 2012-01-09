@@ -33,6 +33,19 @@ Player::Player (PlayerType player_type)
   _player_type = player_type;
 
   _clients = NULL;
+
+  {
+    Player::AttributeId attr_id ("");
+
+    attr_id._name = (gchar *) "attending";
+    SetAttributeValue (&attr_id, (guint) FALSE);
+
+    attr_id._name = (gchar *) "exported";
+    SetAttributeValue (&attr_id, (guint) FALSE);
+
+    attr_id._name = (gchar *) "availability";
+    SetAttributeValue (&attr_id, "Absent");
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -323,8 +336,21 @@ void Player::Load (xmlNode *xml_node)
       {
         AttributeId attr_id (desc->_code_name);
 
-        SetAttributeValue (&attr_id,
-                           value);
+        if (strcmp (desc->_code_name, "ref") == 0)
+        {
+          gchar *first_non_space = g_strchug (value);
+
+          if (first_non_space && first_non_space[0])
+          {
+            SetAttributeValue (&attr_id,
+                               value);
+          }
+        }
+        else
+        {
+          SetAttributeValue (&attr_id,
+                             value);
+        }
 
         if (strcmp (desc->_code_name, "global_status") == 0)
         {
