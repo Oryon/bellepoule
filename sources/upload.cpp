@@ -51,6 +51,15 @@ Upload::Upload (const gchar *filename,
 }
 
 // --------------------------------------------------------------------------------
+Upload::~Upload ()
+{
+  g_free (_full_url);
+  g_free (_user);
+  g_free (_passwd);
+  g_free (_data);
+}
+
+// --------------------------------------------------------------------------------
 void Upload::Start ()
 {
   GError *error = NULL;
@@ -141,13 +150,4 @@ size_t Upload::ReadCallback (void   *ptr,
   upload->_bytes_uploaded += bytes_to_copy;
 
   return bytes_to_copy;
-}
-
-// --------------------------------------------------------------------------------
-Upload::~Upload ()
-{
-  g_free (_full_url);
-  g_free (_user);
-  g_free (_passwd);
-  g_free (_data);
 }

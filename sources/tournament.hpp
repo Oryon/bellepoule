@@ -81,6 +81,8 @@ class Tournament : public Module
 
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);
+
+    static gboolean OnLatestVersionReceived (Tournament *tournament);
 };
 
 #endif

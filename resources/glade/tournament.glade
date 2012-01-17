@@ -747,6 +747,21 @@ Public License instead of this License.  But first, please read
     <property name="can_focus">False</property>
     <property name="icon_name">preferences-desktop-locale</property>
   </object>
+  <object class="GtkImage" id="image7">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-dialog-warning</property>
+  </object>
+  <object class="GtkImage" id="image8">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-refresh</property>
+  </object>
+  <object class="GtkImage" id="image9">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-dialog-warning</property>
+  </object>
   <object class="GtkWindow" id="root">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">BellePoule - Fencing tournament</property>
@@ -912,13 +927,40 @@ Public License instead of this License.  But first, please read
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="menuitem4">
+              <object class="GtkImageMenuItem" id="update_menuitem">
+                <property name="label" translatable="yes">New version!</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">image8</property>
+                <property name="use_stock">False</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu4">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="new_version_menuitem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="label" translatable="yes">menuitem3</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_new_version_menuitem_activate" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkImageMenuItem" id="help">
+                <property name="label">gtk-help</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <property name="right_justified">True</property>
-                <property name="label" translatable="yes">Help</property>
                 <property name="use_underline">True</property>
+                <property name="use_stock">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">
                     <property name="visible">True</property>

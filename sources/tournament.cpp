@@ -25,6 +25,7 @@
 #endif
 
 #include "version.h"
+#include "update_checker.hpp"
 #include "contest.hpp"
 
 #include "tournament.hpp"
@@ -46,6 +47,8 @@ Tournament::Tournament (gchar *filename)
     gtk_widget_show_all (w);
     gtk_widget_hide (_glade->GetWidget ("notebook"));
   }
+
+  gtk_widget_hide (_glade->GetWidget ("update_menuitem"));
 
   if (filename)
   {
@@ -154,6 +157,9 @@ Tournament::Tournament (gchar *filename)
     }
     gtk_target_list_add_uri_targets (target_list, 100);
   }
+
+  UpdateChecker::DownloadLatestVersion ((GSourceFunc) OnLatestVersionReceived,
+                                        this);
 
   _network = new Network ();
 }
@@ -690,6 +696,60 @@ void Tournament::OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
 }
 
 // --------------------------------------------------------------------------------
+gboolean Tournament::OnLatestVersionReceived (Tournament *tournament)
+{
+  GKeyFile *version_file = g_key_file_new ();
+
+  if (UpdateChecker::GetLatestVersion (version_file))
+  {
+    gchar    *version;
+    gchar    *revision;
+    gchar    *maturity;
+    gboolean  new_version_detected = FALSE;
+
+    version = g_key_file_get_string (version_file,
+                                     VERSION_BRANCH,
+                                     "version",
+                                     NULL);
+    revision = g_key_file_get_string (version_file,
+                                      VERSION_BRANCH,
+                                      "revision",
+                                      NULL);
+    maturity = g_key_file_get_string (version_file,
+                                      VERSION_BRANCH,
+                                      "maturity",
+                                      NULL);
+
+    if (version && (strcmp (VERSION, version) != 0))
+    {
+      new_version_detected = TRUE;
+    }
+    else if (revision && (strcmp (VERSION_REVISION, revision) != 0))
+    {
+      new_version_detected = TRUE;
+    }
+    else if (maturity && (strcmp (VERSION_MATURITY, maturity) != 0))
+    {
+      new_version_detected = TRUE;
+    }
+
+    if (new_version_detected)
+    {
+      gchar *label = g_strdup_printf ("%s.%s.%s", version, revision, maturity);
+
+      gtk_menu_item_set_label (GTK_MENU_ITEM (tournament->_glade->GetWidget ("new_version_menuitem")),
+                               label);
+      gtk_widget_show (tournament->_glade->GetWidget ("update_menuitem"));
+      g_free (label);
+    }
+  }
+
+  g_key_file_free (version_file);
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
                                                           Object    *owner)
 {
@@ -833,3 +893,23 @@ extern "C" G_MODULE_EXPORT void on_root_drag_data_received (GtkWidget        *wi
     g_strfreev (uris);
   }
 }
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *menuitem,
+                                                                  Object       owner)
+{
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecuteA (NULL,
+                 "open",
+                 "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+}
+
