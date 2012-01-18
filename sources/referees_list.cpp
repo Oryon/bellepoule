@@ -98,6 +98,24 @@ void RefereesList::Monitor (Player *player)
   player->SetChangeCbk ("availability",
                         (Player::OnChange) OnAvailabilityChanged,
                         this);
+
+  {
+    Player::AttributeId  attending_attr_id ("attending");
+    Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
+    guint                attending = attending_attr->GetUIntValue ();
+    Player::AttributeId  availability_attr_id ("availability");
+
+    if (attending == TRUE)
+    {
+      player->SetAttributeValue (&availability_attr_id,
+                                 "Free");
+    }
+    else if (attending == FALSE)
+    {
+      player->SetAttributeValue (&availability_attr_id,
+                                 "Absent");
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

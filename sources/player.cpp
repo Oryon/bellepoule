@@ -357,12 +357,12 @@ void Player::Load (xmlNode *xml_node)
           if (value[0] == 'F')
           {
             SetAttributeValue (&attending_attr_id,
-                               (guint) 0);
+                               (guint) FALSE);
           }
           else
           {
             SetAttributeValue (&attending_attr_id,
-                               1);
+                               TRUE);
           }
         }
       }
@@ -372,7 +372,7 @@ void Player::Load (xmlNode *xml_node)
   if (GetAttribute (&attending_attr_id) == NULL)
   {
     SetAttributeValue (&attending_attr_id,
-                       (guint) 0);
+                       (guint) FALSE);
   }
 
   {
