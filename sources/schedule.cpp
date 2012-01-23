@@ -706,6 +706,7 @@ void Schedule::Load (xmlDoc  *doc,
   xmlXPathFreeContext (xml_context);
 
   SetCurrentStage (current_stage_index);
+  checkin_stage->OnLoadingCompleted ();
 }
 
 // --------------------------------------------------------------------------------

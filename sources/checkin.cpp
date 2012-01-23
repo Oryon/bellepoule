@@ -151,7 +151,7 @@ void Checkin::SaveList (xmlTextWriter *xml_writer)
 void Checkin::OnListChanged ()
 {
   RefreshAttendingDisplay ();
-  MakeDirty ();
+  PlayersList::OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------

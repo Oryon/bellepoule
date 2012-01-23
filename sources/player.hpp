@@ -67,6 +67,7 @@ class Player : public Object
 
     Player *Duplicate ();
 
+  public:
     Attribute *GetAttribute (AttributeId *attr_id);
 
     void SetAttributeValue (AttributeId *attr_id,
@@ -75,25 +76,33 @@ class Player : public Object
     void SetAttributeValue (AttributeId *attr_id,
                             guint        value);
 
-    guint GetRef ();
+    void SetChangeCbk (const gchar *attr_name,
+                       OnChange     change_cbk,
+                       void        *data);
 
+  public:
+    guint GetRef ();
+    void  SetRef (guint ref);
+
+    gchar *GetName ();
+
+  public:
     void Save (xmlTextWriter *xml_writer,
                const gchar   *player_tag);
 
     void Load (xmlNode *xml_node);
 
-    gchar *GetName ();
-
-    void SetChangeCbk (const gchar *attr_name,
-                       OnChange     change_cbk,
-                       void        *data);
-
+  public:
     static gint CompareWithRef (Player *player,
                                 guint   ref);
 
     static gint Compare (Player      *a,
                          Player      *b,
                          AttributeId *attr_id);
+
+    static gint MultiCompare (Player *a,
+                              Player *b,
+                              GSList *attr_list);
 
     static gint RandomCompare (Player  *A,
                                Player  *B,

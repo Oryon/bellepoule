@@ -105,6 +105,8 @@ class Stage : public virtual Object
 
     void UnLock ();
 
+    virtual void OnLoadingCompleted () {};
+
     GSList *GetResult ();
 
     void RetrieveAttendees ();
@@ -147,6 +149,7 @@ class Stage : public virtual Object
 
     void OnNbQualifiedValueChanged (GtkSpinButton *spinbutton);
 
+  public:
     static void RegisterStageClass (const gchar *name,
                                     const gchar *xml_name,
                                     Creator      creator,

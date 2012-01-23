@@ -620,15 +620,6 @@ void PlayersList::Add (Player *player)
 
   gtk_list_store_append (_store, &iter);
 
-  {
-    gchar               *str;
-    Player::AttributeId  attr_id ("ref");
-
-    str = g_strdup_printf ("%d", player->GetRef ());
-    player->SetAttributeValue (&attr_id, str);
-    g_free (str);
-  }
-
   player->SetData (this, "tree_row_ref",
                    GetPlayerRowRef (&iter),
                    (GDestroyNotify) gtk_tree_row_reference_free);

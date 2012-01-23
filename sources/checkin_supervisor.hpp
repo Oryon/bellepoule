@@ -36,12 +36,12 @@ class CheckinSupervisor : public virtual Checkin, public Stage
 
     void ConvertFromBaseToResult ();
 
-    void OnListChanged ();
-
   private:
     void OnLocked (Reason reason);
 
     void OnUnLocked ();
+
+    void OnLoadingCompleted ();
 
     void Wipe ();
 
@@ -49,13 +49,16 @@ class CheckinSupervisor : public virtual Checkin, public Stage
     static const gchar *_class_name;
     static const gchar *_xml_class_name;
 
-    gboolean   _use_initial_rank;
+    gboolean  _use_initial_rank;
+    GSList   *_checksum_list;
 
     static Stage *CreateInstance (StageClass *stage_class);
 
     gboolean IsOver ();
 
     void UpdateChecksum ();
+
+    void ClearChecksum ();
 
     GSList *GetCurrentClassification ();
 

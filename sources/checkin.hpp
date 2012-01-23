@@ -48,14 +48,15 @@ class Checkin : public PlayersList
     void OnToggleAllPlayers (gboolean present);
 
     void OnImport ();
+
     void OnPrint ();
+
+    void OnListChanged ();
 
   protected:
     ~Checkin ();
 
     static gboolean PresentPlayerFilter (Player *player);
-
-    virtual void OnListChanged ();
 
     virtual void Monitor (Player *player);
 

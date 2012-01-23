@@ -145,6 +145,55 @@ gint Player::Compare (Player      *a,
 }
 
 // --------------------------------------------------------------------------------
+gint Player::MultiCompare (Player *a,
+                           Player *b,
+                           GSList *attr_list)
+{
+  if (b == NULL)
+  {
+    return 1;
+  }
+  else if (a == NULL)
+  {
+    return -1;
+  }
+  else
+  {
+    gint    result;
+    GSList *current = attr_list;
+
+    while (current)
+    {
+      AttributeId *attr_id = (AttributeId *) current->data;
+      Attribute   *attr_a  = a->GetAttribute (attr_id);
+      Attribute   *attr_b  = b->GetAttribute (attr_id);
+
+      result = Attribute::Compare (attr_a, attr_b);
+      if (result)
+      {
+        break;
+      }
+
+      current = g_slist_next (current);
+    }
+
+    if (result == 0)
+    {
+      AttributeId *attr_id = (AttributeId *) g_slist_nth_data (attr_list, 0);
+
+      if (attr_id->_rand_seed)
+      {
+        result = RandomCompare (a,
+                                b,
+                                attr_id->_rand_seed);
+      }
+    }
+
+    return result;
+  }
+}
+
+// --------------------------------------------------------------------------------
 gint Player::RandomCompare (Player  *A,
                             Player  *B,
                             guint32  rand_seed)
@@ -274,6 +323,19 @@ guint Player::GetRef ()
 }
 
 // --------------------------------------------------------------------------------
+void Player::SetRef (guint ref)
+{
+  {
+    AttributeId attr_id ("ref");
+
+    SetAttributeValue (&attr_id,
+                       ref);
+  }
+
+  _ref = ref;
+}
+
+// --------------------------------------------------------------------------------
 void Player::Save (xmlTextWriter *xml_writer,
                    const gchar   *player_tag)
 {
@@ -336,20 +398,17 @@ void Player::Load (xmlNode *xml_node)
       {
         AttributeId attr_id (desc->_code_name);
 
+        SetAttributeValue (&attr_id,
+                           value);
+
         if (strcmp (desc->_code_name, "ref") == 0)
         {
-          gchar *first_non_space = g_strchug (value);
+          Attribute *attr = GetAttribute (&attr_id);
 
-          if (first_non_space && first_non_space[0])
+          if (attr)
           {
-            SetAttributeValue (&attr_id,
-                               value);
+            _ref = attr->GetUIntValue ();
           }
-        }
-        else
-        {
-          SetAttributeValue (&attr_id,
-                             value);
         }
 
         if (strcmp (desc->_code_name, "global_status") == 0)
@@ -373,20 +432,6 @@ void Player::Load (xmlNode *xml_node)
   {
     SetAttributeValue (&attending_attr_id,
                        (guint) FALSE);
-  }
-
-  {
-    Player::AttributeId  attr_id ("ref");
-    Attribute           *attr = GetAttribute (&attr_id);
-
-    if (attr)
-    {
-      _ref = attr->GetUIntValue ();
-      if (_ref > _next_ref)
-      {
-        _next_ref = _ref + 1;
-      }
-    }
   }
 
   g_slist_free (attr_list);

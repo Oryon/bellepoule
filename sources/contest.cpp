@@ -210,6 +210,8 @@ Contest::Contest (const gchar *filename)
 {
   InitInstance ();
 
+  _loading_completed = FALSE;
+
   if (g_path_is_absolute (filename) == FALSE)
   {
     gchar *current_dir = g_get_current_dir ();
@@ -435,6 +437,8 @@ Contest::Contest (const gchar *filename)
   {
     g_source_remove (_save_timeout_id);
   }
+
+  _loading_completed = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -473,6 +477,12 @@ Contest::~Contest ()
 gchar *Contest::GetFilename ()
 {
   return _filename;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Contest::LoadingCompleted ()
+{
+  return _loading_completed;
 }
 
 // --------------------------------------------------------------------------------
@@ -611,6 +621,8 @@ void Contest::InitInstance ()
   _category   = 0;
   _gender     = 0;
   _derived    = FALSE;
+
+  _loading_completed = TRUE;
 
   _checkin_time = new Time ("checkin");
   _scratch_time = new Time ("scratch");
