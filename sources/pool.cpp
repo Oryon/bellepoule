@@ -243,13 +243,24 @@ void Pool::AddFencer (Player *player,
 }
 
 // --------------------------------------------------------------------------------
-void Pool::RemovePlayer (Player *player)
+void Pool::RemoveFencer (Player *player)
 {
   if (g_slist_find (_fencer_list,
                     player))
   {
     _fencer_list = g_slist_remove (_fencer_list,
                                    player);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::RemoveReferee (Player *player)
+{
+  if (g_slist_find (_referee_list,
+                    player))
+  {
+    _referee_list = g_slist_remove (_referee_list,
+                                    player);
   }
 }
 
@@ -426,7 +437,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                            0.0,
                            0.0,
                            -1,
-                           GTK_ANCHOR_W,
+                           GTK_ANCHOR_SW,
                            "fill-color", "Grey",
                            "font", "Sans bold 30.0px",
                            NULL);
@@ -461,7 +472,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                            0.0,
                            0.0,
                            -1,
-                           GTK_ANCHOR_W,
+                           GTK_ANCHOR_SW,
                            "fill-color", "Grey",
                            "font", "Sans bold 30.0px",
                            NULL);
@@ -1691,9 +1702,21 @@ void Pool::Save (xmlTextWriter *xml_writer)
   }
 
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Arbitre");
-    xmlTextWriterEndElement (xml_writer);
+    GSList *current = _referee_list;
+
+    while (current)
+    {
+      Player *referee = (Player *) current->data;
+
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST "Arbitre");
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "REF",
+                                         "%d", referee->GetRef ());
+      xmlTextWriterEndElement (xml_writer);
+
+      current = g_slist_next (current);
+    }
   }
 
   {

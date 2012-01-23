@@ -210,6 +210,8 @@ Contest::Contest (const gchar *filename)
 {
   InitInstance ();
 
+  _loading_completed = FALSE;
+
   if (g_path_is_absolute (filename) == FALSE)
   {
     gchar *current_dir = g_get_current_dir ();
@@ -435,6 +437,8 @@ Contest::Contest (const gchar *filename)
   {
     g_source_remove (_save_timeout_id);
   }
+
+  _loading_completed = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -473,6 +477,12 @@ Contest::~Contest ()
 gchar *Contest::GetFilename ()
 {
   return _filename;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Contest::LoadingCompleted ()
+{
+  return _loading_completed;
 }
 
 // --------------------------------------------------------------------------------
@@ -612,6 +622,8 @@ void Contest::InitInstance ()
   _gender     = 0;
   _derived    = FALSE;
 
+  _loading_completed = TRUE;
+
   _checkin_time = new Time ("checkin");
   _scratch_time = new Time ("scratch");
   _start_time   = new Time ("start");
@@ -738,7 +750,7 @@ void Contest::ChooseColor ()
                                          "Competiton",
                                          "color_to_use",
                                          NULL);
-  if (color_to_use >= (gint) (g_list_length (_color_list)-1))
+  if (color_to_use >= (gint) (g_list_length (_color_list)))
   {
     color_to_use = 0;
   }
@@ -746,7 +758,7 @@ void Contest::ChooseColor ()
   _color->_value = color_to_use;
 
   color_to_use++;
-  if (color_to_use >= (gint) (g_list_length (_color_list)-1))
+  if (color_to_use >= (gint) (g_list_length (_color_list)))
   {
     color_to_use = 0;
   }
@@ -805,11 +817,19 @@ void Contest::Init ()
   _color_list = g_list_append (_color_list, color);
 
   color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  gdk_color_parse ("#9DB8D2", color); // blue hilight
+  _color_list = g_list_append (_color_list, color);
+
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#83A67F", color); // green medium
   _color_list = g_list_append (_color_list, color);
 
   color = (GdkColor *) g_malloc (sizeof (GdkColor));
   gdk_color_parse ("#DF421E", color); // accent red
+  _color_list = g_list_append (_color_list, color);
+
+  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  gdk_color_parse ("#826647", color); // Basic 3D hilight
   _color_list = g_list_append (_color_list, color);
 }
 

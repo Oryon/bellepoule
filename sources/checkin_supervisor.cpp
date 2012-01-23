@@ -22,6 +22,7 @@
 #include "schedule.hpp"
 #include "player.hpp"
 #include "filter.hpp"
+#include "contest.hpp"
 
 #include "checkin_supervisor.hpp"
 
@@ -35,6 +36,7 @@ CheckinSupervisor::CheckinSupervisor (StageClass  *stage_class)
   Stage (stage_class)
 {
   _use_initial_rank = FALSE;
+  _checksum_list    = NULL;
 
   // Sensitive widgets
   {
@@ -54,6 +56,7 @@ CheckinSupervisor::CheckinSupervisor (StageClass  *stage_class)
                                "ref",
                                "start_rank",
 #endif
+                               "availability",
                                "participation_rate",
                                "level",
                                "status",
@@ -90,6 +93,7 @@ CheckinSupervisor::CheckinSupervisor (StageClass  *stage_class)
 // --------------------------------------------------------------------------------
 CheckinSupervisor::~CheckinSupervisor ()
 {
+  g_slist_free (_checksum_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -130,7 +134,7 @@ void CheckinSupervisor::OnLoaded ()
 // --------------------------------------------------------------------------------
 void CheckinSupervisor::OnPlayerLoaded (Player *player)
 {
-  Player::AttributeId  start_rank_id    ("start_rank");
+  Player::AttributeId  start_rank_id ("start_rank");
   Attribute           *start_rank = player->GetAttribute (&start_rank_id);
 
   if (start_rank)
@@ -147,13 +151,6 @@ void CheckinSupervisor::OnPlayerLoaded (Player *player)
 void CheckinSupervisor::Save (xmlTextWriter *xml_writer)
 {
   SaveList (xml_writer);
-}
-
-// --------------------------------------------------------------------------------
-void CheckinSupervisor::OnListChanged ()
-{
-  Checkin::OnListChanged ();
-  UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------
@@ -190,49 +187,67 @@ void CheckinSupervisor::ConvertFromBaseToResult ()
       }
     }
   }
-  UpdateRanking ();
 }
 
 // --------------------------------------------------------------------------------
 void CheckinSupervisor::UpdateChecksum ()
 {
+  // Alphabetic sorting
   {
-    Player::AttributeId attr_id ("ref");
+    Player::AttributeId  name_attr_id       ("name");
+    Player::AttributeId  first_name_attr_id ("first_name");
+    GSList              *attr_list = NULL;
 
-    attr_id.MakeRandomReady (1);
+    attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
+    attr_list = g_slist_prepend (attr_list, &name_attr_id);
+
     _player_list = g_slist_sort_with_data (_player_list,
-                                           (GCompareDataFunc) Player::Compare,
-                                           &attr_id);
+                                           (GCompareDataFunc) Player::MultiCompare,
+                                           attr_list);
+    g_slist_free (attr_list);
   }
+
+  g_slist_free (_checksum_list);
 
   {
     Player::AttributeId  attr_id ("attending");
     GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
     GSList              *current_player = _player_list;
 
-    while (current_player)
+    for (guint ref = 1; current_player; ref++)
     {
-      Player *p;
+      Player *p = (Player *) current_player->data;
 
-      p = (Player *) current_player->data;
       if (p)
       {
-        Attribute *attending;
+        Attribute *attending = p->GetAttribute (&attr_id);
 
-        attending = p->GetAttribute (&attr_id);
         if (attending && attending->GetUIntValue ())
         {
-          gchar *name = p->GetName ();
+          _checksum_list = g_slist_prepend (_checksum_list, p);
 
-          name[0] = toupper (name[0]);
-          g_checksum_update (checksum,
-                             (guchar *) name,
-                             1);
-          g_free (name);
+          // Let the player contribute to the checksum
+          {
+            gchar *name = p->GetName ();
+
+            name[0] = toupper (name[0]);
+            g_checksum_update (checksum,
+                               (guchar *) name,
+                               1);
+            g_free (name);
+          }
+
+          // Give the player a reference
+          if (_contest->LoadingCompleted ())
+          {
+            p->SetRef (ref);
+          }
         }
       }
       current_player = g_slist_next (current_player);
     }
+
+    _checksum_list = g_slist_reverse (_checksum_list);
 
     {
       gchar short_checksum[9];
@@ -250,12 +265,17 @@ void CheckinSupervisor::UpdateChecksum ()
 }
 
 // --------------------------------------------------------------------------------
+void CheckinSupervisor::ClearChecksum ()
+{
+  g_slist_free (_checksum_list);
+  _checksum_list = NULL;
+}
+
+// --------------------------------------------------------------------------------
 void CheckinSupervisor::UpdateRanking ()
 {
   guint                nb_player = g_slist_length (_player_list);
   Player::AttributeId *rank_criteria_id;
-
-  UpdateChecksum ();
 
   {
     if (_use_initial_rank)
@@ -335,10 +355,29 @@ void CheckinSupervisor::UpdateRanking ()
 }
 
 // --------------------------------------------------------------------------------
+void CheckinSupervisor::OnLoadingCompleted ()
+{
+  GSList *current = _checksum_list;
+
+  for (guint ref = 1; current; ref++)
+  {
+    Player *player = (Player *) current->data;
+
+    player->SetRef (ref);
+    Update (player);
+
+    current = g_slist_next (current);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void CheckinSupervisor::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
+
+  UpdateChecksum ();
+  UpdateRanking  ();
 }
 
 // --------------------------------------------------------------------------------
@@ -373,6 +412,8 @@ void CheckinSupervisor::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
+
+  ClearChecksum ();
 }
 
 // --------------------------------------------------------------------------------

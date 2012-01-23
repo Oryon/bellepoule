@@ -188,6 +188,8 @@
 		<Unit filename="sources\table_supervisor.hpp" />
 		<Unit filename="sources\tournament.cpp" />
 		<Unit filename="sources\tournament.hpp" />
+		<Unit filename="sources\update_checker.cpp" />
+		<Unit filename="sources\update_checker.hpp" />
 		<Unit filename="sources\upload.cpp" />
 		<Unit filename="sources\upload.hpp" />
 		<Unit filename="sources\version.h" />

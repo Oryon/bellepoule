@@ -82,6 +82,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "availability",
                                "participation_rate",
                                "level",
                                "status",
@@ -118,6 +119,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "availability",
                                "participation_rate",
                                "level",
                                "global_status",

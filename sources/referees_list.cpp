@@ -59,6 +59,7 @@ RefereesList::RefereesList ()
                          this);
 
     filter->ShowAttribute ("attending");
+    filter->ShowAttribute ("availability");
     filter->ShowAttribute ("participation_rate");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
@@ -84,6 +85,65 @@ RefereesList::RefereesList ()
 // --------------------------------------------------------------------------------
 RefereesList::~RefereesList ()
 {
+}
+
+// --------------------------------------------------------------------------------
+void RefereesList::Monitor (Player *player)
+{
+  Checkin::Monitor (player);
+
+  player->SetChangeCbk ("attending",
+                        (Player::OnChange) OnAttendingChanged,
+                        this);
+  player->SetChangeCbk ("availability",
+                        (Player::OnChange) OnAvailabilityChanged,
+                        this);
+
+  {
+    Player::AttributeId  attending_attr_id ("attending");
+    Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
+    guint                attending = attending_attr->GetUIntValue ();
+    Player::AttributeId  availability_attr_id ("availability");
+
+    if (attending == TRUE)
+    {
+      player->SetAttributeValue (&availability_attr_id,
+                                 "Free");
+    }
+    else if (attending == FALSE)
+    {
+      player->SetAttributeValue (&availability_attr_id,
+                                 "Absent");
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void RefereesList::OnAttendingChanged (Player    *player,
+                                       Attribute *attr,
+                                       Checkin   *checkin)
+{
+  guint               value = attr->GetUIntValue ();
+  Player::AttributeId attr_id ("availability");
+
+  if (value == 1)
+  {
+    player->SetAttributeValue (&attr_id,
+                               "Free");
+  }
+  else if (value == 0)
+  {
+    player->SetAttributeValue (&attr_id,
+                               "Absent");
+  }
+}
+
+// --------------------------------------------------------------------------------
+void RefereesList::OnAvailabilityChanged (Player    *player,
+                                          Attribute *attr,
+                                          Checkin   *checkin)
+{
+  checkin->Update (player);
 }
 
 // --------------------------------------------------------------------------------

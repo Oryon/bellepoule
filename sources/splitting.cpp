@@ -51,6 +51,7 @@ Splitting::Splitting (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "availability",
                                "participation_rate",
                                "level",
                                "status",

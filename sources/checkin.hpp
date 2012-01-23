@@ -48,14 +48,17 @@ class Checkin : public PlayersList
     void OnToggleAllPlayers (gboolean present);
 
     void OnImport ();
+
     void OnPrint ();
+
+    void OnListChanged ();
 
   protected:
     ~Checkin ();
 
     static gboolean PresentPlayerFilter (Player *player);
 
-    virtual void OnListChanged ();
+    virtual void Monitor (Player *player);
 
     void CreateForm (Filter *filter);
 
@@ -77,8 +80,6 @@ class Checkin : public PlayersList
     void ImportCSV (gchar *file);
 
     void OnAddPlayer (Player *player);
-
-    void Monitor (Player *player);
 
     void RefreshAttendingDisplay ();
 

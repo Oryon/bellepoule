@@ -69,6 +69,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "availability",
                                "participation_rate",
                                "level",
                                "status",
@@ -120,6 +121,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 #ifndef DEBUG
                                "ref",
 #endif
+                               "availability",
                                "participation_rate",
                                "level",
                                "global_status",

@@ -33,6 +33,19 @@ Player::Player (PlayerType player_type)
   _player_type = player_type;
 
   _clients = NULL;
+
+  {
+    Player::AttributeId attr_id ("");
+
+    attr_id._name = (gchar *) "attending";
+    SetAttributeValue (&attr_id, (guint) FALSE);
+
+    attr_id._name = (gchar *) "exported";
+    SetAttributeValue (&attr_id, (guint) FALSE);
+
+    attr_id._name = (gchar *) "availability";
+    SetAttributeValue (&attr_id, "Absent");
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -119,6 +132,55 @@ gint Player::Compare (Player      *a,
     result = Attribute::Compare (attr_a, attr_b);
     if (result == 0)
     {
+      if (attr_id->_rand_seed)
+      {
+        result = RandomCompare (a,
+                                b,
+                                attr_id->_rand_seed);
+      }
+    }
+
+    return result;
+  }
+}
+
+// --------------------------------------------------------------------------------
+gint Player::MultiCompare (Player *a,
+                           Player *b,
+                           GSList *attr_list)
+{
+  if (b == NULL)
+  {
+    return 1;
+  }
+  else if (a == NULL)
+  {
+    return -1;
+  }
+  else
+  {
+    gint    result;
+    GSList *current = attr_list;
+
+    while (current)
+    {
+      AttributeId *attr_id = (AttributeId *) current->data;
+      Attribute   *attr_a  = a->GetAttribute (attr_id);
+      Attribute   *attr_b  = b->GetAttribute (attr_id);
+
+      result = Attribute::Compare (attr_a, attr_b);
+      if (result)
+      {
+        break;
+      }
+
+      current = g_slist_next (current);
+    }
+
+    if (result == 0)
+    {
+      AttributeId *attr_id = (AttributeId *) g_slist_nth_data (attr_list, 0);
+
       if (attr_id->_rand_seed)
       {
         result = RandomCompare (a,
@@ -261,6 +323,19 @@ guint Player::GetRef ()
 }
 
 // --------------------------------------------------------------------------------
+void Player::SetRef (guint ref)
+{
+  {
+    AttributeId attr_id ("ref");
+
+    SetAttributeValue (&attr_id,
+                       ref);
+  }
+
+  _ref = ref;
+}
+
+// --------------------------------------------------------------------------------
 void Player::Save (xmlTextWriter *xml_writer,
                    const gchar   *player_tag)
 {
@@ -326,17 +401,27 @@ void Player::Load (xmlNode *xml_node)
         SetAttributeValue (&attr_id,
                            value);
 
+        if (strcmp (desc->_code_name, "ref") == 0)
+        {
+          Attribute *attr = GetAttribute (&attr_id);
+
+          if (attr)
+          {
+            _ref = attr->GetUIntValue ();
+          }
+        }
+
         if (strcmp (desc->_code_name, "global_status") == 0)
         {
           if (value[0] == 'F')
           {
             SetAttributeValue (&attending_attr_id,
-                               (guint) 0);
+                               (guint) FALSE);
           }
           else
           {
             SetAttributeValue (&attending_attr_id,
-                               1);
+                               TRUE);
           }
         }
       }
@@ -346,21 +431,7 @@ void Player::Load (xmlNode *xml_node)
   if (GetAttribute (&attending_attr_id) == NULL)
   {
     SetAttributeValue (&attending_attr_id,
-                       (guint) 0);
-  }
-
-  {
-    Player::AttributeId  attr_id ("ref");
-    Attribute           *attr = GetAttribute (&attr_id);
-
-    if (attr)
-    {
-      _ref = attr->GetUIntValue ();
-      if (_ref > _next_ref)
-      {
-        _next_ref = _ref + 1;
-      }
-    }
+                       (guint) FALSE);
   }
 
   g_slist_free (attr_list);

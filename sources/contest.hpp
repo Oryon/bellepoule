@@ -48,6 +48,7 @@ class Contest : public Module
                     guint   rank);
     void SetTournament (Tournament *tournament);
     Player *GetRefereeFromRef (guint ref);
+    gboolean LoadingCompleted ();
 
     gchar *GetOrganizer ();
     gchar *GetDate ();
@@ -126,6 +127,7 @@ class Contest : public Module
     guint         _save_timeout_id;
     Checkin      *_referees_list;
     gint          _referee_pane_position;
+    gboolean      _loading_completed;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;

@@ -260,20 +260,6 @@ void Form::OnAddButtonClicked ()
   Player *player   = new Player (_player_type);
   GList  *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
 
-  {
-    Player::AttributeId  attr_id ("ref");
-    gchar               *str = g_strdup_printf ("%d\n", player->GetRef ());
-
-    player->SetAttributeValue (&attr_id, str);
-    g_free (str);
-  }
-
-  {
-    Player::AttributeId attr_id ("exported");
-
-    player->SetAttributeValue (&attr_id, (guint) FALSE);
-  }
-
   for (guint i = 0; i < g_list_length (children); i ++)
   {
     GtkWidget           *w;

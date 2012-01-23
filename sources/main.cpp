@@ -146,11 +146,16 @@ int main (int argc, char **argv)
       Tournament::Init ();
 
       {
+        gchar *user_language = Tournament::GetUserLanguage ();
+
         setlocale (LC_ALL, "");
 
-        g_setenv ("LANGUAGE",
-                  Tournament::GetUserLanguage (),
-                  TRUE);
+        if (user_language)
+        {
+          g_setenv ("LANGUAGE",
+                    user_language,
+                    TRUE);
+        }
       }
 
       {
@@ -290,6 +295,16 @@ int main (int argc, char **argv)
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;
+
+      desc = AttributeDesc::Declare (G_TYPE_STRING, "availability", "Disponibilite", gettext ("availability"));
+      desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
+      desc->_rights         = AttributeDesc::PRIVATE;
+      desc->_scope          = AttributeDesc::GLOBAL;
+      desc->_representation = AttributeDesc::GRAPHICAL;
+      desc->AddDiscreteValues ("Busy",   GTK_STOCK_EXECUTE, "",
+                               "Absent", GTK_STOCK_CLOSE,   "",
+                               "Free",   GTK_STOCK_APPLY,   "", NULL);
+
     }
   }
 
