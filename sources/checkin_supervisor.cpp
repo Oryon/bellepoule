@@ -56,6 +56,7 @@ CheckinSupervisor::CheckinSupervisor (StageClass  *stage_class)
                                "ref",
                                "start_rank",
 #endif
+                               "rank",
                                "availability",
                                "participation_rate",
                                "level",
@@ -73,7 +74,6 @@ CheckinSupervisor::CheckinSupervisor (StageClass  *stage_class)
                          this);
 
     filter->ShowAttribute ("attending");
-    filter->ShowAttribute ("rank");
     filter->ShowAttribute ("name");
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("birth_date");

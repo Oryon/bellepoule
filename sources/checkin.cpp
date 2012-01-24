@@ -78,8 +78,8 @@ void Checkin::CreateForm (Filter *filter)
 // --------------------------------------------------------------------------------
 void Checkin::Add (Player *player)
 {
-  Monitor (player);
   PlayersList::Add (player);
+  Monitor (player);
 }
 
 // --------------------------------------------------------------------------------

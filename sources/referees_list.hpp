@@ -22,10 +22,12 @@
 
 #include "checkin.hpp"
 
+class Contest;
+
 class RefereesList : public Checkin
 {
   public:
-    RefereesList ();
+    RefereesList (Contest *contest);
 
     void OnPrintRadioButtonToggled (GtkWidget *widget);
 
@@ -33,11 +35,15 @@ class RefereesList : public Checkin
     ~RefereesList ();
 
   private:
+    Contest *_contest;
+
     void ImportFFF (gchar *file);
 
     void ImportCSV (gchar *file);
 
     void Monitor (Player *player);
+
+    void OnLoadingCompleted ();
 
     static void OnAvailabilityChanged (Player    *player,
                                        Attribute *attr,

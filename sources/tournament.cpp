@@ -35,6 +35,8 @@ Tournament::Tournament (gchar *filename)
   : Module ("tournament.glade")
 {
   _contest_list = NULL;
+  _referee_list = NULL;
+  _referee_ref  = 1;
 
   curl_global_init (CURL_GLOBAL_ALL);
 
@@ -190,6 +192,8 @@ Tournament::~Tournament ()
     // fclose (file);
   }
 
+  g_slist_free (_referee_list);
+
   g_key_file_free (_config_file);
 
   curl_global_cleanup ();
@@ -225,6 +229,45 @@ void Tournament::Init ()
 
   g_free (dir_path);
   g_free (file_path);
+}
+
+// --------------------------------------------------------------------------------
+Player *Tournament::Share (Player *referee)
+{
+  Player *original  = NULL;
+  GSList *current   = _referee_list;
+  GSList *attr_list = NULL;
+  Player::AttributeId  name_attr_id       ("name");
+  Player::AttributeId  first_name_attr_id ("first_name");
+
+  attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
+  attr_list = g_slist_prepend (attr_list, &name_attr_id);
+
+  while (current)
+  {
+    Player *current_referee = (Player *) current->data;
+
+    if (Player::MultiCompare (referee,
+                              current_referee,
+                              attr_list) == 0)
+    {
+      original = current_referee;
+      break;
+    }
+
+    current = g_slist_next (current);
+  }
+
+  g_slist_free (attr_list);
+
+  if (original == NULL)
+  {
+    _referee_list = g_slist_prepend (_referee_list,
+                                     referee);
+    referee->SetRef (_referee_ref++);
+  }
+
+  return original;
 }
 
 // --------------------------------------------------------------------------------

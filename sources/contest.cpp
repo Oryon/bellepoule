@@ -633,7 +633,7 @@ void Contest::InitInstance ()
                          (guint) 0);
 
   {
-    _referees_list = new RefereesList ();
+    _referees_list = new RefereesList (this);
     Plug (_referees_list,
           _glade->GetWidget ("referees_viewport"),
           NULL);
@@ -837,6 +837,15 @@ void Contest::Init ()
 void Contest::SetTournament (Tournament *tournament)
 {
   _tournament = tournament;
+
+  _schedule->OnLoadingCompleted      ();
+  _referees_list->OnLoadingCompleted ();
+}
+
+// --------------------------------------------------------------------------------
+Player *Contest::Share (Player *referee)
+{
+  return _tournament->Share (referee);
 }
 
 // --------------------------------------------------------------------------------

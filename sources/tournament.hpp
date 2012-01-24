@@ -64,6 +64,8 @@ class Tournament : public Module
 
     void OpenContest (const gchar *uri);
 
+    Player *Share (Player *referee);
+
   public:
     const gchar *GetCompetitionData (guint  competition_id,
                                      gchar *data_name);
@@ -72,7 +74,10 @@ class Tournament : public Module
                              guint PlayerId);
 
   private:
+    guint _referee_ref;
+
     GSList  *_contest_list;
+    GSList  *_referee_list;
     Network *_network;
 
     void SetBackupLocation (gchar *location);

@@ -26,14 +26,17 @@
 #include "attribute.hpp"
 #include "player.hpp"
 #include "filter.hpp"
+#include "contest.hpp"
 
 #include "referees_list.hpp"
 
 // --------------------------------------------------------------------------------
-RefereesList::RefereesList ()
+RefereesList::RefereesList (Contest *contest)
   : Checkin ("referees.glade",
              "Arbitre")
 {
+  _contest = contest;
+
   {
     GSList *attr_list;
     Filter *filter;
@@ -165,6 +168,56 @@ void RefereesList::OnDragDataGet (GtkWidget        *widget,
                             (guchar *) &referee_ref,
                             sizeof (referee_ref));
   }
+}
+
+// --------------------------------------------------------------------------------
+void RefereesList::OnLoadingCompleted ()
+{
+  GSList *current     = _player_list;
+  GSList *add_list    = NULL;
+  GSList *remove_list = NULL;
+
+  for (guint ref = 1; current; ref++)
+  {
+    Player *referee  = (Player *) current->data;
+    Player *original = _contest->Share (referee);
+
+    if (original)
+    {
+      add_list = g_slist_prepend (add_list,
+                                  original);
+      remove_list = g_slist_prepend (remove_list,
+                                     referee);
+    }
+    else
+    {
+      Update (referee);
+    }
+
+    current = g_slist_next (current);
+  }
+
+  while (remove_list)
+  {
+    Player *referee  = (Player *) remove_list->data;
+
+    Remove (referee);
+
+    remove_list = g_slist_next (remove_list);
+  }
+  g_slist_free (remove_list);
+
+  while (add_list)
+  {
+    Player *referee  = (Player *) add_list->data;
+
+    Add (referee);
+
+    add_list = g_slist_next (add_list);
+  }
+  g_slist_free (add_list);
+
+  OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------

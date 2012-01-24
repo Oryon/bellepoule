@@ -676,19 +676,19 @@ void PlayersList::RemoveSelection ()
   {
     GtkTreeRowReference *ref;
     GtkTreePath         *selected_path;
-    GtkTreePath         *current_path;
+    GSList              *current_player;
 
     ref = (GtkTreeRowReference *) g_list_nth_data (ref_list, i);
     selected_path = gtk_tree_row_reference_get_path (ref);
     gtk_tree_row_reference_free (ref);
 
-    for (guint i = 0; i <  g_slist_length (_player_list); i++)
+    current_player = _player_list;
+    while (current_player)
     {
-      Player *p;
+      Player      *p = (Player *) current_player->data;
+      GtkTreePath *current_path;
 
-      p = (Player *) g_slist_nth_data (_player_list, i);
       current_path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) p->GetPtrData (this, "tree_row_ref"));
-
       if (gtk_tree_path_compare (selected_path,
                                  current_path) == 0)
       {
@@ -707,7 +707,9 @@ void PlayersList::RemoveSelection ()
         p->Release ();
         break;
       }
+
       gtk_tree_path_free (current_path);
+      current_player = g_slist_next (current_player);
     }
     gtk_tree_path_free (selected_path);
   }
@@ -718,6 +720,31 @@ void PlayersList::RemoveSelection ()
   g_list_free    (selection_list);
 
   OnListChanged ();
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::Remove (Player *player)
+{
+  GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) player->GetPtrData (this,
+                                                                                                   "tree_row_ref"));
+
+  if (path)
+  {
+    GtkTreeIter iter;
+
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
+                             &iter,
+                             path);
+
+    gtk_list_store_remove (_store,
+                           &iter);
+
+    _player_list = g_slist_remove (_player_list,
+                                   player);
+    OnPlayerRemoved (player);
+    player->Release ();
+  }
+  gtk_tree_path_free (path);
 }
 
 // --------------------------------------------------------------------------------

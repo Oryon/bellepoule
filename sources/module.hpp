@@ -60,6 +60,8 @@ class Module : public virtual Object
 
     virtual void OnAttrListUpdated () {};
 
+    virtual void OnLoadingCompleted () {};
+
     gboolean IsPlugged ();
 
     Filter *GetFilter ();
