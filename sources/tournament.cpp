@@ -273,30 +273,30 @@ Player *Tournament::Share (Player *referee,
     }
 
     g_slist_free (attr_list);
+  }
 
-    if (original == NULL)
+  if (original == NULL)
+  {
     {
-      {
-        _referee_list = g_slist_prepend (_referee_list,
-                                         referee);
-        referee->Retain ();
-        referee->SetRef (_referee_ref++);
-      }
+      _referee_list = g_slist_prepend (_referee_list,
+                                       referee);
+      referee->Retain ();
+      referee->SetRef (_referee_ref++);
+    }
 
-      {
-        GSList *current = _contest_list;
+    {
+      GSList *current = _contest_list;
 
-        while (current)
+      while (current)
+      {
+        Contest *contest = (Contest *) current->data;
+
+        if (contest->GetWeaponCode () == weapon)
         {
-          Contest *contest = (Contest *) current->data;
-
-          if (contest->GetWeaponCode () == weapon)
-          {
-            contest->AddReferee (referee);
-          }
-
-          current = g_slist_next (current);
+          contest->AddReferee (referee);
         }
+
+        current = g_slist_next (current);
       }
     }
   }

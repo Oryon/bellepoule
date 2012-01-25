@@ -911,22 +911,24 @@ gboolean TableSupervisor::GetTableSetClassification (GtkTreeModel    *model,
                       -1);
   current_result = table_set->GetCurrentClassification ();
 
-  for (guint i = 0; i < g_slist_length (current_result); i++)
+  while (current_result)
   {
-    Player *player = (Player *) g_slist_nth_data (current_result, i);
+    Player *player = (Player *) current_result->data;
 
     ts->_result = g_slist_remove (ts->_result,
                                   player);
     ts->_result = g_slist_append (ts->_result,
                                   player);
+
+    current_result = g_slist_next (current_result);
   }
 
   {
     GSList *blacardeds = table_set->GetBlackcardeds ();
 
-    for (guint i = 0; i < g_slist_length (blacardeds); i++)
+    while (blacardeds)
     {
-      Player *player = (Player *) g_slist_nth_data (blacardeds, i);
+      Player *player = (Player *) blacardeds->data;
 
       if (g_slist_find (ts->_blackcardeds, player) == NULL)
       {
@@ -935,6 +937,8 @@ gboolean TableSupervisor::GetTableSetClassification (GtkTreeModel    *model,
       }
       ts->_result = g_slist_remove (ts->_result,
                                     player);
+
+      blacardeds = g_slist_next (blacardeds);
     }
     g_slist_free (blacardeds);
   }

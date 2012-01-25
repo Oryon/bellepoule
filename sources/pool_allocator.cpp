@@ -436,12 +436,16 @@ void PoolAllocator::Display ()
       g_signal_connect (root, "button_release_event",
                         G_CALLBACK (on_button_release), this);
 
-      for (guint i = 0; i < g_slist_length (_pools_list); i++)
       {
-        Pool *pool;
+        GSList *current = _pools_list;
 
-        pool = (Pool *) g_slist_nth_data (_pools_list, i);
-        FillPoolTable (pool);
+        while (current)
+        {
+          Pool *pool = (Pool *) current->data;
+
+          FillPoolTable (pool);
+          current = g_slist_next (current);
+        }
       }
     }
   }
@@ -636,18 +640,21 @@ void PoolAllocator::Load (xmlNode *xml_node)
       {
         if (_config_list == NULL)
         {
+          Setup ();
+
           // Get the configuration
           {
-            Setup ();
+            GSList *current = _config_list;
 
-            for (guint i = 0; i < g_slist_length (_config_list); i++)
+            while (current)
             {
-              _selected_config = (Configuration *) g_slist_nth_data (_config_list,
-                                                                     i);
+              _selected_config = (Configuration *) current->data;
+
               if (_selected_config->_nb_pool == nb_pool)
               {
                 break;
               }
+              current = g_slist_next (current);
             }
           }
 
@@ -1120,16 +1127,14 @@ gboolean PoolAllocator::OnButtonPress (GooCanvasItem  *item,
         selected_attr = _filter->GetSelectedAttrList ();
       }
 
-      if (_floating_player && selected_attr)
+      if (_floating_player)
       {
-        for (guint i = 0; i < g_slist_length (selected_attr); i++)
+        while (selected_attr)
         {
-          AttributeDesc       *attr_desc;
+          AttributeDesc       *attr_desc = (AttributeDesc *) selected_attr->data;
           Attribute           *attr;
           Player::AttributeId *attr_id;
 
-          attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                          i);
           attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
           attr = _floating_player->GetAttribute (attr_id);
           attr_id->Release ();
@@ -1144,6 +1149,7 @@ gboolean PoolAllocator::OnButtonPress (GooCanvasItem  *item,
                                       "  ");
             g_free (image);
           }
+          selected_attr = g_slist_next (selected_attr);
         }
       }
 
@@ -1371,70 +1377,71 @@ gboolean PoolAllocator::OnLeaveNotify (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 void PoolAllocator::FixUpTablesBounds ()
 {
-  if (_selected_config == NULL)
+  if (_selected_config)
   {
-    return;
-  }
+    GSList *current = _pools_list;
 
-  for (guint p = 0; p < g_slist_length (_pools_list); p++)
-  {
-    Pool            *pool;
-    GooCanvasItem   *focus_rect;
-    GooCanvasBounds  bounds;
-    GooCanvasItem   *table;
-
-    pool = (Pool *) g_slist_nth_data (_pools_list, p);
-    table = (GooCanvasItem *) pool->GetPtrData (this, "table");
-
-    focus_rect = (GooCanvasItem *) pool->GetPtrData (this, "focus_rectangle");
-
+    while (current)
     {
-      guint nb_columns = 2;
-      guint nb_rows    = _selected_config->_nb_pool / nb_columns;
+      Pool            *pool;
+      GooCanvasItem   *focus_rect;
+      GooCanvasBounds  bounds;
+      GooCanvasItem   *table;
 
-      if (_selected_config->_nb_pool % nb_columns != 0)
-      {
-        nb_rows++;
-      }
+      pool = (Pool *) current->data;
+      table = (GooCanvasItem *) pool->GetPtrData (this, "table");
+
+      focus_rect = (GooCanvasItem *) pool->GetPtrData (this, "focus_rectangle");
 
       {
-        guint row    = (pool->GetNumber () - 1) % nb_rows;
-        guint column = (pool->GetNumber () - 1) / nb_rows;
+        guint nb_columns = 2;
+        guint nb_rows    = _selected_config->_nb_pool / nb_columns;
 
-        goo_canvas_item_get_bounds (table,
-                                    &bounds);
-        goo_canvas_item_translate (table,
-                                   -bounds.x1,
-                                   -bounds.y1);
-        goo_canvas_item_translate (table,
-                                   column * (_max_w + 40.0),
-                                   row * (_max_h + 20.0));
+        if (_selected_config->_nb_pool % nb_columns != 0)
+        {
+          nb_rows++;
+        }
+
+        {
+          guint row    = (pool->GetNumber () - 1) % nb_rows;
+          guint column = (pool->GetNumber () - 1) / nb_rows;
+
+          goo_canvas_item_get_bounds (table,
+                                      &bounds);
+          goo_canvas_item_translate (table,
+                                     -bounds.x1,
+                                     -bounds.y1);
+          goo_canvas_item_translate (table,
+                                     column * (_max_w + 40.0),
+                                     row * (_max_h + 20.0));
+        }
       }
-    }
 
-    goo_canvas_item_get_bounds (table,
-                                &bounds);
-
-    g_object_set (G_OBJECT (focus_rect),
-                  "x",      bounds.x1,
-                  "y",      bounds.y1,
-                  "width",  bounds.x2 - bounds.x1,
-                  "height", bounds.y2 - bounds.y1,
-                  NULL);
-
-    if (_dragging)
-    {
-      goo_canvas_item_raise (focus_rect,
-                             NULL);
-    }
-    else
-    {
-      goo_canvas_item_lower (focus_rect,
-                             NULL);
+      goo_canvas_item_get_bounds (table,
+                                  &bounds);
 
       g_object_set (G_OBJECT (focus_rect),
-                    "stroke-pattern", NULL,
+                    "x",      bounds.x1,
+                    "y",      bounds.y1,
+                    "width",  bounds.x2 - bounds.x1,
+                    "height", bounds.y2 - bounds.y1,
                     NULL);
+
+      if (_dragging)
+      {
+        goo_canvas_item_raise (focus_rect,
+                               NULL);
+      }
+      else
+      {
+        goo_canvas_item_lower (focus_rect,
+                               NULL);
+
+        g_object_set (G_OBJECT (focus_rect),
+                      "stroke-pattern", NULL,
+                      NULL);
+      }
+      current = g_slist_next (current);
     }
   }
 }
@@ -1622,15 +1629,14 @@ void PoolAllocator::DisplayPlayer (Player        *player,
                                    indice+1, 0);
     }
 
-    for (guint i = 0; i < g_slist_length (selected_attr); i++)
+    for (guint i = 0; selected_attr != NULL; i++)
     {
       GooCanvasItem       *item;
       AttributeDesc       *attr_desc;
       Attribute           *attr;
       Player::AttributeId *attr_id;
 
-      attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                      i);
+      attr_desc = (AttributeDesc *) selected_attr->data;
       attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
@@ -1676,6 +1682,8 @@ void PoolAllocator::DisplayPlayer (Player        *player,
                         G_CALLBACK (on_enter_player), pool);
       g_signal_connect (item, "leave_notify_event",
                         G_CALLBACK (on_leave_player), pool);
+
+      selected_attr = g_slist_next (selected_attr);
     }
   }
 }
@@ -1685,12 +1693,14 @@ void PoolAllocator::DeletePools ()
 {
   if (_pools_list)
   {
-    for (guint i = 0; i < g_slist_length (_pools_list); i++)
-    {
-      Pool *pool;
+    GSList *current = _pools_list;
 
-      pool = (Pool *) g_slist_nth_data (_pools_list, i);
+    while (current)
+    {
+      Pool *pool = (Pool *) current->data;
+
       Object::TryToRelease (pool);
+      current = g_slist_next (current);
     }
 
     g_slist_free (_pools_list);
@@ -1726,12 +1736,14 @@ void PoolAllocator::Wipe ()
 
   if (_config_list)
   {
-    for (guint i = 0; i < g_slist_length (_config_list); i++)
-    {
-      Configuration *config;
+    GSList *current = _config_list;
 
-      config = (Configuration *) g_slist_nth_data (_config_list, i);
+    while (current)
+    {
+      Configuration *config = (Configuration *) current->data;
+
       g_free (config);
+      current = g_slist_next (current);
     }
     g_slist_free (_config_list);
     _config_list     = NULL;
@@ -1742,16 +1754,17 @@ void PoolAllocator::Wipe ()
 // --------------------------------------------------------------------------------
 gboolean PoolAllocator::IsOver ()
 {
-  for (guint i = 0; i < g_slist_length (_pools_list); i++)
-  {
-    Pool *pool;
+  GSList *current = _pools_list;
 
-    pool = (Pool *) g_slist_nth_data (_pools_list, i);
+  while (current)
+  {
+    Pool *pool = (Pool *) current->data;
 
     if (pool->GetUIntData (this, "is_balanced") == 0)
     {
       return FALSE;
     }
+    current = g_slist_next (current);
   }
   return TRUE;
 }
@@ -2019,11 +2032,16 @@ void PoolAllocator::OnLocked (Reason reason)
 {
   DisableSensitiveWidgets ();
 
-  for (guint i = 0; i < g_slist_length (_pools_list); i++)
   {
-    Pool *pool = (Pool *) g_slist_nth_data (_pools_list, i);
+    GSList *current = _pools_list;
 
-    pool->CreateMatches (this);
+    while (current)
+    {
+      Pool *pool = (Pool *) current->data;
+
+      pool->CreateMatches (this);
+      current = g_slist_next (current);
+    }
   }
 }
 
@@ -2066,15 +2084,17 @@ void PoolAllocator::Unfocus ()
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnAttrListUpdated ()
 {
+  GSList *current = _pools_list;
+
   _max_w = 0;
   _max_h = 0;
 
-  for (guint i = 0; i < g_slist_length (_pools_list); i++)
+  while (current)
   {
-    Pool *pool;
+    Pool *pool = (Pool *) current->data;
 
-    pool = (Pool *) g_slist_nth_data (_pools_list, i);
     FillPoolTable (pool);
+    current = g_slist_next (current);
   }
   FixUpTablesBounds ();
 }

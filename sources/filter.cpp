@@ -92,18 +92,17 @@ void Filter::SetOwner (Module *owner)
 // --------------------------------------------------------------------------------
 guint Filter::GetAttributeId (const gchar *name)
 {
-  if (_attr_list)
-  {
-    for (guint i = 0; i < g_slist_length (_attr_list); i++)
-    {
-      AttributeDesc *desc;
+  GSList *current = _attr_list;
 
-      desc = (AttributeDesc *) g_slist_nth_data (_attr_list, i);
-      if (strcmp (desc->_code_name, name) == 0)
-      {
-        return i;
-      }
+  for (guint i = 0; current != NULL; i++)
+  {
+    AttributeDesc *desc = (AttributeDesc *) current->data;
+
+    if (strcmp (desc->_code_name, name) == 0)
+    {
+      return i;
     }
+    current = g_slist_next (current);
   }
 
   return 0xFFFFFFFF;

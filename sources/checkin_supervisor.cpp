@@ -166,10 +166,11 @@ void CheckinSupervisor::ConvertFromBaseToResult ()
   // Two different file formats are used. One for preparation one for result.
   // Both are almost similar except that they use a same keyword ("classement")
   // for a different meanning.
+  GSList *current = _player_list;
 
-  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  while (current)
   {
-    Player *p = (Player *) g_slist_nth_data (_player_list, i);
+    Player *p = (Player *) current->data;
 
     if (p)
     {
@@ -186,6 +187,7 @@ void CheckinSupervisor::ConvertFromBaseToResult ()
                               1);
       }
     }
+    current = g_slist_next (current);
   }
 }
 
@@ -348,7 +350,7 @@ void CheckinSupervisor::UpdateRanking ()
       }
       Update (p);
 
-      current_player  = g_slist_next (current_player);
+      current_player = g_slist_next (current_player);
     }
   }
   rank_criteria_id->Release ();

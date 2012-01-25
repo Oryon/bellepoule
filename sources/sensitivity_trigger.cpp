@@ -49,9 +49,11 @@ void SensitivityTrigger::AddWidget (GtkWidget *w)
 // --------------------------------------------------------------------------------
 void SensitivityTrigger::SwitchOn ()
 {
-  for (guint i = 0; i < g_slist_length (_widget_list); i++)
+  GSList *current = _widget_list;
+
+  while (current)
   {
-    GtkWidget *w    = GTK_WIDGET (g_slist_nth_data (_widget_list, i));
+    GtkWidget *w    = GTK_WIDGET (current->data);
     gint       lock = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (w), _data_key));
 
     lock--;
@@ -64,15 +66,18 @@ void SensitivityTrigger::SwitchOn ()
       gtk_widget_set_sensitive (w,
                                 TRUE);
     }
+    current = g_slist_next (current);
   }
 }
 
 // --------------------------------------------------------------------------------
 void SensitivityTrigger::SwitchOff ()
 {
-  for (guint i = 0; i < g_slist_length (_widget_list); i++)
+  GSList *current = _widget_list;
+
+  while (current)
   {
-    GtkWidget *w    = GTK_WIDGET (g_slist_nth_data (_widget_list, i));
+    GtkWidget *w    = GTK_WIDGET (current->data);
     gint       lock = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (w), _data_key));
 
     lock++;
@@ -85,6 +90,7 @@ void SensitivityTrigger::SwitchOff ()
       gtk_widget_set_sensitive (w,
                                 FALSE);
     }
+    current = g_slist_next (current);
   }
 }
 

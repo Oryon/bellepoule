@@ -148,13 +148,12 @@ void Splitting::Display ()
 {
   GSList *shortlist = _attendees->GetShortList ();
 
-  for (guint i = 0; i < g_slist_length (shortlist); i ++)
+  while (shortlist)
   {
-    Player *player;
+    Player *player = (Player *) shortlist->data;
 
-    player = (Player *) g_slist_nth_data (shortlist,
-                                          i);
     Add (player);
+    shortlist = g_slist_next (shortlist);
   }
   OnAttrListUpdated ();
 }

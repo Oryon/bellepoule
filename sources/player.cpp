@@ -365,6 +365,7 @@ void Player::Save (xmlTextWriter *xml_writer,
                    const gchar   *player_tag)
 {
   GSList *attr_list;
+  GSList *current;
 
   AttributeDesc::CreateList (&attr_list,
                              NULL);
@@ -372,12 +373,11 @@ void Player::Save (xmlTextWriter *xml_writer,
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST player_tag);
 
-  for (guint i = 0; i < g_slist_length (attr_list); i++)
+  current = attr_list;
+  while (current)
   {
-    AttributeDesc *desc;
+    AttributeDesc *desc = (AttributeDesc *) current->data;
 
-    desc = (AttributeDesc *) g_slist_nth_data (attr_list,
-                                               i);
     if (   (desc->_persistency == AttributeDesc::PERSISTENT)
         && (desc->_scope       == AttributeDesc::GLOBAL))
     {
@@ -394,6 +394,7 @@ void Player::Save (xmlTextWriter *xml_writer,
         g_free (xml_image);
       }
     }
+    current = g_slist_next (current);
   }
 
   g_slist_free (attr_list);
@@ -405,16 +406,17 @@ void Player::Save (xmlTextWriter *xml_writer,
 void Player::Load (xmlNode *xml_node)
 {
   GSList      *attr_list;
+  GSList      *current;
   AttributeId attending_attr_id ("attending");
 
   AttributeDesc::CreateList (&attr_list,
                              NULL);
-  for (guint i = 0; i < g_slist_length (attr_list ); i++)
-  {
-    AttributeDesc *desc;
 
-    desc = (AttributeDesc *) g_slist_nth_data (attr_list,
-                                               i);
+  current = attr_list;
+  while (current)
+  {
+    AttributeDesc *desc = (AttributeDesc *) current->data;
+
     if (desc->_persistency == AttributeDesc::PERSISTENT)
     {
       gchar *value = (gchar *) xmlGetProp (xml_node, BAD_CAST desc->_xml_name);
@@ -451,6 +453,7 @@ void Player::Load (xmlNode *xml_node)
         }
       }
     }
+    current = g_slist_next (current);
   }
 
   if (GetAttribute (&attending_attr_id) == NULL)

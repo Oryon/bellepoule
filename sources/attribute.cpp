@@ -720,16 +720,17 @@ GSList *AttributeDesc::GetList ()
 // --------------------------------------------------------------------------------
 AttributeDesc *AttributeDesc::GetDesc (const gchar *name)
 {
-  for (guint i = 0; i < g_slist_length (_list); i++)
-  {
-    AttributeDesc *attr_desc;
+  GSList *current = _list;
 
-    attr_desc = (AttributeDesc *) g_slist_nth_data (_list,
-                                                    i);
+  while (current)
+  {
+    AttributeDesc *attr_desc = (AttributeDesc *) current->data;
+
     if (strcmp (attr_desc->_code_name, name) == 0)
     {
       return attr_desc;
     }
+    current = g_slist_next (current);
   }
 
   return NULL;
