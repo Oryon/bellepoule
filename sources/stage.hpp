@@ -105,8 +105,6 @@ class Stage : public virtual Object
 
     void UnLock ();
 
-    virtual void OnLoadingCompleted () {};
-
     GSList *GetResult ();
 
     void RetrieveAttendees ();
@@ -132,6 +130,8 @@ class Stage : public virtual Object
 
     virtual void Load (xmlXPathContext *xml_context,
                        const gchar     *from_node) {};
+
+    virtual void OnLoadingCompleted () {};
 
     virtual void Save (xmlTextWriter *xml_writer) {};
 

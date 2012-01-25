@@ -32,22 +32,36 @@ class Contest : public Module
 {
   public:
      Contest (const gchar *filename);
+
     ~Contest ();
 
     static void Init ();
+
     static Contest *Create ();
 
     Contest *Duplicate ();
+
     void LatchPlayerList ();
 
     void AttachTo (GtkNotebook *to);
+
     void Save ();
+
     void Publish ();
+
     gchar *GetFilename ();
-    void AddPlayer (Player *player,
+
+    void AddFencer (Player *player,
                     guint   rank);
+
+    void AddReferee (Player *referee);
+
+    Player *Share (Player *referee);
+
     void SetTournament (Tournament *tournament);
+
     Player *GetRefereeFromRef (guint ref);
+
     gboolean LoadingCompleted ();
 
     gchar *GetOrganizer ();

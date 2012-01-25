@@ -679,8 +679,6 @@ void Schedule::Load (xmlDoc  *doc,
         current_stage_index = nb_stage-1;
         if (nb_stage == 1)
         {
-          checkin_stage->UnLock ();
-
           stage = Stage::CreateInstance ("pool_stage");
           if (stage)
           {
@@ -706,7 +704,6 @@ void Schedule::Load (xmlDoc  *doc,
   xmlXPathFreeContext (xml_context);
 
   SetCurrentStage (current_stage_index);
-  checkin_stage->OnLoadingCompleted ();
 }
 
 // --------------------------------------------------------------------------------
@@ -751,6 +748,20 @@ void Schedule::LoadStage (Stage   *stage,
                    current_stage_index);
       }
     }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::OnLoadingCompleted ()
+{
+  GList *current = _stage_list;
+
+  while (current)
+  {
+    Stage *stage = (Stage *) current->data;
+
+    stage->OnLoadingCompleted ();
+    current = g_list_next (current);
   }
 }
 

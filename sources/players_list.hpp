@@ -59,6 +59,8 @@ class PlayersList : public Module
 
     void RemoveSelection ();
 
+    void Remove (Player *player);
+
     void SetSensitiveState (gboolean sensitive_value);
 
     GSList *CreateCustomList (CustomFilter filter);

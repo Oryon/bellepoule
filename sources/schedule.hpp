@@ -45,6 +45,8 @@ class Schedule : public Module
     void Load (xmlDoc  *doc,
                Checkin *referees);
 
+    void OnLoadingCompleted ();
+
     Stage *GetStage (guint index);
 
     void SetScoreStuffingPolicy (gboolean allowed);

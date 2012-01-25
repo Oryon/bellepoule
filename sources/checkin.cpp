@@ -78,8 +78,8 @@ void Checkin::CreateForm (Filter *filter)
 // --------------------------------------------------------------------------------
 void Checkin::Add (Player *player)
 {
-  Monitor (player);
   PlayersList::Add (player);
+  Monitor (player);
 }
 
 // --------------------------------------------------------------------------------
@@ -133,14 +133,19 @@ void Checkin::SaveList (xmlTextWriter *xml_writer)
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST _players_tag);
 
-  for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
-    Player *p = (Player *) g_slist_nth_data (_player_list, i);
+    GSList *current = _player_list;
 
-    if (p)
+    while (current)
     {
-      p->Save (xml_writer,
-               _player_tag);
+      Player *p = (Player *) current->data;
+
+      if (p)
+      {
+        p->Save (xml_writer,
+                 _player_tag);
+      }
+      current = g_slist_next (current);
     }
   }
 
@@ -565,8 +570,9 @@ void Checkin::OnPlayerRemoved (Player *player)
 // --------------------------------------------------------------------------------
 void Checkin::OnAttendingChanged (Player    *player,
                                   Attribute *attr,
-                                  Checkin   *checkin)
+                                  Object    *owner)
 {
+  Checkin *checkin = dynamic_cast <Checkin *> (owner);
   guint               value = attr->GetUIntValue ();
   Player::AttributeId global_status_attr_id ("global_status");
 

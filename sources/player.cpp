@@ -125,19 +125,15 @@ gint Player::Compare (Player      *a,
   }
   else
   {
-    gint       result;
     Attribute *attr_a = a->GetAttribute (attr_id);
     Attribute *attr_b = b->GetAttribute (attr_id);
+    gint       result = Attribute::Compare (attr_a, attr_b);
 
-    result = Attribute::Compare (attr_a, attr_b);
-    if (result == 0)
+    if ((result == 0) && (attr_id->_rand_seed))
     {
-      if (attr_id->_rand_seed)
-      {
-        result = RandomCompare (a,
-                                b,
-                                attr_id->_rand_seed);
-      }
+      result = RandomCompare (a,
+                              b,
+                              attr_id->_rand_seed);
     }
 
     return result;
@@ -177,11 +173,10 @@ gint Player::MultiCompare (Player *a,
       current = g_slist_next (current);
     }
 
-    if (result == 0)
     {
-      AttributeId *attr_id = (AttributeId *) g_slist_nth_data (attr_list, 0);
+      AttributeId *attr_id = (AttributeId *) attr_list->data;
 
-      if (attr_id->_rand_seed)
+      if ((result == 0) && (attr_id->_rand_seed))
       {
         result = RandomCompare (a,
                                 b,
@@ -239,16 +234,46 @@ Attribute *Player::GetAttribute (AttributeId *attr_id)
 // --------------------------------------------------------------------------------
 void Player::SetChangeCbk (const gchar *attr_name,
                            OnChange     change_cbk,
-                           void        *data)
+                           Object      *owner)
 {
   Client *client = new Client;
 
   client->_attr_name  = g_strdup (attr_name);
   client->_change_cbk = change_cbk;
-  client->_data       = data;
+  client->_owner      = owner;
 
-  _clients = g_slist_append (_clients,
-                             client);
+  _clients = g_slist_prepend (_clients,
+                              client);
+}
+
+// --------------------------------------------------------------------------------
+void Player::RemoveCbkOwner (Object *owner)
+{
+  GSList *current;
+  GSList *remove_list = NULL;
+
+  current = _clients;
+  while (current)
+  {
+    Client *client = (Client *) current->data;
+
+    if (client->_owner == owner);
+    {
+      remove_list = g_slist_prepend (remove_list,
+                                     client);
+      current = g_slist_next (current);
+    }
+  }
+
+  current = remove_list;
+  while (current)
+  {
+    _clients = g_slist_remove (_clients,
+                               current->data);
+    current = g_slist_next (current);
+  }
+
+  g_slist_free (remove_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -265,7 +290,7 @@ void Player::NotifyChange (Attribute *attr)
     {
       client->_change_cbk (this,
                            attr,
-                           client->_data);
+                           client->_owner);
     }
     list = g_slist_next (list);
   }

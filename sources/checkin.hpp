@@ -95,7 +95,7 @@ class Checkin : public PlayersList
 
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
-                                    Checkin   *checkin);
+                                    Object    *owner);
 };
 
 #endif
