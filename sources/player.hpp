@@ -78,7 +78,9 @@ class Player : public Object
 
     void SetChangeCbk (const gchar *attr_name,
                        OnChange     change_cbk,
-                       void        *data);
+                       Object      *owner);
+
+    void RemoveCbkOwner (Object *owner);
 
   public:
     guint GetRef ();
@@ -113,7 +115,7 @@ class Player : public Object
     {
       gchar    *_attr_name;
       OnChange  _change_cbk;
-      void     *_data;
+      Object   *_owner;
     };
 
     GSList *_clients;

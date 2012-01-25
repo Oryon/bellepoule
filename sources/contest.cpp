@@ -486,7 +486,7 @@ gboolean Contest::LoadingCompleted ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::AddPlayer (Player *player,
+void Contest::AddFencer (Player *fencer,
                          guint   rank)
 {
   if (_schedule)
@@ -498,14 +498,21 @@ void Contest::AddPlayer (Player *player,
       Player::AttributeId  start_rank_attr    ("start_rank");
       Player::AttributeId  previous_rank_attr ("previous_stage_rank", checkin);
 
-      checkin->Add (player);
-      player->SetAttributeValue (&start_rank_attr,
+      checkin->Add (fencer);
+      fencer->SetAttributeValue (&start_rank_attr,
                                  rank);
-      player->SetAttributeValue (&previous_rank_attr,
+      fencer->SetAttributeValue (&previous_rank_attr,
                                  rank);
       checkin->UseInitialRank ();
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::AddReferee (Player *referee)
+{
+  _referees_list->Add           (referee);
+  _referees_list->OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------
@@ -845,7 +852,8 @@ void Contest::SetTournament (Tournament *tournament)
 // --------------------------------------------------------------------------------
 Player *Contest::Share (Player *referee)
 {
-  return _tournament->Share (referee);
+  return _tournament->Share (referee,
+                             GetWeaponCode ());
 }
 
 // --------------------------------------------------------------------------------

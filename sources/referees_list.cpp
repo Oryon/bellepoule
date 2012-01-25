@@ -124,7 +124,7 @@ void RefereesList::Monitor (Player *player)
 // --------------------------------------------------------------------------------
 void RefereesList::OnAttendingChanged (Player    *player,
                                        Attribute *attr,
-                                       Checkin   *checkin)
+                                       Object    *owner)
 {
   guint               value = attr->GetUIntValue ();
   Player::AttributeId attr_id ("availability");
@@ -144,8 +144,10 @@ void RefereesList::OnAttendingChanged (Player    *player,
 // --------------------------------------------------------------------------------
 void RefereesList::OnAvailabilityChanged (Player    *player,
                                           Attribute *attr,
-                                          Checkin   *checkin)
+                                          Object    *owner)
 {
+  Checkin *checkin = dynamic_cast <Checkin *> (owner);
+
   checkin->Update (player);
 }
 
@@ -186,6 +188,7 @@ void RefereesList::OnLoadingCompleted ()
     {
       add_list = g_slist_prepend (add_list,
                                   original);
+
       remove_list = g_slist_prepend (remove_list,
                                      referee);
     }
@@ -197,16 +200,6 @@ void RefereesList::OnLoadingCompleted ()
     current = g_slist_next (current);
   }
 
-  while (remove_list)
-  {
-    Player *referee  = (Player *) remove_list->data;
-
-    Remove (referee);
-
-    remove_list = g_slist_next (remove_list);
-  }
-  g_slist_free (remove_list);
-
   while (add_list)
   {
     Player *referee  = (Player *) add_list->data;
@@ -216,6 +209,16 @@ void RefereesList::OnLoadingCompleted ()
     add_list = g_slist_next (add_list);
   }
   g_slist_free (add_list);
+
+  while (remove_list)
+  {
+    Player *referee  = (Player *) remove_list->data;
+
+    Remove (referee);
+
+    remove_list = g_slist_next (remove_list);
+  }
+  g_slist_free (remove_list);
 
   OnListChanged ();
 }

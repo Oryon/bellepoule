@@ -633,13 +633,17 @@ void PlayersList::Add (Player *player)
 // --------------------------------------------------------------------------------
 void PlayersList::Wipe ()
 {
-  for (guint i = 0; i < g_slist_length (_player_list); i++)
   {
-    Player *player;
+    GSList *current = _player_list;
 
-    player = (Player *) g_slist_nth_data (_player_list,
-                                          i);
-    player->Release ();
+    while (current)
+    {
+      Player *p = (Player *) current->data;
+
+      p->RemoveCbkOwner (this);
+      p->Release ();
+      current = g_slist_next (current);
+    }
   }
 
   g_slist_free (_player_list);

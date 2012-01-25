@@ -186,7 +186,7 @@ void Splitting::OnLocked (Reason reason)
 
         new_player->SetAttributeValue (&exported_attr,
                                        (guint) FALSE);
-        contest->AddPlayer (new_player,
+        contest->AddFencer (new_player,
                             i+1);
       }
 

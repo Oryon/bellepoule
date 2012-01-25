@@ -51,8 +51,10 @@ class Contest : public Module
 
     gchar *GetFilename ();
 
-    void AddPlayer (Player *player,
+    void AddFencer (Player *player,
                     guint   rank);
+
+    void AddReferee (Player *referee);
 
     Player *Share (Player *referee);
 

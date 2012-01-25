@@ -47,11 +47,11 @@ class RefereesList : public Checkin
 
     static void OnAvailabilityChanged (Player    *player,
                                        Attribute *attr,
-                                       Checkin   *checkin);
+                                       Object    *owner);
 
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
-                                    Checkin   *checkin);
+                                    Object    *owner);
 
     void OnDragDataGet (GtkWidget        *widget,
                         GdkDragContext   *drag_context,

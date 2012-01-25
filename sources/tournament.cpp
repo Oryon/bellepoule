@@ -192,7 +192,18 @@ Tournament::~Tournament ()
     // fclose (file);
   }
 
-  g_slist_free (_referee_list);
+  {
+    GSList *current = _referee_list;
+
+    while (current)
+    {
+      Player *referee = (Player *) current->data;
+
+      referee->Release ();
+      current = g_slist_next (current);
+    }
+    g_slist_free (_referee_list);
+  }
 
   g_key_file_free (_config_file);
 
@@ -232,39 +243,62 @@ void Tournament::Init ()
 }
 
 // --------------------------------------------------------------------------------
-Player *Tournament::Share (Player *referee)
+Player *Tournament::Share (Player *referee,
+                           gchar   weapon)
 {
   Player *original  = NULL;
-  GSList *current   = _referee_list;
-  GSList *attr_list = NULL;
-  Player::AttributeId  name_attr_id       ("name");
-  Player::AttributeId  first_name_attr_id ("first_name");
 
-  attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
-  attr_list = g_slist_prepend (attr_list, &name_attr_id);
-
-  while (current)
   {
-    Player *current_referee = (Player *) current->data;
+    GSList *current   = _referee_list;
+    GSList *attr_list = NULL;
+    Player::AttributeId  name_attr_id       ("name");
+    Player::AttributeId  first_name_attr_id ("first_name");
 
-    if (Player::MultiCompare (referee,
-                              current_referee,
-                              attr_list) == 0)
+    attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
+    attr_list = g_slist_prepend (attr_list, &name_attr_id);
+
+    while (current)
     {
-      original = current_referee;
-      break;
+      Player *current_referee = (Player *) current->data;
+
+      if (Player::MultiCompare (referee,
+                                current_referee,
+                                attr_list) == 0)
+      {
+        original = current_referee;
+        break;
+      }
+
+      current = g_slist_next (current);
     }
 
-    current = g_slist_next (current);
-  }
+    g_slist_free (attr_list);
 
-  g_slist_free (attr_list);
+    if (original == NULL)
+    {
+      {
+        _referee_list = g_slist_prepend (_referee_list,
+                                         referee);
+        referee->Retain ();
+        referee->SetRef (_referee_ref++);
+      }
 
-  if (original == NULL)
-  {
-    _referee_list = g_slist_prepend (_referee_list,
-                                     referee);
-    referee->SetRef (_referee_ref++);
+      {
+        GSList *current = _contest_list;
+
+        while (current)
+        {
+          Contest *contest = (Contest *) current->data;
+
+          if (contest->GetWeaponCode () == weapon)
+          {
+            contest->AddReferee (referee);
+          }
+
+          current = g_slist_next (current);
+        }
+      }
+    }
   }
 
   return original;
@@ -372,8 +406,8 @@ void Tournament::Manage (Contest *contest)
     contest->AttachTo (GTK_NOTEBOOK (nb));
     contest->SetTournament (this);
 
-    _contest_list = g_slist_append (_contest_list,
-                                    contest);
+    _contest_list = g_slist_prepend (_contest_list,
+                                     contest);
     if (g_slist_length (_contest_list) == 1)
     {
       gtk_widget_show (_glade->GetWidget ("notebook"));
@@ -400,16 +434,18 @@ void Tournament::OnContestDeleted (Contest *contest)
 // --------------------------------------------------------------------------------
 Contest *Tournament::GetContest (gchar *filename)
 {
-  for (guint i = 0; i < g_slist_length (_contest_list); i++)
-  {
-    Contest *contest;
+  GSList *current = _contest_list;
 
-    contest = (Contest *) g_slist_nth_data (_contest_list,
-                                            i);
+  while (current)
+  {
+    Contest *contest = (Contest *) current->data;
+
     if (strcmp (filename, contest->GetFilename ()) == 0)
     {
       return contest;
     }
+
+    current = g_slist_next (current);
   }
 
   return NULL;
@@ -508,9 +544,8 @@ void Tournament::OnSave ()
 
   while (current)
   {
-    Contest *contest;
+    Contest *contest = (Contest *) current->data;
 
-    contest = (Contest *) current->data;
     contest->Save ();
 
     current = g_slist_next (current);
