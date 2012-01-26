@@ -243,8 +243,7 @@ void Tournament::Init ()
 }
 
 // --------------------------------------------------------------------------------
-Player *Tournament::Share (Player *referee,
-                           gchar   weapon)
+Player *Tournament::Share (Player *referee)
 {
   Player *original  = NULL;
 
@@ -291,7 +290,7 @@ Player *Tournament::Share (Player *referee,
       {
         Contest *contest = (Contest *) current->data;
 
-        if (contest->GetWeaponCode () == weapon)
+        if (contest->GetWeaponCode () == referee->GetWeaponCode ())
         {
           contest->AddReferee (referee);
         }
@@ -408,6 +407,8 @@ void Tournament::Manage (Contest *contest)
 
     _contest_list = g_slist_prepend (_contest_list,
                                      contest);
+    contest->ImportReferees (_referee_list);
+
     if (g_slist_length (_contest_list) == 1)
     {
       gtk_widget_show (_glade->GetWidget ("notebook"));

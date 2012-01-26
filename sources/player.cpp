@@ -361,6 +361,18 @@ void Player::SetRef (guint ref)
 }
 
 // --------------------------------------------------------------------------------
+gchar Player::GetWeaponCode ()
+{
+  return _weapon;
+}
+
+// --------------------------------------------------------------------------------
+void Player::SetWeaponCode (gchar weapon)
+{
+  _weapon = weapon;
+}
+
+// --------------------------------------------------------------------------------
 void Player::Save (xmlTextWriter *xml_writer,
                    const gchar   *player_tag)
 {

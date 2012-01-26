@@ -516,6 +516,49 @@ void Contest::AddReferee (Player *referee)
 }
 
 // --------------------------------------------------------------------------------
+void Contest::ImportReferees (GSList *imported_list)
+{
+  GSList *attr_list = NULL;
+  Player::AttributeId  name_attr_id       ("name");
+  Player::AttributeId  first_name_attr_id ("first_name");
+
+  attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
+  attr_list = g_slist_prepend (attr_list, &name_attr_id);
+
+  while (imported_list)
+  {
+    Player *imported = (Player *) imported_list->data;
+
+    if (imported->GetWeaponCode () == GetWeaponCode ())
+    {
+      GSList *current  = _referees_list->GetList ();
+
+      while (current)
+      {
+        Player *referee = (Player *) current->data;
+
+        if (Player::MultiCompare (imported,
+                                  referee,
+                                  attr_list) == 0)
+        {
+          break;
+        }
+        current = g_slist_next (current);
+      }
+
+      if (current == NULL)
+      {
+        AddReferee (imported);
+      }
+    }
+
+    imported_list = g_slist_next (imported_list);
+  }
+
+  g_slist_free (attr_list);
+}
+
+// --------------------------------------------------------------------------------
 Contest *Contest::Create ()
 {
   Contest *contest = new Contest ();
@@ -852,8 +895,8 @@ void Contest::SetTournament (Tournament *tournament)
 // --------------------------------------------------------------------------------
 Player *Contest::Share (Player *referee)
 {
-  return _tournament->Share (referee,
-                             GetWeaponCode ());
+  referee->SetWeaponCode (GetWeaponCode ());
+  return _tournament->Share (referee);
 }
 
 // --------------------------------------------------------------------------------

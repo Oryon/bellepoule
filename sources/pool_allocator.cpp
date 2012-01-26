@@ -259,6 +259,14 @@ gboolean PoolAllocator::OnDragMotion (GtkWidget      *widget,
     vvalue     = gtk_adjustment_get_value (adjustment);
   }
 
+  if (Locked ())
+  {
+    gdk_drag_status  (drag_context,
+                      (GdkDragAction) 0,
+                      time);
+    return FALSE;
+  }
+
   if (drag_context->targets)
   {
     GdkAtom  target_type;
@@ -315,8 +323,6 @@ gboolean PoolAllocator::OnDragMotion (GtkWidget      *widget,
   gdk_drag_status  (drag_context,
                     (GdkDragAction) 0,
                     time);
-
-
   return FALSE;
 }
 

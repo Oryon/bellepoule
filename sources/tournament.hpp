@@ -64,8 +64,7 @@ class Tournament : public Module
 
     void OpenContest (const gchar *uri);
 
-    Player *Share (Player *referee,
-                   gchar   weapon);
+    Player *Share (Player *referee);
 
   public:
     const gchar *GetCompetitionData (guint  competition_id,

@@ -86,6 +86,9 @@ class Player : public Object
     guint GetRef ();
     void  SetRef (guint ref);
 
+    gchar GetWeaponCode ();
+    void  SetWeaponCode (gchar weapon);
+
     gchar *GetName ();
 
   public:
@@ -124,6 +127,7 @@ class Player : public Object
     static GSList *_attributes_model;
 
     guint      _ref;
+    gchar      _weapon;
     PlayerType _player_type;
 
     ~Player ();

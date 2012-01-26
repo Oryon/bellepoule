@@ -56,6 +56,8 @@ class Contest : public Module
 
     void AddReferee (Player *referee);
 
+    void ImportReferees (GSList *imported_list);
+
     Player *Share (Player *referee);
 
     void SetTournament (Tournament *tournament);

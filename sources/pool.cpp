@@ -446,15 +446,20 @@ void Pool::Draw (GooCanvas *on_canvas,
                            "fill-color", "Grey",
                            "font", "Sans bold 30.0px",
                            NULL);
-      goo_canvas_text_new (referee_group,
-                           gettext ("Referee"),
-                           5.0,
-                           cell_h/2.0,
-                           -1,
-                           GTK_ANCHOR_W,
-                           "fill-color", "Black",
-                           "font", "Sans bold 25.0px",
-                           NULL);
+      if (_referee_list)
+      {
+        Player *referee = (Player *) _referee_list->data;
+
+        goo_canvas_text_new (referee_group,
+                             referee->GetName (),
+                             5.0,
+                             cell_h/2.0,
+                             -1,
+                             GTK_ANCHOR_W,
+                             "fill-color", "Black",
+                             "font", "Sans bold 25.0px",
+                             NULL);
+      }
 
       Canvas::Align (referee_group,
                      NULL,
