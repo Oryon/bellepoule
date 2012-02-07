@@ -213,7 +213,7 @@ void PoolSupervisor::OnUnPlugged ()
   {
     Pool *pool = _pool_allocator->GetPool (i);
 
-    pool->DeleteMatches ();
+    pool->DeleteMatchs ();
   }
 }
 

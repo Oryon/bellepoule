@@ -210,6 +210,7 @@ void CheckinSupervisor::UpdateChecksum ()
   }
 
   g_slist_free (_checksum_list);
+  _checksum_list = NULL;
 
   {
     Player::AttributeId  attr_id ("attending");
@@ -264,13 +265,6 @@ void CheckinSupervisor::UpdateChecksum ()
 
     g_checksum_free (checksum);
   }
-}
-
-// --------------------------------------------------------------------------------
-void CheckinSupervisor::ClearChecksum ()
-{
-  g_slist_free (_checksum_list);
-  _checksum_list = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -414,8 +408,6 @@ void CheckinSupervisor::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
-
-  ClearChecksum ();
 }
 
 // --------------------------------------------------------------------------------

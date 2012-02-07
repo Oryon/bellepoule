@@ -610,15 +610,17 @@ GtkTreeRowReference *PlayersList::GetPlayerRowRef (GtkTreeIter *iter)
 // --------------------------------------------------------------------------------
 void PlayersList::Add (Player *player)
 {
-  GtkTreeIter iter;
-
   player->Retain ();
 
-  gtk_list_store_append (_store, &iter);
+  {
+    GtkTreeIter iter;
 
-  player->SetData (this, "tree_row_ref",
-                   GetPlayerRowRef (&iter),
-                   (GDestroyNotify) gtk_tree_row_reference_free);
+    gtk_list_store_append (_store, &iter);
+
+    player->SetData (this, "tree_row_ref",
+                     GetPlayerRowRef (&iter),
+                     (GDestroyNotify) gtk_tree_row_reference_free);
+  }
 
   _player_list = g_slist_append (_player_list,
                                  player);

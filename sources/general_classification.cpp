@@ -196,7 +196,7 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
     GtkWidget *chooser;
 
     chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a target file..."),
-                                                       GTK_WINDOW (_glade->GetRootWidget ()),
+                                                       NULL,
                                                        GTK_FILE_CHOOSER_ACTION_SAVE,
                                                        GTK_STOCK_CANCEL,
                                                        GTK_RESPONSE_CANCEL,

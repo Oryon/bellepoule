@@ -39,11 +39,11 @@ class RefereesList : public Checkin
 
     void ImportFFF (gchar *file);
 
-    void ImportCSV (gchar *file);
-
     void Monitor (Player *player);
 
     void OnLoadingCompleted ();
+
+    void OnAddPlayerFromForm (Player *player);
 
     static void OnAvailabilityChanged (Player    *player,
                                        Attribute *attr,
@@ -52,6 +52,10 @@ class RefereesList : public Checkin
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Object    *owner);
+
+    static void OnParticipationRateChanged (Player    *player,
+                                            Attribute *attr,
+                                            Object    *owner);
 
     void OnDragDataGet (GtkWidget        *widget,
                         GdkDragContext   *drag_context,

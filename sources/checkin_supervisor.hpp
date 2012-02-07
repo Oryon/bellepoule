@@ -58,8 +58,6 @@ class CheckinSupervisor : public virtual Checkin, public Stage
 
     void UpdateChecksum ();
 
-    void ClearChecksum ();
-
     GSList *GetCurrentClassification ();
 
     void Load (xmlNode *xml_node);

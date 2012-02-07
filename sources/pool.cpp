@@ -70,7 +70,7 @@ Pool::~Pool ()
 
   g_slist_free (_sorted_fencer_list);
 
-  DeleteMatches ();
+  DeleteMatchs ();
 
   Object::TryToRelease (_score_collector);
 
@@ -268,7 +268,7 @@ void Pool::RemoveReferee (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Pool::CreateMatches (Object *rank_owner)
+void Pool::CreateMatchs (Object *rank_owner)
 {
   SortPlayers ();
 
@@ -286,12 +286,12 @@ void Pool::CreateMatches (Object *rank_owner)
 
     {
       guint                       nb_players = GetNbPlayers ();
-      guint                       nb_matches = (nb_players*nb_players - nb_players) / 2;
+      guint                       nb_matchs  = (nb_players*nb_players - nb_players) / 2;
       PoolMatchOrder::PlayerPair *pair       = _match_order->GetPlayerPair (nb_players);
 
       if (pair)
       {
-        for (guint i = 0; i < nb_matches; i++)
+        for (guint i = 0; i < nb_matchs; i++)
         {
           Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._a-1);
           Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._b-1);
@@ -885,7 +885,7 @@ void Pool::Draw (GooCanvas *on_canvas,
       }
     }
 
-    // Matches
+    // Matchs
     if (print_for_referees)
     {
       GooCanvasItem *match_main_table;
@@ -1928,7 +1928,7 @@ void Pool::SortPlayers ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool::DeleteMatches ()
+void Pool::DeleteMatchs ()
 {
   GSList *current = _match_list;
 

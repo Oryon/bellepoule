@@ -60,8 +60,6 @@ class Contest : public Module
 
     Player *Share (Player *referee);
 
-    void SetTournament (Tournament *tournament);
-
     Player *GetRefereeFromRef (guint ref);
 
     gboolean LoadingCompleted ();
@@ -119,7 +117,7 @@ class Contest : public Module
 
     static GList *_color_list;
 
-    gchar        *_owner;
+    gchar        *_level;
     gchar        *_id;
     gchar        *_name;
     gchar        *_organizer;
@@ -172,6 +170,10 @@ class Contest : public Module
     void MakeDirty ();
 
     static gboolean OnSaveTimeout (Contest *contest);
+
+    void OnPlugged ();
+
+    void ChangeNbMatchs (gint delta);
 };
 
 #endif

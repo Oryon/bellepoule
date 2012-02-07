@@ -90,6 +90,7 @@ class Player : public Object
     void  SetWeaponCode (gchar weapon);
 
     gchar *GetName ();
+    void Dump ();
 
   public:
     void Save (xmlTextWriter *xml_writer,

@@ -67,6 +67,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _main_table        = NULL;
   _swapping_criteria = NULL;
   _loaded            = FALSE;
+  _nb_matchs         = 0;
 
   _max_score = new Data ("ScoreMax",
                          5);
@@ -352,7 +353,7 @@ gboolean PoolAllocator::OnDragDrop (GtkWidget      *widget,
   if (_floating_player && _target_pool)
   {
     {
-      Player::AttributeId  attr_id ("availability");
+      Player::AttributeId attr_id ("availability");
 
       _floating_player->SetAttributeValue (&attr_id,
                                            "Busy");
@@ -669,6 +670,8 @@ void PoolAllocator::Load (xmlNode *xml_node)
             CreatePools ();
             DeletePools ();
           }
+
+          _nb_matchs = GetNbMatchs ();
         }
 
         {
@@ -722,7 +725,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
-        current_pool->CreateMatches (this);
+        current_pool->CreateMatchs (this);
         current_pool->Load (n,
                             _attendees->GetShortList ());
         current_pool = NULL;
@@ -943,6 +946,7 @@ void PoolAllocator::CreatePools ()
 
     {
       Swapper *swapper;
+      guint    nb_fencer = g_slist_length (shortlist);
 
       if (_swapping_criteria && _seeding_balanced->_value)
       {
@@ -957,7 +961,7 @@ void PoolAllocator::CreatePools ()
                                shortlist);
       }
 
-      for (guint i = 0; i < g_slist_length (shortlist); i++)
+      for (guint i = 0; i < nb_fencer; i++)
       {
         Player *player;
         Pool   *pool;
@@ -1011,7 +1015,25 @@ void PoolAllocator::CreatePools ()
     }
 
     match_order->Release ();
+
+    {
+      _nb_matchs = GetNbMatchs ();
+
+      ChangeNbMatchs (_nb_matchs);
+    }
   }
+}
+
+// --------------------------------------------------------------------------------
+gint PoolAllocator::GetNbMatchs ()
+{
+  gint nb_matchs;
+
+  nb_matchs  = _selected_config->_size * (_selected_config->_size - 1) / 2;
+  nb_matchs *= _selected_config->_nb_pool - _selected_config->_nb_overloaded;
+  nb_matchs += _selected_config->_nb_overloaded * _selected_config->_size * (_selected_config->_size + 1) / 2;
+
+  return nb_matchs;
 }
 
 // --------------------------------------------------------------------------------
@@ -1244,7 +1266,7 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
       }
       else
       {
-        Player::AttributeId  attr_id ("availability");
+        Player::AttributeId attr_id ("availability");
 
         _floating_player->SetAttributeValue (&attr_id,
                                              "Busy");
@@ -1261,11 +1283,15 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
         FillPoolTable (_source_pool);
       }
     }
+
     //OnAttrListUpdated ();
     SignalStatusUpdate ();
     FixUpTablesBounds ();
 
-    _fencer_list->Update (_floating_player);
+    if (_floating_player->IsFencer ())
+    {
+      _fencer_list->Update (_floating_player);
+    }
 
     ResetCursor ();
     MakeDirty ();
@@ -1715,6 +1741,9 @@ void PoolAllocator::DeletePools ()
 
   CanvasModule::Wipe ();
   _main_table = NULL;
+
+  ChangeNbMatchs (-_nb_matchs);
+  _nb_matchs = 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -2045,7 +2074,7 @@ void PoolAllocator::OnLocked (Reason reason)
     {
       Pool *pool = (Pool *) current->data;
 
-      pool->CreateMatches (this);
+      pool->CreateMatchs (this);
       current = g_slist_next (current);
     }
   }
@@ -2061,6 +2090,11 @@ GSList *PoolAllocator::GetCurrentClassification ()
 void PoolAllocator::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnCanceled ()
+{
 }
 
 // --------------------------------------------------------------------------------

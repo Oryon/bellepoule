@@ -64,7 +64,8 @@ class Tournament : public Module
 
     void OpenContest (const gchar *uri);
 
-    Player *Share (Player *referee);
+    Player *Share (Player  *referee,
+                   Contest *from);
 
   public:
     const gchar *GetCompetitionData (guint  competition_id,
@@ -78,11 +79,14 @@ class Tournament : public Module
 
     GSList  *_contest_list;
     GSList  *_referee_list;
+    guint    _nb_matchs;
     Network *_network;
 
     void SetBackupLocation (gchar *location);
 
     void EnumerateLanguages ();
+
+    void ChangeNbMatchs (gint delta);
 
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);

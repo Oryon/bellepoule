@@ -72,7 +72,7 @@ void Checkin::CreateForm (Filter *filter)
   _form = new Form (filter,
                     this,
                     GetPlayerType (),
-                    (Form::AddPlayerCbk) &Checkin::OnAddPlayer);
+                    (Form::AddPlayerCbk) &Checkin::OnAddPlayerFromForm);
 }
 
 // --------------------------------------------------------------------------------
@@ -526,7 +526,7 @@ void Checkin::ImportCSV (gchar *file)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::OnAddPlayer (Player *player)
+void Checkin::OnAddPlayerFromForm (Player *player)
 {
   Add (player);
   OnListChanged ();

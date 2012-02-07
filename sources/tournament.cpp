@@ -37,6 +37,7 @@ Tournament::Tournament (gchar *filename)
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
+  _nb_matchs    = 0;
 
   curl_global_init (CURL_GLOBAL_ALL);
 
@@ -243,7 +244,8 @@ void Tournament::Init ()
 }
 
 // --------------------------------------------------------------------------------
-Player *Tournament::Share (Player *referee)
+Player *Tournament::Share (Player  *referee,
+                           Contest *from)
 {
   Player *original  = NULL;
 
@@ -290,7 +292,8 @@ Player *Tournament::Share (Player *referee)
       {
         Contest *contest = (Contest *) current->data;
 
-        if (contest->GetWeaponCode () == referee->GetWeaponCode ())
+        if (   (contest != from)
+            && (contest->GetWeaponCode () == referee->GetWeaponCode ()))
         {
           contest->AddReferee (referee);
         }
@@ -301,6 +304,13 @@ Player *Tournament::Share (Player *referee)
   }
 
   return original;
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::ChangeNbMatchs (gint delta)
+{
+  _nb_matchs += delta;
+  g_print ("<<<<<<< %d\n", _nb_matchs);
 }
 
 // --------------------------------------------------------------------------------
@@ -402,8 +412,10 @@ void Tournament::Manage (Contest *contest)
   {
     GtkWidget *nb = _glade->GetWidget ("notebook");
 
+    Plug (contest,
+          NULL,
+          NULL);
     contest->AttachTo (GTK_NOTEBOOK (nb));
-    contest->SetTournament (this);
 
     _contest_list = g_slist_prepend (_contest_list,
                                      contest);
@@ -422,6 +434,8 @@ void Tournament::OnContestDeleted (Contest *contest)
 {
   if (_contest_list)
   {
+    contest->UnPlug ();
+
     _contest_list = g_slist_remove (_contest_list,
                                     contest);
     if (g_slist_length (_contest_list) == 0)
@@ -682,7 +696,7 @@ void Tournament::OnRecent ()
 void Tournament::OnBackupfileLocation ()
 {
   GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a backup files location..."),
-                                                                GTK_WINDOW (_glade->GetRootWidget ()),
+                                                                NULL,
                                                                 GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                                                 GTK_STOCK_CANCEL,
                                                                 GTK_RESPONSE_CANCEL,

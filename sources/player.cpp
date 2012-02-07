@@ -485,3 +485,9 @@ gchar *Player::GetName ()
 
   return attr->GetUserImage ();
 }
+
+// --------------------------------------------------------------------------------
+void Player::Dump ()
+{
+  g_print ("<< %s >>\n", GetName ());
+}

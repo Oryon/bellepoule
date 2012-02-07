@@ -62,6 +62,10 @@ class Checkin : public PlayersList
 
     void CreateForm (Filter *filter);
 
+    virtual void ImportFFF (gchar *file);
+
+    virtual void OnAddPlayerFromForm (Player *player);
+
   private:
     Form        *_form;
     guint        _attendings;
@@ -75,11 +79,7 @@ class Checkin : public PlayersList
 
     virtual void OnPlayerLoaded (Player *player) {};
 
-    void ImportFFF (gchar *file);
-
     void ImportCSV (gchar *file);
-
-    void OnAddPlayer (Player *player);
 
     void RefreshAttendingDisplay ();
 

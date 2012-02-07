@@ -89,7 +89,11 @@ Module::~Module ()
   UnPlug ();
 
   Object::TryToRelease (_glade);
-  g_object_unref (_root);
+
+  if (_root)
+  {
+    g_object_unref (_root);
+  }
 
   if (_config_widget)
   {
@@ -316,18 +320,21 @@ void Module::Plug (Module     *module,
                    GtkWidget  *in,
                    GtkToolbar *toolbar)
 {
-  if (module && in)
+  if (module)
   {
-    gtk_container_add (GTK_CONTAINER (in),
-                       module->_root);
+    if (in)
+    {
+      gtk_container_add (GTK_CONTAINER (in),
+                         module->_root);
+    }
 
     module->_toolbar = toolbar;
-
-    module->OnPlugged ();
 
     _plugged_list = g_slist_append (_plugged_list,
                                     module);
     module->_owner = this;
+
+    module->OnPlugged ();
   }
 }
 
@@ -357,6 +364,15 @@ void Module::UnPlug ()
     }
 
     OnUnPlugged ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Module::ChangeNbMatchs (gint delta)
+{
+  if (_owner)
+  {
+    _owner->ChangeNbMatchs (delta);
   }
 }
 
