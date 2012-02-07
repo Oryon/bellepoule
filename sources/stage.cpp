@@ -178,6 +178,12 @@ void Stage::Lock (Reason reason)
 }
 
 // --------------------------------------------------------------------------------
+void Stage::Cancel ()
+{
+  OnCanceled ();
+}
+
+// --------------------------------------------------------------------------------
 void Stage::UnLock ()
 {
   FreeResult ();
@@ -373,7 +379,7 @@ void Stage::OnQualifiedRatioValueChanged (GtkSpinButton *spinbutton)
   {
     GSList *shortlist = attendees->GetShortList ();
 
-    if (g_slist_length (shortlist))
+    if (shortlist)
     {
       Module    *module = dynamic_cast <Module *> (this);
       GtkWidget *w      = module->GetWidget ("nb_qualified_spinbutton");
@@ -403,7 +409,7 @@ void Stage::OnNbQualifiedValueChanged (GtkSpinButton *spinbutton)
   {
     GSList *shortlist = attendees->GetShortList ();
 
-    if (g_slist_length (shortlist))
+    if (shortlist)
     {
       Module    *module = dynamic_cast <Module *> (this);
       GtkWidget *w      = module->GetWidget ("qualified_ratio_spinbutton");
@@ -754,16 +760,17 @@ Stage::StageClass *Stage::GetClass (const gchar *name)
 {
   if (name)
   {
-    for (guint i = 0; i < g_slist_length (_stage_base); i++)
-    {
-      StageClass *stage_class;
+    GSList *current = _stage_base;
 
-      stage_class = (StageClass *) g_slist_nth_data (_stage_base,
-                                                     i);
+    while (current)
+    {
+      StageClass *stage_class = (StageClass *) current->data;
+
       if (strcmp (name, stage_class->_xml_name) == 0)
       {
         return stage_class;
       }
+      current = g_slist_next (current);
     }
   }
   return NULL;
@@ -1152,13 +1159,14 @@ void Stage::Dump ()
 {
   if (_result)
   {
-    for (guint i = 0; i < g_slist_length (_result); i++)
-    {
-      Player *player;
+    GSList *current = _result;
 
-      player = (Player *) g_slist_nth_data (_result, i);
+    for (guint i = 0; current != NULL; i++)
+    {
+      Player *player = (Player *) current->data;
 
       g_print ("%d >>> %s\n", i, player->GetName ());
+      current = g_slist_next (current);
     }
   }
 }

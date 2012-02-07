@@ -54,6 +54,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
   private:
     void OnLocked (Reason reason);
     void OnUnLocked ();
+    void OnCanceled ();
     void Wipe ();
     GSList *GetCurrentClassification ();
     void LoadConfiguration (xmlNode *xml_node);
@@ -123,6 +124,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     SensitivityTrigger  _swapping_sensitivity_trigger;
     PlayersList        *_fencer_list;
     GtkTargetList      *_dnd_target_list;
+    gint                _nb_matchs;
 
     void Setup ();
     void PopulateFencerList ();
@@ -136,6 +138,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void FixUpTablesBounds ();
     void RegisterConfig (Configuration *config);
     const gchar *GetInputProviderClient ();
+    gint GetNbMatchs ();
 
     void OnAttrListUpdated ();
 

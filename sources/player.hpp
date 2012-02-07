@@ -86,7 +86,11 @@ class Player : public Object
     guint GetRef ();
     void  SetRef (guint ref);
 
+    gchar GetWeaponCode ();
+    void  SetWeaponCode (gchar weapon);
+
     gchar *GetName ();
+    void Dump ();
 
   public:
     void Save (xmlTextWriter *xml_writer,
@@ -124,6 +128,7 @@ class Player : public Object
     static GSList *_attributes_model;
 
     guint      _ref;
+    gchar      _weapon;
     PlayerType _player_type;
 
     ~Player ();

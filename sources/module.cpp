@@ -89,7 +89,11 @@ Module::~Module ()
   UnPlug ();
 
   Object::TryToRelease (_glade);
-  g_object_unref (_root);
+
+  if (_root)
+  {
+    g_object_unref (_root);
+  }
 
   if (_config_widget)
   {
@@ -316,18 +320,21 @@ void Module::Plug (Module     *module,
                    GtkWidget  *in,
                    GtkToolbar *toolbar)
 {
-  if (module && in)
+  if (module)
   {
-    gtk_container_add (GTK_CONTAINER (in),
-                       module->_root);
+    if (in)
+    {
+      gtk_container_add (GTK_CONTAINER (in),
+                         module->_root);
+    }
 
     module->_toolbar = toolbar;
-
-    module->OnPlugged ();
 
     _plugged_list = g_slist_append (_plugged_list,
                                     module);
     module->_owner = this;
+
+    module->OnPlugged ();
   }
 }
 
@@ -357,6 +364,15 @@ void Module::UnPlug ()
     }
 
     OnUnPlugged ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Module::ChangeNbMatchs (gint delta)
+{
+  if (_owner)
+  {
+    _owner->ChangeNbMatchs (delta);
   }
 }
 
@@ -420,21 +436,20 @@ GString *Module::GetPlayerImage (Player *player)
 
   if (player)
   {
-    GSList  *selected_attr = NULL;
+    GSList *selected_attr = NULL;
 
     if (_filter)
     {
       selected_attr = _filter->GetSelectedAttrList ();
     }
 
-    for (guint a = 0; a < g_slist_length (selected_attr); a++)
+    for (guint a = 0; selected_attr != NULL; a++)
     {
       AttributeDesc       *attr_desc;
       Attribute           *attr;
       Player::AttributeId *attr_id;
 
-      attr_desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                      a);
+      attr_desc = (AttributeDesc *) selected_attr->data;
       if (attr_desc->_scope == AttributeDesc::LOCAL)
       {
         attr_id = new Player::AttributeId (attr_desc->_code_name,
@@ -460,6 +475,8 @@ GString *Module::GetPlayerImage (Player *player)
                                  attr_image);
         g_free (attr_image);
       }
+
+      selected_attr = g_slist_next (selected_attr);
     }
 
     image = g_string_append (image,

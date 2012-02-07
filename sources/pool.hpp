@@ -48,7 +48,7 @@ class Pool : public CanvasModule
 
     void  AddFencer     (Player *player, Object *rank_owner);
     void  AddReferee    (Player *player);
-    void  CreateMatches (Object *rank_owner);
+    void  CreateMatchs  (Object *rank_owner);
     void  RemoveFencer  (Player *player);
     void  RemoveReferee (Player *player);
     guint GetNbPlayers  ();
@@ -56,7 +56,7 @@ class Pool : public CanvasModule
     void  DropPlayer    (Player *player, gchar *reason);
     void  RestorePlayer (Player *player);
     void  CleanScores   ();
-    void  DeleteMatches ();
+    void  DeleteMatchs  ();
     void  Lock          ();
     void  UnLock        ();
     void  SetDataOwner  (Object *single_owner,

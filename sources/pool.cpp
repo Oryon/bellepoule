@@ -70,7 +70,7 @@ Pool::~Pool ()
 
   g_slist_free (_sorted_fencer_list);
 
-  DeleteMatches ();
+  DeleteMatchs ();
 
   Object::TryToRelease (_score_collector);
 
@@ -109,14 +109,16 @@ void Pool::Wipe ()
 // --------------------------------------------------------------------------------
 void Pool::Stuff ()
 {
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
+  GSList *current = _match_list;
+
+  while (current)
   {
     Match  *match;
     Player *A;
     Player *B;
     gint    score;
 
-    match = (Match *) g_slist_nth_data (_match_list, i);
+    match = (Match *) current->data;
     A     = match->GetPlayerA ();
     B     = match->GetPlayerB ();
     score = g_random_int_range (0,
@@ -132,6 +134,7 @@ void Pool::Stuff ()
       match->SetScore (A, score, FALSE);
       match->SetScore (B, _max_score->_value, TRUE);
     }
+    current = g_slist_next (current);
   }
 
   RefreshScoreData ();
@@ -265,7 +268,7 @@ void Pool::RemoveReferee (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Pool::CreateMatches (Object *rank_owner)
+void Pool::CreateMatchs (Object *rank_owner)
 {
   SortPlayers ();
 
@@ -283,12 +286,12 @@ void Pool::CreateMatches (Object *rank_owner)
 
     {
       guint                       nb_players = GetNbPlayers ();
-      guint                       nb_matches = (nb_players*nb_players - nb_players) / 2;
+      guint                       nb_matchs  = (nb_players*nb_players - nb_players) / 2;
       PoolMatchOrder::PlayerPair *pair       = _match_order->GetPlayerPair (nb_players);
 
       if (pair)
       {
-        for (guint i = 0; i < nb_matches; i++)
+        for (guint i = 0; i < nb_matchs; i++)
         {
           Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._a-1);
           Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._b-1);
@@ -382,12 +385,14 @@ void Pool::Draw (GooCanvas *on_canvas,
 {
   if (_score_collector)
   {
-    for (guint i = 0; i < g_slist_length (_match_list); i++)
-    {
-      Match *match;
+    GSList *current = _match_list;
 
-      match = (Match *) g_slist_nth_data (_match_list, i);
+    while (current)
+    {
+      Match *match = (Match *) current->data;
+
       _score_collector->RemoveCollectingPoints (match);
+      current = g_slist_next (current);
     }
 
     _score_collector->Release ();
@@ -441,15 +446,20 @@ void Pool::Draw (GooCanvas *on_canvas,
                            "fill-color", "Grey",
                            "font", "Sans bold 30.0px",
                            NULL);
-      goo_canvas_text_new (referee_group,
-                           gettext ("Referee"),
-                           5.0,
-                           cell_h/2.0,
-                           -1,
-                           GTK_ANCHOR_W,
-                           "fill-color", "Black",
-                           "font", "Sans bold 25.0px",
-                           NULL);
+      if (_referee_list)
+      {
+        Player *referee = (Player *) _referee_list->data;
+
+        goo_canvas_text_new (referee_group,
+                             referee->GetName (),
+                             5.0,
+                             cell_h/2.0,
+                             -1,
+                             GTK_ANCHOR_W,
+                             "fill-color", "Black",
+                             "font", "Sans bold 25.0px",
+                             NULL);
+      }
 
       Canvas::Align (referee_group,
                      NULL,
@@ -875,7 +885,7 @@ void Pool::Draw (GooCanvas *on_canvas,
       }
     }
 
-    // Matches
+    // Matchs
     if (print_for_referees)
     {
       GooCanvasItem *match_main_table;
@@ -1586,19 +1596,18 @@ void Pool::RefreshDashBoard ()
 Match *Pool::GetMatch (Player *A,
                        Player *B)
 {
-  if (_match_list)
-  {
-    for (guint i = 0; i < g_slist_length (_match_list); i++)
-    {
-      Match *match;
+  GSList *current = _match_list;
 
-      match = (Match *) g_slist_nth_data (_match_list, i);
-      if (   match->HasPlayer (A)
-             && match->HasPlayer (B))
-      {
-        return match;
-      }
+  while (current)
+  {
+    Match *match = (Match *) current->data;
+
+    if (   match->HasPlayer (A)
+           && match->HasPlayer (B))
+    {
+      return match;
     }
+    current = g_slist_next (current);
   }
 
   return NULL;
@@ -1876,12 +1885,14 @@ void Pool::Load (xmlNode *xml_node,
 // --------------------------------------------------------------------------------
 void Pool::CleanScores ()
 {
-  for (guint i = 0; i < g_slist_length (_match_list); i++)
-  {
-    Match *match;
+  GSList *current = _match_list;
 
-    match = (Match *) g_slist_nth_data (_match_list, i);
+  while (current)
+  {
+    Match *match = (Match *) current->data;
+
     match->CleanScore ();
+    current = g_slist_next (current);
   }
   _is_over = FALSE;
 
@@ -1917,21 +1928,20 @@ void Pool::SortPlayers ()
 }
 
 // --------------------------------------------------------------------------------
-void Pool::DeleteMatches ()
+void Pool::DeleteMatchs ()
 {
-  if (_match_list)
+  GSList *current = _match_list;
+
+  while (current)
   {
-    for (guint i = 0; i < g_slist_length (_match_list); i++)
-    {
-      Match *match;
+    Match *match = (Match *) current->data;
 
-      match = (Match *) g_slist_nth_data (_match_list, i);
-      Object::TryToRelease (match);
-    }
-
-    g_slist_free (_match_list);
-    _match_list = NULL;
+    Object::TryToRelease (match);
+    current = g_slist_next (current);
   }
+
+  g_slist_free (_match_list);
+  _match_list = NULL;
 }
 
 // --------------------------------------------------------------------------------

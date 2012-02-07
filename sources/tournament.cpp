@@ -37,6 +37,7 @@ Tournament::Tournament (gchar *filename)
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
+  _nb_matchs    = 0;
 
   curl_global_init (CURL_GLOBAL_ALL);
 
@@ -243,8 +244,8 @@ void Tournament::Init ()
 }
 
 // --------------------------------------------------------------------------------
-Player *Tournament::Share (Player *referee,
-                           gchar   weapon)
+Player *Tournament::Share (Player  *referee,
+                           Contest *from)
 {
   Player *original  = NULL;
 
@@ -273,35 +274,43 @@ Player *Tournament::Share (Player *referee,
     }
 
     g_slist_free (attr_list);
+  }
 
-    if (original == NULL)
+  if (original == NULL)
+  {
     {
-      {
-        _referee_list = g_slist_prepend (_referee_list,
-                                         referee);
-        referee->Retain ();
-        referee->SetRef (_referee_ref++);
-      }
+      _referee_list = g_slist_prepend (_referee_list,
+                                       referee);
+      referee->Retain ();
+      referee->SetRef (_referee_ref++);
+    }
 
-      {
-        GSList *current = _contest_list;
+    {
+      GSList *current = _contest_list;
 
-        while (current)
+      while (current)
+      {
+        Contest *contest = (Contest *) current->data;
+
+        if (   (contest != from)
+            && (contest->GetWeaponCode () == referee->GetWeaponCode ()))
         {
-          Contest *contest = (Contest *) current->data;
-
-          if (contest->GetWeaponCode () == weapon)
-          {
-            contest->AddReferee (referee);
-          }
-
-          current = g_slist_next (current);
+          contest->AddReferee (referee);
         }
+
+        current = g_slist_next (current);
       }
     }
   }
 
   return original;
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::ChangeNbMatchs (gint delta)
+{
+  _nb_matchs += delta;
+  g_print ("<<<<<<< %d\n", _nb_matchs);
 }
 
 // --------------------------------------------------------------------------------
@@ -403,11 +412,15 @@ void Tournament::Manage (Contest *contest)
   {
     GtkWidget *nb = _glade->GetWidget ("notebook");
 
+    Plug (contest,
+          NULL,
+          NULL);
     contest->AttachTo (GTK_NOTEBOOK (nb));
-    contest->SetTournament (this);
 
     _contest_list = g_slist_prepend (_contest_list,
                                      contest);
+    contest->ImportReferees (_referee_list);
+
     if (g_slist_length (_contest_list) == 1)
     {
       gtk_widget_show (_glade->GetWidget ("notebook"));
@@ -421,6 +434,8 @@ void Tournament::OnContestDeleted (Contest *contest)
 {
   if (_contest_list)
   {
+    contest->UnPlug ();
+
     _contest_list = g_slist_remove (_contest_list,
                                     contest);
     if (g_slist_length (_contest_list) == 0)
@@ -681,7 +696,7 @@ void Tournament::OnRecent ()
 void Tournament::OnBackupfileLocation ()
 {
   GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a backup files location..."),
-                                                                GTK_WINDOW (_glade->GetRootWidget ()),
+                                                                NULL,
                                                                 GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                                                 GTK_STOCK_CANCEL,
                                                                 GTK_RESPONSE_CANCEL,

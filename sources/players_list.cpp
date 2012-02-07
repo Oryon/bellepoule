@@ -121,9 +121,9 @@ void PlayersList::Update (Player *player)
   {
     GSList *attr_list = _filter->GetAttrList ();
 
-    for (guint i = 0; i < g_slist_length (attr_list); i++)
+    for (guint i = 0; attr_list != NULL; i++)
     {
-      AttributeDesc       *desc    = (AttributeDesc *) g_slist_nth_data (attr_list, i);
+      AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
       Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
       Attribute           *attr    = player->GetAttribute (attr_id);
 
@@ -138,6 +138,7 @@ void PlayersList::Update (Player *player)
         gtk_list_store_set (_store, &iter,
                             i, 0, -1);
       }
+      attr_list = g_slist_next (attr_list);
     }
 
     gtk_list_store_set (_store, &iter,
@@ -156,18 +157,18 @@ GSList *PlayersList::GetList ()
 GSList *PlayersList::CreateCustomList (CustomFilter filter)
 {
   GSList *custom_list = NULL;
+  GSList *current     = _player_list;
 
-  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  while (current)
   {
-    Player *p;
-
-    p = (Player *) g_slist_nth_data (_player_list, i);
+    Player *p = (Player *) current->data;
 
     if (filter (p) == TRUE)
     {
       custom_list = g_slist_append (custom_list,
                                     p);
     }
+    current = g_slist_next (current);
   }
 
   return custom_list;
@@ -346,19 +347,14 @@ void PlayersList::OnAttrListUpdated ()
   {
     GSList *selected_attr = _filter->GetSelectedAttrList ();
 
-    if (selected_attr)
+    while (selected_attr)
     {
-      for (guint i = 0; i < g_slist_length (selected_attr); i++)
-      {
-        AttributeDesc *desc;
+      AttributeDesc *desc = (AttributeDesc *) selected_attr->data;
 
-        desc = (AttributeDesc *) g_slist_nth_data (selected_attr,
-                                                   i);
-
-        SetColumn (_filter->GetAttributeId (desc->_code_name),
-                   desc,
-                   -1);
-      }
+      SetColumn (_filter->GetAttributeId (desc->_code_name),
+                 desc,
+                 -1);
+      selected_attr = g_slist_next (selected_attr);
     }
   }
 }
@@ -614,15 +610,17 @@ GtkTreeRowReference *PlayersList::GetPlayerRowRef (GtkTreeIter *iter)
 // --------------------------------------------------------------------------------
 void PlayersList::Add (Player *player)
 {
-  GtkTreeIter iter;
-
   player->Retain ();
 
-  gtk_list_store_append (_store, &iter);
+  {
+    GtkTreeIter iter;
 
-  player->SetData (this, "tree_row_ref",
-                   GetPlayerRowRef (&iter),
-                   (GDestroyNotify) gtk_tree_row_reference_free);
+    gtk_list_store_append (_store, &iter);
+
+    player->SetData (this, "tree_row_ref",
+                     GetPlayerRowRef (&iter),
+                     (GDestroyNotify) gtk_tree_row_reference_free);
+  }
 
   _player_list = g_slist_append (_player_list,
                                  player);
@@ -760,17 +758,16 @@ void PlayersList::OnListChanged ()
 // --------------------------------------------------------------------------------
 Player *PlayersList::GetPlayer (const gchar *path_string)
 {
-  GtkTreePath *path;
-  Player      *result = NULL;
+  Player      *result  = NULL;
+  GtkTreePath *path    = gtk_tree_path_new_from_string (path_string);
+  GSList      *current = _player_list;
 
-  path = gtk_tree_path_new_from_string (path_string);
-  for (guint i = 0; i < g_slist_length (_player_list); i++)
+  while (current)
   {
     GtkTreeRowReference *current_ref;
     GtkTreePath         *current_path;
-    Player              *p;
+    Player              *p = (Player *) current->data;
 
-    p = (Player *) g_slist_nth_data (_player_list, i);
     current_ref = (GtkTreeRowReference *) p->GetPtrData (this, "tree_row_ref");
     current_path = gtk_tree_row_reference_get_path (current_ref);
     if (gtk_tree_path_compare (path,
@@ -782,6 +779,7 @@ Player *PlayersList::GetPlayer (const gchar *path_string)
     }
 
     gtk_tree_path_free (current_path);
+    current = g_slist_next (current);
   }
   gtk_tree_path_free (path);
 

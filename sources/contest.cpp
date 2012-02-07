@@ -110,7 +110,7 @@ GList *Contest::_color_list = NULL;
 // --------------------------------------------------------------------------------
 Contest::Time::Time (const gchar *name)
 {
-  _name = g_strdup (name);
+  _name = g_strdup (name);            https://rally1.rallydev.com/slm/rally.sp?#/3064499742d/detail/defect/5201067858
   _hour   = 12;
   _minute = 0;
 }
@@ -276,7 +276,7 @@ Contest::Contest (const gchar *filename)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Championnat");
         if (attr)
         {
-          _owner = g_strdup (attr);
+          _level = g_strdup (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
@@ -449,7 +449,7 @@ Contest::~Contest ()
     _tournament->OnContestDeleted (this);
   }
 
-  g_free (_owner);
+  g_free (_level);
   g_free (_id);
   g_free (_name);
   g_free (_filename);
@@ -509,10 +509,62 @@ void Contest::AddFencer (Player *fencer,
 }
 
 // --------------------------------------------------------------------------------
+void Contest::ChangeNbMatchs (gint delta)
+{
+  if (_loading_completed)
+  {
+    Module::ChangeNbMatchs (delta);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Contest::AddReferee (Player *referee)
 {
   _referees_list->Add           (referee);
   _referees_list->OnListChanged ();
+}
+
+// --------------------------------------------------------------------------------
+void Contest::ImportReferees (GSList *imported_list)
+{
+  GSList *attr_list = NULL;
+  Player::AttributeId  name_attr_id       ("name");
+  Player::AttributeId  first_name_attr_id ("first_name");
+
+  attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
+  attr_list = g_slist_prepend (attr_list, &name_attr_id);
+
+  while (imported_list)
+  {
+    Player *imported = (Player *) imported_list->data;
+
+    if (imported->GetWeaponCode () == GetWeaponCode ())
+    {
+      GSList *current  = _referees_list->GetList ();
+
+      while (current)
+      {
+        Player *referee = (Player *) current->data;
+
+        if (Player::MultiCompare (imported,
+                                  referee,
+                                  attr_list) == 0)
+        {
+          break;
+        }
+        current = g_slist_next (current);
+      }
+
+      if (current == NULL)
+      {
+        AddReferee (imported);
+      }
+    }
+
+    imported_list = g_slist_next (imported_list);
+  }
+
+  g_slist_free (attr_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -567,9 +619,9 @@ Contest *Contest::Duplicate ()
   contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;
 
-  if (_owner)
+  if (_level)
   {
-    contest->_owner = g_strdup (_owner);
+    contest->_level = g_strdup (_level);
   }
   if (_id)
   {
@@ -616,7 +668,7 @@ void Contest::InitInstance ()
 
   _notebook   = NULL;
 
-  _owner      = NULL;
+  _level      = NULL;
   _id         = NULL;
   _name       = NULL;
   _filename   = NULL;
@@ -841,9 +893,9 @@ void Contest::Init ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::SetTournament (Tournament *tournament)
+void Contest::OnPlugged ()
 {
-  _tournament = tournament;
+  _tournament = dynamic_cast <Tournament *> (_owner);
 
   _schedule->OnLoadingCompleted      ();
   _referees_list->OnLoadingCompleted ();
@@ -852,8 +904,9 @@ void Contest::SetTournament (Tournament *tournament)
 // --------------------------------------------------------------------------------
 Player *Contest::Share (Player *referee)
 {
+  referee->SetWeaponCode (GetWeaponCode ());
   return _tournament->Share (referee,
-                             GetWeaponCode ());
+                             this);
 }
 
 // --------------------------------------------------------------------------------
@@ -1168,11 +1221,11 @@ void Contest::Save (gchar *filename)
       {
         _color->Save (xml_writer);
 
-        if (_owner)
+        if (_level)
         {
           xmlTextWriterWriteAttribute (xml_writer,
                                        BAD_CAST "Championnat",
-                                       BAD_CAST _owner);
+                                       BAD_CAST _level);
         }
 
         if (_id)
@@ -1251,7 +1304,7 @@ gchar *Contest::GetSaveFileName (gchar       *title,
   char      *filename = NULL;
 
   chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
-                                                     GTK_WINDOW (_glade->GetRootWidget ()),
+                                                     NULL,
                                                      GTK_FILE_CHOOSER_ACTION_SAVE,
                                                      GTK_STOCK_CANCEL,
                                                      GTK_RESPONSE_CANCEL,

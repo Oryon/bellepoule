@@ -81,6 +81,7 @@ class Module : public virtual Object
 
     Filter *_filter;
     Glade  *_glade;
+    Module *_owner;
 
     static const gdouble PRINT_HEADER_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;
@@ -119,6 +120,8 @@ class Module : public virtual Object
 
     void SetDndDest (GtkWidget *widget);
 
+    virtual void ChangeNbMatchs (gint delta);
+
   private:
     virtual void OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context) {};
@@ -142,7 +145,6 @@ class Module : public virtual Object
     GtkToolbar         *_toolbar;
     SensitivityTrigger  _sensitivity_trigger;
     GSList             *_plugged_list;
-    Module             *_owner;
     GtkWidget          *_config_widget;
     Object             *_data_owner;
 
