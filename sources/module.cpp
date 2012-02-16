@@ -368,11 +368,33 @@ void Module::UnPlug ()
 }
 
 // --------------------------------------------------------------------------------
-void Module::ChangeNbMatchs (gint delta)
+void Module::RefreshMatchRate (gint    delta)
 {
   if (_owner)
   {
-    _owner->ChangeNbMatchs (delta);
+    _owner->RefreshMatchRate (delta);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Module::RefreshMatchRate (Player *player)
+{
+  if (_owner)
+  {
+    _owner->RefreshMatchRate (player);
+  }
+}
+
+// --------------------------------------------------------------------------------
+Module::State Module::GetState ()
+{
+  if (_owner)
+  {
+    return _owner->GetState ();
+  }
+  else
+  {
+    return OPERATIONAL;
   }
 }
 

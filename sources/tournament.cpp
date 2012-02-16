@@ -307,10 +307,39 @@ Player *Tournament::Share (Player  *referee,
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::ChangeNbMatchs (gint delta)
+void Tournament::RefreshMatchRate (gint delta)
 {
   _nb_matchs += delta;
-  g_print ("<<<<<<< %d\n", _nb_matchs);
+
+  {
+    GSList *current = _referee_list;
+
+    while (current)
+    {
+      Player *referee = (Player *) current->data;
+
+      RefreshMatchRate (referee);
+
+      current = g_slist_next (current);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::RefreshMatchRate (Player *player)
+{
+  Player::AttributeId attr_id ("participation_rate");
+
+  if (_nb_matchs)
+  {
+    player->SetAttributeValue (&attr_id,
+                               player->GetNbMatchs () * 100 / _nb_matchs);
+  }
+  else
+  {
+    player->SetAttributeValue (&attr_id,
+                               (guint) 0);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -634,20 +663,12 @@ void Tournament::OpenContest (const gchar *uri)
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
-  gchar *prg_name = g_get_prgname ();
-
-  if (prg_name)
+  if (_program_path)
   {
-    gchar *install_dirname = g_path_get_dirname (prg_name);
+    gchar *example_dirname = g_build_filename (_program_path, "Exemples", NULL);
 
-    if (install_dirname)
-    {
-      gchar *example_dirname = g_strdup_printf ("%s/Exemples", install_dirname);
-
-      OnOpen (example_dirname);
-      g_free (example_dirname);
-      g_free (install_dirname);
-    }
+    OnOpen (example_dirname);
+    g_free (example_dirname);
   }
 }
 

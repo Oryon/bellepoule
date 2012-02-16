@@ -241,7 +241,7 @@ void CheckinSupervisor::UpdateChecksum ()
           }
 
           // Give the player a reference
-          if (_contest->LoadingCompleted ())
+          if (GetState () == OPERATIONAL)
           {
             p->SetRef (ref);
           }

@@ -1009,9 +1009,14 @@ gboolean TableSet::FillInNode (GNode    *node,
                     && parent_data->_match->GetPlayerB ()))
       {
         GooCanvasItem *goo_item;
+        static gchar  *arrow_icon = NULL;
 
+        if (arrow_icon == NULL)
+        {
+          arrow_icon = g_build_filename (_program_path, "resources/glade/arrow.png", NULL);
+        }
         goo_item = Canvas::PutIconInTable (data->_canvas_table,
-                                           "resources/glade/arrow.png",
+                                           arrow_icon,
                                            0,
                                            3);
         Canvas::SetTableItemAttribute (goo_item, "x-align", 1.0);

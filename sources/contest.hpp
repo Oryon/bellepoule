@@ -62,7 +62,7 @@ class Contest : public Module
 
     Player *GetRefereeFromRef (guint ref);
 
-    gboolean LoadingCompleted ();
+    State GetState ();
 
     gchar *GetOrganizer ();
     gchar *GetDate ();
@@ -141,7 +141,7 @@ class Contest : public Module
     guint         _save_timeout_id;
     Checkin      *_referees_list;
     gint          _referee_pane_position;
-    gboolean      _loading_completed;
+    State         _state;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
@@ -173,7 +173,9 @@ class Contest : public Module
 
     void OnPlugged ();
 
-    void ChangeNbMatchs (gint delta);
+    void RefreshMatchRate (gint delta);
+
+    void RefreshMatchRate (Player *player);
 };
 
 #endif

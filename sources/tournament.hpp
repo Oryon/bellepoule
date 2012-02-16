@@ -86,7 +86,9 @@ class Tournament : public Module
 
     void EnumerateLanguages ();
 
-    void ChangeNbMatchs (gint delta);
+    void RefreshMatchRate (gint delta);
+
+    void RefreshMatchRate (Player *player);
 
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);

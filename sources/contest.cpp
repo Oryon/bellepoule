@@ -210,7 +210,7 @@ Contest::Contest (const gchar *filename)
 {
   InitInstance ();
 
-  _loading_completed = FALSE;
+  _state = LOADING;
 
   if (g_path_is_absolute (filename) == FALSE)
   {
@@ -438,12 +438,14 @@ Contest::Contest (const gchar *filename)
     g_source_remove (_save_timeout_id);
   }
 
-  _loading_completed = TRUE;
+  _state = LOADING;
 }
 
 // --------------------------------------------------------------------------------
 Contest::~Contest ()
 {
+  _state = LEAVING;
+
   if (_tournament)
   {
     _tournament->OnContestDeleted (this);
@@ -480,9 +482,9 @@ gchar *Contest::GetFilename ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Contest::LoadingCompleted ()
+Module::State Contest::GetState ()
 {
-  return _loading_completed;
+  return _state;
 }
 
 // --------------------------------------------------------------------------------
@@ -509,11 +511,20 @@ void Contest::AddFencer (Player *fencer,
 }
 
 // --------------------------------------------------------------------------------
-void Contest::ChangeNbMatchs (gint delta)
+void Contest::RefreshMatchRate (gint delta)
 {
-  if (_loading_completed)
+  if (_state == OPERATIONAL)
   {
-    Module::ChangeNbMatchs (delta);
+    Module::RefreshMatchRate (delta);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::RefreshMatchRate (Player *player)
+{
+  if (_state == OPERATIONAL)
+  {
+    Module::RefreshMatchRate (player);
   }
 }
 
@@ -681,7 +692,7 @@ void Contest::InitInstance ()
   _gender     = 0;
   _derived    = FALSE;
 
-  _loading_completed = TRUE;
+  _state = OPERATIONAL;
 
   _checkin_time = new Time ("checkin");
   _scratch_time = new Time ("scratch");

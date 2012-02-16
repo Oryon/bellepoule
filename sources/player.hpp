@@ -89,6 +89,10 @@ class Player : public Object
     gchar GetWeaponCode ();
     void  SetWeaponCode (gchar weapon);
 
+    void  AddMatchs    (guint nb_matchs);
+    void  RemoveMatchs (guint nb_matchs);
+    guint GetNbMatchs  ();
+
     gchar *GetName ();
     void Dump ();
 
@@ -128,6 +132,7 @@ class Player : public Object
     static GSList *_attributes_model;
 
     guint      _ref;
+    guint      _nb_matchs;
     gchar      _weapon;
     PlayerType _player_type;
 
