@@ -318,13 +318,37 @@ void TableSupervisor::SetTableSetsState ()
 }
 
 // --------------------------------------------------------------------------------
+void TableSupervisor::ShowTableSet (TableSet    *table_set,
+                                    GtkTreeIter *iter)
+{
+  gtk_tree_store_set (_table_set_treestore, iter,
+                      TABLE_SET_VISIBILITY_COLUMN, TRUE,
+                      -1);
+}
+
+// --------------------------------------------------------------------------------
+void TableSupervisor::HideTableSet (TableSet    *table_set,
+                                    GtkTreeIter *iter)
+{
+  gtk_tree_store_set (_table_set_treestore, iter,
+                      TABLE_SET_VISIBILITY_COLUMN, FALSE,
+                      -1);
+
+  if (_displayed_table_set && (_displayed_table_set == table_set))
+  {
+    _displayed_table_set->UnPlug ();
+    _displayed_table_set = NULL;
+  }
+}
+
+// --------------------------------------------------------------------------------
 gboolean TableSupervisor::ActivateTableSet (GtkTreeModel    *model,
                                             GtkTreePath     *path,
                                             GtkTreeIter     *iter,
                                             TableSupervisor *ts)
 {
   TableSet *table_set;
-  gboolean  visibility = FALSE;
+  gboolean  activate = FALSE;
 
   gtk_tree_model_get (model, iter,
                       TABLE_SET_TABLE_COLUMN, &table_set,
@@ -332,43 +356,42 @@ gboolean TableSupervisor::ActivateTableSet (GtkTreeModel    *model,
 
   if (table_set->GetFirstPlace () == 1)
   {
-    visibility = TRUE;
+    activate = TRUE;
   }
   else if (ts->_fenced_places->_value == ALL_PLACES)
   {
-    visibility = TRUE;
+    activate = TRUE;
   }
   else if (ts->_fenced_places->_value == THIRD_PLACES)
   {
     if (table_set->GetFirstPlace () <= 3)
     {
-      visibility = TRUE;
+      activate = TRUE;
     }
   }
   else if (ts->_fenced_places->_value == QUOTA)
   {
   }
 
-  gtk_tree_store_set (ts->_table_set_treestore, iter,
-                      TABLE_SET_VISIBILITY_COLUMN, visibility,
-                      -1);
-
-  if (visibility)
+  if (activate)
   {
     table_set->Activate ();
+    if (table_set->HasAttendees ())
+    {
+      ts->ShowTableSet (table_set,
+                        iter);
+    }
+    else
+    {
+      ts->HideTableSet (table_set,
+                        iter);
+    }
   }
   else
   {
     table_set->DeActivate ();
-  }
-
-  if (ts->_displayed_table_set && (visibility == FALSE))
-  {
-    if (ts->_displayed_table_set == table_set)
-    {
-      ts->_displayed_table_set->UnPlug ();
-      ts->_displayed_table_set = NULL;
-    }
+    ts->HideTableSet (table_set,
+                      iter);
   }
 
   return FALSE;
@@ -585,11 +608,7 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
     {
       place_offset = place_offset << 1;
 
-      if ((i == nb_tables-2) && (place_offset << 1) > nb_players)
-      {
-        break;
-      }
-      else if ((from_place+place_offset) < nb_players)
+      if ((from_place+place_offset) < nb_players)
       {
         FeedTableSetStore (from_place + place_offset,
                            i+1,
@@ -648,15 +667,11 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
 {
   GtkTreeIter iter;
   GtkTreeIter defeated_iter;
+  GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) table_set->GetPtrData (this, "tree_row_ref"));
 
-  {
-    GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) table_set->GetPtrData (this, "tree_row_ref"));
-
-    gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_treestore),
-                             &iter,
-                             path);
-    gtk_tree_path_free (path);
-  }
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_treestore),
+                           &iter,
+                           path);
 
   if (   (table_set->GetNbTables () >= (table->GetNumber () + 3))
       && gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_table_set_treestore),
@@ -680,15 +695,38 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
         GSList *loosers;
         GSList *withdrawals;
 
-        table->GetLoosers (&loosers,
-                           &withdrawals,
-                           NULL);
-
-        defeated_table_set->SetAttendees (loosers,
-                                          withdrawals);
+        if (table->GetLoosers (&loosers,
+                               &withdrawals,
+                               NULL) > 1)
+        {
+          defeated_table_set->SetAttendees (loosers,
+                                            withdrawals);
+          ShowTableSet (defeated_table_set,
+                        &defeated_iter);
+        }
+        else
+        {
+          defeated_table_set->SetAttendees (NULL,
+                                            withdrawals);
+          HideTableSet (defeated_table_set,
+                        &defeated_iter);
+        }
       }
     }
+    else
+    {
+      HideTableSet (defeated_table_set,
+                    &defeated_iter);
+    }
   }
+
+  OnTableSetStatusUpdated (table_set,
+                           this);
+
+  gtk_tree_view_expand_row (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                            path,
+                            TRUE);
+  gtk_tree_path_free (path);
 }
 
 // --------------------------------------------------------------------------------
@@ -983,12 +1021,12 @@ void TableSupervisor::OnTableSetTreeViewCursorChanged (GtkTreeView *treeview)
   gtk_tree_view_get_cursor (treeview,
                             &path,
                             NULL);
-  gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_treestore),
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_filter),
                            &iter,
                            path);
   gtk_tree_path_free (path);
 
-  gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
+  gtk_tree_model_get (GTK_TREE_MODEL (_table_set_filter), &iter,
                       TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
 

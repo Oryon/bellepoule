@@ -63,9 +63,9 @@ class Table : public Object
 
     void DropMatch (Match *match);
 
-    void GetLoosers (GSList **loosers,
-                     GSList **withdrawals,
-                     GSList **blackcardeds);
+    guint GetLoosers (GSList **loosers,
+                      GSList **withdrawals,
+                      GSList **blackcardeds);
 
     gboolean       _has_error;
     guint          _is_over;

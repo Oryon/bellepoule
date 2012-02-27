@@ -83,6 +83,12 @@ class TableSupervisor : public virtual Stage, public Module
 
     void SetTableSetsState ();
 
+    void ShowTableSet (TableSet    *table_set,
+                       GtkTreeIter *iter);
+
+    void HideTableSet (TableSet    *table_set,
+                       GtkTreeIter *iter);
+
     void OnAttrListUpdated ();
 
     gboolean IsOver ();

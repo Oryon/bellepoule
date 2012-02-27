@@ -233,6 +233,21 @@ void Splitting::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
+
+  {
+    GSList              *current = _attendees->GetShortList ();
+    Player::AttributeId  exported_attr ("exported");
+
+    while (current)
+    {
+      Player *player = (Player *) current->data;
+
+      player->SetAttributeValue (&exported_attr,
+                                 (guint) FALSE);
+
+      current = g_slist_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

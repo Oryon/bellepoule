@@ -46,6 +46,8 @@ class TableSet : public CanvasModule
     void SetAttendees (GSList *attendees,
                        GSList *withdrawals);
 
+    gboolean HasAttendees ();
+
     void OnFromTableComboboxChanged ();
 
     void OnStuffClicked ();
@@ -196,6 +198,8 @@ class TableSet : public CanvasModule
 
     void DeleteTree ();
 
+    void DeleteDeadNodes ();
+
     void OnAttrListUpdated ();
 
     void DrawAllConnectors ();
@@ -240,6 +244,9 @@ class TableSet : public CanvasModule
     static gboolean DeleteNode (GNode    *node,
                                 TableSet *table_set);
 
+    static gboolean DeleteDeadNode (GNode    *node,
+                                    TableSet *table_set);
+
     static void OnNewScore (ScoreCollector *score_collector,
                             CanvasModule   *client,
                             Match          *match,
@@ -252,6 +259,8 @@ class TableSet : public CanvasModule
     void AddFork (GNode *to);
 
     void RefreshTableStatus ();
+
+    void DropMatch (GNode *node);
 
     void LookForMatchToPrint (Table    *table_to_print,
                               gboolean  all_sheet);
