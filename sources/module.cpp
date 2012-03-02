@@ -368,7 +368,7 @@ void Module::UnPlug ()
 }
 
 // --------------------------------------------------------------------------------
-void Module::RefreshMatchRate (gint    delta)
+void Module::RefreshMatchRate (gint delta)
 {
   if (_owner)
   {

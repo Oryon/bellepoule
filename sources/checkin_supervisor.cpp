@@ -367,7 +367,7 @@ void CheckinSupervisor::OnLoadingCompleted ()
 }
 
 // --------------------------------------------------------------------------------
-void CheckinSupervisor::OnLocked (Reason reason)
+void CheckinSupervisor::OnLocked ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);

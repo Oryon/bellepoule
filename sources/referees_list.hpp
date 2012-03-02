@@ -41,9 +41,7 @@ class RefereesList : public Checkin
 
     void Monitor (Player *player);
 
-    void OnLoadingCompleted ();
-
-    void OnAddPlayerFromForm (Player *player);
+    void Add (Player *player);
 
     static void OnAvailabilityChanged (Player    *player,
                                        Attribute *attr,

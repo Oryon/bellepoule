@@ -59,6 +59,7 @@ class Pool : public CanvasModule
     void  RestorePlayer (Player *player);
     void  CleanScores   ();
     void  DeleteMatchs  ();
+    void  BookReferees  ();
     void  Lock          ();
     void  UnLock        ();
     void  SetDataOwner  (Object *single_owner,
@@ -183,6 +184,10 @@ class Pool : public CanvasModule
     static gboolean on_status_scrolled (GtkWidget *widget,
                                         GdkEvent  *event,
                                         gpointer   user_data);
+
+    void BookReferee (Player *referee);
+
+    void FreeReferee (Player *referee);
 
     ~Pool ();
 };

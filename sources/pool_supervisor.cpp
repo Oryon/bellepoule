@@ -301,15 +301,28 @@ gint PoolSupervisor::CompareClassification (GtkTreeModel   *model,
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor::OnLocked (Reason reason)
+void PoolSupervisor::OnLoadingCompleted ()
+{
+  if (IsPlugged () && (Locked () == FALSE))
+  {
+    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
+    {
+      Pool *pool = _pool_allocator->GetPool (p);
+
+      pool->BookReferees ();
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolSupervisor::OnLocked ()
 {
   DisableSensitiveWidgets ();
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool *pool;
+    Pool *pool = _pool_allocator->GetPool (p);
 
-    pool = _pool_allocator->GetPool (p);
     pool->Lock ();
   }
 }

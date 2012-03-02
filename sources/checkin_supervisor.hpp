@@ -37,7 +37,7 @@ class CheckinSupervisor : public virtual Checkin, public Stage
     void ConvertFromBaseToResult ();
 
   private:
-    void OnLocked (Reason reason);
+    void OnLocked ();
 
     void OnUnLocked ();
 

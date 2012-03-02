@@ -32,7 +32,7 @@ class Checkin : public PlayersList
     Checkin (const gchar *glade,
              const gchar *player_tag);
 
-    void Add (Player *player);
+    virtual void Add (Player *player);
 
     void LoadList (xmlNode *xml_node);
 
@@ -64,7 +64,7 @@ class Checkin : public PlayersList
 
     virtual void ImportFFF (gchar *file);
 
-    virtual void OnAddPlayerFromForm (Player *player);
+    void OnAddPlayerFromForm (Player *player);
 
   private:
     Form        *_form;

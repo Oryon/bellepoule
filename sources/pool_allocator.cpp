@@ -667,7 +667,10 @@ void PoolAllocator::Load (xmlNode *xml_node)
             DeletePools ();
           }
 
-          _nb_matchs = GetNbMatchs ();
+          {
+            _nb_matchs = GetNbMatchs ();
+            RefreshMatchRate (_nb_matchs);
+          }
         }
 
         {
@@ -1016,7 +1019,6 @@ void PoolAllocator::CreatePools ()
 
     {
       _nb_matchs = GetNbMatchs ();
-
       RefreshMatchRate (_nb_matchs);
     }
   }
@@ -2053,7 +2055,24 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::OnLocked (Reason reason)
+void PoolAllocator::OnLoadingCompleted ()
+{
+  if (IsPlugged () && (Locked () == FALSE))
+  {
+    GSList *current = _pools_list;
+
+    while (current)
+    {
+      Pool *pool = (Pool *) current->data;
+
+      pool->BookReferees ();
+      current = g_slist_next (current);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnLocked ()
 {
   DisableSensitiveWidgets ();
 

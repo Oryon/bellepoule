@@ -667,11 +667,15 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
 {
   GtkTreeIter iter;
   GtkTreeIter defeated_iter;
-  GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) table_set->GetPtrData (this, "tree_row_ref"));
 
-  gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_treestore),
-                           &iter,
-                           path);
+  {
+    GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) table_set->GetPtrData (this, "tree_row_ref"));
+
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_treestore),
+                             &iter,
+                             path);
+    gtk_tree_path_free (path);
+  }
 
   if (   (table_set->GetNbTables () >= (table->GetNumber () + 3))
       && gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_table_set_treestore),
@@ -703,6 +707,16 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
                                             withdrawals);
           ShowTableSet (defeated_table_set,
                         &defeated_iter);
+          {
+            GtkTreePath *path       = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) defeated_table_set->GetPtrData (this, "tree_row_ref"));
+            GtkTreePath *child_path = gtk_tree_model_filter_convert_child_path_to_path (GTK_TREE_MODEL_FILTER (_table_set_filter),
+                                                                                        path);
+
+            gtk_tree_view_expand_to_path (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                                          child_path);
+            gtk_tree_path_free (child_path);
+            gtk_tree_path_free (path);
+          }
         }
         else
         {
@@ -722,11 +736,6 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
 
   OnTableSetStatusUpdated (table_set,
                            this);
-
-  gtk_tree_view_expand_row (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
-                            path,
-                            TRUE);
-  gtk_tree_path_free (path);
 }
 
 // --------------------------------------------------------------------------------
@@ -788,7 +797,7 @@ gboolean TableSupervisor::ToggleTableSetLock (GtkTreeModel *model,
 }
 
 // --------------------------------------------------------------------------------
-void TableSupervisor::OnLocked (Reason reason)
+void TableSupervisor::OnLocked ()
 {
   DisableSensitiveWidgets ();
 

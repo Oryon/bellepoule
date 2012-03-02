@@ -48,12 +48,6 @@ class Stage : public virtual Object
       EDITABLE = 0x0001
     } Rights;
 
-    typedef enum
-    {
-      USER_ACTION,
-      LOADING
-    } Reason;
-
     struct StageClass
     {
       const gchar *_name;
@@ -101,7 +95,7 @@ class Stage : public virtual Object
 
     virtual Stage *GetInputProvider ();
 
-    void Lock (Reason reason);
+    void Lock ();
 
     void UnLock ();
 
@@ -215,7 +209,7 @@ class Stage : public virtual Object
 
     void SetResult ();
     void FreeResult ();
-    virtual void OnLocked (Reason reason) {};
+    virtual void OnLocked () {};
     virtual void OnUnLocked () {};
     virtual void OnCanceled () {};
     static StageClass *GetClass (const gchar *name);

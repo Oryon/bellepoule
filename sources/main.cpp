@@ -241,6 +241,7 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_STRING, "smartphone", "SmartPhone", gettext ("smartphone"));
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "participation_rate", "Activite", gettext ("rate"));
+    desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
     desc->_representation = AttributeDesc::GRAPHICAL;
     desc->_rights         = AttributeDesc::PRIVATE;
 

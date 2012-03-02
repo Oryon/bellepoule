@@ -159,12 +159,12 @@ void Splitting::Display ()
 }
 
 // --------------------------------------------------------------------------------
-void Splitting::OnLocked (Reason reason)
+void Splitting::OnLocked ()
 {
   DisableSensitiveWidgets ();
   SetSensitiveState (FALSE);
 
-  if (reason == USER_ACTION)
+  if (GetState () == OPERATIONAL)
   {
     Contest             *contest = _contest->Duplicate ();
     GSList              *current = _attendees->GetShortList ();

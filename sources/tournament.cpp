@@ -247,7 +247,7 @@ void Tournament::Init ()
 Player *Tournament::Share (Player  *referee,
                            Contest *from)
 {
-  Player *original  = NULL;
+  Player *original = NULL;
 
   {
     GSList *current   = _referee_list;
@@ -267,6 +267,7 @@ Player *Tournament::Share (Player  *referee,
                                 attr_list) == 0)
       {
         original = current_referee;
+        referee->SetRef (original->GetRef ());
         break;
       }
 
@@ -441,9 +442,6 @@ void Tournament::Manage (Contest *contest)
   {
     GtkWidget *nb = _glade->GetWidget ("notebook");
 
-    Plug (contest,
-          NULL,
-          NULL);
     contest->AttachTo (GTK_NOTEBOOK (nb));
 
     _contest_list = g_slist_prepend (_contest_list,
@@ -500,6 +498,9 @@ void Tournament::OnNew ()
 {
   Contest *contest = Contest::Create ();
 
+  Plug (contest,
+        NULL,
+        NULL);
   Manage (contest);
 }
 
@@ -646,8 +647,12 @@ void Tournament::OpenContest (const gchar *uri)
     }
 
     {
-      Contest *contest = new Contest (uri);
+      Contest *contest = new Contest ();
 
+      Plug (contest,
+            NULL,
+            NULL);
+      contest->Load (uri);
       Manage (contest);
     }
 

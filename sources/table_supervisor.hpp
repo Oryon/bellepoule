@@ -51,7 +51,7 @@ class TableSupervisor : public virtual Stage, public Module
     static const gchar *_xml_class_name;
 
   private:
-    void OnLocked (Reason reason);
+    void OnLocked ();
     void OnUnLocked ();
     void OnPlugged ();
     void OnUnPlugged ();

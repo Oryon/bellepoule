@@ -52,7 +52,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void OnFencerListToggled (gboolean toggled);
 
   private:
-    void OnLocked (Reason reason);
+    void OnLoadingCompleted ();
+    void OnLocked ();
     void OnUnLocked ();
     void OnCanceled ();
     void Wipe ();

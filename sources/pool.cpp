@@ -66,10 +66,12 @@ Pool::~Pool ()
 
   g_free (_name);
 
+  while (_referee_list)
+  {
+    RemoveReferee ((Player *) _referee_list->data);
+  }
+
   g_slist_free (_fencer_list);
-
-  g_slist_free (_referee_list);
-
   g_slist_free (_sorted_fencer_list);
 
   DeleteMatchs ();
@@ -216,17 +218,12 @@ void Pool::AddReferee (Player *player)
 
   if (_container->GetState () == OPERATIONAL)
   {
-    {
-      Player::AttributeId attr_id ("availability");
+    BookReferee (player);
+  }
 
-      player->SetAttributeValue (&attr_id,
-                                 "Busy");
-    }
-
-    {
-      player->AddMatchs (GetNbMatchs ());
-      _container->RefreshMatchRate (player);
-    }
+  {
+    player->AddMatchs (GetNbMatchs ());
+    _container->RefreshMatchRate (player);
   }
 }
 
@@ -276,27 +273,17 @@ void Pool::RemoveFencer (Player *player)
 // --------------------------------------------------------------------------------
 void Pool::RemoveReferee (Player *player)
 {
-  if (GetState () == OPERATIONAL)
+  if ((_locked == FALSE) && (_container->GetState () != LOADING))
   {
-    {
-      Player::AttributeId attr_id ("availability");
-
-      if (strcmp (player->GetAttribute (&attr_id)->GetStrValue (),
-                  "Busy") == 0)
-      {
-        player->SetAttributeValue (&attr_id,
-                                   "Free");
-      }
-    }
-
-    {
-      player->RemoveMatchs (GetNbMatchs ());
-      _container->RefreshMatchRate (player);
-    }
+    FreeReferee (player);
   }
 
-  if (g_slist_find (_referee_list,
-                    player))
+  {
+    player->RemoveMatchs (GetNbMatchs ());
+    _container->RefreshMatchRate (player);
+  }
+
+  if (_referee_list)
   {
     _referee_list = g_slist_remove (_referee_list,
                                     player);
@@ -1275,6 +1262,17 @@ void Pool::Lock ()
     Draw (GetCanvas (),
           FALSE);
   }
+
+  if (_container->GetState () == OPERATIONAL)
+  {
+    GSList *current = _referee_list;
+
+    while (current)
+    {
+      FreeReferee ((Player *) current->data);
+      current = g_slist_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1292,6 +1290,49 @@ void Pool::UnLock ()
     Wipe ();
     Draw (GetCanvas (),
           FALSE);
+  }
+
+  if (_container->GetState () == OPERATIONAL)
+  {
+    BookReferees ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::BookReferees ()
+{
+  GSList *current = _referee_list;
+
+  while (current)
+  {
+    BookReferee ((Player *) current->data);
+    current = g_slist_next (current);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::BookReferee (Player *referee)
+{
+  Player::AttributeId attr_id ("availability");
+
+  if (strcmp (referee->GetAttribute (&attr_id)->GetStrValue (),
+              "Free") == 0)
+  {
+    referee->SetAttributeValue (&attr_id,
+                                "Busy");
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Pool::FreeReferee (Player *referee)
+{
+  Player::AttributeId attr_id ("availability");
+  Attribute           *attr = referee->GetAttribute (&attr_id);
+
+  if (attr && strcmp (attr->GetStrValue (), "Busy") == 0)
+  {
+    referee->SetAttributeValue (&attr_id,
+                                "Free");
   }
 }
 
