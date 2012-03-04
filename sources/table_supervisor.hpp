@@ -116,6 +116,8 @@ class TableSupervisor : public virtual Stage, public Module
 
     void ApplyConfig ();
 
+    gboolean TableSetIsFenced (TableSet *table_set);
+
     void FeedTableSetStore (guint        from_place,
                             guint        nb_tables,
                             GtkTreeIter *parent);
