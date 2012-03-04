@@ -197,7 +197,124 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 Contest::Contest ()
   : Module ("contest.glade")
 {
-  InitInstance ();
+  Object::Dump ();
+
+  _save_timeout_id = 0;
+
+  _notebook   = NULL;
+
+  _level      = NULL;
+  _id         = NULL;
+  _name       = NULL;
+  _filename   = NULL;
+  _organizer  = NULL;
+  _web_site   = NULL;
+  _location   = NULL;
+  _tournament = NULL;
+  _weapon     = 0;
+  _category   = 0;
+  _gender     = 0;
+  _derived    = FALSE;
+
+  _state                 = OPERATIONAL;
+  _ref_translation_table = NULL;
+
+  _checkin_time = new Time ("checkin");
+  _scratch_time = new Time ("scratch");
+  _start_time   = new Time ("start");
+
+  _gdk_color = NULL;
+  _color     = new Data ("Couleur",
+                         (guint) 0);
+
+  {
+    _referees_list = new RefereesList (this);
+    Plug (_referees_list,
+          _glade->GetWidget ("referees_viewport"),
+          NULL);
+
+    gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
+                            0);
+    _referee_pane_position = -1;
+  }
+
+  {
+    GTimeVal  current_time;
+    GDate    *date         = g_date_new ();
+
+    g_get_current_time (&current_time);
+    g_date_set_time_val (date,
+                         &current_time);
+
+    _day   = g_date_get_day   (date);
+    _month = g_date_get_month (date);
+    _year  = g_date_get_year  (date);
+
+    g_date_free (date);
+  }
+
+  {
+    _schedule = new Schedule (this);
+
+    Plug (_schedule,
+          _glade->GetWidget ("schedule_viewport"),
+          GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("weapon_box");
+
+    _weapon_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_weapon; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_weapon_combo), gettext (weapon_image[i]));
+    }
+    gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
+    gtk_widget_show (_weapon_combo);
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("gender_box");
+
+    _gender_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_gender; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_gender_combo), gettext (gender_image[i]));
+    }
+    gtk_container_add (GTK_CONTAINER (box), _gender_combo);
+    gtk_widget_show (_gender_combo);
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("category_box");
+
+    _category_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_category; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_category_combo), gettext (category_image[i]));
+    }
+    gtk_container_add (GTK_CONTAINER (box), _category_combo);
+    gtk_widget_show (_category_combo);
+  }
+
+  // FTP repository
+  {
+    GtkListStore *model  = GTK_LIST_STORE (_glade->GetWidget ("FavoriteFTP"));
+    gchar        *path   = g_build_filename (_program_path, "resources", "glade", "escrime_info.jpg", NULL);
+    GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+    GtkTreeIter   iter;
+
+    g_free (path);
+    gtk_list_store_append (model, &iter);
+    gtk_list_store_set (model, &iter,
+                        FTP_NAME_COL,   "<b><big>Escrime Info  </big></b>",
+                        FTP_PIXBUF_COL, pixbuf,
+                        FTP_URL_COL,    "ftp://www.escrime-info.com/web",
+                        FTP_USER_COL,   "belle_poule",
+                        FTP_PASSWD_COL, "tH3MF8huHX",
+                        -1);
+    g_object_unref (pixbuf);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -655,129 +772,6 @@ void Contest::LatchPlayerList ()
     Player::AttributeId  rank_attr ("previous_stage_rank", checkin);
 
     checkin->OnListChanged ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Contest::InitInstance ()
-{
-  Object::Dump ();
-
-  _save_timeout_id = 0;
-
-  _notebook   = NULL;
-
-  _level      = NULL;
-  _id         = NULL;
-  _name       = NULL;
-  _filename   = NULL;
-  _organizer  = NULL;
-  _web_site   = NULL;
-  _location   = NULL;
-  _tournament = NULL;
-  _weapon     = 0;
-  _category   = 0;
-  _gender     = 0;
-  _derived    = FALSE;
-
-  _state                 = OPERATIONAL;
-  _ref_translation_table = NULL;
-
-  _checkin_time = new Time ("checkin");
-  _scratch_time = new Time ("scratch");
-  _start_time   = new Time ("start");
-
-  _gdk_color = NULL;
-  _color     = new Data ("Couleur",
-                         (guint) 0);
-
-  {
-    _referees_list = new RefereesList (this);
-    Plug (_referees_list,
-          _glade->GetWidget ("referees_viewport"),
-          NULL);
-
-    gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
-                            0);
-    _referee_pane_position = -1;
-  }
-
-  {
-    GTimeVal  current_time;
-    GDate    *date         = g_date_new ();
-
-    g_get_current_time (&current_time);
-    g_date_set_time_val (date,
-                         &current_time);
-
-    _day   = g_date_get_day   (date);
-    _month = g_date_get_month (date);
-    _year  = g_date_get_year  (date);
-
-    g_date_free (date);
-  }
-
-  {
-    _schedule = new Schedule (this);
-
-    Plug (_schedule,
-          _glade->GetWidget ("schedule_viewport"),
-          GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
-  }
-
-  {
-    GtkWidget *box = _glade->GetWidget ("weapon_box");
-
-    _weapon_combo = gtk_combo_box_new_text ();
-    for (guint i = 0; i < _nb_weapon; i ++)
-    {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_weapon_combo), gettext (weapon_image[i]));
-    }
-    gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
-    gtk_widget_show (_weapon_combo);
-  }
-
-  {
-    GtkWidget *box = _glade->GetWidget ("gender_box");
-
-    _gender_combo = gtk_combo_box_new_text ();
-    for (guint i = 0; i < _nb_gender; i ++)
-    {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_gender_combo), gettext (gender_image[i]));
-    }
-    gtk_container_add (GTK_CONTAINER (box), _gender_combo);
-    gtk_widget_show (_gender_combo);
-  }
-
-  {
-    GtkWidget *box = _glade->GetWidget ("category_box");
-
-    _category_combo = gtk_combo_box_new_text ();
-    for (guint i = 0; i < _nb_category; i ++)
-    {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_category_combo), gettext (category_image[i]));
-    }
-    gtk_container_add (GTK_CONTAINER (box), _category_combo);
-    gtk_widget_show (_category_combo);
-  }
-
-  // FTP repository
-  {
-    GtkListStore *model  = GTK_LIST_STORE (_glade->GetWidget ("FavoriteFTP"));
-    gchar        *path   = g_build_filename (_program_path, "resources", "glade", "escrime_info.jpg", NULL);
-    GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
-    GtkTreeIter   iter;
-
-    g_free (path);
-    gtk_list_store_append (model, &iter);
-    gtk_list_store_set (model, &iter,
-                        FTP_NAME_COL,   "<b><big>Escrime Info  </big></b>",
-                        FTP_PIXBUF_COL, pixbuf,
-                        FTP_URL_COL,    "ftp://www.escrime-info.com/web",
-                        FTP_USER_COL,   "belle_poule",
-                        FTP_PASSWD_COL, "tH3MF8huHX",
-                        -1);
-    g_object_unref (pixbuf);
   }
 }
 

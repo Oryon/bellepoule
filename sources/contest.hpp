@@ -151,7 +151,6 @@ class Contest : public Module
     GtkWidget   *_category_combo;
     GtkNotebook *_notebook;
 
-    void   InitInstance      ();
     void   ReadProperties    ();
     void   DisplayProperties ();
     gchar *GetSaveFileName   (gchar       *title,
