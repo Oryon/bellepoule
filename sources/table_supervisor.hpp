@@ -51,7 +51,7 @@ class TableSupervisor : public virtual Stage, public Module
     static const gchar *_xml_class_name;
 
   private:
-    void OnLocked (Reason reason);
+    void OnLocked ();
     void OnUnLocked ();
     void OnPlugged ();
     void OnUnPlugged ();
@@ -82,6 +82,12 @@ class TableSupervisor : public virtual Stage, public Module
     void DeleteTableSets ();
 
     void SetTableSetsState ();
+
+    void ShowTableSet (TableSet    *table_set,
+                       GtkTreeIter *iter);
+
+    void HideTableSet (TableSet    *table_set,
+                       GtkTreeIter *iter);
 
     void OnAttrListUpdated ();
 

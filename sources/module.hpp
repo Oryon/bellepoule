@@ -28,6 +28,13 @@ class Player;
 class Module : public virtual Object
 {
   public:
+    typedef enum
+    {
+      LOADING,
+      OPERATIONAL,
+      LEAVING
+    } State;
+
     guint32 _rand_seed;
 
     void Plug (Module     *module,
@@ -60,8 +67,6 @@ class Module : public virtual Object
 
     virtual void OnAttrListUpdated () {};
 
-    virtual void OnLoadingCompleted () {};
-
     gboolean IsPlugged ();
 
     Filter *GetFilter ();
@@ -69,6 +74,12 @@ class Module : public virtual Object
     void DrawContainerPage (GtkPrintOperation *operation,
                             GtkPrintContext   *context,
                             gint               page_nr);
+
+    virtual State GetState ();
+
+    virtual void RefreshMatchRate (gint delta);
+
+    virtual void RefreshMatchRate (Player *player);
 
   protected:
     typedef enum
@@ -119,8 +130,6 @@ class Module : public virtual Object
     void SetDndSource (GtkWidget *widget);
 
     void SetDndDest (GtkWidget *widget);
-
-    virtual void ChangeNbMatchs (gint delta);
 
   private:
     virtual void OnBeginPrint (GtkPrintOperation *operation,

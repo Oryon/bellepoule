@@ -106,36 +106,40 @@ void RefereesList::Monitor (Player *player)
                         this);
 
   {
-    Player::AttributeId  attending_attr_id ("attending");
-    Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
-    guint                attending = attending_attr->GetUIntValue ();
-    Player::AttributeId  availability_attr_id ("availability");
+    Player::AttributeId availability_attr_id ("availability");
 
-    if (attending == TRUE)
+    if (player->GetAttribute (&availability_attr_id) == NULL)
     {
-      player->SetAttributeValue (&availability_attr_id,
-                                 "Free");
-    }
-    else if (attending == FALSE)
-    {
-      player->SetAttributeValue (&availability_attr_id,
-                                 "Absent");
+      Player::AttributeId  attending_attr_id ("attending");
+      Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
+      guint                attending = attending_attr->GetUIntValue ();
+
+      if (attending == TRUE)
+      {
+        player->SetAttributeValue (&availability_attr_id,
+                                   "Free");
+      }
+      else if (attending == FALSE)
+      {
+        player->SetAttributeValue (&availability_attr_id,
+                                   "Absent");
+      }
     }
   }
 }
 
 // --------------------------------------------------------------------------------
-void RefereesList::OnAddPlayerFromForm (Player *player)
+void RefereesList::Add (Player *player)
 {
   Player *original = _contest->Share (player);
 
   if (original)
   {
-    Checkin::OnAddPlayerFromForm (original);
+    Checkin::Add (original);
   }
   else
   {
-    Checkin::OnAddPlayerFromForm (player);
+    Checkin::Add (player);
   }
 }
 
@@ -204,58 +208,6 @@ void RefereesList::OnDragDataGet (GtkWidget        *widget,
 void RefereesList::ImportFFF (gchar *file)
 {
   Checkin::ImportFFF (file);
-  OnLoadingCompleted ();
-}
-
-// --------------------------------------------------------------------------------
-void RefereesList::OnLoadingCompleted ()
-{
-  GSList *add_list    = NULL;
-  GSList *remove_list = NULL;
-  GSList *current     = _player_list;
-
-  while (current)
-  {
-    Player *referee  = (Player *) current->data;
-    Player *original = _contest->Share (referee);
-
-    if (original)
-    {
-      add_list = g_slist_prepend (add_list,
-                                  original);
-
-      remove_list = g_slist_prepend (remove_list,
-                                     referee);
-    }
-    else
-    {
-      Update (referee);
-    }
-
-    current = g_slist_next (current);
-  }
-
-  while (add_list)
-  {
-    Player *referee  = (Player *) add_list->data;
-
-    Add (referee);
-
-    add_list = g_slist_next (add_list);
-  }
-  g_slist_free (add_list);
-
-  while (remove_list)
-  {
-    Player *referee  = (Player *) remove_list->data;
-
-    Remove (referee);
-
-    remove_list = g_slist_next (remove_list);
-  }
-  g_slist_free (remove_list);
-
-  OnListChanged ();
 }
 
 // --------------------------------------------------------------------------------

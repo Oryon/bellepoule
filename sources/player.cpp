@@ -30,6 +30,8 @@ Player::Player (PlayerType player_type)
   _ref = _next_ref;
   _next_ref++;
 
+  _nb_matchs = 0;
+
   _player_type = player_type;
 
   _clients = NULL;
@@ -257,12 +259,12 @@ void Player::RemoveCbkOwner (Object *owner)
   {
     Client *client = (Client *) current->data;
 
-    if (client->_owner == owner);
+    if (client->_owner == owner)
     {
       remove_list = g_slist_prepend (remove_list,
                                      client);
-      current = g_slist_next (current);
     }
+    current = g_slist_next (current);
   }
 
   current = remove_list;
@@ -370,6 +372,24 @@ gchar Player::GetWeaponCode ()
 void Player::SetWeaponCode (gchar weapon)
 {
   _weapon = weapon;
+}
+
+// --------------------------------------------------------------------------------
+void Player::AddMatchs (guint nb_matchs)
+{
+  _nb_matchs += nb_matchs;
+}
+
+// --------------------------------------------------------------------------------
+void Player::RemoveMatchs (guint nb_matchs)
+{
+  _nb_matchs -= nb_matchs;
+}
+
+// --------------------------------------------------------------------------------
+guint Player::GetNbMatchs ()
+{
+  return _nb_matchs;
 }
 
 // --------------------------------------------------------------------------------

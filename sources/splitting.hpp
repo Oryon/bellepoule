@@ -39,7 +39,7 @@ class Splitting : public virtual Stage, public PlayersList
     static const gchar *_xml_class_name;
 
   private:
-    void OnLocked (Reason reason);
+    void OnLocked ();
 
     void OnUnLocked ();
 

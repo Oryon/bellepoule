@@ -42,7 +42,8 @@ class Pool : public CanvasModule
     typedef void (*StatusCbk) (Pool *pool,
                                void *data);
 
-    Pool (Data           *max_score,
+    Pool (Module         *container,
+          Data           *max_score,
           guint           number,
           PoolMatchOrder *match_order);
 
@@ -52,11 +53,13 @@ class Pool : public CanvasModule
     void  RemoveFencer  (Player *player);
     void  RemoveReferee (Player *player);
     guint GetNbPlayers  ();
+    guint GetNbMatchs   ();
     guint GetNumber     ();
     void  DropPlayer    (Player *player, gchar *reason);
     void  RestorePlayer (Player *player);
     void  CleanScores   ();
     void  DeleteMatchs  ();
+    void  BookReferees  ();
     void  Lock          ();
     void  UnLock        ();
     void  SetDataOwner  (Object *single_owner,
@@ -99,6 +102,7 @@ class Pool : public CanvasModule
                                guint     comparison_policy);
 
   private:
+    Module         *_container;
     Object         *_single_owner;
     Object         *_combined_source_owner;
     Data           *_max_score;
@@ -180,6 +184,10 @@ class Pool : public CanvasModule
     static gboolean on_status_scrolled (GtkWidget *widget,
                                         GdkEvent  *event,
                                         gpointer   user_data);
+
+    void BookReferee (Player *referee);
+
+    void FreeReferee (Player *referee);
 
     ~Pool ();
 };

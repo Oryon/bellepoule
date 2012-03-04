@@ -31,7 +31,7 @@ class Checkin;
 class Contest : public Module
 {
   public:
-     Contest (const gchar *filename);
+     Contest ();
 
     ~Contest ();
 
@@ -40,6 +40,8 @@ class Contest : public Module
     static Contest *Create ();
 
     Contest *Duplicate ();
+
+    void Load (const gchar *filename);
 
     void LatchPlayerList ();
 
@@ -62,7 +64,7 @@ class Contest : public Module
 
     Player *GetRefereeFromRef (guint ref);
 
-    gboolean LoadingCompleted ();
+    State GetState ();
 
     gchar *GetOrganizer ();
     gchar *GetDate ();
@@ -141,16 +143,14 @@ class Contest : public Module
     guint         _save_timeout_id;
     Checkin      *_referees_list;
     gint          _referee_pane_position;
-    gboolean      _loading_completed;
+    GHashTable   *_ref_translation_table;
+    State         _state;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
     GtkWidget   *_category_combo;
     GtkNotebook *_notebook;
 
-    Contest ();
-
-    void   InitInstance      ();
     void   ReadProperties    ();
     void   DisplayProperties ();
     gchar *GetSaveFileName   (gchar       *title,
@@ -172,8 +172,6 @@ class Contest : public Module
     static gboolean OnSaveTimeout (Contest *contest);
 
     void OnPlugged ();
-
-    void ChangeNbMatchs (gint delta);
 };
 
 #endif

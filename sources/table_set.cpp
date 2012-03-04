@@ -230,6 +230,12 @@ void TableSet::DeActivate ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean TableSet::HasAttendees ()
+{
+  return (_attendees != NULL);
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::SetAttendees (GSList *attendees)
 {
   g_slist_free (_attendees);
@@ -497,6 +503,7 @@ void TableSet::Garnish ()
 {
   DeleteTree ();
   CreateTree ();
+  DeleteDeadNodes ();
 }
 
 // --------------------------------------------------------------------------------
@@ -674,6 +681,20 @@ void TableSet::DeleteTree ()
   _nb_tables = 0;
   _tables    = NULL;
   _is_over   = FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::DeleteDeadNodes ()
+{
+  if (_tree_root)
+  {
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_NON_LEAVES,
+                     -1,
+                     (GNodeTraverseFunc) DeleteDeadNode,
+                     this);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1009,9 +1030,14 @@ gboolean TableSet::FillInNode (GNode    *node,
                     && parent_data->_match->GetPlayerB ()))
       {
         GooCanvasItem *goo_item;
+        static gchar  *arrow_icon = NULL;
 
+        if (arrow_icon == NULL)
+        {
+          arrow_icon = g_build_filename (_program_path, "resources/glade/arrow.png", NULL);
+        }
         goo_item = Canvas::PutIconInTable (data->_canvas_table,
-                                           "resources/glade/arrow.png",
+                                           arrow_icon,
                                            0,
                                            3);
         Canvas::SetTableItemAttribute (goo_item, "x-align", 1.0);
@@ -1113,6 +1139,29 @@ gboolean TableSet::DeleteNode (GNode    *node,
   NodeData *data = (NodeData *) node->data;
 
   Object::TryToRelease (data->_match);
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSet::DeleteDeadNode (GNode    *node,
+                                   TableSet *table_set)
+{
+  NodeData *data = (NodeData *) node->data;
+
+  if (data->_match)
+  {
+    GNode    *childA      = g_node_nth_child (node, 0);
+    NodeData *childA_data = (NodeData *)  childA->data;
+    GNode    *childB      = g_node_nth_child (node, 1);
+    NodeData *childB_data = (NodeData *)  childB->data;
+
+    if (   (childA_data->_match == NULL)
+        && (childB_data->_match == NULL))
+    {
+      table_set->DropMatch (node);
+    }
+  }
 
   return FALSE;
 }
@@ -1255,24 +1304,41 @@ void TableSet::AddFork (GNode *to)
     }
     else if (to_data)
     {
-      data->_table->DropMatch (data->_match);
-      data->_match->Release ();
-      data->_match = NULL;
+      DropMatch (node);
+    }
+  }
+}
 
-      if (g_node_child_position (to, node) == 0)
-      {
-        to_data->_match->SetPlayerA (NULL);
-      }
-      else
-      {
-        GNode    *A_node = g_node_first_child (to);
-        NodeData *A_data = (NodeData *) A_node->data;
+// --------------------------------------------------------------------------------
+void TableSet::DropMatch (GNode *node)
+{
+  NodeData *data = (NodeData *) node->data;
 
-        if (A_data->_match)
-        {
-          to_data->_match->SetPlayerA (A_data->_match->GetWinner ());
-          to_data->_match->SetPlayerB (NULL);
-        }
+  if (node->parent)
+  {
+    NodeData *parent_data = (NodeData *) node->parent->data;
+    Table    *left_table  = data->_table->GetLeftTable ();
+
+    if (left_table)
+    {
+      left_table->DropMatch (data->_match);
+    }
+    data->_match->Release ();
+    data->_match = NULL;
+
+    if (g_node_child_position (node->parent, node) == 0)
+    {
+      parent_data->_match->SetPlayerA (NULL);
+    }
+    else
+    {
+      GNode    *A_node = g_node_first_child (node->parent);
+      NodeData *A_data = (NodeData *) A_node->data;
+
+      if (A_data->_match)
+      {
+        parent_data->_match->SetPlayerA (A_data->_match->GetWinner ());
+        parent_data->_match->SetPlayerB (NULL);
       }
     }
   }

@@ -170,10 +170,10 @@ void Stage::FreeResult ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage::Lock (Reason reason)
+void Stage::Lock ()
 {
   _locked = true;
-  OnLocked (reason);
+  OnLocked ();
   SetResult ();
 }
 

@@ -96,11 +96,12 @@ gint Table::CompareMatchNumber (Match *a,
 }
 
 // --------------------------------------------------------------------------------
-void Table::GetLoosers (GSList **loosers,
-                        GSList **withdrawals,
-                        GSList **blackcardeds)
+guint Table::GetLoosers (GSList **loosers,
+                         GSList **withdrawals,
+                         GSList **blackcardeds)
 {
-  GSList *current_match = _match_list;
+  GSList   *current_match = _match_list;
+  gboolean  nb_loosers    = 0;
 
   if (loosers)      *loosers      = NULL;
   if (withdrawals)  *withdrawals  = NULL;
@@ -114,40 +115,49 @@ void Table::GetLoosers (GSList **loosers,
     {
       Player *looser = match->GetLooser ();
 
-      if (looser)
+      if (looser && match->IsDropped ())
       {
-        if (match->IsDropped () == FALSE)
+        Player::AttributeId  attr_id ("status", _table_set->GetDataOwner ());
+        Attribute           *attr   = looser->GetAttribute (&attr_id);
+        gchar               *status = attr->GetStrValue ();
+
+        if (status)
         {
-          if (loosers)
+          if (withdrawals && (*status == 'A'))
           {
-            *loosers = g_slist_append (*loosers,
-                                       looser);
+            *withdrawals = g_slist_append (*withdrawals,
+                                           looser);
+          }
+          if (blackcardeds && (*status == 'E'))
+          {
+            *blackcardeds = g_slist_append (*blackcardeds,
+                                            looser);
           }
         }
-        else
-        {
-          Player::AttributeId  attr_id ("status", _table_set->GetDataOwner ());
-          Attribute           *attr   = looser->GetAttribute (&attr_id);
-          gchar               *status = attr->GetStrValue ();
 
-          if (status)
-          {
-            if (withdrawals && (*status == 'A'))
-            {
-              *withdrawals = g_slist_append (*withdrawals,
-                                             looser);
-            }
-            if (blackcardeds && (*status == 'E'))
-            {
-              *blackcardeds = g_slist_append (*blackcardeds,
-                                              looser);
-            }
-          }
+        if (loosers)
+        {
+          *loosers = g_slist_append (*loosers,
+                                     NULL);
+        }
+      }
+      else
+      {
+        if (looser)
+        {
+          nb_loosers++;
+        }
+        if (loosers)
+        {
+          *loosers = g_slist_append (*loosers,
+                                     looser);
         }
       }
     }
     current_match = g_slist_next (current_match);
   }
+
+  return nb_loosers;
 }
 
 // --------------------------------------------------------------------------------

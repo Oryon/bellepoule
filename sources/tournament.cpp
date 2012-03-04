@@ -247,7 +247,7 @@ void Tournament::Init ()
 Player *Tournament::Share (Player  *referee,
                            Contest *from)
 {
-  Player *original  = NULL;
+  Player *original = NULL;
 
   {
     GSList *current   = _referee_list;
@@ -267,6 +267,7 @@ Player *Tournament::Share (Player  *referee,
                                 attr_list) == 0)
       {
         original = current_referee;
+        referee->SetRef (original->GetRef ());
         break;
       }
 
@@ -307,10 +308,39 @@ Player *Tournament::Share (Player  *referee,
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::ChangeNbMatchs (gint delta)
+void Tournament::RefreshMatchRate (gint delta)
 {
   _nb_matchs += delta;
-  g_print ("<<<<<<< %d\n", _nb_matchs);
+
+  {
+    GSList *current = _referee_list;
+
+    while (current)
+    {
+      Player *referee = (Player *) current->data;
+
+      RefreshMatchRate (referee);
+
+      current = g_slist_next (current);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::RefreshMatchRate (Player *player)
+{
+  Player::AttributeId attr_id ("participation_rate");
+
+  if (_nb_matchs)
+  {
+    player->SetAttributeValue (&attr_id,
+                               player->GetNbMatchs () * 100 / _nb_matchs);
+  }
+  else
+  {
+    player->SetAttributeValue (&attr_id,
+                               (guint) 0);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -412,9 +442,6 @@ void Tournament::Manage (Contest *contest)
   {
     GtkWidget *nb = _glade->GetWidget ("notebook");
 
-    Plug (contest,
-          NULL,
-          NULL);
     contest->AttachTo (GTK_NOTEBOOK (nb));
 
     _contest_list = g_slist_prepend (_contest_list,
@@ -471,6 +498,9 @@ void Tournament::OnNew ()
 {
   Contest *contest = Contest::Create ();
 
+  Plug (contest,
+        NULL,
+        NULL);
   Manage (contest);
 }
 
@@ -617,8 +647,12 @@ void Tournament::OpenContest (const gchar *uri)
     }
 
     {
-      Contest *contest = new Contest (uri);
+      Contest *contest = new Contest ();
 
+      Plug (contest,
+            NULL,
+            NULL);
+      contest->Load (uri);
       Manage (contest);
     }
 
@@ -634,20 +668,12 @@ void Tournament::OpenContest (const gchar *uri)
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
-  gchar *prg_name = g_get_prgname ();
-
-  if (prg_name)
+  if (_program_path)
   {
-    gchar *install_dirname = g_path_get_dirname (prg_name);
+    gchar *example_dirname = g_build_filename (_program_path, "Exemples", NULL);
 
-    if (install_dirname)
-    {
-      gchar *example_dirname = g_strdup_printf ("%s/Exemples", install_dirname);
-
-      OnOpen (example_dirname);
-      g_free (example_dirname);
-      g_free (install_dirname);
-    }
+    OnOpen (example_dirname);
+    g_free (example_dirname);
   }
 }
 

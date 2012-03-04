@@ -110,7 +110,7 @@ GList *Contest::_color_list = NULL;
 // --------------------------------------------------------------------------------
 Contest::Time::Time (const gchar *name)
 {
-  _name = g_strdup (name);            https://rally1.rallydev.com/slm/rally.sp?#/3064499742d/detail/defect/5201067858
+  _name = g_strdup (name);
   _hour   = 12;
   _minute = 0;
 }
@@ -197,20 +197,133 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 Contest::Contest ()
   : Module ("contest.glade")
 {
-  InitInstance ();
+  Object::Dump ();
 
-  ChooseColor ();
+  _save_timeout_id = 0;
 
-  _schedule->SetScoreStuffingPolicy (FALSE);
+  _notebook   = NULL;
+
+  _level      = NULL;
+  _id         = NULL;
+  _name       = NULL;
+  _filename   = NULL;
+  _organizer  = NULL;
+  _web_site   = NULL;
+  _location   = NULL;
+  _tournament = NULL;
+  _weapon     = 0;
+  _category   = 0;
+  _gender     = 0;
+  _derived    = FALSE;
+
+  _state                 = OPERATIONAL;
+  _ref_translation_table = NULL;
+
+  _checkin_time = new Time ("checkin");
+  _scratch_time = new Time ("scratch");
+  _start_time   = new Time ("start");
+
+  _gdk_color = NULL;
+  _color     = new Data ("Couleur",
+                         (guint) 0);
+
+  {
+    _referees_list = new RefereesList (this);
+    Plug (_referees_list,
+          _glade->GetWidget ("referees_viewport"),
+          NULL);
+
+    gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
+                            0);
+    _referee_pane_position = -1;
+  }
+
+  {
+    GTimeVal  current_time;
+    GDate    *date         = g_date_new ();
+
+    g_get_current_time (&current_time);
+    g_date_set_time_val (date,
+                         &current_time);
+
+    _day   = g_date_get_day   (date);
+    _month = g_date_get_month (date);
+    _year  = g_date_get_year  (date);
+
+    g_date_free (date);
+  }
+
+  {
+    _schedule = new Schedule (this);
+
+    Plug (_schedule,
+          _glade->GetWidget ("schedule_viewport"),
+          GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("weapon_box");
+
+    _weapon_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_weapon; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_weapon_combo), gettext (weapon_image[i]));
+    }
+    gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
+    gtk_widget_show (_weapon_combo);
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("gender_box");
+
+    _gender_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_gender; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_gender_combo), gettext (gender_image[i]));
+    }
+    gtk_container_add (GTK_CONTAINER (box), _gender_combo);
+    gtk_widget_show (_gender_combo);
+  }
+
+  {
+    GtkWidget *box = _glade->GetWidget ("category_box");
+
+    _category_combo = gtk_combo_box_new_text ();
+    for (guint i = 0; i < _nb_category; i ++)
+    {
+      gtk_combo_box_append_text (GTK_COMBO_BOX (_category_combo), gettext (category_image[i]));
+    }
+    gtk_container_add (GTK_CONTAINER (box), _category_combo);
+    gtk_widget_show (_category_combo);
+  }
+
+  // FTP repository
+  {
+    GtkListStore *model  = GTK_LIST_STORE (_glade->GetWidget ("FavoriteFTP"));
+    gchar        *path   = g_build_filename (_program_path, "resources", "glade", "escrime_info.jpg", NULL);
+    GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+    GtkTreeIter   iter;
+
+    g_free (path);
+    gtk_list_store_append (model, &iter);
+    gtk_list_store_set (model, &iter,
+                        FTP_NAME_COL,   "<b><big>Escrime Info  </big></b>",
+                        FTP_PIXBUF_COL, pixbuf,
+                        FTP_URL_COL,    "ftp://www.escrime-info.com/web",
+                        FTP_USER_COL,   "belle_poule",
+                        FTP_PASSWD_COL, "tH3MF8huHX",
+                        -1);
+    g_object_unref (pixbuf);
+  }
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest (const gchar *filename)
-  : Module ("contest.glade")
+void Contest::Load (const gchar *filename)
 {
-  InitInstance ();
+  _state = LOADING;
 
-  _loading_completed = FALSE;
+  _ref_translation_table = g_hash_table_new (NULL,
+                                             NULL);
 
   if (g_path_is_absolute (filename) == FALSE)
   {
@@ -438,16 +551,19 @@ Contest::Contest (const gchar *filename)
     g_source_remove (_save_timeout_id);
   }
 
-  _loading_completed = TRUE;
+  {
+    g_hash_table_destroy (_ref_translation_table);
+    _ref_translation_table = NULL;
+  }
+
+  _state = OPERATIONAL;
+  _schedule->OnLoadingCompleted ();
 }
 
 // --------------------------------------------------------------------------------
 Contest::~Contest ()
 {
-  if (_tournament)
-  {
-    _tournament->OnContestDeleted (this);
-  }
+  _state = LEAVING;
 
   g_free (_level);
   g_free (_id);
@@ -471,6 +587,11 @@ Contest::~Contest ()
   {
     g_source_remove (_save_timeout_id);
   }
+
+  if (_tournament)
+  {
+    _tournament->OnContestDeleted (this);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -480,9 +601,9 @@ gchar *Contest::GetFilename ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Contest::LoadingCompleted ()
+Module::State Contest::GetState ()
 {
-  return _loading_completed;
+  return _state;
 }
 
 // --------------------------------------------------------------------------------
@@ -505,15 +626,6 @@ void Contest::AddFencer (Player *fencer,
                                  rank);
       checkin->UseInitialRank ();
     }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Contest::ChangeNbMatchs (gint delta)
-{
-  if (_loading_completed)
-  {
-    Module::ChangeNbMatchs (delta);
   }
 }
 
@@ -571,6 +683,10 @@ void Contest::ImportReferees (GSList *imported_list)
 Contest *Contest::Create ()
 {
   Contest *contest = new Contest ();
+
+  contest->ChooseColor ();
+
+  contest->_schedule->SetScoreStuffingPolicy (FALSE);
 
   contest->_name = g_key_file_get_string (_config_file,
                                           "Competiton",
@@ -660,141 +776,29 @@ void Contest::LatchPlayerList ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::InitInstance ()
-{
-  Object::Dump ();
-
-  _save_timeout_id = 0;
-
-  _notebook   = NULL;
-
-  _level      = NULL;
-  _id         = NULL;
-  _name       = NULL;
-  _filename   = NULL;
-  _organizer  = NULL;
-  _web_site   = NULL;
-  _location   = NULL;
-  _tournament = NULL;
-  _weapon     = 0;
-  _category   = 0;
-  _gender     = 0;
-  _derived    = FALSE;
-
-  _loading_completed = TRUE;
-
-  _checkin_time = new Time ("checkin");
-  _scratch_time = new Time ("scratch");
-  _start_time   = new Time ("start");
-
-  _gdk_color = NULL;
-  _color     = new Data ("Couleur",
-                         (guint) 0);
-
-  {
-    _referees_list = new RefereesList (this);
-    Plug (_referees_list,
-          _glade->GetWidget ("referees_viewport"),
-          NULL);
-
-    gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
-                            0);
-    _referee_pane_position = -1;
-  }
-
-  {
-    GTimeVal  current_time;
-    GDate    *date         = g_date_new ();
-
-    g_get_current_time (&current_time);
-    g_date_set_time_val (date,
-                         &current_time);
-
-    _day   = g_date_get_day   (date);
-    _month = g_date_get_month (date);
-    _year  = g_date_get_year  (date);
-
-    g_date_free (date);
-  }
-
-  {
-    _schedule = new Schedule (this);
-
-    Plug (_schedule,
-          _glade->GetWidget ("schedule_viewport"),
-          GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
-  }
-
-  {
-    GtkWidget *box = _glade->GetWidget ("weapon_box");
-
-    _weapon_combo = gtk_combo_box_new_text ();
-    for (guint i = 0; i < _nb_weapon; i ++)
-    {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_weapon_combo), gettext (weapon_image[i]));
-    }
-    gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
-    gtk_widget_show (_weapon_combo);
-  }
-
-  {
-    GtkWidget *box = _glade->GetWidget ("gender_box");
-
-    _gender_combo = gtk_combo_box_new_text ();
-    for (guint i = 0; i < _nb_gender; i ++)
-    {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_gender_combo), gettext (gender_image[i]));
-    }
-    gtk_container_add (GTK_CONTAINER (box), _gender_combo);
-    gtk_widget_show (_gender_combo);
-  }
-
-  {
-    GtkWidget *box = _glade->GetWidget ("category_box");
-
-    _category_combo = gtk_combo_box_new_text ();
-    for (guint i = 0; i < _nb_category; i ++)
-    {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_category_combo), gettext (category_image[i]));
-    }
-    gtk_container_add (GTK_CONTAINER (box), _category_combo);
-    gtk_widget_show (_category_combo);
-  }
-
-  // FTP repository
-  {
-    GtkListStore *model  = GTK_LIST_STORE (_glade->GetWidget ("FavoriteFTP"));
-    gchar        *path   = g_build_filename (_program_path, "resources", "glade", "escrime_info.jpg", NULL);
-    GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
-    GtkTreeIter   iter;
-
-    g_free (path);
-    gtk_list_store_append (model, &iter);
-    gtk_list_store_set (model, &iter,
-                        FTP_NAME_COL,   "<b><big>Escrime Info  </big></b>",
-                        FTP_PIXBUF_COL, pixbuf,
-                        FTP_URL_COL,    "ftp://www.escrime-info.com/web",
-                        FTP_USER_COL,   "belle_poule",
-                        FTP_PASSWD_COL, "tH3MF8huHX",
-                        -1);
-    g_object_unref (pixbuf);
-  }
-}
-
-// --------------------------------------------------------------------------------
 Player *Contest::GetRefereeFromRef (guint ref)
 {
-  GSList *current = _referees_list->GetList ();
-
-  while (current)
+  if (_ref_translation_table)
   {
-    Player *player = (Player *) current->data;
+    ref = (guint) g_hash_table_lookup (_ref_translation_table,
+                                       (gconstpointer) ref);
 
-    if (player->GetRef () == ref)
+  }
+
+  if (ref)
+  {
+    GSList *current = _referees_list->GetList ();
+
+    while (current)
     {
-      return player;
+      Player *player = (Player *) current->data;
+
+      if (player->GetRef () == ref)
+      {
+        return player;
+      }
+      current = g_slist_next (current);
     }
-    current = g_slist_next (current);
   }
 
   return NULL;
@@ -896,17 +900,26 @@ void Contest::Init ()
 void Contest::OnPlugged ()
 {
   _tournament = dynamic_cast <Tournament *> (_owner);
-
-  _schedule->OnLoadingCompleted      ();
-  _referees_list->OnLoadingCompleted ();
 }
 
 // --------------------------------------------------------------------------------
 Player *Contest::Share (Player *referee)
 {
+  Player *original;
+  guint   old_ref = referee->GetRef ();
+
   referee->SetWeaponCode (GetWeaponCode ());
-  return _tournament->Share (referee,
-                             this);
+
+  original = _tournament->Share (referee,
+                                 this);
+  if (_ref_translation_table)
+  {
+    g_hash_table_insert (_ref_translation_table,
+                         (gpointer) old_ref,
+                         (gpointer) referee->GetRef ());
+  }
+
+  return original;
 }
 
 // --------------------------------------------------------------------------------

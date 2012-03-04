@@ -470,7 +470,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
     va_list  ap;
     gchar   *xml_image  = g_strdup (first_xml_image);
     gchar   *user_image = first_user_image;
-    gchar   *icon       = g_strdup (first_icon);
+    gchar   *icon       = g_build_filename (_program_path, first_icon, NULL);
 
     va_start (ap, first_icon);
     while (xml_image)
@@ -499,7 +499,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
       if (xml_image)
       {
         user_image = va_arg (ap, char *);
-        icon       = va_arg (ap, char *);
+        icon       = g_build_filename (_program_path, va_arg (ap, char *), NULL);
       }
     }
     va_end (ap);

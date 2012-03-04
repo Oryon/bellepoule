@@ -353,10 +353,6 @@ gboolean PoolAllocator::OnDragDrop (GtkWidget      *widget,
   if (_floating_player && _target_pool)
   {
     {
-      Player::AttributeId attr_id ("availability");
-
-      _floating_player->SetAttributeValue (&attr_id,
-                                           "Busy");
       _target_pool->AddReferee (_floating_player);
 
       FillPoolTable (_target_pool);
@@ -671,14 +667,18 @@ void PoolAllocator::Load (xmlNode *xml_node)
             DeletePools ();
           }
 
-          _nb_matchs = GetNbMatchs ();
+          {
+            _nb_matchs = GetNbMatchs ();
+            RefreshMatchRate (_nb_matchs);
+          }
         }
 
         {
           guint           number      = g_slist_length (_pools_list);
           PoolMatchOrder *match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
 
-          current_pool = new Pool (_max_score,
+          current_pool = new Pool (this,
+                                   _max_score,
                                    number+1,
                                    match_order);
           match_order->Release ();
@@ -937,7 +937,8 @@ void PoolAllocator::CreatePools ()
     pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
     for (guint i = 0; i < nb_pool; i++)
     {
-      pool_table[i] = new Pool (_max_score,
+      pool_table[i] = new Pool (this,
+                                _max_score,
                                 i+1,
                                 match_order);
       _pools_list = g_slist_append (_pools_list,
@@ -1018,8 +1019,7 @@ void PoolAllocator::CreatePools ()
 
     {
       _nb_matchs = GetNbMatchs ();
-
-      ChangeNbMatchs (_nb_matchs);
+      RefreshMatchRate (_nb_matchs);
     }
   }
 }
@@ -1210,10 +1210,6 @@ gboolean PoolAllocator::OnButtonPress (GooCanvasItem  *item,
       }
       else
       {
-        Player::AttributeId  attr_id ("availability");
-
-        _floating_player->SetAttributeValue (&attr_id,
-                                             "Free");
         pool->RemoveReferee (_floating_player);
       }
 
@@ -1266,10 +1262,6 @@ gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
       }
       else
       {
-        Player::AttributeId attr_id ("availability");
-
-        _floating_player->SetAttributeValue (&attr_id,
-                                             "Busy");
         _target_pool->AddReferee (_floating_player);
       }
       FillPoolTable (_target_pool);
@@ -1725,14 +1717,14 @@ void PoolAllocator::DeletePools ()
 {
   if (_pools_list)
   {
-    GSList *current = _pools_list;
+    GSList *current_pool = _pools_list;
 
-    while (current)
+    while (current_pool)
     {
-      Pool *pool = (Pool *) current->data;
+      Pool *pool = (Pool *) current_pool->data;
 
       Object::TryToRelease (pool);
-      current = g_slist_next (current);
+      current_pool = g_slist_next (current_pool);
     }
 
     g_slist_free (_pools_list);
@@ -1742,7 +1734,7 @@ void PoolAllocator::DeletePools ()
   CanvasModule::Wipe ();
   _main_table = NULL;
 
-  ChangeNbMatchs (-_nb_matchs);
+  RefreshMatchRate (-_nb_matchs);
   _nb_matchs = 0;
 }
 
@@ -2063,7 +2055,24 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::OnLocked (Reason reason)
+void PoolAllocator::OnLoadingCompleted ()
+{
+  if (IsPlugged () && (Locked () == FALSE))
+  {
+    GSList *current = _pools_list;
+
+    while (current)
+    {
+      Pool *pool = (Pool *) current->data;
+
+      pool->BookReferees ();
+      current = g_slist_next (current);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::OnLocked ()
 {
   DisableSensitiveWidgets ();
 

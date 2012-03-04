@@ -640,7 +640,7 @@ void Schedule::Load (xmlDoc  *doc,
 
     if (display_all || (current_stage_index > 0))
     {
-      checkin_stage->Lock (Stage::LOADING);
+      checkin_stage->Lock ();
     }
   }
 
@@ -733,7 +733,7 @@ void Schedule::LoadStage (Stage   *stage,
 
       if (display_all || ((*nb_stage-1) < (guint) current_stage_index))
       {
-        stage->Lock (Stage::LOADING);
+        stage->Lock ();
       }
     }
 
@@ -1044,7 +1044,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
   Stage *stage;
 
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-  stage->Lock (Stage::USER_ACTION);
+  stage->Lock ();
 
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage+1);
   PlugStage (stage);

@@ -47,7 +47,8 @@ class PoolSupervisor : public virtual Stage, public Module
   private:
     void Display ();
     void Garnish ();
-    void OnLocked (Reason reason);
+    void OnLoadingCompleted ();
+    void OnLocked ();
     void OnUnLocked ();
     void Wipe ();
     void RetrievePools ();
