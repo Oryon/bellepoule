@@ -2041,7 +2041,7 @@ gboolean TableSet::on_preview_expose (GtkWidget      *drawing_area,
                                       GdkEventExpose *event,
                                       TableSet       *ts)
 {
-  guint page_number = (guint) g_object_get_data (G_OBJECT (drawing_area), "page_number");
+  guint page_number = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (drawing_area), "page_number"));
 
   gdk_window_clear (drawing_area->window);
 

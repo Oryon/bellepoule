@@ -705,7 +705,7 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
 
         if (table->GetLoosers (&loosers,
                                &withdrawals,
-                               NULL) > 1)
+                               NULL) > 0)
         {
           defeated_table_set->SetAttendees (loosers,
                                             withdrawals);
