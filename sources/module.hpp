@@ -94,6 +94,8 @@ class Module : public virtual Object
     Glade            *_glade;
     Module           *_owner;
     GtkPrintSettings *_print_settings;
+    GtkPrintSettings *_page_setup_print_settings;
+    GtkPageSetup     *_default_page_setup;
 
     static const gdouble PRINT_HEADER_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;

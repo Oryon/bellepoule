@@ -2874,7 +2874,7 @@ void TableSet::OnPageSetupClicked (GtkButton *toolbutton)
 
   new_page_setup = gtk_print_run_page_setup_dialog (NULL,
                                                     _page_setup,
-                                                    _print_settings);
+                                                    _page_setup_print_settings);
   g_object_unref (_page_setup);
   _page_setup = new_page_setup;
 

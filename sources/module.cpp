@@ -46,7 +46,9 @@ Module::Module (const gchar *glade_file,
   _filter         = NULL;
   _rand_seed      = 0;
 
-  _print_settings = gtk_print_settings_new ();
+  _print_settings            = gtk_print_settings_new ();
+  _page_setup_print_settings = gtk_print_settings_new ();
+  _default_page_setup        = gtk_page_setup_new     ();
 
   if (glade_file)
   {
@@ -105,6 +107,8 @@ Module::~Module ()
   Object::TryToRelease (_filter);
 
   g_object_unref (_print_settings);
+  g_object_unref (_page_setup_print_settings);
+  g_object_unref (_default_page_setup);
 }
 
 // --------------------------------------------------------------------------------
@@ -569,9 +573,16 @@ void Module::Print (const gchar             *job_name,
   {
     gtk_print_operation_set_default_page_setup (operation,
                                                 page_setup);
+    gtk_print_operation_set_print_settings (operation,
+                                            _page_setup_print_settings);
   }
-  gtk_print_operation_set_print_settings (operation,
-                                          _print_settings);
+  else
+  {
+    gtk_print_operation_set_default_page_setup (operation,
+                                                _default_page_setup);
+    gtk_print_operation_set_print_settings (operation,
+                                            _print_settings);
+  }
 
   g_signal_connect (G_OBJECT (operation), "begin-print",
                     G_CALLBACK (on_begin_print), this);
@@ -599,14 +610,24 @@ void Module::Print (const gchar             *job_name,
 
   if (res == GTK_PRINT_OPERATION_RESULT_APPLY)
   {
-    GtkPrintSettings *print_settings = gtk_print_operation_get_print_settings (operation);
+    GtkPrintSettings *operation_print_settings = gtk_print_operation_get_print_settings (operation);
 
-    if (print_settings)
+    if (operation_print_settings)
     {
-      g_object_unref (_print_settings);
+      if (page_setup)
+      {
+        g_object_unref (_page_setup_print_settings);
 
-      _print_settings = print_settings;
-      g_object_ref (_print_settings);
+        _page_setup_print_settings = operation_print_settings;
+        g_object_ref (_page_setup_print_settings);
+      }
+      else
+      {
+        g_object_unref (_print_settings);
+
+        _print_settings = operation_print_settings;
+        g_object_ref (_print_settings);
+      }
     }
   }
 
