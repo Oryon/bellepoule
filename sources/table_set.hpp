@@ -87,6 +87,8 @@ class TableSet : public CanvasModule
 
     void OnPrinScaleChanged (gdouble value);
 
+    void OnPageSetupClicked (GtkButton *button);
+
     void Wipe ();
 
     void Display ();
@@ -184,6 +186,7 @@ class TableSet : public CanvasModule
     GtkWidget                *_current_preview_area;
     gdouble                   _zoom_factor;
     gboolean                  _is_active;
+    GtkPageSetup             *_page_setup;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;

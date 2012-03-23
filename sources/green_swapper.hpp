@@ -33,7 +33,14 @@ class GreenSwapper : public Object, public Swapper
                             gchar  *criteria,
                             GSList *player_list);
 
+    GreenSwapper (GSList *pools,
+                  gchar  *criteria,
+                  GSList *player_list);
+
     void Delete ();
+
+    gboolean Swap (Player *player,
+                   Pool   *to_pool);
 
     virtual Player *GetNextPlayer (Pool *for_pool);
 
@@ -56,10 +63,6 @@ class GreenSwapper : public Object, public Swapper
     GSList              *_pools;
     GSList              *_players_list;
 
-    GreenSwapper (GSList *pools,
-                  gchar  *criteria,
-                  GSList *player_list);
-
     ~GreenSwapper ();
 
     void Update ();
@@ -71,9 +74,6 @@ class GreenSwapper : public Object, public Swapper
     gboolean CanSwap (ValueUsage *value,
                       guint       from_pool,
                       guint       to_pool);
-
-    gboolean Swap (Player *player,
-                   Pool   *to_pool);
 };
 
 #endif

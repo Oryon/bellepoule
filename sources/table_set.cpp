@@ -85,6 +85,8 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
 
+  _page_setup = gtk_page_setup_new ();
+
   SetDataOwner (supervisor_module);
   _score_collector = NULL;
 
@@ -209,6 +211,7 @@ TableSet::~TableSet ()
   g_free (_id);
 
   g_object_unref (_from_widget);
+  g_object_unref (_page_setup);
 }
 
 // --------------------------------------------------------------------------------
@@ -2072,26 +2075,12 @@ void TableSet::OnPreviewClicked ()
   }
 
   {
-    GtkWidget    *orientation_w = _glade->GetWidget ("portrait_radiobutton");
-    GtkPageSetup *page_setup    = gtk_page_setup_new ();
-    gchar        *print_name    = GetPrintName ();
-
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (orientation_w)))
-    {
-      gtk_page_setup_set_orientation (page_setup,
-                                      GTK_PAGE_ORIENTATION_PORTRAIT);
-    }
-    else
-    {
-      gtk_page_setup_set_orientation (page_setup,
-                                      GTK_PAGE_ORIENTATION_LANDSCAPE);
-    }
+    gchar *print_name = GetPrintName ();
 
     PrintPreview (print_name,
-                  page_setup);
+                  _page_setup);
     g_free (print_name);
   }
-
 }
 
 // --------------------------------------------------------------------------------
@@ -2126,16 +2115,15 @@ gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
 // --------------------------------------------------------------------------------
 void TableSet::ConfigurePreviewLayout (GtkPrintContext *context)
 {
-  GtkWidget    *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
-  GtkWidget    *preview_layout  = gtk_layout_new (NULL, NULL);
-  GtkPageSetup *page_setup      = gtk_print_context_get_page_setup (context);
-  gdouble       paper_w         = gtk_print_context_get_width  (context);
-  gdouble       paper_h         = gtk_print_context_get_height (context);
-  guint         spacing         = 5;
-  guint         drawing_w;
-  guint         drawing_h;
+  GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+  GtkWidget *preview_layout  = gtk_layout_new (NULL, NULL);
+  gdouble    paper_w         = gtk_print_context_get_width  (context);
+  gdouble    paper_h         = gtk_print_context_get_height (context);
+  guint      spacing         = 5;
+  guint      drawing_w;
+  guint      drawing_h;
 
-  if (gtk_page_setup_get_orientation (page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
+  if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
   {
     drawing_h = 200;
     drawing_w = (guint) (drawing_h*paper_w/paper_h);
@@ -2204,13 +2192,11 @@ void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
 
   if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
   {
-    GtkPrintOperation *operation  = (GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation");
-    GtkPageSetup      *page_setup = gtk_print_operation_get_default_page_setup (operation);
-    gchar             *print_name = GetPrintName ();
+    gchar *print_name = GetPrintName ();
 
     gtk_widget_hide (_print_dialog);
     Print (print_name,
-           page_setup);
+           _page_setup);
     g_free (print_name);
   }
 
@@ -2649,24 +2635,10 @@ void TableSet::OnPrint ()
 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
-      GtkWidget    *orientation_w = _glade->GetWidget ("portrait_radiobutton");
-      GtkPageSetup *page_setup    = gtk_page_setup_new ();
-
-      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (orientation_w)))
-      {
-        gtk_page_setup_set_orientation (page_setup,
-                                        GTK_PAGE_ORIENTATION_PORTRAIT);
-      }
-      else
-      {
-        gtk_page_setup_set_orientation (page_setup,
-                                        GTK_PAGE_ORIENTATION_LANDSCAPE);
-      }
-
       _print_full_table = TRUE;
 
       Print (print_name,
-             page_setup);
+             _page_setup);
     }
     else
     {
@@ -2896,6 +2868,31 @@ void TableSet::OnPrinScaleChanged (gdouble value)
 }
 
 // --------------------------------------------------------------------------------
+void TableSet::OnPageSetupClicked (GtkButton *toolbutton)
+{
+  GtkPageSetup *new_page_setup;
+
+  new_page_setup = gtk_print_run_page_setup_dialog (NULL,
+                                                    _page_setup,
+                                                    _print_settings);
+  g_object_unref (_page_setup);
+  _page_setup = new_page_setup;
+
+  if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
+  {
+    gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
+                              GTK_STOCK_ORIENTATION_LANDSCAPE,
+                              GTK_ICON_SIZE_BUTTON);
+  }
+  else
+  {
+    gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
+                              GTK_STOCK_ORIENTATION_PORTRAIT,
+                              GTK_ICON_SIZE_BUTTON);
+  }
+}
+
+// --------------------------------------------------------------------------------
 gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
                                               GdkEventKey *event,
                                               gpointer     user_data)
@@ -2942,6 +2939,15 @@ extern "C" G_MODULE_EXPORT void on_preview_button_clicked (GtkWidget *widget,
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
   t->OnPreviewClicked ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_page_setup_button_clicked (GtkButton *button,
+                                                              Object    *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnPageSetupClicked (button);
 }
 
 // --------------------------------------------------------------------------------

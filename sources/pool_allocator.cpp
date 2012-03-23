@@ -947,51 +947,49 @@ void PoolAllocator::CreatePools ()
     }
 
     {
-      Swapper *swapper;
+      GreenSwapper *swapper;
       guint    nb_fencer = g_slist_length (shortlist);
 
       if (_swapping_criteria && _seeding_balanced->_value)
       {
-        swapper = GeneticSwapper::Create (_pools_list,
-                                          _swapping_criteria->_code_name,
-                                          shortlist,
-                                          this);
-        swapper->Delete ();
+        swapper = new GreenSwapper (_pools_list,
+                                    _swapping_criteria->_code_name,
+                                    shortlist);
       }
       else
       {
-        for (guint i = 0; i < nb_fencer; i++)
-        {
-          Player *player;
-          Pool   *pool;
+        swapper = new GreenSwapper (_pools_list,
+                                    NULL,
+                                    shortlist);
+      }
 
-          if (_seeding_balanced->_value)
+      for (guint i = 0; i < nb_fencer; i++)
+      {
+        Player *player;
+        Pool   *pool;
+
+        if (_seeding_balanced->_value)
+        {
+          if (((i / nb_pool) % 2) == 0)
           {
-            if (((i / nb_pool) % 2) == 0)
-            {
-              pool = pool_table[i%nb_pool];
-            }
-            else
-            {
-              pool = pool_table[nb_pool-1 - i%nb_pool];
-            }
+            pool = pool_table[i%nb_pool];
           }
           else
           {
-            if (i == 0)
+            pool = pool_table[nb_pool-1 - i%nb_pool];
+          }
+        }
+        else
+        {
+          if (i == 0)
+          {
+            pool = pool_table[0];
+          }
+          if (_selected_config->_nb_overloaded)
+          {
+            if (pool->GetNumber () <= _selected_config->_nb_overloaded)
             {
-              pool = pool_table[0];
-            }
-            if (_selected_config->_nb_overloaded)
-            {
-              if (pool->GetNumber () <= _selected_config->_nb_overloaded)
-              {
-                if (pool->GetNbPlayers () >= _selected_config->_size+1)
-                {
-                  pool = pool_table[pool->GetNumber ()];
-                }
-              }
-              else if (pool->GetNbPlayers () >= _selected_config->_size)
+              if (pool->GetNbPlayers () >= _selected_config->_size+1)
               {
                 pool = pool_table[pool->GetNumber ()];
               }
@@ -1001,16 +999,21 @@ void PoolAllocator::CreatePools ()
               pool = pool_table[pool->GetNumber ()];
             }
           }
-
-          player = (Player *) g_slist_nth_data (shortlist,
-                                                i);
-          player->SetData (this,
-                           "original_pool",
-                           (void *) pool->GetNumber ());
-          pool->AddFencer (player,
-                           this);
+          else if (pool->GetNbPlayers () >= _selected_config->_size)
+          {
+            pool = pool_table[pool->GetNumber ()];
+          }
         }
+
+        player = swapper->GetNextPlayer (pool);
+        player->SetData (this,
+                         "original_pool",
+                         (void *) pool->GetNumber ());
+        pool->AddFencer (player,
+                         this);
       }
+
+      swapper->Release ();
     }
 
     match_order->Release ();

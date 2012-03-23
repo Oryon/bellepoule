@@ -224,7 +224,6 @@ gboolean CanvasModule::OnPreview (GtkPrintOperation        *operation,
                                   GtkPrintContext          *context,
                                   GtkWindow                *parent)
 {
-  GtkPrintSettings *settings;
   GtkWidget *window, *close, *page, *hbox, *vbox;
   cairo_t *cr;
 
@@ -236,8 +235,6 @@ gboolean CanvasModule::OnPreview (GtkPrintOperation        *operation,
                                           300);
     cr = cairo_create (surface);
   }
-
-  settings = gtk_print_operation_get_print_settings (operation);
 
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 

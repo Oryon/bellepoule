@@ -90,9 +90,10 @@ class Module : public virtual Object
       DND_TARGET_NB
     } DndTarget;
 
-    Filter *_filter;
-    Glade  *_glade;
-    Module *_owner;
+    Filter           *_filter;
+    Glade            *_glade;
+    Module           *_owner;
+    GtkPrintSettings *_print_settings;
 
     static const gdouble PRINT_HEADER_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;

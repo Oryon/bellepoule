@@ -44,39 +44,56 @@ class GeneticSwapper : public Object, public Swapper
 
     ~GeneticSwapper ();
 
-    static guint GetPoolIndex (guint fencer_index);
+    guint GetPoolIndex (guint fencer_index);
 
   private:
-    struct Fencer
+    struct Gene
     {
       Player *_fencer;
-      GQuark  _criteria_value;
+      GQuark  _criteria_quark;
       guint   _original_pool;
       guint   _current_pool;
 
-      bool operator == (Fencer const &f);
-      bool operator != (Fencer const &f);
+      bool operator == (const Gene &f);
+      bool operator != (const Gene &f);
 
-      void Dump ();
+      void Dump (Object *owner);
     };
 
     struct PoolData
     {
-      Pool   *_pool;
-      guint   _size;
-      guint   _error;
+      Pool       *_pool;
+      GHashTable *_criteria_count;
     };
 
-    typedef GAListGenome<Fencer *> Genome;
+    struct CriteriaData
+    {
+      guint _count;
 
-    static const guint _seed = 33;
+      guint _ideal_max_fencer1;
+      guint _ideal_max_pool1;
 
-    static GRand    *_rand;
-    static guint     _nb_pools;
-    static PoolData *_pool_table;
-    static guint     _nb_fencers;
-    static GSList   *_fencer_list;
-    static Genome   *_initial_genome;
+      guint _ideal_max_fencer2;
+      guint _ideal_max_pool2;
+
+      guint _real_max_pool1;
+      guint _real_max_pool2;
+    };
+
+    typedef GAListGenome<Gene *> Genome;
+
+    static const guint SEED        = 33;
+    static const guint GENERATIONS = 100;
+
+    Object     *_owner;
+    GRand      *_rand;
+    guint       _nb_pools;
+    PoolData   *_pool_table;
+    guint       _nb_gene;
+    GSList     *_gene_list;
+    GSList     *_top_fencer_quark;
+    Genome     *_initial_genome;
+    GHashTable *_criteria_distribution;
 
     Player::AttributeId *_criteria_id;
 
@@ -84,13 +101,19 @@ class GeneticSwapper : public Object, public Swapper
 
     static void  Initializer (GAGenome &g);
 
-    static int CrossOver (const GAGenome &g1,
-                          const GAGenome &g2,
-                          GAGenome       *c1,
-                          GAGenome       *c2);
+    static GABoolean Terminator (GAGeneticAlgorithm &ga);
 
-    static float Comparator (const GAGenome &g1,
-                             const GAGenome &g2);
+    static void SetIdealData (GQuark          key,
+                              CriteriaData   *data,
+                              GeneticSwapper *swapper);
+
+    static void ResetRealData (GQuark          key,
+                               CriteriaData   *data,
+                               GeneticSwapper *swapper);
+
+    void InsertCriteria (GHashTable   *table,
+                         const GQuark  criteria);
+
 };
 
 #endif
