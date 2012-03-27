@@ -683,6 +683,9 @@ void TableSet::DeleteTree ()
     _tree_root = NULL;
   }
 
+  g_slist_free (_referee_sectors);
+  _referee_sectors = NULL;
+
   for (guint i = 0; i < _nb_tables; i++)
   {
     _tables[i]->Release ();
@@ -1008,17 +1011,25 @@ gboolean TableSet::FillInNode (GNode    *node,
       }
 
       {
-        gchar         *match_name  = data->_match->GetName ();
-        GooCanvasItem *number_item = Canvas::PutTextInTable (data->_fencer_goo_table,
-                                                             match_name,
-                                                             0,
-                                                             0);
-        Canvas::SetTableItemAttribute (number_item, "x-align", 1.0);
-        Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
-        g_object_set (number_item,
-                      "fill-color", "Grey",
-                      "font", "Bold",
-                      NULL);
+        gchar *match_name  = data->_match->GetName ();
+
+        if (match_name == NULL)
+        {
+          match_name = "";
+        }
+
+        {
+          GooCanvasItem *number_item = Canvas::PutTextInTable (data->_fencer_goo_table,
+                                                               match_name,
+                                                               0,
+                                                               0);
+          Canvas::SetTableItemAttribute (number_item, "x-align", 1.0);
+          Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
+          g_object_set (number_item,
+                        "fill-color", "Grey",
+                        "font", "Bold",
+                        NULL);
+        }
       }
 
       {
@@ -1207,7 +1218,11 @@ gboolean TableSet::DeleteNode (GNode    *node,
   {
     RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
                                                                         "referee_sector");
+
     Object::TryToRelease (sector);
+    data->_match->RemoveData (table_set,
+                              "referee_sector");
+
     Object::TryToRelease (data->_match);
   }
 
@@ -3082,6 +3097,7 @@ gboolean TableSet::OnDragMotion (GtkWidget      *widget,
         }
       }
 
+      sector->Unfocus ();
       gdk_drag_status (drag_context,
                        (GdkDragAction) 0,
                        time);

@@ -544,7 +544,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *file)
 
   while (country)
   {
-    gchar  *full_path = g_build_filename (dir_path, country, file, NULL);
+    gchar *full_path = g_build_filename (dir_path, country, file, NULL);
 
     AddDiscreteValues (full_path,
                        country);

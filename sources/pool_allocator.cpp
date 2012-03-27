@@ -1645,8 +1645,14 @@ void PoolAllocator::DisplayPlayer (Player        *player,
   {
     if (player->IsFencer () == FALSE)
     {
+      static gchar  *referee_icon = NULL;
+
+      if (referee_icon == NULL)
+      {
+        referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+      }
       Canvas::PutIconInTable (table,
-                              "resources/glade/referee.png",
+                              referee_icon,
                               indice+1, 0);
     }
     else if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())

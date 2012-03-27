@@ -214,9 +214,15 @@ void RefereeSector::PutInTable (GooCanvasItem *table,
         {
           Player        *referee = (Player *) current->data;
           GooCanvasItem *item;
+          static gchar  *referee_icon = NULL;
+
+          if (referee_icon == NULL)
+          {
+            referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+          }
 
           Canvas::PutIconInTable (table,
-                                  "resources/glade/referee.png",
+                                  referee_icon,
                                   row + i,
                                   column);
           item = Canvas::PutTextInTable (table,
