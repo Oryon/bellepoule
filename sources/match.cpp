@@ -362,7 +362,7 @@ Score *Match::GetScore (Player *fencer)
 // --------------------------------------------------------------------------------
 void Match::Save (xmlTextWriter *xml_writer)
 {
-  if (_A && _B && _number)
+  if (_number)
   {
     xmlTextWriterStartElement (xml_writer,
                                BAD_CAST "Match");

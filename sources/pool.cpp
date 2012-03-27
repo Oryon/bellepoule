@@ -29,7 +29,8 @@
 Pool::Pool (Module         *container,
             Data           *max_score,
             guint           number,
-            PoolMatchOrder *match_order)
+            PoolMatchOrder *match_order,
+            guint32         rand_seed)
   : CanvasModule ("pool.glade",
                   "canvas_scrolled_window")
 {
@@ -47,6 +48,7 @@ Pool::Pool (Module         *container,
   _max_score          = max_score;
   _display_data       = NULL;
   _nb_drop            = 0;
+  _rand_seed          = rand_seed;
 
   _match_order = match_order;
   _match_order->Retain ();
@@ -291,43 +293,31 @@ void Pool::RemoveReferee (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Pool::CreateMatchs (Object *rank_owner)
+void Pool::CreateMatchs ()
 {
   SortPlayers ();
 
   if (_match_list == NULL)
   {
+    guint                       nb_players = GetNbPlayers ();
+    guint                       nb_matchs  = (nb_players*nb_players - nb_players) / 2;
+    PoolMatchOrder::PlayerPair *pair       = _match_order->GetPlayerPair (nb_players);
+
+    if (pair)
     {
-      Player::AttributeId attr_id ("previous_stage_rank",
-                                   rank_owner);
-      attr_id.MakeRandomReady (_rand_seed);
-
-      _fencer_list = g_slist_sort_with_data (_fencer_list,
-                                             (GCompareDataFunc) Player::Compare,
-                                             &attr_id);
-    }
-
-    {
-      guint                       nb_players = GetNbPlayers ();
-      guint                       nb_matchs  = (nb_players*nb_players - nb_players) / 2;
-      PoolMatchOrder::PlayerPair *pair       = _match_order->GetPlayerPair (nb_players);
-
-      if (pair)
+      for (guint i = 0; i < nb_matchs; i++)
       {
-        for (guint i = 0; i < nb_matchs; i++)
-        {
-          Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._a-1);
-          Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._b-1);
+        Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._a-1);
+        Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._b-1);
 
-          Match *match = new Match (a,
-                                    b,
-                                    _max_score);
-          match->SetNameSpace ("M");
-          match->SetNumber (i+1);
+        Match *match = new Match (a,
+                                  b,
+                                  _max_score);
+        match->SetNameSpace ("M");
+        match->SetNumber (i+1);
 
-          _match_list = g_slist_append (_match_list,
-                                        match);
-        }
+        _match_list = g_slist_append (_match_list,
+                                      match);
       }
     }
   }
