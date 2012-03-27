@@ -92,16 +92,16 @@ gboolean Match::IsFake ()
 }
 
 // --------------------------------------------------------------------------------
-void Match::SetPlayerA (Player *player)
+void Match::SetPlayerA (Player *fencer)
 {
-  _A          = player;
+  _A          = fencer;
   _A_is_known = TRUE;
 }
 
 // --------------------------------------------------------------------------------
-void Match::SetPlayerB (Player *player)
+void Match::SetPlayerB (Player *fencer)
 {
-  _B          = player;
+  _B          = fencer;
   _B_is_known = TRUE;
 }
 
@@ -118,9 +118,9 @@ Player *Match::GetPlayerB ()
 }
 
 // --------------------------------------------------------------------------------
-void Match::DropPlayer (Player *player)
+void Match::DropPlayer (Player *fencer)
 {
-  if (_A == player)
+  if (_A == fencer)
   {
     _A_is_dropped = TRUE;
   }
@@ -137,13 +137,13 @@ void Match::DropPlayer (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Match::RestorePlayer (Player *player)
+void Match::RestorePlayer (Player *fencer)
 {
-  if (_A == player)
+  if (_A == fencer)
   {
     _A_is_dropped = FALSE;
   }
-  else if (_B == player)
+  else if (_B == fencer)
   {
     _B_is_dropped = FALSE;
   }
@@ -228,19 +228,19 @@ Player *Match::GetLooser ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match::HasPlayer (Player *player)
+gboolean Match::HasPlayer (Player *fencer)
 {
-  return ((_A == player) || (_B == player));
+  return ((_A == fencer) || (_B == fencer));
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match::PlayerHasScore (Player *player)
+gboolean Match::PlayerHasScore (Player *fencer)
 {
-  if (_A && (player == _A))
+  if (_A && (fencer == _A))
   {
     return (_A_score->IsKnown ());
   }
-  else if (_B && (player == _B))
+  else if (_B && (fencer == _B))
   {
     return (_B_score->IsKnown ());
   }
@@ -251,15 +251,15 @@ gboolean Match::PlayerHasScore (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Match::SetScore (Player   *player,
+void Match::SetScore (Player   *fencer,
                       gint      score,
                       gboolean  is_the_best)
 {
-  if (_A == player)
+  if (_A == fencer)
   {
     _A_score->Set (score, is_the_best);
   }
-  else if (_B == player)
+  else if (_B == fencer)
   {
     _B_score->Set (score, is_the_best);
   }
@@ -287,7 +287,7 @@ gboolean Match::ScoreIsNumber (gchar *score)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match::SetScore (Player *player,
+gboolean Match::SetScore (Player *fencer,
                           gchar  *score)
 {
   gboolean result = FALSE;
@@ -297,7 +297,7 @@ gboolean Match::SetScore (Player *player,
     if (   (strlen (score) == 1)
         && (g_ascii_toupper (score[0]) == 'V'))
     {
-      SetScore (player,
+      SetScore (fencer,
                 _max_score->_value,
                 TRUE);
       result = TRUE;
@@ -319,7 +319,7 @@ gboolean Match::SetScore (Player *player,
         gchar *max_str        = g_strdup_printf ("%d", _max_score->_value);
         gchar *one_digit_more = g_strdup_printf ("%s0", score_value);
 
-        SetScore (player,
+        SetScore (fencer,
                   atoi (score_value),
                   is_the_best);
         if (strlen (score_value) >= strlen (max_str))
@@ -345,13 +345,13 @@ gboolean Match::SetScore (Player *player,
 }
 
 // --------------------------------------------------------------------------------
-Score *Match::GetScore (Player *player)
+Score *Match::GetScore (Player *fencer)
 {
-  if (_A == player)
+  if (_A == fencer)
   {
     return _A_score;
   }
-  else if (_B == player)
+  else if (_B == fencer)
   {
     return _B_score;
   }
@@ -370,6 +370,24 @@ void Match::Save (xmlTextWriter *xml_writer)
                                        BAD_CAST "ID",
                                        "%d", _number);
 
+    {
+      GSList *current = _referee_list;
+
+      while (current)
+      {
+        Player *referee = (Player *) current->data;
+
+        xmlTextWriterStartElement (xml_writer,
+                                   BAD_CAST "Arbitre");
+        xmlTextWriterWriteFormatAttribute (xml_writer,
+                                           BAD_CAST "REF",
+                                           "%d", referee->GetRef ());
+        xmlTextWriterEndElement (xml_writer);
+
+        current = g_slist_next (current);
+      }
+    }
+
     Save (xml_writer,
           _A);
     Save (xml_writer,
@@ -381,23 +399,24 @@ void Match::Save (xmlTextWriter *xml_writer)
 
 // --------------------------------------------------------------------------------
 void Match::Save (xmlTextWriter *xml_writer,
-                  Player        *player)
+                  Player        *fencer)
 {
-  if (player)
+  if (fencer)
   {
-    Score *score = GetScore (player);
+    Score *score = GetScore (fencer);
 
     xmlTextWriterStartElement (xml_writer,
                                BAD_CAST "Tireur");
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "REF",
-                                       "%d", player->GetRef ());
+                                       "%d", fencer->GetRef ());
+
     if (score->IsKnown ())
     {
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "Score",
                                          "%d", score->Get ());
-      if (GetWinner () == player)
+      if (GetWinner () == fencer)
       {
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "Statut",

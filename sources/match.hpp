@@ -45,27 +45,27 @@ class Match : public Object
 
     Player *GetLooser  ();
 
-    void SetPlayerA (Player *player);
+    void SetPlayerA (Player *fencer);
 
-    void SetPlayerB (Player *player);
+    void SetPlayerB (Player *fencer);
 
-    void DropPlayer (Player *player);
+    void DropPlayer (Player *fencer);
 
     gboolean IsFake ();
 
     gboolean IsDropped ();
 
-    void RestorePlayer (Player *player);
+    void RestorePlayer (Player *fencer);
 
-    gboolean HasPlayer (Player *player);
+    gboolean HasPlayer (Player *fencer);
 
-    gboolean PlayerHasScore (Player *player);
+    gboolean PlayerHasScore (Player *fencer);
 
-    void SetScore (Player *player, gint score, gboolean is_the_best);
+    void SetScore (Player *fencer, gint score, gboolean is_the_best);
 
-    gboolean SetScore (Player *player, gchar *score);
+    gboolean SetScore (Player *fencer, gchar *score);
 
-    Score *GetScore (Player *player);
+    Score *GetScore (Player *fencer);
 
     void Save (xmlTextWriter *xml_writer);
 
@@ -106,7 +106,7 @@ class Match : public Object
     gboolean ScoreIsNumber (gchar *score);
 
     void Save (xmlTextWriter *xml_writer,
-               Player        *player);
+               Player        *fencer);
 
     void Init (Data *max_score);
 

@@ -25,16 +25,22 @@
 RefereeSector::RefereeSector (gdouble spacing)
 : Object ("RefereeSector")
 {
-  _node_list      = NULL;
-  _back_rect      = NULL;
-  _sensitive_rect = NULL;
-  _spacing        = spacing;
+  _node_list = NULL;
+  _spacing   = spacing;
+
+  Wipe ();
 }
 
 // --------------------------------------------------------------------------------
 RefereeSector::~RefereeSector ()
 {
   g_slist_free (_node_list);
+}
+
+// --------------------------------------------------------------------------------
+void RefereeSector::Wipe ()
+{
+  _back_rect = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -76,25 +82,17 @@ void RefereeSector::Draw (GooCanvasItem *root_item)
                                           first_child_bounds.x2 - first_child_bounds.x1,
                                           last_child_bounds.y2 - first_child_bounds.y1,
                                           "stroke-pattern", NULL,
+                                          "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                           NULL);
         goo_canvas_item_lower (_back_rect,
                                NULL);
 
-        _sensitive_rect = goo_canvas_rect_new (root_item,
-                                               first_child_bounds.x1,
-                                               first_child_bounds.y1,
-                                               first_child_bounds.x2 - first_child_bounds.x1,
-                                               last_child_bounds.y2 - first_child_bounds.y1,
-                                               "stroke-pattern", NULL,
-                                               "fill-pattern", NULL,
-                                               "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
-                                               NULL);
-        goo_canvas_item_raise (_sensitive_rect,
-                               NULL);
-        g_signal_connect (_sensitive_rect, "enter_notify_event",
+#if 0
+        g_signal_connect (_back_rect, "enter_notify_event",
                           G_CALLBACK (OnEnterNotify), this);
-        g_signal_connect (_sensitive_rect, "leave_notify_event",
+        g_signal_connect (_back_rect, "leave_notify_event",
                           G_CALLBACK (OnLeaveNotify), this);
+#endif
       }
     }
     current = g_slist_next (current);

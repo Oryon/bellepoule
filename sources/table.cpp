@@ -245,6 +245,14 @@ void Table::LoadMatch (xmlNode *xml_node,
       }
       else if (strcmp ((char *) n->name, "Arbitre") == 0)
       {
+        gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+
+        if (attr)
+        {
+          Player *referee = _table_set->GetRefereeFromRef (atoi (attr));
+
+          match->AddReferee (referee);
+        }
       }
       else if (strcmp ((char *) n->name, "Tireur") == 0)
       {

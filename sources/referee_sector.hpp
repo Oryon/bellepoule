@@ -43,6 +43,8 @@ class RefereeSector : public Object
 
     void Draw (GooCanvasItem *root_item);
 
+    void Wipe ();
+
     void GetBounds (GooCanvasBounds *bounds,
                     gdouble          zoom_factor);
 
@@ -62,7 +64,6 @@ class RefereeSector : public Object
 
   private:
     GSList        *_node_list;
-    GooCanvasItem *_sensitive_rect;
     GooCanvasItem *_back_rect;
     gdouble        _spacing;
 

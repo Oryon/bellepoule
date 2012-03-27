@@ -260,7 +260,7 @@ void TableSet::SetAttendees (GSList *attendees)
   }
 
   Garnish ();
-  Display ();
+  OnFromTableComboboxChanged ();
   RefreshTableStatus ();
 }
 
@@ -837,6 +837,16 @@ gboolean TableSet::WipeNode (GNode    *node,
   WipeItem (data->_match_goo_table);
   data->_match_goo_table = NULL;
 
+  if (data->_match)
+  {
+    RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
+                                                                        "referee_sector");
+    if (sector)
+    {
+      sector->Wipe ();
+    }
+  }
+
   return FALSE;
 }
 
@@ -982,7 +992,7 @@ gboolean TableSet::FillInNode (GNode    *node,
     }
 
     // Match
-    if (data->_table->GetColumn () && (data->_match->IsFake () == FALSE))
+    if ((data->_table->GetColumn () > 1) && (data->_match->IsFake () == FALSE))
     {
       {
         data->_match_goo_table = goo_canvas_table_new (table_set->_main_table,
@@ -1193,7 +1203,13 @@ gboolean TableSet::DeleteNode (GNode    *node,
 {
   NodeData *data = (NodeData *) node->data;
 
-  Object::TryToRelease (data->_match);
+  if (data->_match)
+  {
+    RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
+                                                                        "referee_sector");
+    Object::TryToRelease (sector);
+    Object::TryToRelease (data->_match);
+  }
 
   return FALSE;
 }
@@ -1646,6 +1662,14 @@ gboolean TableSet::Stuff (GNode    *node,
 Player *TableSet::GetFencerFromRef (guint ref)
 {
   return _supervisor->GetFencerFromRef (ref);
+}
+
+// --------------------------------------------------------------------------------
+Player *TableSet::GetRefereeFromRef (guint ref)
+{
+  Contest *contest = _supervisor->GetContest ();
+
+  return contest->GetRefereeFromRef (ref);
 }
 
 // --------------------------------------------------------------------------------

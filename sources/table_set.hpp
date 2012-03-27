@@ -114,6 +114,8 @@ class TableSet : public CanvasModule
 
     Player *GetFencerFromRef (guint ref);
 
+    Player *GetRefereeFromRef (guint ref);
+
     guint GetNbTables ();
 
     gchar *GetName ();
