@@ -51,6 +51,8 @@ class Match : public Object
 
     void DropPlayer (Player *player);
 
+    gboolean IsFake ();
+
     gboolean IsDropped ();
 
     void RestorePlayer (Player *player);
@@ -78,6 +80,14 @@ class Match : public Object
     GooCanvasItem *GetScoreTable (GooCanvasItem *parent,
                                   gdouble        size);
 
+    void AddReferee (Player *referee);
+
+    void RemoveReferee (Player *referee);
+
+    void BookReferee (Player *referee);
+
+    GSList *GetRefereeList ();
+
   private:
     Data     *_max_score;
     Player   *_A;
@@ -91,6 +101,7 @@ class Match : public Object
     gchar    *_name_space;
     gchar    *_name;
     guint     _number;
+    GSList   *_referee_list;
 
     gboolean ScoreIsNumber (gchar *score);
 

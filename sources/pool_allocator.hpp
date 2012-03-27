@@ -60,12 +60,15 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     GSList *GetCurrentClassification ();
     void LoadConfiguration (xmlNode *xml_node);
     void SaveConfiguration (xmlTextWriter *xml_writer);
+
+  private:
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,
                      gint               page_nr);
 
+  private:
     gboolean OnDragMotion (GtkWidget      *widget,
                            GdkDragContext *drag_context,
                            gint            x,
@@ -87,7 +90,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
                              guint             info,
                              guint             time);
 
-
+  private:
     void Focus   (Pool *pool);
     void Unfocus ();
 

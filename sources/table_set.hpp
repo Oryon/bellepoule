@@ -24,6 +24,7 @@
 #include "match.hpp"
 #include "score_collector.hpp"
 #include "table.hpp"
+#include "referee_sector.hpp"
 
 class TableSupervisor;
 
@@ -132,16 +133,6 @@ class TableSet : public CanvasModule
   private:
     static const gdouble _score_rect_size;
 
-    struct NodeData
-    {
-      guint          _expected_winner_rank;
-      Table         *_table;
-      guint          _table_index;
-      Match         *_match;
-      GooCanvasItem *_canvas_table;
-      GooCanvasItem *_connector;
-    };
-
     static const gdouble _table_spacing;
 
     gchar                    *_short_name;
@@ -187,6 +178,9 @@ class TableSet : public CanvasModule
     gdouble                   _zoom_factor;
     gboolean                  _is_active;
     GtkPageSetup             *_page_setup;
+    GSList                   *_referee_sectors;
+    Player                   *_floating_referee;
+    RefereeSector            *_target_sector;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -206,6 +200,8 @@ class TableSet : public CanvasModule
     void OnAttrListUpdated ();
 
     void DrawAllConnectors ();
+
+    void DrawAllSectors ();
 
     void Garnish ();
 
@@ -311,6 +307,28 @@ class TableSet : public CanvasModule
                                        TableSet       *ts);
 
     ~TableSet ();
+
+  private:
+    gboolean OnDragMotion (GtkWidget      *widget,
+                           GdkDragContext *drag_context,
+                           gint            x,
+                           gint            y,
+                           guint           time);
+    gboolean OnDragDrop (GtkWidget      *widget,
+                         GdkDragContext *drag_context,
+                         gint            x,
+                         gint            y,
+                         guint           time);
+    void OnDragLeave (GtkWidget      *widget,
+                      GdkDragContext *drag_context,
+                      guint           time);
+    void OnDragDataReceived (GtkWidget        *widget,
+                             GdkDragContext   *drag_context,
+                             gint              x,
+                             gint              y,
+                             GtkSelectionData *data,
+                             guint             info,
+                             guint             time);
 };
 
 #endif

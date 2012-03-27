@@ -57,6 +57,8 @@ Match::~Match ()
 // --------------------------------------------------------------------------------
 void Match::Init (Data *max_score)
 {
+  _referee_list = NULL;
+
   _max_score = max_score;
 
   _A = NULL;
@@ -81,6 +83,12 @@ void Match::Init (Data *max_score)
 gboolean Match::IsDropped ()
 {
   return (_A_is_dropped || _B_is_dropped);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Match::IsFake ()
+{
+  return (GetWinner () && (GetLooser () == NULL));
 }
 
 // --------------------------------------------------------------------------------
@@ -505,4 +513,37 @@ GooCanvasItem *Match::GetScoreTable (GooCanvasItem *parent,
   g_free (font);
 
   return score_table;
+}
+
+// --------------------------------------------------------------------------------
+void Match::AddReferee (Player *referee)
+{
+  if (referee == NULL)
+  {
+    return;
+  }
+
+  if (   (_referee_list == NULL)
+         || (g_slist_find (_referee_list,
+                           referee) == NULL))
+  {
+    _referee_list = g_slist_prepend (_referee_list,
+                                     referee);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Match::RemoveReferee (Player *referee)
+{
+  if (_referee_list == NULL)
+  {
+    _referee_list = g_slist_remove (_referee_list,
+                                    referee);
+  }
+}
+
+// --------------------------------------------------------------------------------
+GSList *Match::GetRefereeList ()
+{
+  return _referee_list;
 }

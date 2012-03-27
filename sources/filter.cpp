@@ -190,6 +190,7 @@ void Filter::SelectAttributes ()
                   "transient-for", gtk_widget_get_parent_window (_filter_window),
                   "destroy-with-parent", TRUE,
                   "title", gettext ("Data"),
+                  "modal", TRUE,
                   NULL);
     g_signal_connect (_filter_window,
                       "delete-event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);

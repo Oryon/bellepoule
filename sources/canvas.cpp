@@ -54,7 +54,7 @@ void Canvas::SetTableItemAttribute (GooCanvasItem *item,
 
 // --------------------------------------------------------------------------------
 void Canvas::SetTableItemAttribute (GooCanvasItem *item,
-                                    const gchar    *attribute,
+                                    const gchar   *attribute,
                                     guint          value)
 {
   GooCanvasItem *parent = goo_canvas_item_get_parent (item);
@@ -96,9 +96,9 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
               row, column);
 
   SetTableItemAttribute (item, "x-expand", 1U);
-  SetTableItemAttribute (item, "x-fill", 1U);
+  SetTableItemAttribute (item, "x-fill",   1U);
   SetTableItemAttribute (item, "x-shrink", 1U);
-  //SetTableItemAttribute (item, "right-padding", 10.0);
+
   //SetTableItemAttribute (item, "y-expand", 1U);
   //SetTableItemAttribute (item, "y-fill", 1U);
   //SetTableItemAttribute (item, "y-shrink", 1U);

@@ -69,6 +69,8 @@ class Stage : public virtual Object
 
     void SetContest (Contest *contest);
 
+    Contest *GetContest ();
+
     gchar *GetFullName ();
 
     void SetName (gchar *name);

@@ -783,6 +783,12 @@ void Stage::SetContest (Contest *contest)
 }
 
 // --------------------------------------------------------------------------------
+Contest *Stage::GetContest ()
+{
+  return _contest;
+}
+
+// --------------------------------------------------------------------------------
 Stage *Stage::CreateInstance (xmlNode *xml_node)
 {
   if (xml_node)
