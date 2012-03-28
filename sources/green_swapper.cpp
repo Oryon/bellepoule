@@ -17,26 +17,26 @@
 #include <string.h>
 #include "pool.hpp"
 
-#include "swapper.hpp"
+#include "green_swapper.hpp"
 
 // --------------------------------------------------------------------------------
-Swapper::ValueUsage::ValueUsage (gchar *image)
+GreenSwapper::ValueUsage::ValueUsage (gchar *image)
 {
   _image      = image;
   _nb_similar = 1;
 }
 
 // --------------------------------------------------------------------------------
-Swapper::ValueUsage::~ValueUsage ()
+GreenSwapper::ValueUsage::~ValueUsage ()
 {
   g_free (_image);
 }
 
 // --------------------------------------------------------------------------------
-Swapper::Swapper (GSList *pools,
-                  gchar  *criteria,
-                  GSList *player_list)
-: Object ("Swapper")
+GreenSwapper::GreenSwapper (GSList *pools,
+                            gchar  *criteria,
+                            GSList *player_list)
+: Object ("GreenSwapper")
 {
   _player_list = g_slist_copy (player_list);
   _array       = NULL;
@@ -55,7 +55,7 @@ Swapper::Swapper (GSList *pools,
 }
 
 // --------------------------------------------------------------------------------
-Swapper::~Swapper ()
+GreenSwapper::~GreenSwapper ()
 {
   Object::TryToRelease (_criteria_id);
   FreeArray ();
@@ -64,16 +64,32 @@ Swapper::~Swapper ()
 }
 
 // --------------------------------------------------------------------------------
-void Swapper::FreeArray ()
+Swapper *GreenSwapper::Create (GSList *pools,
+                               gchar  *criteria,
+                               GSList *player_list)
+{
+  return new GreenSwapper (pools,
+                           criteria,
+                           player_list);
+}
+
+// --------------------------------------------------------------------------------
+void GreenSwapper::Delete ()
+{
+  Release ();
+}
+
+// --------------------------------------------------------------------------------
+void GreenSwapper::FreeArray ()
 {
   if (_array)
   {
     for (guint i = 0; i < _array->len; i++)
     {
-      Swapper::ValueUsage *value_usage;
+      GreenSwapper::ValueUsage *value_usage;
 
       value_usage = g_array_index (_array,
-                                   Swapper::ValueUsage *,
+                                   GreenSwapper::ValueUsage *,
                                    i);
       value_usage->Release ();
     }
@@ -83,7 +99,7 @@ void Swapper::FreeArray ()
 }
 
 // --------------------------------------------------------------------------------
-void Swapper::Update ()
+void GreenSwapper::Update ()
 {
   if (_criteria_id && _player_list)
   {
@@ -140,10 +156,10 @@ void Swapper::Update ()
     // Max. value usage / pool
     for (guint i = 0; i < _array->len; i++)
     {
-      Swapper::ValueUsage *value_usage;
+      GreenSwapper::ValueUsage *value_usage;
 
       value_usage = g_array_index (_array,
-                                   Swapper::ValueUsage *,
+                                   GreenSwapper::ValueUsage *,
                                    i);
 
       value_usage->_max_by_pool        = value_usage->_nb_similar / nb_pool;
@@ -153,7 +169,7 @@ void Swapper::Update ()
 }
 
 // --------------------------------------------------------------------------------
-Swapper::ValueUsage *Swapper::GetValueUsage (gchar *value_image)
+GreenSwapper::ValueUsage *GreenSwapper::GetValueUsage (gchar *value_image)
 {
   gint position = GetUIntData (this, value_image);
 
@@ -170,7 +186,7 @@ Swapper::ValueUsage *Swapper::GetValueUsage (gchar *value_image)
 }
 
 // --------------------------------------------------------------------------------
-Player *Swapper::GetNextPlayer (Pool *for_pool)
+Player *GreenSwapper::GetNextPlayer (Pool *for_pool)
 {
   GSList *current = _player_list;
   GSList *result  = NULL;

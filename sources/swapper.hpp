@@ -17,56 +17,18 @@
 #ifndef swapper_hpp
 #define swapper_hpp
 
-#include <gtk/gtk.h>
-
-#include "object.hpp"
-#include "player.hpp"
-#include "attribute.hpp"
-
 class Pool;
+class Player;
 
-class Swapper : public Object
+class Swapper
 {
   public:
-    Swapper (GSList *pools,
-             gchar  *criteria,
-             GSList *player_list);
+    virtual Player *GetNextPlayer (Pool *for_pool) = 0;
 
-    Player *GetNextPlayer (Pool *for_pool);
+    virtual void Delete () = 0;
 
-  private:
-    struct ValueUsage : Object
-  {
-    ValueUsage (gchar *image);
-
-    ~ValueUsage ();
-
-    gchar *_image;
-    guint  _nb_similar;
-    guint  _max_by_pool;
-    guint  _nb_asymetric_pools;
-  };
-
-    Player::AttributeId *_criteria_id;
-    GSList              *_player_list;
-    GArray              *_array;
-    GSList              *_pools;
-    GSList              *_players_list;
-
-    ~Swapper ();
-
-    void Update ();
-
-    void FreeArray ();
-
-    ValueUsage *GetValueUsage (gchar *value_image);
-
-    gboolean CanSwap (ValueUsage *value,
-                      guint       from_pool,
-                      guint       to_pool);
-
-    gboolean Swap (Player *player,
-                   Pool   *to_pool);
+  protected:
+    Swapper () {};
 };
 
 #endif

@@ -389,7 +389,6 @@ void PoolSupervisor::Manage (Pool *pool)
   }
   pool->CopyPlayersStatus (_pool_allocator);
 
-  pool->_rand_seed = _rand_seed;
   pool->SetFilter (_filter);
   pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                       this);

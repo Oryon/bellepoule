@@ -46,6 +46,10 @@ Module::Module (const gchar *glade_file,
   _filter         = NULL;
   _rand_seed      = 0;
 
+  _print_settings            = gtk_print_settings_new ();
+  _page_setup_print_settings = gtk_print_settings_new ();
+  _default_page_setup        = gtk_page_setup_new     ();
+
   if (glade_file)
   {
     _glade = new Glade (glade_file,
@@ -101,6 +105,10 @@ Module::~Module ()
   }
 
   Object::TryToRelease (_filter);
+
+  g_object_unref (_print_settings);
+  g_object_unref (_page_setup_print_settings);
+  g_object_unref (_default_page_setup);
 }
 
 // --------------------------------------------------------------------------------
@@ -561,26 +569,19 @@ void Module::Print (const gchar             *job_name,
     g_free (full_name);
   }
 
+  if (page_setup)
   {
-    GtkPrintSettings *print_settings = gtk_print_settings_new_from_key_file (_config_file,
-                                                                             "print_settings",
-                                                                             NULL);
-
-    if (print_settings == NULL)
-    {
-      print_settings = gtk_print_settings_new ();
-    }
-
-    if (page_setup)
-    {
-      gtk_print_operation_set_default_page_setup (operation,
-                                                  page_setup);
-      gtk_print_settings_set_orientation  (print_settings,
-                                           gtk_page_setup_get_orientation (page_setup));
-    }
+    gtk_print_operation_set_default_page_setup (operation,
+                                                page_setup);
     gtk_print_operation_set_print_settings (operation,
-                                            print_settings);
-    g_object_unref (print_settings);
+                                            _page_setup_print_settings);
+  }
+  else
+  {
+    gtk_print_operation_set_default_page_setup (operation,
+                                                _default_page_setup);
+    gtk_print_operation_set_print_settings (operation,
+                                            _print_settings);
   }
 
   g_signal_connect (G_OBJECT (operation), "begin-print",
@@ -609,14 +610,24 @@ void Module::Print (const gchar             *job_name,
 
   if (res == GTK_PRINT_OPERATION_RESULT_APPLY)
   {
-    GtkPrintSettings *print_settings = gtk_print_operation_get_print_settings (operation);
+    GtkPrintSettings *operation_print_settings = gtk_print_operation_get_print_settings (operation);
 
-    if (print_settings)
+    if (operation_print_settings)
     {
-      gtk_print_settings_to_key_file (print_settings,
-                                      _config_file,
-                                      "print_settings");
-      g_object_unref (print_settings);
+      if (page_setup)
+      {
+        g_object_unref (_page_setup_print_settings);
+
+        _page_setup_print_settings = operation_print_settings;
+        g_object_ref (_page_setup_print_settings);
+      }
+      else
+      {
+        g_object_unref (_print_settings);
+
+        _print_settings = operation_print_settings;
+        g_object_ref (_print_settings);
+      }
     }
   }
 

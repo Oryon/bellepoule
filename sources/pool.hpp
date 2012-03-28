@@ -45,11 +45,12 @@ class Pool : public CanvasModule
     Pool (Module         *container,
           Data           *max_score,
           guint           number,
-          PoolMatchOrder *match_order);
+          PoolMatchOrder *match_order,
+          guint32         rand_seed);
 
     void  AddFencer     (Player *player, Object *rank_owner);
     void  AddReferee    (Player *player);
-    void  CreateMatchs  (Object *rank_owner);
+    void  CreateMatchs  ();
     void  RemoveFencer  (Player *player);
     void  RemoveReferee (Player *player);
     guint GetNbPlayers  ();

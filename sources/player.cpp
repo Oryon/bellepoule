@@ -413,17 +413,30 @@ void Player::Save (xmlTextWriter *xml_writer,
     if (   (desc->_persistency == AttributeDesc::PERSISTENT)
         && (desc->_scope       == AttributeDesc::GLOBAL))
     {
-      AttributeId  attr_id (desc->_code_name);
-      Attribute   *attr = GetAttribute (&attr_id);
+      gboolean saving_allowed = TRUE;
 
-      if (attr)
+      if (strcmp (desc->_code_name, "final_rank") == 0)
       {
-        gchar *xml_image = attr->GetXmlImage ();
+        AttributeId  exported_id ("exported");
+        Attribute   *exported_attr = GetAttribute (&exported_id);
 
-        xmlTextWriterWriteAttribute (xml_writer,
-                                           BAD_CAST attr->GetXmlName (),
-                                           BAD_CAST xml_image);
-        g_free (xml_image);
+        saving_allowed = exported_attr->GetUIntValue () == FALSE;
+      }
+
+      if (saving_allowed)
+      {
+        AttributeId  attr_id (desc->_code_name);
+        Attribute   *attr = GetAttribute (&attr_id);
+
+        if (attr)
+        {
+          gchar *xml_image = attr->GetXmlImage ();
+
+          xmlTextWriterWriteAttribute (xml_writer,
+                                       BAD_CAST attr->GetXmlName (),
+                                       BAD_CAST xml_image);
+          g_free (xml_image);
+        }
       }
     }
     current = g_slist_next (current);

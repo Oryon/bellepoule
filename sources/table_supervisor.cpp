@@ -342,38 +342,42 @@ void TableSupervisor::HideTableSet (TableSet    *table_set,
 }
 
 // --------------------------------------------------------------------------------
+gboolean TableSupervisor::TableSetIsFenced (TableSet *table_set)
+{
+  if (table_set->GetFirstPlace () == 1)
+  {
+    return TRUE;
+  }
+  else if (_fenced_places->_value == ALL_PLACES)
+  {
+    return TRUE;
+  }
+  else if (_fenced_places->_value == THIRD_PLACES)
+  {
+    if (table_set->GetFirstPlace () <= 3)
+    {
+      return TRUE;
+    }
+  }
+  else if (_fenced_places->_value == QUOTA)
+  {
+  }
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 gboolean TableSupervisor::ActivateTableSet (GtkTreeModel    *model,
                                             GtkTreePath     *path,
                                             GtkTreeIter     *iter,
                                             TableSupervisor *ts)
 {
   TableSet *table_set;
-  gboolean  activate = FALSE;
 
   gtk_tree_model_get (model, iter,
                       TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
 
-  if (table_set->GetFirstPlace () == 1)
-  {
-    activate = TRUE;
-  }
-  else if (ts->_fenced_places->_value == ALL_PLACES)
-  {
-    activate = TRUE;
-  }
-  else if (ts->_fenced_places->_value == THIRD_PLACES)
-  {
-    if (table_set->GetFirstPlace () <= 3)
-    {
-      activate = TRUE;
-    }
-  }
-  else if (ts->_fenced_places->_value == QUOTA)
-  {
-  }
-
-  if (activate)
+  if (ts->TableSetIsFenced (table_set))
   {
     table_set->Activate ();
     if (table_set->HasAttendees ())
@@ -701,21 +705,24 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
 
         if (table->GetLoosers (&loosers,
                                &withdrawals,
-                               NULL) > 1)
+                               NULL) > 0)
         {
           defeated_table_set->SetAttendees (loosers,
                                             withdrawals);
-          ShowTableSet (defeated_table_set,
-                        &defeated_iter);
+          if (TableSetIsFenced (defeated_table_set))
           {
-            GtkTreePath *path       = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) defeated_table_set->GetPtrData (this, "tree_row_ref"));
-            GtkTreePath *child_path = gtk_tree_model_filter_convert_child_path_to_path (GTK_TREE_MODEL_FILTER (_table_set_filter),
-                                                                                        path);
+            ShowTableSet (defeated_table_set,
+                          &defeated_iter);
+            {
+              GtkTreePath *path       = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) defeated_table_set->GetPtrData (this, "tree_row_ref"));
+              GtkTreePath *child_path = gtk_tree_model_filter_convert_child_path_to_path (GTK_TREE_MODEL_FILTER (_table_set_filter),
+                                                                                          path);
 
-            gtk_tree_view_expand_to_path (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
-                                          child_path);
-            gtk_tree_path_free (child_path);
-            gtk_tree_path_free (path);
+              gtk_tree_view_expand_to_path (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                                            child_path);
+              gtk_tree_path_free (child_path);
+              gtk_tree_path_free (path);
+            }
           }
         }
         else

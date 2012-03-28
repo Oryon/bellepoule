@@ -783,6 +783,12 @@ void Stage::SetContest (Contest *contest)
 }
 
 // --------------------------------------------------------------------------------
+Contest *Stage::GetContest ()
+{
+  return _contest;
+}
+
+// --------------------------------------------------------------------------------
 Stage *Stage::CreateInstance (xmlNode *xml_node)
 {
   if (xml_node)
@@ -954,12 +960,9 @@ void Stage::UpdateClassification (GSList *result)
 
       while (current_player)
       {
-        Player    *player;
-        Attribute *rank_attr;
+        Player    *player    = (Player *) current_player->data;
+        Attribute *rank_attr = player->GetAttribute (rank_attr_id);
 
-        player = (Player *) current_player->data;
-
-        rank_attr = player->GetAttribute (rank_attr_id);
         if (rank_attr)
         {
           if (previous_attr_id)

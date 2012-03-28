@@ -67,6 +67,7 @@
 			<Add directory="C:\MinGW\include\goocanvas-0.15\goocanvas" />
 			<Add directory="sources\soap\output" />
 			<Add directory="sources\soap\soap" />
+			<Add directory="sources" />
 		</Compiler>
 		<Linker>
 			<Add library="gtk-win32-2.0" />
@@ -127,10 +128,152 @@
 		<Unit filename="sources\filter.hpp" />
 		<Unit filename="sources\form.cpp" />
 		<Unit filename="sources\form.hpp" />
+		<Unit filename="sources\ga\GA1DArrayGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GA1DArrayGenome.h" />
+		<Unit filename="sources\ga\GA1DBinStrGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GA1DBinStrGenome.h" />
+		<Unit filename="sources\ga\GA2DArrayGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GA2DArrayGenome.h" />
+		<Unit filename="sources\ga\GA2DBinStrGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GA2DBinStrGenome.h" />
+		<Unit filename="sources\ga\GA3DArrayGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GA3DArrayGenome.h" />
+		<Unit filename="sources\ga\GA3DBinStrGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GA3DBinStrGenome.h" />
+		<Unit filename="sources\ga\GAAllele.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAAllele.h" />
+		<Unit filename="sources\ga\GAArray.h" />
+		<Unit filename="sources\ga\GABaseGA.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GABaseGA.h" />
+		<Unit filename="sources\ga\GABin2DecGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GABin2DecGenome.h" />
+		<Unit filename="sources\ga\GABinStr.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GABinStr.h" />
+		<Unit filename="sources\ga\GADCrowdingGA.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GADCrowdingGA.h" />
+		<Unit filename="sources\ga\GADemeGA.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GADemeGA.h" />
+		<Unit filename="sources\ga\GAEvalData.h" />
+		<Unit filename="sources\ga\GAGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAGenome.h" />
+		<Unit filename="sources\ga\GAIncGA.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAIncGA.h" />
+		<Unit filename="sources\ga\GAList.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAList.h" />
+		<Unit filename="sources\ga\GAListBASE.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAListBASE.h" />
+		<Unit filename="sources\ga\GAListGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAListGenome.h" />
+		<Unit filename="sources\ga\GAMask.h" />
+		<Unit filename="sources\ga\GANode.h" />
+		<Unit filename="sources\ga\GAParameter.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAParameter.h" />
+		<Unit filename="sources\ga\GAPopulation.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAPopulation.h" />
+		<Unit filename="sources\ga\GARealGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GARealGenome.h" />
+		<Unit filename="sources\ga\GASStateGA.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GASStateGA.h" />
+		<Unit filename="sources\ga\GAScaling.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAScaling.h" />
+		<Unit filename="sources\ga\GASelector.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GASelector.h" />
+		<Unit filename="sources\ga\GASimpleGA.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GASimpleGA.h" />
+		<Unit filename="sources\ga\GAStatistics.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAStatistics.h" />
+		<Unit filename="sources\ga\GAStringGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GAStringGenome.h" />
+		<Unit filename="sources\ga\GATree.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GATree.h" />
+		<Unit filename="sources\ga\GATreeBASE.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GATreeBASE.h" />
+		<Unit filename="sources\ga\GATreeGenome.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\GATreeGenome.h" />
+		<Unit filename="sources\ga\ga.h" />
+		<Unit filename="sources\ga\gabincvt.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\gabincvt.h" />
+		<Unit filename="sources\ga\gaconfig.h" />
+		<Unit filename="sources\ga\gaerror.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\gaerror.h" />
+		<Unit filename="sources\ga\gaid.h" />
+		<Unit filename="sources\ga\garandom.C">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sources\ga\garandom.h" />
+		<Unit filename="sources\ga\gatypes.h" />
+		<Unit filename="sources\ga\gaversion.h" />
+		<Unit filename="sources\ga\std_stream.h" />
 		<Unit filename="sources\general_classification.cpp" />
 		<Unit filename="sources\general_classification.hpp" />
+		<Unit filename="sources\genetic_swapper.cpp" />
+		<Unit filename="sources\genetic_swapper.hpp" />
 		<Unit filename="sources\glade.cpp" />
 		<Unit filename="sources\glade.hpp" />
+		<Unit filename="sources\green_swapper.cpp" />
+		<Unit filename="sources\green_swapper.hpp" />
 		<Unit filename="sources\main.cpp" />
 		<Unit filename="sources\match.cpp" />
 		<Unit filename="sources\match.hpp" />
@@ -152,6 +295,8 @@
 		<Unit filename="sources\pool_match_order.hpp" />
 		<Unit filename="sources\pool_supervisor.cpp" />
 		<Unit filename="sources\pool_supervisor.hpp" />
+		<Unit filename="sources\referee_sector.cpp" />
+		<Unit filename="sources\referee_sector.hpp" />
 		<Unit filename="sources\referees_list.cpp" />
 		<Unit filename="sources\referees_list.hpp" />
 		<Unit filename="sources\resource.rc">
@@ -178,7 +323,6 @@
 		<Unit filename="sources\splitting.hpp" />
 		<Unit filename="sources\stage.cpp" />
 		<Unit filename="sources\stage.hpp" />
-		<Unit filename="sources\swapper.cpp" />
 		<Unit filename="sources\swapper.hpp" />
 		<Unit filename="sources\table.cpp" />
 		<Unit filename="sources\table.hpp" />
@@ -195,9 +339,7 @@
 		<Unit filename="sources\version.h" />
 		<Extensions>
 			<code_completion />
-			<debugger>
-				<search_path add="F:\BellePoule\launchpad\trunk\system_sources\MinGW\src\libintl\0.14.4\libintl-0.14.4-src" />
-			</debugger>
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

@@ -21,7 +21,8 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "swapper.hpp"
+#include "green_swapper.hpp"
+#include "genetic_swapper.hpp"
 #include "contest.hpp"
 #include "pool_match_order.hpp"
 
@@ -680,7 +681,8 @@ void PoolAllocator::Load (xmlNode *xml_node)
           current_pool = new Pool (this,
                                    _max_score,
                                    number+1,
-                                   match_order);
+                                   match_order,
+                                   _rand_seed);
           match_order->Release ();
 
           _pools_list = g_slist_append (_pools_list,
@@ -725,7 +727,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
-        current_pool->CreateMatchs (this);
+        current_pool->CreateMatchs ();
         current_pool->Load (n,
                             _attendees->GetShortList ());
         current_pool = NULL;
@@ -940,26 +942,27 @@ void PoolAllocator::CreatePools ()
       pool_table[i] = new Pool (this,
                                 _max_score,
                                 i+1,
-                                match_order);
+                                match_order,
+                                _rand_seed);
       _pools_list = g_slist_append (_pools_list,
                                     pool_table[i]);
     }
 
     {
-      Swapper *swapper;
+      GreenSwapper *swapper;
       guint    nb_fencer = g_slist_length (shortlist);
 
       if (_swapping_criteria && _seeding_balanced->_value)
       {
-        swapper = new Swapper (_pools_list,
-                               _swapping_criteria->_code_name,
-                               shortlist);
+        swapper = new GreenSwapper (_pools_list,
+                                    _swapping_criteria->_code_name,
+                                    shortlist);
       }
       else
       {
-        swapper = new Swapper (_pools_list,
-                               NULL,
-                               shortlist);
+        swapper = new GreenSwapper (_pools_list,
+                                    NULL,
+                                    shortlist);
       }
 
       for (guint i = 0; i < nb_fencer; i++)
@@ -1642,8 +1645,14 @@ void PoolAllocator::DisplayPlayer (Player        *player,
   {
     if (player->IsFencer () == FALSE)
     {
+      static gchar  *referee_icon = NULL;
+
+      if (referee_icon == NULL)
+      {
+        referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+      }
       Canvas::PutIconInTable (table,
-                              "resources/glade/referee.png",
+                              referee_icon,
                               indice+1, 0);
     }
     else if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())
@@ -2083,7 +2092,7 @@ void PoolAllocator::OnLocked ()
     {
       Pool *pool = (Pool *) current->data;
 
-      pool->CreateMatchs (this);
+      pool->CreateMatchs ();
       current = g_slist_next (current);
     }
   }
