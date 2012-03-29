@@ -249,9 +249,8 @@ void Table::LoadMatch (xmlNode *xml_node,
 
         if (attr)
         {
-          Player *referee = _table_set->GetRefereeFromRef (atoi (attr));
-
-          match->AddReferee (referee);
+          _table_set->AddReferee (match,
+                                  atoi (attr));
         }
       }
       else if (strcmp ((char *) n->name, "Tireur") == 0)

@@ -22,11 +22,15 @@
 #include "referee_sector.hpp"
 
 // --------------------------------------------------------------------------------
-RefereeSector::RefereeSector (gdouble spacing)
+RefereeSector::RefereeSector (Module  *container,
+                              gdouble  spacing)
 : Object ("RefereeSector")
 {
-  _node_list = NULL;
-  _spacing   = spacing;
+  _container = container;
+
+  _node_list    = NULL;
+  _referee_list = NULL;
+  _spacing      = spacing;
 
   Wipe ();
 }
@@ -34,6 +38,11 @@ RefereeSector::RefereeSector (gdouble spacing)
 // --------------------------------------------------------------------------------
 RefereeSector::~RefereeSector ()
 {
+  while (_referee_list)
+  {
+    RemoveReferee ((Player *) _referee_list->data);
+  }
+
   g_slist_free (_node_list);
 }
 
@@ -153,6 +162,12 @@ void RefereeSector::AddReferee (Player *referee)
     }
     current = g_slist_next (current);
   }
+
+  referee->AddMatchs (GetNbMatchs ());
+  _container->RefreshMatchRate (referee);
+
+  _referee_list = g_slist_prepend (_referee_list,
+                                   referee);
 }
 
 // --------------------------------------------------------------------------------
@@ -171,6 +186,12 @@ void RefereeSector::RemoveReferee (Player *referee)
     }
     current = g_slist_next (current);
   }
+
+  referee->RemoveMatchs (GetNbMatchs ());
+  _container->RefreshMatchRate (referee);
+
+  _referee_list = g_slist_remove (_referee_list,
+                                  referee);
 }
 
 // --------------------------------------------------------------------------------

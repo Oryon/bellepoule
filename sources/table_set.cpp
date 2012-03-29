@@ -72,6 +72,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _tables            = NULL;
   _match_to_print    = NULL;
   _nb_tables         = 0;
+  _nb_matchs         = 0;
   _locked            = FALSE;
   _id                = id;
   _attendees         = NULL;
@@ -85,6 +86,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _is_active         = FALSE;
   _referee_sectors   = NULL;
   _floating_referee  = NULL;
+  _target_sector     = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -228,13 +230,21 @@ gchar *TableSet::GetId ()
 // --------------------------------------------------------------------------------
 void TableSet::Activate ()
 {
-  _is_active = TRUE;
+  if (_is_active == FALSE)
+  {
+    _is_active = TRUE;
+    _supervisor->RefreshMatchRate (_nb_matchs);
+  }
 }
 
 // --------------------------------------------------------------------------------
 void TableSet::DeActivate ()
 {
-  _is_active = FALSE;
+  if (_is_active == TRUE)
+  {
+    _is_active = FALSE;
+    _supervisor->RefreshMatchRate (-_nb_matchs);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -512,7 +522,6 @@ void TableSet::Garnish ()
 {
   DeleteTree ();
   CreateTree ();
-  DeleteDeadNodes ();
 }
 
 // --------------------------------------------------------------------------------
@@ -666,6 +675,11 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
 // --------------------------------------------------------------------------------
 void TableSet::DeleteTree ()
 {
+  if (_is_active)
+  {
+    _supervisor->RefreshMatchRate (-_nb_matchs);
+  }
+
   g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
                                         (void *) on_from_table_combobox_changed,
                                         (Object *) this);
@@ -680,11 +694,10 @@ void TableSet::DeleteTree ()
                      this);
 
     g_node_destroy (_tree_root);
-    _tree_root = NULL;
-  }
 
-  g_slist_free (_referee_sectors);
-  _referee_sectors = NULL;
+    _tree_root       = NULL;
+    _referee_sectors = NULL;
+  }
 
   for (guint i = 0; i < _nb_tables; i++)
   {
@@ -694,20 +707,6 @@ void TableSet::DeleteTree ()
   _nb_tables = 0;
   _tables    = NULL;
   _is_over   = FALSE;
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::DeleteDeadNodes ()
-{
-  if (_tree_root)
-  {
-    g_node_traverse (_tree_root,
-                     G_POST_ORDER,
-                     G_TRAVERSE_NON_LEAVES,
-                     -1,
-                     (GNodeTraverseFunc) DeleteDeadNode,
-                     this);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -791,6 +790,21 @@ void TableSet::CreateTree ()
     g_signal_connect (_glade->GetWidget ("from_table_combobox"), "changed",
                       G_CALLBACK (on_from_table_combobox_changed),
                       (Object *) this);
+  }
+
+  if (_tree_root)
+  {
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_NON_LEAVES,
+                     -1,
+                     (GNodeTraverseFunc) DeleteDeadNode,
+                     this);
+  }
+
+  if (_is_active)
+  {
+    _supervisor->RefreshMatchRate (_nb_matchs);
   }
 }
 
@@ -1303,6 +1317,8 @@ void TableSet::AddFork (GNode *to)
   data->_match = new Match (_max_score);
   data->_match->SetData (this, "node", node);
 
+  _nb_matchs++;
+
   {
     gchar *name_space = g_strdup_printf ("%d-%d.", _first_place, data->_table->GetSize ()*2);
 
@@ -1353,7 +1369,8 @@ void TableSet::AddFork (GNode *to)
                            "table", data->_table->GetLeftTable ());
 
     {
-      RefereeSector *referee_sector = new RefereeSector (_table_spacing);
+      RefereeSector *referee_sector = new RefereeSector (_supervisor,
+                                                         _table_spacing);
 
       _referee_sectors = g_slist_prepend (_referee_sectors,
                                           referee_sector);
@@ -1399,6 +1416,7 @@ void TableSet::AddFork (GNode *to)
           to_data->_match->SetPlayerB (player);
         }
       }
+      _nb_matchs--;
     }
     else if (to_data)
     {
@@ -1440,6 +1458,7 @@ void TableSet::DropMatch (GNode *node)
       }
     }
   }
+  _nb_matchs--;
 }
 
 // --------------------------------------------------------------------------------
@@ -1680,11 +1699,15 @@ Player *TableSet::GetFencerFromRef (guint ref)
 }
 
 // --------------------------------------------------------------------------------
-Player *TableSet::GetRefereeFromRef (guint ref)
+void TableSet::AddReferee (Match *match,
+                           guint  referee_ref)
 {
-  Contest *contest = _supervisor->GetContest ();
+  Contest       *contest = _supervisor->GetContest ();
+  Player        *referee = contest->GetRefereeFromRef (referee_ref);
+  RefereeSector *sector  = (RefereeSector *) match->GetPtrData (this,
+                                                                "referee_sector");
 
-  return contest->GetRefereeFromRef (ref);
+  sector->AddReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
@@ -3069,6 +3092,12 @@ gboolean TableSet::OnDragMotion (GtkWidget      *widget,
 
   }
 
+  if (_target_sector)
+  {
+    _target_sector->Unfocus ();
+    _target_sector = NULL;
+  }
+
   while (current)
   {
     GooCanvasBounds  bounds;
@@ -3139,8 +3168,6 @@ gboolean TableSet::OnDragDrop (GtkWidget      *widget,
   if (_floating_referee && _target_sector)
   {
     {
-      _target_sector->AddReferee (_floating_referee);
-
       {
         Player::AttributeId attr_id ("availability");
 
@@ -3148,10 +3175,7 @@ gboolean TableSet::OnDragDrop (GtkWidget      *widget,
                                               "Busy");
       }
 
-      {
-        _floating_referee->AddMatchs (_target_sector->GetNbMatchs ());
-        RefreshMatchRate (_floating_referee);
-      }
+      _target_sector->AddReferee (_floating_referee);
 
       //FillInNode (_target_sector,
                   //this);

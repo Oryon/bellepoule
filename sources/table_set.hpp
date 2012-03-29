@@ -114,7 +114,8 @@ class TableSet : public CanvasModule
 
     Player *GetFencerFromRef (guint ref);
 
-    Player *GetRefereeFromRef (guint ref);
+    void AddReferee (Match *match,
+                     guint  referee_ref);
 
     guint GetNbTables ();
 
@@ -141,6 +142,7 @@ class TableSet : public CanvasModule
     TableSupervisor          *_supervisor;
     GNode                    *_tree_root;
     guint                     _nb_tables;
+    guint                     _nb_matchs;
     gint                      _table_to_stuff;
     GtkListStore             *_from_table_liststore;
     GtkTreeStore             *_quick_search_treestore;
@@ -196,8 +198,6 @@ class TableSet : public CanvasModule
     void CreateTree ();
 
     void DeleteTree ();
-
-    void DeleteDeadNodes ();
 
     void OnAttrListUpdated ();
 

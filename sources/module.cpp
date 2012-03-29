@@ -359,6 +359,8 @@ void Module::UnPlug ()
                             _root);
     }
 
+    OnUnPlugged ();
+
     if (_owner)
     {
       _owner->_plugged_list = g_slist_remove (_owner->_plugged_list,
@@ -370,8 +372,6 @@ void Module::UnPlug ()
     {
       _filter->UnPlug ();
     }
-
-    OnUnPlugged ();
   }
 }
 

@@ -19,6 +19,7 @@
 
 #include <gtk/gtk.h>
 
+#include "module.hpp"
 #include "object.hpp"
 
 struct NodeData
@@ -37,7 +38,8 @@ class Player;
 class RefereeSector : public Object
 {
   public:
-    RefereeSector (gdouble spacing);
+    RefereeSector (Module  *container,
+                   gdouble  spacing);
 
     void AddNode (GNode *node);
 
@@ -56,18 +58,20 @@ class RefereeSector : public Object
 
     void RemoveReferee (Player *referee);
 
-    guint GetNbMatchs ();
-
     void PutInTable (GooCanvasItem *table,
                      guint          row,
                      guint          column);
 
   private:
+    Module        *_container;
     GSList        *_node_list;
+    GSList        *_referee_list;
     GooCanvasItem *_back_rect;
     gdouble        _spacing;
 
     virtual ~RefereeSector ();
+
+    guint GetNbMatchs ();
 
     static gboolean OnEnterNotify  (GooCanvasItem    *item,
                                     GooCanvasItem    *target_item,
