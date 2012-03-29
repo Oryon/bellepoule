@@ -27,6 +27,7 @@
 #include "classification.hpp"
 #include "table_supervisor.hpp"
 #include "contest.hpp"
+#include "table_zone.hpp"
 
 #include "table_set.hpp"
 
@@ -84,9 +85,9 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _print_scale       = 1.0;
   _zoom_factor       = 1.0;
   _is_active         = FALSE;
-  _referee_sectors   = NULL;
+  _drop_zones        = NULL;
   _floating_referee  = NULL;
-  _target_sector     = NULL;
+  _target_drop_zone  = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -204,7 +205,7 @@ TableSet::~TableSet ()
 
   g_slist_free (_attendees);
   g_slist_free (_withdrawals);
-  g_slist_free (_referee_sectors);
+  g_slist_free (_drop_zones);
 
   gtk_list_store_clear (_from_table_liststore);
   gtk_tree_store_clear (_quick_search_treestore);
@@ -495,7 +496,7 @@ void TableSet::Display ()
 
     RefreshTableStatus ();
     DrawAllConnectors  ();
-    DrawAllSectors     ();
+    DrawAllZones       ();
   }
 }
 
@@ -659,7 +660,7 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
 
   table_set->RefreshTableStatus ();
   table_set->DrawAllConnectors  ();
-  table_set->DrawAllSectors     ();
+  table_set->DrawAllZones       ();
 
   {
     Table *table = (Table *) match->GetPtrData (table_set, "table");
@@ -695,8 +696,8 @@ void TableSet::DeleteTree ()
 
     g_node_destroy (_tree_root);
 
-    _tree_root       = NULL;
-    _referee_sectors = NULL;
+    _tree_root  = NULL;
+    _drop_zones = NULL;
   }
 
   for (guint i = 0; i < _nb_tables; i++)
@@ -823,17 +824,17 @@ void TableSet::DrawAllConnectors ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::DrawAllSectors ()
+void TableSet::DrawAllZones ()
 {
   if (_tree_root)
   {
-    GSList *current = _referee_sectors;
+    GSList *current = _drop_zones;
 
     while (current)
     {
-      RefereeSector *sector = (RefereeSector *) current->data;
+      DropZone *zone = (DropZone *) current->data;
 
-      sector->Draw (GetRootItem ());
+      zone->Draw (GetRootItem ());
       current = g_slist_next (current);
     }
   }
@@ -856,11 +857,11 @@ gboolean TableSet::WipeNode (GNode    *node,
 
   if (data->_match)
   {
-    RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
-                                                                        "referee_sector");
-    if (sector)
+    DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
+                                                            "drop_zone");
+    if (zone)
     {
-      sector->Wipe ();
+      zone->Wipe ();
     }
   }
 
@@ -1047,14 +1048,14 @@ gboolean TableSet::FillInNode (GNode    *node,
       }
 
       {
-        RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
-                                                                            "referee_sector");
+        DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
+                                                                "drop_zone");
 
-        if (sector)
+        if (zone)
         {
-          sector->PutInTable (data->_match_goo_table,
-                              0,
-                              0);
+          zone->PutInTable (data->_match_goo_table,
+                            0,
+                            0);
         }
       }
     }
@@ -1230,12 +1231,12 @@ gboolean TableSet::DeleteNode (GNode    *node,
 
   if (data->_match)
   {
-    RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
-                                                                        "referee_sector");
+    DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
+                                                            "drop_zone");
 
-    Object::TryToRelease (sector);
+    Object::TryToRelease (zone);
     data->_match->RemoveData (table_set,
-                              "referee_sector");
+                              "drop_zone");
 
     Object::TryToRelease (data->_match);
   }
@@ -1369,15 +1370,15 @@ void TableSet::AddFork (GNode *to)
                            "table", data->_table->GetLeftTable ());
 
     {
-      RefereeSector *referee_sector = new RefereeSector (_supervisor,
-                                                         _table_spacing);
+      TableZone *drop_zone = new TableZone (_supervisor,
+                                            _table_spacing);
 
-      _referee_sectors = g_slist_prepend (_referee_sectors,
-                                          referee_sector);
-      referee_sector->AddNode (node);
+      _drop_zones = g_slist_prepend (_drop_zones,
+                                     drop_zone);
+      drop_zone->AddNode (node);
 
       data->_match->SetData (this,
-                             "referee_sector", referee_sector);
+                             "drop_zone", (DropZone *) drop_zone);
     }
 
     AddFork (node);
@@ -1702,12 +1703,12 @@ Player *TableSet::GetFencerFromRef (guint ref)
 void TableSet::AddReferee (Match *match,
                            guint  referee_ref)
 {
-  Contest       *contest = _supervisor->GetContest ();
-  Player        *referee = contest->GetRefereeFromRef (referee_ref);
-  RefereeSector *sector  = (RefereeSector *) match->GetPtrData (this,
-                                                                "referee_sector");
+  Contest  *contest = _supervisor->GetContest ();
+  Player   *referee = contest->GetRefereeFromRef (referee_ref);
+  DropZone *zone    = (DropZone *) match->GetPtrData (this,
+                                                      "drop_zone");
 
-  sector->AddReferee (referee);
+  zone->AddReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
@@ -3055,7 +3056,7 @@ gboolean TableSet::OnDragMotion (GtkWidget      *widget,
                                  gint            y,
                                  guint           time)
 {
-  GSList  *current = _referee_sectors;
+  GSList  *current = _drop_zones;
   gdouble  vvalue;
   gdouble  hvalue;
 
@@ -3092,24 +3093,24 @@ gboolean TableSet::OnDragMotion (GtkWidget      *widget,
 
   }
 
-  if (_target_sector)
+  if (_target_drop_zone)
   {
-    _target_sector->Unfocus ();
-    _target_sector = NULL;
+    _target_drop_zone->Unfocus ();
+    _target_drop_zone = NULL;
   }
 
   while (current)
   {
     GooCanvasBounds  bounds;
-    RefereeSector   *sector = (RefereeSector *) current->data;
+    DropZone        *zone = (DropZone *) current->data;
 
-    sector->GetBounds (&bounds,
-                       _zoom_factor);
+    zone->GetBounds (&bounds,
+                     _zoom_factor);
 
     if (   (x > bounds.x1-hvalue) && (x < bounds.x2-hvalue)
         && (y > bounds.y1-vvalue) && (y < bounds.y2-vvalue))
     {
-      sector->Focus ();
+      zone->Focus ();
 
       if (_floating_referee)
       {
@@ -3118,7 +3119,7 @@ gboolean TableSet::OnDragMotion (GtkWidget      *widget,
 
         if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
         {
-          _target_sector = sector;
+          _target_drop_zone = zone;
           gdk_drag_status  (drag_context,
                             GDK_ACTION_COPY,
                             time);
@@ -3126,7 +3127,7 @@ gboolean TableSet::OnDragMotion (GtkWidget      *widget,
         }
       }
 
-      sector->Unfocus ();
+      zone->Unfocus ();
       gdk_drag_status (drag_context,
                        (GdkDragAction) 0,
                        time);
@@ -3165,7 +3166,7 @@ gboolean TableSet::OnDragDrop (GtkWidget      *widget,
 
   }
 
-  if (_floating_referee && _target_sector)
+  if (_floating_referee && _target_drop_zone)
   {
     {
       {
@@ -3175,18 +3176,18 @@ gboolean TableSet::OnDragDrop (GtkWidget      *widget,
                                               "Busy");
       }
 
-      _target_sector->AddReferee (_floating_referee);
+      _target_drop_zone->AddReferee (_floating_referee);
 
-      //FillInNode (_target_sector,
-                  //this);
+      //FillInNode (_target_drop_zone,
+      //this);
       OnAttrListUpdated ();
       MakeDirty ();
     }
 
-    if (_target_sector)
+    if (_target_drop_zone)
     {
-      _target_sector->Unfocus ();
-      _target_sector = NULL;
+      _target_drop_zone->Unfocus ();
+      _target_drop_zone = NULL;
     }
     result = TRUE;
   }
@@ -3225,9 +3226,9 @@ void TableSet::OnDragLeave (GtkWidget      *widget,
                             GdkDragContext *drag_context,
                             guint           time)
 {
-  if (_target_sector)
+  if (_target_drop_zone)
   {
-    _target_sector->Unfocus ();
+    _target_drop_zone->Unfocus ();
   }
 }
 

@@ -24,7 +24,7 @@
 #include "match.hpp"
 #include "score_collector.hpp"
 #include "table.hpp"
-#include "referee_sector.hpp"
+#include "drop_zone.hpp"
 
 class TableSupervisor;
 
@@ -182,9 +182,9 @@ class TableSet : public CanvasModule
     gdouble                   _zoom_factor;
     gboolean                  _is_active;
     GtkPageSetup             *_page_setup;
-    GSList                   *_referee_sectors;
+    GSList                   *_drop_zones;
     Player                   *_floating_referee;
-    RefereeSector            *_target_sector;
+    DropZone                 *_target_drop_zone;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -203,7 +203,7 @@ class TableSet : public CanvasModule
 
     void DrawAllConnectors ();
 
-    void DrawAllSectors ();
+    void DrawAllZones ();
 
     void Garnish ();
 

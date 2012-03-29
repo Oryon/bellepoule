@@ -14,36 +14,21 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef referee_sector_hpp
-#define referee_sector_hpp
+#ifndef drop_zone_hpp
+#define drop_zone_hpp
 
 #include <gtk/gtk.h>
 
 #include "module.hpp"
-#include "object.hpp"
 
-struct NodeData
-{
-  guint          _expected_winner_rank;
-  Table         *_table;
-  guint          _table_index;
-  Match         *_match;
-  GooCanvasItem *_fencer_goo_table;
-  GooCanvasItem *_match_goo_table;
-  GooCanvasItem *_connector;
-};
+#include "object.hpp"
 
 class Player;
 
-class RefereeSector : public Object
+class DropZone : public Object
 {
   public:
-    RefereeSector (Module  *container,
-                   gdouble  spacing);
-
-    void AddNode (GNode *node);
-
-    void Draw (GooCanvasItem *root_item);
+    DropZone (Module *container);
 
     void Wipe ();
 
@@ -54,34 +39,39 @@ class RefereeSector : public Object
 
     void Unfocus ();
 
-    void AddReferee (Player *referee);
-
-    void RemoveReferee (Player *referee);
-
     void PutInTable (GooCanvasItem *table,
                      guint          row,
                      guint          column);
 
-  private:
+  public:
+    virtual void Draw (GooCanvasItem *root_item);
+
+    virtual void AddReferee (Player *referee);
+
+    virtual void RemoveReferee (Player *referee);
+
+  protected:
     Module        *_container;
-    GSList        *_node_list;
-    GSList        *_referee_list;
     GooCanvasItem *_back_rect;
-    gdouble        _spacing;
 
-    virtual ~RefereeSector ();
+    virtual ~DropZone ();
 
-    guint GetNbMatchs ();
+  private:
+    GSList   *_referee_list;
+    guint     _nb_matchs;
+    gboolean  _nb_matchs_known;
+
+    virtual guint GetNbMatchs ();
 
     static gboolean OnEnterNotify  (GooCanvasItem    *item,
                                     GooCanvasItem    *target_item,
                                     GdkEventCrossing *event,
-                                    RefereeSector    *sector);
+                                    DropZone         *sector);
 
     static gboolean OnLeaveNotify  (GooCanvasItem    *item,
                                     GooCanvasItem    *target_item,
                                     GdkEventCrossing *event,
-                                    RefereeSector    *sector);
+                                    DropZone         *sector);
 };
 
 #endif
