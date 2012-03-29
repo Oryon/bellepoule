@@ -26,7 +26,7 @@ WizardSmallImageFile=BellePoule_small.bmp
 SetupIconFile=setup_logo.ico
 
 [Tasks]
-Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icones de lancement :";
+Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icônes de lancement :";
 Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la barre des tâches"; GroupDescription: "Icones de lancement :";
 ;Name: downloadsources; Description: "Récupérer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
 
@@ -34,27 +34,26 @@ Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la
 Root: HKCU; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\BellePoule.exe,0"; Flags: uninsdeletekey noerror
-Root: HKCU; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.bat"" ""%1"""; Flags: uninsdeletekey noerror
+Root: HKCU; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.exe"" ""%1"""; Flags: uninsdeletekey noerror
 
 Root: HKLM; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\BellePoule.exe,0"; Flags: uninsdeletekey noerror
-Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.bat"" ""%1"""; Flags: uninsdeletekey noerror
+Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.bin"" ""%1"""; Flags: uninsdeletekey noerror
 
 [Languages]
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 ;LicenseFile: "license-French.txt"
 
 [Icons]
-Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\bin\BellePoule.bat"; WorkingDir: "{app}\bin"; IconFilename: "{app}\bin\BellePoule.exe"
-Name: "{userprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}\bin"
-Name: "{commonprograms}\BellePoule\BellePoule"; Filename: "{app}\bin\BellePoule.bat"; WorkingDir: "{app}\bin"; IconFilename: "{app}\bin\BellePoule.exe"
-Name: "{commonprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"; WorkingDir: "{app}\bin"
-Name: "{userdesktop}\BellePoule"; Filename: "{app}\bin\BellePoule.bat"; WorkingDir: "{app}\bin"; Tasks: desktopicon; IconFilename: "{app}\bin\BellePoule.exe"
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filename: "{app}\bin\BellePoule.bat"; WorkingDir: "{app}\bin"; Tasks: quicklaunchicon; IconFilename: "{app}\bin\BellePoule.exe"
+Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; IconFilename: "{app}\bin\BellePoule.exe"
+Name: "{userprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"
+Name: "{commonprograms}\BellePoule\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; IconFilename: "{app}\bin\BellePoule.exe"
+Name: "{commonprograms}\BellePoule\Uninstall BellePoule"; Filename: "{uninstallexe}"
+Name: "{userdesktop}\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; Tasks: desktopicon; IconFilename: "{app}\bin\BellePoule.exe"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\bin\BellePoule.exe"
 
 [Files]
-Source: "path_dependent_files\BellePoule.bat"; DestDir: "{app}\bin"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\bin\BellePoule.bat'), 'INSTALL_DIR', ExpandConstant('{app}\bin'), 1)
 Source: "..\bin\Release\BellePoule.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\resources\gtkrc"; DestDir: "{app}\share\BellePoule\resources"; Flags: ignoreversion
 Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
