@@ -124,6 +124,8 @@
 		<Unit filename="sources\contest.hpp" />
 		<Unit filename="sources\data.cpp" />
 		<Unit filename="sources\data.hpp" />
+		<Unit filename="sources\drop_zone.cpp" />
+		<Unit filename="sources\drop_zone.hpp" />
 		<Unit filename="sources\filter.cpp" />
 		<Unit filename="sources\filter.hpp" />
 		<Unit filename="sources\form.cpp" />
@@ -295,8 +297,6 @@
 		<Unit filename="sources\pool_match_order.hpp" />
 		<Unit filename="sources\pool_supervisor.cpp" />
 		<Unit filename="sources\pool_supervisor.hpp" />
-		<Unit filename="sources\referee_sector.cpp" />
-		<Unit filename="sources\referee_sector.hpp" />
 		<Unit filename="sources\referees_list.cpp" />
 		<Unit filename="sources\referees_list.hpp" />
 		<Unit filename="sources\resource.rc">
@@ -330,6 +330,8 @@
 		<Unit filename="sources\table_set.hpp" />
 		<Unit filename="sources\table_supervisor.cpp" />
 		<Unit filename="sources\table_supervisor.hpp" />
+		<Unit filename="sources\table_zone.cpp" />
+		<Unit filename="sources\table_zone.hpp" />
 		<Unit filename="sources\tournament.cpp" />
 		<Unit filename="sources\tournament.hpp" />
 		<Unit filename="sources\update_checker.cpp" />

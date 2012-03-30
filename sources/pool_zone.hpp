@@ -21,26 +21,14 @@
 
 #include "object.hpp"
 #include "module.hpp"
+#include "pool.hpp"
 #include "drop_zone.hpp"
 
-struct NodeData
-{
-  guint          _expected_winner_rank;
-  Table         *_table;
-  guint          _table_index;
-  Match         *_match;
-  GooCanvasItem *_fencer_goo_table;
-  GooCanvasItem *_match_goo_table;
-  GooCanvasItem *_connector;
-};
-
-class TableZone : public DropZone
+class PoolZone : public DropZone
 {
   public:
-    TableZone (Module  *container,
-               gdouble  spacing);
-
-    void AddNode (GNode *node);
+    PoolZone (Module *container,
+              Pool   *pool);
 
     void Draw (GooCanvasItem *root_item);
 
@@ -48,11 +36,14 @@ class TableZone : public DropZone
 
     void RemoveReferee (Player *referee);
 
-  private:
-    GSList   *_node_list;
-    gdouble   _spacing;
+    Pool *GetPool ();
 
-    virtual ~TableZone ();
+  private:
+    static GtkTargetEntry  _dnd_target_list[];
+
+    Pool *_pool;
+
+    virtual ~PoolZone ();
 
     guint GetNbMatchs ();
 };

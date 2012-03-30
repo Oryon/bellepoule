@@ -3127,11 +3127,7 @@ gboolean TableSet::OnDragMotion (GtkWidget      *widget,
         }
       }
 
-      zone->Unfocus ();
-      gdk_drag_status (drag_context,
-                       (GdkDragAction) 0,
-                       time);
-      return FALSE;
+      break;
     }
 
     current = g_slist_next (current);

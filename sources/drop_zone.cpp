@@ -58,6 +58,20 @@ void DropZone::Draw (GooCanvasItem *root_item)
 }
 
 // --------------------------------------------------------------------------------
+void DropZone::Redraw (gdouble x,
+                       gdouble y,
+                       gdouble w,
+                       gdouble h)
+{
+  g_object_set (G_OBJECT (_back_rect),
+                "x",      x,
+                "y",      y,
+                "width",  w,
+                "height", h,
+                NULL);
+}
+
+// --------------------------------------------------------------------------------
 void DropZone::GetBounds (GooCanvasBounds *bounds,
                           gdouble          zoom_factor)
 {
@@ -140,26 +154,42 @@ void DropZone::PutInTable (GooCanvasItem *table,
     {
       Player        *referee = (Player *) current->data;
       GooCanvasItem *item;
-      static gchar  *referee_icon = NULL;
 
-      if (referee_icon == NULL)
       {
-        referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+        static gchar *referee_icon = NULL;
+
+        if (referee_icon == NULL)
+        {
+          referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+        }
+
+        item = Canvas::PutIconInTable (table,
+                                       referee_icon,
+                                       row + i,
+                                       column);
+        g_signal_connect (item, "button_press_event",
+                          G_CALLBACK (OnButtonPress), this);
+        g_object_set_data (G_OBJECT (item),
+                           "DropZone::referee",
+                           referee);
       }
 
-      Canvas::PutIconInTable (table,
-                              referee_icon,
-                              row + i,
-                              column);
-      item = Canvas::PutTextInTable (table,
-                                     referee->GetName (),
-                                     row + i,
-                                     column+1);
-      Canvas::SetTableItemAttribute (item, "x-align", 1.0);
-      Canvas::SetTableItemAttribute (item, "y-align", 0.5);
-      g_object_set (item,
-                    "font", "Sans Bold Italic 12px",
-                    NULL);
+      {
+        item = Canvas::PutTextInTable (table,
+                                       referee->GetName (),
+                                       row + i,
+                                       column+1);
+        Canvas::SetTableItemAttribute (item, "x-align", 1.0);
+        Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+        g_object_set (item,
+                      "font", "Sans Bold Italic 12px",
+                      NULL);
+        g_signal_connect (item, "button_press_event",
+                          G_CALLBACK (OnButtonPress), this);
+        g_object_set_data (G_OBJECT (item),
+                           "DropZone::referee",
+                           referee);
+      }
 
       current = g_slist_next (current);
     }
@@ -174,12 +204,27 @@ void DropZone::PutInTable (GooCanvasItem *table,
 }
 
 // --------------------------------------------------------------------------------
+gboolean DropZone::OnItemPress (GooCanvasItem  *item,
+                                GdkEventButton *event)
+{
+  if (   (event->button == 1)
+      && (event->type == GDK_BUTTON_PRESS))
+  {
+    Player *floating_referee = (Player *) g_object_get_data (G_OBJECT (item),
+                                                             "DropZone::referee");
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 gboolean DropZone::OnEnterNotify  (GooCanvasItem    *item,
                                    GooCanvasItem    *target_item,
                                    GdkEventCrossing *event,
-                                   DropZone         *sector)
+                                   DropZone         *drop_zone)
 {
-  sector->Focus ();
+  drop_zone->Focus ();
   return TRUE;
 }
 
@@ -187,8 +232,18 @@ gboolean DropZone::OnEnterNotify  (GooCanvasItem    *item,
 gboolean DropZone::OnLeaveNotify  (GooCanvasItem    *item,
                                    GooCanvasItem    *target_item,
                                    GdkEventCrossing *event,
-                                   DropZone         *sector)
+                                   DropZone         *drop_zone)
 {
-  sector->Unfocus ();
+  drop_zone->Unfocus ();
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean DropZone::OnButtonPress (GooCanvasItem  *item,
+                                  GooCanvasItem  *target,
+                                  GdkEventButton *event,
+                                  DropZone       *drop_zone)
+{
+  return drop_zone->OnItemPress (item,
+                                 event);
 }
