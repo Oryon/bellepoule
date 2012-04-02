@@ -315,6 +315,9 @@ class TableSet : public CanvasModule
     gboolean DroppingIsForbidden ();
 
     GString *GetFloatingImage (Object *floating_object);
+
+    gboolean ObjectIsDropable (Object   *floating_object,
+                               DropZone *in_zone);
 };
 
 #endif

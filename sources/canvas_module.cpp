@@ -415,24 +415,16 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
     DropZone *drop_zone = GetZoneAt (x,
                                      y);
 
-    if (drop_zone)
+    if (ObjectIsDropable (_floating_object,
+                          drop_zone))
     {
       drop_zone->Focus ();
+      _target_drop_zone = drop_zone;
 
-      if (_floating_object)
-      {
-        //ylr: Player::AttributeId  attr_id  ("availability");
-        //ylr: Attribute           *attr = _floating_object->GetAttribute (&attr_id);
-
-        //ylr: if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
-        {
-          _target_drop_zone = drop_zone;
-          gdk_drag_status  (drag_context,
-                            GDK_ACTION_COPY,
-                            time);
-          return TRUE;
-        }
-      }
+      gdk_drag_status  (drag_context,
+                        GDK_ACTION_COPY,
+                        time);
+      return TRUE;
     }
   }
 
@@ -465,18 +457,22 @@ gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
 
   }
 
+  if (_target_drop_zone)
+  {
+    _target_drop_zone->Unfocus ();
+  }
+
   if (_floating_object && _target_drop_zone)
   {
     _target_drop_zone->AddObject (_floating_object);
     DropObject (_floating_object,
-                _source_drop_zone,
+                NULL,
                 _target_drop_zone);
-
-    _target_drop_zone->Unfocus ();
-    _target_drop_zone = NULL;
 
     result = TRUE;
   }
+
+  _target_drop_zone = NULL;
 
   gtk_drag_finish (drag_context,
                    result,
@@ -686,7 +682,8 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
       DropZone *drop_zone = GetZoneAt (_drag_x,
                                        _drag_y);
 
-      if (drop_zone)
+      if (ObjectIsDropable (_floating_object,
+                            drop_zone))
       {
         drop_zone->Focus ();
         _target_drop_zone = drop_zone;
@@ -728,6 +725,13 @@ gboolean CanvasModule::DroppingIsForbidden ()
 GString *CanvasModule::GetFloatingImage (Object *floating_object)
 {
   return g_string_new ("???");
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::ObjectIsDropable (Object   *floating_object,
+                                         DropZone *in_zone)
+{
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

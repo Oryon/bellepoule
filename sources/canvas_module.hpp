@@ -83,6 +83,9 @@ class CanvasModule : public Module
 
     virtual GString *GetFloatingImage (Object *floating_object);
 
+    virtual gboolean ObjectIsDropable (Object   *floating_object,
+                                       DropZone *in_zone);
+
   private:
     GooCanvas     *_canvas;
     gdouble        _zoom_factor;

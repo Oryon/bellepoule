@@ -354,6 +354,25 @@ GString *PoolAllocator::GetFloatingImage (Object *floating_object)
 }
 
 // --------------------------------------------------------------------------------
+gboolean PoolAllocator::ObjectIsDropable (Object   *floating_object,
+                                          DropZone *in_zone)
+{
+  if (floating_object && in_zone)
+  {
+    Player::AttributeId  attr_id  ("availability");
+    Player              *player = (Player *) floating_object;
+    Attribute           *attr = player->GetAttribute (&attr_id);
+
+    if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
+    {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 void PoolAllocator::Display ()
 {
   SetUpCombobox ();

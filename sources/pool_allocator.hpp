@@ -139,6 +139,9 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     GString *GetFloatingImage (Object *floating_object);
 
+    gboolean ObjectIsDropable (Object   *floating_object,
+                               DropZone *in_zone);
+
     ~PoolAllocator ();
 };
 

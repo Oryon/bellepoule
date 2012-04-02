@@ -3131,6 +3131,42 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
 }
 
 // --------------------------------------------------------------------------------
+gboolean TableSet::ObjectIsDropable (Object   *floating_object,
+                                     DropZone *in_zone)
+{
+  if (floating_object && in_zone)
+  {
+    Player::AttributeId  attr_id  ("availability");
+    Player              *player = (Player *) floating_object;
+    Attribute           *attr = player->GetAttribute (&attr_id);
+
+    if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
+    {
+      {
+        TableZone *table_zone = (TableZone *) in_zone;
+        GSList    *current    = table_zone->GetNodeList ();
+
+        while (current)
+        {
+          GNode    *node  = (GNode *) current->data;
+          NodeData *data  = (NodeData *) node->data;
+          Match    *match = data->_match;
+
+          if (match->GetPlayerA () && match->GetPlayerB ())
+          {
+            return TRUE;
+          }
+
+          current = g_slist_next (current);
+        }
+      }
+    }
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *widget,
                                                                     Object    *owner)
 {
