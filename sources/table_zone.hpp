@@ -48,6 +48,10 @@ class TableZone : public DropZone
 
     void RemoveReferee (Player *referee);
 
+    void PutInTable (GooCanvasItem *table,
+                     guint          row,
+                     guint          column);
+
   private:
     GSList   *_node_list;
     gdouble   _spacing;

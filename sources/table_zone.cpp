@@ -75,15 +75,7 @@ void TableZone::Draw (GooCanvasItem *root_item)
                                           first_child_bounds.x2 - first_child_bounds.x1,
                                           last_child_bounds.y2 - first_child_bounds.y1,
                                           "stroke-pattern", NULL,
-                                          "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                           NULL);
-
-#if 0
-        g_signal_connect (_back_rect, "enter_notify_event",
-                          G_CALLBACK (OnEnterNotify), this);
-        g_signal_connect (_back_rect, "leave_notify_event",
-                          G_CALLBACK (OnLeaveNotify), this);
-#endif
       }
     }
     current = g_slist_next (current);
@@ -151,4 +143,55 @@ guint TableZone::GetNbMatchs ()
   }
 
   return result;
+}
+
+// --------------------------------------------------------------------------------
+void TableZone::PutInTable (GooCanvasItem *table,
+                            guint          row,
+                            guint          column)
+{
+  GSList *current = _referee_list;
+
+  if (current)
+  {
+    for (guint i = 0; current != NULL; i++)
+    {
+      Player *referee = (Player *) current->data;
+
+      {
+        static gchar *referee_icon = NULL;
+
+        if (referee_icon == NULL)
+        {
+          referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+        }
+
+        Canvas::PutIconInTable (table,
+                                       referee_icon,
+                                       row + i,
+                                       column);
+      }
+
+      {
+        GooCanvasItem *item = Canvas::PutTextInTable (table,
+                                                      referee->GetName (),
+                                                      row + i,
+                                                      column+1);
+        Canvas::SetTableItemAttribute (item, "x-align", 1.0);
+        Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+        g_object_set (item,
+                      "font", "Sans Bold Italic 12px",
+                      NULL);
+      }
+
+      current = g_slist_next (current);
+    }
+  }
+  else // Goocanvas display issue workaround
+  {
+    Canvas::PutTextInTable (table,
+                            "",
+                            row,
+                            column+1);
+  }
 }

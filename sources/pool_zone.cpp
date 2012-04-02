@@ -48,7 +48,6 @@ void PoolZone::Draw (GooCanvasItem *root_item)
     _back_rect = goo_canvas_rect_new (root_item,
                                       0, 0,
                                       0, 0,
-                                      "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                       "stroke-pattern", NULL,
                                       NULL);
     DropZone::Draw (root_item);
@@ -72,7 +71,5 @@ void PoolZone::RemoveReferee (Player *referee)
 // --------------------------------------------------------------------------------
 guint PoolZone::GetNbMatchs ()
 {
-  guint   result  = 0;
-
-  return result;
+  return _pool->GetNbMatchs ();
 }

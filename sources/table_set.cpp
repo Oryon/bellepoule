@@ -1053,9 +1053,11 @@ gboolean TableSet::FillInNode (GNode    *node,
 
         if (zone)
         {
-          zone->PutInTable (data->_match_goo_table,
-                            0,
-                            0);
+          TableZone *table_zone = (TableZone *) table_zone;
+
+          table_zone->PutInTable (data->_match_goo_table,
+                                  0,
+                                  0);
         }
       }
     }

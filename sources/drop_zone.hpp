@@ -39,10 +39,6 @@ class DropZone : public Object
 
     void Unfocus ();
 
-    void PutInTable (GooCanvasItem *table,
-                     guint          row,
-                     guint          column);
-
     void Redraw (gdouble x,
                  gdouble y,
                  gdouble w,
@@ -51,6 +47,10 @@ class DropZone : public Object
   public:
     virtual void Draw (GooCanvasItem *root_item);
 
+    virtual void AddObject (Object *object);
+
+    virtual void RemoveObject (Object *object);
+
     virtual void AddReferee (Player *referee);
 
     virtual void RemoveReferee (Player *referee);
@@ -58,33 +58,14 @@ class DropZone : public Object
   protected:
     Module        *_container;
     GooCanvasItem *_back_rect;
+    GSList        *_referee_list;
 
     virtual ~DropZone ();
 
   private:
-    GSList   *_referee_list;
-    guint     _nb_matchs;
-    gboolean  _nb_matchs_known;
+    guint _nb_matchs;
 
     virtual guint GetNbMatchs ();
-
-    gboolean OnItemPress (GooCanvasItem  *item,
-                          GdkEventButton *event);
-
-    static gboolean OnEnterNotify  (GooCanvasItem    *item,
-                                    GooCanvasItem    *target_item,
-                                    GdkEventCrossing *event,
-                                    DropZone         *drop_zone);
-
-    static gboolean OnLeaveNotify  (GooCanvasItem    *item,
-                                    GooCanvasItem    *target_item,
-                                    GdkEventCrossing *event,
-                                    DropZone         *drop_zone);
-
-    static gboolean OnButtonPress (GooCanvasItem  *item,
-                                   GooCanvasItem  *target,
-                                   GdkEventButton *event,
-                                   DropZone       *drop_zone);
 };
 
 #endif

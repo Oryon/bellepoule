@@ -22,6 +22,7 @@
 
 #include "canvas.hpp"
 #include "module.hpp"
+#include "drop_zone.hpp"
 
 class CanvasModule : public Module
 {
@@ -53,8 +54,99 @@ class CanvasModule : public Module
     virtual void OnEndPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context);
 
+  protected:
+    GSList *_drop_zones;
+
+    void EnableDragAndDrop ();
+
+    void SetObjectDropZone (Object        *object,
+                            GooCanvasItem *item,
+                            DropZone      *drop_zone);
+
   private:
-    GooCanvas *_canvas;
+    virtual Object *GetDropObjectFromRef (guint32 ref);
+
+    virtual void DragObject (Object   *object,
+                             DropZone *from_zone);
+
+    virtual void DropObject (Object   *object,
+                             DropZone *source_zone,
+                             DropZone *target_zone);
+
+    virtual gboolean DroppingIsForbidden ();
+
+    virtual GString *GetFloatingImage (Object *floating_object);
+
+  private:
+    GooCanvas     *_canvas;
+    gboolean       _dragging;
+    GooCanvasItem *_drag_text;
+    DropZone      *_source_drop_zone;
+    DropZone      *_target_drop_zone;
+    Object        *_floating_object;
+    gdouble        _drag_x;
+    gdouble        _drag_y;
+
+    DropZone *GetZoneAt (gint x,
+                         gint y);
+
+    gboolean OnDragMotion (GtkWidget      *widget,
+                           GdkDragContext *drag_context,
+                           gint            x,
+                           gint            y,
+                           guint           time);
+
+    void OnDragLeave (GtkWidget      *widget,
+                      GdkDragContext *drag_context,
+                      guint           time);
+
+    gboolean OnDragDrop (GtkWidget      *widget,
+                         GdkDragContext *drag_context,
+                         gint            x,
+                         gint            y,
+                         guint           time);
+
+    void OnDragDataReceived (GtkWidget        *widget,
+                             GdkDragContext   *drag_context,
+                             gint              x,
+                             gint              y,
+                             GtkSelectionData *data,
+                             guint             info,
+                             guint             time);
+
+    gboolean OnButtonPress (GooCanvasItem  *item,
+                            GooCanvasItem  *target,
+                            GdkEventButton *event,
+                            DropZone       *drop_zone);
+    gboolean OnButtonRelease (GooCanvasItem  *item,
+                              GooCanvasItem  *target,
+                              GdkEventButton *event);
+    gboolean OnMotionNotify (GooCanvasItem  *item,
+                             GooCanvasItem  *target,
+                             GdkEventButton *event);
+
+  private:
+    static gboolean on_button_press (GooCanvasItem  *item,
+                                     GooCanvasItem  *target,
+                                     GdkEventButton *event,
+                                     DropZone       *drop_zone);
+    static gboolean on_button_release (GooCanvasItem  *item,
+                                       GooCanvasItem  *target,
+                                       GdkEventButton *event,
+                                       CanvasModule   *module);
+    static gboolean on_motion_notify (GooCanvasItem  *item,
+                                      GooCanvasItem  *target,
+                                      GdkEventButton *event,
+                                      CanvasModule   *module);
+    static gboolean on_enter_object (GooCanvasItem  *item,
+                                     GooCanvasItem  *target,
+                                     GdkEventButton *event,
+                                     DropZone       *zone);
+    static gboolean on_leave_object (GooCanvasItem  *item,
+                                     GooCanvasItem  *target,
+                                     GdkEventButton *event,
+                                     DropZone       *zone);
+
 };
 
 #endif

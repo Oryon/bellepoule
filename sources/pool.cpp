@@ -222,11 +222,6 @@ void Pool::AddReferee (Player *referee)
   {
     BookReferee (referee);
   }
-
-  {
-    referee->AddMatchs (GetNbMatchs ());
-    _container->RefreshMatchRate (referee);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -278,11 +273,6 @@ void Pool::RemoveReferee (Player *referee)
   if ((_locked == FALSE) && (_container->GetState () != LOADING))
   {
     FreeReferee (referee);
-  }
-
-  {
-    referee->RemoveMatchs (GetNbMatchs ());
-    _container->RefreshMatchRate (referee);
   }
 
   if (_referee_list)
