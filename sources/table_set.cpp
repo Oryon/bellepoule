@@ -83,11 +83,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _first_place       = first_place;
   _loaded            = FALSE;
   _print_scale       = 1.0;
-  _zoom_factor       = 1.0;
   _is_active         = FALSE;
-  _drop_zones        = NULL;
-  _floating_referee  = NULL;
-  _target_drop_zone  = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -205,7 +201,6 @@ TableSet::~TableSet ()
 
   g_slist_free (_attendees);
   g_slist_free (_withdrawals);
-  g_slist_free (_drop_zones);
 
   gtk_list_store_clear (_from_table_liststore);
   gtk_tree_store_clear (_quick_search_treestore);
@@ -696,7 +691,9 @@ void TableSet::DeleteTree ()
 
     g_node_destroy (_tree_root);
 
-    _tree_root  = NULL;
+    _tree_root = NULL;
+
+    g_slist_free (_drop_zones);
     _drop_zones = NULL;
   }
 
@@ -1053,7 +1050,7 @@ gboolean TableSet::FillInNode (GNode    *node,
 
         if (zone)
         {
-          TableZone *table_zone = (TableZone *) table_zone;
+          TableZone *table_zone = (TableZone *) zone;
 
           table_zone->PutInTable (data->_match_goo_table,
                                   0,
@@ -1380,7 +1377,7 @@ void TableSet::AddFork (GNode *to)
       drop_zone->AddNode (node);
 
       data->_match->SetData (this,
-                             "drop_zone", (DropZone *) drop_zone);
+                             "drop_zone", (DropZone *) (drop_zone));
     }
 
     AddFork (node);
@@ -2737,27 +2734,13 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::OnZoom (gdouble value)
-{
-  goo_canvas_set_scale (GetCanvas (),
-                        value);
-  _zoom_factor = value;
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::RestoreZoomFactor (GtkScale *scale)
-{
-  gtk_range_set_value (GTK_RANGE (scale), _zoom_factor);
-  OnZoom (_zoom_factor);
-}
-
-// --------------------------------------------------------------------------------
 void TableSet::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
   gtk_container_add (GTK_CONTAINER (_control_container),
                      _from_widget);
   SetDndDest (GTK_WIDGET (GetCanvas ()));
+  EnableDragAndDrop ();
 }
 
 // --------------------------------------------------------------------------------
@@ -3052,182 +3035,85 @@ gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
 }
 
 // --------------------------------------------------------------------------------
-gboolean TableSet::OnDragMotion (GtkWidget      *widget,
-                                 GdkDragContext *drag_context,
-                                 gint            x,
-                                 gint            y,
-                                 guint           time)
+void TableSet::DragObject (Object   *object,
+                           DropZone *from_zone)
 {
-  GSList  *current = _drop_zones;
-  gdouble  vvalue;
-  gdouble  hvalue;
+  from_zone->RemoveReferee ((Player *) object);
 
+  OnAttrListUpdated ();
+  MakeDirty ();
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::DropObject (Object   *object,
+                           DropZone *source_zone,
+                           DropZone *target_zone)
+{
+  if (target_zone)
   {
-    GtkWidget     *window = _glade->GetWidget ("canvas_scrolled_window");
-    GtkAdjustment *adjustment;
+    target_zone->AddReferee ((Player *) object);
 
-    adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (window));
-    hvalue     = gtk_adjustment_get_value (adjustment);
-
-    adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (window));
-    vvalue     = gtk_adjustment_get_value (adjustment);
+    //FillInNode (target_zone,
+    //this);
+    OnAttrListUpdated ();
+    MakeDirty ();
   }
+}
 
-  if (_locked)
+// --------------------------------------------------------------------------------
+Object *TableSet::GetDropObjectFromRef (guint32 ref)
+{
+  Contest *contest = _supervisor->GetContest ();
+
+  return contest->GetRefereeFromRef (ref);
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSet::DroppingIsForbidden ()
+{
+  return _locked;
+}
+
+// --------------------------------------------------------------------------------
+GString *TableSet::GetFloatingImage (Object *floating_object)
+{
+  GString *string = g_string_new ("");
+
+  if (floating_object)
   {
-    gdk_drag_status  (drag_context,
-                      (GdkDragAction) 0,
-                      time);
-    return FALSE;
-  }
+    Player *player        = (Player *) floating_object;
+    GSList *selected_attr = NULL;
 
-  if (drag_context->targets)
-  {
-    GdkAtom  target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
-                                                        0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
-  }
-
-  if (_target_drop_zone)
-  {
-    _target_drop_zone->Unfocus ();
-    _target_drop_zone = NULL;
-  }
-
-  while (current)
-  {
-    GooCanvasBounds  bounds;
-    DropZone        *zone = (DropZone *) current->data;
-
-    zone->GetBounds (&bounds,
-                     _zoom_factor);
-
-    if (   (x > bounds.x1-hvalue) && (x < bounds.x2-hvalue)
-        && (y > bounds.y1-vvalue) && (y < bounds.y2-vvalue))
+    if (_filter)
     {
-      zone->Focus ();
+      selected_attr = _filter->GetSelectedAttrList ();
+    }
 
-      if (_floating_referee)
+    while (selected_attr)
+    {
+      AttributeDesc       *attr_desc = (AttributeDesc *) selected_attr->data;
+      Attribute           *attr;
+      Player::AttributeId *attr_id;
+
+      attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+      attr = player->GetAttribute (attr_id);
+      attr_id->Release ();
+
+      if (attr)
       {
-        Player::AttributeId  attr_id  ("availability");
-        Attribute           *attr = _floating_referee->GetAttribute (&attr_id);
+        gchar *image = attr->GetUserImage ();
 
-        if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
-        {
-          _target_drop_zone = zone;
-          gdk_drag_status  (drag_context,
-                            GDK_ACTION_COPY,
-                            time);
-          return TRUE;
-        }
+        string = g_string_append (string,
+                                  image);
+        string = g_string_append (string,
+                                  "  ");
+        g_free (image);
       }
-
-      break;
-    }
-
-    current = g_slist_next (current);
-  }
-
-  gdk_drag_status  (drag_context,
-                    (GdkDragAction) 0,
-                    time);
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean TableSet::OnDragDrop (GtkWidget      *widget,
-                               GdkDragContext *drag_context,
-                               gint            x,
-                               gint            y,
-                               guint           time)
-{
-  gboolean result = FALSE;
-
-  if (drag_context->targets)
-  {
-    GdkAtom target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
-                                                        0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
-  }
-
-  if (_floating_referee && _target_drop_zone)
-  {
-    {
-      {
-        Player::AttributeId attr_id ("availability");
-
-        _floating_referee->SetAttributeValue (&attr_id,
-                                              "Busy");
-      }
-
-      _target_drop_zone->AddReferee (_floating_referee);
-
-      //FillInNode (_target_drop_zone,
-      //this);
-      OnAttrListUpdated ();
-      MakeDirty ();
-    }
-
-    if (_target_drop_zone)
-    {
-      _target_drop_zone->Unfocus ();
-      _target_drop_zone = NULL;
-    }
-    result = TRUE;
-  }
-
-  gtk_drag_finish (drag_context,
-                   result,
-                   FALSE,
-                   time);
-
-  return result;
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::OnDragDataReceived (GtkWidget        *widget,
-                                   GdkDragContext   *drag_context,
-                                   gint              x,
-                                   gint              y,
-                                   GtkSelectionData *data,
-                                   guint             info,
-                                   guint             time)
-{
-  if (data && (data->length >= 0))
-  {
-    if (info == INT_TARGET)
-    {
-      guint32 *referee_ref = (guint32 *) data->data;
-      Contest *contest     = _supervisor->GetContest ();
-
-      _floating_referee = contest->GetRefereeFromRef (*referee_ref);
+      selected_attr = g_slist_next (selected_attr);
     }
   }
-}
 
-// --------------------------------------------------------------------------------
-void TableSet::OnDragLeave (GtkWidget      *widget,
-                            GdkDragContext *drag_context,
-                            guint           time)
-{
-  if (_target_drop_zone)
-  {
-    _target_drop_zone->Unfocus ();
-  }
+  return string;
 }
 
 // --------------------------------------------------------------------------------

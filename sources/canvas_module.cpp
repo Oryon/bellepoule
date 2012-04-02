@@ -36,6 +36,7 @@ CanvasModule::CanvasModule (const gchar *glade_file,
   _floating_object  = NULL;
   _dragging         = FALSE;
   _drag_text        = NULL;
+  _zoom_factor      = 1.0;
 }
 
 // --------------------------------------------------------------------------------
@@ -134,6 +135,21 @@ void CanvasModule::WipeItem (GooCanvasItem *item)
   {
     goo_canvas_item_remove (item);
   }
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::OnZoom (gdouble value)
+{
+  goo_canvas_set_scale (GetCanvas (),
+                        value);
+  _zoom_factor = value;
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::RestoreZoomFactor (GtkScale *scale)
+{
+  gtk_range_set_value (GTK_RANGE (scale), _zoom_factor);
+  OnZoom (_zoom_factor);
 }
 
 // --------------------------------------------------------------------------------
@@ -345,7 +361,8 @@ DropZone *CanvasModule::GetZoneAt (gint x,
     GooCanvasBounds  bounds;
     DropZone        *drop_zone = (DropZone *) current->data;
 
-    drop_zone->GetBounds (&bounds);
+    drop_zone->GetBounds (&bounds,
+                          _zoom_factor);
 
     if (   (x > bounds.x1-hvalue) && (x < bounds.x2-hvalue)
            && (y > bounds.y1-vvalue) && (y < bounds.y2-vvalue))

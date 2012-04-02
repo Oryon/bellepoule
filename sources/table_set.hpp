@@ -63,8 +63,6 @@ class TableSet : public CanvasModule
 
     void OnPrint ();
 
-    void OnZoom (gdouble value);
-
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
 
@@ -125,8 +123,6 @@ class TableSet : public CanvasModule
 
     gchar *GetId ();
 
-    void RestoreZoomFactor (GtkScale *scale);
-
     void Activate ();
 
     void DeActivate ();
@@ -179,12 +175,8 @@ class TableSet : public CanvasModule
     guint                     _first_place;
     GtkPrintOperationPreview *_preview;
     GtkWidget                *_current_preview_area;
-    gdouble                   _zoom_factor;
     gboolean                  _is_active;
     GtkPageSetup             *_page_setup;
-    GSList                   *_drop_zones;
-    Player                   *_floating_referee;
-    DropZone                 *_target_drop_zone;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -311,26 +303,18 @@ class TableSet : public CanvasModule
     ~TableSet ();
 
   private:
-    gboolean OnDragMotion (GtkWidget      *widget,
-                           GdkDragContext *drag_context,
-                           gint            x,
-                           gint            y,
-                           guint           time);
-    gboolean OnDragDrop (GtkWidget      *widget,
-                         GdkDragContext *drag_context,
-                         gint            x,
-                         gint            y,
-                         guint           time);
-    void OnDragLeave (GtkWidget      *widget,
-                      GdkDragContext *drag_context,
-                      guint           time);
-    void OnDragDataReceived (GtkWidget        *widget,
-                             GdkDragContext   *drag_context,
-                             gint              x,
-                             gint              y,
-                             GtkSelectionData *data,
-                             guint             info,
-                             guint             time);
+    void DragObject (Object   *object,
+                     DropZone *from_zone);
+
+    void DropObject (Object   *object,
+                     DropZone *source_zone,
+                     DropZone *target_zone);
+
+    Object *GetDropObjectFromRef (guint32 ref);
+
+    gboolean DroppingIsForbidden ();
+
+    GString *GetFloatingImage (Object *floating_object);
 };
 
 #endif

@@ -26,6 +26,11 @@
 
 class CanvasModule : public Module
 {
+  public:
+    void OnZoom (gdouble value);
+
+    void RestoreZoomFactor (GtkScale *scale);
+
   protected:
     CanvasModule (const gchar *glade_file,
                   const gchar *root = NULL);
@@ -79,6 +84,7 @@ class CanvasModule : public Module
 
   private:
     GooCanvas     *_canvas;
+    gdouble        _zoom_factor;
     gboolean       _dragging;
     GooCanvasItem *_drag_text;
     DropZone      *_source_drop_zone;

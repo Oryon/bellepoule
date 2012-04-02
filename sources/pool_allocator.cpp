@@ -232,6 +232,7 @@ void PoolAllocator::OnPlugged ()
   CanvasModule::OnPlugged ();
 
   SetDndDest (GTK_WIDGET (GetCanvas ()));
+  EnableDragAndDrop ();
 }
 
 // --------------------------------------------------------------------------------
@@ -378,8 +379,6 @@ void PoolAllocator::Display ()
     {
       _main_table = goo_canvas_group_new (root,
                                           NULL);
-
-      EnableDragAndDrop ();
 
       {
         GSList *current = _drop_zones;
