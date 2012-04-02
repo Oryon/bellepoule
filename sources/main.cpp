@@ -117,25 +117,18 @@ int main (int argc, char **argv)
 {
   // Init
   {
-    gchar *install_dirname = NULL;
+    gchar *binary_dir      = g_path_get_dirname (argv[0]);
+    gchar *install_dirname;
 
     g_thread_init (NULL);
 
-#ifdef G_OS_WIN32
 #ifdef DEBUG
-    install_dirname = g_get_current_dir ();
+    install_dirname = g_build_filename (binary_dir, "..", "..", NULL);
 #else
-    {
-      gchar *windows_dir = g_get_current_dir ();
+    install_dirname = g_build_filename (binary_dir, "..", "share", "BellePoule", NULL);
+#endif
 
-      install_dirname = g_build_filename (windows_dir, "..", "share", "BellePoule", NULL);
-      g_free (windows_dir);
-    }
-#endif
-#else
-    // Linux or other system
-    install_dirname = g_strdup ("/usr/share/BellePoule");
-#endif
+      g_free (binary_dir);
 
     // g_mem_set_vtable (glib_mem_profiler_table);
 

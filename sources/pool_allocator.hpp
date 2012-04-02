@@ -25,6 +25,7 @@
 #include "players_list.hpp"
 #include "pool_match_order.hpp"
 #include "pool.hpp"
+#include "pool_zone.hpp"
 
 class PoolAllocator : public virtual Stage, public CanvasModule
 {
@@ -69,32 +70,6 @@ class PoolAllocator : public virtual Stage, public CanvasModule
                      gint               page_nr);
 
   private:
-    gboolean OnDragMotion (GtkWidget      *widget,
-                           GdkDragContext *drag_context,
-                           gint            x,
-                           gint            y,
-                           guint           time);
-    gboolean OnDragDrop (GtkWidget      *widget,
-                         GdkDragContext *drag_context,
-                         gint            x,
-                         gint            y,
-                         guint           time);
-    void OnDragLeave (GtkWidget      *widget,
-                      GdkDragContext *drag_context,
-                      guint           time);
-    void OnDragDataReceived (GtkWidget        *widget,
-                             GdkDragContext   *drag_context,
-                             gint              x,
-                             gint              y,
-                             GtkSelectionData *data,
-                             guint             info,
-                             guint             time);
-
-  private:
-    void Focus   (Pool *pool);
-    void Unfocus ();
-
-  private:
     typedef struct
     {
       guint _nb_pool;
@@ -102,18 +77,10 @@ class PoolAllocator : public virtual Stage, public CanvasModule
       guint _nb_overloaded;
     } Configuration;
 
-    GSList             *_pools_list;
     GSList             *_config_list;
     Configuration      *_best_config;
     Configuration      *_selected_config;
     GooCanvas          *_canvas;
-    gboolean            _dragging;
-    GooCanvasItem      *_drag_text;
-    gdouble             _drag_x;
-    gdouble             _drag_y;
-    Pool               *_target_pool;
-    Pool               *_source_pool;
-    Player             *_floating_player;
     GooCanvasItem      *_main_table;
     GtkListStore       *_combobox_store;
     Data               *_swapping;
@@ -127,7 +94,6 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     gboolean            _loaded;
     SensitivityTrigger  _swapping_sensitivity_trigger;
     PlayersList        *_fencer_list;
-    GtkTargetList      *_dnd_target_list;
     gint                _nb_matchs;
 
     void Setup ();
@@ -137,8 +103,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void SetUpCombobox ();
     void Display ();
     void Garnish ();
-    void FillPoolTable (Pool *pool);
-    void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, Pool *pool, GSList *selected_attr);
+    void FillPoolTable (PoolZone *zone);
+    void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, PoolZone *zone, GSList *selected_attr);
     void FixUpTablesBounds ();
     void RegisterConfig (Configuration *config);
     const gchar *GetInputProviderClient ();
@@ -147,54 +113,6 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void OnAttrListUpdated ();
 
     gboolean IsOver ();
-
-    gboolean OnButtonPress (GooCanvasItem  *item,
-                            GooCanvasItem  *target,
-                            GdkEventButton *event,
-                            Pool           *pool);
-    gboolean OnButtonRelease (GooCanvasItem  *item,
-                              GooCanvasItem  *target,
-                              GdkEventButton *event);
-    gboolean OnMotionNotify (GooCanvasItem  *item,
-                             GooCanvasItem  *target,
-                             GdkEventButton *event);
-    gboolean OnEnterNotify (GooCanvasItem  *item,
-                            GooCanvasItem  *target,
-                            GdkEventButton *event,
-                            Pool           *pool);
-    gboolean OnLeaveNotify (GooCanvasItem  *item,
-                            GooCanvasItem  *target,
-                            GdkEventButton *event,
-                            Pool           *pool);
-
-    static gboolean on_enter_player (GooCanvasItem  *item,
-                                  GooCanvasItem  *target,
-                                  GdkEventButton *event,
-                                  Pool           *pool);
-    static gboolean on_leave_player (GooCanvasItem  *item,
-                                  GooCanvasItem  *target,
-                                  GdkEventButton *event,
-                                  Pool           *pool);
-    static gboolean on_button_press (GooCanvasItem  *item,
-                                     GooCanvasItem  *target,
-                                     GdkEventButton *event,
-                                     Pool           *pool);
-    static gboolean on_button_release (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       PoolAllocator  *pl);
-    static gboolean on_motion_notify (GooCanvasItem  *item,
-                                      GooCanvasItem  *target,
-                                      GdkEventButton *event,
-                                      PoolAllocator  *pl);
-    static gboolean on_enter_notify (GooCanvasItem  *item,
-                                     GooCanvasItem  *target,
-                                     GdkEventButton *event,
-                                     Pool           *pool);
-    static gboolean on_leave_notify (GooCanvasItem  *item,
-                                     GooCanvasItem  *target,
-                                     GdkEventButton *event,
-                                     Pool           *pool);
 
     void OnPlugged ();
 
@@ -205,6 +123,21 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void ApplyConfig ();
 
     void FillInConfig ();
+
+    Pool *GetPoolOf (GSList *drop_zone);
+
+    void DragObject (Object   *object,
+                     DropZone *from_zone);
+
+    void DropObject (Object   *object,
+                     DropZone *source_zone,
+                     DropZone *target_zone);
+
+    Object *GetDropObjectFromRef (guint32 ref);
+
+    gboolean DroppingIsForbidden ();
+
+    GString *GetFloatingImage (Object *floating_object);
 
     ~PoolAllocator ();
 };

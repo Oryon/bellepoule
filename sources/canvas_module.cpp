@@ -30,7 +30,13 @@ CanvasModule::CanvasModule (const gchar *glade_file,
 : Module (glade_file,
           root)
 {
-  _canvas = NULL;
+  _canvas           = NULL;
+  _drop_zones       = NULL;
+  _target_drop_zone = NULL;
+  _floating_object  = NULL;
+  _dragging         = FALSE;
+  _drag_text        = NULL;
+  _zoom_factor      = 1.0;
 }
 
 // --------------------------------------------------------------------------------
@@ -132,6 +138,21 @@ void CanvasModule::WipeItem (GooCanvasItem *item)
 }
 
 // --------------------------------------------------------------------------------
+void CanvasModule::OnZoom (gdouble value)
+{
+  goo_canvas_set_scale (GetCanvas (),
+                        value);
+  _zoom_factor = value;
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::RestoreZoomFactor (GtkScale *scale)
+{
+  gtk_range_set_value (GTK_RANGE (scale), _zoom_factor);
+  OnZoom (_zoom_factor);
+}
+
+// --------------------------------------------------------------------------------
 void CanvasModule::OnBeginPrint (GtkPrintOperation *operation,
                                  GtkPrintContext   *context)
 {
@@ -195,7 +216,7 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
     }
 
     if (   (canvas_w*scale > paper_w)
-        || (canvas_h*scale + (header_h+footer_h) > paper_h))
+           || (canvas_h*scale + (header_h+footer_h) > paper_h))
     {
       gdouble x_scale = paper_w / canvas_w;
       gdouble y_scale = paper_h / (canvas_h + (header_h+footer_h)/scale);
@@ -279,4 +300,464 @@ gboolean CanvasModule::OnPreview (GtkPrintOperation        *operation,
 void CanvasModule::OnEndPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context)
 {
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::EnableDragAndDrop ()
+{
+  GooCanvasItem *root = GetRootItem ();
+
+  g_object_set (G_OBJECT (root),
+                "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
+                NULL);
+  g_signal_connect (root, "motion_notify_event",
+                    G_CALLBACK (on_motion_notify), this);
+  g_signal_connect (root, "button_release_event",
+                    G_CALLBACK (on_button_release), this);
+
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::SetObjectDropZone (Object        *object,
+                                      GooCanvasItem *item,
+                                      DropZone      *drop_zone)
+{
+  g_object_set_data (G_OBJECT (item),
+                     "CanvasModule::drop_object",
+                     object);
+  drop_zone->SetData (drop_zone, "CanvasModule::canvas",
+                      this);
+
+  g_signal_connect (item, "button_press_event",
+                    G_CALLBACK (on_button_press), drop_zone);
+  g_signal_connect (item, "enter_notify_event",
+                    G_CALLBACK (on_enter_object), drop_zone);
+  g_signal_connect (item, "leave_notify_event",
+                    G_CALLBACK (on_leave_object), drop_zone);
+}
+
+// --------------------------------------------------------------------------------
+DropZone *CanvasModule::GetZoneAt (gint x,
+                                   gint y)
+{
+  gdouble  vvalue;
+  gdouble  hvalue;
+  GSList  *current = _drop_zones;
+
+  {
+    GtkWidget     *window = _glade->GetWidget ("canvas_scrolled_window");
+    GtkAdjustment *adjustment;
+
+    adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (window));
+    hvalue     = gtk_adjustment_get_value (adjustment);
+
+    adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (window));
+    vvalue     = gtk_adjustment_get_value (adjustment);
+  }
+
+
+  while (current)
+  {
+    GooCanvasBounds  bounds;
+    DropZone        *drop_zone = (DropZone *) current->data;
+
+    drop_zone->GetBounds (&bounds,
+                          _zoom_factor);
+
+    if (   (x > bounds.x1-hvalue) && (x < bounds.x2-hvalue)
+           && (y > bounds.y1-vvalue) && (y < bounds.y2-vvalue))
+    {
+      return drop_zone;
+    }
+
+    current = g_slist_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
+                                     GdkDragContext *drag_context,
+                                     gint            x,
+                                     gint            y,
+                                     guint           time)
+{
+  if (DroppingIsForbidden ())
+  {
+    gdk_drag_status  (drag_context,
+                      (GdkDragAction) 0,
+                      time);
+    return FALSE;
+  }
+
+  if (drag_context->targets)
+  {
+    GdkAtom  target_type;
+
+    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
+                                                        0));
+
+    gtk_drag_get_data (widget,
+                       drag_context,
+                       target_type,
+                       time);
+
+  }
+
+  if (_target_drop_zone)
+  {
+    _target_drop_zone->Unfocus ();
+    _target_drop_zone = NULL;
+  }
+
+  {
+    DropZone *drop_zone = GetZoneAt (x,
+                                     y);
+
+    if (drop_zone)
+    {
+      drop_zone->Focus ();
+
+      if (_floating_object)
+      {
+        //ylr: Player::AttributeId  attr_id  ("availability");
+        //ylr: Attribute           *attr = _floating_object->GetAttribute (&attr_id);
+
+        //ylr: if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
+        {
+          _target_drop_zone = drop_zone;
+          gdk_drag_status  (drag_context,
+                            GDK_ACTION_COPY,
+                            time);
+          return TRUE;
+        }
+      }
+    }
+  }
+
+  gdk_drag_status  (drag_context,
+                    (GdkDragAction) 0,
+                    time);
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
+                                   GdkDragContext *drag_context,
+                                   gint            x,
+                                   gint            y,
+                                   guint           time)
+{
+  gboolean result = FALSE;
+
+  if (drag_context->targets)
+  {
+    GdkAtom  target_type;
+
+    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
+                                                        0));
+
+    gtk_drag_get_data (widget,
+                       drag_context,
+                       target_type,
+                       time);
+
+  }
+
+  if (_floating_object && _target_drop_zone)
+  {
+    _target_drop_zone->AddObject (_floating_object);
+    DropObject (_floating_object,
+                _source_drop_zone,
+                _target_drop_zone);
+
+    _target_drop_zone->Unfocus ();
+    _target_drop_zone = NULL;
+
+    result = TRUE;
+  }
+
+  gtk_drag_finish (drag_context,
+                   result,
+                   FALSE,
+                   time);
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
+                                       GdkDragContext   *drag_context,
+                                       gint              x,
+                                       gint              y,
+                                       GtkSelectionData *data,
+                                       guint             info,
+                                       guint             time)
+{
+  if (data && (data->length >= 0))
+  {
+    if (info == INT_TARGET)
+    {
+      guint32 *ref = (guint32 *) data->data;
+
+      _floating_object = GetDropObjectFromRef (*ref);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::OnDragLeave (GtkWidget      *widget,
+                                GdkDragContext *drag_context,
+                                guint           time)
+{
+  if (_target_drop_zone)
+  {
+    _target_drop_zone->Unfocus ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::on_button_press (GooCanvasItem  *item,
+                                        GooCanvasItem  *target,
+                                        GdkEventButton *event,
+                                        DropZone       *drop_zone)
+{
+  CanvasModule *canvas = (CanvasModule*) drop_zone->GetPtrData (drop_zone, "CanvasModule::canvas");
+
+  if (canvas)
+  {
+    return canvas->OnButtonPress (item,
+                                  target,
+                                  event,
+                                  drop_zone);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
+                                      GooCanvasItem  *target,
+                                      GdkEventButton *event,
+                                      DropZone       *drop_zone)
+{
+  if (DroppingIsForbidden ())
+  {
+    return FALSE;
+  }
+
+  if (   (event->button == 1)
+         && (event->type == GDK_BUTTON_PRESS))
+  {
+    _floating_object = (Player *) g_object_get_data (G_OBJECT (item),
+                                                     "CanvasModule::drop_object");
+
+    _drag_x = event->x;
+    _drag_y = event->y;
+
+    goo_canvas_convert_from_item_space  (GetCanvas (),
+                                         item,
+                                         &_drag_x,
+                                         &_drag_y);
+
+    {
+      GString *string = GetFloatingImage (_floating_object);
+
+      _drag_text = goo_canvas_text_new (GetRootItem (),
+                                        string->str,
+                                        _drag_x,
+                                        _drag_y,
+                                        -1,
+                                        GTK_ANCHOR_NW,
+                                        "font", "Sans Bold 14px", NULL);
+      g_string_free (string,
+                     TRUE);
+
+    }
+
+    SetCursor (GDK_FLEUR);
+
+    _dragging = TRUE;
+    _source_drop_zone = drop_zone;
+    _target_drop_zone = drop_zone;
+
+    DragObject (_floating_object,
+                _source_drop_zone);
+
+    drop_zone->Focus ();
+
+    MakeDirty ();
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::on_button_release (GooCanvasItem  *item,
+                                          GooCanvasItem  *target,
+                                          GdkEventButton *event,
+                                          CanvasModule  *canvas)
+{
+  if (canvas)
+  {
+    return canvas->OnButtonRelease (item,
+                                    target,
+                                    event);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::OnButtonRelease (GooCanvasItem  *item,
+                                        GooCanvasItem  *target,
+                                        GdkEventButton *event)
+{
+  if (_dragging)
+  {
+    if (_target_drop_zone)
+    {
+      _target_drop_zone->Unfocus ();
+    }
+
+    _dragging = FALSE;
+
+    goo_canvas_item_remove (_drag_text);
+    _drag_text = NULL;
+
+    DropObject (_floating_object,
+                _source_drop_zone,
+                _target_drop_zone);
+
+    _target_drop_zone = NULL;
+    _source_drop_zone = NULL;
+
+    ResetCursor ();
+    MakeDirty ();
+  }
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::on_motion_notify (GooCanvasItem  *item,
+                                         GooCanvasItem  *target,
+                                         GdkEventButton *event,
+                                         CanvasModule  *canvas)
+{
+  if (canvas)
+  {
+    canvas->OnMotionNotify (item,
+                            target,
+                            event);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
+                                       GooCanvasItem  *target,
+                                       GdkEventButton *event)
+{
+  if (_dragging && (event->state & GDK_BUTTON1_MASK))
+  {
+    {
+      gdouble new_x = event->x_root;
+      gdouble new_y = event->y_root;
+
+      goo_canvas_item_translate (_drag_text,
+                                 new_x - _drag_x,
+                                 new_y - _drag_y);
+
+      _drag_x = new_x;
+      _drag_y = new_y;
+    }
+
+    if (_target_drop_zone)
+    {
+      _target_drop_zone->Unfocus ();
+      _target_drop_zone = NULL;
+    }
+
+    {
+      DropZone *drop_zone = GetZoneAt (_drag_x,
+                                       _drag_y);
+
+      if (drop_zone)
+      {
+        drop_zone->Focus ();
+        _target_drop_zone = drop_zone;
+      }
+    }
+
+    SetCursor (GDK_FLEUR);
+  }
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+Object *CanvasModule::GetDropObjectFromRef (guint32 ref)
+{
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::DragObject (Object   *object,
+                               DropZone *from_zone)
+{
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::DropObject (Object   *object,
+                               DropZone *source_zone,
+                               DropZone *target_zone)
+{
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::DroppingIsForbidden ()
+{
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+GString *CanvasModule::GetFloatingImage (Object *floating_object)
+{
+  return g_string_new ("???");
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::on_enter_object (GooCanvasItem  *item,
+                                        GooCanvasItem  *target,
+                                        GdkEventButton *event,
+                                        DropZone       *zone)
+{
+  CanvasModule *module = (CanvasModule*) zone->GetPtrData (zone, "CanvasModule::canvas");
+
+  if (module)
+  {
+    module->SetCursor (GDK_FLEUR);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean CanvasModule::on_leave_object (GooCanvasItem  *item,
+                                        GooCanvasItem  *target,
+                                        GdkEventButton *event,
+                                        DropZone       *zone)
+{
+  CanvasModule *module = (CanvasModule*) zone->GetPtrData (zone, "CanvasModule::canvas");
+
+  if (module)
+  {
+    module->ResetCursor ();
+  }
+
+  return FALSE;
 }

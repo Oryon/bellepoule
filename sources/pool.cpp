@@ -203,29 +203,24 @@ void Pool::SetDataOwner (Object *single_owner,
 }
 
 // --------------------------------------------------------------------------------
-void Pool::AddReferee (Player *player)
+void Pool::AddReferee (Player *referee)
 {
-  if (player == NULL)
+  if (referee == NULL)
   {
     return;
   }
 
   if (   (_referee_list == NULL)
          || (g_slist_find (_referee_list,
-                           player) == NULL))
+                           referee) == NULL))
   {
     _referee_list = g_slist_prepend (_referee_list,
-                                     player);
+                                     referee);
   }
 
   if (_container->GetState () == OPERATIONAL)
   {
-    BookReferee (player);
-  }
-
-  {
-    player->AddMatchs (GetNbMatchs ());
-    _container->RefreshMatchRate (player);
+    BookReferee (referee);
   }
 }
 
@@ -273,22 +268,17 @@ void Pool::RemoveFencer (Player *player)
 }
 
 // --------------------------------------------------------------------------------
-void Pool::RemoveReferee (Player *player)
+void Pool::RemoveReferee (Player *referee)
 {
   if ((_locked == FALSE) && (_container->GetState () != LOADING))
   {
-    FreeReferee (player);
-  }
-
-  {
-    player->RemoveMatchs (GetNbMatchs ());
-    _container->RefreshMatchRate (player);
+    FreeReferee (referee);
   }
 
   if (_referee_list)
   {
     _referee_list = g_slist_remove (_referee_list,
-                                    player);
+                                    referee);
   }
 }
 

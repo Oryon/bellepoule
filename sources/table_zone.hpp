@@ -20,6 +20,8 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "module.hpp"
+#include "drop_zone.hpp"
 
 struct NodeData
 {
@@ -32,52 +34,34 @@ struct NodeData
   GooCanvasItem *_connector;
 };
 
-class Player;
-
-class RefereeSector : public Object
+class TableZone : public DropZone
 {
   public:
-    RefereeSector (gdouble spacing);
+    TableZone (Module  *container,
+               gdouble  spacing);
 
     void AddNode (GNode *node);
 
     void Draw (GooCanvasItem *root_item);
 
-    void Wipe ();
-
-    void GetBounds (GooCanvasBounds *bounds,
-                    gdouble          zoom_factor);
-
-    void Focus ();
-
-    void Unfocus ();
-
     void AddReferee (Player *referee);
 
     void RemoveReferee (Player *referee);
 
-    guint GetNbMatchs ();
-
-    void PutInTable (GooCanvasItem *table,
+    void PutInTable (CanvasModule  *canvas_module,
+                     GooCanvasItem *table,
                      guint          row,
                      guint          column);
 
+    GSList *GetNodeList ();
+
   private:
-    GSList        *_node_list;
-    GooCanvasItem *_back_rect;
-    gdouble        _spacing;
+    GSList   *_node_list;
+    gdouble   _spacing;
 
-    virtual ~RefereeSector ();
+    virtual ~TableZone ();
 
-    static gboolean OnEnterNotify  (GooCanvasItem    *item,
-                                    GooCanvasItem    *target_item,
-                                    GdkEventCrossing *event,
-                                    RefereeSector    *sector);
-
-    static gboolean OnLeaveNotify  (GooCanvasItem    *item,
-                                    GooCanvasItem    *target_item,
-                                    GdkEventCrossing *event,
-                                    RefereeSector    *sector);
+    guint GetNbMatchs ();
 };
 
 #endif

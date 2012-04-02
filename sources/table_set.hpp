@@ -24,7 +24,7 @@
 #include "match.hpp"
 #include "score_collector.hpp"
 #include "table.hpp"
-#include "referee_sector.hpp"
+#include "drop_zone.hpp"
 
 class TableSupervisor;
 
@@ -62,8 +62,6 @@ class TableSet : public CanvasModule
     void OnSearchMatch ();
 
     void OnPrint ();
-
-    void OnZoom (gdouble value);
 
     void OnBeginPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
@@ -114,7 +112,8 @@ class TableSet : public CanvasModule
 
     Player *GetFencerFromRef (guint ref);
 
-    Player *GetRefereeFromRef (guint ref);
+    void AddReferee (Match *match,
+                     guint  referee_ref);
 
     guint GetNbTables ();
 
@@ -123,8 +122,6 @@ class TableSet : public CanvasModule
     guint GetFirstPlace ();
 
     gchar *GetId ();
-
-    void RestoreZoomFactor (GtkScale *scale);
 
     void Activate ();
 
@@ -141,6 +138,7 @@ class TableSet : public CanvasModule
     TableSupervisor          *_supervisor;
     GNode                    *_tree_root;
     guint                     _nb_tables;
+    guint                     _nb_matchs;
     gint                      _table_to_stuff;
     GtkListStore             *_from_table_liststore;
     GtkTreeStore             *_quick_search_treestore;
@@ -177,12 +175,8 @@ class TableSet : public CanvasModule
     guint                     _first_place;
     GtkPrintOperationPreview *_preview;
     GtkWidget                *_current_preview_area;
-    gdouble                   _zoom_factor;
     gboolean                  _is_active;
     GtkPageSetup             *_page_setup;
-    GSList                   *_referee_sectors;
-    Player                   *_floating_referee;
-    RefereeSector            *_target_sector;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;
@@ -197,13 +191,11 @@ class TableSet : public CanvasModule
 
     void DeleteTree ();
 
-    void DeleteDeadNodes ();
-
     void OnAttrListUpdated ();
 
     void DrawAllConnectors ();
 
-    void DrawAllSectors ();
+    void DrawAllZones ();
 
     void Garnish ();
 
@@ -311,26 +303,18 @@ class TableSet : public CanvasModule
     ~TableSet ();
 
   private:
-    gboolean OnDragMotion (GtkWidget      *widget,
-                           GdkDragContext *drag_context,
-                           gint            x,
-                           gint            y,
-                           guint           time);
-    gboolean OnDragDrop (GtkWidget      *widget,
-                         GdkDragContext *drag_context,
-                         gint            x,
-                         gint            y,
-                         guint           time);
-    void OnDragLeave (GtkWidget      *widget,
-                      GdkDragContext *drag_context,
-                      guint           time);
-    void OnDragDataReceived (GtkWidget        *widget,
-                             GdkDragContext   *drag_context,
-                             gint              x,
-                             gint              y,
-                             GtkSelectionData *data,
-                             guint             info,
-                             guint             time);
+    void DragObject (Object   *object,
+                     DropZone *from_zone);
+
+    void DropObject (Object   *object,
+                     DropZone *source_zone,
+                     DropZone *target_zone);
+
+    Object *GetDropObjectFromRef (guint32 ref);
+
+    gboolean DroppingIsForbidden ();
+
+    GString *GetFloatingImage (Object *floating_object);
 };
 
 #endif

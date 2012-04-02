@@ -27,6 +27,7 @@
 #include "classification.hpp"
 #include "table_supervisor.hpp"
 #include "contest.hpp"
+#include "table_zone.hpp"
 
 #include "table_set.hpp"
 
@@ -72,6 +73,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _tables            = NULL;
   _match_to_print    = NULL;
   _nb_tables         = 0;
+  _nb_matchs         = 0;
   _locked            = FALSE;
   _id                = id;
   _attendees         = NULL;
@@ -81,10 +83,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _first_place       = first_place;
   _loaded            = FALSE;
   _print_scale       = 1.0;
-  _zoom_factor       = 1.0;
   _is_active         = FALSE;
-  _referee_sectors   = NULL;
-  _floating_referee  = NULL;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -202,7 +201,6 @@ TableSet::~TableSet ()
 
   g_slist_free (_attendees);
   g_slist_free (_withdrawals);
-  g_slist_free (_referee_sectors);
 
   gtk_list_store_clear (_from_table_liststore);
   gtk_tree_store_clear (_quick_search_treestore);
@@ -228,13 +226,21 @@ gchar *TableSet::GetId ()
 // --------------------------------------------------------------------------------
 void TableSet::Activate ()
 {
-  _is_active = TRUE;
+  if (_is_active == FALSE)
+  {
+    _is_active = TRUE;
+    _supervisor->RefreshMatchRate (_nb_matchs);
+  }
 }
 
 // --------------------------------------------------------------------------------
 void TableSet::DeActivate ()
 {
-  _is_active = FALSE;
+  if (_is_active == TRUE)
+  {
+    _is_active = FALSE;
+    _supervisor->RefreshMatchRate (-_nb_matchs);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -485,7 +491,7 @@ void TableSet::Display ()
 
     RefreshTableStatus ();
     DrawAllConnectors  ();
-    DrawAllSectors     ();
+    DrawAllZones       ();
   }
 }
 
@@ -512,7 +518,6 @@ void TableSet::Garnish ()
 {
   DeleteTree ();
   CreateTree ();
-  DeleteDeadNodes ();
 }
 
 // --------------------------------------------------------------------------------
@@ -650,7 +655,7 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
 
   table_set->RefreshTableStatus ();
   table_set->DrawAllConnectors  ();
-  table_set->DrawAllSectors     ();
+  table_set->DrawAllZones       ();
 
   {
     Table *table = (Table *) match->GetPtrData (table_set, "table");
@@ -666,6 +671,11 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
 // --------------------------------------------------------------------------------
 void TableSet::DeleteTree ()
 {
+  if (_is_active)
+  {
+    _supervisor->RefreshMatchRate (-_nb_matchs);
+  }
+
   g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
                                         (void *) on_from_table_combobox_changed,
                                         (Object *) this);
@@ -680,11 +690,12 @@ void TableSet::DeleteTree ()
                      this);
 
     g_node_destroy (_tree_root);
-    _tree_root = NULL;
-  }
 
-  g_slist_free (_referee_sectors);
-  _referee_sectors = NULL;
+    _tree_root = NULL;
+
+    g_slist_free (_drop_zones);
+    _drop_zones = NULL;
+  }
 
   for (guint i = 0; i < _nb_tables; i++)
   {
@@ -694,20 +705,6 @@ void TableSet::DeleteTree ()
   _nb_tables = 0;
   _tables    = NULL;
   _is_over   = FALSE;
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::DeleteDeadNodes ()
-{
-  if (_tree_root)
-  {
-    g_node_traverse (_tree_root,
-                     G_POST_ORDER,
-                     G_TRAVERSE_NON_LEAVES,
-                     -1,
-                     (GNodeTraverseFunc) DeleteDeadNode,
-                     this);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -792,6 +789,21 @@ void TableSet::CreateTree ()
                       G_CALLBACK (on_from_table_combobox_changed),
                       (Object *) this);
   }
+
+  if (_tree_root)
+  {
+    g_node_traverse (_tree_root,
+                     G_POST_ORDER,
+                     G_TRAVERSE_NON_LEAVES,
+                     -1,
+                     (GNodeTraverseFunc) DeleteDeadNode,
+                     this);
+  }
+
+  if (_is_active)
+  {
+    _supervisor->RefreshMatchRate (_nb_matchs);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -809,17 +821,17 @@ void TableSet::DrawAllConnectors ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::DrawAllSectors ()
+void TableSet::DrawAllZones ()
 {
   if (_tree_root)
   {
-    GSList *current = _referee_sectors;
+    GSList *current = _drop_zones;
 
     while (current)
     {
-      RefereeSector *sector = (RefereeSector *) current->data;
+      DropZone *zone = (DropZone *) current->data;
 
-      sector->Draw (GetRootItem ());
+      zone->Draw (GetRootItem ());
       current = g_slist_next (current);
     }
   }
@@ -842,11 +854,11 @@ gboolean TableSet::WipeNode (GNode    *node,
 
   if (data->_match)
   {
-    RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
-                                                                        "referee_sector");
-    if (sector)
+    DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
+                                                            "drop_zone");
+    if (zone)
     {
-      sector->Wipe ();
+      zone->Wipe ();
     }
   }
 
@@ -1033,14 +1045,17 @@ gboolean TableSet::FillInNode (GNode    *node,
       }
 
       {
-        RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
-                                                                            "referee_sector");
+        DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
+                                                                "drop_zone");
 
-        if (sector)
+        if (zone)
         {
-          sector->PutInTable (data->_match_goo_table,
-                              0,
-                              0);
+          TableZone *table_zone = (TableZone *) zone;
+
+          table_zone->PutInTable (table_set,
+                                  data->_match_goo_table,
+                                  0,
+                                  0);
         }
       }
     }
@@ -1216,12 +1231,12 @@ gboolean TableSet::DeleteNode (GNode    *node,
 
   if (data->_match)
   {
-    RefereeSector *sector = (RefereeSector *) data->_match->GetPtrData (table_set,
-                                                                        "referee_sector");
+    DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
+                                                            "drop_zone");
 
-    Object::TryToRelease (sector);
+    Object::TryToRelease (zone);
     data->_match->RemoveData (table_set,
-                              "referee_sector");
+                              "drop_zone");
 
     Object::TryToRelease (data->_match);
   }
@@ -1303,6 +1318,8 @@ void TableSet::AddFork (GNode *to)
   data->_match = new Match (_max_score);
   data->_match->SetData (this, "node", node);
 
+  _nb_matchs++;
+
   {
     gchar *name_space = g_strdup_printf ("%d-%d.", _first_place, data->_table->GetSize ()*2);
 
@@ -1353,14 +1370,15 @@ void TableSet::AddFork (GNode *to)
                            "table", data->_table->GetLeftTable ());
 
     {
-      RefereeSector *referee_sector = new RefereeSector (_table_spacing);
+      TableZone *drop_zone = new TableZone (_supervisor,
+                                            _table_spacing);
 
-      _referee_sectors = g_slist_prepend (_referee_sectors,
-                                          referee_sector);
-      referee_sector->AddNode (node);
+      _drop_zones = g_slist_prepend (_drop_zones,
+                                     drop_zone);
+      drop_zone->AddNode (node);
 
       data->_match->SetData (this,
-                             "referee_sector", referee_sector);
+                             "drop_zone", (DropZone *) (drop_zone));
     }
 
     AddFork (node);
@@ -1399,6 +1417,7 @@ void TableSet::AddFork (GNode *to)
           to_data->_match->SetPlayerB (player);
         }
       }
+      _nb_matchs--;
     }
     else if (to_data)
     {
@@ -1440,6 +1459,7 @@ void TableSet::DropMatch (GNode *node)
       }
     }
   }
+  _nb_matchs--;
 }
 
 // --------------------------------------------------------------------------------
@@ -1680,11 +1700,15 @@ Player *TableSet::GetFencerFromRef (guint ref)
 }
 
 // --------------------------------------------------------------------------------
-Player *TableSet::GetRefereeFromRef (guint ref)
+void TableSet::AddReferee (Match *match,
+                           guint  referee_ref)
 {
-  Contest *contest = _supervisor->GetContest ();
+  Contest  *contest = _supervisor->GetContest ();
+  Player   *referee = contest->GetRefereeFromRef (referee_ref);
+  DropZone *zone    = (DropZone *) match->GetPtrData (this,
+                                                      "drop_zone");
 
-  return contest->GetRefereeFromRef (ref);
+  zone->AddReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
@@ -2711,27 +2735,13 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::OnZoom (gdouble value)
-{
-  goo_canvas_set_scale (GetCanvas (),
-                        value);
-  _zoom_factor = value;
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::RestoreZoomFactor (GtkScale *scale)
-{
-  gtk_range_set_value (GTK_RANGE (scale), _zoom_factor);
-  OnZoom (_zoom_factor);
-}
-
-// --------------------------------------------------------------------------------
 void TableSet::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
   gtk_container_add (GTK_CONTAINER (_control_container),
                      _from_widget);
   SetDndDest (GTK_WIDGET (GetCanvas ()));
+  EnableDragAndDrop ();
 }
 
 // --------------------------------------------------------------------------------
@@ -3026,185 +3036,98 @@ gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
 }
 
 // --------------------------------------------------------------------------------
-gboolean TableSet::OnDragMotion (GtkWidget      *widget,
-                                 GdkDragContext *drag_context,
-                                 gint            x,
-                                 gint            y,
-                                 guint           time)
+void TableSet::DragObject (Object   *object,
+                           DropZone *from_zone)
 {
-  GSList  *current = _referee_sectors;
-  gdouble  vvalue;
-  gdouble  hvalue;
+  from_zone->RemoveReferee ((Player *) object);
 
   {
-    GtkWidget     *window = _glade->GetWidget ("canvas_scrolled_window");
-    GtkAdjustment *adjustment;
+    TableZone *table_zone = (TableZone *) from_zone;
+    GSList    *current    = table_zone->GetNodeList ();
 
-    adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (window));
-    hvalue     = gtk_adjustment_get_value (adjustment);
-
-    adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (window));
-    vvalue     = gtk_adjustment_get_value (adjustment);
-  }
-
-  if (_locked)
-  {
-    gdk_drag_status  (drag_context,
-                      (GdkDragAction) 0,
-                      time);
-    return FALSE;
-  }
-
-  if (drag_context->targets)
-  {
-    GdkAtom  target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
-                                                        0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
-  }
-
-  while (current)
-  {
-    GooCanvasBounds  bounds;
-    RefereeSector   *sector = (RefereeSector *) current->data;
-
-    sector->GetBounds (&bounds,
-                       _zoom_factor);
-
-    if (   (x > bounds.x1-hvalue) && (x < bounds.x2-hvalue)
-        && (y > bounds.y1-vvalue) && (y < bounds.y2-vvalue))
+    while (current)
     {
-      sector->Focus ();
+      FillInNode ((GNode *) current->data,
+                  this);
 
-      if (_floating_referee)
-      {
-        Player::AttributeId  attr_id  ("availability");
-        Attribute           *attr = _floating_referee->GetAttribute (&attr_id);
-
-        if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
-        {
-          _target_sector = sector;
-          gdk_drag_status  (drag_context,
-                            GDK_ACTION_COPY,
-                            time);
-          return TRUE;
-        }
-      }
-
-      sector->Unfocus ();
-      gdk_drag_status (drag_context,
-                       (GdkDragAction) 0,
-                       time);
-      return FALSE;
+      current = g_slist_next (current);
     }
-
-    current = g_slist_next (current);
   }
 
-  gdk_drag_status  (drag_context,
-                    (GdkDragAction) 0,
-                    time);
-  return FALSE;
+  DrawAllConnectors ();
+  DrawAllZones      ();
+
+  MakeDirty ();
 }
 
 // --------------------------------------------------------------------------------
-gboolean TableSet::OnDragDrop (GtkWidget      *widget,
-                               GdkDragContext *drag_context,
-                               gint            x,
-                               gint            y,
-                               guint           time)
+void TableSet::DropObject (Object   *object,
+                           DropZone *source_zone,
+                           DropZone *target_zone)
 {
-  gboolean result = FALSE;
-
-  if (drag_context->targets)
+  if (target_zone)
   {
-    GdkAtom target_type;
+    target_zone->AddReferee ((Player *) object);
 
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
-                                                        0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
-  }
-
-  if (_floating_referee && _target_sector)
-  {
-    {
-      _target_sector->AddReferee (_floating_referee);
-
-      {
-        Player::AttributeId attr_id ("availability");
-
-        _floating_referee->SetAttributeValue (&attr_id,
-                                              "Busy");
-      }
-
-      {
-        _floating_referee->AddMatchs (_target_sector->GetNbMatchs ());
-        RefreshMatchRate (_floating_referee);
-      }
-
-      //FillInNode (_target_sector,
-                  //this);
-      OnAttrListUpdated ();
-      MakeDirty ();
-    }
-
-    if (_target_sector)
-    {
-      _target_sector->Unfocus ();
-      _target_sector = NULL;
-    }
-    result = TRUE;
-  }
-
-  gtk_drag_finish (drag_context,
-                   result,
-                   FALSE,
-                   time);
-
-  return result;
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::OnDragDataReceived (GtkWidget        *widget,
-                                   GdkDragContext   *drag_context,
-                                   gint              x,
-                                   gint              y,
-                                   GtkSelectionData *data,
-                                   guint             info,
-                                   guint             time)
-{
-  if (data && (data->length >= 0))
-  {
-    if (info == INT_TARGET)
-    {
-      guint32 *referee_ref = (guint32 *) data->data;
-      Contest *contest     = _supervisor->GetContest ();
-
-      _floating_referee = contest->GetRefereeFromRef (*referee_ref);
-    }
+    OnAttrListUpdated ();
+    MakeDirty ();
   }
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::OnDragLeave (GtkWidget      *widget,
-                            GdkDragContext *drag_context,
-                            guint           time)
+Object *TableSet::GetDropObjectFromRef (guint32 ref)
 {
-  if (_target_sector)
+  Contest *contest = _supervisor->GetContest ();
+
+  return contest->GetRefereeFromRef (ref);
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSet::DroppingIsForbidden ()
+{
+  return _locked;
+}
+
+// --------------------------------------------------------------------------------
+GString *TableSet::GetFloatingImage (Object *floating_object)
+{
+  GString *string = g_string_new ("");
+
+  if (floating_object)
   {
-    _target_sector->Unfocus ();
+    Player *player        = (Player *) floating_object;
+    GSList *selected_attr = NULL;
+
+    if (_filter)
+    {
+      selected_attr = _filter->GetSelectedAttrList ();
+    }
+
+    while (selected_attr)
+    {
+      AttributeDesc       *attr_desc = (AttributeDesc *) selected_attr->data;
+      Attribute           *attr;
+      Player::AttributeId *attr_id;
+
+      attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+      attr = player->GetAttribute (attr_id);
+      attr_id->Release ();
+
+      if (attr)
+      {
+        gchar *image = attr->GetUserImage ();
+
+        string = g_string_append (string,
+                                  image);
+        string = g_string_append (string,
+                                  "  ");
+        g_free (image);
+      }
+      selected_attr = g_slist_next (selected_attr);
+    }
   }
+
+  return string;
 }
 
 // --------------------------------------------------------------------------------

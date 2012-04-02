@@ -55,16 +55,12 @@ const gchar *PoolAllocator::_xml_class_name = "TourDePoules";
 
 // --------------------------------------------------------------------------------
 PoolAllocator::PoolAllocator (StageClass *stage_class)
-: Stage (stage_class),
+  : Stage (stage_class),
   CanvasModule ("pool_allocator.glade")
 {
-  _pools_list        = NULL;
+  _drop_zones        = NULL;
   _config_list       = NULL;
   _selected_config   = NULL;
-  _dragging          = FALSE;
-  _target_pool       = NULL;
-  _floating_player   = NULL;
-  _drag_text         = NULL;
   _main_table        = NULL;
   _swapping_criteria = NULL;
   _loaded            = FALSE;
@@ -236,173 +232,125 @@ void PoolAllocator::OnPlugged ()
   CanvasModule::OnPlugged ();
 
   SetDndDest (GTK_WIDGET (GetCanvas ()));
+  EnableDragAndDrop ();
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolAllocator::OnDragMotion (GtkWidget      *widget,
-                                      GdkDragContext *drag_context,
-                                      gint            x,
-                                      gint            y,
-                                      guint           time)
+Object *PoolAllocator::GetDropObjectFromRef (guint32 ref)
 {
-  GooCanvasItem *focus_rect;
-  GSList        *current = _pools_list;
-  gdouble        vvalue;
-  gdouble        hvalue;
+  return _contest->GetRefereeFromRef (ref);
+}
 
+// --------------------------------------------------------------------------------
+void PoolAllocator::DragObject (Object   *object,
+                                DropZone *from_zone)
+{
+  Player   *floating_object = (Player *) object;
+  PoolZone *pool_zone       = (PoolZone *) from_zone;
+
+  if (floating_object->IsFencer ())
   {
-    GtkWidget     *window = _glade->GetWidget ("canvas_scrolled_window");
-    GtkAdjustment *adjustment;
+    Pool *pool = pool_zone->GetPool ();
 
-    adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (window));
-    hvalue     = gtk_adjustment_get_value (adjustment);
-
-    adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (window));
-    vvalue     = gtk_adjustment_get_value (adjustment);
+    pool->RemoveFencer (floating_object);
+  }
+  else
+  {
+    pool_zone->RemoveReferee (floating_object);
   }
 
-  if (Locked ())
+  FillPoolTable (pool_zone);
+  SignalStatusUpdate ();
+  FixUpTablesBounds ();
+}
+
+// --------------------------------------------------------------------------------
+void PoolAllocator::DropObject (Object   *object,
+                                DropZone *source_zone,
+                                DropZone *target_zone)
+{
+  Player   *floating_object = (Player *) object;
+  PoolZone *pool_zone       = NULL;
+
+  if (floating_object->IsFencer ())
   {
-    gdk_drag_status  (drag_context,
-                      (GdkDragAction) 0,
-                      time);
-    return FALSE;
-  }
+    Pool *target_pool;
 
-  if (drag_context->targets)
-  {
-    GdkAtom  target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
-                                                        0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
-  }
-
-  while (current)
-  {
-    GooCanvasBounds  bounds;
-    Pool            *pool = (Pool *) current->data;
-
-    focus_rect = (GooCanvasItem *) pool->GetPtrData (this, "focus_rectangle");
-    goo_canvas_item_get_bounds (focus_rect,
-                                &bounds);
-
-    if (   (x > bounds.x1-hvalue) && (x < bounds.x2-hvalue)
-        && (y > bounds.y1-vvalue) && (y < bounds.y2-vvalue))
+    if (target_zone)
     {
-      if (_floating_player)
+      pool_zone = (PoolZone *) target_zone;
+    }
+    else
+    {
+      pool_zone = (PoolZone *) source_zone;
+    }
+
+    target_pool = pool_zone->GetPool ();
+    target_pool->AddFencer (floating_object,
+                            this);
+    _fencer_list->Update (floating_object);
+  }
+  else if (target_zone)
+  {
+    pool_zone = (PoolZone *) target_zone;
+
+    pool_zone->AddReferee (floating_object);
+  }
+
+  if (pool_zone)
+  {
+    FillPoolTable (pool_zone);
+    SignalStatusUpdate (); // ?????
+    FixUpTablesBounds ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean PoolAllocator::DroppingIsForbidden ()
+{
+  return Locked ();
+}
+
+// --------------------------------------------------------------------------------
+GString *PoolAllocator::GetFloatingImage (Object *floating_object)
+{
+  GString *string = g_string_new ("");
+
+  if (floating_object)
+  {
+    Player *player        = (Player *) floating_object;
+    GSList *selected_attr = NULL;
+
+    if (_filter)
+    {
+      selected_attr = _filter->GetSelectedAttrList ();
+    }
+
+    while (selected_attr)
+    {
+      AttributeDesc       *attr_desc = (AttributeDesc *) selected_attr->data;
+      Attribute           *attr;
+      Player::AttributeId *attr_id;
+
+      attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+      attr = player->GetAttribute (attr_id);
+      attr_id->Release ();
+
+      if (attr)
       {
-        Player::AttributeId  attr_id  ("availability");
-        Attribute           *attr = _floating_player->GetAttribute (&attr_id);
+        gchar *image = attr->GetUserImage ();
 
-        if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
-        {
-          Focus (pool);
-          gdk_drag_status  (drag_context,
-                            GDK_ACTION_COPY,
-                            time);
-          return TRUE;
-        }
+        string = g_string_append (string,
+                                  image);
+        string = g_string_append (string,
+                                  "  ");
+        g_free (image);
       }
-
-      gdk_drag_status  (drag_context,
-                        (GdkDragAction) 0,
-                        time);
-      return FALSE;
-    }
-
-    current = g_slist_next (current);
-  }
-
-  Unfocus ();
-  _target_pool = NULL;
-
-  gdk_drag_status  (drag_context,
-                    (GdkDragAction) 0,
-                    time);
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::OnDragDrop (GtkWidget      *widget,
-                                    GdkDragContext *drag_context,
-                                    gint            x,
-                                    gint            y,
-                                    guint           time)
-{
-  gboolean result = FALSE;
-
-  if (drag_context->targets)
-  {
-    GdkAtom  target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
-                                                        0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
-  }
-
-  if (_floating_player && _target_pool)
-  {
-    {
-      _target_pool->AddReferee (_floating_player);
-
-      FillPoolTable (_target_pool);
-      FixUpTablesBounds ();
-      MakeDirty ();
-    }
-
-    Unfocus ();
-    _target_pool = NULL;
-    result = TRUE;
-  }
-
-  gtk_drag_finish (drag_context,
-                   result,
-                   FALSE,
-                   time);
-
-  return result;
-}
-
-// --------------------------------------------------------------------------------
-void PoolAllocator::OnDragDataReceived (GtkWidget        *widget,
-                                        GdkDragContext   *drag_context,
-                                        gint              x,
-                                        gint              y,
-                                        GtkSelectionData *data,
-                                        guint             info,
-                                        guint             time)
-{
-  if (data && (data->length >= 0))
-  {
-    if (info == INT_TARGET)
-    {
-      guint32 *referee_ref = (guint32 *) data->data;
-
-      _floating_player = _contest->GetRefereeFromRef (*referee_ref);
+      selected_attr = g_slist_next (selected_attr);
     }
   }
-}
 
-// --------------------------------------------------------------------------------
-void PoolAllocator::OnDragLeave (GtkWidget      *widget,
-                                 GdkDragContext *drag_context,
-                                 guint           time)
-{
-  if (_target_pool)
-  {
-    Unfocus ();
-  }
+  return string;
 }
 
 // --------------------------------------------------------------------------------
@@ -432,22 +380,13 @@ void PoolAllocator::Display ()
       _main_table = goo_canvas_group_new (root,
                                           NULL);
 
-      g_object_set (G_OBJECT (root),
-                    "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
-                    NULL);
-      g_signal_connect (root, "motion_notify_event",
-                        G_CALLBACK (on_motion_notify), this);
-      g_signal_connect (root, "button_release_event",
-                        G_CALLBACK (on_button_release), this);
-
       {
-        GSList *current = _pools_list;
+        GSList *current = _drop_zones;
 
         while (current)
         {
-          Pool *pool = (Pool *) current->data;
+          FillPoolTable ((PoolZone *) current->data);
 
-          FillPoolTable (pool);
           current = g_slist_next (current);
         }
       }
@@ -461,7 +400,7 @@ void PoolAllocator::Display ()
 // --------------------------------------------------------------------------------
 void PoolAllocator::Garnish ()
 {
-  if (_pools_list == NULL)
+  if (_drop_zones == NULL)
   {
     Setup ();
 
@@ -675,7 +614,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
         }
 
         {
-          guint           number      = g_slist_length (_pools_list);
+          guint           number      = g_slist_length (_drop_zones);
           PoolMatchOrder *match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
 
           current_pool = new Pool (this,
@@ -685,8 +624,13 @@ void PoolAllocator::Load (xmlNode *xml_node)
                                    _rand_seed);
           match_order->Release ();
 
-          _pools_list = g_slist_append (_pools_list,
-                                        current_pool);
+          {
+            PoolZone *zone = new PoolZone (this,
+                                           current_pool);
+
+            _drop_zones = g_slist_append (_drop_zones,
+                                          zone);
+          }
         }
       }
       else if (strcmp ((char *) n->name, "Tireur") == 0)
@@ -752,11 +696,11 @@ void PoolAllocator::Save (xmlTextWriter *xml_writer)
 
   SaveConfiguration (xml_writer);
 
-  if (_pools_list)
+  if (_drop_zones)
   {
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "NbDePoules",
-                                       "%d", g_slist_length (_pools_list));
+                                       "%d", g_slist_length (_drop_zones));
   }
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "PhaseSuivanteDesQualifies",
@@ -771,13 +715,12 @@ void PoolAllocator::Save (xmlTextWriter *xml_writer)
   Stage::SaveAttendees (xml_writer);
 
   {
-    GSList *current = _pools_list;
+    GSList *current = _drop_zones;
 
     while (current)
     {
-      Pool *pool;
+      Pool *pool = GetPoolOf (current);
 
-      pool = (Pool *) current->data;
       pool->Save (xml_writer);
       current = g_slist_next (current);
     }
@@ -944,8 +887,14 @@ void PoolAllocator::CreatePools ()
                                 i+1,
                                 match_order,
                                 _rand_seed);
-      _pools_list = g_slist_append (_pools_list,
-                                    pool_table[i]);
+
+      {
+        PoolZone *zone = new PoolZone (this,
+                                       pool_table[i]);
+
+        _drop_zones = g_slist_append (_drop_zones,
+                                      zone);
+      }
     }
 
     {
@@ -954,13 +903,13 @@ void PoolAllocator::CreatePools ()
 
       if (_swapping_criteria && _seeding_balanced->_value)
       {
-        swapper = new GreenSwapper (_pools_list,
+        swapper = new GreenSwapper (_drop_zones,
                                     _swapping_criteria->_code_name,
                                     shortlist);
       }
       else
       {
-        swapper = new GreenSwapper (_pools_list,
+        swapper = new GreenSwapper (_drop_zones,
                                     NULL,
                                     shortlist);
       }
@@ -1073,352 +1022,18 @@ void PoolAllocator::SetUpCombobox ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolAllocator::on_enter_player (GooCanvasItem  *item,
-                                         GooCanvasItem  *target,
-                                         GdkEventButton *event,
-                                         Pool           *pool)
-{
-  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
-
-  if (pl)
-  {
-    pl->SetCursor (GDK_FLEUR);
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::on_leave_player (GooCanvasItem  *item,
-                                         GooCanvasItem  *target,
-                                         GdkEventButton *event,
-                                         Pool           *pool)
-{
-  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
-
-  if (pl)
-  {
-    pl->ResetCursor ();
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::on_button_press (GooCanvasItem  *item,
-                                         GooCanvasItem  *target,
-                                         GdkEventButton *event,
-                                         Pool           *pool)
-{
-  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
-
-  if (pl)
-  {
-    return pl->OnButtonPress (item,
-                              target,
-                              event,
-                              pool);
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::OnButtonPress (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       Pool           *pool)
-{
-  if (Locked ())
-  {
-    return FALSE;
-  }
-
-  if (   (event->button == 1)
-         && (event->type == GDK_BUTTON_PRESS))
-  {
-    _floating_player = (Player *) g_object_get_data (G_OBJECT (item),
-                                                     "PoolAllocator::player");
-
-    _drag_x = event->x;
-    _drag_y = event->y;
-
-    goo_canvas_convert_from_item_space  (GetCanvas (),
-                                         item,
-                                         &_drag_x,
-                                         &_drag_y);
-
-    {
-      GooCanvasBounds  bounds;
-      GString         *string = g_string_new ("");
-      GSList          *selected_attr = NULL;
-
-      if (_filter)
-      {
-        selected_attr = _filter->GetSelectedAttrList ();
-      }
-
-      if (_floating_player)
-      {
-        while (selected_attr)
-        {
-          AttributeDesc       *attr_desc = (AttributeDesc *) selected_attr->data;
-          Attribute           *attr;
-          Player::AttributeId *attr_id;
-
-          attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
-          attr = _floating_player->GetAttribute (attr_id);
-          attr_id->Release ();
-
-          if (attr)
-          {
-            gchar *image = attr->GetUserImage ();
-
-            string = g_string_append (string,
-                                      image);
-            string = g_string_append (string,
-                                      "  ");
-            g_free (image);
-          }
-          selected_attr = g_slist_next (selected_attr);
-        }
-      }
-
-      goo_canvas_item_get_bounds (item,
-                                  &bounds);
-
-      _drag_text = goo_canvas_text_new (GetRootItem (),
-                                        string->str,
-                                        //bounds.x1,
-                                        //bounds.y1,
-                                        _drag_x,
-                                        _drag_y,
-                                        -1,
-                                        GTK_ANCHOR_NW,
-                                        "font", "Sans Bold 14px", NULL);
-      g_string_free (string,
-                     TRUE);
-
-    }
-
-    SetCursor (GDK_FLEUR);
-
-    _dragging = TRUE;
-    _source_pool = pool;
-
-    {
-      if (_floating_player->IsFencer ())
-      {
-        pool->RemoveFencer (_floating_player);
-      }
-      else
-      {
-        pool->RemoveReferee (_floating_player);
-      }
-
-      FillPoolTable (pool);
-      SignalStatusUpdate ();
-      FixUpTablesBounds ();
-    }
-
-    MakeDirty ();
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::on_button_release (GooCanvasItem  *item,
-                                           GooCanvasItem  *target,
-                                           GdkEventButton *event,
-                                           PoolAllocator    *pl)
-{
-  if (pl)
-  {
-    return pl->OnButtonRelease (item,
-                                target,
-                                event);
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::OnButtonRelease (GooCanvasItem  *item,
-                                         GooCanvasItem  *target,
-                                         GdkEventButton *event)
-{
-  if (_dragging)
-  {
-    _dragging = FALSE;
-
-    goo_canvas_item_remove (_drag_text);
-    _drag_text = NULL;
-
-    if (_target_pool)
-    {
-      if (_floating_player->IsFencer ())
-      {
-        _target_pool->AddFencer (_floating_player,
-                                 this);
-      }
-      else
-      {
-        _target_pool->AddReferee (_floating_player);
-      }
-      FillPoolTable (_target_pool);
-    }
-    else
-    {
-      if (_floating_player->IsFencer ())
-      {
-        _source_pool->AddFencer (_floating_player,
-                                 this);
-        FillPoolTable (_source_pool);
-      }
-    }
-
-    //OnAttrListUpdated ();
-    SignalStatusUpdate ();
-    FixUpTablesBounds ();
-
-    if (_floating_player->IsFencer ())
-    {
-      _fencer_list->Update (_floating_player);
-    }
-
-    ResetCursor ();
-    MakeDirty ();
-  }
-
-  return TRUE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::on_motion_notify (GooCanvasItem  *item,
-                                          GooCanvasItem  *target,
-                                          GdkEventButton *event,
-                                          PoolAllocator  *pl)
-{
-  if (pl)
-  {
-    pl->OnMotionNotify (item,
-                        target,
-                        event);
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::OnMotionNotify (GooCanvasItem  *item,
-                                        GooCanvasItem  *target,
-                                        GdkEventButton *event)
-{
-  if (_dragging && (event->state & GDK_BUTTON1_MASK))
-  {
-    gdouble new_x = event->x_root;
-    gdouble new_y = event->y_root;
-
-    goo_canvas_item_translate (_drag_text,
-                               new_x - _drag_x,
-                               new_y - _drag_y);
-
-    _drag_x = new_x;
-    _drag_y = new_y;
-
-    SetCursor (GDK_FLEUR);
-  }
-
-  return TRUE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::on_enter_notify (GooCanvasItem  *item,
-                                         GooCanvasItem  *target,
-                                         GdkEventButton *event,
-                                         Pool           *pool)
-{
-  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
-
-  if (pl)
-  {
-    return pl->OnEnterNotify (item,
-                              target,
-                              event,
-                              pool);
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::OnEnterNotify (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       Pool           *pool)
-{
-  if (_dragging)
-  {
-    Focus (pool);
-    return TRUE;
-  }
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::on_leave_notify (GooCanvasItem  *item,
-                                         GooCanvasItem  *target,
-                                         GdkEventButton *event,
-                                         Pool           *pool)
-{
-  PoolAllocator *pl = (PoolAllocator*) pool->GetPtrData (pool, "pool_allocator");
-
-  if (pl)
-  {
-    return pl->OnLeaveNotify (item,
-                              target,
-                              event,
-                              pool);
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean PoolAllocator::OnLeaveNotify (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       Pool           *pool)
-{
-  if (_dragging)
-  {
-    Unfocus ();
-    _target_pool = NULL;
-    return TRUE;
-  }
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
 void PoolAllocator::FixUpTablesBounds ()
 {
   if (_selected_config)
   {
-    GSList *current = _pools_list;
+    GSList *current = _drop_zones;
 
     while (current)
     {
-      Pool            *pool;
-      GooCanvasItem   *focus_rect;
+      PoolZone        *zone  = (PoolZone *) current->data;
+      Pool            *pool  = GetPoolOf (current);
+      GooCanvasItem   *table = (GooCanvasItem *) zone->GetPtrData (this, "table");
       GooCanvasBounds  bounds;
-      GooCanvasItem   *table;
-
-      pool = (Pool *) current->data;
-      table = (GooCanvasItem *) pool->GetPtrData (this, "table");
-
-      focus_rect = (GooCanvasItem *) pool->GetPtrData (this, "focus_rectangle");
 
       {
         guint nb_columns = 2;
@@ -1447,34 +1062,18 @@ void PoolAllocator::FixUpTablesBounds ()
       goo_canvas_item_get_bounds (table,
                                   &bounds);
 
-      g_object_set (G_OBJECT (focus_rect),
-                    "x",      bounds.x1,
-                    "y",      bounds.y1,
-                    "width",  bounds.x2 - bounds.x1,
-                    "height", bounds.y2 - bounds.y1,
-                    NULL);
+      zone->Redraw (bounds.x1,
+                    bounds.y1,
+                    bounds.x2 - bounds.x1,
+                    bounds.y2 - bounds.y1);
 
-      if (_dragging)
-      {
-        goo_canvas_item_raise (focus_rect,
-                               NULL);
-      }
-      else
-      {
-        goo_canvas_item_lower (focus_rect,
-                               NULL);
-
-        g_object_set (G_OBJECT (focus_rect),
-                      "stroke-pattern", NULL,
-                      NULL);
-      }
       current = g_slist_next (current);
     }
   }
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::FillPoolTable (Pool *pool)
+void PoolAllocator::FillPoolTable (PoolZone *zone)
 {
   if (_main_table == NULL)
   {
@@ -1482,9 +1081,9 @@ void PoolAllocator::FillPoolTable (Pool *pool)
   }
 
   GooCanvasItem *item;
-  GooCanvasItem *table      = (GooCanvasItem *) pool->GetPtrData (this, "table");
-  GooCanvasItem *focus_rect = (GooCanvasItem *) pool->GetPtrData (this, "focus_rectangle");
-  GSList *selected_attr     = NULL;
+  GooCanvasItem *table         = (GooCanvasItem *) zone->GetPtrData (this, "table");
+  GSList        *selected_attr = NULL;
+  Pool          *pool          = zone->GetPool ();
 
   if (_filter)
   {
@@ -1501,7 +1100,7 @@ void PoolAllocator::FillPoolTable (Pool *pool)
                                   "row-spacing",    2.0,
                                   "column-spacing", 4.0,
                                   NULL);
-    pool->SetData (this, "table",
+    zone->SetData (this, "table",
                    table);
   }
 
@@ -1566,7 +1165,7 @@ void PoolAllocator::FillPoolTable (Pool *pool)
         DisplayPlayer (player,
                        p,
                        table,
-                       pool,
+                       zone,
                        selected_attr);
         p++;
 
@@ -1585,7 +1184,7 @@ void PoolAllocator::FillPoolTable (Pool *pool)
         DisplayPlayer (player,
                        p,
                        table,
-                       pool,
+                       zone,
                        selected_attr);
         p++;
 
@@ -1610,39 +1209,20 @@ void PoolAllocator::FillPoolTable (Pool *pool)
     }
   }
 
-  if (focus_rect == NULL)
-  {
-    focus_rect = goo_canvas_rect_new (GetRootItem (),
-                                      0, 0,
-                                      0, 0,
-                                      "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
-                                      "stroke-pattern", NULL,
-                                      NULL);
-
-    goo_canvas_item_lower (focus_rect,
-                           NULL);
-
-    g_signal_connect (focus_rect, "enter_notify_event",
-                      G_CALLBACK (on_enter_notify), pool);
-    g_signal_connect (focus_rect, "leave_notify_event",
-                      G_CALLBACK (on_leave_notify), pool);
-
-    pool->SetData (pool, "pool_allocator",
-                   this);
-    pool->SetData (this, "focus_rectangle",
-                   focus_rect);
-  }
+  zone->Draw (GetRootItem ());
 }
 
 // --------------------------------------------------------------------------------
 void PoolAllocator::DisplayPlayer (Player        *player,
                                    guint          indice,
                                    GooCanvasItem *table,
-                                   Pool          *pool,
+                                   PoolZone      *zone,
                                    GSList        *selected_attr)
 {
   if (player)
   {
+    Pool *pool = zone->GetPool ();
+
     if (player->IsFencer () == FALSE)
     {
       static gchar  *referee_icon = NULL;
@@ -1705,16 +1285,9 @@ void PoolAllocator::DisplayPlayer (Player        *player,
                       NULL);
       }
 
-      g_object_set_data (G_OBJECT (item),
-                         "PoolAllocator::player",
-                         player);
-
-      g_signal_connect (item, "button_press_event",
-                        G_CALLBACK (on_button_press), pool);
-      g_signal_connect (item, "enter_notify_event",
-                        G_CALLBACK (on_enter_player), pool);
-      g_signal_connect (item, "leave_notify_event",
-                        G_CALLBACK (on_leave_player), pool);
+      SetObjectDropZone (player,
+                         item,
+                         zone);
 
       selected_attr = g_slist_next (selected_attr);
     }
@@ -1724,20 +1297,21 @@ void PoolAllocator::DisplayPlayer (Player        *player,
 // --------------------------------------------------------------------------------
 void PoolAllocator::DeletePools ()
 {
-  if (_pools_list)
+  if (_drop_zones)
   {
-    GSList *current_pool = _pools_list;
+    GSList *current = _drop_zones;
 
-    while (current_pool)
+    while (current)
     {
-      Pool *pool = (Pool *) current_pool->data;
+      Pool *pool = GetPoolOf (current);
 
+      Object::TryToRelease ((PoolZone *) current->data);
       Object::TryToRelease (pool);
-      current_pool = g_slist_next (current_pool);
+      current = g_slist_next (current);
     }
 
-    g_slist_free (_pools_list);
-    _pools_list = NULL;
+    g_slist_free (_drop_zones);
+    _drop_zones = NULL;
   }
 
   CanvasModule::Wipe ();
@@ -1790,11 +1364,11 @@ void PoolAllocator::Wipe ()
 // --------------------------------------------------------------------------------
 gboolean PoolAllocator::IsOver ()
 {
-  GSList *current = _pools_list;
+  GSList *current = _drop_zones;
 
   while (current)
   {
-    Pool *pool = (Pool *) current->data;
+    Pool *pool = GetPoolOf (current);
 
     if (pool->GetUIntData (this, "is_balanced") == 0)
     {
@@ -1847,9 +1421,9 @@ void PoolAllocator::OnBeginPrint (GtkPrintOperation *operation,
 
   {
     guint nb_row_by_page = (guint) ((paper_h - header_h) / ((_max_h+20)*_print_scale));
-    guint nb_row         = g_slist_length (_pools_list)/2;
+    guint nb_row         = g_slist_length (_drop_zones)/2;
 
-    if (g_slist_length (_pools_list) % 2 > 0)
+    if (g_slist_length (_drop_zones) % 2 > 0)
     {
       nb_row++;
     }
@@ -1940,14 +1514,22 @@ gboolean PoolAllocator::SeedingIsBalanced ()
 // --------------------------------------------------------------------------------
 guint PoolAllocator::GetNbPools ()
 {
-  return g_slist_length (_pools_list);
+  return g_slist_length (_drop_zones);
 }
 
 // --------------------------------------------------------------------------------
 Pool *PoolAllocator::GetPool (guint index)
 {
-  return (Pool *) g_slist_nth_data (_pools_list,
-                                    index);
+  return GetPoolOf (g_slist_nth (_drop_zones,
+                                 index));
+}
+
+// --------------------------------------------------------------------------------
+Pool *PoolAllocator::GetPoolOf (GSList *drop_zone)
+{
+  PoolZone *zone = (PoolZone *) drop_zone->data;
+
+  return zone->GetPool ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1980,7 +1562,7 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
     _swapping->_string = "Aucun";
   }
 
-  if (_pools_list)
+  if (_drop_zones)
   {
     DeletePools ();
     CreatePools ();
@@ -2068,11 +1650,11 @@ void PoolAllocator::OnLoadingCompleted ()
 {
   if (IsPlugged () && (Locked () == FALSE))
   {
-    GSList *current = _pools_list;
+    GSList *current = _drop_zones;
 
     while (current)
     {
-      Pool *pool = (Pool *) current->data;
+      Pool *pool = GetPoolOf (current);
 
       pool->BookReferees ();
       current = g_slist_next (current);
@@ -2086,11 +1668,11 @@ void PoolAllocator::OnLocked ()
   DisableSensitiveWidgets ();
 
   {
-    GSList *current = _pools_list;
+    GSList *current = _drop_zones;
 
     while (current)
     {
-      Pool *pool = (Pool *) current->data;
+      Pool *pool = GetPoolOf (current);
 
       pool->CreateMatchs ();
       current = g_slist_next (current);
@@ -2116,42 +1698,17 @@ void PoolAllocator::OnCanceled ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::Focus (Pool *pool)
-{
-  GooCanvasItem *rect = (GooCanvasItem*) pool->GetPtrData (this, "focus_rectangle");
-
-  g_object_set (G_OBJECT (rect),
-                "stroke-color", "black",
-                NULL);
-  _target_pool = pool;
-}
-
-// --------------------------------------------------------------------------------
-void PoolAllocator::Unfocus ()
-{
-  if (_target_pool)
-  {
-    GooCanvasItem *rect = (GooCanvasItem*) _target_pool->GetPtrData (this, "focus_rectangle");
-
-    g_object_set (G_OBJECT (rect),
-                  "stroke-pattern", NULL,
-                  NULL);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void PoolAllocator::OnAttrListUpdated ()
 {
-  GSList *current = _pools_list;
+  GSList *current = _drop_zones;
 
   _max_w = 0;
   _max_h = 0;
 
   while (current)
   {
-    Pool *pool = (Pool *) current->data;
+    FillPoolTable ((PoolZone *) current->data);
 
-    FillPoolTable (pool);
     current = g_slist_next (current);
   }
   FixUpTablesBounds ();
