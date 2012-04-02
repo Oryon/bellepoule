@@ -562,16 +562,10 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
                                          &_drag_y);
 
     {
-      GooCanvasBounds  bounds;
-      GString         *string = GetFloatingImage (_floating_object);
-
-      goo_canvas_item_get_bounds (item,
-                                  &bounds);
+      GString *string = GetFloatingImage (_floating_object);
 
       _drag_text = goo_canvas_text_new (GetRootItem (),
                                         string->str,
-                                        //bounds.x1,
-                                        //bounds.y1,
                                         _drag_x,
                                         _drag_y,
                                         -1,
@@ -588,12 +582,10 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
     _source_drop_zone = drop_zone;
     _target_drop_zone = drop_zone;
 
-    {
-      drop_zone->Focus ();
-    }
-
     DragObject (_floating_object,
                 _source_drop_zone);
+
+    drop_zone->Focus ();
 
     MakeDirty ();
     return TRUE;
@@ -630,14 +622,14 @@ gboolean CanvasModule::OnButtonRelease (GooCanvasItem  *item,
       _target_drop_zone->Unfocus ();
     }
 
-    DropObject (_floating_object,
-                _source_drop_zone,
-                _target_drop_zone);
-
     _dragging = FALSE;
 
     goo_canvas_item_remove (_drag_text);
     _drag_text = NULL;
+
+    DropObject (_floating_object,
+                _source_drop_zone,
+                _target_drop_zone);
 
     _target_drop_zone = NULL;
     _source_drop_zone = NULL;
@@ -684,6 +676,12 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
       _drag_y = new_y;
     }
 
+    if (_target_drop_zone)
+    {
+      _target_drop_zone->Unfocus ();
+      _target_drop_zone = NULL;
+    }
+
     {
       DropZone *drop_zone = GetZoneAt (_drag_x,
                                        _drag_y);
@@ -692,11 +690,6 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
       {
         drop_zone->Focus ();
         _target_drop_zone = drop_zone;
-      }
-      else if (_target_drop_zone)
-      {
-        _target_drop_zone->Unfocus ();
-        _target_drop_zone = NULL;
       }
     }
 

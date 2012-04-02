@@ -62,6 +62,7 @@ class CanvasModule : public Module
   protected:
     GSList *_drop_zones;
 
+  public:
     void EnableDragAndDrop ();
 
     void SetObjectDropZone (Object        *object,

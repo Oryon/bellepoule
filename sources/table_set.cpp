@@ -1052,7 +1052,8 @@ gboolean TableSet::FillInNode (GNode    *node,
         {
           TableZone *table_zone = (TableZone *) zone;
 
-          table_zone->PutInTable (data->_match_goo_table,
+          table_zone->PutInTable (table_set,
+                                  data->_match_goo_table,
                                   0,
                                   0);
         }
@@ -3040,7 +3041,22 @@ void TableSet::DragObject (Object   *object,
 {
   from_zone->RemoveReferee ((Player *) object);
 
-  OnAttrListUpdated ();
+  {
+    TableZone *table_zone = (TableZone *) from_zone;
+    GSList    *current    = table_zone->GetNodeList ();
+
+    while (current)
+    {
+      FillInNode ((GNode *) current->data,
+                  this);
+
+      current = g_slist_next (current);
+    }
+  }
+
+  DrawAllConnectors ();
+  DrawAllZones      ();
+
   MakeDirty ();
 }
 
@@ -3053,8 +3069,6 @@ void TableSet::DropObject (Object   *object,
   {
     target_zone->AddReferee ((Player *) object);
 
-    //FillInNode (target_zone,
-    //this);
     OnAttrListUpdated ();
     MakeDirty ();
   }

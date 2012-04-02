@@ -18,6 +18,7 @@
 #include "match.hpp"
 #include "table.hpp"
 #include "canvas.hpp"
+#include "canvas_module.hpp"
 
 #include "table_zone.hpp"
 
@@ -41,6 +42,12 @@ void TableZone::AddNode (GNode *node)
 {
   _node_list = g_slist_prepend (_node_list,
                                 node);
+}
+
+// --------------------------------------------------------------------------------
+GSList *TableZone::GetNodeList ()
+{
+  return _node_list;
 }
 
 // --------------------------------------------------------------------------------
@@ -146,7 +153,8 @@ guint TableZone::GetNbMatchs ()
 }
 
 // --------------------------------------------------------------------------------
-void TableZone::PutInTable (GooCanvasItem *table,
+void TableZone::PutInTable (CanvasModule  *canvas_module,
+                            GooCanvasItem *table,
                             guint          row,
                             guint          column)
 {
@@ -167,9 +175,9 @@ void TableZone::PutInTable (GooCanvasItem *table,
         }
 
         Canvas::PutIconInTable (table,
-                                       referee_icon,
-                                       row + i,
-                                       column);
+                                referee_icon,
+                                row + i,
+                                column);
       }
 
       {
@@ -182,6 +190,10 @@ void TableZone::PutInTable (GooCanvasItem *table,
         g_object_set (item,
                       "font", "Sans Bold Italic 12px",
                       NULL);
+
+        canvas_module->SetObjectDropZone (referee,
+                                          item,
+                                          this);
       }
 
       current = g_slist_next (current);

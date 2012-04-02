@@ -132,8 +132,6 @@
 		<Unit filename="sources\form.hpp" />
 		<Unit filename="sources\general_classification.cpp" />
 		<Unit filename="sources\general_classification.hpp" />
-		<Unit filename="sources\genetic_swapper.cpp" />
-		<Unit filename="sources\genetic_swapper.hpp" />
 		<Unit filename="sources\glade.cpp" />
 		<Unit filename="sources\glade.hpp" />
 		<Unit filename="sources\green_swapper.cpp" />
