@@ -256,7 +256,7 @@ void PoolAllocator::DragObject (Object   *object,
   }
   else
   {
-    pool_zone->RemoveReferee (floating_object);
+    pool_zone->RemoveObject (floating_object);
   }
 
   FillPoolTable (pool_zone);
@@ -294,13 +294,12 @@ void PoolAllocator::DropObject (Object   *object,
   {
     pool_zone = (PoolZone *) target_zone;
 
-    pool_zone->AddReferee (floating_object);
+    pool_zone->AddObject (floating_object);
   }
 
   if (pool_zone)
   {
     FillPoolTable (pool_zone);
-    SignalStatusUpdate (); // ?????
     FixUpTablesBounds ();
   }
 }
@@ -637,8 +636,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
           guint           number      = g_slist_length (_drop_zones);
           PoolMatchOrder *match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
 
-          current_pool = new Pool (this,
-                                   _max_score,
+          current_pool = new Pool (_max_score,
                                    number+1,
                                    match_order,
                                    _rand_seed);
@@ -681,11 +679,11 @@ void PoolAllocator::Load (xmlNode *xml_node)
 
         if (attr)
         {
-          Player *player = _contest->GetRefereeFromRef (atoi (attr));
+          Player *referee = _contest->GetRefereeFromRef (atoi (attr));
 
-          if (player)
+          if (referee)
           {
-            current_zone->AddReferee (player);
+            current_zone->AddObject (referee);
           }
         }
       }
@@ -902,8 +900,7 @@ void PoolAllocator::CreatePools ()
     pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
     for (guint i = 0; i < nb_pool; i++)
     {
-      pool_table[i] = new Pool (this,
-                                _max_score,
+      pool_table[i] = new Pool (_max_score,
                                 i+1,
                                 match_order,
                                 _rand_seed);
@@ -1553,6 +1550,15 @@ Pool *PoolAllocator::GetPoolOf (GSList *drop_zone)
 }
 
 // --------------------------------------------------------------------------------
+PoolZone *PoolAllocator::GetZone (guint index)
+{
+  GSList *zone = g_slist_nth (_drop_zones,
+                              index);
+
+  return (PoolZone *) zone->data;
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
                                                               Object    *owner)
 {
@@ -1674,9 +1680,9 @@ void PoolAllocator::OnLoadingCompleted ()
 
     while (current)
     {
-      Pool *pool = GetPoolOf (current);
+      PoolZone *zone = (PoolZone *) current->data;
 
-      pool->BookReferees ();
+      zone->BookReferees ();
       current = g_slist_next (current);
     }
   }

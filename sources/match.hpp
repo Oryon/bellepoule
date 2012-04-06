@@ -84,7 +84,7 @@ class Match : public Object
 
     void RemoveReferee (Player *referee);
 
-    void BookReferee (Player *referee);
+    void BookReferees ();
 
     GSList *GetRefereeList ();
 

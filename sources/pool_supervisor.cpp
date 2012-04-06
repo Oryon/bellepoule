@@ -305,11 +305,13 @@ void PoolSupervisor::OnLoadingCompleted ()
 {
   if (IsPlugged () && (Locked () == FALSE))
   {
-    for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
-    {
-      Pool *pool = _pool_allocator->GetPool (p);
+    guint nb_pools = _pool_allocator->GetNbPools ();
 
-      pool->BookReferees ();
+    for (guint p = 0; p < nb_pools; p++)
+    {
+      PoolZone *zone = _pool_allocator->GetZone (p);
+
+      zone->BookReferees ();
     }
   }
 }
@@ -321,9 +323,11 @@ void PoolSupervisor::OnLocked ()
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool *pool = _pool_allocator->GetPool (p);
+    PoolZone *drop_zone = _pool_allocator->GetZone (p);
+    Pool     *pool      = drop_zone->GetPool ();
 
     pool->Lock ();
+    drop_zone->FreeReferees ();
   }
 }
 
@@ -334,10 +338,11 @@ void PoolSupervisor::OnUnLocked ()
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool *pool;
+    PoolZone *drop_zone = _pool_allocator->GetZone (p);
+    Pool     *pool      = drop_zone->GetPool ();
 
-    pool = _pool_allocator->GetPool (p);
     pool->UnLock ();
+    drop_zone->BookReferees ();
   }
 
   OnAttrListUpdated ();

@@ -14,8 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "player.hpp"
-#include "match.hpp"
 #include "canvas.hpp"
 
 #include "drop_zone.hpp"
@@ -24,8 +22,7 @@
 DropZone::DropZone (Module *container)
   : Object ("DropZone")
 {
-  _container    = container;
-  _referee_list = NULL;
+  _container = container;
 
   Wipe ();
 }
@@ -33,10 +30,6 @@ DropZone::DropZone (Module *container)
 // --------------------------------------------------------------------------------
 DropZone::~DropZone ()
 {
-  while (_referee_list)
-  {
-    RemoveReferee ((Player *) _referee_list->data);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -108,26 +101,6 @@ void DropZone::Unfocus ()
 }
 
 // --------------------------------------------------------------------------------
-void DropZone::AddReferee (Player *referee)
-{
-  referee->AddMatchs (GetNbMatchs ());
-  _container->RefreshMatchRate (referee);
-
-  _referee_list = g_slist_prepend (_referee_list,
-                                   referee);
-}
-
-// --------------------------------------------------------------------------------
-void DropZone::RemoveReferee (Player *referee)
-{
-  referee->RemoveMatchs (GetNbMatchs ());
-  _container->RefreshMatchRate (referee);
-
-  _referee_list = g_slist_remove (_referee_list,
-                                  referee);
-}
-
-// --------------------------------------------------------------------------------
 void DropZone::AddObject (Object *object)
 {
 }
@@ -135,10 +108,4 @@ void DropZone::AddObject (Object *object)
 // --------------------------------------------------------------------------------
 void DropZone::RemoveObject (Object *object)
 {
-}
-
-// --------------------------------------------------------------------------------
-guint DropZone::GetNbMatchs ()
-{
-  return 0;
 }

@@ -14,36 +14,43 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef referee_sector_hpp
-#define referee_sector_hpp
+#ifndef referee_zone_hpp
+#define referee_zone_hpp
 
 #include <gtk/gtk.h>
 
-#include "object.hpp"
-#include "module.hpp"
-#include "pool.hpp"
-#include "referee_zone.hpp"
+#include "drop_zone.hpp"
 
-class PoolZone : public RefereeZone
+class Player;
+
+class RefereeZone : public DropZone
 {
   public:
-    PoolZone (Module *container,
-              Pool   *pool);
+    RefereeZone (Module *container);
 
-    void Draw (GooCanvasItem *root_item);
+    void AddObject (Object *object);
 
-    Pool *GetPool ();
+    void RemoveObject (Object *object);
+
+    void BookReferees ();
+
+    void FreeReferees ();
+
+  protected:
+    GSList  *_referee_list;
+
+    virtual ~RefereeZone ();
+
+    virtual void AddReferee (Player *referee);
+
+    virtual void RemoveReferee (Player *referee);
+
+    void BookReferee (Player *referee);
+
+    void FreeReferee (Player *referee);
 
   private:
-    Pool *_pool;
-
-    virtual ~PoolZone ();
-
-    void AddReferee (Player *referee);
-
-    void RemoveReferee (Player *referee);
-
-    guint GetNbMatchs ();
+    virtual guint GetNbMatchs ();
 };
 
 #endif

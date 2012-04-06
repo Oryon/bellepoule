@@ -521,6 +521,17 @@ void TableSupervisor::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
+void TableSupervisor::OnLoadingCompleted ()
+{
+  if (IsPlugged () && (Locked () == FALSE))
+  {
+    gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
+                            (GtkTreeModelForeachFunc) BookReferees,
+                            NULL);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void TableSupervisor::SaveConfiguration (xmlTextWriter *xml_writer)
 {
   Stage::SaveConfiguration (xml_writer);
@@ -559,6 +570,22 @@ gboolean TableSupervisor::SaveTableSet (GtkTreeModel  *model,
                       TABLE_SET_TABLE_COLUMN, &table_set,
                       -1);
   table_set->Save (xml_writer);
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean TableSupervisor::BookReferees (GtkTreeModel  *model,
+                                        GtkTreePath   *path,
+                                        GtkTreeIter   *iter,
+                                        xmlTextWriter *xml_writer)
+{
+  TableSet *table_set;
+
+  gtk_tree_model_get (model, iter,
+                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      -1);
+  table_set->BookReferees ();
 
   return FALSE;
 }

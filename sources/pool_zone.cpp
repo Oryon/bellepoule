@@ -24,7 +24,7 @@
 // --------------------------------------------------------------------------------
 PoolZone::PoolZone (Module *container,
                     Pool   *pool)
-: DropZone (container)
+: RefereeZone (container)
 {
   _pool = pool;
 }
@@ -50,7 +50,7 @@ void PoolZone::Draw (GooCanvasItem *root_item)
                                       0, 0,
                                       "stroke-pattern", NULL,
                                       NULL);
-    DropZone::Draw (root_item);
+    RefereeZone::Draw (root_item);
   }
 }
 
@@ -58,14 +58,14 @@ void PoolZone::Draw (GooCanvasItem *root_item)
 void PoolZone::AddReferee (Player *referee)
 {
   _pool->AddReferee (referee);
-  DropZone::AddReferee (referee);
+  RefereeZone::AddReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
 void PoolZone::RemoveReferee (Player *referee)
 {
   _pool->RemoveReferee (referee);
-  DropZone::RemoveReferee (referee);
+  RefereeZone::RemoveReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
