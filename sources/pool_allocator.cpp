@@ -576,8 +576,9 @@ void PoolAllocator::SaveConfiguration (xmlTextWriter *xml_writer)
 // --------------------------------------------------------------------------------
 void PoolAllocator::Load (xmlNode *xml_node)
 {
-  static Pool  *current_pool = NULL;
-  static guint  nb_pool      = 0;
+  static Pool     *current_pool = NULL;
+  static PoolZone *current_zone = NULL;
+  static guint     nb_pool      = 0;
 
   for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
@@ -644,11 +645,11 @@ void PoolAllocator::Load (xmlNode *xml_node)
           match_order->Release ();
 
           {
-            PoolZone *zone = new PoolZone (this,
-                                           current_pool);
+            current_zone = new PoolZone (this,
+                                         current_pool);
 
             _drop_zones = g_slist_append (_drop_zones,
-                                          zone);
+                                          current_zone);
           }
         }
       }
@@ -684,7 +685,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
 
           if (player)
           {
-            current_pool->AddReferee (player);
+            current_zone->AddReferee (player);
           }
         }
       }
@@ -1709,11 +1710,6 @@ GSList *PoolAllocator::GetCurrentClassification ()
 void PoolAllocator::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
-}
-
-// --------------------------------------------------------------------------------
-void PoolAllocator::OnCanceled ()
-{
 }
 
 // --------------------------------------------------------------------------------

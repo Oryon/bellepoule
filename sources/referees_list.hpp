@@ -43,6 +43,8 @@ class RefereesList : public Checkin
 
     void Add (Player *player);
 
+    void OnPlayerLoaded (Player *referee);
+
     static void OnAvailabilityChanged (Player    *player,
                                        Attribute *attr,
                                        Object    *owner);

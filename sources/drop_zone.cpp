@@ -26,7 +26,6 @@ DropZone::DropZone (Module *container)
 {
   _container    = container;
   _referee_list = NULL;
-  _nb_matchs    = 0;
 
   Wipe ();
 }

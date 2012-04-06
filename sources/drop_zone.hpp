@@ -63,8 +63,6 @@ class DropZone : public Object
     virtual ~DropZone ();
 
   private:
-    guint _nb_matchs;
-
     virtual guint GetNbMatchs ();
 };
 
