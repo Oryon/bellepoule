@@ -30,10 +30,6 @@ RefereeZone::RefereeZone (Module *container)
 // --------------------------------------------------------------------------------
 RefereeZone::~RefereeZone ()
 {
-  while (_referee_list)
-  {
-    RemoveReferee ((Player *) _referee_list->data);
-  }
 }
 
 // --------------------------------------------------------------------------------

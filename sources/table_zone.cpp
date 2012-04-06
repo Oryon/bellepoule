@@ -34,6 +34,11 @@ TableZone::TableZone (Module  *container,
 // --------------------------------------------------------------------------------
 TableZone::~TableZone ()
 {
+  while (_referee_list)
+  {
+    RemoveReferee ((Player *) _referee_list->data);
+  }
+
   g_slist_free (_node_list);
 }
 

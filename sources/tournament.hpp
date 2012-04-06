@@ -88,7 +88,7 @@ class Tournament : public Module
 
     void RefreshMatchRate (gint delta);
 
-    void RefreshMatchRate (Player *player);
+    void RefreshMatchRate (Player *referee);
 
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);

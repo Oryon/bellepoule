@@ -327,19 +327,19 @@ void Tournament::RefreshMatchRate (gint delta)
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::RefreshMatchRate (Player *player)
+void Tournament::RefreshMatchRate (Player *referee)
 {
   Player::AttributeId attr_id ("participation_rate");
 
   if (_nb_matchs)
   {
-    player->SetAttributeValue (&attr_id,
-                               player->GetNbMatchs () * 100 / _nb_matchs);
+    referee->SetAttributeValue (&attr_id,
+                                referee->GetNbMatchs () * 100 / _nb_matchs);
   }
   else
   {
-    player->SetAttributeValue (&attr_id,
-                               (guint) 0);
+    referee->SetAttributeValue (&attr_id,
+                                (guint) 0);
   }
 }
 

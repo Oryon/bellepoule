@@ -32,6 +32,10 @@ PoolZone::PoolZone (Module *container,
 // --------------------------------------------------------------------------------
 PoolZone::~PoolZone ()
 {
+  while (_referee_list)
+  {
+    RemoveReferee ((Player *) _referee_list->data);
+  }
 }
 
 // --------------------------------------------------------------------------------
