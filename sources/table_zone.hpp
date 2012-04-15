@@ -48,7 +48,7 @@ class TableZone : public RefereeZone
 
     void Draw (GooCanvasItem *root_item);
 
-    void BookReferees ();
+    virtual void BookReferees ();
 
     void PutInTable (CanvasModule  *canvas_module,
                      GooCanvasItem *table,

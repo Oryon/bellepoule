@@ -164,7 +164,7 @@ Tournament::Tournament (gchar *filename)
   UpdateChecker::DownloadLatestVersion ((GSourceFunc) OnLatestVersionReceived,
                                         this);
 
-  _network = new Network ();
+  _http_server = new HttpServer ();
 }
 
 // --------------------------------------------------------------------------------
@@ -210,7 +210,7 @@ Tournament::~Tournament ()
 
   curl_global_cleanup ();
 
-  _network->Release ();
+  _http_server->Release ();
 }
 
 // --------------------------------------------------------------------------------

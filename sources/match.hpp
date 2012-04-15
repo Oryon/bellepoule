@@ -86,6 +86,8 @@ class Match : public Object
 
     void BookReferees ();
 
+    void FreeReferees ();
+
     GSList *GetRefereeList ();
 
   private:

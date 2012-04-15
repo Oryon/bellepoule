@@ -97,13 +97,13 @@
 			<Add library="libcurldll" />
 			<Add library="libeay32" />
 			<Add library="libidn" />
-			<Add library="libidn.dll" />
 			<Add library="librtmp" />
 			<Add library="libssh2" />
 			<Add library="libssh2dll" />
 			<Add library="libssl" />
 			<Add library="libssl32" />
 			<Add library="libcrypto" />
+			<Add library="libmicrohttpd" />
 			<Add directory="C:\MinGW\lib" />
 		</Linker>
 		<Unit filename="sources\attendees.cpp" />
@@ -136,6 +136,8 @@
 		<Unit filename="sources\glade.hpp" />
 		<Unit filename="sources\green_swapper.cpp" />
 		<Unit filename="sources\green_swapper.hpp" />
+		<Unit filename="sources\http_server.cpp" />
+		<Unit filename="sources\http_server.hpp" />
 		<Unit filename="sources\main.cpp" />
 		<Unit filename="sources\match.cpp" />
 		<Unit filename="sources\match.hpp" />
@@ -159,6 +161,8 @@
 		<Unit filename="sources\pool_supervisor.hpp" />
 		<Unit filename="sources\pool_zone.cpp" />
 		<Unit filename="sources\pool_zone.hpp" />
+		<Unit filename="sources\referee_zone.cpp" />
+		<Unit filename="sources\referee_zone.hpp" />
 		<Unit filename="sources\referees_list.cpp" />
 		<Unit filename="sources\referees_list.hpp" />
 		<Unit filename="sources\resource.rc">

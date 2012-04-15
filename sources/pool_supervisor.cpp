@@ -184,6 +184,9 @@ void PoolSupervisor::OnPlugged ()
   gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton")),
                                      FALSE);
 
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("single_radiobutton")),
+                                TRUE);
+
   gtk_widget_set_sensitive (_glade->GetWidget ("seeding_viewport"),
                             FALSE);
 

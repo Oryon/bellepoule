@@ -657,6 +657,11 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
   table_set->DrawAllConnectors  ();
   table_set->DrawAllZones       ();
 
+  if (match->GetWinner ())
+  {
+    match->FreeReferees ();
+  }
+
   {
     Table *table = (Table *) match->GetPtrData (table_set, "table");
 

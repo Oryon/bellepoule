@@ -21,7 +21,7 @@
 
 #include "module.hpp"
 #include "glade.hpp"
-#include "network.hpp"
+#include "http_server.hpp"
 
 class Contest;
 
@@ -77,10 +77,10 @@ class Tournament : public Module
   private:
     guint _referee_ref;
 
-    GSList  *_contest_list;
-    GSList  *_referee_list;
-    guint    _nb_matchs;
-    Network *_network;
+    GSList     *_contest_list;
+    GSList     *_referee_list;
+    guint       _nb_matchs;
+    HttpServer *_http_server;
 
     void SetBackupLocation (gchar *location);
 

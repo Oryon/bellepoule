@@ -14,43 +14,34 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef referee_zone_hpp
-#define referee_zone_hpp
+#ifndef http_server_hpp
+#define http_server_hpp
 
-#include <gtk/gtk.h>
+#include <glib.h>
+#include <microhttpd.h>
 
-#include "drop_zone.hpp"
+#include "object.hpp"
 
-class Player;
-
-class RefereeZone : public DropZone
+class HttpServer : public Object
 {
   public:
-    RefereeZone (Module *container);
-
-    void AddObject (Object *object);
-
-    void RemoveObject (Object *object);
-
-    void BookReferees ();
-
-    void FreeReferees ();
-
-  protected:
-    GSList  *_referee_list;
-
-    virtual ~RefereeZone ();
-
-    virtual void AddReferee (Player *referee);
-
-    virtual void RemoveReferee (Player *referee);
-
-    virtual void BookReferee (Player *referee);
-
-    void FreeReferee (Player *referee);
+    HttpServer ();
 
   private:
-    virtual guint GetNbMatchs ();
+    static const guint PORT = 8080;
+
+    struct MHD_Daemon *_deamon;
+
+    ~HttpServer ();
+
+    static int OnClientRequest (HttpServer            *server,
+                                struct MHD_Connection *connection,
+                                const char            *url,
+                                const char            *method,
+                                const char            *version,
+                                const char            *upload_data,
+                                size_t                *upload_data_size,
+                                void                  **con_cls);
 };
 
 #endif
