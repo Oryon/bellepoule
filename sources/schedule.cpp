@@ -1020,7 +1020,6 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
       SetCurrentStage (_current_stage-1);
 
       stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-      stage->Cancel ();
       stage->UnLock ();
     }
 

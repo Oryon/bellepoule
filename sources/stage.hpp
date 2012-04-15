@@ -101,8 +101,6 @@ class Stage : public virtual Object
 
     void UnLock ();
 
-    void Cancel ();
-
     GSList *GetResult ();
 
     void RetrieveAttendees ();
@@ -213,7 +211,6 @@ class Stage : public virtual Object
     void FreeResult ();
     virtual void OnLocked () {};
     virtual void OnUnLocked () {};
-    virtual void OnCanceled () {};
     static StageClass *GetClass (const gchar *name);
 
     void UpdateClassification (GSList *result);

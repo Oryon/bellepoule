@@ -26,15 +26,13 @@
 #include "pool.hpp"
 
 // --------------------------------------------------------------------------------
-Pool::Pool (Module         *container,
-            Data           *max_score,
+Pool::Pool (Data           *max_score,
             guint           number,
             PoolMatchOrder *match_order,
             guint32         rand_seed)
   : CanvasModule ("pool.glade",
                   "canvas_scrolled_window")
 {
-  _container          = container;
   _number             = number;
   _fencer_list        = NULL;
   _referee_list       = NULL;
@@ -217,11 +215,6 @@ void Pool::AddReferee (Player *referee)
     _referee_list = g_slist_prepend (_referee_list,
                                      referee);
   }
-
-  if (_container->GetState () == OPERATIONAL)
-  {
-    BookReferee (referee);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -270,11 +263,6 @@ void Pool::RemoveFencer (Player *player)
 // --------------------------------------------------------------------------------
 void Pool::RemoveReferee (Player *referee)
 {
-  if ((_locked == FALSE) && (_container->GetState () != LOADING))
-  {
-    FreeReferee (referee);
-  }
-
   if (_referee_list)
   {
     _referee_list = g_slist_remove (_referee_list,
@@ -1242,17 +1230,6 @@ void Pool::Lock ()
     Draw (GetCanvas (),
           FALSE);
   }
-
-  if (_container->GetState () == OPERATIONAL)
-  {
-    GSList *current = _referee_list;
-
-    while (current)
-    {
-      FreeReferee ((Player *) current->data);
-      current = g_slist_next (current);
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1270,49 +1247,6 @@ void Pool::UnLock ()
     Wipe ();
     Draw (GetCanvas (),
           FALSE);
-  }
-
-  if (_container->GetState () == OPERATIONAL)
-  {
-    BookReferees ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Pool::BookReferees ()
-{
-  GSList *current = _referee_list;
-
-  while (current)
-  {
-    BookReferee ((Player *) current->data);
-    current = g_slist_next (current);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Pool::BookReferee (Player *referee)
-{
-  Player::AttributeId attr_id ("availability");
-
-  if (strcmp (referee->GetAttribute (&attr_id)->GetStrValue (),
-              "Free") == 0)
-  {
-    referee->SetAttributeValue (&attr_id,
-                                "Busy");
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Pool::FreeReferee (Player *referee)
-{
-  Player::AttributeId attr_id ("availability");
-  Attribute           *attr = referee->GetAttribute (&attr_id);
-
-  if (attr && strcmp (attr->GetStrValue (), "Busy") == 0)
-  {
-    referee->SetAttributeValue (&attr_id,
-                                "Free");
   }
 }
 

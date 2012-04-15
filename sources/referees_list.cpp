@@ -91,6 +91,25 @@ RefereesList::~RefereesList ()
 }
 
 // --------------------------------------------------------------------------------
+void RefereesList::OnPlayerLoaded (Player *referee)
+{
+  Player::AttributeId  attending_attr_id ("attending");
+  Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
+
+  if (attending_attr && attending_attr->GetUIntValue ())
+  {
+    Player::AttributeId availability_attr_id ("availability");
+
+    if (strcmp (referee->GetAttribute (&availability_attr_id)->GetStrValue (),
+                "Absent") == 0)
+    {
+      referee->SetAttributeValue (&availability_attr_id,
+                                  "Free");
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void RefereesList::Monitor (Player *player)
 {
   Checkin::Monitor (player);

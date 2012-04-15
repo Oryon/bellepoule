@@ -115,6 +115,8 @@ class TableSet : public CanvasModule
     void AddReferee (Match *match,
                      guint  referee_ref);
 
+    void BookReferees ();
+
     guint GetNbTables ();
 
     gchar *GetName ();

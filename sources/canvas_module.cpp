@@ -464,7 +464,6 @@ gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
 
   if (_floating_object && _target_drop_zone)
   {
-    _target_drop_zone->AddObject (_floating_object);
     DropObject (_floating_object,
                 NULL,
                 _target_drop_zone);

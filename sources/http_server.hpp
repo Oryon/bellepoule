@@ -14,36 +14,34 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef referee_sector_hpp
-#define referee_sector_hpp
+#ifndef http_server_hpp
+#define http_server_hpp
 
-#include <gtk/gtk.h>
+#include <glib.h>
+#include <microhttpd.h>
 
 #include "object.hpp"
-#include "module.hpp"
-#include "pool.hpp"
-#include "referee_zone.hpp"
 
-class PoolZone : public RefereeZone
+class HttpServer : public Object
 {
   public:
-    PoolZone (Module *container,
-              Pool   *pool);
-
-    void Draw (GooCanvasItem *root_item);
-
-    Pool *GetPool ();
+    HttpServer ();
 
   private:
-    Pool *_pool;
+    static const guint PORT = 8080;
 
-    virtual ~PoolZone ();
+    struct MHD_Daemon *_deamon;
 
-    void AddReferee (Player *referee);
+    ~HttpServer ();
 
-    void RemoveReferee (Player *referee);
-
-    guint GetNbMatchs ();
+    static int OnClientRequest (HttpServer            *server,
+                                struct MHD_Connection *connection,
+                                const char            *url,
+                                const char            *method,
+                                const char            *version,
+                                const char            *upload_data,
+                                size_t                *upload_data_size,
+                                void                  **con_cls);
 };
 
 #endif

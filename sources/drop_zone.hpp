@@ -23,13 +23,9 @@
 
 #include "object.hpp"
 
-class Player;
-
 class DropZone : public Object
 {
   public:
-    DropZone (Module *container);
-
     void Wipe ();
 
     void GetBounds (GooCanvasBounds *bounds,
@@ -44,28 +40,20 @@ class DropZone : public Object
                  gdouble w,
                  gdouble h);
 
-  public:
-    virtual void Draw (GooCanvasItem *root_item);
-
     virtual void AddObject (Object *object);
 
     virtual void RemoveObject (Object *object);
 
-    virtual void AddReferee (Player *referee);
-
-    virtual void RemoveReferee (Player *referee);
+  public:
+    virtual void Draw (GooCanvasItem *root_item);
 
   protected:
     Module        *_container;
     GooCanvasItem *_back_rect;
-    GSList        *_referee_list;
+
+    DropZone (Module *container);
 
     virtual ~DropZone ();
-
-  private:
-    guint _nb_matchs;
-
-    virtual guint GetNbMatchs ();
 };
 
 #endif

@@ -25,7 +25,7 @@
 // --------------------------------------------------------------------------------
 TableZone::TableZone (Module  *container,
                       gdouble  spacing)
-: DropZone (container)
+: RefereeZone (container)
 {
   _node_list = NULL;
   _spacing   = spacing;
@@ -34,6 +34,11 @@ TableZone::TableZone (Module  *container,
 // --------------------------------------------------------------------------------
 TableZone::~TableZone ()
 {
+  while (_referee_list)
+  {
+    RemoveReferee ((Player *) _referee_list->data);
+  }
+
   g_slist_free (_node_list);
 }
 
@@ -88,7 +93,7 @@ void TableZone::Draw (GooCanvasItem *root_item)
     current = g_slist_next (current);
   }
 
-  DropZone::Draw (root_item);
+  RefereeZone::Draw (root_item);
 }
 
 // --------------------------------------------------------------------------------
@@ -108,7 +113,7 @@ void TableZone::AddReferee (Player *referee)
     current = g_slist_next (current);
   }
 
-  DropZone::AddReferee (referee);
+  RefereeZone::AddReferee (referee);
 }
 
 // --------------------------------------------------------------------------------
@@ -128,7 +133,25 @@ void TableZone::RemoveReferee (Player *referee)
     current = g_slist_next (current);
   }
 
-  DropZone::RemoveReferee (referee);
+  RefereeZone::RemoveReferee (referee);
+}
+
+// --------------------------------------------------------------------------------
+void TableZone::BookReferees ()
+{
+  GSList *current = _node_list;
+
+  while (current)
+  {
+    GNode    *node = (GNode *) current->data;
+    NodeData *data = (NodeData *) node->data;
+
+    if (data->_match)
+    {
+      data->_match->BookReferees ();
+    }
+    current = g_slist_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------

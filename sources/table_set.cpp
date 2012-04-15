@@ -657,6 +657,11 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
   table_set->DrawAllConnectors  ();
   table_set->DrawAllZones       ();
 
+  if (match->GetWinner ())
+  {
+    match->FreeReferees ();
+  }
+
   {
     Table *table = (Table *) match->GetPtrData (table_set, "table");
 
@@ -1374,7 +1379,7 @@ void TableSet::AddFork (GNode *to)
                                             _table_spacing);
 
       _drop_zones = g_slist_prepend (_drop_zones,
-                                     drop_zone);
+                                     (DropZone *) drop_zone);
       drop_zone->AddNode (node);
 
       data->_match->SetData (this,
@@ -1557,6 +1562,18 @@ void TableSet::Lock ()
   {
     _score_collector->Lock ();
   }
+
+  {
+    GSList *current = _drop_zones;
+
+    while (current)
+    {
+      TableZone *drop_zone = (TableZone *) current->data;
+
+      drop_zone->FreeReferees ();
+      current = g_slist_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1567,6 +1584,18 @@ void TableSet::UnLock ()
   if (_score_collector)
   {
     _score_collector->UnLock ();
+  }
+
+  {
+    GSList *current = _drop_zones;
+
+    while (current)
+    {
+      TableZone *drop_zone = (TableZone *) current->data;
+
+      drop_zone->BookReferees ();
+      current = g_slist_next (current);
+    }
   }
 }
 
@@ -1703,12 +1732,27 @@ Player *TableSet::GetFencerFromRef (guint ref)
 void TableSet::AddReferee (Match *match,
                            guint  referee_ref)
 {
-  Contest  *contest = _supervisor->GetContest ();
-  Player   *referee = contest->GetRefereeFromRef (referee_ref);
-  DropZone *zone    = (DropZone *) match->GetPtrData (this,
+  Contest   *contest = _supervisor->GetContest ();
+  Player    *referee = contest->GetRefereeFromRef (referee_ref);
+  DropZone  *zone    = (DropZone *) match->GetPtrData (this,
                                                       "drop_zone");
 
-  zone->AddReferee (referee);
+  zone->AddObject (referee);
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::BookReferees ()
+{
+  GSList *current = _drop_zones;
+
+  while (current)
+  {
+    DropZone  *zone       = (DropZone *) current->data;
+    TableZone *table_zone = (TableZone *) zone;
+
+    table_zone->BookReferees ();
+    current = g_slist_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -3039,7 +3083,7 @@ gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
 void TableSet::DragObject (Object   *object,
                            DropZone *from_zone)
 {
-  from_zone->RemoveReferee ((Player *) object);
+  from_zone->RemoveObject (object);
 
   {
     TableZone *table_zone = (TableZone *) from_zone;
@@ -3067,7 +3111,7 @@ void TableSet::DropObject (Object   *object,
 {
   if (target_zone)
   {
-    target_zone->AddReferee ((Player *) object);
+    target_zone->AddObject (object);
 
     OnAttrListUpdated ();
     MakeDirty ();

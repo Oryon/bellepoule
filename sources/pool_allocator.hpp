@@ -40,6 +40,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     Pool *GetPool (guint index);
 
+    PoolZone *GetZone (guint index);
+
     Data *GetMaxScore ();
 
     gboolean SeedingIsBalanced ();

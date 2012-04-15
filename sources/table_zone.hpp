@@ -21,7 +21,7 @@
 
 #include "object.hpp"
 #include "module.hpp"
-#include "drop_zone.hpp"
+#include "referee_zone.hpp"
 
 struct NodeData
 {
@@ -34,19 +34,21 @@ struct NodeData
   GooCanvasItem *_connector;
 };
 
-class TableZone : public DropZone
+class TableZone : public RefereeZone
 {
   public:
     TableZone (Module  *container,
                gdouble  spacing);
 
+    void AddReferee (Player *referee);
+
+    void RemoveReferee (Player *referee);
+
     void AddNode (GNode *node);
 
     void Draw (GooCanvasItem *root_item);
 
-    void AddReferee (Player *referee);
-
-    void RemoveReferee (Player *referee);
+    virtual void BookReferees ();
 
     void PutInTable (CanvasModule  *canvas_module,
                      GooCanvasItem *table,
