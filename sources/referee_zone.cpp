@@ -91,15 +91,19 @@ void RefereeZone::FreeReferee (Player *referee)
 // --------------------------------------------------------------------------------
 void RefereeZone::AddReferee (Player *referee)
 {
-  referee->AddMatchs (GetNbMatchs ());
-  _container->RefreshMatchRate (referee);
-
-  _referee_list = g_slist_prepend (_referee_list,
-                                   referee);
-
-  if (_container->GetState () == Module::OPERATIONAL)
+  if (g_slist_find (_referee_list,
+                    referee) == NULL)
   {
-    BookReferee (referee);
+    referee->AddMatchs (GetNbMatchs ());
+    _container->RefreshMatchRate (referee);
+
+    _referee_list = g_slist_prepend (_referee_list,
+                                     referee);
+
+    if (_container->GetState () == Module::OPERATIONAL)
+    {
+      BookReferee (referee);
+    }
   }
 }
 

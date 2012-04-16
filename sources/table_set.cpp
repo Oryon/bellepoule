@@ -1586,17 +1586,7 @@ void TableSet::UnLock ()
     _score_collector->UnLock ();
   }
 
-  {
-    GSList *current = _drop_zones;
-
-    while (current)
-    {
-      TableZone *drop_zone = (TableZone *) current->data;
-
-      drop_zone->BookReferees ();
-      current = g_slist_next (current);
-    }
-  }
+  BookReferees ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1716,6 +1706,8 @@ gboolean TableSet::Stuff (GNode    *node,
                                      winner,
                                      g_node_child_position (parent, node));
       }
+
+      data->_match->FreeReferees ();
     }
   }
 

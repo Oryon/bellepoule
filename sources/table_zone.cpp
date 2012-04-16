@@ -155,6 +155,31 @@ void TableZone::BookReferees ()
 }
 
 // --------------------------------------------------------------------------------
+void TableZone::BookReferee (Player *referee)
+{
+  gboolean  booking_needed = FALSE;
+  GSList   *current        = _node_list;
+
+  while (current)
+  {
+    GNode    *node = (GNode *) current->data;
+    NodeData *data = (NodeData *) node->data;
+
+    if (data->_match && (data->_match->GetWinner () == NULL))
+    {
+      booking_needed = TRUE;
+      break;
+    }
+    current = g_slist_next (current);
+  }
+
+  if (booking_needed)
+  {
+    RefereeZone::BookReferee (referee);
+  }
+}
+
+// --------------------------------------------------------------------------------
 guint TableZone::GetNbMatchs ()
 {
   GSList *current = _node_list;
