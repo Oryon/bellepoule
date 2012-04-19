@@ -25,23 +25,33 @@
 class HttpServer : public Object
 {
   public:
-    HttpServer ();
+    typedef gchar *(*GetHttpResponseCbk) (Object      *client,
+                                          const gchar *url);
+
+    HttpServer (Object            *client,
+                GetHttpResponseCbk get_http_response);
 
   private:
     static const guint PORT = 8080;
 
-    struct MHD_Daemon *_deamon;
+    struct MHD_Daemon  *_deamon;
+    Object             *_client;
+    GetHttpResponseCbk  _get_http_response;
 
     ~HttpServer ();
 
-    static int OnClientRequest (HttpServer            *server,
-                                struct MHD_Connection *connection,
-                                const char            *url,
-                                const char            *method,
-                                const char            *version,
-                                const char            *upload_data,
-                                size_t                *upload_data_size,
-                                void                  **con_cls);
+    int OnGet (struct MHD_Connection *connection,
+               const char            *url,
+               const char            *method,
+               void                  **con_cls);
+    static int OnMicroHttpRequest (HttpServer            *server,
+                                   struct MHD_Connection *connection,
+                                   const char            *url,
+                                   const char            *method,
+                                   const char            *version,
+                                   const char            *upload_data,
+                                   size_t                *upload_data_size,
+                                   void                  **con_cls);
 };
 
 #endif

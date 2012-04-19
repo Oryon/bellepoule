@@ -90,6 +90,11 @@ class Tournament : public Module
 
     void RefreshMatchRate (Player *referee);
 
+    gchar *GetHttpResponse (const gchar *url);
+
+    static gchar *OnGetHttpResponse (Object      *client,
+                                     const gchar *url);
+
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);
 

@@ -164,7 +164,8 @@ Tournament::Tournament (gchar *filename)
   UpdateChecker::DownloadLatestVersion ((GSourceFunc) OnLatestVersionReceived,
                                         this);
 
-  _http_server = new HttpServer ();
+  _http_server = new HttpServer (this,
+                                 OnGetHttpResponse);
 }
 
 // --------------------------------------------------------------------------------
@@ -241,6 +242,98 @@ void Tournament::Init ()
 
   g_free (dir_path);
   g_free (file_path);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Tournament::GetHttpResponse (const gchar *url)
+{
+  gchar *result = NULL;
+
+  if (strstr (url, "/bellepoule/tournament/competition/"))
+  {
+    gchar *id = strrchr (url, '/');
+
+    if (id && id[1])
+    {
+      GSList *current = _contest_list;
+
+      id++;
+      while (current)
+      {
+        Contest *contest = (Contest *) current->data;
+
+        if (strcmp (contest->GetId (), id) == 0)
+        {
+          gsize length;
+
+          g_file_get_contents (contest->GetFilename (),
+                               &result,
+                               &length,
+                               NULL);
+        }
+        current = g_slist_next (current);
+      }
+    }
+  }
+  else if (strstr (url, "/bellepoule/tournament"))
+  {
+    GSList  *current  = _contest_list;
+    GString *response = g_string_new ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+
+    response = g_string_append (response,
+                                "<Competitions>\n");
+    while (current)
+    {
+      Contest *contest = (Contest *) current->data;
+
+      response = g_string_append (response,
+                                  "<Competition ");
+
+      response = g_string_append (response, "ID=\"");
+      response = g_string_append (response, contest->GetId ());
+      response = g_string_append (response, "\" ");
+
+      response = g_string_append (response, "Name=\"");
+      response = g_string_append (response, contest->GetName ());
+      response = g_string_append (response, "\" ");
+
+      response = g_string_append (response, "Weapon=\"");
+      response = g_string_append (response, contest->GetWeapon ());
+      response = g_string_append (response, "\" ");
+
+      response = g_string_append (response, "Gender=\"");
+      response = g_string_append (response, contest->GetGender ());
+      response = g_string_append (response, "\" ");
+
+      response = g_string_append (response, "Category=\"");
+      response = g_string_append (response, contest->GetCategory ());
+      response = g_string_append (response,
+                                  "\"/>\n");
+
+      current = g_slist_next (current);
+    }
+    response = g_string_append (response,
+                                "</Competitions>");
+
+    result = response->str;
+    g_string_free (response,
+                   FALSE);
+  }
+  else
+  {
+    result = g_strdup ("");
+  }
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Tournament::OnGetHttpResponse (Object      *client,
+                                      const gchar *url)
+{
+  Tournament *tournament = dynamic_cast <Tournament *> (client);
+
+  return tournament->GetHttpResponse (url);
 }
 
 // --------------------------------------------------------------------------------
