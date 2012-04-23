@@ -14,37 +14,39 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef update_checker_hpp
-#define update_checker_hpp
+#ifndef downloader_hpp
+#define downloader_hpp
 
 #include <curl/curl.h>
 #include <glib.h>
 
-class UpdateChecker
+#include "object.hpp"
+
+class Downloader : public Object
 {
   public:
-    static void DownloadLatestVersion (GSourceFunc callback,
-                                       gpointer    callback_data);
+    Downloader (GSourceFunc callback,
+                gpointer    callback_data);
 
-    static gboolean GetLatestVersion (GKeyFile *key_file);
+    void Start (const gchar *address);
+
+    gchar *GetData ();
 
   private:
-    static GSourceFunc  _callback;
-    static gpointer     _callback_data;
-    static gchar       *_latest;
-
-    struct Data
-    {
-      char   *text;
-      size_t  size;
-    };
+    GSourceFunc  _callback;
+    gpointer     _callback_data;
+    gchar       *_data;
+    size_t       _size;
+    gchar       *_address;
 
     static size_t AddText (void   *contents,
                            size_t  size,
                            size_t  nmemb,
-                           Data   *data);
+                           Downloader *downloader);
 
-    static gpointer ThreadFunction (gpointer thread_data);
+    static gpointer ThreadFunction (Downloader *downloader);
+
+    ~Downloader ();
 };
 
 #endif

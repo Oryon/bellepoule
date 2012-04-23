@@ -27,7 +27,7 @@ Filter::Filter (GSList *attr_list,
                 Module *owner)
 : Object ("Filter")
 {
-  _filter_window = NULL;
+  _dialog        = NULL;
   _selected_attr = NULL;
   _attr_list     = attr_list;
   _owner         = owner;
@@ -62,9 +62,9 @@ Filter::Filter (GSList *attr_list,
 // --------------------------------------------------------------------------------
 Filter::~Filter ()
 {
-  if (_filter_window)
+  if (_dialog)
   {
-    gtk_object_destroy (GTK_OBJECT (_filter_window));
+    gtk_object_destroy (GTK_OBJECT (_dialog));
   }
 
   g_slist_free (_selected_attr);
@@ -77,9 +77,9 @@ Filter::~Filter ()
 // --------------------------------------------------------------------------------
 void Filter::UnPlug ()
 {
-  if (_filter_window)
+  if (_dialog)
   {
-    // gtk_widget_hide_all (_filter_window);
+    // gtk_widget_hide_all (_dialog);
   }
 }
 
@@ -182,18 +182,20 @@ void Filter::ShowAttribute (const gchar *name)
 // --------------------------------------------------------------------------------
 void Filter::SelectAttributes ()
 {
-  if (_filter_window == NULL)
+  if (_dialog == NULL)
   {
-    _filter_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    _dialog = gtk_dialog_new_with_buttons (gettext ("Data to display"),
+                                           NULL,
+                                           GTK_DIALOG_DESTROY_WITH_PARENT,
+                                           GTK_STOCK_CLOSE,
+                                           GTK_RESPONSE_NONE,
+                                           NULL);
 
-    g_object_set (_filter_window,
-                  "transient-for", gtk_widget_get_parent_window (_filter_window),
+    g_object_set (_dialog,
+                  "transient-for", gtk_widget_get_parent_window (_dialog),
                   "destroy-with-parent", TRUE,
-                  "title", gettext ("Data"),
                   "modal", TRUE,
                   NULL);
-    g_signal_connect (_filter_window,
-                      "delete-event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
 
     {
       GtkCellRenderer *renderer;
@@ -226,11 +228,18 @@ void Filter::SelectAttributes ()
                                                    NULL);
 
       gtk_tree_view_set_model (GTK_TREE_VIEW (view), GTK_TREE_MODEL (_attr_filter_store));
-      gtk_container_add (GTK_CONTAINER (_filter_window), view);
+
+      {
+        GtkWidget *content_area = gtk_dialog_get_content_area (GTK_DIALOG (_dialog));
+
+        gtk_container_add (GTK_CONTAINER (content_area), view);
+      }
     }
   }
 
-  gtk_widget_show_all (_filter_window);
+  gtk_widget_show_all (_dialog);
+  gtk_dialog_run (GTK_DIALOG (_dialog));
+  gtk_widget_hide (_dialog);
 }
 
 // --------------------------------------------------------------------------------

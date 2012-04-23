@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <glib.h>
+#include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
 #include <curl/curl.h>
 
@@ -25,7 +26,6 @@
 #endif
 
 #include "version.h"
-#include "update_checker.hpp"
 #include "contest.hpp"
 
 #include "tournament.hpp"
@@ -161,11 +161,23 @@ Tournament::Tournament (gchar *filename)
     gtk_target_list_add_uri_targets (target_list, 100);
   }
 
-  UpdateChecker::DownloadLatestVersion ((GSourceFunc) OnLatestVersionReceived,
-                                        this);
+  {
+    GtkWidget *http_entry = _glade->GetWidget ("http_entry");
 
-  _http_server = new HttpServer (this,
-                                 OnGetHttpResponse);
+    gtk_widget_add_events (http_entry,
+                           GDK_KEY_PRESS_MASK);
+  }
+
+  {
+    _competitions_downloader = NULL;
+
+    _version_downloader = new Downloader ((GSourceFunc) OnLatestVersionReceived,
+                                          this);
+    _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
+
+    _http_server = new HttpServer (this,
+                                   OnGetHttpResponse);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -209,9 +221,10 @@ Tournament::~Tournament ()
 
   g_key_file_free (_config_file);
 
-  curl_global_cleanup ();
-
+  Object::TryToRelease (_version_downloader);
+  Object::TryToRelease (_competitions_downloader);
   _http_server->Release ();
+  curl_global_cleanup ();
 }
 
 // --------------------------------------------------------------------------------
@@ -812,6 +825,57 @@ void Tournament::OnRecent ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnWifi ()
+{
+  GtkWidget *w = _glade->GetWidget ("broadcasted_dialog");
+
+  gtk_dialog_run (GTK_DIALOG (w));
+  gtk_widget_hide (w);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::GetBroadcastedCompetitions ()
+{
+  GtkWidget *entry   = _glade->GetWidget ("http_entry");
+  gchar     *address = g_strdup_printf ("http://%s:8080/bellepoule/tournament",
+                                        gtk_entry_get_text (GTK_ENTRY (entry)));
+
+  if (_competitions_downloader == NULL)
+  {
+    _competitions_downloader = new Downloader ((GSourceFunc) OnCompetitionsReceived,
+                                               this);
+  }
+
+  _competitions_downloader->Start (address);
+
+  gtk_entry_set_icon_from_stock (GTK_ENTRY (_glade->GetWidget ("http_entry")),
+                                 GTK_ENTRY_ICON_SECONDARY,
+                                 GTK_STOCK_EXECUTE);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Tournament::OnCompetitionsReceived (Tournament *tournament)
+{
+  gchar *data = tournament->_competitions_downloader->GetData ();
+
+  if (data)
+  {
+    g_print ("%s\n", data);
+    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
+                                       GTK_ENTRY_ICON_SECONDARY,
+                                       "network-transmit-receive");
+  }
+  else
+  {
+    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
+                                       GTK_ENTRY_ICON_SECONDARY,
+                                       "network-offline");
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnBackupfileLocation ()
 {
   GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a backup files location..."),
@@ -910,53 +974,65 @@ void Tournament::OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
 // --------------------------------------------------------------------------------
 gboolean Tournament::OnLatestVersionReceived (Tournament *tournament)
 {
-  GKeyFile *version_file = g_key_file_new ();
+  gchar *data = tournament->_version_downloader->GetData ();
 
-  if (UpdateChecker::GetLatestVersion (version_file))
+  if (data)
   {
-    gchar    *version;
-    gchar    *revision;
-    gchar    *maturity;
-    gboolean  new_version_detected = FALSE;
+    GKeyFile *version_file = g_key_file_new ();
 
-    version = g_key_file_get_string (version_file,
-                                     VERSION_BRANCH,
-                                     "version",
-                                     NULL);
-    revision = g_key_file_get_string (version_file,
-                                      VERSION_BRANCH,
-                                      "revision",
-                                      NULL);
-    maturity = g_key_file_get_string (version_file,
-                                      VERSION_BRANCH,
-                                      "maturity",
-                                      NULL);
+    if (g_key_file_load_from_data (version_file,
+                                   data,
+                                   strlen (data) + 1,
+                                   G_KEY_FILE_NONE,
+                                   NULL))
+    {
+      gchar    *version;
+      gchar    *revision;
+      gchar    *maturity;
+      gboolean  new_version_detected = FALSE;
 
-    if (version && (strcmp (VERSION, version) != 0))
-    {
-      new_version_detected = TRUE;
-    }
-    else if (revision && (strcmp (VERSION_REVISION, revision) != 0))
-    {
-      new_version_detected = TRUE;
-    }
-    else if (maturity && (strcmp (VERSION_MATURITY, maturity) != 0))
-    {
-      new_version_detected = TRUE;
+      version = g_key_file_get_string (version_file,
+                                       VERSION_BRANCH,
+                                       "version",
+                                       NULL);
+      revision = g_key_file_get_string (version_file,
+                                        VERSION_BRANCH,
+                                        "revision",
+                                        NULL);
+      maturity = g_key_file_get_string (version_file,
+                                        VERSION_BRANCH,
+                                        "maturity",
+                                        NULL);
+
+      if (version && (strcmp (VERSION, version) != 0))
+      {
+        new_version_detected = TRUE;
+      }
+      else if (revision && (strcmp (VERSION_REVISION, revision) != 0))
+      {
+        new_version_detected = TRUE;
+      }
+      else if (maturity && (strcmp (VERSION_MATURITY, maturity) != 0))
+      {
+        new_version_detected = TRUE;
+      }
+
+      if (new_version_detected)
+      {
+        gchar *label = g_strdup_printf ("%s.%s.%s", version, revision, maturity);
+
+        gtk_menu_item_set_label (GTK_MENU_ITEM (tournament->_glade->GetWidget ("new_version_menuitem")),
+                                 label);
+        gtk_widget_show (tournament->_glade->GetWidget ("update_menuitem"));
+        g_free (label);
+      }
     }
 
-    if (new_version_detected)
-    {
-      gchar *label = g_strdup_printf ("%s.%s.%s", version, revision, maturity);
-
-      gtk_menu_item_set_label (GTK_MENU_ITEM (tournament->_glade->GetWidget ("new_version_menuitem")),
-                               label);
-      gtk_widget_show (tournament->_glade->GetWidget ("update_menuitem"));
-      g_free (label);
-    }
+    g_key_file_free (version_file);
   }
 
-  g_key_file_free (version_file);
+  tournament->_version_downloader->Release ();
+  tournament->_version_downloader = NULL;
 
   return FALSE;
 }
@@ -1057,6 +1133,15 @@ extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
 }
 
 // --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_wifi_menuitem_activate (GtkWidget *w,
+                                                             Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnWifi ();
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_backup_location_menuitem_activate (GtkWidget *widget,
                                                                       Object    *owner)
 {
@@ -1108,7 +1193,7 @@ extern "C" G_MODULE_EXPORT void on_root_drag_data_received (GtkWidget        *wi
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *menuitem,
-                                                                  Object       owner)
+                                                                  Object      *owner)
 {
 #ifdef WINDOWS_TEMPORARY_PATCH
   ShellExecuteA (NULL,
@@ -1125,3 +1210,18 @@ extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *m
 #endif
 }
 
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gboolean on_http_entry_key_press_event (GtkWidget *widget,
+                                                                   GdkEvent  *event,
+                                                                   Object    *owner)
+{
+  if (event->key.keyval == GDK_Return)
+  {
+    Tournament *t = dynamic_cast <Tournament *> (owner);
+
+    t->GetBroadcastedCompetitions ();
+    return TRUE;
+  }
+
+  return FALSE;
+}

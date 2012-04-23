@@ -22,6 +22,7 @@
 #include "module.hpp"
 #include "glade.hpp"
 #include "http_server.hpp"
+#include "downloader.hpp"
 
 class Contest;
 
@@ -39,6 +40,8 @@ class Tournament : public Module
     void OnOpen (gchar *current_folder = NULL);
 
     void OnRecent ();
+
+    void OnWifi ();
 
     void OnAbout ();
 
@@ -67,6 +70,8 @@ class Tournament : public Module
     Player *Share (Player  *referee,
                    Contest *from);
 
+    void GetBroadcastedCompetitions ();
+
   public:
     const gchar *GetCompetitionData (guint  competition_id,
                                      gchar *data_name);
@@ -81,6 +86,8 @@ class Tournament : public Module
     GSList     *_referee_list;
     guint       _nb_matchs;
     HttpServer *_http_server;
+    Downloader *_version_downloader;
+    Downloader *_competitions_downloader;
 
     void SetBackupLocation (gchar *location);
 
@@ -99,6 +106,8 @@ class Tournament : public Module
                                  gchar            *locale);
 
     static gboolean OnLatestVersionReceived (Tournament *tournament);
+
+    static gboolean OnCompetitionsReceived (Tournament *tournament);
 };
 
 #endif
