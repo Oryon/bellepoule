@@ -55,10 +55,10 @@ void DropZone::Redraw (gdouble x,
                        gdouble h)
 {
   g_object_set (G_OBJECT (_back_rect),
-                "x",      x,
-                "y",      y,
-                "width",  w,
-                "height", h,
+                "x",        x,
+                "y",        y,
+                "width",    w,
+                "height",   h,
                 NULL);
 }
 

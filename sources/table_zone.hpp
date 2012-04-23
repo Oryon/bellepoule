@@ -48,7 +48,7 @@ class TableZone : public RefereeZone
 
     void Draw (GooCanvasItem *root_item);
 
-    virtual void BookReferees ();
+    void BookReferees ();
 
     void PutInTable (CanvasModule  *canvas_module,
                      GooCanvasItem *table,
@@ -64,6 +64,8 @@ class TableZone : public RefereeZone
     virtual ~TableZone ();
 
     guint GetNbMatchs ();
+
+    void BookReferee (Player *referee);
 };
 
 #endif

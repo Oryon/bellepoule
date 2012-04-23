@@ -66,6 +66,7 @@ class Contest : public Module
 
     State GetState ();
 
+    gchar *GetId ();
     gchar *GetOrganizer ();
     gchar *GetDate ();
     gchar *GetWeapon ();

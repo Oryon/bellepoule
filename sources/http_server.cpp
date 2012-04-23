@@ -17,15 +17,18 @@
 #include "http_server.hpp"
 
 // --------------------------------------------------------------------------------
-HttpServer::HttpServer ()
+HttpServer::HttpServer (Object             *client,
+                        GetHttpResponseCbk  get_http_response)
 {
   _deamon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                               PORT,
                               NULL,
                               NULL,
-                              (MHD_AccessHandlerCallback) OnClientRequest,
+                              (MHD_AccessHandlerCallback) OnMicroHttpRequest,
                               this,
                               MHD_OPTION_END);
+  _client            = client;
+  _get_http_response = get_http_response;
 }
 
 // --------------------------------------------------------------------------------
@@ -35,20 +38,51 @@ HttpServer::~HttpServer ()
 }
 
 // --------------------------------------------------------------------------------
-int HttpServer::OnClientRequest (HttpServer            *server,
-                                 struct MHD_Connection *connection,
-                                 const char            *url,
-                                 const char            *method,
-                                 const char            *version,
-                                 const char            *upload_data,
-                                 size_t                *upload_data_size,
-                                 void                  **con_cls)
+int HttpServer::OnGet (struct MHD_Connection *connection,
+                       const char            *url,
+                       const char            *method,
+                       void                  **con_cls)
 {
-  int ret;
+  int    ret             = MHD_NO;
+  gchar *client_response = _get_http_response (_client,
+                                               url);
 
-  if (url)     g_print ("url     ==> %s\n", url);
-  if (method)  g_print ("method  ==> %s\n", method);
-  if (version) g_print ("version ==> %s\n", version);
+  if (client_response)
+  {
+    struct MHD_Response *response;
+    char                *page;
+
+    page = g_strdup (client_response);
+    g_free (client_response);
+
+    *con_cls = NULL;
+
+    response = MHD_create_response_from_data (strlen (page),
+                                              (void *) page,
+                                              MHD_YES,
+                                              MHD_NO);
+    ret = MHD_queue_response (connection,
+                              MHD_HTTP_OK,
+                              response);
+
+    MHD_destroy_response (response);
+  }
+
+  return ret;
+}
+
+// --------------------------------------------------------------------------------
+int HttpServer::OnMicroHttpRequest (HttpServer            *server,
+                                    struct MHD_Connection *connection,
+                                    const char            *url,
+                                    const char            *method,
+                                    const char            *version,
+                                    const char            *upload_data,
+                                    size_t                *upload_data_size,
+                                    void                  **con_cls)
+{
+  //if (url)    g_print ("url     ==> %s\n", url);
+  //if (method) g_print ("method  ==> %s\n", method);
 
   if (strcmp (method, "GET") != 0)
   {
@@ -65,25 +99,11 @@ int HttpServer::OnClientRequest (HttpServer            *server,
 
   if (*upload_data_size != 0)
   {
-    return MHD_NO; // upload data in a GET!?
+    return MHD_NO;
   }
 
-  *con_cls = NULL;
-  {
-    struct MHD_Response *response;
-    static char *page = "<html><head><title>libmicrohttpd demo</title>"\
-                         "</head><body>libmicrohttpd demo</body></html>";
-
-    response = MHD_create_response_from_data (strlen (page),
-                                              (void *) page,
-                                              MHD_NO,
-                                              MHD_NO);
-    ret = MHD_queue_response (connection,
-                              MHD_HTTP_OK,
-                              response);
-
-    MHD_destroy_response (response);
-  }
-
-  return ret;
+  return server->OnGet (connection,
+                        url,
+                        method,
+                        con_cls);
 }

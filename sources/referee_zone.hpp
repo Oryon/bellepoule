@@ -32,9 +32,9 @@ class RefereeZone : public DropZone
 
     void RemoveObject (Object *object);
 
-    void BookReferees ();
+    virtual void BookReferees ();
 
-    void FreeReferees ();
+    virtual void FreeReferees ();
 
   protected:
     GSList  *_referee_list;

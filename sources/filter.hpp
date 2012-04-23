@@ -60,7 +60,7 @@ class Filter : public virtual Object
     GSList       *_attr_list;
     GSList       *_selected_attr;
     GtkListStore *_attr_filter_store;
-    GtkWidget    *_filter_window;
+    GtkWidget    *_dialog;
 
     virtual ~Filter ();
 

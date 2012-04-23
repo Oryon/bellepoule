@@ -201,10 +201,15 @@ Contest::Contest ()
 
   _save_timeout_id = 0;
 
-  _notebook   = NULL;
+  {
+    time_t current_time;
 
+    time (&current_time);
+    _id = g_strdup_printf ("%lx", current_time);
+  }
+
+  _notebook   = NULL;
   _level      = NULL;
-  _id         = NULL;
   _name       = NULL;
   _filename   = NULL;
   _organizer  = NULL;
@@ -1667,6 +1672,12 @@ gchar Contest::GetWeaponCode ()
 gchar *Contest::GetName ()
 {
   return _name;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetId ()
+{
+  return _id;
 }
 
 // --------------------------------------------------------------------------------
