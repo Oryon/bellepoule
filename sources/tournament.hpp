@@ -51,6 +51,8 @@ class Tournament : public Module
 
     void OnSave ();
 
+    void OnBroadcastedActivated (GtkTreePath *path);
+
     static gchar *GetUserLanguage ();
 
     void OnBackupfileLocation ();
@@ -105,9 +107,11 @@ class Tournament : public Module
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);
 
-    static gboolean OnLatestVersionReceived (Tournament *tournament);
+    static gboolean OnLatestVersionReceived (Downloader::CallbackData *cbk_data);
 
-    static gboolean OnCompetitionsReceived (Tournament *tournament);
+    static gboolean OnCompetitionListReceived (Downloader::CallbackData *cbk_data);
+
+    static gboolean OnCompetitionReceived (Downloader::CallbackData *cbk_data);
 };
 
 #endif

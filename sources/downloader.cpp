@@ -17,14 +17,16 @@
 #include "downloader.hpp"
 
 // --------------------------------------------------------------------------------
-Downloader::Downloader (GSourceFunc callback,
-                        gpointer    callback_data)
+Downloader::Downloader (Callback callback,
+                        gpointer user_data)
 : Object ("Downloader")
 {
-  _callback        = callback;
-  _callback_data   = callback_data;
-  _data = NULL;
-  _address         = NULL;
+  _callback = callback;
+  _callback_data._downloader = this;
+  _callback_data._user_data  = user_data;
+
+  _data    = NULL;
+  _address = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -100,12 +102,22 @@ gpointer Downloader::ThreadFunction (Downloader *downloader)
                     CURLOPT_USERAGENT,
                     "libcurl-agent/1.0");
 
+#if 0
+  curl_easy_setopt (curl_handle,
+                    CURLOPT_FOLLOWLOCATION,
+                    1);
+
+  curl_easy_setopt (curl_handle,
+                    CURLOPT_MAXREDIRS,
+                    10);
+#endif
+
   curl_easy_perform (curl_handle);
 
   curl_easy_cleanup (curl_handle);
 
-  g_idle_add (downloader->_callback,
-              downloader->_callback_data);
+  g_idle_add ((GSourceFunc) downloader->_callback,
+              &downloader->_callback_data);
 
   return NULL;
 }

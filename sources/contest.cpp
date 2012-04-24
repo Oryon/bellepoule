@@ -358,8 +358,6 @@ void Contest::Load (const gchar *filename)
 
     xmlXPathInit ();
 
-    // Contest
-    if (doc)
     {
       xmlXPathContext *xml_context = xmlXPathNewContext (doc);
       xmlXPathObject  *xml_object;

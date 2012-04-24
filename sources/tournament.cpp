@@ -18,6 +18,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
 #include <curl/curl.h>
+#include <tinyxml2.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -29,6 +30,15 @@
 #include "contest.hpp"
 
 #include "tournament.hpp"
+
+typedef enum
+{
+  BROADCASTED_ID,
+  BROADCASTED_Name,
+  BROADCASTED_Weapon,
+  BROADCASTED_Gender,
+  BROADCASTED_Category
+} BroadcastedColumn;
 
 // --------------------------------------------------------------------------------
 Tournament::Tournament (gchar *filename)
@@ -171,7 +181,7 @@ Tournament::Tournament (gchar *filename)
   {
     _competitions_downloader = NULL;
 
-    _version_downloader = new Downloader ((GSourceFunc) OnLatestVersionReceived,
+    _version_downloader = new Downloader (OnLatestVersionReceived,
                                           this);
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
 
@@ -842,11 +852,13 @@ void Tournament::GetBroadcastedCompetitions ()
 
   if (_competitions_downloader == NULL)
   {
-    _competitions_downloader = new Downloader ((GSourceFunc) OnCompetitionsReceived,
+    _competitions_downloader = new Downloader (OnCompetitionListReceived,
                                                this);
   }
 
   _competitions_downloader->Start (address);
+
+  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetWidget ("broadcasted_liststore")));
 
   gtk_entry_set_icon_from_stock (GTK_ENTRY (_glade->GetWidget ("http_entry")),
                                  GTK_ENTRY_ICON_SECONDARY,
@@ -854,25 +866,101 @@ void Tournament::GetBroadcastedCompetitions ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::OnCompetitionsReceived (Tournament *tournament)
+gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_data)
 {
-  gchar *data = tournament->_competitions_downloader->GetData ();
+  gboolean    error = TRUE;
+  Tournament *tournament = (Tournament *) cbk_data->_user_data;
+  gchar      *data       = tournament->_competitions_downloader->GetData ();
 
+  data = "<Competitions><Competition ID=\"406\" Name=\"Circuit National\" Weapon=\"Sabre\" Gender=\"M\" Category=\"Junior\"/><Competition ID=\"4f90762b\" Name=\"Essai 6 tireurs\" Weapon=\"Sabre\" Gender=\"M\" Category=\"Poussin\"/></Competitions>";
   if (data)
   {
-    g_print ("%s\n", data);
-    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
-                                       GTK_ENTRY_ICON_SECONDARY,
-                                       "network-transmit-receive");
+    tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument ();
+
+    if (doc->Parse (data) == tinyxml2::XML_NO_ERROR)
+    {
+      GtkListStore         *model = GTK_LIST_STORE (tournament->_glade->GetWidget ("broadcasted_liststore"));
+      GtkTreeIter           iter;
+      tinyxml2::XMLHandle  *hdl   = new tinyxml2::XMLHandle (doc);
+      tinyxml2::XMLHandle   first = hdl->FirstChildElement().FirstChildElement();
+      tinyxml2::XMLElement *elem  = first.ToElement ();
+
+      while (elem)
+      {
+        gtk_list_store_append (model, &iter);
+        gtk_list_store_set (model, &iter,
+                            BROADCASTED_ID,       elem->Attribute ("ID"),
+                            BROADCASTED_Name,     elem->Attribute ("Name"),
+                            BROADCASTED_Weapon,   elem->Attribute ("Weapon"),
+                            BROADCASTED_Gender,   elem->Attribute ("Gender"),
+                            BROADCASTED_Category, elem->Attribute ("Category"),
+                            -1);
+
+        elem = elem->NextSiblingElement ();
+      }
+
+      free (hdl);
+      error = FALSE;
+    }
+    free (doc);
   }
-  else
+
+  if (error)
   {
     gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
                                        GTK_ENTRY_ICON_SECONDARY,
                                        "network-offline");
   }
+  else
+  {
+    gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
+                                       GTK_ENTRY_ICON_SECONDARY,
+                                       "network-transmit-receive");
+  }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Tournament::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
+{
+  Tournament *tournament = (Tournament *) cbk_data->_user_data;
+  gchar      *data       = tournament->_competitions_downloader->GetData ();
+
+  if (data)
+  {
+  }
+
+  cbk_data->_downloader->Release ();
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnBroadcastedActivated (GtkTreePath *path)
+{
+  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetWidget ("broadcasted_liststore"));
+  GtkTreeIter   iter;
+  gchar        *id;
+
+  gtk_tree_model_get_iter (model,
+                           &iter,
+                           path);
+
+  gtk_tree_model_get (model, &iter,
+                      BROADCASTED_ID, &id,
+                      -1);
+
+  {
+    GtkWidget *entry   = _glade->GetWidget ("http_entry");
+    gchar     *address = g_strdup_printf ("http://%s:8080/bellepoule/tournament",
+                                          gtk_entry_get_text (GTK_ENTRY (entry)));
+
+    Downloader *downloader = new Downloader (OnCompetitionReceived,
+                                             this);
+
+    downloader->Start (address);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -972,9 +1060,10 @@ void Tournament::OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::OnLatestVersionReceived (Tournament *tournament)
+gboolean Tournament::OnLatestVersionReceived (Downloader::CallbackData *cbk_data)
 {
-  gchar *data = tournament->_version_downloader->GetData ();
+  Tournament *tournament = (Tournament *) cbk_data->_user_data;
+  gchar      *data       = tournament->_version_downloader->GetData ();
 
   if (data)
   {
@@ -1224,4 +1313,15 @@ extern "C" G_MODULE_EXPORT gboolean on_http_entry_key_press_event (GtkWidget *wi
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_broadcasted_treeview_row_activated (GtkTreeView       *tree_view,
+                                                                       GtkTreePath       *path,
+                                                                       GtkTreeViewColumn *column,
+                                                                       Object            *owner)
+{
+  Tournament  *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnBroadcastedActivated (path);
 }

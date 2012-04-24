@@ -25,19 +25,27 @@
 class Downloader : public Object
 {
   public:
-    Downloader (GSourceFunc callback,
-                gpointer    callback_data);
+    typedef struct
+    {
+      void       *_user_data;
+      Downloader *_downloader;
+    } CallbackData;
+
+    typedef gboolean (*Callback) (CallbackData *data);
+
+    Downloader (Callback callback,
+                gpointer user_data);
 
     void Start (const gchar *address);
 
     gchar *GetData ();
 
   private:
-    GSourceFunc  _callback;
-    gpointer     _callback_data;
-    gchar       *_data;
-    size_t       _size;
-    gchar       *_address;
+    Callback      _callback;
+    CallbackData  _callback_data;
+    gchar        *_data;
+    size_t        _size;
+    gchar        *_address;
 
     static size_t AddText (void   *contents,
                            size_t  size,

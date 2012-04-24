@@ -200,6 +200,8 @@
 		<Unit filename="sources\table_supervisor.hpp" />
 		<Unit filename="sources\table_zone.cpp" />
 		<Unit filename="sources\table_zone.hpp" />
+		<Unit filename="sources\tinyxml2.cpp" />
+		<Unit filename="sources\tinyxml2.h" />
 		<Unit filename="sources\tournament.cpp" />
 		<Unit filename="sources\tournament.hpp" />
 		<Unit filename="sources\upload.cpp" />
