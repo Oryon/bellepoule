@@ -125,6 +125,24 @@ Schedule::~Schedule ()
 }
 
 // --------------------------------------------------------------------------------
+void Schedule::Freeze ()
+{
+  {
+    gtk_widget_hide (_glade->GetWidget ("previous_stage_toolbutton"));
+    gtk_widget_hide (_glade->GetWidget ("next_stage_toolbutton"));
+  }
+
+  {
+    Stage *stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
+
+    if (stage)
+    {
+      stage->Lock ();
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 Stage *Schedule::GetStage (guint index)
 {
   return (Stage *) g_list_nth_data (_stage_list,

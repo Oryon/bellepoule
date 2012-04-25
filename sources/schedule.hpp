@@ -34,6 +34,8 @@ class Schedule : public Module
 
     void DisplayList ();
 
+    void Freeze ();
+
     void CreateDefault (gboolean without_pools = FALSE);
 
     void AddStage    (Stage *stage,

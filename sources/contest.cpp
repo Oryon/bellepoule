@@ -163,6 +163,20 @@ void Contest::Time::ReadProperties (Glade *glade)
 }
 
 // --------------------------------------------------------------------------------
+void Contest::Time::HideProperties (Glade *glade)
+{
+  gchar *button_name;
+
+  button_name = g_strdup_printf ("%s_hour_spinbutton", _name);
+  gtk_widget_set_sensitive (glade->GetWidget (button_name), FALSE);
+  g_free (button_name);
+
+  button_name = g_strdup_printf ("%s_minute_spinbutton", _name);
+  gtk_widget_set_sensitive (glade->GetWidget (button_name), FALSE);
+  g_free (button_name);
+}
+
+// --------------------------------------------------------------------------------
 void Contest::Time::FillInProperties (Glade *glade)
 {
   gchar *button_name;
@@ -323,13 +337,8 @@ Contest::Contest ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::Load (const gchar *filename)
+void Contest::LoadUri (const gchar *filename)
 {
-  _state = LOADING;
-
-  _ref_translation_table = g_hash_table_new (NULL,
-                                             NULL);
-
   if (g_path_is_absolute (filename) == FALSE)
   {
     gchar *current_dir = g_get_current_dir ();
@@ -347,14 +356,82 @@ void Contest::Load (const gchar *filename)
   if (g_file_test (_filename,
                    G_FILE_TEST_IS_REGULAR))
   {
+    xmlDoc *doc = xmlParseFile (filename);
+
+    if (doc)
+    {
+      LoadXmlDoc (doc);
+
+      gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
+                                   filename);
+
+      if (g_str_has_suffix (_filename,
+                            ".cotcot") == FALSE)
+      {
+        g_free (_filename);
+        _filename = NULL;
+      }
+      else
+      {
+        gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
+                                  FALSE);
+      }
+
+      if (_save_timeout_id > 0)
+      {
+        g_source_remove (_save_timeout_id);
+      }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::LoadMemory (const gchar *memory)
+{
+  xmlDoc *doc = xmlReadMemory (memory,
+                               strlen (memory),
+                               "noname.xml",
+                               NULL,
+                               0);
+
+  if (doc)
+  {
+    LoadXmlDoc (doc);
+
+    _schedule->Freeze ();
+
+    gtk_widget_hide (_glade->GetWidget ("save_toolbutton"));
+    gtk_widget_hide (_glade->GetWidget ("score_frame"));
+
+    gtk_widget_set_sensitive (_glade->GetWidget ("title_entry"),     FALSE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("organizer_entry"), FALSE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("web_site_entry"),  FALSE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("location_entry"),  FALSE);
+    gtk_widget_set_sensitive (_glade->GetWidget ("calendar_button"), FALSE);
+    gtk_widget_set_sensitive (_weapon_combo,   FALSE);
+    gtk_widget_set_sensitive (_gender_combo,   FALSE);
+    gtk_widget_set_sensitive (_category_combo, FALSE);
+
+    _checkin_time->HideProperties (_glade);
+    _scratch_time->HideProperties (_glade);
+    _start_time->HideProperties   (_glade);
+
+    gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
+                              1);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::LoadXmlDoc (xmlDoc *doc)
+{
+  _state = LOADING;
+
+  _ref_translation_table = g_hash_table_new (NULL,
+                                             NULL);
+
+  {
     gboolean  score_stuffing_policy = FALSE;
     gboolean  need_post_processing  = FALSE;
-    xmlDoc   *doc                   = xmlParseFile (filename);
-
-    if (doc == NULL)
-    {
-      return;
-    }
 
     xmlXPathInit ();
 
@@ -529,29 +606,6 @@ void Contest::Load (const gchar *filename)
 
       checkin->ConvertFromBaseToResult ();
     }
-
-    {
-      GtkRecentManager *manager = gtk_recent_manager_get_default ();
-
-      gtk_recent_manager_add_item (manager, filename);
-    }
-  }
-
-  if (g_str_has_suffix (_filename,
-                        ".cotcot") == FALSE)
-  {
-    g_free (_filename);
-    _filename = NULL;
-  }
-  else
-  {
-    gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
-                              FALSE);
-  }
-
-  if (_save_timeout_id > 0)
-  {
-    g_source_remove (_save_timeout_id);
   }
 
   {

@@ -797,10 +797,11 @@ Public License instead of this License.  But first, please read
                 <property name="text" translatable="yes">127.0.0.1</property>
                 <property name="secondary_icon_name">network-offline</property>
                 <property name="primary_icon_activatable">False</property>
-                <property name="secondary_icon_activatable">False</property>
+                <property name="secondary_icon_activatable">True</property>
                 <property name="primary_icon_sensitive">True</property>
                 <property name="secondary_icon_sensitive">True</property>
                 <signal name="key-press-event" handler="on_http_entry_key_press_event" swapped="no"/>
+                <signal name="icon-release" handler="on_http_entry_icon_release" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>

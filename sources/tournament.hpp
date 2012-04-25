@@ -67,12 +67,16 @@ class Tournament : public Module
 
     void OnActivateBackup ();
 
-    void OpenContest (const gchar *uri);
+    void OpenUriContest (const gchar *uri);
+
+    void OpenMemoryContest (const gchar *memory);
 
     Player *Share (Player  *referee,
                    Contest *from);
 
     void GetBroadcastedCompetitions ();
+
+    void StopCompetitionMonitoring ();
 
   public:
     const gchar *GetCompetitionData (guint  competition_id,

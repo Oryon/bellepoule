@@ -28,6 +28,9 @@
 
 #include "version.h"
 #include "contest.hpp"
+#if FAKE_XML
+#include "fake_xml.h"
+#endif
 
 #include "tournament.hpp"
 
@@ -86,7 +89,7 @@ Tournament::Tournament (gchar *filename)
       }
     }
 
-    OpenContest (utf8_name);
+    OpenUriContest (utf8_name);
     g_free (utf8_name);
 
     g_free (filename);
@@ -188,6 +191,10 @@ Tournament::Tournament (gchar *filename)
     _http_server = new HttpServer (this,
                                    OnGetHttpResponse);
   }
+
+#if FAKE_XML
+  gtk_widget_hide (_glade->GetWidget ("logo"));
+#endif
 }
 
 // --------------------------------------------------------------------------------
@@ -293,6 +300,7 @@ gchar *Tournament::GetHttpResponse (const gchar *url)
                                &result,
                                &length,
                                NULL);
+          break;
         }
         current = g_slist_next (current);
       }
@@ -691,7 +699,7 @@ void Tournament::OnOpen (gchar *current_folder)
   {
     gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
-    OpenContest (filename);
+    OpenUriContest (filename);
     g_free (filename);
   }
 
@@ -746,7 +754,7 @@ void Tournament::OnOpenUserManual ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OpenContest (const gchar *uri)
+void Tournament::OpenUriContest (const gchar *uri)
 {
   if (uri)
   {
@@ -768,7 +776,33 @@ void Tournament::OpenContest (const gchar *uri)
       Plug (contest,
             NULL,
             NULL);
-      contest->Load (uri);
+      contest->LoadUri (uri);
+      Manage (contest);
+    }
+
+    ResetCursor ();
+
+    while (gtk_events_pending ())
+    {
+      gtk_main_iteration ();
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OpenMemoryContest (const gchar *memory)
+{
+  if (memory)
+  {
+    SetCursor (GDK_WATCH);
+
+    {
+      Contest *contest = new Contest ();
+
+      Plug (contest,
+            NULL,
+            NULL);
+      contest->LoadMemory (memory);
       Manage (contest);
     }
 
@@ -825,7 +859,7 @@ void Tournament::OnRecent ()
 
     if (info)
     {
-      OpenContest (gtk_recent_info_get_uri_display (info));
+      OpenUriContest (gtk_recent_info_get_uri_display (info));
 
       gtk_recent_info_unref (info);
     }
@@ -866,13 +900,31 @@ void Tournament::GetBroadcastedCompetitions ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::StopCompetitionMonitoring ()
+{
+  if (_competitions_downloader)
+  {
+    _competitions_downloader->Release ();
+    _competitions_downloader = NULL;
+  }
+
+  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetWidget ("broadcasted_liststore")));
+
+  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (_glade->GetWidget ("http_entry")),
+                                     GTK_ENTRY_ICON_SECONDARY,
+                                     "network-offline");
+}
+
+// --------------------------------------------------------------------------------
 gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_data)
 {
   gboolean    error = TRUE;
   Tournament *tournament = (Tournament *) cbk_data->_user_data;
   gchar      *data       = tournament->_competitions_downloader->GetData ();
 
-  data = "<Competitions><Competition ID=\"406\" Name=\"Circuit National\" Weapon=\"Sabre\" Gender=\"M\" Category=\"Junior\"/><Competition ID=\"4f90762b\" Name=\"Essai 6 tireurs\" Weapon=\"Sabre\" Gender=\"M\" Category=\"Poussin\"/></Competitions>";
+#if FAKE_XML
+  data = fake_competion_list;
+#endif
   if (data)
   {
     tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument ();
@@ -927,8 +979,12 @@ gboolean Tournament::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
   Tournament *tournament = (Tournament *) cbk_data->_user_data;
   gchar      *data       = tournament->_competitions_downloader->GetData ();
 
+#if FAKE_XML
+  data = fake_competion;
+#endif
   if (data)
   {
+    tournament->OpenMemoryContest (data);
   }
 
   cbk_data->_downloader->Release ();
@@ -1273,7 +1329,7 @@ extern "C" G_MODULE_EXPORT void on_root_drag_data_received (GtkWidget        *wi
                                              NULL,
                                              NULL);
 
-      t->OpenContest (filename);
+      t->OpenUriContest (filename);
       g_free (filename);
     }
     g_strfreev (uris);
@@ -1324,4 +1380,24 @@ extern "C" G_MODULE_EXPORT void on_broadcasted_treeview_row_activated (GtkTreeVi
   Tournament  *t = dynamic_cast <Tournament *> (owner);
 
   t->OnBroadcastedActivated (path);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_http_entry_icon_release (GtkEntry             *entry,
+                                                            GtkEntryIconPosition  icon_pos,
+                                                            GdkEvent             *event,
+                                                            Object               *owner)
+{
+  Tournament  *t         = dynamic_cast <Tournament *> (owner);
+  const gchar *icon_name = gtk_entry_get_icon_name (entry,
+                                                    GTK_ENTRY_ICON_SECONDARY);
+
+  if (strcmp (icon_name, "network-offline") == 0)
+  {
+    t->GetBroadcastedCompetitions ();
+  }
+  else if (strcmp (icon_name, "network-transmit-receive") == 0)
+  {
+    t->StopCompetitionMonitoring ();
+  }
 }

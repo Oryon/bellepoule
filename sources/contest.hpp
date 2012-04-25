@@ -41,7 +41,9 @@ class Contest : public Module
 
     Contest *Duplicate ();
 
-    void Load (const gchar *filename);
+    void LoadUri (const gchar *filename);
+
+    void LoadMemory (const gchar *memory);
 
     void LatchPlayerList ();
 
@@ -97,6 +99,7 @@ class Contest : public Module
       void Save (xmlTextWriter *xml_writer,
                  const gchar   *attr_name);
       void ReadProperties (Glade *glade);
+      void HideProperties (Glade *glade);
       void FillInProperties (Glade *glade);
       void Copy (Time *to);
       gboolean IsEqualTo (Time *to);
@@ -154,6 +157,7 @@ class Contest : public Module
 
     void   ReadProperties    ();
     void   DisplayProperties ();
+    void   LoadXmlDoc        (xmlDoc *doc);
     gchar *GetSaveFileName   (gchar       *title,
                               const gchar *config_key);
     void   Save              (gchar *filename);
