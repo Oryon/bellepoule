@@ -149,6 +149,7 @@ class Contest : public Module
     gint          _referee_pane_position;
     GHashTable   *_ref_translation_table;
     State         _state;
+    gboolean      _read_only;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;

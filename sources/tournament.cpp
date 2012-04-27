@@ -977,7 +977,7 @@ gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_da
 gboolean Tournament::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
 {
   Tournament *tournament = (Tournament *) cbk_data->_user_data;
-  gchar      *data       = tournament->_competitions_downloader->GetData ();
+  gchar      *data       = cbk_data->_downloader->GetData ();
 
 #if FAKE_XML
   data = fake_competion;
@@ -1009,8 +1009,9 @@ void Tournament::OnBroadcastedActivated (GtkTreePath *path)
 
   {
     GtkWidget *entry   = _glade->GetWidget ("http_entry");
-    gchar     *address = g_strdup_printf ("http://%s:8080/bellepoule/tournament",
-                                          gtk_entry_get_text (GTK_ENTRY (entry)));
+    gchar     *address = g_strdup_printf ("http://%s:8080/bellepoule/tournament/competition/%s",
+                                          gtk_entry_get_text (GTK_ENTRY (entry)),
+                                          id);
 
     Downloader *downloader = new Downloader (OnCompetitionReceived,
                                              this);

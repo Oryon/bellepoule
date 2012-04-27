@@ -222,6 +222,7 @@ Contest::Contest ()
     _id = g_strdup_printf ("%lx", current_time);
   }
 
+  _read_only  = FALSE;
   _notebook   = NULL;
   _level      = NULL;
   _name       = NULL;
@@ -419,6 +420,8 @@ void Contest::LoadMemory (const gchar *memory)
     gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
                               1);
   }
+
+  _read_only = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -1221,7 +1224,7 @@ void Contest::Publish ()
 // --------------------------------------------------------------------------------
 void Contest::Save ()
 {
-  if (_filename == NULL)
+  if ((_filename == NULL) && (_read_only == FALSE))
   {
     _filename = GetSaveFileName (gettext ("Choose a file..."),
                                  "default_dir_name");

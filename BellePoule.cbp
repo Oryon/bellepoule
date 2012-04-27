@@ -40,6 +40,7 @@
 					<Add option="-Wunreachable-code" />
 					<Add option="-g" />
 					<Add option="-DDEBUG=1" />
+					<Add option="-DFAKE_XML=1" />
 				</Compiler>
 			</Target>
 		</Build>

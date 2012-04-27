@@ -794,7 +794,7 @@ Public License instead of this License.  But first, please read
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
-                <property name="text" translatable="yes">127.0.0.1</property>
+                <property name="text" translatable="yes">host</property>
                 <property name="secondary_icon_name">network-offline</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">True</property>
