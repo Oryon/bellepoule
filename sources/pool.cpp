@@ -64,6 +64,8 @@ Pool::~Pool ()
 {
   Wipe ();
 
+  DeleteMatchs ();
+
   g_free (_name);
 
   while (_referee_list)
@@ -73,8 +75,6 @@ Pool::~Pool ()
 
   g_slist_free (_fencer_list);
   g_slist_free (_sorted_fencer_list);
-
-  DeleteMatchs ();
 
   Object::TryToRelease (_score_collector);
 
@@ -308,7 +308,7 @@ void Pool::CopyPlayersStatus (Object *from)
 
   while (current)
   {
-    Player::AttributeId  attr_id ("status");
+    Player::AttributeId  attr_id ("status", from);
     Attribute           *status_attr;
     Player              *player;
     gchar               *status;
@@ -316,10 +316,8 @@ void Pool::CopyPlayersStatus (Object *from)
     player = (Player *) current->data;
     RestorePlayer (player);
 
-    attr_id._owner = from;
     status_attr = player->GetAttribute (&attr_id);
-
-    status = status_attr->GetStrValue ();
+    status      = status_attr->GetStrValue ();
 
     if (   (status[0] == 'A')
         || (status[0] == 'F')
@@ -1932,18 +1930,34 @@ void Pool::SortPlayers ()
 // --------------------------------------------------------------------------------
 void Pool::DeleteMatchs ()
 {
-  GSList *current = _match_list;
-
-  while (current)
   {
-    Match *match = (Match *) current->data;
+    GSList *current = _match_list;
 
-    Object::TryToRelease (match);
-    current = g_slist_next (current);
+    while (current)
+    {
+      Match *match = (Match *) current->data;
+
+      Object::TryToRelease (match);
+      current = g_slist_next (current);
+    }
+
+    g_slist_free (_match_list);
+    _match_list = NULL;
   }
 
-  g_slist_free (_match_list);
-  _match_list = NULL;
+  {
+    GSList *current = _player_list;
+
+    while (current)
+    {
+      Player              *player         = (Player *) current->data;
+      Player::AttributeId  status_attr_id = Player::AttributeId ("status", GetDataOwner ());
+
+      player->SetAttributeValue (&status_attr_id,
+                                 "Q");
+      current = g_slist_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
