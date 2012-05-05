@@ -1946,7 +1946,7 @@ void Pool::DeleteMatchs ()
   }
 
   {
-    GSList *current = _player_list;
+    GSList *current = _fencer_list;
 
     while (current)
     {

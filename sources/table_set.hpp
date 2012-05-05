@@ -36,7 +36,8 @@ class TableSet : public CanvasModule
 
     TableSet (TableSupervisor *supervisor,
               gchar           *id,
-              GtkWidget       *control_container,
+              GtkWidget       *from_container,
+              GtkWidget       *to_container,
               guint            first_place);
 
     void SetStatusCbk (StatusCbk  cbk,
@@ -49,7 +50,7 @@ class TableSet : public CanvasModule
 
     gboolean HasAttendees ();
 
-    void OnFromTableComboboxChanged ();
+    void OnFromToTableComboboxChanged ();
 
     void OnStuffClicked ();
 
@@ -143,6 +144,7 @@ class TableSet : public CanvasModule
     guint                     _nb_matchs;
     gint                      _table_to_stuff;
     GtkListStore             *_from_table_liststore;
+    GtkListStore             *_to_table_liststore;
     GtkTreeStore             *_quick_search_treestore;
     GtkTreeModelFilter       *_quick_search_filter;
     GooCanvasItem            *_main_table;
@@ -159,8 +161,10 @@ class TableSet : public CanvasModule
     GtkWidget                *_print_dialog;
     GtkWidget                *_preview_dialog;
     GtkWidget                *_table_print_dialog;
-    GtkWidget                *_control_container;
+    GtkWidget                *_from_container;
     GtkWidget                *_from_widget;
+    GtkWidget                *_to_container;
+    GtkWidget                *_to_widget;
     gboolean                  _print_full_table;
     gdouble                   _printer_dpi_adaptation;
     gdouble                   _print_scale;

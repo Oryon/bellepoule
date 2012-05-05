@@ -10,6 +10,14 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="to_liststore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name status_icon -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkTreeStore" id="match_treestore">
     <columns>
       <!-- column-name match_name -->
@@ -625,7 +633,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="model">from_liststore</property>
-            <signal name="changed" handler="on_from_table_combobox_changed" swapped="no"/>
+            <signal name="changed" handler="on_from_to_table_combobox_changed" swapped="no"/>
             <child>
               <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
               <attributes>
@@ -643,6 +651,31 @@
             <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBox" id="to_table_combobox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="model">to_liststore</property>
+            <signal name="changed" handler="on_from_to_table_combobox_changed" swapped="no"/>
+            <child>
+              <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf3"/>
+              <attributes>
+                <attribute name="stock-id">1</attribute>
+              </attributes>
+            </child>
+            <child>
+              <object class="GtkCellRendererText" id="cellrenderertext2"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

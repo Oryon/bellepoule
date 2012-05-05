@@ -42,6 +42,12 @@ typedef enum
 
 typedef enum
 {
+  TO_NAME_COLUMN,
+  TO_STATUS_COLUMN
+} ToColumnId;
+
+typedef enum
+{
   DISPLAY_NAME_COLUMN
 } DisplayColumnId;
 
@@ -53,37 +59,39 @@ typedef enum
   QUICK_MATCH_VISIBILITY_COLUMN
 } QuickSearchColumnId;
 
-extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
-                                                                Object    *owner);
+extern "C" G_MODULE_EXPORT void on_from_to_table_combobox_changed (GtkWidget *widget,
+                                                                   Object    *owner);
 
 // --------------------------------------------------------------------------------
 TableSet::TableSet (TableSupervisor *supervisor,
                     gchar           *id,
-                    GtkWidget       *control_container,
+                    GtkWidget       *from_container,
+                    GtkWidget       *to_container,
                     guint            first_place)
 : CanvasModule ("table.glade")
 {
   Module *supervisor_module = dynamic_cast <Module *> (supervisor);
 
-  _supervisor        = supervisor;
-  _filter            = supervisor_module->GetFilter ();
-  _control_container = control_container;
-  _main_table        = NULL;
-  _tree_root         = NULL;
-  _tables            = NULL;
-  _match_to_print    = NULL;
-  _nb_tables         = 0;
-  _nb_matchs         = 0;
-  _locked            = FALSE;
-  _id                = id;
-  _attendees         = NULL;
-  _withdrawals       = NULL;
-  _has_error         = FALSE;
-  _is_over           = FALSE;
-  _first_place       = first_place;
-  _loaded            = FALSE;
-  _print_scale       = 1.0;
-  _is_active         = FALSE;
+  _supervisor     = supervisor;
+  _filter         = supervisor_module->GetFilter ();
+  _from_container = from_container;
+  _to_container   = to_container;
+  _main_table     = NULL;
+  _tree_root      = NULL;
+  _tables         = NULL;
+  _match_to_print = NULL;
+  _nb_tables      = 0;
+  _nb_matchs      = 0;
+  _locked         = FALSE;
+  _id             = id;
+  _attendees      = NULL;
+  _withdrawals    = NULL;
+  _has_error      = FALSE;
+  _is_over        = FALSE;
+  _first_place    = first_place;
+  _loaded         = FALSE;
+  _print_scale    = 1.0;
+  _is_active      = FALSE;
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -171,7 +179,16 @@ TableSet::TableSet (TableSupervisor *supervisor,
                           _from_widget);
   }
 
+  {
+    _to_widget = _glade->GetWidget ("to_table_combobox");
+
+    g_object_ref (_to_widget);
+    gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (_to_widget)),
+                          _to_widget);
+  }
+
   _from_table_liststore   = GTK_LIST_STORE (_glade->GetObject ("from_liststore"));
+  _to_table_liststore     = GTK_LIST_STORE (_glade->GetObject ("to_liststore"));
   _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
   _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("match_treemodelfilter"));
 
@@ -201,9 +218,6 @@ TableSet::~TableSet ()
 
   g_slist_free (_attendees);
   g_slist_free (_withdrawals);
-
-  gtk_list_store_clear (_from_table_liststore);
-  gtk_tree_store_clear (_quick_search_treestore);
 
   g_slist_free (_match_to_print);
 
@@ -266,7 +280,7 @@ void TableSet::SetAttendees (GSList *attendees)
   }
 
   Garnish ();
-  OnFromTableComboboxChanged ();
+  OnFromToTableComboboxChanged ();
   RefreshTableStatus ();
 }
 
@@ -394,6 +408,16 @@ void TableSet::RefreshTableStatus ()
       {
         gtk_list_store_set (_from_table_liststore, &iter,
                             FROM_STATUS_COLUMN, icon,
+                            -1);
+      }
+
+      if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_to_table_liststore),
+                                         &iter,
+                                         NULL,
+                                         _nb_tables-t-1) == TRUE)
+      {
+        gtk_list_store_set (_to_table_liststore, &iter,
+                            TO_STATUS_COLUMN, icon,
                             -1);
       }
 
@@ -682,7 +706,7 @@ void TableSet::DeleteTree ()
   }
 
   g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
-                                        (void *) on_from_table_combobox_changed,
+                                        (void *) on_from_to_table_combobox_changed,
                                         (Object *) this);
 
   if (_tree_root)
@@ -767,11 +791,12 @@ void TableSet::CreateTree ()
 
   {
     g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
-                                          (void *) on_from_table_combobox_changed,
+                                          (void *) on_from_to_table_combobox_changed,
                                           (Object *) this);
     gtk_list_store_clear (_from_table_liststore);
+    gtk_list_store_clear (_to_table_liststore);
 
-    for (guint t = 1; t < _nb_tables; t++)
+    for (guint t = 0; t < _nb_tables; t++)
     {
       Table        *table = _tables[t];
       gchar        *text = table->GetImage ();
@@ -779,19 +804,27 @@ void TableSet::CreateTree ()
 
       gtk_list_store_prepend (_from_table_liststore,
                               &iter);
-
       gtk_list_store_set (_from_table_liststore, &iter,
                           FROM_STATUS_COLUMN, GTK_STOCK_EXECUTE,
                           FROM_NAME_COLUMN,   text,
+                          -1);
+
+      gtk_list_store_prepend (_to_table_liststore,
+                              &iter);
+      gtk_list_store_set (_to_table_liststore, &iter,
+                          TO_STATUS_COLUMN, GTK_STOCK_EXECUTE,
+                          TO_NAME_COLUMN,   text,
                           -1);
       g_free (text);
     }
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")),
                               0);
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("to_table_combobox")),
+                              _nb_tables-1);
 
     g_signal_connect (_glade->GetWidget ("from_table_combobox"), "changed",
-                      G_CALLBACK (on_from_table_combobox_changed),
+                      G_CALLBACK (on_from_to_table_combobox_changed),
                       (Object *) this);
   }
 
@@ -962,21 +995,53 @@ gboolean TableSet::DrawConnector (GNode    *node,
     else if (   (G_NODE_IS_LEAF (node) == FALSE)
              || (winner))
     {
-      GNode           *parent      = node->parent;
-      NodeData        *parent_data = (NodeData *) parent->data;
-      GooCanvasBounds  parent_bounds;
+      GNode    *parent      = node->parent;
+      NodeData *parent_data = (NodeData *) parent->data;
 
-      goo_canvas_item_get_bounds (parent_data->_fencer_goo_table,
-                                  &parent_bounds);
+      if (parent_data->_fencer_goo_table)
+      {
+        GooCanvasBounds parent_bounds;
 
-      data->_connector = goo_canvas_polyline_new (table_set->GetRootItem (),
-                                                  FALSE,
-                                                  3,
-                                                  bounds.x1 - _table_spacing/2, bounds.y2,
-                                                  parent_bounds.x1 - _table_spacing/2, bounds.y2,
-                                                  parent_bounds.x1 - _table_spacing/2, parent_bounds.y2,
-                                                  "line-width", 2.0,
-                                                  NULL);
+        goo_canvas_item_get_bounds (parent_data->_fencer_goo_table,
+                                    &parent_bounds);
+
+        data->_connector = goo_canvas_polyline_new (table_set->GetRootItem (),
+                                                    FALSE,
+                                                    3,
+                                                    bounds.x1 - _table_spacing/2, bounds.y2,
+                                                    parent_bounds.x1 - _table_spacing/2, bounds.y2,
+                                                    parent_bounds.x1 - _table_spacing/2, parent_bounds.y2,
+                                                    "line-width", 2.0,
+                                                    NULL);
+      }
+      else
+      {
+        GNode           *sibling;
+        NodeData        *sibling_data;
+        GooCanvasBounds  sibling_bound;
+
+        sibling = g_node_next_sibling (node);
+        if (sibling == NULL)
+        {
+          sibling = g_node_prev_sibling (node);
+        }
+        sibling_data = (NodeData *) sibling->data;
+
+        if (sibling_data->_fencer_goo_table)
+        {
+          goo_canvas_item_get_bounds (sibling_data->_fencer_goo_table,
+                                      &sibling_bound);
+
+          data->_connector = goo_canvas_polyline_new (table_set->GetRootItem (),
+                                                      FALSE,
+                                                      3,
+                                                      bounds.x1 - _table_spacing/2, bounds.y2,
+                                                      bounds.x2, bounds.y2,
+                                                      bounds.x2, sibling_bound.y2,
+                                                      "line-width", 2.0,
+                                                      NULL);
+        }
+      }
     }
   }
 
@@ -1640,19 +1705,25 @@ void TableSet::OnAttrListUpdated ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::OnFromTableComboboxChanged ()
+void TableSet::OnFromToTableComboboxChanged ()
 {
-  guint nb_table_to_display = _nb_tables - gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")));
+  guint from = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")));
+  guint to   = 1 + gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("to_table_combobox")));
 
   for (guint t = 0; t < _nb_tables; t++)
   {
-    if (t < nb_table_to_display)
+    _tables[t]->Hide ();
+  }
+
+  if (to > from)
+  {
+    guint column = 0;
+
+    for (gint t = _nb_tables-from-1; t >= (gint) (_nb_tables-to); t--)
     {
-      _tables[t]->Show (nb_table_to_display - t);
-    }
-    else
-    {
-      _tables[t]->Hide ();
+      g_print ("%s ==>> %d\n", _tables[t]->GetImage (), column);
+      _tables[t]->Show (column);
+      column++;
     }
   }
 
@@ -2774,8 +2845,12 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
 void TableSet::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
-  gtk_container_add (GTK_CONTAINER (_control_container),
+
+  gtk_container_add (GTK_CONTAINER (_from_container),
                      _from_widget);
+  gtk_container_add (GTK_CONTAINER (_to_container),
+                     _to_widget);
+
   SetDndDest (GTK_WIDGET (GetCanvas ()));
   EnableDragAndDrop ();
 }
@@ -2785,8 +2860,13 @@ void TableSet::OnUnPlugged ()
 {
   if (gtk_widget_get_parent (_from_widget))
   {
-    gtk_container_remove (GTK_CONTAINER (_control_container),
+    gtk_container_remove (GTK_CONTAINER (_from_container),
                           _from_widget);
+  }
+  if (gtk_widget_get_parent (_to_widget))
+  {
+    gtk_container_remove (GTK_CONTAINER (_to_container),
+                          _to_widget);
   }
   CanvasModule::OnUnPlugged ();
 }
@@ -3212,12 +3292,12 @@ extern "C" G_MODULE_EXPORT void on_match_sheet_radiobutton_toggled (GtkWidget *w
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_from_table_combobox_changed (GtkWidget *widget,
-                                                                Object    *owner)
+extern "C" G_MODULE_EXPORT void on_from_to_table_combobox_changed (GtkWidget *widget,
+                                                                   Object    *owner)
 {
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
-  t->OnFromTableComboboxChanged ();
+  t->OnFromToTableComboboxChanged ();
 }
 
 // --------------------------------------------------------------------------------

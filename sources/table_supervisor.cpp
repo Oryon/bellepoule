@@ -70,6 +70,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
     AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
 
     LockOnClassification (_glade->GetWidget ("from_vbox"));
+    LockOnClassification (_glade->GetWidget ("to_vbox"));
     LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
     LockOnClassification (_glade->GetWidget ("input_toolbutton"));
   }
@@ -608,6 +609,7 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
     table_set = new TableSet (this,
                               gtk_tree_path_to_string (path),
                               _glade->GetWidget ("from_vbox"),
+                              _glade->GetWidget ("to_vbox"),
                               from_place);
 
     {
