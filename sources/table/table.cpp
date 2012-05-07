@@ -169,6 +169,13 @@ void Table::ManageMatch (Match *match)
 }
 
 // --------------------------------------------------------------------------------
+Match *Table::GetMatch (guint number)
+{
+  return (Match *) g_slist_nth_data (_match_list,
+                                     number);
+}
+
+// --------------------------------------------------------------------------------
 void Table::DropMatch (Match *match)
 {
   _match_list = g_slist_remove (_match_list,

@@ -19,20 +19,20 @@
 typedef enum
 {
   NAME_COLUMN,
-  STATUS_COLUMN
+  STATUS_COLUMN,
+  TABLE_COLUMN
 } ColumnId;
 
 // --------------------------------------------------------------------------------
-TableSetBorder::TableSetBorder (Object       *owner,
-                                GCallback     callback,
-                                GtkWidget    *container,
-                                GtkListStore *liststore,
-                                GtkWidget    *widget)
+TableSetBorder::TableSetBorder (Object    *owner,
+                                GCallback  callback,
+                                GtkWidget *container,
+                                GtkWidget *widget)
 : Object ("TableSetBorder")
 {
   _owner     = owner;
   _callback  = callback;
-  _liststore = liststore;
+  _liststore = GTK_LIST_STORE (gtk_combo_box_get_model (GTK_COMBO_BOX (widget)));
   _container = GTK_CONTAINER (container);
   _widget    = widget;
 
@@ -87,6 +87,7 @@ void TableSetBorder::AddTable (Table *table)
   gtk_list_store_set (_liststore, &iter,
                       STATUS_COLUMN, GTK_STOCK_EXECUTE,
                       NAME_COLUMN,   text,
+                      TABLE_COLUMN,  table,
                       -1);
   g_free (text);
 }
@@ -105,6 +106,25 @@ void TableSetBorder::SelectTable (guint table)
 {
   gtk_combo_box_set_active (GTK_COMBO_BOX (_widget),
                             table);
+}
+
+// --------------------------------------------------------------------------------
+Table *TableSetBorder::GetSelectedTable ()
+{
+  GtkTreeIter iter;
+
+  if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (_widget),
+                                     &iter))
+  {
+    Table *table;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_liststore),
+                        &iter,
+                        TABLE_COLUMN, &table,
+                        -1);
+    return table;
+  }
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------

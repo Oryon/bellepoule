@@ -63,6 +63,8 @@ class Table : public Object
 
     void DropMatch (Match *match);
 
+    Match *GetMatch (guint number);
+
     guint GetLoosers (GSList **loosers,
                       GSList **withdrawals,
                       GSList **blackcardeds);

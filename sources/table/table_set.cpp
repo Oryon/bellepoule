@@ -36,7 +36,7 @@ const gdouble TableSet::_table_spacing   = 10.0;
 
 typedef enum
 {
-  DISPLAY_NAME_COLUMN
+  CUTTING_NAME_COLUMN
 } DisplayColumnId;
 
 typedef enum
@@ -162,12 +162,10 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _from_border = new TableSetBorder (this,
                                      G_CALLBACK (on_from_to_table_combobox_changed),
                                      from_container,
-                                     GTK_LIST_STORE (_glade->GetObject ("from_liststore")),
                                      _glade->GetWidget ("from_table_combobox"));
   _to_border = new TableSetBorder (this,
                                    G_CALLBACK (on_from_to_table_combobox_changed),
                                    to_container,
-                                   GTK_LIST_STORE (_glade->GetObject ("to_liststore")),
                                    _glade->GetWidget ("to_table_combobox"));
 
   _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
@@ -1679,16 +1677,16 @@ void TableSet::OnFromToTableComboboxChanged ()
     gtk_list_store_clear (liststore);
 
     Table *from_table = _tables[_nb_tables-from-1];
-    for (guint i = 0; i < from_table->GetSize () / 2; i++)
+    for (guint i = 1; i <= from_table->GetSize () / 2; i *= 2)
     {
       gchar        *text;
       GtkTreeIter   iter;
 
-      text = g_strdup_printf ("%d %s", i+1, gettext ("cutting"));
+      text = g_strdup_printf ("%d %s", i, gettext ("cutting"));
       gtk_list_store_append (liststore,
                              &iter);
       gtk_list_store_set (liststore, &iter,
-                          0, text,
+                          CUTTING_NAME_COLUMN, text,
                           -1);
       g_free (text);
     }
@@ -1702,7 +1700,10 @@ void TableSet::OnFromToTableComboboxChanged ()
 // --------------------------------------------------------------------------------
 void TableSet::OnCuttingCountComboboxChanged ()
 {
-  g_print ("coucou\n");
+  OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
+                (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+
+  ConfigurePreviewLayout ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
 }
 
 // --------------------------------------------------------------------------------
@@ -2183,16 +2184,29 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
     gdouble canvas_h;
     gdouble global_scale = _print_scale;
     gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
-    guint   cutting_count = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")));
+
+    {
+      guint     cutting_count = 1 << gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")));
+      Table    *from_table    = _from_border->GetSelectedTable ();
+      Match    *match         = from_table->GetMatch (from_table->GetSize () / cutting_count / 2 - 1);
+      GNode    *node          = (GNode *) match->GetPtrData (this, "node");
+      NodeData *data          = (NodeData *) node->data;
+
+    {
+      GooCanvasBounds bounds;
+
+      goo_canvas_item_get_bounds (data->_fencer_goo_table,
+                                  &bounds);
+      g_print ("%d,%d %dx%d\n", bounds.x1, bounds.y1, bounds.x2-bounds.x1, bounds.y2-bounds.y1);
+    }
 
 #if 0
-    {
     (table_set->_main_table,
      data->_fencer_goo_table,
      data->_table->GetRow (data->_table_index) + 1,
      data->_table->GetColumn ());
-    }
 #endif
+    }
 
     {
       GooCanvasBounds bounds;

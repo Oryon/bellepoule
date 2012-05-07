@@ -25,11 +25,10 @@
 class TableSetBorder : public Object
 {
   public:
-    TableSetBorder (Object       *owner,
-                    GCallback     callback,
-                    GtkWidget    *container,
-                    GtkListStore *liststore,
-                    GtkWidget    *widget);
+    TableSetBorder (Object    *owner,
+                    GCallback  callback,
+                    GtkWidget *container,
+                    GtkWidget *widget);
 
     void SetTableIcon (guint        table,
                        const gchar *icon);
@@ -41,6 +40,8 @@ class TableSetBorder : public Object
     void UnMute ();
 
     void SelectTable (guint table);
+
+    Table *GetSelectedTable ();
 
     void Plug ();
 
