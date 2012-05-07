@@ -36,18 +36,6 @@ const gdouble TableSet::_table_spacing   = 10.0;
 
 typedef enum
 {
-  FROM_NAME_COLUMN,
-  FROM_STATUS_COLUMN
-} FromColumnId;
-
-typedef enum
-{
-  TO_NAME_COLUMN,
-  TO_STATUS_COLUMN
-} ToColumnId;
-
-typedef enum
-{
   DISPLAY_NAME_COLUMN
 } DisplayColumnId;
 
@@ -60,6 +48,8 @@ typedef enum
 } QuickSearchColumnId;
 
 extern "C" G_MODULE_EXPORT void on_from_to_table_combobox_changed (GtkWidget *widget,
+                                                                   Object    *owner);
+extern "C" G_MODULE_EXPORT void on_cutting_count_combobox_changed (GtkWidget *widget,
                                                                    Object    *owner);
 
 // --------------------------------------------------------------------------------
@@ -74,8 +64,6 @@ TableSet::TableSet (TableSupervisor *supervisor,
 
   _supervisor     = supervisor;
   _filter         = supervisor_module->GetFilter ();
-  _from_container = from_container;
-  _to_container   = to_container;
   _main_table     = NULL;
   _tree_root      = NULL;
   _tables         = NULL;
@@ -171,24 +159,17 @@ TableSet::TableSet (TableSupervisor *supervisor,
                                                     _quick_score_A);
   }
 
-  {
-    _from_widget = _glade->GetWidget ("from_table_combobox");
+  _from_border = new TableSetBorder (this,
+                                     G_CALLBACK (on_from_to_table_combobox_changed),
+                                     from_container,
+                                     GTK_LIST_STORE (_glade->GetObject ("from_liststore")),
+                                     _glade->GetWidget ("from_table_combobox"));
+  _to_border = new TableSetBorder (this,
+                                   G_CALLBACK (on_from_to_table_combobox_changed),
+                                   to_container,
+                                   GTK_LIST_STORE (_glade->GetObject ("to_liststore")),
+                                   _glade->GetWidget ("to_table_combobox"));
 
-    g_object_ref (_from_widget);
-    gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (_from_widget)),
-                          _from_widget);
-  }
-
-  {
-    _to_widget = _glade->GetWidget ("to_table_combobox");
-
-    g_object_ref (_to_widget);
-    gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (_to_widget)),
-                          _to_widget);
-  }
-
-  _from_table_liststore   = GTK_LIST_STORE (_glade->GetObject ("from_liststore"));
-  _to_table_liststore     = GTK_LIST_STORE (_glade->GetObject ("to_liststore"));
   _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
   _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("match_treemodelfilter"));
 
@@ -227,7 +208,9 @@ TableSet::~TableSet ()
 
   g_free (_id);
 
-  g_object_unref (_from_widget);
+  _from_border->Release ();
+  _to_border->Release   ();
+
   g_object_unref (_page_setup);
 }
 
@@ -372,9 +355,8 @@ void TableSet::RefreshTableStatus ()
 
     for (guint t = 0; t < _nb_tables; t++)
     {
-      GtkTreeIter  iter;
-      gchar       *icon;
-      Table       *table = _tables[t];
+      gchar *icon;
+      Table *table = _tables[t];
 
       if (table->_has_error)
       {
@@ -401,25 +383,10 @@ void TableSet::RefreshTableStatus ()
                                                            0, 0);
       }
 
-      if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_from_table_liststore),
-                                         &iter,
-                                         NULL,
-                                         _nb_tables-t-1) == TRUE)
-      {
-        gtk_list_store_set (_from_table_liststore, &iter,
-                            FROM_STATUS_COLUMN, icon,
-                            -1);
-      }
-
-      if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_to_table_liststore),
-                                         &iter,
-                                         NULL,
-                                         _nb_tables-t-1) == TRUE)
-      {
-        gtk_list_store_set (_to_table_liststore, &iter,
-                            TO_STATUS_COLUMN, icon,
-                            -1);
-      }
+      _from_border->SetTableIcon (_nb_tables-t-1,
+                                  icon);
+      _to_border->SetTableIcon (_nb_tables-t-1,
+                                icon);
 
       g_free (icon);
     }
@@ -790,42 +757,22 @@ void TableSet::CreateTree ()
   AddFork (NULL);
 
   {
-    g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
-                                          (void *) on_from_to_table_combobox_changed,
-                                          (Object *) this);
-    gtk_list_store_clear (_from_table_liststore);
-    gtk_list_store_clear (_to_table_liststore);
+    _from_border->Mute ();
+    _to_border->Mute   ();
 
     for (guint t = 0; t < _nb_tables; t++)
     {
-      Table        *table = _tables[t];
-      gchar        *text = table->GetImage ();
-      GtkTreeIter   iter;
+      Table *table = _tables[t];
 
-      gtk_list_store_prepend (_from_table_liststore,
-                              &iter);
-      gtk_list_store_set (_from_table_liststore, &iter,
-                          FROM_STATUS_COLUMN, GTK_STOCK_EXECUTE,
-                          FROM_NAME_COLUMN,   text,
-                          -1);
-
-      gtk_list_store_prepend (_to_table_liststore,
-                              &iter);
-      gtk_list_store_set (_to_table_liststore, &iter,
-                          TO_STATUS_COLUMN, GTK_STOCK_EXECUTE,
-                          TO_NAME_COLUMN,   text,
-                          -1);
-      g_free (text);
+      _from_border->AddTable (table);
+      _to_border->AddTable   (table);
     }
 
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")),
-                              0);
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("to_table_combobox")),
-                              _nb_tables-1);
+    _from_border->SelectTable (0);
+    _to_border->SelectTable   (_nb_tables-1);
 
-    g_signal_connect (_glade->GetWidget ("from_table_combobox"), "changed",
-                      G_CALLBACK (on_from_to_table_combobox_changed),
-                      (Object *) this);
+    _from_border->UnMute ();
+    _to_border->UnMute   ();
   }
 
   if (_tree_root)
@@ -1721,13 +1668,41 @@ void TableSet::OnFromToTableComboboxChanged ()
 
     for (gint t = _nb_tables-from-1; t >= (gint) (_nb_tables-to); t--)
     {
-      g_print ("%s ==>> %d\n", _tables[t]->GetImage (), column);
       _tables[t]->Show (column);
       column++;
     }
   }
 
+  {
+    GtkListStore *liststore = GTK_LIST_STORE (_glade->GetObject ("cutting_count_liststore"));
+
+    gtk_list_store_clear (liststore);
+
+    Table *from_table = _tables[_nb_tables-from-1];
+    for (guint i = 0; i < from_table->GetSize () / 2; i++)
+    {
+      gchar        *text;
+      GtkTreeIter   iter;
+
+      text = g_strdup_printf ("%d %s", i+1, gettext ("cutting"));
+      gtk_list_store_append (liststore,
+                             &iter);
+      gtk_list_store_set (liststore, &iter,
+                          0, text,
+                          -1);
+      g_free (text);
+    }
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")),
+                              0);
+  }
+
   Display ();
+}
+
+// --------------------------------------------------------------------------------
+void TableSet::OnCuttingCountComboboxChanged ()
+{
+  g_print ("coucou\n");
 }
 
 // --------------------------------------------------------------------------------
@@ -2208,6 +2183,16 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
     gdouble canvas_h;
     gdouble global_scale = _print_scale;
     gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+    guint   cutting_count = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")));
+
+#if 0
+    {
+    (table_set->_main_table,
+     data->_fencer_goo_table,
+     data->_table->GetRow (data->_table_index) + 1,
+     data->_table->GetColumn ());
+    }
+#endif
 
     {
       GooCanvasBounds bounds;
@@ -2424,6 +2409,9 @@ void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
 {
   ConfigurePreviewLayout (context);
 
+  g_signal_connect (_glade->GetWidget ("cutting_count_combobox"), "changed",
+                    G_CALLBACK (on_cutting_count_combobox_changed),
+                    (Object *) this);
   if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
   {
     gchar *print_name = GetPrintName ();
@@ -2440,6 +2428,9 @@ void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
 
     gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
   }
+  g_signal_handlers_disconnect_by_func (_glade->GetWidget ("cutting_count_combobox"),
+                                        (void *) on_cutting_count_combobox_changed,
+                                        (Object *) this);
 
   gtk_print_operation_preview_end_preview (preview);
   gtk_widget_hide (_preview_dialog);
@@ -2846,10 +2837,8 @@ void TableSet::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
 
-  gtk_container_add (GTK_CONTAINER (_from_container),
-                     _from_widget);
-  gtk_container_add (GTK_CONTAINER (_to_container),
-                     _to_widget);
+  _from_border->Plug ();
+  _to_border->Plug   ();
 
   SetDndDest (GTK_WIDGET (GetCanvas ()));
   EnableDragAndDrop ();
@@ -2858,16 +2847,9 @@ void TableSet::OnPlugged ()
 // --------------------------------------------------------------------------------
 void TableSet::OnUnPlugged ()
 {
-  if (gtk_widget_get_parent (_from_widget))
-  {
-    gtk_container_remove (GTK_CONTAINER (_from_container),
-                          _from_widget);
-  }
-  if (gtk_widget_get_parent (_to_widget))
-  {
-    gtk_container_remove (GTK_CONTAINER (_to_container),
-                          _to_widget);
-  }
+  _from_border->UnPlug ();
+  _to_border->UnPlug   ();
+
   CanvasModule::OnUnPlugged ();
 }
 
@@ -3298,6 +3280,15 @@ extern "C" G_MODULE_EXPORT void on_from_to_table_combobox_changed (GtkWidget *wi
   TableSet *t = dynamic_cast <TableSet *> (owner);
 
   t->OnFromToTableComboboxChanged ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_cutting_count_combobox_changed (GtkWidget *widget,
+                                                                   Object    *owner)
+{
+  TableSet *t = dynamic_cast <TableSet *> (owner);
+
+  t->OnCuttingCountComboboxChanged ();
 }
 
 // --------------------------------------------------------------------------------

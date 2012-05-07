@@ -25,6 +25,7 @@
 #include "score_collector.hpp"
 #include "table.hpp"
 #include "drop_zone.hpp"
+#include "table_set_border.hpp"
 
 class TableSupervisor;
 
@@ -51,6 +52,8 @@ class TableSet : public CanvasModule
     gboolean HasAttendees ();
 
     void OnFromToTableComboboxChanged ();
+
+    void OnCuttingCountComboboxChanged ();
 
     void OnStuffClicked ();
 
@@ -143,8 +146,6 @@ class TableSet : public CanvasModule
     guint                     _nb_tables;
     guint                     _nb_matchs;
     gint                      _table_to_stuff;
-    GtkListStore             *_from_table_liststore;
-    GtkListStore             *_to_table_liststore;
     GtkTreeStore             *_quick_search_treestore;
     GtkTreeModelFilter       *_quick_search_filter;
     GooCanvasItem            *_main_table;
@@ -161,10 +162,6 @@ class TableSet : public CanvasModule
     GtkWidget                *_print_dialog;
     GtkWidget                *_preview_dialog;
     GtkWidget                *_table_print_dialog;
-    GtkWidget                *_from_container;
-    GtkWidget                *_from_widget;
-    GtkWidget                *_to_container;
-    GtkWidget                *_to_widget;
     gboolean                  _print_full_table;
     gdouble                   _printer_dpi_adaptation;
     gdouble                   _print_scale;
@@ -183,6 +180,8 @@ class TableSet : public CanvasModule
     GtkWidget                *_current_preview_area;
     gboolean                  _is_active;
     GtkPageSetup             *_page_setup;
+    TableSetBorder           *_from_border;
+    TableSetBorder           *_to_border;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;

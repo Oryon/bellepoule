@@ -197,6 +197,8 @@
 		<Unit filename="sources\table.hpp" />
 		<Unit filename="sources\table_set.cpp" />
 		<Unit filename="sources\table_set.hpp" />
+		<Unit filename="sources\table_set_border.cpp" />
+		<Unit filename="sources\table_set_border.hpp" />
 		<Unit filename="sources\table_supervisor.cpp" />
 		<Unit filename="sources\table_supervisor.hpp" />
 		<Unit filename="sources\table_zone.cpp" />
