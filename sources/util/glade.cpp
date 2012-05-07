@@ -77,15 +77,18 @@ Glade::~Glade ()
 // --------------------------------------------------------------------------------
 void Glade::DetachFromParent (GtkWidget *widget)
 {
-  GtkWidget *parent = gtk_widget_get_parent (widget);
-
-  if (parent)
+  if (widget)
   {
-    gtk_container_forall (GTK_CONTAINER (parent),
-                          (GtkCallback) g_object_ref,
-                          NULL);
-    gtk_container_remove (GTK_CONTAINER (parent),
-                          widget);
+    GtkWidget *parent = gtk_widget_get_parent (widget);
+
+    if (parent)
+    {
+      gtk_container_forall (GTK_CONTAINER (parent),
+                            (GtkCallback) g_object_ref,
+                            NULL);
+      gtk_container_remove (GTK_CONTAINER (parent),
+                            widget);
+    }
   }
 }
 

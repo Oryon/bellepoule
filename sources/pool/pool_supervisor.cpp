@@ -811,41 +811,8 @@ void PoolSupervisor::OnToggleSingleClassification (gboolean single_selected)
 }
 
 // --------------------------------------------------------------------------------
-#include "soapScoringSystemProxy.h"
 void PoolSupervisor::OnScoreDeviceClicked ()
 {
-  ScoringSystemProxy  scoring_system;
-  gchar              *server;
-
-  {
-    GtkWidget *entry  = _glade->GetWidget ("referee_url_entry");
-    gchar     *url    = (gchar *) gtk_entry_get_text (GTK_ENTRY (entry));
-
-    server = g_strdup_printf ("%s:8080", url);
-
-    scoring_system.soap_endpoint = server;
-  }
-
-  // Player data
-  {
-    int status;
-
-    if (scoring_system.SetPoolMatchs (111,
-                                      222,
-                                      333,
-                                      444,
-                                      555,
-                                      status) != SOAP_OK)
-    {
-      scoring_system.soap_stream_fault (std::cerr);
-    }
-    else
-    {
-      printf ("=== > SetPoolMatchs\n");
-    }
-  }
-
-  g_free (server);
 }
 
 // --------------------------------------------------------------------------------

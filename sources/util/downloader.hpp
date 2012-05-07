@@ -33,10 +33,14 @@ class Downloader : public Object
 
     typedef gboolean (*Callback) (CallbackData *data);
 
-    Downloader (Callback callback,
-                gpointer user_data);
+    Downloader (const gchar *name,
+                Callback     callback,
+                gpointer     user_data);
 
-    void Start (const gchar *address);
+    void Start (const gchar *address,
+                guint        refresh_period = 0);
+
+    void Kill ();
 
     gchar *GetData ();
 
@@ -46,6 +50,9 @@ class Downloader : public Object
     gchar        *_data;
     size_t        _size;
     gchar        *_address;
+    guint         _period;
+    gboolean      _killed;
+    gchar        *_name;
 
     static size_t AddText (void   *contents,
                            size_t  size,

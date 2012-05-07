@@ -14,11 +14,14 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <unistd.h>
+
 #include "downloader.hpp"
 
 // --------------------------------------------------------------------------------
-Downloader::Downloader (Callback callback,
-                        gpointer user_data)
+Downloader::Downloader (const gchar *name,
+                        Callback     callback,
+                        gpointer     user_data)
 : Object ("Downloader")
 {
   _callback = callback;
@@ -27,6 +30,10 @@ Downloader::Downloader (Callback callback,
 
   _data    = NULL;
   _address = NULL;
+
+  _killed = FALSE;
+
+  _name = g_strdup (name);
 }
 
 // --------------------------------------------------------------------------------
@@ -34,14 +41,19 @@ Downloader::~Downloader ()
 {
   g_free (_data);
   g_free (_address);
+  g_free (_name);
 }
 
 // --------------------------------------------------------------------------------
-void Downloader::Start (const gchar *address)
+void Downloader::Start (const gchar *address,
+                        guint        refresh_period)
 {
   GError *error = NULL;
 
   _address = g_strdup (address);
+  _period  = refresh_period;
+
+  Retain ();
 
   if (!g_thread_create ((GThreadFunc) ThreadFunction,
                         this,
@@ -50,7 +62,14 @@ void Downloader::Start (const gchar *address)
   {
     g_printerr ("Failed to create Downloader thread: %s\n", error->message);
     g_free (error);
+    Release ();
   }
+}
+
+// --------------------------------------------------------------------------------
+void Downloader::Kill ()
+{
+  _killed = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -79,45 +98,58 @@ size_t Downloader::AddText (void       *contents,
 // --------------------------------------------------------------------------------
 gpointer Downloader::ThreadFunction (Downloader *downloader)
 {
-  CURL *curl_handle;
+  while (downloader->_killed == FALSE)
+  {
+    CURL *curl_handle;
 
-  downloader->_data = (char *) g_malloc (1);
-  downloader->_size = 0;
+    downloader->_data = (char *) g_malloc (1);
+    downloader->_size = 0;
 
-  curl_handle = curl_easy_init ();
+    curl_handle = curl_easy_init ();
 
-  curl_easy_setopt (curl_handle,
-                    CURLOPT_URL,
-                    downloader->_address);
+    curl_easy_setopt (curl_handle,
+                      CURLOPT_URL,
+                      downloader->_address);
 
-  curl_easy_setopt (curl_handle,
-                    CURLOPT_WRITEFUNCTION,
-                    AddText);
+    curl_easy_setopt (curl_handle,
+                      CURLOPT_WRITEFUNCTION,
+                      AddText);
 
-  curl_easy_setopt (curl_handle,
-                    CURLOPT_WRITEDATA,
-                    downloader);
+    curl_easy_setopt (curl_handle,
+                      CURLOPT_WRITEDATA,
+                      downloader);
 
-  curl_easy_setopt (curl_handle,
-                    CURLOPT_USERAGENT,
-                    "libcurl-agent/1.0");
+    curl_easy_setopt (curl_handle,
+                      CURLOPT_USERAGENT,
+                      "libcurl-agent/1.0");
 
 #if 0
-  curl_easy_setopt (curl_handle,
-                    CURLOPT_FOLLOWLOCATION,
-                    1);
+    curl_easy_setopt (curl_handle,
+                      CURLOPT_FOLLOWLOCATION,
+                      1);
 
-  curl_easy_setopt (curl_handle,
-                    CURLOPT_MAXREDIRS,
-                    10);
+    curl_easy_setopt (curl_handle,
+                      CURLOPT_MAXREDIRS,
+                      10);
 #endif
 
-  curl_easy_perform (curl_handle);
+    curl_easy_perform (curl_handle);
 
-  curl_easy_cleanup (curl_handle);
+    curl_easy_cleanup (curl_handle);
 
-  g_idle_add ((GSourceFunc) downloader->_callback,
-              &downloader->_callback_data);
+    g_idle_add ((GSourceFunc) downloader->_callback,
+                &downloader->_callback_data);
+
+    if (downloader->_period == 0)
+    {
+      break;
+    }
+
+    Sleep (downloader->_period);
+    g_print ("%s\n", downloader->_name);
+  }
+
+  downloader->Release ();
 
   return NULL;
 }
