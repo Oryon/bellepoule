@@ -170,6 +170,15 @@ Source: "C:\MinGW\bin\librtmp.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libssh2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libssl32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "C:\MinGW\bin\libxml2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libmicrohttpd-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgnutls-28.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgmp.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libintl-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libiconv-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\pthreadGC2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgcrypt-11.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libgpg-error-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "C:\MinGW\bin\libplibc-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
 ; theme
 Source: "C:\MinGW\etc\gtk-2.0\gtkrc"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion
@@ -255,3 +264,5 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
+

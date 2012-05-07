@@ -176,7 +176,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkNotebook" id="notebook1">
+          <object class="GtkNotebook" id="properties_notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
@@ -188,7 +188,7 @@
                 <property name="left_padding">12</property>
                 <property name="right_padding">12</property>
                 <child>
-                  <object class="GtkTable" id="table1">
+                  <object class="GtkTable" id="frame_table">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="n_rows">2</property>
@@ -788,7 +788,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame" id="frame1">
+                      <object class="GtkFrame" id="score_frame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label_xalign">0</property>
