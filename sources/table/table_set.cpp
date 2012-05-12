@@ -78,7 +78,6 @@ TableSet::TableSet (TableSupervisor *supervisor,
   _is_over        = FALSE;
   _first_place    = first_place;
   _loaded         = FALSE;
-  _print_scale    = 1.0;
   _is_active      = FALSE;
 
   _status_cbk_data = NULL;
@@ -376,9 +375,11 @@ void TableSet::RefreshTableStatus ()
           && table->IsDisplayed ()
           && (table->GetSize () > 1))
       {
+#if 0
         table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
                                                            icon,
                                                            0, 0);
+#endif
       }
 
       _from_border->SetTableIcon (_nb_tables-t-1,
@@ -430,6 +431,7 @@ void TableSet::Display ()
 
       if (table->IsDisplayed ())
       {
+#if 0
         table->_header_item = goo_canvas_table_new (_main_table,
                                                     NULL);
 
@@ -468,6 +470,7 @@ void TableSet::Display ()
                             table->GetColumn ());
 
         Canvas::SetTableItemAttribute (table->_header_item, "x-align", 0.5);
+#endif
       }
     }
 
@@ -1774,7 +1777,7 @@ void TableSet::AddReferee (Match *match,
   Contest   *contest = _supervisor->GetContest ();
   Player    *referee = contest->GetRefereeFromRef (referee_ref);
   DropZone  *zone    = (DropZone *) match->GetPtrData (this,
-                                                      "drop_zone");
+                                                       "drop_zone");
 
   zone->AddObject (referee);
 }
@@ -2170,53 +2173,64 @@ void TableSet::OnSearchMatch ()
 }
 
 // --------------------------------------------------------------------------------
+void TableSet::GetMatchBounds (Match           *match,
+                               GooCanvasBounds *bounds)
+{
+  GNode    *node = (GNode *) match->GetPtrData (this, "node");
+  gdouble   y1;
+  NodeData *data;
+
+  node = g_node_first_child  (node);
+  data = (NodeData *) node->data;
+  goo_canvas_item_get_bounds (data->_fencer_goo_table,
+                              bounds);
+  y1 = bounds->y1;
+
+  node = g_node_next_sibling (node);
+  data = (NodeData *) node->data;
+  goo_canvas_item_get_bounds (data->_fencer_goo_table,
+                              bounds);
+  bounds->y1 = y1;
+}
+
+// --------------------------------------------------------------------------------
 void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context)
 {
   gdouble paper_w = gtk_print_context_get_width  (context);
   gdouble paper_h = gtk_print_context_get_height (context);
 
-  if (_print_full_table)
+  if (_print_session._full_table)
   {
-    gdouble canvas_x;
-    gdouble canvas_y;
-    gdouble canvas_w;
-    gdouble canvas_h;
-    gdouble global_scale = _print_scale;
-    gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
-
-    {
-      guint     cutting_count = 1 << gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")));
-      Table    *from_table    = _from_border->GetSelectedTable ();
-      Match    *match         = from_table->GetMatch (from_table->GetSize () / cutting_count / 2 - 1);
-      GNode    *node          = (GNode *) match->GetPtrData (this, "node");
-      NodeData *data          = (NodeData *) node->data;
+    _print_session._cutting_count = 1 << gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")));
 
     {
       GooCanvasBounds bounds;
 
-      goo_canvas_item_get_bounds (data->_fencer_goo_table,
-                                  &bounds);
-      g_print ("%d,%d %dx%d\n", bounds.x1, bounds.y1, bounds.x2-bounds.x1, bounds.y2-bounds.y1);
-    }
+      if (_print_session._cutting_count > 1)
+      {
+        GooCanvasBounds top_match_bounds;
+        GooCanvasBounds bottom_match_bounds;
+        Table *from_table   = _from_border->GetSelectedTable ();
+        Match *top_match    = from_table->GetMatch (0);
+        Match *bottom_match = from_table->GetMatch (from_table->GetSize () / _print_session._cutting_count / 2 - 1);
 
-#if 0
-    (table_set->_main_table,
-     data->_fencer_goo_table,
-     data->_table->GetRow (data->_table_index) + 1,
-     data->_table->GetColumn ());
-#endif
-    }
+        GetMatchBounds (top_match,
+                        &top_match_bounds);
+        GetMatchBounds (bottom_match,
+                        &bottom_match_bounds);
 
-    {
-      GooCanvasBounds bounds;
+        bounds    = top_match_bounds;
+        bounds.y2 = bottom_match_bounds.y2;
+      }
+      else
+      {
+        goo_canvas_item_get_bounds (GetRootItem (),
+                                    &bounds);
+      }
 
-      goo_canvas_item_get_bounds (GetRootItem (),
-                                  &bounds);
-      canvas_x = bounds.x1;
-      canvas_y = bounds.y1;
-      canvas_w = bounds.x2 - bounds.x1;
-      canvas_h = bounds.y2 - bounds.y1;
+      _print_session._cutting_w = bounds.x2 - bounds.x1;
+      _print_session._cutting_h = bounds.y2 - bounds.y1;
     }
 
     {
@@ -2228,22 +2242,20 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                     NULL);
       printer_dpi = gtk_print_context_get_dpi_x (context);
 
-      _printer_dpi_adaptation = printer_dpi/canvas_dpi;
+      _print_session.SetResolutions (canvas_dpi,
+                                     printer_dpi);
     }
 
-    global_scale *= _printer_dpi_adaptation;
-
-    _print_nb_x_pages = 1;
-    _print_nb_y_pages = 1;
-    if (   (canvas_w * global_scale > paper_w)
-        || (canvas_h * global_scale > paper_h))
     {
-      _print_nb_x_pages += (guint) (canvas_w * global_scale / paper_w);
-      _print_nb_y_pages += (guint) ((canvas_h * global_scale + header_h) / paper_h);
+      gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
+
+      _print_session.SetPaperSize (paper_w,
+                                   paper_h,
+                                   header_h);
     }
 
     gtk_print_operation_set_n_pages (operation,
-                                     _print_nb_x_pages * _print_nb_y_pages);
+                                     _print_session._cutting_count * (_print_session._nb_x_pages*_print_session._nb_y_pages));
   }
   else
   {
@@ -2295,7 +2307,7 @@ void TableSet::OnPreviewClicked ()
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
   {
-    _print_full_table = TRUE;
+    _print_session._full_table = TRUE;
   }
   else
   {
@@ -2304,7 +2316,7 @@ void TableSet::OnPreviewClicked ()
 
     LookForMatchToPrint (NULL,
                          all_sheet);
-    _print_full_table = FALSE;
+    _print_session._full_table = FALSE;
   }
 
   {
@@ -2382,13 +2394,13 @@ void TableSet::ConfigurePreviewLayout (GtkPrintContext *context)
                      preview_layout);
 
   g_object_set (G_OBJECT (preview_layout),
-                "width",  _print_nb_x_pages*(drawing_w+spacing),
-                "height", _print_nb_y_pages*(drawing_h+spacing),
+                "width",  _print_session._nb_x_pages * _print_session._cutting_count * (drawing_w+spacing),
+                "height", _print_session._nb_y_pages * _print_session._cutting_count * (drawing_h+spacing),
                 NULL);
 
-  for (guint x = 0; x < _print_nb_x_pages; x++)
+  for (guint x = 0; x < _print_session._nb_x_pages; x++)
   {
-    for (guint y = 0; y < _print_nb_y_pages; y++)
+    for (guint y = 0; y < _print_session._nb_y_pages * _print_session._cutting_count; y++)
     {
       GtkWidget *drawing_area = gtk_drawing_area_new ();
       GdkColor   bg_color;
@@ -2407,7 +2419,7 @@ void TableSet::ConfigurePreviewLayout (GtkPrintContext *context)
                       x*(drawing_w+spacing),
                       y*(drawing_h+spacing));
 
-      g_object_set_data (G_OBJECT (drawing_area), "page_number", (void *) (y*_print_nb_x_pages + (x+1)));
+      g_object_set_data (G_OBJECT (drawing_area), "page_number", (void *) (y*_print_session._nb_x_pages + (x+1)));
       g_signal_connect (drawing_area, "expose_event",
                         G_CALLBACK (on_preview_expose),
                         this);
@@ -2481,7 +2493,8 @@ void TableSet::OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
     drawing_dpi = 200.0 * canvas_dpi / paper_w;
   }
 
-  _printer_dpi_adaptation = drawing_dpi/canvas_dpi;
+  _print_session.SetResolutions (canvas_dpi,
+                                 drawing_dpi);
 
   gtk_print_context_set_cairo_context (context,
                                        cr,
@@ -2496,20 +2509,16 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                            GtkPrintContext   *context,
                            gint               page_nr)
 {
-  gdouble paper_w   = gtk_print_context_get_width  (context);
-  gdouble paper_h   = gtk_print_context_get_height (context);
-  Module *container = dynamic_cast <Module *> (_supervisor);
+  gdouble  paper_w   = gtk_print_context_get_width  (context);
+  gdouble  paper_h   = gtk_print_context_get_height (context);
+  cairo_t *cr        = gtk_print_context_get_cairo_context (context);
+  Module  *container = dynamic_cast <Module *> (_supervisor);
 
-  if (_print_full_table)
+  if (_print_session._full_table)
   {
-    cairo_t         *cr           = gtk_print_context_get_cairo_context (context);
-    guint            x_page       = page_nr % _print_nb_x_pages;
-    guint            y_page       = page_nr / _print_nb_x_pages;
-    gdouble          header_h     = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
-    gdouble          global_scale = _printer_dpi_adaptation * _print_scale;
-    GooCanvasBounds  bounds;
+    _print_session.ProcessCurrentPage (page_nr);
 
-    if (y_page == 0)
+    if (_print_session.CurrentPageHasHeader ())
     {
       container->DrawContainerPage (operation,
                                     context,
@@ -2517,44 +2526,24 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
     }
 
     cairo_save (cr);
-
-    cairo_scale (cr,
-                 global_scale,
-                 global_scale);
-
-    bounds.x1 = paper_w*(x_page)   / global_scale;
-    bounds.y1 = paper_h*(y_page)   / global_scale;
-    bounds.x2 = paper_w*(x_page+1) / global_scale;
-    bounds.y2 = paper_h*(y_page+1) / global_scale;
-
-    if (y_page == 0)
     {
+      cairo_scale (cr,
+                   _print_session.GetGlobalScale (),
+                   _print_session.GetGlobalScale ());
+
       cairo_translate (cr,
-                       -bounds.x1,
-                       header_h/global_scale);
+                       _print_session.GetPaperXShiftForCurrentPage (),
+                       _print_session.GetPaperYShiftForCurrentPage ());
 
-      bounds.y2 -= header_h/global_scale;
+      goo_canvas_render (GetCanvas (),
+                         cr,
+                         _print_session.GetCanvasBoundsForCurrentPage (),
+                         1.0);
     }
-    else
-    {
-      cairo_translate (cr,
-                       -bounds.x1,
-                       (header_h - paper_h*(y_page)) / global_scale);
-
-      bounds.y1 -= header_h/global_scale;
-      bounds.y2 -= header_h/global_scale;
-    }
-
-    goo_canvas_render (GetCanvas (),
-                       cr,
-                       &bounds,
-                       1.0);
-
     cairo_restore (cr);
   }
   else
   {
-    cairo_t   *cr      = gtk_print_context_get_cairo_context (context);
     GooCanvas *canvas  = Canvas::CreatePrinterCanvas (context);
     GSList    *current_match;
 
@@ -2877,7 +2866,7 @@ void TableSet::OnPrint ()
 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
-      _print_full_table = TRUE;
+      _print_session._full_table = TRUE;
 
       Print (print_name,
              _page_setup);
@@ -2889,7 +2878,7 @@ void TableSet::OnPrint ()
 
       LookForMatchToPrint (NULL,
                            all_sheet);
-      _print_full_table = FALSE;
+      _print_session._full_table = FALSE;
       Print (print_name);
     }
     g_free (print_name);
@@ -2919,7 +2908,7 @@ gboolean TableSet::OnPrintTable (GooCanvasItem  *item,
 
     table_set->LookForMatchToPrint (table_to_print,
                                     all_sheet);
-    table_set->_print_full_table = FALSE;
+    table_set->_print_session._full_table = FALSE;
     table_set->Print (print_name);
     g_free (print_name);
   }
@@ -2942,7 +2931,7 @@ gboolean TableSet::OnPrintMatch (GooCanvasItem  *item,
 
   table_set->_match_to_print = g_slist_prepend (table_set->_match_to_print,
                                                 g_object_get_data (G_OBJECT (item), "match_to_print"));
-  table_set->_print_full_table = FALSE;
+  table_set->_print_session._full_table = FALSE;
   table_set->Print (print_name);
   g_free (print_name);
 
@@ -3101,7 +3090,7 @@ void TableSet::on_status_changed (GtkComboBox *combo_box,
 // --------------------------------------------------------------------------------
 void TableSet::OnPrinScaleChanged (gdouble value)
 {
-  _print_scale = value / 100.0;
+  _print_session.SetScale (value / 100.0);
 
   OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
                 (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));

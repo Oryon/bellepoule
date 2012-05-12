@@ -22,7 +22,6 @@
 #include <libxml/xpath.h>
 
 #include "green_swapper.hpp"
-#include "genetic_swapper.hpp"
 #include "contest.hpp"
 #include "pool_match_order.hpp"
 

@@ -170,6 +170,8 @@
 		</Unit>
 		<Unit filename="sources\table\table.cpp" />
 		<Unit filename="sources\table\table.hpp" />
+		<Unit filename="sources\table\table_print_session.cpp" />
+		<Unit filename="sources\table\table_print_session.hpp" />
 		<Unit filename="sources\table\table_set.cpp" />
 		<Unit filename="sources\table\table_set.hpp" />
 		<Unit filename="sources\table\table_set_border.cpp" />
