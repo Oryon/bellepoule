@@ -5,5 +5,6 @@ es;Español
 fr;Français
 it;Italiano
 ko;한국어
+pt_BR;Português
 nl;Nederlands
 ru;Русский

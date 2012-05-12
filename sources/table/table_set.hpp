@@ -26,6 +26,7 @@
 #include "table.hpp"
 #include "drop_zone.hpp"
 #include "table_set_border.hpp"
+#include "table_print_session.hpp"
 
 class TableSupervisor;
 
@@ -162,11 +163,7 @@ class TableSet : public CanvasModule
     GtkWidget                *_print_dialog;
     GtkWidget                *_preview_dialog;
     GtkWidget                *_table_print_dialog;
-    gboolean                  _print_full_table;
-    gdouble                   _printer_dpi_adaptation;
-    gdouble                   _print_scale;
-    guint                     _print_nb_x_pages;
-    guint                     _print_nb_y_pages;
+    TablePrintSession         _print_session;
     GSList                   *_attendees;
     GSList                   *_withdrawals;
     gboolean                  _locked;
@@ -323,6 +320,9 @@ class TableSet : public CanvasModule
 
     gboolean ObjectIsDropable (Object   *floating_object,
                                DropZone *in_zone);
+
+    void GetMatchBounds (Match           *match,
+                         GooCanvasBounds *bounds);
 };
 
 #endif
