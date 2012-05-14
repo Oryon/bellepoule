@@ -100,13 +100,13 @@ gdouble TablePrintSession::GetPaperXShiftForCurrentPage ()
 // --------------------------------------------------------------------------------
 gdouble TablePrintSession::GetPaperYShiftForCurrentPage ()
 {
-  gdouble shift = 0.0;
+  gdouble shift_y = 0.0;
 
-  shift -= (_current_cutting * _nb_y_pages * _cutting_h) - (_current_cutting * _cutting_h);
-  shift += _header_h_on_canvas;
-  shift -= _cutting_y_page * _page_h;
+  shift_y -= _current_cutting * _cutting_h;
+  shift_y += _header_h_on_canvas;
+  shift_y -= _cutting_y_page * _page_h;
 
-  return shift;
+  return shift_y;
 }
 
 // --------------------------------------------------------------------------------
@@ -162,8 +162,6 @@ void TablePrintSession::ProcessCurrentPage (guint page)
       }
     }
   }
-
-  //Dump ();
 }
 
 // --------------------------------------------------------------------------------

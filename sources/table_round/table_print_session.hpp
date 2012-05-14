@@ -27,6 +27,8 @@ class TablePrintSession
 
     ~TablePrintSession ();
 
+    void Dump ();
+
     void SetScale (gdouble scale);
 
     void SetResolutions (gdouble source_resolution,
@@ -75,8 +77,6 @@ class TablePrintSession
     guint           _cutting_x_page;
     guint           _cutting_y_page;
     guint           _current_cutting;
-
-    void Dump ();
 };
 
 #endif
