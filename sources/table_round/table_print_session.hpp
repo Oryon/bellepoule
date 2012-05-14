@@ -27,6 +27,8 @@ class TablePrintSession
 
     ~TablePrintSession ();
 
+    void Dump ();
+
     void SetScale (gdouble scale);
 
     void SetResolutions (gdouble source_resolution,
@@ -37,6 +39,11 @@ class TablePrintSession
                        gdouble header_h_on_paper);
 
     gdouble GetGlobalScale ();
+
+    void SetCuttingBounds (guint            cutting,
+                           GooCanvasBounds *bounds);
+
+    void Begin (guint cutting_count);
 
   public:
     void ProcessCurrentPage (guint page);
@@ -51,16 +58,13 @@ class TablePrintSession
 
   public:
     gboolean _full_table;
-
     guint    _cutting_count;
-
     guint    _nb_x_pages;
     guint    _nb_y_pages;
 
-    gdouble  _cutting_w;
-    gdouble  _cutting_h;
-
   private:
+    GooCanvasBounds *_bounds_table;
+
     gdouble  _user_scale;
     gdouble  _global_scale;
     gdouble  _source_resolution;
@@ -70,13 +74,14 @@ class TablePrintSession
     gdouble  _page_w;
     gdouble  _page_h;
 
+    gdouble  _cutting_w;
+    gdouble  _cutting_h;
+
     gboolean        _current_page_has_header;
     GooCanvasBounds _canvas_bounds;
     guint           _cutting_x_page;
     guint           _cutting_y_page;
     guint           _current_cutting;
-
-    void Dump ();
 };
 
 #endif

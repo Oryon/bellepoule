@@ -19,6 +19,8 @@
 // --------------------------------------------------------------------------------
 TablePrintSession::TablePrintSession ()
 {
+  _bounds_table = NULL;
+
   _target_resolution = 1.0;
   _source_resolution = 1.0;
   SetScale (1.0);
@@ -27,6 +29,17 @@ TablePrintSession::TablePrintSession ()
 // --------------------------------------------------------------------------------
 TablePrintSession::~TablePrintSession ()
 {
+  g_free (_bounds_table);
+}
+
+// --------------------------------------------------------------------------------
+void TablePrintSession::Begin (guint cutting_count)
+{
+  _cutting_count = cutting_count;
+
+  g_free (_bounds_table);
+  _bounds_table = g_new (GooCanvasBounds,
+                         _cutting_count);
 }
 
 // --------------------------------------------------------------------------------
@@ -46,6 +59,19 @@ void TablePrintSession::SetScale (gdouble scale)
 
   _user_scale   = scale;
   _global_scale = dpi_adaptation * _user_scale;
+}
+
+// --------------------------------------------------------------------------------
+void TablePrintSession::SetCuttingBounds (guint            cutting,
+                                          GooCanvasBounds *bounds)
+{
+  if (cutting < _cutting_count)
+  {
+    _bounds_table[cutting] = *bounds;
+  }
+
+  _cutting_w = bounds->x2 - bounds->x1;
+  _cutting_h = bounds->y2 - bounds->y1;
 }
 
 // --------------------------------------------------------------------------------
@@ -100,13 +126,13 @@ gdouble TablePrintSession::GetPaperXShiftForCurrentPage ()
 // --------------------------------------------------------------------------------
 gdouble TablePrintSession::GetPaperYShiftForCurrentPage ()
 {
-  gdouble shift = 0.0;
+  gdouble shift_y = 0.0;
 
-  shift -= (_current_cutting * _nb_y_pages * _cutting_h) - (_current_cutting * _cutting_h);
-  shift += _header_h_on_canvas;
-  shift -= _cutting_y_page * _page_h;
+  shift_y -= _current_cutting * _cutting_h;
+  shift_y += _header_h_on_canvas;
+  shift_y -= _cutting_y_page * _page_h;
 
-  return shift;
+  return shift_y;
 }
 
 // --------------------------------------------------------------------------------
@@ -126,12 +152,22 @@ void TablePrintSession::ProcessCurrentPage (guint page)
   {
     _canvas_bounds.x1 = _page_w * (_cutting_x_page);
     _canvas_bounds.x2 = _page_w * (_cutting_x_page+1);
+
+    // Clipping
+    {
+      gdouble total_page_w = (_cutting_x_page+1) * _page_w;
+
+      if (total_page_w > _cutting_w)
+      {
+        _canvas_bounds.x2 -= total_page_w - _cutting_w;
+      }
+    }
   }
 
   // Vertical adjustement
   {
     // Move to the current cutting area
-    _canvas_bounds.y1 = _cutting_h * _current_cutting;
+    _canvas_bounds.y1 = _bounds_table[_current_cutting].y1;
 
     // Move to the current position in the current cutting
     if (_cutting_h + _header_h_on_canvas <= _page_h)
@@ -151,6 +187,7 @@ void TablePrintSession::ProcessCurrentPage (guint page)
       {
         _canvas_bounds.y1 -= _header_h_on_canvas;
 
+        // Clipping
         {
           gdouble total_page_h = (_cutting_y_page+1) * _page_h;
 
@@ -162,8 +199,6 @@ void TablePrintSession::ProcessCurrentPage (guint page)
       }
     }
   }
-
-  //Dump ();
 }
 
 // --------------------------------------------------------------------------------
