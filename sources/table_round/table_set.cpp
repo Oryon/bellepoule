@@ -375,11 +375,9 @@ void TableSet::RefreshTableStatus ()
           && table->IsDisplayed ()
           && (table->GetSize () > 1))
       {
-#if 0
         table->_status_item = Canvas::PutStockIconInTable (table->_header_item,
                                                            icon,
                                                            0, 0);
-#endif
       }
 
       _from_border->SetTableIcon (_nb_tables-t-1,
@@ -431,7 +429,6 @@ void TableSet::Display ()
 
       if (table->IsDisplayed ())
       {
-#if 0
         table->_header_item = goo_canvas_table_new (_main_table,
                                                     NULL);
 
@@ -470,7 +467,6 @@ void TableSet::Display ()
                             table->GetColumn ());
 
         Canvas::SetTableItemAttribute (table->_header_item, "x-align", 0.5);
-#endif
       }
     }
 
@@ -2202,37 +2198,6 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
 
   if (_print_session._full_table)
   {
-    _print_session._cutting_count = 1 << gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")));
-
-    {
-      GooCanvasBounds bounds;
-
-      if (_print_session._cutting_count > 1)
-      {
-        GooCanvasBounds top_match_bounds;
-        GooCanvasBounds bottom_match_bounds;
-        Table *from_table   = _from_border->GetSelectedTable ();
-        Match *top_match    = from_table->GetMatch (0);
-        Match *bottom_match = from_table->GetMatch (from_table->GetSize () / _print_session._cutting_count / 2 - 1);
-
-        GetMatchBounds (top_match,
-                        &top_match_bounds);
-        GetMatchBounds (bottom_match,
-                        &bottom_match_bounds);
-
-        bounds    = top_match_bounds;
-        bounds.y2 = bottom_match_bounds.y2;
-      }
-      else
-      {
-        goo_canvas_item_get_bounds (GetRootItem (),
-                                    &bounds);
-      }
-
-      _print_session._cutting_w = bounds.x2 - bounds.x1;
-      _print_session._cutting_h = bounds.y2 - bounds.y1;
-    }
-
     {
       gdouble canvas_dpi;
       gdouble printer_dpi;
@@ -2244,6 +2209,53 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
 
       _print_session.SetResolutions (canvas_dpi,
                                      printer_dpi);
+    }
+
+    _print_session.Begin (1 << gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox"))));
+
+    {
+      GooCanvasBounds  NE_match_bounds;
+      Table           *from_table = _from_border->GetSelectedTable ();
+      guint            nb_matchs  = from_table->GetSize () / _print_session._cutting_count / 2;
+      Table           *to_table   = _to_border->GetSelectedTable ();
+
+      {
+        Match *NE_match;
+
+        while (to_table && (to_table->GetSize () < _print_session._cutting_count))
+        {
+          if (to_table->GetSize () >= from_table->GetSize ())
+          {
+            break;
+          }
+          to_table = to_table->GetLeftTable ();
+        }
+
+        NE_match = to_table->GetMatch (0);
+        GetMatchBounds (NE_match,
+                        &NE_match_bounds);
+      }
+
+      for (guint i = 0; i < _print_session._cutting_count; i++)
+      {
+        GooCanvasBounds  NW_match_bounds;
+        GooCanvasBounds  SW_match_bounds;
+        GooCanvasBounds  bounds;
+        Match           *NW_match    = from_table->GetMatch (i * nb_matchs);
+        Match           *SW_match = from_table->GetMatch ((i+1) * nb_matchs - 1);
+
+        GetMatchBounds (NW_match,
+                        &NW_match_bounds);
+        GetMatchBounds (SW_match,
+                        &SW_match_bounds);
+
+        bounds    = NW_match_bounds;
+        bounds.x2 = NE_match_bounds.x2;
+        bounds.y2 = SW_match_bounds.y2;
+
+        _print_session.SetCuttingBounds (i,
+                                         &bounds);
+      }
     }
 
     {
