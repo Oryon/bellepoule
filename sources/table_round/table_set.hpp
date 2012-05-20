@@ -321,8 +321,9 @@ class TableSet : public CanvasModule
     gboolean ObjectIsDropable (Object   *floating_object,
                                DropZone *in_zone);
 
-    void GetMatchBounds (Match           *match,
-                         GooCanvasBounds *bounds);
+    void GetBounds (GNode           *top,
+                    GNode           *bottom,
+                    GooCanvasBounds *bounds);
 };
 
 #endif

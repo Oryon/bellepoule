@@ -39,6 +39,8 @@ Table::Table (TableSet *table_set,
   _defeated_table_set = NULL;
   _is_displayed       = TRUE;
   _loaded             = FALSE;
+  _node_table         = g_new (GNode *, _size);
+  _free_node_index    = 0;
 
   _match_list = NULL;
 }
@@ -47,6 +49,7 @@ Table::Table (TableSet *table_set,
 Table::~Table ()
 {
   g_slist_free (_match_list);
+  g_free (_node_table);
 }
 
 // --------------------------------------------------------------------------------
@@ -169,10 +172,26 @@ void Table::ManageMatch (Match *match)
 }
 
 // --------------------------------------------------------------------------------
-Match *Table::GetMatch (guint number)
+Match *Table::GetMatch (guint index)
 {
   return (Match *) g_slist_nth_data (_match_list,
-                                     number);
+                                     index);
+}
+
+// --------------------------------------------------------------------------------
+void Table::AddNode (GNode *node)
+{
+  if (_free_node_index < _size)
+  {
+    _node_table[_free_node_index] = node;
+    _free_node_index++;
+  }
+}
+
+// --------------------------------------------------------------------------------
+GNode *Table::GetNode (guint index)
+{
+  return _node_table[index];
 }
 
 // --------------------------------------------------------------------------------
