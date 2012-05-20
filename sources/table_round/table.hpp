@@ -63,7 +63,11 @@ class Table : public Object
 
     void DropMatch (Match *match);
 
-    Match *GetMatch (guint number);
+    Match *GetMatch (guint index);
+
+    void AddNode (GNode *node);
+
+    GNode *GetNode (guint index);
 
     guint GetLoosers (GSList **loosers,
                       GSList **withdrawals,
@@ -85,6 +89,8 @@ class Table : public Object
     Table    *_right_table;
     GSList   *_match_list;
     TableSet *_table_set;
+    GNode    **_node_table;
+    guint     _free_node_index;
 
     ~Table ();
 

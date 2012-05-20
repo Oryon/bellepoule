@@ -1300,6 +1300,7 @@ void TableSet::AddFork (GNode *to)
     data->_table                = _tables[0];
     data->_table_index          = 0;
     node = g_node_new (data);
+    data->_table->AddNode (node);
     _tree_root = node;
   }
   else
@@ -1323,7 +1324,9 @@ void TableSet::AddFork (GNode *to)
     {
       data->_expected_winner_rank = (data->_table->GetSize () + 1) - to_data->_expected_winner_rank;
     }
+
     node = g_node_append_data (to, data);
+    data->_table->AddNode (node);
   }
 
   data->_fencer_goo_table = NULL;
@@ -2169,21 +2172,27 @@ void TableSet::OnSearchMatch ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::GetMatchBounds (Match           *match,
-                               GooCanvasBounds *bounds)
+void TableSet::GetBounds (GNode           *top,
+                          GNode           *bottom,
+                          GooCanvasBounds *bounds)
 {
-  GNode    *node = (GNode *) match->GetPtrData (this, "node");
   gdouble   y1;
   NodeData *data;
 
-  node = g_node_first_child  (node);
-  data = (NodeData *) node->data;
+  data = (NodeData *) top->data;
+  if (data->_fencer_goo_table == NULL)
+  {
+    data = (NodeData *) bottom->data;
+  }
   goo_canvas_item_get_bounds (data->_fencer_goo_table,
                               bounds);
   y1 = bounds->y1;
 
-  node = g_node_next_sibling (node);
-  data = (NodeData *) node->data;
+  data = (NodeData *) bottom->data;
+  if (data->_fencer_goo_table == NULL)
+  {
+    data = (NodeData *) top->data;
+  }
   goo_canvas_item_get_bounds (data->_fencer_goo_table,
                               bounds);
   bounds->y1 = y1;
@@ -2214,13 +2223,20 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
     _print_session.Begin (1 << gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox"))));
 
     {
-      GooCanvasBounds  NE_match_bounds;
+      GooCanvasBounds  E_node_bounds;
       Table           *from_table = _from_border->GetSelectedTable ();
-      guint            nb_matchs  = from_table->GetSize () / _print_session._cutting_count / 2;
+      guint            nb_row     = from_table->GetSize () / _print_session._cutting_count;
       Table           *to_table   = _to_border->GetSelectedTable ();
 
+      if (to_table->GetSize () > from_table->GetSize ())
       {
-        Match *NE_match;
+        gtk_print_operation_set_n_pages (operation,
+                                         0);
+        return;
+      }
+
+      {
+        GNode *E_node;
 
         while (to_table && (to_table->GetSize () < _print_session._cutting_count))
         {
@@ -2231,27 +2247,26 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
           to_table = to_table->GetLeftTable ();
         }
 
-        NE_match = to_table->GetMatch (0);
-        GetMatchBounds (NE_match,
-                        &NE_match_bounds);
+        E_node = to_table->GetNode (0);
+        GetBounds (E_node,
+                   E_node,
+                   &E_node_bounds);
       }
 
       for (guint i = 0; i < _print_session._cutting_count; i++)
       {
-        GooCanvasBounds  NW_match_bounds;
-        GooCanvasBounds  SW_match_bounds;
+        GooCanvasBounds  W_node_bounds;
         GooCanvasBounds  bounds;
-        Match           *NW_match    = from_table->GetMatch (i * nb_matchs);
-        Match           *SW_match = from_table->GetMatch ((i+1) * nb_matchs - 1);
+        GNode           *NW_node = from_table->GetNode (i * nb_row);
+        GNode           *SW_node = from_table->GetNode ((i+1) * nb_row - 1);
 
-        GetMatchBounds (NW_match,
-                        &NW_match_bounds);
-        GetMatchBounds (SW_match,
-                        &SW_match_bounds);
+        GetBounds (NW_node,
+                   SW_node,
+                   &W_node_bounds);
 
-        bounds    = NW_match_bounds;
-        bounds.x2 = NE_match_bounds.x2;
-        bounds.y2 = SW_match_bounds.y2;
+        bounds    = W_node_bounds;
+        bounds.x2 = E_node_bounds.x2;
+        bounds.y2 = W_node_bounds.y2;
 
         _print_session.SetCuttingBounds (i,
                                          &bounds);

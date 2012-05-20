@@ -128,7 +128,7 @@ gdouble TablePrintSession::GetPaperYShiftForCurrentPage ()
 {
   gdouble shift_y = 0.0;
 
-  shift_y -= _current_cutting * _cutting_h;
+  shift_y -= _bounds_table[_current_cutting].y1;
   shift_y += _header_h_on_canvas;
   shift_y -= _cutting_y_page * _page_h;
 
@@ -172,7 +172,7 @@ void TablePrintSession::ProcessCurrentPage (guint page)
     // Move to the current position in the current cutting
     if (_cutting_h + _header_h_on_canvas <= _page_h)
     {
-      _canvas_bounds.y2 = _canvas_bounds.y1 + _cutting_h;
+      _canvas_bounds.y2 = _bounds_table[_current_cutting].y2;
     }
     else
     {
