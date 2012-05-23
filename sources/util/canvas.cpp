@@ -181,9 +181,9 @@ GooCanvas *Canvas::CreatePrinterCanvas (GtkPrintContext *context)
   GooCanvas *canvas = GOO_CANVAS (goo_canvas_new ());
 
   g_object_set (G_OBJECT (canvas),
-                "resolution-x", gtk_print_context_get_dpi_x (context),
-                "resolution-y", gtk_print_context_get_dpi_y (context),
-                "automatic-bounds", TRUE,
+                "resolution-x",       gtk_print_context_get_dpi_x (context),
+                "resolution-y",       gtk_print_context_get_dpi_y (context),
+                "automatic-bounds",   TRUE,
                 "bounds-from-origin", FALSE,
                 NULL);
 
@@ -378,5 +378,16 @@ void Canvas::Align (GooCanvasItem *item,
     goo_canvas_item_translate (item,
                                0,
                                dy);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Canvas::NormalyzeDecimalNotation (gchar *string)
+{
+  gchar *decimal = strchr (string, ',');
+
+  if (decimal)
+  {
+    *decimal = '.';
   }
 }

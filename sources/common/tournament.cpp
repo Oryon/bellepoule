@@ -27,6 +27,7 @@
 #endif
 
 #include "version.h"
+#include "canvas.hpp"
 #include "contest.hpp"
 #if FAKE_XML
 #include "fake_xml.h"
@@ -285,6 +286,191 @@ void Tournament::Init ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnBeginPrint (GtkPrintOperation *operation,
+                               GtkPrintContext   *context)
+{
+  guint list_length = g_slist_length (_referee_list);
+  guint n           = list_length / (NB_TICKET_Y_PER_SHEET * NB_TICKET_X_PER_SHEET);
+
+  if (list_length % (NB_TICKET_Y_PER_SHEET * NB_TICKET_X_PER_SHEET))
+  {
+    n++;
+  }
+
+  gtk_print_operation_set_n_pages (operation,
+                                   n);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnDrawPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr)
+{
+  gdouble        paper_w  = gtk_print_context_get_width  (context);
+  gdouble        paper_h  = gtk_print_context_get_height (context);
+  cairo_t       *cr       = gtk_print_context_get_cairo_context (context);
+  GooCanvas     *canvas   = Canvas::CreatePrinterCanvas (context);
+  gdouble        spacing  = 2.0;
+  gdouble        ticket_w = (100.0/NB_TICKET_X_PER_SHEET) - (NB_TICKET_X_PER_SHEET-1)*spacing;
+  gdouble        ticket_h = (100.0/NB_TICKET_Y_PER_SHEET) * paper_h/paper_w - (NB_TICKET_Y_PER_SHEET-1)*spacing;
+  gdouble        border_w = 0.7;
+  GooCanvasItem *main_table;
+  GSList        *current;
+
+  cairo_save (cr);
+
+  main_table = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
+                                     "row-spacing",         2.0,
+                                     "column-spacing",      2.0,
+                                     "homogeneous-columns", TRUE,
+                                     "homogeneous-rows",    TRUE,
+                                     NULL);
+
+  current = g_slist_nth (_referee_list,
+                         NB_TICKET_Y_PER_SHEET*NB_TICKET_X_PER_SHEET*page_nr);
+
+  for (guint r = 0; current && (r < NB_TICKET_Y_PER_SHEET); r++)
+  {
+    for (guint c = 0; current && (c < NB_TICKET_X_PER_SHEET); c++)
+    {
+      GooCanvasItem *item;
+      Player        *referee = (Player *) current->data;
+      GooCanvasItem *ticket_table = goo_canvas_table_new (main_table,
+                                                          "x-border-spacing", 1.0,
+                                                          "y-border-spacing", 1.0,
+                                                          NULL);
+      // Border
+      {
+        item = goo_canvas_rect_new (main_table,
+                                    0.0,
+                                    0.0,
+                                    ticket_w,
+                                    ticket_h,
+                                    "stroke-color", "Grey",
+                                    "line-width",   border_w,
+                                    NULL);
+        Canvas::PutInTable (main_table,
+                            item,
+                            r,
+                            c);
+      }
+
+      {
+        {
+          GooCanvasItem *name_table = goo_canvas_table_new (ticket_table, NULL);
+
+          // Name
+          {
+            gchar               *font   = g_strdup_printf ("Sans Bold %fpx", 2*PRINT_FONT_HEIGHT);
+            Player::AttributeId  attr_id ("name");
+            Attribute           *attr   = referee->GetAttribute (&attr_id);
+            gchar               *string = attr->GetUserImage ();
+
+            Canvas::NormalyzeDecimalNotation (font);
+            item = Canvas::PutTextInTable (name_table,
+                                           string,
+                                           0,
+                                           0);
+            g_object_set (G_OBJECT (item),
+                          "font",      font,
+                          "ellipsize", PANGO_ELLIPSIZE_END,
+                          "width",     ticket_w/4.0 - 2.0*border_w,
+                          NULL);
+            g_free (string);
+            g_free (font);
+          }
+
+          // First name
+          {
+            gchar               *font   = g_strdup_printf ("Sans %fpx", 1.5*PRINT_FONT_HEIGHT);
+            Player::AttributeId  attr_id ("first_name");
+            Attribute           *attr   = referee->GetAttribute (&attr_id);
+            gchar               *string = attr->GetUserImage ();
+
+            Canvas::NormalyzeDecimalNotation (font);
+            item = Canvas::PutTextInTable (name_table,
+                                           string,
+                                           1,
+                                           0);
+            g_object_set (G_OBJECT (item),
+                          "font", font,
+                          "ellipsize", PANGO_ELLIPSIZE_END,
+                          "width",     ticket_w/4.0 - 2.0*border_w,
+                          NULL);
+            g_free (string);
+            g_free (font);
+          }
+
+          Canvas::PutInTable (ticket_table,
+                              name_table,
+                              0,
+                              0);
+          Canvas::SetTableItemAttribute (name_table, "x-expand", 1U);
+          Canvas::SetTableItemAttribute (name_table, "x-fill",   1U);
+        }
+
+        // Food
+        {
+          GooCanvasItem *food_table = goo_canvas_table_new (ticket_table, NULL);
+          gchar         *font   = g_strdup_printf ("Sans %fpx", 1.8*PRINT_FONT_HEIGHT);
+          const gchar   *stamps[] = {"Meal", "Drink", "Desert", "Cofee", NULL};
+
+          Canvas::NormalyzeDecimalNotation (font);
+
+          g_object_set (G_OBJECT (food_table),
+                        "horz-grid-line-width", 0.3,
+                        "stroke-color", "White",
+                        "fill-color",   "grey",
+                        NULL);
+          for (guint i = 0; stamps[i] != NULL; i++)
+          {
+            item = Canvas::PutTextInTable (food_table,
+                                           gettext (stamps[i]),
+                                           i,
+                                           0);
+            g_object_set (G_OBJECT (item),
+                          "font",       font,
+                          "fill-color", "Black",
+                          NULL);
+            Canvas::SetTableItemAttribute (item, "x-align", 1.0);
+            Canvas::SetTableItemAttribute (item, "x-fill",   0U);
+          }
+
+          g_free (font);
+
+          Canvas::PutInTable (ticket_table,
+                              food_table,
+                              0,
+                              1);
+          Canvas::SetTableItemAttribute (food_table, "right-padding", 1.0);
+        }
+      }
+
+      Canvas::PutInTable (main_table,
+                          ticket_table,
+                          r,
+                          c);
+      Canvas::SetTableItemAttribute (ticket_table, "x-expand", 1U);
+      Canvas::SetTableItemAttribute (ticket_table, "x-fill",   1U);
+      current = g_slist_next (current);
+    }
+
+    if (current)
+    {
+      current = g_slist_next (current);
+    }
+  }
+
+  goo_canvas_render (canvas,
+                     cr,
+                     NULL,
+                     1.0);
+  gtk_widget_destroy (GTK_WIDGET (canvas));
+
+  cairo_restore (cr);
+}
+
+// --------------------------------------------------------------------------------
 gchar *Tournament::GetHttpResponse (const gchar *url)
 {
   gchar *result = NULL;
@@ -417,8 +603,12 @@ Player *Tournament::Share (Player  *referee,
   if (original == NULL)
   {
     {
-      _referee_list = g_slist_prepend (_referee_list,
-                                       referee);
+      Player::AttributeId attr_id ("name");
+
+      _referee_list = g_slist_insert_sorted_with_data (_referee_list,
+                                                       referee,
+                                                       (GCompareDataFunc) Player::Compare,
+                                                       &attr_id);
       referee->Retain ();
       referee->SetRef (_referee_ref++);
     }
@@ -1019,6 +1209,18 @@ gboolean Tournament::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::PrintMealTickets ()
+{
+  Print (gettext ("Meal tickets"));
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::PrintReceiptBook ()
+{
+  Print (gettext ("Receipt book"));
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnBroadcastedActivated (GtkTreePath *path)
 {
   GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetWidget ("broadcasted_liststore"));
@@ -1364,6 +1566,24 @@ extern "C" G_MODULE_EXPORT void on_root_drag_data_received (GtkWidget        *wi
     }
     g_strfreev (uris);
   }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_tickets_menuitem_activate (GtkMenuItem *menuitem,
+                                                              Object      *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->PrintMealTickets ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_receipt_menuitem_activate (GtkMenuItem *menuitem,
+                                                              Object      *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->PrintReceiptBook ();
 }
 
 // --------------------------------------------------------------------------------

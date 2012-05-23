@@ -43,6 +43,7 @@ class Checkin : public PlayersList
 
   public:
     void on_add_player_button_clicked ();
+
     void on_remove_player_button_clicked ();
 
     void OnToggleAllPlayers (gboolean present);

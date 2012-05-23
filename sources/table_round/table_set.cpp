@@ -2607,14 +2607,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
         GooCanvasItem *title_group = goo_canvas_group_new (match_group, NULL);
         gchar         *font        = g_strdup_printf ("Sans Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
 
-        {
-          gchar *decimal = strchr (font, ',');
-
-          if (decimal)
-          {
-            *decimal = '.';
-          }
-        }
+        Canvas::NormalyzeDecimalNotation (font);
 
         match->SetData (this, "printed", (void *) TRUE);
 
@@ -2784,12 +2777,8 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
   {
     GString *image;
     gchar   *font = g_strdup_printf ("Sans Bold %fpx", PRINT_FONT_HEIGHT);
-    gchar   *decimal = strchr (font, ',');
 
-    if (decimal)
-    {
-      *decimal = '.';
-    }
+    Canvas::NormalyzeDecimalNotation (font);
 
     image     = GetPlayerImage (player);
     text_item = Canvas::PutTextInTable (table,
