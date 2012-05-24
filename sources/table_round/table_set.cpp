@@ -470,12 +470,39 @@ void TableSet::Display ()
       }
     }
 
-    g_node_traverse (_tree_root,
-                     G_POST_ORDER,
-                     G_TRAVERSE_ALL,
-                     -1,
-                     (GNodeTraverseFunc) FillInNode,
-                     this);
+    {
+      Table *from    = _from_border->GetSelectedTable ();
+      guint  nb_rows = from->GetSize () * 2 - 1;
+
+      _row_filled = g_new0 (gboolean,
+                            nb_rows);
+
+      g_node_traverse (_tree_root,
+                       G_POST_ORDER,
+                       G_TRAVERSE_ALL,
+                       -1,
+                       (GNodeTraverseFunc) FillInNode,
+                       this);
+
+      for (guint i = 1; i < nb_rows; i+=2)
+      {
+        if (_row_filled[i] == FALSE)
+        {
+          GooCanvasItem *vertical_space = goo_canvas_text_new (_main_table,
+                                                               "",
+                                                               0.0, 0.0,
+                                                               -1.0,
+                                                               GTK_ANCHOR_NW,
+                                                               "fill-pattern", NULL, NULL);
+          Canvas::PutInTable (_main_table,
+                              vertical_space,
+                              i+1,
+                              0);
+        }
+      }
+
+      g_free (_row_filled);
+    }
 
     RefreshTableStatus ();
     DrawAllConnectors  ();
@@ -1008,16 +1035,23 @@ gboolean TableSet::FillInNode (GNode    *node,
               table_set);
 
     {
+      guint row;
+      guint column;
+
       data->_fencer_goo_table = goo_canvas_table_new (table_set->_main_table,
                                                       "column-spacing", table_set->_table_spacing,
                                                       NULL);
       Canvas::SetTableItemAttribute (data->_fencer_goo_table, "x-fill", 1U);
       //Canvas::SetTableItemAttribute (data->_fencer_goo_table, "x-expand", 1U);
 
+      row    = data->_table->GetRow (data->_table_index);
+      column = data->_table->GetColumn ();
       Canvas::PutInTable (table_set->_main_table,
                           data->_fencer_goo_table,
-                          data->_table->GetRow (data->_table_index) + 1,
-                          data->_table->GetColumn ());
+                          row + 1,
+                          column);
+
+      table_set->_row_filled[row] = TRUE;
     }
 
     // Match
@@ -1053,7 +1087,7 @@ gboolean TableSet::FillInNode (GNode    *node,
           Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
           g_object_set (number_item,
                         "fill-color", "Grey",
-                        "font", "Bold",
+                        "font",       "Bold",
                         NULL);
         }
       }
@@ -2790,9 +2824,9 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
     Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
 
     g_object_set (G_OBJECT (text_item),
-                  "font", font,
+                  "font",      font,
                   "ellipsize", PANGO_ELLIPSIZE_NONE,
-                  "anchor", GTK_ANCHOR_WEST,
+                  "anchor",    GTK_ANCHOR_WEST,
                   NULL);
     g_free (font);
   }
