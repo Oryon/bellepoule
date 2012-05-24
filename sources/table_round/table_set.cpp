@@ -1055,7 +1055,7 @@ gboolean TableSet::FillInNode (GNode    *node,
     }
 
     // Match
-    if ((data->_table->GetColumn () > 1) && (data->_match->IsFake () == FALSE))
+    if ((data->_table->GetColumn () > 0) && (data->_match->IsFake () == FALSE))
     {
       {
         data->_match_goo_table = goo_canvas_table_new (table_set->_main_table,
