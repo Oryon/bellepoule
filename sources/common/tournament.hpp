@@ -53,6 +53,10 @@ class Tournament : public Module
 
     void OnBroadcastedActivated (GtkTreePath *path);
 
+    void PrintMealTickets ();
+
+    void PrintPaymentBook ();
+
     static gchar *GetUserLanguage ();
 
     void OnBackupfileLocation ();
@@ -86,6 +90,10 @@ class Tournament : public Module
                              guint PlayerId);
 
   private:
+    static const guint NB_TICKET_X_PER_SHEET = 2;
+    static const guint NB_TICKET_Y_PER_SHEET = 5;
+    static const guint NB_REFEREE_PER_SHEET  = 20;
+
     guint _referee_ref;
 
     GSList     *_contest_list;
@@ -94,6 +102,7 @@ class Tournament : public Module
     HttpServer *_http_server;
     Downloader *_version_downloader;
     Downloader *_competitions_downloader;
+    gboolean    _print_meal_tickets;
 
     void SetBackupLocation (gchar *location);
 
@@ -104,6 +113,13 @@ class Tournament : public Module
     void RefreshMatchRate (Player *referee);
 
     gchar *GetHttpResponse (const gchar *url);
+
+    void OnBeginPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
+
+    void OnDrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
 
     static gchar *OnGetHttpResponse (Object      *client,
                                      const gchar *url);

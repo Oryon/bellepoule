@@ -29,8 +29,6 @@ class RefereesList : public Checkin
   public:
     RefereesList (Contest *contest);
 
-    void OnPrintRadioButtonToggled (GtkWidget *widget);
-
   protected:
     ~RefereesList ();
 

@@ -179,6 +179,7 @@ class TableSet : public CanvasModule
     GtkPageSetup             *_page_setup;
     TableSetBorder           *_from_border;
     TableSetBorder           *_to_border;
+    gboolean                 *_row_filled;
 
     void      *_status_cbk_data;
     StatusCbk  _status_cbk;

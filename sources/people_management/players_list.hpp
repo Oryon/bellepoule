@@ -75,25 +75,13 @@ class PlayersList : public Module
   protected:
     GtkListStore *_store;
 
-  private:
-    void PrintHeader (GooCanvasItem *root_item,
-                      gboolean       update_column_width);
-    void PrintPlayer (GooCanvasItem   *table,
-                      GtkPrintContext *context,
-                      Player          *player,
-                      guint            row,
-                      gboolean         update_column_width);
-    void GetPrintScale (GtkPrintContext *context,
-                        gdouble         *scale,
-                        gdouble         *w,
-                        gdouble         *h);
-    void OnBeginPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
-    void OnDrawPage (GtkPrintOperation *operation,
-                     GtkPrintContext   *context,
-                     gint               page_nr);
-    void OnEndPrint (GtkPrintOperation *operation,
-                     GtkPrintContext   *context);
+    virtual void OnBeginPrint (GtkPrintOperation *operation,
+                               GtkPrintContext   *context);
+    virtual void OnDrawPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr);
+    virtual void OnEndPrint (GtkPrintOperation *operation,
+                             GtkPrintContext   *context);
 
   private:
     guint         _rights;
@@ -120,6 +108,20 @@ class PlayersList : public Module
     void OnCellToggled (gchar         *path_string,
                         gboolean       is_active,
                         AttributeDesc *desc);
+
+    void PrintHeader (GooCanvasItem *root_item,
+                      gboolean       update_column_width);
+
+    void PrintPlayer (GooCanvasItem   *table,
+                      GtkPrintContext *context,
+                      Player          *player,
+                      guint            row,
+                      gboolean         update_column_width);
+
+    void GetPrintScale (GtkPrintContext *context,
+                        gdouble         *scale,
+                        gdouble         *w,
+                        gdouble         *h);
 
     virtual void OnPlayerRemoved (Player *player) {};
 

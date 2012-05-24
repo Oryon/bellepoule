@@ -42,7 +42,7 @@ Checkin::Checkin (const gchar *glade,
                                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                                         GTK_MESSAGE_QUESTION,
                                                         GTK_BUTTONS_OK_CANCEL,
-                                                        gettext ("<b><big>Which fencers do you want to print?</big></b>"));
+                                                        gettext ("<b><big>What do you want to print?</big></b>"));
 
     gtk_window_set_title (GTK_WINDOW (_print_dialog),
                           gettext ("Fencer list printing"));

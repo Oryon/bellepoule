@@ -75,6 +75,8 @@ class Canvas
 
     static void FitToContext (GooCanvasItem   *item,
                               GtkPrintContext *context);
+
+    static void NormalyzeDecimalNotation (gchar *string);
 };
 
 #endif

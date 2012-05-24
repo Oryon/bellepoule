@@ -485,15 +485,11 @@ GooCanvasItem *Match::GetScoreTable (GooCanvasItem *parent,
                                      gdouble        size)
 {
   gchar         *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(size));
-  gchar         *decimal = strchr (font, ',');
   GooCanvasItem *score_table = goo_canvas_table_new (parent,
                                                      "column-spacing", size/10.0,
                                                      NULL);
 
-  if (decimal)
-  {
-    *decimal = '.';
-  }
+  Canvas::NormalyzeDecimalNotation (font);
 
   for (guint i = 0; i < _max_score->_value; i++)
   {
