@@ -180,7 +180,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
-              <object class="GtkAlignment" id="alignment1">
+              <object class="GtkAlignment" id="event_alignment">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="top_padding">12</property>
@@ -896,10 +896,33 @@ stuffing</property>
               </object>
               <packing>
                 <property name="tab_fill">False</property>
+                <property name="reorderable">True</property>
               </packing>
             </child>
             <child>
-              <object class="GtkAlignment" id="alignment5">
+              <object class="GtkAlignment" id="formula_alignment">
+                <property name="can_focus">False</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label2">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Formula</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+                <property name="tab_fill">False</property>
+                <property name="reorderable">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkAlignment" id="publication_alignment">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">0</property>
@@ -1060,22 +1083,8 @@ stuffing</property>
                 </child>
               </object>
               <packing>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
-            </child>
-            <child type="tab">
-              <object class="GtkLabel" id="label2">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Publication</property>
-              </object>
-              <packing>
-                <property name="position">1</property>
-                <property name="tab_fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="label3">
@@ -1086,6 +1095,7 @@ stuffing</property>
               <packing>
                 <property name="position">2</property>
                 <property name="tab_fill">False</property>
+                <property name="reorderable">True</property>
               </packing>
             </child>
           </object>

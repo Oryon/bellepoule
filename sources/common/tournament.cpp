@@ -290,11 +290,25 @@ void Tournament::OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context)
 {
   guint list_length = g_slist_length (_referee_list);
-  guint n           = list_length / (NB_TICKET_Y_PER_SHEET * NB_TICKET_X_PER_SHEET);
+  guint n;
 
-  if (list_length % (NB_TICKET_Y_PER_SHEET * NB_TICKET_X_PER_SHEET))
+  if (_print_meal_tickets)
   {
-    n++;
+    n = list_length / (NB_TICKET_Y_PER_SHEET * NB_TICKET_X_PER_SHEET);
+
+    if (list_length % (NB_TICKET_Y_PER_SHEET * NB_TICKET_X_PER_SHEET))
+    {
+      n++;
+    }
+  }
+  else
+  {
+    n = list_length / NB_REFEREE_PER_SHEET;
+
+    if (list_length % NB_REFEREE_PER_SHEET)
+    {
+      n++;
+    }
   }
 
   gtk_print_operation_set_n_pages (operation,
@@ -310,155 +324,287 @@ void Tournament::OnDrawPage (GtkPrintOperation *operation,
   gdouble        paper_h  = gtk_print_context_get_height (context);
   cairo_t       *cr       = gtk_print_context_get_cairo_context (context);
   GooCanvas     *canvas   = Canvas::CreatePrinterCanvas (context);
-  gdouble        spacing  = 2.0;
-  gdouble        ticket_w = (100.0/NB_TICKET_X_PER_SHEET) - (NB_TICKET_X_PER_SHEET-1)*spacing;
-  gdouble        ticket_h = (100.0/NB_TICKET_Y_PER_SHEET) * paper_h/paper_w - (NB_TICKET_Y_PER_SHEET-1)*spacing;
-  gdouble        border_w = 0.7;
   GooCanvasItem *main_table;
+  GooCanvasItem *item;
   GSList        *current;
 
   cairo_save (cr);
 
-  main_table = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
-                                     "row-spacing",         2.0,
-                                     "column-spacing",      2.0,
-                                     "homogeneous-columns", TRUE,
-                                     "homogeneous-rows",    TRUE,
-                                     NULL);
-
-  current = g_slist_nth (_referee_list,
-                         NB_TICKET_Y_PER_SHEET*NB_TICKET_X_PER_SHEET*page_nr);
-
-  for (guint r = 0; current && (r < NB_TICKET_Y_PER_SHEET); r++)
+  if (_print_meal_tickets)
   {
-    for (guint c = 0; current && (c < NB_TICKET_X_PER_SHEET); c++)
+    gdouble        spacing  = 2.0;
+    gdouble        ticket_w = (100.0/NB_TICKET_X_PER_SHEET) - (NB_TICKET_X_PER_SHEET-1)*spacing;
+    gdouble        ticket_h = (100.0/NB_TICKET_Y_PER_SHEET) * paper_h/paper_w - (NB_TICKET_Y_PER_SHEET-1)*spacing;
+    gdouble        border_w = 0.7;
+
+    main_table = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
+                                       "row-spacing",         2.0,
+                                       "column-spacing",      2.0,
+                                       "homogeneous-columns", TRUE,
+                                       "homogeneous-rows",    TRUE,
+                                       NULL);
+
+    current = g_slist_nth (_referee_list,
+                           NB_TICKET_Y_PER_SHEET*NB_TICKET_X_PER_SHEET*page_nr);
+
+    for (guint r = 0; current && (r < NB_TICKET_Y_PER_SHEET); r++)
     {
-      GooCanvasItem *item;
-      Player        *referee = (Player *) current->data;
-      GooCanvasItem *ticket_table = goo_canvas_table_new (main_table,
-                                                          "x-border-spacing", 1.0,
-                                                          "y-border-spacing", 1.0,
-                                                          NULL);
-      // Border
+      for (guint c = 0; current && (c < NB_TICKET_X_PER_SHEET); c++)
       {
-        item = goo_canvas_rect_new (main_table,
-                                    0.0,
-                                    0.0,
-                                    ticket_w,
-                                    ticket_h,
-                                    "stroke-color", "Grey",
-                                    "line-width",   border_w,
-                                    NULL);
+        Player        *referee = (Player *) current->data;
+        GooCanvasItem *ticket_table = goo_canvas_table_new (main_table,
+                                                            "x-border-spacing", 1.0,
+                                                            "y-border-spacing", 1.0,
+                                                            NULL);
+        // Border
+        {
+          item = goo_canvas_rect_new (main_table,
+                                      0.0,
+                                      0.0,
+                                      ticket_w,
+                                      ticket_h,
+                                      "stroke-color", "Grey",
+                                      "line-width",   border_w,
+                                      NULL);
+          Canvas::PutInTable (main_table,
+                              item,
+                              r,
+                              c);
+        }
+
+        {
+          {
+            GooCanvasItem *name_table = goo_canvas_table_new (ticket_table, NULL);
+
+            // Name
+            {
+              gchar               *font   = g_strdup_printf ("Sans Bold %fpx", 2*PRINT_FONT_HEIGHT);
+              Player::AttributeId  attr_id ("name");
+              Attribute           *attr   = referee->GetAttribute (&attr_id);
+              gchar               *string = attr->GetUserImage ();
+
+              Canvas::NormalyzeDecimalNotation (font);
+              item = Canvas::PutTextInTable (name_table,
+                                             string,
+                                             0,
+                                             0);
+              g_object_set (G_OBJECT (item),
+                            "font",      font,
+                            "ellipsize", PANGO_ELLIPSIZE_END,
+                            "width",     ticket_w/4.0 - 2.0*border_w,
+                            NULL);
+              g_free (string);
+              g_free (font);
+            }
+
+            // First name
+            {
+              gchar               *font   = g_strdup_printf ("Sans %fpx", 1.5*PRINT_FONT_HEIGHT);
+              Player::AttributeId  attr_id ("first_name");
+              Attribute           *attr   = referee->GetAttribute (&attr_id);
+              gchar               *string = attr->GetUserImage ();
+
+              Canvas::NormalyzeDecimalNotation (font);
+              item = Canvas::PutTextInTable (name_table,
+                                             string,
+                                             1,
+                                             0);
+              g_object_set (G_OBJECT (item),
+                            "font", font,
+                            "ellipsize", PANGO_ELLIPSIZE_END,
+                            "width",     ticket_w/4.0 - 2.0*border_w,
+                            NULL);
+              g_free (string);
+              g_free (font);
+            }
+
+            Canvas::PutInTable (ticket_table,
+                                name_table,
+                                0,
+                                0);
+            Canvas::SetTableItemAttribute (name_table, "x-expand", 1U);
+            Canvas::SetTableItemAttribute (name_table, "x-fill",   1U);
+          }
+
+          // Food
+          {
+            GooCanvasItem *food_table = goo_canvas_table_new (ticket_table, NULL);
+            gchar         *font   = g_strdup_printf ("Sans %fpx", 1.8*PRINT_FONT_HEIGHT);
+            const gchar   *strings[] = {"Meal", "Drink", "Desert", "Cofee", NULL};
+
+            Canvas::NormalyzeDecimalNotation (font);
+
+            g_object_set (G_OBJECT (food_table),
+                          "horz-grid-line-width", 0.3,
+                          "stroke-color", "White",
+                          "fill-color",   "grey",
+                          NULL);
+            for (guint i = 0; strings[i] != NULL; i++)
+            {
+              item = Canvas::PutTextInTable (food_table,
+                                             gettext (strings[i]),
+                                             i,
+                                             0);
+              g_object_set (G_OBJECT (item),
+                            "font",       font,
+                            "fill-color", "Black",
+                            NULL);
+              Canvas::SetTableItemAttribute (item, "x-align", 1.0);
+              Canvas::SetTableItemAttribute (item, "x-fill",   0U);
+            }
+
+            g_free (font);
+
+            Canvas::PutInTable (ticket_table,
+                                food_table,
+                                0,
+                                1);
+            Canvas::SetTableItemAttribute (food_table, "right-padding", 1.0);
+          }
+        }
+
         Canvas::PutInTable (main_table,
-                            item,
+                            ticket_table,
                             r,
                             c);
+        Canvas::SetTableItemAttribute (ticket_table, "x-expand", 1U);
+        Canvas::SetTableItemAttribute (ticket_table, "x-fill",   1U);
+        current = g_slist_next (current);
+      }
+
+      if (current)
+      {
+        current = g_slist_next (current);
+      }
+    }
+  }
+  else
+  {
+    gchar         *font = g_strdup_printf ("Sans %fpx", 1.0*PRINT_FONT_HEIGHT);
+    GooCanvasItem *header;
+
+    Canvas::NormalyzeDecimalNotation (font);
+
+    current = g_slist_nth (_referee_list,
+                           NB_REFEREE_PER_SHEET*page_nr);
+
+    main_table = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
+                                       "row-spacing",          4.0,
+                                       "y-border-spacing",     2.0,
+                                       "column-spacing",       10.0,
+                                       "horz-grid-line-width", 0.2,
+                                       "homogeneous-rows",     TRUE,
+                                       NULL);
+
+    {
+      gchar *font = g_strdup_printf ("Sans Bold %fpx", 3.0*PRINT_FONT_HEIGHT);
+
+      Canvas::NormalyzeDecimalNotation (font);
+      header = goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                                    gettext ("Payment book"),
+                                    50.0,
+                                    1.0,
+                                    -1.0,
+                                    GTK_ANCHOR_CENTER,
+                                    "font", font,
+                                    NULL);
+      g_free (font);
+    }
+
+    {
+      gchar *font   = g_strdup_printf ("Sans Bold %fpx", 1.0*PRINT_FONT_HEIGHT);
+      gchar *string = g_strdup_printf ("%s %d", gettext ("Page"), page_nr+1);
+
+      Canvas::NormalyzeDecimalNotation (font);
+      goo_canvas_text_new (goo_canvas_get_root_item (canvas),
+                           string,
+                           100.0,
+                           100.0 * paper_h/paper_w,
+                           -1.0,
+                           GTK_ANCHOR_SE,
+                           "font", font,
+                           NULL);
+      g_free (string);
+      g_free (font);
+    }
+
+    for (guint r = 0; current && (r < NB_REFEREE_PER_SHEET); r++)
+    {
+      Player *referee = (Player *) current->data;
+      guint   c       = 0;
+
+      {
+        const gchar *column[] = {"name", "first_name", "level", NULL};
+
+        for (guint i = 0; column[i] != NULL; i++)
+        {
+          Player::AttributeId  attr_id (column[i]);
+          Attribute           *attr   = referee->GetAttribute (&attr_id);
+          gchar               *string;
+
+          if (attr)
+          {
+            string = attr->GetUserImage ();
+          }
+          else
+          {
+            string = g_strdup ("-");
+          }
+
+          item = Canvas::PutTextInTable (main_table,
+                                         string,
+                                         r,
+                                         c);
+          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+          g_object_set (G_OBJECT (item),
+                        "font", font,
+                        NULL);
+          g_free (string);
+          c++;
+        }
       }
 
       {
+        const gchar *column[] = {"€", "Signature", NULL};
+
+        for (guint i = 0; column[i] != NULL; i++)
         {
-          GooCanvasItem *name_table = goo_canvas_table_new (ticket_table, NULL);
-
-          // Name
-          {
-            gchar               *font   = g_strdup_printf ("Sans Bold %fpx", 2*PRINT_FONT_HEIGHT);
-            Player::AttributeId  attr_id ("name");
-            Attribute           *attr   = referee->GetAttribute (&attr_id);
-            gchar               *string = attr->GetUserImage ();
-
-            Canvas::NormalyzeDecimalNotation (font);
-            item = Canvas::PutTextInTable (name_table,
-                                           string,
-                                           0,
-                                           0);
-            g_object_set (G_OBJECT (item),
-                          "font",      font,
-                          "ellipsize", PANGO_ELLIPSIZE_END,
-                          "width",     ticket_w/4.0 - 2.0*border_w,
-                          NULL);
-            g_free (string);
-            g_free (font);
-          }
-
-          // First name
-          {
-            gchar               *font   = g_strdup_printf ("Sans %fpx", 1.5*PRINT_FONT_HEIGHT);
-            Player::AttributeId  attr_id ("first_name");
-            Attribute           *attr   = referee->GetAttribute (&attr_id);
-            gchar               *string = attr->GetUserImage ();
-
-            Canvas::NormalyzeDecimalNotation (font);
-            item = Canvas::PutTextInTable (name_table,
-                                           string,
-                                           1,
-                                           0);
-            g_object_set (G_OBJECT (item),
-                          "font", font,
-                          "ellipsize", PANGO_ELLIPSIZE_END,
-                          "width",     ticket_w/4.0 - 2.0*border_w,
-                          NULL);
-            g_free (string);
-            g_free (font);
-          }
-
-          Canvas::PutInTable (ticket_table,
-                              name_table,
-                              0,
-                              0);
-          Canvas::SetTableItemAttribute (name_table, "x-expand", 1U);
-          Canvas::SetTableItemAttribute (name_table, "x-fill",   1U);
-        }
-
-        // Food
-        {
-          GooCanvasItem *food_table = goo_canvas_table_new (ticket_table, NULL);
-          gchar         *font   = g_strdup_printf ("Sans %fpx", 1.8*PRINT_FONT_HEIGHT);
-          const gchar   *stamps[] = {"Meal", "Drink", "Desert", "Cofee", NULL};
-
-          Canvas::NormalyzeDecimalNotation (font);
-
-          g_object_set (G_OBJECT (food_table),
-                        "horz-grid-line-width", 0.3,
-                        "stroke-color", "White",
-                        "fill-color",   "grey",
+          item = Canvas::PutTextInTable (main_table,
+                                         gettext (column[i]),
+                                         r,
+                                         c);
+          Canvas::SetTableItemAttribute (item, "x-align", 0.5);
+          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+          g_object_set (G_OBJECT (item),
+                        "font", font,
+                        "fill-color", "grey",
                         NULL);
-          for (guint i = 0; stamps[i] != NULL; i++)
-          {
-            item = Canvas::PutTextInTable (food_table,
-                                           gettext (stamps[i]),
-                                           i,
-                                           0);
-            g_object_set (G_OBJECT (item),
-                          "font",       font,
-                          "fill-color", "Black",
-                          NULL);
-            Canvas::SetTableItemAttribute (item, "x-align", 1.0);
-            Canvas::SetTableItemAttribute (item, "x-fill",   0U);
-          }
-
-          g_free (font);
-
-          Canvas::PutInTable (ticket_table,
-                              food_table,
-                              0,
-                              1);
-          Canvas::SetTableItemAttribute (food_table, "right-padding", 1.0);
+          c++;
         }
       }
 
-      Canvas::PutInTable (main_table,
-                          ticket_table,
-                          r,
-                          c);
-      Canvas::SetTableItemAttribute (ticket_table, "x-expand", 1U);
-      Canvas::SetTableItemAttribute (ticket_table, "x-fill",   1U);
       current = g_slist_next (current);
     }
 
-    if (current)
+    Canvas::Anchor (main_table,
+                    header,
+                    NULL,
+                    40);
+#if 0
+    if (_print_scale != 1.0)
     {
-      current = g_slist_next (current);
+      cairo_matrix_t matrix;
+
+      goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
+                                     &matrix);
+      cairo_matrix_scale (&matrix,
+                          _print_scale,
+                          _print_scale);
+
+      goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
+                                     &matrix);
     }
+#endif
   }
 
   goo_canvas_render (canvas,
@@ -1211,13 +1357,15 @@ gboolean Tournament::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
 // --------------------------------------------------------------------------------
 void Tournament::PrintMealTickets ()
 {
+  _print_meal_tickets = TRUE;
   Print (gettext ("Meal tickets"));
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::PrintReceiptBook ()
+void Tournament::PrintPaymentBook ()
 {
-  Print (gettext ("Receipt book"));
+  _print_meal_tickets = FALSE;
+  Print (gettext ("Payment book"));
 }
 
 // --------------------------------------------------------------------------------
@@ -1578,12 +1726,12 @@ extern "C" G_MODULE_EXPORT void on_tickets_menuitem_activate (GtkMenuItem *menui
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_receipt_menuitem_activate (GtkMenuItem *menuitem,
+extern "C" G_MODULE_EXPORT void on_payment_menuitem_activate (GtkMenuItem *menuitem,
                                                               Object      *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
-  t->PrintReceiptBook ();
+  t->PrintPaymentBook ();
 }
 
 // --------------------------------------------------------------------------------

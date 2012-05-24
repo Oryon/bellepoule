@@ -55,7 +55,7 @@ class Tournament : public Module
 
     void PrintMealTickets ();
 
-    void PrintReceiptBook ();
+    void PrintPaymentBook ();
 
     static gchar *GetUserLanguage ();
 
@@ -92,6 +92,7 @@ class Tournament : public Module
   private:
     static const guint NB_TICKET_X_PER_SHEET = 2;
     static const guint NB_TICKET_Y_PER_SHEET = 5;
+    static const guint NB_REFEREE_PER_SHEET  = 20;
 
     guint _referee_ref;
 
@@ -101,6 +102,7 @@ class Tournament : public Module
     HttpServer *_http_server;
     Downloader *_version_downloader;
     Downloader *_competitions_downloader;
+    gboolean    _print_meal_tickets;
 
     void SetBackupLocation (gchar *location);
 
