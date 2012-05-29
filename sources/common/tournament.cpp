@@ -1658,6 +1658,25 @@ extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
 }
 
 // --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_translate_menuitem_activate (GtkWidget *w,
+                                                                Object    *owner)
+{
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecuteA (NULL,
+                 "open",
+                 "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_wifi_menuitem_activate (GtkWidget *w,
                                                              Object    *owner)
 {
