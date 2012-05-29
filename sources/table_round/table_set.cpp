@@ -2592,14 +2592,35 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                    _print_session.GetGlobalScale (),
                    _print_session.GetGlobalScale ());
 
-      cairo_translate (cr,
-                       _print_session.GetPaperXShiftForCurrentPage (),
-                       _print_session.GetPaperYShiftForCurrentPage ());
+      if (_print_session.CurrentPageHasHeader ())
+      {
+        GooCanvasBounds *mini_bounds = _print_session.GetMiniHeaderBoundsForCurrentPage ();
 
-      goo_canvas_render (GetCanvas (),
-                         cr,
-                         _print_session.GetCanvasBoundsForCurrentPage (),
-                         1.0);
+        cairo_save (cr);
+        cairo_translate (cr,
+                         -mini_bounds->x1,
+                         0.0);
+        goo_canvas_render (GetCanvas (),
+                           cr,
+                           mini_bounds,
+                           1.0);
+        cairo_restore (cr);
+
+        cairo_translate (cr,
+                         0.0,
+                         mini_bounds->y2 - mini_bounds->y1);
+      }
+
+      {
+        cairo_translate (cr,
+                         _print_session.GetPaperXShiftForCurrentPage (),
+                         _print_session.GetPaperYShiftForCurrentPage ());
+
+        goo_canvas_render (GetCanvas (),
+                           cr,
+                           _print_session.GetCanvasBoundsForCurrentPage (),
+                           1.0);
+      }
     }
     cairo_restore (cr);
   }

@@ -226,7 +226,7 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
 
     cairo_translate (cr,
                      -canvas_x*scale,
-                     -canvas_y*scale + header_h);
+                     -canvas_y*scale);
     cairo_scale (cr,
                  scale,
                  scale);

@@ -70,8 +70,11 @@ void TablePrintSession::SetCuttingBounds (guint            cutting,
     _bounds_table[cutting] = *bounds;
   }
 
-  _cutting_w = bounds->x2 - bounds->x1;
-  _cutting_h = bounds->y2 - bounds->y1;
+  if (cutting == 0)
+  {
+    _cutting_w = bounds->x2 - bounds->x1;
+    _cutting_h = bounds->y2 - bounds->y1;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -112,6 +115,12 @@ gboolean TablePrintSession::CurrentPageHasHeader ()
 }
 
 // --------------------------------------------------------------------------------
+GooCanvasBounds *TablePrintSession::GetMiniHeaderBoundsForCurrentPage ()
+{
+  return &_mini_header_bounds;
+}
+
+// --------------------------------------------------------------------------------
 GooCanvasBounds *TablePrintSession::GetCanvasBoundsForCurrentPage ()
 {
   return &_canvas_bounds;
@@ -129,7 +138,6 @@ gdouble TablePrintSession::GetPaperYShiftForCurrentPage ()
   gdouble shift_y = 0.0;
 
   shift_y -= _bounds_table[_current_cutting].y1;
-  shift_y += _header_h_on_canvas;
   shift_y -= _cutting_y_page * _page_h;
 
   return shift_y;
@@ -148,6 +156,14 @@ void TablePrintSession::ProcessCurrentPage (guint page)
 
   _current_page_has_header = (_cutting_y_page % _nb_y_pages == 0);
 
+  // Mini header
+  {
+    _mini_header_bounds.x1 = x_page * _page_w;
+    _mini_header_bounds.x2 = _mini_header_bounds.x1 + _page_w;
+    _mini_header_bounds.y1 = 0.0;
+    _mini_header_bounds.y2 = _bounds_table[0].y1;
+  }
+
   // Horizontal adjustement
   {
     _canvas_bounds.x1 = _page_w * (_cutting_x_page);
@@ -159,7 +175,8 @@ void TablePrintSession::ProcessCurrentPage (guint page)
 
       if (total_page_w > _cutting_w)
       {
-        _canvas_bounds.x2 -= total_page_w - _cutting_w;
+        _canvas_bounds.x2      -= total_page_w - _cutting_w;
+        _mini_header_bounds.x2 -= total_page_w - _cutting_w;
       }
     }
   }

@@ -1505,7 +1505,7 @@ void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
 
   cairo_translate (cr,
                    0.0,
-                   (header_h - (_page_h*page_nr))/_print_scale);
+                   -(_page_h*page_nr)/_print_scale);
 
   goo_canvas_render (GetCanvas (),
                      cr,

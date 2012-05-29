@@ -1485,8 +1485,9 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
 
     if (operation_matrix)
     {
-      cairo_matrix_t  own_matrix;
-      cairo_matrix_t  result_matrix;
+      cairo_matrix_t own_matrix;
+      cairo_matrix_t result_matrix;
+
       goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
                                      &own_matrix);
       cairo_matrix_multiply (&result_matrix,
@@ -1574,6 +1575,15 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                      1.0);
 
   gtk_widget_destroy (GTK_WIDGET (canvas));
+
+  {
+    gdouble  paper_w = gtk_print_context_get_width  (context);
+    cairo_t *cr      = gtk_print_context_get_cairo_context (context);
+
+    cairo_translate (cr,
+                     0.0,
+                     (PRINT_HEADER_HEIGHT+2) * paper_w  / 100);
+  }
 }
 
 // --------------------------------------------------------------------------------
