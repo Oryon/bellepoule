@@ -2588,14 +2588,14 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
 
     cairo_save (cr);
     {
+      GooCanvasBounds *mini_bounds = _print_session.GetMiniHeaderBoundsForCurrentPage ();
+
       cairo_scale (cr,
                    _print_session.GetGlobalScale (),
                    _print_session.GetGlobalScale ());
 
       if (_print_session.CurrentPageHasHeader ())
       {
-        GooCanvasBounds *mini_bounds = _print_session.GetMiniHeaderBoundsForCurrentPage ();
-
         cairo_save (cr);
         cairo_translate (cr,
                          -mini_bounds->x1,
@@ -2605,11 +2605,17 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                            mini_bounds,
                            1.0);
         cairo_restore (cr);
-
+      }
+      else
+      {
         cairo_translate (cr,
                          0.0,
                          mini_bounds->y2 - mini_bounds->y1);
       }
+
+      cairo_translate (cr,
+                       0.0,
+                       mini_bounds->y2 - mini_bounds->y1);
 
       {
         cairo_translate (cr,
