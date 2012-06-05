@@ -21,7 +21,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "green_swapper.hpp"
+#include "smart_swapper.hpp"
 #include "contest.hpp"
 #include "pool_match_order.hpp"
 
@@ -194,6 +194,8 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     Plug (_fencer_list,
           _glade->GetWidget ("fencer_list_hook"));
   }
+
+  _swapper = SmartSwapper::Create (this);
 }
 
 // --------------------------------------------------------------------------------
@@ -203,6 +205,7 @@ PoolAllocator::~PoolAllocator ()
   _swapping->Release         ();
   _seeding_balanced->Release ();
   _fencer_list->Release      ();
+  _swapper->Delete           ();
 }
 
 // --------------------------------------------------------------------------------
@@ -357,13 +360,21 @@ gboolean PoolAllocator::ObjectIsDropable (Object   *floating_object,
 {
   if (floating_object && in_zone)
   {
-    Player::AttributeId  attr_id  ("availability");
-    Player              *player = (Player *) floating_object;
-    Attribute           *attr = player->GetAttribute (&attr_id);
+    Player *player = (Player *) floating_object;
 
-    if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
+    if (player->IsFencer ())
     {
       return TRUE;
+    }
+    else
+    {
+      Player::AttributeId  attr_id  ("availability");
+      Attribute           *attr = player->GetAttribute (&attr_id);
+
+      if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
+      {
+        return TRUE;
+      }
     }
   }
 
@@ -913,22 +924,15 @@ void PoolAllocator::CreatePools ()
       }
     }
 
+    if (_swapping_criteria && _seeding_balanced->_value)
     {
-      GreenSwapper *swapper;
-      guint    nb_fencer = g_slist_length (shortlist);
-
-      if (_swapping_criteria && _seeding_balanced->_value)
-      {
-        swapper = new GreenSwapper (_drop_zones,
-                                    _swapping_criteria->_code_name,
-                                    shortlist);
-      }
-      else
-      {
-        swapper = new GreenSwapper (_drop_zones,
-                                    NULL,
-                                    shortlist);
-      }
+      _swapper->Swap (_drop_zones,
+                      _swapping_criteria->_code_name,
+                      shortlist);
+    }
+    else
+    {
+      guint nb_fencer = g_slist_length (shortlist);
 
       for (guint i = 0; i < nb_fencer; i++)
       {
@@ -972,15 +976,14 @@ void PoolAllocator::CreatePools ()
           }
         }
 
-        player = swapper->GetNextPlayer (pool);
+        player = (Player *) g_slist_nth_data (shortlist,
+                                              i);
         player->SetData (this,
                          "original_pool",
                          (void *) pool->GetNumber ());
         pool->AddFencer (player,
                          this);
       }
-
-      swapper->Release ();
     }
 
     match_order->Release ();
@@ -1464,7 +1467,6 @@ void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
 {
   gdouble paper_w = gtk_print_context_get_width  (context);
   cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
-  gdouble          header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
   GooCanvasBounds  bounds;
 
   DrawContainerPage (operation,

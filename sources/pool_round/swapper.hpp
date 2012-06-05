@@ -27,6 +27,10 @@ class Swapper
 
     virtual void Delete () = 0;
 
+    virtual void Swap (GSList *zones,
+                       gchar  *criteria,
+                       GSList *fencer_list) = 0;
+
   protected:
     Swapper () {};
 };
