@@ -23,8 +23,6 @@ class Player;
 class Swapper
 {
   public:
-    virtual Player *GetNextPlayer (Pool *for_pool) = 0;
-
     virtual void Delete () = 0;
 
     virtual void Swap (GSList *zones,

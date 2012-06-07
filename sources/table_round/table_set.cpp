@@ -419,7 +419,8 @@ void TableSet::Display ()
   if (_tree_root)
   {
     _main_table = goo_canvas_table_new (GetRootItem (),
-                                        "column-spacing", _table_spacing,
+                                        "column-spacing",   _table_spacing,
+                                        //"homogeneous-rows", TRUE,
                                         NULL);
 
     // Header

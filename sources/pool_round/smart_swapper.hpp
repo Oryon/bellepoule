@@ -33,23 +33,61 @@ class SmartSwapper : public Object, public Swapper
                gchar  *criteria,
                GSList *fencer_list);
 
-    Player *GetNextPlayer (Pool *for_pool);
-
   private:
     struct Fencer
     {
-      Player *_player;
-      GQuark  _criteria_quark;
-      guint   _original_pool;
+      Player   *_player;
+      GQuark    _criteria_quark;
+      guint     _original_pool;
+      guint     _rank;
+      gboolean  _is_an_error;
 
       void Dump (Object *owner);
     };
 
-    struct PoolData
+    class PoolSizes
     {
-      Pool       *_pool;
-      GHashTable *_criteria_score;
-      GList      *_fencer_list;
+      public:
+        typedef enum
+        {
+          MIN_SIZE,
+          MAX_SIZE,
+          END_MARK,
+
+          SIZE_TYPE_LEN
+        } SizeType;
+
+        void Configure (guint nb_fencer,
+                        guint nb_pool);
+
+        void NewSize (guint old_size,
+                      guint new_size);
+
+        guint _available_sizes[SIZE_TYPE_LEN];
+
+      private:
+        guint _min_size;
+        guint _max_size;
+        guint _nb_max;
+
+        guint _nb_max_reached;
+    };
+
+    class PoolData
+    {
+      public:
+        Pool       *_pool;
+        GHashTable *_criteria_score;
+        GList      *_fencer_list;
+        guint       _size;
+        PoolSizes  *_pool_sizes;
+
+        void AddFencer (Fencer *fencer);
+
+        void RemoveFencer (GList *fencer);
+
+        void ChangeCriteriaScore (GQuark criteria,
+                                  gint   delta_score);
     };
 
     struct CriteriaData
@@ -58,8 +96,6 @@ class SmartSwapper : public Object, public Swapper
 
       guint _max_criteria_occurrence;
       guint _max_floating_fencers;
-      guint _floating_fencers;
-      guint _has_errors;
     };
 
   private:
@@ -73,22 +109,20 @@ class SmartSwapper : public Object, public Swapper
 
     void ExtractFloatings ();
 
-    void ExtractFencers (PoolData  *from_pool,
-                         GQuark     with_criteria,
-                         guint      number,
-                         GSList   **to_list);
+    Fencer *ExtractFencer (PoolData  *from_pool,
+                           GQuark     with_criteria,
+                           GSList   **to_list);
 
     void DispatchErrors ();
 
     void DispatchFloatings ();
 
-    void DispatchFencers (GSList   *list,
-                          gboolean  try_original_pool_first);
+    void DispatchFencers (GSList *list);
 
-    gboolean FencerCanGoTo (Fencer       *fencer,
-                            PoolData     *data,
-                            CriteriaData *criteria_data,
-                            guint         goal);
+    gboolean MoveFencerTo (Fencer       *fencer,
+                           PoolData     *data,
+                           CriteriaData *criteria_data,
+                           guint         max_pool_size);
 
     static void SetExpectedData (GQuark        quark,
                                  CriteriaData *criteria_data,
@@ -105,12 +139,14 @@ class SmartSwapper : public Object, public Swapper
 
     void StoreSwapping ();
 
+    static gint CompareFencerRank (Fencer *a,
+                                   Fencer *b);
+
   private:
     Object              *_owner;
     guint                _nb_pools;
     PoolData            *_pool_table;
-    guint                _max_pool_size;
-    guint                _min_pool_size;
+    PoolSizes            _pool_sizes;
     GHashTable          *_criteria_distribution;
     Player::AttributeId *_criteria_id;
     GSList              *_error_list;
