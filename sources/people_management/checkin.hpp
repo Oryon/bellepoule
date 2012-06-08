@@ -63,8 +63,6 @@ class Checkin : public PlayersList
 
     void CreateForm (Filter *filter);
 
-    virtual void ImportFFF (gchar *file);
-
     void OnAddPlayerFromForm (Player *player);
 
   private:
@@ -79,6 +77,8 @@ class Checkin : public PlayersList
     virtual void OnLoaded () {};
 
     virtual void OnPlayerLoaded (Player *player) {};
+
+    void ImportFFF (gchar *file);
 
     void ImportCSV (gchar *file);
 

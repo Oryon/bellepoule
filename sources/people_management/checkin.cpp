@@ -191,7 +191,6 @@ void Checkin::OnImport ()
                                  filter);
   }
 
-#if 0
   {
     GtkFileFilter *filter = gtk_file_filter_new ();
 
@@ -202,7 +201,6 @@ void Checkin::OnImport ()
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                  filter);
   }
-#endif
 
   {
     GtkFileFilter *filter = gtk_file_filter_new ();

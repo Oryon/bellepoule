@@ -1120,12 +1120,34 @@ void Tournament::OpenUriContest (const gchar *uri)
     }
 
     {
+      static const gchar *contest_suffix_table[] = {".cotcot", ".COTCOT", ".xml", ".XML", NULL};
+      static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", NULL};
+
       Contest *contest = new Contest ();
 
       Plug (contest,
             NULL,
             NULL);
-      contest->LoadUri (uri);
+
+      for (guint i = 0; contest_suffix_table[i] != NULL; i++)
+      {
+        if (g_str_has_suffix (uri,
+                              contest_suffix_table[i]))
+        {
+          contest->LoadUri (uri);
+          break;
+        }
+      }
+
+      for (guint i = 0; people_suffix_table[i] != NULL; i++)
+      {
+        if (g_str_has_suffix (uri,
+                              people_suffix_table[i]))
+        {
+          break;
+        }
+      }
+
       Manage (contest);
     }
 
