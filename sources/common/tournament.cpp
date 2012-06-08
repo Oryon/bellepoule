@@ -1120,12 +1120,34 @@ void Tournament::OpenUriContest (const gchar *uri)
     }
 
     {
+      static const gchar *contest_suffix_table[] = {".cotcot", ".COTCOT", ".xml", ".XML", NULL};
+      static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", NULL};
+
       Contest *contest = new Contest ();
 
       Plug (contest,
             NULL,
             NULL);
-      contest->LoadUri (uri);
+
+      for (guint i = 0; contest_suffix_table[i] != NULL; i++)
+      {
+        if (g_str_has_suffix (uri,
+                              contest_suffix_table[i]))
+        {
+          contest->LoadUri (uri);
+          break;
+        }
+      }
+
+      for (guint i = 0; people_suffix_table[i] != NULL; i++)
+      {
+        if (g_str_has_suffix (uri,
+                              people_suffix_table[i]))
+        {
+          break;
+        }
+      }
+
       Manage (contest);
     }
 
@@ -1655,6 +1677,25 @@ extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnRecent ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_translate_menuitem_activate (GtkWidget *w,
+                                                                Object    *owner)
+{
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecuteA (NULL,
+                 "open",
+                 "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
 }
 
 // --------------------------------------------------------------------------------

@@ -25,6 +25,7 @@
 #include "players_list.hpp"
 #include "pool_match_order.hpp"
 #include "pool.hpp"
+#include "swapper.hpp"
 #include "pool_zone.hpp"
 
 class PoolAllocator : public virtual Stage, public CanvasModule
@@ -97,6 +98,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     SensitivityTrigger  _swapping_sensitivity_trigger;
     PlayersList        *_fencer_list;
     gint                _nb_matchs;
+    Swapper            *_swapper;
 
     void Setup ();
     void PopulateFencerList ();

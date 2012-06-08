@@ -50,6 +50,8 @@ class TablePrintSession
 
     gboolean CurrentPageHasHeader ();
 
+    GooCanvasBounds *GetMiniHeaderBoundsForCurrentPage ();
+
     GooCanvasBounds *GetCanvasBoundsForCurrentPage ();
 
     gdouble GetPaperXShiftForCurrentPage ();
@@ -78,6 +80,7 @@ class TablePrintSession
     gdouble  _cutting_h;
 
     gboolean        _current_page_has_header;
+    GooCanvasBounds _mini_header_bounds;
     GooCanvasBounds _canvas_bounds;
     guint           _cutting_x_page;
     guint           _cutting_y_page;

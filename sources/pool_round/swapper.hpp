@@ -23,9 +23,13 @@ class Player;
 class Swapper
 {
   public:
-    virtual Player *GetNextPlayer (Pool *for_pool) = 0;
-
     virtual void Delete () = 0;
+
+    virtual void Swap (GSList *zones,
+                       gchar  *criteria,
+                       GSList *fencer_list) = 0;
+
+    virtual guint GetErrors () = 0;
 
   protected:
     Swapper () {};

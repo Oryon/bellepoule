@@ -35,8 +35,6 @@ class RefereesList : public Checkin
   private:
     Contest *_contest;
 
-    void ImportFFF (gchar *file);
-
     void Monitor (Player *player);
 
     void Add (Player *player);

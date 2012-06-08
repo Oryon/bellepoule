@@ -419,7 +419,8 @@ void TableSet::Display ()
   if (_tree_root)
   {
     _main_table = goo_canvas_table_new (GetRootItem (),
-                                        "column-spacing", _table_spacing,
+                                        "column-spacing",   _table_spacing,
+                                        //"homogeneous-rows", TRUE,
                                         NULL);
 
     // Header
@@ -1055,7 +1056,7 @@ gboolean TableSet::FillInNode (GNode    *node,
     }
 
     // Match
-    if ((data->_table->GetColumn () > 1) && (data->_match->IsFake () == FALSE))
+    if ((data->_table->GetColumn () > 0) && (data->_match->IsFake () == FALSE))
     {
       {
         data->_match_goo_table = goo_canvas_table_new (table_set->_main_table,
@@ -2588,18 +2589,45 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
 
     cairo_save (cr);
     {
+      GooCanvasBounds *mini_bounds = _print_session.GetMiniHeaderBoundsForCurrentPage ();
+
       cairo_scale (cr,
                    _print_session.GetGlobalScale (),
                    _print_session.GetGlobalScale ());
 
-      cairo_translate (cr,
-                       _print_session.GetPaperXShiftForCurrentPage (),
-                       _print_session.GetPaperYShiftForCurrentPage ());
+      if (_print_session.CurrentPageHasHeader ())
+      {
+        cairo_save (cr);
+        cairo_translate (cr,
+                         -mini_bounds->x1,
+                         0.0);
+        goo_canvas_render (GetCanvas (),
+                           cr,
+                           mini_bounds,
+                           1.0);
+        cairo_restore (cr);
+      }
+      else
+      {
+        cairo_translate (cr,
+                         0.0,
+                         mini_bounds->y2 - mini_bounds->y1);
+      }
 
-      goo_canvas_render (GetCanvas (),
-                         cr,
-                         _print_session.GetCanvasBoundsForCurrentPage (),
-                         1.0);
+      cairo_translate (cr,
+                       0.0,
+                       mini_bounds->y2 - mini_bounds->y1);
+
+      {
+        cairo_translate (cr,
+                         _print_session.GetPaperXShiftForCurrentPage (),
+                         _print_session.GetPaperYShiftForCurrentPage ());
+
+        goo_canvas_render (GetCanvas (),
+                           cr,
+                           _print_session.GetCanvasBoundsForCurrentPage (),
+                           1.0);
+      }
     }
     cairo_restore (cr);
   }

@@ -222,9 +222,3 @@ void RefereesList::OnDragDataGet (GtkWidget        *widget,
                             sizeof (referee_ref));
   }
 }
-
-// --------------------------------------------------------------------------------
-void RefereesList::ImportFFF (gchar *file)
-{
-  Checkin::ImportFFF (file);
-}

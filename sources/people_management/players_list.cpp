@@ -1068,7 +1068,7 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
 
       goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                            text,
-                           98.0, 9.0,
+                           98.0, -2.0,
                            -1.0,
                            GTK_ANCHOR_SE,
                            "fill-color", "black",
@@ -1086,18 +1086,6 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
     cairo_save (cr);
     {
       GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
-
-      {
-        cairo_matrix_t matrix;
-
-        goo_canvas_item_get_transform (goo_canvas_get_root_item (canvas),
-                                       &matrix);
-        cairo_matrix_translate (&matrix,
-                                1.0,
-                                PRINT_HEADER_HEIGHT+2.0);
-        goo_canvas_item_set_transform (goo_canvas_get_root_item (canvas),
-                                       &matrix);
-      }
 
       PrintHeader (goo_canvas_get_root_item (canvas),
                    FALSE);

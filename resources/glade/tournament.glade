@@ -1176,6 +1176,23 @@ Public License instead of this License.  But first, please read
                   <object class="GtkMenu" id="locale_menu">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="translate_menuitem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="label" translatable="yes">Translate into your language ...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_translate_menuitem_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="menuitem5">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>

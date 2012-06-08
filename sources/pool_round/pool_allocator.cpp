@@ -21,7 +21,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "green_swapper.hpp"
+#include "smart_swapper.hpp"
 #include "contest.hpp"
 #include "pool_match_order.hpp"
 
@@ -39,7 +39,8 @@ typedef enum
 typedef enum
 {
   SWAPPING_IMAGE,
-  SWAPPING_CRITERIA
+  SWAPPING_CRITERIA,
+  SWAPPING_ERRORS
 } SwappingColumn;
 
 extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
@@ -120,6 +121,8 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     filter->Release ();
   }
 
+  _swapper = SmartSwapper::Create (this);
+
   {
     GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetObject ("swapping_liststore"));
     GtkTreeIter   iter;
@@ -129,6 +132,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     gtk_list_store_set (swapping_store, &iter,
                         SWAPPING_IMAGE, "Aucun",
                         SWAPPING_CRITERIA, NULL,
+                        SWAPPING_ERRORS, NULL,
                         -1);
 
     while (attr)
@@ -143,6 +147,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
         gtk_list_store_set (swapping_store, &iter,
                             SWAPPING_IMAGE, attr_desc->_user_name,
                             SWAPPING_CRITERIA, attr_desc,
+                            SWAPPING_ERRORS, NULL,
                             -1);
       }
 
@@ -203,6 +208,7 @@ PoolAllocator::~PoolAllocator ()
   _swapping->Release         ();
   _seeding_balanced->Release ();
   _fencer_list->Release      ();
+  _swapper->Delete           ();
 }
 
 // --------------------------------------------------------------------------------
@@ -357,13 +363,21 @@ gboolean PoolAllocator::ObjectIsDropable (Object   *floating_object,
 {
   if (floating_object && in_zone)
   {
-    Player::AttributeId  attr_id  ("availability");
-    Player              *player = (Player *) floating_object;
-    Attribute           *attr = player->GetAttribute (&attr_id);
+    Player *player = (Player *) floating_object;
 
-    if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
+    if (player->IsFencer ())
     {
       return TRUE;
+    }
+    else
+    {
+      Player::AttributeId  attr_id  ("availability");
+      Attribute           *attr = player->GetAttribute (&attr_id);
+
+      if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
+      {
+        return TRUE;
+      }
     }
   }
 
@@ -544,6 +558,7 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
             || (attr_desc && (strcmp (attr_desc->_code_name, _swapping->_string) == 0)))
         {
           criteria_index = i;
+
           break;
         }
         iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (model),
@@ -913,22 +928,24 @@ void PoolAllocator::CreatePools ()
       }
     }
 
+    if (_seeding_balanced->_value)
     {
-      GreenSwapper *swapper;
-      guint    nb_fencer = g_slist_length (shortlist);
-
-      if (_swapping_criteria && _seeding_balanced->_value)
+      if (_swapping_criteria)
       {
-        swapper = new GreenSwapper (_drop_zones,
-                                    _swapping_criteria->_code_name,
-                                    shortlist);
+        _swapper->Swap (_drop_zones,
+                        _swapping_criteria->_code_name,
+                        shortlist);
       }
       else
       {
-        swapper = new GreenSwapper (_drop_zones,
-                                    NULL,
-                                    shortlist);
+        _swapper->Swap (_drop_zones,
+                        NULL,
+                        shortlist);
       }
+    }
+    else
+    {
+      guint nb_fencer = g_slist_length (shortlist);
 
       for (guint i = 0; i < nb_fencer; i++)
       {
@@ -972,15 +989,14 @@ void PoolAllocator::CreatePools ()
           }
         }
 
-        player = swapper->GetNextPlayer (pool);
+        player = (Player *) g_slist_nth_data (shortlist,
+                                              i);
         player->SetData (this,
                          "original_pool",
                          (void *) pool->GetNumber ());
         pool->AddFencer (player,
                          this);
       }
-
-      swapper->Release ();
     }
 
     match_order->Release ();
@@ -1464,7 +1480,6 @@ void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
 {
   gdouble paper_w = gtk_print_context_get_width  (context);
   cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
-  gdouble          header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
   GooCanvasBounds  bounds;
 
   DrawContainerPage (operation,
@@ -1505,7 +1520,7 @@ void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
 
   cairo_translate (cr,
                    0.0,
-                   (header_h - (_page_h*page_nr))/_print_scale);
+                   -(_page_h*page_nr)/_print_scale);
 
   goo_canvas_render (GetCanvas (),
                      cr,
@@ -1569,12 +1584,13 @@ extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
 {
-  GtkTreeIter iter;
+  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
+  GtkTreeIter   selected_iter;
 
   gtk_combo_box_get_active_iter (cb,
-                                 &iter);
-  gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore")),
-                      &iter,
+                                 &selected_iter);
+  gtk_tree_model_get (model,
+                      &selected_iter,
                       SWAPPING_CRITERIA, &_swapping_criteria,
                       -1);
 
@@ -1596,6 +1612,32 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
     SignalStatusUpdate ();
     MakeDirty ();
   }
+
+#ifdef DEBUG
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (model,
+                                                   &iter);
+    while (iter_is_valid)
+    {
+      gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+                          SWAPPING_ERRORS, NULL,
+                          -1);
+
+      iter_is_valid = gtk_tree_model_iter_next (model,
+                                                &iter);
+    }
+  }
+
+  if (_swapper && _swapper->GetErrors ())
+  {
+    gtk_list_store_set (GTK_LIST_STORE (model), &selected_iter,
+                        SWAPPING_ERRORS, GTK_STOCK_DIALOG_WARNING,
+                        -1);
+  }
+#endif
 }
 
 // --------------------------------------------------------------------------------

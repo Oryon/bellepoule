@@ -151,8 +151,6 @@
 		<Unit filename="sources\people_management\referees_list.hpp" />
 		<Unit filename="sources\people_management\splitting.cpp" />
 		<Unit filename="sources\people_management\splitting.hpp" />
-		<Unit filename="sources\pool_round\green_swapper.cpp" />
-		<Unit filename="sources\pool_round\green_swapper.hpp" />
 		<Unit filename="sources\pool_round\pool.cpp" />
 		<Unit filename="sources\pool_round\pool.hpp" />
 		<Unit filename="sources\pool_round\pool_allocator.cpp" />
@@ -163,6 +161,7 @@
 		<Unit filename="sources\pool_round\pool_supervisor.hpp" />
 		<Unit filename="sources\pool_round\pool_zone.cpp" />
 		<Unit filename="sources\pool_round\pool_zone.hpp" />
+		<Unit filename="sources\pool_round\smart_swapper.cpp" />
 		<Unit filename="sources\pool_round\smart_swapper.hpp" />
 		<Unit filename="sources\pool_round\swapper.hpp" />
 		<Unit filename="sources\resource.rc">
