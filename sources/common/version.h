@@ -5,7 +5,7 @@
 #define VERSION           "3"
 #define VERSION_REVISION  "0"
 #define VERSION_MATURITY  "alpha19"
-#define VERSION_DAY       "19"
+#define VERSION_DAY       "20"
 #define VERSION_MONTH     "12"
 
 #endif

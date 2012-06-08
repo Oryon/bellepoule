@@ -39,7 +39,8 @@ typedef enum
 typedef enum
 {
   SWAPPING_IMAGE,
-  SWAPPING_CRITERIA
+  SWAPPING_CRITERIA,
+  SWAPPING_ERRORS
 } SwappingColumn;
 
 extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
@@ -120,6 +121,8 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     filter->Release ();
   }
 
+  _swapper = SmartSwapper::Create (this);
+
   {
     GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetObject ("swapping_liststore"));
     GtkTreeIter   iter;
@@ -129,6 +132,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     gtk_list_store_set (swapping_store, &iter,
                         SWAPPING_IMAGE, "Aucun",
                         SWAPPING_CRITERIA, NULL,
+                        SWAPPING_ERRORS, NULL,
                         -1);
 
     while (attr)
@@ -143,6 +147,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
         gtk_list_store_set (swapping_store, &iter,
                             SWAPPING_IMAGE, attr_desc->_user_name,
                             SWAPPING_CRITERIA, attr_desc,
+                            SWAPPING_ERRORS, NULL,
                             -1);
       }
 
@@ -194,8 +199,6 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
     Plug (_fencer_list,
           _glade->GetWidget ("fencer_list_hook"));
   }
-
-  _swapper = SmartSwapper::Create (this);
 }
 
 // --------------------------------------------------------------------------------
@@ -555,6 +558,7 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
             || (attr_desc && (strcmp (attr_desc->_code_name, _swapping->_string) == 0)))
         {
           criteria_index = i;
+
           break;
         }
         iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (model),
@@ -924,11 +928,20 @@ void PoolAllocator::CreatePools ()
       }
     }
 
-    if (_swapping_criteria && _seeding_balanced->_value)
+    if (_seeding_balanced->_value)
     {
-      _swapper->Swap (_drop_zones,
-                      _swapping_criteria->_code_name,
-                      shortlist);
+      if (_swapping_criteria)
+      {
+        _swapper->Swap (_drop_zones,
+                        _swapping_criteria->_code_name,
+                        shortlist);
+      }
+      else
+      {
+        _swapper->Swap (_drop_zones,
+                        NULL,
+                        shortlist);
+      }
     }
     else
     {
@@ -1571,12 +1584,13 @@ extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
 {
-  GtkTreeIter iter;
+  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
+  GtkTreeIter   selected_iter;
 
   gtk_combo_box_get_active_iter (cb,
-                                 &iter);
-  gtk_tree_model_get (GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore")),
-                      &iter,
+                                 &selected_iter);
+  gtk_tree_model_get (model,
+                      &selected_iter,
                       SWAPPING_CRITERIA, &_swapping_criteria,
                       -1);
 
@@ -1598,6 +1612,32 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
     SignalStatusUpdate ();
     MakeDirty ();
   }
+
+#ifdef DEBUG
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (model,
+                                                   &iter);
+    while (iter_is_valid)
+    {
+      gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+                          SWAPPING_ERRORS, NULL,
+                          -1);
+
+      iter_is_valid = gtk_tree_model_iter_next (model,
+                                                &iter);
+    }
+  }
+
+  if (_swapper && _swapper->GetErrors ())
+  {
+    gtk_list_store_set (GTK_LIST_STORE (model), &selected_iter,
+                        SWAPPING_ERRORS, GTK_STOCK_DIALOG_WARNING,
+                        -1);
+  }
+#endif
 }
 
 // --------------------------------------------------------------------------------

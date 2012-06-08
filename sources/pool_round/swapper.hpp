@@ -29,6 +29,8 @@ class Swapper
                        gchar  *criteria,
                        GSList *fencer_list) = 0;
 
+    virtual guint GetErrors () = 0;
+
   protected:
     Swapper () {};
 };
