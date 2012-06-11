@@ -41,7 +41,9 @@ class Contest : public Module
 
     Contest *Duplicate ();
 
-    void LoadUri (const gchar *filename);
+    void LoadXml (const gchar *filename);
+
+    void LoadFencerFile (const gchar *filename);
 
     void LoadMemory (const gchar *memory);
 

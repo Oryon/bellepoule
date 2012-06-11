@@ -32,11 +32,13 @@ Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
+Root: HKCU; Subkey: "Software\Classes\.fff"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\BellePoule.exe,0"; Flags: uninsdeletekey noerror
 Root: HKCU; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.exe"" ""%1"""; Flags: uninsdeletekey noerror
 
 Root: HKLM; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
+Root: HKLM; Subkey: "Software\Classes\.fff"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\BellePoule"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\BellePoule.exe,0"; Flags: uninsdeletekey noerror
 Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.bin"" ""%1"""; Flags: uninsdeletekey noerror
@@ -64,6 +66,7 @@ Source: "path_dependent_files\pango.modules"; DestDir: "{app}\etc\pango"; Flags:
 Source: "..\Exemples\exemple.cotcot"; DestDir: "{app}\share\BellePoule\Exemples"; Flags: ignoreversion
 Source: "..\Exemples\CLS_SHM.FFF"; DestDir: "{app}\share\BellePoule\Exemples"; Flags: ignoreversion
 Source: "..\Exemples\CLS_EDM.FFF"; DestDir: "{app}\share\BellePoule\Exemples"; Flags: ignoreversion
+Source: "..\Exemples\FFE\*"; DestDir: "{app}\share\BellePoule\Exemples\FFE"; Flags: ignoreversion
 
 ;Documentation
 Source: "..\resources\user_manual.pdf"; DestDir: "{app}\share\BellePoule\resources"; Flags: ignoreversion
@@ -270,5 +273,6 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 

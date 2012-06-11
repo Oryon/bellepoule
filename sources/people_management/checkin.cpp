@@ -183,21 +183,22 @@ void Checkin::OnImport ()
   {
     GtkFileFilter *filter = gtk_file_filter_new ();
 
-    gtk_file_filter_set_name (filter,
-                              gettext ("All FFF files (.FFF)"));
+    if (GetPlayerType () == Player::FENCER)
+    {
+      gtk_file_filter_set_name (filter,
+                                gettext ("Fencer files"));
+    }
+    else
+    {
+      gtk_file_filter_set_name (filter,
+                                gettext ("Referee files"));
+    }
     gtk_file_filter_add_pattern (filter,
                                  "*.FFF");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                 filter);
-  }
-
-  {
-    GtkFileFilter *filter = gtk_file_filter_new ();
-
-    gtk_file_filter_set_name (filter,
-                              gettext ("All Excel files (.CSV)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.CSV");
+    gtk_file_filter_add_pattern (filter,
+                                 "*.TXT");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                  filter);
   }
@@ -254,8 +255,6 @@ void Checkin::OnImport ()
 
     if (filename)
     {
-      gchar *file;
-
       {
         gchar *dirname = g_path_get_dirname (filename);
 
@@ -272,40 +271,50 @@ void Checkin::OnImport ()
         gtk_recent_manager_add_item (manager, filename);
       }
 
+      if (   g_str_has_suffix (filename, ".fff")
+          || g_str_has_suffix (filename, ".FFF"))
       {
-        gchar *raw_file;
-        gsize  length;
-        guint  j;
-
-        g_file_get_contents ((const gchar *) filename,
-                             &raw_file,
-                             &length,
-                             NULL);
-        length++;
-
-        file = (gchar *) g_malloc (length);
-
-        j = 0;
-        for (guint i = 0; i < length; i++)
-        {
-          if (raw_file[i] != '\r')
-          {
-            file[j] = raw_file[i];
-            j++;
-          }
-        }
+        ImportFFF (filename);
       }
-
-      ImportFFF (file);
-      // ImportCSV (file);
-
-      g_free (file);
+      else
+      {
+        ImportCSV (filename);
+      }
     }
   }
 
   gtk_widget_destroy (chooser);
 
   OnListChanged ();
+}
+
+// --------------------------------------------------------------------------------
+gchar *Checkin::GetFileContent (gchar *filename)
+{
+  gchar *file_content;
+  gchar *raw_file;
+  gsize  length;
+  guint  j;
+
+  g_file_get_contents ((const gchar *) filename,
+                       &raw_file,
+                       &length,
+                       NULL);
+  length++;
+
+  file_content = (gchar *) g_malloc (length);
+
+  j = 0;
+  for (guint i = 0; i < length; i++)
+  {
+    if (raw_file[i] != '\r')
+    {
+      file_content[j] = raw_file[i];
+      j++;
+    }
+  }
+
+  return file_content;
 }
 
 // --------------------------------------------------------------------------------
@@ -333,10 +342,12 @@ gchar *Checkin::ConvertToUtf8 (gchar *what)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::ImportFFF (gchar *file)
+void Checkin::ImportFFF (gchar *filename)
 {
-  gchar *iso_8859_file = ConvertToUtf8 (file);
+  gchar *file_content  = GetFileContent (filename);
+  gchar *iso_8859_file = ConvertToUtf8 (file_content);
 
+  g_free (file_content);
   if (iso_8859_file)
   {
     gchar **lines = g_strsplit_set (iso_8859_file,
@@ -409,7 +420,7 @@ void Checkin::ImportFFF (gchar *file)
 
             if (strlen (tokens[0]) > 2)
             {
-              AttributeDesc *league_desc = AttributeDesc::GetDesc ("league");
+              AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
 
               tokens[0][2] = 0;
 
@@ -463,64 +474,81 @@ void Checkin::ImportFFF (gchar *file)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::ImportCSV (gchar *file)
+void Checkin::ImportCSV (gchar *filename)
 {
-  guint nb_attr = 0;
+  gchar *file_content  = GetFileContent (filename);
+  gchar *iso_8859_file = ConvertToUtf8 (file_content);
 
-  gchar **header_line = g_strsplit_set (file,
-                                        "\n",
-                                        0);
+  g_free (file_content);
+  if (iso_8859_file)
+  {
+    gchar **header_line = g_strsplit_set (iso_8859_file,
+                                          "\n",
+                                          0);
 
-  if (header_line == NULL)
-  {
-    return;
-  }
-  else
-  {
-    // Header
+    if (header_line)
     {
-      gchar **header_attr = g_strsplit_set (header_line[0],
-                                            ";",
-                                            0);
+      guint           nb_attr = 0;
+      AttributeDesc **columns;
 
-      if (header_attr)
+      // Header
       {
-        for (guint i = 0; header_attr[i] != NULL; i++)
+        gchar **header_attr = g_strsplit_set (header_line[0],
+                                              ";",
+                                              0);
+
+        if (header_attr)
         {
-          nb_attr++;
+          for (guint i = 0; header_attr[i] != NULL; i++)
+          {
+            nb_attr++;
+          }
+
+          columns = g_new (AttributeDesc *, nb_attr);
+          for (guint i = 0; i < nb_attr; i++)
+          {
+            columns[i] = AttributeDesc::GuessDescFromUserName (header_attr[i]);
+          }
+
+          g_strfreev (header_attr);
         }
-        g_strfreev (header_attr);
+
+        g_strfreev (header_line);
       }
 
-      g_strfreev (header_line);
-    }
-
-    // Fencers
-    {
-      gchar **tokens = g_strsplit_set (file,
-                                       ";\n",
-                                       0);
-
-      if (tokens)
+      // Fencers
       {
-        for (guint i = nb_attr; tokens[i] != NULL; i += nb_attr)
+        gchar **tokens = g_strsplit_set (iso_8859_file,
+                                         ";\n",
+                                         0);
+
+        if (tokens)
         {
-          Player              *player = new Player (GetPlayerType ());
-          Player::AttributeId  attr_id ("");
+          for (guint i = nb_attr; tokens[i+1] != 0; i += nb_attr)
+          {
+            Player              *player = new Player (GetPlayerType ());
+            Player::AttributeId  attr_id ("");
 
-          attr_id._name = (gchar *) "name";
-          player->SetAttributeValue (&attr_id, tokens[i]);
+            for (guint c = 0; c < nb_attr; c++)
+            {
+              if (columns[c])
+              {
+                attr_id._name = columns[c]->_code_name;
+                player->SetAttributeValue (&attr_id, tokens[i+c]);
+              }
+            }
 
-          attr_id._name = (gchar *) "first_name";
-          player->SetAttributeValue (&attr_id, tokens[i+1]);
-
-          Add (player);
-          player->Release ();
+            Add (player);
+            player->Release ();
+          }
+          g_strfreev (tokens);
         }
-        g_strfreev (tokens);
       }
+
+      g_free (columns);
     }
   }
+  g_free (iso_8859_file);
 }
 
 // --------------------------------------------------------------------------------

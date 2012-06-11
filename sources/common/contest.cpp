@@ -338,7 +338,7 @@ Contest::Contest ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::LoadUri (const gchar *filename)
+void Contest::LoadXml (const gchar *filename)
 {
   if (g_path_is_absolute (filename) == FALSE)
   {
@@ -381,6 +381,48 @@ void Contest::LoadUri (const gchar *filename)
       if (_save_timeout_id > 0)
       {
         g_source_remove (_save_timeout_id);
+      }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::LoadFencerFile (const gchar *filename)
+{
+  gchar *absolute_filename;
+
+  if (g_path_is_absolute (filename) == FALSE)
+  {
+    gchar *current_dir = g_get_current_dir ();
+
+    absolute_filename = g_build_filename (current_dir,
+                                  filename, NULL);
+    g_free (current_dir);
+  }
+  else
+  {
+    absolute_filename = g_strdup (filename);
+  }
+
+
+  if (g_file_test (absolute_filename,
+                   G_FILE_TEST_IS_REGULAR))
+  {
+    if (_schedule)
+    {
+      CheckinSupervisor *checkin;
+
+      _schedule->CreateDefault ();
+      checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+
+      if (   g_str_has_suffix (filename, ".fff")
+          || g_str_has_suffix (filename, ".FFF"))
+      {
+        checkin->ImportFFF (absolute_filename);
+      }
+      else
+      {
+        checkin->ImportCSV (absolute_filename);
       }
     }
   }
@@ -472,18 +514,21 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Championnat");
         if (attr)
         {
+          g_free (_level);
           _level = g_strdup (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
         if (attr)
         {
+          g_free (_id);
           _id = g_strdup (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "TitreLong");
         if (attr)
         {
+          g_free (_name);
           _name = g_strdup (attr);
         }
 
@@ -568,18 +613,21 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Organisateur");
         if (attr)
         {
+          g_free (_organizer);
           _organizer = g_strdup (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "URLorganisateur");
         if (attr)
         {
+          g_free (_web_site);
           _web_site = g_strdup (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Lieu");
         if (attr)
         {
+          g_free (_location);
           _location = g_strdup (attr);
         }
 

@@ -996,15 +996,6 @@ void Tournament::OnOpen (gchar *current_folder)
                               gettext ("BellePoule files (.cotcot)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.cotcot");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                 filter);
-  }
-
-  {
-    GtkFileFilter *filter = gtk_file_filter_new ();
-
-    gtk_file_filter_set_name (filter,
-                              gettext ("FFE files (.xml)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.xml");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
@@ -1121,20 +1112,21 @@ void Tournament::OpenUriContest (const gchar *uri)
 
     {
       static const gchar *contest_suffix_table[] = {".cotcot", ".COTCOT", ".xml", ".XML", NULL};
-      static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", NULL};
-
-      Contest *contest = new Contest ();
-
-      Plug (contest,
-            NULL,
-            NULL);
+      static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", ".txt", ".TXT", NULL};
+      Contest            *contest;
 
       for (guint i = 0; contest_suffix_table[i] != NULL; i++)
       {
         if (g_str_has_suffix (uri,
                               contest_suffix_table[i]))
         {
-          contest->LoadUri (uri);
+          contest = new Contest ();
+
+          Plug (contest,
+                NULL,
+                NULL);
+
+          contest->LoadXml (uri);
           break;
         }
       }
@@ -1144,6 +1136,16 @@ void Tournament::OpenUriContest (const gchar *uri)
         if (g_str_has_suffix (uri,
                               people_suffix_table[i]))
         {
+          contest = Contest::Create ();
+
+          if (contest)
+          {
+            Plug (contest,
+                  NULL,
+                  NULL);
+
+            contest->LoadFencerFile (uri);
+          }
           break;
         }
       }

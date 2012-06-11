@@ -672,7 +672,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *file,
           // Internal code (French federation issue)
           {
             gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                DISCRETE_CODE, tokens[i+3],
+                                DISCRETE_CODE, atoi (tokens[i+3]),
                                 -1);
           }
         }
@@ -692,7 +692,7 @@ void AttributeDesc::CreateList (GSList **list, ...)
   *list = g_slist_copy (_list);
 
   va_start (ap, list);
-  while ( (name = va_arg (ap, char *)) )
+  while ((name = va_arg (ap, char *)))
   {
     for (guint i = 0; i < g_slist_length (*list); i++)
     {
@@ -718,7 +718,7 @@ GSList *AttributeDesc::GetList ()
 }
 
 // --------------------------------------------------------------------------------
-AttributeDesc *AttributeDesc::GetDesc (const gchar *name)
+AttributeDesc *AttributeDesc::GetDescFromCodeName (const gchar *code_name)
 {
   GSList *current = _list;
 
@@ -726,7 +726,7 @@ AttributeDesc *AttributeDesc::GetDesc (const gchar *name)
   {
     AttributeDesc *attr_desc = (AttributeDesc *) current->data;
 
-    if (strcmp (attr_desc->_code_name, name) == 0)
+    if (strcmp (attr_desc->_code_name, code_name) == 0)
     {
       return attr_desc;
     }
@@ -736,9 +736,50 @@ AttributeDesc *AttributeDesc::GetDesc (const gchar *name)
   return NULL;
 }
 
+// --------------------------------------------------------------------------------
+AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name)
+{
+  GSList *current = _list;
 
+  while (current)
+  {
+    AttributeDesc *attr_desc = (AttributeDesc *) current->data;
+    gchar         *pattern;
 
+    {
+      gchar  *simplified_name;
 
+      simplified_name = g_convert_with_fallback (attr_desc->_user_name,
+                                                 -1,
+                                                 "ASCII",
+                                                 "UTF-8",
+                                                 ".*",
+                                                 NULL,
+                                                 NULL,
+                                                 NULL);
+
+      pattern = g_strdup_printf ("^%s$", simplified_name);
+      g_free (simplified_name);
+    }
+
+    if (g_regex_match_simple (pattern,
+                              user_name,
+                              (GRegexCompileFlags) (G_REGEX_CASELESS|G_REGEX_MULTILINE),
+                              (GRegexMatchFlags) 0))
+    {
+      g_print ("%s == %s\n", user_name, attr_desc->_code_name);
+      g_free (pattern);
+      return attr_desc;
+    }
+
+    g_free (pattern);
+    current = g_slist_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------
 Attribute::Attribute (AttributeDesc *desc)
 : Object ("Attribute")
@@ -759,7 +800,7 @@ Attribute::~Attribute ()
 // --------------------------------------------------------------------------------
 Attribute *Attribute::New (gchar *name)
 {
-  AttributeDesc *desc = AttributeDesc::GetDesc (name);
+  AttributeDesc *desc = AttributeDesc::GetDescFromCodeName (name);
 
   if (desc)
   {

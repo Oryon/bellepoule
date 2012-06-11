@@ -748,7 +748,7 @@ GtkTreeModel *Module::GetStatusModel ()
 {
   if (_status_model == NULL)
   {
-    AttributeDesc *desc = AttributeDesc::GetDesc ("status");
+    AttributeDesc *desc = AttributeDesc::GetDescFromCodeName ("status");
 
     if (desc)
     {

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE BaseCompetitionIndividuelle>
+<BaseCompetitionIndividuelle xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Championnat="FFE" ID="61" Arme="E" Sexe="F" Domaine="I" Federation="FFE" Categorie="J" TitreLong="Challenge Lutetia" Annee="2011/2012" Date="24.09.2011"  DateDebut="24.09.2011" DateFin="25.09.2011" DateFichierXML="11.06.2012 10:53" Type="I">
+<Tireurs>
+		<Tireur ID="208347"	Nom ="YAHIAOUI"	Prenom ="Shanaize"	DateNaissance ="22.12.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="010130021347"	Club="AIX UCE"		Classement="1081"	Points="632.57"/>
+		<Tireur ID="267648"	Nom ="CARLBERG"	Prenom ="Yael"	DateNaissance ="09.05.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="010130021757"	Club="AIX UCE"		Classement="1066"	Points="812.60"/>
+		<Tireur ID="208906"	Nom ="BERMOND"	Prenom ="Amandine"	DateNaissance ="24.04.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="010130022215"	Club="AIX UCE"		Classement="1092"	Points="582.97"/>
+		<Tireur ID="301392"	Nom ="CARDONA"	Prenom ="Cyrielle"	DateNaissance ="14.07.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="010130030004"	Club="TEAM EPEE PR"		Classement="1202"	Points="38.71"/>
+		<Tireur ID="273040"	Nom ="LOPEZ"	Prenom ="Manuela"	DateNaissance ="14.01.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="010130200371"	Club="MIRAMAS OP"		Classement="1033"	Points="1575.59"/>
+		<Tireur ID="244231"	Nom ="ROBLES"	Prenom ="Lola"	DateNaissance ="03.12.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="020600240788"	Club="CHANTILLY CE"		Classement="1130"	Points="301.13"/>
+		<Tireur ID="230517"	Nom ="HUGHES"	Prenom ="Alessia"	DateNaissance ="21.02.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="020600250727"	Club="BEAUVAIS ACA"		Classement="1006"	Points="2625.19"/>
+		<Tireur ID="244358"	Nom ="VAN LERBERGHE"	Prenom ="Elise"	DateNaissance ="15.03.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="020800200454"	Club="ABBEVILLE"		Classement="1039"	Points="1365.03"/>
+		<Tireur ID="209887"	Nom ="DE BRAECKELAER"	Prenom ="Lea"	DateNaissance ="27.05.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="020800220947"	Club="AMIENS CEAM"		Classement="1036"	Points="1429.32"/>
+		<Tireur ID="244414"	Nom ="POURCELOT"	Prenom ="Honorine"	DateNaissance ="10.06.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="030250011468"	Club="BESANCON RCE"		Classement="1072"	Points="685.05"/>
+		<Tireur ID="364033"	Nom ="BROILLARD"	Prenom ="Mathilde"	DateNaissance ="15.04.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="030250011791"	Club="BESANCON RCE"		Classement="1197"	Points="49.57"/>
+		<Tireur ID="259471"	Nom ="RUAUD"	Prenom ="Margot"	DateNaissance ="29.04.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="040330090713"	Club="LIBOURNE AS"		Classement="1054"	Points="1060.94"/>
+		<Tireur ID="245290"	Nom ="BOENNEC"	Prenom ="Marion"	DateNaissance ="12.02.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="040330131005"	Club="ORNON ESCR"		Classement="1069"	Points="763.58"/>
+		<Tireur ID="245315"	Nom ="VIGNEAU"	Prenom ="Mathilde"	DateNaissance ="16.04.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="040330131032"	Club="ORNON ESCR"		Classement="1180"	Points="86.47"/>
+		<Tireur ID="279778"	Nom ="GIGANDET"	Prenom ="Laurene"	DateNaissance ="03.04.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="040330131063"	Club="ORNON ESCR"		Classement="1096"	Points="565.50"/>
+		<Tireur ID="346210"	Nom ="BLANC"	Prenom ="Maylis"	DateNaissance ="23.09.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="040330131186"	Club="ORNON ESCR"		Classement="1157"	Points="169.46"/>
+		<Tireur ID="346224"	Nom ="HOSTEIN"	Prenom ="Margot"	DateNaissance ="29.12.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="040330131190"	Club="ORNON ESCR"		Classement="1164"	Points="136.68"/>
+		<Tireur ID="237542"	Nom ="BRINDAMOUR"	Prenom ="Audrey"	DateNaissance ="07.04.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="040330131298"	Club="ORNON ESCR"		Classement="1043"	Points="1263.12"/>
+		<Tireur ID="311544"	Nom ="TACHOT"	Prenom ="Philippine"	DateNaissance ="16.08.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="040400140600"	Club="DAX SE"		Classement="1060"	Points="882.62"/>
+		<Tireur ID="326831"	Nom ="HOUSSAYE"	Prenom ="Clotilde"	DateNaissance ="15.06.1996"	Sexe="F"	Nation="FRA"	Lateralite="G"	Licence="050140040403"	Club="TOUQUES ESCR"		Classement="1117"	Points="387.04"/>
+		<Tireur ID="211928"	Nom ="DUSSAULE"	Prenom ="Delphine"	DateNaissance ="14.03.1995"	Sexe="F"	Nation="FRA"	Lateralite="G"	Licence="050140301135"	Club="CAEN EC"		Classement="1127"	Points="323.42"/>
+		<Tireur ID="212297"	Nom ="CHEZEAU"	Prenom ="Floriane"	DateNaissance ="08.08.1994"	Sexe="F"	Nation="FRA"	Lateralite="G"	Licence="060030330027"	Club="MOULINS BOUR"		Classement="1045"	Points="1224.20"/>
+		<Tireur ID="343605"	Nom ="MALHERBE"	Prenom ="Solene"	DateNaissance ="07.07.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="060630101402"	Club="CLERMONT FER"		Classement="1168"	Points="117.86"/>
+		<Tireur ID="213698"	Nom ="MARTIN"	Prenom ="Chloe"	DateNaissance ="12.09.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="080070220423"	Club="PRIVAS MG"		Classement="1053"	Points="1063.36"/>
+		<Tireur ID="246337"	Nom ="VASSEUR"	Prenom ="Lea"	DateNaissance ="08.08.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="080070390119"	Club="BOURG ANDEOL"		Classement="1131"	Points="291.97"/>
+		<Tireur ID="301062"	Nom ="MARCINIAK"	Prenom ="Juliette"	DateNaissance ="15.09.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="080260021079"	Club="MONTELIMAR"		Classement="1188"	Points="58.27"/>
+		<Tireur ID="352391"	Nom ="BANC SEROPIAN"	Prenom ="Eva"	DateNaissance ="21.12.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="080260041221"	Club="BOURG VALEN"		Classement="1178"	Points="88.24"/>
+		<Tireur ID="314317"	Nom ="MOULIN"	Prenom ="Lisa"	DateNaissance ="06.07.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="080260340040"	Club="CHABEUIL"		Classement="1173"	Points="104.73"/>
+		<Tireur ID="213145"	Nom ="CHAPELLE"	Prenom ="Sara"	DateNaissance ="28.11.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="080380090518"	Club="FONTAINE AS"		Classement="1211"	Points="30.19"/>
+		<Tireur ID="214152"	Nom ="PELLETIER"	Prenom ="Coline"	DateNaissance ="18.09.1992"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="080380191311"	Club="GRENOBLE PAR"		Classement="1011"	Points="2222.23"/>
+		<Tireur ID="270215"	Nom ="GARCIA"	Prenom ="Laura"	DateNaissance ="25.05.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="080380191410"	Club="GRENOBLE PAR"		Classement="1119"	Points="376.42"/>
+		<Tireur ID="217659"	Nom ="ABATI"	Prenom ="Pauline"	DateNaissance ="10.10.1992"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="080380191584"	Club="GRENOBLE PAR"		Classement="1025"	Points="1688.23"/>
+		<Tireur ID="272611"	Nom ="JOSEPH"	Prenom ="Catherine"	DateNaissance ="10.05.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="080380191649"	Club="GRENOBLE PAR"		Classement="1022"	Points="1847.21"/>
+		<Tireur ID="213882"	Nom ="ZUDDAS"	Prenom ="Mathilde"	DateNaissance ="02.06.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="090210011391"	Club="DIJON ASPTT"		Classement="1139"	Points="237.08"/>
+		<Tireur ID="270308"	Nom ="CHEVALLOT"	Prenom ="Marion"	DateNaissance ="05.05.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="090210011745"	Club="DIJON ASPTT"		Classement="1101"	Points="528.53"/>
+		<Tireur ID="358010"	Nom ="CRISTEL DELESSE"	Prenom ="Rebecca"	DateNaissance ="07.10.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="090210012027"	Club="DIJON ASPTT"		Classement="1151"	Points="190.82"/>
+		<Tireur ID="214415"	Nom ="FARGEAS"	Prenom ="Claire"	DateNaissance ="03.03.1992"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="090580270844"	Club="NEVERS CE"		Classement="1056"	Points="1051.09"/>
+		<Tireur ID="214464"	Nom ="BONNET"	Prenom ="Margaux"	DateNaissance ="14.10.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="090580271150"	Club="NEVERS CE"		Classement="1044"	Points="1262.30"/>
+		<Tireur ID="214465"	Nom ="BONNET"	Prenom ="Marie"	DateNaissance ="14.10.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="090580271151"	Club="NEVERS CE"		Classement="1049"	Points="1169.01"/>
+		<Tireur ID="278255"	Nom ="LEQUIN"	Prenom ="Andrea"	DateNaissance ="16.01.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="090710080516"	Club="AUTUN CE"		Classement="1042"	Points="1306.31"/>
+		<Tireur ID="214746"	Nom ="VITALIS"	Prenom ="Coraline"	DateNaissance ="09.05.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="109710070126"	Club="GOSIER ST GE"		Classement="1059"	Points="912.23"/>
+		<Tireur ID="280391"	Nom ="MOLINA"	Prenom ="Sonia"	DateNaissance ="13.02.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="109710070153"	Club="GOSIER ST GE"		Classement="1121"	Points="366.23"/>
+		<Tireur ID="281527"	Nom ="MICOUT"	Prenom ="Ines"	DateNaissance ="26.02.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="110760090928"	Club="LE HAVRE CE"		Classement="1120"	Points="367.78"/>
+		<Tireur ID="280236"	Nom ="BRETEAU"	Prenom ="Emma"	DateNaissance ="27.09.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="110760170279"	Club="SOTTEVILLE"		Classement="1142"	Points="221.37"/>
+		<Tireur ID="411970"	Nom ="DROUET"	Prenom ="Anastasiane"	DateNaissance ="06.07.1992"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="110760170321"	Club="SOTTEVILLE"		Classement="1145"	Points="205.97"/>
+		<Tireur ID="260909"	Nom ="ROCATCHER"	Prenom ="Aude"	DateNaissance ="07.03.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="110760290351"	Club="DIEPPE FL"		Classement="1150"	Points="192.96"/>
+		<Tireur ID="359924"	Nom ="SANCHEZ"	Prenom ="Salome"	DateNaissance ="20.06.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="110760290483"	Club="DIEPPE FL"		Classement="1217"	Points="23.31"/>
+		<Tireur ID="270399"	Nom ="AWONG"	Prenom ="Amelie"	DateNaissance ="09.06.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="129730010458"	Club="CAYENNE CE"		Classement="1030"	Points="1602.08"/>
+		<Tireur ID="320033"	Nom ="RENGOT"	Prenom ="Juliette"	DateNaissance ="14.04.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="130590040260"	Club="GDE SYNTHE"		Classement="1200"	Points="43.09"/>
+		<Tireur ID="247419"	Nom ="SOREL"	Prenom ="Rozenn"	DateNaissance ="08.10.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="130590040304"	Club="GDE SYNTHE"		Classement="1132"	Points="291.44"/>
+		<Tireur ID="247714"	Nom ="LEFEZ"	Prenom ="Sophie"	DateNaissance ="02.07.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="130590040341"	Club="GDE SYNTHE"		Classement="1109"	Points="443.40"/>
+		<Tireur ID="298809"	Nom ="LEDRU"	Prenom ="Margaux"	DateNaissance ="23.06.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="130590200953"	Club="VALENCIENNES"		Classement="1019"	Points="1978.03"/>
+		<Tireur ID="216527"	Nom ="BIENFAIT"	Prenom ="Maude"	DateNaissance ="12.10.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="130590250774"	Club="DOUAI CE"		Classement="1088"	Points="593.24"/>
+		<Tireur ID="216107"	Nom ="GUILLUY"	Prenom ="Fanny"	DateNaissance ="09.09.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="130620120710"	Club="ARRAS CE"		Classement="1021"	Points="1879.07"/>
+		<Tireur ID="248370"	Nom ="VENET"	Prenom ="Alexia"	DateNaissance ="24.10.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140010290131"	Club="MEXIMIEUX"		Classement="1093"	Points="572.41"/>
+		<Tireur ID="248599"	Nom ="ARLES"	Prenom ="Mathilde"	DateNaissance ="03.04.1992"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690100007"	Club="LYON EPEE M"		Classement="1105"	Points="494.80"/>
+		<Tireur ID="295817"	Nom ="DELHOMME"	Prenom ="Juliette"	DateNaissance ="15.10.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690100011"	Club="LYON EPEE M"		Classement="1055"	Points="1051.39"/>
+		<Tireur ID="216846"	Nom ="MERICA"	Prenom ="Mahee"	DateNaissance ="20.07.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="140690100016"	Club="LYON EPEE M"		Classement="1008"	Points="2410.20"/>
+		<Tireur ID="284724"	Nom ="SANCHEZ"	Prenom ="Melanie"	DateNaissance ="29.06.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="140690100018"	Club="LYON EPEE M"		Classement="1128"	Points="312.33"/>
+		<Tireur ID="218058"	Nom ="VIGNOUD"	Prenom ="Mailys"	DateNaissance ="27.12.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690100021"	Club="LYON EPEE M"		Classement="1023"	Points="1835.30"/>
+		<Tireur ID="217506"	Nom ="MALTI"	Prenom ="Lilia"	DateNaissance ="16.01.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="140690100025"	Club="LYON EPEE M"		Classement="1013"	Points="2175.81"/>
+		<Tireur ID="217221"	Nom ="MALLO"	Prenom ="Auriane"	DateNaissance ="11.10.1993"	Sexe="F"	Nation="FRA"	Lateralite="G"	Licence="140690100026"	Club="LYON EPEE M"		Classement="1001"	Points="4001.89"/>
+		<Tireur ID="209115"	Nom ="SAEZ"	Prenom ="Elisa"	DateNaissance ="12.10.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690100029"	Club="LYON EPEE M"		Classement="1090"	Points="584.95"/>
+		<Tireur ID="216746"	Nom ="CIFFOTTI"	Prenom ="Carolane"	DateNaissance ="15.07.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="140690100031"	Club="LYON EPEE M"		Classement="1003"	Points="2732.94"/>
+		<Tireur ID="208454"	Nom ="TRIBAUDEAU"	Prenom ="Maud"	DateNaissance ="11.02.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="140690100033"	Club="LYON EPEE M"		Classement="1007"	Points="2592.28"/>
+		<Tireur ID="208871"	Nom ="ARNEODO"	Prenom ="Pauline"	DateNaissance ="07.11.1992"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690100073"	Club="LYON EPEE M"		Classement="1082"	Points="622.49"/>
+		<Tireur ID="218250"	Nom ="SIMON"	Prenom ="Anne laure"	DateNaissance ="04.10.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690180708"	Club="VENISSIEUX"		Classement="1061"	Points="865.85"/>
+		<Tireur ID="238669"	Nom ="BUZZELLI"	Prenom ="Oriane"	DateNaissance ="29.06.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690390664"	Club="VILLEURBANNE"		Classement="1028"	Points="1645.24"/>
+		<Tireur ID="258389"	Nom ="FILY"	Prenom ="Alexandra"	DateNaissance ="13.04.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690390808"	Club="VILLEURBANNE"		Classement="1152"	Points="179.51"/>
+		<Tireur ID="217577"	Nom ="COURRECH"	Prenom ="Manon"	DateNaissance ="17.05.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690390916"	Club="VILLEURBANNE"		Classement="1125"	Points="346.90"/>
+		<Tireur ID="307327"	Nom ="PAILLET"	Prenom ="Aurelie"	DateNaissance ="26.02.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="140690470580"	Club="OUEST LYONN"		Classement="1203"	Points="35.84"/>
+		<Tireur ID="261840"	Nom ="POMIER"	Prenom ="Aurelie"	DateNaissance ="28.07.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="159720010534"	Club="FORT DE F AE"		Classement="1118"	Points="377.79"/>
+		<Tireur ID="282750"	Nom ="COUNALI-DAMBO"	Prenom ="Graigoir aleace"	DateNaissance ="31.07.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="159720020370"	Club="FORT DE F DU"		Classement="1162"	Points="141.53"/>
+		<Tireur ID="295021"	Nom ="SAINVILLE"	Prenom ="Melanie"	DateNaissance ="07.02.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="159720020381"	Club="FORT DE F DU"		Classement="1201"	Points="41.62"/>
+		<Tireur ID="262156"	Nom ="LOUIS MARIE"	Prenom ="Alexandra"	DateNaissance ="03.03.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="159720050032"	Club="DUCOS MSQ"		Classement="1048"	Points="1169.17"/>
+		<Tireur ID="262166"	Nom ="URSULET"	Prenom ="Ingrid"	DateNaissance ="13.04.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="159720050068"	Club="DUCOS MSQ"		Classement="1051"	Points="1120.00"/>
+		<Tireur ID="218472"	Nom ="GARCIA"	Prenom ="Alienor"	DateNaissance ="01.07.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="160300091015"	Club="NIMES SE"		Classement="1112"	Points="433.24"/>
+		<Tireur ID="295505"	Nom ="FELINE"	Prenom ="Lena"	DateNaissance ="04.04.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="160300091498"	Club="NIMES SE"		Classement="1122"	Points="356.10"/>
+		<Tireur ID="317296"	Nom ="SALAUN"	Prenom ="Garance"	DateNaissance ="27.10.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="160300091573"	Club="NIMES SE"		Classement="1221"	Points="17.95"/>
+		<Tireur ID="315966"	Nom ="COTTET EMARD"	Prenom ="Clemence"	DateNaissance ="15.08.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="160300091726"	Club="NIMES SE"		Classement="1108"	Points="479.37"/>
+		<Tireur ID="240506"	Nom ="PANZIERI"	Prenom ="Marie aude"	DateNaissance ="25.05.1992"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="160300091850"	Club="NIMES SE"		Classement="1015"	Points="2149.64"/>
+		<Tireur ID="262469"	Nom ="OGER"	Prenom ="Morgane"	DateNaissance ="27.01.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="160340390677"	Club="CASTELNAU LL"		Classement="1143"	Points="217.08"/>
+		<Tireur ID="218776"	Nom ="GAILLARD"	Prenom ="Elodie"	DateNaissance ="21.03.1992"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="160660200512"	Club="ARGELES SE"		Classement="1040"	Points="1324.54"/>
+		<Tireur ID="313708"	Nom ="RAULET"	Prenom ="Ophelie"	DateNaissance ="07.01.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="160660200706"	Club="ARGELES SE"		Classement="1077"	Points="651.77"/>
+		<Tireur ID="249421"	Nom ="THIEBAUT"	Prenom ="Lucile"	DateNaissance ="25.10.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="170540051188"	Club="VANDOEUVRE"		Classement="1207"	Points="33.54"/>
+		<Tireur ID="219041"	Nom ="FAUCHER"	Prenom ="Claire"	DateNaissance ="13.05.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="170540051475"	Club="VANDOEUVRE"		Classement="1136"	Points="254.60"/>
+		<Tireur ID="286741"	Nom ="RUHARD"	Prenom ="Pauline"	DateNaissance ="30.04.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="170540070558"	Club="PT A MOUSSON"		Classement="1046"	Points="1224.08"/>
+		<Tireur ID="278221"	Nom ="TESSON"	Prenom ="Severine"	DateNaissance ="02.06.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="180490310548"	Club="ANGERS NDC"		Classement="1067"	Points="805.68"/>
+		<Tireur ID="220421"	Nom ="MARIE"	Prenom ="Cindy"	DateNaissance ="04.05.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="180850150486"	Club="SABLES OLONN"		Classement="1002"	Points="3031.15"/>
+		<Tireur ID="207948"	Nom ="FABIAO"	Prenom ="Sarah"	DateNaissance ="01.05.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="190830190869"	Club="TOULON VAR"		Classement="1037"	Points="1411.80"/>
+		<Tireur ID="207923"	Nom ="SOUVIELLE"	Prenom ="Anne laure"	DateNaissance ="13.04.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="190830191528"	Club="TOULON VAR"		Classement="1050"	Points="1149.77"/>
+		<Tireur ID="221184"	Nom ="BIDAULT"	Prenom ="Chloe"	DateNaissance ="02.09.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="200180060270"	Club="VIERZON CE"		Classement="1155"	Points="171.66"/>
+		<Tireur ID="239384"	Nom ="MURIEL"	Prenom ="Marie amelie"	DateNaissance ="06.11.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="200280080793"	Club="CHARTRES CEA"		Classement=""	Points=""/>
+		<Tireur ID="354517"	Nom ="LASSALLE"	Prenom ="Jeanne"	DateNaissance ="02.12.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="200280080969"	Club="CHARTRES CEA"		Classement="1116"	Points="405.02"/>
+		<Tireur ID="354557"	Nom ="BUREAU"	Prenom ="Lucie"	DateNaissance ="08.03.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="200280080988"	Club="CHARTRES CEA"		Classement="1185"	Points="66.23"/>
+		<Tireur ID="221498"	Nom ="TOUCHET"	Prenom ="Meggie"	DateNaissance ="13.01.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="200450200163"	Club="GIEN CE"		Classement="1129"	Points="305.90"/>
+		<Tireur ID="270989"	Nom ="DODEMAND"	Prenom ="Jeanne"	DateNaissance ="21.09.1995"	Sexe="F"	Nation="FRA"	Lateralite="G"	Licence="200450200294"	Club="GIEN CE"		Classement="1148"	Points="194.59"/>
+		<Tireur ID="239658"	Nom ="LE GUEVEL"	Prenom ="Jeanne"	DateNaissance ="29.11.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="200450231974"	Club="ORLEANS CE"		Classement="1114"	Points="413.60"/>
+		<Tireur ID="285767"	Nom ="PICARD"	Prenom ="Lucie"	DateNaissance ="07.01.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="200450380421"	Club="ST DENIS HOT"		Classement="1078"	Points="648.77"/>
+		<Tireur ID="251540"	Nom ="CIESA"	Prenom ="Laura"	DateNaissance ="20.05.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="210860181106"	Club="POITIERS"		Classement="1100"	Points="537.91"/>
+		<Tireur ID="287050"	Nom ="ADIER"	Prenom ="Ophelie"	DateNaissance ="12.05.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="210860181444"	Club="POITIERS"		Classement="1123"	Points="350.11"/>
+		<Tireur ID="396141"	Nom ="BUESS"	Prenom ="Alexandra"	DateNaissance ="28.10.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="220080011193"	Club="CHARLEVILLE"		Classement="1224"	Points="16.63"/>
+		<Tireur ID="412090"	Nom ="GAROT"	Prenom ="Camille"	DateNaissance ="08.09.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="220080011242"	Club="CHARLEVILLE"		Classement="1182"	Points="76.14"/>
+		<Tireur ID="222971"	Nom ="GUIOT"	Prenom ="Marion"	DateNaissance ="05.06.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="220080090075"	Club="ARDENNES 3A"		Classement="1176"	Points="93.61"/>
+		<Tireur ID="222886"	Nom ="TASSIN"	Prenom ="Noemie"	DateNaissance ="06.12.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="220510081185"	Club="CHALONS CHAM"		Classement="1009"	Points="2318.56"/>
+		<Tireur ID="223094"	Nom ="LETANG"	Prenom ="Claire"	DateNaissance ="22.10.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="220520131194"	Club="CHAUMONT CE"		Classement="1104"	Points="503.14"/>
+		<Tireur ID="222891"	Nom ="DUFOREAU"	Prenom ="Marie"	DateNaissance ="04.09.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="220520131212"	Club="CHAUMONT CE"		Classement="1198"	Points="46.05"/>
+		<Tireur ID="278073"	Nom ="TROTTET"	Prenom ="Louise"	DateNaissance ="17.03.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="230290340627"	Club="QUIMPER EC"		Classement="1079"	Points="636.98"/>
+		<Tireur ID="264475"	Nom ="ROLLAND"	Prenom ="Clemence"	DateNaissance ="20.08.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="230350132072"	Club="RENNES CSG"		Classement="1085"	Points="612.52"/>
+		<Tireur ID="223317"	Nom ="LE BASTARD"	Prenom ="Leonie"	DateNaissance ="28.03.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="230350132630"	Club="RENNES CSG"		Classement="1073"	Points="683.62"/>
+		<Tireur ID="223859"	Nom ="TAVET"	Prenom ="Anais"	DateNaissance ="23.08.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="230350150965"	Club="ST MALO"		Classement="1084"	Points="615.41"/>
+		<Tireur ID="352594"	Nom ="CIPOIRE"	Prenom ="Audrey"	DateNaissance ="30.07.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="230350151350"	Club="ST MALO"		Classement="1192"	Points="55.15"/>
+		<Tireur ID="371646"	Nom ="MARCIANO"	Prenom ="Sarah"	DateNaissance ="04.07.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="240670061822"	Club="STRASBOURG E"		Classement="1190"	Points="55.65"/>
+		<Tireur ID="224775"	Nom ="JACOB"	Prenom ="Louise"	DateNaissance ="23.07.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="240680100551"	Club="COLMAR SR"		Classement="1071"	Points="706.81"/>
+		<Tireur ID="225002"	Nom ="RITZLER"	Prenom ="Benedicte"	DateNaissance ="21.08.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="240680100832"	Club="COLMAR SR"		Classement="1012"	Points="2220.22"/>
+		<Tireur ID="224384"	Nom ="CABANE"	Prenom ="Celia"	DateNaissance ="17.12.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="240680100871"	Club="COLMAR SR"		Classement="1018"	Points="2061.97"/>
+		<Tireur ID="292137"	Nom ="HOUDEBERT"	Prenom ="Mathilde"	DateNaissance ="29.10.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="240680100906"	Club="COLMAR SR"		Classement="1089"	Points="588.47"/>
+		<Tireur ID="208463"	Nom ="MALAFOSSE"	Prenom ="Maud"	DateNaissance ="10.07.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="240680100961"	Club="COLMAR SR"		Classement="1027"	Points="1657.15"/>
+		<Tireur ID="311058"	Nom ="PIERRE"	Prenom ="Tifaine"	DateNaissance ="19.09.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="250120021005"	Club="RODEZ AVEYRO"		Classement="1032"	Points="1579.06"/>
+		<Tireur ID="412427"	Nom ="TOULOUSE"	Prenom ="Anicia"	DateNaissance ="10.07.1994"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="250120021185"	Club="RODEZ AVEYRO"		Classement="1174"	Points="96.02"/>
+		<Tireur ID="225299"	Nom ="AUBER LE SAUX"	Prenom ="Jessica"	DateNaissance ="13.05.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="250310090774"	Club="RAMONVILLE"		Classement="1068"	Points="778.59"/>
+		<Tireur ID="225836"	Nom ="MASSE"	Prenom ="Floriane"	DateNaissance ="12.06.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="250310091296"	Club="RAMONVILLE"		Classement="1147"	Points="196.09"/>
+		<Tireur ID="225593"	Nom ="MEYZIE"	Prenom ="Marie"	DateNaissance ="29.08.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="250310191487"	Club="TOULOUSE UC"		Classement="1065"	Points="817.51"/>
+		<Tireur ID="253886"	Nom ="LASSERRE"	Prenom ="Sarah"	DateNaissance ="01.03.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="250310191734"	Club="TOULOUSE UC"		Classement="1140"	Points="233.87"/>
+		<Tireur ID="298436"	Nom ="ROUILLE"	Prenom ="Justine"	DateNaissance ="07.03.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="250310191911"	Club="TOULOUSE UC"		Classement="1091"	Points="583.23"/>
+		<Tireur ID="368704"	Nom ="FAISSE"	Prenom ="Emmeline"	DateNaissance ="13.06.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="250310340817"	Club="BLAGNAC"		Classement="1138"	Points="237.74"/>
+		<Tireur ID="332523"	Nom ="REY"	Prenom ="Josephine"	DateNaissance ="15.10.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="250320050386"	Club="AUCH PMG"		Classement="1087"	Points="595.44"/>
+		<Tireur ID="332058"	Nom ="LAFONT"	Prenom ="Alexandra"	DateNaissance ="20.11.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="250820140543"	Club="MONTAUBAN"		Classement="1075"	Points="659.27"/>
+		<Tireur ID="357716"	Nom ="DABRIN"	Prenom ="Celia"	DateNaissance ="18.05.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="250820140566"	Club="MONTAUBAN"		Classement="1110"	Points="437.94"/>
+		<Tireur ID="265093"	Nom ="KOULOUNDJOIAN"	Prenom ="Sarah"	DateNaissance ="09.12.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260770540821"	Club="AVON US"		Classement="1064"	Points="826.24"/>
+		<Tireur ID="265496"	Nom ="PHILIPPON"	Prenom ="Amandine"	DateNaissance ="05.09.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="260931611036"	Club="AULNAY CE"		Classement="1216"	Points="24.68"/>
+		<Tireur ID="296838"	Nom ="PHILIPPON"	Prenom ="Jeanne chloe"	DateNaissance ="06.09.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260931611109"	Club="AULNAY CE"		Classement="1209"	Points="31.59"/>
+		<Tireur ID="391443"	Nom ="ARGENTA"	Prenom ="Jessica"	DateNaissance ="09.10.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260931611235"	Club="AULNAY CE"		Classement="1228"	Points="12.70"/>
+		<Tireur ID="271434"	Nom ="REMBI"	Prenom ="Lauren"	DateNaissance ="09.03.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260931630430"	Club="BONDY AS"		Classement="1004"	Points="2656.30"/>
+		<Tireur ID="228176"	Nom ="TECHINE"	Prenom ="Manon"	DateNaissance ="21.07.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260931630685"	Club="BONDY AS"		Classement="1026"	Points="1667.93"/>
+		<Tireur ID="318081"	Nom ="NGOM"	Prenom ="Mariem"	DateNaissance ="16.03.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260931630700"	Club="BONDY AS"		Classement="1010"	Points="2308.85"/>
+		<Tireur ID="413088"	Nom ="LAMORA"	Prenom ="Sophie"	DateNaissance ="01.01.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="260931630709"	Club="BONDY AS"		Classement="1074"	Points="678.00"/>
+		<Tireur ID="293292"	Nom ="THOMAS"	Prenom ="Ellea"	DateNaissance ="21.04.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="260932300492"	Club="GAGNY USM"		Classement="1102"	Points="516.06"/>
+		<Tireur ID="340242"	Nom ="POUCHAIN"	Prenom ="Mathilde"	DateNaissance ="27.01.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="260932300540"	Club="GAGNY USM"		Classement="1134"	Points="275.35"/>
+		<Tireur ID="366636"	Nom ="CREMOUX"	Prenom ="Marine"	DateNaissance ="27.09.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260932300570"	Club="GAGNY USM"		Classement="1156"	Points="169.86"/>
+		<Tireur ID="275753"	Nom ="HERCULE"	Prenom ="Lucie"	DateNaissance ="20.03.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="260940010023"	Club="CACHAN AL"		Classement="1144"	Points="212.84"/>
+		<Tireur ID="254945"	Nom ="VINCENT"	Prenom ="Marie seraphine"	DateNaissance ="19.02.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260941770585"	Club="BRY MARNE"		Classement="1070"	Points="748.16"/>
+		<Tireur ID="227363"	Nom ="BUISSON"	Prenom ="Clementine"	DateNaissance ="29.11.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="260941770586"	Club="BRY MARNE"		Classement="1103"	Points="514.04"/>
+		<Tireur ID="227362"	Nom ="VIENOT"	Prenom ="Flora"	DateNaissance ="04.07.1996"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="260941770608"	Club="BRY MARNE"		Classement="1169"	Points="114.95"/>
+		<Tireur ID="240305"	Nom ="KURAS"	Prenom ="Faustine"	DateNaissance ="02.08.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="260941951689"	Club="ST MAUR VGA"		Classement="1057"	Points="1011.40"/>
+		<Tireur ID="274438"	Nom ="HAZARD"	Prenom ="Camille"	DateNaissance ="25.04.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750210282"	Club="PARIS CSPSE"		Classement="1014"	Points="2158.55"/>
+		<Tireur ID="281363"	Nom ="NIZAN"	Prenom ="Louise"	DateNaissance ="10.11.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750210337"	Club="PARIS CSPSE"		Classement="1099"	Points="550.08"/>
+		<Tireur ID="353276"	Nom ="GALLE"	Prenom ="Adele"	DateNaissance ="19.07.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750210378"	Club="PARIS CSPSE"		Classement="1163"	Points="137.15"/>
+		<Tireur ID="359797"	Nom ="CARDOZE"	Prenom ="Paloma"	DateNaissance ="09.02.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750210432"	Club="PARIS CSPSE"		Classement="1226"	Points="14.00"/>
+		<Tireur ID="276521"	Nom ="GLOAGUEN"	Prenom ="Constance"	DateNaissance ="28.06.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750311290"	Club="PARIS GRP"		Classement="1225"	Points="15.31"/>
+		<Tireur ID="390540"	Nom ="GLOAGUEN"	Prenom ="Eleonore"	DateNaissance ="01.04.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750311591"	Club="PARIS GRP"		Classement="1218"	Points="21.96"/>
+		<Tireur ID="241095"	Nom ="BOLZE"	Prenom ="Jeanne"	DateNaissance ="27.11.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750462609"	Club="PARIS UC"		Classement="1020"	Points="1937.82"/>
+		<Tireur ID="274523"	Nom ="CARRE"	Prenom ="Juliane"	DateNaissance ="13.12.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750462806"	Club="PARIS UC"		Classement="1153"	Points="176.09"/>
+		<Tireur ID="255944"	Nom ="DELAVALLEE"	Prenom ="Laure"	DateNaissance ="14.12.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750473250"	Club="PARIS LPR"		Classement="1206"	Points="34.42"/>
+		<Tireur ID="275529"	Nom ="HEULLANT"	Prenom ="Clara"	DateNaissance ="29.04.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750473579"	Club="PARIS LPR"		Classement="1095"	Points="567.85"/>
+		<Tireur ID="287039"	Nom ="SAKOA"	Prenom ="Gbahi gwladys"	DateNaissance ="03.12.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750473670"	Club="PARIS LPR"		Classement="1062"	Points="852.61"/>
+		<Tireur ID="232909"	Nom ="DE SAINT BLANQUAT"	Prenom ="Camille"	DateNaissance ="13.02.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750473811"	Club="PARIS LPR"		Classement="1041"	Points="1322.92"/>
+		<Tireur ID="313285"	Nom ="VAUJOUR"	Prenom ="Heloise"	DateNaissance ="26.10.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750473892"	Club="PARIS LPR"		Classement="1063"	Points="833.86"/>
+		<Tireur ID="328798"	Nom ="LAPILLONNE"	Prenom ="Marie"	DateNaissance ="23.04.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="270750474022"	Club="PARIS LPR"		Classement="1213"	Points="27.42"/>
+		<Tireur ID="395169"	Nom ="LAUSSEL"	Prenom ="Clotilde"	DateNaissance ="18.10.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="270750474480"	Club="PARIS LPR"		Classement="1137"	Points="253.68"/>
+		<Tireur ID="256128"	Nom ="BERTHIAUX"	Prenom ="Diane"	DateNaissance ="12.06.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="270750510275"	Club="PARIS QDS"		Classement=""	Points=""/>
+		<Tireur ID="230912"	Nom ="LAUDEREAU"	Prenom ="Lisa"	DateNaissance ="10.06.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280780911399"	Club="LE CHESNAY"		Classement="1017"	Points="2063.53"/>
+		<Tireur ID="241409"	Nom ="BOUILLON PICHAULT"	Prenom ="Darina"	DateNaissance ="08.01.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280780911520"	Club="LE CHESNAY"		Classement="1167"	Points="119.69"/>
+		<Tireur ID="241428"	Nom ="CHABANNES"	Prenom ="Camille"	DateNaissance ="20.01.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280780911539"	Club="LE CHESNAY"		Classement="1052"	Points="1074.00"/>
+		<Tireur ID="241452"	Nom ="ANSEVIN OLIVIER"	Prenom ="Laure anne"	DateNaissance ="07.05.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280780911563"	Club="LE CHESNAY"		Classement="1024"	Points="1692.86"/>
+		<Tireur ID="241483"	Nom ="POYET"	Prenom ="Astrid"	DateNaissance ="06.07.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280780911594"	Club="LE CHESNAY"		Classement="1124"	Points="349.63"/>
+		<Tireur ID="257369"	Nom ="BECHADE"	Prenom ="Enora"	DateNaissance ="14.04.1992"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280921420853"	Club="BOULOGNE ACB"		Classement="1029"	Points="1603.39"/>
+		<Tireur ID="234734"	Nom ="DARMON"	Prenom ="Chloe"	DateNaissance ="17.12.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922521350"	Club="LEVALLOIS"		Classement="1195"	Points="50.56"/>
+		<Tireur ID="234824"	Nom ="MONET"	Prenom ="Oriane"	DateNaissance ="23.05.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922521782"	Club="LEVALLOIS"		Classement="1154"	Points="174.58"/>
+		<Tireur ID="234839"	Nom ="EON"	Prenom ="Marie"	DateNaissance ="10.07.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922521850"	Club="LEVALLOIS"		Classement="1170"	Points="114.41"/>
+		<Tireur ID="233830"	Nom ="ZOUARI"	Prenom ="Clemence"	DateNaissance ="12.04.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922522403"	Club="LEVALLOIS"		Classement="1035"	Points="1437.62"/>
+		<Tireur ID="257510"	Nom ="AVENTURIER"	Prenom ="Alizee"	DateNaissance ="24.02.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922522531"	Club="LEVALLOIS"		Classement="1086"	Points="598.23"/>
+		<Tireur ID="301413"	Nom ="GHILES"	Prenom ="Samantha"	DateNaissance ="16.01.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922522608"	Club="LEVALLOIS"		Classement="1083"	Points="619.53"/>
+		<Tireur ID="321829"	Nom ="MASSONI"	Prenom ="Solenne"	DateNaissance ="27.12.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922523109"	Club="LEVALLOIS"		Classement="1165"	Points="130.73"/>
+		<Tireur ID="350512"	Nom ="BARRAU"	Prenom ="Nathalie"	DateNaissance ="12.06.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922523143"	Club="LEVALLOIS"		Classement="1208"	Points="33.00"/>
+		<Tireur ID="228658"	Nom ="MIGNARD"	Prenom ="Lilas"	DateNaissance ="18.09.1995"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922523157"	Club="LEVALLOIS"		Classement="1034"	Points="1569.13"/>
+		<Tireur ID="281529"	Nom ="PIERRE"	Prenom ="Angele"	DateNaissance ="28.08.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922523248"	Club="LEVALLOIS"		Classement="1189"	Points="56.70"/>
+		<Tireur ID="264888"	Nom ="LAGOUTE"	Prenom ="Morgane"	DateNaissance ="24.05.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922523258"	Club="LEVALLOIS"		Classement="1172"	Points="111.50"/>
+		<Tireur ID="246242"	Nom ="MAZILIER"	Prenom ="Juliette"	DateNaissance ="10.11.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280922523498"	Club="LEVALLOIS"		Classement="1106"	Points="494.02"/>
+		<Tireur ID="326270"	Nom ="MICHAUD"	Prenom ="Lea"	DateNaissance ="02.01.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280952010494"	Club="BEAUMONT OIS"		Classement="1181"	Points="84.43"/>
+		<Tireur ID="233462"	Nom ="RICHARD"	Prenom ="Marnie"	DateNaissance ="02.02.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280952101362"	Club="ST GRATIEN"		Classement="1038"	Points="1383.25"/>
+		<Tireur ID="233503"	Nom ="APLINCOURT"	Prenom ="Gersende"	DateNaissance ="15.11.1996"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280952101477"	Club="ST GRATIEN"		Classement="1135"	Points="259.69"/>
+		<Tireur ID="233526"	Nom ="CALABRE"	Prenom ="Cynthia"	DateNaissance ="23.01.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280952101525"	Club="ST GRATIEN"		Classement="1016"	Points="2119.32"/>
+		<Tireur ID="233214"	Nom ="ZUANIGH"	Prenom ="Axele"	DateNaissance ="26.11.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280952102012"	Club="ST GRATIEN"		Classement="1058"	Points="998.85"/>
+		<Tireur ID="225409"	Nom ="AIT ALI"	Prenom ="Victoria"	DateNaissance ="07.12.1994"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280952102230"	Club="ST GRATIEN"		Classement="1005"	Points="2635.84"/>
+		<Tireur ID="240523"	Nom ="NGOM"	Prenom ="Helene"	DateNaissance ="24.07.1993"	Sexe="F"	Nation="FRA"	Lateralite=""	Licence="280952102288"	Club="ST GRATIEN"		Classement="1047"	Points="1176.72"/>
+		<Tireur ID="208403"	Nom ="LODS"	Prenom ="Jeanne"	DateNaissance ="15.09.1993"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="280952102289"	Club="ST GRATIEN"		Classement="1098"	Points="557.92"/>
+		<Tireur ID="235172"	Nom ="BRET"	Prenom ="Emmanuelle"	DateNaissance ="30.03.1995"	Sexe="F"	Nation="FRA"	Lateralite="D"	Licence="299740070124"	Club="ST PIERRE ES"		Classement="1146"	Points="201.28"/>
+</Tireurs>
+<Arbitres>
+		<Arbitre ID="208009" Nom ="SZOKE" Prenom ="Michel" Sexe="M" Categorie="NA" club="AIX UCE" Ligue="PROVENCE" Nation="FRA" Licence="010130021925" DateNaissance ="28.11.1957" />
+		<Arbitre ID="210961" Nom ="PREVAL" Prenom ="Julie" Sexe="F" Categorie="NB" club="BEAUVAIS ACA" Ligue="PICARDIE" Nation="FRA" Licence="020600250369" DateNaissance ="08.07.1981" />
+		<Arbitre ID="229901" Nom ="FENOUL" Prenom ="Frederic" Sexe="M" Categorie="NB" club="AMIENS CEAM" Ligue="PICARDIE" Nation="FRA" Licence="020800221523" DateNaissance ="20.07.1979" />
+		<Arbitre ID="210294" Nom ="POTHIER" Prenom ="Vincent" Sexe="M" Categorie="R" club="BESANCON RCE" Ligue="FRANCHE-COMTE" Nation="FRA" Licence="030250011630" DateNaissance ="04.01.1991" />
+		<Arbitre ID="211500" Nom ="BONNEFOND" Prenom ="Benedicte" Sexe="F" Categorie="R" club="ORNON ESCR" Ligue="AQUITAINE" Nation="FRA" Licence="040330131036" DateNaissance ="06.07.1987" />
+		<Arbitre ID="225547" Nom ="CARNEAU" Prenom ="Lea" Sexe="F" Categorie="R" club="FONTAINE AS" Ligue="DAUPHINE-SAVOIE" Nation="FRA" Licence="080380090757" DateNaissance ="02.09.1987" />
+		<Arbitre ID="211676" Nom ="FERNANDEZ" Prenom ="Clementine" Sexe="F" Categorie="R" club="GRENOBLE PAR" Ligue="DAUPHINE-SAVOIE" Nation="FRA" Licence="080380191269" DateNaissance ="10.01.1991" />
+		<Arbitre ID="213893" Nom ="CHARMEAUX" Prenom ="Pauline" Sexe="F" Categorie="R" club="DIJON ASPTT" Ligue="BOURGOGNE" Nation="FRA" Licence="090210011442" DateNaissance ="25.05.1992" />
+		<Arbitre ID="212564" Nom ="POUYET" Prenom ="Patrick" Sexe="M" Categorie="NA" club="NEVERS CE" Ligue="BOURGOGNE" Nation="FRA" Licence="090580271388" DateNaissance ="16.06.1979" />
+		<Arbitre ID="269720" Nom ="ROBERT" Prenom ="Jean michel" Sexe="M" Categorie="R" club="MOULINS BOUR" Ligue="AUVERGNE" Nation="FRA" Licence="090580280334" DateNaissance ="20.10.1968" />
+		<Arbitre ID="214278" Nom ="SAULNIER" Prenom ="Claire" Sexe="F" Categorie="NB" club="LE CREUSOT" Ligue="BOURGOGNE" Nation="FRA" Licence="090710130796" DateNaissance ="13.03.1989" />
+		<Arbitre ID="247651" Nom ="MESSIANT" Prenom ="Jerome" Sexe="M" Categorie="R" club="GDE SYNTHE" Ligue="NORD-PAS DE CALAIS" Nation="FRA" Licence="130590040239" DateNaissance ="27.08.1983" />
+		<Arbitre ID="215852" Nom ="PIETON" Prenom ="Clement" Sexe="M" Categorie="R" club="TOURCOING CI" Ligue="NORD-PAS DE CALAIS" Nation="FRA" Licence="130590111202" DateNaissance ="08.03.1991" />
+		<Arbitre ID="216447" Nom ="BERTOUT" Prenom ="Antoine" Sexe="M" Categorie="NA" club="DOUAI CE" Ligue="NORD-PAS DE CALAIS" Nation="FRA" Licence="130590250392" DateNaissance ="16.07.1989" />
+		<Arbitre ID="216087" Nom ="PERCHE" Prenom ="Mathieu" Sexe="M" Categorie="NB" club="ARRAS CE" Ligue="NORD-PAS DE CALAIS" Nation="FRA" Licence="130620120650" DateNaissance ="13.01.1989" />
+		<Arbitre ID="217146" Nom ="CHAIX" Prenom ="Emmanuel" Sexe="M" Categorie="NA" club="LYON EPEE M" Ligue="LYONNAIS" Nation="FRA" Licence="140690100006" DateNaissance ="16.11.1963" />
+		<Arbitre ID="217573" Nom ="ROUSSET" Prenom ="Luc" Sexe="M" Categorie="NA" club="VENISSIEUX" Ligue="LYONNAIS" Nation="FRA" Licence="140690180507" DateNaissance ="05.05.1965" />
+		<Arbitre ID="262185" Nom ="GRUBO" Prenom ="Jean marie" Sexe="M" Categorie="R" club="FORT DE F AE" Ligue="MARTINIQUE" Nation="FRA" Licence="159729990007" DateNaissance ="16.04.1967" />
+		<Arbitre ID="208104" Nom ="SICOT" Prenom ="Anne marie" Sexe="F" Categorie="I" club="NIMES SE" Ligue="LANGUEDOC-ROUSSILLON" Nation="FRA" Licence="160300091721" DateNaissance ="07.10.1960" />
+		<Arbitre ID="218771" Nom ="TURA" Prenom ="Jean" Sexe="M" Categorie="R" club="ARGELES SE" Ligue="LANGUEDOC-ROUSSILLON" Nation="FRA" Licence="160660200554" DateNaissance ="01.11.1943" />
+		<Arbitre ID="368484" Nom ="WJAK" Prenom ="Patrick" Sexe="M" Categorie="R" club="PT A MOUSSON" Ligue="LORRAINE" Nation="FRA" Licence="170540070656" DateNaissance ="21.12.1966" />
+		<Arbitre ID="217014" Nom ="MEBAREK CHERIF" Prenom ="Leila" Sexe="F" Categorie="NA" club="LAVAL CE" Ligue="PAYS DE LA LOIRE" Nation="FRA" Licence="180440022193" DateNaissance ="08.02.1990" />
+		<Arbitre ID="220800" Nom ="JEGOUZO" Prenom ="Nolwenn" Sexe="F" Categorie="NB" club="ANGERS NDC" Ligue="PAYS DE LA LOIRE" Nation="FRA" Licence="180490310301" DateNaissance ="15.12.1982" />
+		<Arbitre ID="250934" Nom ="ADAM" Prenom ="Mirel" Sexe="M" Categorie=" " club="TOULON VAR" Ligue="COTE D'AZUR" Nation="FRA" Licence="190830191156" DateNaissance ="05.08.1969" />
+		<Arbitre ID="221238" Nom ="FICHET" Prenom ="Guillaume" Sexe="M" Categorie="R" club="CHARTRES CEA" Ligue="CENTRE" Nation="FRA" Licence="200280080372" DateNaissance ="06.03.1987" />
+		<Arbitre ID="222784" Nom ="PARIS LECLERC" Prenom ="Quentin" Sexe="M" Categorie="R" club="CHARLEVILLE" Ligue="CHAMPAGNE-ARDENNE" Nation="FRA" Licence="220100070457" DateNaissance ="16.02.1988" />
+		<Arbitre ID="222786" Nom ="LE PRADO" Prenom ="Ken" Sexe="M" Categorie="NA" club="TROYES GYMNI" Ligue="CHAMPAGNE-ARDENNE" Nation="FRA" Licence="220100070629" DateNaissance ="06.02.1982" />
+		<Arbitre ID="223081" Nom ="BARRA" Prenom ="Thierry" Sexe="M" Categorie="NA" club="CHAUMONT CE" Ligue="CHAMPAGNE-ARDENNE" Nation="FRA" Licence="220520130523" DateNaissance ="25.04.1957" />
+		<Arbitre ID="223110" Nom ="JAHNKE" Prenom ="Matthieu" Sexe="M" Categorie="FN" club="CHALONS CHAM" Ligue="CHAMPAGNE-ARDENNE" Nation="FRA" Licence="220520130956" DateNaissance ="21.10.1992" />
+		<Arbitre ID="223700" Nom ="BREZILLON" Prenom ="Antoine" Sexe="M" Categorie="R" club="RENNES CSG" Ligue="BRETAGNE" Nation="FRA" Licence="230350131782" DateNaissance ="01.02.1991" />
+		<Arbitre ID="300697" Nom ="CLAVEL" Prenom ="Victorien" Sexe="M" Categorie="NA" club="COLMAR SR" Ligue="ALSACE" Nation="FRA" Licence="240680101021" DateNaissance ="02.01.1985" />
+		<Arbitre ID="225061" Nom ="RAMIREZ" Prenom ="Adrien" Sexe="M" Categorie="R" club="RODEZ AVEYRO" Ligue="MIDI-PYRENEES" Nation="FRA" Licence="250120020509" DateNaissance ="25.05.1985" />
+		<Arbitre ID="253746" Nom ="BUISSON" Prenom ="Bruno" Sexe="M" Categorie="R" club="RAMONVILLE" Ligue="MIDI-PYRENEES" Nation="FRA" Licence="250310090792" DateNaissance ="19.10.1963" />
+		<Arbitre ID="219267" Nom ="CAREL" Prenom ="Philippe" Sexe="M" Categorie="FN" club="TOULOUSE UC" Ligue="MIDI-PYRENEES" Nation="FRA" Licence="250310192088" DateNaissance ="07.03.1961" />
+		<Arbitre ID="225435" Nom ="DENIS" Prenom ="Nicolas" Sexe="M" Categorie="R" club="MONTAUBAN" Ligue="MIDI-PYRENEES" Nation="FRA" Licence="250820140353" DateNaissance ="29.09.1974" />
+		<Arbitre ID="351086" Nom ="AUBRY" Prenom ="Mathis" Sexe="M" Categorie="R" club="AVON US" Ligue="CRETEIL" Nation="FRA" Licence="260770540782" DateNaissance ="18.11.1995" />
+		<Arbitre ID="210162" Nom ="BONAVENTURE" Prenom ="Theo" Sexe="M" Categorie="R" club="AULNAY CE" Ligue="CRETEIL" Nation="FRA" Licence="260931611217" DateNaissance ="18.05.1989" />
+		<Arbitre ID="226766" Nom ="ISAMBART" Prenom ="Gaelle" Sexe="F" Categorie="R" club="BONDY AS" Ligue="CRETEIL" Nation="FRA" Licence="260931630482" DateNaissance ="21.04.1988" />
+		<Arbitre ID="226996" Nom ="LAMARCHE" Prenom ="Camille" Sexe="F" Categorie="FN" club="BONDY AS" Ligue="CRETEIL" Nation="FRA" Licence="260931630548" DateNaissance ="03.02.1990" />
+		<Arbitre ID="228214" Nom ="DE OLIVEIRA" Prenom ="Jaime" Sexe="M" Categorie="R" club="GAGNY USM" Ligue="CRETEIL" Nation="FRA" Licence="260932300400" DateNaissance ="24.08.1960" />
+		<Arbitre ID="227677" Nom ="ROBIN" Prenom ="Siegfried" Sexe="M" Categorie="NB" club="ST MAUR VGA" Ligue="CRETEIL" Nation="FRA" Licence="260941951464" DateNaissance ="03.03.1980" />
+		<Arbitre ID="228610" Nom ="AWADA" Prenom ="Karim" Sexe="M" Categorie="NB" club="PARIS CEP" Ligue="PARIS" Nation="FRA" Licence="270750110015" DateNaissance ="21.01.1981" />
+		<Arbitre ID="229109" Nom ="BROCHARD" Prenom ="Pascal" Sexe="M" Categorie="R" club="PARIS GRP" Ligue="PARIS" Nation="FRA" Licence="270750310909" DateNaissance ="25.07.1961" />
+		<Arbitre ID="363734" Nom ="CINELU" Prenom ="Jean pierre" Sexe="M" Categorie="R" club="PARIS GRP" Ligue="PARIS" Nation="FRA" Licence="270750311538" DateNaissance ="23.09.1959" />
+		<Arbitre ID="234703" Nom ="FEUILLETTE" Prenom ="Benedicte" Sexe="F" Categorie="NA" club="PARIS GRP" Ligue="PARIS" Nation="FRA" Licence="270750311646" DateNaissance ="24.08.1983" />
+		<Arbitre ID="229224" Nom ="BERNARD" Prenom ="Christian" Sexe="M" Categorie="I" club="PARIS CSPSE" Ligue="PARIS" Nation="FRA" Licence="270750341637" DateNaissance ="19.02.1971" />
+		<Arbitre ID="210004" Nom ="ROUSSET" Prenom ="Stephanie" Sexe="F" Categorie="NB" club="PARIS ASPTT" Ligue="PARIS" Nation="FRA" Licence="270750451393" DateNaissance ="02.08.1973" />
+		<Arbitre ID="218606" Nom ="MESTRES" Prenom ="Julie" Sexe="F" Categorie="R" club="PARIS UC" Ligue="PARIS" Nation="FRA" Licence="270750463716" DateNaissance ="06.05.1987" />
+		<Arbitre ID="261936" Nom ="KILO" Prenom ="Clayde" Sexe="M" Categorie="FN" club="PARIS LPR" Ligue="PARIS" Nation="FRA" Licence="270750474477" DateNaissance ="14.10.1989" />
+		<Arbitre ID="230605" Nom ="LEGOUHY" Prenom ="Annie" Sexe="F" Categorie="R" club="PARIS QDS" Ligue="PARIS" Nation="FRA" Licence="270750510088" DateNaissance ="14.11.1959" />
+		<Arbitre ID="232307" Nom ="JELSCH" Prenom ="Raymond" Sexe="M" Categorie="R" club="LE CHESNAY" Ligue="VERSAILLES" Nation="FRA" Licence="280780911959" DateNaissance ="08.03.1988" />
+		<Arbitre ID="232299" Nom ="CARADANT" Prenom ="Frederic" Sexe="M" Categorie="NA" club="BOULOGNE ACB" Ligue="VERSAILLES" Nation="FRA" Licence="280921420581" DateNaissance ="28.05.1969" />
+		<Arbitre ID="209668" Nom ="CARUEL" Prenom ="Herve" Sexe="M" Categorie="NA" club="LEVALLOIS" Ligue="VERSAILLES" Nation="FRA" Licence="280922522932" DateNaissance ="18.04.1962" />
+		<Arbitre ID="233109" Nom ="LANGLET" Prenom ="Thierry" Sexe="M" Categorie="R" club="BEAUMONT OIS" Ligue="VERSAILLES" Nation="FRA" Licence="280952010325" DateNaissance ="30.07.1964" />
+		<Arbitre ID="233475" Nom ="SAGE" Prenom ="Matthieu" Sexe="M" Categorie="R" club="ST GRATIEN" Ligue="VERSAILLES" Nation="FRA" Licence="280952101406" DateNaissance ="18.09.1991" />
+		<Arbitre ID="219396" Nom ="PRATI" Prenom ="Nicolas" Sexe="M" Categorie="NA" club="ST GRATIEN" Ligue="VERSAILLES" Nation="FRA" Licence="280952102017" DateNaissance ="27.10.1983" />
+</Arbitres>
+<Equipes>
+
+</Equipes>
+</BaseCompetitionIndividuelle>
