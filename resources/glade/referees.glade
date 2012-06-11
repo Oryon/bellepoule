@@ -339,7 +339,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Import .FFF file</property>
+                    <property name="label" translatable="yes">Import referee file</property>
+                    <property name="tooltip_text" translatable="no">.FFF, .CSV or .TXT</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-convert</property>
                     <signal name="clicked" handler="on_import_toolbutton_clicked" swapped="no"/>

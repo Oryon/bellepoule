@@ -165,7 +165,7 @@ void Filter::ShowAttribute (const gchar *name)
                                   sibling);
 
       _selected_attr = g_slist_append (_selected_attr,
-                                       AttributeDesc::GetDesc (current_name));
+                                       AttributeDesc::GetDescFromCodeName (current_name));
       break;
     }
 
@@ -269,7 +269,7 @@ void Filter::UpdateAttrList ()
       if (current_visibility == TRUE)
       {
         _selected_attr = g_slist_append (_selected_attr,
-                                         AttributeDesc::GetDesc (current_name));
+                                         AttributeDesc::GetDescFromCodeName (current_name));
       }
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_attr_filter_store),

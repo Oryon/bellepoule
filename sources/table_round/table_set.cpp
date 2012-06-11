@@ -1254,7 +1254,7 @@ gboolean TableSet::FillInNode (GNode    *node,
 
         if ((status[0] == 'E') || (status[0] == 'A'))
         {
-          AttributeDesc *attr_desc = AttributeDesc::GetDesc ("status");
+          AttributeDesc *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
           GooCanvasItem *status_item;
 
           status_item = Canvas::PutIconInTable (data->_fencer_goo_table,

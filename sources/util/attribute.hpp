@@ -90,7 +90,9 @@ class AttributeDesc : public Object
 
     static GSList *GetList ();
 
-    static AttributeDesc *GetDesc (const gchar *name);
+    static AttributeDesc *GetDescFromCodeName (const gchar *code_name);
+
+    static AttributeDesc *GuessDescFromUserName (const gchar *code_name);
 
     void BindDiscreteValues (GObject         *object,
                              GtkCellRenderer *renderer,

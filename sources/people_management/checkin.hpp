@@ -41,6 +41,10 @@ class Checkin : public PlayersList
 
     void SaveList (xmlTextWriter *xml_writer);
 
+    void ImportCSV (gchar *filename);
+
+    void ImportFFF (gchar *filename);
+
   public:
     void on_add_player_button_clicked ();
 
@@ -78,10 +82,6 @@ class Checkin : public PlayersList
 
     virtual void OnPlayerLoaded (Player *player) {};
 
-    void ImportFFF (gchar *file);
-
-    void ImportCSV (gchar *file);
-
     void RefreshAttendingDisplay ();
 
     void OnPlayerRemoved (Player *player);
@@ -97,6 +97,8 @@ class Checkin : public PlayersList
     static void OnAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Object    *owner);
+
+    gchar *GetFileContent (gchar *filename);
 };
 
 #endif

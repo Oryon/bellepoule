@@ -547,7 +547,7 @@ void PlayersList::SetColumn (guint          id,
 void PlayersList::SetAttributeRight (const gchar *name,
                                      gboolean     modifiable)
 {
-  AttributeDesc *desc = AttributeDesc::GetDesc (name);
+  AttributeDesc *desc = AttributeDesc::GetDescFromCodeName (name);
 
   if (desc)
   {
