@@ -608,7 +608,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         x = - 5;
         y = cell_h / 2 + i * cell_h;
-        image = GetPlayerImage (GetPlayer (i, _sorted_fencer_list));
+        image = GetPlayerImage (GetPlayer (i, _sorted_fencer_list), " - ", NULL);
 
         {
           gchar *index = g_strdup_printf (" %d", i+1);
@@ -928,7 +928,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         {
           Player *player   = match->GetPlayerA ();
-          image            = GetPlayerImage (player);
+          image            = GetPlayerImage (player, " - ", NULL);
           gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
                                               g_slist_index (_sorted_fencer_list, player) + 1,
                                               image->str);
@@ -960,7 +960,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         {
           Player *player   = match->GetPlayerB ();
-          image            = GetPlayerImage (player);
+          image            = GetPlayerImage (player, " - ", NULL);
           gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
                                               g_slist_index (_sorted_fencer_list, player) + 1,
                                               image->str);

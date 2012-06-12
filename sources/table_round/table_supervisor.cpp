@@ -103,10 +103,8 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 
     filter->ShowAttribute ("previous_stage_rank");
     filter->ShowAttribute ("name");
-#ifndef DEBUG
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
-#endif
 
     SetFilter (filter);
     filter->Release ();
