@@ -42,8 +42,8 @@ class Player : public Object
           _rand_seed = rand_seed;
         };
 
-        static AttributeId *CreateAttributeId (AttributeDesc *desc,
-                                               Object        *owner);
+        static AttributeId *Create (AttributeDesc *desc,
+                                    Object        *owner);
 
         gchar   *_name;
         Object  *_owner;

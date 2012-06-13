@@ -537,28 +537,32 @@ void SmartSwapper::DispatchFloatings ()
       while (current_floating)
       {
         Fencer *floating = (Fencer *) current_floating->data;
-        guint   score;
 
-        score = (guint) g_hash_table_lookup (floating->_new_pool->_criteria_score,
-                                             (const void *) error->_criteria_quark);
-
-        if (error->CanGoTo (floating->_new_pool,
-                            _criteria_distribution))
+        if (floating->_new_pool)
         {
-          floating->_new_pool->AddFencer    (error);
-          floating->_new_pool->RemoveFencer (floating);
+          guint   score;
 
-          for (guint size_type = 0; _pool_sizes._available_sizes[size_type] != 0; size_type++)
+          score = (guint) g_hash_table_lookup (floating->_new_pool->_criteria_score,
+                                               (const void *) error->_criteria_quark);
+
+          if (error->CanGoTo (floating->_new_pool,
+                              _criteria_distribution))
           {
-            for (guint i = 0; i < _nb_pools; i++)
-            {
-              PoolData *pool_data = &_pool_table[i];
+            floating->_new_pool->AddFencer    (error);
+            floating->_new_pool->RemoveFencer (floating);
 
-              if (MoveFencerTo (floating,
-                                pool_data,
-                                _pool_sizes._available_sizes[size_type]))
+            for (guint size_type = 0; _pool_sizes._available_sizes[size_type] != 0; size_type++)
+            {
+              for (guint i = 0; i < _nb_pools; i++)
               {
-                goto next_error;
+                PoolData *pool_data = &_pool_table[i];
+
+                if (MoveFencerTo (floating,
+                                  pool_data,
+                                  _pool_sizes._available_sizes[size_type]))
+                {
+                  goto next_error;
+                }
               }
             }
           }
@@ -567,6 +571,7 @@ void SmartSwapper::DispatchFloatings ()
         current_floating = g_list_previous (current_floating);
       }
 
+      g_print ("****> %s\n", error->_player->GetName ());
       temp_list = g_slist_prepend (temp_list,
                                    error);
 

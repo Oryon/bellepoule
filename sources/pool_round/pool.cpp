@@ -26,10 +26,10 @@
 #include "pool.hpp"
 
 // --------------------------------------------------------------------------------
-Pool::Pool (Data           *max_score,
-            guint           number,
-            PoolMatchOrder *match_order,
-            guint32         rand_seed)
+Pool::Pool (Data    *max_score,
+            guint    number,
+            gchar    weapon_code,
+            guint32  rand_seed)
   : CanvasModule ("pool.glade",
                   "canvas_scrolled_window")
 {
@@ -48,8 +48,7 @@ Pool::Pool (Data           *max_score,
   _nb_drop            = 0;
   _rand_seed          = rand_seed;
 
-  _match_order = match_order;
-  _match_order->Retain ();
+  _match_order = new PoolMatchOrder (weapon_code);
 
   _status_cbk_data = NULL;
   _status_cbk      = NULL;
@@ -271,31 +270,39 @@ void Pool::RemoveReferee (Player *referee)
 }
 
 // --------------------------------------------------------------------------------
-void Pool::CreateMatchs ()
+void Pool::CreateMatchs (AttributeDesc *affinity_criteria)
 {
   SortPlayers ();
 
   if (_match_list == NULL)
   {
-    guint                       nb_players = GetNbPlayers ();
-    guint                       nb_matchs  = (nb_players*nb_players - nb_players) / 2;
-    PoolMatchOrder::PlayerPair *pair       = _match_order->GetPlayerPair (nb_players);
+    _match_order->SetAffinityCriteria (affinity_criteria,
+                                       _sorted_fencer_list);
 
-    if (pair)
     {
+      guint nb_players = GetNbPlayers ();
+      guint nb_matchs  = (nb_players*nb_players - nb_players) / 2;
+
       for (guint i = 0; i < nb_matchs; i++)
       {
-        Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._a-1);
-        Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._b-1);
+        guint a_id;
+        guint b_id;
 
-        Match *match = new Match (a,
-                                  b,
-                                  _max_score);
-        match->SetNameSpace ("M");
-        match->SetNumber (i+1);
+        if (_match_order->GetPlayerPair (i,
+                                         &a_id,
+                                         &b_id))
+        {
+          Player *a     = (Player *) g_slist_nth_data (_sorted_fencer_list, a_id-1);
+          Player *b     = (Player *) g_slist_nth_data (_sorted_fencer_list, b_id-1);
+          Match  *match = new Match (a,
+                                     b,
+                                     _max_score);
+          match->SetNameSpace ("M");
+          match->SetNumber (i+1);
 
-        _match_list = g_slist_append (_match_list,
-                                      match);
+          _match_list = g_slist_append (_match_list,
+                                        match);
+        }
       }
     }
   }
@@ -608,7 +615,13 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         x = - 5;
         y = cell_h / 2 + i * cell_h;
-        image = GetPlayerImage (GetPlayer (i, _sorted_fencer_list), " - ", NULL);
+        image = GetPlayerImage (GetPlayer (i, _sorted_fencer_list), " ",
+                                "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                                "first_name", "<span foreground=\"darkblue\">",
+                                "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                NULL);
 
         {
           gchar *index = g_strdup_printf (" %d", i+1);
@@ -623,6 +636,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                              x, y, -1,
                              GTK_ANCHOR_EAST,
                              "font", "Sans 18px",
+                             "use-markup", TRUE,
                              NULL);
         g_string_free (image,
                        TRUE);
@@ -928,7 +942,13 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         {
           Player *player   = match->GetPlayerA ();
-          image            = GetPlayerImage (player, " - ", NULL);
+          image            = GetPlayerImage (player, " ",
+                                             "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                                             "first_name", "<span foreground=\"darkblue\">",
+                                             "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                             "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                             "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                             NULL);
           gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
                                               g_slist_index (_sorted_fencer_list, player) + 1,
                                               image->str);
@@ -960,7 +980,13 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         {
           Player *player   = match->GetPlayerB ();
-          image            = GetPlayerImage (player, " - ", NULL);
+          image            = GetPlayerImage (player, " ",
+                                             "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                                             "first_name", "<span foreground=\"darkblue\">",
+                                             "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                             "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                             "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                             NULL);
           gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
                                               g_slist_index (_sorted_fencer_list, player) + 1,
                                               image->str);
@@ -1603,7 +1629,7 @@ Match *Pool::GetMatch (Player *A,
     Match *match = (Match *) current->data;
 
     if (   match->HasPlayer (A)
-           && match->HasPlayer (B))
+        && match->HasPlayer (B))
     {
       return match;
     }
@@ -1616,12 +1642,15 @@ Match *Pool::GetMatch (Player *A,
 // --------------------------------------------------------------------------------
 Match *Pool::GetMatch (guint i)
 {
-  PoolMatchOrder::PlayerPair *pair = _match_order->GetPlayerPair (GetNbPlayers ());
+  guint a_id;
+  guint b_id;
 
-  if (pair)
+  if (_match_order->GetPlayerPair (i,
+                                   &a_id,
+                                   &b_id))
   {
-    Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._a-1);
-    Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, pair[i]._b-1);
+    Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, a_id-1);
+    Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, b_id-1);
 
     return GetMatch (a,
                      b);

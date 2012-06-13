@@ -508,7 +508,7 @@ GString *Module::GetPlayerImage (Player *player,
           va_list  ap;
           gchar   *pango_arg;
 
-          va_start (ap, player);
+          va_start (ap, separator);
           while ((pango_arg = va_arg (ap, char *)))
           {
             if (strcmp (pango_arg, attr_desc->_code_name) == 0)

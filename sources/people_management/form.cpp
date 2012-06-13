@@ -271,7 +271,7 @@ void Form::OnAddButtonClicked ()
                                        i);
     attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "attribute_name");
     attr_desc = AttributeDesc::GetDescFromCodeName (attr_name);
-    attr_id   = Player::AttributeId::CreateAttributeId (attr_desc, _client);
+    attr_id   = Player::AttributeId::Create (attr_desc, _client);
 
     if (attr_desc->_type == G_TYPE_BOOLEAN)
     {

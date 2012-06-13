@@ -124,7 +124,7 @@ void PlayersList::Update (Player *player)
     for (guint i = 0; attr_list != NULL; i++)
     {
       AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
-      Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
+      Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
       Attribute           *attr    = player->GetAttribute (attr_id);
 
       attr_id->Release ();
@@ -209,7 +209,7 @@ void PlayersList::OnCellEdited (gchar         *path_string,
                                 AttributeDesc *desc)
 {
   Player              *p         = GetPlayer (path_string);
-  Player::AttributeId *attr_id   = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
+  Player::AttributeId *attr_id   = Player::AttributeId::Create (desc, GetDataOwner ());
   const gchar         *xml_image = desc->GetDiscreteXmlImage (new_text);
 
   p->SetAttributeValue (attr_id,
@@ -257,8 +257,8 @@ void PlayersList::OnCellToggled (gchar         *path_string,
                                  AttributeDesc *desc)
 {
   GtkTreePath         *toggeled_path = gtk_tree_path_new_from_string (path_string);
-  Player::AttributeId *attr_id       = Player::AttributeId::CreateAttributeId (desc,
-                                                                               GetDataOwner ());
+  Player::AttributeId *attr_id       = Player::AttributeId::Create (desc,
+                                                                    GetDataOwner ());
 
   if (gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
                                            toggeled_path))
@@ -519,7 +519,7 @@ void PlayersList::SetColumn (guint          id,
 
     if (_rights & SORTABLE)
     {
-      Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
+      Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
 
       gtk_tree_view_column_set_sort_column_id (column,
                                                id);
@@ -891,7 +891,7 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
   for (guint j = 0; current_attr != NULL; j++)
   {
     AttributeDesc       *desc    = (AttributeDesc *) current_attr->data;
-    Player::AttributeId *attr_id = Player::AttributeId::CreateAttributeId (desc, GetDataOwner ());
+    Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
     Attribute           *attr    = player->GetAttribute (attr_id);
 
     attr_id->Release ();

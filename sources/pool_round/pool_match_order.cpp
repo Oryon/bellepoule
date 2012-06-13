@@ -14,21 +14,28 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "player.hpp"
+#include "pool.hpp"
+
 #include "pool_match_order.hpp"
 
-static const guint MAX_POOL_SIZE = 17;
+struct PlayerPair
+{
+  guint _a;
+  guint _b;
+};
 
-static PoolMatchOrder::PlayerPair pool_3_kendo_pairs[3] =
+static PlayerPair pool_3_kendo_pairs[3] =
 { {1, 2},
   {1, 3},
   {2, 3}};
 
-static PoolMatchOrder::PlayerPair pool_3_fencing_pairs[3] =
+static PlayerPair pool_3_fencing_pairs[3] =
 { {2, 3},
   {1, 3},
   {1, 2}};
 
-static PoolMatchOrder::PlayerPair pool_4_fencing_pairs[6] =
+static PlayerPair pool_4_fencing_pairs[6] =
 { {1, 4},
   {2, 3},
   {1, 3},
@@ -36,7 +43,7 @@ static PoolMatchOrder::PlayerPair pool_4_fencing_pairs[6] =
   {3, 4},
   {1, 2}};
 
-static PoolMatchOrder::PlayerPair pool_5_fencing_pairs[10] =
+static PlayerPair pool_5_fencing_pairs[10] =
 { {1, 2},
   {3, 4},
   {5, 1},
@@ -48,7 +55,7 @@ static PoolMatchOrder::PlayerPair pool_5_fencing_pairs[10] =
   {3, 5},
   {4, 2}};
 
-static PoolMatchOrder::PlayerPair pool_6_fencing_pairs[15] =
+static PlayerPair pool_6_fencing_pairs[15] =
 { {1, 2},
   {4, 5},
   {2, 3},
@@ -65,7 +72,7 @@ static PoolMatchOrder::PlayerPair pool_6_fencing_pairs[15] =
   {3, 4},
   {6, 2}};
 
-static PoolMatchOrder::PlayerPair pool_7_fencing_pairs[21] =
+static PlayerPair pool_7_fencing_pairs[21] =
 { {1, 4},
   {2, 5},
   {3, 6},
@@ -88,7 +95,7 @@ static PoolMatchOrder::PlayerPair pool_7_fencing_pairs[21] =
   {1, 2},
   {4, 7}};
 
-static PoolMatchOrder::PlayerPair pool_8_fencing_pairs[28] =
+static PlayerPair pool_8_fencing_pairs[28] =
 { {2, 3},
   {1, 5},
   {7, 4},
@@ -118,7 +125,7 @@ static PoolMatchOrder::PlayerPair pool_8_fencing_pairs[28] =
   {7, 2},
   {1, 3}};
 
-static PoolMatchOrder::PlayerPair pool_9_fencing_pairs[36] =
+static PlayerPair pool_9_fencing_pairs[36] =
 { {1, 9},
   {2, 8},
   {3, 7},
@@ -156,7 +163,7 @@ static PoolMatchOrder::PlayerPair pool_9_fencing_pairs[36] =
   {5, 7},
   {9, 8}};
 
-static PoolMatchOrder::PlayerPair pool_10_fencing_pairs[45] =
+static PlayerPair pool_10_fencing_pairs[45] =
 { {1, 4},
   {6, 9},
   {2, 5},
@@ -203,7 +210,7 @@ static PoolMatchOrder::PlayerPair pool_10_fencing_pairs[45] =
   {5, 7},
   {1, 10}};
 
-static PoolMatchOrder::PlayerPair pool_11_fencing_pairs[55] =
+static PlayerPair pool_11_fencing_pairs[55] =
 { {1, 2},
   {7, 8},
   {4, 5},
@@ -260,7 +267,7 @@ static PoolMatchOrder::PlayerPair pool_11_fencing_pairs[55] =
   {10, 5},
   {6, 11}};
 
-static PoolMatchOrder::PlayerPair pool_12_fencing_pairs[66] =
+static PlayerPair pool_12_fencing_pairs[66] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -328,7 +335,7 @@ static PoolMatchOrder::PlayerPair pool_12_fencing_pairs[66] =
   {4, 12},
   {11, 2}};
 
-static PoolMatchOrder::PlayerPair pool_13_fencing_pairs[78] =
+static PlayerPair pool_13_fencing_pairs[78] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -408,7 +415,7 @@ static PoolMatchOrder::PlayerPair pool_13_fencing_pairs[78] =
   {7, 10},
   {12, 13}};
 
-static PoolMatchOrder::PlayerPair pool_14_fencing_pairs[91] =
+static PlayerPair pool_14_fencing_pairs[91] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -501,7 +508,7 @@ static PoolMatchOrder::PlayerPair pool_14_fencing_pairs[91] =
   {9, 14},
   {8, 10}};
 
-static PoolMatchOrder::PlayerPair pool_15_fencing_pairs[105] =
+static PlayerPair pool_15_fencing_pairs[105] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -608,7 +615,7 @@ static PoolMatchOrder::PlayerPair pool_15_fencing_pairs[105] =
   {14, 10},
   {15, 11}};
 
-static PoolMatchOrder::PlayerPair pool_16_fencing_pairs[120] =
+static PlayerPair pool_16_fencing_pairs[120] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -730,7 +737,7 @@ static PoolMatchOrder::PlayerPair pool_16_fencing_pairs[120] =
   {7, 10},
   {8, 9}};
 
-static PoolMatchOrder::PlayerPair pool_17_fencing_pairs[136] =
+static PlayerPair pool_17_fencing_pairs[136] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -869,7 +876,7 @@ static PoolMatchOrder::PlayerPair pool_17_fencing_pairs[136] =
   {11, 8}};
 
 #if 0
-static PoolMatchOrder::PlayerPair pool_18_fencing_pairs[153] =
+static PlayerPair pool_18_fencing_pairs[153] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -1024,7 +1031,7 @@ static PoolMatchOrder::PlayerPair pool_18_fencing_pairs[153] =
   {13, 17},
   {18, 15}};
 
-static PoolMatchOrder::PlayerPair pool_19_fencing_pairs[171] =
+static PlayerPair pool_19_fencing_pairs[171] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -1197,7 +1204,7 @@ static PoolMatchOrder::PlayerPair pool_19_fencing_pairs[171] =
   {17, 19},
   {11, 18}};
 
-static PoolMatchOrder::PlayerPair pool_20_fencing_pairs[190] =
+static PlayerPair pool_20_fencing_pairs[190] =
 { {1, 2},
   {3, 4},
   {5, 6},
@@ -1390,7 +1397,7 @@ static PoolMatchOrder::PlayerPair pool_20_fencing_pairs[190] =
   {17, 8}};
 #endif
 
-static PoolMatchOrder::PlayerPair *fencing_pairs[MAX_POOL_SIZE+1] =
+static PlayerPair *fencing_pairs[PoolMatchOrder::_MAX_POOL_SIZE+1] =
 {
   NULL,
   NULL,
@@ -1415,7 +1422,7 @@ static PoolMatchOrder::PlayerPair *fencing_pairs[MAX_POOL_SIZE+1] =
   //pool_20_fencing_pairs
 };
 
-static PoolMatchOrder::PlayerPair *kendo_pairs[MAX_POOL_SIZE+1] =
+static PlayerPair *kendo_pairs[PoolMatchOrder::_MAX_POOL_SIZE+1] =
 {
   NULL,
   NULL,
@@ -1443,36 +1450,198 @@ static PoolMatchOrder::PlayerPair *kendo_pairs[MAX_POOL_SIZE+1] =
 // --------------------------------------------------------------------------------
 PoolMatchOrder::PoolMatchOrder (gchar weapon_code)
 {
-  if (weapon_code == 'K')
-  {
-    _all_pool_pairs = kendo_pairs;
-  }
-  else
-  {
-    _all_pool_pairs = fencing_pairs;
-  }
+  _weapon_code  = weapon_code;
+  _player_pairs = NULL;
 }
 
 // --------------------------------------------------------------------------------
 PoolMatchOrder::~PoolMatchOrder ()
 {
+  Reset ();
 }
 
 // --------------------------------------------------------------------------------
-guint PoolMatchOrder::GetMaxPoolSize ()
+void PoolMatchOrder::Reset ()
 {
-  return MAX_POOL_SIZE;
+  g_slist_foreach (_player_pairs,
+                   (GFunc) g_free,
+                   NULL);
+  _player_pairs = NULL;
+
 }
 
 // --------------------------------------------------------------------------------
-PoolMatchOrder::PlayerPair *PoolMatchOrder::GetPlayerPair (guint pool_size)
+gboolean PoolMatchOrder::GetPlayerPair (guint  match_index,
+                                        guint *a_id,
+                                        guint *b_id)
 {
-  if (pool_size <= MAX_POOL_SIZE)
+  PlayerPair *pair = (PlayerPair *) g_slist_nth_data (_player_pairs,
+                                                      match_index);
+
+  if (pair)
   {
-    return _all_pool_pairs[pool_size];
+    *a_id = pair->_a;
+    *b_id = pair->_b;
+    return TRUE;
   }
-  else
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
+                                          GSList        *fencer_list)
+{
+  GSList *affinities = NULL;
+
+  Reset ();
+
+  if (affinity_criteria)
   {
-    return NULL;
+    GHashTable *affinity_distribution = g_hash_table_new (NULL,
+                                                          NULL);
+
+    // Disptach fencers according to their affinity
+    {
+      Player::AttributeId *affinity = Player::AttributeId::Create (affinity_criteria, NULL);
+      GSList              *current  = fencer_list;
+
+      for (guint i = 0; current != NULL; i++)
+      {
+        Player    *fencer = (Player *) current->data;
+        Attribute *criteria_attr;
+
+        criteria_attr = fencer->GetAttribute (affinity);
+        if (criteria_attr)
+        {
+          GQuark  quark = g_quark_from_string (criteria_attr->GetUserImage ());
+          GSList *affinity_list;
+
+          affinity_list = (GSList *) g_hash_table_lookup (affinity_distribution,
+                                                          (const void *) quark);
+          affinity_list = g_slist_append (affinity_list,
+                                          (void *) i);
+          g_hash_table_insert (affinity_distribution,
+                               (void *) quark,
+                               affinity_list);
+        }
+
+        current = g_slist_next (current);
+      }
+    }
+
+    // Sort affinities according to their occurence
+    {
+      GHashTableIter  iter;
+      GSList         *affinity_list;
+
+      g_hash_table_iter_init (&iter,
+                              affinity_distribution);
+      while (g_hash_table_iter_next (&iter,
+                                     NULL,
+                                     (gpointer *) &affinity_list))
+      {
+        affinities = g_slist_prepend (affinities,
+                                      affinity_list);
+      }
+
+      affinities = g_slist_sort (affinities,
+                                 (GCompareFunc) CompareAffinityOccurence);
+    }
+
+    g_hash_table_destroy (affinity_distribution);
+  }
+
+  // Set the match order according to the affinities
+  {
+    GSList *current = affinities;
+
+    _player_pairs = GetPlayerPairModel (g_slist_length (fencer_list));
+    while (current)
+    {
+      GSList *affinity_list = (GSList *) current->data;
+
+      if (g_slist_length (affinity_list) > 1)
+      {
+        MovePairsOnHead (affinity_list);
+      }
+      current = g_slist_next (current);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+GSList *PoolMatchOrder::GetPlayerPairModel (guint pool_size)
+{
+  PlayerPair *pair_table = NULL;
+  GSList     *model      = NULL;
+
+  if ((pool_size >= 3) &&  (pool_size <= _MAX_POOL_SIZE))
+  {
+    if (_weapon_code == 'K')
+    {
+      pair_table = kendo_pairs[pool_size];
+    }
+    else
+    {
+      pair_table = fencing_pairs[pool_size];
+    }
+  }
+
+  if (pair_table)
+  {
+    for (guint i = (pool_size * (pool_size - 1)) / 2; i > 0; i--)
+    {
+      PlayerPair *pair = new PlayerPair;
+
+      *pair = pair_table[i-1];
+      model = g_slist_prepend (model,
+                               pair);
+    }
+  }
+
+  return model;
+}
+
+// --------------------------------------------------------------------------------
+gint PoolMatchOrder::CompareAffinityOccurence (GSList *a,
+                                               GSList *b)
+{
+  return (g_slist_length (b) - g_slist_length (a));
+}
+
+// --------------------------------------------------------------------------------
+void PoolMatchOrder::MovePairsOnHead (GSList *affinity_list)
+{
+  GSList *a = affinity_list;
+
+  while (a)
+  {
+    guint   fencer_a_index = (guint) a->data;
+    GSList *b              = g_slist_next (a);
+
+    while (b)
+    {
+      guint   fencer_b_index = (guint) b->data;
+      GSList *current_pair   = _player_pairs;
+
+      while (current_pair)
+      {
+        PlayerPair *pair = (PlayerPair *) current_pair->data;
+
+        if (   (pair->_a == fencer_a_index+1) && (pair->_b == fencer_b_index+1)
+            || (pair->_a == fencer_b_index+1) && (pair->_b == fencer_a_index+1))
+        {
+          _player_pairs = g_slist_remove_link (_player_pairs,
+                                               current_pair);
+          _player_pairs = g_slist_prepend (_player_pairs,
+                                           pair);
+          break;
+        }
+        current_pair = g_slist_next (current_pair);
+      }
+      b = g_slist_next (b);
+    }
+    a = g_slist_next (a);
   }
 }

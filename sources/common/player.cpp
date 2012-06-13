@@ -99,8 +99,8 @@ Player *Player::Duplicate ()
 }
 
 // --------------------------------------------------------------------------------
-Player::AttributeId *Player::AttributeId::CreateAttributeId (AttributeDesc *desc,
-                                                             Object        *owner)
+Player::AttributeId *Player::AttributeId::Create (AttributeDesc *desc,
+                                                  Object        *owner)
 {
   if (desc->_scope == AttributeDesc::GLOBAL)
   {

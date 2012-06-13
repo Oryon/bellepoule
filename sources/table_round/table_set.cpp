@@ -3297,7 +3297,7 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
       Attribute           *attr;
       Player::AttributeId *attr_id;
 
-      attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+      attr_id = Player::AttributeId::Create (attr_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 

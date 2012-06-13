@@ -19,26 +19,37 @@
 
 #include <gtk/gtk.h>
 #include "object.hpp"
+#include "attribute.hpp"
 
 class PoolMatchOrder : public Object
 {
   public:
+    static const guint _MAX_POOL_SIZE = 17;
+
+  public:
     PoolMatchOrder (gchar weapon_code);
 
-    guint GetMaxPoolSize ();
+    gboolean GetPlayerPair (guint  match_index,
+                            guint *a_id,
+                            guint *b_id);
 
-    struct PlayerPair
-    {
-      guint _a;
-      guint _b;
-    };
-
-    PlayerPair *GetPlayerPair (guint pool_size);
+    void SetAffinityCriteria (AttributeDesc *affinity_criteria,
+                              GSList        *fencer_list);
 
   private:
-    PlayerPair **_all_pool_pairs;
+    gchar   _weapon_code;
+    GSList *_player_pairs;
 
     ~PoolMatchOrder ();
+
+    void Reset ();
+
+    GSList *GetPlayerPairModel (guint pool_size);
+
+    void MovePairsOnHead (GSList *affinity_list);
+
+    static gint CompareAffinityOccurence (GSList *a,
+                                          GSList *b);
 };
 
 #endif
