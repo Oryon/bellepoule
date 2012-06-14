@@ -305,6 +305,7 @@ void PoolAllocator::DropObject (Object   *object,
   if (pool_zone)
   {
     FillPoolTable (pool_zone);
+    SignalStatusUpdate ();
     FixUpTablesBounds ();
   }
 }
@@ -336,7 +337,7 @@ GString *PoolAllocator::GetFloatingImage (Object *floating_object)
       Attribute           *attr;
       Player::AttributeId *attr_id;
 
-      attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+      attr_id = Player::AttributeId::Create (attr_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
@@ -647,14 +648,12 @@ void PoolAllocator::Load (xmlNode *xml_node)
         }
 
         {
-          guint           number      = g_slist_length (_drop_zones);
-          PoolMatchOrder *match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
+          guint number = g_slist_length (_drop_zones);
 
           current_pool = new Pool (_max_score,
                                    number+1,
-                                   match_order,
+                                   _contest->GetWeaponCode (),
                                    _rand_seed);
-          match_order->Release ();
 
           {
             current_zone = new PoolZone (this,
@@ -703,7 +702,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
       {
-        current_pool->CreateMatchs ();
+        current_pool->CreateMatchs (_swapping_criteria);
         current_pool->Load (n,
                             _attendees->GetShortList ());
         current_pool = NULL;
@@ -814,20 +813,11 @@ void PoolAllocator::Setup ()
 {
   guint           nb_players    = g_slist_length (_attendees->GetShortList ());
   Configuration  *config        = NULL;
-  guint           max_pool_size;
+  guint           max_pool_size = PoolMatchOrder::_MAX_POOL_SIZE;
 
+  if (nb_players % PoolMatchOrder::_MAX_POOL_SIZE)
   {
-    PoolMatchOrder *pool_match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
-
-    if (nb_players % pool_match_order->GetMaxPoolSize () == 0)
-    {
-      max_pool_size = pool_match_order->GetMaxPoolSize ();
-    }
-    else
-    {
-      max_pool_size = pool_match_order->GetMaxPoolSize () -1;
-    }
-    pool_match_order->Release ();
+    max_pool_size = PoolMatchOrder::_MAX_POOL_SIZE -1;
   }
 
   _best_config = NULL;
@@ -906,17 +896,16 @@ void PoolAllocator::CreatePools ()
 {
   if (_selected_config)
   {
-    Pool          **pool_table;
-    GSList         *shortlist   = _attendees->GetShortList ();
-    guint           nb_pool     = _selected_config->_nb_pool;
-    PoolMatchOrder *match_order = new PoolMatchOrder (_contest->GetWeaponCode ());
+    Pool   **pool_table;
+    GSList  *shortlist = _attendees->GetShortList ();
+    guint   nb_pool    = _selected_config->_nb_pool;
 
     pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
     for (guint i = 0; i < nb_pool; i++)
     {
       pool_table[i] = new Pool (_max_score,
                                 i+1,
-                                match_order,
+                                _contest->GetWeaponCode (),
                                 _rand_seed);
 
       {
@@ -998,8 +987,6 @@ void PoolAllocator::CreatePools ()
                          this);
       }
     }
-
-    match_order->Release ();
 
     {
       _nb_matchs = GetNbMatchs ();
@@ -1282,7 +1269,7 @@ void PoolAllocator::DisplayPlayer (Player        *player,
       Player::AttributeId *attr_id;
 
       attr_desc = (AttributeDesc *) selected_attr->data;
-      attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+      attr_id = Player::AttributeId::Create (attr_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
@@ -1492,7 +1479,7 @@ void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
 
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                          text,
-                         98.0, 9.0,
+                         98.0, -2.0,
                          -1.0,
                          GTK_ANCHOR_SE,
                          "fill-color", "black",
@@ -1741,7 +1728,7 @@ void PoolAllocator::OnLocked ()
     {
       Pool *pool = GetPoolOf (current);
 
-      pool->CreateMatchs ();
+      pool->CreateMatchs (_swapping_criteria);
       current = g_slist_next (current);
     }
   }

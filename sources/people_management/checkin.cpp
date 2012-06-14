@@ -489,7 +489,7 @@ void Checkin::ImportCSV (gchar *filename)
     if (header_line)
     {
       guint           nb_attr = 0;
-      AttributeDesc **columns;
+      AttributeDesc **columns = NULL;
 
       // Header
       {

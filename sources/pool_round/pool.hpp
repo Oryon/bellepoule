@@ -42,14 +42,14 @@ class Pool : public CanvasModule
     typedef void (*StatusCbk) (Pool *pool,
                                void *data);
 
-    Pool (Data           *max_score,
-          guint           number,
-          PoolMatchOrder *match_order,
-          guint32         rand_seed);
+    Pool (Data    *max_score,
+          guint    number,
+          gchar    weapon_code,
+          guint32  rand_seed);
 
     void  AddFencer     (Player *player, Object *rank_owner);
     void  AddReferee    (Player *player);
-    void  CreateMatchs  ();
+    void  CreateMatchs  (AttributeDesc *affinity_criteria);
     void  RemoveFencer  (Player *player);
     void  RemoveReferee (Player *player);
     guint GetNbPlayers  ();

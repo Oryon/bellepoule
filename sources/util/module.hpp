@@ -118,7 +118,8 @@ class Module : public virtual Object
 
     void ResetCursor ();
 
-    GString *GetPlayerImage (Player *player);
+    GString *GetPlayerImage (Player *player,
+                             ...);
 
     virtual ~Module ();
 

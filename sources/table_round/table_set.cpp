@@ -1124,17 +1124,25 @@ gboolean TableSet::FillInNode (GNode    *node,
 
     if (winner)
     {
-      GString *string = table_set->GetPlayerImage (winner);
+      GString *string = table_set->GetPlayerImage (winner,
+                                                   "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                                                   "first_name", "<span foreground=\"darkblue\">",
+                                                   "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                   "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                   "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                   NULL);
 
       player_item = Canvas::PutTextInTable (data->_fencer_goo_table,
                                             string->str,
                                             0,
                                             2);
       Canvas::SetTableItemAttribute (player_item, "y-align", 0.5);
+      g_object_set (G_OBJECT (player_item),
+                    "use-markup", TRUE,
+                    NULL);
 
       g_string_free (string,
                      TRUE);
-
     }
 
     if (parent && winner)
@@ -2842,7 +2850,13 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
 
     Canvas::NormalyzeDecimalNotation (font);
 
-    image     = GetPlayerImage (player);
+    image = GetPlayerImage (player,
+                            "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                            "first_name", "<span foreground=\"darkblue\">",
+                            "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                            "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                            "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                            NULL);
     text_item = Canvas::PutTextInTable (table,
                                         image->str,
                                         row,
@@ -2852,9 +2866,10 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
     Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
 
     g_object_set (G_OBJECT (text_item),
-                  "font",      font,
-                  "ellipsize", PANGO_ELLIPSIZE_NONE,
-                  "anchor",    GTK_ANCHOR_WEST,
+                  "font",       font,
+                  "ellipsize",  PANGO_ELLIPSIZE_NONE,
+                  "anchor",     GTK_ANCHOR_WEST,
+                  "use-markup", TRUE,
                   NULL);
     g_free (font);
   }
@@ -3288,7 +3303,7 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
       Attribute           *attr;
       Player::AttributeId *attr_id;
 
-      attr_id = Player::AttributeId::CreateAttributeId (attr_desc, this);
+      attr_id = Player::AttributeId::Create (attr_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
