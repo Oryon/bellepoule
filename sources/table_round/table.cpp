@@ -430,6 +430,7 @@ void Table::Hide ()
 gchar *Table::GetImage ()
 {
   gchar *image;
+  gchar *printable_image;
 
   if (_size == 1)
   {
@@ -448,5 +449,8 @@ gchar *Table::GetImage ()
     image = g_strdup_printf (gettext ("Table of %d"), _size);
   }
 
-  return image;
+  printable_image = GetUndivadableText (image);
+  g_free (image);
+
+  return printable_image;
 }

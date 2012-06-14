@@ -100,6 +100,50 @@ Object::~Object ()
 }
 
 // --------------------------------------------------------------------------------
+gchar *Object::GetUndivadableText (const gchar *text)
+{
+  gchar *result = NULL;
+
+  if (text)
+  {
+    guint  nb_space = 0;
+
+    for (gchar *current = (gchar *) text; *current != 0; current++)
+    {
+      if (*current == ' ')
+      {
+        nb_space++;
+      }
+    }
+
+    result = (gchar *) g_malloc (strlen (text) + nb_space*2 +1);
+
+    {
+      gchar *current = result;
+
+      for (guint i = 0; text[i] != 0; i++)
+      {
+        if (text[i] == ' ')
+        {
+          // non breaking space
+          *current = 0xC2;
+          current++;
+          *current = 0xA0;
+        }
+        else
+        {
+          *current = text[i];
+        }
+        current++;
+      }
+      *current = 0;
+    }
+  }
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
 void Object::SetProgramPath (gchar *path)
 {
   _program_path = g_strdup (path);

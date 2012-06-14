@@ -55,7 +55,12 @@ Pool::Pool (Data    *max_score,
 
   _score_collector = NULL;
 
-  _name = g_strdup_printf (gettext ("Pool #%02d"), _number);
+  {
+    gchar *text = g_strdup_printf (gettext ("Pool #%02d"), _number);
+
+    _name = GetUndivadableText (text);
+    g_free (text);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -900,7 +905,9 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
 
     // Matchs
+//#ifndef DEBUG
     if (print_for_referees)
+//#endif
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;

@@ -60,6 +60,8 @@ class Object
 
     virtual ~Object ();
 
+    static gchar *GetUndivadableText (const gchar *text);
+
   private:
     GData *_datalist;
     guint  _ref_count;

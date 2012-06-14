@@ -22,50 +22,6 @@
 GSList *AttributeDesc::_list = NULL;
 
 // --------------------------------------------------------------------------------
-static gchar *GetUndivadableText (const gchar *text)
-{
-  gchar *result = NULL;
-
-  if (text)
-  {
-    guint  nb_space = 0;
-
-    for (gchar *current = (gchar *) text; *current != 0; current++)
-    {
-      if (*current == ' ')
-      {
-        nb_space++;
-      }
-    }
-
-    result = (gchar *) g_malloc (strlen (text) + nb_space*2 +1);
-
-    {
-      gchar *current = result;
-
-      for (guint i = 0; text[i] != 0; i++)
-      {
-        if (text[i] == ' ')
-        {
-          // non breaking space
-          *current = 0xC2;
-          current++;
-          *current = 0xA0;
-        }
-        else
-        {
-          *current = text[i];
-        }
-        current++;
-      }
-      *current = 0;
-    }
-  }
-
-  return result;
-}
-
-// --------------------------------------------------------------------------------
 AttributeDesc::AttributeDesc (GType        type,
                               const gchar *code_name,
                               const gchar *xml_name,
