@@ -305,6 +305,7 @@ void PoolAllocator::DropObject (Object   *object,
   if (pool_zone)
   {
     FillPoolTable (pool_zone);
+    SignalStatusUpdate ();
     FixUpTablesBounds ();
   }
 }

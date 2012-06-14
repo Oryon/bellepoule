@@ -25,6 +25,9 @@ struct PlayerPair
   guint _b;
 };
 
+static PlayerPair pool_2_fencing_pairs[1] =
+{{1, 2}};
+
 static PlayerPair pool_3_kendo_pairs[3] =
 { {1, 2},
   {1, 3},
@@ -1401,7 +1404,7 @@ static PlayerPair *fencing_pairs[PoolMatchOrder::_MAX_POOL_SIZE+1] =
 {
   NULL,
   NULL,
-  NULL,
+  pool_2_fencing_pairs,
   pool_3_fencing_pairs,
   pool_4_fencing_pairs,
   pool_5_fencing_pairs,
@@ -1426,7 +1429,7 @@ static PlayerPair *kendo_pairs[PoolMatchOrder::_MAX_POOL_SIZE+1] =
 {
   NULL,
   NULL,
-  NULL,
+  pool_2_fencing_pairs,
   pool_3_kendo_pairs,
   pool_4_fencing_pairs,
   pool_5_fencing_pairs,
@@ -1467,7 +1470,6 @@ void PoolMatchOrder::Reset ()
                    (GFunc) g_free,
                    NULL);
   _player_pairs = NULL;
-
 }
 
 // --------------------------------------------------------------------------------
@@ -1554,20 +1556,27 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
 
   // Set the match order according to the affinities
   {
-    GSList *current = affinities;
+    GSList *current   = affinities;
+    guint   nb_fencer = g_slist_length (fencer_list);
 
-    _player_pairs = GetPlayerPairModel (g_slist_length (fencer_list));
+    _player_pairs = GetPlayerPairModel (nb_fencer);
     while (current)
     {
-      GSList *affinity_list = (GSList *) current->data;
+      GSList *affinity_list   = (GSList *) current->data;
+      guint   affinity_length = g_slist_length (affinity_list);
 
-      if (g_slist_length (affinity_list) > 1)
+      if (   (affinity_length > 1)
+          && (affinity_length * 2 <= nb_fencer))
       {
         MovePairsOnHead (affinity_list);
       }
+      g_slist_free (affinity_list);
+
       current = g_slist_next (current);
     }
   }
+
+  g_slist_free (affinities);
 }
 
 // --------------------------------------------------------------------------------
@@ -1576,7 +1585,7 @@ GSList *PoolMatchOrder::GetPlayerPairModel (guint pool_size)
   PlayerPair *pair_table = NULL;
   GSList     *model      = NULL;
 
-  if ((pool_size >= 3) &&  (pool_size <= _MAX_POOL_SIZE))
+  if ((pool_size >= 2) &&  (pool_size <= _MAX_POOL_SIZE))
   {
     if (_weapon_code == 'K')
     {
@@ -1613,14 +1622,17 @@ gint PoolMatchOrder::CompareAffinityOccurence (GSList *a,
 // --------------------------------------------------------------------------------
 void PoolMatchOrder::MovePairsOnHead (GSList *affinity_list)
 {
-  GSList *a = affinity_list;
+  guint       nb_fencer        = g_slist_length (affinity_list);
+  PlayerPair *translation_grid[nb_fencer][nb_fencer];
+  GSList     *a                = affinity_list;
 
-  while (a)
+  // Extract pairs having affinities
+  for (guint a_list_index = 0; a != NULL; a_list_index++)
   {
     guint   fencer_a_index = (guint) a->data;
     GSList *b              = g_slist_next (a);
 
-    while (b)
+    for (guint b_list_index = a_list_index+1; b != NULL; b_list_index++)
     {
       guint   fencer_b_index = (guint) b->data;
       GSList *current_pair   = _player_pairs;
@@ -1634,8 +1646,10 @@ void PoolMatchOrder::MovePairsOnHead (GSList *affinity_list)
         {
           _player_pairs = g_slist_remove_link (_player_pairs,
                                                current_pair);
-          _player_pairs = g_slist_prepend (_player_pairs,
-                                           pair);
+
+          // Temporarily store the pair in a fake pool grid.
+          translation_grid[a_list_index][b_list_index] = pair;
+          translation_grid[b_list_index][a_list_index] = pair;
           break;
         }
         current_pair = g_slist_next (current_pair);
@@ -1643,5 +1657,27 @@ void PoolMatchOrder::MovePairsOnHead (GSList *affinity_list)
       b = g_slist_next (b);
     }
     a = g_slist_next (a);
+  }
+
+  // Inject extracted pairs on the head of the list
+  // with the relevant order given by the new pair sub model
+  {
+    GSList *sub_model = GetPlayerPairModel (nb_fencer);
+    GSList *current   = sub_model;
+
+    while (current)
+    {
+      PlayerPair *sub_model_pair = (PlayerPair *) current->data;
+      PlayerPair *extracted_pair = translation_grid[sub_model_pair->_a-1][sub_model_pair->_b-1];
+
+      _player_pairs = g_slist_prepend (_player_pairs,
+                                       extracted_pair);
+      current = g_slist_next (current);
+    }
+
+    g_slist_foreach (sub_model,
+                     (GFunc) g_free,
+                     NULL);
+    g_slist_free (sub_model);
   }
 }

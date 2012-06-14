@@ -2851,7 +2851,14 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
 
     Canvas::NormalyzeDecimalNotation (font);
 
-    image     = GetPlayerImage (player, NULL);
+    image = GetPlayerImage (player,
+                            " ",
+                            "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                            "first_name", "<span foreground=\"darkblue\">",
+                            "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                            "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                            "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                            NULL);
     text_item = Canvas::PutTextInTable (table,
                                         image->str,
                                         row,
