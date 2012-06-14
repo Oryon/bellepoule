@@ -620,7 +620,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         x = - 5;
         y = cell_h / 2 + i * cell_h;
-        image = GetPlayerImage (GetPlayer (i, _sorted_fencer_list), " ",
+        image = GetPlayerImage (GetPlayer (i, _sorted_fencer_list),
                                 "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
                                 "first_name", "<span foreground=\"darkblue\">",
                                 "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
@@ -905,9 +905,9 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
 
     // Matchs
-//#ifndef DEBUG
+#ifndef DEBUG
     if (print_for_referees)
-//#endif
+#endif
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;
@@ -949,7 +949,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         {
           Player *player   = match->GetPlayerA ();
-          image            = GetPlayerImage (player, " ",
+          image            = GetPlayerImage (player,
                                              "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
                                              "first_name", "<span foreground=\"darkblue\">",
                                              "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
@@ -987,7 +987,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         {
           Player *player   = match->GetPlayerB ();
-          image            = GetPlayerImage (player, " ",
+          image            = GetPlayerImage (player,
                                              "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
                                              "first_name", "<span foreground=\"darkblue\">",
                                              "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",

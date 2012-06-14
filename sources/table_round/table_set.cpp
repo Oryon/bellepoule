@@ -1125,7 +1125,6 @@ gboolean TableSet::FillInNode (GNode    *node,
     if (winner)
     {
       GString *string = table_set->GetPlayerImage (winner,
-                                                   " ",
                                                    "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
                                                    "first_name", "<span foreground=\"darkblue\">",
                                                    "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
@@ -2852,7 +2851,6 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
     Canvas::NormalyzeDecimalNotation (font);
 
     image = GetPlayerImage (player,
-                            " ",
                             "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
                             "first_name", "<span foreground=\"darkblue\">",
                             "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
@@ -2868,9 +2866,10 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
     Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
 
     g_object_set (G_OBJECT (text_item),
-                  "font",      font,
-                  "ellipsize", PANGO_ELLIPSIZE_NONE,
-                  "anchor",    GTK_ANCHOR_WEST,
+                  "font",       font,
+                  "ellipsize",  PANGO_ELLIPSIZE_NONE,
+                  "anchor",     GTK_ANCHOR_WEST,
+                  "use-markup", TRUE,
                   NULL);
     g_free (font);
   }

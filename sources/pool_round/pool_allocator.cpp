@@ -1479,7 +1479,7 @@ void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
 
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                          text,
-                         98.0, 9.0,
+                         98.0, -2.0,
                          -1.0,
                          GTK_ANCHOR_SE,
                          "fill-color", "black",

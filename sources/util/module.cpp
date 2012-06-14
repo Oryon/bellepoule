@@ -461,7 +461,6 @@ void Module::ResetCursor ()
 
 // --------------------------------------------------------------------------------
 GString *Module::GetPlayerImage (Player *player,
-                                 gchar  *separator,
                                  ...)
 {
   GString *image = g_string_new ("");
@@ -498,17 +497,11 @@ GString *Module::GetPlayerImage (Player *player,
       {
         gchar *attr_image = attr->GetUserImage ();
 
-        if (a > 0)
-        {
-          image = g_string_append (image,
-                                   separator);
-        }
-
         {
           va_list  ap;
           gchar   *pango_arg;
 
-          va_start (ap, separator);
+          va_start (ap, player);
           while ((pango_arg = va_arg (ap, char *)))
           {
             if (strcmp (pango_arg, attr_desc->_code_name) == 0)
@@ -533,13 +526,14 @@ GString *Module::GetPlayerImage (Player *player,
                                    attr_image);
           g_free (attr_image);
         }
+
+        // separator
+        image = g_string_append (image,
+                                 "\302\240");
       }
 
       selected_attr = g_slist_next (selected_attr);
     }
-
-    image = g_string_append (image,
-                             " \302\240\302\240");
   }
 
   return image;
