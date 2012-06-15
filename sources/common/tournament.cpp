@@ -637,11 +637,9 @@ gchar *Tournament::GetHttpResponse (const gchar *url)
         if (    contest->GetFilename ()
              && (strcmp (contest->GetId (), id) == 0))
         {
-          gsize length;
-
           if (g_file_get_contents (contest->GetFilename (),
                                    &result,
-                                   &length,
+                                   NULL,
                                    NULL))
           {
             break;
@@ -1091,6 +1089,68 @@ void Tournament::OnOpenUserManual ()
 #endif
 
   g_free (uri);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnOpenTemplate ()
+{
+  GString *contents = g_string_new ("");
+  gchar   *filename = g_build_filename (g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES),
+                                        "fencer_file_template.csv",
+                                        NULL);
+
+  {
+    GSList  *current_desc = AttributeDesc::GetList ();
+
+    while (current_desc)
+    {
+      AttributeDesc *desc = (AttributeDesc *) current_desc->data;
+
+      if (   (desc->_scope       == AttributeDesc::GLOBAL)
+          && (desc->_rights      == AttributeDesc::PUBLIC)
+          && (desc->_persistency == AttributeDesc::PERSISTENT)
+          && (g_ascii_strcasecmp (desc->_code_name, "smartphone") != 0)
+          && (g_ascii_strcasecmp (desc->_code_name, "exported")   != 0))
+      {
+        contents = g_string_append (contents,
+                                    desc->_user_name);
+        contents = g_string_append_c (contents,
+                                      ';');
+      }
+
+      current_desc = g_slist_next (current_desc);
+    }
+  }
+
+  if (g_file_set_contents (filename,
+                           contents->str,
+                           -1,
+                           NULL))
+  {
+    gchar *uri = g_filename_to_uri (filename,
+                                    NULL,
+                                    NULL);
+
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecuteA (NULL,
+                 "open",
+                 uri,
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                uri,
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+
+    g_free (uri);
+  }
+
+  g_string_free (contents,
+                 TRUE);
+  g_free (filename);
 }
 
 // --------------------------------------------------------------------------------
@@ -1638,6 +1698,15 @@ extern "C" G_MODULE_EXPORT void on_user_manual_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnOpenUserManual ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_template_imagemenuitem_activate (GtkWidget *w,
+                                                                    Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnOpenTemplate ();
 }
 
 // --------------------------------------------------------------------------------

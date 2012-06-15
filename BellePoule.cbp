@@ -74,6 +74,7 @@
 			<Add directory="sources\pool_round" />
 			<Add directory="sources\table_round" />
 			<Add directory="sources\util" />
+			<Add directory="sources\network" />
 		</Compiler>
 		<Linker>
 			<Add library="gtk-win32-2.0" />
@@ -137,6 +138,12 @@
 		<Unit filename="sources\common\tournament.cpp" />
 		<Unit filename="sources\common\tournament.hpp" />
 		<Unit filename="sources\common\version.h" />
+		<Unit filename="sources\network\downloader.cpp" />
+		<Unit filename="sources\network\downloader.hpp" />
+		<Unit filename="sources\network\http_server.cpp" />
+		<Unit filename="sources\network\http_server.hpp" />
+		<Unit filename="sources\network\upload.cpp" />
+		<Unit filename="sources\network\upload.hpp" />
 		<Unit filename="sources\people_management\checkin.cpp" />
 		<Unit filename="sources\people_management\checkin.hpp" />
 		<Unit filename="sources\people_management\checkin_supervisor.cpp" />
@@ -187,16 +194,12 @@
 		<Unit filename="sources\util\canvas_module.hpp" />
 		<Unit filename="sources\util\data.cpp" />
 		<Unit filename="sources\util\data.hpp" />
-		<Unit filename="sources\util\downloader.cpp" />
-		<Unit filename="sources\util\downloader.hpp" />
 		<Unit filename="sources\util\drop_zone.cpp" />
 		<Unit filename="sources\util\drop_zone.hpp" />
 		<Unit filename="sources\util\filter.cpp" />
 		<Unit filename="sources\util\filter.hpp" />
 		<Unit filename="sources\util\glade.cpp" />
 		<Unit filename="sources\util\glade.hpp" />
-		<Unit filename="sources\util\http_server.cpp" />
-		<Unit filename="sources\util\http_server.hpp" />
 		<Unit filename="sources\util\module.cpp" />
 		<Unit filename="sources\util\module.hpp" />
 		<Unit filename="sources\util\object.cpp" />
@@ -205,8 +208,6 @@
 		<Unit filename="sources\util\sensitivity_trigger.hpp" />
 		<Unit filename="sources\util\tinyxml2.cpp" />
 		<Unit filename="sources\util\tinyxml2.h" />
-		<Unit filename="sources\util\upload.cpp" />
-		<Unit filename="sources\util\upload.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
