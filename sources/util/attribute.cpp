@@ -703,7 +703,7 @@ AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name)
     gchar         *pattern;
 
     {
-      gchar  *simplified_name;
+      gchar *simplified_name;
 
       simplified_name = g_convert_with_fallback (attr_desc->_user_name,
                                                  -1,

@@ -318,39 +318,21 @@ gchar *Checkin::GetFileContent (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Checkin::ConvertToUtf8 (gchar *what)
-{
-  gsize   bytes_written;
-  GError *error = NULL;
-  gchar  *result;
-
-  result = g_convert (what,
-                      -1,
-                      "UTF-8",
-                      "ISO-8859-1",
-                      NULL,
-                      &bytes_written,
-                      &error);
-
-  if (error)
-  {
-    g_print ("<<ConvertToUtf8>> %s\n", error->message);
-    g_clear_error (&error);
-  }
-
-  return result;
-}
-
-// --------------------------------------------------------------------------------
 void Checkin::ImportFFF (gchar *filename)
 {
-  gchar *file_content  = GetFileContent (filename);
-  gchar *iso_8859_file = ConvertToUtf8 (file_content);
+  gchar *file_content = GetFileContent (filename);
+  gchar *utf8_content = g_convert (file_content,
+                                   -1,
+                                   "UTF-8",
+                                   "ISO-8859-1",
+                                   NULL,
+                                   NULL,
+                                   NULL);
 
   g_free (file_content);
-  if (iso_8859_file)
+  if (utf8_content)
   {
-    gchar **lines = g_strsplit_set (iso_8859_file,
+    gchar **lines = g_strsplit_set (utf8_content,
                                     "\n",
                                     0);
 
@@ -469,20 +451,24 @@ void Checkin::ImportFFF (gchar *filename)
 
       g_strfreev (lines);
     }
-    g_free (iso_8859_file);
+    g_free (utf8_content);
   }
 }
 
 // --------------------------------------------------------------------------------
 void Checkin::ImportCSV (gchar *filename)
 {
-  gchar *file_content  = GetFileContent (filename);
-  gchar *iso_8859_file = ConvertToUtf8 (file_content);
-
+  gchar *file_content = GetFileContent (filename);
+  gchar *utf8_content = g_locale_to_utf8 (file_content,
+                                          -1,
+                                          NULL,
+                                          NULL,
+                                          NULL);
   g_free (file_content);
-  if (iso_8859_file)
+
+  if (utf8_content)
   {
-    gchar **header_line = g_strsplit_set (iso_8859_file,
+    gchar **header_line = g_strsplit_set (utf8_content,
                                           "\n",
                                           0);
 
@@ -518,7 +504,7 @@ void Checkin::ImportCSV (gchar *filename)
 
       // Fencers
       {
-        gchar **tokens = g_strsplit_set (iso_8859_file,
+        gchar **tokens = g_strsplit_set (utf8_content,
                                          ";\n",
                                          0);
 
@@ -548,7 +534,7 @@ void Checkin::ImportCSV (gchar *filename)
       g_free (columns);
     }
   }
-  g_free (iso_8859_file);
+  g_free (utf8_content);
 }
 
 // --------------------------------------------------------------------------------

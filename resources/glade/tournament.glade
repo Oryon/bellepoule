@@ -1037,7 +1037,7 @@ Public License instead of this License.  But first, please read
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="wifi_menuitem">
-                        <property name="label" translatable="yes">Broadcasted</property>
+                        <property name="label" translatable="yes">Watch</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -1272,7 +1272,7 @@ Public License instead of this License.  But first, please read
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="template_imagemenuitem">
-                        <property name="label" translatable="yes">Fencer file template</property>
+                        <property name="label" translatable="yes">Fencer file template (.csv)</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
