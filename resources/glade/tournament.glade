@@ -926,6 +926,11 @@ Public License instead of this License.  But first, please read
     <property name="can_focus">False</property>
     <property name="icon_name">preferences-desktop-theme</property>
   </object>
+  <object class="GtkImage" id="image15">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">x-office-spreadsheet</property>
+  </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -960,7 +965,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image8">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-refresh</property>
+    <property name="icon_name">software-update-available</property>
   </object>
   <object class="GtkImage" id="image9">
     <property name="visible">True</property>
@@ -1032,7 +1037,7 @@ Public License instead of this License.  But first, please read
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="wifi_menuitem">
-                        <property name="label" translatable="yes">Broadcasted</property>
+                        <property name="label" translatable="yes">Watch</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -1263,6 +1268,24 @@ Public License instead of this License.  But first, please read
                       <object class="GtkSeparatorMenuItem" id="separatormenuitem2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="template_imagemenuitem">
+                        <property name="label" translatable="yes">Fencer file template (.csv)</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="image">image15</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_template_imagemenuitem_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem4">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                       </object>
                     </child>
                     <child>

@@ -700,35 +700,16 @@ AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name)
   while (current)
   {
     AttributeDesc *attr_desc = (AttributeDesc *) current->data;
-    gchar         *pattern;
 
+    if (strcmp (user_name, attr_desc->_user_name) == 0)
     {
-      gchar  *simplified_name;
-
-      simplified_name = g_convert_with_fallback (attr_desc->_user_name,
-                                                 -1,
-                                                 "ASCII",
-                                                 "UTF-8",
-                                                 ".*",
-                                                 NULL,
-                                                 NULL,
-                                                 NULL);
-
-      pattern = g_strdup_printf ("^%s$", simplified_name);
-      g_free (simplified_name);
+      return attr_desc;
     }
-
-    if (g_regex_match_simple (pattern,
-                              user_name,
-                              (GRegexCompileFlags) (G_REGEX_CASELESS|G_REGEX_MULTILINE),
-                              (GRegexMatchFlags) 0))
+    else if (g_ascii_strcasecmp (user_name, attr_desc->_xml_name) == 0)
     {
-      g_print ("%s == %s\n", user_name, attr_desc->_code_name);
-      g_free (pattern);
       return attr_desc;
     }
 
-    g_free (pattern);
     current = g_slist_next (current);
   }
 

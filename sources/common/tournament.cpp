@@ -69,26 +69,11 @@ Tournament::Tournament (gchar *filename)
 
   if (filename)
   {
-    gchar *utf8_name;
-
-    {
-      gsize   bytes_written;
-      GError *error = NULL;
-
-      utf8_name = g_convert (filename,
-                             -1,
-                             "UTF-8",
-                             "ISO-8859-1",
-                             NULL,
-                             &bytes_written,
-                             &error);
-
-      if (error)
-      {
-        g_print ("<<ConvertToUtf8>> %s\n", error->message);
-        g_clear_error (&error);
-      }
-    }
+    gchar *utf8_name = g_locale_to_utf8 (filename,
+                                         -1,
+                                         NULL,
+                                         NULL,
+                                         NULL);
 
     OpenUriContest (utf8_name);
     g_free (utf8_name);
@@ -637,11 +622,9 @@ gchar *Tournament::GetHttpResponse (const gchar *url)
         if (    contest->GetFilename ()
              && (strcmp (contest->GetId (), id) == 0))
         {
-          gsize length;
-
           if (g_file_get_contents (contest->GetFilename (),
                                    &result,
-                                   &length,
+                                   NULL,
                                    NULL))
           {
             break;
@@ -1091,6 +1074,83 @@ void Tournament::OnOpenUserManual ()
 #endif
 
   g_free (uri);
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnOpenTemplate ()
+{
+  GString *contents = g_string_new ("");
+  gchar   *filename = g_build_filename (g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES),
+                                        "fencer_file_template.csv",
+                                        NULL);
+
+  {
+    GSList  *current_desc = AttributeDesc::GetList ();
+
+    while (current_desc)
+    {
+      AttributeDesc *desc = (AttributeDesc *) current_desc->data;
+
+      if (   (desc->_scope       == AttributeDesc::GLOBAL)
+          && (desc->_rights      == AttributeDesc::PUBLIC)
+          && (desc->_persistency == AttributeDesc::PERSISTENT)
+          && (g_ascii_strcasecmp (desc->_code_name, "final_rank") != 0)
+          && (g_ascii_strcasecmp (desc->_code_name, "smartphone") != 0)
+          && (g_ascii_strcasecmp (desc->_code_name, "exported")   != 0))
+      {
+        gchar *locale_string = g_locale_from_utf8 (desc->_user_name,
+                                                   -1,
+                                                   NULL,
+                                                   NULL,
+                                                   NULL);
+        contents = g_string_append (contents,
+                                    locale_string);
+        contents = g_string_append_c (contents,
+                                      ';');
+
+        g_free (locale_string);
+      }
+
+      current_desc = g_slist_next (current_desc);
+    }
+  }
+
+  if (g_file_set_contents (filename,
+                           contents->str,
+                           -1,
+                           NULL))
+  {
+    gchar *uri;
+
+#ifdef WINDOWS_TEMPORARY_PATCH
+    uri = g_locale_from_utf8 (filename,
+                              -1,
+                              NULL,
+                              NULL,
+                              NULL);
+
+    ShellExecute (NULL,
+                  "open",
+                  uri,
+                  NULL,
+                  NULL,
+                  SW_SHOWNORMAL);
+#else
+    uri = g_filename_to_uri (filename,
+                             NULL,
+                             NULL);
+    gtk_show_uri (NULL,
+                  uri,
+                  GDK_CURRENT_TIME,
+                  NULL);
+#endif
+
+    g_free (uri);
+  }
+
+  g_string_free (contents,
+                 TRUE);
+  g_free (filename);
 }
 
 // --------------------------------------------------------------------------------
@@ -1638,6 +1698,15 @@ extern "C" G_MODULE_EXPORT void on_user_manual_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnOpenUserManual ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_template_imagemenuitem_activate (GtkWidget *w,
+                                                                    Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnOpenTemplate ();
 }
 
 // --------------------------------------------------------------------------------

@@ -49,6 +49,8 @@ class Tournament : public Module
 
     void OnOpenUserManual ();
 
+    void OnOpenTemplate ();
+
     void OnSave ();
 
     void OnBroadcastedActivated (GtkTreePath *path);

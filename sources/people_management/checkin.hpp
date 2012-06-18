@@ -90,8 +90,6 @@ class Checkin : public PlayersList
 
     gboolean PlayerIsPrintable (Player *player);
 
-    gchar *ConvertToUtf8 (gchar *what);
-
     Player::PlayerType GetPlayerType ();
 
     static void OnAttendingChanged (Player    *player,
