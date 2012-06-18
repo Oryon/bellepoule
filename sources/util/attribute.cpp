@@ -704,12 +704,10 @@ AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name)
     if (strcmp (user_name, attr_desc->_user_name) == 0)
     {
       return attr_desc;
-      break;
     }
     else if (g_ascii_strcasecmp (user_name, attr_desc->_xml_name) == 0)
     {
       return attr_desc;
-      break;
     }
 
     current = g_slist_next (current);
