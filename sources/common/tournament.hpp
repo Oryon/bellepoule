@@ -75,8 +75,6 @@ class Tournament : public Module
 
     void OpenUriContest (const gchar *uri);
 
-    void OpenMemoryContest (const gchar *memory);
-
     Player *Share (Player  *referee,
                    Contest *from);
 
@@ -132,8 +130,6 @@ class Tournament : public Module
     static gboolean OnLatestVersionReceived (Downloader::CallbackData *cbk_data);
 
     static gboolean OnCompetitionListReceived (Downloader::CallbackData *cbk_data);
-
-    static gboolean OnCompetitionReceived (Downloader::CallbackData *cbk_data);
 };
 
 #endif

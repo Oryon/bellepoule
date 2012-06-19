@@ -99,27 +99,7 @@ Schedule::Schedule (Contest *contest)
 // --------------------------------------------------------------------------------
 Schedule::~Schedule ()
 {
-  guint nb_stages = g_list_length (_stage_list);
-
-  for (guint i = 0; i < nb_stages; i++)
-  {
-    Stage *stage;
-
-    stage = ((Stage *) g_list_nth_data (_stage_list,
-                                        nb_stages - i-1));
-    stage->Wipe ();
-  }
-
-  for (guint i = 0; i < nb_stages; i++)
-  {
-    Stage *stage;
-
-    stage = ((Stage *) g_list_nth_data (_stage_list,
-                                        nb_stages - i-1));
-    Object::TryToRelease (stage);
-  }
-
-  g_list_free (_stage_list);
+  RemoveAllStages ();
 
   gtk_widget_destroy (_formula_dlg);
 }
@@ -471,6 +451,23 @@ void Schedule::AddStage (Stage *stage,
 }
 
 // --------------------------------------------------------------------------------
+void Schedule::RemoveAllStages ()
+{
+  GList *current = g_list_last (_stage_list);
+
+  while (current)
+  {
+    Stage *stage          = (Stage *) current->data;
+    Stage *input_provider = stage->GetInputProvider ();
+
+    RemoveStage (stage);
+    RemoveStage (input_provider);
+
+    current = g_list_last (_stage_list);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Schedule::RemoveStage (Stage *stage)
 {
   if (stage)
@@ -518,11 +515,8 @@ void Schedule::RemoveStage (Stage *stage)
 
     stage->Release ();
 
-    if (page > 0)
-    {
-      gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
-                                page);
-    }
+    gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
+                              page);
   }
 
   {
@@ -612,7 +606,7 @@ void Schedule::Load (xmlDoc  *doc,
   gint             current_stage_index = -1;
   gboolean         display_all         = FALSE;
   Stage           *checkin_stage       = Stage::CreateInstance ("checkin_stage");
-  gchar           *xml_key_word        = "/CompetitionIndividuelle";
+  gchar           *xml_key_word        = (gchar *) "/CompetitionIndividuelle";
 
   {
     xmlNodeSet     *xml_nodeset;
@@ -622,7 +616,7 @@ void Schedule::Load (xmlDoc  *doc,
     {
       xmlXPathFreeObject (xml_object);
       xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle/Phases", xml_context);
-      xml_key_word = "/BaseCompetitionIndividuelle";
+      xml_key_word = (gchar *) "/BaseCompetitionIndividuelle";
     }
 
     xml_nodeset = xml_object->nodesetval;

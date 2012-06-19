@@ -40,7 +40,6 @@
 					<Add option="-Wunreachable-code" />
 					<Add option="-g" />
 					<Add option="-DDEBUG=1" />
-					<Add option="-DFAKE_XML=1" />
 				</Compiler>
 			</Target>
 		</Build>
@@ -119,7 +118,6 @@
 		<Unit filename="sources\common\classification.hpp" />
 		<Unit filename="sources\common\contest.cpp" />
 		<Unit filename="sources\common\contest.hpp" />
-		<Unit filename="sources\common\fake_xml.h" />
 		<Unit filename="sources\common\main.cpp" />
 		<Unit filename="sources\common\match.cpp" />
 		<Unit filename="sources\common\match.hpp" />

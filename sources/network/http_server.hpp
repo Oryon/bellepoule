@@ -17,6 +17,10 @@
 #ifndef http_server_hpp
 #define http_server_hpp
 
+#ifndef WIN32
+#include <stdint.h>
+#include <sys/socket.h>
+#endif
 #include <glib.h>
 #include <microhttpd.h>
 

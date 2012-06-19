@@ -34,11 +34,13 @@ Downloader::Downloader (const gchar *name,
   _killed = FALSE;
 
   _name = g_strdup (name);
+  g_print ("%s ++> created\n", _name);
 }
 
 // --------------------------------------------------------------------------------
 Downloader::~Downloader ()
 {
+  g_print ("%s **> released\n", _name);
   g_free (_data);
   g_free (_address);
   g_free (_name);
@@ -145,7 +147,11 @@ gpointer Downloader::ThreadFunction (Downloader *downloader)
       break;
     }
 
+#ifdef WINDOWS_TEMPORARY_PATCH
     Sleep (downloader->_period);
+#else
+    sleep (downloader->_period/1000);
+#endif
     g_print ("%s\n", downloader->_name);
   }
 

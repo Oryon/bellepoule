@@ -29,9 +29,6 @@
 #include "version.h"
 #include "canvas.hpp"
 #include "contest.hpp"
-#if FAKE_XML
-#include "fake_xml.h"
-#endif
 
 #include "tournament.hpp"
 
@@ -178,10 +175,6 @@ Tournament::Tournament (gchar *filename)
     _http_server = new HttpServer (this,
                                    OnGetHttpResponse);
   }
-
-#if FAKE_XML
-  gtk_widget_hide (_glade->GetWidget ("logo"));
-#endif
 }
 
 // --------------------------------------------------------------------------------
@@ -608,7 +601,7 @@ gchar *Tournament::GetHttpResponse (const gchar *url)
 
   if (strstr (url, "/bellepoule/tournament/competition/"))
   {
-    gchar *id = strrchr (url, '/');
+    gchar *id = (gchar *) strrchr (url, '/');
 
     if (id && id[1])
     {
@@ -1223,32 +1216,6 @@ void Tournament::OpenUriContest (const gchar *uri)
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OpenMemoryContest (const gchar *memory)
-{
-  if (memory)
-  {
-    SetCursor (GDK_WATCH);
-
-    {
-      Contest *contest = new Contest ();
-
-      Plug (contest,
-            NULL,
-            NULL);
-      contest->LoadMemory (memory);
-      Manage (contest);
-    }
-
-    ResetCursor ();
-
-    while (gtk_events_pending ())
-    {
-      gtk_main_iteration ();
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
   if (_program_path)
@@ -1325,7 +1292,7 @@ void Tournament::GetBroadcastedCompetitions ()
   }
 
   _competitions_downloader->Start (address,
-                                   10000);
+                                   60000);
 
   gtk_list_store_clear (GTK_LIST_STORE (_glade->GetWidget ("broadcasted_liststore")));
 
@@ -1361,9 +1328,6 @@ gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_da
     gboolean  error = TRUE;
     gchar    *data  = cbk_data->_downloader->GetData ();
 
-#if FAKE_XML
-    data = fake_competion_list;
-#endif
     if (data)
     {
       tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument ();
@@ -1416,29 +1380,6 @@ gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_da
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
-{
-  Tournament *tournament = (Tournament *) cbk_data->_user_data;
-
-  if (tournament->_competitions_downloader)
-  {
-    gchar *data = cbk_data->_downloader->GetData ();
-
-#if FAKE_XML
-    data = fake_competion;
-#endif
-    if (data)
-    {
-      tournament->OpenMemoryContest (data);
-    }
-
-    cbk_data->_downloader->Release ();
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::PrintMealTickets ()
 {
   _print_meal_tickets = TRUE;
@@ -1473,12 +1414,15 @@ void Tournament::OnBroadcastedActivated (GtkTreePath *path)
                                           gtk_entry_get_text (GTK_ENTRY (entry)),
                                           id);
 
-    Downloader *downloader = new Downloader (id,
-                                             OnCompetitionReceived,
-                                             this);
+    {
+      Contest *contest = new Contest ();
 
-    downloader->Start (address,
-                       5000);
+      Plug (contest,
+            NULL,
+            NULL);
+      contest->LoadRemote (address);
+      Manage (contest);
+    }
   }
 }
 

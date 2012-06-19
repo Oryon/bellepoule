@@ -1629,12 +1629,12 @@ void PoolMatchOrder::MovePairsOnHead (GSList *affinity_list)
   // Extract pairs having affinities
   for (guint a_list_index = 0; a != NULL; a_list_index++)
   {
-    guint   fencer_a_index = (guint) a->data;
+    guint   fencer_a_index = GPOINTER_TO_UINT (a->data);
     GSList *b              = g_slist_next (a);
 
     for (guint b_list_index = a_list_index+1; b != NULL; b_list_index++)
     {
-      guint   fencer_b_index = (guint) b->data;
+      guint   fencer_b_index = GPOINTER_TO_UINT (b->data);
       GSList *current_pair   = _player_pairs;
 
       while (current_pair)

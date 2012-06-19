@@ -23,6 +23,8 @@
 #include "data.hpp"
 #include "module.hpp"
 #include "glade.hpp"
+#include "downloader.hpp"
+#undef GetObject
 #include "schedule.hpp"
 
 class Tournament;
@@ -44,6 +46,8 @@ class Contest : public Module
     void LoadXml (const gchar *filename);
 
     void LoadFencerFile (const gchar *filename);
+
+    void LoadRemote (const gchar *address);
 
     void LoadMemory (const gchar *memory);
 
@@ -152,6 +156,7 @@ class Contest : public Module
     GHashTable   *_ref_translation_table;
     State         _state;
     gboolean      _read_only;
+    Downloader   *_downloader;
 
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
@@ -177,7 +182,11 @@ class Contest : public Module
 
     void MakeDirty ();
 
+    void OpenMemoryContest (Downloader::CallbackData *cbk_data);
+
     static gboolean OnSaveTimeout (Contest *contest);
+
+    static gboolean OnCompetitionReceived (Downloader::CallbackData *cbk_data);
 
     void OnPlugged ();
 };

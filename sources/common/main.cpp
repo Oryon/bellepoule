@@ -304,9 +304,9 @@ int main (int argc, char **argv)
       desc->_rights         = AttributeDesc::PRIVATE;
       desc->_scope          = AttributeDesc::GLOBAL;
       desc->_representation = AttributeDesc::GRAPHICAL;
-      desc->AddDiscreteValues ("Busy",   GTK_STOCK_EXECUTE, "",
-                               "Absent", GTK_STOCK_CLOSE,   "",
-                               "Free",   GTK_STOCK_APPLY,   "", NULL);
+      desc->AddDiscreteValues ("Busy",   (gchar *) GTK_STOCK_EXECUTE, "",
+                               "Absent", (gchar *) GTK_STOCK_CLOSE,   "",
+                               "Free",   (gchar *) GTK_STOCK_APPLY,   "", NULL);
 
     }
   }

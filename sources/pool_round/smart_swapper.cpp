@@ -47,8 +47,8 @@ gboolean SmartSwapper::Fencer::CanGoTo (PoolData   *pool_data,
   }
   else
   {
-    guint score = (guint) g_hash_table_lookup (pool_data->_criteria_score,
-                                               (const void *) _criteria_quark);
+    guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_score,
+                                                         (const void *) _criteria_quark));
 
     if (score && _over_population_error)
     {
@@ -66,8 +66,8 @@ gboolean SmartSwapper::Fencer::CanGoTo (PoolData   *pool_data,
 void SmartSwapper::PoolData::ChangeCriteriaScore (GQuark criteria,
                                                   gint   delta_score)
 {
-  guint score = (guint) g_hash_table_lookup (_criteria_score,
-                                             (const void *) criteria);
+  guint score = GPOINTER_TO_UINT (g_hash_table_lookup (_criteria_score,
+                                                       (const void *) criteria));
   score += delta_score;
 
   g_hash_table_insert (_criteria_score,
@@ -397,8 +397,8 @@ void SmartSwapper::FindLackOfPopulationErrors ()
         PoolData *pool_data = &_pool_table[i];
         guint     score;
 
-        score = (guint) g_hash_table_lookup (pool_data->_criteria_score,
-                                             (const void *) quark);
+        score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_score,
+                                                       (const void *) quark));
 
         if (score < criteria_data->_max_criteria_occurrence-1)
         {
@@ -454,7 +454,7 @@ void SmartSwapper::ExtractFloatings ()
 
     while (current_lack)
     {
-      GQuark  quark            = (GQuark) current_lack->data;
+      GQuark  quark            = GPOINTER_TO_UINT (current_lack->data);
       GList  *current_floating = g_list_last (_floating_list);
 
       while (current_floating)
@@ -542,8 +542,8 @@ void SmartSwapper::DispatchFloatings ()
         {
           guint   score;
 
-          score = (guint) g_hash_table_lookup (floating->_new_pool->_criteria_score,
-                                               (const void *) error->_criteria_quark);
+          score = GPOINTER_TO_UINT (g_hash_table_lookup (floating->_new_pool->_criteria_score,
+                                                         (const void *) error->_criteria_quark));
 
           if (error->CanGoTo (floating->_new_pool,
                               _criteria_distribution))
