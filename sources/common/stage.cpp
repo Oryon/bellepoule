@@ -65,6 +65,11 @@ Stage::~Stage ()
   TryToRelease (_attendees);
   TryToRelease (_qualified_ratio);
   TryToRelease (_nb_qualified);
+
+  if (_previous)
+  {
+    _previous->_next = NULL;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -419,7 +424,7 @@ void Stage::OnNbQualifiedValueChanged (GtkSpinButton *spinbutton)
 void Stage::SetPrevious (Stage *previous)
 {
   _previous = previous;
-  if (_previous)
+  if (_previous && (_previous->_next == this))
   {
     _previous->_next = this;
   }

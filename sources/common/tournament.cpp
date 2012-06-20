@@ -1292,7 +1292,7 @@ void Tournament::GetBroadcastedCompetitions ()
   }
 
   _competitions_downloader->Start (address,
-                                   60000);
+                                   60*5*1000);
 
   gtk_list_store_clear (GTK_LIST_STORE (_glade->GetWidget ("broadcasted_liststore")));
 

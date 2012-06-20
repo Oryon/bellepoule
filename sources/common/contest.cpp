@@ -437,7 +437,7 @@ void Contest::LoadRemote (const gchar *address)
                                 this);
 
   _downloader->Start (address,
-                      5000);
+                      60*2*1000);
 
   _read_only = TRUE;
 }
@@ -455,8 +455,6 @@ gboolean Contest::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
 // --------------------------------------------------------------------------------
 void Contest::OpenMemoryContest (Downloader::CallbackData *cbk_data)
 {
-  g_print ("     RECEIVED\n");
-
   if (_downloader)
   {
     gchar *memory = cbk_data->_downloader->GetData ();
@@ -474,6 +472,7 @@ void Contest::OpenMemoryContest (Downloader::CallbackData *cbk_data)
       if (doc)
       {
         LoadXmlDoc (doc);
+        DisplayProperties ();
 
         _schedule->Freeze ();
 
@@ -1253,6 +1252,18 @@ void Contest::DisplayProperties ()
     gtk_label_set_text (GTK_LABEL (w),
                         gettext (category_image[_category]));
   }
+
+  if (_gdk_color)
+  {
+    GtkWidget *tab = _glade->GetWidget ("eventbox");
+
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_NORMAL,
+                          _gdk_color);
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_ACTIVE,
+                          _gdk_color);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1280,18 +1291,6 @@ void Contest::AttachTo (GtkNotebook *to)
                                     TRUE);
 
   DisplayProperties ();
-
-  if (_gdk_color)
-  {
-    GtkWidget *tab = _glade->GetWidget ("eventbox");
-
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_NORMAL,
-                          _gdk_color);
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_ACTIVE,
-                          _gdk_color);
-  }
 }
 
 // --------------------------------------------------------------------------------

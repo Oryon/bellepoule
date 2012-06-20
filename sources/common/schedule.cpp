@@ -457,11 +457,9 @@ void Schedule::RemoveAllStages ()
 
   while (current)
   {
-    Stage *stage          = (Stage *) current->data;
-    Stage *input_provider = stage->GetInputProvider ();
+    Stage *stage = (Stage *) current->data;
 
     RemoveStage (stage);
-    RemoveStage (input_provider);
 
     current = g_list_last (_stage_list);
   }
@@ -497,26 +495,37 @@ void Schedule::RemoveStage (Stage *stage)
     {
       guint n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (GetRootWidget ()));
 
-      _stage_list = g_list_remove (_stage_list,
-                                   stage);
-
       if (   (n_pages > 0)
           && (_current_stage > 0)
           && (_current_stage == (guint) current_index))
       {
-        Stage *stage;
+        {
+          Module *module = (Module *) dynamic_cast <Module *> (stage);
+
+          stage->Wipe ();
+          module->UnPlug ();
+        }
 
         SetCurrentStage (_current_stage-1);
 
-        stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-        stage->UnLock ();
+        {
+          Stage *new_current_stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
+
+          new_current_stage->UnLock ();
+        }
       }
     }
 
     stage->Release ();
 
-    gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
-                              page);
+    _stage_list = g_list_remove (_stage_list,
+                                 stage);
+
+    if (page >= 0)
+    {
+      gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
+                                page);
+    }
   }
 
   {

@@ -34,13 +34,11 @@ Downloader::Downloader (const gchar *name,
   _killed = FALSE;
 
   _name = g_strdup (name);
-  g_print ("%s ++> created\n", _name);
 }
 
 // --------------------------------------------------------------------------------
 Downloader::~Downloader ()
 {
-  g_print ("%s **> released\n", _name);
   g_free (_data);
   g_free (_address);
   g_free (_name);

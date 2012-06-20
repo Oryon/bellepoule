@@ -24,7 +24,6 @@
 #include "module.hpp"
 #include "glade.hpp"
 #include "downloader.hpp"
-#undef GetObject
 #include "schedule.hpp"
 
 class Tournament;
