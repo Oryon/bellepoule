@@ -1,43 +1,49 @@
-CC=g++
-SRCDIR=sources
-OBJDIR=obj
-BINDIR=bin
-DBGDIR=$(BINDIR)/Debug
-RLSDIR=$(BINDIR)/Release
+EXEC   = bellepoule
+TARGET = Release
 
-# Lancer les commandes suivantes dans un terminal pour voir les bibliothèques et options par défaut
-LIBS=`pkg-config --libs gtk+-2.0 gmodule-2.0 libxml-2.0 goocanvas`
-CFLAGS=`pkg-config --cflags gtk+-2.0 gmodule-2.0 libxml-2.0 goocanvas`
+CC = gcc
+ifeq ($(TARGET), Debug)
+CC += -g
+endif
 
-# Options de compilation, l'option -Wno-write-strings est utilisé car beaucoup de warnings
-# sur la conversion de chaines constantes en *gchar
-#OPTS=-Wall -Wno-write-strings   -Werror -pedantic-errors
-OPTS=-Wall -std=c++98 -pedantic
-OPTSDBG=$(OPTS) -g
+MODULE  = common
+MODULE += network
+MODULE += people_management
+MODULE += pool_round
+MODULE += table_round
+MODULE += util
 
-# Fichiers source à compiler et à linker, ATTENTION à mettre à jour la liste à chaque nouvelle version
-SRCS=attendees.cpp attribute.cpp canvas.cpp canvas_module.cpp checkin.cpp classification.cpp contest.cpp data.cpp filter.cpp general_classification.cpp glade.cpp main.cpp match.cpp module.cpp object.cpp player.cpp players_list.cpp pool_allocator.cpp pool.cpp pool_match_order.cpp pool_supervisor.cpp schedule.cpp score_collector.cpp score.cpp sensitivity_trigger.cpp splitting.cpp stage.cpp swapper.cpp table.cpp tournament.cpp table_supervisor.cpp table_set.cpp upload.cpp
-OBJS=$(SRCS:.cpp=.o)
+CFLAGS  = -W -Wall -ansi -pedantic -Wno-unused
+CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd)
+CFLAGS += $(addprefix -Isources/,$(MODULE))
+ifeq ($(TARGET), Debug)
+CFLAGS += -DDEBUG=1
+endif
 
-# Nom du fichier exécutable à générer dans $(DBGDIR) et $(RLSDIR)
-PROG=BellePoule
+LDFLAGS  = -lstdc++
+LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd)
+LDFLAGS += $(addprefix -Llinux/$(TARGET)/,$(MODULE))
 
-main: $(OBJS)
-	@mkdir -p $(DBGDIR)
-	@mkdir -p $(RLSDIR)
-	@cd $(OBJDIR) && $(CC) $(OBJS) $(LIBS) $(OPTSDBG) -o ../$(DBGDIR)/$(PROG)
-	@cd $(OBJDIR) && $(CC) $(OBJS) $(LIBS) $(OPTS) -o ../$(RLSDIR)/$(PROG)
+SRC = $(wildcard sources/*/*.cpp)
+OBJ = $(SRC:.cpp=.o)
+#OBJ = $(subst sources,linux/$(TARGET),$(SRC:.cpp=.o))
 
-%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(OBJDIR)
-	@$(CC) -c $< -o $(OBJDIR)/$@ $(CFLAGS) $(OPTSDBG)
+all: subdir linux/$(TARGET)/$(EXEC)
+
+subdir:
+	mkdir -p linux/$(TARGET)
+
+linux/$(TARGET)/$(EXEC): $(OBJ)
+	@echo $@
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+%.o: %.cpp
+	@echo $@
+	$(CC) -o $@ -c $< $(CFLAGS)
 
 .PHONY: clean
-clean:
-	@mkdir -p $(OBJDIR)
-	cd $(OBJDIR) && rm -f $(OBJS)
-	cd $(SRCDIR) && rm -f *~
-	rm -f $(PROG)
-	rm -f $(DBGDIR)/$(PROG)
-	rm -f $(RLSDIR)/$(PROG)
 
+clean:
+	rm -f sources/*/*.o
+	rm -rf linux/$(TARGET)/*
+	rmdir linux/$(TARGET)

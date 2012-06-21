@@ -222,7 +222,7 @@
                     <property name="model">swapping_liststore</property>
                     <signal name="changed" handler="on_swapping_combobox_changed" swapped="no"/>
                     <child>
-                      <object class="GtkCellRendererPixbuf" id="combo_icon_renderer"/>
+                      <object class="GtkCellRendererPixbuf" id="combo_icon_renderer2"/>
                       <attributes>
                         <attribute name="stock-id">2</attribute>
                       </attributes>

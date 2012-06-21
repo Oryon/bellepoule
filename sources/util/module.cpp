@@ -29,7 +29,7 @@ GtkTreeModel *Module::_status_model = NULL;
 
 GtkTargetEntry Module::_dnd_target_list[] =
 {
-  {"REFEREE", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET, Module::INT_TARGET}
+  {(gchar *) "REFEREE", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET, Module::INT_TARGET}
 };
 
 // --------------------------------------------------------------------------------

@@ -1076,7 +1076,7 @@ gboolean TableSet::FillInNode (GNode    *node,
 
         if (match_name == NULL)
         {
-          match_name = "";
+          match_name = (gchar *) "";
         }
 
         {

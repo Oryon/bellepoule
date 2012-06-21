@@ -99,27 +99,7 @@ Schedule::Schedule (Contest *contest)
 // --------------------------------------------------------------------------------
 Schedule::~Schedule ()
 {
-  guint nb_stages = g_list_length (_stage_list);
-
-  for (guint i = 0; i < nb_stages; i++)
-  {
-    Stage *stage;
-
-    stage = ((Stage *) g_list_nth_data (_stage_list,
-                                        nb_stages - i-1));
-    stage->Wipe ();
-  }
-
-  for (guint i = 0; i < nb_stages; i++)
-  {
-    Stage *stage;
-
-    stage = ((Stage *) g_list_nth_data (_stage_list,
-                                        nb_stages - i-1));
-    Object::TryToRelease (stage);
-  }
-
-  g_list_free (_stage_list);
+  RemoveAllStages ();
 
   gtk_widget_destroy (_formula_dlg);
 }
@@ -471,6 +451,21 @@ void Schedule::AddStage (Stage *stage,
 }
 
 // --------------------------------------------------------------------------------
+void Schedule::RemoveAllStages ()
+{
+  GList *current = g_list_last (_stage_list);
+
+  while (current)
+  {
+    Stage *stage = (Stage *) current->data;
+
+    RemoveStage (stage);
+
+    current = g_list_last (_stage_list);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Schedule::RemoveStage (Stage *stage)
 {
   if (stage)
@@ -500,25 +495,33 @@ void Schedule::RemoveStage (Stage *stage)
     {
       guint n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (GetRootWidget ()));
 
-      _stage_list = g_list_remove (_stage_list,
-                                   stage);
-
       if (   (n_pages > 0)
           && (_current_stage > 0)
           && (_current_stage == (guint) current_index))
       {
-        Stage *stage;
+        {
+          Module *module = (Module *) dynamic_cast <Module *> (stage);
+
+          stage->Wipe ();
+          module->UnPlug ();
+        }
 
         SetCurrentStage (_current_stage-1);
 
-        stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-        stage->UnLock ();
+        {
+          Stage *new_current_stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
+
+          new_current_stage->UnLock ();
+        }
       }
     }
 
     stage->Release ();
 
-    if (page > 0)
+    _stage_list = g_list_remove (_stage_list,
+                                 stage);
+
+    if (page >= 0)
     {
       gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
                                 page);
@@ -612,7 +615,7 @@ void Schedule::Load (xmlDoc  *doc,
   gint             current_stage_index = -1;
   gboolean         display_all         = FALSE;
   Stage           *checkin_stage       = Stage::CreateInstance ("checkin_stage");
-  gchar           *xml_key_word        = "/CompetitionIndividuelle";
+  gchar           *xml_key_word        = (gchar *) "/CompetitionIndividuelle";
 
   {
     xmlNodeSet     *xml_nodeset;
@@ -622,7 +625,7 @@ void Schedule::Load (xmlDoc  *doc,
     {
       xmlXPathFreeObject (xml_object);
       xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle/Phases", xml_context);
-      xml_key_word = "/BaseCompetitionIndividuelle";
+      xml_key_word = (gchar *) "/BaseCompetitionIndividuelle";
     }
 
     xml_nodeset = xml_object->nodesetval;

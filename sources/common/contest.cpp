@@ -235,6 +235,7 @@ Contest::Contest ()
   _category   = 0;
   _gender     = 0;
   _derived    = FALSE;
+  _downloader = NULL;
 
   _state                 = OPERATIONAL;
   _ref_translation_table = NULL;
@@ -429,41 +430,80 @@ void Contest::LoadFencerFile (const gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-void Contest::LoadMemory (const gchar *memory)
+void Contest::LoadRemote (const gchar *address)
 {
-  xmlDoc *doc = xmlReadMemory (memory,
-                               strlen (memory),
-                               "noname.xml",
-                               NULL,
-                               0);
+  _downloader = new Downloader (address,
+                                OnCompetitionReceived,
+                                this);
 
-  if (doc)
-  {
-    LoadXmlDoc (doc);
-
-    _schedule->Freeze ();
-
-    gtk_widget_hide (_glade->GetWidget ("save_toolbutton"));
-    gtk_widget_hide (_glade->GetWidget ("score_frame"));
-
-    gtk_widget_set_sensitive (_glade->GetWidget ("title_entry"),     FALSE);
-    gtk_widget_set_sensitive (_glade->GetWidget ("organizer_entry"), FALSE);
-    gtk_widget_set_sensitive (_glade->GetWidget ("web_site_entry"),  FALSE);
-    gtk_widget_set_sensitive (_glade->GetWidget ("location_entry"),  FALSE);
-    gtk_widget_set_sensitive (_glade->GetWidget ("calendar_button"), FALSE);
-    gtk_widget_set_sensitive (_weapon_combo,   FALSE);
-    gtk_widget_set_sensitive (_gender_combo,   FALSE);
-    gtk_widget_set_sensitive (_category_combo, FALSE);
-
-    _checkin_time->HideProperties (_glade);
-    _scratch_time->HideProperties (_glade);
-    _start_time->HideProperties   (_glade);
-
-    gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
-                              1);
-  }
+  _downloader->Start (address,
+                      60*2*1000);
 
   _read_only = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Contest::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
+{
+  Contest *contest = (Contest *) cbk_data->_user_data;
+
+  contest->OpenMemoryContest (cbk_data);
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Contest::OpenMemoryContest (Downloader::CallbackData *cbk_data)
+{
+  if (_downloader)
+  {
+    gchar *memory = cbk_data->_downloader->GetData ();
+
+    SetCursor (GDK_WATCH);
+    _schedule->RemoveAllStages ();
+    if (memory)
+    {
+      xmlDoc *doc = xmlReadMemory (memory,
+                                   strlen (memory),
+                                   "noname.xml",
+                                   NULL,
+                                   0);
+
+      if (doc)
+      {
+        LoadXmlDoc (doc);
+        DisplayProperties ();
+
+        _schedule->Freeze ();
+
+        gtk_widget_hide (_glade->GetWidget ("save_toolbutton"));
+        gtk_widget_hide (_glade->GetWidget ("score_frame"));
+
+        gtk_widget_set_sensitive (_glade->GetWidget ("title_entry"),     FALSE);
+        gtk_widget_set_sensitive (_glade->GetWidget ("organizer_entry"), FALSE);
+        gtk_widget_set_sensitive (_glade->GetWidget ("web_site_entry"),  FALSE);
+        gtk_widget_set_sensitive (_glade->GetWidget ("location_entry"),  FALSE);
+        gtk_widget_set_sensitive (_glade->GetWidget ("calendar_button"), FALSE);
+        gtk_widget_set_sensitive (_weapon_combo,   FALSE);
+        gtk_widget_set_sensitive (_gender_combo,   FALSE);
+        gtk_widget_set_sensitive (_category_combo, FALSE);
+
+        _checkin_time->HideProperties (_glade);
+        _scratch_time->HideProperties (_glade);
+        _start_time->HideProperties   (_glade);
+
+        gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
+                                  1);
+      }
+    }
+
+    ResetCursor ();
+
+    while (gtk_events_pending ())
+    {
+      gtk_main_iteration ();
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -700,6 +740,12 @@ Contest::~Contest ()
   {
     _tournament->OnContestDeleted (this);
   }
+
+  if (_downloader)
+  {
+    _downloader->Kill    ();
+    _downloader->Release ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -888,8 +934,8 @@ Player *Contest::GetRefereeFromRef (guint ref)
 {
   if (_ref_translation_table)
   {
-    ref = (guint) g_hash_table_lookup (_ref_translation_table,
-                                       (gconstpointer) ref);
+    ref = GPOINTER_TO_UINT (g_hash_table_lookup (_ref_translation_table,
+                                                 (gconstpointer) ref));
 
   }
 
@@ -1206,6 +1252,18 @@ void Contest::DisplayProperties ()
     gtk_label_set_text (GTK_LABEL (w),
                         gettext (category_image[_category]));
   }
+
+  if (_gdk_color)
+  {
+    GtkWidget *tab = _glade->GetWidget ("eventbox");
+
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_NORMAL,
+                          _gdk_color);
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_ACTIVE,
+                          _gdk_color);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1233,18 +1291,6 @@ void Contest::AttachTo (GtkNotebook *to)
                                     TRUE);
 
   DisplayProperties ();
-
-  if (_gdk_color)
-  {
-    GtkWidget *tab = _glade->GetWidget ("eventbox");
-
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_NORMAL,
-                          _gdk_color);
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_ACTIVE,
-                          _gdk_color);
-  }
 }
 
 // --------------------------------------------------------------------------------

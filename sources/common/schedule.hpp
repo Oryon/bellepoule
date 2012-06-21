@@ -51,6 +51,8 @@ class Schedule : public Module
 
     Stage *GetStage (guint index);
 
+    void RemoveAllStages ();
+
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
 

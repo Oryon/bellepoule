@@ -799,7 +799,7 @@ void PoolAllocator::RegisterConfig (Configuration *config)
     }
 
     if (   (config->_size < 7)
-        || (config->_size == 7) && (config->_nb_overloaded == 0))
+        || ((config->_size == 7) && (config->_nb_overloaded == 0)))
     {
       _best_config = config;
     }

@@ -145,7 +145,11 @@ gpointer Downloader::ThreadFunction (Downloader *downloader)
       break;
     }
 
+#ifdef WINDOWS_TEMPORARY_PATCH
     Sleep (downloader->_period);
+#else
+    sleep (downloader->_period/1000);
+#endif
     g_print ("%s\n", downloader->_name);
   }
 
