@@ -277,6 +277,7 @@ void SmartSwapper::DeletePoolTable ()
   _nb_pools = 0;
 
   g_free (_pool_table);
+  _pool_table = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -302,10 +303,13 @@ void SmartSwapper::LookUpDistribution (GSList *fencer_list)
 
         if (criteria_attr)
         {
-          quark = g_quark_from_string (criteria_attr->GetUserImage ());
+          gchar *user_image = criteria_attr->GetUserImage ();
+
+          quark = g_quark_from_string (user_image);
 
           InsertCriteria (_criteria_distribution,
                           quark);
+          g_free (user_image);
         }
       }
 
@@ -313,6 +317,7 @@ void SmartSwapper::LookUpDistribution (GSList *fencer_list)
       fencer->_rank                  = i;
       fencer->_criteria_quark        = quark;
       fencer->_over_population_error = FALSE;
+      fencer->_new_pool              = NULL;
       fencer->_original_pool         = &_pool_table[GetPoolIndex (i)];
 
       //fencer->Dump (_owner);
@@ -336,17 +341,19 @@ void SmartSwapper::ExtractOverPopulationErrors ()
   {
     PoolData       *pool_data = &_pool_table[i];
     GHashTableIter  iter;
-    guint           count;
-    GQuark          quark;
+    gpointer        key;
+    gpointer        value;
 
     g_hash_table_iter_init (&iter,
                             pool_data->_criteria_score);
 
     //g_print ("   #%d\n", i+1);
     while (g_hash_table_iter_next (&iter,
-                                   (gpointer *) &quark,
-                                   (gpointer *) &count))
+                                   &key,
+                                   &value))
     {
+      GQuark quark = GPOINTER_TO_UINT (key);
+      guint  count = GPOINTER_TO_UINT (value);
       CriteriaData *criteria_data = (CriteriaData *) g_hash_table_lookup (_criteria_distribution,
                                                                           (const void *) quark);
 
@@ -376,9 +383,9 @@ void SmartSwapper::FindLackOfPopulationErrors ()
 {
   //g_print ("\n\nFind lack of population ERRORS\n");
 
-  GHashTableIter  iter;
-  CriteriaData   *criteria_data;
-  GQuark          quark;
+  GHashTableIter iter;
+  gpointer       key;
+  gpointer       value;
 
   _lack_list = NULL;
 
@@ -386,12 +393,16 @@ void SmartSwapper::FindLackOfPopulationErrors ()
                           _criteria_distribution);
 
   while (g_hash_table_iter_next (&iter,
-                                 (gpointer *) &quark,
-                                 (gpointer *) &criteria_data))
+                                 &key,
+                                 &value))
   {
+    CriteriaData *criteria_data = (CriteriaData *) value;
+
     if (   (criteria_data && criteria_data->_max_floating_fencers)
         && (criteria_data->_max_criteria_occurrence > 1))
     {
+      GQuark quark = GPOINTER_TO_UINT (key);
+
       for (guint i = 0; i < _nb_pools; i++)
       {
         PoolData *pool_data = &_pool_table[i];
@@ -402,7 +413,6 @@ void SmartSwapper::FindLackOfPopulationErrors ()
 
         if (score < criteria_data->_max_criteria_occurrence-1)
         {
-          //g_print ("   #%d ==> %s\n", i+1, g_quark_to_string (quark));
 
           _lack_list = g_slist_prepend (_lack_list,
                                         (void *) quark);
@@ -421,17 +431,20 @@ void SmartSwapper::ExtractFloatings ()
   {
     PoolData       *pool_data = &_pool_table[i];
     GHashTableIter  iter;
-    GQuark          quark;
-    guint           count;
+    gpointer        key;
+    gpointer        value;
 
     g_hash_table_iter_init (&iter,
                             pool_data->_criteria_score);
 
     //g_print ("   #%d\n", i+1);
     while (g_hash_table_iter_next (&iter,
-                                   (gpointer *) &quark,
-                                   (gpointer *) &count))
+                                   &key,
+                                   &value))
     {
+      GQuark quark = GPOINTER_TO_UINT (key);
+      guint  count = GPOINTER_TO_UINT (value);
+
       CriteriaData *criteria_data = (CriteriaData *) g_hash_table_lookup (_criteria_distribution,
                                                                           (const void *) quark);
 
@@ -660,15 +673,16 @@ void SmartSwapper::InsertCriteria (GHashTable   *table,
 {
   CriteriaData *criteria_data;
 
-  criteria_data = (CriteriaData *) g_hash_table_lookup (table,
-                                                        (const void *) criteria);
-  if (criteria_data == NULL)
+  if (g_hash_table_lookup_extended (table,
+                                    (gconstpointer) criteria,
+                                    NULL,
+                                    (gpointer *) &criteria_data) == FALSE)
   {
     criteria_data = g_new (CriteriaData, 1);
     criteria_data->_count = 0;
 
     g_hash_table_insert (table,
-                         (void *) criteria,
+                         (gpointer) criteria,
                          criteria_data);
   }
   criteria_data->_count++;
