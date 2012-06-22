@@ -364,8 +364,15 @@ void Contest::LoadXml (const gchar *filename)
     {
       LoadXmlDoc (doc);
 
-      gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
-                                   filename);
+      {
+        gchar *uri = g_filename_to_uri (filename,
+                                        NULL,
+                                        NULL);
+
+        gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
+                                     uri);
+        g_free (uri);
+      }
 
       if (g_str_has_suffix (_filename,
                             ".cotcot") == FALSE)
@@ -1329,9 +1336,13 @@ void Contest::Save ()
     Save (_filename);
 
     {
-      GtkRecentManager *manager = gtk_recent_manager_get_default ();
+      gchar *uri = g_filename_to_uri (_filename,
+                                      NULL,
+                                      NULL);
 
-      gtk_recent_manager_add_item (manager, _filename);
+      gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
+                                   uri);
+      g_free (uri);
     }
 
     {
