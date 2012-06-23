@@ -8,26 +8,30 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-22 18:22+0200\n"
-"PO-Revision-Date: 2012-01-06 17:14+0000\n"
-"Last-Translator: Ignacio Gil <Unknown>\n"
+"PO-Revision-Date: 2012-06-22 19:01+0000\n"
+"Last-Translator: Paulomorales <paulocmorales@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-06-22 04:50+0000\n"
+"X-Launchpad-Export-Date: 2012-06-23 05:11+0000\n"
 "X-Generator: Launchpad (build 15461)\n"
+
+#: ../../resources/glade/table_supervisor.glade:51
+msgid "Fenced places"
+msgstr "Lugares de esgrima"
 
 #: ../../sources/checkin.cpp:28 ../../resources/glade/contest.glade:514
 msgid "Check-in"
-msgstr "Llamada"
+msgstr "Registro"
 
 #: ../../sources/checkin.cpp:94
 msgid "<b><big>Which fencers do you want to print?</big></b>"
-msgstr "<b><big>¿Cuales tiradores quiere imprimir?</big></b>"
+msgstr "<b><big>¿Cuales esgrimistas quiere imprimir?</big></b>"
 
 #: ../../sources/checkin.cpp:97
 msgid "Fencer list printing"
-msgstr "Imprimiendo la lista de tiradores"
+msgstr "Imprimiendo la lista de esgrimistas"
 
 #: ../../sources/checkin.cpp:229
 msgid ""
@@ -69,7 +73,7 @@ msgstr "Lista de ausentes"
 
 #: ../../sources/checkin.cpp:1231
 msgid "Fencer list"
-msgstr "Lista de tiradores"
+msgstr "Lista de esgrimistas"
 
 #: ../../sources/contest.cpp:54 ../../resources/glade/contest.glade:1251
 msgid "Sabre"
@@ -407,9 +411,10 @@ msgid ""
 "french federation to provide the competion organiser with the registered "
 "fencer list."
 msgstr ""
-"FFF (Fencing File Format) es un formato especificado por la FIE. Es "
-"utilizado por la federación francesa para facilitar al organizador de "
-"competiciones la liste de los tiradores registrados."
+"FFF (Fencing File Format - Formato de archivo de esgrima) es un formato "
+"especificado por la FIE. Es utilizado por la federación francesa para "
+"proveer al organizador de la competencia la lista de los esgrimistas "
+"registrados."
 
 #: ../../resources/glade/checkin.glade:186
 msgid "Import .FFF file"
@@ -588,7 +593,7 @@ msgstr "Número de pools"
 
 #: ../../resources/glade/pool_allocator.glade:98
 msgid "Fencers / pools"
-msgstr "Tiradores / pool"
+msgstr "Esgrimistas / Grupo"
 
 #: ../../resources/glade/pool_allocator.glade:138
 msgid "Swapping"
@@ -675,7 +680,7 @@ msgstr "Contenido diseñado para los arbitros."
 
 #: ../../resources/glade/pool_supervisor.glade:379
 msgid "For the bulletin board"
-msgstr ""
+msgstr "Para el Foro de discuciones"
 
 #: ../../resources/glade/pool_supervisor.glade:401
 msgid "<b>For what?</b>"
@@ -727,7 +732,7 @@ msgstr "Esgrimista A"
 
 #: ../../resources/glade/table.glade:559
 msgid "B fencer"
-msgstr "Tirador B"
+msgstr "Esgrimista B"
 
 #: ../../resources/glade/table.glade:608
 msgid "<b>Score</b>"
@@ -796,20 +801,26 @@ msgid ""
 "Mohamed Rebai (Arabic)\n"
 "Sergev Makhtanov (Russian)\n"
 msgstr ""
+"Marijn Somers (Holandés)\n"
+"Julien Diaz (Alemán)\n"
+"Tina Schliemann (Alemán)\n"
+"Alexis Pigeon (Español)\n"
+"Mohamed Rebai (Árabe)\n"
+"Sergev Makhtanov (Ruso)\n"
 
 #: ../../sources/main.cpp:226
 msgid "start rank"
-msgstr ""
+msgstr "rango inicial"
 
 #: ../../sources/main.cpp:236
 msgid "global status"
-msgstr ""
+msgstr "estado global"
 
 #: ../../sources/main.cpp:239 ../../sources/main.cpp:247
 #: ../../resources/glade/pool_supervisor.glade:55
 #: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
-msgstr ""
+msgstr "Calificado"
 
 #: ../../sources/main.cpp:240 ../../sources/main.cpp:248
 msgid "Not qualified"
@@ -817,15 +828,15 @@ msgstr "No calificado"
 
 #: ../../sources/main.cpp:241 ../../sources/main.cpp:249
 msgid "Withdrawal"
-msgstr ""
+msgstr "Retirada"
 
 #: ../../sources/main.cpp:242 ../../sources/main.cpp:250
 msgid "Excluded"
-msgstr ""
+msgstr "Excluído"
 
 #: ../../sources/main.cpp:243 ../../sources/main.cpp:251
 msgid "Forfeit"
-msgstr ""
+msgstr "Descuidar"
 
 #: ../../sources/main.cpp:245
 msgid "status"
@@ -838,7 +849,7 @@ msgstr "Estado"
 #: ../../resources/glade/checkin.glade:80
 #: ../../resources/glade/checkin.glade:118
 msgid "all"
-msgstr ""
+msgstr "todos"
 
 #: ../../resources/glade/general_classification.glade:63
 msgid "Export to CSV"
@@ -846,139 +857,139 @@ msgstr "Exportar a CSV"
 
 #: ../../resources/glade/tournament.glade:917
 msgid "User manual"
-msgstr ""
+msgstr "Manual de usuario"
 
 #: ../../resources/glade/general_classification.glade:78
 msgid "Export to FFF"
-msgstr ""
+msgstr "Exportar a FFF"
 
 #: ../../sources/contest.cpp:57
 msgid "Kendo"
-msgstr ""
+msgstr "Kendo"
 
 #: ../../sources/general_classification.cpp:254
 msgid "All PDF files (.PDF)"
-msgstr ""
+msgstr "Todos los archivos PDF (.pdf)"
 
 #: ../../sources/pool_allocator.cpp:1545
 msgid "Allocation"
-msgstr ""
+msgstr "Ubicación"
 
 #: ../../sources/pool.cpp:381 ../../sources/table_set.cpp:2342
 msgid "Referee"
-msgstr ""
+msgstr "Árbitro"
 
 #: ../../sources/pool.cpp:407 ../../sources/table_set.cpp:2364
 msgid "Piste"
-msgstr ""
+msgstr "Pista"
 
 #: ../../sources/pool_supervisor.cpp:450
 msgid "Pools classification"
-msgstr ""
+msgstr "Grupos de clasificación"
 
 #: ../../sources/table_set.cpp:93 ../../sources/table_set.cpp:2436
 #: ../../sources/table_set.cpp:2443
 msgid "Place #"
-msgstr ""
+msgstr "Lugar #"
 
 #: ../../sources/table_supervisor.cpp:997
 msgid "Table classification"
-msgstr ""
+msgstr "Tabla de clasificaciones"
 
 #: ../../sources/tournament.cpp:289
 msgid "FFE files (.xml)"
-msgstr ""
+msgstr "Archivos FFE (.xml)"
 
 #: ../../sources/tournament.cpp:481
 msgid "Choose a backup files location..."
-msgstr ""
+msgstr "Seleccione la ubicación de los archivos de backup"
 
 #: ../../resources/glade/contest.glade:441
 msgid "Location"
-msgstr ""
+msgstr "Ubicación"
 
 #: ../../resources/glade/contest.glade:895
 msgid "Event"
-msgstr ""
+msgstr "Evento"
 
 #: ../../resources/glade/contest.glade:943
 msgid "FTP server"
-msgstr ""
+msgstr "Servidor FTP"
 
 #: ../../resources/glade/contest.glade:951
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: ../../resources/glade/contest.glade:963
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 #: ../../resources/glade/contest.glade:1050
 msgid "<b>Publisher URL</b>"
-msgstr ""
+msgstr "<b>Editor URL</b>"
 
 #: ../../resources/glade/contest.glade:1070
 #: ../../resources/glade/contest.glade:1084
 msgid "Publication"
-msgstr ""
+msgstr "Publicación"
 
 #: ../../resources/glade/general_classification.glade:93
 msgid "Export to PDF"
-msgstr ""
+msgstr "Exportar a PDF"
 
 #: ../../resources/glade/pool_supervisor.glade:79
 #: ../../resources/glade/table_supervisor.glade:113
 msgid "Number"
-msgstr ""
+msgstr "Número"
 
 #: ../../resources/glade/pool_supervisor.glade:114
 #: ../../resources/glade/table_supervisor.glade:148
 msgid "%"
-msgstr ""
+msgstr "%"
 
 #: ../../resources/glade/pool_supervisor.glade:149
 msgid ""
 "Locked until\n"
 "the begining of the pools."
 msgstr ""
+"Bloqueado hasta\n"
+"el inicio de los grupos."
 
 #: ../../resources/glade/schedule.glade:122
 msgid "<b>Schedule</b>"
-msgstr ""
+msgstr "<b>Programación</b>"
 
 #: ../../resources/glade/schedule.glade:155
 msgid "<b>Parameters</b>"
-msgstr ""
-
-#: ../../resources/glade/table_supervisor.glade:51
-msgid "Fenced places"
-msgstr ""
+msgstr "<b>Parámetros</b>"
 
 #: ../../resources/glade/table_supervisor.glade:159
 msgid ""
 "Locked until\n"
 "the begining of the table."
 msgstr ""
+"Bloqueado hasta\n"
+"el inicio de la tabla."
 
 #: ../../resources/glade/table_supervisor.glade:196
 msgid "None"
-msgstr ""
+msgstr "Ninguno"
 
 #: ../../resources/glade/table_supervisor.glade:212
 msgid "Third place"
-msgstr ""
+msgstr "Tercer lugar"
 
 #: ../../resources/glade/table_supervisor.glade:536
 msgid "For place"
-msgstr ""
+msgstr "Por lugar"
 
 #: ../../resources/glade/table_supervisor.glade:635
 msgid "Zoom"
-msgstr ""
+msgstr "Zoom"
 
 #: ../../resources/glade/tournament.glade:815
 msgid "Backup"
-msgstr ""
+msgstr "Respaldo"
 
 #: ../../resources/glade/tournament.glade:827
 msgid "Backup files location..."
