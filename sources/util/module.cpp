@@ -794,7 +794,7 @@ GtkTreeModel *Module::GetStatusModel ()
         gtk_tree_model_get (desc->_discrete_model,
                             &iter,
                             AttributeDesc::DISCRETE_XML_IMAGE, &xml_image,
-                            AttributeDesc::DISCRETE_USER_IMAGE, &user_image,
+                            AttributeDesc::DISCRETE_LONG_TEXT, &user_image,
                             AttributeDesc::DISCRETE_ICON, &icon, -1);
         if (   (strcmp ("Q", xml_image) == 0)
             || (strcmp ("A", xml_image) == 0)
@@ -805,7 +805,7 @@ GtkTreeModel *Module::GetStatusModel ()
           gtk_tree_store_append (GTK_TREE_STORE (_status_model), &pool_iter, NULL);
           gtk_tree_store_set (GTK_TREE_STORE (_status_model), &pool_iter,
                               AttributeDesc::DISCRETE_XML_IMAGE, xml_image,
-                              AttributeDesc::DISCRETE_USER_IMAGE, user_image,
+                              AttributeDesc::DISCRETE_LONG_TEXT, user_image,
                               AttributeDesc::DISCRETE_ICON, icon,
                               -1);
         }

@@ -408,7 +408,7 @@ void PlayersList::OnDiscreteEditingStarted (GtkCellRenderer *renderer,
     gtk_entry_completion_set_model (completion,
                                     model);
     gtk_entry_completion_set_text_column (completion,
-                                          AttributeDesc::DISCRETE_USER_IMAGE);
+                                          AttributeDesc::DISCRETE_LONG_TEXT);
     gtk_entry_completion_set_inline_completion (completion,
                                                 TRUE);
     g_object_set (G_OBJECT (completion),
@@ -430,8 +430,8 @@ void PlayersList::SetColumn (guint          id,
   gboolean           attr_modifiable = desc->GetUIntData (this,
                                                           "modifiable");
 
-  if (   (desc->_type           == G_TYPE_INT)
-      && (desc->_representation == AttributeDesc::GRAPHICAL))
+  if (   (desc->_type == G_TYPE_INT)
+      && (desc->_look  & AttributeDesc::GRAPHICAL))
   {
     renderer = gtk_cell_renderer_progress_new ();
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
@@ -439,8 +439,8 @@ void PlayersList::SetColumn (guint          id,
                                                        "value", id,
                                                        0,       NULL);
   }
-  else if (   (desc->_type           == G_TYPE_STRING)
-           && (desc->_representation == AttributeDesc::GRAPHICAL))
+  else if (   (desc->_type == G_TYPE_STRING)
+           && (desc->_look  & AttributeDesc::GRAPHICAL))
   {
     renderer = gtk_cell_renderer_pixbuf_new ();
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,

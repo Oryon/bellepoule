@@ -22,6 +22,13 @@
 
 #include "filter.hpp"
 
+static const gchar *look_image[AttributeDesc::NB_LOOK] =
+{
+  "Long text",
+  "Short text",
+  "Graphic"
+};
+
 // --------------------------------------------------------------------------------
 Filter::Filter (GSList *attr_list,
                 Module *owner)
@@ -33,29 +40,50 @@ Filter::Filter (GSList *attr_list,
   _owner         = owner;
 
   {
-    GtkListStore  *store;
-    GtkTreeIter    iter;
+    GtkTreeIter iter;
 
-    store = gtk_list_store_new (NUM_COLS, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING);
+    _look_store = gtk_list_store_new (NUM_LOOK_COLS,
+                                      G_TYPE_STRING, // LOOK_IMAGE
+                                      G_TYPE_UINT);  // LOOK_VALUE
 
-    for (guint i = 0; i < g_slist_length (_attr_list); i++)
+    for (guint i = 0; i < AttributeDesc::NB_LOOK; i++)
     {
-      AttributeDesc *desc;
-
-      desc = (AttributeDesc *) g_slist_nth_data (_attr_list,
-                                                 i);
-      gtk_list_store_append (store, &iter);
-      gtk_list_store_set (store, &iter,
-                          ATTR_USER_NAME, desc->_user_name,
-                          ATTR_XML_NAME, desc->_code_name,
-                          ATTR_VISIBILITY, FALSE,
+      gtk_list_store_append (_look_store, &iter);
+      gtk_list_store_set (_look_store, &iter,
+                          LOOK_IMAGE,  gettext (look_image[i]),
+                          LOOK_VALUE,  i,
                           -1);
     }
+  }
 
-    g_signal_connect (G_OBJECT (store),
+  {
+    GSList *current = attr_list;
+
+    _attr_filter_store = gtk_list_store_new (NUM_ATTR_COLS,
+                                             G_TYPE_BOOLEAN, // ATTR_VISIBILITY
+                                             G_TYPE_STRING,  // ATTR_USER_NAME
+                                             G_TYPE_STRING,  // ATTR_XML_NAME
+                                             G_TYPE_STRING,  // ATTR_LOOK_IMAGE
+                                             G_TYPE_UINT);   // ATTR_LOOK_VALUE
+
+    while (current)
+    {
+      GtkTreeIter    iter;
+      AttributeDesc *desc = (AttributeDesc *) current->data;
+
+      gtk_list_store_append (_attr_filter_store, &iter);
+      gtk_list_store_set (_attr_filter_store, &iter,
+                          ATTR_USER_NAME,  desc->_user_name,
+                          ATTR_XML_NAME,   desc->_code_name,
+                          ATTR_VISIBILITY, FALSE,
+                          ATTR_LOOK_IMAGE, gettext (look_image[AttributeDesc::LONG_TEXT]),
+                          ATTR_LOOK_VALUE, 0,
+                          -1);
+      current = g_slist_next (current);
+    }
+
+    g_signal_connect (G_OBJECT (_attr_filter_store),
                       "row-deleted", G_CALLBACK (OnAttrDeleted), this);
-
-    _attr_filter_store = store;
   }
 }
 
@@ -67,11 +95,10 @@ Filter::~Filter ()
     gtk_object_destroy (GTK_OBJECT (_dialog));
   }
 
-  g_slist_free (_selected_attr);
-
-  g_slist_free (_attr_list);
-
+  g_slist_free   (_selected_attr);
+  g_slist_free   (_attr_list);
   g_object_unref (_attr_filter_store);
+  g_object_unref (_look_store);
 }
 
 // --------------------------------------------------------------------------------
@@ -121,11 +148,6 @@ GSList *Filter::GetSelectedAttrList ()
 }
 
 // --------------------------------------------------------------------------------
-void Filter::SetAttributeList (GSList *list)
-{
-}
-
-// --------------------------------------------------------------------------------
 void Filter::ShowAttribute (const gchar *name)
 {
   GtkTreeIter  iter;
@@ -137,13 +159,13 @@ void Filter::ShowAttribute (const gchar *name)
 
   while (iter_is_valid)
   {
-    gboolean   current_visibility;
-    gchar *current_name;
+    gboolean  current_visibility;
+    gchar    *current_name;
 
     gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                         &iter,
                         ATTR_VISIBILITY, &current_visibility,
-                        ATTR_XML_NAME, &current_name,
+                        ATTR_XML_NAME,   &current_name,
                         -1);
 
     if (current_visibility == TRUE)
@@ -198,34 +220,60 @@ void Filter::SelectAttributes ()
                   NULL);
 
     {
-      GtkCellRenderer *renderer;
-      GtkWidget       *view     = gtk_tree_view_new ();
+      GtkWidget *view = gtk_tree_view_new ();
 
       g_object_set (view,
                     "reorderable", TRUE,
-                    "headers-visible", FALSE,
                     NULL);
 
-      renderer = gtk_cell_renderer_toggle_new ();
-      g_object_set (renderer,
-                    "activatable", TRUE,
-                    NULL);
-      g_signal_connect (renderer,
-                        "toggled", G_CALLBACK (on_cell_toggled), this);
-      gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
-                                                   -1,
-                                                   "Visibility",
-                                                   renderer,
-                                                   "active", ATTR_VISIBILITY,
-                                                   NULL);
+      // Visibility
+      {
+        GtkCellRenderer *renderer = gtk_cell_renderer_toggle_new ();
 
-      renderer = gtk_cell_renderer_text_new ();
-      gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
-                                                   -1,
-                                                   "Name",
-                                                   renderer,
-                                                   "text", ATTR_USER_NAME,
-                                                   NULL);
+        g_object_set (renderer,
+                      "activatable", TRUE,
+                      NULL);
+        g_signal_connect (renderer,
+                          "toggled", G_CALLBACK (OnVisibilityToggled), this);
+        gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
+                                                     -1,
+                                                     "Visibility",
+                                                     renderer,
+                                                     "active", ATTR_VISIBILITY,
+                                                     NULL);
+      }
+
+      // Name
+      {
+        GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+
+        gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
+                                                     -1,
+                                                     gettext ("Data"),
+                                                     renderer,
+                                                     "text", ATTR_USER_NAME,
+                                                     NULL);
+      }
+
+      // Look
+      {
+        GtkCellRenderer *renderer = gtk_cell_renderer_combo_new ();
+
+        g_object_set (G_OBJECT (renderer),
+                      "model",       _look_store,
+                      "text-column", LOOK_IMAGE,
+                      "editable",    TRUE,
+                      "has-entry",   FALSE,
+                      NULL);
+        g_signal_connect (renderer,
+                          "changed", G_CALLBACK (OnLookChanged), this);
+        gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
+                                                     -1,
+                                                     gettext ("Look"),
+                                                     renderer,
+                                                     "text", ATTR_LOOK_IMAGE,
+                                                     NULL);
+      }
 
       gtk_tree_view_set_model (GTK_TREE_VIEW (view), GTK_TREE_MODEL (_attr_filter_store));
 
@@ -257,13 +305,13 @@ void Filter::UpdateAttrList ()
 
     while (iter_is_valid)
     {
-      gchar     *current_name;
-      gboolean   current_visibility;
+      gchar    *current_name;
+      gboolean  current_visibility;
 
       gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                           &iter,
                           ATTR_VISIBILITY, &current_visibility,
-                          ATTR_XML_NAME, &current_name,
+                          ATTR_XML_NAME,   &current_name,
                           -1);
 
       if (current_visibility == TRUE)
@@ -284,36 +332,65 @@ void Filter::UpdateAttrList ()
 }
 
 // --------------------------------------------------------------------------------
-void Filter::on_cell_toggled (GtkCellRendererToggle *cell,
-                              gchar                 *path_string,
-                              gpointer               user_data)
+void Filter::OnVisibilityToggled (GtkCellRendererToggle *cell,
+                                  gchar                 *path_string,
+                                  Filter                *filter)
 {
-  Filter *f = (Filter *) user_data;
-
   {
     GtkTreePath *path      = gtk_tree_path_new_from_string (path_string);
     gboolean     is_active = gtk_cell_renderer_toggle_get_active (cell);
     GtkTreeIter  iter;
 
-    gtk_tree_model_get_iter (GTK_TREE_MODEL (f->_attr_filter_store),
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (filter->_attr_filter_store),
                              &iter,
                              path);
     gtk_tree_path_free (path);
 
-    gtk_list_store_set (GTK_LIST_STORE (f->_attr_filter_store),
+    gtk_list_store_set (GTK_LIST_STORE (filter->_attr_filter_store),
                         &iter,
                         ATTR_VISIBILITY, !is_active, -1);
   }
 
-  f->UpdateAttrList ();
+  filter->UpdateAttrList ();
+}
+
+// --------------------------------------------------------------------------------
+void Filter::OnLookChanged (GtkCellRendererCombo *combo,
+                            gchar                *path_string,
+                            GtkTreeIter          *new_iter,
+                            Filter               *filter)
+{
+  gchar *look_image;
+  guint  look_value;
+
+  gtk_tree_model_get (GTK_TREE_MODEL (filter->_look_store),
+                      new_iter,
+                      LOOK_IMAGE, &look_image,
+                      LOOK_VALUE, &look_value,
+                      -1);
+
+  {
+    GtkTreePath *path  = gtk_tree_path_new_from_string (path_string);
+    GtkTreeIter  iter;
+
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (filter->_attr_filter_store),
+                             &iter,
+                             path);
+    gtk_tree_path_free (path);
+
+    gtk_list_store_set (GTK_LIST_STORE (filter->_attr_filter_store),
+                        &iter,
+                        ATTR_LOOK_IMAGE, look_image,
+                        ATTR_LOOK_VALUE, look_value, -1);
+  }
+
+  filter->UpdateAttrList ();
 }
 
 // --------------------------------------------------------------------------------
 void Filter::OnAttrDeleted (GtkTreeModel *tree_model,
                             GtkTreePath  *path,
-                            gpointer      user_data)
+                            Filter       *filter)
 {
-  Filter *f = (Filter *) user_data;
-
-  f->UpdateAttrList ();
+  filter->UpdateAttrList ();
 }

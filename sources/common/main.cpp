@@ -235,7 +235,7 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "participation_rate", "Activite", gettext ("rate"));
     desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
-    desc->_representation = AttributeDesc::GRAPHICAL;
+    desc->_look           = AttributeDesc::GRAPHICAL;
     desc->_rights         = AttributeDesc::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "level", "Categorie", gettext ("level"));
@@ -303,7 +303,7 @@ int main (int argc, char **argv)
       desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
       desc->_rights         = AttributeDesc::PRIVATE;
       desc->_scope          = AttributeDesc::GLOBAL;
-      desc->_representation = AttributeDesc::GRAPHICAL;
+      desc->_look           = AttributeDesc::GRAPHICAL;
       desc->AddDiscreteValues ("Busy",   (gchar *) GTK_STOCK_EXECUTE, "",
                                "Absent", (gchar *) GTK_STOCK_CLOSE,   "",
                                "Free",   (gchar *) GTK_STOCK_APPLY,   "", NULL);
