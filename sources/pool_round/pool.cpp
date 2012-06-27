@@ -618,10 +618,11 @@ void Pool::Draw (GooCanvas *on_canvas,
       {
         gint           x, y;
         GooCanvasItem *image;
+        GooCanvasItem *player_table = goo_canvas_table_new (grid_group, NULL);
 
         x = - 5;
         y = cell_h / 2 + i * cell_h;
-        image = GetPlayerImage (grid_group,
+        image = GetPlayerImage (player_table,
                                 GetPlayer (i, _sorted_fencer_list),
                                 "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
                                 "first_name", "<span foreground=\"darkblue\">",
@@ -630,20 +631,25 @@ void Pool::Draw (GooCanvas *on_canvas,
                                 "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
                                 NULL);
 
-#if 0
         {
-          gchar *index = g_strdup_printf (" %d", i+1);
+          gchar         *index = g_strdup_printf ("%d\302\240", i+1);
+          GooCanvasItem *text_item;
 
-          image = g_string_append (image,
-                                   index);
+          text_item = Canvas::PutTextInTable (player_table,
+                                              index,
+                                              0,
+                                              1);
+          g_object_set (G_OBJECT (text_item),
+                        "ellipsize",  PANGO_ELLIPSIZE_NONE,
+                        "wrap",       PANGO_WRAP_CHAR,
+                        NULL);
           g_free (index);
         }
-#endif
 
-        goo_canvas_item_translate (image,
+        goo_canvas_item_translate (player_table,
                                    0,
                                    y);
-        Canvas::VAlign (image,
+        Canvas::VAlign (player_table,
                         Canvas::END,
                         grid,
                         Canvas::START,
@@ -956,8 +962,9 @@ void Pool::Draw (GooCanvas *on_canvas,
         }
 
         {
-          Player *player       = match->GetPlayerA ();
-          GooCanvasItem *image = GetPlayerImage (match_table,
+          Player *player              = match->GetPlayerA ();
+          GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
+          GooCanvasItem *image = GetPlayerImage (player_table,
                                                  player,
                                                  "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
                                                  "first_name", "<span foreground=\"darkblue\">",
@@ -965,15 +972,31 @@ void Pool::Draw (GooCanvas *on_canvas,
                                                  "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
                                                  "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
                                                  NULL);
-          //gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
-          //g_slist_index (_sorted_fencer_list, player) + 1,
-          //image->str);
+
+          {
+            gchar *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span>\302\240",
+                                               g_slist_index (_sorted_fencer_list, player) + 1);
+
+            text_item = Canvas::PutTextInTable (player_table,
+                                                position,
+                                                0,
+                                                0);
+            g_object_set (G_OBJECT (text_item),
+                          "use-markup", TRUE,
+                          "ellipsize",  PANGO_ELLIPSIZE_NONE,
+                          "wrap",       PANGO_WRAP_CHAR,
+                          NULL);
+            g_free (position);
+          }
 
           Canvas::PutInTable (match_table,
+                              player_table,
+                              0,
+                              1);
+          Canvas::PutInTable (player_table,
                               image,
                               0,
-                              0);
-          //g_free (position);
+                              1);
 
           {
             GooCanvasItem *score_table = match->GetScoreTable (match_table,
@@ -982,7 +1005,7 @@ void Pool::Draw (GooCanvas *on_canvas,
             Canvas::PutInTable (match_table,
                                 score_table,
                                 0,
-                                1);
+                                2);
             Canvas::SetTableItemAttribute (score_table, "x-align", 1.0);
             Canvas::SetTableItemAttribute (score_table, "x-expand", 1u);
             Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
@@ -991,23 +1014,40 @@ void Pool::Draw (GooCanvas *on_canvas,
 
         {
           Player        *player = match->GetPlayerB ();
-          GooCanvasItem *image  = GetPlayerImage (match_table,
-                                                  player,
-                                                  "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                                  "first_name", "<span foreground=\"darkblue\">",
-                                                  "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                  "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                  "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                  NULL);
-          //gchar  *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span> %s",
-          //g_slist_index (_sorted_fencer_list, player) + 1,
-          //image->str);
+          GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
+          GooCanvasItem *image        = GetPlayerImage (player_table,
+                                                        player,
+                                                        "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                                                        "first_name", "<span foreground=\"darkblue\">",
+                                                        "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        NULL);
+
+          {
+            gchar *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span>\302\240",
+                                               g_slist_index (_sorted_fencer_list, player) + 1);
+
+            text_item = Canvas::PutTextInTable (player_table,
+                                                position,
+                                                0,
+                                                0);
+            g_object_set (G_OBJECT (text_item),
+                          "use-markup", TRUE,
+                          "ellipsize",  PANGO_ELLIPSIZE_NONE,
+                          "wrap",       PANGO_WRAP_CHAR,
+                          NULL);
+            g_free (position);
+          }
 
           Canvas::PutInTable (match_table,
-                              image,
+                              player_table,
                               1,
-                              0);
-          //g_free (position);
+                              1);
+          Canvas::PutInTable (player_table,
+                              image,
+                              0,
+                              1);
 
           {
             GooCanvasItem *score_table = match->GetScoreTable (match_table,
@@ -1016,7 +1056,7 @@ void Pool::Draw (GooCanvas *on_canvas,
             Canvas::PutInTable (match_table,
                                 score_table,
                                 1,
-                                1);
+                                2);
             Canvas::SetTableItemAttribute (score_table, "x-align", 1.0);
             Canvas::SetTableItemAttribute (score_table, "x-expand", 1u);
             Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
