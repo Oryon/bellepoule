@@ -25,6 +25,13 @@
 class Canvas
 {
   public:
+    typedef enum
+    {
+      START,
+      MIDDLE,
+      END
+    } Alignment;
+
     static void PutInTable (GooCanvasItem *table,
                             GooCanvasItem *item,
                             guint          row,
@@ -63,10 +70,17 @@ class Canvas
                         GooCanvasItem *to_right_of,
                         guint          space = 0);
 
-    static void Align (GooCanvasItem *item,
-                       GooCanvasItem *with_left_of,
-                       GooCanvasItem *with_top_of,
-                       gdouble        offset = 0.0);
+    static void VAlign (GooCanvasItem *item,
+                        Alignment      item_alignment,
+                        GooCanvasItem *with,
+                        Alignment      with_alignment,
+                        gdouble        offset = 0.0);
+
+    static void HAlign (GooCanvasItem *item,
+                        Alignment      item_alignment,
+                        GooCanvasItem *with,
+                        Alignment      with_alignment,
+                        gdouble        offset = 0.0);
 
     static GooCanvas *CreatePrinterCanvas (GtkPrintContext *context);
 
@@ -77,6 +91,14 @@ class Canvas
                               GtkPrintContext *context);
 
     static void NormalyzeDecimalNotation (gchar *string);
+
+  private:
+    static gdouble GetDeltaAlign (gdouble   item_1,
+                                  gdouble   item_2,
+                                  Alignment item_alignment,
+                                  gdouble   with_1,
+                                  gdouble   with_2,
+                                  Alignment with_alignment);
 };
 
 #endif

@@ -86,7 +86,7 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
   if (strchr (text, ' '))
   {
     g_object_set (G_OBJECT (item),
-                  "wrap", PANGO_WRAP_CHAR,
+                  "wrap",      PANGO_WRAP_CHAR,
                   "ellipsize", PANGO_ELLIPSIZE_END,
                   NULL);
   }
@@ -333,54 +333,72 @@ void Canvas::Anchor (GooCanvasItem *item,
 }
 
 // --------------------------------------------------------------------------------
-void Canvas::Align (GooCanvasItem *item,
-                    GooCanvasItem *with_left_of,
-                    GooCanvasItem *with_top_of,
-                    gdouble        offset)
+void Canvas::VAlign (GooCanvasItem *item,
+                     Alignment      item_alignment,
+                     GooCanvasItem *with,
+                     Alignment      with_alignment,
+                     gdouble        offset)
 {
   GooCanvasBounds item_bounds;
   GooCanvasBounds with_bounds;
-  gdouble         dx;
-  gdouble         dy;
+  gdouble         dx = 0;
+  gdouble         dy = 0;
 
   goo_canvas_item_get_bounds (item,
                               &item_bounds);
+  goo_canvas_item_get_bounds (with,
+                              &with_bounds);
 
-  if (with_left_of)
-  {
-    goo_canvas_item_get_bounds (with_left_of,
-                                &with_bounds);
+  dx = GetDeltaAlign (item_bounds.x1,
+                      item_bounds.x2,
+                      item_alignment,
+                      with_bounds.x1,
+                      with_bounds.x2,
+                      with_alignment);
+  dx += offset;
 
-    dx = with_bounds.x1 - item_bounds.x1 + offset;
-    dy = 0;
-
-    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
-                                      item,
-                                      &dx,
-                                      &dy);
-    goo_canvas_item_translate (item,
-                               dx,
-                               0);
-  }
-
-  if (with_top_of)
-  {
-    goo_canvas_item_get_bounds (with_top_of,
-                                &with_bounds);
-
-    dx = 0;
-    dy = with_bounds.y1 - item_bounds.y1 + offset;
-
-    goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
-                                      item,
-                                      &dx,
-                                      &dy);
-    goo_canvas_item_translate (item,
-                               0,
-                               dy);
-  }
+  goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
+                                    item,
+                                    &dx,
+                                    &dy);
+  goo_canvas_item_translate (item,
+                             dx,
+                             0);
 }
 
+// --------------------------------------------------------------------------------
+void Canvas::HAlign (GooCanvasItem *item,
+                     Alignment      item_alignment,
+                     GooCanvasItem *with,
+                     Alignment      with_alignment,
+                     gdouble        offset)
+{
+  GooCanvasBounds item_bounds;
+  GooCanvasBounds with_bounds;
+  gdouble         dx = 0;
+  gdouble         dy = 0;
+
+  goo_canvas_item_get_bounds (item,
+                              &item_bounds);
+  goo_canvas_item_get_bounds (with,
+                              &with_bounds);
+
+  dy = GetDeltaAlign (item_bounds.y1,
+                      item_bounds.y2,
+                      item_alignment,
+                      with_bounds.y1,
+                      with_bounds.y2,
+                      with_alignment);
+  dy += offset;
+
+  goo_canvas_convert_to_item_space (goo_canvas_item_get_canvas (item),
+                                    item,
+                                    &dx,
+                                    &dy);
+  goo_canvas_item_translate (item,
+                             0,
+                             dy);
+}
 // --------------------------------------------------------------------------------
 void Canvas::NormalyzeDecimalNotation (gchar *string)
 {
@@ -390,4 +408,44 @@ void Canvas::NormalyzeDecimalNotation (gchar *string)
   {
     *decimal = '.';
   }
+}
+
+// --------------------------------------------------------------------------------
+gdouble Canvas::GetDeltaAlign (gdouble   item_1,
+                               gdouble   item_2,
+                               Alignment item_alignment,
+                               gdouble   with_1,
+                               gdouble   with_2,
+                               Alignment with_alignment)
+{
+  gdouble delta;
+  gdouble with_anchor;
+
+  if (with_alignment == START)
+  {
+    with_anchor = with_1;
+  }
+  else if (with_alignment == MIDDLE)
+  {
+    with_anchor = (with_2 - with_1)/2;
+  }
+  else if (with_alignment == END)
+  {
+    with_anchor = with_2;
+  }
+
+  if (item_alignment == START)
+  {
+    delta = with_anchor - item_1;
+  }
+  else if (item_alignment == MIDDLE)
+  {
+    delta = with_anchor - (item_2 - item_1)/2;
+  }
+  else if (item_alignment == END)
+  {
+    delta = with_anchor - item_2;
+  }
+
+  return delta;
 }

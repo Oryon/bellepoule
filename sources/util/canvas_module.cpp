@@ -153,6 +153,99 @@ void CanvasModule::RestoreZoomFactor (GtkScale *scale)
 }
 
 // --------------------------------------------------------------------------------
+GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
+                                             Player        *player,
+                                             ...)
+{
+  GooCanvasItem *table_item = goo_canvas_table_new (paren_item,
+                                                    NULL);
+
+  if (player)
+  {
+    GSList *selected_attr = NULL;
+
+    if (_filter)
+    {
+      selected_attr = _filter->GetSelectedAttrList ();
+    }
+
+    for (guint a = 0; selected_attr != NULL; a++)
+    {
+      AttributeDesc       *attr_desc;
+      Attribute           *attr;
+      Player::AttributeId *attr_id;
+
+      attr_desc = (AttributeDesc *) selected_attr->data;
+      if (attr_desc->_scope == AttributeDesc::LOCAL)
+      {
+        attr_id = new Player::AttributeId (attr_desc->_code_name,
+                                           GetDataOwner ());
+      }
+      else
+      {
+        attr_id = new Player::AttributeId (attr_desc->_code_name);
+      }
+      attr = player->GetAttribute (attr_id);
+      attr_id->Release ();
+
+      if (attr)
+      {
+        gchar   *attr_image = attr->GetUserImage ();
+        GString *image      = NULL;
+
+        {
+          va_list  ap;
+          gchar   *pango_arg;
+
+          va_start (ap, player);
+          for (guint i = 0; (pango_arg = va_arg (ap, char *)); i++)
+          {
+            if (strcmp (pango_arg, attr_desc->_code_name) == 0)
+            {
+              image = g_string_new (va_arg (ap, char *));
+              image = g_string_append (image,
+                                       attr_image);
+              image = g_string_append (image,
+                                       "\302\240");
+              image = g_string_append (image,
+                                       "</span>");
+              break;
+            }
+          }
+          va_end (ap);
+        }
+        if (image == NULL)
+        {
+          image = g_string_new (attr_image);
+          image = g_string_append (image,
+                                   "\302\240");
+        }
+
+        {
+          GooCanvasItem *item = Canvas::PutTextInTable (table_item,
+                                                        image->str,
+                                                        0,
+                                                        a);
+          g_object_set (G_OBJECT (item),
+                        "use-markup", TRUE,
+                        "ellipsize",  PANGO_ELLIPSIZE_NONE,
+                        "wrap",       PANGO_WRAP_CHAR,
+                        NULL);
+          g_string_free (image,
+                         TRUE);
+        }
+
+        g_free (attr_image);
+      }
+
+      selected_attr = g_slist_next (selected_attr);
+    }
+  }
+
+  return table_item;
+}
+
+// --------------------------------------------------------------------------------
 void CanvasModule::OnBeginPrint (GtkPrintOperation *operation,
                                  GtkPrintContext   *context)
 {
