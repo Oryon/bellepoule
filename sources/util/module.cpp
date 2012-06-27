@@ -460,86 +460,6 @@ void Module::ResetCursor ()
 }
 
 // --------------------------------------------------------------------------------
-GString *Module::GetPlayerImage (Player *player,
-                                 ...)
-{
-  GString *image = g_string_new ("");
-
-  if (player)
-  {
-    GSList *selected_attr = NULL;
-
-    if (_filter)
-    {
-      selected_attr = _filter->GetSelectedAttrList ();
-    }
-
-    for (guint a = 0; selected_attr != NULL; a++)
-    {
-      AttributeDesc       *attr_desc;
-      Attribute           *attr;
-      Player::AttributeId *attr_id;
-
-      attr_desc = (AttributeDesc *) selected_attr->data;
-      if (attr_desc->_scope == AttributeDesc::LOCAL)
-      {
-        attr_id = new Player::AttributeId (attr_desc->_code_name,
-                                           GetDataOwner ());
-      }
-      else
-      {
-        attr_id = new Player::AttributeId (attr_desc->_code_name);
-      }
-      attr = player->GetAttribute (attr_id);
-      attr_id->Release ();
-
-      if (attr)
-      {
-        gchar *attr_image = attr->GetUserImage ();
-
-        {
-          va_list  ap;
-          gchar   *pango_arg;
-
-          va_start (ap, player);
-          while ((pango_arg = va_arg (ap, char *)))
-          {
-            if (strcmp (pango_arg, attr_desc->_code_name) == 0)
-            {
-              image = g_string_append (image,
-                                       va_arg (ap, char *));
-              image = g_string_append (image,
-                                       attr_image);
-              image = g_string_append (image,
-                                       "</span>");
-              attr_image = NULL;
-              g_free (attr_image);
-              break;
-            }
-          }
-          va_end (ap);
-        }
-
-        if (attr_image)
-        {
-          image = g_string_append (image,
-                                   attr_image);
-          g_free (attr_image);
-        }
-
-        // separator
-        image = g_string_append (image,
-                                 "\302\240");
-      }
-
-      selected_attr = g_slist_next (selected_attr);
-    }
-  }
-
-  return image;
-}
-
-// --------------------------------------------------------------------------------
 void Module::Print (const gchar  *job_name,
                     GtkPageSetup *page_setup)
 {
@@ -778,7 +698,8 @@ GtkTreeModel *Module::GetStatusModel ()
       GtkTreeIter  iter;
       gboolean     iter_is_valid;
 
-      _status_model = GTK_TREE_MODEL (gtk_tree_store_new (4, G_TYPE_UINT,
+      _status_model = GTK_TREE_MODEL (gtk_tree_store_new (5, G_TYPE_UINT,
+                                                          G_TYPE_STRING,
                                                           G_TYPE_STRING,
                                                           G_TYPE_STRING,
                                                           GDK_TYPE_PIXBUF));
@@ -794,7 +715,7 @@ GtkTreeModel *Module::GetStatusModel ()
         gtk_tree_model_get (desc->_discrete_model,
                             &iter,
                             AttributeDesc::DISCRETE_XML_IMAGE, &xml_image,
-                            AttributeDesc::DISCRETE_USER_IMAGE, &user_image,
+                            AttributeDesc::DISCRETE_LONG_TEXT, &user_image,
                             AttributeDesc::DISCRETE_ICON, &icon, -1);
         if (   (strcmp ("Q", xml_image) == 0)
             || (strcmp ("A", xml_image) == 0)
@@ -805,8 +726,8 @@ GtkTreeModel *Module::GetStatusModel ()
           gtk_tree_store_append (GTK_TREE_STORE (_status_model), &pool_iter, NULL);
           gtk_tree_store_set (GTK_TREE_STORE (_status_model), &pool_iter,
                               AttributeDesc::DISCRETE_XML_IMAGE, xml_image,
-                              AttributeDesc::DISCRETE_USER_IMAGE, user_image,
-                              AttributeDesc::DISCRETE_ICON, icon,
+                              AttributeDesc::DISCRETE_LONG_TEXT, user_image,
+                              AttributeDesc::DISCRETE_ICON,      icon,
                               -1);
         }
         iter_is_valid = gtk_tree_model_iter_next (desc->_discrete_model,

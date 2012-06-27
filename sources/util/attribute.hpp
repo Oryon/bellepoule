@@ -52,18 +52,24 @@ class AttributeDesc : public Object
 
     typedef enum
     {
-      TEXTUAL,
-      GRAPHICAL
-    } Represenation;
+      LONG_TEXT,
+      SHORT_TEXT,
+      GRAPHICAL,
+
+      NB_LOOK
+    } Look;
 
     typedef enum
     {
       DISCRETE_CODE,
       DISCRETE_XML_IMAGE,
-      DISCRETE_USER_IMAGE,
+      DISCRETE_LONG_TEXT,
+      DISCRETE_SHORT_TEXT,
       DISCRETE_ICON,
       DISCRETE_ICON_NAME,
-      DISCRETE_SELECTOR
+      DISCRETE_SELECTOR,
+
+      NB_DISCRETE_COLUMNS
     } DiscreteColumnId;
 
     GType         _type;
@@ -73,7 +79,7 @@ class AttributeDesc : public Object
     Persistency   _persistency;
     Scope         _scope;
     Uniqueness    _uniqueness;
-    Represenation _representation;
+    Look          _look;
     gboolean      _free_value_allowed;
     Rights        _rights;
     GCompareFunc  _compare_func;
@@ -116,6 +122,8 @@ class AttributeDesc : public Object
     gchar *GetDiscreteUserImage (guint from_code);
 
     gchar *GetDiscreteIcon (guint from_code);
+
+    GdkPixbuf *GetDiscretePixbuf (guint from_code);
 
     gchar *GetXmlImage (gchar *user_image);
 

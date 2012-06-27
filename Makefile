@@ -1,5 +1,5 @@
 EXEC   = bellepoule
-TARGET = Release
+TARGET = Debug
 
 CC = gcc
 ifeq ($(TARGET), Debug)

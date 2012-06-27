@@ -1084,7 +1084,7 @@ gboolean TableSet::FillInNode (GNode    *node,
                                                                match_name,
                                                                0,
                                                                0);
-          Canvas::SetTableItemAttribute (number_item, "x-align", 1.0);
+          Canvas::SetTableItemAttribute (number_item, "x-align", 0.0);
           Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
           g_object_set (number_item,
                         "fill-color", "Grey",
@@ -1124,29 +1124,26 @@ gboolean TableSet::FillInNode (GNode    *node,
 
     if (winner)
     {
-      GString *string = table_set->GetPlayerImage (winner,
-                                                   "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                                   "first_name", "<span foreground=\"darkblue\">",
-                                                   "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                   "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                   "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                   NULL);
-
-      player_item = Canvas::PutTextInTable (data->_fencer_goo_table,
-                                            string->str,
-                                            0,
-                                            2);
-      Canvas::SetTableItemAttribute (player_item, "y-align", 0.5);
-      g_object_set (G_OBJECT (player_item),
-                    "use-markup", TRUE,
-                    NULL);
-
-      g_string_free (string,
-                     TRUE);
+      GooCanvasItem *image = table_set->GetPlayerImage (data->_fencer_goo_table,
+                                                        winner,
+                                                        "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                                                        "first_name", "<span foreground=\"darkblue\">",
+                                                        "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        NULL);
+      Canvas::PutInTable (data->_fencer_goo_table,
+                          image,
+                          0,
+                          1);
+      Canvas::SetTableItemAttribute (image, "y-align", 0.5);
+      Canvas::SetTableItemAttribute (image, "x-align", 0.0);
+      Canvas::SetTableItemAttribute (image, "x-fill", 1u);
     }
 
     if (parent && winner)
     {
+      GooCanvasItem *score_table;
       GooCanvasItem *goo_rect;
       GooCanvasItem *score_text;
       NodeData      *parent_data = (NodeData *) parent->data;
@@ -1156,20 +1153,28 @@ gboolean TableSet::FillInNode (GNode    *node,
                                    winner,
                                    position);
 
+      score_table = goo_canvas_table_new (data->_fencer_goo_table, NULL);
+      Canvas::PutInTable (data->_fencer_goo_table,
+                          score_table,
+                          0,
+                          2);
+      Canvas::SetTableItemAttribute (score_table, "x-align", 1.0);
+      Canvas::SetTableItemAttribute (score_table, "x-expand", 1u);
+      Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+
       // Rectangle
       {
-        goo_rect = goo_canvas_rect_new (data->_fencer_goo_table,
+        goo_rect = goo_canvas_rect_new (score_table,
                                         0, 0,
                                         _score_rect_size, _score_rect_size,
                                         "line-width", 0.0,
                                         "pointer-events", GOO_CANVAS_EVENTS_VISIBLE,
                                         NULL);
 
-        Canvas::PutInTable (data->_fencer_goo_table,
+        Canvas::PutInTable (score_table,
                             goo_rect,
                             0,
-                            3);
-        Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
+                            0);
       }
 
       // Status arrow
@@ -1184,10 +1189,10 @@ gboolean TableSet::FillInNode (GNode    *node,
         {
           arrow_icon = g_build_filename (_program_path, "resources/glade/arrow.png", NULL);
         }
-        goo_item = Canvas::PutIconInTable (data->_fencer_goo_table,
+        goo_item = Canvas::PutIconInTable (score_table,
                                            arrow_icon,
                                            0,
-                                           3);
+                                           0);
         Canvas::SetTableItemAttribute (goo_item, "x-align", 1.0);
         Canvas::SetTableItemAttribute (goo_item, "y-align", 0.0);
 
@@ -1201,7 +1206,7 @@ gboolean TableSet::FillInNode (GNode    *node,
         Score *score       = parent_data->_match->GetScore (winner);
         gchar *score_image = score->GetImage ();
 
-        score_text = goo_canvas_text_new (data->_fencer_goo_table,
+        score_text = goo_canvas_text_new (score_table,
                                           score_image,
                                           0, 0,
                                           -1,
@@ -1210,10 +1215,10 @@ gboolean TableSet::FillInNode (GNode    *node,
                                           NULL);
         g_free (score_image);
 
-        Canvas::PutInTable (data->_fencer_goo_table,
+        Canvas::PutInTable (score_table,
                             score_text,
                             0,
-                            3);
+                            0);
         Canvas::SetTableItemAttribute (score_text, "x-align", 0.5);
         Canvas::SetTableItemAttribute (score_text, "y-align", 0.5);
       }
@@ -1265,10 +1270,10 @@ gboolean TableSet::FillInNode (GNode    *node,
           AttributeDesc *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
           GooCanvasItem *status_item;
 
-          status_item = Canvas::PutIconInTable (data->_fencer_goo_table,
-                                                attr_desc->GetDiscreteIcon (status[0]),
-                                                0,
-                                                3);
+          status_item = Canvas::PutPixbufInTable (score_table,
+                                                  attr_desc->GetDiscretePixbuf (status[0]),
+                                                  0,
+                                                  0);
 
           Canvas::SetTableItemAttribute (status_item, "x-align", 0.5);
           Canvas::SetTableItemAttribute (status_item, "y-align", 0.5);
@@ -2737,9 +2742,10 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
             }
           }
 
-          Canvas::Align (referee_group,
-                         NULL,
-                         name_item);
+          Canvas::VAlign (referee_group,
+                          Canvas::START,
+                          name_item,
+                          Canvas::START);
 
           goo_canvas_rect_new (strip_group,
                                0.0,
@@ -2759,9 +2765,10 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                                "font", font,
                                NULL);
 
-          Canvas::Align (strip_group,
-                         NULL,
-                         referee_group);
+          Canvas::VAlign (strip_group,
+                          Canvas::START,
+                          referee_group,
+                          Canvas::START);
           Canvas::Anchor (strip_group,
                           NULL,
                           referee_group,
@@ -2788,9 +2795,10 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                           title_group,
                           NULL,
                           80);
-          Canvas::Align (match_table,
-                         title_group,
-                         NULL);
+          Canvas::HAlign (match_table,
+                          Canvas::START,
+                          title_group,
+                          Canvas::START);
         }
 
         g_free (font);
@@ -2840,38 +2848,21 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
                                 Player        *player,
                                 guint          row)
 {
-  GooCanvasItem *text_item;
-  GooCanvasItem *goo_rect;
-
   // Name
   {
-    GString *image;
-    gchar   *font = g_strdup_printf ("Sans Bold %fpx", PRINT_FONT_HEIGHT);
-
-    Canvas::NormalyzeDecimalNotation (font);
-
-    image = GetPlayerImage (player,
-                            "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                            "first_name", "<span foreground=\"darkblue\">",
-                            "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                            "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                            "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                            NULL);
-    text_item = Canvas::PutTextInTable (table,
-                                        image->str,
-                                        row,
-                                        0);
-    g_string_free (image,
-                   TRUE);
-    Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
-
-    g_object_set (G_OBJECT (text_item),
-                  "font",       font,
-                  "ellipsize",  PANGO_ELLIPSIZE_NONE,
-                  "anchor",     GTK_ANCHOR_WEST,
-                  "use-markup", TRUE,
-                  NULL);
-    g_free (font);
+    GooCanvasItem *image = GetPlayerImage (table,
+                                           player,
+                                           "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
+                                           "first_name", "<span foreground=\"darkblue\">",
+                                           "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                           "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                           "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                           NULL);
+    Canvas::PutInTable (table,
+                        image,
+                        row,
+                        0);
+    Canvas::SetTableItemAttribute (image, "y-align", 0.5);
   }
 
   // Score
@@ -2887,7 +2878,9 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
   }
 
   {
-    gdouble score_size = 4.0;
+    GooCanvasItem *text_item;
+    GooCanvasItem *goo_rect;
+    const gdouble  score_size = 4.0;
 
     goo_rect = goo_canvas_rect_new (table,
                                     0.0,
@@ -3290,20 +3283,20 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
   if (floating_object)
   {
     Player *player        = (Player *) floating_object;
-    GSList *selected_attr = NULL;
+    GSList *selected_list = NULL;
 
     if (_filter)
     {
-      selected_attr = _filter->GetSelectedAttrList ();
+      selected_list = _filter->GetSelectedAttrList ();
     }
 
-    while (selected_attr)
+    while (selected_list)
     {
-      AttributeDesc       *attr_desc = (AttributeDesc *) selected_attr->data;
-      Attribute           *attr;
-      Player::AttributeId *attr_id;
+      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+      Attribute            *attr;
+      Player::AttributeId  *attr_id;
 
-      attr_id = Player::AttributeId::Create (attr_desc, this);
+      attr_id = Player::AttributeId::Create (selected_attr->_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
@@ -3317,7 +3310,7 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
                                   "  ");
         g_free (image);
       }
-      selected_attr = g_slist_next (selected_attr);
+      selected_list = g_slist_next (selected_list);
     }
   }
 

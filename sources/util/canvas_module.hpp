@@ -46,6 +46,10 @@ class CanvasModule : public Module
     GooCanvas *GetCanvas ();
     GooCanvasItem *GetRootItem ();
 
+    GooCanvasItem *GetPlayerImage (GooCanvasItem *paren_item,
+                                   Player        *player,
+                                   ...);
+
   protected:
     virtual void OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context);

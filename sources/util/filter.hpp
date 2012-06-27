@@ -20,16 +20,21 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "attribute.hpp"
 
 class Module;
 
 class Filter : public virtual Object
 {
   public:
+    struct SelectedAttr
+    {
+      AttributeDesc::Look  _look;
+      AttributeDesc       *_desc;
+    };
+
     Filter (GSList *attr_list,
             Module *owner = NULL);
-
-    void SetAttributeList (GSList *list);
 
     void ShowAttribute (const gchar *name);
 
@@ -53,24 +58,41 @@ class Filter : public virtual Object
       ATTR_VISIBILITY = 0,
       ATTR_USER_NAME,
       ATTR_XML_NAME,
-      NUM_COLS
-    } StoreColumn;
+      ATTR_LOOK_IMAGE,
+      ATTR_LOOK_VALUE,
+
+      NUM_ATTR_COLS
+    } StoreAttrColumn;
+
+    typedef enum
+    {
+      LOOK_IMAGE = 0,
+      LOOK_VALUE,
+
+      NUM_LOOK_COLS
+    } StoreLookColumn;
 
     Module       *_owner;
     GSList       *_attr_list;
-    GSList       *_selected_attr;
+    GSList       *_selected_list;
     GtkListStore *_attr_filter_store;
     GtkWidget    *_dialog;
+    GtkListStore *_look_store;
 
     virtual ~Filter ();
 
-    static void on_cell_toggled (GtkCellRendererToggle *cell,
-                                 gchar                 *path_string,
-                                 gpointer               user_data);
+    static void OnVisibilityToggled (GtkCellRendererToggle *cell,
+                                     gchar                 *path_string,
+                                     Filter                *filter);
+
+    static void OnLookChanged (GtkCellRendererCombo *combo,
+                               gchar                *path_string,
+                               GtkTreeIter          *new_iter,
+                               Filter               *filter);
 
     static void OnAttrDeleted (GtkTreeModel *tree_model,
                                GtkTreePath  *path,
-                               gpointer      user_data);
+                               Filter       *filter);
 
 };
 

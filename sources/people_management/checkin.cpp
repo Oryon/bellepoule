@@ -266,9 +266,13 @@ void Checkin::OnImport ()
       }
 
       {
-        GtkRecentManager *manager = gtk_recent_manager_get_default ();
+        gchar *uri = g_filename_to_uri (filename,
+                                        NULL,
+                                        NULL);
 
-        gtk_recent_manager_add_item (manager, filename);
+        gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
+                                     uri);
+        g_free (uri);
       }
 
       if (   g_str_has_suffix (filename, ".fff")

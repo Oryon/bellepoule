@@ -324,20 +324,20 @@ GString *PoolAllocator::GetFloatingImage (Object *floating_object)
   if (floating_object)
   {
     Player *player        = (Player *) floating_object;
-    GSList *selected_attr = NULL;
+    GSList *selected_list = NULL;
 
     if (_filter)
     {
-      selected_attr = _filter->GetSelectedAttrList ();
+      selected_list = _filter->GetSelectedAttrList ();
     }
 
-    while (selected_attr)
+    while (selected_list)
     {
-      AttributeDesc       *attr_desc = (AttributeDesc *) selected_attr->data;
-      Attribute           *attr;
-      Player::AttributeId *attr_id;
+      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+      Attribute            *attr;
+      Player::AttributeId  *attr_id;
 
-      attr_id = Player::AttributeId::Create (attr_desc, this);
+      attr_id = Player::AttributeId::Create (selected_attr->_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
@@ -351,7 +351,7 @@ GString *PoolAllocator::GetFloatingImage (Object *floating_object)
                                   "  ");
         g_free (image);
       }
-      selected_attr = g_slist_next (selected_attr);
+      selected_list = g_slist_next (selected_list);
     }
   }
 
@@ -1101,12 +1101,12 @@ void PoolAllocator::FillPoolTable (PoolZone *zone)
 
   GooCanvasItem *item;
   GooCanvasItem *table         = (GooCanvasItem *) zone->GetPtrData (this, "table");
-  GSList        *selected_attr = NULL;
+  GSList        *selected_list = NULL;
   Pool          *pool          = zone->GetPool ();
 
   if (_filter)
   {
-    selected_attr = _filter->GetSelectedAttrList ();
+    selected_list = _filter->GetSelectedAttrList ();
   }
 
   if (table)
@@ -1164,12 +1164,12 @@ void PoolAllocator::FillPoolTable (PoolZone *zone)
     Canvas::PutInTable (table,
                         name_table,
                         0, 0);
-    Canvas::SetTableItemAttribute (name_table, "columns", g_slist_length (selected_attr));
+    Canvas::SetTableItemAttribute (name_table, "columns", g_slist_length (selected_list));
     //Canvas::SetTableItemAttribute (name_table, "x-expand", 1U);
     Canvas::SetTableItemAttribute (name_table, "x-fill", 1U);
   }
 
-  if (selected_attr)
+  if (selected_list)
   {
     guint p = 0;
 
@@ -1185,7 +1185,7 @@ void PoolAllocator::FillPoolTable (PoolZone *zone)
                        p,
                        table,
                        zone,
-                       selected_attr);
+                       selected_list);
         p++;
 
         current = g_slist_next (current);
@@ -1204,7 +1204,7 @@ void PoolAllocator::FillPoolTable (PoolZone *zone)
                        p,
                        table,
                        zone,
-                       selected_attr);
+                       selected_list);
         p++;
 
         current = g_slist_next (current);
@@ -1236,7 +1236,7 @@ void PoolAllocator::DisplayPlayer (Player        *player,
                                    guint          indice,
                                    GooCanvasItem *table,
                                    PoolZone      *zone,
-                                   GSList        *selected_attr)
+                                   GSList        *selected_list)
 {
   if (player)
   {
@@ -1261,15 +1261,14 @@ void PoolAllocator::DisplayPlayer (Player        *player,
                                    indice+1, 0);
     }
 
-    for (guint i = 0; selected_attr != NULL; i++)
+    for (guint i = 0; selected_list != NULL; i++)
     {
-      GooCanvasItem       *item;
-      AttributeDesc       *attr_desc;
-      Attribute           *attr;
-      Player::AttributeId *attr_id;
+      GooCanvasItem        *item;
+      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+      Attribute            *attr;
+      Player::AttributeId  *attr_id;
 
-      attr_desc = (AttributeDesc *) selected_attr->data;
-      attr_id = Player::AttributeId::Create (attr_desc, this);
+      attr_id = Player::AttributeId::Create (selected_attr->_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
@@ -1308,7 +1307,7 @@ void PoolAllocator::DisplayPlayer (Player        *player,
                          item,
                          zone);
 
-      selected_attr = g_slist_next (selected_attr);
+      selected_list = g_slist_next (selected_list);
     }
   }
 }

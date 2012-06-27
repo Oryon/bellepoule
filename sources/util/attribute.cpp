@@ -28,20 +28,20 @@ AttributeDesc::AttributeDesc (GType        type,
                               const gchar *user_name)
 : Object ("AttributeDesc")
 {
-  _type                  = type;
-  _code_name             = g_strdup (code_name);
-  _xml_name              = g_strdup (xml_name);
-  _user_name             = g_strdup (user_name);
-  _uniqueness            = SINGULAR;
-  _representation        = TEXTUAL;
-  _persistency           = PERSISTENT;
-  _scope                 = GLOBAL;
-  _free_value_allowed    = TRUE;
-  _rights                = PUBLIC;
-  _discrete_model        = NULL;
-  _compare_func          = NULL;
-  _has_selector          = FALSE;
-  _is_selector           = FALSE;
+  _type               = type;
+  _code_name          = g_strdup (code_name);
+  _xml_name           = g_strdup (xml_name);
+  _user_name          = g_strdup (user_name);
+  _uniqueness         = SINGULAR;
+  _look               = LONG_TEXT;
+  _persistency        = PERSISTENT;
+  _scope              = GLOBAL;
+  _free_value_allowed = TRUE;
+  _rights             = PUBLIC;
+  _discrete_model     = NULL;
+  _compare_func       = NULL;
+  _has_selector       = FALSE;
+  _is_selector        = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -173,12 +173,12 @@ void AttributeDesc::BindDiscreteValues (GObject         *object,
     if (renderer)
     {
       gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (object), renderer,
-                                      "text", DISCRETE_USER_IMAGE, NULL);
+                                      "text", DISCRETE_LONG_TEXT, NULL);
     }
     else
     {
       g_object_set (object,
-                    "text-column", DISCRETE_USER_IMAGE,
+                    "text-column", DISCRETE_LONG_TEXT,
                     NULL);
     }
   }
@@ -191,7 +191,7 @@ void AttributeDesc::BindDiscreteValues (GtkCellRenderer *renderer)
   {
     g_object_set (G_OBJECT (renderer),
                   "model",       _discrete_model,
-                  "text-column", DISCRETE_USER_IMAGE,
+                  "text-column", DISCRETE_LONG_TEXT,
                   NULL);
   }
 }
@@ -232,9 +232,9 @@ const gchar *AttributeDesc::GetDiscreteXmlImage (const gchar *from_user_image)
       gchar *current_image;
       gchar *xml_image;
 
-      gtk_tree_model_get (_discrete_model,     &iter,
-                          DISCRETE_USER_IMAGE, (void *) &current_image,
-                          DISCRETE_XML_IMAGE,  (void *) &xml_image,
+      gtk_tree_model_get (_discrete_model,    &iter,
+                          DISCRETE_LONG_TEXT, (void *) &current_image,
+                          DISCRETE_XML_IMAGE, (void *) &xml_image,
                           -1);
       if (strcmp (current_image, from_user_image) == 0)
       {
@@ -251,7 +251,7 @@ const gchar *AttributeDesc::GetDiscreteXmlImage (const gchar *from_user_image)
 gchar *AttributeDesc::GetDiscreteUserImage (guint from_code)
 {
   gchar *image = (gchar *) GetDiscreteData (from_code,
-                                            DISCRETE_USER_IMAGE);
+                                            DISCRETE_LONG_TEXT);
   if (image)
   {
     return g_strdup (image);
@@ -267,6 +267,13 @@ gchar *AttributeDesc::GetDiscreteIcon (guint from_code)
 {
   return (gchar *) GetDiscreteData (from_code,
                                     DISCRETE_ICON_NAME);
+}
+
+// --------------------------------------------------------------------------------
+GdkPixbuf *AttributeDesc::GetDiscretePixbuf (guint from_code)
+{
+  return (GdkPixbuf *) GetDiscreteData (from_code,
+                                    DISCRETE_ICON);
 }
 
 // --------------------------------------------------------------------------------
@@ -318,7 +325,7 @@ gchar *AttributeDesc::GetXmlImage (gchar *user_image)
 
       gtk_tree_model_get (_discrete_model, &iter,
                           DISCRETE_XML_IMAGE, &current_xml_image,
-                          DISCRETE_USER_IMAGE, &current_user_image,
+                          DISCRETE_LONG_TEXT, &current_user_image,
                           -1);
       if (strcmp (current_user_image, user_image) == 0)
       {
@@ -340,7 +347,7 @@ gchar *AttributeDesc::GetUserImage (GtkTreeIter *iter)
     gchar *image;
 
     gtk_tree_model_get (_discrete_model, iter,
-                        DISCRETE_USER_IMAGE, &image, -1);
+                        DISCRETE_LONG_TEXT, &image, -1);
     if (image)
     {
       return g_strdup (image);
@@ -387,7 +394,7 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image)
 
         gtk_tree_model_get (_discrete_model, &iter,
                             DISCRETE_XML_IMAGE, &current_xml_image,
-                            DISCRETE_USER_IMAGE, &current_user_image,
+                            DISCRETE_LONG_TEXT, &current_user_image,
                             -1);
         if (strcmp (current_xml_image, xml_image) == 0)
         {
@@ -414,12 +421,14 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
 {
   if (_discrete_model == NULL)
   {
-    _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (6, G_TYPE_UINT,
-                                                          G_TYPE_STRING,
-                                                          G_TYPE_STRING,
-                                                          GDK_TYPE_PIXBUF,
-                                                          G_TYPE_STRING,
-                                                          G_TYPE_STRING));
+    _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (NB_DISCRETE_COLUMNS,
+                                                          G_TYPE_UINT,     // DISCRETE_CODE
+                                                          G_TYPE_STRING,   // DISCRETE_XML_IMAGE
+                                                          G_TYPE_STRING,   // DISCRETE_LONG_TEXT
+                                                          G_TYPE_STRING,   // DISCRETE_SHORT_TEXT
+                                                          GDK_TYPE_PIXBUF, // DISCRETE_ICON
+                                                          G_TYPE_STRING,   // DISCRETE_ICON_NAME
+                                                          G_TYPE_STRING)); // DISCRETE_SELECTOR
   }
 
   {
@@ -438,9 +447,9 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
 
       undivadable_image = GetUndivadableText (user_image);
       gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                          DISCRETE_CODE, xml_image[0],
+                          DISCRETE_CODE,      xml_image[0],
                           DISCRETE_XML_IMAGE, xml_image,
-                          DISCRETE_USER_IMAGE, undivadable_image, -1);
+                          DISCRETE_LONG_TEXT, undivadable_image, -1);
       if (*icon)
       {
         GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon, NULL);
@@ -467,12 +476,14 @@ void AttributeDesc::AddDiscreteValueSelector (const gchar *file)
 {
   gchar *path = g_build_filename (_program_path, "resources", file, NULL);
 
-  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (6, G_TYPE_UINT,
-                                                        G_TYPE_STRING,
-                                                        G_TYPE_STRING,
-                                                        GDK_TYPE_PIXBUF,
-                                                        G_TYPE_STRING,
-                                                        G_TYPE_STRING));
+  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (NB_DISCRETE_COLUMNS,
+                                                        G_TYPE_UINT,     // DISCRETE_CODE
+                                                        G_TYPE_STRING,   // DISCRETE_XML_IMAGE
+                                                        G_TYPE_STRING,   // DISCRETE_LONG_TEXT
+                                                        G_TYPE_STRING,   // DISCRETE_SHORT_TEXT
+                                                        GDK_TYPE_PIXBUF, // DISCRETE_ICON
+                                                        G_TYPE_STRING,   // DISCRETE_ICON_NAME
+                                                        G_TYPE_STRING)); // DISCRETE_SELECTOR
 
   _is_selector = TRUE;
 
@@ -489,12 +500,14 @@ void AttributeDesc::AddDiscreteValues (const gchar *file)
   GDir         *dir      = g_dir_open       (dir_path, 0,  NULL);
   const gchar  *country  = g_dir_read_name  (dir);
 
-  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (6, G_TYPE_UINT,
-                                                        G_TYPE_STRING,
-                                                        G_TYPE_STRING,
-                                                        GDK_TYPE_PIXBUF,
-                                                        G_TYPE_STRING,
-                                                        G_TYPE_STRING));
+  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (NB_DISCRETE_COLUMNS,
+                                                        G_TYPE_UINT,     // DISCRETE_CODE
+                                                        G_TYPE_STRING,   // DISCRETE_XML_IMAGE
+                                                        G_TYPE_STRING,   // DISCRETE_LONG_TEXT
+                                                        G_TYPE_STRING,   // DISCRETE_SHORT_TEXT
+                                                        GDK_TYPE_PIXBUF, // DISCRETE_ICON
+                                                        G_TYPE_STRING,   // DISCRETE_ICON_NAME
+                                                        G_TYPE_STRING)); // DISCRETE_SELECTOR
 
   _has_selector = TRUE;
 
@@ -603,9 +616,11 @@ void AttributeDesc::AddDiscreteValues (const gchar *file,
               if (*tokens[i+1] != 0)
               {
                 g_free (undivadable_text);
-                undivadable_text = GetUndivadableText (GetTranslation (textdomain,
-                                                                       tokens[i+1]));
+                undivadable_text = GetUndivadableText (tokens[i+1]);
               }
+              gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
+                                  DISCRETE_SHORT_TEXT, undivadable_text,
+                                  -1);
             }
 
             // Long name
@@ -618,19 +633,29 @@ void AttributeDesc::AddDiscreteValues (const gchar *file,
               }
 
               gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                  DISCRETE_USER_IMAGE, undivadable_text,
+                                  DISCRETE_LONG_TEXT, undivadable_text,
                                   -1);
             }
+
+            // Icon
+#if 0
+            if ()
+            {
+              GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon, NULL);
+
+              gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
+                                  DISCRETE_ICON_NAME, icon,
+                                  DISCRETE_ICON,      pixbuf, -1);
+            }
+#endif
 
             g_free (undivadable_text);
           }
 
           // Internal code (French federation issue)
-          {
-            gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                                DISCRETE_CODE, atoi (tokens[i+3]),
-                                -1);
-          }
+          gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
+                              DISCRETE_CODE, atoi (tokens[i+3]),
+                              -1);
         }
         g_strfreev (tokens);
         g_free (textdomain);

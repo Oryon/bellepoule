@@ -114,7 +114,7 @@ Form::Form (Filter             *filter,
                   gtk_entry_completion_set_model (completion,
                                                   model);
                   gtk_entry_completion_set_text_column (completion,
-                                                        AttributeDesc::DISCRETE_USER_IMAGE);
+                                                        AttributeDesc::DISCRETE_LONG_TEXT);
                   gtk_entry_completion_set_inline_completion (completion,
                                                               TRUE);
                   g_object_set (G_OBJECT (completion),
@@ -210,7 +210,7 @@ void Form::SetSelectorValue (GtkComboBox *combo_box,
       gchar *case_current_value;
 
       gtk_tree_model_get (model, &iter,
-                          AttributeDesc::DISCRETE_USER_IMAGE, &current_value,
+                          AttributeDesc::DISCRETE_LONG_TEXT, &current_value,
                           -1);
       case_current_value = g_utf8_casefold (current_value, -1);
       if (current_value && (g_ascii_strcasecmp (case_current_value, case_value) == 0))
@@ -239,7 +239,7 @@ gboolean Form::OnSelectorChanged (GtkEntryCompletion *widget,
   gchar *value;
 
   gtk_tree_model_get (model, iter,
-                      AttributeDesc::DISCRETE_USER_IMAGE, &value,
+                      AttributeDesc::DISCRETE_LONG_TEXT, &value,
                       -1);
   SetSelectorValue (combobox,
                     value);

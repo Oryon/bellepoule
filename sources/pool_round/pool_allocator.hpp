@@ -108,7 +108,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void Display ();
     void Garnish ();
     void FillPoolTable (PoolZone *zone);
-    void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, PoolZone *zone, GSList *selected_attr);
+    void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, PoolZone *zone, GSList *selected_list);
     void FixUpTablesBounds ();
     void RegisterConfig (Configuration *config);
     const gchar *GetInputProviderClient ();
