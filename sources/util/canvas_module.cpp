@@ -162,28 +162,27 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
 
   if (player)
   {
-    GSList *selected_attr = NULL;
+    GSList *selected_list = NULL;
 
     if (_filter)
     {
-      selected_attr = _filter->GetSelectedAttrList ();
+      selected_list = _filter->GetSelectedAttrList ();
     }
 
-    for (guint a = 0; selected_attr != NULL; a++)
+    for (guint a = 0; selected_list != NULL; a++)
     {
-      AttributeDesc       *attr_desc;
-      Attribute           *attr;
-      Player::AttributeId *attr_id;
+      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;;
+      Attribute            *attr;
+      Player::AttributeId  *attr_id;
 
-      attr_desc = (AttributeDesc *) selected_attr->data;
-      if (attr_desc->_scope == AttributeDesc::LOCAL)
+      if (selected_attr->_desc->_scope == AttributeDesc::LOCAL)
       {
-        attr_id = new Player::AttributeId (attr_desc->_code_name,
+        attr_id = new Player::AttributeId (selected_attr->_desc->_code_name,
                                            GetDataOwner ());
       }
       else
       {
-        attr_id = new Player::AttributeId (attr_desc->_code_name);
+        attr_id = new Player::AttributeId (selected_attr->_desc->_code_name);
       }
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
@@ -200,13 +199,13 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
           va_start (ap, player);
           for (guint i = 0; (pango_arg = va_arg (ap, char *)); i++)
           {
-            if (strcmp (pango_arg, attr_desc->_code_name) == 0)
+            if (strcmp (pango_arg, selected_attr->_desc->_code_name) == 0)
             {
               image = g_string_new (va_arg (ap, char *));
               image = g_string_append (image,
                                        attr_image);
               image = g_string_append (image,
-                                       "\302\240");
+                                       "\302\240\302\240");
               image = g_string_append (image,
                                        "</span>");
               break;
@@ -218,7 +217,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
         {
           image = g_string_new (attr_image);
           image = g_string_append (image,
-                                   "\302\240");
+                                   "\302\240\302\240");
         }
 
         {
@@ -238,7 +237,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
         g_free (attr_image);
       }
 
-      selected_attr = g_slist_next (selected_attr);
+      selected_list = g_slist_next (selected_list);
     }
   }
 

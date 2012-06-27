@@ -35,7 +35,7 @@ Filter::Filter (GSList *attr_list,
 : Object ("Filter")
 {
   _dialog        = NULL;
-  _selected_attr = NULL;
+  _selected_list = NULL;
   _attr_list     = attr_list;
   _owner         = owner;
 
@@ -95,7 +95,11 @@ Filter::~Filter ()
     gtk_object_destroy (GTK_OBJECT (_dialog));
   }
 
-  g_slist_free   (_selected_attr);
+  g_slist_foreach (_selected_list,
+                   (GFunc) g_free,
+                   NULL);
+  g_slist_free (_selected_list);
+
   g_slist_free   (_attr_list);
   g_object_unref (_attr_filter_store);
   g_object_unref (_look_store);
@@ -144,7 +148,7 @@ GSList *Filter::GetAttrList ()
 // --------------------------------------------------------------------------------
 GSList *Filter::GetSelectedAttrList ()
 {
-  return _selected_attr;
+  return _selected_list;
 }
 
 // --------------------------------------------------------------------------------
@@ -179,6 +183,8 @@ void Filter::ShowAttribute (const gchar *name)
 
     if (strcmp (current_name, name) == 0)
     {
+      SelectedAttr *selected_attr = new SelectedAttr ();
+
       gtk_list_store_set (GTK_LIST_STORE (_attr_filter_store),
                           &iter,
                           ATTR_VISIBILITY, TRUE, -1);
@@ -186,8 +192,10 @@ void Filter::ShowAttribute (const gchar *name)
                                   &iter,
                                   sibling);
 
-      _selected_attr = g_slist_append (_selected_attr,
-                                       AttributeDesc::GetDescFromCodeName (current_name));
+      selected_attr->_look = AttributeDesc::LONG_TEXT;;
+      selected_attr->_desc = AttributeDesc::GetDescFromCodeName (current_name);
+      _selected_list = g_slist_append (_selected_list,
+                                       selected_attr);
       break;
     }
 
@@ -293,8 +301,11 @@ void Filter::SelectAttributes ()
 // --------------------------------------------------------------------------------
 void Filter::UpdateAttrList ()
 {
-  g_slist_free (_selected_attr);
-  _selected_attr = NULL;
+  g_slist_foreach (_selected_list,
+                   (GFunc) g_free,
+                   NULL);
+  g_slist_free (_selected_list);
+  _selected_list = NULL;
 
   {
     GtkTreeIter iter;
@@ -316,8 +327,12 @@ void Filter::UpdateAttrList ()
 
       if (current_visibility == TRUE)
       {
-        _selected_attr = g_slist_append (_selected_attr,
-                                         AttributeDesc::GetDescFromCodeName (current_name));
+        SelectedAttr *selected_attr = new SelectedAttr ();
+
+        selected_attr->_look = AttributeDesc::LONG_TEXT;;
+        selected_attr->_desc = AttributeDesc::GetDescFromCodeName (current_name);
+        _selected_list = g_slist_append (_selected_list,
+                                         selected_attr);
       }
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_attr_filter_store),

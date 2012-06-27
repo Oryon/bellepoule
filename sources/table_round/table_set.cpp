@@ -1270,10 +1270,10 @@ gboolean TableSet::FillInNode (GNode    *node,
           AttributeDesc *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
           GooCanvasItem *status_item;
 
-          status_item = Canvas::PutIconInTable (score_table,
-                                                attr_desc->GetDiscreteIcon (status[0]),
-                                                0,
-                                                0);
+          status_item = Canvas::PutPixbufInTable (score_table,
+                                                  attr_desc->GetDiscretePixbuf (status[0]),
+                                                  0,
+                                                  0);
 
           Canvas::SetTableItemAttribute (status_item, "x-align", 0.5);
           Canvas::SetTableItemAttribute (status_item, "y-align", 0.5);
@@ -3283,20 +3283,20 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
   if (floating_object)
   {
     Player *player        = (Player *) floating_object;
-    GSList *selected_attr = NULL;
+    GSList *selected_list = NULL;
 
     if (_filter)
     {
-      selected_attr = _filter->GetSelectedAttrList ();
+      selected_list = _filter->GetSelectedAttrList ();
     }
 
-    while (selected_attr)
+    while (selected_list)
     {
-      AttributeDesc       *attr_desc = (AttributeDesc *) selected_attr->data;
-      Attribute           *attr;
-      Player::AttributeId *attr_id;
+      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+      Attribute            *attr;
+      Player::AttributeId  *attr_id;
 
-      attr_id = Player::AttributeId::Create (attr_desc, this);
+      attr_id = Player::AttributeId::Create (selected_attr->_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
@@ -3310,7 +3310,7 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
                                   "  ");
         g_free (image);
       }
-      selected_attr = g_slist_next (selected_attr);
+      selected_list = g_slist_next (selected_list);
     }
   }
 

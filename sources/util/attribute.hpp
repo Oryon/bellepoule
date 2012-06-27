@@ -67,7 +67,9 @@ class AttributeDesc : public Object
       DISCRETE_SHORT_TEXT,
       DISCRETE_ICON,
       DISCRETE_ICON_NAME,
-      DISCRETE_SELECTOR
+      DISCRETE_SELECTOR,
+
+      NB_DISCRETE_COLUMNS
     } DiscreteColumnId;
 
     GType         _type;
@@ -120,6 +122,8 @@ class AttributeDesc : public Object
     gchar *GetDiscreteUserImage (guint from_code);
 
     gchar *GetDiscreteIcon (guint from_code);
+
+    GdkPixbuf *GetDiscretePixbuf (guint from_code);
 
     gchar *GetXmlImage (gchar *user_image);
 

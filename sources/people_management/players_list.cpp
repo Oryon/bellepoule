@@ -345,16 +345,16 @@ void PlayersList::OnAttrListUpdated ()
 
   if (_filter)
   {
-    GSList *selected_attr = _filter->GetSelectedAttrList ();
+    GSList *selected_list = _filter->GetSelectedAttrList ();
 
-    while (selected_attr)
+    while (selected_list)
     {
-      AttributeDesc *desc = (AttributeDesc *) selected_attr->data;
+      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
 
-      SetColumn (_filter->GetAttributeId (desc->_code_name),
-                 desc,
+      SetColumn (_filter->GetAttributeId (selected_attr->_desc->_code_name),
+                 selected_attr->_desc,
                  -1);
-      selected_attr = g_slist_next (selected_attr);
+      selected_list = g_slist_next (selected_list);
     }
   }
 }
@@ -829,21 +829,20 @@ void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
 void PlayersList::PrintHeader (GooCanvasItem *root_item,
                                gboolean       update_column_width)
 {
-  GSList *current_attr = _filter->GetSelectedAttrList ();
-  gdouble x            = 0.0;
+  GSList *selected_list = _filter->GetSelectedAttrList ();
+  gdouble x             = 0.0;
 
-  for (guint i = 0; current_attr != NULL; i++)
+  for (guint i = 0; selected_list != NULL; i++)
   {
-    AttributeDesc *desc;
+    Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
 
-    desc = (AttributeDesc *) current_attr->data;
-    if (desc)
+    if (selected_attr->_desc)
     {
       gchar         *font = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
       GooCanvasItem *item;
 
       item = goo_canvas_text_new (root_item,
-                                  desc->_user_name,
+                                  selected_attr->_desc->_user_name,
                                   x,
                                   0.0,
                                   -1.0,
@@ -874,7 +873,7 @@ void PlayersList::PrintHeader (GooCanvasItem *root_item,
       }
     }
     x += _column_width[i];
-    current_attr = g_slist_next (current_attr);
+    selected_list = g_slist_next (selected_list);
   }
 }
 
@@ -885,14 +884,14 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
                                guint            row,
                                gboolean         update_column_width)
 {
-  GSList  *current_attr = _filter->GetSelectedAttrList ();
-  gdouble  x            = 0;
+  GSList  *selected_list = _filter->GetSelectedAttrList ();
+  gdouble  x             = 0;
 
-  for (guint j = 0; current_attr != NULL; j++)
+  for (guint j = 0; selected_list != NULL; j++)
   {
-    AttributeDesc       *desc    = (AttributeDesc *) current_attr->data;
-    Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
-    Attribute           *attr    = player->GetAttribute (attr_id);
+    Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+    Player::AttributeId  *attr_id       = Player::AttributeId::Create (selected_attr->_desc, GetDataOwner ());
+    Attribute            *attr          = player->GetAttribute (attr_id);
 
     attr_id->Release ();
     if (attr)
@@ -900,7 +899,7 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
       GooCanvasItem   *item;
       GooCanvasBounds  bounds;
 
-      if (desc->_type == G_TYPE_BOOLEAN)
+      if (selected_attr->_desc->_type == G_TYPE_BOOLEAN)
       {
         if (attr->GetUIntValue () != 0)
         {
@@ -969,7 +968,7 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
       }
     }
     x += _column_width[j];
-    current_attr = g_slist_next (current_attr);
+    selected_list = g_slist_next (selected_list);
   }
 }
 

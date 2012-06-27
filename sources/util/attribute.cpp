@@ -270,6 +270,13 @@ gchar *AttributeDesc::GetDiscreteIcon (guint from_code)
 }
 
 // --------------------------------------------------------------------------------
+GdkPixbuf *AttributeDesc::GetDiscretePixbuf (guint from_code)
+{
+  return (GdkPixbuf *) GetDiscreteData (from_code,
+                                    DISCRETE_ICON);
+}
+
+// --------------------------------------------------------------------------------
 void *AttributeDesc::GetDiscreteData (guint from_code,
                                       guint column)
 {
@@ -414,7 +421,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
 {
   if (_discrete_model == NULL)
   {
-    _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (7,
+    _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (NB_DISCRETE_COLUMNS,
                                                           G_TYPE_UINT,     // DISCRETE_CODE
                                                           G_TYPE_STRING,   // DISCRETE_XML_IMAGE
                                                           G_TYPE_STRING,   // DISCRETE_LONG_TEXT
@@ -440,7 +447,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
 
       undivadable_image = GetUndivadableText (user_image);
       gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
-                          DISCRETE_CODE, xml_image[0],
+                          DISCRETE_CODE,      xml_image[0],
                           DISCRETE_XML_IMAGE, xml_image,
                           DISCRETE_LONG_TEXT, undivadable_image, -1);
       if (*icon)
@@ -469,7 +476,7 @@ void AttributeDesc::AddDiscreteValueSelector (const gchar *file)
 {
   gchar *path = g_build_filename (_program_path, "resources", file, NULL);
 
-  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (7,
+  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (NB_DISCRETE_COLUMNS,
                                                         G_TYPE_UINT,     // DISCRETE_CODE
                                                         G_TYPE_STRING,   // DISCRETE_XML_IMAGE
                                                         G_TYPE_STRING,   // DISCRETE_LONG_TEXT
@@ -493,7 +500,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *file)
   GDir         *dir      = g_dir_open       (dir_path, 0,  NULL);
   const gchar  *country  = g_dir_read_name  (dir);
 
-  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (7,
+  _discrete_model = GTK_TREE_MODEL (gtk_tree_store_new (NB_DISCRETE_COLUMNS,
                                                         G_TYPE_UINT,     // DISCRETE_CODE
                                                         G_TYPE_STRING,   // DISCRETE_XML_IMAGE
                                                         G_TYPE_STRING,   // DISCRETE_LONG_TEXT
@@ -629,6 +636,18 @@ void AttributeDesc::AddDiscreteValues (const gchar *file,
                                   DISCRETE_LONG_TEXT, undivadable_text,
                                   -1);
             }
+
+            // Icon
+#if 0
+            if ()
+            {
+              GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon, NULL);
+
+              gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
+                                  DISCRETE_ICON_NAME, icon,
+                                  DISCRETE_ICON,      pixbuf, -1);
+            }
+#endif
 
             g_free (undivadable_text);
           }

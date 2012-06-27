@@ -74,7 +74,7 @@ class Filter : public virtual Object
 
     Module       *_owner;
     GSList       *_attr_list;
-    GSList       *_selected_attr;
+    GSList       *_selected_list;
     GtkListStore *_attr_filter_store;
     GtkWidget    *_dialog;
     GtkListStore *_look_store;

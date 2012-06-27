@@ -52,6 +52,11 @@ class Canvas
                                           guint          row,
                                           guint          column);
 
+    static GooCanvasItem *PutPixbufInTable (GooCanvasItem *table,
+                                            GdkPixbuf     *pixbuf,
+                                            guint          row,
+                                            guint          column);
+
     static GooCanvasItem *PutStockIconInTable (GooCanvasItem *table,
                                                const gchar   *icon_name,
                                                guint          row,

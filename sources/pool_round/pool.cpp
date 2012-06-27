@@ -632,7 +632,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                 NULL);
 
         {
-          gchar         *index = g_strdup_printf ("%d\302\240", i+1);
+          gchar         *index = g_strdup_printf ("%d\302\240\302\240", i+1);
           GooCanvasItem *text_item;
 
           text_item = Canvas::PutTextInTable (player_table,
@@ -640,8 +640,9 @@ void Pool::Draw (GooCanvas *on_canvas,
                                               0,
                                               1);
           g_object_set (G_OBJECT (text_item),
-                        "ellipsize",  PANGO_ELLIPSIZE_NONE,
-                        "wrap",       PANGO_WRAP_CHAR,
+                        "ellipsize", PANGO_ELLIPSIZE_NONE,
+                        "wrap",      PANGO_WRAP_CHAR,
+                        "font",      "Sans 18px",
                         NULL);
           g_free (index);
         }
@@ -974,7 +975,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                                  NULL);
 
           {
-            gchar *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span>\302\240",
+            gchar *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span>\302\240\302\240",
                                                g_slist_index (_sorted_fencer_list, player) + 1);
 
             text_item = Canvas::PutTextInTable (player_table,
@@ -1025,7 +1026,7 @@ void Pool::Draw (GooCanvas *on_canvas,
                                                         NULL);
 
           {
-            gchar *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span>\302\240",
+            gchar *position = g_strdup_printf ("<span font_weight=\"bold\">%d</span>\302\240\302\240",
                                                g_slist_index (_sorted_fencer_list, player) + 1);
 
             text_item = Canvas::PutTextInTable (player_table,
