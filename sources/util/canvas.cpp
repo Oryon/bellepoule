@@ -167,6 +167,7 @@ GooCanvasItem *Canvas::PutIconInTable (GooCanvasItem *table,
                                               0.0,
                                               0.0,
                                               NULL);
+  g_object_unref (pixbuf);
 
   PutInTable (table,
               item,

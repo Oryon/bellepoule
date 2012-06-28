@@ -219,15 +219,15 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValueSelector ("countries/countries.txt");
+    desc->AddDiscreteValueSelector ("countries");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
-    desc->AddDiscreteValues ("ligues.txt");
+    desc->AddLocalizedDiscreteValues ("ligues");
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
-    desc->AddDiscreteValues ("clubs.txt");
+    desc->AddLocalizedDiscreteValues ("clubs");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 

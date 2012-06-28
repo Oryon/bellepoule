@@ -112,15 +112,18 @@ Tournament::Tournament (gchar *filename)
 
   {
     GtkWidget *w           = _glade->GetWidget ("about_dialog");
-    gchar     *translators = g_strdup_printf ("Julien Diaz       (German)\n"
-                                              "Tina Schliemann   (German)\n"
-                                              "Aureliano Martini (Italian)\n"
-                                              "Jihwan Cho        (Korean)\n"
-                                              "Marijn Somers     (Dutch)\n"
-                                              "Werner Huysmans   (Dutch)\n"
-                                              "Alexis Pigeon     (Spanish)\n"
-                                              "Mohamed Rebai     (Arabic)\n"
-                                              "Sergev Makhtanov  (Russian)");
+    gchar     *translators = g_strdup_printf ("Julien Diaz           (German)\n"
+                                              "Tina Schliemann       (German)\n"
+                                              "Aureliano Martini     (Italian)\n"
+                                              "Jihwan Cho            (Korean)\n"
+                                              "Marijn Somers         (Dutch)\n"
+                                              "Werner Huysmans       (Dutch)\n"
+                                              "Alexis Pigeon         (Spanish)\n"
+                                              "Paulo Morales         (Spanish)\n"
+                                              "Ignacio Gil           (Spanish)\n"
+                                              "Eduardo Alberto Calvo (Spanish, Portuguese)\n"
+                                              "Mohamed Rebai         (Arabic)\n"
+                                              "Sergev Makhtanov      (Russian)");
 
     gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (w),
                                              translators);

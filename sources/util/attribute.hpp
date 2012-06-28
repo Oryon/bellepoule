@@ -66,7 +66,6 @@ class AttributeDesc : public Object
       DISCRETE_LONG_TEXT,
       DISCRETE_SHORT_TEXT,
       DISCRETE_ICON,
-      DISCRETE_ICON_NAME,
       DISCRETE_SELECTOR,
 
       NB_DISCRETE_COLUMNS
@@ -113,17 +112,17 @@ class AttributeDesc : public Object
                             const gchar *first_icon,
                             ...);
 
-    void AddDiscreteValueSelector (const gchar *file);
+    void AddDiscreteValueSelector (const gchar *name);
 
-    void AddDiscreteValues (const gchar *file);
+    void AddLocalizedDiscreteValues (const gchar *name);
 
     const gchar *GetDiscreteXmlImage (const gchar *from_user_image);
 
     gchar *GetDiscreteUserImage (guint from_code);
 
-    gchar *GetDiscreteIcon (guint from_code);
-
     GdkPixbuf *GetDiscretePixbuf (guint from_code);
+
+    GdkPixbuf *GetDiscretePixbuf (const gchar *from_value);
 
     gchar *GetXmlImage (gchar *user_image);
 
@@ -153,7 +152,11 @@ class AttributeDesc : public Object
     void *GetDiscreteData (guint from_code,
                            guint column);
 
-    void AddDiscreteValues (const gchar *file,
+    void *GetDiscreteData (const gchar *from_user_image,
+                           guint        image_type,
+                           guint        column);
+
+    void AddDiscreteValues (const gchar *dir,
                             const gchar *selector);
 
     const gchar *GetTranslation (const gchar *domain,
@@ -193,6 +196,8 @@ class Attribute : public Object
 
     virtual gchar *GetXmlImage () = 0;
 
+    virtual GdkPixbuf *GetPixbuf () = 0;
+
     virtual void *GetListStoreValue () = 0;
 
     virtual gint CompareWith (Attribute *with) = 0;
@@ -229,6 +234,8 @@ class TextAttribute : public Attribute
 
     gchar *GetXmlImage ();
 
+    GdkPixbuf *GetPixbuf ();
+
     void *GetListStoreValue ();
 
     gint CompareWith (Attribute *with);
@@ -259,6 +266,8 @@ class BooleanAttribute : public Attribute
     gchar *GetUserImage ();
 
     gchar *GetXmlImage ();
+
+    GdkPixbuf *GetPixbuf ();
 
     void *GetListStoreValue ();
 
@@ -291,6 +300,8 @@ class IntAttribute : public Attribute
     gchar *GetUserImage ();
 
     gchar *GetXmlImage ();
+
+    GdkPixbuf *GetPixbuf ();
 
     void *GetListStoreValue ();
 
