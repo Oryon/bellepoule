@@ -189,52 +189,62 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
 
       if (attr)
       {
-        gchar   *attr_image = attr->GetUserImage ();
-        GString *image      = NULL;
-
+        if (selected_attr->_look == AttributeDesc::GRAPHICAL)
         {
-          va_list  ap;
-          gchar   *pango_arg;
+          Canvas::PutPixbufInTable (table_item,
+                                    attr->GetPixbuf (),
+                                    0,
+                                    a);
+        }
+        else
+        {
+          gchar   *attr_image = attr->GetUserImage ();
+          GString *image      = NULL;
 
-          va_start (ap, player);
-          for (guint i = 0; (pango_arg = va_arg (ap, char *)); i++)
           {
-            if (strcmp (pango_arg, selected_attr->_desc->_code_name) == 0)
+            va_list  ap;
+            gchar   *pango_arg;
+
+            va_start (ap, player);
+            for (guint i = 0; (pango_arg = va_arg (ap, char *)); i++)
             {
-              image = g_string_new (va_arg (ap, char *));
-              image = g_string_append (image,
-                                       attr_image);
-              image = g_string_append (image,
-                                       "\302\240\302\240");
-              image = g_string_append (image,
-                                       "</span>");
-              break;
+              if (strcmp (pango_arg, selected_attr->_desc->_code_name) == 0)
+              {
+                image = g_string_new (va_arg (ap, char *));
+                image = g_string_append (image,
+                                         attr_image);
+                image = g_string_append (image,
+                                         "\302\240\302\240");
+                image = g_string_append (image,
+                                         "</span>");
+                break;
+              }
             }
+            va_end (ap);
           }
-          va_end (ap);
-        }
-        if (image == NULL)
-        {
-          image = g_string_new (attr_image);
-          image = g_string_append (image,
-                                   "\302\240\302\240");
-        }
+          if (image == NULL)
+          {
+            image = g_string_new (attr_image);
+            image = g_string_append (image,
+                                     "\302\240\302\240");
+          }
 
-        {
-          GooCanvasItem *item = Canvas::PutTextInTable (table_item,
-                                                        image->str,
-                                                        0,
-                                                        a);
-          g_object_set (G_OBJECT (item),
-                        "use-markup", TRUE,
-                        "ellipsize",  PANGO_ELLIPSIZE_NONE,
-                        "wrap",       PANGO_WRAP_CHAR,
-                        NULL);
-          g_string_free (image,
-                         TRUE);
-        }
+          {
+            GooCanvasItem *item = Canvas::PutTextInTable (table_item,
+                                                          image->str,
+                                                          0,
+                                                          a);
+            g_object_set (G_OBJECT (item),
+                          "use-markup", TRUE,
+                          "ellipsize",  PANGO_ELLIPSIZE_NONE,
+                          "wrap",       PANGO_WRAP_CHAR,
+                          NULL);
+            g_string_free (image,
+                           TRUE);
+          }
 
-        g_free (attr_image);
+          g_free (attr_image);
+        }
       }
 
       selected_list = g_slist_next (selected_list);

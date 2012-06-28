@@ -316,20 +316,22 @@ void Filter::UpdateAttrList ()
 
     while (iter_is_valid)
     {
-      gchar    *current_name;
-      gboolean  current_visibility;
+      gchar               *current_name;
+      gboolean             current_visibility;
+      AttributeDesc::Look  curent_look;
 
       gtk_tree_model_get (GTK_TREE_MODEL (_attr_filter_store),
                           &iter,
                           ATTR_VISIBILITY, &current_visibility,
                           ATTR_XML_NAME,   &current_name,
+                          ATTR_LOOK_VALUE, &curent_look,
                           -1);
 
       if (current_visibility == TRUE)
       {
         SelectedAttr *selected_attr = new SelectedAttr ();
 
-        selected_attr->_look = AttributeDesc::LONG_TEXT;;
+        selected_attr->_look = curent_look;
         selected_attr->_desc = AttributeDesc::GetDescFromCodeName (current_name);
         _selected_list = g_slist_append (_selected_list,
                                          selected_attr);

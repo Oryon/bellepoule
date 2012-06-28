@@ -653,8 +653,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         Canvas::VAlign (player_table,
                         Canvas::END,
                         grid,
-                        Canvas::START,
-                        -5.0);
+                        Canvas::START);
       }
 
       // Players (horizontally)
