@@ -154,6 +154,7 @@ void CanvasModule::RestoreZoomFactor (GtkScale *scale)
 
 // --------------------------------------------------------------------------------
 GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
+                                             const gchar   *common_markup,
                                              Player        *player,
                                              ...)
 {
@@ -198,8 +199,13 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
         }
         else
         {
-          gchar   *attr_image = attr->GetUserImage ();
-          GString *image      = NULL;
+          gchar    *attr_image = attr->GetUserImage ();
+          GString  *image;
+          gboolean  arg_found = FALSE;
+
+          image = g_string_new    ("<span ");
+          image = g_string_append (image,
+                                   common_markup);
 
           {
             va_list  ap;
@@ -210,24 +216,28 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
             {
               if (strcmp (pango_arg, selected_attr->_desc->_code_name) == 0)
               {
-                image = g_string_new (va_arg (ap, char *));
                 image = g_string_append (image,
-                                         attr_image);
+                                         va_arg (ap, char *));
                 image = g_string_append (image,
-                                         "\302\240\302\240");
-                image = g_string_append (image,
-                                         "</span>");
+                                         ">");
+                arg_found = TRUE;
                 break;
               }
             }
             va_end (ap);
           }
-          if (image == NULL)
+          if (arg_found == FALSE)
           {
-            image = g_string_new (attr_image);
             image = g_string_append (image,
-                                     "\302\240\302\240");
+                                     ">");
           }
+
+          image = g_string_append (image,
+                                   attr_image);
+          image = g_string_append (image,
+                                   "\302\240\302\240");
+          image = g_string_append (image,
+                                   "</span>");
 
           {
             GooCanvasItem *item = Canvas::PutTextInTable (table_item,

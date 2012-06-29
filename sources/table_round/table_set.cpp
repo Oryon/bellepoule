@@ -1125,12 +1125,13 @@ gboolean TableSet::FillInNode (GNode    *node,
     if (winner)
     {
       GooCanvasItem *image = table_set->GetPlayerImage (data->_fencer_goo_table,
+                                                        "",
                                                         winner,
-                                                        "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                                        "first_name", "<span foreground=\"darkblue\">",
-                                                        "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                        "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                        "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                                                        "first_name", "foreground=\"darkblue\"",
+                                                        "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                        "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                        "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                                         NULL);
       Canvas::PutInTable (data->_fencer_goo_table,
                           image,
@@ -2742,7 +2743,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
             }
           }
 
-          Canvas::VAlign (referee_group,
+          Canvas::HAlign (referee_group,
                           Canvas::START,
                           name_item,
                           Canvas::START);
@@ -2765,7 +2766,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                                "font", font,
                                NULL);
 
-          Canvas::VAlign (strip_group,
+          Canvas::HAlign (strip_group,
                           Canvas::START,
                           referee_group,
                           Canvas::START);
@@ -2794,8 +2795,8 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
           Canvas::Anchor (match_table,
                           title_group,
                           NULL,
-                          80);
-          Canvas::HAlign (match_table,
+                          10);
+          Canvas::VAlign (match_table,
                           Canvas::START,
                           title_group,
                           Canvas::START);
@@ -2850,19 +2851,25 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
 {
   // Name
   {
+    gchar *common_markup = g_strdup_printf ("font_desc=\"Sans %fpx\"", PRINT_FONT_HEIGHT);
+
+    Canvas::NormalyzeDecimalNotation (common_markup);
+
     GooCanvasItem *image = GetPlayerImage (table,
+                                           common_markup,
                                            player,
-                                           "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                           "first_name", "<span foreground=\"darkblue\">",
-                                           "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                           "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                           "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                           "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                                           "first_name", "foreground=\"darkblue\"",
+                                           "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                           "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                           "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                            NULL);
     Canvas::PutInTable (table,
                         image,
                         row,
                         0);
     Canvas::SetTableItemAttribute (image, "y-align", 0.5);
+    g_free (common_markup);
   }
 
   // Score

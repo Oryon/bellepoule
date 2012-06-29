@@ -47,6 +47,7 @@ class CanvasModule : public Module
     GooCanvasItem *GetRootItem ();
 
     GooCanvasItem *GetPlayerImage (GooCanvasItem *paren_item,
+                                   const gchar   *common_markup,
                                    Player        *player,
                                    ...);
 
