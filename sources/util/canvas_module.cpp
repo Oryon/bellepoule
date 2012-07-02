@@ -192,10 +192,45 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
       {
         if (selected_attr->_look == AttributeDesc::GRAPHICAL)
         {
-          Canvas::PutPixbufInTable (table_item,
-                                    attr->GetPixbuf (),
-                                    0,
-                                    a);
+          GooCanvasItem *pix_item = Canvas::PutPixbufInTable (table_item,
+                                                              attr->GetPixbuf (),
+                                                              0,
+                                                              a);
+          if (common_markup && (common_markup[0] != 0))
+          {
+            GRegex     *regex;
+            GMatchInfo *match_info;
+
+            regex = g_regex_new ("[0-9]+\\.[0-9]+px",
+                                 GRegexCompileFlags (0),
+                                 GRegexMatchFlags (0),
+                                 NULL);
+            g_regex_match (regex,
+                           common_markup,
+                           GRegexMatchFlags (0),
+                           &match_info);
+
+            if (g_match_info_matches (match_info))
+            {
+              gchar   *word    = g_match_info_fetch (match_info, 0);
+              gdouble  width;
+              gdouble  height;
+
+              height = g_ascii_strtod (word,
+                                       NULL);
+              width = height *
+                (gdouble) gdk_pixbuf_get_width (attr->GetPixbuf ()) / (gdouble) gdk_pixbuf_get_height (attr->GetPixbuf ());
+
+              g_object_set (G_OBJECT (pix_item),
+                            "width",        width,
+                            "height",       height,
+                            "scale-to-fit", TRUE,
+                            NULL);
+              g_free (word);
+            }
+            g_match_info_free (match_info);
+            g_regex_unref (regex);
+          }
         }
         else
         {

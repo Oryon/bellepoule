@@ -1125,7 +1125,7 @@ gboolean TableSet::FillInNode (GNode    *node,
     if (winner)
     {
       GooCanvasItem *image = table_set->GetPlayerImage (data->_fencer_goo_table,
-                                                        "",
+                                                        "font_desc=\"Sans 14.0px\"",
                                                         winner,
                                                         "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                         "first_name", "foreground=\"darkblue\"",
@@ -1137,7 +1137,7 @@ gboolean TableSet::FillInNode (GNode    *node,
                           image,
                           0,
                           1);
-      Canvas::SetTableItemAttribute (image, "y-align", 0.5);
+      Canvas::SetTableItemAttribute (image, "y-align", 1.0);
       Canvas::SetTableItemAttribute (image, "x-align", 0.0);
       Canvas::SetTableItemAttribute (image, "x-fill", 1u);
     }

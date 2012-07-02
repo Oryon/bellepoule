@@ -623,7 +623,7 @@ void Pool::Draw (GooCanvas *on_canvas,
         x = - 5;
         y = cell_h / 2 + i * cell_h;
         image = GetPlayerImage (player_table,
-                                "font_desc=\"Sans 18px\"",
+                                "font_desc=\"Sans 14.0px\"",
                                 GetPlayer (i, _sorted_fencer_list),
                                 "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                 "first_name", "foreground=\"darkblue\"",
@@ -969,7 +969,7 @@ void Pool::Draw (GooCanvas *on_canvas,
           Player *player              = match->GetPlayerA ();
           GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
           GooCanvasItem *image = GetPlayerImage (player_table,
-                                                 "font_desc=\"Sans 18px\"",
+                                                 "font_desc=\"Sans 14.0px\"",
                                                  player,
                                                  "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                  "first_name", "foreground=\"darkblue\"",
@@ -1021,7 +1021,7 @@ void Pool::Draw (GooCanvas *on_canvas,
           Player        *player = match->GetPlayerB ();
           GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
           GooCanvasItem *image        = GetPlayerImage (player_table,
-                                                        "font_desc=\"Sans 18px\"",
+                                                        "font_desc=\"Sans 14.0px\"",
                                                         player,
                                                         "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                         "first_name", "foreground=\"darkblue\"",
