@@ -457,6 +457,7 @@ void PlayersList::SetColumn (guint           id,
   else if (desc->GetGType (look) == G_TYPE_OBJECT)
   {
     renderer = gtk_cell_renderer_pixbuf_new ();
+
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                        renderer,
                                                        "pixbuf", id*AttributeDesc::NB_LOOK + look,
@@ -958,19 +959,42 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
       }
       else
       {
-        gchar *font  = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
-        gchar *image = attr->GetUserImage (attr_layout->_look);
+        GdkPixbuf *pixbuf = attr->GetPixbuf ();
 
-        item = goo_canvas_text_new (root_item,
-                                    image,
-                                    x,
-                                    row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
-                                    -1.0,
-                                    GTK_ANCHOR_W,
-                                    "font", font,
-                                    NULL);
-        g_free (image);
-        g_free (font);
+        if (pixbuf && (attr_layout->_look == AttributeDesc::GRAPHICAL))
+        {
+          gdouble height = PRINT_FONT_HEIGHT;
+          gdouble width  = height *
+            (gdouble) gdk_pixbuf_get_width (pixbuf) / (gdouble) gdk_pixbuf_get_height (pixbuf);
+
+          item = goo_canvas_image_new (root_item,
+                                       pixbuf,
+                                       x,
+                                       row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
+                                       NULL);
+
+          g_object_set (G_OBJECT (item),
+                        "width",         width,
+                        "height",        height,
+                        "scale-to-fit",  TRUE,
+                        NULL);
+        }
+        else
+        {
+          gchar *font  = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+          gchar *image = attr->GetUserImage (attr_layout->_look);
+
+          item = goo_canvas_text_new (root_item,
+                                      image,
+                                      x,
+                                      row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
+                                      -1.0,
+                                      GTK_ANCHOR_W,
+                                      "font", font,
+                                      NULL);
+          g_free (image);
+          g_free (font);
+        }
 
         goo_canvas_item_get_bounds (item,
                                     &bounds);
