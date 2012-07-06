@@ -69,27 +69,30 @@ void PlayersList::SetFilter (Filter *filter)
 
   if (_filter)
   {
-    GSList *attr_list    = _filter->GetAttrList ();
-    guint  nb_attr       = g_slist_length (attr_list);
-    GType  types[nb_attr + 1];
+    GSList *current = _filter->GetAttrList ();
+    guint   nb_attr = g_slist_length (current);
+    GType  *types   = g_new (GType, nb_attr*AttributeDesc::NB_LOOK + 1);
 
-    for (guint i = 0; i < nb_attr; i++)
+    for (guint i = 0; current; i++)
     {
-      AttributeDesc *desc;
+      AttributeDesc *desc = (AttributeDesc *) current->data;
 
-      desc = (AttributeDesc *) g_slist_nth_data (attr_list,
-                                                 i);
-      types[i] = desc->_type;
+      types[i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT]  = desc->GetGType (AttributeDesc::LONG_TEXT);
+      types[i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT] = desc->GetGType (AttributeDesc::SHORT_TEXT);
+      types[i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL]  = desc->GetGType (AttributeDesc::GRAPHICAL);
 
       if (desc->_is_selector)
       {
         _selector_column = i;
       }
+
+      current = g_slist_next (current);
     }
 
-    types[nb_attr] = G_TYPE_INT;
+    // The player reference used in comparison
+    types[nb_attr*AttributeDesc::NB_LOOK] = G_TYPE_POINTER;
 
-    _store = gtk_list_store_newv (nb_attr+1,
+    _store = gtk_list_store_newv (nb_attr*AttributeDesc::NB_LOOK + 1,
                                   types);
 
     if (_tree_view)
@@ -100,6 +103,8 @@ void PlayersList::SetFilter (Filter *filter)
       gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
                                        _filter->GetAttributeId ("name"));
     }
+
+    g_free (types);
   }
 }
 
@@ -130,13 +135,21 @@ void PlayersList::Update (Player *player)
       attr_id->Release ();
       if (attr)
       {
-        gtk_list_store_set (_store, &iter,
-                            i, attr->GetListStoreValue (), -1);
+        attr->ListStoreSet (_store, &iter,
+                            i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
+        attr->ListStoreSet (_store, &iter,
+                            i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
+        attr->ListStoreSet (_store, &iter,
+                            i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
       }
       else
       {
-        gtk_list_store_set (_store, &iter,
-                            i, 0, -1);
+        desc->ListStoreSetDefault (_store, &iter,
+                                   i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
+        desc->ListStoreSetDefault (_store, &iter,
+                                   i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
+        desc->ListStoreSetDefault (_store, &iter,
+                                   i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
       }
       attr_list = g_slist_next (attr_list);
     }
@@ -345,16 +358,16 @@ void PlayersList::OnAttrListUpdated ()
 
   if (_filter)
   {
-    GSList *selected_list = _filter->GetSelectedAttrList ();
+    GSList *layout_list = _filter->GetLayoutList ();
 
-    while (selected_list)
+    while (layout_list)
     {
-      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+      Filter::Layout *attr_layout = (Filter::Layout *) layout_list->data;
 
-      SetColumn (_filter->GetAttributeId (selected_attr->_desc->_code_name),
-                 selected_attr->_desc,
+      SetColumn (_filter->GetAttributeId (attr_layout->_desc->_code_name),
+                 attr_layout,
                  -1);
-      selected_list = g_slist_next (selected_list);
+      layout_list = g_slist_next (layout_list);
     }
   }
 }
@@ -421,35 +434,58 @@ void PlayersList::OnDiscreteEditingStarted (GtkCellRenderer *renderer,
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::SetColumn (guint          id,
-                             AttributeDesc *desc,
-                             gint           at)
+void PlayersList::SetColumn (guint           id,
+                             Filter::Layout *attr_layout,
+                             gint            at)
 {
-  GtkTreeViewColumn *column   = NULL;
-  GtkCellRenderer   *renderer = NULL;
-  gboolean           attr_modifiable = desc->GetUIntData (this,
-                                                          "modifiable");
+  AttributeDesc       *desc = attr_layout->_desc;
+  AttributeDesc::Look  look = attr_layout->_look;
+  GtkTreeViewColumn   *column   = NULL;
+  GtkCellRenderer     *renderer = NULL;
+  gboolean             attr_modifiable = desc->GetUIntData (this,
+                                                            "modifiable");
 
   if (   (desc->_type == G_TYPE_INT)
-      && (desc->_look  & AttributeDesc::GRAPHICAL))
+      && (look & AttributeDesc::GRAPHICAL))
   {
     renderer = gtk_cell_renderer_progress_new ();
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                        renderer,
-                                                       "value", id,
-                                                       0,       NULL);
+                                                       "value", id*AttributeDesc::NB_LOOK + look,
+                                                       NULL);
   }
-  else if (   (desc->_type == G_TYPE_STRING)
-           && (desc->_look  & AttributeDesc::GRAPHICAL))
+  else if (desc->GetGType (look) == G_TYPE_OBJECT)
   {
     renderer = gtk_cell_renderer_pixbuf_new ();
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                        renderer,
-                                                       "stock-id", id,
-                                                       0,          NULL);
+                                                       "pixbuf", id*AttributeDesc::NB_LOOK + look,
+                                                       NULL);
   }
-  else if (   (desc->_type == G_TYPE_STRING)
-           || (desc->_type == G_TYPE_INT))
+  else if (   (desc->_type == G_TYPE_BOOLEAN)
+           && (look == AttributeDesc::GRAPHICAL))
+  {
+    renderer = gtk_cell_renderer_toggle_new ();
+
+    if (   (desc->_rights == AttributeDesc::PUBLIC)
+        && ((_rights & MODIFIABLE) || attr_modifiable))
+    {
+      g_object_set (renderer,
+                    "activatable", TRUE,
+                    NULL);
+      g_signal_connect (renderer,
+                        "toggled", G_CALLBACK (on_cell_toggled), this);
+      g_object_set_data (G_OBJECT (renderer),
+                         "PlayersList::SensitiveAttribute",
+                         (void *) "activatable");
+    }
+
+    column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
+                                                       renderer,
+                                                       "active", id*AttributeDesc::NB_LOOK + look,
+                                                       NULL);
+  }
+  else
   {
     if (desc->HasDiscreteValue ())
     {
@@ -486,30 +522,8 @@ void PlayersList::SetColumn (guint          id,
 
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                        renderer,
-                                                       "text", id,
-                                                       0,      NULL);
-  }
-  else if (desc->_type == G_TYPE_BOOLEAN)
-  {
-    renderer = gtk_cell_renderer_toggle_new ();
-
-    if (   (desc->_rights == AttributeDesc::PUBLIC)
-        && ((_rights & MODIFIABLE) || attr_modifiable))
-    {
-      g_object_set (renderer,
-                    "activatable", TRUE,
-                    NULL);
-      g_signal_connect (renderer,
-                        "toggled", G_CALLBACK (on_cell_toggled), this);
-      g_object_set_data (G_OBJECT (renderer),
-                         "PlayersList::SensitiveAttribute",
-                         (void *) "activatable");
-    }
-
-    column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
-                                                       renderer,
-                                                       "active", id,
-                                                       0,        NULL);
+                                                       "text", id*AttributeDesc::NB_LOOK + look,
+                                                       NULL);
   }
 
   if (renderer && column)
@@ -522,7 +536,7 @@ void PlayersList::SetColumn (guint          id,
       Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
 
       gtk_tree_view_column_set_sort_column_id (column,
-                                               id);
+                                               id*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT);
 
       if (desc->_type != G_TYPE_STRING)
       {
@@ -531,7 +545,21 @@ void PlayersList::SetColumn (guint          id,
                           &_rand_seed);
       }
       gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
-                                       id,
+                                       id*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,
+                                       (GtkTreeIterCompareFunc) CompareIterator,
+                                       attr_id,
+                                       (GDestroyNotify) Object::TryToRelease);
+
+      attr_id->Retain ();
+      gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
+                                       id*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT,
+                                       (GtkTreeIterCompareFunc) CompareIterator,
+                                       attr_id,
+                                       (GDestroyNotify) Object::TryToRelease);
+
+      attr_id->Retain ();
+      gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
+                                       id*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,
                                        (GtkTreeIterCompareFunc) CompareIterator,
                                        attr_id,
                                        (GDestroyNotify) Object::TryToRelease);
@@ -796,7 +824,7 @@ void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
     gdouble canvas_w;
     gdouble canvas_h;
 
-    _column_width = (gdouble *) g_malloc0 (g_slist_length (_filter->GetSelectedAttrList ()) * sizeof (gdouble));
+    _column_width = (gdouble *) g_malloc0 (g_slist_length (_filter->GetLayoutList ()) * sizeof (gdouble));
 
     GetPrintScale (context,
                    &_print_scale,
@@ -829,20 +857,20 @@ void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
 void PlayersList::PrintHeader (GooCanvasItem *root_item,
                                gboolean       update_column_width)
 {
-  GSList *selected_list = _filter->GetSelectedAttrList ();
-  gdouble x             = 0.0;
+  GSList *layout_list = _filter->GetLayoutList ();
+  gdouble x           = 0.0;
 
-  for (guint i = 0; selected_list != NULL; i++)
+  for (guint i = 0; layout_list != NULL; i++)
   {
-    Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+    Filter::Layout *attr_layout = (Filter::Layout *) layout_list->data;
 
-    if (selected_attr->_desc)
+    if (attr_layout->_desc)
     {
       gchar         *font = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
       GooCanvasItem *item;
 
       item = goo_canvas_text_new (root_item,
-                                  selected_attr->_desc->_user_name,
+                                  attr_layout->_desc->_user_name,
                                   x,
                                   0.0,
                                   -1.0,
@@ -873,7 +901,7 @@ void PlayersList::PrintHeader (GooCanvasItem *root_item,
       }
     }
     x += _column_width[i];
-    selected_list = g_slist_next (selected_list);
+    layout_list = g_slist_next (layout_list);
   }
 }
 
@@ -884,14 +912,14 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
                                guint            row,
                                gboolean         update_column_width)
 {
-  GSList  *selected_list = _filter->GetSelectedAttrList ();
-  gdouble  x             = 0;
+  GSList  *layout_list = _filter->GetLayoutList ();
+  gdouble  x           = 0;
 
-  for (guint j = 0; selected_list != NULL; j++)
+  for (guint j = 0; layout_list != NULL; j++)
   {
-    Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
-    Player::AttributeId  *attr_id       = Player::AttributeId::Create (selected_attr->_desc, GetDataOwner ());
-    Attribute            *attr          = player->GetAttribute (attr_id);
+    Filter::Layout      *attr_layout = (Filter::Layout *) layout_list->data;
+    Player::AttributeId *attr_id     = Player::AttributeId::Create (attr_layout->_desc, GetDataOwner ());
+    Attribute           *attr        = player->GetAttribute (attr_id);
 
     attr_id->Release ();
     if (attr)
@@ -899,7 +927,7 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
       GooCanvasItem   *item;
       GooCanvasBounds  bounds;
 
-      if (selected_attr->_desc->_type == G_TYPE_BOOLEAN)
+      if (attr_layout->_desc->_type == G_TYPE_BOOLEAN)
       {
         if (attr->GetUIntValue () != 0)
         {
@@ -968,7 +996,7 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
       }
     }
     x += _column_width[j];
-    selected_list = g_slist_next (selected_list);
+    layout_list = g_slist_next (layout_list);
   }
 }
 
@@ -1008,7 +1036,7 @@ void PlayersList::GetPrintScale (GtkPrintContext *context,
     {
       *canvas_w = 0;
 
-      for (guint i = 0; i < g_slist_length (_filter->GetSelectedAttrList ()); i++)
+      for (guint i = 0; i < g_slist_length (_filter->GetLayoutList ()); i++)
       {
         *canvas_w += _column_width[i];
       }

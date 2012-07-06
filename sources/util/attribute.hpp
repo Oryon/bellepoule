@@ -78,7 +78,7 @@ class AttributeDesc : public Object
     Persistency   _persistency;
     Scope         _scope;
     Uniqueness    _uniqueness;
-    Look          _look;
+    Look          _favorite_look;
     gboolean      _free_value_allowed;
     Rights        _rights;
     GCompareFunc  _compare_func;
@@ -126,14 +126,23 @@ class AttributeDesc : public Object
 
     gchar *GetXmlImage (gchar *user_image);
 
-    gchar *GetUserImage (gchar *xml_image);
+    gchar *GetUserImage (gchar *xml_image,
+                         Look   look);
 
-    gchar *GetUserImage (GtkTreeIter *iter);
+    gchar *GetUserImage (GtkTreeIter *iter,
+                         Look         look);
 
     gchar *GetXmlImage (GtkTreeIter *iter);
 
     static void Refilter (GtkComboBox *selector,
                           void        *data);
+
+    void ListStoreSetDefault (GtkListStore        *store,
+                              GtkTreeIter         *iter,
+                              gint                 column,
+                              AttributeDesc::Look  look);
+
+    GType GetGType (Look look);
 
   private:
     static GSList *_list;
@@ -192,13 +201,16 @@ class Attribute : public Object
 
     virtual gboolean EntryIsTextBased () = 0;
 
-    virtual gchar *GetUserImage () = 0;
+    virtual gchar *GetUserImage (AttributeDesc::Look look = AttributeDesc::LONG_TEXT) = 0;
 
     virtual gchar *GetXmlImage () = 0;
 
     virtual GdkPixbuf *GetPixbuf () = 0;
 
-    virtual void *GetListStoreValue () = 0;
+    virtual void ListStoreSet (GtkListStore        *store,
+                               GtkTreeIter         *iter,
+                               gint                 column,
+                               AttributeDesc::Look  look) = 0;
 
     virtual gint CompareWith (Attribute *with) = 0;
 
@@ -230,13 +242,16 @@ class TextAttribute : public Attribute
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetUserImage ();
+    gchar *GetUserImage (AttributeDesc::Look look = AttributeDesc::LONG_TEXT);
 
     gchar *GetXmlImage ();
 
     GdkPixbuf *GetPixbuf ();
 
-    void *GetListStoreValue ();
+    void ListStoreSet (GtkListStore        *store,
+                       GtkTreeIter         *iter,
+                       gint                 column,
+                       AttributeDesc::Look  look);
 
     gint CompareWith (Attribute *with);
 
@@ -263,13 +278,16 @@ class BooleanAttribute : public Attribute
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetUserImage ();
+    gchar *GetUserImage (AttributeDesc::Look look = AttributeDesc::LONG_TEXT);
 
     gchar *GetXmlImage ();
 
     GdkPixbuf *GetPixbuf ();
 
-    void *GetListStoreValue ();
+    void ListStoreSet (GtkListStore        *store,
+                       GtkTreeIter         *iter,
+                       gint                 column,
+                       AttributeDesc::Look  look);
 
     gint CompareWith (Attribute *with);
 
@@ -297,13 +315,16 @@ class IntAttribute : public Attribute
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetUserImage ();
+    gchar *GetUserImage (AttributeDesc::Look look = AttributeDesc::LONG_TEXT);
 
     gchar *GetXmlImage ();
 
     GdkPixbuf *GetPixbuf ();
 
-    void *GetListStoreValue ();
+    void ListStoreSet (GtkListStore        *store,
+                       GtkTreeIter         *iter,
+                       gint                 column,
+                       AttributeDesc::Look  look);
 
     gint CompareWith (Attribute *with);
 

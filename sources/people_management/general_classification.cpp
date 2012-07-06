@@ -204,7 +204,7 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
                                                        GTK_RESPONSE_ACCEPT,
                                                        NULL));
     gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
-                                                    true);
+                                                    TRUE);
     {
       char *name = _contest->GetDefaultFileName ();
 

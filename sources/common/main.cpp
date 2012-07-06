@@ -219,10 +219,12 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValueSelector ("countries");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
     desc->AddLocalizedDiscreteValues ("ligues");
+    desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
@@ -235,7 +237,7 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "participation_rate", "Activite", gettext ("rate"));
     desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
-    desc->_look           = AttributeDesc::GRAPHICAL;
+    desc->_favorite_look  = AttributeDesc::GRAPHICAL;
     desc->_rights         = AttributeDesc::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "level", "Categorie", gettext ("level"));
@@ -249,10 +251,12 @@ int main (int argc, char **argv)
     desc->_compare_func = (GCompareFunc) CompareRanking;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
-    desc->_uniqueness  = AttributeDesc::NOT_SINGULAR;
-    desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+    desc->_uniqueness    = AttributeDesc::NOT_SINGULAR;
+    desc->_favorite_look = AttributeDesc::GRAPHICAL;
+    desc->_persistency   = AttributeDesc::NOT_PERSISTENT;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "exported", "Exporte", gettext ("exported"));
+    desc->_favorite_look = AttributeDesc::GRAPHICAL;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
     desc->_scope  = AttributeDesc::GLOBAL;
@@ -303,10 +307,10 @@ int main (int argc, char **argv)
       desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
       desc->_rights         = AttributeDesc::PRIVATE;
       desc->_scope          = AttributeDesc::GLOBAL;
-      desc->_look           = AttributeDesc::GRAPHICAL;
-      desc->AddDiscreteValues ("Busy",   (gchar *) GTK_STOCK_EXECUTE, "",
-                               "Absent", (gchar *) GTK_STOCK_CLOSE,   "",
-                               "Free",   (gchar *) GTK_STOCK_APPLY,   "", NULL);
+      desc->_favorite_look  = AttributeDesc::GRAPHICAL;
+      desc->AddDiscreteValues ("Busy",   gettext ("Busy"),   (gchar *) GTK_STOCK_EXECUTE,
+                               "Absent", gettext ("Absent"), (gchar *) GTK_STOCK_CLOSE,
+                               "Free",   gettext ("Free"),   (gchar *) GTK_STOCK_APPLY, NULL);
 
     }
   }

@@ -38,15 +38,12 @@ Form::Form (Filter             *filter,
   _filter->Retain ();
 
   {
-    GSList      *filter_list = _filter->GetAttrList ();
+    GSList      *current     = _filter->GetAttrList ();
     GtkComboBox *selector_w  = NULL;
 
-    for (guint i = 0; i < g_slist_length (filter_list); i++)
+    while (current)
     {
-      AttributeDesc *attr_desc;
-
-      attr_desc = (AttributeDesc *) g_slist_nth_data (filter_list,
-                                                      i);
+      AttributeDesc *attr_desc = (AttributeDesc *) current->data;
 
       if (attr_desc->_rights == AttributeDesc::PUBLIC)
       {
@@ -179,6 +176,7 @@ Form::Form (Filter             *filter,
           }
         }
       }
+      current = g_slist_next (current);
     }
   }
 }

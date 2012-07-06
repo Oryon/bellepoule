@@ -1379,9 +1379,9 @@ void Pool::RefreshScoreData ()
           _is_over = FALSE;
         }
 
-        if (   (score_a->IsValid () == false)
-               || (score_b->IsValid () == false)
-               || (score_a->IsConsistentWith (score_b) == false))
+        if (   (score_a->IsValid () == FALSE)
+               || (score_b->IsValid () == FALSE)
+               || (score_a->IsConsistentWith (score_b) == FALSE))
         {
           _is_over   = FALSE;
           _has_error = TRUE;
@@ -1947,9 +1947,9 @@ void Pool::Load (xmlNode *xml_node,
               Score *score_A = match->GetScore (player_A);
               Score *score_B = match->GetScore (player_B);
 
-              if (   (score_A->IsValid () == false)
-                     || (score_B->IsValid () == false)
-                     || (score_A->IsConsistentWith (score_B) == false))
+              if (   (score_A->IsValid () == FALSE)
+                     || (score_B->IsValid () == FALSE)
+                     || (score_A->IsConsistentWith (score_B) == FALSE))
               {
                 _has_error = TRUE;
                 _is_over   = FALSE;

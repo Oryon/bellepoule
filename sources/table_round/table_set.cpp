@@ -3289,21 +3289,21 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
 
   if (floating_object)
   {
-    Player *player        = (Player *) floating_object;
-    GSList *selected_list = NULL;
+    Player *player      = (Player *) floating_object;
+    GSList *layout_list = NULL;
 
     if (_filter)
     {
-      selected_list = _filter->GetSelectedAttrList ();
+      layout_list = _filter->GetLayoutList ();
     }
 
-    while (selected_list)
+    while (layout_list)
     {
-      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+      Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;
       Attribute            *attr;
       Player::AttributeId  *attr_id;
 
-      attr_id = Player::AttributeId::Create (selected_attr->_desc, this);
+      attr_id = Player::AttributeId::Create (attr_layout->_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
@@ -3317,7 +3317,7 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
                                   "  ");
         g_free (image);
       }
-      selected_list = g_slist_next (selected_list);
+      layout_list = g_slist_next (layout_list);
     }
   }
 

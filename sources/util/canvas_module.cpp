@@ -163,37 +163,39 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
 
   if (player)
   {
-    GSList *selected_list = NULL;
+    GSList *layout_list = NULL;
 
     if (_filter)
     {
-      selected_list = _filter->GetSelectedAttrList ();
+      layout_list = _filter->GetLayoutList ();
     }
 
-    for (guint a = 0; selected_list != NULL; a++)
+    for (guint a = 0; layout_list != NULL; a++)
     {
-      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;;
+      Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;;
       Attribute            *attr;
       Player::AttributeId  *attr_id;
 
-      if (selected_attr->_desc->_scope == AttributeDesc::LOCAL)
+      if (attr_layout->_desc->_scope == AttributeDesc::LOCAL)
       {
-        attr_id = new Player::AttributeId (selected_attr->_desc->_code_name,
+        attr_id = new Player::AttributeId (attr_layout->_desc->_code_name,
                                            GetDataOwner ());
       }
       else
       {
-        attr_id = new Player::AttributeId (selected_attr->_desc->_code_name);
+        attr_id = new Player::AttributeId (attr_layout->_desc->_code_name);
       }
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
       if (attr)
       {
-        if (selected_attr->_look == AttributeDesc::GRAPHICAL)
+        GdkPixbuf *pixbuf = attr->GetPixbuf ();
+
+        if (pixbuf && (attr_layout->_look == AttributeDesc::GRAPHICAL))
         {
           GooCanvasItem *pix_item = Canvas::PutPixbufInTable (table_item,
-                                                              attr->GetPixbuf (),
+                                                              pixbuf,
                                                               0,
                                                               a);
           if (common_markup && (common_markup[0] != 0))
@@ -222,10 +224,12 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
                 (gdouble) gdk_pixbuf_get_width (attr->GetPixbuf ()) / (gdouble) gdk_pixbuf_get_height (attr->GetPixbuf ());
 
               g_object_set (G_OBJECT (pix_item),
-                            "width",        width,
-                            "height",       height,
-                            "scale-to-fit", TRUE,
+                            "width",         width,
+                            "height",        height,
+                            "scale-to-fit",  TRUE,
                             NULL);
+              Canvas::SetTableItemAttribute (pix_item,
+                                             "right-padding", height/2.0);
               g_free (word);
             }
             g_match_info_free (match_info);
@@ -249,7 +253,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
             va_start (ap, player);
             for (guint i = 0; (pango_arg = va_arg (ap, char *)); i++)
             {
-              if (strcmp (pango_arg, selected_attr->_desc->_code_name) == 0)
+              if (strcmp (pango_arg, attr_layout->_desc->_code_name) == 0)
               {
                 image = g_string_append (image,
                                          va_arg (ap, char *));
@@ -292,7 +296,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
         }
       }
 
-      selected_list = g_slist_next (selected_list);
+      layout_list = g_slist_next (layout_list);
     }
   }
 

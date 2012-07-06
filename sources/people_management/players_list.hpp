@@ -91,9 +91,9 @@ class PlayersList : public Module
     gint          _selector_column;
     gdouble      *_column_width;
 
-    void SetColumn (guint          id,
-                    AttributeDesc *desc,
-                    gint           at);
+    void SetColumn (guint           id,
+                    Filter::Layout *attr_layout,
+                    gint            at);
 
     GtkTreeRowReference *GetPlayerRowRef (GtkTreeIter *iter);
 
