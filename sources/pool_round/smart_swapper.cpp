@@ -303,7 +303,7 @@ void SmartSwapper::LookUpDistribution (GSList *fencer_list)
 
         if (criteria_attr)
         {
-          gchar *user_image = criteria_attr->GetUserImage ();
+          gchar *user_image = criteria_attr->GetUserImage (AttributeDesc::LONG_TEXT);
 
           quark = g_quark_from_string (user_image);
 

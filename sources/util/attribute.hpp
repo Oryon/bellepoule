@@ -201,7 +201,7 @@ class Attribute : public Object
 
     virtual gboolean EntryIsTextBased () = 0;
 
-    virtual gchar *GetUserImage (AttributeDesc::Look look = AttributeDesc::LONG_TEXT) = 0;
+    virtual gchar *GetUserImage (AttributeDesc::Look look) = 0;
 
     virtual gchar *GetXmlImage () = 0;
 
@@ -242,7 +242,7 @@ class TextAttribute : public Attribute
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetUserImage (AttributeDesc::Look look = AttributeDesc::LONG_TEXT);
+    gchar *GetUserImage (AttributeDesc::Look look);
 
     gchar *GetXmlImage ();
 
@@ -278,7 +278,7 @@ class BooleanAttribute : public Attribute
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetUserImage (AttributeDesc::Look look = AttributeDesc::LONG_TEXT);
+    gchar *GetUserImage (AttributeDesc::Look look);
 
     gchar *GetXmlImage ();
 
@@ -315,7 +315,7 @@ class IntAttribute : public Attribute
 
     gboolean EntryIsTextBased ();
 
-    gchar *GetUserImage (AttributeDesc::Look look = AttributeDesc::LONG_TEXT);
+    gchar *GetUserImage (AttributeDesc::Look look);
 
     gchar *GetXmlImage ();
 

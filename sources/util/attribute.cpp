@@ -1074,7 +1074,15 @@ gchar *TextAttribute::GetUserImage (AttributeDesc::Look look)
   }
   else
   {
-    return g_strdup (_value);
+    if (look == AttributeDesc::SHORT_TEXT)
+    {
+      return g_strndup (_value,
+                        3);
+    }
+    else
+    {
+      return g_strdup (_value);
+    }
   }
 }
 

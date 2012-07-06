@@ -343,7 +343,7 @@ GString *PoolAllocator::GetFloatingImage (Object *floating_object)
 
       if (attr)
       {
-        gchar *image = attr->GetUserImage ();
+        gchar *image = attr->GetUserImage (attr_layout->_look);
 
         string = g_string_append (string,
                                   image);
@@ -1274,7 +1274,7 @@ void PoolAllocator::DisplayPlayer (Player        *player,
 
       if (attr)
       {
-        gchar *image = attr->GetUserImage ();
+        gchar *image = attr->GetUserImage (attr_layout->_look);
 
         item = Canvas::PutTextInTable (table,
                                        image,

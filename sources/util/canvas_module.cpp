@@ -238,7 +238,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
         }
         else
         {
-          gchar    *attr_image = attr->GetUserImage ();
+          gchar    *attr_image = attr->GetUserImage (attr_layout->_look);
           GString  *image;
           gboolean  arg_found = FALSE;
 

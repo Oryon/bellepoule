@@ -130,7 +130,7 @@ void Classification::DumpToCSV (gchar  *filename,
 
             if (attr)
             {
-              gchar *image = attr->GetUserImage ();
+              gchar *image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
 
               fprintf (file, "%s", image);
               g_free (image);

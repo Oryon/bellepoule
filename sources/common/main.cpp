@@ -223,9 +223,9 @@ int main (int argc, char **argv)
     desc->AddDiscreteValueSelector ("countries");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
-    desc->AddLocalizedDiscreteValues ("ligues");
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->AddLocalizedDiscreteValues ("ligues");
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;

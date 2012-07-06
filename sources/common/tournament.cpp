@@ -362,7 +362,7 @@ void Tournament::OnDrawPage (GtkPrintOperation *operation,
               gchar               *font   = g_strdup_printf ("Sans Bold %fpx", 2*PRINT_FONT_HEIGHT);
               Player::AttributeId  attr_id ("name");
               Attribute           *attr   = referee->GetAttribute (&attr_id);
-              gchar               *string = attr->GetUserImage ();
+              gchar               *string = attr->GetUserImage (AttributeDesc::LONG_TEXT);
 
               Canvas::NormalyzeDecimalNotation (font);
               item = Canvas::PutTextInTable (name_table,
@@ -383,7 +383,7 @@ void Tournament::OnDrawPage (GtkPrintOperation *operation,
               gchar               *font   = g_strdup_printf ("Sans %fpx", 1.5*PRINT_FONT_HEIGHT);
               Player::AttributeId  attr_id ("first_name");
               Attribute           *attr   = referee->GetAttribute (&attr_id);
-              gchar               *string = attr->GetUserImage ();
+              gchar               *string = attr->GetUserImage (AttributeDesc::LONG_TEXT);
 
               Canvas::NormalyzeDecimalNotation (font);
               item = Canvas::PutTextInTable (name_table,
@@ -525,7 +525,7 @@ void Tournament::OnDrawPage (GtkPrintOperation *operation,
 
           if (attr)
           {
-            string = attr->GetUserImage ();
+            string = attr->GetUserImage (AttributeDesc::LONG_TEXT);
           }
           else
           {

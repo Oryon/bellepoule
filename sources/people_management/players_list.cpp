@@ -959,7 +959,7 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
       else
       {
         gchar *font  = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
-        gchar *image = attr->GetUserImage ();
+        gchar *image = attr->GetUserImage (attr_layout->_look);
 
         item = goo_canvas_text_new (root_item,
                                     image,

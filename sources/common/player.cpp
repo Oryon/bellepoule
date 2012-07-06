@@ -516,7 +516,7 @@ gchar *Player::GetName ()
   Player::AttributeId  attr_id ("name");
   Attribute           *attr = GetAttribute (&attr_id);
 
-  return attr->GetUserImage ();
+  return attr->GetUserImage (AttributeDesc::LONG_TEXT);
 }
 
 // --------------------------------------------------------------------------------
