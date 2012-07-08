@@ -334,16 +334,16 @@ void ScoreCollector::SetMatchColor (Match *match,
     Score         *score_A = match->GetScore (A);
     Score         *score_B = match->GetScore (B);
 
-    if (score_A->IsValid () == false)
+    if (score_A->IsValid () == FALSE)
     {
       color_A = unconsitentcolor;
     }
-    if (score_B->IsValid () == false)
+    if (score_B->IsValid () == FALSE)
     {
       color_B = unconsitentcolor;
     }
 
-    if (score_A->IsConsistentWith (score_B) == false)
+    if (score_A->IsConsistentWith (score_B) == FALSE)
     {
       color_A = unconsitentcolor;
       color_B = unconsitentcolor;

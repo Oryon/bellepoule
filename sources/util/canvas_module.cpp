@@ -154,6 +154,7 @@ void CanvasModule::RestoreZoomFactor (GtkScale *scale)
 
 // --------------------------------------------------------------------------------
 GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
+                                             const gchar   *common_markup,
                                              Player        *player,
                                              ...)
 {
@@ -162,44 +163,88 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
 
   if (player)
   {
-    GSList *selected_list = NULL;
+    GSList *layout_list = NULL;
 
     if (_filter)
     {
-      selected_list = _filter->GetSelectedAttrList ();
+      layout_list = _filter->GetLayoutList ();
     }
 
-    for (guint a = 0; selected_list != NULL; a++)
+    for (guint a = 0; layout_list != NULL; a++)
     {
-      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;;
+      Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;;
       Attribute            *attr;
       Player::AttributeId  *attr_id;
 
-      if (selected_attr->_desc->_scope == AttributeDesc::LOCAL)
+      if (attr_layout->_desc->_scope == AttributeDesc::LOCAL)
       {
-        attr_id = new Player::AttributeId (selected_attr->_desc->_code_name,
+        attr_id = new Player::AttributeId (attr_layout->_desc->_code_name,
                                            GetDataOwner ());
       }
       else
       {
-        attr_id = new Player::AttributeId (selected_attr->_desc->_code_name);
+        attr_id = new Player::AttributeId (attr_layout->_desc->_code_name);
       }
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
       if (attr)
       {
-        if (selected_attr->_look == AttributeDesc::GRAPHICAL)
+        GdkPixbuf *pixbuf = attr->GetPixbuf ();
+
+        if (pixbuf && (attr_layout->_look == AttributeDesc::GRAPHICAL))
         {
-          Canvas::PutPixbufInTable (table_item,
-                                    attr->GetPixbuf (),
-                                    0,
-                                    a);
+          GooCanvasItem *pix_item = Canvas::PutPixbufInTable (table_item,
+                                                              pixbuf,
+                                                              0,
+                                                              a);
+          if (common_markup && (common_markup[0] != 0))
+          {
+            GRegex     *regex;
+            GMatchInfo *match_info;
+
+            regex = g_regex_new ("[0-9]+\\.[0-9]+px",
+                                 GRegexCompileFlags (0),
+                                 GRegexMatchFlags (0),
+                                 NULL);
+            g_regex_match (regex,
+                           common_markup,
+                           GRegexMatchFlags (0),
+                           &match_info);
+
+            if (g_match_info_matches (match_info))
+            {
+              gchar   *word    = g_match_info_fetch (match_info, 0);
+              gdouble  width;
+              gdouble  height;
+
+              height = g_ascii_strtod (word,
+                                       NULL);
+              width = height *
+                (gdouble) gdk_pixbuf_get_width (attr->GetPixbuf ()) / (gdouble) gdk_pixbuf_get_height (attr->GetPixbuf ());
+
+              g_object_set (G_OBJECT (pix_item),
+                            "width",         width,
+                            "height",        height,
+                            "scale-to-fit",  TRUE,
+                            NULL);
+              Canvas::SetTableItemAttribute (pix_item,
+                                             "right-padding", height/2.0);
+              g_free (word);
+            }
+            g_match_info_free (match_info);
+            g_regex_unref (regex);
+          }
         }
         else
         {
-          gchar   *attr_image = attr->GetUserImage ();
-          GString *image      = NULL;
+          gchar    *attr_image = attr->GetUserImage (attr_layout->_look);
+          GString  *image;
+          gboolean  arg_found = FALSE;
+
+          image = g_string_new    ("<span ");
+          image = g_string_append (image,
+                                   common_markup);
 
           {
             va_list  ap;
@@ -208,26 +253,30 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
             va_start (ap, player);
             for (guint i = 0; (pango_arg = va_arg (ap, char *)); i++)
             {
-              if (strcmp (pango_arg, selected_attr->_desc->_code_name) == 0)
+              if (strcmp (pango_arg, attr_layout->_desc->_code_name) == 0)
               {
-                image = g_string_new (va_arg (ap, char *));
                 image = g_string_append (image,
-                                         attr_image);
+                                         va_arg (ap, char *));
                 image = g_string_append (image,
-                                         "\302\240\302\240");
-                image = g_string_append (image,
-                                         "</span>");
+                                         ">");
+                arg_found = TRUE;
                 break;
               }
             }
             va_end (ap);
           }
-          if (image == NULL)
+          if (arg_found == FALSE)
           {
-            image = g_string_new (attr_image);
             image = g_string_append (image,
-                                     "\302\240\302\240");
+                                     ">");
           }
+
+          image = g_string_append (image,
+                                   attr_image);
+          image = g_string_append (image,
+                                   "\302\240\302\240");
+          image = g_string_append (image,
+                                   "</span>");
 
           {
             GooCanvasItem *item = Canvas::PutTextInTable (table_item,
@@ -247,7 +296,7 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
         }
       }
 
-      selected_list = g_slist_next (selected_list);
+      layout_list = g_slist_next (layout_list);
     }
   }
 

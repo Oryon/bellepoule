@@ -27,7 +27,7 @@ class Module;
 class Filter : public virtual Object
 {
   public:
-    struct SelectedAttr
+    struct Layout
     {
       AttributeDesc::Look  _look;
       AttributeDesc       *_desc;
@@ -44,7 +44,7 @@ class Filter : public virtual Object
 
     GSList *GetAttrList ();
 
-    GSList *GetSelectedAttrList ();
+    GSList *GetLayoutList ();
 
     guint GetAttributeId (const gchar *name);
 

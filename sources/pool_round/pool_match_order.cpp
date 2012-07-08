@@ -1516,7 +1516,7 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
         criteria_attr = fencer->GetAttribute (affinity);
         if (criteria_attr)
         {
-          GQuark  quark = g_quark_from_string (criteria_attr->GetUserImage ());
+          GQuark  quark = g_quark_from_string (criteria_attr->GetUserImage (AttributeDesc::LONG_TEXT));
           GSList *affinity_list;
 
           affinity_list = (GSList *) g_hash_table_lookup (affinity_distribution,

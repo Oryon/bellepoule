@@ -64,7 +64,7 @@
 			<Add directory="C:\MinGW\include\pango-1.0" />
 			<Add directory="C:\MinGW\lib\gtk-2.0\include" />
 			<Add directory="C:\MinGW\include\atk-1.0" />
-			<Add directory="C:\MinGW\include\goocanvas-0.15\goocanvas" />
+			<Add directory="C:\MinGW\include\goocanvas-1.0.0\goocanvas" />
 			<Add directory="sources\soap\output" />
 			<Add directory="sources\soap\soap" />
 			<Add directory="sources" />

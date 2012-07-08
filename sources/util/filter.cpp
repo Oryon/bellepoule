@@ -76,8 +76,8 @@ Filter::Filter (GSList *attr_list,
                           ATTR_USER_NAME,  desc->_user_name,
                           ATTR_XML_NAME,   desc->_code_name,
                           ATTR_VISIBILITY, FALSE,
-                          ATTR_LOOK_IMAGE, gettext (look_image[AttributeDesc::LONG_TEXT]),
-                          ATTR_LOOK_VALUE, 0,
+                          ATTR_LOOK_IMAGE, gettext (look_image[desc->_favorite_look]),
+                          ATTR_LOOK_VALUE, desc->_favorite_look,
                           -1);
       current = g_slist_next (current);
     }
@@ -146,7 +146,7 @@ GSList *Filter::GetAttrList ()
 }
 
 // --------------------------------------------------------------------------------
-GSList *Filter::GetSelectedAttrList ()
+GSList *Filter::GetLayoutList ()
 {
   return _selected_list;
 }
@@ -183,7 +183,7 @@ void Filter::ShowAttribute (const gchar *name)
 
     if (strcmp (current_name, name) == 0)
     {
-      SelectedAttr *selected_attr = new SelectedAttr ();
+      Layout *attr_layout = new Layout ();
 
       gtk_list_store_set (GTK_LIST_STORE (_attr_filter_store),
                           &iter,
@@ -192,10 +192,10 @@ void Filter::ShowAttribute (const gchar *name)
                                   &iter,
                                   sibling);
 
-      selected_attr->_look = AttributeDesc::LONG_TEXT;;
-      selected_attr->_desc = AttributeDesc::GetDescFromCodeName (current_name);
+      attr_layout->_desc = AttributeDesc::GetDescFromCodeName (current_name);
+      attr_layout->_look = attr_layout->_desc->_favorite_look;
       _selected_list = g_slist_append (_selected_list,
-                                       selected_attr);
+                                       attr_layout);
       break;
     }
 
@@ -329,12 +329,12 @@ void Filter::UpdateAttrList ()
 
       if (current_visibility == TRUE)
       {
-        SelectedAttr *selected_attr = new SelectedAttr ();
+        Layout *attr_layout = new Layout ();
 
-        selected_attr->_look = curent_look;
-        selected_attr->_desc = AttributeDesc::GetDescFromCodeName (current_name);
+        attr_layout->_look = curent_look;
+        attr_layout->_desc = AttributeDesc::GetDescFromCodeName (current_name);
         _selected_list = g_slist_append (_selected_list,
-                                         selected_attr);
+                                         attr_layout);
       }
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_attr_filter_store),
@@ -356,6 +356,7 @@ void Filter::OnVisibilityToggled (GtkCellRendererToggle *cell,
   {
     GtkTreePath *path      = gtk_tree_path_new_from_string (path_string);
     gboolean     is_active = gtk_cell_renderer_toggle_get_active (cell);
+    gboolean     visibility;
     GtkTreeIter  iter;
 
     gtk_tree_model_get_iter (GTK_TREE_MODEL (filter->_attr_filter_store),
@@ -363,9 +364,18 @@ void Filter::OnVisibilityToggled (GtkCellRendererToggle *cell,
                              path);
     gtk_tree_path_free (path);
 
+    if (is_active)
+    {
+      visibility = FALSE;
+    }
+    else
+    {
+      visibility = TRUE;
+    }
     gtk_list_store_set (GTK_LIST_STORE (filter->_attr_filter_store),
                         &iter,
-                        ATTR_VISIBILITY, !is_active, -1);
+                        ATTR_VISIBILITY, visibility,
+                        -1);
   }
 
   filter->UpdateAttrList ();

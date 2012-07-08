@@ -136,7 +136,7 @@ Source: "..\resources\glade\*.glade"; DestDir: "{app}\share\BellePoule\resources
 Source: "..\resources\countries\*"; DestDir: "{app}\share\BellePoule\resources\countries\"; Flags: ignoreversion recursesubdirs
 Source: "..\resources\exe.ico"; DestDir: "{app}\share\BellePoule\resources\"; Flags: ignoreversion
 
-Source: "..\resources\data\*"; DestDir: "{app}\share\BellePoule\resources\data\"; Flags: ignoreversion  recursesubdirs
+Source: "..\resources\localized_data\*"; DestDir: "{app}\share\BellePoule\resources\localized_data\"; Flags: ignoreversion  recursesubdirs
 
 ; GTK+ dependencies
 ; DLL

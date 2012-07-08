@@ -1125,18 +1125,19 @@ gboolean TableSet::FillInNode (GNode    *node,
     if (winner)
     {
       GooCanvasItem *image = table_set->GetPlayerImage (data->_fencer_goo_table,
+                                                        "font_desc=\"Sans 14.0px\"",
                                                         winner,
-                                                        "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                                        "first_name", "<span foreground=\"darkblue\">",
-                                                        "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                        "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                        "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                                                        "first_name", "foreground=\"darkblue\"",
+                                                        "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                        "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                        "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                                         NULL);
       Canvas::PutInTable (data->_fencer_goo_table,
                           image,
                           0,
                           1);
-      Canvas::SetTableItemAttribute (image, "y-align", 0.5);
+      Canvas::SetTableItemAttribute (image, "y-align", 1.0);
       Canvas::SetTableItemAttribute (image, "x-align", 0.0);
       Canvas::SetTableItemAttribute (image, "x-fill", 1u);
     }
@@ -2742,7 +2743,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
             }
           }
 
-          Canvas::VAlign (referee_group,
+          Canvas::HAlign (referee_group,
                           Canvas::START,
                           name_item,
                           Canvas::START);
@@ -2765,7 +2766,7 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
                                "font", font,
                                NULL);
 
-          Canvas::VAlign (strip_group,
+          Canvas::HAlign (strip_group,
                           Canvas::START,
                           referee_group,
                           Canvas::START);
@@ -2794,8 +2795,8 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
           Canvas::Anchor (match_table,
                           title_group,
                           NULL,
-                          80);
-          Canvas::HAlign (match_table,
+                          10);
+          Canvas::VAlign (match_table,
                           Canvas::START,
                           title_group,
                           Canvas::START);
@@ -2850,19 +2851,25 @@ void TableSet::DrawPlayerMatch (GooCanvasItem *table,
 {
   // Name
   {
+    gchar *common_markup = g_strdup_printf ("font_desc=\"Sans %fpx\"", PRINT_FONT_HEIGHT);
+
+    Canvas::NormalyzeDecimalNotation (common_markup);
+
     GooCanvasItem *image = GetPlayerImage (table,
+                                           common_markup,
                                            player,
-                                           "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                           "first_name", "<span foreground=\"darkblue\">",
-                                           "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                           "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                           "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                           "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                                           "first_name", "foreground=\"darkblue\"",
+                                           "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                           "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                           "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                            NULL);
     Canvas::PutInTable (table,
                         image,
                         row,
                         0);
     Canvas::SetTableItemAttribute (image, "y-align", 0.5);
+    g_free (common_markup);
   }
 
   // Score
@@ -3282,27 +3289,27 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
 
   if (floating_object)
   {
-    Player *player        = (Player *) floating_object;
-    GSList *selected_list = NULL;
+    Player *player      = (Player *) floating_object;
+    GSList *layout_list = NULL;
 
     if (_filter)
     {
-      selected_list = _filter->GetSelectedAttrList ();
+      layout_list = _filter->GetLayoutList ();
     }
 
-    while (selected_list)
+    while (layout_list)
     {
-      Filter::SelectedAttr *selected_attr = (Filter::SelectedAttr *) selected_list->data;
+      Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;
       Attribute            *attr;
       Player::AttributeId  *attr_id;
 
-      attr_id = Player::AttributeId::Create (selected_attr->_desc, this);
+      attr_id = Player::AttributeId::Create (attr_layout->_desc, this);
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
       if (attr)
       {
-        gchar *image = attr->GetUserImage ();
+        gchar *image = attr->GetUserImage (attr_layout->_look);
 
         string = g_string_append (string,
                                   image);
@@ -3310,7 +3317,7 @@ GString *TableSet::GetFloatingImage (Object *floating_object)
                                   "  ");
         g_free (image);
       }
-      selected_list = g_slist_next (selected_list);
+      layout_list = g_slist_next (layout_list);
     }
   }
 

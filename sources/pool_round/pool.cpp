@@ -623,12 +623,13 @@ void Pool::Draw (GooCanvas *on_canvas,
         x = - 5;
         y = cell_h / 2 + i * cell_h;
         image = GetPlayerImage (player_table,
+                                "font_desc=\"Sans 14.0px\"",
                                 GetPlayer (i, _sorted_fencer_list),
-                                "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                "first_name", "<span foreground=\"darkblue\">",
-                                "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                                "first_name", "foreground=\"darkblue\"",
+                                "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                 NULL);
 
         {
@@ -642,7 +643,6 @@ void Pool::Draw (GooCanvas *on_canvas,
           g_object_set (G_OBJECT (text_item),
                         "ellipsize", PANGO_ELLIPSIZE_NONE,
                         "wrap",      PANGO_WRAP_CHAR,
-                        "font",      "Sans 18px",
                         NULL);
           g_free (index);
         }
@@ -925,7 +925,11 @@ void Pool::Draw (GooCanvas *on_canvas,
       GooCanvasItem *text_item;
       guint          nb_column;
 
-      if (nb_players < 12)
+      if (nb_players < 8)
+      {
+        nb_column = 2;
+      }
+      else if (nb_players < 12)
       {
         nb_column = 3;
       }
@@ -965,12 +969,13 @@ void Pool::Draw (GooCanvas *on_canvas,
           Player *player              = match->GetPlayerA ();
           GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
           GooCanvasItem *image = GetPlayerImage (player_table,
+                                                 "font_desc=\"Sans 14.0px\"",
                                                  player,
-                                                 "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                                 "first_name", "<span foreground=\"darkblue\">",
-                                                 "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                 "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                 "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                 "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                                                 "first_name", "foreground=\"darkblue\"",
+                                                 "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                 "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                 "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                                  NULL);
 
           {
@@ -1016,12 +1021,13 @@ void Pool::Draw (GooCanvas *on_canvas,
           Player        *player = match->GetPlayerB ();
           GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
           GooCanvasItem *image        = GetPlayerImage (player_table,
+                                                        "font_desc=\"Sans 14.0px\"",
                                                         player,
-                                                        "name",       "<span font_weight=\"bold\" foreground=\"darkblue\">",
-                                                        "first_name", "<span foreground=\"darkblue\">",
-                                                        "club",       "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                        "league",     "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
-                                                        "country",    "<span style=\"italic\" size=\"x-small\" foreground=\"dimgrey\">",
+                                                        "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
+                                                        "first_name", "foreground=\"darkblue\"",
+                                                        "club",       "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                        "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
+                                                        "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                                         NULL);
 
           {
@@ -1373,9 +1379,9 @@ void Pool::RefreshScoreData ()
           _is_over = FALSE;
         }
 
-        if (   (score_a->IsValid () == false)
-               || (score_b->IsValid () == false)
-               || (score_a->IsConsistentWith (score_b) == false))
+        if (   (score_a->IsValid () == FALSE)
+               || (score_b->IsValid () == FALSE)
+               || (score_a->IsConsistentWith (score_b) == FALSE))
         {
           _is_over   = FALSE;
           _has_error = TRUE;
@@ -1941,9 +1947,9 @@ void Pool::Load (xmlNode *xml_node,
               Score *score_A = match->GetScore (player_A);
               Score *score_B = match->GetScore (player_B);
 
-              if (   (score_A->IsValid () == false)
-                     || (score_B->IsValid () == false)
-                     || (score_A->IsConsistentWith (score_B) == false))
+              if (   (score_A->IsValid () == FALSE)
+                     || (score_B->IsValid () == FALSE)
+                     || (score_A->IsConsistentWith (score_B) == FALSE))
               {
                 _has_error = TRUE;
                 _is_over   = FALSE;

@@ -31,7 +31,7 @@ Stage::Stage (StageClass *stage_class)
 : Object ("Stage")
 {
   _name                  = g_strdup ("");
-  _locked                = false;
+  _locked                = FALSE;
   _result                = NULL;
   _previous              = NULL;
   _next                  = NULL;
@@ -177,7 +177,7 @@ void Stage::FreeResult ()
 // --------------------------------------------------------------------------------
 void Stage::Lock ()
 {
-  _locked = true;
+  _locked = TRUE;
   OnLocked ();
   SetResult ();
 }
@@ -234,7 +234,7 @@ void Stage::UnLock ()
     }
   }
 
-  _locked = false;
+  _locked = FALSE;
   OnUnLocked ();
 }
 
