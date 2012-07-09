@@ -7,8 +7,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin\Debug\BellePoule" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Debug\" />
+				<Option output="Debug\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -20,8 +20,8 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin\Release\BellePoule" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Release\" />
+				<Option output="Release\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release\" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -32,8 +32,8 @@
 				</Linker>
 			</Target>
 			<Target title="Technicolor Debug">
-				<Option output="bin\TechnicolorDebug\BellePoule" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\TechnicolorDebug\" />
+				<Option output="TechnicolorDebug\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option object_output="TechnicolorDebug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
