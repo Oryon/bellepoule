@@ -72,7 +72,7 @@ void Checkin::CreateForm (Filter *filter)
   _form = new Form (filter,
                     this,
                     GetPlayerType (),
-                    (Form::AddPlayerCbk) &Checkin::OnAddPlayerFromForm);
+                    (Form::PlayerCbk) &Checkin::OnPlayerEventFromForm);
 }
 
 // --------------------------------------------------------------------------------
@@ -542,9 +542,18 @@ void Checkin::ImportCSV (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-void Checkin::OnAddPlayerFromForm (Player *player)
+void Checkin::OnPlayerEventFromForm (Player            *player,
+                                     Form::PlayerEvent  event)
 {
-  Add (player);
+  if (event == Form::NEW_PLAYER)
+  {
+    Add (player);
+  }
+  else
+  {
+    Update (player);
+  }
+
   OnListChanged ();
 }
 
@@ -637,6 +646,33 @@ extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
 void Checkin::on_add_player_button_clicked ()
 {
   _form->Show ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_players_list_row_activated  (GtkTreeView       *tree_view,
+                                                                GtkTreePath       *path,
+                                                                GtkTreeViewColumn *column,
+                                                                Object            *owner)
+{
+  Checkin *p = dynamic_cast <Checkin *> (owner);
+
+  p->on_players_list_row_activated (path);
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::on_players_list_row_activated (GtkTreePath *path)
+{
+  Player      *player;
+  GtkTreeIter  iter;
+
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
+                           &iter,
+                           path);
+  gtk_tree_model_get (GTK_TREE_MODEL (_store), &iter,
+                      gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
+                      &player, -1);
+
+  _form->Show (player);
 }
 
 // --------------------------------------------------------------------------------

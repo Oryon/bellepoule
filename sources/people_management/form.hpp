@@ -27,14 +27,21 @@
 class Form : public Module
 {
   public:
-    typedef void (Module::*AddPlayerCbk) (Player *player);
+    typedef enum
+    {
+      UPDATE_PLAYER,
+      NEW_PLAYER
+    } PlayerEvent;
+
+    typedef void (Module::*PlayerCbk) (Player      *player,
+                                       PlayerEvent  event);
 
     Form (Filter             *filter,
           Module             *client,
           Player::PlayerType  player_type,
-          AddPlayerCbk        add_player_cbk);
+          PlayerCbk           player_cbk);
 
-    void Show ();
+    void Show (Player *player = NULL);
 
     void Hide ();
 
@@ -42,13 +49,21 @@ class Form : public Module
 
     void OnCloseButtonClicked ();
 
+    void Lock ();
+
+    void UnLock ();
+
   private:
     Filter             *_filter;
     Module             *_client;
     Player::PlayerType  _player_type;
-    AddPlayerCbk        _add_player_cbk;
+    PlayerCbk           _cbk;
+    Player             *_player_to_update;
+    gboolean            _locked;
 
     ~Form ();
+
+    void ReadAndWipe (Player *player);
 
     static void SetSelectorValue (GtkComboBox *combo_box,
                                   const gchar *value);

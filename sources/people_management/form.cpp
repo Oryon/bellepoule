@@ -26,16 +26,18 @@
 Form::Form (Filter             *filter,
             Module             *client,
             Player::PlayerType  player_type,
-            AddPlayerCbk        add_player_cbk)
+            PlayerCbk           player_cbk)
 : Module ("form.glade")
 {
-  _client         = client;
-  _add_player_cbk = add_player_cbk;
+  _client = client;
+  _cbk    = player_cbk;
 
   _player_type = player_type;
 
   _filter = filter;
   _filter->Retain ();
+
+  _locked = FALSE;
 
   {
     GSList      *current     = _filter->GetAttrList ();
@@ -255,26 +257,68 @@ void Form::OnSelectorEntryActivate (GtkEntry    *widget,
 // --------------------------------------------------------------------------------
 void Form::OnAddButtonClicked ()
 {
-  Player *player   = new Player (_player_type);
   GList  *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
+  Player *player;
+
+  if (_player_to_update)
+  {
+    player = _player_to_update;
+  }
+  else
+  {
+    player = new Player (_player_type);
+  }
+
+  ReadAndWipe (player);
+
+  gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
+                                                        0));
+
+  if (_player_to_update)
+  {
+    (_client->*_cbk) (player,
+                      UPDATE_PLAYER);
+    OnCloseButtonClicked ();
+  }
+  else
+  {
+    (_client->*_cbk) (player,
+                      NEW_PLAYER);
+  }
+
+  player->Release ();
+}
+
+// --------------------------------------------------------------------------------
+void Form::ReadAndWipe (Player *player)
+{
+  GList *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
 
   for (guint i = 0; i < g_list_length (children); i ++)
   {
     GtkWidget           *w;
     gchar               *attr_name;
     AttributeDesc       *attr_desc;
-    Player::AttributeId *attr_id;
+    Player::AttributeId *attr_id = NULL;
 
     w = (GtkWidget *) g_list_nth_data (children,
                                        i);
     attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "attribute_name");
     attr_desc = AttributeDesc::GetDescFromCodeName (attr_name);
-    attr_id   = Player::AttributeId::Create (attr_desc, _client);
+
+    if (player)
+    {
+      attr_id = Player::AttributeId::Create (attr_desc,
+                                             _client);
+    }
 
     if (attr_desc->_type == G_TYPE_BOOLEAN)
     {
-      player->SetAttributeValue (attr_id,
-                                 gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)));
+      if (attr_id)
+      {
+        player->SetAttributeValue (attr_id,
+                                   gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)));
+      }
 
       if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
       {
@@ -292,10 +336,13 @@ void Form::OnAddButtonClicked ()
 
           if (entry)
           {
-            const gchar *xml_image = attr_desc->GetDiscreteXmlImage (gtk_entry_get_text (GTK_ENTRY (entry)));
+            if (attr_id)
+            {
+              const gchar *xml_image = attr_desc->GetDiscreteXmlImage (gtk_entry_get_text (GTK_ENTRY (entry)));
 
-            player->SetAttributeValue (attr_id,
-                                       xml_image);
+              player->SetAttributeValue (attr_id,
+                                         xml_image);
+            }
 
             if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
             {
@@ -303,7 +350,7 @@ void Form::OnAddButtonClicked ()
             }
           }
         }
-        else
+        else if (attr_id)
         {
           GtkTreeIter iter;
 
@@ -320,8 +367,11 @@ void Form::OnAddButtonClicked ()
       }
       else
       {
-        player->SetAttributeValue (attr_id,
-                                   (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
+        if (attr_id)
+        {
+          player->SetAttributeValue (attr_id,
+                                     (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
+        }
 
         if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
         {
@@ -329,14 +379,8 @@ void Form::OnAddButtonClicked ()
         }
       }
     }
-    attr_id->Release ();
+    Object::TryToRelease (attr_id);
   }
-
-  gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
-                                                        0));
-
-  (_client->*_add_player_cbk) (player);
-  player->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -345,14 +389,120 @@ void Form::OnCloseButtonClicked ()
   GtkWidget *w = _glade->GetWidget ("FillInForm");
 
   gtk_widget_hide (w);
+
+  ReadAndWipe (NULL);
 }
 
 // --------------------------------------------------------------------------------
-void Form::Show ()
+void Form::Lock ()
 {
-  GtkWidget *w = _glade->GetWidget ("FillInForm");
+  _locked = TRUE;
+}
 
-  gtk_widget_show_all (w);
+// --------------------------------------------------------------------------------
+void Form::UnLock ()
+{
+  _locked = FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Form::Show (Player *player)
+{
+  _player_to_update = player;
+  if (_player_to_update)
+  {
+    GList *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
+
+    _player_to_update->Retain ();
+    for (guint i = 0; i < g_list_length (children); i ++)
+    {
+      GtkWidget           *w;
+      gchar               *attr_name;
+      AttributeDesc       *attr_desc;
+      Player::AttributeId *attr_id;
+      Attribute           *attr;
+
+      w = (GtkWidget *) g_list_nth_data (children,
+                                         i);
+      attr_name = (gchar *) g_object_get_data (G_OBJECT (w), "attribute_name");
+      attr_desc = AttributeDesc::GetDescFromCodeName (attr_name);
+      attr_id   = Player::AttributeId::Create (attr_desc, _client);
+      attr      = player->GetAttribute (attr_id);
+
+      if (attr)
+      {
+        if (attr_desc->_type == G_TYPE_BOOLEAN)
+        {
+          gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
+                                        attr->GetUIntValue ());
+        }
+        else if (attr_desc->HasDiscreteValue ())
+        {
+          gchar *image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+
+          if (attr_desc->_free_value_allowed)
+          {
+            GtkEntry *entry = GTK_ENTRY (gtk_bin_get_child (GTK_BIN (w)));
+
+            gtk_entry_set_text (entry,
+                                image);
+          }
+          else
+          {
+            GtkTreeIter *iter = attr_desc->GetDiscreteIter (image);
+
+            gtk_combo_box_set_active_iter (GTK_COMBO_BOX (w),
+                                           iter);
+            gtk_tree_iter_free (iter);
+          }
+
+          if (attr_desc->_is_selector)
+          {
+            SetSelectorValue (GTK_COMBO_BOX (w),
+                              image);
+          }
+          g_free (image);
+        }
+        else
+        {
+          gchar *image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+
+          gtk_entry_set_text (GTK_ENTRY (w),
+                              image);
+          g_free (image);
+        }
+      }
+      attr_id->Release ();
+    }
+
+    gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
+                                                          0));
+  }
+
+  gtk_widget_show_all (_glade->GetWidget ("FillInForm"));
+
+  if (_player_to_update)
+  {
+    gtk_widget_hide (_glade->GetWidget ("add_button"));
+    if (_locked)
+    {
+      gtk_widget_hide (_glade->GetWidget ("apply_button"));
+    }
+    else
+    {
+      gtk_widget_show (_glade->GetWidget ("apply_button"));
+    }
+  }
+  else
+  {
+    gtk_widget_show (_glade->GetWidget ("add_button"));
+    gtk_widget_hide (_glade->GetWidget ("apply_button"));
+  }
+
+  gtk_widget_set_sensitive (_glade->GetWidget ("check_vbox"),
+                            !_locked);
+  gtk_widget_set_sensitive (_glade->GetWidget ("value_vbox"),
+                            !_locked);
 
   {
     GList *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
