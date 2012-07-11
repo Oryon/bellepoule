@@ -1096,6 +1096,12 @@ void TextAttribute::ListStoreSet (GtkListStore        *store,
 // --------------------------------------------------------------------------------
 gchar *TextAttribute::GetUserImage (AttributeDesc::Look look)
 {
+  if (look == AttributeDesc::GRAPHICAL)
+  {
+    // Fallback
+    look = AttributeDesc::SHORT_TEXT;
+  }
+
   if (_desc->HasDiscreteValue ())
   {
     return _desc->GetUserImage (_value,
