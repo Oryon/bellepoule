@@ -829,8 +829,8 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
     }
 
     {
-      DropZone *drop_zone = GetZoneAt (_drag_x,
-                                       _drag_y);
+      DropZone *drop_zone = GetZoneAt (_drag_x*_zoom_factor,
+                                       _drag_y*_zoom_factor);
 
       if (ObjectIsDropable (_floating_object,
                             drop_zone))
