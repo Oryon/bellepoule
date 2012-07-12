@@ -1275,7 +1275,12 @@ void PoolAllocator::DisplayPlayer (Player        *player,
       item = NULL;
       if (attr)
       {
-        GdkPixbuf *pixbuf = attr->GetPixbuf ();
+        GdkPixbuf *pixbuf = NULL;
+
+        if (attr_layout->_look == AttributeDesc::GRAPHICAL)
+        {
+          pixbuf = attr->GetPixbuf ();
+        }
 
         if (pixbuf)
         {

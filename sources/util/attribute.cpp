@@ -601,7 +601,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
                             DISCRETE_CODE,       xml_image[0],
                             DISCRETE_XML_IMAGE,  xml_image,
                             DISCRETE_LONG_TEXT,  undivadable_image,
-                            DISCRETE_SHORT_TEXT, undivadable_image, -1);
+                            DISCRETE_SHORT_TEXT, xml_image, -1);
         g_free (undivadable_image);
       }
 
