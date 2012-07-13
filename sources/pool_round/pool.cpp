@@ -923,20 +923,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;
-      guint          nb_column;
-
-      if (nb_players < 8)
-      {
-        nb_column = 2;
-      }
-      else if (nb_players < 12)
-      {
-        nb_column = 3;
-      }
-      else
-      {
-        nb_column = 4;
-      }
+      guint          nb_column = 1;
 
       match_main_table = goo_canvas_table_new (root_item,
                                                "row-spacing",    (gdouble) cell_h/2.0,
@@ -1075,6 +1062,24 @@ void Pool::Draw (GooCanvas *on_canvas,
                             m%nb_column + 2*(m%nb_column) + 1);
 
         Canvas::SetTableItemAttribute (match_table, "x-fill", 1U);
+
+        // Adjust the number of columns according to
+        // the grid width
+        if (m/nb_column == 0)
+        {
+          GooCanvasBounds grid_bounds;
+          GooCanvasBounds main_table_bounds;
+
+          goo_canvas_item_get_bounds (grid_group,
+                                      &grid_bounds);
+          goo_canvas_item_get_bounds (match_main_table,
+                                      &main_table_bounds);
+
+          if ((main_table_bounds.x2 - main_table_bounds.x1) < (grid_bounds.x2 - grid_bounds.x1))
+          {
+            nb_column++;
+          }
+        }
       }
 
       Canvas::Anchor (match_main_table,
