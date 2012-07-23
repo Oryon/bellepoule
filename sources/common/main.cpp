@@ -212,10 +212,11 @@ int main (int argc, char **argv)
     desc->_compare_func = (GCompareFunc) CompareDate;
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "gender", "Sexe", gettext ("gender"));
-    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->_uniqueness         = AttributeDesc::NOT_SINGULAR;
     desc->_free_value_allowed = FALSE;
-    desc->AddDiscreteValues ("M", gettext ("Male"), "",
-                             "F", gettext ("Female"), "", NULL);
+    desc->_favorite_look      = AttributeDesc::GRAPHICAL;
+    desc->AddDiscreteValues ("M", gettext ("Male"), "resources/glade/male.png",
+                             "F", gettext ("Female"), "resources/glade/female.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "country", "Nation", gettext ("country"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;

@@ -75,33 +75,36 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
                                        guint          row,
                                        guint          column)
 {
-  GooCanvasItem *item;
+  GooCanvasItem *item = NULL;
 
-  item = goo_canvas_text_new (table,
-                              text,
-                              0.0, 0.0,
-                              -1.0,
-                              GTK_ANCHOR_NW,
-                              "font", "Sans 14px", NULL);
-  if (strchr (text, ' '))
+  if (text)
   {
-    g_object_set (G_OBJECT (item),
-                  "wrap",      PANGO_WRAP_CHAR,
-                  "ellipsize", PANGO_ELLIPSIZE_END,
-                  NULL);
+    item = goo_canvas_text_new (table,
+                                text,
+                                0.0, 0.0,
+                                -1.0,
+                                GTK_ANCHOR_NW,
+                                "font", "Sans 14px", NULL);
+    if (strchr (text, ' '))
+    {
+      g_object_set (G_OBJECT (item),
+                    "wrap",      PANGO_WRAP_CHAR,
+                    "ellipsize", PANGO_ELLIPSIZE_END,
+                    NULL);
+    }
+
+    PutInTable (table,
+                item,
+                row, column);
+
+    SetTableItemAttribute (item, "x-expand", 1U);
+    SetTableItemAttribute (item, "x-fill",   1U);
+    SetTableItemAttribute (item, "x-shrink", 1U);
+
+    //SetTableItemAttribute (item, "y-expand", 1U);
+    //SetTableItemAttribute (item, "y-fill", 1U);
+    //SetTableItemAttribute (item, "y-shrink", 1U);
   }
-
-  PutInTable (table,
-              item,
-              row, column);
-
-  SetTableItemAttribute (item, "x-expand", 1U);
-  SetTableItemAttribute (item, "x-fill",   1U);
-  SetTableItemAttribute (item, "x-shrink", 1U);
-
-  //SetTableItemAttribute (item, "y-expand", 1U);
-  //SetTableItemAttribute (item, "y-fill", 1U);
-  //SetTableItemAttribute (item, "y-shrink", 1U);
 
   return item;
 }

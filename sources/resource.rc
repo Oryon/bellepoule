@@ -1,1 +1,1 @@
-EXE_ICON    ICON "resources/exe.ico"
+EXE_ICON    ICON "../resources/exe.ico"

@@ -491,16 +491,19 @@ void PlayersList::SetColumn (guint           id,
     if (desc->HasDiscreteValue ())
     {
       renderer = gtk_cell_renderer_combo_new ();
+#if 0
       g_object_set (renderer,
                     "has-entry", desc->_free_value_allowed,
                     NULL);
       desc->BindDiscreteValues (renderer);
+#endif
     }
     else
     {
       renderer = gtk_cell_renderer_text_new ();
     }
 
+#if 0
     if (   (desc->_rights == AttributeDesc::PUBLIC)
         && ((_rights & MODIFIABLE) || attr_modifiable))
     {
@@ -520,6 +523,7 @@ void PlayersList::SetColumn (guint           id,
                           "editing-started", G_CALLBACK (OnDiscreteEditingStarted), desc);
       }
     }
+#endif
 
     column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                        renderer,

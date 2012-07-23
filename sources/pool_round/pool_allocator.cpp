@@ -1272,40 +1272,64 @@ void PoolAllocator::DisplayPlayer (Player        *player,
       attr = player->GetAttribute (attr_id);
       attr_id->Release ();
 
+      item = NULL;
       if (attr)
       {
-        gchar *image = attr->GetUserImage (attr_layout->_look);
+        GdkPixbuf *pixbuf = NULL;
 
-        item = Canvas::PutTextInTable (table,
-                                       image,
-                                       indice+1, i+1);
-        g_free (image);
+        if (attr_layout->_look == AttributeDesc::GRAPHICAL)
+        {
+          pixbuf = attr->GetPixbuf ();
+        }
+
+        if (pixbuf)
+        {
+          item = Canvas::PutPixbufInTable (table,
+                                           pixbuf,
+                                           indice+1, i+1);
+        }
+        else
+        {
+          gchar *image = attr->GetUserImage (attr_layout->_look);
+
+          if (image)
+          {
+            item = Canvas::PutTextInTable (table,
+                                           image,
+                                           indice+1, i+1);
+            g_free (image);
+          }
+        }
       }
-      else
+
+      if (item == NULL)
       {
         item = Canvas::PutTextInTable (table,
                                        " ",
                                        indice+1, i+1);
       }
 
-      if (player->IsFencer ())
+      if (item)
       {
-        g_object_set (G_OBJECT (item),
-                      "font", "Sans 14px",
-                      "fill_color", "black",
-                      NULL);
-      }
-      else
-      {
-        g_object_set (G_OBJECT (item),
-                      "font", "Sans Bold Italic 14px",
-                      "fill_color", "black",
-                      NULL);
-      }
+        if (player->IsFencer ())
+        {
+          g_object_set (G_OBJECT (item),
+                        "font", "Sans 14px",
+                        "fill_color", "black",
+                        NULL);
+        }
+        else
+        {
+          g_object_set (G_OBJECT (item),
+                        "font", "Sans Bold Italic 14px",
+                        "fill_color", "black",
+                        NULL);
+        }
 
-      SetObjectDropZone (player,
-                         item,
-                         zone);
+        SetObjectDropZone (player,
+                           item,
+                           zone);
+      }
 
       layout_list = g_slist_next (layout_list);
     }

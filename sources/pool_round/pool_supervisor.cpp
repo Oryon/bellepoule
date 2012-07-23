@@ -312,9 +312,14 @@ void PoolSupervisor::OnLoadingCompleted ()
 
     for (guint p = 0; p < nb_pools; p++)
     {
-      PoolZone *zone = _pool_allocator->GetZone (p);
+      Pool *pool = _pool_allocator->GetPool (p);
 
-      zone->BookReferees ();
+      if (pool->IsOver () == FALSE)
+      {
+        PoolZone *zone = _pool_allocator->GetZone (p);
+
+        zone->BookReferees ();
+      }
     }
   }
 }
@@ -413,23 +418,28 @@ void PoolSupervisor::OnPoolStatusUpdated (Pool           *pool,
                                      NULL,
                                      pool->GetNumber () - 1))
   {
+    PoolZone *zone = ps->_pool_allocator->GetZone (pool->GetNumber () - 1);
+
     if (pool->IsOver ())
     {
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_APPLY,
                           -1);
+      zone->FreeReferees ();
     }
     else if (pool->HasError ())
     {
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_DIALOG_WARNING,
                           -1);
+      zone->BookReferees ();
     }
     else
     {
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_EXECUTE,
                           -1);
+      zone->BookReferees ();
     }
   }
 
@@ -441,9 +451,8 @@ gboolean PoolSupervisor::IsOver ()
 {
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    Pool *pool;
+    Pool *pool = _pool_allocator->GetPool (p);
 
-    pool = _pool_allocator->GetPool (p);
     if (pool->IsOver () == FALSE)
     {
       return FALSE;

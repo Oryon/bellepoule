@@ -374,6 +374,8 @@ void CheckinSupervisor::OnLocked ()
 
   UpdateChecksum ();
   UpdateRanking  ();
+
+  _form->Lock ();
 }
 
 // --------------------------------------------------------------------------------
@@ -408,6 +410,7 @@ void CheckinSupervisor::OnUnLocked ()
 {
   EnableSensitiveWidgets ();
   SetSensitiveState (TRUE);
+  _form->UnLock ();
 }
 
 // --------------------------------------------------------------------------------

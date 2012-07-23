@@ -319,6 +319,35 @@ gchar *AttributeDesc::GetDiscreteUserImage (guint from_code)
 }
 
 // --------------------------------------------------------------------------------
+GtkTreeIter *AttributeDesc::GetDiscreteIter (const gchar *from_user_image)
+{
+  if (_discrete_model)
+  {
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (_discrete_model,
+                                                   &iter);
+    while (iter_is_valid)
+    {
+      gchar *long_name;
+
+      gtk_tree_model_get (_discrete_model, &iter,
+                          DISCRETE_LONG_TEXT, &long_name,
+                          -1);
+      if (g_strcmp0 (long_name, from_user_image) == 0)
+      {
+        return gtk_tree_iter_copy (&iter);
+      }
+      iter_is_valid = gtk_tree_model_iter_next (_discrete_model,
+                                                &iter);
+    }
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 GdkPixbuf *AttributeDesc::GetDiscretePixbuf (guint from_code)
 {
   return (GdkPixbuf *) GetDiscreteData (from_code,
@@ -572,7 +601,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
                             DISCRETE_CODE,       xml_image[0],
                             DISCRETE_XML_IMAGE,  xml_image,
                             DISCRETE_LONG_TEXT,  undivadable_image,
-                            DISCRETE_SHORT_TEXT, undivadable_image, -1);
+                            DISCRETE_SHORT_TEXT, xml_image, -1);
         g_free (undivadable_image);
       }
 
@@ -1067,6 +1096,12 @@ void TextAttribute::ListStoreSet (GtkListStore        *store,
 // --------------------------------------------------------------------------------
 gchar *TextAttribute::GetUserImage (AttributeDesc::Look look)
 {
+  if (look == AttributeDesc::GRAPHICAL)
+  {
+    // Fallback
+    look = AttributeDesc::SHORT_TEXT;
+  }
+
   if (_desc->HasDiscreteValue ())
   {
     return _desc->GetUserImage (_value,

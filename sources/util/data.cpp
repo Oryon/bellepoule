@@ -66,17 +66,20 @@ gboolean Data::Load (xmlNode *xml_node)
 // --------------------------------------------------------------------------------
 void Data::Save (xmlTextWriter *xml_writer)
 {
-  if (_is_integer)
+  if (_valid)
   {
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST _xml_name,
-                                       "%d", _value);
-  }
-  else if (_string)
-  {
-    xmlTextWriterWriteAttribute (xml_writer,
-                                 BAD_CAST _xml_name,
-                                 BAD_CAST _string);
+    if (_is_integer)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST _xml_name,
+                                         "%d", _value);
+    }
+    else if (_string)
+    {
+      xmlTextWriterWriteAttribute (xml_writer,
+                                   BAD_CAST _xml_name,
+                                   BAD_CAST _string);
+    }
   }
 }
 

@@ -52,6 +52,7 @@ Stage::Stage (StageClass *stage_class)
                                (guint) 100);
   _nb_qualified = new Data ("NbQualifies",
                             (guint) 0);
+  _nb_qualified->Deactivate ();
 }
 
 // --------------------------------------------------------------------------------
@@ -424,7 +425,7 @@ void Stage::OnNbQualifiedValueChanged (GtkSpinButton *spinbutton)
 void Stage::SetPrevious (Stage *previous)
 {
   _previous = previous;
-  if (_previous && (_previous->_next == this))
+  if (_previous)
   {
     _previous->_next = this;
   }
@@ -479,6 +480,8 @@ void Stage::RetrieveAttendees ()
         current = g_slist_next (current);
       }
     }
+
+    _nb_qualified->_value = _qualified_ratio->_value * g_slist_length (shortlist) / 100;
   }
   else
   {
@@ -596,7 +599,6 @@ void Stage::ActivateNbQualified ()
       }
     }
 
-    _nb_qualified->_value = _qualified_ratio->_value * g_slist_length (shortlist) / 100;
     _nb_qualified->Activate ();
   }
 }
@@ -604,30 +606,33 @@ void Stage::ActivateNbQualified ()
 // --------------------------------------------------------------------------------
 void Stage::DeactivateNbQualified ()
 {
-  Module *module;
-
-  if (GetInputProviderClient ())
+  if (_input_provider == NULL)
   {
-    module = dynamic_cast <Module *> (_next);
-  }
-  else
-  {
-    module = dynamic_cast <Module *> (this);
-  }
+    Module *module;
 
-  if (module)
-  {
-    GtkWidget *adjustment = module->GetWidget ("nb_qualified_adjustment");
-
-    if (adjustment)
+    if (GetInputProviderClient ())
     {
-      gtk_adjustment_set_upper (GTK_ADJUSTMENT (adjustment),
-                                0.0);
+      module = dynamic_cast <Module *> (_next);
     }
-  }
+    else
+    {
+      module = dynamic_cast <Module *> (this);
+    }
 
-  _nb_qualified->_value = 0;
-  _nb_qualified->Deactivate ();
+    if (module)
+    {
+      GtkWidget *adjustment = module->GetWidget ("nb_qualified_adjustment");
+
+      if (adjustment)
+      {
+        gtk_adjustment_set_upper (GTK_ADJUSTMENT (adjustment),
+                                  0.0);
+      }
+    }
+
+    _nb_qualified->_value = 0;
+    _nb_qualified->Deactivate ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -848,6 +853,17 @@ void Stage::SetInputProvider (Stage *input_provider)
   TryToRelease (_nb_qualified);
   _nb_qualified = input_provider->_nb_qualified;
   _nb_qualified->Retain ();
+
+  // Let's force the configuration form
+  // to be set properly
+  if (_nb_qualified->IsValid ())
+  {
+    input_provider->ActivateNbQualified ();
+  }
+  else
+  {
+    input_provider->DeactivateNbQualified ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1046,11 +1062,6 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
   if (_nb_qualified)
   {
     _nb_qualified->Load (xml_node);
-  }
-
-  if (_input_provider)
-  {
-    _input_provider->ActivateNbQualified ();
   }
 }
 

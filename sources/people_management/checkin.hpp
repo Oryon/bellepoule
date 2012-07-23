@@ -48,6 +48,8 @@ class Checkin : public PlayersList
   public:
     void on_add_player_button_clicked ();
 
+    void on_players_list_row_activated (GtkTreePath *path);
+
     void on_remove_player_button_clicked ();
 
     void OnToggleAllPlayers (gboolean present);
@@ -59,6 +61,8 @@ class Checkin : public PlayersList
     void OnListChanged ();
 
   protected:
+    Form *_form;
+
     ~Checkin ();
 
     static gboolean PresentPlayerFilter (Player *player);
@@ -67,10 +71,10 @@ class Checkin : public PlayersList
 
     void CreateForm (Filter *filter);
 
-    void OnAddPlayerFromForm (Player *player);
+    void OnPlayerEventFromForm (Player            *player,
+                                Form::PlayerEvent  event);
 
   private:
-    Form        *_form;
     guint        _attendings;
     GtkWidget   *_print_dialog;
     gboolean     _print_attending;

@@ -120,6 +120,8 @@ class AttributeDesc : public Object
 
     gchar *GetDiscreteUserImage (guint from_code);
 
+    GtkTreeIter *GetDiscreteIter (const gchar *from_user_image);
+
     GdkPixbuf *GetDiscretePixbuf (guint from_code);
 
     GdkPixbuf *GetDiscretePixbuf (const gchar *from_value);
