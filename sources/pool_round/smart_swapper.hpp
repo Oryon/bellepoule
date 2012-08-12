@@ -153,6 +153,8 @@ class SmartSwapper : public Object, public Swapper
     static gint CompareFencerRank (Fencer *a,
                                    Fencer *b);
 
+    PoolData *GetPoolToTry (guint index);
+
   private:
     Object              *_owner;
     guint                _nb_pools;
@@ -164,6 +166,7 @@ class SmartSwapper : public Object, public Swapper
     GList               *_floating_list;
     GHashTable          *_lack_table;
     GSList              *_remaining_errors;
+    guint                _first_pool_to_try;
 };
 
 #endif

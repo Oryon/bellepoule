@@ -192,6 +192,8 @@ void SmartSwapper::Swap (GSList *zones,
   _error_list    = NULL;
   _floating_list = NULL;
 
+  _first_pool_to_try = 0;
+
   CreatePoolTable (zones);
 
   _pool_sizes.Configure (g_slist_length (fencer_list),
@@ -334,6 +336,26 @@ void SmartSwapper::LookUpDistribution (GSList *fencer_list)
   g_hash_table_foreach (_criteria_distribution,
                         (GHFunc) SetExpectedData,
                         this);
+
+  // Keep the results available until the end of the processing
+  for (guint i = 0; i < _nb_pools; i++)
+  {
+    PoolData       *pool_data = &_pool_table[i];
+    GHashTableIter  iter;
+    gpointer        key;
+    gpointer        value;
+
+    g_hash_table_iter_init (&iter,
+                            pool_data->_criteria_score);
+    while (g_hash_table_iter_next (&iter,
+                                   &key,
+                                   &value))
+    {
+      g_hash_table_insert (pool_data->_original_criteria_score,
+                           key,
+                           value);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -585,7 +607,7 @@ void SmartSwapper::DispatchFloatings ()
             {
               for (guint i = 0; i < _nb_pools; i++)
               {
-                PoolData *pool_data = &_pool_table[i];
+                PoolData *pool_data = GetPoolToTry (i);
 
                 if (MoveFencerTo (floating,
                                   pool_data,
@@ -606,6 +628,11 @@ void SmartSwapper::DispatchFloatings ()
                                     error);
 
 next_error:
+    _first_pool_to_try++;
+    if (_first_pool_to_try >= _nb_pools)
+    {
+      _first_pool_to_try = 0;
+    }
       current_error = g_slist_next (current_error);
     }
   }
@@ -649,7 +676,7 @@ void SmartSwapper::DispatchFencers (GList *list)
     {
       for (guint i = 0; i < _nb_pools; i++)
       {
-        PoolData *pool_data = &_pool_table[i];
+        PoolData *pool_data = GetPoolToTry (i);
 
         if (MoveFencerTo (fencer,
                           pool_data,
@@ -666,6 +693,12 @@ void SmartSwapper::DispatchFencers (GList *list)
     fencer->_over_population_error = FALSE;
 
 next_fencer:
+    _first_pool_to_try++;
+    if (_first_pool_to_try >= _nb_pools)
+    {
+      _first_pool_to_try = 0;
+    }
+
     list = g_list_next (list);
   }
 }
@@ -677,6 +710,25 @@ gboolean SmartSwapper::MoveFencerTo (Fencer   *fencer,
 {
   if (pool_data->_size < max_pool_size)
   {
+    // Forget pools where over population errors have been detected
+    // for the given criteria
+    if (fencer->_over_population_error)
+    {
+      CriteriaData *criteria_data = (CriteriaData *) g_hash_table_lookup (_criteria_distribution,
+                                                                          (const void *) fencer->_criteria_quark);
+
+      if (criteria_data)
+      {
+        guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_original_criteria_score,
+                                                             (const void *) fencer->_criteria_quark));
+
+        if (score > criteria_data->_max_criteria_occurrence)
+        {
+          return FALSE;
+        }
+      }
+    }
+
     if (fencer->CanGoTo (pool_data,
                          _criteria_distribution))
     {
@@ -751,4 +803,17 @@ gint SmartSwapper::CompareFencerRank (Fencer *a,
 guint SmartSwapper::GetErrors ()
 {
   return g_slist_length (_remaining_errors);
+}
+
+// --------------------------------------------------------------------------------
+SmartSwapper::PoolData *SmartSwapper::GetPoolToTry (guint index)
+{
+  if (index + _first_pool_to_try < _nb_pools)
+  {
+    return &_pool_table[index + _first_pool_to_try];
+  }
+  else
+  {
+    return &_pool_table[index + _first_pool_to_try - _nb_pools];
+  }
 }
