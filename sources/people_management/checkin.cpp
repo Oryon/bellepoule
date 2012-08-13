@@ -113,6 +113,39 @@ void Checkin::LoadList (xmlNode *xml_node)
         Player *player = new Player (GetPlayerType ());
 
         player->Load (n);
+
+        // FFE issue
+        {
+          AttributeDesc       *league_desc = AttributeDesc::GetDescFromCodeName ("league");
+          Player::AttributeId  league_attr_id ("league");
+          Attribute           *league_attr = player->GetAttribute (&league_attr_id);
+
+          if ((league_attr == NULL) || (strlen (league_attr->GetStrValue ()) == 0))
+          {
+            Player::AttributeId  licence_attr_id ("licence");
+            Attribute           *licence_attr = player->GetAttribute (&licence_attr_id);
+
+            if (licence_attr)
+            {
+              gchar *licence_string = g_strdup (licence_attr->GetStrValue ());
+
+              if (strlen (licence_string) >= 2)
+              {
+                licence_string[2] = 0;
+
+                gchar *league = league_desc->GetDiscreteUserImage (atoi (licence_string));
+
+                if (league)
+                {
+                  player->SetAttributeValue (&league_attr_id, league);
+                  g_free (league);
+                }
+              }
+              g_free (licence_string);
+            }
+          }
+        }
+
         Add (player);
         OnPlayerLoaded (player);
         player->Release ();
