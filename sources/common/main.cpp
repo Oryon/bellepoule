@@ -115,6 +115,8 @@ static gint CompareDate (Attribute *attr_a,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
+  // g_mem_set_vtable (glib_mem_profiler_table);
+
   // Init
   {
     gchar *binary_dir      = g_path_get_dirname (argv[0]);
@@ -128,9 +130,7 @@ int main (int argc, char **argv)
     install_dirname = g_build_filename (binary_dir, "..", "share", "BellePoule", NULL);
 #endif
 
-      g_free (binary_dir);
-
-    // g_mem_set_vtable (glib_mem_profiler_table);
+    g_free (binary_dir);
 
     if (install_dirname)
     {
