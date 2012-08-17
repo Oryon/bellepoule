@@ -563,6 +563,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_level);
           _level = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
@@ -570,6 +571,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_id);
           _id = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "TitreLong");
@@ -577,6 +579,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_name);
           _name = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Date");
@@ -601,24 +604,28 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
             g_strfreev (date);
           }
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Appel");
         if (attr)
         {
           _checkin_time->Load (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Scratch");
         if (attr)
         {
           _scratch_time->Load (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Debut");
         if (attr)
         {
           _start_time->Load (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Arme");
@@ -631,6 +638,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
               _weapon = i;
             }
           }
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Sexe");
@@ -643,6 +651,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
               _gender = i;
             }
           }
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Categorie");
@@ -655,6 +664,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
               _category = i;
             }
           }
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Organisateur");
@@ -662,6 +672,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_organizer);
           _organizer = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "URLorganisateur");
@@ -669,6 +680,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_web_site);
           _web_site = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Lieu");
@@ -676,12 +688,14 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_location);
           _location = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "score_stuffing");
         if (attr)
         {
           score_stuffing_policy = (gboolean) atoi (attr);
+          xmlFree (attr);
         }
       }
       xmlXPathFreeObject  (xml_object);

@@ -52,11 +52,13 @@ Data::~Data ()
 // --------------------------------------------------------------------------------
 gboolean Data::Load (xmlNode *xml_node)
 {
-  _string = (gchar *) xmlGetProp (xml_node,
-                                  BAD_CAST _xml_name);
+  gchar *prop = (gchar *) xmlGetProp (xml_node,
+                                      BAD_CAST _xml_name);
+  _string = g_strdup (prop);
   if (_string)
   {
     _value = (guint) atoi (_string);
+    xmlFree (prop);
     return TRUE;
   }
 

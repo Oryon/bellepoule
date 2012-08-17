@@ -496,6 +496,7 @@ void Player::Load (xmlNode *xml_node)
                                TRUE);
           }
         }
+        xmlFree (value);
       }
     }
     current = g_slist_next (current);

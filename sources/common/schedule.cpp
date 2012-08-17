@@ -633,6 +633,7 @@ void Schedule::Load (xmlDoc  *doc,
       if (attr)
       {
         current_stage_index = atoi (attr);
+        xmlFree (attr);
       }
       else
       {

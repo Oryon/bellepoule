@@ -508,6 +508,7 @@ void TableSupervisor::Load (xmlNode *xml_node)
           {
             table_set->Load (n);
           }
+          xmlFree (prop);
         }
       }
       else

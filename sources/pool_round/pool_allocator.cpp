@@ -609,6 +609,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
           if (string)
           {
             nb_pool = (guint) atoi (string);
+            xmlFree (string);
           }
         }
         _loaded = TRUE;
@@ -683,6 +684,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
               current_pool->AddFencer (player,
                                        this);
             }
+            xmlFree (attr);
           }
         }
       }
@@ -698,6 +700,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
           {
             current_zone->AddObject (referee);
           }
+          xmlFree (attr);
         }
       }
       else if (strcmp ((char *) n->name, "Match") == 0)

@@ -1880,6 +1880,7 @@ void Pool::Load (xmlNode *xml_node,
             {
               player_A = (Player *) node->data;
             }
+            xmlFree (attr);
 
             attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
             node = g_slist_find_custom (player_list,
@@ -1889,6 +1890,7 @@ void Pool::Load (xmlNode *xml_node,
             {
               player_B = (Player *) node->data;
             }
+            xmlFree (attr);
           }
 
           match = GetMatch (player_A, player_B);
@@ -1917,13 +1919,14 @@ void Pool::Load (xmlNode *xml_node,
               {
                 is_the_best = TRUE;
               }
+              xmlFree (attr);
 
               attr = (gchar *) xmlGetProp (A, BAD_CAST "Score");
-
               if (attr)
               {
                 match->SetScore (player_A, atoi (attr), is_the_best);
               }
+              xmlFree (attr);
             }
 
             {
@@ -1934,12 +1937,14 @@ void Pool::Load (xmlNode *xml_node,
               {
                 is_the_best = TRUE;
               }
+              xmlFree (attr);
 
               attr = (gchar *) xmlGetProp (B, BAD_CAST "Score");
               if (attr)
               {
                 match->SetScore (player_B, atoi (attr), is_the_best);
               }
+              xmlFree (attr);
             }
 
             if (   (match->PlayerHasScore (player_A) == FALSE)

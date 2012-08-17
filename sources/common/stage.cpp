@@ -671,6 +671,7 @@ void Stage::LoadAttendees (xmlNode *n)
           {
             player->SetAttributeValue (&attr_id,
                                        atoi (rank_attr));
+            xmlFree (rank_attr);
           }
           else
           {
@@ -690,6 +691,7 @@ void Stage::LoadAttendees (xmlNode *n)
                                        status_attr);
             player->SetAttributeValue (&global_status_attr_id,
                                        status_attr);
+            xmlFree (status_attr);
           }
           else
           {
@@ -700,6 +702,8 @@ void Stage::LoadAttendees (xmlNode *n)
           }
         }
       }
+
+      xmlFree (ref_attr);
     }
   }
 }
@@ -1045,9 +1049,13 @@ void Stage::SetScoreStuffingPolicy (gboolean allowed)
 // --------------------------------------------------------------------------------
 void Stage::LoadConfiguration (xmlNode *xml_node)
 {
-  gchar *attr = (gchar *) xmlGetProp (xml_node,
-                                      BAD_CAST "ID");
-  SetName (attr);
+  {
+    gchar *attr = (gchar *) xmlGetProp (xml_node,
+                                        BAD_CAST "ID");
+
+    SetName (attr);
+    xmlFree (attr);
+  }
 
   if (_max_score)
   {

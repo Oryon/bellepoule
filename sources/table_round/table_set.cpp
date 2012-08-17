@@ -601,6 +601,7 @@ void TableSet::LoadNode (xmlNode *xml_node)
           {
             table->Load (n);
           }
+          xmlFree (prop);
         }
       }
       else
