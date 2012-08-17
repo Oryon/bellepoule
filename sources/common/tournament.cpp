@@ -411,7 +411,7 @@ void Tournament::OnDrawPage (GtkPrintOperation *operation,
           {
             GooCanvasItem *food_table = goo_canvas_table_new (ticket_table, NULL);
             gchar         *font   = g_strdup_printf ("Sans %fpx", 1.8*PRINT_FONT_HEIGHT);
-            const gchar   *strings[] = {"Meal", "Drink", "Desert", "Cofee", NULL};
+            const gchar   *strings[] = {"Meal", "Drink", "Dessert", "Coffee", NULL};
 
             Canvas::NormalyzeDecimalNotation (font);
 
