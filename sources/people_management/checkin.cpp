@@ -490,6 +490,8 @@ void Checkin::ImportFFF (gchar *filename)
     }
     g_free (utf8_content);
   }
+
+  RefreshAttendingDisplay ();
 }
 
 // --------------------------------------------------------------------------------
@@ -572,6 +574,8 @@ void Checkin::ImportCSV (gchar *filename)
     }
   }
   g_free (utf8_content);
+
+  RefreshAttendingDisplay ();
 }
 
 // --------------------------------------------------------------------------------
