@@ -112,14 +112,10 @@ void Schedule::Freeze ()
     gtk_widget_hide (_glade->GetWidget ("next_stage_toolbutton"));
   }
 
-  {
-    Stage *stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-
-    if (stage)
-    {
-      stage->Lock ();
-    }
-  }
+  gtk_widget_set_sensitive (_glade->GetWidget ("config_toolbar"),
+                            FALSE);
+  gtk_widget_set_sensitive (_glade->GetWidget ("module_config_hook"),
+                            FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -637,6 +633,7 @@ void Schedule::Load (xmlDoc  *doc,
       if (attr)
       {
         current_stage_index = atoi (attr);
+        xmlFree (attr);
       }
       else
       {

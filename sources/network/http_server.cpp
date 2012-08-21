@@ -19,6 +19,7 @@
 // --------------------------------------------------------------------------------
 HttpServer::HttpServer (Object             *client,
                         GetHttpResponseCbk  get_http_response)
+: Object ("HttpServer")
 {
   _deamon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                               PORT,

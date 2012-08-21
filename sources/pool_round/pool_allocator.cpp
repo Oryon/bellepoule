@@ -184,7 +184,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
                                  "rank",
                                  NULL);
       filter = new Filter (attr_list,
-                           this);
+                           _fencer_list);
 
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
@@ -609,6 +609,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
           if (string)
           {
             nb_pool = (guint) atoi (string);
+            xmlFree (string);
           }
         }
         _loaded = TRUE;
@@ -683,6 +684,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
               current_pool->AddFencer (player,
                                        this);
             }
+            xmlFree (attr);
           }
         }
       }
@@ -698,6 +700,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
           {
             current_zone->AddObject (referee);
           }
+          xmlFree (attr);
         }
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
@@ -1787,12 +1790,25 @@ void PoolAllocator::OnAttrListUpdated ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::OnFilterClicked ()
+{
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("fencer_list"))))
+  {
+    _fencer_list->SelectAttributes ();
+  }
+  else
+  {
+    SelectAttributes ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_filter_button_clicked (GtkWidget *widget,
                                                           Object    *owner)
 {
   PoolAllocator *p = dynamic_cast <PoolAllocator *> (owner);
 
-  p->SelectAttributes ();
+  p->OnFilterClicked ();
 }
 
 // --------------------------------------------------------------------------------

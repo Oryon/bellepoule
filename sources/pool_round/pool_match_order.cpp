@@ -1452,6 +1452,7 @@ static PlayerPair *kendo_pairs[PoolMatchOrder::_MAX_POOL_SIZE+1] =
 
 // --------------------------------------------------------------------------------
 PoolMatchOrder::PoolMatchOrder (gchar weapon_code)
+  : Object ("PoolMatchOrder")
 {
   _weapon_code  = weapon_code;
   _player_pairs = NULL;
@@ -1530,6 +1531,7 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
 
         current = g_slist_next (current);
       }
+      affinity->Release ();
     }
 
     // Sort affinities according to their occurence

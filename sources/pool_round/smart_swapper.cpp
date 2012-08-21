@@ -154,7 +154,7 @@ void SmartSwapper::PoolSizes::NewSize (guint old_size,
 // --------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------
 SmartSwapper::SmartSwapper (Object *owner)
-: Object ("SmartSwapper")
+  : Object ("SmartSwapper")
 {
   _owner            = owner;
   _remaining_errors = NULL;
@@ -192,6 +192,8 @@ void SmartSwapper::Swap (GSList *zones,
   _error_list    = NULL;
   _floating_list = NULL;
 
+  _first_pool_to_try = 0;
+
   CreatePoolTable (zones);
 
   _pool_sizes.Configure (g_slist_length (fencer_list),
@@ -207,6 +209,8 @@ void SmartSwapper::Swap (GSList *zones,
 
     DispatchErrors    ();
     DispatchFloatings ();
+
+    g_hash_table_destroy (_lack_table);
   }
 
   StoreSwapping ();
@@ -229,8 +233,8 @@ void SmartSwapper::StoreSwapping ()
       Fencer *fencer = (Fencer *) current->data;
 
       fencer->_player->SetData (_owner,
-                               "original_pool",
-                               (void *) (i+1));
+                                "original_pool",
+                                (void *) (i+1));
       pool_data->_pool->AddFencer (fencer->_player,
                                    _owner);
 
@@ -255,13 +259,13 @@ void SmartSwapper::CreatePoolTable (GSList *zones)
     {
       PoolZone *zone = (PoolZone *) current->data;
 
-      _pool_table[i]._pool           = zone->GetPool ();
-      _pool_table[i]._fencer_list    = NULL;
-      _pool_table[i]._size           = 0;
-      _pool_table[i]._id             = i + 1;
-      _pool_table[i]._pool_sizes     = &_pool_sizes;
-      _pool_table[i]._criteria_score = g_hash_table_new (NULL,
-                                                         NULL);
+      _pool_table[i]._pool                    = zone->GetPool ();
+      _pool_table[i]._fencer_list             = NULL;
+      _pool_table[i]._size                    = 0;
+      _pool_table[i]._id                      = i + 1;
+      _pool_table[i]._pool_sizes              = &_pool_sizes;
+      _pool_table[i]._criteria_score          = g_hash_table_new (NULL, NULL);
+      _pool_table[i]._original_criteria_score = g_hash_table_new (NULL, NULL);
       current = g_slist_next (current);
     }
   }
@@ -273,6 +277,8 @@ void SmartSwapper::DeletePoolTable ()
   for (guint i = 0; i < _nb_pools; i++)
   {
     g_list_free (_pool_table[i]._fencer_list);
+    g_hash_table_destroy (_pool_table[i]._criteria_score);
+    g_hash_table_destroy (_pool_table[i]._original_criteria_score);
   }
   _nb_pools = 0;
 
@@ -320,7 +326,7 @@ void SmartSwapper::LookUpDistribution (GSList *fencer_list)
       fencer->_new_pool              = NULL;
       fencer->_original_pool         = &_pool_table[GetPoolIndex (i)];
 
-      //fencer->Dump (_owner);
+      // fencer->Dump (_owner);
       fencer->_original_pool->AddFencer (fencer);
 
       current = g_slist_next (current);
@@ -330,12 +336,32 @@ void SmartSwapper::LookUpDistribution (GSList *fencer_list)
   g_hash_table_foreach (_criteria_distribution,
                         (GHFunc) SetExpectedData,
                         this);
+
+  // Keep the results available until the end of the processing
+  for (guint i = 0; i < _nb_pools; i++)
+  {
+    PoolData       *pool_data = &_pool_table[i];
+    GHashTableIter  iter;
+    gpointer        key;
+    gpointer        value;
+
+    g_hash_table_iter_init (&iter,
+                            pool_data->_criteria_score);
+    while (g_hash_table_iter_next (&iter,
+                                   &key,
+                                   &value))
+    {
+      g_hash_table_insert (pool_data->_original_criteria_score,
+                           key,
+                           value);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
 void SmartSwapper::ExtractOverPopulationErrors ()
 {
-  //g_print ("\n\nExtract overpopulation ERRORS\n");
+  // g_print ("\n\nExtract overpopulation ERRORS\n");
 
   for (guint i = 0; i < _nb_pools; i++)
   {
@@ -347,7 +373,7 @@ void SmartSwapper::ExtractOverPopulationErrors ()
     g_hash_table_iter_init (&iter,
                             pool_data->_criteria_score);
 
-    //g_print ("   #%d\n", i+1);
+    // g_print ("   #%d\n", i+1);
     while (g_hash_table_iter_next (&iter,
                                    &key,
                                    &value))
@@ -381,13 +407,14 @@ void SmartSwapper::ExtractOverPopulationErrors ()
 // --------------------------------------------------------------------------------
 void SmartSwapper::FindLackOfPopulationErrors ()
 {
-  //g_print ("\n\nFind lack of population ERRORS\n");
+  // g_print ("\n\nFind lack of population ERRORS\n");
 
   GHashTableIter iter;
   gpointer       key;
   gpointer       value;
 
-  _lack_list = NULL;
+  _lack_table = g_hash_table_new (NULL,
+                                  NULL);
 
   g_hash_table_iter_init (&iter,
                           _criteria_distribution);
@@ -413,9 +440,9 @@ void SmartSwapper::FindLackOfPopulationErrors ()
 
         if (score < criteria_data->_max_criteria_occurrence-1)
         {
-
-          _lack_list = g_slist_prepend (_lack_list,
-                                        (void *) quark);
+          g_hash_table_insert (_lack_table,
+                               (gpointer) quark,
+                               (gpointer) (criteria_data->_max_criteria_occurrence-1));
         }
       }
     }
@@ -425,7 +452,7 @@ void SmartSwapper::FindLackOfPopulationErrors ()
 // --------------------------------------------------------------------------------
 void SmartSwapper::ExtractFloatings ()
 {
-  //g_print ("\n\nExtract FLOATINGS\n");
+  // g_print ("\n\nExtract FLOATINGS\n");
 
   for (guint i = 0; i < _nb_pools; i++)
   {
@@ -437,7 +464,7 @@ void SmartSwapper::ExtractFloatings ()
     g_hash_table_iter_init (&iter,
                             pool_data->_criteria_score);
 
-    //g_print ("   #%d\n", i+1);
+    // g_print ("   #%d\n", i+1);
     while (g_hash_table_iter_next (&iter,
                                    &key,
                                    &value))
@@ -449,7 +476,7 @@ void SmartSwapper::ExtractFloatings ()
                                                                           (const void *) quark);
 
       if (   (criteria_data == NULL)
-          || (criteria_data->_max_floating_fencers && (count == criteria_data->_max_criteria_occurrence)))
+             || (criteria_data->_max_floating_fencers && (count == criteria_data->_max_criteria_occurrence)))
       {
         ExtractFencer (pool_data,
                        quark,
@@ -463,26 +490,37 @@ void SmartSwapper::ExtractFloatings ()
 
   // Transform lack of population into real errors
   {
-    GSList *current_lack = _lack_list;
+    GHashTableIter iter;
+    gpointer       key;
+    gpointer       value;
 
-    while (current_lack)
+    g_hash_table_iter_init (&iter,
+                            _lack_table);
+    while (g_hash_table_iter_next (&iter,
+                                   &key,
+                                   &value))
     {
-      GQuark  quark            = GPOINTER_TO_UINT (current_lack->data);
       GList  *current_floating = g_list_last (_floating_list);
+      GQuark  quark            = GPOINTER_TO_UINT (key);
+      guint   lack_count       = GPOINTER_TO_UINT (value);
 
-      while (current_floating)
+      for (guint i = 0; i < lack_count; i++)
       {
-        Fencer *fencer = (Fencer *) current_floating->data;
-
-        if (fencer->_criteria_quark == quark)
+        if (current_floating)
         {
-          fencer->_over_population_error = TRUE;
+          Fencer *fencer = (Fencer *) current_floating->data;
+
+          if (fencer->_criteria_quark == quark)
+          {
+            fencer->_over_population_error = TRUE;
+          }
+          current_floating = g_list_previous (current_floating);
+        }
+        else
+        {
           break;
         }
-        current_floating = g_list_previous (current_floating);
       }
-
-      current_lack = g_slist_next (current_lack);
     }
   }
 }
@@ -505,19 +543,25 @@ SmartSwapper::Fencer *SmartSwapper::ExtractFencer (PoolData  *from_pool,
     fencer = (Fencer *) current->data;
   }
 
-  *to_list = g_list_prepend (*to_list,
-                             current->data);
+  // Prevent pool leaders from being moved
+  if (fencer->_rank != from_pool->_id-1)
+  {
+    *to_list = g_list_prepend (*to_list,
+                               current->data);
 
-  //fencer->Dump (_owner);
-  from_pool->RemoveFencer ((Fencer *) current->data);
+    // fencer->Dump (_owner);
+    from_pool->RemoveFencer ((Fencer *) current->data);
 
-  return fencer;
+    return fencer;
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
 void SmartSwapper::DispatchErrors ()
 {
-  //g_print ("\n\nDispatch ERRORS\n");
+  // g_print ("\n\nDispatch ERRORS\n");
 
   DispatchFencers (_error_list);
 
@@ -528,9 +572,9 @@ void SmartSwapper::DispatchErrors ()
 // --------------------------------------------------------------------------------
 void SmartSwapper::DispatchFloatings ()
 {
-  GSList *temp_list = NULL;
+  GList *failed_list = NULL;
 
-  //g_print ("\n\nDispatch FLOATINGS\n");
+  // g_print ("\n\nDispatch FLOATINGS\n");
 
   DispatchFencers (_floating_list);
 
@@ -553,11 +597,6 @@ void SmartSwapper::DispatchFloatings ()
 
         if (floating->_new_pool)
         {
-          guint   score;
-
-          score = GPOINTER_TO_UINT (g_hash_table_lookup (floating->_new_pool->_criteria_score,
-                                                         (const void *) error->_criteria_quark));
-
           if (error->CanGoTo (floating->_new_pool,
                               _criteria_distribution))
           {
@@ -568,7 +607,7 @@ void SmartSwapper::DispatchFloatings ()
             {
               for (guint i = 0; i < _nb_pools; i++)
               {
-                PoolData *pool_data = &_pool_table[i];
+                PoolData *pool_data = GetPoolToTry (i);
 
                 if (MoveFencerTo (floating,
                                   pool_data,
@@ -584,17 +623,27 @@ void SmartSwapper::DispatchFloatings ()
         current_floating = g_list_previous (current_floating);
       }
 
-      g_print ("****> %s\n", error->_player->GetName ());
-      temp_list = g_slist_prepend (temp_list,
-                                   error);
+      // g_print ("****> %s\n", error->_player->GetName ());
+      failed_list = g_list_prepend (failed_list,
+                                    error);
 
 next_error:
+    _first_pool_to_try++;
+    if (_first_pool_to_try >= _nb_pools)
+    {
+      _first_pool_to_try = 0;
+    }
       current_error = g_slist_next (current_error);
     }
   }
 
-  g_slist_free (_remaining_errors);
-  _remaining_errors = temp_list;
+  // Last chance to find a pool for the errors
+  {
+    g_slist_free (_remaining_errors);
+    _remaining_errors = NULL;
+
+    DispatchFencers (failed_list);
+  }
 
   g_list_free (_floating_list);
   _floating_list = NULL;
@@ -607,7 +656,7 @@ void SmartSwapper::DispatchFencers (GList *list)
   {
     Fencer *fencer = (Fencer *) list->data;
 
-    //fencer->Dump (_owner);
+    // fencer->Dump (_owner);
 
     // Try original pool first
     if (fencer->_over_population_error == FALSE)
@@ -627,7 +676,7 @@ void SmartSwapper::DispatchFencers (GList *list)
     {
       for (guint i = 0; i < _nb_pools; i++)
       {
-        PoolData *pool_data = &_pool_table[i];
+        PoolData *pool_data = GetPoolToTry (i);
 
         if (MoveFencerTo (fencer,
                           pool_data,
@@ -644,6 +693,12 @@ void SmartSwapper::DispatchFencers (GList *list)
     fencer->_over_population_error = FALSE;
 
 next_fencer:
+    _first_pool_to_try++;
+    if (_first_pool_to_try >= _nb_pools)
+    {
+      _first_pool_to_try = 0;
+    }
+
     list = g_list_next (list);
   }
 }
@@ -655,11 +710,30 @@ gboolean SmartSwapper::MoveFencerTo (Fencer   *fencer,
 {
   if (pool_data->_size < max_pool_size)
   {
+    // Forget pools where over population errors have been detected
+    // for the given criteria
+    if (fencer->_over_population_error)
+    {
+      CriteriaData *criteria_data = (CriteriaData *) g_hash_table_lookup (_criteria_distribution,
+                                                                          (const void *) fencer->_criteria_quark);
+
+      if (criteria_data)
+      {
+        guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_original_criteria_score,
+                                                             (const void *) fencer->_criteria_quark));
+
+        if (score > criteria_data->_max_criteria_occurrence)
+        {
+          return FALSE;
+        }
+      }
+    }
+
     if (fencer->CanGoTo (pool_data,
                          _criteria_distribution))
     {
       pool_data->AddFencer (fencer);
-      //g_print ("          %d (%d)\n", pool_data->_pool->GetNumber (), g_list_length (pool_data->_fencer_list));
+      // g_print ("          %d (%d)\n", pool_data->_pool->GetNumber (), g_list_length (pool_data->_fencer_list));
       return TRUE;
     }
   }
@@ -701,8 +775,8 @@ void SmartSwapper::SetExpectedData (GQuark        quark,
     criteria_data->_max_criteria_occurrence++;
   }
 
-  //g_print ("%d x %20s >> %d (max) %d (floating)\n", criteria_data->_count, g_quark_to_string (quark),
-           //criteria_data->_max_criteria_occurrence, criteria_data->_max_floating_fencers);
+  // g_print ("%d x %20s >> %d (max) %d (floating)\n", criteria_data->_count, g_quark_to_string (quark),
+  // criteria_data->_max_criteria_occurrence, criteria_data->_max_floating_fencers);
 }
 
 // --------------------------------------------------------------------------------
@@ -729,4 +803,17 @@ gint SmartSwapper::CompareFencerRank (Fencer *a,
 guint SmartSwapper::GetErrors ()
 {
   return g_slist_length (_remaining_errors);
+}
+
+// --------------------------------------------------------------------------------
+SmartSwapper::PoolData *SmartSwapper::GetPoolToTry (guint index)
+{
+  if (index + _first_pool_to_try < _nb_pools)
+  {
+    return &_pool_table[index + _first_pool_to_try];
+  }
+  else
+  {
+    return &_pool_table[index + _first_pool_to_try - _nb_pools];
+  }
 }
