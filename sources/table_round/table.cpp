@@ -24,7 +24,7 @@
 Table::Table (TableSet *table_set,
               guint     size,
               guint     number)
-  : Object ("table")
+  : Object ("Table")
 {
   _table_set          = table_set;
   _size               = size;

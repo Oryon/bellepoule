@@ -35,7 +35,7 @@ GtkTargetEntry Module::_dnd_target_list[] =
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,
                 const gchar *root)
-//: Object ("Module")
+: Object ("Module")
 {
   _plugged_list   = NULL;
   _owner          = NULL;

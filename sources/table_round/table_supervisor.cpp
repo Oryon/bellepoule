@@ -157,7 +157,8 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 // --------------------------------------------------------------------------------
 TableSupervisor::~TableSupervisor ()
 {
-  _max_score->Release ();
+  _max_score->Release     ();
+  _fenced_places->Release ();
 
   DeleteTableSets ();
 }

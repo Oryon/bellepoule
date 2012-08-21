@@ -31,6 +31,7 @@ class Player : public Object
       public:
         AttributeId (const gchar *name,
                      Object      *owner = NULL)
+          : Object ("Player::AttributeId")
         {
           _name      = g_strdup (name);
           _owner     = owner;
@@ -121,6 +122,8 @@ class Player : public Object
   private:
     struct Client : public Object
     {
+      Client ()
+        : Object ("Player::Client") {};
       gchar    *_attr_name;
       OnChange  _change_cbk;
       Object   *_owner;

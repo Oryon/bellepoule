@@ -270,6 +270,9 @@ void Player::RemoveCbkOwner (Object *owner)
   current = remove_list;
   while (current)
   {
+    Client *client = (Client *) current->data;
+
+    client->Release ();
     _clients = g_slist_remove (_clients,
                                current->data);
     current = g_slist_next (current);

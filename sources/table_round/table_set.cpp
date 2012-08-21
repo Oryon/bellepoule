@@ -1507,6 +1507,16 @@ void TableSet::DropMatch (GNode *node)
     {
       left_table->DropMatch (data->_match);
     }
+
+    {
+      DropZone *zone = (DropZone *) data->_match->GetPtrData (this,
+                                                              "drop_zone");
+
+      _drop_zones = g_slist_remove (_drop_zones,
+                                    zone);
+      Object::TryToRelease (zone);
+    }
+
     data->_match->Release ();
     data->_match = NULL;
 

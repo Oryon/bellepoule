@@ -24,6 +24,7 @@
 // --------------------------------------------------------------------------------
 Data::Data (const gchar *xml_name,
             guint        default_value)
+: Object ("Data")
 {
   _xml_name = g_strdup (xml_name);
   _value    = default_value;
@@ -35,6 +36,7 @@ Data::Data (const gchar *xml_name,
 // --------------------------------------------------------------------------------
 Data::Data (const gchar *xml_name,
             gchar       *default_value)
+: Object ("Data")
 {
   _xml_name = g_strdup (xml_name);
   _string   = default_value;

@@ -109,6 +109,7 @@ GList *Contest::_color_list = NULL;
 
 // --------------------------------------------------------------------------------
 Contest::Time::Time (const gchar *name)
+  : Object ("Contest::Time")
 {
   _name = g_strdup (name);
   _hour   = 12;
@@ -745,6 +746,8 @@ Contest::~Contest ()
   Object::TryToRelease (_checkin_time);
   Object::TryToRelease (_scratch_time);
   Object::TryToRelease (_start_time);
+
+  Object::TryToRelease (_color);
 
   Object::TryToRelease (_referees_list);
 
