@@ -147,8 +147,8 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
     filter->Release ();
   }
 
-  _table_set_treestore = GTK_TREE_STORE (_glade->GetObject ("table_set_treestore"));
-  _table_set_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("table_set_treemodelfilter"));
+  _table_set_treestore = GTK_TREE_STORE (_glade->GetGObject ("table_set_treestore"));
+  _table_set_filter    = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("table_set_treemodelfilter"));
 
   gtk_tree_model_filter_set_visible_column (_table_set_filter,
                                             TABLE_SET_VISIBILITY_COLUMN_bool);
@@ -1182,7 +1182,7 @@ extern "C" G_MODULE_EXPORT void on_table_nb_qualified_spinbutton_value_changed (
 {
   Module  *module = dynamic_cast <Module *> (owner);
   Stage   *stage  = dynamic_cast <Stage *> (owner);
-  GObject *w      = module->GetObject ("qualified_ratio_spinbutton");
+  GObject *w      = module->GetGObject ("qualified_ratio_spinbutton");
 
   g_signal_handlers_disconnect_by_func (w,
                                         (void *) on_table_qualified_ratio_spinbutton_value_changed,
@@ -1199,7 +1199,7 @@ extern "C" G_MODULE_EXPORT void on_table_qualified_ratio_spinbutton_value_change
 {
   Module  *module = dynamic_cast <Module *> (owner);
   Stage   *stage  = dynamic_cast <Stage *> (owner);
-  GObject *w      = module->GetObject ("nb_qualified_spinbutton");
+  GObject *w      = module->GetGObject ("nb_qualified_spinbutton");
 
   g_signal_handlers_disconnect_by_func (w,
                                         (void *) on_table_nb_qualified_spinbutton_value_changed,

@@ -167,8 +167,8 @@ TableSet::TableSet (TableSupervisor *supervisor,
                                    to_container,
                                    _glade->GetWidget ("to_table_combobox"));
 
-  _quick_search_treestore = GTK_TREE_STORE (_glade->GetObject ("match_treestore"));
-  _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("match_treemodelfilter"));
+  _quick_search_treestore = GTK_TREE_STORE (_glade->GetGObject ("match_treestore"));
+  _quick_search_filter    = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("match_treemodelfilter"));
 
   {
     gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (_glade->GetWidget ("quick_search_combobox")),
@@ -1734,7 +1734,7 @@ void TableSet::OnFromToTableComboboxChanged ()
   }
 
   {
-    GtkListStore *liststore = GTK_LIST_STORE (_glade->GetObject ("cutting_count_liststore"));
+    GtkListStore *liststore = GTK_LIST_STORE (_glade->GetGObject ("cutting_count_liststore"));
 
     gtk_list_store_clear (liststore);
 

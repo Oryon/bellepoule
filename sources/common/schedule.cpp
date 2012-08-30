@@ -44,8 +44,8 @@ Schedule::Schedule (Contest *contest)
   _score_stuffing_allowed = FALSE;
 
   {
-    _list_store        = GTK_LIST_STORE (_glade->GetObject ("stage_liststore"));
-    _list_store_filter = GTK_TREE_MODEL_FILTER (_glade->GetObject ("stage_liststore_filter"));
+    _list_store        = GTK_LIST_STORE (_glade->GetGObject ("stage_liststore"));
+    _list_store_filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("stage_liststore_filter"));
 
     gtk_tree_model_filter_set_visible_column (_list_store_filter,
                                               VISIBILITY_bool);

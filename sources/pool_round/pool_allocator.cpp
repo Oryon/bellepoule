@@ -75,7 +75,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _swapping = new Data ("Decalage",
                         (gchar *) NULL);
 
-  _combobox_store = GTK_LIST_STORE (_glade->GetObject ("combo_liststore"));
+  _combobox_store = GTK_LIST_STORE (_glade->GetGObject ("combo_liststore"));
 
   // Sensitive widgets
   {
@@ -124,7 +124,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _swapper = SmartSwapper::Create (this);
 
   {
-    GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetObject ("swapping_liststore"));
+    GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetGObject ("swapping_liststore"));
     GtkTreeIter   iter;
     GSList       *attr           = _filter->GetAttrList ();
 
@@ -154,7 +154,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
       attr = g_slist_next (attr);
     }
 
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetObject ("swapping_combobox")),
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox")),
                               0);
   }
 
@@ -452,7 +452,7 @@ void PoolAllocator::ApplyConfig ()
 
   if (next_stage)
   {
-    GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (next_stage->GetObject ("balanced_radiobutton"));
+    GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (next_stage->GetGObject ("balanced_radiobutton"));
 
     if (toggle)
     {
@@ -504,11 +504,11 @@ void PoolAllocator::FillInConfig ()
 
     if (_seeding_balanced->_value)
     {
-      w = GTK_TOGGLE_BUTTON (next_stage->GetObject ("balanced_radiobutton"));
+      w = GTK_TOGGLE_BUTTON (next_stage->GetGObject ("balanced_radiobutton"));
     }
     else
     {
-      w = GTK_TOGGLE_BUTTON (next_stage->GetObject ("strength_radiobutton"));
+      w = GTK_TOGGLE_BUTTON (next_stage->GetGObject ("strength_radiobutton"));
     }
 
     if (w)
@@ -536,7 +536,7 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
 
   if (_swapping)
   {
-    GtkTreeModel *model          = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
+    GtkTreeModel *model          = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
     guint         criteria_index = 0;
 
     _swapping->Load (xml_node);
@@ -566,7 +566,7 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
                                                   &iter);
       }
     }
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetObject ("swapping_combobox")),
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox")),
                               criteria_index);
   }
 }
@@ -1597,7 +1597,7 @@ extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
 {
-  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
+  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
   GtkTreeIter   selected_iter;
 
   gtk_combo_box_get_active_iter (cb,

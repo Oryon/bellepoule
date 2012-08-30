@@ -29,7 +29,7 @@ class Glade : public Object
 
     GtkWidget *GetRootWidget    ();
     GtkWidget *GetWidget        (const gchar *name);
-    GObject   *GetObject        (const gchar *name);
+    GObject   *GetGObject       (const gchar *name);
     void       DetachFromParent (GtkWidget *widget);
 
   private:

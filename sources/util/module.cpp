@@ -282,9 +282,9 @@ GtkWidget *Module::GetConfigWidget ()
 }
 
 // --------------------------------------------------------------------------------
-GObject *Module::GetObject (const gchar *name)
+GObject *Module::GetGObject (const gchar *name)
 {
-  return _glade->GetObject (name);
+  return _glade->GetGObject (name);
 }
 
 // --------------------------------------------------------------------------------

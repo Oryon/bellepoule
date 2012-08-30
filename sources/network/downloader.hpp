@@ -18,7 +18,6 @@
 #define downloader_hpp
 
 #include <curl/curl.h>
-#undef GetObject
 #include <glib.h>
 
 #include "object.hpp"

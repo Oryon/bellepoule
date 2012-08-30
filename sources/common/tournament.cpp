@@ -1299,7 +1299,7 @@ void Tournament::GetBroadcastedCompetitions ()
   _competitions_downloader->Start (address,
                                    60*5*1000);
 
-  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetObject ("broadcasted_liststore")));
+  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetGObject ("broadcasted_liststore")));
 
   gtk_entry_set_icon_from_stock (GTK_ENTRY (_glade->GetWidget ("http_entry")),
                                  GTK_ENTRY_ICON_SECONDARY,
@@ -1316,7 +1316,7 @@ void Tournament::StopCompetitionMonitoring ()
     _competitions_downloader = NULL;
   }
 
-  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetObject ("broadcasted_liststore")));
+  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetGObject ("broadcasted_liststore")));
 
   gtk_entry_set_icon_from_icon_name (GTK_ENTRY (_glade->GetWidget ("http_entry")),
                                      GTK_ENTRY_ICON_SECONDARY,
@@ -1339,7 +1339,7 @@ gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_da
 
       if (doc->Parse (data) == tinyxml2::XML_NO_ERROR)
       {
-        GtkListStore         *model = GTK_LIST_STORE (tournament->_glade->GetObject ("broadcasted_liststore"));
+        GtkListStore         *model = GTK_LIST_STORE (tournament->_glade->GetGObject ("broadcasted_liststore"));
         GtkTreeIter           iter;
         tinyxml2::XMLHandle  *hdl   = new tinyxml2::XMLHandle (doc);
         tinyxml2::XMLHandle   first = hdl->FirstChildElement().FirstChildElement();
@@ -1371,7 +1371,7 @@ gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_da
       gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
                                          GTK_ENTRY_ICON_SECONDARY,
                                          "network-offline");
-      gtk_list_store_clear (GTK_LIST_STORE (tournament->_glade->GetObject ("broadcasted_liststore")));
+      gtk_list_store_clear (GTK_LIST_STORE (tournament->_glade->GetGObject ("broadcasted_liststore")));
     }
     else
     {

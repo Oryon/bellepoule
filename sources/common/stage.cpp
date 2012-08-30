@@ -266,7 +266,7 @@ void Stage::ApplyConfig ()
   if (module)
   {
     {
-      GtkEntry *w = GTK_ENTRY (module->GetObject ("name_entry"));
+      GtkEntry *w = GTK_ENTRY (module->GetGObject ("name_entry"));
 
       if (w)
       {
@@ -277,7 +277,7 @@ void Stage::ApplyConfig ()
     }
 
     {
-      GtkEntry *w = GTK_ENTRY (module->GetObject ("max_score_entry"));
+      GtkEntry *w = GTK_ENTRY (module->GetGObject ("max_score_entry"));
 
       if (w)
       {
@@ -291,7 +291,7 @@ void Stage::ApplyConfig ()
     }
 
     {
-      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetObject ("qualified_ratio_spinbutton"));
+      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
 
       if (w)
       {
@@ -300,7 +300,7 @@ void Stage::ApplyConfig ()
     }
 
     {
-      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetObject ("nb_qualified_spinbutton"));
+      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
 
       if (w)
       {
@@ -318,7 +318,7 @@ void Stage::FillInConfig ()
   if (module)
   {
     {
-      GtkEntry *w = GTK_ENTRY (module->GetObject ("name_entry"));
+      GtkEntry *w = GTK_ENTRY (module->GetGObject ("name_entry"));
 
       if (w)
       {
@@ -328,7 +328,7 @@ void Stage::FillInConfig ()
     }
 
     {
-      GtkEntry *w = GTK_ENTRY (module->GetObject ("max_score_entry"));
+      GtkEntry *w = GTK_ENTRY (module->GetGObject ("max_score_entry"));
 
       if (w)
       {
@@ -341,7 +341,7 @@ void Stage::FillInConfig ()
     }
 
     {
-      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetObject ("qualified_ratio_spinbutton"));
+      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
 
       if (w)
       {
@@ -351,7 +351,7 @@ void Stage::FillInConfig ()
     }
 
     {
-      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetObject ("nb_qualified_spinbutton"));
+      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
 
       if (w)
       {
@@ -383,7 +383,7 @@ void Stage::OnQualifiedRatioValueChanged (GtkSpinButton *spinbutton)
     if (shortlist)
     {
       Module        *module = dynamic_cast <Module *> (this);
-      GtkSpinButton *w      = GTK_SPIN_BUTTON (module->GetObject ("nb_qualified_spinbutton"));
+      GtkSpinButton *w      = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
       guint          value  = gtk_spin_button_get_value_as_int (spinbutton);
 
       gtk_spin_button_set_value (w,
@@ -413,7 +413,7 @@ void Stage::OnNbQualifiedValueChanged (GtkSpinButton *spinbutton)
     if (shortlist)
     {
       Module        *module = dynamic_cast <Module *> (this);
-      GtkSpinButton *w      = GTK_SPIN_BUTTON (module->GetObject ("qualified_ratio_spinbutton"));
+      GtkSpinButton *w      = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
       guint          value  = gtk_spin_button_get_value_as_int (spinbutton);
 
       gtk_spin_button_set_value (w,
@@ -591,7 +591,7 @@ void Stage::ActivateNbQualified ()
 
     if (module)
     {
-      GtkAdjustment *adjustment = GTK_ADJUSTMENT (module->GetObject ("nb_qualified_adjustment"));
+      GtkAdjustment *adjustment = GTK_ADJUSTMENT (module->GetGObject ("nb_qualified_adjustment"));
 
       if (adjustment)
       {
@@ -622,7 +622,7 @@ void Stage::DeactivateNbQualified ()
 
     if (module)
     {
-      GtkAdjustment *adjustment = GTK_ADJUSTMENT (module->GetObject ("nb_qualified_adjustment"));
+      GtkAdjustment *adjustment = GTK_ADJUSTMENT (module->GetGObject ("nb_qualified_adjustment"));
 
       if (adjustment)
       {
@@ -884,8 +884,8 @@ void Stage::ToggleClassification (gboolean classification_on)
 
   if (module)
   {
-    GtkWidget *main_w           = GTK_WIDGET (module->GetObject ("main_hook"));
-    GtkWidget *classification_w = GTK_WIDGET (module->GetObject ("classification_hook"));
+    GtkWidget *main_w           = GTK_WIDGET (module->GetGObject ("main_hook"));
+    GtkWidget *classification_w = GTK_WIDGET (module->GetGObject ("classification_hook"));
 
     if (classification_on)
     {
@@ -942,11 +942,11 @@ void Stage::SetClassificationFilter (Filter *filter)
   if (_classification == NULL)
   {
     Module    *module           = dynamic_cast <Module *> (this);
-    GtkWidget *classification_w = GTK_WIDGET (module->GetObject ("classification_list_host"));
+    GtkWidget *classification_w = GTK_WIDGET (module->GetGObject ("classification_list_host"));
 
     if (classification_w == NULL)
     {
-      classification_w = GTK_WIDGET (module->GetObject ("classification_hook"));
+      classification_w = GTK_WIDGET (module->GetGObject ("classification_hook"));
     }
 
     if (classification_w)
@@ -1033,7 +1033,7 @@ void Stage::SetScoreStuffingPolicy (gboolean allowed)
     {
       _score_stuffing_trigger = new SensitivityTrigger ();
 
-      _score_stuffing_trigger->AddWidget (GTK_WIDGET (module->GetObject ("stuff_toolbutton")));
+      _score_stuffing_trigger->AddWidget (GTK_WIDGET (module->GetGObject ("stuff_toolbutton")));
     }
   }
 

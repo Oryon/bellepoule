@@ -162,7 +162,7 @@ GtkWidget *Glade::GetWidget (const gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-GObject *Glade::GetObject (const gchar *name)
+GObject *Glade::GetGObject (const gchar *name)
 {
   return gtk_builder_get_object (_glade_xml,
                                  name);

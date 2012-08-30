@@ -47,7 +47,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 
   _single_owner = new Object ();
 
-  _pool_liststore = GTK_LIST_STORE (_glade->GetObject ("pool_liststore"));
+  _pool_liststore = GTK_LIST_STORE (_glade->GetGObject ("pool_liststore"));
 
   // Sensitive widgets
   {
@@ -885,7 +885,7 @@ extern "C" G_MODULE_EXPORT void on_pool_nb_qualified_spinbutton_value_changed (G
 {
   Module  *module = dynamic_cast <Module *> (owner);
   Stage   *stage  = dynamic_cast <Stage *> (owner);
-  GObject *w      = module->GetObject ("qualified_ratio_spinbutton");
+  GObject *w      = module->GetGObject ("qualified_ratio_spinbutton");
 
   g_signal_handlers_disconnect_by_func (w,
                                         (void *) on_pool_qualified_ratio_spinbutton_value_changed,
@@ -902,7 +902,7 @@ extern "C" G_MODULE_EXPORT void on_pool_qualified_ratio_spinbutton_value_changed
 {
   Module  *module = dynamic_cast <Module *> (owner);
   Stage   *stage  = dynamic_cast <Stage *> (owner);
-  GObject *w      = module->GetObject ("nb_qualified_spinbutton");
+  GObject *w      = module->GetGObject ("nb_qualified_spinbutton");
 
   g_signal_handlers_disconnect_by_func (w,
                                         (void *) on_pool_nb_qualified_spinbutton_value_changed,
