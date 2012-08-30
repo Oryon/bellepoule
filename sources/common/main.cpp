@@ -113,6 +113,7 @@ static gint CompareDate (Attribute *attr_a,
 }
 
 // --------------------------------------------------------------------------------
+#ifdef DEBUG
 static void LogHandler (const gchar    *log_domain,
                         GLogLevelFlags  log_level,
                         const gchar    *message,
@@ -141,6 +142,7 @@ static void LogHandler (const gchar    *log_domain,
     break;
   }
 }
+#endif
 
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)

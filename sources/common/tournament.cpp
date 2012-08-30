@@ -1171,7 +1171,7 @@ void Tournament::OpenUriContest (const gchar *uri)
     {
       static const gchar *contest_suffix_table[] = {".cotcot", ".COTCOT", ".xml", ".XML", NULL};
       static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", ".txt", ".TXT", NULL};
-      Contest            *contest;
+      Contest            *contest = NULL;
 
       for (guint i = 0; contest_suffix_table[i] != NULL; i++)
       {
