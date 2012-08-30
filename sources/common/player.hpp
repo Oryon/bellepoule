@@ -31,8 +31,9 @@ class Player : public Object
       public:
         AttributeId (const gchar *name,
                      Object      *owner = NULL)
+          : Object ("Player::AttributeId")
         {
-          _name      = g_strdup (name);
+          _name      = name;
           _owner     = owner;
           _rand_seed = 0;
         }
@@ -45,9 +46,9 @@ class Player : public Object
         static AttributeId *Create (AttributeDesc *desc,
                                     Object        *owner);
 
-        gchar   *_name;
-        Object  *_owner;
-        guint32  _rand_seed;
+        const gchar *_name;
+        Object      *_owner;
+        guint32      _rand_seed;
     };
 
     typedef void (*OnChange) (Player    *player,
@@ -121,6 +122,17 @@ class Player : public Object
   private:
     struct Client : public Object
     {
+      Client ()
+        : Object ("Player::Client")
+      {
+        _attr_name = NULL;
+      };
+
+      virtual ~Client ()
+      {
+        g_free (_attr_name);
+      };
+
       gchar    *_attr_name;
       OnChange  _change_cbk;
       Object   *_owner;
@@ -136,7 +148,7 @@ class Player : public Object
     gchar      _weapon;
     PlayerType _player_type;
 
-    ~Player ();
+    virtual ~Player ();
 
     void NotifyChange (Attribute *attr);
 };

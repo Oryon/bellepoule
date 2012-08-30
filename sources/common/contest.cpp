@@ -44,11 +44,11 @@
 
 typedef enum
 {
-  FTP_NAME_COL,
-  FTP_PIXBUF_COL,
-  FTP_URL_COL,
-  FTP_USER_COL,
-  FTP_PASSWD_COL
+  FTP_NAME_str,
+  FTP_PIXBUF_pix,
+  FTP_URL_str,
+  FTP_USER_str,
+  FTP_PASSWD_str
 } FTPColumn;
 
 const gchar *Contest::weapon_image[_nb_weapon] =
@@ -109,6 +109,7 @@ GList *Contest::_color_list = NULL;
 
 // --------------------------------------------------------------------------------
 Contest::Time::Time (const gchar *name)
+  : Object ("Contest::Time")
 {
   _name = g_strdup (name);
   _hour   = 12;
@@ -118,6 +119,7 @@ Contest::Time::Time (const gchar *name)
 // --------------------------------------------------------------------------------
 Contest::Time::~Time ()
 {
+  g_free (_name);
 }
 
 // --------------------------------------------------------------------------------
@@ -195,7 +197,7 @@ void Contest::Time::FillInProperties (Glade *glade)
 // --------------------------------------------------------------------------------
 void Contest::Time::Copy (Time *to)
 {
-  to->_name   = _name;
+  to->_name   = g_strdup (_name);
   to->_hour   = _hour;
   to->_minute = _minute;
 }
@@ -247,6 +249,8 @@ Contest::Contest ()
   _gdk_color = NULL;
   _color     = new Data ("Couleur",
                          (guint) 0);
+
+  _properties_dialog = _glade->GetWidget ("properties_dialog");
 
   {
     _referees_list = new RefereesList (this);
@@ -320,7 +324,7 @@ Contest::Contest ()
 
   // FTP repository
   {
-    GtkListStore *model  = GTK_LIST_STORE (_glade->GetWidget ("FavoriteFTP"));
+    GtkListStore *model  = GTK_LIST_STORE (_glade->GetGObject ("FavoriteFTP"));
     gchar        *path   = g_build_filename (_program_path, "resources", "glade", "escrime_info.jpg", NULL);
     GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
     GtkTreeIter   iter;
@@ -328,11 +332,11 @@ Contest::Contest ()
     g_free (path);
     gtk_list_store_append (model, &iter);
     gtk_list_store_set (model, &iter,
-                        FTP_NAME_COL,   "<b><big>Escrime Info  </big></b>",
-                        FTP_PIXBUF_COL, pixbuf,
-                        FTP_URL_COL,    "ftp://www.escrime-info.com/web",
-                        FTP_USER_COL,   "belle_poule",
-                        FTP_PASSWD_COL, "tH3MF8huHX",
+                        FTP_NAME_str,   "<b><big>Escrime Info  </big></b>",
+                        FTP_PIXBUF_pix, pixbuf,
+                        FTP_URL_str,    "ftp://www.escrime-info.com/web",
+                        FTP_USER_str,   "belle_poule",
+                        FTP_PASSWD_str, "tH3MF8huHX",
                         -1);
     g_object_unref (pixbuf);
   }
@@ -563,6 +567,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_level);
           _level = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
@@ -570,6 +575,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_id);
           _id = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "TitreLong");
@@ -577,6 +583,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_name);
           _name = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Date");
@@ -601,24 +608,28 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
             g_strfreev (date);
           }
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Appel");
         if (attr)
         {
           _checkin_time->Load (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Scratch");
         if (attr)
         {
           _scratch_time->Load (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Debut");
         if (attr)
         {
           _start_time->Load (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Arme");
@@ -631,6 +642,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
               _weapon = i;
             }
           }
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Sexe");
@@ -643,6 +655,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
               _gender = i;
             }
           }
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Categorie");
@@ -655,6 +668,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
               _category = i;
             }
           }
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Organisateur");
@@ -662,6 +676,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_organizer);
           _organizer = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "URLorganisateur");
@@ -669,6 +684,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_web_site);
           _web_site = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Lieu");
@@ -676,12 +692,14 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           g_free (_location);
           _location = g_strdup (attr);
+          xmlFree (attr);
         }
 
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "score_stuffing");
         if (attr)
         {
           score_stuffing_policy = (gboolean) atoi (attr);
+          xmlFree (attr);
         }
       }
       xmlXPathFreeObject  (xml_object);
@@ -731,6 +749,8 @@ Contest::~Contest ()
   Object::TryToRelease (_checkin_time);
   Object::TryToRelease (_scratch_time);
   Object::TryToRelease (_start_time);
+
+  Object::TryToRelease (_color);
 
   Object::TryToRelease (_referees_list);
 
@@ -869,17 +889,15 @@ Contest *Contest::Create ()
   contest->FillInProperties ();
 
   {
-    GtkWidget *dialog = contest->_glade->GetWidget ("properties_dialog");
-
-    if (gtk_dialog_run (GTK_DIALOG (dialog)) == TRUE)
+    if (gtk_dialog_run (GTK_DIALOG (contest->_properties_dialog)) == TRUE)
     {
       contest->_schedule->CreateDefault ();
       contest->ReadProperties ();
-      gtk_widget_hide (dialog);
+      gtk_widget_hide (contest->_properties_dialog);
     }
     else
     {
-      gtk_widget_hide (dialog);
+      gtk_widget_hide (contest->_properties_dialog);
       Object::TryToRelease (contest);
       contest = NULL;
     }
@@ -1028,33 +1046,44 @@ void Contest::Init ()
 {
   GdkColor *color;
 
-  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  color = g_new (GdkColor, 1);
   gdk_color_parse ("#EED680", color); // accent yellow
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  color = g_new (GdkColor, 1);
   gdk_color_parse ("#E0B6AF", color); // red hilight
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  color = g_new (GdkColor, 1);
   gdk_color_parse ("#ADA7C8", color); // purple hilight
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  color = g_new (GdkColor, 1);
   gdk_color_parse ("#9DB8D2", color); // blue hilight
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  color = g_new (GdkColor, 1);
   gdk_color_parse ("#83A67F", color); // green medium
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  color = g_new (GdkColor, 1);
   gdk_color_parse ("#DF421E", color); // accent red
   _color_list = g_list_append (_color_list, color);
 
-  color = (GdkColor *) g_malloc (sizeof (GdkColor));
+  color = g_new (GdkColor, 1);
   gdk_color_parse ("#826647", color); // Basic 3D hilight
   _color_list = g_list_append (_color_list, color);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::Cleanup ()
+{
+  g_list_foreach (_color_list,
+                  (GFunc) g_free,
+                  NULL);
+  g_list_free (_color_list);
+
+  _color_list = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -1744,15 +1773,13 @@ extern "C" G_MODULE_EXPORT void on_properties_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void Contest::on_properties_toolbutton_clicked ()
 {
-  GtkWidget *dialog = _glade->GetWidget ("properties_dialog");
-
   FillInProperties ();
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == TRUE)
+  if (gtk_dialog_run (GTK_DIALOG (_properties_dialog)) == TRUE)
   {
     ReadProperties ();
     MakeDirty ();
   }
-  gtk_widget_hide (dialog);
+  gtk_widget_hide (_properties_dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -1782,9 +1809,7 @@ extern "C" G_MODULE_EXPORT void on_calendar_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest::on_calendar_button_clicked ()
 {
-  GtkWidget *dialog = _glade->GetWidget ("calendar_dialog");
-
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == TRUE)
+  if (gtk_dialog_run (GTK_DIALOG (_properties_dialog)) == TRUE)
   {
     guint year;
     guint month;
@@ -1799,7 +1824,7 @@ void Contest::on_calendar_button_clicked ()
                 month,
                 year);
   }
-  gtk_widget_hide (dialog);
+  gtk_widget_hide (_properties_dialog);
 }
 
 // --------------------------------------------------------------------------------
@@ -1892,9 +1917,9 @@ void Contest::on_ftp_changed (GtkComboBox *widget)
 
     gtk_tree_model_get (gtk_combo_box_get_model (widget),
                         &iter,
-                        FTP_URL_COL,    &url,
-                        FTP_USER_COL,   &user,
-                        FTP_PASSWD_COL, &passwd,
+                        FTP_URL_str,    &url,
+                        FTP_USER_str,   &user,
+                        FTP_PASSWD_str, &passwd,
                         -1);
 
     gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("url_entry")),

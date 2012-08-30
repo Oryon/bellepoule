@@ -113,8 +113,42 @@ static gint CompareDate (Attribute *attr_a,
 }
 
 // --------------------------------------------------------------------------------
+#ifdef DEBUG
+static void LogHandler (const gchar    *log_domain,
+                        GLogLevelFlags  log_level,
+                        const gchar    *message,
+                        gpointer        user_data)
+{
+  switch (log_level)
+  {
+    case G_LOG_FLAG_FATAL:
+    case G_LOG_LEVEL_ERROR:
+    case G_LOG_LEVEL_CRITICAL:
+    case G_LOG_LEVEL_WARNING:
+    case G_LOG_FLAG_RECURSION:
+    {
+      printf ("[1;31m[%s][0m %s\n", log_domain, message);
+    }
+    break;
+
+    case G_LOG_LEVEL_MESSAGE:
+    case G_LOG_LEVEL_INFO:
+    case G_LOG_LEVEL_DEBUG:
+    case G_LOG_LEVEL_MASK:
+    default:
+    {
+      printf ("[1;34m[%s][0m %s\n", log_domain, message);
+    }
+    break;
+  }
+}
+#endif
+
+// --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
+  // g_mem_set_vtable (glib_mem_profiler_table);
+
   // Init
   {
     gchar *binary_dir      = g_path_get_dirname (argv[0]);
@@ -123,14 +157,14 @@ int main (int argc, char **argv)
     g_thread_init (NULL);
 
 #ifdef DEBUG
+    g_log_set_default_handler (LogHandler,
+                               NULL);
     install_dirname = g_build_filename (binary_dir, "..", "..", NULL);
 #else
     install_dirname = g_build_filename (binary_dir, "..", "share", "BellePoule", NULL);
 #endif
 
-      g_free (binary_dir);
-
-    // g_mem_set_vtable (glib_mem_profiler_table);
+    g_free (binary_dir);
 
     if (install_dirname)
     {
@@ -181,13 +215,16 @@ int main (int argc, char **argv)
       textdomain ("BellePoule");
     }
 
-    Contest::Init               ();
-    CheckinSupervisor::Init     ();
-    PoolAllocator::Init         ();
-    PoolSupervisor::Init        ();
-    TableSupervisor::Init       ();
-    GeneralClassification::Init ();
-    Splitting::Init             ();
+    Contest::Init ();
+
+    {
+      CheckinSupervisor::Declare     ();
+      PoolAllocator::Declare         ();
+      PoolSupervisor::Declare        ();
+      TableSupervisor::Declare       ();
+      GeneralClassification::Declare ();
+      Splitting::Declare             ();
+    }
 
     g_free (install_dirname);
   }
@@ -332,6 +369,11 @@ int main (int argc, char **argv)
   }
 
   gtk_main ();
+
+  {
+    Contest::Cleanup       ();
+    AttributeDesc::Cleanup ();
+  }
 
   return 0;
 }

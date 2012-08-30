@@ -93,7 +93,7 @@ Splitting::~Splitting ()
 }
 
 // --------------------------------------------------------------------------------
-void Splitting::Init ()
+void Splitting::Declare ()
 {
   RegisterStageClass (gettext (_class_name),
                       _xml_class_name,

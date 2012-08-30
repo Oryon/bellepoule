@@ -38,19 +38,19 @@ class SmartSwapper : public Object, public Swapper
   private:
     class PoolData;
 
-    struct Fencer
+    class Fencer
     {
-      Player   *_player;
-      GQuark    _criteria_quark;
-      PoolData *_original_pool;
-      PoolData *_new_pool;
-      guint     _rank;
-      gboolean  _over_population_error;
+      public:
+        Player   *_player;
+        GQuark    _criteria_quark;
+        PoolData *_original_pool;
+        PoolData *_new_pool;
+        guint     _rank;
+        gboolean  _over_population_error;
 
-      void Dump (Object *owner);
-
-      gboolean CanGoTo (PoolData   *pool_data,
-                        GHashTable *criteria_distribution);
+        void     Dump    (Object *owner);
+        gboolean CanGoTo (PoolData   *pool_data,
+                          GHashTable *criteria_distribution);
     };
 
     class PoolSizes
@@ -77,7 +77,6 @@ class SmartSwapper : public Object, public Swapper
 
       private:
         guint _nb_max;
-
         guint _nb_max_reached;
     };
 
@@ -86,13 +85,13 @@ class SmartSwapper : public Object, public Swapper
       public:
         Pool       *_pool;
         GHashTable *_criteria_score;
+        GHashTable *_original_criteria_score;
         GList      *_fencer_list;
         guint       _size;
         guint       _id;
         PoolSizes  *_pool_sizes;
 
-        void AddFencer (Fencer *fencer);
-
+        void AddFencer    (Fencer *fencer);
         void RemoveFencer (Fencer *fencer);
 
       private:
@@ -100,18 +99,19 @@ class SmartSwapper : public Object, public Swapper
                                   gint   delta_score);
     };
 
-    struct CriteriaData
+    class CriteriaData
     {
-      guint _count;
+      public:
+        guint _count;
 
-      guint _max_criteria_occurrence;
-      guint _max_floating_fencers;
+        guint _max_criteria_occurrence;
+        guint _max_floating_fencers;
     };
 
   private:
     SmartSwapper (Object *rank_attr_id);
 
-    ~SmartSwapper ();
+    virtual ~SmartSwapper ();
 
     guint GetPoolIndex (guint fencer_index);
 
@@ -153,6 +153,8 @@ class SmartSwapper : public Object, public Swapper
     static gint CompareFencerRank (Fencer *a,
                                    Fencer *b);
 
+    PoolData *GetPoolToTry (guint index);
+
   private:
     Object              *_owner;
     guint                _nb_pools;
@@ -162,8 +164,9 @@ class SmartSwapper : public Object, public Swapper
     Player::AttributeId *_criteria_id;
     GList               *_error_list;
     GList               *_floating_list;
-    GSList              *_lack_list;
+    GHashTable          *_lack_table;
     GSList              *_remaining_errors;
+    guint                _first_pool_to_try;
 };
 
 #endif

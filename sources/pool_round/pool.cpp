@@ -802,7 +802,7 @@ void Pool::Draw (GooCanvas *on_canvas,
 
                 gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (w), cell, FALSE);
                 gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (w),
-                                                cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
+                                                cell, "pixbuf", AttributeDesc::DISCRETE_ICON_pix,
                                                 NULL);
 
                 g_object_set_data (G_OBJECT (w), "player",  player);
@@ -1585,15 +1585,17 @@ void Pool::RefreshDashBoard ()
           {
             gtk_tree_model_get (GetStatusModel (),
                                 &iter,
-                                AttributeDesc::DISCRETE_XML_IMAGE, &code,
+                                AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
                                 -1);
             if (strcmp (text, code) == 0)
             {
               gtk_combo_box_set_active_iter (GTK_COMBO_BOX (data),
                                              &iter);
-
+              g_free (code);
               break;
             }
+
+            g_free (code);
             iter_is_valid = gtk_tree_model_iter_next (GetStatusModel (),
                                                       &iter);
           }
@@ -1880,6 +1882,7 @@ void Pool::Load (xmlNode *xml_node,
             {
               player_A = (Player *) node->data;
             }
+            xmlFree (attr);
 
             attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
             node = g_slist_find_custom (player_list,
@@ -1889,6 +1892,7 @@ void Pool::Load (xmlNode *xml_node,
             {
               player_B = (Player *) node->data;
             }
+            xmlFree (attr);
           }
 
           match = GetMatch (player_A, player_B);
@@ -1917,13 +1921,14 @@ void Pool::Load (xmlNode *xml_node,
               {
                 is_the_best = TRUE;
               }
+              xmlFree (attr);
 
               attr = (gchar *) xmlGetProp (A, BAD_CAST "Score");
-
               if (attr)
               {
                 match->SetScore (player_A, atoi (attr), is_the_best);
               }
+              xmlFree (attr);
             }
 
             {
@@ -1934,12 +1939,14 @@ void Pool::Load (xmlNode *xml_node,
               {
                 is_the_best = TRUE;
               }
+              xmlFree (attr);
 
               attr = (gchar *) xmlGetProp (B, BAD_CAST "Score");
               if (attr)
               {
                 match->SetScore (player_B, atoi (attr), is_the_best);
               }
+              xmlFree (attr);
             }
 
             if (   (match->PlayerHasScore (player_A) == FALSE)
@@ -2150,7 +2157,7 @@ void Pool::OnStatusChanged (GtkComboBox *combo_box)
                                  &iter);
   gtk_tree_model_get (GetStatusModel (),
                       &iter,
-                      AttributeDesc::DISCRETE_XML_IMAGE, &code,
+                      AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
                       -1);
 
   if (code && *code !='Q')
@@ -2162,6 +2169,8 @@ void Pool::OnStatusChanged (GtkComboBox *combo_box)
   {
     RestorePlayer (player);
   }
+
+  g_free (code);
 }
 
 // --------------------------------------------------------------------------------

@@ -63,9 +63,9 @@ class Object
     static gchar *GetUndivadableText (const gchar *text);
 
   private:
-    GData *_datalist;
-    guint  _ref_count;
-    gchar *_class_name;
+    GData       *_datalist;
+    guint        _ref_count;
+    const gchar *_class_name;
 
     static GList *_list;
     static guint  _nb_objects;

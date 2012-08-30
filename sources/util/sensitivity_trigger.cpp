@@ -23,6 +23,7 @@ const gchar *SensitivityTrigger::_data_key = "SensitivityTrigger::lock";
 
 // --------------------------------------------------------------------------------
 SensitivityTrigger::SensitivityTrigger ()
+  : Object ("SensitivityTrigger")
 {
   _widget_list = NULL;
 }

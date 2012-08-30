@@ -54,7 +54,7 @@ class TableSetBorder : public Object
     GtkContainer *_container;
     GtkWidget    *_widget;
 
-    ~TableSetBorder ();
+    virtual ~TableSetBorder ();
 };
 
 #endif

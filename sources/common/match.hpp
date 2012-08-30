@@ -112,7 +112,7 @@ class Match : public Object
 
     void Init (Data *max_score);
 
-    ~Match ();
+    virtual ~Match ();
 };
 
 #endif

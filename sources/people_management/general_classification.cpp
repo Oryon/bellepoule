@@ -76,7 +76,7 @@ GeneralClassification::~GeneralClassification ()
 }
 
 // --------------------------------------------------------------------------------
-void GeneralClassification::Init ()
+void GeneralClassification::Declare ()
 {
   RegisterStageClass (gettext (_class_name),
                       _xml_class_name,

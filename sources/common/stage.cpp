@@ -127,6 +127,7 @@ void Stage::SetName (gchar *name)
     }
     else
     {
+      g_free (_name);
       _name = g_strdup (name);
     }
   }
@@ -265,22 +266,22 @@ void Stage::ApplyConfig ()
   if (module)
   {
     {
-      GtkWidget *w = module->GetWidget ("name_entry");
+      GtkEntry *w = GTK_ENTRY (module->GetGObject ("name_entry"));
 
       if (w)
       {
-        gchar *name = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
+        gchar *name = (gchar *) gtk_entry_get_text (w);
 
         SetName (name);
       }
     }
 
     {
-      GtkWidget *w = module->GetWidget ("max_score_entry");
+      GtkEntry *w = GTK_ENTRY (module->GetGObject ("max_score_entry"));
 
       if (w)
       {
-        gchar *str = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
+        gchar *str = (gchar *) gtk_entry_get_text (w);
 
         if (str)
         {
@@ -290,20 +291,20 @@ void Stage::ApplyConfig ()
     }
 
     {
-      GtkWidget *w = module->GetWidget ("qualified_ratio_spinbutton");
+      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
 
       if (w)
       {
-        _qualified_ratio->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
+        _qualified_ratio->_value = gtk_spin_button_get_value_as_int (w);
       }
     }
 
     {
-      GtkWidget *w = module->GetWidget ("nb_qualified_spinbutton");
+      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
 
       if (w)
       {
-        _nb_qualified->_value = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (w));
+        _nb_qualified->_value = gtk_spin_button_get_value_as_int (w);
       }
     }
   }
@@ -317,44 +318,44 @@ void Stage::FillInConfig ()
   if (module)
   {
     {
-      GtkWidget *w = module->GetWidget ("name_entry");
+      GtkEntry *w = GTK_ENTRY (module->GetGObject ("name_entry"));
 
       if (w)
       {
-        gtk_entry_set_text (GTK_ENTRY (w),
+        gtk_entry_set_text (w,
                             GetName ());
       }
     }
 
     {
-      GtkWidget *w = module->GetWidget ("max_score_entry");
+      GtkEntry *w = GTK_ENTRY (module->GetGObject ("max_score_entry"));
 
       if (w)
       {
         gchar *text = g_strdup_printf ("%d", _max_score->_value);
 
-        gtk_entry_set_text (GTK_ENTRY (w),
+        gtk_entry_set_text (w,
                             text);
         g_free (text);
       }
     }
 
     {
-      GtkWidget *w = module->GetWidget ("qualified_ratio_spinbutton");
+      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
 
       if (w)
       {
-        gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+        gtk_spin_button_set_value (w,
                                    _qualified_ratio->_value);
       }
     }
 
     {
-      GtkWidget *w = module->GetWidget ("nb_qualified_spinbutton");
+      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
 
       if (w)
       {
-        gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+        gtk_spin_button_set_value (w,
                                    _nb_qualified->_value);
       }
     }
@@ -381,11 +382,11 @@ void Stage::OnQualifiedRatioValueChanged (GtkSpinButton *spinbutton)
 
     if (shortlist)
     {
-      Module    *module = dynamic_cast <Module *> (this);
-      GtkWidget *w      = module->GetWidget ("nb_qualified_spinbutton");
-      guint      value  = gtk_spin_button_get_value_as_int (spinbutton);
+      Module        *module = dynamic_cast <Module *> (this);
+      GtkSpinButton *w      = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
+      guint          value  = gtk_spin_button_get_value_as_int (spinbutton);
 
-      gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+      gtk_spin_button_set_value (w,
                                  value * g_slist_length (shortlist) / 100);
     }
   }
@@ -411,11 +412,11 @@ void Stage::OnNbQualifiedValueChanged (GtkSpinButton *spinbutton)
 
     if (shortlist)
     {
-      Module    *module = dynamic_cast <Module *> (this);
-      GtkWidget *w      = module->GetWidget ("qualified_ratio_spinbutton");
-      guint      value  = gtk_spin_button_get_value_as_int (spinbutton);
+      Module        *module = dynamic_cast <Module *> (this);
+      GtkSpinButton *w      = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
+      guint          value  = gtk_spin_button_get_value_as_int (spinbutton);
 
-      gtk_spin_button_set_value (GTK_SPIN_BUTTON (w),
+      gtk_spin_button_set_value (w,
                                  value * 100 / g_slist_length (shortlist));
     }
   }
@@ -590,11 +591,11 @@ void Stage::ActivateNbQualified ()
 
     if (module)
     {
-      GtkWidget *adjustment = module->GetWidget ("nb_qualified_adjustment");
+      GtkAdjustment *adjustment = GTK_ADJUSTMENT (module->GetGObject ("nb_qualified_adjustment"));
 
       if (adjustment)
       {
-        gtk_adjustment_set_upper (GTK_ADJUSTMENT (adjustment),
+        gtk_adjustment_set_upper (adjustment,
                                   (gdouble) g_slist_length (shortlist));
       }
     }
@@ -621,11 +622,11 @@ void Stage::DeactivateNbQualified ()
 
     if (module)
     {
-      GtkWidget *adjustment = module->GetWidget ("nb_qualified_adjustment");
+      GtkAdjustment *adjustment = GTK_ADJUSTMENT (module->GetGObject ("nb_qualified_adjustment"));
 
       if (adjustment)
       {
-        gtk_adjustment_set_upper (GTK_ADJUSTMENT (adjustment),
+        gtk_adjustment_set_upper (adjustment,
                                   0.0);
       }
     }
@@ -671,6 +672,7 @@ void Stage::LoadAttendees (xmlNode *n)
           {
             player->SetAttributeValue (&attr_id,
                                        atoi (rank_attr));
+            xmlFree (rank_attr);
           }
           else
           {
@@ -690,6 +692,7 @@ void Stage::LoadAttendees (xmlNode *n)
                                        status_attr);
             player->SetAttributeValue (&global_status_attr_id,
                                        status_attr);
+            xmlFree (status_attr);
           }
           else
           {
@@ -700,6 +703,8 @@ void Stage::LoadAttendees (xmlNode *n)
           }
         }
       }
+
+      xmlFree (ref_attr);
     }
   }
 }
@@ -879,8 +884,8 @@ void Stage::ToggleClassification (gboolean classification_on)
 
   if (module)
   {
-    GtkWidget *main_w           = module->GetWidget ("main_hook");
-    GtkWidget *classification_w = module->GetWidget ("classification_hook");
+    GtkWidget *main_w           = GTK_WIDGET (module->GetGObject ("main_hook"));
+    GtkWidget *classification_w = GTK_WIDGET (module->GetGObject ("classification_hook"));
 
     if (classification_on)
     {
@@ -936,12 +941,12 @@ void Stage::SetClassificationFilter (Filter *filter)
 {
   if (_classification == NULL)
   {
-    Module *module = dynamic_cast <Module *> (this);
-    GtkWidget *classification_w = module->GetWidget ("classification_list_host");
+    Module    *module           = dynamic_cast <Module *> (this);
+    GtkWidget *classification_w = GTK_WIDGET (module->GetGObject ("classification_list_host"));
 
     if (classification_w == NULL)
     {
-      classification_w = module->GetWidget ("classification_hook");
+      classification_w = GTK_WIDGET (module->GetGObject ("classification_hook"));
     }
 
     if (classification_w)
@@ -1028,7 +1033,7 @@ void Stage::SetScoreStuffingPolicy (gboolean allowed)
     {
       _score_stuffing_trigger = new SensitivityTrigger ();
 
-      _score_stuffing_trigger->AddWidget (module->GetWidget ("stuff_toolbutton"));
+      _score_stuffing_trigger->AddWidget (GTK_WIDGET (module->GetGObject ("stuff_toolbutton")));
     }
   }
 
@@ -1045,9 +1050,13 @@ void Stage::SetScoreStuffingPolicy (gboolean allowed)
 // --------------------------------------------------------------------------------
 void Stage::LoadConfiguration (xmlNode *xml_node)
 {
-  gchar *attr = (gchar *) xmlGetProp (xml_node,
-                                      BAD_CAST "ID");
-  SetName (attr);
+  {
+    gchar *attr = (gchar *) xmlGetProp (xml_node,
+                                        BAD_CAST "ID");
+
+    SetName (attr);
+    xmlFree (attr);
+  }
 
   if (_max_score)
   {
@@ -1156,9 +1165,12 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       }
       if (status)
       {
+        gchar *xml_image = status->GetXmlImage ();
+
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "Statut",
-                                     BAD_CAST status->GetXmlImage ());
+                                     BAD_CAST xml_image);
+        g_free (xml_image);
       }
       xmlTextWriterEndElement (xml_writer);
 

@@ -183,7 +183,7 @@ class Pool : public CanvasModule
                                         GdkEvent  *event,
                                         gpointer   user_data);
 
-    ~Pool ();
+    virtual ~Pool ();
 };
 
 #endif

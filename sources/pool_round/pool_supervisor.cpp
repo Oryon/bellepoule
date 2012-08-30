@@ -47,7 +47,7 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
 
   _single_owner = new Object ();
 
-  _pool_liststore = GTK_LIST_STORE (_glade->GetObject ("pool_liststore"));
+  _pool_liststore = GTK_LIST_STORE (_glade->GetGObject ("pool_liststore"));
 
   // Sensitive widgets
   {
@@ -164,7 +164,7 @@ PoolSupervisor::~PoolSupervisor ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor::Init ()
+void PoolSupervisor::Declare ()
 {
   RegisterStageClass (gettext (_class_name),
                       _xml_class_name,
@@ -883,15 +883,15 @@ extern "C" G_MODULE_EXPORT void on_single_radiobutton_toggled (GtkWidget *widget
 extern "C" G_MODULE_EXPORT void on_pool_nb_qualified_spinbutton_value_changed (GtkSpinButton *spinbutton,
                                                                                Object        *owner)
 {
-  Module    *module = dynamic_cast <Module *> (owner);
-  Stage     *stage  = dynamic_cast <Stage *> (owner);
-  GtkWidget *w      = module->GetWidget ("qualified_ratio_spinbutton");
+  Module  *module = dynamic_cast <Module *> (owner);
+  Stage   *stage  = dynamic_cast <Stage *> (owner);
+  GObject *w      = module->GetGObject ("qualified_ratio_spinbutton");
 
-  g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+  g_signal_handlers_disconnect_by_func (w,
                                         (void *) on_pool_qualified_ratio_spinbutton_value_changed,
                                         owner);
   stage->OnNbQualifiedValueChanged (spinbutton);
-  g_signal_connect (G_OBJECT (w), "value-changed",
+  g_signal_connect (w, "value-changed",
                     G_CALLBACK (on_pool_qualified_ratio_spinbutton_value_changed),
                     owner);
 }
@@ -900,15 +900,15 @@ extern "C" G_MODULE_EXPORT void on_pool_nb_qualified_spinbutton_value_changed (G
 extern "C" G_MODULE_EXPORT void on_pool_qualified_ratio_spinbutton_value_changed (GtkSpinButton *spinbutton,
                                                                                   Object        *owner)
 {
-  Module    *module = dynamic_cast <Module *> (owner);
-  Stage     *stage  = dynamic_cast <Stage *> (owner);
-  GtkWidget *w      = module->GetWidget ("nb_qualified_spinbutton");
+  Module  *module = dynamic_cast <Module *> (owner);
+  Stage   *stage  = dynamic_cast <Stage *> (owner);
+  GObject *w      = module->GetGObject ("nb_qualified_spinbutton");
 
-  g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+  g_signal_handlers_disconnect_by_func (w,
                                         (void *) on_pool_nb_qualified_spinbutton_value_changed,
                                         owner);
   stage->OnQualifiedRatioValueChanged (spinbutton);
-  g_signal_connect (G_OBJECT (w), "value-changed",
+  g_signal_connect (w, "value-changed",
                     G_CALLBACK (on_pool_nb_qualified_spinbutton_value_changed),
                     owner);
 }

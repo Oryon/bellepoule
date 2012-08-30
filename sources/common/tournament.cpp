@@ -34,11 +34,11 @@
 
 typedef enum
 {
-  BROADCASTED_ID,
-  BROADCASTED_Name,
-  BROADCASTED_Weapon,
-  BROADCASTED_Gender,
-  BROADCASTED_Category
+  BROADCASTED_ID_str,
+  BROADCASTED_NAME_str,
+  BROADCASTED_WEAPON_str,
+  BROADCASTED_GENDER_str,
+  BROADCASTED_CATEGORY_str
 } BroadcastedColumn;
 
 // --------------------------------------------------------------------------------
@@ -411,7 +411,7 @@ void Tournament::OnDrawPage (GtkPrintOperation *operation,
           {
             GooCanvasItem *food_table = goo_canvas_table_new (ticket_table, NULL);
             gchar         *font   = g_strdup_printf ("Sans %fpx", 1.8*PRINT_FONT_HEIGHT);
-            const gchar   *strings[] = {"Meal", "Drink", "Desert", "Cofee", NULL};
+            const gchar   *strings[] = {"Meal", "Drink", "Dessert", "Coffee", NULL};
 
             Canvas::NormalyzeDecimalNotation (font);
 
@@ -799,12 +799,7 @@ void Tournament::RefreshMatchRate (Player *referee)
 void Tournament::EnumerateLanguages ()
 {
   gchar  *contents;
-  GSList *group        = NULL;
   gchar  *filename     = g_build_filename (_program_path, "resources", "translations", "index.txt", NULL);
-  gchar  *last_setting = g_key_file_get_string (_config_file,
-                                                "Tournament",
-                                                "interface_language",
-                                                NULL);
 
   if (g_file_get_contents (filename,
                            &contents,
@@ -815,9 +810,13 @@ void Tournament::EnumerateLanguages ()
 
     if (lines)
     {
-      const gchar *env    = g_getenv ("LANGUAGE");
-      gchar *original_env = NULL;
-
+      const gchar *env     = g_getenv ("LANGUAGE");
+      gchar *original_env  = NULL;
+      GSList *group        = NULL;
+      gchar  *last_setting = g_key_file_get_string (_config_file,
+                                                    "Tournament",
+                                                    "interface_language",
+                                                    NULL);
       if (env)
       {
         original_env = g_strdup (env);
@@ -857,7 +856,9 @@ void Tournament::EnumerateLanguages ()
             gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
                                             TRUE);
           }
+
           gtk_widget_show (item);
+          g_strfreev (tokens);
         }
       }
 
@@ -872,7 +873,10 @@ void Tournament::EnumerateLanguages ()
       {
         g_unsetenv ("LANGUAGE");
       }
+
+      g_strfreev (lines);
     }
+    g_free (contents);
   }
 
   g_free (filename);
@@ -913,8 +917,6 @@ void Tournament::OnContestDeleted (Contest *contest)
 {
   if (_contest_list)
   {
-    contest->UnPlug ();
-
     _contest_list = g_slist_remove (_contest_list,
                                     contest);
     if (g_slist_length (_contest_list) == 0)
@@ -1169,7 +1171,7 @@ void Tournament::OpenUriContest (const gchar *uri)
     {
       static const gchar *contest_suffix_table[] = {".cotcot", ".COTCOT", ".xml", ".XML", NULL};
       static const gchar *people_suffix_table[]  = {".fff", ".FFF", ".csv", ".CSV", ".txt", ".TXT", NULL};
-      Contest            *contest;
+      Contest            *contest = NULL;
 
       for (guint i = 0; contest_suffix_table[i] != NULL; i++)
       {
@@ -1297,7 +1299,7 @@ void Tournament::GetBroadcastedCompetitions ()
   _competitions_downloader->Start (address,
                                    60*5*1000);
 
-  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetWidget ("broadcasted_liststore")));
+  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetGObject ("broadcasted_liststore")));
 
   gtk_entry_set_icon_from_stock (GTK_ENTRY (_glade->GetWidget ("http_entry")),
                                  GTK_ENTRY_ICON_SECONDARY,
@@ -1314,7 +1316,7 @@ void Tournament::StopCompetitionMonitoring ()
     _competitions_downloader = NULL;
   }
 
-  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetWidget ("broadcasted_liststore")));
+  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetGObject ("broadcasted_liststore")));
 
   gtk_entry_set_icon_from_icon_name (GTK_ENTRY (_glade->GetWidget ("http_entry")),
                                      GTK_ENTRY_ICON_SECONDARY,
@@ -1337,7 +1339,7 @@ gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_da
 
       if (doc->Parse (data) == tinyxml2::XML_NO_ERROR)
       {
-        GtkListStore         *model = GTK_LIST_STORE (tournament->_glade->GetWidget ("broadcasted_liststore"));
+        GtkListStore         *model = GTK_LIST_STORE (tournament->_glade->GetGObject ("broadcasted_liststore"));
         GtkTreeIter           iter;
         tinyxml2::XMLHandle  *hdl   = new tinyxml2::XMLHandle (doc);
         tinyxml2::XMLHandle   first = hdl->FirstChildElement().FirstChildElement();
@@ -1348,11 +1350,11 @@ gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_da
         {
           gtk_list_store_append (model, &iter);
           gtk_list_store_set (model, &iter,
-                              BROADCASTED_ID,       elem->Attribute ("ID"),
-                              BROADCASTED_Name,     elem->Attribute ("Name"),
-                              BROADCASTED_Weapon,   elem->Attribute ("Weapon"),
-                              BROADCASTED_Gender,   elem->Attribute ("Gender"),
-                              BROADCASTED_Category, elem->Attribute ("Category"),
+                              BROADCASTED_ID_str,       elem->Attribute ("ID"),
+                              BROADCASTED_NAME_str,     elem->Attribute ("Name"),
+                              BROADCASTED_WEAPON_str,   elem->Attribute ("Weapon"),
+                              BROADCASTED_GENDER_str,   elem->Attribute ("Gender"),
+                              BROADCASTED_CATEGORY_str, elem->Attribute ("Category"),
                               -1);
 
           elem = elem->NextSiblingElement ();
@@ -1369,7 +1371,7 @@ gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_da
       gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
                                          GTK_ENTRY_ICON_SECONDARY,
                                          "network-offline");
-      gtk_list_store_clear (GTK_LIST_STORE (tournament->_glade->GetWidget ("broadcasted_liststore")));
+      gtk_list_store_clear (GTK_LIST_STORE (tournament->_glade->GetGObject ("broadcasted_liststore")));
     }
     else
     {
@@ -1408,7 +1410,7 @@ void Tournament::OnBroadcastedActivated (GtkTreePath *path)
                            path);
 
   gtk_tree_model_get (model, &iter,
-                      BROADCASTED_ID, &id,
+                      BROADCASTED_ID_str, &id,
                       -1);
 
   {
@@ -1427,6 +1429,8 @@ void Tournament::OnBroadcastedActivated (GtkTreePath *path)
       Manage (contest);
     }
   }
+
+  g_free (id);
 }
 
 // --------------------------------------------------------------------------------

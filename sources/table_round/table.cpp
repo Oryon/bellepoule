@@ -24,7 +24,7 @@
 Table::Table (TableSet *table_set,
               guint     size,
               guint     number)
-  : Object ("table")
+  : Object ("Table")
 {
   _table_set          = table_set;
   _size               = size;
@@ -237,6 +237,7 @@ void Table::Load (xmlNode *xml_node)
           current = g_slist_next (current);
         }
         g_free (number);
+        xmlFree (attr);
       }
       else
       {
@@ -266,8 +267,10 @@ void Table::LoadMatch (xmlNode *xml_node,
         B = NULL;
         if ((attr == NULL) || (atoi (attr) != match->GetNumber ()))
         {
+          xmlFree (attr);
           return;
         }
+        xmlFree (attr);
       }
       else if (strcmp ((char *) n->name, "Arbitre") == 0)
       {
@@ -277,6 +280,7 @@ void Table::LoadMatch (xmlNode *xml_node,
         {
           _table_set->AddReferee (match,
                                   atoi (attr));
+          xmlFree (attr);
         }
       }
       else if (strcmp ((char *) n->name, "Tireur") == 0)
@@ -323,12 +327,14 @@ void Table::LoadScore (xmlNode *xml_node,
   _table_set->SetPlayerToMatch (match,
                                 player,
                                 player_index);
+  xmlFree (attr);
 
   attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Statut");
   if (attr && attr[0] == 'V')
   {
     is_the_best = TRUE;
   }
+  xmlFree (attr);
 
   attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Score");
   if (attr)
@@ -346,6 +352,7 @@ void Table::LoadScore (xmlNode *xml_node,
         *dropped = player;
       }
     }
+    xmlFree (attr);
   }
 }
 

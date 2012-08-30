@@ -61,7 +61,7 @@ class Form : public Module
     Player             *_player_to_update;
     gboolean            _locked;
 
-    ~Form ();
+    virtual ~Form ();
 
     void ReadAndWipe (Player *player);
 

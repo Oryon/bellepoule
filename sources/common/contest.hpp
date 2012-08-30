@@ -34,9 +34,11 @@ class Contest : public Module
   public:
      Contest ();
 
-    ~Contest ();
+    virtual ~Contest ();
 
     static void Init ();
+
+    static void Cleanup ();
 
     static Contest *Create ();
 
@@ -98,7 +100,7 @@ class Contest : public Module
     {
       Time (const gchar *name);
 
-      ~Time ();
+      virtual ~Time ();
 
       void Load (gchar *attr);
       void Save (xmlTextWriter *xml_writer,
@@ -157,6 +159,7 @@ class Contest : public Module
     gboolean      _read_only;
     Downloader   *_downloader;
 
+    GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
     GtkWidget   *_category_combo;

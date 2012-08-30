@@ -27,10 +27,16 @@ class Module;
 class Filter : public virtual Object
 {
   public:
-    struct Layout
+    class Layout : public Object
     {
-      AttributeDesc::Look  _look;
-      AttributeDesc       *_desc;
+      public:
+        Layout ()
+          : Object ("Filter::Layout")
+        {
+        };
+
+        AttributeDesc::Look  _look;
+        AttributeDesc       *_desc;
     };
 
     Filter (GSList *attr_list,
@@ -55,19 +61,19 @@ class Filter : public virtual Object
   private:
     typedef enum
     {
-      ATTR_VISIBILITY = 0,
-      ATTR_USER_NAME,
-      ATTR_XML_NAME,
-      ATTR_LOOK_IMAGE,
-      ATTR_LOOK_VALUE,
+      ATTR_VISIBILITY_bool = 0,
+      ATTR_USER_NAME_str,
+      ATTR_XML_NAME_ptr,
+      ATTR_LOOK_IMAGE_str,
+      ATTR_LOOK_VALUE_uint,
 
       NUM_ATTR_COLS
     } StoreAttrColumn;
 
     typedef enum
     {
-      LOOK_IMAGE = 0,
-      LOOK_VALUE,
+      LOOK_IMAGE_str = 0,
+      LOOK_VALUE_uint,
 
       NUM_LOOK_COLS
     } StoreLookColumn;

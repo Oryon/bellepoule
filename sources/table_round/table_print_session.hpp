@@ -25,7 +25,7 @@ class TablePrintSession
   public:
     TablePrintSession ();
 
-    ~TablePrintSession ();
+    virtual ~TablePrintSession ();
 
     void Dump ();
 

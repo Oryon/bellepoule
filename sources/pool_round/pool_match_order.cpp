@@ -1452,6 +1452,7 @@ static PlayerPair *kendo_pairs[PoolMatchOrder::_MAX_POOL_SIZE+1] =
 
 // --------------------------------------------------------------------------------
 PoolMatchOrder::PoolMatchOrder (gchar weapon_code)
+  : Object ("PoolMatchOrder")
 {
   _weapon_code  = weapon_code;
   _player_pairs = NULL;
@@ -1516,9 +1517,11 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
         criteria_attr = fencer->GetAttribute (affinity);
         if (criteria_attr)
         {
-          GQuark  quark = g_quark_from_string (criteria_attr->GetUserImage (AttributeDesc::LONG_TEXT));
+          gchar  *user_image = criteria_attr->GetUserImage (AttributeDesc::LONG_TEXT);
+          GQuark  quark      = g_quark_from_string (user_image);
           GSList *affinity_list;
 
+          g_free (user_image);
           affinity_list = (GSList *) g_hash_table_lookup (affinity_distribution,
                                                           (const void *) quark);
           affinity_list = g_slist_append (affinity_list,
@@ -1530,6 +1533,7 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
 
         current = g_slist_next (current);
       }
+      affinity->Release ();
     }
 
     // Sort affinities according to their occurence

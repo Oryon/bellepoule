@@ -42,7 +42,7 @@ class HttpServer : public Object
     Object             *_client;
     GetHttpResponseCbk  _get_http_response;
 
-    ~HttpServer ();
+    virtual ~HttpServer ();
 
     int OnGet (struct MHD_Connection *connection,
                const char            *url,

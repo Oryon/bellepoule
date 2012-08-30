@@ -223,10 +223,11 @@ void PlayersList::OnCellEdited (gchar         *path_string,
 {
   Player              *p         = GetPlayer (path_string);
   Player::AttributeId *attr_id   = Player::AttributeId::Create (desc, GetDataOwner ());
-  const gchar         *xml_image = desc->GetDiscreteXmlImage (new_text);
+  gchar               *xml_image = desc->GetDiscreteXmlImage (new_text);
 
   p->SetAttributeValue (attr_id,
                         xml_image);
+  g_free (xml_image);
   attr_id->Release ();
 
   Update (p);
@@ -421,7 +422,7 @@ void PlayersList::OnDiscreteEditingStarted (GtkCellRenderer *renderer,
     gtk_entry_completion_set_model (completion,
                                     model);
     gtk_entry_completion_set_text_column (completion,
-                                          AttributeDesc::DISCRETE_LONG_TEXT);
+                                          AttributeDesc::DISCRETE_LONG_TEXT_str);
     gtk_entry_completion_set_inline_completion (completion,
                                                 TRUE);
     g_object_set (G_OBJECT (completion),

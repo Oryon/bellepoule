@@ -35,7 +35,7 @@ GtkTargetEntry Module::_dnd_target_list[] =
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,
                 const gchar *root)
-//: Object ("Module")
+: Object ("Module")
 {
   _plugged_list   = NULL;
   _owner          = NULL;
@@ -64,18 +64,19 @@ Module::Module (const gchar *glade_file,
       _root = _glade->GetRootWidget ();
     }
 
+    if (_root)
+    {
+      gtk_widget_set_name (_root,
+                           glade_file);
+    }
+
     _glade->DetachFromParent (_root);
   }
 
   {
     _config_widget = _glade->GetWidget ("stage_configuration");
 
-    if (_config_widget)
-    {
-      g_object_ref (_config_widget);
-      gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (_config_widget)),
-                                           _config_widget);
-    }
+    _glade->DetachFromParent (_config_widget);
   }
 }
 
@@ -92,23 +93,13 @@ Module::~Module ()
 
   UnPlug ();
 
-  Object::TryToRelease (_glade);
-
-  if (_root)
-  {
-    g_object_unref (_root);
-  }
-
-  if (_config_widget)
-  {
-    g_object_unref (_config_widget);
-  }
-
   Object::TryToRelease (_filter);
 
   g_object_unref (_print_settings);
   g_object_unref (_page_setup_print_settings);
   g_object_unref (_default_page_setup);
+
+  Object::TryToRelease (_glade);
 }
 
 // --------------------------------------------------------------------------------
@@ -291,9 +282,9 @@ GtkWidget *Module::GetConfigWidget ()
 }
 
 // --------------------------------------------------------------------------------
-GtkWidget *Module::GetWidget (const gchar *name)
+GObject *Module::GetGObject (const gchar *name)
 {
-  return _glade->GetWidget (name);
+  return _glade->GetGObject (name);
 }
 
 // --------------------------------------------------------------------------------
@@ -715,9 +706,9 @@ GtkTreeModel *Module::GetStatusModel ()
 
         gtk_tree_model_get (desc->_discrete_model,
                             &iter,
-                            AttributeDesc::DISCRETE_XML_IMAGE, &xml_image,
-                            AttributeDesc::DISCRETE_LONG_TEXT, &user_image,
-                            AttributeDesc::DISCRETE_ICON, &icon, -1);
+                            AttributeDesc::DISCRETE_XML_IMAGE_str, &xml_image,
+                            AttributeDesc::DISCRETE_LONG_TEXT_str, &user_image,
+                            AttributeDesc::DISCRETE_ICON_pix,      &icon, -1);
         if (   (strcmp ("Q", xml_image) == 0)
             || (strcmp ("A", xml_image) == 0)
             || (strcmp ("E", xml_image) == 0))
@@ -726,11 +717,15 @@ GtkTreeModel *Module::GetStatusModel ()
 
           gtk_tree_store_append (GTK_TREE_STORE (_status_model), &pool_iter, NULL);
           gtk_tree_store_set (GTK_TREE_STORE (_status_model), &pool_iter,
-                              AttributeDesc::DISCRETE_XML_IMAGE, xml_image,
-                              AttributeDesc::DISCRETE_LONG_TEXT, user_image,
-                              AttributeDesc::DISCRETE_ICON,      icon,
+                              AttributeDesc::DISCRETE_XML_IMAGE_str, xml_image,
+                              AttributeDesc::DISCRETE_LONG_TEXT_str, user_image,
+                              AttributeDesc::DISCRETE_ICON_pix,      icon,
                               -1);
         }
+
+        g_free (xml_image);
+        g_free (user_image);
+        g_object_unref (icon);
         iter_is_valid = gtk_tree_model_iter_next (desc->_discrete_model,
                                                   &iter);
       }

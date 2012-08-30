@@ -38,9 +38,9 @@ typedef enum
 
 typedef enum
 {
-  SWAPPING_IMAGE,
-  SWAPPING_CRITERIA,
-  SWAPPING_ERRORS
+  SWAPPING_IMAGE_str,
+  SWAPPING_CRITERIA_ptr,
+  SWAPPING_ERRORS_str
 } SwappingColumn;
 
 extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
@@ -75,7 +75,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _swapping = new Data ("Decalage",
                         (gchar *) NULL);
 
-  _combobox_store = GTK_LIST_STORE (_glade->GetObject ("combo_liststore"));
+  _combobox_store = GTK_LIST_STORE (_glade->GetGObject ("combo_liststore"));
 
   // Sensitive widgets
   {
@@ -124,15 +124,15 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
   _swapper = SmartSwapper::Create (this);
 
   {
-    GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetObject ("swapping_liststore"));
+    GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetGObject ("swapping_liststore"));
     GtkTreeIter   iter;
     GSList       *attr           = _filter->GetAttrList ();
 
     gtk_list_store_append (swapping_store, &iter);
     gtk_list_store_set (swapping_store, &iter,
-                        SWAPPING_IMAGE, "Aucun",
-                        SWAPPING_CRITERIA, NULL,
-                        SWAPPING_ERRORS, NULL,
+                        SWAPPING_IMAGE_str,    "Aucun",
+                        SWAPPING_CRITERIA_ptr, NULL,
+                        SWAPPING_ERRORS_str,   NULL,
                         -1);
 
     while (attr)
@@ -145,16 +145,16 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
         gtk_list_store_append (swapping_store, &iter);
 
         gtk_list_store_set (swapping_store, &iter,
-                            SWAPPING_IMAGE, attr_desc->_user_name,
-                            SWAPPING_CRITERIA, attr_desc,
-                            SWAPPING_ERRORS, NULL,
+                            SWAPPING_IMAGE_str,    attr_desc->_user_name,
+                            SWAPPING_CRITERIA_ptr, attr_desc,
+                            SWAPPING_ERRORS_str,   NULL,
                             -1);
       }
 
       attr = g_slist_next (attr);
     }
 
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetObject ("swapping_combobox")),
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox")),
                               0);
   }
 
@@ -184,7 +184,7 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
                                  "rank",
                                  NULL);
       filter = new Filter (attr_list,
-                           this);
+                           _fencer_list);
 
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
@@ -212,7 +212,7 @@ PoolAllocator::~PoolAllocator ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::Init ()
+void PoolAllocator::Declare ()
 {
   RegisterStageClass (gettext (_class_name),
                       _xml_class_name,
@@ -452,11 +452,11 @@ void PoolAllocator::ApplyConfig ()
 
   if (next_stage)
   {
-    GtkWidget *w = next_stage->GetWidget ("balanced_radiobutton");
+    GtkToggleButton *toggle = GTK_TOGGLE_BUTTON (next_stage->GetGObject ("balanced_radiobutton"));
 
-    if (w)
+    if (toggle)
     {
-      guint seeding_is_balanced = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+      guint seeding_is_balanced = gtk_toggle_button_get_active (toggle);
 
       if (_seeding_balanced->_value != seeding_is_balanced)
       {
@@ -500,20 +500,20 @@ void PoolAllocator::FillInConfig ()
 
   if (next_stage)
   {
-    GtkWidget *w;
+    GtkToggleButton *w;
 
     if (_seeding_balanced->_value)
     {
-      w = next_stage->GetWidget ("balanced_radiobutton");
+      w = GTK_TOGGLE_BUTTON (next_stage->GetGObject ("balanced_radiobutton"));
     }
     else
     {
-      w = next_stage->GetWidget ("strength_radiobutton");
+      w = GTK_TOGGLE_BUTTON (next_stage->GetGObject ("strength_radiobutton"));
     }
 
     if (w)
     {
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w),
+      gtk_toggle_button_set_active (w,
                                     TRUE);
     }
   }
@@ -536,12 +536,12 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
 
   if (_swapping)
   {
-    GtkTreeModel *model          = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
+    GtkTreeModel *model          = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
     guint         criteria_index = 0;
 
     _swapping->Load (xml_node);
 
-    if (_swapping->_string)
+    if (_swapping->GetString ())
     {
       GtkTreeIter iter;
       gboolean    iter_is_valid;
@@ -553,10 +553,10 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
         AttributeDesc *attr_desc;
 
         gtk_tree_model_get (model, &iter,
-                            SWAPPING_CRITERIA, &attr_desc,
+                            SWAPPING_CRITERIA_ptr, &attr_desc,
                             -1);
-        if (   ((attr_desc == NULL) && strcmp (_swapping->_string, "Aucun") == 0)
-            || (attr_desc && (strcmp (attr_desc->_code_name, _swapping->_string) == 0)))
+        if (   ((attr_desc == NULL) && strcmp (_swapping->GetString (), "Aucun") == 0)
+            || (attr_desc && (strcmp (attr_desc->_code_name, _swapping->GetString ()) == 0)))
         {
           criteria_index = i;
 
@@ -566,7 +566,7 @@ void PoolAllocator::LoadConfiguration (xmlNode *xml_node)
                                                   &iter);
       }
     }
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetObject ("swapping_combobox")),
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox")),
                               criteria_index);
   }
 }
@@ -609,6 +609,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
           if (string)
           {
             nb_pool = (guint) atoi (string);
+            xmlFree (string);
           }
         }
         _loaded = TRUE;
@@ -683,6 +684,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
               current_pool->AddFencer (player,
                                        this);
             }
+            xmlFree (attr);
           }
         }
       }
@@ -698,6 +700,7 @@ void PoolAllocator::Load (xmlNode *xml_node)
           {
             current_zone->AddObject (referee);
           }
+          xmlFree (attr);
         }
       }
       else if (strcmp ((char *) n->name, "Match") == 0)
@@ -1594,23 +1597,23 @@ extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
 {
-  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetObject ("swapping_liststore"));
+  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
   GtkTreeIter   selected_iter;
 
   gtk_combo_box_get_active_iter (cb,
                                  &selected_iter);
   gtk_tree_model_get (model,
                       &selected_iter,
-                      SWAPPING_CRITERIA, &_swapping_criteria,
+                      SWAPPING_CRITERIA_ptr, &_swapping_criteria,
                       -1);
 
   if (_swapping_criteria)
   {
-    _swapping->_string = _swapping_criteria->_code_name;
+    _swapping->SetString (_swapping_criteria->_code_name);
   }
   else
   {
-    _swapping->_string = "Aucun";
+    _swapping->SetString ("Aucun");
   }
 
   if (_drop_zones)
@@ -1633,7 +1636,7 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
     while (iter_is_valid)
     {
       gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-                          SWAPPING_ERRORS, NULL,
+                          SWAPPING_ERRORS_str, NULL,
                           -1);
 
       iter_is_valid = gtk_tree_model_iter_next (model,
@@ -1644,7 +1647,7 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
   if (_swapper && _swapper->GetErrors ())
   {
     gtk_list_store_set (GTK_LIST_STORE (model), &selected_iter,
-                        SWAPPING_ERRORS, GTK_STOCK_DIALOG_WARNING,
+                        SWAPPING_ERRORS_str, GTK_STOCK_DIALOG_WARNING,
                         -1);
   }
 #endif
@@ -1787,19 +1790,32 @@ void PoolAllocator::OnAttrListUpdated ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::OnFilterClicked ()
+{
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("fencer_list"))))
+  {
+    _fencer_list->SelectAttributes ();
+  }
+  else
+  {
+    SelectAttributes ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_filter_button_clicked (GtkWidget *widget,
                                                           Object    *owner)
 {
   PoolAllocator *p = dynamic_cast <PoolAllocator *> (owner);
 
-  p->SelectAttributes ();
+  p->OnFilterClicked ();
 }
 
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnFencerListToggled (gboolean toggled)
 {
-  GtkWidget *main_w        = GetWidget ("main_hook");
-  GtkWidget *fencer_list_w = GetWidget ("fencer_list_hook");
+  GtkWidget *main_w        = _glade->GetWidget ("main_hook");
+  GtkWidget *fencer_list_w = _glade->GetWidget ("fencer_list_hook");
 
   if (toggled)
   {

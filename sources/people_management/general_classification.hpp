@@ -35,7 +35,7 @@ class GeneralClassification : public virtual Stage, public PlayersList
       FFF
     } ExportType;
 
-    static void Init ();
+    static void Declare ();
 
     GeneralClassification (StageClass *stage_class);
 
@@ -59,7 +59,7 @@ class GeneralClassification : public virtual Stage, public PlayersList
 
     GSList *GetCurrentClassification ();
 
-    ~GeneralClassification ();
+    virtual ~GeneralClassification ();
 };
 
 #endif

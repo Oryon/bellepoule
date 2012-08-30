@@ -26,7 +26,7 @@
 class CheckinSupervisor : public virtual Checkin, public Stage
 {
   public:
-    static void Init ();
+    static void Declare ();
 
     CheckinSupervisor (StageClass  *stage_class);
 
@@ -71,7 +71,7 @@ class CheckinSupervisor : public virtual Checkin, public Stage
 
     void Save (xmlTextWriter *xml_writer);
 
-    ~CheckinSupervisor ();
+    virtual ~CheckinSupervisor ();
 };
 
 #endif

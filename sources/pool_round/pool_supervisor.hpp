@@ -28,7 +28,7 @@ class PoolAllocator;
 class PoolSupervisor : public virtual Stage, public Module
 {
   public:
-    static void Init ();
+    static void Declare ();
 
     PoolSupervisor (StageClass *stage_class);
 
@@ -75,7 +75,7 @@ class PoolSupervisor : public virtual Stage, public Module
     GtkWidget     *_print_dialog;
     gboolean       _print_all_pool;
 
-    ~PoolSupervisor ();
+    virtual ~PoolSupervisor ();
 
     void OnAttrListUpdated ();
 

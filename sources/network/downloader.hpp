@@ -18,7 +18,6 @@
 #define downloader_hpp
 
 #include <curl/curl.h>
-#undef GetObject
 #include <glib.h>
 
 #include "object.hpp"
@@ -62,7 +61,7 @@ class Downloader : public Object
 
     static gpointer ThreadFunction (Downloader *downloader);
 
-    ~Downloader ();
+    virtual ~Downloader ();
 };
 
 #endif

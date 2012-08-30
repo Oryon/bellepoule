@@ -31,7 +31,7 @@
 class PoolAllocator : public virtual Stage, public CanvasModule
 {
   public:
-    static void Init ();
+    static void Declare ();
 
     PoolAllocator (StageClass *stage_class);
 
@@ -54,6 +54,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void OnComboboxChanged (GtkComboBox *cb);
     void OnSwappingComboboxChanged (GtkComboBox *cb);
     void OnFencerListToggled (gboolean toggled);
+    void OnFilterClicked ();
 
   private:
     void OnLoadingCompleted ();
@@ -146,7 +147,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     gboolean ObjectIsDropable (Object   *floating_object,
                                DropZone *in_zone);
 
-    ~PoolAllocator ();
+    virtual ~PoolAllocator ();
 };
 
 #endif

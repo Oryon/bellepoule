@@ -55,7 +55,7 @@ class PlayersList : public Module
 
     typedef gboolean (*CustomFilter) (Player *player);
 
-    ~PlayersList ();
+    virtual ~PlayersList ();
 
     void RemoveSelection ();
 

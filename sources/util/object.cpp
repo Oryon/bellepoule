@@ -33,29 +33,33 @@ Object::Object (const gchar *class_name)
 {
   g_datalist_init (&_datalist);
   _ref_count = 1;
-  _nb_objects++;
 
 #ifdef DEBUG
+  _nb_objects++;
+
   if (class_name == NULL)
   {
-    _class_name = g_strdup ("anonymous");
+    _class_name = "anonymous";
   }
   else
   {
-    _class_name = g_strdup (class_name);
+    _class_name = class_name;
   }
 
-  for (guint i = 0; i < g_list_length (_list); i++)
   {
-    ClassStatus *status;
+    GList *current = _list;
 
-    status = (ClassStatus *) g_list_nth_data (_list,
-                                              i);
-
-    if (strcmp (status->_name, _class_name) == 0)
+    while (current)
     {
-      status->_nb_objects++;
-      return;
+      ClassStatus *status = (ClassStatus *) current->data;
+
+      if (strcmp (status->_name, _class_name) == 0)
+      {
+        status->_nb_objects++;
+        return;
+      }
+
+      current = g_list_next (current);
     }
   }
 
@@ -77,9 +81,10 @@ Object::~Object ()
   {
     g_datalist_clear (&_datalist);
   }
-  _nb_objects--;
 
 #ifdef DEBUG
+  _nb_objects--;
+
   for (guint i = 0; i < g_list_length (_list); i++)
   {
     ClassStatus *status;
@@ -93,8 +98,6 @@ Object::~Object ()
       return;
     }
   }
-
-  g_free (_class_name);
 
 #endif
 }
@@ -253,11 +256,11 @@ gint Object::GetIntData (Object      *owner,
 // --------------------------------------------------------------------------------
 void Object::Dump ()
 {
+#if DEBUG
   guint total = 0;
 
   g_mem_profile ();
 
-  g_print (">> %d\n", _nb_objects);
   for (guint i = 0; i < g_list_length (_list); i++)
   {
     ClassStatus *status;
@@ -270,5 +273,5 @@ void Object::Dump ()
     total += status->_nb_objects;
   }
   g_print ("TOTAL ==> %d\n", total);
-
+#endif
 }

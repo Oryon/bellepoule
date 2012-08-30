@@ -24,20 +24,23 @@
 // --------------------------------------------------------------------------------
 Data::Data (const gchar *xml_name,
             guint        default_value)
+: Object ("Data")
 {
   _xml_name = g_strdup (xml_name);
   _value    = default_value;
   _valid    = TRUE;
+  _string   = NULL;
 
   _is_integer = TRUE;
 }
 
 // --------------------------------------------------------------------------------
 Data::Data (const gchar *xml_name,
-            gchar       *default_value)
+            const gchar *default_value)
+: Object ("Data")
 {
   _xml_name = g_strdup (xml_name);
-  _string   = default_value;
+  _string   = g_strdup (default_value);
   _valid    = TRUE;
 
   _is_integer = FALSE;
@@ -47,16 +50,34 @@ Data::Data (const gchar *xml_name,
 Data::~Data ()
 {
   g_free (_xml_name);
+  g_free (_string);
+}
+
+// --------------------------------------------------------------------------------
+void Data::SetString (const char *string)
+{
+  g_free (_string);
+  _string = g_strdup (string);
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Data::GetString ()
+{
+  return _string;
 }
 
 // --------------------------------------------------------------------------------
 gboolean Data::Load (xmlNode *xml_node)
 {
-  _string = (gchar *) xmlGetProp (xml_node,
-                                  BAD_CAST _xml_name);
+  gchar *prop = (gchar *) xmlGetProp (xml_node,
+                                      BAD_CAST _xml_name);
+
+  SetString (prop);
+
   if (_string)
   {
     _value = (guint) atoi (_string);
+    xmlFree (prop);
     return TRUE;
   }
 

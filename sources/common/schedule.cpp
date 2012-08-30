@@ -26,10 +26,10 @@
 
 typedef enum
 {
-  NAME_COLUMN,
-  LOCK_COLUMN,
-  STAGE_COLUMN,
-  VISIBILITY_COLUMN
+  NAME_str,
+  LOCK_str,
+  STAGE_ptr,
+  VISIBILITY_bool
 } ColumnId;
 
 // --------------------------------------------------------------------------------
@@ -44,11 +44,11 @@ Schedule::Schedule (Contest *contest)
   _score_stuffing_allowed = FALSE;
 
   {
-    _list_store        = GTK_LIST_STORE (_glade->GetObject ("stage_liststore"));
-    _list_store_filter = GTK_TREE_MODEL_FILTER (_glade->GetObject ("stage_liststore_filter"));
+    _list_store        = GTK_LIST_STORE (_glade->GetGObject ("stage_liststore"));
+    _list_store_filter = GTK_TREE_MODEL_FILTER (_glade->GetGObject ("stage_liststore_filter"));
 
     gtk_tree_model_filter_set_visible_column (_list_store_filter,
-                                              VISIBILITY_COLUMN);
+                                              VISIBILITY_bool);
   }
 
   // Formula dialog
@@ -112,14 +112,10 @@ void Schedule::Freeze ()
     gtk_widget_hide (_glade->GetWidget ("next_stage_toolbutton"));
   }
 
-  {
-    Stage *stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-
-    if (stage)
-    {
-      stage->Lock ();
-    }
-  }
+  gtk_widget_set_sensitive (_glade->GetWidget ("config_toolbar"),
+                            FALSE);
+  gtk_widget_set_sensitive (_glade->GetWidget ("module_config_hook"),
+                            FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -212,17 +208,18 @@ void Schedule::DisplayList ()
 
       gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                           &iter,
-                          STAGE_COLUMN, &current_stage, -1);
+                          STAGE_ptr, &current_stage,
+                          -1);
       if (current_stage->Locked ())
       {
         gtk_list_store_set (_list_store, &iter,
-                            LOCK_COLUMN, GTK_STOCK_DIALOG_AUTHENTICATION,
+                            LOCK_str, GTK_STOCK_DIALOG_AUTHENTICATION,
                             -1);
       }
       else
       {
         gtk_list_store_set (_list_store, &iter,
-                            LOCK_COLUMN, "",
+                            LOCK_str, "",
                             -1);
       }
 
@@ -287,7 +284,8 @@ Module *Schedule::GetSelectedModule  ()
                                                       &filter_iter);
     gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                         &iter,
-                        STAGE_COLUMN, &stage, -1);
+                        STAGE_ptr, &stage,
+                        -1);
 
     return dynamic_cast <Module *> (stage);
   }
@@ -386,7 +384,7 @@ void Schedule::AddStage (Stage *stage,
 
           gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                               &iter,
-                              STAGE_COLUMN, &current_stage,
+                              STAGE_ptr, &current_stage,
                               -1);
 
           if (current_stage == after)
@@ -406,9 +404,9 @@ void Schedule::AddStage (Stage *stage,
       }
 
       gtk_list_store_set (_list_store, &iter,
-                          NAME_COLUMN, stage->GetClassName (),
-                          STAGE_COLUMN, stage,
-                          VISIBILITY_COLUMN, (stage->GetRights () & Stage::EDITABLE) != 0,
+                          NAME_str, stage->GetClassName (),
+                          STAGE_ptr, stage,
+                          VISIBILITY_bool, (stage->GetRights () & Stage::EDITABLE) != 0,
                           -1);
 
       {
@@ -540,7 +538,8 @@ void Schedule::RemoveStage (Stage *stage)
 
       gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                           &iter,
-                          STAGE_COLUMN, &current_stage, -1);
+                          STAGE_ptr, &current_stage,
+                          -1);
       if (current_stage == stage)
       {
         {
@@ -637,6 +636,7 @@ void Schedule::Load (xmlDoc  *doc,
       if (attr)
       {
         current_stage_index = atoi (attr);
+        xmlFree (attr);
       }
       else
       {
@@ -885,7 +885,7 @@ gboolean Schedule::on_new_stage_selected (GtkWidget      *widget,
                                                         &filter_iter);
       gtk_tree_model_get (GTK_TREE_MODEL (owner->_list_store),
                           &iter,
-                          STAGE_COLUMN, &after,
+                          STAGE_ptr, &after,
                           -1);
     }
   }
@@ -1142,7 +1142,8 @@ void Schedule::on_stage_removed ()
                                                         &filter_iter);
       gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                           &iter,
-                          STAGE_COLUMN, &stage, -1);
+                          STAGE_ptr, &stage,
+                          -1);
 
       input_provider = stage->GetInputProvider ();
 
