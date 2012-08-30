@@ -28,7 +28,7 @@ class Contest;
 class Splitting : public virtual Stage, public PlayersList
 {
   public:
-    static void Init ();
+    static void Declare ();
 
     static void SetHostTournament (Tournament *tournament);
 
@@ -60,7 +60,7 @@ class Splitting : public virtual Stage, public PlayersList
 
     static gboolean PresentPlayerFilter (Player *player);
 
-    ~Splitting ();
+    virtual ~Splitting ();
 
     void Garnish ();
 

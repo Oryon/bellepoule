@@ -18,9 +18,9 @@
 
 typedef enum
 {
-  NAME_COLUMN,
-  STATUS_COLUMN,
-  TABLE_COLUMN
+  NAME_COLUMN_str,
+  STATUS_COLUMN_str,
+  TABLE_COLUMN_ptr
 } ColumnId;
 
 // --------------------------------------------------------------------------------
@@ -85,9 +85,9 @@ void TableSetBorder::AddTable (Table *table)
   gtk_list_store_prepend (_liststore,
                           &iter);
   gtk_list_store_set (_liststore, &iter,
-                      STATUS_COLUMN, GTK_STOCK_EXECUTE,
-                      NAME_COLUMN,   text,
-                      TABLE_COLUMN,  table,
+                      STATUS_COLUMN_str, GTK_STOCK_EXECUTE,
+                      NAME_COLUMN_str,   text,
+                      TABLE_COLUMN_ptr,  table,
                       -1);
   g_free (text);
 }
@@ -120,7 +120,7 @@ Table *TableSetBorder::GetSelectedTable ()
 
     gtk_tree_model_get (GTK_TREE_MODEL (_liststore),
                         &iter,
-                        TABLE_COLUMN, &table,
+                        TABLE_COLUMN_ptr, &table,
                         -1);
     return table;
   }
@@ -139,7 +139,7 @@ void TableSetBorder::SetTableIcon (guint        table,
                                      table) == TRUE)
   {
     gtk_list_store_set (_liststore, &iter,
-                        STATUS_COLUMN, icon,
+                        STATUS_COLUMN_str, icon,
                         -1);
   }
 }

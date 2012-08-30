@@ -31,7 +31,7 @@
 class PoolAllocator : public virtual Stage, public CanvasModule
 {
   public:
-    static void Init ();
+    static void Declare ();
 
     PoolAllocator (StageClass *stage_class);
 
@@ -147,7 +147,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     gboolean ObjectIsDropable (Object   *floating_object,
                                DropZone *in_zone);
 
-    ~PoolAllocator ();
+    virtual ~PoolAllocator ();
 };
 
 #endif

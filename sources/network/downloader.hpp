@@ -62,7 +62,7 @@ class Downloader : public Object
 
     static gpointer ThreadFunction (Downloader *downloader);
 
-    ~Downloader ();
+    virtual ~Downloader ();
 };
 
 #endif

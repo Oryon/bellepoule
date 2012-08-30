@@ -303,7 +303,7 @@ class TableSet : public CanvasModule
                                        GdkEventExpose *event,
                                        TableSet       *ts);
 
-    ~TableSet ();
+    virtual ~TableSet ();
 
   private:
     void DragObject (Object   *object,

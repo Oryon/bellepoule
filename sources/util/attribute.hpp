@@ -61,12 +61,12 @@ class AttributeDesc : public Object
 
     typedef enum
     {
-      DISCRETE_CODE,
-      DISCRETE_XML_IMAGE,
-      DISCRETE_LONG_TEXT,
-      DISCRETE_SHORT_TEXT,
-      DISCRETE_ICON,
-      DISCRETE_SELECTOR,
+      DISCRETE_CODE_uint,
+      DISCRETE_XML_IMAGE_str,
+      DISCRETE_LONG_TEXT_str,
+      DISCRETE_SHORT_TEXT_str,
+      DISCRETE_ICON_pix,
+      DISCRETE_SELECTOR_str,
 
       NB_DISCRETE_COLUMNS
     } DiscreteColumnId;
@@ -95,6 +95,8 @@ class AttributeDesc : public Object
 
     static GSList *GetList ();
 
+    static void Cleanup ();
+
     static AttributeDesc *GetDescFromCodeName (const gchar *code_name);
 
     static AttributeDesc *GuessDescFromUserName (const gchar *code_name);
@@ -108,7 +110,7 @@ class AttributeDesc : public Object
     gboolean HasDiscreteValue ();
 
     void AddDiscreteValues (const gchar *first_xml_image,
-                            gchar       *first_user_image,
+                            const gchar *first_user_image,
                             const gchar *first_icon,
                             ...);
 
@@ -116,7 +118,7 @@ class AttributeDesc : public Object
 
     void AddLocalizedDiscreteValues (const gchar *name);
 
-    const gchar *GetDiscreteXmlImage (const gchar *from_user_image);
+    gchar *GetDiscreteXmlImage (const gchar *from_user_image);
 
     gchar *GetDiscreteUserImage (guint from_code);
 
@@ -154,7 +156,7 @@ class AttributeDesc : public Object
                    const gchar *xml_name,
                    const gchar *user_name);
 
-    ~AttributeDesc ();
+    virtual ~AttributeDesc ();
 
     static gboolean DiscreteFilterForCombobox (GtkTreeModel *model,
                                                GtkTreeIter  *iter,
@@ -178,7 +180,7 @@ class AttributeDesc : public Object
 class Attribute : public Object
 {
   public:
-    static Attribute *New (gchar *name);
+    static Attribute *New (const gchar *name);
 
     static gint Compare (Attribute *a, Attribute *b);
 

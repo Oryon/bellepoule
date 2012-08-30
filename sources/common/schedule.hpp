@@ -100,7 +100,7 @@ class Schedule : public Module
   private:
     GtkWidget *_formula_dlg;
 
-    ~Schedule ();
+    virtual ~Schedule ();
     void OnPlugged ();
     void PlugStage (Stage *stage);
     void RefreshStageName (Stage *stage);

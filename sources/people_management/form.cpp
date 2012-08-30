@@ -27,7 +27,8 @@ Form::Form (Filter             *filter,
             Module             *client,
             Player::PlayerType  player_type,
             PlayerCbk           player_cbk)
-: Module ("form.glade")
+: Module ("form.glade",
+          "FillInForm")
 {
   _client = client;
   _cbk    = player_cbk;
@@ -113,7 +114,7 @@ Form::Form (Filter             *filter,
                   gtk_entry_completion_set_model (completion,
                                                   model);
                   gtk_entry_completion_set_text_column (completion,
-                                                        AttributeDesc::DISCRETE_LONG_TEXT);
+                                                        AttributeDesc::DISCRETE_LONG_TEXT_str);
                   gtk_entry_completion_set_inline_completion (completion,
                                                               TRUE);
                   g_object_set (G_OBJECT (completion),
@@ -199,29 +200,34 @@ void Form::SetSelectorValue (GtkComboBox *combo_box,
   {
     GtkTreeIter  iter;
     gboolean     iter_is_valid;
+    gboolean     target_found = FALSE;
     gchar       *case_value = g_utf8_casefold (value, -1);
 
     iter_is_valid = gtk_tree_model_get_iter_first (model,
                                                    &iter);
 
-    while (iter_is_valid)
+    while (iter_is_valid && (target_found == FALSE))
     {
       gchar *current_value;
-      gchar *case_current_value;
 
       gtk_tree_model_get (model, &iter,
-                          AttributeDesc::DISCRETE_LONG_TEXT, &current_value,
+                          AttributeDesc::DISCRETE_LONG_TEXT_str, &current_value,
                           -1);
-      case_current_value = g_utf8_casefold (current_value, -1);
-      if (current_value && (g_ascii_strcasecmp (case_current_value, case_value) == 0))
+
+      if (current_value)
       {
+        gchar *case_current_value = g_utf8_casefold (current_value, -1);
+
+        if (g_ascii_strcasecmp (case_current_value, case_value) == 0)
+        {
+          gtk_combo_box_set_active_iter (combo_box,
+                                         &iter);
+          target_found = TRUE;
+        }
         g_free (case_current_value);
-        gtk_combo_box_set_active_iter (combo_box,
-                                       &iter);
-        break;
+        g_free (current_value);
       }
 
-      g_free (case_current_value);
       iter_is_valid = gtk_tree_model_iter_next (model,
                                                 &iter);
     }
@@ -239,10 +245,12 @@ gboolean Form::OnSelectorChanged (GtkEntryCompletion *widget,
   gchar *value;
 
   gtk_tree_model_get (model, iter,
-                      AttributeDesc::DISCRETE_LONG_TEXT, &value,
+                      AttributeDesc::DISCRETE_LONG_TEXT_str, &value,
                       -1);
   SetSelectorValue (combobox,
                     value);
+  g_free (value);
+
   return FALSE;
 }
 
@@ -338,10 +346,11 @@ void Form::ReadAndWipe (Player *player)
           {
             if (attr_id)
             {
-              const gchar *xml_image = attr_desc->GetDiscreteXmlImage (gtk_entry_get_text (GTK_ENTRY (entry)));
+              gchar *xml_image = attr_desc->GetDiscreteXmlImage (gtk_entry_get_text (GTK_ENTRY (entry)));
 
               player->SetAttributeValue (attr_id,
                                          xml_image);
+              g_free (xml_image);
             }
 
             if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)

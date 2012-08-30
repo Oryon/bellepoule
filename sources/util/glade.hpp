@@ -25,7 +25,7 @@ class Glade : public Object
   public:
      Glade (const gchar *file_name,
             Object      *owner);
-    ~Glade ();
+    virtual ~Glade ();
 
     GtkWidget *GetRootWidget    ();
     GtkWidget *GetWidget        (const gchar *name);
@@ -33,7 +33,10 @@ class Glade : public Object
     void       DetachFromParent (GtkWidget *widget);
 
   private:
-    GtkBuilder *_glade_xml;
+    static guint  _stamp;
+    GtkBuilder   *_glade_xml;
+
+    void StampAllWidgets ();
 };
 
 #endif

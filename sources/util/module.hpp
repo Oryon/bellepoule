@@ -61,7 +61,7 @@ class Module : public virtual Object
 
     GtkWidget *GetRootWidget ();
 
-    GtkWidget *GetWidget (const gchar *name);
+    GObject *GetObject (const gchar *name);
 
     virtual void SetFilter (Filter *filter);
 

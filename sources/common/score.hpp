@@ -24,7 +24,7 @@ class Score : public Object
 {
   public:
     Score  (Data *max);
-    ~Score ();
+    virtual ~Score ();
 
     gboolean IsKnown ();
 

@@ -30,7 +30,7 @@ class RefereesList : public Checkin
     RefereesList (Contest *contest);
 
   protected:
-    ~RefereesList ();
+    virtual ~RefereesList ();
 
   private:
     Contest *_contest;

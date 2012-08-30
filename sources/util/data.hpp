@@ -26,13 +26,16 @@ class Data : public Object
 {
   public:
     guint  _value;
-    gchar *_string;
 
     Data (const gchar *xml_name,
           guint        default_value);
 
     Data (const gchar *xml_name,
-          gchar       *default_value);
+          const gchar *default_value);
+
+    void SetString (const char *string);
+
+    const gchar *GetString ();
 
     void Save (xmlTextWriter *xml_writer);
 
@@ -48,6 +51,7 @@ class Data : public Object
     gchar    *_xml_name;
     gboolean  _is_integer;
     gboolean  _valid;
+    gchar    *_string;
 
     virtual ~Data ();
 };

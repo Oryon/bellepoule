@@ -92,7 +92,7 @@ class Table : public Object
     GNode    **_node_table;
     guint     _free_node_index;
 
-    ~Table ();
+    virtual ~Table ();
 
     static gint CompareMatchNumber (Match *a,
                                     Match *b);

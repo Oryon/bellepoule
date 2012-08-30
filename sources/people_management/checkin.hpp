@@ -63,7 +63,7 @@ class Checkin : public PlayersList
   protected:
     Form *_form;
 
-    ~Checkin ();
+    virtual ~Checkin ();
 
     static gboolean PresentPlayerFilter (Player *player);
 

@@ -39,10 +39,10 @@ typedef enum
 
 typedef enum
 {
-  TABLE_SET_NAME_COLUMN,
-  TABLE_SET_TABLE_COLUMN,
-  TABLE_SET_STATUS_COLUMN,
-  TABLE_SET_VISIBILITY_COLUMN
+  TABLE_SET_NAME_COLUMN_str,
+  TABLE_SET_TABLE_COLUMN_ptr,
+  TABLE_SET_STATUS_COLUMN_str,
+  TABLE_SET_VISIBILITY_COLUMN_bool
 } DisplayColumnId;
 
 extern "C" G_MODULE_EXPORT void on_table_qualified_ratio_spinbutton_value_changed (GtkSpinButton *spinbutton,
@@ -151,7 +151,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
   _table_set_filter    = GTK_TREE_MODEL_FILTER (_glade->GetObject ("table_set_treemodelfilter"));
 
   gtk_tree_model_filter_set_visible_column (_table_set_filter,
-                                            TABLE_SET_VISIBILITY_COLUMN);
+                                            TABLE_SET_VISIBILITY_COLUMN_bool);
 }
 
 // --------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ TableSupervisor::~TableSupervisor ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSupervisor::Init ()
+void TableSupervisor::Declare ()
 {
   RegisterStageClass (gettext (_class_name),
                       _xml_class_name,
@@ -198,7 +198,7 @@ void TableSupervisor::OnTableSetSelected (TableSet *table_set)
   if (table_set)
   {
     Plug (table_set,
-          GetWidget ("table_set_hook"));
+          _glade->GetWidget ("table_set_hook"));
     table_set->Display ();
     table_set->RestoreZoomFactor (GTK_SCALE (_glade->GetWidget ("zoom_scale")));
 
@@ -227,7 +227,7 @@ gboolean TableSupervisor::TableSetIsOver (GtkTreeModel    *model,
   TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
   ts->_is_over &= table_set->IsOver ();
 
@@ -272,7 +272,7 @@ void TableSupervisor::CreateTableSets ()
         gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_table_set_treestore),
                                        &iter);
         gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                            TABLE_SET_TABLE_COLUMN, &first_table_set,
+                            TABLE_SET_TABLE_COLUMN_ptr, &first_table_set,
                             -1);
 
         if (first_table_set)
@@ -322,7 +322,7 @@ void TableSupervisor::ShowTableSet (TableSet    *table_set,
                                     GtkTreeIter *iter)
 {
   gtk_tree_store_set (_table_set_treestore, iter,
-                      TABLE_SET_VISIBILITY_COLUMN, TRUE,
+                      TABLE_SET_VISIBILITY_COLUMN_bool, TRUE,
                       -1);
 }
 
@@ -331,7 +331,7 @@ void TableSupervisor::HideTableSet (TableSet    *table_set,
                                     GtkTreeIter *iter)
 {
   gtk_tree_store_set (_table_set_treestore, iter,
-                      TABLE_SET_VISIBILITY_COLUMN, FALSE,
+                      TABLE_SET_VISIBILITY_COLUMN_bool, FALSE,
                       -1);
 
   if (_displayed_table_set && (_displayed_table_set == table_set))
@@ -374,7 +374,7 @@ gboolean TableSupervisor::ActivateTableSet (GtkTreeModel    *model,
   TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
 
   if (ts->TableSetIsFenced (table_set))
@@ -413,7 +413,7 @@ TableSet *TableSupervisor::GetTableSet (gchar *id)
                                path))
   {
     gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &iter,
-                        TABLE_SET_TABLE_COLUMN, &table_set,
+                        TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                         -1);
   }
 
@@ -431,7 +431,7 @@ gboolean TableSupervisor::DeleteTableSet (GtkTreeModel *model,
   TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
   if (table_set)
   {
@@ -568,7 +568,7 @@ gboolean TableSupervisor::SaveTableSet (GtkTreeModel  *model,
   TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
   table_set->Save (xml_writer);
 
@@ -584,7 +584,7 @@ gboolean TableSupervisor::BookReferees (GtkTreeModel  *model,
   TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
   table_set->BookReferees ();
 
@@ -627,9 +627,9 @@ void TableSupervisor::FeedTableSetStore (guint        from_place,
                              this);
 
     gtk_tree_store_set (_table_set_treestore, &iter,
-                        TABLE_SET_NAME_COLUMN, table_set->GetName (),
-                        TABLE_SET_TABLE_COLUMN, table_set,
-                        TABLE_SET_VISIBILITY_COLUMN, 0,
+                        TABLE_SET_NAME_COLUMN_str,        table_set->GetName (),
+                        TABLE_SET_TABLE_COLUMN_ptr,       table_set,
+                        TABLE_SET_VISIBILITY_COLUMN_bool, 0,
                         -1);
   }
 
@@ -669,25 +669,25 @@ void TableSupervisor::OnTableSetStatusUpdated (TableSet        *table_set,
   if (table_set->IsOver ())
   {
     gtk_tree_store_set (ts->_table_set_treestore, &iter,
-                        TABLE_SET_STATUS_COLUMN, GTK_STOCK_APPLY,
+                        TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_APPLY,
                         -1);
   }
   else if (table_set->HasError ())
   {
     gtk_tree_store_set (ts->_table_set_treestore, &iter,
-                        TABLE_SET_STATUS_COLUMN, GTK_STOCK_DIALOG_WARNING,
+                        TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_DIALOG_WARNING,
                         -1);
   }
   else if (table_set->GetNbTables () > 0)
   {
     gtk_tree_store_set (ts->_table_set_treestore, &iter,
-                        TABLE_SET_STATUS_COLUMN, GTK_STOCK_EXECUTE,
+                        TABLE_SET_STATUS_COLUMN_str, GTK_STOCK_EXECUTE,
                         -1);
   }
   else
   {
     gtk_tree_store_set (ts->_table_set_treestore, &iter,
-                        TABLE_SET_STATUS_COLUMN, NULL,
+                        TABLE_SET_STATUS_COLUMN_str, NULL,
                         -1);
   }
 
@@ -719,7 +719,7 @@ void TableSupervisor::OnTableOver (TableSet *table_set,
     TableSet *defeated_table_set;
 
     gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore), &defeated_iter,
-                        TABLE_SET_TABLE_COLUMN, &defeated_table_set,
+                        TABLE_SET_TABLE_COLUMN_ptr, &defeated_table_set,
                         -1);
 
     if (defeated_table_set)
@@ -817,7 +817,7 @@ gboolean TableSupervisor::ToggleTableSetLock (GtkTreeModel *model,
   TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
 
   if (data)
@@ -914,7 +914,7 @@ gboolean TableSupervisor::StuffTableSet (GtkTreeModel *model,
   TableSet *table_set;
 
   gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
 
   table_set->OnStuffClicked ();
@@ -990,7 +990,7 @@ gboolean TableSupervisor::GetTableSetClassification (GtkTreeModel    *model,
   GSList   *current_result;
 
   gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
   current_result = table_set->GetCurrentClassification ();
 
@@ -1072,7 +1072,7 @@ void TableSupervisor::OnTableSetTreeViewCursorChanged (GtkTreeView *treeview)
   gtk_tree_path_free (path);
 
   gtk_tree_model_get (GTK_TREE_MODEL (_table_set_filter), &iter,
-                      TABLE_SET_TABLE_COLUMN, &table_set,
+                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                       -1);
 
   if (_displayed_table_set != table_set)
@@ -1180,15 +1180,15 @@ extern "C" G_MODULE_EXPORT void on_zoom_hscale_value_changed (GtkRange *range,
 extern "C" G_MODULE_EXPORT void on_table_nb_qualified_spinbutton_value_changed (GtkSpinButton *spinbutton,
                                                                                 Object        *owner)
 {
-  Module    *module = dynamic_cast <Module *> (owner);
-  Stage     *stage  = dynamic_cast <Stage *> (owner);
-  GtkWidget *w      = module->GetWidget ("qualified_ratio_spinbutton");
+  Module  *module = dynamic_cast <Module *> (owner);
+  Stage   *stage  = dynamic_cast <Stage *> (owner);
+  GObject *w      = module->GetObject ("qualified_ratio_spinbutton");
 
-  g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+  g_signal_handlers_disconnect_by_func (w,
                                         (void *) on_table_qualified_ratio_spinbutton_value_changed,
                                         owner);
   stage->OnNbQualifiedValueChanged (spinbutton);
-  g_signal_connect (G_OBJECT (w), "value-changed",
+  g_signal_connect (w, "value-changed",
                     G_CALLBACK (on_table_qualified_ratio_spinbutton_value_changed),
                     owner);
 }
@@ -1197,15 +1197,15 @@ extern "C" G_MODULE_EXPORT void on_table_nb_qualified_spinbutton_value_changed (
 extern "C" G_MODULE_EXPORT void on_table_qualified_ratio_spinbutton_value_changed (GtkSpinButton *spinbutton,
                                                                                    Object        *owner)
 {
-  Module    *module = dynamic_cast <Module *> (owner);
-  Stage     *stage  = dynamic_cast <Stage *> (owner);
-  GtkWidget *w      = module->GetWidget ("nb_qualified_spinbutton");
+  Module  *module = dynamic_cast <Module *> (owner);
+  Stage   *stage  = dynamic_cast <Stage *> (owner);
+  GObject *w      = module->GetObject ("nb_qualified_spinbutton");
 
-  g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+  g_signal_handlers_disconnect_by_func (w,
                                         (void *) on_table_nb_qualified_spinbutton_value_changed,
                                         owner);
   stage->OnQualifiedRatioValueChanged (spinbutton);
-  g_signal_connect (G_OBJECT (w), "value-changed",
+  g_signal_connect (w, "value-changed",
                     G_CALLBACK (on_table_nb_qualified_spinbutton_value_changed),
                     owner);
 }

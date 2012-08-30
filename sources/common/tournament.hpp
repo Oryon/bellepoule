@@ -31,7 +31,7 @@ class Tournament : public Module
   public:
      Tournament (gchar *filename);
 
-    ~Tournament ();
+    virtual ~Tournament ();
 
     static void Init ();
 

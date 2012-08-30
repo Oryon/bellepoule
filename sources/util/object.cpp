@@ -46,17 +46,20 @@ Object::Object (const gchar *class_name)
     _class_name = class_name;
   }
 
-  for (guint i = 0; i < g_list_length (_list); i++)
   {
-    ClassStatus *status;
+    GList *current = _list;
 
-    status = (ClassStatus *) g_list_nth_data (_list,
-                                              i);
-
-    if (strcmp (status->_name, _class_name) == 0)
+    while (current)
     {
-      status->_nb_objects++;
-      return;
+      ClassStatus *status = (ClassStatus *) current->data;
+
+      if (strcmp (status->_name, _class_name) == 0)
+      {
+        status->_nb_objects++;
+        return;
+      }
+
+      current = g_list_next (current);
     }
   }
 

@@ -111,7 +111,7 @@ class SmartSwapper : public Object, public Swapper
   private:
     SmartSwapper (Object *rank_attr_id);
 
-    ~SmartSwapper ();
+    virtual ~SmartSwapper ();
 
     guint GetPoolIndex (guint fencer_index);
 

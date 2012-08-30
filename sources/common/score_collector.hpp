@@ -117,7 +117,7 @@ class ScoreCollector : public Object
     gboolean OnKeyPress (GtkWidget   *widget,
                          GdkEventKey *event);
 
-    ~ScoreCollector ();
+    virtual ~ScoreCollector ();
 };
 
 #endif

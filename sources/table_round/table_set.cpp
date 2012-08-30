@@ -41,10 +41,10 @@ typedef enum
 
 typedef enum
 {
-  QUICK_MATCH_NAME_COLUMN,
-  QUICK_MATCH_COLUMN,
-  QUICK_MATCH_PATH_COLUMN,
-  QUICK_MATCH_VISIBILITY_COLUMN
+  QUICK_MATCH_NAME_COLUMN_str,
+  QUICK_MATCH_COLUMN_ptr,
+  QUICK_MATCH_PATH_COLUMN_str,
+  QUICK_MATCH_VISIBILITY_COLUMN_bool
 } QuickSearchColumnId;
 
 extern "C" G_MODULE_EXPORT void on_from_to_table_combobox_changed (GtkWidget *widget,
@@ -180,7 +180,7 @@ TableSet::TableSet (TableSupervisor *supervisor,
                                         (GtkCellLayoutDataFunc) SetQuickSearchRendererSensitivity,
                                         this, NULL);
     gtk_tree_model_filter_set_visible_column (_quick_search_filter,
-                                              QUICK_MATCH_VISIBILITY_COLUMN);
+                                              QUICK_MATCH_VISIBILITY_COLUMN_bool);
   }
 }
 
@@ -772,8 +772,8 @@ void TableSet::CreateTree ()
                                   &table_iter,
                                   NULL);
           gtk_tree_store_set (_quick_search_treestore, &table_iter,
-                              QUICK_MATCH_NAME_COLUMN, _tables[t]->GetImage (),
-                              QUICK_MATCH_VISIBILITY_COLUMN, 1,
+                              QUICK_MATCH_NAME_COLUMN_str,        _tables[t]->GetImage (),
+                              QUICK_MATCH_VISIBILITY_COLUMN_bool, 1,
                               -1);
         }
       }
@@ -1598,7 +1598,7 @@ void TableSet::LookForMatchToPrint (Table    *table_to_print,
 
         gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
                             &iter,
-                            QUICK_MATCH_COLUMN, &match,
+                            QUICK_MATCH_COLUMN_ptr, &match,
                             -1);
         if (match)
         {
@@ -1902,10 +1902,10 @@ void TableSet::SetPlayerToMatch (Match  *to_match,
         gchar *name_string = g_strdup_printf ("%s / %s", A_name, B_name);
 
         gtk_tree_store_set (_quick_search_treestore, &iter,
-                            QUICK_MATCH_PATH_COLUMN, to_match->GetName (),
-                            QUICK_MATCH_NAME_COLUMN, name_string,
-                            QUICK_MATCH_COLUMN, to_match,
-                            QUICK_MATCH_VISIBILITY_COLUMN, 1,
+                            QUICK_MATCH_PATH_COLUMN_str,        to_match->GetName (),
+                            QUICK_MATCH_NAME_COLUMN_str,        name_string,
+                            QUICK_MATCH_COLUMN_ptr,             to_match,
+                            QUICK_MATCH_VISIBILITY_COLUMN_bool, 1,
                             -1);
         g_free (name_string);
       }
@@ -2189,7 +2189,7 @@ void TableSet::OnSearchMatch ()
 
     gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
                         &iter,
-                        QUICK_MATCH_COLUMN, &match,
+                        QUICK_MATCH_COLUMN_ptr, &match,
                         -1);
 
     if (match)
@@ -3055,7 +3055,7 @@ void TableSet::OnStatusChanged (GtkComboBox *combo_box)
                                  &iter);
   gtk_tree_model_get (GetStatusModel (),
                       &iter,
-                      AttributeDesc::DISCRETE_XML_IMAGE, &code,
+                      AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
                       -1);
 
   player->SetAttributeValue (&status_attr_id,
@@ -3068,6 +3068,7 @@ void TableSet::OnStatusChanged (GtkComboBox *combo_box)
   {
     match->RestorePlayer (player);
   }
+  g_free (code);
 
   OnAttrListUpdated ();
 
@@ -3115,7 +3116,7 @@ gboolean TableSet::on_status_arrow_press (GooCanvasItem  *item,
 
       gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, FALSE);
       gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo),
-                                      cell, "pixbuf", AttributeDesc::DISCRETE_ICON,
+                                      cell, "pixbuf", AttributeDesc::DISCRETE_ICON_pix,
                                       NULL);
 
       goo_canvas_widget_new (table_set->GetRootItem (),
@@ -3154,15 +3155,18 @@ gboolean TableSet::on_status_arrow_press (GooCanvasItem  *item,
         {
           gtk_tree_model_get (table_set->GetStatusModel (),
                               &iter,
-                              AttributeDesc::DISCRETE_XML_IMAGE, &code,
+                              AttributeDesc::DISCRETE_XML_IMAGE_str, &code,
                               -1);
           if (strcmp (text, code) == 0)
           {
             gtk_combo_box_set_active_iter (GTK_COMBO_BOX (combo),
                                            &iter);
 
+            g_free (code);
             break;
           }
+
+          g_free (code);
           iter_is_valid = gtk_tree_model_iter_next (table_set->GetStatusModel (),
                                                     &iter);
         }

@@ -53,7 +53,7 @@ class Classification : public PlayersList
                          Player      *player,
                          const gchar *attr_name);
 
-    ~Classification ();
+    virtual ~Classification ();
 };
 
 #endif

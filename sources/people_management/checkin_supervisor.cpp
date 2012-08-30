@@ -97,7 +97,7 @@ CheckinSupervisor::~CheckinSupervisor ()
 }
 
 // --------------------------------------------------------------------------------
-void CheckinSupervisor::Init ()
+void CheckinSupervisor::Declare ()
 {
   RegisterStageClass (gettext (_class_name),
                       _xml_class_name,

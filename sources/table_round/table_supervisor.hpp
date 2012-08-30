@@ -32,7 +32,7 @@ class Table;
 class TableSupervisor : public virtual Stage, public Module
 {
   public:
-    static void Init ();
+    static void Declare ();
 
     TableSupervisor (StageClass *stage_class);
 
@@ -163,7 +163,7 @@ class TableSupervisor : public virtual Stage, public Module
 
     static void OnTableSetStatusUpdated (TableSet        *table_set,
                                          TableSupervisor *ts);
-    ~TableSupervisor ();
+    virtual ~TableSupervisor ();
 };
 
 #endif

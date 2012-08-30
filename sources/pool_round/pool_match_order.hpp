@@ -40,7 +40,7 @@ class PoolMatchOrder : public Object
     gchar   _weapon_code;
     GSList *_player_pairs;
 
-    ~PoolMatchOrder ();
+    virtual ~PoolMatchOrder ();
 
     void Reset ();
 

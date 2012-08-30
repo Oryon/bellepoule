@@ -41,7 +41,7 @@ class Attendees : public Object
     GSList *_global_list;
     GSList *_shortlist;
 
-    ~Attendees ();
+    virtual ~Attendees ();
 };
 
 #endif

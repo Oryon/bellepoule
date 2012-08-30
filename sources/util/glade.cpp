@@ -16,6 +16,8 @@
 
 #include "glade.hpp"
 
+guint Glade::_stamp = 1;
+
 // --------------------------------------------------------------------------------
 Glade::Glade (const gchar *file_name,
               Object      *owner)
@@ -58,6 +60,9 @@ Glade::Glade (const gchar *file_name,
 
     gtk_builder_connect_signals (_glade_xml,
                                  owner);
+#if DEBUG
+    StampAllWidgets ();
+#endif
   }
   else
   {
@@ -70,8 +75,58 @@ Glade::~Glade ()
 {
   if (_glade_xml)
   {
+    {
+      GSList *objects = gtk_builder_get_objects (_glade_xml);
+      GSList *current = objects;
+
+      while (current)
+      {
+        GObject *object = (GObject *) current->data;
+
+        if (GTK_IS_WIDGET (object))
+        {
+          GtkWidget *widget = GTK_WIDGET (object);
+
+          if (GTK_WIDGET_TOPLEVEL (widget))
+          {
+            gtk_widget_destroy (widget);
+          }
+        }
+
+        current = g_slist_next (current);
+      }
+
+      g_slist_free (objects);
+    }
+
     g_object_unref (G_OBJECT (_glade_xml));
   }
+}
+
+// --------------------------------------------------------------------------------
+void Glade::StampAllWidgets ()
+{
+  GSList *objects      = gtk_builder_get_objects (_glade_xml);
+  GSList *current      = objects;
+  gchar  *stamp_string = g_strdup_printf ("< %d >", _stamp);
+
+  while (current)
+  {
+    GObject *object = (GObject *) current->data;
+
+    if (GTK_IS_WIDGET (object))
+    {
+      gtk_widget_set_name (GTK_WIDGET (object),
+                           stamp_string);
+    }
+
+    current = g_slist_next (current);
+  }
+
+  g_free (stamp_string);
+  g_slist_free (objects);
+
+  _stamp++;
 }
 
 // --------------------------------------------------------------------------------
@@ -83,9 +138,6 @@ void Glade::DetachFromParent (GtkWidget *widget)
 
     if (parent)
     {
-      gtk_container_forall (GTK_CONTAINER (parent),
-                            (GtkCallback) g_object_ref,
-                            NULL);
       gtk_container_remove (GTK_CONTAINER (parent),
                             widget);
     }
@@ -95,8 +147,18 @@ void Glade::DetachFromParent (GtkWidget *widget)
 // --------------------------------------------------------------------------------
 GtkWidget *Glade::GetWidget (const gchar *name)
 {
-  return (GtkWidget *) (gtk_builder_get_object (_glade_xml,
-                                                name));
+  GtkWidget *widget = (GtkWidget *) (gtk_builder_get_object (_glade_xml,
+                                                             name));
+
+#if 0
+  if (widget)
+  {
+    gtk_widget_set_name (widget,
+                         name);
+  }
+#endif
+
+  return widget;
 }
 
 // --------------------------------------------------------------------------------
@@ -109,6 +171,5 @@ GObject *Glade::GetObject (const gchar *name)
 // --------------------------------------------------------------------------------
 GtkWidget *Glade::GetRootWidget ()
 {
-  return GTK_WIDGET (gtk_builder_get_object (_glade_xml,
-                                             "root"));
+  return GetWidget ("root");
 }

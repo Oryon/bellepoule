@@ -273,17 +273,22 @@ void Classification::WriteFFFString (FILE        *file,
 
   if (attr)
   {
-    gsize   bytes_written;
     GError *error = NULL;
     gchar  *result;
 
-    result = g_convert (attr->GetXmlImage (),
-                        -1,
-                        "ISO-8859-1",
-                        "UTF-8",
-                        NULL,
-                        &bytes_written,
-                        &error);
+    {
+      gsize  bytes_written;
+      gchar *xml_image = attr->GetXmlImage ();
+
+      result = g_convert (xml_image,
+                          -1,
+                          "ISO-8859-1",
+                          "UTF-8",
+                          NULL,
+                          &bytes_written,
+                          &error);
+      g_free (xml_image);
+    }
 
     if (error)
     {
