@@ -55,6 +55,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void OnSwappingComboboxChanged (GtkComboBox *cb);
     void OnFencerListToggled (gboolean toggled);
     void OnFilterClicked ();
+    void OnPrintClicked ();
 
   private:
     void OnLoadingCompleted ();
