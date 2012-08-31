@@ -195,9 +195,6 @@ PoolAllocator::PoolAllocator (StageClass *stage_class)
       _fencer_list->SetDataOwner (this);
       filter->Release ();
     }
-
-    Plug (_fencer_list,
-          _glade->GetWidget ("fencer_list_hook"));
   }
 }
 
@@ -238,6 +235,9 @@ void PoolAllocator::OnPlugged ()
 
   SetDndDest (GTK_WIDGET (GetCanvas ()));
   EnableDragAndDrop ();
+
+  _owner->Plug (_fencer_list,
+                _glade->GetWidget ("fencer_list_hook"));
 }
 
 // --------------------------------------------------------------------------------
@@ -1706,6 +1706,22 @@ void PoolAllocator::OnComboboxChanged (GtkComboBox *cb)
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::OnPrintClicked ()
+{
+  gchar *title = g_strdup_printf ("%s %s", gettext ("Allocation"), GetName ());
+
+  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("fencer_list"))))
+  {
+    _fencer_list->Print (title);
+  }
+  else
+  {
+    Print (title);
+  }
+  g_free (title);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
                                                               Object    *owner)
 {
@@ -1719,10 +1735,8 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
                                                              Object    *owner)
 {
   PoolAllocator *pa = dynamic_cast <PoolAllocator *> (owner);
-  gchar         *title = g_strdup_printf ("%s %s", gettext ("Allocation"), pa->GetName ());
 
-  pa->Print (title);
-  g_free (title);
+  pa->OnPrintClicked ();
 }
 
 // --------------------------------------------------------------------------------
