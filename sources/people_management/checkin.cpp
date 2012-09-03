@@ -409,6 +409,9 @@ void Checkin::ImportFFF (gchar *filename)
             player->SetAttributeValue (&attr_id, tokens[1]);
 
             attr_id._name = (gchar *) "birth_date";
+            g_strdelimit (tokens[2],
+                          "/",
+                          '.');
             player->SetAttributeValue (&attr_id, tokens[2]);
 
             attr_id._name = (gchar *) "gender";
@@ -559,6 +562,14 @@ void Checkin::ImportCSV (gchar *filename)
               if (columns[c])
               {
                 attr_id._name = columns[c]->_code_name;
+
+                if (strcmp (attr_id._name, "birth_date") == 0)
+                {
+                  g_strdelimit (tokens[i+c],
+                                "/- ",
+                                '.');
+                }
+
                 player->SetAttributeValue (&attr_id, tokens[i+c]);
               }
             }

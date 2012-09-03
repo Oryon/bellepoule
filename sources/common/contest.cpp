@@ -1809,7 +1809,9 @@ extern "C" G_MODULE_EXPORT void on_calendar_button_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest::on_calendar_button_clicked ()
 {
-  if (gtk_dialog_run (GTK_DIALOG (_properties_dialog)) == TRUE)
+  GtkWidget *dialog = _glade->GetWidget ("calendar_dialog");
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == TRUE)
   {
     guint year;
     guint month;
@@ -1824,7 +1826,7 @@ void Contest::on_calendar_button_clicked ()
                 month,
                 year);
   }
-  gtk_widget_hide (_properties_dialog);
+  gtk_widget_hide (dialog);
 }
 
 // --------------------------------------------------------------------------------
