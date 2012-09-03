@@ -974,11 +974,13 @@ void Tournament::OnOpen (gchar *current_folder)
     GtkFileFilter *filter = gtk_file_filter_new ();
 
     gtk_file_filter_set_name (filter,
-                              gettext ("BellePoule files (.cotcot)"));
+                              gettext ("Competition files (.cotcot / .xml)"));
     gtk_file_filter_add_pattern (filter,
                                  "*.cotcot");
     gtk_file_filter_add_pattern (filter,
                                  "*.xml");
+    gtk_file_filter_add_pattern (filter,
+                                 "*.XML");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                  filter);
   }

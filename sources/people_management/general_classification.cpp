@@ -205,14 +205,6 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
                                                        NULL));
     gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
                                                     TRUE);
-    {
-      char *name = _contest->GetDefaultFileName ();
-
-      gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (chooser),
-                                         name);
-      g_free (name);
-    }
-
 
     {
       gchar *last_dirname = g_key_file_get_string (_config_file,
@@ -237,31 +229,57 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
 
     {
       GtkFileFilter *filter = gtk_file_filter_new ();
+      const gchar   *pattern_upper;
+      gchar         *pattern_lower;
 
       if (export_type == CSV)
       {
         gtk_file_filter_set_name (filter,
                                   gettext ("All Excel files (.CSV)"));
-        gtk_file_filter_add_pattern (filter,
-                                     "*.CSV");
+        pattern_upper = "*.CVS";
       }
       else if (export_type == FFF)
       {
         gtk_file_filter_set_name (filter,
                                   gettext ("All FFF files (.FFF)"));
-        gtk_file_filter_add_pattern (filter,
-                                     "*.FFF");
+        pattern_upper = "*.FFF";
       }
       else if (export_type == PDF)
       {
         gtk_file_filter_set_name (filter,
                                   gettext ("All PDF files (.PDF)"));
-        gtk_file_filter_add_pattern (filter,
-                                     "*.PDF");
+        pattern_upper = "*.PDF";
       }
+
+      gtk_file_filter_add_pattern (filter,
+                                   pattern_upper);
+
+      pattern_lower = g_ascii_strdown (pattern_upper, -1);
+      gtk_file_filter_add_pattern (filter,
+                                   pattern_lower);
 
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                    filter);
+
+      {
+        gchar *cotcot_name = _contest->GetDefaultFileName ();
+        gchar *suffix      = g_strrstr (cotcot_name, ".cotcot");
+        gchar *export_name;
+
+        if (suffix)
+        {
+          *suffix = 0;
+        }
+
+        export_name = g_strdup_printf ("%s.%s", cotcot_name, pattern_lower+2);
+
+        gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (chooser),
+                                           export_name);
+
+        g_free (export_name);
+        g_free (cotcot_name);
+      }
+      g_free (pattern_lower);
     }
 
     {
@@ -281,50 +299,13 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
 
       if (filename)
       {
-        gchar *suffix = NULL;
+        gchar *dirname = g_path_get_dirname (filename);
 
-        if (export_type == CSV)
-        {
-          suffix = g_strdup (".csv");
-        }
-        else if (export_type == FFF)
-        {
-          suffix = g_strdup (".fff");
-        }
-        else if (export_type == PDF)
-        {
-          suffix = g_strdup (".pdf");
-        }
-
-        {
-          gchar *dirname = g_path_get_dirname (filename);
-
-          g_key_file_set_string (_config_file,
-                                 "Competiton",
-                                 "export_dir",
-                                 dirname);
-          g_free (dirname);
-        }
-
-        if (strcmp ((const char *) suffix, (const char *) &filename[strlen (filename) - strlen (suffix)]) != 0)
-        {
-          gchar *with_suffix;
-
-          with_suffix = g_strdup_printf ("%s%s", filename, suffix);
-          g_free (filename);
-          filename = with_suffix;
-
-          {
-            gchar *dirname = g_path_get_dirname (filename);
-
-            g_key_file_set_string (_config_file,
-                                   "Competiton",
-                                   "export_dir",
-                                   dirname);
-            g_free (dirname);
-          }
-        }
-        g_free (suffix);
+        g_key_file_set_string (_config_file,
+                               "Competiton",
+                               "export_dir",
+                               dirname);
+        g_free (dirname);
       }
     }
 
@@ -337,22 +318,23 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
 
     if (classification)
     {
-        if (export_type == CSV)
-        {
-          classification->DumpToCSV (filename,
-                                     _filter->GetAttrList ());
-        }
-        else if (export_type == FFF)
-        {
-          classification->DumpToFFF (filename,
-                                     _contest);
-        }
-        if (export_type == PDF)
-        {
-          classification->PrintPDF ("General classification",
-                                    filename);
-        }
+      if (export_type == CSV)
+      {
+        classification->DumpToCSV (filename,
+                                   _filter->GetAttrList ());
+      }
+      else if (export_type == FFF)
+      {
+        classification->DumpToFFF (filename,
+                                   _contest);
+      }
+      if (export_type == PDF)
+      {
+        classification->PrintPDF ("General classification",
+                                  filename);
+      }
     }
+    g_free (filename);
   }
 }
 
