@@ -452,11 +452,6 @@ void Tournament::OnDrawPage (GtkPrintOperation *operation,
         Canvas::SetTableItemAttribute (ticket_table, "x-fill",   1U);
         current = g_slist_next (current);
       }
-
-      if (current)
-      {
-        current = g_slist_next (current);
-      }
     }
   }
   else
