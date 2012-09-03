@@ -378,8 +378,17 @@ void Form::ReadAndWipe (Player *player)
       {
         if (attr_id)
         {
+          gchar *value = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
+
+          if (strcmp (attr_id->_name, "birth_date") == 0)
+          {
+            g_strdelimit (value,
+                          "/- ",
+                          '.');
+          }
+
           player->SetAttributeValue (attr_id,
-                                     (gchar *) gtk_entry_get_text (GTK_ENTRY (w)));
+                                     value);
         }
 
         if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)

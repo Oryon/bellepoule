@@ -99,19 +99,31 @@ static gint CompareDate (Attribute *attr_a,
 
   if (attr_a)
   {
+    gchar *value = g_strdup (attr_a->GetStrValue ());
+
+    g_strdelimit (value,
+                  "/",
+                  '.');
     g_date_set_parse (&date_a,
-                      (const gchar *) attr_a->GetStrValue ());
+                      value);
+    g_free (value);
   }
+
   if (attr_b)
   {
+    gchar *value = g_strdup (attr_b->GetStrValue ());
+
+    g_strdelimit (value,
+                  "/",
+                  '.');
     g_date_set_parse (&date_b,
-                      (const gchar *) attr_b->GetStrValue ());
+                      value);
+    g_free (value);
   }
 
   return g_date_compare (&date_a,
                          &date_b);
 }
-
 // --------------------------------------------------------------------------------
 #ifdef DEBUG
 static void LogHandler (const gchar    *log_domain,
