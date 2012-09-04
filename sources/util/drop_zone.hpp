@@ -28,17 +28,17 @@ class DropZone : public Object
   public:
     void Wipe ();
 
-    void GetBounds (GooCanvasBounds *bounds,
-                    gdouble          zoom_factor = 1.0);
+    virtual void GetBounds (GooCanvasBounds *bounds,
+                            gdouble          zoom_factor = 1.0);
 
-    void Focus ();
+    virtual void Focus ();
 
-    void Unfocus ();
+    virtual void Unfocus ();
 
-    void Redraw (gdouble x,
-                 gdouble y,
-                 gdouble w,
-                 gdouble h);
+    virtual void Redraw (gdouble x,
+                         gdouble y,
+                         gdouble w,
+                         gdouble h);
 
     virtual void AddObject (Object *object);
 
