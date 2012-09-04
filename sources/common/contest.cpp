@@ -1307,14 +1307,9 @@ void Contest::AttachTo (GtkNotebook *to)
 {
   _notebook = GTK_NOTEBOOK (to);
 
-  {
-    GtkWidget *title = _glade->GetWidget ("notebook_title");
-
-    gtk_notebook_append_page (_notebook,
-                              GetRootWidget (),
-                              title);
-    g_object_unref (title);
-  }
+  gtk_notebook_append_page (_notebook,
+                            GetRootWidget (),
+                            _glade->GetWidget ("notebook_title"));
 
   if (_derived == FALSE)
   {

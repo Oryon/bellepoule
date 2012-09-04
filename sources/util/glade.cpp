@@ -108,7 +108,6 @@ void Glade::StampAllWidgets ()
 {
   GSList *objects      = gtk_builder_get_objects (_glade_xml);
   GSList *current      = objects;
-  gchar  *stamp_string = g_strdup_printf ("< %d >", _stamp);
 
   while (current)
   {
@@ -116,14 +115,30 @@ void Glade::StampAllWidgets ()
 
     if (GTK_IS_WIDGET (object))
     {
+      gchar *stamp_string;
+
+      if (GTK_IS_BUILDABLE (object))
+      {
+        stamp_string = g_strdup_printf ("%d::%s::%s",
+                                        _stamp,
+                                        G_OBJECT_TYPE_NAME (object),
+                                        gtk_buildable_get_name (GTK_BUILDABLE (object)));
+      }
+      else
+      {
+        stamp_string = g_strdup_printf ("%d::%s",
+                                        _stamp,
+                                        G_OBJECT_TYPE_NAME (object));
+      }
+
       gtk_widget_set_name (GTK_WIDGET (object),
                            stamp_string);
+      g_free (stamp_string);
     }
 
     current = g_slist_next (current);
   }
 
-  g_free (stamp_string);
   g_slist_free (objects);
 
   _stamp++;

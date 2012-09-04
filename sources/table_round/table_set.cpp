@@ -414,8 +414,6 @@ void TableSet::SetStatusCbk (StatusCbk  cbk,
 // --------------------------------------------------------------------------------
 void TableSet::Display ()
 {
-  Wipe ();
-
   if (_tree_root)
   {
     _main_table = goo_canvas_table_new (GetRootItem (),
@@ -867,6 +865,7 @@ gboolean TableSet::WipeNode (GNode    *node,
   {
     DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
                                                             "drop_zone");
+
     if (zone)
     {
       zone->Wipe ();
@@ -881,6 +880,9 @@ gboolean TableSet::DeleteCanvasTable (GNode    *node,
                                       TableSet *table_set)
 {
   NodeData *data = (NodeData *) node->data;
+
+  WipeNode (node,
+            table_set);
 
   table_set->_score_collector->RemoveCollectingPoints (data->_match);
 
@@ -1708,6 +1710,7 @@ gboolean TableSet::CloseClassification (GNode    *node,
 // --------------------------------------------------------------------------------
 void TableSet::OnAttrListUpdated ()
 {
+  Wipe ();
   Display ();
 }
 
@@ -1716,6 +1719,8 @@ void TableSet::OnFromToTableComboboxChanged ()
 {
   guint from = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")));
   guint to   = 1 + gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("to_table_combobox")));
+
+  Wipe ();
 
   for (guint t = 0; t < _nb_tables; t++)
   {
@@ -2956,6 +2961,8 @@ void TableSet::OnUnPlugged ()
 {
   _from_border->UnPlug ();
   _to_border->UnPlug   ();
+
+  Wipe ();
 
   CanvasModule::OnUnPlugged ();
 }
