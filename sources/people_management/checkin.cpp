@@ -229,9 +229,15 @@ void Checkin::OnImport ()
     gtk_file_filter_add_pattern (filter,
                                  "*.FFF");
     gtk_file_filter_add_pattern (filter,
+                                 "*.fff");
+    gtk_file_filter_add_pattern (filter,
                                  "*.CSV");
     gtk_file_filter_add_pattern (filter,
+                                 "*.csv");
+    gtk_file_filter_add_pattern (filter,
                                  "*.TXT");
+    gtk_file_filter_add_pattern (filter,
+                                 "*.txt");
     gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                  filter);
   }
@@ -500,13 +506,32 @@ void Checkin::ImportFFF (gchar *filename)
 // --------------------------------------------------------------------------------
 void Checkin::ImportCSV (gchar *filename)
 {
-  gchar *file_content = GetFileContent (filename);
-  gchar *utf8_content = g_locale_to_utf8 (file_content,
-                                          -1,
-                                          NULL,
-                                          NULL,
-                                          NULL);
-  g_free (file_content);
+  gchar  *file_content = GetFileContent (filename);
+  gchar  *utf8_content;
+
+  {
+    GError *error = NULL;
+
+    utf8_content = g_locale_to_utf8 (file_content,
+                                     -1,
+                                     NULL,
+                                     NULL,
+                                     &error);
+    g_free (file_content);
+
+    if (error)
+    {
+      GtkWidget *dialog = gtk_message_dialog_new (NULL,
+                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                  GTK_MESSAGE_ERROR,
+                                                  GTK_BUTTONS_CLOSE,
+                                                  "The imported CSV file is probably based on template generated from another computer.\n\n"
+                                                  "Use a template generated from this computer!");
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+      g_clear_error (&error);
+    }
+  }
 
   if (utf8_content)
   {
@@ -535,7 +560,8 @@ void Checkin::ImportCSV (gchar *filename)
           columns = g_new (AttributeDesc *, nb_attr);
           for (guint i = 0; i < nb_attr; i++)
           {
-            columns[i] = AttributeDesc::GuessDescFromUserName (header_attr[i]);
+            columns[i] = AttributeDesc::GuessDescFromUserName (header_attr[i],
+                                                               "CSV ready");
           }
 
           g_strfreev (header_attr);
