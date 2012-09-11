@@ -3303,7 +3303,7 @@ gboolean TableSet::DroppingIsForbidden (Object *object)
 {
   Player *player = (Player *) object;
 
-  if (player->IsFencer ())
+  if (player && player->IsFencer ())
   {
     return _locked;
   }
