@@ -84,7 +84,7 @@ class CanvasModule : public Module
                              DropZone *source_zone,
                              DropZone *target_zone);
 
-    virtual gboolean DroppingIsForbidden ();
+    virtual gboolean DroppingIsForbidden (Object *object);
 
     virtual GString *GetFloatingImage (Object *floating_object);
 

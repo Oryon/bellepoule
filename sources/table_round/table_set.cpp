@@ -3299,9 +3299,16 @@ Object *TableSet::GetDropObjectFromRef (guint32 ref)
 }
 
 // --------------------------------------------------------------------------------
-gboolean TableSet::DroppingIsForbidden ()
+gboolean TableSet::DroppingIsForbidden (Object *object)
 {
-  return _locked;
+  Player *player = (Player *) object;
+
+  if (player->IsFencer ())
+  {
+    return _locked;
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -3352,30 +3359,21 @@ gboolean TableSet::ObjectIsDropable (Object   *floating_object,
 {
   if (floating_object && in_zone)
   {
-    Player::AttributeId  attr_id  ("availability");
-    Player              *player = (Player *) floating_object;
-    Attribute           *attr = player->GetAttribute (&attr_id);
+    TableZone *table_zone = (TableZone *) in_zone;
+    GSList    *current    = table_zone->GetNodeList ();
 
-    if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
+    while (current)
     {
+      GNode    *node  = (GNode *) current->data;
+      NodeData *data  = (NodeData *) node->data;
+      Match    *match = data->_match;
+
+      if (match->GetPlayerA () && match->GetPlayerB ())
       {
-        TableZone *table_zone = (TableZone *) in_zone;
-        GSList    *current    = table_zone->GetNodeList ();
-
-        while (current)
-        {
-          GNode    *node  = (GNode *) current->data;
-          NodeData *data  = (NodeData *) node->data;
-          Match    *match = data->_match;
-
-          if (match->GetPlayerA () && match->GetPlayerB ())
-          {
-            return TRUE;
-          }
-
-          current = g_slist_next (current);
-        }
+        return TRUE;
       }
+
+      current = g_slist_next (current);
     }
   }
 

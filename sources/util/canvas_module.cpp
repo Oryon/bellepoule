@@ -534,7 +534,7 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
                                      gint            y,
                                      guint           time)
 {
-  if (DroppingIsForbidden ())
+  if (DroppingIsForbidden (_floating_object))
   {
     gdk_drag_status  (drag_context,
                       (GdkDragAction) 0,
@@ -688,7 +688,10 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
                                       GdkEventButton *event,
                                       DropZone       *drop_zone)
 {
-  if (DroppingIsForbidden ())
+  Object *drop_object = (Object *) g_object_get_data (G_OBJECT (item),
+                                                      "CanvasModule::drop_object");
+
+  if (DroppingIsForbidden (drop_object))
   {
     return FALSE;
   }
@@ -696,8 +699,7 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
   if (   (event->button == 1)
          && (event->type == GDK_BUTTON_PRESS))
   {
-    _floating_object = (Player *) g_object_get_data (G_OBJECT (item),
-                                                     "CanvasModule::drop_object");
+    _floating_object = drop_object;
 
     _drag_x = event->x;
     _drag_y = event->y;
@@ -866,7 +868,7 @@ void CanvasModule::DropObject (Object   *object,
 }
 
 // --------------------------------------------------------------------------------
-gboolean CanvasModule::DroppingIsForbidden ()
+gboolean CanvasModule::DroppingIsForbidden (Object *object)
 {
   return TRUE;
 }

@@ -315,7 +315,7 @@ class TableSet : public CanvasModule
 
     Object *GetDropObjectFromRef (guint32 ref);
 
-    gboolean DroppingIsForbidden ();
+    gboolean DroppingIsForbidden (Object *object);
 
     GString *GetFloatingImage (Object *floating_object);
 

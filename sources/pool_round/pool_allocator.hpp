@@ -58,7 +58,6 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void OnPrintClicked ();
 
   private:
-    void OnLoadingCompleted ();
     void OnLocked ();
     void OnUnLocked ();
     void OnCanceled ();
@@ -141,7 +140,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     Object *GetDropObjectFromRef (guint32 ref);
 
-    gboolean DroppingIsForbidden ();
+    gboolean DroppingIsForbidden (Object *object);
 
     GString *GetFloatingImage (Object *floating_object);
 
