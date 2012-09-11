@@ -311,9 +311,16 @@ void PoolAllocator::DropObject (Object   *object,
 }
 
 // --------------------------------------------------------------------------------
-gboolean PoolAllocator::DroppingIsForbidden ()
+gboolean PoolAllocator::DroppingIsForbidden (Object *object)
 {
-  return Locked ();
+  Player *player = (Player *) object;
+
+  if (player && player->IsFencer ())
+  {
+    return Locked ();
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -364,22 +371,7 @@ gboolean PoolAllocator::ObjectIsDropable (Object   *floating_object,
 {
   if (floating_object && in_zone)
   {
-    Player *player = (Player *) floating_object;
-
-    if (player->IsFencer ())
-    {
-      return TRUE;
-    }
-    else
-    {
-      Player::AttributeId  attr_id  ("availability");
-      Attribute           *attr = player->GetAttribute (&attr_id);
-
-      if (attr && (strcmp (attr->GetStrValue (), "Free") == 0))
-      {
-        return TRUE;
-      }
-    }
+    return TRUE;
   }
 
   return FALSE;
@@ -1740,23 +1732,6 @@ extern "C" G_MODULE_EXPORT void on_print_toolbutton_clicked (GtkWidget *widget,
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::OnLoadingCompleted ()
-{
-  if (IsPlugged () && (Locked () == FALSE))
-  {
-    GSList *current = _drop_zones;
-
-    while (current)
-    {
-      PoolZone *zone = (PoolZone *) current->data;
-
-      zone->BookReferees ();
-      current = g_slist_next (current);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
 void PoolAllocator::OnLocked ()
 {
   DisableSensitiveWidgets ();
@@ -1766,8 +1741,10 @@ void PoolAllocator::OnLocked ()
 
     while (current)
     {
-      Pool *pool = GetPoolOf (current);
+      PoolZone *zone = (PoolZone *) current->data;
+      Pool     *pool = GetPoolOf (current);
 
+      zone->ForbidBooking ();
       pool->CreateMatchs (_swapping_criteria);
       current = g_slist_next (current);
     }

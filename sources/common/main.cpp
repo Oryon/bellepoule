@@ -157,6 +157,17 @@ static void LogHandler (const gchar    *log_domain,
 #endif
 
 // --------------------------------------------------------------------------------
+static gboolean IsCsvReady (AttributeDesc *desc)
+{
+  return (   (desc->_scope       == AttributeDesc::GLOBAL)
+          && (desc->_rights      == AttributeDesc::PUBLIC)
+          && (desc->_persistency == AttributeDesc::PERSISTENT)
+          && (g_ascii_strcasecmp (desc->_code_name, "final_rank") != 0)
+          && (g_ascii_strcasecmp (desc->_code_name, "smartphone") != 0)
+          && (g_ascii_strcasecmp (desc->_code_name, "exported")   != 0));
+}
+
+// --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
   // g_mem_set_vtable (glib_mem_profiler_table);
@@ -364,6 +375,9 @@ int main (int argc, char **argv)
 
     }
   }
+
+  AttributeDesc::SetCriteria ("CSV ready",
+                              IsCsvReady);
 
   {
     Tournament *tournament;

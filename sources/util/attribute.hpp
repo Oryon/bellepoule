@@ -71,6 +71,8 @@ class AttributeDesc : public Object
       NB_DISCRETE_COLUMNS
     } DiscreteColumnId;
 
+    typedef gboolean (*CriteriaFunc) (AttributeDesc *desc);
+
     GType         _type;
     gchar        *_xml_name;
     gchar        *_code_name;
@@ -99,7 +101,8 @@ class AttributeDesc : public Object
 
     static AttributeDesc *GetDescFromCodeName (const gchar *code_name);
 
-    static AttributeDesc *GuessDescFromUserName (const gchar *code_name);
+    static AttributeDesc *GuessDescFromUserName (const gchar *code_name,
+                                                 const gchar *criteria);
 
     void BindDiscreteValues (GObject         *object,
                              GtkCellRenderer *renderer,
@@ -148,8 +151,14 @@ class AttributeDesc : public Object
 
     GType GetGType (Look look);
 
+    gboolean MatchCriteria (const gchar *criteria);
+
+    static void SetCriteria (const gchar  *criteria,
+                             CriteriaFunc  func);
+
   private:
-    static GSList *_list;
+    static GSList       *_list;
+    static CriteriaFunc  _criteria_func;
 
     AttributeDesc (GType        type,
                    const gchar *code_name,

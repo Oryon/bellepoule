@@ -185,6 +185,7 @@ void CheckinSupervisor::ConvertFromBaseToResult ()
                               final_rank->GetUIntValue ());
         p->SetAttributeValue (&place_attr_id,
                               1);
+        Update (p);
       }
     }
     current = g_slist_next (current);

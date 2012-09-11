@@ -19,7 +19,8 @@
 
 #include "attribute.hpp"
 
-GSList *AttributeDesc::_list = NULL;
+GSList                      *AttributeDesc::_list          = NULL;
+AttributeDesc::CriteriaFunc  AttributeDesc::_criteria_func = NULL;
 
 // --------------------------------------------------------------------------------
 AttributeDesc::AttributeDesc (GType        type,
@@ -54,6 +55,23 @@ AttributeDesc::~AttributeDesc ()
   g_free (_code_name);
   g_free (_xml_name);
   g_free (_user_name);
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::SetCriteria (const gchar  *criteria,
+                                 CriteriaFunc  func)
+{
+  _criteria_func = func;
+}
+
+// --------------------------------------------------------------------------------
+gboolean AttributeDesc::MatchCriteria (const gchar *criteria)
+{
+  if (_criteria_func)
+  {
+    return _criteria_func (this);
+  }
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -909,7 +927,8 @@ AttributeDesc *AttributeDesc::GetDescFromCodeName (const gchar *code_name)
 }
 
 // --------------------------------------------------------------------------------
-AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name)
+AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name,
+                                                     const gchar *criteria)
 {
   GSList *current = _list;
 
@@ -917,13 +936,16 @@ AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name)
   {
     AttributeDesc *attr_desc = (AttributeDesc *) current->data;
 
-    if (strcmp (user_name, attr_desc->_user_name) == 0)
+    if (attr_desc->MatchCriteria (criteria))
     {
-      return attr_desc;
-    }
-    else if (g_ascii_strcasecmp (user_name, attr_desc->_xml_name) == 0)
-    {
-      return attr_desc;
+      if (strcmp (user_name, attr_desc->_user_name) == 0)
+      {
+        return attr_desc;
+      }
+      else if (g_ascii_strcasecmp (user_name, attr_desc->_xml_name) == 0)
+      {
+        return attr_desc;
+      }
     }
 
     current = g_slist_next (current);

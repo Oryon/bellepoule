@@ -24,7 +24,8 @@
 RefereeZone::RefereeZone (Module *container)
   : DropZone (container)
 {
-  _referee_list = NULL;
+  _referee_list   = NULL;
+  _manage_booking = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -33,9 +34,21 @@ RefereeZone::~RefereeZone ()
 }
 
 // --------------------------------------------------------------------------------
+void RefereeZone::AllowBooking ()
+{
+  _manage_booking = TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void RefereeZone::ForbidBooking ()
+{
+  _manage_booking = FALSE;
+}
+
+// --------------------------------------------------------------------------------
 void RefereeZone::BookReferees ()
 {
-  if (_container->GetState () == Module::OPERATIONAL)
+  if (_manage_booking)
   {
     GSList *current = _referee_list;
 
@@ -50,7 +63,7 @@ void RefereeZone::BookReferees ()
 // --------------------------------------------------------------------------------
 void RefereeZone::FreeReferees ()
 {
-  if (_container->GetState () == Module::OPERATIONAL)
+  if (_manage_booking)
   {
     GSList *current = _referee_list;
 
@@ -65,26 +78,59 @@ void RefereeZone::FreeReferees ()
 // --------------------------------------------------------------------------------
 void RefereeZone::BookReferee (Player *referee)
 {
-  Player::AttributeId attr_id ("availability");
-
-  if (strcmp (referee->GetAttribute (&attr_id)->GetStrValue (),
-              "Free") == 0)
+  if (_manage_booking)
   {
-    referee->SetAttributeValue (&attr_id,
-                                "Busy");
+    guint token = referee->GetUIntData (NULL,
+                                        "Referee::token");
+
+    token++;
+
+    if (token == 1)
+    {
+      Player::AttributeId attr_id ("availability");
+
+      if (strcmp (referee->GetAttribute (&attr_id)->GetStrValue (),
+                  "Free") == 0)
+      {
+        referee->SetAttributeValue (&attr_id,
+                                    "Busy");
+      }
+    }
+
+    referee->SetData (NULL,
+                      "Referee::token",
+                      (void *) token);
   }
 }
 
 // --------------------------------------------------------------------------------
 void RefereeZone::FreeReferee (Player *referee)
 {
-  Player::AttributeId attr_id ("availability");
-  Attribute           *attr = referee->GetAttribute (&attr_id);
-
-  if (attr && strcmp (attr->GetStrValue (), "Busy") == 0)
+  if (_manage_booking)
   {
-    referee->SetAttributeValue (&attr_id,
-                                "Free");
+    guint token = referee->GetUIntData (NULL,
+                                        "Referee::token");
+
+    if (token > 0)
+    {
+      token--;
+    }
+
+    if (token == 0)
+    {
+      Player::AttributeId attr_id ("availability");
+      Attribute           *attr = referee->GetAttribute (&attr_id);
+
+      if (attr && strcmp (attr->GetStrValue (), "Busy") == 0)
+      {
+        referee->SetAttributeValue (&attr_id,
+                                    "Free");
+      }
+    }
+
+    referee->SetData (NULL,
+                      "Referee::token",
+                      (void *) token);
   }
 }
 
@@ -100,10 +146,7 @@ void RefereeZone::AddReferee (Player *referee)
     _referee_list = g_slist_prepend (_referee_list,
                                      referee);
 
-    if (_container->GetState () == Module::OPERATIONAL)
-    {
-      BookReferee (referee);
-    }
+    BookReferee (referee);
   }
 }
 
@@ -116,20 +159,7 @@ void RefereeZone::RemoveReferee (Player *referee)
   _referee_list = g_slist_remove (_referee_list,
                                   referee);
 
-  {
-    gboolean  locked = FALSE;
-    Stage    *stage  = dynamic_cast <Stage *> (_container);
-
-    if (stage)
-    {
-      locked = stage->Locked ();
-    }
-
-    if ((locked == FALSE) && (_container->GetState () != Module::LOADING))
-    {
-      FreeReferee (referee);
-    }
-  }
+  FreeReferee (referee);
 }
 
 // --------------------------------------------------------------------------------

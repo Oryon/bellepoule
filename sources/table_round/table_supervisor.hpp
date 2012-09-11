@@ -117,8 +117,6 @@ class TableSupervisor : public virtual Stage, public Module
 
     void LoadConfiguration (xmlNode *xml_node);
 
-    void OnLoadingCompleted ();
-
     void FillInConfig ();
 
     void ApplyConfig ();

@@ -906,11 +906,6 @@ Public License instead of this License.  But first, please read
     <property name="can_focus">False</property>
     <property name="pixbuf">wifi.png</property>
   </object>
-  <object class="GtkImage" id="image11">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-print</property>
-  </object>
   <object class="GtkImage" id="image12">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -951,26 +946,17 @@ Public License instead of this License.  But first, please read
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-directory</property>
+    <property name="icon-size">1</property>
   </object>
   <object class="GtkImage" id="image6">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">preferences-desktop-locale</property>
   </object>
-  <object class="GtkImage" id="image7">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-dialog-warning</property>
-  </object>
   <object class="GtkImage" id="image8">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">software-update-available</property>
-  </object>
-  <object class="GtkImage" id="image9">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-dialog-warning</property>
   </object>
   <object class="GtkWindow" id="root">
     <property name="can_focus">False</property>

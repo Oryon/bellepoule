@@ -1080,18 +1080,13 @@ void Tournament::OnOpenTemplate ()
                                         NULL);
 
   {
-    GSList  *current_desc = AttributeDesc::GetList ();
+    GSList *current_desc = AttributeDesc::GetList ();
 
     while (current_desc)
     {
       AttributeDesc *desc = (AttributeDesc *) current_desc->data;
 
-      if (   (desc->_scope       == AttributeDesc::GLOBAL)
-          && (desc->_rights      == AttributeDesc::PUBLIC)
-          && (desc->_persistency == AttributeDesc::PERSISTENT)
-          && (g_ascii_strcasecmp (desc->_code_name, "final_rank") != 0)
-          && (g_ascii_strcasecmp (desc->_code_name, "smartphone") != 0)
-          && (g_ascii_strcasecmp (desc->_code_name, "exported")   != 0))
+      if (desc->MatchCriteria ("CSV ready"))
       {
         gchar *locale_string = g_locale_from_utf8 (desc->_user_name,
                                                    -1,

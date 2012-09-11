@@ -204,6 +204,18 @@ void PoolSupervisor::OnPlugged ()
   }
 
   RetrievePools ();
+
+  {
+    guint nb_pools = _pool_allocator->GetNbPools ();
+
+    for (guint p = 0; p < nb_pools; p++)
+    {
+      Pool     *pool = _pool_allocator->GetPool (p);
+      PoolZone *zone = _pool_allocator->GetZone (p);
+
+      zone->AllowBooking ();
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -304,27 +316,6 @@ gint PoolSupervisor::CompareClassification (GtkTreeModel   *model,
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor::OnLoadingCompleted ()
-{
-  if (IsPlugged () && (Locked () == FALSE))
-  {
-    guint nb_pools = _pool_allocator->GetNbPools ();
-
-    for (guint p = 0; p < nb_pools; p++)
-    {
-      Pool *pool = _pool_allocator->GetPool (p);
-
-      if (pool->IsOver () == FALSE)
-      {
-        PoolZone *zone = _pool_allocator->GetZone (p);
-
-        zone->BookReferees ();
-      }
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
 void PoolSupervisor::OnLocked ()
 {
   DisableSensitiveWidgets ();
@@ -335,7 +326,7 @@ void PoolSupervisor::OnLocked ()
     Pool     *pool      = drop_zone->GetPool ();
 
     pool->Lock ();
-    drop_zone->FreeReferees ();
+    drop_zone->ForbidBooking ();
   }
 }
 
@@ -350,7 +341,7 @@ void PoolSupervisor::OnUnLocked ()
     Pool     *pool      = drop_zone->GetPool ();
 
     pool->UnLock ();
-    drop_zone->BookReferees ();
+    drop_zone->AllowBooking ();
   }
 
   OnAttrListUpdated ();
@@ -717,6 +708,18 @@ void PoolSupervisor::OnStuffClicked ()
 void PoolSupervisor::Load (xmlNode *xml_node)
 {
   LoadAttendees (NULL);
+
+  {
+    guint nb_pools = _pool_allocator->GetNbPools ();
+
+    for (guint p = 0; p < nb_pools; p++)
+    {
+      Pool *pool = _pool_allocator->GetPool (p);
+
+      OnPoolStatusUpdated (pool,
+                           this);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -820,11 +823,6 @@ void PoolSupervisor::OnToggleSingleClassification (gboolean single_selected)
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor::OnScoreDeviceClicked ()
-{
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_pool_filter_toolbutton_clicked (GtkWidget *widget,
                                                                    Object    *owner)
 {
@@ -859,15 +857,6 @@ extern "C" G_MODULE_EXPORT void on_stuff_toolbutton_clicked (GtkWidget *widget,
   PoolSupervisor *ps = dynamic_cast <PoolSupervisor *> (owner);
 
   ps->OnStuffClicked ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_score_device_toolbutton_clicked (GtkWidget *widget,
-                                                                    Object    *owner)
-{
-  PoolSupervisor *ps = dynamic_cast <PoolSupervisor *> (owner);
-
-  ps->OnScoreDeviceClicked ();
 }
 
 // --------------------------------------------------------------------------------
