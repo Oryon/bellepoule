@@ -449,7 +449,7 @@ void Player::Save (xmlTextWriter *xml_writer,
 
               g_date_strftime (buffer,
                                sizeof (buffer),
-                               "%d.%m.%y",
+                               "%d.%m.%Y",
                                &date);
               g_free (xml_image);
               xml_image = g_strdup (buffer);
@@ -538,8 +538,8 @@ void Player::Load (xmlNode *xml_node)
               attr->SetValue (buffer);
 
               g_date_free (date);
-              g_strfreev (splitted_date);
             }
+            g_strfreev (splitted_date);
           }
         }
 

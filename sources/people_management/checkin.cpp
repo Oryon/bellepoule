@@ -415,10 +415,35 @@ void Checkin::ImportFFF (gchar *filename)
             player->SetAttributeValue (&attr_id, tokens[1]);
 
             attr_id._name = (gchar *) "birth_date";
-            g_strdelimit (tokens[2],
-                          "/",
-                          '.');
-            player->SetAttributeValue (&attr_id, tokens[2]);
+            {
+              gchar *french_date = tokens[2];
+              gchar **splitted_date;
+
+              splitted_date = g_strsplit (french_date,
+                                          "/",
+                                          0);
+              if (   splitted_date
+                  && splitted_date[0]
+                  && splitted_date[1]
+                  && splitted_date[2])
+              {
+                gchar  buffer[50];
+                GDate *date = g_date_new ();
+
+                g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
+                g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
+                g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
+
+                g_date_strftime (buffer,
+                                 sizeof (buffer),
+                                 "%x",
+                                 date);
+                player->SetAttributeValue (&attr_id, buffer);
+
+                g_date_free (date);
+              }
+              g_strfreev (splitted_date);
+            }
 
             attr_id._name = (gchar *) "gender";
             player->SetAttributeValue (&attr_id, tokens[3]);
@@ -588,13 +613,6 @@ void Checkin::ImportCSV (gchar *filename)
               if (columns[c])
               {
                 attr_id._name = columns[c]->_code_name;
-
-                if (strcmp (attr_id._name, "birth_date") == 0)
-                {
-                  g_strdelimit (tokens[i+c],
-                                "/- ",
-                                '.');
-                }
 
                 player->SetAttributeValue (&attr_id, tokens[i+c]);
               }
