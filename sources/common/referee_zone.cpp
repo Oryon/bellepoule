@@ -21,11 +21,10 @@
 #include "referee_zone.hpp"
 
 // --------------------------------------------------------------------------------
-RefereeZone::RefereeZone (Module *container)
-  : DropZone (container)
+  RefereeZone::RefereeZone (Module *container)
+: DropZone (container)
 {
-  _referee_list   = NULL;
-  _manage_booking = TRUE;
+  _referee_list = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -34,104 +33,80 @@ RefereeZone::~RefereeZone ()
 }
 
 // --------------------------------------------------------------------------------
-void RefereeZone::AllowBooking ()
-{
-  _manage_booking = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-void RefereeZone::ForbidBooking ()
-{
-  _manage_booking = FALSE;
-}
-
-// --------------------------------------------------------------------------------
 void RefereeZone::BookReferees ()
 {
-  if (_manage_booking)
-  {
-    GSList *current = _referee_list;
+  GSList *current = _referee_list;
 
-    while (current)
-    {
-      BookReferee ((Player *) current->data);
-      current = g_slist_next (current);
-    }
+  while (current)
+  {
+    BookReferee ((Player *) current->data);
+    current = g_slist_next (current);
   }
 }
 
 // --------------------------------------------------------------------------------
 void RefereeZone::FreeReferees ()
 {
-  if (_manage_booking)
-  {
-    GSList *current = _referee_list;
+  GSList *current = _referee_list;
 
-    while (current)
-    {
-      FreeReferee ((Player *) current->data);
-      current = g_slist_next (current);
-    }
+  while (current)
+  {
+    FreeReferee ((Player *) current->data);
+    current = g_slist_next (current);
   }
 }
 
 // --------------------------------------------------------------------------------
 void RefereeZone::BookReferee (Player *referee)
 {
-  if (_manage_booking)
+  guint token = referee->GetUIntData (NULL,
+                                      "Referee::token");
+
+  token++;
+
+  if (token == 1)
   {
-    guint token = referee->GetUIntData (NULL,
-                                        "Referee::token");
+    Player::AttributeId attr_id ("availability");
 
-    token++;
-
-    if (token == 1)
+    if (strcmp (referee->GetAttribute (&attr_id)->GetStrValue (),
+                "Free") == 0)
     {
-      Player::AttributeId attr_id ("availability");
-
-      if (strcmp (referee->GetAttribute (&attr_id)->GetStrValue (),
-                  "Free") == 0)
-      {
-        referee->SetAttributeValue (&attr_id,
-                                    "Busy");
-      }
+      referee->SetAttributeValue (&attr_id,
+                                  "Busy");
     }
-
-    referee->SetData (NULL,
-                      "Referee::token",
-                      (void *) token);
   }
+
+  referee->SetData (NULL,
+                    "Referee::token",
+                    (void *) token);
 }
 
 // --------------------------------------------------------------------------------
 void RefereeZone::FreeReferee (Player *referee)
 {
-  if (_manage_booking)
+  guint token = referee->GetUIntData (NULL,
+                                      "Referee::token");
+
+  if (token > 0)
   {
-    guint token = referee->GetUIntData (NULL,
-                                        "Referee::token");
-
-    if (token > 0)
-    {
-      token--;
-    }
-
-    if (token == 0)
-    {
-      Player::AttributeId attr_id ("availability");
-      Attribute           *attr = referee->GetAttribute (&attr_id);
-
-      if (attr && strcmp (attr->GetStrValue (), "Busy") == 0)
-      {
-        referee->SetAttributeValue (&attr_id,
-                                    "Free");
-      }
-    }
-
-    referee->SetData (NULL,
-                      "Referee::token",
-                      (void *) token);
+    token--;
   }
+
+  if (token == 0)
+  {
+    Player::AttributeId attr_id ("availability");
+    Attribute           *attr = referee->GetAttribute (&attr_id);
+
+    if (attr && strcmp (attr->GetStrValue (), "Busy") == 0)
+    {
+      referee->SetAttributeValue (&attr_id,
+                                  "Free");
+    }
+  }
+
+  referee->SetData (NULL,
+                    "Referee::token",
+                    (void *) token);
 }
 
 // --------------------------------------------------------------------------------

@@ -204,18 +204,6 @@ void PoolSupervisor::OnPlugged ()
   }
 
   RetrievePools ();
-
-  {
-    guint nb_pools = _pool_allocator->GetNbPools ();
-
-    for (guint p = 0; p < nb_pools; p++)
-    {
-      Pool     *pool = _pool_allocator->GetPool (p);
-      PoolZone *zone = _pool_allocator->GetZone (p);
-
-      zone->AllowBooking ();
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -322,11 +310,9 @@ void PoolSupervisor::OnLocked ()
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    PoolZone *drop_zone = _pool_allocator->GetZone (p);
-    Pool     *pool      = drop_zone->GetPool ();
+    Pool *pool = _pool_allocator->GetPool (p);
 
     pool->Lock ();
-    drop_zone->ForbidBooking ();
   }
 }
 
@@ -337,11 +323,9 @@ void PoolSupervisor::OnUnLocked ()
 
   for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
   {
-    PoolZone *drop_zone = _pool_allocator->GetZone (p);
-    Pool     *pool      = drop_zone->GetPool ();
+    Pool *pool = _pool_allocator->GetPool (p);
 
     pool->UnLock ();
-    drop_zone->AllowBooking ();
   }
 
   OnAttrListUpdated ();
@@ -354,9 +338,8 @@ void PoolSupervisor::Wipe ()
   {
     for (guint p = 0; p < _pool_allocator->GetNbPools (); p++)
     {
-      Pool *pool;
+      Pool *pool = _pool_allocator->GetPool (p);
 
-      pool = _pool_allocator->GetPool (p);
       pool->CleanScores ();
       pool->Wipe ();
     }
@@ -396,6 +379,10 @@ void PoolSupervisor::Manage (Pool *pool)
   pool->SetFilter (_filter);
   pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                       this);
+
+  gtk_list_store_set (_pool_liststore, &iter,
+                      STATUS_COLUMN, GTK_STOCK_EXECUTE,
+                      -1);
 }
 
 // --------------------------------------------------------------------------------
@@ -410,27 +397,54 @@ void PoolSupervisor::OnPoolStatusUpdated (Pool           *pool,
                                      pool->GetNumber () - 1))
   {
     PoolZone *zone = ps->_pool_allocator->GetZone (pool->GetNumber () - 1);
+    gboolean  already_booked = FALSE;
+    gboolean  need_to_book;
+
+    {
+      gchar *stock_icon;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (ps->_pool_liststore),
+                          &iter,
+                          STATUS_COLUMN, &stock_icon,
+                          -1);
+
+      if (g_ascii_strcasecmp (stock_icon, GTK_STOCK_APPLY) != 0)
+      {
+        already_booked = TRUE;
+      }
+
+      g_free (stock_icon);
+    }
 
     if (pool->IsOver ())
     {
+      need_to_book = FALSE;
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_APPLY,
                           -1);
-      zone->FreeReferees ();
     }
     else if (pool->HasError ())
     {
+      need_to_book = TRUE;
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_DIALOG_WARNING,
                           -1);
-      zone->BookReferees ();
     }
     else
     {
+      need_to_book = TRUE;
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_EXECUTE,
                           -1);
+    }
+
+    if (need_to_book && (already_booked == FALSE))
+    {
       zone->BookReferees ();
+    }
+    else if ((need_to_book == FALSE) && already_booked)
+    {
+      zone->FreeReferees ();
     }
   }
 
@@ -694,9 +708,8 @@ void PoolSupervisor::OnStuffClicked ()
 {
   for (guint i = 0; i < _pool_allocator->GetNbPools (); i++)
   {
-    Pool *pool;
+    Pool *pool = _pool_allocator->GetPool (i);
 
-    pool = _pool_allocator->GetPool (i);
     pool->CleanScores ();
     pool->Stuff ();
   }

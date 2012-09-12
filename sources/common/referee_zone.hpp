@@ -36,10 +36,6 @@ class RefereeZone : public DropZone
 
     virtual void FreeReferees ();
 
-    void AllowBooking ();
-
-    void ForbidBooking ();
-
   protected:
     GSList  *_referee_list;
 
@@ -54,8 +50,6 @@ class RefereeZone : public DropZone
     void FreeReferee (Player *referee);
 
   private:
-    gboolean _manage_booking;
-
     virtual guint GetNbMatchs ();
 };
 
