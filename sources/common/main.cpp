@@ -99,26 +99,14 @@ static gint CompareDate (Attribute *attr_a,
 
   if (attr_a)
   {
-    gchar *value = g_strdup (attr_a->GetStrValue ());
-
-    g_strdelimit (value,
-                  "/",
-                  '.');
     g_date_set_parse (&date_a,
-                      value);
-    g_free (value);
+                      attr_a->GetStrValue ());
   }
 
   if (attr_b)
   {
-    gchar *value = g_strdup (attr_b->GetStrValue ());
-
-    g_strdelimit (value,
-                  "/",
-                  '.');
     g_date_set_parse (&date_b,
-                      value);
-    g_free (value);
+                      attr_b->GetStrValue ());
   }
 
   return g_date_compare (&date_a,
