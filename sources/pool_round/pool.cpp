@@ -154,12 +154,6 @@ void Pool::SetStatusCbk (StatusCbk  cbk,
 {
   _status_cbk_data = data;
   _status_cbk      = cbk;
-
-  if (_status_cbk)
-  {
-    _status_cbk (this,
-                 _status_cbk_data);
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1339,8 +1333,9 @@ void Pool::RefreshScoreData ()
 {
   GSList   *ranking    = NULL;
   guint     nb_players = GetNbPlayers ();
-  gboolean  is_over    = TRUE;
-  gboolean  has_error  = FALSE;
+
+  _is_over   = TRUE;
+  _has_error = FALSE;
 
   for (guint a = 0; a < nb_players; a++)
   {
@@ -1380,15 +1375,15 @@ void Pool::RefreshScoreData ()
         }
         else
         {
-          is_over = FALSE;
+          _is_over = FALSE;
         }
 
         if (   (score_a->IsValid () == FALSE)
                || (score_b->IsValid () == FALSE)
                || (score_a->IsConsistentWith (score_b) == FALSE))
         {
-          is_over   = FALSE;
-          has_error = TRUE;
+          _is_over   = FALSE;
+          _has_error = TRUE;
         }
       }
     }
@@ -1462,16 +1457,10 @@ void Pool::RefreshScoreData ()
 
   g_slist_free (ranking);
 
-  if ((_is_over != is_over) || (_has_error != has_error))
+  if (_status_cbk)
   {
-    _is_over   = is_over;
-    _has_error = has_error;
-
-    if (_status_cbk)
-    {
-      _status_cbk (this,
-                   _status_cbk_data);
-    }
+    _status_cbk (this,
+                 _status_cbk_data);
   }
 
   if (_title_table)
@@ -1482,13 +1471,13 @@ void Pool::RefreshScoreData ()
       _status_item = NULL;
     }
 
-    if (is_over)
+    if (_is_over)
     {
       _status_item = Canvas::PutStockIconInTable (_title_table,
                                                   GTK_STOCK_APPLY,
                                                   0, 0);
     }
-    else if (has_error)
+    else if (_has_error)
     {
       _status_item = Canvas::PutStockIconInTable (_title_table,
                                                   GTK_STOCK_DIALOG_WARNING,

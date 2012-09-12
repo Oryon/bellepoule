@@ -172,8 +172,19 @@ void RefereesList::OnAttendingChanged (Player    *player,
 
   if (value == 1)
   {
-    player->SetAttributeValue (&attr_id,
-                               "Free");
+    guint token = player->GetUIntData (NULL,
+                                       "Referee::token");
+
+    if (token)
+    {
+      player->SetAttributeValue (&attr_id,
+                                 "Busy");
+    }
+    else
+    {
+      player->SetAttributeValue (&attr_id,
+                                 "Free");
+    }
   }
   else if (value == 0)
   {

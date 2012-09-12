@@ -668,14 +668,23 @@ void TableSet::OnNewScore (ScoreCollector *score_collector,
                 table_set);
   }
 
+  {
+    TableZone *zone = (TableZone *) match->GetPtrData (table_set,
+                                                       "drop_zone");
+
+    if (match->GetWinner ())
+    {
+      zone->FreeReferees ();
+    }
+    else
+    {
+      zone->BookReferees ();
+    }
+  }
+
   table_set->RefreshTableStatus ();
   table_set->DrawAllConnectors  ();
   table_set->DrawAllZones       ();
-
-  if (match->GetWinner ())
-  {
-    match->FreeReferees ();
-  }
 
   {
     Table *table = (Table *) match->GetPtrData (table_set, "table");
@@ -863,8 +872,8 @@ gboolean TableSet::WipeNode (GNode    *node,
 
   if (data->_match)
   {
-    DropZone *zone = (DropZone *) data->_match->GetPtrData (table_set,
-                                                            "drop_zone");
+    TableZone *zone = (TableZone *) data->_match->GetPtrData (table_set,
+                                                              "drop_zone");
 
     if (zone)
     {
@@ -1636,18 +1645,6 @@ void TableSet::Lock ()
   {
     _score_collector->Lock ();
   }
-
-  {
-    GSList *current = _drop_zones;
-
-    while (current)
-    {
-      TableZone *drop_zone = (TableZone *) current->data;
-
-      drop_zone->FreeReferees ();
-      current = g_slist_next (current);
-    }
-  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1659,8 +1656,6 @@ void TableSet::UnLock ()
   {
     _score_collector->UnLock ();
   }
-
-  BookReferees ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1810,18 +1805,27 @@ gboolean TableSet::Stuff (GNode    *node,
 
     if (winner)
     {
-      GNode *parent = node->parent;
-
-      if (parent)
       {
-        NodeData *parent_data = (NodeData *) parent->data;
+        GNode *parent = node->parent;
 
-        table_set->SetPlayerToMatch (parent_data->_match,
-                                     winner,
-                                     g_node_child_position (parent, node));
+        if (parent)
+        {
+          NodeData *parent_data = (NodeData *) parent->data;
+
+          table_set->SetPlayerToMatch (parent_data->_match,
+                                       winner,
+                                       g_node_child_position (parent, node));
+        }
       }
 
-      data->_match->FreeReferees ();
+      {
+        TableZone *zone = (TableZone *) data->_match->GetPtrData (table_set,
+                                                                  "drop_zone");
+        if (zone)
+        {
+          zone->FreeReferees ();
+        }
+      }
     }
   }
 
@@ -1838,27 +1842,12 @@ Player *TableSet::GetFencerFromRef (guint ref)
 void TableSet::AddReferee (Match *match,
                            guint  referee_ref)
 {
-  Contest   *contest = _supervisor->GetContest ();
-  Player    *referee = contest->GetRefereeFromRef (referee_ref);
-  DropZone  *zone    = (DropZone *) match->GetPtrData (this,
+  Contest  *contest = _supervisor->GetContest ();
+  Player   *referee = contest->GetRefereeFromRef (referee_ref);
+  DropZone *zone    = (DropZone *) match->GetPtrData (this,
                                                        "drop_zone");
 
   zone->AddObject (referee);
-}
-
-// --------------------------------------------------------------------------------
-void TableSet::BookReferees ()
-{
-  GSList *current = _drop_zones;
-
-  while (current)
-  {
-    DropZone  *zone       = (DropZone *) current->data;
-    TableZone *table_zone = (TableZone *) zone;
-
-    table_zone->BookReferees ();
-    current = g_slist_next (current);
-  }
 }
 
 // --------------------------------------------------------------------------------

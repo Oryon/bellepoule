@@ -18,6 +18,7 @@
 #define referee_sector_hpp
 
 #include <gtk/gtk.h>
+#include <goocanvas.h>
 
 #include "object.hpp"
 #include "module.hpp"
@@ -48,8 +49,6 @@ class TableZone : public RefereeZone
 
     void Draw (GooCanvasItem *root_item);
 
-    void BookReferees ();
-
     void PutInTable (CanvasModule  *canvas_module,
                      GooCanvasItem *table,
                      guint          row,
@@ -64,8 +63,6 @@ class TableZone : public RefereeZone
     virtual ~TableZone ();
 
     guint GetNbMatchs ();
-
-    void BookReferee (Player *referee);
 };
 
 #endif

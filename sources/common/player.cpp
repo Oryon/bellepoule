@@ -435,6 +435,27 @@ void Player::Save (xmlTextWriter *xml_writer,
         {
           gchar *xml_image = attr->GetXmlImage ();
 
+          if (strcmp (desc->_code_name, "birth_date") == 0)
+          {
+            gchar *locale_date = attr->GetStrValue ();
+            GDate  date;
+
+            g_date_set_parse (&date,
+                              attr->GetStrValue ());
+
+            if (g_date_valid (&date))
+            {
+              gchar buffer[50];
+
+              g_date_strftime (buffer,
+                               sizeof (buffer),
+                               "%d.%m.%Y",
+                               &date);
+              g_free (xml_image);
+              xml_image = g_strdup (buffer);
+            }
+          }
+
           xmlTextWriterWriteAttribute (xml_writer,
                                        BAD_CAST attr->GetXmlName (),
                                        BAD_CAST xml_image);
@@ -483,6 +504,42 @@ void Player::Load (xmlNode *xml_node)
           if (attr)
           {
             _ref = attr->GetUIntValue ();
+          }
+        }
+
+        if (strcmp (desc->_code_name, "birth_date") == 0)
+        {
+          Attribute *attr = GetAttribute (&attr_id);
+
+          if (attr)
+          {
+            gchar *french_date = attr->GetStrValue ();
+            gchar **splitted_date;
+
+            splitted_date = g_strsplit (french_date,
+                                        ".",
+                                        0);
+            if (   splitted_date
+                && splitted_date[0]
+                && splitted_date[1]
+                && splitted_date[2])
+            {
+              gchar  buffer[50];
+              GDate *date = g_date_new ();
+
+              g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
+              g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
+              g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
+
+              g_date_strftime (buffer,
+                               sizeof (buffer),
+                               "%x",
+                               date);
+              attr->SetValue (buffer);
+
+              g_date_free (date);
+            }
+            g_strfreev (splitted_date);
           }
         }
 

@@ -1744,7 +1744,6 @@ void PoolAllocator::OnLocked ()
       PoolZone *zone = (PoolZone *) current->data;
       Pool     *pool = GetPoolOf (current);
 
-      zone->ForbidBooking ();
       pool->CreateMatchs (_swapping_criteria);
       current = g_slist_next (current);
     }
