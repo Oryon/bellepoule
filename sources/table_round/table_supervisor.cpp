@@ -565,22 +565,6 @@ gboolean TableSupervisor::SaveTableSet (GtkTreeModel  *model,
 }
 
 // --------------------------------------------------------------------------------
-gboolean TableSupervisor::BookReferees (GtkTreeModel  *model,
-                                        GtkTreePath   *path,
-                                        GtkTreeIter   *iter,
-                                        xmlTextWriter *xml_writer)
-{
-  TableSet *table_set;
-
-  gtk_tree_model_get (model, iter,
-                      TABLE_SET_TABLE_COLUMN_ptr, &table_set,
-                      -1);
-  table_set->BookReferees ();
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
 void TableSupervisor::FeedTableSetStore (guint        from_place,
                                          guint        nb_tables,
                                          GtkTreeIter *parent)

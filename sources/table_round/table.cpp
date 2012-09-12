@@ -17,6 +17,7 @@
 #include "attribute.hpp"
 #include "player.hpp"
 #include "table_set.hpp"
+#include "table_zone.hpp"
 
 #include "table.hpp"
 
@@ -301,6 +302,13 @@ void Table::LoadMatch (xmlNode *xml_node,
           if (dropped)
           {
             match->DropPlayer (dropped);
+          }
+
+          if (match->GetWinner ())
+          {
+            TableZone *zone = (TableZone *) match->GetPtrData (_table_set,
+                                                               "drop_zone");
+            zone->FreeReferees ();
           }
 
           A = NULL;

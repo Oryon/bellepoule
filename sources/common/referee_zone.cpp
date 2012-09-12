@@ -24,7 +24,8 @@
   RefereeZone::RefereeZone (Module *container)
 : DropZone (container)
 {
-  _referee_list = NULL;
+  _referee_list   = NULL;
+  _already_booked = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -35,24 +36,36 @@ RefereeZone::~RefereeZone ()
 // --------------------------------------------------------------------------------
 void RefereeZone::BookReferees ()
 {
-  GSList *current = _referee_list;
-
-  while (current)
+  if (_already_booked == FALSE)
   {
-    BookReferee ((Player *) current->data);
-    current = g_slist_next (current);
+    GSList *current = _referee_list;
+
+    while (current)
+    {
+      BookReferee ((Player *) current->data);
+
+      current = g_slist_next (current);
+    }
+
+    _already_booked = TRUE;
   }
 }
 
 // --------------------------------------------------------------------------------
 void RefereeZone::FreeReferees ()
 {
-  GSList *current = _referee_list;
-
-  while (current)
+  if (_already_booked == TRUE)
   {
-    FreeReferee ((Player *) current->data);
-    current = g_slist_next (current);
+    GSList *current = _referee_list;
+
+    while (current)
+    {
+      FreeReferee ((Player *) current->data);
+
+      current = g_slist_next (current);
+    }
+
+    _already_booked = FALSE;
   }
 }
 
@@ -121,7 +134,10 @@ void RefereeZone::AddReferee (Player *referee)
     _referee_list = g_slist_prepend (_referee_list,
                                      referee);
 
-    BookReferee (referee);
+    if (_already_booked == TRUE)
+    {
+      BookReferee (referee);
+    }
   }
 }
 
@@ -134,7 +150,10 @@ void RefereeZone::RemoveReferee (Player *referee)
   _referee_list = g_slist_remove (_referee_list,
                                   referee);
 
-  FreeReferee (referee);
+  if (_already_booked == TRUE)
+  {
+    FreeReferee (referee);
+  }
 }
 
 // --------------------------------------------------------------------------------

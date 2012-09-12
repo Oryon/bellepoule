@@ -558,47 +558,6 @@ void Match::RemoveReferee (Player *referee)
 }
 
 // --------------------------------------------------------------------------------
-void Match::BookReferees ()
-{
-  if (GetWinner () == FALSE)
-  {
-    GSList *current = _referee_list;
-
-    while (current)
-    {
-      Player              *referee = (Player *) current->data;
-      Player::AttributeId  attr_id ("availability");
-
-      if (strcmp (referee->GetAttribute (&attr_id)->GetStrValue (),
-                  "Free") == 0)
-      {
-        referee->SetAttributeValue (&attr_id,
-                                    "Busy");
-      }
-
-      current = g_slist_next (current);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Match::FreeReferees ()
-{
-  GSList *current = _referee_list;
-
-  while (current)
-  {
-    Player              *referee = (Player *) current->data;
-    Player::AttributeId  attr_id ("availability");
-
-    referee->SetAttributeValue (&attr_id,
-                                "Free");
-
-    current = g_slist_next (current);
-  }
-}
-
-// --------------------------------------------------------------------------------
 GSList *Match::GetRefereeList ()
 {
   return _referee_list;

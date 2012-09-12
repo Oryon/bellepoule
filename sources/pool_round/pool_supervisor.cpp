@@ -397,54 +397,27 @@ void PoolSupervisor::OnPoolStatusUpdated (Pool           *pool,
                                      pool->GetNumber () - 1))
   {
     PoolZone *zone = ps->_pool_allocator->GetZone (pool->GetNumber () - 1);
-    gboolean  already_booked = FALSE;
-    gboolean  need_to_book;
-
-    {
-      gchar *stock_icon;
-
-      gtk_tree_model_get (GTK_TREE_MODEL (ps->_pool_liststore),
-                          &iter,
-                          STATUS_COLUMN, &stock_icon,
-                          -1);
-
-      if (g_ascii_strcasecmp (stock_icon, GTK_STOCK_APPLY) != 0)
-      {
-        already_booked = TRUE;
-      }
-
-      g_free (stock_icon);
-    }
 
     if (pool->IsOver ())
     {
-      need_to_book = FALSE;
+      zone->FreeReferees ();
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_APPLY,
                           -1);
     }
     else if (pool->HasError ())
     {
-      need_to_book = TRUE;
+      zone->BookReferees ();
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_DIALOG_WARNING,
                           -1);
     }
     else
     {
-      need_to_book = TRUE;
+      zone->BookReferees ();
       gtk_list_store_set (ps->_pool_liststore, &iter,
                           STATUS_COLUMN, GTK_STOCK_EXECUTE,
                           -1);
-    }
-
-    if (need_to_book && (already_booked == FALSE))
-    {
-      zone->BookReferees ();
-    }
-    else if ((need_to_book == FALSE) && already_booked)
-    {
-      zone->FreeReferees ();
     }
   }
 

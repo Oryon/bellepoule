@@ -106,11 +106,6 @@ class TableSupervisor : public virtual Stage, public Module
                                   GtkTreeIter   *iter,
                                   xmlTextWriter *xml_writer);
 
-    static gboolean BookReferees (GtkTreeModel  *model,
-                                  GtkTreePath   *path,
-                                  GtkTreeIter   *iter,
-                                  xmlTextWriter *xml_writer);
-
     void SaveConfiguration (xmlTextWriter *xml_writer);
 
     void Load (xmlNode *xml_node);
