@@ -437,8 +437,7 @@ void Player::Save (xmlTextWriter *xml_writer,
 
           if (strcmp (desc->_code_name, "birth_date") == 0)
           {
-            gchar *locale_date = attr->GetStrValue ();
-            GDate  date;
+            GDate date;
 
             g_date_set_parse (&date,
                               attr->GetStrValue ());
