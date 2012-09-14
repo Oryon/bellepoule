@@ -1002,6 +1002,3 @@ msgstr "Activar"
 #: ../../resources/glade/tournament.glade:859
 msgid "Deactivate"
 msgstr "Desactivar"
-
-#~ msgid "points"
-#~ msgstr "puntos"
