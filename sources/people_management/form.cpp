@@ -380,13 +380,6 @@ void Form::ReadAndWipe (Player *player)
         {
           gchar *value = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
 
-          if (strcmp (attr_id->_name, "birth_date") == 0)
-          {
-            g_strdelimit (value,
-                          "/- ",
-                          '.');
-          }
-
           player->SetAttributeValue (attr_id,
                                      value);
         }
