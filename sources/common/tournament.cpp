@@ -843,7 +843,7 @@ void Tournament::EnumerateLanguages ()
 
           g_signal_connect (item, "toggled",
                             G_CALLBACK (OnLocaleToggled), (void *)
-                            tokens[0]);
+                            g_strdup (tokens[0]));
           if (last_setting && strcmp (last_setting, tokens[0]) == 0)
           {
             gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("locale_menuitem")),

@@ -777,7 +777,7 @@ Public License instead of this License.  But first, please read
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">   http://</property>
+                <property name="label" translatable="no">   http://</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -1206,7 +1206,7 @@ Public License instead of this License.  But first, please read
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">menuitem3</property>
+                        <property name="label" translatable="no">menuitem3</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_new_version_menuitem_activate" swapped="no"/>
                       </object>

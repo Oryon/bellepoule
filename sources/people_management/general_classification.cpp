@@ -236,7 +236,7 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
       {
         gtk_file_filter_set_name (filter,
                                   gettext ("All Excel files (.CSV)"));
-        pattern_upper = "*.CVS";
+        pattern_upper = "*.CSV";
       }
       else if (export_type == FFF)
       {
