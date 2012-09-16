@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2011-09-22 18:22+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-14 11:42+0200\n"
 "PO-Revision-Date: 2011-11-22 05:53+0000\n"
 "Last-Translator: Jihwan Cho <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -17,511 +17,608 @@ msgstr ""
 "X-Launchpad-Export-Date: 2012-09-07 05:03+0000\n"
 "X-Generator: Launchpad (build 15914)\n"
 
-#: ../../sources/checkin.cpp:28 ../../resources/glade/contest.glade:514
-msgid "Check-in"
-msgstr "등록"
-
-#: ../../sources/checkin.cpp:94
-msgid "<b><big>Which fencers do you want to print?</big></b>"
-msgstr "<b><big>어떤 선수를 프린트 할까요?</big></b>"
-
-#: ../../sources/checkin.cpp:97
-msgid "Fencer list printing"
-msgstr "선수 목록 프린팅"
-
-#: ../../sources/checkin.cpp:229
-msgid ""
-"Uncheck this box to quicken the data input. The corresponding field will be "
-"ignored on TAB key pressed."
-msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르면 관련 필드가 무시됩니다."
-
-#: ../../sources/checkin.cpp:621
-msgid "Choose a fencer file to import..."
-msgstr "가져올 선수 파일을 선택하세요."
-
-#: ../../sources/checkin.cpp:634 ../../sources/general_classification.cpp:247
-msgid "All FFF files (.FFF)"
-msgstr "모든 FFF 파일(.FFF)"
-
-#: ../../sources/checkin.cpp:646 ../../sources/general_classification.cpp:240
-msgid "All Excel files (.CSV)"
-msgstr "모든 엑셀 파일(.CSV)"
-
-#: ../../sources/checkin.cpp:658 ../../sources/contest.cpp:1199
-#: ../../sources/general_classification.cpp:267
-#: ../../sources/tournament.cpp:300
-msgid "All files"
-msgstr "모든 파일들"
-
-#: ../../sources/checkin.cpp:1219
-msgid "List of registered"
-msgstr "등록된 리스트"
-
-#: ../../sources/checkin.cpp:1223
-msgid "List of presents"
-msgstr "현재 리스트"
-
-#: ../../sources/checkin.cpp:1227
-msgid "List of absents"
-msgstr "결원 리스트"
-
-#: ../../sources/checkin.cpp:1231
-msgid "Fencer list"
-msgstr "선수 리스트"
-
-#: ../../sources/contest.cpp:54 ../../resources/glade/contest.glade:1251
+#: ../../sources/common/contest.cpp:56
+#: ../../resources/glade/contest.glade:1144
 msgid "Sabre"
 msgstr "사브르"
 
-#: ../../sources/contest.cpp:55
+#: ../../sources/common/contest.cpp:57
 msgid "Epée"
 msgstr "에뻬"
 
-#: ../../sources/contest.cpp:56
+#: ../../sources/common/contest.cpp:58
 msgid "Foil"
 msgstr "플러레"
 
-#: ../../sources/contest.cpp:70 ../../sources/main.cpp:206
+#: ../../sources/common/contest.cpp:59
+msgid "Kendo"
+msgstr "검도"
+
+#: ../../sources/common/contest.cpp:72 ../../sources/common/main.cpp:266
 msgid "Male"
 msgstr "남자"
 
-#: ../../sources/contest.cpp:71 ../../sources/main.cpp:207
+#: ../../sources/common/contest.cpp:73 ../../sources/common/main.cpp:267
 msgid "Female"
 msgstr "여자"
 
-#: ../../sources/contest.cpp:72
+#: ../../sources/common/contest.cpp:74
 msgid "Mixed"
 msgstr "혼성"
 
-#: ../../sources/contest.cpp:84
+#: ../../sources/common/contest.cpp:86
 msgid "U8"
 msgstr "8세 이하"
 
-#: ../../sources/contest.cpp:85
+#: ../../sources/common/contest.cpp:87
 msgid "U10"
 msgstr "10세 이하"
 
-#: ../../sources/contest.cpp:86
+#: ../../sources/common/contest.cpp:88
 msgid "U12"
 msgstr "12세 이하"
 
-#: ../../sources/contest.cpp:87
+#: ../../sources/common/contest.cpp:89
 msgid "U14"
 msgstr "14세 이하"
 
-#: ../../sources/contest.cpp:88 ../../resources/glade/contest.glade:1281
+#: ../../sources/common/contest.cpp:90
+#: ../../resources/glade/contest.glade:1168
 msgid "U16"
 msgstr "16세 이하"
 
-#: ../../sources/contest.cpp:89
+#: ../../sources/common/contest.cpp:91
 msgid "U18"
 msgstr "18세 이하"
 
-#: ../../sources/contest.cpp:90
+#: ../../sources/common/contest.cpp:92
 msgid "Senior"
 msgstr "일반부"
 
-#: ../../sources/contest.cpp:91
+#: ../../sources/common/contest.cpp:93
 msgid "Veteran"
 msgstr "중장년부"
 
-#: ../../resources/glade/contest.glade:124
-msgid "Competition properties"
-msgstr "경기 속성"
-
-#: ../../resources/glade/contest.glade:22
-msgid "Date of competition"
-msgstr "경기 일자"
-
-#: ../../sources/contest.cpp:1024 ../../sources/contest.cpp:1173
+#: ../../sources/common/contest.cpp:1354 ../../sources/common/contest.cpp:1508
 msgid "Choose a file..."
 msgstr "파일을 선택하세요..."
 
-msgid "Choose a backup file..."
-msgstr "백업 파일을 선택하세요."
+#: ../../sources/common/contest.cpp:1523
+msgid "BellePoule files (.cotcot)"
+msgstr "BellePoule 파일 (.cotcot)"
 
-msgid ""
-"<b><big>Do you really want to close\n"
-"<big>%s</big> ?</big></b>"
-msgstr "<b><big>정말로 끝내시겠습니까?<big>%s</big> ?</big></b>"
+#: ../../sources/common/contest.cpp:1534
+#: ../../sources/common/tournament.cpp:987
+#: ../../sources/people_management/checkin.cpp:249
+#: ../../sources/people_management/general_classification.cpp:289
+msgid "All files"
+msgstr "모든 파일들"
 
-msgid "Close the competition?"
-msgstr "경기를 종료할까요?"
-
-msgid "Unsaved data will be lost."
-msgstr "저장되지 않은 데이터는 사라집니다."
-
-msgid "Filter"
-msgstr "필터링"
-
-#: ../../sources/general_classification.cpp:26
-#: ../../sources/general_classification.cpp:182
-msgid "General classification"
-msgstr "일반 순위 결정"
-
-#: ../../sources/general_classification.cpp:194
-msgid "Choose a target file..."
-msgstr "원하는 파일을 선택하세요..."
-
-#: ../../sources/main.cpp:191
+#: ../../sources/common/main.cpp:250
 msgid "ref"
 msgstr "심판"
 
-#: ../../sources/main.cpp:194 ../../sources/main.cpp:267
+#: ../../sources/common/main.cpp:253 ../../sources/common/main.cpp:345
 msgid "place"
 msgstr "순위"
 
-#: ../../sources/main.cpp:196
+#: ../../sources/common/main.cpp:255
 msgid "last name"
 msgstr "성"
 
-#: ../../sources/main.cpp:198
+#: ../../sources/common/main.cpp:257
 msgid "first name"
 msgstr "이름"
 
-#: ../../sources/main.cpp:200
+#: ../../sources/common/main.cpp:259
 msgid "date of birth"
 msgstr "생일"
 
-#: ../../sources/main.cpp:203
+#: ../../sources/common/main.cpp:262
 msgid "gender"
 msgstr "성별"
 
-#: ../../sources/main.cpp:209
+#: ../../sources/common/main.cpp:269
 msgid "country"
 msgstr "국가"
 
-#: ../../sources/main.cpp:213
+#: ../../sources/common/main.cpp:274
 msgid "league"
 msgstr "리그"
 
-#: ../../sources/main.cpp:217
+#: ../../sources/common/main.cpp:279
 msgid "club"
 msgstr "클럽"
 
-#: ../../sources/main.cpp:221
+#: ../../sources/common/main.cpp:283
 msgid "licence"
 msgstr "자격"
 
-#: ../../sources/main.cpp:223
+#: ../../sources/common/main.cpp:285
+msgid "smartphone"
+msgstr ""
+
+#: ../../sources/common/main.cpp:287
+msgid "rate"
+msgstr ""
+
+#: ../../sources/common/main.cpp:292
+msgid "level"
+msgstr ""
+
+#: ../../sources/common/main.cpp:295
 msgid "ranking"
 msgstr "순위"
 
-#: ../../sources/main.cpp:230
+#: ../../sources/common/main.cpp:298
+msgid "start rank"
+msgstr "시작 랭킹"
+
+#: ../../sources/common/main.cpp:302
 msgid "presence"
 msgstr "참석"
 
-#: ../../sources/main.cpp:234
+#: ../../sources/common/main.cpp:307
 msgid "exported"
 msgstr "내보내기"
 
-#: ../../sources/main.cpp:255
+#: ../../sources/common/main.cpp:310
+msgid "global status"
+msgstr "전역 상태"
+
+#: ../../sources/common/main.cpp:313 ../../sources/common/main.cpp:321
+#: ../../resources/glade/pool_supervisor.glade:55
+#: ../../resources/glade/table_supervisor.glade:64
+msgid "Qualified"
+msgstr "자격을 획득한"
+
+#: ../../sources/common/main.cpp:314 ../../sources/common/main.cpp:322
+msgid "Not qualified"
+msgstr "자격이 없는"
+
+#: ../../sources/common/main.cpp:315 ../../sources/common/main.cpp:323
+msgid "Withdrawal"
+msgstr "인출"
+
+#: ../../sources/common/main.cpp:316 ../../sources/common/main.cpp:324
+msgid "Excluded"
+msgstr "제외된"
+
+#: ../../sources/common/main.cpp:317 ../../sources/common/main.cpp:325
+msgid "Forfeit"
+msgstr "박탈된"
+
+#: ../../sources/common/main.cpp:319
+msgid "status"
+msgstr "상태"
+
+#: ../../sources/common/main.cpp:329
+msgid "pool #"
+msgstr ""
+
+#: ../../sources/common/main.cpp:333
 msgid "Vict./Bouts (‰)"
 msgstr "승리횟수/경기수 (‰)"
 
-#: ../../sources/main.cpp:259
+#: ../../sources/common/main.cpp:337
 msgid "index"
 msgstr "득실차"
 
-#: ../../sources/main.cpp:263
+#: ../../sources/common/main.cpp:341
 msgid "Hits scored"
 msgstr "득점"
 
-#: ../../sources/main.cpp:272
+#: ../../sources/common/main.cpp:350
 msgid "Round start rank"
 msgstr "경기 시작 랭킹"
 
-#: ../../sources/pool.cpp:56
+#: ../../sources/common/main.cpp:355
+msgid "availability"
+msgstr ""
+
+#: ../../sources/common/main.cpp:360
+msgid "Busy"
+msgstr ""
+
+#: ../../sources/common/main.cpp:361
+msgid "Absent"
+msgstr ""
+
+#: ../../sources/common/main.cpp:362
+msgid "Free"
+msgstr ""
+
+#: ../../sources/common/schedule.cpp:1016
+msgid "<b><big>Do you really want to cancel the current round?</big></b>"
+msgstr "<b><big>정말로 진행 중인 경기를 취소할까요?</big></b>"
+
+#: ../../sources/common/schedule.cpp:1019
+msgid "Go back to the previous round?"
+msgstr "이전 경기로 돌아갈까요?"
+
+#: ../../sources/common/schedule.cpp:1022
+msgid "All the inputs of this round will be cancelled."
+msgstr "이번 경기의 모든 입력이 취소됩니다."
+
+#: ../../sources/common/tournament.cpp:480
+#: ../../sources/common/tournament.cpp:1390
+msgid "Payment book"
+msgstr ""
+
+#: ../../sources/common/tournament.cpp:492
+msgid "Page"
+msgstr ""
+
+#: ../../sources/common/tournament.cpp:842
+msgid "Restart BellePoule for this change to take effect"
+msgstr ""
+
+#: ../../sources/common/tournament.cpp:959
+msgid "Choose a competion file to open... "
+msgstr "열어볼 대회 파일을 선택하세요. "
+
+#: ../../sources/common/tournament.cpp:972
+msgid "Competition files (.cotcot / .xml)"
+msgstr ""
+
+#: ../../sources/common/tournament.cpp:1230
+msgid "Recently opened files"
+msgstr "최근에 열어본 파일"
+
+#: ../../sources/common/tournament.cpp:1245
+msgid "BellePoule files"
+msgstr "BellePoule 파일들"
+
+#: ../../sources/common/tournament.cpp:1383
+msgid "Meal tickets"
+msgstr ""
+
+#: ../../sources/common/tournament.cpp:1431
+msgid "Choose a backup files location..."
+msgstr "백업 파일 위치를 선택하세요."
+
+#: ../../sources/common/tournament.cpp:1664
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr "<b><big>BellePoule을 종료할까요?</big></b>"
+
+#: ../../sources/common/tournament.cpp:1667
+msgid "Quit BellePoule?"
+msgstr "BellePoule을 종료할까요?"
+
+#: ../../sources/common/tournament.cpp:1670
+msgid "All the unsaved competions will be lost."
+msgstr "저장되지 않은 모든 경기가 사라집니다."
+
+#: ../../sources/people_management/checkin.cpp:45
+#: ../../sources/table_round/table_set.cpp:120
+msgid "<b><big>What do you want to print?</big></b>"
+msgstr "<b><big>무엇을 인쇄할까요?</big></b>"
+
+#: ../../sources/people_management/checkin.cpp:48
+msgid "Fencer list printing"
+msgstr "선수 목록 프린팅"
+
+#: ../../sources/people_management/checkin.cpp:207
+msgid "Choose a fencer file to import..."
+msgstr "가져올 선수 파일을 선택하세요."
+
+#: ../../sources/people_management/checkin.cpp:222
+msgid "Fencer files"
+msgstr ""
+
+#: ../../sources/people_management/checkin.cpp:227
+msgid "Referee files"
+msgstr ""
+
+#: ../../sources/people_management/checkin.cpp:780
+msgid "List of registered"
+msgstr "등록된 리스트"
+
+#: ../../sources/people_management/checkin.cpp:784
+msgid "List of presents"
+msgstr "현재 리스트"
+
+#: ../../sources/people_management/checkin.cpp:788
+msgid "List of absents"
+msgstr "결원 리스트"
+
+#: ../../sources/people_management/checkin.cpp:792
+#: ../../resources/glade/pool_allocator.glade:81
+msgid "Fencer list"
+msgstr "선수 리스트"
+
+#: ../../sources/people_management/checkin_supervisor.cpp:29
+#: ../../resources/glade/contest.glade:416
+msgid "Check-in"
+msgstr "등록"
+
+#: ../../sources/people_management/form.cpp:164
+msgid ""
+"Uncheck this box to quicken the data input. The corresponding field will be "
+"ignored on TAB key pressed."
+msgstr ""
+"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
+"면 관련 필드가 무시됩니다."
+
+#: ../../sources/people_management/general_classification.cpp:26
+#: ../../sources/people_management/general_classification.cpp:186
+#: ../../sources/people_management/general_classification.cpp:333
+msgid "General classification"
+msgstr "일반 순위 결정"
+
+#: ../../sources/people_management/general_classification.cpp:198
+msgid "Choose a target file..."
+msgstr "원하는 파일을 선택하세요..."
+
+#: ../../sources/people_management/general_classification.cpp:238
+msgid "All Excel files (.CSV)"
+msgstr "모든 엑셀 파일(.CSV)"
+
+#: ../../sources/people_management/general_classification.cpp:244
+msgid "All FFF files (.FFF)"
+msgstr "모든 FFF 파일(.FFF)"
+
+#: ../../sources/people_management/general_classification.cpp:250
+msgid "All PDF files (.PDF)"
+msgstr "모든 PDF 파일(.PDF)"
+
+#: ../../sources/people_management/splitting.cpp:30
+msgid "Split"
+msgstr "분할"
+
+#: ../../sources/pool_round/pool.cpp:59
 #, c-format
 msgid "Pool #%02d"
 msgstr "풀 #%02d"
 
-#: ../../sources/pool.cpp:601 ../../sources/table_set.cpp:2528
+#: ../../sources/pool_round/pool.cpp:448
+#: ../../sources/table_round/table_set.cpp:2726
+msgid "Referee"
+msgstr "심판"
+
+#: ../../sources/pool_round/pool.cpp:489
+#: ../../sources/table_round/table_set.cpp:2765
+msgid "Piste"
+msgstr "피스트"
+
+#: ../../sources/pool_round/pool.cpp:693
+#: ../../sources/table_round/table_set.cpp:2925
 msgid "Signature"
 msgstr "서명"
 
-#: ../../sources/pool.cpp:633
+#: ../../sources/pool_round/pool.cpp:715
+msgid "Status"
+msgstr "상태"
+
+#: ../../sources/pool_round/pool.cpp:725
 msgid "Victories"
 msgstr "승리"
 
-#: ../../sources/pool.cpp:642
+#: ../../sources/pool_round/pool.cpp:734
 msgid "Vict./Matchs"
 msgstr "승리횟수/경기"
 
-#: ../../sources/pool.cpp:651
+#: ../../sources/pool_round/pool.cpp:743
 msgid "H. scored"
 msgstr "득점"
 
-#: ../../sources/pool.cpp:660
+#: ../../sources/pool_round/pool.cpp:752
 msgid "H. received"
 msgstr "실점"
 
-#: ../../sources/pool.cpp:669
+#: ../../sources/pool_round/pool.cpp:761
 msgid "Index"
 msgstr "득실차"
 
-#: ../../sources/pool.cpp:678
+#: ../../sources/pool_round/pool.cpp:770
 msgid "Place"
 msgstr "순위"
 
-#: ../../sources/pool_allocator.cpp:50
+#: ../../sources/pool_round/pool_allocator.cpp:53
 msgid "Pools arrangement"
 msgstr "풀 배치"
 
-msgid "Pools allocation"
-msgstr "풀 할당"
+#: ../../sources/pool_round/pool_allocator.cpp:1703
+msgid "Allocation"
+msgstr "할당"
 
-#: ../../sources/pool_supervisor.cpp:25 ../../sources/pool_supervisor.cpp:467
+#: ../../sources/pool_round/pool_supervisor.cpp:25
+#: ../../sources/pool_round/pool_supervisor.cpp:515
 msgid "Pools"
 msgstr "풀"
 
-#: ../../sources/pool_supervisor.cpp:100
+#: ../../sources/pool_round/pool_supervisor.cpp:104
 msgid "<b><big>Print...</big></b>"
 msgstr "<b><big>인쇄...</big></b>"
 
-#: ../../sources/pool_supervisor.cpp:103
+#: ../../sources/pool_round/pool_supervisor.cpp:107
 msgid "Pool sheets printing"
 msgstr "풀 시트 인쇄"
 
-msgid "Pool round classification"
-msgstr "풀 라운드 분류"
+#: ../../sources/pool_round/pool_supervisor.cpp:498
+msgid "Pools classification"
+msgstr "풀 분류"
 
-#: ../../sources/schedule.cpp:973
-msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>정말로 진행 중인 경기를 취소할까요?</big></b>"
-
-#: ../../sources/schedule.cpp:976
-msgid "Go back to the previous round?"
-msgstr "이전 경기로 돌아갈까요?"
-
-#: ../../sources/schedule.cpp:979
-msgid "All the inputs of this round will be cancelled."
-msgstr "이번 경기의 모든 입력이 취소됩니다."
-
-#: ../../sources/splitting.cpp:30
-msgid "Split"
-msgstr "분할"
-
-#: ../../sources/table_set.cpp:2434 ../../sources/table_set.cpp:2442
-#: ../../sources/table_supervisor.cpp:31
-#: ../../resources/glade/table_supervisor.glade:358
-msgid "Table"
-msgstr "테이블"
-
-#: ../../sources/table_set.cpp:102
-msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
-
-#: ../../sources/table_set.cpp:120
-msgid "<b><big>What do you want to print?</big></b>"
-msgstr "<b><big>무엇을 인쇄할까요?</big></b>"
-
-#: ../../sources/table_set.cpp:123 ../../sources/table_set.cpp:134
-msgid "Table printing"
-msgstr "테이블 인쇄"
-
-#: ../../sources/table.cpp:386
+#: ../../sources/table_round/table.cpp:452
 msgid "Winner"
 msgstr "승자"
 
-#: ../../sources/table.cpp:390
+#: ../../sources/table_round/table.cpp:456
 msgid "Final"
 msgstr "결승"
 
-#: ../../sources/table.cpp:394
+#: ../../sources/table_round/table.cpp:460
 msgid "Semi-final"
 msgstr "준결승"
 
-#: ../../sources/table.cpp:398
+#: ../../sources/table_round/table.cpp:464
 #, c-format
 msgid "Table of %d"
 msgstr "%d 테이블"
 
-#: ../../sources/table_set.cpp:2314
+#: ../../sources/table_round/table_set.cpp:93
+#: ../../sources/table_round/table_set.cpp:2839
+#: ../../sources/table_round/table_set.cpp:2846
+msgid "Place #"
+msgstr "장소 #"
+
+#: ../../sources/table_round/table_set.cpp:102
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
+msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
+
+#: ../../sources/table_round/table_set.cpp:123
+#: ../../sources/table_round/table_set.cpp:134
+msgid "Table printing"
+msgstr "테이블 인쇄"
+
+#: ../../sources/table_round/table_set.cpp:1747
+msgid "cutting"
+msgstr ""
+
+#: ../../sources/table_round/table_set.cpp:2698
 #, c-format
 msgid "Match %s"
 msgstr "%s 강"
 
-msgid "Table round classification"
-msgstr "테이블 라운드 구분"
+#: ../../sources/table_round/table_set.cpp:2837
+#: ../../sources/table_round/table_set.cpp:2845
+#: ../../sources/table_round/table_supervisor.cpp:31
+#: ../../resources/glade/table_supervisor.glade:358
+msgid "Table"
+msgstr "테이블"
 
-msgid "Score sheet"
-msgstr "점수표"
-
-#: ../../sources/table_set.cpp:2625
+#: ../../sources/table_round/table_set.cpp:2997
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s: 점수표 인쇄"
 
-#: ../../sources/tournament.cpp:265
-msgid "Choose a competion file to open... "
-msgstr "열어볼 대회 파일을 선택하세요. "
+#: ../../sources/table_round/table_supervisor.cpp:1066
+msgid "Table classification"
+msgstr "테이블 분류"
 
-#: ../../sources/contest.cpp:1188 ../../sources/tournament.cpp:278
-msgid "BellePoule files (.cotcot)"
-msgstr "BellePoule 파일 (.cotcot)"
-
-#: ../../sources/tournament.cpp:429
-msgid "Recently opened files"
-msgstr "최근에 열어본 파일"
-
-#: ../../sources/tournament.cpp:441
-msgid "BellePoule files"
-msgstr "BellePoule 파일들"
-
-#: ../../sources/tournament.cpp:624
-msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr "<b><big>BellePoule을 종료할까요?</big></b>"
-
-#: ../../sources/tournament.cpp:627
-msgid "Quit BellePoule?"
-msgstr "BellePoule을 종료할까요?"
-
-#: ../../sources/tournament.cpp:630
-msgid "All the unsaved competions will be lost."
-msgstr "저장되지 않은 모든 경기가 사라집니다."
-
-#: ../../resources/glade/checkin.glade:26
-msgid "Presents"
-msgstr "참석"
-
-#: ../../resources/glade/checkin.glade:32
-msgid "Absents"
-msgstr "불참"
-
-#: ../../resources/glade/checkin.glade:43
-#: ../../resources/glade/checkin.glade:138
-msgid "9999"
-msgstr "9999"
-
-#: ../../resources/glade/checkin.glade:185
-msgid ""
-"FFF (Fencing File Format) is a format specified by the FIE. It's used by the "
-"french federation to provide the competion organiser with the registered "
-"fencer list."
+#: ../../sources/util/filter.cpp:219
+msgid "Data to display"
 msgstr ""
-"FFF (Fencing File Format)은 FIE에서 지정한 포맷입니다. 프랑스 협회에서 대회 운영자에게 등록 선수 리스트를 "
-"제공하기 위해서 사용합니다."
 
-#: ../../resources/glade/checkin.glade:186
-msgid "Import .FFF file"
-msgstr ".FFF 파일 불러오기"
-
-#: ../../sources/filter.cpp:193 ../../resources/glade/checkin.glade:207
+#: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
 #: ../../resources/glade/general_classification.glade:35
-#: ../../resources/glade/pool_allocator.glade:18
-#: ../../resources/glade/pool_supervisor.glade:485
+#: ../../resources/glade/pool_allocator.glade:42
+#: ../../resources/glade/pool_supervisor.glade:547
+#: ../../resources/glade/referees.glade:367
 #: ../../resources/glade/splitting.glade:15
-#: ../../resources/glade/table_supervisor.glade:397
+#: ../../resources/glade/table_supervisor.glade:382
 msgid "Data"
 msgstr "데이터"
 
-#: ../../resources/glade/checkin.glade:265
-msgid "Add a fencer"
-msgstr "선수 추가"
+#: ../../sources/util/filter.cpp:282
+msgid "Look"
+msgstr ""
 
-#: ../../resources/glade/checkin.glade:384
+#: ../../resources/glade/checkin.glade:23
+#: ../../resources/glade/referees.glade:46
 msgid "All the presents"
 msgstr "모두 참석"
 
-#: ../../resources/glade/checkin.glade:399
+#: ../../resources/glade/checkin.glade:38
+#: ../../resources/glade/referees.glade:62
 msgid "All the absents"
 msgstr "모두 불참"
 
-#: ../../resources/glade/contest.glade:1147
-msgid "Save the current state of the competition."
-msgstr "경기를 현재 상태로 저장합니다."
+#: ../../resources/glade/checkin.glade:98
+#: ../../resources/glade/referees.glade:154
+msgid "Presents"
+msgstr "참석"
 
-#: ../../resources/glade/contest.glade:1161
-msgid "To specify the features of the competition."
-msgstr "대회 특징을 명시합니다."
+#: ../../resources/glade/checkin.glade:104
+#: ../../resources/glade/referees.glade:161
+msgid "Absents"
+msgstr "불참"
 
-#: ../../resources/glade/contest.glade:1184
-msgid ""
-"To configure the schedule of the competition in terms of pools, tables and "
-"other rounds."
-msgstr "대회 스케쥴을 설정합니다."
+#: ../../resources/glade/checkin.glade:153
+#: ../../resources/glade/checkin.glade:191
+#: ../../resources/glade/referees.glade:217
+#: ../../resources/glade/referees.glade:263
+msgid "all"
+msgstr "모든"
 
-#: ../../resources/glade/contest.glade:1186
-msgid "Formula"
-msgstr "공식"
+#: ../../resources/glade/checkin.glade:260
+msgid "Import fencer file"
+msgstr ""
 
-#: ../../resources/glade/contest.glade:1266
-msgid "Man"
-msgstr "남자"
+#: ../../resources/glade/contest.glade:21
+msgid "Date of competition"
+msgstr "경기 일자"
 
-msgid "Features of the competition"
-msgstr "경기 특성들"
+#: ../../resources/glade/contest.glade:104
+msgid "Competition properties"
+msgstr "경기 속성"
 
-#: ../../resources/glade/contest.glade:226
+#: ../../resources/glade/contest.glade:156
+#: ../../resources/glade/tournament.glade:841
 msgid "Weapon"
 msgstr "종목"
 
-#: ../../resources/glade/contest.glade:234
+#: ../../resources/glade/contest.glade:163
+#: ../../resources/glade/tournament.glade:852
 msgid "Gender"
 msgstr "성별"
 
-#: ../../resources/glade/contest.glade:246
+#: ../../resources/glade/contest.glade:174
+#: ../../resources/glade/tournament.glade:863
 msgid "Category"
 msgstr "카테고리"
 
-#: ../../resources/glade/contest.glade:304
+#: ../../resources/glade/contest.glade:228
 msgid "<b>Type</b>"
 msgstr "<b>타입</b>"
 
-#: ../../resources/glade/contest.glade:342
+#: ../../resources/glade/contest.glade:262
 msgid "Title"
 msgstr "타이틀"
 
-msgid "Free text for information purposes."
-msgstr "정보를 위한 자유 텍스트"
-
-#: ../../resources/glade/contest.glade:366
+#: ../../resources/glade/contest.glade:283
 msgid "Organizer"
 msgstr "운영자"
 
-#: ../../resources/glade/contest.glade:423
+#: ../../resources/glade/contest.glade:334
 msgid "Web site"
 msgstr "웹사이트"
 
-#: ../../resources/glade/contest.glade:474
+#: ../../resources/glade/contest.glade:351
+msgid "Location"
+msgstr "위치"
+
+#: ../../resources/glade/contest.glade:381
 msgid "<b>Overviews</b>"
 msgstr "<b>개요</b>"
 
-#: ../../resources/glade/contest.glade:506
+#: ../../resources/glade/contest.glade:409
 msgid "Date"
 msgstr "일자"
 
-#: ../../resources/glade/contest.glade:526
+#: ../../resources/glade/contest.glade:427
 msgid "Scratch"
 msgstr "핸디캡 없음"
 
-#: ../../resources/glade/contest.glade:538
+#: ../../resources/glade/contest.glade:438
 msgid "Start"
 msgstr "시작"
 
-#: ../../resources/glade/contest.glade:547
-msgid "31/03/2009"
-msgstr "31/03/2009"
-
-msgid ""
-"Date and time are used to raise alarms to notify the organizer when events "
-"occur."
-msgstr "대회 운영자에게 이벤트 시작을 알려주기 위해 일자와 시간이 사용됩니다."
-
-#: ../../resources/glade/contest.glade:591
-#: ../../resources/glade/contest.glade:662
-#: ../../resources/glade/contest.glade:733
-msgid ":"
-msgstr ":"
-
-#: ../../resources/glade/contest.glade:780
+#: ../../resources/glade/contest.glade:642
 msgid "<b>Date / Time</b>"
 msgstr "<b>일자 / 시간</b>"
 
-#: ../../resources/glade/contest.glade:858
+#: ../../resources/glade/contest.glade:671
+msgid "Allow"
+msgstr "허용"
+
+#: ../../resources/glade/contest.glade:687
+msgid "Forbid"
+msgstr "금지"
+
+#: ../../resources/glade/contest.glade:711
 msgid ""
 "Automatic\n"
 "score\n"
@@ -531,96 +628,111 @@ msgstr ""
 "점수\n"
 "생성"
 
-#: ../../resources/glade/contest.glade:813
-msgid "Allow"
-msgstr "허용"
-
-msgid ""
-"Make the automatic score stuffing button available. It can save the user "
-"boring data captures during training sessions."
-msgstr "자동 점수 생성 버튼을 활성화 합니다. 소프트웨어를 익히는 동안 데이터 입력 작업을 줄여줍니다."
-
-#: ../../resources/glade/contest.glade:831
-msgid "Forbid"
-msgstr "금지"
-
-msgid "Inhibit the automatic score stuffing button."
-msgstr "자동 점수 생성 버튼 비활성화"
-
-#: ../../resources/glade/contest.glade:874
+#: ../../resources/glade/contest.glade:726
 msgid "<b>Scores</b>"
 msgstr "<b>점수</b>"
+
+#: ../../resources/glade/contest.glade:746
+msgid "Event"
+msgstr "이벤트"
+
+#: ../../resources/glade/contest.glade:765
+#: ../../resources/glade/contest.glade:1046
+msgid "Formula"
+msgstr "공식"
+
+#: ../../resources/glade/contest.glade:809
+msgid "FTP server"
+msgstr "FTP 서버"
+
+#: ../../resources/glade/contest.glade:816
+msgid "User"
+msgstr "사용자"
+
+#: ../../resources/glade/contest.glade:827
+msgid "Password"
+msgstr "패스워드"
+
+#: ../../resources/glade/contest.glade:897
+msgid "<b>Publisher URL</b>"
+msgstr "<b>게시자 URL</b>"
+
+#: ../../resources/glade/contest.glade:916
+msgid "Publication"
+msgstr "게시"
+
+#: ../../resources/glade/contest.glade:1013
+msgid "Save the current state of the competition."
+msgstr "경기를 현재 상태로 저장합니다."
+
+#: ../../resources/glade/contest.glade:1025
+msgid "To specify the features of the competition."
+msgstr "대회 특징을 명시합니다."
+
+#: ../../resources/glade/contest.glade:1045
+msgid ""
+"To configure the schedule of the competition in terms of pools, tables and "
+"other rounds."
+msgstr "대회 스케쥴을 설정합니다."
+
+#: ../../resources/glade/contest.glade:1058
+#: ../../resources/glade/referees.glade:115
+#: ../../resources/glade/tournament.glade:1123
+msgid "Referees"
+msgstr ""
+
+#: ../../resources/glade/contest.glade:1156
+msgid "Man"
+msgstr "남자"
+
+#: ../../resources/glade/form.glade:8
+msgid "Add a fencer"
+msgstr "선수 추가"
 
 #: ../../resources/glade/general_classification.glade:61
 msgid ""
 "Export the general classification to a .csv file that a spreadsheet like "
 "Excel or OpenOffice can open."
-msgstr "일반 분류를 엑셀과 같은 스프레드쉬트에서 열람할 수 있도록 .CSV 파일로 내보냅니다."
+msgstr ""
+"일반 분류를 엑셀과 같은 스프레드쉬트에서 열람할 수 있도록 .CSV 파일로 내보냅"
+"니다."
 
-msgid "Export"
-msgstr "내보내기"
+#: ../../resources/glade/general_classification.glade:63
+msgid "Export to CSV"
+msgstr "CSV로 내보내기"
 
-#: ../../resources/glade/pool_allocator.glade:17
+#: ../../resources/glade/general_classification.glade:78
+msgid "Export to FFF"
+msgstr "FFF로 내보내기"
+
+#: ../../resources/glade/general_classification.glade:93
+msgid "Export to PDF"
+msgstr "PDF로 내보내기"
+
+#: ../../resources/glade/pool_allocator.glade:40
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr "표시 순서를 정의할 뿐 아니라 데이터 타입을 지우거나 표시합니다."
 
-#: ../../resources/glade/pool_allocator.glade:30
+#: ../../resources/glade/pool_allocator.glade:56
 msgid "Print"
 msgstr "인쇄"
 
-#: ../../resources/glade/pool_allocator.glade:56
+#: ../../resources/glade/pool_allocator.glade:112
 msgid "Number of pools"
 msgstr "풀 갯수"
 
-#: ../../resources/glade/pool_allocator.glade:98
+#: ../../resources/glade/pool_allocator.glade:162
 msgid "Fencers / pools"
 msgstr "선수 / 풀"
 
-#: ../../resources/glade/pool_allocator.glade:138
+#: ../../resources/glade/pool_allocator.glade:210
 msgid "Swapping"
 msgstr "교체"
-
-#: ../../resources/glade/pool_supervisor.glade:512
-#: ../../resources/glade/table_supervisor.glade:372
-msgid "Classification"
-msgstr "분류"
-
-#: ../../resources/glade/pool_supervisor.glade:536
-msgid ""
-"Fill in all the scores of all the pools randomly\n"
-"To activate/deactivate this button, go to the properties of the competition."
-msgstr ""
-"모든 풀의 점수를 무작위로 채웁니다.\n"
-"이 버튼을 활성 또는 비활성화하기 위해서는 경기 속성으로 이동합니다."
-
-#: ../../resources/glade/pool_supervisor.glade:539
-#: ../../resources/glade/table_supervisor.glade:451
-msgid "Automatic stuffing"
-msgstr "자동 생성"
-
-#: ../../resources/glade/pool_supervisor.glade:593
-msgid "Combined classification"
-msgstr "혼합 분류"
-
-#: ../../resources/glade/pool_supervisor.glade:597
-msgid ""
-"The classification cumulating  the current score and the scores of the "
-"previous pool rounds."
-msgstr "현재 점수와 이전 풀 라운드의 점수를 누적한 분류"
-
-#: ../../resources/glade/pool_supervisor.glade:611
-msgid "Single classification"
-msgstr "단일 순위 결정"
-
-#: ../../resources/glade/pool_supervisor.glade:615
-msgid ""
-"The classification of the current round that doesn't take into account the "
-"scores of the previous rounds. "
-msgstr "현재 라운드의 순위 결정에 이전 라운드의 점수를 고려하지 않습니다. "
 
 #: ../../resources/glade/pool_supervisor.glade:31
 #: ../../resources/glade/splitting.glade:81
 #: ../../resources/glade/table_supervisor.glade:39
+#: ../../resources/glade/tournament.glade:830
 msgid "Name"
 msgstr "이름"
 
@@ -629,301 +741,10 @@ msgstr "이름"
 msgid "Max score"
 msgstr "점수 상한선"
 
-msgid "Number of eliminated"
-msgstr "탈락율"
-
-msgid "The rate of eliminated at the end of this round."
-msgstr "이번 라운드에서 탈락시킬 비율"
-
-#: ../../resources/glade/pool_supervisor.glade:294
-msgid "All the pools"
-msgstr "모든 풀"
-
-#: ../../resources/glade/pool_supervisor.glade:310
-msgid "Only the selected pool"
-msgstr "선택한 풀"
-
-#: ../../resources/glade/pool_supervisor.glade:332
-msgid "<b>What?</b>"
-msgstr "<b>무엇?</b>"
-
-#: ../../resources/glade/pool_supervisor.glade:362
-msgid "For arbitration"
-msgstr "중재용"
-
-#: ../../resources/glade/pool_supervisor.glade:366
-msgid "Content designed for the referees."
-msgstr "심판을 위해 설계된 컨텐츠"
-
-#: ../../resources/glade/pool_supervisor.glade:379
-msgid "For the bulletin board"
-msgstr "게시판용"
-
-#: ../../resources/glade/pool_supervisor.glade:401
-msgid "<b>For what?</b>"
-msgstr "<b>For what?</b>"
-
-#: ../../resources/glade/schedule.glade:213
-msgid "Previous round"
-msgstr "이전 라운드"
-
-#: ../../resources/glade/schedule.glade:227
-msgid "Next round"
-msgstr "다음 라운드"
-
-#: ../../resources/glade/schedule.glade:47
-msgid "Add"
-msgstr "추가"
-
-#: ../../resources/glade/schedule.glade:62
-msgid "Remove"
-msgstr "제거"
-
-#: ../../resources/glade/splitting.glade:120
-msgid "Select the fencers to move to a new competition."
-msgstr "새로운 경기로 이동시킬 선수를 선택하세요."
-
-#: ../../resources/glade/table_supervisor.glade:498
-msgid "From"
-msgstr "부터"
-
-#: ../../resources/glade/table_supervisor.glade:434
-msgid "Fill in a match"
-msgstr "경기에 입력"
-
-#: ../../resources/glade/table_supervisor.glade:448
-msgid ""
-"Fill in all the scores randomly.\n"
-"To activate/deactivate this button, go to the properties of the competition."
-msgstr ""
-"모든 점수를 무작위로 입력합니다.\n"
-"이 버튼을 활성 또는 비활성화하기 위해서는 경기 속성으로 갑니다."
-
-#: ../../resources/glade/table.glade:521
-msgid "<b>Match</b>"
-msgstr "<b>경기</b>"
-
-#: ../../resources/glade/table.glade:551
-msgid "A fencer"
-msgstr "A 선수"
-
-#: ../../resources/glade/table.glade:559
-msgid "B fencer"
-msgstr "B 선수"
-
-#: ../../resources/glade/table.glade:608
-msgid "<b>Score</b>"
-msgstr "<b>점수</b>"
-
-#: ../../resources/glade/table.glade:184
-msgid "The table"
-msgstr "테이블"
-
-#: ../../resources/glade/table.glade:301
-msgid "Score sheets"
-msgstr "점수표"
-
-#: ../../resources/glade/table.glade:327
-#: ../../resources/glade/table_supervisor.glade:228
-msgid "All"
-msgstr "모든"
-
-#: ../../resources/glade/table.glade:343
-msgid "Pending"
-msgstr "대기 중"
-
-#: ../../resources/glade/table.glade:441
-msgid "The pending score sheets"
-msgstr "대기 중인 점수 기록지"
-
-#: ../../resources/glade/table.glade:426
-msgid "All the score sheets"
-msgstr "모든 점수 기록지"
-
-#: ../../resources/glade/tournament.glade:747
-msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - 펜싱 토너먼트"
-
-#: ../../resources/glade/tournament.glade:765
-msgid "File"
-msgstr "파일"
-
-#: ../../resources/glade/tournament.glade:797
-msgid "Recently opened"
-msgstr "최근 파일"
-
-#: ../../resources/glade/tournament.glade:898
-msgid "Help"
-msgstr "도움말"
-
-#: ../../resources/glade/tournament.glade:906
-msgid "Open an example..."
-msgstr "예제 열기..."
-
-#: ../../resources/glade/tournament.glade:12
-msgid ""
-"Fencing tournament management software.\n"
-"\n"
-"\n"
-msgstr ""
-"펜싱 토너먼트 관리 소프트웨어.\n"
-"\n"
-"\n"
-
-msgid ""
-"Marijn Somers (Dutch)\n"
-"Julien Diaz (German)\n"
-"Tina Schliemann (German)\n"
-"Alexis Pigeon (Spanish)\n"
-"Mohamed Rebai (Arabic)\n"
-"Sergev Makhtanov (Russian)\n"
-msgstr ""
-"Marijn Somers (Dutch)\n"
-"Julien Diaz (German)\n"
-"Tina Schliemann (German)\n"
-"Alexis Pigeon (Spanish)\n"
-"Mohamed Rebai (Arabic)\n"
-"Sergev Makhtanov (Russian)\n"
-"Jihwan Cho (Korean)\n"
-
-#: ../../sources/main.cpp:226
-msgid "start rank"
-msgstr "시작 랭킹"
-
-#: ../../sources/main.cpp:236
-msgid "global status"
-msgstr "전역 상태"
-
-#: ../../sources/main.cpp:239 ../../sources/main.cpp:247
-#: ../../resources/glade/pool_supervisor.glade:55
-#: ../../resources/glade/table_supervisor.glade:64
-msgid "Qualified"
-msgstr "자격을 획득한"
-
-#: ../../sources/main.cpp:240 ../../sources/main.cpp:248
-msgid "Not qualified"
-msgstr "자격이 없는"
-
-#: ../../sources/main.cpp:241 ../../sources/main.cpp:249
-msgid "Withdrawal"
-msgstr "인출"
-
-#: ../../sources/main.cpp:242 ../../sources/main.cpp:250
-msgid "Excluded"
-msgstr "제외된"
-
-#: ../../sources/main.cpp:243 ../../sources/main.cpp:251
-msgid "Forfeit"
-msgstr "박탈된"
-
-#: ../../sources/main.cpp:245
-msgid "status"
-msgstr "상태"
-
-#: ../../sources/pool.cpp:623
-msgid "Status"
-msgstr "상태"
-
-#: ../../resources/glade/checkin.glade:80
-#: ../../resources/glade/checkin.glade:118
-msgid "all"
-msgstr "모든"
-
-#: ../../resources/glade/general_classification.glade:63
-msgid "Export to CSV"
-msgstr "CSV로 내보내기"
-
-#: ../../resources/glade/tournament.glade:917
-msgid "User manual"
-msgstr "사용자 메뉴얼"
-
-#: ../../resources/glade/general_classification.glade:78
-msgid "Export to FFF"
-msgstr "FFF로 내보내기"
-
-#: ../../sources/contest.cpp:57
-msgid "Kendo"
-msgstr "검도"
-
-#: ../../sources/general_classification.cpp:254
-msgid "All PDF files (.PDF)"
-msgstr "모든 PDF 파일(.PDF)"
-
-#: ../../sources/pool_allocator.cpp:1545
-msgid "Allocation"
-msgstr "할당"
-
-#: ../../sources/pool.cpp:381 ../../sources/table_set.cpp:2342
-msgid "Referee"
-msgstr "심판"
-
-#: ../../sources/pool.cpp:407 ../../sources/table_set.cpp:2364
-msgid "Piste"
-msgstr "피스트"
-
-#: ../../sources/pool_supervisor.cpp:450
-msgid "Pools classification"
-msgstr "풀 분류"
-
-#: ../../sources/table_set.cpp:93 ../../sources/table_set.cpp:2436
-#: ../../sources/table_set.cpp:2443
-msgid "Place #"
-msgstr "장소 #"
-
-#: ../../sources/table_supervisor.cpp:997
-msgid "Table classification"
-msgstr "테이블 분류"
-
-#: ../../sources/tournament.cpp:289
-msgid "FFE files (.xml)"
-msgstr "FFF 파일(.xml)"
-
-#: ../../sources/tournament.cpp:481
-msgid "Choose a backup files location..."
-msgstr "백업 파일 위치를 선택하세요."
-
-#: ../../resources/glade/contest.glade:441
-msgid "Location"
-msgstr "위치"
-
-#: ../../resources/glade/contest.glade:895
-msgid "Event"
-msgstr "이벤트"
-
-#: ../../resources/glade/contest.glade:943
-msgid "FTP server"
-msgstr "FTP 서버"
-
-#: ../../resources/glade/contest.glade:951
-msgid "User"
-msgstr "사용자"
-
-#: ../../resources/glade/contest.glade:963
-msgid "Password"
-msgstr "패스워드"
-
-#: ../../resources/glade/contest.glade:1050
-msgid "<b>Publisher URL</b>"
-msgstr "<b>게시자 URL</b>"
-
-#: ../../resources/glade/contest.glade:1070
-#: ../../resources/glade/contest.glade:1084
-msgid "Publication"
-msgstr "게시"
-
-#: ../../resources/glade/general_classification.glade:93
-msgid "Export to PDF"
-msgstr "PDF로 내보내기"
-
 #: ../../resources/glade/pool_supervisor.glade:79
 #: ../../resources/glade/table_supervisor.glade:113
 msgid "Number"
 msgstr "숫자"
-
-#: ../../resources/glade/pool_supervisor.glade:114
-#: ../../resources/glade/table_supervisor.glade:148
-msgid "%"
-msgstr "%"
 
 #: ../../resources/glade/pool_supervisor.glade:149
 msgid ""
@@ -933,6 +754,88 @@ msgstr ""
 "풀 시작까지\n"
 "잠겨 있음"
 
+#: ../../resources/glade/pool_supervisor.glade:229
+msgid "Seeding"
+msgstr ""
+
+#: ../../resources/glade/pool_supervisor.glade:246
+msgid "Balanced"
+msgstr ""
+
+#: ../../resources/glade/pool_supervisor.glade:262
+msgid "Grouped by strength"
+msgstr ""
+
+#: ../../resources/glade/pool_supervisor.glade:356
+msgid "All the pools"
+msgstr "모든 풀"
+
+#: ../../resources/glade/pool_supervisor.glade:372
+msgid "Only the selected pool"
+msgstr "선택한 풀"
+
+#: ../../resources/glade/pool_supervisor.glade:394
+msgid "<b>What?</b>"
+msgstr "<b>무엇?</b>"
+
+#: ../../resources/glade/pool_supervisor.glade:424
+msgid "For arbitration"
+msgstr "중재용"
+
+#: ../../resources/glade/pool_supervisor.glade:428
+msgid "Content designed for the referees."
+msgstr "심판을 위해 설계된 컨텐츠"
+
+#: ../../resources/glade/pool_supervisor.glade:441
+msgid "For the bulletin board"
+msgstr "게시판용"
+
+#: ../../resources/glade/pool_supervisor.glade:463
+msgid "<b>For what?</b>"
+msgstr "<b>For what?</b>"
+
+#: ../../resources/glade/pool_supervisor.glade:585
+#: ../../resources/glade/table_supervisor.glade:420
+msgid "Classification"
+msgstr "분류"
+
+#: ../../resources/glade/pool_supervisor.glade:610
+#: ../../resources/glade/table_supervisor.glade:462
+msgid "Automatic stuffing"
+msgstr "자동 생성"
+
+#: ../../resources/glade/pool_supervisor.glade:664
+msgid "Combined classification"
+msgstr "혼합 분류"
+
+#: ../../resources/glade/pool_supervisor.glade:668
+msgid ""
+"The classification cumulating  the current score and the scores of the "
+"previous pool rounds."
+msgstr "현재 점수와 이전 풀 라운드의 점수를 누적한 분류"
+
+#: ../../resources/glade/pool_supervisor.glade:682
+msgid "Single classification"
+msgstr "단일 순위 결정"
+
+#: ../../resources/glade/pool_supervisor.glade:686
+msgid ""
+"The classification of the current round that doesn't take into account the "
+"scores of the previous rounds. "
+msgstr "현재 라운드의 순위 결정에 이전 라운드의 점수를 고려하지 않습니다. "
+
+#: ../../resources/glade/referees.glade:342
+msgid "Import referee file"
+msgstr ""
+
+#: ../../resources/glade/schedule.glade:47
+msgid "Add"
+msgstr "추가"
+
+#: ../../resources/glade/schedule.glade:62
+msgid "Remove"
+msgstr "제거"
+
 #: ../../resources/glade/schedule.glade:122
 msgid "<b>Schedule</b>"
 msgstr "<b>스케츌</b>"
@@ -940,6 +843,59 @@ msgstr "<b>스케츌</b>"
 #: ../../resources/glade/schedule.glade:155
 msgid "<b>Parameters</b>"
 msgstr "<b>변수</b>"
+
+#: ../../resources/glade/schedule.glade:213
+msgid "Previous round"
+msgstr "이전 라운드"
+
+#: ../../resources/glade/schedule.glade:227
+msgid "Next round"
+msgstr "다음 라운드"
+
+#: ../../resources/glade/splitting.glade:120
+msgid "Select the fencers to move to a new competition."
+msgstr "새로운 경기로 이동시킬 선수를 선택하세요."
+
+#: ../../resources/glade/table.glade:247
+msgid "The table"
+msgstr "테이블"
+
+#: ../../resources/glade/table.glade:334
+msgid "Score sheets"
+msgstr "점수표"
+
+#: ../../resources/glade/table.glade:360
+#: ../../resources/glade/table_supervisor.glade:228
+msgid "All"
+msgstr "모든"
+
+#: ../../resources/glade/table.glade:376
+msgid "Pending"
+msgstr "대기 중"
+
+#: ../../resources/glade/table.glade:459
+msgid "All the score sheets"
+msgstr "모든 점수 기록지"
+
+#: ../../resources/glade/table.glade:474
+msgid "The pending score sheets"
+msgstr "대기 중인 점수 기록지"
+
+#: ../../resources/glade/table.glade:554
+msgid "<b>Match</b>"
+msgstr "<b>경기</b>"
+
+#: ../../resources/glade/table.glade:584
+msgid "A fencer"
+msgstr "A 선수"
+
+#: ../../resources/glade/table.glade:592
+msgid "B fencer"
+msgstr "B 선수"
+
+#: ../../resources/glade/table.glade:641
+msgid "<b>Score</b>"
+msgstr "<b>점수</b>"
 
 #: ../../resources/glade/table_supervisor.glade:51
 msgid "Fenced places"
@@ -961,26 +917,112 @@ msgstr "없음"
 msgid "Third place"
 msgstr "3위"
 
-#: ../../resources/glade/table_supervisor.glade:536
+#: ../../resources/glade/table_supervisor.glade:445
+msgid "Fill in a match"
+msgstr "경기에 입력"
+
+#: ../../resources/glade/table_supervisor.glade:459
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+"모든 점수를 무작위로 입력합니다.\n"
+"이 버튼을 활성 또는 비활성화하기 위해서는 경기 속성으로 갑니다."
+
+#: ../../resources/glade/table_supervisor.glade:509
+msgid "From"
+msgstr "부터"
+
+#: ../../resources/glade/table_supervisor.glade:547
+msgid "To"
+msgstr ""
+
+#: ../../resources/glade/table_supervisor.glade:595
 msgid "For place"
 msgstr "순위에 대해"
 
-#: ../../resources/glade/table_supervisor.glade:635
+#: ../../resources/glade/table_supervisor.glade:694
 msgid "Zoom"
 msgstr "확대"
 
-#: ../../resources/glade/tournament.glade:815
+#: ../../resources/glade/tournament.glade:12
+msgid ""
+"Fencing tournament management software.\n"
+"\n"
+"\n"
+msgstr ""
+"펜싱 토너먼트 관리 소프트웨어.\n"
+"\n"
+"\n"
+
+#: ../../resources/glade/tournament.glade:722
+msgid "Broadcasted competitions"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:768
+msgid "Server"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:797
+msgid "host"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:963
+msgid "BellePoule - Fencing tournament"
+msgstr "BellePoule - 펜싱 토너먼트"
+
+#: ../../resources/glade/tournament.glade:982
+msgid "File"
+msgstr "파일"
+
+#: ../../resources/glade/tournament.glade:1014
+msgid "Recently opened"
+msgstr "최근 파일"
+
+#: ../../resources/glade/tournament.glade:1026
+msgid "Watch"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:1043
 msgid "Backup"
 msgstr "백업"
 
-#: ../../resources/glade/tournament.glade:827
+#: ../../resources/glade/tournament.glade:1055
 msgid "Backup files location..."
 msgstr "백업 파일 위치"
 
-#: ../../resources/glade/tournament.glade:848
+#: ../../resources/glade/tournament.glade:1076
 msgid "Activate"
 msgstr "활성화"
 
-#: ../../resources/glade/tournament.glade:859
+#: ../../resources/glade/tournament.glade:1087
 msgid "Deactivate"
 msgstr "비활성화"
+
+#: ../../resources/glade/tournament.glade:1135
+msgid "Print meal tickets"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:1146
+msgid "Print payment book"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:1175
+msgid "Translate into your language ..."
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:1193
+msgid "New version!"
+msgstr ""
+
+#: ../../resources/glade/tournament.glade:1233
+msgid "Open an example..."
+msgstr "예제 열기..."
+
+#: ../../resources/glade/tournament.glade:1244
+msgid "User manual"
+msgstr "사용자 메뉴얼"
+
+#: ../../resources/glade/tournament.glade:1261
+msgid "Fencer file template (.csv)"
+msgstr ""

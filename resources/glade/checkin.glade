@@ -112,7 +112,7 @@
                       <object class="GtkLabel" id="absent_label">
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
-                        <property name="label" translatable="yes">9999</property>
+                        <property name="label" translatable="no">9999</property>
                         <property name="width_chars">5</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
@@ -208,7 +208,7 @@
                       <object class="GtkLabel" id="attending_label">
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
-                        <property name="label" translatable="yes">9999</property>
+                        <property name="label" translatable="no">9999</property>
                         <property name="width_chars">5</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>

@@ -280,6 +280,26 @@ void Classification::WriteFFFString (FILE        *file,
       gsize  bytes_written;
       gchar *xml_image = attr->GetXmlImage ();
 
+      if (strcmp (attr_name, "birth_date") == 0)
+      {
+        GDate date;
+
+        g_date_set_parse (&date,
+                          attr->GetStrValue ());
+
+        if (g_date_valid (&date))
+        {
+          gchar buffer[50];
+
+          g_date_strftime (buffer,
+                           sizeof (buffer),
+                           "%d/%m/%Y",
+                           &date);
+          g_free (xml_image);
+          xml_image = g_strdup (buffer);
+        }
+      }
+
       result = g_convert (xml_image,
                           -1,
                           "ISO-8859-1",
