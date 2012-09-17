@@ -7,15 +7,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-14 11:42+0200\n"
+"POT-Creation-Date: 2012-09-14 16:53+0200\n"
 "PO-Revision-Date: 2012-06-22 19:01+0000\n"
 "Last-Translator: Paulomorales <paulocmorales@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-07 05:03+0000\n"
-"X-Generator: Launchpad (build 15914)\n"
+"X-Launchpad-Export-Date: 2012-09-17 04:45+0000\n"
+"X-Generator: Launchpad (build 15944)\n"
+
+#: ../../resources/glade/table_supervisor.glade:51
+msgid "Fenced places"
+msgstr "Lugares de esgrima"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -464,9 +468,10 @@ msgstr "Lugar #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
-msgstr "<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
+msgstr ""
+"<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
 #: ../../sources/table_round/table_set.cpp:134
@@ -903,10 +908,6 @@ msgstr "Esgrimista B"
 msgid "<b>Score</b>"
 msgstr "<b>Marcador</b>"
 
-#: ../../resources/glade/table_supervisor.glade:51
-msgid "Fenced places"
-msgstr "Lugares de esgrima"
-
 #: ../../resources/glade/table_supervisor.glade:159
 msgid ""
 "Locked until\n"
@@ -1032,3 +1033,15 @@ msgstr "Manual de usuario"
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
 msgstr ""
+
+#~ msgid "9999"
+#~ msgstr "9999"
+
+#~ msgid "31/03/2009"
+#~ msgstr "31/03/2009"
+
+#~ msgid ":"
+#~ msgstr ":"
+
+#~ msgid "points"
+#~ msgstr "puntos"

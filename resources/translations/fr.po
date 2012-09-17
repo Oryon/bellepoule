@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-14 11:42+0200\n"
-"PO-Revision-Date: 2011-09-26 19:49+0000\n"
+"POT-Creation-Date: 2012-09-14 16:53+0200\n"
+"PO-Revision-Date: 2012-09-16 19:39+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-07 05:03+0000\n"
-"X-Generator: Launchpad (build 15914)\n"
+"X-Launchpad-Export-Date: 2012-09-17 04:45+0000\n"
+"X-Generator: Launchpad (build 15944)\n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -138,15 +138,15 @@ msgstr "licence"
 
 #: ../../sources/common/main.cpp:285
 msgid "smartphone"
-msgstr ""
+msgstr "smartphone"
 
 #: ../../sources/common/main.cpp:287
 msgid "rate"
-msgstr ""
+msgstr "taux"
 
 #: ../../sources/common/main.cpp:292
 msgid "level"
-msgstr ""
+msgstr "Niveau"
 
 #: ../../sources/common/main.cpp:295
 msgid "ranking"
@@ -196,7 +196,7 @@ msgstr "statut"
 
 #: ../../sources/common/main.cpp:329
 msgid "pool #"
-msgstr ""
+msgstr "poule N°"
 
 #: ../../sources/common/main.cpp:333
 msgid "Vict./Bouts (‰)"
@@ -216,19 +216,19 @@ msgstr "rang d'entrée"
 
 #: ../../sources/common/main.cpp:355
 msgid "availability"
-msgstr ""
+msgstr "disponibilité"
 
 #: ../../sources/common/main.cpp:360
 msgid "Busy"
-msgstr ""
+msgstr "Occupé"
 
 #: ../../sources/common/main.cpp:361
 msgid "Absent"
-msgstr ""
+msgstr "Absent"
 
 #: ../../sources/common/main.cpp:362
 msgid "Free"
-msgstr ""
+msgstr "Libre"
 
 #: ../../sources/common/schedule.cpp:1016
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
@@ -245,15 +245,15 @@ msgstr "Toutes les saisies de cette phase seront annulées."
 #: ../../sources/common/tournament.cpp:480
 #: ../../sources/common/tournament.cpp:1390
 msgid "Payment book"
-msgstr ""
+msgstr "Registre des paiements"
 
 #: ../../sources/common/tournament.cpp:492
 msgid "Page"
-msgstr ""
+msgstr "Page"
 
 #: ../../sources/common/tournament.cpp:842
 msgid "Restart BellePoule for this change to take effect"
-msgstr ""
+msgstr "Redémarrez BellePoule pour appliquer les changements"
 
 #: ../../sources/common/tournament.cpp:959
 msgid "Choose a competion file to open... "
@@ -261,7 +261,7 @@ msgstr "Choisissez un fichier de compétition à ouvrir ... "
 
 #: ../../sources/common/tournament.cpp:972
 msgid "Competition files (.cotcot / .xml)"
-msgstr ""
+msgstr "Fichiers de compétition (.cotcot / .xml)"
 
 #: ../../sources/common/tournament.cpp:1230
 msgid "Recently opened files"
@@ -273,7 +273,7 @@ msgstr "Fichiers BellePoule"
 
 #: ../../sources/common/tournament.cpp:1383
 msgid "Meal tickets"
-msgstr ""
+msgstr "Tickets repas"
 
 #: ../../sources/common/tournament.cpp:1431
 msgid "Choose a backup files location..."
@@ -306,11 +306,11 @@ msgstr "Choisissez un fichier de tireurs à importer ..."
 
 #: ../../sources/people_management/checkin.cpp:222
 msgid "Fencer files"
-msgstr ""
+msgstr "Fichiers de tireurs"
 
 #: ../../sources/people_management/checkin.cpp:227
 msgid "Referee files"
-msgstr ""
+msgstr "Fichiers d'arbitres"
 
 #: ../../sources/people_management/checkin.cpp:780
 msgid "List of registered"
@@ -466,8 +466,8 @@ msgstr "Place N°"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 msgstr ""
 "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
 
@@ -478,7 +478,7 @@ msgstr "Impression du tableau"
 
 #: ../../sources/table_round/table_set.cpp:1747
 msgid "cutting"
-msgstr ""
+msgstr "Découpe"
 
 #: ../../sources/table_round/table_set.cpp:2698
 #, c-format
@@ -503,7 +503,7 @@ msgstr "Classement des tableaux"
 
 #: ../../sources/util/filter.cpp:219
 msgid "Data to display"
-msgstr ""
+msgstr "Données à afficher"
 
 #: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
 #: ../../resources/glade/general_classification.glade:35
@@ -517,7 +517,7 @@ msgstr "Données"
 
 #: ../../sources/util/filter.cpp:282
 msgid "Look"
-msgstr ""
+msgstr "Apparence"
 
 #: ../../resources/glade/checkin.glade:23
 #: ../../resources/glade/referees.glade:46
@@ -548,7 +548,7 @@ msgstr "tous"
 
 #: ../../resources/glade/checkin.glade:260
 msgid "Import fencer file"
-msgstr ""
+msgstr "Importer fichier de tireurs"
 
 #: ../../resources/glade/contest.glade:21
 msgid "Date of competition"
@@ -684,7 +684,7 @@ msgstr ""
 #: ../../resources/glade/referees.glade:115
 #: ../../resources/glade/tournament.glade:1123
 msgid "Referees"
-msgstr ""
+msgstr "Arbitres"
 
 #: ../../resources/glade/contest.glade:1156
 msgid "Man"
@@ -763,15 +763,15 @@ msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:229
 msgid "Seeding"
-msgstr ""
+msgstr "Répartition"
 
 #: ../../resources/glade/pool_supervisor.glade:246
 msgid "Balanced"
-msgstr ""
+msgstr "Équilibrée"
 
 #: ../../resources/glade/pool_supervisor.glade:262
 msgid "Grouped by strength"
-msgstr ""
+msgstr "Par force équivalente"
 
 #: ../../resources/glade/pool_supervisor.glade:356
 msgid "All the pools"
@@ -835,7 +835,7 @@ msgstr "Le classement de la poule sans tenir compte des précédentes. "
 
 #: ../../resources/glade/referees.glade:342
 msgid "Import referee file"
-msgstr ""
+msgstr "Importer fichier d'arbitres"
 
 #: ../../resources/glade/schedule.glade:47
 msgid "Add"
@@ -945,7 +945,7 @@ msgstr "A partir de"
 
 #: ../../resources/glade/table_supervisor.glade:547
 msgid "To"
-msgstr ""
+msgstr "Jusqu'à"
 
 #: ../../resources/glade/table_supervisor.glade:595
 msgid "For place"
@@ -967,15 +967,15 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:722
 msgid "Broadcasted competitions"
-msgstr ""
+msgstr "Compétitions diffusées"
 
 #: ../../resources/glade/tournament.glade:768
 msgid "Server"
-msgstr ""
+msgstr "Serveur"
 
 #: ../../resources/glade/tournament.glade:797
 msgid "host"
-msgstr ""
+msgstr "hôte"
 
 #: ../../resources/glade/tournament.glade:963
 msgid "BellePoule - Fencing tournament"
@@ -991,7 +991,7 @@ msgstr "Récemment ouvert"
 
 #: ../../resources/glade/tournament.glade:1026
 msgid "Watch"
-msgstr ""
+msgstr "Regarder"
 
 #: ../../resources/glade/tournament.glade:1043
 msgid "Backup"
@@ -1011,19 +1011,19 @@ msgstr "Désactiver"
 
 #: ../../resources/glade/tournament.glade:1135
 msgid "Print meal tickets"
-msgstr ""
+msgstr "Imprimer les tickets repas"
 
 #: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
-msgstr ""
+msgstr "Imprimer le registre des paiements"
 
 #: ../../resources/glade/tournament.glade:1175
 msgid "Translate into your language ..."
-msgstr ""
+msgstr "Traduire dans votre langue ..."
 
 #: ../../resources/glade/tournament.glade:1193
 msgid "New version!"
-msgstr ""
+msgstr "Nouvelle version !"
 
 #: ../../resources/glade/tournament.glade:1233
 msgid "Open an example..."
@@ -1035,4 +1035,42 @@ msgstr "Manuel utilisateur"
 
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
-msgstr ""
+msgstr "Modèle de fichier de tireurs (.csv)"
+
+#~ msgid "Décallage"
+#~ msgstr "Décalage"
+
+#~ msgid ""
+#~ "Décochez cette case pour accélerer la navigation. Le champs correspondant "
+#~ "sera ignoré lors des appuis sur la touche TAB."
+#~ msgstr ""
+#~ "Décochez cette case pour accélerer la navigation. Le champ correspondant "
+#~ "sera ignoré lors des appuis sur la touche TAB."
+
+#~ msgid "9999"
+#~ msgstr "9999"
+
+#~ msgid "31/03/2009"
+#~ msgstr "31/03/2009"
+
+#~ msgid ":"
+#~ msgstr ":"
+
+#~ msgid "points"
+#~ msgstr "points"
+
+#~ msgid "Liste des présents"
+#~ msgstr "Liste des présents"
+
+#~ msgid "présence"
+#~ msgstr "présence"
+
+#~ msgid "Toutes les compétitions non sauvegardées seront perdues."
+#~ msgstr "Toutes les compétitions non sauvegardées seront perdues."
+
+#~ msgid ""
+#~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
+#~ "tableaux et autres phases."
+#~ msgstr ""
+#~ "To configure the schedule of the competition in terms of pools, tables and "
+#~ "other rounds."
