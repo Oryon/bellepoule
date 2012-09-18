@@ -1,11 +1,10 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Spanish translation for bellepoule
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the BellePoule package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-14 16:53+0200\n"
 "PO-Revision-Date: 2012-06-22 19:01+0000\n"
@@ -16,10 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-09-17 04:45+0000\n"
 "X-Generator: Launchpad (build 15944)\n"
-
-#: ../../resources/glade/table_supervisor.glade:51
-msgid "Fenced places"
-msgstr "Lugares de esgrima"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -468,10 +463,9 @@ msgstr "Lugar #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr ""
-"<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
+msgstr "<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
 #: ../../sources/table_round/table_set.cpp:134
@@ -907,6 +901,10 @@ msgstr "Esgrimista B"
 #: ../../resources/glade/table.glade:641
 msgid "<b>Score</b>"
 msgstr "<b>Marcador</b>"
+
+#: ../../resources/glade/table_supervisor.glade:51
+msgid "Fenced places"
+msgstr "Lugares de esgrima"
 
 #: ../../resources/glade/table_supervisor.glade:159
 msgid ""

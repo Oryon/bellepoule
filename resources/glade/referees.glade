@@ -414,6 +414,7 @@
                 <property name="reorderable">True</property>
                 <property name="rules_hint">True</property>
                 <property name="search_column">0</property>
+                <signal name="row_activated" handler="on_players_list_row_activated"/>
               </object>
             </child>
           </object>

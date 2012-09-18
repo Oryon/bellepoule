@@ -993,11 +993,14 @@ void PoolAllocator::CreatePools ()
 // --------------------------------------------------------------------------------
 gint PoolAllocator::GetNbMatchs ()
 {
-  gint nb_matchs;
+  gint nb_matchs = 0;
 
-  nb_matchs  = _selected_config->_size * (_selected_config->_size - 1) / 2;
-  nb_matchs *= _selected_config->_nb_pool - _selected_config->_nb_overloaded;
-  nb_matchs += _selected_config->_nb_overloaded * _selected_config->_size * (_selected_config->_size + 1) / 2;
+  if (_selected_config)
+  {
+    nb_matchs  = _selected_config->_size * (_selected_config->_size - 1) / 2;
+    nb_matchs *= _selected_config->_nb_pool - _selected_config->_nb_overloaded;
+    nb_matchs += _selected_config->_nb_overloaded * _selected_config->_size * (_selected_config->_size + 1) / 2;
+  }
 
   return nb_matchs;
 }
