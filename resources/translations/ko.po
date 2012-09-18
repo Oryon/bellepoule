@@ -1,12 +1,11 @@
 # Korean translation for bellepoule
-# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the bellepoule package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-14 16:53+0200\n"
 "PO-Revision-Date: 2011-11-22 05:53+0000\n"
 "Last-Translator: Jihwan Cho <Unknown>\n"
@@ -336,7 +335,9 @@ msgstr "등록"
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
-msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르면 관련 필드가 무시됩니다."
+msgstr ""
+"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
+"면 관련 필드가 무시됩니다."
 
 #: ../../sources/people_management/general_classification.cpp:26
 #: ../../sources/people_management/general_classification.cpp:186
@@ -462,8 +463,8 @@ msgstr "장소 #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
@@ -691,7 +692,9 @@ msgstr "선수 추가"
 msgid ""
 "Export the general classification to a .csv file that a spreadsheet like "
 "Excel or OpenOffice can open."
-msgstr "일반 분류를 엑셀과 같은 스프레드쉬트에서 열람할 수 있도록 .CSV 파일로 내보냅니다."
+msgstr ""
+"일반 분류를 엑셀과 같은 스프레드쉬트에서 열람할 수 있도록 .CSV 파일로 내보냅"
+"니다."
 
 #: ../../resources/glade/general_classification.glade:63
 msgid "Export to CSV"
