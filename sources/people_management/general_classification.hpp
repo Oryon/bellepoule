@@ -59,6 +59,18 @@ class GeneralClassification : public virtual Stage, public PlayersList
 
     GSList *GetCurrentClassification ();
 
+    guint PreparePrint (GtkPrintOperation *operation,
+                        GtkPrintContext   *context);
+
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page_nr);
+
+    void OnEndPrint (GtkPrintOperation *operation,
+                     GtkPrintContext   *context);
+
+    gchar *GetPrintName ();
+
     virtual ~GeneralClassification ();
 };
 

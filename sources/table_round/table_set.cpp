@@ -2253,11 +2253,12 @@ void TableSet::GetBounds (GNode           *top,
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::OnBeginPrint (GtkPrintOperation *operation,
-                             GtkPrintContext   *context)
+guint TableSet::PreparePrint (GtkPrintOperation *operation,
+                              GtkPrintContext   *context)
 {
   gdouble paper_w = gtk_print_context_get_width  (context);
   gdouble paper_h = gtk_print_context_get_height (context);
+  guint   nb_page;
 
   if (_print_session._full_table)
   {
@@ -2284,9 +2285,7 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
 
       if (to_table->GetSize () > from_table->GetSize ())
       {
-        gtk_print_operation_set_n_pages (operation,
-                                         0);
-        return;
+        return 0;
       }
 
       {
@@ -2335,13 +2334,11 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
                                    header_h);
     }
 
-    gtk_print_operation_set_n_pages (operation,
-                                     _print_session._cutting_count * (_print_session._nb_x_pages*_print_session._nb_y_pages));
+    nb_page = _print_session._cutting_count * (_print_session._nb_x_pages*_print_session._nb_y_pages);
   }
   else
   {
     guint nb_match;
-    guint nb_page;
 
     if (paper_w > paper_h)
     {
@@ -2359,10 +2356,9 @@ void TableSet::OnBeginPrint (GtkPrintOperation *operation,
     {
       nb_page++;
     }
-
-    gtk_print_operation_set_n_pages (operation,
-                                     nb_page);
   }
+
+  return nb_page;
 }
 
 // --------------------------------------------------------------------------------
@@ -2586,9 +2582,9 @@ void TableSet::OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
 }
 
 // --------------------------------------------------------------------------------
-void TableSet::OnDrawPage (GtkPrintOperation *operation,
-                           GtkPrintContext   *context,
-                           gint               page_nr)
+void TableSet::DrawPage (GtkPrintOperation *operation,
+                         GtkPrintContext   *context,
+                         gint               page_nr)
 {
   gdouble  paper_w   = gtk_print_context_get_width  (context);
   gdouble  paper_h   = gtk_print_context_get_height (context);
@@ -2601,6 +2597,10 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
 
     if (_print_session.CurrentPageHasHeader ())
     {
+      g_object_set_data_full (G_OBJECT (operation),
+                              "Print::PageName",
+                              GetPrintName (),
+                              g_free);
       container->DrawContainerPage (operation,
                                     context,
                                     page_nr);
@@ -2675,9 +2675,15 @@ void TableSet::OnDrawPage (GtkPrintOperation *operation,
 
         g_object_set_data (G_OBJECT (operation), "operation_matrix", (void *) &matrix);
 
-        container->DrawContainerPage (operation,
-                                      context,
-                                      page_nr);
+        {
+          g_object_set_data_full (G_OBJECT (operation),
+                                  "Print::PageName",
+                                  GetPrintName (),
+                                  g_free);
+          container->DrawContainerPage (operation,
+                                        context,
+                                        page_nr);
+        }
       }
 
       {

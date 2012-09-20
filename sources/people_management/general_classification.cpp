@@ -330,11 +330,68 @@ void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
       }
       if (export_type == PDF)
       {
-        classification->PrintPDF (gettext ("General classification"),
-                                  filename);
+        _contest->PrintPDF (gettext ("General classification"),
+                            filename);
       }
     }
     g_free (filename);
+  }
+}
+
+// --------------------------------------------------------------------------------
+gchar *GeneralClassification::GetPrintName ()
+{
+  return g_strdup_printf (gettext ("General classification"));
+}
+
+// --------------------------------------------------------------------------------
+guint GeneralClassification::PreparePrint (GtkPrintOperation *operation,
+                                           GtkPrintContext   *context)
+{
+  Classification *classification = GetClassification ();
+
+  if (classification)
+  {
+    return classification->PreparePrint (operation,
+                                         context);
+  }
+
+  return 0;
+}
+
+// --------------------------------------------------------------------------------
+void GeneralClassification::DrawPage (GtkPrintOperation *operation,
+                                      GtkPrintContext   *context,
+                                      gint               page_nr)
+{
+  Classification *classification = GetClassification ();
+
+  if (classification)
+  {
+    g_object_set_data_full (G_OBJECT (operation),
+                            "Print::PageName",
+                            (void *) GetPrintName (),
+                            g_free);
+    DrawContainerPage (operation,
+                       context,
+                       page_nr);
+
+    classification->DrawBarePage (operation,
+                                  context,
+                                  page_nr);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void GeneralClassification::OnEndPrint (GtkPrintOperation *operation,
+                                        GtkPrintContext   *context)
+{
+  Classification *classification = GetClassification ();
+
+  if (classification)
+  {
+    classification->OnEndPrint (operation,
+                                context);
   }
 }
 

@@ -1606,6 +1606,16 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
                           GtkPrintContext   *context,
                           gint               page_nr)
 {
+  _schedule->DrawBookPage (operation,
+                           context,
+                           page_nr);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::DrawPage (GtkPrintOperation *operation,
+                        GtkPrintContext   *context,
+                        gint               page_nr)
+{
   GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
   cairo_matrix_t *operation_matrix = (cairo_matrix_t *) g_object_get_data (G_OBJECT (operation),
                                                                            "operation_matrix");
@@ -1666,7 +1676,7 @@ void Contest::OnDrawPage (GtkPrintOperation *operation,
 
   {
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
-                         (const char *) g_object_get_data (G_OBJECT (operation), "job_name"),
+                         (const char *) g_object_get_data (G_OBJECT (operation), "Print::PageName"),
                          50.0, 7.5,
                          -1.0,
                          GTK_ANCHOR_CENTER,
@@ -1930,6 +1940,22 @@ void Contest::on_ftp_changed (GtkComboBox *widget)
     g_free (user);
     g_free (passwd);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::OnBeginPrint (GtkPrintOperation *operation,
+                            GtkPrintContext   *context)
+{
+  _schedule->PrepareBookPrint (operation,
+                               context);
+}
+
+// --------------------------------------------------------------------------------
+void Contest::OnEndPrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context)
+{
+  _schedule->StopBookPrint (operation,
+                            context);
 }
 
 // --------------------------------------------------------------------------------

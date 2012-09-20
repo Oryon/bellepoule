@@ -520,13 +520,19 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor::OnBeginPrint (GtkPrintOperation *operation,
-                                   GtkPrintContext   *context)
+guint PoolSupervisor::PreparePrint (GtkPrintOperation *operation,
+                                    GtkPrintContext   *context)
 {
+  if (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
+  {
+    _print_all_pool = TRUE;
+  }
+
   {
     GtkWidget *w = _glade->GetWidget ("for_referees_radiobutton");
 
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+    if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS") == FALSE)
+        && gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
       g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) TRUE);
     }
@@ -536,33 +542,38 @@ void PoolSupervisor::OnBeginPrint (GtkPrintOperation *operation,
     }
   }
 
-  if (_print_all_pool)
-  {
-    gtk_print_operation_set_n_pages (operation,
-                                     _pool_allocator->GetNbPools ());
-  }
-  else
-  {
-    gtk_print_operation_set_n_pages (operation,
-                                     1);
-  }
-
   if (_displayed_pool)
   {
     _displayed_pool->Wipe ();
   }
+
+  if (_print_all_pool)
+  {
+    return _pool_allocator->GetNbPools ();
+  }
+  else
+  {
+    return 1;
+  }
 }
 
 // --------------------------------------------------------------------------------
-void PoolSupervisor::OnDrawPage (GtkPrintOperation *operation,
-                                 GtkPrintContext   *context,
-                                 gint               page_nr)
+void PoolSupervisor::DrawPage (GtkPrintOperation *operation,
+                               GtkPrintContext   *context,
+                               gint               page_nr)
 {
-  DrawContainerPage (operation,
-                     context,
-                     page_nr);
+  {
+    g_object_set_data_full (G_OBJECT (operation),
+                            "Print::PageName",
+                            (void *) g_strdup_printf ("%s - %s", gettext ("Pools"), GetName ()),
+                            g_free);
+    DrawContainerPage (operation,
+                       context,
+                       page_nr);
+  }
 
-  if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE)
+  if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
+      || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE))
   {
     Pool *pool;
 

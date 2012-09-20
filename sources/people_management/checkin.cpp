@@ -768,29 +768,43 @@ void Checkin::on_players_list_row_activated (GtkTreePath *path)
 }
 
 // --------------------------------------------------------------------------------
+gchar *Checkin::GetPrintName ()
+{
+  gchar *name;
+
+  if (_print_missing && _print_attending)
+  {
+    name = g_strdup (gettext ("List of registered"));
+  }
+  else if ((_print_missing == FALSE) && _print_attending)
+  {
+    name = g_strdup (gettext ("List of presents"));
+  }
+  else if ((_print_attending == FALSE) && _print_missing)
+  {
+    name = g_strdup (gettext ("List of absents"));
+  }
+  else
+  {
+    name = g_strdup (gettext ("Fencer list"));
+  }
+
+  return name;
+}
+
+// --------------------------------------------------------------------------------
 void Checkin::OnPrint ()
 {
   if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
   {
+    gchar *name;
+
     _print_attending = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("attending_checkbutton")));
     _print_missing   = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("missing_checkbutton")));
 
-    if (_print_missing && _print_attending)
-    {
-      Print (gettext ("List of registered"));
-    }
-    else if ((_print_missing == FALSE) && _print_attending)
-    {
-      Print (gettext ("List of presents"));
-    }
-    else if ((_print_attending == FALSE) && _print_missing)
-    {
-      Print (gettext ("List of absents"));
-    }
-    else
-    {
-      Print (gettext ("Fencer list"));
-    }
+    name = GetPrintName ();
+    Print (name);
+    g_free (name);
   }
   gtk_widget_hide (_print_dialog);
 }

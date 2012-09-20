@@ -1420,8 +1420,8 @@ gboolean PoolAllocator::IsOver ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::OnBeginPrint (GtkPrintOperation *operation,
-                                  GtkPrintContext   *context)
+guint PoolAllocator::PreparePrint (GtkPrintOperation *operation,
+                                   GtkPrintContext   *context)
 {
   gdouble canvas_x;
   gdouble canvas_y;
@@ -1475,24 +1475,30 @@ void PoolAllocator::OnBeginPrint (GtkPrintOperation *operation,
     {
       _nb_page++;
     }
-
-    gtk_print_operation_set_n_pages (operation,
-                                     _nb_page);
   }
+
+  return _nb_page;
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
-                                GtkPrintContext   *context,
-                                gint               page_nr)
+void PoolAllocator::DrawPage (GtkPrintOperation *operation,
+                              GtkPrintContext   *context,
+                              gint               page_nr)
 {
-  gdouble paper_w = gtk_print_context_get_width  (context);
-  cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
+  gdouble          paper_w = gtk_print_context_get_width  (context);
+  cairo_t         *cr      = gtk_print_context_get_cairo_context (context);
   GooCanvasBounds  bounds;
 
-  DrawContainerPage (operation,
-                     context,
-                     page_nr);
+  {
+    g_object_set_data_full (G_OBJECT (operation),
+                            "Print::PageName",
+                            (void *) g_strdup_printf ("%s %s", gettext ("Allocation"), GetName ()),
+                            g_free);
+
+    DrawContainerPage (operation,
+                       context,
+                       page_nr);
+  }
 
   {
     GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);

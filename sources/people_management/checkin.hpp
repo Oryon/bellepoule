@@ -101,6 +101,8 @@ class Checkin : public PlayersList
                                     Object    *owner);
 
     gchar *GetFileContent (gchar *filename);
+
+    gchar *GetPrintName ();
 };
 
 #endif

@@ -90,12 +90,12 @@ class PoolSupervisor : public virtual Stage, public Module
 
     void SetInputProvider (Stage *input_provider);
 
-    void OnBeginPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
+    guint PreparePrint (GtkPrintOperation *operation,
+                        GtkPrintContext   *context);
 
-    void OnDrawPage (GtkPrintOperation *operation,
-                     GtkPrintContext   *context,
-                     gint               page_nr);
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page_nr);
 
     void OnEndPrint (GtkPrintOperation *operation,
                      GtkPrintContext   *context);

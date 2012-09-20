@@ -67,11 +67,11 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void SaveConfiguration (xmlTextWriter *xml_writer);
 
   private:
-    void OnBeginPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
-    void OnDrawPage (GtkPrintOperation *operation,
-                     GtkPrintContext   *context,
-                     gint               page_nr);
+    guint PreparePrint (GtkPrintOperation *operation,
+                        GtkPrintContext   *context);
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page_nr);
 
   private:
     typedef struct

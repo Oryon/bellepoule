@@ -492,7 +492,9 @@ void Module::Print (const gchar             *job_name,
 
   if (job_name)
   {
-    g_object_set_data (G_OBJECT (operation), "job_name", (void *) job_name);
+    g_object_set_data_full (G_OBJECT (operation),
+                            "Print::PageName", (void *) g_strdup (job_name),
+                            g_free);
   }
 
   {
@@ -584,9 +586,31 @@ void Module::Print (const gchar             *job_name,
 }
 
 // --------------------------------------------------------------------------------
+void Module::OnBeginPrint (GtkPrintOperation *operation,
+                           GtkPrintContext   *context)
+{
+  guint n_pages = PreparePrint (operation,
+                                context);
+
+  gtk_print_operation_set_n_pages (operation,
+                                   n_pages);
+}
+
+
+// --------------------------------------------------------------------------------
 void Module::OnDrawPage (GtkPrintOperation *operation,
                          GtkPrintContext   *context,
                          gint               page_nr)
+{
+  DrawPage (operation,
+            context,
+            page_nr);
+}
+
+// --------------------------------------------------------------------------------
+void Module::DrawPage (GtkPrintOperation *operation,
+                       GtkPrintContext   *context,
+                       gint               page_nr)
 {
   DrawContainerPage (operation,
                      context,
@@ -600,9 +624,9 @@ void Module::DrawContainerPage (GtkPrintOperation *operation,
 {
   if (_owner)
   {
-    _owner->OnDrawPage (operation,
-                        context,
-                        page_nr);
+    _owner->DrawPage (operation,
+                      context,
+                      page_nr);
   }
 }
 
@@ -613,6 +637,30 @@ void Module::MakeDirty ()
   {
     _owner->MakeDirty ();
   }
+}
+
+// --------------------------------------------------------------------------------
+void Module::SetPrintPages (gint first,
+                            gint last)
+{
+  if (first < 0)
+  {
+    _first_page_to_print = -1;
+    _last_page_to_print  = -1;
+  }
+  else
+  {
+    _first_page_to_print = first;
+    _last_page_to_print  = last;
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Module::GetPrintPages (gint *first,
+                            gint *last)
+{
+  *first = _first_page_to_print;
+  *last  = _last_page_to_print;
 }
 
 // --------------------------------------------------------------------------------

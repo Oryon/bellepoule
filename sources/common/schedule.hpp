@@ -56,6 +56,14 @@ class Schedule : public Module
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
 
+    void PrepareBookPrint (GtkPrintOperation *operation,
+                           GtkPrintContext   *context);
+    void DrawBookPage (GtkPrintOperation *operation,
+                       GtkPrintContext   *context,
+                       gint               page_nr);
+    void StopBookPrint (GtkPrintOperation *operation,
+                        GtkPrintContext   *context);
+
     void on_previous_stage_toolbutton_clicked ();
     void on_next_stage_toolbutton_clicked     ();
     void on_stage_selected ();
