@@ -86,8 +86,6 @@ class PlayersList : public Module
   protected:
     GtkListStore *_store;
 
-    virtual gchar *GetPrintName ();
-
   private:
     guint     _rights;
     guint     _nb_player_per_page;

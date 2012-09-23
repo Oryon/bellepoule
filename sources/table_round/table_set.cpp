@@ -2597,10 +2597,6 @@ void TableSet::DrawPage (GtkPrintOperation *operation,
 
     if (_print_session.CurrentPageHasHeader ())
     {
-      g_object_set_data_full (G_OBJECT (operation),
-                              "Print::PageName",
-                              GetPrintName (),
-                              g_free);
       container->DrawContainerPage (operation,
                                     context,
                                     page_nr);
@@ -2675,15 +2671,9 @@ void TableSet::DrawPage (GtkPrintOperation *operation,
 
         g_object_set_data (G_OBJECT (operation), "operation_matrix", (void *) &matrix);
 
-        {
-          g_object_set_data_full (G_OBJECT (operation),
-                                  "Print::PageName",
-                                  GetPrintName (),
-                                  g_free);
-          container->DrawContainerPage (operation,
-                                        context,
-                                        page_nr);
-        }
+        container->DrawContainerPage (operation,
+                                      context,
+                                      page_nr);
       }
 
       {

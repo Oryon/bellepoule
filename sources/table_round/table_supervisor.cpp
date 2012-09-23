@@ -1077,6 +1077,17 @@ void TableSupervisor::OnPrint ()
 }
 
 // --------------------------------------------------------------------------------
+gchar *TableSupervisor::GetPrintName ()
+{
+  if (_displayed_table_set)
+  {
+    return _displayed_table_set->GetPrintName ();
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 guint TableSupervisor::PreparePrint (GtkPrintOperation *operation,
                                      GtkPrintContext   *context)
 {
@@ -1087,15 +1098,17 @@ guint TableSupervisor::PreparePrint (GtkPrintOperation *operation,
 
     if (classification)
     {
-      _displayed_table_set->PreparePrint (operation,
-                                          context);
+      return _displayed_table_set->PreparePrint (operation,
+                                                 context);
     }
   }
   else if (_displayed_table_set)
   {
-    _displayed_table_set->PreparePrint (operation,
-                                        context);
+    return _displayed_table_set->PreparePrint (operation,
+                                               context);
   }
+
+  return 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -1110,10 +1123,6 @@ void TableSupervisor::DrawPage (GtkPrintOperation *operation,
 
     if (classification)
     {
-      g_object_set_data_full (G_OBJECT (operation),
-                              "Print::PageName",
-                              (void *) classification->GetPrintName (),
-                              g_free);
       DrawContainerPage (operation,
                          context,
                          page_nr);

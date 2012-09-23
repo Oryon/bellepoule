@@ -68,6 +68,8 @@ class TableSet : public CanvasModule
 
     void OnPrint ();
 
+    gchar *GetPrintName ();
+
     guint PreparePrint (GtkPrintOperation *operation,
                         GtkPrintContext   *context);
 
@@ -260,8 +262,6 @@ class TableSet : public CanvasModule
                               gboolean  all_sheet);
 
     void ConfigurePreviewLayout (GtkPrintContext *context);
-
-    gchar *GetPrintName ();
 
     gboolean PlaceIsFenced (guint place);
 

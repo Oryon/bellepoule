@@ -72,6 +72,7 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     void DrawPage (GtkPrintOperation *operation,
                    GtkPrintContext   *context,
                    gint               page_nr);
+    gchar *GetPrintName ();
 
   private:
     typedef struct

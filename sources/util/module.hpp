@@ -98,6 +98,8 @@ class Module : public virtual Object
     void GetPrintPages (gint *first,
                         gint *last);
 
+    virtual gchar *GetPrintName () {return NULL;};
+
   protected:
     typedef enum
     {

@@ -90,6 +90,8 @@ class PoolSupervisor : public virtual Stage, public Module
 
     void SetInputProvider (Stage *input_provider);
 
+    gchar *GetPrintName ();
+
     guint PreparePrint (GtkPrintOperation *operation,
                         GtkPrintContext   *context);
 

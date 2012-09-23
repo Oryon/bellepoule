@@ -520,6 +520,12 @@ void PoolSupervisor::OnPrintPoolToolbuttonClicked ()
 }
 
 // --------------------------------------------------------------------------------
+gchar *PoolSupervisor::GetPrintName ()
+{
+  return g_strdup_printf ("%s - %s", gettext ("Pools"), GetName ());
+}
+
+// --------------------------------------------------------------------------------
 guint PoolSupervisor::PreparePrint (GtkPrintOperation *operation,
                                     GtkPrintContext   *context)
 {
@@ -562,15 +568,9 @@ void PoolSupervisor::DrawPage (GtkPrintOperation *operation,
                                GtkPrintContext   *context,
                                gint               page_nr)
 {
-  {
-    g_object_set_data_full (G_OBJECT (operation),
-                            "Print::PageName",
-                            (void *) g_strdup_printf ("%s - %s", gettext ("Pools"), GetName ()),
-                            g_free);
-    DrawContainerPage (operation,
-                       context,
-                       page_nr);
-  }
+  DrawContainerPage (operation,
+                     context,
+                     page_nr);
 
   if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
       || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE))

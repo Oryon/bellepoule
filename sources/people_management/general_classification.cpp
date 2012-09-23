@@ -368,10 +368,6 @@ void GeneralClassification::DrawPage (GtkPrintOperation *operation,
 
   if (classification)
   {
-    g_object_set_data_full (G_OBJECT (operation),
-                            "Print::PageName",
-                            (void *) GetPrintName (),
-                            g_free);
     DrawContainerPage (operation,
                        context,
                        page_nr);

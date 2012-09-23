@@ -821,12 +821,6 @@ Player *PlayersList::GetPlayer (const gchar *path_string)
 }
 
 // --------------------------------------------------------------------------------
-gchar *PlayersList::GetPrintName ()
-{
-  return g_strdup ("");
-}
-
-// --------------------------------------------------------------------------------
 guint PlayersList::PreparePrint (GtkPrintOperation *operation,
                                  GtkPrintContext   *context)
 {
@@ -1113,10 +1107,6 @@ void PlayersList::DrawPage (GtkPrintOperation *operation,
                             GtkPrintContext   *context,
                             gint               page_nr)
 {
-  g_object_set_data_full (G_OBJECT (operation),
-                          "Print::PageName",
-                          (void *) GetPrintName (),
-                          g_free);
   DrawContainerPage (operation,
                      context,
                      page_nr);

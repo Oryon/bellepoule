@@ -1420,6 +1420,12 @@ gboolean PoolAllocator::IsOver ()
 }
 
 // --------------------------------------------------------------------------------
+gchar *PoolAllocator::GetPrintName ()
+{
+  return g_strdup_printf ("%s %s", gettext ("Allocation"), GetName ());
+}
+
+// --------------------------------------------------------------------------------
 guint PoolAllocator::PreparePrint (GtkPrintOperation *operation,
                                    GtkPrintContext   *context)
 {
@@ -1489,16 +1495,9 @@ void PoolAllocator::DrawPage (GtkPrintOperation *operation,
   cairo_t         *cr      = gtk_print_context_get_cairo_context (context);
   GooCanvasBounds  bounds;
 
-  {
-    g_object_set_data_full (G_OBJECT (operation),
-                            "Print::PageName",
-                            (void *) g_strdup_printf ("%s %s", gettext ("Allocation"), GetName ()),
-                            g_free);
-
-    DrawContainerPage (operation,
-                       context,
-                       page_nr);
-  }
+  DrawContainerPage (operation,
+                     context,
+                     page_nr);
 
   {
     GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
@@ -1709,7 +1708,7 @@ void PoolAllocator::OnComboboxChanged (GtkComboBox *cb)
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnPrintClicked ()
 {
-  gchar *title = g_strdup_printf ("%s %s", gettext ("Allocation"), GetName ());
+  gchar *title = GetPrintName ();
 
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("fencer_list"))))
   {
@@ -1750,8 +1749,7 @@ void PoolAllocator::OnLocked ()
 
     while (current)
     {
-      PoolZone *zone = (PoolZone *) current->data;
-      Pool     *pool = GetPoolOf (current);
+      Pool *pool = GetPoolOf (current);
 
       pool->CreateMatchs (_swapping_criteria);
       current = g_slist_next (current);

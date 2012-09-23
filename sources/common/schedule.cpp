@@ -1181,9 +1181,10 @@ void Schedule::PrepareBookPrint (GtkPrintOperation *operation,
   g_object_set_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS",  (void *) 1);
   while (current)
   {
-    Stage  *stage  = (Stage *) current->data;
-    Module *module = dynamic_cast <Module *> (stage);
-    guint   n;
+    Stage          *stage          = (Stage *) current->data;
+    Module         *module         = dynamic_cast <Module *> (stage);
+    //Classification *classification = stage->GetClassification ();
+    guint           n;
 
     n = module->PreparePrint (operation,
                               context);
@@ -1225,6 +1226,10 @@ void Schedule::DrawBookPage (GtkPrintOperation *operation,
 
     if ((first_page <= page_nr) && (last_page >= page_nr))
     {
+      g_object_set_data_full (G_OBJECT (operation),
+                              "Print::PageName",
+                              (void *) module->GetPrintName (),
+                              g_free);
       module->DrawPage (operation,
                         context,
                         page_nr-first_page);
