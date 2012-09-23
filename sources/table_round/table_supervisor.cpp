@@ -1077,6 +1077,69 @@ void TableSupervisor::OnPrint ()
 }
 
 // --------------------------------------------------------------------------------
+gchar *TableSupervisor::GetPrintName ()
+{
+  if (_displayed_table_set)
+  {
+    return _displayed_table_set->GetPrintName ();
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+guint TableSupervisor::PreparePrint (GtkPrintOperation *operation,
+                                     GtkPrintContext   *context)
+{
+  if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS") == FALSE)
+      && gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      return _displayed_table_set->PreparePrint (operation,
+                                                 context);
+    }
+  }
+  else if (_displayed_table_set)
+  {
+    return _displayed_table_set->PreparePrint (operation,
+                                               context);
+  }
+
+  return 0;
+}
+
+// --------------------------------------------------------------------------------
+void TableSupervisor::DrawPage (GtkPrintOperation *operation,
+                                GtkPrintContext   *context,
+                                gint               page_nr)
+{
+  if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS") == FALSE)
+      && gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      DrawContainerPage (operation,
+                         context,
+                         page_nr);
+      classification->DrawBarePage (operation,
+                                    context,
+                                    page_nr);
+    }
+  }
+  else if (_displayed_table_set)
+  {
+    _displayed_table_set->DrawPage (operation,
+                                    context,
+                                    page_nr);
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_table_filter_toolbutton_clicked (GtkWidget *widget,
                                                                     Object    *owner)
 {

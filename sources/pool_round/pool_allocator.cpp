@@ -1420,8 +1420,14 @@ gboolean PoolAllocator::IsOver ()
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::OnBeginPrint (GtkPrintOperation *operation,
-                                  GtkPrintContext   *context)
+gchar *PoolAllocator::GetPrintName ()
+{
+  return g_strdup_printf ("%s %s", gettext ("Allocation"), GetName ());
+}
+
+// --------------------------------------------------------------------------------
+guint PoolAllocator::PreparePrint (GtkPrintOperation *operation,
+                                   GtkPrintContext   *context)
 {
   gdouble canvas_x;
   gdouble canvas_y;
@@ -1475,19 +1481,18 @@ void PoolAllocator::OnBeginPrint (GtkPrintOperation *operation,
     {
       _nb_page++;
     }
-
-    gtk_print_operation_set_n_pages (operation,
-                                     _nb_page);
   }
+
+  return _nb_page;
 }
 
 // --------------------------------------------------------------------------------
-void PoolAllocator::OnDrawPage (GtkPrintOperation *operation,
-                                GtkPrintContext   *context,
-                                gint               page_nr)
+void PoolAllocator::DrawPage (GtkPrintOperation *operation,
+                              GtkPrintContext   *context,
+                              gint               page_nr)
 {
-  gdouble paper_w = gtk_print_context_get_width  (context);
-  cairo_t         *cr       = gtk_print_context_get_cairo_context (context);
+  gdouble          paper_w = gtk_print_context_get_width  (context);
+  cairo_t         *cr      = gtk_print_context_get_cairo_context (context);
   GooCanvasBounds  bounds;
 
   DrawContainerPage (operation,
@@ -1703,7 +1708,7 @@ void PoolAllocator::OnComboboxChanged (GtkComboBox *cb)
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnPrintClicked ()
 {
-  gchar *title = g_strdup_printf ("%s %s", gettext ("Allocation"), GetName ());
+  gchar *title = GetPrintName ();
 
   if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("fencer_list"))))
   {
@@ -1744,8 +1749,7 @@ void PoolAllocator::OnLocked ()
 
     while (current)
     {
-      PoolZone *zone = (PoolZone *) current->data;
-      Pool     *pool = GetPoolOf (current);
+      Pool *pool = GetPoolOf (current);
 
       pool->CreateMatchs (_swapping_criteria);
       current = g_slist_next (current);

@@ -114,12 +114,12 @@ class Tournament : public Module
 
     gchar *GetHttpResponse (const gchar *url);
 
-    void OnBeginPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
+    guint PreparePrint (GtkPrintOperation *operation,
+                        GtkPrintContext   *context);
 
-    void OnDrawPage (GtkPrintOperation *operation,
-                     GtkPrintContext   *context,
-                     gint               page_nr);
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page_nr);
 
     static gchar *OnGetHttpResponse (Object      *client,
                                      const gchar *url);

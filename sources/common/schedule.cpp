@@ -1172,6 +1172,92 @@ void Schedule::on_stage_removed ()
 }
 
 // --------------------------------------------------------------------------------
+void Schedule::PrepareBookPrint (GtkPrintOperation *operation,
+                                 GtkPrintContext   *context)
+{
+  guint  n_pages = 0;
+  GList *current = _stage_list;
+
+  g_object_set_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS",  (void *) 1);
+  while (current)
+  {
+    Stage          *stage          = (Stage *) current->data;
+    Module         *module         = dynamic_cast <Module *> (stage);
+    //Classification *classification = stage->GetClassification ();
+    guint           n;
+
+    n = module->PreparePrint (operation,
+                              context);
+    if (n)
+    {
+      module->SetPrintPages (n_pages,
+                             n_pages + n-1);
+      n_pages += n;
+    }
+    else
+    {
+      module->SetPrintPages (-1,
+                             -1);
+    }
+
+    current = g_list_next (current);
+  }
+
+  gtk_print_operation_set_n_pages (operation,
+                                   n_pages);
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::DrawBookPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr)
+{
+  GList *current = _stage_list;
+
+  while (current)
+  {
+    Stage  *stage  = (Stage *) current->data;
+    Module *module = dynamic_cast <Module *> (stage);
+    gint    first_page;
+    gint    last_page;
+
+    module->GetPrintPages (&first_page,
+                           &last_page);
+
+    if ((first_page <= page_nr) && (last_page >= page_nr))
+    {
+      g_object_set_data_full (G_OBJECT (operation),
+                              "Print::PageName",
+                              (void *) module->GetPrintName (),
+                              g_free);
+      module->DrawPage (operation,
+                        context,
+                        page_nr-first_page);
+    }
+
+    current = g_list_next (current);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::StopBookPrint (GtkPrintOperation *operation,
+                              GtkPrintContext   *context)
+{
+  GList *current = _stage_list;
+
+  while (current)
+  {
+    Stage  *stage  = (Stage *) current->data;
+    Module *module = dynamic_cast <Module *> (stage);
+
+    module->OnEndPrint (operation,
+                        context);
+
+    current = g_list_next (current);
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_remove_stage_toolbutton_clicked (GtkWidget *widget,
                                                                     Object    *owner)
 {

@@ -1145,9 +1145,9 @@ void Pool::DrawPage (GtkPrintOperation *operation,
         (gboolean) GPOINTER_TO_INT(g_object_get_data (G_OBJECT (operation), "print_for_referees")));
 
   g_object_set_data (G_OBJECT (operation), "operation_canvas", (void *) canvas);
-  CanvasModule::OnDrawPage (operation,
-                            context,
-                            page_nr);
+  CanvasModule::DrawPage (operation,
+                          context,
+                          page_nr);
   Wipe ();
 
   gtk_widget_destroy (GTK_WIDGET (canvas));

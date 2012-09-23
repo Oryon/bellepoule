@@ -256,7 +256,7 @@ extern "C" G_MODULE_EXPORT void on_splitting_print_toolbutton_clicked (GtkWidget
 {
   Splitting *s = dynamic_cast <Splitting *> (owner);
 
-  s->Print ("Liste des tireurs à extraire");
+  s->Print (gettext ("Liste des tireurs à extraire"));
 }
 
 // --------------------------------------------------------------------------------

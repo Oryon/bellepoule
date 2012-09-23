@@ -821,9 +821,11 @@ Player *PlayersList::GetPlayer (const gchar *path_string)
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
-                                GtkPrintContext   *context)
+guint PlayersList::PreparePrint (GtkPrintOperation *operation,
+                                 GtkPrintContext   *context)
 {
+  _nb_pages = 0;
+
   if (_filter)
   {
     guint   nb_players  = g_slist_length (_player_list);
@@ -832,7 +834,8 @@ void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
 
     _column_width = (gdouble *) g_malloc0 (g_slist_length (_filter->GetLayoutList ()) * sizeof (gdouble));
 
-    GetPrintScale (context,
+    GetPrintScale (operation,
+                   context,
                    &_print_scale,
                    &canvas_w,
                    &canvas_h);
@@ -852,11 +855,10 @@ void PlayersList::OnBeginPrint (GtkPrintOperation *operation,
       {
         _nb_pages++;
       }
-
-      gtk_print_operation_set_n_pages (operation,
-                                       _nb_pages);
     }
   }
+
+  return _nb_pages;
 }
 
 // --------------------------------------------------------------------------------
@@ -1030,10 +1032,11 @@ void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::GetPrintScale (GtkPrintContext *context,
-                                 gdouble         *scale,
-                                 gdouble         *canvas_w,
-                                 gdouble         *canvas_h)
+void PlayersList::GetPrintScale (GtkPrintOperation *operation,
+                                 GtkPrintContext   *context,
+                                 gdouble           *scale,
+                                 gdouble           *canvas_w,
+                                 gdouble           *canvas_h)
 {
   GSList    *current_player;
   guint      nb_players = 0;
@@ -1045,11 +1048,10 @@ void PlayersList::GetPrintScale (GtkPrintContext *context,
   current_player = _player_list;
   for (guint i = 0; current_player != NULL; i++)
   {
-    Player *player;
+    Player *player = (Player *) current_player->data;
 
-    player = (Player *) current_player->data;
-
-    if (PlayerIsPrintable (player))
+    if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
+        || PlayerIsPrintable (player))
     {
       PrintPlayer (goo_canvas_get_root_item (canvas),
                    context,
@@ -1101,14 +1103,24 @@ void PlayersList::GetPrintScale (GtkPrintContext *context,
 }
 
 // --------------------------------------------------------------------------------
-void PlayersList::OnDrawPage (GtkPrintOperation *operation,
-                              GtkPrintContext   *context,
-                              gint               page_nr)
+void PlayersList::DrawPage (GtkPrintOperation *operation,
+                            GtkPrintContext   *context,
+                            gint               page_nr)
 {
   DrawContainerPage (operation,
                      context,
                      page_nr);
 
+  DrawBarePage (operation,
+                context,
+                page_nr);
+}
+
+// --------------------------------------------------------------------------------
+void PlayersList::DrawBarePage (GtkPrintOperation *operation,
+                                GtkPrintContext   *context,
+                                gint               page_nr)
+{
   if (_column_width == NULL)
   {
     return;
@@ -1158,11 +1170,10 @@ void PlayersList::OnDrawPage (GtkPrintOperation *operation,
 
         for (guint i = 0; iter_is_valid && (nb_players < _nb_player_per_page); i++)
         {
-          Player *current_player;
+          Player *current_player = GetPlayer (GTK_TREE_MODEL (_store), &iter);
 
-          current_player = GetPlayer (GTK_TREE_MODEL (_store), &iter);
-
-          if (PlayerIsPrintable (current_player))
+          if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
+              || PlayerIsPrintable (current_player))
           {
             PrintPlayer (goo_canvas_get_root_item (canvas),
                          context,

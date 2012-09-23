@@ -52,11 +52,11 @@ class CanvasModule : public Module
                                    ...);
 
   protected:
-    virtual void OnBeginPrint (GtkPrintOperation *operation,
-                               GtkPrintContext   *context);
-    virtual void OnDrawPage (GtkPrintOperation *operation,
-                             GtkPrintContext   *context,
-                             gint               page_nr);
+    virtual guint PreparePrint (GtkPrintOperation *operation,
+                                GtkPrintContext   *context);
+    virtual void DrawPage (GtkPrintOperation *operation,
+                           GtkPrintContext   *context,
+                           gint               page_nr);
     virtual gboolean OnPreview (GtkPrintOperation        *operation,
                                 GtkPrintOperationPreview *preview,
                                 GtkPrintContext          *context,

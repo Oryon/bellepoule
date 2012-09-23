@@ -304,17 +304,16 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule::OnBeginPrint (GtkPrintOperation *operation,
+guint CanvasModule::PreparePrint (GtkPrintOperation *operation,
                                  GtkPrintContext   *context)
 {
-  gtk_print_operation_set_n_pages (operation,
-                                   1);
+  return 1;
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
-                               GtkPrintContext   *context,
-                               gint               page_nr)
+void CanvasModule::DrawPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr)
 {
   cairo_t   *cr     = gtk_print_context_get_cairo_context (context);
   GooCanvas *canvas = (GooCanvas *) g_object_get_data (G_OBJECT (operation), "operation_canvas");
@@ -324,9 +323,9 @@ void CanvasModule::OnDrawPage (GtkPrintOperation *operation,
   {
     canvas = _canvas;
 
-    Module::OnDrawPage (operation,
-                        context,
-                        page_nr);
+    Module::DrawPage (operation,
+                      context,
+                      page_nr);
   }
 
   cairo_save (cr);

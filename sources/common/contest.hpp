@@ -180,6 +180,10 @@ class Contest : public Module
                      GtkPrintContext   *context,
                      gint               page_nr);
 
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page_nr);
+
     void ChooseColor ();
 
     void MakeDirty ();
@@ -191,6 +195,12 @@ class Contest : public Module
     static gboolean OnCompetitionReceived (Downloader::CallbackData *cbk_data);
 
     void OnPlugged ();
+
+  private:
+    void OnBeginPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
+    void OnEndPrint (GtkPrintOperation *operation,
+                     GtkPrintContext   *context);
 };
 
 #endif

@@ -75,11 +75,30 @@ class Module : public virtual Object
                             GtkPrintContext   *context,
                             gint               page_nr);
 
+    virtual void OnEndPrint (GtkPrintOperation *operation,
+                             GtkPrintContext   *context) {};
+
     virtual State GetState ();
 
     virtual void RefreshMatchRate (gint delta);
 
     virtual void RefreshMatchRate (Player *player);
+
+  public:
+    virtual guint PreparePrint (GtkPrintOperation *operation,
+                                GtkPrintContext   *context) {return 0;};
+
+    virtual void DrawPage (GtkPrintOperation *operation,
+                           GtkPrintContext   *context,
+                           gint               page_nr);
+
+    void SetPrintPages (gint first,
+                        gint last);
+
+    void GetPrintPages (gint *first,
+                        gint *last);
+
+    virtual gchar *GetPrintName () {return NULL;};
 
   protected:
     typedef enum
@@ -96,6 +115,8 @@ class Module : public virtual Object
     GtkPrintSettings *_print_settings;
     GtkPrintSettings *_page_setup_print_settings;
     GtkPageSetup     *_default_page_setup;
+    gint              _first_page_to_print;
+    gint              _last_page_to_print;
 
     static const gdouble PRINT_HEADER_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;
@@ -122,19 +143,19 @@ class Module : public virtual Object
 
     GtkTreeModel *GetStatusModel ();
 
-    virtual void OnDrawPage (GtkPrintOperation *operation,
-                             GtkPrintContext   *context,
-                             gint               page_nr);
-
     virtual void MakeDirty ();
 
     void SetDndSource (GtkWidget *widget);
 
     void SetDndDest (GtkWidget *widget);
 
-  private:
     virtual void OnBeginPrint (GtkPrintOperation *operation,
-                               GtkPrintContext   *context) {};
+                               GtkPrintContext   *context);
+
+  private:
+    virtual void OnDrawPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr);
     virtual gboolean OnPreview (GtkPrintOperation        *operation,
                                 GtkPrintOperationPreview *preview,
                                 GtkPrintContext          *context,
@@ -144,8 +165,6 @@ class Module : public virtual Object
                                        GtkPageSetup             *page_setup) {};
     virtual void OnPreviewReady (GtkPrintOperationPreview *preview,
                                  GtkPrintContext          *context) {};
-    virtual void OnEndPrint (GtkPrintOperation *operation,
-                             GtkPrintContext   *context) {};
 
   private:
     static GtkTreeModel   *_status_model;

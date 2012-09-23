@@ -267,8 +267,8 @@ void Tournament::Init ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnBeginPrint (GtkPrintOperation *operation,
-                               GtkPrintContext   *context)
+guint Tournament::PreparePrint (GtkPrintOperation *operation,
+                                GtkPrintContext   *context)
 {
   guint list_length = g_slist_length (_referee_list);
   guint n;
@@ -292,14 +292,13 @@ void Tournament::OnBeginPrint (GtkPrintOperation *operation,
     }
   }
 
-  gtk_print_operation_set_n_pages (operation,
-                                   n);
+  return n;
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnDrawPage (GtkPrintOperation *operation,
-                             GtkPrintContext   *context,
-                             gint               page_nr)
+void Tournament::DrawPage (GtkPrintOperation *operation,
+                           GtkPrintContext   *context,
+                           gint               page_nr)
 {
   gdouble        paper_w  = gtk_print_context_get_width  (context);
   gdouble        paper_h  = gtk_print_context_get_height (context);

@@ -124,6 +124,15 @@ class TableSupervisor : public virtual Stage, public Module
 
     void OnTableSetSelected (TableSet *table_set);
 
+    gchar *GetPrintName ();
+
+    guint PreparePrint (GtkPrintOperation *operation,
+                        GtkPrintContext   *context);
+
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page_nr);
+
     static gboolean TableSetIsOver (GtkTreeModel    *model,
                                     GtkTreePath     *path,
                                     GtkTreeIter     *iter,
