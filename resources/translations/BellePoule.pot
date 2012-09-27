@@ -1,13 +1,14 @@
-# Translation for bellepoule
-# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
-# This file is distributed under the same license as the BellePoule package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: bellepoule\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-14 16:53+0200\n"
+"POT-Creation-Date: 2012-09-24 16:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,7 +87,7 @@ msgid "BellePoule files (.cotcot)"
 msgstr ""
 
 #: ../../sources/common/contest.cpp:1534
-#: ../../sources/common/tournament.cpp:987
+#: ../../sources/common/tournament.cpp:986
 #: ../../sources/people_management/checkin.cpp:249
 #: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
@@ -238,52 +239,52 @@ msgstr ""
 msgid "All the inputs of this round will be cancelled."
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:480
-#: ../../sources/common/tournament.cpp:1390
+#: ../../sources/common/tournament.cpp:479
+#: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:492
+#: ../../sources/common/tournament.cpp:491
 msgid "Page"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:842
+#: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:959
+#: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:972
+#: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1230
+#: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1245
+#: ../../sources/common/tournament.cpp:1244
 msgid "BellePoule files"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1383
+#: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1431
+#: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1664
+#: ../../sources/common/tournament.cpp:1663
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1667
+#: ../../sources/common/tournament.cpp:1666
 msgid "Quit BellePoule?"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1670
+#: ../../sources/common/tournament.cpp:1669
 msgid "All the unsaved competions will be lost."
 msgstr ""
 
@@ -308,19 +309,19 @@ msgstr ""
 msgid "Referee files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:780
+#: ../../sources/people_management/checkin.cpp:777
 msgid "List of registered"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:784
+#: ../../sources/people_management/checkin.cpp:781
 msgid "List of presents"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:788
+#: ../../sources/people_management/checkin.cpp:785
 msgid "List of absents"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:792
+#: ../../sources/people_management/checkin.cpp:789
 #: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr ""
@@ -339,6 +340,7 @@ msgstr ""
 #: ../../sources/people_management/general_classification.cpp:26
 #: ../../sources/people_management/general_classification.cpp:186
 #: ../../sources/people_management/general_classification.cpp:333
+#: ../../sources/people_management/general_classification.cpp:344
 msgid "General classification"
 msgstr ""
 
@@ -362,23 +364,27 @@ msgstr ""
 msgid "Split"
 msgstr ""
 
+#: ../../sources/people_management/splitting.cpp:259
+msgid "List of fencers to extract"
+msgstr ""
+
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
 msgid "Pool #%02d"
 msgstr ""
 
 #: ../../sources/pool_round/pool.cpp:448
-#: ../../sources/table_round/table_set.cpp:2726
+#: ../../sources/table_round/table_set.cpp:2722
 msgid "Referee"
 msgstr ""
 
 #: ../../sources/pool_round/pool.cpp:489
-#: ../../sources/table_round/table_set.cpp:2765
+#: ../../sources/table_round/table_set.cpp:2761
 msgid "Piste"
 msgstr ""
 
 #: ../../sources/pool_round/pool.cpp:693
-#: ../../sources/table_round/table_set.cpp:2925
+#: ../../sources/table_round/table_set.cpp:2921
 msgid "Signature"
 msgstr ""
 
@@ -414,12 +420,13 @@ msgstr ""
 msgid "Pools arrangement"
 msgstr ""
 
-#: ../../sources/pool_round/pool_allocator.cpp:1703
+#: ../../sources/pool_round/pool_allocator.cpp:1425
 msgid "Allocation"
 msgstr ""
 
 #: ../../sources/pool_round/pool_supervisor.cpp:25
 #: ../../sources/pool_round/pool_supervisor.cpp:515
+#: ../../sources/pool_round/pool_supervisor.cpp:525
 msgid "Pools"
 msgstr ""
 
@@ -453,8 +460,8 @@ msgid "Table of %d"
 msgstr ""
 
 #: ../../sources/table_round/table_set.cpp:93
-#: ../../sources/table_round/table_set.cpp:2839
-#: ../../sources/table_round/table_set.cpp:2846
+#: ../../sources/table_round/table_set.cpp:2835
+#: ../../sources/table_round/table_set.cpp:2842
 msgid "Place #"
 msgstr ""
 
@@ -473,19 +480,19 @@ msgstr ""
 msgid "cutting"
 msgstr ""
 
-#: ../../sources/table_round/table_set.cpp:2698
+#: ../../sources/table_round/table_set.cpp:2694
 #, c-format
 msgid "Match %s"
 msgstr ""
 
-#: ../../sources/table_round/table_set.cpp:2837
-#: ../../sources/table_round/table_set.cpp:2845
+#: ../../sources/table_round/table_set.cpp:2833
+#: ../../sources/table_round/table_set.cpp:2841
 #: ../../sources/table_round/table_supervisor.cpp:31
 #: ../../resources/glade/table_supervisor.glade:358
 msgid "Table"
 msgstr ""
 
-#: ../../sources/table_round/table_set.cpp:2997
+#: ../../sources/table_round/table_set.cpp:2993
 #, c-format
 msgid "%s: score sheets printing"
 msgstr ""

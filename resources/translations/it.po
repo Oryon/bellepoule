@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-14 16:53+0200\n"
+"POT-Creation-Date: 2012-09-24 16:27+0200\n"
 "PO-Revision-Date: 2012-09-22 08:54+0000\n"
 "Last-Translator: Aureliano Martini <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,7 +87,7 @@ msgid "BellePoule files (.cotcot)"
 msgstr "Documento BellePoule (.cotcot)"
 
 #: ../../sources/common/contest.cpp:1534
-#: ../../sources/common/tournament.cpp:987
+#: ../../sources/common/tournament.cpp:986
 #: ../../sources/people_management/checkin.cpp:249
 #: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
@@ -239,52 +239,52 @@ msgstr "Tornare al turno precedente?"
 msgid "All the inputs of this round will be cancelled."
 msgstr "Tutti i dati di questo turno saranno cancellati."
 
-#: ../../sources/common/tournament.cpp:480
-#: ../../sources/common/tournament.cpp:1390
+#: ../../sources/common/tournament.cpp:479
+#: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
 msgstr "Elenco pagamenti"
 
-#: ../../sources/common/tournament.cpp:492
+#: ../../sources/common/tournament.cpp:491
 msgid "Page"
 msgstr "Pagina"
 
-#: ../../sources/common/tournament.cpp:842
+#: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
 msgstr "Riavviare BellePoule per attualizzare i cambiamenti"
 
-#: ../../sources/common/tournament.cpp:959
+#: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
 msgstr "Scegliere una gara da visualizzare... "
 
-#: ../../sources/common/tournament.cpp:972
+#: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
 msgstr "Documento di competizione (.cotcot / .xml)"
 
-#: ../../sources/common/tournament.cpp:1230
+#: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
 msgstr "Documenti recenti"
 
-#: ../../sources/common/tournament.cpp:1245
+#: ../../sources/common/tournament.cpp:1244
 msgid "BellePoule files"
 msgstr "Documenti di BellePoule"
 
-#: ../../sources/common/tournament.cpp:1383
+#: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
 msgstr "Buoni pasto"
 
-#: ../../sources/common/tournament.cpp:1431
+#: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
 msgstr "Destinazione del backup..."
 
-#: ../../sources/common/tournament.cpp:1664
+#: ../../sources/common/tournament.cpp:1663
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
 msgstr "<b><big>Uscire da BellePoule</big></b>"
 
-#: ../../sources/common/tournament.cpp:1667
+#: ../../sources/common/tournament.cpp:1666
 msgid "Quit BellePoule?"
 msgstr "Uscire da BellePoule?"
 
-#: ../../sources/common/tournament.cpp:1670
+#: ../../sources/common/tournament.cpp:1669
 msgid "All the unsaved competions will be lost."
 msgstr "Tutte le modifiche non salvate saranno abbandonate."
 
@@ -309,19 +309,19 @@ msgstr "Lista degli atleti"
 msgid "Referee files"
 msgstr "Lista degli arbitri"
 
-#: ../../sources/people_management/checkin.cpp:780
+#: ../../sources/people_management/checkin.cpp:777
 msgid "List of registered"
 msgstr "Elenco degli iscritti"
 
-#: ../../sources/people_management/checkin.cpp:784
+#: ../../sources/people_management/checkin.cpp:781
 msgid "List of presents"
 msgstr "Elenco dei presenti"
 
-#: ../../sources/people_management/checkin.cpp:788
+#: ../../sources/people_management/checkin.cpp:785
 msgid "List of absents"
 msgstr "Elenco degli assenti"
 
-#: ../../sources/people_management/checkin.cpp:792
+#: ../../sources/people_management/checkin.cpp:789
 #: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr "Elenco degli atleti"
@@ -342,6 +342,7 @@ msgstr ""
 #: ../../sources/people_management/general_classification.cpp:26
 #: ../../sources/people_management/general_classification.cpp:186
 #: ../../sources/people_management/general_classification.cpp:333
+#: ../../sources/people_management/general_classification.cpp:344
 msgid "General classification"
 msgstr "Classifica generale"
 
@@ -365,23 +366,27 @@ msgstr "Tutti i documenti PDF (.PDF)"
 msgid "Split"
 msgstr "Divisione"
 
+#: ../../sources/people_management/splitting.cpp:259
+msgid "List of fencers to extract"
+msgstr ""
+
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
 msgid "Pool #%02d"
 msgstr "Girone #%02d"
 
 #: ../../sources/pool_round/pool.cpp:448
-#: ../../sources/table_round/table_set.cpp:2726
+#: ../../sources/table_round/table_set.cpp:2722
 msgid "Referee"
 msgstr "Arbitro"
 
 #: ../../sources/pool_round/pool.cpp:489
-#: ../../sources/table_round/table_set.cpp:2765
+#: ../../sources/table_round/table_set.cpp:2761
 msgid "Piste"
 msgstr "Pedana"
 
 #: ../../sources/pool_round/pool.cpp:693
-#: ../../sources/table_round/table_set.cpp:2925
+#: ../../sources/table_round/table_set.cpp:2921
 msgid "Signature"
 msgstr "Firma"
 
@@ -417,12 +422,13 @@ msgstr "Posto"
 msgid "Pools arrangement"
 msgstr "Composizione dei gironi"
 
-#: ../../sources/pool_round/pool_allocator.cpp:1703
+#: ../../sources/pool_round/pool_allocator.cpp:1425
 msgid "Allocation"
 msgstr "Ripartizione"
 
 #: ../../sources/pool_round/pool_supervisor.cpp:25
 #: ../../sources/pool_round/pool_supervisor.cpp:515
+#: ../../sources/pool_round/pool_supervisor.cpp:525
 msgid "Pools"
 msgstr "Girone"
 
@@ -456,15 +462,15 @@ msgid "Table of %d"
 msgstr "Tabellone di %d"
 
 #: ../../sources/table_round/table_set.cpp:93
-#: ../../sources/table_round/table_set.cpp:2839
-#: ../../sources/table_round/table_set.cpp:2846
+#: ../../sources/table_round/table_set.cpp:2835
+#: ../../sources/table_round/table_set.cpp:2842
 msgid "Place #"
 msgstr "Rango #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr "<b><big>Quali assalti stampare?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
@@ -476,19 +482,19 @@ msgstr "Stampa del tabellone"
 msgid "cutting"
 msgstr "Taglio"
 
-#: ../../sources/table_round/table_set.cpp:2698
+#: ../../sources/table_round/table_set.cpp:2694
 #, c-format
 msgid "Match %s"
 msgstr "Match %s"
 
-#: ../../sources/table_round/table_set.cpp:2837
-#: ../../sources/table_round/table_set.cpp:2845
+#: ../../sources/table_round/table_set.cpp:2833
+#: ../../sources/table_round/table_set.cpp:2841
 #: ../../sources/table_round/table_supervisor.cpp:31
 #: ../../resources/glade/table_supervisor.glade:358
 msgid "Table"
 msgstr "Tabellone"
 
-#: ../../sources/table_round/table_set.cpp:2997
+#: ../../sources/table_round/table_set.cpp:2993
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s: stampa degli assalti"
@@ -1029,12 +1035,3 @@ msgstr "Manuale dell'utente"
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
 msgstr "Modello lista atleti (.csv)"
-
-#~ msgid "9999"
-#~ msgstr "9999"
-
-#~ msgid ":"
-#~ msgstr ":"
-
-#~ msgid "31/03/2009"
-#~ msgstr "31/03/2009"
