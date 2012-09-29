@@ -13,8 +13,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-23 04:44+0000\n"
-"X-Generator: Launchpad (build 15985)\n"
+"X-Launchpad-Export-Date: 2012-09-29 05:03+0000\n"
+"X-Generator: Launchpad (build 16049)\n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -469,8 +469,8 @@ msgstr "Rango #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 msgstr "<b><big>Quali assalti stampare?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
@@ -1035,3 +1035,12 @@ msgstr "Manuale dell'utente"
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
 msgstr "Modello lista atleti (.csv)"
+
+#~ msgid "9999"
+#~ msgstr "9999"
+
+#~ msgid ":"
+#~ msgstr ":"
+
+#~ msgid "31/03/2009"
+#~ msgstr "31/03/2009"

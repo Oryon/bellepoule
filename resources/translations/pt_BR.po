@@ -13,8 +13,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-19 04:47+0000\n"
-"X-Generator: Launchpad (build 15966)\n"
+"X-Launchpad-Export-Date: 2012-09-29 05:03+0000\n"
+"X-Generator: Launchpad (build 16049)\n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -467,8 +467,8 @@ msgstr ""
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 msgstr ""
 
 #: ../../sources/table_round/table_set.cpp:123
@@ -1015,3 +1015,6 @@ msgstr ""
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
 msgstr ""
+
+#~ msgid "9999"
+#~ msgstr "9999"
