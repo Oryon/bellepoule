@@ -103,6 +103,8 @@ class Checkin : public PlayersList
     gchar *GetFileContent (gchar *filename);
 
     gchar *GetPrintName ();
+
+    void GuessPlayerLeague (Player *player);
 };
 
 #endif
