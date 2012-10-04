@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-24 16:27+0200\n"
-"PO-Revision-Date: 2011-10-10 22:27+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2012-10-03 15:26+0000\n"
+"Last-Translator: werner huysmans <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-29 05:03+0000\n"
-"X-Generator: Launchpad (build 16049)\n"
+"X-Launchpad-Export-Date: 2012-10-04 05:22+0000\n"
+"X-Generator: Launchpad (build 16061)\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: ../../sources/common/contest.cpp:56
@@ -104,7 +104,7 @@ msgstr "plaats"
 
 #: ../../sources/common/main.cpp:255
 msgid "last name"
-msgstr "naam"
+msgstr "famillienaam"
 
 #: ../../sources/common/main.cpp:257
 msgid "first name"
@@ -136,15 +136,15 @@ msgstr "licentie"
 
 #: ../../sources/common/main.cpp:285
 msgid "smartphone"
-msgstr ""
+msgstr "smartphone"
 
 #: ../../sources/common/main.cpp:287
 msgid "rate"
-msgstr ""
+msgstr "ranking"
 
 #: ../../sources/common/main.cpp:292
 msgid "level"
-msgstr ""
+msgstr "niveau"
 
 #: ../../sources/common/main.cpp:295
 msgid "ranking"
@@ -156,7 +156,7 @@ msgstr "start ranking"
 
 #: ../../sources/common/main.cpp:302
 msgid "presence"
-msgstr "presentatie"
+msgstr "aanwezigheid"
 
 #: ../../sources/common/main.cpp:307
 msgid "exported"
@@ -194,7 +194,7 @@ msgstr "status"
 
 #: ../../sources/common/main.cpp:329
 msgid "pool #"
-msgstr ""
+msgstr "poule"
 
 #: ../../sources/common/main.cpp:333
 msgid "Vict./Bouts (‰)"
@@ -210,48 +210,48 @@ msgstr "Treffers gezet"
 
 #: ../../sources/common/main.cpp:350
 msgid "Round start rank"
-msgstr "Ingangsrang"
+msgstr "start ranking"
 
 #: ../../sources/common/main.cpp:355
 msgid "availability"
-msgstr ""
+msgstr "beschikbaarheid"
 
 #: ../../sources/common/main.cpp:360
 msgid "Busy"
-msgstr ""
+msgstr "Bezig"
 
 #: ../../sources/common/main.cpp:361
 msgid "Absent"
-msgstr ""
+msgstr "Afwezig"
 
 #: ../../sources/common/main.cpp:362
 msgid "Free"
-msgstr ""
+msgstr "Vrij"
 
 #: ../../sources/common/schedule.cpp:1016
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>Wil u de huidige fase anulleren ? ?</big></b>"
+msgstr "<b><big>Wil u de huidige ronde anulleren ? ?</big></b>"
 
 #: ../../sources/common/schedule.cpp:1019
 msgid "Go back to the previous round?"
-msgstr "Terugkeren naar de vorige fase ?"
+msgstr "Terugkeren naar de vorige ronde?"
 
 #: ../../sources/common/schedule.cpp:1022
 msgid "All the inputs of this round will be cancelled."
-msgstr "Alle sessies van deze fase zijn geanulleerd"
+msgstr "Alle ingaves van de huidige ronde worden geannulleerd"
 
 #: ../../sources/common/tournament.cpp:479
 #: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
-msgstr ""
+msgstr "Betaling registreren"
 
 #: ../../sources/common/tournament.cpp:491
 msgid "Page"
-msgstr ""
+msgstr "Pagina"
 
 #: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
-msgstr ""
+msgstr "BellePoule heropstarten om deze verandering te aanvaarden"
 
 #: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
@@ -259,7 +259,7 @@ msgstr "Kies een competitiebestand dat u wil openen "
 
 #: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
-msgstr ""
+msgstr "competitiebestand"
 
 #: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
@@ -271,7 +271,7 @@ msgstr "BellePoule bestanden"
 
 #: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
-msgstr ""
+msgstr "maaltijdbonnen"
 
 #: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
@@ -304,11 +304,11 @@ msgstr "Kies een schermersfiche om te importeren"
 
 #: ../../sources/people_management/checkin.cpp:222
 msgid "Fencer files"
-msgstr ""
+msgstr "schermers fiches"
 
 #: ../../sources/people_management/checkin.cpp:227
 msgid "Referee files"
-msgstr ""
+msgstr "scheidsrechtersfiche"
 
 #: ../../sources/people_management/checkin.cpp:777
 msgid "List of registered"
@@ -365,11 +365,11 @@ msgstr "Alle PDF files(.PDF)"
 
 #: ../../sources/people_management/splitting.cpp:30
 msgid "Split"
-msgstr "Verdelen"
+msgstr "Splitsen"
 
 #: ../../sources/people_management/splitting.cpp:259
 msgid "List of fencers to extract"
-msgstr ""
+msgstr "lijst van de af te scheiden schermers"
 
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
@@ -479,11 +479,11 @@ msgstr ""
 #: ../../sources/table_round/table_set.cpp:123
 #: ../../sources/table_round/table_set.cpp:134
 msgid "Table printing"
-msgstr "Tableau overzicht"
+msgstr "tableau printen"
 
 #: ../../sources/table_round/table_set.cpp:1747
 msgid "cutting"
-msgstr ""
+msgstr "snijden"
 
 #: ../../sources/table_round/table_set.cpp:2694
 #, c-format
@@ -553,7 +553,7 @@ msgstr "alle"
 
 #: ../../resources/glade/checkin.glade:260
 msgid "Import fencer file"
-msgstr ""
+msgstr "Importeer schermers fiche"
 
 #: ../../resources/glade/contest.glade:21
 msgid "Date of competition"
@@ -682,14 +682,14 @@ msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
 msgstr ""
-"Toestaan de formule te configureren om de volgorde van poules, tableaus en "
-"andere fases te wijzigen"
+"de formule  configureren met betrekking tot van poules, tableaus en andere "
+"fases."
 
 #: ../../resources/glade/contest.glade:1058
 #: ../../resources/glade/referees.glade:115
 #: ../../resources/glade/tournament.glade:1123
 msgid "Referees"
-msgstr ""
+msgstr "scheidsrechters"
 
 #: ../../resources/glade/contest.glade:1156
 msgid "Man"
@@ -768,15 +768,15 @@ msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:229
 msgid "Seeding"
-msgstr ""
+msgstr "Klassementsbepaling"
 
 #: ../../resources/glade/pool_supervisor.glade:246
 msgid "Balanced"
-msgstr ""
+msgstr "Gebalanceerd"
 
 #: ../../resources/glade/pool_supervisor.glade:262
 msgid "Grouped by strength"
-msgstr ""
+msgstr "gegroepeerd per sterkte"
 
 #: ../../resources/glade/pool_supervisor.glade:356
 msgid "All the pools"
@@ -814,7 +814,7 @@ msgstr "Klassement"
 #: ../../resources/glade/pool_supervisor.glade:610
 #: ../../resources/glade/table_supervisor.glade:462
 msgid "Automatic stuffing"
-msgstr "Automatisch vullen"
+msgstr "Automatisch aanvullen"
 
 #: ../../resources/glade/pool_supervisor.glade:664
 msgid "Combined classification"
@@ -842,7 +842,7 @@ msgstr ""
 
 #: ../../resources/glade/referees.glade:342
 msgid "Import referee file"
-msgstr ""
+msgstr "importeer scheidsrechtersfiche"
 
 #: ../../resources/glade/schedule.glade:47
 msgid "Add"
@@ -862,11 +862,11 @@ msgstr "<b>Parameters</b>"
 
 #: ../../resources/glade/schedule.glade:213
 msgid "Previous round"
-msgstr "Vorige stap"
+msgstr "vorige ronde"
 
 #: ../../resources/glade/schedule.glade:227
 msgid "Next round"
-msgstr "Volgende stap"
+msgstr "volgende ronde"
 
 #: ../../resources/glade/splitting.glade:120
 msgid "Select the fencers to move to a new competition."
@@ -935,7 +935,7 @@ msgstr "Derde plaats"
 
 #: ../../resources/glade/table_supervisor.glade:445
 msgid "Fill in a match"
-msgstr "Match voeren"
+msgstr "match invoeren"
 
 #: ../../resources/glade/table_supervisor.glade:459
 msgid ""
@@ -951,7 +951,7 @@ msgstr "Vanaf"
 
 #: ../../resources/glade/table_supervisor.glade:547
 msgid "To"
-msgstr ""
+msgstr "Tot"
 
 #: ../../resources/glade/table_supervisor.glade:595
 msgid "For place"
@@ -967,25 +967,25 @@ msgid ""
 "\n"
 "\n"
 msgstr ""
-"Schermtoernooi management software\n"
+"Schermtornooi management software\n"
 "\n"
 "\n"
 
 #: ../../resources/glade/tournament.glade:722
 msgid "Broadcasted competitions"
-msgstr ""
+msgstr "uitgezonden competities"
 
 #: ../../resources/glade/tournament.glade:768
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: ../../resources/glade/tournament.glade:797
 msgid "host"
-msgstr ""
+msgstr "host"
 
 #: ../../resources/glade/tournament.glade:963
 msgid "BellePoule - Fencing tournament"
-msgstr "BellePoule - Schermtoernooi"
+msgstr "BellePoule - Schermtornooi"
 
 #: ../../resources/glade/tournament.glade:982
 msgid "File"
@@ -997,7 +997,7 @@ msgstr "Recent geopend"
 
 #: ../../resources/glade/tournament.glade:1026
 msgid "Watch"
-msgstr ""
+msgstr "Bekijk"
 
 #: ../../resources/glade/tournament.glade:1043
 msgid "Backup"
@@ -1017,19 +1017,19 @@ msgstr "Deaktiveren"
 
 #: ../../resources/glade/tournament.glade:1135
 msgid "Print meal tickets"
-msgstr ""
+msgstr "print maaltijdbonnen"
 
 #: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
-msgstr ""
+msgstr "print betalingsbewijs"
 
 #: ../../resources/glade/tournament.glade:1175
 msgid "Translate into your language ..."
-msgstr ""
+msgstr "Vertaal in uw taal"
 
 #: ../../resources/glade/tournament.glade:1193
 msgid "New version!"
-msgstr ""
+msgstr "Nieuwe versie"
 
 #: ../../resources/glade/tournament.glade:1233
 msgid "Open an example..."
@@ -1041,7 +1041,7 @@ msgstr "Gebruikershandleiding"
 
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
-msgstr ""
+msgstr "Schermers Fiche template(.csv)"
 
 #~ msgid "Tous les fichiers"
 #~ msgstr "Alle bestanden"
