@@ -402,7 +402,7 @@ void *AttributeDesc::GetDiscreteData (guint from_code,
       guint  current_code;
       void  *data;
 
-      gtk_tree_model_get (_discrete_model, &iter,
+      gtk_tree_model_get (_discrete_model,    &iter,
                           DISCRETE_CODE_uint, &current_code,
                           column,             &data,
                           -1);

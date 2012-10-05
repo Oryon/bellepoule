@@ -115,36 +115,7 @@ void Checkin::LoadList (xmlNode *xml_node)
         player->Load (n);
 
         // FFE issue
-        {
-          AttributeDesc       *league_desc = AttributeDesc::GetDescFromCodeName ("league");
-          Player::AttributeId  league_attr_id ("league");
-          Attribute           *league_attr = player->GetAttribute (&league_attr_id);
-
-          if ((league_attr == NULL) || (strlen (league_attr->GetStrValue ()) == 0))
-          {
-            Player::AttributeId  licence_attr_id ("licence");
-            Attribute           *licence_attr = player->GetAttribute (&licence_attr_id);
-
-            if (licence_attr)
-            {
-              gchar *licence_string = g_strdup (licence_attr->GetStrValue ());
-
-              if (strlen (licence_string) >= 2)
-              {
-                licence_string[2] = 0;
-
-                gchar *league = league_desc->GetDiscreteUserImage (atoi (licence_string));
-
-                if (league)
-                {
-                  player->SetAttributeValue (&league_attr_id, league);
-                  g_free (league);
-                }
-              }
-              g_free (licence_string);
-            }
-          }
-        }
+        GuessPlayerLeague (player);
 
         Add (player);
         OnPlayerLoaded (player);
@@ -157,6 +128,45 @@ void Checkin::LoadList (xmlNode *xml_node)
       }
     }
     LoadList (n->children);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Checkin::GuessPlayerLeague (Player *player)
+{
+  Player::AttributeId  country_attr_id ("country");
+  Attribute           *country_attr = player->GetAttribute (&country_attr_id);
+
+  if (country_attr && (g_ascii_strcasecmp  (country_attr->GetStrValue (), "FRA") == 0))
+  {
+    Player::AttributeId  league_attr_id ("league");
+    Attribute           *league_attr = player->GetAttribute (&league_attr_id);
+
+    if ((league_attr == NULL) || (strlen (league_attr->GetStrValue ()) == 0))
+    {
+      Player::AttributeId  licence_attr_id ("licence");
+      Attribute           *licence_attr = player->GetAttribute (&licence_attr_id);
+
+      if (licence_attr)
+      {
+        gchar *licence_string = g_strdup (licence_attr->GetStrValue ());
+
+        if (strlen (licence_string) == 12)
+        {
+          licence_string[2] = 0;
+
+          AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
+          gchar         *league      = league_desc->GetDiscreteUserImage (atoi (licence_string));
+
+          if (league)
+          {
+            player->SetAttributeValue (&league_attr_id, league);
+            g_free (league);
+          }
+        }
+        g_free (licence_string);
+      }
+    }
   }
 }
 
@@ -471,25 +481,6 @@ void Checkin::ImportFFF (gchar *filename)
             attr_id._name = (gchar *) "licence";
             player->SetAttributeValue (&attr_id, tokens[0]);
 
-            if (strlen (tokens[0]) > 2)
-            {
-              AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
-
-              tokens[0][2] = 0;
-
-              if (league_desc)
-              {
-                gchar *league = league_desc->GetDiscreteUserImage (atoi (tokens[0]));
-
-                if (league)
-                {
-                  attr_id._name = (gchar *) "league";
-                  player->SetAttributeValue (&attr_id, league);
-                  g_free (league);
-                }
-              }
-            }
-
             attr_id._name = (gchar *) "club";
             player->SetAttributeValue (&attr_id, tokens[2]);
 
@@ -506,6 +497,8 @@ void Checkin::ImportFFF (gchar *filename)
 
             g_strfreev (tokens);
           }
+
+          GuessPlayerLeague (player);
         }
 
         if (line)
@@ -639,6 +632,23 @@ void Checkin::OnPlayerEventFromForm (Player            *player,
 {
   if (event == Form::NEW_PLAYER)
   {
+    {
+      Player::AttributeId  attending_attr_id ("attending");
+      Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
+      Player::AttributeId  global_status_attr_id ("global_status");
+
+      if (attending_attr->GetUIntValue () == 1)
+      {
+        player->SetAttributeValue (&global_status_attr_id,
+                                   "Q");
+      }
+      else
+      {
+        player->SetAttributeValue (&global_status_attr_id,
+                                   "F");
+      }
+    }
+
     Add (player);
   }
   else
@@ -652,9 +662,8 @@ void Checkin::OnPlayerEventFromForm (Player            *player,
 // --------------------------------------------------------------------------------
 void Checkin::Monitor (Player *player)
 {
-  Player::AttributeId attr_id ("attending");
-
-  Attribute *attr = player->GetAttribute (&attr_id);
+  Player::AttributeId  attr_id ("attending");
+  Attribute           *attr = player->GetAttribute ( &attr_id);
 
   if (attr && (attr->GetUIntValue () == TRUE))
   {
