@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2012-09-24 16:27+0200\n"
-"PO-Revision-Date: 2011-11-22 05:53+0000\n"
+"PO-Revision-Date: 2012-10-05 01:50+0000\n"
 "Last-Translator: Jihwan Cho <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-29 05:03+0000\n"
-"X-Generator: Launchpad (build 16049)\n"
+"X-Launchpad-Export-Date: 2012-10-05 04:48+0000\n"
+"X-Generator: Launchpad (build 16061)\n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -36,11 +36,11 @@ msgstr "검도"
 
 #: ../../sources/common/contest.cpp:72 ../../sources/common/main.cpp:266
 msgid "Male"
-msgstr "남자"
+msgstr "남성"
 
 #: ../../sources/common/contest.cpp:73 ../../sources/common/main.cpp:267
 msgid "Female"
-msgstr "여자"
+msgstr "여성"
 
 #: ../../sources/common/contest.cpp:74
 msgid "Mixed"
@@ -77,7 +77,7 @@ msgstr "일반부"
 
 #: ../../sources/common/contest.cpp:93
 msgid "Veteran"
-msgstr "중장년부"
+msgstr "베테랑"
 
 #: ../../sources/common/contest.cpp:1354 ../../sources/common/contest.cpp:1508
 msgid "Choose a file..."
@@ -136,15 +136,15 @@ msgstr "자격"
 
 #: ../../sources/common/main.cpp:285
 msgid "smartphone"
-msgstr ""
+msgstr "스마트폰"
 
 #: ../../sources/common/main.cpp:287
 msgid "rate"
-msgstr ""
+msgstr "비율"
 
 #: ../../sources/common/main.cpp:292
 msgid "level"
-msgstr ""
+msgstr "레벨"
 
 #: ../../sources/common/main.cpp:295
 msgid "ranking"
@@ -152,7 +152,7 @@ msgstr "순위"
 
 #: ../../sources/common/main.cpp:298
 msgid "start rank"
-msgstr "시작 랭킹"
+msgstr "시작 순위"
 
 #: ../../sources/common/main.cpp:302
 msgid "presence"
@@ -160,7 +160,7 @@ msgstr "참석"
 
 #: ../../sources/common/main.cpp:307
 msgid "exported"
-msgstr "내보내기"
+msgstr "내보내기 된"
 
 #: ../../sources/common/main.cpp:310
 msgid "global status"
@@ -170,7 +170,7 @@ msgstr "전역 상태"
 #: ../../resources/glade/pool_supervisor.glade:55
 #: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
-msgstr "자격을 획득한"
+msgstr "자격이 있는"
 
 #: ../../sources/common/main.cpp:314 ../../sources/common/main.cpp:322
 msgid "Not qualified"
@@ -194,7 +194,7 @@ msgstr "상태"
 
 #: ../../sources/common/main.cpp:329
 msgid "pool #"
-msgstr ""
+msgstr "풀#"
 
 #: ../../sources/common/main.cpp:333
 msgid "Vict./Bouts (‰)"
@@ -214,19 +214,19 @@ msgstr "경기 시작 랭킹"
 
 #: ../../sources/common/main.cpp:355
 msgid "availability"
-msgstr ""
+msgstr "가용성"
 
 #: ../../sources/common/main.cpp:360
 msgid "Busy"
-msgstr ""
+msgstr "작업 중"
 
 #: ../../sources/common/main.cpp:361
 msgid "Absent"
-msgstr ""
+msgstr "결석"
 
 #: ../../sources/common/main.cpp:362
 msgid "Free"
-msgstr ""
+msgstr "여유"
 
 #: ../../sources/common/schedule.cpp:1016
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
@@ -243,15 +243,15 @@ msgstr "이번 경기의 모든 입력이 취소됩니다."
 #: ../../sources/common/tournament.cpp:479
 #: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
-msgstr ""
+msgstr "지불 장부"
 
 #: ../../sources/common/tournament.cpp:491
 msgid "Page"
-msgstr ""
+msgstr "페이지"
 
 #: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
-msgstr ""
+msgstr "변경 사항을 적용하기 위해 다시 시작"
 
 #: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
@@ -259,7 +259,7 @@ msgstr "열어볼 대회 파일을 선택하세요. "
 
 #: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
-msgstr ""
+msgstr "대회 파일(.cotcot/ .xml)"
 
 #: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
@@ -271,7 +271,7 @@ msgstr "BellePoule 파일들"
 
 #: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
-msgstr ""
+msgstr "식권"
 
 #: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
@@ -296,7 +296,7 @@ msgstr "<b><big>무엇을 인쇄할까요?</big></b>"
 
 #: ../../sources/people_management/checkin.cpp:48
 msgid "Fencer list printing"
-msgstr "선수 목록 프린팅"
+msgstr "선수 리스트 인쇄"
 
 #: ../../sources/people_management/checkin.cpp:207
 msgid "Choose a fencer file to import..."
@@ -304,11 +304,11 @@ msgstr "가져올 선수 파일을 선택하세요."
 
 #: ../../sources/people_management/checkin.cpp:222
 msgid "Fencer files"
-msgstr ""
+msgstr "선수 파일"
 
 #: ../../sources/people_management/checkin.cpp:227
 msgid "Referee files"
-msgstr ""
+msgstr "심판 파일"
 
 #: ../../sources/people_management/checkin.cpp:777
 msgid "List of registered"
@@ -320,7 +320,7 @@ msgstr "현재 리스트"
 
 #: ../../sources/people_management/checkin.cpp:785
 msgid "List of absents"
-msgstr "결원 리스트"
+msgstr "불참 리스트"
 
 #: ../../sources/people_management/checkin.cpp:789
 #: ../../resources/glade/pool_allocator.glade:81
@@ -330,7 +330,7 @@ msgstr "선수 리스트"
 #: ../../sources/people_management/checkin_supervisor.cpp:29
 #: ../../resources/glade/contest.glade:416
 msgid "Check-in"
-msgstr "등록"
+msgstr "체크인"
 
 #: ../../sources/people_management/form.cpp:164
 msgid ""
@@ -343,7 +343,7 @@ msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크�
 #: ../../sources/people_management/general_classification.cpp:333
 #: ../../sources/people_management/general_classification.cpp:344
 msgid "General classification"
-msgstr "일반 순위 결정"
+msgstr "전체 순위"
 
 #: ../../sources/people_management/general_classification.cpp:198
 msgid "Choose a target file..."
@@ -367,7 +367,7 @@ msgstr "분할"
 
 #: ../../sources/people_management/splitting.cpp:259
 msgid "List of fencers to extract"
-msgstr ""
+msgstr "제외할 선수 리스트"
 
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
@@ -441,7 +441,7 @@ msgstr "풀 시트 인쇄"
 
 #: ../../sources/pool_round/pool_supervisor.cpp:498
 msgid "Pools classification"
-msgstr "풀 분류"
+msgstr "리그 순위"
 
 #: ../../sources/table_round/table.cpp:452
 msgid "Winner"
@@ -458,13 +458,13 @@ msgstr "준결승"
 #: ../../sources/table_round/table.cpp:464
 #, c-format
 msgid "Table of %d"
-msgstr "%d 테이블"
+msgstr "%d 강"
 
 #: ../../sources/table_round/table_set.cpp:93
 #: ../../sources/table_round/table_set.cpp:2835
 #: ../../sources/table_round/table_set.cpp:2842
 msgid "Place #"
-msgstr "장소 #"
+msgstr "등수 #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
@@ -475,11 +475,11 @@ msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big
 #: ../../sources/table_round/table_set.cpp:123
 #: ../../sources/table_round/table_set.cpp:134
 msgid "Table printing"
-msgstr "테이블 인쇄"
+msgstr "대진표 인쇄"
 
 #: ../../sources/table_round/table_set.cpp:1747
 msgid "cutting"
-msgstr ""
+msgstr "잘라내기"
 
 #: ../../sources/table_round/table_set.cpp:2694
 #, c-format
@@ -491,7 +491,7 @@ msgstr "%s 강"
 #: ../../sources/table_round/table_supervisor.cpp:31
 #: ../../resources/glade/table_supervisor.glade:358
 msgid "Table"
-msgstr "테이블"
+msgstr "대진표"
 
 #: ../../sources/table_round/table_set.cpp:2993
 #, c-format
@@ -500,11 +500,11 @@ msgstr "%s: 점수표 인쇄"
 
 #: ../../sources/table_round/table_supervisor.cpp:1066
 msgid "Table classification"
-msgstr "테이블 분류"
+msgstr "토너먼트 순위"
 
 #: ../../sources/util/filter.cpp:219
 msgid "Data to display"
-msgstr ""
+msgstr "표시 데이터"
 
 #: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
 #: ../../resources/glade/general_classification.glade:35
@@ -518,17 +518,17 @@ msgstr "데이터"
 
 #: ../../sources/util/filter.cpp:282
 msgid "Look"
-msgstr ""
+msgstr "보기"
 
 #: ../../resources/glade/checkin.glade:23
 #: ../../resources/glade/referees.glade:46
 msgid "All the presents"
-msgstr "모두 참석"
+msgstr "참가자 전원"
 
 #: ../../resources/glade/checkin.glade:38
 #: ../../resources/glade/referees.glade:62
 msgid "All the absents"
-msgstr "모두 불참"
+msgstr "결석자 전원"
 
 #: ../../resources/glade/checkin.glade:98
 #: ../../resources/glade/referees.glade:154
@@ -538,7 +538,7 @@ msgstr "참석"
 #: ../../resources/glade/checkin.glade:104
 #: ../../resources/glade/referees.glade:161
 msgid "Absents"
-msgstr "불참"
+msgstr "결석"
 
 #: ../../resources/glade/checkin.glade:153
 #: ../../resources/glade/checkin.glade:191
@@ -549,7 +549,7 @@ msgstr "모든"
 
 #: ../../resources/glade/checkin.glade:260
 msgid "Import fencer file"
-msgstr ""
+msgstr "중요 펜싱 파일"
 
 #: ../../resources/glade/contest.glade:21
 msgid "Date of competition"
@@ -638,12 +638,12 @@ msgstr "<b>점수</b>"
 
 #: ../../resources/glade/contest.glade:746
 msgid "Event"
-msgstr "이벤트"
+msgstr "대회"
 
 #: ../../resources/glade/contest.glade:765
 #: ../../resources/glade/contest.glade:1046
 msgid "Formula"
-msgstr "공식"
+msgstr "방식"
 
 #: ../../resources/glade/contest.glade:809
 msgid "FTP server"
@@ -677,13 +677,13 @@ msgstr "대회 특징을 명시합니다."
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
-msgstr "대회 스케쥴을 설정합니다."
+msgstr "풀, 대진표 및 기타 라운드에 대해 대회 스케쥴 설정하기"
 
 #: ../../resources/glade/contest.glade:1058
 #: ../../resources/glade/referees.glade:115
 #: ../../resources/glade/tournament.glade:1123
 msgid "Referees"
-msgstr ""
+msgstr "심판"
 
 #: ../../resources/glade/contest.glade:1156
 msgid "Man"
@@ -697,7 +697,7 @@ msgstr "선수 추가"
 msgid ""
 "Export the general classification to a .csv file that a spreadsheet like "
 "Excel or OpenOffice can open."
-msgstr "일반 분류를 엑셀과 같은 스프레드쉬트에서 열람할 수 있도록 .CSV 파일로 내보냅니다."
+msgstr "전체 순위를 엑셀에서 열람할 수 있도록 .csv 파일로 내보냅니다."
 
 #: ../../resources/glade/general_classification.glade:63
 msgid "Export to CSV"
@@ -741,7 +741,7 @@ msgstr "이름"
 #: ../../resources/glade/pool_supervisor.glade:42
 #: ../../resources/glade/table_supervisor.glade:26
 msgid "Max score"
-msgstr "점수 상한선"
+msgstr "최대 점수"
 
 #: ../../resources/glade/pool_supervisor.glade:79
 #: ../../resources/glade/table_supervisor.glade:113
@@ -758,15 +758,15 @@ msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:229
 msgid "Seeding"
-msgstr ""
+msgstr "대진표 작성 중"
 
 #: ../../resources/glade/pool_supervisor.glade:246
 msgid "Balanced"
-msgstr ""
+msgstr "균형"
 
 #: ../../resources/glade/pool_supervisor.glade:262
 msgid "Grouped by strength"
-msgstr ""
+msgstr "능력별로 그룹 생성"
 
 #: ../../resources/glade/pool_supervisor.glade:356
 msgid "All the pools"
@@ -794,12 +794,12 @@ msgstr "게시판용"
 
 #: ../../resources/glade/pool_supervisor.glade:463
 msgid "<b>For what?</b>"
-msgstr "<b>For what?</b>"
+msgstr "<b>무엇을 위해서?</b>"
 
 #: ../../resources/glade/pool_supervisor.glade:585
 #: ../../resources/glade/table_supervisor.glade:420
 msgid "Classification"
-msgstr "분류"
+msgstr "순위"
 
 #: ../../resources/glade/pool_supervisor.glade:610
 #: ../../resources/glade/table_supervisor.glade:462
@@ -808,27 +808,27 @@ msgstr "자동 생성"
 
 #: ../../resources/glade/pool_supervisor.glade:664
 msgid "Combined classification"
-msgstr "혼합 분류"
+msgstr "연동 순위"
 
 #: ../../resources/glade/pool_supervisor.glade:668
 msgid ""
 "The classification cumulating  the current score and the scores of the "
 "previous pool rounds."
-msgstr "현재 점수와 이전 풀 라운드의 점수를 누적한 분류"
+msgstr "현재 점수와 이전 리그의 점수를 합계한 순위"
 
 #: ../../resources/glade/pool_supervisor.glade:682
 msgid "Single classification"
-msgstr "단일 순위 결정"
+msgstr "개별 순위"
 
 #: ../../resources/glade/pool_supervisor.glade:686
 msgid ""
 "The classification of the current round that doesn't take into account the "
 "scores of the previous rounds. "
-msgstr "현재 라운드의 순위 결정에 이전 라운드의 점수를 고려하지 않습니다. "
+msgstr "이전 리그의 점수를 고려하지 않는 현재 라운드 순위 "
 
 #: ../../resources/glade/referees.glade:342
 msgid "Import referee file"
-msgstr ""
+msgstr "중요 심판 파일"
 
 #: ../../resources/glade/schedule.glade:47
 msgid "Add"
@@ -860,7 +860,7 @@ msgstr "새로운 경기로 이동시킬 선수를 선택하세요."
 
 #: ../../resources/glade/table.glade:247
 msgid "The table"
-msgstr "테이블"
+msgstr "대진표"
 
 #: ../../resources/glade/table.glade:334
 msgid "Score sheets"
@@ -869,11 +869,11 @@ msgstr "점수표"
 #: ../../resources/glade/table.glade:360
 #: ../../resources/glade/table_supervisor.glade:228
 msgid "All"
-msgstr "모든"
+msgstr "전체"
 
 #: ../../resources/glade/table.glade:376
 msgid "Pending"
-msgstr "대기 중"
+msgstr "지연된는 중"
 
 #: ../../resources/glade/table.glade:459
 msgid "All the score sheets"
@@ -881,7 +881,7 @@ msgstr "모든 점수 기록지"
 
 #: ../../resources/glade/table.glade:474
 msgid "The pending score sheets"
-msgstr "대기 중인 점수 기록지"
+msgstr "지연 중인 점수 기록지"
 
 #: ../../resources/glade/table.glade:554
 msgid "<b>Match</b>"
@@ -908,7 +908,7 @@ msgid ""
 "Locked until\n"
 "the begining of the table."
 msgstr ""
-"테이블 시작 전까지\n"
+"라운드 시작 전까지\n"
 "잠겨 있음"
 
 #: ../../resources/glade/table_supervisor.glade:196
@@ -937,7 +937,7 @@ msgstr "부터"
 
 #: ../../resources/glade/table_supervisor.glade:547
 msgid "To"
-msgstr ""
+msgstr "로"
 
 #: ../../resources/glade/table_supervisor.glade:595
 msgid "For place"
@@ -959,15 +959,15 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:722
 msgid "Broadcasted competitions"
-msgstr ""
+msgstr "방송된 경기"
 
 #: ../../resources/glade/tournament.glade:768
 msgid "Server"
-msgstr ""
+msgstr "서버"
 
 #: ../../resources/glade/tournament.glade:797
 msgid "host"
-msgstr ""
+msgstr "호스트"
 
 #: ../../resources/glade/tournament.glade:963
 msgid "BellePoule - Fencing tournament"
@@ -983,7 +983,7 @@ msgstr "최근 파일"
 
 #: ../../resources/glade/tournament.glade:1026
 msgid "Watch"
-msgstr ""
+msgstr "시청"
 
 #: ../../resources/glade/tournament.glade:1043
 msgid "Backup"
@@ -1003,19 +1003,19 @@ msgstr "비활성화"
 
 #: ../../resources/glade/tournament.glade:1135
 msgid "Print meal tickets"
-msgstr ""
+msgstr "식권 인쇄"
 
 #: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
-msgstr ""
+msgstr "지출 장부 인쇄"
 
 #: ../../resources/glade/tournament.glade:1175
 msgid "Translate into your language ..."
-msgstr ""
+msgstr "원하는 언어로 번역하세요..."
 
 #: ../../resources/glade/tournament.glade:1193
 msgid "New version!"
-msgstr ""
+msgstr "신규 버전!"
 
 #: ../../resources/glade/tournament.glade:1233
 msgid "Open an example..."
@@ -1027,7 +1027,7 @@ msgstr "사용자 메뉴얼"
 
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
-msgstr ""
+msgstr "펜서 파일 템플릿 (.csv)"
 
 #~ msgid "9999"
 #~ msgstr "9999"
