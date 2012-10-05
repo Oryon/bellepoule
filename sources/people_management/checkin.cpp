@@ -632,6 +632,23 @@ void Checkin::OnPlayerEventFromForm (Player            *player,
 {
   if (event == Form::NEW_PLAYER)
   {
+    {
+      Player::AttributeId  attending_attr_id ("attending");
+      Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
+      Player::AttributeId  global_status_attr_id ("global_status");
+
+      if (attending_attr->GetUIntValue () == 1)
+      {
+        player->SetAttributeValue (&global_status_attr_id,
+                                   "Q");
+      }
+      else
+      {
+        player->SetAttributeValue (&global_status_attr_id,
+                                   "F");
+      }
+    }
+
     Add (player);
   }
   else
@@ -645,9 +662,8 @@ void Checkin::OnPlayerEventFromForm (Player            *player,
 // --------------------------------------------------------------------------------
 void Checkin::Monitor (Player *player)
 {
-  Player::AttributeId attr_id ("attending");
-
-  Attribute *attr = player->GetAttribute (&attr_id);
+  Player::AttributeId  attr_id ("attending");
+  Attribute           *attr = player->GetAttribute ( &attr_id);
 
   if (attr && (attr->GetUIntValue () == TRUE))
   {
