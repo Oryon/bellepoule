@@ -71,8 +71,8 @@ class Checkin : public PlayersList
 
     void CreateForm (Filter *filter);
 
-    void OnPlayerEventFromForm (Player            *player,
-                                Form::PlayerEvent  event);
+    virtual void OnPlayerEventFromForm (Player            *player,
+                                        Form::PlayerEvent  event);
 
   private:
     guint        _attendings;
