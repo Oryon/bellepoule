@@ -35,21 +35,24 @@ class RefereesList : public Checkin
   private:
     Contest *_contest;
 
-    void Monitor (Player *player);
+    void Monitor (Player *referee);
 
-    void Add (Player *player);
+    void Add (Player *referee);
 
     void OnPlayerLoaded (Player *referee);
 
-    static void OnAvailabilityChanged (Player    *player,
+    void OnPlayerEventFromForm (Player            *referee,
+                                Form::PlayerEvent  event);
+
+    static void OnAvailabilityChanged (Player    *referee,
                                        Attribute *attr,
                                        Object    *owner);
 
-    static void OnAttendingChanged (Player    *player,
+    static void OnAttendingChanged (Player    *referee,
                                     Attribute *attr,
                                     Object    *owner);
 
-    static void OnParticipationRateChanged (Player    *player,
+    static void OnParticipationRateChanged (Player    *referee,
                                             Attribute *attr,
                                             Object    *owner);
 

@@ -98,9 +98,10 @@ void RefereesList::OnPlayerLoaded (Player *referee)
 
   if (attending_attr && attending_attr->GetUIntValue ())
   {
-    Player::AttributeId availability_attr_id ("availability");
+    Player::AttributeId  availability_attr_id ("availability");
+    Attribute           *availability_attr = referee->GetAttribute (&availability_attr_id);
 
-    if (strcmp (referee->GetAttribute (&availability_attr_id)->GetStrValue (),
+    if (strcmp (availability_attr->GetStrValue (),
                 "Absent") == 0)
     {
       referee->SetAttributeValue (&availability_attr_id,
@@ -110,47 +111,74 @@ void RefereesList::OnPlayerLoaded (Player *referee)
 }
 
 // --------------------------------------------------------------------------------
-void RefereesList::Monitor (Player *player)
+void RefereesList::OnPlayerEventFromForm (Player            *referee,
+                                          Form::PlayerEvent  event)
 {
-  Checkin::Monitor (player);
+  Checkin::OnPlayerEventFromForm (referee,
+                                  event);
 
-  player->SetChangeCbk ("attending",
-                        (Player::OnChange) OnAttendingChanged,
-                        this);
-  player->SetChangeCbk ("availability",
-                        (Player::OnChange) OnAvailabilityChanged,
-                        this);
-  player->SetChangeCbk ("participation_rate",
-                        (Player::OnChange) OnParticipationRateChanged,
-                        this);
+#if 0
+  {
+    Player::AttributeId  attending_attr_id ("attending");
+    Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
+    Player::AttributeId  availability_attr_id ("availability");
+
+    if (attending_attr && attending_attr->GetUIntValue ())
+    {
+      referee->SetAttributeValue (&availability_attr_id,
+                                  "Free");
+    }
+    else
+    {
+      referee->SetAttributeValue (&availability_attr_id,
+                                  "Absent");
+    }
+  }
+#endif
+}
+
+// --------------------------------------------------------------------------------
+void RefereesList::Monitor (Player *referee)
+{
+  Checkin::Monitor (referee);
+
+  referee->SetChangeCbk ("attending",
+                         (Player::OnChange) OnAttendingChanged,
+                         this);
+  referee->SetChangeCbk ("availability",
+                         (Player::OnChange) OnAvailabilityChanged,
+                         this);
+  referee->SetChangeCbk ("participation_rate",
+                         (Player::OnChange) OnParticipationRateChanged,
+                         this);
 
   {
     Player::AttributeId availability_attr_id ("availability");
 
-    if (player->GetAttribute (&availability_attr_id) == NULL)
+    if (referee->GetAttribute (&availability_attr_id) == NULL)
     {
       Player::AttributeId  attending_attr_id ("attending");
-      Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
+      Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
       guint                attending = attending_attr->GetUIntValue ();
 
       if (attending == TRUE)
       {
-        player->SetAttributeValue (&availability_attr_id,
-                                   "Free");
+        referee->SetAttributeValue (&availability_attr_id,
+                                    "Free");
       }
       else if (attending == FALSE)
       {
-        player->SetAttributeValue (&availability_attr_id,
-                                   "Absent");
+        referee->SetAttributeValue (&availability_attr_id,
+                                    "Absent");
       }
     }
   }
 }
 
 // --------------------------------------------------------------------------------
-void RefereesList::Add (Player *player)
+void RefereesList::Add (Player *referee)
 {
-  Player *original = _contest->Share (player);
+  Player *original = _contest->Share (referee);
 
   if (original)
   {
@@ -158,12 +186,12 @@ void RefereesList::Add (Player *player)
   }
   else
   {
-    Checkin::Add (player);
+    Checkin::Add (referee);
   }
 }
 
 // --------------------------------------------------------------------------------
-void RefereesList::OnAttendingChanged (Player    *player,
+void RefereesList::OnAttendingChanged (Player    *referee,
                                        Attribute *attr,
                                        Object    *owner)
 {
@@ -172,45 +200,45 @@ void RefereesList::OnAttendingChanged (Player    *player,
 
   if (value == 1)
   {
-    guint token = player->GetUIntData (NULL,
-                                       "Referee::token");
+    guint token = referee->GetUIntData (NULL,
+                                        "Referee::token");
 
     if (token)
     {
-      player->SetAttributeValue (&attr_id,
-                                 "Busy");
+      referee->SetAttributeValue (&attr_id,
+                                  "Busy");
     }
     else
     {
-      player->SetAttributeValue (&attr_id,
-                                 "Free");
+      referee->SetAttributeValue (&attr_id,
+                                  "Free");
     }
   }
   else if (value == 0)
   {
-    player->SetAttributeValue (&attr_id,
-                               "Absent");
+    referee->SetAttributeValue (&attr_id,
+                                "Absent");
   }
 }
 
 // --------------------------------------------------------------------------------
-void RefereesList::OnAvailabilityChanged (Player    *player,
+void RefereesList::OnAvailabilityChanged (Player    *referee,
                                           Attribute *attr,
                                           Object    *owner)
 {
   Checkin *checkin = dynamic_cast <Checkin *> (owner);
 
-  checkin->Update (player);
+  checkin->Update (referee);
 }
 
 // --------------------------------------------------------------------------------
-void RefereesList::OnParticipationRateChanged (Player    *player,
+void RefereesList::OnParticipationRateChanged (Player    *referee,
                                                Attribute *attr,
                                                Object    *owner)
 {
   Checkin *checkin = dynamic_cast <Checkin *> (owner);
 
-  checkin->Update (player);
+  checkin->Update (referee);
 }
 
 // --------------------------------------------------------------------------------
