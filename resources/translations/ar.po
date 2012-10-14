@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-24 16:27+0200\n"
+"POT-Creation-Date: 2012-10-12 12:05+0200\n"
 "PO-Revision-Date: 2010-12-30 00:22+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -90,7 +90,7 @@ msgstr "ملفات BellePoule"
 
 #: ../../sources/common/contest.cpp:1534
 #: ../../sources/common/tournament.cpp:986
-#: ../../sources/people_management/checkin.cpp:249
+#: ../../sources/people_management/checkin.cpp:259
 #: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
 msgstr "جميع الملفات"
@@ -299,31 +299,31 @@ msgstr "<b><big>ماذا تريد طباعة?</big></b>"
 msgid "Fencer list printing"
 msgstr "طباعة قائمة اللاعبين"
 
-#: ../../sources/people_management/checkin.cpp:207
+#: ../../sources/people_management/checkin.cpp:217
 msgid "Choose a fencer file to import..."
 msgstr "اختر ملف اللاعبين الذي تريد تنزيله..."
 
-#: ../../sources/people_management/checkin.cpp:222
+#: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:227
+#: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:777
+#: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
 msgstr "قائمة المسجلين"
 
-#: ../../sources/people_management/checkin.cpp:781
+#: ../../sources/people_management/checkin.cpp:790
 msgid "List of presents"
 msgstr "قائمة الحاضرين"
 
-#: ../../sources/people_management/checkin.cpp:785
+#: ../../sources/people_management/checkin.cpp:794
 msgid "List of absents"
 msgstr "قائمة الغائبين"
 
-#: ../../sources/people_management/checkin.cpp:789
+#: ../../sources/people_management/checkin.cpp:798
 #: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr "قائمة اللاعبين"
@@ -333,7 +333,17 @@ msgstr "قائمة اللاعبين"
 msgid "Check-in"
 msgstr "نداء"
 
-#: ../../sources/people_management/form.cpp:164
+#: ../../sources/people_management/form.cpp:46
+msgid "Fencer"
+msgstr ""
+
+#: ../../sources/people_management/form.cpp:51
+#: ../../sources/pool_round/pool.cpp:448
+#: ../../sources/table_round/table_set.cpp:2722
+msgid "Referee"
+msgstr ""
+
+#: ../../sources/people_management/form.cpp:175
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
@@ -375,11 +385,6 @@ msgstr ""
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
 msgid "Pool #%02d"
-msgstr ""
-
-#: ../../sources/pool_round/pool.cpp:448
-#: ../../sources/table_round/table_set.cpp:2722
-msgid "Referee"
 msgstr ""
 
 #: ../../sources/pool_round/pool.cpp:489
@@ -471,8 +476,8 @@ msgstr ""
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr "<b><big>أي مباريات من الجدول المختار تريد طباعتها?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
@@ -680,8 +685,7 @@ msgstr "يمكنك من إدخال معلومات البطولة."
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
-msgstr ""
-"يمكنك من إدخال صيغة البطولة عبر تحديد تسلسل المجموعات و الجدول ...إلخ."
+msgstr "يمكنك من إدخال صيغة البطولة عبر تحديد تسلسل المجموعات و الجدول ...إلخ."
 
 #: ../../resources/glade/contest.glade:1058
 #: ../../resources/glade/referees.glade:115
@@ -1109,7 +1113,6 @@ msgstr ""
 #~ msgid "Choisissez un fichier de sauvegarde ..."
 #~ msgstr "اختر ملف للتخزين"
 
-#, c-format
 #~ msgid ""
 #~ "<b><big>Voulez-vous vraiment fermer\n"
 #~ "<big>%s</big> ?</big></b>"
@@ -1208,7 +1211,8 @@ msgstr ""
 #~ msgstr "جدول"
 
 #~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
+#~ "b>"
 #~ msgstr "<b><big>أي مباريات من الجدول المختار تريد طباعتها?</big></b>"
 
 #~ msgid "Toutes les saisies de cette phase seront annulées."
@@ -1269,9 +1273,9 @@ msgstr ""
 #~ msgstr "ممنوع"
 
 #~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-#~ "des saisies longues et laborieuses lors des séances de prise en main de "
-#~ "BellePoule."
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut "
+#~ "éviter des saisies longues et laborieuses lors des séances de prise en "
+#~ "main de BellePoule."
 #~ msgstr "يفعّل زر التعبئة الأوتوماتيكية للنتائج."
 
 #~ msgid "Autoriser"
@@ -1310,7 +1314,6 @@ msgstr ""
 #~ msgid "Filtre"
 #~ msgstr "مصفاة"
 
-#, c-format
 #~ msgid "%s : Impression des matchs"
 #~ msgstr "%s : طباعة المباريات"
 
@@ -1320,7 +1323,6 @@ msgstr ""
 #~ msgid "Permet de renseigner les caractéristiques de la compétition."
 #~ msgstr "يمكنك من إدخال معلومات البطولة."
 
-#, c-format
 #~ msgid "Tableau de %d"
 #~ msgstr "جدول %d"
 
@@ -1328,5 +1330,5 @@ msgstr ""
 #~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
 #~ "tableaux et autres phases."
 #~ msgstr ""
-#~ "To configure the schedule of the competition in terms of pools, tables and "
-#~ "other rounds."
+#~ "To configure the schedule of the competition in terms of pools, tables "
+#~ "and other rounds."

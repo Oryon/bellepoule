@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-24 16:27+0200\n"
+"POT-Creation-Date: 2012-10-12 12:05+0200\n"
 "PO-Revision-Date: 2012-06-22 19:01+0000\n"
 "Last-Translator: Paulomorales <paulocmorales@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,10 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-09-29 05:03+0000\n"
 "X-Generator: Launchpad (build 16049)\n"
-
-#: ../../resources/glade/table_supervisor.glade:51
-msgid "Fenced places"
-msgstr "Lugares de esgrima"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -92,7 +88,7 @@ msgstr "Ficheros BellePoule (.cotcot)"
 
 #: ../../sources/common/contest.cpp:1534
 #: ../../sources/common/tournament.cpp:986
-#: ../../sources/people_management/checkin.cpp:249
+#: ../../sources/people_management/checkin.cpp:259
 #: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
 msgstr "Todos los ficheros"
@@ -301,31 +297,31 @@ msgstr "<b><big>¿Qué quiere imprimir?</big></b>"
 msgid "Fencer list printing"
 msgstr "Imprimiendo la lista de esgrimistas"
 
-#: ../../sources/people_management/checkin.cpp:207
+#: ../../sources/people_management/checkin.cpp:217
 msgid "Choose a fencer file to import..."
 msgstr "Elegir un archivo de esgrimistas a importar..."
 
-#: ../../sources/people_management/checkin.cpp:222
+#: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:227
+#: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:777
+#: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
 msgstr "Lista de registrados"
 
-#: ../../sources/people_management/checkin.cpp:781
+#: ../../sources/people_management/checkin.cpp:790
 msgid "List of presents"
 msgstr "Lista de presentes"
 
-#: ../../sources/people_management/checkin.cpp:785
+#: ../../sources/people_management/checkin.cpp:794
 msgid "List of absents"
 msgstr "Lista de ausentes"
 
-#: ../../sources/people_management/checkin.cpp:789
+#: ../../sources/people_management/checkin.cpp:798
 #: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr "Lista de esgrimistas"
@@ -335,7 +331,17 @@ msgstr "Lista de esgrimistas"
 msgid "Check-in"
 msgstr "Registro"
 
-#: ../../sources/people_management/form.cpp:164
+#: ../../sources/people_management/form.cpp:46
+msgid "Fencer"
+msgstr ""
+
+#: ../../sources/people_management/form.cpp:51
+#: ../../sources/pool_round/pool.cpp:448
+#: ../../sources/table_round/table_set.cpp:2722
+msgid "Referee"
+msgstr "Árbitro"
+
+#: ../../sources/people_management/form.cpp:175
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
@@ -378,11 +384,6 @@ msgstr ""
 #, c-format
 msgid "Pool #%02d"
 msgstr "Pool #%02d"
-
-#: ../../sources/pool_round/pool.cpp:448
-#: ../../sources/table_round/table_set.cpp:2722
-msgid "Referee"
-msgstr "Árbitro"
 
 #: ../../sources/pool_round/pool.cpp:489
 #: ../../sources/table_round/table_set.cpp:2761
@@ -473,10 +474,9 @@ msgstr "Lugar #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr ""
-"<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
+msgstr "<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
 #: ../../sources/table_round/table_set.cpp:134
@@ -912,6 +912,10 @@ msgstr "Esgrimista B"
 #: ../../resources/glade/table.glade:641
 msgid "<b>Score</b>"
 msgstr "<b>Marcador</b>"
+
+#: ../../resources/glade/table_supervisor.glade:51
+msgid "Fenced places"
+msgstr "Lugares de esgrima"
 
 #: ../../resources/glade/table_supervisor.glade:159
 msgid ""

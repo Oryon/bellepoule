@@ -40,6 +40,17 @@ Form::Form (Filter             *filter,
 
   _locked = FALSE;
 
+  if (player_type == Player::FENCER)
+  {
+    gtk_window_set_title (GTK_WINDOW (_glade->GetWidget ("FillInForm")),
+                          gettext ("Fencer"));
+  }
+  else
+  {
+    gtk_window_set_title (GTK_WINDOW (_glade->GetWidget ("FillInForm")),
+                          gettext ("Referee"));
+  }
+
   {
     GSList      *current     = _filter->GetAttrList ();
     GtkComboBox *selector_w  = NULL;

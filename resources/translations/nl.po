@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-24 16:27+0200\n"
+"POT-Creation-Date: 2012-10-12 12:05+0200\n"
 "PO-Revision-Date: 2012-10-03 15:26+0000\n"
 "Last-Translator: werner huysmans <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,7 +89,7 @@ msgstr "BellePoule bestanden (.cocot)"
 
 #: ../../sources/common/contest.cpp:1534
 #: ../../sources/common/tournament.cpp:986
-#: ../../sources/people_management/checkin.cpp:249
+#: ../../sources/people_management/checkin.cpp:259
 #: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
 msgstr "Alle bestanden"
@@ -298,31 +298,31 @@ msgstr "<b><big>Wat wilt u printen ?</big></b>"
 msgid "Fencer list printing"
 msgstr "Afdruk van de schermerslijst"
 
-#: ../../sources/people_management/checkin.cpp:207
+#: ../../sources/people_management/checkin.cpp:217
 msgid "Choose a fencer file to import..."
 msgstr "Kies een schermersfiche om te importeren"
 
-#: ../../sources/people_management/checkin.cpp:222
+#: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
 msgstr "schermers fiches"
 
-#: ../../sources/people_management/checkin.cpp:227
+#: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
 msgstr "scheidsrechtersfiche"
 
-#: ../../sources/people_management/checkin.cpp:777
+#: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
 msgstr "Inschrijvingslijst"
 
-#: ../../sources/people_management/checkin.cpp:781
+#: ../../sources/people_management/checkin.cpp:790
 msgid "List of presents"
 msgstr "Aanwezigheidslijst"
 
-#: ../../sources/people_management/checkin.cpp:785
+#: ../../sources/people_management/checkin.cpp:794
 msgid "List of absents"
 msgstr "Lijst van de afwezigen"
 
-#: ../../sources/people_management/checkin.cpp:789
+#: ../../sources/people_management/checkin.cpp:798
 #: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr "Lijst van schermers"
@@ -332,7 +332,17 @@ msgstr "Lijst van schermers"
 msgid "Check-in"
 msgstr "Appel"
 
-#: ../../sources/people_management/form.cpp:164
+#: ../../sources/people_management/form.cpp:46
+msgid "Fencer"
+msgstr ""
+
+#: ../../sources/people_management/form.cpp:51
+#: ../../sources/pool_round/pool.cpp:448
+#: ../../sources/table_round/table_set.cpp:2722
+msgid "Referee"
+msgstr "Scheidsrechter"
+
+#: ../../sources/people_management/form.cpp:175
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
@@ -375,11 +385,6 @@ msgstr "lijst van de af te scheiden schermers"
 #, c-format
 msgid "Pool #%02d"
 msgstr "Poule nr  %02d"
-
-#: ../../sources/pool_round/pool.cpp:448
-#: ../../sources/table_round/table_set.cpp:2722
-msgid "Referee"
-msgstr "Scheidsrechter"
 
 #: ../../sources/pool_round/pool.cpp:489
 #: ../../sources/table_round/table_set.cpp:2761
@@ -470,11 +475,11 @@ msgstr "Plaats #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
-"<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen "
-"?</big></b>"
+"<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen ?</"
+"big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
 #: ../../sources/table_round/table_set.cpp:134
@@ -1124,7 +1129,6 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgid "prénom"
 #~ msgstr "Voornaam"
 
-#, c-format
 #~ msgid ""
 #~ "<b><big>Voulez-vous vraiment fermer\n"
 #~ "<big>%s</big> ?</big></b>"
@@ -1162,7 +1166,6 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgid "Victoires"
 #~ msgstr "Overwinningen"
 
-#, c-format
 #~ msgid "Poule No %02d"
 #~ msgstr "Poule nr  %02d"
 
@@ -1187,7 +1190,6 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgid "<b><big>Imprimer ...</big></b>"
 #~ msgstr "<b><big>Pinten...</big></b>"
 
-#, c-format
 #~ msgid "Tableau de %d"
 #~ msgstr "Tableau van %d"
 
@@ -1210,15 +1212,15 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgstr "Tableau"
 
 #~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
+#~ "b>"
 #~ msgstr ""
-#~ "<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen "
-#~ "?</big></b>"
+#~ "<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen ?</"
+#~ "big></b>"
 
 #~ msgid "Toutes les saisies de cette phase seront annulées."
 #~ msgstr "Alle sessies van deze fase zijn geanulleerd"
 
-#, c-format
 #~ msgid "%s : Impression des matchs"
 #~ msgstr "%s : wedstrijdoverzicht"
 
@@ -1304,8 +1306,8 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgstr ":"
 
 #~ msgid ""
-#~ "Exporte le classement dans un fichier au format \".csv\" pour des tableurs "
-#~ "du type Excel ou OpenOffice"
+#~ "Exporte le classement dans un fichier au format \".csv\" pour des "
+#~ "tableurs du type Excel ou OpenOffice"
 #~ msgstr ""
 #~ "Exporteer het klassement in een `.csv` bestandsformaat voor Excel of "
 #~ "OpenOffice"
@@ -1455,12 +1457,12 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgstr "Onlangs geopende bestanden"
 
 #~ msgid ""
-#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit les "
-#~ "listes de tireurs inscrits aux compétitions par l'intermédiaire de son site "
-#~ "internet. "
+#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit "
+#~ "les listes de tireurs inscrits aux compétitions par l'intermédiaire de "
+#~ "son site internet. "
 #~ msgstr ""
-#~ "FFF is het formaat waarin de Franse Schermfederatie een overzicht geeft van "
-#~ "de geregistreerde schermers via haar website. "
+#~ "FFF is het formaat waarin de Franse Schermfederatie een overzicht geeft "
+#~ "van de geregistreerde schermers via haar website. "
 
 #~ msgid "Sauvegarde l'état courant de la compétition."
 #~ msgstr "Huidige staat van de competitie opslaan"
@@ -1472,8 +1474,8 @@ msgstr "Schermers Fiche template(.csv)"
 #~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
 #~ "tableaux et autres phases."
 #~ msgstr ""
-#~ "Toestaan de formule te configureren om de volgorde van poules, tableaus en "
-#~ "andere fases te wijzigen"
+#~ "Toestaan de formule te configureren om de volgorde van poules, tableaus "
+#~ "en andere fases te wijzigen"
 
 #~ msgid "Permet de renseigner les caractéristiques de la compétition."
 #~ msgstr "Toelaten te leren van de competitie eigenschappen"
@@ -1485,8 +1487,8 @@ msgstr "Schermers Fiche template(.csv)"
 #~ "Les informations de date et heures sont exploitées pour avertir par une "
 #~ "alarme les organisateurs de l'éminence de de certains évènements."
 #~ msgstr ""
-#~ "De informatie van datum en tijd worden gebruikt om een alarm te luiden voor "
-#~ "de organisatoren van bepaalde evenementen"
+#~ "De informatie van datum en tijd worden gebruikt om een alarm te luiden "
+#~ "voor de organisatoren van bepaalde evenementen"
 
 #~ msgid ""
 #~ "Remplissage\n"
@@ -1504,9 +1506,9 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgstr "Verbieden"
 
 #~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-#~ "des saisies longues et laborieuses lors des séances de prise en main de "
-#~ "BellePoule."
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut "
+#~ "éviter des saisies longues et laborieuses lors des séances de prise en "
+#~ "main de BellePoule."
 #~ msgstr ""
 #~ "Knop \"automatisch vullen van scores\" actief maken. Dit kan lange "
 #~ "wachttijden van BellePoule voorkomen"
@@ -1545,7 +1547,8 @@ msgstr "Schermers Fiche template(.csv)"
 #~ "compétition."
 #~ msgstr ""
 #~ "Alle wedstrijden van de tableau vervangen door willekeurige scores.\n"
-#~ "Om deze knop te activeren/desactiveren, ga naar de competitie eigenschappen"
+#~ "Om deze knop te activeren/desactiveren, ga naar de competitie "
+#~ "eigenschappen"
 
 #~ msgid ""
 #~ "Logiciel de gestion de tournois d'escrime.\n"

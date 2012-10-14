@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-24 16:27+0200\n"
+"POT-Creation-Date: 2012-10-12 12:05+0200\n"
 "PO-Revision-Date: 2012-06-22 19:08+0000\n"
 "Last-Translator: Eduardo Alberto Calvo <Unknown>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
@@ -88,7 +88,7 @@ msgstr ""
 
 #: ../../sources/common/contest.cpp:1534
 #: ../../sources/common/tournament.cpp:986
-#: ../../sources/people_management/checkin.cpp:249
+#: ../../sources/people_management/checkin.cpp:259
 #: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
 msgstr "Todos os arquivos"
@@ -297,31 +297,31 @@ msgstr ""
 msgid "Fencer list printing"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:207
+#: ../../sources/people_management/checkin.cpp:217
 msgid "Choose a fencer file to import..."
 msgstr "Escolha um arquivo de esgrimista para importar ..."
 
-#: ../../sources/people_management/checkin.cpp:222
+#: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:227
+#: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:777
+#: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
 msgstr "Lista de registrados"
 
-#: ../../sources/people_management/checkin.cpp:781
+#: ../../sources/people_management/checkin.cpp:790
 msgid "List of presents"
 msgstr "Lista de presentes"
 
-#: ../../sources/people_management/checkin.cpp:785
+#: ../../sources/people_management/checkin.cpp:794
 msgid "List of absents"
 msgstr "Lista de faltas"
 
-#: ../../sources/people_management/checkin.cpp:789
+#: ../../sources/people_management/checkin.cpp:798
 #: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr ""
@@ -331,7 +331,17 @@ msgstr ""
 msgid "Check-in"
 msgstr "Entrada"
 
-#: ../../sources/people_management/form.cpp:164
+#: ../../sources/people_management/form.cpp:46
+msgid "Fencer"
+msgstr ""
+
+#: ../../sources/people_management/form.cpp:51
+#: ../../sources/pool_round/pool.cpp:448
+#: ../../sources/table_round/table_set.cpp:2722
+msgid "Referee"
+msgstr ""
+
+#: ../../sources/people_management/form.cpp:175
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
@@ -371,11 +381,6 @@ msgstr ""
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
 msgid "Pool #%02d"
-msgstr ""
-
-#: ../../sources/pool_round/pool.cpp:448
-#: ../../sources/table_round/table_set.cpp:2722
-msgid "Referee"
 msgstr ""
 
 #: ../../sources/pool_round/pool.cpp:489
@@ -467,8 +472,8 @@ msgstr ""
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
 
 #: ../../sources/table_round/table_set.cpp:123
