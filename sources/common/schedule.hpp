@@ -94,6 +94,8 @@ class Schedule : public Module
                     guint   *nb_stage,
                     gint     current_stage_index);
 
+    void GiveName (Stage *stage);
+
     static void OnStageStatusUpdated (Stage    *stage,
                                       Schedule *schedule);
 

@@ -150,6 +150,7 @@ void Schedule::CreateDefault (gboolean without_pools)
       if (stage)
       {
         AddStage (stage);
+        GiveName (stage);
       }
     }
 
@@ -704,6 +705,7 @@ void Schedule::Load (xmlDoc  *doc,
           if (stage)
           {
             AddStage (stage);
+            GiveName (stage);
           }
 
           stage = Stage::CreateInstance ("PhaseDeTableaux");
@@ -904,6 +906,10 @@ gboolean Schedule::on_new_stage_selected (GtkWidget      *widget,
 
   owner->AddStage (stage,
                    after);
+  if (g_ascii_strcasecmp  (class_name, "pool_stage") == 0)
+  {
+    owner->GiveName (stage);
+  }
 
   stage->FillInConfig ();
   owner->on_stage_selected ();

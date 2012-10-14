@@ -114,10 +114,6 @@ void RefereesList::OnPlayerLoaded (Player *referee)
 void RefereesList::OnPlayerEventFromForm (Player            *referee,
                                           Form::PlayerEvent  event)
 {
-  Checkin::OnPlayerEventFromForm (referee,
-                                  event);
-
-#if 0
   {
     Player::AttributeId  attending_attr_id ("attending");
     Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
@@ -134,7 +130,9 @@ void RefereesList::OnPlayerEventFromForm (Player            *referee,
                                   "Absent");
     }
   }
-#endif
+
+  Checkin::OnPlayerEventFromForm (referee,
+                                  event);
 }
 
 // --------------------------------------------------------------------------------
