@@ -126,6 +126,40 @@ Stage *Schedule::GetStage (guint index)
 }
 
 // --------------------------------------------------------------------------------
+void Schedule::GiveName (Stage *stage)
+{
+  Stage::StageClass *stage_class = stage->GetClass ();
+
+  if (stage_class && (g_ascii_strcasecmp  (stage_class->_xml_name, "pool_stage") == 0))
+  {
+    GList *current     = _stage_list;
+    guint  round_index = 0;
+
+    while (current)
+    {
+      Stage             *current_stage       = (Stage *) current->data;
+      Stage::StageClass *current_stage_class = current_stage->GetClass ();
+
+      if (g_ascii_strcasecmp  (current_stage_class->_xml_name, "pool_stage") == 0)
+      {
+        round_index++;
+      }
+
+      if (current_stage == stage)
+      {
+        gchar *name = g_strdup_printf (gettext ("Round #%d"), round_index);
+
+        stage->SetName (name);
+        g_free (name);
+        break;
+      }
+
+      current = g_list_next (current);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Schedule::CreateDefault (gboolean without_pools)
 {
   if (_stage_list == NULL)
@@ -906,10 +940,7 @@ gboolean Schedule::on_new_stage_selected (GtkWidget      *widget,
 
   owner->AddStage (stage,
                    after);
-  if (g_ascii_strcasecmp  (class_name, "pool_stage") == 0)
-  {
-    owner->GiveName (stage);
-  }
+  owner->GiveName (stage);
 
   stage->FillInConfig ();
   owner->on_stage_selected ();

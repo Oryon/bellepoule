@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-12 12:05+0200\n"
+"POT-Creation-Date: 2012-10-15 17:56+0200\n"
 "PO-Revision-Date: 2012-09-22 08:54+0000\n"
 "Last-Translator: Aureliano Martini <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -227,15 +227,20 @@ msgstr "Assente"
 msgid "Free"
 msgstr "Libero"
 
-#: ../../sources/common/schedule.cpp:1016
+#: ../../sources/common/schedule.cpp:150
+#, c-format
+msgid "Round #%d"
+msgstr ""
+
+#: ../../sources/common/schedule.cpp:1053
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr "<b><big>Cancellare questo turno?</big></b>"
 
-#: ../../sources/common/schedule.cpp:1019
+#: ../../sources/common/schedule.cpp:1056
 msgid "Go back to the previous round?"
 msgstr "Tornare al turno precedente?"
 
-#: ../../sources/common/schedule.cpp:1022
+#: ../../sources/common/schedule.cpp:1059
 msgid "All the inputs of this round will be cancelled."
 msgstr "Tutti i dati di questo turno saranno cancellati."
 
