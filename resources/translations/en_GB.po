@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-24 16:27+0200\n"
+"POT-Creation-Date: 2012-10-12 12:05+0200\n"
 "PO-Revision-Date: 2012-01-13 07:08+0000\n"
 "Last-Translator: Vibhav Pant <vibhavp@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-09-29 05:03+0000\n"
-"X-Generator: Launchpad (build 16049)\n"
+"X-Launchpad-Export-Date: 2012-10-15 05:18+0000\n"
+"X-Generator: Launchpad (build 16137)\n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -88,7 +88,7 @@ msgstr "BellePoule files (.cotcot)"
 
 #: ../../sources/common/contest.cpp:1534
 #: ../../sources/common/tournament.cpp:986
-#: ../../sources/people_management/checkin.cpp:249
+#: ../../sources/people_management/checkin.cpp:259
 #: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
 msgstr "All files"
@@ -297,31 +297,31 @@ msgstr "<b><big>What do you want to print?</big></b>"
 msgid "Fencer list printing"
 msgstr "Fencer list printing"
 
-#: ../../sources/people_management/checkin.cpp:207
+#: ../../sources/people_management/checkin.cpp:217
 msgid "Choose a fencer file to import..."
 msgstr "Choose a fencer file to import..."
 
-#: ../../sources/people_management/checkin.cpp:222
+#: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:227
+#: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:777
+#: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
 msgstr "List of registered"
 
-#: ../../sources/people_management/checkin.cpp:781
+#: ../../sources/people_management/checkin.cpp:790
 msgid "List of presents"
 msgstr "List of presents"
 
-#: ../../sources/people_management/checkin.cpp:785
+#: ../../sources/people_management/checkin.cpp:794
 msgid "List of absents"
 msgstr "List of absents"
 
-#: ../../sources/people_management/checkin.cpp:789
+#: ../../sources/people_management/checkin.cpp:798
 #: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr "Fencer list"
@@ -331,7 +331,17 @@ msgstr "Fencer list"
 msgid "Check-in"
 msgstr "Check-in"
 
-#: ../../sources/people_management/form.cpp:164
+#: ../../sources/people_management/form.cpp:46
+msgid "Fencer"
+msgstr ""
+
+#: ../../sources/people_management/form.cpp:51
+#: ../../sources/pool_round/pool.cpp:448
+#: ../../sources/table_round/table_set.cpp:2722
+msgid "Referee"
+msgstr "Referee"
+
+#: ../../sources/people_management/form.cpp:175
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
@@ -374,11 +384,6 @@ msgstr ""
 #, c-format
 msgid "Pool #%02d"
 msgstr "Pool #%02d"
-
-#: ../../sources/pool_round/pool.cpp:448
-#: ../../sources/table_round/table_set.cpp:2722
-msgid "Referee"
-msgstr "Referee"
 
 #: ../../sources/pool_round/pool.cpp:489
 #: ../../sources/table_round/table_set.cpp:2761
