@@ -529,7 +529,12 @@ gchar *PoolSupervisor::GetPrintName ()
 guint PoolSupervisor::PreparePrint (GtkPrintOperation *operation,
                                     GtkPrintContext   *context)
 {
-  if (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
+  if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+  {
+    return 0;
+  }
+
+  if (GetStageView (operation) == STAGE_VIEW_RESULT)
   {
     _print_all_pool = TRUE;
   }
@@ -537,7 +542,7 @@ guint PoolSupervisor::PreparePrint (GtkPrintOperation *operation,
   {
     GtkWidget *w = _glade->GetWidget ("for_referees_radiobutton");
 
-    if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS") == FALSE)
+    if (   (GetStageView (operation) == STAGE_VIEW_UNDEFINED)
         && gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
     {
       g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) TRUE);
@@ -572,7 +577,7 @@ void PoolSupervisor::DrawPage (GtkPrintOperation *operation,
                      context,
                      page_nr);
 
-  if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
+  if (   (GetStageView (operation) == STAGE_VIEW_RESULT)
       || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE))
   {
     Pool *pool;

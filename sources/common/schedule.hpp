@@ -20,6 +20,7 @@
 #include <libxml/xmlwriter.h>
 #include "stage.hpp"
 #include "module.hpp"
+#include "book.hpp"
 
 class Contest;
 class Checkin;
@@ -109,6 +110,7 @@ class Schedule : public Module
 
   private:
     GtkWidget *_formula_dlg;
+    Book      *_book;
 
     virtual ~Schedule ();
     void OnPlugged ();

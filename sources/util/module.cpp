@@ -640,30 +640,6 @@ void Module::MakeDirty ()
 }
 
 // --------------------------------------------------------------------------------
-void Module::SetPrintPages (gint first,
-                            gint last)
-{
-  if (first < 0)
-  {
-    _first_page_to_print = -1;
-    _last_page_to_print  = -1;
-  }
-  else
-  {
-    _first_page_to_print = first;
-    _last_page_to_print  = last;
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Module::GetPrintPages (gint *first,
-                            gint *last)
-{
-  *first = _first_page_to_print;
-  *last  = _last_page_to_print;
-}
-
-// --------------------------------------------------------------------------------
 void Module::on_begin_print (GtkPrintOperation *operation,
                              GtkPrintContext   *context,
                              Module            *module)

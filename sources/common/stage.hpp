@@ -45,6 +45,15 @@ class Stage : public virtual Object
 
     typedef enum
     {
+      STAGE_VIEW_UNDEFINED,
+      STAGE_VIEW_RESULT,
+      STAGE_VIEW_CLASSIFICATION,
+
+      N_STAGE_VIEW
+    } StageView;
+
+    typedef enum
+    {
       EDITABLE = 0x0001
     } Rights;
 
@@ -186,6 +195,9 @@ class Stage : public virtual Object
     virtual void SaveAttendees (xmlTextWriter *xml_writer);
 
     void LoadAttendees (xmlNode *n);
+
+    StageView GetStageView (GtkPrintOperation *operation);
+
 
   private:
     static GSList *_stage_base;

@@ -74,6 +74,13 @@ Stage::~Stage ()
 }
 
 // --------------------------------------------------------------------------------
+Stage::StageView Stage::GetStageView (GtkPrintOperation *operation)
+{
+  return (StageView) GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (operation),
+                                                          "PRINT_STAGE_VIEW"));
+}
+
+// --------------------------------------------------------------------------------
 void Stage::SetStatusCbk (StatusCbk  cbk,
                           void      *data)
 {

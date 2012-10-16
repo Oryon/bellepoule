@@ -110,6 +110,10 @@
 		</Linker>
 		<Unit filename="..\sources\common\attendees.cpp" />
 		<Unit filename="..\sources\common\attendees.hpp" />
+		<Unit filename="..\sources\common\book.cpp" />
+		<Unit filename="..\sources\common\book.hpp" />
+		<Unit filename="..\sources\common\chapter.cpp" />
+		<Unit filename="..\sources\common\chapter.hpp" />
 		<Unit filename="..\sources\common\classification.cpp" />
 		<Unit filename="..\sources\common\classification.hpp" />
 		<Unit filename="..\sources\common\contest.cpp" />

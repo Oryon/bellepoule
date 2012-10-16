@@ -348,12 +348,19 @@ gchar *GeneralClassification::GetPrintName ()
 guint GeneralClassification::PreparePrint (GtkPrintOperation *operation,
                                            GtkPrintContext   *context)
 {
-  Classification *classification = GetClassification ();
-
-  if (classification)
+  if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
   {
-    return classification->PreparePrint (operation,
-                                         context);
+    return 0;
+  }
+  else
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      return classification->PreparePrint (operation,
+                                           context);
+    }
   }
 
   return 0;

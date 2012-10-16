@@ -1429,57 +1429,64 @@ gchar *PoolAllocator::GetPrintName ()
 guint PoolAllocator::PreparePrint (GtkPrintOperation *operation,
                                    GtkPrintContext   *context)
 {
-  gdouble canvas_x;
-  gdouble canvas_y;
-  gdouble canvas_w;
-  gdouble canvas_h;
-  gdouble paper_w  = gtk_print_context_get_width (context);
-  gdouble paper_h  = gtk_print_context_get_height (context);
-  gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
-
+  if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
   {
-    GooCanvasBounds bounds;
-
-    goo_canvas_item_get_bounds (GetRootItem (),
-                                &bounds);
-    canvas_x = bounds.x1;
-    canvas_y = bounds.y1;
-    canvas_w = bounds.x2 - bounds.x1;
-    canvas_h = bounds.y2 - bounds.y1;
+    return 0;
   }
-
+  else
   {
-    gdouble canvas_dpi;
-    gdouble printer_dpi;
+    gdouble canvas_x;
+    gdouble canvas_y;
+    gdouble canvas_w;
+    gdouble canvas_h;
+    gdouble paper_w  = gtk_print_context_get_width (context);
+    gdouble paper_h  = gtk_print_context_get_height (context);
+    gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
 
-    g_object_get (G_OBJECT (GetCanvas ()),
-                  "resolution-x", &canvas_dpi,
-                  NULL);
-    printer_dpi = gtk_print_context_get_dpi_x (context);
-
-    _print_scale = printer_dpi/canvas_dpi;
-  }
-
-  if (canvas_w * _print_scale > paper_w)
-  {
-    _print_scale = paper_w / canvas_w;
-  }
-
-  {
-    guint nb_row_by_page = (guint) ((paper_h - header_h) / ((_max_h+20)*_print_scale));
-    guint nb_row         = g_slist_length (_drop_zones)/2;
-
-    if (g_slist_length (_drop_zones) % 2 > 0)
     {
-      nb_row++;
+      GooCanvasBounds bounds;
+
+      goo_canvas_item_get_bounds (GetRootItem (),
+                                  &bounds);
+      canvas_x = bounds.x1;
+      canvas_y = bounds.y1;
+      canvas_w = bounds.x2 - bounds.x1;
+      canvas_h = bounds.y2 - bounds.y1;
     }
 
-    _nb_page = nb_row/nb_row_by_page;
-    _page_h  = nb_row_by_page * (_max_h+20)*_print_scale;
-
-    if (nb_row % nb_row_by_page != 0)
     {
-      _nb_page++;
+      gdouble canvas_dpi;
+      gdouble printer_dpi;
+
+      g_object_get (G_OBJECT (GetCanvas ()),
+                    "resolution-x", &canvas_dpi,
+                    NULL);
+      printer_dpi = gtk_print_context_get_dpi_x (context);
+
+      _print_scale = printer_dpi/canvas_dpi;
+    }
+
+    if (canvas_w * _print_scale > paper_w)
+    {
+      _print_scale = paper_w / canvas_w;
+    }
+
+    {
+      guint nb_row_by_page = (guint) ((paper_h - header_h) / ((_max_h+20)*_print_scale));
+      guint nb_row         = g_slist_length (_drop_zones)/2;
+
+      if (g_slist_length (_drop_zones) % 2 > 0)
+      {
+        nb_row++;
+      }
+
+      _nb_page = nb_row/nb_row_by_page;
+      _page_h  = nb_row_by_page * (_max_h+20)*_print_scale;
+
+      if (nb_row % nb_row_by_page != 0)
+      {
+        _nb_page++;
+      }
     }
   }
 
