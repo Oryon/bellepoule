@@ -92,12 +92,6 @@ class Module : public virtual Object
                            GtkPrintContext   *context,
                            gint               page_nr);
 
-    void SetPrintPages (gint first,
-                        gint last);
-
-    void GetPrintPages (gint *first,
-                        gint *last);
-
     virtual gchar *GetPrintName () {return NULL;};
 
   protected:
@@ -115,8 +109,6 @@ class Module : public virtual Object
     GtkPrintSettings *_print_settings;
     GtkPrintSettings *_page_setup_print_settings;
     GtkPageSetup     *_default_page_setup;
-    gint              _first_page_to_print;
-    gint              _last_page_to_print;
 
     static const gdouble PRINT_HEADER_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;
