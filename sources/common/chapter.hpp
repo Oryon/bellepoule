@@ -19,24 +19,29 @@
 
 #include "object.hpp"
 #include "module.hpp"
+#include "stage.hpp"
 
 class Chapter : public Object
 {
   public:
-    Chapter (Module *module,
-             guint   first_page,
-             guint   last_page);
+    Chapter (Module           *module,
+             Stage::StageView  stage_view,
+             guint             first_page,
+             guint             last_page);
 
     Module *GetModule ();
+
+    Stage::StageView GetStageView ();
 
     guint GetFirstPage ();
 
     guint GetLastPage ();
 
   private:
-    Module *_module;
-    guint   _first_page;
-    guint   _last_page;
+    Module           *_module;
+    guint             _first_page;
+    guint             _last_page;
+    Stage::StageView  _stage_view;
 
     virtual ~Chapter ();
 };

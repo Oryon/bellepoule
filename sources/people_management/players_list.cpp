@@ -1050,7 +1050,7 @@ void PlayersList::GetPrintScale (GtkPrintOperation *operation,
   {
     Player *player = (Player *) current_player->data;
 
-    if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
+    if (   (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"))
         || PlayerIsPrintable (player))
     {
       PrintPlayer (goo_canvas_get_root_item (canvas),
@@ -1172,7 +1172,7 @@ void PlayersList::DrawBarePage (GtkPrintOperation *operation,
         {
           Player *current_player = GetPlayer (GTK_TREE_MODEL (_store), &iter);
 
-          if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS"))
+          if (   (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"))
               || PlayerIsPrintable (current_player))
           {
             PrintPlayer (goo_canvas_get_root_item (canvas),

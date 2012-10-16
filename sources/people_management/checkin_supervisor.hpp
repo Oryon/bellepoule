@@ -45,6 +45,9 @@ class CheckinSupervisor : public virtual Checkin, public Stage
 
     void Wipe ();
 
+    guint PreparePrint (GtkPrintOperation *operation,
+                        GtkPrintContext   *context);
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_class_name;

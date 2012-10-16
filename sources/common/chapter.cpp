@@ -17,12 +17,14 @@
 #include "chapter.hpp"
 
 // --------------------------------------------------------------------------------
-Chapter::Chapter (Module *module,
-                  guint   first_page,
-                  guint   last_page)
+Chapter::Chapter (Module           *module,
+                  Stage::StageView  stage_view,
+                  guint             first_page,
+                  guint             last_page)
 : Object ("Chapter")
 {
   _module     = module;
+  _stage_view = stage_view;
   _first_page = first_page;
   _last_page  = last_page;
 }
@@ -48,4 +50,10 @@ guint Chapter::GetLastPage ()
 Module *Chapter::GetModule ()
 {
   return _module;
+}
+
+// --------------------------------------------------------------------------------
+Stage::StageView Chapter::GetStageView ()
+{
+  return _stage_view;
 }

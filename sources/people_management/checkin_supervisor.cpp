@@ -118,6 +118,19 @@ void CheckinSupervisor::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
+guint CheckinSupervisor::PreparePrint (GtkPrintOperation *operation,
+                                       GtkPrintContext   *context)
+{
+  if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+  {
+    return 0;
+  }
+
+  return Checkin::PreparePrint (operation,
+                                context);
+}
+
+// --------------------------------------------------------------------------------
 void CheckinSupervisor::Load (xmlXPathContext *xml_context,
                               const gchar     *from_node)
 {

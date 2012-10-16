@@ -1091,15 +1091,19 @@ gchar *TableSupervisor::GetPrintName ()
 guint TableSupervisor::PreparePrint (GtkPrintOperation *operation,
                                      GtkPrintContext   *context)
 {
-  if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS") == FALSE)
-      && gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  if (GetStageView (operation) == STAGE_VIEW_RESULT)
+  {
+    return 0;
+  }
+  else if (   (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+           || gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
   {
     Classification *classification = GetClassification ();
 
     if (classification)
     {
-      return _displayed_table_set->PreparePrint (operation,
-                                                 context);
+      return classification->PreparePrint (operation,
+                                           context);
     }
   }
   else if (_displayed_table_set)
@@ -1116,8 +1120,18 @@ void TableSupervisor::DrawPage (GtkPrintOperation *operation,
                                 GtkPrintContext   *context,
                                 gint               page_nr)
 {
-  if (   (g_object_get_data (G_OBJECT (operation), "DEFAULT_PRINT_SETTINGS") == FALSE)
-      && gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
+  gboolean print_classification = FALSE;
+
+  if (GetStageView (operation) == STAGE_VIEW_UNDEFINED)
+  {
+    print_classification = gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton")));
+  }
+  if (GetStageView (operation) == Stage::STAGE_VIEW_CLASSIFICATION)
+  {
+    print_classification = TRUE;
+  }
+
+  if (print_classification)
   {
     Classification *classification = GetClassification ();
 
