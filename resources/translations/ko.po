@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-15 17:56+0200\n"
+"POT-Creation-Date: 2012-10-17 08:39+0200\n"
 "PO-Revision-Date: 2012-10-05 01:50+0000\n"
 "Last-Translator: Jihwan Cho <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
@@ -228,20 +228,20 @@ msgstr "결석"
 msgid "Free"
 msgstr "여유"
 
-#: ../../sources/common/schedule.cpp:150
+#: ../../sources/common/schedule.cpp:151
 #, c-format
 msgid "Round #%d"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:1053
+#: ../../sources/common/schedule.cpp:1054
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr "<b><big>정말로 진행 중인 경기를 취소할까요?</big></b>"
 
-#: ../../sources/common/schedule.cpp:1056
+#: ../../sources/common/schedule.cpp:1057
 msgid "Go back to the previous round?"
 msgstr "이전 경기로 돌아갈까요?"
 
-#: ../../sources/common/schedule.cpp:1059
+#: ../../sources/common/schedule.cpp:1060
 msgid "All the inputs of this round will be cancelled."
 msgstr "이번 경기의 모든 입력이 취소됩니다."
 
@@ -351,7 +351,9 @@ msgstr "심판"
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
-msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르면 관련 필드가 무시됩니다."
+msgstr ""
+"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
+"면 관련 필드가 무시됩니다."
 
 #: ../../sources/people_management/general_classification.cpp:26
 #: ../../sources/people_management/general_classification.cpp:186
@@ -478,8 +480,8 @@ msgstr "등수 #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123

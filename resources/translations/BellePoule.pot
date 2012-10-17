@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-15 17:56+0200\n"
+"POT-Creation-Date: 2012-10-17 08:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -227,20 +227,20 @@ msgstr ""
 msgid "Free"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:150
+#: ../../sources/common/schedule.cpp:151
 #, c-format
 msgid "Round #%d"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:1053
+#: ../../sources/common/schedule.cpp:1054
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:1056
+#: ../../sources/common/schedule.cpp:1057
 msgid "Go back to the previous round?"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:1059
+#: ../../sources/common/schedule.cpp:1060
 msgid "All the inputs of this round will be cancelled."
 msgstr ""
 
