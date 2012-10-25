@@ -895,7 +895,7 @@ void PoolAllocator::CreatePools ()
     GSList  *shortlist = _attendees->GetShortList ();
     guint   nb_pool    = _selected_config->_nb_pool;
 
-    pool_table = (Pool **) g_malloc (nb_pool * sizeof (Pool *));
+    pool_table = g_new (Pool *, nb_pool);
     for (guint i = 0; i < nb_pool; i++)
     {
       pool_table[i] = new Pool (_max_score,
@@ -982,6 +982,7 @@ void PoolAllocator::CreatePools ()
                          this);
       }
     }
+    g_free (pool_table);
 
     {
       _nb_matchs = GetNbMatchs ();

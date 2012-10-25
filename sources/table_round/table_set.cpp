@@ -501,6 +501,7 @@ void TableSet::Display ()
       }
 
       g_free (_row_filled);
+      _row_filled = NULL;
     }
 
     RefreshTableStatus ();
@@ -773,15 +774,17 @@ void TableSet::CreateTree ()
 
         // Add an entry for each table in the the quick search
         {
-          GtkTreeIter table_iter;
+          GtkTreeIter  table_iter;
+          gchar       *image = _tables[t]->GetImage ();
 
           gtk_tree_store_prepend (_quick_search_treestore,
                                   &table_iter,
                                   NULL);
           gtk_tree_store_set (_quick_search_treestore, &table_iter,
-                              QUICK_MATCH_NAME_COLUMN_str,        _tables[t]->GetImage (),
+                              QUICK_MATCH_NAME_COLUMN_str,        image,
                               QUICK_MATCH_VISIBILITY_COLUMN_bool, 1,
                               -1);
+          g_free (image);
         }
       }
     }
@@ -894,10 +897,6 @@ gboolean TableSet::DeleteCanvasTable (GNode    *node,
             table_set);
 
   table_set->_score_collector->RemoveCollectingPoints (data->_match);
-
-  data->_connector        = NULL;
-  data->_fencer_goo_table = NULL;
-  data->_match_goo_table  = NULL;
 
   {
     GNode *parent = node->parent;
@@ -1064,7 +1063,10 @@ gboolean TableSet::FillInNode (GNode    *node,
                           row + 1,
                           column);
 
-      table_set->_row_filled[row] = TRUE;
+      if (table_set->_row_filled)
+      {
+        table_set->_row_filled[row] = TRUE;
+      }
     }
 
     // Match
