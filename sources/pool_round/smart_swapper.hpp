@@ -155,6 +155,8 @@ class SmartSwapper : public Object, public Swapper
 
     PoolData *GetPoolToTry (guint index);
 
+    void DumpPools ();
+
   private:
     Object              *_owner;
     guint                _nb_pools;
