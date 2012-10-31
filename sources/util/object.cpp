@@ -105,7 +105,7 @@ Object::~Object ()
 // --------------------------------------------------------------------------------
 gchar *Object::GetUndivadableText (const gchar *text)
 {
-  gchar *result = NULL;
+  guint8 *result = NULL;
 
   if (text)
   {
@@ -119,10 +119,10 @@ gchar *Object::GetUndivadableText (const gchar *text)
       }
     }
 
-    result = (gchar *) g_malloc (strlen (text) + nb_space*2 +1);
+    result = (guint8 *) g_malloc (strlen (text) + nb_space*2 +1);
 
     {
-      gchar *current = result;
+      guint8 *current = result;
 
       for (guint i = 0; text[i] != 0; i++)
       {
@@ -143,7 +143,7 @@ gchar *Object::GetUndivadableText (const gchar *text)
     }
   }
 
-  return result;
+  return (gchar *) result;
 }
 
 // --------------------------------------------------------------------------------

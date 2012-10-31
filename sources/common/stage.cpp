@@ -907,6 +907,20 @@ void Stage::ToggleClassification (gboolean classification_on)
       {
         UpdateClassification (_result);
       }
+      else
+      {
+        GSList *current_player = _result;
+
+        _classification->Wipe ();
+        while (current_player)
+        {
+          Player *player = (Player *) current_player->data;
+
+          _classification->Add (player);
+
+          current_player = g_slist_next (current_player);
+        }
+      }
 
       if (main_w)
       {
@@ -971,9 +985,7 @@ void Stage::UpdateClassification (GSList *result)
 {
   if (_classification)
   {
-    Player::AttributeId *previous_attr_id   = NULL;
-    Player::AttributeId *rank_attr_id       = new Player::AttributeId ("rank", this);
-    Player::AttributeId *final_rank_attr_id = new Player::AttributeId ("final_rank");
+    Player::AttributeId *previous_attr_id = NULL;
 
     if (_input_provider)
     {
@@ -983,7 +995,9 @@ void Stage::UpdateClassification (GSList *result)
     _classification->Wipe ();
 
     {
-      GSList *current_player = result;
+      Player::AttributeId *rank_attr_id       = new Player::AttributeId ("rank", this);
+      Player::AttributeId *final_rank_attr_id = new Player::AttributeId ("final_rank");
+      GSList              *current_player     = result;
 
       while (current_player)
       {
@@ -1004,11 +1018,12 @@ void Stage::UpdateClassification (GSList *result)
 
         current_player = g_slist_next (current_player);
       }
+
+      Object::TryToRelease (rank_attr_id);
+      Object::TryToRelease (final_rank_attr_id);
     }
 
     Object::TryToRelease (previous_attr_id);
-    Object::TryToRelease (rank_attr_id);
-    Object::TryToRelease (final_rank_attr_id);
   }
 }
 

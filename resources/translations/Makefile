@@ -22,7 +22,7 @@ $(POT_FILE): $(CPP_FILES) $(GLADE_FILES)
 	msgmerge --no-fuzzy-matching\
            --update\
            --backup=none\
-           --verbose\
+           --quiet\
            $(subst /LC_MESSAGES/$(DOMAIN).mo,.po,$@) $(POT_FILE)
 	msgfmt --check-format\
          --statistics\

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-15 17:56+0200\n"
+"POT-Creation-Date: 2012-10-17 08:39+0200\n"
 "PO-Revision-Date: 2012-10-03 15:26+0000\n"
 "Last-Translator: werner huysmans <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -228,20 +228,20 @@ msgstr "Afwezig"
 msgid "Free"
 msgstr "Vrij"
 
-#: ../../sources/common/schedule.cpp:150
+#: ../../sources/common/schedule.cpp:151
 #, c-format
 msgid "Round #%d"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:1053
+#: ../../sources/common/schedule.cpp:1054
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr "<b><big>Wil u de huidige ronde anulleren ? ?</big></b>"
 
-#: ../../sources/common/schedule.cpp:1056
+#: ../../sources/common/schedule.cpp:1057
 msgid "Go back to the previous round?"
 msgstr "Terugkeren naar de vorige ronde?"
 
-#: ../../sources/common/schedule.cpp:1059
+#: ../../sources/common/schedule.cpp:1060
 msgid "All the inputs of this round will be cancelled."
 msgstr "Alle ingaves van de huidige ronde worden geannulleerd"
 
@@ -480,11 +480,11 @@ msgstr "Plaats #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
-"<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen "
-"?</big></b>"
+"<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen ?</"
+"big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
 #: ../../sources/table_round/table_set.cpp:134
@@ -1134,7 +1134,6 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgid "prénom"
 #~ msgstr "Voornaam"
 
-#, c-format
 #~ msgid ""
 #~ "<b><big>Voulez-vous vraiment fermer\n"
 #~ "<big>%s</big> ?</big></b>"
@@ -1172,7 +1171,6 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgid "Victoires"
 #~ msgstr "Overwinningen"
 
-#, c-format
 #~ msgid "Poule No %02d"
 #~ msgstr "Poule nr  %02d"
 
@@ -1197,7 +1195,6 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgid "<b><big>Imprimer ...</big></b>"
 #~ msgstr "<b><big>Pinten...</big></b>"
 
-#, c-format
 #~ msgid "Tableau de %d"
 #~ msgstr "Tableau van %d"
 
@@ -1220,15 +1217,15 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgstr "Tableau"
 
 #~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
+#~ "b>"
 #~ msgstr ""
-#~ "<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen "
-#~ "?</big></b>"
+#~ "<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen ?</"
+#~ "big></b>"
 
 #~ msgid "Toutes les saisies de cette phase seront annulées."
 #~ msgstr "Alle sessies van deze fase zijn geanulleerd"
 
-#, c-format
 #~ msgid "%s : Impression des matchs"
 #~ msgstr "%s : wedstrijdoverzicht"
 
@@ -1314,8 +1311,8 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgstr ":"
 
 #~ msgid ""
-#~ "Exporte le classement dans un fichier au format \".csv\" pour des tableurs "
-#~ "du type Excel ou OpenOffice"
+#~ "Exporte le classement dans un fichier au format \".csv\" pour des "
+#~ "tableurs du type Excel ou OpenOffice"
 #~ msgstr ""
 #~ "Exporteer het klassement in een `.csv` bestandsformaat voor Excel of "
 #~ "OpenOffice"
@@ -1465,12 +1462,12 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgstr "Onlangs geopende bestanden"
 
 #~ msgid ""
-#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit les "
-#~ "listes de tireurs inscrits aux compétitions par l'intermédiaire de son site "
-#~ "internet. "
+#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit "
+#~ "les listes de tireurs inscrits aux compétitions par l'intermédiaire de "
+#~ "son site internet. "
 #~ msgstr ""
-#~ "FFF is het formaat waarin de Franse Schermfederatie een overzicht geeft van "
-#~ "de geregistreerde schermers via haar website. "
+#~ "FFF is het formaat waarin de Franse Schermfederatie een overzicht geeft "
+#~ "van de geregistreerde schermers via haar website. "
 
 #~ msgid "Sauvegarde l'état courant de la compétition."
 #~ msgstr "Huidige staat van de competitie opslaan"
@@ -1482,8 +1479,8 @@ msgstr "Schermers Fiche template(.csv)"
 #~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
 #~ "tableaux et autres phases."
 #~ msgstr ""
-#~ "Toestaan de formule te configureren om de volgorde van poules, tableaus en "
-#~ "andere fases te wijzigen"
+#~ "Toestaan de formule te configureren om de volgorde van poules, tableaus "
+#~ "en andere fases te wijzigen"
 
 #~ msgid "Permet de renseigner les caractéristiques de la compétition."
 #~ msgstr "Toelaten te leren van de competitie eigenschappen"
@@ -1495,8 +1492,8 @@ msgstr "Schermers Fiche template(.csv)"
 #~ "Les informations de date et heures sont exploitées pour avertir par une "
 #~ "alarme les organisateurs de l'éminence de de certains évènements."
 #~ msgstr ""
-#~ "De informatie van datum en tijd worden gebruikt om een alarm te luiden voor "
-#~ "de organisatoren van bepaalde evenementen"
+#~ "De informatie van datum en tijd worden gebruikt om een alarm te luiden "
+#~ "voor de organisatoren van bepaalde evenementen"
 
 #~ msgid ""
 #~ "Remplissage\n"
@@ -1514,9 +1511,9 @@ msgstr "Schermers Fiche template(.csv)"
 #~ msgstr "Verbieden"
 
 #~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-#~ "des saisies longues et laborieuses lors des séances de prise en main de "
-#~ "BellePoule."
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut "
+#~ "éviter des saisies longues et laborieuses lors des séances de prise en "
+#~ "main de BellePoule."
 #~ msgstr ""
 #~ "Knop \"automatisch vullen van scores\" actief maken. Dit kan lange "
 #~ "wachttijden van BellePoule voorkomen"
@@ -1555,7 +1552,8 @@ msgstr "Schermers Fiche template(.csv)"
 #~ "compétition."
 #~ msgstr ""
 #~ "Alle wedstrijden van de tableau vervangen door willekeurige scores.\n"
-#~ "Om deze knop te activeren/desactiveren, ga naar de competitie eigenschappen"
+#~ "Om deze knop te activeren/desactiveren, ga naar de competitie "
+#~ "eigenschappen"
 
 #~ msgid ""
 #~ "Logiciel de gestion de tournois d'escrime.\n"

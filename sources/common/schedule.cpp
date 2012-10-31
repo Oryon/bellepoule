@@ -295,9 +295,12 @@ void Schedule::RefreshStageName (Stage *stage)
 
   if (tab_widget)
   {
+    gchar *name = stage->GetFullName ();
+
     gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (GetRootWidget ()),
                                      tab_widget,
-                                     stage->GetFullName ());
+                                     name);
+    g_free (name);
   }
 }
 

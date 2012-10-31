@@ -372,9 +372,14 @@ void Table::Save (xmlTextWriter *xml_writer)
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "ID",
                                      "A%d", _size);
-  xmlTextWriterWriteAttribute (xml_writer,
-                               BAD_CAST "Titre",
-                               BAD_CAST GetImage ());
+  {
+    gchar *image = GetImage ();
+
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "Titre",
+                                 BAD_CAST image);
+    g_free (image);
+  }
   xmlTextWriterWriteFormatAttribute (xml_writer,
                                      BAD_CAST "Taille",
                                      "%d", _size);

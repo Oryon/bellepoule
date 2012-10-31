@@ -25,11 +25,15 @@ class Swapper
   public:
     virtual void Delete () = 0;
 
-    virtual void Swap (GSList *zones,
-                       gchar  *criteria,
+    virtual void Init (GSList *zones,
+                       guint   fencer_count) = 0;
+
+    virtual void Swap (gchar  *criteria,
                        GSList *fencer_list) = 0;
 
-    virtual guint GetErrors () = 0;
+    virtual void RefreshErrors () = 0;
+
+    virtual guint HasErrors () = 0;
 
   protected:
     Swapper () {};
