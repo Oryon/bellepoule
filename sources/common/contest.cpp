@@ -948,8 +948,6 @@ void Contest::LatchPlayerList ()
 
   if (checkin)
   {
-    Player::AttributeId  rank_attr ("previous_stage_rank", checkin);
-
     checkin->OnListChanged ();
   }
 }

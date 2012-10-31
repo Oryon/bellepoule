@@ -116,6 +116,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
     const gchar *GetInputProviderClient ();
     gint GetNbMatchs ();
 
+    void RefreshSwappingErrorIndicator ();
+
     void OnAttrListUpdated ();
 
     gboolean IsOver ();

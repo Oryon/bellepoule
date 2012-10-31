@@ -294,6 +294,11 @@ void PoolAllocator::DropObject (Object   *object,
     target_pool->AddFencer (floating_object,
                             this);
     _fencer_list->Update (floating_object);
+
+    if (target_zone && (target_zone != source_zone))
+    {
+      RefreshSwappingErrorIndicator ();
+    }
   }
   else if (target_zone)
   {
@@ -387,6 +392,8 @@ void PoolAllocator::Display ()
 
     PopulateFencerList ();
   }
+
+  RefreshSwappingErrorIndicator ();
 
   if (_main_table)
   {
@@ -893,6 +900,7 @@ void PoolAllocator::CreatePools ()
   {
     Pool   **pool_table;
     GSList  *shortlist = _attendees->GetShortList ();
+    guint    nb_fencer = g_slist_length (shortlist);
     guint   nb_pool    = _selected_config->_nb_pool;
 
     pool_table = g_new (Pool *, nb_pool);
@@ -914,23 +922,21 @@ void PoolAllocator::CreatePools ()
 
     if (_seeding_balanced->_value)
     {
+      _swapper->Init (_drop_zones,
+                      nb_fencer);
       if (_swapping_criteria)
       {
-        _swapper->Swap (_drop_zones,
-                        _swapping_criteria->_code_name,
+        _swapper->Swap (_swapping_criteria->_code_name,
                         shortlist);
       }
       else
       {
-        _swapper->Swap (_drop_zones,
-                        NULL,
+        _swapper->Swap (NULL,
                         shortlist);
       }
     }
     else
     {
-      guint nb_fencer = g_slist_length (shortlist);
-
       for (guint i = 0; i < nb_fencer; i++)
       {
         Player *player;
@@ -1605,15 +1611,17 @@ extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
 {
-  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
-  GtkTreeIter   selected_iter;
+  {
+    GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
+    GtkTreeIter selected_iter;
 
-  gtk_combo_box_get_active_iter (cb,
-                                 &selected_iter);
-  gtk_tree_model_get (model,
-                      &selected_iter,
-                      SWAPPING_CRITERIA_ptr, &_swapping_criteria,
-                      -1);
+    gtk_combo_box_get_active_iter (cb,
+                                   &selected_iter);
+    gtk_tree_model_get (model,
+                        &selected_iter,
+                        SWAPPING_CRITERIA_ptr, &_swapping_criteria,
+                        -1);
+  }
 
   if (_swapping_criteria)
   {
@@ -1628,13 +1636,27 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
   {
     DeletePools ();
     CreatePools ();
-
     Display ();
     SignalStatusUpdate ();
     MakeDirty ();
   }
+}
 
-#ifdef DEBUG
+// --------------------------------------------------------------------------------
+void PoolAllocator::RefreshSwappingErrorIndicator ()
+{
+  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
+
+  {
+    GSList *shortlist = _attendees->GetShortList ();
+
+    _swapper->Init (_drop_zones,
+                    g_slist_length (shortlist));
+  }
+
+  _swapper->RefreshErrors ();
+
+  // Reset all entries
   {
     GtkTreeIter iter;
     gboolean    iter_is_valid;
@@ -1652,13 +1674,19 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
     }
   }
 
-  if (_swapper && _swapper->GetErrors ())
+  // Set the selected iterator indicator
+  if (_swapper && _swapper->HasErrors ())
   {
+    GtkComboBox *cb = GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox"));
+    GtkTreeIter selected_iter;
+
+    gtk_combo_box_get_active_iter (cb,
+                                   &selected_iter);
+
     gtk_list_store_set (GTK_LIST_STORE (model), &selected_iter,
                         SWAPPING_ERRORS_str, GTK_STOCK_DIALOG_WARNING,
                         -1);
   }
-#endif
 }
 
 // --------------------------------------------------------------------------------

@@ -29,11 +29,15 @@ class SmartSwapper : public Object, public Swapper
 
     void Delete ();
 
-    void Swap (GSList *zones,
-               gchar  *criteria,
+    void Init (GSList *zones,
+               guint   fencer_count);
+
+    void Swap (gchar  *criteria,
                GSList *fencer_list);
 
-    guint GetErrors ();
+    void RefreshErrors ();
+
+    guint HasErrors ();
 
   private:
     class PoolData;
@@ -146,6 +150,9 @@ class SmartSwapper : public Object, public Swapper
 
     void DeletePoolTable ();
 
+    void AddPlayerToPool (Player   *player,
+                          PoolData *pool_data);
+
     void LookUpDistribution (GSList *fencer_list);
 
     void StoreSwapping ();
@@ -159,6 +166,7 @@ class SmartSwapper : public Object, public Swapper
 
   private:
     Object              *_owner;
+    GSList              *_zones;
     guint                _nb_pools;
     PoolData            *_pool_table;
     PoolSizes            _pool_sizes;
@@ -169,6 +177,7 @@ class SmartSwapper : public Object, public Swapper
     GHashTable          *_lack_table;
     GSList              *_remaining_errors;
     guint                _first_pool_to_try;
+    gboolean             _has_errors;
 };
 
 #endif
