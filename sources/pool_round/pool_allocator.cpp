@@ -481,7 +481,7 @@ void PoolAllocator::ApplyConfig ()
       }
     }
 
-    if (Locked () == FALSE)
+    if (IsPlugged () && Locked () == FALSE)
     {
       DeletePools ();
       CreatePools ();
@@ -1259,11 +1259,20 @@ void PoolAllocator::DisplayPlayer (Player        *player,
                               referee_icon,
                               indice+1, 0);
     }
-    else if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())
+    else
     {
-      Canvas::PutStockIconInTable (table,
-                                   GTK_STOCK_REFRESH,
-                                   indice+1, 0);
+      if (player->GetUIntData (this, "original_pool") != pool->GetNumber ())
+      {
+        Canvas::PutStockIconInTable (table,
+                                     GTK_STOCK_REFRESH,
+                                     indice+1, 0);
+      }
+      if (player->GetUIntData (this, "swap_error"))
+      {
+        Canvas::PutStockIconInTable (table,
+                                     GTK_STOCK_DIALOG_WARNING,
+                                     indice+1, 1);
+      }
     }
 
     for (guint i = 0; layout_list != NULL; i++)
@@ -1291,7 +1300,7 @@ void PoolAllocator::DisplayPlayer (Player        *player,
         {
           item = Canvas::PutPixbufInTable (table,
                                            pixbuf,
-                                           indice+1, i+1);
+                                           indice+1, i+2);
         }
         else
         {
@@ -1301,7 +1310,7 @@ void PoolAllocator::DisplayPlayer (Player        *player,
           {
             item = Canvas::PutTextInTable (table,
                                            image,
-                                           indice+1, i+1);
+                                           indice+1, i+2);
             g_free (image);
           }
         }
@@ -1311,7 +1320,7 @@ void PoolAllocator::DisplayPlayer (Player        *player,
       {
         item = Canvas::PutTextInTable (table,
                                        " ",
-                                       indice+1, i+1);
+                                       indice+1, i+2);
       }
 
       if (item)
@@ -1645,47 +1654,50 @@ void PoolAllocator::OnSwappingComboboxChanged (GtkComboBox *cb)
 // --------------------------------------------------------------------------------
 void PoolAllocator::RefreshSwappingErrorIndicator ()
 {
-  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
-
+  if (_swapping_criteria)
   {
-    GSList *shortlist = _attendees->GetShortList ();
+    GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
 
-    _swapper->Init (_drop_zones,
-                    g_slist_length (shortlist));
-  }
-
-  _swapper->RefreshErrors ();
-
-  // Reset all entries
-  {
-    GtkTreeIter iter;
-    gboolean    iter_is_valid;
-
-    iter_is_valid = gtk_tree_model_get_iter_first (model,
-                                                   &iter);
-    while (iter_is_valid)
     {
-      gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-                          SWAPPING_ERRORS_str, NULL,
-                          -1);
+      GSList *shortlist = _attendees->GetShortList ();
 
-      iter_is_valid = gtk_tree_model_iter_next (model,
-                                                &iter);
+      _swapper->Init (_drop_zones,
+                      g_slist_length (shortlist));
     }
-  }
 
-  // Set the selected iterator indicator
-  if (_swapper && _swapper->HasErrors ())
-  {
-    GtkComboBox *cb = GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox"));
-    GtkTreeIter selected_iter;
+    _swapper->RefreshErrors ();
 
-    gtk_combo_box_get_active_iter (cb,
-                                   &selected_iter);
+    // Reset all entries
+    {
+      GtkTreeIter iter;
+      gboolean    iter_is_valid;
 
-    gtk_list_store_set (GTK_LIST_STORE (model), &selected_iter,
-                        SWAPPING_ERRORS_str, GTK_STOCK_DIALOG_WARNING,
-                        -1);
+      iter_is_valid = gtk_tree_model_get_iter_first (model,
+                                                     &iter);
+      while (iter_is_valid)
+      {
+        gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+                            SWAPPING_ERRORS_str, NULL,
+                            -1);
+
+        iter_is_valid = gtk_tree_model_iter_next (model,
+                                                  &iter);
+      }
+    }
+
+    // Set the selected iterator indicator
+    if (_swapper && _swapper->HasErrors ())
+    {
+      GtkComboBox *cb = GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox"));
+      GtkTreeIter selected_iter;
+
+      gtk_combo_box_get_active_iter (cb,
+                                     &selected_iter);
+
+      gtk_list_store_set (GTK_LIST_STORE (model), &selected_iter,
+                          SWAPPING_ERRORS_str, GTK_STOCK_DIALOG_WARNING,
+                          -1);
+    }
   }
 }
 
