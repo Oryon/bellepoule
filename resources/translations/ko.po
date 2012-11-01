@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-10-16 04:49+0000\n"
-"X-Generator: Launchpad (build 16137)\n"
+"X-Launchpad-Export-Date: 2012-11-01 04:43+0000\n"
+"X-Generator: Launchpad (build 16218)\n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -351,9 +351,7 @@ msgstr "심판"
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
-msgstr ""
-"데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르"
-"면 관련 필드가 무시됩니다."
+msgstr "데이터 입력을 빠르게 하기 위해서는 이 상자의 체크를 지우세요. TAB 키를 누르면 관련 필드가 무시됩니다."
 
 #: ../../sources/people_management/general_classification.cpp:26
 #: ../../sources/people_management/general_classification.cpp:186
@@ -480,8 +478,8 @@ msgstr "등수 #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 msgstr "<b><big>선택된 테이블의 어떤 점수표를 인쇄할까요?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
