@@ -7,13 +7,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-17 08:39+0200\n"
-"PO-Revision-Date: 2012-11-01 20:08+0000\n"
-"Last-Translator: Adolfo Jayme Barrientos <fitoschido@gmail.com>\n"
+"PO-Revision-Date: 2012-11-02 19:38+0000\n"
+"Last-Translator: Eduardo Alberto Calvo <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-11-02 05:17+0000\n"
+"X-Launchpad-Export-Date: 2012-11-03 05:11+0000\n"
 "X-Generator: Launchpad (build 16218)\n"
 
 #: ../../resources/glade/table_supervisor.glade:51
@@ -139,11 +139,11 @@ msgstr "licencia"
 
 #: ../../sources/common/main.cpp:285
 msgid "smartphone"
-msgstr ""
+msgstr "smartphone"
 
 #: ../../sources/common/main.cpp:287
 msgid "rate"
-msgstr ""
+msgstr "tasa"
 
 #: ../../sources/common/main.cpp:292
 msgid "level"
@@ -534,7 +534,7 @@ msgstr "Datos"
 
 #: ../../sources/util/filter.cpp:282
 msgid "Look"
-msgstr ""
+msgstr "Apariencia"
 
 #: ../../resources/glade/checkin.glade:23
 #: ../../resources/glade/referees.glade:46
@@ -701,7 +701,7 @@ msgstr ""
 #: ../../resources/glade/referees.glade:115
 #: ../../resources/glade/tournament.glade:1123
 msgid "Referees"
-msgstr ""
+msgstr "Arbitros"
 
 #: ../../resources/glade/contest.glade:1156
 msgid "Man"
@@ -778,15 +778,15 @@ msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:229
 msgid "Seeding"
-msgstr ""
+msgstr "Compartiendo"
 
 #: ../../resources/glade/pool_supervisor.glade:246
 msgid "Balanced"
-msgstr ""
+msgstr "Balanceado"
 
 #: ../../resources/glade/pool_supervisor.glade:262
 msgid "Grouped by strength"
-msgstr ""
+msgstr "Agrupados por fuerza"
 
 #: ../../resources/glade/pool_supervisor.glade:356
 msgid "All the pools"
