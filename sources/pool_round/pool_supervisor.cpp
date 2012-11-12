@@ -137,8 +137,8 @@ PoolSupervisor::PoolSupervisor (StageClass *stage_class)
     filter->ShowAttribute ("first_name");
     filter->ShowAttribute ("club");
     filter->ShowAttribute ("pool_nr");
-    filter->ShowAttribute ("indice");
     filter->ShowAttribute ("victories_ratio");
+    filter->ShowAttribute ("indice");
     filter->ShowAttribute ("HS");
     filter->ShowAttribute ("status");
 
@@ -189,19 +189,6 @@ void PoolSupervisor::OnPlugged ()
 
   gtk_widget_set_sensitive (_glade->GetWidget ("seeding_viewport"),
                             FALSE);
-
-  {
-    Classification *classification = GetClassification ();
-
-    if (_pool_allocator->SeedingIsBalanced ())
-    {
-      classification->EnableSorting ();
-    }
-    else
-    {
-      classification->DisableSorting ();
-    }
-  }
 
   RetrievePools ();
 }
