@@ -40,13 +40,7 @@ class Classification : public PlayersList
     void SetSortFunction (GtkTreeIterCompareFunc sort_func,
                           gpointer               user_data);
 
-    void EnableSorting ();
-
-    void DisableSorting ();
-
   private:
-    gboolean _sorting_enabled;
-
     void OnPlugged ();
 
     void WriteFFFString (FILE        *file,

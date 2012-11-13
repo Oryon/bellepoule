@@ -28,8 +28,6 @@ Classification::Classification (Filter *filter)
 : PlayersList ("classification.glade",
                NO_RIGHT)
 {
-  _sorting_enabled = FALSE;
-
   if (filter)
   {
     filter->SetOwner (this);
@@ -49,29 +47,11 @@ void Classification::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void Classification::EnableSorting ()
-{
-  _sorting_enabled = TRUE;
-  SortDisplay ();
-}
-
-// --------------------------------------------------------------------------------
-void Classification::DisableSorting ()
-{
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_store),
-                                        GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
-                                        GTK_SORT_ASCENDING);
-}
-
-// --------------------------------------------------------------------------------
 void Classification::SortDisplay ()
 {
-  if (_sorting_enabled)
-  {
-    gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_store),
-                                          1,
-                                          GTK_SORT_ASCENDING);
-  }
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_store),
+                                        1,
+                                        GTK_SORT_ASCENDING);
 }
 
 // --------------------------------------------------------------------------------

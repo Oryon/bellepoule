@@ -344,6 +344,10 @@ void SmartSwapper::AddPlayerToPool (Player   *player,
     }
   }
 
+  player->SetData (_owner,
+                   "swap_error",
+                   0);
+
   fencer->_player                = player;
   fencer->_rank                  = previous_stage_rank->GetUIntValue ();
   fencer->_criteria_quark        = quark;
@@ -468,6 +472,9 @@ void SmartSwapper::ExtractOverPopulationErrors ()
           if (fencer)
           {
             fencer->_over_population_error = TRUE;
+            fencer->_player->SetData (_owner,
+                                      "swap_error",
+                                      (void *) 1);
           }
         }
       }
