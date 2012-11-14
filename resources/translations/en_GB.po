@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-17 08:39+0200\n"
-"PO-Revision-Date: 2012-01-13 07:08+0000\n"
-"Last-Translator: Vibhav Pant <vibhavp@gmail.com>\n"
+"PO-Revision-Date: 2012-11-13 21:56+0000\n"
+"Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-11-01 04:43+0000\n"
-"X-Generator: Launchpad (build 16218)\n"
+"X-Launchpad-Export-Date: 2012-11-14 04:44+0000\n"
+"X-Generator: Launchpad (build 16251)\n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -135,15 +135,15 @@ msgstr "licence"
 
 #: ../../sources/common/main.cpp:285
 msgid "smartphone"
-msgstr ""
+msgstr "smartphone"
 
 #: ../../sources/common/main.cpp:287
 msgid "rate"
-msgstr ""
+msgstr "rate"
 
 #: ../../sources/common/main.cpp:292
 msgid "level"
-msgstr ""
+msgstr "level"
 
 #: ../../sources/common/main.cpp:295
 msgid "ranking"
@@ -193,7 +193,7 @@ msgstr "status"
 
 #: ../../sources/common/main.cpp:329
 msgid "pool #"
-msgstr ""
+msgstr "pool #"
 
 #: ../../sources/common/main.cpp:333
 msgid "Vict./Bouts (‰)"
@@ -213,24 +213,24 @@ msgstr "Round start rank"
 
 #: ../../sources/common/main.cpp:355
 msgid "availability"
-msgstr ""
+msgstr "availability"
 
 #: ../../sources/common/main.cpp:360
 msgid "Busy"
-msgstr ""
+msgstr "Busy"
 
 #: ../../sources/common/main.cpp:361
 msgid "Absent"
-msgstr ""
+msgstr "Absent"
 
 #: ../../sources/common/main.cpp:362
 msgid "Free"
-msgstr ""
+msgstr "Free"
 
 #: ../../sources/common/schedule.cpp:151
 #, c-format
 msgid "Round #%d"
-msgstr ""
+msgstr "Round #%d"
 
 #: ../../sources/common/schedule.cpp:1054
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
@@ -247,15 +247,15 @@ msgstr "All the inputs of this round will be cancelled."
 #: ../../sources/common/tournament.cpp:479
 #: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
-msgstr ""
+msgstr "Payment book"
 
 #: ../../sources/common/tournament.cpp:491
 msgid "Page"
-msgstr ""
+msgstr "Page"
 
 #: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
-msgstr ""
+msgstr "Restart BellePoule for this change to take effect"
 
 #: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
@@ -263,7 +263,7 @@ msgstr "Choose a competion file to open... "
 
 #: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
-msgstr ""
+msgstr "Competition files (.cotcot / .xml)"
 
 #: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
@@ -275,7 +275,7 @@ msgstr "BellePoule files"
 
 #: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
-msgstr ""
+msgstr "Meal tickets"
 
 #: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
@@ -308,11 +308,11 @@ msgstr "Choose a fencer file to import..."
 
 #: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
-msgstr ""
+msgstr "Fencer files"
 
 #: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
-msgstr ""
+msgstr "Referee files"
 
 #: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
@@ -338,7 +338,7 @@ msgstr "Check-in"
 
 #: ../../sources/people_management/form.cpp:46
 msgid "Fencer"
-msgstr ""
+msgstr "Fencer"
 
 #: ../../sources/people_management/form.cpp:51
 #: ../../sources/pool_round/pool.cpp:448
@@ -383,7 +383,7 @@ msgstr "Split"
 
 #: ../../sources/people_management/splitting.cpp:259
 msgid "List of fencers to extract"
-msgstr ""
+msgstr "List of fencers to extract"
 
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
@@ -492,7 +492,7 @@ msgstr "Table printing"
 
 #: ../../sources/table_round/table_set.cpp:1747
 msgid "cutting"
-msgstr ""
+msgstr "cutting"
 
 #: ../../sources/table_round/table_set.cpp:2694
 #, c-format
@@ -517,7 +517,7 @@ msgstr "Table classification"
 
 #: ../../sources/util/filter.cpp:219
 msgid "Data to display"
-msgstr ""
+msgstr "Data to display"
 
 #: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
 #: ../../resources/glade/general_classification.glade:35
@@ -531,7 +531,7 @@ msgstr "Data"
 
 #: ../../sources/util/filter.cpp:282
 msgid "Look"
-msgstr ""
+msgstr "Look"
 
 #: ../../resources/glade/checkin.glade:23
 #: ../../resources/glade/referees.glade:46
@@ -562,7 +562,7 @@ msgstr "all"
 
 #: ../../resources/glade/checkin.glade:260
 msgid "Import fencer file"
-msgstr ""
+msgstr "Import fencer file"
 
 #: ../../resources/glade/contest.glade:21
 msgid "Date of competition"
@@ -698,7 +698,7 @@ msgstr ""
 #: ../../resources/glade/referees.glade:115
 #: ../../resources/glade/tournament.glade:1123
 msgid "Referees"
-msgstr ""
+msgstr "Referees"
 
 #: ../../resources/glade/contest.glade:1156
 msgid "Man"
@@ -775,15 +775,15 @@ msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:229
 msgid "Seeding"
-msgstr ""
+msgstr "Seeding"
 
 #: ../../resources/glade/pool_supervisor.glade:246
 msgid "Balanced"
-msgstr ""
+msgstr "Balanced"
 
 #: ../../resources/glade/pool_supervisor.glade:262
 msgid "Grouped by strength"
-msgstr ""
+msgstr "Grouped by strength"
 
 #: ../../resources/glade/pool_supervisor.glade:356
 msgid "All the pools"
@@ -849,7 +849,7 @@ msgstr ""
 
 #: ../../resources/glade/referees.glade:342
 msgid "Import referee file"
-msgstr ""
+msgstr "Import referee file"
 
 #: ../../resources/glade/schedule.glade:47
 msgid "Add"
@@ -958,7 +958,7 @@ msgstr "From"
 
 #: ../../resources/glade/table_supervisor.glade:547
 msgid "To"
-msgstr ""
+msgstr "To"
 
 #: ../../resources/glade/table_supervisor.glade:595
 msgid "For place"
@@ -980,15 +980,15 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:722
 msgid "Broadcasted competitions"
-msgstr ""
+msgstr "Broadcasted competitions"
 
 #: ../../resources/glade/tournament.glade:768
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: ../../resources/glade/tournament.glade:797
 msgid "host"
-msgstr ""
+msgstr "host"
 
 #: ../../resources/glade/tournament.glade:963
 msgid "BellePoule - Fencing tournament"
@@ -1004,7 +1004,7 @@ msgstr "Recently opened"
 
 #: ../../resources/glade/tournament.glade:1026
 msgid "Watch"
-msgstr ""
+msgstr "Watch"
 
 #: ../../resources/glade/tournament.glade:1043
 msgid "Backup"
@@ -1024,19 +1024,19 @@ msgstr "Deactivate"
 
 #: ../../resources/glade/tournament.glade:1135
 msgid "Print meal tickets"
-msgstr ""
+msgstr "Print meal tickets"
 
 #: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
-msgstr ""
+msgstr "Print payment book"
 
 #: ../../resources/glade/tournament.glade:1175
 msgid "Translate into your language ..."
-msgstr ""
+msgstr "Translate into your language ..."
 
 #: ../../resources/glade/tournament.glade:1193
 msgid "New version!"
-msgstr ""
+msgstr "New version!"
 
 #: ../../resources/glade/tournament.glade:1233
 msgid "Open an example..."
@@ -1048,7 +1048,7 @@ msgstr "User manual"
 
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
-msgstr ""
+msgstr "Fencer file template (.csv)"
 
 #~ msgid "Masculin"
 #~ msgstr "Male"
