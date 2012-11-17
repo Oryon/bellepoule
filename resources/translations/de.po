@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-17 08:39+0200\n"
-"PO-Revision-Date: 2011-09-30 20:39+0000\n"
-"Last-Translator: Julien Diaz <Unknown>\n"
+"PO-Revision-Date: 2012-11-16 12:31+0000\n"
+"Last-Translator: Dennis Baudys <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-11-01 04:43+0000\n"
-"X-Generator: Launchpad (build 16218)\n"
+"X-Launchpad-Export-Date: 2012-11-17 04:40+0000\n"
+"X-Generator: Launchpad (build 16278)\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -137,7 +137,7 @@ msgstr "Lizenz"
 
 #: ../../sources/common/main.cpp:285
 msgid "smartphone"
-msgstr ""
+msgstr "Smartphone"
 
 #: ../../sources/common/main.cpp:287
 msgid "rate"
@@ -145,7 +145,7 @@ msgstr ""
 
 #: ../../sources/common/main.cpp:292
 msgid "level"
-msgstr ""
+msgstr "Level"
 
 #: ../../sources/common/main.cpp:295
 msgid "ranking"
@@ -215,24 +215,24 @@ msgstr "Startplatz"
 
 #: ../../sources/common/main.cpp:355
 msgid "availability"
-msgstr ""
+msgstr "Verfügbarkeit"
 
 #: ../../sources/common/main.cpp:360
 msgid "Busy"
-msgstr ""
+msgstr "Beschäftigt"
 
 #: ../../sources/common/main.cpp:361
 msgid "Absent"
-msgstr ""
+msgstr "Abwesend"
 
 #: ../../sources/common/main.cpp:362
 msgid "Free"
-msgstr ""
+msgstr "Verfügbar"
 
 #: ../../sources/common/schedule.cpp:151
 #, c-format
 msgid "Round #%d"
-msgstr ""
+msgstr "Runde #%d"
 
 #: ../../sources/common/schedule.cpp:1054
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
@@ -254,11 +254,11 @@ msgstr ""
 
 #: ../../sources/common/tournament.cpp:491
 msgid "Page"
-msgstr ""
+msgstr "Seite"
 
 #: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
-msgstr ""
+msgstr "Starten Sie BellePoule neu, damit die Änderungen wirksam werden"
 
 #: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
@@ -520,7 +520,7 @@ msgstr "Rangfolge nach der Direktausscheidung"
 
 #: ../../sources/util/filter.cpp:219
 msgid "Data to display"
-msgstr ""
+msgstr "Anzuzeigende Daten"
 
 #: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
 #: ../../resources/glade/general_classification.glade:35
@@ -779,11 +779,11 @@ msgstr ""
 
 #: ../../resources/glade/pool_supervisor.glade:246
 msgid "Balanced"
-msgstr ""
+msgstr "Ausgeglichen"
 
 #: ../../resources/glade/pool_supervisor.glade:262
 msgid "Grouped by strength"
-msgstr ""
+msgstr "Nach Stärke gruppiert"
 
 #: ../../resources/glade/pool_supervisor.glade:356
 msgid "All the pools"
@@ -955,7 +955,7 @@ msgstr "Von"
 
 #: ../../resources/glade/table_supervisor.glade:547
 msgid "To"
-msgstr ""
+msgstr "An"
 
 #: ../../resources/glade/table_supervisor.glade:595
 msgid "For place"
@@ -981,11 +981,11 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:768
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: ../../resources/glade/tournament.glade:797
 msgid "host"
-msgstr ""
+msgstr "Rechner"
 
 #: ../../resources/glade/tournament.glade:963
 msgid "BellePoule - Fencing tournament"
@@ -1001,7 +1001,7 @@ msgstr "Zuletzt verwendete"
 
 #: ../../resources/glade/tournament.glade:1026
 msgid "Watch"
-msgstr ""
+msgstr "Zusehen"
 
 #: ../../resources/glade/tournament.glade:1043
 msgid "Backup"
@@ -1029,11 +1029,11 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:1175
 msgid "Translate into your language ..."
-msgstr ""
+msgstr "In Ihre Sprache übersetzen …"
 
 #: ../../resources/glade/tournament.glade:1193
 msgid "New version!"
-msgstr ""
+msgstr "Neue Version!"
 
 #: ../../resources/glade/tournament.glade:1233
 msgid "Open an example..."
