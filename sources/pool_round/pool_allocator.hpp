@@ -124,6 +124,8 @@ class PoolAllocator : public virtual Stage, public CanvasModule
 
     void OnPlugged ();
 
+    void OnUnPlugged ();
+
     static Stage *CreateInstance (StageClass *stage_class);
 
     void Load (xmlNode *xml_node);

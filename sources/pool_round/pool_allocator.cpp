@@ -241,6 +241,14 @@ void PoolAllocator::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+void PoolAllocator::OnUnPlugged ()
+{
+  CanvasModule::OnUnPlugged ();
+
+  _fencer_list->UnPlug ();
+}
+
+// --------------------------------------------------------------------------------
 Object *PoolAllocator::GetDropObjectFromRef (guint32 ref)
 {
   return _contest->GetRefereeFromRef (ref);
