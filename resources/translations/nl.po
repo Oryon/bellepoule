@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-17 08:39+0200\n"
-"PO-Revision-Date: 2012-10-03 15:26+0000\n"
-"Last-Translator: werner huysmans <Unknown>\n"
+"PO-Revision-Date: 2012-11-25 14:24+0000\n"
+"Last-Translator: Herman van der Vaart <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-11-01 04:43+0000\n"
-"X-Generator: Launchpad (build 16218)\n"
+"X-Launchpad-Export-Date: 2012-11-26 04:51+0000\n"
+"X-Generator: Launchpad (build 16293)\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: ../../sources/common/contest.cpp:56
@@ -231,7 +231,7 @@ msgstr "Vrij"
 #: ../../sources/common/schedule.cpp:151
 #, c-format
 msgid "Round #%d"
-msgstr ""
+msgstr "Rond #%d"
 
 #: ../../sources/common/schedule.cpp:1054
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
@@ -339,7 +339,7 @@ msgstr "Appel"
 
 #: ../../sources/people_management/form.cpp:46
 msgid "Fencer"
-msgstr ""
+msgstr "Schermer"
 
 #: ../../sources/people_management/form.cpp:51
 #: ../../sources/pool_round/pool.cpp:448
@@ -518,7 +518,7 @@ msgstr "Tableau rangschikking"
 
 #: ../../sources/util/filter.cpp:219
 msgid "Data to display"
-msgstr ""
+msgstr "Gegevens om te tonen"
 
 #: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
 #: ../../resources/glade/general_classification.glade:35
