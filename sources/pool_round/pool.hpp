@@ -153,7 +153,8 @@ class Pool : public CanvasModule
                          void        *value);
 
     void Draw (GooCanvas *on_canvas,
-               gboolean   print_for_referees);
+               gboolean   print_for_referees,
+               gboolean   print_matchs);
 
     Match *GetMatch (Player *A,
                      Player *B);
