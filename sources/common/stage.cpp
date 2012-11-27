@@ -411,6 +411,8 @@ void Stage::RetrieveAttendees ()
   {
     _attendees = new Attendees ();
   }
+
+  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -759,30 +761,39 @@ const gchar *Stage::GetInputProviderClient ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage::SetInputProvider (Stage *input_provider)
+void Stage::InitQualifiedForm ()
 {
   Module *module = dynamic_cast <Module *> (this);
 
+  // Let's force the configuration form
+  // to be set properly
+  if (module->GetGObject ("number_radiobutton"))
+  {
+    if (_nb_qualified->IsValid ())
+    {
+      ActivateNbQualified ();
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (module->GetGObject ("number_radiobutton")),
+                                    TRUE);
+    }
+    else
+    {
+      DeactivateNbQualified ();
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (module->GetGObject ("all_radiobutton")),
+                                    TRUE);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage::SetInputProvider (Stage *input_provider)
+{
   _input_provider = input_provider;
 
   TryToRelease (_nb_qualified);
   _nb_qualified = input_provider->_nb_qualified;
   _nb_qualified->Retain ();
 
-  // Let's force the configuration form
-  // to be set properly
-  if (_nb_qualified->IsValid ())
-  {
-    ActivateNbQualified ();
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (module->GetGObject ("number_radiobutton")),
-                                  TRUE);
-  }
-  else
-  {
-    DeactivateNbQualified ();
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (module->GetGObject ("all_radiobutton")),
-                                  TRUE);
-  }
+  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -996,6 +1007,8 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
   {
     _nb_qualified->Load (xml_node);
   }
+
+  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1121,4 +1134,21 @@ Object *Stage::GetPlayerDataOwner ()
   Module *module = dynamic_cast <Module *> (this);
 
   return module->GetDataOwner ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_all_radiobutton_toggled (GtkWidget *widget,
+                                                            Object    *owner)
+{
+  Module *module = dynamic_cast <Module *> (owner);
+  Stage  *stage  = dynamic_cast <Stage *> (owner);
+
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
+  {
+    stage->DeactivateNbQualified ();
+  }
+  else
+  {
+    stage->ActivateNbQualified ();
+  }
 }

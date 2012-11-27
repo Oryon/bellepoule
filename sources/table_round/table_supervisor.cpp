@@ -45,9 +45,6 @@ typedef enum
   TABLE_SET_VISIBILITY_COLUMN_bool
 } DisplayColumnId;
 
-extern "C" G_MODULE_EXPORT void on_table_qualified_ratio_spinbutton_value_changed (GtkSpinButton *spinbutton,
-                                                                                   Object        *owner);
-
 // --------------------------------------------------------------------------------
 TableSupervisor::TableSupervisor (StageClass *stage_class)
   : Stage (stage_class),
@@ -63,8 +60,7 @@ TableSupervisor::TableSupervisor (StageClass *stage_class)
 
   {
     AddSensitiveWidget (_glade->GetWidget ("input_toolbutton"));
-    AddSensitiveWidget (_glade->GetWidget ("qualified_ratio_spinbutton"));
-    AddSensitiveWidget (_glade->GetWidget ("nb_qualified_spinbutton"));
+    AddSensitiveWidget (_glade->GetWidget ("qualified_table"));
     AddSensitiveWidget (_glade->GetWidget ("classification_vbox"));
     AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
     AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
@@ -1224,38 +1220,4 @@ extern "C" G_MODULE_EXPORT void on_zoom_hscale_value_changed (GtkRange *range,
   TableSupervisor *t = dynamic_cast <TableSupervisor *> (owner);
 
   t->OnZoom (gtk_range_get_value (range));
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_table_nb_qualified_spinbutton_value_changed (GtkSpinButton *spinbutton,
-                                                                                Object        *owner)
-{
-  Module  *module = dynamic_cast <Module *> (owner);
-  Stage   *stage  = dynamic_cast <Stage *> (owner);
-  GObject *w      = module->GetGObject ("qualified_ratio_spinbutton");
-
-  g_signal_handlers_disconnect_by_func (w,
-                                        (void *) on_table_qualified_ratio_spinbutton_value_changed,
-                                        owner);
-  stage->OnNbQualifiedValueChanged (spinbutton);
-  g_signal_connect (w, "value-changed",
-                    G_CALLBACK (on_table_qualified_ratio_spinbutton_value_changed),
-                    owner);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_table_qualified_ratio_spinbutton_value_changed (GtkSpinButton *spinbutton,
-                                                                                   Object        *owner)
-{
-  Module  *module = dynamic_cast <Module *> (owner);
-  Stage   *stage  = dynamic_cast <Stage *> (owner);
-  GObject *w      = module->GetGObject ("nb_qualified_spinbutton");
-
-  g_signal_handlers_disconnect_by_func (w,
-                                        (void *) on_table_nb_qualified_spinbutton_value_changed,
-                                        owner);
-  stage->OnQualifiedRatioValueChanged (spinbutton);
-  g_signal_connect (w, "value-changed",
-                    G_CALLBACK (on_table_nb_qualified_spinbutton_value_changed),
-                    owner);
 }

@@ -116,6 +116,7 @@ class Schedule : public Module
     void OnPlugged ();
     void PlugStage (Stage *stage);
     void RefreshStageName (Stage *stage);
+    void RemoveFromNotebook (Stage *stage);
 };
 
 #endif

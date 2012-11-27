@@ -227,7 +227,7 @@ class Stage : public virtual Object
 
     Object *GetPlayerDataOwner ();
 
-    void UpdateNbQualifiedAdjustment ();
+    void InitQualifiedForm ();
 };
 
 #endif
