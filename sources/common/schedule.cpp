@@ -552,12 +552,12 @@ void Schedule::RemoveStage (Stage *stage)
       }
     }
 
-    stage->Release ();
-
     _stage_list = g_list_remove (_stage_list,
                                  stage);
 
     RemoveFromNotebook (stage);
+
+    stage->Release ();
   }
 
   {
