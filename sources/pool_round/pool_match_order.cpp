@@ -1467,10 +1467,14 @@ PoolMatchOrder::~PoolMatchOrder ()
 // --------------------------------------------------------------------------------
 void PoolMatchOrder::Reset ()
 {
-  g_slist_foreach (_player_pairs,
-                   (GFunc) g_free,
-                   NULL);
-  _player_pairs = NULL;
+  if (_player_pairs)
+  {
+    g_slist_foreach (_player_pairs,
+                     (GFunc) g_free,
+                     NULL);
+    g_slist_free (_player_pairs);
+    _player_pairs = NULL;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1499,12 +1503,13 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
 
   Reset ();
 
+#if 0
   if (affinity_criteria)
   {
     GHashTable *affinity_distribution = g_hash_table_new (NULL,
                                                           NULL);
 
-    // Disptach fencers according to their affinity
+    // Count affinities
     {
       Player::AttributeId *affinity = Player::AttributeId::Create (affinity_criteria, NULL);
       GSList              *current  = fencer_list;
@@ -1557,11 +1562,16 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
 
     g_hash_table_destroy (affinity_distribution);
   }
+#endif
 
   // Set the match order according to the affinities
   {
     GSList *current   = affinities;
     guint   nb_fencer = g_slist_length (fencer_list);
+
+    _insertion_step     = 1;
+    _insertion_position = 0;
+    _nb_pairs_inserted  = 0;
 
     _player_pairs = GetPlayerPairModel (nb_fencer);
     while (current)
@@ -1579,6 +1589,8 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
       current = g_slist_next (current);
     }
   }
+
+  // ReorderAdjacents ();
 
   g_slist_free (affinities);
 }
@@ -1605,7 +1617,7 @@ GSList *PoolMatchOrder::GetPlayerPairModel (guint pool_size)
   {
     for (guint i = (pool_size * (pool_size - 1)) / 2; i > 0; i--)
     {
-      PlayerPair *pair = new PlayerPair;
+      PlayerPair *pair = g_new (PlayerPair, 1);
 
       *pair = pair_table[i-1];
       model = g_slist_prepend (model,
@@ -1645,8 +1657,8 @@ void PoolMatchOrder::MovePairsOnHead (GSList *affinity_list)
       {
         PlayerPair *pair = (PlayerPair *) current_pair->data;
 
-        if (   (pair->_a == fencer_a_index+1) && (pair->_b == fencer_b_index+1)
-            || (pair->_a == fencer_b_index+1) && (pair->_b == fencer_a_index+1))
+        if (   ((pair->_a == fencer_a_index+1) && (pair->_b == fencer_b_index+1))
+            || ((pair->_a == fencer_b_index+1) && (pair->_b == fencer_a_index+1)))
         {
           _player_pairs = g_slist_remove_link (_player_pairs,
                                                current_pair);
@@ -1674,14 +1686,122 @@ void PoolMatchOrder::MovePairsOnHead (GSList *affinity_list)
       PlayerPair *sub_model_pair = (PlayerPair *) current->data;
       PlayerPair *extracted_pair = translation_grid[sub_model_pair->_a-1][sub_model_pair->_b-1];
 
-      _player_pairs = g_slist_prepend (_player_pairs,
-                                       extracted_pair);
+      if (_insertion_position > _nb_pairs_inserted)
+      {
+        _insertion_step++;
+        _insertion_position = 1;
+      }
+      _player_pairs = g_slist_insert (_player_pairs,
+                                      extracted_pair,
+                                      _insertion_position);
+      _nb_pairs_inserted++;
+      _insertion_position += _insertion_step;
+
       current = g_slist_next (current);
+    }
+
+    if (_insertion_position == _nb_pairs_inserted)
+    {
+      _insertion_position += _insertion_step;
     }
 
     g_slist_foreach (sub_model,
                      (GFunc) g_free,
                      NULL);
     g_slist_free (sub_model);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void PoolMatchOrder::ReorderAdjacents ()
+{
+  if (_nb_pairs_inserted)
+  {
+    GSList *previous   = g_slist_nth (_player_pairs,
+                                      _nb_pairs_inserted-1);
+    GSList *current    = g_slist_next (previous);
+    GSList *remainging = NULL;
+
+    while (current)
+    {
+      PlayerPair *previous_pair = (PlayerPair *) previous->data;
+      PlayerPair *current_pair  = (PlayerPair *) current->data;
+
+      if (   (current_pair->_a == previous_pair->_a)
+          || (current_pair->_a == previous_pair->_b)
+          || (current_pair->_b == previous_pair->_a)
+          || (current_pair->_b == previous_pair->_b))
+      {
+        GSList *substitute = g_slist_next (current);
+
+        if (substitute == NULL)
+        {
+          remainging = current;
+        }
+
+        while (substitute)
+        {
+          PlayerPair *substitute_pair = (PlayerPair *) substitute->data;
+
+          if (   (substitute_pair->_a != previous_pair->_a)
+              && (substitute_pair->_a != previous_pair->_b)
+              && (substitute_pair->_b != previous_pair->_a)
+              && (substitute_pair->_b != previous_pair->_b))
+          {
+            // Following lines are safe because
+            // _player_pairs can't be modified in our case
+            _player_pairs = g_slist_remove_link (_player_pairs,
+                                                 substitute);
+            _player_pairs = g_slist_insert_before (_player_pairs,
+                                                   current,
+                                                   substitute_pair);
+            break;
+          }
+
+          substitute = g_slist_next (substitute);
+        }
+      }
+
+      previous = current;
+      current  = g_slist_next (previous);
+    }
+
+    if (remainging)
+    {
+      PlayerPair *remainging_pair = (PlayerPair *) remainging->data;
+      GSList     *previous        = g_slist_nth (_player_pairs,
+                                                 _nb_pairs_inserted-1);
+      GSList     *next            = g_slist_next (previous);
+
+      printf ("*** %d - %d\n", remainging_pair->_a, remainging_pair->_b);
+      while (previous && (previous != remainging) && (next != remainging))
+      {
+        PlayerPair *previous_pair = (PlayerPair *) previous->data;
+        PlayerPair *next_pair     = (PlayerPair *) next->data;
+
+        if (   (remainging_pair->_a != previous_pair->_a)
+            && (remainging_pair->_a != previous_pair->_b)
+            && (remainging_pair->_b != previous_pair->_a)
+            && (remainging_pair->_b != previous_pair->_b)
+            && (remainging_pair->_a != next_pair->_a)
+            && (remainging_pair->_a != next_pair->_b)
+            && (remainging_pair->_b != next_pair->_a)
+            && (remainging_pair->_b != next_pair->_b))
+        {
+          printf ("    %d - %d\n", previous_pair->_a, previous_pair->_b);
+
+          _player_pairs = g_slist_remove_link (_player_pairs,
+                                               remainging);
+          _player_pairs = g_slist_insert_before (_player_pairs,
+                                                 next,
+                                                 remainging_pair);
+
+          break;
+        }
+
+        previous = g_slist_next (previous);
+        next     = g_slist_next (previous);
+      }
+    }
   }
 }

@@ -38,6 +38,9 @@ class PoolMatchOrder : public Object
 
   private:
     gchar   _weapon_code;
+    guint   _nb_pairs_inserted;
+    guint   _insertion_position;
+    guint   _insertion_step;
     GSList *_player_pairs;
 
     virtual ~PoolMatchOrder ();
@@ -47,6 +50,8 @@ class PoolMatchOrder : public Object
     GSList *GetPlayerPairModel (guint pool_size);
 
     void MovePairsOnHead (GSList *affinity_list);
+
+    void ReorderAdjacents ();
 
     static gint CompareAffinityOccurence (GSList *a,
                                           GSList *b);

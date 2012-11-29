@@ -387,7 +387,8 @@ void Pool::OnNewScore (ScoreCollector *score_collector,
 
 // --------------------------------------------------------------------------------
 void Pool::Draw (GooCanvas *on_canvas,
-                 gboolean   print_for_referees)
+                 gboolean   print_for_referees,
+                 gboolean   print_matchs)
 {
   if (_score_collector)
   {
@@ -911,9 +912,7 @@ void Pool::Draw (GooCanvas *on_canvas,
     }
 
     // Matchs
-#ifndef DEBUG
-    if (print_for_referees)
-#endif
+    if (print_matchs)
     {
       GooCanvasItem *match_main_table;
       GooCanvasItem *text_item;
@@ -1141,8 +1140,13 @@ void Pool::DrawPage (GtkPrintOperation *operation,
 {
   GooCanvas *canvas = CreateCanvas ();
 
-  Draw (canvas,
-        (gboolean) GPOINTER_TO_INT(g_object_get_data (G_OBJECT (operation), "print_for_referees")));
+  {
+    gboolean for_referees = (gboolean) GPOINTER_TO_INT(g_object_get_data (G_OBJECT (operation), "print_for_referees"));
+
+    Draw (canvas,
+          for_referees,
+          for_referees);
+  }
 
   g_object_set_data (G_OBJECT (operation), "operation_canvas", (void *) canvas);
   CanvasModule::DrawPage (operation,
@@ -1158,7 +1162,8 @@ void Pool::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
   Draw (GetCanvas (),
-        FALSE);
+        FALSE,
+        TRUE);
 }
 
 // --------------------------------------------------------------------------------
@@ -1306,7 +1311,8 @@ void Pool::Lock ()
   {
     Wipe ();
     Draw (GetCanvas (),
-          FALSE);
+          FALSE,
+          TRUE);
   }
 }
 
@@ -1324,7 +1330,8 @@ void Pool::UnLock ()
   {
     Wipe ();
     Draw (GetCanvas (),
-          FALSE);
+          FALSE,
+          TRUE);
   }
 }
 
@@ -1751,8 +1758,6 @@ void Pool::Save (xmlTextWriter *xml_writer)
     for (guint i = 0; current != NULL; i++)
     {
       Player *player;
-      guint   HS;
-      gint    indice;
 
       player = (Player *) current->data;
 
@@ -1776,6 +1781,9 @@ void Pool::Save (xmlTextWriter *xml_writer)
       attr = player->GetAttribute (&attr_id);
       if (attr)
       {
+        gint  indice;
+        guint HS;
+
         HS = player->GetAttribute (&attr_id)->GetUIntValue ();
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "TD",
@@ -2095,7 +2103,8 @@ void Pool::DropPlayer (Player *player,
   {
     Wipe ();
     Draw (GetCanvas (),
-          FALSE);
+          FALSE,
+          TRUE);
   }
 }
 
@@ -2139,7 +2148,8 @@ void Pool::RestorePlayer (Player *player)
   {
     Wipe ();
     Draw (GetCanvas (),
-          FALSE);
+          FALSE,
+          TRUE);
   }
 }
 

@@ -77,6 +77,7 @@ gboolean Data::Load (xmlNode *xml_node)
   if (_string)
   {
     _value = (guint) atoi (_string);
+    _valid = TRUE;
     xmlFree (prop);
     return TRUE;
   }

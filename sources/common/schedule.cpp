@@ -507,7 +507,6 @@ void Schedule::RemoveStage (Stage *stage)
 {
   if (stage)
   {
-    gint   page          = GetNotebookPageNum (stage);
     GList *current       = g_list_find (_stage_list, stage);
     gint   current_index = g_list_index (_stage_list, stage);
     GList *next          = g_list_next (current);
@@ -553,16 +552,12 @@ void Schedule::RemoveStage (Stage *stage)
       }
     }
 
-    stage->Release ();
-
     _stage_list = g_list_remove (_stage_list,
                                  stage);
 
-    if (page >= 0)
-    {
-      gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
-                                page);
-    }
+    RemoveFromNotebook (stage);
+
+    stage->Release ();
   }
 
   {
@@ -610,6 +605,20 @@ void Schedule::RemoveStage (Stage *stage)
     }
   }
   RefreshSensitivity ();
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::RemoveFromNotebook (Stage *stage)
+{
+  gint page = GetNotebookPageNum (stage);
+
+  if (page >= 0)
+  {
+    gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
+                              GetNotebookPageNum (stage));
+    stage->RemoveData (this,
+                       "viewport_stage");
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1065,15 +1074,13 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {
     {
-      Stage   *stage  = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-      gint     page    = GetNotebookPageNum (stage);
-      Module  *module = (Module *) dynamic_cast <Module *> (stage);
+      Stage  *stage  = (Stage *) g_list_nth_data (_stage_list, _current_stage);
+      Module *module = (Module *) dynamic_cast <Module *> (stage);
 
       stage->Wipe ();
       module->UnPlug ();
 
-      gtk_notebook_remove_page (GTK_NOTEBOOK (GetRootWidget ()),
-                                page);
+      RemoveFromNotebook (stage);
     }
 
     {

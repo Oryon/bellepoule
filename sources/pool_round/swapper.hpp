@@ -37,6 +37,8 @@ class Swapper
 
   protected:
     Swapper () {};
+
+    virtual ~Swapper () {};
 };
 
 #endif

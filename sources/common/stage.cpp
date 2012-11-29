@@ -48,11 +48,9 @@ Stage::Stage (StageClass *stage_class)
 
   _max_score = NULL;
 
-  _qualified_ratio = new Data ("RatioQualifies",
-                               (guint) 100);
   _nb_qualified = new Data ("NbQualifies",
                             (guint) 0);
-  _nb_qualified->Deactivate ();
+  DeactivateNbQualified ();
 }
 
 // --------------------------------------------------------------------------------
@@ -64,7 +62,6 @@ Stage::~Stage ()
   TryToRelease (_score_stuffing_trigger);
   TryToRelease (_classification);
   TryToRelease (_attendees);
-  TryToRelease (_qualified_ratio);
   TryToRelease (_nb_qualified);
 
   if (_previous)
@@ -200,11 +197,6 @@ void Stage::UnLock ()
   {
     _next->_attendees->Release ();
     _next->_attendees = NULL;
-
-    if (GetInputProviderClient () == NULL)
-    {
-      _next->DeactivateNbQualified ();
-    }
   }
 
   if (_attendees)
@@ -298,15 +290,6 @@ void Stage::ApplyConfig ()
     }
 
     {
-      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
-
-      if (w)
-      {
-        _qualified_ratio->_value = gtk_spin_button_get_value_as_int (w);
-      }
-    }
-
-    {
       GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
 
       if (w)
@@ -348,16 +331,6 @@ void Stage::FillInConfig ()
     }
 
     {
-      GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
-
-      if (w)
-      {
-        gtk_spin_button_set_value (w,
-                                   _qualified_ratio->_value);
-      }
-    }
-
-    {
       GtkSpinButton *w = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
 
       if (w)
@@ -365,66 +338,6 @@ void Stage::FillInConfig ()
         gtk_spin_button_set_value (w,
                                    _nb_qualified->_value);
       }
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Stage::OnQualifiedRatioValueChanged (GtkSpinButton *spinbutton)
-{
-  Attendees *attendees;
-
-  if (_input_provider)
-  {
-    attendees = _input_provider->_attendees;
-  }
-  else
-  {
-    attendees = _attendees;
-  }
-
-  if (attendees && _nb_qualified->IsValid ())
-  {
-    GSList *shortlist = attendees->GetShortList ();
-
-    if (shortlist)
-    {
-      Module        *module = dynamic_cast <Module *> (this);
-      GtkSpinButton *w      = GTK_SPIN_BUTTON (module->GetGObject ("nb_qualified_spinbutton"));
-      guint          value  = gtk_spin_button_get_value_as_int (spinbutton);
-
-      gtk_spin_button_set_value (w,
-                                 value * g_slist_length (shortlist) / 100);
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Stage::OnNbQualifiedValueChanged (GtkSpinButton *spinbutton)
-{
-  Attendees *attendees;
-
-  if (_input_provider)
-  {
-    attendees = _input_provider->_attendees;
-  }
-  else
-  {
-    attendees = _attendees;
-  }
-
-  if (attendees)
-  {
-    GSList *shortlist = attendees->GetShortList ();
-
-    if (shortlist)
-    {
-      Module        *module = dynamic_cast <Module *> (this);
-      GtkSpinButton *w      = GTK_SPIN_BUTTON (module->GetGObject ("qualified_ratio_spinbutton"));
-      guint          value  = gtk_spin_button_get_value_as_int (spinbutton);
-
-      gtk_spin_button_set_value (w,
-                                 value * 100 / g_slist_length (shortlist));
     }
   }
 }
@@ -489,14 +402,17 @@ void Stage::RetrieveAttendees ()
       }
     }
 
-    _nb_qualified->_value = _qualified_ratio->_value * g_slist_length (shortlist) / 100;
+    if (_nb_qualified->IsValid () == FALSE)
+    {
+      _nb_qualified->_value = g_slist_length (shortlist);
+    }
   }
   else
   {
     _attendees = new Attendees ();
   }
 
-  ActivateNbQualified ();
+  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -512,10 +428,20 @@ GSList *Stage::GetOutputShortlist ()
 
   if (shortlist && classification)
   {
-    guint               nb_to_remove    = g_slist_length (shortlist) - _nb_qualified->_value;
+    guint               nb_to_remove = 0;
     Player::AttributeId stage_attr_id         ("status", GetPlayerDataOwner ());
     Player::AttributeId classif_attr_id       ("status", classification->GetDataOwner ());
     Player::AttributeId global_status_attr_id ("global_status");
+
+    if (_nb_qualified->IsValid ())
+    {
+      guint shortlist_length = g_slist_length (shortlist);
+
+      if (_nb_qualified->_value <= shortlist_length)
+      {
+        nb_to_remove = shortlist_length - _nb_qualified->_value;
+      }
+    }
 
     // remove all of the withdrawalls and black cards
     {
@@ -555,7 +481,7 @@ GSList *Stage::GetOutputShortlist ()
       }
     }
 
-    // remove the reamaing players to reach the quota
+    // Remove the remaining players to reach the quota
     for (guint i = 0; i < nb_to_remove; i++)
     {
       GSList *current;
@@ -580,70 +506,6 @@ GSList *Stage::GetOutputShortlist ()
 }
 
 // --------------------------------------------------------------------------------
-void Stage::ActivateNbQualified ()
-{
-  if (_attendees && (_input_provider == NULL))
-  {
-    GSList *shortlist = _attendees->GetShortList ();
-    Module *module;
-
-    if (GetInputProviderClient ())
-    {
-      module = dynamic_cast <Module *> (_next);
-    }
-    else
-    {
-      module = dynamic_cast <Module *> (this);
-    }
-
-    if (module)
-    {
-      GtkAdjustment *adjustment = GTK_ADJUSTMENT (module->GetGObject ("nb_qualified_adjustment"));
-
-      if (adjustment)
-      {
-        gtk_adjustment_set_upper (adjustment,
-                                  (gdouble) g_slist_length (shortlist));
-      }
-    }
-
-    _nb_qualified->Activate ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Stage::DeactivateNbQualified ()
-{
-  if (_input_provider == NULL)
-  {
-    Module *module;
-
-    if (GetInputProviderClient ())
-    {
-      module = dynamic_cast <Module *> (_next);
-    }
-    else
-    {
-      module = dynamic_cast <Module *> (this);
-    }
-
-    if (module)
-    {
-      GtkAdjustment *adjustment = GTK_ADJUSTMENT (module->GetGObject ("nb_qualified_adjustment"));
-
-      if (adjustment)
-      {
-        gtk_adjustment_set_upper (adjustment,
-                                  0.0);
-      }
-    }
-
-    _nb_qualified->_value = 0;
-    _nb_qualified->Deactivate ();
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Stage::LoadAttendees (xmlNode *n)
 {
   if (_attendees == NULL)
@@ -658,7 +520,10 @@ void Stage::LoadAttendees (xmlNode *n)
       _attendees = new Attendees ();
     }
 
-    ActivateNbQualified ();
+    if (_nb_qualified->IsValid () == FALSE)
+    {
+      _nb_qualified->_value = g_slist_length (_attendees->GetShortList ());
+    }
   }
 
   if (n)
@@ -712,6 +577,55 @@ void Stage::LoadAttendees (xmlNode *n)
       }
 
       xmlFree (ref_attr);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage::ActivateNbQualified ()
+{
+  _nb_qualified->Activate ();
+
+  {
+    Module *module;
+
+    if (GetInputProviderClient ())
+    {
+      module = dynamic_cast <Module *> (_next);
+    }
+    else
+    {
+      module = dynamic_cast <Module *> (this);
+    }
+
+    if (module)
+    {
+      gtk_widget_show         (GTK_WIDGET (module->GetGObject ("nb_qualified_spinbutton")));
+      gtk_widget_queue_resize (GTK_WIDGET (module->GetGObject ("qualified_viewport")));
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Stage::DeactivateNbQualified ()
+{
+  _nb_qualified->Deactivate ();
+
+  {
+    Module *module;
+
+    if (GetInputProviderClient ())
+    {
+      module = dynamic_cast <Module *> (_next);
+    }
+    else
+    {
+      module = dynamic_cast <Module *> (this);
+    }
+
+    if (module)
+    {
+      gtk_widget_hide (GTK_WIDGET (module->GetGObject ("nb_qualified_spinbutton")));
     }
   }
 }
@@ -809,13 +723,7 @@ Stage *Stage::CreateInstance (xmlNode *xml_node)
 {
   if (xml_node)
   {
-    Stage *stage = CreateInstance ((gchar *) xml_node->name);
-
-    if (stage)
-    {
-      stage->DeactivateNbQualified ();
-    }
-    return stage;
+    return CreateInstance ((gchar *) xml_node->name);
   }
 
   return NULL;
@@ -833,7 +741,6 @@ Stage *Stage::CreateInstance (const gchar *name)
     if (stage)
     {
       stage->_class = stage_class;
-      stage->DeactivateNbQualified ();
     }
     return stage;
   }
@@ -854,28 +761,39 @@ const gchar *Stage::GetInputProviderClient ()
 }
 
 // --------------------------------------------------------------------------------
+void Stage::InitQualifiedForm ()
+{
+  Module *module = dynamic_cast <Module *> (this);
+
+  // Let's force the configuration form
+  // to be set properly
+  if (module->GetGObject ("number_radiobutton"))
+  {
+    if (_nb_qualified->IsValid ())
+    {
+      ActivateNbQualified ();
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (module->GetGObject ("number_radiobutton")),
+                                    TRUE);
+    }
+    else
+    {
+      DeactivateNbQualified ();
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (module->GetGObject ("all_radiobutton")),
+                                    TRUE);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
-
-  TryToRelease (_qualified_ratio);
-  _qualified_ratio = input_provider->_qualified_ratio;
-  _qualified_ratio->Retain ();
 
   TryToRelease (_nb_qualified);
   _nb_qualified = input_provider->_nb_qualified;
   _nb_qualified->Retain ();
 
-  // Let's force the configuration form
-  // to be set properly
-  if (_nb_qualified->IsValid ())
-  {
-    input_provider->ActivateNbQualified ();
-  }
-  else
-  {
-    input_provider->DeactivateNbQualified ();
-  }
+  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1085,15 +1003,12 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
     _max_score->Load (xml_node);
   }
 
-  if (_qualified_ratio)
-  {
-    _qualified_ratio->Load (xml_node);
-  }
-
   if (_nb_qualified)
   {
     _nb_qualified->Load (xml_node);
   }
+
+  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1109,11 +1024,6 @@ void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
   if (_max_score)
   {
     _max_score->Save (xml_writer);
-  }
-
-  if (_qualified_ratio)
-  {
-    _qualified_ratio->Save (xml_writer);
   }
 
   if (_nb_qualified->IsValid ())
@@ -1224,4 +1134,21 @@ Object *Stage::GetPlayerDataOwner ()
   Module *module = dynamic_cast <Module *> (this);
 
   return module->GetDataOwner ();
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_all_radiobutton_toggled (GtkWidget *widget,
+                                                            Object    *owner)
+{
+  Module *module = dynamic_cast <Module *> (owner);
+  Stage  *stage  = dynamic_cast <Stage *> (owner);
+
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
+  {
+    stage->DeactivateNbQualified ();
+  }
+  else
+  {
+    stage->ActivateNbQualified ();
+  }
 }

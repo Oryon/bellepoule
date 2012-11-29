@@ -150,9 +150,9 @@ class Stage : public virtual Object
 
     void ToggleClassification (gboolean classification_on);
 
-    void OnQualifiedRatioValueChanged (GtkSpinButton *spinbutton);
+    void ActivateNbQualified ();
 
-    void OnNbQualifiedValueChanged (GtkSpinButton *spinbutton);
+    void DeactivateNbQualified ();
 
   public:
     static void RegisterStageClass (const gchar *name,
@@ -173,7 +173,6 @@ class Stage : public virtual Object
     Stage     *_input_provider;
     Contest   *_contest;
     Data      *_max_score;
-    Data      *_qualified_ratio;
     Data      *_nb_qualified;
 
     Stage (StageClass *stage_class);
@@ -197,7 +196,6 @@ class Stage : public virtual Object
     void LoadAttendees (xmlNode *n);
 
     StageView GetStageView (GtkPrintOperation *operation);
-
 
   private:
     static GSList *_stage_base;
@@ -229,9 +227,7 @@ class Stage : public virtual Object
 
     Object *GetPlayerDataOwner ();
 
-    void ActivateNbQualified ();
-
-    void DeactivateNbQualified ();
+    void InitQualifiedForm ();
 };
 
 #endif
