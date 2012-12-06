@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-17 08:39+0200\n"
-"PO-Revision-Date: 2012-11-02 19:38+0000\n"
-"Last-Translator: Eduardo Alberto Calvo <Unknown>\n"
+"PO-Revision-Date: 2012-12-05 14:51+0000\n"
+"Last-Translator: Sixel <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-11-03 05:11+0000\n"
-"X-Generator: Launchpad (build 16218)\n"
+"X-Launchpad-Export-Date: 2012-12-06 04:44+0000\n"
+"X-Generator: Launchpad (build 16341)\n"
 
 #: ../../resources/glade/table_supervisor.glade:51
 msgid "Fenced places"
@@ -197,7 +197,7 @@ msgstr "estado"
 
 #: ../../sources/common/main.cpp:329
 msgid "pool #"
-msgstr ""
+msgstr "pool #"
 
 #: ../../sources/common/main.cpp:333
 msgid "Vict./Bouts (‰)"
@@ -234,7 +234,7 @@ msgstr "Libre"
 #: ../../sources/common/schedule.cpp:151
 #, c-format
 msgid "Round #%d"
-msgstr ""
+msgstr "Ronda #%d"
 
 #: ../../sources/common/schedule.cpp:1054
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
@@ -251,7 +251,7 @@ msgstr "Todos los valores entrados para esta ronda serán cancelados."
 #: ../../sources/common/tournament.cpp:479
 #: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
-msgstr ""
+msgstr "Libro de pagos"
 
 #: ../../sources/common/tournament.cpp:491
 msgid "Page"
@@ -267,7 +267,7 @@ msgstr "Elegir un fichero de competición que abrir... "
 
 #: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
-msgstr ""
+msgstr "Archivos Competición (.cotcot / .xml)"
 
 #: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
@@ -279,7 +279,7 @@ msgstr "Ficheros BellePoule"
 
 #: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
-msgstr ""
+msgstr "Vales comida"
 
 #: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
@@ -312,11 +312,11 @@ msgstr "Elegir un archivo de esgrimistas a importar..."
 
 #: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
-msgstr ""
+msgstr "Archivos tiradores"
 
 #: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
-msgstr ""
+msgstr "Archivos arbitros"
 
 #: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
@@ -342,7 +342,7 @@ msgstr "Registro"
 
 #: ../../sources/people_management/form.cpp:46
 msgid "Fencer"
-msgstr ""
+msgstr "Tirador"
 
 #: ../../sources/people_management/form.cpp:51
 #: ../../sources/pool_round/pool.cpp:448
@@ -387,7 +387,7 @@ msgstr "Dividir"
 
 #: ../../sources/people_management/splitting.cpp:259
 msgid "List of fencers to extract"
-msgstr ""
+msgstr "Lista de tiradores a extraer"
 
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
@@ -495,7 +495,7 @@ msgstr "Impresión de la tabla"
 
 #: ../../sources/table_round/table_set.cpp:1747
 msgid "cutting"
-msgstr ""
+msgstr "corte"
 
 #: ../../sources/table_round/table_set.cpp:2694
 #, c-format
@@ -565,7 +565,7 @@ msgstr "todos"
 
 #: ../../resources/glade/checkin.glade:260
 msgid "Import fencer file"
-msgstr ""
+msgstr "Importar archivo tirador"
 
 #: ../../resources/glade/contest.glade:21
 msgid "Date of competition"
@@ -852,7 +852,7 @@ msgstr ""
 
 #: ../../resources/glade/referees.glade:342
 msgid "Import referee file"
-msgstr ""
+msgstr "Importar archivo árbitro"
 
 #: ../../resources/glade/schedule.glade:47
 msgid "Add"
@@ -979,7 +979,7 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:722
 msgid "Broadcasted competitions"
-msgstr ""
+msgstr "Competiciones emitidas"
 
 #: ../../resources/glade/tournament.glade:768
 msgid "Server"
@@ -1023,11 +1023,11 @@ msgstr "Desactivar"
 
 #: ../../resources/glade/tournament.glade:1135
 msgid "Print meal tickets"
-msgstr ""
+msgstr "Imprimir vales comida"
 
 #: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
-msgstr ""
+msgstr "Imprimir libro de pagos"
 
 #: ../../resources/glade/tournament.glade:1175
 msgid "Translate into your language ..."
@@ -1047,7 +1047,7 @@ msgstr "Manual de usuario"
 
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
-msgstr ""
+msgstr "Borrador archivo tirador (.csv)"
 
 #~ msgid "9999"
 #~ msgstr "9999"
