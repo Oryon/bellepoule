@@ -16,6 +16,9 @@ $(POT_FILE): $(CPP_FILES) $(GLADE_FILES)
            --keyword=N_\
            $^
 
+revert:
+	bzr revert `bzr status --versioned --short --no-classify . | sed 's/ M //' | sed 's/.*translations\///' | grep -v Makefile`
+
 %.mo: $(POT_FILE)
 	echo
 	echo "[1;33;44m  $@ [0m"
