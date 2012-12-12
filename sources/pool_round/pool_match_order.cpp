@@ -1503,7 +1503,7 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
 
   Reset ();
 
-#if 0
+#ifdef DEBUG
   if (affinity_criteria)
   {
     GHashTable *affinity_distribution = g_hash_table_new (NULL,
@@ -1590,7 +1590,9 @@ void PoolMatchOrder::SetAffinityCriteria (AttributeDesc *affinity_criteria,
     }
   }
 
-  // ReorderAdjacents ();
+#ifdef DEBUG
+  ReorderAdjacents ();
+#endif
 
   g_slist_free (affinities);
 }
@@ -1739,6 +1741,7 @@ void PoolMatchOrder::ReorderAdjacents ()
           remainging = current;
         }
 
+      printf ("*** %d - %d <-> ", current_pair->_a, current_pair->_b);
         while (substitute)
         {
           PlayerPair *substitute_pair = (PlayerPair *) substitute->data;
@@ -1755,8 +1758,10 @@ void PoolMatchOrder::ReorderAdjacents ()
             _player_pairs = g_slist_insert_before (_player_pairs,
                                                    current,
                                                    substitute_pair);
+      printf ("%d - %d\n", substitute_pair->_a, substitute_pair->_b);
             break;
           }
+      printf ("\n");
 
           substitute = g_slist_next (substitute);
         }
@@ -1766,6 +1771,7 @@ void PoolMatchOrder::ReorderAdjacents ()
       current  = g_slist_next (previous);
     }
 
+#if 0
     if (remainging)
     {
       PlayerPair *remainging_pair = (PlayerPair *) remainging->data;
@@ -1803,5 +1809,6 @@ void PoolMatchOrder::ReorderAdjacents ()
         next     = g_slist_next (previous);
       }
     }
+#endif
   }
 }

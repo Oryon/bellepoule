@@ -1140,8 +1140,7 @@ Object *Stage::GetPlayerDataOwner ()
 extern "C" G_MODULE_EXPORT void on_all_radiobutton_toggled (GtkWidget *widget,
                                                             Object    *owner)
 {
-  Module *module = dynamic_cast <Module *> (owner);
-  Stage  *stage  = dynamic_cast <Stage *> (owner);
+  Stage *stage = dynamic_cast <Stage *> (owner);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
   {

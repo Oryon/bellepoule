@@ -29,20 +29,8 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
-			<Target title="Technicolor Debug">
-				<Option output="TechnicolorDebug/BellePoule" prefix_auto="1" extension_auto="1" />
-				<Option object_output="TechnicolorDebug/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-Wunreachable-code" />
-					<Add option="-g" />
-					<Add option="-DDEBUG=1" />
-				</Compiler>
-			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wall" />
 			<Add option="-Wshadow" />
 			<Add option="-Winit-self" />
 			<Add option="-Wcast-align" />
@@ -50,6 +38,8 @@
 			<Add option="-Wswitch-default" />
 			<Add option="-std=c++98" />
 			<Add option="-Wextra" />
+			<Add option="-Wall" />
+			<Add option="-Wno-int-to-pointer-cast" />
 			<Add option="-Wno-long-long -Wno-unused-parameter -Wno-shadow" />
 			<Add option="-pthread -D_REENTRANT" />
 			<Add directory="../sources" />
@@ -59,20 +49,21 @@
 			<Add directory="../sources/table_round" />
 			<Add directory="../sources/util" />
 			<Add directory="../sources/network" />
-			<Add directory="/usr/include/gtk-2.0" />
-			<Add directory="/usr/lib/gtk-2.0/include" />
-			<Add directory="/usr/include/atk-1.0" />
-			<Add directory="/usr/include/cairo" />
-			<Add directory="/usr/include/pango-1.0" />
-			<Add directory="/usr/include/gio-unix-2.0/" />
-			<Add directory="/usr/include/glib-2.0" />
-			<Add directory="/usr/lib/glib-2.0/include" />
-			<Add directory="/usr/include/pixman-1" />
-			<Add directory="/usr/include/freetype2" />
-			<Add directory="/usr/include/directfb" />
-			<Add directory="/usr/include/libpng12" />
-			<Add directory="/usr/include/libxml2" />
-			<Add directory="/usr/include/goocanvas-1.0" />
+      <Add directory="/usr/include/gtk-2.0" />
+      <Add directory="/usr/lib/x86_64-linux-gnu/gtk-2.0/include" />
+      <Add directory="/usr/include" />
+      <Add directory="/usr/include/atk-1.0" />
+      <Add directory="/usr/include/cairo" />
+      <Add directory="/usr/include/gdk-pixbuf-2.0" />
+      <Add directory="/usr/include/pango-1.0" />
+      <Add directory="/usr/include/gio-unix-2.0" />
+      <Add directory="/usr/include/glib-2.0" />
+      <Add directory="/usr/lib/x86_64-linux-gnu/glib-2.0/include" />
+      <Add directory="/usr/include/pixman-1" />
+      <Add directory="/usr/include/freetype2" />
+      <Add directory="/usr/include/libpng12" />
+      <Add directory="/usr/include/libxml2" />
+      <Add directory="/usr/include/goocanvas-1.0" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--export-dynamic" />
@@ -101,6 +92,10 @@
 		</Linker>
 		<Unit filename="../sources/common/attendees.cpp" />
 		<Unit filename="../sources/common/attendees.hpp" />
+		<Unit filename="../sources/common/book.cpp" />
+		<Unit filename="../sources/common/book.hpp" />
+		<Unit filename="../sources/common/chapter.cpp" />
+		<Unit filename="../sources/common/chapter.hpp" />
 		<Unit filename="../sources/common/classification.cpp" />
 		<Unit filename="../sources/common/classification.hpp" />
 		<Unit filename="../sources/common/contest.cpp" />
