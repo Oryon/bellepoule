@@ -1147,7 +1147,7 @@ void PoolAllocator::FillPoolTable (PoolZone *zone)
 
       if (   (pool_size == _selected_config->_size)
           || (   _selected_config->_nb_overloaded
-              && ((pool_size == _selected_config->_size)) || (pool_size == _selected_config->_size + 1)))
+              && ((pool_size == _selected_config->_size) || (pool_size == _selected_config->_size + 1))))
       {
         icon_name = g_strdup (GTK_STOCK_APPLY);
         pool->SetData (this, "is_balanced", (void *) 1);
