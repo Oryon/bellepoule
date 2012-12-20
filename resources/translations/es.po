@@ -10,12 +10,16 @@ msgstr ""
 "PO-Revision-Date: 2012-12-07 19:14+0000\n"
 "Last-Translator: Eduardo Alberto Calvo <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-12-08 05:13+0000\n"
-"X-Generator: Launchpad (build 16341)\n"
+"X-Launchpad-Export-Date: 2012-12-20 04:58+0000\n"
+"X-Generator: Launchpad (build 16378)\n"
+"Language: \n"
+
+#: ../../resources/glade/table_supervisor.glade:51
+msgid "Fenced places"
+msgstr "Lugares de esgrima"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -480,9 +484,10 @@ msgstr "Lugar #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
-msgstr "<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
+msgstr ""
+"<b><big>¿Cual hoja de la tabla seleccionada quiere imprimir?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
 #: ../../sources/table_round/table_set.cpp:134
@@ -918,10 +923,6 @@ msgstr "Esgrimista B"
 #: ../../resources/glade/table.glade:641
 msgid "<b>Score</b>"
 msgstr "<b>Marcador</b>"
-
-#: ../../resources/glade/table_supervisor.glade:51
-msgid "Fenced places"
-msgstr "Lugares de esgrima"
 
 #: ../../resources/glade/table_supervisor.glade:159
 msgid ""
