@@ -153,12 +153,12 @@ void CanvasModule::RestoreZoomFactor (GtkScale *scale)
 }
 
 // --------------------------------------------------------------------------------
-GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *paren_item,
+GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
                                              const gchar   *common_markup,
                                              Player        *player,
                                              ...)
 {
-  GooCanvasItem *table_item = goo_canvas_table_new (paren_item,
+  GooCanvasItem *table_item = goo_canvas_table_new (parent_item,
                                                     NULL);
 
   if (player)
