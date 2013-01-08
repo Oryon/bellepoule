@@ -69,6 +69,8 @@ class Table : public Object
 
     GNode *GetNode (guint index);
 
+    static gboolean NodeHasGooTable (GNode *node);
+
     guint GetLoosers (GSList **loosers,
                       GSList **withdrawals,
                       GSList **blackcardeds);
@@ -104,6 +106,8 @@ class Table : public Object
                     Match   *match,
                     guint    player_index,
                     Player  **dropped);
+
+    void SimplifyLooserTree (GSList **list);
 };
 
 #endif

@@ -33,13 +33,13 @@ class TableSetBorder : public Object
     void SetTableIcon (guint        table,
                        const gchar *icon);
 
-    void Mute ();
+    void MuteCallbacks ();
 
     void AddTable (Table *table);
 
-    void UnMute ();
+    void UnMuteCallbacks ();
 
-    void SelectTable (guint table);
+    void SelectTable (gint table);
 
     Table *GetSelectedTable ();
 

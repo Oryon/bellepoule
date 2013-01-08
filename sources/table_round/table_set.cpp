@@ -754,7 +754,6 @@ void TableSet::CreateTree ()
       break;
     }
   }
-
   _nb_tables++;
 
   gtk_tree_store_clear (_quick_search_treestore);
@@ -792,25 +791,6 @@ void TableSet::CreateTree ()
 
   AddFork (NULL);
 
-  {
-    _from_border->Mute ();
-    _to_border->Mute   ();
-
-    for (guint t = 0; t < _nb_tables; t++)
-    {
-      Table *table = _tables[t];
-
-      _from_border->AddTable (table);
-      _to_border->AddTable   (table);
-    }
-
-    _from_border->SelectTable (0);
-    _to_border->SelectTable   (_nb_tables-1);
-
-    _from_border->UnMute ();
-    _to_border->UnMute   ();
-  }
-
   if (_tree_root)
   {
     g_node_traverse (_tree_root,
@@ -819,6 +799,43 @@ void TableSet::CreateTree ()
                      -1,
                      (GNodeTraverseFunc) DeleteDeadNode,
                      this);
+  }
+
+  {
+    guint nb_active_players = 0;
+
+    {
+      GSList *current = _attendees;
+
+      while (current)
+      {
+        if (current->data)
+        {
+          nb_active_players++;
+        }
+        current = g_slist_next (current);
+      }
+    }
+
+    _from_border->MuteCallbacks ();
+    _to_border->MuteCallbacks   ();
+
+    for (guint t = 0; t < _nb_tables; t++)
+    {
+      Table *table = _tables[t];
+
+      if ((table->GetSize () / 2) < nb_active_players)
+      {
+        _from_border->AddTable (table);
+        _to_border->AddTable   (table);
+      }
+    }
+
+    _from_border->SelectTable (0);
+    _to_border->SelectTable   (-1);
+
+    _from_border->UnMuteCallbacks ();
+    _to_border->UnMuteCallbacks   ();
   }
 
   if (_is_active)
@@ -1086,7 +1103,7 @@ gboolean TableSet::FillInNode (GNode    *node,
       }
 
       {
-        gchar *match_name  = data->_match->GetName ();
+        gchar *match_name = data->_match->GetName ();
 
         if (match_name == NULL)
         {
@@ -1545,8 +1562,8 @@ void TableSet::DropMatch (GNode *node)
       if (A_data->_match)
       {
         parent_data->_match->SetPlayerA (A_data->_match->GetWinner ());
-        parent_data->_match->SetPlayerB (NULL);
       }
+      parent_data->_match->SetPlayerB (NULL);
     }
   }
   _nb_matchs--;
@@ -1714,51 +1731,56 @@ void TableSet::OnAttrListUpdated ()
 // --------------------------------------------------------------------------------
 void TableSet::OnFromToTableComboboxChanged ()
 {
-  guint from = gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("from_table_combobox")));
-  guint to   = 1 + gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("to_table_combobox")));
+  Table *from_table = _from_border->GetSelectedTable ();
+  Table *to_table   = _to_border->GetSelectedTable   ();
 
-  Wipe ();
-
-  for (guint t = 0; t < _nb_tables; t++)
+  if (from_table && to_table)
   {
-    _tables[t]->Hide ();
-  }
+    guint from = from_table->GetNumber ();
+    guint to   = to_table->GetNumber () + 1;
 
-  if (to > from)
-  {
-    guint column = 0;
+    Wipe ();
 
-    for (gint t = _nb_tables-from-1; t >= (gint) (_nb_tables-to); t--)
+    for (guint t = 0; t < _nb_tables; t++)
     {
-      _tables[t]->Show (column);
-      column++;
+      _tables[t]->Hide ();
     }
-  }
 
-  {
-    GtkListStore *liststore = GTK_LIST_STORE (_glade->GetGObject ("cutting_count_liststore"));
-
-    gtk_list_store_clear (liststore);
-
-    Table *from_table = _tables[_nb_tables-from-1];
-    for (guint i = 1; i <= from_table->GetSize () / 2; i *= 2)
+    if (to > from)
     {
-      gchar        *text;
-      GtkTreeIter   iter;
+      guint column = 0;
 
-      text = g_strdup_printf ("%d %s", i, gettext ("cutting"));
-      gtk_list_store_append (liststore,
-                             &iter);
-      gtk_list_store_set (liststore, &iter,
-                          CUTTING_NAME_COLUMN, text,
-                          -1);
-      g_free (text);
+      for (gint t = _nb_tables-from-1; t >= (gint) (_nb_tables-to); t--)
+      {
+        _tables[t]->Show (column);
+        column++;
+      }
     }
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")),
-                              0);
-  }
 
-  Display ();
+    {
+      GtkListStore *liststore = GTK_LIST_STORE (_glade->GetGObject ("cutting_count_liststore"));
+
+      gtk_list_store_clear (liststore);
+
+      for (guint i = 1; i <= from_table->GetSize () / 2; i *= 2)
+      {
+        gchar        *text;
+        GtkTreeIter   iter;
+
+        text = g_strdup_printf ("%d %s", i, gettext ("cutting"));
+        gtk_list_store_append (liststore,
+                               &iter);
+        gtk_list_store_set (liststore, &iter,
+                            CUTTING_NAME_COLUMN, text,
+                            -1);
+        g_free (text);
+      }
+      gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox")),
+                                0);
+    }
+
+    Display ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -2232,26 +2254,45 @@ void TableSet::GetBounds (GNode           *top,
                           GNode           *bottom,
                           GooCanvasBounds *bounds)
 {
-  gdouble   y1;
   NodeData *data;
 
-  data = (NodeData *) top->data;
-  if (data->_fencer_goo_table == NULL)
-  {
-    data = (NodeData *) bottom->data;
-  }
-  goo_canvas_item_get_bounds (data->_fencer_goo_table,
-                              bounds);
-  y1 = bounds->y1;
+  bounds->x1 = 0.0;
+  bounds->y1 = 0.0;
+  bounds->x2 = 0.0;
+  bounds->y2 = 0.0;
 
-  data = (NodeData *) bottom->data;
-  if (data->_fencer_goo_table == NULL)
+  if (top)
   {
     data = (NodeData *) top->data;
+    if (data->_fencer_goo_table == NULL)
+    {
+      data = (NodeData *) bottom->data;
+    }
+    if (data->_fencer_goo_table)
+    {
+      goo_canvas_item_get_bounds (data->_fencer_goo_table,
+                                  bounds);
+    }
   }
-  goo_canvas_item_get_bounds (data->_fencer_goo_table,
-                              bounds);
-  bounds->y1 = y1;
+
+  if (bottom)
+  {
+    data = (NodeData *) bottom->data;
+    if (data->_fencer_goo_table == NULL)
+    {
+      data = (NodeData *) top->data;
+    }
+    if (data->_fencer_goo_table)
+    {
+      GooCanvasBounds bottom_bounds;
+
+      goo_canvas_item_get_bounds (data->_fencer_goo_table,
+                                  &bottom_bounds);
+      bounds->x1 = bottom_bounds.x1;
+      bounds->x2 = bottom_bounds.x2;
+      bounds->y2 = bottom_bounds.y2;
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -2310,10 +2351,26 @@ guint TableSet::PreparePrint (GtkPrintOperation *operation,
 
       for (guint i = 0; i < _print_session._cutting_count; i++)
       {
-        GooCanvasBounds  W_node_bounds;
-        GooCanvasBounds  bounds;
-        GNode           *NW_node = from_table->GetNode (i * nb_row);
-        GNode           *SW_node = from_table->GetNode ((i+1) * nb_row - 1);
+        GooCanvasBounds W_node_bounds;
+        GooCanvasBounds bounds;
+        GNode *NW_node;
+        GNode *SW_node;
+
+        NW_node = NULL;
+        SW_node = NULL;
+        for (guint n = i*nb_row; n < (i+1)*nb_row; n++)
+        {
+          GNode *node = from_table->GetNode (n);
+
+          if (Table::NodeHasGooTable (node))
+          {
+            if (NW_node == NULL)
+            {
+              NW_node = node;
+            }
+            SW_node = node;
+          }
+        }
 
         GetBounds (NW_node,
                    SW_node,

@@ -161,7 +161,92 @@ guint Table::GetLoosers (GSList **loosers,
     current_match = g_slist_next (current_match);
   }
 
+  SimplifyLooserTree (loosers);
+
   return nb_loosers;
+}
+
+// --------------------------------------------------------------------------------
+void Table::SimplifyLooserTree (GSList **list)
+{
+  if (list)
+  {
+    GSList *simplified_list = NULL;
+
+    // Remove empty branches from the top of the tree
+    {
+      GSList *current = *list;
+
+      while (current)
+      {
+        GSList *even;
+        GSList *odd;
+
+        even    = current;
+        current = g_slist_next (current);
+        odd     = current;
+        if (even->data || (odd && odd->data))
+        {
+          simplified_list = g_slist_copy (even);
+
+          // If applicable, invert the NULL player (withdrawal) with its opponent
+          // to make looser trees nicer.
+          if (odd && (even->data == NULL))
+          {
+            simplified_list = g_slist_remove (simplified_list,
+                                              odd->data);
+            simplified_list = g_slist_prepend (simplified_list,
+                                               odd->data);
+          }
+          break;
+        }
+        current = g_slist_next (current);
+      }
+    }
+
+    // Remove empty branches from the bottom of the tree
+    {
+      GSList *ultimate_fencer = NULL;
+      GSList *current         = simplified_list;
+
+      while (current)
+      {
+        if (current->data)
+        {
+          ultimate_fencer = current;
+        }
+
+        current = g_slist_next (current);
+      }
+
+      if (ultimate_fencer)
+      {
+        current = g_slist_next (ultimate_fencer);
+        while (current)
+        {
+          GSList *next = g_slist_next (current);
+
+          if (current->data == NULL)
+          {
+            simplified_list = g_slist_delete_link (simplified_list,
+                                                   current);
+          }
+
+          current = next;
+        }
+
+        if (g_slist_length (simplified_list) % 2 != 0)
+        {
+          simplified_list = g_slist_insert_before (simplified_list,
+                                                   ultimate_fencer,
+                                                   NULL);
+        }
+      }
+    }
+
+    g_slist_free (*list);
+    *list = simplified_list;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -193,6 +278,14 @@ void Table::AddNode (GNode *node)
 GNode *Table::GetNode (guint index)
 {
   return _node_table[index];
+}
+
+// --------------------------------------------------------------------------------
+gboolean Table::NodeHasGooTable (GNode *node)
+{
+  NodeData *data = (NodeData *) node->data;
+
+  return (data->_fencer_goo_table != NULL);
 }
 
 // --------------------------------------------------------------------------------
