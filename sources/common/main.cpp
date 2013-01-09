@@ -160,22 +160,32 @@ int main (int argc, char **argv)
 {
   // g_mem_set_vtable (glib_mem_profiler_table);
 
+  g_thread_init (NULL);
+
   // Init
   {
-    gchar *binary_dir      = g_path_get_dirname (argv[0]);
     gchar *install_dirname;
 
-    g_thread_init (NULL);
+    {
+      gchar *binary_dir;
+
+      {
+        gchar *program = g_find_program_in_path (argv[0]);
+
+        binary_dir = g_path_get_dirname (program);
+        g_free (program);
+      }
 
 #ifdef DEBUG
-    g_log_set_default_handler (LogHandler,
-                               NULL);
-    install_dirname = g_build_filename (binary_dir, "..", "..", NULL);
+      g_log_set_default_handler (LogHandler,
+                                 NULL);
+      install_dirname = g_build_filename (binary_dir, "..", "..", NULL);
 #else
-    install_dirname = g_build_filename (binary_dir, "..", "share", "BellePoule", NULL);
+      install_dirname = g_build_filename (binary_dir, "..", "share", "BellePoule", NULL);
 #endif
 
-    g_free (binary_dir);
+      g_free (binary_dir);
+    }
 
     if (install_dirname)
     {

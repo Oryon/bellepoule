@@ -950,33 +950,15 @@ void PoolAllocator::CreatePools ()
         Player *player;
         Pool   *pool;
 
-        if (_seeding_balanced->_value)
+        if (i == 0)
         {
-          if (((i / nb_pool) % 2) == 0)
-          {
-            pool = pool_table[i%nb_pool];
-          }
-          else
-          {
-            pool = pool_table[nb_pool-1 - i%nb_pool];
-          }
+          pool = pool_table[0];
         }
-        else
+        if (_selected_config->_nb_overloaded)
         {
-          if (i == 0)
+          if (pool->GetNumber () <= _selected_config->_nb_overloaded)
           {
-            pool = pool_table[0];
-          }
-          if (_selected_config->_nb_overloaded)
-          {
-            if (pool->GetNumber () <= _selected_config->_nb_overloaded)
-            {
-              if (pool->GetNbPlayers () >= _selected_config->_size+1)
-              {
-                pool = pool_table[pool->GetNumber ()];
-              }
-            }
-            else if (pool->GetNbPlayers () >= _selected_config->_size)
+            if (pool->GetNbPlayers () >= _selected_config->_size+1)
             {
               pool = pool_table[pool->GetNumber ()];
             }
@@ -985,6 +967,10 @@ void PoolAllocator::CreatePools ()
           {
             pool = pool_table[pool->GetNumber ()];
           }
+        }
+        else if (pool->GetNbPlayers () >= _selected_config->_size)
+        {
+          pool = pool_table[pool->GetNumber ()];
         }
 
         player = (Player *) g_slist_nth_data (shortlist,
@@ -1147,7 +1133,7 @@ void PoolAllocator::FillPoolTable (PoolZone *zone)
 
       if (   (pool_size == _selected_config->_size)
           || (   _selected_config->_nb_overloaded
-              && ((pool_size == _selected_config->_size)) || (pool_size == _selected_config->_size + 1)))
+              && ((pool_size == _selected_config->_size) || (pool_size == _selected_config->_size + 1))))
       {
         icon_name = g_strdup (GTK_STOCK_APPLY);
         pool->SetData (this, "is_balanced", (void *) 1);

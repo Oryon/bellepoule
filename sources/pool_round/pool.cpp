@@ -611,11 +611,10 @@ void Pool::Draw (GooCanvas *on_canvas,
       // Players (vertically)
       for (guint i = 0; i < nb_players; i++)
       {
-        gint           x, y;
+        gint           y;
         GooCanvasItem *image;
         GooCanvasItem *player_table = goo_canvas_table_new (grid_group, NULL);
 
-        x = - 5;
         y = cell_h / 2 + i * cell_h;
         image = GetPlayerImage (player_table,
                                 "font_desc=\"Sans 14.0px\"",
@@ -626,6 +625,10 @@ void Pool::Draw (GooCanvas *on_canvas,
                                 "league",     "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                 "country",    "style=\"italic\" size=\"x-small\" foreground=\"dimgrey\"",
                                 NULL);
+        Canvas::PutInTable (player_table,
+                            image,
+                            0,
+                            0);
 
         {
           gchar         *index = g_strdup_printf ("%d\302\240\302\240", i+1);
@@ -654,20 +657,19 @@ void Pool::Draw (GooCanvas *on_canvas,
       // Players (horizontally)
       for (guint i = 0; i < nb_players; i++)
       {
-        GooCanvasItem *goo_text;
-        gint           x, y;
-        gchar         *text;
+        gint   x, y;
+        gchar *text;
 
         x = cell_w / 2 + i * cell_w;;
         y = - 13;
         text = g_strdup_printf ("%d", i+1);
 
-        goo_text = goo_canvas_text_new (grid_header,
-                                        text,
-                                        x, y, -1,
-                                        GTK_ANCHOR_WEST,
-                                        "font", "Sans 18px",
-                                        NULL);
+        goo_canvas_text_new (grid_header,
+                             text,
+                             x, y, -1,
+                             GTK_ANCHOR_WEST,
+                             "font", "Sans 18px",
+                             NULL);
         g_free (text);
       }
     }

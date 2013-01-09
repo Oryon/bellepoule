@@ -28,7 +28,7 @@ TableSetBorder::TableSetBorder (Object    *owner,
                                 GCallback  callback,
                                 GtkWidget *container,
                                 GtkWidget *widget)
-: Object ("TableSetBorder")
+  : Object ("TableSetBorder")
 {
   _owner     = owner;
   _callback  = callback;
@@ -68,7 +68,7 @@ void TableSetBorder::UnPlug ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSetBorder::Mute ()
+void TableSetBorder::MuteCallbacks ()
 {
   g_signal_handlers_disconnect_by_func (_widget,
                                         (void *) _callback,
@@ -93,7 +93,7 @@ void TableSetBorder::AddTable (Table *table)
 }
 
 // --------------------------------------------------------------------------------
-void TableSetBorder::UnMute ()
+void TableSetBorder::UnMuteCallbacks ()
 {
   g_signal_connect (_widget,
                     "changed",
@@ -102,10 +102,21 @@ void TableSetBorder::UnMute ()
 }
 
 // --------------------------------------------------------------------------------
-void TableSetBorder::SelectTable (guint table)
+void TableSetBorder::SelectTable (gint table)
 {
-  gtk_combo_box_set_active (GTK_COMBO_BOX (_widget),
-                            table);
+  if (table >= 0)
+  {
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_widget),
+                              table);
+  }
+  else
+  {
+    gint n_children = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (_liststore),
+                                                      NULL);
+
+    gtk_combo_box_set_active (GTK_COMBO_BOX (_widget),
+                              n_children-1);
+  }
 }
 
 // --------------------------------------------------------------------------------
