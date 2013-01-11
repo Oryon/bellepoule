@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=3.0
+Type=Application
+Terminal=false
+Exec=/usr/bin/bellepoule
+Icon=/usr/share/BellePoule/resources/glade/svg/locale.svg
+Name=BellePoule
+Comment=Fencing Management Software
+Categories=Utility
