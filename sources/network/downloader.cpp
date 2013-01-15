@@ -61,7 +61,7 @@ void Downloader::Start (const gchar *address,
                         &error))
   {
     g_printerr ("Failed to create Downloader thread: %s\n", error->message);
-    g_free (error);
+    g_error_free (error);
     Release ();
   }
 }

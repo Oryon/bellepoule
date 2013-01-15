@@ -547,7 +547,7 @@ void Checkin::ImportCSV (gchar *filename)
                                                   "Use a template generated from this computer!");
       gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
-      g_clear_error (&error);
+      g_error_free (error);
     }
   }
 

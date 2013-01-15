@@ -749,7 +749,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
                            &error) == FALSE)
   {
     g_print ("AttributeDesc::AddDiscreteValues -> %s\n", error->message);
-    g_free (error);
+    g_error_free (error);
   }
   else
   {
@@ -808,7 +808,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 
               // Icon
               {
-                gchar *escape_file = g_uri_escape_string (tokens[i], " ", FALSE);
+                gchar *escape_file = g_uri_escape_string (tokens[i], NULL, FALSE);
                 gchar *pixbuf_file        = g_build_filename (dir, escape_file, NULL);
                 gchar *pixbuf_file_png    = g_strdup_printf ("%s.png", pixbuf_file);
 

@@ -293,7 +293,7 @@ void Classification::WriteFFFString (FILE        *file,
     if (error)
     {
       g_print ("<<GetFFFString>> %s\n", error->message);
-      g_clear_error (&error);
+      g_error_free (error);
     }
     else if (result)
     {
