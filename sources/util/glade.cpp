@@ -52,7 +52,7 @@ Glade::Glade (const gchar *file_name,
       if (error != NULL)
       {
         g_print ("<<%s>> %s\n", spare_file_name, error->message);
-        g_clear_error (&error);
+        g_error_free (error);
 
         gtk_main_quit ();
       }

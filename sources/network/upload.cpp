@@ -72,7 +72,7 @@ void Upload::Start ()
                         &error))
   {
     g_printerr ("Failed to create Upload thread: %s\n", error->message);
-    g_free (error);
+    g_error_free (error);
     delete (this);
   }
 }
