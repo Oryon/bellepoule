@@ -10,12 +10,12 @@ msgstr ""
 "PO-Revision-Date: 2013-01-03 10:02+0000\n"
 "Last-Translator: Aureliano Martini <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-01-04 04:57+0000\n"
-"X-Generator: Launchpad (build 16393)\n"
+"X-Launchpad-Export-Date: 2013-01-16 04:47+0000\n"
+"X-Generator: Launchpad (build 16420)\n"
+"Language: \n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -480,8 +480,8 @@ msgstr "Rango #"
 
 #: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to print?</"
-"big></b>"
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 msgstr "<b><big>Quali assalti stampare?</big></b>"
 
 #: ../../sources/table_round/table_set.cpp:123
@@ -1026,23 +1026,6 @@ msgstr "Manuale dell'utente"
 #: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
 msgstr "Modello lista atleti (.csv)"
-
-#~ msgid ""
-#~ "Locked until\n"
-#~ "the begining of the pools."
-#~ msgstr ""
-#~ "Bloccato fino\n"
-#~ "all'inizio dei gironi."
-
-#~ msgid ""
-#~ "Locked until\n"
-#~ "the begining of the table."
-#~ msgstr ""
-#~ "Bloccato fino\n"
-#~ "all'inizio del tabellone."
-
-#~ msgid "Translate into your language ..."
-#~ msgstr "Traduci nella tua lingua"
 
 #~ msgid "9999"
 #~ msgstr "9999"

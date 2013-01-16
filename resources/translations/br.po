@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-17 08:39+0200\n"
+"POT-Creation-Date: 2013-01-11 17:06+0100\n"
 "PO-Revision-Date: 2010-09-06 06:51+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2012-12-20 04:58+0000\n"
-"X-Generator: Launchpad (build 16378)\n"
+"X-Launchpad-Export-Date: 2013-01-16 04:47+0000\n"
+"X-Generator: Launchpad (build 16420)\n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -33,11 +33,11 @@ msgstr ""
 msgid "Kendo"
 msgstr ""
 
-#: ../../sources/common/contest.cpp:72 ../../sources/common/main.cpp:266
+#: ../../sources/common/contest.cpp:72 ../../sources/common/main.cpp:276
 msgid "Male"
 msgstr ""
 
-#: ../../sources/common/contest.cpp:73 ../../sources/common/main.cpp:267
+#: ../../sources/common/contest.cpp:73 ../../sources/common/main.cpp:277
 msgid "Female"
 msgstr ""
 
@@ -78,152 +78,152 @@ msgstr ""
 msgid "Veteran"
 msgstr ""
 
-#: ../../sources/common/contest.cpp:1354 ../../sources/common/contest.cpp:1508
+#: ../../sources/common/contest.cpp:1352 ../../sources/common/contest.cpp:1506
 msgid "Choose a file..."
 msgstr ""
 
-#: ../../sources/common/contest.cpp:1523
+#: ../../sources/common/contest.cpp:1521
 msgid "BellePoule files (.cotcot)"
 msgstr ""
 
-#: ../../sources/common/contest.cpp:1534
+#: ../../sources/common/contest.cpp:1532
 #: ../../sources/common/tournament.cpp:986
 #: ../../sources/people_management/checkin.cpp:259
 #: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
 msgstr ""
 
-#: ../../sources/common/main.cpp:250
+#: ../../sources/common/main.cpp:260
 msgid "ref"
 msgstr ""
 
-#: ../../sources/common/main.cpp:253 ../../sources/common/main.cpp:345
+#: ../../sources/common/main.cpp:263 ../../sources/common/main.cpp:355
 msgid "place"
 msgstr ""
 
-#: ../../sources/common/main.cpp:255
+#: ../../sources/common/main.cpp:265
 msgid "last name"
 msgstr ""
 
-#: ../../sources/common/main.cpp:257
+#: ../../sources/common/main.cpp:267
 msgid "first name"
 msgstr ""
 
-#: ../../sources/common/main.cpp:259
+#: ../../sources/common/main.cpp:269
 msgid "date of birth"
 msgstr ""
 
-#: ../../sources/common/main.cpp:262
+#: ../../sources/common/main.cpp:272
 msgid "gender"
 msgstr ""
 
-#: ../../sources/common/main.cpp:269
+#: ../../sources/common/main.cpp:279
 msgid "country"
 msgstr ""
 
-#: ../../sources/common/main.cpp:274
+#: ../../sources/common/main.cpp:284
 msgid "league"
 msgstr ""
 
-#: ../../sources/common/main.cpp:279
+#: ../../sources/common/main.cpp:289
 msgid "club"
 msgstr ""
 
-#: ../../sources/common/main.cpp:283
+#: ../../sources/common/main.cpp:293
 msgid "licence"
 msgstr ""
 
-#: ../../sources/common/main.cpp:285
+#: ../../sources/common/main.cpp:295
 msgid "smartphone"
 msgstr ""
 
-#: ../../sources/common/main.cpp:287
+#: ../../sources/common/main.cpp:297
 msgid "rate"
 msgstr ""
 
-#: ../../sources/common/main.cpp:292
+#: ../../sources/common/main.cpp:302
 msgid "level"
 msgstr ""
 
-#: ../../sources/common/main.cpp:295
+#: ../../sources/common/main.cpp:305
 msgid "ranking"
 msgstr ""
 
-#: ../../sources/common/main.cpp:298
+#: ../../sources/common/main.cpp:308
 msgid "start rank"
 msgstr ""
 
-#: ../../sources/common/main.cpp:302
+#: ../../sources/common/main.cpp:312
 msgid "presence"
 msgstr ""
 
-#: ../../sources/common/main.cpp:307
+#: ../../sources/common/main.cpp:317
 msgid "exported"
 msgstr ""
 
-#: ../../sources/common/main.cpp:310
+#: ../../sources/common/main.cpp:320
 msgid "global status"
 msgstr ""
 
-#: ../../sources/common/main.cpp:313 ../../sources/common/main.cpp:321
+#: ../../sources/common/main.cpp:323 ../../sources/common/main.cpp:331
 #: ../../resources/glade/pool_supervisor.glade:55
 #: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
 msgstr ""
 
-#: ../../sources/common/main.cpp:314 ../../sources/common/main.cpp:322
+#: ../../sources/common/main.cpp:324 ../../sources/common/main.cpp:332
 msgid "Not qualified"
 msgstr ""
 
-#: ../../sources/common/main.cpp:315 ../../sources/common/main.cpp:323
+#: ../../sources/common/main.cpp:325 ../../sources/common/main.cpp:333
 msgid "Withdrawal"
 msgstr ""
 
-#: ../../sources/common/main.cpp:316 ../../sources/common/main.cpp:324
+#: ../../sources/common/main.cpp:326 ../../sources/common/main.cpp:334
 msgid "Excluded"
 msgstr ""
 
-#: ../../sources/common/main.cpp:317 ../../sources/common/main.cpp:325
+#: ../../sources/common/main.cpp:327 ../../sources/common/main.cpp:335
 msgid "Forfeit"
 msgstr ""
 
-#: ../../sources/common/main.cpp:319
+#: ../../sources/common/main.cpp:329
 msgid "status"
 msgstr ""
 
-#: ../../sources/common/main.cpp:329
+#: ../../sources/common/main.cpp:339
 msgid "pool #"
 msgstr ""
 
-#: ../../sources/common/main.cpp:333
+#: ../../sources/common/main.cpp:343
 msgid "Vict./Bouts (‰)"
 msgstr ""
 
-#: ../../sources/common/main.cpp:337
+#: ../../sources/common/main.cpp:347
 msgid "index"
 msgstr ""
 
-#: ../../sources/common/main.cpp:341
+#: ../../sources/common/main.cpp:351
 msgid "Hits scored"
 msgstr ""
 
-#: ../../sources/common/main.cpp:350
+#: ../../sources/common/main.cpp:360
 msgid "Round start rank"
 msgstr ""
 
-#: ../../sources/common/main.cpp:355
+#: ../../sources/common/main.cpp:365
 msgid "availability"
 msgstr ""
 
-#: ../../sources/common/main.cpp:360
+#: ../../sources/common/main.cpp:370
 msgid "Busy"
 msgstr ""
 
-#: ../../sources/common/main.cpp:361
+#: ../../sources/common/main.cpp:371
 msgid "Absent"
 msgstr ""
 
-#: ../../sources/common/main.cpp:362
+#: ../../sources/common/main.cpp:372
 msgid "Free"
 msgstr ""
 
@@ -232,15 +232,15 @@ msgstr ""
 msgid "Round #%d"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:1054
+#: ../../sources/common/schedule.cpp:1066
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:1057
+#: ../../sources/common/schedule.cpp:1069
 msgid "Go back to the previous round?"
 msgstr ""
 
-#: ../../sources/common/schedule.cpp:1060
+#: ../../sources/common/schedule.cpp:1072
 msgid "All the inputs of this round will be cancelled."
 msgstr ""
 
@@ -341,8 +341,8 @@ msgid "Fencer"
 msgstr ""
 
 #: ../../sources/people_management/form.cpp:51
-#: ../../sources/pool_round/pool.cpp:448
-#: ../../sources/table_round/table_set.cpp:2722
+#: ../../sources/pool_round/pool.cpp:449
+#: ../../sources/table_round/table_set.cpp:2781
 msgid "Referee"
 msgstr ""
 
@@ -388,41 +388,41 @@ msgstr ""
 msgid "Pool #%02d"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:489
-#: ../../sources/table_round/table_set.cpp:2761
+#: ../../sources/pool_round/pool.cpp:490
+#: ../../sources/table_round/table_set.cpp:2820
 msgid "Piste"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:693
-#: ../../sources/table_round/table_set.cpp:2921
+#: ../../sources/pool_round/pool.cpp:696
+#: ../../sources/table_round/table_set.cpp:2980
 msgid "Signature"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:715
+#: ../../sources/pool_round/pool.cpp:718
 msgid "Status"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:725
+#: ../../sources/pool_round/pool.cpp:728
 msgid "Victories"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:734
+#: ../../sources/pool_round/pool.cpp:737
 msgid "Vict./Matchs"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:743
+#: ../../sources/pool_round/pool.cpp:746
 msgid "H. scored"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:752
+#: ../../sources/pool_round/pool.cpp:755
 msgid "H. received"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:761
+#: ../../sources/pool_round/pool.cpp:764
 msgid "Index"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:770
+#: ../../sources/pool_round/pool.cpp:773
 msgid "Place"
 msgstr ""
 
@@ -430,48 +430,48 @@ msgstr ""
 msgid "Pools arrangement"
 msgstr ""
 
-#: ../../sources/pool_round/pool_allocator.cpp:1425
+#: ../../sources/pool_round/pool_allocator.cpp:1435
 msgid "Allocation"
 msgstr ""
 
 #: ../../sources/pool_round/pool_supervisor.cpp:25
-#: ../../sources/pool_round/pool_supervisor.cpp:515
-#: ../../sources/pool_round/pool_supervisor.cpp:525
+#: ../../sources/pool_round/pool_supervisor.cpp:499
+#: ../../sources/pool_round/pool_supervisor.cpp:509
 msgid "Pools"
 msgstr ""
 
-#: ../../sources/pool_round/pool_supervisor.cpp:104
+#: ../../sources/pool_round/pool_supervisor.cpp:101
 msgid "<b><big>Print...</big></b>"
 msgstr ""
 
-#: ../../sources/pool_round/pool_supervisor.cpp:107
+#: ../../sources/pool_round/pool_supervisor.cpp:104
 msgid "Pool sheets printing"
 msgstr ""
 
-#: ../../sources/pool_round/pool_supervisor.cpp:498
+#: ../../sources/pool_round/pool_supervisor.cpp:482
 msgid "Pools classification"
 msgstr ""
 
-#: ../../sources/table_round/table.cpp:452
+#: ../../sources/table_round/table.cpp:550
 msgid "Winner"
 msgstr ""
 
-#: ../../sources/table_round/table.cpp:456
+#: ../../sources/table_round/table.cpp:554
 msgid "Final"
 msgstr ""
 
-#: ../../sources/table_round/table.cpp:460
+#: ../../sources/table_round/table.cpp:558
 msgid "Semi-final"
 msgstr ""
 
-#: ../../sources/table_round/table.cpp:464
+#: ../../sources/table_round/table.cpp:562
 #, c-format
 msgid "Table of %d"
 msgstr ""
 
 #: ../../sources/table_round/table_set.cpp:93
-#: ../../sources/table_round/table_set.cpp:2835
-#: ../../sources/table_round/table_set.cpp:2842
+#: ../../sources/table_round/table_set.cpp:2894
+#: ../../sources/table_round/table_set.cpp:2901
 msgid "Place #"
 msgstr ""
 
@@ -486,28 +486,28 @@ msgstr ""
 msgid "Table printing"
 msgstr ""
 
-#: ../../sources/table_round/table_set.cpp:1747
+#: ../../sources/table_round/table_set.cpp:1770
 msgid "cutting"
 msgstr ""
 
-#: ../../sources/table_round/table_set.cpp:2694
+#: ../../sources/table_round/table_set.cpp:2753
 #, c-format
 msgid "Match %s"
 msgstr ""
 
-#: ../../sources/table_round/table_set.cpp:2833
-#: ../../sources/table_round/table_set.cpp:2841
+#: ../../sources/table_round/table_set.cpp:2892
+#: ../../sources/table_round/table_set.cpp:2900
 #: ../../sources/table_round/table_supervisor.cpp:31
-#: ../../resources/glade/table_supervisor.glade:358
+#: ../../resources/glade/table_supervisor.glade:331
 msgid "Table"
 msgstr ""
 
-#: ../../sources/table_round/table_set.cpp:2993
+#: ../../sources/table_round/table_set.cpp:3052
 #, c-format
 msgid "%s: score sheets printing"
 msgstr ""
 
-#: ../../sources/table_round/table_supervisor.cpp:1066
+#: ../../sources/table_round/table_supervisor.cpp:1062
 msgid "Table classification"
 msgstr ""
 
@@ -518,10 +518,10 @@ msgstr ""
 #: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
 #: ../../resources/glade/general_classification.glade:35
 #: ../../resources/glade/pool_allocator.glade:42
-#: ../../resources/glade/pool_supervisor.glade:547
+#: ../../resources/glade/pool_supervisor.glade:515
 #: ../../resources/glade/referees.glade:367
 #: ../../resources/glade/splitting.glade:15
-#: ../../resources/glade/table_supervisor.glade:382
+#: ../../resources/glade/table_supervisor.glade:355
 msgid "Data"
 msgstr ""
 
@@ -749,82 +749,76 @@ msgstr ""
 msgid "Max score"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:79
-#: ../../resources/glade/table_supervisor.glade:113
+#: ../../resources/glade/pool_supervisor.glade:122
+#: ../../resources/glade/table_supervisor.glade:131
 msgid "Number"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:149
-msgid ""
-"Locked until\n"
-"the begining of the pools."
-msgstr ""
-
-#: ../../resources/glade/pool_supervisor.glade:229
+#: ../../resources/glade/pool_supervisor.glade:203
 msgid "Seeding"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:246
+#: ../../resources/glade/pool_supervisor.glade:220
 msgid "Balanced"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:262
+#: ../../resources/glade/pool_supervisor.glade:236
 msgid "Grouped by strength"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:356
+#: ../../resources/glade/pool_supervisor.glade:330
 msgid "All the pools"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:372
+#: ../../resources/glade/pool_supervisor.glade:346
 msgid "Only the selected pool"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:394
+#: ../../resources/glade/pool_supervisor.glade:368
 msgid "<b>What?</b>"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:424
+#: ../../resources/glade/pool_supervisor.glade:398
 msgid "For arbitration"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:428
+#: ../../resources/glade/pool_supervisor.glade:402
 msgid "Content designed for the referees."
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:441
+#: ../../resources/glade/pool_supervisor.glade:415
 msgid "For the bulletin board"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:463
+#: ../../resources/glade/pool_supervisor.glade:437
 msgid "<b>For what?</b>"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:585
-#: ../../resources/glade/table_supervisor.glade:420
+#: ../../resources/glade/pool_supervisor.glade:553
+#: ../../resources/glade/table_supervisor.glade:393
 msgid "Classification"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:610
-#: ../../resources/glade/table_supervisor.glade:462
+#: ../../resources/glade/pool_supervisor.glade:578
+#: ../../resources/glade/table_supervisor.glade:435
 msgid "Automatic stuffing"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:664
+#: ../../resources/glade/pool_supervisor.glade:632
 msgid "Combined classification"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:668
+#: ../../resources/glade/pool_supervisor.glade:636
 msgid ""
 "The classification cumulating  the current score and the scores of the "
 "previous pool rounds."
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:682
+#: ../../resources/glade/pool_supervisor.glade:650
 msgid "Single classification"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:686
+#: ../../resources/glade/pool_supervisor.glade:654
 msgid ""
 "The classification of the current round that doesn't take into account the "
 "scores of the previous rounds. "
@@ -871,7 +865,7 @@ msgid "Score sheets"
 msgstr ""
 
 #: ../../resources/glade/table.glade:360
-#: ../../resources/glade/table_supervisor.glade:228
+#: ../../resources/glade/table_supervisor.glade:201
 msgid "All"
 msgstr ""
 
@@ -907,43 +901,37 @@ msgstr ""
 msgid "Fenced places"
 msgstr ""
 
-#: ../../resources/glade/table_supervisor.glade:159
-msgid ""
-"Locked until\n"
-"the begining of the table."
-msgstr ""
-
-#: ../../resources/glade/table_supervisor.glade:196
+#: ../../resources/glade/table_supervisor.glade:169
 msgid "None"
 msgstr ""
 
-#: ../../resources/glade/table_supervisor.glade:212
+#: ../../resources/glade/table_supervisor.glade:185
 msgid "Third place"
 msgstr ""
 
-#: ../../resources/glade/table_supervisor.glade:445
+#: ../../resources/glade/table_supervisor.glade:418
 msgid "Fill in a match"
 msgstr ""
 
-#: ../../resources/glade/table_supervisor.glade:459
+#: ../../resources/glade/table_supervisor.glade:432
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
 
-#: ../../resources/glade/table_supervisor.glade:509
+#: ../../resources/glade/table_supervisor.glade:482
 msgid "From"
 msgstr ""
 
-#: ../../resources/glade/table_supervisor.glade:547
+#: ../../resources/glade/table_supervisor.glade:520
 msgid "To"
 msgstr ""
 
-#: ../../resources/glade/table_supervisor.glade:595
+#: ../../resources/glade/table_supervisor.glade:568
 msgid "For place"
 msgstr ""
 
-#: ../../resources/glade/table_supervisor.glade:694
+#: ../../resources/glade/table_supervisor.glade:667
 msgid "Zoom"
 msgstr ""
 
@@ -1004,10 +992,6 @@ msgstr ""
 
 #: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
-msgstr ""
-
-#: ../../resources/glade/tournament.glade:1175
-msgid "Translate into your language ..."
 msgstr ""
 
 #: ../../resources/glade/tournament.glade:1193
