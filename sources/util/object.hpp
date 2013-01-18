@@ -17,8 +17,7 @@
 #ifndef object_hpp
 #define object_hpp
 
-#define GETTEXT_PACKAGE "gtk20"
-#include <glib/gi18n-lib.h>
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
 class Object

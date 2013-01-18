@@ -805,7 +805,7 @@ void Tournament::EnumerateLanguages ()
     if (lines)
     {
       const gchar *env     = g_getenv ("LANGUAGE");
-      gchar *original_env  = NULL;
+      gchar  *original_env = NULL;
       GSList *group        = NULL;
       gchar  *last_setting = g_key_file_get_string (_config_file,
                                                     "Tournament",
@@ -814,6 +814,8 @@ void Tournament::EnumerateLanguages ()
       if (env)
       {
         original_env = g_strdup (env);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("locale_menuitem")),
+                                 env);
       }
 
       for (guint l = 0; lines[l] && lines[l][0]; l++)
@@ -1554,17 +1556,28 @@ gboolean Tournament::OnLatestVersionReceived (Downloader::CallbackData *cbk_data
                                         "maturity",
                                         NULL);
 
-      if (version && (strcmp (VERSION, version) != 0))
+      if (version && (strcmp (VERSION, version) < 0))
       {
         new_version_detected = TRUE;
       }
-      else if (revision && (strcmp (VERSION_REVISION, revision) != 0))
+      else if (revision && (strcmp (VERSION_REVISION, revision) < 0))
       {
         new_version_detected = TRUE;
       }
-      else if (maturity && (strcmp (VERSION_MATURITY, maturity) != 0))
+      else if (maturity && (strcmp (VERSION_MATURITY, maturity) < 0))
       {
         new_version_detected = TRUE;
+      }
+      else if (version && strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
+      {
+        char *stable_version = g_key_file_get_string (version_file,
+                                                      "STABLE",
+                                                      "version",
+                                                      NULL);
+        if (stable_version && strcmp (version, stable_version) <= 0)
+        {
+          new_version_detected = TRUE;
+        }
       }
 
       if (new_version_detected)

@@ -1,4 +1,16 @@
-bellepoule (3.0) unstable; urgency=low
+bellepoule (3.0ubuntu2) precise; urgency=low
+
+  * Fixed error on version label.
+
+ -- betonniere <le.roux.yannick@free.fr>  Fri, 18 Jan 2013 10:42:10 +0100
+
+bellepoule (3.0ubuntu1) precise; urgency=low
+
+  * Fixed building issues.
+
+ -- betonniere <le.roux.yannick@free.fr>  Fri, 18 Jan 2013 09:05:54 +0100
+
+bellepoule (3.0) precise; urgency=low
 
   * Initial Release.
 
