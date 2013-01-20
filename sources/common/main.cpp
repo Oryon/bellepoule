@@ -14,8 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#define GETTEXT_PACKAGE "gtk20"
-#include <glib/gi18n-lib.h>
+#include <glib/gi18n.h>
 
 #include <unistd.h>
 #include <stddef.h>

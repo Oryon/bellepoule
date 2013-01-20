@@ -1,6 +1,7 @@
 EXEC    = bellepoule
 TARGET  = Release
 PACKAGE = ~/BellePoule
+RELEASE = bellepoule_3.0
 
 CC = gcc
 ifeq ($(TARGET), Debug)
@@ -58,44 +59,44 @@ package: prepare_packaging prepare_sources prepare_examples prepare_resources
 
 prepare_packaging: clean
 	rm -rf $(PACKAGE)
-	mkdir -p $(PACKAGE)/bellepoule_3.0
-	cp Makefile $(PACKAGE)/bellepoule_3.0
-	cp -rf debian $(PACKAGE)/bellepoule_3.0
-	find $(PACKAGE)/bellepoule_3.0 -type f -exec chmod a-x {} \;
-	chmod a+x $(PACKAGE)/bellepoule_3.0/debian/rules
+	mkdir -p $(PACKAGE)/$(RELEASE)
+	cp Makefile $(PACKAGE)/$(RELEASE)
+	cp -rf debian $(PACKAGE)/$(RELEASE)
+	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
+	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
 
 prepare_examples:
-	mkdir -p $(PACKAGE)/bellepoule_3.0/Exemples
-	cp -f  ../Exemples/exemple.cotcot $(PACKAGE)/bellepoule_3.0/Exemples
-	cp -f  ../Exemples/CLS_SHM.FFF    $(PACKAGE)/bellepoule_3.0/Exemples
-	cp -f  ../Exemples/CLS_EDM.FFF    $(PACKAGE)/bellepoule_3.0/Exemples
-	cp -rf ../Exemples/FFE            $(PACKAGE)/bellepoule_3.0/Exemples
-	find $(PACKAGE)/bellepoule_3.0/Exemples -type f -exec chmod a-x {} \;
+	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples
+	cp -f  ../Exemples/exemple.cotcot $(PACKAGE)/$(RELEASE)/Exemples
+	cp -f  ../Exemples/CLS_SHM.FFF    $(PACKAGE)/$(RELEASE)/Exemples
+	cp -f  ../Exemples/CLS_EDM.FFF    $(PACKAGE)/$(RELEASE)/Exemples
+	cp -rf ../Exemples/FFE            $(PACKAGE)/$(RELEASE)/Exemples
+	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
 
 prepare_resources:
-	mkdir -p $(PACKAGE)/bellepoule_3.0/resources
-	cp -f ../resources/user_manual.pdf $(PACKAGE)/bellepoule_3.0/resources
-	mkdir -p $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -f ../resources/translations/index.txt $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/fr    $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/de    $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/nl    $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/ru    $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/ar    $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/es    $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/it    $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/ko    $(PACKAGE)/bellepoule_3.0/resources/translations
-	cp -rf ../resources/translations/pt_br $(PACKAGE)/bellepoule_3.0/resources/translations
-	mkdir -p $(PACKAGE)/bellepoule_3.0/resources/glade
-	cp -f ../resources/glade/*.png   $(PACKAGE)/bellepoule_3.0/resources/glade
-	cp -f ../resources/glade/*.jpg   $(PACKAGE)/bellepoule_3.0/resources/glade
-	cp -f ../resources/glade/*.glade $(PACKAGE)/bellepoule_3.0/resources/glade
-	cp -rf ../resources/countries      $(PACKAGE)/bellepoule_3.0/resources/countries
-	cp -rf ../resources/localized_data $(PACKAGE)/bellepoule_3.0/resources/localized_data
-	find $(PACKAGE)/bellepoule_3.0/resources -type f -exec chmod a-x {} \;
+	mkdir -p $(PACKAGE)/$(RELEASE)/resources
+	cp -f ../resources/user_manual.pdf $(PACKAGE)/$(RELEASE)/resources
+	mkdir -p $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -f ../resources/translations/index.txt $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/fr    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/de    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/nl    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/ru    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/ar    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/es    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/it    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/ko    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/pt_br $(PACKAGE)/$(RELEASE)/resources/translations
+	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade
+	cp -f ../resources/glade/*.png   $(PACKAGE)/$(RELEASE)/resources/glade
+	cp -f ../resources/glade/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade
+	cp -f ../resources/glade/*.glade $(PACKAGE)/$(RELEASE)/resources/glade
+	cp -rf ../resources/countries      $(PACKAGE)/$(RELEASE)/resources/countries
+	cp -rf ../resources/localized_data $(PACKAGE)/$(RELEASE)/resources/localized_data
+	find $(PACKAGE)/$(RELEASE)/resources -type f -exec chmod a-x {} \;
 
 prepare_sources:
-	cp -rf ../sources $(PACKAGE)/bellepoule_3.0
+	cp -rf ../sources $(PACKAGE)/$(RELEASE)
 
 ##
 ## debuild section
