@@ -24,60 +24,63 @@
 #include "module.hpp"
 #include "player.hpp"
 
-class Form : public Module
+namespace People
 {
-  public:
-    typedef enum
-    {
-      UPDATE_PLAYER,
-      NEW_PLAYER
-    } PlayerEvent;
+  class Form : public Module
+  {
+    public:
+      typedef enum
+      {
+        UPDATE_PLAYER,
+        NEW_PLAYER
+      } PlayerEvent;
 
-    typedef void (Module::*PlayerCbk) (Player      *player,
-                                       PlayerEvent  event);
+      typedef void (Module::*PlayerCbk) (Player      *player,
+                                         PlayerEvent  event);
 
-    Form (Filter             *filter,
-          Module             *client,
-          Player::PlayerType  player_type,
-          PlayerCbk           player_cbk);
+      Form (Filter             *filter,
+            Module             *client,
+            Player::PlayerType  player_type,
+            PlayerCbk           player_cbk);
 
-    void Show (Player *player = NULL);
+      void Show (Player *player = NULL);
 
-    void Hide ();
+      void Hide ();
 
-    void OnAddButtonClicked ();
+      void OnAddButtonClicked ();
 
-    void OnCloseButtonClicked ();
+      void OnCloseButtonClicked ();
 
-    void Lock ();
+      void Lock ();
 
-    void UnLock ();
+      void UnLock ();
 
-  private:
-    Filter             *_filter;
-    Module             *_client;
-    Player::PlayerType  _player_type;
-    PlayerCbk           _cbk;
-    Player             *_player_to_update;
-    gboolean            _locked;
+    private:
+      Filter             *_filter;
+      Module             *_client;
+      Player::PlayerType  _player_type;
+      PlayerCbk           _cbk;
+      Player             *_player_to_update;
+      gboolean            _locked;
 
-    virtual ~Form ();
+      virtual ~Form ();
 
-    void ReadAndWipe (Player *player);
+      void ReadAndWipe (Player *player);
 
-    static void SetSelectorValue (GtkComboBox *combo_box,
-                                  const gchar *value);
+      static void SetSelectorValue (GtkComboBox *combo_box,
+                                    const gchar *value);
 
-    static gboolean OnSelectorChanged (GtkEntryCompletion *widget,
-                                       GtkTreeModel       *model,
-                                       GtkTreeIter        *iter,
-                                       GtkComboBox        *combobox);
+      static gboolean OnSelectorChanged (GtkEntryCompletion *widget,
+                                         GtkTreeModel       *model,
+                                         GtkTreeIter        *iter,
+                                         GtkComboBox        *combobox);
 
-    static void OnSelectorEntryActivate (GtkEntry    *widget,
-                                         GtkComboBox *combobox);
+      static void OnSelectorEntryActivate (GtkEntry    *widget,
+                                           GtkComboBox *combobox);
 
-    static void OnSensitiveStateToggled (GtkToggleButton *togglebutton,
-                                         GtkWidget       *w);
-};
+      static void OnSensitiveStateToggled (GtkToggleButton *togglebutton,
+                                           GtkWidget       *w);
+  };
+}
 
 #endif

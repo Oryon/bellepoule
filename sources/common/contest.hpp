@@ -26,8 +26,12 @@
 #include "downloader.hpp"
 #include "schedule.hpp"
 
+namespace People
+{
+  class Checkin;
+}
+
 class Tournament;
-class Checkin;
 
 class Contest : public Module
 {
@@ -130,34 +134,34 @@ class Contest : public Module
 
     static GList *_color_list;
 
-    gchar        *_level;
-    gchar        *_id;
-    gchar        *_name;
-    gchar        *_organizer;
-    gchar        *_location;
-    gchar        *_web_site;
-    guint         _category;
-    gchar        *_filename;
-    guint         _weapon;
-    guint         _gender;
-    guint         _day;
-    guint         _month;
-    guint         _year;
-    Time         *_checkin_time;
-    Time         *_scratch_time;
-    Time         *_start_time;
-    Schedule     *_schedule;
-    Tournament   *_tournament;
-    gboolean      _derived;
-    Data         *_color;
-    GdkColor     *_gdk_color;
-    guint         _save_timeout_id;
-    Checkin      *_referees_list;
-    gint          _referee_pane_position;
-    GHashTable   *_ref_translation_table;
-    State         _state;
-    gboolean      _read_only;
-    Downloader   *_downloader;
+    gchar           *_level;
+    gchar           *_id;
+    gchar           *_name;
+    gchar           *_organizer;
+    gchar           *_location;
+    gchar           *_web_site;
+    guint            _category;
+    gchar           *_filename;
+    guint            _weapon;
+    guint            _gender;
+    guint            _day;
+    guint            _month;
+    guint            _year;
+    Time            *_checkin_time;
+    Time            *_scratch_time;
+    Time            *_start_time;
+    Schedule        *_schedule;
+    Tournament      *_tournament;
+    gboolean         _derived;
+    Data            *_color;
+    GdkColor        *_gdk_color;
+    guint            _save_timeout_id;
+    People::Checkin *_referees_list;
+    gint             _referee_pane_position;
+    GHashTable      *_ref_translation_table;
+    State            _state;
+    gboolean         _read_only;
+    Net::Downloader *_downloader;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;
@@ -188,11 +192,11 @@ class Contest : public Module
 
     void MakeDirty ();
 
-    void OpenMemoryContest (Downloader::CallbackData *cbk_data);
+    void OpenMemoryContest (Net::Downloader::CallbackData *cbk_data);
 
     static gboolean OnSaveTimeout (Contest *contest);
 
-    static gboolean OnCompetitionReceived (Downloader::CallbackData *cbk_data);
+    static gboolean OnCompetitionReceived (Net::Downloader::CallbackData *cbk_data);
 
     void OnPlugged ();
 

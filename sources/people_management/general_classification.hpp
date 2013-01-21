@@ -25,53 +25,56 @@
 #include "attribute.hpp"
 #include "players_list.hpp"
 
-class GeneralClassification : public virtual Stage, public PlayersList
+namespace People
 {
-  public:
-    typedef enum
-    {
-      CSV,
-      PDF,
-      FFF
-    } ExportType;
+  class GeneralClassification : public virtual Stage, public PlayersList
+  {
+    public:
+      typedef enum
+      {
+        CSV,
+        PDF,
+        FFF
+      } ExportType;
 
-    static void Declare ();
+      static void Declare ();
 
-    GeneralClassification (StageClass *stage_class);
+      GeneralClassification (StageClass *stage_class);
 
-    void OnFilterClicked ();
+      void OnFilterClicked ();
 
-    void OnPrintPoolToolbuttonClicked ();
+      void OnPrintPoolToolbuttonClicked ();
 
-    void OnExportToolbuttonClicked (ExportType export_type);
+      void OnExportToolbuttonClicked (ExportType export_type);
 
-  private:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
+    private:
+      static const gchar *_class_name;
+      static const gchar *_xml_class_name;
 
-    static Stage *CreateInstance (StageClass *stage_class);
+      static Stage *CreateInstance (StageClass *stage_class);
 
-    void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node);
 
-    void Save (xmlTextWriter *xml_writer);
+      void Save (xmlTextWriter *xml_writer);
 
-    void Display ();
+      void Display ();
 
-    GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification ();
 
-    guint PreparePrint (GtkPrintOperation *operation,
-                        GtkPrintContext   *context);
+      guint PreparePrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context);
 
-    void DrawPage (GtkPrintOperation *operation,
-                   GtkPrintContext   *context,
-                   gint               page_nr);
+      void DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
 
-    void OnEndPrint (GtkPrintOperation *operation,
-                     GtkPrintContext   *context);
+      void OnEndPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
 
-    gchar *GetPrintName ();
+      gchar *GetPrintName ();
 
-    virtual ~GeneralClassification ();
-};
+      virtual ~GeneralClassification ();
+  };
+}
 
 #endif

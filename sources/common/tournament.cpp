@@ -170,40 +170,46 @@ Tournament::Tournament (gchar *filename)
   {
     _competitions_downloader = NULL;
 
-    _version_downloader = new Downloader ("_version_downloader",
-                                          OnLatestVersionReceived,
-                                          this);
+    _version_downloader = new Net::Downloader ("_version_downloader",
+                                               OnLatestVersionReceived,
+                                               this);
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
 
-    _http_server = new HttpServer (this,
-                                   OnGetHttpResponse);
+    _http_server = new Net::HttpServer (this,
+                                        OnGetHttpResponse);
   }
 }
 
 // --------------------------------------------------------------------------------
 Tournament::~Tournament ()
 {
-  FILE *file;
-
   {
-    gchar *file_path = g_strdup_printf ("%s/BellePoule/config.ini", g_get_user_config_dir ());
+    GError *error       = NULL;
+    gchar  *config_path = g_strdup_printf ("%s/BellePoule/config.ini", g_get_user_config_dir ());
 
-    file = g_fopen (file_path,
-                    "w");
-    g_free (file_path);
-  }
+    if (config_path)
+    {
+      gsize  config_length;
+      gchar *config = g_key_file_to_data (_config_file,
+                                          &config_length,
+                                          &error);
 
-  if (file)
-  {
-    gsize  length;
-    gchar *config = g_key_file_to_data (_config_file,
-                                        &length,
-                                        NULL);
-
-    fwrite (config, sizeof (char), strlen (config), file);
-    g_free (config);
-
-    // fclose (file);
+      if (error)
+      {
+        g_error ("g_key_file_to_data: %s", error->message);
+        g_error_free (error);
+      }
+      else if (g_file_set_contents (config_path,
+                                    config,
+                                    config_length,
+                                    &error) == FALSE)
+      {
+        g_error ("g_file_set_contents: %s", error->message);
+        g_error_free (error);
+      }
+      g_free (config);
+    }
+    g_free (config_path);
   }
 
   {
@@ -1284,9 +1290,9 @@ void Tournament::GetBroadcastedCompetitions ()
 
   if (_competitions_downloader == NULL)
   {
-    _competitions_downloader = new Downloader ("_competitions_downloader",
-                                               OnCompetitionListReceived,
-                                               this);
+    _competitions_downloader = new Net::Downloader ("_competitions_downloader",
+                                                    OnCompetitionListReceived,
+                                                    this);
   }
 
   _competitions_downloader->Start (address,
@@ -1317,7 +1323,7 @@ void Tournament::StopCompetitionMonitoring ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::OnCompetitionListReceived (Downloader::CallbackData *cbk_data)
+gboolean Tournament::OnCompetitionListReceived (Net::Downloader::CallbackData *cbk_data)
 {
   Tournament *tournament = (Tournament *) cbk_data->_user_data;
 
@@ -1523,7 +1529,7 @@ void Tournament::OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::OnLatestVersionReceived (Downloader::CallbackData *cbk_data)
+gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data)
 {
   Tournament *tournament = (Tournament *) cbk_data->_user_data;
   gchar      *data       = tournament->_version_downloader->GetData ();

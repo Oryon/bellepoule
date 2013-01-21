@@ -22,162 +22,167 @@
 
 #include "swapper.hpp"
 
-class SmartSwapper : public Object, public Swapper
+namespace Pool
 {
-  public:
-    static Swapper *Create (Object *owner);
+  class Pool;
 
-    void Delete ();
+  class SmartSwapper : public Object, public Swapper
+  {
+    public:
+      static Swapper *Create (Object *owner);
 
-    void Init (GSList *zones,
-               guint   fencer_count);
+      void Delete ();
 
-    void Swap (gchar  *criteria,
-               GSList *fencer_list);
+      void Init (GSList *zones,
+                 guint   fencer_count);
 
-    void RefreshErrors ();
+      void Swap (gchar  *criteria,
+                 GSList *fencer_list);
 
-    guint HasErrors ();
+      void RefreshErrors ();
 
-  private:
-    class PoolData;
+      guint HasErrors ();
 
-    class Fencer
-    {
-      public:
-        Player   *_player;
-        GQuark    _criteria_quark;
-        PoolData *_original_pool;
-        PoolData *_new_pool;
-        guint     _rank;
-        gboolean  _over_population_error;
+    private:
+      class PoolData;
 
-        void     Dump    (Object *owner);
-        gboolean CanGoTo (PoolData   *pool_data,
-                          GHashTable *criteria_distribution);
-    };
+      class Fencer
+      {
+        public:
+          Player   *_player;
+          GQuark    _criteria_quark;
+          PoolData *_original_pool;
+          PoolData *_new_pool;
+          guint     _rank;
+          gboolean  _over_population_error;
 
-    class PoolSizes
-    {
-      public:
-        typedef enum
-        {
-          MIN_SIZE,
-          MAX_SIZE,
-          END_MARK,
+          void     Dump    (Object *owner);
+          gboolean CanGoTo (PoolData   *pool_data,
+                            GHashTable *criteria_distribution);
+      };
 
-          SIZE_TYPE_LEN
-        } SizeType;
+      class PoolSizes
+      {
+        public:
+          typedef enum
+          {
+            MIN_SIZE,
+            MAX_SIZE,
+            END_MARK,
 
-        void Configure (guint nb_fencer,
-                        guint nb_pool);
+            SIZE_TYPE_LEN
+          } SizeType;
 
-        void NewSize (guint old_size,
-                      guint new_size);
+          void Configure (guint nb_fencer,
+                          guint nb_pool);
 
-        guint _available_sizes[SIZE_TYPE_LEN];
-        guint _min_size;
-        guint _max_size;
+          void NewSize (guint old_size,
+                        guint new_size);
 
-      private:
-        guint _nb_max;
-        guint _nb_max_reached;
-    };
+          guint _available_sizes[SIZE_TYPE_LEN];
+          guint _min_size;
+          guint _max_size;
 
-    class PoolData
-    {
-      public:
-        Pool       *_pool;
-        GHashTable *_criteria_score;
-        GHashTable *_original_criteria_score;
-        GList      *_fencer_list;
-        guint       _size;
-        guint       _id;
-        PoolSizes  *_pool_sizes;
+        private:
+          guint _nb_max;
+          guint _nb_max_reached;
+      };
 
-        void AddFencer    (Fencer *fencer);
-        void RemoveFencer (Fencer *fencer);
+      class PoolData
+      {
+        public:
+          Pool       *_pool;
+          GHashTable *_criteria_score;
+          GHashTable *_original_criteria_score;
+          GList      *_fencer_list;
+          guint       _size;
+          guint       _id;
+          PoolSizes  *_pool_sizes;
 
-      private:
-        void ChangeCriteriaScore (GQuark criteria,
-                                  gint   delta_score);
-    };
+          void AddFencer    (Fencer *fencer);
+          void RemoveFencer (Fencer *fencer);
 
-    class CriteriaData
-    {
-      public:
-        guint _count;
+        private:
+          void ChangeCriteriaScore (GQuark criteria,
+                                    gint   delta_score);
+      };
 
-        guint _max_criteria_occurrence;
-        guint _max_floating_fencers;
-    };
+      class CriteriaData
+      {
+        public:
+          guint _count;
 
-  private:
-    SmartSwapper (Object *rank_attr_id);
+          guint _max_criteria_occurrence;
+          guint _max_floating_fencers;
+      };
 
-    virtual ~SmartSwapper ();
+    private:
+      SmartSwapper (Object *rank_attr_id);
 
-    guint GetPoolIndex (guint fencer_index);
+      virtual ~SmartSwapper ();
 
-    void ExtractOverPopulationErrors ();
+      guint GetPoolIndex (guint fencer_index);
 
-    void FindLackOfPopulationErrors ();
+      void ExtractOverPopulationErrors ();
 
-    void ExtractFloatings ();
+      void FindLackOfPopulationErrors ();
 
-    Fencer *ExtractFencer (PoolData  *from_pool,
-                           GQuark     with_criteria,
-                           GList    **to_list);
+      void ExtractFloatings ();
 
-    void DispatchErrors ();
+      Fencer *ExtractFencer (PoolData  *from_pool,
+                             GQuark     with_criteria,
+                             GList    **to_list);
 
-    void DispatchFloatings ();
+      void DispatchErrors ();
 
-    void DispatchFencers (GList *list);
+      void DispatchFloatings ();
 
-    gboolean MoveFencerTo (Fencer   *fencer,
-                           PoolData *pool_data,
-                           guint     max_pool_size);
+      void DispatchFencers (GList *list);
 
-    static void SetExpectedData (GQuark        quark,
-                                 CriteriaData *criteria_data,
-                                 SmartSwapper *swapper);
+      gboolean MoveFencerTo (Fencer   *fencer,
+                             PoolData *pool_data,
+                             guint     max_pool_size);
 
-    void InsertCriteria (GHashTable   *table,
-                         const GQuark  criteria);
+      static void SetExpectedData (GQuark        quark,
+                                   CriteriaData *criteria_data,
+                                   SmartSwapper *swapper);
 
-    void CreatePoolTable (GSList *zones);
+      void InsertCriteria (GHashTable   *table,
+                           const GQuark  criteria);
 
-    void DeletePoolTable ();
+      void CreatePoolTable (GSList *zones);
 
-    void AddPlayerToPool (Player   *player,
-                          PoolData *pool_data);
+      void DeletePoolTable ();
 
-    void LookUpDistribution (GSList *fencer_list);
+      void AddPlayerToPool (Player   *player,
+                            PoolData *pool_data);
 
-    void StoreSwapping ();
+      void LookUpDistribution (GSList *fencer_list);
 
-    static gint CompareFencerRank (Fencer *a,
-                                   Fencer *b);
+      void StoreSwapping ();
 
-    PoolData *GetPoolToTry (guint index);
+      static gint CompareFencerRank (Fencer *a,
+                                     Fencer *b);
 
-    void DumpPools ();
+      PoolData *GetPoolToTry (guint index);
 
-  private:
-    Object              *_owner;
-    GSList              *_zones;
-    guint                _nb_pools;
-    PoolData            *_pool_table;
-    PoolSizes            _pool_sizes;
-    GHashTable          *_criteria_distribution;
-    Player::AttributeId *_criteria_id;
-    GList               *_error_list;
-    GList               *_floating_list;
-    GHashTable          *_lack_table;
-    GSList              *_remaining_errors;
-    guint                _first_pool_to_try;
-    gboolean             _has_errors;
-};
+      void DumpPools ();
+
+    private:
+      Object              *_owner;
+      GSList              *_zones;
+      guint                _nb_pools;
+      PoolData            *_pool_table;
+      PoolSizes            _pool_sizes;
+      GHashTable          *_criteria_distribution;
+      Player::AttributeId *_criteria_id;
+      GList               *_error_list;
+      GList               *_floating_list;
+      GHashTable          *_lack_table;
+      GSList              *_remaining_errors;
+      guint                _first_pool_to_try;
+      gboolean             _has_errors;
+  };
+}
 
 #endif

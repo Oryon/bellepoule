@@ -20,71 +20,74 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-class TablePrintSession
+namespace Table
 {
-  public:
-    TablePrintSession ();
+  class PrintSession
+  {
+    public:
+      PrintSession ();
 
-    virtual ~TablePrintSession ();
+      virtual ~PrintSession ();
 
-    void Dump ();
+      void Dump ();
 
-    void SetScale (gdouble scale);
+      void SetScale (gdouble scale);
 
-    void SetResolutions (gdouble source_resolution,
-                         gdouble target_resolution);
+      void SetResolutions (gdouble source_resolution,
+                           gdouble target_resolution);
 
-    void SetPaperSize (gdouble paper_w,
-                       gdouble paper_h,
-                       gdouble header_h_on_paper);
+      void SetPaperSize (gdouble paper_w,
+                         gdouble paper_h,
+                         gdouble header_h_on_paper);
 
-    gdouble GetGlobalScale ();
+      gdouble GetGlobalScale ();
 
-    void SetCuttingBounds (guint            cutting,
-                           GooCanvasBounds *bounds);
+      void SetCuttingBounds (guint            cutting,
+                             GooCanvasBounds *bounds);
 
-    void Begin (guint cutting_count);
+      void Begin (guint cutting_count);
 
-  public:
-    void ProcessCurrentPage (guint page);
+    public:
+      void ProcessCurrentPage (guint page);
 
-    gboolean CurrentPageHasHeader ();
+      gboolean CurrentPageHasHeader ();
 
-    GooCanvasBounds *GetMiniHeaderBoundsForCurrentPage ();
+      GooCanvasBounds *GetMiniHeaderBoundsForCurrentPage ();
 
-    GooCanvasBounds *GetCanvasBoundsForCurrentPage ();
+      GooCanvasBounds *GetCanvasBoundsForCurrentPage ();
 
-    gdouble GetPaperXShiftForCurrentPage ();
+      gdouble GetPaperXShiftForCurrentPage ();
 
-    gdouble GetPaperYShiftForCurrentPage ();
+      gdouble GetPaperYShiftForCurrentPage ();
 
-  public:
-    gboolean _full_table;
-    guint    _cutting_count;
-    guint    _nb_x_pages;
-    guint    _nb_y_pages;
+    public:
+      gboolean _full_table;
+      guint    _cutting_count;
+      guint    _nb_x_pages;
+      guint    _nb_y_pages;
 
-  private:
-    GooCanvasBounds *_bounds_table;
+    private:
+      GooCanvasBounds *_bounds_table;
 
-    gdouble  _user_scale;
-    gdouble  _global_scale;
-    gdouble  _source_resolution;
-    gdouble  _target_resolution;
+      gdouble  _user_scale;
+      gdouble  _global_scale;
+      gdouble  _source_resolution;
+      gdouble  _target_resolution;
 
-    gdouble  _header_h_on_canvas;
-    gdouble  _page_w;
-    gdouble  _page_h;
+      gdouble  _header_h_on_canvas;
+      gdouble  _page_w;
+      gdouble  _page_h;
 
-    gdouble  _cutting_w;
-    gdouble  _cutting_h;
+      gdouble  _cutting_w;
+      gdouble  _cutting_h;
 
-    gboolean        _current_page_has_header;
-    GooCanvasBounds _mini_header_bounds;
-    GooCanvasBounds _canvas_bounds;
-    guint           _cutting_x_page;
-    guint           _cutting_y_page;
-    guint           _current_cutting;
-};
+      gboolean        _current_page_has_header;
+      GooCanvasBounds _mini_header_bounds;
+      GooCanvasBounds _canvas_bounds;
+      guint           _cutting_x_page;
+      guint           _cutting_y_page;
+      guint           _current_cutting;
+  };
+}
 
 #endif

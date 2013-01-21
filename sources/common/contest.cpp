@@ -253,7 +253,7 @@ Contest::Contest ()
   _properties_dialog = _glade->GetWidget ("properties_dialog");
 
   {
-    _referees_list = new RefereesList (this);
+    _referees_list = new People::RefereesList (this);
     Plug (_referees_list,
           _glade->GetWidget ("referees_viewport"),
           NULL);
@@ -422,10 +422,10 @@ void Contest::LoadFencerFile (const gchar *filename)
   {
     if (_schedule)
     {
-      CheckinSupervisor *checkin;
+      People::CheckinSupervisor *checkin;
 
       _schedule->CreateDefault ();
-      checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+      checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
 
       if (   g_str_has_suffix (filename, ".fff")
           || g_str_has_suffix (filename, ".FFF"))
@@ -443,9 +443,9 @@ void Contest::LoadFencerFile (const gchar *filename)
 // --------------------------------------------------------------------------------
 void Contest::LoadRemote (const gchar *address)
 {
-  _downloader = new Downloader (address,
-                                OnCompetitionReceived,
-                                this);
+  _downloader = new Net::Downloader (address,
+                                     OnCompetitionReceived,
+                                     this);
 
   _downloader->Start (address,
                       60*2*1000);
@@ -454,7 +454,7 @@ void Contest::LoadRemote (const gchar *address)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Contest::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
+gboolean Contest::OnCompetitionReceived (Net::Downloader::CallbackData *cbk_data)
 {
   Contest *contest = (Contest *) cbk_data->_user_data;
 
@@ -464,7 +464,7 @@ gboolean Contest::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
 }
 
 // --------------------------------------------------------------------------------
-void Contest::OpenMemoryContest (Downloader::CallbackData *cbk_data)
+void Contest::OpenMemoryContest (Net::Downloader::CallbackData *cbk_data)
 {
   if (_downloader)
   {
@@ -718,7 +718,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
     if (need_post_processing)
     {
-      CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+      People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
 
       checkin->ConvertFromBaseToResult ();
     }
@@ -793,7 +793,7 @@ void Contest::AddFencer (Player *fencer,
 {
   if (_schedule)
   {
-    CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+    People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
 
     if (checkin)
     {
@@ -944,7 +944,7 @@ Contest *Contest::Duplicate ()
 // --------------------------------------------------------------------------------
 void Contest::LatchPlayerList ()
 {
-  CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+  People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
 
   if (checkin)
   {
@@ -1327,10 +1327,10 @@ void Contest::Publish ()
 {
   if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
-    Upload *upload = new Upload (_filename,
-                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
-                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+    Net::Upload *upload = new Net::Upload (_filename,
+                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
+                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 
     upload->Start ();
   }

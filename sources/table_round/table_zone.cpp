@@ -22,192 +22,195 @@
 
 #include "table_zone.hpp"
 
-// --------------------------------------------------------------------------------
-TableZone::TableZone (Module  *container,
-                      gdouble  spacing)
-: RefereeZone (container)
+namespace Table
 {
-  _node_list = NULL;
-  _spacing   = spacing;
-}
-
-// --------------------------------------------------------------------------------
-TableZone::~TableZone ()
-{
-  while (_referee_list)
+  // --------------------------------------------------------------------------------
+  TableZone::TableZone (Module  *container,
+                        gdouble  spacing)
+    : RefereeZone (container)
   {
-    RemoveReferee ((Player *) _referee_list->data);
+    _node_list = NULL;
+    _spacing   = spacing;
   }
-  g_slist_free (_node_list);
-}
 
-// --------------------------------------------------------------------------------
-void TableZone::AddNode (GNode *node)
-{
-  _node_list = g_slist_prepend (_node_list,
-                                node);
-}
-
-// --------------------------------------------------------------------------------
-GSList *TableZone::GetNodeList ()
-{
-  return _node_list;
-}
-
-// --------------------------------------------------------------------------------
-void TableZone::Draw (GooCanvasItem *root_item)
-{
-  GSList *current = _node_list;
-
-  while (current)
+  // --------------------------------------------------------------------------------
+  TableZone::~TableZone ()
   {
-    GNode    *node = (GNode *) current->data;
-    NodeData *data = (NodeData *) node->data;
-
-    if (data->_table && data->_table->IsDisplayed () && data->_match)
+    while (_referee_list)
     {
-      GNode    *first_child      = g_node_first_child (node);
-      GNode    *last_child       = g_node_last_child (node);
-      NodeData *first_child_data = (NodeData *) first_child->data;
-      NodeData *last_child_data  = (NodeData *) last_child->data;
-      GooCanvasBounds first_child_bounds;
-      GooCanvasBounds last_child_bounds;
+      RemoveReferee ((Player *) _referee_list->data);
+    }
+    g_slist_free (_node_list);
+  }
 
-      if (first_child_data->_fencer_goo_table && last_child_data->_fencer_goo_table)
+  // --------------------------------------------------------------------------------
+  void TableZone::AddNode (GNode *node)
+  {
+    _node_list = g_slist_prepend (_node_list,
+                                  node);
+  }
+
+  // --------------------------------------------------------------------------------
+  GSList *TableZone::GetNodeList ()
+  {
+    return _node_list;
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableZone::Draw (GooCanvasItem *root_item)
+  {
+    GSList *current = _node_list;
+
+    while (current)
+    {
+      GNode    *node = (GNode *) current->data;
+      NodeData *data = (NodeData *) node->data;
+
+      if (data->_table && data->_table->IsDisplayed () && data->_match)
       {
-        goo_canvas_item_get_bounds (first_child_data->_fencer_goo_table,
-                                    &first_child_bounds);
-        goo_canvas_item_get_bounds (last_child_data->_fencer_goo_table,
-                                    &last_child_bounds);
+        GNode    *first_child      = g_node_first_child (node);
+        GNode    *last_child       = g_node_last_child (node);
+        NodeData *first_child_data = (NodeData *) first_child->data;
+        NodeData *last_child_data  = (NodeData *) last_child->data;
+        GooCanvasBounds first_child_bounds;
+        GooCanvasBounds last_child_bounds;
 
-        _back_rect = goo_canvas_rect_new (root_item,
-                                          first_child_bounds.x1,
-                                          first_child_bounds.y1,
-                                          first_child_bounds.x2 - first_child_bounds.x1,
-                                          last_child_bounds.y2 - first_child_bounds.y1,
-                                          "stroke-pattern", NULL,
-                                          NULL);
-      }
-    }
-    current = g_slist_next (current);
-  }
-
-  RefereeZone::Draw (root_item);
-}
-
-// --------------------------------------------------------------------------------
-void TableZone::AddReferee (Player *referee)
-{
-  GSList *current = _node_list;
-
-  while (current)
-  {
-    GNode    *node = (GNode *) current->data;
-    NodeData *data = (NodeData *) node->data;
-
-    if (data->_match)
-    {
-      data->_match->AddReferee (referee);
-    }
-    current = g_slist_next (current);
-  }
-
-  RefereeZone::AddReferee (referee);
-}
-
-// --------------------------------------------------------------------------------
-void TableZone::RemoveReferee (Player *referee)
-{
-  GSList *current = _node_list;
-
-  while (current)
-  {
-    GNode    *node = (GNode *) current->data;
-    NodeData *data = (NodeData *) node->data;
-
-    if (data->_match)
-    {
-      data->_match->RemoveReferee (referee);
-    }
-    current = g_slist_next (current);
-  }
-
-  RefereeZone::RemoveReferee (referee);
-}
-
-// --------------------------------------------------------------------------------
-guint TableZone::GetNbMatchs ()
-{
-  GSList *current = _node_list;
-  guint   result  = 0;
-
-  while (current)
-  {
-    GNode    *node = (GNode *) current->data;
-    NodeData *data = (NodeData *) node->data;
-
-    if (data->_match)
-    {
-      result++;
-    }
-    current = g_slist_next (current);
-  }
-
-  return result;
-}
-
-// --------------------------------------------------------------------------------
-void TableZone::PutInTable (CanvasModule  *canvas_module,
-                            GooCanvasItem *table,
-                            guint          row,
-                            guint          column)
-{
-  GSList *current = _referee_list;
-
-  if (current)
-  {
-    for (guint i = 0; current != NULL; i++)
-    {
-      Player *referee = (Player *) current->data;
-
-      {
-        static gchar *referee_icon = NULL;
-
-        if (referee_icon == NULL)
+        if (first_child_data->_fencer_goo_table && last_child_data->_fencer_goo_table)
         {
-          referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+          goo_canvas_item_get_bounds (first_child_data->_fencer_goo_table,
+                                      &first_child_bounds);
+          goo_canvas_item_get_bounds (last_child_data->_fencer_goo_table,
+                                      &last_child_bounds);
+
+          _back_rect = goo_canvas_rect_new (root_item,
+                                            first_child_bounds.x1,
+                                            first_child_bounds.y1,
+                                            first_child_bounds.x2 - first_child_bounds.x1,
+                                            last_child_bounds.y2 - first_child_bounds.y1,
+                                            "stroke-pattern", NULL,
+                                            NULL);
         }
-
-        Canvas::PutIconInTable (table,
-                                referee_icon,
-                                row + i,
-                                column);
       }
-
-      {
-        GooCanvasItem *item = Canvas::PutTextInTable (table,
-                                                      referee->GetName (),
-                                                      row + i,
-                                                      column+1);
-        Canvas::SetTableItemAttribute (item, "x-align", 1.0);
-        Canvas::SetTableItemAttribute (item, "y-align", 0.5);
-        g_object_set (item,
-                      "font", "Sans Bold Italic 12px",
-                      NULL);
-
-        canvas_module->SetObjectDropZone (referee,
-                                          item,
-                                          this);
-      }
-
       current = g_slist_next (current);
     }
+
+    RefereeZone::Draw (root_item);
   }
-  else // Goocanvas display issue workaround
+
+  // --------------------------------------------------------------------------------
+  void TableZone::AddReferee (Player *referee)
   {
-    Canvas::PutTextInTable (table,
-                            "",
-                            row,
-                            column+1);
+    GSList *current = _node_list;
+
+    while (current)
+    {
+      GNode    *node = (GNode *) current->data;
+      NodeData *data = (NodeData *) node->data;
+
+      if (data->_match)
+      {
+        data->_match->AddReferee (referee);
+      }
+      current = g_slist_next (current);
+    }
+
+    RefereeZone::AddReferee (referee);
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableZone::RemoveReferee (Player *referee)
+  {
+    GSList *current = _node_list;
+
+    while (current)
+    {
+      GNode    *node = (GNode *) current->data;
+      NodeData *data = (NodeData *) node->data;
+
+      if (data->_match)
+      {
+        data->_match->RemoveReferee (referee);
+      }
+      current = g_slist_next (current);
+    }
+
+    RefereeZone::RemoveReferee (referee);
+  }
+
+  // --------------------------------------------------------------------------------
+  guint TableZone::GetNbMatchs ()
+  {
+    GSList *current = _node_list;
+    guint   result  = 0;
+
+    while (current)
+    {
+      GNode    *node = (GNode *) current->data;
+      NodeData *data = (NodeData *) node->data;
+
+      if (data->_match)
+      {
+        result++;
+      }
+      current = g_slist_next (current);
+    }
+
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableZone::PutInTable (CanvasModule  *canvas_module,
+                              GooCanvasItem *table,
+                              guint          row,
+                              guint          column)
+  {
+    GSList *current = _referee_list;
+
+    if (current)
+    {
+      for (guint i = 0; current != NULL; i++)
+      {
+        Player *referee = (Player *) current->data;
+
+        {
+          static gchar *referee_icon = NULL;
+
+          if (referee_icon == NULL)
+          {
+            referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+          }
+
+          Canvas::PutIconInTable (table,
+                                  referee_icon,
+                                  row + i,
+                                  column);
+        }
+
+        {
+          GooCanvasItem *item = Canvas::PutTextInTable (table,
+                                                        referee->GetName (),
+                                                        row + i,
+                                                        column+1);
+          Canvas::SetTableItemAttribute (item, "x-align", 1.0);
+          Canvas::SetTableItemAttribute (item, "y-align", 0.5);
+          g_object_set (item,
+                        "font", "Sans Bold Italic 12px",
+                        NULL);
+
+          canvas_module->SetObjectDropZone (referee,
+                                            item,
+                                            this);
+        }
+
+        current = g_slist_next (current);
+      }
+    }
+    else // Goocanvas display issue workaround
+    {
+      Canvas::PutTextInTable (table,
+                              "",
+                              row,
+                              column+1);
+    }
   }
 }

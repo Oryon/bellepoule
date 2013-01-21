@@ -26,146 +26,150 @@
 
 #include "stage.hpp"
 
-class TableSet;
-class Table;
-
-class TableSupervisor : public virtual Stage, public Module
+namespace Table
 {
-  public:
-    static void Declare ();
+  class TableSet;
+  class Table;
 
-    TableSupervisor (StageClass *stage_class);
+  class Supervisor : public virtual Stage, public Module
+  {
+    public:
+      static void Declare ();
 
-    void OnStuffClicked ();
-    void OnInputToggled (GtkWidget *widget);
-    void OnDisplayToggled (GtkWidget *widget);
-    void OnFilterClicked ();
-    void OnPrint ();
-    void OnZoom (gdouble value);
-    void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
-    void OnTableOver (TableSet *table_set,
-                      Table    *table);
+      Supervisor (StageClass *stage_class);
 
-  public:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
+      void OnStuffClicked ();
+      void OnInputToggled (GtkWidget *widget);
+      void OnDisplayToggled (GtkWidget *widget);
+      void OnFilterClicked ();
+      void OnPrint ();
+      void OnZoom (gdouble value);
+      void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
+      void OnTableOver (TableSet *table_set,
+                        Table    *table);
 
-  private:
-    void OnLocked ();
-    void OnUnLocked ();
-    void OnPlugged ();
-    void OnUnPlugged ();
-    void Wipe ();
+    public:
+      static const gchar *_class_name;
+      static const gchar *_xml_class_name;
 
-  private:
-    static const guint NONE         = 0;
-    static const guint QUOTA        = 1;
-    static const guint THIRD_PLACES = 3;
-    static const guint ALL_PLACES   = 99;
+    private:
+      void OnLocked ();
+      void OnUnLocked ();
+      void OnPlugged ();
+      void OnUnPlugged ();
+      void Wipe ();
 
-    GtkTreeStore       *_table_set_treestore;
-    GtkTreeModelFilter *_table_set_filter;
-    xmlTextWriter      *_xml_writer;
-    xmlNode            *_xml_node;
-    TableSet           *_displayed_table_set;
-    gboolean            _is_over;
-    GSList             *_result;
-    GSList             *_blackcardeds;
-    Data               *_fenced_places;
+    private:
+      static const guint NONE         = 0;
+      static const guint QUOTA        = 1;
+      static const guint THIRD_PLACES = 3;
+      static const guint ALL_PLACES   = 99;
 
-    void Display ();
+      GtkTreeStore       *_table_set_treestore;
+      GtkTreeModelFilter *_table_set_filter;
+      xmlTextWriter      *_xml_writer;
+      xmlNode            *_xml_node;
+      TableSet           *_displayed_table_set;
+      gboolean            _is_over;
+      GSList             *_result;
+      GSList             *_blackcardeds;
+      Data               *_fenced_places;
 
-    void Garnish ();
+      void Display ();
 
-    void CreateTableSets ();
+      void Garnish ();
 
-    void DeleteTableSets ();
+      void CreateTableSets ();
 
-    void SetTableSetsState ();
+      void DeleteTableSets ();
 
-    void ShowTableSet (TableSet    *table_set,
-                       GtkTreeIter *iter);
+      void SetTableSetsState ();
 
-    void HideTableSet (TableSet    *table_set,
-                       GtkTreeIter *iter);
+      void ShowTableSet (TableSet    *table_set,
+                         GtkTreeIter *iter);
 
-    void OnAttrListUpdated ();
+      void HideTableSet (TableSet    *table_set,
+                         GtkTreeIter *iter);
 
-    gboolean IsOver ();
+      void OnAttrListUpdated ();
 
-    GSList *GetCurrentClassification ();
+      gboolean IsOver ();
 
-    static Stage *CreateInstance (StageClass *stage_class);
+      GSList *GetCurrentClassification ();
 
-    TableSet *GetTableSet (gchar *id);
+      static Stage *CreateInstance (StageClass *stage_class);
 
-    void Save (xmlTextWriter *xml_writer);
+      TableSet *GetTableSet (gchar *id);
 
-    static gboolean SaveTableSet (GtkTreeModel  *model,
-                                  GtkTreePath   *path,
-                                  GtkTreeIter   *iter,
-                                  xmlTextWriter *xml_writer);
+      void Save (xmlTextWriter *xml_writer);
 
-    void SaveConfiguration (xmlTextWriter *xml_writer);
+      static gboolean SaveTableSet (GtkTreeModel  *model,
+                                    GtkTreePath   *path,
+                                    GtkTreeIter   *iter,
+                                    xmlTextWriter *xml_writer);
 
-    void Load (xmlNode *xml_node);
+      void SaveConfiguration (xmlTextWriter *xml_writer);
 
-    void LoadConfiguration (xmlNode *xml_node);
+      void Load (xmlNode *xml_node);
 
-    void FillInConfig ();
+      void LoadConfiguration (xmlNode *xml_node);
 
-    void ApplyConfig ();
+      void FillInConfig ();
 
-    gboolean TableSetIsFenced (TableSet *table_set);
+      void ApplyConfig ();
 
-    void FeedTableSetStore (guint        from_place,
-                            guint        nb_tables,
-                            GtkTreeIter *parent);
+      gboolean TableSetIsFenced (TableSet *table_set);
 
-    void OnTableSetSelected (TableSet *table_set);
+      void FeedTableSetStore (guint        from_place,
+                              guint        nb_tables,
+                              GtkTreeIter *parent);
 
-    gchar *GetPrintName ();
+      void OnTableSetSelected (TableSet *table_set);
 
-    guint PreparePrint (GtkPrintOperation *operation,
-                        GtkPrintContext   *context);
+      gchar *GetPrintName ();
 
-    void DrawPage (GtkPrintOperation *operation,
-                   GtkPrintContext   *context,
-                   gint               page_nr);
+      guint PreparePrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context);
 
-    static gboolean TableSetIsOver (GtkTreeModel    *model,
-                                    GtkTreePath     *path,
-                                    GtkTreeIter     *iter,
-                                    TableSupervisor *ts);
+      void DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
 
-    static gboolean GetTableSetClassification (GtkTreeModel    *model,
-                                               GtkTreePath     *path,
-                                               GtkTreeIter     *iter,
-                                               TableSupervisor *ts);
-
-    static gboolean DeleteTableSet (GtkTreeModel *model,
-                                    GtkTreePath  *path,
-                                    GtkTreeIter  *iter,
-                                    gpointer      data);
-
-    static gboolean StuffTableSet (GtkTreeModel *model,
-                                   GtkTreePath  *path,
-                                   GtkTreeIter  *iter,
-                                   gpointer      data);
-
-    static gboolean ToggleTableSetLock (GtkTreeModel *model,
-                                        GtkTreePath  *path,
-                                        GtkTreeIter  *iter,
-                                        gboolean      data);
-
-    static gboolean ActivateTableSet (GtkTreeModel    *model,
+      static gboolean TableSetIsOver (GtkTreeModel    *model,
                                       GtkTreePath     *path,
                                       GtkTreeIter     *iter,
-                                      TableSupervisor *ts);
+                                      Supervisor *ts);
 
-    static void OnTableSetStatusUpdated (TableSet        *table_set,
-                                         TableSupervisor *ts);
-    virtual ~TableSupervisor ();
-};
+      static gboolean GetTableSetClassification (GtkTreeModel *model,
+                                                 GtkTreePath  *path,
+                                                 GtkTreeIter  *iter,
+                                                 Supervisor   *ts);
+
+      static gboolean DeleteTableSet (GtkTreeModel *model,
+                                      GtkTreePath  *path,
+                                      GtkTreeIter  *iter,
+                                      gpointer      data);
+
+      static gboolean StuffTableSet (GtkTreeModel *model,
+                                     GtkTreePath  *path,
+                                     GtkTreeIter  *iter,
+                                     gpointer      data);
+
+      static gboolean ToggleTableSetLock (GtkTreeModel *model,
+                                          GtkTreePath  *path,
+                                          GtkTreeIter  *iter,
+                                          gboolean      data);
+
+      static gboolean ActivateTableSet (GtkTreeModel *model,
+                                        GtkTreePath  *path,
+                                        GtkTreeIter  *iter,
+                                        Supervisor   *ts);
+
+      static void OnTableSetStatusUpdated (TableSet   *table_set,
+                                           Supervisor *ts);
+
+      virtual ~Supervisor ();
+  };
+}
 
 #endif

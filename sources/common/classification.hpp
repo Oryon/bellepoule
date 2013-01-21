@@ -24,7 +24,7 @@
 
 class Contest;
 
-class Classification : public PlayersList
+class Classification : public People::PlayersList
 {
   public:
     Classification (Filter *filter);

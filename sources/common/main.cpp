@@ -238,12 +238,12 @@ int main (int argc, char **argv)
     Contest::Init ();
 
     {
-      CheckinSupervisor::Declare     ();
-      PoolAllocator::Declare         ();
-      PoolSupervisor::Declare        ();
-      TableSupervisor::Declare       ();
-      GeneralClassification::Declare ();
-      Splitting::Declare             ();
+      People::CheckinSupervisor::Declare     ();
+      Pool::Allocator::Declare               ();
+      Pool::Supervisor::Declare              ();
+      Table::Supervisor::Declare             ();
+      People::GeneralClassification::Declare ();
+      People::Splitting::Declare             ();
     }
 
     g_free (install_dirname);
@@ -388,7 +388,7 @@ int main (int argc, char **argv)
       tournament = new Tournament (NULL);
     }
 
-    Splitting::SetHostTournament (tournament);
+    People::Splitting::SetHostTournament (tournament);
   }
 
   gtk_main ();

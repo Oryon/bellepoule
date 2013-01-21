@@ -622,8 +622,8 @@ void Schedule::RemoveFromNotebook (Stage *stage)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::Save (xmlTextWriter *xml_writer,
-                     Checkin       *referees)
+void Schedule::Save (xmlTextWriter   *xml_writer,
+                     People::Checkin *referees)
 {
   Stage *stage = ((Stage *) g_list_nth_data (_stage_list,
                                              0));
@@ -655,8 +655,8 @@ void Schedule::Save (xmlTextWriter *xml_writer,
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::Load (xmlDoc  *doc,
-                     Checkin *referees)
+void Schedule::Load (xmlDoc          *doc,
+                     People::Checkin *referees)
 {
   xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
   gint             current_stage_index = -1;
@@ -741,7 +741,7 @@ void Schedule::Load (xmlDoc  *doc,
     // tools than BellePoule
     if (nb_stage > 0)
     {
-      if (dynamic_cast <GeneralClassification *> (GetStage (nb_stage-1)) == NULL)
+      if (dynamic_cast <People::GeneralClassification *> (GetStage (nb_stage-1)) == NULL)
       {
         Stage *stage;
 

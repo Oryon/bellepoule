@@ -22,46 +22,49 @@
 
 #include "object.hpp"
 
-class Downloader : public Object
+namespace Net
 {
-  public:
-    typedef struct
-    {
-      void       *_user_data;
-      Downloader *_downloader;
-    } CallbackData;
+  class Downloader : public Object
+  {
+    public:
+      typedef struct
+      {
+        void       *_user_data;
+        Downloader *_downloader;
+      } CallbackData;
 
-    typedef gboolean (*Callback) (CallbackData *data);
+      typedef gboolean (*Callback) (CallbackData *data);
 
-    Downloader (const gchar *name,
-                Callback     callback,
-                gpointer     user_data);
+      Downloader (const gchar *name,
+                  Callback     callback,
+                  gpointer     user_data);
 
-    void Start (const gchar *address,
-                guint        refresh_period = 0);
+      void Start (const gchar *address,
+                  guint        refresh_period = 0);
 
-    void Kill ();
+      void Kill ();
 
-    gchar *GetData ();
+      gchar *GetData ();
 
-  private:
-    Callback      _callback;
-    CallbackData  _callback_data;
-    gchar        *_data;
-    size_t        _size;
-    gchar        *_address;
-    guint         _period;
-    gboolean      _killed;
-    gchar        *_name;
+    private:
+      Callback      _callback;
+      CallbackData  _callback_data;
+      gchar        *_data;
+      size_t        _size;
+      gchar        *_address;
+      guint         _period;
+      gboolean      _killed;
+      gchar        *_name;
 
-    static size_t AddText (void   *contents,
-                           size_t  size,
-                           size_t  nmemb,
-                           Downloader *downloader);
+      static size_t AddText (void   *contents,
+                             size_t  size,
+                             size_t  nmemb,
+                             Downloader *downloader);
 
-    static gpointer ThreadFunction (Downloader *downloader);
+      static gpointer ThreadFunction (Downloader *downloader);
 
-    virtual ~Downloader ();
-};
+      virtual ~Downloader ();
+  };
+}
 
 #endif

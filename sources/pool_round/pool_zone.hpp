@@ -24,26 +24,29 @@
 #include "pool.hpp"
 #include "referee_zone.hpp"
 
-class PoolZone : public RefereeZone
+namespace Pool
 {
-  public:
-    PoolZone (Module *container,
-              Pool   *pool);
+  class PoolZone : public RefereeZone
+  {
+    public:
+      PoolZone (Module *container,
+                Pool   *pool);
 
-    void Draw (GooCanvasItem *root_item);
+      void Draw (GooCanvasItem *root_item);
 
-    Pool *GetPool ();
+      Pool *GetPool ();
 
-  private:
-    Pool *_pool;
+    private:
+      Pool *_pool;
 
-    virtual ~PoolZone ();
+      virtual ~PoolZone ();
 
-    void AddReferee (Player *referee);
+      void AddReferee (Player *referee);
 
-    void RemoveReferee (Player *referee);
+      void RemoveReferee (Player *referee);
 
-    guint GetNbMatchs ();
-};
+      guint GetNbMatchs ();
+  };
+}
 
 #endif

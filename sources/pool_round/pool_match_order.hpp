@@ -21,40 +21,43 @@
 #include "object.hpp"
 #include "attribute.hpp"
 
-class PoolMatchOrder : public Object
+namespace Pool
 {
-  public:
-    static const guint _MAX_POOL_SIZE = 17;
+  class MatchOrder : public Object
+  {
+    public:
+      static const guint _MAX_POOL_SIZE = 17;
 
-  public:
-    PoolMatchOrder (gchar weapon_code);
+    public:
+      MatchOrder (gchar weapon_code);
 
-    gboolean GetPlayerPair (guint  match_index,
-                            guint *a_id,
-                            guint *b_id);
+      gboolean GetPlayerPair (guint  match_index,
+                              guint *a_id,
+                              guint *b_id);
 
-    void SetAffinityCriteria (AttributeDesc *affinity_criteria,
-                              GSList        *fencer_list);
+      void SetAffinityCriteria (AttributeDesc *affinity_criteria,
+                                GSList        *fencer_list);
 
-  private:
-    gchar   _weapon_code;
-    guint   _nb_pairs_inserted;
-    guint   _insertion_position;
-    guint   _insertion_step;
-    GSList *_player_pairs;
+    private:
+      gchar   _weapon_code;
+      guint   _nb_pairs_inserted;
+      guint   _insertion_position;
+      guint   _insertion_step;
+      GSList *_player_pairs;
 
-    virtual ~PoolMatchOrder ();
+      virtual ~MatchOrder ();
 
-    void Reset ();
+      void Reset ();
 
-    GSList *GetPlayerPairModel (guint pool_size);
+      GSList *GetPlayerPairModel (guint pool_size);
 
-    void MovePairsOnHead (GSList *affinity_list);
+      void MovePairsOnHead (GSList *affinity_list);
 
-    void ReorderAdjacents ();
+      void ReorderAdjacents ();
 
-    static gint CompareAffinityOccurence (GSList *a,
-                                          GSList *b);
-};
+      static gint CompareAffinityOccurence (GSList *a,
+                                            GSList *b);
+  };
+}
 
 #endif

@@ -16,141 +16,144 @@
 
 #include "table_set_border.hpp"
 
-typedef enum
+namespace Table
 {
-  NAME_COLUMN_str,
-  STATUS_COLUMN_str,
-  TABLE_COLUMN_ptr
-} ColumnId;
-
-// --------------------------------------------------------------------------------
-TableSetBorder::TableSetBorder (Object    *owner,
-                                GCallback  callback,
-                                GtkWidget *container,
-                                GtkWidget *widget)
-  : Object ("TableSetBorder")
-{
-  _owner     = owner;
-  _callback  = callback;
-  _liststore = GTK_LIST_STORE (gtk_combo_box_get_model (GTK_COMBO_BOX (widget)));
-  _container = GTK_CONTAINER (container);
-  _widget    = widget;
-
+  typedef enum
   {
-    g_object_ref (_widget);
-    gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (_widget)),
-                          _widget);
+    NAME_COLUMN_str,
+    STATUS_COLUMN_str,
+    TABLE_COLUMN_ptr
+  } ColumnId;
+
+  // --------------------------------------------------------------------------------
+  TableSetBorder::TableSetBorder (Object    *owner,
+                                  GCallback  callback,
+                                  GtkWidget *container,
+                                  GtkWidget *widget)
+    : Object ("TableSetBorder")
+  {
+    _owner     = owner;
+    _callback  = callback;
+    _liststore = GTK_LIST_STORE (gtk_combo_box_get_model (GTK_COMBO_BOX (widget)));
+    _container = GTK_CONTAINER (container);
+    _widget    = widget;
+
+    {
+      g_object_ref (_widget);
+      gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (_widget)),
+                            _widget);
+    }
   }
-}
 
 
-// --------------------------------------------------------------------------------
-TableSetBorder::~TableSetBorder ()
-{
-  g_object_unref (_widget);
-}
-
-// --------------------------------------------------------------------------------
-void TableSetBorder::Plug ()
-{
-  gtk_container_add (_container,
-                     _widget);
-}
-
-// --------------------------------------------------------------------------------
-void TableSetBorder::UnPlug ()
-{
-  if (gtk_widget_get_parent (_widget))
+  // --------------------------------------------------------------------------------
+  TableSetBorder::~TableSetBorder ()
   {
-    gtk_container_remove (_container,
-                          _widget);
+    g_object_unref (_widget);
   }
-}
 
-// --------------------------------------------------------------------------------
-void TableSetBorder::MuteCallbacks ()
-{
-  g_signal_handlers_disconnect_by_func (_widget,
-                                        (void *) _callback,
-                                        _owner);
-  gtk_list_store_clear (_liststore);
-}
-
-// --------------------------------------------------------------------------------
-void TableSetBorder::AddTable (Table *table)
-{
-  gchar       *text = table->GetImage ();
-  GtkTreeIter  iter;
-
-  gtk_list_store_prepend (_liststore,
-                          &iter);
-  gtk_list_store_set (_liststore, &iter,
-                      STATUS_COLUMN_str, GTK_STOCK_EXECUTE,
-                      NAME_COLUMN_str,   text,
-                      TABLE_COLUMN_ptr,  table,
-                      -1);
-  g_free (text);
-}
-
-// --------------------------------------------------------------------------------
-void TableSetBorder::UnMuteCallbacks ()
-{
-  g_signal_connect (_widget,
-                    "changed",
-                    _callback,
-                    _owner);
-}
-
-// --------------------------------------------------------------------------------
-void TableSetBorder::SelectTable (gint table)
-{
-  if (table >= 0)
+  // --------------------------------------------------------------------------------
+  void TableSetBorder::Plug ()
   {
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_widget),
-                              table);
+    gtk_container_add (_container,
+                       _widget);
   }
-  else
-  {
-    gint n_children = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (_liststore),
-                                                      NULL);
 
-    gtk_combo_box_set_active (GTK_COMBO_BOX (_widget),
-                              n_children-1);
+  // --------------------------------------------------------------------------------
+  void TableSetBorder::UnPlug ()
+  {
+    if (gtk_widget_get_parent (_widget))
+    {
+      gtk_container_remove (_container,
+                            _widget);
+    }
   }
-}
 
-// --------------------------------------------------------------------------------
-Table *TableSetBorder::GetSelectedTable ()
-{
-  GtkTreeIter iter;
-
-  if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (_widget),
-                                     &iter))
+  // --------------------------------------------------------------------------------
+  void TableSetBorder::MuteCallbacks ()
   {
-    Table *table;
-
-    gtk_tree_model_get (GTK_TREE_MODEL (_liststore),
-                        &iter,
-                        TABLE_COLUMN_ptr, &table,
-                        -1);
-    return table;
+    g_signal_handlers_disconnect_by_func (_widget,
+                                          (void *) _callback,
+                                          _owner);
+    gtk_list_store_clear (_liststore);
   }
-  return NULL;
-}
 
-// --------------------------------------------------------------------------------
-void TableSetBorder::SetTableIcon (guint        table,
-                                   const gchar *icon)
-{
-  GtkTreeIter iter;
-
-  if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_liststore),
-                                     &iter,
-                                     NULL,
-                                     table) == TRUE)
+  // --------------------------------------------------------------------------------
+  void TableSetBorder::AddTable (Table *table)
   {
+    gchar       *text = table->GetImage ();
+    GtkTreeIter  iter;
+
+    gtk_list_store_prepend (_liststore,
+                            &iter);
     gtk_list_store_set (_liststore, &iter,
-                        STATUS_COLUMN_str, icon,
+                        STATUS_COLUMN_str, GTK_STOCK_EXECUTE,
+                        NAME_COLUMN_str,   text,
+                        TABLE_COLUMN_ptr,  table,
                         -1);
+    g_free (text);
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSetBorder::UnMuteCallbacks ()
+  {
+    g_signal_connect (_widget,
+                      "changed",
+                      _callback,
+                      _owner);
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSetBorder::SelectTable (gint table)
+  {
+    if (table >= 0)
+    {
+      gtk_combo_box_set_active (GTK_COMBO_BOX (_widget),
+                                table);
+    }
+    else
+    {
+      gint n_children = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (_liststore),
+                                                        NULL);
+
+      gtk_combo_box_set_active (GTK_COMBO_BOX (_widget),
+                                n_children-1);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  Table *TableSetBorder::GetSelectedTable ()
+  {
+    GtkTreeIter iter;
+
+    if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (_widget),
+                                       &iter))
+    {
+      Table *table;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (_liststore),
+                          &iter,
+                          TABLE_COLUMN_ptr, &table,
+                          -1);
+      return table;
+    }
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSetBorder::SetTableIcon (guint        table,
+                                     const gchar *icon)
+  {
+    GtkTreeIter iter;
+
+    if (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_liststore),
+                                       &iter,
+                                       NULL,
+                                       table) == TRUE)
+    {
+      gtk_list_store_set (_liststore, &iter,
+                          STATUS_COLUMN_str, icon,
+                          -1);
+    }
   }
 }

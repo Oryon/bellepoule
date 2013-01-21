@@ -22,8 +22,12 @@
 #include "module.hpp"
 #include "book.hpp"
 
+namespace People
+{
+  class Checkin;
+}
+
 class Contest;
-class Checkin;
 
 class Schedule : public Module
 {
@@ -42,11 +46,11 @@ class Schedule : public Module
     void AddStage    (Stage *stage,
                       Stage *after);
 
-    void Save (xmlTextWriter *xml_writer,
-               Checkin       *referees);
+    void Save (xmlTextWriter   *xml_writer,
+               People::Checkin *referees);
 
-    void Load (xmlDoc  *doc,
-               Checkin *referees);
+    void Load (xmlDoc          *doc,
+               People::Checkin *referees);
 
     void OnLoadingCompleted ();
 
