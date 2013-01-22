@@ -19,12 +19,12 @@
 
 #include <gtk/gtk.h>
 
-#include "data.hpp"
-#include "module.hpp"
-#include "match.hpp"
-#include "score_collector.hpp"
+#include "util/data.hpp"
+#include "util/module.hpp"
+#include "common/match.hpp"
+#include "common/score_collector.hpp"
 
-#include "stage.hpp"
+#include "common/stage.hpp"
 
 namespace Table
 {

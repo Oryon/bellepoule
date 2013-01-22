@@ -20,9 +20,9 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "object.hpp"
-#include "module.hpp"
-#include "referee_zone.hpp"
+#include "util/object.hpp"
+#include "util/module.hpp"
+#include "common/referee_zone.hpp"
 
 namespace Table
 {

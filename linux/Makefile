@@ -17,7 +17,7 @@ MODULE += util
 
 CFLAGS  = -W -Wall -ansi -pedantic -Wno-unused -Wno-variadic-macros -Wno-int-to-pointer-cast
 CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd)
-CFLAGS += $(addprefix -Isources/,$(MODULE))
+CFLAGS += -Isources
 ifeq ($(TARGET), Debug)
 CFLAGS += -DDEBUG=1
 endif

@@ -19,10 +19,10 @@
 
 #include <gtk/gtk.h>
 
-#include "object.hpp"
-#include "module.hpp"
-#include "pool.hpp"
-#include "referee_zone.hpp"
+#include "util/object.hpp"
+#include "util/module.hpp"
+#include "pool_round/pool.hpp"
+#include "common/referee_zone.hpp"
 
 namespace Pool
 {

@@ -18,8 +18,9 @@
 #define pool_match_order_hpp
 
 #include <gtk/gtk.h>
-#include "object.hpp"
-#include "attribute.hpp"
+
+#include "util/object.hpp"
+#include "util/attribute.hpp"
 
 namespace Pool
 {

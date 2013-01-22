@@ -20,11 +20,11 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "data.hpp"
-#include "module.hpp"
-#include "attribute.hpp"
-#include "players_list.hpp"
-#include "form.hpp"
+#include "util/data.hpp"
+#include "util/module.hpp"
+#include "util/attribute.hpp"
+#include "people_management/players_list.hpp"
+#include "people_management/form.hpp"
 
 namespace People
 {

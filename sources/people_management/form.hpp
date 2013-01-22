@@ -19,10 +19,10 @@
 
 #include <gtk/gtk.h>
 
-#include "object.hpp"
-#include "filter.hpp"
-#include "module.hpp"
-#include "player.hpp"
+#include "util/object.hpp"
+#include "util/filter.hpp"
+#include "util/module.hpp"
+#include "common/player.hpp"
 
 namespace People
 {

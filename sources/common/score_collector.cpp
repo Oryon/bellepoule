@@ -19,7 +19,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <goocanvas.h>
 
-#include "score_collector.hpp"
+#include "common/score_collector.hpp"
 
 // --------------------------------------------------------------------------------
 ScoreCollector::ScoreCollector (CanvasModule   *client,

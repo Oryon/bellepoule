@@ -21,9 +21,9 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "object.hpp"
-#include "data.hpp"
-#include "score.hpp"
+#include "util/object.hpp"
+#include "util/data.hpp"
+#include "common/score.hpp"
 
 class Player;
 class Match : public Object

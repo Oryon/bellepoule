@@ -14,10 +14,10 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "player.hpp"
-#include "pool.hpp"
+#include "common/player.hpp"
+#include "pool_round/pool.hpp"
 
-#include "pool_match_order.hpp"
+#include "pool_round/pool_match_order.hpp"
 
 namespace Pool
 {

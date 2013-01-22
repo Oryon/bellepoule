@@ -19,8 +19,8 @@
 
 #include <gtk/gtk.h>
 
-#include "object.hpp"
-#include "table.hpp"
+#include "util/object.hpp"
+#include "table_round/table.hpp"
 
 namespace Table
 {

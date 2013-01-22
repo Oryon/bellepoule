@@ -23,12 +23,12 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "attribute.hpp"
-#include "player.hpp"
-#include "filter.hpp"
-#include "contest.hpp"
+#include "util/attribute.hpp"
+#include "common/player.hpp"
+#include "util/filter.hpp"
+#include "common/contest.hpp"
 
-#include "referees_list.hpp"
+#include "people_management/referees_list.hpp"
 
 namespace People
 {

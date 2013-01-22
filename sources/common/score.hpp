@@ -17,8 +17,8 @@
 #ifndef score_hpp
 #define score_hpp
 
-#include "object.hpp"
-#include "data.hpp"
+#include "util/object.hpp"
+#include "util/data.hpp"
 
 class Score : public Object
 {

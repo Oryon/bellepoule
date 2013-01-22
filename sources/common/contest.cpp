@@ -32,15 +32,15 @@
 #include <shellapi.h>
 #endif
 
-#include "version.h"
-#include "canvas.hpp"
-#include "tournament.hpp"
-#include "checkin.hpp"
-#include "referees_list.hpp"
-#include "checkin_supervisor.hpp"
-#include "upload.hpp"
+#include "common/version.h"
+#include "util/canvas.hpp"
+#include "common/tournament.hpp"
+#include "people_management/checkin.hpp"
+#include "people_management/referees_list.hpp"
+#include "people_management/checkin_supervisor.hpp"
+#include "network/upload.hpp"
 
-#include "contest.hpp"
+#include "common/contest.hpp"
 
 typedef enum
 {

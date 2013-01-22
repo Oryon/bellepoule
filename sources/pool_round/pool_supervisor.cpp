@@ -18,9 +18,9 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "pool_allocator.hpp"
-#include "classification.hpp"
-#include "pool_supervisor.hpp"
+#include "pool_round/pool_allocator.hpp"
+#include "common/classification.hpp"
+#include "pool_round/pool_supervisor.hpp"
 
 namespace Pool
 {

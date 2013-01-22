@@ -22,11 +22,11 @@
 #include <libxml/xpath.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "attribute.hpp"
-#include "player.hpp"
-#include "classification.hpp"
-#include "table_set.hpp"
-#include "table_supervisor.hpp"
+#include "util/attribute.hpp"
+#include "common/player.hpp"
+#include "common/classification.hpp"
+#include "table_round/table_set.hpp"
+#include "table_round/table_supervisor.hpp"
 
 namespace Table
 {

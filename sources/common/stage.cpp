@@ -17,12 +17,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "pool_allocator.hpp"
-#include "pool_supervisor.hpp"
-#include "classification.hpp"
-#include "player.hpp"
+#include "pool_round/pool_allocator.hpp"
+#include "pool_round/pool_supervisor.hpp"
+#include "common/classification.hpp"
+#include "common/player.hpp"
 
-#include "stage.hpp"
+#include "common/stage.hpp"
 
 GSList *Stage::_stage_base = NULL;
 

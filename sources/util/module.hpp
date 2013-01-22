@@ -19,10 +19,10 @@
 
 #include <gtk/gtk.h>
 
-#include "object.hpp"
-#include "sensitivity_trigger.hpp"
-#include "filter.hpp"
-#include "glade.hpp"
+#include "util/object.hpp"
+#include "util/sensitivity_trigger.hpp"
+#include "util/filter.hpp"
+#include "util/glade.hpp"
 
 class Player;
 class Module : public virtual Object

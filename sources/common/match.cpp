@@ -18,9 +18,9 @@
 #include <string.h>
 #include <goocanvas.h>
 
-#include "canvas.hpp"
-#include "player.hpp"
-#include "match.hpp"
+#include "util/canvas.hpp"
+#include "common/player.hpp"
+#include "common/match.hpp"
 
 // --------------------------------------------------------------------------------
 Match::Match (Data *max_score)

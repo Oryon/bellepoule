@@ -19,11 +19,11 @@
 #include <libxml/xpath.h>
 #include <gtk/gtk.h>
 
-#include "general_classification.hpp"
-#include "checkin.hpp"
-#include "chapter.hpp"
+#include "people_management/general_classification.hpp"
+#include "people_management/checkin.hpp"
+#include "common/chapter.hpp"
 
-#include "schedule.hpp"
+#include "common/schedule.hpp"
 
 typedef enum
 {

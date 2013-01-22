@@ -20,8 +20,8 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "stage.hpp"
-#include "checkin.hpp"
+#include "common/stage.hpp"
+#include "people_management/checkin.hpp"
 
 namespace People
 {

@@ -14,11 +14,11 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "object.hpp"
-#include "pool.hpp"
-#include "pool_zone.hpp"
+#include "util/object.hpp"
+#include "pool_round/pool.hpp"
+#include "pool_round/pool_zone.hpp"
 
-#include "smart_swapper.hpp"
+#include "pool_round/smart_swapper.hpp"
 
 namespace Pool
 {

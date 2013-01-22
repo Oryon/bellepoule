@@ -53,12 +53,6 @@
 			<Add directory="C:\MinGW\include\atk-1.0" />
 			<Add directory="C:\MinGW\include\goocanvas-1.0.0\goocanvas" />
 			<Add directory="..\sources" />
-			<Add directory="..\sources\common" />
-			<Add directory="..\sources\people_management" />
-			<Add directory="..\sources\pool_round" />
-			<Add directory="..\sources\table_round" />
-			<Add directory="..\sources\util" />
-			<Add directory="..\sources\network" />
 		</Compiler>
 		<Linker>
 			<Add library="gtk-win32-2.0" />

@@ -17,10 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "attribute.hpp"
-#include "player.hpp"
+#include "util/attribute.hpp"
+#include "common/player.hpp"
 
-#include "module.hpp"
+#include "util/module.hpp"
 
 const gdouble Module::PRINT_HEADER_HEIGHT = 10.0; // % of paper width
 const gdouble Module::PRINT_FONT_HEIGHT   = 2.0;  // % of paper width

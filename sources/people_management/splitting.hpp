@@ -19,8 +19,8 @@
 
 #include <gtk/gtk.h>
 
-#include "stage.hpp"
-#include "players_list.hpp"
+#include "common/stage.hpp"
+#include "people_management/players_list.hpp"
 
 class Tournament;
 class Contest;

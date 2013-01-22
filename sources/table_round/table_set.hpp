@@ -19,14 +19,14 @@
 
 #include <gtk/gtk.h>
 
-#include "data.hpp"
-#include "canvas_module.hpp"
-#include "match.hpp"
-#include "score_collector.hpp"
-#include "table.hpp"
-#include "drop_zone.hpp"
-#include "table_set_border.hpp"
-#include "table_print_session.hpp"
+#include "util/data.hpp"
+#include "util/canvas_module.hpp"
+#include "common/match.hpp"
+#include "common/score_collector.hpp"
+#include "table_round/table.hpp"
+#include "util/drop_zone.hpp"
+#include "table_round/table_set_border.hpp"
+#include "table_round/table_print_session.hpp"
 
 namespace Table
 {

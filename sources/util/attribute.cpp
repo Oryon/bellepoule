@@ -17,7 +17,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "attribute.hpp"
+#include "util/attribute.hpp"
 
 GSList                      *AttributeDesc::_list          = NULL;
 AttributeDesc::CriteriaFunc  AttributeDesc::_criteria_func = NULL;

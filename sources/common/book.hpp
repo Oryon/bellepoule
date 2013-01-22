@@ -17,7 +17,7 @@
 #ifndef book_hpp
 #define book_hpp
 
-#include "object.hpp"
+#include "util/object.hpp"
 
 class Book : public Object
 {

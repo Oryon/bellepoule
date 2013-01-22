@@ -19,8 +19,8 @@
 
 #include <gtk/gtk.h>
 
-#include "attribute.hpp"
-#include "players_list.hpp"
+#include "util/attribute.hpp"
+#include "people_management/players_list.hpp"
 
 class Contest;
 

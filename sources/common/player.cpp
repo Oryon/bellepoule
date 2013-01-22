@@ -17,9 +17,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "attribute.hpp"
+#include "util/attribute.hpp"
 
-#include "player.hpp"
+#include "common/player.hpp"
 
 guint Player::_next_ref = 0;
 

@@ -18,7 +18,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
 #include <curl/curl.h>
-#include <tinyxml2.h>
+#include "util/tinyxml2.h"
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -26,11 +26,11 @@
 #include <shellapi.h>
 #endif
 
-#include "version.h"
-#include "canvas.hpp"
-#include "contest.hpp"
+#include "common/version.h"
+#include "util/canvas.hpp"
+#include "common/contest.hpp"
 
-#include "tournament.hpp"
+#include "common/tournament.hpp"
 
 typedef enum
 {

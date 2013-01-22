@@ -18,9 +18,9 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "attribute.hpp"
+#include "util/attribute.hpp"
 
-#include "form.hpp"
+#include "people_management/form.hpp"
 
 namespace People
 {

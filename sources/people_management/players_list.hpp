@@ -20,9 +20,9 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "module.hpp"
-#include "attribute.hpp"
-#include "player.hpp"
+#include "util/module.hpp"
+#include "util/attribute.hpp"
+#include "common/player.hpp"
 
 namespace People
 {

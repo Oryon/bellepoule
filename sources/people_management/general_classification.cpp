@@ -16,12 +16,12 @@
 
 #include <string.h>
 
-#include "attribute.hpp"
-#include "contest.hpp"
-#include "classification.hpp"
-#include "player.hpp"
+#include "util/attribute.hpp"
+#include "common/contest.hpp"
+#include "common/classification.hpp"
+#include "common/player.hpp"
 
-#include "general_classification.hpp"
+#include "people_management/general_classification.hpp"
 
 namespace People
 {

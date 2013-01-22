@@ -20,8 +20,8 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "attribute.hpp"
-#include "object.hpp"
+#include "util/attribute.hpp"
+#include "util/object.hpp"
 
 class Player : public Object
 {

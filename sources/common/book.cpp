@@ -14,11 +14,11 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "module.hpp"
-#include "stage.hpp"
-#include "chapter.hpp"
+#include "util/module.hpp"
+#include "common/stage.hpp"
+#include "common/chapter.hpp"
 
-#include "book.hpp"
+#include "common/book.hpp"
 
 // --------------------------------------------------------------------------------
 Book::Book ()

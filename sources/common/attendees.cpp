@@ -16,7 +16,7 @@
 
 #include <stdlib.h>
 
-#include "attendees.hpp"
+#include "common/attendees.hpp"
 
 // --------------------------------------------------------------------------------
 Attendees::Attendees ()

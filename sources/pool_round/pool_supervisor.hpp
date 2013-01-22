@@ -19,9 +19,9 @@
 
 #include <gtk/gtk.h>
 
-#include "data.hpp"
-#include "module.hpp"
-#include "pool.hpp"
+#include "util/data.hpp"
+#include "util/module.hpp"
+#include "pool_round/pool.hpp"
 
 namespace Pool
 {

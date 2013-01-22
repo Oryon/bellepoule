@@ -18,7 +18,8 @@
 #define glade_hpp
 
 #include <gtk/gtk.h>
-#include "object.hpp"
+
+#include "util/object.hpp"
 
 class Glade : public Object
 {

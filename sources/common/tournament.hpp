@@ -19,10 +19,10 @@
 
 #include <gtk/gtk.h>
 
-#include "module.hpp"
-#include "glade.hpp"
-#include "http_server.hpp"
-#include "downloader.hpp"
+#include "util/module.hpp"
+#include "util/glade.hpp"
+#include "network/http_server.hpp"
+#include "network/downloader.hpp"
 
 class Contest;
 

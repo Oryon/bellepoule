@@ -20,11 +20,11 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "data.hpp"
-#include "stage.hpp"
-#include "canvas_module.hpp"
-#include "score_collector.hpp"
-#include "player.hpp"
+#include "util/data.hpp"
+#include "common/stage.hpp"
+#include "util/canvas_module.hpp"
+#include "common/score_collector.hpp"
+#include "common/player.hpp"
 
 namespace Pool
 {

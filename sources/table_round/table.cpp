@@ -14,12 +14,12 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "attribute.hpp"
-#include "player.hpp"
-#include "table_set.hpp"
-#include "table_zone.hpp"
+#include "util/attribute.hpp"
+#include "common/player.hpp"
+#include "table_round/table_set.hpp"
+#include "table_round/table_zone.hpp"
 
-#include "table.hpp"
+#include "table_round/table.hpp"
 
 namespace Table
 {

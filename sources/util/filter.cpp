@@ -17,10 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "attribute.hpp"
-#include "module.hpp"
+#include "util/attribute.hpp"
+#include "util/module.hpp"
 
-#include "filter.hpp"
+#include "util/filter.hpp"
 
 static const gchar *look_image[AttributeDesc::NB_LOOK] =
 {

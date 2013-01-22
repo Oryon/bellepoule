@@ -19,7 +19,7 @@
 
 #include <gtk/gtk.h>
 
-#include "drop_zone.hpp"
+#include "util/drop_zone.hpp"
 
 class Player;
 

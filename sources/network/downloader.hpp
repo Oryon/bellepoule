@@ -20,7 +20,7 @@
 #include <curl/curl.h>
 #include <glib.h>
 
-#include "object.hpp"
+#include "util/object.hpp"
 
 namespace Net
 {

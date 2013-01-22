@@ -19,15 +19,15 @@
 
 #include <gtk/gtk.h>
 
-#include "data.hpp"
-#include "stage.hpp"
-#include "canvas_module.hpp"
-#include "player.hpp"
-#include "players_list.hpp"
-#include "pool_match_order.hpp"
-#include "pool.hpp"
-#include "swapper.hpp"
-#include "pool_zone.hpp"
+#include "util/data.hpp"
+#include "common/stage.hpp"
+#include "util/canvas_module.hpp"
+#include "common/player.hpp"
+#include "people_management/players_list.hpp"
+#include "pool_round/pool_match_order.hpp"
+#include "pool_round/pool.hpp"
+#include "pool_round/swapper.hpp"
+#include "pool_round/pool_zone.hpp"
 
 namespace Pool
 {

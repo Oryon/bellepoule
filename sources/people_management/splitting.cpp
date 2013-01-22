@@ -21,11 +21,11 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "contest.hpp"
-#include "player.hpp"
-#include "tournament.hpp"
+#include "common/contest.hpp"
+#include "common/player.hpp"
+#include "common/tournament.hpp"
 
-#include "splitting.hpp"
+#include "people_management/splitting.hpp"
 
 namespace People
 {

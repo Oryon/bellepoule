@@ -21,11 +21,11 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "smart_swapper.hpp"
-#include "contest.hpp"
-#include "pool_match_order.hpp"
+#include "pool_round/smart_swapper.hpp"
+#include "common/contest.hpp"
+#include "pool_round/pool_match_order.hpp"
 
-#include "pool_allocator.hpp"
+#include "pool_round/pool_allocator.hpp"
 
 namespace Pool
 {

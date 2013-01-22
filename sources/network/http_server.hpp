@@ -24,7 +24,7 @@
 #include <glib.h>
 #include <microhttpd.h>
 
-#include "object.hpp"
+#include "util/object.hpp"
 
 namespace Net
 {

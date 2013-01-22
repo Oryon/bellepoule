@@ -17,11 +17,11 @@
 #include <string.h>
 #include <glib/gstdio.h>
 
-#include "attribute.hpp"
-#include "contest.hpp"
-#include "player.hpp"
+#include "util/attribute.hpp"
+#include "common/contest.hpp"
+#include "common/player.hpp"
 
-#include "classification.hpp"
+#include "common/classification.hpp"
 
 // --------------------------------------------------------------------------------
 Classification::Classification (Filter *filter)

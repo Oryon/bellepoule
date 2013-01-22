@@ -29,16 +29,16 @@
 
 #include <gtk/gtk.h>
 
-#include "contest.hpp"
-#include "checkin_supervisor.hpp"
-#include "pool_allocator.hpp"
-#include "pool_supervisor.hpp"
-#include "table_supervisor.hpp"
-#include "splitting.hpp"
-#include "tournament.hpp"
-#include "attribute.hpp"
-#include "general_classification.hpp"
-#include "glade.hpp"
+#include "common/contest.hpp"
+#include "people_management/checkin_supervisor.hpp"
+#include "pool_round/pool_allocator.hpp"
+#include "pool_round/pool_supervisor.hpp"
+#include "table_round/table_supervisor.hpp"
+#include "people_management/splitting.hpp"
+#include "common/tournament.hpp"
+#include "util/attribute.hpp"
+#include "people_management/general_classification.hpp"
+#include "util/glade.hpp"
 #include "locale"
 
 // --------------------------------------------------------------------------------

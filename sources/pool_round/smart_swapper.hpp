@@ -17,10 +17,10 @@
 #ifndef smart_swapper_hpp
 #define smart_swapper_hpp
 
-#include "object.hpp"
-#include "player.hpp"
+#include "util/object.hpp"
+#include "common/player.hpp"
 
-#include "swapper.hpp"
+#include "pool_round/swapper.hpp"
 
 namespace Pool
 {

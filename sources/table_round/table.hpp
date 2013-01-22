@@ -21,8 +21,8 @@
 #include <goocanvas.h>
 #include <libxml/xmlwriter.h>
 
-#include "object.hpp"
-#include "match.hpp"
+#include "util/object.hpp"
+#include "common/match.hpp"
 
 namespace Table
 {

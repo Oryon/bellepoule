@@ -17,9 +17,9 @@
 #ifndef chapter_hpp
 #define chapter_hpp
 
-#include "object.hpp"
-#include "module.hpp"
-#include "stage.hpp"
+#include "util/object.hpp"
+#include "util/module.hpp"
+#include "common/stage.hpp"
 
 class Chapter : public Object
 {

@@ -17,12 +17,12 @@
 #include <string.h>
 #include <goocanvas.h>
 
-#include "canvas.hpp"
-#include "attribute.hpp"
-#include "schedule.hpp"
-#include "player.hpp"
+#include "util/canvas.hpp"
+#include "util/attribute.hpp"
+#include "common/schedule.hpp"
+#include "common/player.hpp"
 
-#include "players_list.hpp"
+#include "people_management/players_list.hpp"
 
 namespace People
 {

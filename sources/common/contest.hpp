@@ -20,11 +20,11 @@
 #include <libxml/xmlwriter.h>
 #include <gtk/gtk.h>
 
-#include "data.hpp"
-#include "module.hpp"
-#include "glade.hpp"
-#include "downloader.hpp"
-#include "schedule.hpp"
+#include "util/data.hpp"
+#include "util/module.hpp"
+#include "util/glade.hpp"
+#include "network/downloader.hpp"
+#include "common/schedule.hpp"
 
 namespace People
 {

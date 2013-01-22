@@ -18,12 +18,12 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "attribute.hpp"
-#include "schedule.hpp"
-#include "player.hpp"
-#include "filter.hpp"
+#include "util/attribute.hpp"
+#include "common/schedule.hpp"
+#include "common/player.hpp"
+#include "util/filter.hpp"
 
-#include "checkin.hpp"
+#include "people_management/checkin.hpp"
 
 namespace People
 {

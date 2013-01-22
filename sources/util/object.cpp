@@ -16,7 +16,7 @@
 
 #include <string.h>
 
-#include "object.hpp"
+#include "util/object.hpp"
 
 guint  Object::_nb_objects   = 0;
 GList *Object::_list         = NULL;

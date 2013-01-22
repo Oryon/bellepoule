@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sensitivity_trigger.hpp"
+#include "util/sensitivity_trigger.hpp"
 
 const gchar *SensitivityTrigger::_data_key = "SensitivityTrigger::lock";
 

@@ -16,7 +16,7 @@
 
 #include <unistd.h>
 
-#include "downloader.hpp"
+#include "network/downloader.hpp"
 
 namespace Net
 {

@@ -20,7 +20,7 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "object.hpp"
+#include "util/object.hpp"
 
 class Data : public Object
 {
