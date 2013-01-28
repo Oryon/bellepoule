@@ -16,7 +16,7 @@
 
 #include <string.h>
 
-#include "network/upload.hpp"
+#include "upload.hpp"
 
 namespace Net
 {

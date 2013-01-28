@@ -14,12 +14,12 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/canvas.hpp"
 #include "common/player.hpp"
 #include "common/match.hpp"
 #include "table_round/table.hpp"
-#include "util/canvas.hpp"
 
-#include "pool_round/pool_zone.hpp"
+#include "pool_zone.hpp"
 
 namespace Pool
 {

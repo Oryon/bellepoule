@@ -15,10 +15,11 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "util/module.hpp"
-#include "common/stage.hpp"
-#include "common/chapter.hpp"
 
-#include "common/book.hpp"
+#include "stage.hpp"
+#include "chapter.hpp"
+
+#include "book.hpp"
 
 // --------------------------------------------------------------------------------
 Book::Book ()

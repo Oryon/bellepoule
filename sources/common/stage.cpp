@@ -19,10 +19,11 @@
 
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
-#include "common/classification.hpp"
-#include "common/player.hpp"
 
-#include "common/stage.hpp"
+#include "classification.hpp"
+#include "player.hpp"
+
+#include "stage.hpp"
 
 GSList *Stage::_stage_base = NULL;
 

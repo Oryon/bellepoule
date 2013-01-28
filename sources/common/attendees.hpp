@@ -18,7 +18,8 @@
 #define attendees_hpp
 
 #include "util/object.hpp"
-#include "common/player.hpp"
+
+#include "player.hpp"
 
 class Attendees : public Object
 {

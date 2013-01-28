@@ -21,7 +21,8 @@
 
 #include "util/data.hpp"
 #include "util/module.hpp"
-#include "pool_round/pool.hpp"
+
+#include "pool.hpp"
 
 namespace Pool
 {

@@ -22,8 +22,10 @@
 #include <cairo-pdf.h>
 
 #include "common/match.hpp"
-#include "pool_round/pool_match_order.hpp"
-#include "pool_round/pool.hpp"
+
+#include "pool_match_order.hpp"
+
+#include "pool.hpp"
 
 namespace Pool
 {

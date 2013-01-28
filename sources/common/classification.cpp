@@ -18,10 +18,11 @@
 #include <glib/gstdio.h>
 
 #include "util/attribute.hpp"
-#include "common/contest.hpp"
-#include "common/player.hpp"
 
-#include "common/classification.hpp"
+#include "contest.hpp"
+#include "player.hpp"
+
+#include "classification.hpp"
 
 // --------------------------------------------------------------------------------
 Classification::Classification (Filter *filter)

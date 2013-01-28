@@ -26,11 +26,12 @@
 #include <shellapi.h>
 #endif
 
-#include "common/version.h"
 #include "util/canvas.hpp"
-#include "common/contest.hpp"
 
-#include "common/tournament.hpp"
+#include "version.h"
+#include "contest.hpp"
+
+#include "tournament.hpp"
 
 typedef enum
 {

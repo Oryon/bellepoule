@@ -20,7 +20,7 @@
 #include <stdarg.h>
 #include <gtk/gtk.h>
 
-#include "util/object.hpp"
+#include "object.hpp"
 
 // --------------------------------------------------------------------------------
 class AttributeDesc : public Object
@@ -93,7 +93,9 @@ class AttributeDesc : public Object
                                    const gchar *xml_name,
                                    gchar       *user_name);
 
-    static void CreateList (GSList **list, ...);
+    static void CreateExcludingList (GSList **list, ...);
+
+    static void CreateIncludingList (GSList **list, ...);
 
     static GSList *GetList ();
 
@@ -144,7 +146,7 @@ class AttributeDesc : public Object
     static void Refilter (GtkComboBox *selector,
                           void        *data);
 
-    void ListStoreSetDefault (GtkListStore        *store,
+    void TreeStoreSetDefault (GtkTreeStore        *store,
                               GtkTreeIter         *iter,
                               gint                 column,
                               AttributeDesc::Look  look);
@@ -220,7 +222,7 @@ class Attribute : public Object
 
     virtual GdkPixbuf *GetPixbuf () = 0;
 
-    virtual void ListStoreSet (GtkListStore        *store,
+    virtual void TreeStoreSet (GtkTreeStore        *store,
                                GtkTreeIter         *iter,
                                gint                 column,
                                AttributeDesc::Look  look) = 0;
@@ -261,7 +263,7 @@ class TextAttribute : public Attribute
 
     GdkPixbuf *GetPixbuf ();
 
-    void ListStoreSet (GtkListStore        *store,
+    void TreeStoreSet (GtkTreeStore        *store,
                        GtkTreeIter         *iter,
                        gint                 column,
                        AttributeDesc::Look  look);
@@ -297,7 +299,7 @@ class BooleanAttribute : public Attribute
 
     GdkPixbuf *GetPixbuf ();
 
-    void ListStoreSet (GtkListStore        *store,
+    void TreeStoreSet (GtkTreeStore        *store,
                        GtkTreeIter         *iter,
                        gint                 column,
                        AttributeDesc::Look  look);
@@ -334,7 +336,7 @@ class IntAttribute : public Attribute
 
     GdkPixbuf *GetPixbuf ();
 
-    void ListStoreSet (GtkListStore        *store,
+    void TreeStoreSet (GtkTreeStore        *store,
                        GtkTreeIter         *iter,
                        gint                 column,
                        AttributeDesc::Look  look);

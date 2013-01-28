@@ -22,7 +22,7 @@
 
 #include "common/player.hpp"
 
-#include "util/canvas_module.hpp"
+#include "canvas_module.hpp"
 
 // --------------------------------------------------------------------------------
 CanvasModule::CanvasModule (const gchar *glade_file,

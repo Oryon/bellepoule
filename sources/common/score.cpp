@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <goocanvas.h>
 
-#include "common/score.hpp"
+#include "score.hpp"
 
 // --------------------------------------------------------------------------------
 Score::Score  (Data *max)

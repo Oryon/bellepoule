@@ -21,7 +21,8 @@
 #include <libxml/xmlwriter.h>
 
 #include "common/stage.hpp"
-#include "people_management/checkin.hpp"
+
+#include "checkin.hpp"
 
 namespace People
 {

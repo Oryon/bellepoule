@@ -23,7 +23,6 @@
 #include "util/module.hpp"
 #include "common/match.hpp"
 #include "common/score_collector.hpp"
-
 #include "common/stage.hpp"
 
 namespace Table

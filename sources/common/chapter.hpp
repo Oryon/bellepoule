@@ -19,7 +19,8 @@
 
 #include "util/object.hpp"
 #include "util/module.hpp"
-#include "common/stage.hpp"
+
+#include "stage.hpp"
 
 class Chapter : public Object
 {

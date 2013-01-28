@@ -19,7 +19,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "util/data.hpp"
+#include "data.hpp"
 
 // --------------------------------------------------------------------------------
 Data::Data (const gchar *xml_name,

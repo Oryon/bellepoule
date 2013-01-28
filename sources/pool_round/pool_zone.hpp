@@ -21,8 +21,9 @@
 
 #include "util/object.hpp"
 #include "util/module.hpp"
-#include "pool_round/pool.hpp"
 #include "common/referee_zone.hpp"
+
+#include "pool.hpp"
 
 namespace Pool
 {

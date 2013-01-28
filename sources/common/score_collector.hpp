@@ -22,8 +22,9 @@
 
 #include "util/object.hpp"
 #include "util/canvas_module.hpp"
-#include "common/match.hpp"
-#include "common/player.hpp"
+
+#include "match.hpp"
+#include "player.hpp"
 
 class ScoreCollector : public Object
 {

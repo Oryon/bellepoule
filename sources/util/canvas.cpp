@@ -16,7 +16,7 @@
 
 #include <goocanvas.h>
 
-#include "util/canvas.hpp"
+#include "canvas.hpp"
 
 #define VALUE_INIT {0,{{0}}}
 

@@ -20,7 +20,7 @@
 #include "util/object.hpp"
 #include "common/player.hpp"
 
-#include "pool_round/swapper.hpp"
+#include "swapper.hpp"
 
 namespace Pool
 {

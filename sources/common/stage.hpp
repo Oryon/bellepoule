@@ -26,7 +26,7 @@
 #include "util/object.hpp"
 #include "util/data.hpp"
 #include "util/sensitivity_trigger.hpp"
-#include "common/attendees.hpp"
+#include "attendees.hpp"
 
 class Player;
 class Classification;

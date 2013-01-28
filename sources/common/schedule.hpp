@@ -18,9 +18,11 @@
 #define schedule_hpp
 
 #include <libxml/xmlwriter.h>
-#include "common/stage.hpp"
+
 #include "util/module.hpp"
-#include "common/book.hpp"
+
+#include "stage.hpp"
+#include "book.hpp"
 
 namespace People
 {

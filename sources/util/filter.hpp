@@ -19,8 +19,8 @@
 
 #include <gtk/gtk.h>
 
-#include "util/object.hpp"
-#include "util/attribute.hpp"
+#include "object.hpp"
+#include "attribute.hpp"
 
 class Module;
 

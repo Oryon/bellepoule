@@ -21,8 +21,8 @@
 #include <goocanvas.h>
 
 #include "util/data.hpp"
-#include "common/stage.hpp"
 #include "util/canvas_module.hpp"
+#include "common/stage.hpp"
 #include "common/score_collector.hpp"
 #include "common/player.hpp"
 

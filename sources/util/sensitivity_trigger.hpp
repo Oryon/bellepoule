@@ -19,7 +19,7 @@
 
 #include <gtk/gtk.h>
 
-#include "util/object.hpp"
+#include "object.hpp"
 
 class SensitivityTrigger : public virtual Object
 {

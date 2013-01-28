@@ -21,12 +21,13 @@
 
 #include "util/data.hpp"
 #include "util/canvas_module.hpp"
+#include "util/drop_zone.hpp"
 #include "common/match.hpp"
 #include "common/score_collector.hpp"
-#include "table_round/table.hpp"
-#include "util/drop_zone.hpp"
-#include "table_round/table_set_border.hpp"
-#include "table_round/table_print_session.hpp"
+
+#include "table.hpp"
+#include "table_set_border.hpp"
+#include "table_print_session.hpp"
 
 namespace Table
 {

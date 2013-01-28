@@ -20,7 +20,7 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "people_management/checkin.hpp"
+#include "checkin.hpp"
 
 class Contest;
 

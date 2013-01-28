@@ -21,9 +21,10 @@
 #include <libxml/xmlwriter.h>
 #include <libxml/xpath.h>
 
-#include "common/stage.hpp"
 #include "util/attribute.hpp"
-#include "people_management/players_list.hpp"
+#include "common/stage.hpp"
+
+#include "players_list.hpp"
 
 namespace People
 {

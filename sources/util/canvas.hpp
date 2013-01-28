@@ -20,7 +20,7 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "util/object.hpp"
+#include "object.hpp"
 
 class Canvas
 {

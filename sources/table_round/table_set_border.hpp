@@ -20,7 +20,8 @@
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
-#include "table_round/table.hpp"
+
+#include "table.hpp"
 
 namespace Table
 {

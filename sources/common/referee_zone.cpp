@@ -14,11 +14,11 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "common/player.hpp"
+#include "player.hpp"
 #include "util/canvas.hpp"
-#include "common/stage.hpp"
+#include "stage.hpp"
 
-#include "common/referee_zone.hpp"
+#include "referee_zone.hpp"
 
 // --------------------------------------------------------------------------------
   RefereeZone::RefereeZone (Module *container)

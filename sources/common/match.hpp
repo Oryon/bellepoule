@@ -23,7 +23,8 @@
 
 #include "util/object.hpp"
 #include "util/data.hpp"
-#include "common/score.hpp"
+
+#include "score.hpp"
 
 class Player;
 class Match : public Object

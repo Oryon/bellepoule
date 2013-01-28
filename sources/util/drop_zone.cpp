@@ -14,9 +14,9 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "util/canvas.hpp"
+#include "canvas.hpp"
 
-#include "util/drop_zone.hpp"
+#include "drop_zone.hpp"
 
 // --------------------------------------------------------------------------------
 DropZone::DropZone (Module *container)

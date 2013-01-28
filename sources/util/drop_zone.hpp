@@ -19,9 +19,8 @@
 
 #include <gtk/gtk.h>
 
-#include "util/module.hpp"
-
-#include "util/object.hpp"
+#include "module.hpp"
+#include "object.hpp"
 
 class DropZone : public Object
 {

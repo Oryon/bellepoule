@@ -21,9 +21,10 @@
 
 #include "people_management/general_classification.hpp"
 #include "people_management/checkin.hpp"
-#include "common/chapter.hpp"
 
-#include "common/schedule.hpp"
+#include "chapter.hpp"
+
+#include "schedule.hpp"
 
 typedef enum
 {

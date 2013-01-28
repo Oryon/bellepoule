@@ -25,11 +25,12 @@
 #include "util/attribute.hpp"
 #include "common/player.hpp"
 #include "common/classification.hpp"
-#include "table_round/table_supervisor.hpp"
 #include "common/contest.hpp"
-#include "table_round/table_zone.hpp"
 
-#include "table_round/table_set.hpp"
+#include "table_supervisor.hpp"
+#include "table_zone.hpp"
+
+#include "table_set.hpp"
 
 namespace Table
 {
