@@ -7,13 +7,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-11 17:06+0100\n"
-"PO-Revision-Date: 2012-06-22 19:08+0000\n"
-"Last-Translator: Eduardo Alberto Calvo <Unknown>\n"
+"PO-Revision-Date: 2013-01-28 16:18+0000\n"
+"Last-Translator: Rui Pedro Vieira <rpn.vieira@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-01-28 05:17+0000\n"
+"X-Launchpad-Export-Date: 2013-01-29 05:26+0000\n"
 "X-Generator: Launchpad (build 16451)\n"
 "Language: pt_BR\n"
 
@@ -24,27 +24,27 @@ msgstr ""
 
 #: ../../sources/common/contest.cpp:57
 msgid "Epée"
-msgstr ""
+msgstr "Espada"
 
 #: ../../sources/common/contest.cpp:58
 msgid "Foil"
-msgstr ""
+msgstr "Florete"
 
 #: ../../sources/common/contest.cpp:59
 msgid "Kendo"
-msgstr ""
+msgstr "Kendo"
 
 #: ../../sources/common/contest.cpp:72 ../../sources/common/main.cpp:276
 msgid "Male"
-msgstr "Masculino"
+msgstr "Sexo masculino"
 
 #: ../../sources/common/contest.cpp:73 ../../sources/common/main.cpp:277
 msgid "Female"
-msgstr "Feminino"
+msgstr "Sexo feminino"
 
 #: ../../sources/common/contest.cpp:74
 msgid "Mixed"
-msgstr "Misturado"
+msgstr "Misto"
 
 #: ../../sources/common/contest.cpp:86
 msgid "U8"
@@ -104,7 +104,7 @@ msgstr "colocação"
 
 #: ../../sources/common/main.cpp:265
 msgid "last name"
-msgstr "sobrenome"
+msgstr "apelido"
 
 #: ../../sources/common/main.cpp:267
 msgid "first name"
@@ -136,7 +136,7 @@ msgstr "licença"
 
 #: ../../sources/common/main.cpp:295
 msgid "smartphone"
-msgstr ""
+msgstr "telemóvel"
 
 #: ../../sources/common/main.cpp:297
 msgid "rate"
@@ -144,15 +144,15 @@ msgstr ""
 
 #: ../../sources/common/main.cpp:302
 msgid "level"
-msgstr ""
+msgstr "nível"
 
 #: ../../sources/common/main.cpp:305
 msgid "ranking"
-msgstr "colocaçaõ"
+msgstr "classificação"
 
 #: ../../sources/common/main.cpp:308
 msgid "start rank"
-msgstr ""
+msgstr "iniciar classificação"
 
 #: ../../sources/common/main.cpp:312
 msgid "presence"
@@ -164,37 +164,37 @@ msgstr "exportado"
 
 #: ../../sources/common/main.cpp:320
 msgid "global status"
-msgstr ""
+msgstr "status global"
 
 #: ../../sources/common/main.cpp:323 ../../sources/common/main.cpp:331
 #: ../../resources/glade/pool_supervisor.glade:55
 #: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
-msgstr ""
+msgstr "Qualificado"
 
 #: ../../sources/common/main.cpp:324 ../../sources/common/main.cpp:332
 msgid "Not qualified"
-msgstr ""
+msgstr "não qualificado"
 
 #: ../../sources/common/main.cpp:325 ../../sources/common/main.cpp:333
 msgid "Withdrawal"
-msgstr ""
+msgstr "Retirada"
 
 #: ../../sources/common/main.cpp:326 ../../sources/common/main.cpp:334
 msgid "Excluded"
-msgstr ""
+msgstr "Excluído"
 
 #: ../../sources/common/main.cpp:327 ../../sources/common/main.cpp:335
 msgid "Forfeit"
-msgstr ""
+msgstr "Passe"
 
 #: ../../sources/common/main.cpp:329
 msgid "status"
-msgstr ""
+msgstr "Status"
 
 #: ../../sources/common/main.cpp:339
 msgid "pool #"
-msgstr ""
+msgstr "pool"
 
 #: ../../sources/common/main.cpp:343
 msgid "Vict./Bouts (‰)"
@@ -206,114 +206,114 @@ msgstr "índice"
 
 #: ../../sources/common/main.cpp:351
 msgid "Hits scored"
-msgstr ""
+msgstr "Toques dados"
 
 #: ../../sources/common/main.cpp:360
 msgid "Round start rank"
-msgstr ""
+msgstr "Iniciar ranking"
 
 #: ../../sources/common/main.cpp:365
 msgid "availability"
-msgstr ""
+msgstr "disponibilidade"
 
 #: ../../sources/common/main.cpp:370
 msgid "Busy"
-msgstr ""
+msgstr "Ocupado"
 
 #: ../../sources/common/main.cpp:371
 msgid "Absent"
-msgstr ""
+msgstr "Ausente"
 
 #: ../../sources/common/main.cpp:372
 msgid "Free"
-msgstr ""
+msgstr "Grátis"
 
 #: ../../sources/common/schedule.cpp:151
 #, c-format
 msgid "Round #%d"
-msgstr ""
+msgstr "Etapa #%d"
 
 #: ../../sources/common/schedule.cpp:1066
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr ""
+msgstr "<b><big>Tem a certeza que deseja cancelar a etapa actual?</big></b>"
 
 #: ../../sources/common/schedule.cpp:1069
 msgid "Go back to the previous round?"
-msgstr ""
+msgstr "Voltar para etapa anterior?"
 
 #: ../../sources/common/schedule.cpp:1072
 msgid "All the inputs of this round will be cancelled."
-msgstr ""
+msgstr "Todas as classificações desta etapa serão cancelada."
 
 #: ../../sources/common/tournament.cpp:479
 #: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
-msgstr ""
+msgstr "Livro de pagamentos"
 
 #: ../../sources/common/tournament.cpp:491
 msgid "Page"
-msgstr ""
+msgstr "Página"
 
 #: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
-msgstr ""
+msgstr "Reiniciar o programa para que as alterações tenham efeito"
 
 #: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
-msgstr ""
+msgstr "Escolha um arquivo para abrir competição ... "
 
 #: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
-msgstr ""
+msgstr "Ficheiros de competições(.cotcot / .xml)"
 
 #: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
-msgstr ""
+msgstr "Ficheiros abertos recentemente"
 
 #: ../../sources/common/tournament.cpp:1244
 msgid "BellePoule files"
-msgstr ""
+msgstr "Ficheiros BellePoule"
 
 #: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
-msgstr ""
+msgstr "Tickets de refeições"
 
 #: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
-msgstr ""
+msgstr "Escolha um local para armazenar ficheiros de backup"
 
 #: ../../sources/common/tournament.cpp:1663
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
-msgstr ""
+msgstr "b><big>Tem a certeza que deseja sair do BellePoule</big></b>"
 
 #: ../../sources/common/tournament.cpp:1666
 msgid "Quit BellePoule?"
-msgstr "Desistir BellePoule?"
+msgstr "Sair do BellePoule"
 
 #: ../../sources/common/tournament.cpp:1669
 msgid "All the unsaved competions will be lost."
-msgstr ""
+msgstr "Todas as competições não gravadas serão perdidas"
 
 #: ../../sources/people_management/checkin.cpp:45
 #: ../../sources/table_round/table_set.cpp:120
 msgid "<b><big>What do you want to print?</big></b>"
-msgstr ""
+msgstr "<b><big>O que você deseja imprimir?</big></b>"
 
 #: ../../sources/people_management/checkin.cpp:48
 msgid "Fencer list printing"
-msgstr ""
+msgstr "Imprimir  lista de atiradores"
 
 #: ../../sources/people_management/checkin.cpp:217
 msgid "Choose a fencer file to import..."
-msgstr "Escolha um arquivo de esgrimista para importar ..."
+msgstr "Importar ficheiro de atiradores"
 
 #: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
-msgstr ""
+msgstr "Ficheiros atiradores"
 
 #: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
-msgstr ""
+msgstr "Ficheiro de árbitros"
 
 #: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
@@ -330,28 +330,30 @@ msgstr "Lista de faltas"
 #: ../../sources/people_management/checkin.cpp:798
 #: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
-msgstr ""
+msgstr "Lista de atiradores"
 
 #: ../../sources/people_management/checkin_supervisor.cpp:29
 #: ../../resources/glade/contest.glade:416
 msgid "Check-in"
-msgstr "Entrada"
+msgstr "Registro de entrada"
 
 #: ../../sources/people_management/form.cpp:46
 msgid "Fencer"
-msgstr ""
+msgstr "Atirador"
 
 #: ../../sources/people_management/form.cpp:51
 #: ../../sources/pool_round/pool.cpp:449
 #: ../../sources/table_round/table_set.cpp:2781
 msgid "Referee"
-msgstr ""
+msgstr "Árbitro"
 
 #: ../../sources/people_management/form.cpp:175
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
 msgstr ""
+"Desmarque essa caixa para acelerar a entrada de dados. O campo será ignorado "
+"sempre que pressiona a  tecla TAB."
 
 #: ../../sources/people_management/general_classification.cpp:26
 #: ../../sources/people_management/general_classification.cpp:186
@@ -362,37 +364,37 @@ msgstr "Classificação geral"
 
 #: ../../sources/people_management/general_classification.cpp:198
 msgid "Choose a target file..."
-msgstr "Escolha um arquivo destino"
+msgstr "Escolha um ficheiro de destino"
 
 #: ../../sources/people_management/general_classification.cpp:238
 msgid "All Excel files (.CSV)"
-msgstr "Todos os arquivos do Excel (.CSV)"
+msgstr "Todos os ficheiros do Excel (.CSV)"
 
 #: ../../sources/people_management/general_classification.cpp:244
 msgid "All FFF files (.FFF)"
-msgstr ""
+msgstr "Todos ficheiros (.FFF)"
 
 #: ../../sources/people_management/general_classification.cpp:250
 msgid "All PDF files (.PDF)"
-msgstr ""
+msgstr "Todos ox Ficheiros PDF (.PDF)"
 
 #: ../../sources/people_management/splitting.cpp:30
 msgid "Split"
-msgstr ""
+msgstr "Dividir"
 
 #: ../../sources/people_management/splitting.cpp:259
 msgid "List of fencers to extract"
-msgstr ""
+msgstr "Extrair lista de atiradores"
 
 #: ../../sources/pool_round/pool.cpp:59
 #, c-format
 msgid "Pool #%02d"
-msgstr ""
+msgstr "Pool #%02d"
 
 #: ../../sources/pool_round/pool.cpp:490
 #: ../../sources/table_round/table_set.cpp:2820
 msgid "Piste"
-msgstr ""
+msgstr "Pista"
 
 #: ../../sources/pool_round/pool.cpp:696
 #: ../../sources/table_round/table_set.cpp:2980
@@ -401,7 +403,7 @@ msgstr "Assinatura"
 
 #: ../../sources/pool_round/pool.cpp:718
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: ../../sources/pool_round/pool.cpp:728
 msgid "Victories"
@@ -409,15 +411,15 @@ msgstr "Vitórias"
 
 #: ../../sources/pool_round/pool.cpp:737
 msgid "Vict./Matchs"
-msgstr ""
+msgstr "Vict,/Assaltos"
 
 #: ../../sources/pool_round/pool.cpp:746
 msgid "H. scored"
-msgstr ""
+msgstr "T. Dados"
 
 #: ../../sources/pool_round/pool.cpp:755
 msgid "H. received"
-msgstr ""
+msgstr "T. Sofridos"
 
 #: ../../sources/pool_round/pool.cpp:764
 msgid "Index"
@@ -429,17 +431,17 @@ msgstr "Lugar"
 
 #: ../../sources/pool_round/pool_allocator.cpp:53
 msgid "Pools arrangement"
-msgstr ""
+msgstr "Distribuição Pools"
 
 #: ../../sources/pool_round/pool_allocator.cpp:1435
 msgid "Allocation"
-msgstr ""
+msgstr "Alocação"
 
 #: ../../sources/pool_round/pool_supervisor.cpp:25
 #: ../../sources/pool_round/pool_supervisor.cpp:499
 #: ../../sources/pool_round/pool_supervisor.cpp:509
 msgid "Pools"
-msgstr ""
+msgstr "Pools"
 
 #: ../../sources/pool_round/pool_supervisor.cpp:101
 msgid "<b><big>Print...</big></b>"
