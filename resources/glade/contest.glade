@@ -297,6 +297,7 @@
                                         <property name="yalign">0.44999998807907104</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
+                                        <property name="group">team_radiobutton</property>
                                       </object>
                                       <packing>
                                         <property name="expand">True</property>
@@ -313,7 +314,6 @@
                                         <property name="use_action_appearance">False</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
-                                        <property name="group">individual_radiobutton</property>
                                       </object>
                                       <packing>
                                         <property name="expand">True</property>

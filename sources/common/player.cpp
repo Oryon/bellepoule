@@ -19,7 +19,7 @@
 
 #include "util/attribute.hpp"
 
-#include "common/player.hpp"
+#include "player.hpp"
 
 guint Player::_next_ref = 0;
 
@@ -402,8 +402,8 @@ void Player::Save (xmlTextWriter *xml_writer,
   GSList *attr_list;
   GSList *current;
 
-  AttributeDesc::CreateList (&attr_list,
-                             NULL);
+  AttributeDesc::CreateExcludingList (&attr_list,
+                                      NULL);
 
   xmlTextWriterStartElement (xml_writer,
                              BAD_CAST player_tag);
@@ -477,8 +477,8 @@ void Player::Load (xmlNode *xml_node)
   GSList      *current;
   AttributeId attending_attr_id ("attending");
 
-  AttributeDesc::CreateList (&attr_list,
-                             NULL);
+  AttributeDesc::CreateExcludingList (&attr_list,
+                                      NULL);
 
   current = attr_list;
   while (current)

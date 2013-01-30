@@ -32,15 +32,16 @@
 #include <shellapi.h>
 #endif
 
-#include "common/version.h"
 #include "util/canvas.hpp"
-#include "common/tournament.hpp"
 #include "people_management/checkin.hpp"
 #include "people_management/referees_list.hpp"
 #include "people_management/checkin_supervisor.hpp"
 #include "network/upload.hpp"
 
-#include "common/contest.hpp"
+#include "version.h"
+#include "tournament.hpp"
+
+#include "contest.hpp"
 
 typedef enum
 {
@@ -236,6 +237,7 @@ Contest::Contest ()
   _weapon     = 0;
   _category   = 0;
   _gender     = 0;
+  _team_event = FALSE;
   _derived    = FALSE;
   _downloader = NULL;
 
@@ -527,7 +529,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
   {
     gboolean  score_stuffing_policy = FALSE;
-    gboolean  need_post_processing  = FALSE;
+    gboolean  need_post_processing;
 
     xmlXPathInit ();
 
@@ -536,14 +538,35 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       xmlXPathObject  *xml_object;
       xmlNodeSet      *xml_nodeset;
 
-      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
+      {
+        xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
 
+        need_post_processing = FALSE;
+        _team_event          = FALSE;
+      }
       if (xml_object->nodesetval->nodeNr == 0)
       {
         xmlXPathFreeObject (xml_object);
         xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle", xml_context);
 
         need_post_processing = TRUE;
+        _team_event          = FALSE;
+      }
+      if (xml_object->nodesetval->nodeNr == 0)
+      {
+        xmlXPathFreeObject (xml_object);
+        xml_object = xmlXPathEval (BAD_CAST "/CompetitionParEquipes", xml_context);
+
+        need_post_processing = FALSE;
+        _team_event          = TRUE;
+      }
+      if (xml_object->nodesetval->nodeNr == 0)
+      {
+        xmlXPathFreeObject (xml_object);
+        xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionParEquipes", xml_context);
+
+        need_post_processing = TRUE;
+        _team_event          = TRUE;
       }
 
       xml_nodeset = xml_object->nodesetval;
@@ -1173,6 +1196,9 @@ void Contest::FillInProperties ()
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("allow_radiobutton")),
                                 _schedule->ScoreStuffingIsAllowed ());
 
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("individual_radiobutton")),
+                                (_team_event == FALSE));
+
   FillInDate (_day,
               _month,
               _year);
@@ -1228,6 +1254,8 @@ void Contest::ReadProperties ()
       _schedule->SetScoreStuffingPolicy (policy);
     }
   }
+
+  _team_event = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("team_radiobutton")));
 
   {
     g_key_file_set_string (_config_file,
@@ -1402,10 +1430,20 @@ void Contest::Save (gchar *filename)
                                   "UTF-8",
                                   NULL);
 
-      xmlTextWriterStartDTD (xml_writer,
-                             BAD_CAST "CompetitionIndividuelle",
-                             NULL,
-                             NULL);
+      if (_team_event)
+      {
+        xmlTextWriterStartDTD (xml_writer,
+                               BAD_CAST "CompetitionParEquipes",
+                               NULL,
+                               NULL);
+      }
+      else
+      {
+        xmlTextWriterStartDTD (xml_writer,
+                               BAD_CAST "CompetitionIndividuelle",
+                               NULL,
+                               NULL);
+      }
       xmlTextWriterEndDTD (xml_writer);
 
       xmlTextWriterStartComment (xml_writer);
@@ -1415,8 +1453,16 @@ void Contest::Save (gchar *filename)
       xmlTextWriterWriteFormatString (xml_writer, "   http://betton.escrime.free.fr/index.php/bellepoule\n");
       xmlTextWriterEndComment (xml_writer);
 
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "CompetitionIndividuelle");
+      if (_team_event)
+      {
+        xmlTextWriterStartElement (xml_writer,
+                                   BAD_CAST "CompetitionParEquipes");
+      }
+      else
+      {
+        xmlTextWriterStartElement (xml_writer,
+                                   BAD_CAST "CompetitionIndividuelle");
+      }
 
       {
         _color->Save (xml_writer);

@@ -23,8 +23,9 @@
 #include "util/data.hpp"
 #include "util/module.hpp"
 #include "util/attribute.hpp"
-#include "people_management/players_list.hpp"
-#include "people_management/form.hpp"
+
+#include "players_list.hpp"
+#include "form.hpp"
 
 namespace People
 {
@@ -71,10 +72,14 @@ namespace People
 
       virtual void Monitor (Player *player);
 
-      void CreateForm (Filter *filter);
+      void CreateForm (Filter             *filter,
+                       Player::PlayerType  player_type);
 
       virtual void OnPlayerEventFromForm (Player            *player,
-                                          Form::PlayerEvent  event);
+                                          Form::PlayerEvent  event,
+                                          guint              page);
+
+      Player::PlayerType GetPlayerType ();
 
     private:
       guint        _attendings;
@@ -95,8 +100,6 @@ namespace People
       void OnPlugged ();
 
       gboolean PlayerIsPrintable (Player *player);
-
-      Player::PlayerType GetPlayerType ();
 
       static void OnAttendingChanged (Player    *player,
                                       Attribute *attr,

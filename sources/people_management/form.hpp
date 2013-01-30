@@ -36,14 +36,19 @@ namespace People
       } PlayerEvent;
 
       typedef void (Module::*PlayerCbk) (Player      *player,
-                                         PlayerEvent  event);
+                                         PlayerEvent  event,
+                                         guint        page);
 
-      Form (Filter             *filter,
+      Form (const gchar        *name,
             Module             *client,
+            Filter             *filter,
             Player::PlayerType  player_type,
             PlayerCbk           player_cbk);
 
       void Show (Player *player = NULL);
+
+      void AddPage (const gchar *name,
+                    Filter      *filter);
 
       void Hide ();
 
@@ -56,12 +61,21 @@ namespace People
       void UnLock ();
 
     private:
-      Filter             *_filter;
+      struct Page
+      {
+        GtkWidget *_title_vbox;
+        GtkWidget *_value_vbox;
+        GtkWidget *_check_vbox;
+      };
+
       Module             *_client;
-      Player::PlayerType  _player_type;
       PlayerCbk           _cbk;
       Player             *_player_to_update;
       gboolean            _locked;
+      guint               _page_count;
+      Filter             *_filter;
+      Player::PlayerType  _player_type;
+      Page               *_pages;
 
       virtual ~Form ();
 

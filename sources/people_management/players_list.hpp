@@ -22,6 +22,7 @@
 
 #include "util/module.hpp"
 #include "util/attribute.hpp"
+
 #include "common/player.hpp"
 
 namespace People
@@ -86,7 +87,7 @@ namespace People
       virtual void OnListChanged ();
 
     protected:
-      GtkListStore *_store;
+      GtkTreeStore *_store;
 
     private:
       guint     _rights;

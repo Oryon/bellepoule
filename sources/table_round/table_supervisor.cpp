@@ -25,8 +25,9 @@
 #include "util/attribute.hpp"
 #include "common/player.hpp"
 #include "common/classification.hpp"
-#include "table_round/table_set.hpp"
-#include "table_round/table_supervisor.hpp"
+
+#include "table_set.hpp"
+#include "table_supervisor.hpp"
 
 namespace Table
 {
@@ -77,25 +78,25 @@ namespace Table
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
+                                          "ref",
 #endif
-                                 "availability",
-                                 "participation_rate",
-                                 "level",
-                                 "status",
-                                 "global_status",
-                                 "start_rank",
-                                 "final_rank",
-                                 "attending",
-                                 "exported",
-                                 "victories_ratio",
-                                 "indice",
-                                 "pool_nr",
-                                 "HS",
-                                 "rank",
-                                 NULL);
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "status",
+                                          "global_status",
+                                          "start_rank",
+                                          "final_rank",
+                                          "attending",
+                                          "exported",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          "rank",
+                                          NULL);
       filter = new Filter (attr_list,
                            this);
 
@@ -112,23 +113,23 @@ namespace Table
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
+                                          "ref",
 #endif
-                                 "availability",
-                                 "participation_rate",
-                                 "level",
-                                 "global_status",
-                                 "start_rank",
-                                 "final_rank",
-                                 "attending",
-                                 "exported",
-                                 "victories_ratio",
-                                 "indice",
-                                 "pool_nr",
-                                 "HS",
-                                 NULL);
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "global_status",
+                                          "start_rank",
+                                          "final_rank",
+                                          "attending",
+                                          "exported",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          NULL);
       filter = new Filter (attr_list,
                            this);
 

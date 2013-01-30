@@ -22,7 +22,7 @@
 #include "common/schedule.hpp"
 #include "common/player.hpp"
 
-#include "people_management/players_list.hpp"
+#include "players_list.hpp"
 
 namespace People
 {
@@ -94,7 +94,7 @@ namespace People
       // The player reference used in comparison
       types[nb_attr*AttributeDesc::NB_LOOK] = G_TYPE_POINTER;
 
-      _store = gtk_list_store_newv (nb_attr*AttributeDesc::NB_LOOK + 1,
+      _store = gtk_tree_store_newv (nb_attr*AttributeDesc::NB_LOOK + 1,
                                     types);
 
       if (_tree_view)
@@ -137,26 +137,26 @@ namespace People
         attr_id->Release ();
         if (attr)
         {
-          attr->ListStoreSet (_store, &iter,
+          attr->TreeStoreSet (_store, &iter,
                               i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-          attr->ListStoreSet (_store, &iter,
+          attr->TreeStoreSet (_store, &iter,
                               i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-          attr->ListStoreSet (_store, &iter,
+          attr->TreeStoreSet (_store, &iter,
                               i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
         }
         else
         {
-          desc->ListStoreSetDefault (_store, &iter,
+          desc->TreeStoreSetDefault (_store, &iter,
                                      i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-          desc->ListStoreSetDefault (_store, &iter,
+          desc->TreeStoreSetDefault (_store, &iter,
                                      i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-          desc->ListStoreSetDefault (_store, &iter,
+          desc->TreeStoreSetDefault (_store, &iter,
                                      i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
         }
         attr_list = g_slist_next (attr_list);
       }
 
-      gtk_list_store_set (_store, &iter,
+      gtk_tree_store_set (_store, &iter,
                           gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
                           player, -1);
     }
@@ -651,7 +651,9 @@ namespace People
     {
       GtkTreeIter iter;
 
-      gtk_list_store_append (_store, &iter);
+      gtk_tree_store_append (_store,
+                             &iter,
+                             NULL);
 
       player->SetData (this, "tree_row_ref",
                        GetPlayerRowRef (&iter),
@@ -685,7 +687,7 @@ namespace People
 
     if (_store)
     {
-      gtk_list_store_clear (_store);
+      gtk_tree_store_clear (_store);
     }
   }
 
@@ -736,7 +738,7 @@ namespace People
                                    &iter,
                                    selected_path);
 
-          gtk_list_store_remove (_store,
+          gtk_tree_store_remove (_store,
                                  &iter);
 
           _player_list = g_slist_remove (_player_list,
@@ -774,7 +776,7 @@ namespace People
                                &iter,
                                path);
 
-      gtk_list_store_remove (_store,
+      gtk_tree_store_remove (_store,
                              &iter);
 
       _player_list = g_slist_remove (_player_list,

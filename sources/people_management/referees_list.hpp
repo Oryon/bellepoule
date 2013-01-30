@@ -44,7 +44,8 @@ namespace People
       void OnPlayerLoaded (Player *referee);
 
       void OnPlayerEventFromForm (Player            *referee,
-                                  Form::PlayerEvent  event);
+                                  Form::PlayerEvent  event,
+                                  guint              page);
 
       static void OnAvailabilityChanged (Player    *referee,
                                          Attribute *attr,

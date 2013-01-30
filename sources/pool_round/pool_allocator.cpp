@@ -21,11 +21,12 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "pool_round/smart_swapper.hpp"
 #include "common/contest.hpp"
-#include "pool_round/pool_match_order.hpp"
 
-#include "pool_round/pool_allocator.hpp"
+#include "smart_swapper.hpp"
+#include "pool_match_order.hpp"
+
+#include "pool_allocator.hpp"
 
 namespace Pool
 {
@@ -92,25 +93,25 @@ namespace Pool
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
+                                          "ref",
 #endif
-                                 "availability",
-                                 "participation_rate",
-                                 "level",
-                                 "status",
-                                 "global_status",
-                                 "start_rank",
-                                 "final_rank",
-                                 "attending",
-                                 "exported",
-                                 "victories_ratio",
-                                 "indice",
-                                 "pool_nr",
-                                 "HS",
-                                 "rank",
-                                 NULL);
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "status",
+                                          "global_status",
+                                          "start_rank",
+                                          "final_rank",
+                                          "attending",
+                                          "exported",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          "rank",
+                                          NULL);
       filter = new Filter (attr_list,
                            this);
 
@@ -167,24 +168,24 @@ namespace Pool
         GSList *attr_list;
         Filter *filter;
 
-        AttributeDesc::CreateList (&attr_list,
+        AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                   "ref",
+                                            "ref",
 #endif
-                                   "availability",
-                                   "participation_rate",
-                                   "level",
-                                   "status",
-                                   "global_status",
-                                   "start_rank",
-                                   "final_rank",
-                                   "attending",
-                                   "exported",
-                                   "victories_ratio",
-                                   "indice",
-                                   "HS",
-                                   "rank",
-                                   NULL);
+                                            "availability",
+                                            "participation_rate",
+                                            "level",
+                                            "status",
+                                            "global_status",
+                                            "start_rank",
+                                            "final_rank",
+                                            "attending",
+                                            "exported",
+                                            "victories_ratio",
+                                            "indice",
+                                            "HS",
+                                            "rank",
+                                            NULL);
         filter = new Filter (attr_list,
                              _fencer_list);
 

@@ -20,43 +20,74 @@
 
 #include "util/attribute.hpp"
 
-#include "people_management/form.hpp"
+#include "form.hpp"
 
 namespace People
 {
   // --------------------------------------------------------------------------------
-  Form::Form (Filter             *filter,
+  Form::Form (const gchar        *name,
               Module             *client,
+              Filter             *filter,
               Player::PlayerType  player_type,
               PlayerCbk           player_cbk)
     : Module ("form.glade",
               "FillInForm")
   {
+    _pages      = NULL;
+    _page_count = 0;
+
     _client = client;
     _cbk    = player_cbk;
+    _locked = FALSE;
 
     _player_type = player_type;
 
-    _filter = filter;
-    _filter->Retain ();
+    AddPage (name,
+             filter);
+  }
 
-    _locked = FALSE;
+  // --------------------------------------------------------------------------------
+  Form::~Form ()
+  {
+  }
 
-    if (player_type == Player::FENCER)
+  // --------------------------------------------------------------------------------
+  void Form::AddPage (const gchar *name,
+                      Filter      *filter)
+  {
+    GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
+    Page      *page;
+
+    _page_count++;
+    _pages = g_renew (Page,
+                      _pages,
+                      _page_count);
+
+    page = &_pages[_page_count-1];
+
     {
-      gtk_window_set_title (GTK_WINDOW (_glade->GetWidget ("FillInForm")),
-                            gettext ("Fencer"));
-    }
-    else
-    {
-      gtk_window_set_title (GTK_WINDOW (_glade->GetWidget ("FillInForm")),
-                            gettext ("Referee"));
-    }
+      GSList      *current    = filter->GetAttrList ();
+      GtkComboBox *selector_w = NULL;
 
-    {
-      GSList      *current     = _filter->GetAttrList ();
-      GtkComboBox *selector_w  = NULL;
+      page->_title_vbox = gtk_vbox_new (FALSE, 0);
+      page->_value_vbox = gtk_vbox_new (FALSE, 0);
+      page->_check_vbox = gtk_vbox_new (FALSE, 0);
 
+      gtk_box_pack_start (GTK_BOX (hbox),
+                          page->_check_vbox,
+                          FALSE,
+                          FALSE,
+                          0);
+      gtk_box_pack_start (GTK_BOX (hbox),
+                          page->_title_vbox,
+                          FALSE,
+                          FALSE,
+                          0);
+      gtk_box_pack_start (GTK_BOX (hbox),
+                          page->_value_vbox,
+                          FALSE,
+                          FALSE,
+                          0);
       while (current)
       {
         AttributeDesc *attr_desc = (AttributeDesc *) current->data;
@@ -65,9 +96,8 @@ namespace People
         {
           {
             GtkWidget *w   = gtk_label_new (attr_desc->_user_name);
-            GtkWidget *box = _glade->GetWidget ("title_vbox");
 
-            gtk_box_pack_start (GTK_BOX (box),
+            gtk_box_pack_start (GTK_BOX (page->_title_vbox),
                                 w,
                                 TRUE,
                                 TRUE,
@@ -81,8 +111,6 @@ namespace People
             GtkWidget *value_w;
 
             {
-              GtkWidget *box = _glade->GetWidget ("value_vbox");
-
               if (attr_desc->_type == G_TYPE_BOOLEAN)
               {
                 value_w = gtk_check_button_new ();
@@ -161,7 +189,7 @@ namespace People
                 }
               }
 
-              gtk_box_pack_start (GTK_BOX (box),
+              gtk_box_pack_start (GTK_BOX (page->_value_vbox),
                                   value_w,
                                   TRUE,
                                   TRUE,
@@ -170,8 +198,7 @@ namespace People
             }
 
             {
-              GtkWidget *w   = gtk_check_button_new ();
-              GtkWidget *box = _glade->GetWidget ("check_vbox");
+              GtkWidget *w = gtk_check_button_new ();
 
               gtk_widget_set_tooltip_text (w,
                                            gettext ("Uncheck this box to quicken the data input. The corresponding field will be "
@@ -181,7 +208,7 @@ namespace People
               g_signal_connect (w, "toggled",
                                 G_CALLBACK (OnSensitiveStateToggled), value_w);
 
-              gtk_box_pack_start (GTK_BOX (box),
+              gtk_box_pack_start (GTK_BOX (page->_check_vbox),
                                   w,
                                   TRUE,
                                   TRUE,
@@ -195,12 +222,14 @@ namespace People
         current = g_slist_next (current);
       }
     }
-  }
 
-  // --------------------------------------------------------------------------------
-  Form::~Form ()
-  {
-    _filter->Release ();
+    {
+      GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+
+      gtk_notebook_append_page (notebook,
+                                hbox,
+                                gtk_label_new (name));
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -278,8 +307,10 @@ namespace People
   // --------------------------------------------------------------------------------
   void Form::OnAddButtonClicked ()
   {
-    GList  *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
-    Player *player;
+    GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+    gint         page     = gtk_notebook_get_current_page (notebook);
+    GList       *children = gtk_container_get_children (GTK_CONTAINER (_pages[page]._value_vbox));
+    Player      *player;
 
     if (_player_to_update)
     {
@@ -298,13 +329,15 @@ namespace People
     if (_player_to_update)
     {
       (_client->*_cbk) (player,
-                        UPDATE_PLAYER);
+                        UPDATE_PLAYER,
+                        page);
       OnCloseButtonClicked ();
     }
     else
     {
       (_client->*_cbk) (player,
-                        NEW_PLAYER);
+                        NEW_PLAYER,
+                        page);
     }
 
     player->Release ();
@@ -313,7 +346,9 @@ namespace People
   // --------------------------------------------------------------------------------
   void Form::ReadAndWipe (Player *player)
   {
-    GList *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
+    GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+    gint         page     = gtk_notebook_get_current_page (notebook);
+    GList       *children = gtk_container_get_children (GTK_CONTAINER (_pages[page]._value_vbox));
 
     for (guint i = 0; i < g_list_length (children); i ++)
     {
@@ -432,10 +467,13 @@ namespace People
   // --------------------------------------------------------------------------------
   void Form::Show (Player *player)
   {
+    GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+    gint         page     = gtk_notebook_get_current_page (notebook);
+
     _player_to_update = player;
     if (_player_to_update)
     {
-      GList *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
+      GList *children = gtk_container_get_children (GTK_CONTAINER (_pages[page]._value_vbox));
 
       _player_to_update->Retain ();
       for (guint i = 0; i < g_list_length (children); i ++)
@@ -523,16 +561,19 @@ namespace People
       gtk_widget_hide (_glade->GetWidget ("apply_button"));
     }
 
-    gtk_widget_set_sensitive (_glade->GetWidget ("check_vbox"),
-                              !_locked);
-    gtk_widget_set_sensitive (_glade->GetWidget ("value_vbox"),
-                              !_locked);
-
+    for (guint i = 0; i < _page_count; i++)
     {
-      GList *children = gtk_container_get_children (GTK_CONTAINER (_glade->GetWidget ("value_vbox")));
+      gtk_widget_set_sensitive (_pages[i]._check_vbox,
+                                !_locked);
+      gtk_widget_set_sensitive (_pages[i]._value_vbox,
+                                !_locked);
 
-      gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
-                                                            0));
+      {
+        GList *children = gtk_container_get_children (GTK_CONTAINER (_pages[i]._value_vbox));
+
+        gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
+                                                              0));
+      }
     }
   }
 

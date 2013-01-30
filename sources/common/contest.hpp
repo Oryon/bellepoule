@@ -24,7 +24,8 @@
 #include "util/module.hpp"
 #include "util/glade.hpp"
 #include "network/downloader.hpp"
-#include "common/schedule.hpp"
+
+#include "schedule.hpp"
 
 namespace People
 {
@@ -147,6 +148,7 @@ class Contest : public Module
     guint            _day;
     guint            _month;
     guint            _year;
+    gboolean         _team_event;
     Time            *_checkin_time;
     Time            *_scratch_time;
     Time            *_start_time;
@@ -172,6 +174,7 @@ class Contest : public Module
     void   ReadProperties    ();
     void   DisplayProperties ();
     void   LoadXmlDoc        (xmlDoc *doc);
+    void   LoadHeader        (xmlXPathContext *context);
     gchar *GetSaveFileName   (gchar       *title,
                               const gchar *config_key);
     void   Save              (gchar *filename);

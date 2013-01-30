@@ -24,11 +24,11 @@
 #include <libxml/xpath.h>
 
 #include "util/attribute.hpp"
-#include "common/player.hpp"
 #include "util/filter.hpp"
+#include "common/player.hpp"
 #include "common/contest.hpp"
 
-#include "people_management/referees_list.hpp"
+#include "referees_list.hpp"
 
 namespace People
 {
@@ -43,23 +43,23 @@ namespace People
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
+                                          "ref",
 #endif
-                                 "start_rank",
-                                 "status",
-                                 "global_status",
-                                 "previous_stage_rank",
-                                 "exported",
-                                 "final_rank",
-                                 "victories_ratio",
-                                 "indice",
-                                 "pool_nr",
-                                 "HS",
-                                 "rank",
-                                 "ranking",
-                                 NULL);
+                                          "start_rank",
+                                          "status",
+                                          "global_status",
+                                          "previous_stage_rank",
+                                          "exported",
+                                          "final_rank",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          "rank",
+                                          "ranking",
+                                          NULL);
       filter = new Filter (attr_list,
                            this);
 
@@ -76,7 +76,8 @@ namespace People
       filter->ShowAttribute ("licence");
 
       SetFilter (filter);
-      CreateForm (filter);
+      CreateForm (filter,
+                  GetPlayerType ());
       filter->Release ();
     }
 
@@ -114,7 +115,8 @@ namespace People
 
   // --------------------------------------------------------------------------------
   void RefereesList::OnPlayerEventFromForm (Player            *referee,
-                                            Form::PlayerEvent  event)
+                                            Form::PlayerEvent  event,
+                                            guint              page)
   {
     {
       Player::AttributeId  attending_attr_id ("attending");
@@ -134,7 +136,8 @@ namespace People
     }
 
     Checkin::OnPlayerEventFromForm (referee,
-                                    event);
+                                    event,
+                                    page);
   }
 
   // --------------------------------------------------------------------------------

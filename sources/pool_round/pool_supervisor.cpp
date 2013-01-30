@@ -18,9 +18,11 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "pool_round/pool_allocator.hpp"
 #include "common/classification.hpp"
-#include "pool_round/pool_supervisor.hpp"
+
+#include "pool_allocator.hpp"
+
+#include "pool_supervisor.hpp"
 
 namespace Pool
 {
@@ -64,25 +66,25 @@ namespace Pool
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
+                                          "ref",
 #endif
-                                 "availability",
-                                 "participation_rate",
-                                 "level",
-                                 "status",
-                                 "global_status",
-                                 "start_rank",
-                                 "final_rank",
-                                 "attending",
-                                 "exported",
-                                 "victories_ratio",
-                                 "indice",
-                                 "pool_nr",
-                                 "HS",
-                                 "rank",
-                                 NULL);
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "status",
+                                          "global_status",
+                                          "start_rank",
+                                          "final_rank",
+                                          "attending",
+                                          "exported",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          "rank",
+                                          NULL);
       filter = new Filter (attr_list,
                            this);
 
@@ -116,19 +118,19 @@ namespace Pool
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
+                                          "ref",
 #endif
-                                 "availability",
-                                 "participation_rate",
-                                 "level",
-                                 "global_status",
-                                 "start_rank",
-                                 "final_rank",
-                                 "attending",
-                                 "exported",
-                                 NULL);
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "global_status",
+                                          "start_rank",
+                                          "final_rank",
+                                          "attending",
+                                          "exported",
+                                          NULL);
       filter = new Filter (attr_list);
 
       filter->ShowAttribute ("rank");

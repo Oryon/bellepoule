@@ -19,11 +19,11 @@
 #include <ctype.h>
 
 #include "util/attribute.hpp"
+#include "util/filter.hpp"
 #include "common/schedule.hpp"
 #include "common/player.hpp"
-#include "util/filter.hpp"
 
-#include "people_management/checkin.hpp"
+#include "checkin.hpp"
 
 namespace People
 {
@@ -69,12 +69,32 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::CreateForm (Filter *filter)
+  void Checkin::CreateForm (Filter             *filter,
+                            Player::PlayerType  player_type)
   {
-    _form = new Form (filter,
-                      this,
-                      GetPlayerType (),
-                      (Form::PlayerCbk) &Checkin::OnPlayerEventFromForm);
+    if (_form == NULL)
+    {
+      const gchar *name;
+
+      if (player_type == Player::FENCER)
+      {
+        name = gettext ("Fencer");
+      }
+      else if (player_type == Player::REFEREE)
+      {
+        name = gettext ("Referee");
+      }
+      else
+      {
+        name = gettext ("Team");
+      }
+
+      _form = new Form (name,
+                        this,
+                        filter,
+                        player_type,
+                        (Form::PlayerCbk) &Checkin::OnPlayerEventFromForm);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -630,7 +650,8 @@ namespace People
 
   // --------------------------------------------------------------------------------
   void Checkin::OnPlayerEventFromForm (Player            *player,
-                                       Form::PlayerEvent  event)
+                                       Form::PlayerEvent  event,
+                                       guint              page)
   {
     if (event == Form::NEW_PLAYER)
     {

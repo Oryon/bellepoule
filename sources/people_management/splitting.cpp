@@ -25,7 +25,7 @@
 #include "common/player.hpp"
 #include "common/tournament.hpp"
 
-#include "people_management/splitting.hpp"
+#include "splitting.hpp"
 
 namespace People
 {
@@ -49,24 +49,24 @@ namespace People
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
+                                          "ref",
 #endif
-                                 "availability",
-                                 "participation_rate",
-                                 "level",
-                                 "status",
-                                 "global_status",
-                                 "start_rank",
-                                 "final_rank",
-                                 "rank",
-                                 "attending",
-                                 "victories_ratio",
-                                 "indice",
-                                 "pool_nr",
-                                 "HS",
-                                 NULL);
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "status",
+                                          "global_status",
+                                          "start_rank",
+                                          "final_rank",
+                                          "rank",
+                                          "attending",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          NULL);
       filter = new Filter (attr_list,
                            this);
 

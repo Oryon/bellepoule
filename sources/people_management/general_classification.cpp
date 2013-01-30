@@ -21,7 +21,7 @@
 #include "common/classification.hpp"
 #include "common/player.hpp"
 
-#include "people_management/general_classification.hpp"
+#include "general_classification.hpp"
 
 namespace People
 {
@@ -39,25 +39,25 @@ namespace People
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
+                                          "ref",
 #endif
-                                 "availability",
-                                 "participation_rate",
-                                 "level",
-                                 "global_status",
-                                 "status",
-                                 "start_rank",
-                                 "rank",
-                                 "attending",
-                                 "exported",
-                                 "victories_ratio",
-                                 "indice",
-                                 "pool_nr",
-                                 "HS",
-                                 "previous_stage_rank",
-                                 NULL);
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "global_status",
+                                          "status",
+                                          "start_rank",
+                                          "rank",
+                                          "attending",
+                                          "exported",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          "previous_stage_rank",
+                                          NULL);
       filter = new Filter (attr_list,
                            this);
 

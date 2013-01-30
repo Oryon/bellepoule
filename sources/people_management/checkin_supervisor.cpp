@@ -19,12 +19,12 @@
 #include <ctype.h>
 
 #include "util/attribute.hpp"
+#include "util/filter.hpp"
 #include "common/schedule.hpp"
 #include "common/player.hpp"
-#include "util/filter.hpp"
 #include "common/contest.hpp"
 
-#include "people_management/checkin_supervisor.hpp"
+#include "checkin_supervisor.hpp"
 
 namespace People
 {
@@ -32,7 +32,7 @@ namespace People
   const gchar *CheckinSupervisor::_xml_class_name = "checkin_stage";
 
   // --------------------------------------------------------------------------------
-  CheckinSupervisor::CheckinSupervisor (StageClass  *stage_class)
+  CheckinSupervisor::CheckinSupervisor (StageClass *stage_class)
     : Checkin ("checkin.glade",
                "Tireur"),
     Stage (stage_class)
@@ -49,29 +49,30 @@ namespace People
       AddSensitiveWidget (_glade->GetWidget ("all_absent_button"));
     }
 
+    // Fencer
     {
       GSList *attr_list;
       Filter *filter;
 
-      AttributeDesc::CreateList (&attr_list,
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                                 "ref",
-                                 "start_rank",
+                                          "ref",
+                                          "start_rank",
 #endif
-                                 "rank",
-                                 "availability",
-                                 "participation_rate",
-                                 "level",
-                                 "status",
-                                 "global_status",
-                                 "previous_stage_rank",
-                                 "exported",
-                                 "final_rank",
-                                 "victories_ratio",
-                                 "indice",
-                                 "pool_nr",
-                                 "HS",
-                                 NULL);
+                                          "rank",
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "status",
+                                          "global_status",
+                                          "previous_stage_rank",
+                                          "exported",
+                                          "final_rank",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          NULL);
       filter = new Filter (attr_list,
                            this);
 
@@ -87,7 +88,28 @@ namespace People
       filter->ShowAttribute ("licence");
 
       SetFilter  (filter);
-      CreateForm (filter);
+      CreateForm (filter,
+                  GetPlayerType ());
+      filter->Release ();
+    }
+
+    // Team
+    {
+      GSList *attr_list;
+      Filter *filter;
+
+      AttributeDesc::CreateIncludingList (&attr_list,
+#ifndef DEBUG
+                                          "ref",
+#endif
+                                          "name",
+                                          NULL);
+      filter = new Filter (attr_list,
+                           this);
+
+      _form->AddPage (gettext ("Team"),
+                      filter);
+
       filter->Release ();
     }
   }
