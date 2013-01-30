@@ -20,133 +20,137 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "module.hpp"
-#include "attribute.hpp"
-#include "player.hpp"
+#include "util/module.hpp"
+#include "util/attribute.hpp"
 
-class PlayersList : public Module
+#include "common/player.hpp"
+
+namespace People
 {
-  public:
-    static Player *GetPlayer (GtkTreeModel *model,
-                              GtkTreeIter  *iter);
+  class PlayersList : public Module
+  {
+    public:
+      static Player *GetPlayer (GtkTreeModel *model,
+                                GtkTreeIter  *iter);
 
-    PlayersList (const gchar *glade_file,
-                 guint        rights = SORTABLE | MODIFIABLE);
+      PlayersList (const gchar *glade_file,
+                   guint        rights = SORTABLE | MODIFIABLE);
 
-    virtual void Add (Player *player);
+      virtual void Add (Player *player);
 
-    void Wipe ();
+      void Wipe ();
 
-    void SetFilter (Filter *filter);
+      void SetFilter (Filter *filter);
 
-    void OnAttrListUpdated ();
+      void OnAttrListUpdated ();
 
-    void Update (Player *player);
+      void Update (Player *player);
 
-    GSList *GetList ();
+      GSList *GetList ();
 
-    virtual guint PreparePrint (GtkPrintOperation *operation,
-                                GtkPrintContext   *context);
-    virtual void DrawPage (GtkPrintOperation *operation,
-                           GtkPrintContext   *context,
-                           gint               page_nr);
-    virtual void OnEndPrint (GtkPrintOperation *operation,
-                             GtkPrintContext   *context);
-    void DrawBarePage (GtkPrintOperation *operation,
-                       GtkPrintContext   *context,
-                       gint               page_nr);
+      virtual guint PreparePrint (GtkPrintOperation *operation,
+                                  GtkPrintContext   *context);
+      virtual void DrawPage (GtkPrintOperation *operation,
+                             GtkPrintContext   *context,
+                             gint               page_nr);
+      virtual void OnEndPrint (GtkPrintOperation *operation,
+                               GtkPrintContext   *context);
+      void DrawBarePage (GtkPrintOperation *operation,
+                         GtkPrintContext   *context,
+                         gint               page_nr);
 
-    static const guint NO_RIGHT   = 0x00000000;
-    static const guint SORTABLE   = 0x00000001;
-    static const guint MODIFIABLE = 0x00000002;
+      static const guint NO_RIGHT   = 0x00000000;
+      static const guint SORTABLE   = 0x00000001;
+      static const guint MODIFIABLE = 0x00000002;
 
-  protected:
-    GtkWidget *_tree_view;
-    GSList    *_player_list;
+    protected:
+      GtkWidget *_tree_view;
+      GSList    *_player_list;
 
-    typedef gboolean (*CustomFilter) (Player *player);
+      typedef gboolean (*CustomFilter) (Player *player);
 
-    virtual ~PlayersList ();
+      virtual ~PlayersList ();
 
-    void RemoveSelection ();
+      void RemoveSelection ();
 
-    void Remove (Player *player);
+      void Remove (Player *player);
 
-    void SetSensitiveState (gboolean sensitive_value);
+      void SetSensitiveState (gboolean sensitive_value);
 
-    GSList *CreateCustomList (CustomFilter filter);
+      GSList *CreateCustomList (CustomFilter filter);
 
-    GSList *GetSelectedPlayers ();
+      GSList *GetSelectedPlayers ();
 
-    void SetAttributeRight (const gchar *name,
-                            gboolean     modifiable);
+      void SetAttributeRight (const gchar *name,
+                              gboolean     modifiable);
 
-    virtual void OnListChanged ();
+      virtual void OnListChanged ();
 
-  protected:
-    GtkListStore *_store;
+    protected:
+      GtkTreeStore *_store;
 
-  private:
-    guint     _rights;
-    guint     _nb_player_per_page;
-    gdouble   _print_scale;
-    guint     _nb_pages;
-    gint      _selector_column;
-    gdouble  *_column_width;
+    private:
+      guint     _rights;
+      guint     _nb_player_per_page;
+      gdouble   _print_scale;
+      guint     _nb_pages;
+      gint      _selector_column;
+      gdouble  *_column_width;
 
-    void SetColumn (guint           id,
-                    Filter::Layout *attr_layout,
-                    gint            at);
+      void SetColumn (guint           id,
+                      Filter::Layout *attr_layout,
+                      gint            at);
 
-    GtkTreeRowReference *GetPlayerRowRef (GtkTreeIter *iter);
+      GtkTreeRowReference *GetPlayerRowRef (GtkTreeIter *iter);
 
-    Player *GetPlayer (const gchar *path_string);
+      Player *GetPlayer (const gchar *path_string);
 
-    virtual gboolean PlayerIsPrintable (Player *player);
+      virtual gboolean PlayerIsPrintable (Player *player);
 
-    void OnCellEdited (gchar         *path_string,
-                       gchar         *new_text,
-                       AttributeDesc *desc);
+      void OnCellEdited (gchar         *path_string,
+                         gchar         *new_text,
+                         AttributeDesc *desc);
 
-    void OnCellToggled (gchar         *path_string,
-                        gboolean       is_active,
-                        AttributeDesc *desc);
+      void OnCellToggled (gchar         *path_string,
+                          gboolean       is_active,
+                          AttributeDesc *desc);
 
-    void PrintHeader (GooCanvasItem *root_item,
-                      gboolean       update_column_width);
+      void PrintHeader (GooCanvasItem *root_item,
+                        gboolean       update_column_width);
 
-    void PrintPlayer (GooCanvasItem   *table,
-                      GtkPrintContext *context,
-                      Player          *player,
-                      guint            row,
-                      gboolean         update_column_width);
+      void PrintPlayer (GooCanvasItem   *table,
+                        GtkPrintContext *context,
+                        Player          *player,
+                        guint            row,
+                        gboolean         update_column_width);
 
-    void GetPrintScale (GtkPrintOperation *operation,
-                        GtkPrintContext   *context,
-                        gdouble           *scale,
-                        gdouble           *w,
-                        gdouble           *h);
+      void GetPrintScale (GtkPrintOperation *operation,
+                          GtkPrintContext   *context,
+                          gdouble           *scale,
+                          gdouble           *w,
+                          gdouble           *h);
 
-    virtual void OnPlayerRemoved (Player *player) {};
+      virtual void OnPlayerRemoved (Player *player) {};
 
-    static void on_cell_toggled (GtkCellRendererToggle *cell,
-                                 gchar                 *path_string,
-                                 gpointer               user_data);
+      static void on_cell_toggled (GtkCellRendererToggle *cell,
+                                   gchar                 *path_string,
+                                   gpointer               user_data);
 
-    static void on_cell_edited (GtkCellRendererText *cell,
-                                gchar               *path_string,
-                                gchar               *new_text,
-                                gpointer             user_data);
+      static void on_cell_edited (GtkCellRendererText *cell,
+                                  gchar               *path_string,
+                                  gchar               *new_text,
+                                  gpointer             user_data);
 
-    static gint CompareIterator (GtkTreeModel        *model,
-                                 GtkTreeIter         *a,
-                                 GtkTreeIter         *b,
-                                 Player::AttributeId *attr_id);
+      static gint CompareIterator (GtkTreeModel        *model,
+                                   GtkTreeIter         *a,
+                                   GtkTreeIter         *b,
+                                   Player::AttributeId *attr_id);
 
-    static void OnDiscreteEditingStarted (GtkCellRenderer *renderer,
-                                          GtkCellEditable *editable,
-                                          gchar           *path,
-                                          AttributeDesc   *desc);
-};
+      static void OnDiscreteEditingStarted (GtkCellRenderer *renderer,
+                                            GtkCellEditable *editable,
+                                            gchar           *path,
+                                            AttributeDesc   *desc);
+  };
+}
 
 #endif

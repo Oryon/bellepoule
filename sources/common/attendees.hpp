@@ -17,7 +17,8 @@
 #ifndef attendees_hpp
 #define attendees_hpp
 
-#include "object.hpp"
+#include "util/object.hpp"
+
 #include "player.hpp"
 
 class Attendees : public Object

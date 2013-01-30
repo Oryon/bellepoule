@@ -222,7 +222,7 @@ void AttributeDesc::BindDiscreteValues (GtkCellRenderer *renderer)
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::ListStoreSetDefault (GtkListStore        *store,
+void AttributeDesc::TreeStoreSetDefault (GtkTreeStore        *store,
                                          GtkTreeIter         *iter,
                                          gint                 column,
                                          AttributeDesc::Look  look)
@@ -233,33 +233,33 @@ void AttributeDesc::ListStoreSetDefault (GtkListStore        *store,
     {
       if (look == SHORT_TEXT)
       {
-        gtk_list_store_set (store, iter,
+        gtk_tree_store_set (store, iter,
                             column, "?",
                             -1);
       }
       else
       {
-        gtk_list_store_set (store, iter,
+        gtk_tree_store_set (store, iter,
                             column, "???",
                             -1);
       }
     }
     else
     {
-      gtk_list_store_set (store, iter,
+      gtk_tree_store_set (store, iter,
                           column, NULL,
                           -1);
     }
   }
   else if (_type == G_TYPE_BOOLEAN)
   {
-    gtk_list_store_set (store, iter,
+    gtk_tree_store_set (store, iter,
                         column, FALSE,
                         -1);
   }
   else
   {
-    gtk_list_store_set (store, iter,
+    gtk_tree_store_set (store, iter,
                         column, 0,
                         -1);
   }
@@ -870,7 +870,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::CreateList (GSList **list, ...)
+void AttributeDesc::CreateExcludingList (GSList **list, ...)
 {
   GSList *new_list = NULL;
   GSList *current  = _list;
@@ -896,6 +896,36 @@ void AttributeDesc::CreateList (GSList **list, ...)
       new_list = g_slist_append (new_list,
                                  desc);
     }
+
+    current = g_slist_next (current);
+  }
+
+  *list = new_list;
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::CreateIncludingList (GSList **list, ...)
+{
+  GSList *new_list = NULL;
+  GSList *current  = _list;
+
+  while (current)
+  {
+    va_list        ap;
+    gchar         *name;
+    AttributeDesc *desc = (AttributeDesc *) current->data;
+
+    va_start (ap, list);
+    while ((name = va_arg (ap, char *)))
+    {
+      if (strcmp (name, desc->_code_name) == 0)
+      {
+        new_list = g_slist_append (new_list,
+                                   desc);
+        break;
+      }
+    }
+    va_end (ap);
 
     current = g_slist_next (current);
   }
@@ -1113,14 +1143,14 @@ gchar *TextAttribute::GetXmlImage ()
 }
 
 // --------------------------------------------------------------------------------
-void TextAttribute::ListStoreSet (GtkListStore        *store,
+void TextAttribute::TreeStoreSet (GtkTreeStore        *store,
                                   GtkTreeIter         *iter,
                                   gint                 column,
                                   AttributeDesc::Look  look)
 {
   if (look == AttributeDesc::GRAPHICAL)
   {
-    gtk_list_store_set (store, iter,
+    gtk_tree_store_set (store, iter,
                         column, GetPixbuf (),
                         -1);
   }
@@ -1128,7 +1158,7 @@ void TextAttribute::ListStoreSet (GtkListStore        *store,
   {
     gchar *value = GetUserImage (look);
 
-    gtk_list_store_set (store, iter,
+    gtk_tree_store_set (store, iter,
                         column, value,
                         -1);
     g_free (value);
@@ -1249,12 +1279,12 @@ GdkPixbuf *BooleanAttribute::GetPixbuf ()
 }
 
 // --------------------------------------------------------------------------------
-void BooleanAttribute::ListStoreSet (GtkListStore        *store,
+void BooleanAttribute::TreeStoreSet (GtkTreeStore        *store,
                                      GtkTreeIter         *iter,
                                      gint                 column,
                                      AttributeDesc::Look  look)
 {
-  gtk_list_store_set (store, iter,
+  gtk_tree_store_set (store, iter,
                       column, _value,
                       -1);
 }
@@ -1345,12 +1375,12 @@ gchar *IntAttribute::GetXmlImage ()
 }
 
 // --------------------------------------------------------------------------------
-void IntAttribute::ListStoreSet (GtkListStore        *store,
+void IntAttribute::TreeStoreSet (GtkTreeStore        *store,
                                  GtkTreeIter         *iter,
                                  gint                 column,
                                  AttributeDesc::Look  look)
 {
-  gtk_list_store_set (store, iter,
+  gtk_tree_store_set (store, iter,
                       column, _value,
                       -1);
 }

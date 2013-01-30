@@ -20,91 +20,97 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "data.hpp"
-#include "module.hpp"
-#include "attribute.hpp"
+#include "util/data.hpp"
+#include "util/module.hpp"
+#include "util/attribute.hpp"
+
 #include "players_list.hpp"
 #include "form.hpp"
 
-class Checkin : public PlayersList
+namespace People
 {
-  public:
-    Checkin (const gchar *glade,
-             const gchar *player_tag);
+  class Checkin : public PlayersList
+  {
+    public:
+      Checkin (const gchar *glade,
+               const gchar *player_tag);
 
-    virtual void Add (Player *player);
+      virtual void Add (Player *player);
 
-    void LoadList (xmlNode *xml_node);
+      void LoadList (xmlNode *xml_node);
 
-    void LoadList (xmlXPathContext *xml_context,
-                   const gchar     *from_node);
+      void LoadList (xmlXPathContext *xml_context,
+                     const gchar     *from_node);
 
-    void SaveList (xmlTextWriter *xml_writer);
+      void SaveList (xmlTextWriter *xml_writer);
 
-    void ImportCSV (gchar *filename);
+      void ImportCSV (gchar *filename);
 
-    void ImportFFF (gchar *filename);
+      void ImportFFF (gchar *filename);
 
-  public:
-    void on_add_player_button_clicked ();
+    public:
+      void on_add_player_button_clicked ();
 
-    void on_players_list_row_activated (GtkTreePath *path);
+      void on_players_list_row_activated (GtkTreePath *path);
 
-    void on_remove_player_button_clicked ();
+      void on_remove_player_button_clicked ();
 
-    void OnToggleAllPlayers (gboolean present);
+      void OnToggleAllPlayers (gboolean present);
 
-    void OnImport ();
+      void OnImport ();
 
-    void OnPrint ();
+      void OnPrint ();
 
-    void OnListChanged ();
+      void OnListChanged ();
 
-  protected:
-    Form *_form;
+    protected:
+      Form *_form;
 
-    virtual ~Checkin ();
+      virtual ~Checkin ();
 
-    static gboolean PresentPlayerFilter (Player *player);
+      static gboolean PresentPlayerFilter (Player *player);
 
-    virtual void Monitor (Player *player);
+      virtual void Monitor (Player *player);
 
-    void CreateForm (Filter *filter);
+      void CreateForm (Filter             *filter,
+                       Player::PlayerType  player_type);
 
-    virtual void OnPlayerEventFromForm (Player            *player,
-                                        Form::PlayerEvent  event);
+      virtual void OnPlayerEventFromForm (Player            *player,
+                                          Form::PlayerEvent  event,
+                                          guint              page);
 
-  private:
-    guint        _attendings;
-    GtkWidget   *_print_dialog;
-    gboolean     _print_attending;
-    gboolean     _print_missing;
-    const gchar *_player_tag;
-    gchar       *_players_tag;
+      Player::PlayerType GetPlayerType ();
 
-    virtual void OnLoaded () {};
+    private:
+      guint        _attendings;
+      GtkWidget   *_print_dialog;
+      gboolean     _print_attending;
+      gboolean     _print_missing;
+      const gchar *_player_tag;
+      gchar       *_players_tag;
 
-    virtual void OnPlayerLoaded (Player *player) {};
+      virtual void OnLoaded () {};
 
-    void RefreshAttendingDisplay ();
+      virtual void OnPlayerLoaded (Player *player) {};
 
-    void OnPlayerRemoved (Player *player);
+      void RefreshAttendingDisplay ();
 
-    void OnPlugged ();
+      void OnPlayerRemoved (Player *player);
 
-    gboolean PlayerIsPrintable (Player *player);
+      void OnPlugged ();
 
-    Player::PlayerType GetPlayerType ();
+      gboolean PlayerIsPrintable (Player *player);
 
-    static void OnAttendingChanged (Player    *player,
-                                    Attribute *attr,
-                                    Object    *owner);
+      static void OnAttendingChanged (Player    *player,
+                                      Attribute *attr,
+                                      Object    *owner);
 
-    gchar *GetFileContent (gchar *filename);
+      gchar *GetFileContent (gchar *filename);
 
-    gchar *GetPrintName ();
+      gchar *GetPrintName ();
 
-    void GuessPlayerLeague (Player *player);
-};
+      void GuessPlayerLeague (Player *player);
+  };
+}
 
 #endif

@@ -20,171 +20,174 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "data.hpp"
-#include "stage.hpp"
-#include "canvas_module.hpp"
-#include "score_collector.hpp"
-#include "player.hpp"
+#include "util/data.hpp"
+#include "util/canvas_module.hpp"
+#include "common/stage.hpp"
+#include "common/score_collector.hpp"
+#include "common/player.hpp"
 
-class PoolMatchOrder;
-
-class Pool : public CanvasModule
+namespace Pool
 {
-  public:
-    typedef enum
-    {
-      WITH_POOL_NR  = 0x1,
-      WITH_CALCULUS = 0x2,
-      WITH_RANDOM   = 0x4
-    } ComparisonPolicy;
+  class MatchOrder;
 
-  public:
-    typedef void (*StatusCbk) (Pool *pool,
-                               void *data);
+  class Pool : public CanvasModule
+  {
+    public:
+      typedef enum
+      {
+        WITH_POOL_NR  = 0x1,
+        WITH_CALCULUS = 0x2,
+        WITH_RANDOM   = 0x4
+      } ComparisonPolicy;
 
-    Pool (Data    *max_score,
-          guint    number,
-          gchar    weapon_code,
-          guint32  rand_seed);
+    public:
+      typedef void (*StatusCbk) (Pool *pool,
+                                 void *data);
 
-    void  AddFencer     (Player *player, Object *rank_owner);
-    void  AddReferee    (Player *player);
-    void  CreateMatchs  (AttributeDesc *affinity_criteria);
-    void  RemoveFencer  (Player *player);
-    void  RemoveReferee (Player *player);
-    guint GetNbPlayers  ();
-    guint GetNbMatchs   ();
-    guint GetNumber     ();
-    void  DropPlayer    (Player *player, gchar *reason);
-    void  RestorePlayer (Player *player);
-    void  CleanScores   ();
-    void  DeleteMatchs  ();
-    void  Lock          ();
-    void  UnLock        ();
-    void  SetDataOwner  (Object *single_owner,
-                         Object *combined_owner,
-                         Object *combined_source_owner);
-    void  SetStatusCbk  (StatusCbk  cbk,
-                         void      *data);
-    void OnStatusChanged (GtkComboBox *combo_box);
-    void CopyPlayersStatus (Object *from);
+      Pool (Data    *max_score,
+            guint    number,
+            gchar    weapon_code,
+            guint32  rand_seed);
 
-    gboolean IsOver ();
-    gboolean HasError ();
+      void  AddFencer     (Player *player, Object *rank_owner);
+      void  AddReferee    (Player *player);
+      void  CreateMatchs  (AttributeDesc *affinity_criteria);
+      void  RemoveFencer  (Player *player);
+      void  RemoveReferee (Player *player);
+      guint GetNbPlayers  ();
+      guint GetNbMatchs   ();
+      guint GetNumber     ();
+      void  DropPlayer    (Player *player, gchar *reason);
+      void  RestorePlayer (Player *player);
+      void  CleanScores   ();
+      void  DeleteMatchs  ();
+      void  Lock          ();
+      void  UnLock        ();
+      void  SetDataOwner  (Object *single_owner,
+                           Object *combined_owner,
+                           Object *combined_source_owner);
+      void  SetStatusCbk  (StatusCbk  cbk,
+                           void      *data);
+      void OnStatusChanged (GtkComboBox *combo_box);
+      void CopyPlayersStatus (Object *from);
 
-    void RefreshScoreData ();
+      gboolean IsOver ();
+      gboolean HasError ();
 
-    gchar *GetName ();
+      void RefreshScoreData ();
 
-    void Wipe ();
+      gchar *GetName ();
 
-    void Save (xmlTextWriter *xml_writer);
+      void Wipe ();
 
-    void Load (xmlNode *xml_node,
-               GSList  *player_list);
+      void Save (xmlTextWriter *xml_writer);
 
-    void Stuff ();
+      void Load (xmlNode *xml_node,
+                 GSList  *player_list);
 
-    void DrawPage (GtkPrintOperation *operation,
-                   GtkPrintContext   *context,
-                   gint               page_nr);
+      void Stuff ();
 
-    GSList *GetFencerList ();
+      void DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
 
-    GSList *GetRefereeList ();
+      GSList *GetFencerList ();
 
-    static gint ComparePlayer (Player   *A,
-                               Player   *B,
-                               Object   *data_owner,
-                               guint32   rand_seed,
-                               Object   *main_data_owner,
-                               guint     comparison_policy);
+      GSList *GetRefereeList ();
 
-  private:
-    Object         *_single_owner;
-    Object         *_combined_source_owner;
-    Data           *_max_score;
-    guint           _number;
-    GSList         *_fencer_list;
-    GSList         *_sorted_fencer_list;
-    GSList         *_referee_list;
-    ScoreCollector *_score_collector;
-    GSList         *_match_list;
-    gchar          *_name;
-    gboolean        _is_over;
-    gboolean        _has_error;
-    GooCanvasItem  *_title_table;
-    GooCanvasItem  *_status_item;
-    gboolean        _locked;
-    GSList         *_display_data;
-    guint           _nb_drop;
-    PoolMatchOrder *_match_order;
+      static gint ComparePlayer (Player   *A,
+                                 Player   *B,
+                                 Object   *data_owner,
+                                 guint32   rand_seed,
+                                 Object   *main_data_owner,
+                                 guint     comparison_policy);
 
-    void           *_status_cbk_data;
-    StatusCbk       _status_cbk;
+    private:
+      Object         *_single_owner;
+      Object         *_combined_source_owner;
+      Data           *_max_score;
+      guint           _number;
+      GSList         *_fencer_list;
+      GSList         *_sorted_fencer_list;
+      GSList         *_referee_list;
+      ScoreCollector *_score_collector;
+      GSList         *_match_list;
+      gchar          *_name;
+      gboolean        _is_over;
+      gboolean        _has_error;
+      GooCanvasItem  *_title_table;
+      GooCanvasItem  *_status_item;
+      gboolean        _locked;
+      GSList         *_display_data;
+      guint           _nb_drop;
+      MatchOrder     *_match_order;
 
-  private:
-    typedef enum
-    {
-      AVERAGE,
-      SUM
-    } CombinedOperation;
+      void           *_status_cbk_data;
+      StatusCbk       _status_cbk;
 
-    static gint _ComparePlayer (Player *A,
-                                Player *B,
-                                Pool   *pool);
+    private:
+      typedef enum
+      {
+        AVERAGE,
+        SUM
+      } CombinedOperation;
 
-    static gint _ComparePlayerWithFullRandom (Player *A,
-                                              Player *B,
-                                              Pool   *pool);
+      static gint _ComparePlayer (Player *A,
+                                  Player *B,
+                                  Pool   *pool);
 
-    void OnPlugged ();
+      static gint _ComparePlayerWithFullRandom (Player *A,
+                                                Player *B,
+                                                Pool   *pool);
 
-    void OnUnPlugged ();
+      void OnPlugged ();
 
-    void SortPlayers ();
+      void OnUnPlugged ();
 
-    Player *GetPlayer (guint   i,
-                       GSList *in_list);
+      void SortPlayers ();
 
-    void SetDisplayData (Player      *player,
-                         GooCanvas   *on_canvas,
-                         const gchar *name,
-                         void        *value);
+      Player *GetPlayer (guint   i,
+                         GSList *in_list);
 
-    void Draw (GooCanvas *on_canvas,
-               gboolean   print_for_referees,
-               gboolean   print_matchs);
+      void SetDisplayData (Player      *player,
+                           GooCanvas   *on_canvas,
+                           const gchar *name,
+                           void        *value);
 
-    Match *GetMatch (Player *A,
-                     Player *B);
+      void Draw (GooCanvas *on_canvas,
+                 gboolean   print_for_referees,
+                 gboolean   print_matchs);
 
-    Match *GetMatch (guint i);
+      Match *GetMatch (Player *A,
+                       Player *B);
 
-    static void OnNewScore (ScoreCollector *score_collector,
-                            CanvasModule   *client,
-                            Match          *match,
-                            Player         *player);
+      Match *GetMatch (guint i);
 
-    void RefreshDashBoard ();
+      static void OnNewScore (ScoreCollector *score_collector,
+                              CanvasModule   *client,
+                              Match          *match,
+                              Player         *player);
 
-    void RefreshAttribute (Player            *player,
-                           const gchar       *name,
-                           guint              value,
-                           CombinedOperation  operation);
+      void RefreshDashBoard ();
 
-    static gint CompareMatch (Match *a,
-                              Match *b,
-                              Pool  *pool);
+      void RefreshAttribute (Player            *player,
+                             const gchar       *name,
+                             guint              value,
+                             CombinedOperation  operation);
 
-    static void on_status_changed (GtkComboBox *combo_box,
-                                   Pool        *pool);
+      static gint CompareMatch (Match *a,
+                                Match *b,
+                                Pool  *pool);
 
-    static gboolean on_status_scrolled (GtkWidget *widget,
-                                        GdkEvent  *event,
-                                        gpointer   user_data);
+      static void on_status_changed (GtkComboBox *combo_box,
+                                     Pool        *pool);
 
-    virtual ~Pool ();
-};
+      static gboolean on_status_scrolled (GtkWidget *widget,
+                                          GdkEvent  *event,
+                                          gpointer   user_data);
+
+      virtual ~Pool ();
+  };
+}
 
 #endif

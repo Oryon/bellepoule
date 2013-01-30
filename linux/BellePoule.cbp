@@ -43,12 +43,6 @@
 			<Add option="-Wno-long-long -Wno-unused-parameter -Wno-shadow" />
 			<Add option="-pthread -D_REENTRANT" />
 			<Add directory="../sources" />
-			<Add directory="../sources/common" />
-			<Add directory="../sources/people_management" />
-			<Add directory="../sources/pool_round" />
-			<Add directory="../sources/table_round" />
-			<Add directory="../sources/util" />
-			<Add directory="../sources/network" />
       <Add directory="/usr/include/gtk-2.0" />
       <Add directory="/usr/lib/x86_64-linux-gnu/gtk-2.0/include" />
       <Add directory="/usr/include" />

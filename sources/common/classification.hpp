@@ -19,12 +19,12 @@
 
 #include <gtk/gtk.h>
 
-#include "attribute.hpp"
-#include "players_list.hpp"
+#include "util/attribute.hpp"
+#include "people_management/players_list.hpp"
 
 class Contest;
 
-class Classification : public PlayersList
+class Classification : public People::PlayersList
 {
   public:
     Classification (Filter *filter);

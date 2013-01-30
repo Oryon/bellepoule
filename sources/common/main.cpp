@@ -28,18 +28,19 @@
 #endif
 
 #include <gtk/gtk.h>
-
-#include "contest.hpp"
-#include "checkin_supervisor.hpp"
-#include "pool_allocator.hpp"
-#include "pool_supervisor.hpp"
-#include "table_supervisor.hpp"
-#include "splitting.hpp"
-#include "tournament.hpp"
-#include "attribute.hpp"
-#include "general_classification.hpp"
-#include "glade.hpp"
 #include "locale"
+
+#include "util/attribute.hpp"
+#include "util/glade.hpp"
+#include "people_management/checkin_supervisor.hpp"
+#include "people_management/general_classification.hpp"
+#include "people_management/splitting.hpp"
+#include "pool_round/pool_allocator.hpp"
+#include "pool_round/pool_supervisor.hpp"
+#include "table_round/table_supervisor.hpp"
+
+#include "tournament.hpp"
+#include "contest.hpp"
 
 // --------------------------------------------------------------------------------
 static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
@@ -238,12 +239,12 @@ int main (int argc, char **argv)
     Contest::Init ();
 
     {
-      CheckinSupervisor::Declare     ();
-      PoolAllocator::Declare         ();
-      PoolSupervisor::Declare        ();
-      TableSupervisor::Declare       ();
-      GeneralClassification::Declare ();
-      Splitting::Declare             ();
+      People::CheckinSupervisor::Declare     ();
+      Pool::Allocator::Declare               ();
+      Pool::Supervisor::Declare              ();
+      Table::Supervisor::Declare             ();
+      People::GeneralClassification::Declare ();
+      People::Splitting::Declare             ();
     }
 
     g_free (install_dirname);
@@ -388,7 +389,7 @@ int main (int argc, char **argv)
       tournament = new Tournament (NULL);
     }
 
-    Splitting::SetHostTournament (tournament);
+    People::Splitting::SetHostTournament (tournament);
   }
 
   gtk_main ();

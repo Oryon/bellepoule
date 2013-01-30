@@ -32,13 +32,14 @@
 #include <shellapi.h>
 #endif
 
+#include "util/canvas.hpp"
+#include "people_management/checkin.hpp"
+#include "people_management/referees_list.hpp"
+#include "people_management/checkin_supervisor.hpp"
+#include "network/upload.hpp"
+
 #include "version.h"
-#include "canvas.hpp"
 #include "tournament.hpp"
-#include "checkin.hpp"
-#include "referees_list.hpp"
-#include "checkin_supervisor.hpp"
-#include "upload.hpp"
 
 #include "contest.hpp"
 
@@ -236,6 +237,7 @@ Contest::Contest ()
   _weapon     = 0;
   _category   = 0;
   _gender     = 0;
+  _team_event = FALSE;
   _derived    = FALSE;
   _downloader = NULL;
 
@@ -253,7 +255,7 @@ Contest::Contest ()
   _properties_dialog = _glade->GetWidget ("properties_dialog");
 
   {
-    _referees_list = new RefereesList (this);
+    _referees_list = new People::RefereesList (this);
     Plug (_referees_list,
           _glade->GetWidget ("referees_viewport"),
           NULL);
@@ -422,10 +424,10 @@ void Contest::LoadFencerFile (const gchar *filename)
   {
     if (_schedule)
     {
-      CheckinSupervisor *checkin;
+      People::CheckinSupervisor *checkin;
 
       _schedule->CreateDefault ();
-      checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+      checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
 
       if (   g_str_has_suffix (filename, ".fff")
           || g_str_has_suffix (filename, ".FFF"))
@@ -443,9 +445,9 @@ void Contest::LoadFencerFile (const gchar *filename)
 // --------------------------------------------------------------------------------
 void Contest::LoadRemote (const gchar *address)
 {
-  _downloader = new Downloader (address,
-                                OnCompetitionReceived,
-                                this);
+  _downloader = new Net::Downloader (address,
+                                     OnCompetitionReceived,
+                                     this);
 
   _downloader->Start (address,
                       60*2*1000);
@@ -454,7 +456,7 @@ void Contest::LoadRemote (const gchar *address)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Contest::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
+gboolean Contest::OnCompetitionReceived (Net::Downloader::CallbackData *cbk_data)
 {
   Contest *contest = (Contest *) cbk_data->_user_data;
 
@@ -464,7 +466,7 @@ gboolean Contest::OnCompetitionReceived (Downloader::CallbackData *cbk_data)
 }
 
 // --------------------------------------------------------------------------------
-void Contest::OpenMemoryContest (Downloader::CallbackData *cbk_data)
+void Contest::OpenMemoryContest (Net::Downloader::CallbackData *cbk_data)
 {
   if (_downloader)
   {
@@ -527,7 +529,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
   {
     gboolean  score_stuffing_policy = FALSE;
-    gboolean  need_post_processing  = FALSE;
+    gboolean  need_post_processing;
 
     xmlXPathInit ();
 
@@ -536,14 +538,35 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       xmlXPathObject  *xml_object;
       xmlNodeSet      *xml_nodeset;
 
-      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
+      {
+        xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
 
+        need_post_processing = FALSE;
+        _team_event          = FALSE;
+      }
       if (xml_object->nodesetval->nodeNr == 0)
       {
         xmlXPathFreeObject (xml_object);
         xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle", xml_context);
 
         need_post_processing = TRUE;
+        _team_event          = FALSE;
+      }
+      if (xml_object->nodesetval->nodeNr == 0)
+      {
+        xmlXPathFreeObject (xml_object);
+        xml_object = xmlXPathEval (BAD_CAST "/CompetitionParEquipes", xml_context);
+
+        need_post_processing = FALSE;
+        _team_event          = TRUE;
+      }
+      if (xml_object->nodesetval->nodeNr == 0)
+      {
+        xmlXPathFreeObject (xml_object);
+        xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionParEquipes", xml_context);
+
+        need_post_processing = TRUE;
+        _team_event          = TRUE;
       }
 
       xml_nodeset = xml_object->nodesetval;
@@ -718,7 +741,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
     if (need_post_processing)
     {
-      CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+      People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
 
       checkin->ConvertFromBaseToResult ();
     }
@@ -793,7 +816,7 @@ void Contest::AddFencer (Player *fencer,
 {
   if (_schedule)
   {
-    CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+    People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
 
     if (checkin)
     {
@@ -944,7 +967,7 @@ Contest *Contest::Duplicate ()
 // --------------------------------------------------------------------------------
 void Contest::LatchPlayerList ()
 {
-  CheckinSupervisor *checkin = dynamic_cast <CheckinSupervisor *> (_schedule->GetStage (0));
+  People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
 
   if (checkin)
   {
@@ -1173,6 +1196,9 @@ void Contest::FillInProperties ()
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("allow_radiobutton")),
                                 _schedule->ScoreStuffingIsAllowed ());
 
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("individual_radiobutton")),
+                                (_team_event == FALSE));
+
   FillInDate (_day,
               _month,
               _year);
@@ -1228,6 +1254,8 @@ void Contest::ReadProperties ()
       _schedule->SetScoreStuffingPolicy (policy);
     }
   }
+
+  _team_event = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("team_radiobutton")));
 
   {
     g_key_file_set_string (_config_file,
@@ -1327,10 +1355,10 @@ void Contest::Publish ()
 {
   if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
-    Upload *upload = new Upload (_filename,
-                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
-                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+    Net::Upload *upload = new Net::Upload (_filename,
+                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
+                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 
     upload->Start ();
   }
@@ -1402,10 +1430,20 @@ void Contest::Save (gchar *filename)
                                   "UTF-8",
                                   NULL);
 
-      xmlTextWriterStartDTD (xml_writer,
-                             BAD_CAST "CompetitionIndividuelle",
-                             NULL,
-                             NULL);
+      if (_team_event)
+      {
+        xmlTextWriterStartDTD (xml_writer,
+                               BAD_CAST "CompetitionParEquipes",
+                               NULL,
+                               NULL);
+      }
+      else
+      {
+        xmlTextWriterStartDTD (xml_writer,
+                               BAD_CAST "CompetitionIndividuelle",
+                               NULL,
+                               NULL);
+      }
       xmlTextWriterEndDTD (xml_writer);
 
       xmlTextWriterStartComment (xml_writer);
@@ -1415,8 +1453,16 @@ void Contest::Save (gchar *filename)
       xmlTextWriterWriteFormatString (xml_writer, "   http://betton.escrime.free.fr/index.php/bellepoule\n");
       xmlTextWriterEndComment (xml_writer);
 
-      xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "CompetitionIndividuelle");
+      if (_team_event)
+      {
+        xmlTextWriterStartElement (xml_writer,
+                                   BAD_CAST "CompetitionParEquipes");
+      }
+      else
+      {
+        xmlTextWriterStartElement (xml_writer,
+                                   BAD_CAST "CompetitionIndividuelle");
+      }
 
       {
         _color->Save (xml_writer);

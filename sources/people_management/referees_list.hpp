@@ -24,43 +24,47 @@
 
 class Contest;
 
-class RefereesList : public Checkin
+namespace People
 {
-  public:
-    RefereesList (Contest *contest);
+  class RefereesList : public Checkin
+  {
+    public:
+      RefereesList (Contest *contest);
 
-  protected:
-    virtual ~RefereesList ();
+    protected:
+      virtual ~RefereesList ();
 
-  private:
-    Contest *_contest;
+    private:
+      Contest *_contest;
 
-    void Monitor (Player *referee);
+      void Monitor (Player *referee);
 
-    void Add (Player *referee);
+      void Add (Player *referee);
 
-    void OnPlayerLoaded (Player *referee);
+      void OnPlayerLoaded (Player *referee);
 
-    void OnPlayerEventFromForm (Player            *referee,
-                                Form::PlayerEvent  event);
+      void OnPlayerEventFromForm (Player            *referee,
+                                  Form::PlayerEvent  event,
+                                  guint              page);
 
-    static void OnAvailabilityChanged (Player    *referee,
-                                       Attribute *attr,
-                                       Object    *owner);
+      static void OnAvailabilityChanged (Player    *referee,
+                                         Attribute *attr,
+                                         Object    *owner);
 
-    static void OnAttendingChanged (Player    *referee,
-                                    Attribute *attr,
-                                    Object    *owner);
+      static void OnAttendingChanged (Player    *referee,
+                                      Attribute *attr,
+                                      Object    *owner);
 
-    static void OnParticipationRateChanged (Player    *referee,
-                                            Attribute *attr,
-                                            Object    *owner);
+      static void OnParticipationRateChanged (Player    *referee,
+                                              Attribute *attr,
+                                              Object    *owner);
 
-    void OnDragDataGet (GtkWidget        *widget,
-                        GdkDragContext   *drag_context,
-                        GtkSelectionData *data,
-                        guint             info,
-                        guint             time);
-};
+      void OnDragDataGet (GtkWidget        *widget,
+                          GdkDragContext   *drag_context,
+                          GtkSelectionData *data,
+                          guint             info,
+                          guint             time);
+  };
+}
 
 #endif

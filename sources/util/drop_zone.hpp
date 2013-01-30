@@ -20,7 +20,6 @@
 #include <gtk/gtk.h>
 
 #include "module.hpp"
-
 #include "object.hpp"
 
 class DropZone : public Object

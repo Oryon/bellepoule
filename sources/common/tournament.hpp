@@ -19,10 +19,10 @@
 
 #include <gtk/gtk.h>
 
-#include "module.hpp"
-#include "glade.hpp"
-#include "http_server.hpp"
-#include "downloader.hpp"
+#include "util/module.hpp"
+#include "util/glade.hpp"
+#include "network/http_server.hpp"
+#include "network/downloader.hpp"
 
 class Contest;
 
@@ -96,13 +96,13 @@ class Tournament : public Module
 
     guint _referee_ref;
 
-    GSList     *_contest_list;
-    GSList     *_referee_list;
-    guint       _nb_matchs;
-    HttpServer *_http_server;
-    Downloader *_version_downloader;
-    Downloader *_competitions_downloader;
-    gboolean    _print_meal_tickets;
+    GSList          *_contest_list;
+    GSList          *_referee_list;
+    guint            _nb_matchs;
+    Net::HttpServer *_http_server;
+    Net::Downloader *_version_downloader;
+    Net::Downloader *_competitions_downloader;
+    gboolean         _print_meal_tickets;
 
     void SetBackupLocation (gchar *location);
 
@@ -127,9 +127,9 @@ class Tournament : public Module
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);
 
-    static gboolean OnLatestVersionReceived (Downloader::CallbackData *cbk_data);
+    static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
 
-    static gboolean OnCompetitionListReceived (Downloader::CallbackData *cbk_data);
+    static gboolean OnCompetitionListReceived (Net::Downloader::CallbackData *cbk_data);
 };
 
 #endif

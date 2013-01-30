@@ -20,7 +20,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "schedule.hpp"
+#include "common/player.hpp"
 
 #include "canvas_module.hpp"
 

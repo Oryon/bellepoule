@@ -19,105 +19,109 @@
 
 #include <gtk/gtk.h>
 
-#include "data.hpp"
-#include "module.hpp"
+#include "util/data.hpp"
+#include "util/module.hpp"
+
 #include "pool.hpp"
 
-class PoolAllocator;
-
-class PoolSupervisor : public virtual Stage, public Module
+namespace Pool
 {
-  public:
-    static void Declare ();
+  class Allocator;
 
-    PoolSupervisor (StageClass *stage_class);
+  class Supervisor : public virtual Stage, public Module
+  {
+    public:
+      static void Declare ();
 
-    void OnPrintPoolToolbuttonClicked ();
+      Supervisor (StageClass *stage_class);
 
-    void OnPoolSelected (gint index);
+      void OnPrintPoolToolbuttonClicked ();
 
-    void OnFilterClicked ();
+      void OnPoolSelected (gint index);
 
-    void OnStuffClicked ();
+      void OnFilterClicked ();
 
-    void OnToggleSingleClassification (gboolean single_selected);
+      void OnStuffClicked ();
 
-  private:
-    void Display ();
-    void Garnish ();
-    void OnLocked ();
-    void OnUnLocked ();
-    void Wipe ();
-    void RetrievePools ();
-    void Manage (Pool *pool);
+      void OnToggleSingleClassification (gboolean single_selected);
 
-  private:
-    void OnPoolSelected (Pool *pool);
+    private:
+      void Display ();
+      void Garnish ();
+      void OnLocked ();
+      void OnUnLocked ();
+      void Wipe ();
+      void RetrievePools ();
+      void Manage (Pool *pool);
 
-    static Stage *CreateInstance (StageClass *stage_class);
+    private:
+      void OnPoolSelected (Pool *pool);
 
-    void FillInConfig ();
-    void ApplyConfig ();
-    Stage *GetInputProvider ();
-    gboolean IsOver ();
+      static Stage *CreateInstance (StageClass *stage_class);
 
-  private:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
+      void FillInConfig ();
+      void ApplyConfig ();
+      Stage *GetInputProvider ();
+      gboolean IsOver ();
 
-    Object        *_single_owner;
-    GtkListStore  *_pool_liststore;
-    PoolAllocator *_pool_allocator;
-    Pool          *_displayed_pool;
-    GtkWidget     *_print_dialog;
-    gboolean       _print_all_pool;
+    private:
+      static const gchar *_class_name;
+      static const gchar *_xml_class_name;
 
-    virtual ~PoolSupervisor ();
+      Object       *_single_owner;
+      GtkListStore *_pool_liststore;
+      Allocator    *_allocator;
+      Pool         *_displayed_pool;
+      GtkWidget    *_print_dialog;
+      gboolean      _print_all_pool;
 
-    void OnAttrListUpdated ();
+      virtual ~Supervisor ();
 
-    void OnPlugged ();
+      void OnAttrListUpdated ();
 
-    void OnUnPlugged ();
+      void OnPlugged ();
 
-    void Load (xmlNode *xml_node);
+      void OnUnPlugged ();
 
-    GSList *GetCurrentClassification ();
+      void Load (xmlNode *xml_node);
 
-    GSList *EvaluateClassification (GSList           *list,
-                                    Object           *rank_owner,
-                                    GCompareDataFunc  CompareFunction);
+      GSList *GetCurrentClassification ();
 
-    void SetInputProvider (Stage *input_provider);
+      GSList *EvaluateClassification (GSList           *list,
+                                      Object           *rank_owner,
+                                      GCompareDataFunc  CompareFunction);
 
-    gchar *GetPrintName ();
+      void SetInputProvider (Stage *input_provider);
 
-    guint PreparePrint (GtkPrintOperation *operation,
-                        GtkPrintContext   *context);
+      gchar *GetPrintName ();
 
-    void DrawPage (GtkPrintOperation *operation,
-                   GtkPrintContext   *context,
-                   gint               page_nr);
+      guint PreparePrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context);
 
-    void OnEndPrint (GtkPrintOperation *operation,
-                     GtkPrintContext   *context);
+      void DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
 
-    static void OnPoolStatusUpdated (Pool           *pool,
-                                     PoolSupervisor *ps);
+      void OnEndPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
 
-    static gint CompareClassification (GtkTreeModel   *model,
-                                       GtkTreeIter    *a,
-                                       GtkTreeIter    *b,
-                                       PoolSupervisor *pool_supervisor);
+      static void OnPoolStatusUpdated (Pool       *pool,
+                                       Supervisor *ps);
 
-    static gint CompareSingleClassification (Player         *A,
-                                             Player         *B,
-                                             PoolSupervisor *pool_supervisor);
+      static gint CompareClassification (GtkTreeModel *model,
+                                         GtkTreeIter  *a,
+                                         GtkTreeIter  *b,
+                                         Supervisor   *pool_supervisor);
 
-    static gint CompareCombinedClassification (Player         *A,
-                                               Player         *B,
-                                               PoolSupervisor *pool_supervisor);
-};
+      static gint CompareSingleClassification (Player     *A,
+                                               Player     *B,
+                                               Supervisor *pool_supervisor);
+
+      static gint CompareCombinedClassification (Player     *A,
+                                                 Player     *B,
+                                                 Supervisor *pool_supervisor);
+  };
+}
 
 #endif
 

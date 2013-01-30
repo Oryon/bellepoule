@@ -19,310 +19,314 @@
 
 #include <gtk/gtk.h>
 
-#include "data.hpp"
-#include "canvas_module.hpp"
-#include "match.hpp"
-#include "score_collector.hpp"
+#include "util/data.hpp"
+#include "util/canvas_module.hpp"
+#include "util/drop_zone.hpp"
+#include "common/match.hpp"
+#include "common/score_collector.hpp"
+
 #include "table.hpp"
-#include "drop_zone.hpp"
 #include "table_set_border.hpp"
 #include "table_print_session.hpp"
 
-class TableSupervisor;
-
-class TableSet : public CanvasModule
+namespace Table
 {
-  public:
-    typedef void (*StatusCbk) (TableSet *table_set,
-                               void     *data);
+  class Supervisor;
 
-    TableSet (TableSupervisor *supervisor,
-              gchar           *id,
-              GtkWidget       *from_container,
-              GtkWidget       *to_container,
-              guint            first_place);
+  class TableSet : public CanvasModule
+  {
+    public:
+      typedef void (*StatusCbk) (TableSet *table_set,
+                                 void     *data);
 
-    void SetStatusCbk (StatusCbk  cbk,
-                       void      *data);
+      TableSet (Supervisor *supervisor,
+                gchar      *id,
+                GtkWidget  *from_container,
+                GtkWidget  *to_container,
+                guint       first_place);
 
-    void SetAttendees (GSList *attendees);
+      void SetStatusCbk (StatusCbk  cbk,
+                         void      *data);
 
-    void SetAttendees (GSList *attendees,
-                       GSList *withdrawals);
+      void SetAttendees (GSList *attendees);
 
-    gboolean HasAttendees ();
+      void SetAttendees (GSList *attendees,
+                         GSList *withdrawals);
 
-    void OnFromToTableComboboxChanged ();
+      gboolean HasAttendees ();
 
-    void OnCuttingCountComboboxChanged ();
+      void OnFromToTableComboboxChanged ();
 
-    void OnStuffClicked ();
+      void OnCuttingCountComboboxChanged ();
 
-    void OnInputToggled (GtkWidget *widget);
+      void OnStuffClicked ();
 
-    void OnMatchSheetToggled (GtkWidget *widget);
+      void OnInputToggled (GtkWidget *widget);
 
-    void OnDisplayToggled (GtkWidget *widget);
+      void OnMatchSheetToggled (GtkWidget *widget);
 
-    void OnSearchMatch ();
+      void OnDisplayToggled (GtkWidget *widget);
 
-    void OnPrint ();
+      void OnSearchMatch ();
 
-    gchar *GetPrintName ();
+      void OnPrint ();
 
-    guint PreparePrint (GtkPrintOperation *operation,
-                        GtkPrintContext   *context);
+      gchar *GetPrintName ();
 
-    void DrawPage (GtkPrintOperation *operation,
-                   GtkPrintContext   *context,
-                   gint               page_nr);
+      guint PreparePrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context);
 
-    void OnPreviewClicked ();
+      void DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
 
-    gboolean OnPreview (GtkPrintOperation        *operation,
-                        GtkPrintOperationPreview *preview,
-                        GtkPrintContext          *context,
-                        GtkWindow                *parent);
+      void OnPreviewClicked ();
 
-    void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
-                               GtkPrintContext          *context,
-                               GtkPageSetup             *page_setup);
+      gboolean OnPreview (GtkPrintOperation        *operation,
+                          GtkPrintOperationPreview *preview,
+                          GtkPrintContext          *context,
+                          GtkWindow                *parent);
 
-    void OnPreviewReady (GtkPrintOperationPreview *preview,
-                         GtkPrintContext          *context);
+      void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
+                                 GtkPrintContext          *context,
+                                 GtkPageSetup             *page_setup);
 
-    void OnPrinScaleChanged (gdouble value);
+      void OnPreviewReady (GtkPrintOperationPreview *preview,
+                           GtkPrintContext          *context);
 
-    void OnPageSetupClicked (GtkButton *button);
+      void OnPrinScaleChanged (gdouble value);
 
-    void Wipe ();
+      void OnPageSetupClicked (GtkButton *button);
 
-    void Display ();
+      void Wipe ();
 
-    void Lock ();
+      void Display ();
 
-    void UnLock ();
+      void Lock ();
 
-    gboolean IsOver ();
+      void UnLock ();
 
-    gboolean HasError ();
+      gboolean IsOver ();
 
-    GSList *GetCurrentClassification ();
+      gboolean HasError ();
 
-    void Load (xmlNode *xml_node);
+      GSList *GetCurrentClassification ();
 
-    void Save (xmlTextWriter *xmlwriter);
+      void Load (xmlNode *xml_node);
 
-    void SetPlayerToMatch (Match  *to_match,
-                           Player *player,
-                           guint   position);
+      void Save (xmlTextWriter *xmlwriter);
 
-    Player *GetFencerFromRef (guint ref);
+      void SetPlayerToMatch (Match  *to_match,
+                             Player *player,
+                             guint   position);
 
-    void AddReferee (Match *match,
-                     guint  referee_ref);
+      Player *GetFencerFromRef (guint ref);
 
-    guint GetNbTables ();
+      void AddReferee (Match *match,
+                       guint  referee_ref);
 
-    gchar *GetName ();
+      guint GetNbTables ();
 
-    guint GetFirstPlace ();
+      gchar *GetName ();
 
-    gchar *GetId ();
+      guint GetFirstPlace ();
 
-    void Activate ();
+      gchar *GetId ();
 
-    void DeActivate ();
+      void Activate ();
 
-    GSList *GetBlackcardeds ();
+      void DeActivate ();
 
-  private:
-    static const gdouble _score_rect_size;
+      GSList *GetBlackcardeds ();
 
-    static const gdouble _table_spacing;
+    private:
+      static const gdouble _score_rect_size;
 
-    gchar                    *_short_name;
-    TableSupervisor          *_supervisor;
-    GNode                    *_tree_root;
-    guint                     _nb_tables;
-    guint                     _nb_matchs;
-    gint                      _table_to_stuff;
-    GtkTreeStore             *_quick_search_treestore;
-    GtkTreeModelFilter       *_quick_search_filter;
-    GooCanvasItem            *_main_table;
-    GooCanvasItem            *_quick_score_A;
-    GooCanvasItem            *_quick_score_B;
-    Data                     *_max_score;
-    ScoreCollector           *_score_collector;
-    ScoreCollector           *_quick_score_collector;
-    xmlTextWriter            *_xml_writer;
-    xmlNode                  *_xml_node;
-    Table                    **_tables;
-    GSList                   *_result_list;
-    GSList                   *_match_to_print;
-    GtkWidget                *_print_dialog;
-    GtkWidget                *_preview_dialog;
-    GtkWidget                *_table_print_dialog;
-    TablePrintSession         _print_session;
-    GSList                   *_attendees;
-    GSList                   *_withdrawals;
-    gboolean                  _locked;
-    guint                     _nb_match_per_sheet;
-    gchar                    *_id;
-    gboolean                  _has_error;
-    gboolean                  _is_over;
-    gboolean                  _loaded;
-    guint                     _first_place;
-    GtkPrintOperationPreview *_preview;
-    GtkWidget                *_current_preview_area;
-    gboolean                  _is_active;
-    GtkPageSetup             *_page_setup;
-    TableSetBorder           *_from_border;
-    TableSetBorder           *_to_border;
-    gboolean                 *_row_filled;
+      static const gdouble _table_spacing;
 
-    void      *_status_cbk_data;
-    StatusCbk  _status_cbk;
+      gchar                    *_short_name;
+      Supervisor               *_supervisor;
+      GNode                    *_tree_root;
+      guint                     _nb_tables;
+      guint                     _nb_matchs;
+      gint                      _table_to_stuff;
+      GtkTreeStore             *_quick_search_treestore;
+      GtkTreeModelFilter       *_quick_search_filter;
+      GooCanvasItem            *_main_table;
+      GooCanvasItem            *_quick_score_A;
+      GooCanvasItem            *_quick_score_B;
+      Data                     *_max_score;
+      ScoreCollector           *_score_collector;
+      ScoreCollector           *_quick_score_collector;
+      xmlTextWriter            *_xml_writer;
+      xmlNode                  *_xml_node;
+      Table                    **_tables;
+      GSList                   *_result_list;
+      GSList                   *_match_to_print;
+      GtkWidget                *_print_dialog;
+      GtkWidget                *_preview_dialog;
+      GtkWidget                *_table_print_dialog;
+      PrintSession              _print_session;
+      GSList                   *_attendees;
+      GSList                   *_withdrawals;
+      gboolean                  _locked;
+      guint                     _nb_match_per_sheet;
+      gchar                    *_id;
+      gboolean                  _has_error;
+      gboolean                  _is_over;
+      gboolean                  _loaded;
+      guint                     _first_place;
+      GtkPrintOperationPreview *_preview;
+      GtkWidget                *_current_preview_area;
+      gboolean                  _is_active;
+      GtkPageSetup             *_page_setup;
+      TableSetBorder           *_from_border;
+      TableSetBorder           *_to_border;
+      gboolean                 *_row_filled;
 
-    GooCanvasItem *GetQuickScore (const gchar *container);
+      void      *_status_cbk_data;
+      StatusCbk  _status_cbk;
 
-    void OnPlugged ();
+      GooCanvasItem *GetQuickScore (const gchar *container);
 
-    void OnUnPlugged ();
+      void OnPlugged ();
 
-    void CreateTree ();
+      void OnUnPlugged ();
 
-    void DeleteTree ();
+      void CreateTree ();
 
-    void OnAttrListUpdated ();
+      void DeleteTree ();
 
-    void DrawAllConnectors ();
+      void OnAttrListUpdated ();
 
-    void DrawAllZones ();
+      void DrawAllConnectors ();
 
-    void Garnish ();
+      void DrawAllZones ();
 
-    Table *GetTable (guint size);
+      void Garnish ();
 
-    void LoadNode (xmlNode *xml_node);
+      Table *GetTable (guint size);
 
-    void OnStatusChanged (GtkComboBox *combo_box);
+      void LoadNode (xmlNode *xml_node);
 
-    void DrawPlayerMatch (GooCanvasItem *table,
-                          Match         *match,
-                          Player        *player,
-                          guint          row);
+      void OnStatusChanged (GtkComboBox *combo_box);
 
-    static gboolean Stuff (GNode    *node,
-                           TableSet *table_set);
+      void DrawPlayerMatch (GooCanvasItem *table,
+                            Match         *match,
+                            Player        *player,
+                            guint          row);
 
-    static gboolean StartClassification (GNode    *node,
+      static gboolean Stuff (GNode    *node,
+                             TableSet *table_set);
+
+      static gboolean StartClassification (GNode    *node,
+                                           TableSet *table_set);
+
+      static gboolean CloseClassification (GNode    *node,
+                                           TableSet *table_set);
+
+      static gboolean UpdateTableStatus (GNode    *node,
                                          TableSet *table_set);
 
-    static gboolean CloseClassification (GNode    *node,
+      static gboolean DrawConnector (GNode    *node,
+                                     TableSet *table_set);
+
+      static gboolean WipeNode (GNode    *node,
+                                TableSet *table_set);
+
+      static gboolean DeleteCanvasTable (GNode    *node,
                                          TableSet *table_set);
 
-    static gboolean UpdateTableStatus (GNode    *node,
-                                       TableSet *table_set);
+      static gboolean FillInNode (GNode    *node,
+                                  TableSet *table_set);
 
-    static gboolean DrawConnector (GNode    *node,
-                                   TableSet *table_set);
+      static gboolean DeleteNode (GNode    *node,
+                                  TableSet *table_set);
 
-    static gboolean WipeNode (GNode    *node,
-                              TableSet *table_set);
+      static gboolean DeleteDeadNode (GNode    *node,
+                                      TableSet *table_set);
 
-    static gboolean DeleteCanvasTable (GNode    *node,
-                                       TableSet *table_set);
+      static void OnNewScore (ScoreCollector *score_collector,
+                              CanvasModule   *client,
+                              Match          *match,
+                              Player         *player);
 
-    static gboolean FillInNode (GNode    *node,
-                                TableSet *table_set);
+      gint ComparePreviousRankPlayer (Player  *A,
+                                      Player  *B,
+                                      guint32  rand_seed);
 
-    static gboolean DeleteNode (GNode    *node,
-                                TableSet *table_set);
+      void AddFork (GNode *to);
 
-    static gboolean DeleteDeadNode (GNode    *node,
-                                    TableSet *table_set);
+      void RefreshTableStatus ();
 
-    static void OnNewScore (ScoreCollector *score_collector,
-                            CanvasModule   *client,
-                            Match          *match,
-                            Player         *player);
+      void DropMatch (GNode *node);
 
-    gint ComparePreviousRankPlayer (Player  *A,
-                                    Player  *B,
-                                    guint32  rand_seed);
+      void LookForMatchToPrint (Table    *table_to_print,
+                                gboolean  all_sheet);
 
-    void AddFork (GNode *to);
+      void ConfigurePreviewLayout (GtkPrintContext *context);
 
-    void RefreshTableStatus ();
+      gboolean PlaceIsFenced (guint place);
 
-    void DropMatch (GNode *node);
+      static gint ComparePlayer (Player    *A,
+                                 Player    *B,
+                                 TableSet  *table_set);
 
-    void LookForMatchToPrint (Table    *table_to_print,
-                              gboolean  all_sheet);
+      static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
+                                                     GtkCellRenderer *cell,
+                                                     GtkTreeModel    *tree_model,
+                                                     GtkTreeIter     *iter,
+                                                     TableSet        *table_set);
 
-    void ConfigurePreviewLayout (GtkPrintContext *context);
+      static gboolean OnPrintTable (GooCanvasItem  *item,
+                                    GooCanvasItem  *target_item,
+                                    GdkEventButton *event,
+                                    TableSet       *table_set);
 
-    gboolean PlaceIsFenced (guint place);
+      static gboolean OnPrintMatch (GooCanvasItem  *item,
+                                    GooCanvasItem  *target_item,
+                                    GdkEventButton *event,
+                                    TableSet       *table_set);
 
-    static gint ComparePlayer (Player    *A,
-                               Player    *B,
-                               TableSet  *table_set);
+      static void on_status_changed (GtkComboBox *combo_box,
+                                     TableSet    *table_set);
 
-    static void SetQuickSearchRendererSensitivity (GtkCellLayout   *cell_layout,
-                                                   GtkCellRenderer *cell,
-                                                   GtkTreeModel    *tree_model,
-                                                   GtkTreeIter     *iter,
-                                                   TableSet        *table_set);
+      static gboolean on_status_key_press_event (GtkWidget   *widget,
+                                                 GdkEventKey *event,
+                                                 gpointer     user_data);
 
-    static gboolean OnPrintTable (GooCanvasItem  *item,
-                                  GooCanvasItem  *target_item,
-                                  GdkEventButton *event,
-                                  TableSet       *table_set);
+      static gboolean on_status_arrow_press (GooCanvasItem  *item,
+                                             GooCanvasItem  *target,
+                                             GdkEventButton *event,
+                                             TableSet       *table_set);
 
-    static gboolean OnPrintMatch (GooCanvasItem  *item,
-                                  GooCanvasItem  *target_item,
-                                  GdkEventButton *event,
-                                  TableSet       *table_set);
+      static gboolean on_preview_expose (GtkWidget      *drawing_area,
+                                         GdkEventExpose *event,
+                                         TableSet       *ts);
 
-    static void on_status_changed (GtkComboBox *combo_box,
-                                   TableSet    *table_set);
+      virtual ~TableSet ();
 
-    static gboolean on_status_key_press_event (GtkWidget   *widget,
-                                               GdkEventKey *event,
-                                               gpointer     user_data);
+    private:
+      void DragObject (Object   *object,
+                       DropZone *from_zone);
 
-    static gboolean on_status_arrow_press (GooCanvasItem  *item,
-                                           GooCanvasItem  *target,
-                                           GdkEventButton *event,
-                                           TableSet       *table_set);
+      void DropObject (Object   *object,
+                       DropZone *source_zone,
+                       DropZone *target_zone);
 
-    static gboolean on_preview_expose (GtkWidget      *drawing_area,
-                                       GdkEventExpose *event,
-                                       TableSet       *ts);
+      Object *GetDropObjectFromRef (guint32 ref);
 
-    virtual ~TableSet ();
+      gboolean DroppingIsForbidden (Object *object);
 
-  private:
-    void DragObject (Object   *object,
-                     DropZone *from_zone);
+      GString *GetFloatingImage (Object *floating_object);
 
-    void DropObject (Object   *object,
-                     DropZone *source_zone,
-                     DropZone *target_zone);
+      gboolean ObjectIsDropable (Object   *floating_object,
+                                 DropZone *in_zone);
 
-    Object *GetDropObjectFromRef (guint32 ref);
-
-    gboolean DroppingIsForbidden (Object *object);
-
-    GString *GetFloatingImage (Object *floating_object);
-
-    gboolean ObjectIsDropable (Object   *floating_object,
-                               DropZone *in_zone);
-
-    void GetBounds (GNode           *top,
-                    GNode           *bottom,
-                    GooCanvasBounds *bounds);
-};
+      void GetBounds (GNode           *top,
+                      GNode           *bottom,
+                      GooCanvasBounds *bounds);
+  };
+}
 
 #endif

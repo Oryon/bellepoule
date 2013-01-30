@@ -19,52 +19,56 @@
 
 #include <gtk/gtk.h>
 
-#include "stage.hpp"
+#include "common/stage.hpp"
+
 #include "players_list.hpp"
 
 class Tournament;
 class Contest;
 
-class Splitting : public virtual Stage, public PlayersList
+namespace People
 {
-  public:
-    static void Declare ();
+  class Splitting : public virtual Stage, public PlayersList
+  {
+    public:
+      static void Declare ();
 
-    static void SetHostTournament (Tournament *tournament);
+      static void SetHostTournament (Tournament *tournament);
 
-    Splitting (StageClass *stage_class);
+      Splitting (StageClass *stage_class);
 
-  public:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
+    public:
+      static const gchar *_class_name;
+      static const gchar *_xml_class_name;
 
-  private:
-    void OnLocked ();
+    private:
+      void OnLocked ();
 
-    void OnUnLocked ();
+      void OnUnLocked ();
 
-    void Display ();
+      void Display ();
 
-    void Wipe ();
+      void Wipe ();
 
-    GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification ();
 
-    void Save (xmlTextWriter *xml_writer);
+      void Save (xmlTextWriter *xml_writer);
 
-    void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node);
 
-  private:
-    static Tournament *_tournament;
+    private:
+      static Tournament *_tournament;
 
-    static Stage *CreateInstance (StageClass *stage_class);
+      static Stage *CreateInstance (StageClass *stage_class);
 
-    static gboolean PresentPlayerFilter (Player *player);
+      static gboolean PresentPlayerFilter (Player *player);
 
-    virtual ~Splitting ();
+      virtual ~Splitting ();
 
-    void Garnish ();
+      void Garnish ();
 
-    GSList *GetOutputShortlist ();
-};
+      GSList *GetOutputShortlist ();
+  };
+}
 
 #endif

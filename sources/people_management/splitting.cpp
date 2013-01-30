@@ -21,249 +21,252 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 
-#include "contest.hpp"
-#include "player.hpp"
-#include "tournament.hpp"
+#include "common/contest.hpp"
+#include "common/player.hpp"
+#include "common/tournament.hpp"
 
 #include "splitting.hpp"
 
-const gchar *Splitting::_class_name     = N_ ("Split");
-const gchar *Splitting::_xml_class_name = "PointDeScission";
-
-Tournament *Splitting::_tournament = NULL;
-
-// --------------------------------------------------------------------------------
-Splitting::Splitting (StageClass *stage_class)
-: Stage (stage_class),
-  PlayersList ("splitting.glade",
-               SORTABLE)
+namespace People
 {
-  // Sensitive widgets
-  {
-    AddSensitiveWidget (_glade->GetWidget ("splitting_move_toolbutton"));
-  }
+  const gchar *Splitting::_class_name     = N_ ("Split");
+  const gchar *Splitting::_xml_class_name = "PointDeScission";
 
-  {
-    GSList *attr_list;
-    Filter *filter;
+  Tournament *Splitting::_tournament = NULL;
 
-    AttributeDesc::CreateList (&attr_list,
+  // --------------------------------------------------------------------------------
+  Splitting::Splitting (StageClass *stage_class)
+    : Stage (stage_class),
+    PlayersList ("splitting.glade",
+                 SORTABLE)
+  {
+    // Sensitive widgets
+    {
+      AddSensitiveWidget (_glade->GetWidget ("splitting_move_toolbutton"));
+    }
+
+    {
+      GSList *attr_list;
+      Filter *filter;
+
+      AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
-                               "ref",
+                                          "ref",
 #endif
-                               "availability",
-                               "participation_rate",
-                               "level",
-                               "status",
-                               "global_status",
-                               "start_rank",
-                               "final_rank",
-                               "rank",
-                               "attending",
-                               "victories_ratio",
-                               "indice",
-                               "pool_nr",
-                               "HS",
-                               NULL);
-    filter = new Filter (attr_list,
-                         this);
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "status",
+                                          "global_status",
+                                          "start_rank",
+                                          "final_rank",
+                                          "rank",
+                                          "attending",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          NULL);
+      filter = new Filter (attr_list,
+                           this);
 
-    filter->ShowAttribute ("exported");
-    filter->ShowAttribute ("previous_stage_rank");
-    filter->ShowAttribute ("name");
-    filter->ShowAttribute ("first_name");
-    filter->ShowAttribute ("birth_date");
-    filter->ShowAttribute ("gender");
-    filter->ShowAttribute ("club");
-    filter->ShowAttribute ("country");
-    filter->ShowAttribute ("licence");
+      filter->ShowAttribute ("exported");
+      filter->ShowAttribute ("previous_stage_rank");
+      filter->ShowAttribute ("name");
+      filter->ShowAttribute ("first_name");
+      filter->ShowAttribute ("birth_date");
+      filter->ShowAttribute ("gender");
+      filter->ShowAttribute ("club");
+      filter->ShowAttribute ("country");
+      filter->ShowAttribute ("licence");
 
-    SetFilter (filter);
-    filter->Release ();
+      SetFilter (filter);
+      filter->Release ();
+    }
+
+    SetAttributeRight ("exported",
+                       TRUE);
   }
 
-  SetAttributeRight ("exported",
-                     TRUE);
-}
-
-// --------------------------------------------------------------------------------
-Splitting::~Splitting ()
-{
-  Wipe ();
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Declare ()
-{
-  RegisterStageClass (gettext (_class_name),
-                      _xml_class_name,
-                      CreateInstance,
-                      EDITABLE);
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Garnish ()
-{
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::SetHostTournament (Tournament *tournament)
-{
-  _tournament = tournament;
-}
-
-// --------------------------------------------------------------------------------
-Stage *Splitting::CreateInstance (StageClass *stage_class)
-{
-  return new Splitting (stage_class);
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Save (xmlTextWriter *xml_writer)
-{
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _xml_class_name);
-
-  Stage::SaveConfiguration (xml_writer);
-
-  xmlTextWriterEndElement (xml_writer);
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Load (xmlNode *xml_node)
-{
-  LoadConfiguration (xml_node);
-
-  RetrieveAttendees ();
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Wipe ()
-{
-  PlayersList::Wipe ();
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::Display ()
-{
-  GSList *shortlist = _attendees->GetShortList ();
-
-  while (shortlist)
+  // --------------------------------------------------------------------------------
+  Splitting::~Splitting ()
   {
-    Player *player = (Player *) shortlist->data;
-
-    Add (player);
-    shortlist = g_slist_next (shortlist);
+    Wipe ();
   }
-  OnAttrListUpdated ();
-}
 
-// --------------------------------------------------------------------------------
-void Splitting::OnLocked ()
-{
-  DisableSensitiveWidgets ();
-  SetSensitiveState (FALSE);
-
-  if (GetState () == OPERATIONAL)
+  // --------------------------------------------------------------------------------
+  void Splitting::Declare ()
   {
-    Contest             *contest = _contest->Duplicate ();
-    GSList              *current = _attendees->GetShortList ();
-    Player::AttributeId  exported_attr ("exported");
+    RegisterStageClass (gettext (_class_name),
+                        _xml_class_name,
+                        CreateInstance,
+                        EDITABLE);
+  }
 
-    _tournament->Manage (contest);
+  // --------------------------------------------------------------------------------
+  void Splitting::Garnish ()
+  {
+  }
 
-    for (guint i = 0; current != NULL; i++)
+  // --------------------------------------------------------------------------------
+  void Splitting::SetHostTournament (Tournament *tournament)
+  {
+    _tournament = tournament;
+  }
+
+  // --------------------------------------------------------------------------------
+  Stage *Splitting::CreateInstance (StageClass *stage_class)
+  {
+    return new Splitting (stage_class);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Splitting::Save (xmlTextWriter *xml_writer)
+  {
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST _xml_class_name);
+
+    Stage::SaveConfiguration (xml_writer);
+
+    xmlTextWriterEndElement (xml_writer);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Splitting::Load (xmlNode *xml_node)
+  {
+    LoadConfiguration (xml_node);
+
+    RetrieveAttendees ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Splitting::Wipe ()
+  {
+    PlayersList::Wipe ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Splitting::Display ()
+  {
+    GSList *shortlist = _attendees->GetShortList ();
+
+    while (shortlist)
     {
-      Player    *player;
-      Attribute *attr;
+      Player *player = (Player *) shortlist->data;
 
-      player = (Player *) current->data;
-      attr   = player->GetAttribute (&exported_attr);
-      if (attr->GetUIntValue () == TRUE)
+      Add (player);
+      shortlist = g_slist_next (shortlist);
+    }
+    OnAttrListUpdated ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Splitting::OnLocked ()
+  {
+    DisableSensitiveWidgets ();
+    SetSensitiveState (FALSE);
+
+    if (GetState () == OPERATIONAL)
+    {
+      Contest             *contest = _contest->Duplicate ();
+      GSList              *current = _attendees->GetShortList ();
+      Player::AttributeId  exported_attr ("exported");
+
+      _tournament->Manage (contest);
+
+      for (guint i = 0; current != NULL; i++)
       {
-        Player *new_player = player->Duplicate ();
+        Player    *player;
+        Attribute *attr;
 
-        new_player->SetAttributeValue (&exported_attr,
-                                       (guint) FALSE);
-        contest->AddFencer (new_player,
-                            i+1);
+        player = (Player *) current->data;
+        attr   = player->GetAttribute (&exported_attr);
+        if (attr->GetUIntValue () == TRUE)
+        {
+          Player *new_player = player->Duplicate ();
+
+          new_player->SetAttributeValue (&exported_attr,
+                                         (guint) FALSE);
+          contest->AddFencer (new_player,
+                              i+1);
+        }
+
+        current = g_slist_next (current);
       }
-
-      current = g_slist_next (current);
+      contest->LatchPlayerList ();
     }
-    contest->LatchPlayerList ();
   }
-}
 
-// --------------------------------------------------------------------------------
-GSList *Splitting::GetCurrentClassification ()
-{
-  return g_slist_copy (_player_list);
-}
-
-// --------------------------------------------------------------------------------
-GSList *Splitting::GetOutputShortlist ()
-{
-  GSList *result = CreateCustomList (PresentPlayerFilter);
-
-  if (result)
+  // --------------------------------------------------------------------------------
+  GSList *Splitting::GetCurrentClassification ()
   {
-    Player::AttributeId attr_id ("previous_stage_rank",
-                                 this);
-
-    attr_id.MakeRandomReady (_rand_seed);
-    result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) Player::Compare,
-                                     &attr_id);
+    return g_slist_copy (_player_list);
   }
-  return result;
-}
 
-// --------------------------------------------------------------------------------
-gboolean Splitting::PresentPlayerFilter (Player *player)
-{
-  Player::AttributeId  attr_id ("exported");
-  Attribute           *attr = player->GetAttribute (&attr_id);
-
-  return (attr->GetUIntValue () == FALSE);
-}
-
-// --------------------------------------------------------------------------------
-void Splitting::OnUnLocked ()
-{
-  EnableSensitiveWidgets ();
-  SetSensitiveState (TRUE);
-
+  // --------------------------------------------------------------------------------
+  GSList *Splitting::GetOutputShortlist ()
   {
-    GSList              *current = _attendees->GetShortList ();
-    Player::AttributeId  exported_attr ("exported");
+    GSList *result = CreateCustomList (PresentPlayerFilter);
 
-    while (current)
+    if (result)
     {
-      Player *player = (Player *) current->data;
+      Player::AttributeId attr_id ("previous_stage_rank",
+                                   this);
 
-      player->SetAttributeValue (&exported_attr,
-                                 (guint) FALSE);
+      attr_id.MakeRandomReady (_rand_seed);
+      result = g_slist_sort_with_data (result,
+                                       (GCompareDataFunc) Player::Compare,
+                                       &attr_id);
+    }
+    return result;
+  }
 
-      current = g_slist_next (current);
+  // --------------------------------------------------------------------------------
+  gboolean Splitting::PresentPlayerFilter (Player *player)
+  {
+    Player::AttributeId  attr_id ("exported");
+    Attribute           *attr = player->GetAttribute (&attr_id);
+
+    return (attr->GetUIntValue () == FALSE);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Splitting::OnUnLocked ()
+  {
+    EnableSensitiveWidgets ();
+    SetSensitiveState (TRUE);
+
+    {
+      GSList              *current = _attendees->GetShortList ();
+      Player::AttributeId  exported_attr ("exported");
+
+      while (current)
+      {
+        Player *player = (Player *) current->data;
+
+        player->SetAttributeValue (&exported_attr,
+                                   (guint) FALSE);
+
+        current = g_slist_next (current);
+      }
     }
   }
-}
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_splitting_print_toolbutton_clicked (GtkWidget *widget,
-                                                                       Object    *owner)
-{
-  Splitting *s = dynamic_cast <Splitting *> (owner);
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_splitting_print_toolbutton_clicked (GtkWidget *widget,
+                                                                         Object    *owner)
+  {
+    Splitting *s = dynamic_cast <Splitting *> (owner);
 
-  s->Print (gettext ("List of fencers to extract"));
-}
+    s->Print (gettext ("List of fencers to extract"));
+  }
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_splitting_filter_toolbutton_clicked (GtkWidget *widget,
-                                                                        Object    *owner)
-{
-  Splitting *s = dynamic_cast <Splitting *> (owner);
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_splitting_filter_toolbutton_clicked (GtkWidget *widget,
+                                                                          Object    *owner)
+  {
+    Splitting *s = dynamic_cast <Splitting *> (owner);
 
-  s->SelectAttributes ();
+    s->SelectAttributes ();
+  }
 }

@@ -16,429 +16,432 @@
 
 #include <string.h>
 
-#include "attribute.hpp"
-#include "contest.hpp"
-#include "classification.hpp"
-#include "player.hpp"
+#include "util/attribute.hpp"
+#include "common/contest.hpp"
+#include "common/classification.hpp"
+#include "common/player.hpp"
 
 #include "general_classification.hpp"
 
-const gchar *GeneralClassification::_class_name     = N_ ("General classification");
-const gchar *GeneralClassification::_xml_class_name = "ClassementGeneral";
-
-// --------------------------------------------------------------------------------
-GeneralClassification::GeneralClassification (StageClass *stage_class)
-: Stage (stage_class),
-  PlayersList ("general_classification.glade",
-               NO_RIGHT)
+namespace People
 {
-  // Player attributes to display
+  const gchar *GeneralClassification::_class_name     = N_ ("General classification");
+  const gchar *GeneralClassification::_xml_class_name = "ClassementGeneral";
+
+  // --------------------------------------------------------------------------------
+  GeneralClassification::GeneralClassification (StageClass *stage_class)
+    : Stage (stage_class),
+    PlayersList ("general_classification.glade",
+                 NO_RIGHT)
   {
-    GSList *attr_list;
-    Filter *filter;
-
-    AttributeDesc::CreateList (&attr_list,
-#ifndef DEBUG
-                               "ref",
-#endif
-                               "availability",
-                               "participation_rate",
-                               "level",
-                               "global_status",
-                               "status",
-                               "start_rank",
-                               "rank",
-                               "attending",
-                               "exported",
-                               "victories_ratio",
-                               "indice",
-                               "pool_nr",
-                               "HS",
-                               "previous_stage_rank",
-                               NULL);
-    filter = new Filter (attr_list,
-                         this);
-
-    filter->ShowAttribute ("final_rank");
-    filter->ShowAttribute ("name");
-    filter->ShowAttribute ("first_name");
-    filter->ShowAttribute ("club");
-
-    SetFilter (filter);
-    SetClassificationFilter (filter);
-    filter->Release ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-GeneralClassification::~GeneralClassification ()
-{
-}
-
-// --------------------------------------------------------------------------------
-void GeneralClassification::Declare ()
-{
-  RegisterStageClass (gettext (_class_name),
-                      _xml_class_name,
-                      CreateInstance,
-                      0);
-}
-
-// --------------------------------------------------------------------------------
-Stage *GeneralClassification::CreateInstance (StageClass *stage_class)
-{
-  return new GeneralClassification (stage_class);
-}
-
-// --------------------------------------------------------------------------------
-void GeneralClassification::Display ()
-{
-  ToggleClassification (TRUE);
-}
-
-// --------------------------------------------------------------------------------
-GSList *GeneralClassification::GetCurrentClassification ()
-{
-  GSList *result = NULL;
-
-  {
-    GSList *current = _attendees->GetGlobalList ();
-
-    while (current)
+    // Player attributes to display
     {
-      Player *player;
+      GSList *attr_list;
+      Filter *filter;
 
-      player = (Player *) current->data;
+      AttributeDesc::CreateExcludingList (&attr_list,
+#ifndef DEBUG
+                                          "ref",
+#endif
+                                          "availability",
+                                          "participation_rate",
+                                          "level",
+                                          "global_status",
+                                          "status",
+                                          "start_rank",
+                                          "rank",
+                                          "attending",
+                                          "exported",
+                                          "victories_ratio",
+                                          "indice",
+                                          "pool_nr",
+                                          "HS",
+                                          "previous_stage_rank",
+                                          NULL);
+      filter = new Filter (attr_list,
+                           this);
+
+      filter->ShowAttribute ("final_rank");
+      filter->ShowAttribute ("name");
+      filter->ShowAttribute ("first_name");
+      filter->ShowAttribute ("club");
+
+      SetFilter (filter);
+      SetClassificationFilter (filter);
+      filter->Release ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  GeneralClassification::~GeneralClassification ()
+  {
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::Declare ()
+  {
+    RegisterStageClass (gettext (_class_name),
+                        _xml_class_name,
+                        CreateInstance,
+                        0);
+  }
+
+  // --------------------------------------------------------------------------------
+  Stage *GeneralClassification::CreateInstance (StageClass *stage_class)
+  {
+    return new GeneralClassification (stage_class);
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::Display ()
+  {
+    ToggleClassification (TRUE);
+  }
+
+  // --------------------------------------------------------------------------------
+  GSList *GeneralClassification::GetCurrentClassification ()
+  {
+    GSList *result = NULL;
+
+    {
+      GSList *current = _attendees->GetGlobalList ();
+
+      while (current)
       {
-        Player::AttributeId  exported_attr_id ("exported");
-        Attribute           *exported = player->GetAttribute (&exported_attr_id);
+        Player *player;
 
-        if ((exported == NULL) || (exported->GetUIntValue () == FALSE))
+        player = (Player *) current->data;
         {
-          Player::AttributeId  status_attr_id ("global_status");
-          Attribute           *status_attr = player->GetAttribute (&status_attr_id);
+          Player::AttributeId  exported_attr_id ("exported");
+          Attribute           *exported = player->GetAttribute (&exported_attr_id);
 
-          if (status_attr)
+          if ((exported == NULL) || (exported->GetUIntValue () == FALSE))
           {
-            gchar *status = status_attr->GetStrValue ();
+            Player::AttributeId  status_attr_id ("global_status");
+            Attribute           *status_attr = player->GetAttribute (&status_attr_id);
 
-            if (status && (*status != 'E'))
+            if (status_attr)
             {
-              result = g_slist_prepend (result,
-                                        player);
+              gchar *status = status_attr->GetStrValue ();
+
+              if (status && (*status != 'E'))
+              {
+                result = g_slist_prepend (result,
+                                          player);
+              }
             }
           }
         }
-      }
-      current = g_slist_next (current);
-    }
-  }
-
-  if (result)
-  {
-    Player::AttributeId attr_id ("final_rank");
-
-    attr_id.MakeRandomReady (_rand_seed);
-    result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) Player::Compare,
-                                     &attr_id);
-  }
-  return result;
-}
-
-// --------------------------------------------------------------------------------
-void GeneralClassification::Load (xmlNode *xml_node)
-{
-  LoadConfiguration (xml_node);
-
-  RetrieveAttendees ();
-}
-
-// --------------------------------------------------------------------------------
-void GeneralClassification::Save (xmlTextWriter *xml_writer)
-{
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _xml_class_name);
-
-  SaveConfiguration (xml_writer);
-
-  xmlTextWriterEndElement (xml_writer);
-}
-
-// --------------------------------------------------------------------------------
-void GeneralClassification::OnFilterClicked ()
-{
-  Classification *classification = GetClassification ();
-
-  if (classification)
-  {
-    classification->SelectAttributes ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void GeneralClassification::OnPrintPoolToolbuttonClicked ()
-{
-  Classification *classification = GetClassification ();
-
-  if (classification)
-  {
-    classification->Print (gettext ("General classification"));
-  }
-}
-
-// --------------------------------------------------------------------------------
-void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
-{
-  char *filename = NULL;
-
-  {
-    GtkWidget *chooser;
-
-    chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a target file..."),
-                                                       NULL,
-                                                       GTK_FILE_CHOOSER_ACTION_SAVE,
-                                                       GTK_STOCK_CANCEL,
-                                                       GTK_RESPONSE_CANCEL,
-                                                       GTK_STOCK_SAVE_AS,
-                                                       GTK_RESPONSE_ACCEPT,
-                                                       NULL));
-    gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
-                                                    TRUE);
-
-    {
-      gchar *last_dirname = g_key_file_get_string (_config_file,
-                                                   "Competiton",
-                                                   "export_dir",
-                                                   NULL);
-      if (last_dirname == NULL)
-      {
-        last_dirname = g_key_file_get_string (_config_file,
-                                              "Competiton",
-                                              "default_dir_name",
-                                              NULL);
-      }
-      if (last_dirname)
-      {
-        gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
-                                             last_dirname);
-
-        g_free (last_dirname);
+        current = g_slist_next (current);
       }
     }
 
+    if (result)
     {
-      GtkFileFilter *filter = gtk_file_filter_new ();
-      const gchar   *pattern_upper;
-      gchar         *pattern_lower;
+      Player::AttributeId attr_id ("final_rank");
 
-      if (export_type == CSV)
+      attr_id.MakeRandomReady (_rand_seed);
+      result = g_slist_sort_with_data (result,
+                                       (GCompareDataFunc) Player::Compare,
+                                       &attr_id);
+    }
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::Load (xmlNode *xml_node)
+  {
+    LoadConfiguration (xml_node);
+
+    RetrieveAttendees ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::Save (xmlTextWriter *xml_writer)
+  {
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST _xml_class_name);
+
+    SaveConfiguration (xml_writer);
+
+    xmlTextWriterEndElement (xml_writer);
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::OnFilterClicked ()
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      classification->SelectAttributes ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::OnPrintPoolToolbuttonClicked ()
+  {
+    Classification *classification = GetClassification ();
+
+    if (classification)
+    {
+      classification->Print (gettext ("General classification"));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
+  {
+    char *filename = NULL;
+
+    {
+      GtkWidget *chooser;
+
+      chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a target file..."),
+                                                         NULL,
+                                                         GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                         GTK_STOCK_CANCEL,
+                                                         GTK_RESPONSE_CANCEL,
+                                                         GTK_STOCK_SAVE_AS,
+                                                         GTK_RESPONSE_ACCEPT,
+                                                         NULL));
+      gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
+                                                      TRUE);
+
       {
-        gtk_file_filter_set_name (filter,
-                                  gettext ("All Excel files (.CSV)"));
-        pattern_upper = "*.CSV";
-      }
-      else if (export_type == FFF)
-      {
-        gtk_file_filter_set_name (filter,
-                                  gettext ("All FFF files (.FFF)"));
-        pattern_upper = "*.FFF";
-      }
-      else if (export_type == PDF)
-      {
-        gtk_file_filter_set_name (filter,
-                                  gettext ("All PDF files (.PDF)"));
-        pattern_upper = "*.PDF";
-      }
-
-      gtk_file_filter_add_pattern (filter,
-                                   pattern_upper);
-
-      pattern_lower = g_ascii_strdown (pattern_upper, -1);
-      gtk_file_filter_add_pattern (filter,
-                                   pattern_lower);
-
-      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                   filter);
-
-      {
-        gchar *cotcot_name = _contest->GetDefaultFileName ();
-        gchar *suffix      = g_strrstr (cotcot_name, ".cotcot");
-        gchar *export_name;
-
-        if (suffix)
+        gchar *last_dirname = g_key_file_get_string (_config_file,
+                                                     "Competiton",
+                                                     "export_dir",
+                                                     NULL);
+        if (last_dirname == NULL)
         {
-          *suffix = 0;
+          last_dirname = g_key_file_get_string (_config_file,
+                                                "Competiton",
+                                                "default_dir_name",
+                                                NULL);
+        }
+        if (last_dirname)
+        {
+          gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
+                                               last_dirname);
+
+          g_free (last_dirname);
+        }
+      }
+
+      {
+        GtkFileFilter *filter = gtk_file_filter_new ();
+        const gchar   *pattern_upper;
+        gchar         *pattern_lower;
+
+        if (export_type == CSV)
+        {
+          gtk_file_filter_set_name (filter,
+                                    gettext ("All Excel files (.CSV)"));
+          pattern_upper = "*.CSV";
+        }
+        else if (export_type == FFF)
+        {
+          gtk_file_filter_set_name (filter,
+                                    gettext ("All FFF files (.FFF)"));
+          pattern_upper = "*.FFF";
+        }
+        else if (export_type == PDF)
+        {
+          gtk_file_filter_set_name (filter,
+                                    gettext ("All PDF files (.PDF)"));
+          pattern_upper = "*.PDF";
         }
 
-        export_name = g_strdup_printf ("%s.%s", cotcot_name, pattern_lower+2);
+        gtk_file_filter_add_pattern (filter,
+                                     pattern_upper);
 
-        gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (chooser),
-                                           export_name);
+        pattern_lower = g_ascii_strdown (pattern_upper, -1);
+        gtk_file_filter_add_pattern (filter,
+                                     pattern_lower);
 
-        g_free (export_name);
-        g_free (cotcot_name);
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                     filter);
+
+        {
+          gchar *cotcot_name = _contest->GetDefaultFileName ();
+          gchar *suffix      = g_strrstr (cotcot_name, ".cotcot");
+          gchar *export_name;
+
+          if (suffix)
+          {
+            *suffix = 0;
+          }
+
+          export_name = g_strdup_printf ("%s.%s", cotcot_name, pattern_lower+2);
+
+          gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (chooser),
+                                             export_name);
+
+          g_free (export_name);
+          g_free (cotcot_name);
+        }
+        g_free (pattern_lower);
       }
-      g_free (pattern_lower);
-    }
 
-    {
-      GtkFileFilter *filter = gtk_file_filter_new ();
-
-      gtk_file_filter_set_name (filter,
-                                gettext ("All files"));
-      gtk_file_filter_add_pattern (filter,
-                                   "*");
-      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                   filter);
-    }
-
-    if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
-    {
-      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-
-      if (filename)
       {
-        gchar *dirname = g_path_get_dirname (filename);
+        GtkFileFilter *filter = gtk_file_filter_new ();
 
-        g_key_file_set_string (_config_file,
-                               "Competiton",
-                               "export_dir",
-                               dirname);
-        g_free (dirname);
+        gtk_file_filter_set_name (filter,
+                                  gettext ("All files"));
+        gtk_file_filter_add_pattern (filter,
+                                     "*");
+        gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                     filter);
       }
+
+      if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+      {
+        filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+
+        if (filename)
+        {
+          gchar *dirname = g_path_get_dirname (filename);
+
+          g_key_file_set_string (_config_file,
+                                 "Competiton",
+                                 "export_dir",
+                                 dirname);
+          g_free (dirname);
+        }
+      }
+
+      gtk_widget_destroy (chooser);
     }
 
-    gtk_widget_destroy (chooser);
+    if (filename)
+    {
+      Classification *classification = GetClassification ();
+
+      if (classification)
+      {
+        if (export_type == CSV)
+        {
+          classification->DumpToCSV (filename,
+                                     _filter->GetAttrList ());
+        }
+        else if (export_type == FFF)
+        {
+          classification->DumpToFFF (filename,
+                                     _contest);
+        }
+        if (export_type == PDF)
+        {
+          _contest->PrintPDF (gettext ("General classification"),
+                              filename);
+        }
+      }
+      g_free (filename);
+    }
   }
 
-  if (filename)
+  // --------------------------------------------------------------------------------
+  gchar *GeneralClassification::GetPrintName ()
   {
-    Classification *classification = GetClassification ();
+    return g_strdup_printf (gettext ("General classification"));
+  }
 
-    if (classification)
+  // --------------------------------------------------------------------------------
+  guint GeneralClassification::PreparePrint (GtkPrintOperation *operation,
+                                             GtkPrintContext   *context)
+  {
+    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
     {
-      if (export_type == CSV)
+      return 0;
+    }
+    else
+    {
+      Classification *classification = GetClassification ();
+
+      if (classification)
       {
-        classification->DumpToCSV (filename,
-                                   _filter->GetAttrList ());
-      }
-      else if (export_type == FFF)
-      {
-        classification->DumpToFFF (filename,
-                                   _contest);
-      }
-      if (export_type == PDF)
-      {
-        _contest->PrintPDF (gettext ("General classification"),
-                            filename);
+        return classification->PreparePrint (operation,
+                                             context);
       }
     }
-    g_free (filename);
-  }
-}
 
-// --------------------------------------------------------------------------------
-gchar *GeneralClassification::GetPrintName ()
-{
-  return g_strdup_printf (gettext ("General classification"));
-}
-
-// --------------------------------------------------------------------------------
-guint GeneralClassification::PreparePrint (GtkPrintOperation *operation,
-                                           GtkPrintContext   *context)
-{
-  if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
-  {
     return 0;
   }
-  else
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::DrawPage (GtkPrintOperation *operation,
+                                        GtkPrintContext   *context,
+                                        gint               page_nr)
   {
     Classification *classification = GetClassification ();
 
     if (classification)
     {
-      return classification->PreparePrint (operation,
-                                           context);
+      DrawContainerPage (operation,
+                         context,
+                         page_nr);
+
+      classification->DrawBarePage (operation,
+                                    context,
+                                    page_nr);
     }
   }
 
-  return 0;
-}
-
-// --------------------------------------------------------------------------------
-void GeneralClassification::DrawPage (GtkPrintOperation *operation,
-                                      GtkPrintContext   *context,
-                                      gint               page_nr)
-{
-  Classification *classification = GetClassification ();
-
-  if (classification)
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::OnEndPrint (GtkPrintOperation *operation,
+                                          GtkPrintContext   *context)
   {
-    DrawContainerPage (operation,
-                       context,
-                       page_nr);
+    Classification *classification = GetClassification ();
 
-    classification->DrawBarePage (operation,
-                                  context,
-                                  page_nr);
+    if (classification)
+    {
+      classification->OnEndPrint (operation,
+                                  context);
+    }
   }
-}
 
-// --------------------------------------------------------------------------------
-void GeneralClassification::OnEndPrint (GtkPrintOperation *operation,
-                                        GtkPrintContext   *context)
-{
-  Classification *classification = GetClassification ();
-
-  if (classification)
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_general_classification_filter_button_clicked (GtkWidget *widget,
+                                                                                   Object    *owner)
   {
-    classification->OnEndPrint (operation,
-                                context);
+    GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+
+    g->OnFilterClicked ();
   }
-}
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_general_classification_filter_button_clicked (GtkWidget *widget,
-                                                                                 Object    *owner)
-{
-  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_general_classification_print_toolbutton_clicked (GtkWidget *widget,
+                                                                                      Object    *owner)
+  {
+    GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-  g->OnFilterClicked ();
-}
+    g->OnPrintPoolToolbuttonClicked ();
+  }
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_general_classification_print_toolbutton_clicked (GtkWidget *widget,
-                                                                                    Object    *owner)
-{
-  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_export_csv_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+  {
+    GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-  g->OnPrintPoolToolbuttonClicked ();
-}
+    g->OnExportToolbuttonClicked (GeneralClassification::CSV);
+  }
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_export_csv_toolbutton_clicked (GtkWidget *widget,
-                                                                  Object    *owner)
-{
-  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_export_fff_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+  {
+    GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-  g->OnExportToolbuttonClicked (GeneralClassification::CSV);
-}
+    g->OnExportToolbuttonClicked (GeneralClassification::FFF);
+  }
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_export_fff_toolbutton_clicked (GtkWidget *widget,
-                                                                  Object    *owner)
-{
-  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_export_pdf_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+  {
+    GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-  g->OnExportToolbuttonClicked (GeneralClassification::FFF);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_export_pdf_toolbutton_clicked (GtkWidget *widget,
-                                                                  Object    *owner)
-{
-  GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
-
-  g->OnExportToolbuttonClicked (GeneralClassification::PDF);
+    g->OnExportToolbuttonClicked (GeneralClassification::PDF);
+  }
 }

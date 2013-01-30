@@ -19,42 +19,46 @@
 
 #include <gtk/gtk.h>
 
-#include "object.hpp"
+#include "util/object.hpp"
+
 #include "table.hpp"
 
-class TableSetBorder : public Object
+namespace Table
 {
-  public:
-    TableSetBorder (Object    *owner,
-                    GCallback  callback,
-                    GtkWidget *container,
-                    GtkWidget *widget);
+  class TableSetBorder : public Object
+  {
+    public:
+      TableSetBorder (Object    *owner,
+                      GCallback  callback,
+                      GtkWidget *container,
+                      GtkWidget *widget);
 
-    void SetTableIcon (guint        table,
-                       const gchar *icon);
+      void SetTableIcon (guint        table,
+                         const gchar *icon);
 
-    void MuteCallbacks ();
+      void MuteCallbacks ();
 
-    void AddTable (Table *table);
+      void AddTable (Table *table);
 
-    void UnMuteCallbacks ();
+      void UnMuteCallbacks ();
 
-    void SelectTable (gint table);
+      void SelectTable (gint table);
 
-    Table *GetSelectedTable ();
+      Table *GetSelectedTable ();
 
-    void Plug ();
+      void Plug ();
 
-    void UnPlug ();
+      void UnPlug ();
 
-  private:
-    Object       *_owner;
-    GCallback     _callback;
-    GtkListStore *_liststore;
-    GtkContainer *_container;
-    GtkWidget    *_widget;
+    private:
+      Object       *_owner;
+      GCallback     _callback;
+      GtkListStore *_liststore;
+      GtkContainer *_container;
+      GtkWidget    *_widget;
 
-    virtual ~TableSetBorder ();
-};
+      virtual ~TableSetBorder ();
+  };
+}
 
 #endif

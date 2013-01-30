@@ -17,8 +17,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "pool_allocator.hpp"
-#include "pool_supervisor.hpp"
+#include "pool_round/pool_allocator.hpp"
+#include "pool_round/pool_supervisor.hpp"
+
 #include "classification.hpp"
 #include "player.hpp"
 

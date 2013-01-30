@@ -17,8 +17,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "common/player.hpp"
+
 #include "attribute.hpp"
-#include "player.hpp"
 
 #include "module.hpp"
 

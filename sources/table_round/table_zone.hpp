@@ -20,49 +20,52 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "object.hpp"
-#include "module.hpp"
-#include "referee_zone.hpp"
+#include "util/object.hpp"
+#include "util/module.hpp"
+#include "common/referee_zone.hpp"
 
-struct NodeData
+namespace Table
 {
-  guint          _expected_winner_rank;
-  Table         *_table;
-  guint          _table_index;
-  Match         *_match;
-  GooCanvasItem *_fencer_goo_table;
-  GooCanvasItem *_match_goo_table;
-  GooCanvasItem *_connector;
-};
+  struct NodeData
+  {
+    guint          _expected_winner_rank;
+    Table         *_table;
+    guint          _table_index;
+    Match         *_match;
+    GooCanvasItem *_fencer_goo_table;
+    GooCanvasItem *_match_goo_table;
+    GooCanvasItem *_connector;
+  };
 
-class TableZone : public RefereeZone
-{
-  public:
-    TableZone (Module  *container,
-               gdouble  spacing);
+  class TableZone : public RefereeZone
+  {
+    public:
+      TableZone (Module  *container,
+                 gdouble  spacing);
 
-    void AddReferee (Player *referee);
+      void AddReferee (Player *referee);
 
-    void RemoveReferee (Player *referee);
+      void RemoveReferee (Player *referee);
 
-    void AddNode (GNode *node);
+      void AddNode (GNode *node);
 
-    void Draw (GooCanvasItem *root_item);
+      void Draw (GooCanvasItem *root_item);
 
-    void PutInTable (CanvasModule  *canvas_module,
-                     GooCanvasItem *table,
-                     guint          row,
-                     guint          column);
+      void PutInTable (CanvasModule  *canvas_module,
+                       GooCanvasItem *table,
+                       guint          row,
+                       guint          column);
 
-    GSList *GetNodeList ();
+      GSList *GetNodeList ();
 
-  private:
-    GSList   *_node_list;
-    gdouble   _spacing;
+    private:
+      GSList   *_node_list;
+      gdouble   _spacing;
 
-    virtual ~TableZone ();
+      virtual ~TableZone ();
 
-    guint GetNbMatchs ();
-};
+      guint GetNbMatchs ();
+  };
+}
 
 #endif

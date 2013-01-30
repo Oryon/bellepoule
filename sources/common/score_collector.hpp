@@ -20,8 +20,9 @@
 #include <gtk/gtk.h>
 #include <goocanvas.h>
 
-#include "object.hpp"
-#include "canvas_module.hpp"
+#include "util/object.hpp"
+#include "util/canvas_module.hpp"
+
 #include "match.hpp"
 #include "player.hpp"
 

@@ -18,918 +18,942 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "attribute.hpp"
-#include "schedule.hpp"
-#include "player.hpp"
-#include "filter.hpp"
+#include "util/attribute.hpp"
+#include "util/filter.hpp"
+#include "common/schedule.hpp"
+#include "common/player.hpp"
 
 #include "checkin.hpp"
 
-// --------------------------------------------------------------------------------
-Checkin::Checkin (const gchar *glade,
-                  const gchar *player_tag)
-: PlayersList (glade)
+namespace People
 {
-  _form        = NULL;
-  _attendings  = 0;
-  _player_tag  = player_tag;
-  _players_tag = g_strdup_printf ("%ss", _player_tag);
-
+  // --------------------------------------------------------------------------------
+  Checkin::Checkin (const gchar *glade,
+                    const gchar *player_tag)
+    : PlayersList (glade)
   {
-    GtkWidget *content_area;
+    _form        = NULL;
+    _attendings  = 0;
+    _player_tag  = player_tag;
+    _players_tag = g_strdup_printf ("%ss", _player_tag);
 
-    _print_dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                        GTK_MESSAGE_QUESTION,
-                                                        GTK_BUTTONS_OK_CANCEL,
-                                                        gettext ("<b><big>What do you want to print?</big></b>"));
-
-    gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                          gettext ("Fencer list printing"));
-
-    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
-
-    gtk_widget_reparent (_glade->GetWidget ("print_dialog-vbox"),
-                         content_area);
-  }
-
-  RefreshAttendingDisplay ();
-}
-
-// --------------------------------------------------------------------------------
-Checkin::~Checkin ()
-{
-  gtk_widget_destroy (_print_dialog);
-
-  _form->Release ();
-
-  g_free (_players_tag);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::CreateForm (Filter *filter)
-{
-  _form = new Form (filter,
-                    this,
-                    GetPlayerType (),
-                    (Form::PlayerCbk) &Checkin::OnPlayerEventFromForm);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::Add (Player *player)
-{
-  PlayersList::Add (player);
-  Monitor (player);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::LoadList (xmlXPathContext *xml_context,
-                        const gchar     *from_node)
-{
-  gchar          *path        = g_strdup_printf ("%s/%ss", from_node, _player_tag);
-  xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
-  xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
-
-  if (xml_object->nodesetval->nodeNr)
-  {
-    LoadList (xml_nodeset->nodeTab[0]);
-  }
-
-  g_free (path);
-  xmlXPathFreeObject (xml_object);
-
-  OnLoaded ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::LoadList (xmlNode *xml_node)
-{
-  for (xmlNode *n = xml_node; n != NULL; n = n->next)
-  {
-    if (n->type == XML_ELEMENT_NODE)
     {
-      if (strcmp ((char *) n->name, _player_tag) == 0)
+      GtkWidget *content_area;
+
+      _print_dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                          GTK_MESSAGE_QUESTION,
+                                                          GTK_BUTTONS_OK_CANCEL,
+                                                          gettext ("<b><big>What do you want to print?</big></b>"));
+
+      gtk_window_set_title (GTK_WINDOW (_print_dialog),
+                            gettext ("Fencer list printing"));
+
+      content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
+
+      gtk_widget_reparent (_glade->GetWidget ("print_dialog-vbox"),
+                           content_area);
+    }
+
+    RefreshAttendingDisplay ();
+  }
+
+  // --------------------------------------------------------------------------------
+  Checkin::~Checkin ()
+  {
+    gtk_widget_destroy (_print_dialog);
+
+    _form->Release ();
+
+    g_free (_players_tag);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::CreateForm (Filter             *filter,
+                            Player::PlayerType  player_type)
+  {
+    if (_form == NULL)
+    {
+      const gchar *name;
+
+      if (player_type == Player::FENCER)
       {
-        Player *player = new Player (GetPlayerType ());
-
-        player->Load (n);
-
-        // FFE issue
-        GuessPlayerLeague (player);
-
-        Add (player);
-        OnPlayerLoaded (player);
-        player->Release ();
+        name = gettext ("Fencer");
       }
-      else if (strcmp ((char *) n->name, _players_tag) != 0)
+      else if (player_type == Player::REFEREE)
       {
-        OnListChanged ();
-        return;
+        name = gettext ("Referee");
+      }
+      else
+      {
+        name = gettext ("Team");
+      }
+
+      _form = new Form (name,
+                        this,
+                        filter,
+                        player_type,
+                        (Form::PlayerCbk) &Checkin::OnPlayerEventFromForm);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::Add (Player *player)
+  {
+    PlayersList::Add (player);
+    Monitor (player);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::LoadList (xmlXPathContext *xml_context,
+                          const gchar     *from_node)
+  {
+    gchar          *path        = g_strdup_printf ("%s/%ss", from_node, _player_tag);
+    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
+    xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
+
+    if (xml_object->nodesetval->nodeNr)
+    {
+      LoadList (xml_nodeset->nodeTab[0]);
+    }
+
+    g_free (path);
+    xmlXPathFreeObject (xml_object);
+
+    OnLoaded ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::LoadList (xmlNode *xml_node)
+  {
+    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    {
+      if (n->type == XML_ELEMENT_NODE)
+      {
+        if (strcmp ((char *) n->name, _player_tag) == 0)
+        {
+          Player *player = new Player (GetPlayerType ());
+
+          player->Load (n);
+
+          // FFE issue
+          GuessPlayerLeague (player);
+
+          Add (player);
+          OnPlayerLoaded (player);
+          player->Release ();
+        }
+        else if (strcmp ((char *) n->name, _players_tag) != 0)
+        {
+          OnListChanged ();
+          return;
+        }
+      }
+      LoadList (n->children);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::GuessPlayerLeague (Player *player)
+  {
+    Player::AttributeId  country_attr_id ("country");
+    Attribute           *country_attr = player->GetAttribute (&country_attr_id);
+
+    if (country_attr && (g_ascii_strcasecmp  (country_attr->GetStrValue (), "FRA") == 0))
+    {
+      Player::AttributeId  league_attr_id ("league");
+      Attribute           *league_attr = player->GetAttribute (&league_attr_id);
+
+      if ((league_attr == NULL) || (strlen (league_attr->GetStrValue ()) == 0))
+      {
+        Player::AttributeId  licence_attr_id ("licence");
+        Attribute           *licence_attr = player->GetAttribute (&licence_attr_id);
+
+        if (licence_attr)
+        {
+          gchar *licence_string = g_strdup (licence_attr->GetStrValue ());
+
+          if (strlen (licence_string) == 12)
+          {
+            licence_string[2] = 0;
+
+            AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
+            gchar         *league      = league_desc->GetDiscreteUserImage (atoi (licence_string));
+
+            if (league)
+            {
+              player->SetAttributeValue (&league_attr_id, league);
+              g_free (league);
+            }
+          }
+          g_free (licence_string);
+        }
       }
     }
-    LoadList (n->children);
   }
-}
 
-// --------------------------------------------------------------------------------
-void Checkin::GuessPlayerLeague (Player *player)
-{
-  Player::AttributeId  country_attr_id ("country");
-  Attribute           *country_attr = player->GetAttribute (&country_attr_id);
-
-  if (country_attr && (g_ascii_strcasecmp  (country_attr->GetStrValue (), "FRA") == 0))
+  // --------------------------------------------------------------------------------
+  void Checkin::SaveList (xmlTextWriter *xml_writer)
   {
-    Player::AttributeId  league_attr_id ("league");
-    Attribute           *league_attr = player->GetAttribute (&league_attr_id);
+    xmlTextWriterStartElement (xml_writer,
+                               BAD_CAST _players_tag);
 
-    if ((league_attr == NULL) || (strlen (league_attr->GetStrValue ()) == 0))
     {
-      Player::AttributeId  licence_attr_id ("licence");
-      Attribute           *licence_attr = player->GetAttribute (&licence_attr_id);
+      GSList *current = _player_list;
 
-      if (licence_attr)
+      while (current)
       {
-        gchar *licence_string = g_strdup (licence_attr->GetStrValue ());
+        Player *p = (Player *) current->data;
 
-        if (strlen (licence_string) == 12)
+        if (p)
         {
-          licence_string[2] = 0;
+          p->Save (xml_writer,
+                   _player_tag);
+        }
+        current = g_slist_next (current);
+      }
+    }
 
-          AttributeDesc *league_desc = AttributeDesc::GetDescFromCodeName ("league");
-          gchar         *league      = league_desc->GetDiscreteUserImage (atoi (licence_string));
+    xmlTextWriterEndElement (xml_writer);
+  }
 
-          if (league)
+  // --------------------------------------------------------------------------------
+  void Checkin::OnListChanged ()
+  {
+    RefreshAttendingDisplay ();
+    PlayersList::OnListChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Checkin::PresentPlayerFilter (Player *player)
+  {
+    Player::AttributeId  attr_id ("attending");
+    Attribute           *attr = player->GetAttribute (&attr_id);
+
+    return ((attr == NULL) || (attr->GetUIntValue () == TRUE));
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::OnImport ()
+  {
+    GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a fencer file to import..."),
+                                                      NULL,
+                                                      GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                      GTK_STOCK_CANCEL,
+                                                      GTK_RESPONSE_CANCEL,
+                                                      GTK_STOCK_OPEN,
+                                                      GTK_RESPONSE_ACCEPT,
+                                                      NULL);
+
+    {
+      GtkFileFilter *filter = gtk_file_filter_new ();
+
+      if (GetPlayerType () == Player::FENCER)
+      {
+        gtk_file_filter_set_name (filter,
+                                  gettext ("Fencer files"));
+      }
+      else
+      {
+        gtk_file_filter_set_name (filter,
+                                  gettext ("Referee files"));
+      }
+      gtk_file_filter_add_pattern (filter,
+                                   "*.FFF");
+      gtk_file_filter_add_pattern (filter,
+                                   "*.fff");
+      gtk_file_filter_add_pattern (filter,
+                                   "*.CSV");
+      gtk_file_filter_add_pattern (filter,
+                                   "*.csv");
+      gtk_file_filter_add_pattern (filter,
+                                   "*.TXT");
+      gtk_file_filter_add_pattern (filter,
+                                   "*.txt");
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                   filter);
+    }
+
+    {
+      GtkFileFilter *filter = gtk_file_filter_new ();
+
+      gtk_file_filter_set_name (filter,
+                                gettext ("All files"));
+      gtk_file_filter_add_pattern (filter,
+                                   "*");
+      gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
+                                   filter);
+    }
+
+    {
+      gchar *prg_name = g_get_prgname ();
+
+      if (prg_name)
+      {
+        gchar *install_dirname = g_path_get_dirname (prg_name);
+
+        if (install_dirname)
+        {
+          gchar *example_dirname = g_strdup_printf ("%s/Exemples", install_dirname);
+
+          gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (chooser),
+                                                example_dirname,
+                                                NULL);
+          g_free (example_dirname);
+          g_free (install_dirname);
+        }
+      }
+    }
+
+    {
+      gchar *last_dirname = g_key_file_get_string (_config_file,
+                                                   "Checkin",
+                                                   "default_import_dir_name",
+                                                   NULL);
+      if (last_dirname && g_file_test (last_dirname,
+                                       G_FILE_TEST_IS_DIR))
+      {
+        gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
+                                             last_dirname);
+
+        g_free (last_dirname);
+      }
+    }
+
+    if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+    {
+      gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+
+      if (filename)
+      {
+        {
+          gchar *dirname = g_path_get_dirname (filename);
+
+          g_key_file_set_string (_config_file,
+                                 "Checkin",
+                                 "default_import_dir_name",
+                                 dirname);
+          g_free (dirname);
+        }
+
+        {
+          gchar *uri = g_filename_to_uri (filename,
+                                          NULL,
+                                          NULL);
+
+          gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
+                                       uri);
+          g_free (uri);
+        }
+
+        if (   g_str_has_suffix (filename, ".fff")
+            || g_str_has_suffix (filename, ".FFF"))
+        {
+          ImportFFF (filename);
+        }
+        else
+        {
+          ImportCSV (filename);
+        }
+      }
+    }
+
+    gtk_widget_destroy (chooser);
+
+    OnListChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Checkin::GetFileContent (gchar *filename)
+  {
+    gchar *file_content;
+    gchar *raw_file;
+    gsize  length;
+    guint  j;
+
+    g_file_get_contents ((const gchar *) filename,
+                         &raw_file,
+                         &length,
+                         NULL);
+    length++;
+
+    file_content = (gchar *) g_malloc (length);
+
+    j = 0;
+    for (guint i = 0; i < length; i++)
+    {
+      if (raw_file[i] != '\r')
+      {
+        file_content[j] = raw_file[i];
+        j++;
+      }
+    }
+
+    return file_content;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::ImportFFF (gchar *filename)
+  {
+    gchar *file_content = GetFileContent (filename);
+    gchar *utf8_content = g_convert (file_content,
+                                     -1,
+                                     "UTF-8",
+                                     "ISO-8859-1",
+                                     NULL,
+                                     NULL,
+                                     NULL);
+
+    g_free (file_content);
+    if (utf8_content)
+    {
+      gchar **lines = g_strsplit_set (utf8_content,
+                                      "\n",
+                                      0);
+
+      if (lines && lines[0] && lines[1])
+      {
+        // Header
+        // FFF;WIN;CLASSEMENT;FFE
+        // 08/11/2009;;;;
+
+        // Fencers
+        for (guint l = 2; lines[l] != NULL; l++)
+        {
+          gchar               **line;
+          Player               *player;
+          Player::AttributeId   attr_id ("");
+
+          player = NULL;
+          line = g_strsplit_set (lines[l],
+                                 ";",
+                                 0);
+
+          // General
+          if (line && line[0])
           {
-            player->SetAttributeValue (&league_attr_id, league);
-            g_free (league);
+            gchar **tokens = g_strsplit_set (line[0],
+                                             ",",
+                                             0);
+
+            player = new Player (GetPlayerType ());
+
+            if (tokens)
+            {
+              attr_id._name = (gchar *) "name";
+              player->SetAttributeValue (&attr_id, tokens[0]);
+
+              attr_id._name = (gchar *) "first_name";
+              player->SetAttributeValue (&attr_id, tokens[1]);
+
+              attr_id._name = (gchar *) "birth_date";
+              {
+                gchar *french_date = tokens[2];
+                gchar **splitted_date;
+
+                splitted_date = g_strsplit (french_date,
+                                            "/",
+                                            0);
+                if (   splitted_date
+                    && splitted_date[0]
+                    && splitted_date[1]
+                    && splitted_date[2])
+                {
+                  gchar  buffer[50];
+                  GDate *date = g_date_new ();
+
+                  g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
+                  g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
+                  g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
+
+                  g_date_strftime (buffer,
+                                   sizeof (buffer),
+                                   "%x",
+                                   date);
+                  player->SetAttributeValue (&attr_id, buffer);
+
+                  g_date_free (date);
+                }
+                g_strfreev (splitted_date);
+              }
+
+              attr_id._name = (gchar *) "gender";
+              player->SetAttributeValue (&attr_id, tokens[3]);
+
+              attr_id._name = (gchar *) "country";
+              player->SetAttributeValue (&attr_id, tokens[4]);
+
+              g_strfreev (tokens);
+            }
+          }
+
+          // FIE
+          if (player && line[1])
+          {
+          }
+
+          // National federation
+          if (player && line[2])
+          {
+            gchar **tokens = g_strsplit_set (line[2],
+                                             ",",
+                                             0);
+            if (tokens)
+            {
+              attr_id._name = (gchar *) "licence";
+              player->SetAttributeValue (&attr_id, tokens[0]);
+
+              attr_id._name = (gchar *) "club";
+              player->SetAttributeValue (&attr_id, tokens[2]);
+
+              if (tokens[3] == NULL)
+              {
+                attr_id._name = (gchar *) "ranking";
+                player->SetAttributeValue (&attr_id, (guint) 0);
+              }
+              else
+              {
+                attr_id._name = (gchar *) "ranking";
+                player->SetAttributeValue (&attr_id, tokens[3]);
+              }
+
+              g_strfreev (tokens);
+            }
+
+            GuessPlayerLeague (player);
+          }
+
+          if (line)
+          {
+            if (player)
+            {
+              Add (player);
+              player->Release ();
+            }
+
+            g_strfreev (line);
           }
         }
-        g_free (licence_string);
+
+        g_strfreev (lines);
       }
+      g_free (utf8_content);
     }
+
+    RefreshAttendingDisplay ();
   }
-}
 
-// --------------------------------------------------------------------------------
-void Checkin::SaveList (xmlTextWriter *xml_writer)
-{
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST _players_tag);
-
+  // --------------------------------------------------------------------------------
+  void Checkin::ImportCSV (gchar *filename)
   {
-    GSList *current = _player_list;
+    gchar  *file_content = GetFileContent (filename);
+    gchar  *utf8_content;
 
-    while (current)
     {
-      Player *p = (Player *) current->data;
+      GError *error = NULL;
 
-      if (p)
+      utf8_content = g_locale_to_utf8 (file_content,
+                                       -1,
+                                       NULL,
+                                       NULL,
+                                       &error);
+      g_free (file_content);
+
+      if (error)
       {
-        p->Save (xml_writer,
-                 _player_tag);
+        GtkWidget *dialog = gtk_message_dialog_new (NULL,
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_CLOSE,
+                                                    "The imported CSV file is probably based on template generated from another computer.\n\n"
+                                                    "Use a template generated from this computer!");
+        gtk_dialog_run (GTK_DIALOG (dialog));
+        gtk_widget_destroy (dialog);
+        g_error_free (error);
       }
-      current = g_slist_next (current);
     }
+
+    if (utf8_content)
+    {
+      gchar **header_line = g_strsplit_set (utf8_content,
+                                            "\n",
+                                            0);
+
+      if (header_line)
+      {
+        guint           nb_attr = 0;
+        AttributeDesc **columns = NULL;
+
+        // Header
+        {
+          gchar **header_attr = g_strsplit_set (header_line[0],
+                                                ";",
+                                                0);
+
+          if (header_attr)
+          {
+            for (guint i = 0; header_attr[i] != NULL; i++)
+            {
+              nb_attr++;
+            }
+
+            columns = g_new (AttributeDesc *, nb_attr);
+            for (guint i = 0; i < nb_attr; i++)
+            {
+              columns[i] = AttributeDesc::GuessDescFromUserName (header_attr[i],
+                                                                 "CSV ready");
+            }
+
+            g_strfreev (header_attr);
+          }
+
+          g_strfreev (header_line);
+        }
+
+        // Fencers
+        {
+          gchar **tokens = g_strsplit_set (utf8_content,
+                                           ";\n",
+                                           0);
+
+          if (tokens)
+          {
+            for (guint i = nb_attr; tokens[i+1] != 0; i += nb_attr)
+            {
+              Player              *player = new Player (GetPlayerType ());
+              Player::AttributeId  attr_id ("");
+
+              for (guint c = 0; c < nb_attr; c++)
+              {
+                if (columns[c])
+                {
+                  attr_id._name = columns[c]->_code_name;
+
+                  player->SetAttributeValue (&attr_id, tokens[i+c]);
+                }
+              }
+
+              Add (player);
+              player->Release ();
+            }
+            g_strfreev (tokens);
+          }
+        }
+
+        g_free (columns);
+      }
+    }
+    g_free (utf8_content);
+
+    RefreshAttendingDisplay ();
   }
 
-  xmlTextWriterEndElement (xml_writer);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnListChanged ()
-{
-  RefreshAttendingDisplay ();
-  PlayersList::OnListChanged ();
-}
-
-// --------------------------------------------------------------------------------
-gboolean Checkin::PresentPlayerFilter (Player *player)
-{
-  Player::AttributeId  attr_id ("attending");
-  Attribute           *attr = player->GetAttribute (&attr_id);
-
-  return ((attr == NULL) || (attr->GetUIntValue () == TRUE));
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnImport ()
-{
-  GtkWidget *chooser = gtk_file_chooser_dialog_new (gettext ("Choose a fencer file to import..."),
-                                                    NULL,
-                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
-                                                    GTK_STOCK_CANCEL,
-                                                    GTK_RESPONSE_CANCEL,
-                                                    GTK_STOCK_OPEN,
-                                                    GTK_RESPONSE_ACCEPT,
-                                                    NULL);
-
+  // --------------------------------------------------------------------------------
+  void Checkin::OnPlayerEventFromForm (Player            *player,
+                                       Form::PlayerEvent  event,
+                                       guint              page)
   {
-    GtkFileFilter *filter = gtk_file_filter_new ();
-
-    if (GetPlayerType () == Player::FENCER)
+    if (event == Form::NEW_PLAYER)
     {
-      gtk_file_filter_set_name (filter,
-                                gettext ("Fencer files"));
+      {
+        Player::AttributeId  attending_attr_id ("attending");
+        Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
+        Player::AttributeId  global_status_attr_id ("global_status");
+
+        if (attending_attr->GetUIntValue () == 1)
+        {
+          player->SetAttributeValue (&global_status_attr_id,
+                                     "Q");
+        }
+        else
+        {
+          player->SetAttributeValue (&global_status_attr_id,
+                                     "F");
+        }
+      }
+
+      Add (player);
     }
     else
     {
-      gtk_file_filter_set_name (filter,
-                                gettext ("Referee files"));
+      Update (player);
     }
-    gtk_file_filter_add_pattern (filter,
-                                 "*.FFF");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.fff");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.CSV");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.csv");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.TXT");
-    gtk_file_filter_add_pattern (filter,
-                                 "*.txt");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                 filter);
+
+    OnListChanged ();
   }
 
+  // --------------------------------------------------------------------------------
+  void Checkin::Monitor (Player *player)
   {
-    GtkFileFilter *filter = gtk_file_filter_new ();
+    Player::AttributeId  attr_id ("attending");
+    Attribute           *attr = player->GetAttribute ( &attr_id);
 
-    gtk_file_filter_set_name (filter,
-                              gettext ("All files"));
-    gtk_file_filter_add_pattern (filter,
-                                 "*");
-    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
-                                 filter);
-  }
-
-  {
-    gchar *prg_name = g_get_prgname ();
-
-    if (prg_name)
+    if (attr && (attr->GetUIntValue () == TRUE))
     {
-      gchar *install_dirname = g_path_get_dirname (prg_name);
-
-      if (install_dirname)
-      {
-        gchar *example_dirname = g_strdup_printf ("%s/Exemples", install_dirname);
-
-        gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER (chooser),
-                                              example_dirname,
-                                              NULL);
-        g_free (example_dirname);
-        g_free (install_dirname);
-      }
+      _attendings++;
     }
+
+    player->SetChangeCbk ("attending",
+                          (Player::OnChange) OnAttendingChanged,
+                          this);
   }
 
+  // --------------------------------------------------------------------------------
+  void Checkin::OnPlugged ()
   {
-    gchar *last_dirname = g_key_file_get_string (_config_file,
-                                                 "Checkin",
-                                                 "default_import_dir_name",
-                                                 NULL);
-    if (last_dirname && g_file_test (last_dirname,
-                                     G_FILE_TEST_IS_DIR))
+    OnAttrListUpdated ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::OnPlayerRemoved (Player *player)
+  {
+    Player::AttributeId  attr_id ("attending");
+    Attribute           *attr = player->GetAttribute (&attr_id);
+
+    if (attr && (attr->GetUIntValue () == TRUE))
     {
-      gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser),
-                                           last_dirname);
-
-      g_free (last_dirname);
+      _attendings--;
     }
   }
 
-  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+  // --------------------------------------------------------------------------------
+  void Checkin::OnAttendingChanged (Player    *player,
+                                    Attribute *attr,
+                                    Object    *owner)
   {
-    gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+    Checkin *checkin = dynamic_cast <Checkin *> (owner);
+    guint               value = attr->GetUIntValue ();
+    Player::AttributeId global_status_attr_id ("global_status");
 
-    if (filename)
+    if (value == 1)
     {
-      {
-        gchar *dirname = g_path_get_dirname (filename);
-
-        g_key_file_set_string (_config_file,
-                               "Checkin",
-                               "default_import_dir_name",
-                               dirname);
-        g_free (dirname);
-      }
-
-      {
-        gchar *uri = g_filename_to_uri (filename,
-                                        NULL,
-                                        NULL);
-
-        gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
-                                     uri);
-        g_free (uri);
-      }
-
-      if (   g_str_has_suffix (filename, ".fff")
-          || g_str_has_suffix (filename, ".FFF"))
-      {
-        ImportFFF (filename);
-      }
-      else
-      {
-        ImportCSV (filename);
-      }
+      checkin->_attendings++;
+      player->SetAttributeValue (&global_status_attr_id,
+                                 "Q");
     }
-  }
-
-  gtk_widget_destroy (chooser);
-
-  OnListChanged ();
-}
-
-// --------------------------------------------------------------------------------
-gchar *Checkin::GetFileContent (gchar *filename)
-{
-  gchar *file_content;
-  gchar *raw_file;
-  gsize  length;
-  guint  j;
-
-  g_file_get_contents ((const gchar *) filename,
-                       &raw_file,
-                       &length,
-                       NULL);
-  length++;
-
-  file_content = (gchar *) g_malloc (length);
-
-  j = 0;
-  for (guint i = 0; i < length; i++)
-  {
-    if (raw_file[i] != '\r')
+    else if (value == 0)
     {
-      file_content[j] = raw_file[i];
-      j++;
-    }
-  }
-
-  return file_content;
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::ImportFFF (gchar *filename)
-{
-  gchar *file_content = GetFileContent (filename);
-  gchar *utf8_content = g_convert (file_content,
-                                   -1,
-                                   "UTF-8",
-                                   "ISO-8859-1",
-                                   NULL,
-                                   NULL,
-                                   NULL);
-
-  g_free (file_content);
-  if (utf8_content)
-  {
-    gchar **lines = g_strsplit_set (utf8_content,
-                                    "\n",
-                                    0);
-
-    if (lines && lines[0] && lines[1])
-    {
-      // Header
-      // FFF;WIN;CLASSEMENT;FFE
-      // 08/11/2009;;;;
-
-      // Fencers
-      for (guint l = 2; lines[l] != NULL; l++)
-      {
-        gchar               **line;
-        Player               *player;
-        Player::AttributeId   attr_id ("");
-
-        player = NULL;
-        line = g_strsplit_set (lines[l],
-                               ";",
-                               0);
-
-        // General
-        if (line && line[0])
-        {
-          gchar **tokens = g_strsplit_set (line[0],
-                                           ",",
-                                           0);
-
-          player = new Player (GetPlayerType ());
-
-          if (tokens)
-          {
-            attr_id._name = (gchar *) "name";
-            player->SetAttributeValue (&attr_id, tokens[0]);
-
-            attr_id._name = (gchar *) "first_name";
-            player->SetAttributeValue (&attr_id, tokens[1]);
-
-            attr_id._name = (gchar *) "birth_date";
-            {
-              gchar *french_date = tokens[2];
-              gchar **splitted_date;
-
-              splitted_date = g_strsplit (french_date,
-                                          "/",
-                                          0);
-              if (   splitted_date
-                  && splitted_date[0]
-                  && splitted_date[1]
-                  && splitted_date[2])
-              {
-                gchar  buffer[50];
-                GDate *date = g_date_new ();
-
-                g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
-                g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
-                g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
-
-                g_date_strftime (buffer,
-                                 sizeof (buffer),
-                                 "%x",
-                                 date);
-                player->SetAttributeValue (&attr_id, buffer);
-
-                g_date_free (date);
-              }
-              g_strfreev (splitted_date);
-            }
-
-            attr_id._name = (gchar *) "gender";
-            player->SetAttributeValue (&attr_id, tokens[3]);
-
-            attr_id._name = (gchar *) "country";
-            player->SetAttributeValue (&attr_id, tokens[4]);
-
-            g_strfreev (tokens);
-          }
-        }
-
-        // FIE
-        if (player && line[1])
-        {
-        }
-
-        // National federation
-        if (player && line[2])
-        {
-          gchar **tokens = g_strsplit_set (line[2],
-                                           ",",
-                                           0);
-          if (tokens)
-          {
-            attr_id._name = (gchar *) "licence";
-            player->SetAttributeValue (&attr_id, tokens[0]);
-
-            attr_id._name = (gchar *) "club";
-            player->SetAttributeValue (&attr_id, tokens[2]);
-
-            if (tokens[3] == NULL)
-            {
-              attr_id._name = (gchar *) "ranking";
-              player->SetAttributeValue (&attr_id, (guint) 0);
-            }
-            else
-            {
-              attr_id._name = (gchar *) "ranking";
-              player->SetAttributeValue (&attr_id, tokens[3]);
-            }
-
-            g_strfreev (tokens);
-          }
-
-          GuessPlayerLeague (player);
-        }
-
-        if (line)
-        {
-          if (player)
-          {
-            Add (player);
-            player->Release ();
-          }
-
-          g_strfreev (line);
-        }
-      }
-
-      g_strfreev (lines);
-    }
-    g_free (utf8_content);
-  }
-
-  RefreshAttendingDisplay ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::ImportCSV (gchar *filename)
-{
-  gchar  *file_content = GetFileContent (filename);
-  gchar  *utf8_content;
-
-  {
-    GError *error = NULL;
-
-    utf8_content = g_locale_to_utf8 (file_content,
-                                     -1,
-                                     NULL,
-                                     NULL,
-                                     &error);
-    g_free (file_content);
-
-    if (error)
-    {
-      GtkWidget *dialog = gtk_message_dialog_new (NULL,
-                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                  GTK_MESSAGE_ERROR,
-                                                  GTK_BUTTONS_CLOSE,
-                                                  "The imported CSV file is probably based on template generated from another computer.\n\n"
-                                                  "Use a template generated from this computer!");
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
-      g_error_free (error);
-    }
-  }
-
-  if (utf8_content)
-  {
-    gchar **header_line = g_strsplit_set (utf8_content,
-                                          "\n",
-                                          0);
-
-    if (header_line)
-    {
-      guint           nb_attr = 0;
-      AttributeDesc **columns = NULL;
-
-      // Header
-      {
-        gchar **header_attr = g_strsplit_set (header_line[0],
-                                              ";",
-                                              0);
-
-        if (header_attr)
-        {
-          for (guint i = 0; header_attr[i] != NULL; i++)
-          {
-            nb_attr++;
-          }
-
-          columns = g_new (AttributeDesc *, nb_attr);
-          for (guint i = 0; i < nb_attr; i++)
-          {
-            columns[i] = AttributeDesc::GuessDescFromUserName (header_attr[i],
-                                                               "CSV ready");
-          }
-
-          g_strfreev (header_attr);
-        }
-
-        g_strfreev (header_line);
-      }
-
-      // Fencers
-      {
-        gchar **tokens = g_strsplit_set (utf8_content,
-                                         ";\n",
-                                         0);
-
-        if (tokens)
-        {
-          for (guint i = nb_attr; tokens[i+1] != 0; i += nb_attr)
-          {
-            Player              *player = new Player (GetPlayerType ());
-            Player::AttributeId  attr_id ("");
-
-            for (guint c = 0; c < nb_attr; c++)
-            {
-              if (columns[c])
-              {
-                attr_id._name = columns[c]->_code_name;
-
-                player->SetAttributeValue (&attr_id, tokens[i+c]);
-              }
-            }
-
-            Add (player);
-            player->Release ();
-          }
-          g_strfreev (tokens);
-        }
-      }
-
-      g_free (columns);
-    }
-  }
-  g_free (utf8_content);
-
-  RefreshAttendingDisplay ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnPlayerEventFromForm (Player            *player,
-                                     Form::PlayerEvent  event)
-{
-  if (event == Form::NEW_PLAYER)
-  {
-    {
-      Player::AttributeId  attending_attr_id ("attending");
-      Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
-      Player::AttributeId  global_status_attr_id ("global_status");
-
-      if (attending_attr->GetUIntValue () == 1)
-      {
-        player->SetAttributeValue (&global_status_attr_id,
-                                   "Q");
-      }
-      else
-      {
-        player->SetAttributeValue (&global_status_attr_id,
-                                   "F");
-      }
+      checkin->_attendings--;
+      player->SetAttributeValue (&global_status_attr_id,
+                                 "F");
     }
 
-    Add (player);
+    checkin->RefreshAttendingDisplay ();
   }
-  else
+
+  // --------------------------------------------------------------------------------
+  void Checkin::RefreshAttendingDisplay ()
   {
-    Update (player);
+    gchar *text;
+
+    text = g_strdup_printf ("%d", _attendings);
+    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("attending_label")),
+                        text);
+    g_free (text);
+
+    text = g_strdup_printf ("%d", g_slist_length (_player_list) - _attendings);
+    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("absent_label")),
+                        text);
+    g_free (text);
   }
 
-  OnListChanged ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::Monitor (Player *player)
-{
-  Player::AttributeId  attr_id ("attending");
-  Attribute           *attr = player->GetAttribute ( &attr_id);
-
-  if (attr && (attr->GetUIntValue () == TRUE))
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
+                                                                Object    *owner)
   {
-    _attendings++;
+    Checkin *p = dynamic_cast <Checkin *> (owner);
+
+    p->on_add_player_button_clicked ();
   }
 
-  player->SetChangeCbk ("attending",
-                        (Player::OnChange) OnAttendingChanged,
-                        this);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnPlugged ()
-{
-  OnAttrListUpdated ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnPlayerRemoved (Player *player)
-{
-  Player::AttributeId  attr_id ("attending");
-  Attribute           *attr = player->GetAttribute (&attr_id);
-
-  if (attr && (attr->GetUIntValue () == TRUE))
+  // --------------------------------------------------------------------------------
+  void Checkin::on_add_player_button_clicked ()
   {
-    _attendings--;
+    _form->Show ();
   }
-}
 
-// --------------------------------------------------------------------------------
-void Checkin::OnAttendingChanged (Player    *player,
-                                  Attribute *attr,
-                                  Object    *owner)
-{
-  Checkin *checkin = dynamic_cast <Checkin *> (owner);
-  guint               value = attr->GetUIntValue ();
-  Player::AttributeId global_status_attr_id ("global_status");
-
-  if (value == 1)
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_players_list_row_activated  (GtkTreeView       *tree_view,
+                                                                  GtkTreePath       *path,
+                                                                  GtkTreeViewColumn *column,
+                                                                  Object            *owner)
   {
-    checkin->_attendings++;
-    player->SetAttributeValue (&global_status_attr_id,
-                               "Q");
+    Checkin *p = dynamic_cast <Checkin *> (owner);
+
+    p->on_players_list_row_activated (path);
   }
-  else if (value == 0)
+
+  // --------------------------------------------------------------------------------
+  void Checkin::on_players_list_row_activated (GtkTreePath *path)
   {
-    checkin->_attendings--;
-    player->SetAttributeValue (&global_status_attr_id,
-                               "F");
+    Player      *player;
+    GtkTreeIter  iter;
+
+    gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
+                             &iter,
+                             path);
+    gtk_tree_model_get (GTK_TREE_MODEL (_store), &iter,
+                        gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
+                        &player, -1);
+
+    _form->Show (player);
   }
 
-  checkin->RefreshAttendingDisplay ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::RefreshAttendingDisplay ()
-{
-  gchar *text;
-
-  text = g_strdup_printf ("%d", _attendings);
-  gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("attending_label")),
-                      text);
-  g_free (text);
-
-  text = g_strdup_printf ("%d", g_slist_length (_player_list) - _attendings);
-  gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("absent_label")),
-                      text);
-  g_free (text);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_add_player_button_clicked (GtkWidget *widget,
-                                                              Object    *owner)
-{
-  Checkin *p = dynamic_cast <Checkin *> (owner);
-
-  p->on_add_player_button_clicked ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::on_add_player_button_clicked ()
-{
-  _form->Show ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_players_list_row_activated  (GtkTreeView       *tree_view,
-                                                                GtkTreePath       *path,
-                                                                GtkTreeViewColumn *column,
-                                                                Object            *owner)
-{
-  Checkin *p = dynamic_cast <Checkin *> (owner);
-
-  p->on_players_list_row_activated (path);
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::on_players_list_row_activated (GtkTreePath *path)
-{
-  Player      *player;
-  GtkTreeIter  iter;
-
-  gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
-                           &iter,
-                           path);
-  gtk_tree_model_get (GTK_TREE_MODEL (_store), &iter,
-                      gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
-                      &player, -1);
-
-  _form->Show (player);
-}
-
-// --------------------------------------------------------------------------------
-gchar *Checkin::GetPrintName ()
-{
-  gchar *name;
-
-  if (_print_missing && _print_attending)
-  {
-    name = g_strdup (gettext ("List of registered"));
-  }
-  else if ((_print_missing == FALSE) && _print_attending)
-  {
-    name = g_strdup (gettext ("List of presents"));
-  }
-  else if ((_print_attending == FALSE) && _print_missing)
-  {
-    name = g_strdup (gettext ("List of absents"));
-  }
-  else
-  {
-    name = g_strdup (gettext ("Fencer list"));
-  }
-
-  return name;
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnPrint ()
-{
-  if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+  // --------------------------------------------------------------------------------
+  gchar *Checkin::GetPrintName ()
   {
     gchar *name;
 
-    _print_attending = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("attending_checkbutton")));
-    _print_missing   = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("missing_checkbutton")));
-
-    name = GetPrintName ();
-    Print (name);
-    g_free (name);
-  }
-  gtk_widget_hide (_print_dialog);
-}
-
-// --------------------------------------------------------------------------------
-gboolean Checkin::PlayerIsPrintable (Player *player)
-{
-  Player::AttributeId  attr_id ("attending");
-  Attribute           *attr = player->GetAttribute (&attr_id);
-  gboolean             attending = attr->GetUIntValue ();
-
-  if ((attending == TRUE) && (_print_attending == TRUE))
-  {
-    return TRUE;
-  }
-  else if ((attending == FALSE) && (_print_missing == TRUE))
-  {
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_remove_player_button_clicked (GtkWidget *widget,
-                                                                 Object    *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
-
-  c->on_remove_player_button_clicked ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::on_remove_player_button_clicked ()
-{
-  RemoveSelection ();
-}
-
-// --------------------------------------------------------------------------------
-void Checkin::OnToggleAllPlayers (gboolean present)
-{
-  Player::AttributeId  attr_id ("attending");
-  GSList              *current_player = _player_list;
-
-  while (current_player)
-  {
-    Player *p;
-
-    p = (Player *) current_player->data;
-
-    if (p)
+    if (_print_missing && _print_attending)
     {
-      p->SetAttributeValue (&attr_id,
-                            (guint) present);
-
-      Update (p);
+      name = g_strdup (gettext ("List of registered"));
     }
-    current_player = g_slist_next (current_player);
-  }
-  OnListChanged ();
-}
+    else if ((_print_missing == FALSE) && _print_attending)
+    {
+      name = g_strdup (gettext ("List of presents"));
+    }
+    else if ((_print_attending == FALSE) && _print_missing)
+    {
+      name = g_strdup (gettext ("List of absents"));
+    }
+    else
+    {
+      name = g_strdup (gettext ("Fencer list"));
+    }
 
-// --------------------------------------------------------------------------------
-Player::PlayerType Checkin::GetPlayerType ()
-{
-  if (strcmp (_player_tag, "Arbitre") == 0)
-  {
-    return Player::REFEREE;
+    return name;
   }
-  else
-  {
-    return Player::FENCER;
-  }
-}
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget *widget,
+  // --------------------------------------------------------------------------------
+  void Checkin::OnPrint ()
+  {
+    if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+    {
+      gchar *name;
+
+      _print_attending = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("attending_checkbutton")));
+      _print_missing   = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("missing_checkbutton")));
+
+      name = GetPrintName ();
+      Print (name);
+      g_free (name);
+    }
+    gtk_widget_hide (_print_dialog);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Checkin::PlayerIsPrintable (Player *player)
+  {
+    Player::AttributeId  attr_id ("attending");
+    Attribute           *attr = player->GetAttribute (&attr_id);
+    gboolean             attending = attr->GetUIntValue ();
+
+    if ((attending == TRUE) && (_print_attending == TRUE))
+    {
+      return TRUE;
+    }
+    else if ((attending == FALSE) && (_print_missing == TRUE))
+    {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_remove_player_button_clicked (GtkWidget *widget,
+                                                                   Object    *owner)
+  {
+    Checkin *c = dynamic_cast <Checkin *> (owner);
+
+    c->on_remove_player_button_clicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::on_remove_player_button_clicked ()
+  {
+    RemoveSelection ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::OnToggleAllPlayers (gboolean present)
+  {
+    Player::AttributeId  attr_id ("attending");
+    GSList              *current_player = _player_list;
+
+    while (current_player)
+    {
+      Player *p;
+
+      p = (Player *) current_player->data;
+
+      if (p)
+      {
+        p->SetAttributeValue (&attr_id,
+                              (guint) present);
+
+        Update (p);
+      }
+      current_player = g_slist_next (current_player);
+    }
+    OnListChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  Player::PlayerType Checkin::GetPlayerType ()
+  {
+    if (strcmp (_player_tag, "Arbitre") == 0)
+    {
+      return Player::REFEREE;
+    }
+    else
+    {
+      return Player::FENCER;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_players_list_filter_button_clicked (GtkWidget *widget,
+                                                                         Object    *owner)
+  {
+    Checkin *c = dynamic_cast <Checkin *> (owner);
+
+    c->SelectAttributes ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
+                                                                Object    *owner)
+  {
+    Checkin *c = dynamic_cast <Checkin *> (owner);
+
+    c->OnImport ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_checkin_print_toolbutton_clicked (GtkWidget *widget,
                                                                        Object    *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
+  {
+    Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->SelectAttributes ();
-}
+    c->OnPrint ();
+  }
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_import_toolbutton_clicked (GtkWidget *widget,
-                                                              Object    *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_all_present_button_clicked (GtkWidget *widget,
+                                                                 Object    *owner)
+  {
+    Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->OnImport ();
-}
+    c->OnToggleAllPlayers (TRUE);
+  }
 
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_checkin_print_toolbutton_clicked (GtkWidget *widget,
-                                                                     Object    *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_all_absent_button_clicked (GtkWidget *widget,
+                                                                Object    *owner)
+  {
+    Checkin *c = dynamic_cast <Checkin *> (owner);
 
-  c->OnPrint ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_all_present_button_clicked (GtkWidget *widget,
-                                                               Object    *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
-
-  c->OnToggleAllPlayers (TRUE);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_all_absent_button_clicked (GtkWidget *widget,
-                                                              Object    *owner)
-{
-  Checkin *c = dynamic_cast <Checkin *> (owner);
-
-  c->OnToggleAllPlayers (FALSE);
+    c->OnToggleAllPlayers (FALSE);
+  }
 }

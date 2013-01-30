@@ -23,9 +23,9 @@
 #include <libxml/xpath.h>
 #include <gtk/gtk.h>
 
-#include "object.hpp"
-#include "data.hpp"
-#include "sensitivity_trigger.hpp"
+#include "util/object.hpp"
+#include "util/data.hpp"
+#include "util/sensitivity_trigger.hpp"
 #include "attendees.hpp"
 
 class Player;

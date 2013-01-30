@@ -20,39 +20,42 @@
 #include <curl/curl.h>
 #include <glib.h>
 
-class Upload
+namespace Net
 {
-  public:
-    Upload (const gchar *filename,
-            const gchar *url,
-            const gchar *user,
-            const gchar *passwd);
+  class Upload
+  {
+    public:
+      Upload (const gchar *filename,
+              const gchar *url,
+              const gchar *user,
+              const gchar *passwd);
 
-    void Start ();
+      void Start ();
 
-  private:
-    gchar *_user;
-    gchar *_passwd;
-    gchar *_full_url;
-    gchar *_data;
-    gsize  _data_length;
-    guint  _bytes_uploaded;
+    private:
+      gchar *_user;
+      gchar *_passwd;
+      gchar *_full_url;
+      gchar *_data;
+      gsize  _data_length;
+      guint  _bytes_uploaded;
 
-    virtual ~Upload ();
+      virtual ~Upload ();
 
-    static gpointer ThreadFunction (Upload *upload);
+      static gpointer ThreadFunction (Upload *upload);
 
-    static int OnUpLoadTrace (CURL          *handle,
-                              curl_infotype  type,
-                              char          *data,
-                              size_t         size,
-                              Upload        *upload);
+      static int OnUpLoadTrace (CURL          *handle,
+                                curl_infotype  type,
+                                char          *data,
+                                size_t         size,
+                                Upload        *upload);
 
-    static size_t ReadCallback (void   *ptr,
-                                size_t  size,
-                                size_t  nmemb,
-                                Upload *upload);
-};
+      static size_t ReadCallback (void   *ptr,
+                                  size_t  size,
+                                  size_t  nmemb,
+                                  Upload *upload);
+  };
 
+}
 #endif
 

@@ -17,28 +17,28 @@
 #ifndef swapper_hpp
 #define swapper_hpp
 
-class Pool;
-class Player;
-
-class Swapper
+namespace Pool
 {
-  public:
-    virtual void Delete () = 0;
+  class Swapper
+  {
+    public:
+      virtual void Delete () = 0;
 
-    virtual void Init (GSList *zones,
-                       guint   fencer_count) = 0;
+      virtual void Init (GSList *zones,
+                         guint   fencer_count) = 0;
 
-    virtual void Swap (gchar  *criteria,
-                       GSList *fencer_list) = 0;
+      virtual void Swap (gchar  *criteria,
+                         GSList *fencer_list) = 0;
 
-    virtual void RefreshErrors () = 0;
+      virtual void RefreshErrors () = 0;
 
-    virtual guint HasErrors () = 0;
+      virtual guint HasErrors () = 0;
 
-  protected:
-    Swapper () {};
+    protected:
+      Swapper () {};
 
-    virtual ~Swapper () {};
-};
+      virtual ~Swapper () {};
+  };
+}
 
 #endif

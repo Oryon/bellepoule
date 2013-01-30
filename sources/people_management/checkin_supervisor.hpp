@@ -20,61 +20,65 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "stage.hpp"
+#include "common/stage.hpp"
+
 #include "checkin.hpp"
 
-class CheckinSupervisor : public virtual Checkin, public Stage
+namespace People
 {
-  public:
-    static void Declare ();
+  class CheckinSupervisor : public virtual Checkin, public Stage
+  {
+    public:
+      static void Declare ();
 
-    CheckinSupervisor (StageClass  *stage_class);
+      CheckinSupervisor (StageClass  *stage_class);
 
-    void UseInitialRank ();
+      void UseInitialRank ();
 
-    void UpdateRanking ();
+      void UpdateRanking ();
 
-    void ConvertFromBaseToResult ();
+      void ConvertFromBaseToResult ();
 
-  private:
-    void OnLocked ();
+    private:
+      void OnLocked ();
 
-    void OnUnLocked ();
+      void OnUnLocked ();
 
-    void OnLoadingCompleted ();
+      void OnLoadingCompleted ();
 
-    void Wipe ();
+      void Wipe ();
 
-    guint PreparePrint (GtkPrintOperation *operation,
-                        GtkPrintContext   *context);
+      guint PreparePrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context);
 
-  private:
-    static const gchar *_class_name;
-    static const gchar *_xml_class_name;
+    private:
+      static const gchar *_class_name;
+      static const gchar *_xml_class_name;
 
-    gboolean  _use_initial_rank;
-    GSList   *_checksum_list;
+      gboolean  _use_initial_rank;
+      GSList   *_checksum_list;
 
-    static Stage *CreateInstance (StageClass *stage_class);
+      static Stage *CreateInstance (StageClass *stage_class);
 
-    gboolean IsOver ();
+      gboolean IsOver ();
 
-    void UpdateChecksum ();
+      void UpdateChecksum ();
 
-    GSList *GetCurrentClassification ();
+      GSList *GetCurrentClassification ();
 
-    void Load (xmlNode *xml_node);
+      void Load (xmlNode *xml_node);
 
-    void Load (xmlXPathContext *xml_context,
-               const gchar     *from_node);
+      void Load (xmlXPathContext *xml_context,
+                 const gchar     *from_node);
 
-    void OnLoaded ();
+      void OnLoaded ();
 
-    void OnPlayerLoaded (Player *player);
+      void OnPlayerLoaded (Player *player);
 
-    void Save (xmlTextWriter *xml_writer);
+      void Save (xmlTextWriter *xml_writer);
 
-    virtual ~CheckinSupervisor ();
-};
+      virtual ~CheckinSupervisor ();
+  };
+}
 
 #endif

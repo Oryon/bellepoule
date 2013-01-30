@@ -14,66 +14,69 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "player.hpp"
-#include "match.hpp"
-#include "table.hpp"
-#include "canvas.hpp"
+#include "util/canvas.hpp"
+#include "common/player.hpp"
+#include "common/match.hpp"
+#include "table_round/table.hpp"
 
 #include "pool_zone.hpp"
 
-// --------------------------------------------------------------------------------
-PoolZone::PoolZone (Module *container,
-                    Pool   *pool)
-: RefereeZone (container)
+namespace Pool
 {
-  _pool = pool;
-}
-
-// --------------------------------------------------------------------------------
-PoolZone::~PoolZone ()
-{
-  while (_referee_list)
+  // --------------------------------------------------------------------------------
+  PoolZone::PoolZone (Module *container,
+                      Pool   *pool)
+    : RefereeZone (container)
   {
-    RemoveReferee ((Player *) _referee_list->data);
+    _pool = pool;
   }
-}
 
-// --------------------------------------------------------------------------------
-Pool *PoolZone::GetPool ()
-{
-  return _pool;
-}
-
-// --------------------------------------------------------------------------------
-void PoolZone::Draw (GooCanvasItem *root_item)
-{
-  if (_back_rect == NULL)
+  // --------------------------------------------------------------------------------
+  PoolZone::~PoolZone ()
   {
-    _back_rect = goo_canvas_rect_new (root_item,
-                                      0, 0,
-                                      0, 0,
-                                      "stroke-pattern", NULL,
-                                      NULL);
-    RefereeZone::Draw (root_item);
+    while (_referee_list)
+    {
+      RemoveReferee ((Player *) _referee_list->data);
+    }
   }
-}
 
-// --------------------------------------------------------------------------------
-void PoolZone::AddReferee (Player *referee)
-{
-  _pool->AddReferee (referee);
-  RefereeZone::AddReferee (referee);
-}
+  // --------------------------------------------------------------------------------
+  Pool *PoolZone::GetPool ()
+  {
+    return _pool;
+  }
 
-// --------------------------------------------------------------------------------
-void PoolZone::RemoveReferee (Player *referee)
-{
-  _pool->RemoveReferee (referee);
-  RefereeZone::RemoveReferee (referee);
-}
+  // --------------------------------------------------------------------------------
+  void PoolZone::Draw (GooCanvasItem *root_item)
+  {
+    if (_back_rect == NULL)
+    {
+      _back_rect = goo_canvas_rect_new (root_item,
+                                        0, 0,
+                                        0, 0,
+                                        "stroke-pattern", NULL,
+                                        NULL);
+      RefereeZone::Draw (root_item);
+    }
+  }
 
-// --------------------------------------------------------------------------------
-guint PoolZone::GetNbMatchs ()
-{
-  return _pool->GetNbMatchs ();
+  // --------------------------------------------------------------------------------
+  void PoolZone::AddReferee (Player *referee)
+  {
+    _pool->AddReferee (referee);
+    RefereeZone::AddReferee (referee);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PoolZone::RemoveReferee (Player *referee)
+  {
+    _pool->RemoveReferee (referee);
+    RefereeZone::RemoveReferee (referee);
+  }
+
+  // --------------------------------------------------------------------------------
+  guint PoolZone::GetNbMatchs ()
+  {
+    return _pool->GetNbMatchs ();
+  }
 }

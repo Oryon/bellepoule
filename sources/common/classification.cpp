@@ -17,7 +17,8 @@
 #include <string.h>
 #include <glib/gstdio.h>
 
-#include "attribute.hpp"
+#include "util/attribute.hpp"
+
 #include "contest.hpp"
 #include "player.hpp"
 

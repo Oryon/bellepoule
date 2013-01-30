@@ -21,93 +21,96 @@
 #include <goocanvas.h>
 #include <libxml/xmlwriter.h>
 
-#include "object.hpp"
-#include "match.hpp"
+#include "util/object.hpp"
+#include "common/match.hpp"
 
-class TableSet;
-
-class Table : public Object
+namespace Table
 {
-  public:
-    Table (TableSet *table_set,
-           guint     size,
-           guint     number);
+  class TableSet;
 
-    gchar *GetImage ();
+  class Table : public Object
+  {
+    public:
+      Table (TableSet *table_set,
+             guint     size,
+             guint     number);
 
-    void SetRightTable (Table *right);
+      gchar *GetImage ();
 
-    Table *GetRightTable ();
+      void SetRightTable (Table *right);
 
-    Table *GetLeftTable ();
+      Table *GetRightTable ();
 
-    guint GetSize ();
+      Table *GetLeftTable ();
 
-    guint GetRow (guint for_index);
+      guint GetSize ();
 
-    guint GetColumn ();
+      guint GetRow (guint for_index);
 
-    guint GetNumber ();
+      guint GetColumn ();
 
-    void Show (guint at_column);
+      guint GetNumber ();
 
-    void Hide ();
+      void Show (guint at_column);
 
-    void Save (xmlTextWriter *xml_writer);
+      void Hide ();
 
-    void Load (xmlNode *xml_node);
+      void Save (xmlTextWriter *xml_writer);
 
-    gboolean IsDisplayed ();
+      void Load (xmlNode *xml_node);
 
-    void ManageMatch (Match *match);
+      gboolean IsDisplayed ();
 
-    void DropMatch (Match *match);
+      void ManageMatch (Match *match);
 
-    Match *GetMatch (guint index);
+      void DropMatch (Match *match);
 
-    void AddNode (GNode *node);
+      Match *GetMatch (guint index);
 
-    GNode *GetNode (guint index);
+      void AddNode (GNode *node);
 
-    static gboolean NodeHasGooTable (GNode *node);
+      GNode *GetNode (guint index);
 
-    guint GetLoosers (GSList **loosers,
-                      GSList **withdrawals,
-                      GSList **blackcardeds);
+      static gboolean NodeHasGooTable (GNode *node);
 
-    gboolean       _has_error;
-    guint          _is_over;
-    GooCanvasItem *_status_item;
-    GooCanvasItem *_header_item;
-    TableSet      *_defeated_table_set;
+      guint GetLoosers (GSList **loosers,
+                        GSList **withdrawals,
+                        GSList **blackcardeds);
 
-  private:
-    guint     _size;
-    guint     _number;
-    guint     _column;
-    gboolean  _is_displayed;
-    gboolean  _loaded;
-    Table    *_left_table;
-    Table    *_right_table;
-    GSList   *_match_list;
-    TableSet *_table_set;
-    GNode    **_node_table;
-    guint     _free_node_index;
+      gboolean       _has_error;
+      guint          _is_over;
+      GooCanvasItem *_status_item;
+      GooCanvasItem *_header_item;
+      TableSet      *_defeated_table_set;
 
-    virtual ~Table ();
+    private:
+      guint     _size;
+      guint     _number;
+      guint     _column;
+      gboolean  _is_displayed;
+      gboolean  _loaded;
+      Table    *_left_table;
+      Table    *_right_table;
+      GSList   *_match_list;
+      TableSet *_table_set;
+      GNode    **_node_table;
+      guint     _free_node_index;
 
-    static gint CompareMatchNumber (Match *a,
-                                    Match *b);
+      virtual ~Table ();
 
-    void LoadMatch (xmlNode *xml_node,
-                    Match   *match);
+      static gint CompareMatchNumber (Match *a,
+                                      Match *b);
 
-    void LoadScore (xmlNode *xml_node,
-                    Match   *match,
-                    guint    player_index,
-                    Player  **dropped);
+      void LoadMatch (xmlNode *xml_node,
+                      Match   *match);
 
-    void SimplifyLooserTree (GSList **list);
-};
+      void LoadScore (xmlNode *xml_node,
+                      Match   *match,
+                      guint    player_index,
+                      Player  **dropped);
+
+      void SimplifyLooserTree (GSList **list);
+  };
+}
 
 #endif

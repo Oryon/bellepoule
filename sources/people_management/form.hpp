@@ -19,65 +19,82 @@
 
 #include <gtk/gtk.h>
 
-#include "object.hpp"
-#include "filter.hpp"
-#include "module.hpp"
-#include "player.hpp"
+#include "util/object.hpp"
+#include "util/filter.hpp"
+#include "util/module.hpp"
+#include "common/player.hpp"
 
-class Form : public Module
+namespace People
 {
-  public:
-    typedef enum
-    {
-      UPDATE_PLAYER,
-      NEW_PLAYER
-    } PlayerEvent;
+  class Form : public Module
+  {
+    public:
+      typedef enum
+      {
+        UPDATE_PLAYER,
+        NEW_PLAYER
+      } PlayerEvent;
 
-    typedef void (Module::*PlayerCbk) (Player      *player,
-                                       PlayerEvent  event);
+      typedef void (Module::*PlayerCbk) (Player      *player,
+                                         PlayerEvent  event,
+                                         guint        page);
 
-    Form (Filter             *filter,
-          Module             *client,
-          Player::PlayerType  player_type,
-          PlayerCbk           player_cbk);
+      Form (const gchar        *name,
+            Module             *client,
+            Filter             *filter,
+            Player::PlayerType  player_type,
+            PlayerCbk           player_cbk);
 
-    void Show (Player *player = NULL);
+      void Show (Player *player = NULL);
 
-    void Hide ();
+      void AddPage (const gchar *name,
+                    Filter      *filter);
 
-    void OnAddButtonClicked ();
+      void Hide ();
 
-    void OnCloseButtonClicked ();
+      void OnAddButtonClicked ();
 
-    void Lock ();
+      void OnCloseButtonClicked ();
 
-    void UnLock ();
+      void Lock ();
 
-  private:
-    Filter             *_filter;
-    Module             *_client;
-    Player::PlayerType  _player_type;
-    PlayerCbk           _cbk;
-    Player             *_player_to_update;
-    gboolean            _locked;
+      void UnLock ();
 
-    virtual ~Form ();
+    private:
+      struct Page
+      {
+        GtkWidget *_title_vbox;
+        GtkWidget *_value_vbox;
+        GtkWidget *_check_vbox;
+      };
 
-    void ReadAndWipe (Player *player);
+      Module             *_client;
+      PlayerCbk           _cbk;
+      Player             *_player_to_update;
+      gboolean            _locked;
+      guint               _page_count;
+      Filter             *_filter;
+      Player::PlayerType  _player_type;
+      Page               *_pages;
 
-    static void SetSelectorValue (GtkComboBox *combo_box,
-                                  const gchar *value);
+      virtual ~Form ();
 
-    static gboolean OnSelectorChanged (GtkEntryCompletion *widget,
-                                       GtkTreeModel       *model,
-                                       GtkTreeIter        *iter,
-                                       GtkComboBox        *combobox);
+      void ReadAndWipe (Player *player);
 
-    static void OnSelectorEntryActivate (GtkEntry    *widget,
-                                         GtkComboBox *combobox);
+      static void SetSelectorValue (GtkComboBox *combo_box,
+                                    const gchar *value);
 
-    static void OnSensitiveStateToggled (GtkToggleButton *togglebutton,
-                                         GtkWidget       *w);
-};
+      static gboolean OnSelectorChanged (GtkEntryCompletion *widget,
+                                         GtkTreeModel       *model,
+                                         GtkTreeIter        *iter,
+                                         GtkComboBox        *combobox);
+
+      static void OnSelectorEntryActivate (GtkEntry    *widget,
+                                           GtkComboBox *combobox);
+
+      static void OnSensitiveStateToggled (GtkToggleButton *togglebutton,
+                                           GtkWidget       *w);
+  };
+}
 
 #endif

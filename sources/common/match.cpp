@@ -18,8 +18,10 @@
 #include <string.h>
 #include <goocanvas.h>
 
-#include "canvas.hpp"
+#include "util/canvas.hpp"
+
 #include "player.hpp"
+
 #include "match.hpp"
 
 // --------------------------------------------------------------------------------

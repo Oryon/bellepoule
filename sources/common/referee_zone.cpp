@@ -15,7 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "player.hpp"
-#include "canvas.hpp"
+#include "util/canvas.hpp"
 #include "stage.hpp"
 
 #include "referee_zone.hpp"
