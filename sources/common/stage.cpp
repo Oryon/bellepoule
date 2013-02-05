@@ -1080,7 +1080,7 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       }
 
       xmlTextWriterStartElement (xml_writer,
-                                 BAD_CAST "Tireur");
+                                 BAD_CAST player->GetXmlTag ());
       xmlTextWriterWriteFormatAttribute (xml_writer,
                                          BAD_CAST "REF",
                                          "%d", player->GetRef ());

@@ -35,10 +35,13 @@
 #include "people_management/checkin_supervisor.hpp"
 #include "people_management/general_classification.hpp"
 #include "people_management/splitting.hpp"
+#include "people_management/fencer.hpp"
+#include "people_management/referee.hpp"
+#include "people_management/team.hpp"
+#include "people_management/player_factory.hpp"
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
 #include "table_round/table_supervisor.hpp"
-
 #include "tournament.hpp"
 #include "contest.hpp"
 
@@ -247,6 +250,15 @@ int main (int argc, char **argv)
       People::Splitting::Declare             ();
     }
 
+    {
+      PlayerFactory::AddPlayerType (Fencer::GetPlayerClass (),
+                                    Fencer::CreateInstance);
+      PlayerFactory::AddPlayerType (Team::GetPlayerClass (),
+                                    Team::CreateInstance);
+      PlayerFactory::AddPlayerType (Referee::GetPlayerClass (),
+                                    Referee::CreateInstance);
+    }
+
     g_free (install_dirname);
   }
 
@@ -261,6 +273,10 @@ int main (int argc, char **argv)
     desc->_rights = AttributeDesc::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "final_rank", "Classement", gettext ("place"));
+
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "team", "Equipe", gettext ("team"));
+    desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
+    desc->AddDiscreteValues (NULL, NULL, NULL, NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", gettext ("last name"));
 

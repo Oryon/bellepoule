@@ -264,7 +264,7 @@ namespace Pool
     Player   *floating_object = (Player *) object;
     PoolZone *pool_zone       = (PoolZone *) from_zone;
 
-    if (floating_object->IsFencer ())
+    if (floating_object->Is ("Fencer"))
     {
       Pool *pool = pool_zone->GetPool ();
 
@@ -288,7 +288,7 @@ namespace Pool
     Player   *floating_object = (Player *) object;
     PoolZone *pool_zone       = NULL;
 
-    if (floating_object->IsFencer ())
+    if (floating_object->Is ("Fencer"))
     {
       Pool *target_pool;
 
@@ -331,7 +331,7 @@ namespace Pool
   {
     Player *player = (Player *) object;
 
-    if (player && player->IsFencer ())
+    if (player && player->Is ("Fencer"))
     {
       return Locked ();
     }
@@ -1244,7 +1244,7 @@ namespace Pool
     {
       Pool *pool = zone->GetPool ();
 
-      if (player->IsFencer () == FALSE)
+      if (player->Is ("Fencer") == FALSE)
       {
         static gchar  *referee_icon = NULL;
 
@@ -1322,7 +1322,7 @@ namespace Pool
 
         if (item)
         {
-          if (player->IsFencer ())
+          if (player->Is ("Fencer"))
           {
             g_object_set (G_OBJECT (item),
                           "font", "Sans 14px",

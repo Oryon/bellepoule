@@ -22,7 +22,7 @@
 #include "util/filter.hpp"
 #include "common/schedule.hpp"
 #include "common/player.hpp"
-
+#include "player_factory.hpp"
 #include "checkin.hpp"
 
 namespace People
@@ -69,30 +69,14 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::CreateForm (Filter             *filter,
-                            Player::PlayerType  player_type)
+  void Checkin::CreateForm (Filter      *filter,
+                            const gchar *player_class)
   {
     if (_form == NULL)
     {
-      const gchar *name;
-
-      if (player_type == Player::FENCER)
-      {
-        name = gettext ("Fencer");
-      }
-      else if (player_type == Player::REFEREE)
-      {
-        name = gettext ("Referee");
-      }
-      else
-      {
-        name = gettext ("Team");
-      }
-
-      _form = new Form (name,
-                        this,
+      _form = new Form (this,
                         filter,
-                        player_type,
+                        player_class,
                         (Form::PlayerCbk) &Checkin::OnPlayerEventFromForm);
     }
   }
@@ -108,7 +92,7 @@ namespace People
   void Checkin::LoadList (xmlXPathContext *xml_context,
                           const gchar     *from_node)
   {
-    gchar          *path        = g_strdup_printf ("%s/%ss", from_node, _player_tag);
+    gchar          *path        = g_strdup_printf ("%s/%s", from_node, _players_tag);
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
 
@@ -132,7 +116,7 @@ namespace People
       {
         if (strcmp ((char *) n->name, _player_tag) == 0)
         {
-          Player *player = new Player (GetPlayerType ());
+          Player *player = PlayerFactory::CreatePlayer (GetPlayerClass ());
 
           player->Load (n);
 
@@ -207,8 +191,7 @@ namespace People
 
         if (p)
         {
-          p->Save (xml_writer,
-                   _player_tag);
+          p->Save (xml_writer);
         }
         current = g_slist_next (current);
       }
@@ -246,18 +229,13 @@ namespace People
                                                       NULL);
 
     {
+      gchar         *name = g_strdup_printf ("%s files", GetPlayerClass ());
       GtkFileFilter *filter = gtk_file_filter_new ();
 
-      if (GetPlayerType () == Player::FENCER)
-      {
-        gtk_file_filter_set_name (filter,
-                                  gettext ("Fencer files"));
-      }
-      else
-      {
-        gtk_file_filter_set_name (filter,
-                                  gettext ("Referee files"));
-      }
+#define GETTEXT_TRICK N_ ("Fencer files") N_ ("Referee files")
+      gtk_file_filter_set_name (filter,
+                                gettext (name));
+
       gtk_file_filter_add_pattern (filter,
                                    "*.FFF");
       gtk_file_filter_add_pattern (filter,
@@ -436,7 +414,7 @@ namespace People
                                              ",",
                                              0);
 
-            player = new Player (GetPlayerType ());
+            Player *player = PlayerFactory::CreatePlayer (GetPlayerClass ());
 
             if (tokens)
             {
@@ -620,7 +598,7 @@ namespace People
           {
             for (guint i = nb_attr; tokens[i+1] != 0; i += nb_attr)
             {
-              Player              *player = new Player (GetPlayerType ());
+              Player              *player = PlayerFactory::CreatePlayer (GetPlayerClass ());
               Player::AttributeId  attr_id ("");
 
               for (guint c = 0; c < nb_attr; c++)
@@ -649,12 +627,69 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::OnPlayerEventFromForm (Player            *player,
-                                       Form::PlayerEvent  event,
-                                       guint              page)
+  void Checkin::RegisterNewTeam (const gchar *name)
   {
+    AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
+
+    team_desc->AddDiscreteValues (name,
+                                  name,
+                                  NULL,
+                                  NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::OnPlayerEventFromForm (Player            *player,
+                                       Form::PlayerEvent  event)
+  {
+    if (player->Is ("Team") == FALSE)
+    {
+      gchar  *team_name;
+      Player *team      = NULL;
+
+      // Team name
+      {
+        Player::AttributeId  team_attr_id ("team");
+        Attribute           *team_attr = player->GetAttribute (&team_attr_id);
+
+        team_name = team_attr->GetStrValue ();
+      }
+
+      // Find a team with the given name
+      if (team_name && team_name[0])
+      {
+        Player::AttributeId  name_attr_id ("name");
+        Attribute           *name_attr = Attribute::New ("name");
+
+        name_attr->SetValue (team_name);
+
+        team = GetPlayerWithAttribute (&name_attr_id,
+                                       name_attr);
+        name_attr->Release ();
+
+        // Create a team if necessary
+        if (team == NULL)
+        {
+          team = PlayerFactory::CreatePlayer ("Team");
+
+          team->SetName (team_name);
+          RegisterNewTeam (team_name);
+          Add (team);
+        }
+      }
+
+      player->SetParent (team);
+    }
+
     if (event == Form::NEW_PLAYER)
     {
+      if (player->Is ("Team"))
+      {
+        Player::AttributeId  attr_id ("name");
+        Attribute           *attr      = player->GetAttribute (&attr_id);
+
+        RegisterNewTeam (attr->GetStrValue ());
+      }
+      else
       {
         Player::AttributeId  attending_attr_id ("attending");
         Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);
@@ -900,15 +935,15 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  Player::PlayerType Checkin::GetPlayerType ()
+  const gchar *Checkin::GetPlayerClass ()
   {
     if (strcmp (_player_tag, "Arbitre") == 0)
     {
-      return Player::REFEREE;
+      return "Referee";
     }
     else
     {
-      return Player::FENCER;
+      return "Fencer";
     }
   }
 

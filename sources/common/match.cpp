@@ -380,7 +380,7 @@ void Match::Save (xmlTextWriter *xml_writer)
         Player *referee = (Player *) current->data;
 
         xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST "Arbitre");
+                                   BAD_CAST referee->GetXmlTag ());
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "REF",
                                            "%d", referee->GetRef ());
@@ -408,7 +408,7 @@ void Match::Save (xmlTextWriter *xml_writer,
     Score *score = GetScore (fencer);
 
     xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Tireur");
+                               BAD_CAST fencer->GetXmlTag ());
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "REF",
                                        "%d", fencer->GetRef ());

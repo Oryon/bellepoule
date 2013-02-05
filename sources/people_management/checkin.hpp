@@ -72,14 +72,13 @@ namespace People
 
       virtual void Monitor (Player *player);
 
-      void CreateForm (Filter             *filter,
-                       Player::PlayerType  player_type);
+      void CreateForm (Filter      *filter,
+                       const gchar *player_class);
 
       virtual void OnPlayerEventFromForm (Player            *player,
-                                          Form::PlayerEvent  event,
-                                          guint              page);
+                                          Form::PlayerEvent  event);
 
-      Player::PlayerType GetPlayerType ();
+      const gchar *GetPlayerClass ();
 
     private:
       guint        _attendings;
@@ -110,6 +109,8 @@ namespace People
       gchar *GetPrintName ();
 
       void GuessPlayerLeague (Player *player);
+
+      void RegisterNewTeam (const gchar *name);
   };
 }
 

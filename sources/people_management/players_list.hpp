@@ -86,6 +86,9 @@ namespace People
 
       virtual void OnListChanged ();
 
+      Player *GetPlayerWithAttribute (Player::AttributeId *attr_id,
+                                      Attribute           *attr);
+
     protected:
       GtkTreeStore *_store;
 

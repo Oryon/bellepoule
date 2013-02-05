@@ -89,7 +89,7 @@ namespace People
 
       SetFilter  (filter);
       CreateForm (filter,
-                  GetPlayerType ());
+                  GetPlayerClass ());
       filter->Release ();
     }
 
@@ -107,8 +107,8 @@ namespace People
       filter = new Filter (attr_list,
                            this);
 
-      _form->AddPage (gettext ("Team"),
-                      filter);
+      _form->AddPage (filter,
+                      "Team");
 
       filter->Release ();
     }
