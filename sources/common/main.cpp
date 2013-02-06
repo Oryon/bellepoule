@@ -38,7 +38,6 @@
 #include "people_management/fencer.hpp"
 #include "people_management/referee.hpp"
 #include "people_management/team.hpp"
-#include "people_management/player_factory.hpp"
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
 #include "table_round/table_supervisor.hpp"
@@ -251,12 +250,9 @@ int main (int argc, char **argv)
     }
 
     {
-      PlayerFactory::AddPlayerType (Fencer::GetPlayerClass (),
-                                    Fencer::CreateInstance);
-      PlayerFactory::AddPlayerType (Team::GetPlayerClass (),
-                                    Team::CreateInstance);
-      PlayerFactory::AddPlayerType (Referee::GetPlayerClass (),
-                                    Referee::CreateInstance);
+      Fencer::RegisterClass  ();
+      Team::RegisterClass    ();
+      Referee::RegisterClass ();
     }
 
     g_free (install_dirname);

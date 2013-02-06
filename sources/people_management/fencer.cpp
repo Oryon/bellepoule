@@ -14,11 +14,15 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "player_factory.hpp"
 #include "fencer.hpp"
+
+const gchar *Fencer::_class_name = "Fencer";
+const gchar *Fencer::_xml_tag    = "Tireur";
 
 // --------------------------------------------------------------------------------
 Fencer::Fencer ()
-: Player (GetPlayerClass ())
+: Player (_class_name)
 {
 }
 
@@ -34,15 +38,17 @@ Player *Fencer::Clone ()
 }
 
 // --------------------------------------------------------------------------------
-const gchar *Fencer::GetPlayerClass ()
+void Fencer::RegisterClass ()
 {
-  return "Fencer";
+  PlayerFactory::AddPlayerClass (_class_name,
+                                 _xml_tag,
+                                 CreateInstance);
 }
 
 // --------------------------------------------------------------------------------
 const gchar *Fencer::GetXmlTag ()
 {
-  return "Tireur";
+  return _xml_tag;
 }
 
 // --------------------------------------------------------------------------------

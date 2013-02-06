@@ -14,11 +14,15 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "player_factory.hpp"
 #include "referee.hpp"
+
+const gchar *Referee::_class_name = "Referee";
+const gchar *Referee::_xml_tag    = "Arbitre";
 
 // --------------------------------------------------------------------------------
 Referee::Referee ()
-: Player (GetPlayerClass ())
+: Player (_class_name)
 {
 }
 
@@ -34,15 +38,17 @@ Player *Referee::Clone ()
 }
 
 // --------------------------------------------------------------------------------
-const gchar *Referee::GetPlayerClass ()
+void Referee::RegisterClass ()
 {
-  return "Referee";
+  PlayerFactory::AddPlayerClass (_class_name,
+                                 _xml_tag,
+                                 CreateInstance);
 }
 
 // --------------------------------------------------------------------------------
 const gchar *Referee::GetXmlTag ()
 {
-  return "Arbitre";
+  return _xml_tag;
 }
 
 // --------------------------------------------------------------------------------

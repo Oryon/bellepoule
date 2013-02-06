@@ -24,15 +24,19 @@ class PlayerFactory
   public:
     typedef Player *(*Constructor) ();
 
-    static void AddPlayerType (const gchar *player_type,
-                               Constructor  constructor);
+    static void AddPlayerClass (const gchar *class_name,
+                                const gchar *xml_tag,
+                                Constructor  constructor);
 
-    static Player *CreatePlayer (const gchar *player_type);
+    static Player *CreatePlayer (const gchar *class_name);
+
+    static const gchar *GetXmlTag (const gchar *class_name);
 
   private:
     struct PlayerClass
     {
-      const gchar *_player_type;
+      const gchar *_class_name;
+      const gchar *_xml_tag;
       Constructor  _constructor;
     };
 
@@ -40,7 +44,10 @@ class PlayerFactory
 
   private:
     PlayerFactory ();
+
     virtual ~PlayerFactory ();
+
+    static PlayerClass *GetPlayerClass (const gchar *class_name);
 };
 
 #endif

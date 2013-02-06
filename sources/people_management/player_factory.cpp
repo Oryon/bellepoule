@@ -29,12 +29,14 @@ PlayerFactory::~PlayerFactory ()
 }
 
 // --------------------------------------------------------------------------------
-void PlayerFactory::AddPlayerType (const gchar *player_type,
-                                   Constructor  constructor)
+void PlayerFactory::AddPlayerClass (const gchar *class_name,
+                                    const gchar *xml_tag,
+                                    Constructor  constructor)
 {
   PlayerClass *new_class = new PlayerClass;
 
-  new_class->_player_type = player_type;
+  new_class->_class_name  = class_name;
+  new_class->_xml_tag     = xml_tag;
   new_class->_constructor = constructor;
 
   _classes = g_slist_prepend (_classes,
@@ -42,19 +44,45 @@ void PlayerFactory::AddPlayerType (const gchar *player_type,
 }
 
 // --------------------------------------------------------------------------------
-Player *PlayerFactory::CreatePlayer (const gchar *player_type)
+PlayerFactory::PlayerClass *PlayerFactory::GetPlayerClass (const gchar *class_name)
 {
   GSList *current = _classes;
 
   while (current)
   {
-    PlayerClass *player_class = (PlayerClass *) current->data;
+    PlayerClass *current_player_class = (PlayerClass *) current->data;
 
-    if (g_ascii_strcasecmp (player_class->_player_type, player_type) == 0)
+    if (g_ascii_strcasecmp (current_player_class->_class_name, class_name) == 0)
     {
-      return player_class->_constructor ();
+      return current_player_class;
     }
     current = g_slist_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+Player *PlayerFactory::CreatePlayer (const gchar *class_name)
+{
+  PlayerClass *class_desc = GetPlayerClass (class_name);
+
+  if (class_desc)
+  {
+    return class_desc->_constructor ();
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+const gchar *PlayerFactory::GetXmlTag (const gchar *class_name)
+{
+  PlayerClass *class_desc = GetPlayerClass (class_name);
+
+  if (class_desc)
+  {
+    return class_desc->_xml_tag;
   }
 
   return NULL;

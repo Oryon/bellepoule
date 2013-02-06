@@ -22,13 +22,16 @@
 class Fencer : public Player
 {
   public:
-    static const gchar *GetPlayerClass ();
+    static void RegisterClass ();
 
     static Player *CreateInstance ();
 
     const gchar *GetXmlTag ();
 
   private:
+    static const gchar *_class_name;
+    static const gchar *_xml_tag;
+
     Fencer ();
 
     virtual ~Fencer ();

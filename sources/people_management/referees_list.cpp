@@ -35,7 +35,7 @@ namespace People
   // --------------------------------------------------------------------------------
   RefereesList::RefereesList (Contest *contest)
     : Checkin ("referees.glade",
-               "Arbitre")
+               "Referee")
   {
     _contest = contest;
 
@@ -77,7 +77,7 @@ namespace People
 
       SetFilter (filter);
       CreateForm (filter,
-                  GetPlayerClass ());
+                  "Referee");
       filter->Release ();
     }
 

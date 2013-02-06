@@ -95,9 +95,9 @@ class Player : public Object
     void Dump ();
 
   public:
-    void Save (xmlTextWriter *xml_writer);
+    virtual void Save (xmlTextWriter *xml_writer);
 
-    void Load (xmlNode *xml_node);
+    virtual void Load (xmlNode *xml_node);
 
     virtual const gchar *GetXmlTag () = 0;
 

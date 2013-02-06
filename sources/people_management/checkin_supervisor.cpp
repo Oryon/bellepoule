@@ -34,7 +34,7 @@ namespace People
   // --------------------------------------------------------------------------------
   CheckinSupervisor::CheckinSupervisor (StageClass *stage_class)
     : Checkin ("checkin.glade",
-               "Tireur"),
+               "Fencer"),
     Stage (stage_class)
   {
     _use_initial_rank = FALSE;
@@ -89,7 +89,7 @@ namespace People
 
       SetFilter  (filter);
       CreateForm (filter,
-                  GetPlayerClass ());
+                  "Fencer");
       filter->Release ();
     }
 
@@ -138,7 +138,6 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::Load (xmlNode *xml_node)
   {
-    LoadList (xml_node);
   }
 
   // --------------------------------------------------------------------------------
@@ -159,7 +158,11 @@ namespace People
                                 const gchar     *from_node)
   {
     LoadList (xml_context,
-              from_node);
+              from_node,
+              "Fencer");
+    LoadList (xml_context,
+              from_node,
+              "Team");
   }
 
   // --------------------------------------------------------------------------------
@@ -187,7 +190,10 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::Save (xmlTextWriter *xml_writer)
   {
-    SaveList (xml_writer);
+    SaveList (xml_writer,
+              "Fencer");
+    SaveList (xml_writer,
+              "Team");
   }
 
   // --------------------------------------------------------------------------------
