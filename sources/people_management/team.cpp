@@ -38,7 +38,7 @@ Player *Team::Clone ()
 }
 
 // --------------------------------------------------------------------------------
-void Team::RegisterClass ()
+void Team::RegisterPlayerClass ()
 {
   PlayerFactory::AddPlayerClass (_class_name,
                                  _xml_tag,

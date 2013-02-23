@@ -38,7 +38,7 @@ Player *Fencer::Clone ()
 }
 
 // --------------------------------------------------------------------------------
-void Fencer::RegisterClass ()
+void Fencer::RegisterPlayerClass ()
 {
   PlayerFactory::AddPlayerClass (_class_name,
                                  _xml_tag,

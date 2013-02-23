@@ -250,9 +250,9 @@ int main (int argc, char **argv)
     }
 
     {
-      Fencer::RegisterClass  ();
-      Team::RegisterClass    ();
-      Referee::RegisterClass ();
+      Fencer::RegisterPlayerClass  ();
+      Team::RegisterPlayerClass    ();
+      Referee::RegisterPlayerClass ();
     }
 
     g_free (install_dirname);

@@ -657,69 +657,11 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::RegisterNewTeam (const gchar *name)
-  {
-    AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
-
-    team_desc->AddDiscreteValues (name,
-                                  name,
-                                  NULL,
-                                  NULL);
-  }
-
-  // --------------------------------------------------------------------------------
   void Checkin::OnPlayerEventFromForm (Player            *player,
                                        Form::PlayerEvent  event)
   {
-    if (player->Is ("Team") == FALSE)
-    {
-      gchar  *team_name;
-      Player *team      = NULL;
-
-      // Team name
-      {
-        Player::AttributeId  team_attr_id ("team");
-        Attribute           *team_attr = player->GetAttribute (&team_attr_id);
-
-        team_name = team_attr->GetStrValue ();
-      }
-
-      // Find a team with the given name
-      if (team_name && team_name[0])
-      {
-        Player::AttributeId  name_attr_id ("name");
-        Attribute           *name_attr = Attribute::New ("name");
-
-        name_attr->SetValue (team_name);
-
-        team = GetPlayerWithAttribute (&name_attr_id,
-                                       name_attr);
-        name_attr->Release ();
-
-        // Create a team if necessary
-        if (team == NULL)
-        {
-          team = PlayerFactory::CreatePlayer ("Team");
-
-          team->SetName (team_name);
-          RegisterNewTeam (team_name);
-          Add (team);
-        }
-      }
-
-      player->SetParent (team);
-    }
-
     if (event == Form::NEW_PLAYER)
     {
-      if (player->Is ("Team"))
-      {
-        Player::AttributeId  attr_id ("name");
-        Attribute           *attr      = player->GetAttribute (&attr_id);
-
-        RegisterNewTeam (attr->GetStrValue ());
-      }
-      else
       {
         Player::AttributeId  attending_attr_id ("attending");
         Attribute           *attending_attr = player->GetAttribute (&attending_attr_id);

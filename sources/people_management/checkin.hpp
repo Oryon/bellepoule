@@ -111,8 +111,6 @@ namespace People
       gchar *GetPrintName ();
 
       void GuessPlayerLeague (Player *player);
-
-      void RegisterNewTeam (const gchar *name);
   };
 }
 

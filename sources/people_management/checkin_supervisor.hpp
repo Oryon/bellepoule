@@ -77,6 +77,11 @@ namespace People
 
       void Save (xmlTextWriter *xml_writer);
 
+      void RegisterNewTeam (const gchar *name);
+
+      void OnPlayerEventFromForm (Player            *player,
+                                  Form::PlayerEvent  event);
+
       virtual ~CheckinSupervisor ();
   };
 }

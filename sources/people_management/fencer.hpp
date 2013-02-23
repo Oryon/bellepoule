@@ -22,7 +22,7 @@
 class Fencer : public Player
 {
   public:
-    static void RegisterClass ();
+    static void RegisterPlayerClass ();
 
     static Player *CreateInstance ();
 

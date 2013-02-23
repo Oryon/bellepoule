@@ -38,7 +38,7 @@ Player *Referee::Clone ()
 }
 
 // --------------------------------------------------------------------------------
-void Referee::RegisterClass ()
+void Referee::RegisterPlayerClass ()
 {
   PlayerFactory::AddPlayerClass (_class_name,
                                  _xml_tag,
