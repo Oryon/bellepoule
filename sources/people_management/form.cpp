@@ -19,17 +19,16 @@
 #include <ctype.h>
 
 #include "util/attribute.hpp"
-
+#include "player_factory.hpp"
 #include "form.hpp"
 
 namespace People
 {
   // --------------------------------------------------------------------------------
-  Form::Form (const gchar        *name,
-              Module             *client,
-              Filter             *filter,
-              Player::PlayerType  player_type,
-              PlayerCbk           player_cbk)
+  Form::Form (Module      *client,
+              Filter      *filter,
+              const gchar *player_class,
+              PlayerCbk    player_cbk)
     : Module ("form.glade",
               "FillInForm")
   {
@@ -40,10 +39,8 @@ namespace People
     _cbk    = player_cbk;
     _locked = FALSE;
 
-    _player_type = player_type;
-
-    AddPage (name,
-             filter);
+    AddPage (filter,
+             player_class);
   }
 
   // --------------------------------------------------------------------------------
@@ -52,8 +49,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Form::AddPage (const gchar *name,
-                      Filter      *filter)
+  void Form::AddPage (Filter      *filter,
+                      const gchar *player_class)
   {
     GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
     Page      *page;
@@ -64,6 +61,8 @@ namespace People
                       _page_count);
 
     page = &_pages[_page_count-1];
+
+    page->_player_class = player_class;
 
     {
       GSList      *current    = filter->GetAttrList ();
@@ -228,7 +227,7 @@ namespace People
 
       gtk_notebook_append_page (notebook,
                                 hbox,
-                                gtk_label_new (name));
+                                gtk_label_new (gettext (player_class)));
     }
   }
 
@@ -318,7 +317,7 @@ namespace People
     }
     else
     {
-      player = new Player (_player_type);
+      player = PlayerFactory::CreatePlayer (_pages[page]._player_class);
     }
 
     ReadAndWipe (player);
@@ -329,15 +328,13 @@ namespace People
     if (_player_to_update)
     {
       (_client->*_cbk) (player,
-                        UPDATE_PLAYER,
-                        page);
+                        UPDATE_PLAYER);
       OnCloseButtonClicked ();
     }
     else
     {
       (_client->*_cbk) (player,
-                        NEW_PLAYER,
-                        page);
+                        NEW_PLAYER);
     }
 
     player->Release ();
@@ -468,12 +465,23 @@ namespace People
   void Form::Show (Player *player)
   {
     GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
-    gint         page     = gtk_notebook_get_current_page (notebook);
 
     _player_to_update = player;
     if (_player_to_update)
     {
-      GList *children = gtk_container_get_children (GTK_CONTAINER (_pages[page]._value_vbox));
+      guint  page;
+      GList *children;
+
+      for (page = 0; page < _page_count; page++)
+      {
+        if (player->Is (_pages[page]._player_class))
+        {
+          gtk_notebook_set_current_page (notebook,
+                                         page);
+          break;
+        }
+      }
+      children = gtk_container_get_children (GTK_CONTAINER (_pages[page]._value_vbox));
 
       _player_to_update->Retain ();
       for (guint i = 0; i < g_list_length (children); i ++)

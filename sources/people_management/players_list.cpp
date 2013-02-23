@@ -407,6 +407,27 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  Player *PlayersList::GetPlayerWithAttribute (Player::AttributeId *attr_id,
+                                               Attribute           *attr)
+  {
+    GSList *current = _player_list;
+
+    while (current)
+    {
+      Player    *player       = (Player *) current->data;
+      Attribute *current_attr = player->GetAttribute (attr_id);
+
+      if (Attribute::Compare (attr, current_attr) == 0)
+      {
+        return player;
+      }
+      current = g_slist_next (current);
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::OnDiscreteEditingStarted (GtkCellRenderer *renderer,
                                               GtkCellEditable *editable,
                                               gchar           *path,
@@ -646,14 +667,45 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::Add (Player *player)
   {
+    GtkTreeIter parent_iter;
+    gboolean    has_parent = FALSE;
+
     player->Retain ();
+
+    {
+      Player *parent = player->GetParent ();
+
+      if (parent)
+      {
+        GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) parent->GetPtrData (this,
+                                                                                                         "tree_row_ref"));
+
+        if (path)
+        {
+          gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
+                                   &parent_iter,
+                                   path);
+          has_parent = TRUE;
+        }
+        gtk_tree_path_free (path);
+      }
+    }
 
     {
       GtkTreeIter iter;
 
-      gtk_tree_store_append (_store,
-                             &iter,
-                             NULL);
+      if (has_parent)
+      {
+        gtk_tree_store_append (_store,
+                               &iter,
+                               &parent_iter);
+      }
+      else
+      {
+        gtk_tree_store_append (_store,
+                               &iter,
+                               NULL);
+      }
 
       player->SetData (this, "tree_row_ref",
                        GetPlayerRowRef (&iter),

@@ -22,20 +22,19 @@
 #include "util/filter.hpp"
 #include "common/schedule.hpp"
 #include "common/player.hpp"
-
+#include "player_factory.hpp"
 #include "checkin.hpp"
 
 namespace People
 {
   // --------------------------------------------------------------------------------
   Checkin::Checkin (const gchar *glade,
-                    const gchar *player_tag)
+                    const gchar *default_player_class)
     : PlayersList (glade)
   {
-    _form        = NULL;
-    _attendings  = 0;
-    _player_tag  = player_tag;
-    _players_tag = g_strdup_printf ("%ss", _player_tag);
+    _form                 = NULL;
+    _attendings           = 0;
+    _default_player_class = default_player_class;
 
     {
       GtkWidget *content_area;
@@ -64,35 +63,17 @@ namespace People
     gtk_widget_destroy (_print_dialog);
 
     _form->Release ();
-
-    g_free (_players_tag);
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::CreateForm (Filter             *filter,
-                            Player::PlayerType  player_type)
+  void Checkin::CreateForm (Filter      *filter,
+                            const gchar *player_class)
   {
     if (_form == NULL)
     {
-      const gchar *name;
-
-      if (player_type == Player::FENCER)
-      {
-        name = gettext ("Fencer");
-      }
-      else if (player_type == Player::REFEREE)
-      {
-        name = gettext ("Referee");
-      }
-      else
-      {
-        name = gettext ("Team");
-      }
-
-      _form = new Form (name,
-                        this,
+      _form = new Form (this,
                         filter,
-                        player_type,
+                        player_class,
                         (Form::PlayerCbk) &Checkin::OnPlayerEventFromForm);
     }
   }
@@ -106,33 +87,50 @@ namespace People
 
   // --------------------------------------------------------------------------------
   void Checkin::LoadList (xmlXPathContext *xml_context,
-                          const gchar     *from_node)
+                          const gchar     *from_node,
+                          const gchar     *player_class)
   {
-    gchar          *path        = g_strdup_printf ("%s/%ss", from_node, _player_tag);
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
-    xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
-
-    if (xml_object->nodesetval->nodeNr)
+    if (player_class == NULL)
     {
-      LoadList (xml_nodeset->nodeTab[0]);
+      player_class = _default_player_class;
     }
 
-    g_free (path);
-    xmlXPathFreeObject (xml_object);
+    {
+      const gchar    *player_class_xml_tag  = PlayerFactory::GetXmlTag (player_class);
+      gchar          *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
+      gchar          *path                  = g_strdup_printf ("%s/%s", from_node, players_class_xml_tag);
+      xmlXPathObject *xml_object            = xmlXPathEval (BAD_CAST path, xml_context);
+      xmlNodeSet     *xml_nodeset           = xml_object->nodesetval;
+
+      if (xml_object->nodesetval->nodeNr)
+      {
+        LoadList (xml_nodeset->nodeTab[0],
+                  player_class,
+                  player_class_xml_tag,
+                  players_class_xml_tag);
+      }
+
+      xmlXPathFreeObject (xml_object);
+      g_free (path);
+      g_free (players_class_xml_tag);
+    }
 
     OnLoaded ();
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::LoadList (xmlNode *xml_node)
+  void Checkin::LoadList (xmlNode     *xml_node,
+                          const gchar *player_class,
+                          const gchar *player_class_xml_tag,
+                          const gchar *players_class_xml_tag)
   {
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
-        if (strcmp ((char *) n->name, _player_tag) == 0)
+        if (strcmp ((char *) n->name, player_class_xml_tag) == 0)
         {
-          Player *player = new Player (GetPlayerType ());
+          Player *player = PlayerFactory::CreatePlayer (player_class);
 
           player->Load (n);
 
@@ -143,13 +141,16 @@ namespace People
           OnPlayerLoaded (player);
           player->Release ();
         }
-        else if (strcmp ((char *) n->name, _players_tag) != 0)
+        else if (strcmp ((char *) n->name, players_class_xml_tag) != 0)
         {
           OnListChanged ();
           return;
         }
       }
-      LoadList (n->children);
+      LoadList (n->children,
+                player_class,
+                player_class_xml_tag,
+                players_class_xml_tag);
     }
   }
 
@@ -193,28 +194,40 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::SaveList (xmlTextWriter *xml_writer)
+  void Checkin::SaveList (xmlTextWriter *xml_writer,
+                          const gchar   *player_class)
   {
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST _players_tag);
-
+    if (player_class == NULL)
     {
-      GSList *current = _player_list;
-
-      while (current)
-      {
-        Player *p = (Player *) current->data;
-
-        if (p)
-        {
-          p->Save (xml_writer,
-                   _player_tag);
-        }
-        current = g_slist_next (current);
-      }
+      player_class = _default_player_class;
     }
 
-    xmlTextWriterEndElement (xml_writer);
+    {
+      const gchar *player_class_xml_tag  = PlayerFactory::GetXmlTag (player_class);
+      gchar       *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
+
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST players_class_xml_tag);
+
+      {
+        GSList *current = _player_list;
+
+        while (current)
+        {
+          Player *p = (Player *) current->data;
+
+          if (p && p->Is (player_class))
+          {
+            p->Save (xml_writer);
+          }
+          current = g_slist_next (current);
+        }
+      }
+
+      xmlTextWriterEndElement (xml_writer);
+
+      g_free (players_class_xml_tag);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -246,18 +259,13 @@ namespace People
                                                       NULL);
 
     {
+      gchar         *name = g_strdup_printf ("%s files", _default_player_class);
       GtkFileFilter *filter = gtk_file_filter_new ();
 
-      if (GetPlayerType () == Player::FENCER)
-      {
-        gtk_file_filter_set_name (filter,
-                                  gettext ("Fencer files"));
-      }
-      else
-      {
-        gtk_file_filter_set_name (filter,
-                                  gettext ("Referee files"));
-      }
+#define GETTEXT_TRICK N_ ("Fencer files") N_ ("Referee files")
+      gtk_file_filter_set_name (filter,
+                                gettext (name));
+
       gtk_file_filter_add_pattern (filter,
                                    "*.FFF");
       gtk_file_filter_add_pattern (filter,
@@ -436,7 +444,7 @@ namespace People
                                              ",",
                                              0);
 
-            player = new Player (GetPlayerType ());
+            player = PlayerFactory::CreatePlayer (_default_player_class);
 
             if (tokens)
             {
@@ -620,7 +628,7 @@ namespace People
           {
             for (guint i = nb_attr; tokens[i+1] != 0; i += nb_attr)
             {
-              Player              *player = new Player (GetPlayerType ());
+              Player              *player = PlayerFactory::CreatePlayer (_default_player_class);
               Player::AttributeId  attr_id ("");
 
               for (guint c = 0; c < nb_attr; c++)
@@ -650,8 +658,7 @@ namespace People
 
   // --------------------------------------------------------------------------------
   void Checkin::OnPlayerEventFromForm (Player            *player,
-                                       Form::PlayerEvent  event,
-                                       guint              page)
+                                       Form::PlayerEvent  event)
   {
     if (event == Form::NEW_PLAYER)
     {
@@ -897,19 +904,6 @@ namespace People
       current_player = g_slist_next (current_player);
     }
     OnListChanged ();
-  }
-
-  // --------------------------------------------------------------------------------
-  Player::PlayerType Checkin::GetPlayerType ()
-  {
-    if (strcmp (_player_tag, "Arbitre") == 0)
-    {
-      return Player::REFEREE;
-    }
-    else
-    {
-      return Player::FENCER;
-    }
   }
 
   // --------------------------------------------------------------------------------

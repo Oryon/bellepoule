@@ -528,8 +528,9 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
                                              NULL);
 
   {
-    gboolean  score_stuffing_policy = FALSE;
-    gboolean  need_post_processing;
+    gboolean     score_stuffing_policy = FALSE;
+    gboolean     need_post_processing;
+    const gchar *contest_keyword;
 
     xmlXPathInit ();
 
@@ -539,7 +540,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       xmlNodeSet      *xml_nodeset;
 
       {
-        xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
+        contest_keyword = "/CompetitionIndividuelle";
+        xml_object = xmlXPathEval (BAD_CAST contest_keyword, xml_context);
 
         need_post_processing = FALSE;
         _team_event          = FALSE;
@@ -547,7 +549,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       if (xml_object->nodesetval->nodeNr == 0)
       {
         xmlXPathFreeObject (xml_object);
-        xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle", xml_context);
+        contest_keyword = "/BaseCompetitionIndividuelle";
+        xml_object = xmlXPathEval (BAD_CAST contest_keyword, xml_context);
 
         need_post_processing = TRUE;
         _team_event          = FALSE;
@@ -555,7 +558,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       if (xml_object->nodesetval->nodeNr == 0)
       {
         xmlXPathFreeObject (xml_object);
-        xml_object = xmlXPathEval (BAD_CAST "/CompetitionParEquipes", xml_context);
+        contest_keyword = "/CompetitionParEquipes";
+        xml_object = xmlXPathEval (BAD_CAST contest_keyword, xml_context);
 
         need_post_processing = FALSE;
         _team_event          = TRUE;
@@ -563,7 +567,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       if (xml_object->nodesetval->nodeNr == 0)
       {
         xmlXPathFreeObject (xml_object);
-        xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionParEquipes", xml_context);
+        contest_keyword = "/BaseCompetitionParEquipes";
+        xml_object = xmlXPathEval (BAD_CAST contest_keyword, xml_context);
 
         need_post_processing = TRUE;
         _team_event          = TRUE;
@@ -730,6 +735,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
     }
 
     _schedule->Load (doc,
+                     contest_keyword,
                      _referees_list);
 
     if (score_stuffing_policy)

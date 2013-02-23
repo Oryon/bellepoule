@@ -657,24 +657,20 @@ void Schedule::Save (xmlTextWriter   *xml_writer,
 
 // --------------------------------------------------------------------------------
 void Schedule::Load (xmlDoc          *doc,
+                     const gchar     *contest_keyword,
                      People::Checkin *referees)
 {
   xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
   gint             current_stage_index = -1;
   gboolean         display_all         = FALSE;
   Stage           *checkin_stage       = Stage::CreateInstance ("checkin_stage");
-  gchar           *xml_key_word        = (gchar *) "/CompetitionIndividuelle";
 
   {
     xmlNodeSet     *xml_nodeset;
-    xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle/Phases", xml_context);
+    gchar          *xml_object_path = g_strdup_printf ("/%s/Phases", contest_keyword);
+    xmlXPathObject *xml_object      = xmlXPathEval (BAD_CAST xml_object_path, xml_context);
 
-    if (xml_object->nodesetval->nodeNr == 0)
-    {
-      xmlXPathFreeObject (xml_object);
-      xml_object = xmlXPathEval (BAD_CAST "/BaseCompetitionIndividuelle/Phases", xml_context);
-      xml_key_word = (gchar *) "/BaseCompetitionIndividuelle";
-    }
+    g_free (xml_object_path);
 
     xml_nodeset = xml_object->nodesetval;
     if (xml_object->nodesetval->nodeNr)
@@ -705,7 +701,7 @@ void Schedule::Load (xmlDoc          *doc,
     PlugStage (checkin_stage);
 
     checkin_stage->Load (xml_context,
-                         xml_key_word);
+                         contest_keyword);
     checkin_stage->Display ();
 
     if (display_all || (current_stage_index > 0))
@@ -715,10 +711,10 @@ void Schedule::Load (xmlDoc          *doc,
   }
 
   referees->LoadList (xml_context,
-                      xml_key_word);
+                      contest_keyword);
 
   {
-    gchar          *path        = g_strdup_printf ("/%s/Phases/*", xml_key_word);
+    gchar          *path        = g_strdup_printf ("/%s/Phases/*", contest_keyword);
     xmlXPathObject *xml_object  = xmlXPathEval (BAD_CAST path, xml_context);
     xmlNodeSet     *xml_nodeset = xml_object->nodesetval;
     guint           nb_stage    = 1;

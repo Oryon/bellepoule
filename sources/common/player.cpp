@@ -24,7 +24,7 @@
 guint Player::_next_ref = 0;
 
 // --------------------------------------------------------------------------------
-Player::Player (PlayerType player_type)
+Player::Player (const gchar *player_class)
 : Object ("Player")
 {
   _ref = _next_ref;
@@ -32,7 +32,8 @@ Player::Player (PlayerType player_type)
 
   _nb_matchs = 0;
 
-  _player_type = player_type;
+  _player_class = player_class;
+  _parent       = NULL;
 
   _clients = NULL;
 
@@ -57,18 +58,38 @@ Player::~Player ()
                    (GFunc) Object::TryToRelease,
                    NULL);
   g_slist_free (_clients);
+
+  Object::TryToRelease (_parent);
 }
 
 // --------------------------------------------------------------------------------
-gboolean Player::IsFencer ()
+void Player::SetParent (Player *parent)
 {
-  return _player_type == FENCER;
+  Object::TryToRelease (_parent);
+
+  _parent = parent;
+  if (_parent)
+  {
+    _parent->Retain ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+Player *Player::GetParent ()
+{
+  return _parent;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Player::Is (const gchar *player_class)
+{
+  return (g_ascii_strcasecmp (_player_class, player_class) == 0);
 }
 
 // --------------------------------------------------------------------------------
 Player *Player::Duplicate ()
 {
-  Player *player       = new Player (_player_type);
+  Player *player       = Clone ();
   GSList *current_desc = AttributeDesc::GetList ();
 
   while (current_desc)
@@ -396,8 +417,7 @@ guint Player::GetNbMatchs ()
 }
 
 // --------------------------------------------------------------------------------
-void Player::Save (xmlTextWriter *xml_writer,
-                   const gchar   *player_tag)
+void Player::Save (xmlTextWriter *xml_writer)
 {
   GSList *attr_list;
   GSList *current;
@@ -406,7 +426,7 @@ void Player::Save (xmlTextWriter *xml_writer,
                                       NULL);
 
   xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST player_tag);
+                             BAD_CAST GetXmlTag ());
 
   current = attr_list;
   while (current)
@@ -577,6 +597,15 @@ gchar *Player::GetName ()
   Attribute           *attr = GetAttribute (&attr_id);
 
   return attr->GetUserImage (AttributeDesc::LONG_TEXT);
+}
+
+// --------------------------------------------------------------------------------
+void Player::SetName (const gchar *name)
+{
+  Player::AttributeId  attr_id ("name");
+
+  SetAttributeValue (&attr_id,
+                     name);
 }
 
 // --------------------------------------------------------------------------------

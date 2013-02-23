@@ -33,16 +33,16 @@ namespace People
   {
     public:
       Checkin (const gchar *glade,
-               const gchar *player_tag);
+               const gchar *default_player_class);
 
       virtual void Add (Player *player);
 
-      void LoadList (xmlNode *xml_node);
-
       void LoadList (xmlXPathContext *xml_context,
-                     const gchar     *from_node);
+                     const gchar     *from_node,
+                     const gchar     *player_class = NULL);
 
-      void SaveList (xmlTextWriter *xml_writer);
+      void SaveList (xmlTextWriter *xml_writer,
+                     const gchar   *player_class = NULL);
 
       void ImportCSV (gchar *filename);
 
@@ -72,26 +72,27 @@ namespace People
 
       virtual void Monitor (Player *player);
 
-      void CreateForm (Filter             *filter,
-                       Player::PlayerType  player_type);
+      void CreateForm (Filter      *filter,
+                       const gchar *player_class);
 
       virtual void OnPlayerEventFromForm (Player            *player,
-                                          Form::PlayerEvent  event,
-                                          guint              page);
-
-      Player::PlayerType GetPlayerType ();
+                                          Form::PlayerEvent  event);
 
     private:
       guint        _attendings;
       GtkWidget   *_print_dialog;
       gboolean     _print_attending;
       gboolean     _print_missing;
-      const gchar *_player_tag;
-      gchar       *_players_tag;
+      const gchar *_default_player_class;
 
       virtual void OnLoaded () {};
 
       virtual void OnPlayerLoaded (Player *player) {};
+
+      void LoadList (xmlNode     *xml_node,
+                     const gchar *player_class,
+                     const gchar *player_class_xml_tag,
+                     const gchar *players_class_xml_tag);
 
       void RefreshAttendingDisplay ();
 

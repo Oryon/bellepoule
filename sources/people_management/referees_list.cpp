@@ -35,7 +35,7 @@ namespace People
   // --------------------------------------------------------------------------------
   RefereesList::RefereesList (Contest *contest)
     : Checkin ("referees.glade",
-               "Arbitre")
+               "Referee")
   {
     _contest = contest;
 
@@ -77,7 +77,7 @@ namespace People
 
       SetFilter (filter);
       CreateForm (filter,
-                  GetPlayerType ());
+                  "Referee");
       filter->Release ();
     }
 
@@ -115,8 +115,7 @@ namespace People
 
   // --------------------------------------------------------------------------------
   void RefereesList::OnPlayerEventFromForm (Player            *referee,
-                                            Form::PlayerEvent  event,
-                                            guint              page)
+                                            Form::PlayerEvent  event)
   {
     {
       Player::AttributeId  attending_attr_id ("attending");
@@ -136,8 +135,7 @@ namespace People
     }
 
     Checkin::OnPlayerEventFromForm (referee,
-                                    event,
-                                    page);
+                                    event);
   }
 
   // --------------------------------------------------------------------------------

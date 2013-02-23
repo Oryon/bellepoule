@@ -52,6 +52,7 @@ class Schedule : public Module
                People::Checkin *referees);
 
     void Load (xmlDoc          *doc,
+               const gchar     *contest_keyword,
                People::Checkin *referees);
 
     void OnLoadingCompleted ();

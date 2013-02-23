@@ -3350,7 +3350,7 @@ namespace Table
   {
     Player *player = (Player *) object;
 
-    if (player && player->IsFencer ())
+    if (player && player->Is ("Fencer"))
     {
       return _locked;
     }

@@ -1768,7 +1768,7 @@ namespace Pool
         player = (Player *) current->data;
 
         xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST "Tireur");
+                                   BAD_CAST player->GetXmlTag ());
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "REF",
                                            "%d", player->GetRef ());
@@ -1817,7 +1817,7 @@ namespace Pool
         Player *referee = (Player *) current->data;
 
         xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST "Arbitre");
+                                   BAD_CAST referee->GetXmlTag ());
         xmlTextWriterWriteFormatAttribute (xml_writer,
                                            BAD_CAST "REF",
                                            "%d", referee->GetRef ());

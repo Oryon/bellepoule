@@ -56,17 +56,13 @@ class Player : public Object
                               void      *data);
 
   public:
-    typedef enum
-    {
-      FENCER,
-      REFEREE
-    } PlayerType;
-
-    Player (PlayerType player_type);
-
-    gboolean IsFencer ();
+    gboolean Is (const gchar *player_class);
 
     Player *Duplicate ();
+
+    void SetParent (Player *parent);
+
+    Player *GetParent ();
 
   public:
     Attribute *GetAttribute (AttributeId *attr_id);
@@ -95,13 +91,15 @@ class Player : public Object
     guint GetNbMatchs  ();
 
     gchar *GetName ();
+    void SetName (const gchar *name);
     void Dump ();
 
   public:
-    void Save (xmlTextWriter *xml_writer,
-               const gchar   *player_tag);
+    virtual void Save (xmlTextWriter *xml_writer);
 
-    void Load (xmlNode *xml_node);
+    virtual void Load (xmlNode *xml_node);
+
+    virtual const gchar *GetXmlTag () = 0;
 
   public:
     static gint CompareWithRef (Player *player,
@@ -118,6 +116,13 @@ class Player : public Object
     static gint RandomCompare (Player  *A,
                                Player  *B,
                                guint32  rand_seed);
+
+  protected:
+    Player (const gchar *player_class);
+
+    virtual Player *Clone () = 0;
+
+    virtual ~Player ();
 
   private:
     struct Client : public Object
@@ -143,12 +148,11 @@ class Player : public Object
     static guint   _next_ref;
     static GSList *_attributes_model;
 
-    guint      _ref;
-    guint      _nb_matchs;
-    gchar      _weapon;
-    PlayerType _player_type;
-
-    virtual ~Player ();
+    guint        _ref;
+    guint        _nb_matchs;
+    gchar        _weapon;
+    const gchar *_player_class;
+    Player      *_parent;
 
     void NotifyChange (Attribute *attr);
 };

@@ -1575,7 +1575,7 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
       {
         new_version_detected = TRUE;
       }
-      else if (version && strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
+      else if (version && (strcmp (VERSION_BRANCH, "UNSTABLE") == 0))
       {
         char *stable_version = g_key_file_get_string (version_file,
                                                       "STABLE",
