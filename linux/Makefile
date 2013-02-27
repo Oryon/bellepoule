@@ -1,7 +1,7 @@
 EXEC    = bellepoule
 TARGET  = Release
 PACKAGE = ~/BellePoule
-RELEASE = bellepoule_3.0
+RELEASE = bellepoule_3.1
 
 CC = gcc
 ifeq ($(TARGET), Debug)
@@ -17,7 +17,7 @@ MODULE += util
 
 CFLAGS  = -W -Wall -ansi -pedantic -Wno-unused -Wno-variadic-macros -Wno-int-to-pointer-cast
 CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd)
-CFLAGS += -Isources
+CFLAGS += $(addprefix -Isources/,$(MODULE))
 ifeq ($(TARGET), Debug)
 CFLAGS += -DDEBUG=1
 endif
@@ -87,6 +87,7 @@ prepare_resources:
 	cp -rf ../resources/translations/it    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../resources/translations/ko    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../resources/translations/pt_br $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../resources/translations/sv    $(PACKAGE)/$(RELEASE)/resources/translations
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade
 	cp -f ../resources/glade/*.png   $(PACKAGE)/$(RELEASE)/resources/glade
 	cp -f ../resources/glade/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade
@@ -123,3 +124,11 @@ install:
 clean:
 	rm -f sources/*/*.o
 	rm -rf $(TARGET)
+
+help:
+	@echo "gvim debian/changelog"
+	@echo "make package"
+	@echo "cd ~/BellePoule/$(RELEASE)"
+	@echo "debuild -us -uc"
+	@echo "debuild -S -sa -k<1234>"
+	@echo "ftp /~betonniere/bellepoule/ubuntupackagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"

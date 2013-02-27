@@ -8,3 +8,4 @@ ko;한국어
 nl;Nederlands
 pt_BR;Português
 ru;Русский
+sv;Svenska

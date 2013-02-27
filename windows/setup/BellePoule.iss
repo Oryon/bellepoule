@@ -83,6 +83,7 @@ Source: "..\..\resources\translations\es\*"; DestDir: "{app}\share\BellePoule\re
 Source: "..\..\resources\translations\it\*"; DestDir: "{app}\share\BellePoule\resources\translations\it"; Flags: ignoreversion recursesubdirs
 Source: "..\..\resources\translations\ko\*"; DestDir: "{app}\share\BellePoule\resources\translations\ko"; Flags: ignoreversion recursesubdirs
 Source: "..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\BellePoule\resources\translations\pt_br"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\sv\*"; DestDir: "{app}\share\BellePoule\resources\translations\sv"; Flags: ignoreversion recursesubdirs
 
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -128,6 +129,11 @@ Source: "C:\MinGW\share\locale\pt\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\l
 Source: "C:\MinGW\share\locale\pt\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\pt\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\pt\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+
+Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
 
 ;Resources
 Source: "..\..\resources\glade\*.png"; DestDir: "{app}\share\BellePoule\resources\glade\"; Flags: ignoreversion
@@ -281,6 +287,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 

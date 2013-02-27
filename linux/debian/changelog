@@ -1,3 +1,15 @@
+bellepoule (3.1ubuntu1) precise; urgency=low
+
+  * New contributors
+
+ -- betonniere <le.roux.yannick@free.fr>  Fri, 25 Feb 2013 11:42:10 +0100
+
+bellepoule (3.1) precise; urgency=low
+
+  * New translations (sv, pt)
+
+ -- betonniere <le.roux.yannick@free.fr>  Fri, 25 Feb 2013 10:42:10 +0100
+
 bellepoule (3.0ubuntu2) precise; urgency=low
 
   * Fixed error on version label.
