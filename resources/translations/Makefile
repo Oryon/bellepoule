@@ -13,6 +13,7 @@ $(POT_FILE): $(CPP_FILES) $(GLADE_FILES)
 	xgettext --default-domain=$(DOMAIN)\
            --output=$(POT_FILE)\
            --from-code=UTF-8\
+           --no-location\
            --keyword=N_\
            $^
 
