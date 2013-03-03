@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2013-01-11 17:06+0100\n"
-"PO-Revision-Date: 2013-03-01 15:31+0000\n"
+"PO-Revision-Date: 2013-03-02 22:19+0000\n"
 "Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-03-02 04:59+0000\n"
+"X-Launchpad-Export-Date: 2013-03-03 05:03+0000\n"
 "X-Generator: Launchpad (build 16514)\n"
 
 #: ../../sources/common/contest.cpp:56
@@ -248,7 +248,7 @@ msgstr "All indata för detta avsnitt kommer att gå förlorad."
 #: ../../sources/common/tournament.cpp:479
 #: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
-msgstr "Kostnader"
+msgstr "Utbetalade ersättningar"
 
 #: ../../sources/common/tournament.cpp:491
 msgid "Page"
@@ -1013,7 +1013,7 @@ msgstr "Skriv ut måltidskuponger"
 
 #: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
-msgstr "Skriv ut kostnader"
+msgstr "Skriv ut lista för utbetalade ersättningar"
 
 #: ../../resources/glade/tournament.glade:1193
 msgid "New version!"
