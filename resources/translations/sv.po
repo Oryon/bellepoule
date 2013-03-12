@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2013-01-11 17:06+0100\n"
-"PO-Revision-Date: 2013-03-09 14:20+0000\n"
+"PO-Revision-Date: 2013-03-11 19:49+0000\n"
 "Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-03-10 04:49+0000\n"
-"X-Generator: Launchpad (build 16523)\n"
+"X-Launchpad-Export-Date: 2013-03-12 04:53+0000\n"
+"X-Generator: Launchpad (build 16524)\n"
 
 #: ../../sources/common/contest.cpp:56
 #: ../../resources/glade/contest.glade:1144
@@ -206,7 +206,7 @@ msgstr "Stötindex"
 
 #: ../../sources/common/main.cpp:351
 msgid "Hits scored"
-msgstr "Poängstötar"
+msgstr "Utdelade stötar"
 
 #: ../../sources/common/main.cpp:360
 msgid "Round start rank"
@@ -441,7 +441,7 @@ msgstr "Tilldelning"
 #: ../../sources/pool_round/pool_supervisor.cpp:499
 #: ../../sources/pool_round/pool_supervisor.cpp:509
 msgid "Pools"
-msgstr "Poule"
+msgstr "Pouler"
 
 #: ../../sources/pool_round/pool_supervisor.cpp:101
 msgid "<b><big>Print...</big></b>"
