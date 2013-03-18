@@ -22,38 +22,42 @@
 
 namespace Net
 {
-  class Upload
+  class Uploader
   {
     public:
-      Upload (const gchar *filename,
-              const gchar *url,
-              const gchar *user,
-              const gchar *passwd);
+      Uploader (const gchar *url,
+                const gchar *user,
+                const gchar *passwd);
 
-      void Start ();
+      void UploadFile (const gchar *filename);
+
+      void UploadString (const gchar *string);
 
     private:
       gchar *_user;
       gchar *_passwd;
       gchar *_full_url;
+      gchar *_url;
       gchar *_data;
       gsize  _data_length;
       guint  _bytes_uploaded;
 
-      virtual ~Upload ();
+      virtual ~Uploader ();
 
-      static gpointer ThreadFunction (Upload *upload);
+      void Start ();
+
+      static gpointer ThreadFunction (Uploader *uploader);
 
       static int OnUpLoadTrace (CURL          *handle,
                                 curl_infotype  type,
                                 char          *data,
                                 size_t         size,
-                                Upload        *upload);
+                                Uploader      *uploader);
 
-      static size_t ReadCallback (void   *ptr,
-                                  size_t  size,
-                                  size_t  nmemb,
-                                  Upload *upload);
+      static size_t ReadCallback (void     *ptr,
+                                  size_t    size,
+                                  size_t    nmemb,
+                                  Uploader *uploader);
   };
 
 }

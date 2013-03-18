@@ -177,7 +177,7 @@ namespace People
 
       if (player->Is ("Team") == FALSE)
       {
-        gchar  *team_name;
+        gchar  *team_name = NULL;
         Player *team      = NULL;
 
         // Team name
@@ -185,7 +185,10 @@ namespace People
           Player::AttributeId  team_attr_id ("team");
           Attribute           *team_attr = player->GetAttribute (&team_attr_id);
 
-          team_name = team_attr->GetStrValue ();
+          if (team_attr)
+          {
+            team_name = team_attr->GetStrValue ();
+          }
         }
 
         // Find a team with the given name
