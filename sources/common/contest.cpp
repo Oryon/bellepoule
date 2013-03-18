@@ -36,7 +36,7 @@
 #include "people_management/checkin.hpp"
 #include "people_management/referees_list.hpp"
 #include "people_management/checkin_supervisor.hpp"
-#include "network/upload.hpp"
+#include "network/uploader.hpp"
 
 #include "version.h"
 #include "tournament.hpp"
@@ -1361,12 +1361,11 @@ void Contest::Publish ()
 {
   if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
-    Net::Upload *upload = new Net::Upload (_filename,
-                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
-                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                           gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+    Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
+                                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 
-    upload->Start ();
+    uploader->UploadFile (_filename);
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
   //{

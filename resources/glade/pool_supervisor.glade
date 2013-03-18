@@ -453,6 +453,11 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">stock_scores.png</property>
   </object>
+  <object class="GtkImage" id="smartpool_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">smartphone.png</property>
+  </object>
   <object class="GtkWindow" id="supervisor_window">
     <property name="can_focus">False</property>
     <child>
@@ -579,6 +584,20 @@
                     <property name="use_underline">True</property>
                     <property name="icon_name">gnome-devel</property>
                     <signal name="clicked" handler="on_stuff_toolbutton_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="smartpool_toolbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Send</property>
+                    <property name="use_underline">True</property>
+                    <property name="icon_widget">smartpool_image</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

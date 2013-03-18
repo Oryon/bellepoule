@@ -19,9 +19,8 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "common/classification.hpp"
-
+#include "network/uploader.hpp"
 #include "pool_allocator.hpp"
-
 #include "pool_supervisor.hpp"
 
 namespace Pool
@@ -218,6 +217,18 @@ namespace Pool
 
     classification->SetDataOwner (_single_owner);
     classification->SortDisplay ();
+
+    SendMatchSheeets ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Supervisor::SendMatchSheeets ()
+  {
+    Net::Uploader *uploader = new Net::Uploader ("http://192.168.0.22:35830",
+                                                 NULL,
+                                                 NULL);
+
+    uploader->UploadString ("Les fédérations affiliées à la FIBA participent par le biais de leur équipe féminine aux épreuves de qualification. Onze équipes rejoignent ainsi la Grande-Bretagne, nation hôte de la compétition, pour s'affronter lors du tournoi final.");
   }
 
   // --------------------------------------------------------------------------------
