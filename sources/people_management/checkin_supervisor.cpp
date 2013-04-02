@@ -267,8 +267,7 @@ namespace People
 
           p->SetAttributeValue (&ranking_attr_id,
                                 final_rank->GetUIntValue ());
-          p->SetAttributeValue (&place_attr_id,
-                                1);
+          p->RemoveAttribute (&place_attr_id);
           Update (p);
         }
       }

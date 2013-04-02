@@ -48,6 +48,9 @@ Player::Player (const gchar *player_class)
 
     attr_id._name = (gchar *) "availability";
     SetAttributeValue (&attr_id, "Absent");
+
+    attr_id._name = (gchar *) "global_status";
+    SetAttributeValue (&attr_id, "F");
   }
 }
 
@@ -365,6 +368,13 @@ void Player::SetAttributeValue (AttributeId *attr_id,
 
   attr->SetValue (value);
   NotifyChange (attr);
+}
+
+// --------------------------------------------------------------------------------
+void Player::RemoveAttribute (AttributeId *attr_id)
+{
+  RemoveData (attr_id->_owner,
+              attr_id->_name);
 }
 
 // --------------------------------------------------------------------------------
