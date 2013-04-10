@@ -41,6 +41,8 @@ namespace Pool
 
       void Save (xmlTextWriter *xml_writer);
 
+      void SaveHeader (xmlTextWriter *xml_writer);
+
       guint GetNbPools ();
 
       Pool *GetPool (guint index);

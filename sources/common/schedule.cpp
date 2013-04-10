@@ -623,8 +623,8 @@ void Schedule::RemoveFromNotebook (Stage *stage)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::Save (xmlTextWriter   *xml_writer,
-                     People::Checkin *referees)
+void Schedule::SavePeoples (xmlTextWriter   *xml_writer,
+                            People::Checkin *referees)
 {
   Stage *stage = ((Stage *) g_list_nth_data (_stage_list,
                                              0));
@@ -636,23 +636,27 @@ void Schedule::Save (xmlTextWriter   *xml_writer,
 
     // Referees
     referees->SaveList (xml_writer);
-
-    xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST "Phases");
-    xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "PhaseEnCours",
-                                       "%d", _current_stage);
-
-    for (guint i = 1; i < g_list_length (_stage_list); i++)
-    {
-      stage = ((Stage *) g_list_nth_data (_stage_list,
-                                          i));
-      stage->SetId (i);
-      stage->Save (xml_writer);
-    }
-
-    xmlTextWriterEndElement (xml_writer);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::Save (xmlTextWriter *xml_writer)
+{
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST "Phases");
+  xmlTextWriterWriteFormatAttribute (xml_writer,
+                                     BAD_CAST "PhaseEnCours",
+                                     "%d", _current_stage);
+
+  for (guint i = 1; i < g_list_length (_stage_list); i++)
+  {
+    Stage *stage = ((Stage *) g_list_nth_data (_stage_list,
+                                               i));
+    stage->SetId (i);
+    stage->Save (xml_writer);
+  }
+
+  xmlTextWriterEndElement (xml_writer);
 }
 
 // --------------------------------------------------------------------------------

@@ -733,7 +733,7 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::Save (xmlTextWriter *xml_writer)
+  void Allocator::SaveHeader (xmlTextWriter *xml_writer)
   {
     xmlTextWriterStartElement (xml_writer,
                                BAD_CAST _xml_class_name);
@@ -755,6 +755,12 @@ namespace Pool
                                          BAD_CAST "NbQualifiesParIndice",
                                          "%d", _selected_config->_size);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::Save (xmlTextWriter *xml_writer)
+  {
+    SaveHeader (xml_writer);
 
     Stage::SaveAttendees (xml_writer);
 

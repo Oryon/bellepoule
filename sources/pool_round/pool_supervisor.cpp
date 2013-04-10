@@ -19,9 +19,9 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "common/classification.hpp"
-
+#include "common/contest.hpp"
+#include "network/uploader.hpp"
 #include "pool_allocator.hpp"
-
 #include "pool_supervisor.hpp"
 
 namespace Pool
@@ -218,6 +218,42 @@ namespace Pool
 
     classification->SetDataOwner (_single_owner);
     classification->SortDisplay ();
+
+    SendMatchSheets ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Supervisor::SendMatchSheets ()
+  {
+    xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+    {
+      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+      _contest->SaveHeader (xml_writer);
+      _allocator->SaveHeader (xml_writer);
+      //for (guint p = 0; p < _allocator->GetNbPools (); p++)
+      {
+        Pool *pool = _allocator->GetPool (0);
+
+        pool->Save (xml_writer);
+      }
+      xmlTextWriterEndElement (xml_writer);
+      xmlTextWriterEndElement (xml_writer);
+
+      xmlTextWriterEndDocument (xml_writer);
+
+      xmlFreeTextWriter (xml_writer);
+    }
+
+    {
+      Net::Uploader *uploader   = new Net::Uploader ("http://192.168.0.24:35830",
+                                                     NULL,
+                                                     NULL);
+      uploader->UploadString ((const gchar *) xml_buffer->content);
+    }
+
+    xmlBufferFree (xml_buffer);
   }
 
   // --------------------------------------------------------------------------------

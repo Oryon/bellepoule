@@ -73,6 +73,8 @@ class Player : public Object
     void SetAttributeValue (AttributeId *attr_id,
                             guint        value);
 
+    void RemoveAttribute (AttributeId *attr_id);
+
     void SetChangeCbk (const gchar *attr_name,
                        OnChange     change_cbk,
                        Object      *owner);
