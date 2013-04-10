@@ -59,7 +59,7 @@ namespace Pool
 
       static Stage *CreateInstance (StageClass *stage_class);
 
-      void SendMatchSheeets ();
+      void SendMatchSheets ();
       void FillInConfig ();
       void ApplyConfig ();
       Stage *GetInputProvider ();

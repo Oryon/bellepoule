@@ -19,6 +19,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "common/classification.hpp"
+#include "common/contest.hpp"
 #include "network/uploader.hpp"
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
@@ -218,17 +219,41 @@ namespace Pool
     classification->SetDataOwner (_single_owner);
     classification->SortDisplay ();
 
-    SendMatchSheeets ();
+    SendMatchSheets ();
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::SendMatchSheeets ()
+  void Supervisor::SendMatchSheets ()
   {
-    Net::Uploader *uploader = new Net::Uploader ("http://192.168.0.22:35830",
-                                                 NULL,
-                                                 NULL);
+    xmlBuffer *xml_buffer = xmlBufferCreate ();
 
-    uploader->UploadString ("Les fédérations affiliées à la FIBA participent par le biais de leur équipe féminine aux épreuves de qualification. Onze équipes rejoignent ainsi la Grande-Bretagne, nation hôte de la compétition, pour s'affronter lors du tournoi final.");
+    {
+      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+      _contest->SaveHeader (xml_writer);
+      _allocator->SaveHeader (xml_writer);
+      //for (guint p = 0; p < _allocator->GetNbPools (); p++)
+      {
+        Pool *pool = _allocator->GetPool (0);
+
+        pool->Save (xml_writer);
+      }
+      xmlTextWriterEndElement (xml_writer);
+      xmlTextWriterEndElement (xml_writer);
+
+      xmlTextWriterEndDocument (xml_writer);
+
+      xmlFreeTextWriter (xml_writer);
+    }
+
+    {
+      Net::Uploader *uploader   = new Net::Uploader ("http://192.168.0.24:35830",
+                                                     NULL,
+                                                     NULL);
+      uploader->UploadString ((const gchar *) xml_buffer->content);
+    }
+
+    xmlBufferFree (xml_buffer);
   }
 
   // --------------------------------------------------------------------------------

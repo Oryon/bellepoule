@@ -249,8 +249,6 @@ Contest::Contest ()
   _start_time   = new Time ("start");
 
   _gdk_color = NULL;
-  _color     = new Data ("Couleur",
-                         (guint) 0);
 
   _properties_dialog = _glade->GetWidget ("properties_dialog");
 
@@ -580,12 +578,19 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       {
         gchar *attr;
 
-        if (_color->Load (xml_nodeset->nodeTab[0]))
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Couleur");
+        if (attr)
         {
-          _gdk_color = (GdkColor *) g_list_nth_data (_color_list,
-                                                     _color->_value);
+          _gdk_color = gdk_color_copy ((GdkColor *) (_color_list->data));
+          if (gdk_color_parse (attr,
+                               _gdk_color) == FALSE)
+          {
+            gdk_color_free (_gdk_color);
+            _gdk_color = NULL;
+          }
+          xmlFree (attr);
         }
-        else
+        if (_gdk_color == NULL)
         {
           ChooseColor ();
         }
@@ -779,7 +784,7 @@ Contest::~Contest ()
   Object::TryToRelease (_scratch_time);
   Object::TryToRelease (_start_time);
 
-  Object::TryToRelease (_color);
+  gdk_color_free (_gdk_color);
 
   Object::TryToRelease (_referees_list);
 
@@ -1024,8 +1029,6 @@ void Contest::ChooseColor ()
     color_to_use = 0;
   }
 
-  _color->_value = color_to_use;
-
   color_to_use++;
   if (color_to_use >= (gint) (g_list_length (_color_list)))
   {
@@ -1036,8 +1039,8 @@ void Contest::ChooseColor ()
                           "color_to_use",
                           color_to_use);
 
-  _gdk_color = (GdkColor *) g_list_nth_data (_color_list,
-                                             _color->_value);
+  _gdk_color = gdk_color_copy ((GdkColor *) g_list_nth_data (_color_list,
+                                                             color_to_use));
 }
 
 // --------------------------------------------------------------------------------
@@ -1419,6 +1422,135 @@ void Contest::Save ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::SaveHeader (xmlTextWriter *xml_writer)
+{
+  if (xml_writer)
+  {
+    xmlTextWriterSetIndent     (xml_writer,
+                                TRUE);
+    xmlTextWriterStartDocument (xml_writer,
+                                NULL,
+                                "UTF-8",
+                                NULL);
+
+    if (_team_event)
+    {
+      xmlTextWriterStartDTD (xml_writer,
+                             BAD_CAST "CompetitionParEquipes",
+                             NULL,
+                             NULL);
+    }
+    else
+    {
+      xmlTextWriterStartDTD (xml_writer,
+                             BAD_CAST "CompetitionIndividuelle",
+                             NULL,
+                             NULL);
+    }
+    xmlTextWriterEndDTD (xml_writer);
+
+    xmlTextWriterStartComment (xml_writer);
+    xmlTextWriterWriteFormatString (xml_writer, "\n");
+    xmlTextWriterWriteFormatString (xml_writer, "           By BellePoule (V%s.%s%s)\n", VERSION, VERSION_REVISION, VERSION_MATURITY);
+    xmlTextWriterWriteFormatString (xml_writer, "\n");
+    xmlTextWriterWriteFormatString (xml_writer, "   http://betton.escrime.free.fr/index.php/bellepoule\n");
+    xmlTextWriterEndComment (xml_writer);
+
+    if (_team_event)
+    {
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST "CompetitionParEquipes");
+    }
+    else
+    {
+      xmlTextWriterStartElement (xml_writer,
+                                 BAD_CAST "CompetitionIndividuelle");
+    }
+
+    {
+      gchar *color = gdk_color_to_string  (_gdk_color);
+
+      if (color)
+      {
+        // #rrrrggggbbbb ==> #rrggbb
+        color[3] = color[5];
+        color[4] = color[6];
+        color[5] = color[9];
+        color[6] = color[10];
+        color[7] = 0;
+        xmlTextWriterWriteAttribute (xml_writer,
+                                     BAD_CAST "Couleur",
+                                     BAD_CAST color);
+        g_free (color);
+      }
+    }
+
+    if (_level)
+    {
+      xmlTextWriterWriteAttribute (xml_writer,
+                                   BAD_CAST "Championnat",
+                                   BAD_CAST _level);
+    }
+
+    if (_id)
+    {
+      xmlTextWriterWriteAttribute (xml_writer,
+                                   BAD_CAST "ID",
+                                   BAD_CAST _id);
+    }
+
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "Annee",
+                                       "%d", _year);
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "Arme",
+                                 BAD_CAST weapon_xml_image[_weapon]);
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "Sexe",
+                                 BAD_CAST gender_xml_image[_gender]);
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "Organisateur",
+                                 BAD_CAST _organizer);
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "Categorie",
+                                 BAD_CAST category_xml_image[_category]);
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "Date",
+                                       "%02d.%02d.%d", _day, _month, _year);
+    if (_checkin_time)
+    {
+      _checkin_time->Save (xml_writer,
+                           "Appel");
+    }
+    if (_scratch_time)
+    {
+      _scratch_time->Save (xml_writer,
+                           "Scratch");
+    }
+    if (_start_time)
+    {
+      _start_time->Save   (xml_writer,
+                           "Debut");
+    }
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "TitreLong",
+                                 BAD_CAST _name);
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "URLorganisateur",
+                                 BAD_CAST _web_site);
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "score_stuffing",
+                                       "%d", _schedule->ScoreStuffingIsAllowed ());
+    xmlTextWriterWriteAttribute (xml_writer,
+                                 BAD_CAST "Lieu",
+                                 BAD_CAST _location);
+  }
+
+  _schedule->SavePeoples (xml_writer,
+                          _referees_list);
+}
+
+// --------------------------------------------------------------------------------
 void Contest::Save (gchar *filename)
 {
   if (filename)
@@ -1428,113 +1560,9 @@ void Contest::Save (gchar *filename)
     xml_writer = xmlNewTextWriterFilename (filename, 0);
     if (xml_writer)
     {
-      xmlTextWriterSetIndent     (xml_writer,
-                                  TRUE);
-      xmlTextWriterStartDocument (xml_writer,
-                                  NULL,
-                                  "UTF-8",
-                                  NULL);
+      SaveHeader (xml_writer);
 
-      if (_team_event)
-      {
-        xmlTextWriterStartDTD (xml_writer,
-                               BAD_CAST "CompetitionParEquipes",
-                               NULL,
-                               NULL);
-      }
-      else
-      {
-        xmlTextWriterStartDTD (xml_writer,
-                               BAD_CAST "CompetitionIndividuelle",
-                               NULL,
-                               NULL);
-      }
-      xmlTextWriterEndDTD (xml_writer);
-
-      xmlTextWriterStartComment (xml_writer);
-      xmlTextWriterWriteFormatString (xml_writer, "\n");
-      xmlTextWriterWriteFormatString (xml_writer, "           By BellePoule (V%s.%s%s)\n", VERSION, VERSION_REVISION, VERSION_MATURITY);
-      xmlTextWriterWriteFormatString (xml_writer, "\n");
-      xmlTextWriterWriteFormatString (xml_writer, "   http://betton.escrime.free.fr/index.php/bellepoule\n");
-      xmlTextWriterEndComment (xml_writer);
-
-      if (_team_event)
-      {
-        xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST "CompetitionParEquipes");
-      }
-      else
-      {
-        xmlTextWriterStartElement (xml_writer,
-                                   BAD_CAST "CompetitionIndividuelle");
-      }
-
-      {
-        _color->Save (xml_writer);
-
-        if (_level)
-        {
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "Championnat",
-                                       BAD_CAST _level);
-        }
-
-        if (_id)
-        {
-          xmlTextWriterWriteAttribute (xml_writer,
-                                       BAD_CAST "ID",
-                                       BAD_CAST _id);
-        }
-
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "Annee",
-                                           "%d", _year);
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Arme",
-                                     BAD_CAST weapon_xml_image[_weapon]);
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Sexe",
-                                     BAD_CAST gender_xml_image[_gender]);
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Organisateur",
-                                     BAD_CAST _organizer);
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Categorie",
-                                     BAD_CAST category_xml_image[_category]);
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "Date",
-                                           "%02d.%02d.%d", _day, _month, _year);
-        if (_checkin_time)
-        {
-          _checkin_time->Save (xml_writer,
-                               "Appel");
-        }
-        if (_scratch_time)
-        {
-          _scratch_time->Save (xml_writer,
-                               "Scratch");
-        }
-        if (_start_time)
-        {
-          _start_time->Save   (xml_writer,
-                               "Debut");
-        }
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "TitreLong",
-                                     BAD_CAST _name);
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "URLorganisateur",
-                                     BAD_CAST _web_site);
-        xmlTextWriterWriteFormatAttribute (xml_writer,
-                                           BAD_CAST "score_stuffing",
-                                           "%d", _schedule->ScoreStuffingIsAllowed ());
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Lieu",
-                                     BAD_CAST _location);
-      }
-
-      _schedule->Save (xml_writer,
-                       _referees_list);
+      _schedule->Save (xml_writer);
 
       xmlTextWriterEndElement (xml_writer);
       xmlTextWriterEndDocument (xml_writer);

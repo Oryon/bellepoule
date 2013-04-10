@@ -48,8 +48,10 @@ class Schedule : public Module
     void AddStage    (Stage *stage,
                       Stage *after);
 
-    void Save (xmlTextWriter   *xml_writer,
-               People::Checkin *referees);
+    void SavePeoples (xmlTextWriter   *xml_writer,
+                      People::Checkin *referees);
+
+    void Save (xmlTextWriter *xml_writer);
 
     void Load (xmlDoc          *doc,
                const gchar     *contest_keyword,

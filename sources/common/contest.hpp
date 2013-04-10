@@ -63,6 +63,8 @@ class Contest : public Module
 
     void Save ();
 
+    void SaveHeader (xmlTextWriter *xml_writer);
+
     void Publish ();
 
     gchar *GetFilename ();
@@ -155,7 +157,6 @@ class Contest : public Module
     Schedule        *_schedule;
     Tournament      *_tournament;
     gboolean         _derived;
-    Data            *_color;
     GdkColor        *_gdk_color;
     guint            _save_timeout_id;
     People::Checkin *_referees_list;
