@@ -6,351 +6,260 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-11 17:06+0100\n"
+"POT-Creation-Date: 2013-04-09 16:40+0200\n"
 "PO-Revision-Date: 2012-11-16 12:31+0000\n"
 "Last-Translator: Dennis Baudys <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-02-07 04:57+0000\n"
-"X-Generator: Launchpad (build 16477)\n"
-"Language: \n"
+"X-Launchpad-Export-Date: 2013-01-16 04:47+0000\n"
+"X-Generator: Launchpad (build 16420)\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: ../../sources/common/contest.cpp:56
-#: ../../resources/glade/contest.glade:1144
 msgid "Sabre"
 msgstr "Säbel"
 
-#: ../../sources/common/contest.cpp:57
 msgid "Epée"
 msgstr "Degen"
 
-#: ../../sources/common/contest.cpp:58
 msgid "Foil"
 msgstr "Florett"
 
-#: ../../sources/common/contest.cpp:59
 msgid "Kendo"
 msgstr "Kendo"
 
-#: ../../sources/common/contest.cpp:72 ../../sources/common/main.cpp:276
 msgid "Male"
 msgstr "Herren"
 
-#: ../../sources/common/contest.cpp:73 ../../sources/common/main.cpp:277
 msgid "Female"
 msgstr "Damen"
 
-#: ../../sources/common/contest.cpp:74
 msgid "Mixed"
 msgstr "Gemischt"
 
-#: ../../sources/common/contest.cpp:86
 msgid "U8"
 msgstr "Schüler"
 
-#: ../../sources/common/contest.cpp:87
 msgid "U10"
 msgstr "Schüler"
 
-#: ../../sources/common/contest.cpp:88
 msgid "U12"
 msgstr "B-Jugend"
 
-#: ../../sources/common/contest.cpp:89
 msgid "U14"
 msgstr "A-Jugend"
 
-#: ../../sources/common/contest.cpp:90
-#: ../../resources/glade/contest.glade:1168
 msgid "U16"
 msgstr "Junioren"
 
-#: ../../sources/common/contest.cpp:91
 msgid "U18"
 msgstr "Aktive"
 
-#: ../../sources/common/contest.cpp:92
 msgid "Senior"
 msgstr "Senioren"
 
-#: ../../sources/common/contest.cpp:93
 msgid "Veteran"
 msgstr "Senioren Sonderklasse"
 
-#: ../../sources/common/contest.cpp:1352 ../../sources/common/contest.cpp:1506
 msgid "Choose a file..."
 msgstr "Wählen Sie einen Speicherort..."
 
-#: ../../sources/common/contest.cpp:1521
 msgid "BellePoule files (.cotcot)"
 msgstr "BellePoule-Dateien (.cotcot)"
 
-#: ../../sources/common/contest.cpp:1532
-#: ../../sources/common/tournament.cpp:986
-#: ../../sources/people_management/checkin.cpp:259
-#: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
 msgstr "Alle Dateien"
 
-#: ../../sources/common/main.cpp:260
 msgid "ref"
 msgstr "Ref"
 
-#: ../../sources/common/main.cpp:263 ../../sources/common/main.cpp:355
 msgid "place"
 msgstr "Platz"
 
-#: ../../sources/common/main.cpp:265
 msgid "last name"
 msgstr "Name"
 
-#: ../../sources/common/main.cpp:267
 msgid "first name"
 msgstr "Vorname"
 
-#: ../../sources/common/main.cpp:269
 msgid "date of birth"
 msgstr "Geburtsdatum"
 
-#: ../../sources/common/main.cpp:272
 msgid "gender"
 msgstr "Geschlecht"
 
-#: ../../sources/common/main.cpp:279
 msgid "country"
 msgstr "Nation"
 
-#: ../../sources/common/main.cpp:284
 msgid "league"
 msgstr "LV"
 
-#: ../../sources/common/main.cpp:289
 msgid "club"
 msgstr "Verein"
 
-#: ../../sources/common/main.cpp:293
 msgid "licence"
 msgstr "Lizenz"
 
-#: ../../sources/common/main.cpp:295
 msgid "smartphone"
 msgstr "Smartphone"
 
-#: ../../sources/common/main.cpp:297
 msgid "rate"
 msgstr ""
 
-#: ../../sources/common/main.cpp:302
 msgid "level"
 msgstr "Level"
 
-#: ../../sources/common/main.cpp:305
 msgid "ranking"
 msgstr "Platzierung"
 
-#: ../../sources/common/main.cpp:308
 msgid "start rank"
 msgstr "Start Rang"
 
-#: ../../sources/common/main.cpp:312
 msgid "presence"
 msgstr "Anwesenheit"
 
-#: ../../sources/common/main.cpp:317
 msgid "exported"
 msgstr "exportiert"
 
-#: ../../sources/common/main.cpp:320
 msgid "global status"
 msgstr "global Status"
 
-#: ../../sources/common/main.cpp:323 ../../sources/common/main.cpp:331
-#: ../../resources/glade/pool_supervisor.glade:55
-#: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
 msgstr "Qualifiziert"
 
-#: ../../sources/common/main.cpp:324 ../../sources/common/main.cpp:332
 msgid "Not qualified"
 msgstr "Nicht qualifiziert"
 
-#: ../../sources/common/main.cpp:325 ../../sources/common/main.cpp:333
 msgid "Withdrawal"
 msgstr "Abhebung"
 
-#: ../../sources/common/main.cpp:326 ../../sources/common/main.cpp:334
 msgid "Excluded"
 msgstr "Ausgeschlossen"
 
-#: ../../sources/common/main.cpp:327 ../../sources/common/main.cpp:335
 msgid "Forfeit"
 msgstr "Abhebung"
 
-#: ../../sources/common/main.cpp:329
 msgid "status"
 msgstr "Status"
 
-#: ../../sources/common/main.cpp:339
 msgid "pool #"
 msgstr ""
 
-#: ../../sources/common/main.cpp:343
 msgid "Vict./Bouts (‰)"
 msgstr "Siege/Wettkampf (‰)"
 
-#: ../../sources/common/main.cpp:347
 msgid "index"
 msgstr "Trefferdifferenz"
 
-#: ../../sources/common/main.cpp:351
 msgid "Hits scored"
 msgstr "Treffer gegeben"
 
-#: ../../sources/common/main.cpp:360
 msgid "Round start rank"
 msgstr "Startplatz"
 
-#: ../../sources/common/main.cpp:365
 msgid "availability"
 msgstr "Verfügbarkeit"
 
-#: ../../sources/common/main.cpp:370
 msgid "Busy"
 msgstr "Beschäftigt"
 
-#: ../../sources/common/main.cpp:371
 msgid "Absent"
 msgstr "Abwesend"
 
-#: ../../sources/common/main.cpp:372
 msgid "Free"
 msgstr "Verfügbar"
 
-#: ../../sources/common/schedule.cpp:151
+msgid "Formula"
+msgstr "Austragungsmodus"
+
 #, c-format
 msgid "Round #%d"
 msgstr "Runde #%d"
 
-#: ../../sources/common/schedule.cpp:1066
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr ""
-"<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
+msgstr "<b><big>Wollen Sie wirklich die laufende Phase annullieren?</big></b>"
 
-#: ../../sources/common/schedule.cpp:1069
 msgid "Go back to the previous round?"
 msgstr "Zur vorrangegangener Runde zurückkehren?"
 
-#: ../../sources/common/schedule.cpp:1072
 msgid "All the inputs of this round will be cancelled."
 msgstr "Alle Eingaben dieser Runde werden verworfen."
 
-#: ../../sources/common/tournament.cpp:479
-#: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:491
 msgid "Page"
 msgstr "Seite"
 
-#: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
 msgstr "Starten Sie BellePoule neu, damit die Änderungen wirksam werden"
 
-#: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
 msgstr "Wählen Sie die zu öffnende Datei... "
 
-#: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
 msgstr "Zuletzt geöffnete Dateien"
 
-#: ../../sources/common/tournament.cpp:1244
 msgid "BellePoule files"
 msgstr "Bellepoule-Dateien"
 
-#: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
 msgstr ""
 
-#: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
 msgstr "Wählen Sie einen Speicherort"
 
-#: ../../sources/common/tournament.cpp:1663
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
 msgstr "<b><big>Wollen Sie wirklich BellePoule schließen?</big></b>"
 
-#: ../../sources/common/tournament.cpp:1666
 msgid "Quit BellePoule?"
 msgstr "BellePoule schließen?"
 
-#: ../../sources/common/tournament.cpp:1669
 msgid "All the unsaved competions will be lost."
 msgstr "Alle nicht gespeicherten Änderungen werden verworfen."
 
-#: ../../sources/people_management/checkin.cpp:45
-#: ../../sources/table_round/table_set.cpp:120
 msgid "<b><big>What do you want to print?</big></b>"
 msgstr "<b><big>Was wollen Sie drucken ?</big></b>"
 
-#: ../../sources/people_management/checkin.cpp:48
 msgid "Fencer list printing"
 msgstr "Ausdruck der Teilnehmerliste"
 
-#: ../../sources/people_management/checkin.cpp:217
 msgid "Choose a fencer file to import..."
 msgstr "Wählen Sie die zu importierende Datei..."
 
-#: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
 msgstr ""
 
-#: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
 msgstr "Anmeldeliste"
 
-#: ../../sources/people_management/checkin.cpp:790
 msgid "List of presents"
 msgstr "Anwesendeliste"
 
-#: ../../sources/people_management/checkin.cpp:794
 msgid "List of absents"
 msgstr "Abwesendeliste"
 
-#: ../../sources/people_management/checkin.cpp:798
-#: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr "Fechterliste"
 
-#: ../../sources/people_management/checkin_supervisor.cpp:29
-#: ../../resources/glade/contest.glade:416
 msgid "Check-in"
 msgstr "Aufruf"
 
-#: ../../sources/people_management/form.cpp:46
 msgid "Fencer"
 msgstr ""
 
-#: ../../sources/people_management/form.cpp:51
-#: ../../sources/pool_round/pool.cpp:449
-#: ../../sources/table_round/table_set.cpp:2781
 msgid "Referee"
 msgstr "Schiedsrichter"
 
-#: ../../sources/people_management/form.cpp:175
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
@@ -358,288 +267,215 @@ msgstr ""
 "Um die Dateneingabe zu beschleunigen deaktiveren Sie diese Checkbox. Das "
 "entsprechende Feld wird bei der TAB-Navigation ignoriert."
 
-#: ../../sources/people_management/general_classification.cpp:26
-#: ../../sources/people_management/general_classification.cpp:186
-#: ../../sources/people_management/general_classification.cpp:333
-#: ../../sources/people_management/general_classification.cpp:344
 msgid "General classification"
 msgstr "Ergebnisliste"
 
-#: ../../sources/people_management/general_classification.cpp:198
 msgid "Choose a target file..."
 msgstr "Wählen Sie die Zieldatei..."
 
-#: ../../sources/people_management/general_classification.cpp:238
 msgid "All Excel files (.CSV)"
 msgstr "Alle Excel Dateien (.CSV)"
 
-#: ../../sources/people_management/general_classification.cpp:244
 msgid "All FFF files (.FFF)"
 msgstr "Alle FFF-Dateien (.FFF)"
 
-#: ../../sources/people_management/general_classification.cpp:250
 msgid "All PDF files (.PDF)"
 msgstr "Alle PDF Dateien (.pdf)"
 
-#: ../../sources/people_management/splitting.cpp:30
 msgid "Split"
 msgstr "Spaltung"
 
-#: ../../sources/people_management/splitting.cpp:259
 msgid "List of fencers to extract"
 msgstr ""
 
-#: ../../sources/pool_round/pool.cpp:59
 #, c-format
 msgid "Pool #%02d"
 msgstr "Rundennummer %02d"
 
-#: ../../sources/pool_round/pool.cpp:490
-#: ../../sources/table_round/table_set.cpp:2820
 msgid "Piste"
 msgstr "Bahn"
 
-#: ../../sources/pool_round/pool.cpp:696
-#: ../../sources/table_round/table_set.cpp:2980
 msgid "Signature"
 msgstr "Unterschrift"
 
-#: ../../sources/pool_round/pool.cpp:718
 msgid "Status"
 msgstr "Status"
 
-#: ../../sources/pool_round/pool.cpp:728
 msgid "Victories"
 msgstr "Siege"
 
-#: ../../sources/pool_round/pool.cpp:737
 msgid "Vict./Matchs"
 msgstr "Siege/Gefechte"
 
-#: ../../sources/pool_round/pool.cpp:746
 msgid "H. scored"
 msgstr "T. gegeben"
 
-#: ../../sources/pool_round/pool.cpp:755
 msgid "H. received"
 msgstr "T. erhalten"
 
-#: ../../sources/pool_round/pool.cpp:764
 msgid "Index"
 msgstr "Trefferdifferenz"
 
-#: ../../sources/pool_round/pool.cpp:773
 msgid "Place"
 msgstr "Platz"
 
-#: ../../sources/pool_round/pool_allocator.cpp:53
 msgid "Pools arrangement"
 msgstr "Zusammensetzung der Runden"
 
-#: ../../sources/pool_round/pool_allocator.cpp:1435
+msgid "<i>None</i>"
+msgstr "<i>Kein(e)</i>"
+
+msgid "or"
+msgstr ""
+
 msgid "Allocation"
 msgstr "Verteilung"
 
-#: ../../sources/pool_round/pool_supervisor.cpp:25
-#: ../../sources/pool_round/pool_supervisor.cpp:499
-#: ../../sources/pool_round/pool_supervisor.cpp:509
 msgid "Pools"
 msgstr "Runden"
 
-#: ../../sources/pool_round/pool_supervisor.cpp:101
 msgid "<b><big>Print...</big></b>"
 msgstr "<b><big>Drucken ...</big></b>"
 
-#: ../../sources/pool_round/pool_supervisor.cpp:104
 msgid "Pool sheets printing"
 msgstr "Drucken der Rundenzettel"
 
-#: ../../sources/pool_round/pool_supervisor.cpp:482
 msgid "Pools classification"
 msgstr "Rangfolge nach der Vorrunde"
 
-#: ../../sources/table_round/table.cpp:550
 msgid "Winner"
 msgstr "Sieger"
 
-#: ../../sources/table_round/table.cpp:554
 msgid "Final"
 msgstr "Finale"
 
-#: ../../sources/table_round/table.cpp:558
 msgid "Semi-final"
 msgstr "Halbfinale"
 
-#: ../../sources/table_round/table.cpp:562
 #, c-format
 msgid "Table of %d"
 msgstr "Letzte %d"
 
-#: ../../sources/table_round/table_set.cpp:93
-#: ../../sources/table_round/table_set.cpp:2894
-#: ../../sources/table_round/table_set.cpp:2901
 msgid "Place #"
 msgstr "Platz #"
 
-#: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
-"<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie "
-"drucken?</big></b>"
+"<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie drucken?</big></"
+"b>"
 
-#: ../../sources/table_round/table_set.cpp:123
-#: ../../sources/table_round/table_set.cpp:134
 msgid "Table printing"
 msgstr "Druck der Tabelle"
 
-#: ../../sources/table_round/table_set.cpp:1770
 msgid "cutting"
 msgstr ""
 
-#: ../../sources/table_round/table_set.cpp:2753
 #, c-format
 msgid "Match %s"
 msgstr "Gefecht %s"
 
-#: ../../sources/table_round/table_set.cpp:2892
-#: ../../sources/table_round/table_set.cpp:2900
-#: ../../sources/table_round/table_supervisor.cpp:31
-#: ../../resources/glade/table_supervisor.glade:331
 msgid "Table"
 msgstr "Tabelle"
 
-#: ../../sources/table_round/table_set.cpp:3052
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s : Druck der Gefechte"
 
-#: ../../sources/table_round/table_supervisor.cpp:1062
 msgid "Table classification"
 msgstr "Rangfolge nach der Direktausscheidung"
 
-#: ../../sources/util/filter.cpp:219
+msgid "Long text"
+msgstr ""
+
+msgid "Short text"
+msgstr ""
+
+msgid "Graphic"
+msgstr ""
+
 msgid "Data to display"
 msgstr "Anzuzeigende Daten"
 
-#: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
-#: ../../resources/glade/general_classification.glade:35
-#: ../../resources/glade/pool_allocator.glade:42
-#: ../../resources/glade/pool_supervisor.glade:515
-#: ../../resources/glade/referees.glade:367
-#: ../../resources/glade/splitting.glade:15
-#: ../../resources/glade/table_supervisor.glade:355
+msgid "Visibility"
+msgstr ""
+
 msgid "Data"
 msgstr "Daten"
 
-#: ../../sources/util/filter.cpp:282
 msgid "Look"
 msgstr ""
 
-#: ../../resources/glade/checkin.glade:23
-#: ../../resources/glade/referees.glade:46
 msgid "All the presents"
 msgstr "Alle Anwesende"
 
-#: ../../resources/glade/checkin.glade:38
-#: ../../resources/glade/referees.glade:62
 msgid "All the absents"
 msgstr "Alle Abwesende"
 
-#: ../../resources/glade/checkin.glade:98
-#: ../../resources/glade/referees.glade:154
 msgid "Presents"
 msgstr "Anwesende"
 
-#: ../../resources/glade/checkin.glade:104
-#: ../../resources/glade/referees.glade:161
 msgid "Absents"
 msgstr "Abwesende"
 
-#: ../../resources/glade/checkin.glade:153
-#: ../../resources/glade/checkin.glade:191
-#: ../../resources/glade/referees.glade:217
-#: ../../resources/glade/referees.glade:263
 msgid "all"
 msgstr "Alle"
 
-#: ../../resources/glade/checkin.glade:260
 msgid "Import fencer file"
 msgstr ""
 
-#: ../../resources/glade/contest.glade:21
 msgid "Date of competition"
 msgstr "Datum des Turniers"
 
-#: ../../resources/glade/contest.glade:104
 msgid "Competition properties"
 msgstr "Eigenschaften des Turniers"
 
-#: ../../resources/glade/contest.glade:156
-#: ../../resources/glade/tournament.glade:841
 msgid "Weapon"
 msgstr "Waffe"
 
-#: ../../resources/glade/contest.glade:163
-#: ../../resources/glade/tournament.glade:852
 msgid "Gender"
 msgstr "Geschlecht"
 
-#: ../../resources/glade/contest.glade:174
-#: ../../resources/glade/tournament.glade:863
 msgid "Category"
 msgstr "Kategorie"
 
-#: ../../resources/glade/contest.glade:228
 msgid "<b>Type</b>"
 msgstr "<b>Typ</b>"
 
-#: ../../resources/glade/contest.glade:262
 msgid "Title"
 msgstr "Titel"
 
-#: ../../resources/glade/contest.glade:283
 msgid "Organizer"
 msgstr "Organisator"
 
-#: ../../resources/glade/contest.glade:334
 msgid "Web site"
 msgstr "Netzstandort"
 
-#: ../../resources/glade/contest.glade:351
 msgid "Location"
 msgstr "Ort"
 
-#: ../../resources/glade/contest.glade:381
 msgid "<b>Overviews</b>"
 msgstr "<b>Allgemeine Anmerkungen</b>"
 
-#: ../../resources/glade/contest.glade:409
 msgid "Date"
 msgstr "Datum"
 
-#: ../../resources/glade/contest.glade:427
 msgid "Scratch"
 msgstr "Streichtermin"
 
-#: ../../resources/glade/contest.glade:438
 msgid "Start"
 msgstr "Anfang"
 
-#: ../../resources/glade/contest.glade:642
 msgid "<b>Date / Time</b>"
 msgstr "<b>Datum / Zeitplan</b>"
 
-#: ../../resources/glade/contest.glade:671
 msgid "Allow"
 msgstr "Erlauben"
 
-#: ../../resources/glade/contest.glade:687
 msgid "Forbid"
 msgstr "Verbieten"
 
-#: ../../resources/glade/contest.glade:711
 msgid ""
 "Automatic\n"
 "score\n"
@@ -649,284 +485,204 @@ msgstr ""
 "Ausfüllen\n"
 "der Tabelle"
 
-#: ../../resources/glade/contest.glade:726
 msgid "<b>Scores</b>"
 msgstr "Punktestand"
 
-#: ../../resources/glade/contest.glade:746
 msgid "Event"
 msgstr "Termin"
 
-#: ../../resources/glade/contest.glade:765
-#: ../../resources/glade/contest.glade:1046
-msgid "Formula"
-msgstr "Austragungsmodus"
-
-#: ../../resources/glade/contest.glade:809
 msgid "FTP server"
 msgstr "FTP-Server"
 
-#: ../../resources/glade/contest.glade:816
 msgid "User"
 msgstr "Benutzer"
 
-#: ../../resources/glade/contest.glade:827
 msgid "Password"
 msgstr "Passwort:"
 
-#: ../../resources/glade/contest.glade:897
 msgid "<b>Publisher URL</b>"
 msgstr "<b>Publisher URL</b>"
 
-#: ../../resources/glade/contest.glade:916
 msgid "Publication"
 msgstr "Veröffentlichung"
 
-#: ../../resources/glade/contest.glade:1013
 msgid "Save the current state of the competition."
 msgstr "Speichert den aktuellen Stand des Wettkampfs."
 
-#: ../../resources/glade/contest.glade:1025
 msgid "To specify the features of the competition."
 msgstr "Eigenschaften des Turniers festlegen."
 
-#: ../../resources/glade/contest.glade:1045
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
 msgstr "Festlegen des Modus nach Tabellen, Runden und Spaltung."
 
-#: ../../resources/glade/contest.glade:1058
-#: ../../resources/glade/referees.glade:115
-#: ../../resources/glade/tournament.glade:1123
 msgid "Referees"
 msgstr ""
 
-#: ../../resources/glade/contest.glade:1156
 msgid "Man"
 msgstr "Herren"
 
-#: ../../resources/glade/form.glade:8
 msgid "Add a fencer"
 msgstr "Einen Fechter hinzufügen"
 
-#: ../../resources/glade/general_classification.glade:61
 msgid ""
 "Export the general classification to a .csv file that a spreadsheet like "
 "Excel or OpenOffice can open."
-msgstr ""
-"Exportiert die Rangfolge in eine .csv Datei für Excel oder OpenOffice."
+msgstr "Exportiert die Rangfolge in eine .csv Datei für Excel oder OpenOffice."
 
-#: ../../resources/glade/general_classification.glade:63
 msgid "Export to CSV"
 msgstr "Exportiere in eine CSV Datei"
 
-#: ../../resources/glade/general_classification.glade:78
 msgid "Export to FFF"
 msgstr "Exportiere in eine FFF Datei"
 
-#: ../../resources/glade/general_classification.glade:93
 msgid "Export to PDF"
 msgstr "Exportieren zu PDF"
 
-#: ../../resources/glade/pool_allocator.glade:40
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr "Auswahl der angezeigten Personendaten."
 
-#: ../../resources/glade/pool_allocator.glade:56
 msgid "Print"
 msgstr "Drucken"
 
-#: ../../resources/glade/pool_allocator.glade:112
 msgid "Number of pools"
 msgstr "Zahl der Runden"
 
-#: ../../resources/glade/pool_allocator.glade:162
 msgid "Fencers / pools"
 msgstr "Fechter pro Runde"
 
-#: ../../resources/glade/pool_allocator.glade:210
 msgid "Swapping"
 msgstr "Verschiebung"
 
-#: ../../resources/glade/pool_supervisor.glade:31
-#: ../../resources/glade/splitting.glade:81
-#: ../../resources/glade/table_supervisor.glade:39
-#: ../../resources/glade/tournament.glade:830
 msgid "Name"
 msgstr "Name"
 
-#: ../../resources/glade/pool_supervisor.glade:42
-#: ../../resources/glade/table_supervisor.glade:26
 msgid "Max score"
 msgstr "Max Punktestand"
 
-#: ../../resources/glade/pool_supervisor.glade:122
-#: ../../resources/glade/table_supervisor.glade:131
 msgid "Number"
 msgstr "Nummer"
 
-#: ../../resources/glade/pool_supervisor.glade:203
 msgid "Seeding"
 msgstr ""
 
-#: ../../resources/glade/pool_supervisor.glade:220
 msgid "Balanced"
 msgstr "Ausgeglichen"
 
-#: ../../resources/glade/pool_supervisor.glade:236
 msgid "Grouped by strength"
 msgstr "Nach Stärke gruppiert"
 
-#: ../../resources/glade/pool_supervisor.glade:330
 msgid "All the pools"
 msgstr "Alle Runden"
 
-#: ../../resources/glade/pool_supervisor.glade:346
 msgid "Only the selected pool"
 msgstr "Nur die ausgewählte Runde"
 
-#: ../../resources/glade/pool_supervisor.glade:368
 msgid "<b>What?</b>"
 msgstr "<b>Was ?</b>"
 
-#: ../../resources/glade/pool_supervisor.glade:398
 msgid "For arbitration"
 msgstr "Für die Kampfrichter"
 
-#: ../../resources/glade/pool_supervisor.glade:402
 msgid "Content designed for the referees."
 msgstr "Rundenzettel für die Kampfrichter"
 
-#: ../../resources/glade/pool_supervisor.glade:415
 msgid "For the bulletin board"
 msgstr "Aushang zur Teilnehmerinformation"
 
-#: ../../resources/glade/pool_supervisor.glade:437
 msgid "<b>For what?</b>"
 msgstr "<b>Wofür ?</b>"
 
-#: ../../resources/glade/pool_supervisor.glade:553
-#: ../../resources/glade/table_supervisor.glade:393
 msgid "Classification"
 msgstr "Rangliste"
 
-#: ../../resources/glade/pool_supervisor.glade:578
-#: ../../resources/glade/table_supervisor.glade:435
 msgid "Automatic stuffing"
 msgstr "automatisches Ausfüllen"
 
-#: ../../resources/glade/pool_supervisor.glade:632
 msgid "Combined classification"
 msgstr "Platzierung insgesamt"
 
-#: ../../resources/glade/pool_supervisor.glade:636
 msgid ""
 "The classification cumulating  the current score and the scores of the "
 "previous pool rounds."
 msgstr "Platzierung unter Berücksichtigung aller Runden."
 
-#: ../../resources/glade/pool_supervisor.glade:650
 msgid "Single classification"
 msgstr "Platzierung Runde"
 
-#: ../../resources/glade/pool_supervisor.glade:654
 msgid ""
 "The classification of the current round that doesn't take into account the "
 "scores of the previous rounds. "
 msgstr "Platzierung in der aktuellen Runde (ohne vorhergehende Ergebnisse) "
 
-#: ../../resources/glade/referees.glade:342
 msgid "Import referee file"
 msgstr ""
 
-#: ../../resources/glade/schedule.glade:47
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: ../../resources/glade/schedule.glade:62
 msgid "Remove"
 msgstr "Entfernen"
 
-#: ../../resources/glade/schedule.glade:122
 msgid "<b>Schedule</b>"
 msgstr "<b>Zeitplan</b>"
 
-#: ../../resources/glade/schedule.glade:155
 msgid "<b>Parameters</b>"
 msgstr "<b>Parameter</b>"
 
-#: ../../resources/glade/schedule.glade:213
 msgid "Previous round"
 msgstr "Letzte Runde"
 
-#: ../../resources/glade/schedule.glade:227
 msgid "Next round"
 msgstr "Nächste Runde"
 
-#: ../../resources/glade/splitting.glade:120
 msgid "Select the fencers to move to a new competition."
 msgstr ""
 "Wählen Sie die Fechter, die Sie in ein neues Turnier verschieben wollen."
 
-#: ../../resources/glade/table.glade:247
 msgid "The table"
 msgstr "Die Tabelle"
 
-#: ../../resources/glade/table.glade:334
 msgid "Score sheets"
 msgstr "Gefechtstableau"
 
-#: ../../resources/glade/table.glade:360
-#: ../../resources/glade/table_supervisor.glade:201
 msgid "All"
 msgstr "Alle"
 
-#: ../../resources/glade/table.glade:376
 msgid "Pending"
 msgstr "Offene"
 
-#: ../../resources/glade/table.glade:459
 msgid "All the score sheets"
 msgstr "Alle Gefechtstableaus"
 
-#: ../../resources/glade/table.glade:474
 msgid "The pending score sheets"
 msgstr "Offene Gefechtstableaus"
 
-#: ../../resources/glade/table.glade:554
 msgid "<b>Match</b>"
 msgstr "<b>Gefecht</b>"
 
-#: ../../resources/glade/table.glade:584
 msgid "A fencer"
 msgstr "Fechter A"
 
-#: ../../resources/glade/table.glade:592
 msgid "B fencer"
 msgstr "Fechter B"
 
-#: ../../resources/glade/table.glade:641
 msgid "<b>Score</b>"
 msgstr "<b>Punktestand</b>"
 
-#: ../../resources/glade/table_supervisor.glade:51
 msgid "Fenced places"
 msgstr "Gefochtene Plätze"
 
-#: ../../resources/glade/table_supervisor.glade:169
 msgid "None"
 msgstr "Kein(e)"
 
-#: ../../resources/glade/table_supervisor.glade:185
 msgid "Third place"
 msgstr "Dritte Platz"
 
-#: ../../resources/glade/table_supervisor.glade:418
 msgid "Fill in a match"
 msgstr "Ein Gefecht auswählen"
 
-#: ../../resources/glade/table_supervisor.glade:432
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
@@ -934,23 +690,18 @@ msgstr ""
 "Ausfüllen der Tabelle durch Zufallsergebnisse.\n"
 "Aktivieren/Deaktivieren der Funktion in den Turniereigenschaften."
 
-#: ../../resources/glade/table_supervisor.glade:482
 msgid "From"
 msgstr "Von"
 
-#: ../../resources/glade/table_supervisor.glade:520
 msgid "To"
 msgstr "An"
 
-#: ../../resources/glade/table_supervisor.glade:568
 msgid "For place"
 msgstr "Dritte Platz"
 
-#: ../../resources/glade/table_supervisor.glade:667
 msgid "Zoom"
 msgstr "Vergrößerung"
 
-#: ../../resources/glade/tournament.glade:12
 msgid ""
 "Fencing tournament management software.\n"
 "\n"
@@ -960,71 +711,54 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../../resources/glade/tournament.glade:722
 msgid "Broadcasted competitions"
 msgstr ""
 
-#: ../../resources/glade/tournament.glade:768
 msgid "Server"
 msgstr "Server"
 
-#: ../../resources/glade/tournament.glade:797
 msgid "host"
 msgstr "Rechner"
 
-#: ../../resources/glade/tournament.glade:963
 msgid "BellePoule - Fencing tournament"
 msgstr "BellePoule - Fechtturnier"
 
-#: ../../resources/glade/tournament.glade:982
 msgid "File"
 msgstr "Datei"
 
-#: ../../resources/glade/tournament.glade:1014
 msgid "Recently opened"
 msgstr "Zuletzt verwendete"
 
-#: ../../resources/glade/tournament.glade:1026
 msgid "Watch"
 msgstr "Zusehen"
 
-#: ../../resources/glade/tournament.glade:1043
 msgid "Backup"
 msgstr "Sichern"
 
-#: ../../resources/glade/tournament.glade:1055
 msgid "Backup files location..."
 msgstr "Speicherort"
 
-#: ../../resources/glade/tournament.glade:1076
 msgid "Activate"
 msgstr "Aktivieren"
 
-#: ../../resources/glade/tournament.glade:1087
 msgid "Deactivate"
 msgstr "Deaktivieren"
 
-#: ../../resources/glade/tournament.glade:1135
 msgid "Print meal tickets"
 msgstr ""
 
-#: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
 msgstr ""
 
-#: ../../resources/glade/tournament.glade:1193
 msgid "New version!"
 msgstr "Neue Version!"
 
-#: ../../resources/glade/tournament.glade:1233
 msgid "Open an example..."
 msgstr "Beispiel öffnen"
 
-#: ../../resources/glade/tournament.glade:1244
 msgid "User manual"
 msgstr "Benutzerhandbuch"
 
-#: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
 msgstr ""
 
@@ -1214,7 +948,6 @@ msgstr ""
 #~ msgid "Classement général"
 #~ msgstr "Ergebnisliste"
 
-#, c-format
 #~ msgid ""
 #~ "<b><big>Voulez-vous vraiment fermer\n"
 #~ "<big>%s</big> ?</big></b>"
@@ -1240,7 +973,6 @@ msgstr ""
 #~ msgid "T. données"
 #~ msgstr "T. gegeben"
 
-#, c-format
 #~ msgid "Poule No %02d"
 #~ msgstr "Rundennummer %02d"
 
@@ -1275,7 +1007,6 @@ msgstr ""
 #~ msgid "Poules"
 #~ msgstr "Runden"
 
-#, c-format
 #~ msgid "Tableau de %d"
 #~ msgstr "letzte %d"
 
@@ -1289,15 +1020,15 @@ msgstr ""
 #~ msgstr "Tabelle"
 
 #~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
+#~ "b>"
 #~ msgstr ""
-#~ "<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie "
-#~ "drucken?</big></b>"
+#~ "<b><big>Welche Gefechte der ausgewählten Tabelle wollen Sie drucken?</"
+#~ "big></b>"
 
 #~ msgid "Scission"
 #~ msgstr "Spaltung"
 
-#, c-format
 #~ msgid "%s : Impression des matchs"
 #~ msgstr "%s : Druck der Gefechte"
 
@@ -1444,19 +1175,21 @@ msgstr ""
 #~ msgstr "zu anschlagen"
 
 #~ msgid ""
-#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit les "
-#~ "listes de tireurs inscrits aux compétitions par l'intermédiaire de son site "
-#~ "internet. "
+#~ "FFF est le format sous lequel la Fédération Française d'Escrime  fournit "
+#~ "les listes de tireurs inscrits aux compétitions par l'intermédiaire de "
+#~ "son site internet. "
 #~ msgstr ""
-#~ "FFF ist das Format, unter dem der französischer Fechterbund die Listen von "
-#~ "Fechtern liefert, die an das Turnier über ihr Netzstandort eingetragen sind. "
+#~ "FFF ist das Format, unter dem der französischer Fechterbund die Listen "
+#~ "von Fechtern liefert, die an das Turnier über ihr Netzstandort "
+#~ "eingetragen sind. "
 
 #~ msgid ""
 #~ "Les informations de date et heures sont exploitées pour avertir par une "
 #~ "alarme les organisateurs de l'éminence de de certains évènements."
 #~ msgstr ""
-#~ "Die Informationen von Datum und Stunden werden genutzt, um die Organisatoren "
-#~ "vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu warnen."
+#~ "Die Informationen von Datum und Stunden werden genutzt, um die "
+#~ "Organisatoren vor der Erhöhung bestimmter Ereignisse durch einen Alarm zu "
+#~ "warnen."
 
 #~ msgid "ligue"
 #~ msgstr "LV"
@@ -1486,8 +1219,8 @@ msgstr ""
 #~ "compétition."
 #~ msgstr ""
 #~ "Füllt alle Gefecht der Tabelle durch Zufallsstände.\n"
-#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
-#~ "Turniers."
+#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften "
+#~ "des Turniers."
 
 #~ msgid ""
 #~ "Remplis tous les matchs de toutes les poules par des scores aléatoires.\n"
@@ -1495,15 +1228,15 @@ msgstr ""
 #~ "compétition."
 #~ msgstr ""
 #~ "Füllt alle Gefecht aller Runden durch Zufallsstände.\n"
-#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften des "
-#~ "Turniers."
+#~ "Um diesen Knopf zu aktivieren/unaktivieren, gehen Sie in Eigenschaften "
+#~ "des Turniers."
 
 #~ msgid "Remplissage auto"
 #~ msgstr "automatisches Füllen"
 
 #~ msgid ""
-#~ "Exporte le classement dans un fichier au format \".csv\" pour des tableurs "
-#~ "du type Excel ou OpenOffice"
+#~ "Exporte le classement dans un fichier au format \".csv\" pour des "
+#~ "tableurs du type Excel ou OpenOffice"
 #~ msgstr ""
 #~ "Exportiert die Rangfolge in eine \".csv\" Datei-Format für Excel oder "
 #~ "OpenOffice-Typ"
@@ -1524,12 +1257,13 @@ msgstr ""
 #~ msgstr "Unaktiviert des Knopf \"automatisches Füllen der Punktstände\"."
 
 #~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-#~ "des saisies longues et laborieuses lors des séances de prise en main de "
-#~ "BellePoule."
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut "
+#~ "éviter des saisies longues et laborieuses lors des séances de prise en "
+#~ "main de BellePoule."
 #~ msgstr ""
-#~ "Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann lange "
-#~ "und mühselige Erfassungen während den Testen von BellePoule vermeiden."
+#~ "Aktiviert den Knopf \"automatisches Füllen der Punktstände\". Es kann "
+#~ "lange und mühselige Erfassungen während den Testen von BellePoule "
+#~ "vermeiden."
 
 #~ msgid "Ouvrir un exemple ..."
 #~ msgstr "Ein Beispiel zu eröffnen"
@@ -1627,16 +1361,19 @@ msgstr ""
 #~ "\n"
 #~ "  0. Definitions.\n"
 #~ "\n"
-#~ "  \"This License\" refers to version 3 of the GNU General Public License.\n"
+#~ "  \"This License\" refers to version 3 of the GNU General Public "
+#~ "License.\n"
 #~ "\n"
-#~ "  \"Copyright\" also means copyright-like laws that apply to other kinds of\n"
+#~ "  \"Copyright\" also means copyright-like laws that apply to other kinds "
+#~ "of\n"
 #~ "works, such as semiconductor masks.\n"
 #~ "\n"
 #~ "  \"The Program\" refers to any copyrightable work licensed under this\n"
 #~ "License.  Each licensee is addressed as \"you\".  \"Licensees\" and\n"
 #~ "\"recipients\" may be individuals or organizations.\n"
 #~ "\n"
-#~ "  To \"modify\" a work means to copy from or adapt all or part of the work\n"
+#~ "  To \"modify\" a work means to copy from or adapt all or part of the "
+#~ "work\n"
 #~ "in a fashion requiring copyright permission, other than the making of an\n"
 #~ "exact copy.  The resulting work is called a \"modified version\" of the\n"
 #~ "earlier work or a work \"based on\" the earlier work.\n"
@@ -1849,10 +1586,13 @@ msgstr ""
 #~ "from the Corresponding Source as a System Library, need not be\n"
 #~ "included in conveying the object code work.\n"
 #~ "\n"
-#~ "  A \"User Product\" is either (1) a \"consumer product\", which means any\n"
+#~ "  A \"User Product\" is either (1) a \"consumer product\", which means "
+#~ "any\n"
 #~ "tangible personal property which is normally used for personal, family,\n"
-#~ "or household purposes, or (2) anything designed or sold for incorporation\n"
-#~ "into a dwelling.  In determining whether a product is a consumer product,\n"
+#~ "or household purposes, or (2) anything designed or sold for "
+#~ "incorporation\n"
+#~ "into a dwelling.  In determining whether a product is a consumer "
+#~ "product,\n"
 #~ "doubtful cases shall be resolved in favor of coverage.  For a particular\n"
 #~ "product received by a particular user, \"normally used\" refers to a\n"
 #~ "typical or common use of that class of product, regardless of the status\n"
@@ -1864,7 +1604,8 @@ msgstr ""
 #~ "\n"
 #~ "  \"Installation Information\" for a User Product means any methods,\n"
 #~ "procedures, authorization keys, or other information required to install\n"
-#~ "and execute modified versions of a covered work in that User Product from\n"
+#~ "and execute modified versions of a covered work in that User Product "
+#~ "from\n"
 #~ "a modified version of its Corresponding Source.  The information must\n"
 #~ "suffice to ensure that the continued functioning of the modified object\n"
 #~ "code is in no case prevented or interfered with solely because\n"
@@ -1884,7 +1625,8 @@ msgstr ""
 #~ "  The requirement to provide Installation Information does not include a\n"
 #~ "requirement to continue to provide support service, warranty, or updates\n"
 #~ "for a work that has been modified or installed by the recipient, or for\n"
-#~ "the User Product in which it has been modified or installed.  Access to a\n"
+#~ "the User Product in which it has been modified or installed.  Access to "
+#~ "a\n"
 #~ "network may be denied when the modification itself materially and\n"
 #~ "adversely affects the operation of the network or violates the rules and\n"
 #~ "protocols for communication across the network.\n"
@@ -1914,7 +1656,8 @@ msgstr ""
 #~ "for which you have or can give appropriate copyright permission.\n"
 #~ "\n"
 #~ "  Notwithstanding any other provision of this License, for material you\n"
-#~ "add to a covered work, you may (if authorized by the copyright holders of\n"
+#~ "add to a covered work, you may (if authorized by the copyright holders "
+#~ "of\n"
 #~ "that material) supplement the terms of this License with terms:\n"
 #~ "\n"
 #~ "    a) Disclaiming warranty or limiting liability differently from the\n"
@@ -2098,8 +1841,10 @@ msgstr ""
 #~ "otherwise) that contradict the conditions of this License, they do not\n"
 #~ "excuse you from the conditions of this License.  If you cannot convey a\n"
 #~ "covered work so as to satisfy simultaneously your obligations under this\n"
-#~ "License and any other pertinent obligations, then as a consequence you may\n"
-#~ "not convey it at all.  For example, if you agree to terms that obligate you\n"
+#~ "License and any other pertinent obligations, then as a consequence you "
+#~ "may\n"
+#~ "not convey it at all.  For example, if you agree to terms that obligate "
+#~ "you\n"
 #~ "to collect a royalty for further conveying from those to whom you convey\n"
 #~ "the Program, the only way you could satisfy both those terms and this\n"
 #~ "License would be to refrain entirely from conveying the Program.\n"
@@ -2117,8 +1862,10 @@ msgstr ""
 #~ "\n"
 #~ "  14. Revised Versions of this License.\n"
 #~ "\n"
-#~ "  The Free Software Foundation may publish revised and/or new versions of\n"
-#~ "the GNU General Public License from time to time.  Such new versions will\n"
+#~ "  The Free Software Foundation may publish revised and/or new versions "
+#~ "of\n"
+#~ "the GNU General Public License from time to time.  Such new versions "
+#~ "will\n"
 #~ "be similar in spirit to the present version, but may differ in detail to\n"
 #~ "address new problems or concerns.\n"
 #~ "\n"
@@ -2145,23 +1892,30 @@ msgstr ""
 #~ "\n"
 #~ "  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"
 #~ "APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n"
-#~ "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY\n"
+#~ "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT "
+#~ "WARRANTY\n"
 #~ "OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,\n"
 #~ "THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
-#~ "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\n"
+#~ "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE "
+#~ "PROGRAM\n"
 #~ "IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\n"
 #~ "ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n"
 #~ "\n"
 #~ "  16. Limitation of Liability.\n"
 #~ "\n"
 #~ "  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n"
-#~ "WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS\n"
-#~ "THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY\n"
+#~ "WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR "
+#~ "CONVEYS\n"
+#~ "THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING "
+#~ "ANY\n"
 #~ "GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE\n"
-#~ "USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF\n"
-#~ "DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD\n"
+#~ "USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS "
+#~ "OF\n"
+#~ "DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR "
+#~ "THIRD\n"
 #~ "PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),\n"
-#~ "EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF\n"
+#~ "EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY "
+#~ "OF\n"
 #~ "SUCH DAMAGES.\n"
 #~ "\n"
 #~ "  17. Interpretation of Sections 15 and 16.\n"
@@ -2179,14 +1933,16 @@ msgstr ""
 #~ "\n"
 #~ "  If you develop a new program, and you want it to be of the greatest\n"
 #~ "possible use to the public, the best way to achieve this is to make it\n"
-#~ "free software which everyone can redistribute and change under these terms.\n"
+#~ "free software which everyone can redistribute and change under these "
+#~ "terms.\n"
 #~ "\n"
 #~ "  To do so, attach the following notices to the program.  It is safest\n"
 #~ "to attach them to the start of each source file to most effectively\n"
 #~ "state the exclusion of warranty; and each file should have at least\n"
 #~ "the \"copyright\" line and a pointer to where the full notice is found.\n"
 #~ "\n"
-#~ "    <one line to give the program's name and a brief idea of what it does.>\n"
+#~ "    <one line to give the program's name and a brief idea of what it does."
+#~ ">\n"
 #~ "    Copyright (C) <year>  <name of author>\n"
 #~ "\n"
 #~ "    This program is free software: you can redistribute it and/or modify\n"
@@ -2200,7 +1956,8 @@ msgstr ""
 #~ "    GNU General Public License for more details.\n"
 #~ "\n"
 #~ "    You should have received a copy of the GNU General Public License\n"
-#~ "    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
+#~ "    along with this program.  If not, see <http://www.gnu.org/licenses/"
+#~ ">.\n"
 #~ "\n"
 #~ "Also add information on how to contact you by electronic and paper mail.\n"
 #~ "\n"
@@ -2208,24 +1965,29 @@ msgstr ""
 #~ "notice like this when it starts in an interactive mode:\n"
 #~ "\n"
 #~ "    <program>  Copyright (C) <year>  <name of author>\n"
-#~ "    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
-#~ "w'.\n"
+#~ "    This program comes with ABSOLUTELY NO WARRANTY; for details type "
+#~ "`show w'.\n"
 #~ "    This is free software, and you are welcome to redistribute it\n"
 #~ "    under certain conditions; type `show c' for details.\n"
 #~ "\n"
-#~ "The hypothetical commands `show w' and `show c' should show the appropriate\n"
+#~ "The hypothetical commands `show w' and `show c' should show the "
+#~ "appropriate\n"
 #~ "parts of the General Public License.  Of course, your program's commands\n"
 #~ "might be different; for a GUI interface, you would use an \"about box\".\n"
 #~ "\n"
 #~ "  You should also get your employer (if you work as a programmer) or "
 #~ "school,\n"
-#~ "if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
-#~ "For more information on this, and how to apply and follow the GNU GPL, see\n"
+#~ "if any, to sign a \"copyright disclaimer\" for the program, if "
+#~ "necessary.\n"
+#~ "For more information on this, and how to apply and follow the GNU GPL, "
+#~ "see\n"
 #~ "<http://www.gnu.org/licenses/>.\n"
 #~ "\n"
-#~ "  The GNU General Public License does not permit incorporating your program\n"
+#~ "  The GNU General Public License does not permit incorporating your "
+#~ "program\n"
 #~ "into proprietary programs.  If your program is a subroutine library, you\n"
-#~ "may consider it more useful to permit linking proprietary applications with\n"
+#~ "may consider it more useful to permit linking proprietary applications "
+#~ "with\n"
 #~ "the library.  If this is what you want to do, use the GNU Lesser General\n"
 #~ "Public License instead of this License.  But first, please read\n"
 #~ "<http://www.gnu.org/philosophy/why-not-lgpl.html>. "
@@ -2304,16 +2066,19 @@ msgstr ""
 #~ "\n"
 #~ "  0. Definitions.\n"
 #~ "\n"
-#~ "  \"This License\" refers to version 3 of the GNU General Public License.\n"
+#~ "  \"This License\" refers to version 3 of the GNU General Public "
+#~ "License.\n"
 #~ "\n"
-#~ "  \"Copyright\" also means copyright-like laws that apply to other kinds of\n"
+#~ "  \"Copyright\" also means copyright-like laws that apply to other kinds "
+#~ "of\n"
 #~ "works, such as semiconductor masks.\n"
 #~ "\n"
 #~ "  \"The Program\" refers to any copyrightable work licensed under this\n"
 #~ "License.  Each licensee is addressed as \"you\".  \"Licensees\" and\n"
 #~ "\"recipients\" may be individuals or organizations.\n"
 #~ "\n"
-#~ "  To \"modify\" a work means to copy from or adapt all or part of the work\n"
+#~ "  To \"modify\" a work means to copy from or adapt all or part of the "
+#~ "work\n"
 #~ "in a fashion requiring copyright permission, other than the making of an\n"
 #~ "exact copy.  The resulting work is called a \"modified version\" of the\n"
 #~ "earlier work or a work \"based on\" the earlier work.\n"
@@ -2526,10 +2291,13 @@ msgstr ""
 #~ "from the Corresponding Source as a System Library, need not be\n"
 #~ "included in conveying the object code work.\n"
 #~ "\n"
-#~ "  A \"User Product\" is either (1) a \"consumer product\", which means any\n"
+#~ "  A \"User Product\" is either (1) a \"consumer product\", which means "
+#~ "any\n"
 #~ "tangible personal property which is normally used for personal, family,\n"
-#~ "or household purposes, or (2) anything designed or sold for incorporation\n"
-#~ "into a dwelling.  In determining whether a product is a consumer product,\n"
+#~ "or household purposes, or (2) anything designed or sold for "
+#~ "incorporation\n"
+#~ "into a dwelling.  In determining whether a product is a consumer "
+#~ "product,\n"
 #~ "doubtful cases shall be resolved in favor of coverage.  For a particular\n"
 #~ "product received by a particular user, \"normally used\" refers to a\n"
 #~ "typical or common use of that class of product, regardless of the status\n"
@@ -2541,7 +2309,8 @@ msgstr ""
 #~ "\n"
 #~ "  \"Installation Information\" for a User Product means any methods,\n"
 #~ "procedures, authorization keys, or other information required to install\n"
-#~ "and execute modified versions of a covered work in that User Product from\n"
+#~ "and execute modified versions of a covered work in that User Product "
+#~ "from\n"
 #~ "a modified version of its Corresponding Source.  The information must\n"
 #~ "suffice to ensure that the continued functioning of the modified object\n"
 #~ "code is in no case prevented or interfered with solely because\n"
@@ -2561,7 +2330,8 @@ msgstr ""
 #~ "  The requirement to provide Installation Information does not include a\n"
 #~ "requirement to continue to provide support service, warranty, or updates\n"
 #~ "for a work that has been modified or installed by the recipient, or for\n"
-#~ "the User Product in which it has been modified or installed.  Access to a\n"
+#~ "the User Product in which it has been modified or installed.  Access to "
+#~ "a\n"
 #~ "network may be denied when the modification itself materially and\n"
 #~ "adversely affects the operation of the network or violates the rules and\n"
 #~ "protocols for communication across the network.\n"
@@ -2591,7 +2361,8 @@ msgstr ""
 #~ "for which you have or can give appropriate copyright permission.\n"
 #~ "\n"
 #~ "  Notwithstanding any other provision of this License, for material you\n"
-#~ "add to a covered work, you may (if authorized by the copyright holders of\n"
+#~ "add to a covered work, you may (if authorized by the copyright holders "
+#~ "of\n"
 #~ "that material) supplement the terms of this License with terms:\n"
 #~ "\n"
 #~ "    a) Disclaiming warranty or limiting liability differently from the\n"
@@ -2775,8 +2546,10 @@ msgstr ""
 #~ "otherwise) that contradict the conditions of this License, they do not\n"
 #~ "excuse you from the conditions of this License.  If you cannot convey a\n"
 #~ "covered work so as to satisfy simultaneously your obligations under this\n"
-#~ "License and any other pertinent obligations, then as a consequence you may\n"
-#~ "not convey it at all.  For example, if you agree to terms that obligate you\n"
+#~ "License and any other pertinent obligations, then as a consequence you "
+#~ "may\n"
+#~ "not convey it at all.  For example, if you agree to terms that obligate "
+#~ "you\n"
 #~ "to collect a royalty for further conveying from those to whom you convey\n"
 #~ "the Program, the only way you could satisfy both those terms and this\n"
 #~ "License would be to refrain entirely from conveying the Program.\n"
@@ -2794,8 +2567,10 @@ msgstr ""
 #~ "\n"
 #~ "  14. Revised Versions of this License.\n"
 #~ "\n"
-#~ "  The Free Software Foundation may publish revised and/or new versions of\n"
-#~ "the GNU General Public License from time to time.  Such new versions will\n"
+#~ "  The Free Software Foundation may publish revised and/or new versions "
+#~ "of\n"
+#~ "the GNU General Public License from time to time.  Such new versions "
+#~ "will\n"
 #~ "be similar in spirit to the present version, but may differ in detail to\n"
 #~ "address new problems or concerns.\n"
 #~ "\n"
@@ -2822,23 +2597,30 @@ msgstr ""
 #~ "\n"
 #~ "  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"
 #~ "APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n"
-#~ "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY\n"
+#~ "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT "
+#~ "WARRANTY\n"
 #~ "OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,\n"
 #~ "THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
-#~ "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\n"
+#~ "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE "
+#~ "PROGRAM\n"
 #~ "IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\n"
 #~ "ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n"
 #~ "\n"
 #~ "  16. Limitation of Liability.\n"
 #~ "\n"
 #~ "  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n"
-#~ "WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS\n"
-#~ "THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY\n"
+#~ "WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR "
+#~ "CONVEYS\n"
+#~ "THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING "
+#~ "ANY\n"
 #~ "GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE\n"
-#~ "USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF\n"
-#~ "DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD\n"
+#~ "USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS "
+#~ "OF\n"
+#~ "DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR "
+#~ "THIRD\n"
 #~ "PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),\n"
-#~ "EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF\n"
+#~ "EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY "
+#~ "OF\n"
 #~ "SUCH DAMAGES.\n"
 #~ "\n"
 #~ "  17. Interpretation of Sections 15 and 16.\n"
@@ -2856,14 +2638,16 @@ msgstr ""
 #~ "\n"
 #~ "  If you develop a new program, and you want it to be of the greatest\n"
 #~ "possible use to the public, the best way to achieve this is to make it\n"
-#~ "free software which everyone can redistribute and change under these terms.\n"
+#~ "free software which everyone can redistribute and change under these "
+#~ "terms.\n"
 #~ "\n"
 #~ "  To do so, attach the following notices to the program.  It is safest\n"
 #~ "to attach them to the start of each source file to most effectively\n"
 #~ "state the exclusion of warranty; and each file should have at least\n"
 #~ "the \"copyright\" line and a pointer to where the full notice is found.\n"
 #~ "\n"
-#~ "    <one line to give the program's name and a brief idea of what it does.>\n"
+#~ "    <one line to give the program's name and a brief idea of what it does."
+#~ ">\n"
 #~ "    Copyright (C) <year>  <name of author>\n"
 #~ "\n"
 #~ "    This program is free software: you can redistribute it and/or modify\n"
@@ -2877,7 +2661,8 @@ msgstr ""
 #~ "    GNU General Public License for more details.\n"
 #~ "\n"
 #~ "    You should have received a copy of the GNU General Public License\n"
-#~ "    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n"
+#~ "    along with this program.  If not, see <http://www.gnu.org/licenses/"
+#~ ">.\n"
 #~ "\n"
 #~ "Also add information on how to contact you by electronic and paper mail.\n"
 #~ "\n"
@@ -2885,24 +2670,29 @@ msgstr ""
 #~ "notice like this when it starts in an interactive mode:\n"
 #~ "\n"
 #~ "    <program>  Copyright (C) <year>  <name of author>\n"
-#~ "    This program comes with ABSOLUTELY NO WARRANTY; for details type `show "
-#~ "w'.\n"
+#~ "    This program comes with ABSOLUTELY NO WARRANTY; for details type "
+#~ "`show w'.\n"
 #~ "    This is free software, and you are welcome to redistribute it\n"
 #~ "    under certain conditions; type `show c' for details.\n"
 #~ "\n"
-#~ "The hypothetical commands `show w' and `show c' should show the appropriate\n"
+#~ "The hypothetical commands `show w' and `show c' should show the "
+#~ "appropriate\n"
 #~ "parts of the General Public License.  Of course, your program's commands\n"
 #~ "might be different; for a GUI interface, you would use an \"about box\".\n"
 #~ "\n"
 #~ "  You should also get your employer (if you work as a programmer) or "
 #~ "school,\n"
-#~ "if any, to sign a \"copyright disclaimer\" for the program, if necessary.\n"
-#~ "For more information on this, and how to apply and follow the GNU GPL, see\n"
+#~ "if any, to sign a \"copyright disclaimer\" for the program, if "
+#~ "necessary.\n"
+#~ "For more information on this, and how to apply and follow the GNU GPL, "
+#~ "see\n"
 #~ "<http://www.gnu.org/licenses/>.\n"
 #~ "\n"
-#~ "  The GNU General Public License does not permit incorporating your program\n"
+#~ "  The GNU General Public License does not permit incorporating your "
+#~ "program\n"
 #~ "into proprietary programs.  If your program is a subroutine library, you\n"
-#~ "may consider it more useful to permit linking proprietary applications with\n"
+#~ "may consider it more useful to permit linking proprietary applications "
+#~ "with\n"
 #~ "the library.  If this is what you want to do, use the GNU Lesser General\n"
 #~ "Public License instead of this License.  But first, please read\n"
 #~ "<http://www.gnu.org/philosophy/why-not-lgpl.html>. "

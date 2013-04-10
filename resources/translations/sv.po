@@ -6,348 +6,259 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-01-11 17:06+0100\n"
-"PO-Revision-Date: 2013-03-12 16:26+0000\n"
-"Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-04-09 16:40+0200\n"
+"PO-Revision-Date: 2013-03-18 21:35+0100\n"
+"Last-Translator: \n"
 "Language-Team: Swedish <sv@li.org>\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2013-03-13 04:41+0000\n"
-"X-Generator: Launchpad (build 16532)\n"
+"X-Generator: Poedit 1.5.3\n"
 
-#: ../../sources/common/contest.cpp:56
-#: ../../resources/glade/contest.glade:1144
 msgid "Sabre"
 msgstr "Sabel"
 
-#: ../../sources/common/contest.cpp:57
 msgid "Epée"
 msgstr "Värja"
 
-#: ../../sources/common/contest.cpp:58
 msgid "Foil"
 msgstr "Florett"
 
-#: ../../sources/common/contest.cpp:59
 msgid "Kendo"
 msgstr "Kendo"
 
-#: ../../sources/common/contest.cpp:72 ../../sources/common/main.cpp:276
 msgid "Male"
 msgstr "Herr"
 
-#: ../../sources/common/contest.cpp:73 ../../sources/common/main.cpp:277
 msgid "Female"
 msgstr "Dam"
 
-#: ../../sources/common/contest.cpp:74
 msgid "Mixed"
 msgstr "Mixed"
 
-#: ../../sources/common/contest.cpp:86
 msgid "U8"
 msgstr "U8"
 
-#: ../../sources/common/contest.cpp:87
 msgid "U10"
 msgstr "U10"
 
-#: ../../sources/common/contest.cpp:88
 msgid "U12"
 msgstr "U12"
 
-#: ../../sources/common/contest.cpp:89
 msgid "U14"
 msgstr "U14"
 
-#: ../../sources/common/contest.cpp:90
-#: ../../resources/glade/contest.glade:1168
 msgid "U16"
 msgstr "U16"
 
-#: ../../sources/common/contest.cpp:91
 msgid "U18"
 msgstr "U18"
 
-#: ../../sources/common/contest.cpp:92
 msgid "Senior"
 msgstr "Senior"
 
-#: ../../sources/common/contest.cpp:93
 msgid "Veteran"
 msgstr "Veteran"
 
-#: ../../sources/common/contest.cpp:1352 ../../sources/common/contest.cpp:1506
 msgid "Choose a file..."
 msgstr "Välj en fil …"
 
-#: ../../sources/common/contest.cpp:1521
 msgid "BellePoule files (.cotcot)"
 msgstr "BellePoule-filer (.cotcot)"
 
-#: ../../sources/common/contest.cpp:1532
-#: ../../sources/common/tournament.cpp:986
-#: ../../sources/people_management/checkin.cpp:259
-#: ../../sources/people_management/general_classification.cpp:289
 msgid "All files"
 msgstr "Alla filer"
 
-#: ../../sources/common/main.cpp:260
 msgid "ref"
 msgstr "Dom."
 
-#: ../../sources/common/main.cpp:263 ../../sources/common/main.cpp:355
 msgid "place"
 msgstr "Placering"
 
-#: ../../sources/common/main.cpp:265
 msgid "last name"
 msgstr "Efternamn"
 
-#: ../../sources/common/main.cpp:267
 msgid "first name"
 msgstr "Förnamn"
 
-#: ../../sources/common/main.cpp:269
 msgid "date of birth"
 msgstr "Födelsedatum"
 
-#: ../../sources/common/main.cpp:272
 msgid "gender"
 msgstr "Kön"
 
-#: ../../sources/common/main.cpp:279
 msgid "country"
 msgstr "Land"
 
-#: ../../sources/common/main.cpp:284
 msgid "league"
 msgstr "Förbund"
 
-#: ../../sources/common/main.cpp:289
 msgid "club"
 msgstr "Klubb"
 
-#: ../../sources/common/main.cpp:293
 msgid "licence"
 msgstr "Licensnr."
 
-#: ../../sources/common/main.cpp:295
 msgid "smartphone"
 msgstr "Telefonnr."
 
-#: ../../sources/common/main.cpp:297
 msgid "rate"
 msgstr "Arbetskvot"
 
-#: ../../sources/common/main.cpp:302
 msgid "level"
 msgstr "Nivå"
 
-#: ../../sources/common/main.cpp:305
 msgid "ranking"
 msgstr "Rankning"
 
-#: ../../sources/common/main.cpp:308
 msgid "start rank"
 msgstr "Startrankning"
 
-#: ../../sources/common/main.cpp:312
 msgid "presence"
 msgstr "Närvaro"
 
-#: ../../sources/common/main.cpp:317
 msgid "exported"
 msgstr "Går vidare"
 
-#: ../../sources/common/main.cpp:320
 msgid "global status"
 msgstr "Global status"
 
-#: ../../sources/common/main.cpp:323 ../../sources/common/main.cpp:331
-#: ../../resources/glade/pool_supervisor.glade:55
-#: ../../resources/glade/table_supervisor.glade:64
 msgid "Qualified"
 msgstr "Går vidare"
 
-#: ../../sources/common/main.cpp:324 ../../sources/common/main.cpp:332
 msgid "Not qualified"
 msgstr "Går inte vidare"
 
-#: ../../sources/common/main.cpp:325 ../../sources/common/main.cpp:333
 msgid "Withdrawal"
 msgstr "Brutit tävlingen"
 
-#: ../../sources/common/main.cpp:326 ../../sources/common/main.cpp:334
 msgid "Excluded"
 msgstr "Utesluten"
 
-#: ../../sources/common/main.cpp:327 ../../sources/common/main.cpp:335
 msgid "Forfeit"
 msgstr "Uppgiven match"
 
-#: ../../sources/common/main.cpp:329
 msgid "status"
 msgstr "Status"
 
-#: ../../sources/common/main.cpp:339
 msgid "pool #"
 msgstr "Poulenr."
 
-#: ../../sources/common/main.cpp:343
 msgid "Vict./Bouts (‰)"
 msgstr "Vinster/förluster (‰)"
 
-#: ../../sources/common/main.cpp:347
 msgid "index"
 msgstr "Stötindex"
 
-#: ../../sources/common/main.cpp:351
 msgid "Hits scored"
 msgstr "Utdelade stötar"
 
-#: ../../sources/common/main.cpp:360
 msgid "Round start rank"
 msgstr "Omgångens startrankning"
 
-#: ../../sources/common/main.cpp:365
 msgid "availability"
 msgstr "Tillgänglighet"
 
-#: ../../sources/common/main.cpp:370
 msgid "Busy"
 msgstr "Upptagen"
 
-#: ../../sources/common/main.cpp:371
 msgid "Absent"
 msgstr "Frånvarande"
 
-#: ../../sources/common/main.cpp:372
 msgid "Free"
 msgstr "Friomgång"
 
-#: ../../sources/common/schedule.cpp:151
+msgid "Formula"
+msgstr "Formulär"
+
 #, c-format
 msgid "Round #%d"
 msgstr "Omgång nr. %d"
 
-#: ../../sources/common/schedule.cpp:1066
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr "<b><big>Vill du verkligen stänga det aktuella avsnittet?</big></b>"
 
-#: ../../sources/common/schedule.cpp:1069
 msgid "Go back to the previous round?"
 msgstr "Gå tillbaka till föregående avsnitt?"
 
-#: ../../sources/common/schedule.cpp:1072
 msgid "All the inputs of this round will be cancelled."
 msgstr "All indata för detta avsnitt kommer att gå förlorad."
 
-#: ../../sources/common/tournament.cpp:479
-#: ../../sources/common/tournament.cpp:1389
 msgid "Payment book"
 msgstr "Utbetalade ersättningar"
 
-#: ../../sources/common/tournament.cpp:491
 msgid "Page"
 msgstr "Sida"
 
-#: ../../sources/common/tournament.cpp:841
 msgid "Restart BellePoule for this change to take effect"
 msgstr "Starta om BellePoule för att verkställa ändringen"
 
-#: ../../sources/common/tournament.cpp:958
 msgid "Choose a competion file to open... "
 msgstr "Välj en tävlingsfil att öppna … "
 
-#: ../../sources/common/tournament.cpp:971
 msgid "Competition files (.cotcot / .xml)"
 msgstr "Tävlingsfiler (.cotcot/.xml)"
 
-#: ../../sources/common/tournament.cpp:1229
 msgid "Recently opened files"
 msgstr "Nyligen öppnade filer"
 
-#: ../../sources/common/tournament.cpp:1244
 msgid "BellePoule files"
 msgstr "BellePoule-filer"
 
-#: ../../sources/common/tournament.cpp:1382
 msgid "Meal tickets"
 msgstr "Måltidskuponger"
 
-#: ../../sources/common/tournament.cpp:1430
 msgid "Choose a backup files location..."
 msgstr "Välj en plats för säkerhetskopiefiler …"
 
-#: ../../sources/common/tournament.cpp:1663
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
 msgstr "<b><big>Vill du verkligen avsluta BellePoule?</big></b>"
 
-#: ../../sources/common/tournament.cpp:1666
 msgid "Quit BellePoule?"
 msgstr "Avsluta BellePoule?"
 
-#: ../../sources/common/tournament.cpp:1669
 msgid "All the unsaved competions will be lost."
 msgstr "Alla tävlingar som ännu inte sparats kommer att gå förlorade."
 
-#: ../../sources/people_management/checkin.cpp:45
-#: ../../sources/table_round/table_set.cpp:120
 msgid "<b><big>What do you want to print?</big></b>"
 msgstr "<b><big>Vad vill du skriva ut?</big></b>"
 
-#: ../../sources/people_management/checkin.cpp:48
 msgid "Fencer list printing"
 msgstr "Utskrift av lista över fäktare"
 
-#: ../../sources/people_management/checkin.cpp:217
 msgid "Choose a fencer file to import..."
 msgstr "Välj en fäktarfil att importera …"
 
-#: ../../sources/people_management/checkin.cpp:232
 msgid "Fencer files"
 msgstr "Fäktarfiler"
 
-#: ../../sources/people_management/checkin.cpp:237
 msgid "Referee files"
 msgstr "Domarfiler"
 
-#: ../../sources/people_management/checkin.cpp:786
 msgid "List of registered"
 msgstr "Lista över registrerade"
 
-#: ../../sources/people_management/checkin.cpp:790
 msgid "List of presents"
 msgstr "Lista över närvarande"
 
-#: ../../sources/people_management/checkin.cpp:794
 msgid "List of absents"
 msgstr "Lista över frånvarande"
 
-#: ../../sources/people_management/checkin.cpp:798
-#: ../../resources/glade/pool_allocator.glade:81
 msgid "Fencer list"
 msgstr "Lista över fäktare"
 
-#: ../../sources/people_management/checkin_supervisor.cpp:29
-#: ../../resources/glade/contest.glade:416
 msgid "Check-in"
 msgstr "Registrering"
 
-#: ../../sources/people_management/form.cpp:46
 msgid "Fencer"
 msgstr "Fäktare"
 
-#: ../../sources/people_management/form.cpp:51
-#: ../../sources/pool_round/pool.cpp:449
-#: ../../sources/table_round/table_set.cpp:2781
 msgid "Referee"
 msgstr "Domare"
 
-#: ../../sources/people_management/form.cpp:175
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
 "ignored on TAB key pressed."
@@ -355,288 +266,215 @@ msgstr ""
 "Avmarkera denna kryssruta för att snabba på datainmatningen. Motsvarande "
 "fält kommer att ignoreras när Tabb-tangenten trycks ned."
 
-#: ../../sources/people_management/general_classification.cpp:26
-#: ../../sources/people_management/general_classification.cpp:186
-#: ../../sources/people_management/general_classification.cpp:333
-#: ../../sources/people_management/general_classification.cpp:344
 msgid "General classification"
 msgstr "Slutresultat"
 
-#: ../../sources/people_management/general_classification.cpp:198
 msgid "Choose a target file..."
 msgstr "Välj en målfil …"
 
-#: ../../sources/people_management/general_classification.cpp:238
 msgid "All Excel files (.CSV)"
 msgstr "Alla Excel-filer (.csv)"
 
-#: ../../sources/people_management/general_classification.cpp:244
 msgid "All FFF files (.FFF)"
 msgstr "Alla FFF-filer (.fff)"
 
-#: ../../sources/people_management/general_classification.cpp:250
 msgid "All PDF files (.PDF)"
 msgstr "Alla PDF-filer (.pdf)"
 
-#: ../../sources/people_management/splitting.cpp:30
 msgid "Split"
 msgstr "Delresultat"
 
-#: ../../sources/people_management/splitting.cpp:259
 msgid "List of fencers to extract"
 msgstr "Lista över fäktare att skilja ut"
 
-#: ../../sources/pool_round/pool.cpp:59
 #, c-format
 msgid "Pool #%02d"
 msgstr "Poule nr. %02d"
 
-#: ../../sources/pool_round/pool.cpp:490
-#: ../../sources/table_round/table_set.cpp:2820
 msgid "Piste"
 msgstr "Pist"
 
-#: ../../sources/pool_round/pool.cpp:696
-#: ../../sources/table_round/table_set.cpp:2980
 msgid "Signature"
 msgstr "Underskrift"
 
-#: ../../sources/pool_round/pool.cpp:718
 msgid "Status"
 msgstr "Status"
 
-#: ../../sources/pool_round/pool.cpp:728
 msgid "Victories"
 msgstr "Segrar"
 
-#: ../../sources/pool_round/pool.cpp:737
 msgid "Vict./Matchs"
 msgstr "Segrar/match"
 
-#: ../../sources/pool_round/pool.cpp:746
 msgid "H. scored"
 msgstr "Utdelade"
 
-#: ../../sources/pool_round/pool.cpp:755
 msgid "H. received"
 msgstr "Mottagna"
 
-#: ../../sources/pool_round/pool.cpp:764
 msgid "Index"
 msgstr "Stötindex"
 
-#: ../../sources/pool_round/pool.cpp:773
 msgid "Place"
 msgstr "Placering"
 
-#: ../../sources/pool_round/pool_allocator.cpp:53
 msgid "Pools arrangement"
 msgstr "Pouleindelning"
 
-#: ../../sources/pool_round/pool_allocator.cpp:1435
+msgid "<i>None</i>"
+msgstr "<i>Ingen</i>"
+
+msgid "or"
+msgstr ""
+
 msgid "Allocation"
 msgstr "Tilldelning"
 
-#: ../../sources/pool_round/pool_supervisor.cpp:25
-#: ../../sources/pool_round/pool_supervisor.cpp:499
-#: ../../sources/pool_round/pool_supervisor.cpp:509
 msgid "Pools"
 msgstr "Pouler"
 
-#: ../../sources/pool_round/pool_supervisor.cpp:101
 msgid "<b><big>Print...</big></b>"
 msgstr "<b><big>Skriv ut …</big></b>"
 
-#: ../../sources/pool_round/pool_supervisor.cpp:104
 msgid "Pool sheets printing"
 msgstr "Utskrift av pouleöversikter"
 
-#: ../../sources/pool_round/pool_supervisor.cpp:482
 msgid "Pools classification"
 msgstr "Pouleklassificering"
 
-#: ../../sources/table_round/table.cpp:550
 msgid "Winner"
 msgstr "Vinnare"
 
-#: ../../sources/table_round/table.cpp:554
 msgid "Final"
 msgstr "Final"
 
-#: ../../sources/table_round/table.cpp:558
 msgid "Semi-final"
 msgstr "Semifinal"
 
-#: ../../sources/table_round/table.cpp:562
 #, c-format
 msgid "Table of %d"
 msgstr "Tävlingsschema (%d)"
 
-#: ../../sources/table_round/table_set.cpp:93
-#: ../../sources/table_round/table_set.cpp:2894
-#: ../../sources/table_round/table_set.cpp:2901
 msgid "Place #"
 msgstr "Placeringsnr."
 
-#: ../../sources/table_round/table_set.cpp:102
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr ""
-"<b><big>Vilka poängformulär ur den markerade tabellen vill du skriva "
-"ut?</big></b>"
+"<b><big>Vilka poängformulär ur den markerade tabellen vill du skriva ut?</"
+"big></b>"
 
-#: ../../sources/table_round/table_set.cpp:123
-#: ../../sources/table_round/table_set.cpp:134
 msgid "Table printing"
 msgstr "Utskrift av tabell"
 
-#: ../../sources/table_round/table_set.cpp:1770
 msgid "cutting"
 msgstr "Kupong"
 
-#: ../../sources/table_round/table_set.cpp:2753
 #, c-format
 msgid "Match %s"
 msgstr "Match %s"
 
-#: ../../sources/table_round/table_set.cpp:2892
-#: ../../sources/table_round/table_set.cpp:2900
-#: ../../sources/table_round/table_supervisor.cpp:31
-#: ../../resources/glade/table_supervisor.glade:331
 msgid "Table"
 msgstr "Tabell"
 
-#: ../../sources/table_round/table_set.cpp:3052
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s: utskrift av poängformulär"
 
-#: ../../sources/table_round/table_supervisor.cpp:1062
 msgid "Table classification"
 msgstr "Tabellklassificering"
 
-#: ../../sources/util/filter.cpp:219
+msgid "Long text"
+msgstr ""
+
+msgid "Short text"
+msgstr ""
+
+msgid "Graphic"
+msgstr ""
+
 msgid "Data to display"
 msgstr "Data som skall visas"
 
-#: ../../sources/util/filter.cpp:262 ../../resources/glade/checkin.glade:281
-#: ../../resources/glade/general_classification.glade:35
-#: ../../resources/glade/pool_allocator.glade:42
-#: ../../resources/glade/pool_supervisor.glade:515
-#: ../../resources/glade/referees.glade:367
-#: ../../resources/glade/splitting.glade:15
-#: ../../resources/glade/table_supervisor.glade:355
+msgid "Visibility"
+msgstr ""
+
 msgid "Data"
 msgstr "Data"
 
-#: ../../sources/util/filter.cpp:282
 msgid "Look"
 msgstr "Utseende"
 
-#: ../../resources/glade/checkin.glade:23
-#: ../../resources/glade/referees.glade:46
 msgid "All the presents"
 msgstr "Alla som är närvarande"
 
-#: ../../resources/glade/checkin.glade:38
-#: ../../resources/glade/referees.glade:62
 msgid "All the absents"
 msgstr "Alla som är frånvarande"
 
-#: ../../resources/glade/checkin.glade:98
-#: ../../resources/glade/referees.glade:154
 msgid "Presents"
 msgstr "Närvarande"
 
-#: ../../resources/glade/checkin.glade:104
-#: ../../resources/glade/referees.glade:161
 msgid "Absents"
 msgstr "Frånvarande"
 
-#: ../../resources/glade/checkin.glade:153
-#: ../../resources/glade/checkin.glade:191
-#: ../../resources/glade/referees.glade:217
-#: ../../resources/glade/referees.glade:263
 msgid "all"
 msgstr "alla"
 
-#: ../../resources/glade/checkin.glade:260
 msgid "Import fencer file"
 msgstr "Importera fäktarfil"
 
-#: ../../resources/glade/contest.glade:21
 msgid "Date of competition"
 msgstr "Tävlingsdatum"
 
-#: ../../resources/glade/contest.glade:104
 msgid "Competition properties"
 msgstr "Tävlingsegenskaper"
 
-#: ../../resources/glade/contest.glade:156
-#: ../../resources/glade/tournament.glade:841
 msgid "Weapon"
 msgstr "Vapen"
 
-#: ../../resources/glade/contest.glade:163
-#: ../../resources/glade/tournament.glade:852
 msgid "Gender"
 msgstr "Kön"
 
-#: ../../resources/glade/contest.glade:174
-#: ../../resources/glade/tournament.glade:863
 msgid "Category"
 msgstr "Kategori"
 
-#: ../../resources/glade/contest.glade:228
 msgid "<b>Type</b>"
 msgstr "<b>Tävlingsform</b>"
 
-#: ../../resources/glade/contest.glade:262
 msgid "Title"
 msgstr "Titel"
 
-#: ../../resources/glade/contest.glade:283
 msgid "Organizer"
 msgstr "Organisatör"
 
-#: ../../resources/glade/contest.glade:334
 msgid "Web site"
 msgstr "Webbplats"
 
-#: ../../resources/glade/contest.glade:351
 msgid "Location"
 msgstr "Plats"
 
-#: ../../resources/glade/contest.glade:381
 msgid "<b>Overviews</b>"
 msgstr "<b>Allmänt</b>"
 
-#: ../../resources/glade/contest.glade:409
 msgid "Date"
 msgstr "Datum"
 
-#: ../../resources/glade/contest.glade:427
 msgid "Scratch"
 msgstr "Samling"
 
-#: ../../resources/glade/contest.glade:438
 msgid "Start"
 msgstr "Startar"
 
-#: ../../resources/glade/contest.glade:642
 msgid "<b>Date / Time</b>"
 msgstr "<b>Datum/tid</b>"
 
-#: ../../resources/glade/contest.glade:671
 msgid "Allow"
 msgstr "Tillåt"
 
-#: ../../resources/glade/contest.glade:687
 msgid "Forbid"
 msgstr "Förbjud"
 
-#: ../../resources/glade/contest.glade:711
 msgid ""
 "Automatic\n"
 "score\n"
@@ -646,48 +484,33 @@ msgstr ""
 "poäng-\n"
 "sammanställning"
 
-#: ../../resources/glade/contest.glade:726
 msgid "<b>Scores</b>"
 msgstr "<b>Poäng</b>"
 
-#: ../../resources/glade/contest.glade:746
 msgid "Event"
 msgstr "Händelse"
 
-#: ../../resources/glade/contest.glade:765
-#: ../../resources/glade/contest.glade:1046
-msgid "Formula"
-msgstr "Formulär"
-
-#: ../../resources/glade/contest.glade:809
 msgid "FTP server"
 msgstr "FTP-server"
 
-#: ../../resources/glade/contest.glade:816
 msgid "User"
 msgstr "Användare"
 
-#: ../../resources/glade/contest.glade:827
 msgid "Password"
 msgstr "Lösenord"
 
-#: ../../resources/glade/contest.glade:897
 msgid "<b>Publisher URL</b>"
 msgstr "<b>Publiceringsadress (URL)</b>"
 
-#: ../../resources/glade/contest.glade:916
 msgid "Publication"
 msgstr "Publicering"
 
-#: ../../resources/glade/contest.glade:1013
 msgid "Save the current state of the competition."
 msgstr "Spara det aktuella tillståndet för tävlingen."
 
-#: ../../resources/glade/contest.glade:1025
 msgid "To specify the features of the competition."
 msgstr "För specifikation av tävlingens typ och innehåll."
 
-#: ../../resources/glade/contest.glade:1045
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
@@ -695,21 +518,15 @@ msgstr ""
 "För konfiguration av tävlingsschemat, d.v.s. pouler, tabeller och övriga "
 "avsnitt."
 
-#: ../../resources/glade/contest.glade:1058
-#: ../../resources/glade/referees.glade:115
-#: ../../resources/glade/tournament.glade:1123
 msgid "Referees"
 msgstr "Domare"
 
-#: ../../resources/glade/contest.glade:1156
 msgid "Man"
 msgstr "Man"
 
-#: ../../resources/glade/form.glade:8
 msgid "Add a fencer"
 msgstr "Lägg till en fäktare"
 
-#: ../../resources/glade/general_classification.glade:61
 msgid ""
 "Export the general classification to a .csv file that a spreadsheet like "
 "Excel or OpenOffice can open."
@@ -717,110 +534,78 @@ msgstr ""
 "Exportera slutresultatsammanställningen till en CSV-fil, som kan öppnas i "
 "ett kalkylprogram som Excel eller OpenOffice."
 
-#: ../../resources/glade/general_classification.glade:63
 msgid "Export to CSV"
 msgstr "Exportera till CSV"
 
-#: ../../resources/glade/general_classification.glade:78
 msgid "Export to FFF"
 msgstr "Exportera till FFF"
 
-#: ../../resources/glade/general_classification.glade:93
 msgid "Export to PDF"
 msgstr "Exportera till PDF"
 
-#: ../../resources/glade/pool_allocator.glade:40
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr "Dölj eller visa vissa datatyper, eller bestäm deras visningsordning."
 
-#: ../../resources/glade/pool_allocator.glade:56
 msgid "Print"
 msgstr "Skriv ut"
 
-#: ../../resources/glade/pool_allocator.glade:112
 msgid "Number of pools"
 msgstr "Antal pouler"
 
-#: ../../resources/glade/pool_allocator.glade:162
 msgid "Fencers / pools"
 msgstr "Fäktare/poule"
 
-#: ../../resources/glade/pool_allocator.glade:210
 msgid "Swapping"
 msgstr "Sortering"
 
-#: ../../resources/glade/pool_supervisor.glade:31
-#: ../../resources/glade/splitting.glade:81
-#: ../../resources/glade/table_supervisor.glade:39
-#: ../../resources/glade/tournament.glade:830
 msgid "Name"
 msgstr "Namn"
 
-#: ../../resources/glade/pool_supervisor.glade:42
-#: ../../resources/glade/table_supervisor.glade:26
 msgid "Max score"
 msgstr "Maxpoäng"
 
-#: ../../resources/glade/pool_supervisor.glade:122
-#: ../../resources/glade/table_supervisor.glade:131
 msgid "Number"
 msgstr "Antal"
 
-#: ../../resources/glade/pool_supervisor.glade:203
 msgid "Seeding"
 msgstr "Seedning"
 
-#: ../../resources/glade/pool_supervisor.glade:220
 msgid "Balanced"
 msgstr "Balanserad"
 
-#: ../../resources/glade/pool_supervisor.glade:236
 msgid "Grouped by strength"
 msgstr "Grupperade efter styrka"
 
-#: ../../resources/glade/pool_supervisor.glade:330
 msgid "All the pools"
 msgstr "Samtliga pouler"
 
-#: ../../resources/glade/pool_supervisor.glade:346
 msgid "Only the selected pool"
 msgstr "Endast den markerade poulen"
 
-#: ../../resources/glade/pool_supervisor.glade:368
 msgid "<b>What?</b>"
 msgstr "<b>Vad?</b>"
 
-#: ../../resources/glade/pool_supervisor.glade:398
 msgid "For arbitration"
 msgstr "För domare och sekretariat"
 
-#: ../../resources/glade/pool_supervisor.glade:402
 msgid "Content designed for the referees."
 msgstr "Innehåll utformat för domarna."
 
-#: ../../resources/glade/pool_supervisor.glade:415
 msgid "For the bulletin board"
 msgstr "För anslagstavlan"
 
-#: ../../resources/glade/pool_supervisor.glade:437
 msgid "<b>For what?</b>"
 msgstr "<b>För vad?</b>"
 
-#: ../../resources/glade/pool_supervisor.glade:553
-#: ../../resources/glade/table_supervisor.glade:393
 msgid "Classification"
 msgstr "Resultatställning"
 
-#: ../../resources/glade/pool_supervisor.glade:578
-#: ../../resources/glade/table_supervisor.glade:435
 msgid "Automatic stuffing"
 msgstr "Automatisk sammanställning"
 
-#: ../../resources/glade/pool_supervisor.glade:632
 msgid "Combined classification"
 msgstr "Sammanlagd resultatställning"
 
-#: ../../resources/glade/pool_supervisor.glade:636
 msgid ""
 "The classification cumulating  the current score and the scores of the "
 "previous pool rounds."
@@ -828,11 +613,9 @@ msgstr ""
 "Resultatställning där den aktuella poängställningen och poängen från de "
 "tidigare pouleomgångarna läggs samman."
 
-#: ../../resources/glade/pool_supervisor.glade:650
 msgid "Single classification"
 msgstr "Enskild resultatställning"
 
-#: ../../resources/glade/pool_supervisor.glade:654
 msgid ""
 "The classification of the current round that doesn't take into account the "
 "scores of the previous rounds. "
@@ -840,96 +623,72 @@ msgstr ""
 "Resultatställning för den aktuella rundan, där poängen i föregående omgångar "
 "inte tas med i beräkningen. "
 
-#: ../../resources/glade/referees.glade:342
 msgid "Import referee file"
 msgstr "Importera domarfil"
 
-#: ../../resources/glade/schedule.glade:47
 msgid "Add"
 msgstr "Lägg till"
 
-#: ../../resources/glade/schedule.glade:62
 msgid "Remove"
 msgstr "Ta bort"
 
-#: ../../resources/glade/schedule.glade:122
 msgid "<b>Schedule</b>"
 msgstr "<b>Schema</b>"
 
-#: ../../resources/glade/schedule.glade:155
 msgid "<b>Parameters</b>"
 msgstr "<b>Parametrar</b>"
 
-#: ../../resources/glade/schedule.glade:213
 msgid "Previous round"
 msgstr "Föregående avsnitt"
 
-#: ../../resources/glade/schedule.glade:227
 msgid "Next round"
 msgstr "Nästa avsnitt"
 
-#: ../../resources/glade/splitting.glade:120
 msgid "Select the fencers to move to a new competition."
 msgstr "Välj de fäktare som skall flyttas till en ny tävling."
 
-#: ../../resources/glade/table.glade:247
 msgid "The table"
 msgstr "Tabellen"
 
-#: ../../resources/glade/table.glade:334
 msgid "Score sheets"
 msgstr "Poängformulär"
 
-#: ../../resources/glade/table.glade:360
-#: ../../resources/glade/table_supervisor.glade:201
 msgid "All"
 msgstr "Alla"
 
-#: ../../resources/glade/table.glade:376
 msgid "Pending"
 msgstr "Väntande"
 
-#: ../../resources/glade/table.glade:459
 msgid "All the score sheets"
 msgstr "Alla poängformulär"
 
-#: ../../resources/glade/table.glade:474
 msgid "The pending score sheets"
 msgstr "Ännu ej behandlade poängformulär"
 
-#: ../../resources/glade/table.glade:554
 msgid "<b>Match</b>"
 msgstr "<b>Match</b>"
 
-#: ../../resources/glade/table.glade:584
 msgid "A fencer"
 msgstr "Fäktare A"
 
-#: ../../resources/glade/table.glade:592
 msgid "B fencer"
 msgstr "Fäktare B"
 
-#: ../../resources/glade/table.glade:641
 msgid "<b>Score</b>"
 msgstr "<b>Poäng</b>"
 
-#: ../../resources/glade/table_supervisor.glade:51
 msgid "Fenced places"
 msgstr "Placeringsmatcher"
 
-#: ../../resources/glade/table_supervisor.glade:169
 msgid "None"
 msgstr "Ingen"
 
-#: ../../resources/glade/table_supervisor.glade:185
 msgid "Third place"
 msgstr "Tredje plats"
 
-#: ../../resources/glade/table_supervisor.glade:418
 msgid "Fill in a match"
 msgstr "Fyll i en match"
 
-#: ../../resources/glade/table_supervisor.glade:432
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
@@ -937,23 +696,18 @@ msgstr ""
 "Fyll i alla poäng slumpmässigt.\n"
 "För att aktivera/inaktivera denna knapp, gå till tävlingsegenskaperna."
 
-#: ../../resources/glade/table_supervisor.glade:482
 msgid "From"
 msgstr "Från"
 
-#: ../../resources/glade/table_supervisor.glade:520
 msgid "To"
 msgstr "Till"
 
-#: ../../resources/glade/table_supervisor.glade:568
 msgid "For place"
 msgstr "För placering"
 
-#: ../../resources/glade/table_supervisor.glade:667
 msgid "Zoom"
 msgstr "Zooma"
 
-#: ../../resources/glade/tournament.glade:12
 msgid ""
 "Fencing tournament management software.\n"
 "\n"
@@ -963,70 +717,53 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../../resources/glade/tournament.glade:722
 msgid "Broadcasted competitions"
 msgstr "Mediesända tävlingar"
 
-#: ../../resources/glade/tournament.glade:768
 msgid "Server"
 msgstr "Server"
 
-#: ../../resources/glade/tournament.glade:797
 msgid "host"
 msgstr "värd"
 
-#: ../../resources/glade/tournament.glade:963
 msgid "BellePoule - Fencing tournament"
 msgstr "BellePoule - Fäktningsturnering"
 
-#: ../../resources/glade/tournament.glade:982
 msgid "File"
 msgstr "Arkiv"
 
-#: ../../resources/glade/tournament.glade:1014
 msgid "Recently opened"
 msgstr "Nyligen öppnade"
 
-#: ../../resources/glade/tournament.glade:1026
 msgid "Watch"
 msgstr "Titta"
 
-#: ../../resources/glade/tournament.glade:1043
 msgid "Backup"
 msgstr "Säkerhetskopiering"
 
-#: ../../resources/glade/tournament.glade:1055
 msgid "Backup files location..."
 msgstr "Plats för säkerhetskopiefil …"
 
-#: ../../resources/glade/tournament.glade:1076
 msgid "Activate"
 msgstr "Aktivera"
 
-#: ../../resources/glade/tournament.glade:1087
 msgid "Deactivate"
 msgstr "Inaktivera"
 
-#: ../../resources/glade/tournament.glade:1135
 msgid "Print meal tickets"
 msgstr "Skriv ut måltidskuponger"
 
-#: ../../resources/glade/tournament.glade:1146
 msgid "Print payment book"
 msgstr "Skriv ut lista för utbetalade ersättningar"
 
-#: ../../resources/glade/tournament.glade:1193
 msgid "New version!"
 msgstr "Ny version!"
 
-#: ../../resources/glade/tournament.glade:1233
 msgid "Open an example..."
 msgstr "Öppna ett exempel …"
 
-#: ../../resources/glade/tournament.glade:1244
 msgid "User manual"
 msgstr "Användarhandbok"
 
-#: ../../resources/glade/tournament.glade:1261
 msgid "Fencer file template (.csv)"
 msgstr "Fäktarfilmall (.csv)"
