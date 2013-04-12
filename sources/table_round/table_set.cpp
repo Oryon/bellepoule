@@ -263,7 +263,39 @@ namespace Table
     }
 
     Garnish ();
-    OnFromToTableComboboxChanged ();
+
+    Wipe    ();
+    Display ();
+
+    // Mask free match tables
+    {
+      guint nb_active_players = 0;
+
+      {
+        GSList *current = _attendees;
+
+        while (current)
+        {
+          if (current->data)
+          {
+            nb_active_players++;
+          }
+          current = g_slist_next (current);
+        }
+      }
+
+      for (guint t = 0; t < _nb_tables; t++)
+      {
+        Table *table = _tables[_nb_tables - t - 1];
+
+        if ((table->GetSize () / 2) < nb_active_players)
+        {
+          _from_border->SelectTable (t);
+          break;
+        }
+      }
+    }
+
     RefreshTableStatus ();
   }
 
@@ -805,21 +837,6 @@ namespace Table
     }
 
     {
-      guint nb_active_players = 0;
-
-      {
-        GSList *current = _attendees;
-
-        while (current)
-        {
-          if (current->data)
-          {
-            nb_active_players++;
-          }
-          current = g_slist_next (current);
-        }
-      }
-
       _from_border->MuteCallbacks ();
       _to_border->MuteCallbacks   ();
 
@@ -827,11 +844,8 @@ namespace Table
       {
         Table *table = _tables[t];
 
-        if ((table->GetSize () / 2) < nb_active_players)
-        {
-          _from_border->AddTable (table);
-          _to_border->AddTable   (table);
-        }
+        _from_border->AddTable (table);
+        _to_border->AddTable   (table);
       }
 
       _from_border->SelectTable (0);
