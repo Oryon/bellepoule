@@ -24,9 +24,9 @@
 
 static const gchar *look_image[AttributeDesc::NB_LOOK] =
 {
-  "Long text",
-  "Short text",
-  "Graphic"
+  N_ ("Long text"),
+  N_ ("Short text"),
+  N_ ("Graphic")
 };
 
 // --------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ void Filter::SelectAttributes ()
                           "toggled", G_CALLBACK (OnVisibilityToggled), this);
         gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (view),
                                                      -1,
-                                                     "Visibility",
+                                                     gettext ("Visibility"),
                                                      renderer,
                                                      "active", ATTR_VISIBILITY_bool,
                                                      NULL);
