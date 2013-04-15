@@ -58,7 +58,7 @@ Schedule::Schedule (Contest *contest)
     GtkWidget *menu_pool = gtk_menu_new ();
     GtkWidget *content_area;
 
-    _formula_dlg = gtk_dialog_new_with_buttons ("Formule",
+    _formula_dlg = gtk_dialog_new_with_buttons (gettext ("Formula"),
                                                 NULL,
                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
                                                 GTK_STOCK_OK,

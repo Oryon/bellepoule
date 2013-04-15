@@ -133,7 +133,7 @@ namespace Pool
 
       gtk_list_store_append (swapping_store, &iter);
       gtk_list_store_set (swapping_store, &iter,
-                          SWAPPING_IMAGE_str,    "Aucun",
+                          SWAPPING_IMAGE_str,    gettext ("<i>None</i>"),
                           SWAPPING_CRITERIA_ptr, NULL,
                           SWAPPING_ERRORS_str,   NULL,
                           -1);
@@ -804,7 +804,7 @@ namespace Pool
 
         if (config->_nb_overloaded)
         {
-          pool_size_text = g_strdup_printf ("%d ou %d", config->_size, config->_size+1);
+          pool_size_text = g_strdup_printf ("%d %s %d", config->_size, gettext ("or"), config->_size+1);
         }
         else
         {
