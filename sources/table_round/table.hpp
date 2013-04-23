@@ -77,7 +77,7 @@ namespace Table
                         GSList **withdrawals,
                         GSList **blackcardeds);
 
-      gboolean       _has_error;
+      Match         *_first_error;
       guint          _is_over;
       GooCanvasItem *_status_item;
       GooCanvasItem *_header_item;

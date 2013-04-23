@@ -148,6 +148,8 @@ class Stage : public virtual Object
 
     virtual gboolean IsOver ();
 
+    virtual gchar *GetError ();
+
     void ToggleClassification (gboolean classification_on);
 
     void ActivateNbQualified ();

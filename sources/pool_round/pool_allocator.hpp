@@ -128,6 +128,8 @@ namespace Pool
 
       gboolean IsOver ();
 
+      gchar *GetError ();
+
       void OnPlugged ();
 
       void OnUnPlugged ();
