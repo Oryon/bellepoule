@@ -225,8 +225,8 @@ namespace Table
     {
       gchar *match_name = g_strdup_printf (gettext ("Match %s"), _first_error->GetName ());
       gchar *error      = g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
-                                           " <span foreground=\"black\" style=\"italic\" weight=\"400\">%s </span>",
-                                           match_name, gettext ("\"No winner!\""));
+                                           " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
+                                           match_name, gettext ("No winner!"));
 
       g_free (match_name);
       return error;

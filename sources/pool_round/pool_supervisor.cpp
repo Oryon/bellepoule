@@ -473,8 +473,8 @@ namespace Pool
       if (pool->HasError ())
       {
         return g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
-                                " <span foreground=\"black\" style=\"italic\" weight=\"400\">%s </span>",
-                                pool->GetName (), gettext ("\"Bout without winner!\""));
+                                " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
+                                pool->GetName (), gettext ("Bout without winner!"));
       }
     }
     return NULL;
