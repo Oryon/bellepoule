@@ -70,6 +70,7 @@ namespace Table
       xmlNode            *_xml_node;
       TableSet           *_displayed_table_set;
       gboolean            _is_over;
+      Match              *_first_error;
       GSList             *_result;
       GSList             *_blackcardeds;
       Data               *_fenced_places;
@@ -93,6 +94,8 @@ namespace Table
       void OnAttrListUpdated ();
 
       gboolean IsOver ();
+
+      gchar *GetError ();
 
       GSList *GetCurrentClassification ();
 

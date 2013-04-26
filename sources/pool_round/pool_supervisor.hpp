@@ -64,6 +64,7 @@ namespace Pool
       void ApplyConfig ();
       Stage *GetInputProvider ();
       gboolean IsOver ();
+      gchar *GetError ();
 
     private:
       static const gchar *_class_name;

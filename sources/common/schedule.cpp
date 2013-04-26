@@ -53,6 +53,18 @@ Schedule::Schedule (Contest *contest)
                                               VISIBILITY_bool);
   }
 
+  // Error bg
+  {
+    GdkColor *color = g_new (GdkColor, 1);
+
+    gdk_color_parse ("#c52222", color);
+
+    gtk_widget_modify_bg (_glade->GetWidget ("error_viewport"),
+                          GTK_STATE_NORMAL,
+                          color);
+    g_free (color);
+  }
+
   // Formula dialog
   {
     GtkWidget *menu_pool = gtk_menu_new ();
@@ -877,6 +889,8 @@ void Schedule::RefreshSensitivity ()
                               TRUE);
   }
 
+  gtk_widget_hide (_glade->GetWidget ("error_toolbutton"));
+
   if (_stage_list
       && (_current_stage < g_list_length (_stage_list) - 1))
   {
@@ -886,6 +900,19 @@ void Schedule::RefreshSensitivity ()
     {
       gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
                                 TRUE);
+    }
+    else
+    {
+      gchar *error = stage->GetError ();
+
+      if (error)
+      {
+        gtk_label_set_markup (GTK_LABEL (_glade->GetWidget ("error_label")),
+                              error);
+        gtk_widget_show (_glade->GetWidget ("error_toolbutton"));
+
+        g_free (error);
+      }
     }
   }
 }
@@ -903,6 +930,12 @@ void Schedule::OnPlugged ()
                       -1);
 
   w = _glade->GetWidget ("next_stage_toolbutton");
+  _glade->DetachFromParent (w);
+  gtk_toolbar_insert (toolbar,
+                      GTK_TOOL_ITEM (w),
+                      -1);
+
+  w = _glade->GetWidget ("error_toolbutton");
   _glade->DetachFromParent (w);
   gtk_toolbar_insert (toolbar,
                       GTK_TOOL_ITEM (w),

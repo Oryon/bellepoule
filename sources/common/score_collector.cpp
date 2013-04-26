@@ -38,7 +38,7 @@ ScoreCollector::ScoreCollector (CanvasModule   *client,
   _consistent_focus_color    = g_strdup ("SkyBlue");
   _consistent_normal_color   = g_strdup ("White");
   _unconsistent_focus_color  = g_strdup ("LightCoral");
-  _unconsistent_normal_color = g_strdup ("MistyRose");
+  _unconsistent_normal_color = g_strdup ("#c52222");
 }
 
 // --------------------------------------------------------------------------------

@@ -208,13 +208,33 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean Supervisor::IsOver ()
   {
-    _is_over = TRUE;
+    _is_over     = TRUE;
+    _first_error = NULL;
 
     gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                             (GtkTreeModelForeachFunc) TableSetIsOver,
                             this);
 
     return _is_over;
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Supervisor::GetError ()
+  {
+    if (_first_error)
+    {
+      gchar *match_name = g_strdup_printf (gettext ("Match %s"), _first_error->GetName ());
+      gchar *error      = g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
+                                           " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
+                                           match_name, gettext ("No winner!"));
+
+      g_free (match_name);
+      return error;
+    }
+    else
+    {
+      return NULL;
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -229,6 +249,11 @@ namespace Table
                         TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                         -1);
     ts->_is_over &= table_set->IsOver ();
+
+    if (ts->_first_error == NULL)
+    {
+      ts->_first_error = table_set->GetFirstError ();
+    }
 
     return FALSE;
   }

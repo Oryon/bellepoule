@@ -77,7 +77,7 @@ namespace Table
     _id             = id;
     _attendees      = NULL;
     _withdrawals    = NULL;
-    _has_error      = FALSE;
+    _first_error    = NULL;
     _is_over        = FALSE;
     _first_place    = first_place;
     _loaded         = FALSE;
@@ -264,8 +264,7 @@ namespace Table
 
     Garnish ();
 
-    Wipe    ();
-    Display ();
+    OnFromToTableComboboxChanged ();
 
     // Mask free match tables
     {
@@ -364,13 +363,13 @@ namespace Table
   {
     if (_tree_root)
     {
-      _has_error = FALSE;
-      _is_over   = TRUE;
+      _first_error = NULL;
+      _is_over     = TRUE;
 
       for (guint i = 0; i < _nb_tables; i ++)
       {
-        _tables[i]->_is_over   = TRUE;
-        _tables[i]->_has_error = FALSE;
+        _tables[i]->_is_over     = TRUE;
+        _tables[i]->_first_error = NULL;
         if (_tables[i]->_status_item)
         {
           WipeItem (_tables[i]->_status_item);
@@ -390,11 +389,11 @@ namespace Table
         gchar *icon;
         Table *table = _tables[t];
 
-        if (table->_has_error)
+        if (table->_first_error)
         {
           icon = g_strdup (GTK_STOCK_DIALOG_WARNING);
-          _has_error = TRUE;
-          _is_over   = FALSE;
+          _first_error = table->_first_error;
+          _is_over     = FALSE;
         }
         else if (table->_is_over == TRUE)
         {
@@ -554,7 +553,13 @@ namespace Table
   // --------------------------------------------------------------------------------
   gboolean TableSet::HasError ()
   {
-    return _has_error;
+    return (_first_error != NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  Match *TableSet::GetFirstError ()
+  {
+    return _first_error;
   }
 
   // --------------------------------------------------------------------------------
@@ -972,7 +977,7 @@ namespace Table
             || (score_B->IsValid () == FALSE)
             || (score_A->IsConsistentWith (score_B) == FALSE))
         {
-          left_table->_has_error = TRUE;
+          left_table->_first_error = data->_match;
         }
 
         left_table->_is_over = FALSE;
@@ -1885,10 +1890,14 @@ namespace Table
   {
     Contest  *contest = _supervisor->GetContest ();
     Player   *referee = contest->GetRefereeFromRef (referee_ref);
-    DropZone *zone    = (DropZone *) match->GetPtrData (this,
-                                                        "drop_zone");
 
-    zone->AddObject (referee);
+    if (referee)
+    {
+      DropZone *zone = (DropZone *) match->GetPtrData (this,
+                                                       "drop_zone");
+
+      zone->AddObject (referee);
+    }
   }
 
   // --------------------------------------------------------------------------------

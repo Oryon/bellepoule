@@ -36,7 +36,7 @@ namespace Table
     _column             = number;
     _left_table         = NULL;
     _right_table        = NULL;
-    _has_error          = FALSE;
+    _first_error        = NULL;
     _is_over            = FALSE;
     _status_item        = NULL;
     _header_item        = NULL;

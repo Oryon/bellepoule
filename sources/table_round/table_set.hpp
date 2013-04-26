@@ -139,6 +139,8 @@ namespace Table
 
       GSList *GetBlackcardeds ();
 
+      Match *GetFirstError ();
+
     private:
       static const gdouble _score_rect_size;
 
@@ -172,7 +174,7 @@ namespace Table
       gboolean                  _locked;
       guint                     _nb_match_per_sheet;
       gchar                    *_id;
-      gboolean                  _has_error;
+      Match                    *_first_error;
       gboolean                  _is_over;
       gboolean                  _loaded;
       guint                     _first_place;
