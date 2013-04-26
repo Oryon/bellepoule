@@ -264,8 +264,7 @@ namespace Table
 
     Garnish ();
 
-    Wipe    ();
-    Display ();
+    OnFromToTableComboboxChanged ();
 
     // Mask free match tables
     {
@@ -1891,10 +1890,14 @@ namespace Table
   {
     Contest  *contest = _supervisor->GetContest ();
     Player   *referee = contest->GetRefereeFromRef (referee_ref);
-    DropZone *zone    = (DropZone *) match->GetPtrData (this,
-                                                        "drop_zone");
 
-    zone->AddObject (referee);
+    if (referee)
+    {
+      DropZone *zone = (DropZone *) match->GetPtrData (this,
+                                                       "drop_zone");
+
+      zone->AddObject (referee);
+    }
   }
 
   // --------------------------------------------------------------------------------
