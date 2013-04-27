@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-09 16:46+0200\n"
+"POT-Creation-Date: 2013-04-23 15:21+0200\n"
 "PO-Revision-Date: 2013-04-12 21:24+0000\n"
 "Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-04-23 05:27+0000\n"
+"X-Launchpad-Export-Date: 2013-04-27 05:54+0000\n"
 "X-Generator: Launchpad (build 16580)\n"
 "Language: sv\n"
 
@@ -327,6 +327,9 @@ msgstr "<i>Ingen</i>"
 msgid "or"
 msgstr "eller"
 
+msgid "Wrong fencers count!"
+msgstr ""
+
 msgid "Allocation"
 msgstr "Tilldelning"
 
@@ -338,6 +341,9 @@ msgstr "<b><big>Skriv ut …</big></b>"
 
 msgid "Pool sheets printing"
 msgstr "Utskrift av pouleöversikter"
+
+msgid "Bout without winner!"
+msgstr ""
 
 msgid "Pools classification"
 msgstr "Pouleklassificering"
@@ -381,6 +387,9 @@ msgstr "Tabell"
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s: utskrift av poängformulär"
+
+msgid "No winner!"
+msgstr ""
 
 msgid "Table classification"
 msgstr "Tabellklassificering"

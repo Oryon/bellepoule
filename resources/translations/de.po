@@ -6,14 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-09 16:46+0200\n"
+"POT-Creation-Date: 2013-04-23 15:21+0200\n"
 "PO-Revision-Date: 2013-04-11 00:52+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-04-23 05:26+0000\n"
+"X-Launchpad-Export-Date: 2013-04-27 05:54+0000\n"
 "X-Generator: Launchpad (build 16580)\n"
 "Language: \n"
 "X-Poedit-Language: German\n"
@@ -329,6 +329,9 @@ msgstr "<i>Kein(e)</i>"
 msgid "or"
 msgstr ""
 
+msgid "Wrong fencers count!"
+msgstr ""
+
 msgid "Allocation"
 msgstr "Verteilung"
 
@@ -340,6 +343,9 @@ msgstr "<b><big>Drucken ...</big></b>"
 
 msgid "Pool sheets printing"
 msgstr "Drucken der Rundenzettel"
+
+msgid "Bout without winner!"
+msgstr ""
 
 msgid "Pools classification"
 msgstr "Rangfolge nach der Vorrunde"
@@ -383,6 +389,9 @@ msgstr "Tabelle"
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s : Druck der Gefechte"
+
+msgid "No winner!"
+msgstr ""
 
 msgid "Table classification"
 msgstr "Rangfolge nach der Direktausscheidung"

@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-09 16:46+0200\n"
+"POT-Creation-Date: 2013-04-23 15:21+0200\n"
 "PO-Revision-Date: 2013-04-11 00:53+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-04-23 05:26+0000\n"
+"X-Launchpad-Export-Date: 2013-04-27 05:54+0000\n"
 "X-Generator: Launchpad (build 16580)\n"
 "Language: ko\n"
 
@@ -325,6 +325,9 @@ msgstr "<i>없음</i>"
 msgid "or"
 msgstr ""
 
+msgid "Wrong fencers count!"
+msgstr ""
+
 msgid "Allocation"
 msgstr "할당"
 
@@ -336,6 +339,9 @@ msgstr "<b><big>인쇄...</big></b>"
 
 msgid "Pool sheets printing"
 msgstr "풀 시트 인쇄"
+
+msgid "Bout without winner!"
+msgstr ""
 
 msgid "Pools classification"
 msgstr "리그 순위"
@@ -377,6 +383,9 @@ msgstr "대진표"
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s: 점수표 인쇄"
+
+msgid "No winner!"
+msgstr ""
 
 msgid "Table classification"
 msgstr "토너먼트 순위"
