@@ -85,8 +85,6 @@ namespace People
       gboolean     _print_missing;
       const gchar *_default_player_class;
 
-      virtual void OnLoaded () {};
-
       virtual void OnPlayerLoaded (Player *player) {};
 
       void LoadList (xmlNode     *xml_node,

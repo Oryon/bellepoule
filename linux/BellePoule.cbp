@@ -132,6 +132,8 @@
 		<Unit filename="../sources/people_management/players_list.hpp" />
 		<Unit filename="../sources/people_management/player_factory.cpp" />
 		<Unit filename="../sources/people_management/player_factory.hpp" />
+		<Unit filename="../sources/people_management/players_store.cpp" />
+		<Unit filename="../sources/people_management/players_store.hpp" />
 		<Unit filename="../sources/people_management/referee.cpp" />
 		<Unit filename="../sources/people_management/referee.hpp" />
 		<Unit filename="../sources/people_management/referees_list.cpp" />

@@ -114,8 +114,6 @@ namespace People
       g_free (path);
       g_free (players_class_xml_tag);
     }
-
-    OnLoaded ();
   }
 
   // --------------------------------------------------------------------------------
@@ -137,8 +135,8 @@ namespace People
           // FFE issue
           GuessPlayerLeague (player);
 
-          Add (player);
           OnPlayerLoaded (player);
+          Add (player);
           player->Release ();
         }
         else if (strcmp ((char *) n->name, players_class_xml_tag) != 0)
@@ -793,14 +791,15 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::on_players_list_row_activated (GtkTreePath *path)
   {
-    Player      *player;
-    GtkTreeIter  iter;
+    GtkTreeModel *model = gtk_tree_view_get_model (_tree_view);
+    Player       *player;
+    GtkTreeIter   iter;
 
-    gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
+    gtk_tree_model_get_iter (model,
                              &iter,
                              path);
-    gtk_tree_model_get (GTK_TREE_MODEL (_store), &iter,
-                        gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
+    gtk_tree_model_get (model, &iter,
+                        gtk_tree_model_get_n_columns (model) - 1,
                         &player, -1);
 
     _form->Show (player);

@@ -38,7 +38,7 @@ namespace People
     _selector_column = -1;
 
     {
-      _tree_view = _glade->GetWidget ("players_list");
+      _tree_view = GTK_TREE_VIEW (_glade->GetWidget ("players_list"));
 
       if (_tree_view)
       {
@@ -47,7 +47,7 @@ namespace People
                       "reorderable", FALSE,
                       NULL);
 
-        gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
+        gtk_tree_selection_set_mode (gtk_tree_view_get_selection (_tree_view),
                                      GTK_SELECTION_MULTIPLE);
       }
     }
@@ -58,10 +58,7 @@ namespace People
   {
     Wipe ();
 
-    if (_store)
-    {
-      g_object_unref (_store);
-    }
+    Object::TryToRelease (_store);
   }
 
   // --------------------------------------------------------------------------------
@@ -94,15 +91,14 @@ namespace People
       // The player reference used in comparison
       types[nb_attr*AttributeDesc::NB_LOOK] = G_TYPE_POINTER;
 
-      _store = gtk_tree_store_newv (nb_attr*AttributeDesc::NB_LOOK + 1,
-                                    types);
+      _store = new PlayersStore (nb_attr*AttributeDesc::NB_LOOK + 1,
+                                 types);
 
       if (_tree_view)
       {
-        gtk_tree_view_set_model (GTK_TREE_VIEW (_tree_view),
-                                 GTK_TREE_MODEL (_store));
+        _store->SelectFlatMode (_tree_view);
 
-        gtk_tree_view_set_search_column (GTK_TREE_VIEW (_tree_view),
+        gtk_tree_view_set_search_column (_tree_view,
                                          _filter->GetAttributeId ("name"));
       }
 
@@ -111,54 +107,134 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::Update (Player *player)
+  void PlayersList::ShowTeams ()
   {
+    if (_store->SelectTreeMode (_tree_view))
+    {
+      RefreshDisplay ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::HideTeams ()
+  {
+    if (_store->SelectFlatMode (_tree_view))
+    {
+      RefreshDisplay ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::RefreshDisplay ()
+  {
+    OnAttrListUpdated ();
+
+    {
+      GSList *current = _player_list;
+
+      while (current)
+      {
+        Player *player = (Player *) current->data;
+
+        Update (player);
+        current = g_slist_next (current);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::UpdateLineage (Player *player)
+  {
+    GtkTreeModel        *model      = gtk_tree_view_get_model (_tree_view);
     GtkTreeRowReference *ref;
     GtkTreePath         *path;
-    GtkTreeIter          iter;
 
-    ref  = (GtkTreeRowReference *) player->GetPtrData (this, "tree_row_ref");
+    ref  = _store->GetTreeRowRef (model, player);
     path = gtk_tree_row_reference_get_path (ref);
-    gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
-                             &iter,
-                             path);
-    gtk_tree_path_free (path);
 
-    if (_filter)
+    if (player->GetParent ())
     {
-      GSList *attr_list = _filter->GetAttrList ();
+      GtkTreeRowReference *parent_ref;
+      GtkTreePath         *parent_path;
 
-      for (guint i = 0; attr_list != NULL; i++)
+      parent_ref  = _store->GetTreeRowRef (model, player->GetParent ());
+      parent_path = gtk_tree_row_reference_get_path (parent_ref);
+
+      if (gtk_tree_path_is_descendant (path,
+                                       parent_path) == FALSE)
       {
-        AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
-        Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
-        Attribute           *attr    = player->GetAttribute (attr_id);
-
-        attr_id->Release ();
-        if (attr)
-        {
-          attr->TreeStoreSet (_store, &iter,
-                              i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-          attr->TreeStoreSet (_store, &iter,
-                              i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-          attr->TreeStoreSet (_store, &iter,
-                              i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
-        }
-        else
-        {
-          desc->TreeStoreSetDefault (_store, &iter,
-                                     i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-          desc->TreeStoreSetDefault (_store, &iter,
-                                     i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-          desc->TreeStoreSetDefault (_store, &iter,
-                                     i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
-        }
-        attr_list = g_slist_next (attr_list);
+        _store->Remove (player);
+        _store->Append (player,
+                        player->GetParent ());
       }
 
-      gtk_tree_store_set (_store, &iter,
-                          gtk_tree_model_get_n_columns (GTK_TREE_MODEL (_store)) - 1,
-                          player, -1);
+      gtk_tree_path_free (parent_path);
+    }
+    else if (gtk_tree_path_get_depth (path))
+    {
+      _store->Remove (player);
+      _store->Append (player,
+                      NULL);
+    }
+
+    gtk_tree_path_free (path);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::Update (Player *player)
+  {
+    UpdateLineage (player);
+
+    {
+      GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
+      GtkTreeRowReference *ref;
+      GtkTreePath         *path;
+      GtkTreeIter          iter;
+
+      ref  = _store->GetTreeRowRef (GTK_TREE_MODEL (model),
+                                    player);
+      path = gtk_tree_row_reference_get_path (ref);
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
+                               &iter,
+                               path);
+      gtk_tree_path_free (path);
+
+      if (_filter)
+      {
+        GSList *attr_list = _filter->GetAttrList ();
+
+        for (guint i = 0; attr_list != NULL; i++)
+        {
+          AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
+          Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
+          Attribute           *attr    = player->GetAttribute (attr_id);
+
+          attr_id->Release ();
+          if (attr)
+          {
+            attr->TreeStoreSet (model, &iter,
+                                i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
+            attr->TreeStoreSet (model, &iter,
+                                i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
+            attr->TreeStoreSet (model, &iter,
+                                i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
+          }
+          else
+          {
+            desc->TreeStoreSetDefault (model, &iter,
+                                       i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
+            desc->TreeStoreSetDefault (model, &iter,
+                                       i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
+            desc->TreeStoreSetDefault (model, &iter,
+                                       i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
+          }
+          attr_list = g_slist_next (attr_list);
+        }
+
+        gtk_tree_store_set (model, &iter,
+                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (model)) - 1,
+                            player, -1);
+      }
     }
   }
 
@@ -190,21 +266,6 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::on_cell_edited (GtkCellRendererText *cell,
-                                    gchar               *path_string,
-                                    gchar               *new_text,
-                                    gpointer             user_data)
-  {
-    PlayersList   *p    = (PlayersList *) user_data;
-    AttributeDesc *desc = (AttributeDesc *) g_object_get_data (G_OBJECT (cell),
-                                                               "PlayersList::attribute_desc");
-
-    p->OnCellEdited (path_string,
-                     new_text,
-                     desc);
-  }
-
-  // --------------------------------------------------------------------------------
   void PlayersList::on_cell_toggled (GtkCellRendererToggle *cell,
                                      gchar                 *path_string,
                                      gpointer               user_data)
@@ -219,28 +280,10 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::OnCellEdited (gchar         *path_string,
-                                  gchar         *new_text,
-                                  AttributeDesc *desc)
-  {
-    Player              *p         = GetPlayer (path_string);
-    Player::AttributeId *attr_id   = Player::AttributeId::Create (desc, GetDataOwner ());
-    gchar               *xml_image = desc->GetDiscreteXmlImage (new_text);
-
-    p->SetAttributeValue (attr_id,
-                          xml_image);
-    g_free (xml_image);
-    attr_id->Release ();
-
-    Update (p);
-    OnListChanged ();
-  }
-
-  // --------------------------------------------------------------------------------
   GSList *PlayersList::GetSelectedPlayers ()
   {
     GSList           *result         = NULL;
-    GtkTreeSelection *selection      = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
+    GtkTreeSelection *selection      = gtk_tree_view_get_selection (_tree_view);
     GList            *selection_list = gtk_tree_selection_get_selected_rows (selection,
                                                                              NULL);
 
@@ -276,7 +319,7 @@ namespace People
     Player::AttributeId *attr_id       = Player::AttributeId::Create (desc,
                                                                       GetDataOwner ());
 
-    if (gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view)),
+    if (gtk_tree_selection_path_is_selected (gtk_tree_view_get_selection (_tree_view),
                                              toggeled_path))
     {
       GSList *selected_players = GetSelectedPlayers ();
@@ -342,18 +385,18 @@ namespace People
   void PlayersList::OnAttrListUpdated ()
   {
     {
-      GList *column_list = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
+      GList *column_list = gtk_tree_view_get_columns (_tree_view);
       guint  nb_col      = g_list_length (column_list);
 
       for (guint i = 0; i < nb_col; i++)
       {
         GtkTreeViewColumn *column;
 
-        column = gtk_tree_view_get_column (GTK_TREE_VIEW (_tree_view),
+        column = gtk_tree_view_get_column (_tree_view,
                                            0);
         if (column)
         {
-          gtk_tree_view_remove_column (GTK_TREE_VIEW (_tree_view),
+          gtk_tree_view_remove_column (_tree_view,
                                        column);
         }
       }
@@ -428,36 +471,6 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::OnDiscreteEditingStarted (GtkCellRenderer *renderer,
-                                              GtkCellEditable *editable,
-                                              gchar           *path,
-                                              AttributeDesc   *desc)
-  {
-    GtkEntryCompletion *completion = gtk_entry_completion_new ();
-
-    {
-      GtkTreeModel *model;
-
-      g_object_get (renderer,
-                    "model", &model,
-                    NULL);
-
-      gtk_entry_completion_set_model (completion,
-                                      model);
-      gtk_entry_completion_set_text_column (completion,
-                                            AttributeDesc::DISCRETE_LONG_TEXT_str);
-      gtk_entry_completion_set_inline_completion (completion,
-                                                  TRUE);
-      g_object_set (G_OBJECT (completion),
-                    "popup-set-width", FALSE,
-                    NULL);
-      gtk_entry_set_completion (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (editable))),
-                                completion);
-      g_object_unref (completion);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void PlayersList::SetColumn (guint           id,
                                Filter::Layout *attr_layout,
                                gint            at)
@@ -515,39 +528,11 @@ namespace People
       if (desc->HasDiscreteValue ())
       {
         renderer = gtk_cell_renderer_combo_new ();
-#if 0
-        g_object_set (renderer,
-                      "has-entry", desc->_free_value_allowed,
-                      NULL);
-        desc->BindDiscreteValues (renderer);
-#endif
       }
       else
       {
         renderer = gtk_cell_renderer_text_new ();
       }
-
-#if 0
-      if (   (desc->_rights == AttributeDesc::PUBLIC)
-          && ((_rights & MODIFIABLE) || attr_modifiable))
-      {
-        g_object_set (renderer,
-                      "editable", TRUE,
-                      NULL);
-        g_object_set_data (G_OBJECT (renderer),
-                           "PlayersList::SensitiveAttribute",
-                           (void *) "editable");
-        g_signal_connect (renderer,
-                          "edited", G_CALLBACK (on_cell_edited), this);
-
-        if (   (desc->HasDiscreteValue ())
-            && (desc->_free_value_allowed))
-        {
-          g_signal_connect (renderer,
-                            "editing-started", G_CALLBACK (OnDiscreteEditingStarted), desc);
-        }
-      }
-#endif
 
       column = gtk_tree_view_column_new_with_attributes (desc->_user_name,
                                                          renderer,
@@ -573,28 +558,22 @@ namespace People
                             "CompareIteratorRandSeed",
                             &_rand_seed);
         }
-        gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
-                                         id*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,
-                                         (GtkTreeIterCompareFunc) CompareIterator,
-                                         attr_id,
-                                         (GDestroyNotify) Object::TryToRelease);
+        _store->SetSortFunction (id*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,
+                                 (GtkTreeIterCompareFunc) CompareIterator,
+                                 attr_id);
 
-        attr_id->Retain ();
-        gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
-                                         id*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT,
-                                         (GtkTreeIterCompareFunc) CompareIterator,
-                                         attr_id,
-                                         (GDestroyNotify) Object::TryToRelease);
+        _store->SetSortFunction (id*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT,
+                                 (GtkTreeIterCompareFunc) CompareIterator,
+                                 attr_id);
 
-        attr_id->Retain ();
-        gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
-                                         id*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,
-                                         (GtkTreeIterCompareFunc) CompareIterator,
-                                         attr_id,
-                                         (GDestroyNotify) Object::TryToRelease);
+        _store->SetSortFunction (id*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,
+                                 (GtkTreeIterCompareFunc) CompareIterator,
+                                 attr_id);
+
+        attr_id->Release ();
       }
 
-      gtk_tree_view_insert_column (GTK_TREE_VIEW (_tree_view),
+      gtk_tree_view_insert_column (_tree_view,
                                    column,
                                    at);
     }
@@ -618,7 +597,7 @@ namespace People
   void PlayersList::SetSensitiveState (gboolean sensitive_value)
   {
     {
-      GList *columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (_tree_view));
+      GList *columns = gtk_tree_view_get_columns (_tree_view);
 
       for (guint c = 0; c < g_list_length (columns) ; c++)
       {
@@ -650,67 +629,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GtkTreeRowReference *PlayersList::GetPlayerRowRef (GtkTreeIter *iter)
-  {
-    GtkTreeRowReference *ref;
-    GtkTreePath         *path = gtk_tree_model_get_path (GTK_TREE_MODEL (_store),
-                                                         iter);
-
-    ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_store),
-                                      path);
-
-    gtk_tree_path_free (path);
-
-    return ref;
-  }
-
-  // --------------------------------------------------------------------------------
   void PlayersList::Add (Player *player)
   {
-    GtkTreeIter parent_iter;
-    gboolean    has_parent = FALSE;
-
     player->Retain ();
 
-    {
-      Player *parent = player->GetParent ();
-
-      if (parent)
-      {
-        GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) parent->GetPtrData (this,
-                                                                                                         "tree_row_ref"));
-
-        if (path)
-        {
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
-                                   &parent_iter,
-                                   path);
-          has_parent = TRUE;
-        }
-        gtk_tree_path_free (path);
-      }
-    }
-
-    {
-      GtkTreeIter iter;
-
-      if (has_parent)
-      {
-        gtk_tree_store_append (_store,
-                               &iter,
-                               &parent_iter);
-      }
-      else
-      {
-        gtk_tree_store_append (_store,
-                               &iter,
-                               NULL);
-      }
-
-      player->SetData (this, "tree_row_ref",
-                       GetPlayerRowRef (&iter),
-                       (GDestroyNotify) gtk_tree_row_reference_free);
-    }
+    _store->Append (player,
+                    player->GetParent ());
 
     _player_list = g_slist_append (_player_list,
                                    player);
@@ -739,30 +663,37 @@ namespace People
 
     if (_store)
     {
-      gtk_tree_store_clear (_store);
+      _store->Wipe ();
     }
   }
 
   // --------------------------------------------------------------------------------
   void PlayersList::RemoveSelection ()
   {
-    GList            *ref_list       = NULL;
-    GList            *selection_list = NULL;
-    GtkTreeSelection *selection      = gtk_tree_view_get_selection (GTK_TREE_VIEW (_tree_view));
+    GList        *ref_list = NULL;
+    GtkTreeModel *model    = gtk_tree_view_get_model (_tree_view);
 
-
-    selection_list = gtk_tree_selection_get_selected_rows (selection,
-                                                           NULL);
-
-    for (guint i = 0; i < g_list_length (selection_list); i++)
     {
-      GtkTreeRowReference *ref;
+      GtkTreeSelection *selection      = gtk_tree_view_get_selection (_tree_view);
+      GList            *selection_list = NULL;
 
-      ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (_store),
-                                        (GtkTreePath *) g_list_nth_data (selection_list, i));
-      ref_list = g_list_append (ref_list,
-                                ref);
+      selection_list = gtk_tree_selection_get_selected_rows (selection,
+                                                             NULL);
+
+      for (guint i = 0; i < g_list_length (selection_list); i++)
+      {
+        GtkTreeRowReference *ref;
+
+        ref = gtk_tree_row_reference_new (model,
+                                          (GtkTreePath *) g_list_nth_data (selection_list, i));
+        ref_list = g_list_append (ref_list,
+                                  ref);
+      }
+
+      g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
+      g_list_free    (selection_list);
     }
+
 
     for (guint i = 0; i < g_list_length (ref_list); i++)
     {
@@ -780,23 +711,18 @@ namespace People
         Player      *p = (Player *) current_player->data;
         GtkTreePath *current_path;
 
-        current_path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) p->GetPtrData (this, "tree_row_ref"));
+        current_path = gtk_tree_row_reference_get_path (_store->GetTreeRowRef (model,
+                                                                               p));
         if (gtk_tree_path_compare (selected_path,
                                    current_path) == 0)
         {
-          GtkTreeIter iter;
-
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
-                                   &iter,
-                                   selected_path);
-
-          gtk_tree_store_remove (_store,
-                                 &iter);
+          _store->Remove (p);
 
           _player_list = g_slist_remove (_player_list,
                                          p);
           OnPlayerRemoved (p);
           p->Release ();
+          gtk_tree_path_free (current_path);
           break;
         }
 
@@ -808,35 +734,19 @@ namespace People
 
     g_list_free (ref_list);
 
-    g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
-    g_list_free    (selection_list);
-
     OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
   void PlayersList::Remove (Player *player)
   {
-    GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) player->GetPtrData (this,
-                                                                                                     "tree_row_ref"));
+    _store->Remove (player);
 
-    if (path)
-    {
-      GtkTreeIter iter;
+    _player_list = g_slist_remove (_player_list,
+                                   player);
 
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (_store),
-                               &iter,
-                               path);
-
-      gtk_tree_store_remove (_store,
-                             &iter);
-
-      _player_list = g_slist_remove (_player_list,
-                                     player);
-      OnPlayerRemoved (player);
-      player->Release ();
-    }
-    gtk_tree_path_free (path);
+    OnPlayerRemoved (player);
+    player->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -848,9 +758,10 @@ namespace People
   // --------------------------------------------------------------------------------
   Player *PlayersList::GetPlayer (const gchar *path_string)
   {
-    Player      *result  = NULL;
-    GtkTreePath *path    = gtk_tree_path_new_from_string (path_string);
-    GSList      *current = _player_list;
+    Player       *result  = NULL;
+    GtkTreePath  *path    = gtk_tree_path_new_from_string (path_string);
+    GSList       *current = _player_list;
+    GtkTreeModel *model   = gtk_tree_view_get_model (_tree_view);
 
     while (current)
     {
@@ -858,7 +769,8 @@ namespace People
       GtkTreePath         *current_path;
       Player              *p = (Player *) current->data;
 
-      current_ref = (GtkTreeRowReference *) p->GetPtrData (this, "tree_row_ref");
+      current_ref = _store->GetTreeRowRef (model,
+                                            p);
       current_path = gtk_tree_row_reference_get_path (current_ref);
       if (gtk_tree_path_compare (path,
                                  current_path) == 0)

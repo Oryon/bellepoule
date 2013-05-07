@@ -82,8 +82,8 @@ namespace People
     }
 
     {
-      SetDndSource (_tree_view);
-      gtk_drag_source_set_icon_name (_tree_view,
+      SetDndSource (GTK_WIDGET (_tree_view));
+      gtk_drag_source_set_icon_name (GTK_WIDGET (_tree_view),
                                      "preferences-desktop-theme");
     }
   }

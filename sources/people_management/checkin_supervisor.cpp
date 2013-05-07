@@ -160,54 +160,29 @@ namespace People
   {
     LoadList (xml_context,
               from_node,
-              "Fencer");
+              "Team");
+
+    {
+      GSList        *current   = _player_list;
+      AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
+
+      while (current)
+      {
+        Player              *player = (Player *) current->data;
+        Player::AttributeId  team_attr_id ("name");
+        Attribute           *team_attr = player->GetAttribute (&team_attr_id);
+
+        if (team_desc->GetXmlImage (team_attr->GetStrValue ()) == NULL)
+        {
+          RegisterNewTeam (team_attr->GetStrValue ());
+        }
+        current = g_slist_next (current);
+      }
+    }
+
     LoadList (xml_context,
               from_node,
-              "Team");
-  }
-
-  // --------------------------------------------------------------------------------
-  void CheckinSupervisor::OnLoaded ()
-  {
-    GSList *current = _player_list;
-
-    while (current)
-    {
-      Player *player = (Player *) current->data;
-
-      if (player->Is ("Team") == FALSE)
-      {
-        gchar  *team_name = NULL;
-        Player *team      = NULL;
-
-        // Team name
-        {
-          Player::AttributeId  team_attr_id ("team");
-          Attribute           *team_attr = player->GetAttribute (&team_attr_id);
-
-          if (team_attr)
-          {
-            team_name = team_attr->GetStrValue ();
-          }
-        }
-
-        // Find a team with the given name
-        if (team_name && team_name[0])
-        {
-          Player::AttributeId  name_attr_id ("name");
-          Attribute           *name_attr = Attribute::New ("name");
-
-          name_attr->SetValue (team_name);
-
-          team = GetPlayerWithAttribute (&name_attr_id,
-                                         name_attr);
-          name_attr->Release ();
-        }
-
-        player->SetParent (team);
-      }
-      current = g_slist_next (current);
-    }
+              "Fencer");
 
     _attendees = new Attendees ();
   }
@@ -215,16 +190,31 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnPlayerLoaded (Player *player)
   {
-    Player::AttributeId  start_rank_id ("start_rank");
-    Attribute           *start_rank = player->GetAttribute (&start_rank_id);
-
-    if (start_rank)
     {
-      Player::AttributeId previous_rank_id ("previous_stage_rank", this);
+      Player::AttributeId  start_rank_id ("start_rank");
+      Attribute           *start_rank = player->GetAttribute (&start_rank_id);
 
-      UseInitialRank ();
-      player->SetAttributeValue (&previous_rank_id,
-                                 start_rank->GetUIntValue ());
+      if (start_rank)
+      {
+        Player::AttributeId previous_rank_id ("previous_stage_rank", this);
+
+        UseInitialRank ();
+        player->SetAttributeValue (&previous_rank_id,
+                                   start_rank->GetUIntValue ());
+      }
+    }
+
+    if (player->Is ("Fencer"))
+    {
+      Player::AttributeId  team_attr_id ("team");
+      Attribute           *team_attr = player->GetAttribute (&team_attr_id);
+
+      if (team_attr)
+      {
+        gchar *team_name = team_attr->GetStrValue ();
+
+        player->SetParent (GetTeam (team_name));
+      }
     }
   }
 
@@ -435,6 +425,19 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void CheckinSupervisor::SetTeamEvent (gboolean team_event)
+  {
+    if (team_event)
+    {
+      ShowTeams ();
+    }
+    else
+    {
+      HideTeams ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnLoadingCompleted ()
   {
     GSList *current = _checksum_list;
@@ -514,6 +517,22 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  Player *CheckinSupervisor::GetTeam (const gchar *name)
+  {
+    Player              *team;
+    Player::AttributeId  name_attr_id ("name");
+    Attribute           *name_attr = Attribute::New ("name");
+
+    name_attr->SetValue (name);
+
+    team = GetPlayerWithAttribute (&name_attr_id,
+                                   name_attr);
+    name_attr->Release ();
+
+    return team;
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnPlayerEventFromForm (Player            *player,
                                                  Form::PlayerEvent  event)
   {
@@ -533,14 +552,7 @@ namespace People
       // Find a team with the given name
       if (team_name && team_name[0])
       {
-        Player::AttributeId  name_attr_id ("name");
-        Attribute           *name_attr = Attribute::New ("name");
-
-        name_attr->SetValue (team_name);
-
-        team = GetPlayerWithAttribute (&name_attr_id,
-                                       name_attr);
-        name_attr->Release ();
+        team = GetTeam (team_name);
 
         // Create a team if necessary
         if (team == NULL)

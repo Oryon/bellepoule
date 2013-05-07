@@ -210,18 +210,6 @@ void AttributeDesc::BindDiscreteValues (GObject         *object,
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::BindDiscreteValues (GtkCellRenderer *renderer)
-{
-  if (_discrete_model)
-  {
-    g_object_set (G_OBJECT (renderer),
-                  "model",       _discrete_model,
-                  "text-column", DISCRETE_LONG_TEXT_str,
-                  NULL);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void AttributeDesc::TreeStoreSetDefault (GtkTreeStore        *store,
                                          GtkTreeIter         *iter,
                                          gint                 column,
@@ -234,13 +222,13 @@ void AttributeDesc::TreeStoreSetDefault (GtkTreeStore        *store,
       if (look == SHORT_TEXT)
       {
         gtk_tree_store_set (store, iter,
-                            column, "?",
+                            column, "",
                             -1);
       }
       else
       {
         gtk_tree_store_set (store, iter,
-                            column, "???",
+                            column, "",
                             -1);
       }
     }
