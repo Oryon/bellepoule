@@ -50,7 +50,7 @@ void Classification::OnPlugged ()
 // --------------------------------------------------------------------------------
 void Classification::SortDisplay ()
 {
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_store),
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (gtk_tree_view_get_model (_tree_view)),
                                         1,
                                         GTK_SORT_ASCENDING);
 }
@@ -59,7 +59,7 @@ void Classification::SortDisplay ()
 void Classification::SetSortFunction (GtkTreeIterCompareFunc sort_func,
                                       gpointer               user_data)
 {
-  gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_store),
+  gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (gtk_tree_view_get_model (_tree_view)),
                                    1,
                                    sort_func,
                                    user_data,

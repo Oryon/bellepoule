@@ -66,6 +66,8 @@ class Schedule : public Module
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
 
+    void SetTeamEvent (gboolean team_event);
+
     void PrepareBookPrint (GtkPrintOperation *operation,
                            GtkPrintContext   *context);
     void DrawBookPage (GtkPrintOperation *operation,

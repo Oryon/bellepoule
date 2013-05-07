@@ -233,6 +233,19 @@ void Schedule::SetScoreStuffingPolicy (gboolean allowed)
 }
 
 // --------------------------------------------------------------------------------
+void Schedule::SetTeamEvent (gboolean team_event)
+{
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    Stage *current_stage;
+
+    current_stage = (Stage *) g_list_nth_data (_stage_list,
+                                               i);
+    current_stage->SetTeamEvent (team_event);
+  }
+}
+
+// --------------------------------------------------------------------------------
 gboolean Schedule::ScoreStuffingIsAllowed ()
 {
   return _score_stuffing_allowed;

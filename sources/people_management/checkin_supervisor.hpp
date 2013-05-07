@@ -71,8 +71,6 @@ namespace People
       void Load (xmlXPathContext *xml_context,
                  const gchar     *from_node);
 
-      void OnLoaded ();
-
       void OnPlayerLoaded (Player *player);
 
       void Save (xmlTextWriter *xml_writer);
@@ -81,6 +79,10 @@ namespace People
 
       void OnPlayerEventFromForm (Player            *player,
                                   Form::PlayerEvent  event);
+
+      Player *GetTeam (const gchar *name);
+
+      void SetTeamEvent (gboolean team_event);
 
       virtual ~CheckinSupervisor ();
   };

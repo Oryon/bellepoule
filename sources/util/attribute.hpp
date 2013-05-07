@@ -110,8 +110,6 @@ class AttributeDesc : public Object
                              GtkCellRenderer *renderer,
                              GtkComboBox     *selector);
 
-    void BindDiscreteValues (GtkCellRenderer *renderer);
-
     gboolean HasDiscreteValue ();
 
     void AddDiscreteValues (const gchar *first_xml_image,

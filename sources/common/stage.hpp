@@ -125,6 +125,8 @@ class Stage : public virtual Object
 
     void SetScoreStuffingPolicy (gboolean allowed);
 
+    virtual void SetTeamEvent (gboolean team_event) {};
+
     virtual void Wipe () {};
 
     virtual void Display () {};

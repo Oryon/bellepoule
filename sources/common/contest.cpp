@@ -748,6 +748,11 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       _schedule->SetScoreStuffingPolicy (score_stuffing_policy);
     }
 
+    if (_team_event)
+    {
+      _schedule->SetTeamEvent (_team_event);
+    }
+
     xmlFreeDoc (doc);
 
     if (need_post_processing)
@@ -902,6 +907,8 @@ Contest *Contest::Create ()
   contest->ChooseColor ();
 
   contest->_schedule->SetScoreStuffingPolicy (FALSE);
+
+  contest->_schedule->SetTeamEvent (FALSE);
 
   contest->_name = g_key_file_get_string (_config_file,
                                           "Competiton",
@@ -1264,7 +1271,15 @@ void Contest::ReadProperties ()
     }
   }
 
-  _team_event = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("team_radiobutton")));
+  {
+    gboolean event = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("team_radiobutton")));
+
+    if (event != _team_event)
+    {
+      _team_event = event;
+      _schedule->SetTeamEvent (_team_event);
+    }
+  }
 
   {
     g_key_file_set_string (_config_file,

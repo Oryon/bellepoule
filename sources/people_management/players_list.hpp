@@ -22,8 +22,9 @@
 
 #include "util/module.hpp"
 #include "util/attribute.hpp"
-
 #include "common/player.hpp"
+
+#include "players_store.hpp"
 
 namespace People
 {
@@ -64,8 +65,8 @@ namespace People
       static const guint MODIFIABLE = 0x00000002;
 
     protected:
-      GtkWidget *_tree_view;
-      GSList    *_player_list;
+      GtkTreeView *_tree_view;
+      GSList      *_player_list;
 
       typedef gboolean (*CustomFilter) (Player *player);
 
@@ -89,30 +90,30 @@ namespace People
       Player *GetPlayerWithAttribute (Player::AttributeId *attr_id,
                                       Attribute           *attr);
 
-    protected:
-      GtkTreeStore *_store;
+      void ShowTeams ();
+
+      void HideTeams ();
 
     private:
-      guint     _rights;
-      guint     _nb_player_per_page;
-      gdouble   _print_scale;
-      guint     _nb_pages;
-      gint      _selector_column;
-      gdouble  *_column_width;
+      guint         _rights;
+      guint         _nb_player_per_page;
+      gdouble       _print_scale;
+      guint         _nb_pages;
+      gint          _selector_column;
+      gdouble      *_column_width;
+      PlayersStore *_store;
+
+      void RefreshDisplay ();
+
+      void UpdateLineage (Player *player);
 
       void SetColumn (guint           id,
                       Filter::Layout *attr_layout,
                       gint            at);
 
-      GtkTreeRowReference *GetPlayerRowRef (GtkTreeIter *iter);
-
       Player *GetPlayer (const gchar *path_string);
 
       virtual gboolean PlayerIsPrintable (Player *player);
-
-      void OnCellEdited (gchar         *path_string,
-                         gchar         *new_text,
-                         AttributeDesc *desc);
 
       void OnCellToggled (gchar         *path_string,
                           gboolean       is_active,
@@ -139,20 +140,10 @@ namespace People
                                    gchar                 *path_string,
                                    gpointer               user_data);
 
-      static void on_cell_edited (GtkCellRendererText *cell,
-                                  gchar               *path_string,
-                                  gchar               *new_text,
-                                  gpointer             user_data);
-
       static gint CompareIterator (GtkTreeModel        *model,
                                    GtkTreeIter         *a,
                                    GtkTreeIter         *b,
                                    Player::AttributeId *attr_id);
-
-      static void OnDiscreteEditingStarted (GtkCellRenderer *renderer,
-                                            GtkCellEditable *editable,
-                                            gchar           *path,
-                                            AttributeDesc   *desc);
   };
 }
 
