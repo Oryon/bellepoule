@@ -23,6 +23,7 @@
 #include "common/schedule.hpp"
 #include "common/player.hpp"
 #include "player_factory.hpp"
+#include "tally_counter.hpp"
 #include "checkin.hpp"
 
 namespace People
@@ -33,7 +34,7 @@ namespace People
     : PlayersList (glade)
   {
     _form                 = NULL;
-    _attendings           = 0;
+    _tally_counter        = new TallyCounter ();
     _default_player_class = default_player_class;
 
     {
@@ -62,7 +63,8 @@ namespace People
   {
     gtk_widget_destroy (_print_dialog);
 
-    _form->Release ();
+    _form->Release          ();
+    _tally_counter->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -690,13 +692,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::Monitor (Player *player)
   {
-    Player::AttributeId  attr_id ("attending");
-    Attribute           *attr = player->GetAttribute ( &attr_id);
-
-    if (attr && (attr->GetUIntValue () == TRUE))
-    {
-      _attendings++;
-    }
+    _tally_counter->Monitor (player);
 
     player->SetChangeCbk ("attending",
                           (Player::OnChange) OnAttendingChanged,
@@ -712,13 +708,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::OnPlayerRemoved (Player *player)
   {
-    Player::AttributeId  attr_id ("attending");
-    Attribute           *attr = player->GetAttribute (&attr_id);
-
-    if (attr && (attr->GetUIntValue () == TRUE))
-    {
-      _attendings--;
-    }
+    _tally_counter->Drop (player);
   }
 
   // --------------------------------------------------------------------------------
@@ -726,24 +716,39 @@ namespace People
                                     Attribute *attr,
                                     Object    *owner)
   {
-    Checkin *checkin = dynamic_cast <Checkin *> (owner);
-    guint               value = attr->GetUIntValue ();
-    Player::AttributeId global_status_attr_id ("global_status");
+    Checkin             *checkin = dynamic_cast <Checkin *> (owner);
+    guint                value   = attr->GetUIntValue ();
+    Player::AttributeId  global_status_attr_id ("global_status");
 
     if (value == 1)
     {
-      checkin->_attendings++;
       player->SetAttributeValue (&global_status_attr_id,
                                  "Q");
     }
     else if (value == 0)
     {
-      checkin->_attendings--;
       player->SetAttributeValue (&global_status_attr_id,
                                  "F");
     }
 
+    checkin->_tally_counter->OnAttendingChanged (player,
+                                                 value);
+
     checkin->RefreshAttendingDisplay ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::ShowTeams ()
+  {
+    PlayersList::ShowTeams ();
+    _tally_counter->SetTeamMode ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::HideTeams ()
+  {
+    PlayersList::HideTeams ();
+    _tally_counter->DisableTeamMode ();
   }
 
   // --------------------------------------------------------------------------------
@@ -751,12 +756,12 @@ namespace People
   {
     gchar *text;
 
-    text = g_strdup_printf ("%d", _attendings);
+    text = g_strdup_printf ("%d", _tally_counter->GetPresentsCount ());
     gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("attending_label")),
                         text);
     g_free (text);
 
-    text = g_strdup_printf ("%d", g_slist_length (_player_list) - _attendings);
+    text = g_strdup_printf ("%d", _tally_counter->GetAbsentsCount ());
     gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("absent_label")),
                         text);
     g_free (text);

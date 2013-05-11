@@ -90,9 +90,9 @@ namespace People
       Player *GetPlayerWithAttribute (Player::AttributeId *attr_id,
                                       Attribute           *attr);
 
-      void ShowTeams ();
+      virtual void ShowTeams ();
 
-      void HideTeams ();
+      virtual void HideTeams ();
 
     private:
       guint         _rights;
@@ -105,7 +105,7 @@ namespace People
 
       void RefreshDisplay ();
 
-      void UpdateLineage (Player *player);
+      void UpdateTeam (Player *player);
 
       void SetColumn (guint           id,
                       Filter::Layout *attr_layout,

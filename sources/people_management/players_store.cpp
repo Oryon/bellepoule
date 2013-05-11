@@ -61,37 +61,47 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersStore::Append (Object *item,
-                             Object *parent)
+  void PlayersStore::Update (Player *player)
   {
-    Append (&_flat_store,
-            item,
-            NULL);
+    Remove (player);
+    Append (player);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersStore::Append (Player *player)
+  {
+    if (player->Is ("Team") == FALSE)
+    {
+      Append (&_flat_store,
+              player,
+              NULL);
+    }
+
     Append (&_tree_store,
-            item,
-            parent);
+            player,
+            player->GetTeam ());
   }
 
   // --------------------------------------------------------------------------------
   void PlayersStore::Append (StoreObject *store,
-                             Object      *item,
-                             Object      *parent)
+                             Player      *player,
+                             Player      *team)
   {
-    GtkTreeIter parent_iter;
-    gboolean    has_parent = FALSE;
+    GtkTreeIter team_iter;
+    gboolean    has_team = FALSE;
 
     {
-      if (parent)
+      if (team)
       {
-        GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) parent->GetPtrData (store,
+        GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) team->GetPtrData (store,
                                                                                                          "tree_row_ref"));
 
         if (path)
         {
           gtk_tree_model_get_iter (GTK_TREE_MODEL (store->_gtk_tree_store),
-                                   &parent_iter,
+                                   &team_iter,
                                    path);
-          has_parent = TRUE;
+          has_team = TRUE;
         }
         gtk_tree_path_free (path);
       }
@@ -100,11 +110,11 @@ namespace People
     {
       GtkTreeIter iter;
 
-      if (has_parent)
+      if (has_team)
       {
         gtk_tree_store_append (store->_gtk_tree_store,
                                &iter,
-                               &parent_iter);
+                               &team_iter);
       }
       else
       {
@@ -113,58 +123,62 @@ namespace People
                                NULL);
       }
 
-      item->SetData (store, "tree_row_ref",
-                     GetPlayerRowRef (&iter, store->_gtk_tree_store),
-                     (GDestroyNotify) gtk_tree_row_reference_free);
+      player->SetData (store, "tree_row_ref",
+                       GetPlayerRowRef (&iter, store->_gtk_tree_store),
+                       (GDestroyNotify) gtk_tree_row_reference_free);
     }
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersStore::Remove (Object *item)
+  void PlayersStore::Remove (Player *player)
   {
     Remove (&_flat_store,
-            item);
+            player);
     Remove (&_tree_store,
-            item);
+            player);
   }
 
   // --------------------------------------------------------------------------------
   void PlayersStore::Remove (StoreObject  *store,
-                             Object       *item)
+                             Player       *player)
   {
-    GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) item->GetPtrData (store,
-                                                                                                   "tree_row_ref"));
+    GtkTreeRowReference *ref = (GtkTreeRowReference *) player->GetPtrData (store, "tree_row_ref");
 
-    if (path)
+    if (ref)
     {
-      GtkTreeIter iter;
+      GtkTreePath *path = gtk_tree_row_reference_get_path (ref);
 
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (store->_gtk_tree_store),
-                               &iter,
-                               path);
+      if (path)
+      {
+        GtkTreeIter iter;
 
-      gtk_tree_store_remove (store->_gtk_tree_store,
-                             &iter);
+        gtk_tree_model_get_iter (GTK_TREE_MODEL (store->_gtk_tree_store),
+                                 &iter,
+                                 path);
+
+        gtk_tree_store_remove (store->_gtk_tree_store,
+                               &iter);
+      }
+      gtk_tree_path_free (path);
+
+      player->RemoveData (store,
+                          "tree_row_ref");
     }
-    gtk_tree_path_free (path);
-
-    item->RemoveData (store,
-                      "tree_row_ref");
   }
 
   // --------------------------------------------------------------------------------
   GtkTreeRowReference *PlayersStore::GetTreeRowRef (GtkTreeModel *store,
-                                                    Object       *item)
+                                                    Player       *player)
   {
     if (_flat_store._gtk_tree_store == GTK_TREE_STORE (store))
     {
-      return (GtkTreeRowReference *) item->GetPtrData (&_flat_store,
-                                                       "tree_row_ref");
+      return (GtkTreeRowReference *) player->GetPtrData (&_flat_store,
+                                                         "tree_row_ref");
     }
     else
     {
-      return (GtkTreeRowReference *) item->GetPtrData (&_tree_store,
-                                                       "tree_row_ref");
+      return (GtkTreeRowReference *) player->GetPtrData (&_tree_store,
+                                                         "tree_row_ref");
     }
   }
 
