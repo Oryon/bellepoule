@@ -213,7 +213,7 @@ namespace People
       {
         gchar *team_name = team_attr->GetStrValue ();
 
-        player->SetParent (GetTeam (team_name));
+        player->SetTeam (GetTeam (team_name));
       }
     }
   }
@@ -565,7 +565,7 @@ namespace People
         }
       }
 
-      player->SetParent (team);
+      player->SetTeam (team);
     }
 
     if (event == Form::NEW_PLAYER)

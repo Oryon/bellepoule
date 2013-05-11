@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
+#include "common/player.hpp"
 
 namespace People
 {
@@ -29,10 +30,11 @@ namespace People
       PlayersStore (gint   n_columns,
                     GType *types);
 
-      void Append (Object *item,
-                   Object *parent);
+      void Append (Player *player);
 
-      void Remove (Object *item);
+      void Remove (Player *player);
+
+      void Update (Player *player);
 
       gboolean SelectFlatMode (GtkTreeView *view);
 
@@ -45,7 +47,7 @@ namespace People
                             Object                 *user_data);
 
       GtkTreeRowReference *GetTreeRowRef (GtkTreeModel *store,
-                                          Object       *item);
+                                          Player       *player);
 
     private:
       struct StoreObject : public Object
@@ -56,11 +58,11 @@ namespace People
       ~PlayersStore ();
 
       void Append (StoreObject *store,
-                   Object      *item,
-                   Object      *parent);
+                   Player      *player,
+                   Player      *team);
 
       void Remove (StoreObject *store,
-                   Object      *item);
+                   Player      *player);
 
       GtkTreeRowReference *GetPlayerRowRef (GtkTreeIter  *iter,
                                             GtkTreeStore *store);

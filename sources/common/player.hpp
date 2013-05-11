@@ -60,9 +60,9 @@ class Player : public Object
 
     Player *Duplicate ();
 
-    void SetParent (Player *parent);
+    void SetTeam (Player *team);
 
-    Player *GetParent ();
+    Player *GetTeam ();
 
   public:
     Attribute *GetAttribute (AttributeId *attr_id);
@@ -154,7 +154,7 @@ class Player : public Object
     guint        _nb_matchs;
     gchar        _weapon;
     const gchar *_player_class;
-    Player      *_parent;
+    Player      *_team;
 
     void NotifyChange (Attribute *attr);
 };

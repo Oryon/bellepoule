@@ -33,7 +33,7 @@ Player::Player (const gchar *player_class)
   _nb_matchs = 0;
 
   _player_class = player_class;
-  _parent       = NULL;
+  _team         = NULL;
 
   _clients = NULL;
 
@@ -62,25 +62,25 @@ Player::~Player ()
                    NULL);
   g_slist_free (_clients);
 
-  Object::TryToRelease (_parent);
+  Object::TryToRelease (_team);
 }
 
 // --------------------------------------------------------------------------------
-void Player::SetParent (Player *parent)
+void Player::SetTeam (Player *team)
 {
-  Object::TryToRelease (_parent);
+  Object::TryToRelease (_team);
 
-  _parent = parent;
-  if (_parent)
+  _team = team;
+  if (_team)
   {
-    _parent->Retain ();
+    _team->Retain ();
   }
 }
 
 // --------------------------------------------------------------------------------
-Player *Player::GetParent ()
+Player *Player::GetTeam ()
 {
-  return _parent;
+  return _team;
 }
 
 // --------------------------------------------------------------------------------

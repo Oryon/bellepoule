@@ -143,97 +143,103 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::UpdateLineage (Player *player)
+  void PlayersList::UpdateTeam (Player *player)
   {
-    GtkTreeModel        *model      = gtk_tree_view_get_model (_tree_view);
-    GtkTreeRowReference *ref;
-    GtkTreePath         *path;
+    GtkTreeModel        *model = gtk_tree_view_get_model (_tree_view);
+    GtkTreeRowReference *ref   = _store->GetTreeRowRef (model, player);
 
-    ref  = _store->GetTreeRowRef (model, player);
-    path = gtk_tree_row_reference_get_path (ref);
-
-    if (player->GetParent ())
+    if (ref)
     {
-      GtkTreeRowReference *parent_ref;
-      GtkTreePath         *parent_path;
+      GtkTreePath *path = gtk_tree_row_reference_get_path (ref);
 
-      parent_ref  = _store->GetTreeRowRef (model, player->GetParent ());
-      parent_path = gtk_tree_row_reference_get_path (parent_ref);
-
-      if (gtk_tree_path_is_descendant (path,
-                                       parent_path) == FALSE)
+      if (player->GetTeam ())
       {
-        _store->Remove (player);
-        _store->Append (player,
-                        player->GetParent ());
+        GtkTreeRowReference *team_ref = _store->GetTreeRowRef (model, player->GetTeam ());
+
+        if (team_ref)
+        {
+          GtkTreePath *team_path;
+
+          team_path = gtk_tree_row_reference_get_path (team_ref);
+
+          if (gtk_tree_path_is_descendant (path,
+                                           team_path) == FALSE)
+          {
+            _store->Update (player);
+          }
+
+          gtk_tree_path_free (team_path);
+        }
+      }
+      else if (gtk_tree_path_get_depth (path))
+      {
+        _store->Update (player);
       }
 
-      gtk_tree_path_free (parent_path);
+      gtk_tree_path_free (path);
     }
-    else if (gtk_tree_path_get_depth (path))
-    {
-      _store->Remove (player);
-      _store->Append (player,
-                      NULL);
-    }
-
-    gtk_tree_path_free (path);
   }
 
   // --------------------------------------------------------------------------------
   void PlayersList::Update (Player *player)
   {
-    UpdateLineage (player);
+    if (player->Is ("Team") == FALSE)
+    {
+      UpdateTeam (player);
+    }
 
     {
       GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
-      GtkTreeRowReference *ref;
-      GtkTreePath         *path;
-      GtkTreeIter          iter;
+      GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model),
+                                                          player);
 
-      ref  = _store->GetTreeRowRef (GTK_TREE_MODEL (model),
-                                    player);
-      path = gtk_tree_row_reference_get_path (ref);
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
-                               &iter,
-                               path);
-      gtk_tree_path_free (path);
-
-      if (_filter)
+      if (ref)
       {
-        GSList *attr_list = _filter->GetAttrList ();
+        GtkTreePath         *path;
+        GtkTreeIter          iter;
 
-        for (guint i = 0; attr_list != NULL; i++)
+        path = gtk_tree_row_reference_get_path (ref);
+        gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
+                                 &iter,
+                                 path);
+        gtk_tree_path_free (path);
+
+        if (_filter)
         {
-          AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
-          Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
-          Attribute           *attr    = player->GetAttribute (attr_id);
+          GSList *attr_list = _filter->GetAttrList ();
 
-          attr_id->Release ();
-          if (attr)
+          for (guint i = 0; attr_list != NULL; i++)
           {
-            attr->TreeStoreSet (model, &iter,
-                                i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-            attr->TreeStoreSet (model, &iter,
-                                i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-            attr->TreeStoreSet (model, &iter,
-                                i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
+            AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
+            Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
+            Attribute           *attr    = player->GetAttribute (attr_id);
+
+            attr_id->Release ();
+            if (attr)
+            {
+              attr->TreeStoreSet (model, &iter,
+                                  i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
+              attr->TreeStoreSet (model, &iter,
+                                  i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
+              attr->TreeStoreSet (model, &iter,
+                                  i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
+            }
+            else
+            {
+              desc->TreeStoreSetDefault (model, &iter,
+                                         i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
+              desc->TreeStoreSetDefault (model, &iter,
+                                         i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
+              desc->TreeStoreSetDefault (model, &iter,
+                                         i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
+            }
+            attr_list = g_slist_next (attr_list);
           }
-          else
-          {
-            desc->TreeStoreSetDefault (model, &iter,
-                                       i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-            desc->TreeStoreSetDefault (model, &iter,
-                                       i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-            desc->TreeStoreSetDefault (model, &iter,
-                                       i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
-          }
-          attr_list = g_slist_next (attr_list);
+
+          gtk_tree_store_set (model, &iter,
+                              gtk_tree_model_get_n_columns (GTK_TREE_MODEL (model)) - 1,
+                              player, -1);
         }
-
-        gtk_tree_store_set (model, &iter,
-                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (model)) - 1,
-                            player, -1);
       }
     }
   }
@@ -330,9 +336,7 @@ namespace People
 
         while (current_player)
         {
-          Player *p;
-
-          p = (Player *) current_player->data;
+          Player *p = (Player *) current_player->data;
 
           if (p)
           {
@@ -633,8 +637,7 @@ namespace People
   {
     player->Retain ();
 
-    _store->Append (player,
-                    player->GetParent ());
+    _store->Append (player);
 
     _player_list = g_slist_append (_player_list,
                                    player);

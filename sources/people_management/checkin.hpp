@@ -24,6 +24,7 @@
 #include "util/module.hpp"
 #include "util/attribute.hpp"
 
+#include "tally_counter.hpp"
 #include "players_list.hpp"
 #include "form.hpp"
 
@@ -78,12 +79,16 @@ namespace People
       virtual void OnPlayerEventFromForm (Player            *player,
                                           Form::PlayerEvent  event);
 
+      void ShowTeams ();
+
+      void HideTeams ();
+
     private:
-      guint        _attendings;
-      GtkWidget   *_print_dialog;
-      gboolean     _print_attending;
-      gboolean     _print_missing;
-      const gchar *_default_player_class;
+      TallyCounter *_tally_counter;
+      GtkWidget    *_print_dialog;
+      gboolean      _print_attending;
+      gboolean      _print_missing;
+      const gchar  *_default_player_class;
 
       virtual void OnPlayerLoaded (Player *player) {};
 
