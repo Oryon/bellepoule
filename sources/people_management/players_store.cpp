@@ -94,7 +94,7 @@ namespace People
       if (team)
       {
         GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) team->GetPtrData (store,
-                                                                                                         "tree_row_ref"));
+                                                                                                       "tree_row_ref"));
 
         if (path)
         {

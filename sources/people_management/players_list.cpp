@@ -140,6 +140,8 @@ namespace People
         current = g_slist_next (current);
       }
     }
+
+    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
@@ -769,21 +771,24 @@ namespace People
     while (current)
     {
       GtkTreeRowReference *current_ref;
-      GtkTreePath         *current_path;
       Player              *p = (Player *) current->data;
 
       current_ref = _store->GetTreeRowRef (model,
                                             p);
-      current_path = gtk_tree_row_reference_get_path (current_ref);
-      if (gtk_tree_path_compare (path,
-                                 current_path) == 0)
+      if (current_ref)
       {
-        result = p;
+        GtkTreePath *current_path = gtk_tree_row_reference_get_path (current_ref);
+
+        if (gtk_tree_path_compare (path,
+                                   current_path) == 0)
+        {
+          result = p;
+          gtk_tree_path_free (current_path);
+          break;
+        }
         gtk_tree_path_free (current_path);
-        break;
       }
 
-      gtk_tree_path_free (current_path);
       current = g_slist_next (current);
     }
     gtk_tree_path_free (path);

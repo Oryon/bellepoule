@@ -740,15 +740,15 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::ShowTeams ()
   {
-    PlayersList::ShowTeams ();
     _tally_counter->SetTeamMode ();
+    PlayersList::ShowTeams ();
   }
 
   // --------------------------------------------------------------------------------
   void Checkin::HideTeams ()
   {
-    PlayersList::HideTeams ();
     _tally_counter->DisableTeamMode ();
+    PlayersList::HideTeams ();
   }
 
   // --------------------------------------------------------------------------------
