@@ -28,9 +28,17 @@ class Team : public Player
 
     const gchar *GetXmlTag ();
 
+    void AddMember (Player *member);
+
+    void RemoveMember (Player *member);
+
+    GSList *GetMemberList ();
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_tag;
+
+    GSList *_member_list;
 
     Team ();
 

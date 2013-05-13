@@ -33,7 +33,6 @@ Player::Player (const gchar *player_class)
   _nb_matchs = 0;
 
   _player_class = player_class;
-  _team         = NULL;
 
   _clients = NULL;
 
@@ -61,26 +60,6 @@ Player::~Player ()
                    (GFunc) Object::TryToRelease,
                    NULL);
   g_slist_free (_clients);
-
-  Object::TryToRelease (_team);
-}
-
-// --------------------------------------------------------------------------------
-void Player::SetTeam (Player *team)
-{
-  Object::TryToRelease (_team);
-
-  _team = team;
-  if (_team)
-  {
-    _team->Retain ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-Player *Player::GetTeam ()
-{
-  return _team;
 }
 
 // --------------------------------------------------------------------------------

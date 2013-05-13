@@ -24,11 +24,36 @@ const gchar *Fencer::_xml_tag    = "Tireur";
 Fencer::Fencer ()
 : Player (_class_name)
 {
+  _team = NULL;
 }
 
 // --------------------------------------------------------------------------------
 Fencer::~Fencer ()
 {
+  Object::TryToRelease (_team);
+}
+
+// --------------------------------------------------------------------------------
+void Fencer::SetTeam (Team *team)
+{
+  if (_team)
+  {
+    _team->RemoveMember (this);
+    _team->Release ();
+  }
+
+  _team = team;
+  if (_team)
+  {
+    _team->Retain ();
+    _team->AddMember (this);
+  }
+}
+
+// --------------------------------------------------------------------------------
+Team *Fencer::GetTeam ()
+{
+  return _team;
 }
 
 // --------------------------------------------------------------------------------

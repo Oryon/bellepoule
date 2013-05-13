@@ -21,6 +21,7 @@
 
 #include "util/object.hpp"
 #include "common/player.hpp"
+#include "team.hpp"
 
 namespace People
 {
@@ -59,7 +60,7 @@ namespace People
 
       void Append (StoreObject *store,
                    Player      *player,
-                   Player      *team);
+                   Team        *team);
 
       void Remove (StoreObject *store,
                    Player      *player);

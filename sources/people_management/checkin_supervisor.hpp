@@ -21,6 +21,7 @@
 #include <libxml/xmlwriter.h>
 
 #include "common/stage.hpp"
+#include "team.hpp"
 
 #include "checkin.hpp"
 
@@ -80,9 +81,11 @@ namespace People
       void OnPlayerEventFromForm (Player            *player,
                                   Form::PlayerEvent  event);
 
-      Player *GetTeam (const gchar *name);
+      Team *GetTeam (const gchar *name);
 
       void SetTeamEvent (gboolean team_event);
+
+      void OnPlayerRemoved (Player *player);
 
       virtual ~CheckinSupervisor ();
   };

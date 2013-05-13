@@ -24,17 +24,39 @@ const gchar *Team::_xml_tag    = "Equipe";
 Team::Team ()
 : Player (_class_name)
 {
+  _member_list = NULL;
 }
 
 // --------------------------------------------------------------------------------
 Team::~Team ()
 {
+  g_slist_free (_member_list);
 }
 
 // --------------------------------------------------------------------------------
 Player *Team::Clone ()
 {
   return new Team ();
+}
+
+// --------------------------------------------------------------------------------
+void Team::AddMember (Player *member)
+{
+  _member_list = g_slist_prepend (_member_list,
+                                  member);
+}
+
+// --------------------------------------------------------------------------------
+void Team::RemoveMember (Player *member)
+{
+  _member_list = g_slist_remove (_member_list,
+                                  member);
+}
+
+// --------------------------------------------------------------------------------
+GSList *Team::GetMemberList ()
+{
+  return _member_list;
 }
 
 // --------------------------------------------------------------------------------

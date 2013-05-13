@@ -24,6 +24,7 @@
 #include "common/player.hpp"
 #include "common/contest.hpp"
 
+#include "fencer.hpp"
 #include "player_factory.hpp"
 #include "checkin_supervisor.hpp"
 
@@ -206,14 +207,15 @@ namespace People
 
     if (player->Is ("Fencer"))
     {
-      Player::AttributeId  team_attr_id ("team");
-      Attribute           *team_attr = player->GetAttribute (&team_attr_id);
+      Player::AttributeId team_attr_id  ("team");
+      Fencer                           *fencer    = (Fencer *) player;
+      Attribute                        *team_attr = fencer->GetAttribute ( &team_attr_id);
 
       if (team_attr)
       {
-        gchar *team_name = team_attr->GetStrValue ();
+        gchar  *team_name = team_attr->GetStrValue ();
 
-        player->SetTeam (GetTeam (team_name));
+        fencer->SetTeam (GetTeam (team_name));
       }
     }
   }
@@ -517,7 +519,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  Player *CheckinSupervisor::GetTeam (const gchar *name)
+  Team *CheckinSupervisor::GetTeam (const gchar *name)
   {
     Player              *team;
     Player::AttributeId  name_attr_id ("name");
@@ -529,22 +531,50 @@ namespace People
                                    name_attr);
     name_attr->Release ();
 
-    return team;
+    if (team && team->Is ("Team"))
+    {
+      return (Team *) team;
+    }
+    else
+    {
+      return NULL;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnPlayerRemoved (Player *player)
+  {
+    Checkin::OnPlayerRemoved (player);
+
+    if (player->Is ("Team"))
+    {
+      Team   *team    = (Team *) player;
+      GSList *current = team->GetMemberList ();
+
+      while (current)
+      {
+        Player *player = (Player *) current->data;
+
+        Remove (player);
+        current = g_slist_next (current);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnPlayerEventFromForm (Player            *player,
                                                  Form::PlayerEvent  event)
   {
-    if (player->Is ("Team") == FALSE)
+    if (player->Is ("Fencer"))
     {
       gchar  *team_name;
-      Player *team      = NULL;
+      Fencer *fencer    = (Fencer *) player;
+      Team   *team      = NULL;
 
       // Team name
       {
         Player::AttributeId  team_attr_id ("team");
-        Attribute           *team_attr = player->GetAttribute (&team_attr_id);
+        Attribute           *team_attr = fencer->GetAttribute (&team_attr_id);
 
         team_name = team_attr->GetStrValue ();
       }
@@ -557,7 +587,7 @@ namespace People
         // Create a team if necessary
         if (team == NULL)
         {
-          team = PlayerFactory::CreatePlayer ("Team");
+          team = (Team *) PlayerFactory::CreatePlayer ("Team");
 
           team->SetName (team_name);
           RegisterNewTeam (team_name);
@@ -565,7 +595,7 @@ namespace People
         }
       }
 
-      player->SetTeam (team);
+      fencer->SetTeam (team);
     }
 
     if (event == Form::NEW_PLAYER)

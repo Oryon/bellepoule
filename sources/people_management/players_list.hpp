@@ -24,6 +24,7 @@
 #include "util/attribute.hpp"
 #include "common/player.hpp"
 
+#include "fencer.hpp"
 #include "players_store.hpp"
 
 namespace People
@@ -105,7 +106,7 @@ namespace People
 
       void RefreshDisplay ();
 
-      void UpdateTeam (Player *player);
+      void UpdateTeam (Fencer *fencer);
 
       void SetColumn (guint           id,
                       Filter::Layout *attr_layout,

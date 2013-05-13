@@ -21,6 +21,7 @@
 #include "util/attribute.hpp"
 #include "common/schedule.hpp"
 #include "common/player.hpp"
+#include "team.hpp"
 
 #include "players_list.hpp"
 
@@ -145,18 +146,18 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::UpdateTeam (Player *player)
+  void PlayersList::UpdateTeam (Fencer *fencer)
   {
     GtkTreeModel        *model = gtk_tree_view_get_model (_tree_view);
-    GtkTreeRowReference *ref   = _store->GetTreeRowRef (model, player);
+    GtkTreeRowReference *ref   = _store->GetTreeRowRef (model, fencer);
 
     if (ref)
     {
       GtkTreePath *path = gtk_tree_row_reference_get_path (ref);
 
-      if (player->GetTeam ())
+      if (fencer->GetTeam ())
       {
-        GtkTreeRowReference *team_ref = _store->GetTreeRowRef (model, player->GetTeam ());
+        GtkTreeRowReference *team_ref = _store->GetTreeRowRef (model, fencer->GetTeam ());
 
         if (team_ref)
         {
@@ -167,7 +168,7 @@ namespace People
           if (gtk_tree_path_is_descendant (path,
                                            team_path) == FALSE)
           {
-            _store->Update (player);
+            _store->Update (fencer);
           }
 
           gtk_tree_path_free (team_path);
@@ -175,7 +176,7 @@ namespace People
       }
       else if (gtk_tree_path_get_depth (path))
       {
-        _store->Update (player);
+        _store->Update (fencer);
       }
 
       gtk_tree_path_free (path);
@@ -185,9 +186,9 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::Update (Player *player)
   {
-    if (player->Is ("Team") == FALSE)
+    if (player->Is ("Fencer"))
     {
-      UpdateTeam (player);
+      UpdateTeam ((Fencer *) player);
     }
 
     {
@@ -745,6 +746,19 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::Remove (Player *player)
   {
+    if (player->Is ("Team"))
+    {
+      Team   *team    = (Team *) player;
+      GSList *current = team->GetMemberList ();
+
+      while (current)
+      {
+        Remove ((Player *) current->data);
+
+        current = g_slist_next (current);
+      }
+    }
+
     _store->Remove (player);
 
     _player_list = g_slist_remove (_player_list,

@@ -60,10 +60,6 @@ class Player : public Object
 
     Player *Duplicate ();
 
-    void SetTeam (Player *team);
-
-    Player *GetTeam ();
-
   public:
     Attribute *GetAttribute (AttributeId *attr_id);
 
@@ -154,7 +150,6 @@ class Player : public Object
     guint        _nb_matchs;
     gchar        _weapon;
     const gchar *_player_class;
-    Player      *_team;
 
     void NotifyChange (Attribute *attr);
 };

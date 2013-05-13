@@ -83,6 +83,8 @@ namespace People
 
       void HideTeams ();
 
+      virtual void OnPlayerRemoved (Player *player);
+
     private:
       TallyCounter *_tally_counter;
       GtkWidget    *_print_dialog;
@@ -98,8 +100,6 @@ namespace People
                      const gchar *players_class_xml_tag);
 
       void RefreshAttendingDisplay ();
-
-      void OnPlayerRemoved (Player *player);
 
       void OnPlugged ();
 
