@@ -85,6 +85,9 @@ namespace People
 
       virtual void OnPlayerRemoved (Player *player);
 
+      virtual void OnAttendingChanged (Player *player,
+                                       guint   value);
+
     private:
       TallyCounter *_tally_counter;
       GtkWidget    *_print_dialog;
@@ -105,9 +108,9 @@ namespace People
 
       gboolean PlayerIsPrintable (Player *player);
 
-      static void OnAttendingChanged (Player    *player,
-                                      Attribute *attr,
-                                      Object    *owner);
+      static void OnAttrAttendingChanged (Player    *player,
+                                          Attribute *attr,
+                                          Object    *owner);
 
       gchar *GetFileContent (gchar *filename);
 

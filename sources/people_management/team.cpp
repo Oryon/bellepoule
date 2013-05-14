@@ -40,6 +40,29 @@ Player *Team::Clone ()
 }
 
 // --------------------------------------------------------------------------------
+void Team::SetAttendingFromMembers ()
+{
+  Player::AttributeId  attending_attr_id ("attending");
+  GSList *current       = _member_list;
+  guint   present_count = 0;
+
+  while (current)
+  {
+    Player    *player    = (Player *) current->data;
+    Attribute *attending = player->GetAttribute (&attending_attr_id);
+
+    if (attending && attending->GetUIntValue ())
+    {
+      present_count++;
+    }
+    current = g_slist_next (current);
+  }
+
+  SetAttributeValue (&attending_attr_id,
+                     (present_count >= REQUIRED_PLAYER_COUNT));
+}
+
+// --------------------------------------------------------------------------------
 void Team::AddMember (Player *member)
 {
   _member_list = g_slist_prepend (_member_list,

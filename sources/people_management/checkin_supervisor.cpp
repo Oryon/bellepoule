@@ -39,6 +39,8 @@ namespace People
                "Fencer"),
     Stage (stage_class)
   {
+    _attending_recursivity_running = FALSE;
+
     _use_initial_rank = FALSE;
     _checksum_list    = NULL;
 
@@ -207,13 +209,13 @@ namespace People
 
     if (player->Is ("Fencer"))
     {
-      Player::AttributeId team_attr_id  ("team");
-      Fencer                           *fencer    = (Fencer *) player;
-      Attribute                        *team_attr = fencer->GetAttribute ( &team_attr_id);
+      Player::AttributeId  team_attr_id  ("team");
+      Fencer              *fencer    = (Fencer *) player;
+      Attribute           *team_attr = fencer->GetAttribute ( &team_attr_id);
 
       if (team_attr)
       {
-        gchar  *team_name = team_attr->GetStrValue ();
+        gchar *team_name = team_attr->GetStrValue ();
 
         fencer->SetTeam (GetTeam (team_name));
       }
@@ -264,6 +266,26 @@ namespace People
         }
       }
       current = g_slist_next (current);
+    }
+
+    // FFE xml files may have teams with attending attribute set!
+    // By default everybody is absent.
+    {
+      GSList *current = _player_list;
+
+      while (current)
+      {
+        Player *player = (Player *) current->data;
+
+        if (player->Is ("Team"))
+        {
+          Team *team = (Team *) player;
+
+          team->SetAttendingFromMembers ();
+          Update (team);
+        }
+        current = g_slist_next (current);
+      }
     }
   }
 
@@ -558,6 +580,49 @@ namespace People
         Remove (player);
         current = g_slist_next (current);
       }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnAttendingChanged (Player *player,
+                                              guint   value)
+  {
+    Checkin::OnAttendingChanged (player,
+                                 value);
+
+    if (_attending_recursivity_running == FALSE)
+    {
+      _attending_recursivity_running = TRUE;
+
+      if (player->Is ("Team"))
+      {
+        Team                *team    = (Team *) player;
+        GSList              *current = team->GetMemberList ();
+        Player::AttributeId  attending_attr_id ("attending");
+
+        while (current)
+        {
+          Player *player = (Player *) current->data;
+
+          player->SetAttributeValue (&attending_attr_id,
+                                     value);
+          Update (player);
+          current = g_slist_next (current);
+        }
+      }
+      else if (player->Is ("Fencer"))
+      {
+        Fencer *fencer = (Fencer *) player;
+        Team   *team   = fencer->GetTeam ();
+
+        if (team)
+        {
+          team->SetAttendingFromMembers ();
+          Update (team);
+        }
+      }
+
+      _attending_recursivity_running = FALSE;
     }
   }
 

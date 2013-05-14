@@ -695,7 +695,7 @@ namespace People
     _tally_counter->Monitor (player);
 
     player->SetChangeCbk ("attending",
-                          (Player::OnChange) OnAttendingChanged,
+                          (Player::OnChange) OnAttrAttendingChanged,
                           this);
   }
 
@@ -712,12 +712,21 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::OnAttendingChanged (Player    *player,
+  void Checkin::OnAttrAttendingChanged (Player    *player,
                                     Attribute *attr,
                                     Object    *owner)
   {
-    Checkin             *checkin = dynamic_cast <Checkin *> (owner);
-    guint                value   = attr->GetUIntValue ();
+    Checkin *checkin = dynamic_cast <Checkin *> (owner);
+    guint    value   = attr->GetUIntValue ();
+
+    checkin->OnAttendingChanged (player,
+                                 value);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Checkin::OnAttendingChanged (Player *player,
+                                    guint   value)
+  {
     Player::AttributeId  global_status_attr_id ("global_status");
 
     if (value == 1)
@@ -731,10 +740,10 @@ namespace People
                                  "F");
     }
 
-    checkin->_tally_counter->OnAttendingChanged (player,
-                                                 value);
+    _tally_counter->OnAttendingChanged (player,
+                                        value);
 
-    checkin->RefreshAttendingDisplay ();
+    RefreshAttendingDisplay ();
   }
 
   // --------------------------------------------------------------------------------

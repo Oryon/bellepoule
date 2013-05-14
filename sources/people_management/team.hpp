@@ -34,9 +34,12 @@ class Team : public Player
 
     GSList *GetMemberList ();
 
+    void SetAttendingFromMembers ();
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_tag;
+    static const guint  REQUIRED_PLAYER_COUNT = 3;
 
     GSList *_member_list;
 

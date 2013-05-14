@@ -58,6 +58,7 @@ namespace People
 
       gboolean  _use_initial_rank;
       GSList   *_checksum_list;
+      gboolean  _attending_recursivity_running;
 
       static Stage *CreateInstance (StageClass *stage_class);
 
@@ -86,6 +87,9 @@ namespace People
       void SetTeamEvent (gboolean team_event);
 
       void OnPlayerRemoved (Player *player);
+
+      void OnAttendingChanged (Player    *player,
+                               guint   value);
 
       virtual ~CheckinSupervisor ();
   };
