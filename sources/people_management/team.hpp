@@ -30,11 +30,15 @@ class Team : public Player
 
     void AddMember (Player *member);
 
+    void UpdateMembers ();
+
     void RemoveMember (Player *member);
 
     GSList *GetMemberList ();
 
     void SetAttendingFromMembers ();
+
+    void SetRankFromMembers (Player::AttributeId *criteria);
 
   private:
     static const gchar *_class_name;
@@ -50,6 +54,9 @@ class Team : public Player
     Player *Clone ();
 
     void Load (xmlNode *xml_node);
+
+    static gint CompareRank (guint a,
+                             guint b);
 };
 
 #endif

@@ -91,6 +91,7 @@ class Contest : public Module
     gchar *GetDefaultFileName ();
     gchar *GetGender ();
     gchar *GetCategory ();
+    gboolean IsTeamEvent ();
 
   public:
     void on_save_toolbutton_clicked       ();

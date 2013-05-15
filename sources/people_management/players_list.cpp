@@ -190,6 +190,12 @@ namespace People
     {
       UpdateTeam ((Fencer *) player);
     }
+    else if (player->Is ("Team"))
+    {
+      Team *team = (Team *) player;
+
+      team->UpdateMembers ();
+    }
 
     {
       GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));

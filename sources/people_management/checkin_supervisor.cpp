@@ -107,6 +107,8 @@ namespace People
                                           "ref",
 #endif
                                           "name",
+                                          "attending",
+                                          "ranking",
                                           NULL);
       filter = new Filter (attr_list,
                            this);
@@ -366,6 +368,25 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void CheckinSupervisor::UpdateTeamsRanking (Player::AttributeId *criteria)
+  {
+    GSList *current = _player_list;
+
+    while (current)
+    {
+      Player *player = (Player *) current->data;
+
+      if (player->Is ("Team"))
+      {
+        Team *team = (Team *) player;
+
+        team->SetRankFromMembers (criteria);
+      }
+      current = g_slist_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::UpdateRanking ()
   {
     guint                nb_player = g_slist_length (_player_list);
@@ -386,6 +407,11 @@ namespace People
       _player_list = g_slist_sort_with_data (_player_list,
                                              (GCompareDataFunc) Player::Compare,
                                              rank_criteria_id);
+    }
+
+    if (_contest->IsTeamEvent ())
+    {
+      UpdateTeamsRanking (rank_criteria_id);
     }
 
     {

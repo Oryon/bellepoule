@@ -467,6 +467,19 @@ namespace People
   {
     GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
 
+    gtk_widget_show_all (_glade->GetWidget ("FillInForm"));
+
+    if (player)
+    {
+      gtk_notebook_set_show_tabs (notebook,
+                                  FALSE);
+    }
+    else
+    {
+      gtk_notebook_set_show_tabs (notebook,
+                                  TRUE);
+    }
+
     _player_to_update = player;
     if (_player_to_update)
     {
@@ -549,8 +562,6 @@ namespace People
       gtk_widget_grab_focus ((GtkWidget *) g_list_nth_data (children,
                                                             0));
     }
-
-    gtk_widget_show_all (_glade->GetWidget ("FillInForm"));
 
     if (_player_to_update)
     {

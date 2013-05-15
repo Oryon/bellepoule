@@ -66,6 +66,8 @@ namespace People
 
       void UpdateChecksum ();
 
+      void UpdateTeamsRanking (Player::AttributeId *criteria);
+
       GSList *GetCurrentClassification ();
 
       void Load (xmlNode *xml_node);

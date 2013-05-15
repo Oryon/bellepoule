@@ -1955,6 +1955,12 @@ gchar *Contest::GetWeapon ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Contest::IsTeamEvent ()
+{
+  return _team_event;
+}
+
+// --------------------------------------------------------------------------------
 gchar Contest::GetWeaponCode ()
 {
   return *weapon_xml_image[_weapon];
