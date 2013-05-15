@@ -52,7 +52,7 @@ namespace People
   void Form::AddPage (Filter      *filter,
                       const gchar *player_class)
   {
-    GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
+    GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
     Page      *page;
 
     _page_count++;
@@ -65,12 +65,13 @@ namespace People
     page->_player_class = player_class;
 
     {
+      GtkWidget   *hbox       = gtk_hbox_new (FALSE, 5);
       GSList      *current    = filter->GetAttrList ();
       GtkComboBox *selector_w = NULL;
 
-      page->_title_vbox = gtk_vbox_new (FALSE, 0);
-      page->_value_vbox = gtk_vbox_new (FALSE, 0);
-      page->_check_vbox = gtk_vbox_new (FALSE, 0);
+      page->_title_vbox = gtk_vbox_new (TRUE, 0);
+      page->_value_vbox = gtk_vbox_new (TRUE, 0);
+      page->_check_vbox = gtk_vbox_new (TRUE, 0);
 
       gtk_box_pack_start (GTK_BOX (hbox),
                           page->_check_vbox,
@@ -87,6 +88,12 @@ namespace People
                           FALSE,
                           FALSE,
                           0);
+
+      gtk_box_pack_start (GTK_BOX (vbox),
+                          hbox,
+                          FALSE,
+                          FALSE,
+                          0);
       while (current)
       {
         AttributeDesc *attr_desc = (AttributeDesc *) current->data;
@@ -98,8 +105,8 @@ namespace People
 
             gtk_box_pack_start (GTK_BOX (page->_title_vbox),
                                 w,
-                                TRUE,
-                                TRUE,
+                                FALSE,
+                                FALSE,
                                 0);
             g_object_set (G_OBJECT (w),
                           "xalign", 0.0,
@@ -182,16 +189,13 @@ namespace People
                 else
                 {
                   value_w = gtk_entry_new ();
-                  g_object_set (G_OBJECT (value_w),
-                                "xalign", 0.0,
-                                NULL);
                 }
               }
 
               gtk_box_pack_start (GTK_BOX (page->_value_vbox),
                                   value_w,
-                                  TRUE,
-                                  TRUE,
+                                  FALSE,
+                                  FALSE,
                                   0);
               g_object_set_data (G_OBJECT (value_w), "attribute_name", attr_desc->_code_name);
             }
@@ -209,12 +213,9 @@ namespace People
 
               gtk_box_pack_start (GTK_BOX (page->_check_vbox),
                                   w,
-                                  TRUE,
-                                  TRUE,
+                                  FALSE,
+                                  FALSE,
                                   0);
-              g_object_set (G_OBJECT (w),
-                            "xalign", 0.0,
-                            NULL);
             }
           }
         }
@@ -226,7 +227,7 @@ namespace People
       GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
 
       gtk_notebook_append_page (notebook,
-                                hbox,
+                                vbox,
                                 gtk_label_new (gettext (player_class)));
     }
   }
