@@ -39,8 +39,6 @@ class Schedule : public Module
   public:
      Schedule (Contest *contest);
 
-    void DisplayList ();
-
     void Freeze ();
 
     void CreateDefault (gboolean without_pools = FALSE);
@@ -62,6 +60,8 @@ class Schedule : public Module
     Stage *GetStage (guint index);
 
     void RemoveAllStages ();
+
+    void ApplyNewConfig ();
 
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
@@ -92,8 +92,11 @@ class Schedule : public Module
     gboolean            _score_stuffing_allowed;
     Contest            *_contest;
 
-    void    SetCurrentStage    (guint index);
+    void SetCurrentStage (guint index);
+
     Module *GetSelectedModule  ();
+
+    void DisplayConfig ();
 
     gint GetNotebookPageNum (Stage *stage);
 
@@ -120,8 +123,7 @@ class Schedule : public Module
                                            Schedule       *owner);
 
   private:
-    GtkWidget *_formula_dlg;
-    Book      *_book;
+    Book *_book;
 
     virtual ~Schedule ();
     void OnPlugged ();

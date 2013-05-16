@@ -958,7 +958,6 @@ void Tournament::OnNew ()
   Contest *contest = Contest::Create ();
 
   Plug (contest,
-        NULL,
         NULL);
   Manage (contest);
 }
@@ -1183,7 +1182,6 @@ void Tournament::OpenUriContest (const gchar *uri)
           contest = new Contest ();
 
           Plug (contest,
-                NULL,
                 NULL);
 
           contest->LoadXml (uri);
@@ -1201,7 +1199,6 @@ void Tournament::OpenUriContest (const gchar *uri)
           if (contest)
           {
             Plug (contest,
-                  NULL,
                   NULL);
 
             contest->LoadFencerFile (uri);
@@ -1425,7 +1422,6 @@ void Tournament::OnBroadcastedActivated (GtkTreePath *path)
       Contest *contest = new Contest ();
 
       Plug (contest,
-            NULL,
             NULL);
       contest->LoadRemote (address);
       Manage (contest);

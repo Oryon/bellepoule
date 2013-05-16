@@ -128,7 +128,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="Close_button">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -140,21 +140,6 @@
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button2">
-                <property name="label">gtk-cancel</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
               </packing>
             </child>
           </object>
@@ -169,6 +154,7 @@
           <object class="GtkNotebook" id="properties_notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="homogeneous">True</property>
             <child>
               <object class="GtkAlignment" id="event_alignment">
                 <property name="visible">True</property>
@@ -959,11 +945,11 @@ stuffing</property>
               </object>
               <packing>
                 <property name="tab_fill">False</property>
-                <property name="reorderable">True</property>
               </packing>
             </child>
             <child>
               <object class="GtkAlignment" id="formula_alignment">
+                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
                   <placeholder/>
@@ -974,14 +960,14 @@ stuffing</property>
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="label2">
+              <object class="GtkLabel" id="label27">
+                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Formula</property>
               </object>
               <packing>
                 <property name="position">1</property>
                 <property name="tab_fill">False</property>
-                <property name="reorderable">True</property>
               </packing>
             </child>
             <child>
@@ -1109,7 +1095,7 @@ stuffing</property>
                                       </attributes>
                                     </child>
                                     <child internal-child="entry">
-                                      <object class="GtkEntry" id="comboboxentry-entry2">
+                                      <object class="GtkEntry" id="url_entry">
                                         <property name="can_focus">False</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
@@ -1156,7 +1142,6 @@ stuffing</property>
               <packing>
                 <property name="position">2</property>
                 <property name="tab_fill">False</property>
-                <property name="reorderable">True</property>
               </packing>
             </child>
           </object>
@@ -1169,8 +1154,7 @@ stuffing</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="1">button1</action-widget>
-      <action-widget response="0">button2</action-widget>
+      <action-widget response="1">Close_button</action-widget>
     </action-widgets>
   </object>
   <object class="GtkAdjustment" id="scratch_hour_adjustment">
@@ -1226,20 +1210,6 @@ stuffing</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="properties_toolbutton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">To specify the features of the competition.</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="stock_id">gtk-properties</property>
-                    <signal name="clicked" handler="on_properties_toolbutton_clicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkSeparatorToolItem" id="separatortoolitem1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -1249,14 +1219,13 @@ stuffing</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="formula_toolbutton">
+                  <object class="GtkToolButton" id="properties_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="tooltip_text" translatable="yes">To configure the schedule of the competition in terms of pools, tables and other rounds.</property>
+                    <property name="tooltip_text" translatable="yes">To specify the features of the competition.</property>
                     <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Formula</property>
                     <property name="stock_id">gtk-preferences</property>
-                    <signal name="clicked" handler="on_formula_toolbutton_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_properties_toolbutton_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

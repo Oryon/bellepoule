@@ -68,21 +68,6 @@ Schedule::Schedule (Contest *contest)
   // Formula dialog
   {
     GtkWidget *menu_pool = gtk_menu_new ();
-    GtkWidget *content_area;
-
-    _formula_dlg = gtk_dialog_new_with_buttons (gettext ("Formula"),
-                                                NULL,
-                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                GTK_STOCK_OK,
-                                                GTK_RESPONSE_ACCEPT,
-                                                GTK_STOCK_CANCEL,
-                                                GTK_RESPONSE_REJECT,
-                                                NULL);
-
-    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_formula_dlg));
-
-    gtk_widget_reparent (_glade->GetWidget ("dialog-vbox"),
-                         content_area);
 
     gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (_glade->GetWidget ("add_stage_toolbutton")),
                                    menu_pool);
@@ -115,8 +100,6 @@ Schedule::Schedule (Contest *contest)
 Schedule::~Schedule ()
 {
   RemoveAllStages ();
-
-  gtk_widget_destroy (_formula_dlg);
 }
 
 // --------------------------------------------------------------------------------
@@ -216,6 +199,8 @@ void Schedule::CreateDefault (gboolean without_pools)
     }
     SetCurrentStage (0);
   }
+
+  DisplayConfig ();
 }
 
 // --------------------------------------------------------------------------------
@@ -253,7 +238,7 @@ gboolean Schedule::ScoreStuffingIsAllowed ()
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::DisplayList ()
+void Schedule::DisplayConfig ()
 {
   gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("add_stage_toolbutton")),
                             TRUE);
@@ -292,27 +277,28 @@ void Schedule::DisplayList ()
                                                 &iter);
     }
   }
+}
 
-  if (gtk_dialog_run (GTK_DIALOG (_formula_dlg)) == GTK_RESPONSE_ACCEPT)
+// --------------------------------------------------------------------------------
+void Schedule::ApplyNewConfig ()
+{
+  Stage *current_stage;
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
-    Stage *current_stage;
-
-    for (guint i = 0; i < g_list_length (_stage_list); i++)
-    {
-      current_stage = (Stage *) g_list_nth_data (_stage_list,
-                                                 i);
-      current_stage->ApplyConfig ();
-    }
-
-    for (guint i = 0; i < g_list_length (_stage_list); i++)
-    {
-      current_stage = (Stage *) g_list_nth_data (_stage_list,
-                                                 i);
-      RefreshStageName (current_stage);
-    }
+    current_stage = (Stage *) g_list_nth_data (_stage_list,
+                                               i);
+    current_stage->ApplyConfig ();
   }
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    current_stage = (Stage *) g_list_nth_data (_stage_list,
+                                               i);
+    RefreshStageName (current_stage);
+  }
+
   MakeDirty ();
-  gtk_widget_hide (_formula_dlg);
 }
 
 // --------------------------------------------------------------------------------
@@ -801,6 +787,7 @@ void Schedule::Load (xmlDoc          *doc,
   xmlXPathFreeContext (xml_context);
 
   SetCurrentStage (current_stage_index);
+  DisplayConfig ();
 }
 
 // --------------------------------------------------------------------------------
@@ -934,26 +921,38 @@ void Schedule::RefreshSensitivity ()
 // --------------------------------------------------------------------------------
 void Schedule::OnPlugged ()
 {
-  GtkToolbar *toolbar = GetToolbar ();
-  GtkWidget  *w;
+  GtkWidget *w;
 
-  w = _glade->GetWidget ("previous_stage_toolbutton");
-  _glade->DetachFromParent (w);
-  gtk_toolbar_insert (toolbar,
-                      GTK_TOOL_ITEM (w),
-                      -1);
+  {
+    GtkToolbar *toolbar = GetToolbar ();
 
-  w = _glade->GetWidget ("next_stage_toolbutton");
-  _glade->DetachFromParent (w);
-  gtk_toolbar_insert (toolbar,
-                      GTK_TOOL_ITEM (w),
-                      -1);
+    w = _glade->GetWidget ("previous_stage_toolbutton");
+    _glade->DetachFromParent (w);
+    gtk_toolbar_insert (toolbar,
+                        GTK_TOOL_ITEM (w),
+                        -1);
 
-  w = _glade->GetWidget ("error_toolbutton");
-  _glade->DetachFromParent (w);
-  gtk_toolbar_insert (toolbar,
-                      GTK_TOOL_ITEM (w),
-                      -1);
+    w = _glade->GetWidget ("next_stage_toolbutton");
+    _glade->DetachFromParent (w);
+    gtk_toolbar_insert (toolbar,
+                        GTK_TOOL_ITEM (w),
+                        -1);
+
+    w = _glade->GetWidget ("error_toolbutton");
+    _glade->DetachFromParent (w);
+    gtk_toolbar_insert (toolbar,
+                        GTK_TOOL_ITEM (w),
+                        -1);
+  }
+
+  {
+    GtkContainer *config_container = GetConfigContainer ();
+
+    w = _glade->GetWidget ("config_vbox");
+    _glade->DetachFromParent (w);
+    gtk_container_add (config_container,
+                       w);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1228,8 +1227,10 @@ void Schedule::on_stage_removed ()
       stage_class = stage->GetClass ();
       if (stage_class->_rights & Stage::REMOVABLE)
       {
+        Stage *input_provider = stage->GetInputProvider ();
+
         RemoveStage (stage);
-        RemoveStage (stage->GetInputProvider ());
+        RemoveStage (input_provider);
 
         {
           GtkContainer *container   = GTK_CONTAINER (_glade->GetWidget ("module_config_hook"));
