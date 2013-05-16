@@ -94,7 +94,8 @@ Schedule::Schedule (Contest *contest)
 
       stage_class = Stage::GetClass (i);
 
-      if (stage_class->_rights & Stage::EDITABLE)
+      if (   (stage_class->_rights & Stage::EDITABLE)
+          && (stage_class->_rights & Stage::REMOVABLE))
       {
         menu_item = gtk_menu_item_new_with_label (stage_class->_name);
         g_signal_connect (menu_item, "button-release-event",
@@ -1204,22 +1205,6 @@ void Schedule::PlugStage (Stage *stage)
 void Schedule::on_stage_removed ()
 {
   {
-    GtkContainer *container   = GTK_CONTAINER (_glade->GetWidget ("module_config_hook"));
-    GList        *widget_list = gtk_container_get_children (container);
-
-    if (widget_list)
-    {
-      GtkWidget *config_widget = (GtkWidget *) widget_list->data;
-
-      if (config_widget)
-      {
-        gtk_container_remove (container,
-                              config_widget);
-      }
-    }
-  }
-
-  {
     GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
     GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
     GtkTreeIter       filter_iter;
@@ -1228,9 +1213,9 @@ void Schedule::on_stage_removed ()
                                          NULL,
                                          &filter_iter))
     {
-      Stage       *stage;
-      Stage       *input_provider;
-      GtkTreeIter  iter;
+      Stage             *stage;
+      Stage::StageClass *stage_class;
+      GtkTreeIter        iter;
 
       gtk_tree_model_filter_convert_iter_to_child_iter (_list_store_filter,
                                                         &iter,
@@ -1240,12 +1225,31 @@ void Schedule::on_stage_removed ()
                           STAGE_ptr, &stage,
                           -1);
 
-      input_provider = stage->GetInputProvider ();
+      stage_class = stage->GetClass ();
+      if (stage_class->_rights & Stage::REMOVABLE)
+      {
+        RemoveStage (stage);
+        RemoveStage (stage->GetInputProvider ());
 
-      RemoveStage (stage);
-      RemoveStage (input_provider);
+        {
+          GtkContainer *container   = GTK_CONTAINER (_glade->GetWidget ("module_config_hook"));
+          GList        *widget_list = gtk_container_get_children (container);
+
+          if (widget_list)
+          {
+            GtkWidget *config_widget = (GtkWidget *) widget_list->data;
+
+            if (config_widget)
+            {
+              gtk_container_remove (container,
+                                    config_widget);
+            }
+          }
+        }
+      }
     }
 
+    // Select the last item if the focus is lost
     if (gtk_tree_selection_get_selected (selection,
                                          NULL,
                                          &filter_iter) == FALSE)
@@ -1258,7 +1262,7 @@ void Schedule::on_stage_removed ()
         gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_list_store_filter),
                                        &filter_iter,
                                        NULL,
-                                       n);
+                                       n-1);
         gtk_tree_selection_select_iter (selection,
                                         &filter_iter);
       }

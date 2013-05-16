@@ -168,7 +168,7 @@ namespace Table
     RegisterStageClass (gettext (_class_name),
                         _xml_class_name,
                         CreateInstance,
-                        EDITABLE);
+                        EDITABLE|REMOVABLE);
   }
 
   // --------------------------------------------------------------------------------
