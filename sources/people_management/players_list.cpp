@@ -672,12 +672,7 @@ namespace People
         if (gtk_tree_path_compare (selected_path,
                                    current_path) == 0)
         {
-          _store->Remove (p);
-
-          _player_list = g_slist_remove (_player_list,
-                                         p);
-          OnPlayerRemoved (p);
-          p->Release ();
+          Remove (p);
           gtk_tree_path_free (current_path);
           break;
         }

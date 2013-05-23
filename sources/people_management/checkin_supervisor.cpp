@@ -709,10 +709,6 @@ namespace People
     }
     else if (player->Is ("Fencer"))
     {
-      Player::AttributeId team_attr_id ("team");
-
-      player->SetAttributeValue (&team_attr_id,
-                                 (const gchar *) 0);
     }
   }
 
