@@ -94,6 +94,7 @@ class Contest : public Module
     gboolean IsTeamEvent ();
 
   public:
+    void ReadTeamProperty                 ();
     void on_save_toolbutton_clicked       ();
     void on_properties_toolbutton_clicked ();
     void on_contest_close_button_clicked  ();

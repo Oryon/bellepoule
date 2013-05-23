@@ -79,14 +79,11 @@ namespace People
       virtual void OnPlayerEventFromForm (Player            *player,
                                           Form::PlayerEvent  event);
 
-      void ShowTeams ();
+      void SelectTreeMode ();
 
-      void HideTeams ();
+      void SelectFlatMode ();
 
       virtual void OnPlayerRemoved (Player *player);
-
-      virtual void OnAttendingChanged (Player *player,
-                                       guint   value);
 
     private:
       TallyCounter *_tally_counter;
@@ -110,7 +107,8 @@ namespace People
 
       static void OnAttrAttendingChanged (Player    *player,
                                           Attribute *attr,
-                                          Object    *owner);
+                                          Object    *owner,
+                                          guint      step);
 
       gchar *GetFileContent (gchar *filename);
 

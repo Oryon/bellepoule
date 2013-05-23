@@ -26,6 +26,9 @@ Team::Team ()
 : Player (_class_name)
 {
   _member_list = NULL;
+
+  _default_classification = 0;
+  _minimum_size           = 3;
 }
 
 // --------------------------------------------------------------------------------
@@ -60,7 +63,20 @@ void Team::SetAttendingFromMembers ()
   }
 
   SetAttributeValue (&attending_attr_id,
-                     (present_count >= REQUIRED_PLAYER_COUNT));
+                     (present_count >= _minimum_size));
+}
+
+// --------------------------------------------------------------------------------
+void Team::SetDefaultClassification (guint default_classification)
+{
+  _default_classification = default_classification;
+}
+
+// --------------------------------------------------------------------------------
+void Team::SetMinimumSize (guint size)
+{
+  _minimum_size = size;
+  SetAttendingFromMembers ();
 }
 
 // --------------------------------------------------------------------------------
@@ -95,7 +111,7 @@ void Team::SetRankFromMembers (Player::AttributeId *criteria)
         }
         if (rank == 0)
         {
-          rank = 1000;
+          rank = _default_classification;
         }
 
         rank_list = g_slist_insert_sorted (rank_list,
@@ -110,7 +126,7 @@ void Team::SetRankFromMembers (Player::AttributeId *criteria)
     GSList *current   = rank_list;
     guint   team_rank = 0;
 
-    for (guint i = 0; current && i < REQUIRED_PLAYER_COUNT; i++)
+    for (guint i = 0; current && i < _minimum_size; i++)
     {
       team_rank += GPOINTER_TO_UINT (current->data);
       current = g_slist_next (current);

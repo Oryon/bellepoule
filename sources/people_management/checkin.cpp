@@ -713,20 +713,12 @@ namespace People
 
   // --------------------------------------------------------------------------------
   void Checkin::OnAttrAttendingChanged (Player    *player,
-                                    Attribute *attr,
-                                    Object    *owner)
+                                        Attribute *attr,
+                                        Object    *owner,
+                                        guint      step)
   {
-    Checkin *checkin = dynamic_cast <Checkin *> (owner);
-    guint    value   = attr->GetUIntValue ();
-
-    checkin->OnAttendingChanged (player,
-                                 value);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Checkin::OnAttendingChanged (Player *player,
-                                    guint   value)
-  {
+    Checkin             *checkin = dynamic_cast <Checkin *> (owner);
+    guint                value   = attr->GetUIntValue ();
     Player::AttributeId  global_status_attr_id ("global_status");
 
     if (value == 1)
@@ -740,24 +732,24 @@ namespace People
                                  "F");
     }
 
-    _tally_counter->OnAttendingChanged (player,
-                                        value);
+    checkin->_tally_counter->OnAttendingChanged (player,
+                                                 value);
 
-    RefreshAttendingDisplay ();
+    checkin->RefreshAttendingDisplay ();
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::ShowTeams ()
+  void Checkin::SelectTreeMode ()
   {
     _tally_counter->SetTeamMode ();
-    PlayersList::ShowTeams ();
+    PlayersList::SelectTreeMode ();
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::HideTeams ()
+  void Checkin::SelectFlatMode ()
   {
     _tally_counter->DisableTeamMode ();
-    PlayersList::HideTeams ();
+    PlayersList::SelectFlatMode ();
   }
 
   // --------------------------------------------------------------------------------
@@ -903,17 +895,11 @@ namespace People
 
     while (current_player)
     {
-      Player *p;
+      Player *p = (Player *) current_player->data;
 
-      p = (Player *) current_player->data;
-
-      if (p)
-      {
-        p->SetAttributeValue (&attr_id,
-                              (guint) present);
-
-        Update (p);
-      }
+      TogglePlayerAttr (p,
+                        &attr_id,
+                        present);
       current_player = g_slist_next (current_player);
     }
     OnListChanged ();

@@ -49,6 +49,12 @@ namespace People
 
       void Wipe ();
 
+      void FillInConfig ();
+
+      void ApplyConfig ();
+
+      void ApplyConfig (Team *team);
+
       guint PreparePrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context);
 
@@ -58,9 +64,13 @@ namespace People
 
       gboolean  _use_initial_rank;
       GSList   *_checksum_list;
-      gboolean  _attending_recursivity_running;
+      guint     _default_classification;
+      guint     _minimum_team_size;
+
 
       static Stage *CreateInstance (StageClass *stage_class);
+
+      void Monitor (Player *player);
 
       gboolean IsOver ();
 
@@ -69,6 +79,8 @@ namespace People
       void UpdateTeamsRanking (Player::AttributeId *criteria);
 
       GSList *GetCurrentClassification ();
+
+      void LoadConfiguration (xmlNode *xml_node);
 
       void Load (xmlNode *xml_node);
 
@@ -79,7 +91,7 @@ namespace People
 
       void Save (xmlTextWriter *xml_writer);
 
-      void RegisterNewTeam (const gchar *name);
+      void RegisterNewTeam (Team *team);
 
       void OnPlayerEventFromForm (Player            *player,
                                   Form::PlayerEvent  event);
@@ -92,6 +104,20 @@ namespace People
 
       void OnAttendingChanged (Player    *player,
                                guint   value);
+
+      static void OnAttrAttendingChanged (Player    *player,
+                                          Attribute *attr,
+                                          Object    *owner,
+                                          guint      step);
+
+      static void OnAttrTeamChanged (Player    *player,
+                                     Attribute *attr,
+                                     Object    *owner,
+                                     guint      step);
+
+      void TogglePlayerAttr (Player              *player,
+                             Player::AttributeId *attr_id,
+                             gboolean             new_value);
 
       virtual ~CheckinSupervisor ();
   };

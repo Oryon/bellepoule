@@ -43,6 +43,8 @@ class Module : public virtual Object
                GtkContainer *config_container = NULL);
     void UnPlug ();
 
+    void AddSensitiveWidget (GtkWidget *w);
+
     void Print (const gchar  *job_name,
                 GtkPageSetup *page_setup = NULL);
 
@@ -126,7 +128,6 @@ class Module : public virtual Object
 
     GtkContainer *GetConfigContainer ();
 
-    void AddSensitiveWidget (GtkWidget *w);
     void EnableSensitiveWidgets ();
     void DisableSensitiveWidgets ();
 

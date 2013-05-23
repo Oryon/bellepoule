@@ -1265,15 +1265,7 @@ void Contest::ReadProperties ()
     }
   }
 
-  {
-    gboolean event = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("team_radiobutton")));
-
-    if (event != _team_event)
-    {
-      _team_event = event;
-      _schedule->SetTeamEvent (_team_event);
-    }
-  }
+  ReadTeamProperty ();
 
   {
     g_key_file_set_string (_config_file,
@@ -1299,6 +1291,18 @@ void Contest::ReadProperties ()
 
   _schedule->ApplyNewConfig ();
   DisplayProperties ();
+}
+
+// --------------------------------------------------------------------------------
+void Contest::ReadTeamProperty ()
+{
+  gboolean event = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("team_radiobutton")));
+
+  if (event != _team_event)
+  {
+    _team_event = event;
+    _schedule->SetTeamEvent (_team_event);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1365,6 +1369,14 @@ void Contest::AttachTo (GtkNotebook *to)
   gtk_notebook_set_tab_reorderable (_notebook,
                                     GetRootWidget (),
                                     TRUE);
+
+  {
+    People::CheckinSupervisor *checkin;
+
+    checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
+
+    checkin->AddSensitiveWidget (_glade->GetWidget ("team_vbox"));
+  }
 
   DisplayProperties ();
 }
@@ -2049,4 +2061,13 @@ extern "C" G_MODULE_EXPORT void on_referees_toolbutton_toggled (GtkToggleToolBut
   Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_referees_toolbutton_toggled (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_team_radiobutton_toggled (GtkToggleToolButton *widget,
+                                                             Object              *owner)
+{
+  Contest *c = dynamic_cast <Contest *> (owner);
+
+  c->ReadTeamProperty ();
 }

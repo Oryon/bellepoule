@@ -194,7 +194,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::OnAttendingChanged (Player    *referee,
                                          Attribute *attr,
-                                         Object    *owner)
+                                         Object    *owner,
+                                         guint      step)
   {
     guint               value = attr->GetUIntValue ();
     Player::AttributeId attr_id ("availability");
@@ -225,7 +226,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::OnAvailabilityChanged (Player    *referee,
                                             Attribute *attr,
-                                            Object    *owner)
+                                            Object    *owner,
+                                            guint      step)
   {
     Checkin *checkin = dynamic_cast <Checkin *> (owner);
 
@@ -235,7 +237,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::OnParticipationRateChanged (Player    *referee,
                                                  Attribute *attr,
-                                                 Object    *owner)
+                                                 Object    *owner,
+                                                 guint      step)
   {
     Checkin *checkin = dynamic_cast <Checkin *> (owner);
 

@@ -290,7 +290,7 @@
                                     <property name="label_xalign">0</property>
                                     <property name="shadow_type">etched-out</property>
                                     <child>
-                                      <object class="GtkVBox" id="vbox4">
+                                      <object class="GtkVBox" id="team_vbox">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
@@ -319,6 +319,7 @@
                                             <property name="use_action_appearance">False</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
+                                            <signal name="toggled" handler="on_team_radiobutton_toggled" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>

@@ -53,7 +53,8 @@ class Player : public Object
 
     typedef void (*OnChange) (Player    *player,
                               Attribute *attr,
-                              void      *data);
+                              void      *data,
+                              guint      step);
 
   public:
     gboolean Is (const gchar *player_class);
@@ -61,6 +62,9 @@ class Player : public Object
     Player *Duplicate ();
 
   public:
+    static const guint BEFORE_CHANGE = 0x01;
+    static const guint AFTER_CHANGE  = 0x02;
+
     Attribute *GetAttribute (AttributeId *attr_id);
 
     void SetAttributeValue (AttributeId *attr_id,
@@ -73,7 +77,10 @@ class Player : public Object
 
     void SetChangeCbk (const gchar *attr_name,
                        OnChange     change_cbk,
-                       Object      *owner);
+                       Object      *owner,
+                       guint        steps = AFTER_CHANGE);
+
+    void NotifyChange (const gchar *attr_name);
 
     void RemoveCbkOwner (Object *owner);
 
@@ -139,6 +146,7 @@ class Player : public Object
       gchar    *_attr_name;
       OnChange  _change_cbk;
       Object   *_owner;
+      guint     _steps;
     };
 
     GSList *_clients;
@@ -151,7 +159,8 @@ class Player : public Object
     gchar        _weapon;
     const gchar *_player_class;
 
-    void NotifyChange (Attribute *attr);
+    void NotifyChange (Attribute *attr,
+                       guint      step);
 };
 
 #endif

@@ -1064,21 +1064,18 @@ gint Attribute::Compare (Attribute *a, Attribute *b)
 // --------------------------------------------------------------------------------
 char *Attribute::GetStrValue ()
 {
-  g_print ("**** Wrong call to GetStrValue ****\n");
   return NULL;
 }
 
 // --------------------------------------------------------------------------------
 gint Attribute::GetIntValue ()
 {
-  g_print ("**** Wrong call to GetIntValue ****\n");
   return 0;
 }
 
 // --------------------------------------------------------------------------------
 guint Attribute::GetUIntValue ()
 {
-  g_print ("**** Wrong call to GetUIntValue ****\n");
   return 0;
 }
 
@@ -1098,9 +1095,11 @@ TextAttribute::~TextAttribute ()
 // --------------------------------------------------------------------------------
 void TextAttribute::SetValue (const gchar *value)
 {
+  g_free (_value);
+  _value = NULL;
+
   if (value)
   {
-    g_free (_value);
     _value = GetUndivadableText (value);
   }
 }
