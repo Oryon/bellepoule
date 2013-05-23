@@ -695,7 +695,7 @@ namespace People
     _tally_counter->Monitor (player);
 
     player->SetChangeCbk ("attending",
-                          (Player::OnChange) OnAttendingChanged,
+                          (Player::OnChange) OnAttrAttendingChanged,
                           this);
   }
 
@@ -712,9 +712,10 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::OnAttendingChanged (Player    *player,
-                                    Attribute *attr,
-                                    Object    *owner)
+  void Checkin::OnAttrAttendingChanged (Player    *player,
+                                        Attribute *attr,
+                                        Object    *owner,
+                                        guint      step)
   {
     Checkin             *checkin = dynamic_cast <Checkin *> (owner);
     guint                value   = attr->GetUIntValue ();
@@ -738,17 +739,17 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::ShowTeams ()
+  void Checkin::SelectTreeMode ()
   {
-    PlayersList::ShowTeams ();
     _tally_counter->SetTeamMode ();
+    PlayersList::SelectTreeMode ();
   }
 
   // --------------------------------------------------------------------------------
-  void Checkin::HideTeams ()
+  void Checkin::SelectFlatMode ()
   {
-    PlayersList::HideTeams ();
     _tally_counter->DisableTeamMode ();
+    PlayersList::SelectFlatMode ();
   }
 
   // --------------------------------------------------------------------------------
@@ -894,17 +895,11 @@ namespace People
 
     while (current_player)
     {
-      Player *p;
+      Player *p = (Player *) current_player->data;
 
-      p = (Player *) current_player->data;
-
-      if (p)
-      {
-        p->SetAttributeValue (&attr_id,
-                              (guint) present);
-
-        Update (p);
-      }
+      TogglePlayerAttr (p,
+                        &attr_id,
+                        present);
       current_player = g_slist_next (current_player);
     }
     OnListChanged ();

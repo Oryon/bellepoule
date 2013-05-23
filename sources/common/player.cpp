@@ -33,7 +33,6 @@ Player::Player (const gchar *player_class)
   _nb_matchs = 0;
 
   _player_class = player_class;
-  _team         = NULL;
 
   _clients = NULL;
 
@@ -61,26 +60,6 @@ Player::~Player ()
                    (GFunc) Object::TryToRelease,
                    NULL);
   g_slist_free (_clients);
-
-  Object::TryToRelease (_team);
-}
-
-// --------------------------------------------------------------------------------
-void Player::SetTeam (Player *team)
-{
-  Object::TryToRelease (_team);
-
-  _team = team;
-  if (_team)
-  {
-    _team->Retain ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-Player *Player::GetTeam ()
-{
-  return _team;
 }
 
 // --------------------------------------------------------------------------------
@@ -260,13 +239,15 @@ Attribute *Player::GetAttribute (AttributeId *attr_id)
 // --------------------------------------------------------------------------------
 void Player::SetChangeCbk (const gchar *attr_name,
                            OnChange     change_cbk,
-                           Object      *owner)
+                           Object      *owner,
+                           guint        steps)
 {
   Client *client = new Client;
 
   client->_attr_name  = g_strdup (attr_name);
   client->_change_cbk = change_cbk;
   client->_owner      = owner;
+  client->_steps      = steps;
 
   _clients = g_slist_prepend (_clients,
                               client);
@@ -306,7 +287,21 @@ void Player::RemoveCbkOwner (Object *owner)
 }
 
 // --------------------------------------------------------------------------------
-void Player::NotifyChange (Attribute *attr)
+void Player::NotifyChange (const gchar *attr_name)
+{
+  AttributeId  id (attr_name);
+  Attribute   *attr = GetAttribute (&id);
+
+  if (attr)
+  {
+    NotifyChange (attr, BEFORE_CHANGE);
+    NotifyChange (attr, AFTER_CHANGE);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Player::NotifyChange (Attribute *attr,
+                           guint      step)
 {
   GSList *list = _clients;
 
@@ -315,11 +310,13 @@ void Player::NotifyChange (Attribute *attr)
     Client *client;
 
     client = (Client *) list->data;
-    if (strcmp (client->_attr_name, attr->GetCodeName ()) == 0)
+    if (   (client->_steps & step)
+        && (strcmp (client->_attr_name, attr->GetCodeName ()) == 0))
     {
       client->_change_cbk (this,
                            attr,
-                           client->_owner);
+                           client->_owner,
+                           step);
     }
     list = g_slist_next (list);
   }
@@ -340,10 +337,18 @@ void Player::SetAttributeValue (AttributeId *attr_id,
              attr,
              (GDestroyNotify) Object::TryToRelease);
   }
+  else if ((attr->GetStrValue () == NULL) && (value == NULL))
+  {
+    return;
+  }
+  else if (attr->GetStrValue () && value && strcmp (attr->GetStrValue (), value) == 0)
+  {
+    return;
+  }
 
+  NotifyChange (attr, BEFORE_CHANGE);
   attr->SetValue (value);
-
-  NotifyChange (attr);
+  NotifyChange (attr, AFTER_CHANGE);
 }
 
 // --------------------------------------------------------------------------------
@@ -366,8 +371,9 @@ void Player::SetAttributeValue (AttributeId *attr_id,
     return;
   }
 
+  NotifyChange (attr, BEFORE_CHANGE);
   attr->SetValue (value);
-  NotifyChange (attr);
+  NotifyChange (attr, AFTER_CHANGE);
 }
 
 // --------------------------------------------------------------------------------

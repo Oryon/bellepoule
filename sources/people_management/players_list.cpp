@@ -107,7 +107,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::ShowTeams ()
+  void PlayersList::SelectTreeMode ()
   {
     if (_store->SelectTreeMode (_tree_view))
     {
@@ -116,7 +116,7 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::HideTeams ()
+  void PlayersList::SelectFlatMode ()
   {
     if (_store->SelectFlatMode (_tree_view))
     {
@@ -140,106 +140,69 @@ namespace People
         current = g_slist_next (current);
       }
     }
+
+    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
-  void PlayersList::UpdateTeam (Player *player)
+  void PlayersList::UpdateHierarchy (Player *player)
   {
-    GtkTreeModel        *model = gtk_tree_view_get_model (_tree_view);
-    GtkTreeRowReference *ref   = _store->GetTreeRowRef (model, player);
-
-    if (ref)
-    {
-      GtkTreePath *path = gtk_tree_row_reference_get_path (ref);
-
-      if (player->GetTeam ())
-      {
-        GtkTreeRowReference *team_ref = _store->GetTreeRowRef (model, player->GetTeam ());
-
-        if (team_ref)
-        {
-          GtkTreePath *team_path;
-
-          team_path = gtk_tree_row_reference_get_path (team_ref);
-
-          if (gtk_tree_path_is_descendant (path,
-                                           team_path) == FALSE)
-          {
-            _store->Update (player);
-          }
-
-          gtk_tree_path_free (team_path);
-        }
-      }
-      else if (gtk_tree_path_get_depth (path))
-      {
-        _store->Update (player);
-      }
-
-      gtk_tree_path_free (path);
-    }
+    _store->Update (player);
   }
 
   // --------------------------------------------------------------------------------
   void PlayersList::Update (Player *player)
   {
-    if (player->Is ("Team") == FALSE)
-    {
-      UpdateTeam (player);
-    }
+    GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
+    GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model),
+                                                        player);
 
+    if (ref)
     {
-      GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
-      GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model),
-                                                          player);
+      GtkTreePath         *path;
+      GtkTreeIter          iter;
 
-      if (ref)
+      path = gtk_tree_row_reference_get_path (ref);
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
+                               &iter,
+                               path);
+      gtk_tree_path_free (path);
+
+      if (_filter)
       {
-        GtkTreePath         *path;
-        GtkTreeIter          iter;
+        GSList *attr_list = _filter->GetAttrList ();
 
-        path = gtk_tree_row_reference_get_path (ref);
-        gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
-                                 &iter,
-                                 path);
-        gtk_tree_path_free (path);
-
-        if (_filter)
+        for (guint i = 0; attr_list != NULL; i++)
         {
-          GSList *attr_list = _filter->GetAttrList ();
+          AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
+          Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
+          Attribute           *attr    = player->GetAttribute (attr_id);
 
-          for (guint i = 0; attr_list != NULL; i++)
+          attr_id->Release ();
+          if (attr)
           {
-            AttributeDesc       *desc    = (AttributeDesc *) attr_list->data;
-            Player::AttributeId *attr_id = Player::AttributeId::Create (desc, GetDataOwner ());
-            Attribute           *attr    = player->GetAttribute (attr_id);
-
-            attr_id->Release ();
-            if (attr)
-            {
-              attr->TreeStoreSet (model, &iter,
-                                  i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-              attr->TreeStoreSet (model, &iter,
-                                  i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-              attr->TreeStoreSet (model, &iter,
-                                  i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
-            }
-            else
-            {
-              desc->TreeStoreSetDefault (model, &iter,
-                                         i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
-              desc->TreeStoreSetDefault (model, &iter,
-                                         i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
-              desc->TreeStoreSetDefault (model, &iter,
-                                         i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
-            }
-            attr_list = g_slist_next (attr_list);
+            attr->TreeStoreSet (model, &iter,
+                                i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
+            attr->TreeStoreSet (model, &iter,
+                                i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
+            attr->TreeStoreSet (model, &iter,
+                                i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
           }
-
-          gtk_tree_store_set (model, &iter,
-                              gtk_tree_model_get_n_columns (GTK_TREE_MODEL (model)) - 1,
-                              player, -1);
+          else
+          {
+            desc->TreeStoreSetDefault (model, &iter,
+                                       i*AttributeDesc::NB_LOOK + AttributeDesc::LONG_TEXT,  AttributeDesc::LONG_TEXT);
+            desc->TreeStoreSetDefault (model, &iter,
+                                       i*AttributeDesc::NB_LOOK + AttributeDesc::SHORT_TEXT, AttributeDesc::SHORT_TEXT);
+            desc->TreeStoreSetDefault (model, &iter,
+                                       i*AttributeDesc::NB_LOOK + AttributeDesc::GRAPHICAL,  AttributeDesc::GRAPHICAL);
+          }
+          attr_list = g_slist_next (attr_list);
         }
+
+        gtk_tree_store_set (model, &iter,
+                            gtk_tree_model_get_n_columns (GTK_TREE_MODEL (model)) - 1,
+                            player, -1);
       }
     }
   }
@@ -317,6 +280,20 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::TogglePlayerAttr (Player              *player,
+                                      Player::AttributeId *attr_id,
+                                      gboolean             new_value)
+  {
+    if (player)
+    {
+      player->SetAttributeValue (attr_id,
+                                 new_value);
+
+      Update (player);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::OnCellToggled (gchar         *path_string,
                                    gboolean       is_active,
                                    AttributeDesc *desc)
@@ -338,21 +315,9 @@ namespace People
         {
           Player *p = (Player *) current_player->data;
 
-          if (p)
-          {
-            if (is_active)
-            {
-              p->SetAttributeValue (attr_id,
-                                    (guint) 0);
-            }
-            else
-            {
-              p->SetAttributeValue (attr_id,
-                                    1);
-            }
-
-            Update (p);
-          }
+          TogglePlayerAttr (p,
+                            attr_id,
+                            !is_active);
           current_player = g_slist_next (current_player);
         }
 
@@ -363,21 +328,9 @@ namespace People
     {
       Player *p = GetPlayer (path_string);
 
-      if (p)
-      {
-        if (is_active)
-        {
-          p->SetAttributeValue (attr_id,
-                                (guint) 0);
-        }
-        else
-        {
-          p->SetAttributeValue (attr_id,
-                                1);
-        }
-
-        Update (p);
-      }
+      TogglePlayerAttr (p,
+                        attr_id,
+                        !is_active);
     }
     attr_id->Release ();
     gtk_tree_path_free (toggeled_path);
@@ -769,21 +722,24 @@ namespace People
     while (current)
     {
       GtkTreeRowReference *current_ref;
-      GtkTreePath         *current_path;
       Player              *p = (Player *) current->data;
 
       current_ref = _store->GetTreeRowRef (model,
                                             p);
-      current_path = gtk_tree_row_reference_get_path (current_ref);
-      if (gtk_tree_path_compare (path,
-                                 current_path) == 0)
+      if (current_ref)
       {
-        result = p;
+        GtkTreePath *current_path = gtk_tree_row_reference_get_path (current_ref);
+
+        if (gtk_tree_path_compare (path,
+                                   current_path) == 0)
+        {
+          result = p;
+          gtk_tree_path_free (current_path);
+          break;
+        }
         gtk_tree_path_free (current_path);
-        break;
       }
 
-      gtk_tree_path_free (current_path);
       current = g_slist_next (current);
     }
     gtk_tree_path_free (path);

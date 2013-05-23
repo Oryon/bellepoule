@@ -68,21 +68,6 @@ Schedule::Schedule (Contest *contest)
   // Formula dialog
   {
     GtkWidget *menu_pool = gtk_menu_new ();
-    GtkWidget *content_area;
-
-    _formula_dlg = gtk_dialog_new_with_buttons (gettext ("Formula"),
-                                                NULL,
-                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                GTK_STOCK_OK,
-                                                GTK_RESPONSE_ACCEPT,
-                                                GTK_STOCK_CANCEL,
-                                                GTK_RESPONSE_REJECT,
-                                                NULL);
-
-    content_area = gtk_dialog_get_content_area (GTK_DIALOG (_formula_dlg));
-
-    gtk_widget_reparent (_glade->GetWidget ("dialog-vbox"),
-                         content_area);
 
     gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (_glade->GetWidget ("add_stage_toolbutton")),
                                    menu_pool);
@@ -94,7 +79,8 @@ Schedule::Schedule (Contest *contest)
 
       stage_class = Stage::GetClass (i);
 
-      if (stage_class->_rights & Stage::EDITABLE)
+      if (   (stage_class->_rights & Stage::EDITABLE)
+          && (stage_class->_rights & Stage::REMOVABLE))
       {
         menu_item = gtk_menu_item_new_with_label (stage_class->_name);
         g_signal_connect (menu_item, "button-release-event",
@@ -114,8 +100,6 @@ Schedule::Schedule (Contest *contest)
 Schedule::~Schedule ()
 {
   RemoveAllStages ();
-
-  gtk_widget_destroy (_formula_dlg);
 }
 
 // --------------------------------------------------------------------------------
@@ -215,6 +199,8 @@ void Schedule::CreateDefault (gboolean without_pools)
     }
     SetCurrentStage (0);
   }
+
+  DisplayConfig ();
 }
 
 // --------------------------------------------------------------------------------
@@ -252,7 +238,7 @@ gboolean Schedule::ScoreStuffingIsAllowed ()
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::DisplayList ()
+void Schedule::DisplayConfig ()
 {
   gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("add_stage_toolbutton")),
                             TRUE);
@@ -291,27 +277,28 @@ void Schedule::DisplayList ()
                                                 &iter);
     }
   }
+}
 
-  if (gtk_dialog_run (GTK_DIALOG (_formula_dlg)) == GTK_RESPONSE_ACCEPT)
+// --------------------------------------------------------------------------------
+void Schedule::ApplyNewConfig ()
+{
+  Stage *current_stage;
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
   {
-    Stage *current_stage;
-
-    for (guint i = 0; i < g_list_length (_stage_list); i++)
-    {
-      current_stage = (Stage *) g_list_nth_data (_stage_list,
-                                                 i);
-      current_stage->ApplyConfig ();
-    }
-
-    for (guint i = 0; i < g_list_length (_stage_list); i++)
-    {
-      current_stage = (Stage *) g_list_nth_data (_stage_list,
-                                                 i);
-      RefreshStageName (current_stage);
-    }
+    current_stage = (Stage *) g_list_nth_data (_stage_list,
+                                               i);
+    current_stage->ApplyConfig ();
   }
+
+  for (guint i = 0; i < g_list_length (_stage_list); i++)
+  {
+    current_stage = (Stage *) g_list_nth_data (_stage_list,
+                                               i);
+    RefreshStageName (current_stage);
+  }
+
   MakeDirty ();
-  gtk_widget_hide (_formula_dlg);
 }
 
 // --------------------------------------------------------------------------------
@@ -800,6 +787,7 @@ void Schedule::Load (xmlDoc          *doc,
   xmlXPathFreeContext (xml_context);
 
   SetCurrentStage (current_stage_index);
+  DisplayConfig ();
 }
 
 // --------------------------------------------------------------------------------
@@ -933,26 +921,38 @@ void Schedule::RefreshSensitivity ()
 // --------------------------------------------------------------------------------
 void Schedule::OnPlugged ()
 {
-  GtkToolbar *toolbar = GetToolbar ();
-  GtkWidget  *w;
+  GtkWidget *w;
 
-  w = _glade->GetWidget ("previous_stage_toolbutton");
-  _glade->DetachFromParent (w);
-  gtk_toolbar_insert (toolbar,
-                      GTK_TOOL_ITEM (w),
-                      -1);
+  {
+    GtkToolbar *toolbar = GetToolbar ();
 
-  w = _glade->GetWidget ("next_stage_toolbutton");
-  _glade->DetachFromParent (w);
-  gtk_toolbar_insert (toolbar,
-                      GTK_TOOL_ITEM (w),
-                      -1);
+    w = _glade->GetWidget ("previous_stage_toolbutton");
+    _glade->DetachFromParent (w);
+    gtk_toolbar_insert (toolbar,
+                        GTK_TOOL_ITEM (w),
+                        -1);
 
-  w = _glade->GetWidget ("error_toolbutton");
-  _glade->DetachFromParent (w);
-  gtk_toolbar_insert (toolbar,
-                      GTK_TOOL_ITEM (w),
-                      -1);
+    w = _glade->GetWidget ("next_stage_toolbutton");
+    _glade->DetachFromParent (w);
+    gtk_toolbar_insert (toolbar,
+                        GTK_TOOL_ITEM (w),
+                        -1);
+
+    w = _glade->GetWidget ("error_toolbutton");
+    _glade->DetachFromParent (w);
+    gtk_toolbar_insert (toolbar,
+                        GTK_TOOL_ITEM (w),
+                        -1);
+  }
+
+  {
+    GtkContainer *config_container = GetConfigContainer ();
+
+    w = _glade->GetWidget ("config_vbox");
+    _glade->DetachFromParent (w);
+    gtk_container_add (config_container,
+                       w);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1204,22 +1204,6 @@ void Schedule::PlugStage (Stage *stage)
 void Schedule::on_stage_removed ()
 {
   {
-    GtkContainer *container   = GTK_CONTAINER (_glade->GetWidget ("module_config_hook"));
-    GList        *widget_list = gtk_container_get_children (container);
-
-    if (widget_list)
-    {
-      GtkWidget *config_widget = (GtkWidget *) widget_list->data;
-
-      if (config_widget)
-      {
-        gtk_container_remove (container,
-                              config_widget);
-      }
-    }
-  }
-
-  {
     GtkWidget        *treeview = _glade->GetWidget ("formula_treeview");
     GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
     GtkTreeIter       filter_iter;
@@ -1228,9 +1212,9 @@ void Schedule::on_stage_removed ()
                                          NULL,
                                          &filter_iter))
     {
-      Stage       *stage;
-      Stage       *input_provider;
-      GtkTreeIter  iter;
+      Stage             *stage;
+      Stage::StageClass *stage_class;
+      GtkTreeIter        iter;
 
       gtk_tree_model_filter_convert_iter_to_child_iter (_list_store_filter,
                                                         &iter,
@@ -1240,12 +1224,33 @@ void Schedule::on_stage_removed ()
                           STAGE_ptr, &stage,
                           -1);
 
-      input_provider = stage->GetInputProvider ();
+      stage_class = stage->GetClass ();
+      if (stage_class->_rights & Stage::REMOVABLE)
+      {
+        Stage *input_provider = stage->GetInputProvider ();
 
-      RemoveStage (stage);
-      RemoveStage (input_provider);
+        RemoveStage (stage);
+        RemoveStage (input_provider);
+
+        {
+          GtkContainer *container   = GTK_CONTAINER (_glade->GetWidget ("module_config_hook"));
+          GList        *widget_list = gtk_container_get_children (container);
+
+          if (widget_list)
+          {
+            GtkWidget *config_widget = (GtkWidget *) widget_list->data;
+
+            if (config_widget)
+            {
+              gtk_container_remove (container,
+                                    config_widget);
+            }
+          }
+        }
+      }
     }
 
+    // Select the last item if the focus is lost
     if (gtk_tree_selection_get_selected (selection,
                                          NULL,
                                          &filter_iter) == FALSE)
@@ -1258,7 +1263,7 @@ void Schedule::on_stage_removed ()
         gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_list_store_filter),
                                        &filter_iter,
                                        NULL,
-                                       n);
+                                       n-1);
         gtk_tree_selection_select_iter (selection,
                                         &filter_iter);
       }

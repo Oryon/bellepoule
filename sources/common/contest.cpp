@@ -255,8 +255,7 @@ Contest::Contest ()
   {
     _referees_list = new People::RefereesList (this);
     Plug (_referees_list,
-          _glade->GetWidget ("referees_viewport"),
-          NULL);
+          _glade->GetWidget ("referees_viewport"));
 
     gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
                             0);
@@ -283,7 +282,8 @@ Contest::Contest ()
 
     Plug (_schedule,
           _glade->GetWidget ("schedule_viewport"),
-          GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")));
+          GTK_TOOLBAR (_glade->GetWidget ("contest_toolbar")),
+          GTK_CONTAINER (_glade->GetWidget ("formula_alignment")));
   }
 
   {
@@ -504,7 +504,7 @@ void Contest::OpenMemoryContest (Net::Downloader::CallbackData *cbk_data)
         _start_time->HideProperties   (_glade);
 
         gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
-                                  1);
+                                  2);
       }
     }
 
@@ -768,6 +768,8 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
     _ref_translation_table = NULL;
   }
 
+  FillInProperties ();
+
   _state = OPERATIONAL;
   _schedule->OnLoadingCompleted ();
 }
@@ -928,20 +930,12 @@ Contest *Contest::Create ()
                                               NULL);
 
   contest->FillInProperties ();
+  contest->_schedule->CreateDefault ();
 
   {
-    if (gtk_dialog_run (GTK_DIALOG (contest->_properties_dialog)) == TRUE)
-    {
-      contest->_schedule->CreateDefault ();
-      contest->ReadProperties ();
-      gtk_widget_hide (contest->_properties_dialog);
-    }
-    else
-    {
-      gtk_widget_hide (contest->_properties_dialog);
-      Object::TryToRelease (contest);
-      contest = NULL;
-    }
+    gtk_dialog_run (GTK_DIALOG (contest->_properties_dialog));
+    contest->ReadProperties ();
+    gtk_widget_hide (contest->_properties_dialog);
   }
 
   return contest;
@@ -1271,15 +1265,7 @@ void Contest::ReadProperties ()
     }
   }
 
-  {
-    gboolean event = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("team_radiobutton")));
-
-    if (event != _team_event)
-    {
-      _team_event = event;
-      _schedule->SetTeamEvent (_team_event);
-    }
-  }
+  ReadTeamProperty ();
 
   {
     g_key_file_set_string (_config_file,
@@ -1303,7 +1289,20 @@ void Contest::ReadProperties ()
                            _location);
   }
 
+  _schedule->ApplyNewConfig ();
   DisplayProperties ();
+}
+
+// --------------------------------------------------------------------------------
+void Contest::ReadTeamProperty ()
+{
+  gboolean event = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("team_radiobutton")));
+
+  if (event != _team_event)
+  {
+    _team_event = event;
+    _schedule->SetTeamEvent (_team_event);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -1370,6 +1369,14 @@ void Contest::AttachTo (GtkNotebook *to)
   gtk_notebook_set_tab_reorderable (_notebook,
                                     GetRootWidget (),
                                     TRUE);
+
+  {
+    People::CheckinSupervisor *checkin;
+
+    checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
+
+    checkin->AddSensitiveWidget (_glade->GetWidget ("team_vbox"));
+  }
 
   DisplayProperties ();
 }
@@ -1870,28 +1877,10 @@ extern "C" G_MODULE_EXPORT void on_properties_toolbutton_clicked (GtkWidget *wid
 // --------------------------------------------------------------------------------
 void Contest::on_properties_toolbutton_clicked ()
 {
-  FillInProperties ();
-  if (gtk_dialog_run (GTK_DIALOG (_properties_dialog)) == TRUE)
-  {
-    ReadProperties ();
-    MakeDirty ();
-  }
+  gtk_dialog_run (GTK_DIALOG (_properties_dialog));
+  ReadProperties ();
+  MakeDirty ();
   gtk_widget_hide (_properties_dialog);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_formula_toolbutton_clicked (GtkWidget *widget,
-                                                               Object    *owner)
-{
-  Contest *c = dynamic_cast <Contest *> (owner);
-
-  c->on_formula_toolbutton_clicked ();
-}
-
-// --------------------------------------------------------------------------------
-void Contest::on_formula_toolbutton_clicked ()
-{
-  _schedule->DisplayList ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1952,6 +1941,12 @@ gchar *Contest::GetOrganizer ()
 gchar *Contest::GetWeapon ()
 {
   return gettext (weapon_image[_weapon]);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Contest::IsTeamEvent ()
+{
+  return _team_event;
 }
 
 // --------------------------------------------------------------------------------
@@ -2066,4 +2061,13 @@ extern "C" G_MODULE_EXPORT void on_referees_toolbutton_toggled (GtkToggleToolBut
   Contest *c = dynamic_cast <Contest *> (owner);
 
   c->on_referees_toolbutton_toggled (widget);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_team_radiobutton_toggled (GtkToggleToolButton *widget,
+                                                             Object              *owner)
+{
+  Contest *c = dynamic_cast <Contest *> (owner);
+
+  c->ReadTeamProperty ();
 }

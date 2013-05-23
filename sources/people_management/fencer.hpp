@@ -18,6 +18,7 @@
 #define fencer_hpp
 
 #include "common/player.hpp"
+#include "team.hpp"
 
 class Fencer : public Player
 {
@@ -28,9 +29,14 @@ class Fencer : public Player
 
     const gchar *GetXmlTag ();
 
+    void SetTeam (Team *team);
+
+    Team *GetTeam ();
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_tag;
+    Team               *_team;
 
     Fencer ();
 

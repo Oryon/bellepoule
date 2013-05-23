@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "fencer.hpp"
 #include "players_store.hpp"
 
 namespace People
@@ -70,22 +71,31 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersStore::Append (Player *player)
   {
+    Team *team = NULL;
+
     if (player->Is ("Team") == FALSE)
     {
       Append (&_flat_store,
               player,
               NULL);
+
+      if (player->Is ("Fencer"))
+      {
+        Fencer *fencer = (Fencer *) player;
+
+        team = fencer->GetTeam ();
+      }
     }
 
     Append (&_tree_store,
             player,
-            player->GetTeam ());
+            team);
   }
 
   // --------------------------------------------------------------------------------
   void PlayersStore::Append (StoreObject *store,
                              Player      *player,
-                             Player      *team)
+                             Team        *team)
   {
     GtkTreeIter team_iter;
     gboolean    has_team = FALSE;
@@ -94,7 +104,7 @@ namespace People
       if (team)
       {
         GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) team->GetPtrData (store,
-                                                                                                         "tree_row_ref"));
+                                                                                                       "tree_row_ref"));
 
         if (path)
         {

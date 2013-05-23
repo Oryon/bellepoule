@@ -37,10 +37,13 @@ class Module : public virtual Object
 
     guint32 _rand_seed;
 
-    void Plug (Module     *module,
-               GtkWidget  *in,
-               GtkToolbar *toolbar = NULL);
+    void Plug (Module       *module,
+               GtkWidget    *in,
+               GtkToolbar   *toolbar          = NULL,
+               GtkContainer *config_container = NULL);
     void UnPlug ();
+
+    void AddSensitiveWidget (GtkWidget *w);
 
     void Print (const gchar  *job_name,
                 GtkPageSetup *page_setup = NULL);
@@ -123,7 +126,8 @@ class Module : public virtual Object
 
     GtkToolbar *GetToolbar ();
 
-    void AddSensitiveWidget (GtkWidget *w);
+    GtkContainer *GetConfigContainer ();
+
     void EnableSensitiveWidgets ();
     void DisableSensitiveWidgets ();
 
@@ -164,6 +168,7 @@ class Module : public virtual Object
 
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;
+    GtkContainer       *_config_container;
     SensitivityTrigger  _sensitivity_trigger;
     GSList             *_plugged_list;
     GtkWidget          *_config_widget;

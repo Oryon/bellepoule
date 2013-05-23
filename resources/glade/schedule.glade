@@ -2,72 +2,100 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkDialog" id="config_popup">
+  <object class="GtkWindow" id="config_window">
     <property name="can_focus">False</property>
-    <property name="border_width">5</property>
-    <property name="type_hint">normal</property>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox">
+    <child>
+      <object class="GtkVBox" id="config_vbox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
+        <child>
+          <object class="GtkToolbar" id="config_toolbar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
             <child>
-              <placeholder/>
+              <object class="GtkMenuToolButton" id="add_stage_toolbutton">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">Add</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-add</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkToolButton" id="remove_stage_toolbutton">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">Remove</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-remove</property>
+                <signal name="clicked" handler="on_remove_stage_toolbutton_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="pack_type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkVBox" id="vbox2">
+          <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="spacing">20</property>
             <child>
-              <object class="GtkToolbar" id="config_toolbar">
+              <object class="GtkFrame" id="frame1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">none</property>
                 <child>
-                  <object class="GtkMenuToolButton" id="add_stage_toolbutton">
+                  <object class="GtkTreeView" id="formula_treeview">
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Add</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-add</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">stage_liststore_filter</property>
+                    <property name="headers_visible">False</property>
+                    <property name="headers_clickable">False</property>
+                    <property name="search_column">0</property>
+                    <signal name="cursor-changed" handler="on_formula_treeview_cursor_changed" swapped="no"/>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                        <property name="title">Schedule</property>
+                        <child>
+                          <object class="GtkCellRendererPixbuf" id="lock_cellrendererpixbuf"/>
+                          <attributes>
+                            <attribute name="stock-id">1</attribute>
+                          </attributes>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="name_cellrenderertext"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
                 </child>
-                <child>
-                  <object class="GtkToolButton" id="remove_stage_toolbutton">
+                <child type="label">
+                  <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
                     <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Remove</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-remove</property>
-                    <signal name="clicked" handler="on_remove_stage_toolbutton_clicked" swapped="no"/>
+                    <property name="label" translatable="yes">&lt;b&gt;Schedule&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -77,91 +105,30 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox1">
+              <object class="GtkFrame" id="frame2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="spacing">20</property>
+                <property name="label_xalign">0</property>
                 <child>
-                  <object class="GtkFrame" id="frame1">
+                  <object class="GtkAspectFrame" id="module_config_hook">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label_xalign">0</property>
                     <property name="shadow_type">none</property>
+                    <property name="xalign">1</property>
+                    <property name="yalign">0</property>
                     <child>
-                      <object class="GtkTreeView" id="formula_treeview">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="model">stage_liststore_filter</property>
-                        <property name="headers_visible">False</property>
-                        <property name="headers_clickable">False</property>
-                        <property name="search_column">0</property>
-                        <signal name="cursor-changed" handler="on_formula_treeview_cursor_changed" swapped="no"/>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-                            <property name="title">Schedule</property>
-                            <child>
-                              <object class="GtkCellRendererPixbuf" id="lock_cellrendererpixbuf"/>
-                              <attributes>
-                                <attribute name="stock-id">1</attribute>
-                              </attributes>
-                            </child>
-                            <child>
-                              <object class="GtkCellRendererText" id="name_cellrenderertext"/>
-                              <attributes>
-                                <attribute name="text">0</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child type="label">
-                      <object class="GtkLabel" id="label1">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;b&gt;Schedule&lt;/b&gt;</property>
-                        <property name="use_markup">True</property>
-                      </object>
+                      <placeholder/>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
-                <child>
-                  <object class="GtkFrame" id="frame2">
+                <child type="label">
+                  <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
-                    <child>
-                      <object class="GtkAspectFrame" id="module_config_hook">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">none</property>
-                        <property name="xalign">1</property>
-                        <property name="yalign">0</property>
-                        <child>
-                          <placeholder/>
-                        </child>
-                      </object>
-                    </child>
-                    <child type="label">
-                      <object class="GtkLabel" id="label2">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;b&gt;Parameters&lt;/b&gt;</property>
-                        <property name="use_markup">True</property>
-                      </object>
-                    </child>
+                    <property name="label" translatable="yes">&lt;b&gt;Parameters&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
                   </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
               <packing>

@@ -48,15 +48,18 @@ namespace People
 
       static void OnAvailabilityChanged (Player    *referee,
                                          Attribute *attr,
-                                         Object    *owner);
+                                         Object    *owner,
+                                         guint      step);
 
       static void OnAttendingChanged (Player    *referee,
                                       Attribute *attr,
-                                      Object    *owner);
+                                      Object    *owner,
+                                      guint      step);
 
       static void OnParticipationRateChanged (Player    *referee,
                                               Attribute *attr,
-                                              Object    *owner);
+                                              Object    *owner,
+                                              guint      step);
 
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,

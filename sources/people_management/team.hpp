@@ -28,9 +28,29 @@ class Team : public Player
 
     const gchar *GetXmlTag ();
 
+    void AddMember (Player *member);
+
+    void UpdateMembers ();
+
+    void RemoveMember (Player *member);
+
+    GSList *GetMemberList ();
+
+    void SetAttendingFromMembers ();
+
+    void SetRankFromMembers (Player::AttributeId *criteria);
+
+    void SetDefaultClassification (guint default_classification);
+
+    void SetMinimumSize (guint size);
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_tag;
+
+    GSList *_member_list;
+    guint   _default_classification;
+    guint   _minimum_size;
 
     Team ();
 
@@ -39,6 +59,9 @@ class Team : public Player
     Player *Clone ();
 
     void Load (xmlNode *xml_node);
+
+    static gint CompareRank (guint a,
+                             guint b);
 };
 
 #endif

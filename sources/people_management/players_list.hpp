@@ -72,6 +72,8 @@ namespace People
 
       virtual ~PlayersList ();
 
+      void UpdateHierarchy (Player *player);
+
       void RemoveSelection ();
 
       void Remove (Player *player);
@@ -90,9 +92,13 @@ namespace People
       Player *GetPlayerWithAttribute (Player::AttributeId *attr_id,
                                       Attribute           *attr);
 
-      virtual void ShowTeams ();
+      virtual void SelectTreeMode ();
 
-      virtual void HideTeams ();
+      virtual void SelectFlatMode ();
+
+      virtual void TogglePlayerAttr (Player              *player,
+                                     Player::AttributeId *attr_id,
+                                     gboolean             new_value);
 
     private:
       guint         _rights;
@@ -104,8 +110,6 @@ namespace People
       PlayersStore *_store;
 
       void RefreshDisplay ();
-
-      void UpdateTeam (Player *player);
 
       void SetColumn (guint           id,
                       Filter::Layout *attr_layout,

@@ -38,14 +38,15 @@ Module::Module (const gchar *glade_file,
                 const gchar *root)
 : Object ("Module")
 {
-  _plugged_list   = NULL;
-  _owner          = NULL;
-  _data_owner     = this;
-  _root           = NULL;
-  _glade          = NULL;
-  _toolbar        = NULL;
-  _filter         = NULL;
-  _rand_seed      = 0;
+   _plugged_list     = NULL;
+   _owner            = NULL;
+   _data_owner       = this;
+   _root             = NULL;
+   _glade            = NULL;
+   _toolbar          = NULL;
+   _config_container = NULL;
+   _filter           = NULL;
+   _rand_seed        = 0;
 
   _print_settings            = gtk_print_settings_new ();
   _page_setup_print_settings = gtk_print_settings_new ();
@@ -316,9 +317,10 @@ Filter *Module::GetFilter ()
 }
 
 // --------------------------------------------------------------------------------
-void Module::Plug (Module     *module,
-                   GtkWidget  *in,
-                   GtkToolbar *toolbar)
+void Module::Plug (Module       *module,
+                   GtkWidget    *in,
+                   GtkToolbar   *toolbar,
+                   GtkContainer *config_container)
 {
   if (module)
   {
@@ -328,7 +330,8 @@ void Module::Plug (Module     *module,
                          module->_root);
     }
 
-    module->_toolbar = toolbar;
+    module->_toolbar          = toolbar;
+    module->_config_container = config_container;
 
     _plugged_list = g_slist_append (_plugged_list,
                                     module);
@@ -414,6 +417,12 @@ GtkWidget *Module::GetRootWidget ()
 GtkToolbar *Module::GetToolbar ()
 {
   return _toolbar;
+}
+
+// --------------------------------------------------------------------------------
+GtkContainer *Module::GetConfigContainer ()
+{
+  return _config_container;
 }
 
 // --------------------------------------------------------------------------------

@@ -91,11 +91,12 @@ class Contest : public Module
     gchar *GetDefaultFileName ();
     gchar *GetGender ();
     gchar *GetCategory ();
+    gboolean IsTeamEvent ();
 
   public:
+    void ReadTeamProperty                 ();
     void on_save_toolbutton_clicked       ();
     void on_properties_toolbutton_clicked ();
-    void on_formula_toolbutton_clicked    ();
     void on_contest_close_button_clicked  ();
     void on_calendar_button_clicked       ();
     void on_web_site_button_clicked       ();
