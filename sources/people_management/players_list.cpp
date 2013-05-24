@@ -701,6 +701,18 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::ExpandAll ()
+  {
+    gtk_tree_view_expand_all (_tree_view);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::CollapseAll ()
+  {
+    gtk_tree_view_collapse_all (_tree_view);
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::OnListChanged ()
   {
     MakeDirty ();

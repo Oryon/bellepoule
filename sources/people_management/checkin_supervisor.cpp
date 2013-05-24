@@ -861,4 +861,26 @@ namespace People
                                     event);
 
   }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_expand_eventbox_button_press_event (GtkWidget *widget,
+                                                                             GdkEvent  *event,
+                                                                             Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+    supervisor->ExpandAll ();
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_collapse_eventbox_button_press_event (GtkWidget *widget,
+                                                                               GdkEvent  *event,
+                                                                               Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+    supervisor->CollapseAll ();
+    return TRUE;
+  }
 }

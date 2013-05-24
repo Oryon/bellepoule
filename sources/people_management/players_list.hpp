@@ -60,6 +60,10 @@ namespace People
                          GtkPrintContext   *context,
                          gint               page_nr);
 
+      void ExpandAll ();
+
+      void CollapseAll ();
+
       static const guint NO_RIGHT   = 0x00000000;
       static const guint SORTABLE   = 0x00000001;
       static const guint MODIFIABLE = 0x00000002;
