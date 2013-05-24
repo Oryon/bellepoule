@@ -709,6 +709,15 @@ namespace People
     }
     else if (player->Is ("Fencer"))
     {
+      Fencer *fencer = (Fencer *) player;
+      Team   *team   = fencer->GetTeam ();
+
+      if (team)
+      {
+        fencer->SetTeam (NULL);
+        team->SetAttendingFromMembers ();
+        Update (team);
+      }
     }
   }
 

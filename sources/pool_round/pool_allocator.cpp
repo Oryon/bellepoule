@@ -264,15 +264,15 @@ namespace Pool
     Player   *floating_object = (Player *) object;
     PoolZone *pool_zone       = (PoolZone *) from_zone;
 
-    if (floating_object->Is ("Fencer"))
+    if (floating_object->Is ("Referee"))
+    {
+      pool_zone->RemoveObject (floating_object);
+    }
+    else
     {
       Pool *pool = pool_zone->GetPool ();
 
       pool->RemoveFencer (floating_object);
-    }
-    else
-    {
-      pool_zone->RemoveObject (floating_object);
     }
 
     FillPoolTable (pool_zone);
@@ -288,7 +288,7 @@ namespace Pool
     Player   *floating_object = (Player *) object;
     PoolZone *pool_zone       = NULL;
 
-    if (floating_object->Is ("Fencer"))
+    if (floating_object->Is ("Referee") == FALSE)
     {
       Pool *target_pool;
 
@@ -331,12 +331,12 @@ namespace Pool
   {
     Player *player = (Player *) object;
 
-    if (player && player->Is ("Fencer"))
+    if (player && player->Is ("Referee"))
     {
-      return Locked ();
+      return FALSE;
     }
 
-    return FALSE;
+    return Locked ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1250,7 +1250,7 @@ namespace Pool
     {
       Pool *pool = zone->GetPool ();
 
-      if (player->Is ("Fencer") == FALSE)
+      if (player->Is ("Referee"))
       {
         static gchar  *referee_icon = NULL;
 
@@ -1328,17 +1328,17 @@ namespace Pool
 
         if (item)
         {
-          if (player->Is ("Fencer"))
+          if (player->Is ("Referee"))
           {
             g_object_set (G_OBJECT (item),
-                          "font", "Sans 14px",
+                          "font", "Sans Bold Italic 14px",
                           "fill_color", "black",
                           NULL);
           }
           else
           {
             g_object_set (G_OBJECT (item),
-                          "font", "Sans Bold Italic 14px",
+                          "font", "Sans 14px",
                           "fill_color", "black",
                           NULL);
           }
