@@ -294,7 +294,7 @@ namespace People
     }
 
     {
-      gchar *prg_name = g_get_prgname ();
+      const gchar *prg_name = g_get_prgname ();
 
       if (prg_name)
       {
