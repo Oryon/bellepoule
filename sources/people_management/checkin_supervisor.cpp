@@ -52,7 +52,7 @@ namespace People
       AddSensitiveWidget (_glade->GetWidget ("import_toolbutton"));
       AddSensitiveWidget (_glade->GetWidget ("all_present_button"));
       AddSensitiveWidget (_glade->GetWidget ("all_absent_button"));
-      AddSensitiveWidget (_glade->GetWidget ("default_classification_entry"));
+      AddSensitiveWidget (_glade->GetWidget ("team_table"));
       AddSensitiveWidget (_glade->GetWidget ("teamsize_entry"));
     }
 
@@ -568,18 +568,20 @@ namespace People
     if (team_event)
     {
       SelectTreeMode ();
-      gtk_widget_show (_glade->GetWidget ("default_classification_label"));
-      gtk_widget_show (_glade->GetWidget ("default_classification_viewport"));
+      gtk_widget_show (_glade->GetWidget ("team_classification_label"));
+      gtk_widget_show (_glade->GetWidget ("team_classification_viewport"));
       gtk_widget_show (_glade->GetWidget ("teamsize_label"));
       gtk_widget_show (_glade->GetWidget ("teamsize_viewport"));
+      gtk_widget_show (_glade->GetWidget ("tree_control_hbox"));
     }
     else
     {
       SelectFlatMode ();
-      gtk_widget_hide (_glade->GetWidget ("default_classification_label"));
-      gtk_widget_hide (_glade->GetWidget ("default_classification_viewport"));
+      gtk_widget_hide (_glade->GetWidget ("team_classification_label"));
+      gtk_widget_hide (_glade->GetWidget ("team_classification_viewport"));
       gtk_widget_hide (_glade->GetWidget ("teamsize_label"));
       gtk_widget_hide (_glade->GetWidget ("teamsize_viewport"));
+      gtk_widget_hide (_glade->GetWidget ("tree_control_hbox"));
     }
   }
 

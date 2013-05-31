@@ -148,6 +148,16 @@ namespace People
   void PlayersList::UpdateHierarchy (Player *player)
   {
     _store->Update (player);
+
+    {
+      GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
+      GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model), player);
+      GtkTreePath         *path  = gtk_tree_row_reference_get_path (ref);
+
+      gtk_tree_view_expand_to_path (_tree_view,
+                                    path);
+      gtk_tree_path_free (path);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -159,8 +169,8 @@ namespace People
 
     if (ref)
     {
-      GtkTreePath         *path;
-      GtkTreeIter          iter;
+      GtkTreePath *path;
+      GtkTreeIter  iter;
 
       path = gtk_tree_row_reference_get_path (ref);
       gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
