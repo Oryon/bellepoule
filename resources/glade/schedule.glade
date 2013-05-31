@@ -12,6 +12,7 @@
           <object class="GtkToolbar" id="config_toolbar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="toolbar_style">both</property>
             <child>
               <object class="GtkMenuToolButton" id="add_stage_toolbutton">
                 <property name="visible">True</property>
@@ -172,6 +173,7 @@
           <object class="GtkToolbar" id="toolbar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="toolbar_style">both</property>
             <child>
               <object class="GtkToolButton" id="previous_stage_toolbutton">
                 <property name="visible">True</property>

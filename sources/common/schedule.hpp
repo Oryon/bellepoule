@@ -27,6 +27,7 @@
 namespace People
 {
   class Checkin;
+  class CheckinSupervisor;
 }
 
 class Contest;
@@ -37,7 +38,9 @@ class Schedule : public Module
     typedef void (Object::*StageEvent_t) ();
 
   public:
-     Schedule (Contest *contest);
+    Schedule (Contest *contest);
+
+    People::CheckinSupervisor *GetCheckinSupervisor ();
 
     void Freeze ();
 
@@ -56,8 +59,6 @@ class Schedule : public Module
                People::Checkin *referees);
 
     void OnLoadingCompleted ();
-
-    Stage *GetStage (guint index);
 
     void RemoveAllStages ();
 
@@ -104,6 +105,8 @@ class Schedule : public Module
 
     void RemoveStage (Stage *stage);
 
+    Stage *GetStage (guint index);
+
     void LoadStage (Stage   *stage,
                     xmlNode *xml_node,
                     guint   *nb_stage,
@@ -130,6 +133,7 @@ class Schedule : public Module
     void PlugStage (Stage *stage);
     void RefreshStageName (Stage *stage);
     void RemoveFromNotebook (Stage *stage);
+    Stage *CreateStage (const gchar *class_name);
 };
 
 #endif

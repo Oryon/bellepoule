@@ -21,8 +21,10 @@
 
 #include "people_management/general_classification.hpp"
 #include "people_management/checkin.hpp"
+#include "people_management/checkin_supervisor.hpp"
 
 #include "chapter.hpp"
+#include "contest.hpp"
 
 #include "schedule.hpp"
 
@@ -103,6 +105,31 @@ Schedule::~Schedule ()
 }
 
 // --------------------------------------------------------------------------------
+People::CheckinSupervisor *Schedule::GetCheckinSupervisor ()
+{
+  return dynamic_cast <People::CheckinSupervisor *> (GetStage (0));
+}
+
+// --------------------------------------------------------------------------------
+Stage *Schedule::CreateStage (const gchar *class_name)
+{
+  Stage *stage = Stage::CreateInstance (class_name);
+
+  if (stage && (g_ascii_strcasecmp (class_name, "checkin_stage") == 0))
+  {
+    Module *module = dynamic_cast <Module *> (stage);
+
+    if (module)
+    {
+      module->AddSensitiveWidget (GTK_WIDGET (_contest->GetPtrData (NULL,
+                                                                    "SensitiveWidgetForCheckinStage")));
+    }
+  }
+
+  return stage;
+}
+
+// --------------------------------------------------------------------------------
 void Schedule::Freeze ()
 {
   {
@@ -164,7 +191,7 @@ void Schedule::CreateDefault (gboolean without_pools)
   {
     Stage *stage;
 
-    stage = Stage::CreateInstance ("checkin_stage");
+    stage = CreateStage ("checkin_stage");
     if (stage)
     {
       AddStage (stage);
@@ -178,7 +205,7 @@ void Schedule::CreateDefault (gboolean without_pools)
 
     if (without_pools == FALSE)
     {
-      stage = Stage::CreateInstance ("pool_stage");
+      stage = CreateStage ("pool_stage");
       if (stage)
       {
         AddStage (stage);
@@ -186,13 +213,13 @@ void Schedule::CreateDefault (gboolean without_pools)
       }
     }
 
-    stage = Stage::CreateInstance ("PhaseDeTableaux");
+    stage = CreateStage ("PhaseDeTableaux");
     if (stage)
     {
       AddStage (stage);
     }
 
-    stage = Stage::CreateInstance ("ClassementGeneral");
+    stage = CreateStage ("ClassementGeneral");
     if (stage)
     {
       AddStage (stage);
@@ -679,7 +706,7 @@ void Schedule::Load (xmlDoc          *doc,
   xmlXPathContext *xml_context         = xmlXPathNewContext (doc);
   gint             current_stage_index = -1;
   gboolean         display_all         = FALSE;
-  Stage           *checkin_stage       = Stage::CreateInstance ("checkin_stage");
+  Stage           *checkin_stage       = CreateStage ("checkin_stage");
 
   {
     xmlNodeSet     *xml_nodeset;
@@ -738,9 +765,8 @@ void Schedule::Load (xmlDoc          *doc,
     g_free (path);
     for (guint i = 0; i < (guint) xml_nodeset->nodeNr; i++)
     {
-      Stage *stage;
+      Stage *stage = Stage::CreateInstance (xml_nodeset->nodeTab[i]);
 
-      stage = Stage::CreateInstance (xml_nodeset->nodeTab[i]);
       LoadStage (stage,
                  xml_nodeset->nodeTab[i],
                  &nb_stage,
@@ -761,21 +787,21 @@ void Schedule::Load (xmlDoc          *doc,
         current_stage_index = nb_stage-1;
         if (nb_stage == 1)
         {
-          stage = Stage::CreateInstance ("pool_stage");
+          stage = CreateStage ("pool_stage");
           if (stage)
           {
             AddStage (stage);
             GiveName (stage);
           }
 
-          stage = Stage::CreateInstance ("PhaseDeTableaux");
+          stage = CreateStage ("PhaseDeTableaux");
           if (stage)
           {
             AddStage (stage);
           }
         }
 
-        stage = Stage::CreateInstance ("ClassementGeneral");
+        stage = CreateStage ("ClassementGeneral");
         if (stage)
         {
           AddStage (stage);
@@ -822,7 +848,7 @@ void Schedule::LoadStage (Stage   *stage,
     }
 
     {
-      Stage *input_provider_client = Stage::CreateInstance (stage->GetInputProviderClient ());
+      Stage *input_provider_client = CreateStage (stage->GetInputProviderClient ());
 
       if (input_provider_client)
       {
@@ -962,7 +988,7 @@ gboolean Schedule::on_new_stage_selected (GtkWidget      *widget,
 {
   gchar *class_name = (gchar *) g_object_get_data (G_OBJECT (widget),
                                                    "Schedule::class_name");
-  Stage *stage = Stage::CreateInstance (class_name);
+  Stage *stage = owner->CreateStage (class_name);
   Stage *after = NULL;
 
   {

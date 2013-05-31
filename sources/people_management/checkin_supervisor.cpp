@@ -52,7 +52,7 @@ namespace People
       AddSensitiveWidget (_glade->GetWidget ("import_toolbutton"));
       AddSensitiveWidget (_glade->GetWidget ("all_present_button"));
       AddSensitiveWidget (_glade->GetWidget ("all_absent_button"));
-      AddSensitiveWidget (_glade->GetWidget ("default_classification_entry"));
+      AddSensitiveWidget (_glade->GetWidget ("team_table"));
       AddSensitiveWidget (_glade->GetWidget ("teamsize_entry"));
     }
 
@@ -311,8 +311,9 @@ namespace People
       Player::AttributeId  attr_id ("attending");
       GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
       GSList              *current_player = _player_list;
+      guint                ref = 1;
 
-      for (guint ref = 1; current_player; ref++)
+      while (current_player)
       {
         Player *p = (Player *) current_player->data;
 
@@ -339,6 +340,7 @@ namespace People
             if (GetState () == OPERATIONAL)
             {
               p->SetRef (ref);
+              ref++;
             }
           }
         }
@@ -568,18 +570,20 @@ namespace People
     if (team_event)
     {
       SelectTreeMode ();
-      gtk_widget_show (_glade->GetWidget ("default_classification_label"));
-      gtk_widget_show (_glade->GetWidget ("default_classification_viewport"));
+      gtk_widget_show (_glade->GetWidget ("team_classification_label"));
+      gtk_widget_show (_glade->GetWidget ("team_classification_viewport"));
       gtk_widget_show (_glade->GetWidget ("teamsize_label"));
       gtk_widget_show (_glade->GetWidget ("teamsize_viewport"));
+      gtk_widget_show (_glade->GetWidget ("tree_control_hbox"));
     }
     else
     {
       SelectFlatMode ();
-      gtk_widget_hide (_glade->GetWidget ("default_classification_label"));
-      gtk_widget_hide (_glade->GetWidget ("default_classification_viewport"));
+      gtk_widget_hide (_glade->GetWidget ("team_classification_label"));
+      gtk_widget_hide (_glade->GetWidget ("team_classification_viewport"));
       gtk_widget_hide (_glade->GetWidget ("teamsize_label"));
       gtk_widget_hide (_glade->GetWidget ("teamsize_viewport"));
+      gtk_widget_hide (_glade->GetWidget ("tree_control_hbox"));
     }
   }
 
@@ -612,9 +616,30 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::PresentPlayerFilter (Player      *player,
+                                                   PlayersList *owner)
+  {
+    if (Checkin::PresentPlayerFilter (player, owner))
+    {
+      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+      if (player->Is ("team"))
+      {
+        return (supervisor->_contest->IsTeamEvent () == TRUE);
+      }
+      else
+      {
+        return (supervisor->_contest->IsTeamEvent () == FALSE);
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   GSList *CheckinSupervisor::GetCurrentClassification ()
   {
-    GSList *result = CreateCustomList (PresentPlayerFilter);
+    GSList *result = CreateCustomList (PresentPlayerFilter, this);
 
     if (result)
     {
@@ -709,10 +734,15 @@ namespace People
     }
     else if (player->Is ("Fencer"))
     {
-      Player::AttributeId team_attr_id ("team");
+      Fencer *fencer = (Fencer *) player;
+      Team   *team   = fencer->GetTeam ();
 
-      player->SetAttributeValue (&team_attr_id,
-                                 (const gchar *) 0);
+      if (team)
+      {
+        fencer->SetTeam (NULL);
+        team->SetAttendingFromMembers ();
+        Update (team);
+      }
     }
   }
 
@@ -855,5 +885,27 @@ namespace People
     Checkin::OnPlayerEventFromForm (player,
                                     event);
 
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_expand_eventbox_button_press_event (GtkWidget *widget,
+                                                                             GdkEvent  *event,
+                                                                             Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+    supervisor->ExpandAll ();
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_collapse_eventbox_button_press_event (GtkWidget *widget,
+                                                                               GdkEvent  *event,
+                                                                               Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+    supervisor->CollapseAll ();
+    return TRUE;
   }
 }

@@ -60,6 +60,10 @@ namespace People
                          GtkPrintContext   *context,
                          gint               page_nr);
 
+      void ExpandAll ();
+
+      void CollapseAll ();
+
       static const guint NO_RIGHT   = 0x00000000;
       static const guint SORTABLE   = 0x00000001;
       static const guint MODIFIABLE = 0x00000002;
@@ -68,7 +72,7 @@ namespace People
       GtkTreeView *_tree_view;
       GSList      *_player_list;
 
-      typedef gboolean (*CustomFilter) (Player *player);
+      typedef gboolean (*CustomFilter) (Player *player, PlayersList *owner);
 
       virtual ~PlayersList ();
 
@@ -80,7 +84,8 @@ namespace People
 
       void SetSensitiveState (gboolean sensitive_value);
 
-      GSList *CreateCustomList (CustomFilter filter);
+      GSList *CreateCustomList (CustomFilter  filter,
+                                PlayersList  *owner);
 
       GSList *GetSelectedPlayers ();
 

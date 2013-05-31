@@ -69,7 +69,8 @@ namespace People
 
       virtual ~Checkin ();
 
-      static gboolean PresentPlayerFilter (Player *player);
+      static gboolean PresentPlayerFilter (Player      *player,
+                                           PlayersList *owner);
 
       virtual void Monitor (Player *player);
 

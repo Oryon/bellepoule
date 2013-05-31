@@ -308,6 +308,7 @@
               <object class="GtkToolbar" id="toolbar6">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="toolbar_style">both</property>
                 <child>
                   <object class="GtkToolButton" id="add_player_button">
                     <property name="visible">True</property>

@@ -238,7 +238,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Checkin::PresentPlayerFilter (Player *player)
+  gboolean Checkin::PresentPlayerFilter (Player      *player,
+                                         PlayersList *owner)
   {
     Player::AttributeId  attr_id ("attending");
     Attribute           *attr = player->GetAttribute (&attr_id);
@@ -294,7 +295,7 @@ namespace People
     }
 
     {
-      gchar *prg_name = g_get_prgname ();
+      const gchar *prg_name = g_get_prgname ();
 
       if (prg_name)
       {

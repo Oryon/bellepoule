@@ -44,10 +44,11 @@ namespace Pool
       typedef void (*StatusCbk) (Pool *pool,
                                  void *data);
 
-      Pool (Data    *max_score,
-            guint    number,
-            gchar    weapon_code,
-            guint32  rand_seed);
+      Pool (Data        *max_score,
+            guint        number,
+            gchar        weapon_code,
+            const gchar *xml_player_tag,
+            guint32      rand_seed);
 
       void  AddFencer     (Player *player, Object *rank_owner);
       void  AddReferee    (Player *player);
@@ -120,6 +121,7 @@ namespace Pool
       gboolean        _locked;
       GSList         *_display_data;
       guint           _nb_drop;
+      const gchar    *_xml_player_tag;
       MatchOrder     *_match_order;
 
       void           *_status_cbk_data;

@@ -21,6 +21,7 @@
 #include "pool_round/pool_supervisor.hpp"
 
 #include "classification.hpp"
+#include "contest.hpp"
 #include "player.hpp"
 
 #include "stage.hpp"
@@ -418,8 +419,6 @@ void Stage::RetrieveAttendees ()
   {
     _attendees = new Attendees ();
   }
-
-  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -717,6 +716,7 @@ Stage::StageClass *Stage::GetClass (const gchar *name)
 void Stage::SetContest (Contest *contest)
 {
   _contest = contest;
+  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -796,10 +796,11 @@ void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
 
+  _input_provider->SetContest (_contest);
+
   TryToRelease (_nb_qualified);
   _nb_qualified = input_provider->_nb_qualified;
   _nb_qualified->Retain ();
-
   InitQualifiedForm ();
 }
 
@@ -991,6 +992,19 @@ void Stage::SetScoreStuffingPolicy (gboolean allowed)
   else
   {
     _score_stuffing_trigger->SwitchOff ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Stage::GetXmlPlayerTag ()
+{
+  if (_contest->IsTeamEvent ())
+  {
+    return "Equipe";
+  }
+  else
+  {
+    return "Tireur";
   }
 }
 

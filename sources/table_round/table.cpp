@@ -25,9 +25,10 @@
 namespace Table
 {
   // --------------------------------------------------------------------------------
-  Table::Table (TableSet *table_set,
-                guint     size,
-                guint     number)
+  Table::Table (TableSet    *table_set,
+                const gchar *xml_player_tag,
+                guint        size,
+                guint        number)
     : Object ("Table")
   {
     _table_set          = table_set;
@@ -45,6 +46,7 @@ namespace Table
     _loaded             = FALSE;
     _node_table         = g_new (GNode *, _size);
     _free_node_index    = 0;
+    _xml_player_tag     = xml_player_tag;
 
     _match_list = NULL;
   }
@@ -380,7 +382,7 @@ namespace Table
             xmlFree (attr);
           }
         }
-        else if (strcmp ((char *) n->name, "Tireur") == 0)
+        else if (strcmp ((char *) n->name, _xml_player_tag) == 0)
         {
           if (A == NULL)
           {

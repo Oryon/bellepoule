@@ -148,6 +148,16 @@ namespace People
   void PlayersList::UpdateHierarchy (Player *player)
   {
     _store->Update (player);
+
+    {
+      GtkTreeStore        *model = GTK_TREE_STORE (gtk_tree_view_get_model (_tree_view));
+      GtkTreeRowReference *ref   = _store->GetTreeRowRef (GTK_TREE_MODEL (model), player);
+      GtkTreePath         *path  = gtk_tree_row_reference_get_path (ref);
+
+      gtk_tree_view_expand_to_path (_tree_view,
+                                    path);
+      gtk_tree_path_free (path);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -159,8 +169,8 @@ namespace People
 
     if (ref)
     {
-      GtkTreePath         *path;
-      GtkTreeIter          iter;
+      GtkTreePath *path;
+      GtkTreeIter  iter;
 
       path = gtk_tree_row_reference_get_path (ref);
       gtk_tree_model_get_iter (GTK_TREE_MODEL (model),
@@ -214,7 +224,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GSList *PlayersList::CreateCustomList (CustomFilter filter)
+  GSList *PlayersList::CreateCustomList (CustomFilter filter,
+                                         PlayersList *owner)
   {
     GSList *custom_list = NULL;
     GSList *current     = _player_list;
@@ -223,7 +234,7 @@ namespace People
     {
       Player *p = (Player *) current->data;
 
-      if (filter (p) == TRUE)
+      if (filter (p, owner) == TRUE)
       {
         custom_list = g_slist_append (custom_list,
                                       p);
@@ -672,12 +683,7 @@ namespace People
         if (gtk_tree_path_compare (selected_path,
                                    current_path) == 0)
         {
-          _store->Remove (p);
-
-          _player_list = g_slist_remove (_player_list,
-                                         p);
-          OnPlayerRemoved (p);
-          p->Release ();
+          Remove (p);
           gtk_tree_path_free (current_path);
           break;
         }
@@ -703,6 +709,18 @@ namespace People
 
     OnPlayerRemoved (player);
     player->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::ExpandAll ()
+  {
+    gtk_tree_view_expand_all (_tree_view);
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::CollapseAll ()
+  {
+    gtk_tree_view_collapse_all (_tree_view);
   }
 
   // --------------------------------------------------------------------------------

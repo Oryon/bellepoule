@@ -31,9 +31,10 @@ namespace Table
   class Table : public Object
   {
     public:
-      Table (TableSet *table_set,
-             guint     size,
-             guint     number);
+      Table (TableSet    *table_set,
+             const gchar *xml_player_tag,
+             guint        size,
+             guint        number);
 
       gchar *GetImage ();
 
@@ -84,17 +85,18 @@ namespace Table
       TableSet      *_defeated_table_set;
 
     private:
-      guint     _size;
-      guint     _number;
-      guint     _column;
-      gboolean  _is_displayed;
-      gboolean  _loaded;
-      Table    *_left_table;
-      Table    *_right_table;
-      GSList   *_match_list;
-      TableSet *_table_set;
-      GNode    **_node_table;
-      guint     _free_node_index;
+      guint         _size;
+      guint         _number;
+      guint         _column;
+      gboolean      _is_displayed;
+      gboolean      _loaded;
+      Table        *_left_table;
+      Table        *_right_table;
+      GSList       *_match_list;
+      TableSet     *_table_set;
+      GNode       **_node_table;
+      guint         _free_node_index;
+      const gchar  *_xml_player_tag;
 
       virtual ~Table ();
 

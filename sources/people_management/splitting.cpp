@@ -206,7 +206,7 @@ namespace People
   // --------------------------------------------------------------------------------
   GSList *Splitting::GetOutputShortlist ()
   {
-    GSList *result = CreateCustomList (PresentPlayerFilter);
+    GSList *result = CreateCustomList (PresentPlayerFilter, this);
 
     if (result)
     {
@@ -222,7 +222,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Splitting::PresentPlayerFilter (Player *player)
+  gboolean Splitting::PresentPlayerFilter (Player      *player,
+                                           PlayersList *owner)
   {
     Player::AttributeId  attr_id ("exported");
     Attribute           *attr = player->GetAttribute (&attr_id);

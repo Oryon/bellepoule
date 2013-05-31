@@ -252,6 +252,10 @@ Contest::Contest ()
 
   _properties_dialog = _glade->GetWidget ("properties_dialog");
 
+  SetData (NULL,
+           "SensitiveWidgetForCheckinStage",
+           _glade->GetWidget ("team_vbox"));
+
   {
     _referees_list = new People::RefereesList (this);
     Plug (_referees_list,
@@ -425,7 +429,7 @@ void Contest::LoadFencerFile (const gchar *filename)
       People::CheckinSupervisor *checkin;
 
       _schedule->CreateDefault ();
-      checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
+      checkin = _schedule->GetCheckinSupervisor ();
 
       if (   g_str_has_suffix (filename, ".fff")
           || g_str_has_suffix (filename, ".FFF"))
@@ -757,7 +761,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
     if (need_post_processing)
     {
-      People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
+      People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
 
       checkin->ConvertFromBaseToResult ();
     }
@@ -834,7 +838,7 @@ void Contest::AddFencer (Player *fencer,
 {
   if (_schedule)
   {
-    People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
+    People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
 
     if (checkin)
     {
@@ -979,7 +983,7 @@ Contest *Contest::Duplicate ()
 // --------------------------------------------------------------------------------
 void Contest::LatchPlayerList ()
 {
-  People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
+  People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
 
   if (checkin)
   {
@@ -1369,14 +1373,6 @@ void Contest::AttachTo (GtkNotebook *to)
   gtk_notebook_set_tab_reorderable (_notebook,
                                     GetRootWidget (),
                                     TRUE);
-
-  {
-    People::CheckinSupervisor *checkin;
-
-    checkin = dynamic_cast <People::CheckinSupervisor *> (_schedule->GetStage (0));
-
-    checkin->AddSensitiveWidget (_glade->GetWidget ("team_vbox"));
-  }
 
   DisplayProperties ();
 }
