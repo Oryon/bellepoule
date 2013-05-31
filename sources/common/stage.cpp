@@ -418,8 +418,6 @@ void Stage::RetrieveAttendees ()
   {
     _attendees = new Attendees ();
   }
-
-  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -717,6 +715,7 @@ Stage::StageClass *Stage::GetClass (const gchar *name)
 void Stage::SetContest (Contest *contest)
 {
   _contest = contest;
+  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -796,10 +795,11 @@ void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
 
+  _input_provider->SetContest (_contest);
+
   TryToRelease (_nb_qualified);
   _nb_qualified = input_provider->_nb_qualified;
   _nb_qualified->Retain ();
-
   InitQualifiedForm ();
 }
 
