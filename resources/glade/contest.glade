@@ -1196,6 +1196,7 @@ stuffing</property>
               <object class="GtkToolbar" id="contest_toolbar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="toolbar_style">both</property>
                 <child>
                   <object class="GtkToolButton" id="save_toolbutton">
                     <property name="visible">True</property>
