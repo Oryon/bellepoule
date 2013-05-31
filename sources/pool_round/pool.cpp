@@ -30,10 +30,11 @@
 namespace Pool
 {
   // --------------------------------------------------------------------------------
-  Pool::Pool (Data    *max_score,
-              guint    number,
-              gchar    weapon_code,
-              guint32  rand_seed)
+  Pool::Pool (Data        *max_score,
+              guint        number,
+              gchar        weapon_code,
+              const gchar *xml_player_tag,
+              guint32      rand_seed)
     : CanvasModule ("pool.glade",
                     "canvas_scrolled_window")
   {
@@ -51,6 +52,7 @@ namespace Pool
     _display_data       = NULL;
     _nb_drop            = 0;
     _rand_seed          = rand_seed;
+    _xml_player_tag     = xml_player_tag;
 
     _match_order = new MatchOrder (weapon_code);
 
@@ -1865,7 +1867,7 @@ namespace Pool
           A = NULL;
           B = NULL;
         }
-        else if (strcmp ((char *) n->name, "Tireur") == 0)
+        else if (strcmp ((char *) n->name, _xml_player_tag) == 0)
         {
           if (A == NULL)
           {

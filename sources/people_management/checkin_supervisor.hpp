@@ -105,6 +105,9 @@ namespace People
       void OnAttendingChanged (Player    *player,
                                guint   value);
 
+      static gboolean PresentPlayerFilter (Player      *player,
+                                           PlayersList *owner);
+
       static void OnAttrAttendingChanged (Player    *player,
                                           Attribute *attr,
                                           Object    *owner,

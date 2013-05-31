@@ -61,7 +61,8 @@ namespace People
 
       static Stage *CreateInstance (StageClass *stage_class);
 
-      static gboolean PresentPlayerFilter (Player *player);
+      static gboolean PresentPlayerFilter (Player      *player,
+                                           PlayersList *owner);
 
       virtual ~Splitting ();
 

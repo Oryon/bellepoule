@@ -224,7 +224,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  GSList *PlayersList::CreateCustomList (CustomFilter filter)
+  GSList *PlayersList::CreateCustomList (CustomFilter filter,
+                                         PlayersList *owner)
   {
     GSList *custom_list = NULL;
     GSList *current     = _player_list;
@@ -233,7 +234,7 @@ namespace People
     {
       Player *p = (Player *) current->data;
 
-      if (filter (p) == TRUE)
+      if (filter (p, owner) == TRUE)
       {
         custom_list = g_slist_append (custom_list,
                                       p);

@@ -311,8 +311,9 @@ namespace People
       Player::AttributeId  attr_id ("attending");
       GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
       GSList              *current_player = _player_list;
+      guint                ref = 1;
 
-      for (guint ref = 1; current_player; ref++)
+      while (current_player)
       {
         Player *p = (Player *) current_player->data;
 
@@ -339,6 +340,7 @@ namespace People
             if (GetState () == OPERATIONAL)
             {
               p->SetRef (ref);
+              ref++;
             }
           }
         }
@@ -614,9 +616,30 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::PresentPlayerFilter (Player      *player,
+                                                   PlayersList *owner)
+  {
+    if (Checkin::PresentPlayerFilter (player, owner))
+    {
+      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+      if (player->Is ("team"))
+      {
+        return (supervisor->_contest->IsTeamEvent () == TRUE);
+      }
+      else
+      {
+        return (supervisor->_contest->IsTeamEvent () == FALSE);
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   GSList *CheckinSupervisor::GetCurrentClassification ()
   {
-    GSList *result = CreateCustomList (PresentPlayerFilter);
+    GSList *result = CreateCustomList (PresentPlayerFilter, this);
 
     if (result)
     {

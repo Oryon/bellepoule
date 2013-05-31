@@ -510,7 +510,7 @@ namespace Table
         if (strcmp ((char *) n->name, _xml_class_name) == 0)
         {
         }
-        else if (strcmp ((char *) n->name, "Tireur") == 0)
+        else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
           LoadAttendees (n);
         }

@@ -21,6 +21,7 @@
 #include "pool_round/pool_supervisor.hpp"
 
 #include "classification.hpp"
+#include "contest.hpp"
 #include "player.hpp"
 
 #include "stage.hpp"
@@ -991,6 +992,19 @@ void Stage::SetScoreStuffingPolicy (gboolean allowed)
   else
   {
     _score_stuffing_trigger->SwitchOff ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Stage::GetXmlPlayerTag ()
+{
+  if (_contest->IsTeamEvent ())
+  {
+    return "Equipe";
+  }
+  else
+  {
+    return "Tireur";
   }
 }
 

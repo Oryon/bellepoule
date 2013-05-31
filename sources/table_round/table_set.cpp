@@ -804,6 +804,7 @@ namespace Table
       // Create the tables
       {
         _tables[t] = new Table (this,
+                                _supervisor->GetXmlPlayerTag (),
                                 1 << t,
                                 _nb_tables - t-1);
 

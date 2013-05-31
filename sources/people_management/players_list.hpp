@@ -72,7 +72,7 @@ namespace People
       GtkTreeView *_tree_view;
       GSList      *_player_list;
 
-      typedef gboolean (*CustomFilter) (Player *player);
+      typedef gboolean (*CustomFilter) (Player *player, PlayersList *owner);
 
       virtual ~PlayersList ();
 
@@ -84,7 +84,8 @@ namespace People
 
       void SetSensitiveState (gboolean sensitive_value);
 
-      GSList *CreateCustomList (CustomFilter filter);
+      GSList *CreateCustomList (CustomFilter  filter,
+                                PlayersList  *owner);
 
       GSList *GetSelectedPlayers ();
 

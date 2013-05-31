@@ -159,6 +159,8 @@ class Stage : public virtual Object
 
     void DeactivateNbQualified ();
 
+    const gchar *GetXmlPlayerTag ();
+
   public:
     static void RegisterStageClass (const gchar *name,
                                     const gchar *xml_name,

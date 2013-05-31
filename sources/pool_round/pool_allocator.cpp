@@ -664,6 +664,7 @@ namespace Pool
             current_pool = new Pool (_max_score,
                                      number+1,
                                      _contest->GetWeaponCode (),
+                                     GetXmlPlayerTag (),
                                      _rand_seed);
 
             {
@@ -675,7 +676,7 @@ namespace Pool
             }
           }
         }
-        else if (strcmp ((char *) n->name, "Tireur") == 0)
+        else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
           if (current_pool == NULL)
           {
@@ -926,6 +927,7 @@ namespace Pool
         pool_table[i] = new Pool (_max_score,
                                   i+1,
                                   _contest->GetWeaponCode (),
+                                  GetXmlPlayerTag (),
                                   _rand_seed);
 
         {
