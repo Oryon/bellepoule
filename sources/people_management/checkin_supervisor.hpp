@@ -38,7 +38,13 @@ namespace People
 
       void UpdateRanking ();
 
+      void SetTeamData (Data *minimum_team_size,
+                        Data *manual_classification,
+                        Data *default_classification);
+
       void ConvertFromBaseToResult ();
+
+      void OnManualRadioButtonToggled (GtkToggleButton *button);
 
     private:
       void OnLocked ();
@@ -64,9 +70,9 @@ namespace People
 
       gboolean  _use_initial_rank;
       GSList   *_checksum_list;
-      guint     _default_classification;
-      guint     _minimum_team_size;
-
+      Data     *_manual_classification;
+      Data     *_default_classification;
+      Data     *_minimum_team_size;
 
       static Stage *CreateInstance (StageClass *stage_class);
 

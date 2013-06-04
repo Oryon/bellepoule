@@ -19,6 +19,7 @@
 
 #include <libxml/xmlwriter.h>
 
+#include "util/data.hpp"
 #include "util/module.hpp"
 
 #include "stage.hpp"
@@ -38,7 +39,10 @@ class Schedule : public Module
     typedef void (Object::*StageEvent_t) ();
 
   public:
-    Schedule (Contest *contest);
+    Schedule (Contest *contest,
+              Data    *minimum_team_size,
+              Data    *manual_classification,
+              Data    *default_classification);
 
     People::CheckinSupervisor *GetCheckinSupervisor ();
 
@@ -92,6 +96,9 @@ class Schedule : public Module
     guint               _current_stage;
     gboolean            _score_stuffing_allowed;
     Contest            *_contest;
+    Data               *_minimum_team_size;
+    Data               *_manual_classification;
+    Data               *_default_classification;
 
     void SetCurrentStage (guint index);
 

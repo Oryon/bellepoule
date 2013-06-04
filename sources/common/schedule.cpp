@@ -37,7 +37,10 @@ typedef enum
 } ColumnId;
 
 // --------------------------------------------------------------------------------
-Schedule::Schedule (Contest *contest)
+Schedule::Schedule (Contest *contest,
+                    Data    *minimum_team_size,
+                    Data    *manual_classification,
+                    Data    *default_classification)
 : Module ("schedule.glade",
           "schedule_notebook")
 {
@@ -45,6 +48,9 @@ Schedule::Schedule (Contest *contest)
   _current_stage = 0;
   _contest       = contest;
 
+  _minimum_team_size      = minimum_team_size;
+  _manual_classification  = manual_classification;
+  _default_classification = default_classification;
   _score_stuffing_allowed = FALSE;
 
   {
@@ -117,12 +123,22 @@ Stage *Schedule::CreateStage (const gchar *class_name)
 
   if (stage && (g_ascii_strcasecmp (class_name, "checkin_stage") == 0))
   {
-    Module *module = dynamic_cast <Module *> (stage);
-
-    if (module)
     {
-      module->AddSensitiveWidget (GTK_WIDGET (_contest->GetPtrData (NULL,
-                                                                    "SensitiveWidgetForCheckinStage")));
+      Module *module = dynamic_cast <Module *> (stage);
+
+      if (module)
+      {
+        module->AddSensitiveWidget (GTK_WIDGET (_contest->GetPtrData (NULL,
+                                                                      "SensitiveWidgetForCheckinStage")));
+      }
+    }
+
+    {
+      People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (stage);
+
+      checkin->SetTeamData (_minimum_team_size,
+                            _manual_classification,
+                            _default_classification);
     }
   }
 
@@ -483,7 +499,7 @@ void Schedule::AddStage (Stage *stage,
       }
 
       gtk_list_store_set (_list_store, &iter,
-                          NAME_str, stage->GetClassName (),
+                          NAME_str, stage->GetKlassName (),
                           STAGE_ptr, stage,
                           VISIBILITY_bool, (stage->GetRights () & Stage::EDITABLE) != 0,
                           -1);
@@ -502,28 +518,6 @@ void Schedule::AddStage (Stage *stage,
     }
 
     RefreshSensitivity ();
-
-#if 0
-    for (guint i = 0; i < g_list_length (_stage_list); i++)
-    {
-      Stage *stage;
-      Stage *previous;
-
-      stage = ((Stage *) g_list_nth_data (_stage_list,
-                                            i));
-      previous = stage->GetPreviousStage ();
-      g_print (">> %s", stage->GetClassName ());
-      if (previous)
-      {
-      g_print (" / %s\n", previous->GetClassName ());
-      }
-      else
-      {
-      g_print ("\n");
-      }
-    }
-    g_print ("\n");
-#endif
   }
 }
 
@@ -814,6 +808,7 @@ void Schedule::Load (xmlDoc          *doc,
 
   SetCurrentStage (current_stage_index);
   DisplayConfig ();
+  ApplyNewConfig ();
 }
 
 // --------------------------------------------------------------------------------

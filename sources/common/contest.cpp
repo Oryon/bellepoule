@@ -241,6 +241,10 @@ Contest::Contest ()
   _derived    = FALSE;
   _downloader = NULL;
 
+  _manual_classification  = new Data ("ClassementManuel",     TRUE);
+  _default_classification = new Data ("ClassementParDefaut",  10000);
+  _minimum_team_size      = new Data ("TailleMinimaleEquipe", 3);
+
   _state                 = OPERATIONAL;
   _ref_translation_table = NULL;
 
@@ -282,7 +286,10 @@ Contest::Contest ()
   }
 
   {
-    _schedule = new Schedule (this);
+    _schedule = new Schedule (this,
+                              _minimum_team_size,
+                              _manual_classification,
+                              _default_classification);
 
     Plug (_schedule,
           _glade->GetWidget ("schedule_viewport"),
@@ -530,7 +537,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
                                              NULL);
 
   {
-    gboolean     score_stuffing_policy = FALSE;
+    gboolean     score_stuffing_policy  = FALSE;
     gboolean     need_post_processing;
     const gchar *contest_keyword;
 
@@ -732,12 +739,16 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           xmlFree (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "score_stuffing");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ScoreAleatoire");
         if (attr)
         {
           score_stuffing_policy = (gboolean) atoi (attr);
           xmlFree (attr);
         }
+
+        _minimum_team_size->Load      (xml_nodeset->nodeTab[0]);
+        _manual_classification->Load  (xml_nodeset->nodeTab[0]);
+        _default_classification->Load (xml_nodeset->nodeTab[0]);
       }
       xmlXPathFreeObject  (xml_object);
       xmlXPathFreeContext (xml_context);
@@ -790,6 +801,10 @@ Contest::~Contest ()
   g_free (_organizer);
   g_free (_web_site);
   g_free (_location);
+
+  Object::TryToRelease (_manual_classification);
+  Object::TryToRelease (_default_classification);
+  Object::TryToRelease (_minimum_team_size);
 
   Object::TryToRelease (_checkin_time);
   Object::TryToRelease (_scratch_time);
@@ -1557,8 +1572,15 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
                                  BAD_CAST "URLorganisateur",
                                  BAD_CAST _web_site);
     xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "score_stuffing",
+                                       BAD_CAST "ScoreAleatoire",
                                        "%d", _schedule->ScoreStuffingIsAllowed ());
+    // Team configuration
+    {
+      _minimum_team_size->Save      (xml_writer);
+      _manual_classification->Save  (xml_writer);
+      _default_classification->Save (xml_writer);
+    }
+
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Lieu",
                                  BAD_CAST _location);

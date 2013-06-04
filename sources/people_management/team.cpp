@@ -95,6 +95,7 @@ void Team::SetRankFromMembers (Player::AttributeId *criteria)
     Player::AttributeId  attending_attr_id ("attending");
     GSList *current = _member_list;
 
+  printf ("===>>> %s\n", GetName ());
     while (current)
     {
       Fencer    *fencer    = (Fencer *) current->data;

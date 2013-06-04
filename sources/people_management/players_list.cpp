@@ -96,7 +96,7 @@ namespace People
 
       if (_tree_view)
       {
-        _store->SelectFlatMode (_tree_view);
+        _store->SelectTreeMode (_tree_view);
 
         gtk_tree_view_set_search_column (_tree_view,
                                          _filter->GetAttributeId ("name"));
@@ -564,36 +564,37 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::SetSensitiveState (gboolean sensitive_value)
   {
+    GList *columns = gtk_tree_view_get_columns (_tree_view);
+
+    for (guint c = 0; c < g_list_length (columns) ; c++)
     {
-      GList *columns = gtk_tree_view_get_columns (_tree_view);
+      GList             *renderers;
+      GtkTreeViewColumn *column;
 
-      for (guint c = 0; c < g_list_length (columns) ; c++)
+      column = GTK_TREE_VIEW_COLUMN (g_list_nth_data (columns, c));
+      renderers = gtk_tree_view_column_get_cell_renderers (column);
+
+      for (guint r = 0; r < g_list_length (renderers) ; r++)
       {
-        GList             *renderers;
-        GtkTreeViewColumn *column;
+        GtkCellRenderer *renderer;
+        gchar           *sensitive_attribute;
 
-        column = GTK_TREE_VIEW_COLUMN (g_list_nth_data (columns, c));
-        renderers = gtk_tree_view_column_get_cell_renderers (column);
+        renderer = GTK_CELL_RENDERER (g_list_nth_data (renderers, r));
 
-        for (guint r = 0; r < g_list_length (renderers) ; r++)
+        sensitive_attribute = (gchar *) g_object_get_data (G_OBJECT (renderer),
+                                                           "PlayersList::SensitiveAttribute");
+        if (sensitive_attribute)
         {
-          GtkCellRenderer *renderer;
-          gchar           *sensitive_attribute;
-
-          renderer = GTK_CELL_RENDERER (g_list_nth_data (renderers, r));
-
-          sensitive_attribute = (gchar *) g_object_get_data (G_OBJECT (renderer),
-                                                             "PlayersList::SensitiveAttribute");
           g_object_set (renderer,
                         sensitive_attribute, sensitive_value,
                         NULL);
         }
-
-        g_list_free (renderers);
       }
 
-      g_list_free (columns);
+      g_list_free (renderers);
     }
+
+    g_list_free (columns);
   }
 
   // --------------------------------------------------------------------------------
