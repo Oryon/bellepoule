@@ -757,12 +757,11 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnPlayerRemoved (Player *player)
   {
-    Checkin::OnPlayerRemoved (player);
-
     if (player->Is ("Team"))
     {
       Team   *team    = (Team *) player;
-      GSList *current = team->GetMemberList ();
+      GSList *members = g_slist_copy (team->GetMemberList ());
+      GSList *current = members;
 
       while (current)
       {
@@ -771,6 +770,7 @@ namespace People
         Remove (player);
         current = g_slist_next (current);
       }
+      g_slist_free (members);
     }
     else if (player->Is ("Fencer"))
     {
@@ -784,6 +784,8 @@ namespace People
         Update (team);
       }
     }
+
+    Checkin::OnPlayerRemoved (player);
   }
 
   // --------------------------------------------------------------------------------

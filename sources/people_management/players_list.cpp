@@ -642,57 +642,99 @@ namespace People
     GtkTreeModel *model    = gtk_tree_view_get_model (_tree_view);
 
     {
-      GtkTreeSelection *selection      = gtk_tree_view_get_selection (_tree_view);
-      GList            *selection_list = NULL;
+      GtkTreeSelection *selection            = gtk_tree_view_get_selection (_tree_view);
+      GList            *full_selection_list  = NULL;
+      GList            *short_selection_list = NULL;
 
-      selection_list = gtk_tree_selection_get_selected_rows (selection,
-                                                             NULL);
+      full_selection_list = gtk_tree_selection_get_selected_rows (selection,
+                                                                  NULL);
 
-      for (guint i = 0; i < g_list_length (selection_list); i++)
+      // Remove child when ancestor is in the selection
       {
-        GtkTreeRowReference *ref;
+        GList *current = full_selection_list;
 
-        ref = gtk_tree_row_reference_new (model,
-                                          (GtkTreePath *) g_list_nth_data (selection_list, i));
-        ref_list = g_list_append (ref_list,
-                                  ref);
+        while (current)
+        {
+          GtkTreePath *current_path = (GtkTreePath *) current->data;
+
+          if (gtk_tree_path_get_depth (current_path) == 1)
+          {
+            short_selection_list = g_list_prepend (short_selection_list,
+                                                   current->data);
+          }
+          else
+          {
+            GtkTreePath *ancestor_path = gtk_tree_path_copy (current_path);
+
+            gtk_tree_path_up (ancestor_path);
+            if (g_list_find_custom (full_selection_list,
+                                    ancestor_path,
+                                    (GCompareFunc) gtk_tree_path_compare) == NULL)
+            {
+              short_selection_list = g_list_prepend (short_selection_list,
+                                                     current->data);
+            }
+            gtk_tree_path_free (ancestor_path);
+          }
+
+          current = g_list_next (current);
+        }
       }
 
-      g_list_foreach (selection_list, (GFunc) gtk_tree_path_free, NULL);
-      g_list_free    (selection_list);
+      {
+        GList *current = short_selection_list;
+
+        while (current)
+        {
+          GtkTreeRowReference *ref;
+
+          ref = gtk_tree_row_reference_new (model,
+                                            (GtkTreePath *) current->data);
+          ref_list = g_list_append (ref_list,
+                                    ref);
+
+          current = g_list_next (current);
+        }
+      }
+
+      g_list_foreach (full_selection_list, (GFunc) gtk_tree_path_free, NULL);
+      g_list_free    (full_selection_list);
+      g_list_free    (short_selection_list);
     }
 
 
-    for (guint i = 0; i < g_list_length (ref_list); i++)
     {
-      GtkTreeRowReference *ref;
-      GtkTreePath         *selected_path;
-      GSList              *current_player;
+      GList *current_ref = ref_list;
 
-      ref = (GtkTreeRowReference *) g_list_nth_data (ref_list, i);
-      selected_path = gtk_tree_row_reference_get_path (ref);
-      gtk_tree_row_reference_free (ref);
-
-      current_player = _player_list;
-      while (current_player)
+      while (current_ref)
       {
-        Player      *p = (Player *) current_player->data;
-        GtkTreePath *current_path;
+        GtkTreeRowReference *ref            = (GtkTreeRowReference *) current_ref->data; ;
+        GtkTreePath         *selected_path  = gtk_tree_row_reference_get_path (ref);
+        GSList              *current_player = _player_list;
 
-        current_path = gtk_tree_row_reference_get_path (_store->GetTreeRowRef (model,
-                                                                               p));
-        if (gtk_tree_path_compare (selected_path,
-                                   current_path) == 0)
+        gtk_tree_row_reference_free (ref);
+
+        while (current_player)
         {
-          Remove (p);
-          gtk_tree_path_free (current_path);
-          break;
-        }
+          Player      *p = (Player *) current_player->data;
+          GtkTreePath *current_path;
 
-        gtk_tree_path_free (current_path);
-        current_player = g_slist_next (current_player);
+          current_path = gtk_tree_row_reference_get_path (_store->GetTreeRowRef (model,
+                                                                                 p));
+          if (gtk_tree_path_compare (selected_path,
+                                     current_path) == 0)
+          {
+            Remove (p);
+            gtk_tree_path_free (current_path);
+            break;
+          }
+
+          gtk_tree_path_free (current_path);
+          current_player = g_slist_next (current_player);
+        }
+        gtk_tree_path_free (selected_path);
+        current_ref = g_list_next (current_ref);
       }
-      gtk_tree_path_free (selected_path);
     }
 
     g_list_free (ref_list);
@@ -703,12 +745,13 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::Remove (Player *player)
   {
+    OnPlayerRemoved (player);
+
     _store->Remove (player);
 
     _player_list = g_slist_remove (_player_list,
                                    player);
 
-    OnPlayerRemoved (player);
     player->Release ();
   }
 
