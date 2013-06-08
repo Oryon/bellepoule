@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-23 15:21+0200\n"
-"PO-Revision-Date: 2012-11-13 21:56+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2013-06-07 13:31+0000\n"
+"Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-05-15 05:27+0000\n"
-"X-Generator: Launchpad (build 16617)\n"
+"X-Launchpad-Export-Date: 2013-06-08 05:55+0000\n"
+"X-Generator: Launchpad (build 16667)\n"
 
 msgid "Sabre"
 msgstr "Sabre"
@@ -320,13 +320,13 @@ msgid "Pools arrangement"
 msgstr "Pools arrangement"
 
 msgid "<i>None</i>"
-msgstr ""
+msgstr "<i>None</i>"
 
 msgid "or"
-msgstr ""
+msgstr "or"
 
 msgid "Wrong fencers count!"
-msgstr ""
+msgstr "Invalid fencers count!"
 
 msgid "Allocation"
 msgstr "Allocation"
@@ -341,7 +341,7 @@ msgid "Pool sheets printing"
 msgstr "Pool sheets printing"
 
 msgid "Bout without winner!"
-msgstr ""
+msgstr "Bout without winner!"
 
 msgid "Pools classification"
 msgstr "Pools classification"
@@ -387,25 +387,25 @@ msgid "%s: score sheets printing"
 msgstr "%s: score sheets printing"
 
 msgid "No winner!"
-msgstr ""
+msgstr "No winner!"
 
 msgid "Table classification"
 msgstr "Table classification"
 
 msgid "Long text"
-msgstr ""
+msgstr "Long text"
 
 msgid "Short text"
-msgstr ""
+msgstr "Short text"
 
 msgid "Graphic"
-msgstr ""
+msgstr "Graphic"
 
 msgid "Data to display"
 msgstr "Data to display"
 
 msgid "Visibility"
-msgstr ""
+msgstr "Visibility"
 
 msgid "Data"
 msgstr "Data"
