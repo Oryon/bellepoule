@@ -743,6 +743,8 @@ namespace People
   void Checkin::SelectTreeMode ()
   {
     _tally_counter->SetTeamMode ();
+    RefreshAttendingDisplay ();
+
     PlayersList::SelectTreeMode ();
   }
 
@@ -750,6 +752,8 @@ namespace People
   void Checkin::SelectFlatMode ()
   {
     _tally_counter->DisableTeamMode ();
+    RefreshAttendingDisplay ();
+
     PlayersList::SelectFlatMode ();
   }
 

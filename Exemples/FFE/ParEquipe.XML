@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE BaseCompetitionParEquipes>
+<BaseCompetitionParEquipes xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Championnat="FFE" ID="5174" Arme="S" Sexe="H" Domaine="E" Federation="FFE" Categorie="C" TitreLong="Championnats de France" Annee="2012/2013" Date="05.05.2013" DateDebut="05.05.2013" DateFin="05.05.2013" DateFichierXML="10.05.2013 18:48" Type="E">
+  <Tireurs>
+    <Tireur ID="28532" Nom="HARENDARCZYK" Prenom="Nathan" DateNaissance="20.01.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="260931610168" Club="AULNAY CE" Equipe="AULNAY CE 1" Classement="1046" Points="1160.96"/>
+    <Tireur ID="36062" Nom="LENFANT" Prenom="Jason" DateNaissance="17.08.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="260931610186" Club="AULNAY CE" Equipe="AULNAY CE 1" Classement="1197" Points="172.79"/>
+    <Tireur ID="40071" Nom="MAUBON" Prenom="Bastien" DateNaissance="02.10.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="260931610193" Club="AULNAY CE" Equipe="AULNAY CE 1" Classement="1142" Points="359.45"/>
+    <Tireur ID="40367" Nom="MBENGUE" Prenom="Alioune" DateNaissance="10.04.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="260931610195" Club="AULNAY CE" Equipe="AULNAY CE 1" Classement="1079" Points="749.58"/>
+    <Tireur ID="36031" Nom="LEMONT" Prenom="Theo" DateNaissance="16.07.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="260941800229" Club="CHARENTON" Equipe="CHARENTON 1" Classement="1205" Points="146.89"/>
+    <Tireur ID="40902" Nom="MESSICA" Prenom="Lucas" DateNaissance="11.10.1996" Sexe="M" Nation="FRA" Lateralite="G" Licence="260941800247" Club="CHARENTON" Equipe="CHARENTON 1" Classement="1024" Points="1561.06"/>
+    <Tireur ID="45058" Nom="PASQUIER" Prenom="Maxime" DateNaissance="28.10.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="260941800260" Club="CHARENTON" Equipe="CHARENTON 1" Classement="" Points=""/>
+    <Tireur ID="53899" Nom="SEVIN" Prenom="Paul" DateNaissance="01.08.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="260941800280" Club="CHARENTON" Equipe="CHARENTON 1" Classement="1202" Points="155.34"/>
+    <Tireur ID="24085" Nom="GALLICE" Prenom="Harold" DateNaissance="17.04.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="260941880179" Club="MAISONS ALF" Equipe="MAISONS ALF 1" Classement="1121" Points="457.28"/>
+    <Tireur ID="37838" Nom="MAAZIZ" Prenom="Acyl" DateNaissance="13.02.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="260941880215" Club="MAISONS ALF" Equipe="MAISONS ALF 1" Classement="1210" Points="138.02"/>
+    <Tireur ID="50706" Nom="ROBERT" Prenom="Pierre" DateNaissance="20.02.1997" Sexe="M" Nation="FRA" Lateralite="G" Licence="260941880251" Club="MAISONS ALF" Equipe="MAISONS ALF 1" Classement="1026" Points="1510.76"/>
+    <Tireur ID="11460" Nom="CHAPUIS" Prenom="Allan" DateNaissance="25.03.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="270750360174" Club="PARIS USM" Equipe="PARIS USM 1" Classement="1050" Points="1111.32"/>
+    <Tireur ID="17648" Nom="DENIS" Prenom="Alexandre" DateNaissance="04.04.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="270750360193" Club="PARIS USM" Equipe="PARIS USM 1" Classement="1066" Points="905.43"/>
+    <Tireur ID="41522" Nom="MILOCHE" Prenom="Yann" DateNaissance="01.06.1997" Sexe="M" Nation="FRA" Lateralite="G" Licence="270750360239" Club="PARIS USM" Equipe="PARIS USM 1" Classement="1082" Points="725.92"/>
+    <Tireur ID="51508" Nom="ROUGER" Prenom="Cedric" DateNaissance="27.06.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="270750360302" Club="PARIS USM" Equipe="PARIS USM 1" Classement="1037" Points="1277.41"/>
+    <Tireur ID="977" Nom="ANDRE" Prenom="Gaspard" DateNaissance="17.07.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="280911190107" Club="GIF SUR YVET" Equipe="GIF SUR YVET 1" Classement="1120" Points="460.66"/>
+    <Tireur ID="2270" Nom="BACHET" Prenom="Antoine" DateNaissance="16.04.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="280911190109" Club="GIF SUR YVET" Equipe="GIF SUR YVET 1" Classement="1061" Points="978.64"/>
+    <Tireur ID="49312" Nom="RAUBY" Prenom="Brice" DateNaissance="13.08.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="280911190170" Club="GIF SUR YVET" Equipe="GIF SUR YVET 1" Classement="1117" Points="475.59"/>
+    <Tireur ID="51419" Nom="ROTH" Prenom="Simon" DateNaissance="18.11.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="280911190177" Club="GIF SUR YVET" Equipe="GIF SUR YVET 1" Classement="1038" Points="1276.88"/>
+    <Tireur ID="14240" Nom="COURBIER" Prenom="Hippolyte" DateNaissance="29.11.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="280921550167" Club="CLAMART CE" Equipe="CLAMART CE 1" Classement="1054" Points="1072.32"/>
+    <Tireur ID="22745" Nom="FOGLIO" Prenom="Antoine" DateNaissance="08.07.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="280921550186" Club="CLAMART CE" Equipe="CLAMART CE 1" Classement="1087" Points="700.20"/>
+    <Tireur ID="47816" Nom="PORTE" Prenom="Victor" DateNaissance="23.11.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="280921550247" Club="CLAMART CE" Equipe="CLAMART CE 1" Classement="1023" Points="1570.56"/>
+    <Tireur ID="52525" Nom="SALLES" Prenom="Nicolas" DateNaissance="26.03.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="280921550258" Club="CLAMART CE" Equipe="CLAMART CE 1" Classement="1012" Points="2086.66"/>
+    <Tireur ID="29696" Nom="HOUZEL" Prenom="Paul" DateNaissance="07.12.1997" Sexe="M" Nation="FRA" Lateralite="G" Licence="090210010365" Club="DIJON ASPTT" Equipe="DIJON ASPTT 1" Classement="1195" Points="177.50"/>
+    <Tireur ID="32002" Nom="KLIPFEL" Prenom="Emile" DateNaissance="25.02.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="090210010378" Club="DIJON ASPTT" Equipe="DIJON ASPTT 1" Classement="1115" Points="495.02"/>
+    <Tireur ID="36676" Nom="LEVEQUE" Prenom="Thomas" DateNaissance="16.09.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="090210010387" Club="DIJON ASPTT" Equipe="DIJON ASPTT 1" Classement="1098" Points="564.94"/>
+    <Tireur ID="41905" Nom="MONARCHI" Prenom="Yann" DateNaissance="18.04.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="090890180118" Club="DIJON ASPTT" Equipe="DIJON ASPTT 1" Classement="1101" Points="555.08"/>
+    <Tireur ID="11861" Nom="CHAUCHOY" Prenom="Thibaut" DateNaissance="17.07.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="130590100147" Club="ROUBAIX CE" Equipe="ROUBAIX CE 1" Classement="1039" Points="1248.24"/>
+    <Tireur ID="27403" Nom="GUELTON" Prenom="Bastien" DateNaissance="03.04.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="130590100184" Club="ROUBAIX CE" Equipe="ROUBAIX CE 1" Classement="1062" Points="959.37"/>
+    <Tireur ID="40013" Nom="MATIAS" Prenom="Nicolas" DateNaissance="14.02.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="130590100205" Club="ROUBAIX CE" Equipe="ROUBAIX CE 1" Classement="1017" Points="1693.92"/>
+    <Tireur ID="44515" Nom="PACCHIOTI" Prenom="Romain" DateNaissance="05.12.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="130590100213" Club="ROUBAIX CE" Equipe="ROUBAIX CE 1" Classement="1091" Points="675.32"/>
+    <Tireur ID="1053" Nom="ANDRIANALIZAH" Prenom="Charles" DateNaissance="21.02.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="170570170200" Club="THIONVILLE" Equipe="THIONVILLE 1" Classement="1200" Points="159.51"/>
+    <Tireur ID="22553" Nom="FIZAINE" Prenom="Alexandre" DateNaissance="30.04.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="170570170266" Club="THIONVILLE" Equipe="THIONVILLE 1" Classement="1113" Points="509.47"/>
+    <Tireur ID="29221" Nom="HERVY" Prenom="Alexandre" DateNaissance="10.02.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="170570170280" Club="THIONVILLE" Equipe="THIONVILLE 1" Classement="1030" Points="1387.41"/>
+    <Tireur ID="54800" Nom="SPIEGEL" Prenom="Remi" DateNaissance="05.03.1999" Sexe="M" Nation="FRA" Lateralite="D" Licence="170570170362" Club="THIONVILLE" Equipe="THIONVILLE 1" Classement="1176" Points="241.35"/>
+    <Tireur ID="9286" Nom="BUREAU" Prenom="Augustin" DateNaissance="09.07.1999" Sexe="M" Nation="FRA" Lateralite="D" Licence="050140300217" Club="CAEN EC" Equipe="CAEN EC 1" Classement="1126" Points="420.42"/>
+    <Tireur ID="24464" Nom="GARNIER" Prenom="Theo" DateNaissance="05.06.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="050140300248" Club="CAEN EC" Equipe="CAEN EC 1" Classement="1167" Points="259.83"/>
+    <Tireur ID="30840" Nom="JELASSI GRUDET" Prenom="Nicolas" DateNaissance="21.10.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="050610030065" Club="CAEN EC" Equipe="CAEN EC 1" Classement="1092" Points="670.34"/>
+    <Tireur ID="47655" Nom="POMME" Prenom="Bertrand" DateNaissance="01.02.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="050500350515" Club="CAEN EC" Equipe="CAEN EC 1" Classement="1064" Points="941.09"/>
+    <Tireur ID="16434" Nom="DE ZUTTERE" Prenom="Thibaud" DateNaissance="01.07.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="110270040164" Club="GISORS 3A" Equipe="GISORS 3A 1" Classement="1002" Points="3270.24"/>
+    <Tireur ID="37256" Nom="LONGFIER" Prenom="Romain" DateNaissance="18.05.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="110270040223" Club="GISORS 3A" Equipe="GISORS 3A 1" Classement="1102" Points="553.91"/>
+    <Tireur ID="49493" Nom="REBOUL" Prenom="Alwyn" DateNaissance="31.07.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="110270040256" Club="GISORS 3A" Equipe="GISORS 3A 1" Classement="1105" Points="547.62"/>
+    <Tireur ID="51948" Nom="ROYER" Prenom="Emeric" DateNaissance="08.03.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="110270040269" Club="GISORS 3A" Equipe="GISORS 3A 1" Classement="1130" Points="403.06"/>
+    <Tireur ID="26775" Nom="GRANDIN" Prenom="Thomas" DateNaissance="24.08.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="200180420244" Club="BOURGES ESC" Equipe="BOURGES ESC 1" Classement="1081" Points="730.52"/>
+    <Tireur ID="35136" Nom="LECLEAC'H" Prenom="Balthazar" DateNaissance="21.04.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="200180420267" Club="BOURGES ESC" Equipe="BOURGES ESC 1" Classement="1111" Points="517.43"/>
+    <Tireur ID="37414" Nom="LORIOT" Prenom="Edgar" DateNaissance="17.03.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="200180420275" Club="BOURGES ESC" Equipe="BOURGES ESC 1" Classement="1110" Points="522.75"/>
+    <Tireur ID="38583" Nom="MANE" Prenom="Corentin" DateNaissance="09.01.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="200180420279" Club="BOURGES ESC" Equipe="BOURGES ESC 1" Classement="1078" Points="755.95"/>
+    <Tireur ID="487" Nom="ALBRECHT" Prenom="Tom" DateNaissance="22.10.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="200370170158" Club="JOUE TOURS" Equipe="JOUE TOURS 1" Classement="1027" Points="1452.00"/>
+    <Tireur ID="631" Nom="ALLANO" Prenom="Quentin" DateNaissance="21.01.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="200370140054" Club="JOUE TOURS" Equipe="JOUE TOURS 1" Classement="1124" Points="438.19"/>
+    <Tireur ID="12446" Nom="CHOLLET" Prenom="Emilien" DateNaissance="23.10.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="200370170176" Club="JOUE TOURS" Equipe="JOUE TOURS 1" Classement="1116" Points="494.86"/>
+    <Tireur ID="25412" Nom="GEY" Prenom="Pablo" DateNaissance="08.05.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="200370170212" Club="JOUE TOURS" Equipe="JOUE TOURS 1" Classement="1019" Points="1596.90"/>
+    <Tireur ID="7922" Nom="BOURY" Prenom="Quentin" DateNaissance="10.08.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="200450230373" Club="ORLEANS CE" Equipe="ORLEANS CE 1" Classement="1020" Points="1595.17"/>
+    <Tireur ID="19459" Nom="DUAULT" Prenom="Arthur" DateNaissance="30.08.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="200450230431" Club="ORLEANS CE" Equipe="ORLEANS CE 1" Classement="1048" Points="1129.06"/>
+    <Tireur ID="21081" Nom="EMPEREUR" Prenom="Elliott" DateNaissance="05.07.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="200450230448" Club="ORLEANS CE" Equipe="ORLEANS CE 1" Classement="1055" Points="1024.32"/>
+    <Tireur ID="39620" Nom="MARTINEZ ALMANSA" Prenom="Zacharie" DateNaissance="12.03.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="200450230531" Club="ORLEANS CE" Equipe="ORLEANS CE 1" Classement="1028" Points="1408.16"/>
+    <Tireur ID="17782" Nom="DEQUENNE" Prenom="Pierre" DateNaissance="07.06.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="200450230424" Club="ORLEANS CE" Equipe="ORLEANS CE 2" Classement="1099" Points="563.83"/>
+    <Tireur ID="27092" Nom="GRILLOT" Prenom="Emilien" DateNaissance="27.08.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="200450230478" Club="ORLEANS CE" Equipe="ORLEANS CE 2" Classement="1073" Points="836.22"/>
+    <Tireur ID="32627" Nom="LACROUTS CAZENAVE" Prenom="Quentin" DateNaissance="19.06.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="200450230508" Club="ORLEANS CE" Equipe="ORLEANS CE 2" Classement="1151" Points="322.53"/>
+    <Tireur ID="35275" Nom="LECOQ" Prenom="Yohan" DateNaissance="24.03.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="200450230519" Club="ORLEANS CE" Equipe="ORLEANS CE 2" Classement="1042" Points="1209.67"/>
+    <Tireur ID="7183" Nom="BOTUHA" Prenom="Simon" DateNaissance="21.05.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="230350330095" Club="DINARD LAMES" Equipe="DINARD LAMES 1" Classement="1052" Points="1096.37"/>
+    <Tireur ID="27505" Nom="GUERIN" Prenom="Tristan" DateNaissance="15.09.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="230350330118" Club="DINARD LAMES" Equipe="DINARD LAMES 1" Classement="1107" Points="541.86"/>
+    <Tireur ID="32984" Nom="LALLEMAND" Prenom="Marin" DateNaissance="06.09.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="230350330131" Club="DINARD LAMES" Equipe="DINARD LAMES 1" Classement="1075" Points="788.19"/>
+    <Tireur ID="51030" Nom="ROGER" Prenom="Benjamin" DateNaissance="13.02.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="230350330159" Club="DINARD LAMES" Equipe="DINARD LAMES 1" Classement="1001" Points="3523.83"/>
+    <Tireur ID="27372" Nom="GUEGAN" Prenom="Baptiste" DateNaissance="19.11.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="230350100133" Club="BETTON CP" Equipe="BETTON CP 1" Classement="1010" Points="2137.15"/>
+    <Tireur ID="33760" Nom="LATREILLE" Prenom="Quentin" DateNaissance="06.02.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="230350100148" Club="BETTON CP" Equipe="BETTON CP 1" Classement="1016" Points="1766.04"/>
+    <Tireur ID="34816" Nom="LE ROUX" Prenom="Gurvan" DateNaissance="31.03.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="230350100153" Club="BETTON CP" Equipe="BETTON CP 1" Classement="1060" Points="982.08"/>
+    <Tireur ID="35634" Nom="LEGRAND" Prenom="Abraham" DateNaissance="09.08.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="230350290148" Club="BETTON CP" Equipe="BETTON CP 1" Classement="1032" Points="1348.46"/>
+    <Tireur ID="3975" Nom="BELKESSAM" Prenom="Mathieu" DateNaissance="03.03.1999" Sexe="M" Nation="FRA" Lateralite="D" Licence="010130060060" Club="GEMENOS" Equipe="GEMENOS 1" Classement="1063" Points="954.84"/>
+    <Tireur ID="45112" Nom="PASTUREL" Prenom="Francois" DateNaissance="01.06.1999" Sexe="M" Nation="FRA" Lateralite="D" Licence="010130060079" Club="GEMENOS" Equipe="GEMENOS 1" Classement="1169" Points="256.36"/>
+    <Tireur ID="45134" Nom="PATRICE" Prenom="Jean Philippe" DateNaissance="12.03.1997" Sexe="M" Nation="FRA" Lateralite="G" Licence="010130060081" Club="GEMENOS" Equipe="GEMENOS 1" Classement="1009" Points="2353.46"/>
+    <Tireur ID="57728" Nom="VAN HOFFELEN" Prenom="Raphael" DateNaissance="16.05.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="010130060090" Club="GEMENOS" Equipe="GEMENOS 1" Classement="1005" Points="2579.39"/>
+    <Tireur ID="9901" Nom="CANALI" Prenom="Nael" DateNaissance="06.07.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="080380120370" Club="MEYLAN SE" Equipe="MEYLAN SE 1" Classement="1004" Points="2742.73"/>
+    <Tireur ID="18293" Nom="DESVIGNES" Prenom="Nathan" DateNaissance="23.06.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="080380120245" Club="MEYLAN SE" Equipe="MEYLAN SE 1" Classement="1065" Points="908.74"/>
+    <Tireur ID="34152" Nom="LAZARO" Prenom="Jonathan" DateNaissance="27.06.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="080380120290" Club="MEYLAN SE" Equipe="MEYLAN SE 1" Classement="1069" Points="878.64"/>
+    <Tireur ID="58522" Nom="VERVOITTE" Prenom="Quentin" DateNaissance="05.02.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="080380120360" Club="MEYLAN SE" Equipe="MEYLAN SE 1" Classement="1011" Points="2127.76"/>
+    <Tireur ID="1429" Nom="ARNAUD" Prenom="James" DateNaissance="30.04.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="140690090146" Club="GLEIZE" Equipe="GLEIZE 1" Classement="1131" Points="401.60"/>
+    <Tireur ID="5112" Nom="BES" Prenom="Antoine" DateNaissance="08.04.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="140690090153" Club="GLEIZE" Equipe="GLEIZE 1" Classement="1035" Points="1291.89"/>
+    <Tireur ID="45708" Nom="PERDRISET" Prenom="Francois" DateNaissance="30.10.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="140690090246" Club="GLEIZE" Equipe="GLEIZE 1" Classement="1018" Points="1654.89"/>
+    <Tireur ID="53305" Nom="SCHMIDT" Prenom="Aurelien" DateNaissance="28.05.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="140690090256" Club="GLEIZE" Equipe="GLEIZE 1" Classement="1015" Points="1818.36"/>
+    <Tireur ID="11509" Nom="CHARBONNIER" Prenom="Antoine" DateNaissance="29.07.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="190060060246" Club="NICE OGC" Equipe="NICE OGC 1" Classement="" Points=""/>
+    <Tireur ID="28157" Nom="GUYADER" Prenom="Adrien" DateNaissance="16.04.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="190060060304" Club="NICE OGC" Equipe="NICE OGC 1" Classement="1031" Points="1373.02"/>
+    <Tireur ID="28473" Nom="HANSEN" Prenom="Maxence" DateNaissance="15.02.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="190060320066" Club="NICE OGC" Equipe="NICE OGC 1" Classement="1182" Points="217.09"/>
+    <Tireur ID="13059" Nom="COEFFE" Prenom="Alexandre" DateNaissance="20.03.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="040640210197" Club="PAU SECTION" Equipe="PAU SECTION 1" Classement="1021" Points="1595.09"/>
+    <Tireur ID="15377" Nom="DANNENMULLER" Prenom="Maxime" DateNaissance="23.09.1996" Sexe="M" Nation="FRA" Lateralite="G" Licence="040640210205" Club="PAU SECTION" Equipe="PAU SECTION 1" Classement="1022" Points="1589.81"/>
+    <Tireur ID="54483" Nom="SOMPROU" Prenom="Sylvain" DateNaissance="28.01.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="040640210142" Club="PAU SECTION" Equipe="PAU SECTION 1" Classement="1095" Points="616.89"/>
+    <Tireur ID="62613" Nom="BERGES" Prenom="Alban" DateNaissance="09.05.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="040640210172" Club="PAU SECTION" Equipe="PAU SECTION 1" Classement="1013" Points="2056.26"/>
+    <Tireur ID="13262" Nom="COLLEAU" Prenom="Charles" DateNaissance="06.03.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="250650200181" Club="TARBES ATE" Equipe="TARBES ATE 1" Classement="1007" Points="2469.95"/>
+    <Tireur ID="19467" Nom="DUBARRY" Prenom="Baptiste" DateNaissance="29.03.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="250650200198" Club="TARBES ATE" Equipe="TARBES ATE 1" Classement="1003" Points="3191.62"/>
+    <Tireur ID="55120" Nom="SUDDARDS" Prenom="Georges" DateNaissance="06.01.1998" Sexe="M" Nation="FRA" Lateralite="D" Licence="250650200300" Club="TARBES ATE" Equipe="TARBES ATE 1" Classement="1029" Points="1389.00"/>
+    <Tireur ID="58910" Nom="VILLACAMPA" Prenom="Remy" DateNaissance="15.03.1996" Sexe="M" Nation="FRA" Lateralite="D" Licence="250650200310" Club="TARBES ATE" Equipe="TARBES ATE 1" Classement="1025" Points="1556.19"/>
+    <Tireur ID="5689" Nom="BISCHOFF" Prenom="Hugo" DateNaissance="24.07.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="300870010183" Club="LIMOGES CE" Equipe="LIMOGES CE 1" Classement="1272" Points="20.59"/>
+    <Tireur ID="13103" Nom="COHIDON" Prenom="Thomas" DateNaissance="11.10.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="300870010197" Club="LIMOGES CE" Equipe="LIMOGES CE 1" Classement="1145" Points="339.33"/>
+    <Tireur ID="22368" Nom="FEUILLADE" Prenom="Martin" DateNaissance="27.03.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="300870010219" Club="LIMOGES CE" Equipe="LIMOGES CE 1" Classement="1219" Points="116.68"/>
+    <Tireur ID="51972" Nom="ROYERE" Prenom="Thomas" DateNaissance="01.07.1997" Sexe="M" Nation="FRA" Lateralite="D" Licence="300870010292" Club="LIMOGES CE" Equipe="LIMOGES CE 1" Classement="1186" Points="192.44"/>
+  </Tireurs>
+  <Arbitres>
+  </Arbitres>
+  <Equipes>
+    <Equipe ID="AULNAY CE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="BETTON CP 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="BOURGES ESC 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="CAEN EC 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="CHARENTON 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="CLAMART CE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="DIJON ASPTT 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="DINARD LAMES 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="GEMENOS 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="GIF SUR YVET 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="GISORS 3A 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="GLEIZE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="JOUE TOURS 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="LIMOGES CE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="MAISONS ALF 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="MEYLAN SE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="NICE OGC 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="ORLEANS CE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="ORLEANS CE 2" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="PARIS USM 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="PAU SECTION 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="ROUBAIX CE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="TARBES ATE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+    <Equipe ID="THIONVILLE 1" Nation="FRA" Statut="N" Classement="0" Points="0"/>
+  </Equipes>
+</BaseCompetitionParEquipes>

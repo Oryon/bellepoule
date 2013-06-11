@@ -321,10 +321,10 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 
   if (_print_meal_tickets)
   {
-    gdouble        spacing  = 2.0;
-    gdouble        ticket_w = (100.0/NB_TICKET_X_PER_SHEET) - (NB_TICKET_X_PER_SHEET-1)*spacing;
-    gdouble        ticket_h = (100.0/NB_TICKET_Y_PER_SHEET) * paper_h/paper_w - (NB_TICKET_Y_PER_SHEET-1)*spacing;
-    gdouble        border_w = 0.7;
+    gdouble spacing  = 2.0;
+    gdouble ticket_w = (100.0/NB_TICKET_X_PER_SHEET) - (NB_TICKET_X_PER_SHEET-1) *spacing;
+    gdouble ticket_h = (100.0/NB_TICKET_Y_PER_SHEET) *paper_h/paper_w - (NB_TICKET_Y_PER_SHEET-1) *spacing;
+    gdouble border_w = 0.7;
 
     main_table = goo_canvas_table_new (goo_canvas_get_root_item (canvas),
                                        "row-spacing",         2.0,

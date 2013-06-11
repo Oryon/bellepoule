@@ -197,7 +197,12 @@ int main (int argc, char **argv)
       g_free (gtkrc);
     }
 
-    gtk_init (&argc, &argv);
+    {
+      gtk_init (&argc, &argv);
+
+      g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
+      g_object_set (gtk_settings_get_default (), "gtk-menu-images", TRUE, NULL);
+    }
 
     {
       Object::SetProgramPath (install_dirname);
