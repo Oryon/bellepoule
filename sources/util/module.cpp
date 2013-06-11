@@ -676,10 +676,10 @@ gboolean Module::on_preview (GtkPrintOperation        *operation,
                              GtkWindow                *parent,
                              Module                   *module)
 {
-  return module->OnPreview (operation,
-                            preview,
-                            context,
-                            parent);
+  return module->PreparePreview (operation,
+                                 preview,
+                                 context,
+                                 parent);
 }
 
 // --------------------------------------------------------------------------------

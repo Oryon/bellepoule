@@ -57,10 +57,10 @@ class CanvasModule : public Module
     virtual void DrawPage (GtkPrintOperation *operation,
                            GtkPrintContext   *context,
                            gint               page_nr);
-    virtual gboolean OnPreview (GtkPrintOperation        *operation,
-                                GtkPrintOperationPreview *preview,
-                                GtkPrintContext          *context,
-                                GtkWindow                *parent);
+    virtual gboolean PreparePreview (GtkPrintOperation        *operation,
+                                     GtkPrintOperationPreview *preview,
+                                     GtkPrintContext          *context,
+                                     GtkWindow                *parent);
     virtual void OnEndPrint (GtkPrintOperation *operation,
                              GtkPrintContext   *context);
 
