@@ -209,9 +209,7 @@ void Stage::UnLock ()
 
     for (guint i = 0; current != NULL; i++)
     {
-      Player *player;
-
-      player = (Player *) current->data;
+      Player *player = (Player *) current->data;
 
       if (GetInputProviderClient ())
       {
