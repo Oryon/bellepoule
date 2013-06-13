@@ -909,8 +909,16 @@ namespace People
                                  guint            row,
                                  gboolean         update_column_width)
   {
-    GSList  *layout_list = _filter->GetLayoutList ();
-    gdouble  x           = 0.0;
+    GSList        *layout_list = _filter->GetLayoutList ();
+    gdouble        x           = 0.0;
+    GooCanvasItem *bar;
+
+    bar = goo_canvas_rect_new (root_item,
+                               0.0, row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
+                               15.0, PRINT_FONT_HEIGHT,
+                               "stroke-pattern", NULL,
+                               "fill-color", "Grey85",
+                               NULL);
 
     for (guint j = 0; layout_list != NULL; j++)
     {
@@ -923,16 +931,6 @@ namespace People
       {
         GooCanvasItem   *item;
         GooCanvasBounds  bounds;
-
-        {
-          goo_canvas_rect_new (root_item,
-                               0.0, row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
-                               10.0, 10.0,
-                               "stroke-color", "black",
-                               "fill-color", "grey",
-                               "line-width", 0.3,
-                               NULL);
-        }
 
         if (attr_layout->_desc->_type == G_TYPE_BOOLEAN)
         {
@@ -995,7 +993,7 @@ namespace People
                                         x,
                                         row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
                                         -1.0,
-                                        GTK_ANCHOR_W,
+                                        GTK_ANCHOR_NW,
                                         "font", font,
                                         NULL);
             g_free (image);
@@ -1026,6 +1024,10 @@ namespace People
         }
       }
       x += _column_width[j];
+      g_object_set (G_OBJECT (bar),
+                    "width", x,
+                    NULL);
+
       layout_list = g_slist_next (layout_list);
     }
   }
@@ -1162,14 +1164,14 @@ namespace People
           gboolean     iter_is_valid;
           guint        nb_players = 0;
 
-          iter_is_valid = gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (_store),
+          iter_is_valid = gtk_tree_model_iter_nth_child (gtk_tree_view_get_model (_tree_view),
                                                          &iter,
                                                          NULL,
                                                          page_nr*_nb_player_per_page);
 
           for (guint i = 0; iter_is_valid && (nb_players < _nb_player_per_page); i++)
           {
-            Player *current_player = GetPlayer (GTK_TREE_MODEL (_store), &iter);
+            Player *current_player = GetPlayer (gtk_tree_view_get_model (_tree_view), &iter);
 
             if (   (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"))
                 || PlayerIsPrintable (current_player))
@@ -1182,7 +1184,7 @@ namespace People
               nb_players++;
             }
 
-            iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_store),
+            iter_is_valid = gtk_tree_model_iter_next (gtk_tree_view_get_model (_tree_view),
                                                       &iter);
           }
         }
