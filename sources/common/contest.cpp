@@ -228,11 +228,7 @@ Contest::Contest ()
   _read_only  = FALSE;
   _notebook   = NULL;
   _level      = NULL;
-  _name       = NULL;
   _filename   = NULL;
-  _organizer  = NULL;
-  _web_site   = NULL;
-  _location   = NULL;
   _tournament = NULL;
   _weapon     = 0;
   _category   = 0;
@@ -240,6 +236,23 @@ Contest::Contest ()
   _team_event = FALSE;
   _derived    = FALSE;
   _downloader = NULL;
+
+  _name = g_key_file_get_string (_config_file,
+                                 "Competiton",
+                                 "default_name",
+                                 NULL);
+  _organizer = g_key_file_get_string (_config_file,
+                                      "Competiton",
+                                      "default_organizer",
+                                      NULL);
+  _web_site = g_key_file_get_string (_config_file,
+                                     "Competiton",
+                                     "default_web_site",
+                                     NULL);
+  _location = g_key_file_get_string (_config_file,
+                                     "Competiton",
+                                     "default_location",
+                                     NULL);
 
   _manual_classification  = new Data ("ClassementManuel",     TRUE);
   _default_classification = new Data ("ClassementParDefaut",  10000);
@@ -931,23 +944,6 @@ Contest *Contest::Create ()
 
   contest->_schedule->SetTeamEvent (FALSE);
 
-  contest->_name = g_key_file_get_string (_config_file,
-                                          "Competiton",
-                                          "default_name",
-                                          NULL);
-  contest->_organizer = g_key_file_get_string (_config_file,
-                                               "Competiton",
-                                               "default_organizer",
-                                               NULL);
-  contest->_web_site = g_key_file_get_string (_config_file,
-                                              "Competiton",
-                                              "default_web_site",
-                                              NULL);
-  contest->_location = g_key_file_get_string (_config_file,
-                                              "Competiton",
-                                              "default_location",
-                                              NULL);
-
   contest->FillInProperties ();
   contest->_schedule->CreateDefault ();
 
@@ -1287,25 +1283,37 @@ void Contest::ReadProperties ()
   ReadTeamProperty ();
 
   {
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_name",
-                           _name);
+    if (_name && *_name != 0)
+    {
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_name",
+                             _name);
+    }
 
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_organizer",
-                           _organizer);
+    if (_organizer && *_organizer != 0)
+    {
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_organizer",
+                             _organizer);
+    }
 
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_web_site",
-                           _web_site);
+    if (_web_site && *_web_site != 0)
+    {
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_web_site",
+                             _web_site);
+    }
 
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_location",
-                           _location);
+    if (_location && *_location != 0)
+    {
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_location",
+                             _location);
+    }
   }
 
   _schedule->ApplyNewConfig ();

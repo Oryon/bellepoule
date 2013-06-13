@@ -910,7 +910,7 @@ namespace People
                                  gboolean         update_column_width)
   {
     GSList  *layout_list = _filter->GetLayoutList ();
-    gdouble  x           = 0;
+    gdouble  x           = 0.0;
 
     for (guint j = 0; layout_list != NULL; j++)
     {
@@ -923,6 +923,16 @@ namespace People
       {
         GooCanvasItem   *item;
         GooCanvasBounds  bounds;
+
+        {
+          goo_canvas_rect_new (root_item,
+                               0.0, row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
+                               10.0, 10.0,
+                               "stroke-color", "black",
+                               "fill-color", "grey",
+                               "line-width", 0.3,
+                               NULL);
+        }
 
         if (attr_layout->_desc->_type == G_TYPE_BOOLEAN)
         {
