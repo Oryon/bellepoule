@@ -1812,7 +1812,7 @@ namespace Table
     OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
                   (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
 
-    ConfigurePreviewLayout ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+    ConfigurePreviewBackground ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
   }
 
   // --------------------------------------------------------------------------------
@@ -2347,6 +2347,7 @@ namespace Table
 
       _print_session.Begin (1 << gtk_combo_box_get_active (GTK_COMBO_BOX (_glade->GetWidget ("cutting_count_combobox"))));
 
+      // Get the source bounds on canvas cutting by cutting
       {
         GooCanvasBounds  E_node_bounds;
         Table           *from_table = _from_border->GetSelectedTable ();
@@ -2358,6 +2359,7 @@ namespace Table
           return 0;
         }
 
+        // Horizontally
         {
           GNode *E_node;
 
@@ -2376,15 +2378,14 @@ namespace Table
                      &E_node_bounds);
         }
 
+        // Vertically
         for (guint i = 0; i < _print_session._cutting_count; i++)
         {
-          GooCanvasBounds W_node_bounds;
-          GooCanvasBounds bounds;
-          GNode *NW_node;
-          GNode *SW_node;
+          GooCanvasBounds  W_node_bounds;
+          GooCanvasBounds  bounds;
+          GNode           *NW_node = NULL;
+          GNode           *SW_node = NULL;
 
-          NW_node = NULL;
-          SW_node = NULL;
           for (guint n = i*nb_row; n < (i+1)*nb_row; n++)
           {
             GNode *node = from_table->GetNode (n);
@@ -2492,16 +2493,21 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TableSet::OnPreview (GtkPrintOperation        *operation,
-                                GtkPrintOperationPreview *preview,
-                                GtkPrintContext          *context,
-                                GtkWindow                *parent)
+  gboolean TableSet::PreparePreview (GtkPrintOperation        *operation,
+                                     GtkPrintOperationPreview *preview,
+                                     GtkPrintContext          *context,
+                                     GtkWindow                *parent)
   {
-    _preview = preview;
+    // Store the GtkPrintOperationPreview with additionnal data 
+    // It's used if the preview configuration is changed (scale, cutting, ...)
+    {
+      _preview = preview;
 
-    g_object_set_data (G_OBJECT (_preview), "preview_operation", operation);
-    g_object_set_data (G_OBJECT (_preview), "preview_context",   context);
+      g_object_set_data (G_OBJECT (_preview), "preview_operation", operation);
+      g_object_set_data (G_OBJECT (_preview), "preview_context",   context);
+    }
 
+    // Create and configure the cairo context
     {
       cairo_t *cr = goo_canvas_create_cairo_context (GetCanvas ());
       gdouble  canvas_dpi;
@@ -2521,46 +2527,55 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::ConfigurePreviewLayout (GtkPrintContext *context)
+  void TableSet::ConfigurePreviewBackground (GtkPrintContext *context)
   {
     GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
-    GtkWidget *preview_layout  = gtk_layout_new (NULL, NULL);
+    GtkWidget *drawing_layout  = gtk_layout_new (NULL, NULL);
     gdouble    paper_w         = gtk_print_context_get_width  (context);
     gdouble    paper_h         = gtk_print_context_get_height (context);
     guint      spacing         = 5;
     guint      drawing_w;
     guint      drawing_h;
 
-    if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
+    // Evaluate the page dimensions
     {
-      drawing_h = 200;
-      drawing_w = (guint) (drawing_h*paper_w/paper_h);
-    }
-    else
-    {
-      drawing_w = 200;
-      drawing_h = (guint) (drawing_w*paper_h/paper_w);
-    }
-
-    {
-      GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
-
-      preview_layout = gtk_bin_get_child (GTK_BIN (scrolled_window));
-      if (preview_layout)
+      if (   (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
+          || (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE))
       {
-        gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
+        drawing_h = PREVIEW_PAGE_SIZE;
+        drawing_w = (guint) (drawing_h*paper_w/paper_h);
+      }
+      else
+      {
+        drawing_w = PREVIEW_PAGE_SIZE;
+        drawing_h = (guint) (drawing_w*paper_h/paper_w);
       }
     }
 
-    preview_layout = gtk_layout_new (NULL, NULL);
-    gtk_container_add (GTK_CONTAINER (scrolled_window),
-                       preview_layout);
+    // Remove previous drawing layout from the ScrolledWindow
+    {
+      GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
 
-    g_object_set (G_OBJECT (preview_layout),
-                  "width",  _print_session._nb_x_pages * _print_session._cutting_count * (drawing_w+spacing),
-                  "height", _print_session._nb_y_pages * _print_session._cutting_count * (drawing_h+spacing),
-                  NULL);
+      drawing_layout = gtk_bin_get_child (GTK_BIN (scrolled_window));
+      if (drawing_layout)
+      {
+        gtk_container_remove (GTK_CONTAINER (scrolled_window), drawing_layout);
+      }
+    }
 
+    // Create a new drawing layout in the ScrolledWindow
+    {
+      drawing_layout = gtk_layout_new (NULL, NULL);
+      gtk_container_add (GTK_CONTAINER (scrolled_window),
+                         drawing_layout);
+
+      g_object_set (G_OBJECT (drawing_layout),
+                    "width",  _print_session._nb_x_pages * _print_session._cutting_count * (drawing_w+spacing),
+                    "height", _print_session._nb_y_pages * _print_session._cutting_count * (drawing_h+spacing),
+                    NULL);
+    }
+
+    // Draw a white rectangle for each page to print
     for (guint x = 0; x < _print_session._nb_x_pages; x++)
     {
       for (guint y = 0; y < _print_session._nb_y_pages * _print_session._cutting_count; y++)
@@ -2568,7 +2583,7 @@ namespace Table
         GtkWidget *drawing_area = gtk_drawing_area_new ();
         GdkColor   bg_color;
 
-        gdk_color_parse ("#FFFFFF", &bg_color);
+        gdk_color_parse ("white", &bg_color);
         gtk_widget_modify_bg (drawing_area,
                               GTK_STATE_NORMAL,
                               &bg_color);
@@ -2577,7 +2592,7 @@ namespace Table
                                      drawing_w,
                                      drawing_h);
 
-        gtk_layout_put (GTK_LAYOUT (preview_layout),
+        gtk_layout_put (GTK_LAYOUT (drawing_layout),
                         drawing_area,
                         x*(drawing_w+spacing),
                         y*(drawing_h+spacing));
@@ -2589,14 +2604,14 @@ namespace Table
       }
     }
 
-    gtk_widget_show_all (preview_layout);
+    gtk_widget_show_all (drawing_layout);
   }
 
   // --------------------------------------------------------------------------------
   void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
                                  GtkPrintContext          *context)
   {
-    ConfigurePreviewLayout (context);
+    ConfigurePreviewBackground (context);
 
     g_signal_connect (_glade->GetWidget ("cutting_count_combobox"), "changed",
                       G_CALLBACK (on_cutting_count_combobox_changed),
@@ -2639,11 +2654,12 @@ namespace Table
                   "resolution-x", &canvas_dpi,
                   NULL);
 
-    if (gtk_page_setup_get_orientation (page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
+    if (   (gtk_page_setup_get_orientation (page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
+        || (gtk_page_setup_get_orientation (page_setup) == GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE))
     {
       cairo_translate (cr,
                        0.0,
-                       200.0);
+                       PREVIEW_PAGE_SIZE);
       cairo_rotate (cr,
                     -G_PI_2);
 
@@ -2653,7 +2669,7 @@ namespace Table
       gdouble paper_w = gtk_paper_size_get_width  (paper_size, GTK_UNIT_POINTS);
 
       paper_w     = paper_w * canvas_dpi / 72.0;
-      drawing_dpi = 200.0 * canvas_dpi / paper_w;
+      drawing_dpi = PREVIEW_PAGE_SIZE * canvas_dpi / paper_w;
     }
 
     _print_session.SetResolutions (canvas_dpi,
@@ -3281,7 +3297,7 @@ namespace Table
     OnBeginPrint ((GtkPrintOperation *) g_object_get_data (G_OBJECT (_preview), "preview_operation"),
                   (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
 
-    ConfigurePreviewLayout ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+    ConfigurePreviewBackground ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
   }
 
   // --------------------------------------------------------------------------------
@@ -3301,10 +3317,22 @@ namespace Table
                                 GTK_STOCK_ORIENTATION_LANDSCAPE,
                                 GTK_ICON_SIZE_BUTTON);
     }
-    else
+    else if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE)
+    {
+      gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
+                                GTK_STOCK_ORIENTATION_REVERSE_LANDSCAPE,
+                                GTK_ICON_SIZE_BUTTON);
+    }
+    else if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_PORTRAIT)
     {
       gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
                                 GTK_STOCK_ORIENTATION_PORTRAIT,
+                                GTK_ICON_SIZE_BUTTON);
+    }
+    else if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT)
+    {
+      gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
+                                GTK_STOCK_ORIENTATION_REVERSE_PORTRAIT,
                                 GTK_ICON_SIZE_BUTTON);
     }
   }

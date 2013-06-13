@@ -114,6 +114,7 @@ namespace Pool
       void DeletePools ();
       void SetUpCombobox ();
       void Display ();
+      void RefreshDisplay ();
       void Garnish ();
       void FillPoolTable (PoolZone *zone);
       void DisplayPlayer (Player *player, guint indice, GooCanvasItem *table, PoolZone *zone, GSList *layout_list);

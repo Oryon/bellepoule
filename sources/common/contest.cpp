@@ -228,11 +228,7 @@ Contest::Contest ()
   _read_only  = FALSE;
   _notebook   = NULL;
   _level      = NULL;
-  _name       = NULL;
   _filename   = NULL;
-  _organizer  = NULL;
-  _web_site   = NULL;
-  _location   = NULL;
   _tournament = NULL;
   _weapon     = 0;
   _category   = 0;
@@ -240,6 +236,27 @@ Contest::Contest ()
   _team_event = FALSE;
   _derived    = FALSE;
   _downloader = NULL;
+
+  _name = g_key_file_get_string (_config_file,
+                                 "Competiton",
+                                 "default_name",
+                                 NULL);
+  _organizer = g_key_file_get_string (_config_file,
+                                      "Competiton",
+                                      "default_organizer",
+                                      NULL);
+  _web_site = g_key_file_get_string (_config_file,
+                                     "Competiton",
+                                     "default_web_site",
+                                     NULL);
+  _location = g_key_file_get_string (_config_file,
+                                     "Competiton",
+                                     "default_location",
+                                     NULL);
+
+  _manual_classification  = new Data ("ClassementManuel",     TRUE);
+  _default_classification = new Data ("ClassementParDefaut",  10000);
+  _minimum_team_size      = new Data ("TailleMinimaleEquipe", 3);
 
   _state                 = OPERATIONAL;
   _ref_translation_table = NULL;
@@ -282,7 +299,10 @@ Contest::Contest ()
   }
 
   {
-    _schedule = new Schedule (this);
+    _schedule = new Schedule (this,
+                              _minimum_team_size,
+                              _manual_classification,
+                              _default_classification);
 
     Plug (_schedule,
           _glade->GetWidget ("schedule_viewport"),
@@ -530,7 +550,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
                                              NULL);
 
   {
-    gboolean     score_stuffing_policy = FALSE;
+    gboolean     score_stuffing_policy  = FALSE;
     gboolean     need_post_processing;
     const gchar *contest_keyword;
 
@@ -732,12 +752,16 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           xmlFree (attr);
         }
 
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "score_stuffing");
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ScoreAleatoire");
         if (attr)
         {
           score_stuffing_policy = (gboolean) atoi (attr);
           xmlFree (attr);
         }
+
+        _minimum_team_size->Load      (xml_nodeset->nodeTab[0]);
+        _manual_classification->Load  (xml_nodeset->nodeTab[0]);
+        _default_classification->Load (xml_nodeset->nodeTab[0]);
       }
       xmlXPathFreeObject  (xml_object);
       xmlXPathFreeContext (xml_context);
@@ -790,6 +814,10 @@ Contest::~Contest ()
   g_free (_organizer);
   g_free (_web_site);
   g_free (_location);
+
+  Object::TryToRelease (_manual_classification);
+  Object::TryToRelease (_default_classification);
+  Object::TryToRelease (_minimum_team_size);
 
   Object::TryToRelease (_checkin_time);
   Object::TryToRelease (_scratch_time);
@@ -915,23 +943,6 @@ Contest *Contest::Create ()
   contest->_schedule->SetScoreStuffingPolicy (FALSE);
 
   contest->_schedule->SetTeamEvent (FALSE);
-
-  contest->_name = g_key_file_get_string (_config_file,
-                                          "Competiton",
-                                          "default_name",
-                                          NULL);
-  contest->_organizer = g_key_file_get_string (_config_file,
-                                               "Competiton",
-                                               "default_organizer",
-                                               NULL);
-  contest->_web_site = g_key_file_get_string (_config_file,
-                                              "Competiton",
-                                              "default_web_site",
-                                              NULL);
-  contest->_location = g_key_file_get_string (_config_file,
-                                              "Competiton",
-                                              "default_location",
-                                              NULL);
 
   contest->FillInProperties ();
   contest->_schedule->CreateDefault ();
@@ -1272,25 +1283,37 @@ void Contest::ReadProperties ()
   ReadTeamProperty ();
 
   {
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_name",
-                           _name);
+    if (_name && *_name != 0)
+    {
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_name",
+                             _name);
+    }
 
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_organizer",
-                           _organizer);
+    if (_organizer && *_organizer != 0)
+    {
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_organizer",
+                             _organizer);
+    }
 
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_web_site",
-                           _web_site);
+    if (_web_site && *_web_site != 0)
+    {
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_web_site",
+                             _web_site);
+    }
 
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_location",
-                           _location);
+    if (_location && *_location != 0)
+    {
+      g_key_file_set_string (_config_file,
+                             "Competiton",
+                             "default_location",
+                             _location);
+    }
   }
 
   _schedule->ApplyNewConfig ();
@@ -1557,8 +1580,15 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
                                  BAD_CAST "URLorganisateur",
                                  BAD_CAST _web_site);
     xmlTextWriterWriteFormatAttribute (xml_writer,
-                                       BAD_CAST "score_stuffing",
+                                       BAD_CAST "ScoreAleatoire",
                                        "%d", _schedule->ScoreStuffingIsAllowed ());
+    // Team configuration
+    {
+      _minimum_team_size->Save      (xml_writer);
+      _manual_classification->Save  (xml_writer);
+      _default_classification->Save (xml_writer);
+    }
+
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Lieu",
                                  BAD_CAST _location);

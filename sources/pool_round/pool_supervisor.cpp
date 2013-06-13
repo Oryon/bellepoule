@@ -27,7 +27,7 @@
 namespace Pool
 {
   const gchar *Supervisor::_class_name     = N_ ("Pools");
-  const gchar *Supervisor::_xml_class_name = "pool_stage";
+  const gchar *Supervisor::_xml_class_name = "TourDePoules";
 
   typedef enum
   {
@@ -246,12 +246,14 @@ namespace Pool
       xmlFreeTextWriter (xml_writer);
     }
 
+#if 0
     {
       Net::Uploader *uploader   = new Net::Uploader ("http://192.168.0.24:35830",
                                                      NULL,
                                                      NULL);
       uploader->UploadString ((const gchar *) xml_buffer->content);
     }
+#endif
 
     xmlBufferFree (xml_buffer);
   }
@@ -751,6 +753,8 @@ namespace Pool
   void Supervisor::Load (xmlNode *xml_node)
   {
     LoadAttendees (NULL);
+
+    LoadConfiguration (xml_node);
 
     {
       guint nb_pools = _allocator->GetNbPools ();

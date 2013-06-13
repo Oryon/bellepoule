@@ -82,18 +82,6 @@ namespace Table
 
       void OnPreviewClicked ();
 
-      gboolean OnPreview (GtkPrintOperation        *operation,
-                          GtkPrintOperationPreview *preview,
-                          GtkPrintContext          *context,
-                          GtkWindow                *parent);
-
-      void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
-                                 GtkPrintContext          *context,
-                                 GtkPageSetup             *page_setup);
-
-      void OnPreviewReady (GtkPrintOperationPreview *preview,
-                           GtkPrintContext          *context);
-
       void OnPrinScaleChanged (gdouble value);
 
       void OnPageSetupClicked (GtkButton *button);
@@ -166,7 +154,6 @@ namespace Table
       GSList                   *_result_list;
       GSList                   *_match_to_print;
       GtkWidget                *_print_dialog;
-      GtkWidget                *_preview_dialog;
       GtkWidget                *_table_print_dialog;
       PrintSession              _print_session;
       GSList                   *_attendees;
@@ -178,8 +165,6 @@ namespace Table
       gboolean                  _is_over;
       gboolean                  _loaded;
       guint                     _first_place;
-      GtkPrintOperationPreview *_preview;
-      GtkWidget                *_current_preview_area;
       gboolean                  _is_active;
       GtkPageSetup             *_page_setup;
       TableSetBorder           *_from_border;
@@ -266,8 +251,6 @@ namespace Table
       void LookForMatchToPrint (Table    *table_to_print,
                                 gboolean  all_sheet);
 
-      void ConfigurePreviewLayout (GtkPrintContext *context);
-
       gboolean PlaceIsFenced (guint place);
 
       static gint ComparePlayer (Player    *A,
@@ -302,11 +285,31 @@ namespace Table
                                              GdkEventButton *event,
                                              TableSet       *table_set);
 
+      virtual ~TableSet ();
+
+    private:
+      GtkWidget                *_preview_dialog;
+      GtkPrintOperationPreview *_preview;
+      GtkWidget                *_current_preview_area;
+      static const guint        PREVIEW_PAGE_SIZE = 200;
+
+      void ConfigurePreviewBackground (GtkPrintContext *context);
+
+      gboolean PreparePreview (GtkPrintOperation        *operation,
+                               GtkPrintOperationPreview *preview,
+                               GtkPrintContext          *context,
+                               GtkWindow                *parent);
+
+      void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
+                                 GtkPrintContext          *context,
+                                 GtkPageSetup             *page_setup);
+
+      void OnPreviewReady (GtkPrintOperationPreview *preview,
+                           GtkPrintContext          *context);
+
       static gboolean on_preview_expose (GtkWidget      *drawing_area,
                                          GdkEventExpose *event,
                                          TableSet       *ts);
-
-      virtual ~TableSet ();
 
     private:
       void DragObject (Object   *object,

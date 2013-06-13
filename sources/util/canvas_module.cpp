@@ -390,10 +390,10 @@ void CanvasModule::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-gboolean CanvasModule::OnPreview (GtkPrintOperation        *operation,
-                                  GtkPrintOperationPreview *preview,
-                                  GtkPrintContext          *context,
-                                  GtkWindow                *parent)
+gboolean CanvasModule::PreparePreview (GtkPrintOperation        *operation,
+                                       GtkPrintOperationPreview *preview,
+                                       GtkPrintContext          *context,
+                                       GtkWindow                *parent)
 {
   GtkWidget *window, *close, *page, *hbox, *vbox;
   cairo_t *cr;

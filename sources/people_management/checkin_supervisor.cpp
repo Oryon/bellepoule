@@ -42,8 +42,9 @@ namespace People
     _use_initial_rank = FALSE;
     _checksum_list    = NULL;
 
-    _default_classification = 0;
-    _minimum_team_size      = 3;
+    _manual_classification  = NULL;
+    _default_classification = NULL;
+    _minimum_team_size      = NULL;
 
     // Sensitive widgets
     {
@@ -144,6 +145,18 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void CheckinSupervisor::SetTeamData (Data *minimum_team_size,
+                                       Data *manual_classification,
+                                       Data *default_classification)
+  {
+    _minimum_team_size      = minimum_team_size;
+    _default_classification = default_classification;
+    _manual_classification  = manual_classification;
+    FillInConfig ();
+    ApplyConfig ();
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::Load (xmlNode *xml_node)
   {
   }
@@ -164,7 +177,6 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::LoadConfiguration (xmlNode *xml_node)
   {
-    FillInConfig ();
   }
 
   // --------------------------------------------------------------------------------
@@ -367,19 +379,22 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::UpdateTeamsRanking (Player::AttributeId *criteria)
   {
-    GSList *current = _player_list;
-
-    while (current)
+    if (_manual_classification->_value == FALSE)
     {
-      Player *player = (Player *) current->data;
+      GSList *current = _player_list;
 
-      if (player->Is ("Team"))
+      while (current)
       {
-        Team *team = (Team *) player;
+        Player *player = (Player *) current->data;
 
-        team->SetRankFromMembers (criteria);
+        if (player->Is ("Team"))
+        {
+          Team *team = (Team *) player;
+
+          team->SetRankFromMembers (criteria);
+        }
+        current = g_slist_next (current);
       }
-      current = g_slist_next (current);
     }
   }
 
@@ -401,15 +416,16 @@ namespace People
       }
 
       rank_criteria_id->MakeRandomReady (_rand_seed);
-      _player_list = g_slist_sort_with_data (_player_list,
-                                             (GCompareDataFunc) Player::Compare,
-                                             rank_criteria_id);
     }
 
     if (_contest->IsTeamEvent ())
     {
       UpdateTeamsRanking (rank_criteria_id);
     }
+
+    _player_list = g_slist_sort_with_data (_player_list,
+                                           (GCompareDataFunc) Player::Compare,
+                                           rank_criteria_id);
 
     {
       Player *previous_player = NULL;
@@ -484,26 +500,37 @@ namespace People
   {
     Stage::FillInConfig ();
 
+    if (_manual_classification)
     {
-      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("default_classification_entry"));
-
-      if (w)
+      if (_manual_classification->_value)
       {
-        gchar *text = g_strdup_printf ("%d", _default_classification);
-
-        gtk_entry_set_text (w,
-                            text);
-        g_free (text);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton")),
+                                      TRUE);
+      }
+      else
+      {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("derived_radiobutton")),
+                                      TRUE);
       }
     }
 
+    if (_default_classification)
+    {
+      gchar *text = g_strdup_printf ("%d", _default_classification->_value);
+
+      gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("default_classification_entry")),
+                          text);
+      g_free (text);
+    }
+
+    if (_minimum_team_size)
     {
       GtkAdjustment *adj = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (_glade->GetWidget ("teamsize_entry")));
 
       if (adj)
       {
         gtk_adjustment_set_value (adj,
-                                  _minimum_team_size);
+                                  _minimum_team_size->_value);
       }
     }
   }
@@ -511,6 +538,12 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::ApplyConfig (Team *team)
   {
+    if (_manual_classification)
+    {
+      _manual_classification->_value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton")));
+    }
+
+    if (_default_classification)
     {
       GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("default_classification_entry"));
 
@@ -520,11 +553,12 @@ namespace People
 
         if (value)
         {
-          _default_classification = atoi (value);
+          _default_classification->_value = atoi (value);
         }
       }
     }
 
+    if (_minimum_team_size)
     {
       GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("teamsize_entry"));
 
@@ -534,15 +568,15 @@ namespace People
 
         if (value)
         {
-          _minimum_team_size = atoi (value);
+          _minimum_team_size->_value = atoi (value);
         }
       }
     }
 
     if (team)
     {
-      team->SetDefaultClassification (_default_classification);
-      team->SetMinimumSize           (_minimum_team_size);
+      team->SetDefaultClassification (_default_classification->_value);
+      team->SetMinimumSize           (_minimum_team_size->_value);
     }
     else
     {
@@ -556,8 +590,8 @@ namespace People
         {
           Team *current_team = (Team *) player;
 
-          current_team->SetDefaultClassification (_default_classification);
-          current_team->SetMinimumSize           (_minimum_team_size);
+          current_team->SetDefaultClassification (_default_classification->_value);
+          current_team->SetMinimumSize           (_minimum_team_size->_value);
         }
         current = g_slist_next (current);
       }
@@ -584,6 +618,12 @@ namespace People
       gtk_widget_hide (_glade->GetWidget ("teamsize_label"));
       gtk_widget_hide (_glade->GetWidget ("teamsize_viewport"));
       gtk_widget_hide (_glade->GetWidget ("tree_control_hbox"));
+    }
+
+    // On loading, sensitivity is set by default to TRUE.
+    if (Locked ())
+    {
+      SetSensitiveState (FALSE);
     }
   }
 
@@ -717,12 +757,11 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnPlayerRemoved (Player *player)
   {
-    Checkin::OnPlayerRemoved (player);
-
     if (player->Is ("Team"))
     {
       Team   *team    = (Team *) player;
-      GSList *current = team->GetMemberList ();
+      GSList *members = g_slist_copy (team->GetMemberList ());
+      GSList *current = members;
 
       while (current)
       {
@@ -731,6 +770,7 @@ namespace People
         Remove (player);
         current = g_slist_next (current);
       }
+      g_slist_free (members);
     }
     else if (player->Is ("Fencer"))
     {
@@ -744,6 +784,8 @@ namespace People
         Update (team);
       }
     }
+
+    Checkin::OnPlayerRemoved (player);
   }
 
   // --------------------------------------------------------------------------------
@@ -888,6 +930,20 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnManualRadioButtonToggled (GtkToggleButton *button)
+  {
+    if (gtk_toggle_button_get_active (button))
+    {
+      gtk_widget_hide (GTK_WIDGET (_glade->GetWidget ("derived_table")));
+    }
+    else
+    {
+      gtk_widget_show         (GTK_WIDGET (_glade->GetWidget ("derived_table")));
+      gtk_widget_queue_resize (GTK_WIDGET (_glade->GetWidget ("team_table")));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT gboolean on_expand_eventbox_button_press_event (GtkWidget *widget,
                                                                              GdkEvent  *event,
                                                                              Object    *owner)
@@ -907,5 +963,14 @@ namespace People
 
     supervisor->CollapseAll ();
     return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_manual_radiobutton_toggled (GtkWidget *widget,
+                                                                 Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+    supervisor->OnManualRadioButtonToggled (GTK_TOGGLE_BUTTON (widget));
   }
 }

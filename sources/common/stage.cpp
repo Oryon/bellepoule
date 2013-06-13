@@ -50,7 +50,7 @@ Stage::Stage (StageClass *stage_class)
 
   _max_score = NULL;
 
-  _nb_qualified = new Data ("NbQualifies",
+  _nb_qualified = new Data ("NbQualifiesParIndice",
                             (guint) 0);
   DeactivateNbQualified ();
 }
@@ -98,7 +98,7 @@ void Stage::SignalStatusUpdate ()
 }
 
 // --------------------------------------------------------------------------------
-const gchar *Stage::GetClassName ()
+const gchar *Stage::GetKlassName ()
 {
   return _class->_name;
 }
@@ -209,9 +209,7 @@ void Stage::UnLock ()
 
     for (guint i = 0; current != NULL; i++)
     {
-      Player *player;
-
-      player = (Player *) current->data;
+      Player *player = (Player *) current->data;
 
       if (GetInputProviderClient ())
       {
@@ -716,7 +714,6 @@ Stage::StageClass *Stage::GetClass (const gchar *name)
 void Stage::SetContest (Contest *contest)
 {
   _contest = contest;
-  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -796,12 +793,9 @@ void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
 
-  _input_provider->SetContest (_contest);
-
   TryToRelease (_nb_qualified);
   _nb_qualified = input_provider->_nb_qualified;
   _nb_qualified->Retain ();
-  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------

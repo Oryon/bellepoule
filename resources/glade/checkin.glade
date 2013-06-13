@@ -38,8 +38,9 @@
                     <property name="can_focus">False</property>
                     <property name="n_rows">3</property>
                     <property name="column_spacing">4</property>
+                    <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkRadioButton" id="radiobutton1">
+                      <object class="GtkRadioButton" id="manual_radiobutton">
                         <property name="label" translatable="yes">Manually assigned</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -47,10 +48,11 @@
                         <property name="use_action_appearance">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="on_manual_radiobutton_toggled" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkRadioButton" id="radiobutton2">
+                      <object class="GtkRadioButton" id="derived_radiobutton">
                         <property name="label" translatable="yes">Derived from fencer classification</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -58,7 +60,7 @@
                         <property name="use_action_appearance">False</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
-                        <property name="group">radiobutton1</property>
+                        <property name="group">manual_radiobutton</property>
                       </object>
                       <packing>
                         <property name="top_attach">1</property>
@@ -67,7 +69,6 @@
                     </child>
                     <child>
                       <object class="GtkTable" id="derived_table">
-                        <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="n_columns">4</property>
                         <child>
@@ -580,7 +581,7 @@
                   <object class="GtkImage" id="expand_image">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="stock">gtk-indent</property>
+                    <property name="pixbuf">format-indent-more.png</property>
                   </object>
                 </child>
               </object>
@@ -600,7 +601,7 @@
                   <object class="GtkImage" id="collapse_image">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="stock">gtk-justify-fill</property>
+                    <property name="pixbuf">format-justify-fill.png</property>
                   </object>
                 </child>
               </object>

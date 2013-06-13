@@ -152,10 +152,10 @@ class Module : public virtual Object
     virtual void OnDrawPage (GtkPrintOperation *operation,
                              GtkPrintContext   *context,
                              gint               page_nr);
-    virtual gboolean OnPreview (GtkPrintOperation        *operation,
-                                GtkPrintOperationPreview *preview,
-                                GtkPrintContext          *context,
-                                GtkWindow                *parent) {return TRUE;};
+    virtual gboolean PreparePreview (GtkPrintOperation        *operation,
+                                     GtkPrintOperationPreview *preview,
+                                     GtkPrintContext          *context,
+                                     GtkWindow                *parent) {return TRUE;};
     virtual void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
                                        GtkPrintContext          *context,
                                        GtkPageSetup             *page_setup) {};
