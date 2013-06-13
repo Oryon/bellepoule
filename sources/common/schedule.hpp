@@ -50,9 +50,6 @@ class Schedule : public Module
 
     void CreateDefault (gboolean without_pools = FALSE);
 
-    void AddStage    (Stage *stage,
-                      Stage *after);
-
     void SavePeoples (xmlTextWriter   *xml_writer,
                       People::Checkin *referees);
 
@@ -104,11 +101,15 @@ class Schedule : public Module
 
     Module *GetSelectedModule  ();
 
-    void DisplayConfig ();
+    void DisplayLocks ();
 
     gint GetNotebookPageNum (Stage *stage);
 
-    void AddStage (Stage *stage);
+    void AddStage (Stage *stage,
+                   Stage *after = NULL);
+
+    void InsertStage (Stage *stage,
+                      Stage *after);
 
     void RemoveStage (Stage *stage);
 
@@ -117,6 +118,11 @@ class Schedule : public Module
     void LoadStage (Stage   *stage,
                     xmlNode *xml_node,
                     guint   *nb_stage,
+                    gint     current_stage_index);
+
+    void LoadStage (Stage   *stage,
+                    xmlNode *xml_node,
+                    guint    nb_stage,
                     gint     current_stage_index);
 
     void GiveName (Stage *stage);

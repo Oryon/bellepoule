@@ -50,7 +50,7 @@ Stage::Stage (StageClass *stage_class)
 
   _max_score = NULL;
 
-  _nb_qualified = new Data ("NbQualifies",
+  _nb_qualified = new Data ("NbQualifiesParIndice",
                             (guint) 0);
   DeactivateNbQualified ();
 }
@@ -714,7 +714,6 @@ Stage::StageClass *Stage::GetClass (const gchar *name)
 void Stage::SetContest (Contest *contest)
 {
   _contest = contest;
-  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------
@@ -794,12 +793,9 @@ void Stage::SetInputProvider (Stage *input_provider)
 {
   _input_provider = input_provider;
 
-  _input_provider->SetContest (_contest);
-
   TryToRelease (_nb_qualified);
   _nb_qualified = input_provider->_nb_qualified;
   _nb_qualified->Retain ();
-  InitQualifiedForm ();
 }
 
 // --------------------------------------------------------------------------------

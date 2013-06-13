@@ -54,7 +54,7 @@ namespace Pool
                                                                 Object    *owner);
 
   const gchar *Allocator::_class_name     = N_ ("Pools arrangement");
-  const gchar *Allocator::_xml_class_name = "TourDePoules";
+  const gchar *Allocator::_xml_class_name = "";
 
   // --------------------------------------------------------------------------------
   Allocator::Allocator (StageClass *stage_class)
@@ -394,6 +394,19 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Allocator::RefreshDisplay ()
+  {
+    if (_main_table && (Locked () == FALSE))
+    {
+      DeletePools ();
+      CreatePools ();
+      Display ();
+      SignalStatusUpdate ();
+      MakeDirty ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Allocator::Display ()
   {
     SetUpCombobox ();
@@ -492,14 +505,7 @@ namespace Pool
         }
       }
 
-      if (IsPlugged () && Locked () == FALSE)
-      {
-        DeletePools ();
-        CreatePools ();
-        Display ();
-        SignalStatusUpdate ();
-        MakeDirty ();
-      }
+      RefreshDisplay ();
     }
   }
 
@@ -600,16 +606,18 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::Load (xmlNode *xml_node)
   {
-    static Pool     *current_pool = NULL;
-    static PoolZone *current_zone = NULL;
-    static guint     nb_pool      = 0;
+    static Pool     *current_pool     = NULL;
+    static PoolZone *current_zone     = NULL;
+    static guint     nb_pool          = 0;
+    Stage           *next_stage       = GetNextStage ();
+    StageClass      *next_stage_class = next_stage->GetClass ();
 
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
         if (   (_loaded == FALSE)
-            && strcmp ((char *) n->name, _xml_class_name) == 0)
+            && strcmp ((char *) n->name, next_stage_class->_xml_name) == 0)
         {
           LoadConfiguration (xml_node);
 
@@ -736,8 +744,11 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::SaveHeader (xmlTextWriter *xml_writer)
   {
+    Stage      *next_stage       = GetNextStage ();
+    StageClass *next_stage_class = next_stage->GetClass ();
+
     xmlTextWriterStartElement (xml_writer,
-                               BAD_CAST _xml_class_name);
+                               BAD_CAST next_stage_class->_xml_name);
 
     SaveConfiguration (xml_writer);
 
@@ -750,12 +761,6 @@ namespace Pool
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "PhaseSuivanteDesQualifies",
                                        "%d", GetId ()+2);
-    if (_selected_config)
-    {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "NbQualifiesParIndice",
-                                         "%d", _selected_config->_size);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1666,14 +1671,7 @@ namespace Pool
       _swapping->SetString ("Aucun");
     }
 
-    if (_drop_zones)
-    {
-      DeletePools ();
-      CreatePools ();
-      Display ();
-      SignalStatusUpdate ();
-      MakeDirty ();
-    }
+    RefreshDisplay ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1770,11 +1768,7 @@ namespace Pool
 
       _selected_config = config;
 
-      DeletePools ();
-      CreatePools ();
-      Display ();
-      SignalStatusUpdate ();
-      MakeDirty ();
+      RefreshDisplay ();
     }
   }
 

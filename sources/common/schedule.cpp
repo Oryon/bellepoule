@@ -41,8 +41,8 @@ Schedule::Schedule (Contest *contest,
                     Data    *minimum_team_size,
                     Data    *manual_classification,
                     Data    *default_classification)
-: Module ("schedule.glade",
-          "schedule_notebook")
+  : Module ("schedule.glade",
+            "schedule_notebook")
 {
   _stage_list    = NULL;
   _current_stage = 0;
@@ -171,7 +171,7 @@ void Schedule::GiveName (Stage *stage)
 {
   Stage::StageClass *stage_class = stage->GetClass ();
 
-  if (stage_class && (g_ascii_strcasecmp  (stage_class->_xml_name, "pool_stage") == 0))
+  if (stage_class && (g_ascii_strcasecmp  (stage_class->_xml_name, "TourDePoules") == 0))
   {
     GList *current     = _stage_list;
     guint  round_index = 0;
@@ -181,7 +181,7 @@ void Schedule::GiveName (Stage *stage)
       Stage             *current_stage       = (Stage *) current->data;
       Stage::StageClass *current_stage_class = current_stage->GetClass ();
 
-      if (g_ascii_strcasecmp  (current_stage_class->_xml_name, "pool_stage") == 0)
+      if (g_ascii_strcasecmp  (current_stage_class->_xml_name, "TourDePoules") == 0)
       {
         round_index++;
       }
@@ -221,11 +221,10 @@ void Schedule::CreateDefault (gboolean without_pools)
 
     if (without_pools == FALSE)
     {
-      stage = CreateStage ("pool_stage");
+      stage = CreateStage ("TourDePoules");
       if (stage)
       {
         AddStage (stage);
-        GiveName (stage);
       }
     }
 
@@ -242,8 +241,6 @@ void Schedule::CreateDefault (gboolean without_pools)
     }
     SetCurrentStage (0);
   }
-
-  DisplayConfig ();
 }
 
 // --------------------------------------------------------------------------------
@@ -281,7 +278,7 @@ gboolean Schedule::ScoreStuffingIsAllowed ()
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::DisplayConfig ()
+void Schedule::DisplayLocks ()
 {
   gtk_widget_set_sensitive (GTK_WIDGET (_glade->GetWidget ("add_stage_toolbutton")),
                             TRUE);
@@ -313,8 +310,6 @@ void Schedule::DisplayConfig ()
                             LOCK_str, "",
                             -1);
       }
-
-      current_stage->FillInConfig ();
 
       iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store),
                                                 &iter);
@@ -389,36 +384,36 @@ Module *Schedule::GetSelectedModule  ()
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::AddStage (Stage *stage)
+void Schedule::AddStage (Stage *stage,
+                         Stage *after)
 {
-  Stage *last_stage = NULL;
-
-  if (_stage_list)
+  if ((after == NULL) && _stage_list)
   {
-    last_stage = (Stage *) (g_list_last (_stage_list)->data);
+    after = (Stage *) (g_list_last (_stage_list)->data);
   }
 
-  AddStage (stage,
-            last_stage);
+  stage->SetContest (_contest);
 
   {
     Stage *input_provider = stage->GetInputProvider ();
 
-    if (input_provider)
+    if (input_provider && (after != input_provider))
     {
-      if (input_provider && (last_stage != input_provider))
-      {
-        AddStage (input_provider,
-                  last_stage);
-      }
+      AddStage (input_provider,
+                after);
+
       stage->SetInputProvider (input_provider);
+      after = input_provider;
     }
   }
+
+  InsertStage (stage,
+               after);
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::AddStage (Stage *stage,
-                         Stage *after)
+void Schedule::InsertStage (Stage *stage,
+                            Stage *after)
 {
   if ((stage == NULL) || g_list_find (_stage_list, stage))
   {
@@ -426,7 +421,6 @@ void Schedule::AddStage (Stage *stage,
   }
   else
   {
-    stage->SetContest (_contest);
     stage->SetScoreStuffingPolicy (_score_stuffing_allowed);
 
     // Insert it in the global list
@@ -517,6 +511,8 @@ void Schedule::AddStage (Stage *stage,
       }
     }
 
+    GiveName (stage);
+    stage->FillInConfig ();
     RefreshSensitivity ();
   }
 }
@@ -582,6 +578,7 @@ void Schedule::RemoveStage (Stage *stage)
           Stage *new_current_stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
 
           new_current_stage->UnLock ();
+          DisplayLocks ();
         }
       }
     }
@@ -739,11 +736,14 @@ void Schedule::Load (xmlDoc          *doc,
 
     checkin_stage->Load (xml_context,
                          contest_keyword);
+    checkin_stage->FillInConfig ();
+    checkin_stage->ApplyConfig ();
     checkin_stage->Display ();
 
     if (display_all || (current_stage_index > 0))
     {
       checkin_stage->Lock ();
+      DisplayLocks ();
     }
   }
 
@@ -781,11 +781,10 @@ void Schedule::Load (xmlDoc          *doc,
         current_stage_index = nb_stage-1;
         if (nb_stage == 1)
         {
-          stage = CreateStage ("pool_stage");
+          stage = CreateStage ("TourDePoules");
           if (stage)
           {
             AddStage (stage);
-            GiveName (stage);
           }
 
           stage = CreateStage ("PhaseDeTableaux");
@@ -807,8 +806,6 @@ void Schedule::Load (xmlDoc          *doc,
   xmlXPathFreeContext (xml_context);
 
   SetCurrentStage (current_stage_index);
-  DisplayConfig ();
-  ApplyNewConfig ();
 }
 
 // --------------------------------------------------------------------------------
@@ -819,39 +816,55 @@ void Schedule::LoadStage (Stage   *stage,
 {
   if (stage)
   {
-    gboolean display_all = (current_stage_index < 0);
-
     AddStage (stage);
-    *nb_stage = *nb_stage + 1;
 
-    if (display_all || ((*nb_stage-1) <= (guint) current_stage_index))
     {
-      PlugStage (stage);
-    }
+      Stage *input_provider = stage->GetInputProvider ();
 
-    stage->Load (xml_node);
-    RefreshStageName (stage);
-
-    if (display_all || ((*nb_stage-1) <= (guint) current_stage_index))
-    {
-      stage->Display ();
-
-      if (display_all || ((*nb_stage-1) < (guint) current_stage_index))
+      if (input_provider)
       {
-        stage->Lock ();
-      }
-    }
-
-    {
-      Stage *input_provider_client = CreateStage (stage->GetInputProviderClient ());
-
-      if (input_provider_client)
-      {
-        LoadStage (input_provider_client,
-                   NULL,
-                   nb_stage,
+        (*nb_stage)++;
+        LoadStage (input_provider,
+                   xml_node,
+                   *nb_stage,
                    current_stage_index);
       }
+    }
+
+    (*nb_stage)++;
+    LoadStage (stage,
+               xml_node,
+               *nb_stage,
+               current_stage_index);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::LoadStage (Stage   *stage,
+                          xmlNode *xml_node,
+                          guint    nb_stage,
+                          gint     current_stage_index)
+{
+  gboolean display_all = (current_stage_index < 0);
+
+  if (display_all || ((nb_stage-1) <= (guint) current_stage_index))
+  {
+    PlugStage (stage);
+  }
+
+  stage->Load (xml_node);
+  stage->FillInConfig ();
+  stage->ApplyConfig ();
+  RefreshStageName (stage);
+
+  if (display_all || ((nb_stage-1) <= (guint) current_stage_index))
+  {
+    stage->Display ();
+
+    if (display_all || ((nb_stage-1) < (guint) current_stage_index))
+    {
+      stage->Lock ();
+      DisplayLocks ();
     }
   }
 }
@@ -1007,23 +1020,9 @@ gboolean Schedule::on_new_stage_selected (GtkWidget      *widget,
     }
   }
 
-  {
-    Stage *input_provider = stage->GetInputProvider ();
-
-    if (input_provider)
-    {
-      owner->AddStage (input_provider,
-                       after);
-      stage->SetInputProvider (input_provider);
-      after = input_provider;
-    }
-  }
-
   owner->AddStage (stage,
                    after);
-  owner->GiveName (stage);
 
-  stage->FillInConfig ();
   owner->on_stage_selected ();
   return FALSE;
 }
@@ -1158,6 +1157,7 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
 
       stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
       stage->UnLock ();
+      DisplayLocks ();
     }
 
     MakeDirty ();
@@ -1181,6 +1181,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
 
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
   stage->Lock ();
+  DisplayLocks ();
 
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage+1);
   PlugStage (stage);
