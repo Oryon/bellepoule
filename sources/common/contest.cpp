@@ -91,10 +91,30 @@ const gchar *Contest::category_image[_nb_category] =
   N_ ("U16"),
   N_ ("U18"),
   N_ ("Senior"),
-  N_ ("Veteran")
+  N_ ("Veteran"),
+  N_ ("Veteran 1"),
+  N_ ("Veteran 2"),
+  N_ ("Veteran 3"),
+  N_ ("Veteran 4")
 };
 
 const gchar *Contest::category_xml_image[_nb_category] =
+{
+  "PO",
+  "PUP",
+  "BEN",
+  "M",
+  "C",
+  "J",
+  "S",
+  "VET",
+  "V1",
+  "V2",
+  "V3",
+  "V4"
+};
+
+const gchar *Contest::category_xml_alias[_nb_category] =
 {
   "O",
   "P",
@@ -103,6 +123,10 @@ const gchar *Contest::category_xml_image[_nb_category] =
   "C",
   "J",
   "S",
+  "V",
+  "V",
+  "V",
+  "V",
   "V"
 };
 
@@ -718,11 +742,25 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Categorie");
         if (attr)
         {
-          for (guint i = 0; i < _nb_category; i++)
+          guint i;
+
+          for (i = 0; i < _nb_category; i++)
           {
-            if (strcmp (attr, category_xml_image[i]) == 0)
+            if (strcmp (attr, category_xml_alias[i]) == 0)
             {
               _category = i;
+              break;
+            }
+          }
+          if (i == _nb_category)
+          {
+            for (i = 0; i < _nb_category; i++)
+            {
+              if (strcmp (attr, category_xml_image[i]) == 0)
+              {
+                _category = i;
+                break;
+              }
             }
           }
           xmlFree (attr);

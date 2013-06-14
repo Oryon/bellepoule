@@ -487,6 +487,11 @@ namespace People
               }
 
               attr_id._name = (gchar *) "gender";
+              if ((*tokens[3] == 'H') || (*tokens[3] == 'h'))
+              {
+                // Workaround against malformed files
+                *tokens[3] = 'M';
+              }
               player->SetAttributeValue (&attr_id, tokens[3]);
 
               attr_id._name = (gchar *) "country";
