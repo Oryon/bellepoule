@@ -67,6 +67,49 @@ void Team::SetAttendingFromMembers ()
 }
 
 // --------------------------------------------------------------------------------
+void Team::SetAttributesFromMembers ()
+{
+  GSList *current_desc = AttributeDesc::GetList ();
+
+  while (current_desc)
+  {
+    AttributeDesc *attr_desc = (AttributeDesc *) current_desc->data;
+
+    if (   (attr_desc->_uniqueness  == AttributeDesc::NOT_SINGULAR)
+        && (attr_desc->_persistency == AttributeDesc::PERSISTENT))
+    {
+      AttributeId  attr_id (attr_desc->_code_name);
+      GSList      *current_member = _member_list;
+      Attribute   *team_attr      = NULL;
+
+      RemoveAttribute (&attr_id);
+
+      while (current_member)
+      {
+        Player    *player = (Player *) current_member->data;
+        Attribute *attr   = player->GetAttribute (&attr_id);
+
+        if (team_attr && (Attribute::Compare (team_attr, attr) != 0))
+        {
+          team_attr = NULL;
+          break;
+        }
+        team_attr = attr;
+
+        current_member = g_slist_next (current_member);
+      }
+
+      if (team_attr)
+      {
+        SetAttribute (team_attr);
+      }
+    }
+
+    current_desc = g_slist_next (current_desc);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Team::SetDefaultClassification (guint default_classification)
 {
   _default_classification = default_classification;

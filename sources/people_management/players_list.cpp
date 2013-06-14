@@ -817,14 +817,16 @@ namespace People
 
     if (_filter)
     {
-      guint   nb_players  = g_slist_length (_player_list);
+      guint   players_count;
       gdouble canvas_w;
       gdouble canvas_h;
 
       _column_width = (gdouble *) g_malloc0 (g_slist_length (_filter->GetLayoutList ()) * sizeof (gdouble));
 
+      _flat_print = TRUE;
       GetPrintScale (operation,
                      context,
+                     &players_count,
                      &_print_scale,
                      &canvas_w,
                      &canvas_h);
@@ -834,13 +836,13 @@ namespace People
         gdouble paper_h   = gtk_print_context_get_height (context);
         gdouble free_area = (paper_h*100.0/paper_w - PRINT_HEADER_HEIGHT+2.0);
 
-        _nb_player_per_page = guint (nb_players * free_area/_print_scale / canvas_h) - 1;
+        _nb_player_per_page = guint (players_count * free_area/_print_scale / canvas_h) - 1;
       }
 
       {
-        _nb_pages = nb_players / _nb_player_per_page;
+        _nb_pages = players_count / _nb_player_per_page;
 
-        if (nb_players % _nb_player_per_page != 0)
+        if (players_count % _nb_player_per_page != 0)
         {
           _nb_pages++;
         }
@@ -905,20 +907,24 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::PrintPlayer (GooCanvasItem   *root_item,
                                  GtkPrintContext *context,
+                                 GtkTreePath     *path,
                                  Player          *player,
                                  guint            row,
                                  gboolean         update_column_width)
   {
     GSList        *layout_list = _filter->GetLayoutList ();
     gdouble        x           = 0.0;
-    GooCanvasItem *bar;
+    GooCanvasItem *bar         = NULL;
 
-    bar = goo_canvas_rect_new (root_item,
-                               0.0, row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
-                               15.0, PRINT_FONT_HEIGHT,
-                               "stroke-pattern", NULL,
-                               "fill-color", "Grey85",
-                               NULL);
+    if ((_flat_print == FALSE) && (gtk_tree_path_get_depth (path) == 1))
+    {
+      bar = goo_canvas_rect_new (root_item,
+                                 0.0, row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
+                                 15.0, PRINT_FONT_HEIGHT,
+                                 "stroke-pattern", NULL,
+                                 "fill-color", "Grey85",
+                                 NULL);
+    }
 
     for (guint j = 0; layout_list != NULL; j++)
     {
@@ -985,9 +991,17 @@ namespace People
           }
           else
           {
-            gchar *font  = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+            gchar *font;
             gchar *image = attr->GetUserImage (attr_layout->_look);
 
+            if (bar && strcmp (attr->GetCodeName (), "name") == 0)
+            {
+              font = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
+            }
+            else
+            {
+              font = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+            }
             item = goo_canvas_text_new (root_item,
                                         image,
                                         x,
@@ -1024,45 +1038,92 @@ namespace People
         }
       }
       x += _column_width[j];
-      g_object_set (G_OBJECT (bar),
-                    "width", x,
-                    NULL);
+
+      if (bar)
+      {
+        g_object_set (G_OBJECT (bar),
+                      "width", x,
+                      NULL);
+      }
 
       layout_list = g_slist_next (layout_list);
     }
   }
 
   // --------------------------------------------------------------------------------
+  guint PlayersList::PrintAllPlayers (GtkPrintOperation *operation,
+                                      GooCanvas         *canvas,
+                                      GtkPrintContext   *context,
+                                      gint               page_nr)
+  {
+    guint       players_count = 0;
+    GtkTreeIter iter;
+    gboolean    iter_is_valid;
+
+    iter_is_valid = gtk_tree_model_get_iter_first (gtk_tree_view_get_model (_tree_view),
+                                                   &iter);
+
+    if (iter_is_valid)
+    {
+      if (page_nr != -1)
+      {
+        for (guint i = 0; i < page_nr*_nb_player_per_page; i++)
+        {
+          iter_is_valid = IterNextNode (gtk_tree_view_get_model (_tree_view),
+                                        &iter);
+        }
+      }
+
+      while (iter_is_valid)
+      {
+        Player *current_player = GetPlayer (gtk_tree_view_get_model (_tree_view), &iter);
+
+        if (   (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"))
+            || PlayerIsPrintable (current_player))
+        {
+          GtkTreePath *path = gtk_tree_model_get_path (gtk_tree_view_get_model (_tree_view),
+                                                       &iter);
+
+          PrintPlayer (goo_canvas_get_root_item (canvas),
+                       context,
+                       path,
+                       current_player,
+                       players_count+1,
+                       (page_nr == -1));
+          gtk_tree_path_free (path);
+          players_count++;
+
+          if ((page_nr != -1) && (players_count >= _nb_player_per_page))
+          {
+            break;
+          }
+        }
+
+        iter_is_valid = IterNextNode (gtk_tree_view_get_model (_tree_view),
+                                      &iter);
+      }
+    }
+
+    return players_count;
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::GetPrintScale (GtkPrintOperation *operation,
                                    GtkPrintContext   *context,
+                                   guint             *players_count,
                                    gdouble           *scale,
                                    gdouble           *canvas_w,
                                    gdouble           *canvas_h)
   {
-    GSList    *current_player;
-    guint      nb_players = 0;
     GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
 
     PrintHeader (goo_canvas_get_root_item (canvas),
                  TRUE);
 
-    current_player = _player_list;
-    for (guint i = 0; current_player != NULL; i++)
-    {
-      Player *player = (Player *) current_player->data;
-
-      if (   (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"))
-          || PlayerIsPrintable (player))
-      {
-        PrintPlayer (goo_canvas_get_root_item (canvas),
-                     context,
-                     player,
-                     nb_players+1,
-                     TRUE);
-        nb_players++;
-      }
-      current_player = g_slist_next (current_player);
-    }
+    *players_count = PrintAllPlayers (operation,
+                                      canvas,
+                                      context,
+                                      -1);
 
     {
       {
@@ -1073,7 +1134,7 @@ namespace People
           *canvas_w += _column_width[i];
         }
 
-        *canvas_h = nb_players * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0);
+        *canvas_h = *players_count * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0);
       }
 
       {
@@ -1159,35 +1220,10 @@ namespace People
         PrintHeader (goo_canvas_get_root_item (canvas),
                      FALSE);
 
-        {
-          GtkTreeIter  iter;
-          gboolean     iter_is_valid;
-          guint        nb_players = 0;
-
-          iter_is_valid = gtk_tree_model_iter_nth_child (gtk_tree_view_get_model (_tree_view),
-                                                         &iter,
-                                                         NULL,
-                                                         page_nr*_nb_player_per_page);
-
-          for (guint i = 0; iter_is_valid && (nb_players < _nb_player_per_page); i++)
-          {
-            Player *current_player = GetPlayer (gtk_tree_view_get_model (_tree_view), &iter);
-
-            if (   (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"))
-                || PlayerIsPrintable (current_player))
-            {
-              PrintPlayer (goo_canvas_get_root_item (canvas),
-                           context,
-                           current_player,
-                           nb_players+1,
-                           FALSE);
-              nb_players++;
-            }
-
-            iter_is_valid = gtk_tree_model_iter_next (gtk_tree_view_get_model (_tree_view),
-                                                      &iter);
-          }
-        }
+        PrintAllPlayers (operation,
+                         canvas,
+                         context,
+                         page_nr);
 
         if (_print_scale != 1.0)
         {
@@ -1212,6 +1248,50 @@ namespace People
       }
       cairo_restore (cr);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean PlayersList::IterNextNode (GtkTreeModel *model,
+                                      GtkTreeIter  *iter)
+  {
+    {
+      GtkTreeIter next_node;
+
+      if (gtk_tree_model_iter_children (model,
+                                        &next_node,
+                                        iter))
+      {
+        _flat_print = FALSE;
+        *iter = next_node;
+        return TRUE;
+      }
+    }
+
+    {
+      GtkTreeIter tmp_node = *iter;
+
+      if (gtk_tree_model_iter_next (model,
+                                    iter))
+      {
+        return TRUE;
+      }
+      *iter = tmp_node;
+    }
+
+    {
+      GtkTreeIter next_node;
+
+      if (gtk_tree_model_iter_parent (model,
+                                      &next_node,
+                                      iter))
+      {
+        *iter = next_node;
+        return (gtk_tree_model_iter_next (model,
+                                          iter));
+      }
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

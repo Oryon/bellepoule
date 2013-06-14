@@ -112,6 +112,7 @@ namespace People
       guint         _nb_pages;
       gint          _selector_column;
       gdouble      *_column_width;
+      gboolean      _flat_print;
       PlayersStore *_store;
 
       void RefreshDisplay ();
@@ -122,6 +123,9 @@ namespace People
 
       Player *GetPlayer (const gchar *path_string);
 
+      gboolean IterNextNode (GtkTreeModel *model,
+                             GtkTreeIter  *iter);
+
       virtual gboolean PlayerIsPrintable (Player *player);
 
       void OnCellToggled (gchar         *path_string,
@@ -131,14 +135,21 @@ namespace People
       void PrintHeader (GooCanvasItem *root_item,
                         gboolean       update_column_width);
 
+      guint PrintAllPlayers (GtkPrintOperation *operation,
+                             GooCanvas         *canvas,
+                             GtkPrintContext   *context,
+                             gint               page_nr);
+
       void PrintPlayer (GooCanvasItem   *table,
                         GtkPrintContext *context,
+                        GtkTreePath     *path,
                         Player          *player,
                         guint            row,
                         gboolean         update_column_width);
 
       void GetPrintScale (GtkPrintOperation *operation,
                           GtkPrintContext   *context,
+                          guint             *players_count,
                           gdouble           *scale,
                           gdouble           *w,
                           gdouble           *h);
