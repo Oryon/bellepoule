@@ -291,7 +291,9 @@ namespace People
         {
           Team *team = (Team *) player;
 
-          team->SetAttendingFromMembers ();
+          team->SetAttendingFromMembers  ();
+          team->SetAttributesFromMembers ();
+          Update (team);
         }
         current = g_slist_next (current);
       }
@@ -636,8 +638,10 @@ namespace People
     {
       Player *player = (Player *) current->data;
 
-      player->SetRef (ref);
-      Update (player);
+      {
+        player->SetRef (ref);
+        Update (player);
+      }
 
       current = g_slist_next (current);
     }
@@ -921,6 +925,18 @@ namespace People
       if (player->Is ("Team"))
       {
         RegisterNewTeam ((Team *) player);
+      }
+    }
+
+    if (player->Is ("Fencer"))
+    {
+      Fencer *fencer = (Fencer *) player;
+      Team   *team   = fencer->GetTeam ();
+
+      if (team)
+      {
+        team->SetAttributesFromMembers ();
+        Update (team);
       }
     }
 

@@ -38,6 +38,8 @@ class Team : public Player
 
     void SetAttendingFromMembers ();
 
+    void SetAttributesFromMembers ();
+
     void SetRankFromMembers (Player::AttributeId *criteria);
 
     void SetDefaultClassification (guint default_classification);

@@ -377,6 +377,19 @@ void Player::SetAttributeValue (AttributeId *attr_id,
 }
 
 // --------------------------------------------------------------------------------
+void Player::SetAttribute (Attribute *attr)
+{
+  AttributeId attr_id (attr->GetCodeName ());
+
+  RemoveAttribute (&attr_id);
+
+  SetData (attr_id._owner,
+           attr_id._name,
+           attr->Duplicate (),
+           (GDestroyNotify) Object::TryToRelease);
+}
+
+// --------------------------------------------------------------------------------
 void Player::RemoveAttribute (AttributeId *attr_id)
 {
   RemoveData (attr_id->_owner,
