@@ -991,9 +991,17 @@ namespace People
           }
           else
           {
-            gchar *font  = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+            gchar *font;
             gchar *image = attr->GetUserImage (attr_layout->_look);
 
+            if (bar && strcmp (attr->GetCodeName (), "name") == 0)
+            {
+              font = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
+            }
+            else
+            {
+              font = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+            }
             item = goo_canvas_text_new (root_item,
                                         image,
                                         x,
