@@ -70,20 +70,21 @@ namespace Pool
 #ifndef DEBUG
                                           "ref",
 #endif
-                                          "availability",
-                                          "participation_rate",
-                                          "level",
-                                          "status",
-                                          "global_status",
-                                          "start_rank",
-                                          "final_rank",
-                                          "attending",
-                                          "exported",
-                                          "victories_ratio",
-                                          "indice",
-                                          "pool_nr",
                                           "HS",
+                                          "attending",
+                                          "availability",
+                                          "exported",
+                                          "final_rank",
+                                          "global_status",
+                                          "indice",
+                                          "level",
+                                          "participation_rate",
+                                          "pool_nr",
                                           "rank",
+                                          "start_rank",
+                                          "status",
+                                          "team",
+                                          "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
                            this);
@@ -122,14 +123,15 @@ namespace Pool
 #ifndef DEBUG
                                           "ref",
 #endif
-                                          "availability",
-                                          "participation_rate",
-                                          "level",
-                                          "global_status",
-                                          "start_rank",
-                                          "final_rank",
                                           "attending",
+                                          "availability",
                                           "exported",
+                                          "final_rank",
+                                          "global_status",
+                                          "level",
+                                          "participation_rate",
+                                          "start_rank",
+                                          "team",
                                           NULL);
       filter = new Filter (attr_list);
 
@@ -246,9 +248,9 @@ namespace Pool
       xmlFreeTextWriter (xml_writer);
     }
 
-#if 0
+#if 1
     {
-      Net::Uploader *uploader   = new Net::Uploader ("http://192.168.0.24:35830",
+      Net::Uploader *uploader   = new Net::Uploader ("http://192.168.0.22:35830",
                                                      NULL,
                                                      NULL);
       uploader->UploadString ((const gchar *) xml_buffer->content);

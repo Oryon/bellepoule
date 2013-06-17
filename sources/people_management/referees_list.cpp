@@ -47,18 +47,19 @@ namespace People
 #ifndef DEBUG
                                           "ref",
 #endif
-                                          "start_rank",
-                                          "status",
-                                          "global_status",
-                                          "previous_stage_rank",
+                                          "HS",
                                           "exported",
                                           "final_rank",
-                                          "victories_ratio",
+                                          "global_status",
                                           "indice",
                                           "pool_nr",
-                                          "HS",
+                                          "previous_stage_rank",
                                           "rank",
                                           "ranking",
+                                          "start_rank",
+                                          "status",
+                                          "team",
+                                          "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
                            this);
