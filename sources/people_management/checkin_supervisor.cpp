@@ -606,6 +606,7 @@ namespace People
     if (team_event)
     {
       SelectTreeMode ();
+      _form->ShowPage ("Team");
       gtk_widget_show (_glade->GetWidget ("team_classification_label"));
       gtk_widget_show (_glade->GetWidget ("team_classification_viewport"));
       gtk_widget_show (_glade->GetWidget ("teamsize_label"));
@@ -615,6 +616,7 @@ namespace People
     else
     {
       SelectFlatMode ();
+      _form->HidePage ("Team");
       gtk_widget_hide (_glade->GetWidget ("team_classification_label"));
       gtk_widget_hide (_glade->GetWidget ("team_classification_viewport"));
       gtk_widget_hide (_glade->GetWidget ("teamsize_label"));

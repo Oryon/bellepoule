@@ -63,6 +63,7 @@ namespace People
     page = &_pages[_page_count-1];
 
     page->_player_class = player_class;
+    page->_visible      = TRUE;
 
     {
       GtkWidget   *hbox       = gtk_hbox_new (FALSE, 5);
@@ -463,21 +464,64 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void Form::ShowPage (const gchar *page)
+  {
+    for (guint i = 0; i < _page_count; i++)
+    {
+      if (strcmp (_pages[i]._player_class, page) == 0)
+      {
+        _pages[i]._visible = TRUE;
+        break;
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Form::HidePage (const gchar *page)
+  {
+    for (guint i = 0; i < _page_count; i++)
+    {
+      if (strcmp (_pages[i]._player_class, page) == 0)
+      {
+        _pages[i]._visible = FALSE;
+        break;
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Form::ShowTabs ()
+  {
+    guint visible_count = 0;
+
+    for (guint i = 0; i < _page_count; i++)
+    {
+      visible_count += _pages[i]._visible;
+    }
+
+    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (_glade->GetWidget ("notebook")),
+                                visible_count > 1);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Form::HideTabs ()
+  {
+    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (_glade->GetWidget ("notebook")),
+                                FALSE);
+  }
+
+  // --------------------------------------------------------------------------------
   void Form::Show (Player *player)
   {
-    GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
-
     gtk_widget_show_all (_glade->GetWidget ("FillInForm"));
 
     if (player)
     {
-      gtk_notebook_set_show_tabs (notebook,
-                                  FALSE);
+      HideTabs ();
     }
     else
     {
-      gtk_notebook_set_show_tabs (notebook,
-                                  TRUE);
+      ShowTabs ();
     }
 
     _player_to_update = player;
@@ -490,7 +534,7 @@ namespace People
       {
         if (player->Is (_pages[page]._player_class))
         {
-          gtk_notebook_set_current_page (notebook,
+          gtk_notebook_set_current_page (GTK_NOTEBOOK (_glade->GetWidget ("notebook")),
                                          page);
           break;
         }

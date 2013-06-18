@@ -814,10 +814,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
       _schedule->SetScoreStuffingPolicy (score_stuffing_policy);
     }
 
-    if (_team_event)
-    {
-      _schedule->SetTeamEvent (_team_event);
-    }
+    _schedule->SetTeamEvent (_team_event);
 
     xmlFreeDoc (doc);
 
@@ -980,10 +977,10 @@ Contest *Contest::Create ()
 
   contest->_schedule->SetScoreStuffingPolicy (FALSE);
 
-  contest->_schedule->SetTeamEvent (FALSE);
-
   contest->FillInProperties ();
   contest->_schedule->CreateDefault ();
+
+  contest->_schedule->SetTeamEvent (FALSE);
 
   {
     gtk_dialog_run (GTK_DIALOG (contest->_properties_dialog));
