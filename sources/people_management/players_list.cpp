@@ -922,7 +922,8 @@ namespace People
     gdouble        x           = 0.0;
     GooCanvasItem *bar         = NULL;
 
-    if ((_flat_print == FALSE) && (gtk_tree_path_get_depth (path) == 1))
+    if (   ((_flat_print == FALSE) && (gtk_tree_path_get_depth (path) == 1))
+        || ((_flat_print == TRUE)) && (row % 2))
     {
       bar = goo_canvas_rect_new (root_item,
                                  0.0, row * (PRINT_FONT_HEIGHT + PRINT_FONT_HEIGHT/3.0),
@@ -1000,7 +1001,7 @@ namespace People
             gchar *font;
             gchar *image = attr->GetUserImage (attr_layout->_look);
 
-            if (bar && strcmp (attr->GetCodeName (), "name") == 0)
+            if ((_flat_print == FALSE) && (bar && strcmp (attr->GetCodeName (), "name") == 0))
             {
               font = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
             }
