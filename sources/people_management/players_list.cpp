@@ -649,7 +649,7 @@ namespace People
       full_selection_list = gtk_tree_selection_get_selected_rows (selection,
                                                                   NULL);
 
-      // Remove child when ancestor is in the selection
+      // Forget children when their ancestor is in the selection
       {
         GList *current = full_selection_list;
 
@@ -681,6 +681,7 @@ namespace People
         }
       }
 
+      // Build a reference list to remove
       {
         GList *current = short_selection_list;
 
@@ -702,7 +703,7 @@ namespace People
       g_list_free    (short_selection_list);
     }
 
-
+    // Perform the removing
     {
       GList *current_ref = ref_list;
 
@@ -716,20 +717,25 @@ namespace People
 
         while (current_player)
         {
-          Player      *p = (Player *) current_player->data;
-          GtkTreePath *current_path;
+          Player              *p           = (Player *) current_player->data;
+          GtkTreeRowReference *current_ref = _store->GetTreeRowRef (model, p);
 
-          current_path = gtk_tree_row_reference_get_path (_store->GetTreeRowRef (model,
-                                                                                 p));
-          if (gtk_tree_path_compare (selected_path,
-                                     current_path) == 0)
+          if (current_ref)
           {
-            Remove (p);
+            GtkTreePath *current_path;
+
+            current_path = gtk_tree_row_reference_get_path (current_ref);
+            if (gtk_tree_path_compare (selected_path,
+                                       current_path) == 0)
+            {
+              Remove (p);
+              gtk_tree_path_free (current_path);
+              break;
+            }
+
             gtk_tree_path_free (current_path);
-            break;
           }
 
-          gtk_tree_path_free (current_path);
           current_player = g_slist_next (current_player);
         }
         gtk_tree_path_free (selected_path);
