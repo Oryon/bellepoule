@@ -179,7 +179,8 @@ Tournament::Tournament (gchar *filename)
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
 
     _http_server = new Net::HttpServer (this,
-                                        OnGetHttpResponse);
+                                        HttpPostCbk,
+                                        HttpGetCbk);
   }
 }
 
@@ -601,11 +602,10 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-gchar *Tournament::GetHttpResponse (const gchar *url)
+void Tournament::OnHttpPost (const gchar *url,
+                             const gchar *data)
 {
-  gchar *result = NULL;
-
-  if (strstr (url, "/bellepoule/tournament/competition/"))
+  if (strstr (url, "/tournament/competition/"))
   {
     gchar *id = (gchar *) strrchr (url, '/');
 
@@ -621,19 +621,47 @@ gchar *Tournament::GetHttpResponse (const gchar *url)
         if (    contest->GetFilename ()
              && (strcmp (contest->GetId (), id) == 0))
         {
-          if (g_file_get_contents (contest->GetFilename (),
-                                   &result,
-                                   NULL,
-                                   NULL))
-          {
-            break;
-          }
+          // ............
+          break;
         }
         current = g_slist_next (current);
       }
     }
   }
-  else if (strstr (url, "/bellepoule/tournament"))
+}
+
+// --------------------------------------------------------------------------------
+gchar *Tournament::OnHttpGet (const gchar *url)
+{
+  gchar *result = NULL;
+
+  if (strstr (url, "/tournament/competition/"))
+  {
+    gchar *id = (gchar *) strrchr (url, '/');
+
+    if (id && id[1])
+    {
+      GSList *current = _contest_list;
+
+      id++;
+      while (current)
+      {
+        Contest *contest = (Contest *) current->data;
+
+        if (    contest->GetFilename ()
+             && (strcmp (contest->GetId (), id) == 0))
+        {
+          g_file_get_contents (contest->GetFilename (),
+                               &result,
+                               NULL,
+                               NULL);
+          break;
+        }
+        current = g_slist_next (current);
+      }
+    }
+  }
+  else if (strstr (url, "/tournament"))
   {
     GSList  *current  = _contest_list;
     GString *response = g_string_new ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -686,12 +714,23 @@ gchar *Tournament::GetHttpResponse (const gchar *url)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Tournament::OnGetHttpResponse (Object      *client,
-                                      const gchar *url)
+void Tournament::HttpPostCbk (Object      *client,
+                              const gchar *url,
+                              const gchar *data)
 {
   Tournament *tournament = dynamic_cast <Tournament *> (client);
 
-  return tournament->GetHttpResponse (url);
+  return tournament->OnHttpPost (url,
+                                 data);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Tournament::HttpGetCbk (Object      *client,
+                               const gchar *url)
+{
+  Tournament *tournament = dynamic_cast <Tournament *> (client);
+
+  return tournament->OnHttpGet (url);
 }
 
 // --------------------------------------------------------------------------------
@@ -1285,7 +1324,7 @@ void Tournament::OnWifi ()
 void Tournament::GetBroadcastedCompetitions ()
 {
   GtkWidget *entry   = _glade->GetWidget ("http_entry");
-  gchar     *address = g_strdup_printf ("http://%s:8080/bellepoule/tournament",
+  gchar     *address = g_strdup_printf ("http://%s:35830/tournament",
                                         gtk_entry_get_text (GTK_ENTRY (entry)));
 
   if (_competitions_downloader == NULL)
@@ -1414,7 +1453,7 @@ void Tournament::OnBroadcastedActivated (GtkTreePath *path)
 
   {
     GtkWidget *entry   = _glade->GetWidget ("http_entry");
-    gchar     *address = g_strdup_printf ("http://%s:8080/bellepoule/tournament/competition/%s",
+    gchar     *address = g_strdup_printf ("http://%s:35830/tournament/competition/%s",
                                           gtk_entry_get_text (GTK_ENTRY (entry)),
                                           id);
 

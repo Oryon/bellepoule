@@ -153,7 +153,7 @@ static gboolean IsCsvReady (AttributeDesc *desc)
           && (desc->_rights      == AttributeDesc::PUBLIC)
           && (desc->_persistency == AttributeDesc::PERSISTENT)
           && (g_ascii_strcasecmp (desc->_code_name, "final_rank") != 0)
-          && (g_ascii_strcasecmp (desc->_code_name, "smartphone") != 0)
+          && (g_ascii_strcasecmp (desc->_code_name, "IP") != 0)
           && (g_ascii_strcasecmp (desc->_code_name, "exported")   != 0));
 }
 
@@ -309,7 +309,7 @@ int main (int argc, char **argv)
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
-    desc = AttributeDesc::Declare (G_TYPE_STRING, "smartphone", "SmartPhone", gettext ("smartphone"));
+    desc = AttributeDesc::Declare (G_TYPE_STRING, "IP", "IP", gettext ("IP address"));
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "participation_rate", "Activite", gettext ("rate"));
     desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
@@ -387,6 +387,17 @@ int main (int argc, char **argv)
       desc->AddDiscreteValues ("Busy",   gettext ("Busy"),   (gchar *) GTK_STOCK_EXECUTE,
                                "Absent", gettext ("Absent"), (gchar *) GTK_STOCK_CLOSE,
                                "Free",   gettext ("Free"),   (gchar *) GTK_STOCK_APPLY, NULL);
+
+      desc = AttributeDesc::Declare (G_TYPE_STRING, "connection", "Connection", gettext ("connection"));
+      desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
+      desc->_rights         = AttributeDesc::PRIVATE;
+      desc->_scope          = AttributeDesc::GLOBAL;
+      desc->_favorite_look  = AttributeDesc::GRAPHICAL;
+      desc->AddDiscreteValues ("Broken",     gettext ("Broken"),     (gchar *) GTK_STOCK_DISCONNECT,
+                               "Waiting",    gettext ("Absent"),     (gchar *) GTK_STOCK_DIALOG_QUESTION,
+                               "Processing", gettext ("Processing"), (gchar *) GTK_STOCK_CONNECT,
+                               "Ready",      gettext ("Ready"),      (gchar *) GTK_STOCK_APPLY,
+                               "Manual",     gettext ("Manual"),     (gchar *) GTK_STOCK_EDIT, NULL);
 
     }
   }

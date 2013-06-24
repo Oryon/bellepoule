@@ -220,44 +220,60 @@ namespace Pool
 
     classification->SetDataOwner (_single_owner);
     classification->SortDisplay ();
-
-    SendMatchSheets ();
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::SendMatchSheets ()
+  void Supervisor::OnSmartPouleClicked ()
   {
-    xmlBuffer *xml_buffer = xmlBufferCreate ();
-
+    for (guint p = 0; p < _allocator->GetNbPools (); p++)
     {
-      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+      Pool   *pool            = _allocator->GetPool (p);
+      GSList *current_referee = pool->GetRefereeList ();
 
-      _contest->SaveHeader (xml_writer);
-      _allocator->SaveHeader (xml_writer);
-      //for (guint p = 0; p < _allocator->GetNbPools (); p++)
+      while (current_referee)
       {
-        Pool *pool = _allocator->GetPool (0);
+        Player              *referee = (Player *) current_referee->data;
+        Player::AttributeId  attr_id ("IP");
+        Attribute           *ip_attr = referee->GetAttribute (&attr_id);
 
-        pool->Save (xml_writer);
+        if (ip_attr)
+        {
+          gchar *ip = ip_attr->GetStrValue ();
+
+          if (ip && (ip[0] != 0))
+          {
+            xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+            {
+              xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+              _contest->SaveHeader (xml_writer);
+              _allocator->SaveHeader (xml_writer);
+              pool->Save (xml_writer);
+              xmlTextWriterEndElement (xml_writer);
+              xmlTextWriterEndElement (xml_writer);
+              xmlTextWriterEndDocument (xml_writer);
+
+              xmlFreeTextWriter (xml_writer);
+            }
+
+            {
+              gchar         *url      = g_strdup_printf ("http://%s:56570", ip);
+              Net::Uploader *uploader = new Net::Uploader (url,
+                                                           NULL,
+                                                           NULL);
+
+              uploader->UploadString ((const gchar *) xml_buffer->content);
+              g_free (url);
+            }
+
+            xmlBufferFree (xml_buffer);
+          }
+        }
+
+        current_referee = g_slist_next (current_referee);
       }
-      xmlTextWriterEndElement (xml_writer);
-      xmlTextWriterEndElement (xml_writer);
-
-      xmlTextWriterEndDocument (xml_writer);
-
-      xmlFreeTextWriter (xml_writer);
     }
-
-#if 1
-    {
-      Net::Uploader *uploader   = new Net::Uploader ("http://192.168.0.22:35830",
-                                                     NULL,
-                                                     NULL);
-      uploader->UploadString ((const gchar *) xml_buffer->content);
-    }
-#endif
-
-    xmlBufferFree (xml_buffer);
   }
 
   // --------------------------------------------------------------------------------
@@ -906,6 +922,15 @@ namespace Pool
     Supervisor *ps = dynamic_cast <Supervisor *> (owner);
 
     ps->OnStuffClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_smartpoule_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+  {
+    Supervisor *ps = dynamic_cast <Supervisor *> (owner);
+
+    ps->OnSmartPouleClicked ();
   }
 
   // --------------------------------------------------------------------------------

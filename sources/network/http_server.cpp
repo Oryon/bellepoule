@@ -19,25 +19,25 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::HttpServer (Object             *client,
-                          GetHttpResponseCbk  get_http_response)
+  HttpServer::HttpServer (Object   *client,
+                          HttpPost  http_post,
+                          HttpGet   http_get)
     : Object ("HttpServer")
   {
-    _deamon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
+    _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                                 PORT,
-                                NULL,
-                                NULL,
-                                (MHD_AccessHandlerCallback) OnMicroHttpRequest,
-                                this,
+                                NULL, NULL,
+                                (MHD_AccessHandlerCallback) OnMicroHttpRequest, this,
                                 MHD_OPTION_END);
-    _client            = client;
-    _get_http_response = get_http_response;
+    _client        = client;
+    _http_POST_cbk = http_post;
+    _http_GET_cbk  = http_get;
   }
 
   // --------------------------------------------------------------------------------
   HttpServer::~HttpServer ()
   {
-    MHD_stop_daemon (_deamon);
+    MHD_stop_daemon (_daemon);
   }
 
   // --------------------------------------------------------------------------------
@@ -47,8 +47,8 @@ namespace Net
                          void                  **con_cls)
   {
     int    ret             = MHD_NO;
-    gchar *client_response = _get_http_response (_client,
-                                                 url);
+    gchar *client_response = _http_GET_cbk (_client,
+                                            url);
 
     if (client_response)
     {
@@ -84,30 +84,33 @@ namespace Net
                                       size_t                *upload_data_size,
                                       void                  **con_cls)
   {
-    //if (url)    g_print ("url     ==> %s\n", url);
-    //if (method) g_print ("method  ==> %s\n", method);
+    if (url)    g_print ("url     ==> %s\n", url);
+    if (method) g_print ("method  ==> %s\n", method);
 
-    if (strcmp (method, "GET") != 0)
+    if (strcmp (method, "GET") == 0)
     {
-      return MHD_NO;
+      if (server != *con_cls)
+      {
+        /* The first time only the headers are valid,
+           do not respond in the first round... */
+        *con_cls = server;
+        return MHD_YES;
+      }
+
+      if (*upload_data_size != 0)
+      {
+        return MHD_NO;
+      }
+
+      return server->OnGet (connection,
+                            url,
+                            method,
+                            con_cls);
+    }
+    else if (strcmp (method, "POST") == 0)
+    {
     }
 
-    if (server != *con_cls)
-    {
-      /* The first time only the headers are valid,
-         do not respond in the first round... */
-      *con_cls = server;
-      return MHD_YES;
-    }
-
-    if (*upload_data_size != 0)
-    {
-      return MHD_NO;
-    }
-
-    return server->OnGet (connection,
-                          url,
-                          method,
-                          con_cls);
+    return MHD_NO;
   }
 }

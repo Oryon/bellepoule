@@ -112,7 +112,10 @@ class Tournament : public Module
 
     void RefreshMatchRate (Player *referee);
 
-    gchar *GetHttpResponse (const gchar *url);
+    void OnHttpPost (const gchar *url,
+                     const gchar *data);
+
+    gchar *OnHttpGet (const gchar *url);
 
     guint PreparePrint (GtkPrintOperation *operation,
                         GtkPrintContext   *context);
@@ -121,8 +124,12 @@ class Tournament : public Module
                    GtkPrintContext   *context,
                    gint               page_nr);
 
-    static gchar *OnGetHttpResponse (Object      *client,
-                                     const gchar *url);
+    static void HttpPostCbk (Object      *client,
+                             const gchar *data,
+                             const gchar *url);
+
+    static gchar *HttpGetCbk (Object      *client,
+                              const gchar *url);
 
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);

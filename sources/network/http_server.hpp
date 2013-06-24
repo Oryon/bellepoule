@@ -31,18 +31,23 @@ namespace Net
   class HttpServer : public Object
   {
     public:
-      typedef gchar *(*GetHttpResponseCbk) (Object      *client,
-                                            const gchar *url);
+      typedef void (*HttpPost) (Object      *client,
+                                const gchar *url,
+                                const gchar *data);
+      typedef gchar *(*HttpGet) (Object      *client,
+                                 const gchar *url);
 
-      HttpServer (Object            *client,
-                  GetHttpResponseCbk get_http_response);
+      HttpServer (Object   *client,
+                  HttpPost  http_post,
+                  HttpGet   http_get);
 
     private:
-      static const guint PORT = 8080;
+      static const guint PORT = 35830;
 
-      struct MHD_Daemon  *_deamon;
-      Object             *_client;
-      GetHttpResponseCbk  _get_http_response;
+      struct MHD_Daemon *_daemon;
+      Object            *_client;
+      HttpPost           _http_POST_cbk;
+      HttpGet            _http_GET_cbk;
 
       virtual ~HttpServer ();
 

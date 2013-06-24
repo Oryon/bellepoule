@@ -65,6 +65,7 @@ namespace People
                            this);
 
       filter->ShowAttribute ("attending");
+      filter->ShowAttribute ("connection");
       filter->ShowAttribute ("availability");
       filter->ShowAttribute ("participation_rate");
       filter->ShowAttribute ("name");
@@ -75,6 +76,7 @@ namespace People
       filter->ShowAttribute ("country");
       filter->ShowAttribute ("birth_date");
       filter->ShowAttribute ("licence");
+      filter->ShowAttribute ("IP");
 
       SetFilter (filter);
       CreateForm (filter,

@@ -18,6 +18,26 @@
 
 #include "uploader.hpp"
 
+#ifdef WIN32
+#define RED     ""
+#define GREEN   ""
+#define YELLOW  ""
+#define BLUE    ""
+#define MAGENTA ""
+#define CYAN    ""
+#define WHITE   ""
+#define END     ""
+#else
+#define RED     "\033[1;31m"
+#define GREEN   "\033[1;32m"
+#define YELLOW  "\033[1;33m"
+#define BLUE    "\033[1;34m"
+#define MAGENTA "\033[1;35m"
+#define CYAN    "\033[1;36m"
+#define WHITE   "\033[0;37m"
+#define END     "\033[0m"
+#endif
+
 namespace Net
 {
   // --------------------------------------------------------------------------------
@@ -132,7 +152,7 @@ namespace Net
 
           if (result != CURLE_OK)
           {
-            g_print ("%s\n", curl_easy_strerror (result));
+            g_print (RED "[Uploader Error] " END "%s\n", curl_easy_strerror (result));
           }
         }
 
@@ -153,23 +173,26 @@ namespace Net
   {
     if (type == CURLINFO_TEXT)
     {
-      g_print ("Uploader: ");
+      g_print (BLUE "[Uploader] " END);
     }
     else if (type == CURLINFO_HEADER_IN)
     {
-      g_print ("--CURLINFO_HEADER_IN------\n");
+      g_print (GREEN "--CURLINFO_HEADER_IN------\n" END);
     }
     else if (type == CURLINFO_HEADER_OUT)
     {
-      g_print ("--CURLINFO_HEADER_OUT-----\n");
+      g_print (GREEN "--CURLINFO_HEADER_OUT-----\n" END);
     }
     else if (type == CURLINFO_DATA_IN)
     {
-      g_print ("--CURLINFO_DATA_IN--------\n");
+      g_print (GREEN "--CURLINFO_DATA_IN--------\n" END);
     }
     else if (type == CURLINFO_DATA_OUT)
     {
-      g_print ("--CURLINFO_DATA_OUT-------\n");
+      g_print (GREEN "--CURLINFO_DATA_OUT-------\n" END);
+      g_print ("......\n");
+      g_print ("......\n");
+      return 0;
     }
 
     g_print ("%s\n", data);
@@ -186,6 +209,7 @@ namespace Net
     guint remaining_bytes = uploader->_data_length - uploader->_bytes_uploaded;
     guint bytes_to_copy   = MIN ((size*nmemb), remaining_bytes);
 
+    g_print ("ReadCallback ReadCallback ReadCallback\n");
     memcpy (ptr,
             uploader->_data + uploader->_bytes_uploaded,
             bytes_to_copy);
