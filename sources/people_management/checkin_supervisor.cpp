@@ -248,13 +248,23 @@ namespace People
                                       const gchar   *player_class,
                                       Player        *player)
   {
-    if ((strcmp (player_class, "Fencer") == 0) && player->Is ("Fencer"))
+    if (player->Is ("Team"))
     {
-      Fencer *fencer = (Fencer *) player;
+      Team *team = (Team *) player;
 
-      if (fencer->GetTeam ())
+      team->EnableMemberSaving (_contest->IsTeamEvent ());
+    }
+
+    if (_contest->IsTeamEvent ())
+    {
+      if ((strcmp (player_class, "Fencer") == 0) && player->Is ("Fencer"))
       {
-        return;
+        Fencer *fencer = (Fencer *) player;
+
+        if (fencer->GetTeam ())
+        {
+          return;
+        }
       }
     }
 

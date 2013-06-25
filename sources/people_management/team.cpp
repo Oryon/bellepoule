@@ -29,6 +29,7 @@ Team::Team ()
 
   _default_classification = 0;
   _minimum_size           = 3;
+  _enable_member_saving   = TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -241,6 +242,12 @@ Player *Team::CreateInstance ()
 }
 
 // --------------------------------------------------------------------------------
+void Team::EnableMemberSaving (gboolean enable)
+{
+  _enable_member_saving = enable;
+}
+
+// --------------------------------------------------------------------------------
 void Team::Load (xmlNode *xml_node)
 {
   Player::Load (xml_node);
@@ -286,6 +293,7 @@ void Team::Save (xmlTextWriter *xml_writer)
 
   SaveAttributes (xml_writer);
 
+  if (_enable_member_saving)
   {
     GSList *current_member = _member_list;
 
