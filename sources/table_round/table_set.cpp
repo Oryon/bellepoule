@@ -2611,12 +2611,34 @@ namespace Table
   void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
                                  GtkPrintContext          *context)
   {
+    gint dialog_response;
+
     ConfigurePreviewBackground (context);
 
     g_signal_connect (_glade->GetWidget ("cutting_count_combobox"), "changed",
                       G_CALLBACK (on_cutting_count_combobox_changed),
                       (Object *) this);
-    if (gtk_dialog_run (GTK_DIALOG (_preview_dialog)) == GTK_RESPONSE_OK)
+
+    dialog_response = gtk_dialog_run (GTK_DIALOG (_preview_dialog));
+
+    {
+      GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
+      GtkWidget *preview_layout  = gtk_bin_get_child (GTK_BIN (scrolled_window));
+
+      gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
+    }
+
+    g_signal_handlers_disconnect_by_func (_glade->GetWidget ("cutting_count_combobox"),
+                                          (void *) on_cutting_count_combobox_changed,
+                                          (Object *) this);
+
+    gtk_print_operation_preview_end_preview (preview);
+    gtk_widget_hide (_preview_dialog);
+
+    // To avoid confusion with the preview data
+    // the real printing is started not before the preview
+    // is stopped.
+    if (dialog_response == GTK_RESPONSE_OK)
     {
       gchar *print_name = GetPrintName ();
 
@@ -2625,19 +2647,6 @@ namespace Table
              _page_setup);
       g_free (print_name);
     }
-
-    {
-      GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
-      GtkWidget *preview_layout  = gtk_bin_get_child (GTK_BIN (scrolled_window));
-
-      gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
-    }
-    g_signal_handlers_disconnect_by_func (_glade->GetWidget ("cutting_count_combobox"),
-                                          (void *) on_cutting_count_combobox_changed,
-                                          (Object *) this);
-
-    gtk_print_operation_preview_end_preview (preview);
-    gtk_widget_hide (_preview_dialog);
   }
 
   // --------------------------------------------------------------------------------
