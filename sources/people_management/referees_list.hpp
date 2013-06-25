@@ -41,7 +41,8 @@ namespace People
 
       void Add (Player *referee);
 
-      void OnPlayerLoaded (Player *referee);
+      void OnPlayerLoaded (Player *referee,
+                           Player *owner);
 
       void OnPlayerEventFromForm (Player            *referee,
                                   Form::PlayerEvent  event);

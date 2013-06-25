@@ -36,7 +36,8 @@ namespace People
   // --------------------------------------------------------------------------------
   CheckinSupervisor::CheckinSupervisor (StageClass *stage_class)
     : Checkin ("checkin.glade",
-               "Fencer"),
+               "Fencer",
+               "Team"),
     Stage (stage_class)
   {
     _use_initial_rank = FALSE;
@@ -189,24 +190,6 @@ namespace People
               from_node,
               "Team");
 
-    {
-      GSList        *current   = _player_list;
-      AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
-
-      while (current)
-      {
-        Player              *player = (Player *) current->data;
-        Player::AttributeId  team_attr_id ("name");
-        Attribute           *team_attr = player->GetAttribute (&team_attr_id);
-
-        if (team_desc->GetXmlImage (team_attr->GetStrValue ()) == NULL)
-        {
-          RegisterNewTeam ((Team *) player);
-        }
-        current = g_slist_next (current);
-      }
-    }
-
     LoadList (xml_context,
               from_node,
               "Fencer");
@@ -215,8 +198,27 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::OnPlayerLoaded (Player *player)
+  void CheckinSupervisor::OnPlayerLoaded (Player *player,
+                                          Player *owner)
   {
+    if (player->Is ("Team"))
+    {
+      AttributeDesc       *team_desc = AttributeDesc::GetDescFromCodeName ("team");
+      Player::AttributeId  team_attr_id  ("name");
+      Attribute           *team_attr = player->GetAttribute ( &team_attr_id);
+
+      if (team_desc->GetXmlImage (team_attr->GetStrValue ()) == NULL)
+      {
+        RegisterNewTeam ((Team *) player);
+      }
+    }
+    else if (owner)
+    {
+      Fencer *fencer = (Fencer *) player;
+
+      fencer->SetTeam ((Team *) owner);
+    }
+
     {
       Player::AttributeId  start_rank_id ("start_rank");
       Attribute           *start_rank = player->GetAttribute (&start_rank_id);
@@ -239,6 +241,26 @@ namespace People
               "Fencer");
     SaveList (xml_writer,
               "Team");
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::SavePlayer (xmlTextWriter *xml_writer,
+                                      const gchar   *player_class,
+                                      Player        *player)
+  {
+    if ((strcmp (player_class, "Fencer") == 0) && player->Is ("Fencer"))
+    {
+      Fencer *fencer = (Fencer *) player;
+
+      if (fencer->GetTeam ())
+      {
+        return;
+      }
+    }
+
+    Checkin::SavePlayer (xml_writer,
+                         player_class,
+                         player);
   }
 
   // --------------------------------------------------------------------------------

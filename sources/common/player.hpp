@@ -131,6 +131,8 @@ class Player : public Object
 
     virtual ~Player ();
 
+    void SaveAttributes (xmlTextWriter *xml_writer);
+
   private:
     struct Client : public Object
     {

@@ -35,7 +35,8 @@ namespace People
   // --------------------------------------------------------------------------------
   RefereesList::RefereesList (Contest *contest)
     : Checkin ("referees.glade",
-               "Referee")
+               "Referee",
+               NULL)
   {
     _contest = contest;
 
@@ -97,7 +98,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::OnPlayerLoaded (Player *referee)
+  void RefereesList::OnPlayerLoaded (Player *referee,
+                                     Player *owner)
   {
     Player::AttributeId  attending_attr_id ("attending");
     Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);

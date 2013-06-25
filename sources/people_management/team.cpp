@@ -277,3 +277,27 @@ void Team::Load (xmlNode *xml_node)
     }
   }
 }
+
+// --------------------------------------------------------------------------------
+void Team::Save (xmlTextWriter *xml_writer)
+{
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST GetXmlTag ());
+
+  SaveAttributes (xml_writer);
+
+  {
+    GSList *current_member = _member_list;
+
+    while (current_member)
+    {
+      Player *player = (Player *) current_member->data;
+
+      player->Save (xml_writer);
+
+      current_member = g_slist_next (current_member);
+    }
+  }
+
+  xmlTextWriterEndElement (xml_writer);
+}

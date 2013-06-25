@@ -62,6 +62,8 @@ class Team : public Player
 
     void Load (xmlNode *xml_node);
 
+    void Save (xmlTextWriter *xml_writer);
+
     static gint CompareRank (guint a,
                              guint b);
 };

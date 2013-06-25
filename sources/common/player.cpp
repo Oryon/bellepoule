@@ -446,16 +446,13 @@ guint Player::GetNbMatchs ()
 }
 
 // --------------------------------------------------------------------------------
-void Player::Save (xmlTextWriter *xml_writer)
+void Player::SaveAttributes (xmlTextWriter *xml_writer)
 {
   GSList *attr_list;
   GSList *current;
 
   AttributeDesc::CreateExcludingList (&attr_list,
                                       NULL);
-
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST GetXmlTag ());
 
   current = attr_list;
   while (current)
@@ -515,6 +512,15 @@ void Player::Save (xmlTextWriter *xml_writer)
   }
 
   g_slist_free (attr_list);
+}
+
+// --------------------------------------------------------------------------------
+void Player::Save (xmlTextWriter *xml_writer)
+{
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST GetXmlTag ());
+
+  SaveAttributes (xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
 }
