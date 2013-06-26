@@ -41,13 +41,46 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Uploader::Uploader (const gchar *url,
-                      const gchar *user,
-                      const gchar *passwd)
+  Uploader::Status::Status (const gchar *peer,
+                            PeerStatus   peer_status,
+                            Object      *object)
+    : Object ("Uploader::Status")
+  {
+    _peer        = g_strdup (peer);
+    _peer_status = peer_status;
+    _object      = object;
+
+    if (_object)
+    {
+      _object->Retain ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  Uploader::Status::~Status ()
+  {
+    g_free (_peer);
+    Object::TryToRelease (_object);
+  }
+
+  // --------------------------------------------------------------------------------
+  Uploader::Uploader (const gchar  *url,
+                      UploadStatus  status_cbk,
+                      Object       *status_object,
+                      const gchar  *user,
+                      const gchar  *passwd)
   {
     _url    = g_strdup (url);
     _user   = g_strdup (user);
     _passwd = g_strdup (passwd);
+
+    _status_cbk    = status_cbk;
+    _status_object = status_object;
+
+    if (_status_object)
+    {
+      _status_object->Retain ();
+    }
 
     _full_url = NULL;
     _data     = NULL;
@@ -61,6 +94,8 @@ namespace Net
     g_free (_user);
     g_free (_passwd);
     g_free (_data);
+
+    Object::TryToRelease (_status_object);
   }
 
   // --------------------------------------------------------------------------------
@@ -118,53 +153,6 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gpointer Uploader::ThreadFunction (Uploader *uploader)
-  {
-    if (uploader->_data && uploader->_full_url)
-    {
-      CURL *curl = curl_easy_init ();
-
-      if (curl)
-      {
-        curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
-        curl_easy_setopt (curl, CURLOPT_READDATA,         uploader);
-        curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
-        curl_easy_setopt (curl, CURLOPT_URL,              uploader->_full_url);
-        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) strlen (uploader->_data) + 1);
-#ifdef DEBUG
-        curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION,    OnUpLoadTrace);
-        curl_easy_setopt (curl, CURLOPT_DEBUGDATA,        uploader);
-        curl_easy_setopt (curl, CURLOPT_VERBOSE,          1L);
-#endif
-
-        if (uploader->_user && *uploader->_user && uploader->_passwd && *uploader->_passwd)
-        {
-          gchar *opt = g_strdup_printf ("%s:%s", uploader->_user, uploader->_passwd);
-
-          curl_easy_setopt (curl, CURLOPT_USERPWD, opt);
-          g_free (opt);
-        }
-
-        uploader->_bytes_uploaded = 0;
-
-        {
-          CURLcode result = curl_easy_perform (curl);
-
-          if (result != CURLE_OK)
-          {
-            g_print (RED "[Uploader Error] " END "%s\n", curl_easy_strerror (result));
-          }
-        }
-
-        curl_easy_cleanup (curl);
-      }
-    }
-
-    delete (uploader);
-    return NULL;
-  }
-
-  // --------------------------------------------------------------------------------
   int Uploader::OnUpLoadTrace (CURL          *handle,
                                curl_infotype  type,
                                char          *data,
@@ -195,7 +183,17 @@ namespace Net
       return 0;
     }
 
-    g_print ("%s\n", data);
+    if (data && size)
+    {
+      gchar *printable_buffer = g_strndup (data, size);
+
+      g_print ("%s", printable_buffer);
+      if (printable_buffer[size-1] != '\n')
+      {
+        g_print ("\n");
+      }
+      g_free (printable_buffer);
+    }
 
     return 0;
   }
@@ -209,7 +207,6 @@ namespace Net
     guint remaining_bytes = uploader->_data_length - uploader->_bytes_uploaded;
     guint bytes_to_copy   = MIN ((size*nmemb), remaining_bytes);
 
-    g_print ("ReadCallback ReadCallback ReadCallback\n");
     memcpy (ptr,
             uploader->_data + uploader->_bytes_uploaded,
             bytes_to_copy);
@@ -217,5 +214,77 @@ namespace Net
     uploader->_bytes_uploaded += bytes_to_copy;
 
     return bytes_to_copy;
+  }
+  // --------------------------------------------------------------------------------
+  gpointer Uploader::ThreadFunction (Uploader *uploader)
+  {
+    if (uploader->_data && uploader->_full_url)
+    {
+      CURL *curl = curl_easy_init ();
+
+      if (curl)
+      {
+        curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
+        curl_easy_setopt (curl, CURLOPT_READDATA,         uploader);
+        curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
+        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) strlen (uploader->_data) + 1);
+        curl_easy_setopt (curl, CURLOPT_URL,              uploader->_full_url);
+        curl_easy_setopt (curl, CURLOPT_NOPROXY,          "127.0.0.1");
+#ifdef DEBUG
+        curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION,    OnUpLoadTrace);
+        curl_easy_setopt (curl, CURLOPT_DEBUGDATA,        uploader);
+        curl_easy_setopt (curl, CURLOPT_VERBOSE,          1L);
+#endif
+
+        if (uploader->_user && *uploader->_user && uploader->_passwd && *uploader->_passwd)
+        {
+          gchar *opt = g_strdup_printf ("%s:%s", uploader->_user, uploader->_passwd);
+
+          curl_easy_setopt (curl, CURLOPT_USERPWD, opt);
+          g_free (opt);
+        }
+
+        uploader->_bytes_uploaded = 0;
+
+        {
+          CURLcode result = curl_easy_perform (curl);
+
+          if (result != CURLE_OK)
+          {
+            g_print (RED "[Uploader Error] " END "%s\n", curl_easy_strerror (result));
+          }
+          else
+          {
+            g_print (YELLOW "[Uploader] " END "Done");
+          }
+
+          if (uploader->_status_cbk && uploader->_status_object)
+          {
+            static PeerStatus toto = ERROR;
+            if (toto == ERROR)
+            {
+              toto = OK;
+            }
+            else
+            {
+              toto = ERROR;
+            }
+
+            g_uri_parse_scheme (const char *uri);
+            Status *status = new Status ("127.0.0.1",
+                                         toto,
+                                         uploader->_status_object);
+
+            g_idle_add ((GSourceFunc) uploader->_status_cbk,
+                        status);
+          }
+        }
+
+        curl_easy_cleanup (curl);
+      }
+    }
+
+    delete (uploader);
+    return NULL;
   }
 }

@@ -393,9 +393,8 @@ int main (int argc, char **argv)
       desc->_rights         = AttributeDesc::PRIVATE;
       desc->_scope          = AttributeDesc::GLOBAL;
       desc->_favorite_look  = AttributeDesc::GRAPHICAL;
-      desc->AddDiscreteValues ("Broken",     gettext ("Broken"),     (gchar *) GTK_STOCK_DISCONNECT,
+      desc->AddDiscreteValues ("Broken",     gettext ("Broken"),     (gchar *) GTK_STOCK_DIALOG_WARNING,
                                "Waiting",    gettext ("Absent"),     (gchar *) GTK_STOCK_DIALOG_QUESTION,
-                               "Processing", gettext ("Processing"), (gchar *) GTK_STOCK_CONNECT,
                                "Ready",      gettext ("Ready"),      (gchar *) GTK_STOCK_APPLY,
                                "Manual",     gettext ("Manual"),     (gchar *) GTK_STOCK_EDIT, NULL);
 

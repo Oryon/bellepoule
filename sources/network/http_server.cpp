@@ -25,7 +25,7 @@ namespace Net
     : Object ("HttpServer")
   {
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
-                                PORT,
+                                56570,
                                 NULL, NULL,
                                 (MHD_AccessHandlerCallback) OnMicroHttpRequest, this,
                                 MHD_OPTION_END);
@@ -84,32 +84,46 @@ namespace Net
                                       size_t                *upload_data_size,
                                       void                  **con_cls)
   {
-    if (url)    g_print ("url     ==> %s\n", url);
-    if (method) g_print ("method  ==> %s\n", method);
+    if (server != *con_cls)
+    {
+      *con_cls = server;
+      return MHD_YES;
+    }
 
     if (strcmp (method, "GET") == 0)
     {
-      if (server != *con_cls)
+      if (*upload_data_size == 0)
       {
-        /* The first time only the headers are valid,
-           do not respond in the first round... */
-        *con_cls = server;
-        return MHD_YES;
+        return server->OnGet (connection,
+                              url,
+                              method,
+                              con_cls);
       }
-
-      if (*upload_data_size != 0)
-      {
-        return MHD_NO;
-      }
-
-      return server->OnGet (connection,
-                            url,
-                            method,
-                            con_cls);
     }
     else if (strcmp (method, "POST") == 0)
     {
     }
+#ifdef DEBUG
+    else if (strcmp (method, "PUT") == 0)
+    {
+      if (url && strcmp (url, "/bouts") == 0)
+      {
+        if (*upload_data_size != 0)
+        {
+          struct MHD_Response *response;
+
+          *con_cls = NULL;
+
+          response = MHD_create_response_from_data (0, NULL,
+                                                    MHD_NO, MHD_NO);
+          return MHD_queue_response (connection,
+                                     MHD_HTTP_OK,
+                                     response);
+        }
+        return MHD_YES;
+      }
+    }
+#endif
 
     return MHD_NO;
   }

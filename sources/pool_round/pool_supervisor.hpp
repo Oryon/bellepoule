@@ -21,6 +21,7 @@
 
 #include "util/data.hpp"
 #include "util/module.hpp"
+#include "network/uploader.hpp"
 
 #include "pool.hpp"
 
@@ -107,6 +108,8 @@ namespace Pool
 
       void OnEndPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
+
+      static gboolean OnUploaderStatus (Net::Uploader::Status *status);
 
       static void OnPoolStatusUpdated (Pool       *pool,
                                        Supervisor *ps);

@@ -148,6 +148,9 @@ namespace People
   {
     Checkin::Monitor (referee);
 
+    referee->SetChangeCbk ("connection",
+                           (Player::OnChange) OnConnectionChanged,
+                           this);
     referee->SetChangeCbk ("attending",
                            (Player::OnChange) OnAttendingChanged,
                            this);
@@ -226,6 +229,17 @@ namespace People
       referee->SetAttributeValue (&attr_id,
                                   "Absent");
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::OnConnectionChanged (Player    *referee,
+                                          Attribute *attr,
+                                          Object    *owner,
+                                          guint      step)
+  {
+    Checkin *checkin = dynamic_cast <Checkin *> (owner);
+
+    checkin->Update (referee);
   }
 
   // --------------------------------------------------------------------------------

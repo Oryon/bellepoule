@@ -223,6 +223,53 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Supervisor::OnUploaderStatus (Net::Uploader::Status *status)
+  {
+    Supervisor *supervisor = dynamic_cast <Supervisor *> (status->_object);
+
+    for (guint p = 0; p < supervisor->_allocator->GetNbPools (); p++)
+    {
+      Pool   *pool            = supervisor->_allocator->GetPool (p);
+      GSList *current_referee = pool->GetRefereeList ();
+
+      while (current_referee)
+      {
+        Player              *referee = (Player *) current_referee->data;
+        Player::AttributeId  attr_id ("IP");
+        Attribute           *ip_attr = referee->GetAttribute (&attr_id);
+
+        if (ip_attr)
+        {
+          gchar *ip = ip_attr->GetStrValue ();
+
+          if (ip && (strcmp (ip, status->_peer) == 0))
+          {
+            Player::AttributeId  connection_attr_id ("connection");
+
+            if (status->_peer_status == Net::Uploader::ERROR)
+            {
+              referee->SetAttributeValue (&connection_attr_id,
+                                          "Broken");
+            }
+            else
+            {
+              referee->SetAttributeValue (&connection_attr_id,
+                                          "Waiting");
+            }
+            goto done;
+          }
+        }
+
+        current_referee = g_slist_next (current_referee);
+      }
+    }
+
+done:
+    status->Release ();
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   void Supervisor::OnSmartPouleClicked ()
   {
     for (guint p = 0; p < _allocator->GetNbPools (); p++)
@@ -258,10 +305,10 @@ namespace Pool
             }
 
             {
-              gchar         *url      = g_strdup_printf ("http://%s:56570", ip);
+              gchar         *url      = g_strdup_printf ("http://%s:56570/bouts", ip);
               Net::Uploader *uploader = new Net::Uploader (url,
-                                                           NULL,
-                                                           NULL);
+                                                           (Net::Uploader::UploadStatus) OnUploaderStatus, this,
+                                                           NULL, NULL);
 
               uploader->UploadString ((const gchar *) xml_buffer->content);
               g_free (url);

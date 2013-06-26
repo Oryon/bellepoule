@@ -1441,6 +1441,7 @@ void Contest::Publish ()
   if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
     Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
+                                                 NULL, NULL,
                                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
                                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 

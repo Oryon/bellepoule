@@ -52,6 +52,11 @@ namespace People
                                          Object    *owner,
                                          guint      step);
 
+      static void OnConnectionChanged (Player    *referee,
+                                       Attribute *attr,
+                                       Object    *owner,
+                                       guint      step);
+
       static void OnAttendingChanged (Player    *referee,
                                       Attribute *attr,
                                       Object    *owner,
