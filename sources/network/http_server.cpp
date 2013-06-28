@@ -121,7 +121,8 @@ namespace Net
 #ifdef DEBUG
     else if (strcmp (method, "PUT") == 0)
     {
-      if (url && strstr (url, "/bouts") == 0)
+      if (   url
+          && (strstr (url, "/bouts") || strstr (url, "/message")))
       {
         if (*upload_data_size != **connection_ctx)
         {
@@ -131,7 +132,16 @@ namespace Net
         else
         {
           *upload_data_size = 0;
-          return MHD_YES;
+
+          {
+            struct MHD_Response *response;
+
+            response = MHD_create_response_from_data (strlen ("<BellePoule>\n"), (void *) "<BellePoule>",
+                                                      MHD_NO, MHD_NO);
+            return MHD_queue_response (connection,
+                                       MHD_HTTP_OK,
+                                       response);
+          }
         }
 #if 0
         else

@@ -148,6 +148,9 @@ namespace People
   {
     Checkin::Monitor (referee);
 
+    referee->SetChangeCbk ("IP",
+                           (Player::OnChange) OnIPChanged,
+                           this);
     referee->SetChangeCbk ("connection",
                            (Player::OnChange) OnConnectionChanged,
                            this);
@@ -196,6 +199,7 @@ namespace People
     else
     {
       Checkin::Add (referee);
+      CheckConnection (referee);
     }
   }
 
@@ -228,6 +232,29 @@ namespace People
     {
       referee->SetAttributeValue (&attr_id,
                                   "Absent");
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::CheckConnection (Player *referee)
+  {
+    referee->SendMessage ("/message",
+                          "Welcome to BellePoule network");
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::OnIPChanged (Player    *referee,
+                                  Attribute *attr,
+                                  Object    *owner,
+                                  guint      step)
+  {
+    if (referee->SendMessage ("/message",
+                              "Welcome to BellePoule network") == FALSE)
+    {
+      Player::AttributeId connection_attr_id ("connection");
+
+      referee->SetAttributeValue (&connection_attr_id,
+                                  "Manual");
     }
   }
 

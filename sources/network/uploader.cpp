@@ -41,62 +41,23 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Uploader::Status::Status (const gchar *peer,
-                            PeerStatus   peer_status,
-                            Object      *object)
-    : Object ("Uploader::Status")
-  {
-    _peer = NULL;
-
-    if (peer)
-    {
-      peer = strstr (peer, "//");
-      if (peer)
-      {
-        gchar *end;
-
-        _peer = g_strdup (&peer[2]);
-        end   = strstr (_peer, ":");
-        if (end)
-        {
-          end[0] = 0;
-        }
-      }
-    }
-
-    _peer_status = peer_status;
-    _object      = object;
-
-    if (_object)
-    {
-      _object->Retain ();
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  Uploader::Status::~Status ()
-  {
-    g_free (_peer);
-    Object::TryToRelease (_object);
-  }
-
-  // --------------------------------------------------------------------------------
   Uploader::Uploader (const gchar  *url,
                       UploadStatus  status_cbk,
                       Object       *status_object,
                       const gchar  *user,
                       const gchar  *passwd)
+    : Object ("Uploader")
   {
     _url    = g_strdup (url);
     _user   = g_strdup (user);
     _passwd = g_strdup (passwd);
 
-    _status_cbk    = status_cbk;
-    _status_object = status_object;
+    _status_cbk        = status_cbk;
+    _status_cbk_object = status_object;
 
-    if (_status_object)
+    if (_status_cbk_object)
     {
-      _status_object->Retain ();
+      _status_cbk_object->Retain ();
     }
 
     _full_url = NULL;
@@ -112,7 +73,7 @@ namespace Net
     g_free (_passwd);
     g_free (_data);
 
-    Object::TryToRelease (_status_object);
+    Object::TryToRelease (_status_cbk_object);
   }
 
   // --------------------------------------------------------------------------------
@@ -158,6 +119,8 @@ namespace Net
   {
     GError *error = NULL;
 
+    Retain ();
+
     if (!g_thread_create ((GThreadFunc) ThreadFunction,
                           this,
                           FALSE,
@@ -165,7 +128,7 @@ namespace Net
     {
       g_printerr ("Failed to create Uploader thread: %s\n", error->message);
       g_error_free (error);
-      delete (this);
+      Release ();
     }
   }
 
@@ -232,9 +195,22 @@ namespace Net
 
     return bytes_to_copy;
   }
+
+  // --------------------------------------------------------------------------------
+  gboolean Uploader::DeferedStatus (Uploader *uploader)
+  {
+    uploader->_status_cbk (uploader->_peer_status,
+                           uploader->_status_cbk_object);
+    uploader->Release ();
+
+    return FALSE;
+  }
+
   // --------------------------------------------------------------------------------
   gpointer Uploader::ThreadFunction (Uploader *uploader)
   {
+    gboolean defered_operation = FALSE;
+
     if (uploader->_data && uploader->_full_url)
     {
       CURL *curl = curl_easy_init ();
@@ -264,29 +240,25 @@ namespace Net
         uploader->_bytes_uploaded = 0;
 
         {
-          PeerStatus peer_status;
-          CURLcode   curl_code;
+          CURLcode curl_code;
 
           curl_code = curl_easy_perform (curl);
           if (curl_code != CURLE_OK)
           {
-            peer_status = CONN_ERROR;
+            uploader->_peer_status = CONN_ERROR;
             g_print (RED "[Uploader Error] " END "%s\n", curl_easy_strerror (curl_code));
           }
           else
           {
-            peer_status = CONN_OK;
+            uploader->_peer_status = CONN_OK;
             g_print (YELLOW "[Uploader] " END "Done");
           }
 
-          if (uploader->_status_cbk && uploader->_status_object)
+          if (uploader->_status_cbk && uploader->_status_cbk_object)
           {
-            Status *status = new Status (uploader->_full_url,
-                                         peer_status,
-                                         uploader->_status_object);
-
-            g_idle_add ((GSourceFunc) uploader->_status_cbk,
-                        status);
+            defered_operation = TRUE;
+            g_idle_add ((GSourceFunc) DeferedStatus,
+                        uploader);
           }
         }
 
@@ -294,7 +266,11 @@ namespace Net
       }
     }
 
-    delete (uploader);
+    if (defered_operation == FALSE)
+    {
+      uploader->Release ();
+    }
+
     return NULL;
   }
 }

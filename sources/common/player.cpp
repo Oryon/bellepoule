@@ -25,7 +25,7 @@ guint Player::_next_ref = 0;
 
 // --------------------------------------------------------------------------------
 Player::Player (const gchar *player_class)
-: Object ("Player")
+  : Object ("Player")
 {
   _ref = _next_ref;
   _next_ref++;
@@ -641,6 +641,54 @@ void Player::SetName (const gchar *name)
 
   SetAttributeValue (&attr_id,
                      name);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Player::SendMessage (const gchar *where,
+                              const gchar *message)
+{
+  Player::AttributeId  attr_id ("IP");
+  Attribute           *ip_attr = GetAttribute (&attr_id);
+
+  if (ip_attr)
+  {
+    gchar *ip = ip_attr->GetStrValue ();
+
+    if (ip && (ip[0] != 0))
+    {
+      gchar         *url      = g_strdup_printf ("http://%s:35830%s", ip, where);
+      Net::Uploader *uploader = new Net::Uploader (url,
+                                                   (Net::Uploader::UploadStatus) OnUploaderStatus, this,
+                                                   NULL, NULL);
+
+      g_free (url);
+
+      uploader->UploadString (message);
+      uploader->Release ();
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Player::OnUploaderStatus (Net::Uploader::PeerStatus  peer_status,
+                               Object                    *object)
+{
+  Player              *player = dynamic_cast <Player *> (object);
+  Player::AttributeId  connection_attr_id ("connection");
+
+  if (peer_status == Net::Uploader::CONN_ERROR)
+  {
+    player->SetAttributeValue (&connection_attr_id,
+                               "Broken");
+  }
+  else
+  {
+    player->SetAttributeValue (&connection_attr_id,
+                               "Waiting");
+  }
 }
 
 // --------------------------------------------------------------------------------

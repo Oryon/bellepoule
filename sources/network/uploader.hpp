@@ -23,7 +23,7 @@
 
 namespace Net
 {
-  class Uploader
+  class Uploader : public Object
   {
     public:
       typedef enum
@@ -32,22 +32,8 @@ namespace Net
         CONN_ERROR
       } PeerStatus;
 
-      class Status : public Object
-      {
-        public:
-          Status (const gchar *peer,
-                  PeerStatus   peer_status,
-                  Object      *object);
-
-          gchar      *_peer;
-          PeerStatus  _peer_status;
-          Object     *_object;
-
-        private:
-          virtual ~Status ();
-      };
-
-      typedef gboolean (*UploadStatus) (Uploader::Status *status);
+      typedef void (*UploadStatus) (PeerStatus  peer_status,
+                                    Object     *object);
 
       Uploader (const gchar  *url,
                 UploadStatus  status_cbk,
@@ -68,7 +54,8 @@ namespace Net
       gsize         _data_length;
       guint         _bytes_uploaded;
       UploadStatus  _status_cbk;
-      Object       *_status_object;
+      Object       *_status_cbk_object;
+      PeerStatus    _peer_status;
 
       virtual ~Uploader ();
 
@@ -86,6 +73,8 @@ namespace Net
                                   size_t    size,
                                   size_t    nmemb,
                                   Uploader *uploader);
+
+      static gboolean DeferedStatus (Uploader *uploader);
   };
 
 }

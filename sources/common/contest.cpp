@@ -1446,6 +1446,7 @@ void Contest::Publish ()
                                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 
     uploader->UploadFile (_filename);
+    uploader->Release ();
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
   //{

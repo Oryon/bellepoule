@@ -22,6 +22,7 @@
 
 #include "util/attribute.hpp"
 #include "util/object.hpp"
+#include "network/uploader.hpp"
 
 class Player : public Object
 {
@@ -102,6 +103,10 @@ class Player : public Object
     void Dump ();
 
   public:
+    gboolean SendMessage (const gchar *where,
+                          const gchar *message);
+
+  public:
     virtual void Save (xmlTextWriter *xml_writer);
 
     virtual void Load (xmlNode *xml_node);
@@ -165,6 +170,9 @@ class Player : public Object
 
     void NotifyChange (Attribute *attr,
                        guint      step);
+
+    static void OnUploaderStatus (Net::Uploader::PeerStatus  peer_status,
+                                  Object                    *object);
 };
 
 #endif
