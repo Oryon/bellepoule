@@ -25,9 +25,10 @@ namespace Net
     : Object ("HttpServer")
   {
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
-                                56570,
+                                35830,
                                 NULL, NULL,
                                 (MHD_AccessHandlerCallback) OnMicroHttpRequest, this,
+                                MHD_OPTION_NOTIFY_COMPLETED, OnMicroHttpRequestCompleted, this,
                                 MHD_OPTION_END);
     _client        = client;
     _http_POST_cbk = http_post;
@@ -44,7 +45,7 @@ namespace Net
   int HttpServer::OnGet (struct MHD_Connection *connection,
                          const char            *url,
                          const char            *method,
-                         void                  **con_cls)
+                         size_t                **connection_ctx)
   {
     int    ret             = MHD_NO;
     gchar *client_response = _http_GET_cbk (_client,
@@ -57,8 +58,6 @@ namespace Net
 
       page = g_strdup (client_response);
       g_free (client_response);
-
-      *con_cls = NULL;
 
       response = MHD_create_response_from_data (strlen (page),
                                                 (void *) page,
@@ -75,6 +74,20 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void HttpServer::OnMicroHttpRequestCompleted (HttpServer                      *server,
+                                                struct MHD_Connection           *connection,
+                                                size_t                          **connection_ctx,
+                                                enum MHD_RequestTerminationCode   code)
+  {
+    if (*connection_ctx)
+    {
+      delete (*connection_ctx);
+    }
+
+    *connection_ctx = NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   int HttpServer::OnMicroHttpRequest (HttpServer            *server,
                                       struct MHD_Connection *connection,
                                       const char            *url,
@@ -82,11 +95,12 @@ namespace Net
                                       const char            *version,
                                       const char            *upload_data,
                                       size_t                *upload_data_size,
-                                      void                  **con_cls)
+                                      size_t                **connection_ctx)
   {
-    if (server != *con_cls)
+    if (*connection_ctx == NULL)
     {
-      *con_cls = server;
+      *connection_ctx = g_new (size_t, 1);
+      *(*connection_ctx) = 0;
       return MHD_YES;
     }
 
@@ -97,30 +111,40 @@ namespace Net
         return server->OnGet (connection,
                               url,
                               method,
-                              con_cls);
+                              connection_ctx);
       }
     }
     else if (strcmp (method, "POST") == 0)
     {
+      printf ("  --> %d - %d\n", *upload_data_size, **connection_ctx);
     }
 #ifdef DEBUG
     else if (strcmp (method, "PUT") == 0)
     {
-      if (url && strcmp (url, "/bouts") == 0)
+      if (url && strstr (url, "/bouts") == 0)
       {
-        if (*upload_data_size != 0)
+        if (*upload_data_size != **connection_ctx)
+        {
+          **connection_ctx = *upload_data_size;
+          return MHD_YES;
+        }
+        else
+        {
+          *upload_data_size = 0;
+          return MHD_YES;
+        }
+#if 0
+        else
         {
           struct MHD_Response *response;
 
-          *con_cls = NULL;
-
-          response = MHD_create_response_from_data (0, NULL,
+          response = MHD_create_response_from_data (strlen ("<BellePoule>\n"), (void *) "<BellePoule>",
                                                     MHD_NO, MHD_NO);
           return MHD_queue_response (connection,
                                      MHD_HTTP_OK,
                                      response);
         }
-        return MHD_YES;
+#endif
       }
     }
 #endif

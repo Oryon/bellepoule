@@ -42,8 +42,6 @@ namespace Net
                   HttpGet   http_get);
 
     private:
-      static const guint PORT = 35830;
-
       struct MHD_Daemon *_daemon;
       Object            *_client;
       HttpPost           _http_POST_cbk;
@@ -54,7 +52,7 @@ namespace Net
       int OnGet (struct MHD_Connection *connection,
                  const char            *url,
                  const char            *method,
-                 void                  **con_cls);
+                 size_t                **connection_ctx);
       static int OnMicroHttpRequest (HttpServer            *server,
                                      struct MHD_Connection *connection,
                                      const char            *url,
@@ -62,7 +60,11 @@ namespace Net
                                      const char            *version,
                                      const char            *upload_data,
                                      size_t                *upload_data_size,
-                                     void                  **con_cls);
+                                     size_t                **connection_ctx);
+      static void OnMicroHttpRequestCompleted (HttpServer                      *server,
+                                               struct MHD_Connection           *connection,
+                                               size_t                          **connection_ctx,
+                                               enum MHD_RequestTerminationCode   code);
   };
 }
 

@@ -46,7 +46,24 @@ namespace Net
                             Object      *object)
     : Object ("Uploader::Status")
   {
-    _peer        = g_strdup (peer);
+    _peer = NULL;
+
+    if (peer)
+    {
+      peer = strstr (peer, "//");
+      if (peer)
+      {
+        gchar *end;
+
+        _peer = g_strdup (&peer[2]);
+        end   = strstr (_peer, ":");
+        if (end)
+        {
+          end[0] = 0;
+        }
+      }
+    }
+
     _peer_status = peer_status;
     _object      = object;
 
@@ -247,32 +264,25 @@ namespace Net
         uploader->_bytes_uploaded = 0;
 
         {
-          CURLcode result = curl_easy_perform (curl);
+          PeerStatus peer_status;
+          CURLcode   curl_code;
 
-          if (result != CURLE_OK)
+          curl_code = curl_easy_perform (curl);
+          if (curl_code != CURLE_OK)
           {
-            g_print (RED "[Uploader Error] " END "%s\n", curl_easy_strerror (result));
+            peer_status = CONN_ERROR;
+            g_print (RED "[Uploader Error] " END "%s\n", curl_easy_strerror (curl_code));
           }
           else
           {
+            peer_status = CONN_OK;
             g_print (YELLOW "[Uploader] " END "Done");
           }
 
           if (uploader->_status_cbk && uploader->_status_object)
           {
-            static PeerStatus toto = ERROR;
-            if (toto == ERROR)
-            {
-              toto = OK;
-            }
-            else
-            {
-              toto = ERROR;
-            }
-
-            g_uri_parse_scheme (const char *uri);
-            Status *status = new Status ("127.0.0.1",
-                                         toto,
+            Status *status = new Status (uploader->_full_url,
+                                         peer_status,
                                          uploader->_status_object);
 
             g_idle_add ((GSourceFunc) uploader->_status_cbk,

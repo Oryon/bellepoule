@@ -109,34 +109,18 @@ namespace Net
 
       curl_handle = curl_easy_init ();
 
-      curl_easy_setopt (curl_handle,
-                        CURLOPT_URL,
-                        downloader->_address);
-
-      curl_easy_setopt (curl_handle,
-                        CURLOPT_WRITEFUNCTION,
-                        AddText);
-
-      curl_easy_setopt (curl_handle,
-                        CURLOPT_WRITEDATA,
-                        downloader);
-
-      curl_easy_setopt (curl_handle,
-                        CURLOPT_USERAGENT,
-                        "libcurl-agent/1.0");
+      curl_easy_setopt (curl_handle, CURLOPT_URL,           downloader->_address);
+      curl_easy_setopt (curl_handle, CURLOPT_NOPROXY,       "127.0.0.1");
+      curl_easy_setopt (curl_handle, CURLOPT_WRITEFUNCTION, AddText);
+      curl_easy_setopt (curl_handle, CURLOPT_WRITEDATA,     downloader);
+      curl_easy_setopt (curl_handle, CURLOPT_USERAGENT,     "libcurl-agent/1.0");
 
 #if 0
-      curl_easy_setopt (curl_handle,
-                        CURLOPT_FOLLOWLOCATION,
-                        1);
-
-      curl_easy_setopt (curl_handle,
-                        CURLOPT_MAXREDIRS,
-                        10);
+      curl_easy_setopt (curl_handle, CURLOPT_FOLLOWLOCATION, 1);
+      curl_easy_setopt (curl_handle, CURLOPT_MAXREDIRS, 10);
 #endif
 
       curl_easy_perform (curl_handle);
-
       curl_easy_cleanup (curl_handle);
 
       g_idle_add ((GSourceFunc) downloader->_callback,

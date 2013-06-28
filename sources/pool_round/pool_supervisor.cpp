@@ -246,7 +246,7 @@ namespace Pool
           {
             Player::AttributeId  connection_attr_id ("connection");
 
-            if (status->_peer_status == Net::Uploader::ERROR)
+            if (status->_peer_status == Net::Uploader::CONN_ERROR)
             {
               referee->SetAttributeValue (&connection_attr_id,
                                           "Broken");
@@ -305,7 +305,7 @@ done:
             }
 
             {
-              gchar         *url      = g_strdup_printf ("http://%s:56570/bouts", ip);
+              gchar         *url      = g_strdup_printf ("http://%s:35830/bouts/batch1", ip);
               Net::Uploader *uploader = new Net::Uploader (url,
                                                            (Net::Uploader::UploadStatus) OnUploaderStatus, this,
                                                            NULL, NULL);

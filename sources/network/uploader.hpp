@@ -28,8 +28,8 @@ namespace Net
     public:
       typedef enum
       {
-        OK,
-        ERROR
+        CONN_OK,
+        CONN_ERROR
       } PeerStatus;
 
       class Status : public Object
