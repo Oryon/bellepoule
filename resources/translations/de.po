@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-23 15:21+0200\n"
-"PO-Revision-Date: 2013-04-11 00:52+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2013-06-28 21:28+0000\n"
+"Last-Translator: M. Weber <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-06-21 05:39+0000\n"
-"X-Generator: Launchpad (build 16677)\n"
+"X-Launchpad-Export-Date: 2013-06-30 05:58+0000\n"
+"X-Generator: Launchpad (build 16692)\n"
 "Language: \n"
 "X-Poedit-Language: German\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -41,31 +41,31 @@ msgid "Mixed"
 msgstr "Gemischt"
 
 msgid "U8"
-msgstr "Schüler"
+msgstr "U8"
 
 msgid "U10"
-msgstr "Schüler"
+msgstr "Minis"
 
 msgid "U12"
-msgstr "B-Jugend"
+msgstr "Schüler"
 
 msgid "U14"
-msgstr "A-Jugend"
+msgstr "B-Jugend"
 
 msgid "U16"
-msgstr "Junioren"
+msgstr "A-Jugend"
 
 msgid "U18"
-msgstr "Aktive"
+msgstr "Junioren"
 
 msgid "Senior"
-msgstr "Senioren"
+msgstr "Aktive"
 
 msgid "Veteran"
-msgstr "Senioren Sonderklasse"
+msgstr "Senioren"
 
 msgid "Choose a file..."
-msgstr "Wählen Sie einen Speicherort..."
+msgstr "Datei auswählen …"
 
 msgid "BellePoule files (.cotcot)"
 msgstr "BellePoule-Dateien (.cotcot)"
@@ -95,7 +95,7 @@ msgid "country"
 msgstr "Nation"
 
 msgid "league"
-msgstr "LV"
+msgstr "Landesverband"
 
 msgid "club"
 msgstr "Verein"
@@ -104,7 +104,7 @@ msgid "licence"
 msgstr "Lizenz"
 
 msgid "smartphone"
-msgstr "Smartphone"
+msgstr "Mobilnummer"
 
 msgid "rate"
 msgstr ""
@@ -134,28 +134,28 @@ msgid "Not qualified"
 msgstr "Nicht qualifiziert"
 
 msgid "Withdrawal"
-msgstr "Abhebung"
+msgstr "Streichung"
 
 msgid "Excluded"
 msgstr "Ausgeschlossen"
 
 msgid "Forfeit"
-msgstr "Abhebung"
+msgstr "Aufgabe"
 
 msgid "status"
 msgstr "Status"
 
 msgid "pool #"
-msgstr ""
+msgstr "Rundennr."
 
 msgid "Vict./Bouts (‰)"
-msgstr "Siege/Wettkampf (‰)"
+msgstr "Siege/Gefechte"
 
 msgid "index"
-msgstr "Trefferdifferenz"
+msgstr "Index"
 
 msgid "Hits scored"
-msgstr "Treffer gegeben"
+msgstr "geg. Treffer"
 
 msgid "Round start rank"
 msgstr "Startplatz"
@@ -202,7 +202,7 @@ msgid "Choose a competion file to open... "
 msgstr "Wählen Sie die zu öffnende Datei... "
 
 msgid "Competition files (.cotcot / .xml)"
-msgstr ""
+msgstr "Wettkampfdateien"
 
 msgid "Recently opened files"
 msgstr "Zuletzt geöffnete Dateien"
@@ -211,10 +211,10 @@ msgid "BellePoule files"
 msgstr "Bellepoule-Dateien"
 
 msgid "Meal tickets"
-msgstr ""
+msgstr "Essengutscheine"
 
 msgid "Choose a backup files location..."
-msgstr "Wählen Sie einen Speicherort"
+msgstr "Wählen Sie eine Backup-Datei"
 
 msgid "<b><big>Do you really want to quit BellePoule</big></b>"
 msgstr "<b><big>Wollen Sie wirklich BellePoule schließen?</big></b>"
@@ -235,31 +235,31 @@ msgid "Choose a fencer file to import..."
 msgstr "Wählen Sie die zu importierende Datei..."
 
 msgid "Fencer files"
-msgstr ""
+msgstr "Teilnehmerdateien"
 
 msgid "Referee files"
-msgstr ""
+msgstr "Kampfrichterdateien"
 
 msgid "List of registered"
 msgstr "Anmeldeliste"
 
 msgid "List of presents"
-msgstr "Anwesendeliste"
+msgstr "Anwesenheitsliste"
 
 msgid "List of absents"
-msgstr "Abwesendeliste"
+msgstr "Abwesenheitsliste"
 
 msgid "Fencer list"
-msgstr "Fechterliste"
+msgstr "Teilnehmerliste"
 
 msgid "Check-in"
 msgstr "Aufruf"
 
 msgid "Fencer"
-msgstr ""
+msgstr "Fechter"
 
 msgid "Referee"
-msgstr "Schiedsrichter"
+msgstr "Kampfrichter"
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
@@ -309,13 +309,13 @@ msgid "Vict./Matchs"
 msgstr "Siege/Gefechte"
 
 msgid "H. scored"
-msgstr "T. gegeben"
+msgstr "geg. T."
 
 msgid "H. received"
-msgstr "T. erhalten"
+msgstr "erh. T."
 
 msgid "Index"
-msgstr "Trefferdifferenz"
+msgstr "Trefferindex"
 
 msgid "Place"
 msgstr "Platz"
@@ -327,7 +327,7 @@ msgid "<i>None</i>"
 msgstr "<i>Kein(e)</i>"
 
 msgid "or"
-msgstr ""
+msgstr "oder"
 
 msgid "Wrong fencers count!"
 msgstr ""
@@ -345,7 +345,7 @@ msgid "Pool sheets printing"
 msgstr "Drucken der Rundenzettel"
 
 msgid "Bout without winner!"
-msgstr ""
+msgstr "Gefecht ohne Sieger!"
 
 msgid "Pools classification"
 msgstr "Rangfolge nach der Vorrunde"
@@ -384,14 +384,14 @@ msgid "Match %s"
 msgstr "Gefecht %s"
 
 msgid "Table"
-msgstr "Tabelle"
+msgstr "Direktausscheid"
 
 #, c-format
 msgid "%s: score sheets printing"
 msgstr "%s : Druck der Gefechte"
 
 msgid "No winner!"
-msgstr ""
+msgstr "Kein Sieger!"
 
 msgid "Table classification"
 msgstr "Rangfolge nach der Direktausscheidung"
@@ -409,7 +409,7 @@ msgid "Data to display"
 msgstr "Anzuzeigende Daten"
 
 msgid "Visibility"
-msgstr ""
+msgstr "Sichtbarkeit"
 
 msgid "Data"
 msgstr "Daten"
@@ -418,10 +418,10 @@ msgid "Look"
 msgstr ""
 
 msgid "All the presents"
-msgstr "Alle Anwesende"
+msgstr "Alle Anwesenden"
 
 msgid "All the absents"
-msgstr "Alle Abwesende"
+msgstr "Alle Abwesenden"
 
 msgid "Presents"
 msgstr "Anwesende"
@@ -460,7 +460,7 @@ msgid "Organizer"
 msgstr "Organisator"
 
 msgid "Web site"
-msgstr "Netzstandort"
+msgstr "Webseite"
 
 msgid "Location"
 msgstr "Ort"
@@ -475,16 +475,16 @@ msgid "Scratch"
 msgstr "Streichtermin"
 
 msgid "Start"
-msgstr "Anfang"
+msgstr "Beginn"
 
 msgid "<b>Date / Time</b>"
 msgstr "<b>Datum / Zeitplan</b>"
 
 msgid "Allow"
-msgstr "Erlauben"
+msgstr "Zulassen"
 
 msgid "Forbid"
-msgstr "Verbieten"
+msgstr "Verboten"
 
 msgid ""
 "Automatic\n"
@@ -496,10 +496,10 @@ msgstr ""
 "der Tabelle"
 
 msgid "<b>Scores</b>"
-msgstr "Punktestand"
+msgstr "<b>Punkte</b>"
 
 msgid "Event"
-msgstr "Termin"
+msgstr "Veranstaltung"
 
 msgid "FTP server"
 msgstr "FTP-Server"
@@ -525,10 +525,10 @@ msgstr "Eigenschaften des Turniers festlegen."
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
-msgstr "Festlegen des Modus nach Tabellen, Runden und Spaltung."
+msgstr "Festlegen des Modus nach Tabellen, Runden und anderer Phasen."
 
 msgid "Referees"
-msgstr ""
+msgstr "Kampfrichter"
 
 msgid "Man"
 msgstr "Herren"
@@ -576,7 +576,7 @@ msgid "Number"
 msgstr "Nummer"
 
 msgid "Seeding"
-msgstr ""
+msgstr "Setzen"
 
 msgid "Balanced"
 msgstr "Ausgeglichen"
@@ -591,10 +591,10 @@ msgid "Only the selected pool"
 msgstr "Nur die ausgewählte Runde"
 
 msgid "<b>What?</b>"
-msgstr "<b>Was ?</b>"
+msgstr "<b>Was?</b>"
 
 msgid "For arbitration"
-msgstr "Für die Kampfrichter"
+msgstr "Für das Kampfgericht"
 
 msgid "Content designed for the referees."
 msgstr "Rundenzettel für die Kampfrichter"
@@ -603,7 +603,7 @@ msgid "For the bulletin board"
 msgstr "Aushang zur Teilnehmerinformation"
 
 msgid "<b>For what?</b>"
-msgstr "<b>Wofür ?</b>"
+msgstr "<b>Wofür?</b>"
 
 msgid "Classification"
 msgstr "Rangliste"
@@ -628,7 +628,7 @@ msgid ""
 msgstr "Platzierung in der aktuellen Runde (ohne vorhergehende Ergebnisse) "
 
 msgid "Import referee file"
-msgstr ""
+msgstr "Imprtiere Kampfrichter-Datei"
 
 msgid "Add"
 msgstr "Hinzufügen"
@@ -643,10 +643,10 @@ msgid "<b>Parameters</b>"
 msgstr "<b>Parameter</b>"
 
 msgid "Previous round"
-msgstr "Letzte Runde"
+msgstr "Letzte Phase"
 
 msgid "Next round"
-msgstr "Nächste Runde"
+msgstr "Nächste Phase"
 
 msgid "Select the fencers to move to a new competition."
 msgstr ""
@@ -689,7 +689,7 @@ msgid "None"
 msgstr "Kein(e)"
 
 msgid "Third place"
-msgstr "Dritte Platz"
+msgstr "Dritter Platz"
 
 msgid "Fill in a match"
 msgstr "Ein Gefecht auswählen"
