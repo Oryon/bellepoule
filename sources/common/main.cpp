@@ -395,7 +395,7 @@ int main (int argc, char **argv)
       desc->_favorite_look  = AttributeDesc::GRAPHICAL;
       desc->AddDiscreteValues ("Broken",     gettext ("Broken"),     (gchar *) GTK_STOCK_DIALOG_WARNING,
                                "Waiting",    gettext ("Absent"),     (gchar *) GTK_STOCK_DIALOG_QUESTION,
-                               "Ready",      gettext ("Ready"),      (gchar *) GTK_STOCK_APPLY,
+                               "OK",         gettext ("OK"),         (gchar *) GTK_STOCK_APPLY,
                                "Manual",     gettext ("Manual"),     (gchar *) GTK_STOCK_EDIT, NULL);
 
     }
