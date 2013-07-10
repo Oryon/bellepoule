@@ -390,19 +390,42 @@ namespace Table
           }
           else
           {
-            Player *dropped = NULL;
-
             B = n;
 
-            LoadScore (A, match, 0, &dropped);
-            LoadScore (B, match, 1, &dropped);
-
-            if (dropped)
             {
-              match->DropPlayer (dropped);
+              Player *fencer_a;
+              Player *fencer_b;
+              gchar  *attr;
+
+              attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");
+              if (attr)
+              {
+                fencer_a = _table_set->GetFencerFromRef (atoi (attr));
+                xmlFree (attr);
+              }
+
+              attr = (gchar *) xmlGetProp (B, BAD_CAST "REF");
+              if (attr)
+              {
+                fencer_b = _table_set->GetFencerFromRef (atoi (attr));
+                xmlFree (attr);
+              }
+
+              if (fencer_a && fencer_b)
+              {
+                match->Load (A, fencer_a,
+                             B, fencer_b);
+
+                _table_set->SetPlayerToMatch (match,
+                                              fencer_a,
+                                              0);
+                _table_set->SetPlayerToMatch (match,
+                                              fencer_b,
+                                              1);
+              }
             }
 
-            if (match->GetWinner ())
+            if (match->IsOver ())
             {
               TableZone *zone = (TableZone *) match->GetPtrData (_table_set,
                                                                  "drop_zone");
@@ -417,48 +440,6 @@ namespace Table
         LoadMatch (n->children,
                    match);
       }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Table::LoadScore (xmlNode *xml_node,
-                         Match   *match,
-                         guint    player_index,
-                         Player  **dropped)
-  {
-    gboolean  is_the_best = FALSE;
-    gchar    *attr        = (gchar *) xmlGetProp (xml_node, BAD_CAST "REF");
-    Player   *player      = _table_set->GetFencerFromRef (atoi (attr));
-
-    _table_set->SetPlayerToMatch (match,
-                                  player,
-                                  player_index);
-    xmlFree (attr);
-
-    attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Statut");
-    if (attr && attr[0] == 'V')
-    {
-      is_the_best = TRUE;
-    }
-    xmlFree (attr);
-
-    attr = (gchar *) xmlGetProp (xml_node, BAD_CAST "Score");
-    if (attr)
-    {
-      match->SetScore (player, atoi (attr), is_the_best);
-
-      if (is_the_best == FALSE)
-      {
-        Player::AttributeId  attr_id ("status", _table_set->GetDataOwner ());
-        Attribute           *attr   = player->GetAttribute (&attr_id);
-        gchar               *status = attr->GetStrValue ();
-
-        if (status && ((*status == 'E') || (*status == 'A')))
-        {
-          *dropped = player;
-        }
-      }
-      xmlFree (attr);
     }
   }
 

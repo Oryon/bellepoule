@@ -304,6 +304,7 @@ namespace Table
           if (first_table_set)
           {
             first_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
+            _displayed_table_set = first_table_set;
           }
         }
       }

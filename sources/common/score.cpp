@@ -21,13 +21,12 @@
 
 // --------------------------------------------------------------------------------
 Score::Score  (Data *max)
-: Object ("Score")
+  : Object ("Score")
 {
-  _score       = 0;
-  _is_known    = FALSE;
-  _is_dropped  = FALSE;
-  _max         = max;
-  _is_the_best = FALSE;
+  _max           = max;
+  _score         = 0;
+  _status        = UNKNOWN;
+  _backup_status = UNKNOWN;
 }
 
 // --------------------------------------------------------------------------------
@@ -38,26 +37,24 @@ Score::~Score ()
 // --------------------------------------------------------------------------------
 gboolean Score::IsKnown ()
 {
-  return _is_known || (_is_dropped == TRUE);
+  return _status != UNKNOWN;
 }
 
 // --------------------------------------------------------------------------------
 gboolean Score::IsTheBest ()
 {
-  return _is_the_best && (_is_dropped == FALSE);
+  return _status == VICTORY;
 }
 
 // --------------------------------------------------------------------------------
 guint Score::Get ()
 {
-  if (_is_dropped)
-  {
-    return 0;
-  }
-  else
+  if ((_status == VICTORY) || (_status == DEFEAT))
   {
     return _score;
   }
+
+  return 0;
 }
 
 // --------------------------------------------------------------------------------
@@ -65,77 +62,136 @@ gchar *Score::GetImage ()
 {
   gchar *image;
 
-  if (_is_dropped)
+  if (_status == UNKNOWN)
   {
-    image = g_strdup_printf (" ");
+    image = g_new (char, 1);
+    image[0] = 0; // empty string
   }
-  else if (_is_known)
+  else if (_status == VICTORY)
   {
     if (_score == _max->_value)
     {
       image = g_strdup_printf ("V");
     }
-    else if (_is_the_best)
+    else
     {
       image = g_strdup_printf ("V%d", _score);
     }
-    else
-    {
-      image = g_strdup_printf ("%d", _score);
-    }
+  }
+  else if (_status == DEFEAT)
+  {
+    image = g_strdup_printf ("%d", _score);
   }
   else
   {
-    image = g_strdup ("");
+    image = g_strdup (" ");
   }
 
   return image;
 }
 
 // --------------------------------------------------------------------------------
-void Score::Clean ()
+const gchar *Score::GetStatusImage ()
 {
-  _is_known   = FALSE;
-  _is_dropped = FALSE;
+  if (_status == DEFEAT)
+  {
+    return "D";
+  }
+  else if (_status == VICTORY)
+  {
+    return "V";
+  }
+  else if (_status == WITHDRAWAL)
+  {
+    return "A";
+  }
+  else if (_status == BLACK_CARD)
+  {
+    return "E";
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
-void Score::Drop ()
+void Score::Clean ()
 {
-  _is_dropped = TRUE;
+  _status = UNKNOWN;
+}
+
+// --------------------------------------------------------------------------------
+void Score::Drop (gchar *reason)
+{
+  if (reason)
+  {
+    Status previous_status = _status;
+
+    if (reason[0] == 'A')
+    {
+      _status = WITHDRAWAL;
+    }
+    else if (reason[0] == 'F')
+    {
+      _status = WITHDRAWAL;
+    }
+    else if (reason[0] == 'E')
+    {
+      _status = BLACK_CARD;
+    }
+    else
+    {
+      return;
+    }
+
+    if ((previous_status != WITHDRAWAL) && (previous_status != BLACK_CARD))
+    {
+      _backup_status = previous_status;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+gchar Score::GetDropReason ()
+{
+  if (_status == WITHDRAWAL)
+  {
+    return 'A';
+  }
+  else if (_status == BLACK_CARD)
+  {
+    return 'E';
+  }
+
+  return 0;
 }
 
 // --------------------------------------------------------------------------------
 void Score::Restore ()
 {
-  _is_dropped = FALSE;
+  _status = _backup_status;
 }
 
 // --------------------------------------------------------------------------------
-void Score::Set (gint     score,
-                 gboolean is_the_best)
+void Score::Set (guint    score,
+                 gboolean victory)
 {
-  if (score < 0)
+  _score  = score;
+  _status = DEFEAT;
+
+  if (_score == _max->_value)
   {
-    _is_known    = FALSE;
-    _is_the_best = FALSE;
+    _status = VICTORY;
   }
-  else
+  if (victory)
   {
-    _is_known    = TRUE;
-    _score       = score;
-    _is_the_best = is_the_best;
-    if (_score == _max->_value)
-    {
-      _is_the_best = TRUE;
-    }
+    _status = VICTORY;
   }
 }
 
 // --------------------------------------------------------------------------------
 gboolean Score::IsValid ()
 {
-  if (   IsKnown ()
+  if (   (_status != UNKNOWN)
       && (_score > _max->_value))
   {
     return FALSE;
@@ -145,25 +201,52 @@ gboolean Score::IsValid ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Score::IsOut ()
+{
+  return ((_status == WITHDRAWAL) || (_status == BLACK_CARD));
+}
+
+// --------------------------------------------------------------------------------
+void Score::SynchronizeWith (Score *with)
+{
+  if (IsOut () == FALSE)
+  {
+    if (with->IsOut ())
+    {
+      _backup_status = _status;
+      _status        = OPPONENT_OUT;
+    }
+    else
+    {
+      _status = _backup_status;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 gboolean Score::IsConsistentWith (Score *with)
 {
-  if (   (IsKnown ()       == FALSE)
-      || (with->IsKnown () == FALSE))
+  if ((_status == UNKNOWN) || (with->_status == UNKNOWN))
   {
     return TRUE;
   }
-  else if (_is_dropped && with->_is_dropped)
+  else if ((_status == OPPONENT_OUT) || (with->_status == OPPONENT_OUT))
   {
+    return TRUE;
   }
-  else if (_is_the_best == with->_is_the_best)
-  {
-    return FALSE;
-  }
-  else if (_is_the_best && _score < with->_score)
+  else if ((_status == VICTORY) && (with->_status == VICTORY))
   {
     return FALSE;
   }
-  else if (with->_is_the_best && with->_score < _score)
+  else if ((_status == DEFEAT) && (with->_status == DEFEAT))
+  {
+    return FALSE;
+  }
+  else if ((_status == VICTORY) && (_score < with->_score))
+  {
+    return FALSE;
+  }
+  else if ((with->_status == VICTORY) && (with->_score < _score))
   {
     return FALSE;
   }

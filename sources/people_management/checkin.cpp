@@ -417,27 +417,32 @@ namespace People
   // --------------------------------------------------------------------------------
   gchar *Checkin::GetFileContent (gchar *filename)
   {
-    gchar *file_content;
+    gchar *file_content = NULL;
     gchar *raw_file;
     gsize  length;
-    guint  j;
 
-    g_file_get_contents ((const gchar *) filename,
-                         &raw_file,
-                         &length,
-                         NULL);
-    length++;
-
-    file_content = (gchar *) g_malloc (length);
-
-    j = 0;
-    for (guint i = 0; i < length; i++)
+    if (g_file_get_contents ((const gchar *) filename,
+                             &raw_file,
+                             &length,
+                             NULL))
     {
-      if (raw_file[i] != '\r')
+      guint j;
+
+      length++;
+
+      file_content = (gchar *) g_malloc (length);
+
+      j = 0;
+      for (guint i = 0; i < length; i++)
       {
-        file_content[j] = raw_file[i];
-        j++;
+        if (raw_file[i] != '\r')
+        {
+          file_content[j] = raw_file[i];
+          j++;
+        }
       }
+
+      g_free (raw_file);
     }
 
     return file_content;
