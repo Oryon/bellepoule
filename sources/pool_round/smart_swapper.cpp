@@ -189,7 +189,11 @@ namespace Pool
   SmartSwapper::~SmartSwapper ()
   {
     Object::TryToRelease (_criteria_id);
-    g_hash_table_destroy (_criteria_distribution);
+
+    if (_criteria_distribution)
+    {
+      g_hash_table_destroy (_criteria_distribution);
+    }
   }
 
   // --------------------------------------------------------------------------------

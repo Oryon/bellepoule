@@ -32,8 +32,15 @@ namespace Table
     Table         *_table;
     guint          _table_index;
     Match         *_match;
-    GooCanvasItem *_fencer_goo_table;
+
     GooCanvasItem *_match_goo_table;
+    GooCanvasItem *_fencer_goo_table;
+    GooCanvasItem *_score_goo_table;
+    GooCanvasItem *_score_goo_rect;
+    GooCanvasItem *_score_goo_text;
+    GooCanvasItem *_score_goo_image;
+    GooCanvasItem *_fencer_goo_image;
+    GooCanvasItem *_print_goo_icon;
     GooCanvasItem *_connector;
   };
 

@@ -133,8 +133,8 @@ namespace Pool
       gint    score;
 
       match = (Match *) current->data;
-      A     = match->GetPlayerA ();
-      B     = match->GetPlayerB ();
+      A     = match->GetOpponent (0);
+      B     = match->GetOpponent (1);
       score = g_random_int_range (0,
                                   _max_score->_value);
 
@@ -954,7 +954,7 @@ namespace Pool
           }
 
           {
-            Player *player              = match->GetPlayerA ();
+            Player *player              = match->GetOpponent (0);
             GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
             GooCanvasItem *image = GetPlayerImage (player_table,
                                                    "font_desc=\"Sans 14.0px\"",
@@ -1006,7 +1006,7 @@ namespace Pool
           }
 
           {
-            Player        *player = match->GetPlayerB ();
+            Player        *player = match->GetOpponent (1);
             GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
             GooCanvasItem *image        = GetPlayerImage (player_table,
                                                           "font_desc=\"Sans 14.0px\"",
@@ -1388,16 +1388,13 @@ namespace Pool
               victories++;
             }
           }
-          else
+
+          if (match->IsOver () == FALSE)
           {
             _is_over = FALSE;
           }
-
-          if (   (score_a->IsValid () == FALSE)
-              || (score_b->IsValid () == FALSE)
-              || (score_a->IsConsistentWith (score_b) == FALSE))
+          if (match->HasError ())
           {
-            _is_over   = FALSE;
             _has_error = TRUE;
           }
         }
@@ -1699,8 +1696,8 @@ namespace Pool
     {
       Match *match = (Match *) current->data;
 
-      if (   match->HasPlayer (A)
-          && match->HasPlayer (B))
+      if (   match->HasFencer (A)
+          && match->HasFencer (B))
       {
         return match;
       }
@@ -1735,7 +1732,7 @@ namespace Pool
                            Match *b,
                            Pool  *pool)
   {
-    return g_slist_index (pool->_sorted_fencer_list, a->GetPlayerA ()) - g_slist_index (pool->_sorted_fencer_list, b->GetPlayerA ());
+    return g_slist_index (pool->_sorted_fencer_list, a->GetOpponent (0)) - g_slist_index (pool->_sorted_fencer_list, b->GetOpponent (0));
   }
 
   // --------------------------------------------------------------------------------
@@ -1911,7 +1908,7 @@ namespace Pool
               // XML files may have been generated from another software
               // where the matchs are potentially stored in a different order
               // Consequently, at the loading the initial position has to be recovered.
-              if (player_A != match->GetPlayerA ())
+              if (player_A != match->GetOpponent (0))
               {
                 Player  *p = player_B;
                 xmlNode *n = B;
@@ -1924,57 +1921,16 @@ namespace Pool
               }
 
               {
-                gboolean is_the_best = FALSE;
+                match->Load (A, player_A,
+                             B, player_B);
 
-                attr = (gchar *) xmlGetProp (A, BAD_CAST "Statut");
-                if (attr && attr[0] == 'V')
+                if (match->IsOver () == FALSE)
                 {
-                  is_the_best = TRUE;
+                  _is_over = FALSE;
                 }
-                xmlFree (attr);
-
-                attr = (gchar *) xmlGetProp (A, BAD_CAST "Score");
-                if (attr)
-                {
-                  match->SetScore (player_A, atoi (attr), is_the_best);
-                }
-                xmlFree (attr);
-              }
-
-              {
-                gboolean is_the_best = FALSE;
-
-                attr = (gchar *) xmlGetProp (B, BAD_CAST "Statut");
-                if (attr && attr[0] == 'V')
-                {
-                  is_the_best = TRUE;
-                }
-                xmlFree (attr);
-
-                attr = (gchar *) xmlGetProp (B, BAD_CAST "Score");
-                if (attr)
-                {
-                  match->SetScore (player_B, atoi (attr), is_the_best);
-                }
-                xmlFree (attr);
-              }
-
-              if (   (match->PlayerHasScore (player_A) == FALSE)
-                  || (match->PlayerHasScore (player_B) == FALSE))
-              {
-                _is_over = FALSE;
-              }
-
-              {
-                Score *score_A = match->GetScore (player_A);
-                Score *score_B = match->GetScore (player_B);
-
-                if (   (score_A->IsValid () == FALSE)
-                    || (score_B->IsValid () == FALSE)
-                    || (score_A->IsConsistentWith (score_B) == FALSE))
+                if (match->HasError ())
                 {
                   _has_error = TRUE;
-                  _is_over   = FALSE;
                 }
               }
             }
@@ -2073,37 +2029,32 @@ namespace Pool
   void Pool::DropPlayer (Player *player,
                          gchar  *reason)
   {
-    Player::AttributeId status_attr_id   = Player::AttributeId ("status", GetDataOwner ());
-    Attribute           *status_attr     = player->GetAttribute (&status_attr_id);
-    gboolean             already_dropped = FALSE;
+    Player::AttributeId  status_attr_id = Player::AttributeId ("status", GetDataOwner ());
+    Attribute           *status_attr    = player->GetAttribute ( &status_attr_id);
 
     if (status_attr)
     {
       gchar *status = status_attr->GetStrValue ();
 
-      if (status && *status != 'Q')
+      if (status && (*status == 'Q'))
       {
-        already_dropped = TRUE;
+        _nb_drop++;
       }
     }
 
     player->SetAttributeValue (&status_attr_id,
                                reason);
 
-    if (already_dropped == FALSE)
+    for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      _nb_drop++;
+      Player *opponent = GetPlayer (i, _sorted_fencer_list);
 
-      for (guint i = 0; i < GetNbPlayers (); i++)
+      if (opponent != player)
       {
-        Player *opponent = GetPlayer (i, _sorted_fencer_list);
+        Match *match = GetMatch (opponent, player);
 
-        if (opponent != player)
-        {
-          Match *match = GetMatch (opponent, player);
-
-          match->DropPlayer (player);
-        }
+        match->DropFencer (player,
+                           reason);
       }
     }
 
@@ -2147,7 +2098,7 @@ namespace Pool
         {
           Match *match = GetMatch (opponent, player);
 
-          match->RestorePlayer (player);
+          match->RestoreFencer (player);
         }
       }
     }

@@ -46,13 +46,16 @@ class Team : public Player
 
     void SetMinimumSize (guint size);
 
+    void EnableMemberSaving (gboolean enable);
+
   private:
     static const gchar *_class_name;
     static const gchar *_xml_tag;
 
-    GSList *_member_list;
-    guint   _default_classification;
-    guint   _minimum_size;
+    GSList   *_member_list;
+    guint     _default_classification;
+    guint     _minimum_size;
+    gboolean  _enable_member_saving;
 
     Team ();
 
@@ -61,6 +64,8 @@ class Team : public Player
     Player *Clone ();
 
     void Load (xmlNode *xml_node);
+
+    void Save (xmlTextWriter *xml_writer);
 
     static gint CompareRank (guint a,
                              guint b);

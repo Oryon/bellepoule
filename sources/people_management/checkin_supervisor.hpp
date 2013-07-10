@@ -93,9 +93,14 @@ namespace People
       void Load (xmlXPathContext *xml_context,
                  const gchar     *from_node);
 
-      void OnPlayerLoaded (Player *player);
+      void OnPlayerLoaded (Player *player,
+                           Player *owner);
 
       void Save (xmlTextWriter *xml_writer);
+
+      void SavePlayer (xmlTextWriter *xml_writer,
+                       const gchar   *player_class,
+                       Player        *player);
 
       void RegisterNewTeam (Team *team);
 

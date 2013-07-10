@@ -31,25 +31,28 @@ namespace Net
   class HttpServer : public Object
   {
     public:
-      typedef gchar *(*GetHttpResponseCbk) (Object      *client,
-                                            const gchar *url);
+      typedef void (*HttpPost) (Object      *client,
+                                const gchar *url,
+                                const gchar *data);
+      typedef gchar *(*HttpGet) (Object      *client,
+                                 const gchar *url);
 
-      HttpServer (Object            *client,
-                  GetHttpResponseCbk get_http_response);
+      HttpServer (Object   *client,
+                  HttpPost  http_post,
+                  HttpGet   http_get);
 
     private:
-      static const guint PORT = 8080;
-
-      struct MHD_Daemon  *_deamon;
-      Object             *_client;
-      GetHttpResponseCbk  _get_http_response;
+      struct MHD_Daemon *_daemon;
+      Object            *_client;
+      HttpPost           _http_POST_cbk;
+      HttpGet            _http_GET_cbk;
 
       virtual ~HttpServer ();
 
       int OnGet (struct MHD_Connection *connection,
                  const char            *url,
                  const char            *method,
-                 void                  **con_cls);
+                 size_t                **connection_ctx);
       static int OnMicroHttpRequest (HttpServer            *server,
                                      struct MHD_Connection *connection,
                                      const char            *url,
@@ -57,7 +60,11 @@ namespace Net
                                      const char            *version,
                                      const char            *upload_data,
                                      size_t                *upload_data_size,
-                                     void                  **con_cls);
+                                     size_t                **connection_ctx);
+      static void OnMicroHttpRequestCompleted (HttpServer                      *server,
+                                               struct MHD_Connection           *connection,
+                                               size_t                          **connection_ctx,
+                                               enum MHD_RequestTerminationCode   code);
   };
 }
 

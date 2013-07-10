@@ -106,11 +106,6 @@ namespace Table
       void LoadMatch (xmlNode *xml_node,
                       Match   *match);
 
-      void LoadScore (xmlNode *xml_node,
-                      Match   *match,
-                      guint    player_index,
-                      Player  **dropped);
-
       void SimplifyLooserTree (GSList **list);
   };
 }

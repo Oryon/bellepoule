@@ -23,23 +23,32 @@
 class Score : public Object
 {
   public:
-    Score  (Data *max);
-    virtual ~Score ();
+    Score (Data *max);
 
-    gboolean IsKnown ();
+  public:
+    void Set (guint score, gboolean victory);
 
+    void Drop (gchar *reason);
+
+    void Restore ();
+
+    void Clean ();
+
+    void SynchronizeWith (Score *with);
+
+  public:
     guint Get ();
 
     gchar *GetImage ();
 
-    void Set (gint     score,
-              gboolean is_the_best);
+    gchar GetDropReason ();
 
-    void Clean ();
+    const gchar *GetStatusImage ();
 
-    void Drop ();
+  public:
+    gboolean IsKnown ();
 
-    void Restore ();
+    gboolean IsOut ();
 
     gboolean IsValid ();
 
@@ -48,11 +57,22 @@ class Score : public Object
     gboolean IsConsistentWith (Score *with);
 
   private:
-    gboolean   _is_known;
-    gboolean   _is_dropped;
-    Data      *_max;
-    guint      _score;
-    gboolean   _is_the_best;
+    typedef enum
+    {
+      UNKNOWN,
+      VICTORY,
+      DEFEAT,
+      WITHDRAWAL,
+      BLACK_CARD,
+      OPPONENT_OUT
+    } Status;
+
+    Data   *_max;
+    guint   _score;
+    Status  _status;
+    Status  _backup_status;
+
+    virtual ~Score ();
 };
 
 #endif

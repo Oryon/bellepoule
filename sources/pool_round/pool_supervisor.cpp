@@ -20,7 +20,6 @@
 
 #include "common/classification.hpp"
 #include "common/contest.hpp"
-#include "network/uploader.hpp"
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
 
@@ -70,20 +69,21 @@ namespace Pool
 #ifndef DEBUG
                                           "ref",
 #endif
-                                          "availability",
-                                          "participation_rate",
-                                          "level",
-                                          "status",
-                                          "global_status",
-                                          "start_rank",
-                                          "final_rank",
-                                          "attending",
-                                          "exported",
-                                          "victories_ratio",
-                                          "indice",
-                                          "pool_nr",
                                           "HS",
+                                          "attending",
+                                          "availability",
+                                          "exported",
+                                          "final_rank",
+                                          "global_status",
+                                          "indice",
+                                          "level",
+                                          "participation_rate",
+                                          "pool_nr",
                                           "rank",
+                                          "start_rank",
+                                          "status",
+                                          "team",
+                                          "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
                            this);
@@ -122,14 +122,15 @@ namespace Pool
 #ifndef DEBUG
                                           "ref",
 #endif
-                                          "availability",
-                                          "participation_rate",
-                                          "level",
-                                          "global_status",
-                                          "start_rank",
-                                          "final_rank",
                                           "attending",
+                                          "availability",
                                           "exported",
+                                          "final_rank",
+                                          "global_status",
+                                          "level",
+                                          "participation_rate",
+                                          "start_rank",
+                                          "team",
                                           NULL);
       filter = new Filter (attr_list);
 
@@ -218,44 +219,53 @@ namespace Pool
 
     classification->SetDataOwner (_single_owner);
     classification->SortDisplay ();
-
-    SendMatchSheets ();
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::SendMatchSheets ()
+  void Supervisor::OnSmartPouleClicked ()
   {
-    xmlBuffer *xml_buffer = xmlBufferCreate ();
-
+    for (guint p = 0; p < _allocator->GetNbPools (); p++)
     {
-      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+      Pool   *pool            = _allocator->GetPool (p);
+      GSList *current_referee = pool->GetRefereeList ();
 
-      _contest->SaveHeader (xml_writer);
-      _allocator->SaveHeader (xml_writer);
-      //for (guint p = 0; p < _allocator->GetNbPools (); p++)
+      while (current_referee)
       {
-        Pool *pool = _allocator->GetPool (0);
+        Player              *referee = (Player *) current_referee->data;
+        Player::AttributeId  attr_id ("IP");
+        Attribute           *ip_attr = referee->GetAttribute (&attr_id);
 
-        pool->Save (xml_writer);
+        if (ip_attr)
+        {
+          gchar *ip = ip_attr->GetStrValue ();
+
+          if (ip && (ip[0] != 0))
+          {
+            xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+            {
+              xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+              _contest->SaveHeader (xml_writer);
+              _allocator->SaveHeader (xml_writer);
+              pool->Save (xml_writer);
+              xmlTextWriterEndElement (xml_writer);
+              xmlTextWriterEndElement (xml_writer);
+              xmlTextWriterEndDocument (xml_writer);
+
+              xmlFreeTextWriter (xml_writer);
+            }
+
+            referee->SendMessage ("/bouts/match1",
+                                  (const gchar *) xml_buffer->content);
+
+            xmlBufferFree (xml_buffer);
+          }
+        }
+
+        current_referee = g_slist_next (current_referee);
       }
-      xmlTextWriterEndElement (xml_writer);
-      xmlTextWriterEndElement (xml_writer);
-
-      xmlTextWriterEndDocument (xml_writer);
-
-      xmlFreeTextWriter (xml_writer);
     }
-
-#if 0
-    {
-      Net::Uploader *uploader   = new Net::Uploader ("http://192.168.0.24:35830",
-                                                     NULL,
-                                                     NULL);
-      uploader->UploadString ((const gchar *) xml_buffer->content);
-    }
-#endif
-
-    xmlBufferFree (xml_buffer);
   }
 
   // --------------------------------------------------------------------------------
@@ -904,6 +914,15 @@ namespace Pool
     Supervisor *ps = dynamic_cast <Supervisor *> (owner);
 
     ps->OnStuffClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_smartpoule_toolbutton_clicked (GtkWidget *widget,
+                                                                    Object    *owner)
+  {
+    Supervisor *ps = dynamic_cast <Supervisor *> (owner);
+
+    ps->OnSmartPouleClicked ();
   }
 
   // --------------------------------------------------------------------------------

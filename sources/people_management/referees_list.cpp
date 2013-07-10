@@ -35,7 +35,8 @@ namespace People
   // --------------------------------------------------------------------------------
   RefereesList::RefereesList (Contest *contest)
     : Checkin ("referees.glade",
-               "Referee")
+               "Referee",
+               NULL)
   {
     _contest = contest;
 
@@ -47,23 +48,25 @@ namespace People
 #ifndef DEBUG
                                           "ref",
 #endif
-                                          "start_rank",
-                                          "status",
-                                          "global_status",
-                                          "previous_stage_rank",
+                                          "HS",
                                           "exported",
                                           "final_rank",
-                                          "victories_ratio",
+                                          "global_status",
                                           "indice",
                                           "pool_nr",
-                                          "HS",
+                                          "previous_stage_rank",
                                           "rank",
                                           "ranking",
+                                          "start_rank",
+                                          "status",
+                                          "team",
+                                          "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
                            this);
 
       filter->ShowAttribute ("attending");
+      filter->ShowAttribute ("connection");
       filter->ShowAttribute ("availability");
       filter->ShowAttribute ("participation_rate");
       filter->ShowAttribute ("name");
@@ -74,6 +77,7 @@ namespace People
       filter->ShowAttribute ("country");
       filter->ShowAttribute ("birth_date");
       filter->ShowAttribute ("licence");
+      filter->ShowAttribute ("IP");
 
       SetFilter (filter);
       CreateForm (filter,
@@ -94,7 +98,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RefereesList::OnPlayerLoaded (Player *referee)
+  void RefereesList::OnPlayerLoaded (Player *referee,
+                                     Player *owner)
   {
     Player::AttributeId  attending_attr_id ("attending");
     Attribute           *attending_attr = referee->GetAttribute (&attending_attr_id);
@@ -143,6 +148,12 @@ namespace People
   {
     Checkin::Monitor (referee);
 
+    referee->SetChangeCbk ("IP",
+                           (Player::OnChange) OnIPChanged,
+                           this);
+    referee->SetChangeCbk ("connection",
+                           (Player::OnChange) OnConnectionChanged,
+                           this);
     referee->SetChangeCbk ("attending",
                            (Player::OnChange) OnAttendingChanged,
                            this);
@@ -188,6 +199,7 @@ namespace People
     else
     {
       Checkin::Add (referee);
+      CheckConnection (referee);
     }
   }
 
@@ -221,6 +233,40 @@ namespace People
       referee->SetAttributeValue (&attr_id,
                                   "Absent");
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::CheckConnection (Player *referee)
+  {
+    referee->SendMessage ("/message",
+                          "Welcome to BellePoule network");
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::OnIPChanged (Player    *referee,
+                                  Attribute *attr,
+                                  Object    *owner,
+                                  guint      step)
+  {
+    if (referee->SendMessage ("/message",
+                              "Welcome to BellePoule network") == FALSE)
+    {
+      Player::AttributeId connection_attr_id ("connection");
+
+      referee->SetAttributeValue (&connection_attr_id,
+                                  "Manual");
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::OnConnectionChanged (Player    *referee,
+                                          Attribute *attr,
+                                          Object    *owner,
+                                          guint      step)
+  {
+    Checkin *checkin = dynamic_cast <Checkin *> (owner);
+
+    checkin->Update (referee);
   }
 
   // --------------------------------------------------------------------------------

@@ -82,20 +82,21 @@ namespace Table
 #ifndef DEBUG
                                           "ref",
 #endif
-                                          "availability",
-                                          "participation_rate",
-                                          "level",
-                                          "status",
-                                          "global_status",
-                                          "start_rank",
-                                          "final_rank",
-                                          "attending",
-                                          "exported",
-                                          "victories_ratio",
-                                          "indice",
-                                          "pool_nr",
                                           "HS",
+                                          "attending",
+                                          "availability",
+                                          "exported",
+                                          "final_rank",
+                                          "global_status",
+                                          "indice",
+                                          "level",
+                                          "participation_rate",
+                                          "pool_nr",
                                           "rank",
+                                          "start_rank",
+                                          "status",
+                                          "team",
+                                          "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
                            this);
@@ -117,18 +118,19 @@ namespace Table
 #ifndef DEBUG
                                           "ref",
 #endif
-                                          "availability",
-                                          "participation_rate",
-                                          "level",
-                                          "global_status",
-                                          "start_rank",
-                                          "final_rank",
-                                          "attending",
-                                          "exported",
-                                          "victories_ratio",
-                                          "indice",
-                                          "pool_nr",
                                           "HS",
+                                          "attending",
+                                          "availability",
+                                          "exported",
+                                          "final_rank",
+                                          "global_status",
+                                          "indice",
+                                          "level",
+                                          "participation_rate",
+                                          "pool_nr",
+                                          "start_rank",
+                                          "team",
+                                          "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
                            this);
@@ -302,6 +304,7 @@ namespace Table
           if (first_table_set)
           {
             first_table_set->SetAttendees (g_slist_copy (_attendees->GetShortList ()));
+            _displayed_table_set = first_table_set;
           }
         }
       }
