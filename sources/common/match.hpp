@@ -38,29 +38,29 @@ class Match : public Object
 
     void SetNameSpace (const gchar *name_space);
 
-    Player *GetPlayerA ();
-
-    Player *GetPlayerB ();
+    Player *GetOpponent (guint position);
 
     Player *GetWinner  ();
 
     Player *GetLooser  ();
 
-    void SetPlayerA (Player *fencer);
+    void SetOpponent (guint   position,
+                      Player *fencer);
 
-    void SetPlayerB (Player *fencer);
+    void RemoveOpponent (guint position);
 
-    void DropPlayer (Player *fencer);
-
-    gboolean IsFake ();
+    void DropFencer (Player *fencer,
+                     gchar  *reason);
 
     gboolean IsDropped ();
 
-    void RestorePlayer (Player *fencer);
+    void RestoreFencer (Player *fencer);
 
-    gboolean HasPlayer (Player *fencer);
+    gboolean HasFencer (Player *fencer);
 
-    gboolean PlayerHasScore (Player *fencer);
+    gboolean IsOver ();
+
+    gboolean HasError ();
 
     void SetScore (Player *fencer, gint score, gboolean is_the_best);
 
@@ -69,6 +69,13 @@ class Match : public Object
     Score *GetScore (Player *fencer);
 
     void Save (xmlTextWriter *xml_writer);
+
+    void Load (xmlNode *node_a,
+               Player  *fencer_a,
+               xmlNode *node_b,
+               Player  *fencer_b);
+
+    void SynchronizeScores ();
 
     void CleanScore ();
 
@@ -88,15 +95,15 @@ class Match : public Object
     GSList *GetRefereeList ();
 
   private:
+    struct Opponent
+    {
+      Player   *_fencer;
+      gboolean  _is_known;
+      Score    *_score;
+    };
+
+    Opponent  _opponents[2];
     Data     *_max_score;
-    Player   *_A;
-    Player   *_B;
-    gboolean  _A_is_dropped;
-    gboolean  _B_is_dropped;
-    gboolean  _A_is_known;
-    gboolean  _B_is_known;
-    Score    *_A_score;
-    Score    *_B_score;
     gchar    *_name_space;
     gchar    *_name;
     guint     _number;
@@ -105,6 +112,9 @@ class Match : public Object
     gboolean ScoreIsNumber (gchar *score);
 
     void Save (xmlTextWriter *xml_writer,
+               Player        *fencer);
+
+    void Load (xmlNode *node,
                Player        *fencer);
 
     void Init (Data *max_score);

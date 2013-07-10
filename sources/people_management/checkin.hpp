@@ -34,7 +34,8 @@ namespace People
   {
     public:
       Checkin (const gchar *glade,
-               const gchar *default_player_class);
+               const gchar *base_class,
+               const gchar *gathering_class);
 
       virtual void Add (Player *player);
 
@@ -77,6 +78,10 @@ namespace People
       void CreateForm (Filter      *filter,
                        const gchar *player_class);
 
+      virtual void SavePlayer (xmlTextWriter *xml_writer,
+                               const gchar   *player_class,
+                               Player        *player);
+
       virtual void OnPlayerEventFromForm (Player            *player,
                                           Form::PlayerEvent  event);
 
@@ -91,14 +96,21 @@ namespace People
       GtkWidget    *_print_dialog;
       gboolean      _print_attending;
       gboolean      _print_missing;
-      const gchar  *_default_player_class;
+      const gchar  *_base_class;
+      const gchar  *_gathering_class;
 
-      virtual void OnPlayerLoaded (Player *player) {};
+      virtual void OnPlayerLoaded (Player *player,
+                                   Player *owner) {};
 
       void LoadList (xmlNode     *xml_node,
                      const gchar *player_class,
                      const gchar *player_class_xml_tag,
-                     const gchar *players_class_xml_tag);
+                     const gchar *players_class_xml_tag,
+                     Player      *owner = NULL);
+
+      Player *LoadPlayer (xmlNode     *xml_node,
+                          const gchar *player_class,
+                          Player      *owner);
 
       void RefreshAttendingDisplay ();
 

@@ -30,12 +30,14 @@ namespace People
 {
   // --------------------------------------------------------------------------------
   Checkin::Checkin (const gchar *glade,
-                    const gchar *default_player_class)
+                    const gchar *base_class,
+                    const gchar *gathering_class)
     : PlayersList (glade)
   {
-    _form                 = NULL;
-    _tally_counter        = new TallyCounter ();
-    _default_player_class = default_player_class;
+    _form            = NULL;
+    _tally_counter   = new TallyCounter ();
+    _base_class      = base_class;
+    _gathering_class = gathering_class;
 
     {
       GtkWidget *content_area;
@@ -94,7 +96,7 @@ namespace People
   {
     if (player_class == NULL)
     {
-      player_class = _default_player_class;
+      player_class = _base_class;
     }
 
     {
@@ -122,27 +124,36 @@ namespace People
   void Checkin::LoadList (xmlNode     *xml_node,
                           const gchar *player_class,
                           const gchar *player_class_xml_tag,
-                          const gchar *players_class_xml_tag)
+                          const gchar *players_class_xml_tag,
+                          Player      *owner)
   {
+    const gchar *base_class_xml_tag = PlayerFactory::GetXmlTag (_base_class);
+
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
         if (strcmp ((char *) n->name, player_class_xml_tag) == 0)
         {
-          Player *player = PlayerFactory::CreatePlayer (player_class);
+          Object::TryToRelease (owner);
+          owner = LoadPlayer (n,
+                              player_class,
+                              NULL);
+        }
+        else if (   _gathering_class
+                 && (strcmp (player_class, _gathering_class) == 0)
+                 && (strcmp ((char *) n->name, base_class_xml_tag) == 0))
+        {
+          Player *player = LoadPlayer (n,
+                                       _base_class,
+                                       owner);
 
-          player->Load (n);
-
-          // FFE issue
-          GuessPlayerLeague (player);
-
-          OnPlayerLoaded (player);
-          Add (player);
           player->Release ();
         }
         else if (strcmp ((char *) n->name, players_class_xml_tag) != 0)
         {
+          Object::TryToRelease (owner);
+          owner = NULL;
           OnListChanged ();
           return;
         }
@@ -150,8 +161,28 @@ namespace People
       LoadList (n->children,
                 player_class,
                 player_class_xml_tag,
-                players_class_xml_tag);
+                players_class_xml_tag,
+                owner);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  Player *Checkin::LoadPlayer (xmlNode     *xml_node,
+                               const gchar *player_class,
+                               Player      *owner)
+  {
+    Player *player = PlayerFactory::CreatePlayer (player_class);
+
+    player->Load (xml_node);
+
+    // FFE issue
+    GuessPlayerLeague (player);
+
+    OnPlayerLoaded (player,
+                    owner);
+    Add (player);
+
+    return player;
   }
 
   // --------------------------------------------------------------------------------
@@ -194,12 +225,23 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void Checkin::SavePlayer (xmlTextWriter *xml_writer,
+                            const gchar   *player_class,
+                            Player        *player)
+  {
+    if (player && player->Is (player_class))
+    {
+      player->Save (xml_writer);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Checkin::SaveList (xmlTextWriter *xml_writer,
                           const gchar   *player_class)
   {
     if (player_class == NULL)
     {
-      player_class = _default_player_class;
+      player_class = _base_class;
     }
 
     {
@@ -216,10 +258,10 @@ namespace People
         {
           Player *p = (Player *) current->data;
 
-          if (p && p->Is (player_class))
-          {
-            p->Save (xml_writer);
-          }
+          SavePlayer (xml_writer,
+                      player_class,
+                      p);
+
           current = g_slist_next (current);
         }
       }
@@ -260,7 +302,7 @@ namespace People
                                                       NULL);
 
     {
-      gchar         *name = g_strdup_printf ("%s files", _default_player_class);
+      gchar         *name = g_strdup_printf ("%s files", _base_class);
       GtkFileFilter *filter = gtk_file_filter_new ();
 
 #define GETTEXT_TRICK N_ ("Fencer files") N_ ("Referee files")
@@ -375,27 +417,32 @@ namespace People
   // --------------------------------------------------------------------------------
   gchar *Checkin::GetFileContent (gchar *filename)
   {
-    gchar *file_content;
+    gchar *file_content = NULL;
     gchar *raw_file;
     gsize  length;
-    guint  j;
 
-    g_file_get_contents ((const gchar *) filename,
-                         &raw_file,
-                         &length,
-                         NULL);
-    length++;
-
-    file_content = (gchar *) g_malloc (length);
-
-    j = 0;
-    for (guint i = 0; i < length; i++)
+    if (g_file_get_contents ((const gchar *) filename,
+                             &raw_file,
+                             &length,
+                             NULL))
     {
-      if (raw_file[i] != '\r')
+      guint j;
+
+      length++;
+
+      file_content = (gchar *) g_malloc (length);
+
+      j = 0;
+      for (guint i = 0; i < length; i++)
       {
-        file_content[j] = raw_file[i];
-        j++;
+        if (raw_file[i] != '\r')
+        {
+          file_content[j] = raw_file[i];
+          j++;
+        }
       }
+
+      g_free (raw_file);
     }
 
     return file_content;
@@ -445,7 +492,7 @@ namespace People
                                              ",",
                                              0);
 
-            player = PlayerFactory::CreatePlayer (_default_player_class);
+            player = PlayerFactory::CreatePlayer (_base_class);
 
             if (tokens)
             {
@@ -634,7 +681,7 @@ namespace People
           {
             for (guint i = nb_attr; tokens[i+1] != 0; i += nb_attr)
             {
-              Player              *player = PlayerFactory::CreatePlayer (_default_player_class);
+              Player              *player = PlayerFactory::CreatePlayer (_base_class);
               Player::AttributeId  attr_id ("");
 
               for (guint c = 0; c < nb_attr; c++)

@@ -19,28 +19,43 @@
 
 #include <curl/curl.h>
 #include <glib.h>
+#include "util/object.hpp"
 
 namespace Net
 {
-  class Uploader
+  class Uploader : public Object
   {
     public:
-      Uploader (const gchar *url,
-                const gchar *user,
-                const gchar *passwd);
+      typedef enum
+      {
+        CONN_OK,
+        CONN_ERROR
+      } PeerStatus;
+
+      typedef void (*UploadStatus) (PeerStatus  peer_status,
+                                    Object     *object);
+
+      Uploader (const gchar  *url,
+                UploadStatus  status_cbk,
+                Object       *status_object,
+                const gchar  *user,
+                const gchar  *passwd);
 
       void UploadFile (const gchar *filename);
 
       void UploadString (const gchar *string);
 
     private:
-      gchar *_user;
-      gchar *_passwd;
-      gchar *_full_url;
-      gchar *_url;
-      gchar *_data;
-      gsize  _data_length;
-      guint  _bytes_uploaded;
+      gchar        *_user;
+      gchar        *_passwd;
+      gchar        *_full_url;
+      gchar        *_url;
+      gchar        *_data;
+      gsize         _data_length;
+      guint         _bytes_uploaded;
+      UploadStatus  _status_cbk;
+      Object       *_status_cbk_object;
+      PeerStatus    _peer_status;
 
       virtual ~Uploader ();
 
@@ -58,6 +73,8 @@ namespace Net
                                   size_t    size,
                                   size_t    nmemb,
                                   Uploader *uploader);
+
+      static gboolean DeferedStatus (Uploader *uploader);
   };
 
 }

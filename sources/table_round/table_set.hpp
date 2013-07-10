@@ -108,6 +108,9 @@ namespace Table
                              Player *player,
                              guint   position);
 
+      void RemovePlayerFromMatch (Match *to_match,
+                                  guint  position);
+
       Player *GetFencerFromRef (guint ref);
 
       void AddReferee (Match *match,
@@ -331,6 +334,18 @@ namespace Table
       void GetBounds (GNode           *top,
                       GNode           *bottom,
                       GooCanvasBounds *bounds);
+
+      void RefreshNodes ();
+
+      static gboolean RefreshNode (GNode    *node,
+                                   TableSet *table_set);
+
+      void SpreadWinners ();
+
+      static gboolean SpreadWinner (GNode    *node,
+                                    TableSet *table_set);
+
+      void DumpNode (GNode *node);
   };
 }
 

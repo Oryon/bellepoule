@@ -18,16 +18,47 @@
 
 #include "uploader.hpp"
 
+#ifdef WIN32
+#define RED     ""
+#define GREEN   ""
+#define YELLOW  ""
+#define BLUE    ""
+#define MAGENTA ""
+#define CYAN    ""
+#define WHITE   ""
+#define END     ""
+#else
+#define RED     "\033[1;31m"
+#define GREEN   "\033[1;32m"
+#define YELLOW  "\033[1;33m"
+#define BLUE    "\033[1;34m"
+#define MAGENTA "\033[1;35m"
+#define CYAN    "\033[1;36m"
+#define WHITE   "\033[0;37m"
+#define END     "\033[0m"
+#endif
+
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  Uploader::Uploader (const gchar *url,
-                      const gchar *user,
-                      const gchar *passwd)
+  Uploader::Uploader (const gchar  *url,
+                      UploadStatus  status_cbk,
+                      Object       *status_object,
+                      const gchar  *user,
+                      const gchar  *passwd)
+    : Object ("Uploader")
   {
     _url    = g_strdup (url);
     _user   = g_strdup (user);
     _passwd = g_strdup (passwd);
+
+    _status_cbk        = status_cbk;
+    _status_cbk_object = status_object;
+
+    if (_status_cbk_object)
+    {
+      _status_cbk_object->Retain ();
+    }
 
     _full_url = NULL;
     _data     = NULL;
@@ -41,6 +72,8 @@ namespace Net
     g_free (_user);
     g_free (_passwd);
     g_free (_data);
+
+    Object::TryToRelease (_status_cbk_object);
   }
 
   // --------------------------------------------------------------------------------
@@ -86,6 +119,8 @@ namespace Net
   {
     GError *error = NULL;
 
+    Retain ();
+
     if (!g_thread_create ((GThreadFunc) ThreadFunction,
                           this,
                           FALSE,
@@ -93,55 +128,8 @@ namespace Net
     {
       g_printerr ("Failed to create Uploader thread: %s\n", error->message);
       g_error_free (error);
-      delete (this);
+      Release ();
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  gpointer Uploader::ThreadFunction (Uploader *uploader)
-  {
-    if (uploader->_data && uploader->_full_url)
-    {
-      CURL *curl = curl_easy_init ();
-
-      if (curl)
-      {
-        curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
-        curl_easy_setopt (curl, CURLOPT_READDATA,         uploader);
-        curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
-        curl_easy_setopt (curl, CURLOPT_URL,              uploader->_full_url);
-        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) strlen (uploader->_data) + 1);
-#ifdef DEBUG
-        curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION,    OnUpLoadTrace);
-        curl_easy_setopt (curl, CURLOPT_DEBUGDATA,        uploader);
-        curl_easy_setopt (curl, CURLOPT_VERBOSE,          1L);
-#endif
-
-        if (uploader->_user && *uploader->_user && uploader->_passwd && *uploader->_passwd)
-        {
-          gchar *opt = g_strdup_printf ("%s:%s", uploader->_user, uploader->_passwd);
-
-          curl_easy_setopt (curl, CURLOPT_USERPWD, opt);
-          g_free (opt);
-        }
-
-        uploader->_bytes_uploaded = 0;
-
-        {
-          CURLcode result = curl_easy_perform (curl);
-
-          if (result != CURLE_OK)
-          {
-            g_print ("%s\n", curl_easy_strerror (result));
-          }
-        }
-
-        curl_easy_cleanup (curl);
-      }
-    }
-
-    delete (uploader);
-    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -153,26 +141,39 @@ namespace Net
   {
     if (type == CURLINFO_TEXT)
     {
-      g_print ("Uploader: ");
+      g_print (BLUE "[Uploader] " END);
     }
     else if (type == CURLINFO_HEADER_IN)
     {
-      g_print ("--CURLINFO_HEADER_IN------\n");
+      g_print (GREEN "--CURLINFO_HEADER_IN------\n" END);
     }
     else if (type == CURLINFO_HEADER_OUT)
     {
-      g_print ("--CURLINFO_HEADER_OUT-----\n");
+      g_print (GREEN "--CURLINFO_HEADER_OUT-----\n" END);
     }
     else if (type == CURLINFO_DATA_IN)
     {
-      g_print ("--CURLINFO_DATA_IN--------\n");
+      g_print (GREEN "--CURLINFO_DATA_IN--------\n" END);
     }
     else if (type == CURLINFO_DATA_OUT)
     {
-      g_print ("--CURLINFO_DATA_OUT-------\n");
+      g_print (GREEN "--CURLINFO_DATA_OUT-------\n" END);
+      g_print ("......\n");
+      g_print ("......\n");
+      return 0;
     }
 
-    g_print ("%s\n", data);
+    if (data && size)
+    {
+      gchar *printable_buffer = g_strndup (data, size);
+
+      g_print ("%s", printable_buffer);
+      if (printable_buffer[size-1] != '\n')
+      {
+        g_print ("\n");
+      }
+      g_free (printable_buffer);
+    }
 
     return 0;
   }
@@ -193,5 +194,83 @@ namespace Net
     uploader->_bytes_uploaded += bytes_to_copy;
 
     return bytes_to_copy;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Uploader::DeferedStatus (Uploader *uploader)
+  {
+    uploader->_status_cbk (uploader->_peer_status,
+                           uploader->_status_cbk_object);
+    uploader->Release ();
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gpointer Uploader::ThreadFunction (Uploader *uploader)
+  {
+    gboolean defered_operation = FALSE;
+
+    if (uploader->_data && uploader->_full_url)
+    {
+      CURL *curl = curl_easy_init ();
+
+      if (curl)
+      {
+        curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
+        curl_easy_setopt (curl, CURLOPT_READDATA,         uploader);
+        curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
+        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) strlen (uploader->_data) + 1);
+        curl_easy_setopt (curl, CURLOPT_URL,              uploader->_full_url);
+        curl_easy_setopt (curl, CURLOPT_NOPROXY,          "127.0.0.1");
+#ifdef DEBUG
+        curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION,    OnUpLoadTrace);
+        curl_easy_setopt (curl, CURLOPT_DEBUGDATA,        uploader);
+        curl_easy_setopt (curl, CURLOPT_VERBOSE,          1L);
+#endif
+
+        if (uploader->_user && *uploader->_user && uploader->_passwd && *uploader->_passwd)
+        {
+          gchar *opt = g_strdup_printf ("%s:%s", uploader->_user, uploader->_passwd);
+
+          curl_easy_setopt (curl, CURLOPT_USERPWD, opt);
+          g_free (opt);
+        }
+
+        uploader->_bytes_uploaded = 0;
+
+        {
+          CURLcode curl_code;
+
+          curl_code = curl_easy_perform (curl);
+          if (curl_code != CURLE_OK)
+          {
+            uploader->_peer_status = CONN_ERROR;
+            g_print (RED "[Uploader Error] " END "%s\n", curl_easy_strerror (curl_code));
+          }
+          else
+          {
+            uploader->_peer_status = CONN_OK;
+            g_print (YELLOW "[Uploader] " END "Done");
+          }
+
+          if (uploader->_status_cbk && uploader->_status_cbk_object)
+          {
+            defered_operation = TRUE;
+            g_idle_add ((GSourceFunc) DeferedStatus,
+                        uploader);
+          }
+        }
+
+        curl_easy_cleanup (curl);
+      }
+    }
+
+    if (defered_operation == FALSE)
+    {
+      uploader->Release ();
+    }
+
+    return NULL;
   }
 }

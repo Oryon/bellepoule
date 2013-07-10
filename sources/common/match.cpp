@@ -26,7 +26,7 @@
 
 // --------------------------------------------------------------------------------
 Match::Match (Data *max_score)
-: Object ("Match")
+  : Object ("Match")
 {
   Init (max_score);
 }
@@ -35,22 +35,24 @@ Match::Match (Data *max_score)
 Match::Match  (Player *A,
                Player *B,
                Data   *max_score)
-: Object ("Match")
+  : Object ("Match")
 {
   Init (max_score);
 
-  _A = A;
-  _B = B;
+  _opponents[0]._fencer   = A;
+  _opponents[0]._is_known = TRUE;
 
-  _A_is_known = TRUE;
-  _B_is_known = TRUE;
+  _opponents[1]._fencer   = B;
+  _opponents[1]._is_known = TRUE;
 }
 
 // --------------------------------------------------------------------------------
 Match::~Match ()
 {
-  Object::TryToRelease (_A_score);
-  Object::TryToRelease (_B_score);
+  for (guint i = 0; i < 2; i++)
+  {
+    Object::TryToRelease (_opponents[i]._score);
+  }
 
   g_free (_name);
   g_free (_name_space);
@@ -63,148 +65,135 @@ void Match::Init (Data *max_score)
 
   _max_score = max_score;
 
-  _A = NULL;
-  _B = NULL;
-
-  _A_is_known = FALSE;
-  _B_is_known = FALSE;
-
-  _A_is_dropped = FALSE;
-  _B_is_dropped = FALSE;
+  for (guint i = 0; i < 2; i++)
+  {
+    _opponents[i]._fencer   = NULL;
+    _opponents[i]._is_known = FALSE;
+    _opponents[i]._score    = new Score (max_score);
+  }
 
   _name       = g_strdup ("");
   _name_space = g_strdup ("");
 
   _number = 0;
-
-  _A_score = new Score (max_score);
-  _B_score = new Score (max_score);
 }
 
 // --------------------------------------------------------------------------------
 gboolean Match::IsDropped ()
 {
-  return (_A_is_dropped || _B_is_dropped);
-}
-
-// --------------------------------------------------------------------------------
-gboolean Match::IsFake ()
-{
-  return (GetWinner () && (GetLooser () == NULL));
-}
-
-// --------------------------------------------------------------------------------
-void Match::SetPlayerA (Player *fencer)
-{
-  _A          = fencer;
-  _A_is_known = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-void Match::SetPlayerB (Player *fencer)
-{
-  _B          = fencer;
-  _B_is_known = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-Player *Match::GetPlayerA ()
-{
-  return _A;
-}
-
-// --------------------------------------------------------------------------------
-Player *Match::GetPlayerB ()
-{
-  return _B;
-}
-
-// --------------------------------------------------------------------------------
-void Match::DropPlayer (Player *fencer)
-{
-  if (_A == fencer)
+  for (guint i = 0; i < 2; i++)
   {
-    _A_is_dropped = TRUE;
-  }
-  else
-  {
-    _B_is_dropped = TRUE;
+    if (_opponents[i]._score->IsOut ())
+    {
+      return TRUE;
+    }
   }
 
-  if (IsDropped ())
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Match::SetOpponent (guint   position,
+                         Player *fencer)
+{
+  _opponents[position]._fencer   = fencer;
+  _opponents[position]._is_known = TRUE;
+
+  if (fencer == NULL)
   {
-    _A_score->Drop ();
-    _B_score->Drop ();
+    _opponents[position]._score->Set (0, FALSE);
+    _opponents[!position]._score->Set (0, TRUE);
   }
 }
 
 // --------------------------------------------------------------------------------
-void Match::RestorePlayer (Player *fencer)
+void Match::RemoveOpponent (guint position)
 {
-  if (_A == fencer)
-  {
-    _A_is_dropped = FALSE;
-  }
-  else if (_B == fencer)
-  {
-    _B_is_dropped = FALSE;
-  }
+  _opponents[position]._fencer   = NULL;
+  _opponents[position]._is_known = FALSE;
 
-  if (IsDropped () == FALSE)
+  _opponents[position]._score->Clean ();
+  _opponents[!position]._score->Clean ();
+}
+
+// --------------------------------------------------------------------------------
+Player *Match::GetOpponent (guint position)
+{
+  return _opponents[position]._fencer;
+}
+
+// --------------------------------------------------------------------------------
+void Match::DropFencer (Player *fencer,
+                        gchar  *reason)
+{
+  for (guint i = 0; i < 2; i++)
   {
-    _A_score->Restore ();
-    _B_score->Restore ();
+    if (_opponents[i]._fencer == fencer)
+    {
+      _opponents[i]._score->Drop (reason);
+      _opponents[!i]._score->SynchronizeWith (_opponents[i]._score);
+      return;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Match::RestoreFencer (Player *fencer)
+{
+  for (guint i = 0; i < 2; i++)
+  {
+    if (_opponents[i]._fencer == fencer)
+    {
+      _opponents[i]._score->Restore ();
+      _opponents[!i]._score->SynchronizeWith (_opponents[i]._score);
+      return;
+    }
   }
 }
 
 // --------------------------------------------------------------------------------
 Player *Match::GetWinner ()
 {
-  if (   (_B == NULL)
-      && _B_is_known)
+  for (guint i = 0; i < 2; i++)
   {
-    return _A;
+    if (   (_opponents[i]._fencer == NULL)
+        && _opponents[i]._is_known)
+    {
+      return _opponents[!i]._fencer;
+    }
   }
-  else if (   (_A == NULL)
-           && _A_is_known)
-  {
-    return _B;
-  }
-  else if (PlayerHasScore (_A) && PlayerHasScore (_B))
-  {
-    Score *score_A = GetScore (_A);
-    Score *score_B = GetScore (_B);
 
+  if (_opponents[0]._score->IsKnown () && _opponents[1]._score->IsKnown ())
+  {
     if (IsDropped ())
     {
-      if (_A_is_dropped)
+      for (guint i = 0; i < 2; i++)
       {
-        return _B;
+        if (   (_opponents[i]._score->IsOut ())
+            && (_opponents[!i]._score->IsOut () == FALSE))
+        {
+          return _opponents[!i]._fencer;
+        }
       }
-      else
-      {
-        return _A;
-      }
+      return NULL;
     }
-    else if (   score_A->IsValid ()
-             && score_B->IsValid ()
-             && score_A->IsConsistentWith (score_B))
+    else if (HasError () == FALSE)
     {
-      if (_A_score->Get () > _B_score->Get ())
+      if (_opponents[0]._score->Get () > _opponents[1]._score->Get ())
       {
-        return _A;
+        return _opponents[0]._fencer;
       }
-      else if (_A_score->Get () < _B_score->Get ())
+      else if (_opponents[0]._score->Get () < _opponents[1]._score->Get ())
       {
-        return _B;
+        return _opponents[1]._fencer;
       }
-      else if (_A_score->IsTheBest ())
+
+      for (guint i = 0; i < 2; i++)
       {
-        return _A;
-      }
-      else
-      {
-        return _B;
+        if (_opponents[i]._score->IsTheBest ())
+        {
+          return _opponents[i]._fencer;
+        }
       }
     }
   }
@@ -217,39 +206,64 @@ Player *Match::GetLooser ()
 {
   Player *winner = GetWinner ();
 
-  if (winner && winner == _A)
+  if (winner)
   {
-    return _B;
-  }
-  else if (winner && winner == _B)
-  {
-    return _A;
+    for (guint i = 0; i < 2; i++)
+    {
+      if (_opponents[i]._fencer != winner)
+      {
+        return _opponents[i]._fencer;
+      }
+    }
   }
 
   return NULL;
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match::HasPlayer (Player *fencer)
+gboolean Match::HasFencer (Player *fencer)
 {
-  return ((_A == fencer) || (_B == fencer));
+  for (guint i = 0; i < 2; i++)
+  {
+    if (_opponents[i]._fencer == fencer)
+    {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
-gboolean Match::PlayerHasScore (Player *fencer)
+gboolean Match::IsOver ()
 {
-  if (_A && (fencer == _A))
+  for (guint i = 0; i < 2; i++)
   {
-    return (_A_score->IsKnown ());
+    if (_opponents[i]._is_known == FALSE)
+    {
+      return FALSE;
+    }
+    if (_opponents[i]._score->IsKnown () == FALSE)
+    {
+      return FALSE;
+    }
   }
-  else if (_B && (fencer == _B))
+
+  return (HasError () == FALSE);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Match::HasError ()
+{
+  for (guint i = 0; i < 2; i++)
   {
-    return (_B_score->IsKnown ());
+    if (_opponents[i]._score->IsValid () == FALSE)
+    {
+      return TRUE;
+    }
   }
-  else
-  {
-    return FALSE;
-  }
+
+  return (_opponents[0]._score->IsConsistentWith (_opponents[1]._score) == FALSE);
 }
 
 // --------------------------------------------------------------------------------
@@ -257,13 +271,13 @@ void Match::SetScore (Player   *fencer,
                       gint      score,
                       gboolean  is_the_best)
 {
-  if (_A == fencer)
+  for (guint i = 0; i < 2; i++)
   {
-    _A_score->Set (score, is_the_best);
-  }
-  else if (_B == fencer)
-  {
-    _B_score->Set (score, is_the_best);
+    if (_opponents[i]._fencer == fencer)
+    {
+      _opponents[i]._score->Set (score, is_the_best);
+      break;
+    }
   }
 }
 
@@ -349,13 +363,12 @@ gboolean Match::SetScore (Player *fencer,
 // --------------------------------------------------------------------------------
 Score *Match::GetScore (Player *fencer)
 {
-  if (_A == fencer)
+  for (guint i = 0; i < 2; i++)
   {
-    return _A_score;
-  }
-  else if (_B == fencer)
-  {
-    return _B_score;
+    if (_opponents[i]._fencer == fencer)
+    {
+      return _opponents[i]._score;
+    }
   }
 
   return NULL;
@@ -364,6 +377,14 @@ Score *Match::GetScore (Player *fencer)
 // --------------------------------------------------------------------------------
 void Match::Save (xmlTextWriter *xml_writer)
 {
+  for (guint i = 0; i < 2; i++)
+  {
+    if (_opponents[i]._fencer == NULL)
+    {
+      return;
+    }
+  }
+
   if (_number)
   {
     xmlTextWriterStartElement (xml_writer,
@@ -390,10 +411,11 @@ void Match::Save (xmlTextWriter *xml_writer)
       }
     }
 
-    Save (xml_writer,
-          _A);
-    Save (xml_writer,
-          _B);
+    for (guint i = 0; i < 2; i++)
+    {
+      Save (xml_writer,
+            _opponents[i]._fencer);
+    }
 
     xmlTextWriterEndElement (xml_writer);
   }
@@ -412,23 +434,21 @@ void Match::Save (xmlTextWriter *xml_writer,
     xmlTextWriterWriteFormatAttribute (xml_writer,
                                        BAD_CAST "REF",
                                        "%d", fencer->GetRef ());
-
-    if (score->IsKnown ())
     {
-      xmlTextWriterWriteFormatAttribute (xml_writer,
-                                         BAD_CAST "Score",
-                                         "%d", score->Get ());
-      if (GetWinner () == fencer)
+      const gchar *status_image = score->GetStatusImage ();
+
+      if (status_image)
       {
+        if ((status_image[0] == 'V') || (status_image[0] == 'D'))
+        {
+          xmlTextWriterWriteFormatAttribute (xml_writer,
+                                             BAD_CAST "Score",
+                                             "%d", score->Get ());
+        }
+
         xmlTextWriterWriteAttribute (xml_writer,
                                      BAD_CAST "Statut",
-                                     BAD_CAST "V");
-      }
-      else
-      {
-        xmlTextWriterWriteAttribute (xml_writer,
-                                     BAD_CAST "Statut",
-                                     BAD_CAST "D");
+                                     BAD_CAST status_image);
       }
     }
     xmlTextWriterEndElement (xml_writer);
@@ -436,12 +456,81 @@ void Match::Save (xmlTextWriter *xml_writer,
 }
 
 // --------------------------------------------------------------------------------
+void Match::Load (xmlNode *node_a,
+                  Player  *fencer_a,
+                  xmlNode *node_b,
+                  Player  *fencer_b)
+{
+  _opponents[0]._fencer = fencer_a;
+  Load (node_a,
+        fencer_a);
+
+  _opponents[1]._fencer = fencer_b;
+  Load (node_b,
+        fencer_b);
+
+  for (guint i = 0; i < 2; i++)
+  {
+    if (_opponents[i]._score->IsOut ())
+    {
+      _opponents[!i]._score->SynchronizeWith (_opponents[i]._score);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Match::Load (xmlNode *node,
+                  Player  *fencer)
+{
+  gboolean  victory = FALSE;
+  Score    *score   = GetScore (fencer);
+  gchar    *attr;
+
+  attr = (gchar *) xmlGetProp (node, BAD_CAST "Statut");
+  if (attr)
+  {
+    if (attr[0] == 'V')
+    {
+      victory = TRUE;
+    }
+    else if (attr[0] == 'D')
+    {
+      victory = FALSE;
+    }
+    else
+    {
+      score->Drop (attr);
+    }
+    xmlFree (attr);
+  }
+
+  attr = (gchar *) xmlGetProp (node, BAD_CAST "Score");
+  if (attr)
+  {
+    SetScore (fencer,
+              atoi (attr),
+              victory);
+
+    xmlFree (attr);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Match::SynchronizeScores ()
+{
+  for (guint i = 0; i < 2; i++)
+  {
+    _opponents[i]._score->SynchronizeWith (_opponents[!i]._score);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Match::CleanScore ()
 {
-  _A_is_dropped = FALSE;
-  _B_is_dropped = FALSE;
-  _A_score->Clean ();
-  _B_score->Clean ();
+  for (guint i = 0; i < 2; i++)
+  {
+    _opponents[i]._score->Clean ();
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -541,8 +630,8 @@ void Match::AddReferee (Player *referee)
   }
 
   if (   (_referee_list == NULL)
-         || (g_slist_find (_referee_list,
-                           referee) == NULL))
+      || (g_slist_find (_referee_list,
+                        referee) == NULL))
   {
     _referee_list = g_slist_prepend (_referee_list,
                                      referee);

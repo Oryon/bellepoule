@@ -43,12 +43,16 @@ namespace People
             const gchar *player_class,
             PlayerCbk    player_cbk);
 
-      void Show (Player *player = NULL);
-
       void AddPage (Filter      *filter,
                     const gchar *player_class);
 
+      void Show (Player *player = NULL);
+
       void Hide ();
+
+      void ShowPage (const gchar *page);
+
+      void HidePage (const gchar *page);
 
       void OnAddButtonClicked ();
 
@@ -62,6 +66,7 @@ namespace People
       struct Page
       {
         const gchar *_player_class;
+        gboolean     _visible;
 
         GtkWidget   *_title_vbox;
         GtkWidget   *_value_vbox;
@@ -79,6 +84,10 @@ namespace People
       virtual ~Form ();
 
       void ReadAndWipe (Player *player);
+
+      void ShowTabs ();
+
+      void HideTabs ();
 
       static void SetSelectorValue (GtkComboBox *combo_box,
                                     const gchar *value);

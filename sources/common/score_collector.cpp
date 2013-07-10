@@ -25,7 +25,7 @@
 ScoreCollector::ScoreCollector (CanvasModule   *client,
                                 OnNewScore_cbk  on_new_score,
                                 gboolean        display_match_name)
-: Object ("ScoreCollector")
+  : Object ("ScoreCollector")
 {
   _entry_item         = NULL;
   _gtk_entry          = NULL;
@@ -72,16 +72,19 @@ void ScoreCollector::AddCollectingPoint (GooCanvasItem *point,
 {
   _collecting_point = point;
 
-  AddCollectingTrigger (point);
-  AddCollectingTrigger (score_text);
+  if (g_object_get_data (G_OBJECT (point), "score_text") == NULL)
+  {
+    AddCollectingTrigger (point);
+    AddCollectingTrigger (score_text);
 
-  g_signal_connect (point, "focus_in_event",
-                    G_CALLBACK (on_focus_in), this);
-  g_signal_connect (point, "key-press-event",
-                    G_CALLBACK (on_goocanvas_key_press_event), this);
+    g_signal_connect (point, "focus_in_event",
+                      G_CALLBACK (on_focus_in), this);
+    g_signal_connect (point, "key-press-event",
+                      G_CALLBACK (on_goocanvas_key_press_event), this);
 
-  g_object_set_data (G_OBJECT (point), "score_text", score_text);
-  g_object_set_data (G_OBJECT (point), "next_point", NULL);
+    g_object_set_data (G_OBJECT (point), "score_text", score_text);
+    g_object_set_data (G_OBJECT (point), "next_point", NULL);
+  }
 
   SetMatch (point,
             match,
@@ -95,7 +98,7 @@ void ScoreCollector::SetMatch (GooCanvasItem *to_point,
 {
   if (match)
   {
-    if (match->GetPlayerA () == player)
+    if (match->GetOpponent (0) == player)
     {
       match->SetData (this, "goo_rect_A", to_point);
     }
@@ -122,7 +125,7 @@ void ScoreCollector::Refresh (Match *match)
     {
       // A
       {
-        Score         *score       = match->GetScore (match->GetPlayerA ());
+        Score         *score       = match->GetScore (match->GetOpponent (0));
         GooCanvasItem *score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
         gchar         *score_image = score->GetImage ();
 
@@ -145,7 +148,7 @@ void ScoreCollector::Refresh (Match *match)
       goo_rect = (GooCanvasItem *) match->GetPtrData (this, "goo_rect_B");
       if (goo_rect)
       {
-        Score         *score       = match->GetScore (match->GetPlayerB ());
+        Score         *score       = match->GetScore (match->GetOpponent (1));
         GooCanvasItem *score_text  = (GooCanvasItem *) g_object_get_data (G_OBJECT (goo_rect), "score_text");
         gchar         *score_image = score->GetImage ();
 
@@ -278,7 +281,7 @@ GooCanvasItem *ScoreCollector::GetNextItem (GtkWidget *widget)
     Match *next_match = (Match *) g_object_get_data (G_OBJECT (next_item), "match");
 
     if (   (match == next_match)
-        && (match->GetWinner () != NULL))
+        && (match->IsOver () != FALSE))
     {
       return NULL;
     }
@@ -331,8 +334,8 @@ void ScoreCollector::SetMatchColor (Match *match,
     GooCanvasItem *rect;
     gchar         *color_A = consistent_color;
     gchar         *color_B = consistent_color;
-    Player        *A       = match->GetPlayerA ();
-    Player        *B       = match->GetPlayerB ();
+    Player        *A       = match->GetOpponent (0);
+    Player        *B       = match->GetOpponent (1);
     Score         *score_A = match->GetScore (A);
     Score         *score_B = match->GetScore (B);
 
@@ -413,7 +416,7 @@ gboolean ScoreCollector::OnFocusIn (GooCanvasItem *goo_rect)
         Score    *score       = match->GetScore (player);
         gchar    *score_image = score->GetImage ();
 
-        _gtk_entry  = gtk_entry_new ();
+        _gtk_entry = gtk_entry_new ();
         gtk_entry_set_text (GTK_ENTRY (_gtk_entry),
                             score_image);
         g_free (score_image);
@@ -507,19 +510,19 @@ gboolean ScoreCollector::OnFocusOut (GtkWidget *widget)
       }
       g_free (score_image);
     }
-
-    if (_client && _on_new_score)
-    {
-      _on_new_score (this,
-                     _client,
-                     match,
-                     player);
-    }
   }
 
   SetMatchColor (match,
                  _consistent_normal_color,
                  _unconsistent_normal_color);
+
+  if (_client && _on_new_score)
+  {
+    _on_new_score (this,
+                   _client,
+                   match,
+                   player);
+  }
 
   return TRUE;
 }
@@ -570,6 +573,7 @@ void ScoreCollector::Stop ()
   {
     g_signal_handler_disconnect (_gtk_entry,
                                  _focus_out_handle);
+
     goo_canvas_item_remove (_entry_item);
     _entry_item = NULL;
   }

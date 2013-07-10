@@ -45,6 +45,8 @@ namespace Pool
 
       void OnToggleSingleClassification (gboolean single_selected);
 
+      void OnSmartPouleClicked ();
+
     private:
       void Display ();
       void Garnish ();
@@ -59,7 +61,6 @@ namespace Pool
 
       static Stage *CreateInstance (StageClass *stage_class);
 
-      void SendMatchSheets ();
       void FillInConfig ();
       void ApplyConfig ();
       Stage *GetInputProvider ();

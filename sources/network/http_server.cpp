@@ -19,36 +19,37 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::HttpServer (Object             *client,
-                          GetHttpResponseCbk  get_http_response)
+  HttpServer::HttpServer (Object   *client,
+                          HttpPost  http_post,
+                          HttpGet   http_get)
     : Object ("HttpServer")
   {
-    _deamon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
-                                PORT,
-                                NULL,
-                                NULL,
-                                (MHD_AccessHandlerCallback) OnMicroHttpRequest,
-                                this,
+    _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
+                                35830,
+                                NULL, NULL,
+                                (MHD_AccessHandlerCallback) OnMicroHttpRequest, this,
+                                MHD_OPTION_NOTIFY_COMPLETED, OnMicroHttpRequestCompleted, this,
                                 MHD_OPTION_END);
-    _client            = client;
-    _get_http_response = get_http_response;
+    _client        = client;
+    _http_POST_cbk = http_post;
+    _http_GET_cbk  = http_get;
   }
 
   // --------------------------------------------------------------------------------
   HttpServer::~HttpServer ()
   {
-    MHD_stop_daemon (_deamon);
+    MHD_stop_daemon (_daemon);
   }
 
   // --------------------------------------------------------------------------------
   int HttpServer::OnGet (struct MHD_Connection *connection,
                          const char            *url,
                          const char            *method,
-                         void                  **con_cls)
+                         size_t                **connection_ctx)
   {
     int    ret             = MHD_NO;
-    gchar *client_response = _get_http_response (_client,
-                                                 url);
+    gchar *client_response = _http_GET_cbk (_client,
+                                            url);
 
     if (client_response)
     {
@@ -57,8 +58,6 @@ namespace Net
 
       page = g_strdup (client_response);
       g_free (client_response);
-
-      *con_cls = NULL;
 
       response = MHD_create_response_from_data (strlen (page),
                                                 (void *) page,
@@ -75,6 +74,20 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void HttpServer::OnMicroHttpRequestCompleted (HttpServer                      *server,
+                                                struct MHD_Connection           *connection,
+                                                size_t                          **connection_ctx,
+                                                enum MHD_RequestTerminationCode   code)
+  {
+    if (*connection_ctx)
+    {
+      delete (*connection_ctx);
+    }
+
+    *connection_ctx = NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   int HttpServer::OnMicroHttpRequest (HttpServer            *server,
                                       struct MHD_Connection *connection,
                                       const char            *url,
@@ -82,32 +95,70 @@ namespace Net
                                       const char            *version,
                                       const char            *upload_data,
                                       size_t                *upload_data_size,
-                                      void                  **con_cls)
+                                      size_t                **connection_ctx)
   {
-    //if (url)    g_print ("url     ==> %s\n", url);
-    //if (method) g_print ("method  ==> %s\n", method);
-
-    if (strcmp (method, "GET") != 0)
+    if (*connection_ctx == NULL)
     {
-      return MHD_NO;
-    }
-
-    if (server != *con_cls)
-    {
-      /* The first time only the headers are valid,
-         do not respond in the first round... */
-      *con_cls = server;
+      *connection_ctx = g_new (size_t, 1);
+      *(*connection_ctx) = 0;
       return MHD_YES;
     }
 
-    if (*upload_data_size != 0)
+    if (strcmp (method, "GET") == 0)
     {
-      return MHD_NO;
+      if (*upload_data_size == 0)
+      {
+        return server->OnGet (connection,
+                              url,
+                              method,
+                              connection_ctx);
+      }
     }
+    else if (strcmp (method, "POST") == 0)
+    {
+      printf ("  --> %d - %d\n", *upload_data_size, **connection_ctx);
+    }
+#ifdef DEBUG
+    else if (strcmp (method, "PUT") == 0)
+    {
+      if (   url
+          && (strstr (url, "/bouts") || strstr (url, "/message")))
+      {
+        if (*upload_data_size != **connection_ctx)
+        {
+          **connection_ctx = *upload_data_size;
+          return MHD_YES;
+        }
+        else
+        {
+          *upload_data_size = 0;
 
-    return server->OnGet (connection,
-                          url,
-                          method,
-                          con_cls);
+          {
+            struct MHD_Response *response;
+
+            response = MHD_create_response_from_data (strlen ("<BellePoule>\n"), (void *) "<BellePoule>",
+                                                      MHD_NO, MHD_NO);
+            return MHD_queue_response (connection,
+                                       MHD_HTTP_OK,
+                                       response);
+          }
+        }
+#if 0
+        else
+        {
+          struct MHD_Response *response;
+
+          response = MHD_create_response_from_data (strlen ("<BellePoule>\n"), (void *) "<BellePoule>",
+                                                    MHD_NO, MHD_NO);
+          return MHD_queue_response (connection,
+                                     MHD_HTTP_OK,
+                                     response);
+        }
+#endif
+      }
+    }
+#endif
+
+    return MHD_NO;
   }
 }
