@@ -575,50 +575,55 @@ gint Match::GetNumber ()
 GooCanvasItem *Match::GetScoreTable (GooCanvasItem *parent,
                                      gdouble        size)
 {
-  gchar         *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(size));
-  GooCanvasItem *score_table = goo_canvas_table_new (parent,
-                                                     "column-spacing", size/10.0,
-                                                     NULL);
-
-  Canvas::NormalyzeDecimalNotation (font);
-
-  for (guint i = 0; i < _max_score->_value; i++)
+  if (_max_score->_value <= 15)
   {
-    GooCanvasItem *text_item;
-    GooCanvasItem *goo_rect;
-    gchar         *number = g_strdup_printf ("%d", i+1);
+    gchar         *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(size));
+    GooCanvasItem *score_table = goo_canvas_table_new (parent,
+                                                       "column-spacing", size/10.0,
+                                                       NULL);
 
-    text_item = Canvas::PutTextInTable (score_table,
-                                        number,
-                                        0,
-                                        i);
-    g_free (number);
-    Canvas::SetTableItemAttribute (text_item, "x-align", 0.5);
-    Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
+    Canvas::NormalyzeDecimalNotation (font);
 
-    g_object_set (G_OBJECT (text_item),
-                  "font", font,
-                  "anchor", GTK_ANCHOR_CENTER,
-                  "alignment", PANGO_ALIGN_CENTER,
-                  NULL);
+    for (guint i = 0; i < _max_score->_value; i++)
+    {
+      GooCanvasItem *text_item;
+      GooCanvasItem *goo_rect;
+      gchar         *number = g_strdup_printf ("%d", i+1);
 
-    goo_rect = goo_canvas_rect_new (score_table,
-                                    0.0,
-                                    0.0,
-                                    size,
-                                    size,
-                                    "line-width", size/10.0,
-                                    NULL);
-    Canvas::PutInTable (score_table,
-                        goo_rect,
-                        0,
-                        i);
-    Canvas::SetTableItemAttribute (goo_rect, "x-align", 0.5);
-    Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
+      text_item = Canvas::PutTextInTable (score_table,
+                                          number,
+                                          0,
+                                          i);
+      g_free (number);
+      Canvas::SetTableItemAttribute (text_item, "x-align", 0.5);
+      Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
+
+      g_object_set (G_OBJECT (text_item),
+                    "font", font,
+                    "anchor", GTK_ANCHOR_CENTER,
+                    "alignment", PANGO_ALIGN_CENTER,
+                    NULL);
+
+      goo_rect = goo_canvas_rect_new (score_table,
+                                      0.0,
+                                      0.0,
+                                      size,
+                                      size,
+                                      "line-width", size/10.0,
+                                      NULL);
+      Canvas::PutInTable (score_table,
+                          goo_rect,
+                          0,
+                          i);
+      Canvas::SetTableItemAttribute (goo_rect, "x-align", 0.5);
+      Canvas::SetTableItemAttribute (goo_rect, "y-align", 0.5);
+    }
+    g_free (font);
+
+    return score_table;
   }
-  g_free (font);
 
-  return score_table;
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------

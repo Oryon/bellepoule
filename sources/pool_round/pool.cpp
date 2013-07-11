@@ -1047,13 +1047,16 @@ namespace Pool
               GooCanvasItem *score_table = match->GetScoreTable (match_table,
                                                                  10);
 
-              Canvas::PutInTable (match_table,
-                                  score_table,
-                                  1,
-                                  2);
-              Canvas::SetTableItemAttribute (score_table, "x-align", 1.0);
-              Canvas::SetTableItemAttribute (score_table, "x-expand", 1u);
-              Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+              if (score_table)
+              {
+                Canvas::PutInTable (match_table,
+                                    score_table,
+                                    1,
+                                    2);
+                Canvas::SetTableItemAttribute (score_table, "x-align", 1.0);
+                Canvas::SetTableItemAttribute (score_table, "x-expand", 1u);
+                Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+              }
             }
           }
 

@@ -115,6 +115,7 @@ Tournament::Tournament (gchar *filename)
     GtkWidget *w           = _glade->GetWidget ("about_dialog");
     gchar     *translators = g_strdup_printf ("Julien Diaz           (German)\n"
                                               "Tina Schliemann       (German)\n"
+                                              "Michael Weber         (German)\n"
                                               "Aureliano Martini     (Italian)\n"
                                               "Jihwan Cho            (Korean)\n"
                                               "Marijn Somers         (Dutch)\n"
