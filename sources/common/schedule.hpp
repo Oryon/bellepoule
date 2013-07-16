@@ -68,6 +68,9 @@ class Schedule : public Module
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
 
+    gboolean OnHttpPost (const gchar **url,
+                         const gchar *data);
+
     void SetTeamEvent (gboolean team_event);
 
     void PrepareBookPrint (GtkPrintOperation *operation,
@@ -112,6 +115,8 @@ class Schedule : public Module
                       Stage *after);
 
     void RemoveStage (Stage *stage);
+
+    void GiveStagesAnId ();
 
     Stage *GetStage (guint index);
 

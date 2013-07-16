@@ -1711,6 +1711,62 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Pool::OnHttpPost (const gchar **url,
+                             const gchar *data)
+  {
+    if (*url && data)
+    {
+      guint match_index = atoi  (*url);
+
+      if (match_index > 0)
+      {
+        Match *match = GetMatch (match_index-1);
+
+        if (match)
+        {
+          xmlDoc *doc = xmlReadMemory (data,
+                                       strlen (data),
+                                       "noname.xml",
+                                       NULL,
+                                       0);
+
+          if (doc)
+          {
+            xmlXPathInit ();
+
+            {
+              xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+              xmlXPathObject  *xml_object;
+              xmlNodeSet      *xml_nodeset;
+
+              xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
+              xml_nodeset = xml_object->nodesetval;
+
+              if (xml_nodeset->nodeNr == 2)
+              {
+                for (guint i = 0; i < 2; i++)
+                {
+                  match->Load (xml_nodeset->nodeTab[i],
+                               match->GetOpponent (i));
+                }
+                _score_collector->Refresh (match);
+                RefreshScoreData ();
+                RefreshDashBoard ();
+              }
+
+              xmlXPathFreeObject  (xml_object);
+              xmlXPathFreeContext (xml_context);
+            }
+          }
+          return TRUE;
+        }
+      }
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   Match *Pool::GetMatch (guint i)
   {
     guint a_id;

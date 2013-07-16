@@ -409,6 +409,23 @@ void Schedule::AddStage (Stage *stage,
 
   InsertStage (stage,
                after);
+
+  GiveStagesAnId ();
+}
+
+// --------------------------------------------------------------------------------
+void Schedule::GiveStagesAnId ()
+{
+  GList *current = _stage_list;
+
+  for (guint i = 0; current != NULL; i++)
+  {
+    Stage *stage = (Stage *) current->data;
+
+    stage->SetId (i);
+
+    current = g_list_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -635,6 +652,7 @@ void Schedule::RemoveStage (Stage *stage)
                                                 &iter);
     }
   }
+  GiveStagesAnId ();
   RefreshSensitivity ();
 }
 
@@ -650,6 +668,32 @@ void Schedule::RemoveFromNotebook (Stage *stage)
     stage->RemoveData (this,
                        "viewport_stage");
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Schedule::OnHttpPost (const gchar **url,
+                               const gchar *data)
+{
+  if (url[0])
+  {
+    guint  phase_id = atoi (url[0]);
+    GList *current  = _stage_list;
+
+    while (current)
+    {
+      Stage *stage = (Stage *) current->data;
+
+      if (stage->GetId () == phase_id)
+      {
+        return stage->OnHttpPost (&url[1],
+                                  data);
+      }
+
+      current = g_list_next (current);
+    }
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -682,7 +726,6 @@ void Schedule::Save (xmlTextWriter *xml_writer)
   {
     Stage *stage = ((Stage *) g_list_nth_data (_stage_list,
                                                i));
-    stage->SetId (i);
     stage->Save (xml_writer);
   }
 

@@ -108,6 +108,9 @@ namespace Pool
       void OnEndPrint (GtkPrintOperation *operation,
                        GtkPrintContext   *context);
 
+      gboolean OnHttpPost (const gchar **url,
+                           const gchar *data);
+
       static void OnPoolStatusUpdated (Pool       *pool,
                                        Supervisor *ps);
 

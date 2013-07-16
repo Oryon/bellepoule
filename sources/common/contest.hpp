@@ -82,6 +82,9 @@ class Contest : public Module
 
     State GetState ();
 
+    gboolean OnHttpPost (const gchar **url,
+                         const gchar *data);
+
     gchar *GetId ();
     gchar *GetOrganizer ();
     gchar *GetDate ();

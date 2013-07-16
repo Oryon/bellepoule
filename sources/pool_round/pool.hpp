@@ -75,6 +75,9 @@ namespace Pool
       gboolean IsOver ();
       gboolean HasError ();
 
+      gboolean OnHttpPost (const gchar **url,
+                           const gchar *data);
+
       void RefreshScoreData ();
 
       gchar *GetName ();

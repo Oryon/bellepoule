@@ -42,32 +42,84 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  int HttpServer::OnGet (struct MHD_Connection *connection,
-                         const char            *url,
-                         const char            *method,
-                         size_t                **connection_ctx)
+  gboolean HttpServer::DeferedPost (PostData *post_data)
   {
-    int    ret             = MHD_NO;
-    gchar *client_response = _http_GET_cbk (_client,
-                                            url);
+    post_data->_server->_http_POST_cbk (post_data->_server->_client,
+                                        post_data->_url,
+                                        post_data->_content);
 
-    if (client_response)
+    g_free (post_data->_url);
+    g_free (post_data->_content);
+    post_data->_server->Release ();
+
+    g_free (post_data);
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  int HttpServer::OnRequestReceived (struct MHD_Connection *connection,
+                                     const char            *url,
+                                     const char            *method,
+                                     const char            *upload_data,
+                                     size_t                *upload_data_size)
+  {
+    int ret = MHD_NO;
+
+    if (strcmp (method, "GET") == 0)
     {
-      struct MHD_Response *response;
-      char                *page;
+      if (*upload_data_size == 0)
+      {
+        gchar *client_response = _http_GET_cbk (_client,
+                                                url);
 
-      page = g_strdup (client_response);
-      g_free (client_response);
+        if (client_response)
+        {
+          struct MHD_Response *response;
+          char                *page;
 
-      response = MHD_create_response_from_data (strlen (page),
-                                                (void *) page,
-                                                MHD_YES,
-                                                MHD_NO);
-      ret = MHD_queue_response (connection,
-                                MHD_HTTP_OK,
-                                response);
+          page = g_strdup (client_response);
+          g_free (client_response);
 
-      MHD_destroy_response (response);
+          response = MHD_create_response_from_data (strlen (page),
+                                                    (void *) page,
+                                                    MHD_YES,
+                                                    MHD_NO);
+          ret = MHD_queue_response (connection,
+                                    MHD_HTTP_OK,
+                                    response);
+
+          MHD_destroy_response (response);
+        }
+      }
+    }
+    else if (strcmp (method, "POST") == 0)
+    {
+      {
+        struct MHD_Response *response;
+
+        response = MHD_create_response_from_data (strlen ("Response from BellePoule"),
+                                                  (void *) "Response from BellePoule",
+                                                  MHD_NO,
+                                                  MHD_NO);
+        ret = MHD_queue_response (connection,
+                                  MHD_HTTP_OK,
+                                  response);
+
+        MHD_destroy_response (response);
+      }
+
+      {
+        PostData *post_data = g_new (PostData, 1);
+
+        Retain ();
+        post_data->_server  = this;
+        post_data->_url     = g_strdup (url);
+        post_data->_content = g_strdup (upload_data);
+
+        g_idle_add ((GSourceFunc) DeferedPost,
+                    post_data);
+      }
     }
 
     return ret;
@@ -104,61 +156,10 @@ namespace Net
       return MHD_YES;
     }
 
-    if (strcmp (method, "GET") == 0)
-    {
-      if (*upload_data_size == 0)
-      {
-        return server->OnGet (connection,
-                              url,
-                              method,
-                              connection_ctx);
-      }
-    }
-    else if (strcmp (method, "POST") == 0)
-    {
-      printf ("  --> %d - %d\n", *upload_data_size, **connection_ctx);
-    }
-#ifdef DEBUG
-    else if (strcmp (method, "PUT") == 0)
-    {
-      if (   url
-          && (strstr (url, "/bouts") || strstr (url, "/message")))
-      {
-        if (*upload_data_size != **connection_ctx)
-        {
-          **connection_ctx = *upload_data_size;
-          return MHD_YES;
-        }
-        else
-        {
-          *upload_data_size = 0;
-
-          {
-            struct MHD_Response *response;
-
-            response = MHD_create_response_from_data (strlen ("<BellePoule>\n"), (void *) "<BellePoule>",
-                                                      MHD_NO, MHD_NO);
-            return MHD_queue_response (connection,
-                                       MHD_HTTP_OK,
-                                       response);
-          }
-        }
-#if 0
-        else
-        {
-          struct MHD_Response *response;
-
-          response = MHD_create_response_from_data (strlen ("<BellePoule>\n"), (void *) "<BellePoule>",
-                                                    MHD_NO, MHD_NO);
-          return MHD_queue_response (connection,
-                                     MHD_HTTP_OK,
-                                     response);
-        }
-#endif
-      }
-    }
-#endif
-
-    return MHD_NO;
+    return server->OnRequestReceived (connection,
+                                      url,
+                                      method,
+                                      upload_data,
+                                      upload_data_size);
   }
 }

@@ -112,8 +112,8 @@ class Tournament : public Module
 
     void RefreshMatchRate (Player *referee);
 
-    void OnHttpPost (const gchar *url,
-                     const gchar *data);
+    gboolean OnHttpPost (const gchar *url,
+                         const gchar *data);
 
     gchar *OnHttpGet (const gchar *url);
 
@@ -124,9 +124,9 @@ class Tournament : public Module
                    GtkPrintContext   *context,
                    gint               page_nr);
 
-    static void HttpPostCbk (Object      *client,
-                             const gchar *data,
-                             const gchar *url);
+    static gboolean HttpPostCbk (Object      *client,
+                                 const gchar *data,
+                                 const gchar *url);
 
     static gchar *HttpGetCbk (Object      *client,
                               const gchar *url);

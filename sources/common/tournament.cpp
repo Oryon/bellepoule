@@ -603,32 +603,45 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnHttpPost (const gchar *url,
-                             const gchar *data)
+gboolean Tournament::OnHttpPost (const gchar *url,
+                                 const gchar *data)
 {
-  if (strstr (url, "/tournament/competition/"))
+  gboolean result = FALSE;
+
+  if (url && data)
   {
-    gchar *id = (gchar *) strrchr (url, '/');
-
-    if (id && id[1])
+    gchar **tokens = g_strsplit (url,
+                                 "/",
+                                 0);
+    if (   tokens[0]
+        && (tokens[1] && (strcmp (tokens[1], "tournament") == 0))
+        && (tokens[2] && (strcmp (tokens[2], "competition") == 0)))
     {
-      GSList *current = _contest_list;
+      gchar *competition_id = tokens[3];
 
-      id++;
-      while (current)
+      if (competition_id)
       {
-        Contest *contest = (Contest *) current->data;
+        GSList *current = _contest_list;
 
-        if (    contest->GetFilename ()
-             && (strcmp (contest->GetId (), id) == 0))
+        while (current)
         {
-          // ............
-          break;
+          Contest *contest = (Contest *) current->data;
+
+          if (    contest->GetFilename ()
+              && (strcmp (contest->GetId (), competition_id) == 0))
+          {
+            result = contest->OnHttpPost ((const gchar**) &tokens[4],
+                                          data);
+            break;
+          }
+          current = g_slist_next (current);
         }
-        current = g_slist_next (current);
       }
     }
+    g_strfreev (tokens);
   }
+
+  return result;
 }
 
 // --------------------------------------------------------------------------------
@@ -715,9 +728,9 @@ gchar *Tournament::OnHttpGet (const gchar *url)
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::HttpPostCbk (Object      *client,
-                              const gchar *url,
-                              const gchar *data)
+gboolean Tournament::HttpPostCbk (Object      *client,
+                                  const gchar *url,
+                                  const gchar *data)
 {
   Tournament *tournament = dynamic_cast <Tournament *> (client);
 

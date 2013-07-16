@@ -75,6 +75,9 @@ class Match : public Object
                xmlNode *node_b,
                Player  *fencer_b);
 
+    void Load (xmlNode *node,
+               Player        *fencer);
+
     void SynchronizeScores ();
 
     void CleanScore ();
@@ -112,9 +115,6 @@ class Match : public Object
     gboolean ScoreIsNumber (gchar *score);
 
     void Save (xmlTextWriter *xml_writer,
-               Player        *fencer);
-
-    void Load (xmlNode *node,
                Player        *fencer);
 
     void Init (Data *max_score);

@@ -1744,6 +1744,14 @@ gchar *Contest::GetSaveFileName (gchar       *title,
 }
 
 // --------------------------------------------------------------------------------
+gboolean Contest::OnHttpPost (const gchar **url,
+                              const gchar *data)
+{
+  return _schedule->OnHttpPost (url,
+                                data);
+}
+
+// --------------------------------------------------------------------------------
 void Contest::on_web_site_button_clicked ()
 {
   GtkWidget *entry = _glade->GetWidget ("web_site_entry");

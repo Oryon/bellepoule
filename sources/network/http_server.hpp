@@ -31,9 +31,9 @@ namespace Net
   class HttpServer : public Object
   {
     public:
-      typedef void (*HttpPost) (Object      *client,
-                                const gchar *url,
-                                const gchar *data);
+      typedef gboolean (*HttpPost) (Object      *client,
+                                    const gchar *url,
+                                    const gchar *data);
       typedef gchar *(*HttpGet) (Object      *client,
                                  const gchar *url);
 
@@ -42,6 +42,13 @@ namespace Net
                   HttpGet   http_get);
 
     private:
+      struct PostData
+      {
+        HttpServer *_server;
+        gchar      *_url;
+        gchar      *_content;
+      };
+
       struct MHD_Daemon *_daemon;
       Object            *_client;
       HttpPost           _http_POST_cbk;
@@ -49,10 +56,14 @@ namespace Net
 
       virtual ~HttpServer ();
 
-      int OnGet (struct MHD_Connection *connection,
-                 const char            *url,
-                 const char            *method,
-                 size_t                **connection_ctx);
+      static gboolean DeferedPost (PostData *post_data);
+
+      int OnRequestReceived (struct MHD_Connection *connection,
+                             const char            *url,
+                             const char            *method,
+                             const char            *upload_data,
+                             size_t                *upload_data_size);
+
       static int OnMicroHttpRequest (HttpServer            *server,
                                      struct MHD_Connection *connection,
                                      const char            *url,
@@ -61,6 +72,7 @@ namespace Net
                                      const char            *upload_data,
                                      size_t                *upload_data_size,
                                      size_t                **connection_ctx);
+
       static void OnMicroHttpRequestCompleted (HttpServer                      *server,
                                                struct MHD_Connection           *connection,
                                                size_t                          **connection_ctx,

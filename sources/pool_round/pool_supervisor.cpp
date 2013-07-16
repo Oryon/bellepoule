@@ -256,7 +256,7 @@ namespace Pool
               xmlFreeTextWriter (xml_writer);
             }
 
-            referee->SendMessage ("/bouts/match1",
+            referee->SendMessage ("/E-ScoreSheets",
                                   (const gchar *) xml_buffer->content);
 
             xmlBufferFree (xml_buffer);
@@ -266,6 +266,34 @@ namespace Pool
         current_referee = g_slist_next (current_referee);
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Supervisor::OnHttpPost (const gchar **url,
+                                   const gchar *data)
+  {
+    if (*url)
+    {
+      guint pool_index = atoi (*url);
+
+      if (pool_index > 0)
+      {
+        pool_index--;
+
+        for (guint i = 0; i < _allocator->GetNbPools (); i++)
+        {
+          if (i == pool_index)
+          {
+            Pool *pool = _allocator->GetPool (i);
+
+            return pool->OnHttpPost (&url[1],
+                                     data);
+          }
+        }
+      }
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
