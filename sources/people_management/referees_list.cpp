@@ -238,16 +238,6 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::CheckConnection (Player *referee)
   {
-    referee->SendMessage ("/message",
-                          "Welcome to BellePoule network");
-  }
-
-  // --------------------------------------------------------------------------------
-  void RefereesList::OnIPChanged (Player    *referee,
-                                  Attribute *attr,
-                                  Object    *owner,
-                                  guint      step)
-  {
     if (referee->SendMessage ("/message",
                               "Welcome to BellePoule network") == FALSE)
     {
@@ -256,6 +246,17 @@ namespace People
       referee->SetAttributeValue (&connection_attr_id,
                                   "Manual");
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RefereesList::OnIPChanged (Player    *referee,
+                                  Attribute *attr,
+                                  Object    *owner,
+                                  guint      step)
+  {
+    RefereesList *referee_list = dynamic_cast <RefereesList *> (owner);
+
+    referee_list->CheckConnection (referee);
   }
 
   // --------------------------------------------------------------------------------

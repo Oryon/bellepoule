@@ -158,9 +158,9 @@ namespace Net
     else if (type == CURLINFO_DATA_OUT)
     {
       g_print (GREEN "--CURLINFO_DATA_OUT-------\n" END);
-      //g_print ("......\n");
-      //g_print ("......\n");
-      //return 0;
+      g_print ("......\n");
+      g_print ("......\n");
+      return 0;
     }
 
     if (data && size)

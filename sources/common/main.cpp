@@ -393,10 +393,10 @@ int main (int argc, char **argv)
       desc->_rights         = AttributeDesc::PRIVATE;
       desc->_scope          = AttributeDesc::GLOBAL;
       desc->_favorite_look  = AttributeDesc::GRAPHICAL;
-      desc->AddDiscreteValues ("Broken",     gettext ("Broken"),     (gchar *) GTK_STOCK_DIALOG_WARNING,
-                               "Waiting",    gettext ("Absent"),     (gchar *) GTK_STOCK_DIALOG_QUESTION,
-                               "OK",         gettext ("OK"),         (gchar *) GTK_STOCK_APPLY,
-                               "Manual",     gettext ("Manual"),     (gchar *) GTK_STOCK_EDIT, NULL);
+      desc->AddDiscreteValues ("Broken",  gettext ("Broken"),  "resources/glade/red.png",
+                               "Waiting", gettext ("Waiting"), "resources/glade/orange.png",
+                               "OK",      gettext ("OK"),      "resources/glade/green.png",
+                               "Manual",  gettext ("Manual"),  (gchar *) GTK_STOCK_EDIT, NULL);
 
     }
   }

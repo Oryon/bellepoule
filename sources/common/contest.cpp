@@ -553,6 +553,7 @@ void Contest::OpenMemoryContest (Net::Downloader::CallbackData *cbk_data)
 
         gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
                                   2);
+        xmlFreeDoc (doc);
       }
     }
 

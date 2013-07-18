@@ -614,27 +614,87 @@ gboolean Tournament::OnHttpPost (const gchar *url,
                                  "/",
                                  0);
     if (   tokens[0]
-        && (tokens[1] && (strcmp (tokens[1], "tournament") == 0))
-        && (tokens[2] && (strcmp (tokens[2], "competition") == 0)))
+        && (tokens[1] && (strcmp (tokens[1], "tournament") == 0)))
     {
-      gchar *competition_id = tokens[3];
+      Player *referee = NULL;
+      xmlDoc *doc = xmlReadMemory (data,
+                                   strlen (data),
+                                   "noname.xml",
+                                   NULL,
+                                   0);
 
-      if (competition_id)
+      if (doc)
       {
-        GSList *current = _contest_list;
+        xmlXPathInit ();
 
-        while (current)
         {
-          Contest *contest = (Contest *) current->data;
+          xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+          xmlXPathObject  *xml_object;
+          xmlNodeSet      *xml_nodeset;
 
-          if (    contest->GetFilename ()
-              && (strcmp (contest->GetId (), competition_id) == 0))
+          xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
+          xml_nodeset = xml_object->nodesetval;
+
+          if (xml_nodeset->nodeNr == 1)
           {
-            result = contest->OnHttpPost ((const gchar**) &tokens[4],
-                                          data);
-            break;
+            xmlNode *node = xml_nodeset->nodeTab[0];
+            gchar   *attr = (gchar *) xmlGetProp (node, BAD_CAST "ID");
+
+            if (attr)
+            {
+              GSList *current = _referee_list;
+              guint   ref     = atoi (attr);
+
+              while (current)
+              {
+                Player *current_referee = (Player *) current->data;
+
+                if (current_referee->GetRef () == ref)
+                {
+                  Player::AttributeId connection_attr_id ("connection");
+
+                  referee = current_referee;
+                  referee->SetAttributeValue (&connection_attr_id,
+                                              "OK");
+                  break;
+                }
+                current = g_slist_next (current);
+              }
+
+              xmlFree (attr);
+            }
           }
-          current = g_slist_next (current);
+
+          xmlXPathFreeObject  (xml_object);
+          xmlXPathFreeContext (xml_context);
+        }
+        xmlFreeDoc (doc);
+      }
+
+      if (referee)
+      {
+        if (tokens[2] && (strcmp (tokens[2], "competition") == 0))
+        {
+          gchar *competition_id = tokens[3];
+
+          if (competition_id)
+          {
+            GSList *current = _contest_list;
+
+            while (current)
+            {
+              Contest *contest = (Contest *) current->data;
+
+              if (    contest->GetFilename ()
+                  && (strcmp (contest->GetId (), competition_id) == 0))
+              {
+                result = contest->OnHttpPost ((const gchar**) &tokens[4],
+                                              data);
+                break;
+              }
+              current = g_slist_next (current);
+            }
+          }
         }
       }
     }

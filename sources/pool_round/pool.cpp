@@ -1739,7 +1739,7 @@ namespace Pool
               xmlXPathObject  *xml_object;
               xmlNodeSet      *xml_nodeset;
 
-              xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
+              xml_object = xmlXPathEval (BAD_CAST "/Arbitre/Match/*", xml_context);
               xml_nodeset = xml_object->nodesetval;
 
               if (xml_nodeset->nodeNr == 2)
@@ -1757,6 +1757,7 @@ namespace Pool
               xmlXPathFreeObject  (xml_object);
               xmlXPathFreeContext (xml_context);
             }
+            xmlFreeDoc (doc);
           }
           return TRUE;
         }

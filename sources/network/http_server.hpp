@@ -42,8 +42,25 @@ namespace Net
                   HttpGet   http_get);
 
     private:
-      struct PostData
+      struct RequestBody
       {
+        RequestBody ();
+        ~RequestBody ();
+
+        void Append (const char *buf,
+                     size_t      len);
+
+        gchar *_data;
+        guint  _length;
+      };
+
+      struct DeferedData
+      {
+        DeferedData (HttpServer  *server,
+                     const gchar *url,
+                     RequestBody *request_body);
+        ~DeferedData ();
+
         HttpServer *_server;
         gchar      *_url;
         gchar      *_content;
@@ -56,9 +73,10 @@ namespace Net
 
       virtual ~HttpServer ();
 
-      static gboolean DeferedPost (PostData *post_data);
+      static gboolean DeferedPost (DeferedData *defered_data);
 
       int OnRequestReceived (struct MHD_Connection *connection,
+                             RequestBody           *request_body,
                              const char            *url,
                              const char            *method,
                              const char            *upload_data,
@@ -71,11 +89,11 @@ namespace Net
                                      const char            *version,
                                      const char            *upload_data,
                                      size_t                *upload_data_size,
-                                     size_t                **connection_ctx);
+                                     RequestBody           **request_body);
 
       static void OnMicroHttpRequestCompleted (HttpServer                      *server,
                                                struct MHD_Connection           *connection,
-                                               size_t                          **connection_ctx,
+                                               RequestBody                     **request_body,
                                                enum MHD_RequestTerminationCode   code);
   };
 }
