@@ -553,6 +553,7 @@ void Contest::OpenMemoryContest (Net::Downloader::CallbackData *cbk_data)
 
         gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
                                   2);
+        xmlFreeDoc (doc);
       }
     }
 
@@ -1741,6 +1742,14 @@ gchar *Contest::GetSaveFileName (gchar       *title,
   gtk_widget_destroy (chooser);
 
   return filename;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Contest::OnHttpPost (const gchar **url,
+                              const gchar *data)
+{
+  return _schedule->OnHttpPost (url,
+                                data);
 }
 
 // --------------------------------------------------------------------------------

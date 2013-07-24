@@ -238,8 +238,14 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::CheckConnection (Player *referee)
   {
-    referee->SendMessage ("/message",
-                          "Welcome to BellePoule network");
+    if (referee->SendMessage ("/WelcomeMessage/Referee/ref=1234",
+                              "Welcome to BellePoule network\n") == FALSE)
+    {
+      Player::AttributeId connection_attr_id ("connection");
+
+      referee->SetAttributeValue (&connection_attr_id,
+                                  "Manual");
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -248,14 +254,9 @@ namespace People
                                   Object    *owner,
                                   guint      step)
   {
-    if (referee->SendMessage ("/message",
-                              "Welcome to BellePoule network") == FALSE)
-    {
-      Player::AttributeId connection_attr_id ("connection");
+    RefereesList *referee_list = dynamic_cast <RefereesList *> (owner);
 
-      referee->SetAttributeValue (&connection_attr_id,
-                                  "Manual");
-    }
+    referee_list->CheckConnection (referee);
   }
 
   // --------------------------------------------------------------------------------

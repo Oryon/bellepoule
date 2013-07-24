@@ -19,6 +19,58 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
+  HttpServer::RequestBody::RequestBody ()
+  {
+    _data   = NULL;
+    _length = 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  HttpServer::RequestBody::~RequestBody ()
+  {
+    g_free (_data);
+  }
+
+  // --------------------------------------------------------------------------------
+  void HttpServer::RequestBody::Append (const char *buf,
+                                        size_t      len)
+  {
+    _data = (gchar *) g_realloc (_data,
+                                 _length + len);
+    strncpy (&_data[_length],
+             buf,
+             len);
+    _length += len;
+  }
+}
+
+namespace Net
+{
+  // --------------------------------------------------------------------------------
+  HttpServer::DeferedData::DeferedData (HttpServer  *server,
+                                        const gchar *url,
+                                        RequestBody *request_body)
+  {
+    _server = server;
+    _server->Retain ();
+
+    _url     = g_strdup (url);
+    _content = g_strndup (request_body->_data,
+                          request_body->_length);
+  }
+
+  // --------------------------------------------------------------------------------
+  HttpServer::DeferedData::~DeferedData ()
+  {
+    g_free (_url);
+    g_free (_content);
+    _server->Release ();
+  }
+}
+
+namespace Net
+{
+  // --------------------------------------------------------------------------------
   HttpServer::HttpServer (Object   *client,
                           HttpPost  http_post,
                           HttpGet   http_get)
@@ -42,32 +94,88 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  int HttpServer::OnGet (struct MHD_Connection *connection,
-                         const char            *url,
-                         const char            *method,
-                         size_t                **connection_ctx)
+  gboolean HttpServer::DeferedPost (DeferedData *defered_data)
   {
-    int    ret             = MHD_NO;
-    gchar *client_response = _http_GET_cbk (_client,
-                                            url);
+    defered_data->_server->_http_POST_cbk (defered_data->_server->_client,
+                                           defered_data->_url,
+                                           defered_data->_content);
 
-    if (client_response)
+    delete (defered_data);
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  int HttpServer::OnRequestReceived (struct MHD_Connection *connection,
+                                     RequestBody           *request_body,
+                                     const char            *url,
+                                     const char            *method,
+                                     const char            *upload_data,
+                                     size_t                *upload_data_size)
+  {
+    int ret = MHD_NO;
+
+    if (strcmp (method, "GET") == 0)
     {
-      struct MHD_Response *response;
-      char                *page;
+      if (*upload_data_size == 0)
+      {
+        gchar *client_response = _http_GET_cbk (_client,
+                                                url);
 
-      page = g_strdup (client_response);
-      g_free (client_response);
+        if (client_response)
+        {
+          struct MHD_Response *response;
+          char                *page;
 
-      response = MHD_create_response_from_data (strlen (page),
-                                                (void *) page,
-                                                MHD_YES,
-                                                MHD_NO);
-      ret = MHD_queue_response (connection,
-                                MHD_HTTP_OK,
-                                response);
+          page = g_strdup (client_response);
+          g_free (client_response);
 
-      MHD_destroy_response (response);
+          response = MHD_create_response_from_data (strlen (page),
+                                                    (void *) page,
+                                                    MHD_YES,
+                                                    MHD_NO);
+          ret = MHD_queue_response (connection,
+                                    MHD_HTTP_OK,
+                                    response);
+
+          MHD_destroy_response (response);
+        }
+      }
+    }
+    else if (strcmp (method, "POST") == 0)
+    {
+      if (*upload_data_size)
+      {
+        request_body->Append (upload_data,
+                              *upload_data_size);
+        *upload_data_size = 0;
+        return MHD_YES;
+      }
+      else
+      {
+        {
+          DeferedData *defered_data = new DeferedData (this,
+                                                       url,
+                                                       request_body);
+
+          g_idle_add ((GSourceFunc) DeferedPost,
+                      defered_data);
+        }
+
+        {
+          struct MHD_Response *response;
+
+          response = MHD_create_response_from_data (strlen ("POST received by BellePoule"),
+                                                    (void *) "POST received by BellePoule",
+                                                    MHD_NO,
+                                                    MHD_NO);
+          ret = MHD_queue_response (connection,
+                                    MHD_HTTP_OK,
+                                    response);
+
+          MHD_destroy_response (response);
+        }
+      }
     }
 
     return ret;
@@ -76,15 +184,15 @@ namespace Net
   // --------------------------------------------------------------------------------
   void HttpServer::OnMicroHttpRequestCompleted (HttpServer                      *server,
                                                 struct MHD_Connection           *connection,
-                                                size_t                          **connection_ctx,
+                                                RequestBody                     **request_body,
                                                 enum MHD_RequestTerminationCode   code)
   {
-    if (*connection_ctx)
+    if (*request_body)
     {
-      delete (*connection_ctx);
+      delete (*request_body);
     }
 
-    *connection_ctx = NULL;
+    *request_body = NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -95,70 +203,19 @@ namespace Net
                                       const char            *version,
                                       const char            *upload_data,
                                       size_t                *upload_data_size,
-                                      size_t                **connection_ctx)
+                                      RequestBody           **request_body)
   {
-    if (*connection_ctx == NULL)
+    if (*request_body == NULL)
     {
-      *connection_ctx = g_new (size_t, 1);
-      *(*connection_ctx) = 0;
+      *request_body = new RequestBody ();
       return MHD_YES;
     }
 
-    if (strcmp (method, "GET") == 0)
-    {
-      if (*upload_data_size == 0)
-      {
-        return server->OnGet (connection,
-                              url,
-                              method,
-                              connection_ctx);
-      }
-    }
-    else if (strcmp (method, "POST") == 0)
-    {
-      printf ("  --> %d - %d\n", *upload_data_size, **connection_ctx);
-    }
-#ifdef DEBUG
-    else if (strcmp (method, "PUT") == 0)
-    {
-      if (   url
-          && (strstr (url, "/bouts") || strstr (url, "/message")))
-      {
-        if (*upload_data_size != **connection_ctx)
-        {
-          **connection_ctx = *upload_data_size;
-          return MHD_YES;
-        }
-        else
-        {
-          *upload_data_size = 0;
-
-          {
-            struct MHD_Response *response;
-
-            response = MHD_create_response_from_data (strlen ("<BellePoule>\n"), (void *) "<BellePoule>",
-                                                      MHD_NO, MHD_NO);
-            return MHD_queue_response (connection,
-                                       MHD_HTTP_OK,
-                                       response);
-          }
-        }
-#if 0
-        else
-        {
-          struct MHD_Response *response;
-
-          response = MHD_create_response_from_data (strlen ("<BellePoule>\n"), (void *) "<BellePoule>",
-                                                    MHD_NO, MHD_NO);
-          return MHD_queue_response (connection,
-                                     MHD_HTTP_OK,
-                                     response);
-        }
-#endif
-      }
-    }
-#endif
-
-    return MHD_NO;
+    return server->OnRequestReceived (connection,
+                                      *request_body,
+                                      url,
+                                      method,
+                                      upload_data,
+                                      upload_data_size);
   }
 }

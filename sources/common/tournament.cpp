@@ -115,6 +115,7 @@ Tournament::Tournament (gchar *filename)
     GtkWidget *w           = _glade->GetWidget ("about_dialog");
     gchar     *translators = g_strdup_printf ("Julien Diaz           (German)\n"
                                               "Tina Schliemann       (German)\n"
+                                              "Michael Weber         (German)\n"
                                               "Aureliano Martini     (Italian)\n"
                                               "Jihwan Cho            (Korean)\n"
                                               "Marijn Somers         (Dutch)\n"
@@ -602,32 +603,105 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnHttpPost (const gchar *url,
-                             const gchar *data)
+gboolean Tournament::OnHttpPost (const gchar *url,
+                                 const gchar *data)
 {
-  if (strstr (url, "/tournament/competition/"))
+  gboolean result = FALSE;
+
+  if (url && data)
   {
-    gchar *id = (gchar *) strrchr (url, '/');
-
-    if (id && id[1])
+    gchar **tokens = g_strsplit (url,
+                                 "/",
+                                 0);
+    if (   tokens[0]
+        && (tokens[1] && (strcmp (tokens[1], "tournament") == 0)))
     {
-      GSList *current = _contest_list;
+      Player *referee = NULL;
+      xmlDoc *doc = xmlReadMemory (data,
+                                   strlen (data),
+                                   "noname.xml",
+                                   NULL,
+                                   0);
 
-      id++;
-      while (current)
+      if (doc)
       {
-        Contest *contest = (Contest *) current->data;
+        xmlXPathInit ();
 
-        if (    contest->GetFilename ()
-             && (strcmp (contest->GetId (), id) == 0))
         {
-          // ............
-          break;
+          xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+          xmlXPathObject  *xml_object;
+          xmlNodeSet      *xml_nodeset;
+
+          xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
+          xml_nodeset = xml_object->nodesetval;
+
+          if (xml_nodeset->nodeNr == 1)
+          {
+            xmlNode *node = xml_nodeset->nodeTab[0];
+            gchar   *attr = (gchar *) xmlGetProp (node, BAD_CAST "ID");
+
+            if (attr)
+            {
+              GSList *current = _referee_list;
+              guint   ref     = atoi (attr);
+
+              while (current)
+              {
+                Player *current_referee = (Player *) current->data;
+
+                if (current_referee->GetRef () == ref)
+                {
+                  Player::AttributeId connection_attr_id ("connection");
+
+                  referee = current_referee;
+                  referee->SetAttributeValue (&connection_attr_id,
+                                              "OK");
+                  break;
+                }
+                current = g_slist_next (current);
+              }
+
+              xmlFree (attr);
+            }
+          }
+
+          xmlXPathFreeObject  (xml_object);
+          xmlXPathFreeContext (xml_context);
         }
-        current = g_slist_next (current);
+        xmlFreeDoc (doc);
+      }
+
+      if (referee)
+      {
+        if (tokens[2] && (strcmp (tokens[2], "competition") == 0))
+        {
+          gchar *competition_id = tokens[3];
+
+          if (competition_id)
+          {
+            GSList *current = _contest_list;
+
+            while (current)
+            {
+              Contest *contest = (Contest *) current->data;
+
+              if (    contest->GetFilename ()
+                  && (strcmp (contest->GetId (), competition_id) == 0))
+              {
+                result = contest->OnHttpPost ((const gchar**) &tokens[4],
+                                              data);
+                break;
+              }
+              current = g_slist_next (current);
+            }
+          }
+        }
       }
     }
+    g_strfreev (tokens);
   }
+
+  return result;
 }
 
 // --------------------------------------------------------------------------------
@@ -714,9 +788,9 @@ gchar *Tournament::OnHttpGet (const gchar *url)
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::HttpPostCbk (Object      *client,
-                              const gchar *url,
-                              const gchar *data)
+gboolean Tournament::HttpPostCbk (Object      *client,
+                                  const gchar *url,
+                                  const gchar *data)
 {
   Tournament *tournament = dynamic_cast <Tournament *> (client);
 

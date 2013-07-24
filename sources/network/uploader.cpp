@@ -222,7 +222,7 @@ namespace Net
         curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
         curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) strlen (uploader->_data) + 1);
         curl_easy_setopt (curl, CURLOPT_URL,              uploader->_full_url);
-        curl_easy_setopt (curl, CURLOPT_NOPROXY,          "127.0.0.1");
+        curl_easy_setopt (curl, CURLOPT_NOPROXY,          "127.0.0.1, 10.12.83.104");
 #ifdef DEBUG
         curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION,    OnUpLoadTrace);
         curl_easy_setopt (curl, CURLOPT_DEBUGDATA,        uploader);

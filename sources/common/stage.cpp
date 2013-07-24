@@ -1029,9 +1029,24 @@ void Stage::LoadConfiguration (xmlNode *xml_node)
 // --------------------------------------------------------------------------------
 void Stage::SaveConfiguration (xmlTextWriter *xml_writer)
 {
-  xmlTextWriterWriteFormatAttribute (xml_writer,
-                                     BAD_CAST "PhaseID",
-                                     "%d", _id);
+  if (GetInputProviderClient ())
+  {
+    Stage *next_stage = GetNextStage ();
+
+    if (next_stage)
+    {
+      xmlTextWriterWriteFormatAttribute (xml_writer,
+                                         BAD_CAST "PhaseID",
+                                         "%d", next_stage->GetId ());
+    }
+  }
+  else
+  {
+    xmlTextWriterWriteFormatAttribute (xml_writer,
+                                       BAD_CAST "PhaseID",
+                                       "%d", _id);
+  }
+
   xmlTextWriterWriteAttribute (xml_writer,
                                BAD_CAST "ID",
                                BAD_CAST GetName ());
@@ -1124,6 +1139,13 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
       current = g_slist_next (current);
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Stage::OnHttpPost (const gchar **url,
+                         const gchar *data)
+{
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

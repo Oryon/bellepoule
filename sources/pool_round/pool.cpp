@@ -1047,13 +1047,16 @@ namespace Pool
               GooCanvasItem *score_table = match->GetScoreTable (match_table,
                                                                  10);
 
-              Canvas::PutInTable (match_table,
-                                  score_table,
-                                  1,
-                                  2);
-              Canvas::SetTableItemAttribute (score_table, "x-align", 1.0);
-              Canvas::SetTableItemAttribute (score_table, "x-expand", 1u);
-              Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+              if (score_table)
+              {
+                Canvas::PutInTable (match_table,
+                                    score_table,
+                                    1,
+                                    2);
+                Canvas::SetTableItemAttribute (score_table, "x-align", 1.0);
+                Canvas::SetTableItemAttribute (score_table, "x-expand", 1u);
+                Canvas::SetTableItemAttribute (score_table, "y-align", 0.5);
+              }
             }
           }
 
@@ -1705,6 +1708,63 @@ namespace Pool
     }
 
     return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Pool::OnHttpPost (const gchar **url,
+                             const gchar *data)
+  {
+    if (*url && data)
+    {
+      guint match_index = atoi  (*url);
+
+      if (match_index > 0)
+      {
+        Match *match = GetMatch (match_index-1);
+
+        if (match)
+        {
+          xmlDoc *doc = xmlReadMemory (data,
+                                       strlen (data),
+                                       "noname.xml",
+                                       NULL,
+                                       0);
+
+          if (doc)
+          {
+            xmlXPathInit ();
+
+            {
+              xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+              xmlXPathObject  *xml_object;
+              xmlNodeSet      *xml_nodeset;
+
+              xml_object = xmlXPathEval (BAD_CAST "/Arbitre/Match/*", xml_context);
+              xml_nodeset = xml_object->nodesetval;
+
+              if (xml_nodeset->nodeNr == 2)
+              {
+                for (guint i = 0; i < 2; i++)
+                {
+                  match->Load (xml_nodeset->nodeTab[i],
+                               match->GetOpponent (i));
+                }
+                _score_collector->Refresh (match);
+                RefreshScoreData ();
+                RefreshDashBoard ();
+              }
+
+              xmlXPathFreeObject  (xml_object);
+              xmlXPathFreeContext (xml_context);
+            }
+            xmlFreeDoc (doc);
+          }
+          return TRUE;
+        }
+      }
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

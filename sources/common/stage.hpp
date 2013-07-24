@@ -161,6 +161,9 @@ class Stage : public virtual Object
 
     const gchar *GetXmlPlayerTag ();
 
+    virtual gboolean OnHttpPost (const gchar **url,
+                                 const gchar *data);
+
   public:
     static void RegisterStageClass (const gchar *name,
                                     const gchar *xml_name,
