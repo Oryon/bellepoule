@@ -664,7 +664,7 @@ gboolean Player::SendMessage (const gchar *where,
       }
       else
       {
-        url = g_strdup_printf ("http://%s:35830%s", ip, where);
+        url = g_strdup_printf ("http://%s:35831%s", ip, where);
       }
 
       Net::Uploader *uploader = new Net::Uploader (url,
