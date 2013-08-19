@@ -112,6 +112,10 @@ class Tournament : public Module
 
     void RefreshMatchRate (Player *referee);
 
+    Player *UpdateConnectionStatus (GSList      *player_list,
+                                    guint        ref,
+                                    const gchar *status);
+
     gboolean OnHttpPost (const gchar *url,
                          const gchar *data);
 

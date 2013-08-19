@@ -238,7 +238,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::CheckConnection (Player *referee)
   {
-    if (referee->SendMessage ("/WelcomeMessage/Referee/ref=1234",
+    if (referee->SendMessage ("/WelcomeMessage",
                               "Welcome to BellePoule network\n") == FALSE)
     {
       Player::AttributeId connection_attr_id ("connection");

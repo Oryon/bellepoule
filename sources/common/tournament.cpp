@@ -603,6 +603,30 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
+Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
+                                            guint        ref,
+                                            const gchar *status)
+{
+  GSList *current = player_list;
+
+  while (current)
+  {
+    Player *current_player = (Player *) current->data;
+
+    if (current_player->GetRef () == ref)
+    {
+      Player::AttributeId connection_attr_id ("connection");
+
+      current_player = current_player;
+      current_player->SetAttributeValue (&connection_attr_id,
+                                         "OK");
+      return current_player;
+    }
+    current = g_slist_next (current);
+  }
+}
+
+// --------------------------------------------------------------------------------
 gboolean Tournament::OnHttpPost (const gchar *url,
                                  const gchar *data)
 {
@@ -613,86 +637,80 @@ gboolean Tournament::OnHttpPost (const gchar *url,
     gchar **tokens = g_strsplit (url,
                                  "/",
                                  0);
-    if (   tokens[0]
-        && (tokens[1] && (strcmp (tokens[1], "tournament") == 0)))
+    if (tokens[0] && tokens[1])
     {
-      Player *referee = NULL;
-      xmlDoc *doc = xmlReadMemory (data,
-                                   strlen (data),
-                                   "noname.xml",
-                                   NULL,
-                                   0);
-
-      if (doc)
+      // Status feedback
+      if ((strcmp (tokens[1], "Referee") == 0) && tokens[2])
       {
-        xmlXPathInit ();
+        UpdateConnectionStatus (_referee_list,
+                                atoi (tokens[2]),
+                                "OK");
+      }
+      // Competition data
+      else if (strcmp (tokens[1], "tournament") == 0)
+      {
+        Player *referee = NULL;
+        xmlDoc *doc = xmlReadMemory (data,
+                                     strlen (data),
+                                     "noname.xml",
+                                     NULL,
+                                     0);
 
+        if (doc)
         {
-          xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-          xmlXPathObject  *xml_object;
-          xmlNodeSet      *xml_nodeset;
+          xmlXPathInit ();
 
-          xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
-          xml_nodeset = xml_object->nodesetval;
-
-          if (xml_nodeset->nodeNr == 1)
           {
-            xmlNode *node = xml_nodeset->nodeTab[0];
-            gchar   *attr = (gchar *) xmlGetProp (node, BAD_CAST "ID");
+            xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+            xmlXPathObject  *xml_object;
+            xmlNodeSet      *xml_nodeset;
 
-            if (attr)
+            xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
+            xml_nodeset = xml_object->nodesetval;
+
+            if (xml_nodeset->nodeNr == 1)
             {
-              GSList *current = _referee_list;
-              guint   ref     = atoi (attr);
+              xmlNode *node = xml_nodeset->nodeTab[0];
+              gchar   *attr = (gchar *) xmlGetProp (node, BAD_CAST "ID");
+
+              if (attr)
+              {
+                referee = UpdateConnectionStatus (_referee_list,
+                                                  atoi (attr),
+                                                  "OK");
+                xmlFree (attr);
+              }
+            }
+
+            xmlXPathFreeObject  (xml_object);
+            xmlXPathFreeContext (xml_context);
+          }
+          xmlFreeDoc (doc);
+        }
+
+        if (referee)
+        {
+          if (tokens[2] && (strcmp (tokens[2], "competition") == 0))
+          {
+            gchar *competition_id = tokens[3];
+
+            if (competition_id)
+            {
+              GSList *current = _contest_list;
 
               while (current)
               {
-                Player *current_referee = (Player *) current->data;
+                Contest *contest = (Contest *) current->data;
 
-                if (current_referee->GetRef () == ref)
+                if (    contest->GetFilename ()
+                    && (strcmp (contest->GetId (), competition_id) == 0))
                 {
-                  Player::AttributeId connection_attr_id ("connection");
-
-                  referee = current_referee;
-                  referee->SetAttributeValue (&connection_attr_id,
-                                              "OK");
+                  result = contest->OnHttpPost ((const gchar**) &tokens[4],
+                                                data);
                   break;
                 }
                 current = g_slist_next (current);
               }
-
-              xmlFree (attr);
-            }
-          }
-
-          xmlXPathFreeObject  (xml_object);
-          xmlXPathFreeContext (xml_context);
-        }
-        xmlFreeDoc (doc);
-      }
-
-      if (referee)
-      {
-        if (tokens[2] && (strcmp (tokens[2], "competition") == 0))
-        {
-          gchar *competition_id = tokens[3];
-
-          if (competition_id)
-          {
-            GSList *current = _contest_list;
-
-            while (current)
-            {
-              Contest *contest = (Contest *) current->data;
-
-              if (    contest->GetFilename ()
-                  && (strcmp (contest->GetId (), competition_id) == 0))
-              {
-                result = contest->OnHttpPost ((const gchar**) &tokens[4],
-                                              data);
-                break;
-              }
-              current = g_slist_next (current);
             }
           }
         }

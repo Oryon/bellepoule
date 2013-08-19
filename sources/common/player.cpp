@@ -660,11 +660,11 @@ gboolean Player::SendMessage (const gchar *where,
 
       if (strchr (ip, ':'))
       {
-        url = g_strdup_printf ("http://%s%s", ip, where);
+        url = g_strdup_printf ("http://%s%s/%s?ref=%d", ip, where, _player_class, GetRef ());
       }
       else
       {
-        url = g_strdup_printf ("http://%s:35831%s", ip, where);
+        url = g_strdup_printf ("http://%s:35831%s/%s?ref=%d", ip, where, _player_class, GetRef ());
       }
 
       Net::Uploader *uploader = new Net::Uploader (url,
