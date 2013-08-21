@@ -80,6 +80,8 @@ namespace Pool
 
       void RefreshScoreData ();
 
+      void RefreshStatus ();
+
       gchar *GetName ();
 
       void Wipe ();
@@ -193,6 +195,11 @@ namespace Pool
       static gboolean on_status_scrolled (GtkWidget *widget,
                                           GdkEvent  *event,
                                           gpointer   user_data);
+
+      static void OnAttrConnectionChanged (Player    *player,
+                                           Attribute *attr,
+                                           Object    *owner,
+                                           guint      step);
 
       virtual ~Pool ();
   };

@@ -165,16 +165,10 @@ namespace Pool
   void Pool::SetStatusCbk (StatusCbk  cbk,
                            void      *data)
   {
-    RefreshScoreData ();
-
     _status_cbk_data = data;
     _status_cbk      = cbk;
 
-    if (_status_cbk)
-    {
-      _status_cbk (this,
-                   _status_cbk_data);
-    }
+    RefreshStatus ();
   }
 
   // --------------------------------------------------------------------------------
@@ -233,6 +227,10 @@ namespace Pool
     {
       _referee_list = g_slist_prepend (_referee_list,
                                        referee);
+
+      referee->SetChangeCbk ("connection",
+                             (Player::OnChange) OnAttrConnectionChanged,
+                             this);
     }
   }
 
@@ -286,6 +284,7 @@ namespace Pool
     {
       _referee_list = g_slist_remove (_referee_list,
                                       referee);
+      referee->RemoveCbkOwner (this);
     }
   }
 
@@ -392,6 +391,20 @@ namespace Pool
   {
     return (Player *) g_slist_nth_data (in_list,
                                         i);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::OnAttrConnectionChanged (Player    *player,
+                                      Attribute *attr,
+                                      Object    *owner,
+                                      guint      step)
+  {
+    Pool *pool = dynamic_cast <Pool *> (owner);
+
+    if (pool->_locked == FALSE)
+    {
+      pool->RefreshStatus ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1362,10 +1375,78 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Pool::RefreshStatus ()
+  {
+    if (_status_item)
+    {
+      goo_canvas_item_remove (_status_item);
+      _status_item = NULL;
+    }
+
+    if (_status_pixbuf)
+    {
+      g_object_unref (_status_pixbuf);
+      _status_pixbuf = NULL;
+    }
+
+    if (_is_over)
+    {
+      _status_pixbuf = GetPixbuf (GTK_STOCK_APPLY);
+    }
+    else if (_has_error)
+    {
+      _status_pixbuf = GetPixbuf (GTK_STOCK_DIALOG_WARNING);
+    }
+    else
+    {
+      GSList *current = _referee_list;
+
+      while (current)
+      {
+        Player              *referee = (Player *) current->data;
+        Player::AttributeId  connection_attr_id  ("connection");
+        Attribute           *connection_attr = referee->GetAttribute (&connection_attr_id);
+
+        if (connection_attr)
+        {
+          const gchar *connection_status = connection_attr->GetStrValue ();
+
+          if (   (strcmp (connection_status, "Broken") == 0)
+              || (strcmp (connection_status, "Waiting") == 0))
+          {
+            _status_pixbuf = connection_attr->GetPixbuf ();
+            break;
+          }
+        }
+
+        current = g_slist_next (current);
+      }
+
+      if (_status_pixbuf == NULL)
+      {
+        _status_pixbuf = GetPixbuf (GTK_STOCK_EXECUTE);
+      }
+    }
+
+    if (_title_table && _status_pixbuf)
+    {
+      _status_item = Canvas::PutPixbufInTable (_title_table,
+                                               _status_pixbuf,
+                                               0, 0);
+    }
+
+    if (_status_cbk)
+    {
+      _status_cbk (this,
+                   _status_cbk_data);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Pool::RefreshScoreData ()
   {
-    GSList   *ranking    = NULL;
-    guint     nb_players = GetNbPlayers ();
+    GSList *ranking    = NULL;
+    guint   nb_players = GetNbPlayers ();
 
     _is_over   = TRUE;
     _has_error = FALSE;
@@ -1487,71 +1568,7 @@ namespace Pool
 
     g_slist_free (ranking);
 
-    {
-      if (_status_item)
-      {
-        goo_canvas_item_remove (_status_item);
-        _status_item = NULL;
-      }
-
-      if (_status_pixbuf)
-      {
-        g_object_unref (_status_pixbuf);
-        _status_pixbuf = NULL;
-      }
-
-      if (_is_over)
-      {
-        _status_pixbuf = GetPixbuf (GTK_STOCK_APPLY);
-      }
-      else if (_has_error)
-      {
-        _status_pixbuf = GetPixbuf (GTK_STOCK_DIALOG_WARNING);
-      }
-      else
-      {
-        GSList *current = _referee_list;
-
-        while (current)
-        {
-          Player              *referee = (Player *) current->data;
-          Player::AttributeId  connection_attr_id  ("connection");
-          Attribute           *connection_attr = referee->GetAttribute (&connection_attr_id);
-
-          if (connection_attr)
-          {
-            const gchar *connection_status = connection_attr->GetStrValue ();
-
-            if (   (strcmp (connection_status, "Broken") == 0)
-                || (strcmp (connection_status, "Waiting") == 0))
-            {
-              _status_pixbuf = connection_attr->GetPixbuf ();
-              break;
-            }
-          }
-
-          current = g_slist_next (current);
-        }
-
-        if (_status_pixbuf == NULL)
-        {
-          _status_pixbuf = GetPixbuf (GTK_STOCK_EXECUTE);
-        }
-      }
-
-      if (_title_table && _status_pixbuf)
-      {
-        _status_item = Canvas::PutPixbufInTable (_title_table,
-                                                 _status_pixbuf,
-                                                 0, 0);
-      }
-    }
-
-    if (_status_cbk)
-    {
-      _status_cbk (this,
-                   _status_cbk_data);
-    }
+    RefreshStatus ();
 
     MakeDirty ();
   }
