@@ -45,8 +45,6 @@ namespace Pool
 
       void OnToggleSingleClassification (gboolean single_selected);
 
-      void OnSmartPouleClicked ();
-
     private:
       void Display ();
       void Garnish ();

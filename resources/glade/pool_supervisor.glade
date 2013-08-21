@@ -262,11 +262,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">stock_scores.png</property>
-  </object>
   <object class="GtkAdjustment" id="nb_qualified_adjustment">
     <property name="upper">9999</property>
     <property name="step_increment">1</property>
@@ -541,21 +536,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="smartpoule_toolbutton">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Send</property>
-                    <property name="use_underline">True</property>
-                    <property name="icon_widget">smartpool_image</property>
-                    <signal name="clicked" handler="on_smartpoule_toolbutton_clicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkSeparatorToolItem" id="toolbutton4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -674,7 +654,6 @@
                         <property name="receives_default">False</property>
                         <property name="tooltip_text" translatable="yes">The classification of the current round that doesn't take into account the scores of the previous rounds. </property>
                         <property name="use_action_appearance">False</property>
-                        <property name="image">image1</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">False</property>
                         <signal name="toggled" handler="on_single_radiobutton_toggled" swapped="no"/>

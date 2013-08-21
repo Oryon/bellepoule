@@ -222,53 +222,6 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnSmartPouleClicked ()
-  {
-    for (guint p = 0; p < _allocator->GetNbPools (); p++)
-    {
-      Pool   *pool            = _allocator->GetPool (p);
-      GSList *current_referee = pool->GetRefereeList ();
-
-      while (current_referee)
-      {
-        Player              *referee = (Player *) current_referee->data;
-        Player::AttributeId  attr_id ("IP");
-        Attribute           *ip_attr = referee->GetAttribute (&attr_id);
-
-        if (ip_attr)
-        {
-          gchar *ip = ip_attr->GetStrValue ();
-
-          if (ip && (ip[0] != 0))
-          {
-            xmlBuffer *xml_buffer = xmlBufferCreate ();
-
-            {
-              xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
-
-              _contest->SaveHeader (xml_writer);
-              _allocator->SaveHeader (xml_writer);
-              pool->Save (xml_writer);
-              xmlTextWriterEndElement (xml_writer);
-              xmlTextWriterEndElement (xml_writer);
-              xmlTextWriterEndDocument (xml_writer);
-
-              xmlFreeTextWriter (xml_writer);
-            }
-
-            referee->SendMessage ("/E-ScoreSheets",
-                                  (const gchar *) xml_buffer->content);
-
-            xmlBufferFree (xml_buffer);
-          }
-        }
-
-        current_referee = g_slist_next (current_referee);
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean Supervisor::OnHttpPost (const gchar **url,
                                    const gchar *data)
   {
@@ -671,6 +624,51 @@ namespace Pool
         pool = _displayed_pool;
       }
 
+      if (pool->IsOver () == FALSE)
+      {
+        if (GPOINTER_TO_INT (g_object_get_data (G_OBJECT (operation), "print_for_referees")))
+        {
+          GSList *current_referee = pool->GetRefereeList ();
+
+          while (current_referee)
+          {
+            Player              *referee = (Player *) current_referee->data;
+            Player::AttributeId  attr_id ("IP");
+            Attribute           *ip_attr = referee->GetAttribute (&attr_id);
+
+            if (ip_attr)
+            {
+              gchar *ip = ip_attr->GetStrValue ();
+
+              if (ip && (ip[0] != 0))
+              {
+                xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+                {
+                  xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+                  _contest->SaveHeader (xml_writer);
+                  _allocator->SaveHeader (xml_writer);
+                  pool->Save (xml_writer);
+                  xmlTextWriterEndElement (xml_writer);
+                  xmlTextWriterEndElement (xml_writer);
+                  xmlTextWriterEndDocument (xml_writer);
+
+                  xmlFreeTextWriter (xml_writer);
+                }
+
+                referee->SendMessage ("/E-ScoreSheets",
+                                      (const gchar *) xml_buffer->content);
+
+                xmlBufferFree (xml_buffer);
+              }
+            }
+
+            current_referee = g_slist_next (current_referee);
+          }
+        }
+      }
+
       pool->DrawPage (operation,
                       context,
                       page_nr);
@@ -941,15 +939,6 @@ namespace Pool
     Supervisor *ps = dynamic_cast <Supervisor *> (owner);
 
     ps->OnStuffClicked ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_smartpoule_toolbutton_clicked (GtkWidget *widget,
-                                                                    Object    *owner)
-  {
-    Supervisor *ps = dynamic_cast <Supervisor *> (owner);
-
-    ps->OnSmartPouleClicked ();
   }
 
   // --------------------------------------------------------------------------------
