@@ -99,6 +99,8 @@ namespace Pool
 
       GSList *GetRefereeList ();
 
+      GdkPixbuf *GetStatusPixbuf ();
+
       static gint ComparePlayer (Player   *A,
                                  Player   *B,
                                  Object   *data_owner,
@@ -121,6 +123,7 @@ namespace Pool
       gboolean        _has_error;
       GooCanvasItem  *_title_table;
       GooCanvasItem  *_status_item;
+      GdkPixbuf      *_status_pixbuf;
       gboolean        _locked;
       GSList         *_display_data;
       guint           _nb_drop;

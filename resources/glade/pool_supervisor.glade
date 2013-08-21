@@ -277,7 +277,7 @@
       <!-- column-name name -->
       <column type="gchararray"/>
       <!-- column-name pixmap -->
-      <column type="gchararray"/>
+      <column type="GdkPixbuf"/>
     </columns>
   </object>
   <object class="GtkDialog" id="print_pool_dialog">
@@ -488,7 +488,7 @@
                         <child>
                           <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2"/>
                           <attributes>
-                            <attribute name="stock-id">1</attribute>
+                            <attribute name="pixbuf">1</attribute>
                           </attributes>
                         </child>
                         <child>

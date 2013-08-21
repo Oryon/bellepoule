@@ -443,10 +443,6 @@ namespace Pool
     pool->SetFilter (_filter);
     pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                         this);
-
-    gtk_list_store_set (_pool_liststore, &iter,
-                        STATUS_COLUMN, GTK_STOCK_EXECUTE,
-                        -1);
   }
 
   // --------------------------------------------------------------------------------
@@ -465,23 +461,26 @@ namespace Pool
       if (pool->IsOver ())
       {
         zone->FreeReferees ();
-        gtk_list_store_set (ps->_pool_liststore, &iter,
-                            STATUS_COLUMN, GTK_STOCK_APPLY,
-                            -1);
       }
       else if (pool->HasError ())
       {
         zone->BookReferees ();
-        gtk_list_store_set (ps->_pool_liststore, &iter,
-                            STATUS_COLUMN, GTK_STOCK_DIALOG_WARNING,
-                            -1);
       }
       else
       {
         zone->BookReferees ();
+      }
+
+      {
+        GdkPixbuf *pixbuf = pool->GetStatusPixbuf ();
+
         gtk_list_store_set (ps->_pool_liststore, &iter,
-                            STATUS_COLUMN, GTK_STOCK_EXECUTE,
+                            STATUS_COLUMN, pixbuf,
                             -1);
+        if (pixbuf)
+        {
+          g_object_unref (pixbuf);
+        }
       }
     }
 

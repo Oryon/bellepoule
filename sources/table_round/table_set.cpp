@@ -1441,11 +1441,16 @@ namespace Table
                 {
                   Player::AttributeId  attr_id ("status", table_set->GetDataOwner ());
                   AttributeDesc       *attr_desc = AttributeDesc::GetDescFromCodeName ("status");
+                  GdkPixbuf           *pixbuf = attr_desc->GetDiscretePixbuf (score->GetDropReason ());
 
                   g_object_set (data->_score_goo_image,
-                                "pixbuf",     attr_desc->GetDiscretePixbuf (score->GetDropReason ()),
+                                "pixbuf",     pixbuf,
                                 "visibility", GOO_CANVAS_ITEM_VISIBLE,
                                 NULL);
+                  if (pixbuf)
+                  {
+                    g_object_unref (pixbuf);
+                  }
                 }
               }
             }

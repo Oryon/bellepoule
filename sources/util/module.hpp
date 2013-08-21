@@ -87,6 +87,8 @@ class Module : public virtual Object
 
     virtual void RefreshMatchRate (Player *player);
 
+    GdkPixbuf *GetPixbuf (const gchar *icon);
+
   public:
     virtual guint PreparePrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context) {return 0;};

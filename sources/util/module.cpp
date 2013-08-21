@@ -712,6 +712,31 @@ void Module::on_end_print (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
+GdkPixbuf *Module::GetPixbuf (const gchar *icon)
+{
+  GdkPixbuf *pixbuf;
+
+  pixbuf = gdk_pixbuf_new_from_file (icon, NULL);
+  if (pixbuf)
+  {
+    return pixbuf;
+  }
+  else
+  {
+    GtkWidget *image = gtk_image_new ();
+
+    g_object_ref_sink (image);
+    pixbuf = gtk_widget_render_icon (image,
+                                     icon,
+                                     GTK_ICON_SIZE_BUTTON,
+                                     NULL);
+    g_object_unref (image);
+  }
+
+  return pixbuf;
+}
+
+// --------------------------------------------------------------------------------
 GtkTreeModel *Module::GetStatusModel ()
 {
   if (_status_model == NULL)
