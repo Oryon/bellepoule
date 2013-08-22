@@ -434,7 +434,11 @@ void Contest::LoadXml (const gchar *filename)
       }
       else
       {
-        gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
+        GtkWidget *save_toolbutton = _glade->GetWidget ("save_toolbutton");
+
+        gtk_widget_set_tooltip_text (save_toolbutton,
+                                     _filename);
+        gtk_widget_set_sensitive (save_toolbutton,
                                   FALSE);
       }
 
@@ -1466,6 +1470,12 @@ void Contest::Save ()
   {
     _filename = GetSaveFileName (gettext ("Choose a file..."),
                                  "default_dir_name");
+
+    if (_filename)
+    {
+      gtk_widget_set_tooltip_text (_glade->GetWidget ("save_toolbutton"),
+                                   _filename);
+    }
   }
 
   if (_filename)

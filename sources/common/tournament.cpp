@@ -979,8 +979,8 @@ void Tournament::EnumerateLanguages ()
 
           gtk_menu_shell_append (GTK_MENU_SHELL (_glade->GetWidget ("locale_menu")),
                                  item);
-          gtk_widget_set_tooltip_markup (item,
-                                         gettext ("Restart BellePoule for this change to take effect"));
+          gtk_widget_set_tooltip_text (item,
+                                       gettext ("Restart BellePoule for this change to take effect"));
 
           g_signal_connect (item, "toggled",
                             G_CALLBACK (OnLocaleToggled), (void *)
