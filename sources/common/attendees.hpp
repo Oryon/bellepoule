@@ -35,9 +35,6 @@ class Attendees : public Object
 
     GSList *GetShortList ();
 
-    void AddToShortList (Player              *player,
-                         Player::AttributeId *sort_criteria);
-
   private:
     GSList *_global_list;
     GSList *_shortlist;

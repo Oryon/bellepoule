@@ -115,7 +115,7 @@ class Stage : public virtual Object
 
     void RetrieveAttendees ();
 
-    virtual GSList *GetOutputShortlist ();
+    GSList *GetBarrageList ();
 
     Player *GetFencerFromRef (guint ref);
 
@@ -234,6 +234,8 @@ class Stage : public virtual Object
     static StageClass *GetClass (const gchar *name);
 
     void UpdateClassification (GSList *result);
+
+    virtual GSList *GetOutputShortlist ();
 
     Object *GetPlayerDataOwner ();
 

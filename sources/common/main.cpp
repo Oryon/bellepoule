@@ -40,6 +40,7 @@
 #include "people_management/team.hpp"
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
+#include "pool_round/barrage.hpp"
 #include "table_round/table_supervisor.hpp"
 #include "tournament.hpp"
 #include "contest.hpp"
@@ -251,6 +252,7 @@ int main (int argc, char **argv)
       Pool::Supervisor::Declare              ();
       Table::Supervisor::Declare             ();
       People::GeneralClassification::Declare ();
+      Pool::Barrage::Declare                 ();
       People::Splitting::Declare             ();
     }
 

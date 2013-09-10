@@ -704,6 +704,4 @@
       </object>
     </child>
   </object>
-  <object class="GtkSizeGroup" id="label_sizegroup"/>
-  <object class="GtkSizeGroup" id="value_sizegroup"/>
 </interface>

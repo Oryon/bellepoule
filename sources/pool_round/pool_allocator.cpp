@@ -848,7 +848,7 @@ namespace Pool
     }
 
     _best_config = NULL;
-    for (unsigned int size = 3; size <= MIN (max_pool_size, nb_players); size++)
+    for (guint size = 2; size <= MIN (max_pool_size, nb_players); size++)
     {
       if (nb_players%size == 0)
       {
@@ -864,7 +864,7 @@ namespace Pool
       if (   (nb_players%size != 0)
           || ((size == 6) && (nb_players%7 != 0)))
       {
-        for (unsigned int p = 1; p < nb_players/size; p++)
+        for (guint p = 1; p < nb_players/size; p++)
         {
           if ((nb_players - size*p) % (size + 1) == 0)
           {

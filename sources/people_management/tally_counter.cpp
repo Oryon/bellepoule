@@ -121,8 +121,6 @@ namespace People
   // --------------------------------------------------------------------------------
   TallyCounter::Mode *TallyCounter::GetMode (Player *player)
   {
-    Mode *mode;
-
     if (player->Is ("Team"))
     {
       return &_team_mode;

@@ -624,6 +624,8 @@ Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
     }
     current = g_slist_next (current);
   }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
