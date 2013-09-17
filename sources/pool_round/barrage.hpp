@@ -32,6 +32,8 @@ namespace Pool
 
       void OnFilterClicked ();
 
+      void OnStuffClicked ();
+
     public:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;

@@ -113,6 +113,14 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Barrage::Display ()
   {
+    _pool->SetDataOwner (this,
+                        this,
+                        this);
+
+    _pool->SetFilter (_filter);
+    //_pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
+                         //this);
+
     Plug (_pool,
           _glade->GetWidget ("main_hook"));
 
@@ -147,12 +155,74 @@ namespace Pool
     SaveConfiguration (xml_writer);
     SaveAttendees     (xml_writer);
 
+    if (_pool)
+    {
+      _pool->Save (xml_writer);
+    }
+
     xmlTextWriterEndElement (xml_writer);
   }
 
   // --------------------------------------------------------------------------------
   void Barrage::Load (xmlNode *xml_node)
   {
+    LoadConfiguration (xml_node);
+
+    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    {
+      if (n->type == XML_ELEMENT_NODE)
+      {
+        if (strcmp ((char *) n->name, _xml_class_name) == 0)
+        {
+        }
+        else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
+        {
+          if (_pool == NULL)
+          {
+            LoadAttendees (n);
+          }
+          else
+          {
+            gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
+
+            if (attr)
+            {
+              Player *player = GetFencerFromRef (atoi (attr));
+
+              if (player)
+              {
+                _pool->AddFencer (player,
+                                  this);
+              }
+              xmlFree (attr);
+            }
+          }
+        }
+        else if (strcmp ((char *) n->name, "Poule") == 0)
+        {
+          _pool = new Pool (_max_score,
+                            1,
+                            _contest->GetWeaponCode (),
+                            GetXmlPlayerTag (),
+                            _rand_seed);
+        }
+        else if (strcmp ((char *) n->name, "Arbitre") == 0)
+        {
+        }
+        else if (strcmp ((char *) n->name, "Match") == 0)
+        {
+          _pool->CreateMatchs (NULL);
+          _pool->Load (n,
+                       _attendees->GetShortList ());
+          return;
+        }
+        else
+        {
+          return;
+        }
+      }
+      Load (n->children);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -164,9 +234,6 @@ namespace Pool
                       GetXmlPlayerTag (),
                       _rand_seed);
 
-    _pool->SetDataOwner (this,
-                         this,
-                         this);
     _pool->SetFilter (_filter);
 
     if (_attendees)
@@ -218,11 +285,32 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Barrage::OnStuffClicked ()
+  {
+    if (_pool)
+    {
+      _pool->CleanScores ();
+      _pool->Stuff ();
+    }
+
+    OnAttrListUpdated ();
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_barrage_filter_toolbutton_clicked (GtkWidget *widget,
                                                                         Object    *owner)
   {
     Barrage *t = dynamic_cast <Barrage *> (owner);
 
     t->OnFilterClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_barrage_stuff_toolbutton_clicked (GtkWidget *widget,
+                                                                       Object    *owner)
+  {
+    Barrage *b = dynamic_cast <Barrage *> (owner);
+
+    b->OnStuffClicked ();
   }
 }

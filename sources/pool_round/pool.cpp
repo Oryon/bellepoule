@@ -1606,15 +1606,22 @@ namespace Pool
       Player::AttributeId  source_attr_id (name, _combined_source_owner);
       Attribute           *source_attr = player->GetAttribute (&source_attr_id);
 
-      if (operation == AVERAGE)
+      if (source_attr)
       {
-        player->SetAttributeValue (&combined_attr_id,
-                                   (source_attr->GetUIntValue () + value) / 2);
+        if (operation == AVERAGE)
+        {
+          player->SetAttributeValue (&combined_attr_id,
+                                     (source_attr->GetUIntValue () + value) / 2);
+        }
+        else
+        {
+          player->SetAttributeValue (&combined_attr_id,
+                                     source_attr->GetUIntValue () + value);
+        }
       }
       else
       {
-        player->SetAttributeValue (&combined_attr_id,
-                                   source_attr->GetUIntValue () + value);
+        g_print (RED "source_attr == NULL\n" ESC);
       }
     }
   }
