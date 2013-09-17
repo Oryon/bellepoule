@@ -42,6 +42,24 @@ namespace Pool
       LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
     }
 
+    {
+      GtkWidget *content_area;
+
+      _print_dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                          GTK_MESSAGE_QUESTION,
+                                                          GTK_BUTTONS_OK_CANCEL,
+                                                          gettext ("<b><big>Print...</big></b>"));
+
+      gtk_window_set_title (GTK_WINDOW (_print_dialog),
+                            gettext ("Barrage printing"));
+
+      content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
+
+      gtk_widget_reparent (_glade->GetWidget ("print_dialog-vbox"),
+                           content_area);
+    }
+
     // Filter
     {
       GSList *attr_list;
@@ -83,6 +101,8 @@ namespace Pool
   {
     Object::TryToRelease (_pool);
     Object::TryToRelease (_max_score);
+
+    gtk_widget_destroy (_print_dialog);
   }
 
   // --------------------------------------------------------------------------------
@@ -297,6 +317,87 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  guint Barrage::PreparePrint (GtkPrintOperation *operation,
+                               GtkPrintContext   *context)
+  {
+    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+    {
+      return 0;
+    }
+
+    {
+      GtkWidget *w = _glade->GetWidget ("for_referees_radiobutton");
+
+      if (   (GetStageView (operation) == STAGE_VIEW_UNDEFINED)
+          && gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+      {
+        g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) TRUE);
+      }
+      else
+      {
+        g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) FALSE);
+      }
+    }
+
+    if (_pool)
+    {
+      _pool->Wipe ();
+    }
+
+    return 1;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Barrage::DrawPage (GtkPrintOperation *operation,
+                          GtkPrintContext   *context,
+                          gint               page_nr)
+  {
+    DrawContainerPage (operation,
+                       context,
+                       page_nr);
+
+    if (   (GetStageView (operation) == STAGE_VIEW_RESULT)
+        || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("barrage_classification_toggletoolbutton"))) == FALSE))
+    {
+      _pool->DrawPage (operation,
+                       context,
+                       page_nr);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Barrage::OnEndPrint (GtkPrintOperation *operation,
+                            GtkPrintContext   *context)
+  {
+    OnAttrListUpdated ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Barrage::OnPrintPoolToolbuttonClicked ()
+  {
+    gchar *title          = NULL;
+    Stage *previous_stage = GetPreviousStage ();
+
+    if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("barrage_classification_toggletoolbutton"))))
+    {
+      Classification *classification = GetClassification ();
+
+      if (classification)
+      {
+        title = g_strdup_printf ("%s - %s", gettext ("Barrage classification"), previous_stage->GetName ());
+        classification->Print (title);
+      }
+    }
+    else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+    {
+      title = g_strdup_printf ("%s - %s", gettext ("Barrage"), previous_stage->GetName ());
+      Print (title);
+    }
+    g_free (title);
+    gtk_widget_hide (_print_dialog);
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_barrage_filter_toolbutton_clicked (GtkWidget *widget,
                                                                         Object    *owner)
   {
@@ -312,5 +413,14 @@ namespace Pool
     Barrage *b = dynamic_cast <Barrage *> (owner);
 
     b->OnStuffClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_barrage_print_toolbutton_clicked (GtkWidget *widget,
+                                                                       Object    *owner)
+  {
+    Barrage *b = dynamic_cast <Barrage *> (owner);
+
+    b->OnPrintPoolToolbuttonClicked ();
   }
 }

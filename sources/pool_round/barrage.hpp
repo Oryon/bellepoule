@@ -34,6 +34,8 @@ namespace Pool
 
       void OnStuffClicked ();
 
+      void OnPrintPoolToolbuttonClicked ();
+
     public:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
@@ -57,13 +59,24 @@ namespace Pool
 
       void Garnish ();
 
+      guint PreparePrint (GtkPrintOperation *operation,
+                          GtkPrintContext   *context);
+
+      void DrawPage (GtkPrintOperation *operation,
+                     GtkPrintContext   *context,
+                     gint               page_nr);
+
+      void OnEndPrint (GtkPrintOperation *operation,
+                       GtkPrintContext   *context);
+
     private:
       static Stage *CreateInstance (StageClass *stage_class);
 
       virtual ~Barrage ();
 
     private:
-      Pool *_pool;
+      Pool      *_pool;
+      GtkWidget *_print_dialog;
   };
 }
 
