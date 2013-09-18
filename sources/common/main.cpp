@@ -40,6 +40,7 @@
 #include "people_management/team.hpp"
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
+#include "pool_round/barrage.hpp"
 #include "table_round/table_supervisor.hpp"
 #include "tournament.hpp"
 #include "contest.hpp"
@@ -129,7 +130,7 @@ static void LogHandler (const gchar    *log_domain,
     case G_LOG_LEVEL_WARNING:
     case G_LOG_FLAG_RECURSION:
     {
-      printf ("[1;31m[%s][0m %s\n", log_domain, message);
+      g_print (RED "[%s]" ESC " %s\n", log_domain, message);
     }
     break;
 
@@ -139,7 +140,7 @@ static void LogHandler (const gchar    *log_domain,
     case G_LOG_LEVEL_MASK:
     default:
     {
-      printf ("[1;34m[%s][0m %s\n", log_domain, message);
+      g_print (BLUE "[%s]" ESC " %s\n", log_domain, message);
     }
     break;
   }
@@ -251,6 +252,7 @@ int main (int argc, char **argv)
       Pool::Supervisor::Declare              ();
       Table::Supervisor::Declare             ();
       People::GeneralClassification::Declare ();
+      Pool::Barrage::Declare                 ();
       People::Splitting::Declare             ();
     }
 

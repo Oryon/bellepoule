@@ -80,6 +80,8 @@ namespace Pool
 
       void RefreshScoreData ();
 
+      void RefreshStatus ();
+
       gchar *GetName ();
 
       void Wipe ();
@@ -98,6 +100,10 @@ namespace Pool
       GSList *GetFencerList ();
 
       GSList *GetRefereeList ();
+
+      GdkPixbuf *GetStatusPixbuf ();
+
+      GSList *GetCurrentClassification ();
 
       static gint ComparePlayer (Player   *A,
                                  Player   *B,
@@ -121,6 +127,7 @@ namespace Pool
       gboolean        _has_error;
       GooCanvasItem  *_title_table;
       GooCanvasItem  *_status_item;
+      GdkPixbuf      *_status_pixbuf;
       gboolean        _locked;
       GSList         *_display_data;
       guint           _nb_drop;
@@ -190,6 +197,11 @@ namespace Pool
       static gboolean on_status_scrolled (GtkWidget *widget,
                                           GdkEvent  *event,
                                           gpointer   user_data);
+
+      static void OnAttrConnectionChanged (Player    *player,
+                                           Attribute *attr,
+                                           Object    *owner,
+                                           guint      step);
 
       virtual ~Pool ();
   };

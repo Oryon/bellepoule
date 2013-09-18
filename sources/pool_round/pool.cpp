@@ -47,6 +47,7 @@ namespace Pool
     _has_error          = FALSE;
     _title_table        = NULL;
     _status_item        = NULL;
+    _status_pixbuf      = NULL;
     _locked             = FALSE;
     _max_score          = max_score;
     _display_data       = NULL;
@@ -94,8 +95,14 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::Wipe ()
   {
-    _title_table = NULL;
-    _status_item = NULL;
+    _title_table   = NULL;
+    _status_item   = NULL;
+
+    if (_status_pixbuf)
+    {
+      g_object_unref (_status_pixbuf);
+      _status_pixbuf = NULL;
+    }
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
@@ -160,6 +167,8 @@ namespace Pool
   {
     _status_cbk_data = data;
     _status_cbk      = cbk;
+
+    RefreshStatus ();
   }
 
   // --------------------------------------------------------------------------------
@@ -218,6 +227,10 @@ namespace Pool
     {
       _referee_list = g_slist_prepend (_referee_list,
                                        referee);
+
+      referee->SetChangeCbk ("connection",
+                             (Player::OnChange) OnAttrConnectionChanged,
+                             this);
     }
   }
 
@@ -271,6 +284,7 @@ namespace Pool
     {
       _referee_list = g_slist_remove (_referee_list,
                                       referee);
+      referee->RemoveCbkOwner (this);
     }
   }
 
@@ -377,6 +391,20 @@ namespace Pool
   {
     return (Player *) g_slist_nth_data (in_list,
                                         i);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::OnAttrConnectionChanged (Player    *player,
+                                      Attribute *attr,
+                                      Object    *owner,
+                                      guint      step)
+  {
+    Pool *pool = dynamic_cast <Pool *> (owner);
+
+    if (pool->_locked == FALSE)
+    {
+      pool->RefreshStatus ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1347,10 +1375,78 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Pool::RefreshStatus ()
+  {
+    if (_status_item)
+    {
+      goo_canvas_item_remove (_status_item);
+      _status_item = NULL;
+    }
+
+    if (_status_pixbuf)
+    {
+      g_object_unref (_status_pixbuf);
+      _status_pixbuf = NULL;
+    }
+
+    if (_is_over)
+    {
+      _status_pixbuf = GetPixbuf (GTK_STOCK_APPLY);
+    }
+    else if (_has_error)
+    {
+      _status_pixbuf = GetPixbuf (GTK_STOCK_DIALOG_WARNING);
+    }
+    else
+    {
+      GSList *current = _referee_list;
+
+      while (current)
+      {
+        Player              *referee = (Player *) current->data;
+        Player::AttributeId  connection_attr_id  ("connection");
+        Attribute           *connection_attr = referee->GetAttribute (&connection_attr_id);
+
+        if (connection_attr)
+        {
+          const gchar *connection_status = connection_attr->GetStrValue ();
+
+          if (   (strcmp (connection_status, "Broken") == 0)
+              || (strcmp (connection_status, "Waiting") == 0))
+          {
+            _status_pixbuf = connection_attr->GetPixbuf ();
+            break;
+          }
+        }
+
+        current = g_slist_next (current);
+      }
+
+      if (_status_pixbuf == NULL)
+      {
+        _status_pixbuf = GetPixbuf (GTK_STOCK_EXECUTE);
+      }
+    }
+
+    if (_title_table && _status_pixbuf)
+    {
+      _status_item = Canvas::PutPixbufInTable (_title_table,
+                                               _status_pixbuf,
+                                               0, 0);
+    }
+
+    if (_status_cbk)
+    {
+      _status_cbk (this,
+                   _status_cbk_data);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Pool::RefreshScoreData ()
   {
-    GSList   *ranking    = NULL;
-    guint     nb_players = GetNbPlayers ();
+    GSList *ranking    = NULL;
+    guint   nb_players = GetNbPlayers ();
 
     _is_over   = TRUE;
     _has_error = FALSE;
@@ -1472,41 +1568,30 @@ namespace Pool
 
     g_slist_free (ranking);
 
-    if (_status_cbk)
-    {
-      _status_cbk (this,
-                   _status_cbk_data);
-    }
-
-    if (_title_table)
-    {
-      if (_status_item)
-      {
-        goo_canvas_item_remove (_status_item);
-        _status_item = NULL;
-      }
-
-      if (_is_over)
-      {
-        _status_item = Canvas::PutStockIconInTable (_title_table,
-                                                    GTK_STOCK_APPLY,
-                                                    0, 0);
-      }
-      else if (_has_error)
-      {
-        _status_item = Canvas::PutStockIconInTable (_title_table,
-                                                    GTK_STOCK_DIALOG_WARNING,
-                                                    0, 0);
-      }
-      else
-      {
-        _status_item = Canvas::PutStockIconInTable (_title_table,
-                                                    GTK_STOCK_EXECUTE,
-                                                    0, 0);
-      }
-    }
+    RefreshStatus ();
 
     MakeDirty ();
+  }
+
+  // --------------------------------------------------------------------------------
+  GSList *Pool::GetCurrentClassification ()
+  {
+    GSList *result = g_slist_copy (_sorted_fencer_list);
+
+    result = g_slist_sort_with_data (result,
+                                     (GCompareDataFunc) _ComparePlayer,
+                                     (void *) this);
+  }
+
+  // --------------------------------------------------------------------------------
+  GdkPixbuf *Pool::GetStatusPixbuf ()
+  {
+    if (_status_pixbuf)
+    {
+      g_object_ref (_status_pixbuf);
+    }
+
+    return _status_pixbuf;
   }
 
   // --------------------------------------------------------------------------------
@@ -1531,15 +1616,22 @@ namespace Pool
       Player::AttributeId  source_attr_id (name, _combined_source_owner);
       Attribute           *source_attr = player->GetAttribute (&source_attr_id);
 
-      if (operation == AVERAGE)
+      if (source_attr)
       {
-        player->SetAttributeValue (&combined_attr_id,
-                                   (source_attr->GetUIntValue () + value) / 2);
+        if (operation == AVERAGE)
+        {
+          player->SetAttributeValue (&combined_attr_id,
+                                     (source_attr->GetUIntValue () + value) / 2);
+        }
+        else
+        {
+          player->SetAttributeValue (&combined_attr_id,
+                                     source_attr->GetUIntValue () + value);
+        }
       }
       else
       {
-        player->SetAttributeValue (&combined_attr_id,
-                                   source_attr->GetUIntValue () + value);
+        g_print (RED "source_attr == NULL\n" ESC);
       }
     }
   }

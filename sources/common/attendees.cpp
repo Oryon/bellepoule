@@ -54,16 +54,6 @@ void Attendees::SetGlobalList (GSList *global_list)
 }
 
 // --------------------------------------------------------------------------------
-void Attendees::AddToShortList (Player              *player,
-                                Player::AttributeId *sort_criteria)
-{
-  _shortlist = g_slist_insert_sorted_with_data (_shortlist,
-                                                player,
-                                                (GCompareDataFunc) Player::Compare,
-                                                sort_criteria);
-}
-
-// --------------------------------------------------------------------------------
 GSList *Attendees::GetGlobalList ()
 {
   return _global_list;

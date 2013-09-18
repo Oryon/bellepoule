@@ -207,7 +207,7 @@ void Stage::UnLock ()
     Player::AttributeId  status_attr_id ("status", GetPlayerDataOwner ());
     Player::AttributeId  global_status_attr_id ("global_status");
 
-    for (guint i = 0; current != NULL; i++)
+    while (current)
     {
       Player *player = (Player *) current->data;
 
@@ -393,9 +393,7 @@ void Stage::RetrieveAttendees ()
 
       for (guint i = 0; current != NULL; i++)
       {
-        Player *player;
-
-        player = (Player *) current->data;
+        Player *player = (Player *) current->data;
 
         player->SetAttributeValue (&previous_rank_attr_id,
                                    i+1);
@@ -420,6 +418,51 @@ void Stage::RetrieveAttendees ()
 }
 
 // --------------------------------------------------------------------------------
+GSList *Stage::GetBarrageList ()
+{
+  GSList *barrage_list = NULL;
+
+  if (_previous && _previous->_nb_qualified->IsValid ())
+  {
+    GSList *shortlist = _attendees->GetShortList ();
+
+    if (g_slist_length (shortlist) > _previous->_nb_qualified->_value)
+    {
+      GSList *reversed_short_list = g_slist_copy (shortlist);
+
+      reversed_short_list = g_slist_reverse (reversed_short_list);
+      {
+        GSList              *current = reversed_short_list;
+        Player::AttributeId  rank_attr_id ("rank", _previous);
+        Attribute           *last_qualified_rank = NULL;
+
+        while (current)
+        {
+          Player    *current_fencer = (Player *) current->data;
+          Attribute *current_rank   = current_fencer->GetAttribute (&rank_attr_id);
+
+          if (last_qualified_rank == NULL)
+          {
+            last_qualified_rank = current_rank;
+          }
+          else if (current_rank->GetUIntValue () < last_qualified_rank->GetUIntValue ())
+          {
+            break;
+          }
+          barrage_list = g_slist_prepend (barrage_list,
+                                          current_fencer);
+
+          current = g_slist_next (current);
+        }
+      }
+      g_slist_free (reversed_short_list);
+    }
+  }
+
+  return barrage_list;
+}
+
+// --------------------------------------------------------------------------------
 GSList *Stage::GetOutputShortlist ()
 {
   GSList         *shortlist      = NULL;
@@ -432,20 +475,9 @@ GSList *Stage::GetOutputShortlist ()
 
   if (shortlist && classification)
   {
-    guint               nb_to_remove = 0;
     Player::AttributeId stage_attr_id         ("status", GetPlayerDataOwner ());
     Player::AttributeId classif_attr_id       ("status", classification->GetDataOwner ());
     Player::AttributeId global_status_attr_id ("global_status");
-
-    if (_nb_qualified->IsValid ())
-    {
-      guint shortlist_length = g_slist_length (shortlist);
-
-      if (_nb_qualified->_value <= shortlist_length)
-      {
-        nb_to_remove = shortlist_length - _nb_qualified->_value;
-      }
-    }
 
     // remove all of the withdrawalls and black cards
     {
@@ -453,56 +485,62 @@ GSList *Stage::GetOutputShortlist ()
 
       while (current)
       {
-        Player *player;
+        Player    *player      = (Player *) current->data;
+        Attribute *status_attr = player->GetAttribute (&stage_attr_id);
 
-        player = (Player *) current->data;
+        if (status_attr)
         {
-          Attribute *status_attr = player->GetAttribute (&stage_attr_id);
+          gchar *value = status_attr->GetStrValue ();
 
-          if (status_attr)
+          if (value
+              && (value[0] != 'Q') && value[0] != 'N')
           {
-            gchar *value = status_attr->GetStrValue ();
-
-            if (value
-                && (value[0] != 'Q') && value[0] != 'N')
-            {
-              player->SetAttributeValue (&global_status_attr_id,
-                                         value);
-              shortlist = g_slist_delete_link (shortlist,
-                                               current);
-              if (nb_to_remove > 0)
-              {
-                nb_to_remove--;
-              }
-            }
-            else
-            {
-              break;
-            }
+            player->SetAttributeValue (&global_status_attr_id,
+                                       value);
+            shortlist = g_slist_delete_link (shortlist,
+                                             current);
+          }
+          else
+          {
+            break;
           }
         }
         current = g_slist_last (shortlist);
       }
     }
 
-    // Remove the remaining players to reach the quota
-    for (guint i = 0; i < nb_to_remove; i++)
+    if (_nb_qualified->IsValid () && (_nb_qualified->_value > 0))
     {
-      GSList *current;
-      Player *player;
+      Player *last_qualified = (Player *) g_slist_nth_data (shortlist, _nb_qualified->_value-1);
 
-      current = g_slist_last (shortlist);
-      player = (Player *) current->data;
+      if (last_qualified)
+      {
+        Player::AttributeId  rank_attr_id ("rank", this);
+        Attribute           *last_qualified_rank = last_qualified->GetAttribute (&rank_attr_id);
+        GSList              *current             = g_slist_last (shortlist);
 
-      player->SetAttributeValue (&stage_attr_id,
-                                 "N");
-      player->SetAttributeValue (&classif_attr_id,
-                                 "N");
-      player->SetAttributeValue (&global_status_attr_id,
-                                 "N");
+        while (current)
+        {
+          Player    *player = (Player *) current->data;
+          Attribute *rank   = player->GetAttribute (&rank_attr_id);
 
-      shortlist = g_slist_delete_link (shortlist,
-                                       current);
+          if (rank->GetUIntValue () <= last_qualified_rank->GetUIntValue ())
+          {
+            break;
+          }
+
+          player->SetAttributeValue (&stage_attr_id,
+                                     "N");
+          player->SetAttributeValue (&classif_attr_id,
+                                     "N");
+          player->SetAttributeValue (&global_status_attr_id,
+                                     "N");
+
+          shortlist = g_slist_delete_link (shortlist,
+                                           current);
+          current = g_slist_last (shortlist);
+        }
+      }
     }
   }
 

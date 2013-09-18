@@ -18,26 +18,6 @@
 
 #include "uploader.hpp"
 
-#ifdef WIN32
-#define RED     ""
-#define GREEN   ""
-#define YELLOW  ""
-#define BLUE    ""
-#define MAGENTA ""
-#define CYAN    ""
-#define WHITE   ""
-#define END     ""
-#else
-#define RED     "\033[1;31m"
-#define GREEN   "\033[1;32m"
-#define YELLOW  "\033[1;33m"
-#define BLUE    "\033[1;34m"
-#define MAGENTA "\033[1;35m"
-#define CYAN    "\033[1;36m"
-#define WHITE   "\033[0;37m"
-#define END     "\033[0m"
-#endif
-
 namespace Net
 {
   // --------------------------------------------------------------------------------
@@ -141,23 +121,23 @@ namespace Net
   {
     if (type == CURLINFO_TEXT)
     {
-      g_print (BLUE "[Uploader] " END);
+      g_print (BLUE "[Uploader] " ESC);
     }
     else if (type == CURLINFO_HEADER_IN)
     {
-      g_print (GREEN "--CURLINFO_HEADER_IN------\n" END);
+      g_print (GREEN "--CURLINFO_HEADER_IN------\n" ESC);
     }
     else if (type == CURLINFO_HEADER_OUT)
     {
-      g_print (GREEN "--CURLINFO_HEADER_OUT-----\n" END);
+      g_print (GREEN "--CURLINFO_HEADER_OUT-----\n" ESC);
     }
     else if (type == CURLINFO_DATA_IN)
     {
-      g_print (GREEN "--CURLINFO_DATA_IN--------\n" END);
+      g_print (GREEN "--CURLINFO_DATA_IN--------\n" ESC);
     }
     else if (type == CURLINFO_DATA_OUT)
     {
-      g_print (GREEN "--CURLINFO_DATA_OUT-------\n" END);
+      g_print (GREEN "--CURLINFO_DATA_OUT-------\n" ESC);
       g_print ("......\n");
       g_print ("......\n");
       return 0;
@@ -246,12 +226,12 @@ namespace Net
           if (curl_code != CURLE_OK)
           {
             uploader->_peer_status = CONN_ERROR;
-            g_print (RED "[Uploader Error] " END "%s\n", curl_easy_strerror (curl_code));
+            g_print (RED "[Uploader Error] " ESC "%s\n", curl_easy_strerror (curl_code));
           }
           else
           {
             uploader->_peer_status = CONN_OK;
-            g_print (YELLOW "[Uploader] " END "Done");
+            g_print (YELLOW "[Uploader] " ESC "Done");
           }
 
           if (uploader->_status_cbk && uploader->_status_cbk_object)
