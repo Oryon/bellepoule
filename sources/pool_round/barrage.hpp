@@ -74,6 +74,10 @@ namespace Pool
 
       virtual ~Barrage ();
 
+      void OnPlugged ();
+
+      void OnUnPlugged ();
+
     private:
       Pool      *_pool;
       GtkWidget *_print_dialog;

@@ -1574,6 +1574,16 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  GSList *Pool::GetCurrentClassification ()
+  {
+    GSList *result = g_slist_copy (_sorted_fencer_list);
+
+    result = g_slist_sort_with_data (result,
+                                     (GCompareDataFunc) _ComparePlayer,
+                                     (void *) this);
+  }
+
+  // --------------------------------------------------------------------------------
   GdkPixbuf *Pool::GetStatusPixbuf ()
   {
     if (_status_pixbuf)

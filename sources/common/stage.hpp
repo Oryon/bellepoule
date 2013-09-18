@@ -111,8 +111,6 @@ class Stage : public virtual Object
 
     void UnLock ();
 
-    GSList *GetResult ();
-
     void RetrieveAttendees ();
 
     GSList *GetBarrageList ();
@@ -178,12 +176,14 @@ class Stage : public virtual Object
 
     static Stage *CreateInstance (const gchar *name);
 
+  public:
+    Data      *_nb_qualified;
+
   protected:
     Attendees *_attendees;
     Stage     *_input_provider;
     Contest   *_contest;
     Data      *_max_score;
-    Data      *_nb_qualified;
 
     Stage (StageClass *stage_class);
 

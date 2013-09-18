@@ -94,6 +94,41 @@ namespace Pool
       SetFilter (filter);
       filter->Release ();
     }
+
+    // Classification filter
+    {
+      GSList *attr_list;
+      Filter *filter;
+
+      AttributeDesc::CreateExcludingList (&attr_list,
+#ifndef DEBUG
+                                          "ref",
+#endif
+                                          "attending",
+                                          "availability",
+                                          "exported",
+                                          "final_rank",
+                                          "global_status",
+                                          "level",
+                                          "participation_rate",
+                                          "start_rank",
+                                          "team",
+                                          NULL);
+      filter = new Filter (attr_list);
+
+      filter->ShowAttribute ("rank");
+      filter->ShowAttribute ("name");
+      filter->ShowAttribute ("first_name");
+      filter->ShowAttribute ("club");
+      filter->ShowAttribute ("pool_nr");
+      filter->ShowAttribute ("victories_ratio");
+      filter->ShowAttribute ("indice");
+      filter->ShowAttribute ("HS");
+      filter->ShowAttribute ("status");
+
+      SetClassificationFilter (filter);
+      filter->Release ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -161,10 +196,58 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Barrage::OnPlugged ()
+  {
+    Stage *previous_stage = GetPreviousStage ();
+
+    _nb_qualified = previous_stage->_nb_qualified;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Barrage::OnUnPlugged ()
+  {
+    _nb_qualified = NULL;
+  }
+
+  // --------------------------------------------------------------------------------
   GSList *Barrage::GetCurrentClassification ()
   {
-    return NULL;
+    GSList *result = NULL;
+
+    if (_pool)
+    {
+      GSList *short_list     = _attendees->GetShortList ();
+      guint   exempted_count = g_slist_length (short_list) - _pool->GetNbPlayers ();
+
+      result = _pool->GetCurrentClassification ();
+
+      for (guint i = 0; i < exempted_count; i++)
+      {
+        result = g_slist_prepend (result, short_list->data);
+
+        short_list = g_slist_next (short_list);
+      }
+    }
+
+    {
+      Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
+      GSList              *current = result;
+
+      for (guint i = 1;  current != NULL; i++)
+      {
+        Player *player = (Player *) current->data;
+
+        player->SetAttributeValue (attr_id,
+                                   i);
+        current = g_slist_next (current);
+      }
+
+      attr_id->Release ();
+    }
+
+    return result;
   }
+
 
   // --------------------------------------------------------------------------------
   void Barrage::Save (xmlTextWriter *xml_writer)
@@ -395,6 +478,15 @@ namespace Pool
     }
     g_free (title);
     gtk_widget_hide (_print_dialog);
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_barrage_classification_toggletoolbutton_toggled (GtkToggleToolButton *widget,
+                                                                                      Object              *owner)
+  {
+    Barrage *b = dynamic_cast <Barrage *> (owner);
+
+    b->ToggleClassification (gtk_toggle_tool_button_get_active (widget));
   }
 
   // --------------------------------------------------------------------------------

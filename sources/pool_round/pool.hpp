@@ -103,6 +103,8 @@ namespace Pool
 
       GdkPixbuf *GetStatusPixbuf ();
 
+      GSList *GetCurrentClassification ();
+
       static gint ComparePlayer (Player   *A,
                                  Player   *B,
                                  Object   *data_owner,
