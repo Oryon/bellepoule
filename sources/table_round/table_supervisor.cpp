@@ -136,13 +136,13 @@ namespace Table
                            this);
 
       filter->ShowAttribute ("rank");
+      filter->ShowAttribute ("status");
 #ifdef DEBUG
       filter->ShowAttribute ("previous_stage_rank");
 #endif
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("club");
-      filter->ShowAttribute ("status");
 
       SetClassificationFilter (filter);
       filter->Release ();

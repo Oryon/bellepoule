@@ -1183,24 +1183,30 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {
+    Stage *stage  = (Stage *) g_list_nth_data (_stage_list, _current_stage);
+    guint  rights = stage->GetRights ();
+
+    if (   (rights & Stage::EDITABLE)
+        && (rights & ~Stage::REMOVABLE)) // Barrage
     {
-      Stage  *stage  = (Stage *) g_list_nth_data (_stage_list, _current_stage);
+      RemoveStage (stage);
+    }
+    else
+    {
       Module *module = (Module *) dynamic_cast <Module *> (stage);
 
       stage->Wipe ();
       module->UnPlug ();
 
       RemoveFromNotebook (stage);
-    }
 
-    {
-      Stage *stage;
+      {
+        SetCurrentStage (_current_stage-1);
 
-      SetCurrentStage (_current_stage-1);
-
-      stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-      stage->UnLock ();
-      DisplayLocks ();
+        stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
+        stage->UnLock ();
+        DisplayLocks ();
+      }
     }
 
     MakeDirty ();
@@ -1225,6 +1231,27 @@ void Schedule::on_next_stage_toolbutton_clicked ()
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage);
   stage->Lock ();
   DisplayLocks ();
+
+  if (stage->GetQuotaExceedance ())
+  {
+    GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
+                                                            GTK_DIALOG_MODAL,
+                                                            GTK_MESSAGE_QUESTION,
+                                                            GTK_BUTTONS_YES_NO,
+                                                            gettext ("<b><big>Because of ties, quota is exceeded.\nDo you want to add a barrage round?</big></b>"));
+
+    gtk_window_set_title (GTK_WINDOW (dialog),
+                          gettext ("Barrage"));
+
+    if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_YES)
+    {
+      Stage *barrage = CreateStage ("Barrage");
+
+      AddStage (barrage,
+                stage);
+    }
+    gtk_widget_destroy (dialog);
+  }
 
   stage = (Stage *) g_list_nth_data (_stage_list, _current_stage+1);
   PlugStage (stage);

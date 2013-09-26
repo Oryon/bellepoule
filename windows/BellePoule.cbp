@@ -125,6 +125,8 @@
 		<Unit filename="..\sources\network\http_server.hpp" />
 		<Unit filename="..\sources\network\uploader.cpp" />
 		<Unit filename="..\sources\network\uploader.hpp" />
+		<Unit filename="..\sources\people_management\barrage.cpp" />
+		<Unit filename="..\sources\people_management\barrage.hpp" />
 		<Unit filename="..\sources\people_management\tally_counter.cpp" />
 		<Unit filename="..\sources\people_management\tally_counter.hpp" />
 		<Unit filename="..\sources\people_management\checkin.cpp" />
@@ -164,8 +166,6 @@
 		<Unit filename="..\sources\pool_round\smart_swapper.cpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper.hpp" />
 		<Unit filename="..\sources\pool_round\swapper.hpp" />
-		<Unit filename="..\sources\pool_round\barrage.cpp" />
-		<Unit filename="..\sources\pool_round\barrage.hpp" />
 		<Unit filename="..\sources\resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>

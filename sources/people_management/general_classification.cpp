@@ -83,8 +83,7 @@ namespace People
   {
     RegisterStageClass (gettext (_class_name),
                         _xml_class_name,
-                        CreateInstance,
-                        0);
+                        CreateInstance);
   }
 
   // --------------------------------------------------------------------------------

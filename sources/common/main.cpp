@@ -32,6 +32,7 @@
 
 #include "util/attribute.hpp"
 #include "util/glade.hpp"
+#include "people_management/barrage.hpp"
 #include "people_management/checkin_supervisor.hpp"
 #include "people_management/general_classification.hpp"
 #include "people_management/splitting.hpp"
@@ -40,7 +41,6 @@
 #include "people_management/team.hpp"
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
-#include "pool_round/barrage.hpp"
 #include "table_round/table_supervisor.hpp"
 #include "tournament.hpp"
 #include "contest.hpp"
@@ -251,8 +251,8 @@ int main (int argc, char **argv)
       Pool::Allocator::Declare               ();
       Pool::Supervisor::Declare              ();
       Table::Supervisor::Declare             ();
+      People::Barrage::Declare               ();
       People::GeneralClassification::Declare ();
-      Pool::Barrage::Declare                 ();
       People::Splitting::Declare             ();
     }
 
@@ -339,16 +339,18 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_STRING, "global_status", "Statut", gettext ("global status"));
     desc->_scope  = AttributeDesc::GLOBAL;
     desc->_rights = AttributeDesc::PRIVATE;
+    desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValues ("Q", gettext ("Qualified"),     "resources/glade/normal.png",
-                             "N", gettext ("Not qualified"), "resources/glade/normal.png",
+                             "N", gettext ("Not qualified"), "resources/glade/exit.png",
                              "A", gettext ("Withdrawal"),    "resources/glade/ambulance.png",
                              "E", gettext ("Excluded"),      "resources/glade/black_card.png",
                              "F", gettext ("Forfeit"),       "resources/glade/normal.png", NULL);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "status", "Statut", gettext ("status"));
     desc->_scope = AttributeDesc::LOCAL;
+    desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValues ("Q", gettext ("Qualified"),     "resources/glade/normal.png",
-                             "N", gettext ("Not qualified"), "resources/glade/normal.png",
+                             "N", gettext ("Not qualified"), "resources/glade/exit.png",
                              "A", gettext ("Withdrawal"),    "resources/glade/ambulance.png",
                              "E", gettext ("Excluded"),      "resources/glade/black_card.png",
                              "F", gettext ("Forfeit"),       "resources/glade/normal.png", NULL);

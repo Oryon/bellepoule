@@ -63,7 +63,7 @@ class Stage : public virtual Object
       const gchar *_name;
       const gchar *_xml_name;
       Creator      _creator;
-      Rights       _rights;
+      guint        _rights;
     };
 
   public:
@@ -93,7 +93,7 @@ class Stage : public virtual Object
 
     void SetRandSeed (guint32 rand_seed);
 
-    Rights GetRights ();
+    guint GetRights ();
 
     gboolean Locked ();
 
@@ -113,7 +113,7 @@ class Stage : public virtual Object
 
     void RetrieveAttendees ();
 
-    GSList *GetBarrageList ();
+    guint GetQuotaExceedance ();
 
     Player *GetFencerFromRef (guint ref);
 
@@ -176,14 +176,12 @@ class Stage : public virtual Object
 
     static Stage *CreateInstance (const gchar *name);
 
-  public:
-    Data      *_nb_qualified;
-
   protected:
     Attendees *_attendees;
     Stage     *_input_provider;
     Contest   *_contest;
     Data      *_max_score;
+    Data      *_nb_qualified;
 
     Stage (StageClass *stage_class);
 
@@ -218,6 +216,8 @@ class Stage : public virtual Object
     gboolean            _locked;
     StageClass         *_stage_class;
     GSList             *_result;
+    GSList             *_output_short_list;
+    guint               _quota_exceedance;
     Classification     *_classification;
     GSList             *_locked_on_classification;
     SensitivityTrigger  _sensitivity_trigger;
@@ -235,7 +235,7 @@ class Stage : public virtual Object
 
     void UpdateClassification (GSList *result);
 
-    virtual GSList *GetOutputShortlist ();
+    virtual void SetOutputShortlist ();
 
     Object *GetPlayerDataOwner ();
 

@@ -135,6 +135,7 @@ namespace Pool
       filter = new Filter (attr_list);
 
       filter->ShowAttribute ("rank");
+      filter->ShowAttribute ("status");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("club");
@@ -142,7 +143,6 @@ namespace Pool
       filter->ShowAttribute ("victories_ratio");
       filter->ShowAttribute ("indice");
       filter->ShowAttribute ("HS");
-      filter->ShowAttribute ("status");
 
       SetClassificationFilter (filter);
       filter->Release ();
