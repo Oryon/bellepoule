@@ -162,6 +162,8 @@ class Stage : public virtual Object
     virtual gboolean OnHttpPost (const gchar **url,
                                  const gchar *data);
 
+    void OnFilterClicked (const gchar *classification_toggle_button);
+
   public:
     static void RegisterStageClass (const gchar *name,
                                     const gchar *xml_name,

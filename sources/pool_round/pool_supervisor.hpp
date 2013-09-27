@@ -39,8 +39,6 @@ namespace Pool
 
       void OnPoolSelected (gint index);
 
-      void OnFilterClicked ();
-
       void OnStuffClicked ();
 
       void OnToggleSingleClassification (gboolean single_selected);

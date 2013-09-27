@@ -30,6 +30,8 @@ namespace People
     PlayersList ("barrage.glade",
                  SORTABLE)
   {
+    _ties_count = 0;
+
     {
       GSList *attr_list;
       Filter *filter;
@@ -41,6 +43,7 @@ namespace People
                                           "HS",
                                           "attending",
                                           "availability",
+                                          "exported",
                                           "final_rank",
                                           "global_status",
                                           "indice",
@@ -56,7 +59,7 @@ namespace People
       filter = new Filter (attr_list,
                            this);
 
-      filter->ShowAttribute ("status");
+      filter->ShowAttribute ("promoted");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("birth_date");
@@ -67,6 +70,48 @@ namespace People
       SetFilter (filter);
       filter->Release ();
     }
+
+    {
+      GSList *attr_list;
+      Filter *filter;
+
+      AttributeDesc::CreateExcludingList (&attr_list,
+#ifndef DEBUG
+                                          "ref",
+#endif
+                                          "HS",
+                                          "attending",
+                                          "availability",
+                                          "exported",
+                                          "final_rank",
+                                          "global_status",
+                                          "indice",
+                                          "level",
+                                          "participation_rate",
+                                          "pool_nr",
+                                          "promoted",
+                                          "start_rank",
+                                          "team",
+                                          "victories_ratio",
+                                          NULL);
+      filter = new Filter (attr_list,
+                           this);
+
+      filter->ShowAttribute ("rank");
+      filter->ShowAttribute ("status");
+#ifdef DEBUG
+      filter->ShowAttribute ("previous_stage_rank");
+#endif
+      filter->ShowAttribute ("name");
+      filter->ShowAttribute ("first_name");
+      filter->ShowAttribute ("club");
+
+      SetClassificationFilter (filter);
+      filter->Release ();
+    }
+
+    SetAttributeRight ("promoted",
+                       TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -93,12 +138,15 @@ namespace People
   void Barrage::Display ()
   {
     OnAttrListUpdated ();
-    ToggleClassification (FALSE);
   }
 
   // --------------------------------------------------------------------------------
   void Barrage::OnPlugged ()
   {
+    Stage *previous_stage = GetPreviousStage ();
+
+    _ties_count = previous_stage->GetQuotaExceedance ();
+
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("barrage_classification_toggletoolbutton")),
                                        FALSE);
   }
@@ -106,44 +154,58 @@ namespace People
   // --------------------------------------------------------------------------------
   GSList *Barrage::GetCurrentClassification ()
   {
-    GSList *result = NULL;
-
-#if 0
-    if (_pool)
-    {
-      GSList *short_list     = _attendees->GetShortList ();
-      guint   exempted_count = g_slist_length (short_list) - _pool->GetNbPlayers ();
-
-      result = _pool->GetCurrentClassification ();
-
-      for (guint i = 0; i < exempted_count; i++)
-      {
-        result = g_slist_prepend (result, short_list->data);
-
-        short_list = g_slist_next (short_list);
-      }
-    }
-#endif
+    Player::AttributeId  rank_attr_id ("rank", GetDataOwner ());
+    guint                rank         = 1;
+    GSList              *result       = NULL;
 
     {
-      Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
-      GSList              *current = result;
+      guint   short_list_length = g_slist_length (_attendees->GetShortList ());
+      GSList *current           = _attendees->GetShortList ();
 
-      for (guint i = 1;  current != NULL; i++)
+      for (guint i = 0; i < short_list_length - _ties_count; i++)
       {
         Player *player = (Player *) current->data;
 
-        player->SetAttributeValue (attr_id,
-                                   i);
+        player->SetAttributeValue (&rank_attr_id,
+                                   rank);
+        rank++;
+        result = g_slist_append (result,
+                                 player);
+
         current = g_slist_next (current);
       }
+    }
 
-      attr_id->Release ();
+    {
+      Player::AttributeId promoted_attr_id ("promoted", GetDataOwner ());
+
+      promoted_attr_id.MakeRandomReady (_rand_seed);
+
+      _player_list = g_slist_sort_with_data (_player_list,
+                                             (GCompareDataFunc) Player::Compare,
+                                             &promoted_attr_id);
+      _player_list = g_slist_reverse (_player_list);
+    }
+
+    {
+      GSList *current = _player_list;
+
+      while (current != NULL)
+      {
+        Player *player = (Player *) current->data;
+
+        player->SetAttributeValue (&rank_attr_id,
+                                   rank);
+        rank++;
+        result = g_slist_append (result,
+                                 player);
+
+        current = g_slist_next (current);
+      }
     }
 
     return result;
   }
-
 
   // --------------------------------------------------------------------------------
   void Barrage::Save (xmlTextWriter *xml_writer)
@@ -224,16 +286,44 @@ namespace People
   // --------------------------------------------------------------------------------
   void Barrage::Garnish ()
   {
-    Stage *previous_stage    = GetPreviousStage ();
-    guint  short_list_length = g_slist_length (_attendees->GetShortList ());
-    GSList *current;
+    Player::AttributeId *promoted_attr_id  = new Player::AttributeId ("promoted", GetDataOwner ());
+    guint                short_list_length = g_slist_length (_attendees->GetShortList ());
+    GSList              *current;
 
     current = g_slist_nth (_attendees->GetShortList (),
-                           short_list_length - previous_stage->GetQuotaExceedance ());
+                           short_list_length - _ties_count);
     while (current)
     {
-      Add ((Player *) current->data);
+      Player *player = (Player *) current->data;
+
+      player->SetChangeCbk ("promoted",
+                            (Player::OnChange) OnAttrPromotedChanged,
+                            this);
+      player->SetAttributeValue (promoted_attr_id,
+                                 (guint) 1);
+      Add (player);
+
       current = g_slist_next (current);
+    }
+
+    promoted_attr_id->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Barrage::OnAttrPromotedChanged (Player    *player,
+                                       Attribute *attr,
+                                       Barrage   *barrage,
+                                       guint      step)
+  {
+    Player::AttributeId status_attr_id ("status", barrage->GetDataOwner ());
+
+    if (attr->GetUIntValue () == 0)
+    {
+      player->SetAttributeValue (&status_attr_id, "N");
+    }
+    else
+    {
+      player->SetAttributeValue (&status_attr_id, "Q");
     }
   }
 
@@ -252,7 +342,7 @@ namespace People
   {
     Barrage *b = dynamic_cast <Barrage *> (owner);
 
-    b->SelectAttributes ();
+    b->OnFilterClicked ("barrage_classification_toggletoolbutton");
   }
 
   // --------------------------------------------------------------------------------

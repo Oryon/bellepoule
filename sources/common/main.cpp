@@ -383,6 +383,11 @@ int main (int argc, char **argv)
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;
 
+      desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "promoted", "promoted", gettext ("promoted"));
+      desc->_persistency   = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope         = AttributeDesc::LOCAL;
+      desc->_favorite_look = AttributeDesc::GRAPHICAL;
+
       desc = AttributeDesc::Declare (G_TYPE_STRING, "availability", "Disponibilite", gettext ("availability"));
       desc->_persistency    = AttributeDesc::NOT_PERSISTENT;
       desc->_rights         = AttributeDesc::PRIVATE;

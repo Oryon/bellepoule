@@ -1183,11 +1183,10 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {
-    Stage *stage  = (Stage *) g_list_nth_data (_stage_list, _current_stage);
-    guint  rights = stage->GetRights ();
+    Stage             *stage       = (Stage *) g_list_nth_data (_stage_list, _current_stage);
+    Stage::StageClass *stage_class = stage->GetClass ();
 
-    if (   (rights & Stage::EDITABLE)
-        && (rights & ~Stage::REMOVABLE)) // Barrage
+    if (strcmp (stage_class->_xml_name, "Barrage") == 0)
     {
       RemoveStage (stage);
     }

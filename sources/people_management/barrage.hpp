@@ -39,6 +39,8 @@ namespace People
 
       void OnPlugged ();
 
+      void Garnish ();
+
       GSList *GetCurrentClassification ();
 
       void Save (xmlTextWriter *xml_writer);
@@ -46,11 +48,16 @@ namespace People
       void Load (xmlNode *xml_node);
 
     private:
+      guint _ties_count;
+
       static Stage *CreateInstance (StageClass *stage_class);
 
-      virtual ~Barrage ();
+      static void OnAttrPromotedChanged (Player    *player,
+                                         Attribute *attr,
+                                         Barrage   *barrage,
+                                         guint      step);
 
-      void Garnish ();
+      virtual ~Barrage ();
   };
 }
 

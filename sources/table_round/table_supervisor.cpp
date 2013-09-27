@@ -92,6 +92,7 @@ namespace Table
                                           "level",
                                           "participation_rate",
                                           "pool_nr",
+                                          "promoted",
                                           "rank",
                                           "start_rank",
                                           "status",
@@ -128,6 +129,7 @@ namespace Table
                                           "level",
                                           "participation_rate",
                                           "pool_nr",
+                                          "promoted",
                                           "start_rank",
                                           "team",
                                           "victories_ratio",
@@ -1030,24 +1032,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnFilterClicked ()
-  {
-    if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("table_classification_toggletoolbutton"))))
-    {
-      Classification *classification = GetClassification ();
-
-      if (classification)
-      {
-        classification->SelectAttributes ();
-      }
-    }
-    else
-    {
-      SelectAttributes ();
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void Supervisor::OnZoom (gdouble value)
   {
     if (_displayed_table_set)
@@ -1186,7 +1170,7 @@ namespace Table
   {
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
-    t->OnFilterClicked ();
+    t->OnFilterClicked ("table_classification_toggletoolbutton");
   }
 
   // --------------------------------------------------------------------------------

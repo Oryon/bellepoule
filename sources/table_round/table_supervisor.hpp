@@ -40,7 +40,6 @@ namespace Table
       void OnStuffClicked ();
       void OnInputToggled (GtkWidget *widget);
       void OnDisplayToggled (GtkWidget *widget);
-      void OnFilterClicked ();
       void OnPrint ();
       void OnZoom (gdouble value);
       void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);

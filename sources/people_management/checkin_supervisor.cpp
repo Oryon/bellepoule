@@ -78,6 +78,7 @@ namespace People
                                           "participation_rate",
                                           "pool_nr",
                                           "previous_stage_rank",
+                                          "promoted",
                                           "rank",
                                           "status",
                                           "victories_ratio",

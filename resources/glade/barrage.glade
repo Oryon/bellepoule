@@ -176,14 +176,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSeparatorToolItem" id="toolbutton4">
+              <object class="GtkSeparatorToolItem" id="separatortoolitem1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="homogeneous">True</property>
               </packing>
             </child>
             <child>
@@ -209,7 +208,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="hbox2">
+          <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -236,8 +235,8 @@
             </child>
             <child>
               <object class="GtkViewport" id="classification_hook">
-                <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
                 <property name="resize_mode">queue</property>
                 <property name="shadow_type">none</property>
                 <child>

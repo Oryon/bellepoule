@@ -62,6 +62,7 @@ namespace People
                                           "level",
                                           "participation_rate",
                                           "pool_nr",
+                                          "promoted",
                                           "rank",
                                           "start_rank",
                                           "status",

@@ -79,6 +79,7 @@ namespace Pool
                                           "level",
                                           "participation_rate",
                                           "pool_nr",
+                                          "promoted",
                                           "rank",
                                           "start_rank",
                                           "status",
@@ -129,6 +130,7 @@ namespace Pool
                                           "global_status",
                                           "level",
                                           "participation_rate",
+                                          "promoted",
                                           "start_rank",
                                           "team",
                                           NULL);
@@ -753,24 +755,6 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnFilterClicked ()
-  {
-    if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
-    {
-      Classification *classification = GetClassification ();
-
-      if (classification)
-      {
-        classification->SelectAttributes ();
-      }
-    }
-    else
-    {
-      SelectAttributes ();
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void Supervisor::OnStuffClicked ()
   {
     for (guint i = 0; i < _allocator->GetNbPools (); i++)
@@ -908,9 +892,9 @@ namespace Pool
   extern "C" G_MODULE_EXPORT void on_pool_filter_toolbutton_clicked (GtkWidget *widget,
                                                                      Object    *owner)
   {
-    Supervisor *p = dynamic_cast <Supervisor *> (owner);
+    Supervisor          *p = dynamic_cast <Supervisor *> (owner);
 
-    p->OnFilterClicked ();
+    p->OnFilterClicked ("pool_classification_toggletoolbutton");
   }
 
   // --------------------------------------------------------------------------------

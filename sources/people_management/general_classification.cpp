@@ -53,6 +53,7 @@ namespace People
                                           "participation_rate",
                                           "pool_nr",
                                           "previous_stage_rank",
+                                          "promoted",
                                           "rank",
                                           "start_rank",
                                           "status",
@@ -165,17 +166,6 @@ namespace People
     SaveConfiguration (xml_writer);
 
     xmlTextWriterEndElement (xml_writer);
-  }
-
-  // --------------------------------------------------------------------------------
-  void GeneralClassification::OnFilterClicked ()
-  {
-    Classification *classification = GetClassification ();
-
-    if (classification)
-    {
-      classification->SelectAttributes ();
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -406,7 +396,7 @@ namespace People
   {
     GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-    g->OnFilterClicked ();
+    g->OnFilterClicked (NULL);
   }
 
   // --------------------------------------------------------------------------------
