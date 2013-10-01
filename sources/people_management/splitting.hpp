@@ -48,7 +48,7 @@ namespace People
 
       void Display ();
 
-      void Wipe ();
+      void Reset ();
 
       GSList *GetCurrentClassification ();
 

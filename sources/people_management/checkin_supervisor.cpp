@@ -751,11 +751,6 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::Wipe ()
-  {
-  }
-
-  // --------------------------------------------------------------------------------
   void CheckinSupervisor::RegisterNewTeam (Team *team)
   {
     gchar *name = team->GetName ();

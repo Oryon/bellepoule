@@ -53,8 +53,6 @@ namespace People
 
       void OnLoadingCompleted ();
 
-      void Wipe ();
-
       void FillInConfig ();
 
       void ApplyConfig ();

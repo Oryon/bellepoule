@@ -1392,7 +1392,7 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::Wipe ()
+  void Allocator::Reset ()
   {
     DeletePools ();
 

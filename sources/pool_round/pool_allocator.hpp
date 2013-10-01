@@ -67,7 +67,7 @@ namespace Pool
       void OnLocked ();
       void OnUnLocked ();
       void OnCanceled ();
-      void Wipe ();
+      void Reset ();
       GSList *GetCurrentClassification ();
       void LoadConfiguration (xmlNode *xml_node);
       void SaveConfiguration (xmlTextWriter *xml_writer);

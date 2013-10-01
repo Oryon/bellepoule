@@ -126,7 +126,7 @@ class Stage : public virtual Object
 
     virtual void SetTeamEvent (gboolean team_event) {};
 
-    virtual void Wipe () {};
+    virtual void Reset ();
 
     virtual void Display () {};
 
@@ -207,6 +207,9 @@ class Stage : public virtual Object
 
     StageView GetStageView (GtkPrintOperation *operation);
 
+    void UpdateClassification (Classification *classification,
+                               GSList         *result);
+
   private:
     static GSList *_stage_base;
 
@@ -234,8 +237,6 @@ class Stage : public virtual Object
     virtual void OnLocked () {};
     virtual void OnUnLocked () {};
     static StageClass *GetClass (const gchar *name);
-
-    void UpdateClassification (GSList *result);
 
     virtual void SetOutputShortlist ();
 

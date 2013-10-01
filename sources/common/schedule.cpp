@@ -585,7 +585,7 @@ void Schedule::RemoveStage (Stage *stage)
         {
           Module *module = (Module *) dynamic_cast <Module *> (stage);
 
-          stage->Wipe ();
+          stage->Reset ();
           module->UnPlug ();
         }
 
@@ -1194,7 +1194,7 @@ void Schedule::on_previous_stage_toolbutton_clicked ()
     {
       Module *module = (Module *) dynamic_cast <Module *> (stage);
 
-      stage->Wipe ();
+      stage->Reset ();
       module->UnPlug ();
 
       RemoveFromNotebook (stage);

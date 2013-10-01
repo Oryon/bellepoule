@@ -41,14 +41,12 @@ namespace Pool
 
       void OnStuffClicked ();
 
-      void OnToggleSingleClassification (gboolean single_selected);
-
     private:
       void Display ();
+      void Reset ();
       void Garnish ();
       void OnLocked ();
       void OnUnLocked ();
-      void Wipe ();
       void RetrievePools ();
       void Manage (Pool *pool);
 
@@ -67,12 +65,13 @@ namespace Pool
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
 
-      Object       *_single_owner;
-      GtkListStore *_pool_liststore;
-      Allocator    *_allocator;
-      Pool         *_displayed_pool;
-      GtkWidget    *_print_dialog;
-      gboolean      _print_all_pool;
+      Object         *_current_round_owner;
+      GtkListStore   *_pool_liststore;
+      Allocator      *_allocator;
+      Pool           *_displayed_pool;
+      GtkWidget      *_print_dialog;
+      gboolean        _print_all_pool;
+      Classification *_current_round_classification;
 
       virtual ~Supervisor ();
 
@@ -110,18 +109,13 @@ namespace Pool
       static void OnPoolStatusUpdated (Pool       *pool,
                                        Supervisor *ps);
 
-      static gint CompareClassification (GtkTreeModel *model,
-                                         GtkTreeIter  *a,
-                                         GtkTreeIter  *b,
-                                         Supervisor   *pool_supervisor);
+      static gint CompareCurrentRoundClassification (Player     *A,
+                                                     Player     *B,
+                                                     Supervisor *pool_supervisor);
 
-      static gint CompareSingleClassification (Player     *A,
-                                               Player     *B,
-                                               Supervisor *pool_supervisor);
-
-      static gint CompareCombinedClassification (Player     *A,
-                                                 Player     *B,
-                                                 Supervisor *pool_supervisor);
+      static gint CompareCombinedRoundsClassification (Player     *A,
+                                                       Player     *B,
+                                                       Supervisor *pool_supervisor);
   };
 }
 

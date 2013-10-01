@@ -55,7 +55,7 @@ namespace Table
       void OnUnLocked ();
       void OnPlugged ();
       void OnUnPlugged ();
-      void Wipe ();
+      void Reset ();
 
     private:
       static const guint NONE         = 0;
