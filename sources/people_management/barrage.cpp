@@ -154,7 +154,7 @@ namespace People
   // --------------------------------------------------------------------------------
   GSList *Barrage::GetCurrentClassification ()
   {
-    Player::AttributeId  rank_attr_id ("rank", GetDataOwner ());
+    Player::AttributeId  rank_attr_id ("rank", this);
     guint                rank         = 1;
     GSList              *result       = NULL;
 
@@ -177,7 +177,7 @@ namespace People
     }
 
     {
-      Player::AttributeId promoted_attr_id ("promoted", GetDataOwner ());
+      Player::AttributeId promoted_attr_id ("promoted", this);
 
       promoted_attr_id.MakeRandomReady (_rand_seed);
 
@@ -286,7 +286,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void Barrage::Garnish ()
   {
-    Player::AttributeId *promoted_attr_id  = new Player::AttributeId ("promoted", GetDataOwner ());
+    Player::AttributeId *promoted_attr_id  = new Player::AttributeId ("promoted", this);
     guint                short_list_length = g_slist_length (_attendees->GetShortList ());
     GSList              *current;
 
@@ -315,14 +315,16 @@ namespace People
                                        Barrage   *barrage,
                                        guint      step)
   {
-    Player::AttributeId status_attr_id ("status", barrage->GetDataOwner ());
+    Player::AttributeId status_attr_id ("status", barrage);
 
     if (attr->GetUIntValue () == 0)
     {
+      printf ("%s = N =>> %p\n", player->GetName (), barrage);
       player->SetAttributeValue (&status_attr_id, "N");
     }
     else
     {
+      printf ("%s = Q =>> %p\n", player->GetName (), barrage);
       player->SetAttributeValue (&status_attr_id, "Q");
     }
   }
