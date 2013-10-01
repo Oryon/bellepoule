@@ -40,7 +40,6 @@ namespace Table
       void OnStuffClicked ();
       void OnInputToggled (GtkWidget *widget);
       void OnDisplayToggled (GtkWidget *widget);
-      void OnFilterClicked ();
       void OnPrint ();
       void OnZoom (gdouble value);
       void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
@@ -56,7 +55,7 @@ namespace Table
       void OnUnLocked ();
       void OnPlugged ();
       void OnUnPlugged ();
-      void Wipe ();
+      void Reset ();
 
     private:
       static const guint NONE         = 0;

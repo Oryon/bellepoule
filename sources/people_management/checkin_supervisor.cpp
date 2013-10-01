@@ -78,6 +78,7 @@ namespace People
                                           "participation_rate",
                                           "pool_nr",
                                           "previous_stage_rank",
+                                          "promoted",
                                           "rank",
                                           "status",
                                           "victories_ratio",
@@ -747,11 +748,6 @@ namespace People
     EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
     _form->UnLock ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void CheckinSupervisor::Wipe ()
-  {
   }
 
   // --------------------------------------------------------------------------------

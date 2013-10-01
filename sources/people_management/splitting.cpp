@@ -62,6 +62,7 @@ namespace People
                                           "level",
                                           "participation_rate",
                                           "pool_nr",
+                                          "promoted",
                                           "rank",
                                           "start_rank",
                                           "status",
@@ -92,7 +93,7 @@ namespace People
   // --------------------------------------------------------------------------------
   Splitting::~Splitting ()
   {
-    Wipe ();
+    Reset ();
   }
 
   // --------------------------------------------------------------------------------
@@ -141,8 +142,9 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Splitting::Wipe ()
+  void Splitting::Reset ()
   {
+    Stage::Reset ();
     PlayersList::Wipe ();
   }
 

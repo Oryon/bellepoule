@@ -19,7 +19,7 @@
 
 #include "barrage.hpp"
 
-namespace Pool
+namespace People
 {
   const gchar *Barrage::_class_name     = N_ ("Barrage");
   const gchar *Barrage::_xml_class_name = "Barrage";
@@ -27,40 +27,11 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Barrage::Barrage (StageClass *stage_class)
     : Stage (stage_class),
-    Module ("barrage.glade")
+    PlayersList ("barrage.glade",
+                 SORTABLE)
   {
-    _pool = NULL;
+    _ties_count = 0;
 
-    _max_score = new Data ("ScoreMax",
-                           5);
-
-    // Sensitive widgets
-    {
-      AddSensitiveWidget (_glade->GetWidget ("max_score_entry"));
-      AddSensitiveWidget (_glade->GetWidget ("stuff_toolbutton"));
-
-      LockOnClassification (_glade->GetWidget ("stuff_toolbutton"));
-    }
-
-    {
-      GtkWidget *content_area;
-
-      _print_dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                          GTK_MESSAGE_QUESTION,
-                                                          GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>Print...</big></b>"));
-
-      gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                            gettext ("Barrage printing"));
-
-      content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
-
-      gtk_widget_reparent (_glade->GetWidget ("print_dialog-vbox"),
-                           content_area);
-    }
-
-    // Filter
     {
       GSList *attr_list;
       Filter *filter;
@@ -88,14 +59,18 @@ namespace Pool
       filter = new Filter (attr_list,
                            this);
 
+      filter->ShowAttribute ("promoted");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
+      filter->ShowAttribute ("birth_date");
+      filter->ShowAttribute ("gender");
+      filter->ShowAttribute ("club");
+      filter->ShowAttribute ("country");
 
       SetFilter (filter);
       filter->Release ();
     }
 
-    // Classification filter
     {
       GSList *attr_list;
       Filter *filter;
@@ -104,40 +79,44 @@ namespace Pool
 #ifndef DEBUG
                                           "ref",
 #endif
+                                          "HS",
                                           "attending",
                                           "availability",
                                           "exported",
                                           "final_rank",
                                           "global_status",
+                                          "indice",
                                           "level",
                                           "participation_rate",
+                                          "pool_nr",
+                                          "promoted",
                                           "start_rank",
                                           "team",
+                                          "victories_ratio",
                                           NULL);
-      filter = new Filter (attr_list);
+      filter = new Filter (attr_list,
+                           this);
 
       filter->ShowAttribute ("rank");
+      filter->ShowAttribute ("status");
+#ifdef DEBUG
+      filter->ShowAttribute ("previous_stage_rank");
+#endif
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("club");
-      filter->ShowAttribute ("pool_nr");
-      filter->ShowAttribute ("victories_ratio");
-      filter->ShowAttribute ("indice");
-      filter->ShowAttribute ("HS");
-      filter->ShowAttribute ("status");
 
       SetClassificationFilter (filter);
       filter->Release ();
     }
+
+    SetAttributeRight ("promoted",
+                       TRUE);
   }
 
   // --------------------------------------------------------------------------------
   Barrage::~Barrage ()
   {
-    Object::TryToRelease (_pool);
-    Object::TryToRelease (_max_score);
-
-    gtk_widget_destroy (_print_dialog);
   }
 
   // --------------------------------------------------------------------------------
@@ -146,7 +125,7 @@ namespace Pool
     RegisterStageClass (gettext (_class_name),
                         _xml_class_name,
                         CreateInstance,
-                        EDITABLE|REMOVABLE);
+                        EDITABLE);
   }
 
   // --------------------------------------------------------------------------------
@@ -156,43 +135,9 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Barrage::OnLocked ()
-  {
-  }
-
-  // --------------------------------------------------------------------------------
-  void Barrage::OnUnLocked ()
-  {
-  }
-
-  // --------------------------------------------------------------------------------
   void Barrage::Display ()
   {
-    _pool->SetDataOwner (this,
-                        this,
-                        this);
-
-    _pool->SetFilter (_filter);
-    //_pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
-                         //this);
-
-    Plug (_pool,
-          _glade->GetWidget ("main_hook"));
-
-    ToggleClassification (FALSE);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Barrage::Wipe ()
-  {
-    if (_pool)
-    {
-      _pool->CleanScores ();
-      _pool->Wipe ();
-
-      _pool->UnPlug ();
-      _pool = NULL;
-    }
+    OnAttrListUpdated ();
   }
 
   // --------------------------------------------------------------------------------
@@ -200,54 +145,67 @@ namespace Pool
   {
     Stage *previous_stage = GetPreviousStage ();
 
-    _nb_qualified = previous_stage->_nb_qualified;
-  }
+    _ties_count = previous_stage->GetQuotaExceedance ();
 
-  // --------------------------------------------------------------------------------
-  void Barrage::OnUnPlugged ()
-  {
-    _nb_qualified = NULL;
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("barrage_classification_toggletoolbutton")),
+                                       FALSE);
   }
 
   // --------------------------------------------------------------------------------
   GSList *Barrage::GetCurrentClassification ()
   {
-    GSList *result = NULL;
+    Player::AttributeId  rank_attr_id ("rank", this);
+    guint                rank         = 1;
+    GSList              *result       = NULL;
 
-    if (_pool)
     {
-      GSList *short_list     = _attendees->GetShortList ();
-      guint   exempted_count = g_slist_length (short_list) - _pool->GetNbPlayers ();
+      guint   short_list_length = g_slist_length (_attendees->GetShortList ());
+      GSList *current           = _attendees->GetShortList ();
 
-      result = _pool->GetCurrentClassification ();
-
-      for (guint i = 0; i < exempted_count; i++)
+      for (guint i = 0; i < short_list_length - _ties_count; i++)
       {
-        result = g_slist_prepend (result, short_list->data);
+        Player *player = (Player *) current->data;
 
-        short_list = g_slist_next (short_list);
+        player->SetAttributeValue (&rank_attr_id,
+                                   rank);
+        rank++;
+        result = g_slist_append (result,
+                                 player);
+
+        current = g_slist_next (current);
       }
     }
 
     {
-      Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
-      GSList              *current = result;
+      Player::AttributeId promoted_attr_id ("promoted", this);
 
-      for (guint i = 1;  current != NULL; i++)
+      promoted_attr_id.MakeRandomReady (_rand_seed);
+
+      _player_list = g_slist_sort_with_data (_player_list,
+                                             (GCompareDataFunc) Player::Compare,
+                                             &promoted_attr_id);
+      _player_list = g_slist_reverse (_player_list);
+    }
+
+    {
+      GSList *current = _player_list;
+
+      while (current != NULL)
       {
         Player *player = (Player *) current->data;
 
-        player->SetAttributeValue (attr_id,
-                                   i);
+        player->SetAttributeValue (&rank_attr_id,
+                                   rank);
+        rank++;
+        result = g_slist_append (result,
+                                 player);
+
         current = g_slist_next (current);
       }
-
-      attr_id->Release ();
     }
 
     return result;
   }
-
 
   // --------------------------------------------------------------------------------
   void Barrage::Save (xmlTextWriter *xml_writer)
@@ -258,11 +216,6 @@ namespace Pool
     SaveConfiguration (xml_writer);
     SaveAttendees     (xml_writer);
 
-    if (_pool)
-    {
-      _pool->Save (xml_writer);
-    }
-
     xmlTextWriterEndElement (xml_writer);
   }
 
@@ -271,6 +224,7 @@ namespace Pool
   {
     LoadConfiguration (xml_node);
 
+#if 0
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
@@ -326,158 +280,53 @@ namespace Pool
       }
       Load (n->children);
     }
+#endif
   }
 
   // --------------------------------------------------------------------------------
   void Barrage::Garnish ()
   {
-    _pool = new Pool (_max_score,
-                      1,
-                      _contest->GetWeaponCode (),
-                      GetXmlPlayerTag (),
-                      _rand_seed);
+    Player::AttributeId *promoted_attr_id  = new Player::AttributeId ("promoted", this);
+    guint                short_list_length = g_slist_length (_attendees->GetShortList ());
+    GSList              *current;
 
-    _pool->SetFilter (_filter);
-
-    if (_attendees)
+    current = g_slist_nth (_attendees->GetShortList (),
+                           short_list_length - _ties_count);
+    while (current)
     {
-      GSList *barrage_list = GetBarrageList ();
-      GSList *current      = barrage_list;
+      Player *player = (Player *) current->data;
 
-      while (current)
-      {
-        Player *fencer = (Player *) current->data;
+      player->SetChangeCbk ("promoted",
+                            (Player::OnChange) OnAttrPromotedChanged,
+                            this);
+      player->SetAttributeValue (promoted_attr_id,
+                                 (guint) 1);
+      Add (player);
 
-        _pool->AddFencer (fencer,
-                          this);
-
-        current = g_slist_next (current);
-      }
-      g_slist_free (barrage_list);
-
-      _pool->CreateMatchs (NULL);
+      current = g_slist_next (current);
     }
+
+    promoted_attr_id->Release ();
   }
 
   // --------------------------------------------------------------------------------
-  void Barrage::OnAttrListUpdated ()
+  void Barrage::OnAttrPromotedChanged (Player    *player,
+                                       Attribute *attr,
+                                       Barrage   *barrage,
+                                       guint      step)
   {
-    if (_pool)
-    {
-      _pool->UnPlug ();
-    }
-    Display ();
-  }
+    Player::AttributeId status_attr_id ("status", barrage);
 
-  // --------------------------------------------------------------------------------
-  void Barrage::OnFilterClicked ()
-  {
-    if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("barrage_classification_toggletoolbutton"))))
+    if (attr->GetUIntValue () == 0)
     {
-      Classification *classification = GetClassification ();
-
-      if (classification)
-      {
-        classification->SelectAttributes ();
-      }
+      printf ("%s = N =>> %p\n", player->GetName (), barrage);
+      player->SetAttributeValue (&status_attr_id, "N");
     }
     else
     {
-      SelectAttributes ();
+      printf ("%s = Q =>> %p\n", player->GetName (), barrage);
+      player->SetAttributeValue (&status_attr_id, "Q");
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Barrage::OnStuffClicked ()
-  {
-    if (_pool)
-    {
-      _pool->CleanScores ();
-      _pool->Stuff ();
-    }
-
-    OnAttrListUpdated ();
-  }
-
-  // --------------------------------------------------------------------------------
-  guint Barrage::PreparePrint (GtkPrintOperation *operation,
-                               GtkPrintContext   *context)
-  {
-    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
-    {
-      return 0;
-    }
-
-    {
-      GtkWidget *w = _glade->GetWidget ("for_referees_radiobutton");
-
-      if (   (GetStageView (operation) == STAGE_VIEW_UNDEFINED)
-          && gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
-      {
-        g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) TRUE);
-      }
-      else
-      {
-        g_object_set_data (G_OBJECT (operation), "print_for_referees", (void *) FALSE);
-      }
-    }
-
-    if (_pool)
-    {
-      _pool->Wipe ();
-    }
-
-    return 1;
-  }
-
-  // --------------------------------------------------------------------------------
-  void Barrage::DrawPage (GtkPrintOperation *operation,
-                          GtkPrintContext   *context,
-                          gint               page_nr)
-  {
-    DrawContainerPage (operation,
-                       context,
-                       page_nr);
-
-    if (   (GetStageView (operation) == STAGE_VIEW_RESULT)
-        || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("barrage_classification_toggletoolbutton"))) == FALSE))
-    {
-      _pool->DrawPage (operation,
-                       context,
-                       page_nr);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void Barrage::OnEndPrint (GtkPrintOperation *operation,
-                            GtkPrintContext   *context)
-  {
-    OnAttrListUpdated ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Barrage::OnPrintPoolToolbuttonClicked ()
-  {
-    gchar *title          = NULL;
-    Stage *previous_stage = GetPreviousStage ();
-
-    if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("barrage_classification_toggletoolbutton"))))
-    {
-      Classification *classification = GetClassification ();
-
-      if (classification)
-      {
-        title = g_strdup_printf ("%s - %s", gettext ("Barrage classification"), previous_stage->GetName ());
-        classification->Print (title);
-      }
-    }
-    else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
-    {
-      title = g_strdup_printf ("%s - %s", gettext ("Barrage"), previous_stage->GetName ());
-      Print (title);
-    }
-    g_free (title);
-    gtk_widget_hide (_print_dialog);
   }
 
   // --------------------------------------------------------------------------------
@@ -493,18 +342,9 @@ namespace Pool
   extern "C" G_MODULE_EXPORT void on_barrage_filter_toolbutton_clicked (GtkWidget *widget,
                                                                         Object    *owner)
   {
-    Barrage *t = dynamic_cast <Barrage *> (owner);
-
-    t->OnFilterClicked ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_barrage_stuff_toolbutton_clicked (GtkWidget *widget,
-                                                                       Object    *owner)
-  {
     Barrage *b = dynamic_cast <Barrage *> (owner);
 
-    b->OnStuffClicked ();
+    b->OnFilterClicked ("barrage_classification_toggletoolbutton");
   }
 
   // --------------------------------------------------------------------------------
@@ -513,6 +353,6 @@ namespace Pool
   {
     Barrage *b = dynamic_cast <Barrage *> (owner);
 
-    b->OnPrintPoolToolbuttonClicked ();
+    b->Print (gettext ("Barrage"));
   }
 }

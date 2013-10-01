@@ -19,37 +19,27 @@
 
 #include "util/module.hpp"
 #include "common/stage.hpp"
-#include "pool_round/pool.hpp"
+#include "players_list.hpp"
 
-namespace Pool
+namespace People
 {
-  class Barrage : public virtual Stage, public Module
+  class Barrage : public virtual Stage, public PlayersList
   {
     public:
       static void Declare ();
 
       Barrage (StageClass *stage_class);
 
-      void OnFilterClicked ();
-
-      void OnStuffClicked ();
-
-      void OnPrintPoolToolbuttonClicked ();
-
     public:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
 
     private:
-      void OnLocked ();
-
-      void OnUnLocked ();
-
       void Display ();
 
-      void OnAttrListUpdated ();
+      void OnPlugged ();
 
-      void Wipe ();
+      void Garnish ();
 
       GSList *GetCurrentClassification ();
 
@@ -57,30 +47,17 @@ namespace Pool
 
       void Load (xmlNode *xml_node);
 
-      void Garnish ();
-
-      guint PreparePrint (GtkPrintOperation *operation,
-                          GtkPrintContext   *context);
-
-      void DrawPage (GtkPrintOperation *operation,
-                     GtkPrintContext   *context,
-                     gint               page_nr);
-
-      void OnEndPrint (GtkPrintOperation *operation,
-                       GtkPrintContext   *context);
-
     private:
+      guint _ties_count;
+
       static Stage *CreateInstance (StageClass *stage_class);
 
+      static void OnAttrPromotedChanged (Player    *player,
+                                         Attribute *attr,
+                                         Barrage   *barrage,
+                                         guint      step);
+
       virtual ~Barrage ();
-
-      void OnPlugged ();
-
-      void OnUnPlugged ();
-
-    private:
-      Pool      *_pool;
-      GtkWidget *_print_dialog;
   };
 }
 

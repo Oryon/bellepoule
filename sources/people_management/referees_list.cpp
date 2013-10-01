@@ -55,6 +55,7 @@ namespace People
                                           "indice",
                                           "pool_nr",
                                           "previous_stage_rank",
+                                          "promoted",
                                           "rank",
                                           "ranking",
                                           "start_rank",

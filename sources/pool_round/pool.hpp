@@ -64,7 +64,7 @@ namespace Pool
       void  DeleteMatchs  ();
       void  Lock          ();
       void  UnLock        ();
-      void  SetDataOwner  (Object *single_owner,
+      void  SetDataOwner  (Object *current_round_owner,
                            Object *combined_owner,
                            Object *combined_source_owner);
       void  SetStatusCbk  (StatusCbk  cbk,
@@ -103,18 +103,15 @@ namespace Pool
 
       GdkPixbuf *GetStatusPixbuf ();
 
-      GSList *GetCurrentClassification ();
-
       static gint ComparePlayer (Player   *A,
                                  Player   *B,
                                  Object   *data_owner,
                                  guint32   rand_seed,
-                                 Object   *main_data_owner,
                                  guint     comparison_policy);
 
     private:
-      Object         *_single_owner;
-      Object         *_combined_source_owner;
+      Object         *_combined_rounds_owner;
+      Object         *_previous_combined_round;
       Data           *_max_score;
       guint           _number;
       GSList         *_fencer_list;
@@ -186,6 +183,10 @@ namespace Pool
                              const gchar       *name,
                              guint              value,
                              CombinedOperation  operation);
+
+      void RefreshAttribute (Player            *player,
+                             const gchar       *name,
+                             gchar             *value);
 
       static gint CompareMatch (Match *a,
                                 Match *b,

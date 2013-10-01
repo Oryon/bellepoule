@@ -107,6 +107,7 @@ namespace Pool
                                           "level",
                                           "participation_rate",
                                           "pool_nr",
+                                          "promoted",
                                           "rank",
                                           "start_rank",
                                           "status",
@@ -182,6 +183,7 @@ namespace Pool
                                             "indice",
                                             "level",
                                             "participation_rate",
+                                            "promoted",
                                             "rank",
                                             "start_rank",
                                             "status",
@@ -1390,7 +1392,7 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::Wipe ()
+  void Allocator::Reset ()
   {
     DeletePools ();
 

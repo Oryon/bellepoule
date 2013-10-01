@@ -42,8 +42,6 @@ namespace People
 
       GeneralClassification (StageClass *stage_class);
 
-      void OnFilterClicked ();
-
       void OnPrintPoolToolbuttonClicked ();
 
       void OnExportToolbuttonClicked (ExportType export_type);

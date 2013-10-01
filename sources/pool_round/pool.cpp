@@ -106,12 +106,9 @@ namespace Pool
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
-      Player *player;
-      GSList *current;
+      Player *player  = (Player *) g_slist_nth_data (_fencer_list, i);
+      GSList *current = _display_data;
 
-      player  = (Player *) g_slist_nth_data (_fencer_list, i);
-
-      current = _display_data;
       while (current)
       {
         player->RemoveData (GetDataOwner (),
@@ -184,29 +181,29 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::SetDataOwner (Object *single_owner,
-                           Object *combined_owner,
-                           Object *combined_source_owner)
+  void Pool::SetDataOwner (Object *current_round_owner,
+                           Object *combined_rounds_owner,
+                           Object *previous_combined_round)
   {
-    Module::SetDataOwner (combined_owner);
+    Module::SetDataOwner (current_round_owner);
 
-    _single_owner          = single_owner;
-    _combined_source_owner = combined_source_owner;
+    _combined_rounds_owner   = combined_rounds_owner;
+    _previous_combined_round = previous_combined_round; // To cumulate the current pool round's results with the previous
 
     _nb_drop = 0;
 
     {
-      Player::AttributeId  single_attr_id  ("pool_nr", _single_owner);
-      Player::AttributeId  combined_attr_id ("pool_nr", GetDataOwner ());
+      Player::AttributeId  current_round_attr_id   ("pool_nr", GetDataOwner ());
+      Player::AttributeId  combined_rounds_attr_id ("pool_nr", _combined_rounds_owner);
       GSList              *current = _fencer_list;
 
       while (current)
       {
         Player *player = (Player *) current->data;
 
-        player->SetAttributeValue (&single_attr_id,
+        player->SetAttributeValue (&current_round_attr_id,
                                    _number);
-        player->SetAttributeValue (&combined_attr_id,
+        player->SetAttributeValue (&combined_rounds_attr_id,
                                    _number);
         current = g_slist_next (current);
       }
@@ -335,15 +332,11 @@ namespace Pool
     while (current)
     {
       Player::AttributeId  attr_id ("status", from);
-      Attribute           *status_attr;
-      Player              *player;
-      gchar               *status;
+      Player              *player      = (Player *) current->data;
+      Attribute           *status_attr = player->GetAttribute (&attr_id);
+      gchar               *status      = status_attr->GetStrValue ();
 
-      player = (Player *) current->data;
       RestorePlayer (player);
-
-      status_attr = player->GetAttribute (&attr_id);
-      status      = status_attr->GetStrValue ();
 
       if (   (status[0] == 'A')
           || (status[0] == 'F')
@@ -352,6 +345,7 @@ namespace Pool
         DropPlayer (player,
                     status);
       }
+
       current = g_slist_next (current);
     }
 
@@ -1219,9 +1213,8 @@ namespace Pool
   {
     return ComparePlayer (A,
                           B,
-                          pool->_single_owner,
-                          pool->_rand_seed,
                           pool->GetDataOwner (),
+                          pool->_rand_seed,
                           WITH_CALCULUS | WITH_RANDOM);
   }
 
@@ -1230,7 +1223,6 @@ namespace Pool
                             Player   *B,
                             Object   *data_owner,
                             guint32   rand_seed,
-                            Object   *main_data_owner,
                             guint     comparison_policy)
   {
     if (B == NULL)
@@ -1270,7 +1262,6 @@ namespace Pool
       HS_B = B->GetAttribute (&attr_id)->GetUIntValue ();
 
       attr_id._name = (gchar *) "status";
-      attr_id._owner = main_data_owner;
       if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
       {
         gchar *status_A = A->GetAttribute (&attr_id)->GetStrValue ();
@@ -1451,6 +1442,7 @@ namespace Pool
     _is_over   = TRUE;
     _has_error = FALSE;
 
+    // Evaluate attributes (current round & combined rounds)
     for (guint a = 0; a < nb_players; a++)
     {
       Player *player_a;
@@ -1535,10 +1527,11 @@ namespace Pool
                                       (GCompareDataFunc) _ComparePlayer,
                                       (void *) this);
 
+    // Give players a rank for the current pool
     {
-      Player::AttributeId  victories_ratio_id ("victories_ratio", _single_owner);
-      Player::AttributeId  indice_id          ("indice", _single_owner);
-      Player::AttributeId  HS_id              ("HS", _single_owner);
+      Player::AttributeId  victories_ratio_id ("victories_ratio", GetDataOwner ());
+      Player::AttributeId  indice_id          ("indice",          GetDataOwner ());
+      Player::AttributeId  HS_id              ("HS",              GetDataOwner ());
       GSList *current_player  = ranking;
       Player *previous_player = NULL;
       guint   previous_rank   = 0;
@@ -1574,16 +1567,6 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  GSList *Pool::GetCurrentClassification ()
-  {
-    GSList *result = g_slist_copy (_sorted_fencer_list);
-
-    result = g_slist_sort_with_data (result,
-                                     (GCompareDataFunc) _ComparePlayer,
-                                     (void *) this);
-  }
-
-  // --------------------------------------------------------------------------------
   GdkPixbuf *Pool::GetStatusPixbuf ()
   {
     if (_status_pixbuf)
@@ -1600,39 +1583,68 @@ namespace Pool
                                guint              value,
                                CombinedOperation  operation)
   {
-    Player::AttributeId  single_attr_id  (name, _single_owner);
-    Player::AttributeId  combined_attr_id (name, GetDataOwner ());
-
-    player->SetAttributeValue (&single_attr_id,
-                               value);
-
-    if (_combined_source_owner == NULL)
+    // Current round
     {
-      player->SetAttributeValue (&combined_attr_id,
+      Player::AttributeId current_round_attr_id  (name, GetDataOwner ());
+
+      player->SetAttributeValue (&current_round_attr_id,
                                  value);
     }
-    else
-    {
-      Player::AttributeId  source_attr_id (name, _combined_source_owner);
-      Attribute           *source_attr = player->GetAttribute (&source_attr_id);
 
-      if (source_attr)
+    // Combined rounds
+    {
+      Player::AttributeId combined_rounds_attr_id (name, _combined_rounds_owner);
+
+      if (_previous_combined_round == NULL)
       {
-        if (operation == AVERAGE)
-        {
-          player->SetAttributeValue (&combined_attr_id,
-                                     (source_attr->GetUIntValue () + value) / 2);
-        }
-        else
-        {
-          player->SetAttributeValue (&combined_attr_id,
-                                     source_attr->GetUIntValue () + value);
-        }
+        player->SetAttributeValue (&combined_rounds_attr_id,
+                                   value);
       }
       else
       {
-        g_print (RED "source_attr == NULL\n" ESC);
+        Player::AttributeId  source_attr_id (name, _previous_combined_round);
+        Attribute           *source_attr = player->GetAttribute (&source_attr_id);
+
+        if (source_attr)
+        {
+          if (operation == AVERAGE)
+          {
+            player->SetAttributeValue (&combined_rounds_attr_id,
+                                       (source_attr->GetUIntValue () + value) / 2);
+          }
+          else if (operation == SUM)
+          {
+            player->SetAttributeValue (&combined_rounds_attr_id,
+                                       source_attr->GetUIntValue () + value);
+          }
+        }
+        else
+        {
+          g_print (RED "source_attr == NULL\n" ESC);
+        }
       }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::RefreshAttribute (Player      *player,
+                               const gchar *name,
+                               gchar       *value)
+  {
+    // Current round
+    {
+      Player::AttributeId current_round_attr_id  (name, GetDataOwner ());
+
+      player->SetAttributeValue (&current_round_attr_id,
+                                 value);
+    }
+
+    // Combined rounds
+    {
+      Player::AttributeId combined_rounds_attr_id (name, _combined_rounds_owner);
+
+      player->SetAttributeValue (&combined_rounds_attr_id,
+                                 value);
     }
   }
 
@@ -1654,7 +1666,7 @@ namespace Pool
     if (_title_table)
     {
       guint               nb_players = GetNbPlayers ();
-      Player::AttributeId attr_id ("", _single_owner);
+      Player::AttributeId attr_id ("", GetDataOwner ());
 
       for (guint p = 0; p < nb_players; p++)
       {
@@ -1668,9 +1680,9 @@ namespace Pool
         player = GetPlayer (p, _sorted_fencer_list);
 
         {
-          Player::AttributeId attr_id ("status", GetDataOwner ());
+          Player::AttributeId status_attr_id ("status", GetDataOwner ());
 
-          attr = player->GetAttribute (&attr_id);
+          attr = player->GetAttribute (&status_attr_id);
           data = player->GetPtrData (GetDataOwner (), "StatusItem");
           if (attr && data)
           {
@@ -1909,7 +1921,7 @@ namespace Pool
 
     {
       GSList              *current = working_list;
-      Player::AttributeId  attr_id ("", _single_owner);
+      Player::AttributeId  attr_id ("", GetDataOwner ());
       Attribute           *attr;
 
       for (guint i = 0; current != NULL; i++)
@@ -2124,9 +2136,8 @@ namespace Pool
   {
     return ComparePlayer (A,
                           B,
-                          pool->GetDataOwner (),
+                          NULL,
                           pool->_rand_seed,
-                          pool->GetDataOwner (),
                           WITH_RANDOM);
   }
 
@@ -2170,8 +2181,7 @@ namespace Pool
         Player              *player         = (Player *) current->data;
         Player::AttributeId  status_attr_id = Player::AttributeId ("status", GetDataOwner ());
 
-        player->SetAttributeValue (&status_attr_id,
-                                   "Q");
+        player->RemoveAttribute (&status_attr_id);
         current = g_slist_next (current);
       }
     }
@@ -2182,7 +2192,7 @@ namespace Pool
                          gchar  *reason)
   {
     Player::AttributeId  status_attr_id = Player::AttributeId ("status", GetDataOwner ());
-    Attribute           *status_attr    = player->GetAttribute ( &status_attr_id);
+    Attribute           *status_attr    = player->GetAttribute (&status_attr_id);
 
     if (status_attr)
     {
@@ -2194,8 +2204,9 @@ namespace Pool
       }
     }
 
-    player->SetAttributeValue (&status_attr_id,
-                               reason);
+    RefreshAttribute (player,
+                      "status",
+                      reason);
 
     for (guint i = 0; i < GetNbPlayers (); i++)
     {
@@ -2230,14 +2241,16 @@ namespace Pool
     {
       gchar *status = status_attr->GetStrValue ();
 
-      if (status && (*status != 'Q'))
+      if (status && (*status != 'Q') && (*status != 'N'))
       {
         dropped = TRUE;
       }
     }
 
-    player->SetAttributeValue (&status_attr_id,
-                               "Q");
+    RefreshAttribute (player,
+                      "status",
+                      (gchar *) "Q");
+
     if (dropped)
     {
       _nb_drop--;

@@ -81,40 +81,6 @@
                     <property name="n_columns">2</property>
                     <property name="column_spacing">10</property>
                     <child>
-                      <object class="GtkHBox" id="nb_qualified_hbox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <child>
-                          <object class="GtkSpinButton" id="nb_qualified_spinbutton">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="no_show_all">True</property>
-                            <property name="max_length">4</property>
-                            <property name="invisible_char">●</property>
-                            <property name="invisible_char_set">True</property>
-                            <property name="primary_icon_activatable">False</property>
-                            <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">nb_qualified_adjustment</property>
-                            <property name="snap_to_ticks">True</property>
-                            <property name="numeric">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkRadioButton" id="all_radiobutton">
                         <property name="label">100%</property>
                         <property name="visible">True</property>
@@ -138,6 +104,28 @@
                         <property name="group">all_radiobutton</property>
                       </object>
                       <packing>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="nb_qualified_spinbutton">
+                        <property name="can_focus">True</property>
+                        <property name="no_show_all">True</property>
+                        <property name="max_length">4</property>
+                        <property name="invisible_char">●</property>
+                        <property name="invisible_char_set">True</property>
+                        <property name="primary_icon_activatable">False</property>
+                        <property name="secondary_icon_activatable">False</property>
+                        <property name="primary_icon_sensitive">True</property>
+                        <property name="secondary_icon_sensitive">True</property>
+                        <property name="adjustment">nb_qualified_adjustment</property>
+                        <property name="snap_to_ticks">True</property>
+                        <property name="numeric">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
                         <property name="top_attach">1</property>
                         <property name="bottom_attach">2</property>
                       </packing>
@@ -734,10 +722,10 @@ To activate/deactivate this button, go to the properties of the competition.</pr
       </object>
     </child>
   </object>
+  <object class="GtkSizeGroup" id="label_sizegroup"/>
   <object class="GtkTreeModelFilter" id="table_set_treemodelfilter">
     <property name="child_model">table_set_treestore</property>
   </object>
-  <object class="GtkSizeGroup" id="label_sizegroup"/>
   <object class="GtkSizeGroup" id="value_sizegroup"/>
   <object class="GtkAdjustment" id="zoom_adjustment">
     <property name="lower">0.10000000000000001</property>
