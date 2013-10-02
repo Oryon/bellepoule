@@ -54,7 +54,7 @@ namespace People
 
       static void OnAttrPromotedChanged (Player    *player,
                                          Attribute *attr,
-                                         Barrage   *barrage,
+                                         Object    *object,
                                          guint      step);
 
       virtual ~Barrage ();

@@ -312,19 +312,17 @@ namespace People
   // --------------------------------------------------------------------------------
   void Barrage::OnAttrPromotedChanged (Player    *player,
                                        Attribute *attr,
-                                       Barrage   *barrage,
+                                       Object    *object,
                                        guint      step)
   {
-    Player::AttributeId status_attr_id ("status", barrage);
+    Player::AttributeId status_attr_id ("status", object);
 
     if (attr->GetUIntValue () == 0)
     {
-      printf ("%s = N =>> %p\n", player->GetName (), barrage);
       player->SetAttributeValue (&status_attr_id, "N");
     }
     else
     {
-      printf ("%s = Q =>> %p\n", player->GetName (), barrage);
       player->SetAttributeValue (&status_attr_id, "Q");
     }
   }
