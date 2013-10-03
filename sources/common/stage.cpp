@@ -449,6 +449,7 @@ void Stage::SetOutputShortlist ()
         Player    *player            = (Player *) current->data;
         Attribute *stage_status_attr = player->GetAttribute (&stage_attr_id);
 
+        current = NULL;
         if (stage_status_attr)
         {
           gchar *value = stage_status_attr->GetStrValue ();
@@ -460,14 +461,10 @@ void Stage::SetOutputShortlist ()
                                        value);
             _output_short_list = g_slist_delete_link (_output_short_list,
                                                       current);
-          }
-          else
-          {
-            break;
+            current = g_slist_last (_output_short_list);
           }
         }
-
-        current = g_slist_last (_output_short_list);
+        break;
       }
     }
 

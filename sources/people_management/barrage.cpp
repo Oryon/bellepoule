@@ -224,7 +224,6 @@ namespace People
   {
     LoadConfiguration (xml_node);
 
-#if 0
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
@@ -234,11 +233,8 @@ namespace People
         }
         else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
-          if (_pool == NULL)
-          {
-            LoadAttendees (n);
-          }
-          else
+          LoadAttendees (n);
+
           {
             gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
 
@@ -248,30 +244,29 @@ namespace People
 
               if (player)
               {
-                _pool->AddFencer (player,
-                                  this);
+                Player::AttributeId promoted_attr_id ("promoted", this);
+                Player::AttributeId status_attr_id   ("status", this);
+                Attribute *status_attr = player->GetAttribute (&status_attr_id);
+                gchar     *status      = status_attr->GetStrValue ();
+
+                if (status[0] == 'Q')
+                {
+                  player->SetAttributeValue (&promoted_attr_id,
+                                             (guint) 1);
+                }
+                else
+                {
+                  player->SetAttributeValue (&promoted_attr_id,
+                                             (guint) 0);
+                }
+                player->SetChangeCbk ("promoted",
+                                      (Player::OnChange) OnAttrPromotedChanged,
+                                      this);
+                Add (player);
               }
               xmlFree (attr);
             }
           }
-        }
-        else if (strcmp ((char *) n->name, "Poule") == 0)
-        {
-          _pool = new Pool (_max_score,
-                            1,
-                            _contest->GetWeaponCode (),
-                            GetXmlPlayerTag (),
-                            _rand_seed);
-        }
-        else if (strcmp ((char *) n->name, "Arbitre") == 0)
-        {
-        }
-        else if (strcmp ((char *) n->name, "Match") == 0)
-        {
-          _pool->CreateMatchs (NULL);
-          _pool->Load (n,
-                       _attendees->GetShortList ());
-          return;
         }
         else
         {
@@ -280,13 +275,12 @@ namespace People
       }
       Load (n->children);
     }
-#endif
   }
 
   // --------------------------------------------------------------------------------
   void Barrage::Garnish ()
   {
-    Player::AttributeId *promoted_attr_id  = new Player::AttributeId ("promoted", this);
+    Player::AttributeId  promoted_attr_id ("promoted", this);
     guint                short_list_length = g_slist_length (_attendees->GetShortList ());
     GSList              *current;
 
@@ -299,14 +293,12 @@ namespace People
       player->SetChangeCbk ("promoted",
                             (Player::OnChange) OnAttrPromotedChanged,
                             this);
-      player->SetAttributeValue (promoted_attr_id,
+      player->SetAttributeValue (&promoted_attr_id,
                                  (guint) 1);
       Add (player);
 
       current = g_slist_next (current);
     }
-
-    promoted_attr_id->Release ();
   }
 
   // --------------------------------------------------------------------------------
