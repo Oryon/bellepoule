@@ -40,7 +40,7 @@ namespace People
   void TallyCounter::Monitor (Player *player)
   {
     Player::AttributeId  attr_id ("attending");
-    Attribute           *attr = player->GetAttribute ( &attr_id);
+    Attribute           *attr = player->GetAttribute (&attr_id);
     Mode                *mode = GetMode (player);
 
     mode->_total_count++;

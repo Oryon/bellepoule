@@ -30,7 +30,9 @@ namespace People
     PlayersList ("barrage.glade",
                  SORTABLE)
   {
-    _ties_count = 0;
+    _ties_count        = 0;
+    _short_list_length = 0;
+    _promoted_count    = 0;
 
     {
       GSList *attr_list;
@@ -138,6 +140,7 @@ namespace People
   void Barrage::Display ()
   {
     OnAttrListUpdated ();
+    RefreshPromotedDisplay ();
   }
 
   // --------------------------------------------------------------------------------
@@ -159,10 +162,9 @@ namespace People
     GSList              *result       = NULL;
 
     {
-      guint   short_list_length = g_slist_length (_attendees->GetShortList ());
-      GSList *current           = _attendees->GetShortList ();
+      GSList *current = _attendees->GetShortList ();
 
-      for (guint i = 0; i < short_list_length - _ties_count; i++)
+      for (guint i = 0; i < _short_list_length - _ties_count; i++)
       {
         Player *player = (Player *) current->data;
 
@@ -224,21 +226,24 @@ namespace People
   {
     LoadConfiguration (xml_node);
 
-#if 0
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
       if (n->type == XML_ELEMENT_NODE)
       {
         if (strcmp ((char *) n->name, _xml_class_name) == 0)
         {
+          _loaded_so_far  = 0;
+          _promoted_count = 0;
         }
         else if (strcmp ((char *) n->name, GetXmlPlayerTag ()) == 0)
         {
-          if (_pool == NULL)
+          LoadAttendees (n);
+          if (_short_list_length == 0)
           {
-            LoadAttendees (n);
+            _short_list_length = g_slist_length (_attendees->GetShortList ());
           }
-          else
+          _loaded_so_far++;
+
           {
             gchar *attr = (gchar *) xmlGetProp (n, BAD_CAST "REF");
 
@@ -248,30 +253,37 @@ namespace People
 
               if (player)
               {
-                _pool->AddFencer (player,
-                                  this);
+                Player::AttributeId promoted_attr_id ("promoted", this);
+                Player::AttributeId status_attr_id   ("status", this);
+                Attribute *status_attr = player->GetAttribute (&status_attr_id);
+                gchar     *status      = status_attr->GetStrValue ();
+
+                if (status[0] == 'Q')
+                {
+                  player->SetAttributeValue (&promoted_attr_id,
+                                             (guint) 1);
+                }
+                else
+                {
+                  player->SetAttributeValue (&promoted_attr_id,
+                                             (guint) 0);
+                }
+                player->SetChangeCbk ("promoted",
+                                      (Player::OnChange) OnAttrPromotedChanged,
+                                      this);
+
+                if (_loaded_so_far > (_short_list_length - _ties_count))
+                {
+                  if (status[0] == 'Q')
+                  {
+                    _promoted_count++;
+                  }
+                  Add (player);
+                }
               }
               xmlFree (attr);
             }
           }
-        }
-        else if (strcmp ((char *) n->name, "Poule") == 0)
-        {
-          _pool = new Pool (_max_score,
-                            1,
-                            _contest->GetWeaponCode (),
-                            GetXmlPlayerTag (),
-                            _rand_seed);
-        }
-        else if (strcmp ((char *) n->name, "Arbitre") == 0)
-        {
-        }
-        else if (strcmp ((char *) n->name, "Match") == 0)
-        {
-          _pool->CreateMatchs (NULL);
-          _pool->Load (n,
-                       _attendees->GetShortList ());
-          return;
         }
         else
         {
@@ -280,18 +292,19 @@ namespace People
       }
       Load (n->children);
     }
-#endif
   }
 
   // --------------------------------------------------------------------------------
   void Barrage::Garnish ()
   {
-    Player::AttributeId *promoted_attr_id  = new Player::AttributeId ("promoted", this);
-    guint                short_list_length = g_slist_length (_attendees->GetShortList ());
+    Player::AttributeId  promoted_attr_id ("promoted", this);
     GSList              *current;
 
+    _short_list_length = g_slist_length (_attendees->GetShortList ());
+    _promoted_count    = 0;
+
     current = g_slist_nth (_attendees->GetShortList (),
-                           short_list_length - _ties_count);
+                           _short_list_length - _ties_count);
     while (current)
     {
       Player *player = (Player *) current->data;
@@ -299,34 +312,51 @@ namespace People
       player->SetChangeCbk ("promoted",
                             (Player::OnChange) OnAttrPromotedChanged,
                             this);
-      player->SetAttributeValue (promoted_attr_id,
+      player->SetAttributeValue (&promoted_attr_id,
                                  (guint) 1);
       Add (player);
 
       current = g_slist_next (current);
     }
-
-    promoted_attr_id->Release ();
   }
 
   // --------------------------------------------------------------------------------
   void Barrage::OnAttrPromotedChanged (Player    *player,
                                        Attribute *attr,
-                                       Barrage   *barrage,
+                                       Object    *object,
                                        guint      step)
   {
-    Player::AttributeId status_attr_id ("status", barrage);
+    Barrage *barrage = dynamic_cast <Barrage *> (object);
+    Player::AttributeId status_attr_id ("status", object);
 
     if (attr->GetUIntValue () == 0)
     {
-      printf ("%s = N =>> %p\n", player->GetName (), barrage);
+      barrage->_promoted_count--;
       player->SetAttributeValue (&status_attr_id, "N");
     }
     else
     {
-      printf ("%s = Q =>> %p\n", player->GetName (), barrage);
+      barrage->_promoted_count++;
       player->SetAttributeValue (&status_attr_id, "Q");
     }
+
+    barrage->RefreshPromotedDisplay ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Barrage::RefreshPromotedDisplay ()
+  {
+    gchar *text;
+
+    text = g_strdup_printf ("%d", _short_list_length - (_ties_count - _promoted_count));
+    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("promoted_label")),
+                        text);
+    g_free (text);
+
+    text = g_strdup_printf ("%d", _ties_count - _promoted_count);
+    gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("dropped_label")),
+                        text);
+    g_free (text);
   }
 
   // --------------------------------------------------------------------------------

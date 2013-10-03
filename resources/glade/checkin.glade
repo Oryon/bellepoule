@@ -317,6 +317,7 @@
                         <attributes>
                           <attribute name="weight" value="bold"/>
                           <attribute name="foreground" value="#d0a81caf1efa"/>
+                          <attribute name="scale" value="1.2"/>
                         </attributes>
                       </object>
                       <packing>
@@ -430,6 +431,7 @@
                         <attributes>
                           <attribute name="weight" value="bold"/>
                           <attribute name="foreground" value="#18722a3eb780"/>
+                          <attribute name="scale" value="1.2"/>
                         </attributes>
                       </object>
                       <packing>
