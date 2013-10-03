@@ -49,8 +49,13 @@ namespace People
 
     private:
       guint _ties_count;
+      guint _short_list_length;
+      guint _loaded_so_far;
+      guint _promoted_count;
 
       static Stage *CreateInstance (StageClass *stage_class);
+
+      void RefreshPromotedDisplay ();
 
       static void OnAttrPromotedChanged (Player    *player,
                                          Attribute *attr,
