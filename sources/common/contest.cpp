@@ -391,6 +391,41 @@ Contest::Contest ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::GetUnknownAttributes (const gchar     *contest_keyword,
+                                    xmlXPathContext *xml_context)
+{
+  gchar          *xml_object_path = g_strdup_printf ("/%s/Tireurs/Tireur", contest_keyword);
+  xmlXPathObject *xml_object      = xmlXPathEval (BAD_CAST xml_object_path, xml_context);
+
+  g_free (xml_object_path);
+
+  if (xml_object)
+  {
+    xmlNodeSet *xml_nodeset = xml_object->nodesetval;
+
+    if (xml_object->nodesetval->nodeNr)
+    {
+      xmlAttr *current_attr = xml_nodeset->nodeTab[0]->properties;
+
+      while (current_attr)
+      {
+        if (AttributeDesc::GetDescFromXmlName ((const gchar *) current_attr->name) == NULL)
+        {
+          AttributeDesc::Declare (G_TYPE_STRING,
+                                  (const gchar *) current_attr->name,
+                                  (const gchar *) current_attr->name,
+                                  (gchar *) current_attr->name);
+        }
+
+        current_attr = current_attr->next;
+      }
+    }
+
+    xmlXPathFreeObject  (xml_object);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Contest::LoadXml (const gchar *filename)
 {
   if (g_path_is_absolute (filename) == FALSE)
@@ -807,6 +842,9 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         _default_classification->Load (xml_nodeset->nodeTab[0]);
       }
       xmlXPathFreeObject  (xml_object);
+
+      GetUnknownAttributes (contest_keyword,
+                            xml_context);
       xmlXPathFreeContext (xml_context);
     }
 

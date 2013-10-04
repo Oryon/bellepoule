@@ -180,17 +180,19 @@ class Contest : public Module
     GtkWidget   *_category_combo;
     GtkNotebook *_notebook;
 
-    void   ReadProperties    ();
-    void   DisplayProperties ();
-    void   LoadXmlDoc        (xmlDoc *doc);
-    void   LoadHeader        (xmlXPathContext *context);
-    gchar *GetSaveFileName   (gchar       *title,
-                              const gchar *config_key);
-    void   Save              (gchar *filename);
-    void   FillInProperties  ();
-    void   FillInDate        (guint day,
-                              guint month,
-                              guint year);
+    void   ReadProperties       ();
+    void   DisplayProperties    ();
+    void   LoadXmlDoc           (xmlDoc *doc);
+    void   GetUnknownAttributes (const gchar     *contest_keyword,
+                                 xmlXPathContext *xml_context);
+    void   LoadHeader           (xmlXPathContext *context);
+    gchar *GetSaveFileName      (gchar       *title,
+                                 const gchar *config_key);
+    void   Save                 (gchar *filename);
+    void   FillInProperties     ();
+    void   FillInDate           (guint day,
+                                 guint month,
+                                 guint year);
 
     void OnDrawPage (GtkPrintOperation *operation,
                      GtkPrintContext   *context,

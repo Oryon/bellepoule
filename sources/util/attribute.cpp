@@ -947,6 +947,25 @@ AttributeDesc *AttributeDesc::GetDescFromCodeName (const gchar *code_name)
 }
 
 // --------------------------------------------------------------------------------
+AttributeDesc *AttributeDesc::GetDescFromXmlName (const gchar *xml_name)
+{
+  GSList *current = _list;
+
+  while (current)
+  {
+    AttributeDesc *attr_desc = (AttributeDesc *) current->data;
+
+    if (strcmp (attr_desc->_xml_name, xml_name) == 0)
+    {
+      return attr_desc;
+    }
+    current = g_slist_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 AttributeDesc *AttributeDesc::GuessDescFromUserName (const gchar *user_name,
                                                      const gchar *criteria)
 {
