@@ -40,11 +40,11 @@ namespace Pool
   void SmartSwapper::Fencer::Dump (Object *owner)
   {
 #ifdef DEBUG_SWAPPING
-    Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", owner);
-    Attribute *previous_stage_rank = _player->GetAttribute (&previous_rank_attr_id);
+    Player::AttributeId  stage_start_rank_attr_id ("stage_start_rank", owner);
+    Attribute *stage_start_rank = _player->GetAttribute (&stage_start_rank_attr_id);
 
     PRINT ("%d %20s >> %s (pool #%d)",
-           previous_stage_rank->GetUIntValue (),
+           stage_start_rank->GetUIntValue (),
            _player->GetName (),
            g_quark_to_string (_criteria_quark),
            _original_pool->_id);
@@ -330,10 +330,10 @@ namespace Pool
   void SmartSwapper::AddPlayerToPool (Player   *player,
                                       PoolData *pool_data)
   {
-    Player::AttributeId previous_rank_attr_id ("previous_stage_rank", _owner);
-    Attribute *previous_stage_rank = player->GetAttribute (&previous_rank_attr_id);
+    Player::AttributeId stage_start_rank_attr_id ("stage_start_rank", _owner);
+    Attribute *stage_start_rank = player->GetAttribute (&stage_start_rank_attr_id);
 
-    if (previous_stage_rank == NULL)
+    if (stage_start_rank == NULL)
     {
       g_print (RED "===>> E R R O R\n" ESC);
     }
@@ -363,7 +363,7 @@ namespace Pool
                        0);
 
       fencer->_player                = player;
-      fencer->_rank                  = previous_stage_rank->GetUIntValue ();
+      fencer->_rank                  = stage_start_rank->GetUIntValue ();
       fencer->_criteria_quark        = quark;
       fencer->_over_population_error = FALSE;
       fencer->_new_pool              = NULL;

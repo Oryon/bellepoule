@@ -948,13 +948,13 @@ void Contest::AddFencer (Player *fencer,
 
     if (checkin)
     {
-      Player::AttributeId  start_rank_attr    ("start_rank");
-      Player::AttributeId  previous_rank_attr ("previous_stage_rank", checkin);
+      Player::AttributeId  splitting_start_rank_attr ("splitting_start_rank");
+      Player::AttributeId  stage_start_rank_attr     ("stage_start_rank", checkin);
 
       checkin->Add (fencer);
-      fencer->SetAttributeValue (&start_rank_attr,
+      fencer->SetAttributeValue (&splitting_start_rank_attr,
                                  rank);
-      fencer->SetAttributeValue (&previous_rank_attr,
+      fencer->SetAttributeValue (&stage_start_rank_attr,
                                  rank);
       checkin->UseInitialRank ();
     }

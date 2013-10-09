@@ -53,7 +53,7 @@ namespace People
                                           "participation_rate",
                                           "pool_nr",
                                           "rank",
-                                          "start_rank",
+                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -92,7 +92,7 @@ namespace People
                                           "participation_rate",
                                           "pool_nr",
                                           "promoted",
-                                          "start_rank",
+                                          "splitting_start_rank",
                                           "team",
                                           "victories_ratio",
                                           NULL);
@@ -102,7 +102,7 @@ namespace People
       filter->ShowAttribute ("rank");
       filter->ShowAttribute ("status");
 #ifdef DEBUG
-      filter->ShowAttribute ("previous_stage_rank");
+      filter->ShowAttribute ("stage_start_rank");
 #endif
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
