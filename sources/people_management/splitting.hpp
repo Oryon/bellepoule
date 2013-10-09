@@ -48,7 +48,7 @@ namespace People
 
       void Display ();
 
-      void Reset ();
+      void OnUnPlugged ();
 
       GSList *GetCurrentClassification ();
 

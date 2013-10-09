@@ -184,8 +184,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Supervisor::Display ()
   {
-    Reset ();
-
     OnTableSetSelected (_displayed_table_set);
   }
 
@@ -475,6 +473,7 @@ namespace Table
   {
     if (_displayed_table_set)
     {
+      _displayed_table_set->Wipe ();
       _displayed_table_set->UnPlug ();
       _displayed_table_set = NULL;
     }
@@ -774,17 +773,6 @@ namespace Table
 
     OnTableSetStatusUpdated (table_set,
                              this);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Supervisor::Reset ()
-  {
-    Stage::Reset ();
-
-    if (_displayed_table_set)
-    {
-      _displayed_table_set->Wipe ();
-    }
   }
 
   // --------------------------------------------------------------------------------

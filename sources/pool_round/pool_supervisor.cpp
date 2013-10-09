@@ -203,11 +203,25 @@ namespace Pool
     gtk_widget_set_sensitive (_glade->GetWidget ("seeding_viewport"),
                               TRUE);
 
-    for (guint i = 0; i < _allocator->GetNbPools (); i++)
+    if (_allocator)
     {
-      Pool *pool = _allocator->GetPool (i);
 
-      pool->DeleteMatchs ();
+      for (guint p = 0; p < _allocator->GetNbPools (); p++)
+      {
+        Pool *pool = _allocator->GetPool (p);
+
+        pool->CleanScores ();
+        pool->Wipe ();
+        pool->DeleteMatchs ();
+      }
+
+      if (_displayed_pool)
+      {
+        _displayed_pool->UnPlug ();
+        _displayed_pool = NULL;
+      }
+
+      gtk_list_store_clear (_pool_liststore);
     }
   }
 
@@ -318,31 +332,6 @@ namespace Pool
     }
 
     OnAttrListUpdated ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Supervisor::Reset ()
-  {
-    Stage::Reset ();
-
-    if (_allocator)
-    {
-      for (guint p = 0; p < _allocator->GetNbPools (); p++)
-      {
-        Pool *pool = _allocator->GetPool (p);
-
-        pool->CleanScores ();
-        pool->Wipe ();
-      }
-
-      if (_displayed_pool)
-      {
-        _displayed_pool->UnPlug ();
-        _displayed_pool = NULL;
-      }
-
-      gtk_list_store_clear (_pool_liststore);
-    }
   }
 
   // --------------------------------------------------------------------------------

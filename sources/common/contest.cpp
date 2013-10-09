@@ -972,13 +972,12 @@ void Contest::AddReferee (Player *referee)
 void Contest::ImportReferees (GSList *imported_list)
 {
   GSList *attr_list = NULL;
-  Player::AttributeId  name_attr_id       ("name");
-  Player::AttributeId  first_name_attr_id ("first_name");
+  Player::AttributeId name_attr_id       ("name");
+  Player::AttributeId first_name_attr_id ("first_name");
 
   attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
   attr_list = g_slist_prepend (attr_list, &name_attr_id);
 
-  printf ("==>> %d\n", g_slist_length (imported_list));
   while (imported_list)
   {
     Player *imported = (Player *) imported_list->data;
@@ -1000,16 +999,13 @@ void Contest::ImportReferees (GSList *imported_list)
         current = g_slist_next (current);
       }
 
-    printf ("    ==>> %d\n", g_slist_length (imported_list));
       if (current == NULL)
       {
         AddReferee (imported);
       }
     }
 
-    printf ("    ==>> %d\n", g_slist_length (imported_list));
     imported_list = g_slist_next (imported_list);
-    printf ("    ==>> %d\n\n", g_slist_length (imported_list));
   }
 
   g_slist_free (attr_list);
