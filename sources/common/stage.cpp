@@ -441,14 +441,14 @@ void Stage::SetOutputShortlist ()
     g_print (BLUE "[Withdrawal]\n" ESC);
     // Remove all of the withdrawalls and black cards
     {
-      Player::AttributeId stage_attr_id ("status", GetPlayerDataOwner ());
+      Player::AttributeId stage_status_attr_id ("status", GetPlayerDataOwner ());
       GSList *new_short_list = NULL;
       GSList *current        = _output_short_list;
 
       while (current)
       {
         Player    *player            = (Player *) current->data;
-        Attribute *stage_status_attr = player->GetAttribute (&stage_attr_id);
+        Attribute *stage_status_attr = player->GetAttribute (&stage_status_attr_id);
 
         if (stage_status_attr)
         {

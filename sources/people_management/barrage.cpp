@@ -157,20 +157,21 @@ namespace People
   // --------------------------------------------------------------------------------
   GSList *Barrage::GetCurrentClassification ()
   {
-    Player::AttributeId  rank_attr_id ("rank", this);
-    guint                rank         = 1;
-    GSList              *result       = NULL;
+    Player::AttributeId  previous_stage_rank_attr_id ("rank", GetPreviousStage ());
+    Player::AttributeId  rank_attr_id                ("rank", this);
+    Player::AttributeId promoted_attr_id             ("promoted", this);
+    GSList              *result = NULL;
 
     {
       GSList *current = _attendees->GetShortList ();
 
       for (guint i = 0; i < _short_list_length - _ties_count; i++)
       {
-        Player *player = (Player *) current->data;
+        Player    *player              = (Player *) current->data;
+        Attribute *previous_stage_rank = player->GetAttribute (&previous_stage_rank_attr_id);
 
         player->SetAttributeValue (&rank_attr_id,
-                                   rank);
-        rank++;
+                                   previous_stage_rank->GetUIntValue ());
         result = g_slist_append (result,
                                  player);
 
@@ -179,8 +180,6 @@ namespace People
     }
 
     {
-      Player::AttributeId promoted_attr_id ("promoted", this);
-
       promoted_attr_id.MakeRandomReady (_rand_seed);
 
       _player_list = g_slist_sort_with_data (_player_list,
@@ -191,14 +190,24 @@ namespace People
 
     {
       GSList *current = _player_list;
+      guint   rank;
 
       while (current != NULL)
       {
-        Player *player = (Player *) current->data;
+        Player    *player              = (Player *) current->data;
+        Attribute *previous_stage_rank = player->GetAttribute (&previous_stage_rank_attr_id);
+        Attribute *promoted            = player->GetAttribute (&promoted_attr_id);
 
-        player->SetAttributeValue (&rank_attr_id,
-                                   rank);
-        rank++;
+        if (promoted->GetUIntValue ())
+        {
+          player->SetAttributeValue (&rank_attr_id,
+                                     previous_stage_rank->GetUIntValue ());
+        }
+        else
+        {
+          player->SetAttributeValue (&rank_attr_id,
+                                     previous_stage_rank->GetUIntValue () + 1);
+        }
         result = g_slist_append (result,
                                  player);
 
