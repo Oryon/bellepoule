@@ -113,6 +113,8 @@ class Stage : public virtual Object
 
     void RetrieveAttendees ();
 
+    void GiveEliminatedAFinalRank ();
+
     guint GetQuotaExceedance ();
 
     Player *GetFencerFromRef (guint ref);
@@ -239,6 +241,8 @@ class Stage : public virtual Object
     static StageClass *GetClass (const gchar *name);
 
     virtual void SetOutputShortlist ();
+
+    virtual gboolean HasItsOwnRanking ();
 
     Object *GetPlayerDataOwner ();
 

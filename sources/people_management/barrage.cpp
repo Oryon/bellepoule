@@ -159,7 +159,7 @@ namespace People
   {
     Player::AttributeId  previous_stage_rank_attr_id ("rank", GetPreviousStage ());
     Player::AttributeId  rank_attr_id                ("rank", this);
-    Player::AttributeId promoted_attr_id             ("promoted", this);
+    Player::AttributeId  promoted_attr_id            ("promoted", this);
     GSList              *result = NULL;
 
     {
@@ -190,7 +190,6 @@ namespace People
 
     {
       GSList *current = _player_list;
-      guint   rank;
 
       while (current != NULL)
       {
@@ -206,7 +205,7 @@ namespace People
         else
         {
           player->SetAttributeValue (&rank_attr_id,
-                                     previous_stage_rank->GetUIntValue () + 1);
+                                     _short_list_length - (_ties_count - _promoted_count) + 1);
         }
         result = g_slist_append (result,
                                  player);
