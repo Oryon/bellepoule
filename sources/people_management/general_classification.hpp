@@ -60,6 +60,10 @@ namespace People
 
       GSList *GetCurrentClassification ();
 
+      gboolean HasItsOwnRanking ();
+
+      void GiveShortListAFinalRank ();
+
       guint PreparePrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context);
 

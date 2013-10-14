@@ -40,11 +40,11 @@ namespace Pool
   void SmartSwapper::Fencer::Dump (Object *owner)
   {
 #ifdef DEBUG_SWAPPING
-    Player::AttributeId  previous_rank_attr_id ("previous_stage_rank", owner);
-    Attribute *previous_stage_rank = _player->GetAttribute (&previous_rank_attr_id);
+    Player::AttributeId  stage_start_rank_attr_id ("stage_start_rank", owner);
+    Attribute *stage_start_rank = _player->GetAttribute (&stage_start_rank_attr_id);
 
     PRINT ("%d %20s >> %s (pool #%d)",
-           previous_stage_rank->GetUIntValue (),
+           stage_start_rank->GetUIntValue (),
            _player->GetName (),
            g_quark_to_string (_criteria_quark),
            _original_pool->_id);
@@ -330,40 +330,48 @@ namespace Pool
   void SmartSwapper::AddPlayerToPool (Player   *player,
                                       PoolData *pool_data)
   {
-    Player::AttributeId previous_rank_attr_id ("previous_stage_rank", _owner);
-    Attribute *previous_stage_rank = player->GetAttribute (&previous_rank_attr_id);
-    Fencer    *fencer              = new Fencer;
-    GQuark     quark               = 0;
+    Player::AttributeId stage_start_rank_attr_id ("stage_start_rank", _owner);
+    Attribute *stage_start_rank = player->GetAttribute (&stage_start_rank_attr_id);
 
-    // criteria
+    if (stage_start_rank == NULL)
     {
-      Attribute *criteria_attr = player->GetAttribute (_criteria_id);
-
-      if (criteria_attr)
-      {
-        gchar *user_image = criteria_attr->GetUserImage (AttributeDesc::LONG_TEXT);
-
-        quark = g_quark_from_string (user_image);
-
-        InsertCriteria (_criteria_distribution,
-                        quark);
-        g_free (user_image);
-      }
+      g_print (RED "===>> E R R O R\n" ESC);
     }
+    else
+    {
+      Fencer *fencer = new Fencer;
+      GQuark  quark  = 0;
 
-    player->SetData (_owner,
-                     "swap_error",
-                     0);
+      // criteria
+      {
+        Attribute *criteria_attr = player->GetAttribute (_criteria_id);
 
-    fencer->_player                = player;
-    fencer->_rank                  = previous_stage_rank->GetUIntValue ();
-    fencer->_criteria_quark        = quark;
-    fencer->_over_population_error = FALSE;
-    fencer->_new_pool              = NULL;
-    fencer->_original_pool         = pool_data;
+        if (criteria_attr)
+        {
+          gchar *user_image = criteria_attr->GetUserImage (AttributeDesc::LONG_TEXT);
 
-    fencer->Dump (_owner);
-    fencer->_original_pool->AddFencer (fencer);
+          quark = g_quark_from_string (user_image);
+
+          InsertCriteria (_criteria_distribution,
+                          quark);
+          g_free (user_image);
+        }
+      }
+
+      player->SetData (_owner,
+                       "swap_error",
+                       0);
+
+      fencer->_player                = player;
+      fencer->_rank                  = stage_start_rank->GetUIntValue ();
+      fencer->_criteria_quark        = quark;
+      fencer->_over_population_error = FALSE;
+      fencer->_new_pool              = NULL;
+      fencer->_original_pool         = pool_data;
+
+      fencer->Dump (_owner);
+      fencer->_original_pool->AddFencer (fencer);
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -252,7 +252,7 @@ namespace Pool
       }
 
       {
-        Player::AttributeId attr_id ("previous_stage_rank", rank_owner);
+        Player::AttributeId attr_id ("stage_start_rank", rank_owner);
 
         attr_id.MakeRandomReady (_rand_seed);
         _fencer_list = g_slist_insert_sorted_with_data (_fencer_list,

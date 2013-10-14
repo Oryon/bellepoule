@@ -94,7 +94,7 @@ namespace Table
                                           "pool_nr",
                                           "promoted",
                                           "rank",
-                                          "start_rank",
+                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -102,7 +102,7 @@ namespace Table
       filter = new Filter (attr_list,
                            this);
 
-      filter->ShowAttribute ("previous_stage_rank");
+      filter->ShowAttribute ("stage_start_rank");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("club");
@@ -130,7 +130,7 @@ namespace Table
                                           "participation_rate",
                                           "pool_nr",
                                           "promoted",
-                                          "start_rank",
+                                          "splitting_start_rank",
                                           "team",
                                           "victories_ratio",
                                           NULL);
@@ -140,7 +140,7 @@ namespace Table
       filter->ShowAttribute ("rank");
       filter->ShowAttribute ("status");
 #ifdef DEBUG
-      filter->ShowAttribute ("previous_stage_rank");
+      filter->ShowAttribute ("stage_start_rank");
 #endif
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
@@ -184,8 +184,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void Supervisor::Display ()
   {
-    Reset ();
-
     OnTableSetSelected (_displayed_table_set);
   }
 
@@ -475,6 +473,7 @@ namespace Table
   {
     if (_displayed_table_set)
     {
+      _displayed_table_set->Wipe ();
       _displayed_table_set->UnPlug ();
       _displayed_table_set = NULL;
     }
@@ -774,17 +773,6 @@ namespace Table
 
     OnTableSetStatusUpdated (table_set,
                              this);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Supervisor::Reset ()
-  {
-    Stage::Reset ();
-
-    if (_displayed_table_set)
-    {
-      _displayed_table_set->Wipe ();
-    }
   }
 
   // --------------------------------------------------------------------------------

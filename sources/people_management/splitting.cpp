@@ -64,7 +64,7 @@ namespace People
                                           "pool_nr",
                                           "promoted",
                                           "rank",
-                                          "start_rank",
+                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -73,7 +73,7 @@ namespace People
                            this);
 
       filter->ShowAttribute ("exported");
-      filter->ShowAttribute ("previous_stage_rank");
+      filter->ShowAttribute ("stage_start_rank");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("birth_date");
@@ -93,7 +93,6 @@ namespace People
   // --------------------------------------------------------------------------------
   Splitting::~Splitting ()
   {
-    Reset ();
   }
 
   // --------------------------------------------------------------------------------
@@ -142,9 +141,8 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void Splitting::Reset ()
+  void Splitting::OnUnPlugged ()
   {
-    Stage::Reset ();
     PlayersList::Wipe ();
   }
 
@@ -213,7 +211,7 @@ namespace People
 
     if (result)
     {
-      Player::AttributeId attr_id ("previous_stage_rank",
+      Player::AttributeId attr_id ("stage_start_rank",
                                    this);
 
       attr_id.MakeRandomReady (_rand_seed);

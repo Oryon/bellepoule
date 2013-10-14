@@ -103,6 +103,8 @@ class AttributeDesc : public Object
 
     static AttributeDesc *GetDescFromCodeName (const gchar *code_name);
 
+    static AttributeDesc *GetDescFromXmlName (const gchar *xml_name);
+
     static AttributeDesc *GuessDescFromUserName (const gchar *code_name,
                                                  const gchar *criteria);
 

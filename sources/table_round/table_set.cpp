@@ -2247,27 +2247,21 @@ namespace Table
 
       // Give a place number to each fencer
       {
-        Player::AttributeId *attr_id = new Player::AttributeId ("rank", GetDataOwner ());
+        Player::AttributeId *attr_id         = new Player::AttributeId ("rank", GetDataOwner ());
         GSList              *current;
         guint                previous_rank   = 0;
         Player              *previous_player = NULL;
-        guint32              rand_seed = _rand_seed;
+        guint32              rand_seed       = _rand_seed;
 
         _rand_seed = 0; // !!
         current = _result_list;
         for (guint i = _first_place; current != NULL; i++)
         {
-          Player *player;
+          Player *player = (Player *) current->data;
 
-          player = (Player *) current->data;
-
-          if (   previous_player
-              && (   (ComparePlayer (player,
-                                     previous_player,
-                                     this) == 0)
-                  && (ComparePreviousRankPlayer (player,
-                                                 previous_player,
-                                                 0) == 0))
+          if (   (previous_player && (ComparePlayer (player,
+                                                     previous_player,
+                                                     this) == 0))
               || (PlaceIsFenced (i) == FALSE))
           {
             player->SetAttributeValue (attr_id,
@@ -2380,7 +2374,8 @@ namespace Table
                                             Player  *B,
                                             guint32  rand_seed)
   {
-    Player::AttributeId attr_id ("previous_stage_rank", GetDataOwner ());
+    Stage *previous_stage = _supervisor->GetPreviousStage ();
+    Player::AttributeId attr_id ("rank", previous_stage);
 
     attr_id.MakeRandomReady (rand_seed);
     return Player::Compare (A,

@@ -66,7 +66,7 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
-                                          "start_rank",
+                                          "splitting_start_rank",
 #endif
                                           "HS",
                                           "availability",
@@ -77,7 +77,7 @@ namespace People
                                           "level",
                                           "participation_rate",
                                           "pool_nr",
-                                          "previous_stage_rank",
+                                          "stage_start_rank",
                                           "promoted",
                                           "rank",
                                           "status",
@@ -221,16 +221,16 @@ namespace People
     }
 
     {
-      Player::AttributeId  start_rank_id ("start_rank");
-      Attribute           *start_rank = player->GetAttribute (&start_rank_id);
+      Player::AttributeId  splitting_start_rank_id ("splitting_start_rank");
+      Attribute           *splitting_start_rank = player->GetAttribute (&splitting_start_rank_id);
 
-      if (start_rank)
+      if (splitting_start_rank)
       {
-        Player::AttributeId previous_rank_id ("previous_stage_rank", this);
+        Player::AttributeId stage_start_rank_id ("stage_start_rank", this);
 
         UseInitialRank ();
-        player->SetAttributeValue (&previous_rank_id,
-                                   start_rank->GetUIntValue ());
+        player->SetAttributeValue (&stage_start_rank_id,
+                                   splitting_start_rank->GetUIntValue ());
       }
     }
   }
@@ -442,7 +442,7 @@ namespace People
     {
       if (_use_initial_rank)
       {
-        rank_criteria_id = new Player::AttributeId ("previous_stage_rank",
+        rank_criteria_id = new Player::AttributeId ("stage_start_rank",
                                                     this);
       }
       else
@@ -463,10 +463,10 @@ namespace People
                                            rank_criteria_id);
 
     {
-      Player *previous_player = NULL;
-      GSList *current_player  = _player_list;
-      gint    previous_rank   = 0;
-      guint   nb_present      = 1;
+      Player *previous_player  = NULL;
+      GSList *current_player   = _player_list;
+      gint    stage_start_rank = 0;
+      guint   nb_present       = 1;
 
       while (current_player)
       {
@@ -482,33 +482,33 @@ namespace People
         }
 
         {
-          Player::AttributeId previous_rank_id ("previous_stage_rank", this);
-          Player::AttributeId rank_id          ("rank", this);
+          Player::AttributeId stage_start_rank_id ("stage_start_rank", this);
+          Player::AttributeId rank_id             ("rank", this);
 
           if (attending && attending->GetUIntValue ())
           {
             if (   previous_player
                 && (Player::Compare (previous_player, p, rank_criteria_id) == 0))
             {
-              p->SetAttributeValue (&previous_rank_id,
-                                    previous_rank);
+              p->SetAttributeValue (&stage_start_rank_id,
+                                    stage_start_rank);
               p->SetAttributeValue (&rank_id,
-                                    previous_rank);
+                                    stage_start_rank);
             }
             else
             {
-              p->SetAttributeValue (&previous_rank_id,
+              p->SetAttributeValue (&stage_start_rank_id,
                                     nb_present);
               p->SetAttributeValue (&rank_id,
                                     nb_present);
-              previous_rank = nb_present;
+              stage_start_rank = nb_present;
             }
             previous_player = p;
             nb_present++;
           }
           else
           {
-            p->SetAttributeValue (&previous_rank_id,
+            p->SetAttributeValue (&stage_start_rank_id,
                                   nb_player);
             p->SetAttributeValue (&rank_id,
                                   nb_player);

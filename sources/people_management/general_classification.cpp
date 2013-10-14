@@ -52,10 +52,10 @@ namespace People
                                           "level",
                                           "participation_rate",
                                           "pool_nr",
-                                          "previous_stage_rank",
+                                          "stage_start_rank",
                                           "promoted",
                                           "rank",
-                                          "start_rank",
+                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -102,53 +102,95 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean GeneralClassification::HasItsOwnRanking ()
+  {
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
   GSList *GeneralClassification::GetCurrentClassification ()
   {
-    GSList *result = NULL;
+    Player::AttributeId final_rank_attr_id ("final_rank");
+    GSList *full_result = g_slist_copy (_attendees->GetGlobalList ());
+    GSList *result      = NULL;
 
+    GiveShortListAFinalRank ();
+
+    // Sort final list
+    if (full_result)
     {
-      GSList *current = _attendees->GetGlobalList ();
+      final_rank_attr_id.MakeRandomReady (_rand_seed);
+      full_result = g_slist_sort_with_data (full_result,
+                                            (GCompareDataFunc) Player::Compare,
+                                            &final_rank_attr_id);
+    }
+
+    // Remove black carded and exported
+    {
+      guint   excluded_count = 0;
+      GSList *current        = full_result;
 
       while (current)
       {
-        Player *player;
+        Player::AttributeId  exported_attr_id ("exported");
+        Player    *player   = (Player *) current->data;
+        Attribute *exported = player->GetAttribute (&exported_attr_id);
 
-        player = (Player *) current->data;
+        if (exported && (exported->GetUIntValue () == TRUE))
         {
-          Player::AttributeId  exported_attr_id ("exported");
-          Attribute           *exported = player->GetAttribute (&exported_attr_id);
+          excluded_count++;
+        }
+        else
+        {
+          Player::AttributeId  status_attr_id ("global_status");
+          Attribute           *status_attr = player->GetAttribute (&status_attr_id);
 
-          if ((exported == NULL) || (exported->GetUIntValue () == FALSE))
+          if (status_attr)
           {
-            Player::AttributeId  status_attr_id ("global_status");
-            Attribute           *status_attr = player->GetAttribute (&status_attr_id);
+            gchar *status = status_attr->GetStrValue ();
 
-            if (status_attr)
+            if (status && (*status == 'E'))
             {
-              gchar *status = status_attr->GetStrValue ();
+              excluded_count++;
+            }
+            else
+            {
+              Attribute *rank_attr = player->GetAttribute (&final_rank_attr_id);
 
-              if (status && (*status != 'E'))
-              {
-                result = g_slist_prepend (result,
-                                          player);
-              }
+              player->SetAttributeValue (&final_rank_attr_id,
+                                         rank_attr->GetUIntValue () - excluded_count);
+              result = g_slist_append (result,
+                                       player);
             }
           }
         }
+
         current = g_slist_next (current);
       }
     }
 
-    if (result)
-    {
-      Player::AttributeId attr_id ("final_rank");
+    g_slist_free (full_result);
 
-      attr_id.MakeRandomReady (_rand_seed);
-      result = g_slist_sort_with_data (result,
-                                       (GCompareDataFunc) Player::Compare,
-                                       &attr_id);
-    }
     return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::GiveShortListAFinalRank ()
+  {
+    Player::AttributeId rank_attr_id       ("rank",   GetPreviousStage ());
+    Player::AttributeId final_rank_attr_id ("final_rank");
+    GSList *current = _attendees->GetShortList ();
+
+    while (current)
+    {
+      Player    *player    = (Player *) current->data;
+      Attribute *rank_attr = player->GetAttribute ( &rank_attr_id);
+
+      player->SetAttributeValue (&final_rank_attr_id,
+                                 rank_attr->GetUIntValue ());
+
+      current = g_slist_next (current);
+    }
   }
 
   // --------------------------------------------------------------------------------

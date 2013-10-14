@@ -324,7 +324,7 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));
     desc->_compare_func = (GCompareFunc) CompareRanking;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "start_rank", "RangInitial", gettext ("start rank"));
+    desc = AttributeDesc::Declare (G_TYPE_INT, "splitting_start_rank", "RangInitial", gettext ("start rank"));
     desc->_rights       = AttributeDesc::PRIVATE;
     desc->_compare_func = (GCompareFunc) CompareRanking;
 
@@ -378,7 +378,7 @@ int main (int argc, char **argv)
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;
 
-      desc = AttributeDesc::Declare (G_TYPE_INT, "previous_stage_rank", "previous_stage_rank", gettext ("Round start rank"));
+      desc = AttributeDesc::Declare (G_TYPE_INT, "stage_start_rank", "stage_start_rank", gettext ("Round start rank"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_rights      = AttributeDesc::PRIVATE;
       desc->_scope       = AttributeDesc::LOCAL;

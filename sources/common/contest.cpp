@@ -391,6 +391,41 @@ Contest::Contest ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::GetUnknownAttributes (const gchar     *contest_keyword,
+                                    xmlXPathContext *xml_context)
+{
+  gchar          *xml_object_path = g_strdup_printf ("/%s/Tireurs/Tireur", contest_keyword);
+  xmlXPathObject *xml_object      = xmlXPathEval (BAD_CAST xml_object_path, xml_context);
+
+  g_free (xml_object_path);
+
+  if (xml_object)
+  {
+    xmlNodeSet *xml_nodeset = xml_object->nodesetval;
+
+    if (xml_object->nodesetval->nodeNr)
+    {
+      xmlAttr *current_attr = xml_nodeset->nodeTab[0]->properties;
+
+      while (current_attr)
+      {
+        if (AttributeDesc::GetDescFromXmlName ((const gchar *) current_attr->name) == NULL)
+        {
+          AttributeDesc::Declare (G_TYPE_STRING,
+                                  (const gchar *) current_attr->name,
+                                  (const gchar *) current_attr->name,
+                                  (gchar *) current_attr->name);
+        }
+
+        current_attr = current_attr->next;
+      }
+    }
+
+    xmlXPathFreeObject  (xml_object);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Contest::LoadXml (const gchar *filename)
 {
   if (g_path_is_absolute (filename) == FALSE)
@@ -807,6 +842,9 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         _default_classification->Load (xml_nodeset->nodeTab[0]);
       }
       xmlXPathFreeObject  (xml_object);
+
+      GetUnknownAttributes (contest_keyword,
+                            xml_context);
       xmlXPathFreeContext (xml_context);
     }
 
@@ -910,13 +948,13 @@ void Contest::AddFencer (Player *fencer,
 
     if (checkin)
     {
-      Player::AttributeId  start_rank_attr    ("start_rank");
-      Player::AttributeId  previous_rank_attr ("previous_stage_rank", checkin);
+      Player::AttributeId  splitting_start_rank_attr ("splitting_start_rank");
+      Player::AttributeId  stage_start_rank_attr     ("stage_start_rank", checkin);
 
       checkin->Add (fencer);
-      fencer->SetAttributeValue (&start_rank_attr,
+      fencer->SetAttributeValue (&splitting_start_rank_attr,
                                  rank);
-      fencer->SetAttributeValue (&previous_rank_attr,
+      fencer->SetAttributeValue (&stage_start_rank_attr,
                                  rank);
       checkin->UseInitialRank ();
     }
@@ -934,13 +972,12 @@ void Contest::AddReferee (Player *referee)
 void Contest::ImportReferees (GSList *imported_list)
 {
   GSList *attr_list = NULL;
-  Player::AttributeId  name_attr_id       ("name");
-  Player::AttributeId  first_name_attr_id ("first_name");
+  Player::AttributeId name_attr_id       ("name");
+  Player::AttributeId first_name_attr_id ("first_name");
 
   attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
   attr_list = g_slist_prepend (attr_list, &name_attr_id);
 
-  printf ("==>> %d\n", g_slist_length (imported_list));
   while (imported_list)
   {
     Player *imported = (Player *) imported_list->data;
@@ -962,16 +999,13 @@ void Contest::ImportReferees (GSList *imported_list)
         current = g_slist_next (current);
       }
 
-    printf ("    ==>> %d\n", g_slist_length (imported_list));
       if (current == NULL)
       {
         AddReferee (imported);
       }
     }
 
-    printf ("    ==>> %d\n", g_slist_length (imported_list));
     imported_list = g_slist_next (imported_list);
-    printf ("    ==>> %d\n\n", g_slist_length (imported_list));
   }
 
   g_slist_free (attr_list);

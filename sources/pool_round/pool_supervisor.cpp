@@ -81,7 +81,7 @@ namespace Pool
                                           "pool_nr",
                                           "promoted",
                                           "rank",
-                                          "start_rank",
+                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -132,7 +132,7 @@ namespace Pool
                                             "level",
                                             "participation_rate",
                                             "promoted",
-                                            "start_rank",
+                                            "splitting_start_rank",
                                             "team",
                                             NULL);
         filter = new Filter (attr_list);
@@ -203,11 +203,25 @@ namespace Pool
     gtk_widget_set_sensitive (_glade->GetWidget ("seeding_viewport"),
                               TRUE);
 
-    for (guint i = 0; i < _allocator->GetNbPools (); i++)
+    if (_allocator)
     {
-      Pool *pool = _allocator->GetPool (i);
 
-      pool->DeleteMatchs ();
+      for (guint p = 0; p < _allocator->GetNbPools (); p++)
+      {
+        Pool *pool = _allocator->GetPool (p);
+
+        pool->CleanScores ();
+        pool->Wipe ();
+        pool->DeleteMatchs ();
+      }
+
+      if (_displayed_pool)
+      {
+        _displayed_pool->UnPlug ();
+        _displayed_pool = NULL;
+      }
+
+      gtk_list_store_clear (_pool_liststore);
     }
   }
 
@@ -318,31 +332,6 @@ namespace Pool
     }
 
     OnAttrListUpdated ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Supervisor::Reset ()
-  {
-    Stage::Reset ();
-
-    if (_allocator)
-    {
-      for (guint p = 0; p < _allocator->GetNbPools (); p++)
-      {
-        Pool *pool = _allocator->GetPool (p);
-
-        pool->CleanScores ();
-        pool->Wipe ();
-      }
-
-      if (_displayed_pool)
-      {
-        _displayed_pool->UnPlug ();
-        _displayed_pool = NULL;
-      }
-
-      gtk_list_store_clear (_pool_liststore);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -598,48 +587,45 @@ namespace Pool
         pool = _displayed_pool;
       }
 
-      if (pool->IsOver () == FALSE)
+      if (GPOINTER_TO_INT (g_object_get_data (G_OBJECT (operation), "print_for_referees")))
       {
-        if (GPOINTER_TO_INT (g_object_get_data (G_OBJECT (operation), "print_for_referees")))
+        GSList *current_referee = pool->GetRefereeList ();
+
+        while (current_referee)
         {
-          GSList *current_referee = pool->GetRefereeList ();
+          Player              *referee = (Player *) current_referee->data;
+          Player::AttributeId  attr_id ("IP");
+          Attribute           *ip_attr = referee->GetAttribute (&attr_id);
 
-          while (current_referee)
+          if (ip_attr)
           {
-            Player              *referee = (Player *) current_referee->data;
-            Player::AttributeId  attr_id ("IP");
-            Attribute           *ip_attr = referee->GetAttribute (&attr_id);
+            gchar *ip = ip_attr->GetStrValue ();
 
-            if (ip_attr)
+            if (ip && (ip[0] != 0))
             {
-              gchar *ip = ip_attr->GetStrValue ();
+              xmlBuffer *xml_buffer = xmlBufferCreate ();
 
-              if (ip && (ip[0] != 0))
               {
-                xmlBuffer *xml_buffer = xmlBufferCreate ();
+                xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
 
-                {
-                  xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+                _contest->SaveHeader (xml_writer);
+                _allocator->SaveHeader (xml_writer);
+                pool->Save (xml_writer);
+                xmlTextWriterEndElement (xml_writer);
+                xmlTextWriterEndElement (xml_writer);
+                xmlTextWriterEndDocument (xml_writer);
 
-                  _contest->SaveHeader (xml_writer);
-                  _allocator->SaveHeader (xml_writer);
-                  pool->Save (xml_writer);
-                  xmlTextWriterEndElement (xml_writer);
-                  xmlTextWriterEndElement (xml_writer);
-                  xmlTextWriterEndDocument (xml_writer);
-
-                  xmlFreeTextWriter (xml_writer);
-                }
-
-                referee->SendMessage ("/E-ScoreSheets",
-                                      (const gchar *) xml_buffer->content);
-
-                xmlBufferFree (xml_buffer);
+                xmlFreeTextWriter (xml_writer);
               }
-            }
 
-            current_referee = g_slist_next (current_referee);
+              referee->SendMessage ("/E-ScoreSheets",
+                                    (const gchar *) xml_buffer->content);
+
+              xmlBufferFree (xml_buffer);
+            }
           }
+
+          current_referee = g_slist_next (current_referee);
         }
       }
 

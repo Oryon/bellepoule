@@ -43,7 +43,6 @@ namespace Pool
 
     private:
       void Display ();
-      void Reset ();
       void Garnish ();
       void OnLocked ();
       void OnUnLocked ();

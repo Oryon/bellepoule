@@ -109,7 +109,7 @@ namespace Pool
                                           "pool_nr",
                                           "promoted",
                                           "rank",
-                                          "start_rank",
+                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -117,7 +117,7 @@ namespace Pool
       filter = new Filter (attr_list,
                            this);
 
-      filter->ShowAttribute ("previous_stage_rank");
+      filter->ShowAttribute ("stage_start_rank");
       filter->ShowAttribute ("name");
       filter->ShowAttribute ("first_name");
       filter->ShowAttribute ("club");
@@ -185,7 +185,7 @@ namespace Pool
                                             "participation_rate",
                                             "promoted",
                                             "rank",
-                                            "start_rank",
+                                            "splitting_start_rank",
                                             "status",
                                             "team",
                                             "victories_ratio",
