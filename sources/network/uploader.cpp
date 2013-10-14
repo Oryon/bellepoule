@@ -139,7 +139,6 @@ namespace Net
     {
       g_print (GREEN "--CURLINFO_DATA_OUT-------\n" ESC);
       g_print ("......\n");
-      g_print ("......\n");
       return 0;
     }
 
