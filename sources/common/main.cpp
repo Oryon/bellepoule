@@ -312,6 +312,7 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "IP", "IP", gettext ("IP address"));
+    desc->_rights = AttributeDesc::PRIVATE;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "participation_rate", "Activite", gettext ("rate"));
     desc->_persistency    = AttributeDesc::NOT_PERSISTENT;

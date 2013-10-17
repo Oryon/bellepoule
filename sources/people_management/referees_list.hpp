@@ -47,17 +47,10 @@ namespace People
       void OnPlayerEventFromForm (Player            *referee,
                                   Form::PlayerEvent  event);
 
-      void CheckConnection (Player *referee);
-
       static void OnAvailabilityChanged (Player    *referee,
                                          Attribute *attr,
                                          Object    *owner,
                                          guint      step);
-
-      static void OnIPChanged (Player    *referee,
-                               Attribute *attr,
-                               Object    *owner,
-                               guint      step);
 
       static void OnConnectionChanged (Player    *referee,
                                        Attribute *attr,

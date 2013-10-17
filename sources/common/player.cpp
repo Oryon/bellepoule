@@ -36,6 +36,8 @@ Player::Player (const gchar *player_class)
 
   _clients = NULL;
 
+  _flash_code = new FlashCode ();
+
   {
     Player::AttributeId attr_id ("");
 
@@ -56,6 +58,8 @@ Player::Player (const gchar *player_class)
 // --------------------------------------------------------------------------------
 Player::~Player ()
 {
+  _flash_code->Release ();
+
   g_slist_foreach (_clients,
                    (GFunc) Object::TryToRelease,
                    NULL);
@@ -705,4 +709,10 @@ void Player::OnUploaderStatus (Net::Uploader::PeerStatus  peer_status,
 void Player::Dump ()
 {
   g_print ("<< %s >>\n", GetName ());
+}
+
+// --------------------------------------------------------------------------------
+FlashCode *Player::GetFlashCode ()
+{
+  return _flash_code;
 }

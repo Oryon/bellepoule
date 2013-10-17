@@ -43,6 +43,7 @@ namespace People
 #ifndef DEBUG
                                           "ref",
 #endif
+                                          "IP",
                                           "HS",
                                           "attending",
                                           "availability",

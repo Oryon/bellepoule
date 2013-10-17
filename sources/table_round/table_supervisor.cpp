@@ -82,6 +82,7 @@ namespace Table
 #ifndef DEBUG
                                           "ref",
 #endif
+                                          "IP",
                                           "HS",
                                           "attending",
                                           "availability",
@@ -119,6 +120,7 @@ namespace Table
 #ifndef DEBUG
                                           "ref",
 #endif
+                                          "IP",
                                           "HS",
                                           "attending",
                                           "availability",
