@@ -48,6 +48,7 @@ namespace People
 #ifndef DEBUG
                                           "ref",
 #endif
+                                          "IP",
                                           "HS",
                                           "exported",
                                           "final_rank",
@@ -78,7 +79,6 @@ namespace People
       filter->ShowAttribute ("country");
       filter->ShowAttribute ("birth_date");
       filter->ShowAttribute ("licence");
-      filter->ShowAttribute ("IP");
 
       SetFilter (filter);
       CreateForm (filter,
@@ -149,9 +149,6 @@ namespace People
   {
     Checkin::Monitor (referee);
 
-    referee->SetChangeCbk ("IP",
-                           (Player::OnChange) OnIPChanged,
-                           this);
     referee->SetChangeCbk ("connection",
                            (Player::OnChange) OnConnectionChanged,
                            this);
@@ -200,7 +197,6 @@ namespace People
     else
     {
       Checkin::Add (referee);
-      CheckConnection (referee);
     }
   }
 
@@ -234,30 +230,6 @@ namespace People
       referee->SetAttributeValue (&attr_id,
                                   "Absent");
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  void RefereesList::CheckConnection (Player *referee)
-  {
-    if (referee->SendMessage ("/WelcomeMessage",
-                              "Welcome to BellePoule network\n") == FALSE)
-    {
-      Player::AttributeId connection_attr_id ("connection");
-
-      referee->SetAttributeValue (&connection_attr_id,
-                                  "Manual");
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void RefereesList::OnIPChanged (Player    *referee,
-                                  Attribute *attr,
-                                  Object    *owner,
-                                  guint      step)
-  {
-    RefereesList *referee_list = dynamic_cast <RefereesList *> (owner);
-
-    referee_list->CheckConnection (referee);
   }
 
   // --------------------------------------------------------------------------------

@@ -69,6 +69,7 @@ namespace Pool
 #ifndef DEBUG
                                           "ref",
 #endif
+                                          "IP",
                                           "HS",
                                           "attending",
                                           "availability",
@@ -124,6 +125,7 @@ namespace Pool
 #ifndef DEBUG
                                             "ref",
 #endif
+                                            "IP",
                                             "attending",
                                             "availability",
                                             "exported",

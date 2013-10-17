@@ -605,6 +605,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 // --------------------------------------------------------------------------------
 Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
                                             guint        ref,
+                                            const gchar *address,
                                             const gchar *status)
 {
   GSList *current = player_list;
@@ -616,10 +617,16 @@ Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
     if (current_player->GetRef () == ref)
     {
       Player::AttributeId connection_attr_id ("connection");
+      Player::AttributeId ip_attr_id         ("IP");
 
       current_player = current_player;
       current_player->SetAttributeValue (&connection_attr_id,
                                          "OK");
+      if (address)
+      {
+        current_player->SetAttributeValue (&ip_attr_id,
+                                           address);
+      }
       return current_player;
     }
     current = g_slist_next (current);
@@ -646,6 +653,7 @@ gboolean Tournament::OnHttpPost (const gchar *url,
       {
         UpdateConnectionStatus (_referee_list,
                                 atoi (tokens[2]),
+                                data,
                                 "OK");
       }
       // Competition data
@@ -679,6 +687,7 @@ gboolean Tournament::OnHttpPost (const gchar *url,
               {
                 referee = UpdateConnectionStatus (_referee_list,
                                                   atoi (attr),
+                                                  NULL,
                                                   "OK");
                 xmlFree (attr);
               }

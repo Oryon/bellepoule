@@ -114,6 +114,7 @@ class Tournament : public Module
 
     Player *UpdateConnectionStatus (GSList      *player_list,
                                     guint        ref,
+                                    const gchar *address,
                                     const gchar *status);
 
     gboolean OnHttpPost (const gchar *url,

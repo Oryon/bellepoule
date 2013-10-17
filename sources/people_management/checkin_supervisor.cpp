@@ -68,6 +68,7 @@ namespace People
                                           "ref",
                                           "splitting_start_rank",
 #endif
+                                          "IP",
                                           "HS",
                                           "availability",
                                           "exported",

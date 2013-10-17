@@ -14,6 +14,12 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
 #include <qrencode.h>
 
 #include "flash_code.hpp"
@@ -39,17 +45,80 @@ void FlashCode::DestroyPixbuf (guchar   *pixels,
 }
 
 // --------------------------------------------------------------------------------
-GdkPixbuf *FlashCode::GetPixbuf ()
+gchar *FlashCode::GetIpAddress ()
+{
+  struct ifaddrs *ifa_list;
+
+  if (getifaddrs (&ifa_list) == -1)
+  {
+    g_error ("getifaddrs");
+  }
+  else
+  {
+    for (struct ifaddrs *ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
+    {
+      if (   ifa->ifa_addr
+          && (ifa->ifa_flags & IFF_UP)
+          && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
+      {
+        int family = ifa->ifa_addr->sa_family;
+
+        if (family == AF_INET)
+        {
+          char host[NI_MAXHOST];
+
+          if (getnameinfo (ifa->ifa_addr,
+                           sizeof(struct sockaddr_in),
+                           host,
+                           NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
+          {
+            return g_strdup (host);
+          }
+        }
+      }
+    }
+
+    freeifaddrs (ifa_list);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gchar *FlashCode::GetKey ()
+{
+  gchar *key;
+  GHmac *hmac = g_hmac_new (G_CHECKSUM_SHA1,
+                            (const guchar *) this,
+                            50);
+
+  key = g_strdup (g_hmac_get_string (hmac));
+  g_hmac_unref (hmac);
+
+  return key;
+}
+
+// --------------------------------------------------------------------------------
+GdkPixbuf *FlashCode::GetPixbuf (guint ref)
 {
   if (_pixbuf == NULL)
   {
     QRcode *qr_code;
 
-    qr_code = QRcode_encodeString ((const gchar *) "10.12.74.255:35830#izeyauaxybrpzeyrcroicyzeiauyriucyuioeryiouyvuiay",
-                                   0,
-                                   QR_ECLEVEL_L,
-                                   QR_MODE_8,
-                                   1);
+    {
+      gchar *ip   = GetIpAddress ();
+      gchar *key  = GetKey ();
+      gchar *code = g_strdup_printf ("%s:35830-%d-%s", ip, ref, key);
+
+      qr_code = QRcode_encodeString (code,
+                                     0,
+                                     QR_ECLEVEL_L,
+                                     QR_MODE_8,
+                                     1);
+      g_free (code);
+      g_free (key);
+      g_free (ip);
+    }
 
     {
       GdkPixbuf *small_pixbuf;

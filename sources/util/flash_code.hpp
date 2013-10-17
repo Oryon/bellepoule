@@ -24,10 +24,14 @@ class FlashCode : public Object
   public:
     FlashCode ();
 
-    GdkPixbuf *GetPixbuf ();
+    GdkPixbuf *GetPixbuf (guint ref);
 
   private:
     GdkPixbuf *_pixbuf;
+
+    gchar *GetIpAddress ();
+
+    gchar *GetKey ();
 
     static void DestroyPixbuf (guchar   *pixels,
                                gpointer  data);
