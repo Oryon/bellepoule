@@ -68,18 +68,19 @@ namespace People
         const gchar *_player_class;
         gboolean     _visible;
 
-        GtkWidget   *_title_vbox;
-        GtkWidget   *_value_vbox;
-        GtkWidget   *_check_vbox;
+        GtkWidget *_title_vbox;
+        GtkWidget *_value_vbox;
+        GtkWidget *_check_vbox;
+        GtkImage  *_flash_code_image;
       };
 
-      Module      *_client;
-      PlayerCbk    _cbk;
-      Player      *_player_to_update;
-      gboolean     _locked;
-      guint        _page_count;
-      Filter      *_filter;
-      Page        *_pages;
+      Module    *_client;
+      PlayerCbk  _cbk;
+      Player    *_player_to_update;
+      gboolean   _locked;
+      guint      _page_count;
+      Filter    *_filter;
+      Page      *_pages;
 
       virtual ~Form ();
 

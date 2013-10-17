@@ -70,9 +70,10 @@ namespace People
       GSList      *current    = filter->GetAttrList ();
       GtkComboBox *selector_w = NULL;
 
-      page->_title_vbox = gtk_vbox_new (TRUE, 0);
-      page->_value_vbox = gtk_vbox_new (TRUE, 0);
-      page->_check_vbox = gtk_vbox_new (TRUE, 0);
+      page->_title_vbox       = gtk_vbox_new (TRUE, 0);
+      page->_value_vbox       = gtk_vbox_new (TRUE, 0);
+      page->_check_vbox       = gtk_vbox_new (TRUE, 0);
+      page->_flash_code_image = GTK_IMAGE (gtk_image_new ());
 
       gtk_box_pack_start (GTK_BOX (hbox),
                           page->_check_vbox,
@@ -95,6 +96,12 @@ namespace People
                           FALSE,
                           FALSE,
                           0);
+      gtk_box_pack_start (GTK_BOX (vbox),
+                          GTK_WIDGET (page->_flash_code_image),
+                          FALSE,
+                          FALSE,
+                          0);
+
       while (current)
       {
         AttributeDesc *attr_desc = (AttributeDesc *) current->data;
@@ -527,19 +534,27 @@ namespace People
     _player_to_update = player;
     if (_player_to_update)
     {
-      guint  page;
+      Page  *page;
       GList *children;
 
-      for (page = 0; page < _page_count; page++)
+      for (guint i = 0; i < _page_count; i++)
       {
-        if (player->Is (_pages[page]._player_class))
+        if (player->Is (_pages[i]._player_class))
         {
+          page = &_pages[i];
           gtk_notebook_set_current_page (GTK_NOTEBOOK (_glade->GetWidget ("notebook")),
-                                         page);
+                                         i);
+          {
+            FlashCode *flash_code = player->GetFlashCode ();
+
+            gtk_image_set_from_pixbuf (page->_flash_code_image,
+                                       flash_code->GetPixbuf ());
+          }
           break;
         }
       }
-      children = gtk_container_get_children (GTK_CONTAINER (_pages[page]._value_vbox));
+
+      children = gtk_container_get_children (GTK_CONTAINER (page->_value_vbox));
 
       _player_to_update->Retain ();
       for (guint i = 0; i < g_list_length (children); i ++)

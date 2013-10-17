@@ -89,6 +89,7 @@
 			<Add library="libssl32" />
 			<Add library="libcrypto" />
 			<Add library="libmicrohttpd" />
+			<Add library="libqrencode" />
 			<Add directory="C:\MinGW\lib" />
 		</Linker>
 		<Unit filename="..\sources\common\attendees.cpp" />
@@ -127,8 +128,6 @@
 		<Unit filename="..\sources\network\uploader.hpp" />
 		<Unit filename="..\sources\people_management\barrage.cpp" />
 		<Unit filename="..\sources\people_management\barrage.hpp" />
-		<Unit filename="..\sources\people_management\tally_counter.cpp" />
-		<Unit filename="..\sources\people_management\tally_counter.hpp" />
 		<Unit filename="..\sources\people_management\checkin.cpp" />
 		<Unit filename="..\sources\people_management\checkin.hpp" />
 		<Unit filename="..\sources\people_management\checkin_supervisor.cpp" />
@@ -139,10 +138,10 @@
 		<Unit filename="..\sources\people_management\form.hpp" />
 		<Unit filename="..\sources\people_management\general_classification.cpp" />
 		<Unit filename="..\sources\people_management\general_classification.hpp" />
-		<Unit filename="..\sources\people_management\players_list.cpp" />
-		<Unit filename="..\sources\people_management\players_list.hpp" />
 		<Unit filename="..\sources\people_management\player_factory.cpp" />
 		<Unit filename="..\sources\people_management\player_factory.hpp" />
+		<Unit filename="..\sources\people_management\players_list.cpp" />
+		<Unit filename="..\sources\people_management\players_list.hpp" />
 		<Unit filename="..\sources\people_management\players_store.cpp" />
 		<Unit filename="..\sources\people_management\players_store.hpp" />
 		<Unit filename="..\sources\people_management\referee.cpp" />
@@ -151,6 +150,8 @@
 		<Unit filename="..\sources\people_management\referees_list.hpp" />
 		<Unit filename="..\sources\people_management\splitting.cpp" />
 		<Unit filename="..\sources\people_management\splitting.hpp" />
+		<Unit filename="..\sources\people_management\tally_counter.cpp" />
+		<Unit filename="..\sources\people_management\tally_counter.hpp" />
 		<Unit filename="..\sources\people_management\team.cpp" />
 		<Unit filename="..\sources\people_management\team.hpp" />
 		<Unit filename="..\sources\pool_round\pool.cpp" />
@@ -193,6 +194,8 @@
 		<Unit filename="..\sources\util\drop_zone.hpp" />
 		<Unit filename="..\sources\util\filter.cpp" />
 		<Unit filename="..\sources\util\filter.hpp" />
+		<Unit filename="..\sources\util\flash_code.cpp" />
+		<Unit filename="..\sources\util\flash_code.hpp" />
 		<Unit filename="..\sources\util\glade.cpp" />
 		<Unit filename="..\sources\util\glade.hpp" />
 		<Unit filename="..\sources\util\module.cpp" />

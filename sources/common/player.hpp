@@ -21,6 +21,7 @@
 #include <libxml/xmlwriter.h>
 
 #include "util/attribute.hpp"
+#include "util/flash_code.hpp"
 #include "util/object.hpp"
 #include "network/uploader.hpp"
 
@@ -101,6 +102,7 @@ class Player : public Object
     gchar *GetName ();
     void SetName (const gchar *name);
     void Dump ();
+    FlashCode *GetFlashCode ();
 
   public:
     gboolean SendMessage (const gchar *where,
@@ -167,6 +169,7 @@ class Player : public Object
     guint        _nb_matchs;
     gchar        _weapon;
     const gchar *_player_class;
+    FlashCode   *_flash_code;
 
     void NotifyChange (Attribute *attr,
                        guint      step);
