@@ -36,7 +36,7 @@ Player::Player (const gchar *player_class)
 
   _clients = NULL;
 
-  _flash_code = new FlashCode ();
+  _flash_code = new FlashCode (this);
 
   {
     Player::AttributeId attr_id ("");

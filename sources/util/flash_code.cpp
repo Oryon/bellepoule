@@ -28,13 +28,15 @@
 #endif
 #include <qrencode.h>
 
+#include "common/player.hpp"
 #include "flash_code.hpp"
 
 // --------------------------------------------------------------------------------
-FlashCode::FlashCode ()
+FlashCode::FlashCode (Player *player)
   : Object ("FlashCode")
 {
   _pixbuf = NULL;
+  _player = player;
 }
 
 // --------------------------------------------------------------------------------
@@ -145,7 +147,7 @@ gchar *FlashCode::GetKey ()
 }
 
 // --------------------------------------------------------------------------------
-GdkPixbuf *FlashCode::GetPixbuf (guint ref)
+GdkPixbuf *FlashCode::GetPixbuf ()
 {
   if (_pixbuf == NULL)
   {
@@ -154,7 +156,7 @@ GdkPixbuf *FlashCode::GetPixbuf (guint ref)
     {
       gchar *ip   = GetIpAddress ();
       gchar *key  = GetKey ();
-      gchar *code = g_strdup_printf ("%s:35830-%d-%s", ip, ref, key);
+      gchar *code = g_strdup_printf ("%s:35830-%s-%d-%s", ip, _player->GetName (), _player->GetRef (), key);
 
       qr_code = QRcode_encodeString (code,
                                      0,
