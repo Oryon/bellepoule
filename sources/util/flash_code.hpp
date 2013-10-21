@@ -19,14 +19,17 @@
 
 #include "util/object.hpp"
 
+class Player;
+
 class FlashCode : public Object
 {
   public:
-    FlashCode ();
+    FlashCode (Player *player);
 
-    GdkPixbuf *GetPixbuf (guint ref);
+    GdkPixbuf *GetPixbuf ();
 
   private:
+    Player    *_player;
     GdkPixbuf *_pixbuf;
 
     gchar *GetIpAddress ();

@@ -90,6 +90,7 @@
 			<Add library="libcrypto" />
 			<Add library="libmicrohttpd" />
 			<Add library="libqrencode" />
+			<Add library="libiphlpapi.a" />
 			<Add directory="C:\MinGW\lib" />
 		</Linker>
 		<Unit filename="..\sources\common\attendees.cpp" />
