@@ -18,19 +18,30 @@
 #define flash_code_hpp
 
 #include "util/object.hpp"
+#include "network/wifi_network.hpp"
 
 class Player;
 
 class FlashCode : public Object
 {
   public:
+    FlashCode (const gchar *user_name);
+
     FlashCode (Player *player);
+
+    void SetWifiNetwork (Net::WifiNetwork *network);
 
     GdkPixbuf *GetPixbuf ();
 
   private:
+    static Net::WifiNetwork *_wifi_network;
+
+    gchar     *_user_name;
+    gchar     *_key;
     Player    *_player;
     GdkPixbuf *_pixbuf;
+
+    gchar *GetNetwork ();
 
     gchar *GetIpAddress ();
 
