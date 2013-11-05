@@ -51,6 +51,15 @@ Tournament::Tournament (gchar *filename)
   _referee_ref  = 1;
   _nb_matchs    = 0;
 
+  {
+    _wifi_network     = new Net::WifiNetwork ();
+    _admin_flash_code = new FlashCode ("Administrator");
+
+    gtk_entry_set_visibility (GTK_ENTRY (_glade->GetWidget ("passphrase_entry")),
+                              FALSE);
+    RefreshScannerCode ();
+  }
+
   curl_global_init (CURL_GLOBAL_ALL);
 
   EnumerateLanguages ();
@@ -245,6 +254,9 @@ Tournament::~Tournament ()
 
   _http_server->Release ();
   curl_global_cleanup ();
+
+  _admin_flash_code->Release ();
+  _wifi_network->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1191,16 +1203,6 @@ void Tournament::OnSave ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnAbout ()
-{
-  GtkWidget *w = _glade->GetWidget ("about_dialog");
-
-  gtk_dialog_run (GTK_DIALOG (w));
-
-  gtk_widget_hide (w);
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::OnOpenUserManual ()
 {
   gchar *uri = g_build_filename (_program_path, "resources", "user_manual.pdf", NULL);
@@ -1415,9 +1417,9 @@ void Tournament::OnRecent ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnWifi ()
+void Tournament::OnMenuDialog (const gchar *dialog)
 {
-  GtkWidget *w = _glade->GetWidget ("broadcasted_dialog");
+  GtkWidget *w = _glade->GetWidget (dialog);
 
   gtk_dialog_run (GTK_DIALOG (w));
   gtk_widget_hide (w);
@@ -1749,6 +1751,37 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::RefreshScannerCode ()
+{
+  GtkEntry    *ssid_w       = GTK_ENTRY     (_glade->GetWidget ("SSID_entry"));
+  GtkEntry    *passphrase_w = GTK_ENTRY     (_glade->GetWidget ("passphrase_entry"));
+  GtkComboBox *security_w   = GTK_COMBO_BOX (_glade->GetWidget ("security_combobox"));
+
+  _wifi_network->SetSSID       ((gchar *) gtk_entry_get_text (ssid_w));
+  _wifi_network->SetPassphrase ((gchar *) gtk_entry_get_text (passphrase_w));
+
+  switch (gtk_combo_box_get_active (security_w))
+  {
+    case 0:
+      _wifi_network->SetEncryption ("nopass");
+      break;
+    case 1:
+      _wifi_network->SetEncryption ("WEP");
+      break;
+    case 2:
+      _wifi_network->SetEncryption ("WPA");
+      break;
+    default:
+      break;
+  }
+
+  _admin_flash_code->SetWifiNetwork (_wifi_network);
+
+  gtk_image_set_from_pixbuf (GTK_IMAGE (_glade->GetWidget ("scanner_code_image")),
+                             _admin_flash_code->GetPixbuf ());
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
                                                           Object    *owner)
 {
@@ -1781,7 +1814,7 @@ extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
-  t->OnAbout ();
+  t->OnMenuDialog ("about_dialog");
 }
 
 // --------------------------------------------------------------------------------
@@ -1873,11 +1906,20 @@ extern "C" G_MODULE_EXPORT void on_translate_menuitem_activate (GtkWidget *w,
 
 // --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_wifi_menuitem_activate (GtkWidget *w,
-                                                             Object    *owner)
+                                                           Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
-  t->OnWifi ();
+  t->OnMenuDialog ("broadcasted_dialog");
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_network_config_menuitem_activate (GtkWidget *w,
+                                                                     Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnMenuDialog ("network_dialog");
 }
 
 // --------------------------------------------------------------------------------
@@ -2012,4 +2054,13 @@ extern "C" G_MODULE_EXPORT void on_http_entry_icon_release (GtkEntry            
   {
     t->StopCompetitionMonitoring ();
   }
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_network_config_changed (GtkEditable *editable,
+                                                           Object      *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->RefreshScannerCode ();
 }

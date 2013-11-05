@@ -21,8 +21,10 @@
 
 #include "util/module.hpp"
 #include "util/glade.hpp"
+#include "util/flash_code.hpp"
 #include "network/http_server.hpp"
 #include "network/downloader.hpp"
+#include "network/wifi_network.hpp"
 
 class Contest;
 
@@ -41,9 +43,7 @@ class Tournament : public Module
 
     void OnRecent ();
 
-    void OnWifi ();
-
-    void OnAbout ();
+    void OnMenuDialog (const gchar *dialog);
 
     void OnOpenExample ();
 
@@ -82,6 +82,8 @@ class Tournament : public Module
 
     void StopCompetitionMonitoring ();
 
+    void RefreshScannerCode ();
+
   public:
     const gchar *GetCompetitionData (guint  competition_id,
                                      gchar *data_name);
@@ -96,13 +98,15 @@ class Tournament : public Module
 
     guint _referee_ref;
 
-    GSList          *_contest_list;
-    GSList          *_referee_list;
-    guint            _nb_matchs;
-    Net::HttpServer *_http_server;
-    Net::Downloader *_version_downloader;
-    Net::Downloader *_competitions_downloader;
-    gboolean         _print_meal_tickets;
+    GSList           *_contest_list;
+    GSList           *_referee_list;
+    guint             _nb_matchs;
+    Net::HttpServer  *_http_server;
+    Net::Downloader  *_version_downloader;
+    Net::Downloader  *_competitions_downloader;
+    gboolean          _print_meal_tickets;
+    Net::WifiNetwork *_wifi_network;
+    FlashCode        *_admin_flash_code;
 
     void SetBackupLocation (gchar *location);
 

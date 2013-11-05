@@ -31,18 +31,51 @@
 #include "common/player.hpp"
 #include "flash_code.hpp"
 
+Net::WifiNetwork *FlashCode::_wifi_network = NULL;
+
+// --------------------------------------------------------------------------------
+FlashCode::FlashCode (const gchar *user_name)
+  : Object ("FlashCode")
+{
+  _pixbuf    = NULL;
+  _player    = NULL;
+  _user_name = g_strdup (user_name);
+  _key       = NULL;
+}
+
 // --------------------------------------------------------------------------------
 FlashCode::FlashCode (Player *player)
   : Object ("FlashCode")
 {
-  _pixbuf = NULL;
+  _pixbuf    = NULL;
+  _user_name = NULL;
+
   _player = player;
+  if (_player)
+  {
+    _player->Retain ();
+  }
 }
 
 // --------------------------------------------------------------------------------
 FlashCode::~FlashCode ()
 {
   g_object_unref (_pixbuf);
+  g_free (_user_name);
+  g_free (_key);
+  Object::TryToRelease (_player);
+}
+
+// --------------------------------------------------------------------------------
+void FlashCode::SetWifiNetwork (Net::WifiNetwork *network)
+{
+  _wifi_network = network;
+
+  if (_pixbuf)
+  {
+    g_object_unref (_pixbuf);
+    _pixbuf = NULL;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -50,6 +83,22 @@ void FlashCode::DestroyPixbuf (guchar   *pixels,
                                gpointer  data)
 {
   g_free (pixels);
+}
+
+// --------------------------------------------------------------------------------
+gchar *FlashCode::GetNetwork ()
+{
+  if (_wifi_network->IsValid ())
+  {
+    return g_strdup_printf ("[%s-%s-%s]",
+                            _wifi_network->GetSSID (),
+                            _wifi_network->GetEncryption (),
+                            _wifi_network->GetPassphrase ());
+  }
+  else
+  {
+    return g_strdup_printf ("");
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -131,19 +180,26 @@ gchar *FlashCode::GetIpAddress ()
 // --------------------------------------------------------------------------------
 gchar *FlashCode::GetKey ()
 {
-#if 0
-  gchar *key;
-  GHmac *hmac = g_hmac_new (G_CHECKSUM_SHA1,
-                            (const guchar *) this,
-                            50);
+  if (_key == NULL)
+  {
+    static const guint32  data_length = 50;
+    GRand                *random      = g_rand_new ();
+    guchar               *data        = g_new (guchar, data_length);
 
-  key = g_strdup (g_hmac_get_string (hmac));
-  g_hmac_unref (hmac);
+    for (guint i = 0; i < data_length; i++)
+    {
+      data[i] = g_rand_int (random);
+    }
 
-  return key;
-#endif
+    _key = g_compute_checksum_for_data (G_CHECKSUM_SHA1,
+                                        data,
+                                        data_length);
 
-  return g_strdup ("123456");
+    g_rand_free (random);
+    g_free (data);
+  }
+
+  return g_strdup (_key);
 }
 
 // --------------------------------------------------------------------------------
@@ -154,9 +210,25 @@ GdkPixbuf *FlashCode::GetPixbuf ()
     QRcode *qr_code;
 
     {
-      gchar *ip   = GetIpAddress ();
-      gchar *key  = GetKey ();
-      gchar *code = g_strdup_printf ("%s:35830-%s-%d-%s", ip, _player->GetName (), _player->GetRef (), key);
+      gchar *network   = GetNetwork ();
+      gchar *ip        = GetIpAddress ();
+      gchar *key       = GetKey ();
+      guint  user_ref  = 0;
+      gchar *user_name = _user_name;
+      gchar *code;
+
+      if (_player)
+      {
+        user_name = _player->GetName ();
+        user_ref  = _player->GetRef ();
+      }
+
+      code = g_strdup_printf ("%s%s:35830-%s-%d-%s",
+                              network,
+                              ip,
+                              user_name,
+                              user_ref,
+                              key);
 
       qr_code = QRcode_encodeString (code,
                                      0,
@@ -166,6 +238,7 @@ GdkPixbuf *FlashCode::GetPixbuf ()
       g_free (code);
       g_free (key);
       g_free (ip);
+      g_free (network);
     }
 
     {

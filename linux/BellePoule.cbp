@@ -119,6 +119,8 @@
 		<Unit filename="../sources/network/http_server.hpp" />
 		<Unit filename="../sources/network/uploader.cpp" />
 		<Unit filename="../sources/network/uploader.hpp" />
+		<Unit filename="../sources/network/wifi_network.hpp" />
+		<Unit filename="../sources/network/wifi_network.cpp" />
 		<Unit filename="../sources/people_management/barrage.cpp" />
 		<Unit filename="../sources/people_management/barrage.hpp" />
 		<Unit filename="../sources/people_management/tally_counter.cpp" />
