@@ -680,6 +680,7 @@ namespace Pool
                                      _contest->GetWeaponCode (),
                                      GetXmlPlayerTag (),
                                      _rand_seed);
+            SetPoolFlashRef (current_pool);
 
             {
               current_zone = new PoolZone (this,
@@ -923,6 +924,18 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Allocator::SetPoolFlashRef (Pool *pool)
+  {
+    gchar *ref = g_strdup_printf ("%s:%d:%d",
+                                  _contest->GetId (),
+                                  GetId () + 1,
+                                  pool->GetNumber ());
+
+    pool->SetFlashRef (ref);
+    g_free (ref);
+  }
+
+  // --------------------------------------------------------------------------------
   void Allocator::CreatePools ()
   {
     if (_selected_config)
@@ -940,6 +953,7 @@ namespace Pool
                                   _contest->GetWeaponCode (),
                                   GetXmlPlayerTag (),
                                   _rand_seed);
+        SetPoolFlashRef (pool_table[i]);
 
         {
           PoolZone *zone = new PoolZone (this,

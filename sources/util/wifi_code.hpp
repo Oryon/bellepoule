@@ -14,28 +14,39 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef flash_code_hpp
-#define flash_code_hpp
+#ifndef wifi_code_hpp
+#define wifi_code_hpp
 
 #include "util/object.hpp"
+#include "common/player.hpp"
+#include "network/wifi_network.hpp"
+#include "flash_code.hpp"
 
-class FlashCode : public Object
+class Player;
+
+class WifiCode : public FlashCode
 {
   public:
-    FlashCode (const gchar *text);
+    WifiCode (const gchar *user_name);
 
-    GdkPixbuf *GetPixbuf (guint pixel_size = 3);
+    WifiCode (Player *player);
 
-  protected:
-    gchar *_text;
-
-    virtual ~FlashCode ();
+    void SetWifiNetwork (Net::WifiNetwork *network);
 
   private:
-    static void DestroyPixbuf (guchar   *pixels,
-                               gpointer  data);
+    static Net::WifiNetwork *_wifi_network;
+    Player                  *_player;
+    gchar                   *_key;
 
-    virtual gchar *GetText ();
+    gchar *GetNetwork ();
+
+    gchar *GetIpAddress ();
+
+    gchar *GetKey ();
+
+    virtual ~WifiCode ();
+
+    gchar *GetText ();
 };
 
 #endif

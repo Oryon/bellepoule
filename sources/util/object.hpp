@@ -40,6 +40,8 @@
 #define ESC     "\033[0m"
 #endif
 
+class FlashCode;
+
 class Object
 {
   public:
@@ -68,6 +70,10 @@ class Object
 
     void RemoveAllData ();
 
+    void SetFlashRef (const gchar *ref);
+
+    FlashCode *GetFlashCode ();
+
     static void Dump ();
 
     static void TryToRelease (Object *object);
@@ -76,6 +82,7 @@ class Object
 
   protected:
     static gchar *_program_path;
+    FlashCode    *_flash_code;
 
     virtual ~Object ();
 

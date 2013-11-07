@@ -86,7 +86,7 @@ class Match : public Object
 
     gint GetNumber ();
 
-    gchar *GetName ();
+    const gchar *GetName ();
 
     GooCanvasItem *GetScoreTable (GooCanvasItem *parent,
                                   gdouble        size);

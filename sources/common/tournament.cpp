@@ -52,8 +52,8 @@ Tournament::Tournament (gchar *filename)
   _nb_matchs    = 0;
 
   {
-    _wifi_network     = new Net::WifiNetwork ();
-    _admin_flash_code = new FlashCode ("Administrator");
+    _wifi_network    = new Net::WifiNetwork ();
+    _admin_wifi_code = new WifiCode ("Administrator");
 
     gtk_entry_set_visibility (GTK_ENTRY (_glade->GetWidget ("passphrase_entry")),
                               FALSE);
@@ -255,7 +255,7 @@ Tournament::~Tournament ()
   _http_server->Release ();
   curl_global_cleanup ();
 
-  _admin_flash_code->Release ();
+  _admin_wifi_code->Release ();
   _wifi_network->Release ();
 }
 
@@ -1775,10 +1775,15 @@ void Tournament::RefreshScannerCode ()
       break;
   }
 
-  _admin_flash_code->SetWifiNetwork (_wifi_network);
+  _admin_wifi_code->SetWifiNetwork (_wifi_network);
 
-  gtk_image_set_from_pixbuf (GTK_IMAGE (_glade->GetWidget ("scanner_code_image")),
-                             _admin_flash_code->GetPixbuf ());
+  {
+    GdkPixbuf *pixbuf = _admin_wifi_code->GetPixbuf ();
+
+    gtk_image_set_from_pixbuf (GTK_IMAGE (_glade->GetWidget ("scanner_code_image")),
+                               pixbuf);
+    g_object_ref (pixbuf);
+  }
 }
 
 // --------------------------------------------------------------------------------

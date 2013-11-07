@@ -16,6 +16,7 @@
 
 #include <string.h>
 
+#include "flash_code.hpp"
 #include "object.hpp"
 
 guint  Object::_nb_objects   = 0;
@@ -33,6 +34,8 @@ Object::Object (const gchar *class_name)
 {
   g_datalist_init (&_datalist);
   _ref_count = 1;
+
+  _flash_code = NULL;
 
 #ifdef DEBUG
   _nb_objects++;
@@ -81,6 +84,8 @@ Object::~Object ()
   {
     g_datalist_clear (&_datalist);
   }
+
+  TryToRelease (_flash_code);
 
 #ifdef DEBUG
   _nb_objects--;
@@ -150,6 +155,18 @@ gchar *Object::GetUndivadableText (const gchar *text)
 void Object::SetProgramPath (gchar *path)
 {
   _program_path = g_strdup (path);
+}
+
+// --------------------------------------------------------------------------------
+void Object::SetFlashRef (const gchar *ref)
+{
+  _flash_code = new FlashCode (ref);
+}
+
+// --------------------------------------------------------------------------------
+FlashCode *Object::GetFlashCode ()
+{
+  return _flash_code;
 }
 
 // --------------------------------------------------------------------------------

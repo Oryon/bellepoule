@@ -900,7 +900,7 @@ namespace Table
 
       if (data && data->_match)
       {
-        gchar *match_name = data->_match->GetName ();
+        const gchar *match_name = data->_match->GetName ();
 
         if (match_name)
         {
@@ -1135,7 +1135,7 @@ namespace Table
 
         // match_name
         {
-          gchar *match_name = data->_match->GetName ();
+          const gchar *match_name = data->_match->GetName ();
 
           if (match_name == NULL)
           {
@@ -1637,6 +1637,7 @@ namespace Table
                                "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
 
         data->_match->SetNumber (indices[1]+1);
+        data->_match->SetFlashRef (data->_match->GetName ());
 
         left_table->ManageMatch (data->_match);
       }
@@ -2953,6 +2954,7 @@ namespace Table
           Player        *A      = match->GetOpponent (0);
           Player        *B      = match->GetOpponent (1);
           GooCanvasItem *name_item;
+          GooCanvasItem *flash_item;
           GooCanvasItem *title_group = goo_canvas_group_new (match_group, NULL);
           gchar         *font        = g_strdup_printf ("Sans Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
 
@@ -2960,21 +2962,36 @@ namespace Table
 
           match->SetData (this, "printed", (void *) TRUE);
 
+          // Flash code
+          {
+            gdouble    offset     = i *((100.0/_nb_match_per_sheet) *paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 7.0);
+            FlashCode *flash_code = match->GetFlashCode ();
+            GdkPixbuf *pixbuf     = flash_code->GetPixbuf ();
+
+            flash_item = goo_canvas_image_new (title_group,
+                                               pixbuf,
+                                               0.0,
+                                               offset - 6.0,
+                                               NULL);
+            g_object_set (G_OBJECT (flash_item),
+                          "width",         8.0,
+                          "height",        8.0,
+                          "scale-to-fit",  TRUE,
+                          NULL);
+            g_object_unref (pixbuf);
+          }
+
           // Match ID
           {
-            gdouble  offset       = i * ((100.0/_nb_match_per_sheet) * paper_h/paper_w) + (PRINT_HEADER_HEIGHT + 10.0);
-            gchar   *match_number = g_strdup_printf (gettext ("Match %s"), match->GetName ());
-
             name_item = goo_canvas_text_new (title_group,
-                                             match_number,
+                                             match->GetName (),
                                              0.0,
-                                             offset - 6.0,
+                                             0.0,
                                              -1.0,
                                              GTK_ANCHOR_W,
                                              "fill-color", "grey",
                                              "font", font,
                                              NULL);
-            g_free (match_number);
           }
 
           // Referee / Strip
@@ -3016,9 +3033,18 @@ namespace Table
               }
             }
 
+            Canvas::HAlign (name_item,
+                            Canvas::START,
+                            flash_item,
+                            Canvas::START);
+            Canvas::Anchor (name_item,
+                            NULL,
+                            flash_item,
+                            5);
+
             Canvas::HAlign (referee_group,
                             Canvas::START,
-                            name_item,
+                            flash_item,
                             Canvas::START);
 
             goo_canvas_rect_new (strip_group,
