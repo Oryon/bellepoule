@@ -14,68 +14,21 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <sys/types.h>
-#ifdef WIN32
-  #include <winsock2.h>
-  #include <ws2tcpip.h>
-  #include <iphlpapi.h>
-#else
-  #include <ifaddrs.h>
-  #include <sys/socket.h>
-  #include <sys/ioctl.h>
-  #include <net/if.h>
-  #include <netdb.h>
-#endif
 #include <qrencode.h>
 
-#include "common/player.hpp"
 #include "flash_code.hpp"
 
-Net::WifiNetwork *FlashCode::_wifi_network = NULL;
-
 // --------------------------------------------------------------------------------
-FlashCode::FlashCode (const gchar *user_name)
+FlashCode::FlashCode (const gchar *text)
   : Object ("FlashCode")
 {
-  _pixbuf    = NULL;
-  _player    = NULL;
-  _user_name = g_strdup (user_name);
-  _key       = NULL;
-}
-
-// --------------------------------------------------------------------------------
-FlashCode::FlashCode (Player *player)
-  : Object ("FlashCode")
-{
-  _pixbuf    = NULL;
-  _user_name = NULL;
-
-  _player = player;
-  if (_player)
-  {
-    _player->Retain ();
-  }
+  _text = g_strdup_printf ("%s", text);
 }
 
 // --------------------------------------------------------------------------------
 FlashCode::~FlashCode ()
 {
-  g_object_unref (_pixbuf);
-  g_free (_user_name);
-  g_free (_key);
-  Object::TryToRelease (_player);
-}
-
-// --------------------------------------------------------------------------------
-void FlashCode::SetWifiNetwork (Net::WifiNetwork *network)
-{
-  _wifi_network = network;
-
-  if (_pixbuf)
-  {
-    g_object_unref (_pixbuf);
-    _pixbuf = NULL;
-  }
+  g_free (_text);
 }
 
 // --------------------------------------------------------------------------------
@@ -86,165 +39,34 @@ void FlashCode::DestroyPixbuf (guchar   *pixels,
 }
 
 // --------------------------------------------------------------------------------
-gchar *FlashCode::GetNetwork ()
+gchar *FlashCode::GetText ()
 {
-  if (_wifi_network->IsValid ())
-  {
-    return g_strdup_printf ("[%s-%s-%s]",
-                            _wifi_network->GetSSID (),
-                            _wifi_network->GetEncryption (),
-                            _wifi_network->GetPassphrase ());
-  }
-  else
-  {
-    return g_strdup_printf ("");
-  }
+  return g_strdup (_text);
 }
 
 // --------------------------------------------------------------------------------
-gchar *FlashCode::GetIpAddress ()
+GdkPixbuf *FlashCode::GetPixbuf (guint pixel_size)
 {
-  gchar *ip_address = NULL;
+  GdkPixbuf *pixbuf = NULL;
 
-#ifdef WIN32
-  ULONG            info_length  = sizeof (IP_ADAPTER_INFO);
-  PIP_ADAPTER_INFO adapter_info = (IP_ADAPTER_INFO *) malloc (sizeof (IP_ADAPTER_INFO));
-
-  if (adapter_info)
-  {
-    if (GetAdaptersInfo (adapter_info, &info_length) == ERROR_BUFFER_OVERFLOW)
-    {
-      free (adapter_info);
-
-      adapter_info = (IP_ADAPTER_INFO *) malloc (info_length);
-    }
-
-    if (GetAdaptersInfo (adapter_info, &info_length) == NO_ERROR)
-    {
-      PIP_ADAPTER_INFO adapter = adapter_info;
-
-      while (adapter)
-      {
-        if (strcmp (adapter->IpAddressList.IpAddress.String, "0.0.0.0") != 0)
-        {
-          ip_address = g_strdup (adapter->IpAddressList.IpAddress.String);
-          break;
-        }
-
-        adapter = adapter->Next;
-      }
-    }
-
-    free (adapter_info);
-  }
-#else
-    struct ifaddrs *ifa_list;
-
-    if (getifaddrs (&ifa_list) == -1)
-    {
-      g_error ("getifaddrs");
-    }
-    else
-    {
-      for (struct ifaddrs *ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
-      {
-        if (   ifa->ifa_addr
-            && (ifa->ifa_flags & IFF_UP)
-            && ((ifa->ifa_flags & IFF_LOOPBACK) == 0))
-        {
-          int family = ifa->ifa_addr->sa_family;
-
-          if (family == AF_INET)
-          {
-            char host[NI_MAXHOST];
-
-            if (getnameinfo (ifa->ifa_addr,
-                             sizeof (struct sockaddr_in),
-                             host,
-                             NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
-            {
-              ip_address = g_strdup (host);
-              break;
-            }
-          }
-        }
-      }
-
-      freeifaddrs (ifa_list);
-    }
-#endif
-
-  return ip_address;
-}
-
-// --------------------------------------------------------------------------------
-gchar *FlashCode::GetKey ()
-{
-  if (_key == NULL)
-  {
-    static const guint32  data_length = 50;
-    GRand                *random      = g_rand_new ();
-    guchar               *data        = g_new (guchar, data_length);
-
-    for (guint i = 0; i < data_length; i++)
-    {
-      data[i] = g_rand_int (random);
-    }
-
-    _key = g_compute_checksum_for_data (G_CHECKSUM_SHA1,
-                                        data,
-                                        data_length);
-
-    g_rand_free (random);
-    g_free (data);
-  }
-
-  return g_strdup (_key);
-}
-
-// --------------------------------------------------------------------------------
-GdkPixbuf *FlashCode::GetPixbuf ()
-{
-  if (_pixbuf == NULL)
   {
     QRcode *qr_code;
 
     {
-      gchar *network   = GetNetwork ();
-      gchar *ip        = GetIpAddress ();
-      gchar *key       = GetKey ();
-      guint  user_ref  = 0;
-      gchar *user_name = _user_name;
-      gchar *code;
+      gchar  *text = GetText ();
 
-      if (_player)
-      {
-        user_name = _player->GetName ();
-        user_ref  = _player->GetRef ();
-      }
-
-      code = g_strdup_printf ("%s%s:35830-%s-%d-%s",
-                              network,
-                              ip,
-                              user_name,
-                              user_ref,
-                              key);
-
-      qr_code = QRcode_encodeString (code,
+      qr_code = QRcode_encodeString (text,
                                      0,
                                      QR_ECLEVEL_L,
                                      QR_MODE_8,
                                      1);
-      g_free (code);
-      g_free (key);
-      g_free (ip);
-      g_free (network);
+      g_free (text);
     }
 
     {
       GdkPixbuf *small_pixbuf;
       guint      stride = qr_code->width * 3;
-      guchar    *data   = g_new (guchar, qr_code->width *stride);
+      guchar    *data   = g_new (guchar, qr_code->width * stride);
 
       for (gint y = 0; y < qr_code->width; y++)
       {
@@ -279,13 +101,13 @@ GdkPixbuf *FlashCode::GetPixbuf ()
                                                DestroyPixbuf,
                                                NULL);
 
-      _pixbuf = gdk_pixbuf_scale_simple (small_pixbuf,
-                                         qr_code->width * 3,
-                                         qr_code->width * 3,
+      pixbuf = gdk_pixbuf_scale_simple (small_pixbuf,
+                                         qr_code->width * pixel_size,
+                                         qr_code->width * pixel_size,
                                          GDK_INTERP_NEAREST);
       g_object_unref (small_pixbuf);
     }
   }
 
-  return _pixbuf;
+  return pixbuf;
 }

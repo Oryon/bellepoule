@@ -553,7 +553,7 @@ void Match::SetNumber (gint number)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Match::GetName ()
+const gchar *Match::GetName ()
 {
   if (_number)
   {

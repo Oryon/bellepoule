@@ -21,7 +21,7 @@
 
 #include "util/module.hpp"
 #include "util/glade.hpp"
-#include "util/flash_code.hpp"
+#include "util/wifi_code.hpp"
 #include "network/http_server.hpp"
 #include "network/downloader.hpp"
 #include "network/wifi_network.hpp"
@@ -63,7 +63,7 @@ class Tournament : public Module
 
     void OnBackupfileLocation ();
 
-    Contest *GetContest (gchar *filename);
+    Contest *GetContest (const gchar *filename);
 
     void Manage (Contest *contest);
 
@@ -106,7 +106,7 @@ class Tournament : public Module
     Net::Downloader  *_competitions_downloader;
     gboolean          _print_meal_tickets;
     Net::WifiNetwork *_wifi_network;
-    FlashCode        *_admin_flash_code;
+    WifiCode         *_admin_wifi_code;
 
     void SetBackupLocation (gchar *location);
 
@@ -115,6 +115,8 @@ class Tournament : public Module
     void RefreshMatchRate (gint delta);
 
     void RefreshMatchRate (Player *referee);
+
+    Contest *FetchContest (const gchar *id);
 
     Player *UpdateConnectionStatus (GSList      *player_list,
                                     guint        ref,

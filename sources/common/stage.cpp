@@ -1292,8 +1292,9 @@ void Stage::SaveAttendees (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Stage::OnHttpPost (const gchar **url,
-                         const gchar *data)
+gboolean Stage::OnHttpPost (const gchar *command,
+                            const gchar **ressource,
+                            const gchar *data)
 {
   return FALSE;
 }

@@ -82,7 +82,8 @@ class Contest : public Module
 
     State GetState ();
 
-    gboolean OnHttpPost (const gchar **url,
+    gboolean OnHttpPost (const gchar *command,
+                         const gchar **ressource,
                          const gchar *data);
 
     gchar *GetId ();

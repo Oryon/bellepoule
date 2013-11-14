@@ -449,6 +449,7 @@ namespace Pool
       // Name
       {
         GooCanvasItem *text_item;
+        GdkPixbuf     *pixbuf = _flash_code->GetPixbuf (2);
 
         _title_table = goo_canvas_table_new (title_group, NULL);
         text_item = Canvas::PutTextInTable (_title_table,
@@ -458,6 +459,12 @@ namespace Pool
         g_object_set (G_OBJECT (text_item),
                       "font", "Sans bold 18px",
                       NULL);
+
+        Canvas::PutPixbufInTable (_title_table,
+                                  pixbuf,
+                                  1,
+                                  1);
+        g_object_unref (pixbuf);
       }
 
       // Referee / Track
@@ -1815,12 +1822,12 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Pool::OnHttpPost (const gchar **url,
+  gboolean Pool::OnHttpPost (const gchar **ressource,
                              const gchar *data)
   {
-    if (*url && data)
+    if (*ressource && data)
     {
-      guint match_index = atoi  (*url);
+      guint match_index = atoi  (*ressource);
 
       if (match_index > 0)
       {

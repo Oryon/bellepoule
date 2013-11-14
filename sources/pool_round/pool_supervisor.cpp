@@ -237,25 +237,33 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Supervisor::OnHttpPost (const gchar **url,
+  gboolean Supervisor::OnHttpPost (const gchar *command,
+                                   const gchar **ressource,
                                    const gchar *data)
   {
-    if (*url)
+    if (*ressource)
     {
-      guint pool_index = atoi (*url);
+      guint pool_index = atoi (*ressource);
 
       if (pool_index > 0)
       {
         pool_index--;
 
-        for (guint i = 0; i < _allocator->GetNbPools (); i++)
+        if (strcmp (command, "ScoreSheet") == 0)
         {
-          if (i == pool_index)
+          OnPoolSelected (pool_index);
+        }
+        else if (strcmp (command, "Score") == 0)
+        {
+          for (guint i = 0; i < _allocator->GetNbPools (); i++)
           {
-            Pool *pool = _allocator->GetPool (i);
+            if (i == pool_index)
+            {
+              Pool *pool = _allocator->GetPool (i);
 
-            return pool->OnHttpPost (&url[1],
-                                     data);
+              return pool->OnHttpPost (&ressource[1],
+                                       data);
+            }
           }
         }
       }

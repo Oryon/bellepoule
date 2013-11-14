@@ -546,9 +546,11 @@ namespace People
                                          i);
           {
             FlashCode *flash_code = player->GetFlashCode ();
+            GdkPixbuf *pixbuf     = flash_code->GetPixbuf ();
 
             gtk_image_set_from_pixbuf (page->_flash_code_image,
-                                       flash_code->GetPixbuf ());
+                                       pixbuf);
+            g_object_unref (pixbuf);
           }
           break;
         }

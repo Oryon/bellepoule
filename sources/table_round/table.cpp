@@ -319,8 +319,8 @@ namespace Table
 
           while (current)
           {
-            Match *match = (Match *) current->data;
-            gchar *id = match->GetName ();
+            Match       *match = (Match *) current->data;
+            const gchar *id    = match->GetName ();
 
             id = strstr (id, "-");
             if (id)
