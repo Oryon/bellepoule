@@ -187,22 +187,23 @@ gchar *WifiCode::GetKey ()
 // --------------------------------------------------------------------------------
 gchar *WifiCode::GetText ()
 {
-  gchar *network   = GetNetwork ();
-  gchar *ip        = GetIpAddress ();
-  gchar *key       = GetKey ();
+  gchar *network = GetNetwork ();
+  gchar *ip      = GetIpAddress ();
+  gchar *key     = GetKey ();
   gchar *text;
 
   if (_player)
   {
-    text = g_strdup_printf ("%s%s:35830-%s-%s",
+    text = g_strdup_printf ("%s%s:35830-%s-%d-%s",
                             network,
                             ip,
                             _player->GetName (),
+                            _player->GetRef (),
                             key);
   }
   else
   {
-    text = g_strdup_printf ("%s%s:35830-%s-%s",
+    text = g_strdup_printf ("%s%s:35830-%s-0-%s",
                             network,
                             ip,
                             _text,

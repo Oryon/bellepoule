@@ -648,6 +648,27 @@ Player *Tournament::UpdateConnectionStatus (GSList      *player_list,
 }
 
 // --------------------------------------------------------------------------------
+Contest *Tournament::FetchContest (const gchar *id)
+{
+  if (id)
+  {
+    GSList *current = _contest_list;
+
+    while (current)
+    {
+      Contest *contest = (Contest *) current->data;
+
+      if (strcmp (contest->GetId (), id) == 0)
+      {
+        return contest;
+      }
+      current = g_slist_next (current);
+    }
+  }
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
 gboolean Tournament::OnHttpPost (const gchar *url,
                                  const gchar *data)
 {
@@ -669,51 +690,60 @@ gboolean Tournament::OnHttpPost (const gchar *url,
                                 "OK");
       }
       // Competition data
-      else if (strcmp (tokens[1], "tournament") == 0)
+      else if (   (strcmp (tokens[1], "Score") == 0)
+               || (strcmp (tokens[1], "ScoreSheet") == 0))
       {
-        Player *referee = NULL;
-        xmlDoc *doc = xmlReadMemory (data,
-                                     strlen (data),
-                                     "noname.xml",
-                                     NULL,
-                                     0);
+        gboolean request_is_valid = FALSE;
 
-        if (doc)
+        if (strcmp (tokens[1], "Score") == 0)
         {
-          xmlXPathInit ();
+          xmlDoc *doc = xmlReadMemory (data,
+                                       strlen (data),
+                                       "noname.xml",
+                                       NULL,
+                                       0);
 
+          if (doc)
           {
-            xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-            xmlXPathObject  *xml_object;
-            xmlNodeSet      *xml_nodeset;
+            xmlXPathInit ();
 
-            xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
-            xml_nodeset = xml_object->nodesetval;
-
-            if (xml_nodeset->nodeNr == 1)
             {
-              xmlNode *node = xml_nodeset->nodeTab[0];
-              gchar   *attr = (gchar *) xmlGetProp (node, BAD_CAST "ID");
+              xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+              xmlXPathObject  *xml_object;
+              xmlNodeSet      *xml_nodeset;
 
-              if (attr)
+              xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
+              xml_nodeset = xml_object->nodesetval;
+
+              if (xml_nodeset->nodeNr == 1)
               {
-                referee = UpdateConnectionStatus (_referee_list,
-                                                  atoi (attr),
-                                                  NULL,
-                                                  "OK");
-                xmlFree (attr);
-              }
-            }
+                xmlNode *node = xml_nodeset->nodeTab[0];
+                gchar   *attr = (gchar *) xmlGetProp (node, BAD_CAST "ID");
 
-            xmlXPathFreeObject  (xml_object);
-            xmlXPathFreeContext (xml_context);
+                if (attr)
+                {
+                  request_is_valid = (UpdateConnectionStatus (_referee_list,
+                                                              atoi (attr),
+                                                              NULL,
+                                                              "OK") != NULL);
+                  xmlFree (attr);
+                }
+              }
+
+              xmlXPathFreeObject  (xml_object);
+              xmlXPathFreeContext (xml_context);
+            }
+            xmlFreeDoc (doc);
           }
-          xmlFreeDoc (doc);
+        }
+        if (strcmp (tokens[1], "ScoreSheet") == 0)
+        {
+          request_is_valid = TRUE;
         }
 
-        if (referee)
+        if (request_is_valid)
         {
-          if (tokens[2] && (strcmp (tokens[2], "competition") == 0))
+          if (tokens[2] && (strcmp (tokens[2], "Competition") == 0))
           {
             gchar *competition_id = tokens[3];
 
@@ -725,10 +755,21 @@ gboolean Tournament::OnHttpPost (const gchar *url,
               {
                 Contest *contest = (Contest *) current->data;
 
-                if (    contest->GetFilename ()
-                    && (strcmp (contest->GetId (), competition_id) == 0))
+                if (strcmp (contest->GetId (), competition_id) == 0)
                 {
-                  result = contest->OnHttpPost ((const gchar**) &tokens[4],
+                  if (strcmp (tokens[1], "ScoreSheet") == 0)
+                  {
+                    GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+                    gint        page = gtk_notebook_page_num (nb,
+                                                              contest->GetRootWidget ());
+
+                    g_object_set (G_OBJECT (nb),
+                                  "page", page,
+                                  NULL);
+                  }
+
+                  result = contest->OnHttpPost (tokens[1],
+                                                (const gchar**) &tokens[4],
                                                 data);
                   break;
                 }
@@ -1087,7 +1128,7 @@ void Tournament::OnContestDeleted (Contest *contest)
 }
 
 // --------------------------------------------------------------------------------
-Contest *Tournament::GetContest (gchar *filename)
+Contest *Tournament::GetContest (const gchar *filename)
 {
   GSList *current = _contest_list;
 

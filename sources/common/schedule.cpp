@@ -671,12 +671,13 @@ void Schedule::RemoveFromNotebook (Stage *stage)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Schedule::OnHttpPost (const gchar **url,
+gboolean Schedule::OnHttpPost (const gchar *command,
+                               const gchar **ressource,
                                const gchar *data)
 {
-  if (url[0])
+  if (ressource[0])
   {
-    guint  phase_id = atoi (url[0]);
+    guint  phase_id = atoi (ressource[0]);
     GList *current  = _stage_list;
 
     while (current)
@@ -685,7 +686,8 @@ gboolean Schedule::OnHttpPost (const gchar **url,
 
       if (stage->GetId () == phase_id)
       {
-        return stage->OnHttpPost (&url[1],
+        return stage->OnHttpPost (command,
+                                  &ressource[1],
                                   data);
       }
 

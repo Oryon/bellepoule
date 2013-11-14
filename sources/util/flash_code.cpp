@@ -22,7 +22,7 @@
 FlashCode::FlashCode (const gchar *text)
   : Object ("FlashCode")
 {
-  _text   = g_strdup (text);
+  _text = g_strdup_printf ("%s", text);
 }
 
 // --------------------------------------------------------------------------------

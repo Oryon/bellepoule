@@ -926,7 +926,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::SetPoolFlashRef (Pool *pool)
   {
-    gchar *ref = g_strdup_printf ("%s:%d:%d",
+    gchar *ref = g_strdup_printf ("#%s/%d/%d",
                                   _contest->GetId (),
                                   GetId () + 1,
                                   pool->GetNumber ());

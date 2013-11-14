@@ -63,7 +63,7 @@ class Tournament : public Module
 
     void OnBackupfileLocation ();
 
-    Contest *GetContest (gchar *filename);
+    Contest *GetContest (const gchar *filename);
 
     void Manage (Contest *contest);
 
@@ -115,6 +115,8 @@ class Tournament : public Module
     void RefreshMatchRate (gint delta);
 
     void RefreshMatchRate (Player *referee);
+
+    Contest *FetchContest (const gchar *id);
 
     Player *UpdateConnectionStatus (GSList      *player_list,
                                     guint        ref,

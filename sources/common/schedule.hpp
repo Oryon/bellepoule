@@ -68,7 +68,8 @@ class Schedule : public Module
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
 
-    gboolean OnHttpPost (const gchar **url,
+    gboolean OnHttpPost (const gchar *command,
+                         const gchar **ressource,
                          const gchar *data);
 
     void SetTeamEvent (gboolean team_event);

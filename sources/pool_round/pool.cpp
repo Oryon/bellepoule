@@ -1822,12 +1822,12 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Pool::OnHttpPost (const gchar **url,
+  gboolean Pool::OnHttpPost (const gchar **ressource,
                              const gchar *data)
   {
-    if (*url && data)
+    if (*ressource && data)
     {
-      guint match_index = atoi  (*url);
+      guint match_index = atoi  (*ressource);
 
       if (match_index > 0)
       {

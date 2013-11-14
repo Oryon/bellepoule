@@ -1793,10 +1793,12 @@ gchar *Contest::GetSaveFileName (gchar       *title,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Contest::OnHttpPost (const gchar **url,
+gboolean Contest::OnHttpPost (const gchar *command,
+                              const gchar **resource,
                               const gchar *data)
 {
-  return _schedule->OnHttpPost (url,
+  return _schedule->OnHttpPost (command,
+                                resource,
                                 data);
 }
 
