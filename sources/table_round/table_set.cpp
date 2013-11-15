@@ -1637,7 +1637,18 @@ namespace Table
                                "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
 
         data->_match->SetNumber (indices[1]+1);
-        data->_match->SetFlashRef (data->_match->GetName ());
+
+        // flash code
+        {
+          Contest *contest = _supervisor->GetContest ();
+          gchar   *ref     = g_strdup_printf ("#%s/%d/%s.%d",
+                                              contest->GetId (),
+                                              _supervisor->GetId (),
+                                              _id,
+                                              data->_match->GetNumber ());
+          data->_match->SetFlashRef (ref);
+          g_free (ref);
+        }
 
         left_table->ManageMatch (data->_match);
       }

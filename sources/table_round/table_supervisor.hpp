@@ -114,7 +114,11 @@ namespace Table
 
       void LoadConfiguration (xmlNode *xml_node);
 
-      void FillInConfig ();
+      gboolean OnHttpPost (const gchar *command,
+                           const gchar **ressource,
+                           const gchar *data);
+
+        void FillInConfig ();
 
       void ApplyConfig ();
 

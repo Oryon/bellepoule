@@ -494,6 +494,50 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  gboolean Supervisor::OnHttpPost (const gchar *command,
+                                   const gchar **ressource,
+                                   const gchar *data)
+  {
+    gboolean result = FALSE;
+    gchar **tokens = g_strsplit (*ressource,
+                                 ".",
+                                 0);
+
+    if (tokens && tokens[0])
+    {
+      GtkTreeIter iter;
+
+      if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (_table_set_treestore),
+                                               &iter,
+                                               tokens[0]))
+      {
+        //TableSet *table_set;
+
+        GtkTreePath *path = gtk_tree_path_new_from_string (tokens[0]);
+
+        if (path)
+        {
+          gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                                    path,
+                                    NULL,
+                                    FALSE);
+          gtk_tree_path_free (path);
+          result = TRUE;
+        }
+        //gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore),
+                            //&iter,
+                            //TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                            //-1);
+
+        //OnTableSetSelected (table_set);
+      }
+    }
+    g_strfreev (tokens);
+
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
   void Supervisor::LoadConfiguration (xmlNode *xml_node)
   {
     Stage::LoadConfiguration (xml_node);
