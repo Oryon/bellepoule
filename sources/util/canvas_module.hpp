@@ -102,6 +102,8 @@ class CanvasModule : public Module
     gdouble        _drag_x;
     gdouble        _drag_y;
 
+    GtkScrolledWindow *GetScrolledWindow ();
+
     DropZone *GetZoneAt (gint x,
                          gint y);
 

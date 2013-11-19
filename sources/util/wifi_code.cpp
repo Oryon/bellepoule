@@ -58,7 +58,7 @@ WifiCode::WifiCode (Player *player)
 WifiCode::~WifiCode ()
 {
   g_free (_key);
-  _player->Release ();
+  TryToRelease (_player);
 }
 
 // --------------------------------------------------------------------------------

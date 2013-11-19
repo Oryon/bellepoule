@@ -505,34 +505,30 @@ namespace Table
 
     if (tokens && tokens[0])
     {
-      GtkTreeIter iter;
+      GtkTreePath *path = gtk_tree_path_new_from_string (tokens[0]);
 
-      if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (_table_set_treestore),
-                                               &iter,
-                                               tokens[0]))
+      if (path)
       {
-        //TableSet *table_set;
-
-        GtkTreePath *path = gtk_tree_path_new_from_string (tokens[0]);
-
-        if (path)
-        {
-          gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
-                                    path,
-                                    NULL,
-                                    FALSE);
-          gtk_tree_path_free (path);
-          result = TRUE;
-        }
-        //gtk_tree_model_get (GTK_TREE_MODEL (_table_set_treestore),
-                            //&iter,
-                            //TABLE_SET_TABLE_COLUMN_ptr, &table_set,
-                            //-1);
-
-        //OnTableSetSelected (table_set);
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                                  path,
+                                  NULL,
+                                  FALSE);
+        gtk_tree_path_free (path);
+        result = TRUE;
       }
+
+      if (_displayed_table_set)
+      {
+        gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
+                                           TRUE);
+
+        _displayed_table_set->OnHttpPost (command,
+                                          (const gchar**) &tokens[1],
+                                          data);
+      }
+
+      g_strfreev (tokens);
     }
-    g_strfreev (tokens);
 
     return result;
   }

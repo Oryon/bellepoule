@@ -487,6 +487,12 @@ void CanvasModule::SetObjectDropZone (Object        *object,
 }
 
 // --------------------------------------------------------------------------------
+GtkScrolledWindow *CanvasModule::GetScrolledWindow ()
+{
+  return GTK_SCROLLED_WINDOW (gtk_widget_get_parent (GTK_WIDGET (_canvas)));
+}
+
+// --------------------------------------------------------------------------------
 DropZone *CanvasModule::GetZoneAt (gint x,
                                    gint y)
 {
@@ -495,14 +501,18 @@ DropZone *CanvasModule::GetZoneAt (gint x,
   GSList  *current = _drop_zones;
 
   {
-    GtkWidget     *window = _glade->GetWidget ("canvas_scrolled_window");
-    GtkAdjustment *adjustment;
+    GtkScrolledWindow *window = GetScrolledWindow ();
 
-    adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (window));
-    hvalue     = gtk_adjustment_get_value (adjustment);
+    if (window)
+    {
+      GtkAdjustment *adjustment;
 
-    adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (window));
-    vvalue     = gtk_adjustment_get_value (adjustment);
+      adjustment = gtk_scrolled_window_get_hadjustment (window);
+      hvalue     = gtk_adjustment_get_value (adjustment);
+
+      adjustment = gtk_scrolled_window_get_vadjustment (window);
+      vvalue     = gtk_adjustment_get_value (adjustment);
+    }
   }
 
 
@@ -830,8 +840,25 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
     }
 
     {
-      DropZone *drop_zone = GetZoneAt (_drag_x*_zoom_factor,
-                                       _drag_y*_zoom_factor);
+      DropZone *drop_zone;
+      gdouble   adjx = 0.0;
+      gdouble   adjy = 0.0;
+
+      {
+        GtkScrolledWindow *sw = GetScrolledWindow ();
+
+        if (sw)
+        {
+          GtkAdjustment *hadj = gtk_scrolled_window_get_hadjustment (sw);
+          GtkAdjustment *vadj = gtk_scrolled_window_get_vadjustment (sw);
+
+          adjx = gtk_adjustment_get_value (hadj);
+          adjy = gtk_adjustment_get_value (vadj);
+        }
+      }
+
+      drop_zone = GetZoneAt (_drag_x*_zoom_factor - adjx,
+                             _drag_y*_zoom_factor - adjy);
 
       if (ObjectIsDropable (_floating_object,
                             drop_zone))

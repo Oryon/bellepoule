@@ -132,6 +132,10 @@ namespace Table
 
       Match *GetFirstError ();
 
+      gboolean OnHttpPost (const gchar *command,
+                           const gchar **ressource,
+                           const gchar *data);
+
     private:
       static const gdouble _score_rect_size;
 
