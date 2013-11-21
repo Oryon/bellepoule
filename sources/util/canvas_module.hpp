@@ -27,9 +27,7 @@
 class CanvasModule : public Module
 {
   public:
-    void OnZoom (gdouble value);
-
-    void RestoreZoomFactor (GtkScale *scale);
+    virtual void UnPlug ();
 
   protected:
     CanvasModule (const gchar *glade_file,
@@ -50,6 +48,12 @@ class CanvasModule : public Module
                                    const gchar   *common_markup,
                                    Player        *player,
                                    ...);
+
+    void SetZoomer (GtkRange *zoomer);
+
+    void FreezeZoomer ();
+
+    void RestoreZoomFactor ();
 
   protected:
     virtual guint PreparePrint (GtkPrintOperation *operation,
@@ -92,17 +96,21 @@ class CanvasModule : public Module
                                        DropZone *in_zone);
 
   private:
-    GooCanvas     *_canvas;
-    gdouble        _zoom_factor;
-    gboolean       _dragging;
-    GooCanvasItem *_drag_text;
-    DropZone      *_source_drop_zone;
-    DropZone      *_target_drop_zone;
-    Object        *_floating_object;
-    gdouble        _drag_x;
-    gdouble        _drag_y;
+    GooCanvas         *_canvas;
+    GtkScrolledWindow *_scrolled_window;
+    GtkRange          *_zoomer;
+    gdouble            _zoom_factor;
+    gdouble            _h_adj;
+    gdouble            _v_adj;
+    gboolean           _dragging;
+    GooCanvasItem     *_drag_text;
+    DropZone          *_source_drop_zone;
+    DropZone          *_target_drop_zone;
+    Object            *_floating_object;
+    gdouble            _drag_x;
+    gdouble            _drag_y;
 
-    GtkScrolledWindow *GetScrolledWindow ();
+    void OnZoom (gdouble value);
 
     DropZone *GetZoneAt (gint x,
                          gint y);
@@ -163,7 +171,12 @@ class CanvasModule : public Module
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      DropZone       *zone);
-
+    static void on_hadjustment_changed (GtkAdjustment *adjustment,
+                                        CanvasModule  *canvas_module);
+    static void on_vadjustment_changed (GtkAdjustment *adjustment,
+                                        CanvasModule  *canvas_module);
+    static void on_zoom_changed (GtkRange     *range,
+                                 CanvasModule *canvas_module);
 };
 
 #endif

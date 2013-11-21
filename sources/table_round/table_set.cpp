@@ -446,8 +446,13 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::Display ()
+  void TableSet::Display (GtkRange *zoomer)
   {
+    if (zoomer)
+    {
+      SetZoomer (zoomer);
+    }
+
     if (_tree_root)
     {
       Wipe ();
@@ -541,6 +546,8 @@ namespace Table
       }
 
       RefreshNodes ();
+
+      RestoreZoomFactor ();
     }
   }
 
@@ -1913,12 +1920,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::OnAttrListUpdated ()
-  {
-    Display ();
-  }
-
-  // --------------------------------------------------------------------------------
   void TableSet::OnFromToTableComboboxChanged ()
   {
     Table *from_table = _from_border->GetSelectedTable ();
@@ -1969,7 +1970,7 @@ namespace Table
                                   0);
       }
 
-      Display ();
+      Display (NULL);
     }
   }
 
@@ -3611,7 +3612,8 @@ namespace Table
     {
       target_zone->AddObject (object);
 
-      OnAttrListUpdated ();
+      FreezeZoomer ();
+      Display (NULL);
       MakeDirty ();
     }
   }

@@ -41,7 +41,6 @@ namespace Table
       void OnInputToggled (GtkWidget *widget);
       void OnDisplayToggled (GtkWidget *widget);
       void OnPrint ();
-      void OnZoom (gdouble value);
       void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
       void OnTableOver (TableSet *table_set,
                         Table    *table);

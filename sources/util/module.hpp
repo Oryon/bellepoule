@@ -41,6 +41,7 @@ class Module : public virtual Object
                GtkWidget    *in,
                GtkToolbar   *toolbar          = NULL,
                GtkContainer *config_container = NULL);
+
     void UnPlug ();
 
     void AddSensitiveWidget (GtkWidget *w);

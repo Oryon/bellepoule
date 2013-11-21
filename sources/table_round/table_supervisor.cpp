@@ -202,8 +202,7 @@ namespace Table
     {
       Plug (table_set,
             _glade->GetWidget ("table_set_hook"));
-      table_set->Display ();
-      table_set->RestoreZoomFactor (GTK_SCALE (_glade->GetWidget ("zoom_scale")));
+      table_set->Display (GTK_RANGE (_glade->GetWidget ("zoom_scale")));
 
       _displayed_table_set = table_set;
     }
@@ -1064,15 +1063,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnZoom (gdouble value)
-  {
-    if (_displayed_table_set)
-    {
-      _displayed_table_set->OnZoom (value);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void Supervisor::OnTableSetTreeViewCursorChanged (GtkTreeView *treeview)
   {
     GtkTreePath *path;
@@ -1233,16 +1223,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_zoom_scalebutton_value_changed (GtkWidget *widget,
-                                                                     gdouble    value,
-                                                                     Object    *owner)
-  {
-    Supervisor *t = dynamic_cast <Supervisor *> (owner);
-
-    t->OnZoom (value);
-  }
-
-  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_display_toolbutton_toggled (GtkWidget *widget,
                                                                  Object    *owner)
   {
@@ -1258,14 +1238,5 @@ namespace Table
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
     t->OnTableSetTreeViewCursorChanged (treeview);
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_zoom_hscale_value_changed (GtkRange *range,
-                                                                Object   *owner)
-  {
-    Supervisor *t = dynamic_cast <Supervisor *> (owner);
-
-    t->OnZoom (gtk_range_get_value (range));
   }
 }

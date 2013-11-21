@@ -88,7 +88,7 @@ namespace Table
 
       void Wipe ();
 
-      void Display ();
+      void Display (GtkRange *zoomer);
 
       void Lock ();
 
@@ -190,8 +190,6 @@ namespace Table
       void CreateTree ();
 
       void DeleteTree ();
-
-      void OnAttrListUpdated ();
 
       void DrawAllConnectors ();
 

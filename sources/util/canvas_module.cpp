@@ -31,12 +31,16 @@ CanvasModule::CanvasModule (const gchar *glade_file,
           root)
 {
   _canvas           = NULL;
+  _scrolled_window  = NULL;
+  _zoomer           = NULL;
   _drop_zones       = NULL;
   _target_drop_zone = NULL;
   _floating_object  = NULL;
   _dragging         = FALSE;
   _drag_text        = NULL;
   _zoom_factor      = 1.0;
+  _h_adj            = 0.0;
+  _v_adj            = 0.0;
 }
 
 // --------------------------------------------------------------------------------
@@ -52,12 +56,34 @@ void CanvasModule::OnPlugged ()
 {
   if (_canvas == NULL)
   {
-    GtkWidget *view_port = _glade->GetWidget ("canvas_scrolled_window");
+    _scrolled_window = GTK_SCROLLED_WINDOW (_glade->GetWidget ("canvas_scrolled_window"));
 
     _canvas = CreateCanvas ();
 
-    gtk_container_add (GTK_CONTAINER (view_port), GTK_WIDGET (_canvas));
+    gtk_container_add (GTK_CONTAINER (_scrolled_window), GTK_WIDGET (_canvas));
     gtk_widget_show_all (GTK_WIDGET (_canvas));
+  }
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::UnPlug ()
+{
+  FreezeZoomer ();
+
+  Module::UnPlug ();
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::FreezeZoomer ()
+{
+  if (_zoomer && _scrolled_window)
+  {
+    g_signal_handlers_disconnect_by_func (_zoomer,
+                                          (void *) on_zoom_changed, this);
+    g_signal_handlers_disconnect_by_func (gtk_scrolled_window_get_hadjustment (_scrolled_window),
+                                          (void *) on_hadjustment_changed, this);
+    g_signal_handlers_disconnect_by_func (gtk_scrolled_window_get_vadjustment (_scrolled_window),
+                                          (void *) on_vadjustment_changed, this);
   }
 }
 
@@ -67,7 +93,8 @@ void CanvasModule::OnUnPlugged ()
   if (_canvas)
   {
     gtk_widget_destroy (GTK_WIDGET (_canvas));
-    _canvas = NULL;
+    _canvas          = NULL;
+    _scrolled_window = NULL;
   }
 }
 
@@ -146,10 +173,40 @@ void CanvasModule::OnZoom (gdouble value)
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule::RestoreZoomFactor (GtkScale *scale)
+void CanvasModule::SetZoomer (GtkRange *zoomer)
 {
-  gtk_range_set_value (GTK_RANGE (scale), _zoom_factor);
-  OnZoom (_zoom_factor);
+  _zoomer = zoomer;
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::RestoreZoomFactor ()
+{
+  if (_zoomer)
+  {
+    gtk_range_set_value (GTK_RANGE (_zoomer), _zoom_factor);
+    OnZoom (_zoom_factor);
+
+    {
+      GtkAdjustment *adj;
+
+      adj = gtk_scrolled_window_get_hadjustment (_scrolled_window);
+      gtk_adjustment_set_value (adj,
+                                _h_adj);
+      adj = gtk_scrolled_window_get_vadjustment (_scrolled_window);
+      gtk_adjustment_set_value (adj,
+                                _v_adj);
+    }
+
+    g_signal_connect (_zoomer,
+                      "value-changed",
+                      G_CALLBACK (on_zoom_changed), this);
+    g_signal_connect (gtk_scrolled_window_get_hadjustment (_scrolled_window),
+                      "value-changed",
+                      G_CALLBACK (on_hadjustment_changed), this);
+    g_signal_connect (gtk_scrolled_window_get_vadjustment (_scrolled_window),
+                      "value-changed",
+                      G_CALLBACK (on_vadjustment_changed), this);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -487,12 +544,6 @@ void CanvasModule::SetObjectDropZone (Object        *object,
 }
 
 // --------------------------------------------------------------------------------
-GtkScrolledWindow *CanvasModule::GetScrolledWindow ()
-{
-  return GTK_SCROLLED_WINDOW (gtk_widget_get_parent (GTK_WIDGET (_canvas)));
-}
-
-// --------------------------------------------------------------------------------
 DropZone *CanvasModule::GetZoneAt (gint x,
                                    gint y)
 {
@@ -500,21 +551,16 @@ DropZone *CanvasModule::GetZoneAt (gint x,
   gdouble  hvalue;
   GSList  *current = _drop_zones;
 
+  if (_scrolled_window)
   {
-    GtkScrolledWindow *window = GetScrolledWindow ();
+    GtkAdjustment *adjustment;
 
-    if (window)
-    {
-      GtkAdjustment *adjustment;
+    adjustment = gtk_scrolled_window_get_hadjustment (_scrolled_window);
+    hvalue     = gtk_adjustment_get_value (adjustment);
 
-      adjustment = gtk_scrolled_window_get_hadjustment (window);
-      hvalue     = gtk_adjustment_get_value (adjustment);
-
-      adjustment = gtk_scrolled_window_get_vadjustment (window);
-      vvalue     = gtk_adjustment_get_value (adjustment);
-    }
+    adjustment = gtk_scrolled_window_get_vadjustment (_scrolled_window);
+    vvalue     = gtk_adjustment_get_value (adjustment);
   }
-
 
   while (current)
   {
@@ -844,17 +890,13 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
       gdouble   adjx = 0.0;
       gdouble   adjy = 0.0;
 
+      if (_scrolled_window)
       {
-        GtkScrolledWindow *sw = GetScrolledWindow ();
+        GtkAdjustment *hadj = gtk_scrolled_window_get_hadjustment (_scrolled_window);
+        GtkAdjustment *vadj = gtk_scrolled_window_get_vadjustment (_scrolled_window);
 
-        if (sw)
-        {
-          GtkAdjustment *hadj = gtk_scrolled_window_get_hadjustment (sw);
-          GtkAdjustment *vadj = gtk_scrolled_window_get_vadjustment (sw);
-
-          adjx = gtk_adjustment_get_value (hadj);
-          adjy = gtk_adjustment_get_value (vadj);
-        }
+        adjx = gtk_adjustment_get_value (hadj);
+        adjy = gtk_adjustment_get_value (vadj);
       }
 
       drop_zone = GetZoneAt (_drag_x*_zoom_factor - adjx,
@@ -942,4 +984,25 @@ gboolean CanvasModule::on_leave_object (GooCanvasItem  *item,
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::on_hadjustment_changed (GtkAdjustment *adjustment,
+                                           CanvasModule  *canvas_module)
+{
+  canvas_module->_h_adj = gtk_adjustment_get_value (adjustment);
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::on_vadjustment_changed (GtkAdjustment *adjustment,
+                                           CanvasModule  *canvas_module)
+{
+  canvas_module->_v_adj = gtk_adjustment_get_value (adjustment);
+}
+
+// --------------------------------------------------------------------------------
+void CanvasModule::on_zoom_changed (GtkRange     *range,
+                                    CanvasModule *canvas_module)
+{
+  canvas_module->OnZoom (gtk_range_get_value (range));
 }
