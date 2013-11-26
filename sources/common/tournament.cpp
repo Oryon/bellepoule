@@ -676,111 +676,142 @@ gboolean Tournament::OnHttpPost (const gchar *url,
 
   if (url && data)
   {
-    gchar **tokens = g_strsplit (url,
-                                 "/",
-                                 0);
-    if (tokens[0] && tokens[1])
+    gchar **lines = g_strsplit_set (data,
+                                    "\n",
+                                    0);
+    if (lines[0])
     {
-      // Status feedback
-      if ((strcmp (tokens[1], "Referee") == 0) && tokens[2])
+      const gchar *body = data;
+
+      body = strstr (body, "\n"); if (body) body++;
+      // Source
       {
-        UpdateConnectionStatus (_referee_list,
-                                atoi (tokens[2]),
-                                data,
-                                "OK");
+        gchar **tokens = g_strsplit_set (lines[0],
+                                         "/",
+                                         0);
+
+        if (tokens)
+        {
+          if (tokens[0] && tokens[1] && tokens[2])
+          {
+            // Status feedback
+            UpdateConnectionStatus (_referee_list,
+                                    atoi (tokens[2]),
+                                    tokens[1],
+                                    "OK");
+          }
+          g_strfreev (tokens);
+        }
       }
-      // Competition data
-      else if (   (strcmp (tokens[1], "Score") == 0)
-               || (strcmp (tokens[1], "ScoreSheet") == 0))
+
+      // Request type
+      if (lines[1])
       {
-        gboolean request_is_valid = FALSE;
+        gchar **tokens = g_strsplit_set (lines[1],
+                                         "/",
+                                         0);
 
-        if (strcmp (tokens[1], "Score") == 0)
+        body = strstr (body, "\n"); if (body) body++;
+        if (tokens)
         {
-          xmlDoc *doc = xmlReadMemory (data,
-                                       strlen (data),
-                                       "noname.xml",
-                                       NULL,
-                                       0);
-
-          if (doc)
+          if (tokens[0] && tokens[1])
           {
-            xmlXPathInit ();
-
+            // Competition data
+            if (   (strcmp (tokens[1], "Score") == 0)
+                || (strcmp (tokens[1], "ScoreSheet") == 0))
             {
-              xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-              xmlXPathObject  *xml_object;
-              xmlNodeSet      *xml_nodeset;
+              gboolean request_is_valid = FALSE;
 
-              xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
-              xml_nodeset = xml_object->nodesetval;
-
-              if (xml_nodeset->nodeNr == 1)
+              if (strcmp (tokens[1], "Score") == 0)
               {
-                xmlNode *node = xml_nodeset->nodeTab[0];
-                gchar   *attr = (gchar *) xmlGetProp (node, BAD_CAST "ID");
+                xmlDoc *doc = xmlReadMemory (body,
+                                             strlen (body),
+                                             "noname.xml",
+                                             NULL,
+                                             0);
 
-                if (attr)
+                if (doc)
                 {
-                  request_is_valid = (UpdateConnectionStatus (_referee_list,
-                                                              atoi (attr),
-                                                              NULL,
-                                                              "OK") != NULL);
-                  xmlFree (attr);
-                }
-              }
+                  xmlXPathInit ();
 
-              xmlXPathFreeObject  (xml_object);
-              xmlXPathFreeContext (xml_context);
-            }
-            xmlFreeDoc (doc);
-          }
-        }
-        if (strcmp (tokens[1], "ScoreSheet") == 0)
-        {
-          request_is_valid = TRUE;
-        }
-
-        if (request_is_valid)
-        {
-          if (tokens[2] && (strcmp (tokens[2], "Competition") == 0))
-          {
-            gchar *competition_id = tokens[3];
-
-            if (competition_id)
-            {
-              GSList *current = _contest_list;
-
-              while (current)
-              {
-                Contest *contest = (Contest *) current->data;
-
-                if (strcmp (contest->GetId (), competition_id) == 0)
-                {
-                  if (strcmp (tokens[1], "ScoreSheet") == 0)
                   {
-                    GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
-                    gint        page = gtk_notebook_page_num (nb,
-                                                              contest->GetRootWidget ());
+                    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+                    xmlXPathObject  *xml_object;
+                    xmlNodeSet      *xml_nodeset;
 
-                    g_object_set (G_OBJECT (nb),
-                                  "page", page,
-                                  NULL);
+                    xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
+                    xml_nodeset = xml_object->nodesetval;
+
+                    if (xml_nodeset->nodeNr == 1)
+                    {
+                      xmlNode *node = xml_nodeset->nodeTab[0];
+                      gchar   *attr = (gchar *) xmlGetProp (node, BAD_CAST "ID");
+
+                      if (attr)
+                      {
+                        request_is_valid = (UpdateConnectionStatus (_referee_list,
+                                                                    atoi (attr),
+                                                                    NULL,
+                                                                    "OK") != NULL);
+                        xmlFree (attr);
+                      }
+                    }
+
+                    xmlXPathFreeObject  (xml_object);
+                    xmlXPathFreeContext (xml_context);
                   }
-
-                  result = contest->OnHttpPost (tokens[1],
-                                                (const gchar**) &tokens[4],
-                                                data);
-                  break;
+                  xmlFreeDoc (doc);
                 }
-                current = g_slist_next (current);
+              }
+              if (strcmp (tokens[1], "ScoreSheet") == 0)
+              {
+                request_is_valid = TRUE;
+              }
+
+              if (request_is_valid)
+              {
+                if (tokens[2] && (strcmp (tokens[2], "Competition") == 0))
+                {
+                  gchar *competition_id = tokens[3];
+
+                  if (competition_id)
+                  {
+                    GSList *current = _contest_list;
+
+                    while (current)
+                    {
+                      Contest *contest = (Contest *) current->data;
+
+                      if (strcmp (contest->GetId (), competition_id) == 0)
+                      {
+                        if (strcmp (tokens[1], "ScoreSheet") == 0)
+                        {
+                          GtkNotebook *nb  = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
+                          gint        page = gtk_notebook_page_num (nb,
+                                                                    contest->GetRootWidget ());
+
+                          g_object_set (G_OBJECT (nb),
+                                        "page", page,
+                                        NULL);
+                        }
+
+                        result = contest->OnHttpPost (tokens[1],
+                                                      (const gchar**) &tokens[4],
+                                                      body);
+                        break;
+                      }
+                      current = g_slist_next (current);
+                    }
+                  }
+                }
               }
             }
           }
+          g_strfreev (tokens);
         }
       }
     }
-    g_strfreev (tokens);
+    g_strfreev (lines);
   }
 
   return result;

@@ -1744,7 +1744,6 @@ namespace Pool
             remainging = current;
           }
 
-          printf ("*** %d - %d <-> ", current_pair->_a, current_pair->_b);
           while (substitute)
           {
             PlayerPair *substitute_pair = (PlayerPair *) substitute->data;

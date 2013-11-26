@@ -574,9 +574,9 @@ void Player::Load (xmlNode *xml_node)
             gchar *french_date = attr->GetStrValue ();
             gchar **splitted_date;
 
-            splitted_date = g_strsplit (french_date,
-                                        ".",
-                                        0);
+            splitted_date = g_strsplit_set (french_date,
+                                            ".",
+                                            0);
             if (   splitted_date
                 && splitted_date[0]
                 && splitted_date[1]
@@ -664,11 +664,11 @@ gboolean Player::SendMessage (const gchar *where,
 
       if (strchr (ip, ':'))
       {
-        url = g_strdup_printf ("http://%s%s/%s?ref=%d", ip, where, _player_class, GetRef ());
+        url = g_strdup_printf ("http://%s", ip);
       }
       else
       {
-        url = g_strdup_printf ("http://%s:35831%s/%s?ref=%d", ip, where, _player_class, GetRef ());
+        url = g_strdup_printf ("http://%s:35831", ip);
       }
 
       Net::Uploader *uploader = new Net::Uploader (url,
@@ -677,7 +677,16 @@ gboolean Player::SendMessage (const gchar *where,
 
       g_free (url);
 
-      uploader->UploadString (message);
+      {
+        gchar *encrypted_msg = g_strdup_printf ("%s/%s?ref=%d\n"
+                                                "%s",
+                                                where, _player_class, GetRef (),
+                                                message);
+
+        uploader->UploadString (encrypted_msg);
+        g_free (encrypted_msg);
+      }
+
       uploader->Release ();
       return TRUE;
     }

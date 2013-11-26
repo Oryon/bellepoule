@@ -498,9 +498,9 @@ namespace Table
                                    const gchar *data)
   {
     gboolean result = FALSE;
-    gchar **tokens = g_strsplit (*ressource,
-                                 ".",
-                                 0);
+    gchar **tokens = g_strsplit_set (*ressource,
+                                     ".",
+                                     0);
 
     if (tokens && tokens[0])
     {
