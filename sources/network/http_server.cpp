@@ -59,6 +59,17 @@ namespace Net
              len);
     _length += len;
   }
+
+  // --------------------------------------------------------------------------------
+  void HttpServer::RequestBody::Replace (const char *buf)
+  {
+    g_free (_data);
+    _data   = NULL;
+    _length = 0;
+
+    Append (buf,
+            strlen (buf) + 1);
+  }
 }
 
 namespace Net
@@ -182,11 +193,18 @@ namespace Net
           if (client_addr->sa_family == AF_INET)
           {
             struct sockaddr_in *in_addr = (struct sockaddr_in *) client_addr;
-            gchar              *key     = _client->GetSecretKey (inet_ntoa (in_addr->sin_addr));
+            gchar              *key     = _client->GetSecretKey (inet_ntoa (in_addr->sin_addr),
+                                                                 strcmp (url, "/authentication") == 0);
 
-            printf (BLUE "<%s>\n" ESC, _cryptor->Decrypt (request_body->_data,
-                                                          key));
-            g_free (key);
+            if (key)
+            {
+              gchar *decrypted = _cryptor->Decrypt (request_body->_data,
+                                                    key);
+              request_body->Replace (decrypted);
+
+              g_free (decrypted);
+              g_free (key);
+            }
           }
         }
 

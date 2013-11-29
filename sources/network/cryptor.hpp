@@ -32,8 +32,8 @@ namespace Net
       guchar *Encrypt (const gchar *text,
                        const gchar *key);
 
-      guchar *Decrypt (gchar       *text,
-                       const gchar *key);
+      gchar *Decrypt (gchar       *text,
+                      const gchar *key);
 
     private:
       GRand          *_rand;

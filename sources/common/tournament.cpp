@@ -291,41 +291,45 @@ void Tournament::Init ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Tournament::GetSecretKey (const gchar *ip)
+gchar *Tournament::GetSecretKey (const gchar *ip,
+                                 gboolean     authentication_request)
 {
-  Player::AttributeId ip_attr_id ("IP");
-  Player *found   = NULL;
-  Player *exposed = NULL;
+  Player *whom = NULL;
 
   {
+    Player::AttributeId ip_attr_id ("IP");
     GSList *current = _referee_list;
 
     while (current)
     {
-      Player    *referee = (Player *) current->data;
-      Attribute *attr    = referee->GetAttribute (&ip_attr_id);
+      Player *referee = (Player *) current->data;
 
-      if (attr && strcmp (ip, attr->GetStrValue ()) == 0)
+      if (authentication_request)
       {
-        found = referee;
-        break;
+        if (referee->GetIntData (NULL, "SmartCodeExposed"))
+        {
+          whom = referee;
+          break;
+        }
       }
-      if (referee->GetIntData (NULL, "SmartCodeExposed"))
+      else
       {
-        exposed = referee;
+        Attribute *attr = referee->GetAttribute (&ip_attr_id);
+
+        if (attr && strcmp (ip, attr->GetStrValue ()) == 0)
+        {
+          whom = referee;
+          break;
+        }
       }
 
       current = g_slist_next (current);
     }
   }
 
-  if (found == NULL)
+  if (whom)
   {
-    found = exposed;
-  }
-  if (found)
-  {
-    WifiCode *wifi_code = (WifiCode *) found->GetFlashCode ();
+    WifiCode *wifi_code = (WifiCode *) whom->GetFlashCode ();
 
     return wifi_code->GetKey ();
   }

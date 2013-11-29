@@ -38,7 +38,8 @@ namespace Net
         public:
           Client () {};
 
-          virtual gchar *GetSecretKey (const gchar *ip) = 0;
+          virtual gchar *GetSecretKey (const gchar *ip,
+                                       gboolean     authentication_request) = 0;
 
         protected:
           virtual ~Client () {};
@@ -63,6 +64,7 @@ namespace Net
 
         void Append (const char *buf,
                      size_t      len);
+        void Replace (const char *buf);
 
         gchar *_data;
         guint  _length;

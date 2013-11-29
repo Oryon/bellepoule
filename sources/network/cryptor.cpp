@@ -73,8 +73,8 @@ namespace Net
   }
 
   // ----------------------------------------------------------------------------------------------
-  guchar *Cryptor::Decrypt (gchar       *text,
-                            const gchar *key)
+  gchar *Cryptor::Decrypt (gchar       *text,
+                           const gchar *key)
   {
     gchar *body = strchr (text, '/');
 
@@ -95,12 +95,16 @@ namespace Net
 
       // because we have padding ON, we must allocate an extra cipher block size of memory
       plain_len = body_len;
-      plaintext = (guchar *) malloc (plain_len + AES_BLOCK_SIZE);
+      plaintext = g_new (guchar, plain_len + AES_BLOCK_SIZE);
 
-      EVP_DecryptInit_ex  (&_de_cipher, EVP_aes_256_cbc (), NULL, (guchar *) key, iv_bytes);
+      EVP_DecryptInit_ex  (&_de_cipher,
+                           EVP_aes_256_cbc (),
+                           NULL,
+                           (guchar *) key,
+                           iv_bytes);
 
       EVP_DecryptUpdate (&_de_cipher,
-                         (guchar *) plaintext, &plain_len,
+                         plaintext, &plain_len,
                          body_bytes, body_len);
 
       {
@@ -109,11 +113,12 @@ namespace Net
         EVP_DecryptFinal_ex (&_de_cipher,
                              plaintext + plain_len,
                              &remaining_len);
-
-        //*len = plain_len + remaining_len;
       }
 
-      return plaintext;
+      g_free (iv_bytes);
+      g_free (body_bytes);
+
+      return (gchar *) plaintext;
     }
 
     return NULL;
@@ -136,33 +141,33 @@ namespace Net
   guchar *Cryptor::GetBytes (gchar *text,
                              gint  *bytes_count)
   {
-    gchar  *current_symbol = text;
-    guchar *bytes;
-    guchar *current_byte;
+    guchar *bytes    = NULL;
+    gint    text_len = strlen (text);
 
-    *bytes_count = strlen (text)/2;
-    bytes        = g_new (guchar, *bytes_count);
-    current_byte = bytes;
-
-    while (current_symbol)
+    if ((text_len % 2) == 0)
     {
-      if (current_symbol[0] && current_symbol[1])
-      {
-        gchar symbol[3];
+      gchar  *current_symbol = text;
+      guchar *current_byte;
 
-        symbol[0] = current_symbol[0];
-        symbol[1] = current_symbol[1];
-        symbol[2] = '\0';
+      *bytes_count = text_len/2;
+      bytes        = g_new (guchar, *bytes_count);
+      current_byte = bytes;
 
-        *current_byte = (guchar) strtol (symbol,
-                                         NULL,
-                                         16);
-        current_symbol += 2;
-        current_byte   += 1;
-      }
-      else
+      for (gint i = 0; i < *bytes_count; i++)
       {
-        break;
+        if (current_symbol[0] && current_symbol[1])
+        {
+          gchar symbol[3];
+
+          symbol[0] = current_symbol[0];
+          symbol[1] = current_symbol[1];
+          symbol[2] = '\0';
+
+          current_byte[i] = (guchar) strtol (symbol,
+                                              NULL,
+                                              16);
+          current_symbol += 2;
+        }
       }
     }
 
