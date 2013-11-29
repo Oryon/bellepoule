@@ -1760,7 +1760,6 @@ namespace Pool
               _player_pairs = g_slist_insert_before (_player_pairs,
                                                      current,
                                                      substitute_pair);
-              printf ("%d - %d\n", substitute_pair->_a, substitute_pair->_b);
               break;
             }
             printf ("\n");

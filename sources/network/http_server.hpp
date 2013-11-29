@@ -25,19 +25,33 @@
 #include <microhttpd.h>
 
 #include "util/object.hpp"
+#include "common/player.hpp"
+#include "cryptor.hpp"
 
 namespace Net
 {
   class HttpServer : public Object
   {
     public:
-      typedef gboolean (*HttpPost) (Object      *client,
+      class Client
+      {
+        public:
+          Client () {};
+
+          virtual gchar *GetSecretKey (const gchar *ip) = 0;
+
+        protected:
+          virtual ~Client () {};
+      };
+
+    public:
+      typedef gboolean (*HttpPost) (Client      *client,
                                     const gchar *url,
                                     const gchar *data);
-      typedef gchar *(*HttpGet) (Object      *client,
+      typedef gchar *(*HttpGet) (Client      *client,
                                  const gchar *url);
 
-      HttpServer (Object   *client,
+      HttpServer (Client   *client,
                   HttpPost  http_post,
                   HttpGet   http_get);
 
@@ -67,9 +81,10 @@ namespace Net
       };
 
       struct MHD_Daemon *_daemon;
-      Object            *_client;
+      Client            *_client;
       HttpPost           _http_POST_cbk;
       HttpGet            _http_GET_cbk;
+      Cryptor           *_cryptor;
 
       virtual ~HttpServer ();
 

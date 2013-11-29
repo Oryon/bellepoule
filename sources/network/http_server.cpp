@@ -14,6 +14,23 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <sys/types.h>
+#ifdef WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #include <iphlpapi.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+#else
+  #include <ifaddrs.h>
+  #include <sys/socket.h>
+  #include <sys/ioctl.h>
+  #include <net/if.h>
+  #include <netdb.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+#endif
+
 #include "http_server.hpp"
 
 namespace Net
@@ -71,7 +88,7 @@ namespace Net
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::HttpServer (Object   *client,
+  HttpServer::HttpServer (Client   *client,
                           HttpPost  http_post,
                           HttpGet   http_get)
     : Object ("HttpServer")
@@ -82,6 +99,8 @@ namespace Net
                                 (MHD_AccessHandlerCallback) OnMicroHttpRequest, this,
                                 MHD_OPTION_NOTIFY_COMPLETED, OnMicroHttpRequestCompleted, this,
                                 MHD_OPTION_END);
+    _cryptor = new Cryptor ();
+
     _client        = client;
     _http_POST_cbk = http_post;
     _http_GET_cbk  = http_get;
@@ -91,6 +110,7 @@ namespace Net
   HttpServer::~HttpServer ()
   {
     MHD_stop_daemon (_daemon);
+    _cryptor->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -153,6 +173,23 @@ namespace Net
       }
       else
       {
+        {
+          struct sockaddr    *client_addr;
+          const union MHD_ConnectionInfo *info = MHD_get_connection_info (connection,
+                                                                          MHD_CONNECTION_INFO_CLIENT_ADDRESS);
+
+          client_addr = (struct sockaddr *) info->client_addr;
+          if (client_addr->sa_family == AF_INET)
+          {
+            struct sockaddr_in *in_addr = (struct sockaddr_in *) client_addr;
+            gchar              *key     = _client->GetSecretKey (inet_ntoa (in_addr->sin_addr));
+
+            printf (BLUE "<%s>\n" ESC, _cryptor->Decrypt (request_body->_data,
+                                                          key));
+            g_free (key);
+          }
+        }
+
         {
           DeferedData *defered_data = new DeferedData (this,
                                                        url,

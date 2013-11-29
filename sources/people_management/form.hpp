@@ -62,6 +62,8 @@ namespace People
 
       void UnLock ();
 
+      void OnUnmap ();
+
     private:
       struct Page
       {

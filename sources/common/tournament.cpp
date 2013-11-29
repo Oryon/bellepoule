@@ -30,6 +30,7 @@
 
 #include "version.h"
 #include "contest.hpp"
+#include "people_management/form.hpp"
 
 #include "tournament.hpp"
 
@@ -287,6 +288,49 @@ void Tournament::Init ()
 
   g_free (dir_path);
   g_free (file_path);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Tournament::GetSecretKey (const gchar *ip)
+{
+  Player::AttributeId ip_attr_id ("IP");
+  Player *found   = NULL;
+  Player *exposed = NULL;
+
+  {
+    GSList *current = _referee_list;
+
+    while (current)
+    {
+      Player    *referee = (Player *) current->data;
+      Attribute *attr    = referee->GetAttribute (&ip_attr_id);
+
+      if (attr && strcmp (ip, attr->GetStrValue ()) == 0)
+      {
+        found = referee;
+        break;
+      }
+      if (referee->GetIntData (NULL, "SmartCodeExposed"))
+      {
+        exposed = referee;
+      }
+
+      current = g_slist_next (current);
+    }
+  }
+
+  if (found == NULL)
+  {
+    found = exposed;
+  }
+  if (found)
+  {
+    WifiCode *wifi_code = (WifiCode *) found->GetFlashCode ();
+
+    return wifi_code->GetKey ();
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -901,21 +945,21 @@ gchar *Tournament::OnHttpGet (const gchar *url)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::HttpPostCbk (Object      *client,
-                                  const gchar *url,
-                                  const gchar *data)
+gboolean Tournament::HttpPostCbk (Net::HttpServer::Client *client,
+                                  const gchar             *url,
+                                  const gchar             *data)
 {
-  Tournament *tournament = dynamic_cast <Tournament *> (client);
+  Tournament *tournament = (Tournament *) client;
 
   return tournament->OnHttpPost (url,
                                  data);
 }
 
 // --------------------------------------------------------------------------------
-gchar *Tournament::HttpGetCbk (Object      *client,
-                               const gchar *url)
+gchar *Tournament::HttpGetCbk (Net::HttpServer::Client *client,
+                               const gchar             *url)
 {
-  Tournament *tournament = dynamic_cast <Tournament *> (client);
+  Tournament *tournament = (Tournament *) client;
 
   return tournament->OnHttpGet (url);
 }

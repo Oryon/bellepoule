@@ -350,6 +350,17 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void Form::OnUnmap ()
+  {
+    if (_player_to_update)
+    {
+      _player_to_update->RemoveData (NULL,
+                                     "SmartCodeExposed");
+      _player_to_update = NULL;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Form::ReadAndWipe (Player *player)
   {
     GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
@@ -524,6 +535,9 @@ namespace People
 
     if (player)
     {
+      player->SetData (NULL,
+                       "SmartCodeExposed", (void *) 1);
+
       HideTabs ();
     }
     else
@@ -698,6 +712,17 @@ namespace People
     Form *f = dynamic_cast <Form *> (owner);
 
     f->OnCloseButtonClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_FillInForm_unmap_event (GtkWidget *widget,
+                                                                 GdkEvent  *event,
+                                                                 Object    *owner)
+  {
+    Form *f = dynamic_cast <Form *> (owner);
+
+    f->OnUnmap ();
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

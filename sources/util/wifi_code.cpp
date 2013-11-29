@@ -164,24 +164,39 @@ gchar *WifiCode::GetKey ()
 {
   if (_key == NULL)
   {
-    static const guint32  data_length = 50;
+    static const guint32  data_length = 256 / 8;
     GRand                *random      = g_rand_new ();
-    guchar               *data        = g_new (guchar, data_length);
 
+    _key = g_new (gchar, data_length+1);
     for (guint i = 0; i < data_length; i++)
     {
-      data[i] = g_rand_int (random);
-    }
+      guint ascii_set = g_rand_int_range (random, 0, 3);
 
-    _key = g_compute_checksum_for_data (G_CHECKSUM_SHA1,
-                                        data,
-                                        data_length);
+      if (ascii_set == 0)
+      {
+        _key[i] = g_rand_int_range (random,
+                                    '0',
+                                    '9');
+      }
+      else if (ascii_set == 1)
+      {
+        _key[i] = g_rand_int_range (random,
+                                    'A',
+                                    'Z');
+      }
+      else
+      {
+        _key[i] = g_rand_int_range (random,
+                                    'a',
+                                    'z');
+      }
+    }
+    _key[data_length] = '\0';
 
     g_rand_free (random);
-    g_free (data);
   }
 
-  return g_strdup (_key);
+  return g_strdup ((gchar *) _key);
 }
 
 // --------------------------------------------------------------------------------
