@@ -32,7 +32,8 @@ namespace Net
       guchar *Encrypt (const gchar *text,
                        const gchar *key);
 
-      gchar *Decrypt (gchar       *text,
+      gchar *Decrypt (gchar       *data,
+                      guint        length,
                       const gchar *key);
 
     private:
@@ -44,8 +45,8 @@ namespace Net
 
       guchar *GetIv ();
 
-      guchar *GetBytes (gchar *text,
-                        gint  *bytes_count);
+      guchar *GetBytes (gchar *data,
+                        gint   bytes_count);
   };
 }
 

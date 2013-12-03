@@ -19,8 +19,6 @@
   #include <winsock2.h>
   #include <ws2tcpip.h>
   #include <iphlpapi.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
 #else
   #include <ifaddrs.h>
   #include <sys/socket.h>
@@ -199,8 +197,10 @@ namespace Net
             if (key)
             {
               gchar *decrypted = _cryptor->Decrypt (request_body->_data,
+                                                    request_body->_length,
                                                     key);
               request_body->Replace (decrypted);
+              printf (BLUE "<%s>\n" ESC, decrypted);
 
               g_free (decrypted);
               g_free (key);

@@ -53,7 +53,11 @@ namespace Net
     guchar *cipher_txt = (guchar *) malloc (cipher_len);
     guchar *iv         = GetIv ();
 
-    EVP_EncryptInit_ex  (&_en_cipher, EVP_aes_256_cbc (), NULL, (guchar *) key, iv);
+    EVP_EncryptInit_ex  (&_en_cipher,
+                         EVP_aes_256_cbc (),
+                         NULL,
+                         (guchar *) key,
+                         iv);
 
     EVP_EncryptUpdate (&_en_cipher,
                        cipher_txt, &cipher_len,
@@ -65,18 +69,17 @@ namespace Net
       EVP_EncryptFinal_ex (&_en_cipher,
                            cipher_txt + cipher_len,
                            &remaining_len);
-
-      //*text_len = cipher_len + remaining_len;
     }
 
     return cipher_txt;
   }
 
   // ----------------------------------------------------------------------------------------------
-  gchar *Cryptor::Decrypt (gchar       *text,
+  gchar *Cryptor::Decrypt (gchar       *data,
+                           guint        length,
                            const gchar *key)
   {
-    gchar *body = strchr (text, '/');
+    gchar *body = strchr (data, '/');
 
     if (body)
     {
@@ -90,12 +93,14 @@ namespace Net
       *body = '\0';
       body++;
 
-      iv_bytes   = GetBytes (text, &iv_len);
-      body_bytes = GetBytes (body, &body_len);
+      iv_len   = strlen (data);
+      body_len = length - iv_len - 1;
+      iv_bytes   = GetBytes (data, iv_len);
+      body_bytes = GetBytes (body, body_len);
 
       // because we have padding ON, we must allocate an extra cipher block size of memory
-      plain_len = body_len;
-      plaintext = g_new (guchar, plain_len + AES_BLOCK_SIZE);
+      plain_len = body_len/2;
+      plaintext = g_new (guchar, plain_len + AES_BLOCK_SIZE + 1);
 
       EVP_DecryptInit_ex  (&_de_cipher,
                            EVP_aes_256_cbc (),
@@ -105,7 +110,7 @@ namespace Net
 
       EVP_DecryptUpdate (&_de_cipher,
                          plaintext, &plain_len,
-                         body_bytes, body_len);
+                         body_bytes, body_len/2);
 
       {
         gint remaining_len;
@@ -113,6 +118,7 @@ namespace Net
         EVP_DecryptFinal_ex (&_de_cipher,
                              plaintext + plain_len,
                              &remaining_len);
+        plaintext[plain_len + remaining_len] = '\0';
       }
 
       g_free (iv_bytes);
@@ -138,22 +144,18 @@ namespace Net
   }
 
   // ----------------------------------------------------------------------------------------------
-  guchar *Cryptor::GetBytes (gchar *text,
-                             gint  *bytes_count)
+  guchar *Cryptor::GetBytes (gchar *data,
+                             gint   bytes_count)
   {
-    guchar *bytes    = NULL;
-    gint    text_len = strlen (text);
+    guchar *bytes = NULL;
 
-    if ((text_len % 2) == 0)
+    if ((bytes_count % 2) == 0)
     {
-      gchar  *current_symbol = text;
-      guchar *current_byte;
+      gchar *current_symbol = data;
 
-      *bytes_count = text_len/2;
-      bytes        = g_new (guchar, *bytes_count);
-      current_byte = bytes;
+      bytes = g_new (guchar, bytes_count/2);
 
-      for (gint i = 0; i < *bytes_count; i++)
+      for (gint i = 0; i < bytes_count; i++)
       {
         if (current_symbol[0] && current_symbol[1])
         {
@@ -163,9 +165,9 @@ namespace Net
           symbol[1] = current_symbol[1];
           symbol[2] = '\0';
 
-          current_byte[i] = (guchar) strtol (symbol,
-                                              NULL,
-                                              16);
+          bytes[i] = (guchar) strtol (symbol,
+                                      NULL,
+                                      16);
           current_symbol += 2;
         }
       }
