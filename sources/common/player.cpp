@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "util/attribute.hpp"
+#include "network/cryptor.hpp"
 
 #include "player.hpp"
 
@@ -660,31 +661,54 @@ gboolean Player::SendMessage (const gchar *where,
 
     if (ip && (ip[0] != 0))
     {
-      gchar *url;
+      Net::Uploader *uploader;
 
-      if (strchr (ip, ':'))
       {
-        url = g_strdup_printf ("http://%s", ip);
+        gchar *url;
+
+        if (strchr (ip, ':'))
+        {
+          url = g_strdup_printf ("http://%s", ip);
+        }
+        else
+        {
+          url = g_strdup_printf ("http://%s:35831", ip);
+        }
+
+        uploader = new Net::Uploader (url,
+                                      (Net::Uploader::UploadStatus) OnUploaderStatus, this,
+                                      NULL, NULL);
+
+        g_free (url);
       }
-      else
-      {
-        url = g_strdup_printf ("http://%s:35831", ip);
-      }
-
-      Net::Uploader *uploader = new Net::Uploader (url,
-                                                   (Net::Uploader::UploadStatus) OnUploaderStatus, this,
-                                                   NULL, NULL);
-
-      g_free (url);
 
       {
-        gchar *encrypted_msg = g_strdup_printf ("%s/%s?ref=%d\n"
-                                                "%s",
-                                                where, _player_class, GetRef (),
-                                                message);
+        gchar        *encrypted_msg;
+        guint         encrypted_len;
+        gchar        *secret_key;
+        Net::Cryptor *cryptor       = new Net::Cryptor ();
+        gchar        *full_message  = g_strdup_printf ("%s/%s?ref=%d\n"
+                                                       "%s",
+                                                       where, _player_class, GetRef (),
+                                                       message);
 
-        uploader->UploadString (encrypted_msg);
+        {
+          WifiCode *wifi_code = (WifiCode *) GetFlashCode ();
+
+          secret_key = wifi_code->GetKey ();
+        }
+
+        encrypted_msg = (gchar *) cryptor->Encrypt (full_message,
+                                                    secret_key,
+                                                    &encrypted_len);
+
+        uploader->UploadString (encrypted_msg,
+                                encrypted_len);
+
+        g_free (full_message);
         g_free (encrypted_msg);
+        g_free (secret_key);
+        cryptor->Release ();
       }
 
       uploader->Release ();

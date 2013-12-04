@@ -45,7 +45,8 @@ namespace Net
 
   // ----------------------------------------------------------------------------------------------
   guchar *Cryptor::Encrypt (const gchar *text,
-                            const gchar *key)
+                            const gchar *key,
+                            guint       *length)
   {
     // max cipher_txt len for a n bytes of text is n + AES_BLOCK_SIZE -1 bytes
     guint   text_len   = strlen ((gchar *) text);
@@ -69,62 +70,54 @@ namespace Net
       EVP_EncryptFinal_ex (&_en_cipher,
                            cipher_txt + cipher_len,
                            &remaining_len);
+
+      *length = cipher_len + remaining_len;
     }
 
     return cipher_txt;
   }
 
   // ----------------------------------------------------------------------------------------------
-  gchar *Cryptor::Decrypt (gchar       *data,
-                           guint        length,
-                           const gchar *key)
+  gchar *Cryptor::Decrypt (gchar        *data,
+                           const guchar *iv,
+                           const gchar  *key)
   {
-    gchar *body = strchr (data, '/');
-
-    if (body)
+    if (iv && data)
     {
-      gint    plain_len;
-      gint    iv_len;
-      gint    body_len;
-      guchar *plaintext;
-      guchar *iv_bytes;
-      guchar *body_bytes;
+      gsize   bytes_len;
+      guchar *data_bytes = g_base64_decode (data,
+                                            &bytes_len);
 
-      *body = '\0';
-      body++;
-
-      iv_len   = strlen (data);
-      body_len = length - iv_len - 1;
-      iv_bytes   = GetBytes (data, iv_len);
-      body_bytes = GetBytes (body, body_len);
-
-      // because we have padding ON, we must allocate an extra cipher block size of memory
-      plain_len = body_len/2;
-      plaintext = g_new (guchar, plain_len + AES_BLOCK_SIZE + 1);
-
-      EVP_DecryptInit_ex  (&_de_cipher,
-                           EVP_aes_256_cbc (),
-                           NULL,
-                           (guchar *) key,
-                           iv_bytes);
-
-      EVP_DecryptUpdate (&_de_cipher,
-                         plaintext, &plain_len,
-                         body_bytes, body_len/2);
-
+      if (iv && data_bytes)
       {
-        gint remaining_len;
+        gint    plain_len = bytes_len;
+        guchar *plaintext;
 
-        EVP_DecryptFinal_ex (&_de_cipher,
-                             plaintext + plain_len,
-                             &remaining_len);
-        plaintext[plain_len + remaining_len] = '\0';
+        // because we have padding ON, we must allocate an extra cipher block size of memory
+        plaintext = g_new (guchar, plain_len + AES_BLOCK_SIZE);
+
+        EVP_DecryptInit_ex  (&_de_cipher,
+                             EVP_aes_256_cbc (),
+                             NULL,
+                             (guchar *) key,
+                             iv);
+
+        EVP_DecryptUpdate (&_de_cipher,
+                           plaintext, &plain_len,
+                           data_bytes, bytes_len);
+
+        {
+          gint remaining_len;
+
+          EVP_DecryptFinal_ex (&_de_cipher,
+                               plaintext + plain_len,
+                               &remaining_len);
+        }
+
+        g_free (data_bytes);
+
+        return (gchar *) plaintext;
       }
-
-      g_free (iv_bytes);
-      g_free (body_bytes);
-
-      return (gchar *) plaintext;
     }
 
     return NULL;

@@ -113,6 +113,8 @@ namespace Net
     _client        = client;
     _http_POST_cbk = http_post;
     _http_GET_cbk  = http_get;
+
+    _iv = NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -120,6 +122,8 @@ namespace Net
   {
     MHD_stop_daemon (_daemon);
     _cryptor->Release ();
+
+    g_free (_iv);
   }
 
   // --------------------------------------------------------------------------------
@@ -132,6 +136,24 @@ namespace Net
     delete (defered_data);
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  int HttpServer::HeaderIterator (HttpServer         *server,
+                                  enum MHD_ValueKind  kind,
+                                  const char         *key,
+                                  const char         *value)
+  {
+    printf (YELLOW "%s ==> %s\n", key, value);
+    if (strcmp (key, "IV") == 0)
+    {
+      gsize out_len;
+
+      server->_iv = g_base64_decode (value,
+                                     &out_len);
+      return MHD_NO;
+    }
+    return MHD_YES;
   }
 
   // --------------------------------------------------------------------------------
@@ -183,6 +205,16 @@ namespace Net
       else
       {
         {
+          g_free (_iv);
+          _iv = NULL;
+
+          MHD_get_connection_values (connection,
+                                     MHD_HEADER_KIND,
+                                     (MHD_KeyValueIterator) HeaderIterator,
+                                     this);
+        }
+
+        {
           struct sockaddr    *client_addr;
           const union MHD_ConnectionInfo *info = MHD_get_connection_info (connection,
                                                                           MHD_CONNECTION_INFO_CLIENT_ADDRESS);
@@ -197,7 +229,7 @@ namespace Net
             if (key)
             {
               gchar *decrypted = _cryptor->Decrypt (request_body->_data,
-                                                    request_body->_length,
+                                                    _iv,
                                                     key);
               request_body->Replace (decrypted);
               printf (BLUE "<%s>\n" ESC, decrypted);
@@ -242,11 +274,13 @@ namespace Net
                                                 RequestBody                     **request_body,
                                                 enum MHD_RequestTerminationCode   code)
   {
+    g_free (server->_iv);
+    server->_iv = NULL;
+
     if (*request_body)
     {
       delete (*request_body);
     }
-
     *request_body = NULL;
   }
 

@@ -85,11 +85,21 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Uploader::UploadString (const gchar *string)
+  void Uploader::UploadString (const gchar *string,
+                               guint        char_count)
   {
     _full_url    = g_strdup (_url);
-    _data        = g_strdup (string);
-    _data_length = strlen (_data);
+
+    if (char_count == 0)
+    {
+      _data        = g_strdup (string);
+      _data_length = strlen (_data);
+    }
+    else
+    {
+      _data        = g_strndup (string, char_count);
+      _data_length = char_count;
+    }
 
     Start ();
   }

@@ -43,7 +43,8 @@ namespace Net
 
       void UploadFile (const gchar *filename);
 
-      void UploadString (const gchar *string);
+      void UploadString (const gchar *string,
+                         guint        char_count = 0);
 
     private:
       gchar        *_user;

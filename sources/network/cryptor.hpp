@@ -30,11 +30,12 @@ namespace Net
       Cryptor ();
 
       guchar *Encrypt (const gchar *text,
-                       const gchar *key);
+                       const gchar *key,
+                       guint       *length);
 
-      gchar *Decrypt (gchar       *data,
-                      guint        length,
-                      const gchar *key);
+      gchar *Decrypt (gchar        *data,
+                      const guchar *_iv,
+                      const gchar  *key);
 
     private:
       GRand          *_rand;

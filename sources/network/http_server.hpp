@@ -87,6 +87,7 @@ namespace Net
       HttpPost           _http_POST_cbk;
       HttpGet            _http_GET_cbk;
       Cryptor           *_cryptor;
+      guchar            *_iv;
 
       virtual ~HttpServer ();
 
@@ -98,6 +99,11 @@ namespace Net
                              const char            *method,
                              const char            *upload_data,
                              size_t                *upload_data_size);
+
+      static int HeaderIterator (HttpServer         *server,
+                                 enum MHD_ValueKind  kind,
+                                 const char         *key,
+                                 const char         *value);
 
       static int OnMicroHttpRequest (HttpServer            *server,
                                      struct MHD_Connection *connection,
