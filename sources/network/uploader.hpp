@@ -44,12 +44,13 @@ namespace Net
       void UploadFile (const gchar *filename);
 
       void UploadString (const gchar *string,
-                         guint        char_count = 0);
+                         guchar      *iv);
 
     private:
       gchar        *_user;
       gchar        *_passwd;
       gchar        *_full_url;
+      gchar        *_iv;
       gchar        *_url;
       gchar        *_data;
       gsize         _data_length;

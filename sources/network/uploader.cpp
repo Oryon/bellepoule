@@ -41,6 +41,7 @@ namespace Net
     }
 
     _full_url = NULL;
+    _iv       = NULL;
     _data     = NULL;
   }
 
@@ -49,6 +50,7 @@ namespace Net
   {
     g_free (_url);
     g_free (_full_url);
+    g_free (_iv);
     g_free (_user);
     g_free (_passwd);
     g_free (_data);
@@ -86,20 +88,15 @@ namespace Net
 
   // --------------------------------------------------------------------------------
   void Uploader::UploadString (const gchar *string,
-                               guint        char_count)
+                               guchar      *iv)
   {
-    _full_url    = g_strdup (_url);
+    _full_url = g_strdup (_url);
 
-    if (char_count == 0)
-    {
-      _data        = g_strdup (string);
-      _data_length = strlen (_data);
-    }
-    else
-    {
-      _data        = g_strndup (string, char_count);
-      _data_length = char_count;
-    }
+    g_free (_iv);
+    _iv = g_base64_encode (iv, 16);
+
+    _data        = g_strdup (string);
+    _data_length = strlen (_data) + 1;
 
     Start ();
   }
@@ -206,12 +203,22 @@ namespace Net
 
       if (curl)
       {
+        struct curl_slist *header = NULL;
+
+        if (uploader->_iv)
+        {
+          gchar *iv_header = g_strdup_printf ("IV: %s", uploader->_iv);
+
+          header = curl_slist_append (NULL, iv_header);
+          g_free (iv_header);
+        }
+
         curl_easy_setopt (curl, CURLOPT_READFUNCTION,     ReadCallback);
         curl_easy_setopt (curl, CURLOPT_READDATA,         uploader);
         curl_easy_setopt (curl, CURLOPT_UPLOAD,           1L);
-        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) strlen (uploader->_data) + 1);
+        curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) uploader->_data_length);
         curl_easy_setopt (curl, CURLOPT_URL,              uploader->_full_url);
-        curl_easy_setopt (curl, CURLOPT_NOPROXY,          "127.0.0.1, 10.12.83.104");
+        curl_easy_setopt (curl, CURLOPT_HTTPHEADER,       header);
 #ifdef DEBUG
         curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION,    OnUpLoadTrace);
         curl_easy_setopt (curl, CURLOPT_DEBUGDATA,        uploader);
@@ -252,6 +259,7 @@ namespace Net
         }
 
         curl_easy_cleanup (curl);
+        curl_slist_free_all (header);
       }
     }
 

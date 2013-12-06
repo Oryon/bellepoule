@@ -29,25 +29,20 @@ namespace Net
     public:
       Cryptor ();
 
-      guchar *Encrypt (const gchar *text,
-                       const gchar *key,
-                       guint       *length);
+      gchar *Encrypt (const gchar  *text,
+                      const gchar  *key,
+                      guchar      **iv);
 
       gchar *Decrypt (gchar        *data,
                       const guchar *_iv,
                       const gchar  *key);
 
     private:
-      GRand          *_rand;
-      EVP_CIPHER_CTX  _en_cipher;
-      EVP_CIPHER_CTX  _de_cipher;
+      GRand *_rand;
 
       virtual ~Cryptor ();
 
       guchar *GetIv ();
-
-      guchar *GetBytes (gchar *data,
-                        gint   bytes_count);
   };
 }
 

@@ -684,8 +684,8 @@ gboolean Player::SendMessage (const gchar *where,
 
       {
         gchar        *encrypted_msg;
-        guint         encrypted_len;
         gchar        *secret_key;
+        guchar       *iv;
         Net::Cryptor *cryptor       = new Net::Cryptor ();
         gchar        *full_message  = g_strdup_printf ("%s/%s?ref=%d\n"
                                                        "%s",
@@ -698,16 +698,16 @@ gboolean Player::SendMessage (const gchar *where,
           secret_key = wifi_code->GetKey ();
         }
 
-        encrypted_msg = (gchar *) cryptor->Encrypt (full_message,
-                                                    secret_key,
-                                                    &encrypted_len);
-
+        encrypted_msg = cryptor->Encrypt (full_message,
+                                          secret_key,
+                                          &iv);
         uploader->UploadString (encrypted_msg,
-                                encrypted_len);
+                                iv);
 
         g_free (full_message);
         g_free (encrypted_msg);
         g_free (secret_key);
+        g_free (iv);
         cryptor->Release ();
       }
 

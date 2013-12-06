@@ -29,52 +29,59 @@ namespace Net
     : Object ("Cryptor")
   {
     _rand = g_rand_new ();
-
-    EVP_CIPHER_CTX_init (&_en_cipher);
-    EVP_CIPHER_CTX_init (&_de_cipher);
   }
 
   // ----------------------------------------------------------------------------------------------
   Cryptor::~Cryptor ()
   {
-    EVP_CIPHER_CTX_cleanup (&_en_cipher);
-    EVP_CIPHER_CTX_cleanup (&_de_cipher);
-
     g_rand_free (_rand);
   }
 
   // ----------------------------------------------------------------------------------------------
-  guchar *Cryptor::Encrypt (const gchar *text,
-                            const gchar *key,
-                            guint       *length)
+  gchar *Cryptor::Encrypt (const gchar  *text,
+                           const gchar  *key,
+                           guchar      **iv)
   {
-    // max cipher_txt len for a n bytes of text is n + AES_BLOCK_SIZE -1 bytes
-    guint   text_len   = strlen ((gchar *) text);
-    gint    cipher_len = text_len + AES_BLOCK_SIZE;
-    guchar *cipher_txt = (guchar *) malloc (cipher_len);
-    guchar *iv         = GetIv ();
+    gchar          *base64_text;
+    EVP_CIPHER_CTX  cipher;
+    guint           text_len    = strlen ((gchar *) text) + 1;
+    guchar         *cipher_txt  = g_new (guchar, text_len + AES_BLOCK_SIZE);
+    gint            written_len;
+    gint            cipher_len;
 
-    EVP_EncryptInit_ex  (&_en_cipher,
-                         EVP_aes_256_cbc (),
-                         NULL,
-                         (guchar *) key,
-                         iv);
+    *iv = GetIv ();
 
-    EVP_EncryptUpdate (&_en_cipher,
-                       cipher_txt, &cipher_len,
+    EVP_CIPHER_CTX_init (&cipher);
+
+    EVP_EncryptInit_ex (&cipher,
+                        EVP_aes_256_cbc (),
+                        NULL,
+                        (guchar *) key,
+                        *iv);
+
+    EVP_EncryptInit_ex (&cipher,
+                        NULL,
+                        NULL,
+                        NULL,
+                        NULL);
+
+    EVP_EncryptUpdate (&cipher,
+                       cipher_txt, &written_len,
                        (guchar *) text, text_len);
+    cipher_len = written_len;
 
-    {
-      gint remaining_len;
+    EVP_EncryptFinal_ex (&cipher,
+                         cipher_txt + written_len,
+                         &written_len);
+    cipher_len += written_len;
 
-      EVP_EncryptFinal_ex (&_en_cipher,
-                           cipher_txt + cipher_len,
-                           &remaining_len);
+    base64_text = g_base64_encode (cipher_txt,
+                                   cipher_len);
+    g_free (cipher_txt);
 
-      *length = cipher_len + remaining_len;
-    }
+    EVP_CIPHER_CTX_cleanup (&cipher);
 
-    return cipher_txt;
+    return base64_text;
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -84,37 +91,40 @@ namespace Net
   {
     if (iv && data)
     {
-      gsize   bytes_len;
-      guchar *data_bytes = g_base64_decode (data,
-                                            &bytes_len);
+      gsize   cipher_len;
+      guchar *cipher_bytes = g_base64_decode (data,
+                                              &cipher_len);
 
-      if (iv && data_bytes)
+      if (iv && cipher_bytes)
       {
-        gint    plain_len = bytes_len;
-        guchar *plaintext;
+        EVP_CIPHER_CTX  cipher;
+        gint            written_len;
+        gint            plain_len;
+        guchar         *plaintext   = g_new (guchar, cipher_len+1); // Including provision for
+                                                                    // the missing NULL char
 
-        // because we have padding ON, we must allocate an extra cipher block size of memory
-        plaintext = g_new (guchar, plain_len + AES_BLOCK_SIZE);
+        EVP_CIPHER_CTX_init (&cipher);
 
-        EVP_DecryptInit_ex  (&_de_cipher,
+        EVP_DecryptInit_ex  (&cipher,
                              EVP_aes_256_cbc (),
                              NULL,
                              (guchar *) key,
                              iv);
 
-        EVP_DecryptUpdate (&_de_cipher,
-                           plaintext, &plain_len,
-                           data_bytes, bytes_len);
+        EVP_DecryptUpdate (&cipher,
+                           plaintext, &written_len,
+                           cipher_bytes, cipher_len);
+        plain_len = written_len;
 
-        {
-          gint remaining_len;
+        EVP_DecryptFinal_ex (&cipher,
+                             plaintext + written_len,
+                             &written_len);
+        plain_len += written_len;
+        plaintext[plain_len] = '\0';
 
-          EVP_DecryptFinal_ex (&_de_cipher,
-                               plaintext + plain_len,
-                               &remaining_len);
-        }
+        EVP_CIPHER_CTX_cleanup (&cipher);
 
-        g_free (data_bytes);
+        g_free (cipher_bytes);
 
         return (gchar *) plaintext;
       }
@@ -134,38 +144,5 @@ namespace Net
     }
 
     return iv;
-  }
-
-  // ----------------------------------------------------------------------------------------------
-  guchar *Cryptor::GetBytes (gchar *data,
-                             gint   bytes_count)
-  {
-    guchar *bytes = NULL;
-
-    if ((bytes_count % 2) == 0)
-    {
-      gchar *current_symbol = data;
-
-      bytes = g_new (guchar, bytes_count/2);
-
-      for (gint i = 0; i < bytes_count; i++)
-      {
-        if (current_symbol[0] && current_symbol[1])
-        {
-          gchar symbol[3];
-
-          symbol[0] = current_symbol[0];
-          symbol[1] = current_symbol[1];
-          symbol[2] = '\0';
-
-          bytes[i] = (guchar) strtol (symbol,
-                                      NULL,
-                                      16);
-          current_symbol += 2;
-        }
-      }
-    }
-
-    return bytes;
   }
 }
