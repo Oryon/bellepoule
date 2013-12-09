@@ -96,7 +96,7 @@ namespace Net
     _iv = g_base64_encode (iv, 16);
 
     _data        = g_strdup (string);
-    _data_length = strlen (_data) + 1;
+    _data_length = strlen (_data);
 
     Start ();
   }

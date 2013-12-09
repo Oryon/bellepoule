@@ -144,7 +144,6 @@ namespace Net
                                   const char         *key,
                                   const char         *value)
   {
-    printf (YELLOW "%s ==> %s\n", key, value);
     if (strcmp (key, "IV") == 0)
     {
       gsize out_len;
@@ -232,7 +231,6 @@ namespace Net
                                                     _iv,
                                                     key);
               request_body->Replace (decrypted);
-              printf (BLUE "<%s>\n" ESC, decrypted);
 
               g_free (decrypted);
               g_free (key);

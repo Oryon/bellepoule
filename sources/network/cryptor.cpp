@@ -59,12 +59,6 @@ namespace Net
                         (guchar *) key,
                         *iv);
 
-    EVP_EncryptInit_ex (&cipher,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL);
-
     EVP_EncryptUpdate (&cipher,
                        cipher_txt, &written_len,
                        (guchar *) text, text_len);
