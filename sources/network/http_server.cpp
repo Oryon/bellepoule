@@ -222,8 +222,7 @@ namespace Net
           if (client_addr->sa_family == AF_INET)
           {
             struct sockaddr_in *in_addr = (struct sockaddr_in *) client_addr;
-            gchar              *key     = _client->GetSecretKey (inet_ntoa (in_addr->sin_addr),
-                                                                 strcmp (url, "/authentication") == 0);
+            gchar              *key     = _client->GetSecretKey (inet_ntoa (in_addr->sin_addr), url);
 
             if (key)
             {

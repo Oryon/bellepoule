@@ -352,12 +352,6 @@ namespace People
   // --------------------------------------------------------------------------------
   void Form::OnUnmap ()
   {
-    if (_player_to_update)
-    {
-      _player_to_update->RemoveData (NULL,
-                                     "SmartCodeExposed");
-      _player_to_update = NULL;
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -533,17 +527,8 @@ namespace People
   {
     gtk_widget_show_all (_glade->GetWidget ("FillInForm"));
 
-    if (_player_to_update)
-    {
-      _player_to_update->RemoveData (NULL,
-                                     "SmartCodeExposed");
-    }
-
     if (player)
     {
-      player->SetData (NULL,
-                       "SmartCodeExposed", (void *) 1);
-
       HideTabs ();
     }
     else

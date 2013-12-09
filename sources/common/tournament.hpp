@@ -136,7 +136,7 @@ class Tournament : public Module, Net::HttpServer::Client
                    gint               page_nr);
 
     gchar *GetSecretKey (const gchar *ip,
-                         gboolean     authentication_request);
+                         const gchar *authentication_scheme);
 
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
                                  const gchar             *data,

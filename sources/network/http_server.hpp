@@ -39,7 +39,7 @@ namespace Net
           Client () {};
 
           virtual gchar *GetSecretKey (const gchar *ip,
-                                       gboolean     authentication_request) = 0;
+                                       const gchar *authentication_scheme) = 0;
 
         protected:
           virtual ~Client () {};

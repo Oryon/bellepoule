@@ -292,23 +292,50 @@ void Tournament::Init ()
 
 // --------------------------------------------------------------------------------
 gchar *Tournament::GetSecretKey (const gchar *ip,
-                                 gboolean     authentication_request)
+                                 const gchar *authentication_scheme)
 {
-  Player *whom = NULL;
+  WifiCode *wifi_code = NULL;
 
   {
     Player::AttributeId ip_attr_id ("IP");
     GSList *current = _referee_list;
+    gint    ref     = -1;
+
+    if (authentication_scheme)
+    {
+      gchar **tokens = g_strsplit_set (authentication_scheme,
+                                       "/",
+                                       0);
+
+      if (tokens && tokens[0] && tokens[1])
+      {
+        if (strcmp (tokens[1], "ScoreSheet") == 0)
+        {
+          ref = 0;
+        }
+        else if (tokens[2])
+        {
+          ref = atoi (tokens[2]);
+        }
+      }
+
+      g_strfreev (tokens);
+    }
+
+    if (ref == 0)
+    {
+      wifi_code = _admin_wifi_code;
+    }
 
     while (current)
     {
       Player *referee = (Player *) current->data;
 
-      if (authentication_request)
+      if (ref != -1)
       {
-        if (referee->GetIntData (NULL, "SmartCodeExposed"))
+        if (referee->GetRef () == (guint) ref)
         {
-          whom = referee;
+          wifi_code = (WifiCode *) referee->GetFlashCode ();
           break;
         }
       }
@@ -318,7 +345,7 @@ gchar *Tournament::GetSecretKey (const gchar *ip,
 
         if (attr && strcmp (ip, attr->GetStrValue ()) == 0)
         {
-          whom = referee;
+          wifi_code = (WifiCode *) referee->GetFlashCode ();
           break;
         }
       }
@@ -327,10 +354,8 @@ gchar *Tournament::GetSecretKey (const gchar *ip,
     }
   }
 
-  if (whom)
+  if (wifi_code)
   {
-    WifiCode *wifi_code = (WifiCode *) whom->GetFlashCode ();
-
     return wifi_code->GetKey ();
   }
 
