@@ -446,8 +446,13 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::Display ()
+  void TableSet::Display (GtkRange *zoomer)
   {
+    if (zoomer)
+    {
+      SetZoomer (zoomer);
+    }
+
     if (_tree_root)
     {
       Wipe ();
@@ -541,6 +546,8 @@ namespace Table
       }
 
       RefreshNodes ();
+
+      RestoreZoomFactor ();
     }
   }
 
@@ -1637,7 +1644,21 @@ namespace Table
                                "quick_search_path", path, (GDestroyNotify) gtk_tree_path_free);
 
         data->_match->SetNumber (indices[1]+1);
-        data->_match->SetFlashRef (data->_match->GetName ());
+
+        // flash code
+        {
+          gchar *path_string = gtk_tree_path_to_string (path);
+
+          Contest *contest = _supervisor->GetContest ();
+          gchar   *ref     = g_strdup_printf ("#%s/%d/%s.%s",
+                                              contest->GetId (),
+                                              _supervisor->GetId (),
+                                              _id,
+                                              path_string);
+          data->_match->SetFlashRef (ref);
+          g_free (ref);
+          g_free (path_string);
+        }
 
         left_table->ManageMatch (data->_match);
       }
@@ -1899,12 +1920,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::OnAttrListUpdated ()
-  {
-    Display ();
-  }
-
-  // --------------------------------------------------------------------------------
   void TableSet::OnFromToTableComboboxChanged ()
   {
     Table *from_table = _from_border->GetSelectedTable ();
@@ -1955,7 +1970,7 @@ namespace Table
                                   0);
       }
 
-      Display ();
+      Display (NULL);
     }
   }
 
@@ -1966,6 +1981,28 @@ namespace Table
                   (GtkPrintContext   *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
 
     ConfigurePreviewBackground ((GtkPrintContext *) g_object_get_data (G_OBJECT (_preview), "preview_context"));
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean TableSet::OnHttpPost (const gchar *command,
+                                 const gchar **ressource,
+                                 const gchar *data)
+  {
+    if (ressource && ressource[0])
+    {
+      GtkTreeIter iter;
+
+      if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (_quick_search_filter),
+                                               &iter,
+                                               ressource[0]))
+      {
+        gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
+                                       &iter);
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -2426,6 +2463,7 @@ namespace Table
           gtk_label_set_text (GTK_LABEL (_glade->GetWidget ("fencerB_label")),
                               name);
           g_free (name);
+
           return;
         }
       }
@@ -3574,7 +3612,8 @@ namespace Table
     {
       target_zone->AddObject (object);
 
-      OnAttrListUpdated ();
+      FreezeZoomer ();
+      Display (NULL);
       MakeDirty ();
     }
   }

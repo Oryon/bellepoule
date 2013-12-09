@@ -668,7 +668,6 @@ To activate/deactivate this button, go to the properties of the competition.</pr
                             <property name="restrict_to_fill_level">False</property>
                             <property name="fill_level">1</property>
                             <property name="draw_value">False</property>
-                            <signal name="value-changed" handler="on_zoom_hscale_value_changed" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">True</property>

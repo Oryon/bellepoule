@@ -202,8 +202,7 @@ namespace Table
     {
       Plug (table_set,
             _glade->GetWidget ("table_set_hook"));
-      table_set->Display ();
-      table_set->RestoreZoomFactor (GTK_SCALE (_glade->GetWidget ("zoom_scale")));
+      table_set->Display (GTK_RANGE (_glade->GetWidget ("zoom_scale")));
 
       _displayed_table_set = table_set;
     }
@@ -491,6 +490,46 @@ namespace Table
   {
     DeleteTableSets ();
     CreateTableSets ();
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Supervisor::OnHttpPost (const gchar *command,
+                                   const gchar **ressource,
+                                   const gchar *data)
+  {
+    gboolean result = FALSE;
+    gchar **tokens = g_strsplit_set (*ressource,
+                                     ".",
+                                     0);
+
+    if (tokens && tokens[0])
+    {
+      GtkTreePath *path = gtk_tree_path_new_from_string (tokens[0]);
+
+      if (path)
+      {
+        gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                                  path,
+                                  NULL,
+                                  FALSE);
+        gtk_tree_path_free (path);
+        result = TRUE;
+      }
+
+      if (_displayed_table_set)
+      {
+        gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
+                                           TRUE);
+
+        _displayed_table_set->OnHttpPost (command,
+                                          (const gchar**) &tokens[1],
+                                          data);
+      }
+
+      g_strfreev (tokens);
+    }
+
+    return result;
   }
 
   // --------------------------------------------------------------------------------
@@ -1024,15 +1063,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::OnZoom (gdouble value)
-  {
-    if (_displayed_table_set)
-    {
-      _displayed_table_set->OnZoom (value);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void Supervisor::OnTableSetTreeViewCursorChanged (GtkTreeView *treeview)
   {
     GtkTreePath *path;
@@ -1193,16 +1223,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_zoom_scalebutton_value_changed (GtkWidget *widget,
-                                                                     gdouble    value,
-                                                                     Object    *owner)
-  {
-    Supervisor *t = dynamic_cast <Supervisor *> (owner);
-
-    t->OnZoom (value);
-  }
-
-  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_display_toolbutton_toggled (GtkWidget *widget,
                                                                  Object    *owner)
   {
@@ -1218,14 +1238,5 @@ namespace Table
     Supervisor *t = dynamic_cast <Supervisor *> (owner);
 
     t->OnTableSetTreeViewCursorChanged (treeview);
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_zoom_hscale_value_changed (GtkRange *range,
-                                                                Object   *owner)
-  {
-    Supervisor *t = dynamic_cast <Supervisor *> (owner);
-
-    t->OnZoom (gtk_range_get_value (range));
   }
 }

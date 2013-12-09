@@ -14,6 +14,21 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <sys/types.h>
+#ifdef WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #include <iphlpapi.h>
+#else
+  #include <ifaddrs.h>
+  #include <sys/socket.h>
+  #include <sys/ioctl.h>
+  #include <net/if.h>
+  #include <netdb.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+#endif
+
 #include "http_server.hpp"
 
 namespace Net
@@ -41,6 +56,17 @@ namespace Net
              buf,
              len);
     _length += len;
+  }
+
+  // --------------------------------------------------------------------------------
+  void HttpServer::RequestBody::Replace (const char *buf)
+  {
+    g_free (_data);
+    _data   = NULL;
+    _length = 0;
+
+    Append (buf,
+            strlen (buf) + 1);
   }
 }
 
@@ -71,7 +97,7 @@ namespace Net
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::HttpServer (Object   *client,
+  HttpServer::HttpServer (Client   *client,
                           HttpPost  http_post,
                           HttpGet   http_get)
     : Object ("HttpServer")
@@ -82,15 +108,22 @@ namespace Net
                                 (MHD_AccessHandlerCallback) OnMicroHttpRequest, this,
                                 MHD_OPTION_NOTIFY_COMPLETED, OnMicroHttpRequestCompleted, this,
                                 MHD_OPTION_END);
+    _cryptor = new Cryptor ();
+
     _client        = client;
     _http_POST_cbk = http_post;
     _http_GET_cbk  = http_get;
+
+    _iv = NULL;
   }
 
   // --------------------------------------------------------------------------------
   HttpServer::~HttpServer ()
   {
     MHD_stop_daemon (_daemon);
+    _cryptor->Release ();
+
+    g_free (_iv);
   }
 
   // --------------------------------------------------------------------------------
@@ -103,6 +136,23 @@ namespace Net
     delete (defered_data);
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  int HttpServer::HeaderIterator (HttpServer         *server,
+                                  enum MHD_ValueKind  kind,
+                                  const char         *key,
+                                  const char         *value)
+  {
+    if (strcmp (key, "IV") == 0)
+    {
+      gsize out_len;
+
+      server->_iv = g_base64_decode (value,
+                                     &out_len);
+      return MHD_NO;
+    }
+    return MHD_YES;
   }
 
   // --------------------------------------------------------------------------------
@@ -154,6 +204,40 @@ namespace Net
       else
       {
         {
+          g_free (_iv);
+          _iv = NULL;
+
+          MHD_get_connection_values (connection,
+                                     MHD_HEADER_KIND,
+                                     (MHD_KeyValueIterator) HeaderIterator,
+                                     this);
+        }
+
+        {
+          struct sockaddr    *client_addr;
+          const union MHD_ConnectionInfo *info = MHD_get_connection_info (connection,
+                                                                          MHD_CONNECTION_INFO_CLIENT_ADDRESS);
+
+          client_addr = (struct sockaddr *) info->client_addr;
+          if (client_addr->sa_family == AF_INET)
+          {
+            struct sockaddr_in *in_addr = (struct sockaddr_in *) client_addr;
+            gchar              *key     = _client->GetSecretKey (inet_ntoa (in_addr->sin_addr), url);
+
+            if (key)
+            {
+              gchar *decrypted = _cryptor->Decrypt (request_body->_data,
+                                                    _iv,
+                                                    key);
+              request_body->Replace (decrypted);
+
+              g_free (decrypted);
+              g_free (key);
+            }
+          }
+        }
+
+        {
           DeferedData *defered_data = new DeferedData (this,
                                                        url,
                                                        request_body);
@@ -187,11 +271,13 @@ namespace Net
                                                 RequestBody                     **request_body,
                                                 enum MHD_RequestTerminationCode   code)
   {
+    g_free (server->_iv);
+    server->_iv = NULL;
+
     if (*request_body)
     {
       delete (*request_body);
     }
-
     *request_body = NULL;
   }
 

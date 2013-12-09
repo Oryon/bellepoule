@@ -88,7 +88,7 @@ namespace Table
 
       void Wipe ();
 
-      void Display ();
+      void Display (GtkRange *zoomer);
 
       void Lock ();
 
@@ -131,6 +131,10 @@ namespace Table
       GSList *GetBlackcardeds ();
 
       Match *GetFirstError ();
+
+      gboolean OnHttpPost (const gchar *command,
+                           const gchar **ressource,
+                           const gchar *data);
 
     private:
       static const gdouble _score_rect_size;
@@ -186,8 +190,6 @@ namespace Table
       void CreateTree ();
 
       void DeleteTree ();
-
-      void OnAttrListUpdated ();
 
       void DrawAllConnectors ();
 

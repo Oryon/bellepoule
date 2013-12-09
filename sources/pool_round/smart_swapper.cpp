@@ -640,7 +640,7 @@ namespace Pool
     }
 
     // Prevent pool leaders from being moved
-    if (fencer->_rank != from_pool->_id-1)
+    if (fencer->_rank != from_pool->_id)
     {
       if (to_list)
       {

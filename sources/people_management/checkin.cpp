@@ -507,9 +507,9 @@ namespace People
                 gchar *french_date = tokens[2];
                 gchar **splitted_date;
 
-                splitted_date = g_strsplit (french_date,
-                                            "/",
-                                            0);
+                splitted_date = g_strsplit_set (french_date,
+                                                "/",
+                                                0);
                 if (   splitted_date
                     && splitted_date[0]
                     && splitted_date[1]

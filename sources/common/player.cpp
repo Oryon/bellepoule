@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "util/attribute.hpp"
+#include "network/cryptor.hpp"
 
 #include "player.hpp"
 
@@ -574,9 +575,9 @@ void Player::Load (xmlNode *xml_node)
             gchar *french_date = attr->GetStrValue ();
             gchar **splitted_date;
 
-            splitted_date = g_strsplit (french_date,
-                                        ".",
-                                        0);
+            splitted_date = g_strsplit_set (french_date,
+                                            ".",
+                                            0);
             if (   splitted_date
                 && splitted_date[0]
                 && splitted_date[1]
@@ -660,24 +661,56 @@ gboolean Player::SendMessage (const gchar *where,
 
     if (ip && (ip[0] != 0))
     {
-      gchar *url;
+      Net::Uploader *uploader;
 
-      if (strchr (ip, ':'))
       {
-        url = g_strdup_printf ("http://%s%s/%s?ref=%d", ip, where, _player_class, GetRef ());
+        gchar *url;
+
+        if (strchr (ip, ':'))
+        {
+          url = g_strdup_printf ("http://%s", ip);
+        }
+        else
+        {
+          url = g_strdup_printf ("http://%s:35831", ip);
+        }
+
+        uploader = new Net::Uploader (url,
+                                      (Net::Uploader::UploadStatus) OnUploaderStatus, this,
+                                      NULL, NULL);
+
+        g_free (url);
       }
-      else
+
       {
-        url = g_strdup_printf ("http://%s:35831%s/%s?ref=%d", ip, where, _player_class, GetRef ());
+        gchar        *encrypted_msg;
+        gchar        *secret_key;
+        guchar       *iv;
+        Net::Cryptor *cryptor       = new Net::Cryptor ();
+        gchar        *full_message  = g_strdup_printf ("%s/%s?ref=%d\n"
+                                                       "%s",
+                                                       where, _player_class, GetRef (),
+                                                       message);
+
+        {
+          WifiCode *wifi_code = (WifiCode *) GetFlashCode ();
+
+          secret_key = wifi_code->GetKey ();
+        }
+
+        encrypted_msg = cryptor->Encrypt (full_message,
+                                          secret_key,
+                                          &iv);
+        uploader->UploadString (encrypted_msg,
+                                iv);
+
+        g_free (full_message);
+        g_free (encrypted_msg);
+        g_free (secret_key);
+        g_free (iv);
+        cryptor->Release ();
       }
 
-      Net::Uploader *uploader = new Net::Uploader (url,
-                                                   (Net::Uploader::UploadStatus) OnUploaderStatus, this,
-                                                   NULL, NULL);
-
-      g_free (url);
-
-      uploader->UploadString (message);
       uploader->Release ();
       return TRUE;
     }

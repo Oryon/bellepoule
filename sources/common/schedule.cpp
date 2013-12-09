@@ -686,6 +686,8 @@ gboolean Schedule::OnHttpPost (const gchar *command,
 
       if (stage->GetId () == phase_id)
       {
+        gtk_notebook_set_current_page  (GTK_NOTEBOOK (GetRootWidget ()),
+                                        phase_id);
         return stage->OnHttpPost (command,
                                   &ressource[1],
                                   data);

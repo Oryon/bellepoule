@@ -41,7 +41,6 @@ namespace Table
       void OnInputToggled (GtkWidget *widget);
       void OnDisplayToggled (GtkWidget *widget);
       void OnPrint ();
-      void OnZoom (gdouble value);
       void OnTableSetTreeViewCursorChanged (GtkTreeView *treeview);
       void OnTableOver (TableSet *table_set,
                         Table    *table);
@@ -114,7 +113,11 @@ namespace Table
 
       void LoadConfiguration (xmlNode *xml_node);
 
-      void FillInConfig ();
+      gboolean OnHttpPost (const gchar *command,
+                           const gchar **ressource,
+                           const gchar *data);
+
+        void FillInConfig ();
 
       void ApplyConfig ();
 

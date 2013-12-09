@@ -14,39 +14,36 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef wifi_code_hpp
-#define wifi_code_hpp
+#ifndef cryptor_hpp
+#define cryptor_hpp
+
+#include <openssl/aes.h>
+#include <openssl/evp.h>
 
 #include "util/object.hpp"
-#include "common/player.hpp"
-#include "network/wifi_network.hpp"
-#include "flash_code.hpp"
 
-class Player;
-
-class WifiCode : public FlashCode
+namespace Net
 {
-  public:
-    WifiCode (const gchar *user_name);
+  class Cryptor : public Object
+  {
+    public:
+      Cryptor ();
 
-    WifiCode (Player *player);
+      gchar *Encrypt (const gchar  *text,
+                      const gchar  *key,
+                      guchar      **iv);
 
-    void SetWifiNetwork (Net::WifiNetwork *network);
+      gchar *Decrypt (gchar        *data,
+                      const guchar *_iv,
+                      const gchar  *key);
 
-    gchar *GetKey ();
+    private:
+      GRand *_rand;
 
-  private:
-    static Net::WifiNetwork *_wifi_network;
-    Player                  *_player;
-    gchar                   *_key;
+      virtual ~Cryptor ();
 
-    gchar *GetNetwork ();
-
-    gchar *GetIpAddress ();
-
-    virtual ~WifiCode ();
-
-    gchar *GetText ();
-};
+      guchar *GetIv ();
+  };
+}
 
 #endif

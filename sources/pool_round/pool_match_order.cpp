@@ -1744,7 +1744,6 @@ namespace Pool
             remainging = current;
           }
 
-          printf ("*** %d - %d <-> ", current_pair->_a, current_pair->_b);
           while (substitute)
           {
             PlayerPair *substitute_pair = (PlayerPair *) substitute->data;
@@ -1761,7 +1760,6 @@ namespace Pool
               _player_pairs = g_slist_insert_before (_player_pairs,
                                                      current,
                                                      substitute_pair);
-              printf ("%d - %d\n", substitute_pair->_a, substitute_pair->_b);
               break;
             }
             printf ("\n");

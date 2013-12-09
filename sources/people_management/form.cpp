@@ -350,6 +350,11 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void Form::OnUnmap ()
+  {
+  }
+
+  // --------------------------------------------------------------------------------
   void Form::ReadAndWipe (Player *player)
   {
     GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("notebook"));
@@ -698,6 +703,17 @@ namespace People
     Form *f = dynamic_cast <Form *> (owner);
 
     f->OnCloseButtonClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_FillInForm_unmap_event (GtkWidget *widget,
+                                                                 GdkEvent  *event,
+                                                                 Object    *owner)
+  {
+    Form *f = dynamic_cast <Form *> (owner);
+
+    f->OnUnmap ();
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

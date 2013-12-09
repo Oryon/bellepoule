@@ -121,6 +121,8 @@
 		<Unit filename="..\sources\common\tournament.cpp" />
 		<Unit filename="..\sources\common\tournament.hpp" />
 		<Unit filename="..\sources\common\version.h" />
+		<Unit filename="..\sources\network\cryptor.cpp" />
+		<Unit filename="..\sources\network\cryptor.hpp" />
 		<Unit filename="..\sources\network\downloader.cpp" />
 		<Unit filename="..\sources\network\downloader.hpp" />
 		<Unit filename="..\sources\network\http_server.cpp" />

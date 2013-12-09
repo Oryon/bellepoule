@@ -28,7 +28,7 @@
 
 class Contest;
 
-class Tournament : public Module
+class Tournament : public Module, Net::HttpServer::Client
 {
   public:
      Tournament (gchar *filename);
@@ -135,12 +135,15 @@ class Tournament : public Module
                    GtkPrintContext   *context,
                    gint               page_nr);
 
-    static gboolean HttpPostCbk (Object      *client,
-                                 const gchar *data,
-                                 const gchar *url);
+    gchar *GetSecretKey (const gchar *ip,
+                         const gchar *authentication_scheme);
 
-    static gchar *HttpGetCbk (Object      *client,
-                              const gchar *url);
+    static gboolean HttpPostCbk (Net::HttpServer::Client *client,
+                                 const gchar             *data,
+                                 const gchar             *url);
+
+    static gchar *HttpGetCbk (Net::HttpServer::Client *client,
+                              const gchar             *url);
 
     static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                  gchar            *locale);

@@ -161,9 +161,9 @@ void Contest::Time::Load (gchar *attr)
 {
   if (strlen (attr) > 0)
   {
-    gchar **time = g_strsplit (attr,
-                               ":",
-                               2);
+    gchar **time = g_strsplit_set (attr,
+                                   ":",
+                                   2);
 
     if (time[0] && time[1])
     {
@@ -716,9 +716,9 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         {
           if (strlen (attr) > 0)
           {
-            gchar **date = g_strsplit (attr,
-                                       ".",
-                                       3);
+            gchar **date = g_strsplit_set (attr,
+                                           ".",
+                                           3);
 
             if (date[0] && date[1] && date[2])
             {
