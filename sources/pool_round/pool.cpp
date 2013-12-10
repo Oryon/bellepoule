@@ -95,6 +95,22 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::Wipe ()
   {
+    if (_score_collector)
+    {
+      GSList *current = _match_list;
+
+      while (current)
+      {
+        Match *match = (Match *) current->data;
+
+        _score_collector->RemoveCollectingPoints (match);
+        current = g_slist_next (current);
+      }
+
+      _score_collector->Release ();
+      _score_collector = NULL;
+    }
+
     _title_table   = NULL;
     _status_item   = NULL;
 
@@ -418,21 +434,6 @@ namespace Pool
                    gboolean   print_for_referees,
                    gboolean   print_matchs)
   {
-    if (_score_collector)
-    {
-      GSList *current = _match_list;
-
-      while (current)
-      {
-        Match *match = (Match *) current->data;
-
-        _score_collector->RemoveCollectingPoints (match);
-        current = g_slist_next (current);
-      }
-
-      _score_collector->Release ();
-    }
-
     _score_collector = new ScoreCollector (this,
                                            (ScoreCollector::OnNewScore_cbk) &Pool::OnNewScore);
 

@@ -307,23 +307,30 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
       {
         wifi_code = _admin_wifi_code;
       }
-      else if (   (strcmp (tokens[1], "HandShake") == 0)
-               || (strcmp (tokens[1], "Score")     == 0))
+      else if (   (strcmp (tokens[1], "HandShake")  == 0)
+               || (strcmp (tokens[1], "Score")      == 0))
       {
         GSList *current = _referee_list;
         guint   ref     = atoi (tokens[2]);
 
-        while (current)
+        if (ref == 0)
         {
-          Player *referee = (Player *) current->data;
-
-          if (referee->GetRef () == ref)
+          wifi_code = _admin_wifi_code;
+        }
+        else
+        {
+          while (current)
           {
-            wifi_code = (WifiCode *) referee->GetFlashCode ();
-            break;
-          }
+            Player *referee = (Player *) current->data;
 
-          current = g_slist_next (current);
+            if (referee->GetRef () == ref)
+            {
+              wifi_code = (WifiCode *) referee->GetFlashCode ();
+              break;
+            }
+
+            current = g_slist_next (current);
+          }
         }
       }
       g_strfreev (tokens);
@@ -729,8 +736,7 @@ gboolean Tournament::OnHttpPost (const gchar *data)
                                     0);
     if (lines[0])
     {
-      const gchar *body          = data;
-      gboolean     authenticated = FALSE;
+      const gchar *body = data;
 
       body = strstr (body, "\n"); if (body) body++;
       // Source
