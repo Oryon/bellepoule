@@ -18,6 +18,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
 #include <curl/curl.h>
+#include <locale.h>
 #include "util/tinyxml2.h"
 
 #ifdef WINDOWS_TEMPORARY_PATCH
@@ -619,7 +620,8 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
       }
 
       {
-        const gchar *column[] = {"€", "Signature", NULL};
+        struct lconv *local_conv = localeconv ();
+        const gchar  *column[]   = {local_conv->currency_symbol, gettext ("Signature"), NULL};
 
         for (guint i = 0; column[i] != NULL; i++)
         {
