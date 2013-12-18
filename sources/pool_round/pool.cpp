@@ -32,7 +32,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Pool::Pool (Data        *max_score,
               guint        number,
-              gchar        weapon_code,
               const gchar *xml_player_tag,
               guint32      rand_seed)
     : CanvasModule ("pool.glade",
@@ -55,7 +54,7 @@ namespace Pool
     _rand_seed          = rand_seed;
     _xml_player_tag     = xml_player_tag;
 
-    _match_order = new MatchOrder (weapon_code);
+    _match_order = new MatchOrder ();
 
     _status_cbk_data = NULL;
     _status_cbk      = NULL;

@@ -677,7 +677,6 @@ namespace Pool
 
             current_pool = new Pool (_max_score,
                                      number+1,
-                                     _contest->GetWeaponCode (),
                                      GetXmlPlayerTag (),
                                      _rand_seed);
             SetPoolFlashRef (current_pool);
@@ -950,7 +949,6 @@ namespace Pool
       {
         pool_table[i] = new Pool (_max_score,
                                   i+1,
-                                  _contest->GetWeaponCode (),
                                   GetXmlPlayerTag (),
                                   _rand_seed);
         SetPoolFlashRef (pool_table[i]);

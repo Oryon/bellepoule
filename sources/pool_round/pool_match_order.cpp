@@ -31,11 +31,6 @@ namespace Pool
   static PlayerPair pool_2_fencing_pairs[1] =
   {{1, 2}};
 
-  static PlayerPair pool_3_kendo_pairs[3] =
-  { {1, 2},
-    {1, 3},
-    {2, 3}};
-
   static PlayerPair pool_3_fencing_pairs[3] =
   { {2, 3},
     {1, 3},
@@ -1428,37 +1423,11 @@ namespace Pool
       //pool_20_fencing_pairs
   };
 
-  static PlayerPair *kendo_pairs[MatchOrder::_MAX_POOL_SIZE+1] =
-  {
-    NULL,
-    NULL,
-    pool_2_fencing_pairs,
-    pool_3_kendo_pairs,
-    pool_4_fencing_pairs,
-    pool_5_fencing_pairs,
-    pool_6_fencing_pairs,
-    pool_7_fencing_pairs,
-    pool_8_fencing_pairs,
-    pool_9_fencing_pairs,
-    pool_10_fencing_pairs,
-    pool_11_fencing_pairs,
-    pool_12_fencing_pairs,
-    pool_13_fencing_pairs,
-    pool_14_fencing_pairs,
-    pool_15_fencing_pairs,
-    pool_16_fencing_pairs,
-    pool_17_fencing_pairs
-      //pool_18_fencing_pairs,
-      //pool_19_fencing_pairs,
-      //pool_20_fencing_pairs
-  };
-
   // --------------------------------------------------------------------------------
-  MatchOrder::MatchOrder (gchar weapon_code)
+  MatchOrder::MatchOrder ()
     : Object ("PoolMatchOrder")
   {
-    _weapon_code  = weapon_code;
-    _player_pairs = NULL;
+    _fencer_pairs = NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -1470,13 +1439,13 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void MatchOrder::Reset ()
   {
-    if (_player_pairs)
+    if (_fencer_pairs)
     {
-      g_slist_foreach (_player_pairs,
+      g_slist_foreach (_fencer_pairs,
                        (GFunc) g_free,
                        NULL);
-      g_slist_free (_player_pairs);
-      _player_pairs = NULL;
+      g_slist_free (_fencer_pairs);
+      _fencer_pairs = NULL;
     }
   }
 
@@ -1485,7 +1454,7 @@ namespace Pool
                                       guint *a_id,
                                       guint *b_id)
   {
-    PlayerPair *pair = (PlayerPair *) g_slist_nth_data (_player_pairs,
+    PlayerPair *pair = (PlayerPair *) g_slist_nth_data (_fencer_pairs,
                                                         match_index);
 
     if (pair)
@@ -1576,7 +1545,7 @@ namespace Pool
       _insertion_position = 0;
       _nb_pairs_inserted  = 0;
 
-      _player_pairs = GetPlayerPairModel (nb_fencer);
+      _fencer_pairs = GetPlayerPairModel (nb_fencer);
       while (current)
       {
         GSList *affinity_list   = (GSList *) current->data;
@@ -1603,23 +1572,12 @@ namespace Pool
   // --------------------------------------------------------------------------------
   GSList *MatchOrder::GetPlayerPairModel (guint pool_size)
   {
-    PlayerPair *pair_table = NULL;
-    GSList     *model      = NULL;
+    GSList *model = NULL;
 
     if ((pool_size >= 2) &&  (pool_size <= _MAX_POOL_SIZE))
     {
-      if (_weapon_code == 'K')
-      {
-        pair_table = kendo_pairs[pool_size];
-      }
-      else
-      {
-        pair_table = fencing_pairs[pool_size];
-      }
-    }
+      PlayerPair *pair_table = fencing_pairs[pool_size];
 
-    if (pair_table)
-    {
       for (guint i = (pool_size * (pool_size - 1)) / 2; i > 0; i--)
       {
         PlayerPair *pair = g_new (PlayerPair, 1);
@@ -1656,7 +1614,7 @@ namespace Pool
       for (guint b_list_index = a_list_index+1; b != NULL; b_list_index++)
       {
         guint   fencer_b_index = GPOINTER_TO_UINT (b->data);
-        GSList *current_pair   = _player_pairs;
+        GSList *current_pair   = _fencer_pairs;
 
         while (current_pair)
         {
@@ -1665,7 +1623,7 @@ namespace Pool
           if (   ((pair->_a == fencer_a_index+1) && (pair->_b == fencer_b_index+1))
               || ((pair->_a == fencer_b_index+1) && (pair->_b == fencer_a_index+1)))
           {
-            _player_pairs = g_slist_remove_link (_player_pairs,
+            _fencer_pairs = g_slist_remove_link (_fencer_pairs,
                                                  current_pair);
 
             // Temporarily store the pair in a fake pool grid.
@@ -1696,7 +1654,7 @@ namespace Pool
           _insertion_step++;
           _insertion_position = 1;
         }
-        _player_pairs = g_slist_insert (_player_pairs,
+        _fencer_pairs = g_slist_insert (_fencer_pairs,
                                         extracted_pair,
                                         _insertion_position);
         _nb_pairs_inserted++;
@@ -1722,7 +1680,7 @@ namespace Pool
   {
     if (_nb_pairs_inserted)
     {
-      GSList *previous   = g_slist_nth (_player_pairs,
+      GSList *previous   = g_slist_nth (_fencer_pairs,
                                         _nb_pairs_inserted-1);
       GSList *current    = g_slist_next (previous);
       GSList *remainging = NULL;
@@ -1754,10 +1712,10 @@ namespace Pool
                 && (substitute_pair->_b != previous_pair->_b))
             {
               // Following lines are safe because
-              // _player_pairs can't be modified in our case
-              _player_pairs = g_slist_remove_link (_player_pairs,
+              // _fencer_pairs can't be modified in our case
+              _fencer_pairs = g_slist_remove_link (_fencer_pairs,
                                                    substitute);
-              _player_pairs = g_slist_insert_before (_player_pairs,
+              _fencer_pairs = g_slist_insert_before (_fencer_pairs,
                                                      current,
                                                      substitute_pair);
               break;
@@ -1776,7 +1734,7 @@ namespace Pool
       if (remainging)
       {
         PlayerPair *remainging_pair = (PlayerPair *) remainging->data;
-        GSList     *previous        = g_slist_nth (_player_pairs,
+        GSList     *previous        = g_slist_nth (_fencer_pairs,
                                                    _nb_pairs_inserted-1);
         GSList     *next            = g_slist_next (previous);
 
@@ -1797,9 +1755,9 @@ namespace Pool
           {
             printf ("    %d - %d\n", previous_pair->_a, previous_pair->_b);
 
-            _player_pairs = g_slist_remove_link (_player_pairs,
+            _fencer_pairs = g_slist_remove_link (_fencer_pairs,
                                                  remainging);
-            _player_pairs = g_slist_insert_before (_player_pairs,
+            _fencer_pairs = g_slist_insert_before (_fencer_pairs,
                                                    next,
                                                    remainging_pair);
 

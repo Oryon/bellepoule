@@ -46,7 +46,6 @@ namespace Pool
 
       Pool (Data        *max_score,
             guint        number,
-            gchar        weapon_code,
             const gchar *xml_player_tag,
             guint32      rand_seed);
 

@@ -56,16 +56,14 @@ const gchar *Contest::weapon_image[_nb_weapon] =
 {
   N_ ("Sabre"),
   N_ ("Epée"),
-  N_ ("Foil"),
-  N_ ("Kendo")
+  N_ ("Foil")
 };
 
 const gchar *Contest::weapon_xml_image[_nb_weapon] =
 {
   "S",
   "E",
-  "F",
-  "K"
+  "F"
 };
 
 const gchar *Contest::gender_image[_nb_gender] =
