@@ -38,8 +38,7 @@ namespace Net
         public:
           Client () {};
 
-          virtual gchar *GetSecretKey (const gchar *ip,
-                                       const gchar *authentication_scheme) = 0;
+          virtual gchar *GetSecretKey (const gchar *authentication_scheme) = 0;
 
         protected:
           virtual ~Client () {};
@@ -47,7 +46,6 @@ namespace Net
 
     public:
       typedef gboolean (*HttpPost) (Client      *client,
-                                    const gchar *url,
                                     const gchar *data);
       typedef gchar *(*HttpGet) (Client      *client,
                                  const gchar *url);
@@ -73,12 +71,10 @@ namespace Net
       struct DeferedData
       {
         DeferedData (HttpServer  *server,
-                     const gchar *url,
                      RequestBody *request_body);
         ~DeferedData ();
 
         HttpServer *_server;
-        gchar      *_url;
         gchar      *_content;
       };
 

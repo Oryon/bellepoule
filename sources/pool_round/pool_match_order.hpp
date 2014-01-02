@@ -30,7 +30,7 @@ namespace Pool
       static const guint _MAX_POOL_SIZE = 17;
 
     public:
-      MatchOrder (gchar weapon_code);
+      MatchOrder ();
 
       gboolean GetPlayerPair (guint  match_index,
                               guint *a_id,
@@ -40,11 +40,10 @@ namespace Pool
                                 GSList        *fencer_list);
 
     private:
-      gchar   _weapon_code;
       guint   _nb_pairs_inserted;
       guint   _insertion_position;
       guint   _insertion_step;
-      GSList *_player_pairs;
+      GSList *_fencer_pairs;
 
       virtual ~MatchOrder ();
 

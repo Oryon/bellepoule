@@ -14,32 +14,20 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef swapper_hpp
-#define swapper_hpp
+#ifndef criteria_profile_hpp
+#define criteria_profile_hpp
 
-namespace Pool
+#include <glib-2.0/glib.h>
+
+namespace SmartSwapper
 {
-  class Swapper
+  class CriteriaProfile
   {
     public:
-      virtual void Delete () = 0;
+      guint _count;
 
-      virtual void Init (GSList *zones,
-                         guint   fencer_count) = 0;
-
-      virtual void Swap (GSList *criteria_list,
-                         GSList *fencer_list) = 0;
-
-      virtual guint HasErrors () = 0;
-
-      virtual guint GetOverCount () = 0;
-
-      virtual guint GetMoved () = 0;
-
-    protected:
-      Swapper () {};
-
-      virtual ~Swapper () {};
+      guint _max_criteria_occurrence;
+      guint _max_floating_fencers;
   };
 }
 

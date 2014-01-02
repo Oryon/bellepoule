@@ -14,32 +14,38 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef swapper_hpp
-#define swapper_hpp
+#ifndef smart_sizes_hpp
+#define smart_sizes_hpp
 
-namespace Pool
+#include "util/object.hpp"
+
+namespace SmartSwapper
 {
-  class Swapper
+  class PoolSizes
   {
     public:
-      virtual void Delete () = 0;
+      typedef enum
+      {
+        MIN_SIZE,
+        MAX_SIZE,
+        END_MARK,
 
-      virtual void Init (GSList *zones,
-                         guint   fencer_count) = 0;
+        SIZE_TYPE_LEN
+      } SizeType;
 
-      virtual void Swap (GSList *criteria_list,
-                         GSList *fencer_list) = 0;
+      void Configure (guint nb_fencer,
+                      guint nb_pool);
 
-      virtual guint HasErrors () = 0;
+      void NewSize (guint old_size,
+                    guint new_size);
 
-      virtual guint GetOverCount () = 0;
+      guint _available_sizes[SIZE_TYPE_LEN];
+      guint _min_size;
+      guint _max_size;
 
-      virtual guint GetMoved () = 0;
-
-    protected:
-      Swapper () {};
-
-      virtual ~Swapper () {};
+    private:
+      guint _nb_max;
+      guint _nb_max_reached;
   };
 }
 

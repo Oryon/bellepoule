@@ -32,7 +32,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Pool::Pool (Data        *max_score,
               guint        number,
-              gchar        weapon_code,
               const gchar *xml_player_tag,
               guint32      rand_seed)
     : CanvasModule ("pool.glade",
@@ -55,7 +54,7 @@ namespace Pool
     _rand_seed          = rand_seed;
     _xml_player_tag     = xml_player_tag;
 
-    _match_order = new MatchOrder (weapon_code);
+    _match_order = new MatchOrder ();
 
     _status_cbk_data = NULL;
     _status_cbk      = NULL;
@@ -95,6 +94,22 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::Wipe ()
   {
+    if (_score_collector)
+    {
+      GSList *current = _match_list;
+
+      while (current)
+      {
+        Match *match = (Match *) current->data;
+
+        _score_collector->RemoveCollectingPoints (match);
+        current = g_slist_next (current);
+      }
+
+      _score_collector->Release ();
+      _score_collector = NULL;
+    }
+
     _title_table   = NULL;
     _status_item   = NULL;
 
@@ -286,8 +301,10 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::CreateMatchs (AttributeDesc *affinity_criteria)
+  void Pool::CreateMatchs (GSList *affinity_criteria_list)
   {
+    AttributeDesc *affinity_criteria = (AttributeDesc *) affinity_criteria_list->data;
+
     SortPlayers ();
 
     if (_match_list == NULL)
@@ -418,21 +435,6 @@ namespace Pool
                    gboolean   print_for_referees,
                    gboolean   print_matchs)
   {
-    if (_score_collector)
-    {
-      GSList *current = _match_list;
-
-      while (current)
-      {
-        Match *match = (Match *) current->data;
-
-        _score_collector->RemoveCollectingPoints (match);
-        current = g_slist_next (current);
-      }
-
-      _score_collector->Release ();
-    }
-
     _score_collector = new ScoreCollector (this,
                                            (ScoreCollector::OnNewScore_cbk) &Pool::OnNewScore);
 
@@ -1850,7 +1852,7 @@ namespace Pool
               xmlXPathObject  *xml_object;
               xmlNodeSet      *xml_nodeset;
 
-              xml_object = xmlXPathEval (BAD_CAST "/Arbitre/Match/*", xml_context);
+              xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
               xml_nodeset = xml_object->nodesetval;
 
               if (xml_nodeset->nodeNr == 2)

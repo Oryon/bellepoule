@@ -128,7 +128,7 @@ class Contest : public Module
       guint  _minute;
     };
 
-    static const guint _nb_weapon = 4;
+    static const guint _nb_weapon = 3;
     static const gchar *weapon_image[_nb_weapon];
     static const gchar *weapon_xml_image[_nb_weapon];
 

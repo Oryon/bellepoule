@@ -23,7 +23,7 @@
 
 #include "common/contest.hpp"
 
-#include "smart_swapper.hpp"
+#include "smart_swapper/smart_swapper.hpp"
 #include "pool_match_order.hpp"
 
 #include "pool_allocator.hpp"
@@ -39,19 +39,10 @@ namespace Pool
     BEST_PIXMAP_COL
   } ComboboxColumn;
 
-  typedef enum
-  {
-    SWAPPING_IMAGE_str,
-    SWAPPING_CRITERIA_ptr,
-    SWAPPING_ERRORS_str
-  } SwappingColumn;
-
   extern "C" G_MODULE_EXPORT void on_nb_pools_combobox_changed (GtkWidget *widget,
                                                                 Object    *owner);
   extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
                                                                  Object    *owner);
-  extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
-                                                                Object    *owner);
 
   const gchar *Allocator::_class_name     = N_ ("Pools arrangement");
   const gchar *Allocator::_xml_class_name = "";
@@ -61,13 +52,13 @@ namespace Pool
     : Stage (stage_class),
     CanvasModule ("pool_allocator.glade")
   {
-    _drop_zones        = NULL;
-    _config_list       = NULL;
-    _selected_config   = NULL;
-    _main_table        = NULL;
-    _swapping_criteria = NULL;
-    _loaded            = FALSE;
-    _nb_matchs         = 0;
+    _drop_zones             = NULL;
+    _config_list            = NULL;
+    _selected_config        = NULL;
+    _main_table             = NULL;
+    _swapping_criteria_list = NULL;
+    _loaded                 = FALSE;
+    _nb_matchs              = 0;
 
     _max_score = new Data ("ScoreMax",
                            5);
@@ -84,9 +75,9 @@ namespace Pool
     {
       AddSensitiveWidget (_glade->GetWidget ("nb_pools_combobox"));
       AddSensitiveWidget (_glade->GetWidget ("pool_size_combobox"));
-      AddSensitiveWidget (_glade->GetWidget ("swapping_combobox"));
+      AddSensitiveWidget (_glade->GetWidget ("swapping_hbox"));
 
-      _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_combobox"));
+      _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_hbox"));
     }
 
     {
@@ -127,41 +118,30 @@ namespace Pool
       filter->Release ();
     }
 
-    _swapper = SmartSwapper::Create (this);
+    _swapper = SmartSwapper::SmartSwapper::Create (this);
 
     {
-      GtkListStore *swapping_store = GTK_LIST_STORE (_glade->GetGObject ("swapping_liststore"));
-      GtkTreeIter   iter;
-      GSList       *attr           = _filter->GetAttrList ();
-
-      gtk_list_store_append (swapping_store, &iter);
-      gtk_list_store_set (swapping_store, &iter,
-                          SWAPPING_IMAGE_str,    gettext ("<i>None</i>"),
-                          SWAPPING_CRITERIA_ptr, NULL,
-                          SWAPPING_ERRORS_str,   NULL,
-                          -1);
+      GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
+      GSList       *attr          = _filter->GetAttrList ();
 
       while (attr)
       {
-        AttributeDesc *attr_desc;
+        AttributeDesc *attr_desc = (AttributeDesc *) attr->data;
 
-        attr_desc = (AttributeDesc *) attr->data;
         if (attr_desc->_uniqueness == AttributeDesc::NOT_SINGULAR)
         {
-          gtk_list_store_append (swapping_store, &iter);
+          GtkWidget *check = gtk_check_button_new_with_label (attr_desc->_user_name);
 
-          gtk_list_store_set (swapping_store, &iter,
-                              SWAPPING_IMAGE_str,    attr_desc->_user_name,
-                              SWAPPING_CRITERIA_ptr, attr_desc,
-                              SWAPPING_ERRORS_str,   NULL,
-                              -1);
+          g_signal_connect (check, "toggled",
+                            G_CALLBACK (OnSwappingToggled), this);
+          g_object_set_data (G_OBJECT (check),
+                             "criteria_attribute", attr_desc);
+          gtk_container_add (swapping_hbox,
+                             check);
         }
 
         attr = g_slist_next (attr);
       }
-
-      gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox")),
-                                0);
     }
 
     {
@@ -311,11 +291,6 @@ namespace Pool
       target_pool->AddFencer (floating_object,
                               this);
       _fencer_list->Update (floating_object);
-
-      if (target_zone && (target_zone != source_zone))
-      {
-        RefreshSwappingErrorIndicator ();
-      }
     }
     else if (target_zone)
     {
@@ -423,8 +398,6 @@ namespace Pool
       PopulateFencerList ();
     }
 
-    RefreshSwappingErrorIndicator ();
-
     if (_main_table)
     {
       goo_canvas_item_remove (_main_table);
@@ -499,7 +472,7 @@ namespace Pool
           {
             _swapping_sensitivity_trigger.SwitchOff ();
 
-            if (_swapping_criteria)
+            if (_swapping_criteria_list)
             {
               GtkWidget *w = _glade->GetWidget ("swapping_combobox");
 
@@ -558,38 +531,49 @@ namespace Pool
 
     if (_swapping)
     {
-      GtkTreeModel *model          = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
-      guint         criteria_index = 0;
-
       _swapping->Load (xml_node);
 
       if (_swapping->GetString ())
       {
-        GtkTreeIter iter;
-        gboolean    iter_is_valid;
+        gchar **tokens = g_strsplit_set (_swapping->GetString (),
+                                         "/",
+                                         0);
 
-        iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model),
-                                                       &iter);
-        for (guint i = 0; iter_is_valid; i++)
+        if (tokens)
         {
-          AttributeDesc *attr_desc;
+          GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
+          GList        *siblings      = gtk_container_get_children (swapping_hbox);
 
-          gtk_tree_model_get (model, &iter,
-                              SWAPPING_CRITERIA_ptr, &attr_desc,
-                              -1);
-          if (   ((attr_desc == NULL) && strcmp (_swapping->GetString (), "Aucun") == 0)
-              || (attr_desc && (strcmp (attr_desc->_code_name, _swapping->GetString ()) == 0)))
+          for (guint i = 0; tokens[i] != NULL; i++)
           {
-            criteria_index = i;
+            if (*tokens[i] != '\0')
+            {
+              GList *current = siblings;
 
-            break;
+              while (current)
+              {
+                GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (current->data);
+                AttributeDesc   *attr_desc;
+
+                attr_desc = (AttributeDesc *) g_object_get_data (G_OBJECT (togglebutton), "criteria_attribute");
+
+                if (strstr (_swapping->GetString (), attr_desc->_code_name))
+                {
+                  _swapping_criteria_list = g_slist_append (_swapping_criteria_list,
+                                                            attr_desc);
+
+                  gtk_toggle_button_set_active (togglebutton,
+                                                TRUE);
+                }
+
+                current = g_list_next (current);
+              }
+            }
           }
-          iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (model),
-                                                    &iter);
+
+          g_strfreev (tokens);
         }
       }
-      gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox")),
-                                criteria_index);
     }
   }
 
@@ -677,7 +661,6 @@ namespace Pool
 
             current_pool = new Pool (_max_score,
                                      number+1,
-                                     _contest->GetWeaponCode (),
                                      GetXmlPlayerTag (),
                                      _rand_seed);
             SetPoolFlashRef (current_pool);
@@ -731,7 +714,7 @@ namespace Pool
         }
         else if (strcmp ((char *) n->name, "Match") == 0)
         {
-          current_pool->CreateMatchs (_swapping_criteria);
+          current_pool->CreateMatchs (_swapping_criteria_list);
           current_pool->Load (n,
                               _attendees->GetShortList ());
           current_pool = NULL;
@@ -938,19 +921,23 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::CreatePools ()
   {
+    GtkWidget *swapping_hbox = _glade->GetWidget ("swapping_hbox");
+
+    gtk_widget_set_tooltip_text (swapping_hbox,
+                                 "");
+
     if (_selected_config)
     {
       Pool   **pool_table;
-      GSList  *shortlist = _attendees->GetShortList ();
-      guint    nb_fencer = g_slist_length (shortlist);
-      guint   nb_pool    = _selected_config->_nb_pool;
+      GSList  *shortlist  = _attendees->GetShortList ();
+      guint    nb_fencer  = g_slist_length (shortlist);
+      guint    nb_pool    = _selected_config->_nb_pool;
 
       pool_table = g_new (Pool *, nb_pool);
       for (guint i = 0; i < nb_pool; i++)
       {
         pool_table[i] = new Pool (_max_score,
                                   i+1,
-                                  _contest->GetWeaponCode (),
                                   GetXmlPlayerTag (),
                                   _rand_seed);
         SetPoolFlashRef (pool_table[i]);
@@ -968,15 +955,25 @@ namespace Pool
       {
         _swapper->Init (_drop_zones,
                         nb_fencer);
-        if (_swapping_criteria)
+        if (_swapping_criteria_list)
         {
-          _swapper->Swap (_swapping_criteria->_code_name,
+          _swapper->Swap (_swapping_criteria_list,
                           shortlist);
         }
         else
         {
           _swapper->Swap (NULL,
                           shortlist);
+        }
+
+        {
+          gchar *figures = g_strdup_printf ("Errors: %d\n"
+                                            "Moved : %d",
+                                            _swapper->GetOverCount (), _swapper->GetMoved ());
+
+          gtk_widget_set_tooltip_text (swapping_hbox,
+                                       figures);
+          g_free (figures);
         }
       }
       else
@@ -1659,92 +1656,6 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_swapping_combobox_changed (GtkWidget *widget,
-                                                                Object    *owner)
-  {
-    Allocator *pl = dynamic_cast <Allocator *> (owner);
-
-    pl->OnSwappingComboboxChanged (GTK_COMBO_BOX (widget));
-  }
-
-  // --------------------------------------------------------------------------------
-  void Allocator::OnSwappingComboboxChanged (GtkComboBox *cb)
-  {
-    {
-      GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
-      GtkTreeIter selected_iter;
-
-      gtk_combo_box_get_active_iter (cb,
-                                     &selected_iter);
-      gtk_tree_model_get (model,
-                          &selected_iter,
-                          SWAPPING_CRITERIA_ptr, &_swapping_criteria,
-                          -1);
-    }
-
-    if (_swapping_criteria)
-    {
-      _swapping->SetString (_swapping_criteria->_code_name);
-    }
-    else
-    {
-      _swapping->SetString ("Aucun");
-    }
-
-    RefreshDisplay ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void Allocator::RefreshSwappingErrorIndicator ()
-  {
-    if (_swapping_criteria)
-    {
-      GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetGObject ("swapping_liststore"));
-
-      {
-        GSList *shortlist = _attendees->GetShortList ();
-
-        _swapper->Init (_drop_zones,
-                        g_slist_length (shortlist));
-      }
-
-      _swapper->RefreshErrors ();
-
-      // Reset all entries
-      {
-        GtkTreeIter iter;
-        gboolean    iter_is_valid;
-
-        iter_is_valid = gtk_tree_model_get_iter_first (model,
-                                                       &iter);
-        while (iter_is_valid)
-        {
-          gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-                              SWAPPING_ERRORS_str, NULL,
-                              -1);
-
-          iter_is_valid = gtk_tree_model_iter_next (model,
-                                                    &iter);
-        }
-      }
-
-      // Set the selected iterator indicator
-      if (_swapper && _swapper->HasErrors ())
-      {
-        GtkComboBox *cb = GTK_COMBO_BOX (_glade->GetGObject ("swapping_combobox"));
-        GtkTreeIter selected_iter;
-
-        gtk_combo_box_get_active_iter (cb,
-                                       &selected_iter);
-
-        gtk_list_store_set (GTK_LIST_STORE (model), &selected_iter,
-                            SWAPPING_ERRORS_str, GTK_STOCK_DIALOG_WARNING,
-                            -1);
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_pool_size_combobox_changed (GtkWidget *widget,
                                                                  Object    *owner)
   {
@@ -1838,7 +1749,7 @@ namespace Pool
       {
         Pool *pool = GetPoolOf (current);
 
-        pool->CreateMatchs (_swapping_criteria);
+        pool->CreateMatchs (_swapping_criteria_list);
         current = g_slist_next (current);
       }
     }
@@ -1883,6 +1794,48 @@ namespace Pool
     else
     {
       SelectAttributes ();
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::OnSwappingToggled (GtkToggleButton *togglebutton,
+                                     Allocator       *allocator)
+  {
+    if (allocator->_contest->GetState () == OPERATIONAL)
+    {
+      GtkWidget *parent   = gtk_widget_get_parent (GTK_WIDGET (togglebutton));
+      GList     *siblings = gtk_container_get_children (GTK_CONTAINER (parent));
+      GString   *string   = g_string_new ("/");
+
+      g_slist_free (allocator->_swapping_criteria_list);
+      allocator->_swapping_criteria_list = NULL;
+
+      while (siblings)
+      {
+        GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (siblings->data);
+
+        if (gtk_toggle_button_get_active (togglebutton))
+        {
+          AttributeDesc *desc;
+
+          desc = (AttributeDesc *) g_object_get_data (G_OBJECT (togglebutton), "criteria_attribute");
+
+          allocator->_swapping_criteria_list = g_slist_append (allocator->_swapping_criteria_list,
+                                                               desc);
+
+          g_string_append_printf (string,
+                                  "%s/",
+                                  desc->_code_name);
+        }
+
+        siblings = g_list_next (siblings);
+      }
+
+      allocator->_swapping->SetString (string->str);
+      g_string_free (string,
+                     TRUE);
+
+      allocator->RefreshDisplay ();
     }
   }
 

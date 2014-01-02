@@ -74,13 +74,11 @@ namespace Net
 {
   // --------------------------------------------------------------------------------
   HttpServer::DeferedData::DeferedData (HttpServer  *server,
-                                        const gchar *url,
                                         RequestBody *request_body)
   {
     _server = server;
     _server->Retain ();
 
-    _url     = g_strdup (url);
     _content = g_strndup (request_body->_data,
                           request_body->_length);
   }
@@ -88,7 +86,6 @@ namespace Net
   // --------------------------------------------------------------------------------
   HttpServer::DeferedData::~DeferedData ()
   {
-    g_free (_url);
     g_free (_content);
     _server->Release ();
   }
@@ -130,7 +127,6 @@ namespace Net
   gboolean HttpServer::DeferedPost (DeferedData *defered_data)
   {
     defered_data->_server->_http_POST_cbk (defered_data->_server->_client,
-                                           defered_data->_url,
                                            defered_data->_content);
 
     delete (defered_data);
@@ -214,32 +210,22 @@ namespace Net
         }
 
         {
-          struct sockaddr    *client_addr;
-          const union MHD_ConnectionInfo *info = MHD_get_connection_info (connection,
-                                                                          MHD_CONNECTION_INFO_CLIENT_ADDRESS);
+          gchar *key = _client->GetSecretKey (url);
 
-          client_addr = (struct sockaddr *) info->client_addr;
-          if (client_addr->sa_family == AF_INET)
+          if (key)
           {
-            struct sockaddr_in *in_addr = (struct sockaddr_in *) client_addr;
-            gchar              *key     = _client->GetSecretKey (inet_ntoa (in_addr->sin_addr), url);
+            gchar *decrypted = _cryptor->Decrypt (request_body->_data,
+                                                  _iv,
+                                                  key);
+            request_body->Replace (decrypted);
 
-            if (key)
-            {
-              gchar *decrypted = _cryptor->Decrypt (request_body->_data,
-                                                    _iv,
-                                                    key);
-              request_body->Replace (decrypted);
-
-              g_free (decrypted);
-              g_free (key);
-            }
+            g_free (decrypted);
+            g_free (key);
           }
         }
 
         {
           DeferedData *defered_data = new DeferedData (this,
-                                                       url,
                                                        request_body);
 
           g_idle_add ((GSourceFunc) DeferedPost,

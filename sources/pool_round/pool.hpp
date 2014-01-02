@@ -46,13 +46,12 @@ namespace Pool
 
       Pool (Data        *max_score,
             guint        number,
-            gchar        weapon_code,
             const gchar *xml_player_tag,
             guint32      rand_seed);
 
       void  AddFencer     (Player *player, Object *rank_owner);
       void  AddReferee    (Player *player);
-      void  CreateMatchs  (AttributeDesc *affinity_criteria);
+      void  CreateMatchs  (GSList *affinity_criteria_list);
       void  RemoveFencer  (Player *player);
       void  RemoveReferee (Player *player);
       guint GetNbPlayers  ();

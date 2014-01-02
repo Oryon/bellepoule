@@ -120,11 +120,10 @@ class Tournament : public Module, Net::HttpServer::Client
 
     Player *UpdateConnectionStatus (GSList      *player_list,
                                     guint        ref,
-                                    const gchar *address,
+                                    const gchar *ip_address,
                                     const gchar *status);
 
-    gboolean OnHttpPost (const gchar *url,
-                         const gchar *data);
+    gboolean OnHttpPost (const gchar *data);
 
     gchar *OnHttpGet (const gchar *url);
 
@@ -135,12 +134,10 @@ class Tournament : public Module, Net::HttpServer::Client
                    GtkPrintContext   *context,
                    gint               page_nr);
 
-    gchar *GetSecretKey (const gchar *ip,
-                         const gchar *authentication_scheme);
+    gchar *GetSecretKey (const gchar *authentication_scheme);
 
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
-                                 const gchar             *data,
-                                 const gchar             *url);
+                                 const gchar             *data);
 
     static gchar *HttpGetCbk (Net::HttpServer::Client *client,
                               const gchar             *url);
