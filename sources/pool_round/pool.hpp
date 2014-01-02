@@ -51,7 +51,7 @@ namespace Pool
 
       void  AddFencer     (Player *player, Object *rank_owner);
       void  AddReferee    (Player *player);
-      void  CreateMatchs  (AttributeDesc *affinity_criteria);
+      void  CreateMatchs  (GSList *affinity_criteria_list);
       void  RemoveFencer  (Player *player);
       void  RemoveReferee (Player *player);
       guint GetNbPlayers  ();

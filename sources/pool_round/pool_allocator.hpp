@@ -58,7 +58,6 @@ namespace Pool
       static const gchar *_xml_class_name;
 
       void OnComboboxChanged (GtkComboBox *cb);
-      void OnSwappingComboboxChanged (GtkComboBox *cb);
       void OnFencerListToggled (gboolean toggled);
       void OnFilterClicked ();
       void OnPrintClicked ();
@@ -96,7 +95,7 @@ namespace Pool
       GtkListStore       *_combobox_store;
       Data               *_swapping;
       Data               *_seeding_balanced;
-      AttributeDesc      *_swapping_criteria;
+      GSList             *_swapping_criteria_list;
       gdouble             _max_w;
       gdouble             _max_h;
       gdouble             _print_scale;
@@ -122,8 +121,6 @@ namespace Pool
       void RegisterConfig (Configuration *config);
       const gchar *GetInputProviderClient ();
       gint GetNbMatchs ();
-
-      void RefreshSwappingErrorIndicator ();
 
       void OnAttrListUpdated ();
 
@@ -163,6 +160,8 @@ namespace Pool
       gboolean ObjectIsDropable (Object   *floating_object,
                                  DropZone *in_zone);
 
+      static void OnSwappingToggled (GtkToggleButton *togglebutton,
+                                     Allocator       *allocator);
       virtual ~Allocator ();
   };
 }

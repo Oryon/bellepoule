@@ -301,8 +301,10 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::CreateMatchs (AttributeDesc *affinity_criteria)
+  void Pool::CreateMatchs (GSList *affinity_criteria_list)
   {
+    AttributeDesc *affinity_criteria = (AttributeDesc *) affinity_criteria_list->data;
+
     SortPlayers ();
 
     if (_match_list == NULL)
