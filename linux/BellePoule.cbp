@@ -161,8 +161,8 @@
 		<Unit filename="../sources/pool_round/pool_supervisor.hpp" />
 		<Unit filename="../sources/pool_round/pool_zone.cpp" />
 		<Unit filename="../sources/pool_round/pool_zone.hpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/pool_sizes.cpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/pool_sizes.hpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/pool_profiles.cpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/pool_profiles.hpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/pool_data.cpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/pool_data.hpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/smart_swapper.cpp" />

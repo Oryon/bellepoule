@@ -20,14 +20,14 @@
 namespace SmartSwapper
 {
   // --------------------------------------------------------------------------------
-  PoolData::PoolData (Pool::Pool *pool,
-                      guint       id,
-                      PoolSizes  *sizes,
-                      guint       criteria_count)
+  PoolData::PoolData (Pool::Pool    *pool,
+                      guint          id,
+                      PoolProfiles  *profiles,
+                      guint          criteria_count)
   {
     _pool           = pool;
     _id             = id;
-    _pool_sizes     = sizes;
+    _pool_profiles  = profiles;
     _criteria_count = criteria_count;
 
     {
@@ -83,7 +83,7 @@ namespace SmartSwapper
 
     _fencer_list = g_list_append (_fencer_list,
                                   fencer);
-    _pool_sizes->NewSize (_size, _size+1);
+    _pool_profiles->ChangeFencerCount (_size, _size+1);
     _size++;
 
     for (guint i = 0; i < _criteria_count; i++)
@@ -101,7 +101,7 @@ namespace SmartSwapper
 
     _fencer_list = g_list_remove (_fencer_list,
                                   fencer);
-    _pool_sizes->NewSize (_size, _size-1);
+    _pool_profiles->ChangeFencerCount (_size, _size-1);
     _size--;
 
     for (guint i = 0; i < _criteria_count; i++)

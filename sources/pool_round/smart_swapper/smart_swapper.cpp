@@ -23,7 +23,7 @@
 
 namespace SmartSwapper
 {
-  //#define DEBUG_SWAPPING
+#define DEBUG_SWAPPING
 
 #ifdef DEBUG_SWAPPING
 #define PRINT(...)\
@@ -57,18 +57,24 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   SmartSwapper::~SmartSwapper ()
   {
-    for (guint i = 0; i < _criteria_count; i++)
-    {
-      g_hash_table_destroy (_distributions[i]);
-    }
-
-    g_free (_distributions);
+    Clean ();
   }
 
   // --------------------------------------------------------------------------------
   Pool::Swapper *SmartSwapper::Create (Object *owner)
   {
     return new SmartSwapper (owner);
+  }
+
+  // --------------------------------------------------------------------------------
+  void SmartSwapper::Clean ()
+  {
+    for (guint i = 0; i < _criteria_count; i++)
+    {
+      g_hash_table_destroy (_distributions[i]);
+    }
+
+    g_free (_distributions);
   }
 
   // --------------------------------------------------------------------------------
@@ -81,11 +87,13 @@ namespace SmartSwapper
   void SmartSwapper::Init (GSList *zones,
                            guint   fencer_count)
   {
+    Clean ();
+
     _zones    = zones;
     _nb_pools = g_slist_length (zones);
 
-    _pool_sizes.Configure (fencer_count,
-                           _nb_pools);
+    _pool_profiles.Configure (fencer_count,
+                              _nb_pools);
   }
 
   // --------------------------------------------------------------------------------
@@ -146,7 +154,7 @@ namespace SmartSwapper
         {
           _previous_criteria_quark = GPOINTER_TO_UINT (key);
 
-          printf (RED "Movable ==> %s\n" ESC, g_quark_to_string (_previous_criteria_quark));
+          PRINT (RED "Movable ==> %s\n" ESC, g_quark_to_string (_previous_criteria_quark));
           Iterate ();
         }
       }
@@ -183,7 +191,7 @@ namespace SmartSwapper
       {
         Fencer *fencer = (Fencer *) current->data;
 
-        if (fencer->_player->GetIntData (_owner, "original_pool") != (gint) (i+1))
+        if (fencer->_player->GetIntData (_owner, "no_swapping_pool") != (gint) (i+1))
         {
           _moved++;
 
@@ -214,7 +222,7 @@ namespace SmartSwapper
 
       _pool_table[i] = new PoolData (zone->GetPool (),
                                      i+1,
-                                     &_pool_sizes,
+                                     &_pool_profiles,
                                      _criteria_count);
 
       zones = g_slist_next (zones);
@@ -255,6 +263,9 @@ namespace SmartSwapper
       player->SetData (_owner,
                        "swap_error",
                        0);
+      player->SetData (_owner,
+                       "no_swapping_pool",
+                       (void *) pool_data->_id);
 
       for (guint i = 0; i < _criteria_count; i++)
       {
@@ -557,7 +568,6 @@ namespace SmartSwapper
       *to_list = g_list_prepend (*to_list,
                                  current->data);
 
-      PRINT ("extract %s\n", fencer->_player->GetName ());
       fencer->Dump (_owner);
       from_pool->RemoveFencer ((Fencer *) current->data);
     }
@@ -610,7 +620,7 @@ namespace SmartSwapper
               new_pool->AddFencer    (error);
               new_pool->RemoveFencer (floating);
 
-              for (guint size_type = 0; _pool_sizes._available_sizes[size_type] != 0; size_type++)
+              for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
               {
                 for (guint i = 0; i < _nb_pools; i++)
                 {
@@ -618,7 +628,7 @@ namespace SmartSwapper
 
                   if (MoveFencerTo (floating,
                                     pool_data,
-                                    _pool_sizes._available_sizes[size_type]))
+                                    _pool_profiles.GetSize (profile_type)))
                   {
                     goto next_error;
                   }
@@ -679,18 +689,18 @@ next_error:
       // Try original pool first
       if (fencer->_over_population_error == FALSE)
       {
-        for (guint size_type = 0; _pool_sizes._available_sizes[size_type] != 0; size_type++)
+        for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
         {
           if (MoveFencerTo (fencer,
                             fencer->_original_pool,
-                            _pool_sizes._available_sizes[size_type]))
+                            _pool_profiles.GetSize (profile_type)))
           {
             goto next_fencer;
           }
         }
       }
 
-      for (guint size_type = 0; _pool_sizes._available_sizes[size_type] != 0; size_type++)
+      for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
       {
         for (guint i = 0; i < _nb_pools; i++)
         {
@@ -698,7 +708,7 @@ next_error:
 
           if (MoveFencerTo (fencer,
                             pool_data,
-                            _pool_sizes._available_sizes[size_type]))
+                            _pool_profiles.GetSize (profile_type)))
           {
             goto next_fencer;
           }

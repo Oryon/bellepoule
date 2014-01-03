@@ -20,7 +20,7 @@
 #include "util/object.hpp"
 #include "pool_round/pool.hpp"
 
-#include "pool_sizes.hpp"
+#include "pool_profiles.hpp"
 
 namespace SmartSwapper
 {
@@ -29,19 +29,19 @@ namespace SmartSwapper
   class PoolData
   {
     public:
-      Pool::Pool  *_pool;
-      guint        _criteria_count;
-      GHashTable **_criteria_scores;
-      GHashTable **_original_criteria_scores;
-      GList       *_fencer_list;
-      guint        _size;
-      guint        _id;
-      PoolSizes   *_pool_sizes;
+      Pool::Pool    *_pool;
+      guint          _criteria_count;
+      GHashTable   **_criteria_scores;
+      GHashTable   **_original_criteria_scores;
+      GList         *_fencer_list;
+      guint          _size;
+      guint          _id;
+      PoolProfiles  *_pool_profiles;
 
-      PoolData (Pool::Pool *pool,
-                guint       id,
-                PoolSizes  *sizes,
-                guint       criteria_count);
+      PoolData (Pool::Pool   *pool,
+                guint         id,
+                PoolProfiles *profiles,
+                guint         criteria_count);
 
       ~PoolData ();
 

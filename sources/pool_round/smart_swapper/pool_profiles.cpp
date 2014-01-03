@@ -14,13 +14,13 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "pool_sizes.hpp"
+#include "pool_profiles.hpp"
 
 namespace SmartSwapper
 {
   // --------------------------------------------------------------------------------
-  void PoolSizes::Configure (guint nb_fencer,
-                             guint nb_pool)
+  void PoolProfiles::Configure (guint nb_fencer,
+                                guint nb_pool)
   {
     _min_size       = nb_fencer / nb_pool;
     _max_size       = 0;
@@ -37,19 +37,31 @@ namespace SmartSwapper
   }
 
   // --------------------------------------------------------------------------------
-  void PoolSizes::NewSize (guint old_size,
-                           guint new_size)
+  guint PoolProfiles::GetSize (guint type)
   {
-    if (old_size < new_size)
+    return _available_sizes[type];
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean PoolProfiles::Exists (guint type)
+  {
+    return ((type < END_MARK) && (_available_sizes[type] > 0));
+  }
+
+  // --------------------------------------------------------------------------------
+  void PoolProfiles::ChangeFencerCount (guint old_count,
+                                        guint new_count)
+  {
+    if (old_count < new_count)
     {
-      if (new_size == _max_size)
+      if (new_count == _max_size)
       {
         _nb_max_reached++;
       }
     }
-    else if (old_size > new_size)
+    else if (old_count > new_count)
     {
-      if (old_size == _max_size)
+      if (old_count == _max_size)
       {
         _nb_max_reached--;
       }

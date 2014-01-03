@@ -23,7 +23,7 @@
 
 #include "criteria_profile.hpp"
 #include "pool_fencer.hpp"
-#include "pool_sizes.hpp"
+#include "pool_profiles.hpp"
 #include "pool_data.hpp"
 
 namespace SmartSwapper
@@ -103,24 +103,26 @@ namespace SmartSwapper
 
       PoolData *GetPoolToTry (guint index);
 
+      void Clean ();
+
       void DumpPools ();
 
     private:
-      Object      *_owner;
-      GSList      *_zones;
-      guint        _nb_pools;
-      PoolData   **_pool_table;
-      PoolSizes    _pool_sizes;
-      GHashTable **_distributions;
-      GList       *_error_list;
-      GList       *_floating_list;
-      GHashTable  *_lack_table;
-      GSList      *_remaining_errors;
-      guint        _first_pool_to_try;
-      gboolean     _has_errors;
-      guint        _over_count;
-      guint        _moved;
-      guint        _criteria_count;
+      Object        *_owner;
+      GSList        *_zones;
+      guint          _nb_pools;
+      PoolData     **_pool_table;
+      PoolProfiles   _pool_profiles;
+      GHashTable   **_distributions;
+      GList         *_error_list;
+      GList         *_floating_list;
+      GHashTable    *_lack_table;
+      GSList        *_remaining_errors;
+      guint          _first_pool_to_try;
+      gboolean       _has_errors;
+      guint          _over_count;
+      guint          _moved;
+      guint          _criteria_count;
 
       guint       _current_criteria_index;
       GQuark      _previous_criteria_quark;

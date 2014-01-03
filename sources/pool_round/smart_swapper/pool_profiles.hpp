@@ -14,16 +14,27 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef smart_sizes_hpp
-#define smart_sizes_hpp
+#ifndef smart_profiles_hpp
+#define smart_profiles_hpp
 
 #include "util/object.hpp"
 
 namespace SmartSwapper
 {
-  class PoolSizes
+  class PoolProfiles
   {
     public:
+      void Configure (guint nb_fencer,
+                      guint nb_pool);
+
+      void ChangeFencerCount (guint old_count,
+                              guint new_count);
+
+      guint GetSize (guint type);
+
+      gboolean Exists (guint type);
+
+    private:
       typedef enum
       {
         MIN_SIZE,
@@ -31,21 +42,14 @@ namespace SmartSwapper
         END_MARK,
 
         SIZE_TYPE_LEN
-      } SizeType;
+      } ProfileType;
 
-      void Configure (guint nb_fencer,
-                      guint nb_pool);
-
-      void NewSize (guint old_size,
-                    guint new_size);
-
-      guint _available_sizes[SIZE_TYPE_LEN];
       guint _min_size;
       guint _max_size;
-
-    private:
       guint _nb_max;
       guint _nb_max_reached;
+
+      guint _available_sizes[SIZE_TYPE_LEN];
   };
 }
 
