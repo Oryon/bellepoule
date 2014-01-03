@@ -31,21 +31,20 @@ namespace SmartSwapper
       _max_size = _min_size+1;
     }
 
-    _available_sizes[MIN_SIZE] = _min_size;
-    _available_sizes[MAX_SIZE] = _max_size;
-    _available_sizes[END_MARK] = 0;
+    _sizes[SMALL] = _min_size;
+    _sizes[BIG]   = _max_size;
   }
 
   // --------------------------------------------------------------------------------
   guint PoolProfiles::GetSize (guint type)
   {
-    return _available_sizes[type];
+    return _sizes[type];
   }
 
   // --------------------------------------------------------------------------------
   gboolean PoolProfiles::Exists (guint type)
   {
-    return ((type < END_MARK) && (_available_sizes[type] > 0));
+    return ((type < PROFILE_TYPE_LEN) && (_sizes[type] > 0));
   }
 
   // --------------------------------------------------------------------------------
@@ -69,11 +68,11 @@ namespace SmartSwapper
 
     if (_nb_max_reached >= _nb_max)
     {
-      _available_sizes[MAX_SIZE] = 0;
+      _sizes[BIG] = 0;
     }
     else
     {
-      _available_sizes[MAX_SIZE] = _max_size;
+      _sizes[BIG] = _max_size;
     }
   }
 }

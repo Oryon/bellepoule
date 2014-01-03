@@ -299,15 +299,18 @@ int main (int argc, char **argv)
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->AddDiscreteValueSelector ("countries");
+    AttributeDesc::AddSwappable (desc);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "league", "Ligue", gettext ("league"));
     desc->_favorite_look = AttributeDesc::GRAPHICAL;
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddLocalizedDiscreteValues ("ligues");
+    AttributeDesc::AddSwappable (desc);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "club", "Club", gettext ("club"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddLocalizedDiscreteValues ("clubs");
+    AttributeDesc::AddSwappable (desc);
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "licence", "Licence", gettext ("licence"));
 

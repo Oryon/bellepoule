@@ -37,11 +37,10 @@ namespace SmartSwapper
     private:
       typedef enum
       {
-        MIN_SIZE,
-        MAX_SIZE,
-        END_MARK,
+        SMALL,
+        BIG,
 
-        SIZE_TYPE_LEN
+        PROFILE_TYPE_LEN
       } ProfileType;
 
       guint _min_size;
@@ -49,7 +48,7 @@ namespace SmartSwapper
       guint _nb_max;
       guint _nb_max_reached;
 
-      guint _available_sizes[SIZE_TYPE_LEN];
+      guint _sizes[PROFILE_TYPE_LEN-1];
   };
 }
 

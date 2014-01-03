@@ -122,7 +122,7 @@ namespace Pool
 
     {
       GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
-      GSList       *attr          = _filter->GetAttrList ();
+      GSList       *attr          = AttributeDesc::GetSwappableList ();
 
       while (attr)
       {
@@ -379,11 +379,15 @@ namespace Pool
   {
     if (_main_table && (Locked () == FALSE))
     {
+      SetCursor (GDK_WATCH);
+
       DeletePools ();
       CreatePools ();
       Display ();
       SignalStatusUpdate ();
       MakeDirty ();
+
+      ResetCursor ();
     }
   }
 
@@ -557,7 +561,7 @@ namespace Pool
 
                 attr_desc = (AttributeDesc *) g_object_get_data (G_OBJECT (togglebutton), "criteria_attribute");
 
-                if (strstr (_swapping->GetString (), attr_desc->_code_name))
+                if (strcmp (tokens[i], attr_desc->_code_name) == 0)
                 {
                   _swapping_criteria_list = g_slist_append (_swapping_criteria_list,
                                                             attr_desc);
@@ -1294,12 +1298,14 @@ namespace Pool
                                        GTK_STOCK_REFRESH,
                                        indice+1, 0);
         }
+#ifdef DEBUG
         if (player->GetUIntData (this, "swap_error"))
         {
           Canvas::PutStockIconInTable (table,
-                                       GTK_STOCK_DIALOG_WARNING,
+                                       GTK_STOCK_MEDIA_STOP,
                                        indice+1, 1);
         }
+#endif
       }
 
       for (guint i = 0; layout_list != NULL; i++)

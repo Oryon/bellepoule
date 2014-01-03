@@ -158,8 +158,13 @@ class AttributeDesc : public Object
     static void SetCriteria (const gchar  *criteria,
                              CriteriaFunc  func);
 
+    static void AddSwappable (AttributeDesc *desc);
+
+    static GSList *GetSwappableList ();
+
   private:
     static GSList       *_list;
+    static GSList       *_swappable_list;
     static CriteriaFunc  _criteria_func;
 
     AttributeDesc (GType        type,
