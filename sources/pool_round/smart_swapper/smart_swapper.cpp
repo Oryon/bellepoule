@@ -42,8 +42,9 @@ namespace SmartSwapper
     _owner            = owner;
     _remaining_errors = NULL;
 
-    _criteria_count = 0;
-    _distributions  = NULL;
+    _criteria_count          = 0;
+    _distributions           = NULL;
+    _previous_criteria_quark = 0;
 
     _nb_pools   = 0;
     _pool_table = NULL;
@@ -120,15 +121,15 @@ namespace SmartSwapper
       }
     }
 
-    for (_current_criteria_index = 0; _current_criteria_index < _criteria_count; _current_criteria_index++)
+    for (_criteria_depth = 0; _criteria_depth < _criteria_count; _criteria_depth++)
     {
       {
         AttributeDesc       *attr_desc   = (AttributeDesc *) criteria_list->data;
         Player::AttributeId *criteria_id = new Player::AttributeId (attr_desc->_code_name);
 
-        _distributions[_current_criteria_index] = LookUpDistribution (fencer_list,
-                                                                      _current_criteria_index,
-                                                                      criteria_id);
+        _distributions[_criteria_depth] = LookUpDistribution (fencer_list,
+                                                              _criteria_depth,
+                                                              criteria_id);
       }
 
       _remaining_errors  = NULL;
@@ -136,7 +137,7 @@ namespace SmartSwapper
       _floating_list     = NULL;
       _first_pool_to_try = 0;
 
-      if (_current_criteria_index == 0)
+      if (_criteria_depth == 0)
       {
         Iterate ();
       }
@@ -146,7 +147,7 @@ namespace SmartSwapper
         gpointer       key;
 
         g_hash_table_iter_init (&iter,
-                                _distributions[_current_criteria_index-1]);
+                                _distributions[_criteria_depth-1]);
 
         while (g_hash_table_iter_next (&iter,
                                        &key,
@@ -386,7 +387,7 @@ namespace SmartSwapper
       gpointer        value;
 
       g_hash_table_iter_init (&iter,
-                              pool_data->_criteria_scores[_current_criteria_index]);
+                              pool_data->_criteria_scores[_criteria_depth]);
 
       PRINT ("   #%d", i+1);
       while (g_hash_table_iter_next (&iter,
@@ -395,7 +396,7 @@ namespace SmartSwapper
       {
         GQuark quark = GPOINTER_TO_UINT (key);
         guint  count = GPOINTER_TO_UINT (value);
-        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_current_criteria_index],
+        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_criteria_depth],
                                                                                   (const void *) quark);
 
         if (criteria_data && (count > criteria_data->_max_criteria_occurrence))
@@ -433,7 +434,7 @@ namespace SmartSwapper
                                     NULL);
 
     g_hash_table_iter_init (&iter,
-                            _distributions[_current_criteria_index]);
+                            _distributions[_criteria_depth]);
 
     while (g_hash_table_iter_next (&iter,
                                    &key,
@@ -451,7 +452,7 @@ namespace SmartSwapper
           PoolData *pool_data = _pool_table[i];
           guint     score;
 
-          score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[_current_criteria_index],
+          score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[_criteria_depth],
                                                          (const void *) quark));
 
           if (score < criteria_data->_max_criteria_occurrence-1)
@@ -478,7 +479,7 @@ namespace SmartSwapper
       gpointer        value;
 
       g_hash_table_iter_init (&iter,
-                              pool_data->_criteria_scores[_current_criteria_index]);
+                              pool_data->_criteria_scores[_criteria_depth]);
 
       PRINT ("   #%d", i+1);
       while (g_hash_table_iter_next (&iter,
@@ -488,7 +489,7 @@ namespace SmartSwapper
         GQuark quark = GPOINTER_TO_UINT (key);
         guint  count = GPOINTER_TO_UINT (value);
 
-        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_current_criteria_index],
+        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_criteria_depth],
                                                                                   (const void *) quark);
 
         if (   (criteria_data == NULL)
@@ -526,8 +527,8 @@ namespace SmartSwapper
           {
             Fencer *fencer = (Fencer *) current_floating->data;
 
-            if (   fencer->Movable (_current_criteria_index, _previous_criteria_quark)
-                && (fencer->_criteria_quarks[_current_criteria_index] == quark))
+            if (   FencerIsMovable (fencer)
+                && (fencer->_criteria_quarks[_criteria_depth] == quark))
             {
               fencer->_over_population_error = TRUE;
               PRINT ("transform %s\n", fencer->_player->GetName ());
@@ -552,8 +553,8 @@ namespace SmartSwapper
     Fencer *fencer  = (Fencer *) current->data;
 
     while (   (fencer->_rank == from_pool->_id) // Prevent pool leaders from being moved
-           || (fencer->Movable (_current_criteria_index, _previous_criteria_quark) == FALSE)
-           || (fencer->_criteria_quarks[_current_criteria_index] != with_criteria))
+           || (FencerIsMovable (fencer) == FALSE)
+           || (fencer->_criteria_quarks[_criteria_depth] != with_criteria))
     {
       current = g_list_previous (current);
       if (current == NULL)
@@ -610,9 +611,7 @@ namespace SmartSwapper
 
           if (floating->_new_pool)
           {
-            if (error->CanGoTo (floating->_new_pool,
-                                _current_criteria_index,
-                                _distributions[_current_criteria_index]))
+            if (FencerCanGoTo (error, floating->_new_pool))
             {
               PoolData *new_pool = floating->_new_pool;
 
@@ -767,13 +766,13 @@ next_fencer:
       // for the given criteria
       if (fencer->_over_population_error)
       {
-        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_current_criteria_index],
-                                                                                  (const void *) fencer->_criteria_quarks[_current_criteria_index]);
+        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                                                  (const void *) fencer->_criteria_quarks[_criteria_depth]);
 
         if (criteria_data)
         {
-          guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_original_criteria_scores[_current_criteria_index],
-                                                               (const void *) fencer->_criteria_quarks[_current_criteria_index]));
+          guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_original_criteria_scores[_criteria_depth],
+                                                               (const void *) fencer->_criteria_quarks[_criteria_depth]));
 
           if (score > criteria_data->_max_criteria_occurrence)
           {
@@ -782,9 +781,7 @@ next_fencer:
         }
       }
 
-      if (fencer->CanGoTo (pool_data,
-                           _current_criteria_index,
-                           _distributions[_current_criteria_index]))
+      if (FencerCanGoTo (fencer, pool_data))
       {
         pool_data->AddFencer (fencer);
         PRINT ("          --> #%d (%d)", pool_data->_pool->GetNumber (), g_list_length (pool_data->_fencer_list));
@@ -830,6 +827,72 @@ next_fencer:
                                         Fencer *b)
   {
     return a->_rank - b->_rank;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean SmartSwapper::FencerIsMovable (Fencer *fencer)
+  {
+    return (   (_criteria_depth == 0)
+            || (_previous_criteria_quark == fencer->_criteria_quarks[_criteria_depth-1]));
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean SmartSwapper::FencerCanGoTo (Fencer   *fencer,
+                                        PoolData *pool_data)
+#if 0
+  {
+    for (guint i = 0; i < _criteria_depth; i++)
+    {
+      CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[i],
+                                                                                (const void *) fencer->_criteria_quarks[i]);
+
+      if (criteria_data != NULL)
+      {
+        guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[i],
+                                                             (const void *) fencer->_criteria_quarks[i]));
+
+        if (score && fencer->_over_population_error)
+        {
+          if (   criteria_data->_max_floating_fencers
+              && (score >= criteria_data->_max_criteria_occurrence - 1))
+          {
+            return FALSE;
+          }
+        }
+
+        if (score >= criteria_data->_max_criteria_occurrence)
+        {
+          return FALSE;
+        }
+      }
+    }
+
+    return TRUE;
+  }
+#endif
+  {
+    CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                                              (const void *) fencer->_criteria_quarks[_criteria_depth]);
+
+    if (criteria_data == NULL)
+    {
+      return TRUE;
+    }
+
+    {
+      guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[_criteria_depth],
+                                                           (const void *) fencer->_criteria_quarks[_criteria_depth]));
+
+      if (score && fencer->_over_population_error)
+      {
+        if (criteria_data->_max_floating_fencers)
+        {
+          return score < criteria_data->_max_criteria_occurrence - 1;
+        }
+      }
+
+      return score < criteria_data->_max_criteria_occurrence;
+    }
   }
 
   // --------------------------------------------------------------------------------

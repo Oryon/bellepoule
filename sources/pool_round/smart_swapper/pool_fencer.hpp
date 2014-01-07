@@ -42,13 +42,6 @@ namespace SmartSwapper
       ~Fencer ();
 
       void Dump (Object *owner);
-
-      gboolean Movable (guint  criteria_index,
-                        GQuark previous_criteria_quark);
-
-      gboolean CanGoTo (PoolData   *pool_data,
-                        guint       criteria_index,
-                        GHashTable *criteria_distribution);
   };
 }
 

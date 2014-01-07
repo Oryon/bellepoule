@@ -50,40 +50,4 @@ namespace SmartSwapper
   {
     printf ("        %s\n", _player->GetName ());
   }
-
-  // --------------------------------------------------------------------------------
-  gboolean Fencer::Movable (guint  criteria_index,
-                            GQuark previous_criteria_quark)
-  {
-    return ((criteria_index == 0) || (previous_criteria_quark == _criteria_quarks[criteria_index-1]));
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Fencer::CanGoTo (PoolData   *pool_data,
-                            guint       criteria_index,
-                            GHashTable *criteria_distribution)
-  {
-    CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (criteria_distribution,
-                                                                              (const void *) _criteria_quarks[criteria_index]);
-
-    if (criteria_data == NULL)
-    {
-      return TRUE;
-    }
-
-    {
-      guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[criteria_index],
-                                                           (const void *) _criteria_quarks[criteria_index]));
-
-      if (score && _over_population_error)
-      {
-        if (criteria_data->_max_floating_fencers)
-        {
-          return score < criteria_data->_max_criteria_occurrence - 1;
-        }
-      }
-
-      return score < criteria_data->_max_criteria_occurrence;
-    }
-  }
 }

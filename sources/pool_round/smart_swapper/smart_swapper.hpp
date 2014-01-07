@@ -105,6 +105,10 @@ namespace SmartSwapper
 
       void Clean ();
 
+      gboolean FencerIsMovable (Fencer *fencer);
+
+      gboolean FencerCanGoTo (Fencer   *fencer,
+                              PoolData *pool_data);
       void DumpPools ();
 
     private:
@@ -124,8 +128,8 @@ namespace SmartSwapper
       guint          _moved;
       guint          _criteria_count;
 
-      guint       _current_criteria_index;
-      GQuark      _previous_criteria_quark;
+      guint  _criteria_depth;
+      GQuark _previous_criteria_quark;
   };
 }
 
