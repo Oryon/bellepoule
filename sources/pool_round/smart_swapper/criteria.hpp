@@ -14,20 +14,34 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef criteria_profile_hpp
-#define criteria_profile_hpp
+#ifndef criteria_hpp
+#define criteria_hpp
 
-#include <glib-2.0/glib.h>
+#include "util/object.hpp"
 
 namespace SmartSwapper
 {
-  class CriteriaProfile
+  class Criteria : public Object
   {
     public:
-      guint _count;
+      Criteria ();
 
-      guint _max_criteria_occurrence;
-      guint _max_floating_fencers;
+      void Use ();
+
+      gboolean HasFloatingProfile ();
+
+      static void Profile (GQuark    quark,
+                           Criteria *criteria,
+                           guint     pool_count);
+
+    public:
+      guint _max_criteria_count;
+
+    private:
+      guint _count;
+      guint _max_floating_count;
+
+      ~Criteria ();
   };
 }
 

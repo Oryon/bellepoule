@@ -21,7 +21,7 @@
 #include "common/player.hpp"
 #include "pool_round/swapper.hpp"
 
-#include "criteria_profile.hpp"
+#include "criteria.hpp"
 #include "pool_fencer.hpp"
 #include "pool_profiles.hpp"
 #include "pool_data.hpp"
@@ -76,10 +76,6 @@ namespace SmartSwapper
                              PoolData *pool_data,
                              guint     max_pool_size);
 
-      static void SetExpectedData (GQuark           quark,
-                                   CriteriaProfile *criteria_data,
-                                   SmartSwapper    *swapper);
-
       void InsertCriteria (Player              *player,
                            GHashTable          *criteria_distribution,
                            Player::AttributeId *criteria_id);
@@ -102,6 +98,8 @@ namespace SmartSwapper
                                      Fencer *b);
 
       PoolData *GetPoolToTry (guint index);
+
+      void ChangeFirstPoolTotry ();
 
       void Clean ();
 

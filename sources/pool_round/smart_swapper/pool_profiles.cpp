@@ -22,17 +22,17 @@ namespace SmartSwapper
   void PoolProfiles::Configure (guint nb_fencer,
                                 guint nb_pool)
   {
-    _min_size       = nb_fencer / nb_pool;
-    _max_size       = 0;
-    _nb_max_reached = 0;
-    _nb_max         = nb_fencer % nb_pool;
-    if (_nb_max)
+    _small_size    = nb_fencer / nb_pool;
+    _big_size      = 0;
+    _big_count     = 0;
+    _max_big_count = nb_fencer % nb_pool;
+    if (_max_big_count)
     {
-      _max_size = _min_size+1;
+      _big_size = _small_size+1;
     }
 
-    _sizes[SMALL] = _min_size;
-    _sizes[BIG]   = _max_size;
+    _sizes[SMALL] = _small_size;
+    _sizes[BIG]   = _big_size;
   }
 
   // --------------------------------------------------------------------------------
@@ -53,26 +53,26 @@ namespace SmartSwapper
   {
     if (old_count < new_count)
     {
-      if (new_count == _max_size)
+      if (new_count == _big_size)
       {
-        _nb_max_reached++;
+        _big_count++;
       }
     }
     else if (old_count > new_count)
     {
-      if (old_count == _max_size)
+      if (old_count == _big_size)
       {
-        _nb_max_reached--;
+        _big_count--;
       }
     }
 
-    if (_nb_max_reached >= _nb_max)
+    if (_big_count >= _max_big_count)
     {
       _sizes[BIG] = 0;
     }
     else
     {
-      _sizes[BIG] = _max_size;
+      _sizes[BIG] = _big_size;
     }
   }
 }

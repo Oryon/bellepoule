@@ -39,8 +39,11 @@ namespace SmartSwapper
   SmartSwapper::SmartSwapper (Object *owner)
     : Object ("SmartSwapper")
   {
-    _owner            = owner;
+    _owner = owner;
+
     _remaining_errors = NULL;
+    _error_list       = NULL;
+    _floating_list    = NULL;
 
     _criteria_count          = 0;
     _distributions           = NULL;
@@ -131,11 +134,6 @@ namespace SmartSwapper
                                                               _criteria_depth,
                                                               criteria_id);
       }
-
-      _remaining_errors  = NULL;
-      _error_list        = NULL;
-      _floating_list     = NULL;
-      _first_pool_to_try = 0;
 
       if (_criteria_depth == 0)
       {
@@ -228,6 +226,8 @@ namespace SmartSwapper
 
       zones = g_slist_next (zones);
     }
+
+    _first_pool_to_try = 0;
   }
 
   // --------------------------------------------------------------------------------
@@ -306,21 +306,20 @@ namespace SmartSwapper
         GQuark quark      = g_quark_from_string (user_image);
 
         {
-          CriteriaProfile *criteria_data;
+          Criteria *criteria;
 
           if (g_hash_table_lookup_extended (criteria_distribution,
                                             (gconstpointer) quark,
                                             NULL,
-                                            (gpointer *) &criteria_data) == FALSE)
+                                            (gpointer *) &criteria) == FALSE)
           {
-            criteria_data = g_new (CriteriaProfile, 1);
-            criteria_data->_count = 0;
+            criteria = new Criteria ();
 
             g_hash_table_insert (criteria_distribution,
                                  (gpointer) quark,
-                                 criteria_data);
+                                 criteria);
           }
-          criteria_data->_count++;
+          criteria->Use ();
         }
 
         g_free (user_image);
@@ -336,7 +335,7 @@ namespace SmartSwapper
     GHashTable *criteria_distribution = g_hash_table_new_full (NULL,
                                                                NULL,
                                                                NULL,
-                                                               g_free);
+                                                               (GDestroyNotify) Object::TryToRelease);
 
     while (fencer_list)
     {
@@ -348,8 +347,8 @@ namespace SmartSwapper
     }
 
     g_hash_table_foreach (criteria_distribution,
-                          (GHFunc) SetExpectedData,
-                          this);
+                          (GHFunc) Criteria::Profile,
+                          (void *) _nb_pools);
 
     // Keep the results available until the end of the processing
     for (guint i = 0; i < _nb_pools; i++)
@@ -377,7 +376,7 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void SmartSwapper::ExtractOverPopulationErrors ()
   {
-    PRINT ("\n\nExtract overpopulation ERRORS");
+    PRINT (GREEN "\n\nExtract overpopulation ERRORS" ESC);
 
     for (guint i = 0; i < _nb_pools; i++)
     {
@@ -396,12 +395,12 @@ namespace SmartSwapper
       {
         GQuark quark = GPOINTER_TO_UINT (key);
         guint  count = GPOINTER_TO_UINT (value);
-        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                                                  (const void *) quark);
+        Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                               (const void *) quark);
 
-        if (criteria_data && (count > criteria_data->_max_criteria_occurrence))
+        if (criteria && (count > criteria->_max_criteria_count))
         {
-          for (guint error = 0; error < count - criteria_data->_max_criteria_occurrence; error++)
+          for (guint error = 0; error < count - criteria->_max_criteria_count; error++)
           {
             Fencer *fencer = ExtractFencer (pool_data,
                                             quark,
@@ -424,7 +423,7 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void SmartSwapper::FindLackOfPopulationErrors ()
   {
-    PRINT ("\n\nFind lack of population ERRORS");
+    PRINT (GREEN "\n\nFind lack of population ERRORS" ESC);
 
     GHashTableIter iter;
     gpointer       key;
@@ -440,10 +439,11 @@ namespace SmartSwapper
                                    &key,
                                    &value))
     {
-      CriteriaProfile *criteria_data = (CriteriaProfile *) value;
+      Criteria *criteria = (Criteria *) value;
 
-      if (   (criteria_data && criteria_data->_max_floating_fencers)
-          && (criteria_data->_max_criteria_occurrence > 1))
+      if (   criteria
+          && criteria->HasFloatingProfile ()
+          && (criteria->_max_criteria_count > 1))
       {
         GQuark quark = GPOINTER_TO_UINT (key);
 
@@ -455,11 +455,11 @@ namespace SmartSwapper
           score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[_criteria_depth],
                                                          (const void *) quark));
 
-          if (score < criteria_data->_max_criteria_occurrence-1)
+          if (score < criteria->_max_criteria_count-1)
           {
             g_hash_table_insert (_lack_table,
                                  (gpointer) quark,
-                                 (gpointer) (criteria_data->_max_criteria_occurrence-1));
+                                 (gpointer) (criteria->_max_criteria_count-1));
           }
         }
       }
@@ -469,7 +469,7 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void SmartSwapper::ExtractFloatings ()
   {
-    PRINT ("\n\nExtract FLOATINGS");
+    PRINT (GREEN "\n\nExtract FLOATINGS" ESC);
 
     for (guint i = 0; i < _nb_pools; i++)
     {
@@ -489,11 +489,11 @@ namespace SmartSwapper
         GQuark quark = GPOINTER_TO_UINT (key);
         guint  count = GPOINTER_TO_UINT (value);
 
-        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                                                  (const void *) quark);
+        Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                               (const void *) quark);
 
-        if (   (criteria_data == NULL)
-            || (criteria_data->_max_floating_fencers && (count == criteria_data->_max_criteria_occurrence)))
+        if (   (criteria == NULL)
+            || (criteria->HasFloatingProfile () && (count == criteria->_max_criteria_count)))
         {
           ExtractFencer (pool_data,
                          quark,
@@ -505,6 +505,8 @@ namespace SmartSwapper
     _floating_list = g_list_sort (_floating_list,
                                   (GCompareFunc) CompareFencerRank);
 
+
+    PRINT (GREEN "\n\nTransform LACKS into ERRORS" ESC);
     // Transform lack of population into real errors
     {
       GHashTableIter iter;
@@ -531,7 +533,7 @@ namespace SmartSwapper
                 && (fencer->_criteria_quarks[_criteria_depth] == quark))
             {
               fencer->_over_population_error = TRUE;
-              PRINT ("transform %s\n", fencer->_player->GetName ());
+              PRINT ("    transform %s\n", fencer->_player->GetName ());
             }
             current_floating = g_list_previous (current_floating);
           }
@@ -579,7 +581,7 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void SmartSwapper::DispatchErrors ()
   {
-    PRINT ("\n\nDispatch ERRORS");
+    PRINT (GREEN "\n\nDispatch ERRORS" ESC);
 
     DispatchFencers (_error_list);
 
@@ -592,10 +594,11 @@ namespace SmartSwapper
   {
     GList *failed_list = NULL;
 
-    PRINT ("\n\nDispatch FLOATINGS");
+    PRINT (GREEN "\n\nDispatch FLOATINGS" ESC);
 
     DispatchFencers (_floating_list);
 
+    PRINT (GREEN "\n\nDispatch REMAINING" ESC);
     // Remaining errors
     {
       GSList *current_error = _remaining_errors;
@@ -648,11 +651,7 @@ namespace SmartSwapper
                                       error);
 
 next_error:
-        _first_pool_to_try++;
-        if (_first_pool_to_try >= _nb_pools)
-        {
-          _first_pool_to_try = 0;
-        }
+        ChangeFirstPoolTotry ();
         current_error = g_slist_next (current_error);
       }
     }
@@ -720,12 +719,7 @@ next_error:
       fencer->_over_population_error = FALSE;
 
 next_fencer:
-      _first_pool_to_try++;
-      if (_first_pool_to_try >= _nb_pools)
-      {
-        _first_pool_to_try = 0;
-      }
-
+      ChangeFirstPoolTotry ();
       list = g_list_next (list);
     }
 
@@ -766,15 +760,15 @@ next_fencer:
       // for the given criteria
       if (fencer->_over_population_error)
       {
-        CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                                                  (const void *) fencer->_criteria_quarks[_criteria_depth]);
+        Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                               (const void *) fencer->_criteria_quarks[_criteria_depth]);
 
-        if (criteria_data)
+        if (criteria)
         {
           guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_original_criteria_scores[_criteria_depth],
                                                                (const void *) fencer->_criteria_quarks[_criteria_depth]));
 
-          if (score > criteria_data->_max_criteria_occurrence)
+          if (score > criteria->_max_criteria_count)
           {
             return FALSE;
           }
@@ -790,23 +784,6 @@ next_fencer:
     }
 
     return FALSE;
-  }
-
-  // --------------------------------------------------------------------------------
-  void SmartSwapper::SetExpectedData (GQuark           quark,
-                                      CriteriaProfile *criteria_data,
-                                      SmartSwapper    *swapper)
-  {
-    criteria_data->_max_criteria_occurrence = criteria_data->_count / swapper->_nb_pools;
-
-    criteria_data->_max_floating_fencers = criteria_data->_count % swapper->_nb_pools;
-    if (criteria_data->_max_floating_fencers)
-    {
-      criteria_data->_max_criteria_occurrence++;
-    }
-
-    PRINT ("%d x %20s >> %d (max) %d (floating)", criteria_data->_count, g_quark_to_string (quark),
-           criteria_data->_max_criteria_occurrence, criteria_data->_max_floating_fencers);
   }
 
   // --------------------------------------------------------------------------------
@@ -843,24 +820,24 @@ next_fencer:
   {
     for (guint i = 0; i < _criteria_depth; i++)
     {
-      CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[i],
-                                                                                (const void *) fencer->_criteria_quarks[i]);
+      Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[i],
+                                                             (const void *) fencer->_criteria_quarks[i]);
 
-      if (criteria_data != NULL)
+      if (criteria != NULL)
       {
         guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[i],
                                                              (const void *) fencer->_criteria_quarks[i]));
 
         if (score && fencer->_over_population_error)
         {
-          if (   criteria_data->_max_floating_fencers
-              && (score >= criteria_data->_max_criteria_occurrence - 1))
+          if (   criteria->HasFloatingProfile ()
+              && (score >= criteria->_max_criteria_count - 1))
           {
             return FALSE;
           }
         }
 
-        if (score >= criteria_data->_max_criteria_occurrence)
+        if (score >= criteria->_max_criteria_count)
         {
           return FALSE;
         }
@@ -871,10 +848,10 @@ next_fencer:
   }
 #endif
   {
-    CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                                              (const void *) fencer->_criteria_quarks[_criteria_depth]);
+    Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                           (const void *) fencer->_criteria_quarks[_criteria_depth]);
 
-    if (criteria_data == NULL)
+    if (criteria == NULL)
     {
       return TRUE;
     }
@@ -885,13 +862,13 @@ next_fencer:
 
       if (score && fencer->_over_population_error)
       {
-        if (criteria_data->_max_floating_fencers)
+        if (criteria->HasFloatingProfile ())
         {
-          return score < criteria_data->_max_criteria_occurrence - 1;
+          return score < criteria->_max_criteria_count - 1;
         }
       }
 
-      return score < criteria_data->_max_criteria_occurrence;
+      return score < criteria->_max_criteria_count;
     }
   }
 
@@ -911,6 +888,16 @@ next_fencer:
     else
     {
       return _pool_table[index + _first_pool_to_try - _nb_pools];
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void SmartSwapper::ChangeFirstPoolTotry ()
+  {
+    _first_pool_to_try++;
+    if (_first_pool_to_try >= _nb_pools)
+    {
+      _first_pool_to_try = 0;
     }
   }
 

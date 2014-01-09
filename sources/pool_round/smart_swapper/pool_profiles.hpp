@@ -43,10 +43,10 @@ namespace SmartSwapper
         PROFILE_TYPE_LEN
       } ProfileType;
 
-      guint _min_size;
-      guint _max_size;
-      guint _nb_max;
-      guint _nb_max_reached;
+      guint _small_size;
+      guint _big_size;
+      guint _max_big_count;
+      guint _big_count;
 
       guint _sizes[PROFILE_TYPE_LEN-1];
   };

@@ -14,39 +14,48 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "util/object.hpp"
-
-#include "pool_round/pool.hpp"
-#include "pool_round/pool_zone.hpp"
-
-#include "pool_data.hpp"
-#include "pool_fencer.hpp"
+#include "criteria.hpp"
 
 namespace SmartSwapper
 {
   // --------------------------------------------------------------------------------
-  Fencer::Fencer (Player   *player,
-                  guint     rank,
-                  PoolData *original_pool,
-                  guint     criteria_count)
+  Criteria::Criteria()
+    : Object ("Criteria")
   {
-    _over_population_error = FALSE;
-    _new_pool              = NULL;
-    _player                = player;
-    _rank                  = rank;
-    _original_pool         = original_pool;
-    _criteria_quarks       = g_new0 (GQuark, criteria_count);
+    _count = 0;
   }
 
   // --------------------------------------------------------------------------------
-  Fencer::~Fencer ()
+  Criteria::~Criteria()
   {
-    g_free (_criteria_quarks);
   }
 
   // --------------------------------------------------------------------------------
-  void Fencer::Dump (Object *owner)
+  void Criteria::Use ()
   {
-    printf ("        %s\n", _player->GetName ());
+    _count++;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Criteria::HasFloatingProfile ()
+  {
+    return _max_floating_count > 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Criteria::Profile (GQuark    quark,
+                          Criteria *criteria,
+                          guint     pool_count)
+  {
+    criteria->_max_criteria_count = criteria->_count / pool_count;
+
+    criteria->_max_floating_count = criteria->_count % pool_count;
+    if (criteria->_max_floating_count)
+    {
+      criteria->_max_criteria_count++;
+    }
+
+    printf ("%d x %20s >> %d (max) %d (floating)", criteria->_count, g_quark_to_string (quark),
+            criteria->_max_criteria_count, criteria->_max_floating_count);
   }
 }
