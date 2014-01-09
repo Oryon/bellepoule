@@ -18,30 +18,34 @@
 #define criteria_hpp
 
 #include "util/object.hpp"
+#include "util/attribute.hpp"
+#include "common/player.hpp"
 
 namespace SmartSwapper
 {
-  class Criteria : public Object
+  class CriteriaValue : public Object
   {
     public:
-      Criteria ();
+      CriteriaValue (Attribute *criteria_attr);
 
-      void Use ();
+      void Use (Player *fencer);
 
       gboolean HasFloatingProfile ();
 
-      static void Profile (GQuark    quark,
-                           Criteria *criteria,
-                           guint     pool_count);
+      static void Profile (GQuark         quark,
+                           CriteriaValue *criteria_value,
+                           guint          pool_count);
 
     public:
       guint _max_criteria_count;
 
     private:
-      guint _count;
-      guint _max_floating_count;
+      guint      _count;
+      guint      _max_floating_count;
+      GSList    *_fencer_list;
+      Attribute *_criteria_attr;
 
-      ~Criteria ();
+      ~CriteriaValue ();
   };
 }
 

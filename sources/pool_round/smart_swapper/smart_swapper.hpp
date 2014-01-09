@@ -21,7 +21,7 @@
 #include "common/player.hpp"
 #include "pool_round/swapper.hpp"
 
-#include "criteria.hpp"
+#include "criteria_value.hpp"
 #include "pool_fencer.hpp"
 #include "pool_profiles.hpp"
 #include "pool_data.hpp"

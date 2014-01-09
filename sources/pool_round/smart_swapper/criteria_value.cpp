@@ -14,48 +14,54 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "criteria.hpp"
+#include "criteria_value.hpp"
 
 namespace SmartSwapper
 {
   // --------------------------------------------------------------------------------
-  Criteria::Criteria()
-    : Object ("Criteria")
+  CriteriaValue::CriteriaValue (Attribute *criteria_attr)
+    : Object ("CriteriaValue")
   {
-    _count = 0;
+    _count       = 0;
+    _fencer_list = NULL;
+
+    _criteria_attr = criteria_attr;
+    _criteria_attr->Retain ();
   }
 
   // --------------------------------------------------------------------------------
-  Criteria::~Criteria()
+  CriteriaValue::~CriteriaValue ()
   {
+    g_slist_free (_fencer_list);
+    Object::TryToRelease (_criteria_attr);
   }
 
   // --------------------------------------------------------------------------------
-  void Criteria::Use ()
+  void CriteriaValue::Use (Player *fencer)
   {
     _count++;
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Criteria::HasFloatingProfile ()
+  gboolean CriteriaValue::HasFloatingProfile ()
   {
     return _max_floating_count > 0;
   }
 
   // --------------------------------------------------------------------------------
-  void Criteria::Profile (GQuark    quark,
-                          Criteria *criteria,
-                          guint     pool_count)
+  void CriteriaValue::Profile (GQuark         quark,
+                               CriteriaValue *criteria_value,
+                               guint          pool_count)
   {
-    criteria->_max_criteria_count = criteria->_count / pool_count;
+    criteria_value->_max_criteria_count = criteria_value->_count / pool_count;
 
-    criteria->_max_floating_count = criteria->_count % pool_count;
-    if (criteria->_max_floating_count)
+    criteria_value->_max_floating_count = criteria_value->_count % pool_count;
+    if (criteria_value->_max_floating_count)
     {
-      criteria->_max_criteria_count++;
+      criteria_value->_max_criteria_count++;
     }
 
-    printf ("%d x %20s >> %d (max) %d (floating)", criteria->_count, g_quark_to_string (quark),
-            criteria->_max_criteria_count, criteria->_max_floating_count);
+    printf ("%d x %20s >> %d (max) %d (floating)", criteria_value->_count, g_quark_to_string (quark),
+            criteria_value->_max_criteria_count, criteria_value->_max_floating_count);
   }
 }

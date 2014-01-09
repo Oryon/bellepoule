@@ -133,6 +133,7 @@ namespace SmartSwapper
         _distributions[_criteria_depth] = LookUpDistribution (fencer_list,
                                                               _criteria_depth,
                                                               criteria_id);
+        criteria_id->Release ();
       }
 
       if (_criteria_depth == 0)
@@ -306,20 +307,20 @@ namespace SmartSwapper
         GQuark quark      = g_quark_from_string (user_image);
 
         {
-          Criteria *criteria;
+          CriteriaValue *criteria_value;
 
           if (g_hash_table_lookup_extended (criteria_distribution,
                                             (gconstpointer) quark,
                                             NULL,
-                                            (gpointer *) &criteria) == FALSE)
+                                            (gpointer *) &criteria_value) == FALSE)
           {
-            criteria = new Criteria ();
+            criteria_value = new CriteriaValue (criteria_attr);
 
             g_hash_table_insert (criteria_distribution,
                                  (gpointer) quark,
-                                 criteria);
+                                 criteria_value);
           }
-          criteria->Use ();
+          criteria_value->Use (player);
         }
 
         g_free (user_image);
@@ -347,7 +348,7 @@ namespace SmartSwapper
     }
 
     g_hash_table_foreach (criteria_distribution,
-                          (GHFunc) Criteria::Profile,
+                          (GHFunc) CriteriaValue::Profile,
                           (void *) _nb_pools);
 
     // Keep the results available until the end of the processing
@@ -395,12 +396,12 @@ namespace SmartSwapper
       {
         GQuark quark = GPOINTER_TO_UINT (key);
         guint  count = GPOINTER_TO_UINT (value);
-        Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                               (const void *) quark);
+        CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                                               (const void *) quark);
 
-        if (criteria && (count > criteria->_max_criteria_count))
+        if (criteria_value && (count > criteria_value->_max_criteria_count))
         {
-          for (guint error = 0; error < count - criteria->_max_criteria_count; error++)
+          for (guint error = 0; error < count - criteria_value->_max_criteria_count; error++)
           {
             Fencer *fencer = ExtractFencer (pool_data,
                                             quark,
@@ -439,11 +440,11 @@ namespace SmartSwapper
                                    &key,
                                    &value))
     {
-      Criteria *criteria = (Criteria *) value;
+      CriteriaValue *criteria_value = (CriteriaValue *) value;
 
-      if (   criteria
-          && criteria->HasFloatingProfile ()
-          && (criteria->_max_criteria_count > 1))
+      if (   criteria_value
+          && criteria_value->HasFloatingProfile ()
+          && (criteria_value->_max_criteria_count > 1))
       {
         GQuark quark = GPOINTER_TO_UINT (key);
 
@@ -455,11 +456,11 @@ namespace SmartSwapper
           score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[_criteria_depth],
                                                          (const void *) quark));
 
-          if (score < criteria->_max_criteria_count-1)
+          if (score < criteria_value->_max_criteria_count-1)
           {
             g_hash_table_insert (_lack_table,
                                  (gpointer) quark,
-                                 (gpointer) (criteria->_max_criteria_count-1));
+                                 (gpointer) (criteria_value->_max_criteria_count-1));
           }
         }
       }
@@ -489,11 +490,11 @@ namespace SmartSwapper
         GQuark quark = GPOINTER_TO_UINT (key);
         guint  count = GPOINTER_TO_UINT (value);
 
-        Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                               (const void *) quark);
+        CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                                               (const void *) quark);
 
-        if (   (criteria == NULL)
-            || (criteria->HasFloatingProfile () && (count == criteria->_max_criteria_count)))
+        if (   (criteria_value == NULL)
+            || (criteria_value->HasFloatingProfile () && (count == criteria_value->_max_criteria_count)))
         {
           ExtractFencer (pool_data,
                          quark,
@@ -757,18 +758,18 @@ next_fencer:
     if (pool_data->_size < max_pool_size)
     {
       // Forget pools where over population errors have been detected
-      // for the given criteria
+      // for the given criteria_value
       if (fencer->_over_population_error)
       {
-        Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                               (const void *) fencer->_criteria_quarks[_criteria_depth]);
+        CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                                               (const void *) fencer->_criteria_quarks[_criteria_depth]);
 
-        if (criteria)
+        if (criteria_value)
         {
           guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_original_criteria_scores[_criteria_depth],
                                                                (const void *) fencer->_criteria_quarks[_criteria_depth]));
 
-          if (score > criteria->_max_criteria_count)
+          if (score > criteria_value->_max_criteria_count)
           {
             return FALSE;
           }
@@ -820,24 +821,24 @@ next_fencer:
   {
     for (guint i = 0; i < _criteria_depth; i++)
     {
-      Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[i],
-                                                             (const void *) fencer->_criteria_quarks[i]);
+      CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[i],
+                                                                             (const void *) fencer->_criteria_quarks[i]);
 
-      if (criteria != NULL)
+      if (criteria_value != NULL)
       {
         guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[i],
                                                              (const void *) fencer->_criteria_quarks[i]));
 
         if (score && fencer->_over_population_error)
         {
-          if (   criteria->HasFloatingProfile ()
-              && (score >= criteria->_max_criteria_count - 1))
+          if (   criteria_value->HasFloatingProfile ()
+              && (score >= criteria_value->_max_criteria_count - 1))
           {
             return FALSE;
           }
         }
 
-        if (score >= criteria->_max_criteria_count)
+        if (score >= criteria_value->_max_criteria_count)
         {
           return FALSE;
         }
@@ -848,10 +849,10 @@ next_fencer:
   }
 #endif
   {
-    Criteria *criteria = (Criteria *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                           (const void *) fencer->_criteria_quarks[_criteria_depth]);
+    CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[_criteria_depth],
+                                                                           (const void *) fencer->_criteria_quarks[_criteria_depth]);
 
-    if (criteria == NULL)
+    if (criteria_value == NULL)
     {
       return TRUE;
     }
@@ -862,13 +863,13 @@ next_fencer:
 
       if (score && fencer->_over_population_error)
       {
-        if (criteria->HasFloatingProfile ())
+        if (criteria_value->HasFloatingProfile ())
         {
-          return score < criteria->_max_criteria_count - 1;
+          return score < criteria_value->_max_criteria_count - 1;
         }
       }
 
-      return score < criteria->_max_criteria_count;
+      return score < criteria_value->_max_criteria_count;
     }
   }
 

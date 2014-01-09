@@ -167,8 +167,8 @@
 		<Unit filename="../sources/pool_round/smart_swapper/pool_data.hpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/smart_swapper.cpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/smart_swapper.hpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/criteria.hpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/criteria.cpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/criteria_value.hpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/criteria_value.cpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/pool_fencer.cpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/pool_fencer.hpp" />
 		<Unit filename="../sources/pool_round/swapper.hpp" />
