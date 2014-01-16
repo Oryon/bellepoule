@@ -32,7 +32,6 @@ namespace SmartSwapper
       PoolData *_original_pool;
       PoolData *_new_pool;
       guint     _rank;
-      gboolean  _over_population_error;
 
       Fencer (Player   *player,
               guint     rank,

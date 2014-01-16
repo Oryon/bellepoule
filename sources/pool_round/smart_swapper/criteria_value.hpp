@@ -21,29 +21,38 @@
 #include "util/attribute.hpp"
 #include "common/player.hpp"
 
+#include "pool_fencer.hpp"
+
 namespace SmartSwapper
 {
   class CriteriaValue : public Object
   {
     public:
-      CriteriaValue (Attribute *criteria_attr);
+      CriteriaValue (Player::AttributeId *criteria_id);
 
       void Use (Player *fencer);
 
       gboolean HasFloatingProfile ();
+
+      guint GetErrorLine (Fencer *fencer);
+
+      gboolean CanFloat (Fencer *fencer);
 
       static void Profile (GQuark         quark,
                            CriteriaValue *criteria_value,
                            guint          pool_count);
 
     public:
-      guint _max_criteria_count;
+      guint _max_count_per_pool;
 
     private:
-      guint      _count;
-      guint      _max_floating_count;
-      GSList    *_fencer_list;
-      Attribute *_criteria_attr;
+      guint                _pool_count;
+      guint                _fencer_count;
+      guint                _floating_count;
+      guint                _error_line;
+      guint                _floating_line;
+      GSList              *_fencer_list;
+      Player::AttributeId *_criteria_id;
 
       ~CriteriaValue ();
   };

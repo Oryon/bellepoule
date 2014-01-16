@@ -36,13 +36,13 @@ namespace SmartSwapper
     }
 
     {
-      _criteria_scores          = g_new (GHashTable *, criteria_count);
-      _original_criteria_scores = g_new (GHashTable *, criteria_count);
+      _criteria_scores = g_new (GHashTable *, criteria_count);
+      _criteria_errors = g_new (GHashTable *, criteria_count);
 
       for (guint i = 0; i < criteria_count; i++)
       {
-        _criteria_scores[i]          = g_hash_table_new (NULL, NULL);
-        _original_criteria_scores[i] = g_hash_table_new (NULL, NULL);
+        _criteria_scores[i] = g_hash_table_new (NULL, NULL);
+        _criteria_errors[i] = g_hash_table_new (NULL, NULL);
       }
     }
   }
@@ -68,11 +68,11 @@ namespace SmartSwapper
       for (guint i = 0; i < _criteria_count; i++)
       {
         g_hash_table_destroy (_criteria_scores[i]);
-        g_hash_table_destroy (_original_criteria_scores[i]);
+        g_hash_table_destroy (_criteria_errors[i]);
       }
 
       g_free (_criteria_scores);
-      g_free (_original_criteria_scores);
+      g_free (_criteria_errors);
     }
   }
 
@@ -110,6 +110,50 @@ namespace SmartSwapper
                            _criteria_scores[i],
                            -1);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PoolData::SetError (guint  criteria_depth,
+                           GQuark criteria_quark)
+  {
+    g_hash_table_insert (_criteria_errors[criteria_depth],
+                         (void *) criteria_quark,
+                         (void *) 1);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean PoolData::HasErrorsFor (guint  criteria_depth,
+                                   GQuark criteria_quark)
+  {
+    return GPOINTER_TO_UINT (g_hash_table_lookup (_criteria_errors[criteria_depth],
+                                                  (const void *) criteria_quark));
+  }
+
+  // --------------------------------------------------------------------------------
+  guint PoolData::GetTeammateRank (Fencer *fencer,
+                                   guint   criteria_depth)
+  {
+    guint  rank    = 1;
+    GList *current = _fencer_list;
+
+    while (current)
+    {
+      Fencer *teammate = (Fencer *) current->data;
+
+      if (teammate == fencer)
+      {
+        break;
+      }
+
+      if (teammate->_criteria_quarks[criteria_depth] == fencer->_criteria_quarks[criteria_depth])
+      {
+        rank++;
+      }
+
+      current = g_list_next (current);
+    }
+
+    return rank;
   }
 
   // --------------------------------------------------------------------------------

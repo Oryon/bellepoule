@@ -30,12 +30,11 @@ namespace SmartSwapper
                   PoolData *original_pool,
                   guint     criteria_count)
   {
-    _over_population_error = FALSE;
-    _new_pool              = NULL;
-    _player                = player;
-    _rank                  = rank;
-    _original_pool         = original_pool;
-    _criteria_quarks       = g_new0 (GQuark, criteria_count);
+    _new_pool        = NULL;
+    _player          = player;
+    _rank            = rank;
+    _original_pool   = original_pool;
+    _criteria_quarks = g_new0 (GQuark, criteria_count);
   }
 
   // --------------------------------------------------------------------------------

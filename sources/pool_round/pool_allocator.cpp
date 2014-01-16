@@ -971,9 +971,8 @@ namespace Pool
         }
 
         {
-          gchar *figures = g_strdup_printf ("Errors: %d\n"
-                                            "Moved : %d",
-                                            _swapper->GetOverCount (), _swapper->GetMoved ());
+          gchar *figures = g_strdup_printf ("Moved : %d",
+                                            _swapper->GetMoved ());
 
           gtk_widget_set_tooltip_text (swapping_hbox,
                                        figures);

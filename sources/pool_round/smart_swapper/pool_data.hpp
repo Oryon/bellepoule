@@ -29,15 +29,13 @@ namespace SmartSwapper
   class PoolData
   {
     public:
-      Pool::Pool    *_pool;
-      guint          _criteria_count;
-      GHashTable   **_criteria_scores;
-      GHashTable   **_original_criteria_scores;
-      GList         *_fencer_list;
-      guint          _size;
-      guint          _id;
-      PoolProfiles  *_pool_profiles;
+      Pool::Pool  *_pool;
+      GHashTable **_criteria_scores;
+      GList       *_fencer_list;
+      guint        _id;
+      guint        _size;
 
+    public:
       PoolData (Pool::Pool   *pool,
                 guint         id,
                 PoolProfiles *profiles,
@@ -49,7 +47,20 @@ namespace SmartSwapper
 
       void RemoveFencer (Fencer *fencer);
 
+      void SetError (guint  criteria_depth,
+                     GQuark criteria_quark);
+
+      gboolean HasErrorsFor (guint  criteria_depth,
+                             GQuark criteria_quark);
+
+      guint GetTeammateRank (Fencer *fencer,
+                             guint   criteria_depth);
+
     private:
+      guint          _criteria_count;
+      GHashTable   **_criteria_errors;
+      PoolProfiles  *_pool_profiles;
+
       void ChangeCriteriaScore (GQuark      criteria,
                                 GHashTable *criteria_score,
                                 gint        delta_score);

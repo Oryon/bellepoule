@@ -43,8 +43,6 @@ namespace SmartSwapper
 
       guint HasErrors ();
 
-      guint GetOverCount ();
-
       guint GetMoved ();
 
     private:
@@ -56,21 +54,14 @@ namespace SmartSwapper
 
       void Iterate ();
 
-      void ExtractOverPopulationErrors ();
-
-      void FindLackOfPopulationErrors ();
-
       void ExtractFloatings ();
-
-      Fencer *ExtractFencer (PoolData  *from_pool,
-                             GQuark     with_criteria,
-                             GList    **to_list);
 
       void DispatchErrors ();
 
       void DispatchFloatings ();
 
-      void DispatchFencers (GList *list);
+      void DispatchFencers (GList    *list,
+                            gboolean  original_pool_first);
 
       gboolean MoveFencerTo (Fencer   *fencer,
                              PoolData *pool_data,
@@ -118,11 +109,9 @@ namespace SmartSwapper
       GHashTable   **_distributions;
       GList         *_error_list;
       GList         *_floating_list;
-      GHashTable    *_lack_table;
       GSList        *_remaining_errors;
       guint          _first_pool_to_try;
       gboolean       _has_errors;
-      guint          _over_count;
       guint          _moved;
       guint          _criteria_count;
 

@@ -19,33 +19,74 @@
 namespace SmartSwapper
 {
   // --------------------------------------------------------------------------------
-  CriteriaValue::CriteriaValue (Attribute *criteria_attr)
+  CriteriaValue::CriteriaValue (Player::AttributeId *criteria_id)
     : Object ("CriteriaValue")
   {
-    _count       = 0;
-    _fencer_list = NULL;
+    _fencer_count = 0;
+    _fencer_list  = NULL;
 
-    _criteria_attr = criteria_attr;
-    _criteria_attr->Retain ();
+    _criteria_id = criteria_id;
+    _criteria_id->Retain ();
   }
 
   // --------------------------------------------------------------------------------
   CriteriaValue::~CriteriaValue ()
   {
     g_slist_free (_fencer_list);
-    Object::TryToRelease (_criteria_attr);
+    _criteria_id->Release ();
   }
 
   // --------------------------------------------------------------------------------
   void CriteriaValue::Use (Player *fencer)
   {
-    _count++;
+    _fencer_count++;
+
+    _fencer_list = g_slist_insert_sorted_with_data (_fencer_list,
+                                                    fencer,
+                                                    (GCompareDataFunc) Player::Compare,
+                                                    _criteria_id);
   }
 
   // --------------------------------------------------------------------------------
   gboolean CriteriaValue::HasFloatingProfile ()
   {
-    return _max_floating_count > 0;
+    return _floating_count > 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  guint CriteriaValue::GetErrorLine (Fencer *fencer)
+  {
+    if (_floating_count == 0)
+    {
+      return _max_count_per_pool+1;
+    }
+    else
+    {
+      if (CanFloat (fencer))
+      {
+        return _max_count_per_pool+1;
+      }
+      else
+      {
+        return _max_count_per_pool;
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean CriteriaValue::CanFloat (Fencer *fencer)
+  {
+    if (_floating_count > 0)
+    {
+      guint rank = g_slist_index (_fencer_list, fencer->_player) + 1;
+
+      if (rank > ((_max_count_per_pool-1) * _pool_count))
+      {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -53,15 +94,16 @@ namespace SmartSwapper
                                CriteriaValue *criteria_value,
                                guint          pool_count)
   {
-    criteria_value->_max_criteria_count = criteria_value->_count / pool_count;
+    criteria_value->_pool_count         = pool_count;
+    criteria_value->_max_count_per_pool = criteria_value->_fencer_count / pool_count;
 
-    criteria_value->_max_floating_count = criteria_value->_count % pool_count;
-    if (criteria_value->_max_floating_count)
+    criteria_value->_floating_count = criteria_value->_fencer_count % pool_count;
+    if (criteria_value->_floating_count)
     {
-      criteria_value->_max_criteria_count++;
+      criteria_value->_max_count_per_pool++;
     }
 
-    printf ("%d x %20s >> %d (max) %d (floating)", criteria_value->_count, g_quark_to_string (quark),
-            criteria_value->_max_criteria_count, criteria_value->_max_floating_count);
+    printf ("%d x %20s >> %d (max) %d (floating)\n", criteria_value->_fencer_count, g_quark_to_string (quark),
+            criteria_value->_max_count_per_pool, criteria_value->_floating_count);
   }
 }
