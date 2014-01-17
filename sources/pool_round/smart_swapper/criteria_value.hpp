@@ -28,7 +28,8 @@ namespace SmartSwapper
   class CriteriaValue : public Object
   {
     public:
-      CriteriaValue (Player::AttributeId *criteria_id);
+      CriteriaValue (Player::AttributeId *criteria_id,
+                     Object              *owner);
 
       void Use (Player *fencer);
 
@@ -46,6 +47,7 @@ namespace SmartSwapper
       guint _max_count_per_pool;
 
     private:
+      Object              *_owner;
       guint                _pool_count;
       guint                _fencer_count;
       guint                _floating_count;

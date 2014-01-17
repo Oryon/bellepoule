@@ -19,9 +19,12 @@
 namespace SmartSwapper
 {
   // --------------------------------------------------------------------------------
-  CriteriaValue::CriteriaValue (Player::AttributeId *criteria_id)
+  CriteriaValue::CriteriaValue (Player::AttributeId *criteria_id,
+                                Object              *owner)
     : Object ("CriteriaValue")
   {
+    _owner = owner;
+
     _fencer_count = 0;
     _fencer_list  = NULL;
 
@@ -41,10 +44,14 @@ namespace SmartSwapper
   {
     _fencer_count++;
 
-    _fencer_list = g_slist_insert_sorted_with_data (_fencer_list,
-                                                    fencer,
-                                                    (GCompareDataFunc) Player::Compare,
-                                                    _criteria_id);
+    {
+      Player::AttributeId attr_id ("stage_start_rank", _owner);
+
+      _fencer_list = g_slist_insert_sorted_with_data (_fencer_list,
+                                                      fencer,
+                                                      (GCompareDataFunc) Player::Compare,
+                                                      &attr_id);
+    }
   }
 
   // --------------------------------------------------------------------------------

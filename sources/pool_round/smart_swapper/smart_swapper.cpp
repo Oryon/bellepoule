@@ -128,7 +128,6 @@ namespace SmartSwapper
         Player::AttributeId *criteria_id = new Player::AttributeId (attr_desc->_code_name);
 
         _distributions[_criteria_depth] = LookUpDistribution (fencer_list,
-                                                              _criteria_depth,
                                                               criteria_id);
         criteria_id->Release ();
       }
@@ -166,8 +165,7 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void SmartSwapper::Iterate ()
   {
-    ExtractFloatings ();
-
+    ExtractMovables   ();
     DispatchErrors    ();
     DispatchFloatings ();
   }
@@ -307,7 +305,7 @@ namespace SmartSwapper
                                             NULL,
                                             (gpointer *) &criteria_value) == FALSE)
           {
-            criteria_value = new CriteriaValue (criteria_id);
+            criteria_value = new CriteriaValue (criteria_id, _owner);
 
             g_hash_table_insert (criteria_distribution,
                                  (gpointer) quark,
@@ -323,7 +321,6 @@ namespace SmartSwapper
 
   // --------------------------------------------------------------------------------
   GHashTable *SmartSwapper::LookUpDistribution (GSList              *fencer_list,
-                                                guint                criteria_index,
                                                 Player::AttributeId *criteria_id)
   {
     GHashTable *criteria_distribution = g_hash_table_new_full (NULL,
@@ -348,7 +345,7 @@ namespace SmartSwapper
   }
 
   // --------------------------------------------------------------------------------
-  void SmartSwapper::ExtractFloatings ()
+  void SmartSwapper::ExtractMovables ()
   {
     PRINT (GREEN "\n\nExtraction" ESC);
 
@@ -378,14 +375,14 @@ namespace SmartSwapper
             Fencer *fencer = (Fencer *) current->data;
 
             if (   (fencer->_rank != pool_data->_id) // Prevent pool leaders from being moved
-                // || (FencerIsMovable (fencer) == FALSE)
+                && FencerIsMovable (fencer)
                 && (fencer->_criteria_quarks[_criteria_depth] == quark))
             {
               guint teammate_rank = pool_data->GetTeammateRank (fencer, _criteria_depth);
 
               if (criteria_value->CanFloat (fencer))
               {
-                printf (RED "  << FLOATING >>" ESC " %s\n", fencer->_player->GetName ());
+                PRINT (GREEN "  << FLOATING >>" ESC " %s\n", fencer->_player->GetName ());
                 _floating_list = g_list_prepend (_floating_list,
                                                  fencer);
 
@@ -393,7 +390,7 @@ namespace SmartSwapper
               }
               else if (teammate_rank >= criteria_value->GetErrorLine (fencer))
               {
-                printf (GREEN "  << ERROR >>" ESC " %s\n", fencer->_player->GetName ());
+                PRINT (RED "  << ERROR >>" ESC " %s\n", fencer->_player->GetName ());
                 _error_list = g_list_prepend (_error_list,
                                               fencer);
 
@@ -437,78 +434,6 @@ namespace SmartSwapper
 
     DispatchFencers (_floating_list,
                      TRUE);
-
-#if 0
-    GList *failed_list = NULL;
-
-    PRINT (GREEN "\n\nDispatch REMAINING" ESC);
-    // Remaining errors
-    {
-      GSList *current_error = _remaining_errors;
-
-      while (current_error)
-      {
-        Fencer *error            = (Fencer *) current_error->data;
-        GList  *current_floating = g_list_last (_floating_list);
-
-        while (current_floating)
-        {
-          Fencer *floating = (Fencer *) current_floating->data;
-
-          if (floating->_new_pool)
-          {
-            if (FencerCanGoTo (error, floating->_new_pool))
-            {
-              PoolData *new_pool = floating->_new_pool;
-
-              // Try this assignment
-              new_pool->AddFencer    (error);
-              new_pool->RemoveFencer (floating);
-
-              for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
-              {
-                for (guint i = 0; i < _nb_pools; i++)
-                {
-                  PoolData *pool_data = GetPoolToTry (i);
-
-                  if (MoveFencerTo (floating,
-                                    pool_data,
-                                    _pool_profiles.GetSize (profile_type)))
-                  {
-                    goto next_error;
-                  }
-                }
-              }
-
-              // Failed! Restore the previous assignment
-              new_pool->RemoveFencer (error);
-              new_pool->AddFencer    (floating);
-            }
-          }
-
-          current_floating = g_list_previous (current_floating);
-        }
-
-        PRINT ("!!!!> %s", error->_player->GetName ());
-        failed_list = g_list_prepend (failed_list,
-                                      error);
-
-next_error:
-        ChangeFirstPoolTotry ();
-        current_error = g_slist_next (current_error);
-      }
-    }
-
-    // Last chance to find a pool for the errors
-    {
-      g_slist_free (_remaining_errors);
-      _remaining_errors = NULL;
-
-      DispatchFencers (failed_list);
-      _has_errors = (failed_list != NULL);
-      g_list_free (failed_list);
-    }
-#endif
 
     g_list_free (_floating_list);
     _floating_list = NULL;
@@ -566,13 +491,14 @@ next_error:
       // Moving failed
       _remaining_errors = g_slist_prepend (_remaining_errors,
                                            fencer);
+      PRINT (RED "  << %s >>\n" ESC, fencer->_player->GetName ());
 
 next_fencer:
       ChangeFirstPoolTotry ();
       list = g_list_next (list);
     }
 
-    DumpPools ();
+    // DumpPools ();
   }
 
   // --------------------------------------------------------------------------------
@@ -605,7 +531,9 @@ next_fencer:
   {
     if (pool_data->_size < max_pool_size)
     {
-      if (FencerCanGoTo (fencer, pool_data))
+      if (FencerCanGoTo (fencer,
+                         pool_data,
+                         _criteria_depth))
       {
         pool_data->AddFencer (fencer);
         PRINT ("          --> #%d (%d)", pool_data->_pool->GetNumber (), g_list_length (pool_data->_fencer_list));
@@ -645,13 +573,26 @@ next_fencer:
 
   // --------------------------------------------------------------------------------
   gboolean SmartSwapper::FencerCanGoTo (Fencer   *fencer,
-                                        PoolData *pool_data)
+                                        PoolData *pool_data,
+                                        guint     depth)
   {
-    guint          teammate_rank  = pool_data->GetTeammateRank (fencer, _criteria_depth);
-    CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[_criteria_depth],
-                                                                           (const void *) fencer->_criteria_quarks[_criteria_depth]);
+    if (depth != 0)
+    {
+      if (FencerCanGoTo (fencer,
+                         pool_data,
+                         depth-1) == FALSE)
+      {
+        return FALSE;
+      }
+    }
 
-    return (teammate_rank < criteria_value->GetErrorLine (fencer));
+    {
+      guint          teammate_rank  = pool_data->GetTeammateRank (fencer, depth);
+      CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[depth],
+                                                                             (const void *) fencer->_criteria_quarks[depth]);
+
+      return (teammate_rank < criteria_value->GetErrorLine (fencer));
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -54,7 +54,7 @@ namespace SmartSwapper
 
       void Iterate ();
 
-      void ExtractFloatings ();
+      void ExtractMovables ();
 
       void DispatchErrors ();
 
@@ -80,7 +80,6 @@ namespace SmartSwapper
                             GSList   *criteria_list);
 
       GHashTable *LookUpDistribution (GSList              *fencer_list,
-                                      guint                criteria_index,
                                       Player::AttributeId *criteria_id);
 
       void StoreSwapping ();
@@ -97,7 +96,8 @@ namespace SmartSwapper
       gboolean FencerIsMovable (Fencer *fencer);
 
       gboolean FencerCanGoTo (Fencer   *fencer,
-                              PoolData *pool_data);
+                              PoolData *pool_data,
+                              guint     depth);
       void DumpPools ();
 
     private:
