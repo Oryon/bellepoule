@@ -187,8 +187,8 @@ namespace SmartSwapper
           _moved++;
 
           fencer->_player->SetData (_owner,
-                                    "swap_error",
-                                    (void *) 1);
+                                    "swapped_from",
+                                    (void *) fencer->_original_pool->_id);
         }
 
         fencer->_player->SetData (_owner,
@@ -253,9 +253,8 @@ namespace SmartSwapper
                                    pool_data,
                                    _criteria_count);
 
-      player->SetData (_owner,
-                       "swap_error",
-                       0);
+      player->RemoveData (_owner,
+                          "swapped_from");
       player->SetData (_owner,
                        "no_swapping_pool",
                        (void *) pool_data->_id);
@@ -441,7 +440,7 @@ namespace SmartSwapper
 
   // --------------------------------------------------------------------------------
   void SmartSwapper::DispatchFencers (GList    *list,
-                                      gboolean  original_pool_first)
+                                      gboolean  favorite_pool_first)
   {
     if (list == NULL)
     {
@@ -454,13 +453,15 @@ namespace SmartSwapper
 
       fencer->Dump (_owner);
 
-      // Try original pool first
-      if (original_pool_first)
+      // Try favorite pool first
+      if (favorite_pool_first)
       {
+        PoolData *favorite_pool = fencer->_original_pool;
+
         for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
         {
           if (MoveFencerTo (fencer,
-                            fencer->_original_pool,
+                            favorite_pool,
                             _pool_profiles.GetSize (profile_type)))
           {
             goto next_fencer;
@@ -474,7 +475,7 @@ namespace SmartSwapper
         {
           PoolData *pool_data = GetPoolToTry (i);
 
-          if (   original_pool_first
+          if (   favorite_pool_first
               || pool_data->HasErrorsFor (_criteria_depth,                                      // Forget pools where over population
                                           fencer->_criteria_quarks[_criteria_depth]) == FALSE)  // errors have been detected the given criteria
           {

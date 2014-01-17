@@ -61,7 +61,7 @@ namespace SmartSwapper
       void DispatchFloatings ();
 
       void DispatchFencers (GList    *list,
-                            gboolean  original_pool_first);
+                            gboolean  favorite_pool_first);
 
       gboolean MoveFencerTo (Fencer   *fencer,
                              PoolData *pool_data,

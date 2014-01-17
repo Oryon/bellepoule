@@ -1297,14 +1297,26 @@ namespace Pool
                                        GTK_STOCK_REFRESH,
                                        indice+1, 0);
         }
-#ifdef DEBUG
-        if (player->GetUIntData (this, "swap_error"))
+//#ifdef DEBUG
         {
-          Canvas::PutStockIconInTable (table,
-                                       GTK_STOCK_MEDIA_STOP,
-                                       indice+1, 1);
+          guint swapped_from = player->GetUIntData (this, "swapped_from");
+
+          if (swapped_from)
+          {
+            GooCanvasItem *item;
+            gchar         *swapped_from_text = g_strdup_printf ("%02d", swapped_from);
+
+            item = Canvas::PutTextInTable (table,
+                                           swapped_from_text,
+                                           indice+1, 1);
+            g_object_set (G_OBJECT (item),
+                          "font", "Sans Bold Italic 14px",
+                          "fill_color", "red",
+                          NULL);
+            g_free (swapped_from_text);
+          }
         }
-#endif
+//#endif
       }
 
       for (guint i = 0; layout_list != NULL; i++)
