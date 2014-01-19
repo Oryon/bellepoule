@@ -19,8 +19,9 @@
 
 #include "attribute.hpp"
 
-GSList                      *AttributeDesc::_list          = NULL;
-AttributeDesc::CriteriaFunc  AttributeDesc::_criteria_func = NULL;
+GSList                      *AttributeDesc::_list           = NULL;
+GSList                      *AttributeDesc::_swappable_list = NULL;
+AttributeDesc::CriteriaFunc  AttributeDesc::_criteria_func  = NULL;
 
 // --------------------------------------------------------------------------------
 AttributeDesc::AttributeDesc (GType        type,
@@ -115,6 +116,19 @@ void AttributeDesc::Cleanup ()
   g_slist_free (_list);
 
   _list = NULL;
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::AddSwappable (AttributeDesc *desc)
+{
+  _swappable_list = g_slist_append (_swappable_list,
+                                    desc);
+}
+
+// --------------------------------------------------------------------------------
+GSList *AttributeDesc::GetSwappableList ()
+{
+  return _swappable_list;
 }
 
 // --------------------------------------------------------------------------------

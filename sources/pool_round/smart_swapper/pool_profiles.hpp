@@ -14,20 +14,41 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef criteria_profile_hpp
-#define criteria_profile_hpp
+#ifndef smart_profiles_hpp
+#define smart_profiles_hpp
 
-#include <glib-2.0/glib.h>
+#include "util/object.hpp"
 
 namespace SmartSwapper
 {
-  class CriteriaProfile
+  class PoolProfiles
   {
     public:
-      guint _count;
+      void Configure (guint nb_fencer,
+                      guint nb_pool);
 
-      guint _max_criteria_occurrence;
-      guint _max_floating_fencers;
+      void ChangeFencerCount (guint old_count,
+                              guint new_count);
+
+      guint GetSize (guint type);
+
+      gboolean Exists (guint type);
+
+    private:
+      typedef enum
+      {
+        SMALL,
+        BIG,
+
+        PROFILE_TYPE_LEN
+      } ProfileType;
+
+      guint _small_size;
+      guint _big_size;
+      guint _max_big_count;
+      guint _big_count;
+
+      guint _sizes[PROFILE_TYPE_LEN-1];
   };
 }
 

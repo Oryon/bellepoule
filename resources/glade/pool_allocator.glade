@@ -100,7 +100,7 @@
           <object class="GtkHBox" id="hbox4">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="spacing">30</property>
+            <property name="spacing">10</property>
             <child>
               <object class="GtkHBox" id="hbox5">
                 <property name="visible">True</property>
@@ -240,17 +240,23 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkHBox" id="swapping_criteria_hbox">
+                  <object class="GtkViewport" id="viewport1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
+                      <object class="GtkHBox" id="swapping_criteria_hbox">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
                     </child>
                   </object>
                   <packing>

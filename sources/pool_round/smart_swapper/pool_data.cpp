@@ -20,14 +20,15 @@
 namespace SmartSwapper
 {
   // --------------------------------------------------------------------------------
-  PoolData::PoolData (Pool::Pool *pool,
-                      guint       id,
-                      PoolSizes  *sizes,
-                      guint       criteria_count)
+  PoolData::PoolData (Pool::Pool    *pool,
+                      guint          id,
+                      PoolProfiles  *profiles,
+                      guint          criteria_count)
+    : Object ("SmartSwapper::PoolData")
   {
     _pool           = pool;
     _id             = id;
-    _pool_sizes     = sizes;
+    _pool_profiles  = profiles;
     _criteria_count = criteria_count;
 
     {
@@ -36,13 +37,13 @@ namespace SmartSwapper
     }
 
     {
-      _criteria_scores          = g_new (GHashTable *, criteria_count);
-      _original_criteria_scores = g_new (GHashTable *, criteria_count);
+      _criteria_scores = g_new (GHashTable *, criteria_count);
+      _criteria_errors = g_new (GHashTable *, criteria_count);
 
       for (guint i = 0; i < criteria_count; i++)
       {
-        _criteria_scores[i]          = g_hash_table_new (NULL, NULL);
-        _original_criteria_scores[i] = g_hash_table_new (NULL, NULL);
+        _criteria_scores[i] = g_hash_table_new (NULL, NULL);
+        _criteria_errors[i] = g_hash_table_new (NULL, NULL);
       }
     }
   }
@@ -51,16 +52,9 @@ namespace SmartSwapper
   PoolData::~PoolData ()
   {
     {
-      GList *current = _fencer_list;
-
-      while (current)
-      {
-        Fencer *fencer = (Fencer *) current->data;
-
-        delete (fencer);
-        current = g_list_next (current);
-      }
-
+      g_list_foreach (_fencer_list,
+                      (GFunc) Object::TryToRelease,
+                      NULL);
       g_list_free (_fencer_list);
     }
 
@@ -68,11 +62,11 @@ namespace SmartSwapper
       for (guint i = 0; i < _criteria_count; i++)
       {
         g_hash_table_destroy (_criteria_scores[i]);
-        g_hash_table_destroy (_original_criteria_scores[i]);
+        g_hash_table_destroy (_criteria_errors[i]);
       }
 
       g_free (_criteria_scores);
-      g_free (_original_criteria_scores);
+      g_free (_criteria_errors);
     }
   }
 
@@ -83,7 +77,7 @@ namespace SmartSwapper
 
     _fencer_list = g_list_append (_fencer_list,
                                   fencer);
-    _pool_sizes->NewSize (_size, _size+1);
+    _pool_profiles->ChangeFencerCount (_size, _size+1);
     _size++;
 
     for (guint i = 0; i < _criteria_count; i++)
@@ -101,7 +95,7 @@ namespace SmartSwapper
 
     _fencer_list = g_list_remove (_fencer_list,
                                   fencer);
-    _pool_sizes->NewSize (_size, _size-1);
+    _pool_profiles->ChangeFencerCount (_size, _size-1);
     _size--;
 
     for (guint i = 0; i < _criteria_count; i++)
@@ -110,6 +104,55 @@ namespace SmartSwapper
                            _criteria_scores[i],
                            -1);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PoolData::SetError (guint  criteria_depth,
+                           GQuark criteria_quark)
+  {
+    g_hash_table_insert (_criteria_errors[criteria_depth],
+                         (void *) criteria_quark,
+                         (void *) 1);
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean PoolData::HasErrorsFor (guint  criteria_depth,
+                                   GQuark criteria_quark)
+  {
+    return GPOINTER_TO_UINT (g_hash_table_lookup (_criteria_errors[criteria_depth],
+                                                  (const void *) criteria_quark));
+  }
+
+  // --------------------------------------------------------------------------------
+  guint PoolData::GetTeammateRank (Fencer *fencer,
+                                   guint   criteria_depth)
+  {
+    guint  rank    = 1;
+    GList *current = _fencer_list;
+
+    while (current)
+    {
+      Fencer *teammate = (Fencer *) current->data;
+
+      if (teammate == fencer)
+      {
+        return rank;
+      }
+
+      if (teammate->_criteria_quarks[criteria_depth] == fencer->_criteria_quarks[criteria_depth])
+      {
+        if (fencer->_rank < teammate->_rank)
+        {
+          return rank;
+        }
+
+        rank++;
+      }
+
+      current = g_list_next (current);
+    }
+
+    return rank;
   }
 
   // --------------------------------------------------------------------------------

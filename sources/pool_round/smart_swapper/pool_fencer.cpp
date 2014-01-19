@@ -19,24 +19,35 @@
 #include "pool_round/pool.hpp"
 #include "pool_round/pool_zone.hpp"
 
-#include "criteria_profile.hpp"
 #include "pool_data.hpp"
 #include "pool_fencer.hpp"
 
 namespace SmartSwapper
 {
+#define DEBUG_SWAPPING
+
+#ifdef DEBUG_SWAPPING
+#define PRINT(...)\
+  {\
+    g_print (__VA_ARGS__);\
+    g_print ("\n");\
+  }
+#else
+#define PRINT(...)
+#endif
+
   // --------------------------------------------------------------------------------
   Fencer::Fencer (Player   *player,
                   guint     rank,
                   PoolData *original_pool,
                   guint     criteria_count)
+    : Object ("SmartSwapper::Fencer")
   {
-    _over_population_error = FALSE;
-    _new_pool              = NULL;
-    _player                = player;
-    _rank                  = rank;
-    _original_pool         = original_pool;
-    _criteria_quarks       = g_new0 (GQuark, criteria_count);
+    _new_pool        = NULL;
+    _player          = player;
+    _rank            = rank;
+    _original_pool   = original_pool;
+    _criteria_quarks = g_new0 (GQuark, criteria_count);
   }
 
   // --------------------------------------------------------------------------------
@@ -48,42 +59,6 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void Fencer::Dump (Object *owner)
   {
-    printf ("        %s\n", _player->GetName ());
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Fencer::Movable (guint  criteria_index,
-                            GQuark previous_criteria_quark)
-  {
-    return ((criteria_index == 0) || (previous_criteria_quark == _criteria_quarks[criteria_index-1]));
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Fencer::CanGoTo (PoolData   *pool_data,
-                            guint       criteria_index,
-                            GHashTable *criteria_distribution)
-  {
-    CriteriaProfile *criteria_data = (CriteriaProfile *) g_hash_table_lookup (criteria_distribution,
-                                                                              (const void *) _criteria_quarks[criteria_index]);
-
-    if (criteria_data == NULL)
-    {
-      return TRUE;
-    }
-
-    {
-      guint score = GPOINTER_TO_UINT (g_hash_table_lookup (pool_data->_criteria_scores[criteria_index],
-                                                           (const void *) _criteria_quarks[criteria_index]));
-
-      if (score && _over_population_error)
-      {
-        if (criteria_data->_max_floating_fencers)
-        {
-          return score < criteria_data->_max_criteria_occurrence - 1;
-        }
-      }
-
-      return score < criteria_data->_max_criteria_occurrence;
-    }
+    PRINT ("        %s", _player->GetName ());
   }
 }

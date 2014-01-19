@@ -21,9 +21,9 @@
 #include "common/player.hpp"
 #include "pool_round/swapper.hpp"
 
-#include "criteria_profile.hpp"
+#include "criteria_value.hpp"
 #include "pool_fencer.hpp"
-#include "pool_sizes.hpp"
+#include "pool_profiles.hpp"
 #include "pool_data.hpp"
 
 namespace SmartSwapper
@@ -43,8 +43,6 @@ namespace SmartSwapper
 
       guint HasErrors ();
 
-      guint GetOverCount ();
-
       guint GetMoved ();
 
     private:
@@ -56,29 +54,18 @@ namespace SmartSwapper
 
       void Iterate ();
 
-      void ExtractOverPopulationErrors ();
-
-      void FindLackOfPopulationErrors ();
-
-      void ExtractFloatings ();
-
-      Fencer *ExtractFencer (PoolData  *from_pool,
-                             GQuark     with_criteria,
-                             GList    **to_list);
+      void ExtractMovables ();
 
       void DispatchErrors ();
 
       void DispatchFloatings ();
 
-      void DispatchFencers (GList *list);
+      void DispatchFencers (GList    *list,
+                            gboolean  favorite_pool_first);
 
       gboolean MoveFencerTo (Fencer   *fencer,
                              PoolData *pool_data,
                              guint     max_pool_size);
-
-      static void SetExpectedData (GQuark           quark,
-                                   CriteriaProfile *criteria_data,
-                                   SmartSwapper    *swapper);
 
       void InsertCriteria (Player              *player,
                            GHashTable          *criteria_distribution,
@@ -93,7 +80,6 @@ namespace SmartSwapper
                             GSList   *criteria_list);
 
       GHashTable *LookUpDistribution (GSList              *fencer_list,
-                                      guint                criteria_index,
                                       Player::AttributeId *criteria_id);
 
       void StoreSwapping ();
@@ -103,27 +89,33 @@ namespace SmartSwapper
 
       PoolData *GetPoolToTry (guint index);
 
+      void ChangeFirstPoolTotry ();
+
+      void Clean ();
+
+      gboolean FencerIsMovable (Fencer *fencer);
+
+      gboolean FencerCanGoTo (Fencer   *fencer,
+                              PoolData *pool_data,
+                              guint     depth);
       void DumpPools ();
 
     private:
-      Object      *_owner;
-      GSList      *_zones;
-      guint        _nb_pools;
-      PoolData   **_pool_table;
-      PoolSizes    _pool_sizes;
-      GHashTable **_distributions;
-      GList       *_error_list;
-      GList       *_floating_list;
-      GHashTable  *_lack_table;
-      GSList      *_remaining_errors;
-      guint        _first_pool_to_try;
-      gboolean     _has_errors;
-      guint        _over_count;
-      guint        _moved;
-      guint        _criteria_count;
+      Object        *_owner;
+      GSList        *_zones;
+      guint          _nb_pools;
+      PoolData     **_pool_table;
+      PoolProfiles   _pool_profiles;
+      GHashTable   **_distributions;
+      GList         *_error_list;
+      GList         *_floating_list;
+      GSList        *_remaining_errors;
+      guint          _first_pool_to_try;
+      guint          _moved;
+      guint          _criteria_count;
 
-      guint       _current_criteria_index;
-      GQuark      _previous_criteria_quark;
+      guint  _criteria_depth;
+      GQuark _previous_criteria_quark;
   };
 }
 

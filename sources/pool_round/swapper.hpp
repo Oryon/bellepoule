@@ -32,8 +32,6 @@ namespace Pool
 
       virtual guint HasErrors () = 0;
 
-      virtual guint GetOverCount () = 0;
-
       virtual guint GetMoved () = 0;
 
     protected:

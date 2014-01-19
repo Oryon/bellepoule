@@ -20,28 +20,26 @@
 #include "util/object.hpp"
 #include "pool_round/pool.hpp"
 
-#include "pool_sizes.hpp"
+#include "pool_profiles.hpp"
 
 namespace SmartSwapper
 {
   class Fencer;
 
-  class PoolData
+  class PoolData : public Object
   {
     public:
       Pool::Pool  *_pool;
-      guint        _criteria_count;
       GHashTable **_criteria_scores;
-      GHashTable **_original_criteria_scores;
       GList       *_fencer_list;
-      guint        _size;
       guint        _id;
-      PoolSizes   *_pool_sizes;
+      guint        _size;
 
-      PoolData (Pool::Pool *pool,
-                guint       id,
-                PoolSizes  *sizes,
-                guint       criteria_count);
+    public:
+      PoolData (Pool::Pool   *pool,
+                guint         id,
+                PoolProfiles *profiles,
+                guint         criteria_count);
 
       ~PoolData ();
 
@@ -49,7 +47,20 @@ namespace SmartSwapper
 
       void RemoveFencer (Fencer *fencer);
 
+      void SetError (guint  criteria_depth,
+                     GQuark criteria_quark);
+
+      gboolean HasErrorsFor (guint  criteria_depth,
+                             GQuark criteria_quark);
+
+      guint GetTeammateRank (Fencer *fencer,
+                             guint   criteria_depth);
+
     private:
+      guint          _criteria_count;
+      GHashTable   **_criteria_errors;
+      PoolProfiles  *_pool_profiles;
+
       void ChangeCriteriaScore (GQuark      criteria,
                                 GHashTable *criteria_score,
                                 gint        delta_score);

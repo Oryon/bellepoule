@@ -24,7 +24,7 @@ namespace SmartSwapper
 {
   class PoolData;
 
-  class Fencer
+  class Fencer : public Object
   {
     public:
       Player   *_player;
@@ -32,7 +32,6 @@ namespace SmartSwapper
       PoolData *_original_pool;
       PoolData *_new_pool;
       guint     _rank;
-      gboolean  _over_population_error;
 
       Fencer (Player   *player,
               guint     rank,
@@ -42,13 +41,6 @@ namespace SmartSwapper
       ~Fencer ();
 
       void Dump (Object *owner);
-
-      gboolean Movable (guint  criteria_index,
-                        GQuark previous_criteria_quark);
-
-      gboolean CanGoTo (PoolData   *pool_data,
-                        guint       criteria_index,
-                        GHashTable *criteria_distribution);
   };
 }
 

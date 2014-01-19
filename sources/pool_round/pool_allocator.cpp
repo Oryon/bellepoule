@@ -122,7 +122,7 @@ namespace Pool
 
     {
       GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
-      GSList       *attr          = _filter->GetAttrList ();
+      GSList       *attr          = AttributeDesc::GetSwappableList ();
 
       while (attr)
       {
@@ -379,11 +379,15 @@ namespace Pool
   {
     if (_main_table && (Locked () == FALSE))
     {
+      SetCursor (GDK_WATCH);
+
       DeletePools ();
       CreatePools ();
       Display ();
       SignalStatusUpdate ();
       MakeDirty ();
+
+      ResetCursor ();
     }
   }
 
@@ -557,7 +561,7 @@ namespace Pool
 
                 attr_desc = (AttributeDesc *) g_object_get_data (G_OBJECT (togglebutton), "criteria_attribute");
 
-                if (strstr (_swapping->GetString (), attr_desc->_code_name))
+                if (strcmp (tokens[i], attr_desc->_code_name) == 0)
                 {
                   _swapping_criteria_list = g_slist_append (_swapping_criteria_list,
                                                             attr_desc);
@@ -967,9 +971,8 @@ namespace Pool
         }
 
         {
-          gchar *figures = g_strdup_printf ("Errors: %d\n"
-                                            "Moved : %d",
-                                            _swapper->GetOverCount (), _swapper->GetMoved ());
+          gchar *figures = g_strdup_printf ("Moved : %d",
+                                            _swapper->GetMoved ());
 
           gtk_widget_set_tooltip_text (swapping_hbox,
                                        figures);
@@ -1294,12 +1297,26 @@ namespace Pool
                                        GTK_STOCK_REFRESH,
                                        indice+1, 0);
         }
-        if (player->GetUIntData (this, "swap_error"))
+//#ifdef DEBUG
         {
-          Canvas::PutStockIconInTable (table,
-                                       GTK_STOCK_DIALOG_WARNING,
-                                       indice+1, 1);
+          guint swapped_from = player->GetUIntData (this, "swapped_from");
+
+          if (swapped_from)
+          {
+            GooCanvasItem *item;
+            gchar         *swapped_from_text = g_strdup_printf ("%02d", swapped_from);
+
+            item = Canvas::PutTextInTable (table,
+                                           swapped_from_text,
+                                           indice+1, 1);
+            g_object_set (G_OBJECT (item),
+                          "font", "Sans Bold Italic 14px",
+                          "fill_color", "red",
+                          NULL);
+            g_free (swapped_from_text);
+          }
         }
+//#endif
       }
 
       for (guint i = 0; layout_list != NULL; i++)
@@ -1465,20 +1482,29 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gchar *Allocator::GetError ()
   {
-    GSList *current = _drop_zones;
-
-    while (current)
+    if (_swapper->HasErrors ())
     {
-      Pool *pool = GetPoolOf (current);
-
-      if (pool->GetUIntData (this, "is_balanced") == 0)
-      {
-        return g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
-                                " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
-                                pool->GetName (), gettext ("Wrong fencers count!"));
-      }
-      current = g_slist_next (current);
+      return g_strdup_printf ("<span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
+                              gettext ("Swapping failed"));
     }
+    else
+    {
+      GSList *current = _drop_zones;
+
+      while (current)
+      {
+        Pool *pool = GetPoolOf (current);
+
+        if (pool->GetUIntData (this, "is_balanced") == 0)
+        {
+          return g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
+                                  " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
+                                  pool->GetName (), gettext ("Wrong fencers count!"));
+        }
+        current = g_slist_next (current);
+      }
+    }
+
     return NULL;
   }
 
