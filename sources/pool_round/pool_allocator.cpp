@@ -1311,7 +1311,7 @@ namespace Pool
                                            indice+1, 1);
             g_object_set (G_OBJECT (item),
                           "font", "Sans Bold Italic 14px",
-                          "fill_color", "red",
+                          "fill_color", "blue",
                           NULL);
             g_free (swapped_from_text);
           }

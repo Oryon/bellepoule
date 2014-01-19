@@ -48,7 +48,7 @@ namespace SmartSwapper
       guint _max_big_count;
       guint _big_count;
 
-      guint _sizes[PROFILE_TYPE_LEN-1];
+      guint _sizes[PROFILE_TYPE_LEN];
   };
 }
 
