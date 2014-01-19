@@ -1482,20 +1482,29 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gchar *Allocator::GetError ()
   {
-    GSList *current = _drop_zones;
-
-    while (current)
+    if (_swapper->HasErrors ())
     {
-      Pool *pool = GetPoolOf (current);
-
-      if (pool->GetUIntData (this, "is_balanced") == 0)
-      {
-        return g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
-                                " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
-                                pool->GetName (), gettext ("Wrong fencers count!"));
-      }
-      current = g_slist_next (current);
+      return g_strdup_printf ("<span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
+                              gettext ("Swapping failed"));
     }
+    else
+    {
+      GSList *current = _drop_zones;
+
+      while (current)
+      {
+        Pool *pool = GetPoolOf (current);
+
+        if (pool->GetUIntData (this, "is_balanced") == 0)
+        {
+          return g_strdup_printf (" <span foreground=\"black\" weight=\"800\">%s:</span> \n "
+                                  " <span foreground=\"black\" style=\"italic\" weight=\"400\">\"%s\" </span>",
+                                  pool->GetName (), gettext ("Wrong fencers count!"));
+        }
+        current = g_slist_next (current);
+      }
+    }
+
     return NULL;
   }
 

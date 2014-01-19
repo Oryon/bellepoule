@@ -111,7 +111,6 @@ namespace SmartSwapper
       GList         *_floating_list;
       GSList        *_remaining_errors;
       guint          _first_pool_to_try;
-      gboolean       _has_errors;
       guint          _moved;
       guint          _criteria_count;
 

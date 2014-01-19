@@ -24,11 +24,24 @@
 
 namespace SmartSwapper
 {
+#define DEBUG_SWAPPING
+
+#ifdef DEBUG_SWAPPING
+#define PRINT(...)\
+  {\
+    g_print (__VA_ARGS__);\
+    g_print ("\n");\
+  }
+#else
+#define PRINT(...)
+#endif
+
   // --------------------------------------------------------------------------------
   Fencer::Fencer (Player   *player,
                   guint     rank,
                   PoolData *original_pool,
                   guint     criteria_count)
+    : Object ("SmartSwapper::Fencer")
   {
     _new_pool        = NULL;
     _player          = player;
@@ -46,6 +59,6 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void Fencer::Dump (Object *owner)
   {
-    printf ("        %s\n", _player->GetName ());
+    PRINT ("        %s", _player->GetName ());
   }
 }

@@ -52,8 +52,6 @@ namespace SmartSwapper
 
     _nb_pools   = 0;
     _pool_table = NULL;
-
-    _has_errors = FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -71,6 +69,15 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void SmartSwapper::Clean ()
   {
+    {
+      g_slist_foreach (_remaining_errors,
+                       (GFunc) Object::TryToRelease,
+                       NULL);
+      g_slist_free (_remaining_errors);
+
+      _remaining_errors = NULL;
+    }
+
     for (guint i = 0; i < _criteria_count; i++)
     {
       g_hash_table_destroy (_distributions[i]);
@@ -227,7 +234,7 @@ namespace SmartSwapper
   {
     for (guint i = 0; i < _nb_pools; i++)
     {
-      delete (_pool_table[i]);
+      _pool_table[i]->Release ();
     }
 
     g_free (_pool_table);
@@ -492,14 +499,13 @@ namespace SmartSwapper
       // Moving failed
       _remaining_errors = g_slist_prepend (_remaining_errors,
                                            fencer);
-      PRINT (RED "  << %s >>\n" ESC, fencer->_player->GetName ());
+      printf (RED "  << %s >>\n" ESC, fencer->_player->GetName ());
+      DumpPools ();
 
 next_fencer:
       ChangeFirstPoolTotry ();
       list = g_list_next (list);
     }
-
-    // DumpPools ();
   }
 
   // --------------------------------------------------------------------------------
@@ -599,7 +605,7 @@ next_fencer:
   // --------------------------------------------------------------------------------
   guint SmartSwapper::HasErrors ()
   {
-    return _has_errors;
+    return (_remaining_errors != NULL);
   }
 
   // --------------------------------------------------------------------------------

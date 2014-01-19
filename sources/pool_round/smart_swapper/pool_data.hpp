@@ -26,7 +26,7 @@ namespace SmartSwapper
 {
   class Fencer;
 
-  class PoolData
+  class PoolData : public Object
   {
     public:
       Pool::Pool  *_pool;

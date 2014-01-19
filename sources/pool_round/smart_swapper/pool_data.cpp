@@ -24,6 +24,7 @@ namespace SmartSwapper
                       guint          id,
                       PoolProfiles  *profiles,
                       guint          criteria_count)
+    : Object ("SmartSwapper::PoolData")
   {
     _pool           = pool;
     _id             = id;
@@ -51,16 +52,9 @@ namespace SmartSwapper
   PoolData::~PoolData ()
   {
     {
-      GList *current = _fencer_list;
-
-      while (current)
-      {
-        Fencer *fencer = (Fencer *) current->data;
-
-        delete (fencer);
-        current = g_list_next (current);
-      }
-
+      g_list_foreach (_fencer_list,
+                      (GFunc) Object::TryToRelease,
+                      NULL);
       g_list_free (_fencer_list);
     }
 
@@ -142,11 +136,16 @@ namespace SmartSwapper
 
       if (teammate == fencer)
       {
-        break;
+        return rank;
       }
 
       if (teammate->_criteria_quarks[criteria_depth] == fencer->_criteria_quarks[criteria_depth])
       {
+        if (fencer->_rank < teammate->_rank)
+        {
+          return rank;
+        }
+
         rank++;
       }
 

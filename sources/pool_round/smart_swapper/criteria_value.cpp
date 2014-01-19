@@ -18,6 +18,18 @@
 
 namespace SmartSwapper
 {
+#define DEBUG_SWAPPING
+
+#ifdef DEBUG_SWAPPING
+#define PRINT(...)\
+  {\
+    g_print (__VA_ARGS__);\
+    g_print ("\n");\
+  }
+#else
+#define PRINT(...)
+#endif
+
   // --------------------------------------------------------------------------------
   CriteriaValue::CriteriaValue (Player::AttributeId *criteria_id,
                                 Object              *owner)
@@ -110,7 +122,7 @@ namespace SmartSwapper
       criteria_value->_max_count_per_pool++;
     }
 
-    printf ("%d x %20s >> %d (max) %d (floating)\n", criteria_value->_fencer_count, g_quark_to_string (quark),
-            criteria_value->_max_count_per_pool, criteria_value->_floating_count);
+    PRINT ("%d x %20s >> %d (max) %d (floating)", criteria_value->_fencer_count, g_quark_to_string (quark),
+           criteria_value->_max_count_per_pool, criteria_value->_floating_count);
   }
 }
