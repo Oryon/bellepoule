@@ -425,7 +425,6 @@ namespace SmartSwapper
   void SmartSwapper::DispatchErrors ()
   {
     PRINT (GREEN "\n\nDispatch ERRORS" ESC);
-
     DispatchFencers (_error_list,
                      FALSE);
 
@@ -437,9 +436,78 @@ namespace SmartSwapper
   void SmartSwapper::DispatchFloatings ()
   {
     PRINT (GREEN "\n\nDispatch FLOATINGS" ESC);
-
     DispatchFencers (_floating_list,
                      TRUE);
+
+    PRINT (GREEN "\n\nDispatch REMAINING" ESC);
+    {
+      GSList *failed_list = NULL;
+
+      // Remaining errors
+      {
+        GSList *current_error = _remaining_errors;
+
+        while (current_error)
+        {
+          Fencer *error            = (Fencer *) current_error->data;
+          GList  *current_floating = g_list_last (_floating_list);
+
+          while (current_floating)
+          {
+            Fencer *floating = (Fencer *) current_floating->data;
+
+            if (floating->_new_pool)
+            {
+              if (FencerCanGoTo (error,
+                                 floating->_new_pool,
+                                 _criteria_depth))
+              {
+                PoolData *new_pool = floating->_new_pool;
+
+                // Try this assignment
+                new_pool->AddFencer    (error);
+                new_pool->RemoveFencer (floating);
+
+                for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
+                {
+                  for (guint i = 0; i < _nb_pools; i++)
+                  {
+                    PoolData *pool_data = GetPoolToTry (i);
+
+                    if (MoveFencerTo (floating,
+                                      pool_data,
+                                      _pool_profiles.GetSize (profile_type)))
+                    {
+                      goto next_error;
+                    }
+                  }
+                }
+
+                // Failed! Restore the previous assignment
+                new_pool->RemoveFencer (error);
+                new_pool->AddFencer    (floating);
+              }
+            }
+
+            current_floating = g_list_previous (current_floating);
+          }
+
+          PRINT ("!!!!> %s", error->_player->GetName ());
+          failed_list = g_slist_prepend (failed_list,
+                                         error);
+
+next_error:
+          ChangeFirstPoolTotry ();
+          current_error = g_slist_next (current_error);
+        }
+      }
+
+      {
+        g_slist_free (_remaining_errors);
+        _remaining_errors = NULL;
+        _remaining_errors = failed_list;
+      }
+    }
 
     g_list_free (_floating_list);
     _floating_list = NULL;
