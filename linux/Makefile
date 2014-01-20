@@ -1,8 +1,8 @@
 EXEC    = bellepoule
 TARGET  = Release
 PACKAGE = /local/BellePoule
-VERSION = 3.6
-STEP    = ubuntu2
+VERSION = 4.0
+STEP    = ubuntu1
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
 
@@ -143,6 +143,7 @@ help:
 	@echo "make -s UBUNTU=precise V=1 package"
 	@echo "make -s UBUNTU=quantal V=1 package"
 	@echo "make -s UBUNTU=raring  V=1 package"
+	@echo "make -s UBUNTU=saucy   V=1 package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "debuild -us -uc"
 	@echo "debuild -S -sa -k<1234>"

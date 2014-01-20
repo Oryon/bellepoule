@@ -1667,9 +1667,14 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Pool *Allocator::GetPoolOf (GSList *drop_zone)
   {
-    PoolZone *zone = (PoolZone *) drop_zone->data;
+    if (drop_zone)
+    {
+      PoolZone *zone = (PoolZone *) drop_zone->data;
 
-    return zone->GetPool ();
+      return zone->GetPool ();
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
