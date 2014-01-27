@@ -14,34 +14,33 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pool_fencer_hpp
-#define pool_fencer_hpp
+#ifndef snake_hpp
+#define snake_hpp
 
 #include "util/object.hpp"
-#include "common/player.hpp"
 
 namespace SmartSwapper
 {
-  class PoolData;
-
-  class Fencer : public Object
+  class Snake : public Object
   {
     public:
-      Player   *_player;
-      GQuark   *_criteria_quarks;
-      PoolData *_original_pool;
-      PoolData *_new_pool;
-      guint     _rank;
+      Snake (guint length);
 
-      Fencer (Player   *player,
-              guint     rank,
-              PoolData *original_pool,
-              guint     criteria_count);
+      void Reset (guint position);
 
-      void Dump (Object *owner);
+      guint GetNextPosition ();
 
     private:
-      ~Fencer ();
+      guint _length;
+      guint _cursor_parity;
+      guint _odd_cursor;
+      guint _even_cursor;
+
+      ~Snake ();
+
+      guint GetNextEvenCursor ();
+
+      guint GetNextOddCursor ();
   };
 }
 
