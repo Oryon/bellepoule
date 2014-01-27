@@ -135,6 +135,12 @@ Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\
 Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
 Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
 
+Source: "C:\MinGW\share\locale\ja\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\ja\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\ja\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+Source: "C:\MinGW\share\locale\ja\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+
+
 ;Resources
 Source: "..\..\resources\glade\*.png"; DestDir: "{app}\share\BellePoule\resources\glade\"; Flags: ignoreversion
 Source: "..\..\resources\glade\*.jpg"; DestDir: "{app}\share\BellePoule\resources\glade\"; Flags: ignoreversion
@@ -287,6 +293,7 @@ end;
 
 [Run]
 ;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
+
 
 
 
