@@ -41,8 +41,6 @@ namespace SmartSwapper
                 PoolProfiles *profiles,
                 guint         criteria_count);
 
-      ~PoolData ();
-
       void AddFencer (Fencer *fencer);
 
       void RemoveFencer (Fencer *fencer);
@@ -60,6 +58,8 @@ namespace SmartSwapper
       guint          _criteria_count;
       GHashTable   **_criteria_errors;
       PoolProfiles  *_pool_profiles;
+
+      ~PoolData ();
 
       void ChangeCriteriaScore (GQuark      criteria,
                                 GHashTable *criteria_score,

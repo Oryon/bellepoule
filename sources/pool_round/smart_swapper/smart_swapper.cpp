@@ -52,6 +52,7 @@ namespace SmartSwapper
 
     _nb_pools   = 0;
     _pool_table = NULL;
+    _snake      = NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -84,6 +85,9 @@ namespace SmartSwapper
     }
 
     g_free (_distributions);
+
+    Object::TryToRelease (_snake);
+    _snake = NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -100,6 +104,8 @@ namespace SmartSwapper
 
     _zones    = zones;
     _nb_pools = g_slist_length (zones);
+
+    _snake = new Snake (_nb_pools);
 
     _pool_profiles.Configure (fencer_count,
                               _nb_pools);
@@ -225,8 +231,6 @@ namespace SmartSwapper
 
       zones = g_slist_next (zones);
     }
-
-    _first_pool_to_try = 0;
   }
 
   // --------------------------------------------------------------------------------
@@ -425,8 +429,7 @@ namespace SmartSwapper
   void SmartSwapper::DispatchErrors ()
   {
     PRINT (GREEN "\n\nDispatch ERRORS" ESC);
-    DispatchFencers (_error_list,
-                     FALSE);
+    DispatchFencers (_error_list);
 
     g_list_free (_error_list);
     _error_list = NULL;
@@ -436,8 +439,7 @@ namespace SmartSwapper
   void SmartSwapper::DispatchFloatings ()
   {
     PRINT (GREEN "\n\nDispatch FLOATINGS" ESC);
-    DispatchFencers (_floating_list,
-                     TRUE);
+    DispatchFencers (_floating_list);
 
     PRINT (GREEN "\n\nDispatch REMAINING" ESC);
     {
@@ -470,9 +472,11 @@ namespace SmartSwapper
 
                 for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
                 {
+                  _snake->Reset (floating->_original_pool->_id);
+
                   for (guint i = 0; i < _nb_pools; i++)
                   {
-                    PoolData *pool_data = GetPoolToTry (i);
+                    PoolData *pool_data = _pool_table[_snake->GetNextPosition () - 1];
 
                     if (MoveFencerTo (floating,
                                       pool_data,
@@ -497,7 +501,6 @@ namespace SmartSwapper
                                          error);
 
 next_error:
-          ChangeFirstPoolTotry ();
           current_error = g_slist_next (current_error);
         }
       }
@@ -514,8 +517,7 @@ next_error:
   }
 
   // --------------------------------------------------------------------------------
-  void SmartSwapper::DispatchFencers (GList    *list,
-                                      gboolean  favorite_pool_first)
+  void SmartSwapper::DispatchFencers (GList *list)
   {
     if (list == NULL)
     {
@@ -528,38 +530,19 @@ next_error:
 
       fencer->Dump (_owner);
 
-      // Try favorite pool first
-      if (favorite_pool_first)
+      for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
       {
-        PoolData *favorite_pool = fencer->_original_pool;
+        _snake->Reset (fencer->_original_pool->_id);
 
-        for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
+        for (guint i = 0; i < _nb_pools; i++)
         {
+          PoolData *pool_data = _pool_table[_snake->GetNextPosition () - 1];
+
           if (MoveFencerTo (fencer,
-                            favorite_pool,
+                            pool_data,
                             _pool_profiles.GetSize (profile_type)))
           {
             goto next_fencer;
-          }
-        }
-      }
-
-      for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
-      {
-        for (guint i = 0; i < _nb_pools; i++)
-        {
-          PoolData *pool_data = GetPoolToTry (i);
-
-          if (   favorite_pool_first
-              || pool_data->HasErrorsFor (_criteria_depth,                                      // Forget pools where over population
-                                          fencer->_criteria_quarks[_criteria_depth]) == FALSE)  // errors have been detected the given criteria
-          {
-            if (MoveFencerTo (fencer,
-                              pool_data,
-                              _pool_profiles.GetSize (profile_type)))
-            {
-              goto next_fencer;
-            }
           }
         }
       }
@@ -571,7 +554,6 @@ next_error:
       DumpPools ();
 
 next_fencer:
-      ChangeFirstPoolTotry ();
       list = g_list_next (list);
     }
   }
@@ -674,29 +656,6 @@ next_fencer:
   guint SmartSwapper::HasErrors ()
   {
     return (_remaining_errors != NULL);
-  }
-
-  // --------------------------------------------------------------------------------
-  PoolData *SmartSwapper::GetPoolToTry (guint index)
-  {
-    if (index + _first_pool_to_try < _nb_pools)
-    {
-      return _pool_table[index + _first_pool_to_try];
-    }
-    else
-    {
-      return _pool_table[index + _first_pool_to_try - _nb_pools];
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void SmartSwapper::ChangeFirstPoolTotry ()
-  {
-    _first_pool_to_try++;
-    if (_first_pool_to_try >= _nb_pools)
-    {
-      _first_pool_to_try = 0;
-    }
   }
 
   // --------------------------------------------------------------------------------

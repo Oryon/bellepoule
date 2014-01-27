@@ -25,6 +25,7 @@
 #include "pool_fencer.hpp"
 #include "pool_profiles.hpp"
 #include "pool_data.hpp"
+#include "snake.hpp"
 
 namespace SmartSwapper
 {
@@ -60,8 +61,7 @@ namespace SmartSwapper
 
       void DispatchFloatings ();
 
-      void DispatchFencers (GList    *list,
-                            gboolean  favorite_pool_first);
+      void DispatchFencers (GList *list);
 
       gboolean MoveFencerTo (Fencer   *fencer,
                              PoolData *pool_data,
@@ -87,10 +87,6 @@ namespace SmartSwapper
       static gint CompareFencerRank (Fencer *a,
                                      Fencer *b);
 
-      PoolData *GetPoolToTry (guint index);
-
-      void ChangeFirstPoolTotry ();
-
       void Clean ();
 
       gboolean FencerIsMovable (Fencer *fencer);
@@ -104,6 +100,7 @@ namespace SmartSwapper
       Object        *_owner;
       GSList        *_zones;
       guint          _nb_pools;
+      Snake         *_snake;
       PoolData     **_pool_table;
       PoolProfiles   _pool_profiles;
       GHashTable   **_distributions;

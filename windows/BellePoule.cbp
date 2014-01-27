@@ -175,6 +175,8 @@
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_data.hpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_fencer.cpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_fencer.hpp" />
+		<Unit filename="..\sources\pool_round\smart_swapper\snake.cpp" />
+		<Unit filename="..\sources\pool_round\smart_swapper\snake.hpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_profiles.cpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_profiles.hpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\smart_swapper.cpp" />
