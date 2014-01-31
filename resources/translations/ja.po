@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2013-04-23 15:21+0200\n"
-"PO-Revision-Date: 2014-01-28 05:32+0000\n"
-"Last-Translator: Farid ELKHALKI <felkhalki@lfitokyo.org>\n"
+"PO-Revision-Date: 2014-01-30 09:23+0000\n"
+"Last-Translator: brun <Unknown>\n"
 "Language-Team: Japanese <ja@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-01-29 05:29+0000\n"
+"X-Launchpad-Export-Date: 2014-01-31 05:57+0000\n"
 "X-Generator: Launchpad (build 16916)\n"
 
 msgid "Sabre"
@@ -36,7 +36,7 @@ msgid "Female"
 msgstr "女性"
 
 msgid "Mixed"
-msgstr ""
+msgstr "複合"
 
 msgid "U8"
 msgstr "U8"
@@ -57,7 +57,7 @@ msgid "U18"
 msgstr "U18"
 
 msgid "Senior"
-msgstr ""
+msgstr "大人"
 
 msgid "Veteran"
 msgstr "ベテラン"
@@ -72,7 +72,7 @@ msgid "All files"
 msgstr "すべてのファイル"
 
 msgid "ref"
-msgstr ""
+msgstr "参照"
 
 msgid "place"
 msgstr "場所"
@@ -105,7 +105,7 @@ msgid "smartphone"
 msgstr "スマートフォン"
 
 msgid "rate"
-msgstr ""
+msgstr "率"
 
 msgid "level"
 msgstr "レベル"
@@ -123,7 +123,7 @@ msgid "exported"
 msgstr "エクスポート"
 
 msgid "global status"
-msgstr ""
+msgstr "グローバルステータス"
 
 msgid "Qualified"
 msgstr "資格のある"
@@ -132,7 +132,7 @@ msgid "Not qualified"
 msgstr "資格がない"
 
 msgid "Withdrawal"
-msgstr ""
+msgstr "撤回"
 
 msgid "Excluded"
 msgstr "除外"
@@ -153,10 +153,10 @@ msgid "index"
 msgstr "インデックス"
 
 msgid "Hits scored"
-msgstr ""
+msgstr "打撃記録"
 
 msgid "Round start rank"
-msgstr ""
+msgstr "初めラウンドランク"
 
 msgid "availability"
 msgstr "可用性"
@@ -223,10 +223,10 @@ msgid "All the unsaved competions will be lost."
 msgstr "すべての保存されていない競技は失われます。"
 
 msgid "<b><big>What do you want to print?</big></b>"
-msgstr "b><big>何を印刷したいのですか？</big></b>"
+msgstr "<b><big>何を印刷したいのですか？</big></b>"
 
 msgid "Fencer list printing"
-msgstr "フェンサーリスト印刷"
+msgstr "フェンシング選手リスト印刷"
 
 msgid "Choose a fencer file to import..."
 msgstr "インポートするフェンシング選手ファイルを選択してください..."
@@ -241,7 +241,7 @@ msgid "List of registered"
 msgstr "登録のリスト"
 
 msgid "List of presents"
-msgstr ""
+msgstr "存在感のリスト"
 
 msgid "List of absents"
 msgstr "休むのリスト"
@@ -264,25 +264,25 @@ msgid ""
 msgstr "データ入力を早めるには、このボックスのチェックを外します。　対応するフィールドには、押されたTabキーでは無視されます。"
 
 msgid "General classification"
-msgstr ""
+msgstr "大別"
 
 msgid "Choose a target file..."
-msgstr ""
+msgstr "対象のファイルを選択してください..."
 
 msgid "All Excel files (.CSV)"
-msgstr ""
+msgstr "すべてのExcelファイル（。CSV）"
 
 msgid "All FFF files (.FFF)"
-msgstr ""
+msgstr "すべてFFFファイル（。FFF）"
 
 msgid "All PDF files (.PDF)"
-msgstr ""
+msgstr "すべてPDFファイル（。PDF）"
 
 msgid "Split"
-msgstr ""
+msgstr "分割"
 
 msgid "List of fencers to extract"
-msgstr ""
+msgstr "抽出するフェンシング選手のリスト"
 
 #, c-format
 msgid "Pool #%02d"
