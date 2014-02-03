@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2013-04-23 15:21+0200\n"
-"PO-Revision-Date: 2014-01-31 10:32+0000\n"
+"PO-Revision-Date: 2014-02-02 09:33+0000\n"
 "Last-Translator: brun <Unknown>\n"
 "Language-Team: Japanese <ja@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-02-01 06:26+0000\n"
+"X-Launchpad-Export-Date: 2014-02-03 05:23+0000\n"
 "X-Generator: Launchpad (build 16916)\n"
 
 msgid "Sabre"
@@ -144,7 +144,7 @@ msgid "status"
 msgstr "ステータス"
 
 msgid "pool #"
-msgstr "プール＃"
+msgstr "グループリーグ #"
 
 msgid "Vict./Bouts (‰)"
 msgstr "勝つ/試合 (‰)"
@@ -441,131 +441,134 @@ msgid "Gender"
 msgstr "性別"
 
 msgid "Category"
-msgstr ""
+msgstr "範疇"
 
 msgid "<b>Type</b>"
-msgstr ""
+msgstr "<b>種類</b>"
 
 msgid "Title"
-msgstr ""
+msgstr "タイトル"
 
 msgid "Organizer"
-msgstr ""
+msgstr "主催者"
 
 msgid "Web site"
-msgstr ""
+msgstr "ウェブサイト"
 
 msgid "Location"
-msgstr ""
+msgstr "場所"
 
 msgid "<b>Overviews</b>"
-msgstr ""
+msgstr "<b>概要</b>"
 
 msgid "Date"
-msgstr ""
+msgstr "年月日"
 
 msgid "Scratch"
-msgstr ""
+msgstr "スクラッチ"
 
 msgid "Start"
-msgstr ""
+msgstr "スタート"
 
 msgid "<b>Date / Time</b>"
-msgstr ""
+msgstr "<b>年月日 / 時間</b>"
 
 msgid "Allow"
-msgstr ""
+msgstr "許可する"
 
 msgid "Forbid"
-msgstr ""
+msgstr "禁止する"
 
 msgid ""
 "Automatic\n"
 "score\n"
 "stuffing"
 msgstr ""
+"自動\n"
+"得点\n"
+"充填"
 
 msgid "<b>Scores</b>"
-msgstr ""
+msgstr "<b>得点</b>"
 
 msgid "Event"
-msgstr ""
+msgstr "イベント"
 
 msgid "FTP server"
-msgstr ""
+msgstr "ftpサーバー"
 
 msgid "User"
-msgstr ""
+msgstr "ユーザー"
 
 msgid "Password"
-msgstr ""
+msgstr "パスワード"
 
 msgid "<b>Publisher URL</b>"
-msgstr ""
+msgstr "<b>発行元のURL</b>"
 
 msgid "Publication"
-msgstr ""
+msgstr "出版物"
 
 msgid "Save the current state of the competition."
-msgstr ""
+msgstr "競争の現在の状態を保存します。"
 
 msgid "To specify the features of the competition."
-msgstr ""
+msgstr "競争の特性を指定する"
 
 msgid ""
 "To configure the schedule of the competition in terms of pools, tables and "
 "other rounds."
-msgstr ""
+msgstr "グループリーグ、テーブルとラウンドの面で競争のスケジュールを構成するに。"
 
 msgid "Referees"
-msgstr ""
+msgstr "審判"
 
 msgid "Man"
-msgstr ""
+msgstr "男性"
 
 msgid "Add a fencer"
-msgstr ""
+msgstr "フェンシング選手の追加"
 
 msgid ""
 "Export the general classification to a .csv file that a spreadsheet like "
 "Excel or OpenOffice can open."
-msgstr ""
+msgstr "ExcelやOpenOfficeのようなスプレッドシートが開くことができますcsvファイルに一般的な分類をエクスポートします。"
 
 msgid "Export to CSV"
-msgstr ""
+msgstr "CSVにエクスポート"
 
 msgid "Export to FFF"
-msgstr ""
+msgstr "FFFにエクスポート"
 
 msgid "Export to PDF"
-msgstr ""
+msgstr "PDF にエクスポート"
 
 msgid "Mask or unmask some data type as well as define their display order."
-msgstr ""
+msgstr "データ·タイプを表示または非表示。その表示順序を定義します。"
 
 msgid "Print"
-msgstr ""
+msgstr "印刷"
 
 msgid "Number of pools"
-msgstr ""
+msgstr "グループリーグの数"
 
 msgid "Fencers / pools"
-msgstr ""
+msgstr "フェンシング選手 / グループリーグ"
 
 msgid "Swapping"
-msgstr ""
+msgstr "順列"
 
 msgid "Name"
-msgstr ""
+msgstr "氏名"
 
 msgid "Max score"
-msgstr ""
+msgstr "最大得点"
 
 msgid "Number"
-msgstr ""
+msgstr "号"
 
 msgid "Seeding"
-msgstr ""
+msgstr "シーディング"
 
 msgid "Balanced"
 msgstr ""
@@ -704,9 +707,12 @@ msgid ""
 "\n"
 "\n"
 msgstr ""
+"フェンシングのトーナメント管理ソフトウェア。\n"
+"\n"
+"\n"
 
 msgid "Broadcasted competitions"
-msgstr ""
+msgstr "放送された競技会"
 
 msgid "Server"
 msgstr "サーバ"
@@ -721,7 +727,7 @@ msgid "File"
 msgstr "ファイル"
 
 msgid "Recently opened"
-msgstr ""
+msgstr "最近オープンした"
 
 msgid "Watch"
 msgstr "見る"
@@ -730,28 +736,28 @@ msgid "Backup"
 msgstr "バックアップ"
 
 msgid "Backup files location..."
-msgstr ""
+msgstr "バックアップファイルの場所..."
 
 msgid "Activate"
-msgstr ""
+msgstr "有効にする"
 
 msgid "Deactivate"
-msgstr ""
+msgstr "非活性化する"
 
 msgid "Print meal tickets"
-msgstr ""
+msgstr "印刷チケットのお食事"
 
 msgid "Print payment book"
-msgstr ""
+msgstr "印刷納付書"
 
 msgid "New version!"
-msgstr ""
+msgstr "新バージョン！"
 
 msgid "Open an example..."
-msgstr ""
+msgstr "例えばを開ける。。。"
 
 msgid "User manual"
-msgstr ""
+msgstr "ユーザーマニュアル"
 
 msgid "Fencer file template (.csv)"
-msgstr ""
+msgstr "フェンシング選手テンプレートファイル（。CSV）"
