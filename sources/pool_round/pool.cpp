@@ -29,6 +29,8 @@
 
 namespace Pool
 {
+  gboolean Pool::_match_id_watermarked = TRUE;
+
   // --------------------------------------------------------------------------------
   Pool::Pool (Data        *max_score,
               guint        number,
@@ -174,6 +176,18 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Pool::SetWaterMarkingPolicy (gboolean enabled)
+  {
+    _match_id_watermarked = enabled;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Pool::WaterMarkingEnabled ()
+  {
+    return _match_id_watermarked;
+  }
+
+  // --------------------------------------------------------------------------------
   void Pool::SetStatusCbk (StatusCbk  cbk,
                            void      *data)
   {
@@ -303,7 +317,12 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Pool::CreateMatchs (GSList *affinity_criteria_list)
   {
-    AttributeDesc *affinity_criteria = (AttributeDesc *) affinity_criteria_list->data;
+    AttributeDesc *affinity_criteria = NULL;
+
+    if (affinity_criteria_list)
+    {
+      affinity_criteria = (AttributeDesc *) affinity_criteria_list->data;
+    }
 
     SortPlayers ();
 
@@ -612,9 +631,18 @@ namespace Pool
                                                     NULL);
                   if (print_for_referees)
                   {
-                    g_object_set (score_text,
-                                  "fill-color", "Grey",
-                                  NULL);
+                    if (_match_id_watermarked)
+                    {
+                      g_object_set (score_text,
+                                    "fill-color", "Grey",
+                                    NULL);
+                    }
+                    else
+                    {
+                      g_object_set (score_text,
+                                    "fill-color", "White",
+                                    NULL);
+                    }
                   }
                   g_free (score_image);
                 }
