@@ -588,6 +588,9 @@ msgstr ""
 msgid "Content designed for the referees."
 msgstr ""
 
+msgid "Matches watermarked"
+msgstr ""
+
 msgid "For the bulletin board"
 msgstr ""
 

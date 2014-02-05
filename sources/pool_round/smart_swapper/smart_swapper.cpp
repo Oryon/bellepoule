@@ -644,11 +644,35 @@ next_fencer:
     }
 
     {
-      guint          teammate_rank  = pool_data->GetTeammateRank (fencer, depth);
+      gboolean       result         = TRUE;
       CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[depth],
                                                                              (const void *) fencer->_criteria_quarks[depth]);
 
-      return (teammate_rank < criteria_value->GetErrorLine (fencer));
+      pool_data->AddFencer (fencer);
+      {
+        GList *current = g_list_last (pool_data->_fencer_list);
+
+        while (current)
+        {
+          Fencer *current_fencer = (Fencer *) current->data;
+
+          if (current_fencer->_criteria_quarks[_criteria_depth] == fencer->_criteria_quarks[depth])
+          {
+            guint teammate_rank = pool_data->GetTeammateRank (current_fencer, _criteria_depth);
+
+            if (teammate_rank >= criteria_value->GetErrorLine (current_fencer))
+            {
+              result = FALSE;
+              break;
+            }
+          }
+
+          current = g_list_previous (current);
+        }
+      }
+      pool_data->RemoveFencer (fencer);
+
+      return result;
     }
   }
 
