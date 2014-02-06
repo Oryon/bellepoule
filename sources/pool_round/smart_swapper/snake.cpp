@@ -33,7 +33,7 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void Snake::Reset (guint position)
   {
-    _cursor_parity = 0;
+    _request_count = 0;
     _odd_cursor    = position;
     _even_cursor   = position;
   }
@@ -69,15 +69,22 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   guint Snake::GetNextPosition ()
   {
-    _cursor_parity++;
+    _request_count++;
 
-    if (_cursor_parity % 2)
+    if (_request_count == 1)
     {
-      return GetNextEvenCursor ();
+      return _odd_cursor;
     }
     else
     {
-      return GetNextOddCursor ();
+      if (_request_count % 2)
+      {
+        return GetNextEvenCursor ();
+      }
+      else
+      {
+        return GetNextOddCursor ();
+      }
     }
   }
 }

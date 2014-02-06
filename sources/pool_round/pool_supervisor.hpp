@@ -41,6 +41,8 @@ namespace Pool
 
       void OnStuffClicked ();
 
+      void OnForRefereesClicked (GtkToggleButton *toggle_button);
+
     private:
       void Display ();
       void Garnish ();
@@ -120,4 +122,3 @@ namespace Pool
 }
 
 #endif
-

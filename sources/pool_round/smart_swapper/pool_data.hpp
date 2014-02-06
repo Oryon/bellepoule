@@ -43,6 +43,8 @@ namespace SmartSwapper
 
       void AddFencer (Fencer *fencer);
 
+      void InsertFencer (Fencer *fencer);
+
       void RemoveFencer (Fencer *fencer);
 
       void SetError (guint  criteria_depth,

@@ -38,8 +38,6 @@ namespace SmartSwapper
               PoolData *original_pool,
               guint     criteria_count);
 
-      void Dump (Object *owner);
-
     private:
       ~Fencer ();
   };

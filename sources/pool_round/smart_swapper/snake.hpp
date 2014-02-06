@@ -32,7 +32,7 @@ namespace SmartSwapper
 
     private:
       guint _length;
-      guint _cursor_parity;
+      guint _request_count;
       guint _odd_cursor;
       guint _even_cursor;
 

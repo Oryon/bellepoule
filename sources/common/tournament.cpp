@@ -131,6 +131,8 @@ Tournament::Tournament (gchar *filename)
                                               "Jihwan Cho            (Korean)\n"
                                               "Marijn Somers         (Dutch)\n"
                                               "Werner Huysmans       (Dutch)\n"
+                                              "Farid Elkhalki        (Japanese)\n"
+                                              "Jean-François Brun    (Japanese)\n"
                                               "Alexis Pigeon         (Spanish)\n"
                                               "Paulo Morales         (Spanish)\n"
                                               "Ignacio Gil           (Spanish)\n"

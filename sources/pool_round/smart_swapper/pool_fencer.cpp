@@ -24,18 +24,6 @@
 
 namespace SmartSwapper
 {
-#define DEBUG_SWAPPING
-
-#ifdef DEBUG_SWAPPING
-#define PRINT(...)\
-  {\
-    g_print (__VA_ARGS__);\
-    g_print ("\n");\
-  }
-#else
-#define PRINT(...)
-#endif
-
   // --------------------------------------------------------------------------------
   Fencer::Fencer (Player   *player,
                   guint     rank,
@@ -54,11 +42,5 @@ namespace SmartSwapper
   Fencer::~Fencer ()
   {
     g_free (_criteria_quarks);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Fencer::Dump (Object *owner)
-  {
-    PRINT ("        %s", _player->GetName ());
   }
 }

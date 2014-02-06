@@ -495,6 +495,9 @@ namespace Pool
   {
     gchar *title = NULL;
 
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("watermark_checkbutton")),
+                                  Pool::WaterMarkingEnabled ());
+
     if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
     {
       Classification *classification = GetClassification ();
@@ -517,6 +520,8 @@ namespace Pool
       {
         _print_all_pool = FALSE;
       }
+
+      Pool::SetWaterMarkingPolicy (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("watermark_checkbutton"))));
 
       title = g_strdup_printf ("%s - %s", gettext ("Pools"), GetName ());
       Print (title);
@@ -844,6 +849,13 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Supervisor::OnForRefereesClicked (GtkToggleButton *toggle_button)
+  {
+    gtk_widget_set_sensitive (_glade->GetWidget ("watermark_checkbutton"),
+                              gtk_toggle_button_get_active (toggle_button));
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_pool_filter_toolbutton_clicked (GtkWidget *widget,
                                                                      Object    *owner)
   {
@@ -878,5 +890,14 @@ namespace Pool
     Supervisor *ps = dynamic_cast <Supervisor *> (owner);
 
     ps->OnStuffClicked ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_for_referees_radiobutton_clicked (GtkWidget *widget,
+                                                                       Object    *owner)
+  {
+    Supervisor *ps = dynamic_cast <Supervisor *> (owner);
+
+    ps->OnForRefereesClicked (GTK_TOGGLE_BUTTON (widget));
   }
 }
