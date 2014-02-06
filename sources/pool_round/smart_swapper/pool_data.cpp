@@ -77,6 +77,7 @@ namespace SmartSwapper
 
     _fencer_list = g_list_append (_fencer_list,
                                   fencer);
+
     _pool_profiles->ChangeFencerCount (_size, _size+1);
     _size++;
 
@@ -85,6 +86,21 @@ namespace SmartSwapper
       ChangeCriteriaScore (fencer->_criteria_quarks[i],
                            _criteria_scores[i],
                            1);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PoolData::InsertFencer (Fencer *fencer)
+  {
+    AddFencer (fencer);
+
+    {
+      Player::AttributeId attr_id ("stage_start_rank", _pool->GetDataOwner ());
+
+      _fencer_list = g_list_sort_with_data (_fencer_list,
+                                            (GCompareDataFunc) Player::Compare,
+                                            &attr_id);
+      _fencer_list = g_list_reverse (_fencer_list);
     }
   }
 

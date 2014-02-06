@@ -23,7 +23,7 @@
 
 namespace SmartSwapper
 {
-#define DEBUG_SWAPPING
+//#define DEBUG_SWAPPING
 
 #ifdef DEBUG_SWAPPING
 #define PRINT(...)\
@@ -288,7 +288,7 @@ namespace SmartSwapper
         criteria_list = g_slist_next (criteria_list);
       }
 
-      fencer->Dump (_owner);
+      PRINT ("        %s", fencer->_player->GetName ());
       fencer->_original_pool->AddFencer (fencer);
     }
   }
@@ -359,6 +359,8 @@ namespace SmartSwapper
   {
     PRINT (GREEN "\n\nExtraction" ESC);
 
+    DumpPools ();
+
     for (guint i = 0; i < _nb_pools; i++)
     {
       PoolData       *pool_data = _pool_table[i];
@@ -384,6 +386,7 @@ namespace SmartSwapper
           {
             Fencer *fencer = (Fencer *) current->data;
 
+            current = g_list_previous (current);
             if (   (fencer->_rank != pool_data->_id) // Prevent pool leaders from being moved
                 && FencerIsMovable (fencer)
                 && (fencer->_criteria_quarks[_criteria_depth] == quark))
@@ -392,7 +395,7 @@ namespace SmartSwapper
 
               if (criteria_value->CanFloat (fencer))
               {
-                PRINT (GREEN "  << FLOATING >>" ESC " %s\n", fencer->_player->GetName ());
+                PRINT (GREEN "  << FLOATING >>" ESC " %s", fencer->_player->GetName ());
                 _floating_list = g_list_prepend (_floating_list,
                                                  fencer);
 
@@ -400,7 +403,7 @@ namespace SmartSwapper
               }
               else if (teammate_rank >= criteria_value->GetErrorLine (fencer))
               {
-                PRINT (RED "  << ERROR >>" ESC " %s\n", fencer->_player->GetName ());
+                PRINT (RED "  << ERROR >>" ESC " %s", fencer->_player->GetName ());
                 _error_list = g_list_prepend (_error_list,
                                               fencer);
 
@@ -412,8 +415,6 @@ namespace SmartSwapper
                 break;
               }
             }
-
-            current = g_list_previous (current);
           }
         }
       }
@@ -429,6 +430,8 @@ namespace SmartSwapper
   void SmartSwapper::DispatchErrors ()
   {
     PRINT (GREEN "\n\nDispatch ERRORS" ESC);
+
+    DumpPools ();
     DispatchFencers (_error_list);
 
     g_list_free (_error_list);
@@ -467,7 +470,7 @@ namespace SmartSwapper
                 PoolData *new_pool = floating->_new_pool;
 
                 // Try this assignment
-                new_pool->AddFencer    (error);
+                new_pool->InsertFencer (error);
                 new_pool->RemoveFencer (floating);
 
                 for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
@@ -489,7 +492,7 @@ namespace SmartSwapper
 
                 // Failed! Restore the previous assignment
                 new_pool->RemoveFencer (error);
-                new_pool->AddFencer    (floating);
+                new_pool->InsertFencer (floating);
               }
             }
 
@@ -528,7 +531,7 @@ next_error:
     {
       Fencer *fencer = (Fencer *) list->data;
 
-      fencer->Dump (_owner);
+      PRINT ("        %s", fencer->_player->GetName ());
 
       for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
       {
@@ -563,7 +566,6 @@ next_fencer:
   {
 #ifdef DEBUG_SWAPPING
     PRINT (" ");
-    PRINT (" ");
     for (guint i = 0; i < _nb_pools; i++)
     {
       PoolData *pool_data = _pool_table[i];
@@ -574,10 +576,11 @@ next_fencer:
       {
         Fencer *fencer = (Fencer *) current->data;
 
-        fencer->Dump (_owner);
+        PRINT ("        %s", fencer->_player->GetName ());
         current = g_list_next (current);
       }
     }
+    PRINT (" ");
 #endif
   }
 
@@ -592,8 +595,8 @@ next_fencer:
                          pool_data,
                          _criteria_depth))
       {
-        pool_data->AddFencer (fencer);
-        PRINT ("          --> #%d (%d)", pool_data->_pool->GetNumber (), g_list_length (pool_data->_fencer_list));
+        pool_data->InsertFencer (fencer);
+        PRINT ("          --> #%d", pool_data->_pool->GetNumber ());
         return TRUE;
       }
     }
@@ -648,7 +651,6 @@ next_fencer:
       CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[depth],
                                                                              (const void *) fencer->_criteria_quarks[depth]);
 
-      pool_data->AddFencer (fencer);
       {
         GList *current = g_list_last (pool_data->_fencer_list);
 
@@ -656,21 +658,39 @@ next_fencer:
         {
           Fencer *current_fencer = (Fencer *) current->data;
 
-          if (current_fencer->_criteria_quarks[_criteria_depth] == fencer->_criteria_quarks[depth])
+          if (current_fencer->_criteria_quarks[depth] == fencer->_criteria_quarks[depth])
           {
-            guint teammate_rank = pool_data->GetTeammateRank (current_fencer, _criteria_depth);
+            guint teammate_rank = pool_data->GetTeammateRank (current_fencer, depth);
 
-            if (teammate_rank >= criteria_value->GetErrorLine (current_fencer))
+            PRINT (YELLOW "%d: " CYAN "[%s (" BLUE "%d " RED "%d" CYAN ") - %s (" RED "%d" CYAN ")]" ESC,
+                   depth,
+                   current_fencer->_player->GetName (),
+                   teammate_rank,
+                   criteria_value->GetErrorLine (current_fencer),
+                   fencer->_player->GetName (),
+                   criteria_value->GetErrorLine (fencer));
+
+            if (current_fencer->_rank > fencer->_rank)
             {
-              result = FALSE;
-              break;
+              if (teammate_rank+1 >= criteria_value->GetErrorLine (current_fencer))
+              {
+                result = FALSE;
+                break;
+              }
+            }
+            else
+            {
+              if (teammate_rank+1 >= criteria_value->GetErrorLine (fencer))
+              {
+                result = FALSE;
+                break;
+              }
             }
           }
 
           current = g_list_previous (current);
         }
       }
-      pool_data->RemoveFencer (fencer);
 
       return result;
     }
