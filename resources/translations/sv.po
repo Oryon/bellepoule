@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-01-27 05:27+0000\n"
-"X-Generator: Launchpad (build 16914)\n"
+"X-Launchpad-Export-Date: 2014-02-07 06:20+0000\n"
+"X-Generator: Launchpad (build 16916)\n"
 "Language: sv\n"
 
 msgid "Sabre"
@@ -599,6 +599,9 @@ msgstr "För domare och sekretariat"
 
 msgid "Content designed for the referees."
 msgstr "Innehåll utformat för domarna."
+
+msgid "Matches watermarked"
+msgstr ""
 
 msgid "For the bulletin board"
 msgstr "För anslagstavlan"
