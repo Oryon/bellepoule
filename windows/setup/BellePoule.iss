@@ -3,6 +3,8 @@
 
 #include "..\..\sources\common\version.h"
 
+#define MINGW "C:\MinGW"
+
 [Setup]
 AppName=BellePoule
 AppVerName=BellePoule version {#VERSION}.{#VERSION_REVISION}{#VERSION_MATURITY}
@@ -26,9 +28,8 @@ WizardSmallImageFile=BellePoule_small.bmp
 SetupIconFile=setup_logo.ico
 
 [Tasks]
-Name: desktopicon; Description: "Créer un icone sur le bureau"; GroupDescription: "Icônes de lancement :";
-Name: quicklaunchicon; Description: "Créer une icone de lancement rapide dans la barre des tâches"; GroupDescription: "Icones de lancement :";
-;Name: downloadsources; Description: "Récupérer le code source"; GroupDescription: "Code source :"; Flags: unchecked;
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\.cotcot"; ValueType: string; ValueName: ""; ValueData: "BellePoule"; Flags: uninsdeletekey noerror
@@ -44,8 +45,31 @@ Root: HKLM; Subkey: "Software\Classes\BellePoule\DefaultIcon"; ValueType: string
 Root: HKLM; Subkey: "Software\Classes\BellePoule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\BellePoule.bin"" ""%1"""; Flags: uninsdeletekey noerror
 
 [Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "catalan"; MessagesFile: "compiler:Languages\Catalan.isl"
+Name: "corsican"; MessagesFile: "compiler:Languages\Corsican.isl"
+Name: "czech"; MessagesFile: "compiler:Languages\Czech.isl"
+Name: "danish"; MessagesFile: "compiler:Languages\Danish.isl"
+Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "finnish"; MessagesFile: "compiler:Languages\Finnish.isl"
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
-;LicenseFile: "license-French.txt"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "greek"; MessagesFile: "compiler:Languages\Greek.isl"
+Name: "hebrew"; MessagesFile: "compiler:Languages\Hebrew.isl"
+Name: "hungarian"; MessagesFile: "compiler:Languages\Hungarian.isl"
+Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "nepali"; MessagesFile: "compiler:Languages\Nepali.islu"
+Name: "norwegian"; MessagesFile: "compiler:Languages\Norwegian.isl"
+Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "serbiancyrillic"; MessagesFile: "compiler:Languages\SerbianCyrillic.isl"
+Name: "serbianlatin"; MessagesFile: "compiler:Languages\SerbianLatin.isl"
+Name: "slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Icons]
 Name: "{userprograms}\BellePoule\BellePoule"; Filename: "{app}\bin\BellePoule.exe"; IconFilename: "{app}\bin\BellePoule.exe"
@@ -84,62 +108,64 @@ Source: "..\..\resources\translations\it\*"; DestDir: "{app}\share\BellePoule\re
 Source: "..\..\resources\translations\ko\*"; DestDir: "{app}\share\BellePoule\resources\translations\ko"; Flags: ignoreversion recursesubdirs
 Source: "..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\BellePoule\resources\translations\pt_br"; Flags: ignoreversion recursesubdirs
 Source: "..\..\resources\translations\sv\*"; DestDir: "{app}\share\BellePoule\resources\translations\sv"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\ja\*"; DestDir: "{app}\share\BellePoule\resources\translations\ja"; Flags: ignoreversion recursesubdirs
 
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\fr\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+#ifdef MINGW
+Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\nl\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\nl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\nl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\nl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\nl\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\nl\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\de\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\de\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\de\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\de\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\de\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\de\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\de\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\de\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\de\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\ru\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ru\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ru\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ru\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ru\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ru\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\ar\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ar\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ar\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ar\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ar\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ar\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\es\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\es\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\es\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\es\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\es\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\es\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\es\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\es\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\es\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\it\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\it\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\it\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\it\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\it\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\it\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\it\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\it\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\it\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\ko\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ko\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ko\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ko\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ko\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ko\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\pt\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\pt\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\pt\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\pt\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\pt\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\pt\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\sv\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\sv\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\sv\LC_MESSAGES"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\locale\ja\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ja\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ja\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
-Source: "C:\MinGW\share\locale\ja\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
-
+Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{app}\share\locale\ja\LC_MESSAGES"; Flags: ignoreversion
+#endif
 
 ;Resources
 Source: "..\..\resources\glade\*.png"; DestDir: "{app}\share\BellePoule\resources\glade\"; Flags: ignoreversion
@@ -152,104 +178,116 @@ Source: "..\..\resources\localized_data\*"; DestDir: "{app}\share\BellePoule\res
 
 ; GTK+ dependencies
 ; DLL
-Source: "C:\MinGW\bin\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\jpeg62.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libtiff3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-;Source: "C:\MinGW\bin\libpng14-14.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpng12.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpng12-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgio-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\intl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libatk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgdk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libglib-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgmodule-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgobject-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgthread-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpango-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpangoft2-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\iconv.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgoocanvas-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\freetype6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libcroco-0.6-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libfontconfig-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libfreetype-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgsf-1-114.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\librsvg-2-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+#ifdef MINGW
+Source: "{#MINGW}\bin\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\jpeg62.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libtiff3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+;Source: "{#MINGW}\bin\libpng14-14.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libpng12.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libpng12-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgio-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\intl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libatk-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgdk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libglib-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgmodule-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgobject-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgthread-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libpango-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libpangoft2-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\iconv.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgoocanvas-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\freetype6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libcroco-0.6-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libfontconfig-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libfreetype-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgsf-1-114.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\librsvg-2-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
-Source: "C:\MinGW\bin\libcurl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libssh2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libeay32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libidn-11.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\librtmp.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libssh2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libssl32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libxml2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libmicrohttpd-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgnutls-28.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgmp.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libintl-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libiconv-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\pthreadGC2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgcrypt-11.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libgpg-error-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "C:\MinGW\bin\libplibc-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libcurl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libssh2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libeay32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libidn-11.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\librtmp.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libssh2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libssl32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libxml2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libmicrohttpd-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgnutls-28.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgmp.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libintl-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libiconv-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\pthreadGC2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgcrypt-11.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgpg-error-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libplibc-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+#endif
 
 ; theme
-Source: "C:\MinGW\etc\gtk-2.0\gtkrc"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion
-Source: "C:\MinGW\share\themes\Aurora\gtk-2.0\gtkrc"; DestDir: "{app}\share\themes\Aurora\gtk-2.0"; Flags: ignoreversion
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libaurora.dll"; DestDir: "{app}\lib\gtk-2.0\2.10.0\engines\"; Flags: ignoreversion
+#ifdef MINGW
+Source: "{#MINGW}\etc\gtk-2.0\gtkrc"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion
+Source: "{#MINGW}\share\themes\Aurora\gtk-2.0\gtkrc"; DestDir: "{app}\share\themes\Aurora\gtk-2.0"; Flags: ignoreversion
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\engines\libaurora.dll"; DestDir: "{app}\lib\gtk-2.0\2.10.0\engines\"; Flags: ignoreversion
+#endif
 
 ; icons
-Source: "C:\MinGW\share\icons\hicolor\index.theme"; DestDir: "{app}\share\icons\hicolor\"; Flags: ignoreversion
+#ifdef MINGW
+Source: "{#MINGW}\share\icons\hicolor\index.theme"; DestDir: "{app}\share\icons\hicolor\"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\icons\hicolor\16x16\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\24x24\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\32x32\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\48x48\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\48x48\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\16x16\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\24x24\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\32x32\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\48x48\apps\gnome-devel.png"; DestDir: "{app}\share\icons\hicolor\48x48\apps\"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\icons\hicolor\16x16\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\24x24\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\32x32\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\16x16\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\24x24\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\32x32\apps\preferences-desktop-theme.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\icons\hicolor\16x16\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\24x24\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\32x32\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\16x16\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\16x16\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\24x24\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\24x24\apps\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\32x32\apps\preferences-desktop-locale.png"; DestDir: "{app}\share\icons\hicolor\32x32\apps\"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\icons\hicolor\16x16\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\16x16\mimetypes\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\24x24\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\24x24\mimetypes\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\32x32\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\32x32\mimetypes\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\16x16\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\16x16\mimetypes\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\24x24\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\24x24\mimetypes\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\32x32\mimetypes\x-office-spreadsheet.png"; DestDir: "{app}\share\icons\hicolor\32x32\mimetypes\"; Flags: ignoreversion
 
-Source: "C:\MinGW\share\icons\hicolor\16x16\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\16x16\status\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\24x24\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\24x24\status\"; Flags: ignoreversion
-Source: "C:\MinGW\share\icons\hicolor\32x32\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\32x32\status\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\16x16\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\16x16\status\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\24x24\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\24x24\status\"; Flags: ignoreversion
+Source: "{#MINGW}\share\icons\hicolor\32x32\status\software-update-available.png"; DestDir: "{app}\share\icons\hicolor\32x32\status\"; Flags: ignoreversion
+#endif
 
 ;
-Source: "C:\MinGW\etc\pango\pango.aliases"; Destdir: "{app}\etc\pango"
+#ifdef MINGW
+Source: "{#MINGW}\etc\pango\pango.aliases"; Destdir: "{app}\etc\pango"
+#endif
 
 ; loaders
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\loaders\*"; Destdir: "{app}\lib\gtk-2.0\2.10.0\loaders"
+#ifdef MINGW
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\loaders\*"; Destdir: "{app}\lib\gtk-2.0\2.10.0\loaders"
+#endif
 
 ; optional: let the user make the app look more Windows-like
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libwimp.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\engines"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\engines\libpixmap.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\engines"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-am-et.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-cedilla.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-cyrillic-translit.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ime.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-inuktitut.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ipa.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-multipress.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-thai.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-er.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-ti-et.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "C:\MinGW\lib\gtk-2.0\2.10.0\immodules\im-viqr.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+#ifdef MINGW
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\engines\libwimp.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\engines"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\engines\libpixmap.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\engines"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-am-et.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-cedilla.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-cyrillic-translit.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-ime.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-inuktitut.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-ipa.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-multipress.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-thai.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-ti-er.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-ti-et.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-viqr.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
+#endif
 
 [Code]
 //////////////////////////////////////////
@@ -290,11 +328,4 @@ begin
 
   SaveStringsToFile(file, lines, False);
 end;
-
-[Run]
-;Filename: "{app}\BellePoule.exe"; Description: "{cm:LaunchProgram,BellePoule}"; Flags: waituntilterminated postinstall skipifsilent
-
-
-
-
 
