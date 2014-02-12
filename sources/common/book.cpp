@@ -37,8 +37,8 @@ void Book::Prepare (GtkPrintOperation *operation,
                     GtkPrintContext   *context,
                     GList             *stage_list)
 {
-  _chapters = NULL;
-  _n_pages  = 0;
+  _chapters   = NULL;
+  _page_count = 0;
 
   GList *current = stage_list;
 
@@ -49,23 +49,24 @@ void Book::Prepare (GtkPrintOperation *operation,
 
     for (guint view = 1; view < Stage::N_STAGE_VIEW; view++)
     {
-      guint n;
+      guint module_page_count;
 
       g_object_set_data (G_OBJECT (operation),
                          "PRINT_STAGE_VIEW",  GUINT_TO_POINTER (view));
 
-      n = module->PreparePrint (operation,
-                                context);
-      if (n)
+      module_page_count = module->PreparePrint (operation,
+                                                context);
+      if (module_page_count)
       {
         Chapter *chapter = new Chapter (module,
+                                        stage->GetFullName (),
                                         (Stage::StageView) view,
-                                        _n_pages,
-                                        _n_pages + n-1);
+                                        _page_count,
+                                        module_page_count+1);
 
         _chapters = g_slist_append (_chapters,
                                     chapter);
-        _n_pages += n;
+        _page_count += module_page_count+1;
       }
     }
 
@@ -73,13 +74,13 @@ void Book::Prepare (GtkPrintOperation *operation,
   }
 
   gtk_print_operation_set_n_pages (operation,
-                                   _n_pages);
+                                   _page_count);
 }
 
 // --------------------------------------------------------------------------------
 void Book::Print (GtkPrintOperation *operation,
-                 GtkPrintContext   *context,
-                 gint               page_nr)
+                  GtkPrintContext   *context,
+                  gint               page_nr)
 {
   GSList *current = _chapters;
 
@@ -99,9 +100,17 @@ void Book::Print (GtkPrintOperation *operation,
                               "Print::PageName",
                               (void *) module->GetPrintName (),
                               g_free);
-      module->DrawPage (operation,
-                        context,
-                        page_nr-first_page);
+      if (page_nr == first_page)
+      {
+        chapter->DrawHeaderPage (operation,
+                                 context);
+      }
+      else
+      {
+        module->DrawPage (operation,
+                          context,
+                          page_nr - first_page-1);
+      }
       break;
     }
 
