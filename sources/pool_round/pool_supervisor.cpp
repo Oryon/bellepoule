@@ -493,18 +493,26 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Supervisor::OnPrintPoolToolbuttonClicked ()
   {
-    gchar *title = NULL;
+    gchar *title = g_strdup_printf ("%s - %s", gettext ("Pools"), GetName ());
 
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("watermark_checkbutton")),
                                   Pool::WaterMarkingEnabled ());
 
     if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))))
     {
-      Classification *classification = GetClassification ();
+      Classification *classification;
+
+      if (gtk_notebook_get_current_page (GTK_NOTEBOOK (_glade->GetWidget ("classification_hook"))))
+      {
+        classification = _current_round_classification;
+      }
+      else
+      {
+        classification = GetClassification ();
+      }
 
       if (classification)
       {
-        title = g_strdup_printf ("%s - %s", gettext ("Pools classification"), GetName ());
         classification->Print (title);
       }
     }
@@ -523,7 +531,6 @@ namespace Pool
 
       Pool::SetWaterMarkingPolicy (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("watermark_checkbutton"))));
 
-      title = g_strdup_printf ("%s - %s", gettext ("Pools"), GetName ());
       Print (title);
     }
     g_free (title);
@@ -542,6 +549,13 @@ namespace Pool
   {
     if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
     {
+      Classification *classification = GetClassification ();
+
+      if (classification)
+      {
+        return classification->PreparePrint (operation,
+                                             context);
+      }
       return 0;
     }
 
@@ -588,8 +602,19 @@ namespace Pool
                        context,
                        page_nr);
 
-    if (   (GetStageView (operation) == STAGE_VIEW_RESULT)
-        || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE))
+    if (GetStageView (operation) == STAGE_VIEW_CLASSIFICATION)
+    {
+      Classification *classification = GetClassification ();
+
+      if (classification)
+      {
+        classification->DrawBarePage (operation,
+                                      context,
+                                      page_nr);
+      }
+    }
+    else if (   (GetStageView (operation) == STAGE_VIEW_RESULT)
+             || (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("pool_classification_toggletoolbutton"))) == FALSE))
     {
       Pool *pool;
 

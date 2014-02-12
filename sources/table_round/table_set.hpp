@@ -80,11 +80,9 @@ namespace Table
                      GtkPrintContext   *context,
                      gint               page_nr);
 
-      void OnPreviewClicked ();
+      void DisplayPreview ();
 
       void OnPrinScaleChanged (gdouble value);
-
-      void OnPageSetupClicked (GtkButton *button);
 
       void Wipe ();
 

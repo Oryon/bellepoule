@@ -26,9 +26,10 @@ class Chapter : public Object
 {
   public:
     Chapter (Module           *module,
+             gchar            *name,
              Stage::StageView  stage_view,
              guint             first_page,
-             guint             last_page);
+             guint             page_count);
 
     Module *GetModule ();
 
@@ -38,8 +39,12 @@ class Chapter : public Object
 
     guint GetLastPage ();
 
+    void DrawHeaderPage (GtkPrintOperation *operation,
+                         GtkPrintContext   *context);
+
   private:
     Module           *_module;
+    gchar            *_name;
     guint             _first_page;
     guint             _last_page;
     Stage::StageView  _stage_view;

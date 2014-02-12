@@ -2,3 +2,8 @@ bin
 obj
 .cproject
 .project
+*.layout
+*.depend
+Debug
+Release
+windows/setup/Output

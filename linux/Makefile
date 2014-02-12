@@ -143,7 +143,6 @@ help:
 	@#echo "make -s UBUNTU=lucid   V=1 package"
 	@echo "make -s UBUNTU=precise V=1 package"
 	@echo "make -s UBUNTU=quantal V=1 package"
-	@echo "make -s UBUNTU=raring  V=1 package"
 	@echo "make -s UBUNTU=saucy   V=1 package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "debuild -us -uc"

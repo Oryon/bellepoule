@@ -36,7 +36,7 @@ class Book : public Object
                GtkPrintContext   *context);
 
   private:
-    guint   _n_pages;
+    guint   _page_count;
     GSList *_chapters;
 
     virtual ~Book ();
