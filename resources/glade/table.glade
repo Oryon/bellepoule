@@ -192,11 +192,11 @@
     </child>
   </object>
   <object class="GtkAdjustment" id="print_scale_adjustment">
-    <property name="lower">10</property>
-    <property name="upper">200</property>
+    <property name="lower">50</property>
+    <property name="upper">100</property>
     <property name="value">100</property>
     <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="page_increment">5</property>
   </object>
   <object class="GtkDialog" id="print_table_dialog">
     <property name="can_focus">False</property>
@@ -239,85 +239,14 @@
                 <property name="can_focus">False</property>
                 <property name="spacing">15</property>
                 <child>
-                  <object class="GtkVBox" id="vbox6">
+                  <object class="GtkRadioButton" id="table_radiobutton">
+                    <property name="label" translatable="yes">The table</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkRadioButton" id="table_radiobutton">
-                        <property name="label" translatable="yes">The table</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="use_action_appearance">False</property>
-                        <property name="active">True</property>
-                        <property name="draw_indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkAlignment" id="full_table_alignment">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="left_padding">35</property>
-                        <child>
-                          <object class="GtkVBox" id="full_table_vbox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <child>
-                              <object class="GtkButton" id="page_setup_button">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
-                                <signal name="clicked" handler="on_page_setup_button_clicked" swapped="no"/>
-                                <child>
-                                  <object class="GtkImage" id="page_setup_image">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="stock">gtk-orientation-portrait</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="preview_button">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
-                                <signal name="clicked" handler="on_preview_button_clicked" swapped="no"/>
-                                <child>
-                                  <object class="GtkImage" id="image2">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="stock">gtk-print-preview</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>

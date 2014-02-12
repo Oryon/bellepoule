@@ -2214,16 +2214,13 @@ namespace Table
   void TableSet::OnMatchSheetToggled (GtkWidget *widget)
   {
     GtkWidget *match_vbox = _glade->GetWidget ("match_sheet_vbox");
-    GtkWidget *table_vbox = _glade->GetWidget ("full_table_vbox");
 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
     {
-      gtk_widget_set_sensitive (table_vbox, FALSE);
       gtk_widget_set_sensitive (match_vbox, TRUE);
     }
     else
     {
-      gtk_widget_set_sensitive (table_vbox, TRUE);
       gtk_widget_set_sensitive (match_vbox, FALSE);
     }
   }
@@ -2665,7 +2662,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::OnPreviewClicked ()
+  void TableSet::DisplayPreview ()
   {
     GtkWidget *w = _glade->GetWidget ("table_radiobutton");
 
@@ -3300,8 +3297,7 @@ namespace Table
       {
         _print_session._full_table = TRUE;
 
-        Print (print_name,
-               _page_setup);
+        DisplayPreview ();
       }
       else
       {
@@ -3529,43 +3525,6 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::OnPageSetupClicked (GtkButton *toolbutton)
-  {
-    GtkPageSetup *new_page_setup;
-
-    new_page_setup = gtk_print_run_page_setup_dialog (GTK_WINDOW (_print_dialog),
-                                                      _page_setup,
-                                                      _page_setup_print_settings);
-    g_object_unref (_page_setup);
-    _page_setup = new_page_setup;
-
-    if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_LANDSCAPE)
-    {
-      gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
-                                GTK_STOCK_ORIENTATION_LANDSCAPE,
-                                GTK_ICON_SIZE_BUTTON);
-    }
-    else if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE)
-    {
-      gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
-                                GTK_STOCK_ORIENTATION_REVERSE_LANDSCAPE,
-                                GTK_ICON_SIZE_BUTTON);
-    }
-    else if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_PORTRAIT)
-    {
-      gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
-                                GTK_STOCK_ORIENTATION_PORTRAIT,
-                                GTK_ICON_SIZE_BUTTON);
-    }
-    else if (gtk_page_setup_get_orientation (_page_setup) == GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT)
-    {
-      gtk_image_set_from_stock (GTK_IMAGE (_glade->GetWidget ("page_setup_image")),
-                                GTK_STOCK_ORIENTATION_REVERSE_PORTRAIT,
-                                GTK_ICON_SIZE_BUTTON);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean TableSet::on_status_key_press_event (GtkWidget   *widget,
                                                 GdkEventKey *event,
                                                 gpointer     user_data)
@@ -3742,24 +3701,6 @@ namespace Table
     TableSet *t = dynamic_cast <TableSet *> (owner);
 
     t->OnSearchMatch ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_preview_button_clicked (GtkWidget *widget,
-                                                             Object    *owner)
-  {
-    TableSet *t = dynamic_cast <TableSet *> (owner);
-
-    t->OnPreviewClicked ();
-  }
-
-  // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_page_setup_button_clicked (GtkButton *button,
-                                                                Object    *owner)
-  {
-    TableSet *t = dynamic_cast <TableSet *> (owner);
-
-    t->OnPageSetupClicked (button);
   }
 
   // --------------------------------------------------------------------------------
