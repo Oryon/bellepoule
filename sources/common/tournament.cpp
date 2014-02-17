@@ -1777,11 +1777,11 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
                                         "maturity",
                                         NULL);
 
-      if (version && (strcmp (VERSION, version) < 0))
+      if (version && (atoi (VERSION) < atoi (version)))
       {
         new_version_detected = TRUE;
       }
-      else if (revision && (strcmp (VERSION_REVISION, revision) < 0))
+      else if (revision && (atoi (VERSION_REVISION) < atoi (revision)))
       {
         new_version_detected = TRUE;
       }
