@@ -287,7 +287,7 @@ Contest::Contest ()
   _scratch_time = new Time ("scratch");
   _start_time   = new Time ("start");
 
-  _gdk_color = NULL;
+  ChooseColor ();
 
   _properties_dialog = _glade->GetWidget ("properties_dialog");
 
@@ -1014,8 +1014,6 @@ Contest *Contest::Create ()
 {
   Contest *contest = new Contest ();
 
-  contest->ChooseColor ();
-
   contest->_schedule->SetScoreStuffingPolicy (FALSE);
 
   contest->FillInProperties ();
@@ -1059,10 +1057,15 @@ Contest *Contest::Duplicate ()
   contest->_month      = _month;
   contest->_year       = _year;
   contest->_tournament = _tournament;
+  contest->_team_event = _team_event;
 
   _checkin_time->Copy (contest->_checkin_time);
   _scratch_time->Copy (contest->_scratch_time);
   _start_time->Copy   (contest->_start_time);
+
+  contest->_minimum_team_size->Copy (_minimum_team_size);
+
+  contest->FillInProperties ();
 
   return contest;
 }

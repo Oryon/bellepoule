@@ -446,6 +446,23 @@ void Stage::SetOutputShortlist ()
     Player::AttributeId classif_attr_id       ("status", GetPlayerDataOwner ());
     Player::AttributeId global_status_attr_id ("global_status");
 
+    // Reset status to Q before applying Quota
+    {
+      GSList *current = _output_short_list;
+
+      while (current)
+      {
+        Player *player = (Player *) current->data;
+
+        player->SetAttributeValue (&classif_attr_id,
+                                   "Q");
+        player->SetAttributeValue (&global_status_attr_id,
+                                   "Q");
+
+        current = g_slist_next (current);
+      }
+    }
+
     // Remove all of the withdrawalls and black cards
     {
       Player::AttributeId stage_status_attr_id ("status", GetPlayerDataOwner ());

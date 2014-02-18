@@ -47,6 +47,8 @@ class Data : public Object
 
     gboolean IsValid ();
 
+    void Copy (Data *from);
+
   private:
     gchar    *_xml_name;
     gboolean  _is_integer;

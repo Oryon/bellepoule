@@ -54,6 +54,19 @@ Data::~Data ()
 }
 
 // --------------------------------------------------------------------------------
+void Data::Copy (Data *from)
+{
+  if (_is_integer)
+  {
+    _value = from->_value;
+  }
+  else
+  {
+    SetString (from->GetString ());
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Data::SetString (const char *string)
 {
   g_free (_string);
