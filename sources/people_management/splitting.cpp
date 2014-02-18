@@ -202,6 +202,20 @@ namespace People
   // --------------------------------------------------------------------------------
   GSList *Splitting::GetCurrentClassification ()
   {
+    Player::AttributeId rank_attr_id          ("rank", this);
+    Player::AttributeId previous_rank_attr_id ("rank", GetPreviousStage ());
+    GSList *current = _player_list;
+
+    while (current)
+    {
+      Player    *fencer        = (Player *) current->data;
+      Attribute *previous_rank = fencer->GetAttribute (&previous_rank_attr_id);
+
+      fencer->SetAttributeValue (&rank_attr_id,
+                                 previous_rank->GetIntValue ());
+      current = g_slist_next (current);
+    }
+
     return g_slist_copy (_player_list);
   }
 
@@ -249,10 +263,14 @@ namespace People
 
         player->SetAttributeValue (&exported_attr,
                                    (guint) FALSE);
+        Update (player);
 
         current = g_slist_next (current);
       }
     }
+
+    OnAttrListUpdated ();
+    OnListChanged ();
   }
 
   // --------------------------------------------------------------------------------
