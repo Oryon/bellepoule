@@ -29,11 +29,12 @@ class Classification : public People::PlayersList
   public:
     Classification (Filter *filter);
 
-    void DumpToCSV (gchar  *filename,
-                    GSList *attr_list);
-
     void DumpToFFF (gchar   *filename,
                     Contest *contest);
+
+    void DumpToHTML (gchar   *filename,
+                     Contest *contest,
+                     GSList  *attr_list);
 
     void SortDisplay ();
 

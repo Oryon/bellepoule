@@ -35,7 +35,8 @@ namespace People
       {
         CSV,
         PDF,
-        FFF
+        FFF,
+        HTML
       } ExportType;
 
       static void Declare ();

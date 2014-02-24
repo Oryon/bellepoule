@@ -877,7 +877,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       response = g_string_append (response, "\" ");
 
       response = g_string_append (response, "Gender=\"");
-      response = g_string_append (response, contest->GetGender ());
+      response = g_string_append (response, contest->GetGenderCode ());
       response = g_string_append (response, "\" ");
 
       response = g_string_append (response, "Category=\"");
