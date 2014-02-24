@@ -815,10 +815,18 @@ namespace Pool
                             result);
     }
 
-
-    return EvaluateClassification (result,
-                                   this,
-                                   (GCompareDataFunc) CompareCombinedRoundsClassification);
+    if (_allocator->SeedingIsBalanced () == FALSE)
+    {
+      return EvaluateClassification (result,
+                                     this,
+                                     (GCompareDataFunc) CompareCurrentRoundClassification);
+    }
+    else
+    {
+      return EvaluateClassification (result,
+                                     this,
+                                     (GCompareDataFunc) CompareCombinedRoundsClassification);
+    }
   }
 
   // --------------------------------------------------------------------------------
