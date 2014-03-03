@@ -2000,6 +2000,15 @@ extern "C" G_MODULE_EXPORT void on_network_config_menuitem_activate (GtkWidget *
 }
 
 // --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_scanner_menuitem_activate (GtkWidget *w,
+                                                              Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnMenuDialog ("scanner_dialog");
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_backup_location_menuitem_activate (GtkWidget *widget,
                                                                       Object    *owner)
 {

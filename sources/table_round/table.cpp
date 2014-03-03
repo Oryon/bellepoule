@@ -444,7 +444,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Table::Save (xmlTextWriter *xml_writer)
+  void Table::SaveHeader (xmlTextWriter *xml_writer)
   {
     xmlTextWriterStartElement (xml_writer,
                                BAD_CAST "Tableau");
@@ -468,6 +468,12 @@ namespace Table
                                    BAD_CAST "DestinationDesElimines",
                                    BAD_CAST _defeated_table_set->GetId ());
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Table::Save (xmlTextWriter *xml_writer)
+  {
+    SaveHeader (xml_writer);
 
     {
       GSList *current_match = _match_list;

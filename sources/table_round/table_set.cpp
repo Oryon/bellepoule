@@ -318,9 +318,18 @@ namespace Table
                                                     GtkTreeIter     *iter,
                                                     TableSet        *table_set)
   {
-    gboolean sensitive = !gtk_tree_model_iter_has_child (tree_model, iter);
+    gboolean    sensitive = TRUE;
+    GtkTreeIter parent;
 
-    g_object_set (cell, "sensitive", sensitive, NULL);
+    if (gtk_tree_model_iter_parent (tree_model,
+                                    &parent,
+                                    iter) == FALSE)
+    {
+      sensitive = gtk_tree_model_iter_has_child (tree_model,
+                                                 iter);
+    }
+
+    g_object_set(cell, "sensitive", sensitive, NULL);
   }
 
   // --------------------------------------------------------------------------------
@@ -662,7 +671,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::Save (xmlTextWriter *xml_writer)
+  void TableSet::SaveHeader (xmlTextWriter *xml_writer)
   {
     xmlTextWriterStartElement (xml_writer,
                                BAD_CAST "SuiteDeTableaux");
@@ -678,6 +687,12 @@ namespace Table
                                          BAD_CAST "NbDeTableaux",
                                          "%d", _nb_tables-1);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSet::Save (xmlTextWriter *xml_writer)
+  {
+    SaveHeader (xml_writer);
 
     if (_tree_root)
     {
@@ -1851,6 +1866,8 @@ namespace Table
                                                   &parent);
       }
     }
+
+    _match_to_print = g_slist_reverse (_match_to_print);
   }
 
   // --------------------------------------------------------------------------------
@@ -1994,11 +2011,62 @@ namespace Table
 
       if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (_quick_search_filter),
                                                &iter,
-                                               ressource[0]))
+                                               ressource[0]) == FALSE)
+      {
+        return FALSE;
+      }
+
+      if (strcmp (command, "ScoreSheet") == 0)
       {
         gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
                                        &iter);
         return TRUE;
+      }
+      else if (strcmp (command, "Score") == 0)
+      {
+        Match *match;
+
+        gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
+                            &iter,
+                            QUICK_MATCH_COLUMN_ptr, &match,
+                            -1);
+        if (match)
+        {
+          xmlDoc *doc = xmlReadMemory (data,
+                                       strlen (data),
+                                       "noname.xml",
+                                       NULL,
+                                       0);
+
+          if (doc)
+          {
+            xmlXPathInit ();
+
+            {
+              xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+              xmlXPathObject  *xml_object;
+              xmlNodeSet      *xml_nodeset;
+
+              xml_object = xmlXPathEval (BAD_CAST "/Match/*", xml_context);
+              xml_nodeset = xml_object->nodesetval;
+
+              if (xml_nodeset->nodeNr == 2)
+              {
+                for (guint i = 0; i < 2; i++)
+                {
+                  match->Load (xml_nodeset->nodeTab[i],
+                               match->GetOpponent (i));
+                }
+                RefreshNodes ();
+              }
+
+              xmlXPathFreeObject  (xml_object);
+              xmlXPathFreeContext (xml_context);
+            }
+            xmlFreeDoc (doc);
+          }
+          return TRUE;
+        }
       }
     }
 
@@ -2158,11 +2226,21 @@ namespace Table
                               -1);
           g_free (name_string);
         }
+        else
+        {
+          gtk_tree_store_set (_quick_search_treestore, &iter,
+                              QUICK_MATCH_PATH_COLUMN_str,        NULL,
+                              QUICK_MATCH_NAME_COLUMN_str,        NULL,
+                              QUICK_MATCH_COLUMN_ptr,             NULL,
+                              QUICK_MATCH_VISIBILITY_COLUMN_bool, 0,
+                              -1);
+        }
 
         g_free (A_name);
         g_free (B_name);
       }
     }
+    gtk_tree_model_filter_refilter (_quick_search_filter);
   }
 
   // --------------------------------------------------------------------------------
@@ -2639,6 +2717,116 @@ namespace Table
       if (nb_match%_nb_match_per_sheet != 0)
       {
         nb_page++;
+      }
+
+      // E-scoresheet
+      {
+        GSList     *current_match    = _match_to_print;
+        GHashTable *match_list_table = g_hash_table_new (NULL, NULL);
+
+        while (current_match)
+        {
+          Match  *match           = (Match *) current_match->data;
+          GSList *current_referee = match->GetRefereeList ();
+
+          while (current_referee)
+          {
+            GSList *match_list;
+
+            if (g_hash_table_lookup_extended (match_list_table,
+                                              (gconstpointer) current_referee->data,
+                                              NULL,
+                                              (gpointer *) &match_list) == FALSE)
+            {
+              match_list = NULL;
+            }
+            match_list = g_slist_append (match_list,
+                                         match);
+            g_hash_table_insert (match_list_table,
+                                 (gpointer) current_referee->data,
+                                 match_list);
+
+            current_referee = g_slist_next (current_referee);
+          }
+
+          current_match = g_slist_next (current_match);
+        }
+
+        {
+          GHashTableIter  iter;
+          Player         *referee;
+          GSList         *match_list;
+
+          g_hash_table_iter_init (&iter,
+                                  match_list_table);
+
+          while (g_hash_table_iter_next (&iter,
+                                         (gpointer *) &referee,
+                                         (gpointer *) &match_list))
+          {
+            Player::AttributeId  attr_id ("IP");
+            Attribute           *ip_attr = referee->GetAttribute (&attr_id);
+
+            if (ip_attr)
+            {
+              gchar *ip = ip_attr->GetStrValue ();
+
+              if (ip && (ip[0] != 0))
+              {
+                xmlBuffer *xml_buffer    = xmlBufferCreate ();
+                GSList    *current_match = match_list;
+
+                {
+                  Contest       *contest        = _supervisor->GetContest ();
+                  xmlTextWriter *xml_writer     = xmlNewTextWriterMemory (xml_buffer, 0);
+                  Table         *previous_table = NULL;
+
+                  contest->SaveHeader     (xml_writer);
+                  _supervisor->SaveHeader (xml_writer);
+                  SaveHeader              (xml_writer);
+
+                  while (current_match)
+                  {
+                    Match *match = (Match *) current_match->data;
+                    Table *table = (Table *) match->GetPtrData (this, "table");
+
+                    if ((previous_table == NULL) || (table != previous_table))
+                    {
+                      if (previous_table)
+                      {
+                        xmlTextWriterEndElement (xml_writer);
+                      }
+                      table->SaveHeader (xml_writer);
+                    }
+
+                    match->Save (xml_writer);
+
+                    previous_table = table;
+
+                    current_match = g_slist_next (current_match);
+                  }
+
+                  xmlTextWriterEndElement (xml_writer);
+                  xmlTextWriterEndElement (xml_writer);
+                  xmlTextWriterEndElement (xml_writer);
+
+                  xmlTextWriterEndDocument (xml_writer);
+
+                  xmlFreeTextWriter (xml_writer);
+                }
+
+                referee->SendMessage ("/E-ScoreSheets",
+                                      (const gchar *) xml_buffer->content);
+                printf ("%s\n", xml_buffer->content);
+
+                g_slist_free (match_list);
+                xmlBufferFree (xml_buffer);
+              }
+            }
+          }
+        }
+
+        g_hash_table_destroy (match_list_table);
       }
     }
 

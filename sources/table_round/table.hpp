@@ -56,6 +56,8 @@ namespace Table
 
       void Hide ();
 
+      void SaveHeader (xmlTextWriter *xml_writer);
+
       void Save (xmlTextWriter *xml_writer);
 
       void Load (xmlNode *xml_node);
