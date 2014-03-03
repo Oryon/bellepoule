@@ -1372,7 +1372,7 @@ namespace Table
   {
     NodeData *data = (NodeData *) node->data;
 
-    if (data && data->_match)
+    if (data && data->_match && data->_fencer_goo_table)
     {
       Player *winner = data->_match->GetWinner ();
 
