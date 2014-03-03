@@ -94,6 +94,7 @@ class Contest : public Module
     gchar *GetName ();
     gchar *GetDefaultFileName ();
     gchar *GetGender ();
+    gchar *GetGenderCode ();
     gchar *GetCategory ();
     gboolean IsTeamEvent ();
 

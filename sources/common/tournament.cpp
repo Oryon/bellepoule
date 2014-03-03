@@ -877,7 +877,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       response = g_string_append (response, "\" ");
 
       response = g_string_append (response, "Gender=\"");
-      response = g_string_append (response, contest->GetGender ());
+      response = g_string_append (response, contest->GetGenderCode ());
       response = g_string_append (response, "\" ");
 
       response = g_string_append (response, "Category=\"");
@@ -1997,6 +1997,15 @@ extern "C" G_MODULE_EXPORT void on_network_config_menuitem_activate (GtkWidget *
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnMenuDialog ("network_dialog");
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_scanner_menuitem_activate (GtkWidget *w,
+                                                              Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnMenuDialog ("scanner_dialog");
 }
 
 // --------------------------------------------------------------------------------

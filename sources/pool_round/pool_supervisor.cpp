@@ -651,8 +651,10 @@ namespace Pool
                 _contest->SaveHeader (xml_writer);
                 _allocator->SaveHeader (xml_writer);
                 pool->Save (xml_writer);
+
                 xmlTextWriterEndElement (xml_writer);
                 xmlTextWriterEndElement (xml_writer);
+
                 xmlTextWriterEndDocument (xml_writer);
 
                 xmlFreeTextWriter (xml_writer);
@@ -815,10 +817,18 @@ namespace Pool
                             result);
     }
 
-
-    return EvaluateClassification (result,
-                                   this,
-                                   (GCompareDataFunc) CompareCombinedRoundsClassification);
+    if (_allocator->SeedingIsBalanced () == FALSE)
+    {
+      return EvaluateClassification (result,
+                                     this,
+                                     (GCompareDataFunc) CompareCurrentRoundClassification);
+    }
+    else
+    {
+      return EvaluateClassification (result,
+                                     this,
+                                     (GCompareDataFunc) CompareCombinedRoundsClassification);
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -2100,9 +2100,15 @@ gchar *Contest::GetDefaultFileName ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest::GetGender ()
+gchar *Contest::GetGenderCode ()
 {
   return (char *) gender_xml_image[_gender];
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetGender ()
+{
+  return (char *) gettext (gender_image[_gender]);
 }
 
 // --------------------------------------------------------------------------------

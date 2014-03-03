@@ -67,64 +67,127 @@ void Classification::SetSortFunction (GtkTreeIterCompareFunc sort_func,
 }
 
 // --------------------------------------------------------------------------------
-void Classification::DumpToCSV (gchar  *filename,
-                                GSList *attr_list)
+void Classification::DumpToHTML (gchar   *filename,
+                                 Contest *contest,
+                                 GSList  *attr_list)
 {
   FILE *file = g_fopen (filename, "w");
 
   if (file)
   {
-    GSList *current_player = _player_list;
+    fprintf (file,
+             "<html>\n"
+             "  <head>\n"
+             "    <Title>%s %s - %s - %s - %s</Title>\n"
+             "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n"
+#include "css.h"
+             "  </head>\n\n",
+             contest->GetName (),
+             contest->GetDate (),
+             contest->GetWeapon (),
+             contest->GetGender (),
+             contest->GetCategory ());
 
+    fprintf (file,
+             "  <body>\n"
+             "    <div>\n"
+             "      <div class=\"Title\">\n"
+             "        <center>\n"
+             "          <h1>%s</h1>\n"
+             "          <h1>%s</h1>\n"
+             "          <h1>%s - %s - %s</h1>\n"
+             "        </center>\n"
+             "      <div>\n"
+             "\n"
+             "      <div class=\"Round\">\n"
+             "        <h3>%s</h3>\n"
+             "        <table class=\"Table\">\n",
+             contest->GetName (),
+             contest->GetDate (),
+             contest->GetWeapon (),
+             contest->GetGender (),
+             contest->GetCategory (),
+             gettext ("General classification"));
+
+    // Header
     {
       GSList *current_attr_desc = attr_list;
 
+      fprintf (file, "          <tr class=\"TableHeader\">\n");
       while (current_attr_desc)
       {
-        AttributeDesc *attr_desc = (AttributeDesc *) current_attr_desc->data;
+        Filter::Layout *layout    = (Filter::Layout *) current_attr_desc->data;
+        AttributeDesc  *attr_desc = layout->_desc;
 
         if (attr_desc->_scope == AttributeDesc::GLOBAL)
         {
-          fprintf (file, "%s,", attr_desc->_user_name);
+          fprintf (file,
+                   "            <th>%s</th>\n",
+                   attr_desc->_user_name);
         }
 
         current_attr_desc = g_slist_next (current_attr_desc);
       }
+      fprintf (file, "          </tr>\n");
     }
-    fprintf (file, "\n");
 
-    while (current_player)
+    // Fencers
     {
-      Player *player = (Player *) current_player->data;
+      GSList *current_player = _player_list;
 
+      for (guint i = 0; current_player; i++)
       {
-        GSList *current_attr_desc = attr_list;
+        Player *player = (Player *) current_player->data;
 
-        while (current_attr_desc)
+        if (i%2)
         {
-          AttributeDesc *attr_desc = (AttributeDesc *) current_attr_desc->data;
-
-          if (attr_desc->_scope == AttributeDesc::GLOBAL)
-          {
-            Player::AttributeId  attr_id   = Player::AttributeId (attr_desc->_code_name);
-            Attribute           *attr      = player->GetAttribute (&attr_id);
-
-            if (attr)
-            {
-              gchar *image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
-
-              fprintf (file, "%s", image);
-              g_free (image);
-            }
-            fprintf (file, ",");
-          }
-
-          current_attr_desc = g_slist_next (current_attr_desc);
+          fprintf (file, "          <tr class=\"OddRow\">\n");
         }
+        else
+        {
+          fprintf (file, "          <tr class=\"EvenRow\">\n");
+        }
+
+        {
+          GSList *current_attr_desc = attr_list;
+
+          while (current_attr_desc)
+          {
+            Filter::Layout *layout    = (Filter::Layout *) current_attr_desc->data;
+            AttributeDesc  *attr_desc = layout->_desc;
+
+            if (attr_desc->_scope == AttributeDesc::GLOBAL)
+            {
+              Player::AttributeId  attr_id = Player::AttributeId (attr_desc->_code_name);
+              Attribute           *attr    = player->GetAttribute ( &attr_id);
+
+              if (attr)
+              {
+                gchar *image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+
+                fprintf (file, "            <td>%s</td>\n", image);
+                g_free (image);
+              }
+            }
+
+            current_attr_desc = g_slist_next (current_attr_desc);
+          }
+        }
+        fprintf (file, "          </tr>\n");
+        current_player = g_slist_next (current_player);
       }
-      fprintf (file, "\n");
-      current_player = g_slist_next (current_player);
     }
+
+    fprintf (file,
+             "        </table>\n"
+             "      </div>\n"
+             "      <div class=\"Footer\">\n"
+             "        <h6>Managed by BellePoule <a href=\"http://betton.escrime.free.fr/index.php/bellepoule\">http://betton.escrime.free.fr/index.php/bellepoule</a><h6/>\n"
+             "      <div>\n"
+             "    </div>\n"
+             "  </body>\n");
+
+    fprintf (file, "</html>\n");
     fclose (file);
   }
 }
@@ -144,7 +207,7 @@ void Classification::DumpToFFF (gchar   *filename,
     fprintf (file, "%s;%s;%s;%s;%s;%s\n",
              contest->GetDate (),
              contest->GetWeapon (),
-             contest->GetGender (),
+             contest->GetGenderCode (),
              contest->GetCategory (),
              contest->GetName (),
              contest->GetName ());

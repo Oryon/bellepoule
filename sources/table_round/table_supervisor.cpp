@@ -502,28 +502,48 @@ namespace Table
                                      ".",
                                      0);
 
-    if (tokens && tokens[0])
+    if (tokens)
     {
       GtkTreePath *path = gtk_tree_path_new_from_string (tokens[0]);
 
       if (path)
       {
-        gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
-                                  path,
-                                  NULL,
-                                  FALSE);
-        gtk_tree_path_free (path);
-        result = TRUE;
-      }
+        if (strcmp (command, "ScoreSheet") == 0)
+        {
+          gtk_tree_view_set_cursor (GTK_TREE_VIEW (_glade->GetWidget ("table_set_treeview")),
+                                    path,
+                                    NULL,
+                                    FALSE);
 
-      if (_displayed_table_set)
-      {
-        gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
-                                           TRUE);
+          if (_displayed_table_set)
+          {
+            gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (_glade->GetWidget ("input_toolbutton")),
+                                               TRUE);
 
-        _displayed_table_set->OnHttpPost (command,
+            result = _displayed_table_set->OnHttpPost (command,
+                                                       (const gchar**) &tokens[1],
+                                                       data);
+          }
+        }
+        else if (strcmp (command, "Score") == 0)
+        {
+          GtkTreeIter  iter;
+          TableSet    *table_set;
+
+          gtk_tree_model_get_iter (GTK_TREE_MODEL (_table_set_filter),
+                                   &iter,
+                                   path);
+
+          gtk_tree_model_get (GTK_TREE_MODEL (_table_set_filter), &iter,
+                              TABLE_SET_TABLE_COLUMN_ptr, &table_set,
+                              -1);
+
+          result = table_set->OnHttpPost (command,
                                           (const gchar**) &tokens[1],
                                           data);
+        }
+
+        gtk_tree_path_free (path);
       }
 
       g_strfreev (tokens);
@@ -602,13 +622,20 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::Save (xmlTextWriter *xml_writer)
+  void Supervisor::SaveHeader (xmlTextWriter *xml_writer)
   {
     xmlTextWriterStartElement (xml_writer,
                                BAD_CAST _xml_class_name);
 
     SaveConfiguration (xml_writer);
-    SaveAttendees     (xml_writer);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Supervisor::Save (xmlTextWriter *xml_writer)
+  {
+    SaveHeader (xml_writer);
+
+    SaveAttendees (xml_writer);
 
     gtk_tree_model_foreach (GTK_TREE_MODEL (_table_set_filter),
                             (GtkTreeModelForeachFunc) SaveTableSet,

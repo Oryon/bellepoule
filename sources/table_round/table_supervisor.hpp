@@ -45,6 +45,8 @@ namespace Table
       void OnTableOver (TableSet *table_set,
                         Table    *table);
 
+      void SaveHeader (xmlTextWriter *xml_writer);
+
     public:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;

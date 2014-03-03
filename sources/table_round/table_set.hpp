@@ -100,6 +100,8 @@ namespace Table
 
       void Load (xmlNode *xml_node);
 
+      void SaveHeader (xmlTextWriter *xmlwriter);
+
       void Save (xmlTextWriter *xmlwriter);
 
       void SetPlayerToMatch (Match  *to_match,

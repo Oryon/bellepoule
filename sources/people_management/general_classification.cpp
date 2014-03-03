@@ -287,6 +287,12 @@ namespace People
                                     gettext ("All PDF files (.PDF)"));
           pattern_upper = "*.PDF";
         }
+        else if (export_type == HTML)
+        {
+          gtk_file_filter_set_name (filter,
+                                    gettext ("All HTML files (.HTML)"));
+          pattern_upper = "*.HTML";
+        }
 
         gtk_file_filter_add_pattern (filter,
                                      pattern_upper);
@@ -355,20 +361,21 @@ namespace People
 
       if (classification)
       {
-        if (export_type == CSV)
-        {
-          classification->DumpToCSV (filename,
-                                     _filter->GetAttrList ());
-        }
-        else if (export_type == FFF)
+        if (export_type == FFF)
         {
           classification->DumpToFFF (filename,
                                      _contest);
         }
-        if (export_type == PDF)
+        else if (export_type == PDF)
         {
           _contest->PrintPDF (gettext ("General classification"),
                               filename);
+        }
+        else if (export_type == HTML)
+        {
+          classification->DumpToHTML (filename,
+                                      _contest,
+                                      _filter->GetLayoutList ());
         }
       }
       g_free (filename);
@@ -454,12 +461,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_export_csv_toolbutton_clicked (GtkWidget *widget,
+  extern "C" G_MODULE_EXPORT void on_export_html_toolbutton_clicked (GtkWidget *widget,
                                                                     Object    *owner)
   {
     GeneralClassification *g = dynamic_cast <GeneralClassification *> (owner);
 
-    g->OnExportToolbuttonClicked (GeneralClassification::CSV);
+    g->OnExportToolbuttonClicked (GeneralClassification::HTML);
   }
 
   // --------------------------------------------------------------------------------
