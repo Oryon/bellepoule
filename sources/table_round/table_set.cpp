@@ -2018,9 +2018,16 @@ namespace Table
 
       if (strcmp (command, "ScoreSheet") == 0)
       {
-        gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
-                                       &iter);
-        return TRUE;
+        GtkTreeIter filter_iter;
+
+        if (gtk_tree_model_filter_convert_child_iter_to_iter (_quick_search_filter,
+                                                              &filter_iter,
+                                                              &iter))
+        {
+          gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
+                                         &filter_iter);
+          return TRUE;
+        }
       }
       else if (strcmp (command, "Score") == 0)
       {
