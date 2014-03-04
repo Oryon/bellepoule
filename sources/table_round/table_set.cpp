@@ -2009,7 +2009,7 @@ namespace Table
     {
       GtkTreeIter iter;
 
-      if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (_quick_search_filter),
+      if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (_quick_search_treestore),
                                                &iter,
                                                ressource[0]) == FALSE)
       {
@@ -2018,15 +2018,22 @@ namespace Table
 
       if (strcmp (command, "ScoreSheet") == 0)
       {
-        gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
-                                       &iter);
-        return TRUE;
+        GtkTreeIter filter_iter;
+
+        if (gtk_tree_model_filter_convert_child_iter_to_iter (_quick_search_filter,
+                                                              &filter_iter,
+                                                              &iter))
+        {
+          gtk_combo_box_set_active_iter (GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox")),
+                                         &filter_iter);
+          return TRUE;
+        }
       }
       else if (strcmp (command, "Score") == 0)
       {
         Match *match;
 
-        gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_filter),
+        gtk_tree_model_get (GTK_TREE_MODEL (_quick_search_treestore),
                             &iter,
                             QUICK_MATCH_COLUMN_ptr, &match,
                             -1);
@@ -2773,54 +2780,61 @@ namespace Table
 
               if (ip && (ip[0] != 0))
               {
-                xmlBuffer *xml_buffer    = xmlBufferCreate ();
-                GSList    *current_match = match_list;
-
+                // One message per table
+                for (guint t = 0; t < _nb_tables; t++)
                 {
-                  Contest       *contest        = _supervisor->GetContest ();
-                  xmlTextWriter *xml_writer     = xmlNewTextWriterMemory (xml_buffer, 0);
-                  Table         *previous_table = NULL;
+                  xmlBuffer *xml_buffer    = xmlBufferCreate ();
+                  GSList    *current_match = match_list;
 
-                  contest->SaveHeader     (xml_writer);
-                  _supervisor->SaveHeader (xml_writer);
-                  SaveHeader              (xml_writer);
-
-                  while (current_match)
                   {
-                    Match *match = (Match *) current_match->data;
-                    Table *table = (Table *) match->GetPtrData (this, "table");
+                    Contest       *contest        = _supervisor->GetContest ();
+                    xmlTextWriter *xml_writer     = xmlNewTextWriterMemory (xml_buffer, 0);
+                    Table         *previous_table = NULL;
 
-                    if ((previous_table == NULL) || (table != previous_table))
+                    contest->SaveHeader     (xml_writer);
+                    _supervisor->SaveHeader (xml_writer);
+                    SaveHeader              (xml_writer);
+
+                    while (current_match)
                     {
-                      if (previous_table)
+                      Match *match = (Match *) current_match->data;
+                      Table *table = (Table *) match->GetPtrData (this, "table");
+
+                      if (table->GetNumber () == t)
                       {
-                        xmlTextWriterEndElement (xml_writer);
+                        if ((previous_table == NULL) || (table != previous_table))
+                        {
+                          if (previous_table)
+                          {
+                            xmlTextWriterEndElement (xml_writer);
+                          }
+                          table->SaveHeader (xml_writer);
+                        }
+
+                        match->Save (xml_writer);
+
+                        previous_table = table;
                       }
-                      table->SaveHeader (xml_writer);
+
+                      current_match = g_slist_next (current_match);
                     }
 
-                    match->Save (xml_writer);
+                    xmlTextWriterEndElement (xml_writer);
+                    xmlTextWriterEndElement (xml_writer);
+                    xmlTextWriterEndElement (xml_writer);
 
-                    previous_table = table;
+                    xmlTextWriterEndDocument (xml_writer);
 
-                    current_match = g_slist_next (current_match);
+                    xmlFreeTextWriter (xml_writer);
                   }
 
-                  xmlTextWriterEndElement (xml_writer);
-                  xmlTextWriterEndElement (xml_writer);
-                  xmlTextWriterEndElement (xml_writer);
+                  referee->SendMessage ("/E-ScoreSheets",
+                                        (const gchar *) xml_buffer->content);
+                  printf ("%s\n", xml_buffer->content);
 
-                  xmlTextWriterEndDocument (xml_writer);
-
-                  xmlFreeTextWriter (xml_writer);
+                  xmlBufferFree (xml_buffer);
                 }
-
-                referee->SendMessage ("/E-ScoreSheets",
-                                      (const gchar *) xml_buffer->content);
-                printf ("%s\n", xml_buffer->content);
-
                 g_slist_free (match_list);
-                xmlBufferFree (xml_buffer);
               }
             }
           }
