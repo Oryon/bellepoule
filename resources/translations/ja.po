@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2013-04-23 15:21+0200\n"
-"PO-Revision-Date: 2014-02-02 09:33+0000\n"
+"PO-Revision-Date: 2014-03-16 10:25+0000\n"
 "Last-Translator: brun <Unknown>\n"
 "Language-Team: Japanese <ja@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-03-11 05:47+0000\n"
-"X-Generator: Launchpad (build 16948)\n"
+"X-Launchpad-Export-Date: 2014-03-17 04:54+0000\n"
+"X-Generator: Launchpad (build 16963)\n"
 
 msgid "Sabre"
 msgstr "サーブル"
@@ -571,139 +571,141 @@ msgid "Seeding"
 msgstr "シーディング"
 
 msgid "Balanced"
-msgstr ""
+msgstr "バランスのとれた"
 
 msgid "Grouped by strength"
-msgstr ""
+msgstr "強さによってグループ化された"
 
 msgid "All the pools"
-msgstr ""
+msgstr "すべてのグループリーグ"
 
 msgid "Only the selected pool"
-msgstr ""
+msgstr "選択したグループリーグだけ"
 
 msgid "<b>What?</b>"
-msgstr ""
+msgstr "<b>何?</b>"
 
 msgid "For arbitration"
-msgstr ""
+msgstr "仲裁"
 
 msgid "Content designed for the referees."
-msgstr ""
+msgstr "審判のために設計されたコンテンツ。"
 
 msgid "Matches watermarked"
-msgstr ""
+msgstr "透かしを入れた試合"
 
 msgid "For the bulletin board"
-msgstr ""
+msgstr "掲示板のため"
 
 msgid "<b>For what?</b>"
-msgstr ""
+msgstr "<b>何のために？</b>"
 
 msgid "Classification"
-msgstr ""
+msgstr "分類"
 
 msgid "Automatic stuffing"
-msgstr ""
+msgstr "自動充填"
 
 msgid "Combined classification"
-msgstr ""
+msgstr "組み合わせ分類"
 
 msgid ""
 "The classification cumulating  the current score and the scores of the "
 "previous pool rounds."
-msgstr ""
+msgstr "今のスコアと前のグループリーグのラウンドのスコアを加算分類。"
 
 msgid "Single classification"
-msgstr ""
+msgstr "シングル分類"
 
 msgid ""
 "The classification of the current round that doesn't take into account the "
 "scores of the previous rounds. "
-msgstr ""
+msgstr "前のラウンドのスコアは、現在のラウンドのランキングで考慮されない。 "
 
 msgid "Import referee file"
-msgstr ""
+msgstr "審判のファイルをインポートする"
 
 msgid "Add"
-msgstr ""
+msgstr "追加する"
 
 msgid "Remove"
-msgstr ""
+msgstr "削除"
 
 msgid "<b>Schedule</b>"
-msgstr ""
+msgstr "<b>スケジュール</b>"
 
 msgid "<b>Parameters</b>"
-msgstr ""
+msgstr "<b>パラメータ</b>"
 
 msgid "Previous round"
-msgstr ""
+msgstr "前ラウンド"
 
 msgid "Next round"
-msgstr ""
+msgstr "次のラウンド"
 
 msgid "Select the fencers to move to a new competition."
-msgstr ""
+msgstr "新たな競争に移動するフェンシング選手を選択します。"
 
 msgid "The table"
-msgstr ""
+msgstr "テーブル"
 
 msgid "Score sheets"
-msgstr ""
+msgstr "スコアシート"
 
 msgid "All"
-msgstr ""
+msgstr "すべて"
 
 msgid "Pending"
-msgstr ""
+msgstr "保留中"
 
 msgid "All the score sheets"
-msgstr ""
+msgstr "すべてのスコアシート"
 
 msgid "The pending score sheets"
-msgstr ""
+msgstr "保留中のスコアシート"
 
 msgid "<b>Match</b>"
-msgstr ""
+msgstr "<b>試合</b>"
 
 msgid "A fencer"
-msgstr ""
+msgstr "A フェンシング選手"
 
 msgid "B fencer"
-msgstr ""
+msgstr "B フェンシング選手"
 
 msgid "<b>Score</b>"
-msgstr ""
+msgstr "<b>スコア</b>"
 
 msgid "Fenced places"
-msgstr ""
+msgstr "フェンシングしたの場所"
 
 msgid "None"
-msgstr ""
+msgstr "なし"
 
 msgid "Third place"
-msgstr ""
+msgstr "三位"
 
 msgid "Fill in a match"
-msgstr ""
+msgstr "試合に記入"
 
 msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
+"ランダムにすべてのスコアを入力してください。\n"
+"このボタンを有効にする/無効化する、競争のプロパティにアクセスしてください。"
 
 msgid "From"
-msgstr ""
+msgstr "から"
 
 msgid "To"
-msgstr ""
+msgstr "まで"
 
 msgid "For place"
-msgstr ""
+msgstr "場所のため"
 
 msgid "Zoom"
-msgstr ""
+msgstr "ズーム"
 
 msgid ""
 "Fencing tournament management software.\n"
