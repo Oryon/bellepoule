@@ -276,7 +276,7 @@ Contest::Contest ()
                                      "default_location",
                                      NULL);
 
-  _manual_classification  = new Data ("ClassementManuel",     TRUE);
+  _manual_classification  = new Data ("ClassementManuel",     (guint) FALSE);
   _default_classification = new Data ("ClassementParDefaut",  10000);
   _minimum_team_size      = new Data ("TailleMinimaleEquipe", 3);
 

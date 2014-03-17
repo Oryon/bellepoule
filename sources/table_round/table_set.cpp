@@ -1354,6 +1354,7 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::RefreshNodes ()
   {
+    printf ("    RefreshNodes\n");
     g_node_traverse (_tree_root,
                      G_POST_ORDER,
                      G_TRAVERSE_ALL,
@@ -2738,15 +2739,9 @@ namespace Table
 
           while (current_referee)
           {
-            GSList *match_list;
+            GSList *match_list = g_hash_table_lookup (match_list_table,
+                                                      (gconstpointer) current_referee->data);
 
-            if (g_hash_table_lookup_extended (match_list_table,
-                                              (gconstpointer) current_referee->data,
-                                              NULL,
-                                              (gpointer *) &match_list) == FALSE)
-            {
-              match_list = NULL;
-            }
             match_list = g_slist_append (match_list,
                                          match);
             g_hash_table_insert (match_list_table,
@@ -2830,7 +2825,6 @@ namespace Table
 
                   referee->SendMessage ("/E-ScoreSheets",
                                         (const gchar *) xml_buffer->content);
-                  printf ("%s\n", xml_buffer->content);
 
                   xmlBufferFree (xml_buffer);
                 }
