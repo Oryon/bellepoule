@@ -2739,8 +2739,8 @@ namespace Table
 
           while (current_referee)
           {
-            GSList *match_list = g_hash_table_lookup (match_list_table,
-                                                      (gconstpointer) current_referee->data);
+            GSList *match_list = (GSList *) g_hash_table_lookup (match_list_table,
+                                                                 (gconstpointer) current_referee->data);
 
             match_list = g_slist_append (match_list,
                                          match);
