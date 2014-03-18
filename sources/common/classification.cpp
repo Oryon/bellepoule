@@ -168,6 +168,10 @@ void Classification::DumpToHTML (gchar   *filename,
                 fprintf (file, "            <td>%s</td>\n", image);
                 g_free (image);
               }
+              else
+              {
+                fprintf (file, "            <td></td>\n");
+              }
             }
 
             current_attr_desc = g_slist_next (current_attr_desc);
