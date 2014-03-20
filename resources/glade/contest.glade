@@ -1097,7 +1097,7 @@ stuffing</property>
                                     </child>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="url_entry">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
