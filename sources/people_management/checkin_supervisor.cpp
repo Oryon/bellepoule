@@ -27,6 +27,7 @@
 #include "fencer.hpp"
 #include "player_factory.hpp"
 #include "checkin_supervisor.hpp"
+#include "rank_importer.hpp"
 
 namespace People
 {
@@ -977,6 +978,30 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnImportRanking ()
+  {
+    RankImporter *importer = new RankImporter (_config_file);
+
+    {
+      GSList *current = _player_list;
+
+      while (current)
+      {
+        Player *fencer = (Player *) current->data;
+
+        importer->ModifyRank (fencer);
+        Update (fencer);
+
+        current = g_slist_next (current);
+      }
+    }
+
+    importer->Release ();
+
+    OnListChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnManualRadioButtonToggled (GtkToggleButton *button)
   {
     if (gtk_toggle_button_get_active (button))
@@ -1019,5 +1044,14 @@ namespace People
     CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
 
     supervisor->OnManualRadioButtonToggled (GTK_TOGGLE_BUTTON (widget));
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_ranking_toolbutton_clicked (GtkWidget *widget,
+                                                                 Object    *owner)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+    supervisor->OnImportRanking ();
   }
 }

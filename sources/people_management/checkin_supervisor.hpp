@@ -46,6 +46,8 @@ namespace People
 
       void OnManualRadioButtonToggled (GtkToggleButton *button);
 
+      void OnImportRanking ();
+
     private:
       void OnLocked ();
 

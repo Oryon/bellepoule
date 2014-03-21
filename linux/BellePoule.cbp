@@ -127,6 +127,8 @@
 		<Unit filename="../sources/people_management/barrage.hpp" />
 		<Unit filename="../sources/people_management/tally_counter.cpp" />
 		<Unit filename="../sources/people_management/tally_counter.hpp" />
+		<Unit filename="../sources/people_management/rank_importer.cpp" />
+		<Unit filename="../sources/people_management/rank_importer.hpp" />
 		<Unit filename="../sources/people_management/checkin.cpp" />
 		<Unit filename="../sources/people_management/checkin.hpp" />
 		<Unit filename="../sources/people_management/checkin_supervisor.cpp" />

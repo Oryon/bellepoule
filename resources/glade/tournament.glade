@@ -1414,7 +1414,7 @@ Public License instead of this License.  But first, please read
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="scanner_menuitem">
-                        <property name="label" translatable="yes">Scanner</property>
+                        <property name="label" translatable="yes">Score sheet scanner (QuickPoule)</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>

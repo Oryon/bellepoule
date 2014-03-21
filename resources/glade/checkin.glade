@@ -485,10 +485,25 @@
                     <property name="can_focus">False</property>
                     <property name="tooltip_text">.FFF, .CSV or .TXT</property>
                     <property name="use_action_appearance">False</property>
-                    <property name="label" translatable="yes">Import fencer file</property>
+                    <property name="label" translatable="yes">Import fencers</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-convert</property>
                     <signal name="clicked" handler="on_import_toolbutton_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="ranking_toolbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                    <property name="label" translatable="yes">Import ranking</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-sort-descending</property>
+                    <signal name="clicked" handler="on_ranking_toolbutton_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
