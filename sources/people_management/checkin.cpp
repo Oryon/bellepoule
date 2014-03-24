@@ -317,10 +317,6 @@ namespace People
                                    "*.CSV");
       gtk_file_filter_add_pattern (filter,
                                    "*.csv");
-      gtk_file_filter_add_pattern (filter,
-                                   "*.TXT");
-      gtk_file_filter_add_pattern (filter,
-                                   "*.txt");
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                    filter);
     }
@@ -655,6 +651,12 @@ namespace People
           {
             for (guint i = 0; header_attr[i] != NULL; i++)
             {
+              g_strdelimit (header_attr[i],
+                            "\"",
+                            ' ');
+              g_strchug  (header_attr[i]);
+              g_strchomp (header_attr[i]);
+
               nb_attr++;
             }
 
@@ -690,6 +692,11 @@ namespace People
                 {
                   attr_id._name = columns[c]->_code_name;
 
+                  g_strdelimit (tokens[i+c],
+                                "\"",
+                                ' ');
+                  g_strchug  (tokens[i+c]);
+                  g_strchomp (tokens[i+c]);
                   player->SetAttributeValue (&attr_id, tokens[i+c]);
                 }
               }
