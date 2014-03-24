@@ -87,10 +87,9 @@ Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0";
 Source: "path_dependent_files\pango.modules"; DestDir: "{app}\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 
 ;Exemple de fichiers
-Source: "..\..\Exemples\exemple.cotcot"; DestDir: "{app}\share\BellePoule\Exemples"; Flags: ignoreversion
-Source: "..\..\Exemples\CLS_SHM.FFF"; DestDir: "{app}\share\BellePoule\Exemples"; Flags: ignoreversion
-Source: "..\..\Exemples\CLS_EDM.FFF"; DestDir: "{app}\share\BellePoule\Exemples"; Flags: ignoreversion
-Source: "..\..\Exemples\FFE\*"; DestDir: "{app}\share\BellePoule\Exemples\FFE"; Flags: ignoreversion
+Source: "..\..\Exemples\exemple.cotcot"; DestDir: "{app}\share\BellePoule\Exemples";             Flags: ignoreversion
+Source: "..\..\Exemples\FFE\*";          DestDir: "{app}\share\BellePoule\Exemples\FFE";         Flags: ignoreversion
+Source: "..\..\Exemples\Classements\*";  DestDir: "{app}\share\BellePoule\Exemples\Classements"; Flags: ignoreversion
 
 ;Documentation
 Source: "..\..\resources\user_manual.pdf"; DestDir: "{app}\share\BellePoule\resources"; Flags: ignoreversion

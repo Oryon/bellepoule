@@ -179,6 +179,16 @@
       </object>
     </child>
   </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">ranking_pack.png</property>
+  </object>
+  <object class="GtkImage" id="image4">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">file_pack.png</property>
+  </object>
   <object class="GtkDialog" id="print_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -480,6 +490,16 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkSeparatorToolItem" id="separatortoolitem2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="use_action_appearance">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkToolButton" id="import_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -487,7 +507,7 @@
                     <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Import fencers</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-convert</property>
+                    <property name="icon_widget">image4</property>
                     <signal name="clicked" handler="on_import_toolbutton_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -502,7 +522,7 @@
                     <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Import ranking</property>
                     <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-sort-descending</property>
+                    <property name="icon_widget">image3</property>
                     <signal name="clicked" handler="on_ranking_toolbutton_clicked" swapped="no"/>
                   </object>
                   <packing>

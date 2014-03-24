@@ -77,13 +77,16 @@ prepare_packaging: clean
 prepare_examples:
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples
 	cp -f  ../Exemples/exemple.cotcot      $(PACKAGE)/$(RELEASE)/Exemples
-	cp -f  ../Exemples/CLS_SHM.FFF         $(PACKAGE)/$(RELEASE)/Exemples
-	cp -f  ../Exemples/CLS_EDM.FFF         $(PACKAGE)/$(RELEASE)/Exemples
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples/FFE
 	cp -rf ../Exemples/FFE/Individuelle.XML $(PACKAGE)/$(RELEASE)/Exemples/FFE
 	cp -rf ../Exemples/FFE/ParEquipe.XML    $(PACKAGE)/$(RELEASE)/Exemples/FFE
 	cp -rf ../Exemples/FFE/Fencers.FFF      $(PACKAGE)/$(RELEASE)/Exemples/FFE
 	cp -rf ../Exemples/FFE/Referees.txt     $(PACKAGE)/$(RELEASE)/Exemples/FFE
+	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples/Classements
+	cp -rf ../Exemples/Classements/EHBEN.TXT $(PACKAGE)/$(RELEASE)/Exemples/Classements
+	cp -rf ../Exemples/Classements/EHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
+	cp -rf ../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
+	cp -rf ../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
 	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
 
 prepare_resources:
