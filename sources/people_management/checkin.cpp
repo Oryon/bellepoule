@@ -317,10 +317,6 @@ namespace People
                                    "*.CSV");
       gtk_file_filter_add_pattern (filter,
                                    "*.csv");
-      gtk_file_filter_add_pattern (filter,
-                                   "*.TXT");
-      gtk_file_filter_add_pattern (filter,
-                                   "*.txt");
       gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser),
                                    filter);
     }
