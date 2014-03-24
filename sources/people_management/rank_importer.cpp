@@ -26,46 +26,49 @@ namespace People
   RankImporter::RankImporter (GKeyFile *config_file)
     : Object ("RankImporter")
   {
-    _rank_table = g_hash_table_new_full (g_str_hash,
-                                         g_str_equal,
-                                         g_free,
-                                         NULL);
+    _rank_table = NULL;
     DisplayChooser (config_file);
   }
 
   // --------------------------------------------------------------------------------
   RankImporter::~RankImporter ()
   {
-    g_hash_table_destroy (_rank_table);
+    if (_rank_table)
+    {
+      g_hash_table_destroy (_rank_table);
+    }
   }
 
   // --------------------------------------------------------------------------------
   void RankImporter::ModifyRank (Player *fencer)
   {
-    Attribute           *attr;
-    Player::AttributeId  ranking_attr_id ("ranking");
-    Player::AttributeId  name_attr_id    ("name");
-    Player::AttributeId  first_attr_id   ("first_name");
-    gchar               *name;
-    gchar               *first_name;
-    gchar               *id;
-    guint                new_rank;
+    if (_rank_table)
+    {
+      Attribute           *attr;
+      Player::AttributeId  ranking_attr_id ("ranking");
+      Player::AttributeId  name_attr_id    ("name");
+      Player::AttributeId  first_attr_id   ("first_name");
+      gchar               *name;
+      gchar               *first_name;
+      gchar               *id;
+      guint                new_rank;
 
-    attr = fencer->GetAttribute (&name_attr_id);
-    name = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+      attr = fencer->GetAttribute (&name_attr_id);
+      name = attr->GetUserImage (AttributeDesc::LONG_TEXT);
 
-    attr = fencer->GetAttribute (&first_attr_id);
-    first_name = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+      attr = fencer->GetAttribute (&first_attr_id);
+      first_name = attr->GetUserImage (AttributeDesc::LONG_TEXT);
 
-    id = g_strdup_printf ("%s:%s", name, first_name);
-    new_rank = GPOINTER_TO_UINT (g_hash_table_lookup (_rank_table,
-                                                      id));
-    fencer->SetAttributeValue (&ranking_attr_id,
-                               new_rank);
+      id = g_strdup_printf ("%s:%s", name, first_name);
+      new_rank = GPOINTER_TO_UINT (g_hash_table_lookup (_rank_table,
+                                                        id));
+      fencer->SetAttributeValue (&ranking_attr_id,
+                                 new_rank);
 
-    g_free (id);
-    g_free (first_name);
-    g_free (name);
+      g_free (id);
+      g_free (first_name);
+      g_free (name);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -84,12 +87,12 @@ namespace People
       GtkFileFilter *filter = gtk_file_filter_new ();
 
       gtk_file_filter_set_name (filter,
-                                gettext ("Rank files"));
+                                gettext ("Rank files: cotcot, xml, txt (France)"));
 
       gtk_file_filter_add_pattern (filter,
-                                   "*.FFF");
+                                   "*.TXT");
       gtk_file_filter_add_pattern (filter,
-                                   "*.fff");
+                                   "*.txt");
       gtk_file_filter_add_pattern (filter,
                                    "*.XML");
       gtk_file_filter_add_pattern (filter,
@@ -172,7 +175,21 @@ namespace People
           g_free (uri);
         }
 
-        Load (filename);
+        _rank_table = g_hash_table_new_full (g_str_hash,
+                                             g_str_equal,
+                                             g_free,
+                                             NULL);
+
+        if (   g_str_has_suffix (filename, ".cotcot")
+            || g_str_has_suffix (filename, ".xml")
+            || g_str_has_suffix (filename, ".XML"))
+        {
+          LoadXml (filename);
+        }
+        else
+        {
+          LoadTxt (filename);
+        }
       }
     }
 
@@ -180,7 +197,81 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void RankImporter::Load (const gchar *filename)
+  void RankImporter::LoadTxt (const gchar *filename)
+  {
+    gchar *file_content;
+
+    if (g_file_get_contents (filename,
+                             &file_content,
+                             NULL,
+                             NULL))
+    {
+      gchar *utf8_content = g_convert (file_content,
+                                       -1,
+                                       "UTF-8",
+                                       "ISO-8859-1",
+                                       NULL,
+                                       NULL,
+                                       NULL);
+
+      g_free (file_content);
+      if (utf8_content)
+      {
+        gchar *fencers = g_strstr_len (utf8_content, -1, "TIREURS");
+
+        if (fencers)
+        {
+          gchar **lines;
+
+          fencers = fencers + strlen ("TIREURS") + 1;
+          lines = g_strsplit_set (fencers,
+                                  "\n",
+                                  0);
+
+          if (lines)
+          {
+            for (guint l = 0; lines[l] != NULL; l++)
+            {
+              gchar **tokens = g_strsplit_set (lines[l],
+                                               "/",
+                                               0);
+
+              if (tokens && tokens[0])
+              {
+                const gchar *name       = NULL;
+                const gchar *first_name = NULL;
+                const gchar *rank       = NULL;
+
+                for (guint t = 0; tokens[t] != NULL; t++)
+                {
+                  if (t == 0)
+                  {
+                    name = tokens[t];
+                  }
+                  else if (t == 1)
+                  {
+                    first_name = tokens[t];
+                  }
+                  rank = tokens[t];
+                }
+                g_hash_table_insert (_rank_table,
+                                     g_strdup_printf ("%s:%s", name, first_name),
+                                     (gpointer) atoi (rank));
+
+                g_strfreev (tokens);
+              }
+            }
+            g_strfreev (lines);
+          }
+        }
+
+        g_free (utf8_content);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void RankImporter::LoadXml (const gchar *filename)
   {
     xmlDoc *doc = xmlParseFile (filename);
 

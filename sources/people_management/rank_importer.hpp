@@ -34,7 +34,9 @@ namespace People
 
       virtual ~RankImporter ();
 
-      void Load (const gchar *filename);
+      void LoadTxt (const gchar *filename);
+
+      void LoadXml (const gchar *filename);
 
       void LoadList (xmlNode *xml_node);
 
