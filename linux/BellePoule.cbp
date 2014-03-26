@@ -208,6 +208,8 @@
 		<Unit filename="../sources/util/glade.hpp" />
 		<Unit filename="../sources/util/module.cpp" />
 		<Unit filename="../sources/util/module.hpp" />
+		<Unit filename="../sources/util/clock.cpp" />
+		<Unit filename="../sources/util/clock.hpp" />
 		<Unit filename="../sources/util/object.cpp" />
 		<Unit filename="../sources/util/object.hpp" />
 		<Unit filename="../sources/util/sensitivity_trigger.cpp" />

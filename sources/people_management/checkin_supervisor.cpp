@@ -53,6 +53,7 @@ namespace People
       AddSensitiveWidget (_glade->GetWidget ("add_player_button"));
       AddSensitiveWidget (_glade->GetWidget ("remove_player_button"));
       AddSensitiveWidget (_glade->GetWidget ("import_toolbutton"));
+      AddSensitiveWidget (_glade->GetWidget ("ranking_toolbutton"));
       AddSensitiveWidget (_glade->GetWidget ("all_present_button"));
       AddSensitiveWidget (_glade->GetWidget ("all_absent_button"));
       AddSensitiveWidget (_glade->GetWidget ("team_table"));
