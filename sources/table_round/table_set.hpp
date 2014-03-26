@@ -344,6 +344,8 @@ namespace Table
 
       void SpreadWinners ();
 
+      void RefilterQuickSearch ();
+
       static gboolean SpreadWinner (GNode    *node,
                                     TableSet *table_set);
 

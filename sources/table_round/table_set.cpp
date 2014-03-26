@@ -555,6 +555,7 @@ namespace Table
       }
 
       RefreshNodes ();
+      RefilterQuickSearch ();
 
       RestoreZoomFactor ();
     }
@@ -739,6 +740,7 @@ namespace Table
 
     table_set->SpreadWinners ();
     table_set->RefreshNodes ();
+    table_set->RefilterQuickSearch ();
 
     {
       Table *table = (Table *) match->GetPtrData (table_set, "table");
@@ -1354,7 +1356,6 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::RefreshNodes ()
   {
-    printf ("    RefreshNodes\n");
     g_node_traverse (_tree_root,
                      G_POST_ORDER,
                      G_TRAVERSE_ALL,
@@ -2248,7 +2249,20 @@ namespace Table
         g_free (B_name);
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSet::RefilterQuickSearch ()
+  {
+    GtkComboBox *combobox = GTK_COMBO_BOX (_glade->GetWidget ("quick_search_combobox"));
+
+    g_object_ref (_quick_search_filter);
+
+    gtk_combo_box_set_model (combobox, NULL);
     gtk_tree_model_filter_refilter (_quick_search_filter);
+    gtk_combo_box_set_model (combobox, GTK_TREE_MODEL (_quick_search_filter));
+
+    g_object_unref (_quick_search_filter);
   }
 
   // --------------------------------------------------------------------------------
@@ -2267,6 +2281,7 @@ namespace Table
       }
 
       RefreshTableStatus ();
+      RefilterQuickSearch ();
 
       for (guint t = 1; t < _nb_tables; t++)
       {
