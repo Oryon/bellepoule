@@ -251,7 +251,10 @@ namespace Table
     gtk_tree_model_get (model, iter,
                         TABLE_SET_TABLE_COLUMN_ptr, &table_set,
                         -1);
-    ts->_is_over &= table_set->IsOver ();
+    if (table_set->GetFirstPlace () == 1)
+    {
+      ts->_is_over &= table_set->IsOver ();
+    }
 
     if (ts->_first_error == NULL)
     {
