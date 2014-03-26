@@ -983,7 +983,7 @@ void Schedule::RefreshSensitivity ()
       gtk_widget_set_sensitive (_glade->GetWidget ("next_stage_toolbutton"),
                                 TRUE);
     }
-    else
+
     {
       gchar *error = stage->GetError ();
 
@@ -1281,11 +1281,25 @@ void Schedule::PlugStage (Stage *stage)
   g_free (name);
 
   {
-    Stage *previous = stage->GetPreviousStage ();
+    Stage *previous = stage->GetInputProvider ();
+
+    if (previous == NULL)
+    {
+      previous = stage->GetPreviousStage ();
+    }
 
     if (previous)
     {
-      stage->SetRandSeed (previous->GetRandSeed ());
+      const guint32  seed[] = {stage->GetId (), previous->GetRandSeed ()};
+      GRand         *rand;
+      gint           rand_seed;
+
+      rand = g_rand_new_with_seed_array (seed,
+                                         sizeof (seed) / sizeof (guint32));
+      rand_seed = (gint) g_rand_int (rand);
+      g_rand_free (rand);
+
+      stage->SetRandSeed (rand_seed);
     }
   }
 
