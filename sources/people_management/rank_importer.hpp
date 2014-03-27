@@ -31,6 +31,7 @@ namespace People
 
     private:
       GHashTable *_rank_table;
+      guint       _worst_rank;
 
       virtual ~RankImporter ();
 
@@ -41,6 +42,8 @@ namespace People
       void LoadList (xmlNode *xml_node);
 
       void DisplayChooser (GKeyFile *config_file);
+
+      void UpdateWorstRank (guint rank_candidate);
   };
 }
 

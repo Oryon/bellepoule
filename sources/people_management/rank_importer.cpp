@@ -40,6 +40,16 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void RankImporter::UpdateWorstRank (guint rank_candidate)
+  {
+    if (   (_worst_rank == 0)
+        || (_worst_rank < rank_candidate))
+    {
+      _worst_rank = rank_candidate;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void RankImporter::ModifyRank (Player *fencer)
   {
     if (_rank_table)
@@ -62,6 +72,11 @@ namespace People
       id = g_strdup_printf ("%s:%s", name, first_name);
       new_rank = GPOINTER_TO_UINT (g_hash_table_lookup (_rank_table,
                                                         id));
+      if (new_rank == 0)
+      {
+        new_rank = _worst_rank+1;
+      }
+
       fencer->SetAttributeValue (&ranking_attr_id,
                                  new_rank);
 
@@ -180,6 +195,8 @@ namespace People
                                              g_free,
                                              NULL);
 
+        _worst_rank = 0;
+
         if (   g_str_has_suffix (filename, ".cotcot")
             || g_str_has_suffix (filename, ".xml")
             || g_str_has_suffix (filename, ".XML"))
@@ -238,25 +255,30 @@ namespace People
 
               if (tokens && tokens[0])
               {
-                const gchar *name       = NULL;
-                const gchar *first_name = NULL;
+                gchar       *name       = NULL;
+                gchar       *first_name = NULL;
                 const gchar *rank       = NULL;
+                guint        rank_value;
 
                 for (guint t = 0; tokens[t] != NULL; t++)
                 {
                   if (t == 0)
                   {
-                    name = tokens[t];
+                    name = GetUndivadableText (tokens[t]);
                   }
                   else if (t == 1)
                   {
-                    first_name = tokens[t];
+                    first_name = GetUndivadableText (tokens[t]);
                   }
                   rank = tokens[t];
                 }
+                rank_value = atoi (rank);
                 g_hash_table_insert (_rank_table,
                                      g_strdup_printf ("%s:%s", name, first_name),
-                                     (gpointer) atoi (rank));
+                                     (gpointer) rank_value);
+                g_free (name);
+                g_free (first_name);
+                UpdateWorstRank (rank_value);
 
                 g_strfreev (tokens);
               }
@@ -313,13 +335,20 @@ namespace People
         }
         else if (strcmp ((char *) n->name, "Tireur") == 0)
         {
-          gchar *rank       = (gchar *) xmlGetProp (n, BAD_CAST "Classement");
-          gchar *name       = (gchar *) xmlGetProp (n, BAD_CAST "Nom");
-          gchar *first_name = (gchar *) xmlGetProp (n, BAD_CAST "Prenom");
+          gchar *rank                   = (gchar *) xmlGetProp (n, BAD_CAST "Classement");
+          guint  rank_value             = atoi (rank);
+          gchar *name                   = (gchar *) xmlGetProp (n, BAD_CAST "Nom");
+          gchar *first_name             = (gchar *) xmlGetProp (n, BAD_CAST "Prenom");
+          gchar *name_undivadabel       = GetUndivadableText (name);
+          gchar *first_name_undivadabel = GetUndivadableText (first_name);
 
           g_hash_table_insert (_rank_table,
-                               g_strdup_printf ("%s:%s", name, first_name),
-                               (gpointer) atoi (rank));
+                               g_strdup_printf ("%s:%s", name_undivadabel, first_name_undivadabel),
+                               (gpointer) rank_value);
+          UpdateWorstRank (rank_value);
+
+          g_free (name_undivadabel);
+          g_free (first_name_undivadabel);
 
           xmlFree (name);
           xmlFree (first_name);
