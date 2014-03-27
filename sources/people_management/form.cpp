@@ -69,11 +69,14 @@ namespace People
       GtkWidget   *hbox       = gtk_hbox_new (FALSE, 5);
       GSList      *current    = filter->GetAttrList ();
       GtkComboBox *selector_w = NULL;
+      GtkWidget   *smartpoule_label = gtk_label_new (gettext ("<b>Smartpoule</b> configuration code"));
 
       page->_title_vbox       = gtk_vbox_new (TRUE, 0);
       page->_value_vbox       = gtk_vbox_new (TRUE, 0);
       page->_check_vbox       = gtk_vbox_new (TRUE, 0);
       page->_flash_code_image = GTK_IMAGE (gtk_image_new ());
+
+      gtk_label_set_use_markup (GTK_LABEL (smartpoule_label), TRUE);
 
       gtk_box_pack_start (GTK_BOX (hbox),
                           page->_check_vbox,
@@ -97,7 +100,17 @@ namespace People
                           FALSE,
                           0);
       gtk_box_pack_start (GTK_BOX (vbox),
+                           gtk_hseparator_new (),
+                          FALSE,
+                          FALSE,
+                          10);
+      gtk_box_pack_start (GTK_BOX (vbox),
                           GTK_WIDGET (page->_flash_code_image),
+                          FALSE,
+                          FALSE,
+                          0);
+      gtk_box_pack_start (GTK_BOX (vbox),
+                          smartpoule_label,
                           FALSE,
                           FALSE,
                           0);
