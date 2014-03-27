@@ -921,7 +921,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image10">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">wifi.png</property>
+    <property name="pixbuf">eye.png</property>
   </object>
   <object class="GtkImage" id="image11">
     <property name="visible">True</property>
@@ -951,7 +951,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image16">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-connect</property>
+    <property name="pixbuf">wifi.png</property>
   </object>
   <object class="GtkImage" id="image17">
     <property name="visible">True</property>
@@ -1008,38 +1008,7 @@ Public License instead of this License.  But first, please read
       <object class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <object class="GtkButton" id="close_network_button">
-                <property name="label">gtk-close</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
+        <property name="spacing">12</property>
         <child>
           <object class="GtkAlignment" id="alignment">
             <property name="visible">True</property>
@@ -1178,11 +1147,99 @@ Public License instead of this License.  But first, please read
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area3">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <object class="GtkButton" id="close_network_button">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkLabel" id="label1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Copy here your WIFI network parameters.
+They'll be used to automatically configure
+the smartphones running
+ &lt;b&gt;QuickPoule&lt;/b&gt; and &lt;b&gt;SmartPoule&lt;/b&gt;.</property>
+            <property name="use_markup">True</property>
+            <property name="justify">center</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox3">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkLinkButton" id="linkbutton2">
+                <property name="label">QuickPoule</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="relief">none</property>
+                <property name="uri">https://play.google.com/store/apps/details?id=betton.escrime.quickpoule</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLinkButton" id="linkbutton3">
+                <property name="label">SmartPoule</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="relief">none</property>
+                <property name="uri">https://play.google.com/store/apps/details?id=betton.escrime.smartpoule</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
         </child>
       </object>
     </child>
@@ -1700,8 +1757,9 @@ Public License instead of this License.  But first, please read
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Scan this code with &lt;b&gt;QuickPoule&lt;/b&gt;
 to make your smarphone
-a score sheet scanner</property>
+a score sheet scanner.</property>
                                 <property name="use_markup">True</property>
+                                <property name="justify">center</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -1711,7 +1769,7 @@ a score sheet scanner</property>
                             </child>
                             <child>
                               <object class="GtkLinkButton" id="linkbutton1">
-                                <property name="label" translatable="yes">QuickPoule</property>
+                                <property name="label">QuickPoule</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>

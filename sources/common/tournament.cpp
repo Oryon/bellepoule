@@ -1277,9 +1277,11 @@ void Tournament::OnSave ()
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenUserManual ()
 {
-  gchar *uri = g_build_filename (_program_path, "resources", "user_manual.pdf", NULL);
+  gchar *uri;
 
 #ifdef WINDOWS_TEMPORARY_PATCH
+  uri = g_build_filename (_program_path, "resources", "user_manual.pdf", NULL);
+
   ShellExecute (NULL,
                 "open",
                 uri,
@@ -1287,6 +1289,8 @@ void Tournament::OnOpenUserManual ()
                 NULL,
                 SW_SHOWNORMAL);
 #else
+  uri = g_build_filename ("file://", _program_path, "resources", "user_manual.pdf", NULL);
+
   gtk_show_uri (NULL,
                 uri,
                 GDK_CURRENT_TIME,
