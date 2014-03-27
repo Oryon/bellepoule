@@ -207,13 +207,14 @@ namespace People
   {
     if (player->Is ("Team"))
     {
+      Team                *team      = (Team *) player;
       AttributeDesc       *team_desc = AttributeDesc::GetDescFromCodeName ("team");
       Player::AttributeId  team_attr_id  ("name");
       Attribute           *team_attr = player->GetAttribute ( &team_attr_id);
 
       if (team_desc->GetXmlImage (team_attr->GetStrValue ()) == NULL)
       {
-        RegisterNewTeam ((Team *) player);
+        RegisterNewTeam (team);
       }
     }
     else if (owner)
@@ -415,28 +416,6 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::UpdateTeamsRanking (Player::AttributeId *criteria)
-  {
-    if (_manual_classification->_value == FALSE)
-    {
-      GSList *current = _player_list;
-
-      while (current)
-      {
-        Player *player = (Player *) current->data;
-
-        if (player->Is ("Team"))
-        {
-          Team *team = (Team *) player;
-
-          team->SetRankFromMembers (criteria);
-        }
-        current = g_slist_next (current);
-      }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void CheckinSupervisor::UpdateRanking ()
   {
     guint                nb_player = g_slist_length (_player_list);
@@ -454,11 +433,6 @@ namespace People
       }
 
       rank_criteria_id->MakeRandomReady (_rand_seed);
-    }
-
-    if (_contest->IsTeamEvent ())
-    {
-      UpdateTeamsRanking (rank_criteria_id);
     }
 
     _player_list = g_slist_sort_with_data (_player_list,
@@ -615,6 +589,8 @@ namespace People
     {
       team->SetDefaultClassification (_default_classification->_value);
       team->SetMinimumSize           (_minimum_team_size->_value);
+      team->SetManualClassification  (_manual_classification->_value);
+      Update (team);
     }
     else
     {
@@ -630,6 +606,8 @@ namespace People
 
           current_team->SetDefaultClassification (_default_classification->_value);
           current_team->SetMinimumSize           (_minimum_team_size->_value);
+          current_team->SetManualClassification  (_manual_classification->_value);
+          Update (current_team);
         }
         current = g_slist_next (current);
       }
@@ -842,7 +820,9 @@ namespace People
       player->SetChangeCbk ("attending",
                             (Player::OnChange) OnAttrAttendingChanged,
                             this);
-
+      player->SetChangeCbk ("ranking",
+                            (Player::OnChange) OnAttrAttendingChanged,
+                            this);
       player->SetChangeCbk ("team",
                             (Player::OnChange) OnAttrTeamChanged,
                             this,
@@ -881,6 +861,7 @@ namespace People
       if (team)
       {
         team->SetAttendingFromMembers ();
+        supervisor->Update (team);
       }
     }
     else if (player->Is ("Team"))

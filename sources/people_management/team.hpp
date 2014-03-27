@@ -40,11 +40,11 @@ class Team : public Player
 
     void SetAttributesFromMembers ();
 
-    void SetRankFromMembers (Player::AttributeId *criteria);
-
     void SetDefaultClassification (guint default_classification);
 
     void SetMinimumSize (guint size);
+
+    void SetManualClassification (gboolean manual);
 
     void EnableMemberSaving (gboolean enable);
 
@@ -55,6 +55,7 @@ class Team : public Player
     GSList   *_member_list;
     guint     _default_classification;
     guint     _minimum_size;
+    gboolean  _manual_classification;
     gboolean  _enable_member_saving;
 
     Team ();
@@ -66,9 +67,6 @@ class Team : public Player
     void Load (xmlNode *xml_node);
 
     void Save (xmlTextWriter *xml_writer);
-
-    static gint CompareRank (guint a,
-                             guint b);
 };
 
 #endif
