@@ -882,15 +882,23 @@ namespace People
 
     if (_print_missing && _print_attending)
     {
-      name = g_strdup (gettext ("List of registered"));
+      name = g_strdup_printf ("%s (%d)",
+                              gettext ("List of registered"),
+                              _tally_counter->GetTotalCount ());
     }
     else if ((_print_missing == FALSE) && _print_attending)
     {
-      name = g_strdup (gettext ("List of presents"));
+      name = g_strdup_printf ("%s (%d/%d)",
+                              gettext ("List of presents"),
+                              _tally_counter->GetPresentsCount (),
+                              _tally_counter->GetTotalCount ());
     }
     else if ((_print_attending == FALSE) && _print_missing)
     {
-      name = g_strdup (gettext ("List of absents"));
+      name = g_strdup_printf ("%s (%d/%d)",
+                              gettext ("List of absents"),
+                              _tally_counter->GetAbsentsCount (),
+                              _tally_counter->GetTotalCount ());
     }
     else
     {
