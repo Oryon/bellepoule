@@ -2051,7 +2051,11 @@ extern "C" G_MODULE_EXPORT void on_contest_close_button_clicked (GtkWidget *widg
 void Contest::on_contest_close_button_clicked ()
 {
   Save ();
-  Release ();
+
+  if (_filename)
+  {
+    Release ();
+  }
 }
 
 // --------------------------------------------------------------------------------
