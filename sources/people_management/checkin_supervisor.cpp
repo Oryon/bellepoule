@@ -362,7 +362,8 @@ namespace People
       Player::AttributeId  attr_id ("attending");
       GChecksum           *checksum       = g_checksum_new (G_CHECKSUM_MD5);
       GSList              *current_player = _player_list;
-      guint                ref = 1;
+      guint                ref            = 1;
+      guint                absent_ref     = 10000;
 
       while (current_player)
       {
@@ -393,6 +394,11 @@ namespace People
               p->SetRef (ref);
               ref++;
             }
+          }
+          else
+          {
+            p->SetRef (absent_ref);
+            absent_ref++;
           }
         }
         current_player = g_slist_next (current_player);
