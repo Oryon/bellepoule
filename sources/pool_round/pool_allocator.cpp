@@ -1464,17 +1464,24 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gboolean Allocator::IsOver ()
   {
-    GSList *current = _drop_zones;
-
-    while (current)
+    if (_swapper->HasErrors ())
     {
-      Pool *pool = GetPoolOf (current);
+      return FALSE;
+    }
+    else
+    {
+      GSList *current = _drop_zones;
 
-      if (pool->GetUIntData (this, "is_balanced") == 0)
+      while (current)
       {
-        return FALSE;
+        Pool *pool = GetPoolOf (current);
+
+        if (pool->GetUIntData (this, "is_balanced") == 0)
+        {
+          return FALSE;
+        }
+        current = g_slist_next (current);
       }
-      current = g_slist_next (current);
     }
     return TRUE;
   }
