@@ -692,6 +692,7 @@ next_fencer:
         }
       }
 
+      PRINT ("");
       return result;
     }
   }

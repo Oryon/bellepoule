@@ -87,7 +87,6 @@
               <object class="GtkToolButton" id="export_html_toolbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Export the general classification to a .csv file that a spreadsheet like Excel or OpenOffice can open.</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_underline">True</property>
                 <property name="label_widget">label1</property>

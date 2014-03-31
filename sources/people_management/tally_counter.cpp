@@ -81,6 +81,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  guint TallyCounter::GetTotalCount ()
+  {
+    return GetPresentsCount () + GetAbsentsCount ();
+  }
+
+  // --------------------------------------------------------------------------------
   guint TallyCounter::GetPresentsCount ()
   {
     if (_team_mode_enabled)

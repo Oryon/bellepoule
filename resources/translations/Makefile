@@ -2,6 +2,7 @@
 
 DOMAIN      = BellePoule
 POT_FILE    = $(DOMAIN).pot
+PO_FILES    = $(wildcard *.po)
 MO_FILES    = $(wildcard */LC_MESSAGES/$(DOMAIN).mo)
 CPP_FILES   = $(wildcard ../../sources/*/*cpp)
 GLADE_FILES = $(wildcard ../../resources/glade/*glade)
@@ -33,3 +34,9 @@ revert:
          --verbose\
          --output-file=$@\
            $(subst /LC_MESSAGES/$(DOMAIN).mo,.po,$@)
+
+to_trunk:
+	cp $(PO_FILES) ../../../trunk/resources/translations/
+
+from_trunk:
+	cp ../../../trunk/resources/translations/*.po .
