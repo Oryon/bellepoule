@@ -178,11 +178,9 @@ namespace People
 
       for (guint i = 0; current != NULL; i++)
       {
-        Player    *player;
-        Attribute *attr;
+        Player    *player = (Player *) current->data;
+        Attribute *attr   = player->GetAttribute ( &exported_attr);
 
-        player = (Player *) current->data;
-        attr   = player->GetAttribute (&exported_attr);
         if (attr->GetUIntValue () == TRUE)
         {
           Player *new_player = player->Duplicate ();
