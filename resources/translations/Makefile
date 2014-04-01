@@ -36,7 +36,9 @@ revert:
            $(subst /LC_MESSAGES/$(DOMAIN).mo,.po,$@)
 
 to_trunk:
-	cp $(PO_FILES) ../../../trunk/resources/translations/
+	cp $(PO_FILES) ../../../trunk/resources/translations
+	cp $(POT_FILE) ../../../trunk/resources/translations
 
 from_trunk:
-	cp ../../../trunk/resources/translations/*.po .
+	cp ../../../trunk/resources/translations/$(POT_FILE) .
+	cp ../../../trunk/resources/translations/*.po        .
