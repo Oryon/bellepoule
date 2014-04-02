@@ -188,8 +188,9 @@ class Contest : public Module
     void   GetUnknownAttributes (const gchar     *contest_keyword,
                                  xmlXPathContext *xml_context);
     void   LoadHeader           (xmlXPathContext *context);
-    gchar *GetSaveFileName      (gchar       *title,
-                                 const gchar *config_key);
+    gchar *GetSaveFileName      (GtkWidget   *chooser,
+                                 const gchar *config_key,
+                                 gint        *choice = NULL);
     void   Save                 (gchar *filename);
     void   FillInProperties     ();
     void   FillInDate           (guint day,
