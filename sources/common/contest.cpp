@@ -481,6 +481,22 @@ void Contest::LoadXml (const gchar *filename)
       }
     }
   }
+
+  if ((_filename == NULL) && (_read_only == FALSE))
+  {
+    GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
+                                                                  NULL,
+                                                                  GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                                  GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
+                                                                  GTK_STOCK_SAVE_AS, GTK_RESPONSE_ACCEPT,
+                                                                  NULL));
+
+    GetSaveFileName (chooser,
+                     "default_dir_name");
+    gtk_widget_destroy (chooser);
+  }
+
+  Save ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1027,6 +1043,22 @@ Contest *Contest::Create ()
     gtk_widget_hide (contest->_properties_dialog);
   }
 
+  if (contest->_read_only == FALSE)
+  {
+    GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
+                                                                  NULL,
+                                                                  GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                                  GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
+                                                                  GTK_STOCK_SAVE_AS, GTK_RESPONSE_ACCEPT,
+                                                                  NULL));
+
+    contest->GetSaveFileName (chooser,
+                              "default_dir_name");
+    gtk_widget_destroy (chooser);
+  }
+
+  contest->Save ();
+
   return contest;
 }
 
@@ -1505,32 +1537,11 @@ void Contest::Publish ()
 // --------------------------------------------------------------------------------
 void Contest::Save ()
 {
-  if ((_filename == NULL) && (_read_only == FALSE))
-  {
-    _filename = GetSaveFileName (gettext ("Choose a file..."),
-                                 "default_dir_name");
-
-    if (_filename)
-    {
-      gtk_widget_set_tooltip_text (_glade->GetWidget ("save_toolbutton"),
-                                   _filename);
-    }
-  }
-
   if (_filename)
   {
     Save (_filename);
 
-    {
-      gchar *uri = g_filename_to_uri (_filename,
-                                      NULL,
-                                      NULL);
-
-      gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
-                                   uri);
-      g_free (uri);
-    }
-
+    if (_tournament)
     {
       const gchar *location = _tournament->GetBackupLocation ();
 
@@ -1711,20 +1722,12 @@ void Contest::Save (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest::GetSaveFileName (gchar       *title,
-                                 const gchar *config_key)
+gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
+                                 const gchar *config_key,
+                                 gint        *choice)
 {
-  GtkWidget *chooser;
-  char      *filename = NULL;
+  gint response;
 
-  chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
-                                                     NULL,
-                                                     GTK_FILE_CHOOSER_ACTION_SAVE,
-                                                     GTK_STOCK_CANCEL,
-                                                     GTK_RESPONSE_CANCEL,
-                                                     GTK_STOCK_SAVE_AS,
-                                                     GTK_RESPONSE_ACCEPT,
-                                                     NULL));
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (chooser),
                                                   TRUE);
 
@@ -1772,25 +1775,45 @@ gchar *Contest::GetSaveFileName (gchar       *title,
     g_free (name);
   }
 
-  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
+  response = gtk_dialog_run (GTK_DIALOG (chooser));
+
+  if (response == GTK_RESPONSE_ACCEPT)
   {
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+    _filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
-    if (filename)
+    if (_filename)
     {
-      gchar *dirname = g_path_get_dirname (filename);
+      gtk_widget_set_tooltip_text (_glade->GetWidget ("save_toolbutton"),
+                                   _filename);
 
-      g_key_file_set_string (_config_file,
-                             "Competiton",
-                             config_key,
-                             dirname);
-      g_free (dirname);
+      {
+        gchar *dirname = g_path_get_dirname (_filename);
+
+        g_key_file_set_string (_config_file,
+                               "Competiton",
+                               config_key,
+                               dirname);
+        g_free (dirname);
+      }
+
+      {
+        gchar *uri = g_filename_to_uri (_filename,
+                                        NULL,
+                                        NULL);
+
+        gtk_recent_manager_add_item (gtk_recent_manager_get_default (),
+                                     uri);
+        g_free (uri);
+      }
     }
   }
 
-  gtk_widget_destroy (chooser);
+  if (choice)
+  {
+    *choice = response;
+  }
 
-  return filename;
+  return _filename;
 }
 
 // --------------------------------------------------------------------------------
@@ -1985,6 +2008,19 @@ extern "C" G_MODULE_EXPORT void on_save_toolbutton_clicked (GtkWidget *widget,
 // --------------------------------------------------------------------------------
 void Contest::on_save_toolbutton_clicked ()
 {
+  if ((_filename == NULL) && (_read_only == FALSE))
+  {
+    GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
+                                                                  NULL,
+                                                                  GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                                  GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
+                                                                  GTK_STOCK_SAVE_AS, GTK_RESPONSE_ACCEPT,
+                                                                  NULL));
+    GetSaveFileName (chooser,
+                     "default_dir_name");
+    gtk_widget_destroy (chooser);
+  }
+
   Save ();
 }
 
@@ -2050,9 +2086,26 @@ extern "C" G_MODULE_EXPORT void on_contest_close_button_clicked (GtkWidget *widg
 // --------------------------------------------------------------------------------
 void Contest::on_contest_close_button_clicked ()
 {
+  gint choice;
+
+  if ((_filename == NULL) && (_read_only == FALSE))
+  {
+    GtkWidget *chooser = GTK_WIDGET (gtk_file_chooser_dialog_new (gettext ("Choose a file..."),
+                                                                  NULL,
+                                                                  GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                                  GTK_STOCK_CANCEL,                 GTK_RESPONSE_CANCEL,
+                                                                  gettext ("Close without saving"), GTK_RESPONSE_REJECT,
+                                                                  GTK_STOCK_SAVE_AS,                GTK_RESPONSE_ACCEPT,
+                                                                  NULL));
+    GetSaveFileName (chooser,
+                     "default_dir_name",
+                     &choice);
+    gtk_widget_destroy (chooser);
+  }
+
   Save ();
 
-  if (_filename)
+  if (choice != GTK_RESPONSE_CANCEL)
   {
     Release ();
   }
