@@ -98,9 +98,8 @@ namespace SmartSwapper
       Player::AttributeId attr_id ("stage_start_rank", _pool->GetDataOwner ());
 
       _fencer_list = g_list_sort_with_data (_fencer_list,
-                                            (GCompareDataFunc) Player::Compare,
+                                            (GCompareDataFunc) Fencer::CompareRank,
                                             &attr_id);
-      _fencer_list = g_list_reverse (_fencer_list);
     }
   }
 

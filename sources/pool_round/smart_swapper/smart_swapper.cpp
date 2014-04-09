@@ -71,10 +71,10 @@ namespace SmartSwapper
   void SmartSwapper::Clean ()
   {
     {
-      g_slist_foreach (_remaining_errors,
-                       (GFunc) Object::TryToRelease,
-                       NULL);
-      g_slist_free (_remaining_errors);
+      g_list_foreach (_remaining_errors,
+                      (GFunc) Object::TryToRelease,
+                      NULL);
+      g_list_free (_remaining_errors);
 
       _remaining_errors = NULL;
     }
@@ -421,9 +421,9 @@ namespace SmartSwapper
     }
 
     _error_list = g_list_sort (_error_list,
-                               (GCompareFunc) CompareFencerRank);
+                               (GCompareFunc) Fencer::CompareRank);
     _floating_list = g_list_sort (_floating_list,
-                                  (GCompareFunc) CompareFencerRank);
+                                  (GCompareFunc) Fencer::CompareRank);
   }
 
   // --------------------------------------------------------------------------------
@@ -442,15 +442,17 @@ namespace SmartSwapper
   void SmartSwapper::DispatchFloatings ()
   {
     PRINT (GREEN "\n\nDispatch FLOATINGS" ESC);
+    DumpPools ();
     DispatchFencers (_floating_list);
 
     PRINT (GREEN "\n\nDispatch REMAINING" ESC);
+    DumpPools ();
     {
-      GSList *failed_list = NULL;
+      GList *failed_list = NULL;
 
       // Remaining errors
       {
-        GSList *current_error = _remaining_errors;
+        GList *current_error = _remaining_errors;
 
         while (current_error)
         {
@@ -463,16 +465,16 @@ namespace SmartSwapper
 
             if (floating->_new_pool)
             {
+              PoolData *new_pool = floating->_new_pool;
+
+              new_pool->RemoveFencer (floating);
               if (FencerCanGoTo (error,
-                                 floating->_new_pool,
+                                 new_pool,
                                  _criteria_depth))
               {
-                PoolData *new_pool = floating->_new_pool;
-
-                // Try this assignment
                 new_pool->InsertFencer (error);
-                new_pool->RemoveFencer (floating);
 
+                PRINT (YELLOW "%s ***  %s\n" ESC, error->_player->GetName (), floating->_player->GetName ());
                 for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
                 {
                   _snake->Reset (floating->_original_pool->_id);
@@ -489,27 +491,24 @@ namespace SmartSwapper
                     }
                   }
                 }
-
-                // Failed! Restore the previous assignment
                 new_pool->RemoveFencer (error);
-                new_pool->InsertFencer (floating);
               }
+              new_pool->InsertFencer (floating);
             }
 
             current_floating = g_list_previous (current_floating);
           }
 
-          PRINT ("!!!!> %s", error->_player->GetName ());
-          failed_list = g_slist_prepend (failed_list,
-                                         error);
+          failed_list = g_list_prepend (failed_list,
+                                        error);
 
 next_error:
-          current_error = g_slist_next (current_error);
+          current_error = g_list_next (current_error);
         }
       }
 
       {
-        g_slist_free (_remaining_errors);
+        g_list_free (_remaining_errors);
         _remaining_errors = NULL;
         _remaining_errors = failed_list;
       }
@@ -551,9 +550,9 @@ next_error:
       }
 
       // Moving failed
-      _remaining_errors = g_slist_prepend (_remaining_errors,
-                                           fencer);
-      printf (RED "  << %s >>\n" ESC, fencer->_player->GetName ());
+      _remaining_errors = g_list_prepend (_remaining_errors,
+                                          fencer);
+      PRINT (RED "  << %s >>\n" ESC, fencer->_player->GetName ());
       DumpPools ();
 
 next_fencer:
@@ -615,13 +614,6 @@ next_fencer:
     {
       return (_nb_pools-1 - fencer_index % _nb_pools);
     }
-  }
-
-  // --------------------------------------------------------------------------------
-  gint SmartSwapper::CompareFencerRank (Fencer *a,
-                                        Fencer *b)
-  {
-    return a->_rank - b->_rank;
   }
 
   // --------------------------------------------------------------------------------
@@ -692,7 +684,7 @@ next_fencer:
         }
       }
 
-      PRINT ("");
+      PRINT (" ");
       return result;
     }
   }

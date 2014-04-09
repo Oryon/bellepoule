@@ -60,9 +60,6 @@
       </object>
     </child>
   </object>
-  <object class="GtkTextBuffer" id="textbuffer1">
-    <property name="text" translatable="yes">Select the fencers to move to a new competition.</property>
-  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <child>
@@ -133,15 +130,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkSizeGroup" id="label_sizegroup">
-    <widgets>
-      <widget name="label4"/>
-    </widgets>
-  </object>
-  <object class="GtkSizeGroup" id="value_sizegroup">
-    <widgets>
-      <widget name="name_entry"/>
-    </widgets>
   </object>
 </interface>
