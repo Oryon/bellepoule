@@ -38,6 +38,9 @@ namespace SmartSwapper
               PoolData *original_pool,
               guint     criteria_count);
 
+      static gint CompareRank (Fencer *a,
+                               Fencer *b);
+
     private:
       ~Fencer ();
   };

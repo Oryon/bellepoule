@@ -84,9 +84,6 @@ namespace SmartSwapper
 
       void StoreSwapping ();
 
-      static gint CompareFencerRank (Fencer *a,
-                                     Fencer *b);
-
       void Clean ();
 
       gboolean FencerIsMovable (Fencer *fencer);
@@ -106,7 +103,7 @@ namespace SmartSwapper
       GHashTable   **_distributions;
       GList         *_error_list;
       GList         *_floating_list;
-      GSList        *_remaining_errors;
+      GList         *_remaining_errors;
       guint          _first_pool_to_try;
       guint          _moved;
       guint          _criteria_count;

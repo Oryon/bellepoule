@@ -43,4 +43,11 @@ namespace SmartSwapper
   {
     g_free (_criteria_quarks);
   }
+
+  // --------------------------------------------------------------------------------
+  gint Fencer::CompareRank (Fencer *a,
+                            Fencer *b)
+  {
+    return a->_rank - b->_rank;
+  }
 }
