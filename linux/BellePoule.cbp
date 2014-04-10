@@ -3,6 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="BellePoule" />
+		<Option execution_dir="/media/usb0/BellePoule/bazaar/trunk/linux/" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -12,7 +13,6 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-Wunreachable-code" />
 					<Add option="-g" />
 					<Add option="-DDEBUG=1" />
 				</Compiler>
@@ -33,31 +33,40 @@
 		<Compiler>
 			<Add option="-Wshadow" />
 			<Add option="-Winit-self" />
+			<Add option="-Wredundant-decls" />
 			<Add option="-Wcast-align" />
+			<Add option="-Wundef" />
+			<Add option="-Wunreachable-code" />
+			<Add option="-Wmissing-include-dirs" />
 			<Add option="-Wswitch-enum" />
 			<Add option="-Wswitch-default" />
+			<Add option="-pedantic" />
 			<Add option="-std=c++98" />
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-Wno-int-to-pointer-cast" />
-			<Add option="-Wno-long-long -Wno-unused-parameter -Wno-shadow" />
+			<Add option="-Wno-long-long" />
+			<Add option="-Wno-unused-parameter" />
+			<Add option="-Wno-shadow" />
+			<Add option="-Wno-vla" />
+			<Add option="-Wno-variadic-macros" />
 			<Add option="-pthread -D_REENTRANT" />
 			<Add directory="../sources" />
-      <Add directory="/usr/include/gtk-2.0" />
-      <Add directory="/usr/lib/x86_64-linux-gnu/gtk-2.0/include" />
-      <Add directory="/usr/include" />
-      <Add directory="/usr/include/atk-1.0" />
-      <Add directory="/usr/include/cairo" />
-      <Add directory="/usr/include/gdk-pixbuf-2.0" />
-      <Add directory="/usr/include/pango-1.0" />
-      <Add directory="/usr/include/gio-unix-2.0" />
-      <Add directory="/usr/include/glib-2.0" />
-      <Add directory="/usr/lib/x86_64-linux-gnu/glib-2.0/include" />
-      <Add directory="/usr/include/pixman-1" />
-      <Add directory="/usr/include/freetype2" />
-      <Add directory="/usr/include/libpng12" />
-      <Add directory="/usr/include/libxml2" />
-      <Add directory="/usr/include/goocanvas-1.0" />
+			<Add directory="/usr/include/gtk-2.0" />
+			<Add directory="/usr/lib/x86_64-linux-gnu/gtk-2.0/include" />
+			<Add directory="/usr/include" />
+			<Add directory="/usr/include/atk-1.0" />
+			<Add directory="/usr/include/cairo" />
+			<Add directory="/usr/include/gdk-pixbuf-2.0" />
+			<Add directory="/usr/include/pango-1.0" />
+			<Add directory="/usr/include/gio-unix-2.0" />
+			<Add directory="/usr/include/glib-2.0" />
+			<Add directory="/usr/lib/x86_64-linux-gnu/glib-2.0/include" />
+			<Add directory="/usr/include/pixman-1" />
+			<Add directory="/usr/include/freetype2" />
+			<Add directory="/usr/include/libpng12" />
+			<Add directory="/usr/include/libxml2" />
+			<Add directory="/usr/include/goocanvas-1.0" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--export-dynamic" />
@@ -121,14 +130,10 @@
 		<Unit filename="../sources/network/http_server.hpp" />
 		<Unit filename="../sources/network/uploader.cpp" />
 		<Unit filename="../sources/network/uploader.hpp" />
-		<Unit filename="../sources/network/wifi_network.hpp" />
 		<Unit filename="../sources/network/wifi_network.cpp" />
+		<Unit filename="../sources/network/wifi_network.hpp" />
 		<Unit filename="../sources/people_management/barrage.cpp" />
 		<Unit filename="../sources/people_management/barrage.hpp" />
-		<Unit filename="../sources/people_management/tally_counter.cpp" />
-		<Unit filename="../sources/people_management/tally_counter.hpp" />
-		<Unit filename="../sources/people_management/rank_importer.cpp" />
-		<Unit filename="../sources/people_management/rank_importer.hpp" />
 		<Unit filename="../sources/people_management/checkin.cpp" />
 		<Unit filename="../sources/people_management/checkin.hpp" />
 		<Unit filename="../sources/people_management/checkin_supervisor.cpp" />
@@ -139,18 +144,22 @@
 		<Unit filename="../sources/people_management/form.hpp" />
 		<Unit filename="../sources/people_management/general_classification.cpp" />
 		<Unit filename="../sources/people_management/general_classification.hpp" />
-		<Unit filename="../sources/people_management/players_list.cpp" />
-		<Unit filename="../sources/people_management/players_list.hpp" />
 		<Unit filename="../sources/people_management/player_factory.cpp" />
 		<Unit filename="../sources/people_management/player_factory.hpp" />
+		<Unit filename="../sources/people_management/players_list.cpp" />
+		<Unit filename="../sources/people_management/players_list.hpp" />
 		<Unit filename="../sources/people_management/players_store.cpp" />
 		<Unit filename="../sources/people_management/players_store.hpp" />
+		<Unit filename="../sources/people_management/rank_importer.cpp" />
+		<Unit filename="../sources/people_management/rank_importer.hpp" />
 		<Unit filename="../sources/people_management/referee.cpp" />
 		<Unit filename="../sources/people_management/referee.hpp" />
 		<Unit filename="../sources/people_management/referees_list.cpp" />
 		<Unit filename="../sources/people_management/referees_list.hpp" />
 		<Unit filename="../sources/people_management/splitting.cpp" />
 		<Unit filename="../sources/people_management/splitting.hpp" />
+		<Unit filename="../sources/people_management/tally_counter.cpp" />
+		<Unit filename="../sources/people_management/tally_counter.hpp" />
 		<Unit filename="../sources/people_management/team.cpp" />
 		<Unit filename="../sources/people_management/team.hpp" />
 		<Unit filename="../sources/pool_round/pool.cpp" />
@@ -163,16 +172,16 @@
 		<Unit filename="../sources/pool_round/pool_supervisor.hpp" />
 		<Unit filename="../sources/pool_round/pool_zone.cpp" />
 		<Unit filename="../sources/pool_round/pool_zone.hpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/pool_profiles.cpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/pool_profiles.hpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/criteria_value.cpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/criteria_value.hpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/pool_data.cpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/pool_data.hpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/smart_swapper.cpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/smart_swapper.hpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/criteria_value.hpp" />
-		<Unit filename="../sources/pool_round/smart_swapper/criteria_value.cpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/pool_fencer.cpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/pool_fencer.hpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/pool_profiles.cpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/pool_profiles.hpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/smart_swapper.cpp" />
+		<Unit filename="../sources/pool_round/smart_swapper/smart_swapper.hpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/snake.cpp" />
 		<Unit filename="../sources/pool_round/smart_swapper/snake.hpp" />
 		<Unit filename="../sources/pool_round/swapper.hpp" />
@@ -194,6 +203,8 @@
 		<Unit filename="../sources/util/canvas.hpp" />
 		<Unit filename="../sources/util/canvas_module.cpp" />
 		<Unit filename="../sources/util/canvas_module.hpp" />
+		<Unit filename="../sources/util/clock.cpp" />
+		<Unit filename="../sources/util/clock.hpp" />
 		<Unit filename="../sources/util/data.cpp" />
 		<Unit filename="../sources/util/data.hpp" />
 		<Unit filename="../sources/util/drop_zone.cpp" />
@@ -202,20 +213,18 @@
 		<Unit filename="../sources/util/filter.hpp" />
 		<Unit filename="../sources/util/flash_code.cpp" />
 		<Unit filename="../sources/util/flash_code.hpp" />
-		<Unit filename="../sources/util/wifi_code.cpp" />
-		<Unit filename="../sources/util/wifi_code.hpp" />
 		<Unit filename="../sources/util/glade.cpp" />
 		<Unit filename="../sources/util/glade.hpp" />
 		<Unit filename="../sources/util/module.cpp" />
 		<Unit filename="../sources/util/module.hpp" />
-		<Unit filename="../sources/util/clock.cpp" />
-		<Unit filename="../sources/util/clock.hpp" />
 		<Unit filename="../sources/util/object.cpp" />
 		<Unit filename="../sources/util/object.hpp" />
 		<Unit filename="../sources/util/sensitivity_trigger.cpp" />
 		<Unit filename="../sources/util/sensitivity_trigger.hpp" />
 		<Unit filename="../sources/util/tinyxml2.cpp" />
 		<Unit filename="../sources/util/tinyxml2.h" />
+		<Unit filename="../sources/util/wifi_code.cpp" />
+		<Unit filename="../sources/util/wifi_code.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
