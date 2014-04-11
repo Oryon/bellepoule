@@ -33,7 +33,6 @@ namespace People
     public:
       typedef enum
       {
-        CSV,
         PDF,
         FFF,
         HTML

@@ -78,12 +78,15 @@ void CanvasModule::FreezeZoomer ()
 {
   if (_zoomer && _scrolled_window)
   {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-fpermissive"
     g_signal_handlers_disconnect_by_func (_zoomer,
-                                          (void *) on_zoom_changed, this);
+                                          G_CALLBACK (on_zoom_changed), this);
     g_signal_handlers_disconnect_by_func (gtk_scrolled_window_get_hadjustment (_scrolled_window),
-                                          (void *) on_hadjustment_changed, this);
+                                          G_CALLBACK (on_hadjustment_changed), this);
     g_signal_handlers_disconnect_by_func (gtk_scrolled_window_get_vadjustment (_scrolled_window),
-                                          (void *) on_vadjustment_changed, this);
+                                          G_CALLBACK (on_vadjustment_changed), this);
+#pragma GCC diagnostic pop
   }
 }
 
@@ -547,8 +550,8 @@ void CanvasModule::SetObjectDropZone (Object        *object,
 DropZone *CanvasModule::GetZoneAt (gint x,
                                    gint y)
 {
-  gdouble  vvalue;
-  gdouble  hvalue;
+  gdouble  vvalue  = 0.0;
+  gdouble  hvalue  = 0.0;
   GSList  *current = _drop_zones;
 
   if (_scrolled_window)

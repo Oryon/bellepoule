@@ -761,9 +761,12 @@ namespace Table
       _supervisor->RefreshMatchRate (-_nb_matchs);
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-fpermissive"
     g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
-                                          (void *) on_from_to_table_combobox_changed,
+                                          G_CALLBACK (on_from_to_table_combobox_changed),
                                           (Object *) this);
+#pragma GCC diagnostic pop
 
     if (_tree_root)
     {
@@ -3036,9 +3039,12 @@ namespace Table
       gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-fpermissive"
     g_signal_handlers_disconnect_by_func (_glade->GetWidget ("cutting_count_combobox"),
-                                          (void *) on_cutting_count_combobox_changed,
+                                          G_CALLBACK (on_cutting_count_combobox_changed),
                                           (Object *) this);
+#pragma GCC diagnostic pop
 
     gtk_print_operation_preview_end_preview (preview);
     gtk_widget_hide (_preview_dialog);

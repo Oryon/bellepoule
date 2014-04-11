@@ -476,13 +476,30 @@ namespace Pool
           {
             _swapping_sensitivity_trigger.SwitchOff ();
 
-            if (_swapping_criteria_list)
-            {
-              GtkWidget *w = _glade->GetWidget ("swapping_combobox");
+            g_slist_free (_swapping_criteria_list);
+            _swapping_criteria_list = NULL;
 
-              gtk_combo_box_set_active (GTK_COMBO_BOX (w),
-                                        0);
-              return;
+            {
+              GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
+              GList        *siblings      = gtk_container_get_children (swapping_hbox);
+
+              while (siblings)
+              {
+                GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (siblings->data);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-fpermissive"
+                g_signal_handlers_disconnect_by_func (G_OBJECT (togglebutton),
+                                                      G_CALLBACK (OnSwappingToggled),
+                                                      (Object *) this);
+#pragma GCC diagnostic pop
+                gtk_toggle_button_set_active (togglebutton,
+                                              FALSE);
+                g_signal_connect (G_OBJECT (togglebutton), "toggled",
+                                  G_CALLBACK (OnSwappingToggled), this);
+
+                siblings = g_list_next (siblings);
+              }
             }
           }
         }
@@ -981,15 +998,13 @@ namespace Pool
       }
       else
       {
+        Pool *pool = pool_table[0];
+
         for (guint i = 0; i < nb_fencer; i++)
         {
-          Player *player;
-          Pool   *pool;
+          Player *player = (Player *) g_slist_nth_data (shortlist,
+                                                        i);
 
-          if (i == 0)
-          {
-            pool = pool_table[0];
-          }
           if (_selected_config->_nb_overloaded)
           {
             if (pool->GetNumber () <= _selected_config->_nb_overloaded)
@@ -1009,11 +1024,11 @@ namespace Pool
             pool = pool_table[pool->GetNumber ()];
           }
 
-          player = (Player *) g_slist_nth_data (shortlist,
-                                                i);
           player->SetData (this,
                            "original_pool",
                            (void *) pool->GetNumber ());
+          player->RemoveData (this,
+                              "swapped_from");
           pool->AddFencer (player,
                            this);
         }
@@ -1045,6 +1060,8 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::SetUpCombobox ()
   {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-fpermissive"
     if (_best_config)
     {
       GtkWidget *w;
@@ -1055,7 +1072,7 @@ namespace Pool
 
       w = _glade->GetWidget ("nb_pools_combobox");
       g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                            (void *) on_nb_pools_combobox_changed,
+                                            G_CALLBACK (on_nb_pools_combobox_changed),
                                             (Object *) this);
       gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                 config_index);
@@ -1065,7 +1082,7 @@ namespace Pool
 
       w = _glade->GetWidget ("pool_size_combobox");
       g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                            (void *) on_pool_size_combobox_changed,
+                                            G_CALLBACK (on_pool_size_combobox_changed),
                                             (Object *) this);
       gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                 config_index);
@@ -1073,6 +1090,7 @@ namespace Pool
                         G_CALLBACK (on_pool_size_combobox_changed),
                         (Object *) this);
     }
+#pragma GCC diagnostic pop
   }
 
   // --------------------------------------------------------------------------------
@@ -1427,12 +1445,15 @@ namespace Pool
     DeletePools ();
 
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-fpermissive"
       g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_size_combobox"),
-                                            (void *) on_pool_size_combobox_changed,
+                                            G_CALLBACK (on_pool_size_combobox_changed),
                                             (Object *) this);
       g_signal_handlers_disconnect_by_func (_glade->GetWidget ("nb_pools_combobox"),
-                                            (void *) on_nb_pools_combobox_changed,
+                                            G_CALLBACK (on_nb_pools_combobox_changed),
                                             (Object *) this);
+#pragma GCC diagnostic pop
 
       gtk_list_store_clear (_combobox_store);
 
@@ -1531,10 +1552,7 @@ namespace Pool
     }
     else
     {
-      gdouble canvas_x;
-      gdouble canvas_y;
       gdouble canvas_w;
-      gdouble canvas_h;
       gdouble paper_w  = gtk_print_context_get_width (context);
       gdouble paper_h  = gtk_print_context_get_height (context);
       gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
@@ -1544,10 +1562,7 @@ namespace Pool
 
         goo_canvas_item_get_bounds (GetRootItem (),
                                     &bounds);
-        canvas_x = bounds.x1;
-        canvas_y = bounds.y1;
         canvas_w = bounds.x2 - bounds.x1;
-        canvas_h = bounds.y2 - bounds.y1;
       }
 
       {
@@ -1711,12 +1726,14 @@ namespace Pool
 
     if (config)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-fpermissive"
       {
         GtkWidget *w;
 
         w = _glade->GetWidget ("nb_pools_combobox");
         g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                              (void *) on_nb_pools_combobox_changed,
+                                              G_CALLBACK (on_nb_pools_combobox_changed),
                                               (Object *) this);
         gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                   config_index);
@@ -1726,7 +1743,7 @@ namespace Pool
 
         w = _glade->GetWidget ("pool_size_combobox");
         g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                              (void *) on_pool_size_combobox_changed,
+                                              G_CALLBACK (on_pool_size_combobox_changed),
                                               (Object *) this);
         gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                   config_index);
@@ -1734,6 +1751,7 @@ namespace Pool
                           G_CALLBACK (on_pool_size_combobox_changed),
                           (Object *) this);
       }
+#pragma GCC diagnostic pop
 
       _selected_config = config;
 

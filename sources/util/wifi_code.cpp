@@ -79,7 +79,7 @@ gchar *WifiCode::GetNetwork ()
   }
   else
   {
-    return g_strdup_printf ("");
+    return g_strdup ("");
   }
 }
 

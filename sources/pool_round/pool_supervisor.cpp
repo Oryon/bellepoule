@@ -448,12 +448,14 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Supervisor::OnPoolSelected (gint index)
   {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-fpermissive"
     if ((index >= 0) && _allocator)
     {
       OnPoolSelected (_allocator->GetPool (index));
 
       g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_combobox"),
-                                            (void *) on_pool_combobox_changed,
+                                            G_CALLBACK (on_pool_combobox_changed),
                                             (Object *) this);
       gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("pool_combobox")),
                                 index);
@@ -461,6 +463,7 @@ namespace Pool
                         G_CALLBACK (on_pool_combobox_changed),
                         (Object *) this);
     }
+#pragma GCC diagnostic pop
   }
 
   // --------------------------------------------------------------------------------
