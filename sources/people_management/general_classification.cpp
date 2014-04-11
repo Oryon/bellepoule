@@ -269,13 +269,7 @@ namespace People
         const gchar   *pattern_upper;
         gchar         *pattern_lower;
 
-        if (export_type == CSV)
-        {
-          gtk_file_filter_set_name (filter,
-                                    gettext ("All Excel files (.CSV)"));
-          pattern_upper = "*.CSV";
-        }
-        else if (export_type == FFF)
+        if (export_type == FFF)
         {
           gtk_file_filter_set_name (filter,
                                     gettext ("All FFF files (.FFF)"));
@@ -292,6 +286,10 @@ namespace People
           gtk_file_filter_set_name (filter,
                                     gettext ("All HTML files (.HTML)"));
           pattern_upper = "*.HTML";
+        }
+        else
+        {
+          return;
         }
 
         gtk_file_filter_add_pattern (filter,

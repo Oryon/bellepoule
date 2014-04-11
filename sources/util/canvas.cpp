@@ -230,7 +230,6 @@ gdouble Canvas::GetScaleToFit (GooCanvasItem   *item,
                                GtkPrintContext *context)
 {
   gdouble    canvas_w;
-  gdouble    canvas_h;
   gdouble    scale;
   GooCanvas *canvas  = goo_canvas_item_get_canvas (item);
   gdouble    paper_w = gtk_print_context_get_width (context);
@@ -241,7 +240,6 @@ gdouble Canvas::GetScaleToFit (GooCanvasItem   *item,
     goo_canvas_item_get_bounds (item,
                                 &bounds);
     canvas_w = bounds.x2 - bounds.x1;
-    canvas_h = bounds.y2 - bounds.y1;
   }
 
   {
@@ -441,8 +439,8 @@ gdouble Canvas::GetDeltaAlign (gdouble   item_1,
                                gdouble   with_2,
                                Alignment with_alignment)
 {
-  gdouble delta;
-  gdouble with_anchor;
+  gdouble delta       = 0.0;
+  gdouble with_anchor = with_1;
 
   if (with_alignment == START)
   {

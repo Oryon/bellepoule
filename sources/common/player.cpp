@@ -165,7 +165,7 @@ gint Player::MultiCompare (Player *a,
   }
   else
   {
-    gint    result;
+    gint    result  = 0;
     GSList *current = attr_list;
 
     while (current)

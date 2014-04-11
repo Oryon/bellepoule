@@ -169,6 +169,6 @@ help:
 	@echo "make -s UBUNTU=quantal V=1 package"
 	@echo "make -s UBUNTU=saucy   V=1 package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
-	@echo "debuild -us -uc"
+	@echo "debuild -us -uc --lintian-opts --color always"
 	@echo "debuild -S -sa -k<1234>"
 	@echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"

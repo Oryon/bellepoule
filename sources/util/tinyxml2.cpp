@@ -36,6 +36,9 @@ distribution.
 	#include <stdarg.h>
 #endif
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-default"
+#pragma GCC diagnostic ignored "-Wunused-result"
 using namespace tinyxml2;
 
 static const char LINE_FEED				= (char)0x0a;			// all line endings are normalized to LF
@@ -1832,3 +1835,4 @@ bool XMLPrinter::Visit( const XMLUnknown& unknown )
 	PushUnknown( unknown.Value() );
 	return true;
 }
+#pragma GCC diagnostic pop

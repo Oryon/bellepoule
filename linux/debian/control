@@ -10,4 +10,4 @@ Package: bellepoule
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk2.0-0 (>=2.16.0), libxml2, libcurl3, libmicrohttpd5, libgoocanvas3
 Description: Fencing tournament management
- This software can help you very efficiently in the management of your tournaments.
+ This software can help you efficiently in the management of your tournaments.

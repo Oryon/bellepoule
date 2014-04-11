@@ -273,7 +273,7 @@ gint Object::GetIntData (Object      *owner,
 // --------------------------------------------------------------------------------
 void Object::Dump ()
 {
-#if DEBUG
+#ifdef DEBUG
   guint total = 0;
 
   g_mem_profile ();
