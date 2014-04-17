@@ -236,8 +236,6 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 Contest::Contest ()
   : Module ("contest.glade")
 {
-  Object::Dump ();
-
   _save_timeout_id = 0;
 
   {
@@ -920,8 +918,6 @@ Contest::~Contest ()
   Object::TryToRelease (_referees_list);
 
   Object::TryToRelease (_schedule);
-
-  Object::Dump ();
 
   if (_save_timeout_id > 0)
   {

@@ -31,7 +31,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wshadow" />
 			<Add option="-Winit-self" />
 			<Add option="-Wredundant-decls" />
 			<Add option="-Wcast-align" />
@@ -40,7 +39,6 @@
 			<Add option="-Wmissing-include-dirs" />
 			<Add option="-Wswitch-enum" />
 			<Add option="-Wswitch-default" />
-			<Add option="-pedantic" />
 			<Add option="-std=c++98" />
 			<Add option="-Wextra" />
 			<Add option="-Wall" />

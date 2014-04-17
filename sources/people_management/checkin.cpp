@@ -135,7 +135,6 @@ namespace People
       {
         if (strcmp ((char *) n->name, player_class_xml_tag) == 0)
         {
-          Object::TryToRelease (owner);
           owner = LoadPlayer (n,
                               player_class,
                               NULL);
@@ -147,12 +146,9 @@ namespace People
           Player *player = LoadPlayer (n,
                                        _base_class,
                                        owner);
-
-          player->Release ();
         }
         else if (strcmp ((char *) n->name, players_class_xml_tag) != 0)
         {
-          Object::TryToRelease (owner);
           owner = NULL;
           OnListChanged ();
           return;
@@ -181,6 +177,7 @@ namespace People
     OnPlayerLoaded (player,
                     owner);
     Add (player);
+    player->Release ();
 
     return player;
   }

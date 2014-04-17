@@ -205,6 +205,8 @@ int main (int argc, char **argv)
       g_object_set (gtk_settings_get_default (), "gtk-menu-images", TRUE, NULL);
     }
 
+    //Object::Track ("Player");
+
     {
       Object::SetProgramPath (install_dirname);
 

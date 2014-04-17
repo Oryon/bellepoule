@@ -487,12 +487,9 @@ namespace Pool
               {
                 GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (siblings->data);
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-fpermissive"
                 g_signal_handlers_disconnect_by_func (G_OBJECT (togglebutton),
-                                                      G_CALLBACK (OnSwappingToggled),
+                                                      (void *) OnSwappingToggled,
                                                       (Object *) this);
-#pragma GCC diagnostic pop
                 gtk_toggle_button_set_active (togglebutton,
                                               FALSE);
                 g_signal_connect (G_OBJECT (togglebutton), "toggled",
@@ -1060,8 +1057,6 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::SetUpCombobox ()
   {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-fpermissive"
     if (_best_config)
     {
       GtkWidget *w;
@@ -1072,7 +1067,7 @@ namespace Pool
 
       w = _glade->GetWidget ("nb_pools_combobox");
       g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                            G_CALLBACK (on_nb_pools_combobox_changed),
+                                            (void *) on_nb_pools_combobox_changed,
                                             (Object *) this);
       gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                 config_index);
@@ -1082,7 +1077,7 @@ namespace Pool
 
       w = _glade->GetWidget ("pool_size_combobox");
       g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                            G_CALLBACK (on_pool_size_combobox_changed),
+                                            (void *) on_pool_size_combobox_changed,
                                             (Object *) this);
       gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                 config_index);
@@ -1090,7 +1085,6 @@ namespace Pool
                         G_CALLBACK (on_pool_size_combobox_changed),
                         (Object *) this);
     }
-#pragma GCC diagnostic pop
   }
 
   // --------------------------------------------------------------------------------
@@ -1445,15 +1439,12 @@ namespace Pool
     DeletePools ();
 
     {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-fpermissive"
       g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_size_combobox"),
-                                            G_CALLBACK (on_pool_size_combobox_changed),
+                                            (void *) on_pool_size_combobox_changed,
                                             (Object *) this);
       g_signal_handlers_disconnect_by_func (_glade->GetWidget ("nb_pools_combobox"),
-                                            G_CALLBACK (on_nb_pools_combobox_changed),
+                                            (void *) on_nb_pools_combobox_changed,
                                             (Object *) this);
-#pragma GCC diagnostic pop
 
       gtk_list_store_clear (_combobox_store);
 
@@ -1726,14 +1717,12 @@ namespace Pool
 
     if (config)
     {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-fpermissive"
       {
         GtkWidget *w;
 
         w = _glade->GetWidget ("nb_pools_combobox");
         g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                              G_CALLBACK (on_nb_pools_combobox_changed),
+                                              (void *) on_nb_pools_combobox_changed,
                                               (Object *) this);
         gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                   config_index);
@@ -1743,7 +1732,7 @@ namespace Pool
 
         w = _glade->GetWidget ("pool_size_combobox");
         g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                              G_CALLBACK (on_pool_size_combobox_changed),
+                                              (void *) on_pool_size_combobox_changed,
                                               (Object *) this);
         gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                   config_index);
@@ -1751,7 +1740,6 @@ namespace Pool
                           G_CALLBACK (on_pool_size_combobox_changed),
                           (Object *) this);
       }
-#pragma GCC diagnostic pop
 
       _selected_config = config;
 

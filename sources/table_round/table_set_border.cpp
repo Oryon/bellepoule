@@ -72,12 +72,9 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSetBorder::MuteCallbacks ()
   {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-fpermissive"
     g_signal_handlers_disconnect_by_func (_widget,
-                                          G_CALLBACK (_callback),
+                                          (void *) _callback,
                                           _owner);
-#pragma GCC diagnostic pop
     gtk_list_store_clear (_liststore);
   }
 

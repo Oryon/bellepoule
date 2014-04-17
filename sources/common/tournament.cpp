@@ -2154,3 +2154,18 @@ extern "C" G_MODULE_EXPORT void on_network_config_changed (GtkEditable *editable
 
   t->RefreshScannerCode ();
 }
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget,
+                                                             GdkEventKey *event,
+                                                             Object      *owner)
+{
+#ifdef DEBUG
+  if (event->keyval == GDK_F11)
+  {
+    Object::DumpList ();
+  }
+#endif
+
+  return FALSE;
+}

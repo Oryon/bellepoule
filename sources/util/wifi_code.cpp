@@ -47,18 +47,12 @@ WifiCode::WifiCode (Player *player)
 {
   _player = player;
   _key    = NULL;
-
-  if (_player)
-  {
-    _player->Retain ();
-  }
 }
 
 // --------------------------------------------------------------------------------
 WifiCode::~WifiCode ()
 {
   g_free (_key);
-  TryToRelease (_player);
 }
 
 // --------------------------------------------------------------------------------

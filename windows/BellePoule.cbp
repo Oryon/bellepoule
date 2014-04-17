@@ -31,7 +31,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wshadow" />
 			<Add option="-Winit-self" />
 			<Add option="-Wcast-align" />
 			<Add option="-Wswitch-enum" />
@@ -39,7 +38,10 @@
 			<Add option="-std=c++98" />
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
-			<Add option="-mms-bitfields -Wno-long-long -Wno-unused-parameter -Wno-shadow" />
+			<Add option="-Wno-long-long" />
+			<Add option="-Wno-unused-parameter" />
+			<Add option="-Wno-shadow" />
+			<Add option="-mms-bitfields" />
 			<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
 			<Add option="-DWIN32" />
 			<Add directory="C:\MinGW\include" />

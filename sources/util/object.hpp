@@ -74,11 +74,15 @@ class Object
 
     FlashCode *GetFlashCode ();
 
-    static void Dump ();
+    virtual void Dump ();
 
     static void TryToRelease (Object *object);
 
     static void SetProgramPath (gchar *path);
+
+    static void DumpList ();
+
+    static void Track (const gchar *klass);
 
   protected:
     static gchar *_program_path;
@@ -93,8 +97,11 @@ class Object
     guint        _ref_count;
     const gchar *_class_name;
 
-    static GList *_list;
-    static guint  _nb_objects;
+#ifdef DEBUG
+    static GList       *_list;
+    static guint        _nb_objects;
+    static const gchar *_klass_to_track;
+#endif
 };
 
 #endif

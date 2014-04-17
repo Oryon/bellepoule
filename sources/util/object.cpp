@@ -19,15 +19,19 @@
 #include "flash_code.hpp"
 #include "object.hpp"
 
-guint  Object::_nb_objects   = 0;
-GList *Object::_list         = NULL;
 gchar *Object::_program_path = NULL;
+
+#ifdef DEBUG
+guint        Object::_nb_objects     = 0;
+GList       *Object::_list           = NULL;
+const gchar *Object::_klass_to_track = NULL;
 
 struct ClassStatus
 {
   const gchar *_name;
   guint        _nb_objects;
 };
+#endif
 
 // --------------------------------------------------------------------------------
 Object::Object (const gchar *class_name)
@@ -47,6 +51,12 @@ Object::Object (const gchar *class_name)
   else
   {
     _class_name = class_name;
+  }
+
+  if (_klass_to_track && strcmp (_klass_to_track, _class_name) == 0)
+  {
+    printf ("%s creation\n    ", _class_name);
+    Dump ();
   }
 
   {
@@ -89,6 +99,12 @@ Object::~Object ()
 
 #ifdef DEBUG
   _nb_objects--;
+
+  if (_klass_to_track && strcmp (_klass_to_track, _class_name) == 0)
+  {
+    printf ("%s destruction\n    ", _class_name);
+    Dump ();
+  }
 
   for (guint i = 0; i < g_list_length (_list); i++)
   {
@@ -173,11 +189,26 @@ FlashCode *Object::GetFlashCode ()
 void Object::Retain ()
 {
   _ref_count++;
+#ifdef DEBUG
+  if (_klass_to_track && strcmp (_klass_to_track, _class_name) == 0)
+  {
+    printf ("%s retained\n    ", _class_name);
+    Dump ();
+  }
+#endif
 }
 
 // --------------------------------------------------------------------------------
 void Object::Release ()
 {
+#ifdef DEBUG
+  if (_klass_to_track && strcmp (_klass_to_track, _class_name) == 0)
+  {
+    printf ("%s released\n    ", _class_name);
+    Dump ();
+  }
+#endif
+
   if (_ref_count == 0)
   {
     g_print ("ERROR\n");
@@ -274,6 +305,14 @@ gint Object::GetIntData (Object      *owner,
 void Object::Dump ()
 {
 #ifdef DEBUG
+  printf ("%p\n", this);
+#endif
+}
+
+// --------------------------------------------------------------------------------
+void Object::DumpList ()
+{
+#ifdef DEBUG
   guint total = 0;
 
   g_mem_profile ();
@@ -289,6 +328,14 @@ void Object::Dump ()
                               status->_nb_objects);
     total += status->_nb_objects;
   }
-  g_print ("TOTAL ==> %d\n", total);
+  g_print ("TOTAL ==> " BLUE "%d\n" ESC, total);
+#endif
+}
+
+// --------------------------------------------------------------------------------
+void Object::Track (const gchar *klass)
+{
+#ifdef DEBUG
+  _klass_to_track = klass;
 #endif
 }
