@@ -143,9 +143,9 @@ namespace People
                  && (strcmp (player_class, _gathering_class) == 0)
                  && (strcmp ((char *) n->name, base_class_xml_tag) == 0))
         {
-          Player *player = LoadPlayer (n,
-                                       _base_class,
-                                       owner);
+          LoadPlayer (n,
+                      _base_class,
+                      owner);
         }
         else if (strcmp ((char *) n->name, players_class_xml_tag) != 0)
         {

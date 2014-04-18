@@ -1203,14 +1203,24 @@ the smartphones running
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkLinkButton" id="linkbutton2">
-                <property name="label">QuickPoule</property>
+              <object class="GtkButton" id="QuickPoule_button">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="relief">none</property>
-                <property name="uri">https://play.google.com/store/apps/details?id=betton.escrime.quickpoule</property>
+                <signal name="clicked" handler="on_QuickPoule_button_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkLabel" id="label6">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">QuickPoule</property>
+                    <attributes>
+                      <attribute name="underline" value="True"/>
+                      <attribute name="foreground" value="#13be37adc79a"/>
+                    </attributes>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -1219,14 +1229,24 @@ the smartphones running
               </packing>
             </child>
             <child>
-              <object class="GtkLinkButton" id="linkbutton3">
-                <property name="label">SmartPoule</property>
+              <object class="GtkButton" id="SmartPoule_button">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
                 <property name="relief">none</property>
-                <property name="uri">https://play.google.com/store/apps/details?id=betton.escrime.smartpoule</property>
+                <signal name="clicked" handler="on_SmartPoule_button_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkLabel" id="label7">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">SmartPoule</property>
+                    <attributes>
+                      <attribute name="underline" value="True"/>
+                      <attribute name="foreground" value="#13be37adc79a"/>
+                    </attributes>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -1769,15 +1789,24 @@ a score sheet scanner.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLinkButton" id="linkbutton1">
-                                <property name="label">QuickPoule</property>
+                              <object class="GtkButton" id="QuickPoule_button1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="has_tooltip">True</property>
                                 <property name="use_action_appearance">False</property>
                                 <property name="relief">none</property>
-                                <property name="uri">https://play.google.com/store/apps/details?id=betton.escrime.quickpoule</property>
+                                <signal name="clicked" handler="on_QuickPoule_button_clicked" swapped="no"/>
+                                <child>
+                                  <object class="GtkLabel" id="label9">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">QuickPoule</property>
+                                    <attributes>
+                                      <attribute name="underline" value="True"/>
+                                      <attribute name="foreground" value="#13be37adc79a"/>
+                                    </attributes>
+                                  </object>
+                                </child>
                               </object>
                               <packing>
                                 <property name="expand">True</property>
