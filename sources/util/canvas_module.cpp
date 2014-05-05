@@ -547,8 +547,8 @@ void CanvasModule::SetObjectDropZone (Object        *object,
 DropZone *CanvasModule::GetZoneAt (gint x,
                                    gint y)
 {
-  gdouble  vvalue;
-  gdouble  hvalue;
+  gdouble  vvalue  = 0.0;
+  gdouble  hvalue  = 0.0;
   GSList  *current = _drop_zones;
 
   if (_scrolled_window)

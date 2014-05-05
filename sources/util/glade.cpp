@@ -60,7 +60,7 @@ Glade::Glade (const gchar *file_name,
 
     gtk_builder_connect_signals (_glade_xml,
                                  owner);
-#if DEBUG
+#ifdef DEBUG
     StampAllWidgets ();
 #endif
   }

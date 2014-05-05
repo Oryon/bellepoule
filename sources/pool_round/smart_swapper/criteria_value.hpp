@@ -35,7 +35,8 @@ namespace SmartSwapper
 
       gboolean HasFloatingProfile ();
 
-      guint GetErrorLine (Fencer *fencer);
+      guint GetErrorLine (Fencer   *fencer,
+                          gboolean  worst_case = FALSE);
 
       gboolean CanFloat (Fencer *fencer);
 

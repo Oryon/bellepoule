@@ -23,7 +23,9 @@
 
 namespace SmartSwapper
 {
+#ifdef DEBUG
 //#define DEBUG_SWAPPING
+#endif
 
 #ifdef DEBUG_SWAPPING
 #define PRINT(...)\
@@ -41,6 +43,7 @@ namespace SmartSwapper
   {
     _owner = owner;
 
+    _worst_case       = FALSE;
     _remaining_errors = NULL;
     _error_list       = NULL;
     _floating_list    = NULL;
@@ -163,13 +166,13 @@ namespace SmartSwapper
         {
           _previous_criteria_quark = GPOINTER_TO_UINT (key);
 
-          PRINT (RED "Movable ==> %s\n" ESC, g_quark_to_string (_previous_criteria_quark));
           Iterate ();
         }
       }
 
       criteria_list = g_slist_next (criteria_list);
     }
+    _previous_criteria_quark = 0;
 
     StoreSwapping ();
     DeletePoolTable ();
@@ -178,6 +181,9 @@ namespace SmartSwapper
   // --------------------------------------------------------------------------------
   void SmartSwapper::Iterate ()
   {
+    PRINT (RED "******************************");
+    PRINT (RED "** %s" ESC, g_quark_to_string (_previous_criteria_quark));
+    PRINT (RED "******************************");
     ExtractMovables   ();
     DispatchErrors    ();
     DispatchFloatings ();
@@ -487,7 +493,7 @@ namespace SmartSwapper
                                       pool_data,
                                       _pool_profiles.GetSize (profile_type)))
                     {
-                      goto next_error;
+                      goto next_remaining_error;
                     }
                   }
                 }
@@ -502,17 +508,58 @@ namespace SmartSwapper
           failed_list = g_list_prepend (failed_list,
                                         error);
 
-next_error:
+next_remaining_error:
           current_error = g_list_next (current_error);
         }
       }
 
-      {
-        g_list_free (_remaining_errors);
-        _remaining_errors = NULL;
-        _remaining_errors = failed_list;
-      }
+      g_list_free (_remaining_errors);
+      _remaining_errors = failed_list;
     }
+
+    PRINT (GREEN "\n\nDispatch FAILING" ESC);
+    DumpPools ();
+    _worst_case = TRUE;
+    {
+      GList *failed_list = NULL;
+
+      // Failing errors
+      {
+        GList *current_error = _remaining_errors;
+
+        while (current_error)
+        {
+          Fencer *error = (Fencer *) current_error->data;
+
+          for (guint profile_type = 0; _pool_profiles.Exists (profile_type); profile_type++)
+          {
+            _snake->Reset (error->_original_pool->_id);
+
+            for (guint i = 0; i < _nb_pools; i++)
+            {
+              PoolData *pool_data = _pool_table[_snake->GetNextPosition () - 1];
+
+              if (MoveFencerTo (error,
+                                pool_data,
+                                _pool_profiles.GetSize (profile_type)))
+              {
+                goto next_failing_error;
+              }
+            }
+          }
+
+          failed_list = g_list_prepend (failed_list,
+                                        error);
+
+next_failing_error:
+          current_error = g_list_next (current_error);
+        }
+      }
+
+      g_list_free (_remaining_errors);
+      _remaining_errors = failed_list;
+    }
+    _worst_case = FALSE;
 
     g_list_free (_floating_list);
     _floating_list = NULL;
@@ -658,13 +705,13 @@ next_fencer:
                    depth,
                    current_fencer->_player->GetName (),
                    teammate_rank,
-                   criteria_value->GetErrorLine (current_fencer),
+                   criteria_value->GetErrorLine (current_fencer, _worst_case),
                    fencer->_player->GetName (),
                    criteria_value->GetErrorLine (fencer));
 
             if (current_fencer->_rank > fencer->_rank)
             {
-              if (teammate_rank+1 >= criteria_value->GetErrorLine (current_fencer))
+              if (teammate_rank+1 >= criteria_value->GetErrorLine (current_fencer, _worst_case))
               {
                 result = FALSE;
                 break;
@@ -672,7 +719,7 @@ next_fencer:
             }
             else
             {
-              if (teammate_rank+1 >= criteria_value->GetErrorLine (fencer))
+              if (teammate_rank+1 >= criteria_value->GetErrorLine (fencer, _worst_case))
               {
                 result = FALSE;
                 break;

@@ -55,7 +55,7 @@ class Stage : public virtual Object
     typedef enum
     {
       EDITABLE  = 0x0001,
-      REMOVABLE = 0x0002,
+      REMOVABLE = 0x0002
     } Rights;
 
     struct StageClass

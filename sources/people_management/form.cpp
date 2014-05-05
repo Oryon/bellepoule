@@ -552,7 +552,7 @@ namespace People
     _player_to_update = player;
     if (_player_to_update)
     {
-      Page  *page;
+      Page  *page     = NULL;
       GList *children;
 
       for (guint i = 0; i < _page_count; i++)

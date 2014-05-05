@@ -101,7 +101,6 @@ namespace Pool
                                           "pool_nr",
                                           "promoted",
                                           "rank",
-                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -167,7 +166,6 @@ namespace Pool
                                             "participation_rate",
                                             "promoted",
                                             "rank",
-                                            "splitting_start_rank",
                                             "status",
                                             "team",
                                             "victories_ratio",
@@ -476,13 +474,27 @@ namespace Pool
           {
             _swapping_sensitivity_trigger.SwitchOff ();
 
-            if (_swapping_criteria_list)
-            {
-              GtkWidget *w = _glade->GetWidget ("swapping_combobox");
+            g_slist_free (_swapping_criteria_list);
+            _swapping_criteria_list = NULL;
 
-              gtk_combo_box_set_active (GTK_COMBO_BOX (w),
-                                        0);
-              return;
+            {
+              GtkContainer *swapping_hbox = GTK_CONTAINER (_glade->GetGObject ("swapping_criteria_hbox"));
+              GList        *siblings      = gtk_container_get_children (swapping_hbox);
+
+              while (siblings)
+              {
+                GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (siblings->data);
+
+                g_signal_handlers_disconnect_by_func (G_OBJECT (togglebutton),
+                                                      (void *) OnSwappingToggled,
+                                                      (Object *) this);
+                gtk_toggle_button_set_active (togglebutton,
+                                              FALSE);
+                g_signal_connect (G_OBJECT (togglebutton), "toggled",
+                                  G_CALLBACK (OnSwappingToggled), this);
+
+                siblings = g_list_next (siblings);
+              }
             }
           }
         }
@@ -981,15 +993,13 @@ namespace Pool
       }
       else
       {
+        Pool *pool = pool_table[0];
+
         for (guint i = 0; i < nb_fencer; i++)
         {
-          Player *player;
-          Pool   *pool;
+          Player *player = (Player *) g_slist_nth_data (shortlist,
+                                                        i);
 
-          if (i == 0)
-          {
-            pool = pool_table[0];
-          }
           if (_selected_config->_nb_overloaded)
           {
             if (pool->GetNumber () <= _selected_config->_nb_overloaded)
@@ -1009,11 +1019,11 @@ namespace Pool
             pool = pool_table[pool->GetNumber ()];
           }
 
-          player = (Player *) g_slist_nth_data (shortlist,
-                                                i);
           player->SetData (this,
                            "original_pool",
                            (void *) pool->GetNumber ());
+          player->RemoveData (this,
+                              "swapped_from");
           pool->AddFencer (player,
                            this);
         }
@@ -1531,10 +1541,7 @@ namespace Pool
     }
     else
     {
-      gdouble canvas_x;
-      gdouble canvas_y;
       gdouble canvas_w;
-      gdouble canvas_h;
       gdouble paper_w  = gtk_print_context_get_width (context);
       gdouble paper_h  = gtk_print_context_get_height (context);
       gdouble header_h = (PRINT_HEADER_HEIGHT+2) * paper_w  / 100;
@@ -1544,10 +1551,7 @@ namespace Pool
 
         goo_canvas_item_get_bounds (GetRootItem (),
                                     &bounds);
-        canvas_x = bounds.x1;
-        canvas_y = bounds.y1;
         canvas_w = bounds.x2 - bounds.x1;
-        canvas_h = bounds.y2 - bounds.y1;
       }
 
       {

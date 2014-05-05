@@ -205,6 +205,8 @@ int main (int argc, char **argv)
       g_object_set (gtk_settings_get_default (), "gtk-menu-images", TRUE, NULL);
     }
 
+    //Object::Track ("Player");
+
     {
       Object::SetProgramPath (install_dirname);
 
@@ -326,10 +328,6 @@ int main (int argc, char **argv)
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
 
     desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));
-    desc->_compare_func = (GCompareFunc) CompareRanking;
-
-    desc = AttributeDesc::Declare (G_TYPE_INT, "splitting_start_rank", "RangInitial", gettext ("start rank"));
-    desc->_rights       = AttributeDesc::PRIVATE;
     desc->_compare_func = (GCompareFunc) CompareRanking;
 
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));

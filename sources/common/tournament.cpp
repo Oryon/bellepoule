@@ -2154,3 +2154,56 @@ extern "C" G_MODULE_EXPORT void on_network_config_changed (GtkEditable *editable
 
   t->RefreshScannerCode ();
 }
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget,
+                                                             GdkEventKey *event,
+                                                             Object      *owner)
+{
+#ifdef DEBUG
+  if (event->keyval == GDK_F11)
+  {
+    Object::DumpList ();
+  }
+#endif
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_QuickPoule_button_clicked (GtkButton *widget,
+                                                              gpointer   user_data)
+{
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecute (NULL,
+                "open",
+                "https://play.google.com/store/apps/details?id=betton.escrime.quickpoule",
+                NULL,
+                NULL,
+                SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                "https://play.google.com/store/apps/details?id=betton.escrime.quickpoule",
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
+                                                              gpointer   user_data)
+{
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecute (NULL,
+                "open",
+                "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
+                NULL,
+                NULL,
+                SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                "https://play.google.com/store/apps/details?id=betton.escrime.smartpoule",
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+}

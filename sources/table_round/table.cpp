@@ -393,8 +393,8 @@ namespace Table
             B = n;
 
             {
-              Player *fencer_a;
-              Player *fencer_b;
+              Player *fencer_a = NULL;
+              Player *fencer_b = NULL;
               gchar  *attr;
 
               attr = (gchar *) xmlGetProp (A, BAD_CAST "REF");

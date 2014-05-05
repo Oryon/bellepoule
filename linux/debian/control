@@ -2,7 +2,7 @@ Source: bellepoule
 Section: misc
 Priority: extra
 Maintainer: betonniere <le.roux.yannick@free.fr>
-Build-Depends: debhelper (>= 8.0.0), libgtk2.0-dev (>=2.16.0), libxml2-dev, libcurl3-dev, libmicrohttpd-dev, libgoocanvas-dev
+Build-Depends: debhelper (>= 8.0.0), libgtk2.0-dev (>=2.16.0), libxml2-dev, libcurl3-dev, libmicrohttpd-dev, libgoocanvas-dev, libqrencode-dev
 Standards-Version: 3.9.3
 Homepage: http://betton.escrime.free.fr/index.php/bellepoule
 
@@ -10,4 +10,4 @@ Package: bellepoule
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk2.0-0 (>=2.16.0), libxml2, libcurl3, libmicrohttpd5, libgoocanvas3
 Description: Fencing tournament management
- This software can help you very efficiently in the management of your tournaments.
+ This software can help you efficiently in the management of your tournaments.

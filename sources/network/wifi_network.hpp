@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Yannick Le Roux.
+// Copyright (C) 2011 Yannick Le Roux.
 // This file is part of BellePoule.
 //
 //   BellePoule is free software: you can redistribute it and/or modify
@@ -14,33 +14,38 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef cryptor_hpp
-#define cryptor_hpp
+#ifndef wifi_network_hpp
+#define wifi_network_hpp
 
 #include "util/object.hpp"
 
 namespace Net
 {
-  class Cryptor : public Object
+  class WifiNetwork : public Object
   {
     public:
-      Cryptor ();
+      WifiNetwork ();
 
-      gchar *Encrypt (const gchar  *text,
-                      const gchar  *key,
-                      guchar      **iv);
+      gboolean IsValid ();
 
-      gchar *Decrypt (gchar        *data,
-                      const guchar *_iv,
-                      const gchar  *key);
+      const gchar *GetSSID ();
+
+      const gchar *GetPassphrase ();
+
+      const gchar *GetEncryption ();
+
+      void SetSSID (const gchar *SSID);
+
+      void SetPassphrase (const gchar *passphrase);
+
+      void SetEncryption (const gchar *encryption);
 
     private:
-      GRand *_rand;
+      gchar *_SSID;
+      gchar *_passphrase;
+      gchar *_encryption;
 
-      virtual ~Cryptor ();
-
-      guchar *GetIv ();
+      virtual ~WifiNetwork ();
   };
 }
-
 #endif

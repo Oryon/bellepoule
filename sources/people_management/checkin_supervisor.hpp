@@ -34,8 +34,6 @@ namespace People
 
       CheckinSupervisor (StageClass  *stage_class);
 
-      void UseInitialRank ();
-
       void UpdateRanking ();
 
       void SetTeamData (Data *minimum_team_size,
@@ -68,11 +66,10 @@ namespace People
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
 
-      gboolean  _use_initial_rank;
-      GSList   *_checksum_list;
-      Data     *_manual_classification;
-      Data     *_default_classification;
-      Data     *_minimum_team_size;
+      GSList *_checksum_list;
+      Data   *_manual_classification;
+      Data   *_default_classification;
+      Data   *_minimum_team_size;
 
       static Stage *CreateInstance (StageClass *stage_class);
 

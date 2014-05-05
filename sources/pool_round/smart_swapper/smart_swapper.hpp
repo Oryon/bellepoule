@@ -107,6 +107,7 @@ namespace SmartSwapper
       guint          _first_pool_to_try;
       guint          _moved;
       guint          _criteria_count;
+      gboolean       _worst_case;
 
       guint  _criteria_depth;
       GQuark _previous_criteria_quark;
