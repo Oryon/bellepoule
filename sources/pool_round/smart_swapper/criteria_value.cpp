@@ -73,7 +73,8 @@ namespace SmartSwapper
   }
 
   // --------------------------------------------------------------------------------
-  guint CriteriaValue::GetErrorLine (Fencer *fencer)
+  guint CriteriaValue::GetErrorLine (Fencer   *fencer,
+                                     gboolean  worst_case)
   {
     if (_floating_count == 0)
     {
@@ -81,7 +82,7 @@ namespace SmartSwapper
     }
     else
     {
-      if (CanFloat (fencer))
+      if (worst_case || CanFloat (fencer))
       {
         return _max_count_per_pool+1;
       }
