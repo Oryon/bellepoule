@@ -82,7 +82,6 @@ namespace Pool
                                           "pool_nr",
                                           "promoted",
                                           "rank",
-                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -134,7 +133,6 @@ namespace Pool
                                             "level",
                                             "participation_rate",
                                             "promoted",
-                                            "splitting_start_rank",
                                             "team",
                                             NULL);
         filter = new Filter (attr_list);

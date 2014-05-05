@@ -68,7 +68,7 @@ namespace People
 
       void Garnish ();
 
-      GSList *GetOutputShortlist ();
+      GSList *GetRemainingList ();
   };
 }
 

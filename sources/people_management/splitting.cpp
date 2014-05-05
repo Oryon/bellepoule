@@ -65,7 +65,6 @@ namespace People
                                           "pool_nr",
                                           "promoted",
                                           "rank",
-                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -179,7 +178,7 @@ namespace People
       for (guint i = 0; current != NULL; i++)
       {
         Player    *player = (Player *) current->data;
-        Attribute *attr   = player->GetAttribute ( &exported_attr);
+        Attribute *attr   = player->GetAttribute (&exported_attr);
 
         if (attr->GetUIntValue () == TRUE)
         {
@@ -214,25 +213,26 @@ namespace People
       current = g_slist_next (current);
     }
 
-    return g_slist_copy (_player_list);
+    return GetRemainingList ();
   }
 
   // --------------------------------------------------------------------------------
-  GSList *Splitting::GetOutputShortlist ()
+  GSList *Splitting::GetRemainingList ()
   {
-    GSList *result = CreateCustomList (PresentPlayerFilter, this);
+    GSList *remaining = CreateCustomList (PresentPlayerFilter, this);
 
-    if (result)
+    if (remaining)
     {
       Player::AttributeId attr_id ("stage_start_rank",
                                    this);
 
       attr_id.MakeRandomReady (_rand_seed);
-      result = g_slist_sort_with_data (result,
-                                       (GCompareDataFunc) Player::Compare,
-                                       &attr_id);
+      remaining = g_slist_sort_with_data (remaining,
+                                                   (GCompareDataFunc) Player::Compare,
+                                                   &attr_id);
     }
-    return result;
+
+    return remaining;
   }
 
   // --------------------------------------------------------------------------------

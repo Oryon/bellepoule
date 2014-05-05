@@ -330,10 +330,6 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_INT, "ranking", "Ranking", gettext ("ranking"));
     desc->_compare_func = (GCompareFunc) CompareRanking;
 
-    desc = AttributeDesc::Declare (G_TYPE_INT, "splitting_start_rank", "RangInitial", gettext ("start rank"));
-    desc->_rights       = AttributeDesc::PRIVATE;
-    desc->_compare_func = (GCompareFunc) CompareRanking;
-
     desc = AttributeDesc::Declare (G_TYPE_BOOLEAN, "attending", "Presence", gettext ("presence"));
     desc->_uniqueness    = AttributeDesc::NOT_SINGULAR;
     desc->_favorite_look = AttributeDesc::GRAPHICAL;

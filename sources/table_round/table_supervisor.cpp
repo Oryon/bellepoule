@@ -95,7 +95,6 @@ namespace Table
                                           "pool_nr",
                                           "promoted",
                                           "rank",
-                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",
@@ -132,7 +131,6 @@ namespace Table
                                           "participation_rate",
                                           "pool_nr",
                                           "promoted",
-                                          "splitting_start_rank",
                                           "team",
                                           "victories_ratio",
                                           NULL);

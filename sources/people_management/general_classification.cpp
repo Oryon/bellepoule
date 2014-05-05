@@ -56,7 +56,6 @@ namespace People
                                           "stage_start_rank",
                                           "promoted",
                                           "rank",
-                                          "splitting_start_rank",
                                           "status",
                                           "team",
                                           "victories_ratio",

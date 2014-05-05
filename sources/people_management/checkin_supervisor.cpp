@@ -41,8 +41,7 @@ namespace People
                "Team"),
     Stage (stage_class)
   {
-    _use_initial_rank = FALSE;
-    _checksum_list    = NULL;
+    _checksum_list = NULL;
 
     _manual_classification  = NULL;
     _default_classification = NULL;
@@ -68,7 +67,6 @@ namespace People
       AttributeDesc::CreateExcludingList (&attr_list,
 #ifndef DEBUG
                                           "ref",
-                                          "splitting_start_rank",
 #endif
                                           "IP",
                                           "HS",
@@ -223,20 +221,6 @@ namespace People
 
       fencer->SetTeam ((Team *) owner);
     }
-
-    {
-      Player::AttributeId  splitting_start_rank_id ("splitting_start_rank");
-      Attribute           *splitting_start_rank = player->GetAttribute (&splitting_start_rank_id);
-
-      if (splitting_start_rank)
-      {
-        Player::AttributeId stage_start_rank_id ("stage_start_rank", this);
-
-        UseInitialRank ();
-        player->SetAttributeValue (&stage_start_rank_id,
-                                   splitting_start_rank->GetUIntValue ());
-      }
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -276,12 +260,6 @@ namespace People
     Checkin::SavePlayer (xml_writer,
                          player_class,
                          player);
-  }
-
-  // --------------------------------------------------------------------------------
-  void CheckinSupervisor::UseInitialRank ()
-  {
-    _use_initial_rank = TRUE;
   }
 
   // --------------------------------------------------------------------------------
@@ -428,15 +406,7 @@ namespace People
     Player::AttributeId *rank_criteria_id;
 
     {
-      if (_use_initial_rank)
-      {
-        rank_criteria_id = new Player::AttributeId ("stage_start_rank",
-                                                    this);
-      }
-      else
-      {
-        rank_criteria_id = new Player::AttributeId ("ranking");
-      }
+      rank_criteria_id = new Player::AttributeId ("ranking");
 
       rank_criteria_id->MakeRandomReady (_rand_seed);
     }
