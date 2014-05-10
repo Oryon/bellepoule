@@ -1,0 +1,763 @@
+# Esperanto translation for bellepoule
+# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# This file is distributed under the same license as the bellepoule package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bellepoule\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2014-03-31 16:29+0200\n"
+"PO-Revision-Date: 2014-05-09 18:20+0000\n"
+"Last-Translator: Eliovir <Unknown>\n"
+"Language-Team: Esperanto <eo@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2014-05-10 06:48+0000\n"
+"X-Generator: Launchpad (build 16996)\n"
+
+msgid "Sabre"
+msgstr ""
+
+msgid "Epée"
+msgstr ""
+
+msgid "Foil"
+msgstr ""
+
+msgid "Kendo"
+msgstr ""
+
+msgid "Male"
+msgstr ""
+
+msgid "Female"
+msgstr ""
+
+msgid "Mixed"
+msgstr ""
+
+msgid "U8"
+msgstr ""
+
+msgid "U10"
+msgstr ""
+
+msgid "U12"
+msgstr ""
+
+msgid "U14"
+msgstr ""
+
+msgid "U16"
+msgstr ""
+
+msgid "U18"
+msgstr ""
+
+msgid "Senior"
+msgstr ""
+
+msgid "Veteran"
+msgstr ""
+
+msgid "Choose a file..."
+msgstr "Elekti dosieron..."
+
+msgid "BellePoule files (.cotcot)"
+msgstr ""
+
+msgid "All files"
+msgstr "Ĉiuj dosieroj"
+
+msgid "Close without saving"
+msgstr "Fermi sen konservado"
+
+msgid "ref"
+msgstr ""
+
+msgid "place"
+msgstr ""
+
+msgid "last name"
+msgstr "familinomo"
+
+msgid "first name"
+msgstr ""
+
+msgid "date of birth"
+msgstr ""
+
+msgid "gender"
+msgstr ""
+
+msgid "country"
+msgstr "lando"
+
+msgid "league"
+msgstr ""
+
+msgid "club"
+msgstr "klubo"
+
+msgid "licence"
+msgstr ""
+
+msgid "smartphone"
+msgstr ""
+
+msgid "rate"
+msgstr ""
+
+msgid "level"
+msgstr "nivelo"
+
+msgid "ranking"
+msgstr ""
+
+msgid "start rank"
+msgstr ""
+
+msgid "presence"
+msgstr ""
+
+msgid "exported"
+msgstr ""
+
+msgid "global status"
+msgstr ""
+
+msgid "Qualified"
+msgstr ""
+
+msgid "Not qualified"
+msgstr ""
+
+msgid "Withdrawal"
+msgstr ""
+
+msgid "Excluded"
+msgstr ""
+
+msgid "Forfeit"
+msgstr ""
+
+msgid "status"
+msgstr "stato"
+
+msgid "pool #"
+msgstr ""
+
+msgid "Vict./Bouts (‰)"
+msgstr ""
+
+msgid "index"
+msgstr "indekso"
+
+msgid "Hits scored"
+msgstr ""
+
+msgid "Round start rank"
+msgstr ""
+
+msgid "availability"
+msgstr "disponebleco"
+
+msgid "Busy"
+msgstr "Okupite"
+
+msgid "Absent"
+msgstr "Fore"
+
+msgid "Free"
+msgstr "Senpage"
+
+msgid "Formula"
+msgstr "Formulo"
+
+#, c-format
+msgid "Round #%d"
+msgstr ""
+
+msgid "<b><big>Do you really want to cancel the current round?</big></b>"
+msgstr ""
+
+msgid "Go back to the previous round?"
+msgstr ""
+
+msgid "All the inputs of this round will be cancelled."
+msgstr ""
+
+msgid "Payment book"
+msgstr ""
+
+msgid "Page"
+msgstr "Paĝo"
+
+msgid "Restart BellePoule for this change to take effect"
+msgstr ""
+
+msgid "Choose a competion file to open... "
+msgstr ""
+
+msgid "Competition files (.cotcot / .xml)"
+msgstr ""
+
+msgid "Recently opened files"
+msgstr ""
+
+msgid "BellePoule files"
+msgstr ""
+
+msgid "Meal tickets"
+msgstr ""
+
+msgid "Choose a backup files location..."
+msgstr ""
+
+msgid "<b><big>Do you really want to quit BellePoule</big></b>"
+msgstr ""
+
+msgid "Quit BellePoule?"
+msgstr ""
+
+msgid "All the unsaved competions will be lost."
+msgstr ""
+
+msgid "<b><big>What do you want to print?</big></b>"
+msgstr ""
+
+msgid "Fencer list printing"
+msgstr ""
+
+msgid "Choose a fencer file to import..."
+msgstr ""
+
+msgid "Fencer files"
+msgstr ""
+
+msgid "Referee files"
+msgstr ""
+
+msgid "List of registered"
+msgstr ""
+
+msgid "List of presents"
+msgstr ""
+
+msgid "List of absents"
+msgstr ""
+
+msgid "Fencer list"
+msgstr ""
+
+msgid "Check-in"
+msgstr ""
+
+msgid "Fencer"
+msgstr ""
+
+msgid "Referee"
+msgstr ""
+
+msgid ""
+"Uncheck this box to quicken the data input. The corresponding field will be "
+"ignored on TAB key pressed."
+msgstr ""
+
+msgid "General classification"
+msgstr ""
+
+msgid "Choose a target file..."
+msgstr ""
+
+msgid "All Excel files (.CSV)"
+msgstr ""
+
+msgid "All FFF files (.FFF)"
+msgstr ""
+
+msgid "All PDF files (.PDF)"
+msgstr ""
+
+msgid "Split"
+msgstr "Dividi"
+
+msgid "List of fencers to extract"
+msgstr ""
+
+#, c-format
+msgid "Pool #%02d"
+msgstr ""
+
+msgid "Piste"
+msgstr ""
+
+msgid "Signature"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Victories"
+msgstr ""
+
+msgid "Vict./Matchs"
+msgstr ""
+
+msgid "H. scored"
+msgstr ""
+
+msgid "H. received"
+msgstr ""
+
+msgid "Index"
+msgstr ""
+
+msgid "Place"
+msgstr ""
+
+msgid "Pools arrangement"
+msgstr ""
+
+msgid "<i>None</i>"
+msgstr ""
+
+msgid "or"
+msgstr ""
+
+msgid "Wrong fencers count!"
+msgstr ""
+
+msgid "Allocation"
+msgstr ""
+
+msgid "Pools"
+msgstr ""
+
+msgid "<b><big>Print...</big></b>"
+msgstr ""
+
+msgid "Pool sheets printing"
+msgstr ""
+
+msgid "Bout without winner!"
+msgstr ""
+
+msgid "Pools classification"
+msgstr ""
+
+msgid "Winner"
+msgstr ""
+
+msgid "Final"
+msgstr ""
+
+msgid "Semi-final"
+msgstr ""
+
+#, c-format
+msgid "Table of %d"
+msgstr ""
+
+msgid "Place #"
+msgstr ""
+
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
+msgstr ""
+
+msgid "Table printing"
+msgstr ""
+
+msgid "cutting"
+msgstr ""
+
+#, c-format
+msgid "Match %s"
+msgstr ""
+
+msgid "Table"
+msgstr ""
+
+#, c-format
+msgid "%s: score sheets printing"
+msgstr ""
+
+msgid "No winner!"
+msgstr ""
+
+msgid "Table classification"
+msgstr ""
+
+msgid "Long text"
+msgstr ""
+
+msgid "Short text"
+msgstr ""
+
+msgid "Graphic"
+msgstr ""
+
+msgid "Data to display"
+msgstr ""
+
+msgid "Visibility"
+msgstr ""
+
+msgid "Data"
+msgstr ""
+
+msgid "Look"
+msgstr ""
+
+msgid "All the presents"
+msgstr ""
+
+msgid "All the absents"
+msgstr ""
+
+msgid "Presents"
+msgstr ""
+
+msgid "Absents"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "Import fencer file"
+msgstr ""
+
+msgid "Date of competition"
+msgstr ""
+
+msgid "Competition properties"
+msgstr ""
+
+msgid "Weapon"
+msgstr ""
+
+msgid "Gender"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "<b>Type</b>"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Organizer"
+msgstr ""
+
+msgid "Web site"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "<b>Overviews</b>"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Scratch"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "<b>Date / Time</b>"
+msgstr ""
+
+msgid "Allow"
+msgstr ""
+
+msgid "Forbid"
+msgstr ""
+
+msgid ""
+"Automatic\n"
+"score\n"
+"stuffing"
+msgstr ""
+
+msgid "<b>Scores</b>"
+msgstr ""
+
+msgid "Event"
+msgstr ""
+
+msgid "FTP server"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "<b>Publisher URL</b>"
+msgstr ""
+
+msgid "Publication"
+msgstr ""
+
+msgid "Save the current state of the competition."
+msgstr ""
+
+msgid "To specify the features of the competition."
+msgstr ""
+
+msgid ""
+"To configure the schedule of the competition in terms of pools, tables and "
+"other rounds."
+msgstr ""
+
+msgid "Referees"
+msgstr ""
+
+msgid "Man"
+msgstr ""
+
+msgid "Add a fencer"
+msgstr ""
+
+msgid ""
+"Export the general classification to a .csv file that a spreadsheet like "
+"Excel or OpenOffice can open."
+msgstr ""
+
+msgid "Export to CSV"
+msgstr ""
+
+msgid "Export to FFF"
+msgstr ""
+
+msgid "Export to PDF"
+msgstr ""
+
+msgid "Mask or unmask some data type as well as define their display order."
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
+msgid "Number of pools"
+msgstr ""
+
+msgid "Fencers / pools"
+msgstr ""
+
+msgid "Swapping"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Max score"
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Seeding"
+msgstr ""
+
+msgid "Balanced"
+msgstr ""
+
+msgid "Grouped by strength"
+msgstr ""
+
+msgid "All the pools"
+msgstr ""
+
+msgid "Only the selected pool"
+msgstr ""
+
+msgid "<b>What?</b>"
+msgstr ""
+
+msgid "For arbitration"
+msgstr ""
+
+msgid "Content designed for the referees."
+msgstr ""
+
+msgid "Matches watermarked"
+msgstr ""
+
+msgid "For the bulletin board"
+msgstr ""
+
+msgid "<b>For what?</b>"
+msgstr ""
+
+msgid "Classification"
+msgstr ""
+
+msgid "Automatic stuffing"
+msgstr ""
+
+msgid "Combined classification"
+msgstr ""
+
+msgid ""
+"The classification cumulating  the current score and the scores of the "
+"previous pool rounds."
+msgstr ""
+
+msgid "Single classification"
+msgstr ""
+
+msgid ""
+"The classification of the current round that doesn't take into account the "
+"scores of the previous rounds. "
+msgstr ""
+
+msgid "Import referee file"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "<b>Schedule</b>"
+msgstr ""
+
+msgid "<b>Parameters</b>"
+msgstr ""
+
+msgid "Previous round"
+msgstr ""
+
+msgid "Next round"
+msgstr ""
+
+msgid "Select the fencers to move to a new competition."
+msgstr ""
+
+msgid "The table"
+msgstr ""
+
+msgid "Score sheets"
+msgstr ""
+
+msgid "All"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "All the score sheets"
+msgstr ""
+
+msgid "The pending score sheets"
+msgstr ""
+
+msgid "<b>Match</b>"
+msgstr ""
+
+msgid "A fencer"
+msgstr ""
+
+msgid "B fencer"
+msgstr ""
+
+msgid "<b>Score</b>"
+msgstr ""
+
+msgid "Fenced places"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Third place"
+msgstr ""
+
+msgid "Fill in a match"
+msgstr ""
+
+msgid ""
+"Fill in all the scores randomly.\n"
+"To activate/deactivate this button, go to the properties of the competition."
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "To"
+msgstr ""
+
+msgid "For place"
+msgstr ""
+
+msgid "Zoom"
+msgstr ""
+
+msgid ""
+"Fencing tournament management software.\n"
+"\n"
+"\n"
+msgstr ""
+
+msgid "Broadcasted competitions"
+msgstr ""
+
+msgid "Server"
+msgstr ""
+
+msgid "host"
+msgstr ""
+
+msgid "BellePoule - Fencing tournament"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Recently opened"
+msgstr ""
+
+msgid "Watch"
+msgstr ""
+
+msgid "Backup"
+msgstr ""
+
+msgid "Backup files location..."
+msgstr ""
+
+msgid "Activate"
+msgstr ""
+
+msgid "Deactivate"
+msgstr ""
+
+msgid "Print meal tickets"
+msgstr ""
+
+msgid "Print payment book"
+msgstr ""
+
+msgid "New version!"
+msgstr ""
+
+msgid "Open an example..."
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Fencer file template (.csv)"
+msgstr ""
