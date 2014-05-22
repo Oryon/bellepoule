@@ -526,7 +526,7 @@ namespace People
 
                   // Short year fixing
                   {
-                    if (strlen (splitted_date[2]) == 2)
+                    if (strlen (splitted_date[2]) <= 2)
                     {
                       GDateYear short_year = (GDateYear) atoi (splitted_date[2]);
 
