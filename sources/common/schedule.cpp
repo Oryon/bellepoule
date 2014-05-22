@@ -686,8 +686,19 @@ gboolean Schedule::OnHttpPost (const gchar *command,
 
       if (stage->GetId () == phase_id)
       {
-        gtk_notebook_set_current_page  (GTK_NOTEBOOK (GetRootWidget ()),
-                                        phase_id);
+        if (strcmp (command, "ScoreSheet") == 0)
+        {
+          gtk_notebook_set_current_page  (GTK_NOTEBOOK (GetRootWidget ()),
+                                          phase_id);
+        }
+        else if (strcmp (command, "Score") == 0)
+        {
+          if (stage->Locked ())
+          {
+            return FALSE;
+          }
+        }
+
         return stage->OnHttpPost (command,
                                   &ressource[1],
                                   data);
