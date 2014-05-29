@@ -35,6 +35,8 @@
 			<Add option="-Wcast-align" />
 			<Add option="-Wswitch-enum" />
 			<Add option="-Wswitch-default" />
+			<Add option="-Wmain" />
+			<Add option="-std=c++0x" />
 			<Add option="-std=c++98" />
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
@@ -44,10 +46,17 @@
 			<Add option="-mms-bitfields" />
 			<Add option="-DWINDOWS_TEMPORARY_PATCH=1" />
 			<Add option="-DWIN32" />
+			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
+			<Add option="-DGDK_DISABLE_DEPRECATED" />
+			<Add option="-DGSEAL_ENABLE" />
+			<Add option="-DLIBXML_STATIC" />
+			<Add directory="C:\MinGW\msys\1.0\include" />
+			<Add directory="C:\MinGW\msys\1.0\include\libxml2" />
 			<Add directory="C:\MinGW\include" />
 			<Add directory="C:\MinGW\include\gtk-2.0" />
 			<Add directory="C:\MinGW\include\cairo" />
 			<Add directory="C:\MinGW\include\gdk" />
+			<Add directory="C:\MinGW\include\gdk-pixbuf-2.0" />
 			<Add directory="C:\MinGW\include\glib-2.0" />
 			<Add directory="C:\MinGW\lib\glib-2.0\include" />
 			<Add directory="C:\MinGW\include\pango-1.0" />
@@ -61,8 +70,6 @@
 			<Add library="gobject-2.0" />
 			<Add library="glib-2.0" />
 			<Add library="libgthread-2.0" />
-			<Add library="glade-2.0" />
-			<Add library="xml2" />
 			<Add library="goocanvas" />
 			<Add library="gdk-win32-2.0" />
 			<Add library="atk-1.0" />
@@ -75,25 +82,20 @@
 			<Add library="cairo" />
 			<Add library="gmodule-2.0" />
 			<Add library="intl" />
-			<Add library="curl" />
 			<Add library="ws2_32" />
-			<Add library="ssh2" />
-			<Add library="libz" />
-			<Add library="libzdll" />
+			<Add library="curl" />
 			<Add library="libcurl" />
 			<Add library="libcurldll" />
-			<Add library="libeay32" />
-			<Add library="libidn" />
-			<Add library="librtmp" />
-			<Add library="libssh2" />
-			<Add library="libssh2dll" />
+			<Add library="libz" />
+			<Add library="libzdll" />
 			<Add library="libssl" />
-			<Add library="libssl32" />
 			<Add library="libcrypto" />
 			<Add library="libmicrohttpd" />
 			<Add library="libqrencode" />
 			<Add library="libiphlpapi.a" />
+			<Add library="xml2" />
 			<Add directory="C:\MinGW\lib" />
+			<Add directory="C:\MinGW\msys\1.0\lib" />
 		</Linker>
 		<Unit filename="..\sources\common\attendees.cpp" />
 		<Unit filename="..\sources\common\attendees.hpp" />
@@ -135,8 +137,6 @@
 		<Unit filename="..\sources\network\wifi_network.hpp" />
 		<Unit filename="..\sources\people_management\barrage.cpp" />
 		<Unit filename="..\sources\people_management\barrage.hpp" />
-		<Unit filename="..\sources\people_management\rank_importer.cpp" />
-		<Unit filename="..\sources\people_management\rank_importer.hpp" />
 		<Unit filename="..\sources\people_management\checkin.cpp" />
 		<Unit filename="..\sources\people_management\checkin.hpp" />
 		<Unit filename="..\sources\people_management\checkin_supervisor.cpp" />
@@ -153,6 +153,8 @@
 		<Unit filename="..\sources\people_management\players_list.hpp" />
 		<Unit filename="..\sources\people_management\players_store.cpp" />
 		<Unit filename="..\sources\people_management\players_store.hpp" />
+		<Unit filename="..\sources\people_management\rank_importer.cpp" />
+		<Unit filename="..\sources\people_management\rank_importer.hpp" />
 		<Unit filename="..\sources\people_management\referee.cpp" />
 		<Unit filename="..\sources\people_management\referee.hpp" />
 		<Unit filename="..\sources\people_management\referees_list.cpp" />
@@ -173,18 +175,18 @@
 		<Unit filename="..\sources\pool_round\pool_supervisor.hpp" />
 		<Unit filename="..\sources\pool_round\pool_zone.cpp" />
 		<Unit filename="..\sources\pool_round\pool_zone.hpp" />
-		<Unit filename="..\sources\pool_round\smart_swapper\criteria_value.hpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\criteria_value.cpp" />
+		<Unit filename="..\sources\pool_round\smart_swapper\criteria_value.hpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_data.cpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_data.hpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_fencer.cpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_fencer.hpp" />
-		<Unit filename="..\sources\pool_round\smart_swapper\snake.cpp" />
-		<Unit filename="..\sources\pool_round\smart_swapper\snake.hpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_profiles.cpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\pool_profiles.hpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\smart_swapper.cpp" />
 		<Unit filename="..\sources\pool_round\smart_swapper\smart_swapper.hpp" />
+		<Unit filename="..\sources\pool_round\smart_swapper\snake.cpp" />
+		<Unit filename="..\sources\pool_round\smart_swapper\snake.hpp" />
 		<Unit filename="..\sources\pool_round\swapper.hpp" />
 		<Unit filename="..\sources\resource.rc">
 			<Option compilerVar="WINDRES" />
@@ -207,6 +209,8 @@
 		<Unit filename="..\sources\util\canvas.hpp" />
 		<Unit filename="..\sources\util\canvas_module.cpp" />
 		<Unit filename="..\sources\util\canvas_module.hpp" />
+		<Unit filename="..\sources\util\clock.cpp" />
+		<Unit filename="..\sources\util\clock.hpp" />
 		<Unit filename="..\sources\util\data.cpp" />
 		<Unit filename="..\sources\util\data.hpp" />
 		<Unit filename="..\sources\util\drop_zone.cpp" />
@@ -219,8 +223,6 @@
 		<Unit filename="..\sources\util\glade.hpp" />
 		<Unit filename="..\sources\util\module.cpp" />
 		<Unit filename="..\sources\util\module.hpp" />
-		<Unit filename="..\sources\util\clock.cpp" />
-		<Unit filename="..\sources\util\clock.hpp" />
 		<Unit filename="..\sources\util\object.cpp" />
 		<Unit filename="..\sources\util\object.hpp" />
 		<Unit filename="..\sources\util\sensitivity_trigger.cpp" />

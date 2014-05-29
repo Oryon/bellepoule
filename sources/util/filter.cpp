@@ -92,7 +92,7 @@ Filter::~Filter ()
 {
   if (_dialog)
   {
-    gtk_object_destroy (GTK_OBJECT (_dialog));
+    gtk_widget_destroy (GTK_WIDGET (_dialog));
   }
 
   {

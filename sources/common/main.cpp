@@ -163,8 +163,6 @@ int main (int argc, char **argv)
 {
   // g_mem_set_vtable (glib_mem_profiler_table);
 
-  g_thread_init (NULL);
-
   // Init
   {
     gchar *install_dirname;
@@ -184,7 +182,18 @@ int main (int argc, char **argv)
                                  NULL);
       install_dirname = g_build_filename (binary_dir, "..", "..", NULL);
 #else
-      install_dirname = g_build_filename (binary_dir, "..", "share", "BellePoule", NULL);
+      {
+        gchar *basename = g_path_get_basename (argv[0]);
+
+        if (strstr (basename, ".exe"))
+        {
+          g_free (basename);
+          basename = g_strdup ("bellepoule");
+        }
+
+        install_dirname = g_build_filename (binary_dir, "..", "share", basename, NULL);
+        g_free (basename);
+      }
 #endif
 
       g_free (binary_dir);
@@ -267,9 +276,11 @@ int main (int argc, char **argv)
     g_free (install_dirname);
   }
 
+#if GTK_MAJOR_VERSION < 3
   gtk_about_dialog_set_url_hook (AboutDialogActivateLinkFunc,
                                  NULL,
                                  NULL);
+#endif
 
   {
     AttributeDesc *desc;

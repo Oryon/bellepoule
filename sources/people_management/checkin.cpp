@@ -462,6 +462,20 @@ namespace People
 
       if (lines && lines[0] && lines[1])
       {
+        GDateYear current_year;
+
+        {
+          GTimeVal  time_of_day;
+          GDate    *current_date = g_date_new ();
+
+          g_get_current_time (&time_of_day);
+          g_date_set_time_val (current_date,
+                               &time_of_day);
+
+          current_year = g_date_get_year (current_date);
+          g_date_free (current_date);
+        }
+
         // Header
         // FFF;WIN;CLASSEMENT;FFE
         // 08/11/2009;;;;
@@ -508,20 +522,43 @@ namespace People
                     && splitted_date[1]
                     && splitted_date[2])
                 {
-                  gchar  buffer[50];
-                  GDate *date = g_date_new ();
+                  GDateYear long_year;
 
-                  g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
-                  g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
-                  g_date_set_year  (date, (GDateYear)  atoi (splitted_date[2]));
+                  // Short year fixing
+                  {
+                    if (strlen (splitted_date[2]) <= 2)
+                    {
+                      GDateYear short_year = (GDateYear) atoi (splitted_date[2]);
 
-                  g_date_strftime (buffer,
-                                   sizeof (buffer),
-                                   "%x",
-                                   date);
-                  player->SetAttributeValue (&attr_id, buffer);
+                      long_year = short_year + current_year - (current_year%100);
+                      if (short_year >= (current_year%100))
+                      {
+                        long_year -= 100;
+                      }
+                    }
+                    else
+                    {
+                      long_year = (GDateYear) atoi (splitted_date[2]);
+                    }
+                  }
 
-                  g_date_free (date);
+                  // GDate --> String
+                  {
+                    gchar  buffer[50];
+                    GDate *date = g_date_new ();
+
+                    g_date_set_day   (date, (GDateDay)   atoi (splitted_date[0]));
+                    g_date_set_month (date, (GDateMonth) atoi (splitted_date[1]));
+                    g_date_set_year  (date, long_year);
+
+                    g_date_strftime (buffer,
+                                     sizeof (buffer),
+                                     "%x",
+                                     date);
+                    player->SetAttributeValue (&attr_id, buffer);
+
+                    g_date_free (date);
+                  }
                 }
                 g_strfreev (splitted_date);
               }

@@ -49,6 +49,9 @@
 			<Add option="-Wno-vla" />
 			<Add option="-Wno-variadic-macros" />
 			<Add option="-pthread -D_REENTRANT" />
+			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
+			<Add option="-DGDK_DISABLE_DEPRECATED" />
+			<Add option="-DGSEAL_ENABLE" />
 			<Add directory="../sources" />
 			<Add directory="/usr/include/gtk-2.0" />
 			<Add directory="/usr/lib/x86_64-linux-gnu/gtk-2.0/include" />

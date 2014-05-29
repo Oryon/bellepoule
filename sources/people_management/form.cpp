@@ -149,6 +149,7 @@ namespace People
                   GtkCellRenderer    *cell;
                   GtkEntryCompletion *completion;
 
+#if GTK_MAJOR_VERSION < 3
                   if (attr_desc->_free_value_allowed)
                   {
                     value_w = gtk_combo_box_entry_new ();
@@ -156,13 +157,13 @@ namespace People
                     completion = gtk_entry_completion_new ();
                   }
                   else
+#endif
                   {
                     value_w = gtk_combo_box_new ();
                     cell = gtk_cell_renderer_text_new ();
                     gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), cell, TRUE);
                     completion = NULL;
                   }
-
                   if (attr_desc->_is_selector)
                   {
                     selector_w = GTK_COMBO_BOX (value_w);
@@ -736,7 +737,7 @@ namespace People
   {
     Form *f = dynamic_cast <Form *> (owner);
 
-    if (event->keyval == GDK_Return)
+    if (event->keyval == GDK_KEY_Return)
     {
       f->OnAddButtonClicked ();
       return TRUE;

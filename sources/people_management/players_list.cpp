@@ -572,7 +572,7 @@ namespace People
       GtkTreeViewColumn *column;
 
       column = GTK_TREE_VIEW_COLUMN (g_list_nth_data (columns, c));
-      renderers = gtk_tree_view_column_get_cell_renderers (column);
+      renderers = gtk_cell_layout_get_cells (GTK_CELL_LAYOUT (column));
 
       for (guint r = 0; r < g_list_length (renderers) ; r++)
       {

@@ -330,6 +330,7 @@ Contest::Contest ()
           GTK_CONTAINER (_glade->GetWidget ("formula_alignment")));
   }
 
+#if GTK_MAJOR_VERSION < 3
   {
     GtkWidget *box = _glade->GetWidget ("weapon_box");
 
@@ -365,6 +366,11 @@ Contest::Contest ()
     gtk_container_add (GTK_CONTAINER (box), _category_combo);
     gtk_widget_show (_category_combo);
   }
+#else
+   _weapon_combo   = NULL;
+   _gender_combo   = NULL;
+   _category_combo = NULL;
+#endif
 
   // FTP repository
   {

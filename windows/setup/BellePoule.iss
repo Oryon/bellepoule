@@ -81,33 +81,33 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BellePoule"; Filen
 
 [Files]
 Source: "..\Release\BellePoule.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\resources\gtkrc"; DestDir: "{app}\share\BellePoule\resources"; Flags: ignoreversion
+Source: "..\..\resources\gtkrc"; DestDir: "{app}\share\bellepoule\resources"; Flags: ignoreversion
 Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gdk-pixbuf.loaders'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\pango.modules"; DestDir: "{app}\etc\pango"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\pango\pango.modules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 
 ;Exemple de fichiers
-Source: "..\..\Exemples\exemple.cotcot"; DestDir: "{app}\share\BellePoule\Exemples";             Flags: ignoreversion
-Source: "..\..\Exemples\FFE\*";          DestDir: "{app}\share\BellePoule\Exemples\FFE";         Flags: ignoreversion
-Source: "..\..\Exemples\Classements\*";  DestDir: "{app}\share\BellePoule\Exemples\Classements"; Flags: ignoreversion
+Source: "..\..\Exemples\exemple.cotcot"; DestDir: "{app}\share\bellepoule\Exemples";             Flags: ignoreversion
+Source: "..\..\Exemples\FFE\*";          DestDir: "{app}\share\bellepoule\Exemples\FFE";         Flags: ignoreversion
+Source: "..\..\Exemples\Classements\*";  DestDir: "{app}\share\bellepoule\Exemples\Classements"; Flags: ignoreversion
 
 ;Documentation
-Source: "..\..\resources\user_manual.pdf"; DestDir: "{app}\share\BellePoule\resources"; Flags: ignoreversion
+Source: "..\..\resources\user_manual.pdf"; DestDir: "{app}\share\bellepoule\resources"; Flags: ignoreversion
 
 ;Traductions
-Source: "..\..\resources\translations\index.txt"; DestDir: "{app}\share\BellePoule\resources\translations"; Flags: ignoreversion
+Source: "..\..\resources\translations\index.txt"; DestDir: "{app}\share\bellepoule\resources\translations"; Flags: ignoreversion
 
-Source: "..\..\resources\translations\fr\*"; DestDir: "{app}\share\BellePoule\resources\translations\fr"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\de\*"; DestDir: "{app}\share\BellePoule\resources\translations\de"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\nl\*"; DestDir: "{app}\share\BellePoule\resources\translations\nl"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\ru\*"; DestDir: "{app}\share\BellePoule\resources\translations\ru"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\ar\*"; DestDir: "{app}\share\BellePoule\resources\translations\ar"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\es\*"; DestDir: "{app}\share\BellePoule\resources\translations\es"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\it\*"; DestDir: "{app}\share\BellePoule\resources\translations\it"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\ko\*"; DestDir: "{app}\share\BellePoule\resources\translations\ko"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\BellePoule\resources\translations\pt_br"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\sv\*"; DestDir: "{app}\share\BellePoule\resources\translations\sv"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\translations\ja\*"; DestDir: "{app}\share\BellePoule\resources\translations\ja"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\fr\*"; DestDir: "{app}\share\bellepoule\resources\translations\fr"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\de\*"; DestDir: "{app}\share\bellepoule\resources\translations\de"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\nl\*"; DestDir: "{app}\share\bellepoule\resources\translations\nl"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\ru\*"; DestDir: "{app}\share\bellepoule\resources\translations\ru"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\ar\*"; DestDir: "{app}\share\bellepoule\resources\translations\ar"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\es\*"; DestDir: "{app}\share\bellepoule\resources\translations\es"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\it\*"; DestDir: "{app}\share\bellepoule\resources\translations\it"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\ko\*"; DestDir: "{app}\share\bellepoule\resources\translations\ko"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\pt_br\*"; DestDir: "{app}\share\bellepoule\resources\translations\pt_br"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\sv\*"; DestDir: "{app}\share\bellepoule\resources\translations\sv"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\translations\ja\*"; DestDir: "{app}\share\bellepoule\resources\translations\ja"; Flags: ignoreversion recursesubdirs
 
 #ifdef MINGW
 Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -167,24 +167,19 @@ Source: "{#MINGW}\share\locale\ja\LC_MESSAGES\gtk20-properties.mo"; DestDir: "{a
 #endif
 
 ;Resources
-Source: "..\..\resources\glade\*.png"; DestDir: "{app}\share\BellePoule\resources\glade\"; Flags: ignoreversion
-Source: "..\..\resources\glade\*.jpg"; DestDir: "{app}\share\BellePoule\resources\glade\"; Flags: ignoreversion
-Source: "..\..\resources\glade\*.glade"; DestDir: "{app}\share\BellePoule\resources\glade\"; Flags: ignoreversion
-Source: "..\..\resources\countries\*"; DestDir: "{app}\share\BellePoule\resources\countries\"; Flags: ignoreversion recursesubdirs
-Source: "..\..\resources\exe.ico"; DestDir: "{app}\share\BellePoule\resources\"; Flags: ignoreversion
+Source: "..\..\resources\glade\*.png"; DestDir: "{app}\share\bellepoule\resources\glade\"; Flags: ignoreversion
+Source: "..\..\resources\glade\*.jpg"; DestDir: "{app}\share\bellepoule\resources\glade\"; Flags: ignoreversion
+Source: "..\..\resources\glade\*.glade"; DestDir: "{app}\share\bellepoule\resources\glade\"; Flags: ignoreversion
+Source: "..\..\resources\countries\*"; DestDir: "{app}\share\bellepoule\resources\countries\"; Flags: ignoreversion recursesubdirs
+Source: "..\..\resources\exe.ico"; DestDir: "{app}\share\bellepoule\resources\"; Flags: ignoreversion
 
-Source: "..\..\resources\localized_data\*"; DestDir: "{app}\share\BellePoule\resources\localized_data\"; Flags: ignoreversion  recursesubdirs
+Source: "..\..\resources\localized_data\*"; DestDir: "{app}\share\bellepoule\resources\localized_data\"; Flags: ignoreversion  recursesubdirs
 
 ; GTK+ dependencies
 ; DLL
 #ifdef MINGW
 Source: "{#MINGW}\bin\libcairo-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libpangocairo-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\jpeg62.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libtiff3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-;Source: "{#MINGW}\bin\libpng14-14.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libpng12.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libpng12-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libgio-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\zlib1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\intl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -198,25 +193,23 @@ Source: "{#MINGW}\bin\libgtk-win32-2.0-0.dll"; DestDir: "{app}\bin"; Flags: igno
 Source: "{#MINGW}\bin\libpango-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libpangoft2-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\iconv.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libgoocanvas-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\bzip2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\freetype6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libcroco-0.6-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libfontconfig-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libfreetype-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libgsf-1-114.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\librsvg-2-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 
-Source: "{#MINGW}\bin\libcurl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libssh2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libexpat-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libpng14-14.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libeay32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libidn-11.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\librtmp.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libssh2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libssl32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "{#MINGW}\bin\libxml2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\ssleay32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libqrencode-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libz-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+
+Source: "{#MINGW}\bin\libcurl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "{#MINGW}\bin\libxml2-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libmicrohttpd-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libgnutls-28.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libgmp.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
