@@ -1,10 +1,11 @@
-EXEC    = bellepoule
+EXEC    = bellepoulebeta
 TARGET  = Release
-PACKAGE = /local/BellePoule
+PACKAGE = /local/$(USER)/$(EXEC)
 VERSION = 4.0
 STEP    = ubuntu1
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
+V       = 3
 
 CC = gcc
 ifeq ($(TARGET), Debug)
@@ -39,14 +40,14 @@ CFLAGS += -Wno-unused-parameter
 CFLAGS += -Wno-shadow
 CFLAGS += -Wno-vla
 CFLAGS += -Wno-variadic-macros
-CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd)
+CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
 CFLAGS += -Isources
 ifeq ($(TARGET), Debug)
 CFLAGS += -DDEBUG=1
 endif
 
 LDFLAGS  = -lstdc++
-LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode)
+LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
 LDFLAGS += $(addprefix -L$(TARGET)/,$(MODULE))
 
 SRC   = $(wildcard sources/*/*.cpp)
@@ -80,20 +81,10 @@ valgrind:
 package: prepare_packaging prepare_sources prepare_examples prepare_resources
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
-
-prepare_packaging: clean
-	rm -rf $(PACKAGE)/*
-	mkdir -p $(PACKAGE)/$(RELEASE)
-	cp Makefile $(PACKAGE)/$(RELEASE)
-	cp -rf debian $(PACKAGE)/$(RELEASE)
-	rm -f $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "bellepoule ($(VERSION)$(STEP)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "  * Miscellaneous improvments" >> $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo " -- betonniere <le.roux.yannick@free.fr>  Fri, 29 May 2013 11:42:10 +0100" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
 	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
+
+prepare_packaging: prepare_staging prepare_changelog prepare_control prepare_copyright prepare_desktop
 
 prepare_examples:
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples
@@ -134,42 +125,67 @@ prepare_resources:
 	cp -rf ../resources/localized_data $(PACKAGE)/$(RELEASE)/resources/localized_data
 	find $(PACKAGE)/$(RELEASE)/resources -type f -exec chmod a-x {} \;
 
-prepare_sources:
+prepare_sources: clean_sources
 	cp -rf ../sources $(PACKAGE)/$(RELEASE)
+
+prepare_staging:
+	rm -rf $(PACKAGE)/*
+	mkdir -p $(PACKAGE)/$(RELEASE)
+	cp Makefile $(PACKAGE)/$(RELEASE)
+	cp -rf debian $(PACKAGE)/$(RELEASE)
+
+prepare_changelog:
+	rm -f $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "$(EXEC) ($(VERSION)$(STEP)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "  * Miscellaneous improvments" >> $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo " -- betonniere <le.roux.yannick@free.fr>  Fri, 29 May 2013 11:42:10 +0100" >> $(PACKAGE)/$(RELEASE)/debian/changelog
+
+prepare_control:
+	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/control
+
+prepare_copyright:
+	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
+
+prepare_desktop:
+	mv -f $(PACKAGE)/$(RELEASE)/debian/*.desktop $(PACKAGE)/$(RELEASE)/debian/$(EXEC).desktop
+	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/$(EXEC).desktop
 
 ##
 ## debuild section
 ##
-.PHONY: install clean
+.PHONY: install clean_sources
 
 install:
 	mkdir -p $(DESTDIR)/usr/bin
 	install $(TARGET)/$(EXEC) $(DESTDIR)/usr/bin/$(EXEC)
 	mkdir -p $(DESTDIR)/usr/share/applications
-	install --mode=644 debian/bellepoule.desktop $(DESTDIR)/usr/share/applications/bellepoule.desktop
-	mkdir -p $(DESTDIR)/usr/share/BellePoule
-	mkdir -p `find Exemples -type d | sed 's?Exemples?$(DESTDIR)/usr/share/BellePoule/&?'`
+	install --mode=644 debian/$(EXEC).desktop $(DESTDIR)/usr/share/applications/$(EXEC).desktop
+	mkdir -p $(DESTDIR)/usr/share/$(EXEC)
+	mkdir -p `find Exemples -type d | sed 's?Exemples?$(DESTDIR)/usr/share/$(EXEC)/&?'`
 	find Exemples -type f  | while read file;\
 		do \
-		install --mode=644 $$file '$(DESTDIR)/usr/share/BellePoule/'$$file ;\
+		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
 		done
-	mkdir -p `find resources -type d | sed 's?resources?$(DESTDIR)/usr/share/BellePoule/&?'`
+	mkdir -p `find resources -type d | sed 's?resources?$(DESTDIR)/usr/share/$(EXEC)/&?'`
 	find resources -type f  | while read file;\
 		do \
-		install --mode=644 $$file '$(DESTDIR)/usr/share/BellePoule/'$$file ;\
+		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
 		done
 
-clean:
-	rm -f sources/*/*.o
+clean_sources:
+	rm -f `find ../sources -name "*.o"`
 	rm -rf $(TARGET)
 
 help:
 	@#echo "make -s UBUNTU=lucid   V=1 package"
-	@echo "make -s UBUNTU=precise V=1 package"
-	@echo "make -s UBUNTU=quantal V=1 package"
-	@echo "make -s UBUNTU=saucy   V=1 package"
-	@echo "make -s UBUNTU=trusty  V=1 package"
+	@echo "make -s UBUNTU=precise V=$(V) package"
+	@echo "make -s UBUNTU=quantal V=$(V) package"
+	@echo "make -s UBUNTU=saucy   V=$(V) package"
+	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "debuild -us -uc --lintian-opts --color always"
 	@echo "debuild -S -sa -k<1234>"
 	@echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
+	@echo "dput bellepoule $(EXEC)_$(VERSION)$(STEP)~$(UBUNTU)$(V)_source.changes"

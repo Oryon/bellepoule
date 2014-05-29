@@ -87,7 +87,7 @@ Glade::~Glade ()
         {
           GtkWidget *widget = GTK_WIDGET (object);
 
-          if (GTK_WIDGET_TOPLEVEL (widget))
+          if (gtk_widget_is_toplevel (widget))
           {
             gtk_widget_destroy (widget);
           }

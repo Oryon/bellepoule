@@ -278,7 +278,7 @@ namespace People
       guint32  referee_ref = referee->GetRef ();
 
       gtk_selection_data_set (data,
-                              data->target,
+                              GDK_SELECTION_TYPE_INTEGER,
                               32,
                               (guchar *) &referee_ref,
                               sizeof (referee_ref));

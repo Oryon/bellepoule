@@ -2104,7 +2104,7 @@ extern "C" G_MODULE_EXPORT gboolean on_http_entry_key_press_event (GtkWidget *wi
                                                                    GdkEvent  *event,
                                                                    Object    *owner)
 {
-  if (event->key.keyval == GDK_Return)
+  if (event->key.keyval == GDK_KEY_Return)
   {
     Tournament *t = dynamic_cast <Tournament *> (owner);
 
@@ -2161,7 +2161,7 @@ extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget
                                                              Object      *owner)
 {
 #ifdef DEBUG
-  if (event->keyval == GDK_F11)
+  if (event->keyval == GDK_KEY_F11)
   {
     Object::DumpList ();
   }

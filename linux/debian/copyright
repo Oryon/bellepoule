@@ -1,5 +1,5 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: bellepoule
+Upstream-Name: __EXEC__
 Source: <https://code.launchpad.net/~betonniere/bellepoule/trunk>
 
 Files: *

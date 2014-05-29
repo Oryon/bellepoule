@@ -235,7 +235,7 @@ gboolean ScoreCollector::on_key_press_event (GtkWidget   *widget,
 gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
                                      GdkEventKey *event)
 {
-  if ((event->keyval == GDK_Return) || (event->keyval == GDK_Tab))
+  if ((event->keyval == GDK_KEY_Return) || (event->keyval == GDK_KEY_Tab))
   {
     GooCanvasItem *next_item = GetNextItem (widget);
 
@@ -256,7 +256,7 @@ gboolean ScoreCollector::OnKeyPress (GtkWidget   *widget,
 
     return TRUE;
   }
-  else if (event->keyval == GDK_Escape)
+  else if (event->keyval == GDK_KEY_Escape)
   {
     GooCanvasItem *score_text = (GooCanvasItem *) g_object_get_data (G_OBJECT (widget),
                                                                      "score_text");
@@ -533,7 +533,7 @@ gboolean ScoreCollector::on_goocanvas_key_press_event (GooCanvasItem  *item,
                                                        GdkEventKey    *event,
                                                        ScoreCollector *score_collector)
 {
-  if (event->keyval == GDK_Escape)
+  if (event->keyval == GDK_KEY_Escape)
   {
     goo_canvas_grab_focus (goo_canvas_item_get_canvas (item),
                            goo_canvas_get_root_item (goo_canvas_item_get_canvas (item)));

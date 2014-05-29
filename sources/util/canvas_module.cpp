@@ -589,6 +589,8 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
                                      gint            y,
                                      guint           time)
 {
+  GList *targets = gdk_drag_context_list_targets (drag_context);
+
   if (DroppingIsForbidden (_floating_object))
   {
     gdk_drag_status  (drag_context,
@@ -597,12 +599,11 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
     return FALSE;
   }
 
-  if (drag_context->targets)
+  if (targets)
   {
     GdkAtom  target_type;
 
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
-                                                        0));
+    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (targets, 0));
 
     gtk_drag_get_data (widget,
                        drag_context,
@@ -647,14 +648,14 @@ gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
                                    gint            y,
                                    guint           time)
 {
-  gboolean result = FALSE;
+  gboolean  result  = FALSE;
+  GList    *targets = gdk_drag_context_list_targets (drag_context);
 
-  if (drag_context->targets)
+  if (targets)
   {
     GdkAtom  target_type;
 
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (drag_context->targets,
-                                                        0));
+    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (targets, 0));
 
     gtk_drag_get_data (widget,
                        drag_context,
@@ -696,11 +697,11 @@ void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
                                        guint             info,
                                        guint             time)
 {
-  if (data && (data->length >= 0))
+  if (data && (gtk_selection_data_get_length (data) >= 0))
   {
     if (info == INT_TARGET)
     {
-      guint32 *ref = (guint32 *) data->data;
+      guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
 
       _floating_object = GetDropObjectFromRef (*ref);
     }

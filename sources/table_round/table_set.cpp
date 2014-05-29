@@ -2863,7 +2863,9 @@ namespace Table
   {
     guint page_number = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (drawing_area), "page_number"));
 
-    gdk_window_clear (drawing_area->window);
+#if GTK_MAJOR_VERSION < 3
+    gdk_window_clear (gtk_widget_get_window (drawing_area));
+#endif
 
     ts->_current_preview_area = drawing_area;
     gtk_print_operation_preview_render_page (ts->_preview,
@@ -3062,7 +3064,7 @@ namespace Table
                                        GtkPrintContext          *context,
                                        GtkPageSetup             *page_setup)
   {
-    cairo_t      *cr         = gdk_cairo_create (_current_preview_area->window);
+    cairo_t      *cr         = gdk_cairo_create (gtk_widget_get_window (_current_preview_area));
     GtkPaperSize *paper_size = gtk_page_setup_get_paper_size (page_setup);
     gdouble       canvas_dpi;
     gdouble       drawing_dpi;
@@ -3740,7 +3742,7 @@ namespace Table
                                                 GdkEventKey *event,
                                                 gpointer     user_data)
   {
-    if (event->keyval == GDK_Escape)
+    if (event->keyval == GDK_KEY_Escape)
     {
       gtk_widget_destroy (GTK_WIDGET (widget));
       return TRUE;
