@@ -112,7 +112,7 @@ void Filter::UnPlug ()
 {
   if (_dialog)
   {
-    // gtk_widget_hide_all (_dialog);
+    // gtk_widget_hide (_dialog);
   }
 }
 

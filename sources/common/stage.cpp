@@ -945,11 +945,7 @@ void Stage::ToggleClassification (gboolean classification_on)
     {
       if (main_w)
       {
-#if GTK_MAJOR_VERSION < 3
-        gtk_widget_hide_all (main_w);
-#else
         gtk_widget_hide (main_w);
-#endif
       }
       gtk_widget_show (classification_w);
 
