@@ -126,6 +126,9 @@ Object::~Object ()
 // --------------------------------------------------------------------------------
 gchar *Object::GetUndivadableText (const gchar *text)
 {
+#ifdef WIN32
+  return g_strdup (text);
+#else
   guint8 *result = NULL;
 
   if (text)
@@ -165,6 +168,7 @@ gchar *Object::GetUndivadableText (const gchar *text)
   }
 
   return (gchar *) result;
+#endif
 }
 
 // --------------------------------------------------------------------------------

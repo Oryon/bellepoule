@@ -339,16 +339,16 @@ namespace People
           guint  rank_value             = atoi (rank);
           gchar *name                   = (gchar *) xmlGetProp (n, BAD_CAST "Nom");
           gchar *first_name             = (gchar *) xmlGetProp (n, BAD_CAST "Prenom");
-          gchar *name_undivadabel       = GetUndivadableText (name);
-          gchar *first_name_undivadabel = GetUndivadableText (first_name);
+          gchar *name_undivadable       = GetUndivadableText (name);
+          gchar *first_name_undivadable = GetUndivadableText (first_name);
 
           g_hash_table_insert (_rank_table,
-                               g_strdup_printf ("%s:%s", name_undivadabel, first_name_undivadabel),
+                               g_strdup_printf ("%s:%s", name_undivadable, first_name_undivadable),
                                (gpointer) rank_value);
           UpdateWorstRank (rank_value);
 
-          g_free (name_undivadabel);
-          g_free (first_name_undivadabel);
+          g_free (name_undivadable);
+          g_free (first_name_undivadable);
 
           xmlFree (name);
           xmlFree (first_name);
