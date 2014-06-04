@@ -160,7 +160,6 @@ namespace Table
       Table                    **_tables;
       GSList                   *_result_list;
       GSList                   *_match_to_print;
-      GtkWidget                *_table_print_dialog;
       PrintSession              _print_session;
       GSList                   *_attendees;
       GSList                   *_withdrawals;

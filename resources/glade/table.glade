@@ -50,9 +50,9 @@
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="message_type">question</property>
+    <property name="buttons">cancel</property>
     <property name="text" translatable="yes">&lt;b&gt;&lt;big&gt;How to print?&lt;/big&gt;&lt;/b&gt;</property>
     <property name="use_markup">True</property>
-    <property name="buttons">cancel</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -301,6 +301,7 @@
                         <child>
                           <object class="GtkVBox" id="match_sheet_vbox">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
                             <child>
                               <object class="GtkRadioButton" id="all_radiobutton">
@@ -369,17 +370,22 @@
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
-  <object class="GtkDialog" id="print_table_table_dialog">
+  <object class="GtkMessageDialog" id="score_sheet_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="type_hint">normal</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="message_type">question</property>
+    <property name="buttons">ok-cancel</property>
+    <property name="text" translatable="yes">&lt;b&gt;&lt;big&gt;Which score sheets of the selected table do you want to print?&lt;/big&gt;&lt;/b&gt;</property>
+    <property name="use_markup">True</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="print_table_dialog_vbox">
+      <object class="GtkVBox" id="dialog-vbox2">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -415,6 +421,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="use_action_appearance">False</property>
+                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -430,7 +437,6 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="use_action_appearance">False</property>
-                    <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">table_all_radiobutton</property>
                   </object>
@@ -446,7 +452,7 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">False</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>

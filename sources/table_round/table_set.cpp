@@ -96,24 +96,6 @@ namespace Table
     _short_name = g_strdup_printf ("%s%d", gettext ("Place #"), first_place);
 
     {
-      GtkWidget *content_area;
-
-      _table_print_dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                                GTK_MESSAGE_QUESTION,
-                                                                GTK_BUTTONS_OK_CANCEL,
-                                                                gettext ("<b><big>Which score sheets of the selected table do you want to print?</big></b>"));
-
-      content_area = gtk_dialog_get_content_area (GTK_DIALOG (_table_print_dialog));
-
-      gtk_widget_reparent (_glade->GetWidget ("print_table_dialog_vbox"),
-                           content_area);
-
-      gtk_widget_set_sensitive (_glade->GetWidget ("match_sheet_vbox"),
-                                FALSE);
-    }
-
-    {
       _quick_score_collector = new ScoreCollector (this,
                                                    (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore,
                                                    FALSE);
@@ -167,8 +149,6 @@ namespace Table
     g_slist_free (_withdrawals);
 
     g_slist_free (_match_to_print);
-
-    gtk_widget_destroy (_table_print_dialog);
 
     g_free (_id);
 
@@ -3504,14 +3484,18 @@ namespace Table
                                    GdkEventButton *event,
                                    TableSet       *table_set)
   {
-    Table *table_to_print = (Table *) g_object_get_data (G_OBJECT (item), "table_to_print");
-    gchar *title          = g_strdup_printf (gettext ("%s: score sheets printing"), table_to_print->GetImage ());
+    Table     *table_to_print     = (Table *) g_object_get_data (G_OBJECT (item), "table_to_print");
+    GtkWidget *score_sheet_dialog = table_set->_glade->GetWidget ("score_sheet_dialog");
 
-    gtk_window_set_title (GTK_WINDOW (table_set->_table_print_dialog),
-                          title);
-    g_free (title);
+    {
+      gchar *title = g_strdup_printf (gettext ("%s: score sheets printing"), table_to_print->GetImage ());
 
-    if (gtk_dialog_run (GTK_DIALOG (table_set->_table_print_dialog)) == GTK_RESPONSE_OK)
+      gtk_window_set_title (GTK_WINDOW (score_sheet_dialog),
+                            title);
+      g_free (title);
+    }
+
+    if (gtk_dialog_run (GTK_DIALOG (score_sheet_dialog)) == GTK_RESPONSE_OK)
     {
       GtkWidget *w          = table_set->_glade->GetWidget ("table_all_radiobutton");
       gboolean   all_sheet  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
@@ -3524,7 +3508,7 @@ namespace Table
       g_free (print_name);
     }
 
-    gtk_widget_hide (table_set->_table_print_dialog);
+    gtk_widget_hide (score_sheet_dialog);
 
     return TRUE;
   }
