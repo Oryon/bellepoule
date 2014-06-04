@@ -2,10 +2,10 @@ EXEC    = bellepoulebeta
 TARGET  = Release
 PACKAGE = /local/$(USER)/$(EXEC)
 VERSION = 4.0
-STEP    = ubuntu1
+STEP    = ubuntu5
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
-V       = 3
+V       = 1
 
 CC = gcc
 ifeq ($(TARGET), Debug)

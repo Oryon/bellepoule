@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
+  <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="config_window">
     <property name="can_focus">False</property>
@@ -189,17 +189,23 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">file_pack.png</property>
   </object>
-  <object class="GtkDialog" id="print_dialog">
+  <object class="GtkMessageDialog" id="print_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="type_hint">normal</property>
+    <property name="title" translatable="yes">Fencer list printing</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="message_type">question</property>
+    <property name="buttons">ok-cancel</property>
+    <property name="text" translatable="yes">&lt;b&gt;&lt;big&gt;What do you want to print?&lt;/big&gt;&lt;/b&gt;</property>
+    <property name="use_markup">True</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="print_dialog-vbox">
+      <object class="GtkVBox" id="dialog-vbox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area4">
+          <object class="GtkHButtonBox" id="dialog-action_area">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -265,7 +271,7 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">False</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>

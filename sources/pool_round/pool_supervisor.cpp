@@ -96,24 +96,6 @@ namespace Pool
       filter->Release ();
     }
 
-    {
-      GtkWidget *content_area;
-
-      _print_dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                          GTK_MESSAGE_QUESTION,
-                                                          GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>Print...</big></b>"));
-
-      gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                            gettext ("Pool sheets printing"));
-
-      content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
-
-      gtk_widget_reparent (_glade->GetWidget ("print_dialog-vbox"),
-                           content_area);
-    }
-
     // Classifications
     {
       Filter *filter;
@@ -163,7 +145,6 @@ namespace Pool
   Supervisor::~Supervisor ()
   {
     Object::TryToRelease (_allocator);
-    gtk_widget_destroy (_print_dialog);
 
     _current_round_classification->Release ();
 
@@ -514,25 +495,31 @@ namespace Pool
         classification->Print (title);
       }
     }
-    else if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+    else
     {
-      GtkWidget *w = _glade->GetWidget ("all_pool_radiobutton");
+      GtkWidget *print_dialog = _glade->GetWidget ("print_pool_dialog");
 
-      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+      if (gtk_dialog_run (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
       {
-        _print_all_pool = TRUE;
-      }
-      else
-      {
-        _print_all_pool = FALSE;
-      }
+        GtkWidget *w = _glade->GetWidget ("all_pool_radiobutton");
 
-      Pool::SetWaterMarkingPolicy (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("watermark_checkbutton"))));
+        if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+        {
+          _print_all_pool = TRUE;
+        }
+        else
+        {
+          _print_all_pool = FALSE;
+        }
 
-      Print (title);
+        Pool::SetWaterMarkingPolicy (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("watermark_checkbutton"))));
+
+        Print (title);
+      }
+      gtk_widget_hide (print_dialog);
     }
+
     g_free (title);
-    gtk_widget_hide (_print_dialog);
   }
 
   // --------------------------------------------------------------------------------

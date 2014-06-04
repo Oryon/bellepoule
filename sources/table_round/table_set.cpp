@@ -114,40 +114,6 @@ namespace Table
     }
 
     {
-      GtkWidget *content_area;
-
-      _print_dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                          GTK_MESSAGE_QUESTION,
-                                                          GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>What do you want to print?</big></b>"));
-
-      gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                            gettext ("Table printing"));
-
-      content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
-
-      gtk_widget_reparent (_glade->GetWidget ("print_table_dialog-vbox"),
-                           content_area);
-    }
-
-    {
-      GtkWidget *content_area;
-
-      _preview_dialog = gtk_dialog_new_with_buttons (gettext ("Table printing"),
-                                                     NULL,
-                                                     GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                     GTK_STOCK_PRINT,  GTK_RESPONSE_OK,
-                                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                                     NULL);
-
-      content_area = gtk_dialog_get_content_area (GTK_DIALOG (_preview_dialog));
-
-      gtk_widget_reparent (_glade->GetWidget ("preview_dialog-vbox"),
-                           content_area);
-    }
-
-    {
       _quick_score_collector = new ScoreCollector (this,
                                                    (ScoreCollector::OnNewScore_cbk) &TableSet::OnNewScore,
                                                    FALSE);
@@ -202,8 +168,6 @@ namespace Table
 
     g_slist_free (_match_to_print);
 
-    gtk_widget_destroy (_print_dialog);
-    gtk_widget_destroy (_preview_dialog);
     gtk_widget_destroy (_table_print_dialog);
 
     g_free (_id);
@@ -3021,7 +2985,11 @@ namespace Table
   void TableSet::OnPreviewReady (GtkPrintOperationPreview *preview,
                                  GtkPrintContext          *context)
   {
-    gint dialog_response;
+    gint       dialog_response;
+    GtkWidget *preview_dialog = _glade->GetWidget ("preview_dialog");
+
+    gtk_window_set_resizable (GTK_WINDOW (preview_dialog),
+                              TRUE);
 
     ConfigurePreviewBackground (context);
 
@@ -3029,7 +2997,7 @@ namespace Table
                       G_CALLBACK (on_cutting_count_combobox_changed),
                       (Object *) this);
 
-    dialog_response = gtk_dialog_run (GTK_DIALOG (_preview_dialog));
+    dialog_response = gtk_dialog_run (GTK_DIALOG (preview_dialog));
 
     {
       GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
@@ -3043,16 +3011,16 @@ namespace Table
                                           (Object *) this);
 
     gtk_print_operation_preview_end_preview (preview);
-    gtk_widget_hide (_preview_dialog);
+    gtk_widget_hide (preview_dialog);
 
     // To avoid confusion with the preview data
     // the real printing is started not before the preview
     // is stopped.
-    if (dialog_response == GTK_RESPONSE_OK)
+    if (dialog_response == 1)
     {
       gchar *print_name = GetPrintName ();
 
-      gtk_widget_hide (_print_dialog);
+      gtk_widget_hide (_glade->GetWidget ("print_dialog"));
       Print (print_name,
              _page_setup);
       g_free (print_name);
@@ -3501,7 +3469,9 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSet::OnPrint ()
   {
-    if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+    GtkWidget *print_dialog = _glade->GetWidget ("print_dialog");
+
+    if (gtk_dialog_run (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
     {
       GtkWidget *w          = _glade->GetWidget ("table_radiobutton");
       gchar     *print_name = GetPrintName ();
@@ -3525,7 +3495,7 @@ namespace Table
       g_free (print_name);
     }
 
-    gtk_widget_hide (_print_dialog);
+    gtk_widget_hide (print_dialog);
   }
 
   // --------------------------------------------------------------------------------

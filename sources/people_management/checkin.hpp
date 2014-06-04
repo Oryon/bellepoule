@@ -93,7 +93,6 @@ namespace People
 
     private:
       TallyCounter *_tally_counter;
-      GtkWidget    *_print_dialog;
       gboolean      _print_attending;
       gboolean      _print_missing;
       const gchar  *_base_class;

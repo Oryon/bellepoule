@@ -160,7 +160,6 @@ namespace Table
       Table                    **_tables;
       GSList                   *_result_list;
       GSList                   *_match_to_print;
-      GtkWidget                *_print_dialog;
       GtkWidget                *_table_print_dialog;
       PrintSession              _print_session;
       GSList                   *_attendees;
@@ -293,7 +292,6 @@ namespace Table
       virtual ~TableSet ();
 
     private:
-      GtkWidget                *_preview_dialog;
       GtkPrintOperationPreview *_preview;
       GtkWidget                *_current_preview_area;
       static const guint        PREVIEW_PAGE_SIZE = 200;
