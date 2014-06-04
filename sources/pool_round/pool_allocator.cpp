@@ -295,6 +295,16 @@ namespace Pool
       pool_zone = (PoolZone *) target_zone;
 
       pool_zone->AddObject (floating_object);
+
+      if (Locked ())
+      {
+        Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+        if (next_stage)
+        {
+          next_stage->OnAttrListUpdated ();
+        }
+      }
     }
 
     if (pool_zone)
