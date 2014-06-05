@@ -110,10 +110,8 @@ AttributeDesc *AttributeDesc::Declare (GType        type,
 // --------------------------------------------------------------------------------
 void AttributeDesc::Cleanup ()
 {
-  g_slist_foreach (_list,
-                   (GFunc) Object::TryToRelease,
-                   NULL);
-  g_slist_free (_list);
+  g_slist_free_full (_list,
+                     (GDestroyNotify) Object::TryToRelease);
 
   _list = NULL;
 }

@@ -1466,16 +1466,8 @@ namespace Pool
 
     if (_config_list)
     {
-      GSList *current = _config_list;
-
-      while (current)
-      {
-        Configuration *config = (Configuration *) current->data;
-
-        g_free (config);
-        current = g_slist_next (current);
-      }
-      g_slist_free (_config_list);
+      g_slist_free_full (_config_list,
+                         (GDestroyNotify) g_free);
       _config_list     = NULL;
       _selected_config = NULL;
     }

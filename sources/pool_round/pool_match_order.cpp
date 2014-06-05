@@ -1441,10 +1441,8 @@ namespace Pool
   {
     if (_fencer_pairs)
     {
-      g_slist_foreach (_fencer_pairs,
-                       (GFunc) g_free,
-                       NULL);
-      g_slist_free (_fencer_pairs);
+      g_slist_free_full (_fencer_pairs,
+                         (GDestroyNotify) g_free);
       _fencer_pairs = NULL;
     }
   }
@@ -1668,10 +1666,8 @@ namespace Pool
         _insertion_position += _insertion_step;
       }
 
-      g_slist_foreach (sub_model,
-                       (GFunc) g_free,
-                       NULL);
-      g_slist_free (sub_model);
+      g_slist_free_full (sub_model,
+                         (GDestroyNotify) g_free);
     }
   }
 

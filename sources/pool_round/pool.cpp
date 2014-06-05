@@ -2196,17 +2196,8 @@ namespace Pool
     CleanScores ();
 
     {
-      GSList *current = _match_list;
-
-      while (current)
-      {
-        Match *match = (Match *) current->data;
-
-        Object::TryToRelease (match);
-        current = g_slist_next (current);
-      }
-
-      g_slist_free (_match_list);
+      g_slist_free_full (_match_list,
+                         (GDestroyNotify) Object::TryToRelease);
       _match_list = NULL;
     }
 

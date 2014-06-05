@@ -230,18 +230,8 @@ Tournament::~Tournament ()
     g_free (config_path);
   }
 
-  {
-    GSList *current = _referee_list;
-
-    while (current)
-    {
-      Player *referee = (Player *) current->data;
-
-      referee->Release ();
-      current = g_slist_next (current);
-    }
-    g_slist_free (_referee_list);
-  }
+  g_slist_free_full (_referee_list,
+                     (GDestroyNotify) Object::TryToRelease);
 
   g_key_file_free (_config_file);
 
