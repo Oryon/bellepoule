@@ -910,6 +910,9 @@ namespace People
   void CheckinSupervisor::OnPlayerEventFromForm (Player            *player,
                                                  Form::PlayerEvent  event)
   {
+    Checkin::OnPlayerEventFromForm (player,
+                                    event);
+
     if (event == Form::NEW_PLAYER)
     {
       if (player->Is ("Team"))
@@ -929,10 +932,6 @@ namespace People
         Update (team);
       }
     }
-
-    Checkin::OnPlayerEventFromForm (player,
-                                    event);
-
   }
 
   // --------------------------------------------------------------------------------
