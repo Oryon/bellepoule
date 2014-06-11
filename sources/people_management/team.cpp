@@ -249,15 +249,6 @@ void Team::Load (xmlNode *xml_node)
         {
           SetAttributeValue (&name_attr_id,
                              name);
-
-          {
-            AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
-
-            team_desc->AddDiscreteValues (name,
-                                          name,
-                                          NULL,
-                                          NULL);
-          }
         }
       }
     }

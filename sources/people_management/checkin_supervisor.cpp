@@ -128,6 +128,7 @@ namespace People
     {
       _null_team = new NullTeam ();
       _null_team->SetName ("** Sans équipe **");
+      RegisterNewTeam (_null_team);
       Add (_null_team);
     }
   }
@@ -573,66 +574,64 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::ApplyConfig (Team *team)
   {
-    if (_manual_classification)
+    if (_manual_classification && _minimum_team_size && _default_classification)
     {
       _manual_classification->_value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton")));
-    }
 
-    if (_default_classification)
-    {
-      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("default_classification_entry"));
-
-      if (w)
       {
-        gchar *value = (gchar *) gtk_entry_get_text (w);
+        GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("default_classification_entry"));
 
-        if (value)
+        if (w)
         {
-          _default_classification->_value = atoi (value);
+          gchar *value = (gchar *) gtk_entry_get_text (w);
+
+          if (value)
+          {
+            _default_classification->_value = atoi (value);
+          }
         }
       }
-    }
 
-    if (_minimum_team_size)
-    {
-      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("teamsize_entry"));
-
-      if (w)
       {
-        gchar *value = (gchar *) gtk_entry_get_text (w);
+        GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("teamsize_entry"));
 
-        if (value)
+        if (w)
         {
-          _minimum_team_size->_value = atoi (value);
+          gchar *value = (gchar *) gtk_entry_get_text (w);
+
+          if (value)
+          {
+            _minimum_team_size->_value = atoi (value);
+          }
         }
       }
-    }
 
-    if (team)
-    {
-      team->SetDefaultClassification (_default_classification->_value);
-      team->SetMinimumSize           (_minimum_team_size->_value);
-      team->SetManualClassification  (_manual_classification->_value);
-      Update (team);
-    }
-    else
-    {
-      GSList *current = _player_list;
-
-      while (current)
+      if (team)
       {
-        Player *player = (Player *) current->data;
+        team->SetDefaultClassification (_default_classification->_value);
+        team->SetMinimumSize           (_minimum_team_size->_value);
+        team->SetManualClassification  (_manual_classification->_value);
+        Update (team);
+      }
+      else
+      {
+        GSList *current = _player_list;
 
-        if (player->Is ("Team"))
+        while (current)
         {
-          Team *current_team = (Team *) player;
+          Player *player = (Player *) current->data;
 
-          current_team->SetDefaultClassification (_default_classification->_value);
-          current_team->SetMinimumSize           (_minimum_team_size->_value);
-          current_team->SetManualClassification  (_manual_classification->_value);
-          Update (current_team);
+          if (player->Is ("Team"))
+          {
+            Team *current_team = (Team *) player;
+
+            current_team->SetDefaultClassification (_default_classification->_value);
+            current_team->SetMinimumSize           (_minimum_team_size->_value);
+            current_team->SetManualClassification  (_manual_classification->_value);
+            Update (current_team);
+          }
+          current = g_slist_next (current);
         }
-        current = g_slist_next (current);
       }
     }
   }
@@ -759,12 +758,15 @@ namespace People
   {
     gchar *name = team->GetName ();
 
-    AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
+    if (GetTeam (name) == NULL)
+    {
+      AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
 
-    team_desc->AddDiscreteValues (name,
-                                  name,
-                                  NULL,
-                                  NULL);
+      team_desc->AddDiscreteValues (name,
+                                    name,
+                                    NULL,
+                                    NULL);
+    }
 
     ApplyConfig (team);
   }
@@ -957,16 +959,21 @@ namespace People
   void CheckinSupervisor::OnPlayerEventFromForm (Player            *player,
                                                  Form::PlayerEvent  event)
   {
-    Checkin::OnPlayerEventFromForm (player,
-                                    event);
-
     if (event == Form::NEW_PLAYER)
     {
       if (player->Is ("Team"))
       {
+        if (GetTeam (player->GetName ()))
+        {
+          return;
+        }
+
         RegisterNewTeam ((Team *) player);
       }
     }
+
+    Checkin::OnPlayerEventFromForm (player,
+                                    event);
 
     if (player->Is ("Fencer"))
     {

@@ -419,11 +419,13 @@ namespace People
             {
               if (attr_id)
               {
-                gchar *xml_image = attr_desc->GetDiscreteXmlImage (gtk_entry_get_text (GTK_ENTRY (entry)));
+                gchar *value     = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+                gchar *xml_image = attr_desc->GetDiscreteXmlImage (g_strstrip (value));
 
                 player->SetAttributeValue (attr_id,
                                            xml_image);
                 g_free (xml_image);
+                g_free (value);
               }
 
               if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
@@ -451,10 +453,11 @@ namespace People
         {
           if (attr_id)
           {
-            gchar *value = (gchar *) gtk_entry_get_text (GTK_ENTRY (w));
+            gchar *value = g_strdup (gtk_entry_get_text (GTK_ENTRY (w)));
 
             player->SetAttributeValue (attr_id,
-                                       value);
+                                       g_strstrip (value));
+            g_free (value);
           }
 
           if (attr_desc->_uniqueness == AttributeDesc::SINGULAR)
