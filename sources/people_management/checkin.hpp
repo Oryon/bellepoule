@@ -91,6 +91,8 @@ namespace People
 
       virtual void OnPlayerRemoved (Player *player);
 
+      virtual gboolean PlayerIsPrintable (Player *player);
+
     private:
       TallyCounter *_tally_counter;
       gboolean      _print_attending;
@@ -114,8 +116,6 @@ namespace People
       void RefreshAttendingDisplay ();
 
       void OnPlugged ();
-
-      gboolean PlayerIsPrintable (Player *player);
 
       static void OnAttrAttendingChanged (Player    *player,
                                           Attribute *attr,

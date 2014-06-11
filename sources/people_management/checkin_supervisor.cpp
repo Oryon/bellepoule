@@ -124,12 +124,20 @@ namespace People
 
       filter->Release ();
     }
+
+    {
+      _null_team = new NullTeam ();
+      _null_team->SetName ("** Sans équipe **");
+      Add (_null_team);
+    }
   }
 
   // --------------------------------------------------------------------------------
   CheckinSupervisor::~CheckinSupervisor ()
   {
     g_slist_free (_checksum_list);
+
+    _null_team->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -162,6 +170,34 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::Load (xmlNode *xml_node)
   {
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::PlayerIsPrintable (Player *player)
+  {
+    if (player->Is ("Team"))
+    {
+      Team   *team    = (Team *) player;
+      GSList *current = team->GetMemberList ();
+
+      while (current)
+      {
+        Player *member = (Player *) current->data;
+
+        if (Checkin::PlayerIsPrintable (member))
+        {
+          return TRUE;
+        }
+
+        current = g_slist_next (current);
+      }
+
+      return FALSE;
+    }
+    else
+    {
+      return Checkin::PlayerIsPrintable (player);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -208,18 +244,25 @@ namespace People
       Team                *team      = (Team *) player;
       AttributeDesc       *team_desc = AttributeDesc::GetDescFromCodeName ("team");
       Player::AttributeId  team_attr_id  ("name");
-      Attribute           *team_attr = player->GetAttribute ( &team_attr_id);
+      Attribute           *team_attr = player->GetAttribute (&team_attr_id);
 
       if (team_desc->GetXmlImage (team_attr->GetStrValue ()) == NULL)
       {
         RegisterNewTeam (team);
       }
     }
-    else if (owner)
+    else
     {
       Fencer *fencer = (Fencer *) player;
 
-      fencer->SetTeam ((Team *) owner);
+      if (owner)
+      {
+        fencer->SetTeam ((Team *) owner);
+      }
+      else
+      {
+        fencer->SetTeam (_null_team);
+      }
     }
   }
 
@@ -237,29 +280,33 @@ namespace People
                                       const gchar   *player_class,
                                       Player        *player)
   {
-    if (player->Is ("Team"))
+    if (player != _null_team)
     {
-      Team *team = (Team *) player;
-
-      team->EnableMemberSaving (_contest->IsTeamEvent ());
-    }
-
-    if (_contest->IsTeamEvent ())
-    {
-      if ((strcmp (player_class, "Fencer") == 0) && player->Is ("Fencer"))
+      if (player->Is ("Team"))
       {
-        Fencer *fencer = (Fencer *) player;
+        Team *team = (Team *) player;
 
-        if (fencer->GetTeam ())
+        team->EnableMemberSaving (_contest->IsTeamEvent ());
+      }
+
+      if (_contest->IsTeamEvent ())
+      {
+        if ((strcmp (player_class, "Fencer") == 0) && player->Is ("Fencer"))
         {
-          return;
+          Fencer *fencer = (Fencer *) player;
+          Team   *team   = fencer->GetTeam ();
+
+          if (team != _null_team)
+          {
+            return;
+          }
         }
       }
-    }
 
-    Checkin::SavePlayer (xml_writer,
-                         player_class,
-                         player);
+      Checkin::SavePlayer (xml_writer,
+                           player_class,
+                           player);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -770,7 +817,7 @@ namespace People
 
       if (team)
       {
-        fencer->SetTeam (NULL);
+        fencer->SetTeam (_null_team);
         team->SetAttendingFromMembers ();
         Update (team);
       }
@@ -875,7 +922,7 @@ namespace People
       {
         gchar  *team_name = attr->GetStrValue ();
         Fencer *fencer    = (Fencer *) player;
-        Team   *team      = NULL;
+        Team   *team      = supervisor->_null_team;
 
         // Find a team with the given name
         if (team_name && team_name[0])

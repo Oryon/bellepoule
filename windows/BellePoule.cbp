@@ -165,6 +165,8 @@
 		<Unit filename="..\sources\people_management\tally_counter.hpp" />
 		<Unit filename="..\sources\people_management\team.cpp" />
 		<Unit filename="..\sources\people_management\team.hpp" />
+		<Unit filename="..\sources\people_management\null_team.cpp" />
+		<Unit filename="..\sources\people_management\null_team.hpp" />
 		<Unit filename="..\sources\pool_round\pool.cpp" />
 		<Unit filename="..\sources\pool_round\pool.hpp" />
 		<Unit filename="..\sources\pool_round\pool_allocator.cpp" />

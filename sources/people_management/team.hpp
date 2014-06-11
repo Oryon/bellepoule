@@ -30,15 +30,15 @@ class Team : public Player
 
     void AddMember (Player *member);
 
-    void UpdateMembers ();
+    virtual void UpdateMembers ();
 
     void RemoveMember (Player *member);
 
     GSList *GetMemberList ();
 
-    void SetAttendingFromMembers ();
+    virtual void SetAttendingFromMembers ();
 
-    void SetAttributesFromMembers ();
+    virtual void SetAttributesFromMembers ();
 
     void SetDefaultClassification (guint default_classification);
 
@@ -47,6 +47,11 @@ class Team : public Player
     void SetManualClassification (gboolean manual);
 
     void EnableMemberSaving (gboolean enable);
+
+  protected:
+    Team ();
+
+    virtual ~Team ();
 
   private:
     static const gchar *_class_name;
@@ -58,15 +63,13 @@ class Team : public Player
     gboolean  _manual_classification;
     gboolean  _enable_member_saving;
 
-    Team ();
-
-    virtual ~Team ();
-
     Player *Clone ();
 
     void Load (xmlNode *xml_node);
 
     void Save (xmlTextWriter *xml_writer);
+
+    void SaveMembers (xmlTextWriter *xml_writer);
 };
 
 #endif
