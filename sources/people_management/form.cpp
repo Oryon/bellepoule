@@ -149,15 +149,13 @@ namespace People
                   GtkCellRenderer    *cell;
                   GtkEntryCompletion *completion;
 
-#if GTK_MAJOR_VERSION < 3
                   if (attr_desc->_free_value_allowed)
                   {
-                    value_w = gtk_combo_box_entry_new ();
-                    cell = NULL;
+                    value_w    = gtk_combo_box_new_with_entry ();
+                    cell       = NULL;
                     completion = gtk_entry_completion_new ();
                   }
                   else
-#endif
                   {
                     value_w = gtk_combo_box_new ();
                     cell = gtk_cell_renderer_text_new ();

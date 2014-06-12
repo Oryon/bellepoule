@@ -215,7 +215,7 @@ void AttributeDesc::BindDiscreteValues (GObject         *object,
     else
     {
       g_object_set (object,
-                    "text-column", DISCRETE_LONG_TEXT_str,
+                    "entry-text-column", DISCRETE_LONG_TEXT_str,
                     NULL);
     }
   }
