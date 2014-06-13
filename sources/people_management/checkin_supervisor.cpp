@@ -242,15 +242,7 @@ namespace People
   {
     if (player->Is ("Team"))
     {
-      Team                *team      = (Team *) player;
-      AttributeDesc       *team_desc = AttributeDesc::GetDescFromCodeName ("team");
-      Player::AttributeId  team_attr_id  ("name");
-      Attribute           *team_attr = player->GetAttribute (&team_attr_id);
-
-      if (team_desc->GetXmlImage (team_attr->GetStrValue ()) == NULL)
-      {
-        RegisterNewTeam (team);
-      }
+      RegisterNewTeam ((Team *) player);
     }
     else
     {
@@ -756,12 +748,11 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::RegisterNewTeam (Team *team)
   {
-    gchar *name = team->GetName ();
+    AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
+    gchar         *name      = team->GetName ();
 
-    if (GetTeam (name) == NULL)
+    if (team_desc->GetXmlImage (name) == NULL)
     {
-      AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
-
       team_desc->AddDiscreteValues (name,
                                     name,
                                     NULL,

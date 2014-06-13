@@ -96,10 +96,8 @@ namespace People
 
       if (_tree_view)
       {
+        _store->SetSearchColumn (_filter->GetAttributeId ("name"));
         _store->SelectTreeMode (_tree_view);
-
-        gtk_tree_view_set_search_column (_tree_view,
-                                         _filter->GetAttributeId ("name"));
       }
 
       g_free (types);

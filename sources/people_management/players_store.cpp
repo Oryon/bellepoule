@@ -38,12 +38,20 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersStore::SetSearchColumn (gint column)
+  {
+    _search_column = column * AttributeDesc::NB_LOOK;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean PlayersStore::SelectFlatMode (GtkTreeView *view)
   {
     if (GTK_TREE_MODEL (_flat_store._gtk_tree_store) != gtk_tree_view_get_model (view))
     {
       gtk_tree_view_set_model (view,
                                GTK_TREE_MODEL (_flat_store._gtk_tree_store));
+      gtk_tree_view_set_search_column (view,
+                                       _search_column);
       return TRUE;
     }
     return FALSE;
@@ -56,6 +64,8 @@ namespace People
     {
       gtk_tree_view_set_model (view,
                                GTK_TREE_MODEL (_tree_store._gtk_tree_store));
+      gtk_tree_view_set_search_column (view,
+                                       _search_column);
       return TRUE;
     }
     return FALSE;
