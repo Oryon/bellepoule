@@ -40,7 +40,11 @@ void Clock::PrintElapsed (const gchar *tag)
                   &current_timeval,
                   &_last_timeval);
 
-  printf (BLUE "%s " ESC "%ld.%ld\n", tag, diff_timeval.tv_sec, diff_timeval.tv_usec);
+  printf (BLUE "%s " ESC "%ld (%ld/%ld)\n",
+          tag,
+          diff_timeval.tv_sec*G_USEC_PER_SEC + diff_timeval.tv_usec,
+          diff_timeval.tv_sec,
+          diff_timeval.tv_usec);
 
   _last_timeval = current_timeval;
 }

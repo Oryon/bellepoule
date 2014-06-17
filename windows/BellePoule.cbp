@@ -207,6 +207,8 @@
 		<Unit filename="..\sources\table_round\table_zone.hpp" />
 		<Unit filename="..\sources\util\attribute.cpp" />
 		<Unit filename="..\sources\util\attribute.hpp" />
+		<Unit filename="..\sources\util\attribute_desc.cpp" />
+		<Unit filename="..\sources\util\attribute_desc.hpp" />
 		<Unit filename="..\sources\util\canvas.cpp" />
 		<Unit filename="..\sources\util\canvas.hpp" />
 		<Unit filename="..\sources\util\canvas_module.cpp" />

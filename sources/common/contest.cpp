@@ -1111,7 +1111,7 @@ Player *Contest::GetRefereeFromRef (guint ref)
   if (_ref_translation_table)
   {
     ref = GPOINTER_TO_UINT (g_hash_table_lookup (_ref_translation_table,
-                                                 (gconstpointer) ref));
+                                                 GUINT_TO_POINTER (ref)));
 
   }
 

@@ -675,16 +675,16 @@ namespace Table
       if (match->IsOver ())
       {
         zone->FreeReferees ();
+        table_set->SpreadWinners ();
+        table_set->RefreshNodes ();
+        table_set->RefilterQuickSearch ();
       }
       else
       {
         zone->BookReferees ();
+        table_set->RefreshTableStatus ();
       }
     }
-
-    table_set->SpreadWinners ();
-    table_set->RefreshNodes ();
-    table_set->RefilterQuickSearch ();
 
     {
       Table *table = (Table *) match->GetPtrData (table_set, "table");
@@ -2010,7 +2010,20 @@ namespace Table
                   match->Load (xml_nodeset->nodeTab[i],
                                match->GetOpponent (i));
                 }
-                RefreshNodes ();
+
+                _quick_score_collector->Refresh (match);
+
+                if (match->IsOver ())
+                {
+                  SpreadWinners ();
+                  RefreshNodes ();
+                  RefilterQuickSearch ();
+                }
+                else
+                {
+                  _score_collector->Refresh (match);
+                  RefreshTableStatus ();
+                }
               }
 
               xmlXPathFreeObject  (xml_object);
