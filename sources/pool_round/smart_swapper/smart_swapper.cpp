@@ -399,7 +399,7 @@ namespace SmartSwapper
             {
               guint teammate_rank = pool_data->GetTeammateRank (fencer, _criteria_depth);
 
-              if (criteria_value->CanFloat (fencer))
+              if ((criteria_value == NULL) || criteria_value->CanFloat (fencer))
               {
                 PRINT (GREEN "  << FLOATING >>" ESC " %s", fencer->_player->GetName ());
                 _floating_list = g_list_prepend (_floating_list,
@@ -407,7 +407,7 @@ namespace SmartSwapper
 
                 pool_data->RemoveFencer ((Fencer *) fencer);
               }
-              else if (teammate_rank >= criteria_value->GetErrorLine (fencer))
+              else if (criteria_value && (teammate_rank >= criteria_value->GetErrorLine (fencer)))
               {
                 PRINT (RED "  << ERROR >>" ESC " %s", fencer->_player->GetName ());
                 _error_list = g_list_prepend (_error_list,
@@ -690,6 +690,7 @@ next_fencer:
       CriteriaValue *criteria_value = (CriteriaValue *) g_hash_table_lookup (_distributions[depth],
                                                                              (const void *) fencer->_criteria_quarks[depth]);
 
+      if (criteria_value)
       {
         GList *current = g_list_last (pool_data->_fencer_list);
 

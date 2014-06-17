@@ -550,7 +550,7 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image,
     {
       GtkTreePath *path = (GtkTreePath *) g_hash_table_lookup (_discrete_xml_table,
                                                                xml_image);
-      path = NULL;
+
       if (path)
       {
         GtkTreeIter iter;
