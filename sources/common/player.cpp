@@ -61,10 +61,8 @@ Player::~Player ()
 {
   _wifi_code->Release ();
 
-  g_slist_foreach (_clients,
-                   (GFunc) Object::TryToRelease,
-                   NULL);
-  g_slist_free (_clients);
+  g_slist_free_full (_clients,
+                     (GDestroyNotify) Object::TryToRelease);
 }
 
 // --------------------------------------------------------------------------------

@@ -124,12 +124,21 @@ namespace People
 
       filter->Release ();
     }
+
+    {
+      _null_team = new NullTeam ();
+      _null_team->SetName ("** Sans équipe **");
+      RegisterNewTeam (_null_team);
+      Add (_null_team);
+    }
   }
 
   // --------------------------------------------------------------------------------
   CheckinSupervisor::~CheckinSupervisor ()
   {
     g_slist_free (_checksum_list);
+
+    _null_team->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -162,6 +171,34 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::Load (xmlNode *xml_node)
   {
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::PlayerIsPrintable (Player *player)
+  {
+    if (player->Is ("Team"))
+    {
+      Team   *team    = (Team *) player;
+      GSList *current = team->GetMemberList ();
+
+      while (current)
+      {
+        Player *member = (Player *) current->data;
+
+        if (Checkin::PlayerIsPrintable (member))
+        {
+          return TRUE;
+        }
+
+        current = g_slist_next (current);
+      }
+
+      return FALSE;
+    }
+    else
+    {
+      return Checkin::PlayerIsPrintable (player);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -205,21 +242,20 @@ namespace People
   {
     if (player->Is ("Team"))
     {
-      Team                *team      = (Team *) player;
-      AttributeDesc       *team_desc = AttributeDesc::GetDescFromCodeName ("team");
-      Player::AttributeId  team_attr_id  ("name");
-      Attribute           *team_attr = player->GetAttribute ( &team_attr_id);
-
-      if (team_desc->GetXmlImage (team_attr->GetStrValue ()) == NULL)
-      {
-        RegisterNewTeam (team);
-      }
+      RegisterNewTeam ((Team *) player);
     }
-    else if (owner)
+    else
     {
       Fencer *fencer = (Fencer *) player;
 
-      fencer->SetTeam ((Team *) owner);
+      if (owner)
+      {
+        fencer->SetTeam ((Team *) owner);
+      }
+      else
+      {
+        fencer->SetTeam (_null_team);
+      }
     }
   }
 
@@ -237,29 +273,33 @@ namespace People
                                       const gchar   *player_class,
                                       Player        *player)
   {
-    if (player->Is ("Team"))
+    if (player != _null_team)
     {
-      Team *team = (Team *) player;
-
-      team->EnableMemberSaving (_contest->IsTeamEvent ());
-    }
-
-    if (_contest->IsTeamEvent ())
-    {
-      if ((strcmp (player_class, "Fencer") == 0) && player->Is ("Fencer"))
+      if (player->Is ("Team"))
       {
-        Fencer *fencer = (Fencer *) player;
+        Team *team = (Team *) player;
 
-        if (fencer->GetTeam ())
+        team->EnableMemberSaving (_contest->IsTeamEvent ());
+      }
+
+      if (_contest->IsTeamEvent ())
+      {
+        if ((strcmp (player_class, "Fencer") == 0) && player->Is ("Fencer"))
         {
-          return;
+          Fencer *fencer = (Fencer *) player;
+          Team   *team   = fencer->GetTeam ();
+
+          if (team != _null_team)
+          {
+            return;
+          }
         }
       }
-    }
 
-    Checkin::SavePlayer (xml_writer,
-                         player_class,
-                         player);
+      Checkin::SavePlayer (xml_writer,
+                           player_class,
+                           player);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -526,66 +566,64 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::ApplyConfig (Team *team)
   {
-    if (_manual_classification)
+    if (_manual_classification && _minimum_team_size && _default_classification)
     {
       _manual_classification->_value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton")));
-    }
 
-    if (_default_classification)
-    {
-      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("default_classification_entry"));
-
-      if (w)
       {
-        gchar *value = (gchar *) gtk_entry_get_text (w);
+        GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("default_classification_entry"));
 
-        if (value)
+        if (w)
         {
-          _default_classification->_value = atoi (value);
+          gchar *value = (gchar *) gtk_entry_get_text (w);
+
+          if (value)
+          {
+            _default_classification->_value = atoi (value);
+          }
         }
       }
-    }
 
-    if (_minimum_team_size)
-    {
-      GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("teamsize_entry"));
-
-      if (w)
       {
-        gchar *value = (gchar *) gtk_entry_get_text (w);
+        GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("teamsize_entry"));
 
-        if (value)
+        if (w)
         {
-          _minimum_team_size->_value = atoi (value);
+          gchar *value = (gchar *) gtk_entry_get_text (w);
+
+          if (value)
+          {
+            _minimum_team_size->_value = atoi (value);
+          }
         }
       }
-    }
 
-    if (team)
-    {
-      team->SetDefaultClassification (_default_classification->_value);
-      team->SetMinimumSize           (_minimum_team_size->_value);
-      team->SetManualClassification  (_manual_classification->_value);
-      Update (team);
-    }
-    else
-    {
-      GSList *current = _player_list;
-
-      while (current)
+      if (team)
       {
-        Player *player = (Player *) current->data;
+        team->SetDefaultClassification (_default_classification->_value);
+        team->SetMinimumSize           (_minimum_team_size->_value);
+        team->SetManualClassification  (_manual_classification->_value);
+        Update (team);
+      }
+      else
+      {
+        GSList *current = _player_list;
 
-        if (player->Is ("Team"))
+        while (current)
         {
-          Team *current_team = (Team *) player;
+          Player *player = (Player *) current->data;
 
-          current_team->SetDefaultClassification (_default_classification->_value);
-          current_team->SetMinimumSize           (_minimum_team_size->_value);
-          current_team->SetManualClassification  (_manual_classification->_value);
-          Update (current_team);
+          if (player->Is ("Team"))
+          {
+            Team *current_team = (Team *) player;
+
+            current_team->SetDefaultClassification (_default_classification->_value);
+            current_team->SetMinimumSize           (_minimum_team_size->_value);
+            current_team->SetManualClassification  (_manual_classification->_value);
+            Update (current_team);
+          }
+          current = g_slist_next (current);
         }
-        current = g_slist_next (current);
       }
     }
   }
@@ -710,14 +748,16 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::RegisterNewTeam (Team *team)
   {
-    gchar *name = team->GetName ();
-
     AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
+    gchar         *name      = team->GetName ();
 
-    team_desc->AddDiscreteValues (name,
-                                  name,
-                                  NULL,
-                                  NULL);
+    if (team_desc->GetXmlImage (name) == NULL)
+    {
+      team_desc->AddDiscreteValues (name,
+                                    name,
+                                    NULL,
+                                    NULL);
+    }
 
     ApplyConfig (team);
   }
@@ -770,7 +810,7 @@ namespace People
 
       if (team)
       {
-        fencer->SetTeam (NULL);
+        fencer->SetTeam (_null_team);
         team->SetAttendingFromMembers ();
         Update (team);
       }
@@ -875,7 +915,7 @@ namespace People
       {
         gchar  *team_name = attr->GetStrValue ();
         Fencer *fencer    = (Fencer *) player;
-        Team   *team      = NULL;
+        Team   *team      = supervisor->_null_team;
 
         // Find a team with the given name
         if (team_name && team_name[0])
@@ -914,9 +954,17 @@ namespace People
     {
       if (player->Is ("Team"))
       {
+        if (GetTeam (player->GetName ()))
+        {
+          return;
+        }
+
         RegisterNewTeam ((Team *) player);
       }
     }
+
+    Checkin::OnPlayerEventFromForm (player,
+                                    event);
 
     if (player->Is ("Fencer"))
     {
@@ -929,10 +977,6 @@ namespace People
         Update (team);
       }
     }
-
-    Checkin::OnPlayerEventFromForm (player,
-                                    event);
-
   }
 
   // --------------------------------------------------------------------------------

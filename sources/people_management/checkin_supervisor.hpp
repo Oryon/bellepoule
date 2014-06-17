@@ -22,6 +22,7 @@
 
 #include "common/stage.hpp"
 #include "team.hpp"
+#include "null_team.hpp"
 
 #include "checkin.hpp"
 
@@ -66,10 +67,11 @@ namespace People
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
 
-      GSList *_checksum_list;
-      Data   *_manual_classification;
-      Data   *_default_classification;
-      Data   *_minimum_team_size;
+      GSList   *_checksum_list;
+      Data     *_manual_classification;
+      Data     *_default_classification;
+      Data     *_minimum_team_size;
+      NullTeam *_null_team;
 
       static Stage *CreateInstance (StageClass *stage_class);
 
@@ -127,6 +129,8 @@ namespace People
       void TogglePlayerAttr (Player              *player,
                              Player::AttributeId *attr_id,
                              gboolean             new_value);
+
+      gboolean PlayerIsPrintable (Player *player);
 
       virtual ~CheckinSupervisor ();
   };

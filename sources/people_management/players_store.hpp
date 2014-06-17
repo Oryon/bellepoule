@@ -39,6 +39,8 @@ namespace People
 
       gboolean SelectFlatMode (GtkTreeView *view);
 
+      void SetSearchColumn (gint column);
+
       gboolean SelectTreeMode (GtkTreeView *view);
 
       void Wipe ();
@@ -71,6 +73,7 @@ namespace People
     private:
       StoreObject _flat_store;
       StoreObject _tree_store;
+      gint        _search_column;
   };
 }
 

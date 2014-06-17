@@ -295,6 +295,16 @@ namespace Pool
       pool_zone = (PoolZone *) target_zone;
 
       pool_zone->AddObject (floating_object);
+
+      if (Locked ())
+      {
+        Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+        if (next_stage)
+        {
+          next_stage->OnAttrListUpdated ();
+        }
+      }
     }
 
     if (pool_zone)
@@ -1456,16 +1466,8 @@ namespace Pool
 
     if (_config_list)
     {
-      GSList *current = _config_list;
-
-      while (current)
-      {
-        Configuration *config = (Configuration *) current->data;
-
-        g_free (config);
-        current = g_slist_next (current);
-      }
-      g_slist_free (_config_list);
+      g_slist_free_full (_config_list,
+                         (GDestroyNotify) g_free);
       _config_list     = NULL;
       _selected_config = NULL;
     }
@@ -1900,11 +1902,7 @@ namespace Pool
     {
       if (main_w)
       {
-#if GTK_MAJOR_VERSION < 3
-        gtk_widget_hide_all (main_w);
-#else
         gtk_widget_hide (main_w);
-#endif
       }
       gtk_widget_show (fencer_list_w);
     }

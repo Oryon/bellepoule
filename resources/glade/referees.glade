@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
+  <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="print_dialog">
     <property name="can_focus">False</property>
@@ -170,11 +170,12 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="xalign">1</property>
-                        <property name="label" translatable="no">9999</property>
+                        <property name="label">9999</property>
                         <property name="width_chars">5</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                           <attribute name="foreground" value="#d0a81caf1efa"/>
+                          <attribute name="scale" value="1.2"/>
                         </attributes>
                       </object>
                       <packing>
@@ -283,11 +284,12 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="xalign">1</property>
-                        <property name="label" translatable="no">9999</property>
+                        <property name="label">9999</property>
                         <property name="width_chars">5</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                           <attribute name="foreground" value="#18722a3eb780"/>
+                          <attribute name="scale" value="1.2"/>
                         </attributes>
                       </object>
                       <packing>
@@ -339,9 +341,9 @@
                   <object class="GtkToolButton" id="import_toolbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="tooltip_text">.FFF, .CSV or .TXT</property>
                     <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Import referee file</property>
-                    <property name="tooltip_text" translatable="no">.FFF, .CSV or .TXT</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-convert</property>
                     <signal name="clicked" handler="on_import_toolbutton_clicked" swapped="no"/>
@@ -415,7 +417,7 @@
                 <property name="reorderable">True</property>
                 <property name="rules_hint">True</property>
                 <property name="search_column">0</property>
-                <signal name="row_activated" handler="on_players_list_row_activated"/>
+                <signal name="row-activated" handler="on_players_list_row_activated" swapped="no"/>
               </object>
             </child>
           </object>

@@ -197,7 +197,6 @@ Source: "{#MINGW}\bin\libgoocanvas-3.dll"; DestDir: "{app}\bin"; Flags: ignoreve
 Source: "{#MINGW}\bin\libgdk_pixbuf-2.0-0.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\freetype6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libfontconfig-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-
 Source: "{#MINGW}\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libexpat-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -207,7 +206,6 @@ Source: "{#MINGW}\bin\libidn-11.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\ssleay32.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libqrencode-3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libz-1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
-
 Source: "{#MINGW}\bin\libcurl.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libxml2-2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#MINGW}\bin\libmicrohttpd-10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
@@ -262,23 +260,6 @@ Source: "{#MINGW}\etc\pango\pango.aliases"; Destdir: "{app}\etc\pango"
 ; loaders
 #ifdef MINGW
 Source: "{#MINGW}\lib\gtk-2.0\2.10.0\loaders\*"; Destdir: "{app}\lib\gtk-2.0\2.10.0\loaders"
-#endif
-
-; optional: let the user make the app look more Windows-like
-#ifdef MINGW
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\engines\libwimp.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\engines"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\engines\libpixmap.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\engines"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-am-et.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-cedilla.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-cyrillic-translit.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-ime.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-inuktitut.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-ipa.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-multipress.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-thai.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-ti-er.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-ti-et.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
-Source: "{#MINGW}\lib\gtk-2.0\2.10.0\immodules\im-viqr.dll"; Destdir: "{app}\lib\gtk-2.0\2.10.0\immodules"
 #endif
 
 [Code]

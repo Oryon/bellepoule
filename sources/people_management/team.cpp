@@ -249,15 +249,6 @@ void Team::Load (xmlNode *xml_node)
         {
           SetAttributeValue (&name_attr_id,
                              name);
-
-          {
-            AttributeDesc *team_desc = AttributeDesc::GetDescFromCodeName ("team");
-
-            team_desc->AddDiscreteValues (name,
-                                          name,
-                                          NULL,
-                                          NULL);
-          }
         }
       }
     }
@@ -265,13 +256,8 @@ void Team::Load (xmlNode *xml_node)
 }
 
 // --------------------------------------------------------------------------------
-void Team::Save (xmlTextWriter *xml_writer)
+void Team::SaveMembers (xmlTextWriter *xml_writer)
 {
-  xmlTextWriterStartElement (xml_writer,
-                             BAD_CAST GetXmlTag ());
-
-  SaveAttributes (xml_writer);
-
   if (_enable_member_saving)
   {
     GSList *current_member = _member_list;
@@ -285,6 +271,16 @@ void Team::Save (xmlTextWriter *xml_writer)
       current_member = g_slist_next (current_member);
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+void Team::Save (xmlTextWriter *xml_writer)
+{
+  xmlTextWriterStartElement (xml_writer,
+                             BAD_CAST GetXmlTag ());
+
+  SaveAttributes (xml_writer);
+  SaveMembers (xml_writer);
 
   xmlTextWriterEndElement (xml_writer);
 }

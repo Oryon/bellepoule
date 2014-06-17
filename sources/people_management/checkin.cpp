@@ -39,32 +39,12 @@ namespace People
     _base_class      = base_class;
     _gathering_class = gathering_class;
 
-    {
-      GtkWidget *content_area;
-
-      _print_dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                          GTK_MESSAGE_QUESTION,
-                                                          GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>What do you want to print?</big></b>"));
-
-      gtk_window_set_title (GTK_WINDOW (_print_dialog),
-                            gettext ("Fencer list printing"));
-
-      content_area = gtk_dialog_get_content_area (GTK_DIALOG (_print_dialog));
-
-      gtk_widget_reparent (_glade->GetWidget ("print_dialog-vbox"),
-                           content_area);
-    }
-
     RefreshAttendingDisplay ();
   }
 
   // --------------------------------------------------------------------------------
   Checkin::~Checkin ()
   {
-    gtk_widget_destroy (_print_dialog);
-
     _form->Release          ();
     _tally_counter->Release ();
   }
@@ -945,7 +925,9 @@ namespace People
   // --------------------------------------------------------------------------------
   void Checkin::OnPrint ()
   {
-    if (gtk_dialog_run (GTK_DIALOG (_print_dialog)) == GTK_RESPONSE_OK)
+    GtkWidget *print_dialog = _glade->GetWidget ("print_dialog");
+
+    if (gtk_dialog_run (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
     {
       gchar *name;
 
@@ -956,7 +938,8 @@ namespace People
       Print (name);
       g_free (name);
     }
-    gtk_widget_hide (_print_dialog);
+
+    gtk_widget_hide (print_dialog);
   }
 
   // --------------------------------------------------------------------------------

@@ -247,9 +247,14 @@ GooCanvasItem *CanvasModule::GetPlayerImage (GooCanvasItem *parent_item,
 
       if (attr)
       {
-        GdkPixbuf *pixbuf = attr->GetPixbuf ();
+        GdkPixbuf *pixbuf = NULL;
 
-        if (pixbuf && (attr_layout->_look == AttributeDesc::GRAPHICAL))
+        if (attr_layout->_look == AttributeDesc::GRAPHICAL)
+        {
+          pixbuf = attr->GetPixbuf ();
+        }
+
+        if (pixbuf)
         {
           GooCanvasItem *pix_item = Canvas::PutPixbufInTable (table_item,
                                                               pixbuf,

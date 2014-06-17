@@ -95,12 +95,8 @@ Filter::~Filter ()
     gtk_widget_destroy (GTK_WIDGET (_dialog));
   }
 
-  {
-    g_slist_foreach (_selected_list,
-                     (GFunc) Object::TryToRelease,
-                     NULL);
-    g_slist_free (_selected_list);
-  }
+  g_slist_free_full (_selected_list,
+                     (GDestroyNotify) Object::TryToRelease);
 
   g_slist_free   (_attr_list);
   g_object_unref (_attr_filter_store);
@@ -112,7 +108,7 @@ void Filter::UnPlug ()
 {
   if (_dialog)
   {
-    // gtk_widget_hide_all (_dialog);
+    // gtk_widget_hide (_dialog);
   }
 }
 
@@ -304,10 +300,8 @@ void Filter::SelectAttributes ()
 void Filter::UpdateAttrList ()
 {
   {
-    g_slist_foreach (_selected_list,
-                     (GFunc) Object::TryToRelease,
-                     NULL);
-    g_slist_free (_selected_list);
+    g_slist_free_full (_selected_list,
+                       (GDestroyNotify) Object::TryToRelease);
     _selected_list = NULL;
   }
 

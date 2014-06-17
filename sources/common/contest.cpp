@@ -330,14 +330,13 @@ Contest::Contest ()
           GTK_CONTAINER (_glade->GetWidget ("formula_alignment")));
   }
 
-#if GTK_MAJOR_VERSION < 3
   {
     GtkWidget *box = _glade->GetWidget ("weapon_box");
 
-    _weapon_combo = gtk_combo_box_new_text ();
+    _weapon_combo = gtk_combo_box_text_new ();
     for (guint i = 0; i < _nb_weapon; i ++)
     {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_weapon_combo), gettext (weapon_image[i]));
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_weapon_combo), gettext (weapon_image[i]));
     }
     gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
     gtk_widget_show (_weapon_combo);
@@ -346,10 +345,10 @@ Contest::Contest ()
   {
     GtkWidget *box = _glade->GetWidget ("gender_box");
 
-    _gender_combo = gtk_combo_box_new_text ();
+    _gender_combo = gtk_combo_box_text_new ();
     for (guint i = 0; i < _nb_gender; i ++)
     {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_gender_combo), gettext (gender_image[i]));
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_gender_combo), gettext (gender_image[i]));
     }
     gtk_container_add (GTK_CONTAINER (box), _gender_combo);
     gtk_widget_show (_gender_combo);
@@ -358,19 +357,14 @@ Contest::Contest ()
   {
     GtkWidget *box = _glade->GetWidget ("category_box");
 
-    _category_combo = gtk_combo_box_new_text ();
+    _category_combo = gtk_combo_box_text_new ();
     for (guint i = 0; i < _nb_category; i ++)
     {
-      gtk_combo_box_append_text (GTK_COMBO_BOX (_category_combo), gettext (category_image[i]));
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_category_combo), gettext (category_image[i]));
     }
     gtk_container_add (GTK_CONTAINER (box), _category_combo);
     gtk_widget_show (_category_combo);
   }
-#else
-   _weapon_combo   = NULL;
-   _gender_combo   = NULL;
-   _category_combo = NULL;
-#endif
 
   // FTP repository
   {
@@ -1117,7 +1111,7 @@ Player *Contest::GetRefereeFromRef (guint ref)
   if (_ref_translation_table)
   {
     ref = GPOINTER_TO_UINT (g_hash_table_lookup (_ref_translation_table,
-                                                 (gconstpointer) ref));
+                                                 GUINT_TO_POINTER (ref)));
 
   }
 
@@ -1514,7 +1508,7 @@ void Contest::Publish ()
 {
   if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
-    Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("url_entry"))),
+    Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
                                                  NULL, NULL,
                                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
                                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
@@ -2200,8 +2194,6 @@ void Contest::on_ftp_changed (GtkComboBox *widget)
                         FTP_PASSWD_str, &passwd,
                         -1);
 
-    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("url_entry")),
-                        url);
     gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("user_entry")),
                         user);
     gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry")),

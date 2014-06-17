@@ -91,9 +91,10 @@ namespace People
 
       virtual void OnPlayerRemoved (Player *player);
 
+      virtual gboolean PlayerIsPrintable (Player *player);
+
     private:
       TallyCounter *_tally_counter;
-      GtkWidget    *_print_dialog;
       gboolean      _print_attending;
       gboolean      _print_missing;
       const gchar  *_base_class;
@@ -115,8 +116,6 @@ namespace People
       void RefreshAttendingDisplay ();
 
       void OnPlugged ();
-
-      gboolean PlayerIsPrintable (Player *player);
 
       static void OnAttrAttendingChanged (Player    *player,
                                           Attribute *attr,

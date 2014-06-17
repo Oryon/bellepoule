@@ -70,7 +70,6 @@ namespace Pool
       GtkListStore   *_pool_liststore;
       Allocator      *_allocator;
       Pool           *_displayed_pool;
-      GtkWidget      *_print_dialog;
       gboolean        _print_all_pool;
       Classification *_current_round_classification;
 
