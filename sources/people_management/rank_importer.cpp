@@ -55,32 +55,39 @@ namespace People
     if (_rank_table)
     {
       Attribute           *attr;
-      Player::AttributeId  ranking_attr_id ("ranking");
-      Player::AttributeId  name_attr_id    ("name");
-      Player::AttributeId  first_attr_id   ("first_name");
-      gchar               *name;
-      gchar               *first_name;
-      gchar               *id;
-      guint                new_rank;
+      Player::AttributeId  name_attr_id  ("name");
+      Player::AttributeId  first_attr_id ("first_name");
+      gchar               *name       = NULL;
+      gchar               *first_name = NULL;
 
       attr = fencer->GetAttribute (&name_attr_id);
-      name = attr->GetUserImage (AttributeDesc::LONG_TEXT);
-
-      attr = fencer->GetAttribute (&first_attr_id);
-      first_name = attr->GetUserImage (AttributeDesc::LONG_TEXT);
-
-      id = g_strdup_printf ("%s:%s", name, first_name);
-      new_rank = GPOINTER_TO_UINT (g_hash_table_lookup (_rank_table,
-                                                        id));
-      if (new_rank == 0)
+      if (attr)
       {
-        new_rank = _worst_rank+1;
+        name = attr->GetUserImage (AttributeDesc::LONG_TEXT);
       }
 
-      fencer->SetAttributeValue (&ranking_attr_id,
-                                 new_rank);
+      attr = fencer->GetAttribute (&first_attr_id);
+      if (attr)
+      {
+        first_name = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+      }
 
-      g_free (id);
+      if (name && first_name)
+      {
+        Player::AttributeId  ranking_attr_id ("ranking");
+        gchar *id       = g_strdup_printf ("%s:%s", name, first_name);
+        guint  new_rank = GPOINTER_TO_UINT (g_hash_table_lookup (_rank_table, id));
+
+        if (new_rank == 0)
+        {
+          new_rank = _worst_rank+1;
+        }
+
+        fencer->SetAttributeValue (&ranking_attr_id,
+                                   new_rank);
+        g_free (id);
+      }
+
       g_free (first_name);
       g_free (name);
     }
