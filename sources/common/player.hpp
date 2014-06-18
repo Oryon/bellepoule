@@ -63,6 +63,8 @@ class Player : public Object
 
     Player *Duplicate ();
 
+    virtual gboolean IsSticky ();
+
   public:
     static const guint BEFORE_CHANGE = 0x01;
     static const guint AFTER_CHANGE  = 0x02;

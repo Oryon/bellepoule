@@ -41,3 +41,9 @@ void NullTeam::SetAttributesFromMembers ()
 void NullTeam::UpdateMembers ()
 {
 }
+
+// --------------------------------------------------------------------------------
+gboolean NullTeam::IsSticky ()
+{
+  return TRUE;
+}

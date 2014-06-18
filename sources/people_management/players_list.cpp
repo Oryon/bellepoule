@@ -749,14 +749,17 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::Remove (Player *player)
   {
-    OnPlayerRemoved (player);
+    if (player->IsSticky () == FALSE)
+    {
+      OnPlayerRemoved (player);
 
-    _store->Remove (player);
+      _store->Remove (player);
 
-    _player_list = g_slist_remove (_player_list,
-                                   player);
+      _player_list = g_slist_remove (_player_list,
+                                     player);
 
-    player->Release ();
+      player->Release ();
+    }
   }
 
   // --------------------------------------------------------------------------------
