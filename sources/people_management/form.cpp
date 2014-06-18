@@ -146,22 +146,40 @@ namespace People
               {
                 if (attr_desc->HasDiscreteValue ())
                 {
-                  GtkCellRenderer    *cell;
                   GtkEntryCompletion *completion;
 
                   if (attr_desc->_free_value_allowed)
                   {
                     value_w    = gtk_combo_box_new_with_entry ();
-                    cell       = NULL;
                     completion = gtk_entry_completion_new ();
+
+                    g_object_set (G_OBJECT (value_w),
+                                  "entry-text-column", AttributeDesc::DISCRETE_LONG_TEXT_str,
+                                  NULL);
                   }
                   else
                   {
-                    value_w = gtk_combo_box_new ();
-                    cell = gtk_cell_renderer_text_new ();
-                    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), cell, TRUE);
-                    completion = NULL;
+                    GtkCellRenderer *text_renderer;
+
+                    value_w       = gtk_combo_box_new ();
+                    text_renderer = gtk_cell_renderer_text_new ();
+                    completion    = NULL;
+
+                    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), text_renderer, TRUE);
+                    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (value_w), text_renderer,
+                                                    "text", AttributeDesc::DISCRETE_LONG_TEXT_str, NULL);
                   }
+
+                  {
+                    GtkCellRenderer *pixbuf_renderer = gtk_cell_renderer_pixbuf_new ();
+
+                    gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (value_w), pixbuf_renderer, FALSE);
+                    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (value_w),
+                                                    pixbuf_renderer,
+                                                    "pixbuf", AttributeDesc::DISCRETE_ICON_pix,
+                                                    NULL);
+                  }
+
                   if (attr_desc->_is_selector)
                   {
                     selector_w = GTK_COMBO_BOX (value_w);
@@ -170,7 +188,6 @@ namespace People
                   }
 
                   attr_desc->BindDiscreteValues (G_OBJECT (value_w),
-                                                 cell,
                                                  selector_w);
 
                   if (completion)

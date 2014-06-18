@@ -107,9 +107,8 @@ class AttributeDesc : public Object
     static AttributeDesc *GuessDescFromUserName (const gchar *code_name,
                                                  const gchar *criteria);
 
-    void BindDiscreteValues (GObject         *object,
-                             GtkCellRenderer *renderer,
-                             GtkComboBox     *selector);
+    void BindDiscreteValues (GObject     *object,
+                             GtkComboBox *selector);
 
     gboolean HasDiscreteValue ();
 

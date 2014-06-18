@@ -181,9 +181,8 @@ gboolean AttributeDesc::DiscreteFilterForCombobox (GtkTreeModel *model,
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::BindDiscreteValues (GObject         *object,
-                                        GtkCellRenderer *renderer,
-                                        GtkComboBox     *selector)
+void AttributeDesc::BindDiscreteValues (GObject     *object,
+                                        GtkComboBox *selector)
 {
   if (_discrete_model)
   {
@@ -215,18 +214,6 @@ void AttributeDesc::BindDiscreteValues (GObject         *object,
     {
       g_object_set (object,
                     "model", _discrete_model,
-                    NULL);
-    }
-
-    if (renderer)
-    {
-      gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (object), renderer,
-                                      "text", DISCRETE_LONG_TEXT_str, NULL);
-    }
-    else
-    {
-      g_object_set (object,
-                    "entry-text-column", DISCRETE_LONG_TEXT_str,
                     NULL);
     }
   }
