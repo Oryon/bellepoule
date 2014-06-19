@@ -121,6 +121,11 @@ namespace People
                                           Object    *owner,
                                           guint      step);
 
+      static void OnAttrTeamRenamed (Player    *player,
+                                     Attribute *attr,
+                                     Object    *owner,
+                                     guint      step);
+
       static void OnAttrTeamChanged (Player    *player,
                                      Attribute *attr,
                                      Object    *owner,
