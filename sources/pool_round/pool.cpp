@@ -648,8 +648,7 @@ namespace Pool
                 }
 
                 if (   (print_for_referees == FALSE)
-                    && (_locked == FALSE)
-                    && (match->IsDropped () == FALSE))
+                    && (_locked == FALSE))
                 {
                   _score_collector->AddCollectingPoint (goo_rect,
                                                         score_text,
