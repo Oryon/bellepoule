@@ -32,6 +32,8 @@ class NullTeam : public Team
     void SetAttributesFromMembers ();
 
     void UpdateMembers ();
+
+    gboolean IsSticky ();
 };
 
 #endif

@@ -829,6 +829,10 @@ namespace People
       player->SetChangeCbk ("attending",
                             (Player::OnChange) OnAttrAttendingChanged,
                             this);
+      player->SetChangeCbk ("name",
+                            (Player::OnChange) OnAttrTeamRenamed,
+                            this,
+                            Player::AFTER_CHANGE);
     }
 
     if (player->Is ("Fencer"))
@@ -884,6 +888,36 @@ namespace People
     {
       supervisor->Update (player);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnAttrTeamRenamed (Player    *player,
+                                             Attribute *attr,
+                                             Object    *owner,
+                                             guint      step)
+  {
+    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+    Team              *team       = (Team *) player;
+
+    {
+      Player::AttributeId  team_attr_id ("team");
+      GSList *member_list = g_slist_copy (team->GetMemberList ());
+      GSList *current     = member_list;
+
+      while (current)
+      {
+        Player *member = (Player *) current->data;
+
+        member->SetAttributeValue (&team_attr_id,
+                                   attr->GetStrValue ());
+
+        current = g_slist_next (current);
+      }
+
+      g_slist_free (member_list);
+    }
+
+    supervisor->RegisterNewTeam (team);
   }
 
   // --------------------------------------------------------------------------------

@@ -293,6 +293,7 @@ int main (int argc, char **argv)
     desc = AttributeDesc::Declare (G_TYPE_STRING, "team", "Equipe", gettext ("team"));
     desc->_uniqueness = AttributeDesc::NOT_SINGULAR;
     desc->AddDiscreteValues (NULL, NULL, NULL, NULL);
+    desc->EnableSorting ();
 
     desc = AttributeDesc::Declare (G_TYPE_STRING, "name", "Nom", gettext ("last name"));
 

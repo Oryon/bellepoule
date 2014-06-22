@@ -72,6 +72,12 @@ gboolean Player::Is (const gchar *player_class)
 }
 
 // --------------------------------------------------------------------------------
+gboolean Player::IsSticky ()
+{
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 Player *Player::Duplicate ()
 {
   Player *player       = Clone ();

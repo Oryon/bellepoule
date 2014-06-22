@@ -181,9 +181,8 @@ gboolean AttributeDesc::DiscreteFilterForCombobox (GtkTreeModel *model,
 }
 
 // --------------------------------------------------------------------------------
-void AttributeDesc::BindDiscreteValues (GObject         *object,
-                                        GtkCellRenderer *renderer,
-                                        GtkComboBox     *selector)
+void AttributeDesc::BindDiscreteValues (GObject     *object,
+                                        GtkComboBox *selector)
 {
   if (_discrete_model)
   {
@@ -217,19 +216,15 @@ void AttributeDesc::BindDiscreteValues (GObject         *object,
                     "model", _discrete_model,
                     NULL);
     }
-
-    if (renderer)
-    {
-      gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (object), renderer,
-                                      "text", DISCRETE_LONG_TEXT_str, NULL);
-    }
-    else
-    {
-      g_object_set (object,
-                    "entry-text-column", DISCRETE_LONG_TEXT_str,
-                    NULL);
-    }
   }
+}
+
+// --------------------------------------------------------------------------------
+void AttributeDesc::EnableSorting ()
+{
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_discrete_model),
+                                        DISCRETE_LONG_TEXT_str,
+                                        GTK_SORT_ASCENDING);
 }
 
 // --------------------------------------------------------------------------------

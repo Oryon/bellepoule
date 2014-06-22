@@ -598,6 +598,7 @@ namespace People
           {
             if (player)
             {
+              OnPlayerLoaded (player, NULL);
               Add (player);
               player->Release ();
             }
@@ -715,6 +716,7 @@ namespace People
                 }
               }
 
+              OnPlayerLoaded (player, NULL);
               Add (player);
               player->Release ();
             }

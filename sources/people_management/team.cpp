@@ -109,7 +109,8 @@ void Team::SetAttributesFromMembers ()
     AttributeDesc *attr_desc = (AttributeDesc *) current_desc->data;
 
     if (   (attr_desc->_uniqueness  == AttributeDesc::NOT_SINGULAR)
-        && (attr_desc->_persistency == AttributeDesc::PERSISTENT))
+        && (attr_desc->_persistency == AttributeDesc::PERSISTENT)
+        && (strcmp (attr_desc->_code_name, "team") != 0))
     {
       AttributeId  attr_id (attr_desc->_code_name);
       GSList      *current_member = _member_list;
