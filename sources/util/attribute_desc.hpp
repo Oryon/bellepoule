@@ -110,6 +110,8 @@ class AttributeDesc : public Object
     void BindDiscreteValues (GObject     *object,
                              GtkComboBox *selector);
 
+    void EnableSorting ();
+
     gboolean HasDiscreteValue ();
 
     void AddDiscreteValues (const gchar *first_xml_image,

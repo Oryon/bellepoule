@@ -220,6 +220,14 @@ void AttributeDesc::BindDiscreteValues (GObject     *object,
 }
 
 // --------------------------------------------------------------------------------
+void AttributeDesc::EnableSorting ()
+{
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_discrete_model),
+                                        DISCRETE_LONG_TEXT_str,
+                                        GTK_SORT_ASCENDING);
+}
+
+// --------------------------------------------------------------------------------
 void AttributeDesc::TreeStoreSetDefault (GtkTreeStore        *store,
                                          GtkTreeIter         *iter,
                                          gint                 column,
