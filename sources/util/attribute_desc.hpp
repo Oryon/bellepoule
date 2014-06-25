@@ -198,5 +198,10 @@ class AttributeDesc : public Object
 
     const gchar *GetTranslation (const gchar *domain,
                                  const gchar *text);
+
+    static gint CompareTextColumn (GtkTreeModel *model,
+                                   GtkTreeIter  *a,
+                                   GtkTreeIter  *b,
+                                   gpointer      user_data);
 };
 #endif
