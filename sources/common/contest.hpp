@@ -78,7 +78,7 @@ class Contest : public Module
 
     Player *Share (Player *referee);
 
-    Player *GetRefereeFromRef (guint ref);
+    Player *GetRefereeFromDndRef (guint ref);
 
     State GetState ();
 

@@ -133,6 +133,12 @@ namespace Table
       gtk_tree_model_filter_set_visible_column (_quick_search_filter,
                                                 QUICK_MATCH_VISIBILITY_COLUMN_bool);
     }
+
+    // Dnd
+    {
+      _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _dnd_config->CreateTargetTable ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -2114,7 +2120,7 @@ namespace Table
                              guint  referee_ref)
   {
     Contest  *contest = _supervisor->GetContest ();
-    Player   *referee = contest->GetRefereeFromRef (referee_ref);
+    Player   *referee = contest->GetRefereeFromDndRef (referee_ref);
 
     if (referee)
     {
@@ -3444,7 +3450,13 @@ namespace Table
     _from_border->Plug ();
     _to_border->Plug   ();
 
-    SetDndDest (GTK_WIDGET (GetCanvas ()));
+    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
+                       (GtkDestDefaults) 0,
+                       _dnd_config->GetTargetTable (),
+                       _dnd_config->GetTargetTableSize (),
+                       GDK_ACTION_COPY);
+
+    ConnectDndDest (GTK_WIDGET (GetCanvas ()));
     EnableDragAndDrop ();
   }
 
@@ -3762,7 +3774,7 @@ namespace Table
   {
     Contest *contest = _supervisor->GetContest ();
 
-    return contest->GetRefereeFromRef (ref);
+    return contest->GetRefereeFromDndRef (ref);
   }
 
   // --------------------------------------------------------------------------------

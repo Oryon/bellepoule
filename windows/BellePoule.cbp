@@ -211,6 +211,8 @@
 		<Unit filename="..\sources\util\attribute_desc.hpp" />
 		<Unit filename="..\sources\util\canvas.cpp" />
 		<Unit filename="..\sources\util\canvas.hpp" />
+		<Unit filename="..\sources\util\dnd_config.cpp" />
+		<Unit filename="..\sources\util\dnd_config.hpp" />
 		<Unit filename="..\sources\util\canvas_module.cpp" />
 		<Unit filename="..\sources\util\canvas_module.hpp" />
 		<Unit filename="..\sources\util\clock.cpp" />

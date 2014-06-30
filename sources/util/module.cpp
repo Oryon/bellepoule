@@ -28,11 +28,6 @@ const gdouble Module::PRINT_FONT_HEIGHT   = 2.0;  // % of paper width
 GKeyFile     *Module::_config_file  = NULL;
 GtkTreeModel *Module::_status_model = NULL;
 
-GtkTargetEntry Module::_dnd_target_list[] =
-{
-  {(gchar *) "REFEREE", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET, Module::INT_TARGET}
-};
-
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,
                 const gchar *root)
@@ -80,11 +75,15 @@ Module::Module (const gchar *glade_file,
 
     _glade->DetachFromParent (_config_widget);
   }
+
+  _dnd_config = new DndConfig ();
 }
 
 // --------------------------------------------------------------------------------
 Module::~Module ()
 {
+  _dnd_config->Release ();
+
   while (_plugged_list)
   {
     Module *module;
@@ -175,9 +174,25 @@ gboolean Module::OnDragMotion (GtkWidget      *widget,
                                gint            y,
                                guint           time)
 {
+  // if (_dnd_config->GetFloatingObject () == NULL)
+  {
+    GList *target = gdk_drag_context_list_targets (drag_context);
+
+    while (target)
+    {
+      gtk_drag_get_data (widget,
+                         drag_context,
+                         GDK_POINTER_TO_ATOM (target->data),
+                         time);
+
+      target = g_list_next (target);
+    }
+  }
+
   gdk_drag_status  (drag_context,
                     (GdkDragAction) 0,
                     time);
+
   return FALSE;
 }
 
@@ -230,31 +245,15 @@ void Module::OnDragDataReceived (GtkWidget        *widget,
 }
 
 // --------------------------------------------------------------------------------
-void Module::SetDndSource (GtkWidget *widget)
+void Module::ConnectDndSource (GtkWidget *widget)
 {
-  gtk_drag_source_set (widget,
-                       GDK_MODIFIER_MASK,
-                       _dnd_target_list,
-                       sizeof (_dnd_target_list) / sizeof (_dnd_target_list[0]),
-                       GDK_ACTION_COPY);
-
-  gtk_drag_source_add_text_targets (widget);
-
   g_signal_connect (widget, "drag-data-get",
                     G_CALLBACK (DragDataGet), this);
 }
 
 // --------------------------------------------------------------------------------
-void Module::SetDndDest (GtkWidget *widget)
+void Module::ConnectDndDest (GtkWidget *widget)
 {
-  gtk_drag_dest_set (widget,
-                     (GtkDestDefaults) 0,
-                     _dnd_target_list,
-                     sizeof (_dnd_target_list) / sizeof (_dnd_target_list[0]),
-                     GDK_ACTION_COPY);
-
-  gtk_drag_dest_add_text_targets (widget);
-
   g_signal_connect (widget, "drag-motion",
                     G_CALLBACK (DragMotion), this);
   g_signal_connect (widget, "drag-leave",

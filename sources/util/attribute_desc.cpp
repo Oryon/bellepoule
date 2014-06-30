@@ -220,8 +220,38 @@ void AttributeDesc::BindDiscreteValues (GObject     *object,
 }
 
 // --------------------------------------------------------------------------------
+gint AttributeDesc::CompareTextColumn (GtkTreeModel *model,
+                                       GtkTreeIter  *a,
+                                       GtkTreeIter  *b,
+                                       gpointer      user_data)
+{
+  gboolean  result;
+  gchar    *a_image;
+  gchar    *b_image;
+
+  gtk_tree_model_get (model, a,
+                      DISCRETE_XML_IMAGE_str, (void *) &a_image,
+                      -1);
+  gtk_tree_model_get (model, b,
+                      DISCRETE_XML_IMAGE_str, (void *) &b_image,
+                      -1);
+  result = strcmp (a_image, b_image);
+
+  g_free (a_image);
+  g_free (b_image);
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
 void AttributeDesc::EnableSorting ()
 {
+  gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (_discrete_model),
+                                   DISCRETE_LONG_TEXT_str,
+                                   (GtkTreeIterCompareFunc) CompareTextColumn,
+                                   NULL,
+                                   NULL);
+
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (_discrete_model),
                                         DISCRETE_LONG_TEXT_str,
                                         GTK_SORT_ASCENDING);

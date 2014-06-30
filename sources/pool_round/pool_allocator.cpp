@@ -80,6 +80,12 @@ namespace Pool
       _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_hbox"));
     }
 
+    // Dnd
+    {
+      _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _dnd_config->CreateTargetTable ();
+    }
+
     {
       GSList *attr_list;
       Filter *filter;
@@ -220,7 +226,13 @@ namespace Pool
   {
     CanvasModule::OnPlugged ();
 
-    SetDndDest (GTK_WIDGET (GetCanvas ()));
+    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
+                       (GtkDestDefaults) 0,
+                       _dnd_config->GetTargetTable (),
+                       _dnd_config->GetTargetTableSize (),
+                       GDK_ACTION_COPY);
+
+    ConnectDndDest (GTK_WIDGET (GetCanvas ()));
     EnableDragAndDrop ();
 
     _owner->Plug (_fencer_list,
@@ -238,7 +250,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Object *Allocator::GetDropObjectFromRef (guint32 ref)
   {
-    return _contest->GetRefereeFromRef (ref);
+    return _contest->GetRefereeFromDndRef (ref);
   }
 
   // --------------------------------------------------------------------------------
@@ -729,7 +741,7 @@ namespace Pool
 
           if (attr)
           {
-            Player *referee = _contest->GetRefereeFromRef (atoi (attr));
+            Player *referee = _contest->GetRefereeFromDndRef (atoi (attr));
 
             if (referee)
             {

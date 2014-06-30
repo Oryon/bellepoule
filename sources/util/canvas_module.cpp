@@ -35,7 +35,6 @@ CanvasModule::CanvasModule (const gchar *glade_file,
   _zoomer           = NULL;
   _drop_zones       = NULL;
   _target_drop_zone = NULL;
-  _floating_object  = NULL;
   _dragging         = FALSE;
   _drag_text        = NULL;
   _zoom_factor      = 1.0;
@@ -594,27 +593,18 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
                                      gint            y,
                                      guint           time)
 {
-  GList *targets = gdk_drag_context_list_targets (drag_context);
+  Module::OnDragMotion (widget,
+                        drag_context,
+                        x,
+                        y,
+                        time);
 
-  if (DroppingIsForbidden (_floating_object))
+  if (DroppingIsForbidden (_dnd_config->GetFloatingObject ()))
   {
-    gdk_drag_status  (drag_context,
-                      (GdkDragAction) 0,
-                      time);
+    gdk_drag_status (drag_context,
+                     (GdkDragAction) 0,
+                     time);
     return FALSE;
-  }
-
-  if (targets)
-  {
-    GdkAtom  target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (targets, 0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
   }
 
   if (_target_drop_zone)
@@ -627,7 +617,7 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
     DropZone *drop_zone = GetZoneAt (x,
                                      y);
 
-    if (ObjectIsDropable (_floating_object,
+    if (ObjectIsDropable (_dnd_config->GetFloatingObject (),
                           drop_zone))
     {
       drop_zone->Focus ();
@@ -653,30 +643,16 @@ gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
                                    gint            y,
                                    guint           time)
 {
-  gboolean  result  = FALSE;
-  GList    *targets = gdk_drag_context_list_targets (drag_context);
-
-  if (targets)
-  {
-    GdkAtom  target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (targets, 0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
-  }
+  gboolean result = FALSE;
 
   if (_target_drop_zone)
   {
     _target_drop_zone->Unfocus ();
   }
 
-  if (_floating_object && _target_drop_zone)
+  if (_dnd_config->GetFloatingObject () && _target_drop_zone)
   {
-    DropObject (_floating_object,
+    DropObject (_dnd_config->GetFloatingObject (),
                 NULL,
                 _target_drop_zone);
 
@@ -704,12 +680,9 @@ void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
 {
   if (data && (gtk_selection_data_get_length (data) >= 0))
   {
-    if (info == INT_TARGET)
-    {
-      guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
+    guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
 
-      _floating_object = GetDropObjectFromRef (*ref);
-    }
+    _dnd_config->SetFloatingObject (GetDropObjectFromRef (*ref));
   }
 }
 
@@ -758,9 +731,9 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
   }
 
   if (   (event->button == 1)
-         && (event->type == GDK_BUTTON_PRESS))
+      && (event->type == GDK_BUTTON_PRESS))
   {
-    _floating_object = drop_object;
+    _dnd_config->SetFloatingObject (drop_object);
 
     _drag_x = event->x;
     _drag_y = event->y;
@@ -771,7 +744,7 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
                                          &_drag_y);
 
     {
-      GString *string = GetFloatingImage (_floating_object);
+      GString *string = GetFloatingImage (_dnd_config->GetFloatingObject ());
 
       _drag_text = goo_canvas_text_new (GetRootItem (),
                                         string->str,
@@ -791,7 +764,7 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
     _source_drop_zone = drop_zone;
     _target_drop_zone = drop_zone;
 
-    DragObject (_floating_object,
+    DragObject (_dnd_config->GetFloatingObject (),
                 _source_drop_zone);
 
     drop_zone->Focus ();
@@ -836,7 +809,7 @@ gboolean CanvasModule::OnButtonRelease (GooCanvasItem  *item,
     goo_canvas_item_remove (_drag_text);
     _drag_text = NULL;
 
-    DropObject (_floating_object,
+    DropObject (_dnd_config->GetFloatingObject (),
                 _source_drop_zone,
                 _target_drop_zone);
 
@@ -908,7 +881,7 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
       drop_zone = GetZoneAt (_drag_x*_zoom_factor - adjx,
                              _drag_y*_zoom_factor - adjy);
 
-      if (ObjectIsDropable (_floating_object,
+      if (ObjectIsDropable (_dnd_config->GetFloatingObject (),
                             drop_zone))
       {
         drop_zone->Focus ();

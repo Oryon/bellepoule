@@ -28,6 +28,8 @@ guint Player::_next_ref = 0;
 Player::Player (const gchar *player_class)
   : Object ("Player")
 {
+  _dnd_ref = _next_ref;
+
   _ref = _next_ref;
   _next_ref++;
 
@@ -403,6 +405,12 @@ void Player::RemoveAttribute (AttributeId *attr_id)
 {
   RemoveData (attr_id->_owner,
               attr_id->_name);
+}
+
+// --------------------------------------------------------------------------------
+guint Player::GetDndRef ()
+{
+  return _dnd_ref;
 }
 
 // --------------------------------------------------------------------------------

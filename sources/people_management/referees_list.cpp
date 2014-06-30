@@ -86,7 +86,16 @@ namespace People
     }
 
     {
-      SetDndSource (GTK_WIDGET (_tree_view));
+      _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _dnd_config->CreateTargetTable ();
+
+      gtk_drag_source_set (GTK_WIDGET (_tree_view),
+                           GDK_MODIFIER_MASK,
+                           _dnd_config->GetTargetTable (),
+                           _dnd_config->GetTargetTableSize (),
+                           GDK_ACTION_COPY);
+
+      ConnectDndSource (GTK_WIDGET (_tree_view));
       gtk_drag_source_set_icon_name (GTK_WIDGET (_tree_view),
                                      "preferences-desktop-theme");
     }
@@ -271,14 +280,14 @@ namespace People
                                     guint             info,
                                     guint             time)
   {
-    if (info == INT_TARGET)
+    if (info == _dnd_target)
     {
       GSList  *selected    = GetSelectedPlayers ();
       Player  *referee     = (Player *) selected->data;
-      guint32  referee_ref = referee->GetRef ();
+      guint32  referee_ref = referee->GetDndRef ();
 
       gtk_selection_data_set (data,
-                              GDK_SELECTION_TYPE_INTEGER,
+                              gtk_selection_data_get_target (data),
                               32,
                               (guchar *) &referee_ref,
                               sizeof (referee_ref));

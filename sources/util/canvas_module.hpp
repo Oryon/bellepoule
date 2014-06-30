@@ -106,7 +106,6 @@ class CanvasModule : public Module
     GooCanvasItem     *_drag_text;
     DropZone          *_source_drop_zone;
     DropZone          *_target_drop_zone;
-    Object            *_floating_object;
     gdouble            _drag_x;
     gdouble            _drag_y;
 

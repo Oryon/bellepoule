@@ -67,11 +67,11 @@ namespace People
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
 
-      GSList   *_checksum_list;
-      Data     *_manual_classification;
-      Data     *_default_classification;
-      Data     *_minimum_team_size;
-      NullTeam *_null_team;
+      GSList    *_checksum_list;
+      Data      *_manual_classification;
+      Data      *_default_classification;
+      Data      *_minimum_team_size;
+      NullTeam  *_null_team;
 
       static Stage *CreateInstance (StageClass *stage_class);
 
@@ -108,10 +108,32 @@ namespace People
 
       void SetTeamEvent (gboolean team_event);
 
+      Player *GetFencerFromDndRef (guint ref);
+
       void OnPlayerRemoved (Player *player);
 
       void OnAttendingChanged (Player    *player,
                                guint   value);
+
+      void OnDragDataGet (GtkWidget        *widget,
+                          GdkDragContext   *drag_context,
+                          GtkSelectionData *selection_data,
+                          guint             target_type,
+                          guint             time);
+
+      void OnDragDataReceived (GtkWidget        *widget,
+                               GdkDragContext   *drag_context,
+                               gint              x,
+                               gint              y,
+                               GtkSelectionData *selection_data,
+                               guint             target_type,
+                               guint             time);
+
+      gboolean OnDragDrop (GtkWidget      *widget,
+                           GdkDragContext *drag_context,
+                           gint            x,
+                           gint            y,
+                           guint           time);
 
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);

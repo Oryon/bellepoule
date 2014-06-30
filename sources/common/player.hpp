@@ -91,6 +91,8 @@ class Player : public Object
     void RemoveCbkOwner (Object *owner);
 
   public:
+    guint GetDndRef ();
+
     guint GetRef ();
     void  SetRef (guint ref);
 
@@ -167,6 +169,7 @@ class Player : public Object
     static guint   _next_ref;
     static GSList *_attributes_model;
 
+    guint        _dnd_ref;
     guint        _ref;
     guint        _nb_matchs;
     gchar        _weapon;

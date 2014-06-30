@@ -131,6 +131,14 @@ namespace People
       RegisterNewTeam (_null_team);
       Add (_null_team);
     }
+
+    {
+      _dnd_target = _dnd_config->CreateTarget ("bellepoule/fencer", GTK_TARGET_SAME_WIDGET);
+      _dnd_config->CreateTargetTable ();
+
+      ConnectDndSource (GTK_WIDGET (_tree_view));
+      ConnectDndDest   (GTK_WIDGET (_tree_view));
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -640,6 +648,19 @@ namespace People
       gtk_widget_show (_glade->GetWidget ("teamsize_label"));
       gtk_widget_show (_glade->GetWidget ("teamsize_viewport"));
       gtk_widget_show (_glade->GetWidget ("tree_control_hbox"));
+
+      if (Locked () == FALSE)
+      {
+        gtk_tree_view_enable_model_drag_source (_tree_view,
+                                                GDK_BUTTON1_MASK,
+                                                _dnd_config->GetTargetTable (),
+                                                _dnd_config->GetTargetTableSize (),
+                                                GDK_ACTION_MOVE);
+        gtk_tree_view_enable_model_drag_dest (_tree_view,
+                                              _dnd_config->GetTargetTable (),
+                                              _dnd_config->GetTargetTableSize (),
+                                              GDK_ACTION_MOVE);
+      }
     }
     else
     {
@@ -650,6 +671,9 @@ namespace People
       gtk_widget_hide (_glade->GetWidget ("teamsize_label"));
       gtk_widget_hide (_glade->GetWidget ("teamsize_viewport"));
       gtk_widget_hide (_glade->GetWidget ("tree_control_hbox"));
+
+      gtk_tree_view_unset_rows_drag_source (_tree_view);
+      gtk_tree_view_unset_rows_drag_dest   (_tree_view);
     }
 
     // On loading, sensitivity is set by default to TRUE.
@@ -1049,6 +1073,83 @@ namespace People
       gtk_widget_show         (GTK_WIDGET (_glade->GetWidget ("derived_table")));
       gtk_widget_queue_resize (GTK_WIDGET (_glade->GetWidget ("team_table")));
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  Player *CheckinSupervisor::GetFencerFromDndRef (guint ref)
+  {
+    GSList *current = _player_list;
+
+    while (current)
+    {
+      Player *player = (Player *) current->data;
+
+      if (player->GetDndRef () == ref)
+      {
+        return player;
+      }
+      current = g_slist_next (current);
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnDragDataGet (GtkWidget        *widget,
+                                         GdkDragContext   *drag_context,
+                                         GtkSelectionData *selection_data,
+                                         guint             target_type,
+                                         guint             time)
+  {
+
+    if (target_type == _dnd_target)
+    {
+      GSList  *selected   = GetSelectedPlayers ();
+      Player  *fencer     = (Player *) selected->data;
+      guint32  fencer_ref = fencer->GetDndRef ();
+
+      gtk_selection_data_set (selection_data,
+                              gtk_selection_data_get_target (selection_data),
+                              32,
+                              (guchar *) &fencer_ref,
+                              sizeof (fencer_ref));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnDragDataReceived (GtkWidget        *widget,
+                                              GdkDragContext   *drag_context,
+                                              gint              x,
+                                              gint              y,
+                                              GtkSelectionData *selection_data,
+                                              guint             target_type,
+                                              guint             time)
+  {
+    if (target_type == _dnd_target)
+    {
+      if (selection_data && (gtk_selection_data_get_length (selection_data) >= 0))
+      {
+        guint32 *toto   = (guint32 *) gtk_selection_data_get_data (selection_data);
+        Player  *fencer = GetFencerFromDndRef (*toto);
+
+        _dnd_config->SetFloatingObject (fencer);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::OnDragDrop (GtkWidget      *widget,
+                                          GdkDragContext *drag_context,
+                                          gint            x,
+                                          gint            y,
+                                          guint           time)
+  {
+    gtk_drag_finish (drag_context,
+                     FALSE,
+                     FALSE,
+                     time);
+
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
