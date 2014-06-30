@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
+#include "util/dnd_config.hpp"
 #include "common/stage.hpp"
 #include "team.hpp"
 #include "null_team.hpp"
@@ -64,14 +65,18 @@ namespace People
                           GtkPrintContext   *context);
 
     private:
+      DndConfig *_dnd_config;
+      guint32    _dnd_target;
+
+    private:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
 
-      GSList   *_checksum_list;
-      Data     *_manual_classification;
-      Data     *_default_classification;
-      Data     *_minimum_team_size;
-      NullTeam *_null_team;
+      GSList    *_checksum_list;
+      Data      *_manual_classification;
+      Data      *_default_classification;
+      Data      *_minimum_team_size;
+      NullTeam  *_null_team;
 
       static Stage *CreateInstance (StageClass *stage_class);
 
@@ -112,6 +117,20 @@ namespace People
 
       void OnAttendingChanged (Player    *player,
                                guint   value);
+
+      void OnDragDataGet (GtkWidget        *widget,
+                          GdkDragContext   *drag_context,
+                          GtkSelectionData *selection_data,
+                          guint             target_type,
+                          guint             time);
+
+      void OnDragDataReceived (GtkWidget        *widget,
+                               GdkDragContext   *drag_context,
+                               gint              x,
+                               gint              y,
+                               GtkSelectionData *selection_data,
+                               guint             target_type,
+                               guint             time);
 
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);

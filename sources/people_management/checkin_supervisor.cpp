@@ -131,6 +131,26 @@ namespace People
       RegisterNewTeam (_null_team);
       Add (_null_team);
     }
+
+    {
+      _dnd_config = new DndConfig ();
+
+      _dnd_target = _dnd_config->CreateTarget ("bellepoule/fencer", GTK_TARGET_SAME_WIDGET);
+      _dnd_config->CreateTargetTable ();
+
+      gtk_tree_view_enable_model_drag_source (_tree_view,
+                                              GDK_BUTTON1_MASK,
+                                              _dnd_config->GetTargetTable (),
+                                              _dnd_config->GetTargetTableSize (),
+                                              GDK_ACTION_MOVE);
+      gtk_tree_view_enable_model_drag_dest (_tree_view,
+                                            _dnd_config->GetTargetTable (),
+                                            _dnd_config->GetTargetTableSize (),
+                                            GDK_ACTION_MOVE);
+
+      ConnectDndSource (GTK_WIDGET (_tree_view));
+      ConnectDndDest   (GTK_WIDGET (_tree_view));
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -138,7 +158,8 @@ namespace People
   {
     g_slist_free (_checksum_list);
 
-    _null_team->Release ();
+    _null_team->Release  ();
+    _dnd_config->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -1048,6 +1069,50 @@ namespace People
     {
       gtk_widget_show         (GTK_WIDGET (_glade->GetWidget ("derived_table")));
       gtk_widget_queue_resize (GTK_WIDGET (_glade->GetWidget ("team_table")));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnDragDataGet (GtkWidget        *widget,
+                                         GdkDragContext   *drag_context,
+                                         GtkSelectionData *selection_data,
+                                         guint             target_type,
+                                         guint             time)
+  {
+
+    if (target_type == _dnd_target)
+    {
+      guint32 toto = 33;
+
+      gtk_selection_data_set (selection_data,
+                              gtk_selection_data_get_target (selection_data),
+                              32,
+                              (guchar *) &toto,
+                              sizeof (toto));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnDragDataReceived (GtkWidget        *widget,
+                                              GdkDragContext   *drag_context,
+                                              gint              x,
+                                              gint              y,
+                                              GtkSelectionData *selection_data,
+                                              guint             target_type,
+                                              guint             time)
+  {
+    if (target_type == _dnd_target)
+    {
+      if (selection_data && (gtk_selection_data_get_length (selection_data) >= 0))
+      {
+        guint32 *toto = (guint32 *) gtk_selection_data_get_data (selection_data);
+
+        printf ("**** %d\n", *toto);
+        gtk_drag_finish (drag_context,
+                         TRUE,
+                         FALSE,
+                         time);
+      }
     }
   }
 

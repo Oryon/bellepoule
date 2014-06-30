@@ -101,14 +101,6 @@ class Module : public virtual Object
     virtual gchar *GetPrintName () {return NULL;};
 
   protected:
-    typedef enum
-    {
-      STRING_TARGET,
-      INT_TARGET,
-
-      DND_TARGET_NB
-    } DndTarget;
-
     Filter           *_filter;
     Glade            *_glade;
     Module           *_owner;
@@ -144,9 +136,9 @@ class Module : public virtual Object
 
     virtual void MakeDirty ();
 
-    void SetDndSource (GtkWidget *widget);
+    void ConnectDndSource (GtkWidget *widget);
 
-    void SetDndDest (GtkWidget *widget);
+    void ConnectDndDest (GtkWidget *widget);
 
     virtual void OnBeginPrint (GtkPrintOperation *operation,
                                GtkPrintContext   *context);
@@ -166,8 +158,7 @@ class Module : public virtual Object
                                  GtkPrintContext          *context) {};
 
   private:
-    static GtkTreeModel   *_status_model;
-    static GtkTargetEntry  _dnd_target_list[];
+    static GtkTreeModel *_status_model;
 
     GtkWidget          *_root;
     GtkToolbar         *_toolbar;
@@ -204,6 +195,13 @@ class Module : public virtual Object
     static void on_preview_ready (GtkPrintOperationPreview *preview,
                                   GtkPrintContext          *context,
                                   Module                   *module);
+
+  protected:
+    virtual gboolean OnDragDrop (GtkWidget      *widget,
+                                 GdkDragContext *drag_context,
+                                 gint            x,
+                                 gint            y,
+                                 guint           time);
 
   private:
     static void DragDataGet (GtkWidget        *widget,
@@ -244,11 +242,6 @@ class Module : public virtual Object
                               gint            y,
                               guint           time,
                               Module         *owner);
-    virtual gboolean OnDragDrop (GtkWidget      *widget,
-                                 GdkDragContext *drag_context,
-                                 gint            x,
-                                 gint            y,
-                                 guint           time);
 
     static void DragDataReceived (GtkWidget        *widget,
                                   GdkDragContext   *drag_context,

@@ -133,6 +133,14 @@ namespace Table
       gtk_tree_model_filter_set_visible_column (_quick_search_filter,
                                                 QUICK_MATCH_VISIBILITY_COLUMN_bool);
     }
+
+    // Dnd
+    {
+      _dnd_config = new DndConfig ();
+
+      _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _dnd_config->CreateTargetTable ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -156,6 +164,8 @@ namespace Table
     _to_border->Release   ();
 
     g_object_unref (_page_setup);
+
+    _dnd_config->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -3444,7 +3454,13 @@ namespace Table
     _from_border->Plug ();
     _to_border->Plug   ();
 
-    SetDndDest (GTK_WIDGET (GetCanvas ()));
+    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
+                       (GtkDestDefaults) 0,
+                       _dnd_config->GetTargetTable (),
+                       _dnd_config->GetTargetTableSize (),
+                       GDK_ACTION_COPY);
+
+    ConnectDndDest (GTK_WIDGET (GetCanvas ()));
     EnableDragAndDrop ();
   }
 

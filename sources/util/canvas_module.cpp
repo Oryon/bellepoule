@@ -594,27 +594,27 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
                                      gint            y,
                                      guint           time)
 {
-  GList *targets = gdk_drag_context_list_targets (drag_context);
+  if (_floating_object == NULL)
+  {
+    GList *target = gdk_drag_context_list_targets (drag_context);
+
+    while (target)
+    {
+      gtk_drag_get_data (widget,
+                         drag_context,
+                         GDK_POINTER_TO_ATOM (target->data),
+                         time);
+
+      target = g_list_next (target);
+    }
+  }
 
   if (DroppingIsForbidden (_floating_object))
   {
-    gdk_drag_status  (drag_context,
-                      (GdkDragAction) 0,
-                      time);
+    gdk_drag_status (drag_context,
+                     (GdkDragAction) 0,
+                     time);
     return FALSE;
-  }
-
-  if (targets)
-  {
-    GdkAtom  target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (targets, 0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
   }
 
   if (_target_drop_zone)
@@ -653,21 +653,13 @@ gboolean CanvasModule::OnDragDrop (GtkWidget      *widget,
                                    gint            y,
                                    guint           time)
 {
-  gboolean  result  = FALSE;
-  GList    *targets = gdk_drag_context_list_targets (drag_context);
+  gboolean result = FALSE;
 
-  if (targets)
-  {
-    GdkAtom  target_type;
-
-    target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (targets, 0));
-
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       target_type,
-                       time);
-
-  }
+  Module::OnDragDrop (widget,
+                      drag_context,
+                      x,
+                      y,
+                      time);
 
   if (_target_drop_zone)
   {
@@ -704,12 +696,9 @@ void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
 {
   if (data && (gtk_selection_data_get_length (data) >= 0))
   {
-    if (info == INT_TARGET)
-    {
-      guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
+    guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
 
-      _floating_object = GetDropObjectFromRef (*ref);
-    }
+    _floating_object = GetDropObjectFromRef (*ref);
   }
 }
 
