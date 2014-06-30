@@ -22,7 +22,6 @@
 #include "util/data.hpp"
 #include "util/canvas_module.hpp"
 #include "util/drop_zone.hpp"
-#include "util/dnd_config.hpp"
 #include "common/match.hpp"
 #include "common/score_collector.hpp"
 
@@ -176,8 +175,6 @@ namespace Table
       TableSetBorder           *_from_border;
       TableSetBorder           *_to_border;
       gboolean                 *_row_filled;
-      DndConfig                *_dnd_config;
-      guint32                   _dnd_target;
 
       void      *_status_cbk_data;
       StatusCbk  _status_cbk;

@@ -21,7 +21,6 @@
 
 #include "util/canvas_module.hpp"
 #include "util/data.hpp"
-#include "util/dnd_config.hpp"
 #include "common/player.hpp"
 #include "common/stage.hpp"
 #include "people_management/players_list.hpp"
@@ -107,8 +106,6 @@ namespace Pool
       People::PlayersList *_fencer_list;
       gint                _nb_matchs;
       Swapper            *_swapper;
-      DndConfig          *_dnd_config;
-      guint32             _dnd_target;
 
       void Setup ();
       void PopulateFencerList ();

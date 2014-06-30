@@ -86,8 +86,6 @@ namespace People
     }
 
     {
-      _dnd_config = new DndConfig ();
-
       _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
       _dnd_config->CreateTargetTable ();
 
@@ -106,7 +104,6 @@ namespace People
   // --------------------------------------------------------------------------------
   RefereesList::~RefereesList ()
   {
-    _dnd_config->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -287,7 +284,7 @@ namespace People
     {
       GSList  *selected    = GetSelectedPlayers ();
       Player  *referee     = (Player *) selected->data;
-      guint32  referee_ref = referee->GetRef ();
+      guint32  referee_ref = referee->GetDndRef ();
 
       gtk_selection_data_set (data,
                               gtk_selection_data_get_target (data),

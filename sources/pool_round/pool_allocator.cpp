@@ -82,8 +82,6 @@ namespace Pool
 
     // Dnd
     {
-      _dnd_config = new DndConfig ();
-
       _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
       _dnd_config->CreateTargetTable ();
     }
@@ -201,7 +199,6 @@ namespace Pool
     _seeding_balanced->Release ();
     _fencer_list->Release      ();
     _swapper->Delete           ();
-    _dnd_config->Release       ();
   }
 
   // --------------------------------------------------------------------------------
@@ -253,7 +250,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Object *Allocator::GetDropObjectFromRef (guint32 ref)
   {
-    return _contest->GetRefereeFromRef (ref);
+    return _contest->GetRefereeFromDndRef (ref);
   }
 
   // --------------------------------------------------------------------------------
@@ -744,7 +741,7 @@ namespace Pool
 
           if (attr)
           {
-            Player *referee = _contest->GetRefereeFromRef (atoi (attr));
+            Player *referee = _contest->GetRefereeFromDndRef (atoi (attr));
 
             if (referee)
             {

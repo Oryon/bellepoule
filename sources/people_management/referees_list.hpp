@@ -20,7 +20,6 @@
 #include <gtk/gtk.h>
 #include <libxml/xmlwriter.h>
 
-#include "util/dnd_config.hpp"
 #include "checkin.hpp"
 
 class Contest;
@@ -36,9 +35,7 @@ namespace People
       virtual ~RefereesList ();
 
     private:
-      Contest   *_contest;
-      DndConfig *_dnd_config;
-      guint32    _dnd_target;
+      Contest *_contest;
 
       void Monitor (Player *referee);
 

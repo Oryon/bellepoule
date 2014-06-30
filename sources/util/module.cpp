@@ -75,11 +75,15 @@ Module::Module (const gchar *glade_file,
 
     _glade->DetachFromParent (_config_widget);
   }
+
+  _dnd_config = new DndConfig ();
 }
 
 // --------------------------------------------------------------------------------
 Module::~Module ()
 {
+  _dnd_config->Release ();
+
   while (_plugged_list)
   {
     Module *module;
@@ -145,19 +149,7 @@ gboolean Module::OnDragDrop (GtkWidget      *widget,
                              gint            y,
                              guint           time)
 {
-  GList *target = gdk_drag_context_list_targets (drag_context);
-
-  while (target)
-  {
-    gtk_drag_get_data (widget,
-                       drag_context,
-                       GDK_POINTER_TO_ATOM (target->data),
-                       time);
-
-    target = g_list_next (target);
-  }
-
-  return TRUE;
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -182,9 +174,25 @@ gboolean Module::OnDragMotion (GtkWidget      *widget,
                                gint            y,
                                guint           time)
 {
+  // if (_dnd_config->GetFloatingObject () == NULL)
+  {
+    GList *target = gdk_drag_context_list_targets (drag_context);
+
+    while (target)
+    {
+      gtk_drag_get_data (widget,
+                         drag_context,
+                         GDK_POINTER_TO_ATOM (target->data),
+                         time);
+
+      target = g_list_next (target);
+    }
+  }
+
   gdk_drag_status  (drag_context,
                     (GdkDragAction) 0,
                     time);
+
   return FALSE;
 }
 

@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 
 #include "object.hpp"
+#include "dnd_config.hpp"
 #include "sensitivity_trigger.hpp"
 #include "filter.hpp"
 #include "glade.hpp"
@@ -99,6 +100,10 @@ class Module : public virtual Object
                            gint               page_nr);
 
     virtual gchar *GetPrintName () {return NULL;};
+
+  protected:
+    DndConfig *_dnd_config;
+    guint32    _dnd_target;
 
   protected:
     Filter           *_filter;
@@ -197,11 +202,14 @@ class Module : public virtual Object
                                   Module                   *module);
 
   protected:
-    virtual gboolean OnDragDrop (GtkWidget      *widget,
-                                 GdkDragContext *drag_context,
-                                 gint            x,
-                                 gint            y,
-                                 guint           time);
+    virtual gboolean OnDragMotion (GtkWidget      *widget,
+                                   GdkDragContext *drag_context,
+                                   gint            x,
+                                   gint            y,
+                                   guint           time);
+    virtual void OnDragLeave (GtkWidget      *widget,
+                              GdkDragContext *drag_context,
+                              guint           time);
 
   private:
     static void DragDataGet (GtkWidget        *widget,
@@ -222,19 +230,11 @@ class Module : public virtual Object
                                 gint            y,
                                 guint           time,
                                 Module         *owner);
-    virtual gboolean OnDragMotion (GtkWidget      *widget,
-                                   GdkDragContext *drag_context,
-                                   gint            x,
-                                   gint            y,
-                                   guint           time);
 
     static void DragLeave (GtkWidget      *widget,
                            GdkDragContext *drag_context,
                            guint           time,
                            Module         *owner);
-    virtual void OnDragLeave (GtkWidget      *widget,
-                              GdkDragContext *drag_context,
-                              guint           time);
 
     static gboolean DragDrop (GtkWidget      *widget,
                               GdkDragContext *drag_context,
@@ -242,6 +242,11 @@ class Module : public virtual Object
                               gint            y,
                               guint           time,
                               Module         *owner);
+    virtual gboolean OnDragDrop (GtkWidget      *widget,
+                                 GdkDragContext *drag_context,
+                                 gint            x,
+                                 gint            y,
+                                 guint           time);
 
     static void DragDataReceived (GtkWidget        *widget,
                                   GdkDragContext   *drag_context,

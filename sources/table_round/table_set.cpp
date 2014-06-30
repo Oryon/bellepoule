@@ -136,8 +136,6 @@ namespace Table
 
     // Dnd
     {
-      _dnd_config = new DndConfig ();
-
       _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
       _dnd_config->CreateTargetTable ();
     }
@@ -164,8 +162,6 @@ namespace Table
     _to_border->Release   ();
 
     g_object_unref (_page_setup);
-
-    _dnd_config->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -2124,7 +2120,7 @@ namespace Table
                              guint  referee_ref)
   {
     Contest  *contest = _supervisor->GetContest ();
-    Player   *referee = contest->GetRefereeFromRef (referee_ref);
+    Player   *referee = contest->GetRefereeFromDndRef (referee_ref);
 
     if (referee)
     {
@@ -3778,7 +3774,7 @@ namespace Table
   {
     Contest *contest = _supervisor->GetContest ();
 
-    return contest->GetRefereeFromRef (ref);
+    return contest->GetRefereeFromDndRef (ref);
   }
 
   // --------------------------------------------------------------------------------
