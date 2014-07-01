@@ -955,18 +955,25 @@ namespace People
 
     if (step == Player::BEFORE_CHANGE)
     {
-      Attribute *attending_attr = player->GetAttribute (&attending_attr_id);
+      {
+        Attribute *attending_attr = player->GetAttribute (&attending_attr_id);
 
-      // To refresh the status of the old team
-      // attending is temporarily set to 0
-      // to be restored on AFTER_CHANGE step when
-      // the new team is really set.
+        // To refresh the status of the old team
+        // attending is temporarily set to 0
+        // to be restored on AFTER_CHANGE step when
+        // the new team is really set.
+        player->SetData (owner,
+                         "attending_to_restore",
+                         (void *) attending_attr->GetUIntValue ());
+
+        player->SetAttributeValue (&attending_attr_id,
+                                   (guint) 0);
+      }
+
       player->SetData (owner,
-                       "attending_to_restore",
-                       (void *) attending_attr->GetUIntValue ());
-
-      player->SetAttributeValue (&attending_attr_id,
-                                 (guint) 0);
+                       "previous_team",
+                       g_strdup (attr->GetStrValue ()),
+                       g_free);
     }
     else
     {
@@ -991,8 +998,25 @@ namespace People
           }
         }
 
-        fencer->SetTeam (team);
-        supervisor->UpdateHierarchy (player);
+        {
+          fencer->SetTeam (team);
+          team->SetAttributesFromMembers ();
+          supervisor->UpdateHierarchy (player);
+          supervisor->Update (team);
+        }
+
+        {
+          Team *previous_team = supervisor->GetTeam ((gchar *) player->GetPtrData (owner,
+                                                                                   "previous_team"));
+
+          if (previous_team)
+          {
+            previous_team->SetAttributesFromMembers ();
+            supervisor->Update (previous_team);
+            player->RemoveData (owner,
+                                "previous_team");
+          }
+        }
       }
 
       player->SetAttributeValue (&attending_attr_id,

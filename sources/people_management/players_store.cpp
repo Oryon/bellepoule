@@ -44,6 +44,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean PlayersStore::IsInFlatMode (GtkTreeView *view)
+  {
+    return (GTK_TREE_MODEL (_flat_store._gtk_tree_store) == gtk_tree_view_get_model (view));
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean PlayersStore::SelectFlatMode (GtkTreeView *view)
   {
     if (GTK_TREE_MODEL (_flat_store._gtk_tree_store) != gtk_tree_view_get_model (view))

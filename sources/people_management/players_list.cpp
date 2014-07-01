@@ -437,6 +437,34 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::CellDataFunc (GtkTreeViewColumn *tree_column,
+                                  GtkCellRenderer   *cell,
+                                  GtkTreeModel      *tree_model,
+                                  GtkTreeIter       *iter,
+                                  PlayersList       *players_list)
+  {
+    if (players_list->_store->IsInFlatMode (players_list->_tree_view) == FALSE)
+    {
+      GtkTreeIter parent_iter;
+
+      if (gtk_tree_model_iter_parent (gtk_tree_view_get_model (players_list->_tree_view),
+                                      &parent_iter,
+                                      iter) == FALSE)
+      {
+        g_object_set (cell,
+                      "weight", PANGO_WEIGHT_BOLD,
+                      NULL);
+      }
+      else
+      {
+        g_object_set (cell,
+                      "weight", PANGO_WEIGHT_NORMAL,
+                      NULL);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::SetColumn (guint           id,
                                Filter::Layout *attr_layout,
                                gint            at)
@@ -504,6 +532,11 @@ namespace People
                                                          renderer,
                                                          "text", id*AttributeDesc::NB_LOOK + look,
                                                          NULL);
+      gtk_tree_view_column_set_cell_data_func (column,
+                                               renderer,
+                                               (GtkTreeCellDataFunc) CellDataFunc,
+                                               this,
+                                               NULL);
     }
 
     if (renderer && column)

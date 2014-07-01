@@ -156,6 +156,12 @@ namespace People
 
       virtual void OnPlayerRemoved (Player *player) {};
 
+      static void CellDataFunc (GtkTreeViewColumn *tree_column,
+                                GtkCellRenderer   *cell,
+                                GtkTreeModel      *tree_model,
+                                GtkTreeIter       *iter,
+                                PlayersList       *players_list);
+
       static void on_cell_toggled (GtkCellRendererToggle *cell,
                                    gchar                 *path_string,
                                    gpointer               user_data);

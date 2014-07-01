@@ -52,6 +52,8 @@ namespace People
       GtkTreeRowReference *GetTreeRowRef (GtkTreeModel *store,
                                           Player       *player);
 
+      gboolean IsInFlatMode (GtkTreeView *view);
+
     private:
       struct StoreObject : public Object
       {
