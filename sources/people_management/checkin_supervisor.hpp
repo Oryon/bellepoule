@@ -135,6 +135,12 @@ namespace People
                            gint            y,
                            guint           time);
 
+      gboolean OnDragMotion (GtkWidget      *widget,
+                             GdkDragContext *drag_context,
+                             gint            x,
+                             gint            y,
+                             guint           time);
+
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);
 

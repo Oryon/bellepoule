@@ -1117,6 +1117,48 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::OnDragMotion (GtkWidget      *widget,
+                                            GdkDragContext *drag_context,
+                                            gint            x,
+                                            gint            y,
+                                            guint           time)
+  {
+    Player *player;
+
+    Module::OnDragMotion (widget,
+                          drag_context,
+                          x,
+                          y,
+                          time);
+
+    player = (Player *) _dnd_config->GetFloatingObject ();
+
+    if (player->Is ("Fencer"))
+    {
+      GtkTreePath             *path;
+      GtkTreeViewDropPosition  pos;
+
+      if (gtk_tree_view_get_dest_row_at_pos (_tree_view,
+                                             x,
+                                             y,
+                                             &path,
+                                             &pos))
+      {
+        gtk_tree_view_set_drag_dest_row (_tree_view,
+                                         path,
+                                         pos);
+        return FALSE;
+      }
+    }
+
+    gdk_drag_status  (drag_context,
+                      GDK_ACTION_PRIVATE,
+                      time);
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnDragDataReceived (GtkWidget        *widget,
                                               GdkDragContext   *drag_context,
                                               gint              x,
@@ -1144,12 +1186,53 @@ namespace People
                                           gint            y,
                                           guint           time)
   {
+    gboolean  result = FALSE;
+    Player   *player = (Player *) _dnd_config->GetFloatingObject ();
+
+    if (player->Is ("Fencer"))
+    {
+      Fencer                  *fencer = (Fencer *) player;
+      GtkTreePath             *path;
+      GtkTreeViewDropPosition  pos;
+
+      if (gtk_tree_view_get_dest_row_at_pos (_tree_view,
+                                             x,
+                                             y,
+                                             &path,
+                                             &pos))
+      {
+        GtkTreeModel        *model = gtk_tree_view_get_model (_tree_view);
+        GtkTreeIter          iter;
+        Player              *dest;
+        Player::AttributeId  attr_id ("team");
+
+        gtk_tree_model_get_iter (model,
+                                 &iter,
+                                 path);
+
+        gtk_tree_model_get (model, &iter,
+                            gtk_tree_model_get_n_columns (model) - 1,
+                            &dest, -1);
+
+        if (dest->Is ("Fencer"))
+        {
+          Fencer *fencer = (Fencer *) dest;
+
+          dest = fencer->GetTeam ();
+        }
+
+        fencer->SetAttributeValue (&attr_id,
+                                   dest->GetName ());
+        result = TRUE;
+      }
+    }
+
     gtk_drag_finish (drag_context,
-                     FALSE,
+                     result,
                      FALSE,
                      time);
 
-    return FALSE;
+    return result;
   }
 
   // --------------------------------------------------------------------------------
