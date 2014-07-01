@@ -115,6 +115,10 @@ namespace People
       void OnAttendingChanged (Player    *player,
                                guint   value);
 
+      void EnableDragAndDrop ();
+
+      void DisableDragAndDrop ();
+
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
                           GtkSelectionData *selection_data,

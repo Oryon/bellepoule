@@ -637,6 +637,30 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void CheckinSupervisor::EnableDragAndDrop ()
+  {
+    if (_contest->IsTeamEvent ())
+    {
+      gtk_tree_view_enable_model_drag_source (_tree_view,
+                                              GDK_BUTTON1_MASK,
+                                              _dnd_config->GetTargetTable (),
+                                              _dnd_config->GetTargetTableSize (),
+                                              GDK_ACTION_MOVE);
+      gtk_tree_view_enable_model_drag_dest (_tree_view,
+                                            _dnd_config->GetTargetTable (),
+                                            _dnd_config->GetTargetTableSize (),
+                                            GDK_ACTION_MOVE);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::DisableDragAndDrop ()
+  {
+    gtk_tree_view_unset_rows_drag_source (_tree_view);
+    gtk_tree_view_unset_rows_drag_dest   (_tree_view);
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::SetTeamEvent (gboolean team_event)
   {
     if (team_event)
@@ -651,15 +675,7 @@ namespace People
 
       if (Locked () == FALSE)
       {
-        gtk_tree_view_enable_model_drag_source (_tree_view,
-                                                GDK_BUTTON1_MASK,
-                                                _dnd_config->GetTargetTable (),
-                                                _dnd_config->GetTargetTableSize (),
-                                                GDK_ACTION_MOVE);
-        gtk_tree_view_enable_model_drag_dest (_tree_view,
-                                              _dnd_config->GetTargetTable (),
-                                              _dnd_config->GetTargetTableSize (),
-                                              GDK_ACTION_MOVE);
+        EnableDragAndDrop ();
       }
     }
     else
@@ -672,8 +688,7 @@ namespace People
       gtk_widget_hide (_glade->GetWidget ("teamsize_viewport"));
       gtk_widget_hide (_glade->GetWidget ("tree_control_hbox"));
 
-      gtk_tree_view_unset_rows_drag_source (_tree_view);
-      gtk_tree_view_unset_rows_drag_dest   (_tree_view);
+      DisableDragAndDrop ();
     }
 
     // On loading, sensitivity is set by default to TRUE.
@@ -711,6 +726,8 @@ namespace People
     UpdateRanking  ();
 
     _form->Lock ();
+
+    DisableDragAndDrop ();
   }
 
   // --------------------------------------------------------------------------------
@@ -767,6 +784,7 @@ namespace People
     EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
     _form->UnLock ();
+    EnableDragAndDrop ();
   }
 
   // --------------------------------------------------------------------------------
