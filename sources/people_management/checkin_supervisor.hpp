@@ -47,6 +47,13 @@ namespace People
 
       void OnImportRanking ();
 
+      static void OnCopySelection (GtkWidget         *w,
+                                   CheckinSupervisor *supervisor);
+
+      static void OnPasteSelection (GtkWidget         *w,
+                                    CheckinSupervisor *supervisor);
+
+
     private:
       void OnLocked ();
 
@@ -66,6 +73,7 @@ namespace People
     private:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
+      static GSList      *_clipboard;
 
       GSList    *_checksum_list;
       Data      *_manual_classification;
@@ -115,6 +123,10 @@ namespace People
       void OnAttendingChanged (Player    *player,
                                guint   value);
 
+      void EnableDragAndDrop ();
+
+      void DisableDragAndDrop ();
+
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
                           GtkSelectionData *selection_data,
@@ -134,6 +146,12 @@ namespace People
                            gint            x,
                            gint            y,
                            guint           time);
+
+      gboolean OnDragMotion (GtkWidget      *widget,
+                             GdkDragContext *drag_context,
+                             gint            x,
+                             gint            y,
+                             guint           time);
 
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);

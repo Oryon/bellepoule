@@ -601,9 +601,6 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
 
   if (DroppingIsForbidden (_dnd_config->GetFloatingObject ()))
   {
-    gdk_drag_status (drag_context,
-                     (GdkDragAction) 0,
-                     time);
     return FALSE;
   }
 
@@ -630,9 +627,6 @@ gboolean CanvasModule::OnDragMotion (GtkWidget      *widget,
     }
   }
 
-  gdk_drag_status  (drag_context,
-                    (GdkDragAction) 0,
-                    time);
   return FALSE;
 }
 

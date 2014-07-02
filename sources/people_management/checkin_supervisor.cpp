@@ -29,10 +29,30 @@
 #include "checkin_supervisor.hpp"
 #include "rank_importer.hpp"
 
+static gint my_popup_handler (GtkWidget *widget,
+                              GdkEvent  *event)
+{
+  if (event->type == GDK_BUTTON_PRESS)
+  {
+    GdkEventButton *event_button = (GdkEventButton *) event;
+
+    if (event_button->button == 3)
+    {
+      gtk_menu_popup (GTK_MENU (widget),
+                      NULL, NULL, NULL, NULL,
+                      event_button->button, event_button->time);
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
 namespace People
 {
   const gchar *CheckinSupervisor::_class_name     = N_("Check-in");
   const gchar *CheckinSupervisor::_xml_class_name = "checkin_stage";
+  GSList      *CheckinSupervisor::_clipboard      = NULL;
 
   // --------------------------------------------------------------------------------
   CheckinSupervisor::CheckinSupervisor (StageClass *stage_class)
@@ -138,6 +158,59 @@ namespace People
 
       ConnectDndSource (GTK_WIDGET (_tree_view));
       ConnectDndDest   (GTK_WIDGET (_tree_view));
+    }
+
+    // Popup menu
+    {
+      GtkUIManager *ui_manager = gtk_ui_manager_new ();
+
+      {
+        GError *error = NULL;
+        static const gchar xml[] =
+          "<ui>\n"
+          "  <popup name='PopupMenu'>\n"
+          "    <menuitem action='CopyAction'/>\n"
+          "    <menuitem action='PasteAction'/>\n"
+          "  </popup>\n"
+          "</ui>";
+
+        if (gtk_ui_manager_add_ui_from_string (ui_manager,
+                                               xml,
+                                               -1,
+                                               &error) == FALSE)
+        {
+          g_message ("building menus failed: %s", error->message);
+          g_error_free (error);
+          error = NULL;
+        }
+      }
+
+      // Actions
+      {
+        GtkActionGroup *action_group = gtk_action_group_new ("PlayersListActionGroup");
+        static GtkActionEntry entries[] =
+        {
+          {"CopyAction",  GTK_STOCK_COPY,  gettext ("Copy"),  "<Control>C", NULL, G_CALLBACK (OnCopySelection)},
+          {"PasteAction", GTK_STOCK_PASTE, gettext ("Paste"), "<Control>V", NULL, G_CALLBACK (OnPasteSelection)},
+        };
+
+        gtk_action_group_add_actions (action_group,
+                                      entries,
+                                      G_N_ELEMENTS (entries),
+                                      this);
+        gtk_ui_manager_insert_action_group (ui_manager,
+                                            action_group,
+                                            0);
+      }
+
+      {
+        GtkWidget *menu = gtk_ui_manager_get_widget (ui_manager, "/PopupMenu");
+
+        gtk_widget_show_all (menu);
+
+        g_signal_connect_swapped (_tree_view, "button_press_event",
+                                  G_CALLBACK (my_popup_handler), menu);
+      }
     }
   }
 
@@ -637,6 +710,30 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void CheckinSupervisor::EnableDragAndDrop ()
+  {
+    if (_contest->IsTeamEvent ())
+    {
+      gtk_tree_view_enable_model_drag_source (_tree_view,
+                                              GDK_BUTTON1_MASK,
+                                              _dnd_config->GetTargetTable (),
+                                              _dnd_config->GetTargetTableSize (),
+                                              GDK_ACTION_MOVE);
+      gtk_tree_view_enable_model_drag_dest (_tree_view,
+                                            _dnd_config->GetTargetTable (),
+                                            _dnd_config->GetTargetTableSize (),
+                                            GDK_ACTION_MOVE);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::DisableDragAndDrop ()
+  {
+    gtk_tree_view_unset_rows_drag_source (_tree_view);
+    gtk_tree_view_unset_rows_drag_dest   (_tree_view);
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::SetTeamEvent (gboolean team_event)
   {
     if (team_event)
@@ -651,15 +748,7 @@ namespace People
 
       if (Locked () == FALSE)
       {
-        gtk_tree_view_enable_model_drag_source (_tree_view,
-                                                GDK_BUTTON1_MASK,
-                                                _dnd_config->GetTargetTable (),
-                                                _dnd_config->GetTargetTableSize (),
-                                                GDK_ACTION_MOVE);
-        gtk_tree_view_enable_model_drag_dest (_tree_view,
-                                              _dnd_config->GetTargetTable (),
-                                              _dnd_config->GetTargetTableSize (),
-                                              GDK_ACTION_MOVE);
+        EnableDragAndDrop ();
       }
     }
     else
@@ -672,8 +761,7 @@ namespace People
       gtk_widget_hide (_glade->GetWidget ("teamsize_viewport"));
       gtk_widget_hide (_glade->GetWidget ("tree_control_hbox"));
 
-      gtk_tree_view_unset_rows_drag_source (_tree_view);
-      gtk_tree_view_unset_rows_drag_dest   (_tree_view);
+      DisableDragAndDrop ();
     }
 
     // On loading, sensitivity is set by default to TRUE.
@@ -711,6 +799,8 @@ namespace People
     UpdateRanking  ();
 
     _form->Lock ();
+
+    DisableDragAndDrop ();
   }
 
   // --------------------------------------------------------------------------------
@@ -767,6 +857,7 @@ namespace People
     EnableSensitiveWidgets ();
     SetSensitiveState (TRUE);
     _form->UnLock ();
+    EnableDragAndDrop ();
   }
 
   // --------------------------------------------------------------------------------
@@ -955,18 +1046,25 @@ namespace People
 
     if (step == Player::BEFORE_CHANGE)
     {
-      Attribute *attending_attr = player->GetAttribute (&attending_attr_id);
+      {
+        Attribute *attending_attr = player->GetAttribute (&attending_attr_id);
 
-      // To refresh the status of the old team
-      // attending is temporarily set to 0
-      // to be restored on AFTER_CHANGE step when
-      // the new team is really set.
+        // To refresh the status of the old team
+        // attending is temporarily set to 0
+        // to be restored on AFTER_CHANGE step when
+        // the new team is really set.
+        player->SetData (owner,
+                         "attending_to_restore",
+                         (void *) attending_attr->GetUIntValue ());
+
+        player->SetAttributeValue (&attending_attr_id,
+                                   (guint) 0);
+      }
+
       player->SetData (owner,
-                       "attending_to_restore",
-                       (void *) attending_attr->GetUIntValue ());
-
-      player->SetAttributeValue (&attending_attr_id,
-                                 (guint) 0);
+                       "previous_team",
+                       g_strdup (attr->GetStrValue ()),
+                       g_free);
     }
     else
     {
@@ -991,8 +1089,25 @@ namespace People
           }
         }
 
-        fencer->SetTeam (team);
-        supervisor->UpdateHierarchy (player);
+        {
+          fencer->SetTeam (team);
+          team->SetAttributesFromMembers ();
+          supervisor->UpdateHierarchy (player);
+          supervisor->Update (team);
+        }
+
+        {
+          Team *previous_team = supervisor->GetTeam ((gchar *) player->GetPtrData (owner,
+                                                                                   "previous_team"));
+
+          if (previous_team)
+          {
+            previous_team->SetAttributesFromMembers ();
+            supervisor->Update (previous_team);
+            player->RemoveData (owner,
+                                "previous_team");
+          }
+        }
       }
 
       player->SetAttributeValue (&attending_attr_id,
@@ -1117,6 +1232,48 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gboolean CheckinSupervisor::OnDragMotion (GtkWidget      *widget,
+                                            GdkDragContext *drag_context,
+                                            gint            x,
+                                            gint            y,
+                                            guint           time)
+  {
+    Player *player;
+
+    Module::OnDragMotion (widget,
+                          drag_context,
+                          x,
+                          y,
+                          time);
+
+    player = (Player *) _dnd_config->GetFloatingObject ();
+
+    if (player->Is ("Fencer"))
+    {
+      GtkTreePath             *path;
+      GtkTreeViewDropPosition  pos;
+
+      if (gtk_tree_view_get_dest_row_at_pos (_tree_view,
+                                             x,
+                                             y,
+                                             &path,
+                                             &pos))
+      {
+        gtk_tree_view_set_drag_dest_row (_tree_view,
+                                         path,
+                                         pos);
+        return FALSE;
+      }
+    }
+
+    gdk_drag_status  (drag_context,
+                      GDK_ACTION_PRIVATE,
+                      time);
+
+    return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnDragDataReceived (GtkWidget        *widget,
                                               GdkDragContext   *drag_context,
                                               gint              x,
@@ -1144,10 +1301,130 @@ namespace People
                                           gint            y,
                                           guint           time)
   {
+    gboolean  result = FALSE;
+    Player   *player = (Player *) _dnd_config->GetFloatingObject ();
+
+    if (player->Is ("Fencer"))
+    {
+      Fencer                  *fencer = (Fencer *) player;
+      GtkTreePath             *path;
+      GtkTreeViewDropPosition  pos;
+
+      if (gtk_tree_view_get_dest_row_at_pos (_tree_view,
+                                             x,
+                                             y,
+                                             &path,
+                                             &pos))
+      {
+        GtkTreeModel        *model = gtk_tree_view_get_model (_tree_view);
+        GtkTreeIter          iter;
+        Player              *dest;
+        Player::AttributeId  attr_id ("team");
+
+        gtk_tree_model_get_iter (model,
+                                 &iter,
+                                 path);
+
+        gtk_tree_model_get (model, &iter,
+                            gtk_tree_model_get_n_columns (model) - 1,
+                            &dest, -1);
+
+        if (dest->Is ("Fencer"))
+        {
+          Fencer *fencer = (Fencer *) dest;
+
+          dest = fencer->GetTeam ();
+        }
+
+        fencer->SetAttributeValue (&attr_id,
+                                   dest->GetName ());
+        result = TRUE;
+      }
+    }
+
     gtk_drag_finish (drag_context,
-                     FALSE,
+                     result,
                      FALSE,
                      time);
+
+    return result;
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnCopySelection (GtkWidget         *w,
+                                           CheckinSupervisor *supervisor)
+  {
+    g_slist_free_full (_clipboard,
+                       (GDestroyNotify) Object::TryToRelease);
+
+    _clipboard = supervisor->GetSelectedPlayers ();
+
+    {
+      GSList *current = _clipboard;
+
+      while (current)
+      {
+        Fencer *fencer = (Fencer *) current->data;
+
+        fencer->Retain ();
+        current = g_slist_next (current);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnPasteSelection (GtkWidget         *w,
+                                            CheckinSupervisor *supervisor)
+  {
+    if (_clipboard)
+    {
+      GSList *current = _clipboard;
+
+      if (g_slist_find (supervisor->_player_list, current->data))
+      {
+        return;
+      }
+
+      while (current)
+      {
+        Fencer *fencer     = (Fencer *) current->data;
+        Fencer *duplicated = (Fencer *)(Fencer *)  fencer->Duplicate ();
+
+        supervisor->Add (duplicated);
+        duplicated->Release ();
+        fencer->Release     ();
+        current = g_slist_next (current);
+      }
+
+      g_slist_free (_clipboard);
+      _clipboard = NULL;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_players_list_key_press_event (GtkWidget *widget,
+                                                                       GdkEvent  *event,
+                                                                       Object    *owner)
+  {
+    if (   ((event->key.keyval == 'C') || (event->key.keyval == 'c'))
+        && (event->key.state & GDK_CONTROL_MASK))
+    {
+      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+      CheckinSupervisor::OnCopySelection (widget,
+                                          supervisor);
+      return TRUE;
+    }
+
+    if (   ((event->key.keyval == 'V') || (event->key.keyval == 'v'))
+        && (event->key.state & GDK_CONTROL_MASK))
+    {
+      CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+
+      CheckinSupervisor::OnPasteSelection (widget,
+                                           supervisor);
+      return TRUE;
+    }
 
     return FALSE;
   }
