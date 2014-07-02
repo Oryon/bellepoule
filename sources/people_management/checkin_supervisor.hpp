@@ -47,6 +47,13 @@ namespace People
 
       void OnImportRanking ();
 
+      static void OnCopySelection (GtkWidget         *w,
+                                   CheckinSupervisor *supervisor);
+
+      static void OnPasteSelection (GtkWidget         *w,
+                                    CheckinSupervisor *supervisor);
+
+
     private:
       void OnLocked ();
 
@@ -66,6 +73,7 @@ namespace People
     private:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
+      static GSList      *_clipboard;
 
       GSList    *_checksum_list;
       Data      *_manual_classification;
