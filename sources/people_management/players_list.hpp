@@ -97,6 +97,8 @@ namespace People
       Player *GetPlayerWithAttribute (Player::AttributeId *attr_id,
                                       Attribute           *attr);
 
+      GtkAction *GetAction (const gchar *name);
+
       virtual void SelectTreeMode ();
 
       virtual void SelectFlatMode ();
@@ -106,6 +108,8 @@ namespace People
                                      gboolean             new_value);
 
     private:
+      static GSList *_clipboard;
+
       guint         _rights;
       guint         _nb_player_per_page;
       gdouble       _print_scale;
@@ -114,6 +118,7 @@ namespace People
       gdouble      *_column_width;
       gboolean      _flat_print;
       PlayersStore *_store;
+      GtkUIManager *_ui_manager;
 
       void RefreshDisplay ();
 
@@ -156,6 +161,12 @@ namespace People
 
       virtual void OnPlayerRemoved (Player *player) {};
 
+      static void OnCopySelection (GtkWidget   *w,
+                                   PlayersList *players_list);
+
+      static void OnPasteSelection (GtkWidget   *w,
+                                    PlayersList *players_list);
+
       static void CellDataFunc (GtkTreeViewColumn *tree_column,
                                 GtkCellRenderer   *cell,
                                 GtkTreeModel      *tree_model,
@@ -170,6 +181,9 @@ namespace People
                                    GtkTreeIter         *a,
                                    GtkTreeIter         *b,
                                    Player::AttributeId *attr_id);
+
+      static gint OnButtonPress (GtkWidget *widget,
+                                 GdkEvent  *event);
   };
 }
 

@@ -47,13 +47,6 @@ namespace People
 
       void OnImportRanking ();
 
-      static void OnCopySelection (GtkWidget         *w,
-                                   CheckinSupervisor *supervisor);
-
-      static void OnPasteSelection (GtkWidget         *w,
-                                    CheckinSupervisor *supervisor);
-
-
     private:
       void OnLocked ();
 
@@ -70,16 +63,17 @@ namespace People
       guint PreparePrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context);
 
+      void SetPasteVisibility (gboolean visibility);
+
     private:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
-      static GSList      *_clipboard;
 
-      GSList    *_checksum_list;
-      Data      *_manual_classification;
-      Data      *_default_classification;
-      Data      *_minimum_team_size;
-      NullTeam  *_null_team;
+      GSList       *_checksum_list;
+      Data         *_manual_classification;
+      Data         *_default_classification;
+      Data         *_minimum_team_size;
+      NullTeam     *_null_team;
 
       static Stage *CreateInstance (StageClass *stage_class);
 

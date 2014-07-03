@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string.h>
+#include <gdk/gdkkeysyms.h>
 #include <goocanvas.h>
 
 #include "util/canvas.hpp"
@@ -26,6 +27,8 @@
 
 namespace People
 {
+  GSList *PlayersList::_clipboard = NULL;
+
   // --------------------------------------------------------------------------------
   PlayersList::PlayersList (const gchar *glade_file,
                             guint        rights)
@@ -42,13 +45,81 @@ namespace People
 
       if (_tree_view)
       {
-        g_object_set (_tree_view,
-                      "rules-hint",  TRUE,
-                      "reorderable", FALSE,
-                      NULL);
+        {
+          g_object_set (_tree_view,
+                        "rules-hint",  TRUE,
+                        "reorderable", FALSE,
+                        NULL);
 
-        gtk_tree_selection_set_mode (gtk_tree_view_get_selection (_tree_view),
-                                     GTK_SELECTION_MULTIPLE);
+          gtk_tree_selection_set_mode (gtk_tree_view_get_selection (_tree_view),
+                                       GTK_SELECTION_MULTIPLE);
+        }
+
+        // Popup menu
+        {
+          _ui_manager = gtk_ui_manager_new ();
+
+          {
+            GError *error = NULL;
+            static const gchar xml[] =
+              "<ui>\n"
+              "  <popup name='PopupMenu'>\n"
+              "    <menuitem action='CopyAction'/>\n"
+              "    <menuitem action='PasteAction'/>\n"
+              "  </popup>\n"
+              "</ui>";
+
+            if (gtk_ui_manager_add_ui_from_string (_ui_manager,
+                                                   xml,
+                                                   -1,
+                                                   &error) == FALSE)
+            {
+              g_message ("building menus failed: %s", error->message);
+              g_error_free (error);
+              error = NULL;
+            }
+          }
+
+          // Actions
+          {
+            GtkActionGroup *action_group = gtk_action_group_new ("PlayersListActionGroup");
+            static GtkActionEntry entries[] =
+            {
+              {"CopyAction",  GTK_STOCK_COPY,  gettext ("Copy"),  NULL, NULL, G_CALLBACK (OnCopySelection)},
+              {"PasteAction", GTK_STOCK_PASTE, gettext ("Paste"), NULL, NULL, G_CALLBACK (OnPasteSelection)},
+            };
+
+            gtk_action_group_add_actions (action_group,
+                                          entries,
+                                          G_N_ELEMENTS (entries),
+                                          this);
+            gtk_ui_manager_insert_action_group (_ui_manager,
+                                                action_group,
+                                                0);
+
+            g_object_unref (G_OBJECT (action_group));
+          }
+
+
+          {
+            GtkWidget *menu = gtk_ui_manager_get_widget (_ui_manager, "/PopupMenu");
+
+            gtk_widget_show_all (menu);
+
+            g_signal_connect_swapped (_tree_view, "button_press_event",
+                                      G_CALLBACK (OnButtonPress), menu);
+          }
+
+          {
+            GtkAction *paste_action = GetAction ("PasteAction");
+
+            if (paste_action)
+            {
+              gtk_action_set_visible (paste_action,
+                                      FALSE);
+            }
+          }
+        }
       }
     }
   }
@@ -57,8 +128,8 @@ namespace People
   PlayersList::~PlayersList ()
   {
     Wipe ();
-
     Object::TryToRelease (_store);
+    //g_object_unref (G_OBJECT (_ui_manager));
   }
 
   // --------------------------------------------------------------------------------
@@ -102,6 +173,40 @@ namespace People
 
       g_free (types);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  GtkAction *PlayersList::GetAction (const gchar *name)
+  {
+    GList *groups = gtk_ui_manager_get_action_groups (_ui_manager);
+
+    while (groups)
+    {
+      GtkActionGroup *group = (GtkActionGroup *) groups->data;
+
+      if (strcmp (gtk_action_group_get_name (group), "PlayersListActionGroup") == 0)
+      {
+        GList *actions = gtk_action_group_list_actions (group);
+
+        while (actions)
+        {
+          GtkAction *action = (GtkAction *) actions->data;
+
+          if (strcmp (gtk_action_get_name (action), name) == 0)
+          {
+            return action;
+          }
+
+          actions = g_list_next (actions);
+        }
+
+        break;
+      }
+
+      groups = g_list_next (groups);
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
@@ -1345,5 +1450,76 @@ namespace People
   gboolean PlayersList::PlayerIsPrintable (Player *player)
   {
     return TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::OnCopySelection (GtkWidget   *w,
+                                     PlayersList *players_list)
+  {
+    g_slist_free_full (_clipboard,
+                       (GDestroyNotify) Object::TryToRelease);
+
+    _clipboard = players_list->GetSelectedPlayers ();
+
+    {
+      GSList *current = _clipboard;
+
+      while (current)
+      {
+        Player *player = (Player *) current->data;
+
+        player->Retain ();
+        current = g_slist_next (current);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::OnPasteSelection (GtkWidget   *w,
+                                      PlayersList *players_list)
+  {
+    if (_clipboard)
+    {
+      GSList *current = _clipboard;
+
+      if (g_slist_find (players_list->_player_list, current->data))
+      {
+        return;
+      }
+
+      while (current)
+      {
+        Player *player     = (Player *) current->data;
+        Player *duplicated = (Player *) player->Duplicate ();
+
+        players_list->Add (duplicated);
+        duplicated->Release ();
+        player->Release     ();
+        current = g_slist_next (current);
+      }
+
+      g_slist_free (_clipboard);
+      _clipboard = NULL;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gint PlayersList::OnButtonPress (GtkWidget *widget,
+                                   GdkEvent  *event)
+  {
+    if (event->type == GDK_BUTTON_PRESS)
+    {
+      GdkEventButton *event_button = (GdkEventButton *) event;
+
+      if (event_button->button == 3)
+      {
+        gtk_menu_popup (GTK_MENU (widget),
+                        NULL, NULL, NULL, NULL,
+                        event_button->button, event_button->time);
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 }
