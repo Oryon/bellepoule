@@ -169,6 +169,11 @@ namespace People
                              Player::AttributeId *attr_id,
                              gboolean             new_value);
 
+      void CellDataFunc (GtkTreeViewColumn *tree_column,
+                         GtkCellRenderer   *cell,
+                         GtkTreeModel      *tree_model,
+                         GtkTreeIter       *iter);
+
       gboolean PlayerIsPrintable (Player *player);
 
       virtual ~CheckinSupervisor ();

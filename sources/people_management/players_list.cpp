@@ -542,31 +542,24 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::OnCellDataFunc (GtkTreeViewColumn *tree_column,
+                                    GtkCellRenderer   *cell,
+                                    GtkTreeModel      *tree_model,
+                                    GtkTreeIter       *iter,
+                                    PlayersList       *players_list)
+  {
+    players_list->CellDataFunc (tree_column,
+                                cell,
+                                tree_model,
+                                iter);
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::CellDataFunc (GtkTreeViewColumn *tree_column,
                                   GtkCellRenderer   *cell,
                                   GtkTreeModel      *tree_model,
-                                  GtkTreeIter       *iter,
-                                  PlayersList       *players_list)
+                                  GtkTreeIter       *iter)
   {
-    if (players_list->_store->IsInFlatMode (players_list->_tree_view) == FALSE)
-    {
-      GtkTreeIter parent_iter;
-
-      if (gtk_tree_model_iter_parent (gtk_tree_view_get_model (players_list->_tree_view),
-                                      &parent_iter,
-                                      iter) == FALSE)
-      {
-        g_object_set (cell,
-                      "weight", PANGO_WEIGHT_BOLD,
-                      NULL);
-      }
-      else
-      {
-        g_object_set (cell,
-                      "weight", PANGO_WEIGHT_NORMAL,
-                      NULL);
-      }
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -639,7 +632,7 @@ namespace People
                                                          NULL);
       gtk_tree_view_column_set_cell_data_func (column,
                                                renderer,
-                                               (GtkTreeCellDataFunc) CellDataFunc,
+                                               (GtkTreeCellDataFunc) OnCellDataFunc,
                                                this,
                                                NULL);
     }

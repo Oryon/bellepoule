@@ -119,17 +119,21 @@ namespace People
     {
       if (team)
       {
-        GtkTreePath *path = gtk_tree_row_reference_get_path ((GtkTreeRowReference *) team->GetPtrData (store,
-                                                                                                       "tree_row_ref"));
+        GtkTreeRowReference *row_ref = (GtkTreeRowReference *) team->GetPtrData (store, "tree_row_ref");
 
-        if (path)
+        if (row_ref)
         {
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (store->_gtk_tree_store),
-                                   &team_iter,
-                                   path);
-          has_team = TRUE;
+          GtkTreePath *path = gtk_tree_row_reference_get_path (row_ref);
+
+          if (path)
+          {
+            gtk_tree_model_get_iter (GTK_TREE_MODEL (store->_gtk_tree_store),
+                                     &team_iter,
+                                     path);
+            has_team = TRUE;
+          }
+          gtk_tree_path_free (path);
         }
-        gtk_tree_path_free (path);
       }
     }
 
