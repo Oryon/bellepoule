@@ -179,7 +179,6 @@ clean_sources:
 	rm -rf $(TARGET)
 
 help:
-	@#echo "make -s UBUNTU=lucid   V=1 package"
 	@echo "make -s UBUNTU=precise V=$(V) package"
 	@echo "make -s UBUNTU=saucy   V=$(V) package"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
