@@ -169,6 +169,8 @@
 		<Unit filename="../sources/pool_round/pool.hpp" />
 		<Unit filename="../sources/pool_round/pool_allocator.cpp" />
 		<Unit filename="../sources/pool_round/pool_allocator.hpp" />
+		<Unit filename="../sources/pool_round/pool_match_sequence.cpp" />
+		<Unit filename="../sources/pool_round/pool_match_sequence.hpp" />
 		<Unit filename="../sources/pool_round/pool_match_order.cpp" />
 		<Unit filename="../sources/pool_round/pool_match_order.hpp" />
 		<Unit filename="../sources/pool_round/pool_supervisor.cpp" />
