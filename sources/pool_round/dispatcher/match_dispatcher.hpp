@@ -36,9 +36,10 @@ namespace Pool
       void Dump ();
 
     private:
-      GList *_pair_list;
-      guint  _pool_size;
-      gchar *_name;
+      GList     *_pair_list;
+      guint      _pool_size;
+      gchar     *_name;
+      Opponent **_opponent_table;
 
       virtual ~MatchDispatcher ();
 
@@ -52,8 +53,6 @@ namespace Pool
       void CreatePairs (GList *opponent_list);
 
       void FixErrors ();
-
-      gint GetFitness (Pair *pair);
 
       void RefreshFitness ();
   };

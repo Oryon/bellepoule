@@ -22,26 +22,25 @@ namespace Pool
   MatchDispatcher::MatchDispatcher (guint pool_size)
     : Object ("PoolMatchSequence")
   {
-    GList *opponent_list = GetOpponentList (pool_size);
-
     Init ("Generated",
           pool_size);
 
-    SpreadOpponents (opponent_list);
-    CreatePairs (opponent_list);
+    {
+      GList *opponent_list = GetOpponentList (pool_size);
 
-    RefreshFitness ();
+      SpreadOpponents (opponent_list);
+      CreatePairs (opponent_list);
+
+      g_list_free (opponent_list);
+    }
+
     //Dump ();
 
     if (pool_size > 4)
     {
-      FixErrors ();
-
       RefreshFitness ();
+      FixErrors ();
     }
-
-    g_list_free_full (opponent_list,
-                      (GDestroyNotify) Object::TryToRelease);
   }
 
   // --------------------------------------------------------------------------------
@@ -72,8 +71,6 @@ namespace Pool
     va_end (ap);
 
     g_free (opponent_table);
-
-    RefreshFitness ();
   }
 
   // --------------------------------------------------------------------------------
@@ -81,6 +78,12 @@ namespace Pool
   {
     g_list_free_full (_pair_list,
                       (GDestroyNotify) Object::TryToRelease);
+
+    for (guint i = 0; i < _pool_size; i++)
+    {
+      Object::TryToRelease (_opponent_table[i]);
+    }
+    g_free (_opponent_table);
 
     g_free (_name);
   }
@@ -92,108 +95,50 @@ namespace Pool
     _pair_list = NULL;
     _pool_size = pool_size;
     _name      = g_strdup (name);
-  }
 
-  // --------------------------------------------------------------------------------
-  gint MatchDispatcher::GetFitness (Pair *pair)
-  {
-    guint  fitness   = 0;
-    GList *pair_node = g_list_find (_pair_list, pair);
-    GList *current;
-
-    current = g_list_next (pair_node);
-    for (guint i = 0; current != NULL; i++)
+    _opponent_table = g_new (Opponent *, pool_size);
+    for (guint i = 0; i < pool_size; i++)
     {
-      Pair *current_pair = (Pair *) current->data;
-
-      if (current_pair->HasSameOpponent (pair))
-      {
-        fitness = i;
-        break;
-      }
-
-      current = g_list_next (current);
+      _opponent_table[i] = new Opponent (i+1);
     }
-
-    current = g_list_previous (pair_node);
-    for (guint i = 0; current != NULL; i++)
-    {
-      Pair *current_pair = (Pair *) current->data;
-
-      if (current_pair->HasSameOpponent (pair))
-      {
-        if (fitness)
-        {
-          fitness = MIN (fitness, i);
-        }
-        else
-        {
-          fitness = i;
-        }
-        break;
-      }
-
-      current = g_list_previous (current);
-    }
-
-    return fitness;
   }
 
   // --------------------------------------------------------------------------------
   void MatchDispatcher::RefreshFitness ()
   {
+    GList *current = g_list_last (_pair_list);
+
+    while (current)
     {
-      GList *current = _pair_list;
+      Pair  *pair     = (Pair *) current->data;
+      GList *previous = g_list_previous (current);
 
-      for (guint i = 1; current != NULL; i++)
+      pair->_a_fitness = -1;
+      pair->_b_fitness = -1;
+
+      for (guint i = 0; previous != NULL; i++)
       {
-        Pair  *pair    = (Pair *) current->data;
-        guint  fitness = GetFitness (pair);
+        Pair *previous_pair = (Pair *) previous->data;
 
-        pair->SetFitness (fitness);
-
-        current = g_list_next (current);
-      }
-    }
-
-    {
-      GList *current = g_list_last (_pair_list);
-
-      while (current)
-      {
-        Pair  *pair     = (Pair *) current->data;
-        GList *previous = g_list_previous (current);
-
-        pair->_a_fitness = -1;
-        pair->_b_fitness = -1;
-
-        for (guint i = 0; previous != NULL; i++)
+        if (pair->_a_fitness == -1)
         {
-          Pair *previous_pair = (Pair *) previous->data;
-
-          if (pair->_a_fitness == -1)
+          if (previous_pair->HasOpponent (pair->_a))
           {
-            if (previous_pair->HasOpponent (pair->_a))
-            {
-              pair->_a_fitness = i;
-            }
+            pair->_a_fitness = i;
           }
-          if (pair->_b_fitness == -1)
+        }
+        if (pair->_b_fitness == -1)
+        {
+          if (previous_pair->HasOpponent (pair->_b))
           {
-            if (previous_pair->HasOpponent (pair->_b))
-            {
-              pair->_b_fitness = i;
-            }
+            pair->_b_fitness = i;
           }
-
-          previous = g_list_previous (previous);
         }
 
-        if (pair->_a_fitness == -1) pair->_a_fitness = 0;
-        if (pair->_b_fitness == -1) pair->_b_fitness = 0;
-
-        current = g_list_previous (current);
+        previous = g_list_previous (previous);
       }
+
+      current = g_list_previous (current);
     }
   }
 
@@ -203,21 +148,35 @@ namespace Pool
     GList *current       = _pair_list;
     guint *fitness_table = g_new0 (guint, _pool_size);
 
+    RefreshFitness ();
+
     printf (GREEN "**** %s\n" ESC, _name);
 
+    // Flat list
     for (guint i = 1; current != NULL; i++)
     {
       Pair *pair = (Pair *) current->data;
 
       pair->Dump ();
 
-      fitness_table[pair->_a_fitness]++;
-      fitness_table[pair->_b_fitness]++;
+      if (pair->_a_fitness >= 0) fitness_table[pair->_a_fitness]++;
+      if (pair->_b_fitness >= 0) fitness_table[pair->_b_fitness]++;
 
       current = g_list_next (current);
     }
 
-    for (guint i = 1; i < _pool_size; i++)
+    // Fencer digest
+    for (guint i = 0; i < _pool_size; i++)
+    {
+      if (fitness_table[i])
+      {
+        printf (BLUE);
+      }
+      printf ("%d:%2d   " ESC, i, fitness_table[i]);
+    }
+
+    // Global digest
+    for (guint i = 0; i < _pool_size; i++)
     {
       if (fitness_table[i])
       {
@@ -238,10 +197,8 @@ namespace Pool
 
     for (guint i = 0; i < pool_size; i++)
     {
-      Opponent *opponent = new Opponent (i+1);
-
       opponent_list = g_list_append (opponent_list,
-                                     opponent);
+                                     _opponent_table[i]);
     }
 
     return opponent_list;

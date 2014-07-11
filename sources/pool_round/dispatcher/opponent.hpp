@@ -38,8 +38,6 @@ namespace Pool
 
       void SetFitness (guint fitness);
 
-      guint GetLastMatch ();
-
       void Dump ();
 
       static gint CompareFitness (Opponent *a,

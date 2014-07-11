@@ -51,12 +51,26 @@ namespace Pool
 #endif
 
     printf ("%2d(", _a->GetId ());
-    if (_a_fitness == 0) printf (RED);
-    printf ("%d" ESC ")", _a_fitness);
+    if (_a_fitness == -1)
+    {
+      printf (" )");
+    }
+    else
+    {
+      if (_a_fitness == 0) printf (RED);
+      printf ("%d" ESC ")", _a_fitness);
+    }
 
     printf (" - %2d(", _b->GetId ());
-    if (_b_fitness == 0) printf (RED);
-    printf ("%d" ESC ")\n", _b_fitness);
+    if (_b_fitness == -1)
+    {
+      printf (" )\n");
+    }
+    else
+    {
+      if (_b_fitness == 0) printf (RED);
+      printf ("%d" ESC ")\n", _b_fitness);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -68,7 +82,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gint Pair::GetFitness ()
   {
-    return _fitness;
+    return MIN (_a_fitness, _b_fitness);
   }
 
   // --------------------------------------------------------------------------------
@@ -78,18 +92,6 @@ namespace Pool
     {
       return (   (_a == o)
               || (_b == o));
-    }
-
-    return FALSE;
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Pair::HasSameOpponent (Pair *than)
-  {
-    if (than)
-    {
-      return (   than->HasOpponent (_a)
-              || than->HasOpponent (_b));
     }
 
     return FALSE;

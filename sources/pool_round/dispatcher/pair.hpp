@@ -44,8 +44,6 @@ namespace Pool
 
       gboolean HasOpponent (Opponent *o);
 
-      gboolean HasSameOpponent (Pair *than);
-
     private:
       gint _fitness;
 
