@@ -172,6 +172,15 @@
 		<Unit filename="../sources/pool_round/pool.hpp" />
 		<Unit filename="../sources/pool_round/pool_allocator.cpp" />
 		<Unit filename="../sources/pool_round/pool_allocator.hpp" />
+    <Unit filename="../sources/pool_round/dispatcher/opponent.cpp" />
+    <Unit filename="../sources/pool_round/dispatcher/opponent.hpp" />
+    <Unit filename="../sources/pool_round/dispatcher/pair.cpp" />
+    <Unit filename="../sources/pool_round/dispatcher/pair.hpp" />
+    <Unit filename="../sources/pool_round/dispatcher/match_dispatcher.cpp" />
+    <Unit filename="../sources/pool_round/dispatcher/match_dispatcher.hpp" />
+    <Unit filename="../sources/pool_round/dispatcher/test.cpp">
+      <Option target="Debug" />
+    </Unit>
 		<Unit filename="../sources/pool_round/pool_match_order.cpp" />
 		<Unit filename="../sources/pool_round/pool_match_order.hpp" />
 		<Unit filename="../sources/pool_round/pool_match_sequence.cpp" />
