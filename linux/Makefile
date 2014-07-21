@@ -2,7 +2,7 @@ EXEC    = bellepoulebeta
 TARGET  = Release
 PACKAGE = /local/$(USER)/$(EXEC)
 VERSION = 4.0
-STEP    = ubuntu6
+STEP    = ubuntu8
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
 V       = 1
@@ -180,7 +180,6 @@ clean_sources:
 
 help:
 	@echo "make -s UBUNTU=precise V=$(V) package"
-	@echo "make -s UBUNTU=saucy   V=$(V) package"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "debuild -us -uc --lintian-opts --color always"
