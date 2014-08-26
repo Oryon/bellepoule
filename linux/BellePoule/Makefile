@@ -12,13 +12,12 @@ ifeq ($(TARGET), Debug)
 CC += -g
 endif
 
-MODULE  = common
-MODULE += network
-MODULE += people_management
-MODULE += pool_round
-MODULE += pool_round/smart_swapper
-MODULE += table_round
-MODULE += util
+MODULE  = common/network
+MODULE += common/util
+MODULE += BellePoule/people_management
+MODULE += BellePoule/pool_round
+MODULE += BellePoule/pool_round/smart_swapper
+MODULE += BellePoule/table_round
 
 CFLAGS  =
 CFLAGS += -Wshadow
@@ -41,17 +40,17 @@ CFLAGS += -Wno-shadow
 CFLAGS += -Wno-vla
 CFLAGS += -Wno-variadic-macros
 CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
-CFLAGS += -Isources
+CFLAGS += -Isources/common
+CFLAGS += -Isources/BellePoule
 ifeq ($(TARGET), Debug)
 CFLAGS += -DDEBUG=1
 endif
 
 LDFLAGS  = -lstdc++
 LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
-LDFLAGS += $(addprefix -L$(TARGET)/,$(MODULE))
 
-SRC   = $(wildcard sources/*/*.cpp)
-SRC  += $(wildcard sources/*/*/*.cpp)
+SRC   = $(wildcard sources/*/*/*.cpp)
+SRC  += $(wildcard sources/*/*/*/*.cpp)
 OBJ   = $(SRC:.cpp=.o)
 #OBJ = $(subst sources,$(TARGET),$(SRC:.cpp=.o))
 
@@ -64,12 +63,12 @@ subdir:
 	mkdir -p $(TARGET)
 
 $(TARGET)/$(EXEC): $(OBJ)
-	@echo $@
-	$(CC) -o $@ $^ $(LDFLAGS)
+	@echo "\033[1;31m" $@ "\033[0m"
+	@$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.cpp
-	@echo $@
-	$(CC) -o $@ -c $< $(CFLAGS)
+	@echo "\033[1;34m" $@ "\033[0m"
+	@$(CC) -o $@ -c $< $(CFLAGS)
 
 valgrind:
 	G_SLICE=always-malloc G_DEBUG=gc-friendly valgrind --log-file=memory_leak.log --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 $(TARGET)/$(EXEC)
@@ -88,45 +87,47 @@ prepare_packaging: prepare_staging prepare_changelog prepare_control prepare_cop
 
 prepare_examples:
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples
-	cp -f  ../Exemples/exemple.cotcot      $(PACKAGE)/$(RELEASE)/Exemples
+	cp -f  ../../Exemples/exemple.cotcot      $(PACKAGE)/$(RELEASE)/Exemples
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	cp -rf ../Exemples/FFE/Individuelle.XML $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	cp -rf ../Exemples/FFE/ParEquipe.XML    $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	cp -rf ../Exemples/FFE/Fencers.FFF      $(PACKAGE)/$(RELEASE)/Exemples/FFE
-	cp -rf ../Exemples/FFE/Referees.txt     $(PACKAGE)/$(RELEASE)/Exemples/FFE
+	cp -rf ../../Exemples/FFE/Individuelle.XML $(PACKAGE)/$(RELEASE)/Exemples/FFE
+	cp -rf ../../Exemples/FFE/ParEquipe.XML    $(PACKAGE)/$(RELEASE)/Exemples/FFE
+	cp -rf ../../Exemples/FFE/Fencers.FFF      $(PACKAGE)/$(RELEASE)/Exemples/FFE
+	cp -rf ../../Exemples/FFE/Referees.txt     $(PACKAGE)/$(RELEASE)/Exemples/FFE
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	cp -rf ../Exemples/Classements/EHBEN.TXT $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	cp -rf ../Exemples/Classements/EHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	cp -rf ../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
-	cp -rf ../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
+	cp -rf ../../Exemples/Classements/EHBEN.TXT $(PACKAGE)/$(RELEASE)/Exemples/Classements
+	cp -rf ../../Exemples/Classements/EHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
+	cp -rf ../../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
+	cp -rf ../../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
 	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources
-	cp -f ../resources/user_manual.pdf $(PACKAGE)/$(RELEASE)/resources
+	cp -f ../../resources/user_manual.pdf $(PACKAGE)/$(RELEASE)/resources
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -f ../resources/translations/index.txt $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/fr    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/de    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/nl    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/ru    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/ar    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/es    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/it    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/ko    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/pt_br $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/sv    $(PACKAGE)/$(RELEASE)/resources/translations
-	cp -rf ../resources/translations/ja    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -f ../../resources/translations/index.txt $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/fr    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/de    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/nl    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/ru    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/ar    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/es    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/it    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/ko    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/pt_br $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/sv    $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -rf ../../resources/translations/ja    $(PACKAGE)/$(RELEASE)/resources/translations
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -f ../resources/glade/*.png   $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -f ../resources/glade/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -f ../resources/glade/*.glade $(PACKAGE)/$(RELEASE)/resources/glade
-	cp -rf ../resources/countries      $(PACKAGE)/$(RELEASE)/resources/countries
-	cp -rf ../resources/localized_data $(PACKAGE)/$(RELEASE)/resources/localized_data
+	cp -f ../../resources/glade/*.png   $(PACKAGE)/$(RELEASE)/resources/glade
+	cp -f ../../resources/glade/*.jpg   $(PACKAGE)/$(RELEASE)/resources/glade
+	cp -f ../../resources/glade/*.glade $(PACKAGE)/$(RELEASE)/resources/glade
+	cp -rf ../../resources/countries      $(PACKAGE)/$(RELEASE)/resources/countries
+	cp -rf ../../resources/localized_data $(PACKAGE)/$(RELEASE)/resources/localized_data
 	find $(PACKAGE)/$(RELEASE)/resources -type f -exec chmod a-x {} \;
 
 prepare_sources: clean_sources
-	cp -rf ../sources $(PACKAGE)/$(RELEASE)
+	mkdir -p $(PACKAGE)/$(RELEASE)/sources
+	cp -rf ../../sources/BellePoule $(PACKAGE)/$(RELEASE)/sources/BellePoule
+	cp -rf ../../sources/common     $(PACKAGE)/$(RELEASE)/sources/common
 
 prepare_staging:
 	rm -rf $(PACKAGE)/*
@@ -175,7 +176,7 @@ install:
 		done
 
 clean_sources:
-	rm -f `find ../sources -name "*.o"`
+	rm -f `find ../../sources -name "*.o"`
 	rm -rf $(TARGET)
 
 help:

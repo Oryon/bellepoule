@@ -3,7 +3,6 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="BellePoule" />
-		<Option execution_dir="/media/usb0/BellePoule/bazaar/trunk" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -134,6 +133,8 @@
     <Unit filename="../../sources/BellePoule/people_management/form.hpp" />
     <Unit filename="../../sources/BellePoule/people_management/general_classification.cpp" />
     <Unit filename="../../sources/BellePoule/people_management/general_classification.hpp" />
+    <Unit filename="../../sources/BellePoule/people_management/null_team.cpp" />
+    <Unit filename="../../sources/BellePoule/people_management/null_team.hpp" />
     <Unit filename="../../sources/BellePoule/people_management/player_factory.cpp" />
     <Unit filename="../../sources/BellePoule/people_management/player_factory.hpp" />
     <Unit filename="../../sources/BellePoule/people_management/players_list.cpp" />
@@ -152,27 +153,25 @@
     <Unit filename="../../sources/BellePoule/people_management/tally_counter.hpp" />
     <Unit filename="../../sources/BellePoule/people_management/team.cpp" />
     <Unit filename="../../sources/BellePoule/people_management/team.hpp" />
-    <Unit filename="../../sources/BellePoule/people_management/null_team.cpp" />
-    <Unit filename="../../sources/BellePoule/people_management/null_team.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_allocator.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_allocator.hpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/opponent.cpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/opponent.hpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/pair.cpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/pair.hpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/match_dispatcher.cpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/match_dispatcher.hpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/test.cpp">
-      <Option target="Debug" />
-    </Unit>
     <Unit filename="../../sources/BellePoule/pool_round/pool_match_order.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_match_order.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_supervisor.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_supervisor.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_zone.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_zone.hpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/match_dispatcher.cpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/match_dispatcher.hpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/opponent.cpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/opponent.hpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/pair.cpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/pair.hpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/test.cpp">
+      <Option target="Debug" />
+    </Unit>
     <Unit filename="../../sources/BellePoule/pool_round/smart_swapper/criteria_value.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/smart_swapper/criteria_value.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/smart_swapper/pool_data.cpp" />
@@ -214,14 +213,14 @@
     <Unit filename="../../sources/common/util/attribute_desc.hpp" />
     <Unit filename="../../sources/common/util/canvas.cpp" />
     <Unit filename="../../sources/common/util/canvas.hpp" />
-    <Unit filename="../../sources/common/util/dnd_config.cpp" />
-    <Unit filename="../../sources/common/util/dnd_config.hpp" />
     <Unit filename="../../sources/common/util/canvas_module.cpp" />
     <Unit filename="../../sources/common/util/canvas_module.hpp" />
     <Unit filename="../../sources/common/util/clock.cpp" />
     <Unit filename="../../sources/common/util/clock.hpp" />
     <Unit filename="../../sources/common/util/data.cpp" />
     <Unit filename="../../sources/common/util/data.hpp" />
+    <Unit filename="../../sources/common/util/dnd_config.cpp" />
+    <Unit filename="../../sources/common/util/dnd_config.hpp" />
     <Unit filename="../../sources/common/util/drop_zone.cpp" />
     <Unit filename="../../sources/common/util/drop_zone.hpp" />
     <Unit filename="../../sources/common/util/filter.cpp" />

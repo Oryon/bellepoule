@@ -647,7 +647,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
                             DISCRETE_SHORT_TEXT_str, xml_image, -1);
 
         g_hash_table_insert (_discrete_code_table,
-                             GUINT_TO_POINTER (xml_image[0]),
+                             (void *) xml_image[0],
                              gtk_tree_model_get_path (_discrete_model, &iter));
         g_hash_table_insert (_discrete_xml_table,
                              g_strdup (xml_image),
