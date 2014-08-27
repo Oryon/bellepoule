@@ -73,7 +73,8 @@ Screen::Screen ()
 
   _http_server = new Net::HttpServer (this,
                                       HttpPostCbk,
-                                      NULL);
+                                      NULL,
+                                      35832);
 }
 
 // --------------------------------------------------------------------------------
@@ -161,6 +162,11 @@ gboolean Screen::OnHttpPost (const gchar *data)
 
   if (data)
   {
+    if (strstr (data, "coucou"))
+    {
+      gtk_widget_set_visible (_glade->GetWidget ("code_image"),
+                              FALSE);
+    }
   }
 
   return result;
@@ -169,7 +175,7 @@ gboolean Screen::OnHttpPost (const gchar *data)
 // --------------------------------------------------------------------------------
 gchar *Screen::GetSecretKey (const gchar *authentication_scheme)
 {
-  return NULL;
+  return _wifi_code->GetKey ();
 }
 
 // --------------------------------------------------------------------------------

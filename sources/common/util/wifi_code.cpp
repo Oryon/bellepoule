@@ -32,6 +32,7 @@
 #include "wifi_code.hpp"
 
 Net::WifiNetwork *WifiCode::_wifi_network = NULL;
+guint             WifiCode::_port         = 0;
 
 // --------------------------------------------------------------------------------
 WifiCode::WifiCode (const gchar *user_name)
@@ -59,6 +60,12 @@ WifiCode::~WifiCode ()
 void WifiCode::SetWifiNetwork (Net::WifiNetwork *network)
 {
   _wifi_network = network;
+}
+
+// --------------------------------------------------------------------------------
+void WifiCode::SetPort (guint port)
+{
+  _port = port;
 }
 
 // --------------------------------------------------------------------------------
@@ -210,18 +217,20 @@ gchar *WifiCode::GetText ()
 
   if (_player)
   {
-    text = g_strdup_printf ("%s%s:35830-%s-%d-%s",
+    text = g_strdup_printf ("%s%s:%d-%s-%d-%s",
                             network,
                             ip,
+                            _port,
                             _player->GetName (),
                             _player->GetRef (),
                             key);
   }
   else
   {
-    text = g_strdup_printf ("%s%s:35830-%s-0-%s",
+    text = g_strdup_printf ("%s%s:%d-%s-0-%s",
                             network,
                             ip,
+                            _port,
                             _text,
                             key);
   }

@@ -17,6 +17,7 @@
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
+#include "util/wifi_code.hpp"
 #include "screen.hpp"
 
 // --------------------------------------------------------------------------------
@@ -54,6 +55,8 @@ static void LogHandler (const gchar    *log_domain,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
+  Screen *screen;
+
   // g_mem_set_vtable (glib_mem_profiler_table);
 
   // Init
@@ -128,13 +131,11 @@ int main (int argc, char **argv)
     g_free (install_dirname);
   }
 
-  {
-    Screen *screen = new Screen ();
+  WifiCode::SetPort (35832);
 
-
-  }
-
+  screen = new Screen ();
   gtk_main ();
+  screen->Release ();
 
   return 0;
 }

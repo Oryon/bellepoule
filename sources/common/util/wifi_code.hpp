@@ -31,6 +31,8 @@ class WifiCode : public FlashCode
 
     WifiCode (Player *player);
 
+    static void SetPort (guint port);
+
     void SetWifiNetwork (Net::WifiNetwork *network);
 
     gchar *GetKey ();
@@ -39,6 +41,8 @@ class WifiCode : public FlashCode
 
   private:
     static Net::WifiNetwork *_wifi_network;
+    static guint             _port;
+
     Player                  *_player;
     gchar                   *_key;
 

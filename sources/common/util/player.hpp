@@ -25,6 +25,8 @@
 #include "util/object.hpp"
 #include "network/uploader.hpp"
 
+class WifiCode;
+
 class Player : public Object
 {
   public:

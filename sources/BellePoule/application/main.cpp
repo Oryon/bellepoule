@@ -42,6 +42,7 @@
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
 #include "table_round/table_supervisor.hpp"
+#include "util/wifi_code.hpp"
 #include "tournament.hpp"
 #include "contest.hpp"
 
@@ -272,6 +273,8 @@ int main (int argc, char **argv)
       Team::RegisterPlayerClass    ();
       Referee::RegisterPlayerClass ();
     }
+
+    WifiCode::SetPort (35830);
 
     g_free (install_dirname);
   }

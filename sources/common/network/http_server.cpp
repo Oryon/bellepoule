@@ -96,11 +96,12 @@ namespace Net
   // --------------------------------------------------------------------------------
   HttpServer::HttpServer (Client   *client,
                           HttpPost  http_post,
-                          HttpGet   http_get)
+                          HttpGet   http_get,
+                          guint     port)
     : Object ("HttpServer")
   {
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
-                                35830,
+                                port,
                                 NULL, NULL,
                                 (MHD_AccessHandlerCallback) OnMicroHttpRequest, this,
                                 MHD_OPTION_NOTIFY_COMPLETED, OnMicroHttpRequestCompleted, this,

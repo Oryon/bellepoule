@@ -194,7 +194,8 @@ Tournament::Tournament (gchar *filename)
 
     _http_server = new Net::HttpServer (this,
                                         HttpPostCbk,
-                                        HttpGetCbk);
+                                        HttpGetCbk,
+                                        35830);
   }
 }
 

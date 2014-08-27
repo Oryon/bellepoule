@@ -52,7 +52,8 @@ namespace Net
 
       HttpServer (Client   *client,
                   HttpPost  http_post,
-                  HttpGet   http_get);
+                  HttpGet   http_get,
+                  guint     port);
 
     private:
       struct RequestBody
