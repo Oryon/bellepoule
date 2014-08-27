@@ -20,18 +20,43 @@
 #include <gtk/gtk.h>
 
 #include "util/module.hpp"
+#include "network/http_server.hpp"
+#include "network/wifi_network.hpp"
+#include "util/wifi_code.hpp"
 
-class Screen : public Module
+class Screen : public Module, Net::HttpServer::Client
 {
   public:
     Screen ();
 
     void Unfullscreen ();
 
+    void ToggleWifiCode ();
+
   private:
+    Net::HttpServer *_http_server;
+    WifiCode        *_wifi_code;
+
     virtual ~Screen ();
 
     void Rescale (gdouble factor);
+
+    void ChangeNumber (gint step);
+
+    void SetTitle (const gchar *name,
+                   const gchar *color);
+
+    void SetScore (const gchar *light_color,
+                   const gchar *name,
+                   const gchar *score);
+
+    gboolean OnHttpPost (const gchar *data);
+
+    gchar *GetSecretKey (const gchar *authentication_scheme);
+
+  private:
+    static gboolean HttpPostCbk (Net::HttpServer::Client *client,
+                                 const gchar             *data);
 };
 
 #endif

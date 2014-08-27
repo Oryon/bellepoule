@@ -31,7 +31,7 @@ class Glade : public Object
     GtkWidget *GetRootWidget    ();
     GtkWidget *GetWidget        (const gchar *name);
     GObject   *GetGObject       (const gchar *name);
-    void       DetachFromParent (GtkWidget *widget);
+    void       DetachFromParent (GtkWidget   *widget);
     GSList    *GetObjectList    ();
 
   private:

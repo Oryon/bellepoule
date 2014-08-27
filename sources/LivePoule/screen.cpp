@@ -68,6 +68,12 @@ Screen::Screen ()
                                             &purple);
     }
   }
+
+  _wifi_code = new WifiCode ("Piste");
+
+  _http_server = new Net::HttpServer (this,
+                                      HttpPostCbk,
+                                      NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -87,17 +93,24 @@ void Screen::Rescale (gdouble factor)
 
     if (GTK_IS_LABEL (object))
     {
-      GtkLabel          *label      = GTK_LABEL (object);
-      PangoAttrList     *attr_list  = pango_attr_list_copy (gtk_label_get_attributes (label));
-      PangoAttrIterator *iter       = pango_attr_list_get_iterator (attr_list);
-      PangoAttrFloat    *scale_attr = (PangoAttrFloat *) pango_attr_iterator_get (iter, PANGO_ATTR_SCALE);
+      GtkLabel      *label     = GTK_LABEL (object);
+      PangoAttrList *attr_list = pango_attr_list_copy (gtk_label_get_attributes (label));
 
-      scale_attr->value *= factor;
-      gtk_label_set_attributes (label,
-                                attr_list);
+      if (attr_list)
+      {
+        PangoAttrIterator *iter       = pango_attr_list_get_iterator (attr_list);
+        PangoAttrFloat    *scale_attr = (PangoAttrFloat *) pango_attr_iterator_get (iter, PANGO_ATTR_SCALE);
 
-      pango_attr_iterator_destroy (iter);
-      pango_attr_list_unref (attr_list);
+        if (scale_attr)
+        {
+          scale_attr->value *= factor;
+          gtk_label_set_attributes (label,
+                                    attr_list);
+        }
+
+        pango_attr_iterator_destroy (iter);
+        pango_attr_list_unref (attr_list);
+      }
     }
 
     current = g_slist_next (current);
@@ -115,6 +128,60 @@ void Screen::Unfullscreen ()
 }
 
 // --------------------------------------------------------------------------------
+void Screen::ToggleWifiCode ()
+{
+  GtkWidget *w = _glade->GetWidget ("code_image");
+
+  if (gtk_widget_get_visible (w))
+  {
+    gtk_widget_set_visible (w,
+                            FALSE);
+  }
+  else
+  {
+    _wifi_code->ResetKey ();
+
+    {
+      GdkPixbuf *pixbuf = _wifi_code->GetPixbuf ();
+
+      gtk_image_set_from_pixbuf (GTK_IMAGE (_glade->GetWidget ("code_image")),
+                                 pixbuf);
+      g_object_ref (pixbuf);
+    }
+
+    gtk_widget_set_visible (w,
+                            TRUE);
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Screen::OnHttpPost (const gchar *data)
+{
+  gboolean result = FALSE;
+
+  if (data)
+  {
+  }
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Screen::GetSecretKey (const gchar *authentication_scheme)
+{
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
+                              const gchar             *data)
+{
+  Screen *screen = (Screen *) client;
+
+  return screen->OnHttpPost (data);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget,
                                                              GdkEventKey *event,
                                                              Object      *owner)
@@ -125,6 +192,13 @@ extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget
 
     s->Unfullscreen ();
   }
+  else if (event->keyval == GDK_KEY_space)
+  {
+    Screen *s = dynamic_cast <Screen *> (owner);
+
+    s->ToggleWifiCode ();
+  }
+
 
   return FALSE;
 }

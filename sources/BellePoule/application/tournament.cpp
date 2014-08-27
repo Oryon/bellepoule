@@ -300,8 +300,8 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
       {
         wifi_code = _admin_wifi_code;
       }
-      else if (   (strcmp (tokens[1], "HandShake")  == 0)
-               || (strcmp (tokens[1], "Score")      == 0))
+      else if (   (strcmp (tokens[1], "HandShake") == 0)
+               || (strcmp (tokens[1], "Score")     == 0))
       {
         GSList *current = _referee_list;
         guint   ref     = atoi (tokens[2]);

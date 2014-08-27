@@ -35,6 +35,8 @@ class WifiCode : public FlashCode
 
     gchar *GetKey ();
 
+    void ResetKey ();
+
   private:
     static Net::WifiNetwork *_wifi_network;
     Player                  *_player;

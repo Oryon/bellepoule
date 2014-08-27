@@ -64,7 +64,7 @@ void WifiCode::SetWifiNetwork (Net::WifiNetwork *network)
 // --------------------------------------------------------------------------------
 gchar *WifiCode::GetNetwork ()
 {
-  if (_wifi_network->IsValid ())
+  if (_wifi_network && (_wifi_network->IsValid ()))
   {
     return g_strdup_printf ("[%s-%s-%s]",
                             _wifi_network->GetSSID (),
@@ -151,6 +151,13 @@ gchar *WifiCode::GetIpAddress ()
 #endif
 
   return ip_address;
+}
+
+// --------------------------------------------------------------------------------
+void WifiCode::ResetKey ()
+{
+  g_free (_key);
+  _key = NULL;
 }
 
 // --------------------------------------------------------------------------------

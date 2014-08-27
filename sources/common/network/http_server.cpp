@@ -161,7 +161,7 @@ namespace Net
   {
     int ret = MHD_NO;
 
-    if (strcmp (method, "GET") == 0)
+    if (_http_GET_cbk && (strcmp (method, "GET") == 0))
     {
       if (*upload_data_size == 0)
       {
@@ -188,7 +188,7 @@ namespace Net
         }
       }
     }
-    else if (strcmp (method, "POST") == 0)
+    else if (_http_POST_cbk && (strcmp (method, "POST") == 0))
     {
       if (*upload_data_size)
       {
