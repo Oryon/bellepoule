@@ -104,10 +104,16 @@ Glade::~Glade ()
 }
 
 // --------------------------------------------------------------------------------
+GSList *Glade::GetObjectList ()
+{
+  return gtk_builder_get_objects (_glade_xml);
+}
+
+// --------------------------------------------------------------------------------
 void Glade::StampAllWidgets ()
 {
-  GSList *objects      = gtk_builder_get_objects (_glade_xml);
-  GSList *current      = objects;
+  GSList *objects = gtk_builder_get_objects (_glade_xml);
+  GSList *current = objects;
 
   while (current)
   {

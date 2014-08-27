@@ -14,31 +14,24 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef glade_hpp
-#define glade_hpp
+#ifndef screen_hpp
+#define screen_hpp
 
 #include <gtk/gtk.h>
 
-#include "object.hpp"
+#include "util/module.hpp"
 
-class Glade : public Object
+class Screen : public Module
 {
   public:
-     Glade (const gchar *file_name,
-            Object      *owner);
-    virtual ~Glade ();
+    Screen ();
 
-    GtkWidget *GetRootWidget    ();
-    GtkWidget *GetWidget        (const gchar *name);
-    GObject   *GetGObject       (const gchar *name);
-    void       DetachFromParent (GtkWidget *widget);
-    GSList    *GetObjectList    ();
+    void Unfullscreen ();
 
   private:
-    static guint  _stamp;
-    GtkBuilder   *_glade_xml;
+    virtual ~Screen ();
 
-    void StampAllWidgets ();
+    void Rescale (gdouble factor);
 };
 
 #endif

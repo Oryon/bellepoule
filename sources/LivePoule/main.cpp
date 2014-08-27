@@ -14,16 +14,10 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <glib/gi18n.h>
-
-#include <unistd.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
+#include "screen.hpp"
 
 // --------------------------------------------------------------------------------
 #ifdef DEBUG
@@ -60,13 +54,12 @@ static void LogHandler (const gchar    *log_domain,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  gchar      *install_dirname;
-  GtkBuilder *_glade_xml;
-
   // g_mem_set_vtable (glib_mem_profiler_table);
 
   // Init
   {
+    gchar *install_dirname;
+
     {
       gchar *binary_dir;
 
@@ -80,7 +73,7 @@ int main (int argc, char **argv)
 #ifdef DEBUG
       g_log_set_default_handler (LogHandler,
                                  NULL);
-      install_dirname = g_build_filename (binary_dir, "..", NULL);
+      install_dirname = g_build_filename (binary_dir, "..", "..", "..", NULL);
 #else
       {
         gchar *basename = g_path_get_basename (argv[0]);
@@ -95,9 +88,8 @@ int main (int argc, char **argv)
         g_free (basename);
       }
 #endif
-      g_free (binary_dir);
 
-      Object::SetProgramPath (install_dirname);
+      g_free (binary_dir);
     }
 
     {
@@ -108,63 +100,41 @@ int main (int argc, char **argv)
     }
 
     //Object::Track ("Player");
+
+    {
+      Object::SetProgramPath (install_dirname);
+
+      {
+        gchar *translation_path = g_build_filename (install_dirname, "resources", "countries", "translations", NULL);
+
+        bindtextdomain ("countries", translation_path);
+        bind_textdomain_codeset ("countries", "UTF-8");
+
+        g_free (translation_path);
+      }
+
+      {
+        gchar *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
+
+        bindtextdomain ("BellePoule", translation_path);
+        bind_textdomain_codeset ("BellePoule", "UTF-8");
+
+        g_free (translation_path);
+      }
+
+      textdomain ("BellePoule");
+    }
+
+    g_free (install_dirname);
   }
 
   {
-    GError *error = NULL;
-    gchar  *path = g_build_filename (install_dirname, "resources", "LivePoule.glade", NULL);
+    Screen *screen = new Screen ();
 
-    _glade_xml = gtk_builder_new ();
 
-    gtk_builder_add_from_file (_glade_xml,
-                               path,
-                               &error);
-    if (error != NULL)
-    {
-      g_print ("<<%s>> %s\n", path, error->message);
-      g_error_free (error);
-
-      gtk_main_quit ();
-    }
-    g_free (path);
-
-    gtk_builder_connect_signals (_glade_xml,
-                                 NULL);
-  }
-
-  {
-    GtkWidget *widget = (GtkWidget *) (gtk_builder_get_object (_glade_xml,
-                                                               "root"));
-
-    {
-      GdkRGBA green = {0.137, 0.568, 0.137, 1.0};
-
-      gtk_widget_override_background_color ((GtkWidget *) gtk_builder_get_object (_glade_xml, "green_light_viewport"),
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &green);
-    }
-    {
-      GdkRGBA red = {0.568, 0.137, 0.137, 1.0};
-
-      gtk_widget_override_background_color ((GtkWidget *) gtk_builder_get_object (_glade_xml, "red_light_viewport"),
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &red);
-    }
-    {
-      GdkRGBA purple = {(double) 0xAD / 255.0, (double) 0xA7 / 255.0, (double) 0xC8 / 255.0, 1.0};
-
-      gtk_widget_override_background_color ((GtkWidget *) gtk_builder_get_object (_glade_xml, "title_viewport"),
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &purple);
-    }
-
-    gtk_widget_show_all (widget);
   }
 
   gtk_main ();
-
-  g_free (install_dirname);
-  g_object_unref (G_OBJECT (_glade_xml));
 
   return 0;
 }

@@ -3,7 +3,6 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="LivePoule" />
-    <Option execution_dir="/media/usb0/BellePoule/bazaar/trunk/linux/LivePoule" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -40,7 +39,8 @@
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGDK_DISABLE_DEPRECATED" />
 			<Add option="-DGSEAL_ENABLE" />
-      <Add directory="../../sources" />
+      <Add directory="../../sources/common" />
+      <Add directory="../../sources/LivePoule" />
 			<Add directory="/usr/include/gtk-3.0" />
 			<Add directory="/usr/include" />
 			<Add directory="/usr/include/atk-1.0" />
@@ -83,10 +83,26 @@
 			<Add library="qrencode" />
 		</Linker>
     <Unit filename="../../sources/LivePoule/main.cpp" />
-    <Unit filename="../../sources/util/object.hpp" />
-    <Unit filename="../../sources/util/object.cpp" />
-    <Unit filename="../../sources/util/flash_code.hpp" />
-    <Unit filename="../../sources/util/flash_code.cpp" />
+    <Unit filename="../../sources/LivePoule/screen.cpp" />
+    <Unit filename="../../sources/LivePoule/screen.hpp" />
+    <Unit filename="../../sources/common/util/attribute.cpp" />
+    <Unit filename="../../sources/common/util/attribute.hpp" />
+    <Unit filename="../../sources/common/util/attribute_desc.cpp" />
+    <Unit filename="../../sources/common/util/attribute_desc.hpp" />
+    <Unit filename="../../sources/common/util/dnd_config.cpp" />
+    <Unit filename="../../sources/common/util/dnd_config.hpp" />
+    <Unit filename="../../sources/common/util/filter.cpp" />
+    <Unit filename="../../sources/common/util/filter.hpp" />
+    <Unit filename="../../sources/common/util/flash_code.cpp" />
+    <Unit filename="../../sources/common/util/flash_code.hpp" />
+    <Unit filename="../../sources/common/util/glade.cpp" />
+    <Unit filename="../../sources/common/util/glade.hpp" />
+    <Unit filename="../../sources/common/util/module.cpp" />
+    <Unit filename="../../sources/common/util/module.hpp" />
+    <Unit filename="../../sources/common/util/object.cpp" />
+    <Unit filename="../../sources/common/util/object.hpp" />
+    <Unit filename="../../sources/common/util/sensitivity_trigger.cpp" />
+    <Unit filename="../../sources/common/util/sensitivity_trigger.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
