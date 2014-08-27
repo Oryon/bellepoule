@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=3.0
-Type=Application
-Terminal=false
-Exec=/usr/bin/__EXEC__
-Icon=/usr/share/__EXEC__/resources/glade/exe.png
-Name=__EXEC__
-Comment=Fencing Management Software
-Categories=Utility

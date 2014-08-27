@@ -603,7 +603,6 @@
                 <property name="search_column">0</property>
                 <property name="enable_tree_lines">True</property>
                 <signal name="row-activated" handler="on_players_list_row_activated" swapped="no"/>
-                <signal name="key-press-event" handler="on_players_list_key_press_event" swapped="no"/>
               </object>
             </child>
           </object>
