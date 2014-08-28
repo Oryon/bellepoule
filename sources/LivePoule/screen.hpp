@@ -23,6 +23,7 @@
 #include "network/http_server.hpp"
 #include "network/wifi_network.hpp"
 #include "util/wifi_code.hpp"
+#include "timer.hpp"
 
 class Screen : public Module, Net::HttpServer::Client
 {
@@ -36,6 +37,7 @@ class Screen : public Module, Net::HttpServer::Client
   private:
     Net::HttpServer *_http_server;
     WifiCode        *_wifi_code;
+    Timer           *_timer;
 
     virtual ~Screen ();
 
@@ -53,8 +55,6 @@ class Screen : public Module, Net::HttpServer::Client
     void SetColor (const gchar *color);
 
     void SetTitle (const gchar *title);
-
-    void SetTimer (gint sec);
 
     void SetFencer (const gchar *light_color,
                     const gchar *data,

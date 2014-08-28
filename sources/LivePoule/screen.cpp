@@ -62,6 +62,8 @@ Screen::Screen ()
     }
   }
 
+  _timer = new Timer (_glade->GetWidget ("timer"));
+
   _wifi_code = new WifiCode ("Piste");
 
   _http_server = new Net::HttpServer (this,
@@ -73,6 +75,7 @@ Screen::Screen ()
 // --------------------------------------------------------------------------------
 Screen::~Screen ()
 {
+  _timer->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -161,7 +164,7 @@ gboolean Screen::OnHttpPost (const gchar *data)
                               FALSE);
       SetColor ("#FFFFFF00");
       SetTitle ("");
-      SetTimer (3*60);
+      _timer->Set (3*60);
       SetFencer ("Red",
                  "fencer",
                  "");
@@ -240,11 +243,22 @@ void Screen::SetCompetition (GKeyFile *key_file)
 // --------------------------------------------------------------------------------
 void Screen::SetTimer (GKeyFile *key_file)
 {
-  gint value = g_key_file_get_integer (key_file,
-                                       "Timer",
-                                       "value",
-                                       NULL);
-  SetTimer (value);
+  {
+    gint value = g_key_file_get_integer (key_file,
+                                         "Timer",
+                                         "value",
+                                         NULL);
+    _timer->Set (value);
+  }
+
+  {
+    gchar *state = g_key_file_get_string (key_file,
+                                          "Timer",
+                                          "state",
+                                          NULL);
+    _timer->SetState (state);
+    g_free (state);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -272,20 +286,6 @@ void Screen::SetTitle (const gchar *title)
 
     gtk_label_set_text (label,
                         title);
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Screen::SetTimer (gint sec)
-{
-  if (sec)
-  {
-    GtkLabel *label = GTK_LABEL (_glade->GetWidget ("timer"));
-    gchar    *text  = g_strdup_printf ("%02d:%02d", sec/60, sec%60);
-
-    gtk_label_set_text (label,
-                        text);
-    g_free (text);
   }
 }
 
