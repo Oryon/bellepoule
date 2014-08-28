@@ -23,6 +23,7 @@
 #include "network/http_server.hpp"
 #include "network/wifi_network.hpp"
 #include "util/wifi_code.hpp"
+#include "timer.hpp"
 
 class Screen : public Module, Net::HttpServer::Client
 {
@@ -36,6 +37,7 @@ class Screen : public Module, Net::HttpServer::Client
   private:
     Net::HttpServer *_http_server;
     WifiCode        *_wifi_code;
+    Timer           *_timer;
 
     virtual ~Screen ();
 
@@ -43,12 +45,20 @@ class Screen : public Module, Net::HttpServer::Client
 
     void ChangeNumber (gint step);
 
-    void SetTitle (const gchar *name,
-                   const gchar *color);
+    void SetCompetition (GKeyFile *key_file);
+
+    void SetTimer (GKeyFile *key_file);
 
     void SetScore (const gchar *light_color,
-                   const gchar *name,
-                   const gchar *score);
+                   GKeyFile    *key_file);
+
+    void SetColor (const gchar *color);
+
+    void SetTitle (const gchar *title);
+
+    void SetFencer (const gchar *light_color,
+                    const gchar *data,
+                    const gchar *name);
 
     gboolean OnHttpPost (const gchar *data);
 

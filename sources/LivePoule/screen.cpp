@@ -60,14 +60,9 @@ Screen::Screen ()
                                             GTK_STATE_FLAG_NORMAL,
                                             &red);
     }
-    {
-      GdkRGBA purple = {(double) 0xAD / 255.0, (double) 0xA7 / 255.0, (double) 0xC8 / 255.0, 1.0};
-
-      gtk_widget_override_background_color (_glade->GetWidget ("title_viewport"),
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &purple);
-    }
   }
+
+  _timer = new Timer (_glade->GetWidget ("timer"));
 
   _wifi_code = new WifiCode ("Piste");
 
@@ -80,6 +75,7 @@ Screen::Screen ()
 // --------------------------------------------------------------------------------
 Screen::~Screen ()
 {
+  _timer->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -166,10 +162,173 @@ gboolean Screen::OnHttpPost (const gchar *data)
     {
       gtk_widget_set_visible (_glade->GetWidget ("code_image"),
                               FALSE);
+      SetColor ("#FFFFFF00");
+      SetTitle ("");
+      _timer->Set (3*60);
+      SetFencer ("Red",
+                 "fencer",
+                 "");
+      SetFencer ("Red",
+                 "score",
+                 "0");
+      SetFencer ("Green",
+                 "fencer",
+                 "");
+      SetFencer ("Green",
+                 "score",
+                 "0");
+      result = TRUE;
+    }
+    else
+    {
+      const gchar *key_file_data = strstr (data, "# LivePoule KeyFile");
+
+      if (key_file_data)
+      {
+        GKeyFile *key_file = g_key_file_new ();
+
+        if (g_key_file_load_from_data (key_file,
+                                       key_file_data,
+                                       -1,
+                                       G_KEY_FILE_NONE,
+                                       NULL))
+        {
+          SetCompetition (key_file);
+
+          SetTimer (key_file);
+
+          SetScore ("Red",
+                    key_file);
+
+          SetScore ("Green",
+                    key_file);
+
+          result = TRUE;
+        }
+
+        g_key_file_free (key_file);
+      }
     }
   }
 
   return result;
+}
+
+// --------------------------------------------------------------------------------
+void Screen::SetCompetition (GKeyFile *key_file)
+{
+  {
+    gchar *color = g_key_file_get_string (key_file,
+                                          "Competiton",
+                                          "color",
+                                          NULL);
+    {
+      SetColor (color);
+      g_free (color);
+    }
+  }
+
+  {
+    gchar *title = g_key_file_get_string (key_file,
+                                          "Competiton",
+                                          "name",
+                                          NULL);
+    {
+      SetTitle (title);
+      g_free (title);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Screen::SetTimer (GKeyFile *key_file)
+{
+  {
+    gint value = g_key_file_get_integer (key_file,
+                                         "Timer",
+                                         "value",
+                                         NULL);
+    _timer->Set (value);
+  }
+
+  {
+    gchar *state = g_key_file_get_string (key_file,
+                                          "Timer",
+                                          "state",
+                                          NULL);
+    _timer->SetState (state);
+    g_free (state);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Screen::SetColor (const gchar *color)
+{
+  if (color)
+  {
+    GdkRGBA rgba;
+
+    gdk_rgba_parse (&rgba,
+                    color);
+
+    gtk_widget_override_background_color (_glade->GetWidget ("title_viewport"),
+                                          GTK_STATE_FLAG_NORMAL,
+                                          &rgba);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Screen::SetTitle (const gchar *title)
+{
+  if (title)
+  {
+    GtkLabel *label = GTK_LABEL (_glade->GetWidget ("title"));
+
+    gtk_label_set_text (label,
+                        title);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Screen::SetScore (const gchar *light_color,
+                       GKeyFile    *key_file)
+{
+  {
+    gchar *name = g_key_file_get_string (key_file,
+                                         light_color,
+                                         "fencer",
+                                         NULL);
+    SetFencer (light_color,
+               "fencer",
+               name);
+    g_free (name);
+  }
+  {
+    gchar *name = g_key_file_get_string (key_file,
+                                         light_color,
+                                         "score",
+                                         NULL);
+    SetFencer (light_color,
+               "score",
+               name);
+    g_free (name);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Screen::SetFencer (const gchar *light_color,
+                        const gchar *data,
+                        const gchar *name)
+{
+  if (name)
+  {
+    gchar    *id    = g_strdup_printf ("%s_%s", light_color, data);
+    GtkLabel *label = GTK_LABEL (_glade->GetWidget (id));
+
+    gtk_label_set_text (label,
+                        name);
+    g_free (id);
+  }
 }
 
 // --------------------------------------------------------------------------------
