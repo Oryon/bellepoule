@@ -43,12 +43,22 @@ class Screen : public Module, Net::HttpServer::Client
 
     void ChangeNumber (gint step);
 
-    void SetTitle (const gchar *name,
-                   const gchar *color);
+    void SetCompetition (GKeyFile *key_file);
+
+    void SetTimer (GKeyFile *key_file);
 
     void SetScore (const gchar *light_color,
-                   const gchar *name,
-                   const gchar *score);
+                   GKeyFile    *key_file);
+
+    void SetColor (const gchar *color);
+
+    void SetTitle (const gchar *title);
+
+    void SetTimer (gint sec);
+
+    void SetFencer (const gchar *light_color,
+                    const gchar *data,
+                    const gchar *name);
 
     gboolean OnHttpPost (const gchar *data);
 
