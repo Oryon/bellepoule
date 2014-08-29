@@ -24,6 +24,7 @@
 #include "network/wifi_network.hpp"
 #include "util/wifi_code.hpp"
 #include "timer.hpp"
+#include "light.hpp"
 
 class Screen : public Module, Net::HttpServer::Client
 {
@@ -39,7 +40,15 @@ class Screen : public Module, Net::HttpServer::Client
     WifiCode        *_wifi_code;
     Timer           *_timer;
 
+    Light           *_red_hit_light;
+    Light           *_red_failure_light;
+
+    Light           *_green_hit_light;
+    Light           *_green_failure_light;
+
     virtual ~Screen ();
+
+    void ResetDisplay ();
 
     void Rescale (gdouble factor);
 

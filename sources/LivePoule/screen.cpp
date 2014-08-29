@@ -27,6 +27,7 @@ Screen::Screen ()
   // Show the main window
   {
     gtk_window_fullscreen (GTK_WINDOW (window));
+
     gtk_widget_show_all (window);
 
     gtk_window_get_size (GTK_WINDOW (window),
@@ -44,23 +45,24 @@ Screen::Screen ()
     Rescale (MIN (full_width/glade_width, full_height/glade_height));
   }
 
-  // Colorizes the lights
+  // Lights
   {
-    {
-      GdkRGBA green = {0.137, 0.568, 0.137, 1.0};
+    _red_hit_light       = new Light (_glade->GetWidget ("red_hit_light"),
+                                      "off",       "#555555",
+                                      "valid",     "#b01313",
+                                      "non-valid", "#ffffff", NULL);
+    _red_failure_light   = new Light (_glade->GetWidget ("red_failure_light"),
+                                      "on", "#ecdf11", NULL);
 
-      gtk_widget_override_background_color (_glade->GetWidget ("green_light_viewport"),
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &green);
-    }
-    {
-      GdkRGBA red = {0.568, 0.137, 0.137, 1.0};
-
-      gtk_widget_override_background_color (_glade->GetWidget ("red_light_viewport"),
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &red);
-    }
+    _green_hit_light     = new Light (_glade->GetWidget ("green_hit_light"),
+                                      "off",       "#555555",
+                                      "valid",     "#13b013",
+                                      "non-valid", "#ffffff", NULL);
+    _green_failure_light = new Light (_glade->GetWidget ("green_failure_light"),
+                                      "on", "#ecdf11", NULL);
   }
+
+  ResetDisplay ();
 
   _timer = new Timer (_glade->GetWidget ("timer"));
 
@@ -76,6 +78,30 @@ Screen::Screen ()
 Screen::~Screen ()
 {
   _timer->Release ();
+}
+
+// --------------------------------------------------------------------------------
+void Screen::ResetDisplay ()
+{
+  SetColor ("#93a24c");
+
+  SetTitle ("");
+
+  _timer->Set (0);
+
+  SetFencer ("red",
+             "fencer",
+             "");
+  SetFencer ("red",
+             "score",
+             "");
+
+  SetFencer ("green",
+             "fencer",
+             "");
+  SetFencer ("green",
+             "score",
+             "");
 }
 
 // --------------------------------------------------------------------------------
@@ -108,6 +134,17 @@ void Screen::Rescale (gdouble factor)
         pango_attr_iterator_destroy (iter);
         pango_attr_list_unref (attr_list);
       }
+    }
+    else
+    {
+      GdkRGBA rgba;
+
+      gdk_rgba_parse (&rgba,
+                      "#333333");
+
+      gtk_widget_override_background_color (GTK_WIDGET (object),
+                                            GTK_STATE_FLAG_NORMAL,
+                                            &rgba);
     }
 
     current = g_slist_next (current);
@@ -162,21 +199,18 @@ gboolean Screen::OnHttpPost (const gchar *data)
     {
       gtk_widget_set_visible (_glade->GetWidget ("code_image"),
                               FALSE);
-      SetColor ("#FFFFFF00");
-      SetTitle ("");
+
+      ResetDisplay ();
+
       _timer->Set (3*60);
-      SetFencer ("Red",
-                 "fencer",
-                 "");
-      SetFencer ("Red",
+
+      SetFencer ("red",
                  "score",
                  "0");
-      SetFencer ("Green",
-                 "fencer",
-                 "");
-      SetFencer ("Green",
+      SetFencer ("green",
                  "score",
                  "0");
+
       result = TRUE;
     }
     else
@@ -196,11 +230,10 @@ gboolean Screen::OnHttpPost (const gchar *data)
           SetCompetition (key_file);
 
           SetTimer (key_file);
-
-          SetScore ("Red",
+          SetScore ("red",
                     key_file);
 
-          SetScore ("Green",
+          SetScore ("green",
                     key_file);
 
           result = TRUE;
@@ -219,7 +252,7 @@ void Screen::SetCompetition (GKeyFile *key_file)
 {
   {
     gchar *color = g_key_file_get_string (key_file,
-                                          "Competiton",
+                                          "competition",
                                           "color",
                                           NULL);
     {
@@ -230,7 +263,7 @@ void Screen::SetCompetition (GKeyFile *key_file)
 
   {
     gchar *title = g_key_file_get_string (key_file,
-                                          "Competiton",
+                                          "competition",
                                           "name",
                                           NULL);
     {
@@ -245,15 +278,49 @@ void Screen::SetTimer (GKeyFile *key_file)
 {
   {
     gint value = g_key_file_get_integer (key_file,
-                                         "Timer",
+                                         "timer",
                                          "value",
                                          NULL);
     _timer->Set (value);
+    if (value)
+    {
+      static int toto = 0;
+      if (toto == 0)
+      {
+        _red_hit_light->SwitchOn ("valid");
+        _green_hit_light->SwitchOff ();
+        _green_failure_light->SwitchOn ();
+        toto++;
+      }
+      else if (toto == 1)
+      {
+        _red_hit_light->SwitchOff ();
+        _green_hit_light->SwitchOn ("valid");
+        _green_failure_light->SwitchOff ();
+        toto++;
+      }
+      else if (toto == 2)
+      {
+        _red_hit_light->SwitchOn ("valid");
+        _green_hit_light->SwitchOn ("non-valid");
+        _red_failure_light->SwitchOn ();
+        _green_failure_light->SwitchOn ();
+        toto++;
+      }
+      else if (toto == 3)
+      {
+        _red_hit_light->SwitchOff ();
+        _green_hit_light->SwitchOff ();
+        _red_failure_light->SwitchOff ();
+        _green_failure_light->SwitchOff ();
+        toto = 0;
+      }
+    }
   }
 
   {
     gchar *state = g_key_file_get_string (key_file,
-                                          "Timer",
+                                          "timer",
                                           "state",
                                           NULL);
     _timer->SetState (state);
@@ -364,7 +431,5 @@ extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget
     s->ToggleWifiCode ();
   }
 
-
   return FALSE;
 }
-

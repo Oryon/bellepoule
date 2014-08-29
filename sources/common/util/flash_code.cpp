@@ -64,30 +64,28 @@ GdkPixbuf *FlashCode::GetPixbuf (guint pixel_size)
     }
 
     {
-      GdkPixbuf *small_pixbuf;
-      guint      stride = qr_code->width * 3;
-      guchar    *data   = g_new (guchar, qr_code->width * stride);
+      GdkPixbuf   *small_pixbuf;
+      const guint  margin     = 4;
+      guint        dst_width  = qr_code->width + 2*margin;
+      guint        dst_stride = dst_width * 3;
+      guchar      *data       = g_new (guchar, dst_width * dst_stride);
+
+      memset (data, 0xFF, dst_width * dst_stride);
 
       for (gint y = 0; y < qr_code->width; y++)
       {
-        guchar *row = qr_code->data + (y * qr_code->width);
-        guchar *p   = data + (y * stride);
+        guchar *src  = qr_code->data + (y * qr_code->width);
+        guchar *dest = data + margin*3 + ((y + margin) * dst_stride);
 
         for (gint x = 0; x < qr_code->width; x++)
         {
-          if (row[x] & 0x1)
+          if (src[x] & 0x1)
           {
-            p[0] = 0x0;
-            p[1] = 0x0;
-            p[2] = 0x0;
+            dest[0] = 0x0;
+            dest[1] = 0x0;
+            dest[2] = 0x0;
           }
-          else
-          {
-            p[0] = 0xFF;
-            p[1] = 0xFF;
-            p[2] = 0xFF;
-          }
-          p += 3;
+          dest += 3;
         }
       }
 
@@ -95,16 +93,16 @@ GdkPixbuf *FlashCode::GetPixbuf (guint pixel_size)
                                                GDK_COLORSPACE_RGB,
                                                FALSE,
                                                8,
-                                               qr_code->width,
-                                               qr_code->width,
-                                               stride,
+                                               dst_width,
+                                               dst_width,
+                                               dst_stride,
                                                DestroyPixbuf,
                                                NULL);
 
       pixbuf = gdk_pixbuf_scale_simple (small_pixbuf,
-                                         qr_code->width * pixel_size,
-                                         qr_code->width * pixel_size,
-                                         GDK_INTERP_NEAREST);
+                                        dst_width * pixel_size,
+                                        dst_width * pixel_size,
+                                        GDK_INTERP_NEAREST);
       g_object_unref (small_pixbuf);
     }
   }
