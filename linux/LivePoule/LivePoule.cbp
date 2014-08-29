@@ -84,6 +84,8 @@
 			<Add library="crypto" />
 		</Linker>
     <Unit filename="../../sources/LivePoule/main.cpp" />
+    <Unit filename="../../sources/LivePoule/light.cpp" />
+    <Unit filename="../../sources/LivePoule/light.hpp" />
     <Unit filename="../../sources/LivePoule/screen.cpp" />
     <Unit filename="../../sources/LivePoule/screen.hpp" />
     <Unit filename="../../sources/LivePoule/timer.cpp" />
