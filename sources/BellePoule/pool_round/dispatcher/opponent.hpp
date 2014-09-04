@@ -55,7 +55,7 @@ namespace Pool
 
       gchar *GetName ();
 
-      void Dump ();
+      void Dump (guint max_fitness);
 
       static gint CompareFitness (Opponent *a,
                                   Opponent *b);

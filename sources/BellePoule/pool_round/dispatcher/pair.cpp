@@ -72,7 +72,7 @@ namespace Pool
   {
     if ((_a_fitness == 0) || (_b_fitness == 0))
     {
-      printf (RED "%s - %s\n" ESC, _a->GetName (), _b->GetName ());
+      g_print (RED "%s - %s\n" ESC, _a->GetName (), _b->GetName ());
     }
     return ((_a_fitness == 0) || (_b_fitness == 0));
   }

@@ -29,7 +29,7 @@ namespace Pool
     public:
       static const guint _MAX_POOL_SIZE = 17;
 
-      Dispatcher ();
+      Dispatcher (const gchar *name);
 
       Dispatcher (guint        pool_size,
                   const gchar *name,

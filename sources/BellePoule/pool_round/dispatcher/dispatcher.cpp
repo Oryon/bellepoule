@@ -20,11 +20,11 @@
 namespace Pool
 {
   // --------------------------------------------------------------------------------
-  Dispatcher::Dispatcher ()
+  Dispatcher::Dispatcher (const gchar *name)
     : Object ("Dispatcher")
   {
     _pool_size     = 0;
-    _name          = g_strdup ("Generated");
+    _name          = g_strdup (name);
     _opponent_list = NULL;
     _pair_list     = NULL;
   }
@@ -187,12 +187,15 @@ namespace Pool
     {
       SpreadOpponents (_opponent_list);
       CreatePairs     (_opponent_list);
-
       RefreshFitness ();
+
+#ifdef DEBUG
       if (_pool_size > 4)
       {
         FixErrors ();
+        RefreshFitness ();
       }
+#endif
     }
 
     g_hash_table_destroy (affinity_distribution);
@@ -206,7 +209,6 @@ namespace Pool
     {
       GList *current = _opponent_list;
 
-      printf ("%s\n", g_quark_to_string (teammate_quark));
       while (current)
       {
         Opponent *o = (Opponent *) current->data;
@@ -265,18 +267,17 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Dispatcher::CreatePairs (GList *opponent_list)
   {
-    GList *current   = opponent_list;
-    gint   iteration = 1;
+    GList *working_list = g_list_copy (opponent_list);
+    GList *current      = working_list;
+    gint   iteration    = 1;
 
     while (current)
     {
       Opponent *a = (Opponent *) current->data;
-      printf (BLUE "%s" ESC, a->GetName ());
       Opponent *b = a->GetBestOpponent ();
 
       if (b && ((b->GetFitness () == -1) || (b->GetFitness () < iteration-1)))
       {
-        printf (YELLOW "%s\n" ESC, b->GetName ());
         _pair_list = g_list_append (_pair_list,
                                     new Pair (iteration, a, b));
 
@@ -290,11 +291,13 @@ namespace Pool
         current = g_list_next (current);
       }
     }
+    g_list_free (working_list);
   }
 
   // --------------------------------------------------------------------------------
   void Dispatcher::FixErrors ()
   {
+#if 0
     GList *current = _pair_list;
 
     while (current)
@@ -303,7 +306,6 @@ namespace Pool
 
       if (current_pair->HasFitnessError ())
       {
-#if 0
         GList *tail = g_list_copy (current);
 
         while (current)
@@ -317,11 +319,11 @@ namespace Pool
         _pair_list = g_list_concat (tail,
                                     _pair_list);
         break;
-#endif
       }
 
       current = g_list_next (current);
     }
+#endif
   }
 
   // --------------------------------------------------------------------------------
@@ -349,11 +351,12 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Dispatcher::Dump ()
   {
-    guint *fitness_table = g_new0 (guint, _pool_size);
+#ifdef DEBUG
+    guint  pair_count    = GetPairCount ();
+    guint  max_fitness   = 0;
+    guint *fitness_table = g_new0 (guint, pair_count);
 
     printf (GREEN "**** %s\n" ESC, _name);
-
-    RefreshFitness ();
 
     // Flat list
     {
@@ -367,8 +370,11 @@ namespace Pool
 
         pair->Dump ();
 
-        if (a_fitness < _pool_size) fitness_table[a_fitness]++;
-        if (b_fitness < _pool_size) fitness_table[b_fitness]++;
+        if (a_fitness < pair_count) fitness_table[a_fitness]++;
+        if (b_fitness < pair_count) fitness_table[b_fitness]++;
+
+        if (a_fitness > max_fitness) max_fitness = a_fitness;
+        if (b_fitness > max_fitness) max_fitness = b_fitness;
 
         current = g_list_next (current);
       }
@@ -379,7 +385,7 @@ namespace Pool
       GList *current = _opponent_list;
 
       printf ("   ");
-      for (guint i = 0; i < _pool_size; i++)
+      for (guint i = 0; i < max_fitness+1; i++)
       {
         printf ("; Rest %2d", i);
       }
@@ -389,14 +395,14 @@ namespace Pool
       {
         Opponent *opponent = (Opponent *) current->data;
 
-        opponent->Dump ();
+        opponent->Dump (max_fitness+1);
 
         current = g_list_next (current);
       }
     }
 
     // Global digest
-    for (guint i = 0; i < _pool_size; i++)
+    for (guint i = 0; i < max_fitness+1; i++)
     {
       if (fitness_table[i])
       {
@@ -408,5 +414,6 @@ namespace Pool
     printf ("\n\n");
 
     g_free (fitness_table);
+#endif
   }
 }

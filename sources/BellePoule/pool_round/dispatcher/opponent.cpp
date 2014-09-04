@@ -105,7 +105,6 @@ namespace Pool
       {
         Opponent *target = (Opponent *) current->data;
 
-        printf (GREEN "    %s" ESC, target->GetName ());
         if (target->IsCompatibleWith (this))
         {
           return target;
@@ -178,15 +177,23 @@ namespace Pool
   {
     if (_fencer)
     {
-      return g_strdup_printf ("%s (%d)", _fencer->GetName (), _fitness);
+      return _fencer->GetName ();
     }
 
     return NULL;
   }
 
   // --------------------------------------------------------------------------------
-  void Opponent::Dump ()
+  void Opponent::Dump (guint max_fitness)
   {
-    printf ("  %s\n", _fencer->GetName ());
+    if (_fitness_profile)
+    {
+      printf (" %2d", _id);
+      for (guint i = 0; i < max_fitness; i++)
+      {
+        printf (";       %2d", _fitness_profile[i]);
+      }
+      printf ("\n");
+    }
   }
 }

@@ -54,8 +54,6 @@ namespace Pool
     _rand_seed          = rand_seed;
     _xml_player_tag     = xml_player_tag;
 
-    _dispatcher = new Dispatcher ();
-
     _status_cbk_data = NULL;
     _status_cbk      = NULL;
 
@@ -67,6 +65,8 @@ namespace Pool
       _name = GetUndivadableText (text);
       g_free (text);
     }
+
+    _dispatcher = new Dispatcher (_name);
   }
 
   // --------------------------------------------------------------------------------
@@ -326,10 +326,9 @@ namespace Pool
 
     if (_match_list == NULL)
     {
-      printf ("**** %s\n", GetName ());
       _dispatcher->SetAffinityCriteria (affinity_criteria,
                                         _sorted_fencer_list);
-      printf ("\n");
+      _dispatcher->Dump ();
 
       {
         guint nb_players = GetNbPlayers ();
