@@ -1008,22 +1008,39 @@ namespace Pool
           match = GetMatch (m);
 
           {
-            text_item = Canvas::PutTextInTable (match_main_table,
+            GooCanvasItem *name_table = goo_canvas_table_new (match_main_table,
+                                                              "column-spacing", 1.0,
+                                                              NULL);
+
+            text_item = Canvas::PutTextInTable (name_table,
                                                 match->GetName (),
-                                                m/nb_column,
-                                                m%nb_column + 2*(m%nb_column));
+                                                0,
+                                                0);
             g_object_set (G_OBJECT (text_item),
                           "font", "Sans bold 18px",
                           NULL);
 
             if (match->GetUIntData (this, "rest_error"))
             {
+              GooCanvasItem *icon = Canvas::PutStockIconInTable (name_table,
+                                                                 GTK_STOCK_MEDIA_PAUSE,
+                                                                 0,
+                                                                 1);
+              Canvas::SetTableItemAttribute (icon, "y-align", 0.5);
+#ifdef DEBUG
               g_object_set (G_OBJECT (text_item),
                             "fill-color", "Red",
                             NULL);
+#endif
             }
 
             Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
+
+            Canvas::PutInTable (match_main_table,
+                                name_table,
+                                m/nb_column,
+                                m%nb_column + 2*(m%nb_column));
+            Canvas::SetTableItemAttribute (name_table, "y-align", 0.5);
           }
 
           {
