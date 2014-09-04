@@ -38,6 +38,10 @@ namespace Pool
 
       gboolean HasFitnessError ();
 
+      guint GetA ();
+
+      guint GetB ();
+
       guint GetAFitness ();
 
       guint GetBFitness ();

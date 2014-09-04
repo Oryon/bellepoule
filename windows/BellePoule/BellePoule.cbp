@@ -157,8 +157,9 @@
 		<Unit filename="..\..\sources\BellePoule\people_management\tally_counter.hpp" />
 		<Unit filename="..\..\sources\BellePoule\people_management\team.cpp" />
 		<Unit filename="..\..\sources\BellePoule\people_management\team.hpp" />
-		<Unit filename="..\..\sources\BellePoule\pool_round\dispatcher\match_dispatcher.cpp" />
-		<Unit filename="..\..\sources\BellePoule\pool_round\dispatcher\match_dispatcher.hpp" />
+		<Unit filename="..\..\sources\BellePoule\pool_round\dispatcher\default_order.data" />
+		<Unit filename="..\..\sources\BellePoule\pool_round\dispatcher\dispatcher.cpp" />
+		<Unit filename="..\..\sources\BellePoule\pool_round\dispatcher\dispatcher.hpp" />
 		<Unit filename="..\..\sources\BellePoule\pool_round\dispatcher\opponent.cpp" />
 		<Unit filename="..\..\sources\BellePoule\pool_round\dispatcher\opponent.hpp" />
 		<Unit filename="..\..\sources\BellePoule\pool_round\dispatcher\pair.cpp" />
@@ -170,8 +171,6 @@
 		<Unit filename="..\..\sources\BellePoule\pool_round\pool.hpp" />
 		<Unit filename="..\..\sources\BellePoule\pool_round\pool_allocator.cpp" />
 		<Unit filename="..\..\sources\BellePoule\pool_round\pool_allocator.hpp" />
-		<Unit filename="..\..\sources\BellePoule\pool_round\pool_match_order.cpp" />
-		<Unit filename="..\..\sources\BellePoule\pool_round\pool_match_order.hpp" />
 		<Unit filename="..\..\sources\BellePoule\pool_round\pool_supervisor.cpp" />
 		<Unit filename="..\..\sources\BellePoule\pool_round\pool_supervisor.hpp" />
 		<Unit filename="..\..\sources\BellePoule\pool_round\pool_zone.cpp" />

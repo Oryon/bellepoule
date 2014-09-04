@@ -24,7 +24,7 @@
 #include "application/contest.hpp"
 
 #include "smart_swapper/smart_swapper.hpp"
-#include "pool_match_order.hpp"
+#include "dispatcher/dispatcher.hpp"
 
 #include "pool_allocator.hpp"
 
@@ -866,11 +866,11 @@ namespace Pool
   {
     guint           nb_players    = g_slist_length (_attendees->GetShortList ());
     Configuration  *config        = NULL;
-    guint           max_pool_size = MatchOrder::_MAX_POOL_SIZE;
+    guint           max_pool_size = Dispatcher::_MAX_POOL_SIZE;
 
-    if (nb_players % MatchOrder::_MAX_POOL_SIZE)
+    if (nb_players % Dispatcher::_MAX_POOL_SIZE)
     {
-      max_pool_size = MatchOrder::_MAX_POOL_SIZE -1;
+      max_pool_size = Dispatcher::_MAX_POOL_SIZE -1;
     }
 
     _best_config = NULL;

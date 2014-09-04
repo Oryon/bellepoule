@@ -26,7 +26,6 @@
 #include "people_management/players_list.hpp"
 
 #include "pool.hpp"
-#include "pool_match_order.hpp"
 #include "swapper.hpp"
 #include "pool_zone.hpp"
 

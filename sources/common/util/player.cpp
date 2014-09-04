@@ -116,7 +116,11 @@ Player *Player::Duplicate ()
 Player::AttributeId *Player::AttributeId::Create (AttributeDesc *desc,
                                                   Object        *owner)
 {
-  if (desc->_scope == AttributeDesc::GLOBAL)
+  if (desc == NULL)
+  {
+    return NULL;
+  }
+  else if (desc->_scope == AttributeDesc::GLOBAL)
   {
     return new Player::AttributeId (desc->_code_name);
   }
