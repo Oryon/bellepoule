@@ -1022,16 +1022,15 @@ namespace Pool
 
             if (match->GetUIntData (this, "rest_error"))
             {
-              GooCanvasItem *icon = Canvas::PutStockIconInTable (name_table,
-                                                                 GTK_STOCK_MEDIA_PAUSE,
-                                                                 0,
-                                                                 1);
+              gchar *png = g_build_filename (_program_path, "resources/glade/clock.png", NULL);
+
+              GooCanvasItem *icon = Canvas::PutIconInTable (name_table,
+                                                            png,
+                                                            0,
+                                                            1);
               Canvas::SetTableItemAttribute (icon, "y-align", 0.5);
-#ifdef DEBUG
-              g_object_set (G_OBJECT (text_item),
-                            "fill-color", "Red",
-                            NULL);
-#endif
+
+              g_free (png);
             }
 
             Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);

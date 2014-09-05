@@ -99,6 +99,7 @@ namespace Pool
   void Dispatcher::SetAffinityCriteria (AttributeDesc *affinity_criteria,
                                         GSList        *fencer_list)
   {
+    guint       team_count;
     GHashTable *affinity_distribution = g_hash_table_new (NULL,
                                                           NULL);
 
@@ -164,7 +165,10 @@ namespace Pool
       }
     }
 
-    if (g_hash_table_size (affinity_distribution) == 0)
+    team_count = g_hash_table_size (affinity_distribution);
+    if (   (team_count == 0)
+        || (team_count == 1)
+        || (team_count == _pool_size))
     {
       if ((_pool_size >= 2) &&  (_pool_size <= _MAX_POOL_SIZE))
       {

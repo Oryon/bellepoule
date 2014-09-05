@@ -288,7 +288,7 @@ void Screen::SetTimer (GKeyFile *key_file)
       if (toto == 0)
       {
         _red_hit_light->SwitchOn ("valid");
-        _green_hit_light->SwitchOff ();
+        _green_hit_light->SwitchOn ("valid");
         _green_failure_light->SwitchOn ();
         toto++;
       }

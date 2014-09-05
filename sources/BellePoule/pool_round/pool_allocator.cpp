@@ -1329,7 +1329,7 @@ namespace Pool
                                        GTK_STOCK_REFRESH,
                                        indice+1, 0);
         }
-//#ifdef DEBUG
+#ifdef DEBUG
         {
           guint swapped_from = player->GetUIntData (this, "swapped_from");
 
@@ -1348,7 +1348,7 @@ namespace Pool
             g_free (swapped_from_text);
           }
         }
-//#endif
+#endif
       }
 
       for (guint i = 0; layout_list != NULL; i++)
