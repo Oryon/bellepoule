@@ -19,6 +19,7 @@
 #include "util/object.hpp"
 #include "util/wifi_code.hpp"
 #include "screen.hpp"
+#include "gpio.hpp"
 
 // --------------------------------------------------------------------------------
 #ifdef DEBUG
@@ -132,6 +133,8 @@ int main (int argc, char **argv)
   }
 
   WifiCode::SetPort (35832);
+
+  Gpio::Init ();
 
   screen = new Screen ();
   gtk_main ();

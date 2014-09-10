@@ -16,8 +16,11 @@
 
 #include "light.hpp"
 
+Gpio::EventHandler Light::_event_handler = NULL;
+
 // --------------------------------------------------------------------------------
 Light::Light (GtkWidget *w,
+              guint      pin,
               ...)
   : Object ("Light")
 {
@@ -26,7 +29,7 @@ Light::Light (GtkWidget *w,
   {
     va_list ap;
 
-    va_start (ap, w);
+    va_start (ap, pin);
     while (1)
     {
       gchar *state;
@@ -59,12 +62,28 @@ Light::Light (GtkWidget *w,
     va_end (ap);
   }
 
+  _pin = new Gpio (pin,
+                   _event_handler);
+
   SwitchOff ();
 }
 
 // --------------------------------------------------------------------------------
 Light::~Light ()
 {
+  _pin->Release ();
+}
+
+// --------------------------------------------------------------------------------
+void Light::Refresh (GQuark  quark,
+                     Light  *light)
+{
+}
+
+// --------------------------------------------------------------------------------
+void Light::SetEventHandler (Gpio::EventHandler handler)
+{
+  _event_handler = handler;
 }
 
 // --------------------------------------------------------------------------------

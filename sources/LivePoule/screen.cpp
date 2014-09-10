@@ -16,6 +16,8 @@
 
 #include "screen.hpp"
 
+Screen *Screen::_gpio_client = NULL;
+
 // --------------------------------------------------------------------------------
 Screen::Screen ()
   : Module ("LivePoule.glade")
@@ -45,24 +47,56 @@ Screen::Screen ()
     Rescale (MIN (full_width/glade_width, full_height/glade_height));
   }
 
-  // Lights
   {
-    _red_hit_light       = new Light (_glade->GetWidget ("red_hit_light"),
-                                      "off",       "#555555",
-                                      "valid",     "#b01313",
-                                      "non-valid", "#ffffff", NULL);
-    _red_failure_light   = new Light (_glade->GetWidget ("red_failure_light"),
-                                      "on", "#ecdf11", NULL);
+    Light::SetEventHandler (OnLightEvent);
 
-    _green_hit_light     = new Light (_glade->GetWidget ("green_hit_light"),
-                                      "off",       "#555555",
-                                      "valid",     "#13b013",
-                                      "non-valid", "#ffffff", NULL);
-    _green_failure_light = new Light (_glade->GetWidget ("green_failure_light"),
-                                      "on", "#ecdf11", NULL);
+    _gpio_client = this;
   }
 
-  ResetDisplay ();
+  // Lights
+  {
+    Light *light;
+
+    g_datalist_init (&_lights);
+
+    light = new Light (_glade->GetWidget ("red_hit_light"),
+                       1,
+                       "off",       "#555555",
+                       "valid",     "#b01313",
+                       "non-valid", "#ffffff", NULL);
+    g_datalist_set_data_full (&_lights,
+                              "red_hit_light",
+                              light,
+                              (GDestroyNotify) Object::TryToRelease);
+
+    light = new Light (_glade->GetWidget ("red_failure_light"),
+                       2,
+                       "on", "#ecdf11", NULL);
+    g_datalist_set_data_full (&_lights,
+                              "red_failure_light",
+                              light,
+                              (GDestroyNotify) Object::TryToRelease);
+
+    light = new Light (_glade->GetWidget ("green_hit_light"),
+                       3,
+                       "off",       "#555555",
+                       "valid",     "#13b013",
+                       "non-valid", "#ffffff", NULL);
+    g_datalist_set_data_full (&_lights,
+                              "green_hit_light",
+                              light,
+                              (GDestroyNotify) Object::TryToRelease);
+
+    light = new Light (_glade->GetWidget ("green_failure_light"),
+                       4,
+                       "on", "#ecdf11", NULL);
+    g_datalist_set_data_full (&_lights,
+                              "green_failure_light",
+                              light,
+                              (GDestroyNotify) Object::TryToRelease);
+  }
+
+  _strip_id = 1;
 
   _timer = new Timer (_glade->GetWidget ("timer"));
 
@@ -72,18 +106,47 @@ Screen::Screen ()
                                       HttpPostCbk,
                                       NULL,
                                       35832);
+
+  ResetDisplay ();
 }
 
 // --------------------------------------------------------------------------------
 Screen::~Screen ()
 {
+  _gpio_client = NULL;
+
   _timer->Release ();
+
+  g_datalist_clear (&_lights);
+}
+
+// --------------------------------------------------------------------------------
+void Screen::OnLightEvent ()
+{
+  printf (">>> OnLightEvent <<<\n");
+  g_idle_add ((GSourceFunc) OnLightDefferedEvent,
+              NULL);
+}
+
+// --------------------------------------------------------------------------------
+void Screen::OnLightDefferedEvent ()
+{
+  printf (">>> OnLightDefferedEvent <<<\n");
+
+  if (_gpio_client)
+  {
+    g_datalist_foreach (&_gpio_client->_lights,
+                        (GDataForeachFunc) Light::Refresh,
+                        NULL);
+  }
 }
 
 // --------------------------------------------------------------------------------
 void Screen::ResetDisplay ()
 {
   SetColor ("#93a24c");
+
+  RefreshStripId ();
 
   SetTitle ("");
 
@@ -189,6 +252,21 @@ void Screen::ToggleWifiCode ()
 }
 
 // --------------------------------------------------------------------------------
+void Screen::ChangeStripId (gint step)
+{
+  if ((step < 0) && (_strip_id <= (guint) (-step)))
+  {
+    _strip_id = 1;
+  }
+  else
+  {
+    _strip_id += step;
+  }
+
+  RefreshStripId ();
+}
+
+// --------------------------------------------------------------------------------
 gboolean Screen::OnHttpPost (const gchar *data)
 {
   gboolean result = FALSE;
@@ -284,35 +362,40 @@ void Screen::SetTimer (GKeyFile *key_file)
     _timer->Set (value);
     if (value)
     {
-      static int toto = 0;
+      static int  toto                 = 0;
+      Light      *red_hit_light       = (Light *) g_datalist_get_data (&_lights, "red_hit_light");
+      Light      *green_hit_light     = (Light *) g_datalist_get_data (&_lights, "green_hit_light");
+      Light      *red_failure_light   = (Light *) g_datalist_get_data (&_lights, "red_failure_light");
+      Light      *green_failure_light = (Light *) g_datalist_get_data (&_lights, "green_failure_light");
+
       if (toto == 0)
       {
-        _red_hit_light->SwitchOn ("valid");
-        _green_hit_light->SwitchOn ("valid");
-        _green_failure_light->SwitchOn ();
+        red_hit_light->SwitchOn ("valid");
+        green_hit_light->SwitchOn ("valid");
+        green_failure_light->SwitchOn ();
         toto++;
       }
       else if (toto == 1)
       {
-        _red_hit_light->SwitchOff ();
-        _green_hit_light->SwitchOn ("valid");
-        _green_failure_light->SwitchOff ();
+        red_hit_light->SwitchOff ();
+        green_hit_light->SwitchOn ("valid");
+        green_failure_light->SwitchOff ();
         toto++;
       }
       else if (toto == 2)
       {
-        _red_hit_light->SwitchOn ("valid");
-        _green_hit_light->SwitchOn ("non-valid");
-        _red_failure_light->SwitchOn ();
-        _green_failure_light->SwitchOn ();
+        red_hit_light->SwitchOn ("valid");
+        green_hit_light->SwitchOn ("non-valid");
+        red_failure_light->SwitchOn ();
+        green_failure_light->SwitchOn ();
         toto++;
       }
       else if (toto == 3)
       {
-        _red_hit_light->SwitchOff ();
-        _green_hit_light->SwitchOff ();
-        _red_failure_light->SwitchOff ();
-        _green_failure_light->SwitchOff ();
+        red_hit_light->SwitchOff ();
+        green_hit_light->SwitchOff ();
+        red_failure_light->SwitchOff ();
+        green_failure_light->SwitchOff ();
         toto = 0;
       }
     }
@@ -342,6 +425,17 @@ void Screen::SetColor (const gchar *color)
                                           GTK_STATE_FLAG_NORMAL,
                                           &rgba);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Screen::RefreshStripId ()
+{
+  GtkLabel *w    = GTK_LABEL (_glade->GetWidget ("strip"));
+  gchar    *name = g_strdup_printf ("Piste %02d", _strip_id);
+
+  gtk_label_set_text (w,
+                      name);
+  g_free (name);
 }
 
 // --------------------------------------------------------------------------------
@@ -414,22 +508,38 @@ gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
 }
 
 // --------------------------------------------------------------------------------
+gboolean Screen::OnKeyPressed (GdkEventKey *event)
+{
+  if (event->keyval == GDK_KEY_Escape)
+  {
+    Unfullscreen ();
+    return TRUE;
+  }
+  else if (event->keyval == GDK_KEY_KP_Enter)
+  {
+    ToggleWifiCode ();
+    return TRUE;
+  }
+  else if (event->keyval == GDK_KEY_KP_Add)
+  {
+    ChangeStripId (1);
+    return TRUE;
+  }
+  else if (event->keyval == GDK_KEY_KP_Subtract)
+  {
+    ChangeStripId (-1);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget,
                                                              GdkEventKey *event,
                                                              Object      *owner)
 {
-  if (event->keyval == GDK_KEY_Escape)
-  {
-    Screen *s = dynamic_cast <Screen *> (owner);
+  Screen *s = dynamic_cast <Screen *> (owner);
 
-    s->Unfullscreen ();
-  }
-  else if (event->keyval == GDK_KEY_space)
-  {
-    Screen *s = dynamic_cast <Screen *> (owner);
-
-    s->ToggleWifiCode ();
-  }
-
-  return FALSE;
+  return s->OnKeyPressed (event);
 }

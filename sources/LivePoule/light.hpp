@@ -20,19 +20,28 @@
 #include <gtk/gtk.h>
 
 #include "util/object.hpp"
+#include "gpio.hpp"
 
 class Light : public Object
 {
   public:
     Light (GtkWidget *w,
+           guint      pin,
            ...);
+
+    static void SetEventHandler (Gpio::EventHandler handler);
+
+    static void Refresh (GQuark  key_id,
+                         Light  *light);
 
     void SwitchOn (const gchar *state = NULL);
 
     void SwitchOff ();
 
   private:
-    GtkWidget *_widget;
+    static Gpio::EventHandler  _event_handler;
+    GtkWidget                 *_widget;
+    Gpio                      *_pin;
 
     virtual ~Light ();
 };

@@ -31,24 +31,21 @@ class Screen : public Module, Net::HttpServer::Client
   public:
     Screen ();
 
-    void Unfullscreen ();
-
-    void ToggleWifiCode ();
+    gboolean OnKeyPressed (GdkEventKey *event);
 
   private:
+    static Screen   *_gpio_client;
     Net::HttpServer *_http_server;
     WifiCode        *_wifi_code;
     Timer           *_timer;
-
-    Light           *_red_hit_light;
-    Light           *_red_failure_light;
-
-    Light           *_green_hit_light;
-    Light           *_green_failure_light;
+    GData           *_lights;
+    guint            _strip_id;
 
     virtual ~Screen ();
 
     void ResetDisplay ();
+
+    void RefreshStripId ();
 
     void Rescale (gdouble factor);
 
@@ -73,9 +70,19 @@ class Screen : public Module, Net::HttpServer::Client
 
     gchar *GetSecretKey (const gchar *authentication_scheme);
 
+    void Unfullscreen ();
+
+    void ToggleWifiCode ();
+
+    void ChangeStripId (gint step);
+
   private:
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
                                  const gchar             *data);
+
+    static void OnLightEvent ();
+
+    static void OnLightDefferedEvent ();
 };
 
 #endif
