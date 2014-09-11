@@ -17,8 +17,6 @@
 #ifndef gpio_hpp
 #define gpio_hpp
 
-#include <gtk/gtk.h>
-
 #include "util/object.hpp"
 
 class Gpio : public Object
@@ -29,14 +27,13 @@ class Gpio : public Object
   public:
     static void Init ();
 
-    Gpio (guint        pin,
+    Gpio (guint        pin_id,
           EventHandler handler);
 
-    guint GetState ();
+    guint GetVoltageState ();
 
   private:
-    EventHandler _event_handler;
-    guint        _pin;
+    guint _pin_id;
 
     virtual ~Gpio ();
 };

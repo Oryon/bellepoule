@@ -14,38 +14,24 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef light_hpp
-#define light_hpp
-
-#include <gtk/gtk.h>
+#ifndef scoring_machine_hpp
+#define scoring_machine_hpp
 
 #include "util/object.hpp"
-#include "gpio.hpp"
 
-class Light : public Object
+class ScoringMachine : public Object
 {
   public:
-    Light (GtkWidget *w,
-           ...);
+    ScoringMachine ();
 
-    static void SetEventHandler (Gpio::EventHandler handler);
-
-    static void Refresh (GQuark  key_id,
-                         Light  *light);
-
-    void SwitchOn (const gchar *state = NULL);
-
-    void SwitchOff ();
-
-    void WireGpioPin (const gchar *state,
-                      guint        pin_id);
+    void ConnectToLights (GData *lights);
 
   private:
-    static Gpio::EventHandler  _event_handler;
-    GtkWidget                 *_widget;
-    GList                     *_pin_list;
+    virtual ~ScoringMachine ();
 
-    virtual ~Light ();
+    static void OnConnect (GQuark          quark,
+                           Light          *light,
+                           ScoringMachine *machine);
 };
 
 #endif

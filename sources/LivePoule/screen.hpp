@@ -25,6 +25,7 @@
 #include "util/wifi_code.hpp"
 #include "timer.hpp"
 #include "light.hpp"
+#include "scoring_machine.hpp"
 
 class Screen : public Module, Net::HttpServer::Client
 {
@@ -34,12 +35,13 @@ class Screen : public Module, Net::HttpServer::Client
     gboolean OnKeyPressed (GdkEventKey *event);
 
   private:
-    static Screen   *_gpio_client;
+    static Screen   *_singleton;
     Net::HttpServer *_http_server;
     WifiCode        *_wifi_code;
     Timer           *_timer;
     GData           *_lights;
     guint            _strip_id;
+    ScoringMachine  *_st_george;
 
     virtual ~Screen ();
 

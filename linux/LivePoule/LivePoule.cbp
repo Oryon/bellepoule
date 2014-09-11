@@ -88,6 +88,8 @@
     <Unit filename="../../sources/LivePoule/gpio.hpp" />
     <Unit filename="../../sources/LivePoule/light.cpp" />
     <Unit filename="../../sources/LivePoule/light.hpp" />
+    <Unit filename="../../sources/LivePoule/scoring_machine.cpp" />
+    <Unit filename="../../sources/LivePoule/scoring_machine.hpp" />
     <Unit filename="../../sources/LivePoule/screen.cpp" />
     <Unit filename="../../sources/LivePoule/screen.hpp" />
     <Unit filename="../../sources/LivePoule/timer.cpp" />

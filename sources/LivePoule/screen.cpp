@@ -16,7 +16,7 @@
 
 #include "screen.hpp"
 
-Screen *Screen::_gpio_client = NULL;
+Screen *Screen::_singleton = NULL;
 
 // --------------------------------------------------------------------------------
 Screen::Screen ()
@@ -50,7 +50,7 @@ Screen::Screen ()
   {
     Light::SetEventHandler (OnLightEvent);
 
-    _gpio_client = this;
+    _singleton = this;
   }
 
   // Lights
@@ -59,9 +59,8 @@ Screen::Screen ()
 
     g_datalist_init (&_lights);
 
+    // red_hit_light
     light = new Light (_glade->GetWidget ("red_hit_light"),
-                       1,
-                       "off",       "#555555",
                        "valid",     "#b01313",
                        "non-valid", "#ffffff", NULL);
     g_datalist_set_data_full (&_lights,
@@ -69,17 +68,16 @@ Screen::Screen ()
                               light,
                               (GDestroyNotify) Object::TryToRelease);
 
+    // red_failure_light
     light = new Light (_glade->GetWidget ("red_failure_light"),
-                       2,
                        "on", "#ecdf11", NULL);
     g_datalist_set_data_full (&_lights,
                               "red_failure_light",
                               light,
                               (GDestroyNotify) Object::TryToRelease);
 
+    // green_hit_light
     light = new Light (_glade->GetWidget ("green_hit_light"),
-                       3,
-                       "off",       "#555555",
                        "valid",     "#13b013",
                        "non-valid", "#ffffff", NULL);
     g_datalist_set_data_full (&_lights,
@@ -87,13 +85,20 @@ Screen::Screen ()
                               light,
                               (GDestroyNotify) Object::TryToRelease);
 
+    // green_failure_light
     light = new Light (_glade->GetWidget ("green_failure_light"),
-                       4,
                        "on", "#ecdf11", NULL);
     g_datalist_set_data_full (&_lights,
                               "green_failure_light",
                               light,
                               (GDestroyNotify) Object::TryToRelease);
+  }
+
+  // Scoring machines
+  {
+    _st_george = new ScoringMachine ();
+
+    _st_george->ConnectToLights (_lights);
   }
 
   _strip_id = 1;
@@ -113,9 +118,11 @@ Screen::Screen ()
 // --------------------------------------------------------------------------------
 Screen::~Screen ()
 {
-  _gpio_client = NULL;
+  _singleton = NULL;
 
   _timer->Release ();
+
+  _st_george->Release ();
 
   g_datalist_clear (&_lights);
 }
@@ -132,10 +139,9 @@ void Screen::OnLightEvent ()
 void Screen::OnLightDefferedEvent ()
 {
   printf (">>> OnLightDefferedEvent <<<\n");
-
-  if (_gpio_client)
+  if (_singleton)
   {
-    g_datalist_foreach (&_gpio_client->_lights,
+    g_datalist_foreach (&_singleton->_lights,
                         (GDataForeachFunc) Light::Refresh,
                         NULL);
   }
@@ -360,45 +366,6 @@ void Screen::SetTimer (GKeyFile *key_file)
                                          "value",
                                          NULL);
     _timer->Set (value);
-    if (value)
-    {
-      static int  toto                 = 0;
-      Light      *red_hit_light       = (Light *) g_datalist_get_data (&_lights, "red_hit_light");
-      Light      *green_hit_light     = (Light *) g_datalist_get_data (&_lights, "green_hit_light");
-      Light      *red_failure_light   = (Light *) g_datalist_get_data (&_lights, "red_failure_light");
-      Light      *green_failure_light = (Light *) g_datalist_get_data (&_lights, "green_failure_light");
-
-      if (toto == 0)
-      {
-        red_hit_light->SwitchOn ("valid");
-        green_hit_light->SwitchOn ("valid");
-        green_failure_light->SwitchOn ();
-        toto++;
-      }
-      else if (toto == 1)
-      {
-        red_hit_light->SwitchOff ();
-        green_hit_light->SwitchOn ("valid");
-        green_failure_light->SwitchOff ();
-        toto++;
-      }
-      else if (toto == 2)
-      {
-        red_hit_light->SwitchOn ("valid");
-        green_hit_light->SwitchOn ("non-valid");
-        red_failure_light->SwitchOn ();
-        green_failure_light->SwitchOn ();
-        toto++;
-      }
-      else if (toto == 3)
-      {
-        red_hit_light->SwitchOff ();
-        green_hit_light->SwitchOff ();
-        red_failure_light->SwitchOff ();
-        green_failure_light->SwitchOff ();
-        toto = 0;
-      }
-    }
   }
 
   {

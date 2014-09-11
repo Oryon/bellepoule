@@ -20,32 +20,27 @@ Gpio::EventHandler Light::_event_handler = NULL;
 
 // --------------------------------------------------------------------------------
 Light::Light (GtkWidget *w,
-              guint      pin,
               ...)
   : Object ("Light")
 {
-  _widget = w;
+  _widget   = w;
+  _pin_list = NULL;
 
   {
     va_list ap;
 
-    va_start (ap, pin);
+    va_start (ap, w);
     while (1)
     {
       gchar *state;
       gchar *color;
 
-      state = va_arg (ap, char *);
+      state = va_arg (ap, gchar *);
       if (state == NULL)
       {
         break;
       }
-
       color = va_arg (ap, char *);
-      if (color == NULL)
-      {
-        break;
-      }
 
       {
         GdkRGBA *rgba_color = g_new (GdkRGBA, 1);
@@ -61,23 +56,57 @@ Light::Light (GtkWidget *w,
     }
     va_end (ap);
   }
-
-  _pin = new Gpio (pin,
-                   _event_handler);
-
-  SwitchOff ();
 }
 
 // --------------------------------------------------------------------------------
 Light::~Light ()
 {
-  _pin->Release ();
+  g_list_free_full (_pin_list,
+                    (GDestroyNotify) Object::TryToRelease);
+}
+
+// --------------------------------------------------------------------------------
+void Light::WireGpioPin (const gchar *state,
+                         guint        pin_id)
+{
+  Gpio *gpio_pin = new Gpio (pin_id,
+                             _event_handler);
+
+  gpio_pin->SetData (this,
+                     "light_state",
+                     g_strdup (state),
+                     g_free);
+
+  _pin_list = g_list_prepend (_pin_list,
+                              gpio_pin);
+
+  if (gpio_pin->GetVoltageState ())
+  {
+    SwitchOn ((const gchar *) gpio_pin->GetPtrData (this,
+                                                    "light_state"));
+  }
 }
 
 // --------------------------------------------------------------------------------
 void Light::Refresh (GQuark  quark,
                      Light  *light)
 {
+  GList *current = light->_pin_list;
+
+  while (current)
+  {
+    Gpio *gpio_pin = (Gpio *) current->data;
+
+    if (gpio_pin->GetVoltageState ())
+    {
+      light->SwitchOn ((const gchar *) gpio_pin->GetPtrData (light,
+                                                             "light_state"));
+      return;
+    }
+    current = g_list_next (current);
+  }
+
+  light->SwitchOff ();
 }
 
 // --------------------------------------------------------------------------------

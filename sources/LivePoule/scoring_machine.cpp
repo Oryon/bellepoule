@@ -14,56 +14,49 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
-
-#ifdef WIRING_PI
-#include <wiringPi.h>
-#endif
-
-#include "gpio.hpp"
+#include "light.hpp"
+#include "scoring_machine.hpp"
 
 // --------------------------------------------------------------------------------
-Gpio::Gpio (guint        pin_id,
-            EventHandler handler)
-  : Object ("Gpio")
+ScoringMachine::ScoringMachine ()
+  : Object ("ScoringMachine")
 {
-  _pin_id = pin_id;
+}
 
-#ifdef WIRING_PI
-  pinMode         (_pin_id, INPUT);
-  pullUpDnControl (_pin_id, PUD_UP);
+// --------------------------------------------------------------------------------
+ScoringMachine::~ScoringMachine ()
+{
+}
 
-  if (wiringPiISR (pin_id,
-                   INT_EDGE_BOTH,
-                   handler) < 0)
+// --------------------------------------------------------------------------------
+void ScoringMachine::ConnectToLights (GData *lights)
+{
+  g_datalist_foreach (&lights,
+                      (GDataForeachFunc) ScoringMachine::OnConnect,
+                      this);
+}
+
+// --------------------------------------------------------------------------------
+void ScoringMachine::OnConnect (GQuark          quark,
+                                Light          *light,
+                                ScoringMachine *machine)
+{
+  if (quark == g_quark_from_string ("red_hit_light"))
   {
-    g_warning ("OnSignal[%d] registration error", pin_id);
+    light->WireGpioPin ("valid",     0);
+    light->WireGpioPin ("non-valid", 1);
   }
-#endif
-}
-
-// --------------------------------------------------------------------------------
-Gpio::~Gpio ()
-{
-}
-
-// --------------------------------------------------------------------------------
-void Gpio::Init ()
-{
-#ifdef WIRING_PI
-  wiringPiSetup () ;
-#endif
-}
-
-// --------------------------------------------------------------------------------
-guint Gpio::GetVoltageState ()
-{
-#ifdef WIRING_PI
-  return digitalRead (_pin_id);
-#else
-  return 1;
-#endif
+  else if (quark == g_quark_from_string ("red_failure_light"))
+  {
+    light->WireGpioPin ("on", 2);
+  }
+  else if (quark == g_quark_from_string ("green_hit_light"))
+  {
+    light->WireGpioPin ("valid",     3);
+    light->WireGpioPin ("non-valid", 4);
+  }
+  else if (quark == g_quark_from_string ("green_failure_light"))
+  {
+    light->WireGpioPin ("on", 5);
+  }
 }
