@@ -33,10 +33,6 @@ class Light : public Object
     static void Refresh (GQuark  key_id,
                          Light  *light);
 
-    void SwitchOn (const gchar *state = NULL);
-
-    void SwitchOff ();
-
     void WireGpioPin (const gchar *state,
                       guint        pin_id);
 
@@ -46,6 +42,11 @@ class Light : public Object
     GList                     *_pin_list;
 
     virtual ~Light ();
+
+    void SwitchOn (const gchar *state = NULL);
+
+    void SwitchOff ();
+
 };
 
 #endif

@@ -30,7 +30,9 @@ Gpio::Gpio (guint        pin_id,
             EventHandler handler)
   : Object ("Gpio")
 {
-  _pin_id = pin_id;
+  _pin_id        = pin_id;
+  _event_handler = handler;
+  _fake_voltage  = 0;
 
 #ifdef WIRING_PI
   pinMode         (_pin_id, INPUT);
@@ -42,6 +44,10 @@ Gpio::Gpio (guint        pin_id,
   {
     g_warning ("OnSignal[%d] registration error", pin_id);
   }
+#else
+  g_thread_new (NULL,
+                (GThreadFunc) FakeLoop,
+                this);
 #endif
 }
 
@@ -64,6 +70,30 @@ guint Gpio::GetVoltageState ()
 #ifdef WIRING_PI
   return digitalRead (_pin_id);
 #else
-  return 1;
+  return _fake_voltage;
 #endif
+}
+
+// --------------------------------------------------------------------------------
+gpointer Gpio::FakeLoop (Gpio *gpio)
+{
+  while (1)
+  {
+    gint32 delay = g_random_int_range (1, 10);
+
+    sleep (delay);
+
+    if (gpio->_fake_voltage)
+    {
+      gpio->_fake_voltage = 0;
+    }
+    else
+    {
+      gpio->_fake_voltage = 1;
+    }
+
+    gpio->_event_handler ();
+  }
+
+  return NULL;
 }

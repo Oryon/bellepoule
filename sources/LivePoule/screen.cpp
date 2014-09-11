@@ -62,7 +62,7 @@ Screen::Screen ()
     // red_hit_light
     light = new Light (_glade->GetWidget ("red_hit_light"),
                        "valid",     "#b01313",
-                       "non-valid", "#ffffff", NULL);
+                       "non-valid", "#eeeeee", NULL);
     g_datalist_set_data_full (&_lights,
                               "red_hit_light",
                               light,
@@ -79,7 +79,7 @@ Screen::Screen ()
     // green_hit_light
     light = new Light (_glade->GetWidget ("green_hit_light"),
                        "valid",     "#13b013",
-                       "non-valid", "#ffffff", NULL);
+                       "non-valid", "#eeeeee", NULL);
     g_datalist_set_data_full (&_lights,
                               "green_hit_light",
                               light,
@@ -135,21 +135,21 @@ void Screen::ManageScoringMachine (ScoringMachine *machine)
 // --------------------------------------------------------------------------------
 void Screen::OnLightEvent ()
 {
-  printf (">>> OnLightEvent <<<\n");
   g_idle_add ((GSourceFunc) OnLightDefferedEvent,
               NULL);
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnLightDefferedEvent ()
+gboolean Screen::OnLightDefferedEvent ()
 {
-  printf (">>> OnLightDefferedEvent <<<\n");
   if (_singleton)
   {
     g_datalist_foreach (&_singleton->_lights,
                         (GDataForeachFunc) Light::Refresh,
                         NULL);
   }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -165,17 +165,17 @@ void Screen::ResetDisplay ()
 
   SetFencer ("red",
              "fencer",
-             "");
+             "toto");
   SetFencer ("red",
              "score",
-             "");
+             "6");
 
   SetFencer ("green",
              "fencer",
-             "");
+             "bidule");
   SetFencer ("green",
              "score",
-             "");
+             "5");
 }
 
 // --------------------------------------------------------------------------------

@@ -33,9 +33,13 @@ class Gpio : public Object
     guint GetVoltageState ();
 
   private:
-    guint _pin_id;
+    guint        _pin_id;
+    guint        _fake_voltage;
+    EventHandler _event_handler;
 
     virtual ~Gpio ();
+
+    static gpointer FakeLoop (Gpio *gpio);
 };
 
 #endif

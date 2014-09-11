@@ -86,7 +86,7 @@ class Screen : public Module, Net::HttpServer::Client
 
     static void OnLightEvent ();
 
-    static void OnLightDefferedEvent ();
+    static gboolean OnLightDefferedEvent ();
 };
 
 #endif
