@@ -14,29 +14,22 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef scoring_machine_hpp
-#define scoring_machine_hpp
+#ifndef sg_machine_hpp
+#define sg_machine_hpp
 
-#include "util/object.hpp"
-#include "light.hpp"
+#include "scoring_machine.hpp"
 
-class ScoringMachine : public Object
+class SgMachine : public ScoringMachine
 {
   public:
-    void ConnectToLights (GData *lights);
-
-  protected:
-    ScoringMachine (const gchar *class_name);
-
-    virtual ~ScoringMachine ();
-
-    virtual void Wire (GQuark  quark,
-                       Light  *light) = 0;
+    SgMachine ();
 
   private:
-    static void ConnectToLight (GQuark          quark,
-                                Light          *light,
-                                ScoringMachine *machine);
+    virtual ~SgMachine ();
+
+    virtual void Wire (GQuark  quark,
+                       Light  *light);
+
 };
 
 #endif

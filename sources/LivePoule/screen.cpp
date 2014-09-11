@@ -94,14 +94,9 @@ Screen::Screen ()
                               (GDestroyNotify) Object::TryToRelease);
   }
 
-  // Scoring machines
-  {
-    _st_george = new ScoringMachine ();
-
-    _st_george->ConnectToLights (_lights);
-  }
-
   _strip_id = 1;
+
+  _scoring_machines = NULL;
 
   _timer = new Timer (_glade->GetWidget ("timer"));
 
@@ -122,9 +117,19 @@ Screen::~Screen ()
 
   _timer->Release ();
 
-  _st_george->Release ();
+  g_list_free_full (_scoring_machines,
+                    (GDestroyNotify) Object::TryToRelease);
 
   g_datalist_clear (&_lights);
+}
+
+// --------------------------------------------------------------------------------
+void Screen::ManageScoringMachine (ScoringMachine *machine)
+{
+  machine->ConnectToLights (_lights);
+
+  _scoring_machines = g_list_prepend (_scoring_machines,
+                                      machine);
 }
 
 // --------------------------------------------------------------------------------

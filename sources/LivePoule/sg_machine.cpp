@@ -14,33 +14,39 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "light.hpp"
-#include "scoring_machine.hpp"
+#include "sg_machine.hpp"
 
 // --------------------------------------------------------------------------------
-ScoringMachine::ScoringMachine (const gchar *class_name)
-  : Object (class_name)
+SgMachine::SgMachine ()
+  : ScoringMachine ("SgMachine")
 {
 }
 
 // --------------------------------------------------------------------------------
-ScoringMachine::~ScoringMachine ()
+SgMachine::~SgMachine ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void ScoringMachine::ConnectToLights (GData *lights)
+void SgMachine::Wire (GQuark  quark,
+                      Light  *light)
 {
-  g_datalist_foreach (&lights,
-                      (GDataForeachFunc) ScoringMachine::ConnectToLight,
-                      this);
-}
-
-// --------------------------------------------------------------------------------
-void ScoringMachine::ConnectToLight (GQuark          quark,
-                                     Light          *light,
-                                     ScoringMachine *machine)
-{
-  machine->Wire (quark,
-                 light);
+  if (quark == g_quark_from_string ("red_hit_light"))
+  {
+    light->WireGpioPin ("valid",     0);
+    light->WireGpioPin ("non-valid", 1);
+  }
+  else if (quark == g_quark_from_string ("red_failure_light"))
+  {
+    light->WireGpioPin ("on", 2);
+  }
+  else if (quark == g_quark_from_string ("green_hit_light"))
+  {
+    light->WireGpioPin ("valid",     3);
+    light->WireGpioPin ("non-valid", 4);
+  }
+  else if (quark == g_quark_from_string ("green_failure_light"))
+  {
+    light->WireGpioPin ("on", 5);
+  }
 }

@@ -20,6 +20,7 @@
 #include "util/wifi_code.hpp"
 #include "screen.hpp"
 #include "gpio.hpp"
+#include "sg_machine.hpp"
 
 // --------------------------------------------------------------------------------
 #ifdef DEBUG
@@ -137,7 +138,10 @@ int main (int argc, char **argv)
   Gpio::Init ();
 
   screen = new Screen ();
+  screen->ManageScoringMachine (new SgMachine ());
+
   gtk_main ();
+
   screen->Release ();
 
   return 0;

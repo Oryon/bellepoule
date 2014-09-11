@@ -32,6 +32,8 @@ class Screen : public Module, Net::HttpServer::Client
   public:
     Screen ();
 
+    void ManageScoringMachine (ScoringMachine *machine);
+
     gboolean OnKeyPressed (GdkEventKey *event);
 
   private:
@@ -41,7 +43,7 @@ class Screen : public Module, Net::HttpServer::Client
     Timer           *_timer;
     GData           *_lights;
     guint            _strip_id;
-    ScoringMachine  *_st_george;
+    GList           *_scoring_machines;
 
     virtual ~Screen ();
 
