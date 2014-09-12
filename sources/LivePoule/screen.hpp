@@ -24,6 +24,7 @@
 #include "network/wifi_network.hpp"
 #include "util/wifi_code.hpp"
 #include "timer.hpp"
+#include "gpio.hpp"
 #include "light.hpp"
 #include "scoring_machine.hpp"
 
@@ -44,6 +45,9 @@ class Screen : public Module, Net::HttpServer::Client
     GData           *_lights;
     guint            _strip_id;
     GList           *_scoring_machines;
+    Gpio            *_qr_code_pin;
+    Gpio            *_strip_plus_pin;
+    Gpio            *_strip_minus_pin;
 
     virtual ~Screen ();
 
@@ -87,6 +91,12 @@ class Screen : public Module, Net::HttpServer::Client
     static void OnLightEvent ();
 
     static gboolean OnLightDefferedEvent ();
+
+    static void OnQrCodeButton ();
+
+    static void OnStripPlusPin ();
+
+    static void OnStripMinusPin ();
 };
 
 #endif

@@ -47,6 +47,13 @@ Screen::Screen ()
     Rescale (MIN (full_width/glade_width, full_height/glade_height));
   }
 
+  // Button
+  {
+    _qr_code_pin     = new Gpio (6, OnQrCodeButton);
+    _strip_plus_pin  = new Gpio (7, OnStripPlusPin);
+    _strip_minus_pin = new Gpio (8, OnStripMinusPin);
+  }
+
   {
     Light::SetEventHandler (OnLightEvent);
 
@@ -117,6 +124,10 @@ Screen::~Screen ()
 
   _timer->Release ();
 
+  _qr_code_pin->Release ();
+  _strip_plus_pin->Release ();
+  _strip_minus_pin->Release ();
+
   g_list_free_full (_scoring_machines,
                     (GDestroyNotify) Object::TryToRelease);
 
@@ -130,6 +141,8 @@ void Screen::ManageScoringMachine (ScoringMachine *machine)
 
   _scoring_machines = g_list_prepend (_scoring_machines,
                                       machine);
+
+  OnLightEvent ();
 }
 
 // --------------------------------------------------------------------------------
@@ -480,6 +493,24 @@ gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
 }
 
 // --------------------------------------------------------------------------------
+void Screen::OnQrCodeButton ()
+{
+  _singleton->ToggleWifiCode ();
+}
+
+// --------------------------------------------------------------------------------
+void Screen::OnStripPlusPin ()
+{
+  _singleton->ChangeStripId (1);
+}
+
+// --------------------------------------------------------------------------------
+void Screen::OnStripMinusPin ()
+{
+  _singleton->ChangeStripId (-1);
+}
+
+// --------------------------------------------------------------------------------
 gboolean Screen::OnKeyPressed (GdkEventKey *event)
 {
   if (event->keyval == GDK_KEY_Escape)
@@ -514,4 +545,14 @@ extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget
   Screen *s = dynamic_cast <Screen *> (owner);
 
   return s->OnKeyPressed (event);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
+                                                          GdkEvent  *event,
+                                                          Object    *owner)
+{
+  gtk_main_quit ();
+
+  return TRUE;
 }

@@ -38,11 +38,11 @@ Gpio::Gpio (guint        pin_id,
   pinMode         (_pin_id, INPUT);
   pullUpDnControl (_pin_id, PUD_UP);
 
-  if (wiringPiISR (pin_id,
+  if (wiringPiISR (_pin_id,
                    INT_EDGE_BOTH,
                    handler) < 0)
   {
-    g_warning ("OnSignal[%d] registration error", pin_id);
+    g_warning ("OnSignal[%d] registration error", _pin_id);
   }
 #else
   g_thread_new (NULL,

@@ -79,12 +79,6 @@ void Light::WireGpioPin (const gchar *state,
 
   _pin_list = g_list_prepend (_pin_list,
                               gpio_pin);
-
-  if (gpio_pin->GetVoltageState ())
-  {
-    SwitchOn ((const gchar *) gpio_pin->GetPtrData (this,
-                                                    "light_state"));
-  }
 }
 
 // --------------------------------------------------------------------------------

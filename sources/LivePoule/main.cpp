@@ -22,6 +22,8 @@
 #include "gpio.hpp"
 #include "sg_machine.hpp"
 
+static Screen *screen = NULL;
+
 // --------------------------------------------------------------------------------
 #ifdef DEBUG
 static void LogHandler (const gchar    *log_domain,
@@ -57,8 +59,6 @@ static void LogHandler (const gchar    *log_domain,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  Screen *screen;
-
   // g_mem_set_vtable (glib_mem_profiler_table);
 
   // Init
@@ -97,12 +97,7 @@ int main (int argc, char **argv)
       g_free (binary_dir);
     }
 
-    {
-      gtk_init (&argc, &argv);
-
-      g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
-      g_object_set (gtk_settings_get_default (), "gtk-menu-images", TRUE, NULL);
-    }
+    gtk_init (&argc, &argv);
 
     //Object::Track ("Player");
 

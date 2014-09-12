@@ -1,11 +1,6 @@
-EXEC   = livepoule
-TARGET = Release
+EXEC = livepoule
 
 CC = arm-linux-gnueabihf-gcc
-
-ifeq ($(TARGET), Debug)
-CC += -g
-endif
 
 CFLAGS  = -DWIRING_PI
 CFLAGS += -Wshadow
@@ -30,9 +25,6 @@ CFLAGS += -Wno-variadic-macros
 CFLAGS += $(shell pkg-config --cflags gtk+-3.0 libxml-2.0 libcurl libmicrohttpd libqrencode libssl)
 CFLAGS += -I../../sources/common
 CFLAGS += -I../../sources/LivePoule
-ifeq ($(TARGET), Debug)
-CFLAGS += -DDEBUG=1
-endif
 
 LDFLAGS  = -lstdc++
 LDFLAGS += $(shell pkg-config --libs gtk+-3.0 libxml-2.0 libcurl libmicrohttpd libqrencode libssl)
@@ -51,19 +43,20 @@ OBJ   = $(SRC:.cpp=.o)
 ##
 ## Compilation section
 ##
-all: subdir $(TARGET)/$(EXEC)
+all: $(EXEC)
+	cp $(EXEC) ~/bin
 
-subdir:
-	mkdir -p $(TARGET)
-
-$(TARGET)/$(EXEC): $(OBJ)
-	@echo "\033[1;31m" $@ "\033[0m"
+$(EXEC): $(OBJ)
+	@echo "\033[1;36m" $< "\033[0m"
 	@$(CC) -o $@ $^ $(LDFLAGS)
 
 %.o: %.cpp
 	@echo "\033[1;34m" $@ "\033[0m"
 	@$(CC) -o $@ -c $< $(CFLAGS)
 
+sync:
+	touch $(SRC)
+
 clean:
 	rm $(OBJ)
-	rm $(TARGET)/$(EXEC)
+	rm $(EXEC)
