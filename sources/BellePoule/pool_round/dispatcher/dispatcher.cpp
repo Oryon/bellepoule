@@ -193,7 +193,7 @@ namespace Pool
       CreatePairs     (_opponent_list);
       RefreshFitness ();
 
-#ifdef DEBUG
+#ifdef DEBUG_DISPATCHER
       if (_pool_size > 4)
       {
         FixErrors ();
@@ -355,7 +355,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Dispatcher::Dump ()
   {
-#ifdef DEBUG
+#ifdef DEBUG_DISPATCHER
     guint  pair_count    = GetPairCount ();
     guint  max_fitness   = 0;
     guint *fitness_table = g_new0 (guint, pair_count);

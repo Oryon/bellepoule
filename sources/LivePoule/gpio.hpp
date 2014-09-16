@@ -28,7 +28,8 @@ class Gpio : public Object
     static void Init ();
 
     Gpio (guint        pin_id,
-          EventHandler handler);
+          EventHandler handler,
+          gboolean     fake_event_allowed = FALSE);
 
     guint GetVoltageState ();
 

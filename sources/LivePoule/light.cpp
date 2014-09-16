@@ -70,7 +70,8 @@ void Light::WireGpioPin (const gchar *state,
                          guint        pin_id)
 {
   Gpio *gpio_pin = new Gpio (pin_id,
-                             _event_handler);
+                             _event_handler,
+                             TRUE);
 
   gpio_pin->SetData (this,
                      "light_state",

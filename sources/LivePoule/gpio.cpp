@@ -27,7 +27,8 @@
 
 // --------------------------------------------------------------------------------
 Gpio::Gpio (guint        pin_id,
-            EventHandler handler)
+            EventHandler handler,
+            gboolean     fake_event_allowed)
   : Object ("Gpio")
 {
   _pin_id        = pin_id;
@@ -45,9 +46,12 @@ Gpio::Gpio (guint        pin_id,
     g_warning ("OnSignal[%d] registration error", _pin_id);
   }
 #else
-  g_thread_new (NULL,
-                (GThreadFunc) FakeLoop,
-                this);
+  if (fake_event_allowed)
+  {
+    g_thread_new (NULL,
+                  (GThreadFunc) FakeLoop,
+                  this);
+  }
 #endif
 }
 
