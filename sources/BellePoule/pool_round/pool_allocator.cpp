@@ -254,74 +254,66 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::DragObject (Object   *object,
-                              DropZone *from_zone)
-  {
-    Player   *floating_object = (Player *) object;
-    PoolZone *pool_zone       = (PoolZone *) from_zone;
-
-    if (floating_object->Is ("Referee"))
-    {
-      pool_zone->RemoveObject (floating_object);
-    }
-    else
-    {
-      Pool *pool = pool_zone->GetPool ();
-
-      pool->RemoveFencer (floating_object);
-    }
-
-    FillPoolTable (pool_zone);
-    SignalStatusUpdate ();
-    FixUpTablesBounds ();
-  }
-
-  // --------------------------------------------------------------------------------
   void Allocator::DropObject (Object   *object,
                               DropZone *source_zone,
                               DropZone *target_zone)
   {
-    Player   *floating_object = (Player *) object;
-    PoolZone *pool_zone       = NULL;
+    Player   *floating_object  = (Player *) object;
+    PoolZone *source_pool_zone = NULL;
+    PoolZone *target_pool_zone = NULL;
 
-    if (floating_object->Is ("Referee") == FALSE)
+    if (source_zone)
     {
-      Pool *target_pool;
+      source_pool_zone = (PoolZone *) source_zone;
 
-      if (target_zone)
+      if (floating_object->Is ("Referee"))
       {
-        pool_zone = (PoolZone *) target_zone;
+        source_pool_zone->RemoveObject (floating_object);
+      }
+    }
+
+    if (target_zone)
+    {
+      target_pool_zone = (PoolZone *) target_zone;
+
+      if (floating_object->Is ("Referee") == FALSE)
+      {
+        if (source_pool_zone)
+        {
+          Pool *source_pool = source_pool_zone->GetPool ();
+
+          source_pool->RemoveFencer (floating_object);
+        }
+
+        {
+          Pool *target_pool = target_pool_zone->GetPool ();
+
+          target_pool->AddFencer (floating_object,
+                                  this);
+        }
+
+        _fencer_list->Update (floating_object);
       }
       else
       {
-        pool_zone = (PoolZone *) source_zone;
-      }
+        target_pool_zone->AddObject (floating_object);
 
-      target_pool = pool_zone->GetPool ();
-      target_pool->AddFencer (floating_object,
-                              this);
-      _fencer_list->Update (floating_object);
-    }
-    else if (target_zone)
-    {
-      pool_zone = (PoolZone *) target_zone;
-
-      pool_zone->AddObject (floating_object);
-
-      if (Locked ())
-      {
-        Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
-
-        if (next_stage)
+        if (Locked ())
         {
-          next_stage->OnAttrListUpdated ();
+          Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+          if (next_stage)
+          {
+            next_stage->OnAttrListUpdated ();
+          }
         }
       }
     }
 
-    if (pool_zone)
+    if (source_pool_zone || target_pool_zone)
     {
-      FillPoolTable (pool_zone);
+      FillPoolTable (source_pool_zone);
+      FillPoolTable (target_pool_zone);
       SignalStatusUpdate ();
       FixUpTablesBounds ();
     }
@@ -1161,7 +1153,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::FillPoolTable (PoolZone *zone)
   {
-    if (_main_table == NULL)
+    if ((zone == NULL) || (_main_table == NULL))
     {
       return;
     }
