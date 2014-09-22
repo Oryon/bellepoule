@@ -24,7 +24,7 @@
 namespace SmartSwapper
 {
 #ifdef DEBUG
-//#define DEBUG_SWAPPING
+#define DEBUG_SWAPPING
 #endif
 
 #ifdef DEBUG_SWAPPING
@@ -740,6 +740,18 @@ next_fencer:
   // --------------------------------------------------------------------------------
   guint SmartSwapper::HasErrors ()
   {
+#ifdef DEBUG_SWAPPING
+    GList *current = _remaining_errors;
+
+    while (current)
+    {
+      Fencer *f = (Fencer *) current->data;
+
+      printf (">> %s\n", f->_player->GetName ());
+      current = g_list_next (current);
+    }
+#endif
+
     return (_remaining_errors != NULL);
   }
 
