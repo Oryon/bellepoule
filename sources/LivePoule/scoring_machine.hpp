@@ -14,50 +14,29 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pair_hpp
-#define pair_hpp
-
-#include <glib.h>
+#ifndef scoring_machine_hpp
+#define scoring_machine_hpp
 
 #include "util/object.hpp"
-#include "opponent.hpp"
+#include "light.hpp"
 
-namespace Pool
+class ScoringMachine : public Object
 {
-  class Pair : public Object
-  {
-    public:
-      Pair (guint     iteration,
-            Opponent *a,
-            Opponent *b);
+  public:
+    void ConnectToLights (GData *lights);
 
-      void ResetFitness ();
+  protected:
+    ScoringMachine (const gchar *class_name);
 
-      void SetFitness (Pair  *tested_pair,
-                       guint  fitness);
+    virtual ~ScoringMachine ();
 
-      gboolean HasFitnessError ();
+    virtual void Wire (GQuark  quark,
+                       Light  *light) = 0;
 
-      guint GetA ();
-
-      guint GetB ();
-
-      guint GetAFitness ();
-
-      guint GetBFitness ();
-
-      void Dump ();
-
-      gboolean HasOpponent (Opponent *o);
-
-    private:
-      Opponent *_a;
-      Opponent *_b;
-      gint      _a_fitness;
-      gint      _b_fitness;
-
-      virtual ~Pair ();
-  };
-}
+  private:
+    static void ConnectToLight (GQuark          quark,
+                                Light          *light,
+                                ScoringMachine *machine);
+};
 
 #endif

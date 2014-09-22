@@ -3730,39 +3730,21 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::DragObject (Object   *object,
-                             DropZone *from_zone)
-  {
-    from_zone->RemoveObject (object);
-
-    {
-      TableZone *table_zone = (TableZone *) from_zone;
-      GSList    *current    = table_zone->GetNodeList ();
-
-      while (current)
-      {
-        FillInNode ((GNode *) current->data,
-                    this);
-
-        current = g_slist_next (current);
-      }
-    }
-
-    DrawAllConnectors ();
-    DrawAllZones      ();
-
-    MakeDirty ();
-  }
-
-  // --------------------------------------------------------------------------------
   void TableSet::DropObject (Object   *object,
                              DropZone *source_zone,
                              DropZone *target_zone)
   {
+    if (source_zone)
+    {
+      source_zone->RemoveObject (object);
+    }
+
     if (target_zone)
     {
       target_zone->AddObject (object);
+    }
 
+    {
       FreezeZoomer ();
       Display (NULL);
       MakeDirty ();

@@ -14,46 +14,33 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef match_dispatcher_hpp
-#define match_dispatcher_hpp
-
-#include <glib.h>
+#ifndef gpio_hpp
+#define gpio_hpp
 
 #include "util/object.hpp"
-#include "pair.hpp"
 
-namespace Pool
+class Gpio : public Object
 {
-  class MatchDispatcher : public Object
-  {
-    public:
-      MatchDispatcher (guint pool_size);
+  public:
+    typedef void (*EventHandler) () ;
 
-      MatchDispatcher (guint        pool_size,
-                       const gchar *name,
-                       ...);
+  public:
+    static void Init ();
 
-      void Dump ();
+    Gpio (guint        pin_id,
+          EventHandler handler,
+          gboolean     fake_event_allowed = FALSE);
 
-    private:
-      GList *_pair_list;
-      guint  _pool_size;
-      gchar *_name;
-      GList *_opponent_list;
+    guint GetVoltageState ();
 
-      virtual ~MatchDispatcher ();
+  private:
+    guint        _pin_id;
+    guint        _fake_voltage;
+    EventHandler _event_handler;
 
-      void Init (const gchar *name,
-                 guint        pool_size);
+    virtual ~Gpio ();
 
-      void SpreadOpponents (GList *opponent_list);
-
-      void CreatePairs (GList *opponent_list);
-
-      void FixErrors ();
-
-      void RefreshFitness ();
-  };
-}
+    static gpointer FakeLoop (Gpio *gpio);
+};
 
 #endif

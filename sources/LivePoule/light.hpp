@@ -14,50 +14,39 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pair_hpp
-#define pair_hpp
+#ifndef light_hpp
+#define light_hpp
 
-#include <glib.h>
+#include <gtk/gtk.h>
 
 #include "util/object.hpp"
-#include "opponent.hpp"
+#include "gpio.hpp"
 
-namespace Pool
+class Light : public Object
 {
-  class Pair : public Object
-  {
-    public:
-      Pair (guint     iteration,
-            Opponent *a,
-            Opponent *b);
+  public:
+    Light (GtkWidget *w,
+           ...);
 
-      void ResetFitness ();
+    static void SetEventHandler (Gpio::EventHandler handler);
 
-      void SetFitness (Pair  *tested_pair,
-                       guint  fitness);
+    static void Refresh (GQuark  key_id,
+                         Light  *light);
 
-      gboolean HasFitnessError ();
+    void WireGpioPin (const gchar *state,
+                      guint        pin_id);
 
-      guint GetA ();
+  private:
+    static Gpio::EventHandler  _event_handler;
+    GtkWidget                 *_widget;
+    GList                     *_pin_list;
 
-      guint GetB ();
+    virtual ~Light ();
 
-      guint GetAFitness ();
+    void SwitchOn (const gchar *state = NULL);
 
-      guint GetBFitness ();
+    void SwitchOff ();
 
-      void Dump ();
-
-      gboolean HasOpponent (Opponent *o);
-
-    private:
-      Opponent *_a;
-      Opponent *_b;
-      gint      _a_fitness;
-      gint      _b_fitness;
-
-      virtual ~Pair ();
-  };
-}
+};
 
 #endif

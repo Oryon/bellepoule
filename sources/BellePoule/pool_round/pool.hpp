@@ -26,10 +26,10 @@
 #include "application/score_collector.hpp"
 #include "util/player.hpp"
 
+#include "dispatcher/dispatcher.hpp"
+
 namespace Pool
 {
-  class MatchOrder;
-
   class Pool : public CanvasModule
   {
     public:
@@ -133,7 +133,7 @@ namespace Pool
     GSList          *_display_data;
     guint            _nb_drop;
     const gchar     *_xml_player_tag;
-    MatchOrder      *_match_order;
+    Dispatcher      *_dispatcher;
 
     void            *_status_cbk_data;
     StatusCbk        _status_cbk;

@@ -20,6 +20,7 @@
 #include <glib.h>
 
 #include "util/object.hpp"
+#include "people_management/fencer.hpp"
 
 namespace Pool
 {
@@ -28,7 +29,10 @@ namespace Pool
   class Opponent : public Object
   {
     public:
-      Opponent (guint id);
+      Opponent (guint   id,
+                Fencer *fencer);
+
+      void SetQuark (GQuark quark);
 
       guint GetId ();
 
@@ -38,9 +42,20 @@ namespace Pool
 
       void SetFitness (guint fitness);
 
+      gint GetFitness ();
+
       void RefreshFitnessProfile (guint fitness);
 
-      void Dump ();
+      void Lock (GQuark teammate_quark,
+                 guint  teammate_count);
+
+      gboolean IsCompatibleWith (Opponent *with);
+
+      void Use (Opponent *who);
+
+      gchar *GetName ();
+
+      void Dump (guint max_fitness);
 
       static gint CompareFitness (Opponent *a,
                                   Opponent *b);
@@ -49,11 +64,14 @@ namespace Pool
                                        guint     size);
 
     private:
-      guint  _id;
-      guint  _fitness;
-      guint *_fitness_profile;
-      guint  _max_fitness;
-      GList *_opponent_list;
+      guint   _id;
+      Fencer *_fencer;
+      GQuark  _quark;
+      guint   _lock;
+      gint    _fitness;
+      guint  *_fitness_profile;
+      guint   _max_fitness;
+      GList  *_opponent_list;
 
       virtual ~Opponent ();
   };

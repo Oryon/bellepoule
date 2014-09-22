@@ -314,9 +314,6 @@ namespace Table
                                          TableSet       *ts);
 
     private:
-      void DragObject (Object   *object,
-                       DropZone *from_zone);
-
       void DropObject (Object   *object,
                        DropZone *source_zone,
                        DropZone *target_zone);

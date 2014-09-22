@@ -19,14 +19,18 @@
 namespace Pool
 {
   // --------------------------------------------------------------------------------
-  Opponent::Opponent (guint id)
+  Opponent::Opponent (guint   id,
+                      Fencer *fencer)
     : Object ("Opponent")
   {
     _id              = id;
-    _fitness         = 0;
+    _fencer          = fencer;
+    _fitness         = -1;
     _opponent_list   = NULL;
     _fitness_profile = NULL;
     _max_fitness     = 0;
+    _lock            = 0;
+    _quark           = 0;
   }
 
   // --------------------------------------------------------------------------------
@@ -44,6 +48,12 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Opponent::SetQuark (GQuark quark)
+  {
+    _quark = quark;
+  }
+
+  // --------------------------------------------------------------------------------
   void Opponent::Feed (GList *opponent_list)
   {
     _opponent_list = g_list_copy (opponent_list);
@@ -53,24 +63,68 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Opponent::Use (Opponent *who)
+  {
+    if (_quark == who->_quark)
+    {
+      _lock--;
+      who->_lock--;
+    }
+
+    {
+      _opponent_list = g_list_delete_link (_opponent_list,
+                                           g_list_find (_opponent_list, who));
+      who->_opponent_list = g_list_delete_link (who->_opponent_list,
+                                                 g_list_find (who->_opponent_list, this));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Opponent::IsCompatibleWith (Opponent *with)
+  {
+    if (_quark == with->_quark)
+    {
+      return TRUE;
+    }
+    else
+    {
+      return ((_lock == 0) && (with->_lock == 0));
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   Opponent *Opponent::GetBestOpponent ()
   {
     _opponent_list = g_list_sort (_opponent_list,
                                   (GCompareFunc) CompareFitness);
 
-    if (_opponent_list)
     {
-      Opponent *target = (Opponent *) _opponent_list->data;
+      GList *current = _opponent_list;
 
-      _opponent_list = g_list_delete_link (_opponent_list,
-                                           _opponent_list);
-      target->_opponent_list = g_list_delete_link (target->_opponent_list,
-                                                   g_list_find (target->_opponent_list, this));
+      while (current)
+      {
+        Opponent *target = (Opponent *) current->data;
 
-      return target;
+        if (target->IsCompatibleWith (this))
+        {
+          return target;
+        }
+
+        current = g_list_next (current);
+      }
     }
 
     return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Opponent::Lock (GQuark teammate_quark,
+                       guint  teammate_count)
+  {
+    if (teammate_quark == _quark)
+    {
+      _lock = teammate_count - 1;
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -106,6 +160,12 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  gint Opponent::GetFitness ()
+  {
+    return _fitness;
+  }
+
+  // --------------------------------------------------------------------------------
   gint Opponent::CompareFitness (Opponent *a,
                                  Opponent *b)
   {
@@ -113,12 +173,23 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Opponent::Dump ()
+  gchar *Opponent::GetName ()
+  {
+    if (_fencer)
+    {
+      return _fencer->GetName ();
+    }
+
+    return NULL;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Opponent::Dump (guint max_fitness)
   {
     if (_fitness_profile)
     {
       printf (" %2d", _id);
-      for (guint i = 0; i < _max_fitness; i++)
+      for (guint i = 0; i < max_fitness; i++)
       {
         printf (";       %2d", _fitness_profile[i]);
       }
