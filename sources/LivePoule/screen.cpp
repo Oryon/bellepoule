@@ -14,6 +14,9 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <glib/gstdio.h>
+#include <gio/gunixsocketaddress.h>
+
 #include "screen.hpp"
 
 Screen *Screen::_singleton = NULL;
@@ -109,6 +112,8 @@ Screen::Screen ()
 
   _wifi_code = new WifiCode ("Piste");
 
+  _wpa = new Wpa ();
+
   _http_server = new Net::HttpServer (this,
                                       HttpPostCbk,
                                       NULL,
@@ -123,6 +128,10 @@ Screen::~Screen ()
   _singleton = NULL;
 
   _timer->Release ();
+
+  _wpa->Release ();
+
+  _wifi_code->Release ();
 
   _qr_code_pin->Release ();
   _strip_plus_pin->Release ();
@@ -260,6 +269,8 @@ void Screen::ToggleWifiCode ()
   }
   else
   {
+    _wpa->ConfigureNetwork ();
+
     _wifi_code->ResetKey ();
 
     {
@@ -518,7 +529,8 @@ gboolean Screen::OnKeyPressed (GdkEventKey *event)
     Unfullscreen ();
     return TRUE;
   }
-  else if (event->keyval == GDK_KEY_KP_Enter)
+  else if (   (event->keyval == GDK_KEY_KP_Enter)
+           || (event->keyval == GDK_KEY_Return))
   {
     ToggleWifiCode ();
     return TRUE;

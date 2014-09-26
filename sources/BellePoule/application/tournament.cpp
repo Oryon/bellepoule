@@ -92,16 +92,7 @@ Tournament::Tournament (gchar *filename)
 
   {
     GtkWidget *w       = _glade->GetWidget ("about_dialog");
-    gchar     *version;
-
-    if (strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
-    {
-      version = g_strdup_printf ("V%s.%sbeta%s", VERSION, VERSION_REVISION, VERSION_MATURITY);
-    }
-    else
-    {
-      version = g_strdup_printf ("V%s.%s%s", VERSION, VERSION_REVISION, VERSION_MATURITY);
-    }
+    gchar     *version = g_strdup_printf ("V%s.%s%s", VERSION, VERSION_REVISION, VERSION_MATURITY);
 
     gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
                                   (const gchar *) version);
@@ -1789,7 +1780,7 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
       {
         new_version_detected = TRUE;
       }
-      else if (maturity && (atoi (VERSION_MATURITY) < atoi (maturity)))
+      else if (maturity && (strcmp (VERSION_MATURITY, maturity) < 0))
       {
         new_version_detected = TRUE;
       }
@@ -1808,15 +1799,6 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
       if (new_version_detected)
       {
         gchar *label = g_strdup_printf ("%s.%s.%s", version, revision, maturity);
-
-        if (strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
-        {
-          label = g_strdup_printf ("%s.%sbeta%s", version, revision, maturity);
-        }
-        else
-        {
-          label = g_strdup_printf ("%s.%s%s", version, revision, maturity);
-        }
 
         gtk_menu_item_set_label (GTK_MENU_ITEM (tournament->_glade->GetWidget ("new_version_menuitem")),
                                  label);

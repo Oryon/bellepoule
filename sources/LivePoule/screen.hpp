@@ -27,6 +27,7 @@
 #include "gpio.hpp"
 #include "light.hpp"
 #include "scoring_machine.hpp"
+#include "wpa.hpp"
 
 class Screen : public Module, Net::HttpServer::Client
 {
@@ -41,6 +42,7 @@ class Screen : public Module, Net::HttpServer::Client
     static Screen   *_singleton;
     Net::HttpServer *_http_server;
     WifiCode        *_wifi_code;
+    gchar           *_wifi_configuration;
     Timer           *_timer;
     GData           *_lights;
     guint            _strip_id;
@@ -48,6 +50,7 @@ class Screen : public Module, Net::HttpServer::Client
     Gpio            *_qr_code_pin;
     Gpio            *_strip_plus_pin;
     Gpio            *_strip_minus_pin;
+    Wpa             *_wpa;
 
     virtual ~Screen ();
 
