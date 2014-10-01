@@ -1820,27 +1820,12 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
 // --------------------------------------------------------------------------------
 void Tournament::RefreshScannerCode ()
 {
-  GtkEntry    *ssid_w       = GTK_ENTRY     (_glade->GetWidget ("SSID_entry"));
-  GtkEntry    *passphrase_w = GTK_ENTRY     (_glade->GetWidget ("passphrase_entry"));
-  GtkComboBox *security_w   = GTK_COMBO_BOX (_glade->GetWidget ("security_combobox"));
+  GtkEntry    *ssid_w       = GTK_ENTRY (_glade->GetWidget ("SSID_entry"));
+  GtkEntry    *passphrase_w = GTK_ENTRY (_glade->GetWidget ("passphrase_entry"));
 
   _wifi_network->SetSSID       ((gchar *) gtk_entry_get_text (ssid_w));
   _wifi_network->SetPassphrase ((gchar *) gtk_entry_get_text (passphrase_w));
-
-  switch (gtk_combo_box_get_active (security_w))
-  {
-    case 0:
-      _wifi_network->SetEncryption ("nopass");
-      break;
-    case 1:
-      _wifi_network->SetEncryption ("WEP");
-      break;
-    case 2:
-      _wifi_network->SetEncryption ("WPA");
-      break;
-    default:
-      break;
-  }
+  _wifi_network->SetEncryption ("WPA");
 
   _admin_wifi_code->SetWifiNetwork (_wifi_network);
 

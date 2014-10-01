@@ -903,12 +903,6 @@ Public License instead of this License.  But first, please read
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">No encryption</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">WEP</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">WPA</col>
       </row>
     </data>
@@ -1113,7 +1107,7 @@ Public License instead of this License.  But first, please read
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="model">encryption_liststore</property>
-                            <property name="active">2</property>
+                            <property name="active">0</property>
                             <signal name="changed" handler="on_network_config_changed" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="cellrenderertext5"/>
