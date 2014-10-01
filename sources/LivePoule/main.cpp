@@ -75,7 +75,9 @@ int main (int argc, char **argv)
 
       g_log_set_default_handler (LogHandler,
                                  NULL);
-
+#ifdef DEBUG
+      install_dirname = g_build_filename (binary_dir, "..", "..", "..", NULL);
+#else
       {
         gchar *basename = g_path_get_basename (argv[0]);
 
@@ -88,6 +90,7 @@ int main (int argc, char **argv)
         install_dirname = g_build_filename (binary_dir, "..", "share", basename, NULL);
         g_free (basename);
       }
+#endif
 
       g_free (binary_dir);
     }

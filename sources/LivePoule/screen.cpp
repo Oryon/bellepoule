@@ -260,16 +260,20 @@ void Screen::Unfullscreen ()
 // --------------------------------------------------------------------------------
 void Screen::ToggleWifiCode ()
 {
-  GtkWidget *w = _glade->GetWidget ("code_image");
+  GtkWidget *image = _glade->GetWidget ("code_image");
 
-  if (gtk_widget_get_visible (w))
+  if (gtk_widget_get_visible (image))
   {
-    gtk_widget_set_visible (w,
+    gtk_widget_set_visible (image,
                             FALSE);
   }
   else
   {
+    GtkWidget *spinner = _glade->GetWidget ("spinner");
+
+    gtk_widget_set_visible (spinner, TRUE);
     _wpa->ConfigureNetwork ();
+    gtk_widget_set_visible (spinner, FALSE);
 
     _wifi_code->ResetKey ();
 
@@ -281,8 +285,7 @@ void Screen::ToggleWifiCode ()
       g_object_ref (pixbuf);
     }
 
-    gtk_widget_set_visible (w,
-                            TRUE);
+    gtk_widget_set_visible (image, TRUE);
   }
 }
 
