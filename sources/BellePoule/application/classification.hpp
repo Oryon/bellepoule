@@ -32,10 +32,6 @@ class Classification : public People::PlayersList
     void DumpToFFF (gchar   *filename,
                     Contest *contest);
 
-    void DumpToHTML (gchar   *filename,
-                     Contest *contest,
-                     GSList  *attr_list);
-
     void SortDisplay ();
 
     void SetSortFunction (GtkTreeIterCompareFunc sort_func,

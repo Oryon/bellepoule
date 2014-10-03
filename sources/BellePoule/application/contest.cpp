@@ -24,6 +24,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
+#include <glib/gstdio.h>
+#include <glib/gprintf.h>
 #include <goocanvas.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
@@ -1535,6 +1537,18 @@ void Contest::Save ()
   {
     Save (_filename);
 
+    {
+      gchar *html_file = g_strdup (_filename);
+      gchar *suffix    = strstr (html_file, ".cotcot");
+
+      if (suffix)
+      {
+        sprintf (suffix, ".html");
+        DumpToHTML (html_file, NULL);
+      }
+      g_free (html_file);
+    }
+
     if (_tournament)
     {
       const gchar *location = _tournament->GetBackupLocation ();
@@ -1712,6 +1726,69 @@ void Contest::Save (gchar *filename)
 
     gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
                               FALSE);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::DumpToHTML (gchar  *filename,
+                          Module *module)
+{
+  if (filename)
+  {
+    FILE *file = g_fopen (filename, "w");
+
+    {
+      fprintf (file,
+               "<html>\n"
+               "  <head>\n"
+               "    <Title>%s %s - %s - %s - %s</Title>\n"
+               "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n"
+#include "css.h"
+               "  </head>\n\n",
+               GetName (),
+               GetDate (),
+               GetWeapon (),
+               GetGender (),
+               GetCategory ());
+
+      fprintf (file,
+               "  <body>\n"
+               "    <div>\n"
+               "      <div class=\"Title\">\n"
+               "        <center>\n"
+               "          <h1>%s</h1>\n"
+               "          <h1>%s</h1>\n"
+               "          <h1>%s - %s - %s</h1>\n"
+               "        </center>\n"
+               "      <div>\n"
+               "\n",
+               GetName (),
+               GetDate (),
+               GetWeapon (),
+               GetGender (),
+               GetCategory ());
+    }
+
+    if (module)
+    {
+      module->DumpToHTML (file);
+    }
+    else
+    {
+      _schedule->DumpToHTML (file);
+    }
+
+    {
+      fprintf (file,
+               "      <div class=\"Footer\">\n"
+               "        <h6>Managed by BellePoule <a href=\"http://betton.escrime.free.fr/index.php/bellepoule\">http://betton.escrime.free.fr/index.php/bellepoule</a><h6/>\n"
+               "      <div>\n"
+               "    </div>\n"
+               "  </body>\n");
+
+      fprintf (file, "</html>\n");
+      fclose (file);
+    }
   }
 }
 

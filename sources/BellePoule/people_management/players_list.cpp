@@ -16,6 +16,7 @@
 
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib/gstdio.h>
 #include <goocanvas.h>
 
 #include "util/canvas.hpp"
@@ -1514,5 +1515,119 @@ namespace People
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean PlayersList::IsTableBorder (guint place)
+  {
+    if (place > 1)
+    {
+      guint bit1_count = 0;
+
+      while (place)
+      {
+        bit1_count += (place & 1L);
+        place >>= 1;
+      }
+
+      return (bit1_count == 1);
+    }
+
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::DumpToHTML (FILE *file)
+  {
+    if (_filter && file)
+    {
+      fprintf (file,
+               "      <div class=\"Round\">\n"
+               "        <h3>%s</h3>\n"
+               "        <table class=\"Table\">\n",
+               gettext ("General classification"));
+
+      // Header
+      {
+        GSList *current_attr_desc = _filter->GetLayoutList ();
+
+        fprintf (file, "          <tr class=\"TableHeader\">\n");
+        while (current_attr_desc)
+        {
+          Filter::Layout *layout    = (Filter::Layout *) current_attr_desc->data;
+          AttributeDesc  *attr_desc = layout->_desc;
+
+          if (attr_desc->_scope == AttributeDesc::GLOBAL)
+          {
+            fprintf (file,
+                     "            <th>%s</th>\n",
+                     attr_desc->_user_name);
+          }
+
+          current_attr_desc = g_slist_next (current_attr_desc);
+        }
+        fprintf (file, "          </tr>\n");
+      }
+
+      // Fencers
+      {
+        GSList *current_player = _player_list;
+
+        for (guint i = 0; current_player; i++)
+        {
+          Player *player = (Player *) current_player->data;
+
+          if (IsTableBorder (i))
+          {
+            fprintf (file, "          <tr class=\"Separator\">\n");
+          }
+
+          if (i%2)
+          {
+            fprintf (file, "          <tr class=\"OddRow\">\n");
+          }
+          else
+          {
+            fprintf (file, "          <tr class=\"EvenRow\">\n");
+          }
+
+          {
+            GSList *current_attr_desc = _filter->GetLayoutList ();
+
+            while (current_attr_desc)
+            {
+              Filter::Layout *layout    = (Filter::Layout *) current_attr_desc->data;
+              AttributeDesc  *attr_desc = layout->_desc;
+
+              if (attr_desc->_scope == AttributeDesc::GLOBAL)
+              {
+                Player::AttributeId  attr_id = Player::AttributeId (attr_desc->_code_name);
+                Attribute           *attr    = player->GetAttribute ( &attr_id);
+
+                if (attr)
+                {
+                  gchar *image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+
+                  fprintf (file, "            <td>%s</td>\n", image);
+                  g_free (image);
+                }
+                else
+                {
+                  fprintf (file, "            <td></td>\n");
+                }
+              }
+
+              current_attr_desc = g_slist_next (current_attr_desc);
+            }
+          }
+          fprintf (file, "          </tr>\n");
+          current_player = g_slist_next (current_player);
+        }
+      }
+
+      fprintf (file,
+               "        </table>\n"
+               "      </div>\n");
+    }
   }
 }

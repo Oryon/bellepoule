@@ -711,6 +711,11 @@ void Module::on_end_print (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
+void Module::DumpToHTML (FILE *file)
+{
+}
+
+// --------------------------------------------------------------------------------
 GdkPixbuf *Module::GetPixbuf (const gchar *icon)
 {
   GdkPixbuf *pixbuf;

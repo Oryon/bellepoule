@@ -748,6 +748,11 @@ void Schedule::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
+void Schedule::SaveAsHtml (FILE *file)
+{
+}
+
+// --------------------------------------------------------------------------------
 void Schedule::Load (xmlDoc          *doc,
                      const gchar     *contest_keyword,
                      People::Checkin *referees)

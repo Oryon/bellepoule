@@ -370,9 +370,8 @@ namespace People
         }
         else if (export_type == HTML)
         {
-          classification->DumpToHTML (filename,
-                                      _contest,
-                                      _filter->GetLayoutList ());
+          _contest->DumpToHTML (filename,
+                                classification);
         }
       }
       g_free (filename);
