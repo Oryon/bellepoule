@@ -1520,19 +1520,6 @@ namespace People
   // --------------------------------------------------------------------------------
   gboolean PlayersList::IsTableBorder (guint place)
   {
-    if (place > 1)
-    {
-      guint bit1_count = 0;
-
-      while (place)
-      {
-        bit1_count += (place & 1L);
-        place >>= 1;
-      }
-
-      return (bit1_count == 1);
-    }
-
     return FALSE;
   }
 
@@ -1542,10 +1529,7 @@ namespace People
     if (_filter && file)
     {
       fprintf (file,
-               "      <div class=\"Round\">\n"
-               "        <h3>%s</h3>\n"
-               "        <table class=\"Table\">\n",
-               gettext ("General classification"));
+               "        <table class=\"Table\">\n");
 
       // Header
       {
@@ -1626,8 +1610,7 @@ namespace People
       }
 
       fprintf (file,
-               "        </table>\n"
-               "      </div>\n");
+               "        </table>\n");
     }
   }
 }

@@ -1544,7 +1544,7 @@ void Contest::Save ()
       if (suffix)
       {
         sprintf (suffix, ".html");
-        DumpToHTML (html_file, NULL);
+        DumpToHTML (html_file, _schedule);
       }
       g_free (html_file);
     }
@@ -1769,14 +1769,7 @@ void Contest::DumpToHTML (gchar  *filename,
                GetCategory ());
     }
 
-    if (module)
-    {
-      module->DumpToHTML (file);
-    }
-    else
-    {
-      _schedule->DumpToHTML (file);
-    }
+    module->DumpToHTML (file);
 
     {
       fprintf (file,

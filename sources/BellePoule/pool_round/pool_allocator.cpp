@@ -1888,6 +1888,12 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Allocator::DumpToHTML (FILE *file)
+  {
+    _fencer_list->DumpToHTML (file);
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_filter_button_clicked (GtkWidget *widget,
                                                             Object    *owner)
   {

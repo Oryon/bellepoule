@@ -748,8 +748,65 @@ void Schedule::Save (xmlTextWriter *xml_writer)
 }
 
 // --------------------------------------------------------------------------------
-void Schedule::SaveAsHtml (FILE *file)
+void Schedule::DumpToHTML (FILE *file)
 {
+  {
+    GList *current = _stage_list;
+
+    fprintf (file,
+             "      <div id=\"menu\">\n"
+             "        <ul id=\"menu_bar\">\n");
+
+    while (current)
+    {
+      Stage             *stage       = (Stage *) current->data;
+      Stage::StageClass *stage_class = stage->GetClass ();
+
+      fprintf (file, "          <li><a href=\"\" onclick=\"javascript:OnTabClicked (\'round_%d\'); return false;\">%s %s</a></li>\n",
+               stage->GetId (),
+               stage_class->_name,
+               stage->GetName ());
+
+      current = g_list_next (current);
+    }
+
+    fprintf (file,
+             "        </ul>\n"
+             "      </div>\n\n");
+  }
+
+  {
+    GList *current = _stage_list;
+
+    for (guint i = 0; current != NULL; i++)
+    {
+      Stage             *stage       = (Stage *) current->data;
+      Stage::StageClass *stage_class = stage->GetClass ();
+      Module            *module      = (Module *) dynamic_cast <Module *> (stage);
+
+      fprintf (file,
+               "      <div class=\"Round\" id=\"round_%d\"",
+               stage->GetId ());
+      if (i == 0)
+      {
+        fprintf (file, " style=\"display: inline\">\n");
+      }
+      else
+      {
+        fprintf (file, ">\n");
+      }
+      fprintf (file,
+               "        <h3>%s</h3>\n",
+               stage_class->_name);
+
+      module->DumpToHTML (file);
+
+      fprintf (file,
+               "      </div>\n");
+
+      current = g_list_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------

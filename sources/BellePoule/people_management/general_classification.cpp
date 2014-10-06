@@ -379,6 +379,14 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void GeneralClassification::DumpToHTML (FILE *file)
+  {
+    Classification *classification = GetClassification ();
+
+    classification->DumpToHTML (file);
+  }
+
+  // --------------------------------------------------------------------------------
   gchar *GeneralClassification::GetPrintName ()
   {
     return g_strdup_printf (gettext ("General classification"));

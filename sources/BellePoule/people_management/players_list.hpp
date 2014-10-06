@@ -124,7 +124,7 @@ namespace People
 
       void RefreshDisplay ();
 
-      gboolean IsTableBorder (guint place);
+      virtual gboolean IsTableBorder (guint place);
 
       void SetColumn (guint           id,
                       Filter::Layout *attr_layout,

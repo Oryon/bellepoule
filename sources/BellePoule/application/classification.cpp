@@ -26,8 +26,8 @@
 
 // --------------------------------------------------------------------------------
 Classification::Classification (Filter *filter)
-: PlayersList ("classification.glade",
-               NO_RIGHT)
+  : PlayersList ("classification.glade",
+                 NO_RIGHT)
 {
   if (filter)
   {
@@ -251,4 +251,23 @@ void Classification::WriteFFFString (FILE        *file,
       g_free (result);
     }
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Classification::IsTableBorder (guint place)
+{
+  if (place > 1)
+  {
+    guint bit1_count = 0;
+
+    while (place)
+    {
+      bit1_count += (place & 1L);
+      place >>= 1;
+    }
+
+    return (bit1_count == 1);
+  }
+
+  return FALSE;
 }

@@ -45,6 +45,8 @@ class Classification : public People::PlayersList
                          const gchar *attr_name);
 
     virtual ~Classification ();
+
+    gboolean IsTableBorder (guint place);
 };
 
 #endif

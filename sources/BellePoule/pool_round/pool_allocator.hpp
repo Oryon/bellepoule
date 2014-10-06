@@ -156,6 +156,8 @@ namespace Pool
       gboolean ObjectIsDropable (Object   *floating_object,
                                  DropZone *in_zone);
 
+      void DumpToHTML (FILE *file);
+
       static void OnSwappingToggled (GtkToggleButton *togglebutton,
                                      Allocator       *allocator);
       virtual ~Allocator ();
