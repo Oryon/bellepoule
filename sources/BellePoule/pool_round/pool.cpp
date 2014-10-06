@@ -2183,6 +2183,106 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Pool::DumpToHTML (FILE *file)
+  {
+    guint nb_players = GetNbPlayers ();
+
+    fprintf (file, "          <tr class=\"PoolName\">\n");
+    fprintf (file, "            <td>%s</td>\n", GetName ());
+    fprintf (file, "          </tr>\n");
+
+    for (guint i = 0; i < nb_players; i++)
+    {
+      Player *A = GetPlayer (i, _sorted_fencer_list);
+
+      fprintf (file, "          <tr class=\"EvenRow\">\n");
+
+      {
+        GSList *layout_list = NULL;
+
+        if (_filter)
+        {
+          layout_list = _filter->GetLayoutList ();
+        }
+
+        for (guint a = 0; layout_list != NULL; a++)
+        {
+          Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;;
+          Attribute            *attr;
+          Player::AttributeId  *attr_id;
+
+          if (attr_layout->_desc->_scope == AttributeDesc::LOCAL)
+          {
+            attr_id = new Player::AttributeId (attr_layout->_desc->_code_name,
+                                               GetDataOwner ());
+          }
+          else
+          {
+            attr_id = new Player::AttributeId (attr_layout->_desc->_code_name);
+          }
+          attr = A->GetAttribute (attr_id);
+          attr_id->Release ();
+
+          if (attr)
+          {
+            gchar *attr_image;
+
+            if (attr_layout->_look == AttributeDesc::GRAPHICAL)
+            {
+              attr_image = attr->GetUserImage (AttributeDesc::SHORT_TEXT);
+            }
+            else
+            {
+              attr_image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+            }
+
+            fprintf (file, "            <td>%s</td>\n", attr_image);
+            g_free (attr_image);
+          }
+
+          layout_list = g_slist_next (layout_list);
+        }
+      }
+
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+
+      for (guint j = 0; j < nb_players; j++)
+      {
+        if (i != j)
+        {
+          Player *B     = GetPlayer (j, _sorted_fencer_list);
+          Match  *match = GetMatch (A, B);
+
+          if (match)
+          {
+            if (match->IsDropped ())
+            {
+              fprintf (file, "            <td class=\"NoScoreCell\"></td>\n");
+            }
+            else
+            {
+              Score *score       = match->GetScore (A);
+              gchar *score_image = score->GetImage ();
+
+              fprintf (file, "            <td class=\"PoolCell\">%s</td>\n", score_image);
+              g_free (score_image);
+            }
+          }
+          else
+          {
+            fprintf (file, "            <td class=\"NoScoreCell\"></td>\n");
+          }
+        }
+        else
+        {
+          fprintf (file, "            <td class=\"NoScoreCell\"></td>\n");
+        }
+      }
+      fprintf (file, "          </tr>\n");
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Pool::CleanScores ()
   {
     GSList *current = _match_list;

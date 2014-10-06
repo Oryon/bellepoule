@@ -83,6 +83,8 @@ namespace Pool
 
       void Load (xmlNode *xml_node);
 
+      void DumpToHTML (FILE *file);
+
       GSList *GetCurrentClassification ();
 
       GSList *EvaluateClassification (GSList           *list,

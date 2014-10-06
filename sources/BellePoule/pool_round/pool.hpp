@@ -90,6 +90,8 @@ namespace Pool
       void Load (xmlNode *xml_node,
                  GSList  *player_list);
 
+      void DumpToHTML (FILE *file);
+
       void Stuff ();
 
       void DrawPage (GtkPrintOperation *operation,

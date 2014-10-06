@@ -796,10 +796,13 @@ void Schedule::DumpToHTML (FILE *file)
         fprintf (file, ">\n");
       }
       fprintf (file,
-               "        <h3>%s</h3>\n",
+               "        <h1>%s</h1>\n",
                stage_class->_name);
 
-      module->DumpToHTML (file);
+      if (i <= _current_stage)
+      {
+        module->DumpToHTML (file);
+      }
 
       fprintf (file,
                "      </div>\n");

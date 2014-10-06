@@ -1529,24 +1529,21 @@ namespace People
     if (_filter && file)
     {
       fprintf (file,
-               "        <table class=\"Table\">\n");
+               "        <table class=\"List\">\n");
 
       // Header
       {
         GSList *current_attr_desc = _filter->GetLayoutList ();
 
-        fprintf (file, "          <tr class=\"TableHeader\">\n");
+        fprintf (file, "          <tr class=\"ListHeader\">\n");
         while (current_attr_desc)
         {
           Filter::Layout *layout    = (Filter::Layout *) current_attr_desc->data;
           AttributeDesc  *attr_desc = layout->_desc;
 
-          if (attr_desc->_scope == AttributeDesc::GLOBAL)
-          {
-            fprintf (file,
-                     "            <th>%s</th>\n",
-                     attr_desc->_user_name);
-          }
+          fprintf (file,
+                   "            <th>%s</th>\n",
+                   attr_desc->_user_name);
 
           current_attr_desc = g_slist_next (current_attr_desc);
         }
@@ -1580,25 +1577,33 @@ namespace People
 
             while (current_attr_desc)
             {
-              Filter::Layout *layout    = (Filter::Layout *) current_attr_desc->data;
-              AttributeDesc  *attr_desc = layout->_desc;
+              Filter::Layout      *layout    = (Filter::Layout *) current_attr_desc->data;
+              AttributeDesc       *attr_desc = layout->_desc;
+              Player::AttributeId *attr_id;
+              Attribute           *attr;
 
               if (attr_desc->_scope == AttributeDesc::GLOBAL)
               {
-                Player::AttributeId  attr_id = Player::AttributeId (attr_desc->_code_name);
-                Attribute           *attr    = player->GetAttribute ( &attr_id);
+                attr_id = new Player::AttributeId  (attr_desc->_code_name);
+              }
+              else
+              {
+                attr_id = new Player::AttributeId  (attr_desc->_code_name,
+                                                    GetDataOwner ());
+              }
 
-                if (attr)
-                {
-                  gchar *image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+              attr = player->GetAttribute (attr_id);
+              attr_id->Release ();
+              if (attr)
+              {
+                gchar *image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
 
-                  fprintf (file, "            <td>%s</td>\n", image);
-                  g_free (image);
-                }
-                else
-                {
-                  fprintf (file, "            <td></td>\n");
-                }
+                fprintf (file, "            <td>%s</td>\n", image);
+                g_free (image);
+              }
+              else
+              {
+                fprintf (file, "            <td></td>\n");
               }
 
               current_attr_desc = g_slist_next (current_attr_desc);
