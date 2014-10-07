@@ -780,14 +780,15 @@ namespace Pool
     fprintf (file, "          <table>\n");
 
     {
-      guint nb_pools = _allocator->GetNbPools ();
+      guint nb_pools  = _allocator->GetNbPools ();
+      guint nb_matchs = _allocator->GetNbMatchs ();
 
       for (guint p = 0; p < nb_pools; p++)
       {
         Pool *pool = _allocator->GetPool (p);
 
         fprintf (file, "          <tr class=\"PoolSeparator\">\n");
-        pool->DumpToHTML (file);
+        pool->DumpToHTML (file, nb_matchs/nb_pools + nb_matchs%nb_pools);
       }
     }
 

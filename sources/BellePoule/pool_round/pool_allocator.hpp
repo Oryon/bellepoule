@@ -44,6 +44,8 @@ namespace Pool
 
       guint GetNbPools ();
 
+      gint GetNbMatchs ();
+
       Pool *GetPool (guint index);
 
       PoolZone *GetZone (guint index);
@@ -119,7 +121,6 @@ namespace Pool
       void FixUpTablesBounds ();
       void RegisterConfig (Configuration *config);
       const gchar *GetInputProviderClient ();
-      gint GetNbMatchs ();
 
       void OnAttrListUpdated ();
 

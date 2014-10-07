@@ -2183,68 +2183,94 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Pool::DumpToHTML (FILE *file)
+  void Pool::DumpToHTML (FILE  *file,
+                         guint  grid_size)
   {
-    guint nb_players = GetNbPlayers ();
+    guint nb_players  = GetNbPlayers ();
 
-    fprintf (file, "          <tr class=\"PoolName\">\n");
-    fprintf (file, "            <td>%s</td>\n", GetName ());
-    fprintf (file, "          </tr>\n");
-
-    for (guint i = 0; i < nb_players; i++)
+    // Header
     {
-      Player *A = GetPlayer (i, _sorted_fencer_list);
+      fprintf (file, "          <tr class=\"PoolName\">\n");
+      fprintf (file, "            <td>%s</td>\n", GetName ());
 
-      fprintf (file, "          <tr class=\"EvenRow\">\n");
-
+      if (_filter)
       {
-        GSList *layout_list = NULL;
+        GSList *current = _filter->GetLayoutList ();
 
-        if (_filter)
+        while (current)
         {
-          layout_list = _filter->GetLayoutList ();
-        }
+          fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
 
-        for (guint a = 0; layout_list != NULL; a++)
-        {
-          Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;;
-          Attribute            *attr;
-          Player::AttributeId  *attr_id;
-
-          if (attr_layout->_desc->_scope == AttributeDesc::LOCAL)
-          {
-            attr_id = new Player::AttributeId (attr_layout->_desc->_code_name,
-                                               GetDataOwner ());
-          }
-          else
-          {
-            attr_id = new Player::AttributeId (attr_layout->_desc->_code_name);
-          }
-          attr = A->GetAttribute (attr_id);
-          attr_id->Release ();
-
-          if (attr)
-          {
-            gchar *attr_image;
-
-            if (attr_layout->_look == AttributeDesc::GRAPHICAL)
-            {
-              attr_image = attr->GetUserImage (AttributeDesc::SHORT_TEXT);
-            }
-            else
-            {
-              attr_image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
-            }
-
-            fprintf (file, "            <td>%s</td>\n", attr_image);
-            g_free (attr_image);
-          }
-
-          layout_list = g_slist_next (layout_list);
+          current = g_slist_next (current);
         }
       }
 
+      for (guint i = 0; i < nb_players; i++)
+      {
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>%d</td>\n", i+1);
+      }
+
       fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      if ((nb_players-1)*2 < grid_size)
+      {
+        fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      }
+
+      {
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>V</td>\n");
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>+/-</td>\n");
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>+</td>\n");
+      }
+
+      fprintf (file, "          </tr>\n");
+    }
+
+    for (guint i = 0; i < nb_players; i++)
+    {
+      GSList *layout_list = _filter->GetLayoutList ();
+      Player *A           = GetPlayer (i, _sorted_fencer_list);
+
+      fprintf (file, "          <tr class=\"EvenRow\">\n");
+
+      for (guint a = 0; layout_list != NULL; a++)
+      {
+        Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;;
+        Attribute            *attr;
+        Player::AttributeId  *attr_id;
+
+        if (attr_layout->_desc->_scope == AttributeDesc::LOCAL)
+        {
+          attr_id = new Player::AttributeId (attr_layout->_desc->_code_name,
+                                             GetDataOwner ());
+        }
+        else
+        {
+          attr_id = new Player::AttributeId (attr_layout->_desc->_code_name);
+        }
+        attr = A->GetAttribute (attr_id);
+        attr_id->Release ();
+
+        if (attr)
+        {
+          gchar *attr_image;
+
+          if (attr_layout->_look == AttributeDesc::GRAPHICAL)
+          {
+            attr_image = attr->GetUserImage (AttributeDesc::SHORT_TEXT);
+          }
+          else
+          {
+            attr_image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
+          }
+
+          fprintf (file, "            <td>%s</td>\n", attr_image);
+          g_free (attr_image);
+        }
+
+        layout_list = g_slist_next (layout_list);
+      }
+
+      fprintf (file, "            <td class=\"GridSeparator\">%d</td>\n", i+1);
 
       for (guint j = 0; j < nb_players; j++)
       {
@@ -2278,6 +2304,26 @@ namespace Pool
           fprintf (file, "            <td class=\"NoScoreCell\"></td>\n");
         }
       }
+
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      if ((nb_players-1)*2 < grid_size)
+      {
+        fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      }
+
+      {
+        Player::AttributeId attr_id ("", GetDataOwner ());
+
+        attr_id._name = (gchar *) "victories_ratio";
+        fprintf (file, "            <td class=\"DashBoardCell\">%1.3f</td>\n", (float) (A->GetAttribute (&attr_id)->GetUIntValue ()) / 1000.0);
+
+        attr_id._name = (gchar *) "indice";
+        fprintf (file, "            <td class=\"DashBoardCell\">%d</td>\n", A->GetAttribute (&attr_id)->GetIntValue ());
+
+        attr_id._name = (gchar *) "HS";
+        fprintf (file, "            <td class=\"DashBoardCell\">%d</td>\n", A->GetAttribute (&attr_id)->GetUIntValue ());
+      }
+
       fprintf (file, "          </tr>\n");
     }
   }

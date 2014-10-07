@@ -90,7 +90,8 @@ namespace Pool
       void Load (xmlNode *xml_node,
                  GSList  *player_list);
 
-      void DumpToHTML (FILE *file);
+      void DumpToHTML (FILE  *file,
+                       guint  grid_size);
 
       void Stuff ();
 
