@@ -2183,6 +2183,41 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Pool::DumpToHTML (FILE                *file,
+                         Player              *fencer,
+                         const gchar         *attr_name,
+                         AttributeDesc::Look  look)
+
+  {
+    AttributeDesc       *desc = AttributeDesc::GetDescFromCodeName (attr_name);
+    Player::AttributeId *attr_id;
+    Attribute           *attr;
+
+    if (desc->_scope == AttributeDesc::LOCAL)
+    {
+      attr_id = new Player::AttributeId (desc->_code_name,
+                                         _owner);
+    }
+    else
+    {
+      attr_id = new Player::AttributeId (desc->_code_name);
+    }
+
+    attr = fencer->GetAttribute (attr_id);
+    attr_id->Release ();
+
+    if (attr)
+    {
+      gchar *attr_image = attr->GetUserImage (look);
+
+      fprintf (file, "            <td>\n");
+      fprintf (file, "              <span class=\"%s\">%s </span>", attr_name, attr_image);
+      fprintf (file, "            </td>\n");
+      g_free (attr_image);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Pool::DumpToHTML (FILE  *file,
                          guint  grid_size)
   {
@@ -2193,17 +2228,10 @@ namespace Pool
       fprintf (file, "          <tr class=\"PoolName\">\n");
       fprintf (file, "            <td>%s</td>\n", GetName ());
 
-      if (_filter)
-      {
-        GSList *current = _filter->GetLayoutList ();
-
-        while (current)
-        {
-          fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
-
-          current = g_slist_next (current);
-        }
-      }
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
 
       for (guint i = 0; i < nb_players; i++)
       {
@@ -2228,49 +2256,24 @@ namespace Pool
 
     for (guint i = 0; i < nb_players; i++)
     {
-      GSList *layout_list = _filter->GetLayoutList ();
-      Player *A           = GetPlayer (i, _sorted_fencer_list);
+      Player *A = GetPlayer (i, _sorted_fencer_list);
 
       fprintf (file, "          <tr class=\"EvenRow\">\n");
 
-      for (guint a = 0; layout_list != NULL; a++)
-      {
-        Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;
-        Attribute            *attr;
-        Player::AttributeId  *attr_id;
+      DumpToHTML (file,
+                  A,
+                  "name",
+                  AttributeDesc::LONG_TEXT);
+      DumpToHTML (file,
+                  A,
+                  "first_name",
+                  AttributeDesc::LONG_TEXT);
+      DumpToHTML (file,
+                  A,
+                  "country",
+                  AttributeDesc::SHORT_TEXT);
 
-        if (attr_layout->_desc->_scope == AttributeDesc::LOCAL)
-        {
-          attr_id = new Player::AttributeId (attr_layout->_desc->_code_name,
-                                             GetDataOwner ());
-        }
-        else
-        {
-          attr_id = new Player::AttributeId (attr_layout->_desc->_code_name);
-        }
-        attr = A->GetAttribute (attr_id);
-        attr_id->Release ();
-
-        if (attr)
-        {
-          gchar *attr_image;
-
-          if (attr_layout->_look == AttributeDesc::GRAPHICAL)
-          {
-            attr_image = attr->GetUserImage (AttributeDesc::SHORT_TEXT);
-          }
-          else
-          {
-            attr_image = attr->GetUserImage (AttributeDesc::LONG_TEXT);
-          }
-
-          fprintf (file, "            <td>%s</td>\n", attr_image);
-          g_free (attr_image);
-        }
-
-        layout_list = g_slist_next (layout_list);
-      }
-
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
       fprintf (file, "            <td class=\"GridSeparator\">%d</td>\n", i+1);
 
       for (guint j = 0; j < nb_players; j++)

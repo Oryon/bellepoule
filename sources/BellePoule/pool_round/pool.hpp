@@ -174,6 +174,11 @@ namespace Pool
                  gboolean   print_for_referees,
                  gboolean   print_matchs);
 
+      void DumpToHTML (FILE                *file,
+                       Player              *fencer,
+                       const gchar         *attr_name,
+                       AttributeDesc::Look  look);
+
       Match *GetMatch (Player *A,
                        Player *B);
 
