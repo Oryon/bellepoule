@@ -55,6 +55,8 @@ class Schedule : public Module
 
     void Save (xmlTextWriter *xml_writer);
 
+    void DumpToHTML (FILE *file);
+
     void Load (xmlDoc          *doc,
                const gchar     *contest_keyword,
                People::Checkin *referees);

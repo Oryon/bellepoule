@@ -24,6 +24,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
+#include <glib/gstdio.h>
+#include <glib/gprintf.h>
 #include <goocanvas.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
@@ -56,14 +58,16 @@ const gchar *Contest::weapon_image[_nb_weapon] =
 {
   N_ ("Sabre"),
   N_ ("Epée"),
-  N_ ("Foil")
+  N_ ("Foil"),
+  N_ ("Educ")
 };
 
 const gchar *Contest::weapon_xml_image[_nb_weapon] =
 {
   "S",
   "E",
-  "F"
+  "F",
+  "EE"
 };
 
 const gchar *Contest::gender_image[_nb_gender] =
@@ -245,17 +249,17 @@ Contest::Contest ()
     _id = g_strdup_printf ("%lx", current_time);
   }
 
-  _read_only  = FALSE;
-  _notebook   = NULL;
-  _level      = NULL;
-  _filename   = NULL;
-  _tournament = NULL;
-  _weapon     = 0;
-  _category   = 0;
-  _gender     = 0;
-  _team_event = FALSE;
-  _derived    = FALSE;
-  _downloader = NULL;
+   _read_only     = FALSE;
+   _notebook      = NULL;
+   _level         = NULL;
+   _filename      = NULL;
+   _html_filename = NULL;
+   _tournament    = NULL;
+   _weapon        = 0;
+   _category      = 0;
+   _gender        = 0;
+   _team_event    = FALSE;
+   _derived       = FALSE;
 
   _name = g_key_file_get_string (_config_file,
                                  "Competiton",
@@ -535,84 +539,6 @@ void Contest::LoadFencerFile (const gchar *filename)
       {
         checkin->ImportCSV (absolute_filename);
       }
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Contest::LoadRemote (const gchar *address)
-{
-  _downloader = new Net::Downloader (address,
-                                     OnCompetitionReceived,
-                                     this);
-
-  _downloader->Start (address,
-                      60*2*1000);
-
-  _read_only = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Contest::OnCompetitionReceived (Net::Downloader::CallbackData *cbk_data)
-{
-  Contest *contest = (Contest *) cbk_data->_user_data;
-
-  contest->OpenMemoryContest (cbk_data);
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-void Contest::OpenMemoryContest (Net::Downloader::CallbackData *cbk_data)
-{
-  if (_downloader)
-  {
-    gchar *memory = cbk_data->_downloader->GetData ();
-
-    SetCursor (GDK_WATCH);
-    _schedule->RemoveAllStages ();
-    if (memory)
-    {
-      xmlDoc *doc = xmlReadMemory (memory,
-                                   strlen (memory),
-                                   "noname.xml",
-                                   NULL,
-                                   0);
-
-      if (doc)
-      {
-        LoadXmlDoc (doc);
-        DisplayProperties ();
-
-        _schedule->Freeze ();
-
-        gtk_widget_hide (_glade->GetWidget ("save_toolbutton"));
-        gtk_widget_hide (_glade->GetWidget ("score_frame"));
-
-        gtk_widget_set_sensitive (_glade->GetWidget ("title_entry"),     FALSE);
-        gtk_widget_set_sensitive (_glade->GetWidget ("organizer_entry"), FALSE);
-        gtk_widget_set_sensitive (_glade->GetWidget ("web_site_entry"),  FALSE);
-        gtk_widget_set_sensitive (_glade->GetWidget ("location_entry"),  FALSE);
-        gtk_widget_set_sensitive (_glade->GetWidget ("calendar_button"), FALSE);
-        gtk_widget_set_sensitive (_weapon_combo,   FALSE);
-        gtk_widget_set_sensitive (_gender_combo,   FALSE);
-        gtk_widget_set_sensitive (_category_combo, FALSE);
-
-        _checkin_time->HideProperties (_glade);
-        _scratch_time->HideProperties (_glade);
-        _start_time->HideProperties   (_glade);
-
-        gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
-                                  2);
-        xmlFreeDoc (doc);
-      }
-    }
-
-    ResetCursor ();
-
-    while (gtk_events_pending ())
-    {
-      gtk_main_iteration ();
     }
   }
 }
@@ -901,6 +827,7 @@ Contest::~Contest ()
   g_free (_id);
   g_free (_name);
   g_free (_filename);
+  g_free (_html_filename);
   g_free (_organizer);
   g_free (_web_site);
   g_free (_location);
@@ -928,18 +855,18 @@ Contest::~Contest ()
   {
     _tournament->OnContestDeleted (this);
   }
-
-  if (_downloader)
-  {
-    _downloader->Kill    ();
-    _downloader->Release ();
-  }
 }
 
 // --------------------------------------------------------------------------------
 gchar *Contest::GetFilename ()
 {
   return _filename;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetHtmlFileName ()
+{
+  return _html_filename;
 }
 
 // --------------------------------------------------------------------------------
@@ -1508,13 +1435,25 @@ void Contest::Publish ()
 {
   if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
-    Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
-                                                 NULL, NULL,
-                                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+    {
+      Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
+                                                   NULL, NULL,
+                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 
-    uploader->UploadFile (_filename);
-    uploader->Release ();
+      uploader->UploadFile (_filename);
+      uploader->Release ();
+    }
+
+    {
+      Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
+                                                   NULL, NULL,
+                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+
+      uploader->UploadFile (_html_filename);
+      uploader->Release ();
+    }
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
   //{
@@ -1532,6 +1471,20 @@ void Contest::Save ()
   if (_filename)
   {
     Save (_filename);
+
+    if (_html_filename == NULL)
+    {
+      gchar *suffix;
+
+      _html_filename = g_strdup (_filename);
+      suffix         = strstr (_html_filename, ".cotcot");
+      if (suffix)
+      {
+        sprintf (suffix, ".html");
+      }
+    }
+
+    DumpToHTML (_html_filename, _schedule);
 
     if (_tournament)
     {
@@ -1710,6 +1663,62 @@ void Contest::Save (gchar *filename)
 
     gtk_widget_set_sensitive (_glade->GetWidget ("save_toolbutton"),
                               FALSE);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::DumpToHTML (gchar  *filename,
+                          Module *module)
+{
+  if (filename)
+  {
+    FILE *file = g_fopen (filename, "w");
+
+    {
+      fprintf (file,
+               "<html>\n"
+               "  <head>\n"
+               "    <Title>%s %s - %s - %s - %s</Title>\n"
+               "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n"
+#include "css.h"
+               "  </head>\n\n",
+               GetName (),
+               GetDate (),
+               GetWeapon (),
+               GetGender (),
+               GetCategory ());
+
+      fprintf (file,
+               "  <body>\n"
+               "    <div>\n"
+               "      <div class=\"Title\">\n"
+               "        <center>\n"
+               "          <h1>%s</h1>\n"
+               "          <h1>%s</h1>\n"
+               "          <h1>%s - %s - %s</h1>\n"
+               "        </center>\n"
+               "      <div>\n"
+               "\n",
+               GetName (),
+               GetDate (),
+               GetWeapon (),
+               GetGender (),
+               GetCategory ());
+    }
+
+    module->DumpToHTML (file);
+
+    {
+      fprintf (file,
+               "      <div class=\"Footer\">\n"
+               "        <h6>Managed by BellePoule <a href=\"http://betton.escrime.free.fr/index.php/bellepoule\">http://betton.escrime.free.fr/index.php/bellepoule</a><h6/>\n"
+               "      <div>\n"
+               "    </div>\n"
+               "  </body>\n");
+
+      fprintf (file, "</html>\n");
+      fclose (file);
+    }
   }
 }
 

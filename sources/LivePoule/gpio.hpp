@@ -14,39 +14,33 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef checkin_hpp
-#define checkin_hpp
+#ifndef gpio_hpp
+#define gpio_hpp
 
-#include <gtk/gtk.h>
+#include "util/object.hpp"
 
-#include "util/attribute.hpp"
-#include "people_management/players_list.hpp"
-
-class Contest;
-
-class Classification : public People::PlayersList
+class Gpio : public Object
 {
   public:
-    Classification (Filter *filter);
+    typedef void (*EventHandler) () ;
 
-    void DumpToFFF (gchar   *filename,
-                    Contest *contest);
+  public:
+    static void Init ();
 
-    void SortDisplay ();
+    Gpio (guint        pin_id,
+          EventHandler handler,
+          gboolean     fake_event_allowed = FALSE);
 
-    void SetSortFunction (GtkTreeIterCompareFunc sort_func,
-                          gpointer               user_data);
+    guint GetVoltageState ();
 
   private:
-    void OnPlugged ();
+    guint        _pin_id;
+    guint        _fake_voltage;
+    EventHandler _event_handler;
 
-    void WriteFFFString (FILE        *file,
-                         Player      *player,
-                         const gchar *attr_name);
+    virtual ~Gpio ();
 
-    virtual ~Classification ();
-
-    gboolean IsTableBorder (guint place);
+    static gpointer FakeLoop (Gpio *gpio);
 };
 
 #endif

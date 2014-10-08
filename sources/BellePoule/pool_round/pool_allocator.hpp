@@ -26,7 +26,6 @@
 #include "people_management/players_list.hpp"
 
 #include "pool.hpp"
-#include "pool_match_order.hpp"
 #include "swapper.hpp"
 #include "pool_zone.hpp"
 
@@ -52,6 +51,8 @@ namespace Pool
       Data *GetMaxScore ();
 
       gboolean SeedingIsBalanced ();
+
+      guint GetBiggestPoolSize ();
 
     public:
       static const gchar *_class_name;
@@ -120,6 +121,7 @@ namespace Pool
       void FixUpTablesBounds ();
       void RegisterConfig (Configuration *config);
       const gchar *GetInputProviderClient ();
+
       gint GetNbMatchs ();
 
       void OnAttrListUpdated ();
@@ -144,9 +146,6 @@ namespace Pool
 
       Pool *GetPoolOf (GSList *drop_zone);
 
-      void DragObject (Object   *object,
-                       DropZone *from_zone);
-
       void DropObject (Object   *object,
                        DropZone *source_zone,
                        DropZone *target_zone);
@@ -159,6 +158,8 @@ namespace Pool
 
       gboolean ObjectIsDropable (Object   *floating_object,
                                  DropZone *in_zone);
+
+      void DumpToHTML (FILE *file);
 
       static void OnSwappingToggled (GtkToggleButton *togglebutton,
                                      Allocator       *allocator);

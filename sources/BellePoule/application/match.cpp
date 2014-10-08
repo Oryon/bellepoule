@@ -375,6 +375,12 @@ Score *Match::GetScore (Player *fencer)
 }
 
 // --------------------------------------------------------------------------------
+Score *Match::GetScore (guint fencer)
+{
+  return _opponents[fencer]._score;
+}
+
+// --------------------------------------------------------------------------------
 void Match::Save (xmlTextWriter *xml_writer)
 {
   for (guint i = 0; i < 2; i++)

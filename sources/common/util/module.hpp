@@ -91,6 +91,8 @@ class Module : public virtual Object
 
     GdkPixbuf *GetPixbuf (const gchar *icon);
 
+    virtual void DumpToHTML (FILE *file);
+
   public:
     virtual guint PreparePrint (GtkPrintOperation *operation,
                                 GtkPrintContext   *context) {return 0;};

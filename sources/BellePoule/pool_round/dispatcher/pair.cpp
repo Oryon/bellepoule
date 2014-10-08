@@ -28,37 +28,13 @@ namespace Pool
 
     _a->SetFitness (iteration);
     _b->SetFitness (iteration);
+
+    _a->Use (b);
   }
 
   // --------------------------------------------------------------------------------
   Pair::~Pair ()
   {
-  }
-
-  // --------------------------------------------------------------------------------
-  void Pair::Dump ()
-  {
-    printf ("%2d(", _a->GetId ());
-    if (_a_fitness == -1)
-    {
-      printf (" )");
-    }
-    else
-    {
-      if (_a_fitness == 0) printf (RED);
-      printf ("%d" ESC ")", _a_fitness);
-    }
-
-    printf (" - %2d(", _b->GetId ());
-    if (_b_fitness == -1)
-    {
-      printf (" )\n");
-    }
-    else
-    {
-      if (_b_fitness == 0) printf (RED);
-      printf ("%d" ESC ")\n", _b_fitness);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -94,6 +70,10 @@ namespace Pool
   // --------------------------------------------------------------------------------
   gboolean Pair::HasFitnessError ()
   {
+    if ((_a_fitness == 0) || (_b_fitness == 0))
+    {
+      g_print (RED "%s - %s\n" ESC, _a->GetName (), _b->GetName ());
+    }
     return ((_a_fitness == 0) || (_b_fitness == 0));
   }
 
@@ -127,5 +107,52 @@ namespace Pool
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Pair::GetA ()
+  {
+    if (_a)
+    {
+      return _a->GetId ();
+    }
+
+    return 0;
+  }
+  // --------------------------------------------------------------------------------
+  guint Pair::GetB ()
+  {
+    if (_b)
+    {
+      return _b->GetId ();
+    }
+
+    return 0;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pair::Dump ()
+  {
+    printf ("%2d(", _a->GetId ());
+    if (_a_fitness == -1)
+    {
+      printf (" )");
+    }
+    else
+    {
+      if (_a_fitness == 0) printf (RED);
+      printf ("%d" ESC ")", _a_fitness);
+    }
+
+    printf (" - %2d(", _b->GetId ());
+    if (_b_fitness == -1)
+    {
+      printf (" )\n");
+    }
+    else
+    {
+      if (_b_fitness == 0) printf (RED);
+      printf ("%d" ESC ")\n", _b_fitness);
+    }
   }
 }

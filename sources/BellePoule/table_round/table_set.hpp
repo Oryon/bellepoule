@@ -26,6 +26,7 @@
 #include "application/score_collector.hpp"
 
 #include "table.hpp"
+#include "html_table.hpp"
 #include "table_set_border.hpp"
 #include "table_print_session.hpp"
 
@@ -104,6 +105,8 @@ namespace Table
 
       void Save (xmlTextWriter *xmlwriter);
 
+      void DumpToHTML (FILE *file);
+
       void SetPlayerToMatch (Match  *to_match,
                              Player *player,
                              guint   position);
@@ -175,6 +178,7 @@ namespace Table
       TableSetBorder           *_from_border;
       TableSetBorder           *_to_border;
       gboolean                 *_row_filled;
+      HtmlTable                *_html_table;
 
       void      *_status_cbk_data;
       StatusCbk  _status_cbk;
@@ -314,9 +318,6 @@ namespace Table
                                          TableSet       *ts);
 
     private:
-      void DragObject (Object   *object,
-                       DropZone *from_zone);
-
       void DropObject (Object   *object,
                        DropZone *source_zone,
                        DropZone *target_zone);

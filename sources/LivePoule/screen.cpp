@@ -14,7 +14,12 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <glib/gstdio.h>
+#include <gio/gunixsocketaddress.h>
+
 #include "screen.hpp"
+
+Screen *Screen::_singleton = NULL;
 
 // --------------------------------------------------------------------------------
 Screen::Screen ()
@@ -27,6 +32,7 @@ Screen::Screen ()
   // Show the main window
   {
     gtk_window_fullscreen (GTK_WINDOW (window));
+
     gtk_widget_show_all (window);
 
     gtk_window_get_size (GTK_WINDOW (window),
@@ -44,38 +50,154 @@ Screen::Screen ()
     Rescale (MIN (full_width/glade_width, full_height/glade_height));
   }
 
-  // Colorizes the lights
+  // Button
   {
-    {
-      GdkRGBA green = {0.137, 0.568, 0.137, 1.0};
-
-      gtk_widget_override_background_color (_glade->GetWidget ("green_light_viewport"),
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &green);
-    }
-    {
-      GdkRGBA red = {0.568, 0.137, 0.137, 1.0};
-
-      gtk_widget_override_background_color (_glade->GetWidget ("red_light_viewport"),
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &red);
-    }
+    _qr_code_pin     = new Gpio (6, OnQrCodeButton);
+    _strip_plus_pin  = new Gpio (7, OnStripPlusPin);
+    _strip_minus_pin = new Gpio (8, OnStripMinusPin);
   }
+
+  {
+    Light::SetEventHandler (OnLightEvent);
+
+    _singleton = this;
+  }
+
+  // Lights
+  {
+    Light *light;
+
+    g_datalist_init (&_lights);
+
+    // red_hit_light
+    light = new Light (_glade->GetWidget ("red_hit_light"),
+                       "valid",     "#b01313",
+                       "non-valid", "#eeeeee", NULL);
+    g_datalist_set_data_full (&_lights,
+                              "red_hit_light",
+                              light,
+                              (GDestroyNotify) Object::TryToRelease);
+
+    // red_failure_light
+    light = new Light (_glade->GetWidget ("red_failure_light"),
+                       "on", "#ecdf11", NULL);
+    g_datalist_set_data_full (&_lights,
+                              "red_failure_light",
+                              light,
+                              (GDestroyNotify) Object::TryToRelease);
+
+    // green_hit_light
+    light = new Light (_glade->GetWidget ("green_hit_light"),
+                       "valid",     "#13b013",
+                       "non-valid", "#eeeeee", NULL);
+    g_datalist_set_data_full (&_lights,
+                              "green_hit_light",
+                              light,
+                              (GDestroyNotify) Object::TryToRelease);
+
+    // green_failure_light
+    light = new Light (_glade->GetWidget ("green_failure_light"),
+                       "on", "#ecdf11", NULL);
+    g_datalist_set_data_full (&_lights,
+                              "green_failure_light",
+                              light,
+                              (GDestroyNotify) Object::TryToRelease);
+  }
+
+  _strip_id = 1;
+
+  _scoring_machines = NULL;
 
   _timer = new Timer (_glade->GetWidget ("timer"));
 
   _wifi_code = new WifiCode ("Piste");
 
+  _wpa = new Wpa ();
+
   _http_server = new Net::HttpServer (this,
                                       HttpPostCbk,
                                       NULL,
                                       35832);
+
+  ResetDisplay ();
 }
 
 // --------------------------------------------------------------------------------
 Screen::~Screen ()
 {
+  _singleton = NULL;
+
   _timer->Release ();
+
+  _wpa->Release ();
+
+  _wifi_code->Release ();
+
+  _qr_code_pin->Release ();
+  _strip_plus_pin->Release ();
+  _strip_minus_pin->Release ();
+
+  g_list_free_full (_scoring_machines,
+                    (GDestroyNotify) Object::TryToRelease);
+
+  g_datalist_clear (&_lights);
+}
+
+// --------------------------------------------------------------------------------
+void Screen::ManageScoringMachine (ScoringMachine *machine)
+{
+  machine->ConnectToLights (_lights);
+
+  _scoring_machines = g_list_prepend (_scoring_machines,
+                                      machine);
+
+  OnLightEvent ();
+}
+
+// --------------------------------------------------------------------------------
+void Screen::OnLightEvent ()
+{
+  g_idle_add ((GSourceFunc) OnLightDefferedEvent,
+              NULL);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Screen::OnLightDefferedEvent ()
+{
+  if (_singleton)
+  {
+    g_datalist_foreach (&_singleton->_lights,
+                        (GDataForeachFunc) Light::Refresh,
+                        NULL);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Screen::ResetDisplay ()
+{
+  SetColor ("#93a24c");
+
+  RefreshStripId ();
+
+  SetTitle ("");
+
+  _timer->Set (0);
+
+  SetFencer ("red",
+             "fencer",
+             "toto");
+  SetFencer ("red",
+             "score",
+             "6");
+
+  SetFencer ("green",
+             "fencer",
+             "bidule");
+  SetFencer ("green",
+             "score",
+             "5");
 }
 
 // --------------------------------------------------------------------------------
@@ -109,6 +231,17 @@ void Screen::Rescale (gdouble factor)
         pango_attr_list_unref (attr_list);
       }
     }
+    else
+    {
+      GdkRGBA rgba;
+
+      gdk_rgba_parse (&rgba,
+                      "#333333");
+
+      gtk_widget_override_background_color (GTK_WIDGET (object),
+                                            GTK_STATE_FLAG_NORMAL,
+                                            &rgba);
+    }
 
     current = g_slist_next (current);
   }
@@ -127,15 +260,21 @@ void Screen::Unfullscreen ()
 // --------------------------------------------------------------------------------
 void Screen::ToggleWifiCode ()
 {
-  GtkWidget *w = _glade->GetWidget ("code_image");
+  GtkWidget *image = _glade->GetWidget ("code_image");
 
-  if (gtk_widget_get_visible (w))
+  if (gtk_widget_get_visible (image))
   {
-    gtk_widget_set_visible (w,
+    gtk_widget_set_visible (image,
                             FALSE);
   }
   else
   {
+    GtkWidget *spinner = _glade->GetWidget ("spinner");
+
+    gtk_widget_set_visible (spinner, TRUE);
+    _wpa->ConfigureNetwork ();
+    gtk_widget_set_visible (spinner, FALSE);
+
     _wifi_code->ResetKey ();
 
     {
@@ -146,9 +285,23 @@ void Screen::ToggleWifiCode ()
       g_object_ref (pixbuf);
     }
 
-    gtk_widget_set_visible (w,
-                            TRUE);
+    gtk_widget_set_visible (image, TRUE);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Screen::ChangeStripId (gint step)
+{
+  if ((step < 0) && (_strip_id <= (guint) (-step)))
+  {
+    _strip_id = 1;
+  }
+  else
+  {
+    _strip_id += step;
+  }
+
+  RefreshStripId ();
 }
 
 // --------------------------------------------------------------------------------
@@ -162,21 +315,18 @@ gboolean Screen::OnHttpPost (const gchar *data)
     {
       gtk_widget_set_visible (_glade->GetWidget ("code_image"),
                               FALSE);
-      SetColor ("#FFFFFF00");
-      SetTitle ("");
+
+      ResetDisplay ();
+
       _timer->Set (3*60);
-      SetFencer ("Red",
-                 "fencer",
-                 "");
-      SetFencer ("Red",
+
+      SetFencer ("red",
                  "score",
                  "0");
-      SetFencer ("Green",
-                 "fencer",
-                 "");
-      SetFencer ("Green",
+      SetFencer ("green",
                  "score",
                  "0");
+
       result = TRUE;
     }
     else
@@ -196,11 +346,10 @@ gboolean Screen::OnHttpPost (const gchar *data)
           SetCompetition (key_file);
 
           SetTimer (key_file);
-
-          SetScore ("Red",
+          SetScore ("red",
                     key_file);
 
-          SetScore ("Green",
+          SetScore ("green",
                     key_file);
 
           result = TRUE;
@@ -219,7 +368,7 @@ void Screen::SetCompetition (GKeyFile *key_file)
 {
   {
     gchar *color = g_key_file_get_string (key_file,
-                                          "Competiton",
+                                          "competition",
                                           "color",
                                           NULL);
     {
@@ -230,7 +379,7 @@ void Screen::SetCompetition (GKeyFile *key_file)
 
   {
     gchar *title = g_key_file_get_string (key_file,
-                                          "Competiton",
+                                          "competition",
                                           "name",
                                           NULL);
     {
@@ -245,7 +394,7 @@ void Screen::SetTimer (GKeyFile *key_file)
 {
   {
     gint value = g_key_file_get_integer (key_file,
-                                         "Timer",
+                                         "timer",
                                          "value",
                                          NULL);
     _timer->Set (value);
@@ -253,7 +402,7 @@ void Screen::SetTimer (GKeyFile *key_file)
 
   {
     gchar *state = g_key_file_get_string (key_file,
-                                          "Timer",
+                                          "timer",
                                           "state",
                                           NULL);
     _timer->SetState (state);
@@ -275,6 +424,17 @@ void Screen::SetColor (const gchar *color)
                                           GTK_STATE_FLAG_NORMAL,
                                           &rgba);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Screen::RefreshStripId ()
+{
+  GtkLabel *w    = GTK_LABEL (_glade->GetWidget ("strip"));
+  gchar    *name = g_strdup_printf ("Piste %02d", _strip_id);
+
+  gtk_label_set_text (w,
+                      name);
+  g_free (name);
 }
 
 // --------------------------------------------------------------------------------
@@ -347,24 +507,67 @@ gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget,
-                                                             GdkEventKey *event,
-                                                             Object      *owner)
+void Screen::OnQrCodeButton ()
+{
+  _singleton->ToggleWifiCode ();
+}
+
+// --------------------------------------------------------------------------------
+void Screen::OnStripPlusPin ()
+{
+  _singleton->ChangeStripId (1);
+}
+
+// --------------------------------------------------------------------------------
+void Screen::OnStripMinusPin ()
+{
+  _singleton->ChangeStripId (-1);
+}
+
+// --------------------------------------------------------------------------------
+gboolean Screen::OnKeyPressed (GdkEventKey *event)
 {
   if (event->keyval == GDK_KEY_Escape)
   {
-    Screen *s = dynamic_cast <Screen *> (owner);
-
-    s->Unfullscreen ();
+    Unfullscreen ();
+    return TRUE;
   }
-  else if (event->keyval == GDK_KEY_space)
+  else if (   (event->keyval == GDK_KEY_KP_Enter)
+           || (event->keyval == GDK_KEY_Return))
   {
-    Screen *s = dynamic_cast <Screen *> (owner);
-
-    s->ToggleWifiCode ();
+    ToggleWifiCode ();
+    return TRUE;
   }
-
+  else if (event->keyval == GDK_KEY_KP_Add)
+  {
+    ChangeStripId (1);
+    return TRUE;
+  }
+  else if (event->keyval == GDK_KEY_KP_Subtract)
+  {
+    ChangeStripId (-1);
+    return TRUE;
+  }
 
   return FALSE;
 }
 
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget,
+                                                             GdkEventKey *event,
+                                                             Object      *owner)
+{
+  Screen *s = dynamic_cast <Screen *> (owner);
+
+  return s->OnKeyPressed (event);
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
+                                                          GdkEvent  *event,
+                                                          Object    *owner)
+{
+  gtk_main_quit ();
+
+  return TRUE;
+}

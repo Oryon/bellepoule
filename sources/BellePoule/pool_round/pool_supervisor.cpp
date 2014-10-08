@@ -774,6 +774,28 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Supervisor::DumpToHTML (FILE *file)
+  {
+    fprintf (file, "        <div>\n");
+    fprintf (file, "          <table>\n");
+
+    {
+      guint nb_pools = _allocator->GetNbPools ();
+
+      for (guint p = 0; p < nb_pools; p++)
+      {
+        Pool *pool = _allocator->GetPool (p);
+
+        pool->DumpToHTML (file, _allocator->GetBiggestPoolSize ());
+        fprintf (file, "          <tr class=\"PoolSeparator\">\n");
+      }
+    }
+
+    fprintf (file, "          </table>\n\n");
+    fprintf (file, "        </div>\n");
+  }
+
+  // --------------------------------------------------------------------------------
   GSList *Supervisor::GetCurrentClassification ()
   {
     GSList *result = NULL;

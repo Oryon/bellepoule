@@ -68,6 +68,8 @@ class Match : public Object
 
     Score *GetScore (Player *fencer);
 
+    Score *GetScore (guint fencer);
+
     void Save (xmlTextWriter *xml_writer);
 
     void Load (xmlNode *node_a,

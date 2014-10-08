@@ -82,6 +82,7 @@ namespace Table
     _first_place    = first_place;
     _loaded         = FALSE;
     _is_active      = FALSE;
+    _html_table     = new HtmlTable (supervisor_module);
 
     _status_cbk_data = NULL;
     _status_cbk      = NULL;
@@ -160,6 +161,8 @@ namespace Table
 
     _from_border->Release ();
     _to_border->Release   ();
+
+    _html_table->Release ();
 
     g_object_unref (_page_setup);
   }
@@ -476,6 +479,7 @@ namespace Table
         _row_filled = g_new0 (gboolean,
                               nb_rows);
 
+        _html_table->Clean ();
         g_node_traverse (_tree_root,
                          G_POST_ORDER,
                          G_TRAVERSE_ALL,
@@ -797,6 +801,8 @@ namespace Table
 
     AddFork (NULL);
 
+    _html_table->Prepare (_nb_tables);
+
     if (_tree_root)
     {
       g_node_traverse (_tree_root,
@@ -861,6 +867,34 @@ namespace Table
         current = g_slist_next (current);
       }
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void TableSet::DumpToHTML (FILE *file)
+  {
+    fprintf (file, "        <div>\n");
+    fprintf (file, "          <table class=\"TableTable\">\n");
+
+    fprintf (file, "            <tr class=\"TableName\">\n");
+    for (gint t = _nb_tables-1; t >= 0; t--)
+    {
+      Table *table      = _tables[t];
+      gchar *tabel_name = table->GetImage ();
+
+      fprintf (file, "              <th>%s</th>\n", tabel_name);
+
+      g_free (tabel_name);
+    }
+    fprintf (file, "            </tr>\n");
+
+    fprintf (file, "            <tr>\n");
+    fprintf (file, "              <th></th>\n");
+    fprintf (file, "            </tr>\n");
+
+    _html_table->DumpToHTML (file);
+
+    fprintf (file, "          </table>\n");
+    fprintf (file, "        </div>\n");
   }
 
   // --------------------------------------------------------------------------------
@@ -1020,6 +1054,8 @@ namespace Table
                                                       parent_bounds.x1 - _table_spacing/2, parent_bounds.y2,
                                                       "line-width", 2.0,
                                                       NULL);
+          table_set->_html_table->Connect (data->_match,
+                                           parent_data->_match);
         }
         else
         {
@@ -1084,6 +1120,10 @@ namespace Table
                             data->_fencer_goo_table,
                             row + 1,
                             column);
+
+        table_set->_html_table->Put (data->_match,
+                                     row,
+                                     column);
 
         if (table_set->_row_filled)
         {
@@ -3730,39 +3770,21 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  void TableSet::DragObject (Object   *object,
-                             DropZone *from_zone)
-  {
-    from_zone->RemoveObject (object);
-
-    {
-      TableZone *table_zone = (TableZone *) from_zone;
-      GSList    *current    = table_zone->GetNodeList ();
-
-      while (current)
-      {
-        FillInNode ((GNode *) current->data,
-                    this);
-
-        current = g_slist_next (current);
-      }
-    }
-
-    DrawAllConnectors ();
-    DrawAllZones      ();
-
-    MakeDirty ();
-  }
-
-  // --------------------------------------------------------------------------------
   void TableSet::DropObject (Object   *object,
                              DropZone *source_zone,
                              DropZone *target_zone)
   {
+    if (source_zone)
+    {
+      source_zone->RemoveObject (object);
+    }
+
     if (target_zone)
     {
       target_zone->AddObject (object);
+    }
 
+    {
       FreezeZoomer ();
       Display (NULL);
       MakeDirty ();

@@ -14,46 +14,31 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef match_dispatcher_hpp
-#define match_dispatcher_hpp
-
-#include <glib.h>
+#ifndef wpa_hpp
+#define wpa_hpp
 
 #include "util/object.hpp"
-#include "pair.hpp"
 
-namespace Pool
+class Wpa : public Object
 {
-  class MatchDispatcher : public Object
-  {
-    public:
-      MatchDispatcher (guint pool_size);
+  public:
+    Wpa ();
 
-      MatchDispatcher (guint        pool_size,
-                       const gchar *name,
-                       ...);
+    void ConfigureNetwork ();
 
-      void Dump ();
+  private:
+    GSocket *_socket;
+    gchar   *_network_config;
 
-    private:
-      GList *_pair_list;
-      guint  _pool_size;
-      gchar *_name;
-      GList *_opponent_list;
+    virtual ~Wpa ();
 
-      virtual ~MatchDispatcher ();
+    void OpenSocket ();
 
-      void Init (const gchar *name,
-                 guint        pool_size);
+    gchar *Send (const gchar *request);
 
-      void SpreadOpponents (GList *opponent_list);
+    gchar *GetNetworkConfig ();
 
-      void CreatePairs (GList *opponent_list);
-
-      void FixErrors ();
-
-      void RefreshFitness ();
-  };
-}
+    gchar *AddNetwork ();
+};
 
 #endif

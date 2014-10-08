@@ -14,12 +14,22 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <unistd.h>
+#ifdef WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #include <iphlpapi.h>
+#else
+  #include <netdb.h>
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+#endif
 #include <glib.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
 #include <curl/curl.h>
 #include <locale.h>
-#include "util/tinyxml2.h"
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -34,15 +44,6 @@
 #include "people_management/form.hpp"
 
 #include "tournament.hpp"
-
-typedef enum
-{
-  BROADCASTED_ID_str,
-  BROADCASTED_NAME_str,
-  BROADCASTED_WEAPON_str,
-  BROADCASTED_GENDER_str,
-  BROADCASTED_CATEGORY_str
-} BroadcastedColumn;
 
 // --------------------------------------------------------------------------------
 Tournament::Tournament (gchar *filename)
@@ -178,15 +179,6 @@ Tournament::Tournament (gchar *filename)
   }
 
   {
-    GtkWidget *http_entry = _glade->GetWidget ("http_entry");
-
-    gtk_widget_add_events (http_entry,
-                           GDK_KEY_PRESS_MASK);
-  }
-
-  {
-    _competitions_downloader = NULL;
-
     _version_downloader = new Net::Downloader ("_version_downloader",
                                                OnLatestVersionReceived,
                                                this);
@@ -240,11 +232,6 @@ Tournament::~Tournament ()
   {
     _version_downloader->Kill    ();
     _version_downloader->Release ();
-  }
-  if (_competitions_downloader)
-  {
-    _competitions_downloader->Kill    ();
-    _competitions_downloader->Release ();
   }
 
   _http_server->Release ();
@@ -841,7 +828,89 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       }
     }
   }
-  else if (strstr (url, "/tournament"))
+  else if (strstr (url, "/tournament/html/competition/"))
+  {
+    gchar *id = (gchar *) strrchr (url, '/');
+
+    if (id && id[1])
+    {
+      GSList *current = _contest_list;
+
+      id++;
+      while (current)
+      {
+        Contest *contest = (Contest *) current->data;
+
+        if (    contest->GetHtmlFileName ()
+             && (strcmp (contest->GetId (), id) == 0))
+        {
+          g_file_get_contents (contest->GetHtmlFileName (),
+                               &result,
+                               NULL,
+                               NULL);
+          break;
+        }
+        current = g_slist_next (current);
+      }
+    }
+  }
+  else if (strcmp (url, "/tournament/list.html") == 0)
+  {
+    GSList  *current  = _contest_list;
+    GString *response = g_string_new ("");
+    gchar   *ip_addr  = NULL;
+
+    {
+      struct hostent *hostinfo;
+      gchar           hostname[50];
+
+      gethostname (hostname, sizeof (hostname));
+      hostinfo = gethostbyname (hostname);
+      if (hostinfo)
+      {
+        ip_addr = inet_ntoa (*(struct in_addr*) (hostinfo->h_addr));
+      }
+    }
+
+    response = g_string_append (response, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd\">\n");
+    response = g_string_append (response, "<html>\n");
+    response = g_string_append (response, "  <head>\n");
+    response = g_string_append (response, "    <meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">\n");
+    response = g_string_append (response, "  </head>\n");
+
+    response = g_string_append (response, "  <body>\n");
+    while (current)
+    {
+      Contest *contest = (Contest *) current->data;
+
+      response = g_string_append (response, "    <div>\n");
+      response = g_string_append (response, "      <a href=\"http://");
+      response = g_string_append (response, ip_addr);
+      response = g_string_append (response, ":35830/tournament/html/competition/");
+      response = g_string_append (response, contest->GetId ());
+      response = g_string_append (response, "\">");
+
+      response = g_string_append (response, contest->GetName ());
+      response = g_string_append (response, "-");
+      response = g_string_append (response, contest->GetWeapon ());
+      response = g_string_append (response, "-");
+      response = g_string_append (response, contest->GetGenderCode ());
+      response = g_string_append (response, "-");
+      response = g_string_append (response, contest->GetCategory ());
+
+      response = g_string_append (response, "      </a>\n");
+      response = g_string_append (response, "    </div>\n");
+
+      current = g_slist_next (current);
+    }
+    response = g_string_append (response, "  </body>\n");
+    response = g_string_append (response, "</html>\n");
+
+    result = response->str;
+    g_string_free (response,
+                   FALSE);
+  }
+  else if (strcmp (url, "/tournament") == 0)
   {
     GSList  *current  = _contest_list;
     GString *response = g_string_new ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -884,10 +953,6 @@ gchar *Tournament::OnHttpGet (const gchar *url)
     result = response->str;
     g_string_free (response,
                    FALSE);
-  }
-  else
-  {
-    result = g_strdup ("");
   }
 
   return result;
@@ -1493,108 +1558,6 @@ void Tournament::OnMenuDialog (const gchar *dialog)
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::GetBroadcastedCompetitions ()
-{
-  GtkWidget *entry   = _glade->GetWidget ("http_entry");
-  gchar     *address = g_strdup_printf ("http://%s:35830/tournament",
-                                        gtk_entry_get_text (GTK_ENTRY (entry)));
-
-  if (_competitions_downloader == NULL)
-  {
-    _competitions_downloader = new Net::Downloader ("_competitions_downloader",
-                                                    OnCompetitionListReceived,
-                                                    this);
-  }
-
-  _competitions_downloader->Start (address,
-                                   60*5*1000);
-
-  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetGObject ("broadcasted_liststore")));
-
-  gtk_entry_set_icon_from_stock (GTK_ENTRY (_glade->GetWidget ("http_entry")),
-                                 GTK_ENTRY_ICON_SECONDARY,
-                                 GTK_STOCK_EXECUTE);
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::StopCompetitionMonitoring ()
-{
-  if (_competitions_downloader)
-  {
-    _competitions_downloader->Kill    ();
-    _competitions_downloader->Release ();
-    _competitions_downloader = NULL;
-  }
-
-  gtk_list_store_clear (GTK_LIST_STORE (_glade->GetGObject ("broadcasted_liststore")));
-
-  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (_glade->GetWidget ("http_entry")),
-                                     GTK_ENTRY_ICON_SECONDARY,
-                                     "network-offline");
-}
-
-// --------------------------------------------------------------------------------
-gboolean Tournament::OnCompetitionListReceived (Net::Downloader::CallbackData *cbk_data)
-{
-  Tournament *tournament = (Tournament *) cbk_data->_user_data;
-
-  if (tournament->_competitions_downloader)
-  {
-    gboolean  error = TRUE;
-    gchar    *data  = cbk_data->_downloader->GetData ();
-
-    if (data)
-    {
-      tinyxml2::XMLDocument *doc = new tinyxml2::XMLDocument ();
-
-      if (doc->Parse (data) == tinyxml2::XML_NO_ERROR)
-      {
-        GtkListStore         *model = GTK_LIST_STORE (tournament->_glade->GetGObject ("broadcasted_liststore"));
-        GtkTreeIter           iter;
-        tinyxml2::XMLHandle  *hdl   = new tinyxml2::XMLHandle (doc);
-        tinyxml2::XMLHandle   first = hdl->FirstChildElement().FirstChildElement();
-        tinyxml2::XMLElement *elem  = first.ToElement ();
-
-        gtk_list_store_clear (model);
-        while (elem)
-        {
-          gtk_list_store_append (model, &iter);
-          gtk_list_store_set (model, &iter,
-                              BROADCASTED_ID_str,       elem->Attribute ("ID"),
-                              BROADCASTED_NAME_str,     elem->Attribute ("Name"),
-                              BROADCASTED_WEAPON_str,   elem->Attribute ("Weapon"),
-                              BROADCASTED_GENDER_str,   elem->Attribute ("Gender"),
-                              BROADCASTED_CATEGORY_str, elem->Attribute ("Category"),
-                              -1);
-
-          elem = elem->NextSiblingElement ();
-        }
-
-        free (hdl);
-        error = FALSE;
-      }
-      free (doc);
-    }
-
-    if (error)
-    {
-      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
-                                         GTK_ENTRY_ICON_SECONDARY,
-                                         "network-offline");
-      gtk_list_store_clear (GTK_LIST_STORE (tournament->_glade->GetGObject ("broadcasted_liststore")));
-    }
-    else
-    {
-      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (tournament->_glade->GetWidget ("http_entry")),
-                                         GTK_ENTRY_ICON_SECONDARY,
-                                         "network-transmit-receive");
-    }
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::PrintMealTickets ()
 {
   _print_meal_tickets = TRUE;
@@ -1606,40 +1569,6 @@ void Tournament::PrintPaymentBook ()
 {
   _print_meal_tickets = FALSE;
   Print (gettext ("Payment book"));
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::OnBroadcastedActivated (GtkTreePath *path)
-{
-  GtkTreeModel *model = GTK_TREE_MODEL (_glade->GetWidget ("broadcasted_liststore"));
-  GtkTreeIter   iter;
-  gchar        *id;
-
-  gtk_tree_model_get_iter (model,
-                           &iter,
-                           path);
-
-  gtk_tree_model_get (model, &iter,
-                      BROADCASTED_ID_str, &id,
-                      -1);
-
-  {
-    GtkWidget *entry   = _glade->GetWidget ("http_entry");
-    gchar     *address = g_strdup_printf ("http://%s:35830/tournament/competition/%s",
-                                          gtk_entry_get_text (GTK_ENTRY (entry)),
-                                          id);
-
-    {
-      Contest *contest = new Contest ();
-
-      Plug (contest,
-            NULL);
-      contest->LoadRemote (address);
-      Manage (contest);
-    }
-  }
-
-  g_free (id);
 }
 
 // --------------------------------------------------------------------------------
@@ -1820,27 +1749,12 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
 // --------------------------------------------------------------------------------
 void Tournament::RefreshScannerCode ()
 {
-  GtkEntry    *ssid_w       = GTK_ENTRY     (_glade->GetWidget ("SSID_entry"));
-  GtkEntry    *passphrase_w = GTK_ENTRY     (_glade->GetWidget ("passphrase_entry"));
-  GtkComboBox *security_w   = GTK_COMBO_BOX (_glade->GetWidget ("security_combobox"));
+  GtkEntry    *ssid_w       = GTK_ENTRY (_glade->GetWidget ("SSID_entry"));
+  GtkEntry    *passphrase_w = GTK_ENTRY (_glade->GetWidget ("passphrase_entry"));
 
   _wifi_network->SetSSID       ((gchar *) gtk_entry_get_text (ssid_w));
   _wifi_network->SetPassphrase ((gchar *) gtk_entry_get_text (passphrase_w));
-
-  switch (gtk_combo_box_get_active (security_w))
-  {
-    case 0:
-      _wifi_network->SetEncryption ("nopass");
-      break;
-    case 1:
-      _wifi_network->SetEncryption ("WEP");
-      break;
-    case 2:
-      _wifi_network->SetEncryption ("WPA");
-      break;
-    default:
-      break;
-  }
+  _wifi_network->SetEncryption ("WPA");
 
   _admin_wifi_code->SetWifiNetwork (_wifi_network);
 
@@ -1977,15 +1891,6 @@ extern "C" G_MODULE_EXPORT void on_translate_menuitem_activate (GtkWidget *w,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_wifi_menuitem_activate (GtkWidget *w,
-                                                           Object    *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnMenuDialog ("broadcasted_dialog");
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_network_config_menuitem_activate (GtkWidget *w,
                                                                      Object    *owner)
 {
@@ -2088,53 +1993,6 @@ extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *m
                 GDK_CURRENT_TIME,
                 NULL);
 #endif
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT gboolean on_http_entry_key_press_event (GtkWidget *widget,
-                                                                   GdkEvent  *event,
-                                                                   Object    *owner)
-{
-  if (event->key.keyval == GDK_KEY_Return)
-  {
-    Tournament *t = dynamic_cast <Tournament *> (owner);
-
-    t->GetBroadcastedCompetitions ();
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_broadcasted_treeview_row_activated (GtkTreeView       *tree_view,
-                                                                       GtkTreePath       *path,
-                                                                       GtkTreeViewColumn *column,
-                                                                       Object            *owner)
-{
-  Tournament  *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnBroadcastedActivated (path);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_http_entry_icon_release (GtkEntry             *entry,
-                                                            GtkEntryIconPosition  icon_pos,
-                                                            GdkEvent             *event,
-                                                            Object               *owner)
-{
-  Tournament  *t         = dynamic_cast <Tournament *> (owner);
-  const gchar *icon_name = gtk_entry_get_icon_name (entry,
-                                                    GTK_ENTRY_ICON_SECONDARY);
-
-  if (icon_name && strcmp (icon_name, "network-offline") == 0)
-  {
-    t->GetBroadcastedCompetitions ();
-  }
-  else
-  {
-    t->StopCompetitionMonitoring ();
-  }
 }
 
 // --------------------------------------------------------------------------------

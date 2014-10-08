@@ -84,10 +84,20 @@
 			<Add library="crypto" />
 		</Linker>
     <Unit filename="../../sources/LivePoule/main.cpp" />
+    <Unit filename="../../sources/LivePoule/gpio.cpp" />
+    <Unit filename="../../sources/LivePoule/gpio.hpp" />
+    <Unit filename="../../sources/LivePoule/light.cpp" />
+    <Unit filename="../../sources/LivePoule/light.hpp" />
+    <Unit filename="../../sources/LivePoule/scoring_machine.cpp" />
+    <Unit filename="../../sources/LivePoule/scoring_machine.hpp" />
+    <Unit filename="../../sources/LivePoule/sg_machine.cpp" />
+    <Unit filename="../../sources/LivePoule/sg_machine.hpp" />
     <Unit filename="../../sources/LivePoule/screen.cpp" />
     <Unit filename="../../sources/LivePoule/screen.hpp" />
     <Unit filename="../../sources/LivePoule/timer.cpp" />
     <Unit filename="../../sources/LivePoule/timer.hpp" />
+    <Unit filename="../../sources/LivePoule/wpa.cpp" />
+    <Unit filename="../../sources/LivePoule/wpa.hpp" />
     <Unit filename="../../sources/common/util/attribute.cpp" />
     <Unit filename="../../sources/common/util/attribute.hpp" />
     <Unit filename="../../sources/common/util/attribute_desc.cpp" />

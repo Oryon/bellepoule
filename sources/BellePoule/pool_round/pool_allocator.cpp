@@ -24,7 +24,7 @@
 #include "application/contest.hpp"
 
 #include "smart_swapper/smart_swapper.hpp"
-#include "pool_match_order.hpp"
+#include "dispatcher/dispatcher.hpp"
 
 #include "pool_allocator.hpp"
 
@@ -254,74 +254,66 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::DragObject (Object   *object,
-                              DropZone *from_zone)
-  {
-    Player   *floating_object = (Player *) object;
-    PoolZone *pool_zone       = (PoolZone *) from_zone;
-
-    if (floating_object->Is ("Referee"))
-    {
-      pool_zone->RemoveObject (floating_object);
-    }
-    else
-    {
-      Pool *pool = pool_zone->GetPool ();
-
-      pool->RemoveFencer (floating_object);
-    }
-
-    FillPoolTable (pool_zone);
-    SignalStatusUpdate ();
-    FixUpTablesBounds ();
-  }
-
-  // --------------------------------------------------------------------------------
   void Allocator::DropObject (Object   *object,
                               DropZone *source_zone,
                               DropZone *target_zone)
   {
-    Player   *floating_object = (Player *) object;
-    PoolZone *pool_zone       = NULL;
+    Player   *floating_object  = (Player *) object;
+    PoolZone *source_pool_zone = NULL;
+    PoolZone *target_pool_zone = NULL;
 
-    if (floating_object->Is ("Referee") == FALSE)
+    if (source_zone)
     {
-      Pool *target_pool;
+      source_pool_zone = (PoolZone *) source_zone;
 
-      if (target_zone)
+      if (floating_object->Is ("Referee"))
       {
-        pool_zone = (PoolZone *) target_zone;
+        source_pool_zone->RemoveObject (floating_object);
+      }
+    }
+
+    if (target_zone)
+    {
+      target_pool_zone = (PoolZone *) target_zone;
+
+      if (floating_object->Is ("Referee") == FALSE)
+      {
+        if (source_pool_zone)
+        {
+          Pool *source_pool = source_pool_zone->GetPool ();
+
+          source_pool->RemoveFencer (floating_object);
+        }
+
+        {
+          Pool *target_pool = target_pool_zone->GetPool ();
+
+          target_pool->AddFencer (floating_object,
+                                  this);
+        }
+
+        _fencer_list->Update (floating_object);
       }
       else
       {
-        pool_zone = (PoolZone *) source_zone;
-      }
+        target_pool_zone->AddObject (floating_object);
 
-      target_pool = pool_zone->GetPool ();
-      target_pool->AddFencer (floating_object,
-                              this);
-      _fencer_list->Update (floating_object);
-    }
-    else if (target_zone)
-    {
-      pool_zone = (PoolZone *) target_zone;
-
-      pool_zone->AddObject (floating_object);
-
-      if (Locked ())
-      {
-        Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
-
-        if (next_stage)
+        if (Locked ())
         {
-          next_stage->OnAttrListUpdated ();
+          Module *next_stage = dynamic_cast <Module *> (GetNextStage ());
+
+          if (next_stage)
+          {
+            next_stage->OnAttrListUpdated ();
+          }
         }
       }
     }
 
-    if (pool_zone)
+    if (source_pool_zone || target_pool_zone)
     {
-      FillPoolTable (pool_zone);
+      FillPoolTable (source_pool_zone);
+      FillPoolTable (target_pool_zone);
       SignalStatusUpdate ();
       FixUpTablesBounds ();
     }
@@ -866,11 +858,11 @@ namespace Pool
   {
     guint           nb_players    = g_slist_length (_attendees->GetShortList ());
     Configuration  *config        = NULL;
-    guint           max_pool_size = MatchOrder::_MAX_POOL_SIZE;
+    guint           max_pool_size = Dispatcher::_MAX_POOL_SIZE;
 
-    if (nb_players % MatchOrder::_MAX_POOL_SIZE)
+    if (nb_players % Dispatcher::_MAX_POOL_SIZE)
     {
-      max_pool_size = MatchOrder::_MAX_POOL_SIZE -1;
+      max_pool_size = Dispatcher::_MAX_POOL_SIZE -1;
     }
 
     _best_config = NULL;
@@ -1060,6 +1052,21 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  guint Allocator::GetBiggestPoolSize ()
+  {
+    if (_selected_config)
+    {
+      if (_selected_config->_nb_overloaded)
+      {
+        return _selected_config->_size + 1;
+      }
+      return _selected_config->_size;
+    }
+
+    return 0;
+  }
+
+  // --------------------------------------------------------------------------------
   gint Allocator::GetNbMatchs ()
   {
     gint nb_matchs = 0;
@@ -1161,7 +1168,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Allocator::FillPoolTable (PoolZone *zone)
   {
-    if (_main_table == NULL)
+    if ((zone == NULL) || (_main_table == NULL))
     {
       return;
     }
@@ -1329,7 +1336,7 @@ namespace Pool
                                        GTK_STOCK_REFRESH,
                                        indice+1, 0);
         }
-//#ifdef DEBUG
+#ifdef DEBUG
         {
           guint swapped_from = player->GetUIntData (this, "swapped_from");
 
@@ -1348,7 +1355,7 @@ namespace Pool
             g_free (swapped_from_text);
           }
         }
-//#endif
+#endif
       }
 
       for (guint i = 0; layout_list != NULL; i++)
@@ -1893,6 +1900,12 @@ namespace Pool
 
       allocator->RefreshDisplay ();
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Allocator::DumpToHTML (FILE *file)
+  {
+    _fencer_list->DumpToHTML (file);
   }
 
   // --------------------------------------------------------------------------------

@@ -14,39 +14,29 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef checkin_hpp
-#define checkin_hpp
+#ifndef scoring_machine_hpp
+#define scoring_machine_hpp
 
-#include <gtk/gtk.h>
+#include "util/object.hpp"
+#include "light.hpp"
 
-#include "util/attribute.hpp"
-#include "people_management/players_list.hpp"
-
-class Contest;
-
-class Classification : public People::PlayersList
+class ScoringMachine : public Object
 {
   public:
-    Classification (Filter *filter);
+    void ConnectToLights (GData *lights);
 
-    void DumpToFFF (gchar   *filename,
-                    Contest *contest);
+  protected:
+    ScoringMachine (const gchar *class_name);
 
-    void SortDisplay ();
+    virtual ~ScoringMachine ();
 
-    void SetSortFunction (GtkTreeIterCompareFunc sort_func,
-                          gpointer               user_data);
+    virtual void Wire (GQuark  quark,
+                       Light  *light) = 0;
 
   private:
-    void OnPlugged ();
-
-    void WriteFFFString (FILE        *file,
-                         Player      *player,
-                         const gchar *attr_name);
-
-    virtual ~Classification ();
-
-    gboolean IsTableBorder (guint place);
+    static void ConnectToLight (GQuark          quark,
+                                Light          *light,
+                                ScoringMachine *machine);
 };
 
 #endif

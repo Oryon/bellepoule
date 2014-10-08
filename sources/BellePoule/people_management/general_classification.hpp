@@ -76,6 +76,8 @@ namespace People
 
       gchar *GetPrintName ();
 
+      void DumpToHTML (FILE *file);
+
       virtual ~GeneralClassification ();
   };
 }

@@ -226,7 +226,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void GeneralClassification::OnExportToolbuttonClicked (ExportType export_type)
   {
-    char *filename = NULL;
+    gchar *filename          = NULL;
+    gchar *filename_modifier = (gchar *) "";
 
     {
       GtkWidget *chooser;
@@ -284,7 +285,8 @@ namespace People
         {
           gtk_file_filter_set_name (filter,
                                     gettext ("All HTML files (.HTML)"));
-          pattern_upper = "*.HTML";
+          pattern_upper     = "*.HTML";
+          filename_modifier = gettext (_class_name);
         }
         else
         {
@@ -311,7 +313,7 @@ namespace People
             *suffix = 0;
           }
 
-          export_name = g_strdup_printf ("%s.%s", cotcot_name, pattern_lower+2);
+          export_name = g_strdup_printf ("%s%s.%s", cotcot_name, filename_modifier, pattern_lower+2);
 
           gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (chooser),
                                              export_name);
@@ -370,13 +372,20 @@ namespace People
         }
         else if (export_type == HTML)
         {
-          classification->DumpToHTML (filename,
-                                      _contest,
-                                      _filter->GetLayoutList ());
+          _contest->DumpToHTML (filename,
+                                classification);
         }
       }
       g_free (filename);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  void GeneralClassification::DumpToHTML (FILE *file)
+  {
+    Classification *classification = GetClassification ();
+
+    classification->DumpToHTML (file);
   }
 
   // --------------------------------------------------------------------------------

@@ -23,8 +23,6 @@
 
 #include "application/match.hpp"
 
-#include "pool_match_order.hpp"
-
 #include "pool.hpp"
 
 namespace Pool
@@ -56,8 +54,6 @@ namespace Pool
     _rand_seed          = rand_seed;
     _xml_player_tag     = xml_player_tag;
 
-    _match_order = new MatchOrder ();
-
     _status_cbk_data = NULL;
     _status_cbk      = NULL;
 
@@ -69,6 +65,8 @@ namespace Pool
       _name = GetUndivadableText (text);
       g_free (text);
     }
+
+    _dispatcher = new Dispatcher (_name);
   }
 
   // --------------------------------------------------------------------------------
@@ -90,7 +88,7 @@ namespace Pool
 
     Object::TryToRelease (_score_collector);
 
-    _match_order->Release ();
+    _dispatcher->Release ();
   }
 
   // --------------------------------------------------------------------------------
@@ -328,8 +326,9 @@ namespace Pool
 
     if (_match_list == NULL)
     {
-      _match_order->SetAffinityCriteria (affinity_criteria,
-                                         _sorted_fencer_list);
+      _dispatcher->SetAffinityCriteria (affinity_criteria,
+                                        _sorted_fencer_list);
+      _dispatcher->Dump ();
 
       {
         guint nb_players = GetNbPlayers ();
@@ -337,12 +336,14 @@ namespace Pool
 
         for (guint i = 0; i < nb_matchs; i++)
         {
-          guint a_id;
-          guint b_id;
+          guint    a_id;
+          guint    b_id;
+          gboolean rest_error;
 
-          if (_match_order->GetPlayerPair (i,
-                                           &a_id,
-                                           &b_id))
+          if (_dispatcher->GetPlayerPair (i,
+                                          &a_id,
+                                          &b_id,
+                                          &rest_error))
           {
             Player *a     = (Player *) g_slist_nth_data (_sorted_fencer_list, a_id-1);
             Player *b     = (Player *) g_slist_nth_data (_sorted_fencer_list, b_id-1);
@@ -351,6 +352,7 @@ namespace Pool
                                        _max_score);
             match->SetNameSpace ("M");
             match->SetNumber (i+1);
+            match->SetData (this, "rest_error", (void *) rest_error);
 
             _match_list = g_slist_append (_match_list,
                                           match);
@@ -577,9 +579,7 @@ namespace Pool
 
           for (guint i = 0; i < nb_players; i++)
           {
-            Player *A;
-
-            A = GetPlayer (i, _sorted_fencer_list);
+            Player *A = GetPlayer (i, _sorted_fencer_list);
 
             for (guint j = 0; j < nb_players; j++)
             {
@@ -602,67 +602,74 @@ namespace Pool
                 Player *B     = GetPlayer (j, _sorted_fencer_list);
                 Match  *match = GetMatch (A, B);
 
-                if (match->IsDropped ())
+                if (match)
                 {
-                  g_object_set (goo_rect, "fill-color", "grey", NULL);
-                }
-
-                // Text
-                {
-                  gchar *score_image;
-
-                  if (print_for_referees)
+                  if (match->IsDropped ())
                   {
-                    score_image = g_strdup (match->GetName ());
+                    g_object_set (goo_rect, "fill-color", "grey", NULL);
                   }
-                  else
-                  {
-                    Score *score = match->GetScore (A);
 
-                    score_image = score->GetImage ();
-                  }
-                  score_text = goo_canvas_text_new (grid_group,
-                                                    score_image,
-                                                    x + cell_w / 2,
-                                                    y + cell_h / 2,
-                                                    -1,
-                                                    GTK_ANCHOR_CENTER,
-                                                    "font", "Sans bold 18px",
-                                                    NULL);
-                  if (print_for_referees)
+                  // Text
                   {
-                    if (_match_id_watermarked)
+                    gchar *score_image;
+
+                    if (print_for_referees)
                     {
-                      g_object_set (score_text,
-                                    "fill-color", "Grey",
-                                    NULL);
+                      score_image = g_strdup (match->GetName ());
                     }
                     else
                     {
-                      g_object_set (score_text,
-                                    "fill-color", "White",
-                                    NULL);
+                      Score *score = match->GetScore (A);
+
+                      score_image = score->GetImage ();
+                    }
+                    score_text = goo_canvas_text_new (grid_group,
+                                                      score_image,
+                                                      x + cell_w / 2,
+                                                      y + cell_h / 2,
+                                                      -1,
+                                                      GTK_ANCHOR_CENTER,
+                                                      "font", "Sans bold 18px",
+                                                      NULL);
+                    if (print_for_referees)
+                    {
+                      if (_match_id_watermarked)
+                      {
+                        g_object_set (score_text,
+                                      "fill-color", "Grey",
+                                      NULL);
+                      }
+                      else
+                      {
+                        g_object_set (score_text,
+                                      "fill-color", "White",
+                                      NULL);
+                      }
+                    }
+                    g_free (score_image);
+                  }
+
+                  if (   (print_for_referees == FALSE)
+                      && (_locked == FALSE))
+                  {
+                    _score_collector->AddCollectingPoint (goo_rect,
+                                                          score_text,
+                                                          match,
+                                                          A);
+
+                    if (previous_goo_rect)
+                    {
+                      _score_collector->SetNextCollectingPoint (previous_goo_rect,
+                                                                goo_rect);
                     }
                   }
-                  g_free (score_image);
-                }
 
-                if (   (print_for_referees == FALSE)
-                    && (_locked == FALSE))
+                  previous_goo_rect = goo_rect;
+                }
+                else
                 {
-                  _score_collector->AddCollectingPoint (goo_rect,
-                                                        score_text,
-                                                        match,
-                                                        A);
-
-                  if (previous_goo_rect)
-                  {
-                    _score_collector->SetNextCollectingPoint (previous_goo_rect,
-                                                              goo_rect);
-                  }
+                  g_object_set (goo_rect, "fill-color", "grey", NULL);
                 }
-
-                previous_goo_rect = goo_rect;
               }
               else
               {
@@ -1001,14 +1008,38 @@ namespace Pool
           match = GetMatch (m);
 
           {
-            text_item = Canvas::PutTextInTable (match_main_table,
+            GooCanvasItem *name_table = goo_canvas_table_new (match_main_table,
+                                                              "column-spacing", 1.0,
+                                                              NULL);
+
+            text_item = Canvas::PutTextInTable (name_table,
                                                 match->GetName (),
-                                                m/nb_column,
-                                                m%nb_column + 2*(m%nb_column));
+                                                0,
+                                                0);
             g_object_set (G_OBJECT (text_item),
                           "font", "Sans bold 18px",
                           NULL);
+
+            if (match->GetUIntData (this, "rest_error"))
+            {
+              gchar *png = g_build_filename (_program_path, "resources/glade/clock.png", NULL);
+
+              GooCanvasItem *icon = Canvas::PutIconInTable (name_table,
+                                                            png,
+                                                            0,
+                                                            1);
+              Canvas::SetTableItemAttribute (icon, "y-align", 0.5);
+
+              g_free (png);
+            }
+
             Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
+
+            Canvas::PutInTable (match_main_table,
+                                name_table,
+                                m/nb_column,
+                                m%nb_column + 2*(m%nb_column));
+            Canvas::SetTableItemAttribute (name_table, "y-align", 0.5);
           }
 
           {
@@ -1494,35 +1525,39 @@ namespace Pool
         {
           Player *player_b = GetPlayer (b, _sorted_fencer_list);
           Match  *match    = GetMatch (player_a, player_b);
-          Score  *score_a  = match->GetScore (player_a);
-          Score  *score_b  = match->GetScore (player_b);
 
-          if (score_a->IsKnown ())
+          if (match)
           {
-            hits_scored += score_a->Get ();
-          }
+            Score  *score_a  = match->GetScore (player_a);
+            Score  *score_b  = match->GetScore (player_b);
 
-          if (score_b->IsKnown ())
-          {
-            hits_received -= score_b->Get ();
-          }
-
-          if (   score_a->IsKnown ()
-              && score_b->IsKnown ())
-          {
-            if (score_a->IsTheBest ())
+            if (score_a->IsKnown ())
             {
-              victories++;
+              hits_scored += score_a->Get ();
             }
-          }
 
-          if (match->IsOver () == FALSE)
-          {
-            _is_over = FALSE;
-          }
-          if (match->HasError ())
-          {
-            _has_error = TRUE;
+            if (score_b->IsKnown ())
+            {
+              hits_received -= score_b->Get ();
+            }
+
+            if (   score_a->IsKnown ()
+                && score_b->IsKnown ())
+            {
+              if (score_a->IsTheBest ())
+              {
+                victories++;
+              }
+            }
+
+            if (match->IsOver () == FALSE)
+            {
+              _is_over = FALSE;
+            }
+            if (match->HasError ())
+            {
+              _has_error = TRUE;
+            }
           }
         }
       }
@@ -1910,18 +1945,21 @@ namespace Pool
   // --------------------------------------------------------------------------------
   Match *Pool::GetMatch (guint i)
   {
-    guint a_id;
-    guint b_id;
+    guint    a_id;
+    guint    b_id;
+    gboolean rest_error;
 
-    if (_match_order->GetPlayerPair (i,
-                                     &a_id,
-                                     &b_id))
+    if (_dispatcher->GetPlayerPair (i,
+                                    &a_id,
+                                    &b_id,
+                                    &rest_error))
     {
-      Player *a = (Player *) g_slist_nth_data (_sorted_fencer_list, a_id-1);
-      Player *b = (Player *) g_slist_nth_data (_sorted_fencer_list, b_id-1);
+      Player *a     = (Player *) g_slist_nth_data (_sorted_fencer_list, a_id-1);
+      Player *b     = (Player *) g_slist_nth_data (_sorted_fencer_list, b_id-1);
+      Match  *match = GetMatch (a, b);
 
-      return GetMatch (a,
-                       b);
+      match->SetData (this, "rest_error", (void *) rest_error);
+      return match;
     }
 
     return NULL;
@@ -2145,6 +2183,158 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Pool::DumpToHTML (FILE                *file,
+                         Player              *fencer,
+                         const gchar         *attr_name,
+                         AttributeDesc::Look  look)
+
+  {
+    AttributeDesc       *desc = AttributeDesc::GetDescFromCodeName (attr_name);
+    Player::AttributeId *attr_id;
+    Attribute           *attr;
+
+    if (desc->_scope == AttributeDesc::LOCAL)
+    {
+      attr_id = new Player::AttributeId (desc->_code_name,
+                                         _owner);
+    }
+    else
+    {
+      attr_id = new Player::AttributeId (desc->_code_name);
+    }
+
+    attr = fencer->GetAttribute (attr_id);
+    attr_id->Release ();
+
+    if (attr)
+    {
+      gchar *attr_image = attr->GetUserImage (look);
+
+      fprintf (file, "            <td>\n");
+      fprintf (file, "              <span class=\"%s\">%s </span>", attr_name, attr_image);
+      fprintf (file, "            </td>\n");
+      g_free (attr_image);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::DumpToHTML (FILE  *file,
+                         guint  grid_size)
+  {
+    guint nb_players  = GetNbPlayers ();
+
+    // Header
+    {
+      fprintf (file, "          <tr class=\"PoolName\">\n");
+      fprintf (file, "            <td>%s</td>\n", GetName ());
+
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+
+      for (guint i = 0; i < nb_players; i++)
+      {
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>%d</td>\n", i+1);
+      }
+
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      if (nb_players < grid_size)
+      {
+        fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      }
+
+      {
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>#</td>\n");
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>V</td>\n");
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>+/-</td>\n");
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>+</td>\n");
+      }
+
+      fprintf (file, "          </tr>\n");
+    }
+
+    for (guint i = 0; i < nb_players; i++)
+    {
+      Player *A = GetPlayer (i, _sorted_fencer_list);
+
+      fprintf (file, "          <tr class=\"EvenRow\">\n");
+
+      DumpToHTML (file,
+                  A,
+                  "name",
+                  AttributeDesc::LONG_TEXT);
+      DumpToHTML (file,
+                  A,
+                  "first_name",
+                  AttributeDesc::LONG_TEXT);
+      DumpToHTML (file,
+                  A,
+                  "country",
+                  AttributeDesc::SHORT_TEXT);
+
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      fprintf (file, "            <td class=\"GridSeparator\">%d</td>\n", i+1);
+
+      for (guint j = 0; j < nb_players; j++)
+      {
+        if (i != j)
+        {
+          Player *B     = GetPlayer (j, _sorted_fencer_list);
+          Match  *match = GetMatch (A, B);
+
+          if (match)
+          {
+            if (match->IsDropped ())
+            {
+              fprintf (file, "            <td class=\"NoScoreCell\"></td>\n");
+            }
+            else
+            {
+              Score *score       = match->GetScore (A);
+              gchar *score_image = score->GetImage ();
+
+              fprintf (file, "            <td class=\"PoolCell\">%s</td>\n", score_image);
+              g_free (score_image);
+            }
+          }
+          else
+          {
+            fprintf (file, "            <td class=\"NoScoreCell\"></td>\n");
+          }
+        }
+        else
+        {
+          fprintf (file, "            <td class=\"NoScoreCell\"></td>\n");
+        }
+      }
+
+      fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      if (nb_players < grid_size)
+      {
+        fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
+      }
+
+      {
+        Player::AttributeId attr_id ("", GetDataOwner ());
+
+        fprintf (file, "            <td class=\"DashBoardCell\">%d</td>\n", A->GetIntData (this, "Rank"));
+
+        attr_id._name = (gchar *) "victories_ratio";
+        fprintf (file, "            <td class=\"DashBoardCell\">%1.3f</td>\n", (float) (A->GetAttribute (&attr_id)->GetUIntValue ()) / 1000.0);
+
+        attr_id._name = (gchar *) "indice";
+        fprintf (file, "            <td class=\"DashBoardCell\">%d</td>\n", A->GetAttribute (&attr_id)->GetIntValue ());
+
+        attr_id._name = (gchar *) "HS";
+        fprintf (file, "            <td class=\"DashBoardCell\">%d</td>\n", A->GetAttribute (&attr_id)->GetUIntValue ());
+      }
+
+      fprintf (file, "          </tr>\n");
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Pool::CleanScores ()
   {
     GSList *current = _match_list;
@@ -2243,8 +2433,11 @@ namespace Pool
       {
         Match *match = GetMatch (opponent, player);
 
-        match->DropFencer (player,
-                           reason);
+        if (match)
+        {
+          match->DropFencer (player,
+                             reason);
+        }
       }
     }
 
@@ -2290,7 +2483,10 @@ namespace Pool
         {
           Match *match = GetMatch (opponent, player);
 
-          match->RestoreFencer (player);
+          if (match)
+          {
+            match->RestoreFencer (player);
+          }
         }
       }
     }

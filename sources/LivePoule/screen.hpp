@@ -24,22 +24,39 @@
 #include "network/wifi_network.hpp"
 #include "util/wifi_code.hpp"
 #include "timer.hpp"
+#include "gpio.hpp"
+#include "light.hpp"
+#include "scoring_machine.hpp"
+#include "wpa.hpp"
 
 class Screen : public Module, Net::HttpServer::Client
 {
   public:
     Screen ();
 
-    void Unfullscreen ();
+    void ManageScoringMachine (ScoringMachine *machine);
 
-    void ToggleWifiCode ();
+    gboolean OnKeyPressed (GdkEventKey *event);
 
   private:
+    static Screen   *_singleton;
     Net::HttpServer *_http_server;
     WifiCode        *_wifi_code;
+    gchar           *_wifi_configuration;
     Timer           *_timer;
+    GData           *_lights;
+    guint            _strip_id;
+    GList           *_scoring_machines;
+    Gpio            *_qr_code_pin;
+    Gpio            *_strip_plus_pin;
+    Gpio            *_strip_minus_pin;
+    Wpa             *_wpa;
 
     virtual ~Screen ();
+
+    void ResetDisplay ();
+
+    void RefreshStripId ();
 
     void Rescale (gdouble factor);
 
@@ -64,9 +81,25 @@ class Screen : public Module, Net::HttpServer::Client
 
     gchar *GetSecretKey (const gchar *authentication_scheme);
 
+    void Unfullscreen ();
+
+    void ToggleWifiCode ();
+
+    void ChangeStripId (gint step);
+
   private:
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
                                  const gchar             *data);
+
+    static void OnLightEvent ();
+
+    static gboolean OnLightDefferedEvent ();
+
+    static void OnQrCodeButton ();
+
+    static void OnStripPlusPin ();
+
+    static void OnStripMinusPin ();
 };
 
 #endif

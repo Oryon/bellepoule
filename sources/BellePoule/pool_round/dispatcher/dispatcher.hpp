@@ -14,49 +14,59 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pool_match_order_hpp
-#define pool_match_order_hpp
+#ifndef dispatcher_hpp
+#define dispatcher_hpp
 
-#include <gtk/gtk.h>
+#include <glib.h>
 
 #include "util/object.hpp"
-#include "util/attribute.hpp"
+#include "pair.hpp"
 
 namespace Pool
 {
-  class MatchOrder : public Object
+  class Dispatcher : public Object
   {
     public:
       static const guint _MAX_POOL_SIZE = 17;
 
-    public:
-      MatchOrder ();
+      Dispatcher (const gchar *name);
 
-      gboolean GetPlayerPair (guint  match_index,
-                              guint *a_id,
-                              guint *b_id);
+      Dispatcher (guint        pool_size,
+                  const gchar *name,
+                  ...);
 
       void SetAffinityCriteria (AttributeDesc *affinity_criteria,
                                 GSList        *fencer_list);
 
-    private:
-      guint   _nb_pairs_inserted;
-      guint   _insertion_position;
-      guint   _insertion_step;
-      GSList *_fencer_pairs;
+      gboolean GetPlayerPair (guint     match_index,
+                              guint    *a_id,
+                              guint    *b_id,
+                              gboolean *rest_error);
 
-      virtual ~MatchOrder ();
+      void Dump ();
+
+    private:
+      GList *_pair_list;
+      guint  _pool_size;
+      gchar *_name;
+      GList *_opponent_list;
+
+      virtual ~Dispatcher ();
 
       void Reset ();
 
-      GSList *GetPlayerPairModel (guint pool_size);
+      void SpreadOpponents (GList *opponent_list);
 
-      void MovePairsOnHead (GSList *affinity_list);
+      void CreatePairs (GList *opponent_list);
 
-      void ReorderAdjacents ();
+      void FixErrors ();
 
-      static gint CompareAffinityOccurence (GSList *a,
-                                            GSList *b);
+      void RefreshFitness ();
+
+      guint GetPairCount ();
+
+      void LockOpponents (GQuark teammate_quark,
+                          guint  teammate_count);
   };
 }
 

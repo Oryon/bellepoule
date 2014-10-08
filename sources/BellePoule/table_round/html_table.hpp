@@ -14,49 +14,46 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef pair_hpp
-#define pair_hpp
-
-#include <glib.h>
+#ifndef html_table_hpp
+#define html_table_hpp
 
 #include "util/object.hpp"
-#include "opponent.hpp"
+#include "util/player.hpp"
+#include "util/filter.hpp"
+#include "application/match.hpp"
 
-namespace Pool
+namespace Table
 {
-  class Pair : public Object
+  class HtmlTable : public Object
   {
     public:
-      Pair (guint     iteration,
-            Opponent *a,
-            Opponent *b);
+      HtmlTable (Object *owner);
 
-      void ResetFitness ();
+      void Prepare (guint column_count);
 
-      void SetFitness (Pair  *tested_pair,
-                       guint  fitness);
+      void Clean ();
 
-      gboolean HasFitnessError ();
+      void Put (Match *match,
+                guint  row,
+                guint  column);
 
-      guint GetA ();
+      void Connect (Match *m1,
+                    Match *m2);
 
-      guint GetB ();
-
-      guint GetAFitness ();
-
-      guint GetBFitness ();
-
-      void Dump ();
-
-      gboolean HasOpponent (Opponent *o);
+      void DumpToHTML (FILE *file);
 
     private:
-      Opponent *_a;
-      Opponent *_b;
-      gint      _a_fitness;
-      gint      _b_fitness;
+      void   **_table;
+      guint    _table_width;
+      guint    _table_height;
+      Object  *_owner;
 
-      virtual ~Pair ();
+      virtual ~HtmlTable ();
+
+      void DumpToHTML (FILE                *file,
+                       Player              *fencer,
+                       const gchar         *attr_name,
+                       AttributeDesc::Look  look);
   };
 }
 

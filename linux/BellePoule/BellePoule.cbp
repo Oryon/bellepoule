@@ -157,14 +157,13 @@
     <Unit filename="../../sources/BellePoule/pool_round/pool.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_allocator.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_allocator.hpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/pool_match_order.cpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/pool_match_order.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_supervisor.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_supervisor.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_zone.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/pool_zone.hpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/match_dispatcher.cpp" />
-    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/match_dispatcher.hpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/default_order.data" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/dispatcher.cpp" />
+    <Unit filename="../../sources/BellePoule/pool_round/dispatcher/dispatcher.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/dispatcher/opponent.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/dispatcher/opponent.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/dispatcher/pair.cpp" />
@@ -185,6 +184,8 @@
     <Unit filename="../../sources/BellePoule/pool_round/smart_swapper/snake.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/smart_swapper/snake.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/swapper.hpp" />
+    <Unit filename="../../sources/BellePoule/table_round/html_table.cpp" />
+    <Unit filename="../../sources/BellePoule/table_round/html_table.hpp" />
     <Unit filename="../../sources/BellePoule/table_round/table.cpp" />
     <Unit filename="../../sources/BellePoule/table_round/table.hpp" />
     <Unit filename="../../sources/BellePoule/table_round/table_print_session.cpp" />
@@ -237,8 +238,6 @@
     <Unit filename="../../sources/common/util/player.hpp" />
     <Unit filename="../../sources/common/util/sensitivity_trigger.cpp" />
     <Unit filename="../../sources/common/util/sensitivity_trigger.hpp" />
-    <Unit filename="../../sources/common/util/tinyxml2.cpp" />
-    <Unit filename="../../sources/common/util/tinyxml2.h" />
     <Unit filename="../../sources/common/util/wifi_code.cpp" />
     <Unit filename="../../sources/common/util/wifi_code.hpp" />
 		<Extensions>

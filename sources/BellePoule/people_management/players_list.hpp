@@ -64,6 +64,8 @@ namespace People
 
       void CollapseAll ();
 
+      void DumpToHTML (FILE *file);
+
       static const guint NO_RIGHT   = 0x00000000;
       static const guint SORTABLE   = 0x00000001;
       static const guint MODIFIABLE = 0x00000002;
@@ -121,6 +123,8 @@ namespace People
       GtkUIManager *_ui_manager;
 
       void RefreshDisplay ();
+
+      virtual gboolean IsTableBorder (guint place);
 
       void SetColumn (guint           id,
                       Filter::Layout *attr_layout,

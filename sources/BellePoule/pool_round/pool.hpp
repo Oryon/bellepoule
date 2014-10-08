@@ -26,10 +26,10 @@
 #include "application/score_collector.hpp"
 #include "util/player.hpp"
 
+#include "dispatcher/dispatcher.hpp"
+
 namespace Pool
 {
-  class MatchOrder;
-
   class Pool : public CanvasModule
   {
     public:
@@ -90,6 +90,9 @@ namespace Pool
       void Load (xmlNode *xml_node,
                  GSList  *player_list);
 
+      void DumpToHTML (FILE  *file,
+                       guint  grid_size);
+
       void Stuff ();
 
       void DrawPage (GtkPrintOperation *operation,
@@ -133,7 +136,7 @@ namespace Pool
     GSList          *_display_data;
     guint            _nb_drop;
     const gchar     *_xml_player_tag;
-    MatchOrder      *_match_order;
+    Dispatcher      *_dispatcher;
 
     void            *_status_cbk_data;
     StatusCbk        _status_cbk;
@@ -170,6 +173,11 @@ namespace Pool
       void Draw (GooCanvas *on_canvas,
                  gboolean   print_for_referees,
                  gboolean   print_matchs);
+
+      void DumpToHTML (FILE                *file,
+                       Player              *fencer,
+                       const gchar         *attr_name,
+                       AttributeDesc::Look  look);
 
       Match *GetMatch (Player *A,
                        Player *B);

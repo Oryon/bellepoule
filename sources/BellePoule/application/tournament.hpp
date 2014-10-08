@@ -53,8 +53,6 @@ class Tournament : public Module, Net::HttpServer::Client
 
     void OnSave ();
 
-    void OnBroadcastedActivated (GtkTreePath *path);
-
     void PrintMealTickets ();
 
     void PrintPaymentBook ();
@@ -78,16 +76,9 @@ class Tournament : public Module, Net::HttpServer::Client
     Player *Share (Player  *referee,
                    Contest *from);
 
-    void GetBroadcastedCompetitions ();
-
-    void StopCompetitionMonitoring ();
-
     void RefreshScannerCode ();
 
   public:
-    const gchar *GetCompetitionData (guint  competition_id,
-                                     gchar *data_name);
-
     const Player *GetPlayer (guint CompetitionId,
                              guint PlayerId);
 
@@ -103,7 +94,6 @@ class Tournament : public Module, Net::HttpServer::Client
     guint             _nb_matchs;
     Net::HttpServer  *_http_server;
     Net::Downloader  *_version_downloader;
-    Net::Downloader  *_competitions_downloader;
     gboolean          _print_meal_tickets;
     Net::WifiNetwork *_wifi_network;
     WifiCode         *_admin_wifi_code;
@@ -146,8 +136,6 @@ class Tournament : public Module, Net::HttpServer::Client
                                  gchar            *locale);
 
     static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
-
-    static gboolean OnCompetitionListReceived (Net::Downloader::CallbackData *cbk_data);
 };
 
 #endif

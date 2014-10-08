@@ -894,6 +894,15 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
+  void Supervisor::DumpToHTML (FILE *file)
+  {
+    if (_displayed_table_set)
+    {
+      _displayed_table_set->DumpToHTML (file);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void Supervisor::OnLocked ()
   {
     DisableSensitiveWidgets ();
