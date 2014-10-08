@@ -1435,14 +1435,25 @@ void Contest::Publish ()
 {
   if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
-    Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
-                                                 NULL, NULL,
-                                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                                 gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+    {
+      Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
+                                                   NULL, NULL,
+                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 
-    uploader->UploadFile (_filename);
-    uploader->UploadFile (_html_filename);
-    uploader->Release ();
+      uploader->UploadFile (_filename);
+      uploader->Release ();
+    }
+
+    {
+      Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
+                                                   NULL, NULL,
+                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
+                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+
+      uploader->UploadFile (_html_filename);
+      uploader->Release ();
+    }
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
   //{

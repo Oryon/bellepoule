@@ -24,7 +24,7 @@
 namespace SmartSwapper
 {
 #ifdef DEBUG
-#define DEBUG_SWAPPING
+//#define DEBUG_SWAPPING
 #endif
 
 #ifdef DEBUG_SWAPPING

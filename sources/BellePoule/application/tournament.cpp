@@ -15,10 +15,16 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <unistd.h>
-#include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ifdef WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #include <iphlpapi.h>
+#else
+  #include <netdb.h>
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+#endif
 #include <glib.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
@@ -852,16 +858,17 @@ gchar *Tournament::OnHttpGet (const gchar *url)
   {
     GSList  *current  = _contest_list;
     GString *response = g_string_new ("");
+    gchar   *ip_addr  = NULL;
 
     {
       struct hostent *hostinfo;
       gchar           hostname[50];
 
-      gethostname (hostname, 49);
-      hostinfo = gethostbyname(hostname);
+      gethostname (hostname, sizeof (hostname));
+      hostinfo = gethostbyname (hostname);
       if (hostinfo)
       {
-        printf (">> %s\n", inet_ntoa (*(struct in_addr*) (hostinfo->h_addr)));
+        ip_addr = inet_ntoa (*(struct in_addr*) (hostinfo->h_addr));
       }
     }
 
@@ -877,7 +884,9 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       Contest *contest = (Contest *) current->data;
 
       response = g_string_append (response, "    <div>\n");
-      response = g_string_append (response, "      <a href=\"http://127.0.0.1:35830/tournament/html/competition/");
+      response = g_string_append (response, "      <a href=\"http://");
+      response = g_string_append (response, ip_addr);
+      response = g_string_append (response, ":35830/tournament/html/competition/");
       response = g_string_append (response, contest->GetId ());
       response = g_string_append (response, "\">");
 
