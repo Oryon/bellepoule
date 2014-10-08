@@ -184,6 +184,8 @@
     <Unit filename="../../sources/BellePoule/pool_round/smart_swapper/snake.cpp" />
     <Unit filename="../../sources/BellePoule/pool_round/smart_swapper/snake.hpp" />
     <Unit filename="../../sources/BellePoule/pool_round/swapper.hpp" />
+    <Unit filename="../../sources/BellePoule/table_round/html_table.cpp" />
+    <Unit filename="../../sources/BellePoule/table_round/html_table.hpp" />
     <Unit filename="../../sources/BellePoule/table_round/table.cpp" />
     <Unit filename="../../sources/BellePoule/table_round/table.hpp" />
     <Unit filename="../../sources/BellePoule/table_round/table_print_session.cpp" />

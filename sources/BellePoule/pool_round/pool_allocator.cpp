@@ -1052,6 +1052,21 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  guint Allocator::GetBiggestPoolSize ()
+  {
+    if (_selected_config)
+    {
+      if (_selected_config->_nb_overloaded)
+      {
+        return _selected_config->_size + 1;
+      }
+      return _selected_config->_size;
+    }
+
+    return 0;
+  }
+
+  // --------------------------------------------------------------------------------
   gint Allocator::GetNbMatchs ()
   {
     gint nb_matchs = 0;

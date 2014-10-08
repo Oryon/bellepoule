@@ -119,7 +119,9 @@ namespace Table
                            const gchar **ressource,
                            const gchar *data);
 
-        void FillInConfig ();
+      void DumpToHTML (FILE *file);
+
+      void FillInConfig ();
 
       void ApplyConfig ();
 

@@ -44,8 +44,6 @@ namespace Pool
 
       guint GetNbPools ();
 
-      gint GetNbMatchs ();
-
       Pool *GetPool (guint index);
 
       PoolZone *GetZone (guint index);
@@ -53,6 +51,8 @@ namespace Pool
       Data *GetMaxScore ();
 
       gboolean SeedingIsBalanced ();
+
+      guint GetBiggestPoolSize ();
 
     public:
       static const gchar *_class_name;
@@ -121,6 +121,8 @@ namespace Pool
       void FixUpTablesBounds ();
       void RegisterConfig (Configuration *config);
       const gchar *GetInputProviderClient ();
+
+      gint GetNbMatchs ();
 
       void OnAttrListUpdated ();
 

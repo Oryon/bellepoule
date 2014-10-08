@@ -2211,12 +2211,13 @@ namespace Pool
       }
 
       fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
-      if ((nb_players-1)*2 < grid_size)
+      if (nb_players < grid_size)
       {
         fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
       }
 
       {
+        fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>#</td>\n");
         fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>V</td>\n");
         fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>+/-</td>\n");
         fprintf (file, "            <td class=\"GridSeparator\" style=\"text-align: center\";>+</td>\n");
@@ -2234,7 +2235,7 @@ namespace Pool
 
       for (guint a = 0; layout_list != NULL; a++)
       {
-        Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;;
+        Filter::Layout       *attr_layout = (Filter::Layout *) layout_list->data;
         Attribute            *attr;
         Player::AttributeId  *attr_id;
 
@@ -2306,13 +2307,15 @@ namespace Pool
       }
 
       fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
-      if ((nb_players-1)*2 < grid_size)
+      if (nb_players < grid_size)
       {
         fprintf (file, "            <td class=\"GridSeparator\"></td>\n");
       }
 
       {
         Player::AttributeId attr_id ("", GetDataOwner ());
+
+        fprintf (file, "            <td class=\"DashBoardCell\">%d</td>\n", A->GetIntData (this, "Rank"));
 
         attr_id._name = (gchar *) "victories_ratio";
         fprintf (file, "            <td class=\"DashBoardCell\">%1.3f</td>\n", (float) (A->GetAttribute (&attr_id)->GetUIntValue ()) / 1000.0);
