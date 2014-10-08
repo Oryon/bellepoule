@@ -245,8 +245,6 @@
 		<Unit filename="..\..\sources\common\util\player.hpp" />
 		<Unit filename="..\..\sources\common\util\sensitivity_trigger.cpp" />
 		<Unit filename="..\..\sources\common\util\sensitivity_trigger.hpp" />
-		<Unit filename="..\..\sources\common\util\tinyxml2.cpp" />
-		<Unit filename="..\..\sources\common\util\tinyxml2.h" />
 		<Unit filename="..\..\sources\common\util\wifi_code.cpp" />
 		<Unit filename="..\..\sources\common\util\wifi_code.hpp" />
 		<Extensions>

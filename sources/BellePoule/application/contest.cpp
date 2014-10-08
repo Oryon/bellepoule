@@ -249,17 +249,17 @@ Contest::Contest ()
     _id = g_strdup_printf ("%lx", current_time);
   }
 
-  _read_only  = FALSE;
-  _notebook   = NULL;
-  _level      = NULL;
-  _filename   = NULL;
-  _tournament = NULL;
-  _weapon     = 0;
-  _category   = 0;
-  _gender     = 0;
-  _team_event = FALSE;
-  _derived    = FALSE;
-  _downloader = NULL;
+   _read_only     = FALSE;
+   _notebook      = NULL;
+   _level         = NULL;
+   _filename      = NULL;
+   _html_filename = NULL;
+   _tournament    = NULL;
+   _weapon        = 0;
+   _category      = 0;
+   _gender        = 0;
+   _team_event    = FALSE;
+   _derived       = FALSE;
 
   _name = g_key_file_get_string (_config_file,
                                  "Competiton",
@@ -539,84 +539,6 @@ void Contest::LoadFencerFile (const gchar *filename)
       {
         checkin->ImportCSV (absolute_filename);
       }
-    }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Contest::LoadRemote (const gchar *address)
-{
-  _downloader = new Net::Downloader (address,
-                                     OnCompetitionReceived,
-                                     this);
-
-  _downloader->Start (address,
-                      60*2*1000);
-
-  _read_only = TRUE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Contest::OnCompetitionReceived (Net::Downloader::CallbackData *cbk_data)
-{
-  Contest *contest = (Contest *) cbk_data->_user_data;
-
-  contest->OpenMemoryContest (cbk_data);
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-void Contest::OpenMemoryContest (Net::Downloader::CallbackData *cbk_data)
-{
-  if (_downloader)
-  {
-    gchar *memory = cbk_data->_downloader->GetData ();
-
-    SetCursor (GDK_WATCH);
-    _schedule->RemoveAllStages ();
-    if (memory)
-    {
-      xmlDoc *doc = xmlReadMemory (memory,
-                                   strlen (memory),
-                                   "noname.xml",
-                                   NULL,
-                                   0);
-
-      if (doc)
-      {
-        LoadXmlDoc (doc);
-        DisplayProperties ();
-
-        _schedule->Freeze ();
-
-        gtk_widget_hide (_glade->GetWidget ("save_toolbutton"));
-        gtk_widget_hide (_glade->GetWidget ("score_frame"));
-
-        gtk_widget_set_sensitive (_glade->GetWidget ("title_entry"),     FALSE);
-        gtk_widget_set_sensitive (_glade->GetWidget ("organizer_entry"), FALSE);
-        gtk_widget_set_sensitive (_glade->GetWidget ("web_site_entry"),  FALSE);
-        gtk_widget_set_sensitive (_glade->GetWidget ("location_entry"),  FALSE);
-        gtk_widget_set_sensitive (_glade->GetWidget ("calendar_button"), FALSE);
-        gtk_widget_set_sensitive (_weapon_combo,   FALSE);
-        gtk_widget_set_sensitive (_gender_combo,   FALSE);
-        gtk_widget_set_sensitive (_category_combo, FALSE);
-
-        _checkin_time->HideProperties (_glade);
-        _scratch_time->HideProperties (_glade);
-        _start_time->HideProperties   (_glade);
-
-        gtk_notebook_remove_page (GTK_NOTEBOOK (_glade->GetWidget ("properties_notebook")),
-                                  2);
-        xmlFreeDoc (doc);
-      }
-    }
-
-    ResetCursor ();
-
-    while (gtk_events_pending ())
-    {
-      gtk_main_iteration ();
     }
   }
 }
@@ -905,6 +827,7 @@ Contest::~Contest ()
   g_free (_id);
   g_free (_name);
   g_free (_filename);
+  g_free (_html_filename);
   g_free (_organizer);
   g_free (_web_site);
   g_free (_location);
@@ -932,18 +855,18 @@ Contest::~Contest ()
   {
     _tournament->OnContestDeleted (this);
   }
-
-  if (_downloader)
-  {
-    _downloader->Kill    ();
-    _downloader->Release ();
-  }
 }
 
 // --------------------------------------------------------------------------------
 gchar *Contest::GetFilename ()
 {
   return _filename;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Contest::GetHtmlFileName ()
+{
+  return _html_filename;
 }
 
 // --------------------------------------------------------------------------------
@@ -1518,6 +1441,7 @@ void Contest::Publish ()
                                                  gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 
     uploader->UploadFile (_filename);
+    uploader->UploadFile (_html_filename);
     uploader->Release ();
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
@@ -1537,17 +1461,19 @@ void Contest::Save ()
   {
     Save (_filename);
 
+    if (_html_filename == NULL)
     {
-      gchar *html_file = g_strdup (_filename);
-      gchar *suffix    = strstr (html_file, ".cotcot");
+      gchar *suffix;
 
+      _html_filename = g_strdup (_filename);
+      suffix         = strstr (_html_filename, ".cotcot");
       if (suffix)
       {
         sprintf (suffix, ".html");
-        DumpToHTML (html_file, _schedule);
       }
-      g_free (html_file);
     }
+
+    DumpToHTML (_html_filename, _schedule);
 
     if (_tournament)
     {

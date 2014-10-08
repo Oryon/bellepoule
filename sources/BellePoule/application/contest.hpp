@@ -23,7 +23,6 @@
 #include "util/data.hpp"
 #include "util/module.hpp"
 #include "util/glade.hpp"
-#include "network/downloader.hpp"
 
 #include "schedule.hpp"
 
@@ -53,10 +52,6 @@ class Contest : public Module
 
     void LoadFencerFile (const gchar *filename);
 
-    void LoadRemote (const gchar *address);
-
-    void LoadMemory (const gchar *memory);
-
     void LatchPlayerList ();
 
     void AttachTo (GtkNotebook *to);
@@ -70,6 +65,8 @@ class Contest : public Module
     void Publish ();
 
     gchar *GetFilename ();
+
+    gchar *GetHtmlFileName ();
 
     void AddFencer (Player *player,
                     guint   rank);
@@ -154,6 +151,7 @@ class Contest : public Module
     gchar           *_web_site;
     guint            _category;
     gchar           *_filename;
+    gchar           *_html_filename;
     guint            _weapon;
     guint            _gender;
     guint            _day;
@@ -176,7 +174,6 @@ class Contest : public Module
     GHashTable      *_ref_translation_table;
     State            _state;
     gboolean         _read_only;
-    Net::Downloader *_downloader;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;
@@ -211,11 +208,7 @@ class Contest : public Module
 
     void MakeDirty ();
 
-    void OpenMemoryContest (Net::Downloader::CallbackData *cbk_data);
-
     static gboolean OnSaveTimeout (Contest *contest);
-
-    static gboolean OnCompetitionReceived (Net::Downloader::CallbackData *cbk_data);
 
     void OnPlugged ();
 
