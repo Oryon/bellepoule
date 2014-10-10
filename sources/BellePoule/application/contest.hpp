@@ -104,7 +104,6 @@ class Contest : public Module
     void on_contest_close_button_clicked  ();
     void on_calendar_button_clicked       ();
     void on_web_site_button_clicked       ();
-    void on_ftp_changed                   (GtkComboBox *widget);
     void on_referees_toolbutton_toggled   (GtkToggleToolButton *w);
 
   private:

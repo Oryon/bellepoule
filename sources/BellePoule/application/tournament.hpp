@@ -25,6 +25,7 @@
 #include "network/http_server.hpp"
 #include "network/downloader.hpp"
 #include "network/wifi_network.hpp"
+#include "publication.hpp"
 
 class Contest;
 
@@ -78,6 +79,10 @@ class Tournament : public Module, Net::HttpServer::Client
 
     void RefreshScannerCode ();
 
+    void on_ftp_changed (GtkComboBox *widget);
+
+    Net::Uploader *GetFtpUpLoader ();
+
   public:
     const Player *GetPlayer (guint CompetitionId,
                              guint PlayerId);
@@ -97,6 +102,7 @@ class Tournament : public Module, Net::HttpServer::Client
     gboolean          _print_meal_tickets;
     Net::WifiNetwork *_wifi_network;
     WifiCode         *_admin_wifi_code;
+    Publication      *_publication;
 
     void SetBackupLocation (gchar *location);
 

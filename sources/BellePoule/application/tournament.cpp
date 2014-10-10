@@ -54,6 +54,8 @@ Tournament::Tournament (gchar *filename)
   _referee_ref  = 1;
   _nb_matchs    = 0;
 
+  _publication = new Publication (_glade);
+
   {
     _wifi_network    = new Net::WifiNetwork ();
     _admin_wifi_code = new WifiCode ("Administrator");
@@ -239,6 +241,8 @@ Tournament::~Tournament ()
 
   _admin_wifi_code->Release ();
   _wifi_network->Release ();
+
+  _publication->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1768,6 +1772,18 @@ void Tournament::RefreshScannerCode ()
 }
 
 // --------------------------------------------------------------------------------
+Net::Uploader *Tournament::GetFtpUpLoader ()
+{
+  return _publication->GetUpLoader ();
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::on_ftp_changed (GtkComboBox *widget)
+{
+  _publication->OnRemoteHostChanged (widget);
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_new_menuitem_activate (GtkWidget *w,
                                                           Object    *owner)
 {
@@ -1897,6 +1913,15 @@ extern "C" G_MODULE_EXPORT void on_network_config_menuitem_activate (GtkWidget *
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnMenuDialog ("network_dialog");
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_ftp_menuitem_activate (GtkWidget *w,
+                                                          Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnMenuDialog ("publication_dialog");
 }
 
 // --------------------------------------------------------------------------------
@@ -2055,4 +2080,13 @@ extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
                 GDK_CURRENT_TIME,
                 NULL);
 #endif
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_ftp_comboboxentry_changed (GtkComboBox *widget,
+                                                              Object      *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->on_ftp_changed (widget);
 }
