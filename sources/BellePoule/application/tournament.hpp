@@ -21,11 +21,9 @@
 
 #include "util/module.hpp"
 #include "util/glade.hpp"
-#include "util/wifi_code.hpp"
 #include "network/http_server.hpp"
 #include "network/downloader.hpp"
-#include "network/wifi_network.hpp"
-#include "publication.hpp"
+#include "ecosystem.hpp"
 
 class Contest;
 
@@ -77,10 +75,6 @@ class Tournament : public Module, Net::HttpServer::Client
     Player *Share (Player  *referee,
                    Contest *from);
 
-    void RefreshScannerCode ();
-
-    void on_ftp_changed (GtkComboBox *widget);
-
     Net::Uploader *GetFtpUpLoader ();
 
   public:
@@ -100,9 +94,7 @@ class Tournament : public Module, Net::HttpServer::Client
     Net::HttpServer  *_http_server;
     Net::Downloader  *_version_downloader;
     gboolean          _print_meal_tickets;
-    Net::WifiNetwork *_wifi_network;
-    WifiCode         *_admin_wifi_code;
-    Publication      *_publication;
+    EcoSystem        *_ecosystem;
 
     void SetBackupLocation (gchar *location);
 

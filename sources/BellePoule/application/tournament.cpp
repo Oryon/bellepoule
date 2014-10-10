@@ -54,16 +54,7 @@ Tournament::Tournament (gchar *filename)
   _referee_ref  = 1;
   _nb_matchs    = 0;
 
-  _publication = new Publication (_glade);
-
-  {
-    _wifi_network    = new Net::WifiNetwork ();
-    _admin_wifi_code = new WifiCode ("Administrator");
-
-    gtk_entry_set_visibility (GTK_ENTRY (_glade->GetWidget ("passphrase_entry")),
-                              FALSE);
-    RefreshScannerCode ();
-  }
+  _ecosystem = new EcoSystem (_glade);
 
   curl_global_init (CURL_GLOBAL_ALL);
 
@@ -239,10 +230,7 @@ Tournament::~Tournament ()
   _http_server->Release ();
   curl_global_cleanup ();
 
-  _admin_wifi_code->Release ();
-  _wifi_network->Release ();
-
-  _publication->Release ();
+  _ecosystem->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -290,7 +278,7 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
     {
       if (strcmp (tokens[1], "ScoreSheet") == 0)
       {
-        wifi_code = _admin_wifi_code;
+        wifi_code = _ecosystem->GetAdminCode ();
       }
       else if (   (strcmp (tokens[1], "HandShake") == 0)
                || (strcmp (tokens[1], "Score")     == 0))
@@ -300,7 +288,7 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
 
         if (ref == 0)
         {
-          wifi_code = _admin_wifi_code;
+          wifi_code = _ecosystem->GetAdminCode ();
         }
         else
         {
@@ -1751,36 +1739,9 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::RefreshScannerCode ()
-{
-  GtkEntry    *ssid_w       = GTK_ENTRY (_glade->GetWidget ("SSID_entry"));
-  GtkEntry    *passphrase_w = GTK_ENTRY (_glade->GetWidget ("passphrase_entry"));
-
-  _wifi_network->SetSSID       ((gchar *) gtk_entry_get_text (ssid_w));
-  _wifi_network->SetPassphrase ((gchar *) gtk_entry_get_text (passphrase_w));
-  _wifi_network->SetEncryption ("WPA");
-
-  _admin_wifi_code->SetWifiNetwork (_wifi_network);
-
-  {
-    GdkPixbuf *pixbuf = _admin_wifi_code->GetPixbuf ();
-
-    gtk_image_set_from_pixbuf (GTK_IMAGE (_glade->GetWidget ("scanner_code_image")),
-                               pixbuf);
-    g_object_ref (pixbuf);
-  }
-}
-
-// --------------------------------------------------------------------------------
 Net::Uploader *Tournament::GetFtpUpLoader ()
 {
-  return _publication->GetUpLoader ();
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::on_ftp_changed (GtkComboBox *widget)
-{
-  _publication->OnRemoteHostChanged (widget);
+  return _ecosystem->GetUpLoader ();
 }
 
 // --------------------------------------------------------------------------------
@@ -2021,15 +1982,6 @@ extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *m
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_network_config_changed (GtkEditable *editable,
-                                                           Object      *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->RefreshScannerCode ();
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget,
                                                              GdkEventKey *event,
                                                              Object      *owner)
@@ -2080,13 +2032,4 @@ extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
                 GDK_CURRENT_TIME,
                 NULL);
 #endif
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_ftp_comboboxentry_changed (GtkComboBox *widget,
-                                                              Object      *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->on_ftp_changed (widget);
 }

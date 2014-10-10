@@ -14,26 +14,36 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef publication_hpp
-#define publication_hpp
+#ifndef ecosystem_hpp
+#define ecosystem_hpp
 
 #include "util/object.hpp"
 #include "util/glade.hpp"
 #include "network/uploader.hpp"
+#include "util/wifi_code.hpp"
+#include "network/wifi_network.hpp"
 
-class Publication : public Object
+class EcoSystem : public Object
 {
   public:
-    Publication (Glade *glade);
+    EcoSystem (Glade *glade);
 
     Net::Uploader *GetUpLoader ();
 
-    void OnRemoteHostChanged (GtkComboBox *widget);
+    WifiCode *GetAdminCode ();
 
   private:
-    Glade *_glade;
+    Glade            *_glade;
+    Net::WifiNetwork *_wifi_network;
+    WifiCode         *_admin_wifi_code;
 
-    virtual ~Publication ();
+    virtual ~EcoSystem ();
+
+    static void RefreshScannerCode (GtkEditable *widget,
+                                    EcoSystem   *ecosystem);
+
+    static void OnRemoteHostChanged (GtkEditable *widget,
+                                     EcoSystem   *ecosystem);
 };
 
 #endif
