@@ -15,16 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <unistd.h>
-#ifdef WIN32
-  #include <winsock2.h>
-  #include <ws2tcpip.h>
-  #include <iphlpapi.h>
-#else
-  #include <netdb.h>
-  #include <sys/socket.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
-#endif
 #include <glib.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
@@ -850,19 +840,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
   {
     GSList  *current  = _contest_list;
     GString *response = g_string_new ("");
-    gchar   *ip_addr  = NULL;
-
-    {
-      struct hostent *hostinfo;
-      gchar           hostname[50];
-
-      gethostname (hostname, sizeof (hostname));
-      hostinfo = gethostbyname (hostname);
-      if (hostinfo)
-      {
-        ip_addr = inet_ntoa (*(struct in_addr*) (hostinfo->h_addr));
-      }
-    }
+    gchar   *ip_addr  = _http_server->GetIpV4 ();
 
     response = g_string_append (response, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd\">\n");
     response = g_string_append (response, "<html>\n");
@@ -901,6 +879,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
     result = response->str;
     g_string_free (response,
                    FALSE);
+    g_free (ip_addr);
   }
   else if (strcmp (url, "/tournament") == 0)
   {

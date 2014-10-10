@@ -55,6 +55,8 @@ namespace Net
                   HttpGet   http_get,
                   guint     port);
 
+      gchar *GetIpV4 ();
+
     private:
       struct RequestBody
       {
