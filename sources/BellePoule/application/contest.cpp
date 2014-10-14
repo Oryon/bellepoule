@@ -1655,8 +1655,8 @@ void Contest::DumpToHTML (gchar  *filename,
                GetCategory ());
 
       fprintf (file,
-               "  <body>\n"
-               "    <div>\n"
+               "  <body onLoad=\"javascript:OnLoad ();\">\n"
+               "    <div id=\'main_div\'>\n"
                "      <div class=\"Title\">\n"
                "        <center>\n"
                "          <h1>%s</h1>\n"

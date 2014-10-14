@@ -1521,6 +1521,13 @@ the smartphones running
                       </object>
                     </child>
                     <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem5">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="ftp_menuitem">
                         <property name="label">Publication</property>
                         <property name="visible">True</property>
