@@ -70,6 +70,8 @@ class Schedule : public Module
     void SetScoreStuffingPolicy (gboolean allowed);
     gboolean ScoreStuffingIsAllowed ();
 
+    void OnPrint ();
+
     gboolean OnHttpPost (const gchar *command,
                          const gchar **ressource,
                          const gchar *data);
@@ -134,6 +136,13 @@ class Schedule : public Module
                     gint     current_stage_index);
 
     void GiveName (Stage *stage);
+
+    guint PreparePrint (GtkPrintOperation *operation,
+                        GtkPrintContext   *context);
+
+    void DrawPage (GtkPrintOperation *operation,
+                   GtkPrintContext   *context,
+                   gint               page_nr);
 
     static void OnStageStatusUpdated (Stage    *stage,
                                       Schedule *schedule);

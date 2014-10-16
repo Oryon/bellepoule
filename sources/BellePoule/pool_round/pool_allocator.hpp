@@ -80,6 +80,10 @@ namespace Pool
                      gint               page_nr);
       gchar *GetPrintName ();
 
+      void DrawConfig (GtkPrintOperation *operation,
+                       GtkPrintContext   *context,
+                       gint               page_nr);
+
     private:
       typedef struct
       {

@@ -269,11 +269,13 @@ void Screen::ToggleWifiCode ()
   }
   else
   {
+#if 0
     GtkWidget *spinner = _glade->GetWidget ("spinner");
 
     gtk_widget_set_visible (spinner, TRUE);
     _wpa->ConfigureNetwork ();
     gtk_widget_set_visible (spinner, FALSE);
+#endif
 
     _wifi_code->ResetKey ();
 
@@ -509,18 +511,21 @@ gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
 // --------------------------------------------------------------------------------
 void Screen::OnQrCodeButton ()
 {
+  printf ("*******>> OnQrCodeButton\n");
   _singleton->ToggleWifiCode ();
 }
 
 // --------------------------------------------------------------------------------
 void Screen::OnStripPlusPin ()
 {
+  printf ("*******>> OnStripPlusPin\n");
   _singleton->ChangeStripId (1);
 }
 
 // --------------------------------------------------------------------------------
 void Screen::OnStripMinusPin ()
 {
+  printf ("*******>> OnStripMinusPin\n");
   _singleton->ChangeStripId (-1);
 }
 

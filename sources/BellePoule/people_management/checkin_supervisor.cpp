@@ -21,6 +21,7 @@
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "application/schedule.hpp"
+#include "util/canvas.hpp"
 #include "util/player.hpp"
 #include "application/contest.hpp"
 
@@ -220,6 +221,37 @@ namespace People
 
     return Checkin::PreparePrint (operation,
                                   context);
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::DrawConfig (GtkPrintOperation *operation,
+                                      GtkPrintContext   *context,
+                                      gint               page_nr)
+  {
+    {
+      gchar *text = g_strdup_printf ("%s : %d",
+                                     gettext ("Expected fencers"),
+                                     g_slist_length (_player_list));
+
+      DrawConfigLine (operation,
+                      context,
+                      text);
+
+      g_free (text);
+    }
+
+    if (_contest->IsTeamEvent ())
+    {
+      gchar *text = g_strdup_printf ("%s : %s",
+                                     gettext ("Team size"),
+                                     _minimum_team_size->GetString ());
+
+      DrawConfigLine (operation,
+                      context,
+                      text);
+
+      g_free (text);
+    }
   }
 
   // --------------------------------------------------------------------------------

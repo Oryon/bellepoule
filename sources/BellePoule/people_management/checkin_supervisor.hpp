@@ -176,6 +176,10 @@ namespace People
 
       gboolean PlayerIsPrintable (Player *player);
 
+      void DrawConfig (GtkPrintOperation *operation,
+                       GtkPrintContext   *context,
+                       gint               page_nr);
+
       virtual ~CheckinSupervisor ();
   };
 }
