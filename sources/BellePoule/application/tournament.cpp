@@ -86,21 +86,21 @@ Tournament::Tournament (gchar *filename)
   {
     GtkWidget   *w         = _glade->GetWidget ("about_dialog");
     const gchar *authors[] = {"Florence Blanchard",
-                              "Laurent Bonnot",
-                              "Tony (ajs New Mexico)",
-                              "Emmanuel Chaix",
-                              "Julien Diaz",
-                              "Olivier Larcher",
-                              "Yannick Le Roux",
-                              "Jean-Pierre Mahé",
-                              "Pierre Moro",
-                              "Killian Poulet",
-                              "Michel Relet",
-                              "Vincent Rémy",
-                              "Tina Schliemann",
-                              "Claude Simonnot",
-                              "Sébastien Vermandel",
-                              NULL};
+      "Laurent Bonnot",
+      "Tony (ajs New Mexico)",
+      "Emmanuel Chaix",
+      "Julien Diaz",
+      "Olivier Larcher",
+      "Yannick Le Roux",
+      "Jean-Pierre Mahé",
+      "Pierre Moro",
+      "Killian Poulet",
+      "Michel Relet",
+      "Vincent Rémy",
+      "Tina Schliemann",
+      "Claude Simonnot",
+      "Sébastien Vermandel",
+      NULL};
 
     gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (w),
                                   authors);
@@ -166,11 +166,23 @@ Tournament::Tournament (gchar *filename)
                                                OnLatestVersionReceived,
                                                this);
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
+  }
+
+  {
+    gchar *ip_addr;
+    gchar *html_url;
 
     _http_server = new Net::HttpServer (this,
                                         HttpPostCbk,
                                         HttpGetCbk,
                                         35830);
+    ip_addr = _http_server->GetIpV4 ();
+    html_url = g_strdup_printf ("http://%s:35830/tournament/list.html", ip_addr);
+
+    SetFlashRef (html_url);
+
+    g_free (html_url);
+    g_free (ip_addr);
   }
 }
 

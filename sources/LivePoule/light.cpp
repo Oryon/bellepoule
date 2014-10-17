@@ -92,7 +92,7 @@ void Light::Refresh (GQuark  quark,
   {
     Gpio *gpio_pin = (Gpio *) current->data;
 
-    if (gpio_pin->GetVoltageState ())
+    if (gpio_pin->GetVoltageState () == 0)
     {
       light->SwitchOn ((const gchar *) gpio_pin->GetPtrData (light,
                                                              "light_state"));

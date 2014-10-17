@@ -1137,7 +1137,15 @@ void Contest::Cleanup ()
 // --------------------------------------------------------------------------------
 void Contest::OnPlugged ()
 {
+  FlashCode *flash_code;
+  gchar     *url;
+
   _tournament = dynamic_cast <Tournament *> (_owner);
+
+  flash_code = _tournament->GetFlashCode ();
+  url = flash_code->GetText ();
+  SetFlashRef (flash_code->GetText ());
+  g_free (url);
 }
 
 // --------------------------------------------------------------------------------

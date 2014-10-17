@@ -511,21 +511,18 @@ gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
 // --------------------------------------------------------------------------------
 void Screen::OnQrCodeButton ()
 {
-  printf ("*******>> OnQrCodeButton\n");
   _singleton->ToggleWifiCode ();
 }
 
 // --------------------------------------------------------------------------------
 void Screen::OnStripPlusPin ()
 {
-  printf ("*******>> OnStripPlusPin\n");
   _singleton->ChangeStripId (1);
 }
 
 // --------------------------------------------------------------------------------
 void Screen::OnStripMinusPin ()
 {
-  printf ("*******>> OnStripMinusPin\n");
   _singleton->ChangeStripId (-1);
 }
 

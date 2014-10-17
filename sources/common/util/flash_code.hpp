@@ -26,6 +26,8 @@ class FlashCode : public Object
 
     GdkPixbuf *GetPixbuf (guint pixel_size = 3);
 
+    virtual gchar *GetText ();
+
   protected:
     gchar *_text;
 
@@ -34,8 +36,6 @@ class FlashCode : public Object
   private:
     static void DestroyPixbuf (guchar   *pixels,
                                gpointer  data);
-
-    virtual gchar *GetText ();
 };
 
 #endif
