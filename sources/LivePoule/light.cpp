@@ -14,22 +14,29 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef WIRING_PI
+#include <wiringPi.h>
+#endif
+
 #include "light.hpp"
 
-Gpio::EventHandler Light::_event_handler = NULL;
-
 // --------------------------------------------------------------------------------
-Light::Light (GtkWidget *w,
+Light::Light (GtkWidget          *w,
+              Gpio::EventHandler  event_handler,
+              void               *context,
               ...)
   : Object ("Light")
 {
   _widget   = w;
   _pin_list = NULL;
 
+  _event_handler = event_handler;
+  _context       = context;
+
   {
     va_list ap;
 
-    va_start (ap, w);
+    va_start (ap, context);
     while (1)
     {
       gchar *state;
@@ -71,6 +78,8 @@ void Light::WireGpioPin (const gchar *state,
 {
   Gpio *gpio_pin = new Gpio (pin_id,
                              _event_handler,
+                             _context,
+                             INT_EDGE_BOTH,
                              TRUE);
 
   gpio_pin->SetData (this,
@@ -102,12 +111,6 @@ void Light::Refresh (GQuark  quark,
   }
 
   light->SwitchOff ();
-}
-
-// --------------------------------------------------------------------------------
-void Light::SetEventHandler (Gpio::EventHandler handler)
-{
-  _event_handler = handler;
 }
 
 // --------------------------------------------------------------------------------

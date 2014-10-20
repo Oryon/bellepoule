@@ -22,23 +22,27 @@
 class Gpio : public Object
 {
   public:
-    typedef void (*EventHandler) () ;
+    typedef void (*EventHandler) (void *context);
 
   public:
     static void Init ();
 
-    Gpio (guint        pin_id,
-          EventHandler handler,
-          gboolean     fake_event_allowed = FALSE);
+    Gpio (guint         pin_id,
+          EventHandler  handler,
+          void         *context,
+          guint         edge,
+          gboolean      fake_event_allowed = FALSE);
 
     guint GetVoltageState ();
 
-  private:
-    guint        _pin_id;
-    guint        _fake_voltage;
-    EventHandler _event_handler;
-
+  protected:
     virtual ~Gpio ();
+
+  private:
+    guint         _pin_id;
+    guint         _fake_voltage;
+    EventHandler  _event_handler;
+    void         *_context;
 
     static gpointer FakeLoop (Gpio *gpio);
 };
