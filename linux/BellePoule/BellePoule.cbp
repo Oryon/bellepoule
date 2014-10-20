@@ -94,6 +94,8 @@
 			<Add library="curl" />
 			<Add library="microhttpd" />
 			<Add library="qrencode" />
+			<Add library="ssl" />
+			<Add library="crypto" />
 		</Linker>
     <Unit filename="../../sources/BellePoule/application/attendees.cpp" />
     <Unit filename="../../sources/BellePoule/application/attendees.hpp" />
@@ -105,6 +107,8 @@
     <Unit filename="../../sources/BellePoule/application/classification.hpp" />
     <Unit filename="../../sources/BellePoule/application/contest.cpp" />
     <Unit filename="../../sources/BellePoule/application/contest.hpp" />
+    <Unit filename="../../sources/BellePoule/application/ecosystem.cpp" />
+    <Unit filename="../../sources/BellePoule/application/ecosystem.hpp" />
     <Unit filename="../../sources/BellePoule/application/main.cpp" />
     <Unit filename="../../sources/BellePoule/application/match.cpp" />
     <Unit filename="../../sources/BellePoule/application/match.hpp" />

@@ -142,6 +142,10 @@ namespace Table
                      GtkPrintContext   *context,
                      gint               page_nr);
 
+      void DrawConfig (GtkPrintOperation *operation,
+                       GtkPrintContext   *context,
+                       gint               page_nr);
+
       static gboolean TableSetIsOver (GtkTreeModel    *model,
                                       GtkTreePath     *path,
                                       GtkTreeIter     *iter,

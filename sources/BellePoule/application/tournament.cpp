@@ -15,16 +15,6 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <unistd.h>
-#ifdef WIN32
-  #include <winsock2.h>
-  #include <ws2tcpip.h>
-  #include <iphlpapi.h>
-#else
-  #include <netdb.h>
-  #include <sys/socket.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
-#endif
 #include <glib.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
@@ -54,14 +44,7 @@ Tournament::Tournament (gchar *filename)
   _referee_ref  = 1;
   _nb_matchs    = 0;
 
-  {
-    _wifi_network    = new Net::WifiNetwork ();
-    _admin_wifi_code = new WifiCode ("Administrator");
-
-    gtk_entry_set_visibility (GTK_ENTRY (_glade->GetWidget ("passphrase_entry")),
-                              FALSE);
-    RefreshScannerCode ();
-  }
+  _ecosystem = new EcoSystem (_glade);
 
   curl_global_init (CURL_GLOBAL_ALL);
 
@@ -103,21 +86,21 @@ Tournament::Tournament (gchar *filename)
   {
     GtkWidget   *w         = _glade->GetWidget ("about_dialog");
     const gchar *authors[] = {"Florence Blanchard",
-                              "Laurent Bonnot",
-                              "Tony (ajs New Mexico)",
-                              "Emmanuel Chaix",
-                              "Julien Diaz",
-                              "Olivier Larcher",
-                              "Yannick Le Roux",
-                              "Jean-Pierre Mahé",
-                              "Pierre Moro",
-                              "Killian Poulet",
-                              "Michel Relet",
-                              "Vincent Rémy",
-                              "Tina Schliemann",
-                              "Claude Simonnot",
-                              "Sébastien Vermandel",
-                              NULL};
+      "Laurent Bonnot",
+      "Tony (ajs New Mexico)",
+      "Emmanuel Chaix",
+      "Julien Diaz",
+      "Olivier Larcher",
+      "Yannick Le Roux",
+      "Jean-Pierre Mahé",
+      "Pierre Moro",
+      "Killian Poulet",
+      "Michel Relet",
+      "Vincent Rémy",
+      "Tina Schliemann",
+      "Claude Simonnot",
+      "Sébastien Vermandel",
+      NULL};
 
     gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (w),
                                   authors);
@@ -183,11 +166,23 @@ Tournament::Tournament (gchar *filename)
                                                OnLatestVersionReceived,
                                                this);
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
+  }
+
+  {
+    gchar *ip_addr;
+    gchar *html_url;
 
     _http_server = new Net::HttpServer (this,
                                         HttpPostCbk,
                                         HttpGetCbk,
                                         35830);
+    ip_addr = _http_server->GetIpV4 ();
+    html_url = g_strdup_printf ("http://%s:35830/tournament/list.html", ip_addr);
+
+    SetFlashRef (html_url);
+
+    g_free (html_url);
+    g_free (ip_addr);
   }
 }
 
@@ -237,8 +232,7 @@ Tournament::~Tournament ()
   _http_server->Release ();
   curl_global_cleanup ();
 
-  _admin_wifi_code->Release ();
-  _wifi_network->Release ();
+  _ecosystem->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -286,7 +280,7 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
     {
       if (strcmp (tokens[1], "ScoreSheet") == 0)
       {
-        wifi_code = _admin_wifi_code;
+        wifi_code = _ecosystem->GetAdminCode ();
       }
       else if (   (strcmp (tokens[1], "HandShake") == 0)
                || (strcmp (tokens[1], "Score")     == 0))
@@ -296,7 +290,7 @@ gchar *Tournament::GetSecretKey (const gchar *authentication_scheme)
 
         if (ref == 0)
         {
-          wifi_code = _admin_wifi_code;
+          wifi_code = _ecosystem->GetAdminCode ();
         }
         else
         {
@@ -858,19 +852,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
   {
     GSList  *current  = _contest_list;
     GString *response = g_string_new ("");
-    gchar   *ip_addr  = NULL;
-
-    {
-      struct hostent *hostinfo;
-      gchar           hostname[50];
-
-      gethostname (hostname, sizeof (hostname));
-      hostinfo = gethostbyname (hostname);
-      if (hostinfo)
-      {
-        ip_addr = inet_ntoa (*(struct in_addr*) (hostinfo->h_addr));
-      }
-    }
+    gchar   *ip_addr  = _http_server->GetIpV4 ();
 
     response = g_string_append (response, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd\">\n");
     response = g_string_append (response, "<html>\n");
@@ -909,6 +891,7 @@ gchar *Tournament::OnHttpGet (const gchar *url)
     result = response->str;
     g_string_free (response,
                    FALSE);
+    g_free (ip_addr);
   }
   else if (strcmp (url, "/tournament") == 0)
   {
@@ -1747,24 +1730,9 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::RefreshScannerCode ()
+Net::Uploader *Tournament::GetFtpUpLoader ()
 {
-  GtkEntry    *ssid_w       = GTK_ENTRY (_glade->GetWidget ("SSID_entry"));
-  GtkEntry    *passphrase_w = GTK_ENTRY (_glade->GetWidget ("passphrase_entry"));
-
-  _wifi_network->SetSSID       ((gchar *) gtk_entry_get_text (ssid_w));
-  _wifi_network->SetPassphrase ((gchar *) gtk_entry_get_text (passphrase_w));
-  _wifi_network->SetEncryption ("WPA");
-
-  _admin_wifi_code->SetWifiNetwork (_wifi_network);
-
-  {
-    GdkPixbuf *pixbuf = _admin_wifi_code->GetPixbuf ();
-
-    gtk_image_set_from_pixbuf (GTK_IMAGE (_glade->GetWidget ("scanner_code_image")),
-                               pixbuf);
-    g_object_ref (pixbuf);
-  }
+  return _ecosystem->GetUpLoader ();
 }
 
 // --------------------------------------------------------------------------------
@@ -1900,6 +1868,15 @@ extern "C" G_MODULE_EXPORT void on_network_config_menuitem_activate (GtkWidget *
 }
 
 // --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_ftp_menuitem_activate (GtkWidget *w,
+                                                          Object    *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnMenuDialog ("publication_dialog");
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_scanner_menuitem_activate (GtkWidget *w,
                                                               Object    *owner)
 {
@@ -1993,15 +1970,6 @@ extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *m
                 GDK_CURRENT_TIME,
                 NULL);
 #endif
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_network_config_changed (GtkEditable *editable,
-                                                           Object      *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->RefreshScannerCode ();
 }
 
 // --------------------------------------------------------------------------------

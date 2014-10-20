@@ -19,8 +19,6 @@
 
 #include "screen.hpp"
 
-Screen *Screen::_singleton = NULL;
-
 // --------------------------------------------------------------------------------
 Screen::Screen ()
   : Module ("LivePoule.glade")
@@ -52,15 +50,9 @@ Screen::Screen ()
 
   // Button
   {
-    _qr_code_pin     = new Gpio (6, OnQrCodeButton);
-    _strip_plus_pin  = new Gpio (7, OnStripPlusPin);
-    _strip_minus_pin = new Gpio (8, OnStripMinusPin);
-  }
-
-  {
-    Light::SetEventHandler (OnLightEvent);
-
-    _singleton = this;
+    _qr_code_pin     = new Button (6, (Gpio::EventHandler) OnQrCodeButton,  this);
+    _strip_plus_pin  = new Button (7, (Gpio::EventHandler) OnStripPlusPin,  this);
+    _strip_minus_pin = new Button (8, (Gpio::EventHandler) OnStripMinusPin, this);
   }
 
   // Lights
@@ -71,8 +63,10 @@ Screen::Screen ()
 
     // red_hit_light
     light = new Light (_glade->GetWidget ("red_hit_light"),
+                       (Gpio::EventHandler) OnLightEvent, this,
                        "valid",     "#b01313",
-                       "non-valid", "#eeeeee", NULL);
+                       "non-valid", "#eeeeee",
+                       NULL);
     g_datalist_set_data_full (&_lights,
                               "red_hit_light",
                               light,
@@ -80,6 +74,7 @@ Screen::Screen ()
 
     // red_failure_light
     light = new Light (_glade->GetWidget ("red_failure_light"),
+                       (Gpio::EventHandler) OnLightEvent, this,
                        "on", "#ecdf11", NULL);
     g_datalist_set_data_full (&_lights,
                               "red_failure_light",
@@ -88,8 +83,10 @@ Screen::Screen ()
 
     // green_hit_light
     light = new Light (_glade->GetWidget ("green_hit_light"),
+                       (Gpio::EventHandler) OnLightEvent, this,
                        "valid",     "#13b013",
-                       "non-valid", "#eeeeee", NULL);
+                       "non-valid", "#eeeeee",
+                       NULL);
     g_datalist_set_data_full (&_lights,
                               "green_hit_light",
                               light,
@@ -97,6 +94,7 @@ Screen::Screen ()
 
     // green_failure_light
     light = new Light (_glade->GetWidget ("green_failure_light"),
+                       (Gpio::EventHandler) OnLightEvent, this,
                        "on", "#ecdf11", NULL);
     g_datalist_set_data_full (&_lights,
                               "green_failure_light",
@@ -125,8 +123,6 @@ Screen::Screen ()
 // --------------------------------------------------------------------------------
 Screen::~Screen ()
 {
-  _singleton = NULL;
-
   _timer->Release ();
 
   _wpa->Release ();
@@ -151,25 +147,22 @@ void Screen::ManageScoringMachine (ScoringMachine *machine)
   _scoring_machines = g_list_prepend (_scoring_machines,
                                       machine);
 
-  OnLightEvent ();
+  OnLightEvent (this);
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnLightEvent ()
+void Screen::OnLightEvent (Screen *screen)
 {
   g_idle_add ((GSourceFunc) OnLightDefferedEvent,
-              NULL);
+              screen);
 }
 
 // --------------------------------------------------------------------------------
-gboolean Screen::OnLightDefferedEvent ()
+gboolean Screen::OnLightDefferedEvent (Screen *screen)
 {
-  if (_singleton)
-  {
-    g_datalist_foreach (&_singleton->_lights,
-                        (GDataForeachFunc) Light::Refresh,
-                        NULL);
-  }
+  g_datalist_foreach (&screen->_lights,
+                      (GDataForeachFunc) Light::Refresh,
+                      NULL);
 
   return FALSE;
 }
@@ -269,11 +262,13 @@ void Screen::ToggleWifiCode ()
   }
   else
   {
+#if 0
     GtkWidget *spinner = _glade->GetWidget ("spinner");
 
     gtk_widget_set_visible (spinner, TRUE);
     _wpa->ConfigureNetwork ();
     gtk_widget_set_visible (spinner, FALSE);
+#endif
 
     _wifi_code->ResetKey ();
 
@@ -507,21 +502,21 @@ gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnQrCodeButton ()
+void Screen::OnQrCodeButton (Screen *screen)
 {
-  _singleton->ToggleWifiCode ();
+  screen->ToggleWifiCode ();
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnStripPlusPin ()
+void Screen::OnStripPlusPin (Screen *screen)
 {
-  _singleton->ChangeStripId (1);
+  screen->ChangeStripId (1);
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnStripMinusPin ()
+void Screen::OnStripMinusPin (Screen *screen)
 {
-  _singleton->ChangeStripId (-1);
+  screen->ChangeStripId (-1);
 }
 
 // --------------------------------------------------------------------------------

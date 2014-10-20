@@ -109,6 +109,8 @@
 		<Unit filename="..\..\sources\BellePoule\application\classification.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\contest.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\contest.hpp" />
+		<Unit filename="..\..\sources\BellePoule\application\ecosystem.cpp" />
+		<Unit filename="..\..\sources\BellePoule\application\ecosystem.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\main.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\match.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\match.hpp" />

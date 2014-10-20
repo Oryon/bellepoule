@@ -24,7 +24,7 @@
 #include "network/wifi_network.hpp"
 #include "util/wifi_code.hpp"
 #include "timer.hpp"
-#include "gpio.hpp"
+#include "button.hpp"
 #include "light.hpp"
 #include "scoring_machine.hpp"
 #include "wpa.hpp"
@@ -39,7 +39,6 @@ class Screen : public Module, Net::HttpServer::Client
     gboolean OnKeyPressed (GdkEventKey *event);
 
   private:
-    static Screen   *_singleton;
     Net::HttpServer *_http_server;
     WifiCode        *_wifi_code;
     gchar           *_wifi_configuration;
@@ -47,9 +46,9 @@ class Screen : public Module, Net::HttpServer::Client
     GData           *_lights;
     guint            _strip_id;
     GList           *_scoring_machines;
-    Gpio            *_qr_code_pin;
-    Gpio            *_strip_plus_pin;
-    Gpio            *_strip_minus_pin;
+    Button          *_qr_code_pin;
+    Button          *_strip_plus_pin;
+    Button          *_strip_minus_pin;
     Wpa             *_wpa;
 
     virtual ~Screen ();
@@ -91,15 +90,15 @@ class Screen : public Module, Net::HttpServer::Client
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
                                  const gchar             *data);
 
-    static void OnLightEvent ();
+    static void OnLightEvent (Screen *screen);
 
-    static gboolean OnLightDefferedEvent ();
+    static gboolean OnLightDefferedEvent (Screen *screen);
 
-    static void OnQrCodeButton ();
+    static void OnQrCodeButton (Screen *context);
 
-    static void OnStripPlusPin ();
+    static void OnStripPlusPin (Screen *context);
 
-    static void OnStripMinusPin ();
+    static void OnStripMinusPin (Screen *context);
 };
 
 #endif

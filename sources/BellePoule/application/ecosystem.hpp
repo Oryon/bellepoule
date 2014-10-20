@@ -14,28 +14,36 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef flash_code_hpp
-#define flash_code_hpp
+#ifndef ecosystem_hpp
+#define ecosystem_hpp
 
 #include "util/object.hpp"
+#include "util/glade.hpp"
+#include "network/uploader.hpp"
+#include "util/wifi_code.hpp"
+#include "network/wifi_network.hpp"
 
-class FlashCode : public Object
+class EcoSystem : public Object
 {
   public:
-    FlashCode (const gchar *text);
+    EcoSystem (Glade *glade);
 
-    GdkPixbuf *GetPixbuf (guint pixel_size = 3);
+    Net::Uploader *GetUpLoader ();
 
-    virtual gchar *GetText ();
-
-  protected:
-    gchar *_text;
-
-    virtual ~FlashCode ();
+    WifiCode *GetAdminCode ();
 
   private:
-    static void DestroyPixbuf (guchar   *pixels,
-                               gpointer  data);
+    Glade            *_glade;
+    Net::WifiNetwork *_wifi_network;
+    WifiCode         *_admin_wifi_code;
+
+    virtual ~EcoSystem ();
+
+    static void RefreshScannerCode (GtkEditable *widget,
+                                    EcoSystem   *ecosystem);
+
+    static void OnRemoteHostChanged (GtkEditable *widget,
+                                     EcoSystem   *ecosystem);
 };
 
 #endif

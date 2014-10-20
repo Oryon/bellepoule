@@ -26,13 +26,16 @@
 #include "gpio.hpp"
 
 // --------------------------------------------------------------------------------
-Gpio::Gpio (guint        pin_id,
-            EventHandler handler,
-            gboolean     fake_event_allowed)
+Gpio::Gpio (guint         pin_id,
+            EventHandler  handler,
+            void         *context,
+            guint         edge,
+            gboolean      fake_event_allowed)
   : Object ("Gpio")
 {
   _pin_id        = pin_id;
   _event_handler = handler;
+  _context       = context;
   _fake_voltage  = 0;
 
 #ifdef WIRING_PI
@@ -41,7 +44,8 @@ Gpio::Gpio (guint        pin_id,
 
   if (wiringPiISR (_pin_id,
                    INT_EDGE_BOTH,
-                   handler) < 0)
+                   handler,
+                   context) < 0)
   {
     g_warning ("OnSignal[%d] registration error", _pin_id);
   }
@@ -96,7 +100,7 @@ gpointer Gpio::FakeLoop (Gpio *gpio)
       gpio->_fake_voltage = 1;
     }
 
-    gpio->_event_handler ();
+    gpio->_event_handler (gpio->_context);
   }
 
   return NULL;

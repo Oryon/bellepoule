@@ -45,15 +45,6 @@
 
 #include "contest.hpp"
 
-typedef enum
-{
-  FTP_NAME_str,
-  FTP_PIXBUF_pix,
-  FTP_URL_str,
-  FTP_USER_str,
-  FTP_PASSWD_str
-} FTPColumn;
-
 const gchar *Contest::weapon_image[_nb_weapon] =
 {
   N_ ("Sabre"),
@@ -368,25 +359,6 @@ Contest::Contest ()
     }
     gtk_container_add (GTK_CONTAINER (box), _category_combo);
     gtk_widget_show (_category_combo);
-  }
-
-  // FTP repository
-  {
-    GtkListStore *model  = GTK_LIST_STORE (_glade->GetGObject ("FavoriteFTP"));
-    gchar        *path   = g_build_filename (_program_path, "resources", "glade", "escrime_info.jpg", NULL);
-    GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
-    GtkTreeIter   iter;
-
-    g_free (path);
-    gtk_list_store_append (model, &iter);
-    gtk_list_store_set (model, &iter,
-                        FTP_NAME_str,   "<b><big>Escrime Info  </big></b>",
-                        FTP_PIXBUF_pix, pixbuf,
-                        FTP_URL_str,    "ftp://www.escrime-info.com/web",
-                        FTP_USER_str,   "belle_poule",
-                        FTP_PASSWD_str, "tH3MF8huHX",
-                        -1);
-    g_object_unref (pixbuf);
   }
 }
 
@@ -1165,7 +1137,15 @@ void Contest::Cleanup ()
 // --------------------------------------------------------------------------------
 void Contest::OnPlugged ()
 {
+  FlashCode *flash_code;
+  gchar     *url;
+
   _tournament = dynamic_cast <Tournament *> (_owner);
+
+  flash_code = _tournament->GetFlashCode ();
+  url = flash_code->GetText ();
+  SetFlashRef (flash_code->GetText ());
+  g_free (url);
 }
 
 // --------------------------------------------------------------------------------
@@ -1436,20 +1416,14 @@ void Contest::Publish ()
   if (_schedule->ScoreStuffingIsAllowed () == FALSE)
   {
     {
-      Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
-                                                   NULL, NULL,
-                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+      Net::Uploader *uploader = _tournament->GetFtpUpLoader ();
 
       uploader->UploadFile (_filename);
       uploader->Release ();
     }
 
     {
-      Net::Uploader *uploader = new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
-                                                   NULL, NULL,
-                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
-                                                   gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
+      Net::Uploader *uploader = _tournament->GetFtpUpLoader ();
 
       uploader->UploadFile (_html_filename);
       uploader->Release ();
@@ -1689,8 +1663,8 @@ void Contest::DumpToHTML (gchar  *filename,
                GetCategory ());
 
       fprintf (file,
-               "  <body>\n"
-               "    <div>\n"
+               "  <body onLoad=\"javascript:OnLoad ();\">\n"
+               "    <div id=\'main_div\'>\n"
                "      <div class=\"Title\">\n"
                "        <center>\n"
                "          <h1>%s</h1>\n"
@@ -2185,36 +2159,6 @@ gchar *Contest::GetDate ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::on_ftp_changed (GtkComboBox *widget)
-{
-  GtkTreeIter iter;
-
-  if (gtk_combo_box_get_active_iter (widget,
-                                     &iter))
-  {
-    gchar *url;
-    gchar *user;
-    gchar *passwd;
-
-    gtk_tree_model_get (gtk_combo_box_get_model (widget),
-                        &iter,
-                        FTP_URL_str,    &url,
-                        FTP_USER_str,   &user,
-                        FTP_PASSWD_str, &passwd,
-                        -1);
-
-    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("user_entry")),
-                        user);
-    gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry")),
-                        passwd);
-
-    g_free (url);
-    g_free (user);
-    g_free (passwd);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Contest::OnBeginPrint (GtkPrintOperation *operation,
                             GtkPrintContext   *context)
 {
@@ -2228,15 +2172,6 @@ void Contest::OnEndPrint (GtkPrintOperation *operation,
 {
   _schedule->StopBookPrint (operation,
                             context);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_ftp_comboboxentry_changed (GtkComboBox *widget,
-                                                              Object      *owner)
-{
-  Contest *c = dynamic_cast <Contest *> (owner);
-
-  c->on_ftp_changed (widget);
 }
 
 // --------------------------------------------------------------------------------

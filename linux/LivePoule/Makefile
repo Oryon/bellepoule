@@ -3,7 +3,7 @@ EXEC = livepoule
 CC = arm-linux-gnueabihf-gcc
 
 CFLAGS  =
-#CFLAGS += -DWIRING_PI
+CFLAGS += -DWIRING_PI
 CFLAGS += -Wshadow
 CFLAGS += -Winit-self
 CFLAGS += -Wredundant-decls

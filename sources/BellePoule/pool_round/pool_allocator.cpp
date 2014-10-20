@@ -1672,6 +1672,70 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  void Allocator::DrawConfig (GtkPrintOperation *operation,
+                              GtkPrintContext   *context,
+                              gint               page_nr)
+  {
+    {
+      gchar *text;
+
+      if (_seeding_balanced->_value)
+      {
+        text = g_strdup_printf ("%s : %s",
+                                gettext ("Seeding"),
+                                gettext ("Balanced"));
+      }
+      else
+      {
+        text = g_strdup_printf ("%s : %s",
+                                gettext ("Seeding"),
+                                gettext ("Grouped by strength"));
+      }
+
+      DrawConfigLine (operation,
+                      context,
+                      text);
+
+      g_free (text);
+    }
+
+    {
+      gchar *text = g_strdup_printf ("%s : %d",
+                                     gettext ("Max score"),
+                                     _max_score->_value);
+
+      DrawConfigLine (operation,
+                      context,
+                      text);
+
+      g_free (text);
+    }
+
+    {
+      gchar *text;
+
+      if (_nb_qualified->IsValid ())
+      {
+        text = g_strdup_printf ("%s : %d",
+                                gettext ("Qualified"),
+                                _nb_qualified->_value);
+      }
+      else
+      {
+        text = g_strdup_printf ("%s : %s",
+                                gettext ("Qualified"),
+                                "100%");
+      }
+
+      DrawConfigLine (operation,
+                      context,
+                      text);
+
+      g_free (text);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   Data *Allocator::GetMaxScore ()
   {
     return _max_score;

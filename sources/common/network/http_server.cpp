@@ -125,6 +125,45 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  gchar *HttpServer::GetIpV4 ()
+  {
+    gchar *address = NULL;
+
+#ifdef WIN32
+    {
+      struct hostent *hostinfo;
+      gchar           hostname[50];
+
+      gethostname (hostname, sizeof (hostname));
+      hostinfo = gethostbyname (hostname);
+      if (hostinfo)
+      {
+        address = g_strdup (inet_ntoa (*(struct in_addr*) (hostinfo->h_addr)));
+      }
+    }
+#else
+    {
+      int fd = socket (AF_INET, SOCK_DGRAM, 0);
+
+      if (fd != -1)
+      {
+        struct ifreq ioctl_request;
+
+        strcpy (ioctl_request.ifr_name, "eth0");
+        if (ioctl (fd, SIOCGIFADDR, &ioctl_request) != -1)
+        {
+          address = g_strdup (inet_ntoa (((struct sockaddr_in *) &ioctl_request.ifr_addr)->sin_addr));
+        }
+
+        close (fd);
+      }
+    }
+#endif
+
+    return address;
+  }
+
+  // --------------------------------------------------------------------------------
   gboolean HttpServer::DeferedPost (DeferedData *defered_data)
   {
     defered_data->_server->_http_POST_cbk (defered_data->_server->_client,

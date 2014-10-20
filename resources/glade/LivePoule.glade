@@ -328,6 +328,7 @@
                     <child>
                       <object class="GtkSpinner" id="spinner">
                         <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
                         <property name="active">True</property>
                       </object>
                       <packing>
