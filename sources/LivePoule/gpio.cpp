@@ -26,11 +26,9 @@
 #include "gpio.hpp"
 
 // --------------------------------------------------------------------------------
-Gpio::Gpio (guint         pin_id,
-            EventHandler  handler,
-            void         *context,
-            guint         edge,
-            gboolean      fake_event_allowed)
+Gpio::Gpio (guint        pin_id,
+            GSourceFunc  handler,
+            void        *context)
   : Object ("Gpio")
 {
   _pin_id        = pin_id;
@@ -44,17 +42,10 @@ Gpio::Gpio (guint         pin_id,
 
   if (wiringPiISR (_pin_id,
                    INT_EDGE_BOTH,
-                   handler,
-                   context) < 0)
+                   OnEvent,
+                   this) < 0)
   {
     g_warning ("OnSignal[%d] registration error", _pin_id);
-  }
-#else
-  if (fake_event_allowed)
-  {
-    g_thread_new (NULL,
-                  (GThreadFunc) FakeLoop,
-                  this);
   }
 #endif
 }
@@ -73,6 +64,16 @@ void Gpio::Init ()
 }
 
 // --------------------------------------------------------------------------------
+void Gpio::GenerateFakeEvent ()
+{
+#ifndef WIRING_PI
+  g_thread_new (NULL,
+                (GThreadFunc) FakeLoop,
+                this);
+#endif
+}
+
+// --------------------------------------------------------------------------------
 guint Gpio::GetVoltageState ()
 {
 #ifdef WIRING_PI
@@ -80,6 +81,13 @@ guint Gpio::GetVoltageState ()
 #else
   return _fake_voltage;
 #endif
+}
+
+// --------------------------------------------------------------------------------
+void Gpio::OnEvent (Gpio *gpio)
+{
+  g_idle_add ((GSourceFunc) gpio->_event_handler,
+              gpio->_context);
 }
 
 // --------------------------------------------------------------------------------
@@ -100,7 +108,7 @@ gpointer Gpio::FakeLoop (Gpio *gpio)
       gpio->_fake_voltage = 1;
     }
 
-    gpio->_event_handler (gpio->_context);
+    gpio->OnEvent (gpio);
   }
 
   return NULL;

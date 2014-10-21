@@ -50,9 +50,9 @@ Screen::Screen ()
 
   // Button
   {
-    _qr_code_pin     = new Button (6, (Gpio::EventHandler) OnQrCodeButton,  this);
-    _strip_plus_pin  = new Button (7, (Gpio::EventHandler) OnStripPlusPin,  this);
-    _strip_minus_pin = new Button (8, (Gpio::EventHandler) OnStripMinusPin, this);
+    _qr_code_pin     = new Button (6, (GSourceFunc) OnQrCodeButton,  this);
+    _strip_plus_pin  = new Button (7, (GSourceFunc) OnStripPlusPin,  this);
+    _strip_minus_pin = new Button (8, (GSourceFunc) OnStripMinusPin, this);
   }
 
   // Lights
@@ -63,7 +63,7 @@ Screen::Screen ()
 
     // red_hit_light
     light = new Light (_glade->GetWidget ("red_hit_light"),
-                       (Gpio::EventHandler) OnLightEvent, this,
+                       (GSourceFunc) OnLightEvent, this,
                        "valid",     "#b01313",
                        "non-valid", "#eeeeee",
                        NULL);
@@ -74,7 +74,7 @@ Screen::Screen ()
 
     // red_failure_light
     light = new Light (_glade->GetWidget ("red_failure_light"),
-                       (Gpio::EventHandler) OnLightEvent, this,
+                       (GSourceFunc) OnLightEvent, this,
                        "on", "#ecdf11", NULL);
     g_datalist_set_data_full (&_lights,
                               "red_failure_light",
@@ -83,7 +83,7 @@ Screen::Screen ()
 
     // green_hit_light
     light = new Light (_glade->GetWidget ("green_hit_light"),
-                       (Gpio::EventHandler) OnLightEvent, this,
+                       (GSourceFunc) OnLightEvent, this,
                        "valid",     "#13b013",
                        "non-valid", "#eeeeee",
                        NULL);
@@ -94,7 +94,7 @@ Screen::Screen ()
 
     // green_failure_light
     light = new Light (_glade->GetWidget ("green_failure_light"),
-                       (Gpio::EventHandler) OnLightEvent, this,
+                       (GSourceFunc) OnLightEvent, this,
                        "on", "#ecdf11", NULL);
     g_datalist_set_data_full (&_lights,
                               "green_failure_light",
@@ -151,20 +151,13 @@ void Screen::ManageScoringMachine (ScoringMachine *machine)
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnLightEvent (Screen *screen)
-{
-  g_idle_add ((GSourceFunc) OnLightDefferedEvent,
-              screen);
-}
-
-// --------------------------------------------------------------------------------
-gboolean Screen::OnLightDefferedEvent (Screen *screen)
+gboolean Screen::OnLightEvent (Screen *screen)
 {
   g_datalist_foreach (&screen->_lights,
                       (GDataForeachFunc) Light::Refresh,
                       NULL);
 
-  return FALSE;
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------
@@ -502,21 +495,36 @@ gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnQrCodeButton (Screen *screen)
+gboolean Screen::OnQrCodeButton (Screen *screen)
 {
-  screen->ToggleWifiCode ();
+  if (screen->_qr_code_pin->GetVoltageState () == 0)
+  {
+    screen->ToggleWifiCode ();
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnStripPlusPin (Screen *screen)
+gboolean Screen::OnStripPlusPin (Screen *screen)
 {
-  screen->ChangeStripId (1);
+  if (screen->_strip_plus_pin->GetVoltageState () == 0)
+  {
+    screen->ChangeStripId (1);
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnStripMinusPin (Screen *screen)
+gboolean Screen::OnStripMinusPin (Screen *screen)
 {
-  screen->ChangeStripId (-1);
+  if (screen->_strip_minus_pin->GetVoltageState () == 0)
+  {
+    screen->ChangeStripId (-1);
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------

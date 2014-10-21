@@ -90,15 +90,13 @@ class Screen : public Module, Net::HttpServer::Client
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
                                  const gchar             *data);
 
-    static void OnLightEvent (Screen *screen);
+    static gboolean OnLightEvent (Screen *screen);
 
-    static gboolean OnLightDefferedEvent (Screen *screen);
+    static gboolean OnQrCodeButton (Screen *context);
 
-    static void OnQrCodeButton (Screen *context);
+    static gboolean OnStripPlusPin (Screen *context);
 
-    static void OnStripPlusPin (Screen *context);
-
-    static void OnStripMinusPin (Screen *context);
+    static gboolean OnStripMinusPin (Screen *context);
 };
 
 #endif
