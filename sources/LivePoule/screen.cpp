@@ -173,17 +173,17 @@ void Screen::ResetDisplay ()
 
   SetFencer ("red",
              "fencer",
-             "toto");
+             "");
   SetFencer ("red",
              "score",
-             "6");
+             "");
 
   SetFencer ("green",
              "fencer",
-             "bidule");
+             "");
   SetFencer ("green",
              "score",
-             "5");
+             "");
 }
 
 // --------------------------------------------------------------------------------
@@ -246,35 +246,55 @@ void Screen::Unfullscreen ()
 // --------------------------------------------------------------------------------
 void Screen::ToggleWifiCode ()
 {
-  GtkWidget *image = _glade->GetWidget ("code_image");
+  GtkWidget *qr_code_image = _glade->GetWidget ("code_image");
 
-  if (gtk_widget_get_visible (image))
+  if (gtk_widget_get_visible (qr_code_image))
   {
-    gtk_widget_set_visible (image,
+    gtk_widget_set_visible (qr_code_image,
                             FALSE);
   }
   else
   {
-#if 0
     GtkWidget *spinner = _glade->GetWidget ("spinner");
 
-    gtk_widget_set_visible (spinner, TRUE);
-    _wpa->ConfigureNetwork ();
-    gtk_widget_set_visible (spinner, FALSE);
-#endif
-
-    _wifi_code->ResetKey ();
-
+    if (gtk_widget_get_visible (spinner) == FALSE)
     {
-      GdkPixbuf *pixbuf = _wifi_code->GetPixbuf ();
+      GtkWidget *spinner = _glade->GetWidget ("spinner");
 
-      gtk_image_set_from_pixbuf (GTK_IMAGE (_glade->GetWidget ("code_image")),
-                                 pixbuf);
-      g_object_ref (pixbuf);
+      gtk_widget_set_visible (spinner, TRUE);
+      _wpa->ConfigureNetwork ((GSourceFunc) OnNetworkConfigured,
+                              this);
     }
-
-    gtk_widget_set_visible (image, TRUE);
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Screen::OnNetworkConfigured (Object *client)
+{
+  Screen *screen = dynamic_cast <Screen *> (client);
+  {
+    GtkWidget *spinner = screen->_glade->GetWidget ("spinner");
+
+    gtk_widget_set_visible (spinner, FALSE);
+  }
+
+  screen->_wifi_code->ResetKey ();
+
+  {
+    GdkPixbuf *pixbuf = screen->_wifi_code->GetPixbuf ();
+
+    gtk_image_set_from_pixbuf (GTK_IMAGE (screen->_glade->GetWidget ("code_image")),
+                               pixbuf);
+    g_object_ref (pixbuf);
+  }
+
+  {
+    GtkWidget *qr_code_image = screen->_glade->GetWidget ("code_image");
+
+    gtk_widget_set_visible (qr_code_image, TRUE);
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------

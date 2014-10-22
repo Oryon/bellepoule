@@ -97,6 +97,8 @@ class Screen : public Module, Net::HttpServer::Client
     static gboolean OnStripPlusPin (Screen *context);
 
     static gboolean OnStripMinusPin (Screen *context);
+
+    static gboolean OnNetworkConfigured (Object *client);
 };
 
 #endif

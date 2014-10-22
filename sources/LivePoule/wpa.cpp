@@ -102,7 +102,7 @@ void Wpa::OpenSocket ()
                             FALSE,
                             &error) == FALSE)
       {
-        g_warning ("%s", error->message);
+        g_warning ("%s: %s", "/var/run/wpa_supplicant/wlan0", error->message);
         g_error_free (error);
       }
     }
@@ -155,6 +155,7 @@ gchar *Wpa::Send (const gchar *request)
 // --------------------------------------------------------------------------------
 gchar *Wpa::GetNetworkConfig ()
 {
+#ifdef WIRING_PI
   GError *error  = NULL;
   gchar  *config = NULL;
 
@@ -173,6 +174,10 @@ gchar *Wpa::GetNetworkConfig ()
   }
 
   g_free (config);
+#else
+    sleep (10);
+#endif
+
   return NULL;
 }
 
@@ -191,9 +196,21 @@ gchar *Wpa::AddNetwork ()
 }
 
 // --------------------------------------------------------------------------------
-void Wpa::ConfigureNetwork ()
+void Wpa::ConfigureNetwork (GSourceFunc  configuration_cbk,
+                            Object      *configuration_client)
 {
-  gchar *new_config = GetNetworkConfig ();
+  _configuration_cbk    = configuration_cbk;
+  _configuration_client = configuration_client;
+
+  g_thread_new (NULL,
+                (GThreadFunc) ConfigurationThread,
+                this);
+}
+
+// --------------------------------------------------------------------------------
+gpointer Wpa::ConfigurationThread (Wpa *wpa)
+{
+  gchar *new_config = wpa->GetNetworkConfig ();
 
   if (new_config)
   {
@@ -226,18 +243,18 @@ void Wpa::ConfigureNetwork ()
         gchar *network_id;
 
         {
-          gchar *last_network = AddNetwork ();
+          gchar *last_network = wpa->AddNetwork ();
 
           for (gint i = 1 ; i <= atoi (last_network); i++)
           {
             gchar *request = g_strdup_printf ("REMOVE_NETWORK %d", i);
 
-            Send (request);
+            wpa->Send (request);
             g_free (request);
           }
         }
 
-        network_id = AddNetwork ();
+        network_id = wpa->AddNetwork ();
 
         for (guint k = 0; keys[k]; k++)
         {
@@ -257,7 +274,7 @@ void Wpa::ConfigureNetwork ()
           {
             gchar *request = g_strdup_printf ("SET_NETWORK %s %s %s", network_id, keys[k], value);
 
-            Send (request);
+            wpa->Send (request);
 
             g_free (value);
             g_free (request);
@@ -268,22 +285,27 @@ void Wpa::ConfigureNetwork ()
           gchar *request;
 
           request = g_strdup_printf ("ENABLE_NETWORK %s", network_id);
-          g_free (Send (request));
+          g_free (wpa->Send (request));
           g_free (request);
 
           request = g_strdup_printf ("SELECT_NETWORK %s", network_id);
-          g_free (Send (request));
+          g_free (wpa->Send (request));
           g_free (request);
         }
 
-        g_free (Send ("SAVE_CONFIG"));
+        g_free (wpa->Send ("SAVE_CONFIG"));
 
         g_free (network_id);
 
-        g_free (_network_config);
-        _network_config = new_config;
+        g_free (wpa->_network_config);
+        wpa->_network_config = new_config;
       }
     }
     g_key_file_unref (key_file);
   }
+
+  g_idle_add (wpa->_configuration_cbk,
+              wpa->_configuration_client);
+
+  return NULL;
 }

@@ -30,6 +30,11 @@ static void LogHandler (const gchar    *log_domain,
                         const gchar    *message,
                         gpointer        user_data)
 {
+  if (log_domain == NULL)
+  {
+    log_domain = "LivePoule";
+  }
+
   switch (log_level)
   {
     case G_LOG_FLAG_FATAL:

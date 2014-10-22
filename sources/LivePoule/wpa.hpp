@@ -24,11 +24,14 @@ class Wpa : public Object
   public:
     Wpa ();
 
-    void ConfigureNetwork ();
+    void ConfigureNetwork (GSourceFunc  on_network_event,
+                           Object      *client);
 
   private:
-    GSocket *_socket;
-    gchar   *_network_config;
+    GSocket     *_socket;
+    gchar       *_network_config;
+    GSourceFunc  _configuration_cbk;
+    Object      *_configuration_client;
 
     virtual ~Wpa ();
 
@@ -39,6 +42,8 @@ class Wpa : public Object
     gchar *GetNetworkConfig ();
 
     gchar *AddNetwork ();
+
+    static gpointer ConfigurationThread (Wpa *wpa);
 };
 
 #endif

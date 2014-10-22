@@ -42,7 +42,7 @@ Gpio::Gpio (guint        pin_id,
 
   if (wiringPiISR (_pin_id,
                    INT_EDGE_BOTH,
-                   OnEvent,
+                   (void (*) (void *)) OnEvent,
                    this) < 0)
   {
     g_warning ("OnSignal[%d] registration error", _pin_id);
