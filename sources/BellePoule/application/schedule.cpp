@@ -734,6 +734,9 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
                      context,
                      page_nr);
 
+  if (strcmp ((const gchar *) g_object_get_data (G_OBJECT (operation), "Print::PageName"),
+              gettext ("Formula")) == 0)
+
   {
     cairo_t *cr      = gtk_print_context_get_cairo_context (context);
     gdouble  paper_w = gtk_print_context_get_width (context);
