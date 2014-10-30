@@ -208,6 +208,8 @@
     <Unit filename="../../sources/common/network/downloader.hpp" />
     <Unit filename="../../sources/common/network/http_server.cpp" />
     <Unit filename="../../sources/common/network/http_server.hpp" />
+    <Unit filename="../../sources/common/network/ph7.c" />
+    <Unit filename="../../sources/common/network/ph7.h" />
     <Unit filename="../../sources/common/network/uploader.cpp" />
     <Unit filename="../../sources/common/network/uploader.hpp" />
     <Unit filename="../../sources/common/network/wifi_network.cpp" />

@@ -14,36 +14,30 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef gpio_hpp
-#define gpio_hpp
+#ifndef button_hpp
+#define button_hpp
 
-#include "util/object.hpp"
+#include "gpio.hpp"
 
-class Gpio : public Object
+class Button : public Gpio
 {
   public:
-    static void Init ();
-
-    Gpio (guint        pin_id,
-          GSourceFunc  handler,
-          void        *context);
-
-    void GenerateFakeEvent ();
-
-    guint GetVoltageState ();
-
-  protected:
-    virtual ~Gpio ();
+    Button (guint        pin_id,
+            GSourceFunc  handler,
+            void        *context);
 
   private:
-    guint         _pin_id;
-    guint         _fake_voltage;
-    GSourceFunc   _event_handler;
-    void         *_context;
+    GSourceFunc  _debounced_handler;
+    void        *_debounced_context;
+    guint        _debounce_started;
 
-    static void OnEvent (Gpio *gpio);
+    virtual ~Button ();
 
-    static gpointer FakeLoop (Gpio *gpio);
+    static gboolean OnButtonEvent (Button *button);
+
+    static gboolean OnDebounceStop (Button *button);
+
+    static gpointer MainLoop (Button *button);
 };
 
 #endif

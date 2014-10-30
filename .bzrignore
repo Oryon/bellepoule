@@ -8,3 +8,5 @@ Debug
 Release
 windows/setup/Output
 ./trucs
+./windows/BellePoule/setup/Output
+./linux/LivePoule/livepoule

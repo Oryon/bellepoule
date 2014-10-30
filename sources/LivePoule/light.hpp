@@ -25,9 +25,9 @@
 class Light : public Object
 {
   public:
-    Light (GtkWidget          *w,
-           Gpio::EventHandler  event_handler,
-           void               *context,
+    Light (GtkWidget   *w,
+           GSourceFunc  event_handler,
+           void        *context,
            ...);
 
     static void Refresh (GQuark  key_id,
@@ -37,10 +37,10 @@ class Light : public Object
                       guint        pin_id);
 
   private:
-    Gpio::EventHandler  _event_handler;
-    void               *_context;
-    GtkWidget          *_widget;
-    GList              *_pin_list;
+    GSourceFunc  _event_handler;
+    void        *_context;
+    GtkWidget   *_widget;
+    GList       *_pin_list;
 
     virtual ~Light ();
 

@@ -50,9 +50,9 @@ Screen::Screen ()
 
   // Button
   {
-    _qr_code_pin     = new Button (6, (Gpio::EventHandler) OnQrCodeButton,  this);
-    _strip_plus_pin  = new Button (7, (Gpio::EventHandler) OnStripPlusPin,  this);
-    _strip_minus_pin = new Button (8, (Gpio::EventHandler) OnStripMinusPin, this);
+    _qr_code_pin     = new Button (6, (GSourceFunc) OnQrCodeButton,  this);
+    _strip_plus_pin  = new Button (7, (GSourceFunc) OnStripPlusPin,  this);
+    _strip_minus_pin = new Button (8, (GSourceFunc) OnStripMinusPin, this);
   }
 
   // Lights
@@ -63,7 +63,7 @@ Screen::Screen ()
 
     // red_hit_light
     light = new Light (_glade->GetWidget ("red_hit_light"),
-                       (Gpio::EventHandler) OnLightEvent, this,
+                       (GSourceFunc) OnLightEvent, this,
                        "valid",     "#b01313",
                        "non-valid", "#eeeeee",
                        NULL);
@@ -74,7 +74,7 @@ Screen::Screen ()
 
     // red_failure_light
     light = new Light (_glade->GetWidget ("red_failure_light"),
-                       (Gpio::EventHandler) OnLightEvent, this,
+                       (GSourceFunc) OnLightEvent, this,
                        "on", "#ecdf11", NULL);
     g_datalist_set_data_full (&_lights,
                               "red_failure_light",
@@ -83,7 +83,7 @@ Screen::Screen ()
 
     // green_hit_light
     light = new Light (_glade->GetWidget ("green_hit_light"),
-                       (Gpio::EventHandler) OnLightEvent, this,
+                       (GSourceFunc) OnLightEvent, this,
                        "valid",     "#13b013",
                        "non-valid", "#eeeeee",
                        NULL);
@@ -94,7 +94,7 @@ Screen::Screen ()
 
     // green_failure_light
     light = new Light (_glade->GetWidget ("green_failure_light"),
-                       (Gpio::EventHandler) OnLightEvent, this,
+                       (GSourceFunc) OnLightEvent, this,
                        "on", "#ecdf11", NULL);
     g_datalist_set_data_full (&_lights,
                               "green_failure_light",
@@ -151,20 +151,13 @@ void Screen::ManageScoringMachine (ScoringMachine *machine)
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnLightEvent (Screen *screen)
-{
-  g_idle_add ((GSourceFunc) OnLightDefferedEvent,
-              screen);
-}
-
-// --------------------------------------------------------------------------------
-gboolean Screen::OnLightDefferedEvent (Screen *screen)
+gboolean Screen::OnLightEvent (Screen *screen)
 {
   g_datalist_foreach (&screen->_lights,
                       (GDataForeachFunc) Light::Refresh,
                       NULL);
 
-  return FALSE;
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------
@@ -180,17 +173,17 @@ void Screen::ResetDisplay ()
 
   SetFencer ("red",
              "fencer",
-             "toto");
+             "");
   SetFencer ("red",
              "score",
-             "6");
+             "");
 
   SetFencer ("green",
              "fencer",
-             "bidule");
+             "");
   SetFencer ("green",
              "score",
-             "5");
+             "");
 }
 
 // --------------------------------------------------------------------------------
@@ -253,35 +246,55 @@ void Screen::Unfullscreen ()
 // --------------------------------------------------------------------------------
 void Screen::ToggleWifiCode ()
 {
-  GtkWidget *image = _glade->GetWidget ("code_image");
+  GtkWidget *qr_code_image = _glade->GetWidget ("code_image");
 
-  if (gtk_widget_get_visible (image))
+  if (gtk_widget_get_visible (qr_code_image))
   {
-    gtk_widget_set_visible (image,
+    gtk_widget_set_visible (qr_code_image,
                             FALSE);
   }
   else
   {
-#if 0
     GtkWidget *spinner = _glade->GetWidget ("spinner");
 
-    gtk_widget_set_visible (spinner, TRUE);
-    _wpa->ConfigureNetwork ();
-    gtk_widget_set_visible (spinner, FALSE);
-#endif
-
-    _wifi_code->ResetKey ();
-
+    if (gtk_widget_get_visible (spinner) == FALSE)
     {
-      GdkPixbuf *pixbuf = _wifi_code->GetPixbuf ();
+      GtkWidget *spinner = _glade->GetWidget ("spinner");
 
-      gtk_image_set_from_pixbuf (GTK_IMAGE (_glade->GetWidget ("code_image")),
-                                 pixbuf);
-      g_object_ref (pixbuf);
+      gtk_widget_set_visible (spinner, TRUE);
+      _wpa->ConfigureNetwork ((GSourceFunc) OnNetworkConfigured,
+                              this);
     }
-
-    gtk_widget_set_visible (image, TRUE);
   }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Screen::OnNetworkConfigured (Object *client)
+{
+  Screen *screen = dynamic_cast <Screen *> (client);
+  {
+    GtkWidget *spinner = screen->_glade->GetWidget ("spinner");
+
+    gtk_widget_set_visible (spinner, FALSE);
+  }
+
+  screen->_wifi_code->ResetKey ();
+
+  {
+    GdkPixbuf *pixbuf = screen->_wifi_code->GetPixbuf ();
+
+    gtk_image_set_from_pixbuf (GTK_IMAGE (screen->_glade->GetWidget ("code_image")),
+                               pixbuf);
+    g_object_ref (pixbuf);
+  }
+
+  {
+    GtkWidget *qr_code_image = screen->_glade->GetWidget ("code_image");
+
+    gtk_widget_set_visible (qr_code_image, TRUE);
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------
@@ -502,21 +515,36 @@ gboolean Screen::HttpPostCbk (Net::HttpServer::Client *client,
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnQrCodeButton (Screen *screen)
+gboolean Screen::OnQrCodeButton (Screen *screen)
 {
-  screen->ToggleWifiCode ();
+  if (screen->_qr_code_pin->GetVoltageState () == 0)
+  {
+    screen->ToggleWifiCode ();
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnStripPlusPin (Screen *screen)
+gboolean Screen::OnStripPlusPin (Screen *screen)
 {
-  screen->ChangeStripId (1);
+  if (screen->_strip_plus_pin->GetVoltageState () == 0)
+  {
+    screen->ChangeStripId (1);
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------
-void Screen::OnStripMinusPin (Screen *screen)
+gboolean Screen::OnStripMinusPin (Screen *screen)
 {
-  screen->ChangeStripId (-1);
+  if (screen->_strip_minus_pin->GetVoltageState () == 0)
+  {
+    screen->ChangeStripId (-1);
+  }
+
+  return G_SOURCE_REMOVE;
 }
 
 // --------------------------------------------------------------------------------
