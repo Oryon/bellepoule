@@ -168,6 +168,9 @@ Tournament::Tournament (gchar *filename)
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
   }
 
+  _web_server = new Net::WebServer ((Net::WebServer::ProgressFunc) OnWebServerProgress,
+                                    this);
+
   {
     gchar *ip_addr;
     gchar *html_url;
@@ -228,6 +231,8 @@ Tournament::~Tournament ()
     _version_downloader->Kill    ();
     _version_downloader->Release ();
   }
+
+  _web_server->Release ();
 
   _http_server->Release ();
   curl_global_cleanup ();
@@ -1638,6 +1643,24 @@ void Tournament::OnActivateBackup ()
 }
 
 // --------------------------------------------------------------------------------
+void Tournament::OnVideoToggled (GtkToggleButton *togglebutton)
+{
+  GtkWidget *hbox = _glade->GetWidget ("video_toggle_hbox");
+
+  gtk_widget_set_sensitive (hbox,
+                            FALSE);
+
+  if (gtk_toggle_button_get_active (togglebutton))
+  {
+    _web_server->Stop ();
+  }
+  else
+  {
+    _web_server->Start ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Tournament::OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
                                   gchar            *locale)
 {
@@ -1733,6 +1756,29 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
 Net::Uploader *Tournament::GetFtpUpLoader ()
 {
   return _ecosystem->GetUpLoader ();
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::OnWebServerProgress (gdouble  progress,
+                                      Object  *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  if (   (progress == 0.0)
+      || (progress == 1.0))
+  {
+    GtkWidget *hbox = t->_glade->GetWidget ("video_toggle_hbox");
+
+    gtk_widget_set_sensitive (hbox,
+                              TRUE);
+  }
+
+  {
+    GtkProgressBar *bar = GTK_PROGRESS_BAR (t->_glade->GetWidget ("video_progressbar"));
+
+    gtk_progress_bar_set_fraction (bar,
+                                   progress);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -2023,4 +2069,13 @@ extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
                 GDK_CURRENT_TIME,
                 NULL);
 #endif
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_video_off_toggled (GtkToggleButton *togglebutton,
+                                                      Object          *owner)
+{
+  Tournament *t = dynamic_cast <Tournament *> (owner);
+
+  t->OnVideoToggled (togglebutton);
 }

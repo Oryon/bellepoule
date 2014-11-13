@@ -23,6 +23,7 @@
 #include "util/glade.hpp"
 #include "network/http_server.hpp"
 #include "network/downloader.hpp"
+#include "network/web_server.hpp"
 #include "ecosystem.hpp"
 
 class Contest;
@@ -70,6 +71,8 @@ class Tournament : public Module, Net::HttpServer::Client
 
     void OnActivateBackup ();
 
+    void OnVideoToggled (GtkToggleButton *togglebutton);
+
     void OpenUriContest (const gchar *uri);
 
     Player *Share (Player  *referee,
@@ -93,6 +96,7 @@ class Tournament : public Module, Net::HttpServer::Client
     guint             _nb_matchs;
     Net::HttpServer  *_http_server;
     Net::Downloader  *_version_downloader;
+    Net::WebServer   *_web_server;
     gboolean          _print_meal_tickets;
     EcoSystem        *_ecosystem;
 
@@ -114,6 +118,9 @@ class Tournament : public Module, Net::HttpServer::Client
     gboolean OnHttpPost (const gchar *data);
 
     gchar *OnHttpGet (const gchar *url);
+
+    static void OnWebServerProgress (gdouble  progress,
+                                     Object  *owner);
 
     guint PreparePrint (GtkPrintOperation *operation,
                         GtkPrintContext   *context);

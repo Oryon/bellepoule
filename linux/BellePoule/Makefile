@@ -2,7 +2,7 @@ EXEC    = bellepoulebeta
 TARGET  = Release
 PACKAGE = /local/$(USER)/$(EXEC)
 VERSION = 4.0
-STEP    = ubuntu13
+STEP    = ubuntu14
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
 V       = 1
@@ -77,7 +77,7 @@ valgrind:
 ##
 ## Packaging section
 ##
-package: prepare_packaging prepare_sources prepare_examples prepare_resources
+package: prepare_packaging prepare_sources prepare_examples prepare_resources prepare_www
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
 	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
@@ -99,6 +99,10 @@ prepare_examples:
 	cp -rf ../../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
 	cp -rf ../../Exemples/Classements/FHBEN.xml $(PACKAGE)/$(RELEASE)/Exemples/Classements
 	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
+
+prepare_www:
+	cp -rf ../../sources/www $(PACKAGE)/$(RELEASE)
+	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources
@@ -164,13 +168,23 @@ install:
 	mkdir -p $(DESTDIR)/usr/share/applications
 	install --mode=644 debian/$(EXEC).desktop $(DESTDIR)/usr/share/applications/$(EXEC).desktop
 	mkdir -p $(DESTDIR)/usr/share/$(EXEC)
+	#Examples
 	mkdir -p `find Exemples -type d | sed 's?Exemples?$(DESTDIR)/usr/share/$(EXEC)/&?'`
 	find Exemples -type f  | while read file;\
 		do \
 		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
 		done
+	#Resources
 	mkdir -p `find resources -type d | sed 's?resources?$(DESTDIR)/usr/share/$(EXEC)/&?'`
 	find resources -type f  | while read file;\
+		do \
+		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
+		done
+	#Lighttpd
+	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
+	install --mode=644 99-bellepoule.conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-bellepoule.conf ;
+	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(EXEC)/&?'`
+	find www -type f  | while read file;\
 		do \
 		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
 		done
