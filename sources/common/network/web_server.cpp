@@ -19,21 +19,27 @@
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  WebServer::WebServer (ProgressFunc  progress_func,
-                        Object       *owner)
+  WebServer::WebServer (StateFunc  state_func,
+                        Object    *owner)
     : Object ("WebServer")
   {
+#ifndef WIN32
     g_mutex_init (&_mutex);
     _thread = NULL;
 
-    _progress      = 0.0;
-    _progress_func = progress_func;
-    _owner         = owner;
+    _in_progress  = FALSE;
+    _on           = FALSE;
+    _failed       = FALSE;
+    _state_func   = state_func;
+    _owner        = owner;
+#endif
   }
 
   // --------------------------------------------------------------------------------
   WebServer::~WebServer ()
   {
+#ifndef WIN32
+    g_mutex_lock (&server->_mutex);
     ShutDown (this);
 
     if (_thread)
@@ -42,68 +48,93 @@ namespace Net
     }
 
     g_mutex_clear (&_mutex);
+#endif
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Start ()
   {
+#ifndef WIN32
     if (g_mutex_trylock (&_mutex))
     {
       _thread = g_thread_new (NULL,
                               (GThreadFunc) StartUp,
                               this);
-      g_mutex_unlock (&_mutex);
     }
+#endif
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Stop ()
   {
+#ifndef WIN32
     if (g_mutex_trylock (&_mutex))
     {
       _thread = g_thread_new (NULL,
                               (GThreadFunc) ShutDown,
                               this);
-      g_mutex_unlock (&_mutex);
     }
+#endif
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Spawn (const gchar *cmd_line)
   {
-    GError *error;
-
-    if (g_spawn_command_line_sync (cmd_line,
-                                   NULL,
-                                   NULL,
-                                   NULL,
-                                   &error) == FALSE)
+#ifndef WIN32
+    if (_failed == FALSE)
     {
-      if (error)
+      GError *error;
+      gint    exit_status;
+
+      if (g_spawn_command_line_sync (cmd_line,
+                                     NULL,
+                                     NULL,
+                                     &exit_status,
+                                     &error) == FALSE)
       {
-        g_warning ("%s: %s", cmd_line, error->message);
-        g_error_free (error);
+        if (error)
+        {
+          g_warning ("%s: %s", cmd_line, error->message);
+          g_error_free (error);
+        }
+        _failed = TRUE;
+      }
+      else if (exit_status != 0)
+      {
+        _failed = TRUE;
       }
     }
 
-    _progress += _step;
     g_idle_add ((GSourceFunc) OnProgress,
                 this);
+#endif
   }
 
   // --------------------------------------------------------------------------------
   gpointer WebServer::StartUp (WebServer *server)
   {
-    g_mutex_lock (&server->_mutex);
-    server->_step = 0.25;
-    server->Spawn ("gksudo lighty-enable-mod fastcgi");
-    server->Spawn ("gksudo lighty-enable-mod fastcgi-php");
-    server->Spawn ("gksudo lighty-enable-mod bellepoule");
-    server->Spawn ("gksudo /etc/init.d/lighttpd restart");
+#ifndef WIN32
+    if (server->_on == FALSE)
+    {
+      server->_failed      = FALSE;
+      server->_in_progress = TRUE;
 
-    g_thread_unref (server->_thread);
-    server->_thread = NULL;
+      server->Spawn ("gksudo --description Video lighty-enable-mod fastcgi");
+      server->Spawn ("gksudo --description Video lighty-enable-mod fastcgi-php");
+      server->Spawn ("gksudo --description Video lighty-enable-mod bellepoule");
+      server->Spawn ("gksudo --description Video /etc/init.d/lighttpd restart");
+
+      server->_on          = TRUE;
+      server->_in_progress = FALSE;
+
+      if (server->_thread)
+      {
+        g_thread_unref (server->_thread);
+        server->_thread = NULL;
+      }
+    }
     g_mutex_unlock (&server->_mutex);
+#endif
 
     return NULL;
   }
@@ -111,14 +142,26 @@ namespace Net
   // --------------------------------------------------------------------------------
   gpointer WebServer::ShutDown (WebServer *server)
   {
-    g_mutex_lock (&server->_mutex);
-    server->_step = -0.5;
-    server->Spawn ("gksu lighty-disable-mod bellepoule");
-    server->Spawn ("gksudo /etc/init.d/lighttpd stop");
+#ifndef WIN32
+    if (server->_on)
+    {
+      server->_failed      = FALSE;
+      server->_in_progress = TRUE;
 
-    g_thread_unref (server->_thread);
-    server->_thread = NULL;
+      server->Spawn ("gksudo --description Video lighty-disable-mod bellepoule");
+      server->Spawn ("gksudo --description Video /etc/init.d/lighttpd stop");
+
+      server->_on          = FALSE;
+      server->_in_progress = FALSE;
+
+      if (server->_thread)
+      {
+        g_thread_unref (server->_thread);
+        server->_thread = NULL;
+      }
+    }
     g_mutex_unlock (&server->_mutex);
+#endif
 
     return NULL;
   }
@@ -126,9 +169,14 @@ namespace Net
   // --------------------------------------------------------------------------------
   guint WebServer::OnProgress (WebServer *server)
   {
-    server->_progress_func (server->_progress,
-                            server->_owner);
+#ifndef WIN32
+    server->_state_func (server->_in_progress,
+                         server->_on,
+                         server->_owner);
 
     return G_SOURCE_REMOVE;
+#else
+    return FALSE;
+#endif
   }
 }

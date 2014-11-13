@@ -168,7 +168,7 @@ Tournament::Tournament (gchar *filename)
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
   }
 
-  _web_server = new Net::WebServer ((Net::WebServer::ProgressFunc) OnWebServerProgress,
+  _web_server = new Net::WebServer ((Net::WebServer::StateFunc) OnWebServerState,
                                     this);
 
   {
@@ -180,7 +180,7 @@ Tournament::Tournament (gchar *filename)
                                         HttpGetCbk,
                                         35830);
     ip_addr = _http_server->GetIpV4 ();
-    html_url = g_strdup_printf ("http://%s:35830/tournament/list.html", ip_addr);
+    html_url = g_strdup_printf ("http://%s/index.php", ip_addr);
 
     SetFlashRef (html_url);
 
@@ -826,77 +826,6 @@ gchar *Tournament::OnHttpGet (const gchar *url)
         current = g_slist_next (current);
       }
     }
-  }
-  else if (strstr (url, "/tournament/html/competition/"))
-  {
-    gchar *id = (gchar *) strrchr (url, '/');
-
-    if (id && id[1])
-    {
-      GSList *current = _contest_list;
-
-      id++;
-      while (current)
-      {
-        Contest *contest = (Contest *) current->data;
-
-        if (    contest->GetHtmlFileName ()
-             && (strcmp (contest->GetId (), id) == 0))
-        {
-          g_file_get_contents (contest->GetHtmlFileName (),
-                               &result,
-                               NULL,
-                               NULL);
-          break;
-        }
-        current = g_slist_next (current);
-      }
-    }
-  }
-  else if (strcmp (url, "/tournament/list.html") == 0)
-  {
-    GSList  *current  = _contest_list;
-    GString *response = g_string_new ("");
-    gchar   *ip_addr  = _http_server->GetIpV4 ();
-
-    response = g_string_append (response, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd\">\n");
-    response = g_string_append (response, "<html>\n");
-    response = g_string_append (response, "  <head>\n");
-    response = g_string_append (response, "    <meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">\n");
-    response = g_string_append (response, "  </head>\n");
-
-    response = g_string_append (response, "  <body>\n");
-    while (current)
-    {
-      Contest *contest = (Contest *) current->data;
-
-      response = g_string_append (response, "    <div>\n");
-      response = g_string_append (response, "      <a href=\"http://");
-      response = g_string_append (response, ip_addr);
-      response = g_string_append (response, ":35830/tournament/html/competition/");
-      response = g_string_append (response, contest->GetId ());
-      response = g_string_append (response, "\">");
-
-      response = g_string_append (response, contest->GetName ());
-      response = g_string_append (response, "-");
-      response = g_string_append (response, contest->GetWeapon ());
-      response = g_string_append (response, "-");
-      response = g_string_append (response, contest->GetGenderCode ());
-      response = g_string_append (response, "-");
-      response = g_string_append (response, contest->GetCategory ());
-
-      response = g_string_append (response, "      </a>\n");
-      response = g_string_append (response, "    </div>\n");
-
-      current = g_slist_next (current);
-    }
-    response = g_string_append (response, "  </body>\n");
-    response = g_string_append (response, "</html>\n");
-
-    result = response->str;
-    g_string_free (response,
-                   FALSE);
-    g_free (ip_addr);
   }
   else if (strcmp (url, "/tournament") == 0)
   {
@@ -1645,11 +1574,6 @@ void Tournament::OnActivateBackup ()
 // --------------------------------------------------------------------------------
 void Tournament::OnVideoToggled (GtkToggleButton *togglebutton)
 {
-  GtkWidget *hbox = _glade->GetWidget ("video_toggle_hbox");
-
-  gtk_widget_set_sensitive (hbox,
-                            FALSE);
-
   if (gtk_toggle_button_get_active (togglebutton))
   {
     _web_server->Stop ();
@@ -1759,25 +1683,23 @@ Net::Uploader *Tournament::GetFtpUpLoader ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnWebServerProgress (gdouble  progress,
-                                      Object  *owner)
+void Tournament::OnWebServerState (gboolean  in_progress,
+                                   gboolean  on,
+                                   Object   *owner)
 {
-  Tournament *t = dynamic_cast <Tournament *> (owner);
+  Tournament *t       = dynamic_cast <Tournament *> (owner);
+  GtkWidget  *hbox    = t->_glade->GetWidget ("video_toggle_hbox");
+  GtkWidget  *spinner = t->_glade->GetWidget ("video_spinner");
 
-  if (   (progress == 0.0)
-      || (progress == 1.0))
+  if (in_progress == TRUE)
   {
-    GtkWidget *hbox = t->_glade->GetWidget ("video_toggle_hbox");
-
-    gtk_widget_set_sensitive (hbox,
-                              TRUE);
+    gtk_widget_hide (hbox);
+    gtk_widget_show (spinner);
   }
-
+  else
   {
-    GtkProgressBar *bar = GTK_PROGRESS_BAR (t->_glade->GetWidget ("video_progressbar"));
-
-    gtk_progress_bar_set_fraction (bar,
-                                   progress);
+    gtk_widget_show (hbox);
+    gtk_widget_hide (spinner);
   }
 }
 

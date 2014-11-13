@@ -119,8 +119,9 @@ class Tournament : public Module, Net::HttpServer::Client
 
     gchar *OnHttpGet (const gchar *url);
 
-    static void OnWebServerProgress (gdouble  progress,
-                                     Object  *owner);
+    static void OnWebServerState (gboolean  in_progress,
+                                  gboolean  on,
+                                  Object    *owner);
 
     guint PreparePrint (GtkPrintOperation *operation,
                         GtkPrintContext   *context);

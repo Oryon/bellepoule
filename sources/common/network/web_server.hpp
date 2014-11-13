@@ -26,11 +26,12 @@ namespace Net
   class WebServer : public Object
   {
     public:
-      typedef void (*ProgressFunc) (gdouble  percent,
-                                    Object  *owner);
+      typedef void (*StateFunc) (gboolean  in_progress,
+                                 gboolean  on,
+                                 Object    *owner);
 
-      WebServer (ProgressFunc  progress_func,
-                 Object       *owner);
+      WebServer (StateFunc  progress_func,
+                 Object    *owner);
 
       void Start ();
 
@@ -38,11 +39,14 @@ namespace Net
 
     private:
       GThread      *_thread;
+#ifndef WIN32
       GMutex        _mutex;
-      ProgressFunc  _progress_func;
+#endif
+      StateFunc     _state_func;
       Object       *_owner;
-      gdouble       _progress;
-      gdouble       _step;
+      gboolean      _in_progress;
+      gboolean      _on;
+      gboolean      _failed;
 
       virtual ~WebServer ();
 
