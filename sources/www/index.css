@@ -1,0 +1,434 @@
+body          {margin:0px;padding:0px;background:#ffffff;font-family:arial, helvetica, sans-serif;font-size:11px;}
+a               {color: black;text-decoration : none;}
+a:hover     {color: black;text-decoration : underline;}
+a :visited {color: black;text-decoration : none;}
+
+
+div.footer
+{
+	width: 100%;
+	text-align: center;
+}
+
+
+div.selectFolder
+{
+	width: 350px;
+	margin: auto;
+	margin-top: 50px;
+
+	padding-top: 50px;
+	padding-bottom: 50px;
+	
+	border: 2px solid black;
+}
+div.selectFolder_Button
+{
+	text-align: center;
+}
+
+
+div.competitionTabControl
+{
+	margin:0px;padding:0px;
+	height: 50px;
+	background-color: rgb( 80, 80, 80 );
+}
+
+
+div.competitionTab
+{
+	width: 150px;
+	height: 40px;
+	margin-top: 5px;
+	margin-left: 10px;
+	padding-left: 5px;
+	float: left;
+	
+	text-align: center;
+	
+	-moz-border-radius:2px;-khtml-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;
+}
+div.competitionTabActive
+{
+	width: 150px;
+	height: 40px;
+	margin-top: 5px;
+	margin-left: 10px;
+	padding-left: 5px;
+	float: left;
+	
+	text-align: center;
+	
+	position: relative; 
+	top: 20px;
+	
+	-moz-border-radius:2px;-khtml-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;
+}
+div.competitionTabRefresh
+{
+	width: 80px;
+	height: 20px;
+	margin-top: 5px;
+	margin-left: 10px;
+	padding-left: 5px;
+	float: left;
+	
+	text-align: center;
+	background-color: #222222;
+	
+	-moz-border-radius:2px;-khtml-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;
+}
+div.competitionTabRefresh a
+{
+	color: #FFFFFF;
+}
+div.competitionTab a, div.competitionTabActive a
+{
+	margin: 0px;
+	padding: 0px;
+	vertical-align : middle;
+}
+div.defileButton
+{
+	width: 100px;
+	height: 20px;
+	margin-top: 5px;
+	margin-left: 10px;
+	padding-left: 5px;
+	float: right; 
+	background-color: rgb( 32,32,32 );
+	color: #FFFFFF;
+	position: fixed;
+	right: 115px;
+	top: 5px;
+	
+	-moz-border-radius:2px;-khtml-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;
+}
+div.settingButton
+{
+	width: 100px;
+	height: 20px;
+	margin-top: 5px;
+	margin-left: 10px;
+	padding-left: 5px;
+	float: right; 
+	background-color: rgb( 32,32,32 );
+	color: #FFFFFF;
+	position: fixed;
+	right: 5px;
+	top: 5px;
+	
+	-moz-border-radius:2px;-khtml-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;
+}
+
+div.settingForm
+{
+	width: 250px;
+	height: 100px;
+	position: fixed;
+	right: 5px;
+	top: 30px;
+	
+	border: 3px solid red;
+	background-color: #FFFFFF;
+	-moz-border-radius:2px;-khtml-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;
+	display: none;
+}
+div.settingForm div.closeButton
+{
+	position: relative;
+	float: right;
+	top: 5px;
+	right: 5px;
+	
+	width: 15px;
+	height: 15px;
+	
+	border: 1px solid black;
+}
+div.settingForm div.form
+{
+	margin-left: 10px;
+	margin-top: 25px;
+}
+
+div.competitionTabPage
+{
+	margin-top: 10px;
+}
+div.competitionTabPageInner
+{
+	
+}
+
+
+div.cartouche
+{
+	text-align : center;
+	font-size: 23px;
+	margin-top : 30px;
+	margin-bottom : 70px;
+}
+
+
+div.stepTabControl
+{
+	height: 35px;
+	
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-top: 30px;
+	
+	border-bottom: 3px solid rgb( 200, 200, 200 );
+}		
+div.stepTab
+{
+	width: 200px;
+	height: 30px;
+	float: left;
+	
+	margin-top : 5px;
+	padding-left : 10px;
+	border-right: 1px solid rgb( 100, 100, 100 );
+	background-color: rgb( 200, 200, 200 );
+	
+	color: rgb( 230, 230, 230 );
+}		
+div.stepTabActive
+{
+	width: 250px;
+	height: 37px;
+	float: left;
+	position: relative; 
+	top: 1px;
+	
+	padding-left : 10px;
+	border-right: 1px solid rgb( 100, 100, 100 );
+	border-left: 1px solid rgb( 100, 100, 100 );
+	border-top: 1px solid rgb( 100, 100, 100 );
+	background-color: rgb( 230, 230, 230 );
+	
+	font-size: 20px;
+	font-weight: bold;
+}		
+div.stepTabPage
+{
+	padding: 10px;
+	margin-bottom: 150px;
+}
+
+
+
+
+/**********************************************
+	LISTE DES TIREURS PRESENTS
+**********************************************/
+table.listeTireur
+{
+	border-collapse : collapse;
+	margin: auto;
+	margin-bottom: 30px;
+	
+	font-size: 16px;
+}
+
+table.listeTireur th
+{
+	background-color : #BBBBBB;
+	font-size : 25px;
+	padding-left: 10px;
+	padding-right: 10px;
+	
+	text-align: left;
+}
+table.listeTireur td
+{
+	padding-left: 20px;
+	padding-right: 10px;
+}
+table.listeTireur td.tireur
+{
+	padding-left: 50px;
+}
+table.listeTireur tr.impair td
+{
+	background-color : #DDDDDD;
+}
+table.listeTireur tr.equipe td
+{
+	font-size: 20px;
+	font-weight: bold;
+	background-color : #CCCCCC;
+}
+
+div.formule h2
+{
+	font-size: 25px;
+}
+div.formule p
+{
+	font-size: 20px;
+}
+
+
+/**********************************************
+	POULES
+**********************************************/
+div.PouleTabControl
+{
+	height: 25px;
+	width:100%;
+}
+div.PouleTab
+{
+	width: 100px;
+	height: 20px;
+	margin-top: 5px;
+	margin-left: 10px;
+	padding-left: 5px;
+	float: left; 
+	background-color: #EEEEEE;
+	color: #111111;
+	
+	-moz-border-radius:2px;-khtml-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;
+}
+table.poule
+{
+	border-collapse: collapse;
+	float: left;
+	margin: 30px;
+}
+
+table.poule th.pouleNumber, table.poule th.pouleNumber input
+{
+	font-size: 25px;
+}
+table.poule th.number
+{
+	width: 35px;
+}
+table.poule td
+{
+	border: 2px solid black;
+	text-align : center;
+	font-size: 20px;
+}
+table.poule td.insideblack
+{
+	background-color: #222222
+}
+table.poule td.insideAbandon
+{
+	background-color: #BBBBBB;
+	font-size: 16px;
+}
+
+table.poule tr.tireurRow td.tireurClassement
+{
+	border-right: none;
+	padding-left: 5px;
+	padding-right: 5px;
+	text-align: right;
+	width: 30px;
+}
+table.poule tr.tireurRow td.number
+{
+	border-left: none;
+	padding-left: 5px;
+	padding-right: 5px;
+	text-align: right;
+}
+table.poule  tr.tireurRow td.tireurName
+{
+	padding: 5px;
+	padding-right: 30px;
+	padding-left: 30px;
+	text-align: left;
+	
+	border-left: none;
+	border-right: none;
+	
+	font-weight: bold;
+}
+table.poule tr.tireurRow td.victoire, table.poule tr.tireurRow th.victoire
+{
+	width: 35px;
+	border-left: 4px solid black;
+}
+table.poule tr.complement td
+{
+	height: 35px;
+	border: none;
+}
+
+
+
+
+/**********************************************
+	TABLEAU
+**********************************************/
+table.tableau
+{
+	border-collapse: collapse;
+}
+
+table.tableau th
+{
+	font-size: 20px;
+}
+table.tableau th.tabTitle
+{
+	padding-bottom: 30px;
+	text-align: left;
+}
+table.tableau th a
+{
+	font-size: 12px;
+}
+
+table.tableau td
+{
+	width: 400px;
+	height: 30px;
+	
+	vertical-align: bottom;
+	border: 1px solid #FFFFFF;
+	border-top: none;
+	
+	font-size: 16px;
+}
+
+table.tableau td.top
+{
+	border-bottom: 1px solid black;
+}
+table.tableau td.middle
+{
+	border-right: 1px solid black;
+}
+table.tableau td.bottom
+{
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+table.tableau td div.tabRg
+{
+	width: 30px;
+	float: left;
+}
+table.tableau td div.tabScore
+{
+	width: 40px;
+	float: rigth;
+}
+table.tableau td div.tabNom
+{
+	width: 270px;
+	float:left;
+	padding-left: 20px;
+	font-weight: bold;
+}
+
+

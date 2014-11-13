@@ -244,7 +244,6 @@ Contest::Contest ()
    _notebook      = NULL;
    _level         = NULL;
    _filename      = NULL;
-   _html_filename = NULL;
    _tournament    = NULL;
    _weapon        = 0;
    _category      = 0;
@@ -799,7 +798,6 @@ Contest::~Contest ()
   g_free (_id);
   g_free (_name);
   g_free (_filename);
-  g_free (_html_filename);
   g_free (_organizer);
   g_free (_web_site);
   g_free (_location);
@@ -833,12 +831,6 @@ Contest::~Contest ()
 gchar *Contest::GetFilename ()
 {
   return _filename;
-}
-
-// --------------------------------------------------------------------------------
-gchar *Contest::GetHtmlFileName ()
-{
-  return _html_filename;
 }
 
 // --------------------------------------------------------------------------------
@@ -1421,13 +1413,6 @@ void Contest::Publish ()
       uploader->UploadFile (_filename);
       uploader->Release ();
     }
-
-    {
-      Net::Uploader *uploader = _tournament->GetFtpUpLoader ();
-
-      uploader->UploadFile (_html_filename);
-      uploader->Release ();
-    }
   }
   //if (_checkin_time->IsEqualTo (_scratch_time))
   //{
@@ -1445,20 +1430,6 @@ void Contest::Save ()
   if (_filename)
   {
     Save (_filename);
-
-    if (_html_filename == NULL)
-    {
-      gchar *suffix;
-
-      _html_filename = g_strdup (_filename);
-      suffix         = strstr (_html_filename, ".cotcot");
-      if (suffix)
-      {
-        sprintf (suffix, ".html");
-      }
-    }
-
-    DumpToHTML (_html_filename, _schedule);
 
     if (_tournament)
     {

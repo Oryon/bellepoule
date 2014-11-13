@@ -157,7 +157,7 @@ class Module : public virtual Object
     virtual gboolean PreparePreview (GtkPrintOperation        *operation,
                                      GtkPrintOperationPreview *preview,
                                      GtkPrintContext          *context,
-                                     GtkWindow                *parent) {return TRUE;};
+                                     GtkWindow                *parent) {return FALSE;};
     virtual void OnPreviewGotPageSize (GtkPrintOperationPreview *preview,
                                        GtkPrintContext          *context,
                                        GtkPageSetup             *page_setup) {};

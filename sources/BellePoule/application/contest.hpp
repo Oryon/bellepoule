@@ -66,8 +66,6 @@ class Contest : public Module
 
     gchar *GetFilename ();
 
-    gchar *GetHtmlFileName ();
-
     void AddFencer (Player *player,
                     guint   rank);
 
@@ -150,7 +148,6 @@ class Contest : public Module
     gchar           *_web_site;
     guint            _category;
     gchar           *_filename;
-    gchar           *_html_filename;
     guint            _weapon;
     guint            _gender;
     guint            _day;
