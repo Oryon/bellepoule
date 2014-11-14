@@ -50,6 +50,8 @@ namespace Net
 
       virtual ~WebServer ();
 
+      void Prepare ();
+
       void Spawn (const gchar *cmd_line);
 
       static gpointer StartUp (WebServer *server);

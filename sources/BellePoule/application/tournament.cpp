@@ -1572,8 +1572,10 @@ void Tournament::OnActivateBackup ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnVideoToggled (GtkToggleButton *togglebutton)
+void Tournament::OnVideoReleased ()
 {
+  GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_off"));
+
   if (gtk_toggle_button_get_active (togglebutton))
   {
     _web_server->Stop ();
@@ -1687,18 +1689,22 @@ void Tournament::OnWebServerState (gboolean  in_progress,
                                    gboolean  on,
                                    Object   *owner)
 {
-  Tournament *t       = dynamic_cast <Tournament *> (owner);
-  GtkWidget  *hbox    = t->_glade->GetWidget ("video_toggle_hbox");
-  GtkWidget  *spinner = t->_glade->GetWidget ("video_spinner");
+  Tournament      *t          = dynamic_cast <Tournament *> (owner);
+  GtkWidget       *hbox       = t->_glade->GetWidget ("video_toggle_hbox");
+  GtkWidget       *spinner    = t->_glade->GetWidget ("video_spinner");
+  GtkToggleButton *on_toggle  = GTK_TOGGLE_BUTTON (t->_glade->GetWidget ("video_on"));
+  GtkToggleButton *off_toggle = GTK_TOGGLE_BUTTON (t->_glade->GetWidget ("video_off"));
 
+  gtk_toggle_button_set_active (on_toggle,  (on == TRUE));
+  gtk_toggle_button_set_active (off_toggle, (on == FALSE));
   if (in_progress == TRUE)
   {
-    gtk_widget_hide (hbox);
+    gtk_widget_set_sensitive (hbox, FALSE);
     gtk_widget_show (spinner);
   }
   else
   {
-    gtk_widget_show (hbox);
+    gtk_widget_set_sensitive (hbox, TRUE);
     gtk_widget_hide (spinner);
   }
 }
@@ -1994,10 +2000,10 @@ extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_video_off_toggled (GtkToggleButton *togglebutton,
-                                                      Object          *owner)
+extern "C" G_MODULE_EXPORT void on_video_released (GtkWidget *widget,
+                                                   Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
-  t->OnVideoToggled (togglebutton);
+  t->OnVideoReleased ();
 }

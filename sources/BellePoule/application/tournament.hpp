@@ -71,7 +71,7 @@ class Tournament : public Module, Net::HttpServer::Client
 
     void OnActivateBackup ();
 
-    void OnVideoToggled (GtkToggleButton *togglebutton);
+    void OnVideoReleased ();
 
     void OpenUriContest (const gchar *uri);
 

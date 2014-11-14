@@ -39,7 +39,7 @@ namespace Net
   WebServer::~WebServer ()
   {
 #ifndef WIN32
-    g_mutex_lock (&server->_mutex);
+    g_mutex_lock (&_mutex);
     ShutDown (this);
 
     if (_thread)
@@ -49,6 +49,16 @@ namespace Net
 
     g_mutex_clear (&_mutex);
 #endif
+  }
+
+  // --------------------------------------------------------------------------------
+  void WebServer::Prepare ()
+  {
+    _failed      = FALSE;
+    _in_progress = TRUE;
+
+    g_idle_add ((GSourceFunc) OnProgress,
+                this);
   }
 
   // --------------------------------------------------------------------------------
@@ -116,15 +126,14 @@ namespace Net
 #ifndef WIN32
     if (server->_on == FALSE)
     {
-      server->_failed      = FALSE;
-      server->_in_progress = TRUE;
+      server->Prepare ();
 
-      server->Spawn ("gksudo --description Video lighty-enable-mod fastcgi");
-      server->Spawn ("gksudo --description Video lighty-enable-mod fastcgi-php");
-      server->Spawn ("gksudo --description Video lighty-enable-mod bellepoule");
-      server->Spawn ("gksudo --description Video /etc/init.d/lighttpd restart");
+      server->Spawn ("gksudo --description VideoServer lighty-enable-mod fastcgi");
+      server->Spawn ("gksudo --description VideoServer lighty-enable-mod fastcgi-php");
+      server->Spawn ("gksudo --description VideoServer lighty-enable-mod bellepoule");
+      server->Spawn ("gksudo --description VideoServer /etc/init.d/lighttpd restart");
 
-      server->_on          = TRUE;
+      server->_on          = (server->_failed == FALSE);
       server->_in_progress = FALSE;
 
       if (server->_thread)
@@ -145,13 +154,12 @@ namespace Net
 #ifndef WIN32
     if (server->_on)
     {
-      server->_failed      = FALSE;
-      server->_in_progress = TRUE;
+      server->Prepare ();
 
-      server->Spawn ("gksudo --description Video lighty-disable-mod bellepoule");
-      server->Spawn ("gksudo --description Video /etc/init.d/lighttpd stop");
+      server->Spawn ("gksudo --description VideoServer lighty-disable-mod bellepoule");
+      server->Spawn ("gksudo --description VideoServer /etc/init.d/lighttpd stop");
 
-      server->_on          = FALSE;
+      server->_on          = (server->_failed == TRUE);
       server->_in_progress = FALSE;
 
       if (server->_thread)
