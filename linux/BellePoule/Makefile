@@ -103,6 +103,8 @@ prepare_examples:
 prepare_www:
 	cp -rf ../../sources/www $(PACKAGE)/$(RELEASE)
 	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)
+	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
+	cp -f  ../../scripts/www* $(PACKAGE)/$(RELEASE)/scripts
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources
@@ -187,6 +189,11 @@ install:
 	find www -type f  | while read file;\
 		do \
 		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
+		done
+	mkdir -p `find scripts -type d | sed 's?scripts?$(DESTDIR)/usr/share/$(EXEC)/&?'`
+	find scripts -type f  | while read file;\
+		do \
+		install --mode=755 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
 		done
 
 clean_sources:

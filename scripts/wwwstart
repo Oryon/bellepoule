@@ -1,0 +1,22 @@
+#!/bin/bash
+lighty-enable-mod fastcgi;
+if test ${?} -neq 0 ; then
+  exit -1;
+fi
+
+lighty-enable-mod fastcgi-php;
+if test ${?} -neq 0 ; then
+  exit -1;
+fi
+
+lighty-enable-mod bellepoule;
+if test ${?} -neq 0 ; then
+  exit -1;
+fi
+
+/etc/init.d/lighttpd restart;
+  if test ${?} -neq 0 ; then
+exit -1;
+fi
+
+exit 0;

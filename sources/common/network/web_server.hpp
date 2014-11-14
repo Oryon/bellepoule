@@ -52,7 +52,7 @@ namespace Net
 
       void Prepare ();
 
-      void Spawn (const gchar *cmd_line);
+      void Spawn (const gchar *script);
 
       static gpointer StartUp (WebServer *server);
 

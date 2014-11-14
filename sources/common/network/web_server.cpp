@@ -88,13 +88,15 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void WebServer::Spawn (const gchar *cmd_line)
+  void WebServer::Spawn (const gchar *script)
   {
 #ifndef WIN32
     if (_failed == FALSE)
     {
-      GError *error;
+      GError *error       = NULL;
       gint    exit_status;
+      gchar  *path        = g_build_filename (_program_path, "scripts", script, NULL);
+      gchar  *cmd_line    = g_strdup_printf ("gksudo --preserve-env --description VideoServer %s", path);
 
       if (g_spawn_command_line_sync (cmd_line,
                                      NULL,
@@ -113,6 +115,9 @@ namespace Net
       {
         _failed = TRUE;
       }
+
+      g_free (cmd_line);
+      g_free (path);
     }
 
     g_idle_add ((GSourceFunc) OnProgress,
@@ -127,11 +132,7 @@ namespace Net
     if (server->_on == FALSE)
     {
       server->Prepare ();
-
-      server->Spawn ("gksudo --description VideoServer lighty-enable-mod fastcgi");
-      server->Spawn ("gksudo --description VideoServer lighty-enable-mod fastcgi-php");
-      server->Spawn ("gksudo --description VideoServer lighty-enable-mod bellepoule");
-      server->Spawn ("gksudo --description VideoServer /etc/init.d/lighttpd restart");
+      server->Spawn ("wwwstart");
 
       server->_on          = (server->_failed == FALSE);
       server->_in_progress = FALSE;
@@ -155,9 +156,7 @@ namespace Net
     if (server->_on)
     {
       server->Prepare ();
-
-      server->Spawn ("gksudo --description VideoServer lighty-disable-mod bellepoule");
-      server->Spawn ("gksudo --description VideoServer /etc/init.d/lighttpd stop");
+      server->Spawn ("wwwstop");
 
       server->_on          = (server->_failed == TRUE);
       server->_in_progress = FALSE;
