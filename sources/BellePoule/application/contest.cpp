@@ -794,6 +794,18 @@ Contest::~Contest ()
 {
   _state = LEAVING;
 
+  // www
+  if (_filename)
+  {
+    gchar *base_name = g_path_get_basename (_filename);
+    gchar *www_file  = g_build_filename (_program_path, "www", "cotcot", base_name, NULL);
+
+    g_unlink (www_file);
+
+    g_free (base_name);
+    g_free (www_file);
+  }
+
   g_free (_level);
   g_free (_id);
   g_free (_name);
@@ -1429,8 +1441,20 @@ void Contest::Save ()
 {
   if (_filename)
   {
+    // Regular
     Save (_filename);
 
+    // www
+    {
+      gchar *base_name = g_path_get_basename (_filename);
+      gchar *www_file  = g_build_filename (_program_path, "www", "cotcot", base_name, NULL);
+
+      Save (www_file);
+      g_free (base_name);
+      g_free (www_file);
+    }
+
+    // Backup
     if (_tournament)
     {
       const gchar *location = _tournament->GetBackupLocation ();

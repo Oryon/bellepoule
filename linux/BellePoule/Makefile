@@ -2,7 +2,7 @@ EXEC    = bellepoulebeta
 TARGET  = Release
 PACKAGE = /local/$(USER)/$(EXEC)
 VERSION = 4.0
-STEP    = ubuntu14
+STEP    = ubuntu15
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
 V       = 1
@@ -101,10 +101,13 @@ prepare_examples:
 	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
 
 prepare_www:
-	cp -rf ../../sources/www $(PACKAGE)/$(RELEASE)
+	cp -rf ../../www $(PACKAGE)/$(RELEASE)
+	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
 	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)
 	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
 	cp -f  ../../scripts/www* $(PACKAGE)/$(RELEASE)/scripts
+	sed -i 's/bellepouledebug/bellepoule/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstart
+	sed -i 's/bellepouledebug/bellepoule/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources
@@ -185,6 +188,8 @@ install:
 	#Lighttpd
 	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
 	install --mode=644 99-bellepoule.conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-bellepoule.conf ;
+	mkdir -p $(DESTDIR)/usr/share/$(EXEC)/www/cotcot
+	chmod a+w $(DESTDIR)/usr/share/$(EXEC)/www/cotcot
 	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(EXEC)/&?'`
 	find www -type f  | while read file;\
 		do \

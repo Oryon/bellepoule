@@ -192,6 +192,30 @@ Tournament::Tournament (gchar *filename)
 // --------------------------------------------------------------------------------
 Tournament::~Tournament ()
 {
+#if 1
+  {
+    GSList *list    = _contest_list;
+    GSList *current = _contest_list;
+
+    _contest_list = NULL;
+    while (current)
+    {
+      Contest *contest = (Contest *) current->data;
+
+      contest->Release ();
+      current = g_slist_next (current);
+    }
+    g_slist_free (list);
+#else
+    // Doesn't work! Can't figure out yet why.
+    GSList *list = _contest_list;
+
+    _contest_list = NULL;
+    g_slist_free_full (list,
+                       (GDestroyNotify) Object::TryToRelease);
+#endif
+  }
+
   {
     GError *error       = NULL;
     gchar  *config_path = g_strdup_printf ("%s/BellePoule/config.ini", g_get_user_config_dir ());
