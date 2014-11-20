@@ -83,7 +83,7 @@ package: prepare_packaging prepare_sources prepare_examples prepare_resources pr
 	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
 	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
 
-prepare_packaging: prepare_staging prepare_changelog prepare_control prepare_copyright prepare_desktop
+prepare_packaging: prepare_staging prepare_changelog prepare_control prepare_rules prepare_copyright prepare_desktop
 
 prepare_examples:
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples
@@ -155,6 +155,9 @@ prepare_changelog:
 prepare_control:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/control
 
+prepare_rules:
+	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/rules
+
 prepare_copyright:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
 
@@ -198,7 +201,7 @@ install:
 		do \
 		install --mode=755 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
 		done
-	install --mode=777 -d $(DESTDIR)/usr/share/$(EXEC)/www/cotcot
+	install --mode=1777 -d $(DESTDIR)/usr/share/$(EXEC)/www/cotcot
 
 clean_sources:
 	rm -f `find ../../sources -name "*.o"`
