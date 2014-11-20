@@ -23,8 +23,11 @@ namespace Net
                         Object    *owner)
     : Object ("WebServer")
   {
-#ifndef WIN32
-    g_mutex_init (&_mutex);
+    if (pthread_mutex_init (&_mutex, NULL) != 0)
+    {
+      g_warning ("pthread_mutex_init: failed");
+    }
+
     _thread = NULL;
 
     _in_progress  = FALSE;
@@ -32,14 +35,12 @@ namespace Net
     _failed       = FALSE;
     _state_func   = state_func;
     _owner        = owner;
-#endif
   }
 
   // --------------------------------------------------------------------------------
   WebServer::~WebServer ()
   {
-#ifndef WIN32
-    g_mutex_lock (&_mutex);
+    pthread_mutex_lock (&_mutex);
     ShutDown (this);
 
     if (_thread)
@@ -47,8 +48,7 @@ namespace Net
       g_object_unref (_thread);
     }
 
-    g_mutex_clear (&_mutex);
-#endif
+    pthread_mutex_destroy (&_mutex);
   }
 
   // --------------------------------------------------------------------------------
@@ -64,33 +64,28 @@ namespace Net
   // --------------------------------------------------------------------------------
   void WebServer::Start ()
   {
-#ifndef WIN32
-    if (g_mutex_trylock (&_mutex))
+    if (pthread_mutex_trylock (&_mutex) == 0)
     {
       _thread = g_thread_new (NULL,
                               (GThreadFunc) StartUp,
                               this);
     }
-#endif
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Stop ()
   {
-#ifndef WIN32
-    if (g_mutex_trylock (&_mutex))
+    if (pthread_mutex_trylock (&_mutex) == 0)
     {
       _thread = g_thread_new (NULL,
                               (GThreadFunc) ShutDown,
                               this);
     }
-#endif
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Spawn (const gchar *script)
   {
-#ifndef WIN32
     if (_failed == FALSE)
     {
       GError *error       = NULL;
@@ -122,13 +117,11 @@ namespace Net
 
     g_idle_add ((GSourceFunc) OnProgress,
                 this);
-#endif
   }
 
   // --------------------------------------------------------------------------------
   gpointer WebServer::StartUp (WebServer *server)
   {
-#ifndef WIN32
     if (server->_on == FALSE)
     {
       server->Prepare ();
@@ -143,8 +136,7 @@ namespace Net
         server->_thread = NULL;
       }
     }
-    g_mutex_unlock (&server->_mutex);
-#endif
+    pthread_mutex_unlock (&server->_mutex);
 
     return NULL;
   }
@@ -152,7 +144,6 @@ namespace Net
   // --------------------------------------------------------------------------------
   gpointer WebServer::ShutDown (WebServer *server)
   {
-#ifndef WIN32
     if (server->_on)
     {
       server->Prepare ();
@@ -167,8 +158,7 @@ namespace Net
         server->_thread = NULL;
       }
     }
-    g_mutex_unlock (&server->_mutex);
-#endif
+    pthread_mutex_unlock (&server->_mutex);
 
     return NULL;
   }
@@ -176,14 +166,10 @@ namespace Net
   // --------------------------------------------------------------------------------
   guint WebServer::OnProgress (WebServer *server)
   {
-#ifndef WIN32
     server->_state_func (server->_in_progress,
                          server->_on,
                          server->_owner);
 
     return G_SOURCE_REMOVE;
-#else
-    return FALSE;
-#endif
   }
 }

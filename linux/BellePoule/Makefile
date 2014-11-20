@@ -188,8 +188,6 @@ install:
 	#Lighttpd
 	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
 	install --mode=644 99-bellepoule.conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-bellepoule.conf ;
-	mkdir -p $(DESTDIR)/usr/share/$(EXEC)/www/cotcot
-	chmod a+w $(DESTDIR)/usr/share/$(EXEC)/www/cotcot
 	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(EXEC)/&?'`
 	find www -type f  | while read file;\
 		do \
@@ -200,6 +198,7 @@ install:
 		do \
 		install --mode=755 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
 		done
+	install --mode=777 -d $(DESTDIR)/usr/share/$(EXEC)/www/cotcot
 
 clean_sources:
 	rm -f `find ../../sources -name "*.o"`
