@@ -144,6 +144,7 @@ namespace Pool
     private:
       typedef enum
       {
+        NONE,
         AVERAGE,
         SUM
       } CombinedOperation;
@@ -194,7 +195,8 @@ namespace Pool
       void RefreshAttribute (Player            *player,
                              const gchar       *name,
                              guint              value,
-                             CombinedOperation  operation);
+                             CombinedOperation  operation,
+                             guint              combined_value = 0);
 
       void RefreshAttribute (Player            *player,
                              const gchar       *name,

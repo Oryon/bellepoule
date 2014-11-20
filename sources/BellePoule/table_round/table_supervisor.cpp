@@ -97,6 +97,8 @@ namespace Table
                                           "rank",
                                           "status",
                                           "team",
+                                          "victories_count",
+                                          "bouts_count",
                                           "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
@@ -132,6 +134,8 @@ namespace Table
                                           "pool_nr",
                                           "promoted",
                                           "team",
+                                          "victories_count",
+                                          "bouts_count",
                                           "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,

@@ -56,6 +56,8 @@ namespace People
                                           "rank",
                                           "status",
                                           "team",
+                                          "victories_count",
+                                          "bouts_count",
                                           "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
@@ -94,6 +96,8 @@ namespace People
                                           "pool_nr",
                                           "promoted",
                                           "team",
+                                          "victories_count",
+                                          "bouts_count",
                                           "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,

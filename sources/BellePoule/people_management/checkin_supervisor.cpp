@@ -83,6 +83,8 @@ namespace People
                                           "promoted",
                                           "rank",
                                           "status",
+                                          "victories_count",
+                                          "bouts_count",
                                           "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,

@@ -84,6 +84,8 @@ namespace Pool
                                           "rank",
                                           "status",
                                           "team",
+                                          "victories_count",
+                                          "bouts_count",
                                           "victories_ratio",
                                           NULL);
       filter = new Filter (attr_list,
@@ -125,6 +127,10 @@ namespace Pool
         filter->ShowAttribute ("first_name");
         filter->ShowAttribute ("club");
         filter->ShowAttribute ("pool_nr");
+#if DEBUG
+        filter->ShowAttribute ("victories_count");
+        filter->ShowAttribute ("bouts_count");
+#endif
         filter->ShowAttribute ("victories_ratio");
         filter->ShowAttribute ("indice");
         filter->ShowAttribute ("HS");

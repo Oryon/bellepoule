@@ -378,6 +378,14 @@ int main (int argc, char **argv)
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 
+      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_count", "victories_count", gettext ("Victories"));
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::LOCAL;
+
+      desc = AttributeDesc::Declare (G_TYPE_INT, "bouts_count", "bouts_count", gettext ("Bouts"));
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::LOCAL;
+
       desc = AttributeDesc::Declare (G_TYPE_INT, "victories_ratio", "victories_ratio", gettext ("Vict./Bouts (‰)"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
