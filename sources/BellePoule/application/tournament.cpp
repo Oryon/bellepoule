@@ -60,6 +60,24 @@ Tournament::Tournament (gchar *filename)
 
   gtk_widget_hide (_glade->GetWidget ("update_menuitem"));
 
+  // URL QrCode
+  {
+    gchar *ip_addr;
+    gchar *html_url;
+
+    _http_server = new Net::HttpServer (this,
+                                        HttpPostCbk,
+                                        HttpGetCbk,
+                                        35830);
+    ip_addr = _http_server->GetIpV4 ();
+    html_url = g_strdup_printf ("http://%s/index.php", ip_addr);
+
+    SetFlashRef (html_url);
+
+    g_free (html_url);
+    g_free (ip_addr);
+  }
+
   if (filename)
   {
     gchar *utf8_name = g_locale_to_utf8 (filename,
@@ -170,23 +188,6 @@ Tournament::Tournament (gchar *filename)
 
   _web_server = new Net::WebServer ((Net::WebServer::StateFunc) OnWebServerState,
                                     this);
-
-  {
-    gchar *ip_addr;
-    gchar *html_url;
-
-    _http_server = new Net::HttpServer (this,
-                                        HttpPostCbk,
-                                        HttpGetCbk,
-                                        35830);
-    ip_addr = _http_server->GetIpV4 ();
-    html_url = g_strdup_printf ("http://%s/index.php", ip_addr);
-
-    SetFlashRef (html_url);
-
-    g_free (html_url);
-    g_free (ip_addr);
-  }
 }
 
 // --------------------------------------------------------------------------------
