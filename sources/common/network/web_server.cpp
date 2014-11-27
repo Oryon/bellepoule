@@ -28,8 +28,6 @@ namespace Net
       g_warning ("pthread_mutex_init: failed");
     }
 
-    _thread = NULL;
-
     _in_progress  = FALSE;
     _on           = FALSE;
     _failed       = FALSE;
@@ -42,11 +40,6 @@ namespace Net
   {
     pthread_mutex_lock (&_mutex);
     ShutDown (this);
-
-    if (_thread)
-    {
-      g_object_unref (_thread);
-    }
 
     pthread_mutex_destroy (&_mutex);
   }
@@ -66,9 +59,10 @@ namespace Net
   {
     if (pthread_mutex_trylock (&_mutex) == 0)
     {
-      _thread = g_thread_new (NULL,
-                              (GThreadFunc) StartUp,
-                              this);
+      g_thread_create ((GThreadFunc) StartUp,
+                       this,
+                       FALSE,
+                       NULL);
     }
   }
 
@@ -77,9 +71,10 @@ namespace Net
   {
     if (pthread_mutex_trylock (&_mutex) == 0)
     {
-      _thread = g_thread_new (NULL,
-                              (GThreadFunc) ShutDown,
-                              this);
+      g_thread_create ((GThreadFunc) ShutDown,
+                       this,
+                       FALSE,
+                       NULL);
     }
   }
 
@@ -91,7 +86,13 @@ namespace Net
       GError *error       = NULL;
       gint    exit_status;
       gchar  *path        = g_build_filename (_program_path, "scripts", script, NULL);
-      gchar  *cmd_line    = g_strdup_printf ("gksudo --preserve-env --description VideoServer %s", path);
+      gchar  *cmd_line;
+
+#ifdef WIN32
+      cmd_line = g_strdup_printf ("'%s.bat'", path);
+#else
+      cmd_line = g_strdup_printf ("gksudo --preserve-env --description VideoServer %s.sh", path);
+#endif
 
       if (g_spawn_command_line_sync (cmd_line,
                                      NULL,
@@ -129,12 +130,6 @@ namespace Net
 
       server->_on          = (server->_failed == FALSE);
       server->_in_progress = FALSE;
-
-      if (server->_thread)
-      {
-        g_thread_unref (server->_thread);
-        server->_thread = NULL;
-      }
     }
     pthread_mutex_unlock (&server->_mutex);
 
@@ -151,12 +146,6 @@ namespace Net
 
       server->_on          = (server->_failed == TRUE);
       server->_in_progress = FALSE;
-
-      if (server->_thread)
-      {
-        g_thread_unref (server->_thread);
-        server->_thread = NULL;
-      }
     }
     pthread_mutex_unlock (&server->_mutex);
 
@@ -170,6 +159,6 @@ namespace Net
                          server->_on,
                          server->_owner);
 
-    return G_SOURCE_REMOVE;
+    return FALSE;
   }
 }

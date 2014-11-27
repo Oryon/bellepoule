@@ -39,7 +39,6 @@ namespace Net
       void Stop ();
 
     private:
-      GThread         *_thread;
       pthread_mutex_t  _mutex;  // GMutex are not available on windows
       StateFunc        _state_func;
       Object          *_owner;
