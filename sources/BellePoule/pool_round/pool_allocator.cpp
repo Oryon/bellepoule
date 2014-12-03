@@ -1326,7 +1326,7 @@ namespace Pool
 
         if (referee_icon == NULL)
         {
-          referee_icon = g_build_filename (_program_path, "resources/glade/referee.png", NULL);
+          referee_icon = g_build_filename (_share_dir, "resources/glade/referee.png", NULL);
         }
         Canvas::PutIconInTable (table,
                                 referee_icon,

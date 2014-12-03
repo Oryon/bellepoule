@@ -1026,7 +1026,7 @@ void Tournament::RefreshMatchRate (Player *referee)
 void Tournament::EnumerateLanguages ()
 {
   gchar  *contents;
-  gchar  *filename     = g_build_filename (_program_path, "resources", "translations", "index.txt", NULL);
+  gchar  *filename     = g_build_filename (_share_dir, "resources", "translations", "index.txt", NULL);
 
   if (g_file_get_contents (filename,
                            &contents,
@@ -1278,7 +1278,7 @@ void Tournament::OnOpenUserManual ()
   gchar *uri;
 
 #ifdef WINDOWS_TEMPORARY_PATCH
-  uri = g_build_filename (_program_path, "resources", "user_manual.pdf", NULL);
+  uri = g_build_filename (_share_dir, "resources", "user_manual.pdf", NULL);
 
   ShellExecute (NULL,
                 "open",
@@ -1287,7 +1287,7 @@ void Tournament::OnOpenUserManual ()
                 NULL,
                 SW_SHOWNORMAL);
 #else
-  uri = g_build_filename ("file://", _program_path, "resources", "user_manual.pdf", NULL);
+  uri = g_build_filename ("file://", _share_dir, "resources", "user_manual.pdf", NULL);
 
   gtk_show_uri (NULL,
                 uri,
@@ -1440,9 +1440,9 @@ void Tournament::OpenUriContest (const gchar *uri)
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
-  if (_program_path)
+  if (_share_dir)
   {
-    gchar *example_dirname = g_build_filename (_program_path, "Exemples", NULL);
+    gchar *example_dirname = g_build_filename (_share_dir, "Exemples", NULL);
 
     OnOpen (example_dirname);
     g_free (example_dirname);

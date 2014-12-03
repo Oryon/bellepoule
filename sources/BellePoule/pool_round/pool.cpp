@@ -1022,7 +1022,7 @@ namespace Pool
 
             if (match->GetUIntData (this, "rest_error"))
             {
-              gchar *png = g_build_filename (_program_path, "resources/glade/clock.png", NULL);
+              gchar *png = g_build_filename (_share_dir, "resources/glade/clock.png", NULL);
 
               GooCanvasItem *icon = Canvas::PutIconInTable (name_table,
                                                             png,

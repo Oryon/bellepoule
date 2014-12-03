@@ -798,7 +798,7 @@ Contest::~Contest ()
   if (_filename)
   {
     gchar *base_name = g_path_get_basename (_filename);
-    gchar *www_file  = g_build_filename (_program_path, "www", "cotcot", base_name, NULL);
+    gchar *www_file  = g_build_filename (_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
 
     g_unlink (www_file);
 
@@ -1447,7 +1447,7 @@ void Contest::Save ()
     // www
     {
       gchar *base_name = g_path_get_basename (_filename);
-      gchar *www_file  = g_build_filename (_program_path, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
+      gchar *www_file  = g_build_filename (_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
 
       Save (www_file);
       g_free (base_name);
