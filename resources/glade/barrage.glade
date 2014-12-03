@@ -164,7 +164,7 @@
                       <object class="GtkLabel" id="dropped_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">999</property>
+                        <property name="label">999</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                           <attribute name="scale" value="1.2"/>
@@ -194,7 +194,7 @@
                       <object class="GtkLabel" id="promoted_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">999</property>
+                        <property name="label">999</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                           <attribute name="scale" value="1.2"/>

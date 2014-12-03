@@ -25,7 +25,7 @@
                   <object class="GtkLabel" id="strip">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">PISTE 1</property>
+                    <property name="label">PISTE 1</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                       <attribute name="scale" value="3"/>
@@ -42,7 +42,7 @@
                   <object class="GtkLabel" id="title">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Title</property>
+                    <property name="label">Title</property>
                     <attributes>
                       <attribute name="scale" value="3"/>
                     </attributes>
@@ -91,7 +91,7 @@
                           <object class="GtkLabel" id="red_fencer">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Red</property>
+                            <property name="label">Red</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                               <attribute name="scale" value="3"/>
@@ -108,7 +108,7 @@
                           <object class="GtkLabel" id="red_score">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">0</property>
+                            <property name="label">0</property>
                             <property name="justify">right</property>
                             <attributes>
                               <attribute name="scale" value="8"/>
@@ -178,7 +178,7 @@
                           <object class="GtkLabel" id="green_fencer">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Green</property>
+                            <property name="label">Green</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                               <attribute name="scale" value="3"/>
@@ -195,7 +195,7 @@
                           <object class="GtkLabel" id="green_score">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">0</property>
+                            <property name="label">0</property>
                             <property name="justify">right</property>
                             <attributes>
                               <attribute name="scale" value="8"/>
@@ -290,7 +290,7 @@
               <object class="GtkLabel" id="timer">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">00:00</property>
+                <property name="label">00:00</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                   <attribute name="scale" value="8"/>
