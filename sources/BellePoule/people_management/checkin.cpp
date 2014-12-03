@@ -659,7 +659,7 @@ namespace People
         // Header
         {
           gchar **header_attr = g_strsplit_set (header_line[0],
-                                                ";",
+                                                ";,",
                                                 0);
 
           if (header_attr)
@@ -691,7 +691,7 @@ namespace People
         // Fencers
         {
           gchar **tokens = g_strsplit_set (utf8_content,
-                                           ";\n",
+                                           ";,\n",
                                            0);
 
           if (tokens)
