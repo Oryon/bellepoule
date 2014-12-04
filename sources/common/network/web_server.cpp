@@ -83,41 +83,57 @@ namespace Net
   {
     if (_failed == FALSE)
     {
-      GError *error       = NULL;
-      gint    exit_status;
-      gchar  *path        = g_build_filename (_program_path, "scripts", script, NULL);
-      gchar  *cmd_line;
+      GError   *error       = NULL;
+      gint      exit_status;
+      gchar    *path        = g_build_filename (_share_dir, "scripts", script, NULL);
+      gchar    *cmd_line;
+      gboolean  spawn_status;
 
 #ifdef WIN32
-      cmd_line = g_strdup_printf ("'%s.bat'", path);
+      {
+        guint windows_result;
+
+        cmd_line = g_strdup_printf ("%s.bat", path);
+
+        windows_result = (guint32) ShellExecute (NULL,
+                                                 "open",
+                                                 cmd_line,
+                                                 NULL,
+                                                 _root_dir,
+                                                 SW_HIDE);
+        spawn_status = windows_result > 32;
+        exit_status  = 0;
+      }
 #else
-      cmd_line = g_strdup_printf ("gksudo --preserve-env --description VideoServer %s.sh", path);
+      {
+        cmd_line   = g_strdup_printf ("gksudo --preserve-env --description VideoServer %s.sh", path);
+        spawn_status = g_spawn_command_line_sync (cmd_line,
+                                                  NULL,
+                                                  NULL,
+                                                  &exit_status,
+                                                  &error);
+      }
 #endif
 
-      if (g_spawn_command_line_sync (cmd_line,
-                                     NULL,
-                                     NULL,
-                                     &exit_status,
-                                     &error) == FALSE)
+      if (spawn_status == FALSE)
       {
-        if (error)
-        {
-          g_warning ("%s: %s", cmd_line, error->message);
-          g_error_free (error);
-        }
         _failed = TRUE;
       }
-      else if (exit_status != 0)
+      if (exit_status != 0)
       {
+        g_warning ("%s status: %d", cmd_line, exit_status);
+        _failed = TRUE;
+      }
+      if (error)
+      {
+        g_warning ("%s error: %s", cmd_line, error->message);
+        g_error_free (error);
         _failed = TRUE;
       }
 
       g_free (cmd_line);
       g_free (path);
     }
-
-    g_idle_add ((GSourceFunc) OnProgress,
-                this);
   }
 
   // --------------------------------------------------------------------------------
@@ -132,6 +148,9 @@ namespace Net
       server->_in_progress = FALSE;
     }
     pthread_mutex_unlock (&server->_mutex);
+
+    g_idle_add ((GSourceFunc) OnProgress,
+                server);
 
     return NULL;
   }
@@ -148,6 +167,9 @@ namespace Net
       server->_in_progress = FALSE;
     }
     pthread_mutex_unlock (&server->_mutex);
+
+    g_idle_add ((GSourceFunc) OnProgress,
+                server);
 
     return NULL;
   }
