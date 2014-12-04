@@ -5,7 +5,7 @@ VERSION = 4.0
 STEP    = ubuntu15
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
-V       = 1
+V       = 2
 
 CC = gcc
 ifeq ($(TARGET), Debug)

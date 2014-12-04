@@ -75,6 +75,13 @@ const gchar *Contest::gender_xml_image[_nb_gender] =
   "FM"
 };
 
+const gchar *Contest::gender_xml_alias[_nb_gender] =
+{
+  "M",
+  "D",
+  "FM"
+};
+
 const gchar *Contest::category_image[_nb_category] =
 {
   N_ ("U8"),
@@ -670,6 +677,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
             if (strcmp (attr, weapon_xml_image[i]) == 0)
             {
               _weapon = i;
+              break;
             }
           }
           xmlFree (attr);
@@ -678,13 +686,28 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Sexe");
         if (attr)
         {
-          for (guint i = 0; i < _nb_gender; i++)
+          guint i;
+
+          for (i = 0; i < _nb_gender; i++)
           {
             if (strcmp (attr, gender_xml_image[i]) == 0)
             {
               _gender = i;
+              break;
             }
           }
+          if (i == _nb_gender)
+          {
+            for (i = 0; i < _nb_gender; i++)
+            {
+              if (strcmp (attr, gender_xml_alias[i]) == 0)
+              {
+                _gender = i;
+                break;
+              }
+            }
+          }
+
           xmlFree (attr);
         }
 

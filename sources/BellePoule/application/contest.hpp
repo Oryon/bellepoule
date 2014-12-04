@@ -132,6 +132,7 @@ class Contest : public Module
     static const guint _nb_gender = 3;
     static const gchar *gender_image[_nb_gender];
     static const gchar *gender_xml_image[_nb_gender];
+    static const gchar *gender_xml_alias[_nb_gender];
 
     static const guint _nb_category = 12;
     static const gchar *category_image[_nb_category];
