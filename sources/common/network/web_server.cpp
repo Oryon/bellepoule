@@ -23,118 +23,134 @@ namespace Net
                         Object    *owner)
     : Object ("WebServer")
   {
-#ifndef WIN32
-    g_mutex_init (&_mutex);
-    _thread = NULL;
+    if (pthread_mutex_init (&_mutex, NULL) != 0)
+    {
+      g_warning ("pthread_mutex_init: failed");
+    }
 
     _in_progress  = FALSE;
     _on           = FALSE;
     _failed       = FALSE;
     _state_func   = state_func;
     _owner        = owner;
-#endif
   }
 
   // --------------------------------------------------------------------------------
   WebServer::~WebServer ()
   {
-#ifndef WIN32
-    g_mutex_lock (&server->_mutex);
+    pthread_mutex_lock (&_mutex);
     ShutDown (this);
 
-    if (_thread)
-    {
-      g_object_unref (_thread);
-    }
+    pthread_mutex_destroy (&_mutex);
+  }
 
-    g_mutex_clear (&_mutex);
-#endif
+  // --------------------------------------------------------------------------------
+  void WebServer::Prepare ()
+  {
+    _failed      = FALSE;
+    _in_progress = TRUE;
+
+    g_idle_add ((GSourceFunc) OnProgress,
+                this);
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Start ()
   {
-#ifndef WIN32
-    if (g_mutex_trylock (&_mutex))
+    if (pthread_mutex_trylock (&_mutex) == 0)
     {
-      _thread = g_thread_new (NULL,
-                              (GThreadFunc) StartUp,
-                              this);
+      g_thread_create ((GThreadFunc) StartUp,
+                       this,
+                       FALSE,
+                       NULL);
     }
-#endif
   }
 
   // --------------------------------------------------------------------------------
   void WebServer::Stop ()
   {
-#ifndef WIN32
-    if (g_mutex_trylock (&_mutex))
+    if (pthread_mutex_trylock (&_mutex) == 0)
     {
-      _thread = g_thread_new (NULL,
-                              (GThreadFunc) ShutDown,
-                              this);
+      g_thread_create ((GThreadFunc) ShutDown,
+                       this,
+                       FALSE,
+                       NULL);
     }
-#endif
   }
 
   // --------------------------------------------------------------------------------
-  void WebServer::Spawn (const gchar *cmd_line)
+  void WebServer::Spawn (const gchar *script)
   {
-#ifndef WIN32
     if (_failed == FALSE)
     {
-      GError *error;
-      gint    exit_status;
+      GError   *error       = NULL;
+      gint      exit_status;
+      gchar    *path        = g_build_filename (_share_dir, "scripts", script, NULL);
+      gchar    *cmd_line;
+      gboolean  spawn_status;
 
-      if (g_spawn_command_line_sync (cmd_line,
-                                     NULL,
-                                     NULL,
-                                     &exit_status,
-                                     &error) == FALSE)
+#ifdef WIN32
       {
-        if (error)
-        {
-          g_warning ("%s: %s", cmd_line, error->message);
-          g_error_free (error);
-        }
-        _failed = TRUE;
-      }
-      else if (exit_status != 0)
-      {
-        _failed = TRUE;
-      }
-    }
+        guint windows_result;
 
-    g_idle_add ((GSourceFunc) OnProgress,
-                this);
+        cmd_line = g_strdup_printf ("%s.bat", path);
+
+        windows_result = (guint32) ShellExecute (NULL,
+                                                 "open",
+                                                 cmd_line,
+                                                 NULL,
+                                                 _root_dir,
+                                                 SW_HIDE);
+        spawn_status = windows_result > 32;
+        exit_status  = 0;
+      }
+#else
+      {
+        cmd_line   = g_strdup_printf ("gksudo --preserve-env --description VideoServer %s.sh", path);
+        spawn_status = g_spawn_command_line_sync (cmd_line,
+                                                  NULL,
+                                                  NULL,
+                                                  &exit_status,
+                                                  &error);
+      }
 #endif
+
+      if (spawn_status == FALSE)
+      {
+        _failed = TRUE;
+      }
+      if (exit_status != 0)
+      {
+        g_warning ("%s status: %d", cmd_line, exit_status);
+        _failed = TRUE;
+      }
+      if (error)
+      {
+        g_warning ("%s error: %s", cmd_line, error->message);
+        g_error_free (error);
+        _failed = TRUE;
+      }
+
+      g_free (cmd_line);
+      g_free (path);
+    }
   }
 
   // --------------------------------------------------------------------------------
   gpointer WebServer::StartUp (WebServer *server)
   {
-#ifndef WIN32
     if (server->_on == FALSE)
     {
-      server->_failed      = FALSE;
-      server->_in_progress = TRUE;
+      server->Prepare ();
+      server->Spawn ("wwwstart");
 
-      server->Spawn ("gksudo --description Video lighty-enable-mod fastcgi");
-      server->Spawn ("gksudo --description Video lighty-enable-mod fastcgi-php");
-      server->Spawn ("gksudo --description Video lighty-enable-mod bellepoule");
-      server->Spawn ("gksudo --description Video /etc/init.d/lighttpd restart");
-
-      server->_on          = TRUE;
+      server->_on          = (server->_failed == FALSE);
       server->_in_progress = FALSE;
-
-      if (server->_thread)
-      {
-        g_thread_unref (server->_thread);
-        server->_thread = NULL;
-      }
     }
-    g_mutex_unlock (&server->_mutex);
-#endif
+    pthread_mutex_unlock (&server->_mutex);
+
+    g_idle_add ((GSourceFunc) OnProgress,
+                server);
 
     return NULL;
   }
@@ -142,26 +158,18 @@ namespace Net
   // --------------------------------------------------------------------------------
   gpointer WebServer::ShutDown (WebServer *server)
   {
-#ifndef WIN32
     if (server->_on)
     {
-      server->_failed      = FALSE;
-      server->_in_progress = TRUE;
+      server->Prepare ();
+      server->Spawn ("wwwstop");
 
-      server->Spawn ("gksudo --description Video lighty-disable-mod bellepoule");
-      server->Spawn ("gksudo --description Video /etc/init.d/lighttpd stop");
-
-      server->_on          = FALSE;
+      server->_on          = (server->_failed == TRUE);
       server->_in_progress = FALSE;
-
-      if (server->_thread)
-      {
-        g_thread_unref (server->_thread);
-        server->_thread = NULL;
-      }
     }
-    g_mutex_unlock (&server->_mutex);
-#endif
+    pthread_mutex_unlock (&server->_mutex);
+
+    g_idle_add ((GSourceFunc) OnProgress,
+                server);
 
     return NULL;
   }
@@ -169,14 +177,10 @@ namespace Net
   // --------------------------------------------------------------------------------
   guint WebServer::OnProgress (WebServer *server)
   {
-#ifndef WIN32
     server->_state_func (server->_in_progress,
                          server->_on,
                          server->_owner);
 
-    return G_SOURCE_REMOVE;
-#else
     return FALSE;
-#endif
   }
 }

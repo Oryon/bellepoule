@@ -7,3 +7,4 @@ Icon=/usr/share/__EXEC__/resources/glade/exe.png
 Name=__EXEC__
 Comment=Fencing Management Software
 Categories=Utility
+MimeType=application/x-bellepoule

@@ -1022,7 +1022,7 @@ namespace Pool
 
             if (match->GetUIntData (this, "rest_error"))
             {
-              gchar *png = g_build_filename (_program_path, "resources/glade/clock.png", NULL);
+              gchar *png = g_build_filename (_share_dir, "resources/glade/clock.png", NULL);
 
               GooCanvasItem *icon = Canvas::PutIconInTable (name_table,
                                                             png,
@@ -1565,20 +1565,15 @@ namespace Pool
       player_a->SetData (GetDataOwner (), "Victories", (void *) victories);
       player_a->SetData (GetDataOwner (), "HR", (void *) hits_received);
 
-      if ((GetNbPlayers () - _nb_drop) > 1)
-      {
-        RefreshAttribute (player_a,
-                          "victories_ratio",
-                          (victories*1000 / (GetNbPlayers () - _nb_drop -1)),
-                          AVERAGE);
-      }
-      else
-      {
-        RefreshAttribute (player_a,
-                          "victories_ratio",
-                          0,
-                          AVERAGE);
-      }
+      RefreshAttribute (player_a,
+                        "victories_count",
+                        victories,
+                        SUM);
+
+      RefreshAttribute (player_a,
+                        "bouts_count",
+                        GetNbPlayers () - _nb_drop -1,
+                        SUM);
 
       RefreshAttribute (player_a,
                         "indice",
@@ -1589,6 +1584,45 @@ namespace Pool
                         "HS",
                         hits_scored,
                         SUM);
+
+      // Ratio
+      {
+        guint current_round_ratio = 0;
+        guint combined_ratio;
+
+        // current
+        if ((GetNbPlayers () - _nb_drop) > 1)
+        {
+          current_round_ratio = victories*1000 / (GetNbPlayers () - _nb_drop -1);
+        }
+
+        // combined
+        combined_ratio = current_round_ratio;
+        if (_previous_combined_round)
+        {
+          Player::AttributeId  previous_victories_attr_id ("victories_count", _previous_combined_round);
+          Player::AttributeId  previous_bouts_attr_id     ("bouts_count",     _previous_combined_round);
+          Attribute           *victories_attr = player_a->GetAttribute (&previous_victories_attr_id);
+          Attribute           *bouts_attr     = player_a->GetAttribute (&previous_bouts_attr_id);
+
+          if (victories_attr && bouts_attr)
+          {
+            guint total_victories = victories_attr->GetUIntValue () + victories;
+            guint total_bouts     = bouts_attr->GetUIntValue ()     + GetNbPlayers () - _nb_drop -1;
+
+            if (total_bouts)
+            {
+              combined_ratio = total_victories*1000 / total_bouts;
+            }
+          }
+        }
+
+        RefreshAttribute (player_a,
+                          "victories_ratio",
+                          current_round_ratio,
+                          NONE,
+                          combined_ratio);
+      }
 
       ranking = g_slist_append (ranking,
                                 player_a);
@@ -1652,7 +1686,8 @@ namespace Pool
   void Pool::RefreshAttribute (Player            *player,
                                const gchar       *name,
                                guint              value,
-                               CombinedOperation  operation)
+                               CombinedOperation  operation,
+                               guint              combined_value)
   {
     // Current round
     {
@@ -1687,6 +1722,11 @@ namespace Pool
           {
             player->SetAttributeValue (&combined_rounds_attr_id,
                                        source_attr->GetUIntValue () + value);
+          }
+          else if (operation == NONE)
+          {
+            player->SetAttributeValue (&combined_rounds_attr_id,
+                                       combined_value);
           }
         }
         else

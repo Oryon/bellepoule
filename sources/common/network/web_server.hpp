@@ -14,9 +14,10 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef web_server_hpp
-#define web_server_hpp
+#ifndef web_server_linux_hpp
+#define web_server_linux_hpp
 
+#include <pthread.h>
 #include <glib.h>
 
 #include "util/object.hpp"
@@ -28,7 +29,7 @@ namespace Net
     public:
       typedef void (*StateFunc) (gboolean  in_progress,
                                  gboolean  on,
-                                 Object    *owner);
+                                 Object   *owner);
 
       WebServer (StateFunc  progress_func,
                  Object    *owner);
@@ -38,19 +39,18 @@ namespace Net
       void Stop ();
 
     private:
-      GThread      *_thread;
-#ifndef WIN32
-      GMutex        _mutex;
-#endif
-      StateFunc     _state_func;
-      Object       *_owner;
-      gboolean      _in_progress;
-      gboolean      _on;
-      gboolean      _failed;
+      pthread_mutex_t  _mutex;  // GMutex are not available on windows
+      StateFunc        _state_func;
+      Object          *_owner;
+      gboolean         _in_progress;
+      gboolean         _on;
+      gboolean         _failed;
 
       virtual ~WebServer ();
 
-      void Spawn (const gchar *cmd_line);
+      void Prepare ();
+
+      void Spawn (const gchar *script);
 
       static gpointer StartUp (WebServer *server);
 

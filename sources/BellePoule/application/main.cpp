@@ -166,7 +166,8 @@ int main (int argc, char **argv)
 
   // Init
   {
-    gchar *install_dirname;
+    gchar *root_dir;
+    gchar *share_dir;
 
     {
       gchar *binary_dir;
@@ -181,7 +182,8 @@ int main (int argc, char **argv)
 #ifdef DEBUG
       g_log_set_default_handler (LogHandler,
                                  NULL);
-      install_dirname = g_build_filename (binary_dir, "..", "..", "..", NULL);
+      root_dir  = g_build_filename (binary_dir, "..", "..", "..", NULL);
+      share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
 #else
       {
         gchar *basename = g_path_get_basename (argv[0]);
@@ -192,7 +194,8 @@ int main (int argc, char **argv)
           basename = g_strdup ("bellepoule");
         }
 
-        install_dirname = g_build_filename (binary_dir, "..", "share", basename, NULL);
+        root_dir  = g_build_filename (binary_dir, "..", NULL);
+        share_dir = g_build_filename (binary_dir, "..", "share", basename, NULL);
         g_free (basename);
       }
 #endif
@@ -200,9 +203,9 @@ int main (int argc, char **argv)
       g_free (binary_dir);
     }
 
-    if (install_dirname)
+    if (share_dir)
     {
-      gchar *gtkrc = g_build_filename (install_dirname, "resources", "gtkrc", NULL);
+      gchar *gtkrc = g_build_filename (share_dir, "resources", "gtkrc", NULL);
 
       gtk_rc_add_default_file (gtkrc);
       g_free (gtkrc);
@@ -218,7 +221,8 @@ int main (int argc, char **argv)
     //Object::Track ("Player");
 
     {
-      Object::SetProgramPath (install_dirname);
+      Object::SetProgramPaths (root_dir,
+                               share_dir);
 
       Tournament::Init ();
 
@@ -236,7 +240,7 @@ int main (int argc, char **argv)
       }
 
       {
-        gchar *translation_path = g_build_filename (install_dirname, "resources", "countries", "translations", NULL);
+        gchar *translation_path = g_build_filename (share_dir, "resources", "countries", "translations", NULL);
 
         bindtextdomain ("countries", translation_path);
         bind_textdomain_codeset ("countries", "UTF-8");
@@ -245,7 +249,7 @@ int main (int argc, char **argv)
       }
 
       {
-        gchar *translation_path = g_build_filename (install_dirname, "resources", "translations", NULL);
+        gchar *translation_path = g_build_filename (share_dir, "resources", "translations", NULL);
 
         bindtextdomain ("BellePoule", translation_path);
         bind_textdomain_codeset ("BellePoule", "UTF-8");
@@ -276,7 +280,8 @@ int main (int argc, char **argv)
 
     WifiCode::SetPort (35830);
 
-    g_free (install_dirname);
+    g_free (root_dir);
+    g_free (share_dir);
   }
 
 #if GTK_MAJOR_VERSION < 3
@@ -375,6 +380,14 @@ int main (int argc, char **argv)
     // Not persistent data
     {
       desc = AttributeDesc::Declare (G_TYPE_INT, "pool_nr", "pool_nr", gettext ("pool #"));
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::LOCAL;
+
+      desc = AttributeDesc::Declare (G_TYPE_INT, "victories_count", "victories_count", gettext ("Victories"));
+      desc->_persistency = AttributeDesc::NOT_PERSISTENT;
+      desc->_scope       = AttributeDesc::LOCAL;
+
+      desc = AttributeDesc::Declare (G_TYPE_INT, "bouts_count", "bouts_count", gettext ("Bouts"));
       desc->_persistency = AttributeDesc::NOT_PERSISTENT;
       desc->_scope       = AttributeDesc::LOCAL;
 

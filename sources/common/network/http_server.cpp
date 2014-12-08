@@ -134,11 +134,13 @@ namespace Net
       struct hostent *hostinfo;
       gchar           hostname[50];
 
-      gethostname (hostname, sizeof (hostname));
-      hostinfo = gethostbyname (hostname);
-      if (hostinfo)
+      if (gethostname (hostname, sizeof (hostname)) == 0)
       {
-        address = g_strdup (inet_ntoa (*(struct in_addr*) (hostinfo->h_addr)));
+        hostinfo = gethostbyname (hostname);
+        if (hostinfo)
+        {
+          address = g_strdup (inet_ntoa (*(struct in_addr*) (hostinfo->h_addr)));
+        }
       }
     }
 #else

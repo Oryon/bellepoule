@@ -110,6 +110,16 @@ Source: "..\..\..\resources\translations\sv\*"; DestDir: "{app}\share\bellepoule
 Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\bellepoule\resources\translations\ja"; Flags: ignoreversion recursesubdirs
 
 #ifdef MINGW
+;WebServer
+[Dirs]
+Name: "{app}\webserver\LightTPD\www\cotcot"
+
+[Files]
+Source: "{#MINGW}\webserver\*"; DestDir: "{app}\webserver"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\sources\www\*"; DestDir: "{app}\webserver\LightTPD\www"; Flags: ignoreversion
+Source: "..\..\..\scripts\wwwstart.bat"; DestDir: "{app}\share\bellepoule\scripts"; Flags: ignoreversion
+Source: "..\..\..\scripts\wwwstop.bat"; DestDir: "{app}\share\bellepoule\scripts"; Flags: ignoreversion
+
 Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\atk10.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\glib20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
 Source: "{#MINGW}\share\locale\fr\LC_MESSAGES\gtk20.mo"; DestDir: "{app}\share\locale\fr\LC_MESSAGES"; Flags: ignoreversion
@@ -173,7 +183,7 @@ Source: "..\..\..\resources\glade\*.glade"; DestDir: "{app}\share\bellepoule\res
 Source: "..\..\..\resources\countries\*"; DestDir: "{app}\share\bellepoule\resources\countries\"; Flags: ignoreversion recursesubdirs
 Source: "..\..\..\resources\exe.ico"; DestDir: "{app}\share\bellepoule\resources\"; Flags: ignoreversion
 
-Source: "..\..\..\resources\localized_data\*"; DestDir: "{app}\share\bellepoule\resources\localized_data\"; Flags: ignoreversion  recursesubdirs
+Source: "..\..\..\resources\localized_data\*"; DestDir: "{app}\share\bellepoule\resources\localized_data\"; Flags: ignoreversion recursesubdirs
 
 ; GTK+ dependencies
 ; DLL

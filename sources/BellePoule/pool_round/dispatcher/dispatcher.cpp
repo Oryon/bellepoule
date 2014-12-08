@@ -99,7 +99,8 @@ namespace Pool
   void Dispatcher::SetAffinityCriteria (AttributeDesc *affinity_criteria,
                                         GSList        *fencer_list)
   {
-    guint       team_count;
+    guint biggest_team_size = 0;
+
     GHashTable *affinity_distribution = g_hash_table_new (NULL,
                                                           NULL);
 
@@ -135,6 +136,16 @@ namespace Pool
                                                             (const void *) quark);
             affinity_list = g_slist_append (affinity_list,
                                             (void *) i);
+
+            {
+              guint team_size = g_slist_length (affinity_list);
+
+              if (team_size > biggest_team_size)
+              {
+                biggest_team_size = team_size;
+              }
+            }
+
             g_hash_table_insert (affinity_distribution,
                                  (void *) quark,
                                  affinity_list);
@@ -148,27 +159,7 @@ namespace Pool
       Object::TryToRelease (affinity);
     }
 
-    // Lock by affinity
-    {
-      GHashTableIter  iter;
-      GSList         *affinity_list;
-      GQuark          quark;
-
-      g_hash_table_iter_init (&iter,
-                              affinity_distribution);
-      while (g_hash_table_iter_next (&iter,
-                                     (gpointer *) &quark,
-                                     (gpointer *) &affinity_list))
-      {
-        LockOpponents (quark,
-                       g_slist_length (affinity_list));
-      }
-    }
-
-    team_count = g_hash_table_size (affinity_distribution);
-    if (   (team_count == 0)
-        || (team_count == 1)
-        || (team_count == _pool_size))
+    if (biggest_team_size > _pool_size/2)
     {
       if ((_pool_size >= 2) &&  (_pool_size <= _MAX_POOL_SIZE))
       {
@@ -189,6 +180,23 @@ namespace Pool
     }
     else
     {
+      // Lock by affinity
+      {
+        GHashTableIter  iter;
+        GSList         *affinity_list;
+        GQuark          quark;
+
+        g_hash_table_iter_init (&iter,
+                                affinity_distribution);
+        while (g_hash_table_iter_next (&iter,
+                                       (gpointer *) &quark,
+                                       (gpointer *) &affinity_list))
+        {
+          LockOpponents (quark,
+                         g_slist_length (affinity_list));
+        }
+      }
+
       SpreadOpponents (_opponent_list);
       CreatePairs     (_opponent_list);
       RefreshFitness ();

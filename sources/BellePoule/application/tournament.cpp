@@ -60,6 +60,24 @@ Tournament::Tournament (gchar *filename)
 
   gtk_widget_hide (_glade->GetWidget ("update_menuitem"));
 
+  // URL QrCode
+  {
+    gchar *ip_addr;
+    gchar *html_url;
+
+    _http_server = new Net::HttpServer (this,
+                                        HttpPostCbk,
+                                        HttpGetCbk,
+                                        35830);
+    ip_addr = _http_server->GetIpV4 ();
+    html_url = g_strdup_printf ("http://%s/index.php", ip_addr);
+
+    SetFlashRef (html_url);
+
+    g_free (html_url);
+    g_free (ip_addr);
+  }
+
   if (filename)
   {
     gchar *utf8_name = g_locale_to_utf8 (filename,
@@ -170,28 +188,35 @@ Tournament::Tournament (gchar *filename)
 
   _web_server = new Net::WebServer ((Net::WebServer::StateFunc) OnWebServerState,
                                     this);
-
-  {
-    gchar *ip_addr;
-    gchar *html_url;
-
-    _http_server = new Net::HttpServer (this,
-                                        HttpPostCbk,
-                                        HttpGetCbk,
-                                        35830);
-    ip_addr = _http_server->GetIpV4 ();
-    html_url = g_strdup_printf ("http://%s/index.php", ip_addr);
-
-    SetFlashRef (html_url);
-
-    g_free (html_url);
-    g_free (ip_addr);
-  }
 }
 
 // --------------------------------------------------------------------------------
 Tournament::~Tournament ()
 {
+#if 1
+  {
+    GSList *list    = _contest_list;
+    GSList *current = _contest_list;
+
+    _contest_list = NULL;
+    while (current)
+    {
+      Contest *contest = (Contest *) current->data;
+
+      contest->Release ();
+      current = g_slist_next (current);
+    }
+    g_slist_free (list);
+#else
+    // Doesn't work! Can't figure out yet why.
+    GSList *list = _contest_list;
+
+    _contest_list = NULL;
+    g_slist_free_full (list,
+                       (GDestroyNotify) Object::TryToRelease);
+#endif
+  }
+
   {
     GError *error       = NULL;
     gchar  *config_path = g_strdup_printf ("%s/BellePoule/config.ini", g_get_user_config_dir ());
@@ -1001,7 +1026,7 @@ void Tournament::RefreshMatchRate (Player *referee)
 void Tournament::EnumerateLanguages ()
 {
   gchar  *contents;
-  gchar  *filename     = g_build_filename (_program_path, "resources", "translations", "index.txt", NULL);
+  gchar  *filename     = g_build_filename (_share_dir, "resources", "translations", "index.txt", NULL);
 
   if (g_file_get_contents (filename,
                            &contents,
@@ -1253,7 +1278,7 @@ void Tournament::OnOpenUserManual ()
   gchar *uri;
 
 #ifdef WINDOWS_TEMPORARY_PATCH
-  uri = g_build_filename (_program_path, "resources", "user_manual.pdf", NULL);
+  uri = g_build_filename (_share_dir, "resources", "user_manual.pdf", NULL);
 
   ShellExecute (NULL,
                 "open",
@@ -1262,7 +1287,7 @@ void Tournament::OnOpenUserManual ()
                 NULL,
                 SW_SHOWNORMAL);
 #else
-  uri = g_build_filename ("file://", _program_path, "resources", "user_manual.pdf", NULL);
+  uri = g_build_filename ("file://", _share_dir, "resources", "user_manual.pdf", NULL);
 
   gtk_show_uri (NULL,
                 uri,
@@ -1415,9 +1440,9 @@ void Tournament::OpenUriContest (const gchar *uri)
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
-  if (_program_path)
+  if (_share_dir)
   {
-    gchar *example_dirname = g_build_filename (_program_path, "Exemples", NULL);
+    gchar *example_dirname = g_build_filename (_share_dir, "Exemples", NULL);
 
     OnOpen (example_dirname);
     g_free (example_dirname);
@@ -1572,8 +1597,10 @@ void Tournament::OnActivateBackup ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnVideoToggled (GtkToggleButton *togglebutton)
+void Tournament::OnVideoReleased ()
 {
+  GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (_glade->GetWidget ("video_off"));
+
   if (gtk_toggle_button_get_active (togglebutton))
   {
     _web_server->Stop ();
@@ -1687,18 +1714,22 @@ void Tournament::OnWebServerState (gboolean  in_progress,
                                    gboolean  on,
                                    Object   *owner)
 {
-  Tournament *t       = dynamic_cast <Tournament *> (owner);
-  GtkWidget  *hbox    = t->_glade->GetWidget ("video_toggle_hbox");
-  GtkWidget  *spinner = t->_glade->GetWidget ("video_spinner");
+  Tournament      *t          = dynamic_cast <Tournament *> (owner);
+  GtkWidget       *hbox       = t->_glade->GetWidget ("video_toggle_hbox");
+  GtkWidget       *spinner    = t->_glade->GetWidget ("video_spinner");
+  GtkToggleButton *on_toggle  = GTK_TOGGLE_BUTTON (t->_glade->GetWidget ("video_on"));
+  GtkToggleButton *off_toggle = GTK_TOGGLE_BUTTON (t->_glade->GetWidget ("video_off"));
 
+  gtk_toggle_button_set_active (on_toggle,  (on == TRUE));
+  gtk_toggle_button_set_active (off_toggle, (on == FALSE));
   if (in_progress == TRUE)
   {
-    gtk_widget_hide (hbox);
+    gtk_widget_set_sensitive (hbox, FALSE);
     gtk_widget_show (spinner);
   }
   else
   {
-    gtk_widget_show (hbox);
+    gtk_widget_set_sensitive (hbox, TRUE);
     gtk_widget_hide (spinner);
   }
 }
@@ -1994,10 +2025,10 @@ extern "C" G_MODULE_EXPORT void on_SmartPoule_button_clicked (GtkButton *widget,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_video_off_toggled (GtkToggleButton *togglebutton,
-                                                      Object          *owner)
+extern "C" G_MODULE_EXPORT void on_video_released (GtkWidget *widget,
+                                                   Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
-  t->OnVideoToggled (togglebutton);
+  t->OnVideoReleased ();
 }

@@ -665,7 +665,7 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
       if (icon)
       {
         GdkPixbuf *pixbuf;
-        gchar     *icon_path = g_build_filename (_program_path, icon, NULL);
+        gchar     *icon_path = g_build_filename (_share_dir, icon, NULL);
 
         if (g_file_test (icon_path, G_FILE_TEST_IS_REGULAR))
         {
@@ -723,7 +723,7 @@ void AttributeDesc::CreateDiscreteModel ()
 // --------------------------------------------------------------------------------
 void AttributeDesc::AddDiscreteValueSelector (const gchar *name)
 {
-  gchar *path = g_build_filename (_program_path, "resources", name, NULL);
+  gchar *path = g_build_filename (_share_dir, "resources", name, NULL);
 
   CreateDiscreteModel ();
 
@@ -738,7 +738,7 @@ void AttributeDesc::AddDiscreteValueSelector (const gchar *name)
 // --------------------------------------------------------------------------------
 void AttributeDesc::AddLocalizedDiscreteValues (const gchar *name)
 {
-  gchar       *dir_path = g_build_filename (_program_path, "resources", "localized_data", NULL);
+  gchar       *dir_path = g_build_filename (_share_dir, "resources", "localized_data", NULL);
   GDir        *dir      = g_dir_open       (dir_path, 0,  NULL);
   const gchar *country  = g_dir_read_name  (dir);
 

@@ -2,10 +2,10 @@ EXEC    = bellepoulebeta
 TARGET  = Release
 PACKAGE = /local/$(USER)/$(EXEC)
 VERSION = 4.0
-STEP    = ubuntu14
+STEP    = ubuntu15
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
-V       = 1
+V       = 2
 
 CC = gcc
 ifeq ($(TARGET), Debug)
@@ -80,10 +80,11 @@ valgrind:
 package: prepare_packaging prepare_sources prepare_examples prepare_resources prepare_www
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
+	rm -rf `find $(PACKAGE) -name ".*.swp"`
 	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
 	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
 
-prepare_packaging: prepare_staging prepare_changelog prepare_control prepare_copyright prepare_desktop
+prepare_packaging: prepare_staging prepare_changelog prepare_control prepare_rules prepare_copyright prepare_desktop
 
 prepare_examples:
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples
@@ -101,8 +102,13 @@ prepare_examples:
 	find $(PACKAGE)/$(RELEASE)/Exemples -type f -exec chmod a-x {} \;
 
 prepare_www:
-	cp -rf ../../sources/www $(PACKAGE)/$(RELEASE)
+	cp -rf ../../webserver/LightTPD/www $(PACKAGE)/$(RELEASE)
+	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
 	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)
+	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
+	cp -f  ../../scripts/www*sh $(PACKAGE)/$(RELEASE)/scripts
+	sed -i 's/bellepouledebug/bellepoule/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstart.sh
+	sed -i 's/bellepouledebug/bellepoule/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources
@@ -149,9 +155,14 @@ prepare_changelog:
 
 prepare_control:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/control
+	chmod a-x $(PACKAGE)/$(RELEASE)/debian/control
+
+prepare_rules:
+	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/rules
 
 prepare_copyright:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
+	chmod a-x $(PACKAGE)/$(RELEASE)/debian/copyright
 
 prepare_desktop:
 	mv -f $(PACKAGE)/$(RELEASE)/debian/*.desktop $(PACKAGE)/$(RELEASE)/debian/$(EXEC).desktop
@@ -183,11 +194,17 @@ install:
 	#Lighttpd
 	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
 	install --mode=644 99-bellepoule.conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-bellepoule.conf ;
-	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(EXEC)/&?'`
+	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(EXEC)/webserver/LightTPD/&?'`
 	find www -type f  | while read file;\
 		do \
-		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
+		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/webserver/LightTPD/'$$file ;\
 		done
+	mkdir -p `find scripts -type d | sed 's?scripts?$(DESTDIR)/usr/share/$(EXEC)/&?'`
+	find scripts -type f  | while read file;\
+		do \
+		install --mode=755 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
+		done
+	install --mode=1777 -d $(DESTDIR)/usr/share/$(EXEC)/webserver/LightTPD/www/cotcot
 
 clean_sources:
 	rm -f `find ../../sources -name "*.o"`

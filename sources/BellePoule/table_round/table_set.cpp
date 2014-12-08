@@ -1241,7 +1241,7 @@ namespace Table
 
             if (arrow_icon == NULL)
             {
-              arrow_icon = g_build_filename (_program_path, "resources/glade/arrow.png", NULL);
+              arrow_icon = g_build_filename (_share_dir, "resources/glade/arrow.png", NULL);
             }
             goo_item = Canvas::PutIconInTable (data->_score_goo_table,
                                                arrow_icon,

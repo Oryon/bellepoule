@@ -11,3 +11,7 @@
 
 %:
 	dh $@ 
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod 1777 debian/__EXEC__/usr/share/__EXEC__/webserver/LightTPD/www/cotcot

@@ -95,6 +95,7 @@
 			<Add library="libmicrohttpd" />
 			<Add library="libqrencode" />
 			<Add library="libiphlpapi.a" />
+			<Add library="libpthreadGC2.a" />
 			<Add library="xml2" />
 			<Add directory="C:\MinGW\lib" />
 			<Add directory="C:\MinGW\msys\1.0\lib" />
