@@ -1026,8 +1026,7 @@ Public License instead of this License.  But first, please read
             <property name="can_focus">False</property>
             <property name="label" translatable="yes">Copy here your WIFI network parameters.
 They'll be used to automatically configure
-the smartphones running
- &lt;b&gt;QuickPoule&lt;/b&gt; and &lt;b&gt;SmartPoule&lt;/b&gt;.</property>
+the smartphones running &lt;b&gt;SmartPoule&lt;/b&gt;.</property>
             <property name="use_markup">True</property>
             <property name="justify">center</property>
           </object>
@@ -1041,32 +1040,6 @@ the smartphones running
           <object class="GtkHBox" id="hbox3">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <child>
-              <object class="GtkButton" id="QuickPoule_button">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <property name="relief">none</property>
-                <signal name="clicked" handler="on_QuickPoule_button_clicked" swapped="no"/>
-                <child>
-                  <object class="GtkLabel" id="label6">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label">QuickPoule</property>
-                    <attributes>
-                      <attribute name="underline" value="True"/>
-                      <attribute name="foreground" value="#13be37adc79a"/>
-                    </attributes>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkButton" id="SmartPoule_button">
                 <property name="visible">True</property>
@@ -1089,8 +1062,8 @@ the smartphones running
               </object>
               <packing>
                 <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
               </packing>
             </child>
           </object>
@@ -1925,7 +1898,7 @@ the smartphones running
                               <object class="GtkLabel" id="label11">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Scan this code with &lt;b&gt;QuickPoule&lt;/b&gt;
+                                <property name="label" translatable="yes">Scan this code with &lt;b&gt;SmartPoule&lt;/b&gt;
 to make your smarphone
 a score sheet scanner.</property>
                                 <property name="use_markup">True</property>
@@ -1938,28 +1911,39 @@ a score sheet scanner.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="QuickPoule_button1">
+                              <object class="GtkHBox" id="hbox4">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
-                                <property name="relief">none</property>
-                                <signal name="clicked" handler="on_QuickPoule_button_clicked" swapped="no"/>
+                                <property name="can_focus">False</property>
                                 <child>
-                                  <object class="GtkLabel" id="label9">
+                                  <object class="GtkButton" id="QuickPoule_button1">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label">QuickPoule</property>
-                                    <attributes>
-                                      <attribute name="underline" value="True"/>
-                                      <attribute name="foreground" value="#13be37adc79a"/>
-                                    </attributes>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <property name="relief">none</property>
+                                    <signal name="clicked" handler="on_QuickPoule_button_clicked" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="label9">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="label">SmartPoule</property>
+                                        <attributes>
+                                          <attribute name="underline" value="True"/>
+                                          <attribute name="foreground" value="#13be37adc79a"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
                                   </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">True</property>
-                                <property name="fill">True</property>
+                                <property name="fill">False</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>

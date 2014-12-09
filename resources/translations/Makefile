@@ -20,6 +20,8 @@ $(POT_FILE): $(CPP_FILES) $(GLADE_FILES)
            --keyword=N_\
            $^
 
+pot: $(POT_FILE)
+
 clean:
 	rm $(POT_FILE)
 
