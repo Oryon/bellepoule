@@ -6,15 +6,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-31 16:29+0200\n"
+"POT-Creation-Date: 2014-12-09 10:39+0100\n"
 "PO-Revision-Date: 2014-04-28 08:36+0000\n"
 "Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-11-21 06:15+0000\n"
-"X-Generator: Launchpad (build 17252)\n"
+"X-Launchpad-Export-Date: 2014-12-10 05:59+0000\n"
+"X-Generator: Launchpad (build 17283)\n"
+
+msgid "Classification"
+msgstr "Classification"
 
 msgid "Sabre"
 msgstr "Sabre"
@@ -25,8 +28,8 @@ msgstr "Epée"
 msgid "Foil"
 msgstr "Foil"
 
-msgid "Kendo"
-msgstr "Kendo"
+msgid "Educ"
+msgstr ""
 
 msgid "Male"
 msgstr "Male"
@@ -61,6 +64,18 @@ msgstr "Senior"
 msgid "Veteran"
 msgstr "Veteran"
 
+msgid "Veteran 1"
+msgstr ""
+
+msgid "Veteran 2"
+msgstr ""
+
+msgid "Veteran 3"
+msgstr ""
+
+msgid "Veteran 4"
+msgstr ""
+
 msgid "Choose a file..."
 msgstr "Choose a file..."
 
@@ -78,6 +93,9 @@ msgstr "ref"
 
 msgid "place"
 msgstr "place"
+
+msgid "team"
+msgstr ""
 
 msgid "last name"
 msgstr "last name"
@@ -103,8 +121,8 @@ msgstr "club"
 msgid "licence"
 msgstr "licence"
 
-msgid "smartphone"
-msgstr "smartphone"
+msgid "IP address"
+msgstr ""
 
 msgid "rate"
 msgstr "rate"
@@ -114,9 +132,6 @@ msgstr "level"
 
 msgid "ranking"
 msgstr "ranking"
-
-msgid "start rank"
-msgstr "start rank"
 
 msgid "presence"
 msgstr "presence"
@@ -148,6 +163,12 @@ msgstr "status"
 msgid "pool #"
 msgstr "pool #"
 
+msgid "Victories"
+msgstr "Victories"
+
+msgid "Bouts"
+msgstr ""
+
 msgid "Vict./Bouts (‰)"
 msgstr "Vict./Bouts (‰)"
 
@@ -159,6 +180,9 @@ msgstr "Hits scored"
 
 msgid "Round start rank"
 msgstr "Round start rank"
+
+msgid "promoted"
+msgstr ""
 
 msgid "availability"
 msgstr "availability"
@@ -172,12 +196,27 @@ msgstr "Absent"
 msgid "Free"
 msgstr "Free"
 
-msgid "Formula"
-msgstr "Formula"
+msgid "connection"
+msgstr ""
+
+msgid "Broken"
+msgstr ""
+
+msgid "Waiting"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Manual"
+msgstr ""
 
 #, c-format
 msgid "Round #%d"
 msgstr "Round #%d"
+
+msgid "Formula"
+msgstr "Formula"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr "<b><big>Do you really want to cancel the current round?</big></b>"
@@ -188,11 +227,22 @@ msgstr "Go back to the previous round?"
 msgid "All the inputs of this round will be cancelled."
 msgstr "All the inputs of this round will be cancelled."
 
+msgid ""
+"<b><big>Because of ties, quota is exceeded.\n"
+"Do you want to add a barrage round?</big></b>"
+msgstr ""
+
+msgid "Barrage"
+msgstr ""
+
 msgid "Payment book"
 msgstr "Payment book"
 
 msgid "Page"
 msgstr "Page"
+
+msgid "Signature"
+msgstr "Signature"
 
 msgid "Restart BellePoule for this change to take effect"
 msgstr "Restart BellePoule for this change to take effect"
@@ -224,12 +274,6 @@ msgstr "Quit BellePoule?"
 msgid "All the unsaved competions will be lost."
 msgstr "All the unsaved competions will be lost."
 
-msgid "<b><big>What do you want to print?</big></b>"
-msgstr "<b><big>What do you want to print?</big></b>"
-
-msgid "Fencer list printing"
-msgstr "Fencer list printing"
-
 msgid "Choose a fencer file to import..."
 msgstr "Choose a fencer file to import..."
 
@@ -254,11 +298,14 @@ msgstr "Fencer list"
 msgid "Check-in"
 msgstr "Check-in"
 
-msgid "Fencer"
-msgstr "Fencer"
+msgid "Expected fencers"
+msgstr ""
 
-msgid "Referee"
-msgstr "Referee"
+msgid "Team size"
+msgstr ""
+
+msgid "<b>Smartpoule</b> configuration code"
+msgstr ""
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
@@ -273,14 +320,26 @@ msgstr "General classification"
 msgid "Choose a target file..."
 msgstr "Choose a target file..."
 
-msgid "All Excel files (.CSV)"
-msgstr "All Excel files (.CSV)"
-
 msgid "All FFF files (.FFF)"
 msgstr "All FFF files (.FFF)"
 
 msgid "All PDF files (.PDF)"
 msgstr "All PDF files (.PDF)"
+
+msgid "All HTML files (.HTML)"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Paste"
+msgstr ""
+
+msgid "Choose a rank file to apply..."
+msgstr ""
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr ""
 
 msgid "Split"
 msgstr "Split"
@@ -288,21 +347,45 @@ msgstr "Split"
 msgid "List of fencers to extract"
 msgstr "List of fencers to extract"
 
+msgid "Pools arrangement"
+msgstr "Pools arrangement"
+
+msgid "or"
+msgstr "or"
+
+msgid "Swapping failed"
+msgstr ""
+
+msgid "Wrong fencers count!"
+msgstr "Invalid fencers count!"
+
+msgid "Allocation"
+msgstr "Allocation"
+
+msgid "Seeding"
+msgstr "Seeding"
+
+msgid "Balanced"
+msgstr "Balanced"
+
+msgid "Grouped by strength"
+msgstr "Grouped by strength"
+
+msgid "Max score"
+msgstr "Max score"
+
 #, c-format
 msgid "Pool #%02d"
 msgstr "Pool #%02d"
 
+msgid "Referee"
+msgstr "Referee"
+
 msgid "Piste"
 msgstr "Piste"
 
-msgid "Signature"
-msgstr "Signature"
-
 msgid "Status"
 msgstr "Status"
-
-msgid "Victories"
-msgstr "Victories"
 
 msgid "Vict./Matchs"
 msgstr "Vict./Matchs"
@@ -319,35 +402,11 @@ msgstr "Index"
 msgid "Place"
 msgstr "Place"
 
-msgid "Pools arrangement"
-msgstr "Pools arrangement"
-
-msgid "<i>None</i>"
-msgstr "<i>None</i>"
-
-msgid "or"
-msgstr "or"
-
-msgid "Wrong fencers count!"
-msgstr "Invalid fencers count!"
-
-msgid "Allocation"
-msgstr "Allocation"
-
 msgid "Pools"
 msgstr "Pools"
 
-msgid "<b><big>Print...</big></b>"
-msgstr "<b><big>Print...</big></b>"
-
-msgid "Pool sheets printing"
-msgstr "Pool sheets printing"
-
 msgid "Bout without winner!"
 msgstr "Bout without winner!"
-
-msgid "Pools classification"
-msgstr "Pools classification"
 
 msgid "Winner"
 msgstr "Winner"
@@ -365,22 +424,8 @@ msgstr "Table of %d"
 msgid "Place #"
 msgstr "Place #"
 
-msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-
-msgid "Table printing"
-msgstr "Table printing"
-
 msgid "cutting"
 msgstr "cutting"
-
-#, c-format
-msgid "Match %s"
-msgstr "Match %s"
 
 msgid "Table"
 msgstr "Table"
@@ -389,11 +434,27 @@ msgstr "Table"
 msgid "%s: score sheets printing"
 msgstr "%s: score sheets printing"
 
+#, c-format
+msgid "Match %s"
+msgstr "Match %s"
+
 msgid "No winner!"
 msgstr "No winner!"
 
 msgid "Table classification"
 msgstr "Table classification"
+
+msgid "Fenced places"
+msgstr "Fenced places"
+
+msgid "All"
+msgstr "All"
+
+msgid "Third place"
+msgstr "Third place"
+
+msgid "None"
+msgstr "None"
 
 msgid "Long text"
 msgstr "Long text"
@@ -416,6 +477,45 @@ msgstr "Data"
 msgid "Look"
 msgstr "Look"
 
+msgid "For arbitration"
+msgstr "For arbitration"
+
+msgid "Content designed for the referees."
+msgstr "Content designed for the referees."
+
+msgid "For the bulletin board"
+msgstr "For the bulletin board"
+
+msgid "<b>For what?</b>"
+msgstr "<b>For what?</b>"
+
+msgid "Promoted"
+msgstr ""
+
+msgid "Eliminated"
+msgstr ""
+
+msgid "Team classification"
+msgstr ""
+
+msgid "Manually assigned"
+msgstr ""
+
+msgid "Derived from fencer classification"
+msgstr ""
+
+msgid "when unknown"
+msgstr ""
+
+msgid "Minimum team size"
+msgstr ""
+
+msgid "Fencer list printing"
+msgstr "Fencer list printing"
+
+msgid "<b><big>What do you want to print?</big></b>"
+msgstr "<b><big>What do you want to print?</big></b>"
+
 msgid "All the presents"
 msgstr "All the presents"
 
@@ -431,8 +531,11 @@ msgstr "Absents"
 msgid "all"
 msgstr "all"
 
-msgid "Import fencer file"
-msgstr "Import fencer file"
+msgid "Import fencers"
+msgstr ""
+
+msgid "Import ranking"
+msgstr ""
 
 msgid "Date of competition"
 msgstr "Date of competition"
@@ -448,6 +551,12 @@ msgstr "Gender"
 
 msgid "Category"
 msgstr "Category"
+
+msgid "Individual"
+msgstr ""
+
+msgid "Team"
+msgstr ""
 
 msgid "<b>Type</b>"
 msgstr "<b>Type</b>"
@@ -500,33 +609,11 @@ msgstr "<b>Scores</b>"
 msgid "Event"
 msgstr "Event"
 
-msgid "FTP server"
-msgstr "FTP server"
-
-msgid "User"
-msgstr "User"
-
-msgid "Password"
-msgstr "Password"
-
-msgid "<b>Publisher URL</b>"
-msgstr "<b>Publisher URL</b>"
-
-msgid "Publication"
-msgstr "Publication"
-
 msgid "Save the current state of the competition."
 msgstr "Save the current state of the competition."
 
 msgid "To specify the features of the competition."
 msgstr "To specify the features of the competition."
-
-msgid ""
-"To configure the schedule of the competition in terms of pools, tables and "
-"other rounds."
-msgstr ""
-"To configure the schedule of the competition in terms of pools, tables and "
-"other rounds."
 
 msgid "Referees"
 msgstr "Referees"
@@ -534,24 +621,17 @@ msgstr "Referees"
 msgid "Man"
 msgstr "Man"
 
-msgid "Add a fencer"
-msgstr "Add a fencer"
-
-msgid ""
-"Export the general classification to a .csv file that a spreadsheet like "
-"Excel or OpenOffice can open."
+msgid "Form"
 msgstr ""
-"Export the general classification to a .csv file that a spreadsheet like "
-"Excel or OpenOffice can open."
 
-msgid "Export to CSV"
-msgstr "Export to CSV"
+msgid "Export to <b>HTML</b>"
+msgstr ""
 
-msgid "Export to FFF"
-msgstr "Export to FFF"
+msgid "Export to <b>FFF</b>"
+msgstr ""
 
-msgid "Export to PDF"
-msgstr "Export to PDF"
+msgid "Export to <b>PDF</b>"
+msgstr ""
 
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr "Mask or unmask some data type as well as define their display order."
@@ -571,20 +651,14 @@ msgstr "Swapping"
 msgid "Name"
 msgstr "Name"
 
-msgid "Max score"
-msgstr "Max score"
-
 msgid "Number"
 msgstr "Number"
 
-msgid "Seeding"
-msgstr "Seeding"
+msgid "Pool sheets printing"
+msgstr "Pool sheets printing"
 
-msgid "Balanced"
-msgstr "Balanced"
-
-msgid "Grouped by strength"
-msgstr "Grouped by strength"
+msgid "<b><big>Print...</big></b>"
+msgstr "<b><big>Print...</big></b>"
 
 msgid "All the pools"
 msgstr "All the pools"
@@ -595,23 +669,8 @@ msgstr "Only the selected pool"
 msgid "<b>What?</b>"
 msgstr "<b>What?</b>"
 
-msgid "For arbitration"
-msgstr "For arbitration"
-
-msgid "Content designed for the referees."
-msgstr "Content designed for the referees."
-
 msgid "Matches watermarked"
 msgstr "Matches watermarked"
-
-msgid "For the bulletin board"
-msgstr "For the bulletin board"
-
-msgid "<b>For what?</b>"
-msgstr "<b>For what?</b>"
-
-msgid "Classification"
-msgstr "Classification"
 
 msgid "Automatic stuffing"
 msgstr "Automatic stuffing"
@@ -619,22 +678,8 @@ msgstr "Automatic stuffing"
 msgid "Combined classification"
 msgstr "Combined classification"
 
-msgid ""
-"The classification cumulating  the current score and the scores of the "
-"previous pool rounds."
-msgstr ""
-"The classification cumulating  the current score and the scores of the "
-"previous pool rounds."
-
 msgid "Single classification"
 msgstr "Single classification"
-
-msgid ""
-"The classification of the current round that doesn't take into account the "
-"scores of the previous rounds. "
-msgstr ""
-"The classification of the current round that doesn't take into account the "
-"scores of the previous rounds. "
 
 msgid "Import referee file"
 msgstr "Import referee file"
@@ -657,8 +702,11 @@ msgstr "Previous round"
 msgid "Next round"
 msgstr "Next round"
 
-msgid "Select the fencers to move to a new competition."
-msgstr "Select the fencers to move to a new competition."
+msgid "Table printing"
+msgstr "Table printing"
+
+msgid "<b><big>How to print?</big></b>"
+msgstr ""
 
 msgid "The table"
 msgstr "The table"
@@ -666,11 +714,15 @@ msgstr "The table"
 msgid "Score sheets"
 msgstr "Score sheets"
 
-msgid "All"
-msgstr "All"
-
 msgid "Pending"
 msgstr "Pending"
+
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
+msgstr ""
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
 
 msgid "All the score sheets"
 msgstr "All the score sheets"
@@ -689,15 +741,6 @@ msgstr "B fencer"
 
 msgid "<b>Score</b>"
 msgstr "<b>Score</b>"
-
-msgid "Fenced places"
-msgstr "Fenced places"
-
-msgid "None"
-msgstr "None"
-
-msgid "Third place"
-msgstr "Third place"
 
 msgid "Fill in a match"
 msgstr "Fill in a match"
@@ -730,14 +773,32 @@ msgstr ""
 "\n"
 "\n"
 
-msgid "Broadcasted competitions"
-msgstr "Broadcasted competitions"
+msgid "Security"
+msgstr ""
 
-msgid "Server"
-msgstr "Server"
+msgid "Passphrase"
+msgstr ""
 
-msgid "host"
-msgstr "host"
+msgid ""
+"Copy here your WIFI network parameters.\n"
+"They'll be used to automatically configure\n"
+"the smartphones running <b>SmartPoule</b>."
+msgstr ""
+
+msgid "User"
+msgstr "User"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "FTP server"
+msgstr "FTP server"
+
+msgid "<b>Web site</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr ""
 
 msgid "BellePoule - Fencing tournament"
 msgstr "BellePoule - Fencing tournament"
@@ -747,9 +808,6 @@ msgstr "File"
 
 msgid "Recently opened"
 msgstr "Recently opened"
-
-msgid "Watch"
-msgstr "Watch"
 
 msgid "Backup"
 msgstr "Backup"
@@ -769,6 +827,12 @@ msgstr "Print meal tickets"
 msgid "Print payment book"
 msgstr "Print payment book"
 
+msgid "Ecosystem"
+msgstr ""
+
+msgid "Score sheet scanner"
+msgstr ""
+
 msgid "New version!"
 msgstr "New version!"
 
@@ -780,6 +844,15 @@ msgstr "User manual"
 
 msgid "Fencer file template (.csv)"
 msgstr "Fencer file template (.csv)"
+
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
+msgstr ""
+
+msgid "<b>Score sheet scanner</b>"
+msgstr ""
 
 #~ msgid "Masculin"
 #~ msgstr "Male"

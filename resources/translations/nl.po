@@ -6,17 +6,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-31 16:29+0200\n"
+"POT-Creation-Date: 2014-12-09 10:39+0100\n"
 "PO-Revision-Date: 2013-04-11 00:53+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-11-21 06:14+0000\n"
-"X-Generator: Launchpad (build 17252)\n"
+"X-Launchpad-Export-Date: 2014-12-10 05:59+0000\n"
+"X-Generator: Launchpad (build 17283)\n"
 "Language: \n"
 "X-Poedit-SourceCharset: utf-8\n"
+
+msgid "Classification"
+msgstr "Klassement"
 
 msgid "Sabre"
 msgstr "Sabel"
@@ -27,8 +30,8 @@ msgstr "Degen"
 msgid "Foil"
 msgstr "Floret"
 
-msgid "Kendo"
-msgstr "Kendo"
+msgid "Educ"
+msgstr ""
 
 msgid "Male"
 msgstr "Mannelijk"
@@ -63,6 +66,18 @@ msgstr "Senior"
 msgid "Veteran"
 msgstr "Veteraan"
 
+msgid "Veteran 1"
+msgstr ""
+
+msgid "Veteran 2"
+msgstr ""
+
+msgid "Veteran 3"
+msgstr ""
+
+msgid "Veteran 4"
+msgstr ""
+
 msgid "Choose a file..."
 msgstr "Kies een bestand om op te slaan"
 
@@ -80,6 +95,9 @@ msgstr "scheidsrechter"
 
 msgid "place"
 msgstr "plaats"
+
+msgid "team"
+msgstr ""
 
 msgid "last name"
 msgstr "famillienaam"
@@ -105,8 +123,8 @@ msgstr "club"
 msgid "licence"
 msgstr "licentie"
 
-msgid "smartphone"
-msgstr "smartphone"
+msgid "IP address"
+msgstr ""
 
 msgid "rate"
 msgstr "ranking"
@@ -116,9 +134,6 @@ msgstr "niveau"
 
 msgid "ranking"
 msgstr "klassement"
-
-msgid "start rank"
-msgstr "start ranking"
 
 msgid "presence"
 msgstr "aanwezigheid"
@@ -150,6 +165,12 @@ msgstr "status"
 msgid "pool #"
 msgstr "poule"
 
+msgid "Victories"
+msgstr "Overwinningen"
+
+msgid "Bouts"
+msgstr ""
+
 msgid "Vict./Bouts (‰)"
 msgstr "Vict./Matches (‰)"
 
@@ -161,6 +182,9 @@ msgstr "Treffers gezet"
 
 msgid "Round start rank"
 msgstr "start ranking"
+
+msgid "promoted"
+msgstr ""
 
 msgid "availability"
 msgstr "beschikbaarheid"
@@ -174,12 +198,27 @@ msgstr "Afwezig"
 msgid "Free"
 msgstr "Vrij"
 
-msgid "Formula"
-msgstr "Formule"
+msgid "connection"
+msgstr ""
+
+msgid "Broken"
+msgstr ""
+
+msgid "Waiting"
+msgstr ""
+
+msgid "OK"
+msgstr ""
+
+msgid "Manual"
+msgstr ""
 
 #, c-format
 msgid "Round #%d"
 msgstr "Rond #%d"
+
+msgid "Formula"
+msgstr "Formule"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr "<b><big>Wil u de huidige ronde anulleren ? ?</big></b>"
@@ -190,11 +229,22 @@ msgstr "Terugkeren naar de vorige ronde?"
 msgid "All the inputs of this round will be cancelled."
 msgstr "Alle ingaves van de huidige ronde worden geannulleerd"
 
+msgid ""
+"<b><big>Because of ties, quota is exceeded.\n"
+"Do you want to add a barrage round?</big></b>"
+msgstr ""
+
+msgid "Barrage"
+msgstr ""
+
 msgid "Payment book"
 msgstr "Betaling registreren"
 
 msgid "Page"
 msgstr "Pagina"
+
+msgid "Signature"
+msgstr "Handtekening"
 
 msgid "Restart BellePoule for this change to take effect"
 msgstr "BellePoule heropstarten om deze verandering te aanvaarden"
@@ -226,12 +276,6 @@ msgstr "BellePoulle afsluiten ?"
 msgid "All the unsaved competions will be lost."
 msgstr "Alle competities die niet zijn opgeslagen zullen verloren gaan"
 
-msgid "<b><big>What do you want to print?</big></b>"
-msgstr "<b><big>Wat wilt u printen ?</big></b>"
-
-msgid "Fencer list printing"
-msgstr "Afdruk van de schermerslijst"
-
 msgid "Choose a fencer file to import..."
 msgstr "Kies een schermersfiche om te importeren"
 
@@ -256,11 +300,14 @@ msgstr "Lijst van schermers"
 msgid "Check-in"
 msgstr "Appel"
 
-msgid "Fencer"
-msgstr "Schermer"
+msgid "Expected fencers"
+msgstr ""
 
-msgid "Referee"
-msgstr "Scheidsrechter"
+msgid "Team size"
+msgstr ""
+
+msgid "<b>Smartpoule</b> configuration code"
+msgstr ""
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
@@ -275,14 +322,26 @@ msgstr "Algemeen klassement"
 msgid "Choose a target file..."
 msgstr "Kies een bestand om naar op te slaan"
 
-msgid "All Excel files (.CSV)"
-msgstr "Alle Excel bestanden (.CSV)"
-
 msgid "All FFF files (.FFF)"
 msgstr "Alle FFF bestanden (.FFF)"
 
 msgid "All PDF files (.PDF)"
 msgstr "Alle PDF files(.PDF)"
+
+msgid "All HTML files (.HTML)"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Paste"
+msgstr ""
+
+msgid "Choose a rank file to apply..."
+msgstr ""
+
+msgid "Rank files: cotcot, xml, txt (France)"
+msgstr ""
 
 msgid "Split"
 msgstr "Splitsen"
@@ -290,21 +349,45 @@ msgstr "Splitsen"
 msgid "List of fencers to extract"
 msgstr "lijst van de af te scheiden schermers"
 
+msgid "Pools arrangement"
+msgstr "Samenstelling poules"
+
+msgid "or"
+msgstr ""
+
+msgid "Swapping failed"
+msgstr ""
+
+msgid "Wrong fencers count!"
+msgstr ""
+
+msgid "Allocation"
+msgstr "Toewijzing"
+
+msgid "Seeding"
+msgstr "Klassementsbepaling"
+
+msgid "Balanced"
+msgstr "Gebalanceerd"
+
+msgid "Grouped by strength"
+msgstr "gegroepeerd per sterkte"
+
+msgid "Max score"
+msgstr "Max uitslag"
+
 #, c-format
 msgid "Pool #%02d"
 msgstr "Poule nr  %02d"
 
+msgid "Referee"
+msgstr "Scheidsrechter"
+
 msgid "Piste"
 msgstr "Loper"
 
-msgid "Signature"
-msgstr "Handtekening"
-
 msgid "Status"
 msgstr "Status"
-
-msgid "Victories"
-msgstr "Overwinningen"
 
 msgid "Vict./Matchs"
 msgstr "Overwinningen./Matches"
@@ -321,35 +404,11 @@ msgstr "Index"
 msgid "Place"
 msgstr "Plaats"
 
-msgid "Pools arrangement"
-msgstr "Samenstelling poules"
-
-msgid "<i>None</i>"
-msgstr "<i>Geen</i>"
-
-msgid "or"
-msgstr ""
-
-msgid "Wrong fencers count!"
-msgstr ""
-
-msgid "Allocation"
-msgstr "Toewijzing"
-
 msgid "Pools"
 msgstr "Poules"
 
-msgid "<b><big>Print...</big></b>"
-msgstr "<b><big>Printen...</big></b>"
-
-msgid "Pool sheets printing"
-msgstr "Afdrukken Poule bladen"
-
 msgid "Bout without winner!"
 msgstr ""
-
-msgid "Pools classification"
-msgstr "Poule rangschikking"
 
 msgid "Winner"
 msgstr "Winnaar"
@@ -367,22 +426,8 @@ msgstr "Tableau van %d"
 msgid "Place #"
 msgstr "Plaats #"
 
-msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
-msgstr ""
-"<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen "
-"?</big></b>"
-
-msgid "Table printing"
-msgstr "tableau printen"
-
 msgid "cutting"
 msgstr "snijden"
-
-#, c-format
-msgid "Match %s"
-msgstr "Westrijd %s"
 
 msgid "Table"
 msgstr "Tableau"
@@ -391,11 +436,27 @@ msgstr "Tableau"
 msgid "%s: score sheets printing"
 msgstr "%s : printen wedstrijdblad"
 
+#, c-format
+msgid "Match %s"
+msgstr "Westrijd %s"
+
 msgid "No winner!"
 msgstr ""
 
 msgid "Table classification"
 msgstr "Tableau rangschikking"
+
+msgid "Fenced places"
+msgstr "Geschermde plaatsen"
+
+msgid "All"
+msgstr "Alles"
+
+msgid "Third place"
+msgstr "Derde plaats"
+
+msgid "None"
+msgstr "Geen"
 
 msgid "Long text"
 msgstr ""
@@ -418,6 +479,45 @@ msgstr "Data"
 msgid "Look"
 msgstr ""
 
+msgid "For arbitration"
+msgstr "Voor de scheidsrechter"
+
+msgid "Content designed for the referees."
+msgstr "Speciale inhoud voor scheidsrechters"
+
+msgid "For the bulletin board"
+msgstr "Om te tonen"
+
+msgid "<b>For what?</b>"
+msgstr "<b>Waarom ?</b>"
+
+msgid "Promoted"
+msgstr ""
+
+msgid "Eliminated"
+msgstr ""
+
+msgid "Team classification"
+msgstr ""
+
+msgid "Manually assigned"
+msgstr ""
+
+msgid "Derived from fencer classification"
+msgstr ""
+
+msgid "when unknown"
+msgstr ""
+
+msgid "Minimum team size"
+msgstr ""
+
+msgid "Fencer list printing"
+msgstr "Afdruk van de schermerslijst"
+
+msgid "<b><big>What do you want to print?</big></b>"
+msgstr "<b><big>Wat wilt u printen ?</big></b>"
+
 msgid "All the presents"
 msgstr "Iedereen is aanwezig"
 
@@ -433,8 +533,11 @@ msgstr "Afwezig"
 msgid "all"
 msgstr "alle"
 
-msgid "Import fencer file"
-msgstr "Importeer schermers fiche"
+msgid "Import fencers"
+msgstr ""
+
+msgid "Import ranking"
+msgstr ""
 
 msgid "Date of competition"
 msgstr "Competitiedatum"
@@ -450,6 +553,12 @@ msgstr "Sex"
 
 msgid "Category"
 msgstr "Categorie"
+
+msgid "Individual"
+msgstr ""
+
+msgid "Team"
+msgstr ""
 
 msgid "<b>Type</b>"
 msgstr "<b>Type</b>"
@@ -502,33 +611,11 @@ msgstr "<b>Uitslagen</b>"
 msgid "Event"
 msgstr "Gebeurtenis"
 
-msgid "FTP server"
-msgstr "FTP server"
-
-msgid "User"
-msgstr "Gebruiker"
-
-msgid "Password"
-msgstr "Paswoord"
-
-msgid "<b>Publisher URL</b>"
-msgstr "<b>Publisher URL</b>"
-
-msgid "Publication"
-msgstr "Publicatie"
-
 msgid "Save the current state of the competition."
 msgstr "Huidige staat van de competitie opslaan"
 
 msgid "To specify the features of the competition."
 msgstr "De kenmerken van de competitie specificeren"
-
-msgid ""
-"To configure the schedule of the competition in terms of pools, tables and "
-"other rounds."
-msgstr ""
-"de formule  configureren met betrekking tot van poules, tableaus en andere "
-"fases."
 
 msgid "Referees"
 msgstr "scheidsrechters"
@@ -536,24 +623,17 @@ msgstr "scheidsrechters"
 msgid "Man"
 msgstr "Man"
 
-msgid "Add a fencer"
-msgstr "Schermer toevoegen"
-
-msgid ""
-"Export the general classification to a .csv file that a spreadsheet like "
-"Excel or OpenOffice can open."
+msgid "Form"
 msgstr ""
-"Exporteer het klassement in een `.csv` bestandsformaat voor Excel of "
-"OpenOffice"
 
-msgid "Export to CSV"
-msgstr "Exporteer naar CSV"
+msgid "Export to <b>HTML</b>"
+msgstr ""
 
-msgid "Export to FFF"
-msgstr "Exporteer naar FFF"
+msgid "Export to <b>FFF</b>"
+msgstr ""
 
-msgid "Export to PDF"
-msgstr "Exporteren naar PDF"
+msgid "Export to <b>PDF</b>"
+msgstr ""
 
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr ""
@@ -575,20 +655,14 @@ msgstr "Spreiding"
 msgid "Name"
 msgstr "Naam:"
 
-msgid "Max score"
-msgstr "Max uitslag"
-
 msgid "Number"
 msgstr "Aantal"
 
-msgid "Seeding"
-msgstr "Klassementsbepaling"
+msgid "Pool sheets printing"
+msgstr "Afdrukken Poule bladen"
 
-msgid "Balanced"
-msgstr "Gebalanceerd"
-
-msgid "Grouped by strength"
-msgstr "gegroepeerd per sterkte"
+msgid "<b><big>Print...</big></b>"
+msgstr "<b><big>Printen...</big></b>"
 
 msgid "All the pools"
 msgstr "Alle poules"
@@ -599,23 +673,8 @@ msgstr "Enkel de geselecteerde poule"
 msgid "<b>What?</b>"
 msgstr "<b>Wat ?</b>"
 
-msgid "For arbitration"
-msgstr "Voor de scheidsrechter"
-
-msgid "Content designed for the referees."
-msgstr "Speciale inhoud voor scheidsrechters"
-
 msgid "Matches watermarked"
 msgstr ""
-
-msgid "For the bulletin board"
-msgstr "Om te tonen"
-
-msgid "<b>For what?</b>"
-msgstr "<b>Waarom ?</b>"
-
-msgid "Classification"
-msgstr "Klassement"
 
 msgid "Automatic stuffing"
 msgstr "Automatisch aanvullen"
@@ -623,22 +682,8 @@ msgstr "Automatisch aanvullen"
 msgid "Combined classification"
 msgstr "Gecombineerde classificatie"
 
-msgid ""
-"The classification cumulating  the current score and the scores of the "
-"previous pool rounds."
-msgstr ""
-"De classificatie telt de huidige score en de scores van de vorige poule "
-"rondes op"
-
 msgid "Single classification"
 msgstr "Enkele classificatie"
-
-msgid ""
-"The classification of the current round that doesn't take into account the "
-"scores of the previous rounds. "
-msgstr ""
-"De classificatie van de huidige ronde neemt de scores van de vorige rondes "
-"niet mee "
 
 msgid "Import referee file"
 msgstr "importeer scheidsrechtersfiche"
@@ -661,8 +706,11 @@ msgstr "vorige ronde"
 msgid "Next round"
 msgstr "volgende ronde"
 
-msgid "Select the fencers to move to a new competition."
-msgstr "Selecteer de schermers om naar een nieuwe competitie te kopieren"
+msgid "Table printing"
+msgstr "tableau printen"
+
+msgid "<b><big>How to print?</big></b>"
+msgstr ""
 
 msgid "The table"
 msgstr "De tableau"
@@ -670,11 +718,15 @@ msgstr "De tableau"
 msgid "Score sheets"
 msgstr "Wedstrijdformulieren"
 
-msgid "All"
-msgstr "Alles"
-
 msgid "Pending"
 msgstr "In afwachting"
+
+msgid ""
+"<b><big>Which score sheets of the selected table do you want to "
+"print?</big></b>"
+msgstr ""
+"<b><big>Welke wedstrijden van de geselecteerde tableau wil u printen "
+"?</big></b>"
 
 msgid "All the score sheets"
 msgstr "Alle wedstrijdformulieren"
@@ -693,15 +745,6 @@ msgstr "Schermer B"
 
 msgid "<b>Score</b>"
 msgstr "<b>Score</b>"
-
-msgid "Fenced places"
-msgstr "Geschermde plaatsen"
-
-msgid "None"
-msgstr "Geen"
-
-msgid "Third place"
-msgstr "Derde plaats"
 
 msgid "Fill in a match"
 msgstr "match invoeren"
@@ -734,14 +777,32 @@ msgstr ""
 "\n"
 "\n"
 
-msgid "Broadcasted competitions"
-msgstr "uitgezonden competities"
+msgid "Security"
+msgstr ""
 
-msgid "Server"
-msgstr "Server"
+msgid "Passphrase"
+msgstr ""
 
-msgid "host"
-msgstr "host"
+msgid ""
+"Copy here your WIFI network parameters.\n"
+"They'll be used to automatically configure\n"
+"the smartphones running <b>SmartPoule</b>."
+msgstr ""
+
+msgid "User"
+msgstr "Gebruiker"
+
+msgid "Password"
+msgstr "Paswoord"
+
+msgid "FTP server"
+msgstr "FTP server"
+
+msgid "<b>Web site</b>"
+msgstr ""
+
+msgid "<b>Video server</b>"
+msgstr ""
 
 msgid "BellePoule - Fencing tournament"
 msgstr "BellePoule - Schermtornooi"
@@ -751,9 +812,6 @@ msgstr "Bestand"
 
 msgid "Recently opened"
 msgstr "Recent geopend"
-
-msgid "Watch"
-msgstr "Bekijk"
 
 msgid "Backup"
 msgstr "Backup"
@@ -773,6 +831,12 @@ msgstr "print maaltijdbonnen"
 msgid "Print payment book"
 msgstr "print betalingsbewijs"
 
+msgid "Ecosystem"
+msgstr ""
+
+msgid "Score sheet scanner"
+msgstr ""
+
 msgid "New version!"
 msgstr "Nieuwe versie"
 
@@ -784,6 +848,15 @@ msgstr "Gebruikershandleiding"
 
 msgid "Fencer file template (.csv)"
 msgstr "Schermers Fiche template(.csv)"
+
+msgid ""
+"Scan this code with <b>SmartPoule</b>\n"
+"to make your smarphone\n"
+"a score sheet scanner."
+msgstr ""
+
+msgid "<b>Score sheet scanner</b>"
+msgstr ""
 
 #~ msgid "Tous les fichiers"
 #~ msgstr "Alle bestanden"
