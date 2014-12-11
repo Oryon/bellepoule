@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-09 10:39+0100\n"
-"PO-Revision-Date: 2014-12-09 22:51+0000\n"
+"POT-Creation-Date: 2014-12-10 09:00+0100\n"
+"PO-Revision-Date: 2014-12-10 09:46+0000\n"
 "Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-12-10 05:59+0000\n"
+"X-Launchpad-Export-Date: 2014-12-11 06:47+0000\n"
 "X-Generator: Launchpad (build 17283)\n"
 "Language: sv\n"
 
@@ -31,7 +31,7 @@ msgid "Foil"
 msgstr "Florett"
 
 msgid "Educ"
-msgstr ""
+msgstr "Student"
 
 msgid "Male"
 msgstr "Herr"
@@ -82,7 +82,7 @@ msgid "Choose a file..."
 msgstr "Välj en fil …"
 
 msgid "BellePoule files (.cotcot)"
-msgstr "BellePoule-filer (.cotcot)"
+msgstr "BellePoule-filer (*.cotcot)"
 
 msgid "All files"
 msgstr "Alla filer"
@@ -97,7 +97,7 @@ msgid "place"
 msgstr "Placering"
 
 msgid "team"
-msgstr "lag"
+msgstr "Lag"
 
 msgid "last name"
 msgstr "Efternamn"
@@ -169,7 +169,7 @@ msgid "Victories"
 msgstr "Segrar"
 
 msgid "Bouts"
-msgstr "Dubbelstötar"
+msgstr "Förluster"
 
 msgid "Vict./Bouts (‰)"
 msgstr "Vinster/förluster (‰)"
@@ -184,7 +184,7 @@ msgid "Round start rank"
 msgstr "Omgångens startrankning"
 
 msgid "promoted"
-msgstr "vidare"
+msgstr "Vidare"
 
 msgid "availability"
 msgstr "Tillgänglighet"
@@ -199,10 +199,10 @@ msgid "Free"
 msgstr "Friomgång"
 
 msgid "connection"
-msgstr "anslutning"
+msgstr "Anslutning"
 
 msgid "Broken"
-msgstr "Brutit"
+msgstr "Frånkopplad"
 
 msgid "Waiting"
 msgstr "Väntar"
@@ -211,33 +211,45 @@ msgid "OK"
 msgstr "OK"
 
 msgid "Manual"
-msgstr ""
+msgstr "Manuell"
 
 #, c-format
 msgid "Round #%d"
-msgstr "Omgång nr. %d"
+msgstr "Omgång %d"
 
 msgid "Formula"
 msgstr "Formulär"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>Vill du verkligen stänga det aktuella avsnittet?</big></b>"
+msgstr "<b><big>Vill du verkligen stänga den aktuella omgången?</big></b>"
 
 msgid "Go back to the previous round?"
-msgstr "Gå tillbaka till föregående avsnitt?"
+msgstr "Gå tillbaka till föregående omgång?"
 
 msgid "All the inputs of this round will be cancelled."
-msgstr "All indata för detta avsnitt kommer att gå förlorad."
+msgstr "All indata för denna omgång kommer att gå förlorad."
 
 msgid ""
 "<b><big>Because of ties, quota is exceeded.\n"
 "Do you want to add a barrage round?</big></b>"
 msgstr ""
-"<b><big>På grund av oavgjorda matcher har kvoten överskridits.\n"
-"Vill du lägga till en utslagningsrunda?</big></b>"
+"<b><big>Oavgjorda matcher har gjort att kvoten överskridits.\n"
+"Vill du lägga till en utslagningsomgång?</big></b>"
 
 msgid "Barrage"
-msgstr "Utslagningsrunda"
+msgstr "Utslagningsomgång"
+
+msgid "Meal"
+msgstr ""
+
+msgid "Drink"
+msgstr ""
+
+msgid "Dessert"
+msgstr ""
+
+msgid "Coffee"
+msgstr ""
 
 msgid "Payment book"
 msgstr "Utbetalade ersättningar"
@@ -255,7 +267,7 @@ msgid "Choose a competion file to open... "
 msgstr "Välj en tävlingsfil att öppna … "
 
 msgid "Competition files (.cotcot / .xml)"
-msgstr "Tävlingsfiler (.cotcot/.xml)"
+msgstr "Tävlingsfiler (*.cotcot/*.xml)"
 
 msgid "Recently opened files"
 msgstr "Nyligen öppnade filer"
@@ -325,10 +337,10 @@ msgid "Choose a target file..."
 msgstr "Välj en målfil …"
 
 msgid "All FFF files (.FFF)"
-msgstr "Alla FFF-filer (.fff)"
+msgstr "Alla FFF-filer (*.fff)"
 
 msgid "All PDF files (.PDF)"
-msgstr "Alla PDF-filer (.pdf)"
+msgstr "Alla PDF-filer (*.pdf)"
 
 msgid "All HTML files (.HTML)"
 msgstr "Alla HTML-filer (*.html)"
@@ -340,7 +352,7 @@ msgid "Paste"
 msgstr "Klistra in"
 
 msgid "Choose a rank file to apply..."
-msgstr "Välj en rankningsfil för tillämpning …"
+msgstr "Välj en rankningsfil …"
 
 msgid "Rank files: cotcot, xml, txt (France)"
 msgstr "Rankningsfiler: cotcot, xml, txt (Frankrike)"
@@ -358,7 +370,7 @@ msgid "or"
 msgstr "eller"
 
 msgid "Swapping failed"
-msgstr "Växlingen misslyckades"
+msgstr "Sorteringen misslyckades"
 
 msgid "Wrong fencers count!"
 msgstr "Felaktigt antal fäktare!"
@@ -380,7 +392,7 @@ msgstr "Maxpoäng"
 
 #, c-format
 msgid "Pool #%02d"
-msgstr "Poule nr. %02d"
+msgstr "Poule %02d"
 
 msgid "Referee"
 msgstr "Domare"
@@ -392,7 +404,7 @@ msgid "Status"
 msgstr "Status"
 
 msgid "Vict./Matchs"
-msgstr "Segrar/match"
+msgstr "Segrar/matcher"
 
 msgid "H. scored"
 msgstr "Utdelade"
@@ -410,7 +422,7 @@ msgid "Pools"
 msgstr "Pouler"
 
 msgid "Bout without winner!"
-msgstr "Förlustmatch utan vinnare!"
+msgstr "Avslutad utan vinnare!"
 
 msgid "Winner"
 msgstr "Vinnare"
@@ -503,10 +515,10 @@ msgid "Team classification"
 msgstr "Lagresultat"
 
 msgid "Manually assigned"
-msgstr ""
+msgstr "Tilldelad manuellt"
 
 msgid "Derived from fencer classification"
-msgstr "Härledd från fäktarens resultattabell"
+msgstr "Härledd från fäktarens resultatställning"
 
 msgid "when unknown"
 msgstr "om okänd"
@@ -584,7 +596,7 @@ msgid "Date"
 msgstr "Datum"
 
 msgid "Scratch"
-msgstr "Samling"
+msgstr "Inskrivningsstopp"
 
 msgid "Start"
 msgstr "Startar"
@@ -617,7 +629,7 @@ msgid "Save the current state of the competition."
 msgstr "Spara det aktuella tillståndet för tävlingen."
 
 msgid "To specify the features of the competition."
-msgstr "För specifikation av tävlingens typ och innehåll."
+msgstr "Anger tävlingens typ och innehåll."
 
 msgid "Referees"
 msgstr "Domare"
@@ -701,10 +713,10 @@ msgid "<b>Parameters</b>"
 msgstr "<b>Parametrar</b>"
 
 msgid "Previous round"
-msgstr "Föregående avsnitt"
+msgstr "Föregående omgång"
 
 msgid "Next round"
-msgstr "Nästa avsnitt"
+msgstr "Nästa omgång"
 
 msgid "Table printing"
 msgstr "Utskrift av tabell"
@@ -835,10 +847,10 @@ msgid "Print payment book"
 msgstr "Skriv ut lista för utbetalade ersättningar"
 
 msgid "Ecosystem"
-msgstr "Ekosystem"
+msgstr "Nätverk"
 
 msgid "Score sheet scanner"
-msgstr "Poängprotokollskanner"
+msgstr "Poängformulärläsare"
 
 msgid "New version!"
 msgstr "Ny version!"
@@ -850,7 +862,7 @@ msgid "User manual"
 msgstr "Användarhandbok"
 
 msgid "Fencer file template (.csv)"
-msgstr "Fäktarfilmall (.csv)"
+msgstr "Fäktarfilmall (*.csv)"
 
 msgid ""
 "Scan this code with <b>SmartPoule</b>\n"
@@ -859,7 +871,7 @@ msgid ""
 msgstr ""
 "Skanna in den här koden med <b>SmartPoule</b>\n"
 "för att göra din smarttelefon\n"
-"till en poängprotokollskanner."
+"till en poängformulärläsare."
 
 msgid "<b>Score sheet scanner</b>"
-msgstr "<b>Poängformulärskanner</b>"
+msgstr "<b>Poängformulärläsare</b>"

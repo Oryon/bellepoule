@@ -6,14 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-09 10:39+0100\n"
-"PO-Revision-Date: 2014-04-01 21:00+0000\n"
+"POT-Creation-Date: 2014-12-10 09:00+0100\n"
+"PO-Revision-Date: 2014-12-10 08:35+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-12-10 05:59+0000\n"
+"X-Launchpad-Export-Date: 2014-12-11 06:47+0000\n"
 "X-Generator: Launchpad (build 17283)\n"
 "Language: \n"
 "X-Poedit-Language: French\n"
@@ -32,7 +32,7 @@ msgid "Foil"
 msgstr "Fleuret"
 
 msgid "Educ"
-msgstr ""
+msgstr "Educ"
 
 msgid "Male"
 msgstr "Masculin"
@@ -68,16 +68,16 @@ msgid "Veteran"
 msgstr "Vétéran"
 
 msgid "Veteran 1"
-msgstr ""
+msgstr "Vétéran 1"
 
 msgid "Veteran 2"
-msgstr ""
+msgstr "Vétéran 2"
 
 msgid "Veteran 3"
-msgstr ""
+msgstr "Vétéran 3"
 
 msgid "Veteran 4"
-msgstr ""
+msgstr "Vétéran 4"
 
 msgid "Choose a file..."
 msgstr "Choisissez un fichier de sauvegarde ..."
@@ -98,7 +98,7 @@ msgid "place"
 msgstr "place"
 
 msgid "team"
-msgstr ""
+msgstr "équipe"
 
 msgid "last name"
 msgstr "nom"
@@ -125,7 +125,7 @@ msgid "licence"
 msgstr "licence"
 
 msgid "IP address"
-msgstr ""
+msgstr "Adresse IP"
 
 msgid "rate"
 msgstr "taux"
@@ -170,7 +170,7 @@ msgid "Victories"
 msgstr "Victoires"
 
 msgid "Bouts"
-msgstr ""
+msgstr "Matchs"
 
 msgid "Vict./Bouts (‰)"
 msgstr "Vict./Matchs (‰)"
@@ -185,7 +185,7 @@ msgid "Round start rank"
 msgstr "rang d'entrée"
 
 msgid "promoted"
-msgstr ""
+msgstr "promu"
 
 msgid "availability"
 msgstr "disponibilité"
@@ -200,19 +200,19 @@ msgid "Free"
 msgstr "Libre"
 
 msgid "connection"
-msgstr ""
+msgstr "connexion"
 
 msgid "Broken"
-msgstr ""
+msgstr "Cassée"
 
 msgid "Waiting"
-msgstr ""
+msgstr "En attente"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "Manual"
-msgstr ""
+msgstr "Manuelle"
 
 #, c-format
 msgid "Round #%d"
@@ -234,8 +234,22 @@ msgid ""
 "<b><big>Because of ties, quota is exceeded.\n"
 "Do you want to add a barrage round?</big></b>"
 msgstr ""
+"<b><big>Le quota n'est pas respecté à cause d'égalités.\n"
+"Voulez-vous ajouter un tour de barrage ?</big></b>"
 
 msgid "Barrage"
+msgstr "Barrage"
+
+msgid "Meal"
+msgstr ""
+
+msgid "Drink"
+msgstr ""
+
+msgid "Dessert"
+msgstr ""
+
+msgid "Coffee"
 msgstr ""
 
 msgid "Payment book"
@@ -302,13 +316,13 @@ msgid "Check-in"
 msgstr "Appel"
 
 msgid "Expected fencers"
-msgstr ""
+msgstr "Tireurs attendus"
 
 msgid "Team size"
-msgstr ""
+msgstr "Taille des équipes"
 
 msgid "<b>Smartpoule</b> configuration code"
-msgstr ""
+msgstr "Code de configuration de <b>Smartpoule</b>"
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
@@ -330,19 +344,19 @@ msgid "All PDF files (.PDF)"
 msgstr "Tous les fichiers PDF (.pdf)"
 
 msgid "All HTML files (.HTML)"
-msgstr ""
+msgstr "Tous les fichiers HTML (.HTML)"
 
 msgid "Copy"
-msgstr ""
+msgstr "Copier"
 
 msgid "Paste"
-msgstr ""
+msgstr "Coller"
 
 msgid "Choose a rank file to apply..."
-msgstr ""
+msgstr "Choisir un fichier de classement à appliquer"
 
 msgid "Rank files: cotcot, xml, txt (France)"
-msgstr ""
+msgstr "Fichier de classement : cotcot, xml, txt (France)"
 
 msgid "Split"
 msgstr "Scission"
@@ -357,7 +371,7 @@ msgid "or"
 msgstr "ou"
 
 msgid "Swapping failed"
-msgstr ""
+msgstr "Erreur de décalage"
 
 msgid "Wrong fencers count!"
 msgstr "Mauvais nombre de tireurs !"
@@ -493,25 +507,25 @@ msgid "<b>For what?</b>"
 msgstr "<b>Pour quoi ?</b>"
 
 msgid "Promoted"
-msgstr ""
+msgstr "Promus"
 
 msgid "Eliminated"
-msgstr ""
+msgstr "Éliminés"
 
 msgid "Team classification"
-msgstr ""
+msgstr "Classement des équipes"
 
 msgid "Manually assigned"
-msgstr ""
+msgstr "Assigné manuellement"
 
 msgid "Derived from fencer classification"
-msgstr ""
+msgstr "Dérivé des classement individuels"
 
 msgid "when unknown"
-msgstr ""
+msgstr "si inconnu"
 
 msgid "Minimum team size"
-msgstr ""
+msgstr "Taille minimale des équipes"
 
 msgid "Fencer list printing"
 msgstr "Impression de la liste des tireurs"
@@ -535,10 +549,10 @@ msgid "all"
 msgstr "tous"
 
 msgid "Import fencers"
-msgstr ""
+msgstr "Importer des tireurs"
 
 msgid "Import ranking"
-msgstr ""
+msgstr "Inporter des classements"
 
 msgid "Date of competition"
 msgstr "Date de la compétition"
@@ -556,10 +570,10 @@ msgid "Category"
 msgstr "Categorie"
 
 msgid "Individual"
-msgstr ""
+msgstr "Individuel"
 
 msgid "Team"
-msgstr ""
+msgstr "Par équipe"
 
 msgid "<b>Type</b>"
 msgstr "<b>Type</b>"
@@ -625,16 +639,16 @@ msgid "Man"
 msgstr "Homme"
 
 msgid "Form"
-msgstr ""
+msgstr "Formulaire"
 
 msgid "Export to <b>HTML</b>"
-msgstr ""
+msgstr "Exporter en <b>HTML</b>"
 
 msgid "Export to <b>FFF</b>"
-msgstr ""
+msgstr "Exporter en <b>FFF</b>"
 
 msgid "Export to <b>PDF</b>"
-msgstr ""
+msgstr "Exporter en <b>PDF</b>"
 
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr ""
@@ -711,7 +725,7 @@ msgid "Table printing"
 msgstr "Impression du tableau"
 
 msgid "<b><big>How to print?</big></b>"
-msgstr ""
+msgstr "<b><big>Comment imprimmer ?</big></b>"
 
 msgid "The table"
 msgstr "Le tableau"
@@ -779,16 +793,19 @@ msgstr ""
 "\n"
 
 msgid "Security"
-msgstr ""
+msgstr "Sécurité"
 
 msgid "Passphrase"
-msgstr ""
+msgstr "Mot de passe"
 
 msgid ""
 "Copy here your WIFI network parameters.\n"
 "They'll be used to automatically configure\n"
 "the smartphones running <b>SmartPoule</b>."
 msgstr ""
+"Copier ici les paramètres du réseau WIFI.\n"
+"Ils seront automatiquement utiliser pour configurer\n"
+"les smartphones avec <b>SmartPoule</b>."
 
 msgid "User"
 msgstr "Utilisateur"
@@ -800,10 +817,10 @@ msgid "FTP server"
 msgstr "Serveur FTP"
 
 msgid "<b>Web site</b>"
-msgstr ""
+msgstr "<b>Site Web</b>"
 
 msgid "<b>Video server</b>"
-msgstr ""
+msgstr "<b>Serveur vidéo</b>"
 
 msgid "BellePoule - Fencing tournament"
 msgstr "BellePoule - Tournoi d'escrime"
@@ -833,10 +850,10 @@ msgid "Print payment book"
 msgstr "Imprimer le registre des paiements"
 
 msgid "Ecosystem"
-msgstr ""
+msgstr "Ecosystème"
 
 msgid "Score sheet scanner"
-msgstr ""
+msgstr "Scanner de feuilles de match"
 
 msgid "New version!"
 msgstr "Nouvelle version !"
@@ -855,9 +872,12 @@ msgid ""
 "to make your smarphone\n"
 "a score sheet scanner."
 msgstr ""
+"Scanner ce code avec <b>SmartPoule</b>\n"
+"pour transformer votre smarphone\n"
+"scanner de feuilles de match."
 
 msgid "<b>Score sheet scanner</b>"
-msgstr ""
+msgstr "<b>Scanner de feuilles de match</b>"
 
 #~ msgid "Décallage"
 #~ msgstr "Décalage"
