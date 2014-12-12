@@ -1,9 +1,9 @@
 #ifndef version_hpp
 #define version_hpp
 
-#define VERSION_BRANCH    "UNSTABLE"
+#define VERSION_BRANCH    "STABLE"
 #define VERSION           "4"
 #define VERSION_REVISION  "0"
-#define VERSION_MATURITY  "beta_15"
+#define VERSION_MATURITY  ""
 
 #endif
