@@ -1643,51 +1643,67 @@ gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk
                                    G_KEY_FILE_NONE,
                                    NULL))
     {
-      gchar    *version;
-      gchar    *revision;
-      gchar    *maturity;
-      gboolean  new_version_detected = FALSE;
+      gboolean     new_version_detected = FALSE;
+      const gchar *local_version        = VERSION;
+      const gchar *local_revision       = VERSION_REVISION;
+      const gchar *local_maturity       = VERSION_MATURITY;
+      gchar       *remote_version;
+      gchar       *remote_revision;
+      gchar       *remote_maturity;
 
-      version = g_key_file_get_string (version_file,
-                                       VERSION_BRANCH,
-                                       "version",
-                                       NULL);
-      revision = g_key_file_get_string (version_file,
-                                        VERSION_BRANCH,
-                                        "revision",
-                                        NULL);
-      maturity = g_key_file_get_string (version_file,
-                                        VERSION_BRANCH,
-                                        "maturity",
-                                        NULL);
+      remote_version = g_key_file_get_string (version_file,
+                                              VERSION_BRANCH,
+                                              "version",
+                                              NULL);
+      remote_revision = g_key_file_get_string (version_file,
+                                               VERSION_BRANCH,
+                                               "revision",
+                                               NULL);
+      remote_maturity = g_key_file_get_string (version_file,
+                                               VERSION_BRANCH,
+                                               "maturity",
+                                               NULL);
 
-      if (version && (atoi (VERSION) < atoi (version)))
+      if (remote_version && remote_revision && remote_maturity)
       {
-        new_version_detected = TRUE;
-      }
-      else if (revision && (atoi (VERSION_REVISION) < atoi (revision)))
-      {
-        new_version_detected = TRUE;
-      }
-      else if (maturity && (strcmp (VERSION_MATURITY, maturity) < 0))
-      {
-        new_version_detected = TRUE;
-      }
-      else if (version && (strcmp (VERSION_BRANCH, "UNSTABLE") == 0))
-      {
-        char *stable_version = g_key_file_get_string (version_file,
-                                                      "STABLE",
-                                                      "version",
-                                                      NULL);
-        if (stable_version && strcmp (version, stable_version) <= 0)
+        if (atoi (local_version) < atoi (remote_version))
         {
           new_version_detected = TRUE;
+        }
+        else if (atoi (local_version) == atoi (remote_version))
+        {
+          if (strcmp (local_maturity, remote_maturity) != 0)
+          {
+            if (*remote_maturity == '\0')
+            {
+              new_version_detected = TRUE;
+            }
+            else if (strcmp (local_maturity, remote_maturity) < 0)
+            {
+              new_version_detected = TRUE;
+            }
+          }
+          else if (atoi (local_revision) < atoi (remote_revision))
+          {
+            new_version_detected = TRUE;
+          }
+        }
+        else if (strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
+        {
+          char *stable_version = g_key_file_get_string (version_file,
+                                                        "STABLE",
+                                                        "version",
+                                                        NULL);
+          if (stable_version && strcmp (remote_version, stable_version) <= 0)
+          {
+            new_version_detected = TRUE;
+          }
         }
       }
 
       if (new_version_detected)
       {
-        gchar *label = g_strdup_printf ("%s.%s.%s", version, revision, maturity);
+        gchar *label = g_strdup_printf ("%s.%s.%s", remote_version, remote_revision, remote_maturity);
 
         gtk_menu_item_set_label (GTK_MENU_ITEM (tournament->_glade->GetWidget ("new_version_menuitem")),
                                  label);
