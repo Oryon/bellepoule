@@ -112,11 +112,11 @@ Source: "..\..\..\resources\translations\ja\*"; DestDir: "{app}\share\bellepoule
 #ifdef MINGW
 ;WebServer
 [Dirs]
-Name: "{app}\webserver\LightTPD\www\cotcot"
+Name: "{app}\share\bellepoule\webserver\LightTPD\www\cotcot"
 
 [Files]
-Source: "{#MINGW}\webserver\*"; DestDir: "{app}\webserver"; Flags: ignoreversion recursesubdirs
-Source: "..\..\..\sources\www\*"; DestDir: "{app}\webserver\LightTPD\www"; Flags: ignoreversion
+Source: "{#MINGW}\webserver\*"; DestDir: "{app}\share\bellepoule\webserver"; Flags: ignoreversion recursesubdirs
+Source: "..\..\..\sources\www\*"; DestDir: "{app}\share\bellepoule\webserver\LightTPD\www"; Flags: ignoreversion
 Source: "..\..\..\scripts\wwwstart.bat"; DestDir: "{app}\share\bellepoule\scripts"; Flags: ignoreversion
 Source: "..\..\..\scripts\wwwstop.bat"; DestDir: "{app}\share\bellepoule\scripts"; Flags: ignoreversion
 

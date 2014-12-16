@@ -99,7 +99,7 @@ namespace Net
                                                  "open",
                                                  cmd_line,
                                                  NULL,
-                                                 _root_dir,
+                                                 _share_dir,
                                                  SW_HIDE);
         spawn_status = windows_result > 32;
         exit_status  = 0;
