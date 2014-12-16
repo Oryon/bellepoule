@@ -1,11 +1,12 @@
-EXEC    = bellepoulebeta
+#EXEC    = bellepoulebeta
+EXEC    = bellepoule
 TARGET  = Release
 PACKAGE = /local/$(USER)/$(EXEC)
 VERSION = 4.0
-STEP    = ubuntu15
+STEP    = ubuntu1
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
-V       = 2
+V       = 1
 
 CC = gcc
 ifeq ($(TARGET), Debug)
@@ -104,11 +105,12 @@ prepare_examples:
 prepare_www:
 	cp -rf ../../webserver/LightTPD/www $(PACKAGE)/$(RELEASE)
 	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
-	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)
+	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(EXEC).conf
+	sed -i 's/bellepoule/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/99-$(EXEC).conf
 	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
 	cp -f  ../../scripts/www*sh $(PACKAGE)/$(RELEASE)/scripts
-	sed -i 's/bellepouledebug/bellepoule/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstart.sh
-	sed -i 's/bellepouledebug/bellepoule/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
+	sed -i 's/bellepouledebug/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstart.sh
+	sed -i 's/bellepouledebug/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources
@@ -193,7 +195,7 @@ install:
 		done
 	#Lighttpd
 	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
-	install --mode=644 99-bellepoule.conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-bellepoule.conf ;
+	install --mode=644 99-$(EXEC).conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-$(EXEC).conf ;
 	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(EXEC)/webserver/LightTPD/&?'`
 	find www -type f  | while read file;\
 		do \
