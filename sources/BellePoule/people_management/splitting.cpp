@@ -274,6 +274,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  gchar *Splitting::GetPrintName ()
+  {
+    return g_strdup_printf ("%s - %s", gettext ("Split"), GetName ());
+  }
+
+  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_splitting_print_toolbutton_clicked (GtkWidget *widget,
                                                                          Object    *owner)
   {
