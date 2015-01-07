@@ -244,9 +244,9 @@ namespace People
 
     if (_contest->IsTeamEvent ())
     {
-      gchar *text = g_strdup_printf ("%s : %s",
+      gchar *text = g_strdup_printf ("%s : %d",
                                      gettext ("Team size"),
-                                     _minimum_team_size->GetString ());
+                                     _minimum_team_size->_value);
 
       DrawConfigLine (operation,
                       context,
