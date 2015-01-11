@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 #include "attribute_desc.hpp"
+#include "tree_model_index.hpp"
 
 GSList                      *AttributeDesc::_list           = NULL;
 GSList                      *AttributeDesc::_swappable_list = NULL;
@@ -45,10 +46,10 @@ AttributeDesc::AttributeDesc (GType        type,
   _has_selector       = FALSE;
   _is_selector        = FALSE;
 
-  _discrete_code_table       = NULL;
-  _discrete_xml_table        = NULL;
-  _discrete_long_text_table  = NULL;
-  _discrete_short_text_table = NULL;
+  _discrete_code_index       = NULL;
+  _discrete_xml_index        = NULL;
+  _discrete_long_text_index  = NULL;
+  _discrete_short_text_index = NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -56,10 +57,10 @@ AttributeDesc::~AttributeDesc ()
 {
   if (_discrete_model)
   {
-    g_hash_table_destroy (_discrete_code_table);
-    g_hash_table_destroy (_discrete_xml_table);
-    g_hash_table_destroy (_discrete_long_text_table);
-    g_hash_table_destroy (_discrete_short_text_table);
+    _discrete_code_index->Release       ();
+    _discrete_xml_index->Release        ();
+    _discrete_long_text_index->Release  ();
+    _discrete_short_text_index->Release ();
 
     g_object_unref (_discrete_model);
   }
@@ -339,23 +340,17 @@ gchar *AttributeDesc::GetDiscreteXmlImage (const gchar *from_user_image)
 {
   if (_discrete_model)
   {
-    GtkTreePath *path = (GtkTreePath *) g_hash_table_lookup (_discrete_long_text_table,
-                                                             from_user_image);
-    if (path)
+    GtkTreeIter iter;
+
+    if (_discrete_long_text_index->GetIterFromKey (from_user_image,
+                                                   &iter))
     {
-      GtkTreeIter iter;
+      gchar *xml_image;
 
-      if (gtk_tree_model_get_iter (_discrete_model,
-                                   &iter,
-                                   path))
-      {
-        gchar *xml_image;
-
-        gtk_tree_model_get (_discrete_model, &iter,
-                            DISCRETE_XML_IMAGE_str, (void *) &xml_image,
-                            -1);
-        return xml_image;
-      }
+      gtk_tree_model_get (_discrete_model, &iter,
+                          DISCRETE_XML_IMAGE_str, (void *) &xml_image,
+                          -1);
+      return xml_image;
     }
   }
 
@@ -374,18 +369,12 @@ GtkTreeIter *AttributeDesc::GetDiscreteIter (const gchar *from_user_image)
 {
   if (_discrete_model)
   {
-    GtkTreePath *path = (GtkTreePath *) g_hash_table_lookup (_discrete_long_text_table,
-                                                             from_user_image);
-    if (path)
-    {
-      GtkTreeIter iter;
+    GtkTreeIter iter;
 
-      if (gtk_tree_model_get_iter (_discrete_model,
-                                   &iter,
-                                   path))
-      {
-        return gtk_tree_iter_copy (&iter);
-      }
+    if (_discrete_long_text_index->GetIterFromKey (from_user_image,
+                                                   &iter))
+    {
+      return gtk_tree_iter_copy (&iter);
     }
   }
 
@@ -413,23 +402,17 @@ void *AttributeDesc::GetDiscreteData (guint from_code,
 {
   if (_discrete_model)
   {
-    GtkTreePath *path = (GtkTreePath *) g_hash_table_lookup (_discrete_code_table,
-                                                             GUINT_TO_POINTER (from_code));
-    if (path)
+    GtkTreeIter iter;
+
+    if (_discrete_code_index->GetIterFromKey (GUINT_TO_POINTER (from_code),
+                                              &iter))
     {
-      GtkTreeIter iter;
+      void *data;
 
-      if (gtk_tree_model_get_iter (_discrete_model,
-                                   &iter,
-                                   path))
-      {
-        void *data;
-
-        gtk_tree_model_get (_discrete_model, &iter,
-                            column,          &data,
-                            -1);
-        return data;
-      }
+      gtk_tree_model_get (_discrete_model, &iter,
+                          column,          &data,
+                          -1);
+      return data;
     }
   }
 
@@ -443,39 +426,33 @@ void *AttributeDesc::GetDiscreteData (const gchar *from_user_image,
 {
   if (_discrete_model)
   {
-    GtkTreePath *path = NULL;
+    GtkTreeIter iter;
+    gboolean    iter_is_valid = FALSE;
 
     if (image_type == DISCRETE_SHORT_TEXT_str)
     {
-      path = (GtkTreePath *) g_hash_table_lookup (_discrete_short_text_table,
-                                                  from_user_image);
+      iter_is_valid = _discrete_short_text_index->GetIterFromKey (from_user_image,
+                                                                  &iter);
     }
     else if (image_type == DISCRETE_LONG_TEXT_str)
     {
-      path = (GtkTreePath *) g_hash_table_lookup (_discrete_long_text_table,
-                                                  from_user_image);
+      iter_is_valid = _discrete_long_text_index->GetIterFromKey (from_user_image,
+                                                                 &iter);
     }
     else if (image_type == DISCRETE_XML_IMAGE_str)
     {
-      path = (GtkTreePath *) g_hash_table_lookup (_discrete_xml_table,
-                                                  from_user_image);
+      iter_is_valid = _discrete_xml_index->GetIterFromKey (from_user_image,
+                                                           &iter);
     }
 
-    if (path)
+    if (iter_is_valid)
     {
-      GtkTreeIter iter;
+      void *data;
 
-      if (gtk_tree_model_get_iter (_discrete_model,
-                                   &iter,
-                                   path))
-      {
-        void *data;
-
-        gtk_tree_model_get (_discrete_model, &iter,
-                            column,          &data,
-                            -1);
-        return data;
-      }
+      gtk_tree_model_get (_discrete_model, &iter,
+                          column,          &data,
+                          -1);
+      return data;
     }
   }
 
@@ -487,25 +464,17 @@ gchar *AttributeDesc::GetXmlImage (gchar *user_image)
 {
   if (_discrete_model)
   {
-    GtkTreePath *path = (GtkTreePath *) g_hash_table_lookup (_discrete_long_text_table,
-                                                             user_image);
-    if (path)
+    GtkTreeIter iter;
+
+    if (_discrete_long_text_index->GetIterFromKey (user_image,
+                                                   &iter))
     {
-      GtkTreeIter iter;
+      gchar *current_xml_image;
 
-      if (gtk_tree_model_get_iter (_discrete_model,
-                                   &iter,
-                                   path))
-      {
-        {
-          gchar *current_xml_image;
-
-          gtk_tree_model_get (_discrete_model, &iter,
-                              DISCRETE_XML_IMAGE_str, &current_xml_image,
-                              -1);
-          return current_xml_image;
-        }
-      }
+      gtk_tree_model_get (_discrete_model, &iter,
+                          DISCRETE_XML_IMAGE_str, &current_xml_image,
+                          -1);
+      return current_xml_image;
     }
   }
 
@@ -573,38 +542,31 @@ gchar *AttributeDesc::GetUserImage (gchar *xml_image,
   {
     if (_discrete_model)
     {
-      GtkTreePath *path = (GtkTreePath *) g_hash_table_lookup (_discrete_xml_table,
-                                                               xml_image);
+      GtkTreeIter iter;
 
-      if (path)
+      if (_discrete_xml_index->GetIterFromKey (xml_image,
+                                               &iter))
       {
-        GtkTreeIter iter;
+        gint   column;
+        gchar *current_user_image;
 
-        if (gtk_tree_model_get_iter (_discrete_model,
-                                     &iter,
-                                     path))
+        if (look == SHORT_TEXT)
         {
-          gint   column;
-          gchar *current_user_image;
-
-          if (look == SHORT_TEXT)
-          {
-            column = DISCRETE_SHORT_TEXT_str;
-          }
-          else if (look == LONG_TEXT)
-          {
-            column = DISCRETE_LONG_TEXT_str;
-          }
-          else
-          {
-            return NULL;
-          }
-
-          gtk_tree_model_get (_discrete_model, &iter,
-                              column, &current_user_image,
-                              -1);
-          return current_user_image;
+          column = DISCRETE_SHORT_TEXT_str;
         }
+        else if (look == LONG_TEXT)
+        {
+          column = DISCRETE_LONG_TEXT_str;
+        }
+        else
+        {
+          return NULL;
+        }
+
+        gtk_tree_model_get (_discrete_model, &iter,
+                            column, &current_user_image,
+                            -1);
+        return current_user_image;
       }
     }
     return GetUndivadableText (xml_image);
@@ -646,18 +608,14 @@ void AttributeDesc::AddDiscreteValues (const gchar *first_xml_image,
                             DISCRETE_LONG_TEXT_str,  undivadable_image,
                             DISCRETE_SHORT_TEXT_str, xml_image, -1);
 
-        g_hash_table_insert (_discrete_code_table,
-                             (void *) xml_image[0],
-                             gtk_tree_model_get_path (_discrete_model, &iter));
-        g_hash_table_insert (_discrete_xml_table,
-                             g_strdup (xml_image),
-                             gtk_tree_model_get_path (_discrete_model, &iter));
-        g_hash_table_insert (_discrete_long_text_table,
-                             g_strdup (undivadable_image),
-                             gtk_tree_model_get_path (_discrete_model, &iter));
-        g_hash_table_insert (_discrete_short_text_table,
-                             g_strdup (xml_image),
-                             gtk_tree_model_get_path (_discrete_model, &iter));
+        _discrete_code_index->SetIterToKey (&iter,
+                                            (const void *) xml_image[0]);
+        _discrete_xml_index->SetIterToKey (&iter,
+                                           xml_image);
+        _discrete_long_text_index->SetIterToKey (&iter,
+                                                 undivadable_image);
+        _discrete_short_text_index->SetIterToKey (&iter,
+                                                  xml_image);
 
         g_free (undivadable_image);
       }
@@ -714,10 +672,10 @@ void AttributeDesc::CreateDiscreteModel ()
                                                         GDK_TYPE_PIXBUF, // DISCRETE_ICON_pix
                                                         G_TYPE_STRING)); // DISCRETE_SELECTOR_str
 
-  _discrete_code_table       = g_hash_table_new_full (NULL,              NULL, NULL,   (GDestroyNotify) gtk_tree_path_free);
-  _discrete_xml_table        = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) gtk_tree_path_free);
-  _discrete_long_text_table  = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) gtk_tree_path_free);
-  _discrete_short_text_table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) gtk_tree_path_free);
+  _discrete_code_index       = new TreeModelIndex (_discrete_model, g_direct_hash);
+  _discrete_xml_index        = new TreeModelIndex (_discrete_model, g_str_hash);
+  _discrete_long_text_index  = new TreeModelIndex (_discrete_model, g_str_hash);
+  _discrete_short_text_index = new TreeModelIndex (_discrete_model, g_str_hash);
 }
 
 // --------------------------------------------------------------------------------
@@ -831,9 +789,8 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
               gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
                                   DISCRETE_XML_IMAGE_str, undivadable_text,
                                   -1);
-              g_hash_table_insert (_discrete_xml_table,
-                                   g_strdup (undivadable_text),
-                                   gtk_tree_model_get_path (_discrete_model, &iter));
+              _discrete_xml_index->SetIterToKey (&iter,
+                                                 undivadable_text);
 
               // Icon
               {
@@ -864,9 +821,8 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
               gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
                                   DISCRETE_SHORT_TEXT_str, undivadable_text,
                                   -1);
-              g_hash_table_insert (_discrete_short_text_table,
-                                   g_strdup (undivadable_text),
-                                   gtk_tree_model_get_path (_discrete_model, &iter));
+              _discrete_short_text_index->SetIterToKey (&iter,
+                                                        undivadable_text);
             }
 
             // Long name
@@ -881,9 +837,8 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
               gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
                                   DISCRETE_LONG_TEXT_str, undivadable_text,
                                   -1);
-              g_hash_table_insert (_discrete_long_text_table,
-                                   g_strdup (undivadable_text),
-                                   gtk_tree_model_get_path (_discrete_model, &iter));
+              _discrete_long_text_index->SetIterToKey (&iter,
+                                                       undivadable_text);
             }
 
             g_free (undivadable_text);
@@ -893,9 +848,8 @@ void AttributeDesc::AddDiscreteValues (const gchar *dir,
           gtk_tree_store_set (GTK_TREE_STORE (_discrete_model), &iter,
                               DISCRETE_CODE_uint, atoi (tokens[i+3]),
                               -1);
-          g_hash_table_insert (_discrete_code_table,
-                               GUINT_TO_POINTER (atoi (tokens[i+3])),
-                               gtk_tree_model_get_path (_discrete_model, &iter));
+          _discrete_code_index->SetIterToKey (&iter,
+                                              GUINT_TO_POINTER (atoi (tokens[i+3])));
         }
         g_strfreev (tokens);
         g_free (textdomain);

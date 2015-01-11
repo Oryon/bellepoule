@@ -250,6 +250,8 @@
 		<Unit filename="..\..\sources\common\util\player.hpp" />
 		<Unit filename="..\..\sources\common\util\sensitivity_trigger.cpp" />
 		<Unit filename="..\..\sources\common\util\sensitivity_trigger.hpp" />
+		<Unit filename="..\..\sources\common\util\tree_model_index.cpp" />
+		<Unit filename="..\..\sources\common\util\tree_model_index.hpp" />
 		<Unit filename="..\..\sources\common\util\wifi_code.cpp" />
 		<Unit filename="..\..\sources\common\util\wifi_code.hpp" />
 		<Extensions>
