@@ -22,6 +22,8 @@
 
 #include "object.hpp"
 
+class TreeModelIndex;
+
 class AttributeDesc : public Object
 {
   public:
@@ -163,10 +165,10 @@ class AttributeDesc : public Object
     static GSList *GetSwappableList ();
 
   private:
-    GHashTable *_discrete_code_table;
-    GHashTable *_discrete_xml_table;
-    GHashTable *_discrete_long_text_table;
-    GHashTable *_discrete_short_text_table;
+    TreeModelIndex *_discrete_code_index;
+    TreeModelIndex *_discrete_xml_index;
+    TreeModelIndex *_discrete_long_text_index;
+    TreeModelIndex *_discrete_short_text_index;
 
     void CreateDiscreteModel ();
 

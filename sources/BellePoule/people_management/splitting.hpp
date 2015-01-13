@@ -69,6 +69,8 @@ namespace People
       void Garnish ();
 
       GSList *GetRemainingList ();
+
+      gchar *GetPrintName ();
   };
 }
 

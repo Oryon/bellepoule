@@ -647,19 +647,25 @@ namespace People
 
     if (utf8_content)
     {
-      gchar **header_line = g_strsplit_set (utf8_content,
-                                            "\n",
-                                            0);
+      gchar **rows = g_strsplit_set (utf8_content,
+                                     "\n",
+                                     0);
 
-      if (header_line)
+      if (rows && rows[0])
       {
-        guint           nb_attr = 0;
-        AttributeDesc **columns = NULL;
+        guint           nb_attr    = 0;
+        AttributeDesc **columns    = NULL;
+        const char     *delimiters = ",";
+
+        if (strchr (rows[0], ';'))
+        {
+          delimiters = ";";
+        }
 
         // Header
         {
-          gchar **header_attr = g_strsplit_set (header_line[0],
-                                                ";,",
+          gchar **header_attr = g_strsplit_set (rows[0],
+                                                delimiters,
                                                 0);
 
           if (header_attr)
@@ -684,48 +690,56 @@ namespace People
 
             g_strfreev (header_attr);
           }
-
-          g_strfreev (header_line);
         }
 
         // Fencers
+        for (guint f = 1; rows[f] != NULL; f++)
         {
-          gchar **tokens = g_strsplit_set (utf8_content,
-                                           ";,\n",
+          gchar **tokens = g_strsplit_set (rows[f],
+                                           delimiters,
                                            0);
 
           if (tokens)
           {
-            for (guint i = nb_attr; tokens[i+1] != 0; i += nb_attr)
+            Player              *player = PlayerFactory::CreatePlayer (_base_class);
+            Player::AttributeId  attr_id ("");
+            gboolean             has_attribute = FALSE;
+
+            for (guint c = 0; c < nb_attr; c++)
             {
-              Player              *player = PlayerFactory::CreatePlayer (_base_class);
-              Player::AttributeId  attr_id ("");
-
-              for (guint c = 0; c < nb_attr; c++)
+              if (tokens[c] == NULL)
               {
-                if (columns[c])
-                {
-                  attr_id._name = columns[c]->_code_name;
-
-                  g_strdelimit (tokens[i+c],
-                                "\"",
-                                ' ');
-                  g_strchug  (tokens[i+c]);
-                  g_strchomp (tokens[i+c]);
-                  player->SetAttributeValue (&attr_id, tokens[i+c]);
-                }
+                break;
               }
 
+              if (columns[c])
+              {
+                attr_id._name = columns[c]->_code_name;
+
+                g_strdelimit (tokens[c],
+                              "\"",
+                              ' ');
+                g_strchug  (tokens[c]);
+                g_strchomp (tokens[c]);
+                player->SetAttributeValue (&attr_id, tokens[c]);
+                has_attribute = TRUE;
+              }
+            }
+
+            if (has_attribute)
+            {
               OnPlayerLoaded (player, NULL);
               Add (player);
-              player->Release ();
             }
+            player->Release ();
+
             g_strfreev (tokens);
           }
         }
 
         g_free (columns);
       }
+      g_strfreev (rows);
     }
     g_free (utf8_content);
 

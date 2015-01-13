@@ -101,6 +101,16 @@ namespace People
       gtk_drag_source_set_icon_name (GTK_WIDGET (_tree_view),
                                      "preferences-desktop-theme");
     }
+
+    {
+      GtkAction *atction = GetAction ("CopyAction");
+
+      if (atction)
+      {
+        gtk_action_set_visible (atction,
+                                FALSE);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

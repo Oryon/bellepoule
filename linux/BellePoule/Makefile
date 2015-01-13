@@ -158,6 +158,9 @@ prepare_changelog:
 prepare_control:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/control
 	chmod a-x $(PACKAGE)/$(RELEASE)/debian/control
+ifeq ($(EXEC), bellepoulebeta)
+	sed -i 's/Replaces/#Replaces/' $(PACKAGE)/$(RELEASE)/debian/control
+endif
 
 prepare_rules:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/rules
@@ -167,7 +170,7 @@ prepare_copyright:
 	chmod a-x $(PACKAGE)/$(RELEASE)/debian/copyright
 
 prepare_desktop:
-	mv -f $(PACKAGE)/$(RELEASE)/debian/*.desktop $(PACKAGE)/$(RELEASE)/debian/$(EXEC).desktop
+	mv -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(EXEC).desktop
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/$(EXEC).desktop
 
 ##
