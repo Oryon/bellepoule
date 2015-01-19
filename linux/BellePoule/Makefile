@@ -2,7 +2,7 @@
 EXEC    = bellepoule
 TARGET  = Release
 PACKAGE = /local/$(USER)/$(EXEC)
-VERSION = 4.0
+VERSION = 4.1
 STEP    = ubuntu1
 RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
