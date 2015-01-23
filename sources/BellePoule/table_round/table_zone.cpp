@@ -195,7 +195,7 @@ namespace Table
           Canvas::SetTableItemAttribute (item, "x-align", 1.0);
           Canvas::SetTableItemAttribute (item, "y-align", 0.5);
           g_object_set (item,
-                        "font", "Sans Bold Italic 12px",
+                        "font", BP_FONT "Bold Italic 12px",
                         NULL);
 
           canvas_module->SetObjectDropZone (referee,

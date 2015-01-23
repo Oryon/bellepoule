@@ -1004,7 +1004,7 @@ namespace People
 
       if (attr_layout->_desc)
       {
-        gchar         *font = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
+        gchar         *font = g_strdup_printf (BP_FONT "Bold %dpx", guint (PRINT_FONT_HEIGHT));
         GooCanvasItem *item;
 
         item = goo_canvas_text_new (root_item,
@@ -1134,11 +1134,11 @@ namespace People
 
             if ((_flat_print == FALSE) && (bar && strcmp (attr->GetCodeName (), "name") == 0))
             {
-              font = g_strdup_printf ("Sans Bold %dpx", guint (PRINT_FONT_HEIGHT));
+              font = g_strdup_printf (BP_FONT "Bold %dpx", guint (PRINT_FONT_HEIGHT));
             }
             else
             {
-              font = g_strdup_printf ("Sans %dpx", guint (PRINT_FONT_HEIGHT));
+              font = g_strdup_printf (BP_FONT "%dpx", guint (PRINT_FONT_HEIGHT));
             }
             item = goo_canvas_text_new (root_item,
                                         image,
@@ -1340,7 +1340,7 @@ namespace People
                              -1.0,
                              GTK_ANCHOR_SE,
                              "fill-color", "black",
-                             "font", "Sans Bold 2px", NULL);
+                             "font", BP_FONT "Bold 2px", NULL);
         g_free (text);
 
         goo_canvas_render (canvas,

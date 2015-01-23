@@ -442,7 +442,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 
             // Name
             {
-              gchar               *font   = g_strdup_printf ("Sans Bold %fpx", 2*PRINT_FONT_HEIGHT);
+              gchar               *font   = g_strdup_printf (BP_FONT "Bold %fpx", 2*PRINT_FONT_HEIGHT);
               Player::AttributeId  attr_id ("name");
               Attribute           *attr   = referee->GetAttribute (&attr_id);
               gchar               *string = attr->GetUserImage (AttributeDesc::LONG_TEXT);
@@ -463,7 +463,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 
             // First name
             {
-              gchar               *font   = g_strdup_printf ("Sans %fpx", 1.5*PRINT_FONT_HEIGHT);
+              gchar               *font   = g_strdup_printf (BP_FONT "%fpx", 1.5*PRINT_FONT_HEIGHT);
               Player::AttributeId  attr_id ("first_name");
               Attribute           *attr   = referee->GetAttribute (&attr_id);
               gchar               *string = attr->GetUserImage (AttributeDesc::LONG_TEXT);
@@ -493,7 +493,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
           // Food
           {
             GooCanvasItem *food_table = goo_canvas_table_new (ticket_table, NULL);
-            gchar         *font   = g_strdup_printf ("Sans %fpx", 1.8*PRINT_FONT_HEIGHT);
+            gchar         *font   = g_strdup_printf (BP_FONT "%fpx", 1.8*PRINT_FONT_HEIGHT);
             const gchar   *strings[] = {gettext ("Meal"),
                                         gettext ("Drink"),
                                         gettext ("Dessert"),
@@ -542,7 +542,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
   }
   else
   {
-    gchar         *font = g_strdup_printf ("Sans %fpx", 1.0*PRINT_FONT_HEIGHT);
+    gchar         *font = g_strdup_printf (BP_FONT "%fpx", 1.0*PRINT_FONT_HEIGHT);
     GooCanvasItem *header;
 
     Canvas::NormalyzeDecimalNotation (font);
@@ -559,7 +559,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
                                        NULL);
 
     {
-      gchar *font = g_strdup_printf ("Sans Bold %fpx", 3.0*PRINT_FONT_HEIGHT);
+      gchar *font = g_strdup_printf (BP_FONT "Bold %fpx", 3.0*PRINT_FONT_HEIGHT);
 
       Canvas::NormalyzeDecimalNotation (font);
       header = goo_canvas_text_new (goo_canvas_get_root_item (canvas),
@@ -574,7 +574,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
     }
 
     {
-      gchar *font   = g_strdup_printf ("Sans Bold %fpx", 1.0*PRINT_FONT_HEIGHT);
+      gchar *font   = g_strdup_printf (BP_FONT "Bold %fpx", 1.0*PRINT_FONT_HEIGHT);
       gchar *string = g_strdup_printf ("%s %d", gettext ("Page"), page_nr+1);
 
       Canvas::NormalyzeDecimalNotation (font);

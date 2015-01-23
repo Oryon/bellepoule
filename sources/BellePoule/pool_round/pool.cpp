@@ -480,7 +480,7 @@ namespace Pool
                                             0,
                                             1);
         g_object_set (G_OBJECT (text_item),
-                      "font", "Sans bold 18px",
+                      "font", BP_FONT "bold 18px",
                       NULL);
 
         Canvas::PutPixbufInTable (_title_table,
@@ -510,7 +510,7 @@ namespace Pool
                              -1,
                              GTK_ANCHOR_SW,
                              "fill-color", "Grey",
-                             "font", "Sans bold 30.0px",
+                             "font", BP_FONT "bold 30.0px",
                              NULL);
         if (_referee_list)
         {
@@ -523,7 +523,7 @@ namespace Pool
                                -1,
                                GTK_ANCHOR_W,
                                "fill-color", "Black",
-                               "font", "Sans bold 25.0px",
+                               "font", BP_FONT "bold 25.0px",
                                NULL);
         }
 
@@ -551,7 +551,7 @@ namespace Pool
                              -1,
                              GTK_ANCHOR_SW,
                              "fill-color", "Grey",
-                             "font", "Sans bold 30.0px",
+                             "font", BP_FONT "bold 30.0px",
                              NULL);
 
         Canvas::HAlign (track_group,
@@ -629,7 +629,7 @@ namespace Pool
                                                       y + cell_h / 2,
                                                       -1,
                                                       GTK_ANCHOR_CENTER,
-                                                      "font", "Sans bold 18px",
+                                                      "font", BP_FONT "bold 18px",
                                                       NULL);
                     if (print_for_referees)
                     {
@@ -688,7 +688,7 @@ namespace Pool
 
           y = cell_h / 2 + i * cell_h;
           image = GetPlayerImage (player_table,
-                                  "font_desc=\"Sans 14.0px\"",
+                                  "font_desc=\"" BP_FONT "14.0px\"",
                                   GetPlayer (i, _sorted_fencer_list),
                                   "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                   "first_name", "foreground=\"darkblue\"",
@@ -739,7 +739,7 @@ namespace Pool
                                text,
                                x, y, -1,
                                GTK_ANCHOR_WEST,
-                               "font", "Sans 18px",
+                               "font", BP_FONT "18px",
                                NULL);
           g_free (text);
         }
@@ -770,7 +770,7 @@ namespace Pool
                                  -1,
                                  GTK_ANCHOR_W,
                                  "fill-color", "Grey95",
-                                 "font", "Sans bold 30.0px",
+                                 "font", BP_FONT "bold 30.0px",
                                  NULL);
           }
         }
@@ -789,7 +789,7 @@ namespace Pool
                                             gettext ("Status"),
                                             0.0, y, -1,
                                             GTK_ANCHOR_WEST,
-                                            "font", "Sans 18px",
+                                            "font", BP_FONT "18px",
                                             NULL);
             goo_canvas_item_rotate (goo_text, 315, 0.0, y);
             x += cell_w;
@@ -799,7 +799,7 @@ namespace Pool
                                           gettext ("Victories"),
                                           x, y, -1,
                                           GTK_ANCHOR_WEST,
-                                          "font", "Sans 18px",
+                                          "font", BP_FONT "18px",
                                           NULL);
           goo_canvas_item_rotate (goo_text, 315, x, y);
           x += cell_w;
@@ -808,7 +808,7 @@ namespace Pool
                                           gettext ("Vict./Matchs"),
                                           x, y, -1,
                                           GTK_ANCHOR_WEST,
-                                          "font", "Sans 18px",
+                                          "font", BP_FONT "18px",
                                           NULL);
           goo_canvas_item_rotate (goo_text, 315, x, y);
           x += cell_w;
@@ -817,7 +817,7 @@ namespace Pool
                                           gettext ("H. scored"),
                                           x, y, -1,
                                           GTK_ANCHOR_WEST,
-                                          "font", "Sans 18px",
+                                          "font", BP_FONT "18px",
                                           NULL);
           goo_canvas_item_rotate (goo_text, 315, x, y);
           x += cell_w;
@@ -826,7 +826,7 @@ namespace Pool
                                           gettext ("H. received"),
                                           x, y, -1,
                                           GTK_ANCHOR_WEST,
-                                          "font", "Sans 18px",
+                                          "font", BP_FONT "18px",
                                           NULL);
           goo_canvas_item_rotate (goo_text, 315, x, y);
           x += cell_w;
@@ -835,7 +835,7 @@ namespace Pool
                                           gettext ("Index"),
                                           x, y, -1,
                                           GTK_ANCHOR_WEST,
-                                          "font", "Sans 18px",
+                                          "font", BP_FONT "18px",
                                           NULL);
           goo_canvas_item_rotate (goo_text, 315, x, y);
           x += cell_w;
@@ -844,7 +844,7 @@ namespace Pool
                                           gettext ("Place"),
                                           x, y, -1,
                                           GTK_ANCHOR_WEST,
-                                          "font", "Sans 18px",
+                                          "font", BP_FONT "18px",
                                           NULL);
           goo_canvas_item_rotate (goo_text, 315, x, y);
           x += cell_w;
@@ -892,7 +892,7 @@ namespace Pool
                                                 ".",
                                                 x, y, -1,
                                                 GTK_ANCHOR_CENTER,
-                                                "font", "Sans 18px",
+                                                "font", BP_FONT "18px",
                                                 NULL);
                 SetDisplayData (player, on_canvas, "VictoriesItem", goo_item);
                 x += cell_w;
@@ -901,7 +901,7 @@ namespace Pool
                                                 ".",
                                                 x, y, -1,
                                                 GTK_ANCHOR_CENTER,
-                                                "font", "Sans 18px",
+                                                "font", BP_FONT "18px",
                                                 NULL);
                 SetDisplayData (player, on_canvas, "VictoriesRatioItem", goo_item);
                 x += cell_w;
@@ -910,7 +910,7 @@ namespace Pool
                                                 ".",
                                                 x, y, -1,
                                                 GTK_ANCHOR_CENTER,
-                                                "font", "Sans 18px",
+                                                "font", BP_FONT "18px",
                                                 NULL);
                 SetDisplayData (player, on_canvas, "HSItem", goo_item);
                 x += cell_w;
@@ -919,7 +919,7 @@ namespace Pool
                                                 ".",
                                                 x, y, -1,
                                                 GTK_ANCHOR_CENTER,
-                                                "font", "Sans 18px",
+                                                "font", BP_FONT "18px",
                                                 NULL);
                 SetDisplayData (player, on_canvas, "HRItem", goo_item);
                 x += cell_w;
@@ -928,7 +928,7 @@ namespace Pool
                                                 ".",
                                                 x, y, -1,
                                                 GTK_ANCHOR_CENTER,
-                                                "font", "Sans 18px",
+                                                "font", BP_FONT "18px",
                                                 NULL);
                 SetDisplayData (player, on_canvas, "IndiceItem", goo_item);
                 x += cell_w;
@@ -937,7 +937,7 @@ namespace Pool
                                                 ".",
                                                 x, y, -1,
                                                 GTK_ANCHOR_CENTER,
-                                                "font", "Sans 18px",
+                                                "font", BP_FONT "18px",
                                                 NULL);
                 SetDisplayData (player, on_canvas, "RankItem", goo_item);
                 x += cell_w;
@@ -1017,7 +1017,7 @@ namespace Pool
                                                 0,
                                                 0);
             g_object_set (G_OBJECT (text_item),
-                          "font", "Sans bold 18px",
+                          "font", BP_FONT "bold 18px",
                           NULL);
 
             if (match->GetUIntData (this, "rest_error"))
@@ -1046,7 +1046,7 @@ namespace Pool
             Player *player              = match->GetOpponent (0);
             GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
             GooCanvasItem *image = GetPlayerImage (player_table,
-                                                   "font_desc=\"Sans 14.0px\"",
+                                                   "font_desc=\"" BP_FONT "14.0px\"",
                                                    player,
                                                    "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                    "first_name", "foreground=\"darkblue\"",
@@ -1098,7 +1098,7 @@ namespace Pool
             Player        *player = match->GetOpponent (1);
             GooCanvasItem *player_table = goo_canvas_table_new (match_table, NULL);
             GooCanvasItem *image        = GetPlayerImage (player_table,
-                                                          "font_desc=\"Sans 14.0px\"",
+                                                          "font_desc=\"" BP_FONT "14.0px\"",
                                                           player,
                                                           "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                           "first_name", "foreground=\"darkblue\"",

@@ -84,7 +84,7 @@ GooCanvasItem *Canvas::PutTextInTable (GooCanvasItem *table,
                                 0.0, 0.0,
                                 -1.0,
                                 GTK_ANCHOR_NW,
-                                "font", "Sans 14px", NULL);
+                                "font", BP_FONT "14px", NULL);
     if (strchr (text, ' '))
     {
       g_object_set (G_OBJECT (item),

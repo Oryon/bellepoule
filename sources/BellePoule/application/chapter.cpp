@@ -111,7 +111,7 @@ void Chapter::DrawHeaderPage (GtkPrintOperation *operation,
                          GTK_ANCHOR_CENTER,
                          "alignment", PANGO_ALIGN_CENTER,
                          "fill-color", "black",
-                         "font", "Sans Bold 10.0px", NULL);
+                         "font", BP_FONT "Bold 10.0px", NULL);
 
     goo_canvas_render (canvas,
                        gtk_print_context_get_cairo_context (context),

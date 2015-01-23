@@ -29,6 +29,7 @@
 #define CYAN    ""
 #define WHITE   ""
 #define ESC     ""
+#define BP_FONT "Sans "
 #else
 #define RED     "\033[1;31m"
 #define GREEN   "\033[1;32m"
@@ -38,6 +39,11 @@
 #define CYAN    "\033[1;36m"
 #define WHITE   "\033[0;37m"
 #define ESC     "\033[0m"
+#if PANGO_VERSION_MAJOR == 1 && PANGO_VERSION_MINOR > 30
+#define BP_FONT "Nimbus Sans L "
+#else
+#define BP_FONT "Sans "
+#endif
 #endif
 
 #if GTK_MAJOR_VERSION >= 3

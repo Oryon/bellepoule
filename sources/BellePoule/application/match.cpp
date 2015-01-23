@@ -583,7 +583,7 @@ GooCanvasItem *Match::GetScoreTable (GooCanvasItem *parent,
 {
   if (_max_score->_value <= 15)
   {
-    gchar         *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(size));
+    gchar         *font = g_strdup_printf (BP_FONT "Bold %fpx", 1.5/2.0*(size));
     GooCanvasItem *score_table = goo_canvas_table_new (parent,
                                                        "column-spacing", size/10.0,
                                                        NULL);

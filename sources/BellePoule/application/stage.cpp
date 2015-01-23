@@ -1389,7 +1389,7 @@ void Stage::DrawConfigLine (GtkPrintOperation *operation,
                          0.0,
                          -1.0,
                          GTK_ANCHOR_W,
-                         "font", "Sans 2px", NULL);
+                         "font", BP_FONT "2px", NULL);
 
     goo_canvas_render (canvas,
                        gtk_print_context_get_cairo_context (context),

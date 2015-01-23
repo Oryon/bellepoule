@@ -1235,7 +1235,7 @@ namespace Pool
                                        pool->GetName (),
                                        0, 1);
         g_object_set (G_OBJECT (item),
-                      "font", "Sans bold 18px",
+                      "font", BP_FONT "bold 18px",
                       NULL);
       }
 
@@ -1353,7 +1353,7 @@ namespace Pool
                                            swapped_from_text,
                                            indice+1, 1);
             g_object_set (G_OBJECT (item),
-                          "font", "Sans Bold Italic 14px",
+                          "font", BP_FONT "Bold Italic 14px",
                           "fill_color", "blue",
                           NULL);
             g_free (swapped_from_text);
@@ -1415,14 +1415,14 @@ namespace Pool
           if (player->Is ("Referee"))
           {
             g_object_set (G_OBJECT (item),
-                          "font", "Sans Bold Italic 14px",
+                          "font", BP_FONT "Bold Italic 14px",
                           "fill_color", "black",
                           NULL);
           }
           else
           {
             g_object_set (G_OBJECT (item),
-                          "font", "Sans 14px",
+                          "font", BP_FONT "14px",
                           "fill_color", "black",
                           NULL);
           }
@@ -1641,7 +1641,7 @@ namespace Pool
                            -1.0,
                            GTK_ANCHOR_SE,
                            "fill-color", "black",
-                           "font", "Sans Bold 2px", NULL);
+                           "font", BP_FONT "Bold 2px", NULL);
       g_free (text);
 
       goo_canvas_render (canvas,

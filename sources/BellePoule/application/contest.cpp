@@ -1888,7 +1888,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          GTK_ANCHOR_NORTH,
                          "alignment", PANGO_ALIGN_CENTER,
                          "fill-color", "black",
-                         "font", "Sans Bold 2.5px", NULL);
+                         "font", BP_FONT "Bold 2.5px", NULL);
   }
 
   {
@@ -1901,14 +1901,14 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          -1.0,
                          GTK_ANCHOR_CENTER,
                          "fill-color", "black",
-                         "font", "Sans Bold 4px", NULL);
+                         "font", BP_FONT "Bold 4px", NULL);
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                          text,
                          50.0, 3.0,
                          -1.0,
                          GTK_ANCHOR_CENTER,
                          "fill-color", "white",
-                         "font", "Sans Bold 4px", NULL);
+                         "font", BP_FONT "Bold 4px", NULL);
     g_free (text);
   }
 
@@ -1919,7 +1919,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          -1.0,
                          GTK_ANCHOR_CENTER,
                          "fill-color", "black",
-                         "font", "Sans Bold 4px", NULL);
+                         "font", BP_FONT "Bold 4px", NULL);
   }
 
   if (_organizer)
@@ -1930,7 +1930,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          -1.0,
                          GTK_ANCHOR_EAST,
                          "fill-color", "black",
-                         "font", "Sans Bold 2.5px", NULL);
+                         "font", BP_FONT "Bold 2.5px", NULL);
   }
 
   {
@@ -1940,7 +1940,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          -1.0,
                          GTK_ANCHOR_EAST,
                          "fill-color", "black",
-                         "font", "Sans Bold 2.5px", NULL);
+                         "font", BP_FONT "Bold 2.5px", NULL);
   }
 
   goo_canvas_render (canvas,

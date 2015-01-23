@@ -773,7 +773,7 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
                                -1.0,
                                GTK_ANCHOR_W,
                                "fill-color", "black",
-                               "font", "Sans Bold 2px", NULL);
+                               "font", BP_FONT "Bold 2px", NULL);
           g_free (text);
 
           goo_canvas_render (canvas,
@@ -838,7 +838,7 @@ void Schedule::DrawPage (GtkPrintOperation *operation,
                              -1.0,
                              GTK_ANCHOR_W,
                              "fill-color", "blue",
-                             "font", "Sans Bold 2px", NULL);
+                             "font", BP_FONT "Bold 2px", NULL);
         g_free (url);
       }
 
