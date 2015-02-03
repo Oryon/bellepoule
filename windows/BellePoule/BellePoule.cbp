@@ -100,6 +100,8 @@
 			<Add directory="C:\MinGW\lib" />
 			<Add directory="C:\MinGW\msys\1.0\lib" />
 		</Linker>
+		<Unit filename="..\..\sources\BellePoule\application\application.cpp" />
+		<Unit filename="..\..\sources\BellePoule\application\application.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\attendees.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\attendees.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\book.cpp" />

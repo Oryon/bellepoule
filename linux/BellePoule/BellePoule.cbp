@@ -97,6 +97,8 @@
 			<Add library="ssl" />
 			<Add library="crypto" />
 		</Linker>
+    <Unit filename="../../sources/BellePoule/application/application.cpp" />
+    <Unit filename="../../sources/BellePoule/application/application.hpp" />
     <Unit filename="../../sources/BellePoule/application/attendees.cpp" />
     <Unit filename="../../sources/BellePoule/application/attendees.hpp" />
     <Unit filename="../../sources/BellePoule/application/book.cpp" />
