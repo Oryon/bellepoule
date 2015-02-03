@@ -41,6 +41,7 @@
 #include "network/uploader.hpp"
 
 #include "version.h"
+#include "global.hpp"
 #include "tournament.hpp"
 
 #include "contest.hpp"
@@ -258,19 +259,19 @@ Contest::Contest ()
    _team_event    = FALSE;
    _derived       = FALSE;
 
-  _name = g_key_file_get_string (_config_file,
+  _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
                                  "default_name",
                                  NULL);
-  _organizer = g_key_file_get_string (_config_file,
+  _organizer = g_key_file_get_string (Global::_user_config->_key_file,
                                       "Competiton",
                                       "default_organizer",
                                       NULL);
-  _web_site = g_key_file_get_string (_config_file,
+  _web_site = g_key_file_get_string (Global::_user_config->_key_file,
                                      "Competiton",
                                      "default_web_site",
                                      NULL);
-  _location = g_key_file_get_string (_config_file,
+  _location = g_key_file_get_string (Global::_user_config->_key_file,
                                      "Competiton",
                                      "default_location",
                                      NULL);
@@ -1065,7 +1066,7 @@ void Contest::ChooseColor ()
 {
   gint color_to_use;
 
-  color_to_use = g_key_file_get_integer (_config_file,
+  color_to_use = g_key_file_get_integer (Global::_user_config->_key_file,
                                          "Competiton",
                                          "color_to_use",
                                          NULL);
@@ -1079,7 +1080,7 @@ void Contest::ChooseColor ()
   {
     color_to_use = 0;
   }
-  g_key_file_set_integer (_config_file,
+  g_key_file_set_integer (Global::_user_config->_key_file,
                           "Competiton",
                           "color_to_use",
                           color_to_use);
@@ -1322,7 +1323,7 @@ void Contest::ReadProperties ()
   {
     if (_name && *_name != 0)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_name",
                              _name);
@@ -1330,7 +1331,7 @@ void Contest::ReadProperties ()
 
     if (_organizer && *_organizer != 0)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_organizer",
                              _organizer);
@@ -1338,7 +1339,7 @@ void Contest::ReadProperties ()
 
     if (_web_site && *_web_site != 0)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_web_site",
                              _web_site);
@@ -1346,7 +1347,7 @@ void Contest::ReadProperties ()
 
     if (_location && *_location != 0)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_location",
                              _location);
@@ -1747,7 +1748,7 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
   }
 
   {
-    gchar *last_dirname = g_key_file_get_string (_config_file,
+    gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                  "Competiton",
                                                  config_key,
                                                  NULL);
@@ -1782,7 +1783,7 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
       {
         gchar *dirname = g_path_get_dirname (_filename);
 
-        g_key_file_set_string (_config_file,
+        g_key_file_set_string (Global::_user_config->_key_file,
                                "Competiton",
                                config_key,
                                dirname);

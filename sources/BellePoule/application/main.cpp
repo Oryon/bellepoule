@@ -44,7 +44,6 @@
 #include "table_round/table_supervisor.hpp"
 #include "util/wifi_code.hpp"
 #include "tournament.hpp"
-#include "contest.hpp"
 
 // --------------------------------------------------------------------------------
 static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
@@ -162,6 +161,8 @@ static gboolean IsCsvReady (AttributeDesc *desc)
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
+  Tournament *tournament;
+
   // g_mem_set_vtable (glib_mem_profiler_table);
 
   // Init
@@ -220,47 +221,10 @@ int main (int argc, char **argv)
 
     //Object::Track ("Player");
 
-    {
-      Object::SetProgramPaths (root_dir,
-                               share_dir);
+    Object::SetProgramPaths (root_dir,
+                             share_dir);
 
-      Tournament::Init ();
-
-      {
-        gchar *user_language = Tournament::GetUserLanguage ();
-
-        setlocale (LC_ALL, "");
-
-        if (user_language)
-        {
-          g_setenv ("LANGUAGE",
-                    user_language,
-                    TRUE);
-        }
-      }
-
-      {
-        gchar *translation_path = g_build_filename (share_dir, "resources", "countries", "translations", NULL);
-
-        bindtextdomain ("countries", translation_path);
-        bind_textdomain_codeset ("countries", "UTF-8");
-
-        g_free (translation_path);
-      }
-
-      {
-        gchar *translation_path = g_build_filename (share_dir, "resources", "translations", NULL);
-
-        bindtextdomain ("BellePoule", translation_path);
-        bind_textdomain_codeset ("BellePoule", "UTF-8");
-
-        g_free (translation_path);
-      }
-
-      textdomain ("BellePoule");
-    }
-
-    Contest::Init ();
+    tournament = Tournament::New ("BellePoule");
 
     {
       People::CheckinSupervisor::Declare     ();
@@ -290,6 +254,7 @@ int main (int argc, char **argv)
                                  NULL);
 #endif
 
+  // Attributes definition
   {
     AttributeDesc *desc;
 
@@ -438,21 +403,19 @@ int main (int argc, char **argv)
                                "Manual",  gettext ("Manual"),  (gchar *) GTK_STOCK_EDIT, NULL);
 
     }
+
+    AttributeDesc::SetCriteria ("CSV ready",
+                                IsCsvReady);
   }
 
-  AttributeDesc::SetCriteria ("CSV ready",
-                              IsCsvReady);
-
   {
-    Tournament *tournament;
-
     if (argc > 1)
     {
-      tournament = new Tournament (g_strdup (argv[1]));
+      tournament->Start (g_strdup (argv[1]));
     }
     else
     {
-      tournament = new Tournament (NULL);
+      tournament->Start (NULL);
     }
 
     People::Splitting::SetHostTournament (tournament);
@@ -460,10 +423,8 @@ int main (int argc, char **argv)
 
   gtk_main ();
 
-  {
-    Contest::Cleanup       ();
-    AttributeDesc::Cleanup ();
-  }
+  tournament->Release ();
+  AttributeDesc::Cleanup ();
 
   return 0;
 }

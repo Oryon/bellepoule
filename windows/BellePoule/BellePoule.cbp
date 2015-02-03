@@ -112,6 +112,10 @@
 		<Unit filename="..\..\sources\BellePoule\application\contest.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\ecosystem.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\ecosystem.hpp" />
+		<Unit filename="..\..\sources\BellePoule\application\global.cpp" />
+		<Unit filename="..\..\sources\BellePoule\application\global.hpp" />
+		<Unit filename="..\..\sources\BellePoule\application\language.cpp" />
+		<Unit filename="..\..\sources\BellePoule\application\language.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\main.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\match.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\match.hpp" />
@@ -252,6 +256,8 @@
 		<Unit filename="..\..\sources\common\util\sensitivity_trigger.hpp" />
 		<Unit filename="..\..\sources\common\util\tree_model_index.cpp" />
 		<Unit filename="..\..\sources\common\util\tree_model_index.hpp" />
+		<Unit filename="..\..\sources\common\util\user_config.cpp" />
+		<Unit filename="..\..\sources\common\util\user_config.hpp" />
 		<Unit filename="..\..\sources\common\util\wifi_code.cpp" />
 		<Unit filename="..\..\sources\common\util\wifi_code.hpp" />
 		<Extensions>

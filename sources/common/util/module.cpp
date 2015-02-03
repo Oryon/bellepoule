@@ -23,10 +23,9 @@
 
 #include "module.hpp"
 
-const gdouble Module::PRINT_HEADER_HEIGHT = 10.0; // % of paper width
-const gdouble Module::PRINT_FONT_HEIGHT   = 2.0;  // % of paper width
-GKeyFile     *Module::_config_file  = NULL;
-GtkTreeModel *Module::_status_model = NULL;
+const gdouble  Module::PRINT_HEADER_HEIGHT = 10.0; // % of paper width
+const gdouble  Module::PRINT_FONT_HEIGHT   = 2.0;    // % of paper width
+GtkTreeModel  *Module::_status_model       = NULL;
 
 // --------------------------------------------------------------------------------
 Module::Module (const gchar *glade_file,

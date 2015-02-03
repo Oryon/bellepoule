@@ -21,6 +21,7 @@
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "application/schedule.hpp"
+#include "application/global.hpp"
 #include "util/player.hpp"
 #include "player_factory.hpp"
 #include "tally_counter.hpp"
@@ -330,7 +331,7 @@ namespace People
     }
 
     {
-      gchar *last_dirname = g_key_file_get_string (_config_file,
+      gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                    "Checkin",
                                                    "default_import_dir_name",
                                                    NULL);
@@ -353,7 +354,7 @@ namespace People
         {
           gchar *dirname = g_path_get_dirname (filename);
 
-          g_key_file_set_string (_config_file,
+          g_key_file_set_string (Global::_user_config->_key_file,
                                  "Checkin",
                                  "default_import_dir_name",
                                  dirname);

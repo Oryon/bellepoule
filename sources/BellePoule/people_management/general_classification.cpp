@@ -19,6 +19,7 @@
 #include "util/attribute.hpp"
 #include "application/contest.hpp"
 #include "application/classification.hpp"
+#include "application/global.hpp"
 #include "util/player.hpp"
 
 #include "general_classification.hpp"
@@ -246,13 +247,13 @@ namespace People
                                                       TRUE);
 
       {
-        gchar *last_dirname = g_key_file_get_string (_config_file,
+        gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                      "Competiton",
                                                      "export_dir",
                                                      NULL);
         if (last_dirname == NULL)
         {
-          last_dirname = g_key_file_get_string (_config_file,
+          last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                 "Competiton",
                                                 "default_dir_name",
                                                 NULL);
@@ -345,7 +346,7 @@ namespace People
         {
           gchar *dirname = g_path_get_dirname (filename);
 
-          g_key_file_set_string (_config_file,
+          g_key_file_set_string (Global::_user_config->_key_file,
                                  "Competiton",
                                  "export_dir",
                                  dirname);

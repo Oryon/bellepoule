@@ -24,6 +24,7 @@
 #include "util/canvas.hpp"
 #include "util/player.hpp"
 #include "application/contest.hpp"
+#include "application/global.hpp"
 
 #include "fencer.hpp"
 #include "player_factory.hpp"
@@ -1131,7 +1132,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnImportRanking ()
   {
-    RankImporter *importer = new RankImporter (_config_file);
+    RankImporter *importer = new RankImporter (Global::_user_config->_key_file);
 
     {
       GSList *current = _player_list;
