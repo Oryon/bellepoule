@@ -112,6 +112,7 @@ void Language::Populate (GtkMenuItem  *menu_item,
           g_setenv ("LANGUAGE",
                     tokens[0],
                     TRUE);
+          textdomain ("BellePoule");
 
           g_strdelimit (tokens[1],
                         "\n\r",
@@ -148,6 +149,7 @@ void Language::Populate (GtkMenuItem  *menu_item,
         g_setenv ("LANGUAGE",
                   favorite,
                   TRUE);
+        textdomain ("BellePoule");
         g_free (favorite);
       }
       else

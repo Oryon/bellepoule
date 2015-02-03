@@ -80,6 +80,8 @@ Tournament *Tournament::New (const gchar *app_name)
       _singleton->_language = language;
     }
 
+    Contest::Init ();
+
     return _singleton;
   }
 
@@ -128,6 +130,9 @@ Tournament::~Tournament ()
   _ecosystem->Release   ();
   _language->Release    ();
   Global::_user_config->Release ();
+  Contest::Cleanup ();
+
+  _singleton = NULL;
 
   curl_global_cleanup ();
 }
