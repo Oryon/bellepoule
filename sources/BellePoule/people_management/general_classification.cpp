@@ -16,10 +16,10 @@
 
 #include <string.h>
 
+#include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "application/contest.hpp"
 #include "application/classification.hpp"
-#include "application/global.hpp"
 #include "util/player.hpp"
 
 #include "general_classification.hpp"

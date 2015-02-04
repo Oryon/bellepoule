@@ -24,9 +24,9 @@
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
 #include "table_round/table_supervisor.hpp"
+#include "util/global.hpp"
 #include "util/wifi_code.hpp"
 #include "application.hpp"
-#include "global.hpp"
 
 #include "tournament.hpp"
 

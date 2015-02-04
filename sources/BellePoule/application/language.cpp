@@ -16,7 +16,7 @@
 
 #include <locale.h>
 
-#include "global.hpp"
+#include "util/global.hpp"
 
 #include "language.hpp"
 
@@ -43,7 +43,7 @@ Language::Language ()
 
   // Countries
   {
-    gchar *translation_path = g_build_filename (_share_dir, "resources", "countries", "translations", NULL);
+    gchar *translation_path = g_build_filename (Global::_share_dir, "resources", "countries", "translations", NULL);
 
     bindtextdomain ("countries", translation_path);
     bind_textdomain_codeset ("countries", "UTF-8");
@@ -53,7 +53,7 @@ Language::Language ()
 
   // Items
   {
-    gchar *translation_path = g_build_filename (_share_dir, "resources", "translations", NULL);
+    gchar *translation_path = g_build_filename (Global::_share_dir, "resources", "translations", NULL);
 
     bindtextdomain ("BellePoule", translation_path);
     bind_textdomain_codeset ("BellePoule", "UTF-8");
@@ -87,7 +87,7 @@ void Language::Populate (GtkMenuItem  *menu_item,
                          GtkMenuShell *menu_shell)
 {
   gchar  *contents;
-  gchar  *filename = g_build_filename (_share_dir, "resources", "translations", "index.txt", NULL);
+  gchar  *filename = g_build_filename (Global::_share_dir, "resources", "translations", "index.txt", NULL);
 
   if (g_file_get_contents (filename,
                            &contents,

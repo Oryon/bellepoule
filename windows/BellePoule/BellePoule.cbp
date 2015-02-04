@@ -114,8 +114,6 @@
 		<Unit filename="..\..\sources\BellePoule\application\contest.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\ecosystem.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\ecosystem.hpp" />
-		<Unit filename="..\..\sources\BellePoule\application\global.cpp" />
-		<Unit filename="..\..\sources\BellePoule\application\global.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\language.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\language.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\main.cpp" />
@@ -248,6 +246,8 @@
 		<Unit filename="..\..\sources\common\util\flash_code.hpp" />
 		<Unit filename="..\..\sources\common\util\glade.cpp" />
 		<Unit filename="..\..\sources\common\util\glade.hpp" />
+		<Unit filename="..\..\sources\common\util\global.cpp" />
+		<Unit filename="..\..\sources\common\util\global.hpp" />
 		<Unit filename="..\..\sources\common\util\module.cpp" />
 		<Unit filename="..\..\sources\common\util\module.hpp" />
 		<Unit filename="..\..\sources\common\util\object.cpp" />

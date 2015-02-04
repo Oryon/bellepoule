@@ -18,10 +18,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "application/schedule.hpp"
-#include "application/global.hpp"
 #include "util/player.hpp"
 #include "player_factory.hpp"
 #include "tally_counter.hpp"

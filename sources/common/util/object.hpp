@@ -95,17 +95,12 @@ class Object
 
     static void TryToRelease (Object *object);
 
-    static void SetProgramPaths (gchar *root_dir,
-                                 gchar *share_dir);
-
     static void DumpList ();
 
     static void Track (const gchar *klass);
 
   protected:
-    static gchar *_root_dir;
-    static gchar *_share_dir;
-    FlashCode    *_flash_code;
+    FlashCode *_flash_code;
 
     virtual ~Object ();
 

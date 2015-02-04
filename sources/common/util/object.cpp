@@ -19,9 +19,6 @@
 #include "flash_code.hpp"
 #include "object.hpp"
 
-gchar *Object::_root_dir  = NULL;
-gchar *Object::_share_dir = NULL;
-
 #ifdef DEBUG
 guint        Object::_nb_objects     = 0;
 GList       *Object::_list           = NULL;
@@ -170,14 +167,6 @@ gchar *Object::GetUndivadableText (const gchar *text)
 
   return (gchar *) result;
 #endif
-}
-
-// --------------------------------------------------------------------------------
-void Object::SetProgramPaths (gchar *root_dir,
-                              gchar *share_dir)
-{
-  _root_dir  = g_strdup (root_dir);
-  _share_dir = g_strdup (share_dir);
 }
 
 // --------------------------------------------------------------------------------

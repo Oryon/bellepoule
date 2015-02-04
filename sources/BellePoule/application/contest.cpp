@@ -34,6 +34,7 @@
 #include <shellapi.h>
 #endif
 
+#include "util/global.hpp"
 #include "util/canvas.hpp"
 #include "people_management/checkin.hpp"
 #include "people_management/referees_list.hpp"
@@ -41,7 +42,6 @@
 #include "network/uploader.hpp"
 
 #include "version.h"
-#include "global.hpp"
 #include "tournament.hpp"
 
 #include "contest.hpp"
@@ -822,7 +822,7 @@ Contest::~Contest ()
   if (_filename)
   {
     gchar *base_name = g_path_get_basename (_filename);
-    gchar *www_file  = g_build_filename (_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
+    gchar *www_file  = g_build_filename (Global::_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
 
     g_unlink (www_file);
 
@@ -1471,7 +1471,7 @@ void Contest::Save ()
     // www
     {
       gchar *base_name = g_path_get_basename (_filename);
-      gchar *www_file  = g_build_filename (_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
+      gchar *www_file  = g_build_filename (Global::_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
 
       Save (www_file);
       g_free (base_name);

@@ -23,6 +23,7 @@ class Global
 {
   public:
     static UserConfig *_user_config;
+    static gchar      *_share_dir;
 
   private:
     Global ();

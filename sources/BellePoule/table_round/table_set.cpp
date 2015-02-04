@@ -22,6 +22,7 @@
 #include <libxml/xpath.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "util/player.hpp"
 #include "application/classification.hpp"
@@ -1241,7 +1242,7 @@ namespace Table
 
             if (arrow_icon == NULL)
             {
-              arrow_icon = g_build_filename (_share_dir, "resources/glade/arrow.png", NULL);
+              arrow_icon = g_build_filename (Global::_share_dir, "resources/glade/arrow.png", NULL);
             }
             goo_item = Canvas::PutIconInTable (data->_score_goo_table,
                                                arrow_icon,

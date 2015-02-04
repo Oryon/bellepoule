@@ -26,10 +26,10 @@
 #include <shellapi.h>
 #endif
 
+#include "util/global.hpp"
 #include "util/canvas.hpp"
 
 #include "version.h"
-#include "global.hpp"
 #include "contest.hpp"
 #include "people_management/form.hpp"
 
@@ -1159,7 +1159,7 @@ void Tournament::OnOpenUserManual ()
   gchar *uri;
 
 #ifdef WINDOWS_TEMPORARY_PATCH
-  uri = g_build_filename (_share_dir, "resources", "user_manual.pdf", NULL);
+  uri = g_build_filename (Global::_share_dir, "resources", "user_manual.pdf", NULL);
 
   ShellExecute (NULL,
                 "open",
@@ -1168,7 +1168,7 @@ void Tournament::OnOpenUserManual ()
                 NULL,
                 SW_SHOWNORMAL);
 #else
-  uri = g_build_filename ("file://", _share_dir, "resources", "user_manual.pdf", NULL);
+  uri = g_build_filename ("file://", Global::_share_dir, "resources", "user_manual.pdf", NULL);
 
   gtk_show_uri (NULL,
                 uri,
@@ -1321,9 +1321,9 @@ void Tournament::OpenUriContest (const gchar *uri)
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
-  if (_share_dir)
+  if (Global::_share_dir)
   {
-    gchar *example_dirname = g_build_filename (_share_dir, "Exemples", NULL);
+    gchar *example_dirname = g_build_filename (Global::_share_dir, "Exemples", NULL);
 
     OnOpen (example_dirname);
     g_free (example_dirname);

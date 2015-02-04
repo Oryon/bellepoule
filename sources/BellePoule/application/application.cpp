@@ -23,6 +23,7 @@
 #endif
 
 #include "util/attribute.hpp"
+#include "util/global.hpp"
 
 #include "application.hpp"
 
@@ -147,9 +148,6 @@ Application::Application (int    *argc,
 
   // Init
   {
-    gchar *root_dir;
-    gchar *share_dir;
-
     {
       gchar *binary_dir;
 
@@ -163,8 +161,7 @@ Application::Application (int    *argc,
 #ifdef DEBUG
       g_log_set_default_handler (LogHandler,
                                  NULL);
-      root_dir  = g_build_filename (binary_dir, "..", "..", "..", NULL);
-      share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
+      Global::_share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
 #else
       {
         gchar *basename = g_path_get_basename ((*argv)[0]);
@@ -175,8 +172,7 @@ Application::Application (int    *argc,
           basename = g_strdup ("bellepoule");
         }
 
-        root_dir  = g_build_filename (binary_dir, "..", NULL);
-        share_dir = g_build_filename (binary_dir, "..", "share", basename, NULL);
+        Global::_share_dir = g_build_filename (binary_dir, "..", "share", basename, NULL);
         g_free (basename);
       }
 #endif
@@ -184,9 +180,9 @@ Application::Application (int    *argc,
       g_free (binary_dir);
     }
 
-    if (share_dir)
+    if (Global::_share_dir)
     {
-      gchar *gtkrc = g_build_filename (share_dir, "resources", "gtkrc", NULL);
+      gchar *gtkrc = g_build_filename (Global::_share_dir, "resources", "gtkrc", NULL);
 
       gtk_rc_add_default_file (gtkrc);
       g_free (gtkrc);
@@ -200,12 +196,6 @@ Application::Application (int    *argc,
     }
 
     //Object::Track ("Player");
-
-    Object::SetProgramPaths (root_dir,
-                             share_dir);
-
-    g_free (root_dir);
-    g_free (share_dir);
   }
 
 #if GTK_MAJOR_VERSION < 3
@@ -221,6 +211,9 @@ Application::Application (int    *argc,
 Application::~Application ()
 {
   AttributeDesc::Cleanup ();
+
+  g_free (Global::_share_dir);
+
   curl_global_cleanup ();
 }
 

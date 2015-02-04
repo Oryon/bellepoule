@@ -18,13 +18,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "application/schedule.hpp"
 #include "util/canvas.hpp"
 #include "util/player.hpp"
 #include "application/contest.hpp"
-#include "application/global.hpp"
 
 #include "fencer.hpp"
 #include "player_factory.hpp"
