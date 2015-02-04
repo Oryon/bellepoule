@@ -26,6 +26,8 @@
 #include "table_round/table_supervisor.hpp"
 #include "util/wifi_code.hpp"
 #include "application.hpp"
+#include "global.hpp"
+
 #include "tournament.hpp"
 
 // --------------------------------------------------------------------------------
@@ -45,9 +47,11 @@ class BellePoule : public Application
 };
 
 // --------------------------------------------------------------------------------
-BellePoule::BellePoule (int *argc, char ***argv)
+BellePoule::BellePoule (int    *argc,
+                        char ***argv)
 : Application (argc, argv)
 {
+  Global::_user_config = new UserConfig ("BellePoule");
   _tournament = NULL;
 }
 
@@ -55,12 +59,13 @@ BellePoule::BellePoule (int *argc, char ***argv)
 BellePoule::~BellePoule ()
 {
   _tournament->Release ();
+  Global::_user_config->Release ();
 }
 
 // --------------------------------------------------------------------------------
 void BellePoule::Prepare ()
 {
-  _tournament = Tournament::New ("BellePoule");
+  _tournament = Tournament::New ();
 
   {
     People::CheckinSupervisor::Declare     ();
@@ -100,10 +105,7 @@ void BellePoule::Start (int argc, char **argv)
 
     gtk_main ();
   }
-
-  _tournament->Release ();
 }
-
 
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)

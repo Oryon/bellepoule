@@ -30,9 +30,7 @@ class Contest;
 class Tournament : public Module, Net::HttpServer::Client
 {
   public:
-    static Tournament *New (const gchar *app_name);
-
-    static void Cleanup ();
+    static Tournament *New ();
 
     void Start (gchar *filename);
 
@@ -100,7 +98,7 @@ class Tournament : public Module, Net::HttpServer::Client
     EcoSystem       *_ecosystem;
     Language        *_language;
 
-    Tournament (const gchar *app_name);
+    Tournament ();
 
     virtual ~Tournament ();
 

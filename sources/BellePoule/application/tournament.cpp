@@ -18,7 +18,6 @@
 #include <glib.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
-#include <curl/curl.h>
 #include <locale.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
@@ -39,7 +38,7 @@
 Tournament *Tournament::_singleton = NULL;
 
 // --------------------------------------------------------------------------------
-Tournament::Tournament (const gchar *app_name)
+Tournament::Tournament ()
   : Module ("tournament.glade")
 {
   _singleton    = NULL;
@@ -50,33 +49,27 @@ Tournament::Tournament (const gchar *app_name)
 }
 
 // --------------------------------------------------------------------------------
-Tournament *Tournament::New (const gchar *app_name)
+Tournament *Tournament::New ()
 {
   if (_singleton == NULL)
   {
-    curl_global_init (CURL_GLOBAL_ALL);
-
+    if (Global::_user_config->IsEmpty ())
     {
-      Global::_user_config = new UserConfig (app_name);
+      g_key_file_set_string (Global::_user_config->_key_file,
+                             "Competiton",
+                             "default_dir_name",
+                             g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
 
-      if (Global::_user_config->IsEmpty ())
-      {
-        g_key_file_set_string (Global::_user_config->_key_file,
-                               "Competiton",
-                               "default_dir_name",
-                               g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
-
-        g_key_file_set_string (Global::_user_config->_key_file,
-                               "Checkin",
-                               "default_import_dir_name",
-                               g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
-      }
+      g_key_file_set_string (Global::_user_config->_key_file,
+                             "Checkin",
+                             "default_import_dir_name",
+                             g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
     }
 
     {
       Language *language = new Language ();
 
-      _singleton = new Tournament (app_name);
+      _singleton = new Tournament ();
       _singleton->_language = language;
     }
 
@@ -88,12 +81,11 @@ Tournament *Tournament::New (const gchar *app_name)
   return NULL;
 }
 
-
 // --------------------------------------------------------------------------------
 Tournament::~Tournament ()
 {
-#if 1
   {
+#if 1
     GSList *list    = _contest_list;
     GSList *current = _contest_list;
 
@@ -108,10 +100,7 @@ Tournament::~Tournament ()
     g_slist_free (list);
 #else
     // Doesn't work! Can't figure out yet why.
-    GSList *list = _contest_list;
-
-    _contest_list = NULL;
-    g_slist_free_full (list,
+    g_slist_free_full (_contest_list,
                        (GDestroyNotify) Object::TryToRelease);
 #endif
   }
@@ -129,12 +118,9 @@ Tournament::~Tournament ()
   _http_server->Release ();
   _ecosystem->Release   ();
   _language->Release    ();
-  Global::_user_config->Release ();
   Contest::Cleanup ();
 
   _singleton = NULL;
-
-  curl_global_cleanup ();
 }
 
 // --------------------------------------------------------------------------------
@@ -283,12 +269,6 @@ void Tournament::Start (gchar *filename)
 
   _web_server = new Net::WebServer ((Net::WebServer::StateFunc) OnWebServerState,
                                     this);
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::Cleanup ()
-{
-  Contest::Cleanup ();
 }
 
 // --------------------------------------------------------------------------------

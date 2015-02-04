@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <curl/curl.h>
+
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -211,12 +213,15 @@ Application::Application (int    *argc,
                                  NULL,
                                  NULL);
 #endif
+
+  curl_global_init (CURL_GLOBAL_ALL);
 }
 
 // --------------------------------------------------------------------------------
 Application::~Application ()
 {
   AttributeDesc::Cleanup ();
+  curl_global_cleanup ();
 }
 
 // --------------------------------------------------------------------------------
