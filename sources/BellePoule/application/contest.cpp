@@ -236,7 +236,7 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest ()
+Contest::Contest (gboolean for_duplication )
   : Module ("contest.glade")
 {
   _save_timeout_id = 0;
@@ -276,7 +276,7 @@ Contest::Contest ()
                                      "default_location",
                                      NULL);
 
-  _manual_classification  = new Data ("ClassementManuel",     (guint) FALSE);
+  _manual_classification  = new Data ("ClassementManuel",     (guint) (for_duplication == TRUE));
   _default_classification = new Data ("ClassementParDefaut",  10000);
   _minimum_team_size      = new Data ("TailleMinimaleEquipe", 3);
 
@@ -895,6 +895,20 @@ void Contest::AddFencer (Player *fencer,
 }
 
 // --------------------------------------------------------------------------------
+void Contest::AddFencer (Player *fencer)
+{
+  if (_schedule)
+  {
+    People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
+
+    if (checkin)
+    {
+      checkin->Add (fencer);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Contest::AddReferee (Player *referee)
 {
   _referees_list->Add           (referee);
@@ -984,7 +998,7 @@ Contest *Contest::Create ()
 // --------------------------------------------------------------------------------
 Contest *Contest::Duplicate ()
 {
-  Contest *contest = new Contest ();
+  Contest *contest = new Contest (TRUE);
 
   contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;
