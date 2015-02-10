@@ -178,10 +178,6 @@ void Score::Set (guint    score,
   _score  = score;
   _status = DEFEAT;
 
-  if (_score == _max->_value)
-  {
-    _status = VICTORY;
-  }
   if (victory)
   {
     _status = VICTORY;
@@ -247,11 +243,6 @@ gboolean Score::IsConsistentWith (Score *with)
     return FALSE;
   }
   else if ((with->_status == VICTORY) && (with->_score < _score))
-  {
-    return FALSE;
-  }
-  else if (   (_score >= _max->_value)
-           && (with->_score >= _max->_value))
   {
     return FALSE;
   }

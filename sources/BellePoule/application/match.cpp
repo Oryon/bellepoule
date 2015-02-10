@@ -522,15 +522,6 @@ void Match::Load (xmlNode *node,
 }
 
 // --------------------------------------------------------------------------------
-void Match::SynchronizeScores ()
-{
-  for (guint i = 0; i < 2; i++)
-  {
-    _opponents[i]._score->SynchronizeWith (_opponents[!i]._score);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Match::CleanScore ()
 {
   for (guint i = 0; i < 2; i++)
