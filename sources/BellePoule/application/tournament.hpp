@@ -23,14 +23,15 @@
 #include "network/downloader.hpp"
 #include "network/web_server.hpp"
 #include "ecosystem.hpp"
-#include "language.hpp"
 
 class Contest;
 
 class Tournament : public Module, Net::HttpServer::Client
 {
   public:
-    static Tournament *New ();
+    Tournament ();
+
+    static void Init ();
 
     void Start (gchar *filename);
 
@@ -96,9 +97,6 @@ class Tournament : public Module, Net::HttpServer::Client
     Net::WebServer  *_web_server;
     gboolean         _print_meal_tickets;
     EcoSystem       *_ecosystem;
-    Language        *_language;
-
-    Tournament ();
 
     virtual ~Tournament ();
 

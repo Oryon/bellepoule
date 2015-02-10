@@ -24,6 +24,8 @@
 
 #include "util/attribute.hpp"
 #include "util/global.hpp"
+#include "util/module.hpp"
+#include "language.hpp"
 
 #include "application.hpp"
 
@@ -141,9 +143,13 @@ gboolean Application::IsCsvReady (AttributeDesc *desc)
 }
 
 // --------------------------------------------------------------------------------
-Application::Application (int    *argc,
-                          char ***argv)
+Application::Application (const gchar   *config_file,
+                          int           *argc,
+                          char        ***argv)
 {
+  _language    = NULL;
+  _main_module = NULL;
+
   // g_mem_set_vtable (glib_mem_profiler_table);
 
   // Init
@@ -205,6 +211,8 @@ Application::Application (int    *argc,
 #endif
 
   curl_global_init (CURL_GLOBAL_ALL);
+
+  Global::_user_config = new UserConfig (config_file);
 }
 
 // --------------------------------------------------------------------------------
@@ -212,7 +220,11 @@ Application::~Application ()
 {
   AttributeDesc::Cleanup ();
 
+  _language->Release ();
+
   g_free (Global::_share_dir);
+
+  Global::_user_config->Release ();
 
   curl_global_cleanup ();
 }
@@ -220,6 +232,8 @@ Application::~Application ()
 // --------------------------------------------------------------------------------
 void Application::Prepare ()
 {
+  _language = new Language ();
+
   // Attributes definition
   {
     AttributeDesc *desc;
@@ -373,4 +387,12 @@ void Application::Prepare ()
     AttributeDesc::SetCriteria ("CSV ready",
                                 IsCsvReady);
   }
+}
+
+// --------------------------------------------------------------------------------
+void Application::Start (int    argc,
+                         char **argv)
+{
+  _language->Populate (GTK_MENU_ITEM  (_main_module->GetGObject ("locale_menuitem")),
+                       GTK_MENU_SHELL (_main_module->GetGObject ("locale_menu")));
 }

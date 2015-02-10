@@ -21,20 +21,29 @@
 
 class Attribute;
 class AttributeDesc;
+class Application;
+class Module;
+class Language;
 
 class Application : public Object
 {
   public:
     virtual void Prepare ();
 
-    virtual void Start (int argc, char **argv) = 0;
+    virtual void Start (int argc, char **argv);
 
   protected:
-    Application (int *argc, char ***argv);
+    Module *_main_module;
+
+    Application (const gchar   *config_file,
+                 int           *argc,
+                 char        ***argv);
 
     virtual ~Application ();
 
   private:
+    Language *_language;
+
     static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                                              const gchar    *link,
                                              gpointer        data);

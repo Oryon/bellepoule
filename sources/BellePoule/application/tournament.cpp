@@ -35,13 +35,10 @@
 
 #include "tournament.hpp"
 
-Tournament *Tournament::_singleton = NULL;
-
 // --------------------------------------------------------------------------------
 Tournament::Tournament ()
   : Module ("tournament.glade")
 {
-  _singleton    = NULL;
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
@@ -49,36 +46,20 @@ Tournament::Tournament ()
 }
 
 // --------------------------------------------------------------------------------
-Tournament *Tournament::New ()
+void Tournament::Init ()
 {
-  if (_singleton == NULL)
+  if (Global::_user_config->IsEmpty ())
   {
-    if (Global::_user_config->IsEmpty ())
-    {
-      g_key_file_set_string (Global::_user_config->_key_file,
-                             "Competiton",
-                             "default_dir_name",
-                             g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
+    g_key_file_set_string (Global::_user_config->_key_file,
+                           "Competiton",
+                           "default_dir_name",
+                           g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
 
-      g_key_file_set_string (Global::_user_config->_key_file,
-                             "Checkin",
-                             "default_import_dir_name",
-                             g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
-    }
-
-    {
-      Language *language = new Language ();
-
-      _singleton = new Tournament ();
-      _singleton->_language = language;
-    }
-
-    Contest::Init ();
-
-    return _singleton;
+    g_key_file_set_string (Global::_user_config->_key_file,
+                           "Checkin",
+                           "default_import_dir_name",
+                           g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
   }
-
-  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -117,18 +98,12 @@ Tournament::~Tournament ()
   _web_server->Release  ();
   _http_server->Release ();
   _ecosystem->Release   ();
-  _language->Release    ();
   Contest::Cleanup ();
-
-  _singleton = NULL;
 }
 
 // --------------------------------------------------------------------------------
 void Tournament::Start (gchar *filename)
 {
-  _language->Populate (GTK_MENU_ITEM  (_glade->GetWidget ("locale_menuitem")),
-                       GTK_MENU_SHELL (_glade->GetWidget ("locale_menu")));
-
   _ecosystem = new EcoSystem (_glade);
 
   // Show the main window

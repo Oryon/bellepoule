@@ -24,11 +24,10 @@
 #include "pool_round/pool_allocator.hpp"
 #include "pool_round/pool_supervisor.hpp"
 #include "table_round/table_supervisor.hpp"
-#include "util/global.hpp"
 #include "util/wifi_code.hpp"
-#include "application.hpp"
-
-#include "tournament.hpp"
+#include "application/application.hpp"
+#include "application/contest.hpp"
+#include "application/tournament.hpp"
 
 // --------------------------------------------------------------------------------
 class BellePoule : public Application
@@ -37,8 +36,6 @@ class BellePoule : public Application
     BellePoule (int *argc, char ***argv);
 
   private:
-    Tournament *_tournament;
-
     virtual ~BellePoule ();
 
     void Prepare ();
@@ -49,23 +46,21 @@ class BellePoule : public Application
 // --------------------------------------------------------------------------------
 BellePoule::BellePoule (int    *argc,
                         char ***argv)
-: Application (argc, argv)
+: Application ("BellePoule", argc, argv)
 {
-  Global::_user_config = new UserConfig ("BellePoule");
-  _tournament = NULL;
 }
 
 // --------------------------------------------------------------------------------
 BellePoule::~BellePoule ()
 {
-  _tournament->Release ();
-  Global::_user_config->Release ();
+  _main_module->Release ();
 }
 
 // --------------------------------------------------------------------------------
 void BellePoule::Prepare ()
 {
-  _tournament = Tournament::New ();
+  Tournament::Init ();
+  Contest::Init    ();
 
   {
     People::CheckinSupervisor::Declare     ();
@@ -83,28 +78,32 @@ void BellePoule::Prepare ()
     Referee::RegisterPlayerClass ();
   }
 
-  WifiCode::SetPort (35830);
-
   Application::Prepare ();
 }
 
 // --------------------------------------------------------------------------------
-void BellePoule::Start (int argc, char **argv)
+void BellePoule::Start (int    argc,
+                        char **argv)
 {
+  Tournament *tournament = new Tournament ();
+
+  WifiCode::SetPort (35830);
+  People::Splitting::SetHostTournament (tournament);
+
+  _main_module = tournament;
+  Application::Start (argc,
+                      argv);
+
+  if (argc > 1)
   {
-    if (argc > 1)
-    {
-      _tournament->Start (g_strdup (argv[1]));
-    }
-    else
-    {
-      _tournament->Start (NULL);
-    }
-
-    People::Splitting::SetHostTournament (_tournament);
-
-    gtk_main ();
+    tournament->Start (g_strdup (argv[1]));
   }
+  else
+  {
+    tournament->Start (NULL);
+  }
+
+  gtk_main ();
 }
 
 // --------------------------------------------------------------------------------
