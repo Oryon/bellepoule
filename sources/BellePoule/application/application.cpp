@@ -14,12 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <glib/gi18n.h>
-
-#include <unistd.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#include <curl/curl.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -27,29 +22,17 @@
 #include <shellapi.h>
 #endif
 
-#include <gtk/gtk.h>
-#include "locale"
-
 #include "util/attribute.hpp"
-#include "util/glade.hpp"
-#include "people_management/barrage.hpp"
-#include "people_management/checkin_supervisor.hpp"
-#include "people_management/general_classification.hpp"
-#include "people_management/splitting.hpp"
-#include "people_management/fencer.hpp"
-#include "people_management/referee.hpp"
-#include "people_management/team.hpp"
-#include "pool_round/pool_allocator.hpp"
-#include "pool_round/pool_supervisor.hpp"
-#include "table_round/table_supervisor.hpp"
-#include "util/wifi_code.hpp"
-#include "tournament.hpp"
-#include "contest.hpp"
+#include "util/global.hpp"
+#include "util/module.hpp"
+#include "language.hpp"
+
+#include "application.hpp"
 
 // --------------------------------------------------------------------------------
-static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
-                                         const gchar    *link,
-                                         gpointer        data)
+void Application::AboutDialogActivateLinkFunc (GtkAboutDialog *about,
+                                               const gchar    *link,
+                                               gpointer        data)
 {
 #ifdef WINDOWS_TEMPORARY_PATCH
   ShellExecuteA (NULL,
@@ -67,8 +50,8 @@ static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
 }
 
 // --------------------------------------------------------------------------------
-static gint CompareRanking (Attribute *attr_a,
-                            Attribute *attr_b)
+gint Application::CompareRanking (Attribute *attr_a,
+                                  Attribute *attr_b)
 {
   gint value_a = 0;
   gint value_b = 0;
@@ -95,8 +78,8 @@ static gint CompareRanking (Attribute *attr_a,
 }
 
 // --------------------------------------------------------------------------------
-static gint CompareDate (Attribute *attr_a,
-                         Attribute *attr_b)
+gint Application::CompareDate (Attribute *attr_a,
+                               Attribute *attr_b)
 {
   GDate date_a;
   GDate date_b;
@@ -118,10 +101,10 @@ static gint CompareDate (Attribute *attr_a,
 }
 // --------------------------------------------------------------------------------
 #ifdef DEBUG
-static void LogHandler (const gchar    *log_domain,
-                        GLogLevelFlags  log_level,
-                        const gchar    *message,
-                        gpointer        user_data)
+void Application::LogHandler (const gchar    *log_domain,
+                              GLogLevelFlags  log_level,
+                              const gchar    *message,
+                              gpointer        user_data)
 {
   switch (log_level)
   {
@@ -149,7 +132,7 @@ static void LogHandler (const gchar    *log_domain,
 #endif
 
 // --------------------------------------------------------------------------------
-static gboolean IsCsvReady (AttributeDesc *desc)
+gboolean Application::IsCsvReady (AttributeDesc *desc)
 {
   return (   (desc->_scope       == AttributeDesc::GLOBAL)
           && (desc->_rights      == AttributeDesc::PUBLIC)
@@ -160,20 +143,22 @@ static gboolean IsCsvReady (AttributeDesc *desc)
 }
 
 // --------------------------------------------------------------------------------
-int main (int argc, char **argv)
+Application::Application (const gchar   *config_file,
+                          int           *argc,
+                          char        ***argv)
 {
+  _language    = NULL;
+  _main_module = NULL;
+
   // g_mem_set_vtable (glib_mem_profiler_table);
 
   // Init
   {
-    gchar *root_dir;
-    gchar *share_dir;
-
     {
       gchar *binary_dir;
 
       {
-        gchar *program = g_find_program_in_path (argv[0]);
+        gchar *program = g_find_program_in_path ((*argv)[0]);
 
         binary_dir = g_path_get_dirname (program);
         g_free (program);
@@ -182,11 +167,10 @@ int main (int argc, char **argv)
 #ifdef DEBUG
       g_log_set_default_handler (LogHandler,
                                  NULL);
-      root_dir  = g_build_filename (binary_dir, "..", "..", "..", NULL);
-      share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
+      Global::_share_dir = g_build_filename (binary_dir, "..", "..", "..", NULL);
 #else
       {
-        gchar *basename = g_path_get_basename (argv[0]);
+        gchar *basename = g_path_get_basename ((*argv)[0]);
 
         if (strstr (basename, ".exe"))
         {
@@ -194,8 +178,7 @@ int main (int argc, char **argv)
           basename = g_strdup ("bellepoule");
         }
 
-        root_dir  = g_build_filename (binary_dir, "..", NULL);
-        share_dir = g_build_filename (binary_dir, "..", "share", basename, NULL);
+        Global::_share_dir = g_build_filename (binary_dir, "..", "share", basename, NULL);
         g_free (basename);
       }
 #endif
@@ -203,85 +186,22 @@ int main (int argc, char **argv)
       g_free (binary_dir);
     }
 
-    if (share_dir)
+    if (Global::_share_dir)
     {
-      gchar *gtkrc = g_build_filename (share_dir, "resources", "gtkrc", NULL);
+      gchar *gtkrc = g_build_filename (Global::_share_dir, "resources", "gtkrc", NULL);
 
       gtk_rc_add_default_file (gtkrc);
       g_free (gtkrc);
     }
 
     {
-      gtk_init (&argc, &argv);
+      gtk_init (argc, argv);
 
       g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
       g_object_set (gtk_settings_get_default (), "gtk-menu-images", TRUE, NULL);
     }
 
     //Object::Track ("Player");
-
-    {
-      Object::SetProgramPaths (root_dir,
-                               share_dir);
-
-      Tournament::Init ();
-
-      {
-        gchar *user_language = Tournament::GetUserLanguage ();
-
-        setlocale (LC_ALL, "");
-
-        if (user_language)
-        {
-          g_setenv ("LANGUAGE",
-                    user_language,
-                    TRUE);
-        }
-      }
-
-      {
-        gchar *translation_path = g_build_filename (share_dir, "resources", "countries", "translations", NULL);
-
-        bindtextdomain ("countries", translation_path);
-        bind_textdomain_codeset ("countries", "UTF-8");
-
-        g_free (translation_path);
-      }
-
-      {
-        gchar *translation_path = g_build_filename (share_dir, "resources", "translations", NULL);
-
-        bindtextdomain ("BellePoule", translation_path);
-        bind_textdomain_codeset ("BellePoule", "UTF-8");
-
-        g_free (translation_path);
-      }
-
-      textdomain ("BellePoule");
-    }
-
-    Contest::Init ();
-
-    {
-      People::CheckinSupervisor::Declare     ();
-      Pool::Allocator::Declare               ();
-      Pool::Supervisor::Declare              ();
-      Table::Supervisor::Declare             ();
-      People::Barrage::Declare               ();
-      People::GeneralClassification::Declare ();
-      People::Splitting::Declare             ();
-    }
-
-    {
-      Fencer::RegisterPlayerClass  ();
-      Team::RegisterPlayerClass    ();
-      Referee::RegisterPlayerClass ();
-    }
-
-    WifiCode::SetPort (35830);
-
-    g_free (root_dir);
-    g_free (share_dir);
   }
 
 #if GTK_MAJOR_VERSION < 3
@@ -290,6 +210,31 @@ int main (int argc, char **argv)
                                  NULL);
 #endif
 
+  curl_global_init (CURL_GLOBAL_ALL);
+
+  Global::_user_config = new UserConfig (config_file);
+}
+
+// --------------------------------------------------------------------------------
+Application::~Application ()
+{
+  AttributeDesc::Cleanup ();
+
+  _language->Release ();
+
+  g_free (Global::_share_dir);
+
+  Global::_user_config->Release ();
+
+  curl_global_cleanup ();
+}
+
+// --------------------------------------------------------------------------------
+void Application::Prepare ()
+{
+  _language = new Language ();
+
+  // Attributes definition
   {
     AttributeDesc *desc;
 
@@ -438,32 +383,16 @@ int main (int argc, char **argv)
                                "Manual",  gettext ("Manual"),  (gchar *) GTK_STOCK_EDIT, NULL);
 
     }
+
+    AttributeDesc::SetCriteria ("CSV ready",
+                                IsCsvReady);
   }
+}
 
-  AttributeDesc::SetCriteria ("CSV ready",
-                              IsCsvReady);
-
-  {
-    Tournament *tournament;
-
-    if (argc > 1)
-    {
-      tournament = new Tournament (g_strdup (argv[1]));
-    }
-    else
-    {
-      tournament = new Tournament (NULL);
-    }
-
-    People::Splitting::SetHostTournament (tournament);
-  }
-
-  gtk_main ();
-
-  {
-    Contest::Cleanup       ();
-    AttributeDesc::Cleanup ();
-  }
-
-  return 0;
+// --------------------------------------------------------------------------------
+void Application::Start (int    argc,
+                         char **argv)
+{
+  _language->Populate (GTK_MENU_ITEM  (_main_module->GetGObject ("locale_menuitem")),
+                       GTK_MENU_SHELL (_main_module->GetGObject ("locale_menu")));
 }

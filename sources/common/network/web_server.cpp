@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/global.hpp"
+
 #include "web_server.hpp"
 
 namespace Net
@@ -85,7 +87,7 @@ namespace Net
     {
       GError   *error       = NULL;
       gint      exit_status;
-      gchar    *path        = g_build_filename (_share_dir, "scripts", script, NULL);
+      gchar    *path        = g_build_filename (Global::_share_dir, "scripts", script, NULL);
       gchar    *cmd_line;
       gboolean  spawn_status;
 
@@ -99,7 +101,7 @@ namespace Net
                                                  "open",
                                                  cmd_line,
                                                  NULL,
-                                                 _share_dir,
+                                                 Global::_share_dir,
                                                  SW_HIDE);
         spawn_status = windows_result > 32;
         exit_status  = 0;

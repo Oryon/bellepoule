@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/global.hpp"
 #include "util/canvas.hpp"
 #include "util/canvas_module.hpp"
 #include "util/player.hpp"
@@ -178,7 +179,7 @@ namespace Table
 
           if (referee_icon == NULL)
           {
-            referee_icon = g_build_filename (_share_dir, "resources/glade/referee.png", NULL);
+            referee_icon = g_build_filename (Global::_share_dir, "resources/glade/referee.png", NULL);
           }
 
           Canvas::PutIconInTable (table,
@@ -195,7 +196,7 @@ namespace Table
           Canvas::SetTableItemAttribute (item, "x-align", 1.0);
           Canvas::SetTableItemAttribute (item, "y-align", 0.5);
           g_object_set (item,
-                        "font", "Sans Bold Italic 12px",
+                        "font", BP_FONT "Bold Italic 12px",
                         NULL);
 
           canvas_module->SetObjectDropZone (referee,

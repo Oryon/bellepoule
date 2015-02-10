@@ -80,8 +80,6 @@ class Match : public Object
     void Load (xmlNode *node,
                Player        *fencer);
 
-    void SynchronizeScores ();
-
     void CleanScore ();
 
     void SetNumber (gint number);

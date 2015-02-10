@@ -36,7 +36,7 @@ class Tournament;
 class Contest : public Module
 {
   public:
-     Contest ();
+    Contest (gboolean for_duplication = FALSE);
 
     virtual ~Contest ();
 
@@ -68,6 +68,8 @@ class Contest : public Module
 
     void AddFencer (Player *player,
                     guint   rank);
+
+    void AddFencer (Player *player);
 
     void AddReferee (Player *referee);
 

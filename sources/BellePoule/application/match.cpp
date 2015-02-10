@@ -522,15 +522,6 @@ void Match::Load (xmlNode *node,
 }
 
 // --------------------------------------------------------------------------------
-void Match::SynchronizeScores ()
-{
-  for (guint i = 0; i < 2; i++)
-  {
-    _opponents[i]._score->SynchronizeWith (_opponents[!i]._score);
-  }
-}
-
-// --------------------------------------------------------------------------------
 void Match::CleanScore ()
 {
   for (guint i = 0; i < 2; i++)
@@ -583,7 +574,7 @@ GooCanvasItem *Match::GetScoreTable (GooCanvasItem *parent,
 {
   if (_max_score->_value <= 15)
   {
-    gchar         *font = g_strdup_printf ("Sans Bold %fpx", 1.5/2.0*(size));
+    gchar         *font = g_strdup_printf (BP_FONT "Bold %fpx", 1.5/2.0*(size));
     GooCanvasItem *score_table = goo_canvas_table_new (parent,
                                                        "column-spacing", size/10.0,
                                                        NULL);

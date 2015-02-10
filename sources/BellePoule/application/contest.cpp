@@ -34,6 +34,7 @@
 #include <shellapi.h>
 #endif
 
+#include "util/global.hpp"
 #include "util/canvas.hpp"
 #include "people_management/checkin.hpp"
 #include "people_management/referees_list.hpp"
@@ -235,7 +236,7 @@ gboolean Contest::Time::IsEqualTo (Time *to)
 }
 
 // --------------------------------------------------------------------------------
-Contest::Contest ()
+Contest::Contest (gboolean for_duplication )
   : Module ("contest.glade")
 {
   _save_timeout_id = 0;
@@ -258,24 +259,24 @@ Contest::Contest ()
    _team_event    = FALSE;
    _derived       = FALSE;
 
-  _name = g_key_file_get_string (_config_file,
+  _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
                                  "default_name",
                                  NULL);
-  _organizer = g_key_file_get_string (_config_file,
+  _organizer = g_key_file_get_string (Global::_user_config->_key_file,
                                       "Competiton",
                                       "default_organizer",
                                       NULL);
-  _web_site = g_key_file_get_string (_config_file,
+  _web_site = g_key_file_get_string (Global::_user_config->_key_file,
                                      "Competiton",
                                      "default_web_site",
                                      NULL);
-  _location = g_key_file_get_string (_config_file,
+  _location = g_key_file_get_string (Global::_user_config->_key_file,
                                      "Competiton",
                                      "default_location",
                                      NULL);
 
-  _manual_classification  = new Data ("ClassementManuel",     (guint) FALSE);
+  _manual_classification  = new Data ("ClassementManuel",     (guint) (for_duplication == TRUE));
   _default_classification = new Data ("ClassementParDefaut",  10000);
   _minimum_team_size      = new Data ("TailleMinimaleEquipe", 3);
 
@@ -821,7 +822,7 @@ Contest::~Contest ()
   if (_filename)
   {
     gchar *base_name = g_path_get_basename (_filename);
-    gchar *www_file  = g_build_filename (_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
+    gchar *www_file  = g_build_filename (Global::_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
 
     g_unlink (www_file);
 
@@ -888,6 +889,20 @@ void Contest::AddFencer (Player *fencer,
 
       fencer->SetAttributeValue (&ranking_attr,
                                  rank);
+      checkin->Add (fencer);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Contest::AddFencer (Player *fencer)
+{
+  if (_schedule)
+  {
+    People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
+
+    if (checkin)
+    {
       checkin->Add (fencer);
     }
   }
@@ -983,7 +998,7 @@ Contest *Contest::Create ()
 // --------------------------------------------------------------------------------
 Contest *Contest::Duplicate ()
 {
-  Contest *contest = new Contest ();
+  Contest *contest = new Contest (TRUE);
 
   contest->_schedule->CreateDefault (TRUE);
   contest->_derived = TRUE;
@@ -1065,7 +1080,7 @@ void Contest::ChooseColor ()
 {
   gint color_to_use;
 
-  color_to_use = g_key_file_get_integer (_config_file,
+  color_to_use = g_key_file_get_integer (Global::_user_config->_key_file,
                                          "Competiton",
                                          "color_to_use",
                                          NULL);
@@ -1079,7 +1094,7 @@ void Contest::ChooseColor ()
   {
     color_to_use = 0;
   }
-  g_key_file_set_integer (_config_file,
+  g_key_file_set_integer (Global::_user_config->_key_file,
                           "Competiton",
                           "color_to_use",
                           color_to_use);
@@ -1322,7 +1337,7 @@ void Contest::ReadProperties ()
   {
     if (_name && *_name != 0)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_name",
                              _name);
@@ -1330,7 +1345,7 @@ void Contest::ReadProperties ()
 
     if (_organizer && *_organizer != 0)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_organizer",
                              _organizer);
@@ -1338,7 +1353,7 @@ void Contest::ReadProperties ()
 
     if (_web_site && *_web_site != 0)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_web_site",
                              _web_site);
@@ -1346,7 +1361,7 @@ void Contest::ReadProperties ()
 
     if (_location && *_location != 0)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_location",
                              _location);
@@ -1470,7 +1485,7 @@ void Contest::Save ()
     // www
     {
       gchar *base_name = g_path_get_basename (_filename);
-      gchar *www_file  = g_build_filename (_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
+      gchar *www_file  = g_build_filename (Global::_share_dir, "webserver", "LightTPD", "www", "cotcot", base_name, NULL);
 
       Save (www_file);
       g_free (base_name);
@@ -1747,7 +1762,7 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
   }
 
   {
-    gchar *last_dirname = g_key_file_get_string (_config_file,
+    gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                  "Competiton",
                                                  config_key,
                                                  NULL);
@@ -1782,7 +1797,7 @@ gchar *Contest::GetSaveFileName (GtkWidget   *chooser,
       {
         gchar *dirname = g_path_get_dirname (_filename);
 
-        g_key_file_set_string (_config_file,
+        g_key_file_set_string (Global::_user_config->_key_file,
                                "Competiton",
                                config_key,
                                dirname);
@@ -1888,7 +1903,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          GTK_ANCHOR_NORTH,
                          "alignment", PANGO_ALIGN_CENTER,
                          "fill-color", "black",
-                         "font", "Sans Bold 2.5px", NULL);
+                         "font", BP_FONT "Bold 2.5px", NULL);
   }
 
   {
@@ -1901,14 +1916,14 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          -1.0,
                          GTK_ANCHOR_CENTER,
                          "fill-color", "black",
-                         "font", "Sans Bold 4px", NULL);
+                         "font", BP_FONT "Bold 4px", NULL);
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                          text,
                          50.0, 3.0,
                          -1.0,
                          GTK_ANCHOR_CENTER,
                          "fill-color", "white",
-                         "font", "Sans Bold 4px", NULL);
+                         "font", BP_FONT "Bold 4px", NULL);
     g_free (text);
   }
 
@@ -1919,7 +1934,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          -1.0,
                          GTK_ANCHOR_CENTER,
                          "fill-color", "black",
-                         "font", "Sans Bold 4px", NULL);
+                         "font", BP_FONT "Bold 4px", NULL);
   }
 
   if (_organizer)
@@ -1930,7 +1945,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          -1.0,
                          GTK_ANCHOR_EAST,
                          "fill-color", "black",
-                         "font", "Sans Bold 2.5px", NULL);
+                         "font", BP_FONT "Bold 2.5px", NULL);
   }
 
   {
@@ -1940,7 +1955,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
                          -1.0,
                          GTK_ANCHOR_EAST,
                          "fill-color", "black",
-                         "font", "Sans Bold 2.5px", NULL);
+                         "font", BP_FONT "Bold 2.5px", NULL);
   }
 
   goo_canvas_render (canvas,

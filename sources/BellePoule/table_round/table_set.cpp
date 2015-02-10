@@ -22,6 +22,7 @@
 #include <libxml/xpath.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "util/player.hpp"
 #include "application/classification.hpp"
@@ -309,7 +310,7 @@ namespace Table
                                       _score_rect_size/2, _score_rect_size/2,
                                       -1,
                                       GTK_ANCHOR_CENTER,
-                                      "font", "Sans bold 18px",
+                                      "font", BP_FONT "bold 18px",
                                       NULL);
 
     _quick_score_collector->AddCollectingPoint (goo_rect,
@@ -443,7 +444,7 @@ namespace Table
                                                 0,
                                                 1);
             g_object_set (G_OBJECT (text_item),
-                          "font", "Sans bold 18px",
+                          "font", BP_FONT "bold 18px",
                           NULL);
             g_free (text);
           }
@@ -1165,7 +1166,7 @@ namespace Table
             Canvas::SetTableItemAttribute (number_item, "y-align", 0.5);
             g_object_set (number_item,
                           "fill-color", "Grey",
-                          "font",       "Bold",
+                          "font",       BP_FONT "Bold",
                           NULL);
           }
         }
@@ -1241,7 +1242,7 @@ namespace Table
 
             if (arrow_icon == NULL)
             {
-              arrow_icon = g_build_filename (_share_dir, "resources/glade/arrow.png", NULL);
+              arrow_icon = g_build_filename (Global::_share_dir, "resources/glade/arrow.png", NULL);
             }
             goo_item = Canvas::PutIconInTable (data->_score_goo_table,
                                                arrow_icon,
@@ -1262,7 +1263,7 @@ namespace Table
                                                          0, 0,
                                                          -1,
                                                          GTK_ANCHOR_CENTER,
-                                                         "font", "Sans bold 18px",
+                                                         "font", BP_FONT "bold 18px",
                                                          NULL);
 
             Canvas::PutInTable (data->_score_goo_table,
@@ -1392,7 +1393,7 @@ namespace Table
         if (winner)
         {
           data->_fencer_goo_image = table_set->GetPlayerImage (data->_fencer_goo_table,
-                                                               "font_desc=\"Sans 14.0px\"",
+                                                               "font_desc=\"" BP_FONT "14.0px\"",
                                                                winner,
                                                                "name",       "font_weight=\"bold\" foreground=\"darkblue\"",
                                                                "first_name", "foreground=\"darkblue\"",
@@ -3211,7 +3212,7 @@ namespace Table
           GooCanvasItem *name_item;
           GooCanvasItem *flash_item;
           GooCanvasItem *title_group = goo_canvas_group_new (match_group, NULL);
-          gchar         *font        = g_strdup_printf ("Sans Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
+          gchar         *font        = g_strdup_printf (BP_FONT "Bold %fpx", 3.5/2.0*(PRINT_FONT_HEIGHT));
 
           Canvas::NormalyzeDecimalNotation (font);
 
@@ -3405,7 +3406,7 @@ namespace Table
   {
     // Name
     {
-      gchar *common_markup = g_strdup_printf ("font_desc=\"Sans %fpx\"", PRINT_FONT_HEIGHT);
+      gchar *common_markup = g_strdup_printf ("font_desc=\"" BP_FONT "%fpx\"", PRINT_FONT_HEIGHT);
 
       Canvas::NormalyzeDecimalNotation (common_markup);
 
@@ -3476,7 +3477,7 @@ namespace Table
                                           3);
       Canvas::SetTableItemAttribute (text_item, "y-align", 0.5);
       g_object_set (G_OBJECT (text_item),
-                    "font", "Sans bold 3.5px",
+                    "font", BP_FONT "bold 3.5px",
                     "fill-color", "Grey95",
                     NULL);
     }

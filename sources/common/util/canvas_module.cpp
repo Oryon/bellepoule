@@ -746,7 +746,7 @@ gboolean CanvasModule::OnButtonPress (GooCanvasItem  *item,
                                         _drag_y,
                                         -1,
                                         GTK_ANCHOR_NW,
-                                        "font", "Sans Bold 14px", NULL);
+                                        "font", BP_FONT "Bold 14px", NULL);
       g_string_free (string,
                      TRUE);
 

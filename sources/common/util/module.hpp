@@ -24,6 +24,7 @@
 #include "sensitivity_trigger.hpp"
 #include "filter.hpp"
 #include "glade.hpp"
+#include "user_config.hpp"
 
 class Player;
 class Module : public virtual Object
@@ -117,8 +118,6 @@ class Module : public virtual Object
 
     static const gdouble PRINT_HEADER_HEIGHT;
     static const gdouble PRINT_FONT_HEIGHT;
-
-    static GKeyFile *_config_file;
 
     Module (const gchar *glade_file,
             const gchar *root = NULL);

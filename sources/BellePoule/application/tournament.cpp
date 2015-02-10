@@ -18,7 +18,6 @@
 #include <glib.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
-#include <curl/curl.h>
 #include <locale.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
@@ -27,6 +26,7 @@
 #include <shellapi.h>
 #endif
 
+#include "util/global.hpp"
 #include "util/canvas.hpp"
 
 #include "version.h"
@@ -36,19 +36,75 @@
 #include "tournament.hpp"
 
 // --------------------------------------------------------------------------------
-Tournament::Tournament (gchar *filename)
+Tournament::Tournament ()
   : Module ("tournament.glade")
 {
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
   _nb_matchs    = 0;
+}
 
+// --------------------------------------------------------------------------------
+void Tournament::Init ()
+{
+  if (Global::_user_config->IsEmpty ())
+  {
+    g_key_file_set_string (Global::_user_config->_key_file,
+                           "Competiton",
+                           "default_dir_name",
+                           g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
+
+    g_key_file_set_string (Global::_user_config->_key_file,
+                           "Checkin",
+                           "default_import_dir_name",
+                           g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
+  }
+}
+
+// --------------------------------------------------------------------------------
+Tournament::~Tournament ()
+{
+  {
+#if 1
+    GSList *list    = _contest_list;
+    GSList *current = _contest_list;
+
+    _contest_list = NULL;
+    while (current)
+    {
+      Contest *contest = (Contest *) current->data;
+
+      contest->Release ();
+      current = g_slist_next (current);
+    }
+    g_slist_free (list);
+#else
+    // Doesn't work! Can't figure out yet why.
+    g_slist_free_full (_contest_list,
+                       (GDestroyNotify) Object::TryToRelease);
+#endif
+  }
+
+  g_slist_free_full (_referee_list,
+                     (GDestroyNotify) Object::TryToRelease);
+
+  if (_version_downloader)
+  {
+    _version_downloader->Kill    ();
+    _version_downloader->Release ();
+  }
+
+  _web_server->Release  ();
+  _http_server->Release ();
+  _ecosystem->Release   ();
+  Contest::Cleanup ();
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::Start (gchar *filename)
+{
   _ecosystem = new EcoSystem (_glade);
-
-  curl_global_init (CURL_GLOBAL_ALL);
-
-  EnumerateLanguages ();
 
   // Show the main window
   {
@@ -104,21 +160,21 @@ Tournament::Tournament (gchar *filename)
   {
     GtkWidget   *w         = _glade->GetWidget ("about_dialog");
     const gchar *authors[] = {"Florence Blanchard",
-      "Laurent Bonnot",
-      "Tony (ajs New Mexico)",
-      "Emmanuel Chaix",
-      "Julien Diaz",
-      "Olivier Larcher",
-      "Yannick Le Roux",
-      "Jean-Pierre Mahé",
-      "Pierre Moro",
-      "Killian Poulet",
-      "Michel Relet",
-      "Vincent Rémy",
-      "Tina Schliemann",
-      "Claude Simonnot",
-      "Sébastien Vermandel",
-      NULL};
+                              "Laurent Bonnot",
+                              "Tony (ajs New Mexico)",
+                              "Emmanuel Chaix",
+                              "Julien Diaz",
+                              "Olivier Larcher",
+                              "Yannick Le Roux",
+                              "Jean-Pierre Mahé",
+                              "Pierre Moro",
+                              "Killian Poulet",
+                              "Michel Relet",
+                              "Vincent Rémy",
+                              "Tina Schliemann",
+                              "Claude Simonnot",
+                              "Sébastien Vermandel",
+                              NULL};
 
     gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (w),
                                   authors);
@@ -150,7 +206,7 @@ Tournament::Tournament (gchar *filename)
   }
 
   {
-    gchar *last_backup = g_key_file_get_string (_config_file,
+    gchar *last_backup = g_key_file_get_string (Global::_user_config->_key_file,
                                                 "Tournament",
                                                 "backup_location",
                                                 NULL);
@@ -188,111 +244,6 @@ Tournament::Tournament (gchar *filename)
 
   _web_server = new Net::WebServer ((Net::WebServer::StateFunc) OnWebServerState,
                                     this);
-}
-
-// --------------------------------------------------------------------------------
-Tournament::~Tournament ()
-{
-#if 1
-  {
-    GSList *list    = _contest_list;
-    GSList *current = _contest_list;
-
-    _contest_list = NULL;
-    while (current)
-    {
-      Contest *contest = (Contest *) current->data;
-
-      contest->Release ();
-      current = g_slist_next (current);
-    }
-    g_slist_free (list);
-#else
-    // Doesn't work! Can't figure out yet why.
-    GSList *list = _contest_list;
-
-    _contest_list = NULL;
-    g_slist_free_full (list,
-                       (GDestroyNotify) Object::TryToRelease);
-#endif
-  }
-
-  {
-    GError *error       = NULL;
-    gchar  *config_path = g_strdup_printf ("%s/BellePoule/config.ini", g_get_user_config_dir ());
-
-    if (config_path)
-    {
-      gsize  config_length;
-      gchar *config = g_key_file_to_data (_config_file,
-                                          &config_length,
-                                          &error);
-
-      if (error)
-      {
-        g_error ("g_key_file_to_data: %s", error->message);
-        g_error_free (error);
-      }
-      else if (g_file_set_contents (config_path,
-                                    config,
-                                    config_length,
-                                    &error) == FALSE)
-      {
-        g_error ("g_file_set_contents: %s", error->message);
-        g_error_free (error);
-      }
-      g_free (config);
-    }
-    g_free (config_path);
-  }
-
-  g_slist_free_full (_referee_list,
-                     (GDestroyNotify) Object::TryToRelease);
-
-  g_key_file_free (_config_file);
-
-  if (_version_downloader)
-  {
-    _version_downloader->Kill    ();
-    _version_downloader->Release ();
-  }
-
-  _web_server->Release ();
-
-  _http_server->Release ();
-  curl_global_cleanup ();
-
-  _ecosystem->Release ();
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::Init ()
-{
-  gchar *dir_path  = g_strdup_printf ("%s/BellePoule", g_get_user_config_dir ());
-  gchar *file_path = g_strdup_printf ("%s/config.ini", dir_path);
-
-  _config_file = g_key_file_new ();
-  if (g_key_file_load_from_file (_config_file,
-                                 file_path,
-                                 G_KEY_FILE_KEEP_COMMENTS,
-                                 NULL) == FALSE)
-  {
-    g_mkdir_with_parents (dir_path,
-                          0700);
-
-    g_key_file_set_string (_config_file,
-                           "Competiton",
-                           "default_dir_name",
-                           g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
-
-    g_key_file_set_string (_config_file,
-                           "Checkin",
-                           "default_import_dir_name",
-                           g_get_user_special_dir (G_USER_DIRECTORY_DOCUMENTS));
-  }
-
-  g_free (dir_path);
-  g_free (file_path);
 }
 
 // --------------------------------------------------------------------------------
@@ -442,7 +393,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 
             // Name
             {
-              gchar               *font   = g_strdup_printf ("Sans Bold %fpx", 2*PRINT_FONT_HEIGHT);
+              gchar               *font   = g_strdup_printf (BP_FONT "Bold %fpx", 2*PRINT_FONT_HEIGHT);
               Player::AttributeId  attr_id ("name");
               Attribute           *attr   = referee->GetAttribute (&attr_id);
               gchar               *string = attr->GetUserImage (AttributeDesc::LONG_TEXT);
@@ -463,7 +414,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
 
             // First name
             {
-              gchar               *font   = g_strdup_printf ("Sans %fpx", 1.5*PRINT_FONT_HEIGHT);
+              gchar               *font   = g_strdup_printf (BP_FONT "%fpx", 1.5*PRINT_FONT_HEIGHT);
               Player::AttributeId  attr_id ("first_name");
               Attribute           *attr   = referee->GetAttribute (&attr_id);
               gchar               *string = attr->GetUserImage (AttributeDesc::LONG_TEXT);
@@ -493,7 +444,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
           // Food
           {
             GooCanvasItem *food_table = goo_canvas_table_new (ticket_table, NULL);
-            gchar         *font   = g_strdup_printf ("Sans %fpx", 1.8*PRINT_FONT_HEIGHT);
+            gchar         *font   = g_strdup_printf (BP_FONT "%fpx", 1.8*PRINT_FONT_HEIGHT);
             const gchar   *strings[] = {gettext ("Meal"),
                                         gettext ("Drink"),
                                         gettext ("Dessert"),
@@ -542,7 +493,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
   }
   else
   {
-    gchar         *font = g_strdup_printf ("Sans %fpx", 1.0*PRINT_FONT_HEIGHT);
+    gchar         *font = g_strdup_printf (BP_FONT "%fpx", 1.0*PRINT_FONT_HEIGHT);
     GooCanvasItem *header;
 
     Canvas::NormalyzeDecimalNotation (font);
@@ -559,7 +510,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
                                        NULL);
 
     {
-      gchar *font = g_strdup_printf ("Sans Bold %fpx", 3.0*PRINT_FONT_HEIGHT);
+      gchar *font = g_strdup_printf (BP_FONT "Bold %fpx", 3.0*PRINT_FONT_HEIGHT);
 
       Canvas::NormalyzeDecimalNotation (font);
       header = goo_canvas_text_new (goo_canvas_get_root_item (canvas),
@@ -574,7 +525,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
     }
 
     {
-      gchar *font   = g_strdup_printf ("Sans Bold %fpx", 1.0*PRINT_FONT_HEIGHT);
+      gchar *font   = g_strdup_printf (BP_FONT "Bold %fpx", 1.0*PRINT_FONT_HEIGHT);
       gchar *string = g_strdup_printf ("%s %d", gettext ("Page"), page_nr+1);
 
       Canvas::NormalyzeDecimalNotation (font);
@@ -1026,104 +977,6 @@ void Tournament::RefreshMatchRate (Player *referee)
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::EnumerateLanguages ()
-{
-  gchar  *contents;
-  gchar  *filename     = g_build_filename (_share_dir, "resources", "translations", "index.txt", NULL);
-
-  if (g_file_get_contents (filename,
-                           &contents,
-                           NULL,
-                           NULL) == TRUE)
-  {
-    gchar **lines = g_strsplit_set (contents, "\n", 0);
-
-    if (lines)
-    {
-      const gchar *env     = g_getenv ("LANGUAGE");
-      gchar  *original_env = NULL;
-      GSList *group        = NULL;
-      gchar  *last_setting = g_key_file_get_string (_config_file,
-                                                    "Tournament",
-                                                    "interface_language",
-                                                    NULL);
-      if (env)
-      {
-        original_env = g_strdup (env);
-        gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("locale_menuitem")),
-                                 env);
-      }
-
-      for (guint l = 0; lines[l] && lines[l][0]; l++)
-      {
-        gchar **tokens = g_strsplit_set (lines[l], ";", 0);
-
-        if (tokens)
-        {
-          GtkWidget *item;
-
-          g_setenv ("LANGUAGE",
-                    tokens[0],
-                    TRUE);
-
-          g_strdelimit (tokens[1],
-                        "\n\r",
-                        '\0');
-
-          item  = gtk_radio_menu_item_new_with_label (group, tokens[1]);
-          group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
-
-          gtk_menu_shell_append (GTK_MENU_SHELL (_glade->GetWidget ("locale_menu")),
-                                 item);
-          gtk_widget_set_tooltip_text (item,
-                                       gettext ("Restart BellePoule for this change to take effect"));
-
-          g_signal_connect (item, "toggled",
-                            G_CALLBACK (OnLocaleToggled), (void *)
-                            g_strdup (tokens[0]));
-          if (last_setting && strcmp (last_setting, tokens[0]) == 0)
-          {
-            gtk_menu_item_set_label (GTK_MENU_ITEM (_glade->GetWidget ("locale_menuitem")),
-                                     tokens[0]);
-            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item),
-                                            TRUE);
-          }
-
-          gtk_widget_show (item);
-          g_strfreev (tokens);
-        }
-      }
-
-      if (original_env)
-      {
-        g_setenv ("LANGUAGE",
-                  original_env,
-                  TRUE);
-        g_free (original_env);
-      }
-      else
-      {
-        g_unsetenv ("LANGUAGE");
-      }
-
-      g_strfreev (lines);
-    }
-    g_free (contents);
-  }
-
-  g_free (filename);
-}
-
-// --------------------------------------------------------------------------------
-gchar *Tournament::GetUserLanguage ()
-{
-  return g_key_file_get_string (_config_file,
-                                "Tournament",
-                                "interface_language",
-                                NULL);
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::Manage (Contest *contest)
 {
   if (contest)
@@ -1235,7 +1088,7 @@ void Tournament::OnOpen (gchar *current_folder)
   }
   else
   {
-    gchar *last_dirname = g_key_file_get_string (_config_file,
+    gchar *last_dirname = g_key_file_get_string (Global::_user_config->_key_file,
                                                  "Competiton",
                                                  "default_dir_name",
                                                  NULL);
@@ -1281,7 +1134,7 @@ void Tournament::OnOpenUserManual ()
   gchar *uri;
 
 #ifdef WINDOWS_TEMPORARY_PATCH
-  uri = g_build_filename (_share_dir, "resources", "user_manual.pdf", NULL);
+  uri = g_build_filename (Global::_share_dir, "resources", "user_manual.pdf", NULL);
 
   ShellExecute (NULL,
                 "open",
@@ -1290,7 +1143,7 @@ void Tournament::OnOpenUserManual ()
                 NULL,
                 SW_SHOWNORMAL);
 #else
-  uri = g_build_filename ("file://", _share_dir, "resources", "user_manual.pdf", NULL);
+  uri = g_build_filename ("file://", Global::_share_dir, "resources", "user_manual.pdf", NULL);
 
   gtk_show_uri (NULL,
                 uri,
@@ -1383,7 +1236,7 @@ void Tournament::OpenUriContest (const gchar *uri)
     {
       gchar *dirname = g_path_get_dirname (uri);
 
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Competiton",
                              "default_dir_name",
                              dirname);
@@ -1443,9 +1296,9 @@ void Tournament::OpenUriContest (const gchar *uri)
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenExample ()
 {
-  if (_share_dir)
+  if (Global::_share_dir)
   {
-    gchar *example_dirname = g_build_filename (_share_dir, "Exemples", NULL);
+    gchar *example_dirname = g_build_filename (Global::_share_dir, "Exemples", NULL);
 
     OnOpen (example_dirname);
     g_free (example_dirname);
@@ -1529,7 +1382,7 @@ void Tournament::OnBackupfileLocation ()
                                                                 NULL));
 
   {
-    gchar *last_location = g_key_file_get_string (_config_file,
+    gchar *last_location = g_key_file_get_string (Global::_user_config->_key_file,
                                                   "Tournament",
                                                   "backup_location",
                                                   NULL);
@@ -1548,7 +1401,7 @@ void Tournament::OnBackupfileLocation ()
 
     if (foldername)
     {
-      g_key_file_set_string (_config_file,
+      g_key_file_set_string (Global::_user_config->_key_file,
                              "Tournament",
                              "backup_location",
                              foldername);
@@ -1611,19 +1464,6 @@ void Tournament::OnVideoReleased ()
   else
   {
     _web_server->Start ();
-  }
-}
-
-// --------------------------------------------------------------------------------
-void Tournament::OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
-                                  gchar            *locale)
-{
-  if (gtk_check_menu_item_get_active (checkmenuitem))
-  {
-    g_key_file_set_string (_config_file,
-                           "Tournament",
-                           "interface_language",
-                           locale);
   }
 }
 
@@ -1835,9 +1675,6 @@ extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
   {
-    Tournament *t = dynamic_cast <Tournament *> (owner);
-
-    t->Release ();
     gtk_main_quit ();
   }
   else

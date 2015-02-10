@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "util/global.hpp"
+
 #include "ecosystem.hpp"
 
 typedef enum
@@ -48,7 +50,7 @@ EcoSystem::EcoSystem (Glade *glade)
   // Remote FTP
   {
     GtkListStore *model  = GTK_LIST_STORE (_glade->GetGObject ("FavoriteFTP"));
-    gchar        *path   = g_build_filename (_share_dir, "resources", "glade", "escrime_info.jpg", NULL);
+    gchar        *path   = g_build_filename (Global::_share_dir, "resources", "glade", "escrime_info.jpg", NULL);
     GdkPixbuf    *pixbuf = gdk_pixbuf_new_from_file (path, NULL);
     GtkTreeIter   iter;
 

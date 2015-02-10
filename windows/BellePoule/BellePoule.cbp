@@ -8,9 +8,11 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="Debug\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="Debug" />
 				<Option object_output="Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-Wunreachable-code" />
 					<Add option="-g" />
@@ -19,6 +21,7 @@
 			</Target>
 			<Target title="Release">
 				<Option output="Release\BellePoule" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="Release" />
 				<Option object_output="Release\" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -100,6 +103,8 @@
 			<Add directory="C:\MinGW\lib" />
 			<Add directory="C:\MinGW\msys\1.0\lib" />
 		</Linker>
+		<Unit filename="..\..\sources\BellePoule\application\application.cpp" />
+		<Unit filename="..\..\sources\BellePoule\application\application.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\attendees.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\attendees.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\book.cpp" />
@@ -112,7 +117,8 @@
 		<Unit filename="..\..\sources\BellePoule\application\contest.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\ecosystem.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\ecosystem.hpp" />
-		<Unit filename="..\..\sources\BellePoule\application\main.cpp" />
+		<Unit filename="..\..\sources\BellePoule\application\language.cpp" />
+		<Unit filename="..\..\sources\BellePoule\application\language.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\match.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\match.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\referee_zone.cpp" />
@@ -128,6 +134,10 @@
 		<Unit filename="..\..\sources\BellePoule\application\tournament.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\tournament.hpp" />
 		<Unit filename="..\..\sources\BellePoule\application\version.h" />
+		<Unit filename="..\..\sources\BellePoule\main\bellepoule.cpp" />
+		<Unit filename="..\..\sources\BellePoule\main\dispatcher.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="..\..\sources\BellePoule\people_management\barrage.cpp" />
 		<Unit filename="..\..\sources\BellePoule\people_management\barrage.hpp" />
 		<Unit filename="..\..\sources\BellePoule\people_management\checkin.cpp" />
@@ -242,6 +252,8 @@
 		<Unit filename="..\..\sources\common\util\flash_code.hpp" />
 		<Unit filename="..\..\sources\common\util\glade.cpp" />
 		<Unit filename="..\..\sources\common\util\glade.hpp" />
+		<Unit filename="..\..\sources\common\util\global.cpp" />
+		<Unit filename="..\..\sources\common\util\global.hpp" />
 		<Unit filename="..\..\sources\common\util\module.cpp" />
 		<Unit filename="..\..\sources\common\util\module.hpp" />
 		<Unit filename="..\..\sources\common\util\object.cpp" />
@@ -252,6 +264,8 @@
 		<Unit filename="..\..\sources\common\util\sensitivity_trigger.hpp" />
 		<Unit filename="..\..\sources\common\util\tree_model_index.cpp" />
 		<Unit filename="..\..\sources\common\util\tree_model_index.hpp" />
+		<Unit filename="..\..\sources\common\util\user_config.cpp" />
+		<Unit filename="..\..\sources\common\util\user_config.hpp" />
 		<Unit filename="..\..\sources\common\util\wifi_code.cpp" />
 		<Unit filename="..\..\sources\common\util\wifi_code.hpp" />
 		<Extensions>

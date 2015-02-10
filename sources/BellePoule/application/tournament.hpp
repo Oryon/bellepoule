@@ -17,8 +17,6 @@
 #ifndef tournament_hpp
 #define tournament_hpp
 
-#include <gtk/gtk.h>
-
 #include "util/module.hpp"
 #include "util/glade.hpp"
 #include "network/http_server.hpp"
@@ -31,11 +29,11 @@ class Contest;
 class Tournament : public Module, Net::HttpServer::Client
 {
   public:
-     Tournament (gchar *filename);
-
-    virtual ~Tournament ();
+    Tournament ();
 
     static void Init ();
+
+    void Start (gchar *filename);
 
     void OnNew ();
 
@@ -56,8 +54,6 @@ class Tournament : public Module, Net::HttpServer::Client
     void PrintMealTickets ();
 
     void PrintPaymentBook ();
-
-    static gchar *GetUserLanguage ();
 
     void OnBackupfileLocation ();
 
@@ -89,20 +85,22 @@ class Tournament : public Module, Net::HttpServer::Client
     static const guint NB_TICKET_Y_PER_SHEET = 5;
     static const guint NB_REFEREE_PER_SHEET  = 20;
 
+    static Tournament *_singleton;
+
     guint _referee_ref;
 
-    GSList           *_contest_list;
-    GSList           *_referee_list;
-    guint             _nb_matchs;
-    Net::HttpServer  *_http_server;
-    Net::Downloader  *_version_downloader;
-    Net::WebServer   *_web_server;
-    gboolean          _print_meal_tickets;
-    EcoSystem        *_ecosystem;
+    GSList          *_contest_list;
+    GSList          *_referee_list;
+    guint            _nb_matchs;
+    Net::HttpServer *_http_server;
+    Net::Downloader *_version_downloader;
+    Net::WebServer  *_web_server;
+    gboolean         _print_meal_tickets;
+    EcoSystem       *_ecosystem;
+
+    virtual ~Tournament ();
 
     void SetBackupLocation (gchar *location);
-
-    void EnumerateLanguages ();
 
     void RefreshMatchRate (gint delta);
 
@@ -137,9 +135,6 @@ class Tournament : public Module, Net::HttpServer::Client
 
     static gchar *HttpGetCbk (Net::HttpServer::Client *client,
                               const gchar             *url);
-
-    static void OnLocaleToggled (GtkCheckMenuItem *checkmenuitem,
-                                 gchar            *locale);
 
     static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
 };

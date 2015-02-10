@@ -18,6 +18,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "util/global.hpp"
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
 #include "application/schedule.hpp"
@@ -1131,7 +1132,7 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::OnImportRanking ()
   {
-    RankImporter *importer = new RankImporter (_config_file);
+    RankImporter *importer = new RankImporter (Global::_user_config->_key_file);
 
     {
       GSList *current = _player_list;
