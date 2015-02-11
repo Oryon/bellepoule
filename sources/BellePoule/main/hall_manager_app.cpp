@@ -15,16 +15,16 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "application/application.hpp"
-#include "hall.hpp"
+#include "hall_manager.hpp"
 
 // --------------------------------------------------------------------------------
-class Dispatcher : public Application
+class HallManagerApp : public Application
 {
   public:
-    Dispatcher (int *argc, char ***argv);
+    HallManagerApp (int *argc, char ***argv);
 
   private:
-    virtual ~Dispatcher ();
+    virtual ~HallManagerApp ();
 
     void Prepare ();
 
@@ -32,36 +32,36 @@ class Dispatcher : public Application
 };
 
 // --------------------------------------------------------------------------------
-Dispatcher::Dispatcher (int    *argc,
-                        char ***argv)
-: Application ("Dispatcher", argc, argv)
+HallManagerApp::HallManagerApp (int    *argc,
+                                char ***argv)
+  : Application ("HallManager", argc, argv)
 {
 }
 
 // --------------------------------------------------------------------------------
-Dispatcher::~Dispatcher ()
+HallManagerApp::~HallManagerApp ()
 {
   _main_module->Release ();
 }
 
 // --------------------------------------------------------------------------------
-void Dispatcher::Prepare ()
+void HallManagerApp::Prepare ()
 {
   Application::Prepare ();
 }
 
 // --------------------------------------------------------------------------------
-void Dispatcher::Start (int    argc,
-                        char **argv)
+void HallManagerApp::Start (int    argc,
+                            char **argv)
 {
-  Hall *hall = new Hall ();
+  HallManager *hall_manager = new HallManager ();
 
-  _main_module = hall;
+  _main_module = hall_manager;
 
   Application::Start (argc,
                       argv);
 
-  hall->Start ();
+  hall_manager->Start ();
 
   gtk_main ();
 }
@@ -70,7 +70,7 @@ void Dispatcher::Start (int    argc,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  Application *application = new Dispatcher (&argc, &argv);
+  Application *application = new HallManagerApp (&argc, &argv);
 
   application->Prepare ();
 

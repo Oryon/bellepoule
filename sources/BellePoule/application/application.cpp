@@ -356,6 +356,13 @@ void Application::Start (int    argc,
     g_free (translators);
   }
 
+  {
+    GtkWidget *w = _main_module->GetRootWidget ();
+
+    gtk_widget_show_all (w);
+  }
+
+  gtk_widget_hide (GTK_WIDGET (_main_module->GetGObject ("update_menuitem")));
 }
 
 // --------------------------------------------------------------------------------

@@ -100,15 +100,7 @@ void Tournament::Start (gchar *filename)
 {
   _ecosystem = new EcoSystem (_glade);
 
-  // Show the main window
-  {
-    GtkWidget *w = _glade->GetRootWidget ();
-
-    gtk_widget_show_all (w);
-    gtk_widget_hide (_glade->GetWidget ("notebook"));
-  }
-
-  gtk_widget_hide (_glade->GetWidget ("update_menuitem"));
+  gtk_widget_hide (_glade->GetWidget ("notebook"));
 
   // URL QrCode
   {
