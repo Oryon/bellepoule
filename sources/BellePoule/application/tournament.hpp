@@ -93,7 +93,6 @@ class Tournament : public Module, Net::HttpServer::Client
     GSList          *_referee_list;
     guint            _nb_matchs;
     Net::HttpServer *_http_server;
-    Net::Downloader *_version_downloader;
     Net::WebServer  *_web_server;
     gboolean         _print_meal_tickets;
     EcoSystem       *_ecosystem;
@@ -135,8 +134,6 @@ class Tournament : public Module, Net::HttpServer::Client
 
     static gchar *HttpGetCbk (Net::HttpServer::Client *client,
                               const gchar             *url);
-
-    static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
 };
 
 #endif

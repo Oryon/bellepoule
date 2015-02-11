@@ -18,6 +18,7 @@
 #define application_hpp
 
 #include "util/object.hpp"
+#include "network/downloader.hpp"
 
 class Attribute;
 class AttributeDesc;
@@ -42,7 +43,8 @@ class Application : public Object
     virtual ~Application ();
 
   private:
-    Language *_language;
+    Language        *_language;
+    Net::Downloader *_version_downloader;
 
     static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                                              const gchar    *link,
@@ -60,6 +62,8 @@ class Application : public Object
                             gpointer        user_data);
 
     static gboolean IsCsvReady (AttributeDesc *desc);
+
+    static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
 };
 
 #endif
