@@ -30,10 +30,20 @@ class Piste : public Object
     void Translate (gdouble tx,
                     gdouble ty);
 
+    void Rotate ();
+
+    static Piste *GetSelected ();
+
   private:
+    static Piste *_selected;
+
     GooCanvasItem *_root;
     GooCanvasItem *_rect;
     guint          _id;
+    gboolean       _dragging;
+    gdouble        _drag_x;
+    gdouble        _drag_y;
+    gboolean       _horizontal;
 
     ~Piste ();
 
@@ -41,6 +51,11 @@ class Piste : public Object
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      Piste          *piste);
+
+    static gboolean OnPisteUnSelected (GooCanvasItem  *item,
+                                       GooCanvasItem  *target,
+                                       GdkEventButton *event,
+                                       Piste          *piste);
 
     static gboolean OnFocusIn (GooCanvasItem *goo_rect,
                                GooCanvasItem *target,
@@ -51,6 +66,11 @@ class Piste : public Object
                                 GooCanvasItem *target,
                                 GdkEventFocus *event,
                                 Piste          *piste);
+
+    static gboolean OnMotionNotify (GooCanvasItem  *item,
+                                    GooCanvasItem  *target,
+                                    GdkEventMotion *event,
+                                    Piste          *piste);
 };
 
 #endif

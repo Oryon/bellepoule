@@ -31,8 +31,8 @@ Hall::Hall ()
 // --------------------------------------------------------------------------------
 Hall::~Hall ()
 {
-  g_slist_free_full (_piste_list,
-                     (GDestroyNotify) Object::TryToRelease);
+  g_list_free_full (_piste_list,
+                    (GDestroyNotify) Object::TryToRelease);
 }
 
 // --------------------------------------------------------------------------------
@@ -64,16 +64,38 @@ void Hall::OnPlugged ()
 void Hall::AddPiste ()
 {
   Piste *piste = new Piste (_root,
-                            g_slist_length (_piste_list));
+                            g_list_length (_piste_list));
 
-  _piste_list = g_slist_prepend (_piste_list,
-                                 piste);
+  _piste_list = g_list_prepend (_piste_list,
+                                piste);
 
   piste->Translate (_new_x_location,
                     _new_y_location);
 
   _new_x_location += 5.0;
   _new_y_location += 5.0;
+}
+
+// --------------------------------------------------------------------------------
+void Hall::RemovePiste (Piste *piste)
+{
+  if (piste)
+  {
+    GList *current = _piste_list;
+
+    while (current)
+    {
+      if (current->data == piste)
+      {
+        _piste_list = g_list_remove_link (_piste_list,
+                                          current);
+        piste->Release ();
+        break;
+      }
+
+      current = g_list_next (current);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -97,7 +119,22 @@ extern "C" G_MODULE_EXPORT void on_add_piste_button_clicked (GtkWidget *widget,
 }
 
 // --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_rotate_piste_button_clicked (GtkWidget *widget,
+                                                                Object    *owner)
+{
+  Piste *piste = Piste::GetSelected ();
+
+  if (piste)
+  {
+    piste->Rotate ();
+  }
+}
+
+// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_remove_piste_button_clicked (GtkWidget *widget,
                                                                 Object    *owner)
 {
+  Hall *h = dynamic_cast <Hall *> (owner);
+
+  h->RemovePiste (Piste::GetSelected ());
 }

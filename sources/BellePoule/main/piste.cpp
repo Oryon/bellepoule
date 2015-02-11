@@ -16,12 +16,16 @@
 
 #include "piste.hpp"
 
+Piste *Piste::_selected = NULL;
+
 // --------------------------------------------------------------------------------
 Piste::Piste (GooCanvasItem *parent,
               guint          id)
   : Object ("Piste")
 {
-  _id = id;
+  _id         = id;
+  _dragging   = FALSE;
+  _horizontal = TRUE;
 
   _root = goo_canvas_group_new (parent,
                                 NULL);
@@ -47,8 +51,18 @@ Piste::Piste (GooCanvasItem *parent,
                       this);
 
     g_signal_connect (_rect,
+                      "motion_notify_event",
+                      G_CALLBACK (OnMotionNotify),
+                      this);
+
+    g_signal_connect (_rect,
                       "button_press_event",
                       G_CALLBACK (OnPisteSelected),
+                      this);
+
+    g_signal_connect (_rect,
+                      "button_release_event",
+                      G_CALLBACK (OnPisteUnSelected),
                       this);
   }
 
@@ -72,6 +86,12 @@ Piste::Piste (GooCanvasItem *parent,
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
+  if (_selected == this)
+  {
+    _selected = NULL;
+  }
+
+  goo_canvas_item_remove (_root);
 }
 
 // --------------------------------------------------------------------------------
@@ -84,14 +104,66 @@ void Piste::Translate (gdouble tx,
 }
 
 // --------------------------------------------------------------------------------
+void Piste::Rotate ()
+{
+  if (_horizontal)
+  {
+    goo_canvas_item_rotate (_root,
+                            90.0,
+                            0.0,
+                            0.0);
+    _horizontal = FALSE;
+  }
+  else
+  {
+    goo_canvas_item_rotate (_root,
+                            -90.0,
+                            0.0,
+                            0.0);
+    _horizontal = TRUE;
+  }
+}
+
+// --------------------------------------------------------------------------------
+Piste *Piste::GetSelected ()
+{
+  return _selected;
+}
+
+// --------------------------------------------------------------------------------
 gboolean Piste::OnPisteSelected (GooCanvasItem  *item,
                                  GooCanvasItem  *target,
                                  GdkEventButton *event,
                                  Piste          *piste)
 {
-  goo_canvas_grab_focus (goo_canvas_item_get_canvas (item),
-                         item);
-  return TRUE;
+  if (event->button == 1)
+  {
+    piste->_dragging = TRUE;
+    piste->_drag_x = event->x;
+    piste->_drag_y = event->y;
+
+    goo_canvas_grab_focus (goo_canvas_item_get_canvas (item),
+                           item);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Piste::OnPisteUnSelected (GooCanvasItem  *item,
+                                   GooCanvasItem  *target,
+                                   GdkEventButton *event,
+                                   Piste          *piste)
+{
+  if (event->button == 1)
+  {
+    piste->_dragging = FALSE;
+
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -100,6 +172,8 @@ gboolean Piste::OnFocusIn (GooCanvasItem *goo_rect,
                            GdkEventFocus *event,
                            Piste         *piste)
 {
+  _selected = piste;
+
   g_object_set (piste->_rect,
                 "line-width", 1.0,
                 NULL);
@@ -112,8 +186,28 @@ gboolean Piste::OnFocusOut (GooCanvasItem *goo_rect,
                             GdkEventFocus *event,
                             Piste         *piste)
 {
+  _selected = NULL;
+
   g_object_set (piste->_rect,
                 "line-width", 0.5,
                 NULL);
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Piste::OnMotionNotify (GooCanvasItem  *item,
+                                GooCanvasItem  *target,
+                                GdkEventMotion *event,
+                                Piste          *piste)
+{
+  if (piste->_dragging && (event->state & GDK_BUTTON1_MASK))
+  {
+    double new_x = event->x;
+    double new_y = event->y;
+
+    piste->Translate (new_x - piste->_drag_x,
+                      new_y - piste->_drag_y);
+  }
+
   return TRUE;
 }

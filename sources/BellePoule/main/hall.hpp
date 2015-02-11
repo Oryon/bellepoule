@@ -19,6 +19,8 @@
 
 #include "util/canvas_module.hpp"
 
+class Piste;
+
 class Hall : public CanvasModule
 {
   public:
@@ -26,9 +28,11 @@ class Hall : public CanvasModule
 
     void AddPiste ();
 
+    void RemovePiste (Piste *piste);
+
   private:
     GooCanvasItem *_root;
-    GSList        *_piste_list;
+    GList         *_piste_list;
     gdouble        _new_x_location;
     gdouble        _new_y_location;
 
