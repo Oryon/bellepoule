@@ -59,6 +59,11 @@ class Hall : public CanvasModule, Piste::Listener
                                 GdkEventButton *event,
                                 Hall           *hall);
 
+    static gboolean OnMotionNotify (GooCanvasItem  *item,
+                                    GooCanvasItem  *target,
+                                    GdkEventMotion *event,
+                                    Hall           *hall);
+
     void OnPisteButtonEvent (Piste          *piste,
                              GdkEventButton *event);
 

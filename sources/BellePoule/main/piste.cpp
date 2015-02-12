@@ -45,7 +45,7 @@ Piste::Piste (GooCanvasItem *parent,
   {
     _progress_item = goo_canvas_rect_new (_root_item,
                                           _BORDER_W, _H - (_H/10.0),
-                                          _W - _BORDER_W*2.0, (_H/10.0),
+                                          _W - _BORDER_W*2.0, (_H/10.0)-_BORDER_W,
                                           "fill-color", "orange",
                                           "line-width", 0.0,
                                           NULL);

@@ -48,12 +48,23 @@ void Hall::OnPlugged ()
   _root = goo_canvas_group_new (GetRootItem (),
                                 NULL);
 
+  g_signal_connect (_root,
+                    "motion_notify_event",
+                    G_CALLBACK (OnMotionNotify),
+                    this);
+
 #if 1
-  goo_canvas_rect_new (_root,
-                       0.0, 0.0, 300,  150,
-                       "line-width",   2.0,
-                       "stroke-color", "darkgrey",
-                       NULL);
+  {
+    GooCanvasItem *rect = goo_canvas_rect_new (_root,
+                                               0.0, 0.0, 300, 150,
+                                               "line-width", 0.0,
+                                               "fill-color", "White",
+                                               NULL);
+    g_signal_connect (rect,
+                      "motion_notify_event",
+                      G_CALLBACK (OnMotionNotify),
+                      this);
+  }
 #endif
 
   g_signal_connect (GetRootItem (),
@@ -248,6 +259,7 @@ void Hall::OnPisteButtonEvent (Piste          *piste,
                                          piste);
 
         piste->Select ();
+        SetCursor (GDK_FLEUR);
       }
     }
 
@@ -269,14 +281,35 @@ void Hall::OnPisteButtonEvent (Piste          *piste,
 void Hall::OnPisteMotionEvent (Piste          *piste,
                                GdkEventMotion *event)
 {
-  if (_dragging && (event->state & GDK_BUTTON1_MASK))
-  {
-    double new_x = event->x;
-    double new_y = event->y;
+  SetCursor (GDK_FLEUR);
 
-    TranslateSelected (new_x - _drag_x,
-                       new_y - _drag_y);
+  if (_dragging)
+  {
+    if (   (event->state & GDK_BUTTON1_MASK)
+        && ((event->state & GDK_CONTROL_MASK) == 0))
+    {
+      double new_x = event->x;
+      double new_y = event->y;
+
+      TranslateSelected (new_x - _drag_x,
+                         new_y - _drag_y);
+    }
   }
+  else if (g_list_find (_selected_list, piste) == NULL)
+  {
+    ResetCursor ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+gboolean Hall::OnMotionNotify (GooCanvasItem  *item,
+                               GooCanvasItem  *target,
+                               GdkEventMotion *event,
+                               Hall           *hall)
+{
+  hall->ResetCursor ();
+
+  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
