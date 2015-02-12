@@ -65,19 +65,21 @@ Piste::Piste (GooCanvasItem *parent,
                                   "font", BP_FONT "bold 10px",
                                   NULL);
 
-#if 0
   {
-    GdkPixbuf *pixbuf = _listener->GetPixbuf (GTK_STOCK_APPLY);
+    Module    *owner  = dynamic_cast <Module *> (listener);
+    GdkPixbuf *pixbuf = owner->GetPixbuf (GTK_STOCK_APPLY);
 
     _status_item = goo_canvas_image_new (_root_item,
                                          pixbuf,
-                                         0.0,
-                                         0.0,
+                                         (_W - 10.0) * 2.0,
+                                         1.0,
                                          NULL);
+    goo_canvas_item_scale (_status_item,
+                           0.5,
+                           0.5);
 
     g_object_unref (pixbuf);
   }
-#endif
 
   goo_canvas_item_translate (_root_item, 5.0, 5.0);
 

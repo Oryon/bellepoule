@@ -49,7 +49,8 @@ class CanvasModule : public Module
                                    Player        *player,
                                    ...);
 
-    void SetZoomer (GtkRange *zoomer);
+    void SetZoomer (GtkRange *zoomer,
+                    gdouble   default_value = 1.0);
 
     void FreezeZoomer ();
 

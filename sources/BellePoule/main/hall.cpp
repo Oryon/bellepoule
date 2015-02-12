@@ -28,6 +28,9 @@ Hall::Hall ()
   _new_y_location = 0.0;
 
   _dragging = FALSE;
+
+  SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")),
+             2.0);
 }
 
 // --------------------------------------------------------------------------------
@@ -41,9 +44,6 @@ Hall::~Hall ()
 void Hall::OnPlugged ()
 {
   CanvasModule::OnPlugged ();
-
-  goo_canvas_set_scale (GetCanvas (),
-                        3.0);
 
   _root = goo_canvas_group_new (GetRootItem (),
                                 NULL);
@@ -60,6 +60,7 @@ void Hall::OnPlugged ()
                     this);
 
   AddPiste ();
+  RestoreZoomFactor ();
 }
 
 // --------------------------------------------------------------------------------
@@ -257,7 +258,6 @@ void Hall::OnPisteMotionEvent (Piste          *piste,
     TranslateSelected (new_x - _drag_x,
                        new_y - _drag_y);
   }
-
 }
 
 // --------------------------------------------------------------------------------

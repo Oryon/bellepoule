@@ -172,9 +172,11 @@ void CanvasModule::OnZoom (gdouble value)
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule::SetZoomer (GtkRange *zoomer)
+void CanvasModule::SetZoomer (GtkRange *zoomer,
+                              gdouble   default_value)
 {
-  _zoomer = zoomer;
+  _zoomer      = zoomer;
+  _zoom_factor = default_value;
 }
 
 // --------------------------------------------------------------------------------
