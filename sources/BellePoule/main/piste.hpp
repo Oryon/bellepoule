@@ -21,51 +21,60 @@
 
 #include "util/object.hpp"
 
+class Module;
+
 class Piste : public Object
 {
   public:
+    class Listener
+    {
+      public:
+        virtual void OnPisteButtonEvent (Piste          *piste,
+                                         GdkEventButton *event) = 0;
+        virtual void OnPisteMotionEvent (Piste          *piste,
+                                         GdkEventMotion *event) = 0;
+    };
+
+  public:
     Piste (GooCanvasItem *parent,
-           guint          id);
+           Listener      *listener);
+
+    void Select ();
+
+    void UnSelect ();
 
     void Translate (gdouble tx,
                     gdouble ty);
 
     void Rotate ();
 
-    static Piste *GetSelected ();
+    guint GetId ();
+
+    void SetId (guint id);
 
   private:
-    static Piste *_selected;
+    static const gdouble _W = 160.0;
+    static const gdouble _H = 20.0;
 
-    GooCanvasItem *_root;
-    GooCanvasItem *_rect;
-    guint          _id;
-    gboolean       _dragging;
-    gdouble        _drag_x;
-    gdouble        _drag_y;
-    gboolean       _horizontal;
+    Piste::Listener *_listener;
+    GooCanvasItem   *_root_item;
+    GooCanvasItem   *_rect_item;
+    GooCanvasItem   *_id_item;
+    GooCanvasItem   *_status_item;
+    guint            _id;
+    gboolean         _horizontal;
 
     ~Piste ();
 
-    static gboolean OnPisteSelected (GooCanvasItem  *item,
+    static gboolean OnButtonPress (GooCanvasItem  *item,
+                                   GooCanvasItem  *target,
+                                   GdkEventButton *event,
+                                   Piste          *piste);
+
+    static gboolean OnButtonRelease (GooCanvasItem  *item,
                                      GooCanvasItem  *target,
                                      GdkEventButton *event,
                                      Piste          *piste);
-
-    static gboolean OnPisteUnSelected (GooCanvasItem  *item,
-                                       GooCanvasItem  *target,
-                                       GdkEventButton *event,
-                                       Piste          *piste);
-
-    static gboolean OnFocusIn (GooCanvasItem *goo_rect,
-                               GooCanvasItem *target,
-                               GdkEventFocus *event,
-                               Piste          *piste);
-
-    static gboolean OnFocusOut (GooCanvasItem *goo_rect,
-                                GooCanvasItem *target,
-                                GdkEventFocus *event,
-                                Piste          *piste);
 
     static gboolean OnMotionNotify (GooCanvasItem  *item,
                                     GooCanvasItem  *target,

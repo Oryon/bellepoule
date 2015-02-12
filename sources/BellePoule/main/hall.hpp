@@ -18,10 +18,9 @@
 #define hall_hpp
 
 #include "util/canvas_module.hpp"
+#include "piste.hpp"
 
-class Piste;
-
-class Hall : public CanvasModule
+class Hall : public CanvasModule, Piste::Listener
 {
   public:
     Hall ();
@@ -30,20 +29,39 @@ class Hall : public CanvasModule
 
     void RemovePiste (Piste *piste);
 
+    void TranslateSelected (gdouble tx,
+                            gdouble ty);
+
+    void RotateSelected ();
+
+    void RemoveSelected ();
+
   private:
     GooCanvasItem *_root;
     GList         *_piste_list;
+    GList         *_selected_list;
     gdouble        _new_x_location;
     gdouble        _new_y_location;
+    gboolean       _dragging;
+    gdouble        _drag_x;
+    gdouble        _drag_y;
 
     ~Hall ();
 
     void OnPlugged ();
 
+    void CancelSeletion ();
+
     static gboolean OnSelected (GooCanvasItem  *goo_rect,
                                 GooCanvasItem  *target,
                                 GdkEventButton *event,
                                 Hall           *hall);
+
+    void OnPisteButtonEvent (Piste          *piste,
+                             GdkEventButton *event);
+
+    void OnPisteMotionEvent (Piste          *piste,
+                             GdkEventMotion *event);
 };
 
 #endif

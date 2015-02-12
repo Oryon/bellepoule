@@ -26,6 +26,8 @@ Hall::Hall ()
 
   _new_x_location = 0.0;
   _new_y_location = 0.0;
+
+  _dragging = FALSE;
 }
 
 // --------------------------------------------------------------------------------
@@ -63,17 +65,89 @@ void Hall::OnPlugged ()
 // --------------------------------------------------------------------------------
 void Hall::AddPiste ()
 {
-  Piste *piste = new Piste (_root,
-                            g_list_length (_piste_list));
+  Piste *piste  = new Piste (_root, this);
+  GList *before = _piste_list;
 
-  _piste_list = g_list_prepend (_piste_list,
-                                piste);
+  for (guint i = 1; before != NULL; i++)
+  {
+    Piste *current_piste = (Piste *) before->data;
+
+    if (current_piste->GetId () != i)
+    {
+      break;
+    }
+    piste->SetId (i+1);
+
+    before = g_list_next (before);
+  }
+
+  if (before)
+  {
+    _piste_list = g_list_insert_before (_piste_list,
+                                        before,
+                                        piste);
+  }
+  else
+  {
+    _piste_list = g_list_append (_piste_list,
+                                 piste);
+  }
 
   piste->Translate (_new_x_location,
                     _new_y_location);
 
   _new_x_location += 5.0;
   _new_y_location += 5.0;
+}
+
+// --------------------------------------------------------------------------------
+void Hall::RemoveSelected ()
+{
+  GList *current = _selected_list;
+
+  while (current)
+  {
+    Piste *piste = (Piste *) current->data;
+
+    RemovePiste (piste);
+
+    current = g_list_next (current);
+  }
+
+  g_list_free (_selected_list);
+  _selected_list = NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Hall::TranslateSelected (gdouble tx,
+                              gdouble ty)
+{
+  GList *current = _selected_list;
+
+  while (current)
+  {
+    Piste *piste = (Piste *) current->data;
+
+    piste->Translate (tx,
+                      ty);
+
+    current = g_list_next (current);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Hall::RotateSelected ()
+{
+  GList *current = _selected_list;
+
+  while (current)
+  {
+    Piste *piste = (Piste *) current->data;
+
+    piste->Rotate ();
+
+    current = g_list_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -104,9 +178,86 @@ gboolean Hall::OnSelected (GooCanvasItem  *item,
                            GdkEventButton *event,
                            Hall           *hall)
 {
-  goo_canvas_grab_focus (goo_canvas_item_get_canvas (item),
-                         item);
+  hall->CancelSeletion ();
+
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void Hall::CancelSeletion ()
+{
+  GList *current = _selected_list;
+
+  while (current)
+  {
+    Piste *current_piste = (Piste *) current->data;
+
+    current_piste->UnSelect ();
+
+    current = g_list_next (current);
+  }
+
+  g_list_free (_selected_list);
+  _selected_list = NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Hall::OnPisteButtonEvent (Piste          *piste,
+                               GdkEventButton *event)
+{
+  if (event->type == GDK_BUTTON_PRESS)
+  {
+    GList *selected_node = g_list_find (_selected_list, piste);
+
+    if (selected_node)
+    {
+      if (event->state & GDK_CONTROL_MASK)
+      {
+        _selected_list = g_list_remove_link (_selected_list,
+                                             selected_node);
+        piste->UnSelect ();
+      }
+    }
+    else
+    {
+      if ((event->state & GDK_CONTROL_MASK) == 0)
+      {
+        CancelSeletion ();
+      }
+
+      {
+        _selected_list = g_list_prepend (_selected_list,
+                                         piste);
+
+        piste->Select ();
+      }
+    }
+
+    {
+      _dragging = TRUE;
+      _drag_x = event->x;
+      _drag_y = event->y;
+    }
+  }
+  else
+  {
+    _dragging = FALSE;
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Hall::OnPisteMotionEvent (Piste          *piste,
+                               GdkEventMotion *event)
+{
+  if (_dragging && (event->state & GDK_BUTTON1_MASK))
+  {
+    double new_x = event->x;
+    double new_y = event->y;
+
+    TranslateSelected (new_x - _drag_x,
+                       new_y - _drag_y);
+  }
+
 }
 
 // --------------------------------------------------------------------------------
@@ -122,12 +273,9 @@ extern "C" G_MODULE_EXPORT void on_add_piste_button_clicked (GtkWidget *widget,
 extern "C" G_MODULE_EXPORT void on_rotate_piste_button_clicked (GtkWidget *widget,
                                                                 Object    *owner)
 {
-  Piste *piste = Piste::GetSelected ();
+  Hall *h = dynamic_cast <Hall *> (owner);
 
-  if (piste)
-  {
-    piste->Rotate ();
-  }
+  h->RotateSelected ();
 }
 
 // --------------------------------------------------------------------------------
@@ -136,5 +284,5 @@ extern "C" G_MODULE_EXPORT void on_remove_piste_button_clicked (GtkWidget *widge
 {
   Hall *h = dynamic_cast <Hall *> (owner);
 
-  h->RemovePiste (Piste::GetSelected ());
+  h->RemoveSelected ();
 }
