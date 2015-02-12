@@ -14,6 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <math.h>
+
 #include "util/module.hpp"
 
 #include "piste.hpp"
@@ -33,27 +35,21 @@ Piste::Piste (GooCanvasItem *parent,
     _rect_item = goo_canvas_rect_new (_root_item,
                                       0.0, 0.0,
                                       _W, _H,
-                                      "line-width",   0.5,
-                                      "radius-x",     1.0,
-                                      "radius-y",     1.0,
+                                      "line-width",   _BORDER_W,
                                       "stroke-color", "black",
                                       "fill-color",   "lightblue",
                                       NULL);
+    MonitorEvent (_rect_item);
+  }
 
-    g_signal_connect (_rect_item,
-                      "motion_notify_event",
-                      G_CALLBACK (OnMotionNotify),
-                      this);
-
-    g_signal_connect (_rect_item,
-                      "button_press_event",
-                      G_CALLBACK (OnButtonPress),
-                      this);
-
-    g_signal_connect (_rect_item,
-                      "button_release_event",
-                      G_CALLBACK (OnButtonRelease),
-                      this);
+  {
+    _progress_item = goo_canvas_rect_new (_root_item,
+                                          _BORDER_W, _H - (_H/10.0),
+                                          _W - _BORDER_W*2.0, (_H/10.0),
+                                          "fill-color", "orange",
+                                          "line-width", 0.0,
+                                          NULL);
+    MonitorEvent (_progress_item);
   }
 
   _id_item = goo_canvas_text_new (_root_item,
@@ -81,7 +77,9 @@ Piste::Piste (GooCanvasItem *parent,
     g_object_unref (pixbuf);
   }
 
-  goo_canvas_item_translate (_root_item, 5.0, 5.0);
+  goo_canvas_item_translate (_root_item,
+                             _RESOLUTION,
+                             _RESOLUTION);
 
   SetId (1);
 }
@@ -182,7 +180,7 @@ gboolean Piste::OnButtonRelease (GooCanvasItem  *item,
 void Piste::Select ()
 {
   g_object_set (_rect_item,
-                "line-width", 1.0,
+                "line-width", _BORDER_W*2.0,
                 NULL);
 }
 
@@ -190,7 +188,7 @@ void Piste::Select ()
 void Piste::UnSelect ()
 {
   g_object_set (_rect_item,
-                "line-width", 0.5,
+                "line-width", _BORDER_W,
                 NULL);
 }
 
@@ -204,4 +202,51 @@ gboolean Piste::OnMotionNotify (GooCanvasItem  *item,
                                         event);
 
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+gdouble Piste::GetGridAdjustment (gdouble coordinate)
+{
+  gdouble modulo = fmod (coordinate, _RESOLUTION);
+
+  if (modulo > _RESOLUTION/2.0)
+  {
+    return _RESOLUTION - modulo;
+  }
+  else
+  {
+    return -modulo;
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Piste::AlignOnGrid ()
+{
+  GooCanvasBounds bounds;
+
+  goo_canvas_item_get_bounds (_root_item,
+                              &bounds);
+
+  goo_canvas_item_translate (_root_item,
+                             GetGridAdjustment (bounds.x1),
+                             GetGridAdjustment (bounds.y1));
+}
+
+// --------------------------------------------------------------------------------
+void Piste::MonitorEvent (GooCanvasItem *item)
+{
+  g_signal_connect (item,
+                    "motion_notify_event",
+                    G_CALLBACK (OnMotionNotify),
+                    this);
+
+  g_signal_connect (item,
+                    "button_press_event",
+                    G_CALLBACK (OnButtonPress),
+                    this);
+
+  g_signal_connect (item,
+                    "button_release_event",
+                    G_CALLBACK (OnButtonRelease),
+                    this);
 }

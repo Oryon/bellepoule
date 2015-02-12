@@ -52,19 +52,28 @@ class Piste : public Object
 
     void SetId (guint id);
 
+    void AlignOnGrid ();
+
   private:
-    static const gdouble _W = 160.0;
-    static const gdouble _H = 20.0;
+    static const gdouble _W          = 160.0;
+    static const gdouble _H          = 20.0;
+    static const gdouble _BORDER_W   = 0.5;
+    static const gdouble _RESOLUTION = 10.0;
 
     Piste::Listener *_listener;
     GooCanvasItem   *_root_item;
     GooCanvasItem   *_rect_item;
+    GooCanvasItem   *_progress_item;
     GooCanvasItem   *_id_item;
     GooCanvasItem   *_status_item;
     guint            _id;
     gboolean         _horizontal;
 
     ~Piste ();
+
+    void MonitorEvent (GooCanvasItem *item);
+
+    gdouble GetGridAdjustment (gdouble coordinate);
 
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,

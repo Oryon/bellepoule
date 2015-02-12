@@ -48,11 +48,13 @@ void Hall::OnPlugged ()
   _root = goo_canvas_group_new (GetRootItem (),
                                 NULL);
 
+#if 1
   goo_canvas_rect_new (_root,
                        0.0, 0.0, 300,  150,
                        "line-width",   2.0,
                        "stroke-color", "darkgrey",
                        NULL);
+#endif
 
   g_signal_connect (GetRootItem (),
                     "button_press_event",
@@ -117,6 +119,21 @@ void Hall::RemoveSelected ()
 
   g_list_free (_selected_list);
   _selected_list = NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Hall::AlignSelectedOnGrid ()
+{
+  GList *current = _selected_list;
+
+  while (current)
+  {
+    Piste *piste = (Piste *) current->data;
+
+    piste->AlignOnGrid ();
+
+    current = g_list_next (current);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -243,6 +260,8 @@ void Hall::OnPisteButtonEvent (Piste          *piste,
   else
   {
     _dragging = FALSE;
+
+    AlignSelectedOnGrid ();
   }
 }
 

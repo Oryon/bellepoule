@@ -36,6 +36,8 @@ class Hall : public CanvasModule, Piste::Listener
 
     void RemoveSelected ();
 
+    void AlignSelectedOnGrid ();
+
   private:
     GooCanvasItem *_root;
     GList         *_piste_list;
