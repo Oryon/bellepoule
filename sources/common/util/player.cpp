@@ -39,6 +39,8 @@ Player::Player (const gchar *player_class)
 
   _clients = NULL;
 
+  _weapon = NULL;
+
   _wifi_code = new WifiCode (this);
 
   {
@@ -437,13 +439,13 @@ void Player::SetRef (guint ref)
 }
 
 // --------------------------------------------------------------------------------
-gchar Player::GetWeaponCode ()
+Weapon  *Player::GetWeapon ()
 {
   return _weapon;
 }
 
 // --------------------------------------------------------------------------------
-void Player::SetWeaponCode (gchar weapon)
+void Player::SetWeapon (Weapon *weapon)
 {
   _weapon = weapon;
 }

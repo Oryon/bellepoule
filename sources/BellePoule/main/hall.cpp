@@ -22,7 +22,8 @@
 Hall::Hall ()
   : CanvasModule ("hall.glade")
 {
-  _piste_list = NULL;
+  _piste_list    = NULL;
+  _selected_list = NULL;
 
   _new_x_location = 0.0;
   _new_y_location = 0.0;
@@ -267,6 +268,9 @@ void Hall::OnPisteButtonEvent (Piste          *piste,
       _dragging = TRUE;
       _drag_x = event->x;
       _drag_y = event->y;
+
+      piste->GetHorizontalCoord (&_drag_x,
+                                 &_drag_y);
     }
   }
   else
@@ -290,6 +294,9 @@ void Hall::OnPisteMotionEvent (Piste          *piste,
     {
       double new_x = event->x;
       double new_y = event->y;
+
+      piste->GetHorizontalCoord (&new_x,
+                                 &new_y);
 
       TranslateSelected (new_x - _drag_x,
                          new_y - _drag_y);

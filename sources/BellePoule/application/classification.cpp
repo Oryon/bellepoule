@@ -21,6 +21,7 @@
 
 #include "contest.hpp"
 #include "util/player.hpp"
+#include "weapon.hpp"
 
 #include "classification.hpp"
 
@@ -76,11 +77,12 @@ void Classification::DumpToFFF (gchar   *filename,
   {
     Player::AttributeId  attr_id ("global_status");
     GSList              *current_player = _player_list;
+    Weapon              *weapon = contest->GetWeapon ();
 
     fprintf (file, "FFF;WIN;competition;%s;individuel\n", contest->GetOrganizer ());
     fprintf (file, "%s;%s;%s;%s;%s;%s\n",
              contest->GetDate (),
-             contest->GetWeapon (),
+             weapon->GetImage (),
              contest->GetGenderCode (),
              contest->GetCategory (),
              contest->GetName (),

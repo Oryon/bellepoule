@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "application/application.hpp"
+#include "people_management/referee.hpp"
 #include "hall_manager.hpp"
 
 // --------------------------------------------------------------------------------
@@ -47,6 +48,8 @@ HallManagerApp::~HallManagerApp ()
 // --------------------------------------------------------------------------------
 void HallManagerApp::Prepare ()
 {
+  Referee::RegisterPlayerClass ();
+
   Application::Prepare ();
 }
 

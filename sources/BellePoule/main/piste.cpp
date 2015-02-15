@@ -94,9 +94,18 @@ Piste::~Piste ()
 void Piste::Translate (gdouble tx,
                        gdouble ty)
 {
-  goo_canvas_item_translate (_root_item,
-                             tx,
-                             ty);
+  if (_horizontal)
+  {
+    goo_canvas_item_translate (_root_item,
+                               tx,
+                               ty);
+  }
+  else
+  {
+    goo_canvas_item_translate (_root_item,
+                               ty,
+                               -tx);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -202,6 +211,19 @@ gboolean Piste::OnMotionNotify (GooCanvasItem  *item,
                                         event);
 
   return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void Piste::GetHorizontalCoord (gdouble *x,
+                                gdouble *y)
+{
+  if (_horizontal == FALSE)
+  {
+    gdouble swap = *x;
+
+    *x = -(*y);
+    *y = swap;
+  }
 }
 
 // --------------------------------------------------------------------------------

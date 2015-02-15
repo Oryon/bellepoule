@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "people_management/referees_list.hpp"
 #include "hall.hpp"
 
 #include "hall_manager.hpp"
@@ -22,10 +23,33 @@
 HallManager::HallManager ()
   : Module ("hall_manager.glade")
 {
-  Hall *hall = new Hall ();
+  {
+    Hall *hall = new Hall ();
 
-  Plug (hall,
-        _glade->GetWidget ("hall_viewport"));
+    Plug (hall,
+          _glade->GetWidget ("hall_viewport"));
+  }
+
+  {
+    People::RefereesList *list = new People::RefereesList (NULL);
+
+    Plug (list,
+          _glade->GetWidget ("referees_viewport"));
+
+#if 0
+    {
+      _notebook = GTK_NOTEBOOK (to);
+
+      gtk_notebook_append_page (_notebook,
+                                GetRootWidget (),
+                                _glade->GetWidget ("notebook_title"));
+
+      gtk_notebook_set_tab_reorderable (_notebook,
+                                        GetRootWidget (),
+                                        TRUE);
+    }
+#endif
+  }
 }
 
 // --------------------------------------------------------------------------------

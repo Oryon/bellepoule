@@ -54,6 +54,9 @@ class Piste : public Object
 
     void AlignOnGrid ();
 
+    void GetHorizontalCoord (gdouble *x,
+                             gdouble *y);
+
   private:
     static const gdouble _W          = 160.0;
     static const gdouble _H          = 20.0;

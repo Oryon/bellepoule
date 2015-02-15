@@ -43,24 +43,9 @@
 
 #include "version.h"
 #include "tournament.hpp"
+#include "weapon.hpp"
 
 #include "contest.hpp"
-
-const gchar *Contest::weapon_image[_nb_weapon] =
-{
-  N_ ("Sabre"),
-  N_ ("Epée"),
-  N_ ("Foil"),
-  N_ ("Educ")
-};
-
-const gchar *Contest::weapon_xml_image[_nb_weapon] =
-{
-  "S",
-  "E",
-  "F",
-  "EE"
-};
 
 const gchar *Contest::gender_image[_nb_gender] =
 {
@@ -253,7 +238,7 @@ Contest::Contest (gboolean for_duplication )
    _level         = NULL;
    _filename      = NULL;
    _tournament    = NULL;
-   _weapon        = 0;
+   _weapon        = Weapon::GetDefault ();
    _category      = 0;
    _gender        = 0;
    _team_event    = FALSE;
@@ -333,12 +318,17 @@ Contest::Contest (gboolean for_duplication )
   }
 
   {
-    GtkWidget *box = _glade->GetWidget ("weapon_box");
+    GtkWidget *box     = _glade->GetWidget ("weapon_box");
+    GSList    *current = Weapon::GetList ();
 
     _weapon_combo = gtk_combo_box_text_new ();
-    for (guint i = 0; i < _nb_weapon; i ++)
+    while (current)
     {
-      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_weapon_combo), gettext (weapon_image[i]));
+      Weapon *weapon = (Weapon *) current->data;
+
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (_weapon_combo),
+                                      weapon->GetImage ());
+      current = g_slist_next (current);
     }
     gtk_container_add (GTK_CONTAINER (box), _weapon_combo);
     gtk_widget_show (_weapon_combo);
@@ -673,14 +663,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
         attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "Arme");
         if (attr)
         {
-          for (guint i = 0; i < _nb_weapon; i++)
-          {
-            if (strcmp (attr, weapon_xml_image[i]) == 0)
-            {
-              _weapon = i;
-              break;
-            }
-          }
+          _weapon = Weapon::GetFromXml (attr);
           xmlFree (attr);
         }
 
@@ -929,7 +912,7 @@ void Contest::ImportReferees (GSList *imported_list)
   {
     Player *imported = (Player *) imported_list->data;
 
-    if (imported->GetWeaponCode () == GetWeaponCode ())
+    if (_weapon->IsTheSameThan (imported->GetWeapon ()))
     {
       GSList *current  = _referees_list->GetList ();
 
@@ -1196,7 +1179,7 @@ Player *Contest::Share (Player *referee)
   Player *original;
   guint   old_ref = referee->GetRef ();
 
-  referee->SetWeaponCode (GetWeaponCode ());
+  referee->SetWeapon (_weapon);
 
   original = _tournament->Share (referee,
                                  this);
@@ -1262,7 +1245,7 @@ void Contest::FillInProperties ()
                       _location);
 
   gtk_combo_box_set_active (GTK_COMBO_BOX (_weapon_combo),
-                            _weapon);
+                            _weapon->GetIndex ());
 
   gtk_combo_box_set_active (GTK_COMBO_BOX (_gender_combo),
                             _gender);
@@ -1311,7 +1294,7 @@ void Contest::ReadProperties ()
   g_free (_location);
   _location = g_strdup (str);
 
-  _weapon   = gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo));
+  _weapon   = Weapon::GetFromIndex (gtk_combo_box_get_active (GTK_COMBO_BOX (_weapon_combo)));
   _gender   = gtk_combo_box_get_active (GTK_COMBO_BOX (_gender_combo));
   _category = gtk_combo_box_get_active (GTK_COMBO_BOX (_category_combo));
 
@@ -1400,7 +1383,7 @@ void Contest::DisplayProperties ()
   if (w)
   {
     gtk_label_set_text (GTK_LABEL (w),
-                        gettext (weapon_image[_weapon]));
+                        _weapon->GetImage ());
   }
 
   w = _glade->GetWidget ("contest_gender_label");
@@ -1595,7 +1578,7 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
                                        "%d", _year);
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Arme",
-                                 BAD_CAST weapon_xml_image[_weapon]);
+                                 BAD_CAST _weapon->GetXmlImage ());
     xmlTextWriterWriteAttribute (xml_writer,
                                  BAD_CAST "Sexe",
                                  BAD_CAST gender_xml_image[_gender]);
@@ -1691,7 +1674,7 @@ void Contest::DumpToHTML (gchar  *filename,
                "  </head>\n\n",
                GetName (),
                GetDate (),
-               GetWeapon (),
+               _weapon->GetImage (),
                GetGender (),
                GetCategory ());
 
@@ -1708,7 +1691,7 @@ void Contest::DumpToHTML (gchar  *filename,
                "\n",
                GetName (),
                GetDate (),
-               GetWeapon (),
+               _weapon->GetImage (),
                GetGender (),
                GetCategory ());
     }
@@ -1907,7 +1890,7 @@ void Contest::DrawPage (GtkPrintOperation *operation,
   }
 
   {
-    char *text = g_strdup_printf ("%s - %s - %s", gettext (weapon_image[_weapon]),
+    char *text = g_strdup_printf ("%s - %s - %s", _weapon->GetImage (),
                                   gettext (gender_image[_gender]),
                                   gettext (category_image[_category]));
     goo_canvas_text_new (goo_canvas_get_root_item (canvas),
@@ -2126,21 +2109,15 @@ gchar *Contest::GetOrganizer ()
 }
 
 // --------------------------------------------------------------------------------
-gchar *Contest::GetWeapon ()
+Weapon *Contest::GetWeapon ()
 {
-  return gettext (weapon_image[_weapon]);
+  return _weapon;
 }
 
 // --------------------------------------------------------------------------------
 gboolean Contest::IsTeamEvent ()
 {
   return _team_event;
-}
-
-// --------------------------------------------------------------------------------
-gchar Contest::GetWeaponCode ()
-{
-  return *weapon_xml_image[_weapon];
 }
 
 // --------------------------------------------------------------------------------
@@ -2159,7 +2136,7 @@ gchar *Contest::GetId ()
 gchar *Contest::GetDefaultFileName ()
 {
   return g_strdup_printf ("%s-%s-%s-%s.cotcot", _name,
-                          gettext (weapon_image[_weapon]),
+                          _weapon->GetImage (),
                           gettext (gender_image[_gender]),
                           gettext (category_image[_category]));
 }

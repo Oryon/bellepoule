@@ -31,6 +31,7 @@
 
 #include "version.h"
 #include "contest.hpp"
+#include "weapon.hpp"
 #include "people_management/form.hpp"
 
 #include "tournament.hpp"
@@ -750,9 +751,13 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       response = g_string_append (response, contest->GetName ());
       response = g_string_append (response, "\" ");
 
-      response = g_string_append (response, "Weapon=\"");
-      response = g_string_append (response, contest->GetWeapon ());
-      response = g_string_append (response, "\" ");
+      {
+        Weapon *weapon = contest->GetWeapon ();
+
+        response = g_string_append (response, "Weapon=\"");
+        response = g_string_append (response, weapon->GetImage ());
+        response = g_string_append (response, "\" ");
+      }
 
       response = g_string_append (response, "Gender=\"");
       response = g_string_append (response, contest->GetGenderCode ());
@@ -842,14 +847,15 @@ Player *Tournament::Share (Player  *referee,
     }
 
     {
-      GSList *current = _contest_list;
+      GSList *current        = _contest_list;
+      Weapon *referee_weapon = referee->GetWeapon ();
 
       while (current)
       {
         Contest *contest = (Contest *) current->data;
 
         if (   (contest != from)
-            && (contest->GetWeaponCode () == referee->GetWeaponCode ()))
+            && (referee_weapon->IsTheSameThan (contest->GetWeapon ())))
         {
           contest->AddReferee (referee);
         }

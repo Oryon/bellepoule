@@ -26,6 +26,7 @@
 #include "network/uploader.hpp"
 
 class WifiCode;
+class Weapon;
 
 class Player : public Object
 {
@@ -98,8 +99,8 @@ class Player : public Object
     guint GetRef ();
     void  SetRef (guint ref);
 
-    gchar GetWeaponCode ();
-    void  SetWeaponCode (gchar weapon);
+    Weapon *GetWeapon ();
+    void  SetWeapon (Weapon *weapon);
 
     void  AddMatchs    (guint nb_matchs);
     void  RemoveMatchs (guint nb_matchs);
@@ -174,7 +175,7 @@ class Player : public Object
     guint        _dnd_ref;
     guint        _ref;
     guint        _nb_matchs;
-    gchar        _weapon;
+    Weapon      *_weapon;
     const gchar *_player_class;
     WifiCode    *_wifi_code;
 

@@ -28,6 +28,7 @@
 #include "util/module.hpp"
 #include "network/downloader.hpp"
 #include "language.hpp"
+#include "weapon.hpp"
 #include "version.h"
 
 #include "application.hpp"
@@ -136,6 +137,14 @@ Application::~Application ()
 void Application::Prepare ()
 {
   _language = new Language ();
+
+  // Weapon
+  {
+    new Weapon ("Educ",  "EE");
+    new Weapon ("Foil",  "F");
+    new Weapon ("Epée",  "E");
+    new Weapon ("Sabre", "S");
+  }
 
   // Attributes definition
   {

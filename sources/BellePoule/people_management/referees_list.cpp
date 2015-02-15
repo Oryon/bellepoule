@@ -21,7 +21,6 @@
 #include <libxml/xmlwriter.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include <libxml/xpath.h>
 
 #include "util/attribute.hpp"
 #include "util/filter.hpp"
@@ -208,7 +207,12 @@ namespace People
   // --------------------------------------------------------------------------------
   void RefereesList::Add (Player *referee)
   {
-    Player *original = _contest->Share (referee);
+    Player *original = NULL;
+
+    if (_contest)
+    {
+      original = _contest->Share (referee);
+    }
 
     if (original)
     {
