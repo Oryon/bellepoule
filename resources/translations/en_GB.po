@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-10 09:00+0100\n"
-"PO-Revision-Date: 2015-02-11 07:16+0000\n"
+"PO-Revision-Date: 2015-02-14 12:36+0000\n"
 "Last-Translator: Dom134 <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-02-12 06:19+0000\n"
-"X-Generator: Launchpad (build 17336)\n"
+"X-Launchpad-Export-Date: 2015-02-15 05:43+0000\n"
+"X-Generator: Launchpad (build 17341)\n"
 
 msgid "Classification"
 msgstr "Classification"
@@ -65,16 +65,16 @@ msgid "Veteran"
 msgstr "Veteran"
 
 msgid "Veteran 1"
-msgstr ""
+msgstr "Veteran Cat 1"
 
 msgid "Veteran 2"
-msgstr ""
+msgstr "Veteran Cat 2"
 
 msgid "Veteran 3"
-msgstr ""
+msgstr "Veteran Cat 3"
 
 msgid "Veteran 4"
-msgstr ""
+msgstr "Veteran Cat 4"
 
 msgid "Choose a file..."
 msgstr "Choose a file..."
@@ -319,7 +319,7 @@ msgid "Team size"
 msgstr "Team size"
 
 msgid "<b>Smartpoule</b> configuration code"
-msgstr ""
+msgstr "Configuration code for <b>SmartPoule</b>"
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
@@ -350,10 +350,10 @@ msgid "Paste"
 msgstr "Paste"
 
 msgid "Choose a rank file to apply..."
-msgstr ""
+msgstr "Choose a rankings file to apply..."
 
 msgid "Rank files: cotcot, xml, txt (France)"
-msgstr ""
+msgstr "Rankings files: cotcot, xml, txt"
 
 msgid "Split"
 msgstr "Split"
@@ -639,13 +639,13 @@ msgid "Form"
 msgstr "Form"
 
 msgid "Export to <b>HTML</b>"
-msgstr ""
+msgstr "Export to <b>HTML</b>"
 
 msgid "Export to <b>FFF</b>"
-msgstr ""
+msgstr "Export to <b>FFF</b>"
 
 msgid "Export to <b>PDF</b>"
-msgstr ""
+msgstr "Export to <b>PDF</b>"
 
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr "Mask or unmask some data type as well as define their display order."
@@ -720,7 +720,7 @@ msgid "Table printing"
 msgstr "Table printing"
 
 msgid "<b><big>How to print?</big></b>"
-msgstr ""
+msgstr "<b><big>Printing options</big></b>"
 
 msgid "The table"
 msgstr "The table"
@@ -812,10 +812,10 @@ msgid "FTP server"
 msgstr "FTP server"
 
 msgid "<b>Web site</b>"
-msgstr ""
+msgstr "<b>Website</b>"
 
 msgid "<b>Video server</b>"
-msgstr ""
+msgstr "<b>Video server</b>"
 
 msgid "BellePoule - Fencing tournament"
 msgstr "BellePoule - Fencing tournament"
@@ -848,7 +848,7 @@ msgid "Ecosystem"
 msgstr ""
 
 msgid "Score sheet scanner"
-msgstr ""
+msgstr "Score sheet scanner"
 
 msgid "New version!"
 msgstr "New version!"
@@ -867,9 +867,12 @@ msgid ""
 "to make your smarphone\n"
 "a score sheet scanner."
 msgstr ""
+"Scan this code with SmartPoule</b>\n"
+"to make your smartphone\n"
+"a score sheet scanner."
 
 msgid "<b>Score sheet scanner</b>"
-msgstr ""
+msgstr "<b>Score sheet scanner</b>"
 
 #~ msgid "Masculin"
 #~ msgstr "Male"
