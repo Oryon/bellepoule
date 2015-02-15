@@ -30,13 +30,13 @@
 #include "application/tournament.hpp"
 
 // --------------------------------------------------------------------------------
-class BellePoule : public Application
+class BellPouleApp : public Application
 {
   public:
-    BellePoule (int *argc, char ***argv);
+    BellPouleApp (int *argc, char ***argv);
 
   private:
-    virtual ~BellePoule ();
+    virtual ~BellPouleApp ();
 
     void Prepare ();
 
@@ -44,20 +44,20 @@ class BellePoule : public Application
 };
 
 // --------------------------------------------------------------------------------
-BellePoule::BellePoule (int    *argc,
-                        char ***argv)
-: Application ("BellePoule", argc, argv)
+BellPouleApp::BellPouleApp (int    *argc,
+                            char ***argv)
+  : Application ("BellePoule", argc, argv)
 {
 }
 
 // --------------------------------------------------------------------------------
-BellePoule::~BellePoule ()
+BellPouleApp::~BellPouleApp ()
 {
   _main_module->Release ();
 }
 
 // --------------------------------------------------------------------------------
-void BellePoule::Prepare ()
+void BellPouleApp::Prepare ()
 {
   Tournament::Init ();
   Contest::Init    ();
@@ -82,8 +82,8 @@ void BellePoule::Prepare ()
 }
 
 // --------------------------------------------------------------------------------
-void BellePoule::Start (int    argc,
-                        char **argv)
+void BellPouleApp::Start (int    argc,
+                          char **argv)
 {
   Tournament *tournament = new Tournament ();
 
@@ -109,7 +109,7 @@ void BellePoule::Start (int    argc,
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  Application *application = new BellePoule (&argc, &argv);
+  Application *application = new BellPouleApp (&argc, &argv);
 
   application->Prepare ();
 

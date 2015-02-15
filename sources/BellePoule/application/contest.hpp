@@ -32,6 +32,7 @@ namespace People
 }
 
 class Tournament;
+class Weapon;
 
 class Contest : public Module
 {
@@ -85,17 +86,16 @@ class Contest : public Module
                          const gchar **ressource,
                          const gchar *data);
 
-    gchar *GetId ();
-    gchar *GetOrganizer ();
-    gchar *GetDate ();
-    gchar *GetWeapon ();
-    gchar  GetWeaponCode ();
-    gchar *GetName ();
-    gchar *GetDefaultFileName ();
-    gchar *GetGender ();
-    gchar *GetGenderCode ();
-    gchar *GetCategory ();
-    gboolean IsTeamEvent ();
+    gchar    *GetId              ();
+    gchar    *GetOrganizer       ();
+    gchar    *GetDate            ();
+    Weapon   *GetWeapon          ();
+    gchar    *GetName            ();
+    gchar    *GetDefaultFileName ();
+    gchar    *GetGender          ();
+    gchar    *GetGenderCode      ();
+    gchar    *GetCategory        ();
+    gboolean  IsTeamEvent        ();
 
   public:
     void ReadTeamProperty                 ();
@@ -127,10 +127,6 @@ class Contest : public Module
       guint  _minute;
     };
 
-    static const guint _nb_weapon = 4;
-    static const gchar *weapon_image[_nb_weapon];
-    static const gchar *weapon_xml_image[_nb_weapon];
-
     static const guint _nb_gender = 3;
     static const gchar *gender_image[_nb_gender];
     static const gchar *gender_xml_image[_nb_gender];
@@ -151,7 +147,7 @@ class Contest : public Module
     gchar           *_web_site;
     guint            _category;
     gchar           *_filename;
-    guint            _weapon;
+    Weapon          *_weapon;
     guint            _gender;
     guint            _day;
     guint            _month;

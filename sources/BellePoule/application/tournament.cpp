@@ -31,6 +31,7 @@
 
 #include "version.h"
 #include "contest.hpp"
+#include "weapon.hpp"
 #include "people_management/form.hpp"
 
 #include "tournament.hpp"
@@ -89,12 +90,6 @@ Tournament::~Tournament ()
   g_slist_free_full (_referee_list,
                      (GDestroyNotify) Object::TryToRelease);
 
-  if (_version_downloader)
-  {
-    _version_downloader->Kill    ();
-    _version_downloader->Release ();
-  }
-
   _web_server->Release  ();
   _http_server->Release ();
   _ecosystem->Release   ();
@@ -106,15 +101,7 @@ void Tournament::Start (gchar *filename)
 {
   _ecosystem = new EcoSystem (_glade);
 
-  // Show the main window
-  {
-    GtkWidget *w = _glade->GetRootWidget ();
-
-    gtk_widget_show_all (w);
-    gtk_widget_hide (_glade->GetWidget ("notebook"));
-  }
-
-  gtk_widget_hide (_glade->GetWidget ("update_menuitem"));
+  gtk_widget_hide (_glade->GetWidget ("notebook"));
 
   // URL QrCode
   {
@@ -149,63 +136,6 @@ void Tournament::Start (gchar *filename)
   }
 
   {
-    GtkWidget *w       = _glade->GetWidget ("about_dialog");
-    gchar     *version = g_strdup_printf ("V%s.%s%s", VERSION, VERSION_REVISION, VERSION_MATURITY);
-
-    gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
-                                  (const gchar *) version);
-    g_free (version);
-  }
-
-  {
-    GtkWidget   *w         = _glade->GetWidget ("about_dialog");
-    const gchar *authors[] = {"Florence Blanchard",
-                              "Laurent Bonnot",
-                              "Tony (ajs New Mexico)",
-                              "Emmanuel Chaix",
-                              "Julien Diaz",
-                              "Olivier Larcher",
-                              "Yannick Le Roux",
-                              "Jean-Pierre Mahé",
-                              "Pierre Moro",
-                              "Killian Poulet",
-                              "Michel Relet",
-                              "Vincent Rémy",
-                              "Tina Schliemann",
-                              "Claude Simonnot",
-                              "Sébastien Vermandel",
-                              NULL};
-
-    gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (w),
-                                  authors);
-  }
-
-  {
-    GtkWidget *w           = _glade->GetWidget ("about_dialog");
-    gchar     *translators = g_strdup_printf ("Julien Diaz           (German)\n"
-                                              "Tina Schliemann       (German)\n"
-                                              "Michael Weber         (German)\n"
-                                              "Aureliano Martini     (Italian)\n"
-                                              "Jihwan Cho            (Korean)\n"
-                                              "Marijn Somers         (Dutch)\n"
-                                              "Werner Huysmans       (Dutch)\n"
-                                              "Farid Elkhalki        (Japanese)\n"
-                                              "Jean-François Brun    (Japanese)\n"
-                                              "Alexis Pigeon         (Spanish)\n"
-                                              "Paulo Morales         (Spanish)\n"
-                                              "Ignacio Gil           (Spanish)\n"
-                                              "Eduardo Alberto Calvo (Spanish, Portuguese)\n"
-                                              "Rui Pedro Vieira      (Portuguese)\n"
-                                              "Mohamed Rebai         (Arabic)\n"
-                                              "Mikael Hiort af Ornäs (Swedish)\n"
-                                              "Sergev Makhtanov      (Russian)");
-
-    gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (w),
-                                             translators);
-    g_free (translators);
-  }
-
-  {
     gchar *last_backup = g_key_file_get_string (Global::_user_config->_key_file,
                                                 "Tournament",
                                                 "backup_location",
@@ -233,13 +163,6 @@ void Tournament::Start (gchar *filename)
       gtk_target_list_unref (target_list);
     }
     gtk_target_list_add_uri_targets (target_list, 100);
-  }
-
-  {
-    _version_downloader = new Net::Downloader ("_version_downloader",
-                                               OnLatestVersionReceived,
-                                               this);
-    _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
   }
 
   _web_server = new Net::WebServer ((Net::WebServer::StateFunc) OnWebServerState,
@@ -828,9 +751,13 @@ gchar *Tournament::OnHttpGet (const gchar *url)
       response = g_string_append (response, contest->GetName ());
       response = g_string_append (response, "\" ");
 
-      response = g_string_append (response, "Weapon=\"");
-      response = g_string_append (response, contest->GetWeapon ());
-      response = g_string_append (response, "\" ");
+      {
+        Weapon *weapon = contest->GetWeapon ();
+
+        response = g_string_append (response, "Weapon=\"");
+        response = g_string_append (response, weapon->GetImage ());
+        response = g_string_append (response, "\" ");
+      }
 
       response = g_string_append (response, "Gender=\"");
       response = g_string_append (response, contest->GetGenderCode ());
@@ -920,14 +847,15 @@ Player *Tournament::Share (Player  *referee,
     }
 
     {
-      GSList *current = _contest_list;
+      GSList *current        = _contest_list;
+      Weapon *referee_weapon = referee->GetWeapon ();
 
       while (current)
       {
         Contest *contest = (Contest *) current->data;
 
         if (   (contest != from)
-            && (contest->GetWeaponCode () == referee->GetWeaponCode ()))
+            && (referee_weapon->IsTheSameThan (contest->GetWeapon ())))
         {
           contest->AddReferee (referee);
         }
@@ -1468,101 +1396,6 @@ void Tournament::OnVideoReleased ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data)
-{
-  Tournament *tournament = (Tournament *) cbk_data->_user_data;
-  gchar      *data       = tournament->_version_downloader->GetData ();
-
-  if (data)
-  {
-    GKeyFile *version_file = g_key_file_new ();
-
-    if (g_key_file_load_from_data (version_file,
-                                   data,
-                                   strlen (data) + 1,
-                                   G_KEY_FILE_NONE,
-                                   NULL))
-    {
-      gboolean     new_version_detected = FALSE;
-      const gchar *local_version        = VERSION;
-      const gchar *local_revision       = VERSION_REVISION;
-      const gchar *local_maturity       = VERSION_MATURITY;
-      gchar       *remote_version;
-      gchar       *remote_revision;
-      gchar       *remote_maturity;
-
-      remote_version = g_key_file_get_string (version_file,
-                                              VERSION_BRANCH,
-                                              "version",
-                                              NULL);
-      remote_revision = g_key_file_get_string (version_file,
-                                               VERSION_BRANCH,
-                                               "revision",
-                                               NULL);
-      remote_maturity = g_key_file_get_string (version_file,
-                                               VERSION_BRANCH,
-                                               "maturity",
-                                               NULL);
-
-      if (remote_version && remote_revision && remote_maturity)
-      {
-        if (atoi (local_version) < atoi (remote_version))
-        {
-          new_version_detected = TRUE;
-        }
-        else if (atoi (local_version) == atoi (remote_version))
-        {
-          if (strcmp (local_maturity, remote_maturity) != 0)
-          {
-            if (*remote_maturity == '\0')
-            {
-              new_version_detected = TRUE;
-            }
-            else if (strcmp (local_maturity, remote_maturity) < 0)
-            {
-              new_version_detected = TRUE;
-            }
-          }
-          else if (atoi (local_revision) < atoi (remote_revision))
-          {
-            new_version_detected = TRUE;
-          }
-        }
-        else if (strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
-        {
-          char *stable_version = g_key_file_get_string (version_file,
-                                                        "STABLE",
-                                                        "version",
-                                                        NULL);
-          if (stable_version && strcmp (remote_version, stable_version) <= 0)
-          {
-            new_version_detected = TRUE;
-          }
-        }
-      }
-
-      if (new_version_detected)
-      {
-        gchar *label = g_strdup_printf ("%s.%s.%s", remote_version, remote_revision, remote_maturity);
-
-        gtk_menu_item_set_label (GTK_MENU_ITEM (tournament->_glade->GetWidget ("new_version_menuitem")),
-                                 label);
-        gtk_widget_show (tournament->_glade->GetWidget ("update_menuitem"));
-        g_free (label);
-      }
-    }
-
-    g_key_file_free (version_file);
-  }
-
-  tournament->_version_downloader->Kill    ();
-  tournament->_version_downloader->Release ();
-  tournament->_version_downloader = NULL;
-
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
 Net::Uploader *Tournament::GetFtpUpLoader ()
 {
   return _ecosystem->GetUpLoader ();
@@ -1618,15 +1451,6 @@ extern "C" G_MODULE_EXPORT void on_save_menuitem_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnSave ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
-                                                           Object    *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnMenuDialog ("about_dialog");
 }
 
 // --------------------------------------------------------------------------------
@@ -1692,25 +1516,6 @@ extern "C" G_MODULE_EXPORT void on_recent_menuitem_activate (GtkWidget *w,
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnRecent ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_translate_menuitem_activate (GtkWidget *w,
-                                                                Object    *owner)
-{
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecuteA (NULL,
-                 "open",
-                 "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
-                 NULL,
-                 NULL,
-                 SW_SHOWNORMAL);
-#else
-  gtk_show_uri (NULL,
-                "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
-                GDK_CURRENT_TIME,
-                NULL);
-#endif
 }
 
 // --------------------------------------------------------------------------------
@@ -1806,25 +1611,6 @@ extern "C" G_MODULE_EXPORT void on_payment_menuitem_activate (GtkMenuItem *menui
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->PrintPaymentBook ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *menuitem,
-                                                                  Object      *owner)
-{
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecuteA (NULL,
-                 "open",
-                 "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
-                 NULL,
-                 NULL,
-                 SW_SHOWNORMAL);
-#else
-  gtk_show_uri (NULL,
-                "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
-                GDK_CURRENT_TIME,
-                NULL);
-#endif
 }
 
 // --------------------------------------------------------------------------------

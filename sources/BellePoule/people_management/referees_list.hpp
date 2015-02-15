@@ -18,6 +18,7 @@
 #define referees_list_hpp
 
 #include <gtk/gtk.h>
+#include <libxml/xpath.h>
 #include <libxml/xmlwriter.h>
 
 #include "checkin.hpp"

@@ -22,8 +22,8 @@
 					<Add library="Debug/BellePoule.so" />
 				</Linker>
 			</Target>
-			<Target title="Dispatcher_Debug">
-				<Option output="Debug/Dispatcher" prefix_auto="1" extension_auto="1" />
+			<Target title="HallManager_Debug">
+				<Option output="Debug/HallManager" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -33,7 +33,7 @@
 			</Target>
 		</Build>
 		<VirtualTargets>
-			<Add alias="Debug" targets="Lib_Debug;Dispatcher_Debug;BellePoule_Debug;" />
+			<Add alias="Debug" targets="Lib_Debug;HallManager_Debug;BellePoule_Debug;" />
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-Winit-self" />
@@ -142,6 +142,12 @@
 		<Unit filename="../../sources/BellePoule/application/contest.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/application/weapon.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/application/weapon.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/application/ecosystem.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -196,20 +202,32 @@
 		<Unit filename="../../sources/BellePoule/application/tournament.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/main/hall.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/hall.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
 		<Unit filename="../../sources/BellePoule/application/version.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/main/bellepoule.cpp">
+		<Unit filename="../../sources/BellePoule/main/bellepoule_app.cpp">
 			<Option target="BellePoule_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/main/dispatcher.cpp">
-			<Option target="Dispatcher_Debug" />
+		<Unit filename="../../sources/BellePoule/main/hall_manager_app.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/main/hall_manager.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/main/hall_manager.hpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/main/hall.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/main/hall.hpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/main/piste.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/main/piste.hpp">
+			<Option target="HallManager_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/people_management/barrage.cpp">
 			<Option target="Lib_Debug" />

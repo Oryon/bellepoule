@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <stdlib.h>
 #include <curl/curl.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
@@ -25,122 +26,12 @@
 #include "util/attribute.hpp"
 #include "util/global.hpp"
 #include "util/module.hpp"
+#include "network/downloader.hpp"
 #include "language.hpp"
+#include "weapon.hpp"
+#include "version.h"
 
 #include "application.hpp"
-
-// --------------------------------------------------------------------------------
-void Application::AboutDialogActivateLinkFunc (GtkAboutDialog *about,
-                                               const gchar    *link,
-                                               gpointer        data)
-{
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecuteA (NULL,
-                 "open",
-                 link,
-                 NULL,
-                 NULL,
-                 SW_SHOWNORMAL);
-#else
-  gtk_show_uri (NULL,
-                link,
-                GDK_CURRENT_TIME,
-                NULL);
-#endif
-}
-
-// --------------------------------------------------------------------------------
-gint Application::CompareRanking (Attribute *attr_a,
-                                  Attribute *attr_b)
-{
-  gint value_a = 0;
-  gint value_b = 0;
-
-  if (attr_a)
-  {
-    value_a = attr_a->GetIntValue ();
-  }
-  if (attr_b)
-  {
-    value_b = attr_b->GetIntValue ();
-  }
-
-  if (value_a == 0)
-  {
-    value_a = G_MAXINT;
-  }
-  if (value_b == 0)
-  {
-    value_b = G_MAXINT;
-  }
-
-  return (value_a - value_b);
-}
-
-// --------------------------------------------------------------------------------
-gint Application::CompareDate (Attribute *attr_a,
-                               Attribute *attr_b)
-{
-  GDate date_a;
-  GDate date_b;
-
-  if (attr_a)
-  {
-    g_date_set_parse (&date_a,
-                      attr_a->GetStrValue ());
-  }
-
-  if (attr_b)
-  {
-    g_date_set_parse (&date_b,
-                      attr_b->GetStrValue ());
-  }
-
-  return g_date_compare (&date_a,
-                         &date_b);
-}
-// --------------------------------------------------------------------------------
-#ifdef DEBUG
-void Application::LogHandler (const gchar    *log_domain,
-                              GLogLevelFlags  log_level,
-                              const gchar    *message,
-                              gpointer        user_data)
-{
-  switch (log_level)
-  {
-    case G_LOG_FLAG_FATAL:
-    case G_LOG_LEVEL_ERROR:
-    case G_LOG_LEVEL_CRITICAL:
-    case G_LOG_LEVEL_WARNING:
-    case G_LOG_FLAG_RECURSION:
-    {
-      g_print (RED "[%s]" ESC " %s\n", log_domain, message);
-    }
-    break;
-
-    case G_LOG_LEVEL_MESSAGE:
-    case G_LOG_LEVEL_INFO:
-    case G_LOG_LEVEL_DEBUG:
-    case G_LOG_LEVEL_MASK:
-    default:
-    {
-      g_print (BLUE "[%s]" ESC " %s\n", log_domain, message);
-    }
-    break;
-  }
-}
-#endif
-
-// --------------------------------------------------------------------------------
-gboolean Application::IsCsvReady (AttributeDesc *desc)
-{
-  return (   (desc->_scope       == AttributeDesc::GLOBAL)
-          && (desc->_rights      == AttributeDesc::PUBLIC)
-          && (desc->_persistency == AttributeDesc::PERSISTENT)
-          && (g_ascii_strcasecmp (desc->_code_name, "final_rank") != 0)
-          && (g_ascii_strcasecmp (desc->_code_name, "IP") != 0)
-          && (g_ascii_strcasecmp (desc->_code_name, "exported")   != 0));
-}
 
 // --------------------------------------------------------------------------------
 Application::Application (const gchar   *config_file,
@@ -213,6 +104,13 @@ Application::Application (const gchar   *config_file,
   curl_global_init (CURL_GLOBAL_ALL);
 
   Global::_user_config = new UserConfig (config_file);
+
+  {
+    _version_downloader = new Net::Downloader ("_version_downloader",
+                                               OnLatestVersionReceived,
+                                               this);
+    _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -221,6 +119,12 @@ Application::~Application ()
   AttributeDesc::Cleanup ();
 
   _language->Release ();
+
+  if (_version_downloader)
+  {
+    _version_downloader->Kill    ();
+    _version_downloader->Release ();
+  }
 
   g_free (Global::_share_dir);
 
@@ -233,6 +137,14 @@ Application::~Application ()
 void Application::Prepare ()
 {
   _language = new Language ();
+
+  // Weapon
+  {
+    new Weapon ("Educ",  "EE");
+    new Weapon ("Foil",  "F");
+    new Weapon ("Epée",  "E");
+    new Weapon ("Sabre", "S");
+  }
 
   // Attributes definition
   {
@@ -395,4 +307,327 @@ void Application::Start (int    argc,
 {
   _language->Populate (GTK_MENU_ITEM  (_main_module->GetGObject ("locale_menuitem")),
                        GTK_MENU_SHELL (_main_module->GetGObject ("locale_menu")));
+
+  {
+    GtkWidget *w       = GTK_WIDGET (_main_module->GetGObject ("about_dialog"));
+    gchar     *version = g_strdup_printf ("V%s.%s%s", VERSION, VERSION_REVISION, VERSION_MATURITY);
+
+    gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (w),
+                                  (const gchar *) version);
+    g_free (version);
+  }
+
+  {
+    GtkWidget   *w         = GTK_WIDGET (_main_module->GetGObject ("about_dialog"));
+    const gchar *authors[] = {"Florence Blanchard",
+                              "Laurent Bonnot",
+                              "Tony (ajs New Mexico)",
+                              "Emmanuel Chaix",
+                              "Julien Diaz",
+                              "Olivier Larcher",
+                              "Yannick Le Roux",
+                              "Jean-Pierre Mahé",
+                              "Pierre Moro",
+                              "Killian Poulet",
+                              "Michel Relet",
+                              "Vincent Rémy",
+                              "Tina Schliemann",
+                              "Claude Simonnot",
+                              "Sébastien Vermandel",
+                              NULL};
+
+    gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (w),
+                                  authors);
+  }
+
+  {
+    GtkWidget *w           = GTK_WIDGET (_main_module->GetGObject ("about_dialog"));
+    gchar     *translators = g_strdup_printf ("Julien Diaz           (German)\n"
+                                              "Tina Schliemann       (German)\n"
+                                              "Michael Weber         (German)\n"
+                                              "Aureliano Martini     (Italian)\n"
+                                              "Jihwan Cho            (Korean)\n"
+                                              "Marijn Somers         (Dutch)\n"
+                                              "Werner Huysmans       (Dutch)\n"
+                                              "Farid Elkhalki        (Japanese)\n"
+                                              "Jean-François Brun    (Japanese)\n"
+                                              "Alexis Pigeon         (Spanish)\n"
+                                              "Paulo Morales         (Spanish)\n"
+                                              "Ignacio Gil           (Spanish)\n"
+                                              "Eduardo Alberto Calvo (Spanish, Portuguese)\n"
+                                              "Rui Pedro Vieira      (Portuguese)\n"
+                                              "Mohamed Rebai         (Arabic)\n"
+                                              "Mikael Hiort af Ornäs (Swedish)\n"
+                                              "Sergev Makhtanov      (Russian)");
+
+    gtk_about_dialog_set_translator_credits (GTK_ABOUT_DIALOG (w),
+                                             translators);
+    g_free (translators);
+  }
+
+  {
+    GtkWidget *w = _main_module->GetRootWidget ();
+
+    gtk_widget_show_all (w);
+  }
+
+  gtk_widget_hide (GTK_WIDGET (_main_module->GetGObject ("update_menuitem")));
+}
+
+// --------------------------------------------------------------------------------
+gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data)
+{
+  Application *application = (Application *) cbk_data->_user_data;
+  gchar       *data        = application->_version_downloader->GetData ();
+
+  if (data)
+  {
+    GKeyFile *version_file = g_key_file_new ();
+
+    if (g_key_file_load_from_data (version_file,
+                                   data,
+                                   strlen (data) + 1,
+                                   G_KEY_FILE_NONE,
+                                   NULL))
+    {
+      gboolean     new_version_detected = FALSE;
+      const gchar *local_version        = VERSION;
+      const gchar *local_revision       = VERSION_REVISION;
+      const gchar *local_maturity       = VERSION_MATURITY;
+      gchar       *remote_version;
+      gchar       *remote_revision;
+      gchar       *remote_maturity;
+
+      remote_version = g_key_file_get_string (version_file,
+                                              VERSION_BRANCH,
+                                              "version",
+                                              NULL);
+      remote_revision = g_key_file_get_string (version_file,
+                                               VERSION_BRANCH,
+                                               "revision",
+                                               NULL);
+      remote_maturity = g_key_file_get_string (version_file,
+                                               VERSION_BRANCH,
+                                               "maturity",
+                                               NULL);
+
+      if (remote_version && remote_revision && remote_maturity)
+      {
+        if (atoi (local_version) < atoi (remote_version))
+        {
+          new_version_detected = TRUE;
+        }
+        else if (atoi (local_version) == atoi (remote_version))
+        {
+          if (strcmp (local_maturity, remote_maturity) != 0)
+          {
+            if (*remote_maturity == '\0')
+            {
+              new_version_detected = TRUE;
+            }
+            else if (strcmp (local_maturity, remote_maturity) < 0)
+            {
+              new_version_detected = TRUE;
+            }
+          }
+          else if (atoi (local_revision) < atoi (remote_revision))
+          {
+            new_version_detected = TRUE;
+          }
+        }
+        else if (strcmp (VERSION_BRANCH, "UNSTABLE") == 0)
+        {
+          char *stable_version = g_key_file_get_string (version_file,
+                                                        "STABLE",
+                                                        "version",
+                                                        NULL);
+          if (stable_version && strcmp (remote_version, stable_version) <= 0)
+          {
+            new_version_detected = TRUE;
+          }
+        }
+      }
+
+      if (new_version_detected)
+      {
+        Module *main_module = application->_main_module;
+        gchar  *label       = g_strdup_printf ("%s.%s.%s", remote_version, remote_revision, remote_maturity);
+
+        gtk_menu_item_set_label (GTK_MENU_ITEM (main_module->GetGObject ("new_version_menuitem")),
+                                 label);
+        gtk_widget_show (GTK_WIDGET (main_module->GetGObject ("update_menuitem")));
+        g_free (label);
+      }
+    }
+
+    g_key_file_free (version_file);
+  }
+
+  application->_version_downloader->Kill    ();
+  application->_version_downloader->Release ();
+  application->_version_downloader = NULL;
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Application::AboutDialogActivateLinkFunc (GtkAboutDialog *about,
+                                               const gchar    *link,
+                                               gpointer        data)
+{
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecuteA (NULL,
+                 "open",
+                 link,
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                link,
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+}
+
+// --------------------------------------------------------------------------------
+gint Application::CompareRanking (Attribute *attr_a,
+                                  Attribute *attr_b)
+{
+  gint value_a = 0;
+  gint value_b = 0;
+
+  if (attr_a)
+  {
+    value_a = attr_a->GetIntValue ();
+  }
+  if (attr_b)
+  {
+    value_b = attr_b->GetIntValue ();
+  }
+
+  if (value_a == 0)
+  {
+    value_a = G_MAXINT;
+  }
+  if (value_b == 0)
+  {
+    value_b = G_MAXINT;
+  }
+
+  return (value_a - value_b);
+}
+
+// --------------------------------------------------------------------------------
+gint Application::CompareDate (Attribute *attr_a,
+                               Attribute *attr_b)
+{
+  GDate date_a;
+  GDate date_b;
+
+  if (attr_a)
+  {
+    g_date_set_parse (&date_a,
+                      attr_a->GetStrValue ());
+  }
+
+  if (attr_b)
+  {
+    g_date_set_parse (&date_b,
+                      attr_b->GetStrValue ());
+  }
+
+  return g_date_compare (&date_a,
+                         &date_b);
+}
+// --------------------------------------------------------------------------------
+#ifdef DEBUG
+void Application::LogHandler (const gchar    *log_domain,
+                              GLogLevelFlags  log_level,
+                              const gchar    *message,
+                              gpointer        user_data)
+{
+  switch (log_level)
+  {
+    case G_LOG_FLAG_FATAL:
+    case G_LOG_LEVEL_ERROR:
+    case G_LOG_LEVEL_CRITICAL:
+    case G_LOG_LEVEL_WARNING:
+    case G_LOG_FLAG_RECURSION:
+    {
+      g_print (RED "[%s]" ESC " %s\n", log_domain, message);
+    }
+    break;
+
+    case G_LOG_LEVEL_MESSAGE:
+    case G_LOG_LEVEL_INFO:
+    case G_LOG_LEVEL_DEBUG:
+    case G_LOG_LEVEL_MASK:
+    default:
+    {
+      g_print (BLUE "[%s]" ESC " %s\n", log_domain, message);
+    }
+    break;
+  }
+}
+#endif
+
+// --------------------------------------------------------------------------------
+gboolean Application::IsCsvReady (AttributeDesc *desc)
+{
+  return (   (desc->_scope       == AttributeDesc::GLOBAL)
+          && (desc->_rights      == AttributeDesc::PUBLIC)
+          && (desc->_persistency == AttributeDesc::PERSISTENT)
+          && (g_ascii_strcasecmp (desc->_code_name, "final_rank") != 0)
+          && (g_ascii_strcasecmp (desc->_code_name, "IP") != 0)
+          && (g_ascii_strcasecmp (desc->_code_name, "exported")   != 0));
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_new_version_menuitem_activate (GtkMenuItem *menuitem,
+                                                                  Object      *owner)
+{
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecuteA (NULL,
+                 "open",
+                 "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                "http://betton.escrime.free.fr/index.php/bellepoule-telechargement",
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_translate_menuitem_activate (GtkWidget *w,
+                                                                Object    *owner)
+{
+#ifdef WINDOWS_TEMPORARY_PATCH
+  ShellExecuteA (NULL,
+                 "open",
+                 "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
+                 NULL,
+                 NULL,
+                 SW_SHOWNORMAL);
+#else
+  gtk_show_uri (NULL,
+                "http://betton.escrime.free.fr/index.php/developpement/translation-guidelines",
+                GDK_CURRENT_TIME,
+                NULL);
+#endif
+}
+
+// --------------------------------------------------------------------------------
+extern "C" G_MODULE_EXPORT void on_about_menuitem_activate (GtkWidget *w,
+                                                            Object    *owner)
+{
+  Module    *m      = dynamic_cast <Module *> (owner);
+  GtkDialog *dialog = GTK_DIALOG (m->GetGObject ("about_dialog"));
+
+  gtk_dialog_run  (dialog);
+  gtk_widget_hide (GTK_WIDGET (dialog));
 }
