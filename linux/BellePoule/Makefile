@@ -113,9 +113,8 @@ prepare_www:
 	sed -i 's/bellepouledebug/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
 
 prepare_resources:
-	mkdir -p $(PACKAGE)/$(RELEASE)/resources
-	cp -f ../../resources/user_manual.pdf $(PACKAGE)/$(RELEASE)/resources
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/translations
+	cp -f ../../resources/translations/user_manual.pdf $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -f ../../resources/translations/index.txt $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/fr    $(PACKAGE)/$(RELEASE)/resources/translations
 	cp -rf ../../resources/translations/de    $(PACKAGE)/$(RELEASE)/resources/translations

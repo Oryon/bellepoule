@@ -1465,7 +1465,7 @@ void Schedule::on_next_stage_toolbutton_clicked ()
                                                             GTK_DIALOG_MODAL,
                                                             GTK_MESSAGE_QUESTION,
                                                             GTK_BUTTONS_YES_NO,
-                                                            gettext ("<b><big>Because of ties, quota is exceeded.\nDo you want to add a barrage round?</big></b>"));
+                                                            gettext ("<b><big>Because of ties, the quota is exceeded.\nDo you wish to add a barrage round?</big></b>"));
 
     gtk_window_set_title (GTK_WINDOW (dialog),
                           gettext ("Barrage"));

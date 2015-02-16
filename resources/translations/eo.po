@@ -229,8 +229,8 @@ msgid "All the inputs of this round will be cancelled."
 msgstr ""
 
 msgid ""
-"<b><big>Because of ties, quota is exceeded.\n"
-"Do you want to add a barrage round?</big></b>"
+"<b><big>Because of ties, the quota is exceeded.\n"
+"Do you wish to add a barrage round?</big></b>"
 msgstr ""
 
 msgid "Barrage"
@@ -781,9 +781,9 @@ msgid "Passphrase"
 msgstr ""
 
 msgid ""
-"Copy here your WIFI network parameters.\n"
-"They'll be used to automatically configure\n"
-"the smartphones running <b>SmartPoule</b>."
+"Enter your WIFI network settings here.\n"
+"They will be used to automatically configure\n"
+"the smarthphones running <b>SmartPoule</b>"
 msgstr ""
 
 msgid "User"
