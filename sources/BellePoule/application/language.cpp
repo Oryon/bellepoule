@@ -33,11 +33,22 @@ Language::Language ()
 
     setlocale (LC_ALL, "");
 
+    if (user_language == NULL)
+    {
+      user_language = g_ascii_strdown (setlocale (LC_ALL, NULL), -1);
+
+      if (user_language && (strlen (user_language) >= 2))
+      {
+        user_language[2] = '\0';
+      }
+    }
+
     if (user_language)
     {
       g_setenv ("LANGUAGE",
                 user_language,
                 TRUE);
+      g_free (user_language);
     }
   }
 

@@ -1024,9 +1024,9 @@ Public License instead of this License.  But first, please read
           <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Copy here your WIFI network parameters.
-They'll be used to automatically configure
-the smartphones running &lt;b&gt;SmartPoule&lt;/b&gt;.</property>
+            <property name="label" translatable="yes">Enter your WIFI network settings here.
+They will be used to automatically configure
+the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
             <property name="use_markup">True</property>
             <property name="justify">center</property>
           </object>

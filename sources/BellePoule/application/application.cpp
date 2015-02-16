@@ -332,6 +332,7 @@ void Application::Start (int    argc,
                               "Michel Relet",
                               "Vincent Rémy",
                               "Tina Schliemann",
+                              "Dom Walden",
                               "Claude Simonnot",
                               "Sébastien Vermandel",
                               NULL};
@@ -345,6 +346,7 @@ void Application::Start (int    argc,
     gchar     *translators = g_strdup_printf ("Julien Diaz           (German)\n"
                                               "Tina Schliemann       (German)\n"
                                               "Michael Weber         (German)\n"
+                                              "Dom Walden            (English\n"
                                               "Aureliano Martini     (Italian)\n"
                                               "Jihwan Cho            (Korean)\n"
                                               "Marijn Somers         (Dutch)\n"

@@ -92,7 +92,7 @@ Source: "..\..\..\Exemples\FFE\*";          DestDir: "{app}\share\bellepoule\Exe
 Source: "..\..\..\Exemples\Classements\*";  DestDir: "{app}\share\bellepoule\Exemples\Classements"; Flags: ignoreversion
 
 ;Documentation
-Source: "..\..\..\resources\user_manual.pdf"; DestDir: "{app}\share\bellepoule\resources"; Flags: ignoreversion
+Source: "..\..\..\resources\translations\user_manual.pdf"; DestDir: "{app}\share\bellepoule\resources\translations"; Flags: ignoreversion
 
 ;Traductions
 Source: "..\..\..\resources\translations\index.txt"; DestDir: "{app}\share\bellepoule\resources\translations"; Flags: ignoreversion

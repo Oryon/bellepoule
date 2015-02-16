@@ -1059,11 +1059,33 @@ void Tournament::OnSave ()
 // --------------------------------------------------------------------------------
 void Tournament::OnOpenUserManual ()
 {
-  gchar *uri;
+  gchar *uri           = NULL;
+  gchar *language_code = g_key_file_get_string (Global::_user_config->_key_file,
+                                                "Tournament",
+                                                "interface_language",
+                                                NULL);
+
+  if (language_code)
+  {
+    uri = g_build_filename (Global::_share_dir, "resources", "translations", language_code, "user_manual.pdf", NULL);
+
+    if (g_file_test (uri,
+                     G_FILE_TEST_EXISTS) == FALSE)
+    {
+      g_free (uri);
+      uri = NULL;
+    }
+
+    g_free (language_code);
+  }
+
+  if (uri == NULL)
+  {
+    uri = g_build_filename (Global::_share_dir, "resources", "translations", "user_manual.pdf", NULL);
+  }
+
 
 #ifdef WINDOWS_TEMPORARY_PATCH
-  uri = g_build_filename (Global::_share_dir, "resources", "user_manual.pdf", NULL);
-
   ShellExecute (NULL,
                 "open",
                 uri,
@@ -1071,12 +1093,15 @@ void Tournament::OnOpenUserManual ()
                 NULL,
                 SW_SHOWNORMAL);
 #else
-  uri = g_build_filename ("file://", Global::_share_dir, "resources", "user_manual.pdf", NULL);
+  {
+    gchar *full_uri = g_build_filename ("file://", uri, NULL);
 
-  gtk_show_uri (NULL,
-                uri,
-                GDK_CURRENT_TIME,
-                NULL);
+    gtk_show_uri (NULL,
+                  full_uri,
+                  GDK_CURRENT_TIME,
+                  NULL);
+    g_free (full_uri);
+  }
 #endif
 
   g_free (uri);
