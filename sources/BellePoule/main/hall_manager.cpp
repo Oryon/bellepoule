@@ -15,7 +15,9 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "people_management/referees_list.hpp"
+#include "application/weapon.hpp"
 #include "hall.hpp"
+#include "batch.hpp"
 
 #include "hall_manager.hpp"
 
@@ -31,24 +33,34 @@ HallManager::HallManager ()
   }
 
   {
-    People::RefereesList *list = new People::RefereesList (NULL);
+    GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook"));
+    GSList      *current  = Weapon::GetList ();
 
-    Plug (list,
-          _glade->GetWidget ("referees_viewport"));
-
-#if 0
+    while (current)
     {
-      _notebook = GTK_NOTEBOOK (to);
+      Weapon               *weapon   = (Weapon *) current->data;
+      People::RefereesList *list     = new People::RefereesList (NULL);
+      GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
 
-      gtk_notebook_append_page (_notebook,
-                                GetRootWidget (),
-                                _glade->GetWidget ("notebook_title"));
+      gtk_notebook_append_page (notebook,
+                                viewport,
+                                gtk_label_new (gettext (weapon->GetImage ())));
+      Plug (list,
+            viewport);
 
-      gtk_notebook_set_tab_reorderable (_notebook,
-                                        GetRootWidget (),
-                                        TRUE);
+      current = g_slist_next (current);
     }
-#endif
+  }
+
+  {
+    GtkWidget *notebook = _glade->GetWidget ("batch_notebook");
+    Batch     *batch;
+
+    batch = new Batch ();
+    batch->AttachTo (GTK_NOTEBOOK (notebook));
+
+    batch = new Batch ();
+    batch->AttachTo (GTK_NOTEBOOK (notebook));
   }
 }
 

@@ -43,33 +43,74 @@ Piste::Piste (GooCanvasItem *parent,
   }
 
   {
+    _color_item = goo_canvas_rect_new (_root_item,
+                                       _BORDER_W, _BORDER_W,
+                                       _W/10.0, _H - _BORDER_W*2.0,
+                                       "line-width", 0.0,
+                                       "fill-color", "darkgreen",
+                                       NULL);
+    MonitorEvent (_color_item);
+  }
+
+  {
     _progress_item = goo_canvas_rect_new (_root_item,
-                                          _BORDER_W, _H - (_H/10.0),
-                                          _W - _BORDER_W*2.0, (_H/10.0)-_BORDER_W,
-                                          "fill-color", "orange",
+                                          _W/10.0 + _BORDER_W,
+                                          _H - (_H/10.0),
+                                          _W/2.0,
+                                          (_H/10.0)-_BORDER_W,
+                                          "fill-color", "darkgreen",
                                           "line-width", 0.0,
                                           NULL);
     MonitorEvent (_progress_item);
   }
 
-  _id_item = goo_canvas_text_new (_root_item,
-                                  "",
-                                  1.0, 1.0,
-                                  -1.0,
-                                  GTK_ANCHOR_NW,
-                                  "fill-color", "black",
-                                  "font", BP_FONT "bold 10px",
-                                  NULL);
+  {
+    _id_item = goo_canvas_text_new (_root_item,
+                                    "",
+                                    1.0, 1.0,
+                                    -1.0,
+                                    GTK_ANCHOR_NW,
+                                    "fill-color", "black",
+                                    "font", BP_FONT "bold 10px",
+                                    NULL);
+    MonitorEvent (_id_item);
+  }
+
+  {
+    _title_item = goo_canvas_text_new (_root_item,
+                                       "Sabre-Homme-Cadet",
+                                       _W/2.0, 1.0,
+                                       -1.0,
+                                       GTK_ANCHOR_NORTH,
+                                       "fill-color", "black",
+                                       "font", BP_FONT "bold 8px",
+                                       NULL);
+    MonitorEvent (_title_item);
+  }
+
+  {
+    _match_item = goo_canvas_text_new (_root_item,
+                                       "Poule N°1",
+                                       _W/2.0, 9.0,
+                                       -1.0,
+                                       GTK_ANCHOR_NORTH,
+                                       "fill-color", "black",
+                                       "font", BP_FONT "bold 8px",
+                                       NULL);
+    MonitorEvent (_match_item);
+  }
 
   {
     Module    *owner  = dynamic_cast <Module *> (listener);
-    GdkPixbuf *pixbuf = owner->GetPixbuf (GTK_STOCK_APPLY);
+    GdkPixbuf *pixbuf = owner->GetPixbuf (GTK_STOCK_DIALOG_AUTHENTICATION);
 
     _status_item = goo_canvas_image_new (_root_item,
                                          pixbuf,
                                          (_W - 10.0) * 2.0,
                                          1.0,
                                          NULL);
+    MonitorEvent (_status_item);
+
     goo_canvas_item_scale (_status_item,
                            0.5,
                            0.5);
