@@ -223,6 +223,12 @@
 		<Unit filename="../../sources/BellePoule/main/hall.hpp">
 			<Option target="HallManager_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/main/batch.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/main/batch.hpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/main/piste.cpp">
 			<Option target="HallManager_Debug" />
 		</Unit>

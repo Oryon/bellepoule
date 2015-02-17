@@ -66,8 +66,11 @@ class Piste : public Object
     Piste::Listener *_listener;
     GooCanvasItem   *_root_item;
     GooCanvasItem   *_rect_item;
+    GooCanvasItem   *_color_item;
     GooCanvasItem   *_progress_item;
     GooCanvasItem   *_id_item;
+    GooCanvasItem   *_match_item;
+    GooCanvasItem   *_title_item;
     GooCanvasItem   *_status_item;
     guint            _id;
     gboolean         _horizontal;
