@@ -25,6 +25,7 @@
 #include "pool_round/pool_supervisor.hpp"
 #include "table_round/table_supervisor.hpp"
 #include "util/wifi_code.hpp"
+#include "util/partner.hpp"
 #include "application/application.hpp"
 #include "application/contest.hpp"
 #include "application/tournament.hpp"
@@ -36,24 +37,34 @@ class BellPouleApp : public Application
     BellPouleApp (int *argc, char ***argv);
 
   private:
+    Tournament *_tournament;
+
     virtual ~BellPouleApp ();
 
     void Prepare ();
 
     void Start (int argc, char **argv);
+
+    void OnNewPartner (Partner *partner);
+
+    gboolean OnHttpPost (const gchar *data);
+
+    gchar *OnHttpGet (const gchar *url);
+
+    gchar *GetSecretKey (const gchar *authentication_scheme);
 };
 
 // --------------------------------------------------------------------------------
 BellPouleApp::BellPouleApp (int    *argc,
                             char ***argv)
-  : Application ("BellePoule", argc, argv)
+  : Application ("BellePoule", 35830, argc, argv)
 {
 }
 
 // --------------------------------------------------------------------------------
 BellPouleApp::~BellPouleApp ()
 {
-  _main_module->Release ();
+  _tournament->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -85,12 +96,12 @@ void BellPouleApp::Prepare ()
 void BellPouleApp::Start (int    argc,
                           char **argv)
 {
-  Tournament *tournament = new Tournament ();
+  _tournament = new Tournament ();
 
   WifiCode::SetPort (35830);
-  People::Splitting::SetHostTournament (tournament);
+  People::Splitting::SetHostTournament (_tournament);
 
-  _main_module = tournament;
+  _main_module = _tournament;
   Application::Start (argc,
                       argv);
 
@@ -98,14 +109,53 @@ void BellPouleApp::Start (int    argc,
 
   if (argc > 1)
   {
-    tournament->Start (g_strdup (argv[1]));
+    _tournament->Start (g_strdup (argv[1]));
   }
   else
   {
-    tournament->Start (NULL);
+    _tournament->Start (NULL);
   }
 
   gtk_main ();
+}
+
+// --------------------------------------------------------------------------------
+gboolean BellPouleApp::OnHttpPost (const gchar *data)
+{
+  if (_tournament)
+  {
+    return _tournament->OnHttpPost (data);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gchar *BellPouleApp::OnHttpGet (const gchar *url)
+{
+  if (_tournament)
+  {
+    return _tournament->OnHttpGet (url);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gchar *BellPouleApp::GetSecretKey (const gchar *authentication_scheme)
+{
+  if (_tournament)
+  {
+    return _tournament->GetSecretKey (authentication_scheme);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void BellPouleApp::OnNewPartner (Partner *partner)
+{
+  printf ("OnNewPartner\n");
 }
 
 // --------------------------------------------------------------------------------

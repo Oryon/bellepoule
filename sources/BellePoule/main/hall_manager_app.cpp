@@ -35,7 +35,7 @@ class HallManagerApp : public Application
 // --------------------------------------------------------------------------------
 HallManagerApp::HallManagerApp (int    *argc,
                                 char ***argv)
-  : Application ("HallManager", argc, argv)
+  : Application ("HallManager", 35840, argc, argv)
 {
 }
 
@@ -72,7 +72,6 @@ void HallManagerApp::Start (int    argc,
 
   gtk_main ();
 }
-
 
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)

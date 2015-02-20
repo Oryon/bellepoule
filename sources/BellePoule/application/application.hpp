@@ -19,14 +19,16 @@
 
 #include "util/object.hpp"
 #include "network/downloader.hpp"
+#include "network/http_server.hpp"
 
 class Attribute;
 class AttributeDesc;
 class Application;
 class Module;
 class Language;
+class Partner;
 
-class Application : public Object
+class Application : public Object, Net::HttpServer::Client
 {
   public:
     virtual void Prepare ();
@@ -37,6 +39,7 @@ class Application : public Object
     Module *_main_module;
 
     Application (const gchar   *config_file,
+                 guint          http_port,
                  int           *argc,
                  char        ***argv);
 
@@ -46,14 +49,21 @@ class Application : public Object
 
     void ListenToAnnouncement ();
 
-    void SendMessageToPartner (const gchar *partner);
-
   private:
     static const gchar *ANNOUNCE_GROUP;
     static const guint  ANNOUNCE_PORT = 35000;
 
     Language        *_language;
     Net::Downloader *_version_downloader;
+    Net::HttpServer *_http_server;
+
+    virtual void OnNewPartner (Partner *partner);
+
+    virtual gboolean OnHttpPost (const gchar *data);
+
+    virtual gchar *OnHttpGet (const gchar *url);
+
+    virtual gchar *GetSecretKey (const gchar *authentication_scheme);
 
     static void AboutDialogActivateLinkFunc (GtkAboutDialog *about,
                                              const gchar    *link,
@@ -75,6 +85,12 @@ class Application : public Object
     static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
 
     static gpointer AnnoucementListener (Application *application);
+
+    static gboolean HttpPostCbk (Net::HttpServer::Client *client,
+                                 const gchar             *data);
+
+    static gchar *HttpGetCbk (Net::HttpServer::Client *client,
+                              const gchar             *url);
 };
 
 #endif

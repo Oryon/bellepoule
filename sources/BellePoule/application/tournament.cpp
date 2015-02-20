@@ -33,6 +33,7 @@
 #include "contest.hpp"
 #include "weapon.hpp"
 #include "people_management/form.hpp"
+#include "network/http_server.hpp"
 
 #include "tournament.hpp"
 
@@ -91,7 +92,6 @@ Tournament::~Tournament ()
                      (GDestroyNotify) Object::TryToRelease);
 
   _web_server->Release  ();
-  _http_server->Release ();
   _ecosystem->Release   ();
   Contest::Cleanup ();
 }
@@ -108,11 +108,7 @@ void Tournament::Start (gchar *filename)
     gchar *ip_addr;
     gchar *html_url;
 
-    _http_server = new Net::HttpServer (this,
-                                        HttpPostCbk,
-                                        HttpGetCbk,
-                                        35830);
-    ip_addr = _http_server->GetIpV4 ();
+    ip_addr = Net::HttpServer::GetIpV4 ();
     html_url = g_strdup_printf ("http://%s/index.php", ip_addr);
 
     SetFlashRef (html_url);
@@ -779,24 +775,6 @@ gchar *Tournament::OnHttpGet (const gchar *url)
   }
 
   return result;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Tournament::HttpPostCbk (Net::HttpServer::Client *client,
-                                  const gchar             *data)
-{
-  Tournament *tournament = (Tournament *) client;
-
-  return tournament->OnHttpPost (data);
-}
-
-// --------------------------------------------------------------------------------
-gchar *Tournament::HttpGetCbk (Net::HttpServer::Client *client,
-                               const gchar             *url)
-{
-  Tournament *tournament = (Tournament *) client;
-
-  return tournament->OnHttpGet (url);
 }
 
 // --------------------------------------------------------------------------------

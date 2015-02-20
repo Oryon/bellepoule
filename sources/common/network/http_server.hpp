@@ -55,7 +55,9 @@ namespace Net
                   HttpGet   http_get,
                   guint     port);
 
-      gchar *GetIpV4 ();
+      guint GetPort ();
+
+      static gchar *GetIpV4 ();
 
     private:
       struct RequestBody
@@ -82,6 +84,7 @@ namespace Net
       };
 
       struct MHD_Daemon *_daemon;
+      guint              _port;
       Client            *_client;
       HttpPost           _http_POST_cbk;
       HttpGet            _http_GET_cbk;

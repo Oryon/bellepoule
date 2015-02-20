@@ -100,6 +100,8 @@ namespace Net
                           guint     port)
     : Object ("HttpServer")
   {
+    _port = port;
+
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                                 port,
                                 NULL, NULL,
@@ -122,6 +124,12 @@ namespace Net
     _cryptor->Release ();
 
     g_free (_iv);
+  }
+
+  // --------------------------------------------------------------------------------
+  guint HttpServer::GetPort ()
+  {
+    return _port;
   }
 
   // --------------------------------------------------------------------------------
@@ -230,7 +238,7 @@ namespace Net
         }
       }
     }
-    else if (_http_POST_cbk && (strcmp (method, "POST") == 0))
+    else if (_http_POST_cbk && ((strcmp (method, "POST") == 0) || (strcmp (method, "PUT") == 0)))
     {
       if (*upload_data_size)
       {

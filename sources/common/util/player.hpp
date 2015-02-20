@@ -28,7 +28,7 @@
 class WifiCode;
 class Weapon;
 
-class Player : public Object
+class Player : public Object, Net::Uploader::Listener
 {
   public:
     class AttributeId : public Object
@@ -182,8 +182,12 @@ class Player : public Object
     void NotifyChange (Attribute *attr,
                        guint      step);
 
-    static void OnUploaderStatus (Net::Uploader::PeerStatus  peer_status,
-                                  Object                    *object);
+  private:
+    void OnUploadStatus (Net::Uploader::PeerStatus peer_status);
+
+    void Use ();
+
+    void Drop ();
 };
 
 #endif

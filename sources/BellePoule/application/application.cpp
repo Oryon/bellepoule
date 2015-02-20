@@ -32,6 +32,7 @@
 #include "util/attribute.hpp"
 #include "util/global.hpp"
 #include "util/module.hpp"
+#include "util/partner.hpp"
 #include "network/downloader.hpp"
 #include "language.hpp"
 #include "weapon.hpp"
@@ -43,6 +44,7 @@ const gchar *Application::ANNOUNCE_GROUP = "225.0.0.35";
 
 // --------------------------------------------------------------------------------
 Application::Application (const gchar   *config_file,
+                          guint          http_port,
                           int           *argc,
                           char        ***argv)
 {
@@ -119,12 +121,19 @@ Application::Application (const gchar   *config_file,
                                                this);
     _version_downloader->Start ("http://betton.escrime.free.fr/documents/BellePoule/latest.html");
   }
+
+  _http_server = new Net::HttpServer (this,
+                                      HttpPostCbk,
+                                      HttpGetCbk,
+                                      http_port);
 }
 
 // --------------------------------------------------------------------------------
 Application::~Application ()
 {
   AttributeDesc::Cleanup ();
+
+  _http_server->Release ();
 
   _language->Release ();
 
@@ -389,7 +398,6 @@ gboolean Application::AnnounceAvailability (Application *application)
 {
   struct sockaddr_in  addr;
   int                 fd;
-  const char         *message = "HallManager";
 
   if ((fd = socket (AF_INET,
                     SOCK_DGRAM,
@@ -409,15 +417,22 @@ gboolean Application::AnnounceAvailability (Application *application)
     addr.sin_port        = htons     (ANNOUNCE_PORT);
   }
 
-  if (sendto (fd,
-              message,
-              strlen (message) + 1,
-              0,
-              (struct sockaddr *) &addr,
-              sizeof(addr)) < 0)
   {
-    g_warning ("sendto: %s", strerror (errno));
-    return FALSE;
+    char *message = g_strdup_printf ("HallManager:%d", application->_http_server->GetPort ());
+
+    if (sendto (fd,
+                message,
+                strlen (message) + 1,
+                0,
+                (struct sockaddr *) &addr,
+                sizeof(addr)) < 0)
+    {
+      g_warning ("sendto: %s", strerror (errno));
+      g_free (message);
+      return FALSE;
+    }
+
+    g_free (message);
   }
 
   return TRUE;
@@ -504,27 +519,30 @@ gpointer Application::AnnoucementListener (Application *application)
 
   while (1)
   {
-    socklen_t addrlen = sizeof (addr);
-    char      message[100];
-    ssize_t   size;
+    struct sockaddr_in from;
+    socklen_t          addrlen = sizeof (from);
+    char               message[100];
+    ssize_t            size;
 
     if ((size = recvfrom (fd,
                           message,
                           100,
                           0,
-                          (struct sockaddr *) &addr,
+                          (struct sockaddr *) &from,
                           &addrlen)) < 0)
     {
       g_warning ("recvfrom: %s", strerror (errno));
     }
-    printf ("%ld << %s >>\n", size, message);
+
+    application->OnNewPartner (new Partner (message,
+                                            &from));
   }
 
   return NULL;
 }
 
 // --------------------------------------------------------------------------------
-void Application::SendMessageToPartner (const gchar *partner)
+void Application::OnNewPartner (Partner *partner)
 {
 }
 
@@ -622,6 +640,44 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
   application->_version_downloader = NULL;
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Application::OnHttpPost (const gchar *data)
+{
+  printf ("POST ==> %s\n", data);
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Application::OnHttpGet (const gchar *url)
+{
+  printf ("GET ==> %s\n", url);
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gchar *Application::GetSecretKey (const gchar *authentication_scheme)
+{
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Application::HttpPostCbk (Net::HttpServer::Client *client,
+                                   const gchar             *data)
+{
+  Application *app = (Application *) client;
+
+  return app->OnHttpPost (data);
+}
+
+// --------------------------------------------------------------------------------
+gchar *Application::HttpGetCbk (Net::HttpServer::Client *client,
+                                const gchar             *url)
+{
+  Application *app = (Application *) client;
+
+  return app->OnHttpGet (url);
 }
 
 // --------------------------------------------------------------------------------

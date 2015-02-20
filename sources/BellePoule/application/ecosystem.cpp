@@ -117,7 +117,7 @@ WifiCode *EcoSystem::GetAdminCode ()
 Net::Uploader *EcoSystem::GetUpLoader ()
 {
   return new Net::Uploader (gtk_entry_get_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (_glade->GetWidget ("ftp_comboboxentry"))))),
-                            NULL, NULL,
+                            NULL,
                             gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("user_entry"))),
                             gtk_entry_get_text (GTK_ENTRY (_glade->GetWidget ("passwd_entry"))));
 }

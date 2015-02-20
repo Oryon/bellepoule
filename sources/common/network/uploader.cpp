@@ -22,8 +22,7 @@ namespace Net
 {
   // --------------------------------------------------------------------------------
   Uploader::Uploader (const gchar  *url,
-                      UploadStatus  status_cbk,
-                      Object       *status_object,
+                      Listener     *listener,
                       const gchar  *user,
                       const gchar  *passwd)
     : Object ("Uploader")
@@ -32,12 +31,11 @@ namespace Net
     _user   = g_strdup (user);
     _passwd = g_strdup (passwd);
 
-    _status_cbk        = status_cbk;
-    _status_cbk_object = status_object;
+    _listener = listener;
 
-    if (_status_cbk_object)
+    if (_listener)
     {
-      _status_cbk_object->Retain ();
+      _listener->Use ();
     }
 
     _full_url = NULL;
@@ -55,7 +53,10 @@ namespace Net
     g_free (_passwd);
     g_free (_data);
 
-    Object::TryToRelease (_status_cbk_object);
+    if (_listener)
+    {
+      _listener->Drop ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -93,7 +94,12 @@ namespace Net
     _full_url = g_strdup (_url);
 
     g_free (_iv);
-    _iv = g_base64_encode (iv, 16);
+    _iv = NULL;
+
+    if (iv)
+    {
+      _iv = g_base64_encode (iv, 16);
+    }
 
     _data        = g_strdup (string);
     _data_length = strlen (_data);
@@ -185,8 +191,7 @@ namespace Net
   // --------------------------------------------------------------------------------
   gboolean Uploader::DeferedStatus (Uploader *uploader)
   {
-    uploader->_status_cbk (uploader->_peer_status,
-                           uploader->_status_cbk_object);
+    uploader->_listener->OnUploadStatus (uploader->_peer_status);
     uploader->Release ();
 
     return FALSE;
@@ -250,7 +255,7 @@ namespace Net
             g_print (YELLOW "[Uploader] " ESC "Done");
           }
 
-          if (uploader->_status_cbk && uploader->_status_cbk_object)
+          if (uploader->_listener)
           {
             defered_operation = TRUE;
             g_idle_add ((GSourceFunc) DeferedStatus,
