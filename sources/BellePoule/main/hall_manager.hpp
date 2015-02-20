@@ -19,6 +19,8 @@
 
 #include "util/module.hpp"
 
+class Batch;
+
 class HallManager : public Module
 {
   public:
@@ -26,8 +28,14 @@ class HallManager : public Module
 
     void Start ();
 
+    void AddContest (const gchar *data);
+
   private:
+    GList *_batch_list;
+
     virtual ~HallManager ();
+
+    Batch *GetBatch (const gchar *id);
 };
 
 #endif

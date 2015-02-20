@@ -152,14 +152,8 @@
 		<Unit filename="..\..\sources\BellePoule\application\version.h" />
 		<Unit filename="..\..\sources\BellePoule\application\weapon.cpp" />
 		<Unit filename="..\..\sources\BellePoule\application\weapon.hpp" />
-		<Unit filename="..\..\sources\BellePoule\main\batch.cpp">
-			<Option target="Dispatcher_Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\sources\BellePoule\main\batch.hpp">
-			<Option target="Dispatcher_Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\..\sources\BellePoule\main\batch.cpp" />
+		<Unit filename="..\..\sources\BellePoule\main\batch.hpp" />
 		<Unit filename="..\..\sources\BellePoule\main\bellepoule_app.cpp">
 			<Option target="BellePoule_Debug" />
 			<Option target="Release" />
@@ -295,6 +289,8 @@
 		<Unit filename="..\..\sources\common\util\module.hpp" />
 		<Unit filename="..\..\sources\common\util\object.cpp" />
 		<Unit filename="..\..\sources\common\util\object.hpp" />
+		<Unit filename="..\..\sources\common\util\partner.cpp" />
+		<Unit filename="..\..\sources\common\util\partner.hpp" />
 		<Unit filename="..\..\sources\common\util\player.cpp" />
 		<Unit filename="..\..\sources\common\util\player.hpp" />
 		<Unit filename="..\..\sources\common\util\sensitivity_trigger.cpp" />

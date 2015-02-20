@@ -32,12 +32,17 @@ namespace Net
         CONN_ERROR
       } PeerStatus;
 
-      typedef void (*UploadStatus) (PeerStatus  peer_status,
-                                    Object     *object);
+      class Listener
+      {
+        public:
+          virtual void OnUploadStatus (PeerStatus peer_status) = 0;
+          virtual void Use  () = 0;
+          virtual void Drop () = 0;
+      };
 
+    public:
       Uploader (const gchar  *url,
-                UploadStatus  status_cbk,
-                Object       *status_object,
+                Listener     *listener,
                 const gchar  *user,
                 const gchar  *passwd);
 
@@ -55,8 +60,7 @@ namespace Net
       gchar        *_data;
       gsize         _data_length;
       guint         _bytes_uploaded;
-      UploadStatus  _status_cbk;
-      Object       *_status_cbk_object;
+      Listener     *_listener;
       PeerStatus    _peer_status;
 
       virtual ~Uploader ();

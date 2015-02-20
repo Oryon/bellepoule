@@ -235,6 +235,12 @@
 		<Unit filename="../../sources/BellePoule/main/piste.hpp">
 			<Option target="HallManager_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/util/partner.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/util/partner.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/people_management/barrage.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>

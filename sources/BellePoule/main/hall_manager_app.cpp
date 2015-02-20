@@ -25,17 +25,21 @@ class HallManagerApp : public Application
     HallManagerApp (int *argc, char ***argv);
 
   private:
+    HallManager *_hall_manager;
+
     virtual ~HallManagerApp ();
 
     void Prepare ();
 
     void Start (int argc, char **argv);
+
+    gboolean OnHttpPost (const gchar *data);
 };
 
 // --------------------------------------------------------------------------------
 HallManagerApp::HallManagerApp (int    *argc,
                                 char ***argv)
-  : Application ("HallManager", argc, argv)
+  : Application ("HallManager", 35840, argc, argv)
 {
 }
 
@@ -57,18 +61,32 @@ void HallManagerApp::Prepare ()
 void HallManagerApp::Start (int    argc,
                             char **argv)
 {
-  HallManager *hall_manager = new HallManager ();
+  _hall_manager = new HallManager ();
 
-  _main_module = hall_manager;
+  _main_module = _hall_manager;
 
   Application::Start (argc,
                       argv);
 
-  hall_manager->Start ();
+  AnnounceAvailability ();
+
+  _hall_manager->Start ();
 
   gtk_main ();
 }
 
+// --------------------------------------------------------------------------------
+gboolean HallManagerApp::OnHttpPost (const gchar *data)
+{
+  if (Application::OnHttpPost (data) == FALSE)
+  {
+    _hall_manager->AddContest (data);
+
+    return FALSE;
+  }
+
+  return TRUE;
+}
 
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)

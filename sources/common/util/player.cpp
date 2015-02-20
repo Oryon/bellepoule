@@ -694,7 +694,7 @@ gboolean Player::SendMessage (const gchar *where,
         }
 
         uploader = new Net::Uploader (url,
-                                      (Net::Uploader::UploadStatus) OnUploaderStatus, this,
+                                      this,
                                       NULL, NULL);
 
         g_free (url);
@@ -738,21 +738,31 @@ gboolean Player::SendMessage (const gchar *where,
 }
 
 // --------------------------------------------------------------------------------
-void Player::OnUploaderStatus (Net::Uploader::PeerStatus  peer_status,
-                               Object                    *object)
+void Player::Use ()
 {
-  Player              *player = dynamic_cast <Player *> (object);
+  Retain ();
+}
+
+// --------------------------------------------------------------------------------
+void Player::Drop ()
+{
+  Release ();
+}
+
+// --------------------------------------------------------------------------------
+void Player::OnUploadStatus (Net::Uploader::PeerStatus peer_status)
+{
   Player::AttributeId  connection_attr_id ("connection");
 
   if (peer_status == Net::Uploader::CONN_ERROR)
   {
-    player->SetAttributeValue (&connection_attr_id,
-                               "Broken");
+    SetAttributeValue (&connection_attr_id,
+                       "Broken");
   }
   else
   {
-    player->SetAttributeValue (&connection_attr_id,
-                               "Waiting");
+    SetAttributeValue (&connection_attr_id,
+                       "Waiting");
   }
 }
 

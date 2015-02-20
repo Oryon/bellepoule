@@ -43,6 +43,10 @@ class Piste : public Object
 
     void UnSelect ();
 
+    void SetColor (const gchar *color);
+
+    void Translate (const gchar *color);
+
     void Translate (gdouble tx,
                     gdouble ty);
 
@@ -66,7 +70,6 @@ class Piste : public Object
     Piste::Listener *_listener;
     GooCanvasItem   *_root_item;
     GooCanvasItem   *_rect_item;
-    GooCanvasItem   *_color_item;
     GooCanvasItem   *_progress_item;
     GooCanvasItem   *_id_item;
     GooCanvasItem   *_match_item;
