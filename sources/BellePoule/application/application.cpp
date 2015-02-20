@@ -50,6 +50,7 @@ Application::Application (const gchar   *config_file,
 {
   _language    = NULL;
   _main_module = NULL;
+  _granted     = FALSE;
 
   // g_mem_set_vtable (glib_mem_profiler_table);
 
@@ -394,7 +395,7 @@ void Application::Start (int    argc,
 }
 
 // --------------------------------------------------------------------------------
-gboolean Application::AnnounceAvailability (Application *application)
+gboolean Application::MulticastAvailability (Application *application)
 {
   struct sockaddr_in  addr;
   int                 fd;
@@ -435,7 +436,15 @@ gboolean Application::AnnounceAvailability (Application *application)
     g_free (message);
   }
 
-  return TRUE;
+  return (application->_granted == FALSE);
+}
+
+// --------------------------------------------------------------------------------
+void Application::AnnounceAvailability ()
+{
+  g_timeout_add_seconds (5,
+                         (GSourceFunc) MulticastAvailability,
+                         this);
 }
 
 // --------------------------------------------------------------------------------
@@ -645,14 +654,18 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
 // --------------------------------------------------------------------------------
 gboolean Application::OnHttpPost (const gchar *data)
 {
-  printf ("POST ==> %s\n", data);
+  if (strcmp (data, "tagada soinsoin") == 0)
+  {
+    _granted = TRUE;
+    return TRUE;
+  }
+
   return FALSE;
 }
 
 // --------------------------------------------------------------------------------
 gchar *Application::OnHttpGet (const gchar *url)
 {
-  printf ("GET ==> %s\n", url);
   return NULL;
 }
 

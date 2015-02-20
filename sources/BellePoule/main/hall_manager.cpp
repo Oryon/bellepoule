@@ -25,6 +25,8 @@
 HallManager::HallManager ()
   : Module ("hall_manager.glade")
 {
+  _batch_list = NULL;
+
   {
     Hall *hall = new Hall ();
 
@@ -51,25 +53,82 @@ HallManager::HallManager ()
       current = g_slist_next (current);
     }
   }
-
-  {
-    GtkWidget *notebook = _glade->GetWidget ("batch_notebook");
-    Batch     *batch;
-
-    batch = new Batch ();
-    batch->AttachTo (GTK_NOTEBOOK (notebook));
-
-    batch = new Batch ();
-    batch->AttachTo (GTK_NOTEBOOK (notebook));
-  }
 }
 
 // --------------------------------------------------------------------------------
 HallManager::~HallManager ()
 {
+  g_list_free_full (_batch_list,
+                    (GDestroyNotify) Object::TryToRelease);
 }
 
 // --------------------------------------------------------------------------------
 void HallManager::Start ()
 {
+}
+
+// --------------------------------------------------------------------------------
+Batch *HallManager::GetBatch (const gchar *id)
+{
+  GList *current = _batch_list;
+
+  while (current)
+  {
+    Batch *batch = (Batch *) current->data;
+
+    if (strcmp (batch->GetId (), id) == 0)
+    {
+      return batch;
+    }
+
+    current = g_list_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void HallManager::AddContest (const gchar *data)
+{
+  GKeyFile *key_file = g_key_file_new ();
+  GError   *error    = NULL;
+
+  if (g_key_file_load_from_data (key_file,
+                                 data,
+                                 -1,
+                                 G_KEY_FILE_NONE,
+                                 &error) == FALSE)
+  {
+    g_warning ("g_key_file_load_from_data: %s", error->message);
+    g_clear_error (&error);
+  }
+  else
+  {
+    gchar *id = g_key_file_get_string (key_file,
+                                       "Contest",
+                                       "id",
+                                       NULL);
+
+    if (id)
+    {
+      GtkWidget *notebook = _glade->GetWidget ("batch_notebook");
+      Batch     *batch    = GetBatch (id);
+
+      if (batch == NULL)
+      {
+        batch = new Batch (id);
+
+        _batch_list = g_list_prepend (_batch_list,
+                                      batch);
+
+        batch->AttachTo (GTK_NOTEBOOK (notebook));
+      }
+
+      batch->SetProperties (key_file);
+
+      g_free (id);
+    }
+  }
+
+  g_key_file_free (key_file);
 }

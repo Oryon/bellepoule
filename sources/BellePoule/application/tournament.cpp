@@ -28,6 +28,7 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "util/partner.hpp"
 
 #include "version.h"
 #include "contest.hpp"
@@ -41,6 +42,7 @@
 Tournament::Tournament ()
   : Module ("tournament.glade")
 {
+  _hall_manager = NULL;
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
@@ -94,6 +96,35 @@ Tournament::~Tournament ()
   _web_server->Release  ();
   _ecosystem->Release   ();
   Contest::Cleanup ();
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::SetHallManager (Partner *partner)
+{
+  if (   (_hall_manager == NULL)
+      && (partner->Is ("HallManager")))
+  {
+    partner->Accept ();
+
+    {
+      GSList *current = _contest_list;
+
+      while (current)
+      {
+        Contest *contest = (Contest *) current->data;
+
+        contest->SetHallManager (partner);
+
+        current = g_slist_next (current);
+      }
+
+      _hall_manager = partner;
+    }
+
+    return;
+  }
+
+  partner->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -900,6 +931,8 @@ void Tournament::Manage (Contest *contest)
       gtk_widget_show (_glade->GetWidget ("notebook"));
       gtk_widget_hide (_glade->GetWidget ("logo"));
     }
+
+    contest->SetHallManager (_hall_manager);
   }
 }
 

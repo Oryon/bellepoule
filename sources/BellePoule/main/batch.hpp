@@ -22,15 +22,22 @@
 class Batch : public Module
 {
   public:
-    Batch ();
+    Batch (const gchar *id);
 
     void AttachTo (GtkNotebook *to);
 
+    const gchar *GetId ();
+
+    void SetProperties (GKeyFile *key_file);
+
   private:
-    GdkColor     *_color;
+    gchar        *_id;
     GtkListStore *_list_store;
 
     virtual ~Batch ();
+
+    void SetProperty (GKeyFile    *key_file,
+                      const gchar *property);
 };
 
 #endif

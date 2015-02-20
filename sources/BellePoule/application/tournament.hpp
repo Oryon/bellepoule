@@ -24,6 +24,7 @@
 #include "ecosystem.hpp"
 
 class Contest;
+class Partner;
 
 class Tournament : public Module
 {
@@ -81,6 +82,8 @@ class Tournament : public Module
 
     gchar *GetSecretKey (const gchar *authentication_scheme);
 
+    void SetHallManager (Partner *partner);
+
   public:
     const Player *GetPlayer (guint CompetitionId,
                              guint PlayerId);
@@ -100,6 +103,7 @@ class Tournament : public Module
     Net::WebServer  *_web_server;
     gboolean         _print_meal_tickets;
     EcoSystem       *_ecosystem;
+    Partner         *_hall_manager;
 
     virtual ~Tournament ();
 

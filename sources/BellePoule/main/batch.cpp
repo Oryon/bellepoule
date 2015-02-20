@@ -22,13 +22,10 @@ typedef enum
 } ColumnId;
 
 // --------------------------------------------------------------------------------
-Batch::Batch ()
+Batch::Batch (const gchar *id)
   : Module ("batch.glade")
 {
-  {
-    _color = g_new (GdkColor, 1);
-    gdk_color_parse ("#EED680", _color);
-  }
+  _id = g_strdup (id);
 
   {
     GtkTreeIter iter;
@@ -50,6 +47,61 @@ Batch::Batch ()
 // --------------------------------------------------------------------------------
 Batch::~Batch ()
 {
+  g_free (_id);
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Batch::GetId ()
+{
+  return _id;
+}
+
+// --------------------------------------------------------------------------------
+void Batch::SetProperty (GKeyFile    *key_file,
+                         const gchar *property)
+{
+  gchar    *property_widget = g_strdup_printf ("contest_%s_label", property);
+  GtkLabel *label           = GTK_LABEL (_glade->GetGObject (property_widget));
+  gchar    *value;
+
+  value = g_key_file_get_string (key_file,
+                                 "Contest",
+                                 property,
+                                 NULL);
+  gtk_label_set_text (label,
+                      gettext (value));
+
+  g_free (property_widget);
+  g_free (value);
+}
+
+// --------------------------------------------------------------------------------
+void Batch::SetProperties (GKeyFile *key_file)
+{
+  SetProperty (key_file, "gender");
+  SetProperty (key_file, "weapon");
+  SetProperty (key_file, "category");
+
+  {
+    GdkColor  *gdk_color;
+    GtkWidget *tab   = _glade->GetWidget ("notebook_title");
+    gchar     *color = g_key_file_get_string (key_file,
+                                              "Contest",
+                                              "color",
+                                              NULL);
+    gdk_color_parse (color,
+                     gdk_color);
+
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_NORMAL,
+                          gdk_color);
+    gtk_widget_modify_bg (tab,
+                          GTK_STATE_ACTIVE,
+                          gdk_color);
+
+    gdk_color_free (gdk_color);
+    g_free (color);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -58,15 +110,4 @@ void Batch::AttachTo (GtkNotebook *to)
   gtk_notebook_append_page (to,
                             GetRootWidget (),
                             _glade->GetWidget ("notebook_title"));
-
-  {
-    GtkWidget *tab = _glade->GetWidget ("notebook_title");
-
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_NORMAL,
-                          _color);
-    gtk_widget_modify_bg (tab,
-                          GTK_STATE_ACTIVE,
-                          _color);
-  }
 }

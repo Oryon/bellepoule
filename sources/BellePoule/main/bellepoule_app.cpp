@@ -155,7 +155,7 @@ gchar *BellPouleApp::GetSecretKey (const gchar *authentication_scheme)
 // --------------------------------------------------------------------------------
 void BellPouleApp::OnNewPartner (Partner *partner)
 {
-  printf ("OnNewPartner\n");
+  _tournament->SetHallManager (partner);
 }
 
 // --------------------------------------------------------------------------------

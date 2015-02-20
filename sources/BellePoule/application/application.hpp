@@ -45,9 +45,13 @@ class Application : public Object, Net::HttpServer::Client
 
     virtual ~Application ();
 
-    static gboolean AnnounceAvailability (Application *application);
+    void AnnounceAvailability ();
 
     void ListenToAnnouncement ();
+
+    virtual gboolean OnHttpPost (const gchar *data);
+
+    virtual gchar *OnHttpGet (const gchar *url);
 
   private:
     static const gchar *ANNOUNCE_GROUP;
@@ -56,12 +60,9 @@ class Application : public Object, Net::HttpServer::Client
     Language        *_language;
     Net::Downloader *_version_downloader;
     Net::HttpServer *_http_server;
+    gboolean         _granted;
 
     virtual void OnNewPartner (Partner *partner);
-
-    virtual gboolean OnHttpPost (const gchar *data);
-
-    virtual gchar *OnHttpGet (const gchar *url);
 
     virtual gchar *GetSecretKey (const gchar *authentication_scheme);
 
@@ -83,6 +84,8 @@ class Application : public Object, Net::HttpServer::Client
     static gboolean IsCsvReady (AttributeDesc *desc);
 
     static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
+
+    static gboolean MulticastAvailability (Application *application);
 
     static gpointer AnnoucementListener (Application *application);
 

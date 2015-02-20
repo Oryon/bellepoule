@@ -33,6 +33,7 @@ namespace People
 
 class Tournament;
 class Weapon;
+class Partner;
 
 class Contest : public Module
 {
@@ -85,6 +86,8 @@ class Contest : public Module
     gboolean OnHttpPost (const gchar *command,
                          const gchar **ressource,
                          const gchar *data);
+
+    void SetHallManager (Partner *partner);
 
     gchar    *GetId              ();
     gchar    *GetOrganizer       ();
@@ -169,6 +172,7 @@ class Contest : public Module
     GHashTable      *_ref_translation_table;
     State            _state;
     gboolean         _read_only;
+    Partner         *_hall_manager;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;
@@ -206,6 +210,8 @@ class Contest : public Module
     static gboolean OnSaveTimeout (Contest *contest);
 
     void OnPlugged ();
+
+    void UpdateHallManager ();
 
   private:
     void OnBeginPrint (GtkPrintOperation *operation,

@@ -31,17 +31,29 @@ Partner::Partner (const gchar        *who,
                                -1);
 
   _ip   = g_strdup (inet_ntoa (from->sin_addr));
+  _role = g_strdup (slices[0]);
   _port = atoi (slices[1]);
 
   g_strfreev (slices);
-
-  SendMessage ("tagada soinsoin");
 }
 
 // --------------------------------------------------------------------------------
 Partner::~Partner ()
 {
   g_free (_ip);
+  g_free (_role);
+}
+
+// --------------------------------------------------------------------------------
+void Partner::Accept ()
+{
+  SendMessage ("tagada soinsoin");
+}
+
+// --------------------------------------------------------------------------------
+gboolean Partner::Is (const gchar *role)
+{
+  return (strcmp (role, _role) == 0);
 }
 
 // --------------------------------------------------------------------------------
@@ -79,8 +91,7 @@ gboolean Partner::SendMessage (const gchar *message)
     }
 
     {
-      gchar *full_message = g_strdup_printf ("/batch\n"
-                                             "%s", message);
+      gchar *full_message = g_strdup_printf ("%s", message);
 
       uploader->UploadString (full_message,
                               NULL);

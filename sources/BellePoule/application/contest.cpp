@@ -36,6 +36,7 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "util/partner.hpp"
 #include "people_management/checkin.hpp"
 #include "people_management/referees_list.hpp"
 #include "people_management/checkin_supervisor.hpp"
@@ -243,6 +244,7 @@ Contest::Contest (gboolean for_duplication )
    _gender        = 0;
    _team_event    = FALSE;
    _derived       = FALSE;
+   _hall_manager  = NULL;
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -847,6 +849,58 @@ Contest::~Contest ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::SetHallManager (Partner *partner)
+{
+  _hall_manager = partner;
+
+  UpdateHallManager ();
+}
+
+// --------------------------------------------------------------------------------
+void Contest::UpdateHallManager ()
+{
+  if (_hall_manager)
+  {
+    GKeyFile *key_file = g_key_file_new ();
+    gchar    *color    = gdk_color_to_string (_gdk_color);
+
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "id",
+                           _id);
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "color",
+                           color);
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "weapon",
+                           _weapon->GetImage ());
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "gender",
+                           gender_image[_gender]);
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "category",
+                           category_image[_category]);
+
+    {
+      gsize  config_length;
+      gchar *message = g_key_file_to_data (key_file,
+                                           &config_length,
+                                           NULL);
+      _hall_manager->SendMessage (message);
+
+      g_free (message);
+    }
+
+    g_free (color);
+    g_key_file_free (key_file);
+  }
+}
+
+// --------------------------------------------------------------------------------
 gchar *Contest::GetFilename ()
 {
   return _filename;
@@ -1352,6 +1406,7 @@ void Contest::ReadProperties ()
   }
 
   _schedule->ApplyNewConfig ();
+  UpdateHallManager ();
   DisplayProperties ();
 }
 

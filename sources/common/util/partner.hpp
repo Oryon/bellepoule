@@ -26,13 +26,18 @@ class Partner : public Object, Net::Uploader::Listener
     Partner (const gchar        *who,
              struct sockaddr_in *from);
 
+    void Accept ();
+
+    gboolean Is (const gchar *role);
+
+    gboolean SendMessage (const gchar *message);
+
   private:
     gchar *_ip;
+    gchar *_role;
     guint  _port;
 
     ~Partner ();
-
-    gboolean SendMessage (const gchar *message);
 
   private:
     void OnUploadStatus (Net::Uploader::PeerStatus peer_status);
