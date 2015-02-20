@@ -64,6 +64,10 @@ void HallManagerApp::Start (int    argc,
   Application::Start (argc,
                       argv);
 
+  g_timeout_add_seconds (5,
+                         (GSourceFunc) AnnounceAvailability,
+                         this);
+
   hall_manager->Start ();
 
   gtk_main ();

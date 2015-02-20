@@ -16,6 +16,12 @@
 
 #include <stdlib.h>
 #include <curl/curl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -32,6 +38,8 @@
 #include "version.h"
 
 #include "application.hpp"
+
+const gchar *Application::ANNOUNCE_GROUP = "225.0.0.35";
 
 // --------------------------------------------------------------------------------
 Application::Application (const gchar   *config_file,
@@ -374,6 +382,150 @@ void Application::Start (int    argc,
   }
 
   gtk_widget_hide (GTK_WIDGET (_main_module->GetGObject ("update_menuitem")));
+}
+
+// --------------------------------------------------------------------------------
+gboolean Application::AnnounceAvailability (Application *application)
+{
+  struct sockaddr_in  addr;
+  int                 fd;
+  const char         *message = "HallManager";
+
+  if ((fd = socket (AF_INET,
+                    SOCK_DGRAM,
+                    0)) < 0)
+  {
+    g_warning ("socket: %s", strerror (errno));
+    return FALSE;
+  }
+
+  {
+    memset (&addr,
+            0,
+            sizeof(addr));
+
+    addr.sin_family      = AF_INET;
+    addr.sin_addr.s_addr = inet_addr (ANNOUNCE_GROUP);
+    addr.sin_port        = htons     (ANNOUNCE_PORT);
+  }
+
+  if (sendto (fd,
+              message,
+              strlen (message) + 1,
+              0,
+              (struct sockaddr *) &addr,
+              sizeof(addr)) < 0)
+  {
+    g_warning ("sendto: %s", strerror (errno));
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+// --------------------------------------------------------------------------------
+void Application::ListenToAnnouncement ()
+{
+  GError *error = NULL;
+
+  if (!g_thread_create ((GThreadFunc) AnnoucementListener,
+                        this,
+                        FALSE,
+                        &error))
+  {
+    g_warning ("Failed to create AnnoucementListener thread: %s\n", error->message);
+    g_error_free (error);
+  }
+}
+
+// -------------------------------------------------------------------------------
+gpointer Application::AnnoucementListener (Application *application)
+{
+  struct sockaddr_in addr;
+  int                fd;
+
+  if ((fd = socket (AF_INET,
+                    SOCK_DGRAM,
+                    0)) < 0)
+  {
+    g_warning ("socket: %s", strerror (errno));
+    return NULL;
+  }
+
+  // allow multiple sockets to use the same PORT number
+  {
+    guint yes = 1;
+
+    if (setsockopt (fd,
+                    SOL_SOCKET,
+                    SO_REUSEADDR,
+                    &yes,
+                    sizeof (yes)) < 0)
+    {
+      g_warning ("setsockopt: %s", strerror (errno));
+      return NULL;
+    }
+  }
+
+  {
+    memset (&addr,
+            0,
+            sizeof(addr));
+
+    addr.sin_family      = AF_INET;
+    addr.sin_addr.s_addr = htonl (INADDR_ANY);
+    addr.sin_port        = htons (ANNOUNCE_PORT);
+  }
+
+  if (bind (fd,
+            (struct sockaddr *) &addr,
+            sizeof (addr)) < 0)
+  {
+    g_warning ("socket: %s", strerror (errno));
+    return NULL;
+  }
+
+  // use setsockopt() to request that the kernel join a multicast group
+  {
+    struct ip_mreq option;
+
+    option.imr_multiaddr.s_addr = inet_addr (ANNOUNCE_GROUP);
+    option.imr_interface.s_addr = htonl     (INADDR_ANY);
+    if (setsockopt (fd,
+                    IPPROTO_IP,
+                    IP_ADD_MEMBERSHIP,
+                    &option,
+                    sizeof (option)) < 0)
+    {
+      g_warning ("setsockopt: %s", strerror (errno));
+      return NULL;
+    }
+  }
+
+  while (1)
+  {
+    socklen_t addrlen = sizeof (addr);
+    char      message[100];
+    ssize_t   size;
+
+    if ((size = recvfrom (fd,
+                          message,
+                          100,
+                          0,
+                          (struct sockaddr *) &addr,
+                          &addrlen)) < 0)
+    {
+      g_warning ("recvfrom: %s", strerror (errno));
+    }
+    printf ("%ld << %s >>\n", size, message);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void Application::SendMessageToPartner (const gchar *partner)
+{
 }
 
 // --------------------------------------------------------------------------------

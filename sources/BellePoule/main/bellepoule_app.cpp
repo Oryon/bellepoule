@@ -94,6 +94,8 @@ void BellPouleApp::Start (int    argc,
   Application::Start (argc,
                       argv);
 
+  ListenToAnnouncement ();
+
   if (argc > 1)
   {
     tournament->Start (g_strdup (argv[1]));

@@ -42,7 +42,16 @@ class Application : public Object
 
     virtual ~Application ();
 
+    static gboolean AnnounceAvailability (Application *application);
+
+    void ListenToAnnouncement ();
+
+    void SendMessageToPartner (const gchar *partner);
+
   private:
+    static const gchar *ANNOUNCE_GROUP;
+    static const guint  ANNOUNCE_PORT = 35000;
+
     Language        *_language;
     Net::Downloader *_version_downloader;
 
@@ -64,6 +73,8 @@ class Application : public Object
     static gboolean IsCsvReady (AttributeDesc *desc);
 
     static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
+
+    static gpointer AnnoucementListener (Application *application);
 };
 
 #endif

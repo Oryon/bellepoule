@@ -759,6 +759,7 @@ Public License instead of this License.  But first, please read
                 <property name="label" translatable="yes">File</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
                 <property name="image">image9</property>
                 <property name="use_stock">False</property>
                 <child type="submenu">
@@ -770,6 +771,7 @@ Public License instead of this License.  But first, please read
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="on_new_menuitem_activate" swapped="no"/>
@@ -780,6 +782,7 @@ Public License instead of this License.  But first, please read
                         <property name="label">gtk-open</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="on_open_menuitem_activate" swapped="no"/>
@@ -796,6 +799,7 @@ Public License instead of this License.  But first, please read
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="button-press-event" handler="on_root_delete_event" swapped="no"/>
@@ -809,6 +813,7 @@ Public License instead of this License.  But first, please read
               <object class="GtkImageMenuItem" id="locale_menuitem">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
                 <property name="image">image6</property>
                 <property name="use_stock">False</property>
                 <child type="submenu">
@@ -819,6 +824,7 @@ Public License instead of this License.  But first, please read
                       <object class="GtkMenuItem" id="translate_menuitem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="label">Translate into your language ...</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_translate_menuitem_activate" swapped="no"/>
@@ -839,6 +845,7 @@ Public License instead of this License.  But first, please read
                 <property name="label" translatable="yes">New version!</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
                 <property name="right_justified">True</property>
                 <property name="image">image8</property>
                 <property name="use_stock">False</property>
@@ -850,6 +857,7 @@ Public License instead of this License.  But first, please read
                       <object class="GtkMenuItem" id="new_version_menuitem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="label">menuitem3</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_new_version_menuitem_activate" swapped="no"/>
@@ -864,6 +872,7 @@ Public License instead of this License.  But first, please read
                 <property name="label">gtk-help</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
                 <property name="right_justified">True</property>
                 <property name="use_underline">True</property>
                 <property name="use_stock">True</property>
@@ -876,6 +885,7 @@ Public License instead of this License.  But first, please read
                         <property name="label" translatable="yes">Open an example...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_example_menuitem_activate" swapped="no"/>
@@ -886,6 +896,7 @@ Public License instead of this License.  But first, please read
                         <property name="label" translatable="yes">User manual</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="image">image3</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_user_manual_activate" swapped="no"/>
@@ -902,6 +913,7 @@ Public License instead of this License.  But first, please read
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="on_about_menuitem_activate" swapped="no"/>
