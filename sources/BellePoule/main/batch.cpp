@@ -89,6 +89,9 @@ void Batch::SetProperties (GKeyFile *key_file)
                                               "Contest",
                                               "color",
                                               NULL);
+
+    gdk_color = g_new (GdkColor, 1);
+
     gdk_color_parse (color,
                      gdk_color);
 

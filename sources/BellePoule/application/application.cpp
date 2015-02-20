@@ -19,9 +19,13 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/types.h>
+#ifdef WIN32
+#include <winsock2.h>
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -483,7 +487,7 @@ gpointer Application::AnnoucementListener (Application *application)
     if (setsockopt (fd,
                     SOL_SOCKET,
                     SO_REUSEADDR,
-                    &yes,
+                    (const char *) &yes,
                     sizeof (yes)) < 0)
     {
       g_warning ("setsockopt: %s", strerror (errno));
@@ -518,7 +522,7 @@ gpointer Application::AnnoucementListener (Application *application)
     if (setsockopt (fd,
                     IPPROTO_IP,
                     IP_ADD_MEMBERSHIP,
-                    &option,
+                    (const char *) &option,
                     sizeof (option)) < 0)
     {
       g_warning ("setsockopt: %s", strerror (errno));
