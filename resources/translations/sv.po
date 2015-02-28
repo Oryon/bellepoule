@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-02-16 10:21+0100\n"
-"PO-Revision-Date: 2015-02-23 08:14+0000\n"
+"PO-Revision-Date: 2015-02-27 23:47+0000\n"
 "Last-Translator: Mikael Hiort af Ornäs <lakritslemmel@hotmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-02-24 05:21+0000\n"
-"X-Generator: Launchpad (build 17355)\n"
+"X-Launchpad-Export-Date: 2015-02-28 05:34+0000\n"
+"X-Generator: Launchpad (build 17361)\n"
 "Language: sv\n"
 
 msgid "Classification"
@@ -31,7 +31,7 @@ msgid "Foil"
 msgstr "Florett"
 
 msgid "Educ"
-msgstr "Student"
+msgstr "Instruktionsklass"
 
 msgid "Male"
 msgstr "Herr"
@@ -43,22 +43,22 @@ msgid "Mixed"
 msgstr "Mixed"
 
 msgid "U8"
-msgstr "U8"
+msgstr "Minior (U11)"
 
 msgid "U10"
-msgstr "U10"
+msgstr "Yngre ungdom (U13)"
 
 msgid "U12"
-msgstr "U12"
+msgstr "Äldre ungdom (U15)"
 
 msgid "U14"
-msgstr "U14"
+msgstr "Kadett (U17)"
 
 msgid "U16"
-msgstr "U16"
+msgstr "Junior (U20)"
 
 msgid "U18"
-msgstr "U18"
+msgstr "Senior (U23)"
 
 msgid "Senior"
 msgstr "Senior"
@@ -67,16 +67,16 @@ msgid "Veteran"
 msgstr "Veteran"
 
 msgid "Veteran 1"
-msgstr "Veteran 1"
+msgstr "Veteran 40-49"
 
 msgid "Veteran 2"
-msgstr "Veteran 2"
+msgstr "Veteran 50-59"
 
 msgid "Veteran 3"
-msgstr "Veteran 3"
+msgstr "Veteran 60-69"
 
 msgid "Veteran 4"
-msgstr "Veteran 4"
+msgstr "Veteran 70-"
 
 msgid "Choose a file..."
 msgstr "Välj en fil …"
@@ -218,7 +218,7 @@ msgid "Round #%d"
 msgstr "Omgång %d"
 
 msgid "Formula"
-msgstr "Formulär"
+msgstr "Tävlingsformat"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
 msgstr "<b><big>Vill du verkligen stänga den aktuella omgången?</big></b>"
@@ -312,7 +312,7 @@ msgid "Fencer list"
 msgstr "Lista över fäktare"
 
 msgid "Check-in"
-msgstr "Registrering"
+msgstr "Inskrivning"
 
 msgid "Expected fencers"
 msgstr "Förväntade fäktare"
