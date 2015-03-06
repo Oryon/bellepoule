@@ -117,9 +117,22 @@ void Tournament::SetHallManager (Partner *partner)
 
         current = g_slist_next (current);
       }
-
-      _hall_manager = partner;
     }
+
+    {
+      GSList *current = _referee_list;
+
+      while (current)
+      {
+        Player *referee = (Player *) current->data;
+
+        referee->SetPartner (partner);
+
+        current = g_slist_next (current);
+      }
+    }
+
+    _hall_manager = partner;
 
     return;
   }
@@ -655,7 +668,7 @@ gboolean Tournament::OnHttpPost (const gchar *data)
                                          "/",
                                          0);
 
-        if (tokens && tokens[0] && tokens[1] && tokens[2])
+        if (tokens && tokens[0] && tokens[1] && tokens[2]) // ex: /10.12.74.121/1
         {
           // Status feedback
           UpdateConnectionStatus (_referee_list,
@@ -677,8 +690,8 @@ gboolean Tournament::OnHttpPost (const gchar *data)
         if (tokens && tokens[0] && tokens[1])
         {
           // Competition data
-          if (   (strcmp (tokens[1], "Score") == 0)
-              || (strcmp (tokens[1], "ScoreSheet") == 0))
+          if (   (strcmp (tokens[1], "Score") == 0)       // ex: /Score/Competition/61/2/1/1
+              || (strcmp (tokens[1], "ScoreSheet") == 0)) // ex: /ScoreSheet/Competition/61/2/1
           {
             if (tokens[2] && (strcmp (tokens[2], "Competition") == 0))
             {
@@ -853,6 +866,7 @@ Player *Tournament::Share (Player  *referee,
                                                        &attr_id);
       referee->Retain ();
       referee->SetRef (_referee_ref++);
+      referee->SetPartner (_hall_manager);
     }
 
     {

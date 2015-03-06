@@ -284,9 +284,10 @@ namespace Net
 
         {
           struct MHD_Response *response;
+          static const gchar  *message  = "Reçu 5 sur 5";
 
-          response = MHD_create_response_from_data (strlen ("POST received by BellePoule"),
-                                                    (void *) "POST received by BellePoule",
+          response = MHD_create_response_from_data (strlen (message),
+                                                    (void *) message,
                                                     MHD_NO,
                                                     MHD_NO);
           ret = MHD_queue_response (connection,

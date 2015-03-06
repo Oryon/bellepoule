@@ -452,6 +452,8 @@ void Contest::LoadXml (const gchar *filename)
       {
         g_source_remove (_save_timeout_id);
       }
+
+      xmlFreeDoc (doc);
     }
   }
 
@@ -777,8 +779,6 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
     _schedule->SetTeamEvent (_team_event);
 
-    xmlFreeDoc (doc);
-
     if (need_post_processing)
     {
       People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
@@ -885,15 +885,8 @@ void Contest::UpdateHallManager ()
                            "category",
                            category_image[_category]);
 
-    {
-      gsize  config_length;
-      gchar *message = g_key_file_to_data (key_file,
-                                           &config_length,
-                                           NULL);
-      _hall_manager->SendMessage (message);
-
-      g_free (message);
-    }
+    _hall_manager->SendMessage ("/Competition",
+                                key_file);
 
     g_free (color);
     g_key_file_free (key_file);
@@ -950,6 +943,8 @@ void Contest::AddReferee (Player *referee)
 {
   _referees_list->Add           (referee);
   _referees_list->OnListChanged ();
+
+  referee->SetPartner (_hall_manager);
 }
 
 // --------------------------------------------------------------------------------
@@ -1226,6 +1221,26 @@ void Contest::OnPlugged ()
   SetFlashRef (flash_code->GetText ());
   g_free (url);
 }
+
+// --------------------------------------------------------------------------------
+void Contest::OnUnPlugged ()
+{
+  if (_hall_manager)
+  {
+    GKeyFile *key_file = g_key_file_new ();
+
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "id",
+                           _id);
+
+    _hall_manager->SendMessage ("/Competition",
+                                key_file);
+
+    g_key_file_free (key_file);
+  }
+}
+
 
 // --------------------------------------------------------------------------------
 Player *Contest::Share (Player *referee)

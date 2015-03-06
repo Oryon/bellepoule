@@ -27,6 +27,7 @@
 
 class WifiCode;
 class Weapon;
+class Partner;
 
 class Player : public Object, Net::Uploader::Listener
 {
@@ -111,6 +112,10 @@ class Player : public Object, Net::Uploader::Listener
     void Dump ();
     FlashCode *GetFlashCode ();
 
+    void SetPartner (Partner *partner);
+
+    void NotifyChangesToPartners ();
+
   public:
     gboolean SendMessage (const gchar *where,
                           const gchar *message);
@@ -178,6 +183,7 @@ class Player : public Object, Net::Uploader::Listener
     Weapon      *_weapon;
     const gchar *_player_class;
     WifiCode    *_wifi_code;
+    Partner     *_partner;
 
     void NotifyChange (Attribute *attr,
                        guint      step);

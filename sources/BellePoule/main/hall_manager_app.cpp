@@ -80,7 +80,7 @@ gboolean HallManagerApp::OnHttpPost (const gchar *data)
 {
   if (Application::OnHttpPost (data) == FALSE)
   {
-    _hall_manager->AddContest (data);
+    _hall_manager->OnHttpPost (data);
 
     return FALSE;
   }

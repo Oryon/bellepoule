@@ -211,6 +211,8 @@ class Contest : public Module
 
     void OnPlugged ();
 
+    void OnUnPlugged ();
+
     void UpdateHallManager ();
 
   private:

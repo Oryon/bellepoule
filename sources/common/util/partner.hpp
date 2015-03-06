@@ -30,7 +30,11 @@ class Partner : public Object, Net::Uploader::Listener
 
     gboolean Is (const gchar *role);
 
-    gboolean SendMessage (const gchar *message);
+    gboolean SendMessage (const gchar *where,
+                          GKeyFile    *keyfile);
+
+    gboolean SendMessage (const gchar *where,
+                          const gchar *message);
 
   private:
     gchar *_ip;

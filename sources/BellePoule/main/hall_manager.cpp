@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "people_management/referees_list.hpp"
 #include "application/weapon.hpp"
 #include "hall.hpp"
 #include "batch.hpp"
@@ -34,6 +33,8 @@ HallManager::HallManager ()
           _glade->GetWidget ("hall_viewport"));
   }
 
+  _referee_list = NULL;
+
   {
     GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook"));
     GSList      *current  = Weapon::GetList ();
@@ -43,6 +44,11 @@ HallManager::HallManager ()
       Weapon               *weapon   = (Weapon *) current->data;
       People::RefereesList *list     = new People::RefereesList (NULL);
       GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
+
+      if (_referee_list == NULL)
+      {
+        _referee_list = list;
+      }
 
       gtk_notebook_append_page (notebook,
                                 viewport,
@@ -85,6 +91,46 @@ Batch *HallManager::GetBatch (const gchar *id)
   }
 
   return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void HallManager::OnHttpPost (const gchar *data)
+{
+  gchar **lines = g_strsplit_set (data,
+                                  "\n",
+                                  0);
+  if (lines[0])
+  {
+    const gchar *body = data;
+
+    body = strstr (body, "\n"); if (body) body++;
+
+    if (strcmp (lines[0], "/Competition") == 0)
+    {
+      AddContest (body);
+    }
+    else if (strcmp (lines[0], "/Referee") == 0)
+    {
+      AddReferee (body);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void HallManager::AddReferee (const gchar *data)
+{
+  xmlDocPtr doc = xmlParseMemory (data, strlen (data));
+
+  if (doc)
+  {
+    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+
+    _referee_list->LoadList (xml_context,
+                             "");
+
+    xmlXPathFreeContext (xml_context);
+    xmlFreeDoc (doc);
+  }
 }
 
 // --------------------------------------------------------------------------------

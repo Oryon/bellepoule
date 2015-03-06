@@ -51,7 +51,15 @@ Partner::~Partner ()
 // --------------------------------------------------------------------------------
 void Partner::Accept ()
 {
-  SendMessage ("tagada soinsoin");
+  GKeyFile *key_file = g_key_file_new ();
+
+  g_key_file_set_string (key_file,
+                         "BellePoule",
+                         "", "");
+
+  //_hall_manager->SendMessage (key_file);
+
+  g_key_file_free (key_file);
 }
 
 // --------------------------------------------------------------------------------
@@ -78,7 +86,8 @@ void Partner::OnUploadStatus (Net::Uploader::PeerStatus peer_status)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Partner::SendMessage (const gchar *message)
+gboolean Partner::SendMessage (const gchar *where,
+                               const gchar *message)
 {
   if (_ip)
   {
@@ -95,17 +104,35 @@ gboolean Partner::SendMessage (const gchar *message)
     }
 
     {
-      gchar *full_message = g_strdup_printf ("%s", message);
+      gchar *full_message = g_strdup_printf ("%s\n%s", where, message);
 
       uploader->UploadString (full_message,
                               NULL);
-
       g_free (full_message);
     }
 
     uploader->Release ();
+
     return TRUE;
   }
 
   return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Partner::SendMessage (const gchar *where,
+                               GKeyFile    *keyfile)
+{
+  gchar    *message;
+  gboolean  result;
+
+  message = g_key_file_to_data (keyfile,
+                                NULL,
+                                NULL);
+
+  result = SendMessage (where, message);
+
+  g_free (message);
+
+  return result;
 }
