@@ -37,28 +37,18 @@ Piste::Piste (GooCanvasItem *parent,
                                       _W, _H,
                                       "line-width",   _BORDER_W,
                                       "stroke-color", "black",
-                                      "fill-color",   "lightblue",
+                                      "fill-color",   "#CCCCCC",
                                       NULL);
     MonitorEvent (_rect_item);
   }
 
   {
-    _color_item = goo_canvas_rect_new (_root_item,
-                                       _BORDER_W, _BORDER_W,
-                                       _W/10.0, _H - _BORDER_W*2.0,
-                                       "line-width", 0.0,
-                                       "fill-color", "darkgreen",
-                                       NULL);
-    MonitorEvent (_color_item);
-  }
-
-  {
     _progress_item = goo_canvas_rect_new (_root_item,
-                                          _W/10.0 + _BORDER_W,
+                                          _BORDER_W,
                                           _H - (_H/10.0),
                                           _W/2.0,
                                           (_H/10.0)-_BORDER_W,
-                                          "fill-color", "darkgreen",
+                                          "fill-color", "#fe7418",
                                           "line-width", 0.0,
                                           NULL);
     MonitorEvent (_progress_item);
@@ -83,7 +73,7 @@ Piste::Piste (GooCanvasItem *parent,
                                        -1.0,
                                        GTK_ANCHOR_NORTH,
                                        "fill-color", "black",
-                                       "font", BP_FONT "bold 8px",
+                                       "font", BP_FONT "8px",
                                        NULL);
     MonitorEvent (_title_item);
   }
@@ -129,6 +119,14 @@ Piste::Piste (GooCanvasItem *parent,
 Piste::~Piste ()
 {
   goo_canvas_item_remove (_root_item);
+}
+
+// --------------------------------------------------------------------------------
+void Piste::SetColor (const gchar *color)
+{
+  g_object_set (_rect_item,
+                "fill-color", color,
+                NULL);
 }
 
 // --------------------------------------------------------------------------------

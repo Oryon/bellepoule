@@ -14,7 +14,6 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "people_management/referees_list.hpp"
 #include "application/weapon.hpp"
 #include "hall.hpp"
 #include "batch.hpp"
@@ -25,12 +24,16 @@
 HallManager::HallManager ()
   : Module ("hall_manager.glade")
 {
+  _batch_list = NULL;
+
   {
     Hall *hall = new Hall ();
 
     Plug (hall,
           _glade->GetWidget ("hall_viewport"));
   }
+
+  _referee_list = NULL;
 
   {
     GtkNotebook *notebook = GTK_NOTEBOOK (_glade->GetWidget ("referee_notebook"));
@@ -42,6 +45,11 @@ HallManager::HallManager ()
       People::RefereesList *list     = new People::RefereesList (NULL);
       GtkWidget            *viewport = gtk_viewport_new (NULL, NULL);
 
+      if (_referee_list == NULL)
+      {
+        _referee_list = list;
+      }
+
       gtk_notebook_append_page (notebook,
                                 viewport,
                                 gtk_label_new (gettext (weapon->GetImage ())));
@@ -51,25 +59,122 @@ HallManager::HallManager ()
       current = g_slist_next (current);
     }
   }
-
-  {
-    GtkWidget *notebook = _glade->GetWidget ("batch_notebook");
-    Batch     *batch;
-
-    batch = new Batch ();
-    batch->AttachTo (GTK_NOTEBOOK (notebook));
-
-    batch = new Batch ();
-    batch->AttachTo (GTK_NOTEBOOK (notebook));
-  }
 }
 
 // --------------------------------------------------------------------------------
 HallManager::~HallManager ()
 {
+  g_list_free_full (_batch_list,
+                    (GDestroyNotify) Object::TryToRelease);
 }
 
 // --------------------------------------------------------------------------------
 void HallManager::Start ()
 {
+}
+
+// --------------------------------------------------------------------------------
+Batch *HallManager::GetBatch (const gchar *id)
+{
+  GList *current = _batch_list;
+
+  while (current)
+  {
+    Batch *batch = (Batch *) current->data;
+
+    if (strcmp (batch->GetId (), id) == 0)
+    {
+      return batch;
+    }
+
+    current = g_list_next (current);
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------------
+void HallManager::OnHttpPost (const gchar *data)
+{
+  gchar **lines = g_strsplit_set (data,
+                                  "\n",
+                                  0);
+  if (lines[0])
+  {
+    const gchar *body = data;
+
+    body = strstr (body, "\n"); if (body) body++;
+
+    if (strcmp (lines[0], "/Competition") == 0)
+    {
+      AddContest (body);
+    }
+    else if (strcmp (lines[0], "/Referee") == 0)
+    {
+      AddReferee (body);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void HallManager::AddReferee (const gchar *data)
+{
+  xmlDocPtr doc = xmlParseMemory (data, strlen (data));
+
+  if (doc)
+  {
+    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+
+    _referee_list->LoadList (xml_context,
+                             "");
+
+    xmlXPathFreeContext (xml_context);
+    xmlFreeDoc (doc);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void HallManager::AddContest (const gchar *data)
+{
+  GKeyFile *key_file = g_key_file_new ();
+  GError   *error    = NULL;
+
+  if (g_key_file_load_from_data (key_file,
+                                 data,
+                                 -1,
+                                 G_KEY_FILE_NONE,
+                                 &error) == FALSE)
+  {
+    g_warning ("g_key_file_load_from_data: %s", error->message);
+    g_clear_error (&error);
+  }
+  else
+  {
+    gchar *id = g_key_file_get_string (key_file,
+                                       "Contest",
+                                       "id",
+                                       NULL);
+
+    if (id)
+    {
+      GtkWidget *notebook = _glade->GetWidget ("batch_notebook");
+      Batch     *batch    = GetBatch (id);
+
+      if (batch == NULL)
+      {
+        batch = new Batch (id);
+
+        _batch_list = g_list_prepend (_batch_list,
+                                      batch);
+
+        batch->AttachTo (GTK_NOTEBOOK (notebook));
+      }
+
+      batch->SetProperties (key_file);
+
+      g_free (id);
+    }
+  }
+
+  g_key_file_free (key_file);
 }

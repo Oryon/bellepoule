@@ -100,6 +100,8 @@ namespace Net
                           guint     port)
     : Object ("HttpServer")
   {
+    _port = port;
+
     _daemon = MHD_start_daemon (MHD_USE_DEBUG | MHD_USE_SELECT_INTERNALLY,
                                 port,
                                 NULL, NULL,
@@ -122,6 +124,12 @@ namespace Net
     _cryptor->Release ();
 
     g_free (_iv);
+  }
+
+  // --------------------------------------------------------------------------------
+  guint HttpServer::GetPort ()
+  {
+    return _port;
   }
 
   // --------------------------------------------------------------------------------
@@ -230,7 +238,7 @@ namespace Net
         }
       }
     }
-    else if (_http_POST_cbk && (strcmp (method, "POST") == 0))
+    else if (_http_POST_cbk && ((strcmp (method, "POST") == 0) || (strcmp (method, "PUT") == 0)))
     {
       if (*upload_data_size)
       {
@@ -276,9 +284,10 @@ namespace Net
 
         {
           struct MHD_Response *response;
+          static const gchar  *message  = "Reçu 5 sur 5";
 
-          response = MHD_create_response_from_data (strlen ("POST received by BellePoule"),
-                                                    (void *) "POST received by BellePoule",
+          response = MHD_create_response_from_data (strlen (message),
+                                                    (void *) message,
                                                     MHD_NO,
                                                     MHD_NO);
           ret = MHD_queue_response (connection,

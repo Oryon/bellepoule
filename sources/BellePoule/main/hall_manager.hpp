@@ -18,6 +18,9 @@
 #define hall_manager_hpp
 
 #include "util/module.hpp"
+#include "people_management/referees_list.hpp"
+
+class Batch;
 
 class HallManager : public Module
 {
@@ -26,8 +29,19 @@ class HallManager : public Module
 
     void Start ();
 
+    void OnHttpPost (const gchar *data);
+
   private:
+    GList                *_batch_list;
+    People::RefereesList *_referee_list;
+
     virtual ~HallManager ();
+
+    Batch *GetBatch (const gchar *id);
+
+    void AddContest (const gchar *data);
+
+    void AddReferee (const gchar *data);
 };
 
 #endif

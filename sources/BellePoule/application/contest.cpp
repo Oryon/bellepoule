@@ -36,6 +36,7 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "util/partner.hpp"
 #include "people_management/checkin.hpp"
 #include "people_management/referees_list.hpp"
 #include "people_management/checkin_supervisor.hpp"
@@ -243,6 +244,7 @@ Contest::Contest (gboolean for_duplication )
    _gender        = 0;
    _team_event    = FALSE;
    _derived       = FALSE;
+   _hall_manager  = NULL;
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -450,6 +452,8 @@ void Contest::LoadXml (const gchar *filename)
       {
         g_source_remove (_save_timeout_id);
       }
+
+      xmlFreeDoc (doc);
     }
   }
 
@@ -775,8 +779,6 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
     _schedule->SetTeamEvent (_team_event);
 
-    xmlFreeDoc (doc);
-
     if (need_post_processing)
     {
       People::CheckinSupervisor *checkin = _schedule->GetCheckinSupervisor ();
@@ -847,6 +849,51 @@ Contest::~Contest ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::SetHallManager (Partner *partner)
+{
+  _hall_manager = partner;
+
+  UpdateHallManager ();
+}
+
+// --------------------------------------------------------------------------------
+void Contest::UpdateHallManager ()
+{
+  if (_hall_manager)
+  {
+    GKeyFile *key_file = g_key_file_new ();
+    gchar    *color    = gdk_color_to_string (_gdk_color);
+
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "id",
+                           _id);
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "color",
+                           color);
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "weapon",
+                           _weapon->GetImage ());
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "gender",
+                           gender_image[_gender]);
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "category",
+                           category_image[_category]);
+
+    _hall_manager->SendMessage ("/Competition",
+                                key_file);
+
+    g_free (color);
+    g_key_file_free (key_file);
+  }
+}
+
+// --------------------------------------------------------------------------------
 gchar *Contest::GetFilename ()
 {
   return _filename;
@@ -896,6 +943,8 @@ void Contest::AddReferee (Player *referee)
 {
   _referees_list->Add           (referee);
   _referees_list->OnListChanged ();
+
+  referee->SetPartner (_hall_manager);
 }
 
 // --------------------------------------------------------------------------------
@@ -1174,6 +1223,26 @@ void Contest::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+void Contest::OnUnPlugged ()
+{
+  if (_hall_manager)
+  {
+    GKeyFile *key_file = g_key_file_new ();
+
+    g_key_file_set_string (key_file,
+                           "Contest",
+                           "id",
+                           _id);
+
+    _hall_manager->SendMessage ("/Competition",
+                                key_file);
+
+    g_key_file_free (key_file);
+  }
+}
+
+
+// --------------------------------------------------------------------------------
 Player *Contest::Share (Player *referee)
 {
   Player *original;
@@ -1352,6 +1421,7 @@ void Contest::ReadProperties ()
   }
 
   _schedule->ApplyNewConfig ();
+  UpdateHallManager ();
   DisplayProperties ();
 }
 

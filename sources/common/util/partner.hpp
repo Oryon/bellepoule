@@ -14,30 +14,41 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef batch_hpp
-#define batch_hpp
+#ifndef partner_hpp
+#define partner_hpp
 
-#include "util/module.hpp"
+#include "util/object.hpp"
+#include "network/uploader.hpp"
 
-class Batch : public Module
+class Partner : public Object, Net::Uploader::Listener
 {
   public:
-    Batch (const gchar *id);
+    Partner (const gchar        *who,
+             struct sockaddr_in *from);
 
-    void AttachTo (GtkNotebook *to);
+    void Accept ();
 
-    const gchar *GetId ();
+    gboolean Is (const gchar *role);
 
-    void SetProperties (GKeyFile *key_file);
+    gboolean SendMessage (const gchar *where,
+                          GKeyFile    *keyfile);
+
+    gboolean SendMessage (const gchar *where,
+                          const gchar *message);
 
   private:
-    gchar        *_id;
-    GtkListStore *_list_store;
+    gchar *_ip;
+    gchar *_role;
+    guint  _port;
 
-    virtual ~Batch ();
+    ~Partner ();
 
-    void SetProperty (GKeyFile    *key_file,
-                      const gchar *property);
+  private:
+    void OnUploadStatus (Net::Uploader::PeerStatus peer_status);
+
+    void Use ();
+
+    void Drop ();
 };
 
 #endif

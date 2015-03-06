@@ -131,6 +131,7 @@ namespace People
     // Remove black carded and exported
     {
       guint   excluded_count = 0;
+      guint   fencer_count   = g_slist_length (full_result);
       GSList *current        = full_result;
 
       while (current)
@@ -160,8 +161,16 @@ namespace People
             {
               Attribute *rank_attr = player->GetAttribute (&final_rank_attr_id);
 
+              if (rank_attr)
+              {
               player->SetAttributeValue (&final_rank_attr_id,
                                          rank_attr->GetUIntValue () - excluded_count);
+              }
+              else
+              {
+                player->SetAttributeValue (&final_rank_attr_id,
+                                           fencer_count - excluded_count);
+              }
               result = g_slist_append (result,
                                        player);
             }

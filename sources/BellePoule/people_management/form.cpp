@@ -375,6 +375,8 @@ namespace People
                         NEW_PLAYER);
     }
 
+    player->NotifyChangesToPartners ();
+
     player->Release ();
   }
 

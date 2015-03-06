@@ -83,6 +83,26 @@ void Hall::AddPiste ()
   Piste *piste  = new Piste (_root, this);
   GList *before = _piste_list;
 
+  {
+    static guint  toto  = 0;
+    static const gchar *color_table[] =
+    {
+      "#EED680",
+      "#E0B6AF",
+      "#ADA7C8",
+      "#9DB8D2",
+      "#83A67F",
+      "#DF421E",
+      "#826647"
+    };
+
+    if (toto < 6)
+    {
+      piste->SetColor (color_table[toto]);
+      toto++;
+    }
+  }
+
   for (guint i = 1; before != NULL; i++)
   {
     Piste *current_piste = (Piste *) before->data;

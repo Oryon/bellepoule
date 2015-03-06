@@ -28,11 +28,13 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
+#include "util/partner.hpp"
 
 #include "version.h"
 #include "contest.hpp"
 #include "weapon.hpp"
 #include "people_management/form.hpp"
+#include "network/http_server.hpp"
 
 #include "tournament.hpp"
 
@@ -40,6 +42,7 @@
 Tournament::Tournament ()
   : Module ("tournament.glade")
 {
+  _hall_manager = NULL;
   _contest_list = NULL;
   _referee_list = NULL;
   _referee_ref  = 1;
@@ -91,9 +94,50 @@ Tournament::~Tournament ()
                      (GDestroyNotify) Object::TryToRelease);
 
   _web_server->Release  ();
-  _http_server->Release ();
   _ecosystem->Release   ();
   Contest::Cleanup ();
+}
+
+// --------------------------------------------------------------------------------
+void Tournament::SetHallManager (Partner *partner)
+{
+  if (   (_hall_manager == NULL)
+      && (partner->Is ("HallManager")))
+  {
+    partner->Accept ();
+
+    {
+      GSList *current = _contest_list;
+
+      while (current)
+      {
+        Contest *contest = (Contest *) current->data;
+
+        contest->SetHallManager (partner);
+
+        current = g_slist_next (current);
+      }
+    }
+
+    {
+      GSList *current = _referee_list;
+
+      while (current)
+      {
+        Player *referee = (Player *) current->data;
+
+        referee->SetPartner (partner);
+
+        current = g_slist_next (current);
+      }
+    }
+
+    _hall_manager = partner;
+
+    return;
+  }
+
+  partner->Release ();
 }
 
 // --------------------------------------------------------------------------------
@@ -108,11 +152,7 @@ void Tournament::Start (gchar *filename)
     gchar *ip_addr;
     gchar *html_url;
 
-    _http_server = new Net::HttpServer (this,
-                                        HttpPostCbk,
-                                        HttpGetCbk,
-                                        35830);
-    ip_addr = _http_server->GetIpV4 ();
+    ip_addr = Net::HttpServer::GetIpV4 ();
     html_url = g_strdup_printf ("http://%s/index.php", ip_addr);
 
     SetFlashRef (html_url);
@@ -628,7 +668,7 @@ gboolean Tournament::OnHttpPost (const gchar *data)
                                          "/",
                                          0);
 
-        if (tokens && tokens[0] && tokens[1] && tokens[2])
+        if (tokens && tokens[0] && tokens[1] && tokens[2]) // ex: /10.12.74.121/1
         {
           // Status feedback
           UpdateConnectionStatus (_referee_list,
@@ -650,8 +690,8 @@ gboolean Tournament::OnHttpPost (const gchar *data)
         if (tokens && tokens[0] && tokens[1])
         {
           // Competition data
-          if (   (strcmp (tokens[1], "Score") == 0)
-              || (strcmp (tokens[1], "ScoreSheet") == 0))
+          if (   (strcmp (tokens[1], "Score") == 0)       // ex: /Score/Competition/61/2/1/1
+              || (strcmp (tokens[1], "ScoreSheet") == 0)) // ex: /ScoreSheet/Competition/61/2/1
           {
             if (tokens[2] && (strcmp (tokens[2], "Competition") == 0))
             {
@@ -782,24 +822,6 @@ gchar *Tournament::OnHttpGet (const gchar *url)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Tournament::HttpPostCbk (Net::HttpServer::Client *client,
-                                  const gchar             *data)
-{
-  Tournament *tournament = (Tournament *) client;
-
-  return tournament->OnHttpPost (data);
-}
-
-// --------------------------------------------------------------------------------
-gchar *Tournament::HttpGetCbk (Net::HttpServer::Client *client,
-                               const gchar             *url)
-{
-  Tournament *tournament = (Tournament *) client;
-
-  return tournament->OnHttpGet (url);
-}
-
-// --------------------------------------------------------------------------------
 Player *Tournament::Share (Player  *referee,
                            Contest *from)
 {
@@ -844,6 +866,7 @@ Player *Tournament::Share (Player  *referee,
                                                        &attr_id);
       referee->Retain ();
       referee->SetRef (_referee_ref++);
+      referee->SetPartner (_hall_manager);
     }
 
     {
@@ -922,6 +945,8 @@ void Tournament::Manage (Contest *contest)
       gtk_widget_show (_glade->GetWidget ("notebook"));
       gtk_widget_hide (_glade->GetWidget ("logo"));
     }
+
+    contest->SetHallManager (_hall_manager);
   }
 }
 

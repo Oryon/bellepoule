@@ -27,8 +27,9 @@
 
 class WifiCode;
 class Weapon;
+class Partner;
 
-class Player : public Object
+class Player : public Object, Net::Uploader::Listener
 {
   public:
     class AttributeId : public Object
@@ -111,6 +112,10 @@ class Player : public Object
     void Dump ();
     FlashCode *GetFlashCode ();
 
+    void SetPartner (Partner *partner);
+
+    void NotifyChangesToPartners ();
+
   public:
     gboolean SendMessage (const gchar *where,
                           const gchar *message);
@@ -178,12 +183,17 @@ class Player : public Object
     Weapon      *_weapon;
     const gchar *_player_class;
     WifiCode    *_wifi_code;
+    Partner     *_partner;
 
     void NotifyChange (Attribute *attr,
                        guint      step);
 
-    static void OnUploaderStatus (Net::Uploader::PeerStatus  peer_status,
-                                  Object                    *object);
+  private:
+    void OnUploadStatus (Net::Uploader::PeerStatus peer_status);
+
+    void Use ();
+
+    void Drop ();
 };
 
 #endif

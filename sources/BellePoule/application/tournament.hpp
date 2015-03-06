@@ -19,14 +19,14 @@
 
 #include "util/module.hpp"
 #include "util/glade.hpp"
-#include "network/http_server.hpp"
 #include "network/downloader.hpp"
 #include "network/web_server.hpp"
 #include "ecosystem.hpp"
 
 class Contest;
+class Partner;
 
-class Tournament : public Module, Net::HttpServer::Client
+class Tournament : public Module
 {
   public:
     Tournament ();
@@ -76,6 +76,14 @@ class Tournament : public Module, Net::HttpServer::Client
 
     Net::Uploader *GetFtpUpLoader ();
 
+    gboolean OnHttpPost (const gchar *data);
+
+    gchar *OnHttpGet (const gchar *url);
+
+    gchar *GetSecretKey (const gchar *authentication_scheme);
+
+    void SetHallManager (Partner *partner);
+
   public:
     const Player *GetPlayer (guint CompetitionId,
                              guint PlayerId);
@@ -92,10 +100,10 @@ class Tournament : public Module, Net::HttpServer::Client
     GSList          *_contest_list;
     GSList          *_referee_list;
     guint            _nb_matchs;
-    Net::HttpServer *_http_server;
     Net::WebServer  *_web_server;
     gboolean         _print_meal_tickets;
     EcoSystem       *_ecosystem;
+    Partner         *_hall_manager;
 
     virtual ~Tournament ();
 
@@ -112,10 +120,6 @@ class Tournament : public Module, Net::HttpServer::Client
                                     const gchar *ip_address,
                                     const gchar *status);
 
-    gboolean OnHttpPost (const gchar *data);
-
-    gchar *OnHttpGet (const gchar *url);
-
     static void OnWebServerState (gboolean  in_progress,
                                   gboolean  on,
                                   Object    *owner);
@@ -126,14 +130,6 @@ class Tournament : public Module, Net::HttpServer::Client
     void DrawPage (GtkPrintOperation *operation,
                    GtkPrintContext   *context,
                    gint               page_nr);
-
-    gchar *GetSecretKey (const gchar *authentication_scheme);
-
-    static gboolean HttpPostCbk (Net::HttpServer::Client *client,
-                                 const gchar             *data);
-
-    static gchar *HttpGetCbk (Net::HttpServer::Client *client,
-                              const gchar             *url);
 };
 
 #endif

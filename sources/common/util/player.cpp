@@ -18,7 +18,10 @@
 #include <string.h>
 
 #include "util/attribute.hpp"
+#include "util/partner.hpp"
 #include "network/cryptor.hpp"
+
+#include "people_management/player_factory.hpp" // !!
 
 #include "player.hpp"
 
@@ -38,6 +41,7 @@ Player::Player (const gchar *player_class)
   _player_class = player_class;
 
   _clients = NULL;
+  _partner = NULL;
 
   _weapon = NULL;
 
@@ -340,6 +344,52 @@ void Player::NotifyChange (Attribute *attr,
 }
 
 // --------------------------------------------------------------------------------
+void Player::NotifyChangesToPartners ()
+{
+  if (_partner)
+  {
+    xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+    {
+      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 1);
+
+      xmlTextWriterSetIndent (xml_writer,
+                              TRUE);
+      xmlTextWriterStartDocument (xml_writer,
+                                  NULL,
+                                  "UTF-8",
+                                  NULL);
+
+      {
+        const gchar *player_class_xml_tag  = PlayerFactory::GetXmlTag (_player_class);
+        gchar       *players_class_xml_tag = g_strdup_printf ("%ss", player_class_xml_tag);
+
+        xmlTextWriterStartElement (xml_writer,
+                                   BAD_CAST players_class_xml_tag);
+
+        Save (xml_writer);
+
+        xmlTextWriterEndElement (xml_writer);
+
+        g_free (players_class_xml_tag);
+      }
+
+      xmlFreeTextWriter (xml_writer);
+    }
+
+    {
+      gchar *where = g_strdup_printf ("/%s", _player_class);
+
+      _partner->SendMessage (where,
+                             (const gchar *) xml_buffer->content);
+      g_free (where);
+    }
+
+    xmlBufferFree (xml_buffer);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Player::SetAttributeValue (AttributeId *attr_id,
                                 const gchar *value)
 {
@@ -448,6 +498,13 @@ Weapon  *Player::GetWeapon ()
 void Player::SetWeapon (Weapon *weapon)
 {
   _weapon = weapon;
+}
+
+// --------------------------------------------------------------------------------
+void Player::SetPartner (Partner *partner)
+{
+  _partner = partner;
+  NotifyChangesToPartners ();
 }
 
 // --------------------------------------------------------------------------------
@@ -694,7 +751,7 @@ gboolean Player::SendMessage (const gchar *where,
         }
 
         uploader = new Net::Uploader (url,
-                                      (Net::Uploader::UploadStatus) OnUploaderStatus, this,
+                                      this,
                                       NULL, NULL);
 
         g_free (url);
@@ -715,6 +772,8 @@ gboolean Player::SendMessage (const gchar *where,
 
           secret_key = wifi_code->GetKey ();
         }
+
+        printf ("%s\n", full_message);
 
         encrypted_msg = cryptor->Encrypt (full_message,
                                           secret_key,
@@ -738,21 +797,31 @@ gboolean Player::SendMessage (const gchar *where,
 }
 
 // --------------------------------------------------------------------------------
-void Player::OnUploaderStatus (Net::Uploader::PeerStatus  peer_status,
-                               Object                    *object)
+void Player::Use ()
 {
-  Player              *player = dynamic_cast <Player *> (object);
+  Retain ();
+}
+
+// --------------------------------------------------------------------------------
+void Player::Drop ()
+{
+  Release ();
+}
+
+// --------------------------------------------------------------------------------
+void Player::OnUploadStatus (Net::Uploader::PeerStatus peer_status)
+{
   Player::AttributeId  connection_attr_id ("connection");
 
   if (peer_status == Net::Uploader::CONN_ERROR)
   {
-    player->SetAttributeValue (&connection_attr_id,
-                               "Broken");
+    SetAttributeValue (&connection_attr_id,
+                       "Broken");
   }
   else
   {
-    player->SetAttributeValue (&connection_attr_id,
-                               "Waiting");
+    SetAttributeValue (&connection_attr_id,
+                       "Waiting");
   }
 }
 
