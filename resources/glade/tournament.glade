@@ -1588,7 +1588,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkImageMenuItem" id="network_config_menuitem">
-                        <property name="label">WIFI</property>
+                        <property name="label" translatable="yes">WIFI</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -1616,7 +1616,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="ftp_menuitem">
-                        <property name="label">Publication</property>
+                        <property name="label" translatable="yes">Publication</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>

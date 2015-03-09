@@ -1332,7 +1332,7 @@ namespace People
 
       {
         GooCanvas *canvas = Canvas::CreatePrinterCanvas (context);
-        char      *text   = g_strdup_printf ("Page %d/%d", page_nr+1, _nb_pages);
+        char      *text   = g_strdup_printf ("%s %d/%d", gettext ("Page"), page_nr+1, _nb_pages);
 
         goo_canvas_text_new (goo_canvas_get_root_item (canvas),
                              text,
