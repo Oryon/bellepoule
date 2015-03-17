@@ -62,8 +62,8 @@ class Contest : public Module
 
     void SaveHeader (xmlTextWriter *xml_writer);
 
-    void DumpToHTML (gchar  *filename,
-                     Module *module);
+    void DumpToHTML (gchar *filename);
+
     void Publish ();
 
     gchar *GetFilename ();
