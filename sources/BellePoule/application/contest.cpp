@@ -1727,8 +1727,7 @@ void Contest::Save (gchar *filename)
 }
 
 // --------------------------------------------------------------------------------
-void Contest::DumpToHTML (gchar  *filename,
-                          Module *module)
+void Contest::DumpToHTML (gchar *filename)
 {
   if (filename)
   {
@@ -1766,7 +1765,7 @@ void Contest::DumpToHTML (gchar  *filename,
                GetCategory ());
     }
 
-    module->DumpToHTML (file);
+    _schedule->DumpToHTML (file);
 
     {
       fprintf (file,
@@ -2232,10 +2231,18 @@ gchar *Contest::GetCategory ()
 // --------------------------------------------------------------------------------
 gchar *Contest::GetDate ()
 {
-  static gchar date[] = "01/01/1970";
+  static gchar image[] = "Wide enough memory buffer to store the printable date";
+  GDate *date = g_date_new_dmy (_day,
+                                (GDateMonth) _month,
+                                _year);
 
-  sprintf (date, "%02d/%02d/%02d", _day, _month, _year);
-  return date;
+  g_date_strftime (image,
+                   strlen (image)+1,
+                   "%x",
+                   date);
+  g_date_free (date);
+
+  return image;
 }
 
 // --------------------------------------------------------------------------------

@@ -384,8 +384,7 @@ namespace People
         }
         else if (export_type == HTML)
         {
-          _contest->DumpToHTML (filename,
-                                classification);
+          _contest->DumpToHTML (filename);
         }
       }
       g_free (filename);
