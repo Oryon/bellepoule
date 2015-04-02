@@ -13,6 +13,8 @@
     <columns>
       <!-- column-name name -->
       <column type="gchararray"/>
+      <!-- column-name sha1 -->
+      <column type="gpointer"/>
     </columns>
   </object>
   <object class="GtkWindow" id="window">
@@ -87,7 +89,7 @@
                   </object>
                 </child>
                 <child type="label">
-                  <object class="GtkLabel" id="label1">
+                  <object class="GtkLabel" id="batch_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">&lt;b&gt;Groups&lt;/b&gt;</property>

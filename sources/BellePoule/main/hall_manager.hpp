@@ -42,6 +42,8 @@ class HallManager : public Module
     void AddContest (const gchar *data);
 
     void AddReferee (const gchar *data);
+
+    void ManageTask (const gchar *data);
 };
 
 #endif

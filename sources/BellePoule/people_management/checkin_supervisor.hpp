@@ -63,8 +63,6 @@ namespace People
       guint PreparePrint (GtkPrintOperation *operation,
                           GtkPrintContext   *context);
 
-      void SetPasteVisibility (gboolean visibility);
-
     private:
       static const gchar *_class_name;
       static const gchar *_xml_class_name;

@@ -14,34 +14,23 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 #include "batch.hpp"
 
 typedef enum
 {
-  NAME_str
+  NAME_str,
+  SHA1_ptr
 } ColumnId;
 
 // --------------------------------------------------------------------------------
 Batch::Batch (const gchar *id)
   : Module ("batch.glade")
 {
-  _id = g_strdup (id);
-
-  {
-    GtkTreeIter iter;
-
-    _list_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
-
-    for (guint i = 0; i < 5; i ++)
-    {
-      gtk_list_store_append (_list_store,
-                             &iter);
-
-      gtk_list_store_set (_list_store, &iter,
-                          NAME_str, "Poule N°1",
-                          -1);
-    }
-  }
+   _id         = g_strdup (id);
+   _list_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 }
 
 // --------------------------------------------------------------------------------
@@ -113,4 +102,87 @@ void Batch::AttachTo (GtkNotebook *to)
   gtk_notebook_append_page (to,
                             GetRootWidget (),
                             _glade->GetWidget ("notebook_title"));
+}
+
+// --------------------------------------------------------------------------------
+gboolean Batch::HasTask (GChecksum *sha1)
+{
+  GtkTreeIter iter;
+  gboolean    iter_is_valid;
+
+  iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_list_store),
+                                                 &iter);
+  while (iter_is_valid)
+  {
+    GChecksum *current_sha1;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
+                        &iter,
+                        SHA1_ptr, &current_sha1,
+                        -1);
+
+    if (strcmp (g_checksum_get_string (sha1),
+                g_checksum_get_string (current_sha1)) == 0)
+    {
+      return TRUE;
+    }
+
+    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store),
+                                              &iter);
+  }
+
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+void Batch::LoadTask (xmlNode   *xml_node,
+                      GChecksum *sha1)
+{
+  if (HasTask (sha1) == FALSE)
+  {
+    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    {
+      if (n->type == XML_ELEMENT_NODE)
+      {
+        if (strcmp ((char *) n->name, "TourDePoules") == 0)
+        {
+          GtkLabel *label = GTK_LABEL (_glade->GetWidget ("batch_label"));
+          gchar    *name;
+
+          name = g_strdup_printf ("%s %s",
+                                  gettext ("Pool"),
+                                  (gchar *) xmlGetProp (n, BAD_CAST "ID"));
+          gtk_label_set_text (label, name);
+        }
+        else if (strcmp ((char *) n->name, "Poule") == 0)
+        {
+          GtkTreeIter  iter;
+          gchar       *attr;
+          gchar       *name;
+
+          attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+          if (attr)
+          {
+            name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
+          }
+          else
+          {
+            name = g_strdup (gettext ("Pool"));
+          }
+
+          gtk_list_store_append (_list_store,
+                                 &iter);
+
+          gtk_list_store_set (_list_store, &iter,
+                              NAME_str, name,
+                              SHA1_ptr, g_checksum_copy (sha1),
+                              -1);
+        }
+
+        printf("node type: Element, name: %s\n", n->name);
+        LoadTask (n->children,
+                  sha1);
+      }
+    }
+  }
 }

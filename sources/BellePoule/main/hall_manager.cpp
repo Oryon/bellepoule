@@ -109,10 +109,73 @@ void HallManager::OnHttpPost (const gchar *data)
     {
       AddContest (body);
     }
+    else if (strcmp (lines[0], "/Task") == 0)
+    {
+      ManageTask (body);
+    }
     else if (strcmp (lines[0], "/Referee") == 0)
     {
       AddReferee (body);
     }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void HallManager::ManageTask (const gchar *data)
+{
+  xmlDocPtr doc = xmlParseMemory (data, strlen (data));
+
+  if (doc)
+  {
+    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+
+    xmlXPathInit ();
+
+    {
+      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+      xmlXPathObject  *xml_object;
+      xmlNodeSet      *xml_nodeset;
+
+      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
+      if (xml_object->nodesetval->nodeNr == 0)
+      {
+        xmlXPathFreeObject (xml_object);
+        xml_object = xmlXPathEval (BAD_CAST "/CompetitionParEquipes", xml_context);
+      }
+
+      xml_nodeset = xml_object->nodesetval;
+      if (xml_object->nodesetval->nodeNr)
+      {
+        gchar *attr;
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
+        if (attr)
+        {
+          Batch *batch = GetBatch (attr);
+
+          if (batch)
+          {
+            GChecksum *sha1 = g_checksum_new (G_CHECKSUM_SHA1);
+
+            g_checksum_update (sha1,
+                               (const guchar *) data,
+                               -1);
+
+            batch->LoadTask (xml_nodeset->nodeTab[0],
+                             sha1);
+
+            g_checksum_free (sha1);
+          }
+          xmlFree (attr);
+        }
+      }
+
+      xmlXPathFreeObject  (xml_object);
+      xmlXPathFreeContext (xml_context);
+    }
+
+    xmlXPathFreeContext (xml_context);
+    xmlFreeDoc (doc);
   }
 }
 

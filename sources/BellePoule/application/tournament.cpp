@@ -119,19 +119,6 @@ void Tournament::SetHallManager (Partner *partner)
       }
     }
 
-    {
-      GSList *current = _referee_list;
-
-      while (current)
-      {
-        Player *referee = (Player *) current->data;
-
-        referee->SetPartner (partner);
-
-        current = g_slist_next (current);
-      }
-    }
-
     _hall_manager = partner;
 
     return;
@@ -822,76 +809,6 @@ gchar *Tournament::OnHttpGet (const gchar *url)
 }
 
 // --------------------------------------------------------------------------------
-Player *Tournament::Share (Player  *referee,
-                           Contest *from)
-{
-  Player *original = NULL;
-
-  {
-    GSList *current   = _referee_list;
-    GSList *attr_list = NULL;
-    Player::AttributeId  name_attr_id       ("name");
-    Player::AttributeId  first_name_attr_id ("first_name");
-
-    attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
-    attr_list = g_slist_prepend (attr_list, &name_attr_id);
-
-    while (current)
-    {
-      Player *current_referee = (Player *) current->data;
-
-      if (Player::MultiCompare (referee,
-                                current_referee,
-                                attr_list) == 0)
-      {
-        original = current_referee;
-        referee->SetRef (original->GetRef ());
-        break;
-      }
-
-      current = g_slist_next (current);
-    }
-
-    g_slist_free (attr_list);
-  }
-
-  if (original == NULL)
-  {
-    {
-      Player::AttributeId attr_id ("name");
-
-      _referee_list = g_slist_insert_sorted_with_data (_referee_list,
-                                                       referee,
-                                                       (GCompareDataFunc) Player::Compare,
-                                                       &attr_id);
-      referee->Retain ();
-      referee->SetRef (_referee_ref++);
-      referee->SetPartner (_hall_manager);
-    }
-
-    {
-      GSList *current        = _contest_list;
-      Weapon *referee_weapon = referee->GetWeapon ();
-
-      while (current)
-      {
-        Contest *contest = (Contest *) current->data;
-
-        if (   (contest != from)
-            && (referee_weapon->IsTheSameThan (contest->GetWeapon ())))
-        {
-          contest->AddReferee (referee);
-        }
-
-        current = g_slist_next (current);
-      }
-    }
-  }
-
-  return original;
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::RefreshMatchRate (gint delta)
 {
   _nb_matchs += delta;
@@ -938,7 +855,6 @@ void Tournament::Manage (Contest *contest)
 
     _contest_list = g_slist_prepend (_contest_list,
                                      contest);
-    contest->ImportReferees (_referee_list);
 
     if (g_slist_length (_contest_list) == 1)
     {

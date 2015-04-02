@@ -672,18 +672,6 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::SetPasteVisibility (gboolean visibility)
-  {
-    GtkAction *paste_action = GetAction ("PasteAction");
-
-    if (paste_action)
-    {
-      gtk_action_set_visible (paste_action,
-                              visibility);
-    }
-  }
-
-  // --------------------------------------------------------------------------------
   void CheckinSupervisor::EnableDragAndDrop ()
   {
     if (_contest->IsTeamEvent ())

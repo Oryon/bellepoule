@@ -75,10 +75,6 @@ class Contest : public Module
 
     void AddReferee (Player *referee);
 
-    void ImportReferees (GSList *imported_list);
-
-    Player *Share (Player *referee);
-
     Player *GetRefereeFromDndRef (guint ref);
 
     State GetState ();
@@ -88,6 +84,8 @@ class Contest : public Module
                          const gchar *data);
 
     void SetHallManager (Partner *partner);
+
+    Partner *GetHallManager ();
 
     gchar    *GetId              ();
     gchar    *GetOrganizer       ();
@@ -169,7 +167,6 @@ class Contest : public Module
     guint            _save_timeout_id;
     People::Checkin *_referees_list;
     gint             _referee_pane_position;
-    GHashTable      *_ref_translation_table;
     State            _state;
     gboolean         _read_only;
     Partner         *_hall_manager;
