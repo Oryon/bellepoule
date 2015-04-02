@@ -45,6 +45,12 @@ class Batch : public Module
                       const gchar *property);
 
     gboolean HasTask (GChecksum *sha1);
+
+    void OnDragDataGet (GtkWidget        *widget,
+                        GdkDragContext   *drag_context,
+                        GtkSelectionData *data,
+                        guint             info,
+                        guint             time);
 };
 
 #endif

@@ -39,9 +39,9 @@ class HallManager : public Module
 
     Batch *GetBatch (const gchar *id);
 
-    void AddContest (const gchar *data);
+    void ManageContest (const gchar *data);
 
-    void AddReferee (const gchar *data);
+    void ManageReferee (const gchar *data);
 
     void ManageTask (const gchar *data);
 };

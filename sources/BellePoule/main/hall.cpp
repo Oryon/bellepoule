@@ -73,6 +73,18 @@ void Hall::OnPlugged ()
                     G_CALLBACK (OnSelected),
                     this);
 
+
+  {
+    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
+                       (GtkDestDefaults) 0,
+                       _dnd_config->GetTargetTable (),
+                       _dnd_config->GetTargetTableSize (),
+                       GDK_ACTION_COPY);
+
+    ConnectDndDest (GTK_WIDGET (GetCanvas ()));
+    EnableDragAndDrop ();
+  }
+
   AddPiste ();
   RestoreZoomFactor ();
 }
@@ -82,26 +94,6 @@ void Hall::AddPiste ()
 {
   Piste *piste  = new Piste (_root, this);
   GList *before = _piste_list;
-
-  {
-    static guint  toto  = 0;
-    static const gchar *color_table[] =
-    {
-      "#EED680",
-      "#E0B6AF",
-      "#ADA7C8",
-      "#9DB8D2",
-      "#83A67F",
-      "#DF421E",
-      "#826647"
-    };
-
-    if (toto < 6)
-    {
-      piste->SetColor (color_table[toto]);
-      toto++;
-    }
-  }
 
   for (guint i = 1; before != NULL; i++)
   {

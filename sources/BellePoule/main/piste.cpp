@@ -68,7 +68,7 @@ Piste::Piste (GooCanvasItem *parent,
 
   {
     _title_item = goo_canvas_text_new (_root_item,
-                                       "Sabre-Homme-Cadet",
+                                       "",
                                        _W/2.0, 1.0,
                                        -1.0,
                                        GTK_ANCHOR_NORTH,
@@ -80,7 +80,7 @@ Piste::Piste (GooCanvasItem *parent,
 
   {
     _match_item = goo_canvas_text_new (_root_item,
-                                       "Poule N°1",
+                                       "",
                                        _W/2.0, 9.0,
                                        -1.0,
                                        GTK_ANCHOR_NORTH,
@@ -112,7 +112,8 @@ Piste::Piste (GooCanvasItem *parent,
                              _RESOLUTION,
                              _RESOLUTION);
 
-  SetId (1);
+  SetId    (1);
+  SetColor ("#CCCCCC");
 }
 
 // --------------------------------------------------------------------------------

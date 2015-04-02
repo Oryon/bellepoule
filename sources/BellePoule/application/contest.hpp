@@ -73,8 +73,6 @@ class Contest : public Module
 
     void AddFencer (Player *player);
 
-    void AddReferee (Player *referee);
-
     Player *GetRefereeFromDndRef (guint ref);
 
     State GetState ();
@@ -105,7 +103,6 @@ class Contest : public Module
     void on_contest_close_button_clicked  ();
     void on_calendar_button_clicked       ();
     void on_web_site_button_clicked       ();
-    void on_referees_toolbutton_toggled   (GtkToggleToolButton *w);
 
   private:
     struct Time : public Object
@@ -166,7 +163,6 @@ class Contest : public Module
     GdkColor        *_gdk_color;
     guint            _save_timeout_id;
     People::Checkin *_referees_list;
-    gint             _referee_pane_position;
     State            _state;
     gboolean         _read_only;
     Partner         *_hall_manager;

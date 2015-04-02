@@ -281,15 +281,7 @@ Contest::Contest (gboolean for_duplication )
            "SensitiveWidgetForCheckinStage",
            _glade->GetWidget ("team_vbox"));
 
-  {
-    _referees_list = new People::RefereesList (this);
-    Plug (_referees_list,
-          _glade->GetWidget ("referees_viewport"));
-
-    gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
-                            0);
-    _referee_pane_position = -1;
-  }
+  _referees_list = new People::RefereesList (this);
 
   {
     GTimeVal  current_time;
@@ -948,15 +940,6 @@ void Contest::AddFencer (Player *fencer)
       checkin->Add (fencer);
     }
   }
-}
-
-// --------------------------------------------------------------------------------
-void Contest::AddReferee (Player *referee)
-{
-  _referees_list->Add           (referee);
-  _referees_list->OnListChanged ();
-
-  referee->SetPartner (_hall_manager);
 }
 
 // --------------------------------------------------------------------------------
@@ -1970,25 +1953,6 @@ void Contest::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void Contest::on_referees_toolbutton_toggled (GtkToggleToolButton *w)
-{
-  GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
-
-  if (gtk_toggle_tool_button_get_active (w))
-  {
-    gtk_paned_set_position (paned,
-                            _referee_pane_position);
-  }
-  else
-  {
-    _referee_pane_position = gtk_paned_get_position (paned);
-    gtk_paned_set_position (paned,
-                            0);
-  }
-
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_web_site_button_clicked (GtkWidget *widget,
                                                             Object    *owner)
 {
@@ -2200,15 +2164,6 @@ void Contest::OnEndPrint (GtkPrintOperation *operation,
 {
   _schedule->StopBookPrint (operation,
                             context);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_referees_toolbutton_toggled (GtkToggleToolButton *widget,
-                                                                Object              *owner)
-{
-  Contest *c = dynamic_cast <Contest *> (owner);
-
-  c->on_referees_toolbutton_toggled (widget);
 }
 
 // --------------------------------------------------------------------------------

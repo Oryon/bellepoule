@@ -107,7 +107,7 @@ void HallManager::OnHttpPost (const gchar *data)
 
     if (strcmp (lines[0], "/Competition") == 0)
     {
-      AddContest (body);
+      ManageContest (body);
     }
     else if (strcmp (lines[0], "/Task") == 0)
     {
@@ -115,7 +115,7 @@ void HallManager::OnHttpPost (const gchar *data)
     }
     else if (strcmp (lines[0], "/Referee") == 0)
     {
-      AddReferee (body);
+      ManageReferee (body);
     }
   }
 }
@@ -180,7 +180,7 @@ void HallManager::ManageTask (const gchar *data)
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::AddReferee (const gchar *data)
+void HallManager::ManageReferee (const gchar *data)
 {
   xmlDocPtr doc = xmlParseMemory (data, strlen (data));
 
@@ -197,7 +197,7 @@ void HallManager::AddReferee (const gchar *data)
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::AddContest (const gchar *data)
+void HallManager::ManageContest (const gchar *data)
 {
   GKeyFile *key_file = g_key_file_new ();
   GError   *error    = NULL;

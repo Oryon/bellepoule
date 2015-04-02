@@ -29,8 +29,23 @@ typedef enum
 Batch::Batch (const gchar *id)
   : Module ("batch.glade")
 {
-   _id         = g_strdup (id);
-   _list_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
+  _id         = g_strdup (id);
+  _list_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
+
+  {
+    GtkWidget *source = _glade->GetWidget ("treeview");
+
+    _dnd_target = _dnd_config->CreateTarget ("bellepoule/task", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_config->CreateTargetTable ();
+
+    gtk_drag_source_set (source,
+                         GDK_MODIFIER_MASK,
+                         _dnd_config->GetTargetTable (),
+                         _dnd_config->GetTargetTableSize (),
+                         GDK_ACTION_COPY);
+
+    ConnectDndSource (source);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -184,5 +199,29 @@ void Batch::LoadTask (xmlNode   *xml_node,
                   sha1);
       }
     }
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Batch::OnDragDataGet (GtkWidget        *widget,
+                           GdkDragContext   *drag_context,
+                           GtkSelectionData *data,
+                           guint             info,
+                           guint             time)
+{
+  if (info == _dnd_target)
+  {
+    printf ("OnDragDataGet\n");
+#if 0
+    GSList  *selected    = GetSelectedPlayers ();
+    Player  *referee     = (Player *) selected->data;
+    guint32  referee_ref = referee->GetDndRef ();
+
+    gtk_selection_data_set (data,
+                            gtk_selection_data_get_target (data),
+                            32,
+                            (guchar *) &referee_ref,
+                            sizeof (referee_ref));
+#endif
   }
 }
