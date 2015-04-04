@@ -7,13 +7,13 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-03-09 14:54+0100\n"
-"PO-Revision-Date: 2015-03-10 07:56+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"PO-Revision-Date: 2015-04-03 19:42+0000\n"
+"Last-Translator: Jean Marc <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-25 05:47+0000\n"
+"X-Launchpad-Export-Date: 2015-04-04 05:28+0000\n"
 "X-Generator: Launchpad (build 17413)\n"
 "Language: \n"
 "X-Poedit-Language: French\n"
@@ -26,13 +26,13 @@ msgid "Sabre"
 msgstr "Sabre"
 
 msgid "Epée"
-msgstr "Epée"
+msgstr "Épée"
 
 msgid "Foil"
 msgstr "Fleuret"
 
 msgid "Educ"
-msgstr "Educ"
+msgstr "Éduc"
 
 msgid "Male"
 msgstr "Masculin"
@@ -83,7 +83,7 @@ msgid "Choose a file..."
 msgstr "Choisissez un fichier de sauvegarde ..."
 
 msgid "BellePoule files (.cotcot)"
-msgstr "Les fichiers BellePoule (.cocot)"
+msgstr "Les fichiers BellePoule (.cotcot)"
 
 msgid "All files"
 msgstr "Tous les fichiers"
@@ -107,7 +107,7 @@ msgid "first name"
 msgstr "prénom"
 
 msgid "date of birth"
-msgstr "date naissance"
+msgstr "date de naissance"
 
 msgid "gender"
 msgstr "sexe"
@@ -131,7 +131,7 @@ msgid "rate"
 msgstr "taux"
 
 msgid "level"
-msgstr "Niveau"
+msgstr "niveau"
 
 msgid "ranking"
 msgstr "classement"
@@ -149,7 +149,7 @@ msgid "Qualified"
 msgstr "Qualifiés"
 
 msgid "Not qualified"
-msgstr "Eliminé"
+msgstr "Éliminés"
 
 msgid "Withdrawal"
 msgstr "Abandon"
@@ -164,7 +164,7 @@ msgid "status"
 msgstr "statut"
 
 msgid "pool #"
-msgstr "poule N°"
+msgstr "poule n°"
 
 msgid "Victories"
 msgstr "Victoires"
@@ -216,16 +216,16 @@ msgstr "Manuelle"
 
 #, c-format
 msgid "Round #%d"
-msgstr "Tour N° %d"
+msgstr "Tour n° %d"
 
 msgid "Formula"
 msgstr "Formule"
 
 msgid "<b><big>Do you really want to cancel the current round?</big></b>"
-msgstr "<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>"
+msgstr "<b><big>Voulez-vous vraiment annuler la phase courante ?</big></b>"
 
 msgid "Go back to the previous round?"
-msgstr "Revenir à la phase précédente ?"
+msgstr "Revenir à la phase précédente ?"
 
 msgid "All the inputs of this round will be cancelled."
 msgstr "Toutes les saisies de cette phase seront annulées."
@@ -235,7 +235,7 @@ msgid ""
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
 "<b><big>Le quota n'est pas respecté à cause d'égalités.\n"
-"Voulez-vous ajouter un tour de barrage ?</big></b>"
+"Voulez-vous ajouter un tour de barrage ?</big></b>"
 
 msgid "Barrage"
 msgstr "Barrage"
@@ -393,7 +393,7 @@ msgstr "Score max"
 
 #, c-format
 msgid "Pool #%02d"
-msgstr "Poule No %02d"
+msgstr "Poule N° %02d"
 
 msgid "Referee"
 msgstr "Arbitre"
@@ -439,7 +439,7 @@ msgid "Table of %d"
 msgstr "Tableau de %d"
 
 msgid "Place #"
-msgstr "Place N°"
+msgstr "Place n°"
 
 msgid "cutting"
 msgstr "Découpe"
@@ -449,7 +449,7 @@ msgstr "Tableau"
 
 #, c-format
 msgid "%s: score sheets printing"
-msgstr "%s : Impression des matchs"
+msgstr "%s : impression des matchs"
 
 #, c-format
 msgid "Match %s"
@@ -624,7 +624,7 @@ msgid "<b>Scores</b>"
 msgstr "<b>Scores</b>"
 
 msgid "Event"
-msgstr "Évènement"
+msgstr "Événement"
 
 msgid "Save the current state of the competition."
 msgstr "Sauvegarde l'état courant de la compétition."
@@ -701,7 +701,7 @@ msgid "Single classification"
 msgstr "Classement simple"
 
 msgid "Import referee file"
-msgstr "Importer fichier d'arbitres"
+msgstr "Importer le fichier d'arbitres"
 
 msgid "Add"
 msgstr "Ajouter"
@@ -713,7 +713,7 @@ msgid "<b>Schedule</b>"
 msgstr "<b>Déroulement</b>"
 
 msgid "<b>Parameters</b>"
-msgstr "<b>Parametres</b>"
+msgstr "<b>Paramètres</b>"
 
 msgid "Previous round"
 msgstr "Tour précédent"
@@ -767,12 +767,12 @@ msgid ""
 "Fill in all the scores randomly.\n"
 "To activate/deactivate this button, go to the properties of the competition."
 msgstr ""
-"Remplit tous les matchs du tableau par des scores aléatoires.\n"
+"Remplir tous les matchs du tableau par des scores aléatoires.\n"
 "Pour activer/désactiver ce bouton, allez dans les propriétés de la "
 "compétition."
 
 msgid "From"
-msgstr "A partir de"
+msgstr "À partir de"
 
 msgid "To"
 msgstr "Jusqu'à"
@@ -817,7 +817,7 @@ msgid "FTP server"
 msgstr "Serveur FTP"
 
 msgid "<b>Web site</b>"
-msgstr "<b>Site Web</b>"
+msgstr "<b>Site web</b>"
 
 msgid "<b>Video server</b>"
 msgstr "<b>Serveur vidéo</b>"
@@ -868,7 +868,7 @@ msgid "Open an example..."
 msgstr "Ouvrir un exemple ..."
 
 msgid "User manual"
-msgstr "Manuel utilisateur"
+msgstr "Manuel de l'utilisateur"
 
 msgid "Fencer file template (.csv)"
 msgstr "Modèle de fichier de tireurs (.csv)"
