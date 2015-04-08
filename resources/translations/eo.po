@@ -8,17 +8,17 @@ msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2015-03-09 14:54+0100\n"
-"PO-Revision-Date: 2014-05-09 18:20+0000\n"
+"PO-Revision-Date: 2015-04-07 21:49+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-03-25 05:47+0000\n"
+"X-Launchpad-Export-Date: 2015-04-08 05:14+0000\n"
 "X-Generator: Launchpad (build 17413)\n"
 
 msgid "Classification"
-msgstr ""
+msgstr "Kategoriado"
 
 msgid "Sabre"
 msgstr ""
@@ -33,13 +33,13 @@ msgid "Educ"
 msgstr ""
 
 msgid "Male"
-msgstr ""
+msgstr "Malina"
 
 msgid "Female"
-msgstr ""
+msgstr "Ina"
 
 msgid "Mixed"
-msgstr ""
+msgstr "Miksita"
 
 msgid "U8"
 msgstr ""
@@ -90,13 +90,13 @@ msgid "Close without saving"
 msgstr "Fermi sen konservado"
 
 msgid "ref"
-msgstr ""
+msgstr "ref"
 
 msgid "place"
 msgstr ""
 
 msgid "team"
-msgstr ""
+msgstr "skipo"
 
 msgid "last name"
 msgstr "familinomo"
@@ -123,7 +123,7 @@ msgid "licence"
 msgstr ""
 
 msgid "IP address"
-msgstr ""
+msgstr "IP-adreso"
 
 msgid "rate"
 msgstr ""
@@ -201,16 +201,16 @@ msgid "connection"
 msgstr ""
 
 msgid "Broken"
-msgstr ""
+msgstr "Rompita"
 
 msgid "Waiting"
-msgstr ""
+msgstr "Atendante"
 
 msgid "OK"
-msgstr ""
+msgstr "Bone"
 
 msgid "Manual"
-msgstr ""
+msgstr "Permane"
 
 #, c-format
 msgid "Round #%d"
@@ -234,7 +234,7 @@ msgid ""
 msgstr ""
 
 msgid "Barrage"
-msgstr ""
+msgstr "Baraĝo"
 
 msgid "Meal"
 msgstr ""
@@ -243,10 +243,10 @@ msgid "Drink"
 msgstr ""
 
 msgid "Dessert"
-msgstr ""
+msgstr "Deserto"
 
 msgid "Coffee"
-msgstr ""
+msgstr "Kafo"
 
 msgid "Payment book"
 msgstr ""
@@ -255,7 +255,7 @@ msgid "Page"
 msgstr "Paĝo"
 
 msgid "Signature"
-msgstr ""
+msgstr "Subskribo"
 
 msgid "Restart BellePoule for this change to take effect"
 msgstr ""
@@ -341,10 +341,10 @@ msgid "All HTML files (.HTML)"
 msgstr ""
 
 msgid "Copy"
-msgstr ""
+msgstr "Kopii"
 
 msgid "Paste"
-msgstr ""
+msgstr "Alglui"
 
 msgid "Choose a rank file to apply..."
 msgstr ""
@@ -362,7 +362,7 @@ msgid "Pools arrangement"
 msgstr ""
 
 msgid "or"
-msgstr ""
+msgstr "aŭ"
 
 msgid "Swapping failed"
 msgstr ""
