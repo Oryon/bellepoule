@@ -34,6 +34,8 @@ namespace People
       void OnAttendingChanged (Player   *player,
                                gboolean  present);
 
+      guint GetTotalFencerCount ();
+
       guint GetTotalCount ();
 
       guint GetPresentsCount ();

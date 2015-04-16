@@ -81,6 +81,12 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  guint TallyCounter::GetTotalFencerCount ()
+  {
+    return _normal_mode._total_count;
+  }
+
+  // --------------------------------------------------------------------------------
   guint TallyCounter::GetTotalCount ()
   {
     return GetPresentsCount () + GetAbsentsCount ();
@@ -104,7 +110,7 @@ namespace People
   {
     if (_team_mode_enabled)
     {
-      return _team_mode._total_count - _team_mode._present_count;
+      return _team_mode._total_count - _team_mode._present_count - 1;
     }
     else
     {

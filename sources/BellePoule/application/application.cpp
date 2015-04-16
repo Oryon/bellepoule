@@ -446,6 +446,8 @@ gboolean Application::MulticastAvailability (Application *application)
 // --------------------------------------------------------------------------------
 void Application::AnnounceAvailability ()
 {
+  MulticastAvailability (this);
+
   g_timeout_add_seconds (5,
                          (GSourceFunc) MulticastAvailability,
                          this);

@@ -101,15 +101,7 @@ namespace People
                                      "preferences-desktop-theme");
     }
 
-    {
-      GtkAction *atction = GetAction ("CopyAction");
-
-      if (atction)
-      {
-        gtk_action_set_visible (atction,
-                                FALSE);
-      }
-    }
+    SetPasteVisibility (TRUE);
   }
 
   // --------------------------------------------------------------------------------
@@ -201,26 +193,6 @@ namespace People
                                       "Absent");
         }
       }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void RefereesList::Add (Player *referee)
-  {
-    Player *original = NULL;
-
-    if (_contest)
-    {
-      original = _contest->Share (referee);
-    }
-
-    if (original)
-    {
-      Checkin::Add (original);
-    }
-    else
-    {
-      Checkin::Add (referee);
     }
   }
 

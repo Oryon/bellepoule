@@ -131,7 +131,7 @@ namespace People
 
     {
       _null_team = new NullTeam ();
-      _null_team->SetName ("** Sans équipe **");
+      _null_team->SetName (gettext ("** Without team **"));
       RegisterNewTeam (_null_team);
       Add (_null_team);
     }
@@ -234,7 +234,7 @@ namespace People
     {
       gchar *text = g_strdup_printf ("%s : %d",
                                      gettext ("Expected fencers"),
-                                     g_slist_length (_player_list));
+                                     _tally_counter->GetTotalFencerCount ());
 
       DrawConfigLine (operation,
                       context,
@@ -245,15 +245,29 @@ namespace People
 
     if (_contest->IsTeamEvent ())
     {
-      gchar *text = g_strdup_printf ("%s : %d",
-                                     gettext ("Team size"),
-                                     _minimum_team_size->_value);
+      {
+        gchar *text = g_strdup_printf ("%s : %d",
+                                       gettext ("Expected teams"),
+                                       _tally_counter->GetTotalCount ());
 
-      DrawConfigLine (operation,
-                      context,
-                      text);
+        DrawConfigLine (operation,
+                        context,
+                        text);
 
-      g_free (text);
+        g_free (text);
+      }
+
+      {
+        gchar *text = g_strdup_printf ("%s : %d",
+                                       gettext ("Team size"),
+                                       _minimum_team_size->_value);
+
+        DrawConfigLine (operation,
+                        context,
+                        text);
+
+        g_free (text);
+      }
     }
   }
 
@@ -668,18 +682,6 @@ namespace People
           current = g_slist_next (current);
         }
       }
-    }
-  }
-
-  // --------------------------------------------------------------------------------
-  void CheckinSupervisor::SetPasteVisibility (gboolean visibility)
-  {
-    GtkAction *paste_action = GetAction ("PasteAction");
-
-    if (paste_action)
-    {
-      gtk_action_set_visible (paste_action,
-                              visibility);
     }
   }
 
@@ -1225,7 +1227,7 @@ namespace People
 
     player = (Player *) _dnd_config->GetFloatingObject ();
 
-    if (player->Is ("Fencer"))
+    if (player && (player->Is ("Fencer")))
     {
       GtkTreePath             *path;
       GtkTreeViewDropPosition  pos;
@@ -1315,6 +1317,8 @@ namespace People
 
         fencer->SetAttributeValue (&attr_id,
                                    dest->GetName ());
+        OnListChanged ();
+
         result = TRUE;
       }
     }

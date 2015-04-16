@@ -19,11 +19,11 @@
 
 #include <goocanvas.h>
 
-#include "util/object.hpp"
+#include "util/drop_zone.hpp"
 
 class Module;
 
-class Piste : public Object
+class Piste : public DropZone
 {
   public:
     class Listener
@@ -37,7 +37,9 @@ class Piste : public Object
 
   public:
     Piste (GooCanvasItem *parent,
-           Listener      *listener);
+           Module        *container);
+
+    void SetListener (Listener *listener);
 
     void Select ();
 
@@ -98,6 +100,9 @@ class Piste : public Object
                                     GooCanvasItem  *target,
                                     GdkEventMotion *event,
                                     Piste          *piste);
+
+  private:
+    void RedrawDropZone ();
 };
 
 #endif

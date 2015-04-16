@@ -267,8 +267,7 @@ Contest::Contest (gboolean for_duplication )
   _default_classification = new Data ("ClassementParDefaut",  10000);
   _minimum_team_size      = new Data ("TailleMinimaleEquipe", 3);
 
-  _state                 = OPERATIONAL;
-  _ref_translation_table = NULL;
+  _state = OPERATIONAL;
 
   _checkin_time = new Time ("checkin");
   _scratch_time = new Time ("scratch");
@@ -282,15 +281,7 @@ Contest::Contest (gboolean for_duplication )
            "SensitiveWidgetForCheckinStage",
            _glade->GetWidget ("team_vbox"));
 
-  {
-    _referees_list = new People::RefereesList (this);
-    Plug (_referees_list,
-          _glade->GetWidget ("referees_viewport"));
-
-    gtk_paned_set_position (GTK_PANED (_glade->GetWidget ("hpaned")),
-                            0);
-    _referee_pane_position = -1;
-  }
+  _referees_list = new People::RefereesList (this);
 
   {
     GTimeVal  current_time;
@@ -521,9 +512,6 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 {
   _state = LOADING;
 
-  _ref_translation_table = g_hash_table_new (NULL,
-                                             NULL);
-
   {
     gboolean     score_stuffing_policy  = FALSE;
     gboolean     need_post_processing;
@@ -573,7 +561,7 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 
       xml_nodeset = xml_object->nodesetval;
 
-      if (xml_object->nodesetval->nodeNr)
+      if (xml_nodeset && xml_nodeset->nodeNr)
       {
         gchar *attr;
 
@@ -787,11 +775,6 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
     }
   }
 
-  {
-    g_hash_table_destroy (_ref_translation_table);
-    _ref_translation_table = NULL;
-  }
-
   FillInProperties ();
 
   _state = OPERATIONAL;
@@ -849,6 +832,12 @@ Contest::~Contest ()
 }
 
 // --------------------------------------------------------------------------------
+Partner *Contest::GetHallManager ()
+{
+  return _hall_manager;
+}
+
+// --------------------------------------------------------------------------------
 void Contest::SetHallManager (Partner *partner)
 {
   _hall_manager = partner;
@@ -861,35 +850,50 @@ void Contest::UpdateHallManager ()
 {
   if (_hall_manager)
   {
-    GKeyFile *key_file = g_key_file_new ();
-    gchar    *color    = gdk_color_to_string (_gdk_color);
+    {
+      GKeyFile *key_file = g_key_file_new ();
+      gchar    *color    = gdk_color_to_string (_gdk_color);
 
-    g_key_file_set_string (key_file,
-                           "Contest",
-                           "id",
-                           _id);
-    g_key_file_set_string (key_file,
-                           "Contest",
-                           "color",
-                           color);
-    g_key_file_set_string (key_file,
-                           "Contest",
-                           "weapon",
-                           _weapon->GetImage ());
-    g_key_file_set_string (key_file,
-                           "Contest",
-                           "gender",
-                           gender_image[_gender]);
-    g_key_file_set_string (key_file,
-                           "Contest",
-                           "category",
-                           category_image[_category]);
+      g_key_file_set_string (key_file,
+                             "Contest",
+                             "id",
+                             _id);
+      g_key_file_set_string (key_file,
+                             "Contest",
+                             "color",
+                             color);
+      g_key_file_set_string (key_file,
+                             "Contest",
+                             "weapon",
+                             _weapon->GetImage ());
+      g_key_file_set_string (key_file,
+                             "Contest",
+                             "gender",
+                             gender_image[_gender]);
+      g_key_file_set_string (key_file,
+                             "Contest",
+                             "category",
+                             category_image[_category]);
 
-    _hall_manager->SendMessage ("/Competition",
-                                key_file);
+      _hall_manager->SendMessage ("/Competition",
+                                  key_file);
 
-    g_free (color);
-    g_key_file_free (key_file);
+      g_free (color);
+      g_key_file_free (key_file);
+    }
+
+    {
+      GSList *current = _referees_list->GetList ();
+
+      while (current)
+      {
+        Player *referee = (Player *) current->data;
+
+        referee->SetPartner (_hall_manager);
+
+        current = g_slist_next (current);
+      }
+    }
   }
 }
 
@@ -936,58 +940,6 @@ void Contest::AddFencer (Player *fencer)
       checkin->Add (fencer);
     }
   }
-}
-
-// --------------------------------------------------------------------------------
-void Contest::AddReferee (Player *referee)
-{
-  _referees_list->Add           (referee);
-  _referees_list->OnListChanged ();
-
-  referee->SetPartner (_hall_manager);
-}
-
-// --------------------------------------------------------------------------------
-void Contest::ImportReferees (GSList *imported_list)
-{
-  GSList *attr_list = NULL;
-  Player::AttributeId name_attr_id       ("name");
-  Player::AttributeId first_name_attr_id ("first_name");
-
-  attr_list = g_slist_prepend (attr_list, &first_name_attr_id);
-  attr_list = g_slist_prepend (attr_list, &name_attr_id);
-
-  while (imported_list)
-  {
-    Player *imported = (Player *) imported_list->data;
-
-    if (_weapon->IsTheSameThan (imported->GetWeapon ()))
-    {
-      GSList *current  = _referees_list->GetList ();
-
-      while (current)
-      {
-        Player *referee = (Player *) current->data;
-
-        if (Player::MultiCompare (imported,
-                                  referee,
-                                  attr_list) == 0)
-        {
-          break;
-        }
-        current = g_slist_next (current);
-      }
-
-      if (current == NULL)
-      {
-        AddReferee (imported);
-      }
-    }
-
-    imported_list = g_slist_next (imported_list);
-  }
-
-  g_slist_free (attr_list);
 }
 
 // --------------------------------------------------------------------------------
@@ -1055,6 +1007,7 @@ Contest *Contest::Duplicate ()
   contest->_year       = _year;
   contest->_tournament = _tournament;
   contest->_team_event = _team_event;
+  contest->_schedule->SetTeamEvent (_team_event);
 
   _checkin_time->Copy (contest->_checkin_time);
   _scratch_time->Copy (contest->_scratch_time);
@@ -1081,13 +1034,6 @@ void Contest::LatchPlayerList ()
 // --------------------------------------------------------------------------------
 Player *Contest::GetRefereeFromDndRef (guint ref)
 {
-  if (_ref_translation_table)
-  {
-    ref = GPOINTER_TO_UINT (g_hash_table_lookup (_ref_translation_table,
-                                                 GUINT_TO_POINTER (ref)));
-
-  }
-
   if (ref)
   {
     GSList *current = _referees_list->GetList ();
@@ -1239,27 +1185,6 @@ void Contest::OnUnPlugged ()
 
     g_key_file_free (key_file);
   }
-}
-
-
-// --------------------------------------------------------------------------------
-Player *Contest::Share (Player *referee)
-{
-  Player *original;
-  guint   old_ref = referee->GetRef ();
-
-  referee->SetWeapon (_weapon);
-
-  original = _tournament->Share (referee,
-                                 this);
-  if (_ref_translation_table)
-  {
-    g_hash_table_insert (_ref_translation_table,
-                         (gpointer) old_ref,
-                         (gpointer) referee->GetRef ());
-  }
-
-  return original;
 }
 
 // --------------------------------------------------------------------------------
@@ -2029,25 +1954,6 @@ void Contest::DrawPage (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void Contest::on_referees_toolbutton_toggled (GtkToggleToolButton *w)
-{
-  GtkPaned *paned = GTK_PANED (_glade->GetWidget ("hpaned"));
-
-  if (gtk_toggle_tool_button_get_active (w))
-  {
-    gtk_paned_set_position (paned,
-                            _referee_pane_position);
-  }
-  else
-  {
-    _referee_pane_position = gtk_paned_get_position (paned);
-    gtk_paned_set_position (paned,
-                            0);
-  }
-
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_web_site_button_clicked (GtkWidget *widget,
                                                             Object    *owner)
 {
@@ -2259,15 +2165,6 @@ void Contest::OnEndPrint (GtkPrintOperation *operation,
 {
   _schedule->StopBookPrint (operation,
                             context);
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_referees_toolbutton_toggled (GtkToggleToolButton *widget,
-                                                                Object              *owner)
-{
-  Contest *c = dynamic_cast <Contest *> (owner);
-
-  c->on_referees_toolbutton_toggled (widget);
 }
 
 // --------------------------------------------------------------------------------

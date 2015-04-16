@@ -111,17 +111,21 @@ namespace People
                                       G_CALLBACK (OnButtonPress), menu);
           }
 
-          {
-            GtkAction *paste_action = GetAction ("PasteAction");
-
-            if (paste_action)
-            {
-              gtk_action_set_visible (paste_action,
-                                      FALSE);
-            }
-          }
+          SetPasteVisibility (FALSE);
         }
       }
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::SetPasteVisibility (gboolean visibility)
+  {
+    GtkAction *paste_action = GetAction ("PasteAction");
+
+    if (paste_action)
+    {
+      gtk_action_set_visible (paste_action,
+                              visibility);
     }
   }
 

@@ -109,6 +109,8 @@ namespace People
                                      Player::AttributeId *attr_id,
                                      gboolean             new_value);
 
+      void SetPasteVisibility (gboolean visibility);
+
     private:
       static GSList *_clipboard;
 

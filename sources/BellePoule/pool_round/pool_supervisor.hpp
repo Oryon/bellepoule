@@ -85,6 +85,8 @@ namespace Pool
 
       void DumpToHTML (FILE *file);
 
+      void SendTask (Pool *pool);
+
       GSList *GetCurrentClassification ();
 
       GSList *EvaluateClassification (GSList           *list,

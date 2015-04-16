@@ -17,6 +17,8 @@
 #ifndef batch_hpp
 #define batch_hpp
 
+#include <libxml/xpath.h>
+
 #include "util/module.hpp"
 
 class Batch : public Module
@@ -25,6 +27,9 @@ class Batch : public Module
     Batch (const gchar *id);
 
     void AttachTo (GtkNotebook *to);
+
+    void LoadTask (xmlNode   *xml_node,
+                   GChecksum *sha1);
 
     const gchar *GetId ();
 
@@ -38,6 +43,14 @@ class Batch : public Module
 
     void SetProperty (GKeyFile    *key_file,
                       const gchar *property);
+
+    gboolean HasTask (GChecksum *sha1);
+
+    void OnDragDataGet (GtkWidget        *widget,
+                        GdkDragContext   *drag_context,
+                        GtkSelectionData *data,
+                        guint             info,
+                        guint             time);
 };
 
 #endif

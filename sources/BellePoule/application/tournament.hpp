@@ -71,9 +71,6 @@ class Tournament : public Module
 
     void OpenUriContest (const gchar *uri);
 
-    Player *Share (Player  *referee,
-                   Contest *from);
-
     Net::Uploader *GetFtpUpLoader ();
 
     gboolean OnHttpPost (const gchar *data);

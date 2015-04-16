@@ -73,59 +73,77 @@ void Hall::OnPlugged ()
                     G_CALLBACK (OnSelected),
                     this);
 
+
+  {
+    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
+                       (GtkDestDefaults) 0,
+                       _dnd_config->GetTargetTable (),
+                       _dnd_config->GetTargetTableSize (),
+                       GDK_ACTION_COPY);
+
+    ConnectDndDest (GTK_WIDGET (GetCanvas ()));
+    EnableDragAndDrop ();
+  }
+
   AddPiste ();
   RestoreZoomFactor ();
+}
+
+// --------------------------------------------------------------------------------
+gboolean Hall::DroppingIsForbidden (Object *object)
+{
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Hall::ObjectIsDropable (Object   *floating_object,
+                                 DropZone *in_zone)
+{
+  printf ("%p / %p\n", floating_object, in_zone);
+  return (in_zone != NULL);
 }
 
 // --------------------------------------------------------------------------------
 void Hall::AddPiste ()
 {
   Piste *piste  = new Piste (_root, this);
-  GList *before = _piste_list;
+
+  piste->SetListener (this);
 
   {
-    static guint  toto  = 0;
-    static const gchar *color_table[] =
-    {
-      "#EED680",
-      "#E0B6AF",
-      "#ADA7C8",
-      "#9DB8D2",
-      "#83A67F",
-      "#DF421E",
-      "#826647"
-    };
+    _drop_zones = g_slist_append (_drop_zones,
+                                  piste);
 
-    if (toto < 6)
+    piste->Draw (GetRootItem ());
+  }
+
+  {
+    GList *before = _piste_list;
+
+    for (guint i = 1; before != NULL; i++)
     {
-      piste->SetColor (color_table[toto]);
-      toto++;
+      Piste *current_piste = (Piste *) before->data;
+
+      if (current_piste->GetId () != i)
+      {
+        break;
+      }
+      piste->SetId (i+1);
+
+      before = g_list_next (before);
     }
-  }
 
-  for (guint i = 1; before != NULL; i++)
-  {
-    Piste *current_piste = (Piste *) before->data;
-
-    if (current_piste->GetId () != i)
+    if (before)
     {
-      break;
+      _piste_list = g_list_insert_before (_piste_list,
+                                          before,
+                                          piste);
     }
-    piste->SetId (i+1);
-
-    before = g_list_next (before);
-  }
-
-  if (before)
-  {
-    _piste_list = g_list_insert_before (_piste_list,
-                                        before,
-                                        piste);
-  }
-  else
-  {
-    _piste_list = g_list_append (_piste_list,
-                                 piste);
+    else
+    {
+      _piste_list = g_list_append (_piste_list,
+                                   piste);
+    }
   }
 
   piste->Translate (_new_x_location,

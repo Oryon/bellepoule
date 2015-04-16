@@ -18,6 +18,7 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "util/partner.hpp"
 #include "application/classification.hpp"
 #include "application/contest.hpp"
 #include "pool_allocator.hpp"
@@ -354,6 +355,39 @@ namespace Pool
     pool->SetFilter (_filter);
     pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                         this);
+
+    SendTask (pool);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Supervisor::SendTask (Pool *pool)
+  {
+    Partner *hall_manager = _contest->GetHallManager ();
+
+    if (hall_manager)
+    {
+      xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+      {
+        xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+        _contest->SaveHeader (xml_writer);
+        _allocator->SaveHeader (xml_writer);
+        pool->Save (xml_writer);
+
+        xmlTextWriterEndElement (xml_writer);
+        xmlTextWriterEndElement (xml_writer);
+
+        xmlTextWriterEndDocument (xml_writer);
+
+        xmlFreeTextWriter (xml_writer);
+      }
+
+      hall_manager->SendMessage ("/Task",
+                                 (const gchar *) xml_buffer->content);
+
+      xmlBufferFree (xml_buffer);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -616,50 +650,6 @@ namespace Pool
       else
       {
         pool = _displayed_pool;
-      }
-
-      if (GPOINTER_TO_INT (g_object_get_data (G_OBJECT (operation), "print_for_referees")))
-      {
-        GSList *current_referee = pool->GetRefereeList ();
-
-        while (current_referee)
-        {
-          Player              *referee = (Player *) current_referee->data;
-          Player::AttributeId  attr_id ("IP");
-          Attribute           *ip_attr = referee->GetAttribute (&attr_id);
-
-          if (ip_attr)
-          {
-            gchar *ip = ip_attr->GetStrValue ();
-
-            if (ip && (ip[0] != 0))
-            {
-              xmlBuffer *xml_buffer = xmlBufferCreate ();
-
-              {
-                xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
-
-                _contest->SaveHeader (xml_writer);
-                _allocator->SaveHeader (xml_writer);
-                pool->Save (xml_writer);
-
-                xmlTextWriterEndElement (xml_writer);
-                xmlTextWriterEndElement (xml_writer);
-
-                xmlTextWriterEndDocument (xml_writer);
-
-                xmlFreeTextWriter (xml_writer);
-              }
-
-              referee->SendMessage ("/E-ScoreSheets",
-                                    (const gchar *) xml_buffer->content);
-
-              xmlBufferFree (xml_buffer);
-            }
-          }
-
-          current_referee = g_slist_next (current_referee);
-        }
       }
 
       pool->DrawPage (operation,

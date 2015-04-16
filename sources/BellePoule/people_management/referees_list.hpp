@@ -40,8 +40,6 @@ namespace People
 
       void Monitor (Player *referee);
 
-      void Add (Player *referee);
-
       void OnPlayerLoaded (Player *referee,
                            Player *owner);
 
