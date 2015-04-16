@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-09 14:54+0100\n"
+"POT-Creation-Date: 2015-04-16 13:46+0200\n"
 "PO-Revision-Date: 2010-12-30 00:22+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2015-03-10 05:21+0000\n"
 "X-Generator: Launchpad (build 17389)\n"
-"Language: \n"
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
@@ -313,7 +313,13 @@ msgstr "قائمة اللاعبين"
 msgid "Check-in"
 msgstr "نداء"
 
+msgid "** Without team **"
+msgstr ""
+
 msgid "Expected fencers"
+msgstr ""
+
+msgid "Expected teams"
 msgstr ""
 
 msgid "Team size"
@@ -733,8 +739,8 @@ msgid "Pending"
 msgstr ""
 
 msgid ""
-"<b><big>Which score sheets of the selected table do you want to "
-"print?</big></b>"
+"<b><big>Which score sheets of the selected table do you want to print?</"
+"big></b>"
 msgstr "<b><big>أي مباريات من الجدول المختار تريد طباعتها?</big></b>"
 
 msgid "All the score sheets"
@@ -953,7 +959,6 @@ msgstr ""
 #~ msgid "Choisissez un fichier de sauvegarde ..."
 #~ msgstr "اختر ملف للتخزين"
 
-#, c-format
 #~ msgid ""
 #~ "<b><big>Voulez-vous vraiment fermer\n"
 #~ "<big>%s</big> ?</big></b>"
@@ -1052,7 +1057,8 @@ msgstr ""
 #~ msgstr "جدول"
 
 #~ msgid ""
-#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></b>"
+#~ "<b><big>Quels matchs du tableau sélectionné voulez-vous imprimer ?</big></"
+#~ "b>"
 #~ msgstr "<b><big>أي مباريات من الجدول المختار تريد طباعتها?</big></b>"
 
 #~ msgid "Toutes les saisies de cette phase seront annulées."
@@ -1113,9 +1119,9 @@ msgstr ""
 #~ msgstr "ممنوع"
 
 #~ msgid ""
-#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut éviter "
-#~ "des saisies longues et laborieuses lors des séances de prise en main de "
-#~ "BellePoule."
+#~ "Rend actif le bouton de remplissage automatique des scores. Ca peut "
+#~ "éviter des saisies longues et laborieuses lors des séances de prise en "
+#~ "main de BellePoule."
 #~ msgstr "يفعّل زر التعبئة الأوتوماتيكية للنتائج."
 
 #~ msgid "Autoriser"
@@ -1154,7 +1160,6 @@ msgstr ""
 #~ msgid "Filtre"
 #~ msgstr "مصفاة"
 
-#, c-format
 #~ msgid "%s : Impression des matchs"
 #~ msgstr "%s : طباعة المباريات"
 
@@ -1164,7 +1169,6 @@ msgstr ""
 #~ msgid "Permet de renseigner les caractéristiques de la compétition."
 #~ msgstr "يمكنك من إدخال معلومات البطولة."
 
-#, c-format
 #~ msgid "Tableau de %d"
 #~ msgstr "جدول %d"
 
@@ -1172,5 +1176,5 @@ msgstr ""
 #~ "Permet de configurer la formule en définissant l'enchaînement des poules, "
 #~ "tableaux et autres phases."
 #~ msgstr ""
-#~ "To configure the schedule of the competition in terms of pools, tables and "
-#~ "other rounds."
+#~ "To configure the schedule of the competition in terms of pools, tables "
+#~ "and other rounds."

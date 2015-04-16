@@ -67,6 +67,7 @@ namespace People
 
     protected:
       Form *_form;
+      TallyCounter *_tally_counter;
 
       virtual ~Checkin ();
 
@@ -94,7 +95,6 @@ namespace People
       virtual gboolean PlayerIsPrintable (Player *player);
 
     private:
-      TallyCounter *_tally_counter;
       gboolean      _print_attending;
       gboolean      _print_missing;
       const gchar  *_base_class;

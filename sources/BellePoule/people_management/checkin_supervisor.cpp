@@ -131,7 +131,7 @@ namespace People
 
     {
       _null_team = new NullTeam ();
-      _null_team->SetName ("** Sans équipe **");
+      _null_team->SetName (gettext ("** Without team **"));
       RegisterNewTeam (_null_team);
       Add (_null_team);
     }
@@ -234,7 +234,7 @@ namespace People
     {
       gchar *text = g_strdup_printf ("%s : %d",
                                      gettext ("Expected fencers"),
-                                     g_slist_length (_player_list));
+                                     _tally_counter->GetTotalFencerCount ());
 
       DrawConfigLine (operation,
                       context,
@@ -245,15 +245,29 @@ namespace People
 
     if (_contest->IsTeamEvent ())
     {
-      gchar *text = g_strdup_printf ("%s : %d",
-                                     gettext ("Team size"),
-                                     _minimum_team_size->_value);
+      {
+        gchar *text = g_strdup_printf ("%s : %d",
+                                       gettext ("Expected teams"),
+                                       _tally_counter->GetTotalCount ());
 
-      DrawConfigLine (operation,
-                      context,
-                      text);
+        DrawConfigLine (operation,
+                        context,
+                        text);
 
-      g_free (text);
+        g_free (text);
+      }
+
+      {
+        gchar *text = g_strdup_printf ("%s : %d",
+                                       gettext ("Team size"),
+                                       _minimum_team_size->_value);
+
+        DrawConfigLine (operation,
+                        context,
+                        text);
+
+        g_free (text);
+      }
     }
   }
 
