@@ -211,8 +211,9 @@ void Batch::OnDragDataGet (GtkWidget        *widget,
 {
   if (info == _dnd_target)
   {
-    printf ("OnDragDataGet\n");
 #if 0
+    printf ("OnDragDataGet\n");
+
     GSList  *selected    = GetSelectedPlayers ();
     Player  *referee     = (Player *) selected->data;
     guint32  referee_ref = referee->GetDndRef ();

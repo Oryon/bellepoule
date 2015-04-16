@@ -22,14 +22,19 @@
 
 // --------------------------------------------------------------------------------
 Piste::Piste (GooCanvasItem *parent,
-              Listener      *listener)
-  : Object ("Piste")
+              Module        *container)
+  : DropZone (container)
 {
   _horizontal = TRUE;
-  _listener   = listener;
+  _listener   = NULL;
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
+
+  _back_rect = goo_canvas_rect_new (_root_item,
+                                    -10.0, -10.0,
+                                    _W+20.0, _H+20.0,
+                                    NULL);
 
   {
     _rect_item = goo_canvas_rect_new (_root_item,
@@ -91,8 +96,7 @@ Piste::Piste (GooCanvasItem *parent,
   }
 
   {
-    Module    *owner  = dynamic_cast <Module *> (listener);
-    GdkPixbuf *pixbuf = owner->GetPixbuf (GTK_STOCK_DIALOG_AUTHENTICATION);
+    GdkPixbuf *pixbuf = container->GetPixbuf (GTK_STOCK_DIALOG_AUTHENTICATION);
 
     _status_item = goo_canvas_image_new (_root_item,
                                          pixbuf,
@@ -114,12 +118,20 @@ Piste::Piste (GooCanvasItem *parent,
 
   SetId    (1);
   SetColor ("#CCCCCC");
+
+  RedrawDropZone ();
 }
 
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
   goo_canvas_item_remove (_root_item);
+}
+
+// --------------------------------------------------------------------------------
+void Piste::SetListener (Listener *listener)
+{
+  _listener = listener;
 }
 
 // --------------------------------------------------------------------------------
@@ -146,6 +158,8 @@ void Piste::Translate (gdouble tx,
                                ty,
                                -tx);
   }
+
+  RedrawDropZone ();
 }
 
 // --------------------------------------------------------------------------------
@@ -167,6 +181,8 @@ void Piste::Rotate ()
                             0.0);
     _horizontal = TRUE;
   }
+
+  RedrawDropZone ();
 }
 
 // --------------------------------------------------------------------------------
@@ -292,6 +308,8 @@ void Piste::AlignOnGrid ()
   goo_canvas_item_translate (_root_item,
                              GetGridAdjustment (bounds.x1),
                              GetGridAdjustment (bounds.y1));
+
+  RedrawDropZone ();
 }
 
 // --------------------------------------------------------------------------------
@@ -311,4 +329,18 @@ void Piste::MonitorEvent (GooCanvasItem *item)
                     "button_release_event",
                     G_CALLBACK (OnButtonRelease),
                     this);
+}
+
+// --------------------------------------------------------------------------------
+void Piste::RedrawDropZone ()
+{
+  GooCanvasBounds bounds;
+
+  goo_canvas_item_get_bounds (_root_item,
+                              &bounds);
+
+  Redraw (bounds.x1,
+          bounds.y1,
+          bounds.x2+50.0,
+          bounds.y2+50.0);
 }

@@ -54,6 +54,11 @@ class Hall : public CanvasModule, Piste::Listener
 
     void CancelSeletion ();
 
+    gboolean DroppingIsForbidden (Object *object);
+
+    gboolean ObjectIsDropable (Object   *floating_object,
+                               DropZone *in_zone);
+
     static gboolean OnSelected (GooCanvasItem  *goo_rect,
                                 GooCanvasItem  *target,
                                 GdkEventButton *event,

@@ -90,34 +90,60 @@ void Hall::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
+gboolean Hall::DroppingIsForbidden (Object *object)
+{
+  return FALSE;
+}
+
+// --------------------------------------------------------------------------------
+gboolean Hall::ObjectIsDropable (Object   *floating_object,
+                                 DropZone *in_zone)
+{
+  printf ("%p / %p\n", floating_object, in_zone);
+  return (in_zone != NULL);
+}
+
+// --------------------------------------------------------------------------------
 void Hall::AddPiste ()
 {
   Piste *piste  = new Piste (_root, this);
-  GList *before = _piste_list;
 
-  for (guint i = 1; before != NULL; i++)
+  piste->SetListener (this);
+
   {
-    Piste *current_piste = (Piste *) before->data;
+    _drop_zones = g_slist_append (_drop_zones,
+                                  piste);
 
-    if (current_piste->GetId () != i)
+    piste->Draw (GetRootItem ());
+  }
+
+  {
+    GList *before = _piste_list;
+
+    for (guint i = 1; before != NULL; i++)
     {
-      break;
+      Piste *current_piste = (Piste *) before->data;
+
+      if (current_piste->GetId () != i)
+      {
+        break;
+      }
+      piste->SetId (i+1);
+
+      before = g_list_next (before);
     }
-    piste->SetId (i+1);
 
-    before = g_list_next (before);
-  }
-
-  if (before)
-  {
-    _piste_list = g_list_insert_before (_piste_list,
-                                        before,
-                                        piste);
-  }
-  else
-  {
-    _piste_list = g_list_append (_piste_list,
-                                 piste);
+    if (before)
+    {
+      _piste_list = g_list_insert_before (_piste_list,
+                                          before,
+                                          piste);
+    }
+    else
+    {
+      _piste_list = g_list_append (_piste_list,
+                                   piste);
+    }
   }
 
   piste->Translate (_new_x_location,

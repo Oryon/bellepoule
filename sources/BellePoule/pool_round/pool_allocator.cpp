@@ -53,7 +53,6 @@ namespace Pool
     : Stage (stage_class),
     CanvasModule ("pool_allocator.glade")
   {
-    _drop_zones             = NULL;
     _config_list            = NULL;
     _selected_config        = NULL;
     _main_table             = NULL;
