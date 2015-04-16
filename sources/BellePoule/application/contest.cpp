@@ -1007,6 +1007,7 @@ Contest *Contest::Duplicate ()
   contest->_year       = _year;
   contest->_tournament = _tournament;
   contest->_team_event = _team_event;
+  contest->_schedule->SetTeamEvent (_team_event);
 
   _checkin_time->Copy (contest->_checkin_time);
   _scratch_time->Copy (contest->_scratch_time);

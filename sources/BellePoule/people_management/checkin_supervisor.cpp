@@ -1227,7 +1227,7 @@ namespace People
 
     player = (Player *) _dnd_config->GetFloatingObject ();
 
-    if (player->Is ("Fencer"))
+    if (player && (player->Is ("Fencer")))
     {
       GtkTreePath             *path;
       GtkTreeViewDropPosition  pos;
@@ -1317,6 +1317,8 @@ namespace People
 
         fencer->SetAttributeValue (&attr_id,
                                    dest->GetName ());
+        OnListChanged ();
+
         result = TRUE;
       }
     }
