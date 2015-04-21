@@ -311,6 +311,10 @@ namespace Pool
             next_stage->OnAttrListUpdated ();
           }
         }
+        else
+        {
+          MakeDirty ();
+        }
       }
     }
 

@@ -999,6 +999,9 @@ void Schedule::Load (xmlDoc          *doc,
 
   gtk_widget_show_all (GetRootWidget ());
 
+  referees->LoadList (xml_context,
+                      contest_keyword);
+
   // Checkin - Player list
   if (checkin_stage)
   {
@@ -1017,9 +1020,6 @@ void Schedule::Load (xmlDoc          *doc,
       DisplayLocks ();
     }
   }
-
-  referees->LoadList (xml_context,
-                      contest_keyword);
 
   {
     gchar          *path        = g_strdup_printf ("/%s/Phases/*", contest_keyword);
