@@ -1,7 +1,7 @@
 EXEC    = bellepoulebeta
 #EXEC    = bellepoule
 TARGET  = Release
-PACKAGE = /local/$(USER)/$(EXEC)
+PACKAGE = $(HOME)/$(EXEC)
 VERSION = 5.0
 STEP    = ubuntu1
 RELEASE = $(EXEC)_$(VERSION)
@@ -152,7 +152,7 @@ prepare_changelog:
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "  * Miscellaneous improvments" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo " -- betonniere <le.roux.yannick@free.fr>  Fri, 29 May 2013 11:42:10 +0100" >> $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo " -- betonniere <bellepoule.dev@free.fr>  Fri, 29 May 2013 11:42:10 +0100" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 
 prepare_control:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/control
@@ -219,6 +219,7 @@ help:
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "debuild -us -uc --lintian-opts --color always"
+	@echo "gpg -K"
 	@echo "debuild -S -sa -k<1234>"
 	@echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
-	@echo "dput bellepoule $(EXEC)_$(VERSION)$(STEP)~$(UBUNTU)$(V)_source.changes"
+	@echo "dput ppa:betonniere/bellepoule ../$(EXEC)*_source.changes"

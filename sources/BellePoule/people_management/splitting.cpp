@@ -175,6 +175,8 @@ namespace People
       GSList              *current = _attendees->GetShortList ();
       Player::AttributeId  exported_attr ("exported");
 
+      _tournament->Plug (contest,
+                         NULL);
       _tournament->Manage (contest);
 
       for (guint i = 0; current != NULL; i++)
@@ -193,16 +195,17 @@ namespace People
 
           if (player->Is ("Team"))
           {
-            Team   *team    = (Team *) player;
-            GSList *members = team->GetMemberList ();
+            Team   *team     = (Team *) player;
+            Team   *new_team = (Team *) new_player;
+            GSList *members  = team->GetMemberList ();
 
             while (members)
             {
               Player *member     = (Player *) members->data;
               Player *new_member = member->Duplicate ();
 
-              contest->AddFencer (new_member);
-              team->AddMember (new_member);
+              contest->AddFencer  (new_member);
+              new_team->AddMember (new_member);
               new_member->Release ();
 
               members = g_slist_next (members);

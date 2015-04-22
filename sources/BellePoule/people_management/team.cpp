@@ -192,7 +192,7 @@ void Team::AddMember (Player *member)
 void Team::RemoveMember (Player *member)
 {
   _member_list = g_slist_remove (_member_list,
-                                  member);
+                                 member);
 }
 
 // --------------------------------------------------------------------------------
