@@ -67,11 +67,12 @@ namespace People
       static const gchar *_class_name;
       static const gchar *_xml_class_name;
 
-      GSList       *_checksum_list;
-      Data         *_manual_classification;
-      Data         *_default_classification;
-      Data         *_minimum_team_size;
-      NullTeam     *_null_team;
+      GSList   *_checksum_list;
+      Data     *_manual_classification;
+      Data     *_default_classification;
+      Data     *_minimum_team_size;
+      NullTeam *_null_team;
+      guint32   _dnd_key;
 
       static Stage *CreateInstance (StageClass *stage_class);
 
@@ -122,7 +123,7 @@ namespace People
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
                           GtkSelectionData *selection_data,
-                          guint             target_type,
+                          guint             key,
                           guint             time);
 
       void OnDragDataReceived (GtkWidget        *widget,
@@ -130,7 +131,7 @@ namespace People
                                gint              x,
                                gint              y,
                                GtkSelectionData *selection_data,
-                               guint             target_type,
+                               guint             key,
                                guint             time);
 
       gboolean OnDragDrop (GtkWidget      *widget,

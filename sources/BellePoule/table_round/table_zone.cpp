@@ -84,7 +84,7 @@ namespace Table
           goo_canvas_item_get_bounds (last_child_data->_fencer_goo_table,
                                       &last_child_bounds);
 
-          _back_rect = goo_canvas_rect_new (root_item,
+          _drop_rect = goo_canvas_rect_new (root_item,
                                             first_child_bounds.x1,
                                             first_child_bounds.y1,
                                             first_child_bounds.x2 - first_child_bounds.x1,

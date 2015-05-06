@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "piste.hpp"
+#include "batch.hpp"
 
 #include "hall.hpp"
 
@@ -32,12 +33,17 @@ Hall::Hall ()
 
   SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")),
              2.0);
+
+  _batch_list = NULL;
 }
 
 // --------------------------------------------------------------------------------
 Hall::~Hall ()
 {
   g_list_free_full (_piste_list,
+                    (GDestroyNotify) Object::TryToRelease);
+
+  g_list_free_full (_batch_list,
                     (GDestroyNotify) Object::TryToRelease);
 }
 
@@ -99,8 +105,126 @@ gboolean Hall::DroppingIsForbidden (Object *object)
 gboolean Hall::ObjectIsDropable (Object   *floating_object,
                                  DropZone *in_zone)
 {
-  printf ("%p / %p\n", floating_object, in_zone);
   return (in_zone != NULL);
+}
+
+// --------------------------------------------------------------------------------
+Object *Hall::GetDropObjectFromRef (guint32 ref)
+{
+  return GetBatch (ref);
+}
+
+// --------------------------------------------------------------------------------
+void Hall::DropObject (Object   *object,
+                       DropZone *source_zone,
+                       DropZone *target_zone)
+{
+  printf ("Drrrrrrrrrooop\n");
+}
+
+// --------------------------------------------------------------------------------
+void Hall::ManageContest (const gchar *data,
+                          GtkNotebook *notebook)
+{
+  GKeyFile *key_file = g_key_file_new ();
+  GError   *error    = NULL;
+
+  if (g_key_file_load_from_data (key_file,
+                                 data,
+                                 -1,
+                                 G_KEY_FILE_NONE,
+                                 &error) == FALSE)
+  {
+    g_warning ("g_key_file_load_from_data: %s", error->message);
+    g_clear_error (&error);
+  }
+  else
+  {
+    gchar *id = g_key_file_get_string (key_file,
+                                       "Contest",
+                                       "id",
+                                       NULL);
+
+    if (id)
+    {
+      Batch *batch = GetBatch (id);
+
+      if (batch == NULL)
+      {
+        batch = new Batch (id);
+
+        _batch_list = g_list_prepend (_batch_list,
+                                      batch);
+
+        batch->AttachTo (notebook);
+      }
+
+      batch->SetProperties (key_file);
+
+      g_free (id);
+    }
+  }
+
+  g_key_file_free (key_file);
+}
+
+// --------------------------------------------------------------------------------
+void Hall::ManageJob (const gchar *data)
+{
+  xmlDocPtr doc = xmlParseMemory (data, strlen (data));
+
+  if (doc)
+  {
+    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+
+    xmlXPathInit ();
+
+    {
+      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+      xmlXPathObject  *xml_object;
+      xmlNodeSet      *xml_nodeset;
+
+      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
+      if (xml_object->nodesetval->nodeNr == 0)
+      {
+        xmlXPathFreeObject (xml_object);
+        xml_object = xmlXPathEval (BAD_CAST "/CompetitionParEquipes", xml_context);
+      }
+
+      xml_nodeset = xml_object->nodesetval;
+      if (xml_object->nodesetval->nodeNr)
+      {
+        gchar *attr;
+
+        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
+        if (attr)
+        {
+          Batch *batch = GetBatch (attr);
+
+          if (batch)
+          {
+            GChecksum *sha1 = g_checksum_new (G_CHECKSUM_SHA1);
+
+            g_checksum_update (sha1,
+                               (const guchar *) data,
+                               -1);
+
+            batch->LoadJob (xml_nodeset->nodeTab[0],
+                            sha1);
+
+            g_checksum_free (sha1);
+          }
+          xmlFree (attr);
+        }
+      }
+
+      xmlXPathFreeObject  (xml_object);
+      xmlXPathFreeContext (xml_context);
+    }
+
+    xmlXPathFreeContext (xml_context);
+    xmlFreeDoc (doc);
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -151,6 +275,35 @@ void Hall::AddPiste ()
 
   _new_x_location += 5.0;
   _new_y_location += 5.0;
+}
+
+// --------------------------------------------------------------------------------
+Batch *Hall::GetBatch (const gchar *id)
+{
+  guint32 dnd_id = (guint32) g_ascii_strtoull (id,
+                                               NULL,
+                                               16);
+  return GetBatch (dnd_id);
+}
+
+// --------------------------------------------------------------------------------
+Batch *Hall::GetBatch (guint32 id)
+{
+  GList *current = _batch_list;
+
+  while (current)
+  {
+    Batch *batch = (Batch *) current->data;
+
+    if (batch->GetId () == id)
+    {
+      return batch;
+    }
+
+    current = g_list_next (current);
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------

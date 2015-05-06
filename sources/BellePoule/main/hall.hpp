@@ -20,6 +20,8 @@
 #include "util/canvas_module.hpp"
 #include "piste.hpp"
 
+class Batch;
+
 class Hall : public CanvasModule, Piste::Listener
 {
   public:
@@ -38,6 +40,11 @@ class Hall : public CanvasModule, Piste::Listener
 
     void AlignSelectedOnGrid ();
 
+    void ManageContest (const gchar *data,
+                        GtkNotebook *notebook);
+
+    void ManageJob (const gchar *data);
+
   private:
     GooCanvasItem *_root;
     GList         *_piste_list;
@@ -47,6 +54,7 @@ class Hall : public CanvasModule, Piste::Listener
     gboolean       _dragging;
     gdouble        _drag_x;
     gdouble        _drag_y;
+    GList         *_batch_list;
 
     ~Hall ();
 
@@ -54,10 +62,20 @@ class Hall : public CanvasModule, Piste::Listener
 
     void CancelSeletion ();
 
+    Batch *GetBatch (const gchar *id);
+
+    Batch *GetBatch (guint id);
+
     gboolean DroppingIsForbidden (Object *object);
 
     gboolean ObjectIsDropable (Object   *floating_object,
                                DropZone *in_zone);
+
+    Object *GetDropObjectFromRef (guint32 ref);
+
+    void DropObject (Object   *object,
+                     DropZone *source_zone,
+                     DropZone *target_zone);
 
     static gboolean OnSelected (GooCanvasItem  *goo_rect,
                                 GooCanvasItem  *target,

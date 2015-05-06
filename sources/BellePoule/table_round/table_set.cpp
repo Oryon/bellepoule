@@ -136,11 +136,7 @@ namespace Table
                                                 QUICK_MATCH_VISIBILITY_COLUMN_bool);
     }
 
-    // Dnd
-    {
-      _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
-      _dnd_config->CreateTargetTable ();
-    }
+    _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
   }
 
   // --------------------------------------------------------------------------------

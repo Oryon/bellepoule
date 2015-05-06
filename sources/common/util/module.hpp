@@ -106,7 +106,6 @@ class Module : public virtual Object
 
   protected:
     DndConfig *_dnd_config;
-    guint32    _dnd_target;
 
   protected:
     Filter           *_filter;

@@ -82,6 +82,10 @@ class Piste : public DropZone
 
     ~Piste ();
 
+    void Focus ();
+
+    void Unfocus ();
+
     void MonitorEvent (GooCanvasItem *item);
 
     gdouble GetGridAdjustment (gdouble coordinate);
@@ -100,9 +104,6 @@ class Piste : public DropZone
                                     GooCanvasItem  *target,
                                     GdkEventMotion *event,
                                     Piste          *piste);
-
-  private:
-    void RedrawDropZone ();
 };
 
 #endif

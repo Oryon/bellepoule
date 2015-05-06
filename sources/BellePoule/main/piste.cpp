@@ -31,20 +31,15 @@ Piste::Piste (GooCanvasItem *parent,
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
 
-  _back_rect = goo_canvas_rect_new (_root_item,
-                                    -10.0, -10.0,
-                                    _W+20.0, _H+20.0,
-                                    NULL);
-
   {
-    _rect_item = goo_canvas_rect_new (_root_item,
+    _drop_rect = goo_canvas_rect_new (_root_item,
                                       0.0, 0.0,
                                       _W, _H,
-                                      "line-width",   _BORDER_W,
-                                      "stroke-color", "black",
+                                      //"line-width",   _BORDER_W,
+                                      //"stroke-color", "black",
                                       "fill-color",   "#CCCCCC",
                                       NULL);
-    MonitorEvent (_rect_item);
+    MonitorEvent (_drop_rect);
   }
 
   {
@@ -118,8 +113,6 @@ Piste::Piste (GooCanvasItem *parent,
 
   SetId    (1);
   SetColor ("#CCCCCC");
-
-  RedrawDropZone ();
 }
 
 // --------------------------------------------------------------------------------
@@ -137,8 +130,28 @@ void Piste::SetListener (Listener *listener)
 // --------------------------------------------------------------------------------
 void Piste::SetColor (const gchar *color)
 {
-  g_object_set (_rect_item,
+  g_object_set (_drop_rect,
                 "fill-color", color,
+                NULL);
+}
+
+// --------------------------------------------------------------------------------
+void Piste::Focus ()
+{
+  DropZone::Focus ();
+
+  g_object_set (G_OBJECT (_drop_rect),
+                "fill-color", "pink",
+                NULL);
+}
+
+// --------------------------------------------------------------------------------
+void Piste::Unfocus ()
+{
+  DropZone::Unfocus ();
+
+  g_object_set (G_OBJECT (_drop_rect),
+                "fill-color", "orange",
                 NULL);
 }
 
@@ -158,8 +171,6 @@ void Piste::Translate (gdouble tx,
                                ty,
                                -tx);
   }
-
-  RedrawDropZone ();
 }
 
 // --------------------------------------------------------------------------------
@@ -181,8 +192,6 @@ void Piste::Rotate ()
                             0.0);
     _horizontal = TRUE;
   }
-
-  RedrawDropZone ();
 }
 
 // --------------------------------------------------------------------------------
@@ -244,17 +253,23 @@ gboolean Piste::OnButtonRelease (GooCanvasItem  *item,
 // --------------------------------------------------------------------------------
 void Piste::Select ()
 {
-  g_object_set (_rect_item,
-                "line-width", _BORDER_W*2.0,
+  GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 10.0, 1.0);
+
+  g_object_set (_drop_rect,
+                "line-dash", dash,
                 NULL);
+  goo_canvas_line_dash_unref (dash);
 }
 
 // --------------------------------------------------------------------------------
 void Piste::UnSelect ()
 {
-  g_object_set (_rect_item,
-                "line-width", _BORDER_W,
+  GooCanvasLineDash *dash = goo_canvas_line_dash_new (0);
+
+  g_object_set (_drop_rect,
+                "line-dash", dash,
                 NULL);
+  goo_canvas_line_dash_unref (dash);
 }
 
 // --------------------------------------------------------------------------------
@@ -308,8 +323,6 @@ void Piste::AlignOnGrid ()
   goo_canvas_item_translate (_root_item,
                              GetGridAdjustment (bounds.x1),
                              GetGridAdjustment (bounds.y1));
-
-  RedrawDropZone ();
 }
 
 // --------------------------------------------------------------------------------
@@ -329,18 +342,4 @@ void Piste::MonitorEvent (GooCanvasItem *item)
                     "button_release_event",
                     G_CALLBACK (OnButtonRelease),
                     this);
-}
-
-// --------------------------------------------------------------------------------
-void Piste::RedrawDropZone ()
-{
-  GooCanvasBounds bounds;
-
-  goo_canvas_item_get_bounds (_root_item,
-                              &bounds);
-
-  Redraw (bounds.x1,
-          bounds.y1,
-          bounds.x2+50.0,
-          bounds.y2+50.0);
 }

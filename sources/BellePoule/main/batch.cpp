@@ -29,14 +29,16 @@ typedef enum
 Batch::Batch (const gchar *id)
   : Module ("batch.glade")
 {
-  _id         = g_strdup (id);
+  _id = (guint32) g_ascii_strtoull (id,
+                                    NULL,
+                                    16);
+
   _list_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
 
   {
     GtkWidget *source = _glade->GetWidget ("treeview");
 
-    _dnd_target = _dnd_config->CreateTarget ("bellepoule/task", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
-    _dnd_config->CreateTargetTable ();
+    _dnd_key = _dnd_config->CreateTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
     gtk_drag_source_set (source,
                          GDK_MODIFIER_MASK,
@@ -51,11 +53,10 @@ Batch::Batch (const gchar *id)
 // --------------------------------------------------------------------------------
 Batch::~Batch ()
 {
-  g_free (_id);
 }
 
 // --------------------------------------------------------------------------------
-const gchar *Batch::GetId ()
+guint32 Batch::GetId ()
 {
   return _id;
 }
@@ -120,7 +121,7 @@ void Batch::AttachTo (GtkNotebook *to)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Batch::HasTask (GChecksum *sha1)
+gboolean Batch::HasJob (GChecksum *sha1)
 {
   GtkTreeIter iter;
   gboolean    iter_is_valid;
@@ -150,10 +151,10 @@ gboolean Batch::HasTask (GChecksum *sha1)
 }
 
 // --------------------------------------------------------------------------------
-void Batch::LoadTask (xmlNode   *xml_node,
-                      GChecksum *sha1)
+void Batch::LoadJob (xmlNode   *xml_node,
+                     GChecksum *sha1)
 {
-  if (HasTask (sha1) == FALSE)
+  if (HasJob (sha1) == FALSE)
   {
     for (xmlNode *n = xml_node; n != NULL; n = n->next)
     {
@@ -194,9 +195,8 @@ void Batch::LoadTask (xmlNode   *xml_node,
                               -1);
         }
 
-        printf("node type: Element, name: %s\n", n->name);
-        LoadTask (n->children,
-                  sha1);
+        LoadJob (n->children,
+                 sha1);
       }
     }
   }
@@ -206,23 +206,15 @@ void Batch::LoadTask (xmlNode   *xml_node,
 void Batch::OnDragDataGet (GtkWidget        *widget,
                            GdkDragContext   *drag_context,
                            GtkSelectionData *data,
-                           guint             info,
+                           guint             key,
                            guint             time)
 {
-  if (info == _dnd_target)
+  if (key == _dnd_key)
   {
-#if 0
-    printf ("OnDragDataGet\n");
-
-    GSList  *selected    = GetSelectedPlayers ();
-    Player  *referee     = (Player *) selected->data;
-    guint32  referee_ref = referee->GetDndRef ();
-
     gtk_selection_data_set (data,
                             gtk_selection_data_get_target (data),
                             32,
-                            (guchar *) &referee_ref,
-                            sizeof (referee_ref));
-#endif
+                            (guchar *) &_id,
+                            sizeof (_id));
   }
 }

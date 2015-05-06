@@ -29,8 +29,6 @@ class DndConfig : public virtual Object
     guint32 CreateTarget (const gchar *target,
                           guint        flags);
 
-    void CreateTargetTable ();
-
     GtkTargetEntry *GetTargetTable ();
 
     guint GetTargetTableSize ();
@@ -47,6 +45,8 @@ class DndConfig : public virtual Object
     Object         *_floating_object;
 
     ~DndConfig ();
+
+    void CreateTargetTable ();
 };
 
 #endif

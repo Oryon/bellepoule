@@ -49,9 +49,9 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void PoolZone::Draw (GooCanvasItem *root_item)
   {
-    if (_back_rect == NULL)
+    if (_drop_rect == NULL)
     {
-      _back_rect = goo_canvas_rect_new (root_item,
+      _drop_rect = goo_canvas_rect_new (root_item,
                                         0, 0,
                                         0, 0,
                                         "stroke-pattern", NULL,

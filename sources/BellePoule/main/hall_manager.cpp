@@ -16,7 +16,6 @@
 
 #include "application/weapon.hpp"
 #include "hall.hpp"
-#include "batch.hpp"
 
 #include "hall_manager.hpp"
 
@@ -24,12 +23,10 @@
 HallManager::HallManager ()
   : Module ("hall_manager.glade")
 {
-  _batch_list = NULL;
-
   {
-    Hall *hall = new Hall ();
+    _hall = new Hall ();
 
-    Plug (hall,
+    Plug (_hall,
           _glade->GetWidget ("hall_viewport"));
   }
 
@@ -64,33 +61,12 @@ HallManager::HallManager ()
 // --------------------------------------------------------------------------------
 HallManager::~HallManager ()
 {
-  g_list_free_full (_batch_list,
-                    (GDestroyNotify) Object::TryToRelease);
+  _hall->Release ();
 }
 
 // --------------------------------------------------------------------------------
 void HallManager::Start ()
 {
-}
-
-// --------------------------------------------------------------------------------
-Batch *HallManager::GetBatch (const gchar *id)
-{
-  GList *current = _batch_list;
-
-  while (current)
-  {
-    Batch *batch = (Batch *) current->data;
-
-    if (strcmp (batch->GetId (), id) == 0)
-    {
-      return batch;
-    }
-
-    current = g_list_next (current);
-  }
-
-  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -107,75 +83,17 @@ void HallManager::OnHttpPost (const gchar *data)
 
     if (strcmp (lines[0], "/Competition") == 0)
     {
-      ManageContest (body);
+      _hall->ManageContest (body,
+                            GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
     }
-    else if (strcmp (lines[0], "/Task") == 0)
+    else if (strcmp (lines[0], "/Job") == 0)
     {
-      ManageTask (body);
+      _hall->ManageJob (body);
     }
     else if (strcmp (lines[0], "/Referee") == 0)
     {
       ManageReferee (body);
     }
-  }
-}
-
-// --------------------------------------------------------------------------------
-void HallManager::ManageTask (const gchar *data)
-{
-  xmlDocPtr doc = xmlParseMemory (data, strlen (data));
-
-  if (doc)
-  {
-    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-
-    xmlXPathInit ();
-
-    {
-      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-      xmlXPathObject  *xml_object;
-      xmlNodeSet      *xml_nodeset;
-
-      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
-      if (xml_object->nodesetval->nodeNr == 0)
-      {
-        xmlXPathFreeObject (xml_object);
-        xml_object = xmlXPathEval (BAD_CAST "/CompetitionParEquipes", xml_context);
-      }
-
-      xml_nodeset = xml_object->nodesetval;
-      if (xml_object->nodesetval->nodeNr)
-      {
-        gchar *attr;
-
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
-        if (attr)
-        {
-          Batch *batch = GetBatch (attr);
-
-          if (batch)
-          {
-            GChecksum *sha1 = g_checksum_new (G_CHECKSUM_SHA1);
-
-            g_checksum_update (sha1,
-                               (const guchar *) data,
-                               -1);
-
-            batch->LoadTask (xml_nodeset->nodeTab[0],
-                             sha1);
-
-            g_checksum_free (sha1);
-          }
-          xmlFree (attr);
-        }
-      }
-
-      xmlXPathFreeObject  (xml_object);
-      xmlXPathFreeContext (xml_context);
-    }
-
-    xmlXPathFreeContext (xml_context);
-    xmlFreeDoc (doc);
   }
 }
 
@@ -194,50 +112,4 @@ void HallManager::ManageReferee (const gchar *data)
     xmlXPathFreeContext (xml_context);
     xmlFreeDoc (doc);
   }
-}
-
-// --------------------------------------------------------------------------------
-void HallManager::ManageContest (const gchar *data)
-{
-  GKeyFile *key_file = g_key_file_new ();
-  GError   *error    = NULL;
-
-  if (g_key_file_load_from_data (key_file,
-                                 data,
-                                 -1,
-                                 G_KEY_FILE_NONE,
-                                 &error) == FALSE)
-  {
-    g_warning ("g_key_file_load_from_data: %s", error->message);
-    g_clear_error (&error);
-  }
-  else
-  {
-    gchar *id = g_key_file_get_string (key_file,
-                                       "Contest",
-                                       "id",
-                                       NULL);
-
-    if (id)
-    {
-      GtkWidget *notebook = _glade->GetWidget ("batch_notebook");
-      Batch     *batch    = GetBatch (id);
-
-      if (batch == NULL)
-      {
-        batch = new Batch (id);
-
-        _batch_list = g_list_prepend (_batch_list,
-                                      batch);
-
-        batch->AttachTo (GTK_NOTEBOOK (notebook));
-      }
-
-      batch->SetProperties (key_file);
-
-      g_free (id);
-    }
-  }
-
-  g_key_file_free (key_file);
 }
