@@ -13,7 +13,7 @@
     <columns>
       <!-- column-name name -->
       <column type="gchararray"/>
-      <!-- column-name sha1 -->
+      <!-- column-name job -->
       <column type="gpointer"/>
     </columns>
   </object>

@@ -228,6 +228,12 @@
 		<Unit filename="../../sources/BellePoule/main/hall_manager_app.cpp">
 			<Option target="HallManager_Debug" />
 		</Unit>
+		<Unit filename="../../sources/BellePoule/main/job.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/main/job.hpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/main/piste.cpp">
 			<Option target="HallManager_Debug" />
 		</Unit>

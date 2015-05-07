@@ -35,10 +35,15 @@ class Batch : public Module
 
     void SetProperties (GKeyFile *key_file);
 
+    GSList *GetCurrentSelection ();
+
+    GdkColor *GetColor ();
+
   private:
     guint32       _id;
     GtkListStore *_list_store;
     guint32       _dnd_key;
+    GdkColor     *_gdk_color;
 
     virtual ~Batch ();
 

@@ -17,6 +17,7 @@
 #include <math.h>
 
 #include "util/module.hpp"
+#include "job.hpp"
 
 #include "piste.hpp"
 
@@ -125,6 +126,17 @@ Piste::~Piste ()
 void Piste::SetListener (Listener *listener)
 {
   _listener = listener;
+}
+
+// --------------------------------------------------------------------------------
+void Piste::AddJob (Job *job)
+{
+  gchar *color = gdk_color_to_string (job->GetGdkColor ());
+
+  g_object_set (_drop_rect,
+                "fill-color", color,
+                NULL);
+  g_free (color);
 }
 
 // --------------------------------------------------------------------------------

@@ -17,12 +17,13 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "job.hpp"
 #include "batch.hpp"
 
 typedef enum
 {
   NAME_str,
-  SHA1_ptr
+  JOB_ptr
 } ColumnId;
 
 // --------------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Batch::Batch (const gchar *id)
                                     16);
 
   _list_store = GTK_LIST_STORE (_glade->GetGObject ("liststore"));
+
+  _gdk_color = NULL;
 
   {
     GtkWidget *source = _glade->GetWidget ("treeview");
@@ -53,6 +56,7 @@ Batch::Batch (const gchar *id)
 // --------------------------------------------------------------------------------
 Batch::~Batch ()
 {
+  gdk_color_free (_gdk_color);
 }
 
 // --------------------------------------------------------------------------------
@@ -88,26 +92,24 @@ void Batch::SetProperties (GKeyFile *key_file)
   SetProperty (key_file, "category");
 
   {
-    GdkColor  *gdk_color;
     GtkWidget *tab   = _glade->GetWidget ("notebook_title");
     gchar     *color = g_key_file_get_string (key_file,
                                               "Contest",
                                               "color",
                                               NULL);
 
-    gdk_color = g_new (GdkColor, 1);
+    _gdk_color = g_new (GdkColor, 1);
 
     gdk_color_parse (color,
-                     gdk_color);
+                     _gdk_color);
 
     gtk_widget_modify_bg (tab,
                           GTK_STATE_NORMAL,
-                          gdk_color);
+                          _gdk_color);
     gtk_widget_modify_bg (tab,
                           GTK_STATE_ACTIVE,
-                          gdk_color);
+                          _gdk_color);
 
-    gdk_color_free (gdk_color);
     g_free (color);
   }
 }
@@ -121,6 +123,46 @@ void Batch::AttachTo (GtkNotebook *to)
 }
 
 // --------------------------------------------------------------------------------
+GSList *Batch::GetCurrentSelection ()
+{
+  GSList           *result    = NULL;
+  GtkTreeView      *tree_view = GTK_TREE_VIEW (_glade->GetWidget ("treeview"));
+  GtkTreeSelection *selection = gtk_tree_view_get_selection (tree_view);
+
+  if (selection)
+  {
+    GList        *current;
+    GtkTreeModel *model          = gtk_tree_view_get_model (tree_view);
+    GList        *selection_list = gtk_tree_selection_get_selected_rows (selection,
+                                                                         NULL);
+
+    current = selection_list;
+    while (current)
+    {
+      GtkTreeIter  iter;
+      Job         *job;
+
+      gtk_tree_model_get_iter (model,
+                               &iter,
+                               (GtkTreePath *) current->data);
+      gtk_tree_model_get (model, &iter,
+                          JOB_ptr,
+                          &job, -1);
+
+      result = g_slist_append (result,
+                               job);
+
+      current = g_list_next (current);
+    }
+
+    g_list_free_full (selection_list,
+                      (GDestroyNotify) gtk_tree_path_free);
+  }
+
+  return result;
+}
+
+// --------------------------------------------------------------------------------
 gboolean Batch::HasJob (GChecksum *sha1)
 {
   GtkTreeIter iter;
@@ -130,15 +172,14 @@ gboolean Batch::HasJob (GChecksum *sha1)
                                                  &iter);
   while (iter_is_valid)
   {
-    GChecksum *current_sha1;
+    Job *current_job;
 
     gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
                         &iter,
-                        SHA1_ptr, &current_sha1,
+                        JOB_ptr, &current_job,
                         -1);
 
-    if (strcmp (g_checksum_get_string (sha1),
-                g_checksum_get_string (current_sha1)) == 0)
+    if (current_job->Is (sha1))
     {
       return TRUE;
     }
@@ -169,12 +210,15 @@ void Batch::LoadJob (xmlNode   *xml_node,
                                   gettext ("Pool"),
                                   (gchar *) xmlGetProp (n, BAD_CAST "ID"));
           gtk_label_set_text (label, name);
+          g_free (name);
         }
         else if (strcmp ((char *) n->name, "Poule") == 0)
         {
           GtkTreeIter  iter;
           gchar       *attr;
           gchar       *name;
+          Job         *job = new Job (sha1,
+                                      _gdk_color);
 
           attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
           if (attr)
@@ -189,10 +233,12 @@ void Batch::LoadJob (xmlNode   *xml_node,
           gtk_list_store_append (_list_store,
                                  &iter);
 
+          job->SetName (name);
           gtk_list_store_set (_list_store, &iter,
                               NAME_str, name,
-                              SHA1_ptr, g_checksum_copy (sha1),
+                              JOB_ptr,  job,
                               -1);
+          g_free (name);
         }
 
         LoadJob (n->children,

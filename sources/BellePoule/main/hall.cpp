@@ -16,6 +16,7 @@
 
 #include "piste.hpp"
 #include "batch.hpp"
+#include "job.hpp"
 
 #include "hall.hpp"
 
@@ -119,7 +120,26 @@ void Hall::DropObject (Object   *object,
                        DropZone *source_zone,
                        DropZone *target_zone)
 {
-  printf ("Drrrrrrrrrooop\n");
+  Batch *batch = dynamic_cast <Batch *> (object);
+
+  if (batch)
+  {
+    GSList *selection = batch->GetCurrentSelection ();
+    GSList *current   = selection;
+    Piste  *piste     = dynamic_cast <Piste *> (target_zone);
+
+    while (current)
+    {
+      Job *job = (Job *) current->data;
+
+      piste->AddJob (job);
+
+      current = g_slist_next (current);
+    }
+
+    g_slist_free_full (selection,
+                       (GDestroyNotify) g_free);
+  }
 }
 
 // --------------------------------------------------------------------------------

@@ -22,6 +22,7 @@
 #include "util/drop_zone.hpp"
 
 class Module;
+class Job;
 
 class Piste : public DropZone
 {
@@ -40,6 +41,8 @@ class Piste : public DropZone
            Module        *container);
 
     void SetListener (Listener *listener);
+
+    void AddJob (Job *job);
 
     void Select ();
 
