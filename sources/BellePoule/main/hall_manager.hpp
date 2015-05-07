@@ -20,7 +20,7 @@
 #include "util/module.hpp"
 #include "people_management/referees_list.hpp"
 
-class Batch;
+class Hall;
 
 class HallManager : public Module
 {
@@ -32,18 +32,12 @@ class HallManager : public Module
     void OnHttpPost (const gchar *data);
 
   private:
-    GList                *_batch_list;
+    Hall                 *_hall;
     People::RefereesList *_referee_list;
 
     virtual ~HallManager ();
 
-    Batch *GetBatch (const gchar *id);
-
-    void ManageContest (const gchar *data);
-
     void ManageReferee (const gchar *data);
-
-    void ManageTask (const gchar *data);
 };
 
 #endif

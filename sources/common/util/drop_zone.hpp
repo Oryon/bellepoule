@@ -48,7 +48,7 @@ class DropZone : public Object
 
   protected:
     Module        *_container;
-    GooCanvasItem *_back_rect;
+    GooCanvasItem *_drop_rect;
 
     DropZone (Module *container);
 

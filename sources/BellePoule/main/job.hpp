@@ -14,39 +14,29 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef dnd_config_hpp
-#define dnd_config_hpp
+#ifndef job_hpp
+#define job_hpp
 
-#include <gtk/gtk.h>
+#include "util/object.hpp"
 
-#include "object.hpp"
-
-class DndConfig : public virtual Object
+class Job : public Object
 {
   public:
-    DndConfig ();
+    Job (GChecksum *sha1,
+         GdkColor  *gdk_color);
 
-    guint32 CreateTarget (const gchar *target,
-                          guint        flags);
+    void SetName (const gchar *name);
 
-    GtkTargetEntry *GetTargetTable ();
+    gboolean Is (GChecksum *sha1);
 
-    guint GetTargetTableSize ();
-
-    void SetFloatingObject (Object *object);
-
-    Object *GetFloatingObject ();
-
+    GdkColor *GetGdkColor ();
 
   private:
-    GtkTargetList  *_target_list;
-    GtkTargetEntry *_target_table;
-    gint            _count;
-    Object         *_floating_object;
+    GChecksum *_sha1;
+    gchar     *_name;
+    GdkColor  *_gdk_color;
 
-    ~DndConfig ();
-
-    void CreateTargetTable ();
+    ~Job ();
 };
 
 #endif

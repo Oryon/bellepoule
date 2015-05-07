@@ -80,11 +80,7 @@ namespace Pool
       _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_hbox"));
     }
 
-    // Dnd
-    {
-      _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
-      _dnd_config->CreateTargetTable ();
-    }
+    _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
     {
       GSList *attr_list;

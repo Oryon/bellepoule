@@ -28,28 +28,34 @@ class Batch : public Module
 
     void AttachTo (GtkNotebook *to);
 
-    void LoadTask (xmlNode   *xml_node,
-                   GChecksum *sha1);
+    void LoadJob (xmlNode   *xml_node,
+                  GChecksum *sha1);
 
-    const gchar *GetId ();
+    guint GetId ();
 
     void SetProperties (GKeyFile *key_file);
 
+    GSList *GetCurrentSelection ();
+
+    GdkColor *GetColor ();
+
   private:
-    gchar        *_id;
+    guint32       _id;
     GtkListStore *_list_store;
+    guint32       _dnd_key;
+    GdkColor     *_gdk_color;
 
     virtual ~Batch ();
 
     void SetProperty (GKeyFile    *key_file,
                       const gchar *property);
 
-    gboolean HasTask (GChecksum *sha1);
+    gboolean HasJob (GChecksum *sha1);
 
     void OnDragDataGet (GtkWidget        *widget,
                         GdkDragContext   *drag_context,
                         GtkSelectionData *data,
-                        guint             info,
+                        guint             key,
                         guint             time);
 };
 

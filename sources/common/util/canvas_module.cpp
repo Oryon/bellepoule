@@ -671,7 +671,7 @@ void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
                                        gint              x,
                                        gint              y,
                                        GtkSelectionData *data,
-                                       guint             info,
+                                       guint             key,
                                        guint             time)
 {
   if (data && (gtk_selection_data_get_length (data) >= 0))

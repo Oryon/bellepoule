@@ -60,12 +60,22 @@ void DndConfig::CreateTargetTable ()
 // --------------------------------------------------------------------------------
 GtkTargetEntry *DndConfig::GetTargetTable ()
 {
+  if (_target_table == NULL)
+  {
+    CreateTargetTable ();
+  }
+
   return _target_table;
 }
 
 // --------------------------------------------------------------------------------
 guint DndConfig::GetTargetTableSize ()
 {
+  if (_target_table == NULL)
+  {
+    CreateTargetTable ();
+  }
+
   return _count;
 }
 

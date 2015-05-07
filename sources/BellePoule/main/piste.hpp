@@ -22,6 +22,7 @@
 #include "util/drop_zone.hpp"
 
 class Module;
+class Job;
 
 class Piste : public DropZone
 {
@@ -40,6 +41,8 @@ class Piste : public DropZone
            Module        *container);
 
     void SetListener (Listener *listener);
+
+    void AddJob (Job *job);
 
     void Select ();
 
@@ -82,6 +85,10 @@ class Piste : public DropZone
 
     ~Piste ();
 
+    void Focus ();
+
+    void Unfocus ();
+
     void MonitorEvent (GooCanvasItem *item);
 
     gdouble GetGridAdjustment (gdouble coordinate);
@@ -100,9 +107,6 @@ class Piste : public DropZone
                                     GooCanvasItem  *target,
                                     GdkEventMotion *event,
                                     Piste          *piste);
-
-  private:
-    void RedrawDropZone ();
 };
 
 #endif

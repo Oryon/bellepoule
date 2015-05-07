@@ -106,14 +106,14 @@ Module::~Module ()
 void Module::DragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
                           GtkSelectionData *data,
-                          guint             info,
+                          guint             key,
                           guint             time,
                           Module           *owner)
 {
   owner->OnDragDataGet (widget,
                         drag_context,
                         data,
-                        info,
+                        key,
                         time);
 }
 
@@ -121,7 +121,7 @@ void Module::DragDataGet (GtkWidget        *widget,
 void Module::OnDragDataGet (GtkWidget        *widget,
                             GdkDragContext   *drag_context,
                             GtkSelectionData *data,
-                            guint             info,
+                            guint             key,
                             guint             time)
 {
 }
@@ -219,7 +219,7 @@ void Module::DragDataReceived (GtkWidget        *widget,
                                gint              x,
                                gint              y,
                                GtkSelectionData *data,
-                               guint             info,
+                               guint             key,
                                guint             time,
                                Module           *owner)
 {
@@ -228,7 +228,7 @@ void Module::DragDataReceived (GtkWidget        *widget,
                              x,
                              y,
                              data,
-                             info,
+                             key,
                              time);
 }
 
@@ -238,7 +238,7 @@ void Module::OnDragDataReceived (GtkWidget        *widget,
                                  gint              x,
                                  gint              y,
                                  GtkSelectionData *data,
-                                 guint             info,
+                                 guint             key,
                                  guint             time)
 {
 }

@@ -35,15 +35,15 @@ DropZone::~DropZone ()
 // --------------------------------------------------------------------------------
 void DropZone::Wipe ()
 {
-  _back_rect = NULL;
+  _drop_rect = NULL;
 }
 
 // --------------------------------------------------------------------------------
 void DropZone::Draw (GooCanvasItem *root_item)
 {
-  if (_back_rect)
+  if (_drop_rect)
   {
-    goo_canvas_item_lower (_back_rect,
+    goo_canvas_item_lower (_drop_rect,
                            NULL);
   }
 }
@@ -54,7 +54,7 @@ void DropZone::Redraw (gdouble x,
                        gdouble w,
                        gdouble h)
 {
-  g_object_set (G_OBJECT (_back_rect),
+  g_object_set (G_OBJECT (_drop_rect),
                 "x",        x,
                 "y",        y,
                 "width",    w,
@@ -66,9 +66,9 @@ void DropZone::Redraw (gdouble x,
 void DropZone::GetBounds (GooCanvasBounds *bounds,
                           gdouble          zoom_factor)
 {
-  if (_back_rect)
+  if (_drop_rect)
   {
-    goo_canvas_item_get_bounds (_back_rect,
+    goo_canvas_item_get_bounds (_drop_rect,
                                 bounds);
     bounds->x1 *= zoom_factor;
     bounds->x2 *= zoom_factor;
@@ -87,7 +87,7 @@ void DropZone::GetBounds (GooCanvasBounds *bounds,
 // --------------------------------------------------------------------------------
 void DropZone::Focus ()
 {
-  g_object_set (G_OBJECT (_back_rect),
+  g_object_set (G_OBJECT (_drop_rect),
                 "fill-color", "Grey",
                 NULL);
 }
@@ -95,7 +95,7 @@ void DropZone::Focus ()
 // --------------------------------------------------------------------------------
 void DropZone::Unfocus ()
 {
-  g_object_set (G_OBJECT (_back_rect),
+  g_object_set (G_OBJECT (_drop_rect),
                 "fill-color", "White",
                 NULL);
 }

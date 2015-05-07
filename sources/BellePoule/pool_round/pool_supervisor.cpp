@@ -356,11 +356,11 @@ namespace Pool
     pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                         this);
 
-    SendTask (pool);
+    SendJob (pool);
   }
 
   // --------------------------------------------------------------------------------
-  void Supervisor::SendTask (Pool *pool)
+  void Supervisor::SendJob (Pool *pool)
   {
     Partner *hall_manager = _contest->GetHallManager ();
 
@@ -383,7 +383,7 @@ namespace Pool
         xmlFreeTextWriter (xml_writer);
       }
 
-      hall_manager->SendMessage ("/Task",
+      hall_manager->SendMessage ("/Job",
                                  (const gchar *) xml_buffer->content);
 
       xmlBufferFree (xml_buffer);

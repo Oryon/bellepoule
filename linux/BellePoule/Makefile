@@ -1,7 +1,7 @@
 EXEC    = bellepoulebeta
 #EXEC    = bellepoule
 TARGET  = Release
-PACKAGE = $(HOME)/$(EXEC)
+PACKAGE = $(HOME)/PPA/$(EXEC)
 VERSION = 5.0
 STEP    = ubuntu1
 RELEASE = $(EXEC)_$(VERSION)
@@ -217,6 +217,7 @@ clean_sources:
 help:
 	@echo "make -s UBUNTU=precise V=$(V) package"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
+	@echo "make -s UBUNTU=vivid   V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "debuild -us -uc --lintian-opts --color always"
 	@echo "gpg -K"

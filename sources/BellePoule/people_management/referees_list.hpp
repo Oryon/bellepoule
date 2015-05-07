@@ -37,6 +37,7 @@ namespace People
 
     private:
       Contest *_contest;
+      guint32  _dnd_key;
 
       void Monitor (Player *referee);
 
@@ -69,7 +70,7 @@ namespace People
       void OnDragDataGet (GtkWidget        *widget,
                           GdkDragContext   *drag_context,
                           GtkSelectionData *data,
-                          guint             info,
+                          guint             key,
                           guint             time);
   };
 }

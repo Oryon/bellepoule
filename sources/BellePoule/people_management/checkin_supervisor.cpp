@@ -137,8 +137,7 @@ namespace People
     }
 
     {
-      _dnd_target = _dnd_config->CreateTarget ("bellepoule/fencer", GTK_TARGET_SAME_WIDGET);
-      _dnd_config->CreateTargetTable ();
+      _dnd_key = _dnd_config->CreateTarget ("bellepoule/fencer", GTK_TARGET_SAME_WIDGET);
 
       ConnectDndSource (GTK_WIDGET (_tree_view));
       ConnectDndDest   (GTK_WIDGET (_tree_view));
@@ -1192,11 +1191,11 @@ namespace People
   void CheckinSupervisor::OnDragDataGet (GtkWidget        *widget,
                                          GdkDragContext   *drag_context,
                                          GtkSelectionData *selection_data,
-                                         guint             target_type,
+                                         guint             key,
                                          guint             time)
   {
 
-    if (target_type == _dnd_target)
+    if (key == _dnd_key)
     {
       GSList  *selected   = GetSelectedPlayers ();
       Player  *fencer     = (Player *) selected->data;
@@ -1258,10 +1257,10 @@ namespace People
                                               gint              x,
                                               gint              y,
                                               GtkSelectionData *selection_data,
-                                              guint             target_type,
+                                              guint             key,
                                               guint             time)
   {
-    if (target_type == _dnd_target)
+    if (key == _dnd_key)
     {
       if (selection_data && (gtk_selection_data_get_length (selection_data) >= 0))
       {

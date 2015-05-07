@@ -87,8 +87,7 @@ namespace People
     }
 
     {
-      _dnd_target = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
-      _dnd_config->CreateTargetTable ();
+      _dnd_key = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
       gtk_drag_source_set (GTK_WIDGET (_tree_view),
                            GDK_MODIFIER_MASK,
@@ -265,10 +264,10 @@ namespace People
   void RefereesList::OnDragDataGet (GtkWidget        *widget,
                                     GdkDragContext   *drag_context,
                                     GtkSelectionData *data,
-                                    guint             info,
+                                    guint             key,
                                     guint             time)
   {
-    if (info == _dnd_target)
+    if (key == _dnd_key)
     {
       GSList  *selected    = GetSelectedPlayers ();
       Player  *referee     = (Player *) selected->data;

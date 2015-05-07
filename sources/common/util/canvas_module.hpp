@@ -136,7 +136,7 @@ class CanvasModule : public Module
                              gint              x,
                              gint              y,
                              GtkSelectionData *data,
-                             guint             info,
+                             guint             key,
                              guint             time);
 
     gboolean OnButtonPress (GooCanvasItem  *item,
