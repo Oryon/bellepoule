@@ -1287,6 +1287,27 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
+  gint Pool::CompareStatus (gchar A,
+                            gchar B)
+  {
+    static char status_value[] = {'Q', 'N', 'A', 'E', 'F', 0};
+    gint a_value;
+    gint b_value;
+
+    for (a_value = 0; status_value[a_value] != 0 && status_value[a_value] != A; a_value++);
+    for (b_value = 0; status_value[b_value] != 0 && status_value[b_value] != B; b_value++);
+
+    if (a_value < b_value)
+    {
+      return -1;
+    }
+    else
+    {
+      return 1;
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   gint Pool::ComparePlayer (Player   *A,
                             Player   *B,
                             Object   *data_owner,
@@ -1303,14 +1324,16 @@ namespace Pool
     }
     else if (comparison_policy & WITH_CALCULUS)
     {
-      guint   pool_nr_A;
-      guint   pool_nr_B;
-      guint   ratio_A;
-      guint   ratio_B;
-      gint    average_A;
-      gint    average_B;
-      guint   HS_A;
-      guint   HS_B;
+      guint        pool_nr_A;
+      guint        pool_nr_B;
+      guint        ratio_A;
+      guint        ratio_B;
+      gint         average_A;
+      gint         average_B;
+      guint        HS_A;
+      guint        HS_B;
+      const gchar *status_A  = "Q";
+      const gchar *status_B  = "Q";
       Player::AttributeId attr_id ("", data_owner);
 
       attr_id._name = (gchar *) "pool_nr";
@@ -1330,34 +1353,22 @@ namespace Pool
       HS_B = B->GetAttribute (&attr_id)->GetUIntValue ();
 
       attr_id._name = (gchar *) "status";
-      if (A->GetAttribute (&attr_id) && B->GetAttribute (&attr_id))
+      if (A->GetAttribute (&attr_id))
       {
-        gchar *status_A = A->GetAttribute (&attr_id)->GetStrValue ();
-        gchar *status_B = B->GetAttribute (&attr_id)->GetStrValue ();
+        status_A = A->GetAttribute (&attr_id)->GetStrValue ();
+      }
+      if (B->GetAttribute (&attr_id))
+      {
+        status_B = B->GetAttribute (&attr_id)->GetStrValue ();
+      }
 
-        if ((status_A[0] == 'Q') && (status_A[0] != status_B[0]))
-        {
-          return -1;
-        }
-        if ((status_B[0] == 'Q') && (status_B[0] != status_A[0]))
+      if (status_A[0] != status_B[0])
+      {
+        if (status_A[0] == 'E')
         {
           return 1;
         }
-
-        if ((status_A[0] == 'E') && (status_A[0] != status_B[0]))
-        {
-          return 1;
-        }
-        if ((status_B[0] == 'E') && (status_B[0] != status_A[0]))
-        {
-          return -1;
-        }
-
-        if ((status_A[0] == 'A') && (status_A[0] != status_B[0]))
-        {
-          return 1;
-        }
-        if ((status_B[0] == 'A') && (status_B[0] != status_A[0]))
+        if (status_B[0] == 'E')
         {
           return -1;
         }
@@ -1370,6 +1381,13 @@ namespace Pool
           return pool_nr_A - pool_nr_B;
         }
       }
+
+      if (status_A[0] != status_B[0])
+      {
+        return CompareStatus (status_A[0],
+                              status_B[0]);
+      }
+
       if (ratio_B != ratio_A)
       {
         return ratio_B - ratio_A;

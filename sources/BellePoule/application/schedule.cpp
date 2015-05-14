@@ -573,6 +573,7 @@ void Schedule::RemoveStage (Stage *stage)
           previous_stage = (Stage *) (g_list_previous (current)->data);
         }
         next_stage->SetPrevious (previous_stage);
+        stage->SetPrevious (NULL);
       }
     }
 
