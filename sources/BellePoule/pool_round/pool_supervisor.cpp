@@ -811,6 +811,7 @@ namespace Pool
       }
     }
 
+    // Current round classification
     {
       result = EvaluateClassification (result,
                                        _current_round_owner,
@@ -820,17 +821,18 @@ namespace Pool
                             result);
     }
 
-    if (_allocator->SeedingIsBalanced () == FALSE)
+    // Combined classification
+    if (_allocator->SeedingIsBalanced ())
     {
       return EvaluateClassification (result,
                                      this,
-                                     (GCompareDataFunc) CompareCurrentRoundClassification);
+                                     (GCompareDataFunc) CompareCombinedRoundsClassification);
     }
     else
     {
       return EvaluateClassification (result,
                                      this,
-                                     (GCompareDataFunc) CompareCombinedRoundsClassification);
+                                     (GCompareDataFunc) CompareCurrentRoundClassification);
     }
   }
 

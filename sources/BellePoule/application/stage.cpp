@@ -1044,7 +1044,7 @@ void Stage::GiveEliminatedAFinalRank ()
       Player    *player    = (Player *) current->data;
       Attribute *rank_attr = player->GetAttribute (&rank_attr_id);
 
-      if (_next && (_next->HasItsOwnRanking () == FALSE))
+      if ((_next == NULL) || (_next->HasItsOwnRanking () == FALSE))
       {
         player->SetAttributeValue (&final_rank_attr_id,
                                    rank_attr->GetUIntValue ());

@@ -157,6 +157,9 @@ namespace Pool
                                                 Player *B,
                                                 Pool   *pool);
 
+      static gint CompareStatus (gchar A,
+                                 gchar B);
+
       void OnPlugged ();
 
       void OnUnPlugged ();
