@@ -220,7 +220,6 @@ help:
 	@echo "make -s UBUNTU=vivid   V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "debuild -us -uc --lintian-opts --color always"
-	@echo "gpg -K"
-	@echo "debuild -S -sa -k<1234>"
+	@echo "debuild -S -sa -k"`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
 	@echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
 	@echo "dput ppa:betonniere/bellepoule ../$(EXEC)*_source.changes"

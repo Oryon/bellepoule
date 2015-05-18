@@ -883,22 +883,18 @@ namespace Pool
         RegisterConfig (config);
       }
 
-      if (   (nb_players%size != 0)
-          || ((size == 6) && (nb_players%7 != 0)))
+      for (guint p = 1; p < nb_players/size; p++)
       {
-        for (guint p = 1; p < nb_players/size; p++)
+        if ((nb_players - size*p) % (size + 1) == 0)
         {
-          if ((nb_players - size*p) % (size + 1) == 0)
-          {
-            config = (Configuration *) g_malloc (sizeof (Configuration));
+          config = (Configuration *) g_malloc (sizeof (Configuration));
 
-            config->_nb_pool       = p + (nb_players - size*p) / (size + 1);
-            config->_size          = size;
-            config->_nb_overloaded = (nb_players - size*p) / (size+1);
+          config->_nb_pool       = p + (nb_players - size*p) / (size + 1);
+          config->_size          = size;
+          config->_nb_overloaded = (nb_players - size*p) / (size+1);
 
-            RegisterConfig (config);
-            break;
-          }
+          RegisterConfig (config);
+          break;
         }
       }
     }
