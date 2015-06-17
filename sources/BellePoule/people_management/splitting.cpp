@@ -195,9 +195,8 @@ namespace People
 
           if (player->Is ("Team"))
           {
-            Team   *team     = (Team *) player;
-            Team   *new_team = (Team *) new_player;
-            GSList *members  = team->GetMemberList ();
+            Team   *team    = (Team *) player;
+            GSList *members = team->GetMemberList ();
 
             while (members)
             {
@@ -205,7 +204,6 @@ namespace People
               Player *new_member = member->Duplicate ();
 
               contest->AddFencer  (new_member);
-              new_team->AddMember (new_member);
               new_member->Release ();
 
               members = g_slist_next (members);

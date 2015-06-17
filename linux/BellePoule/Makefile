@@ -217,6 +217,7 @@ clean_sources:
 help:
 	@echo "make -s UBUNTU=precise V=$(V) package"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
+	@echo "make -s UBUNTU=utopic  V=$(V) package"
 	@echo "make -s UBUNTU=vivid   V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "debuild -us -uc --lintian-opts --color always"
