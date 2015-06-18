@@ -52,16 +52,16 @@ namespace Net
                          guchar      *iv);
 
     private:
-      gchar        *_user;
-      gchar        *_passwd;
-      gchar        *_full_url;
-      gchar        *_iv;
-      gchar        *_url;
-      gchar        *_data;
-      gsize         _data_length;
-      guint         _bytes_uploaded;
-      Listener     *_listener;
-      PeerStatus    _peer_status;
+      gchar      *_user;
+      gchar      *_passwd;
+      gchar      *_full_url;
+      gchar      *_iv;
+      gchar      *_url;
+      gchar      *_data;
+      gsize       _data_length;
+      guint       _bytes_uploaded;
+      Listener   *_listener;
+      PeerStatus  _peer_status;
 
       virtual ~Uploader ();
 
