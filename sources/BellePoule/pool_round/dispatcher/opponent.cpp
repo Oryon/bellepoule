@@ -65,7 +65,7 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Opponent::Use (Opponent *who)
   {
-    if (_quark == who->_quark)
+    if (_quark && (_quark == who->_quark))
     {
       _lock--;
       who->_lock--;

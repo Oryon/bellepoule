@@ -293,9 +293,9 @@ namespace Pool
         _pair_list = g_list_append (_pair_list,
                                     new Pair (iteration, a, b));
 
-        opponent_list = g_list_sort (opponent_list,
-                                     (GCompareFunc) Opponent::CompareFitness);
-        current = opponent_list;
+        working_list = g_list_sort (working_list,
+                                    (GCompareFunc) Opponent::CompareFitness);
+        current = working_list;
         iteration++;
       }
       else
