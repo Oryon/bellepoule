@@ -134,6 +134,10 @@ namespace People
 
       Player *GetPlayer (const gchar *path_string);
 
+      Player *GetNextPrintablePlayer (GtkTreeModel *model,
+                                      GtkTreeIter  *iter,
+                                      gboolean      print_full_list);
+
       gboolean IterNextNode (GtkTreeModel *model,
                              GtkTreeIter  *iter);
 
