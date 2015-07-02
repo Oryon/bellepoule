@@ -947,14 +947,29 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::TogglePlayerAttr (Player              *player,
                                             Player::AttributeId *attr_id,
-                                            gboolean             new_value)
+                                            gboolean             new_value,
+                                            gboolean             popup_on_error)
   {
     // Teams can't be toggled
     if (player && (player->Is ("Team") == FALSE))
     {
       Checkin::TogglePlayerAttr (player,
                                  attr_id,
-                                 new_value);
+                                 new_value,
+                                 popup_on_error);
+    }
+    else if (popup_on_error)
+    {
+      GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                  GTK_MESSAGE_INFO,
+                                                  GTK_BUTTONS_CLOSE,
+                                                  "Cochez les tireurs présents de l'équipe.\n"
+                                                  "Décochez les tireurs absents de l'équipe.\n\n"
+                                                  "Vous avez configuré la taille des équipes à %d tireurs minimum.",
+                                                  3);
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
     }
   }
 

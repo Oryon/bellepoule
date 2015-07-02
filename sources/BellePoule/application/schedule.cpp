@@ -1398,8 +1398,8 @@ gint Schedule::GetNotebookPageNum (Stage *stage)
 // --------------------------------------------------------------------------------
 void Schedule::on_previous_stage_toolbutton_clicked ()
 {
-  GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          GTK_DIALOG_MODAL,
+  GtkWidget *dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                                           GTK_MESSAGE_QUESTION,
                                                           GTK_BUTTONS_OK_CANCEL,
                                                           gettext ("<b><big>Do you really want to cancel the current round?</big></b>"));
@@ -1462,8 +1462,8 @@ void Schedule::on_next_stage_toolbutton_clicked ()
 
   if (stage->GetQuotaExceedance ())
   {
-    GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                            GTK_DIALOG_MODAL,
+    GtkWidget *dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                            GTK_DIALOG_DESTROY_WITH_PARENT,
                                                             GTK_MESSAGE_QUESTION,
                                                             GTK_BUTTONS_YES_NO,
                                                             gettext ("<b><big>Because of ties, the quota is exceeded.\nDo you wish to add a barrage round?</big></b>"));

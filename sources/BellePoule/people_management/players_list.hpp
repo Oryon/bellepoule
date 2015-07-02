@@ -107,7 +107,8 @@ namespace People
 
       virtual void TogglePlayerAttr (Player              *player,
                                      Player::AttributeId *attr_id,
-                                     gboolean             new_value);
+                                     gboolean             new_value,
+                                     gboolean             popup_on_error = FALSE);
 
       void SetPasteVisibility (gboolean visibility);
 
