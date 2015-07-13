@@ -63,6 +63,8 @@ class Attribute : public Object
 
     virtual gint CompareWith (Attribute *with) = 0;
 
+    virtual gint CompareWith (const gchar *with) = 0;
+
     virtual Attribute *Duplicate () = 0;
 
   protected:
@@ -104,6 +106,8 @@ class TextAttribute : public Attribute
 
     gint CompareWith (Attribute *with);
 
+    gint CompareWith (const gchar *with);
+
     Attribute *Duplicate ();
 };
 
@@ -139,6 +143,8 @@ class BooleanAttribute : public Attribute
                        AttributeDesc::Look  look);
 
     gint CompareWith (Attribute *with);
+
+    gint CompareWith (const gchar *with);
 
     Attribute *Duplicate ();
 };
@@ -176,6 +182,8 @@ class IntAttribute : public Attribute
                        AttributeDesc::Look  look);
 
     gint CompareWith (Attribute *with);
+
+    gint CompareWith (const gchar *with);
 
     Attribute *Duplicate ();
 };

@@ -22,6 +22,7 @@
 
 #include "application/stage.hpp"
 #include "team.hpp"
+#include "fencer.hpp"
 #include "null_team.hpp"
 
 #include "checkin.hpp"
@@ -38,14 +39,17 @@ namespace People
       void UpdateRanking ();
 
       void SetTeamData (Data *minimum_team_size,
-                        Data *manual_classification,
-                        Data *default_classification);
+                        Data *manual_classification);
 
       void ConvertFromBaseToResult ();
 
-      void OnManualRadioButtonToggled (GtkToggleButton *button);
-
       void OnImportRanking ();
+
+      void OnConfigChanged ();
+
+      void OnListChanged ();
+
+      void Add (Player *player);
 
     private:
       void OnLocked ();
@@ -69,8 +73,8 @@ namespace People
 
       GSList   *_checksum_list;
       Data     *_manual_classification;
-      Data     *_default_classification;
       Data     *_minimum_team_size;
+      guint     _worst_classification;
       NullTeam *_null_team;
       guint32   _dnd_key;
 
@@ -113,8 +117,10 @@ namespace People
 
       void OnPlayerRemoved (Player *player);
 
-      void OnAttendingChanged (Player    *player,
+      void OnAttendingChanged (Player *player,
                                guint   value);
+
+      void UpdateWorstClassification ();
 
       void EnableDragAndDrop ();
 
@@ -148,11 +154,6 @@ namespace People
 
       static gboolean PresentPlayerFilter (Player      *player,
                                            PlayersList *owner);
-
-      static void OnAttrAttendingChanged (Player    *player,
-                                          Attribute *attr,
-                                          Object    *owner,
-                                          guint      step);
 
       static void OnAttrTeamRenamed (Player    *player,
                                      Attribute *attr,

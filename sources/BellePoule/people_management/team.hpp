@@ -18,6 +18,7 @@
 #define team_hpp
 
 #include "util/player.hpp"
+#include "util/data.hpp"
 
 class Team : public Player
 {
@@ -42,9 +43,9 @@ class Team : public Player
 
     void SetDefaultClassification (guint default_classification);
 
-    void SetMinimumSize (guint size);
+    void SetMinimumSize (Data *size);
 
-    void SetManualClassification (gboolean manual);
+    void SetManualClassification (Data *manual);
 
     void EnableMemberSaving (gboolean enable);
 
@@ -59,8 +60,8 @@ class Team : public Player
 
     GSList   *_member_list;
     guint     _default_classification;
-    guint     _minimum_size;
-    gboolean  _manual_classification;
+    Data     *_minimum_size;
+    Data     *_manual_classification;
     gboolean  _enable_member_saving;
 
     Player *Clone ();

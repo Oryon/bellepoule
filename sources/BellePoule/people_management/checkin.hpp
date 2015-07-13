@@ -63,10 +63,10 @@ namespace People
 
       void OnPrint ();
 
-      void OnListChanged ();
+      virtual void OnListChanged ();
 
     protected:
-      Form *_form;
+      Form         *_form;
       TallyCounter *_tally_counter;
 
       virtual ~Checkin ();

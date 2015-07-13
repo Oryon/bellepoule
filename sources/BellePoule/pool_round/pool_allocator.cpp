@@ -75,9 +75,9 @@ namespace Pool
     {
       AddSensitiveWidget (_glade->GetWidget ("nb_pools_combobox"));
       AddSensitiveWidget (_glade->GetWidget ("pool_size_combobox"));
-      AddSensitiveWidget (_glade->GetWidget ("swapping_hbox"));
+      AddSensitiveWidget (_glade->GetWidget ("swapping_criteria_hbox"));
 
-      _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_hbox"));
+      _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_criteria_hbox"));
     }
 
     _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);

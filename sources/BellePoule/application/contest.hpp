@@ -152,7 +152,6 @@ class Contest : public Module
     guint            _year;
     gboolean         _team_event;
     Data            *_manual_classification;
-    Data            *_default_classification;
     Data            *_minimum_team_size;
     Time            *_checkin_time;
     Time            *_scratch_time;

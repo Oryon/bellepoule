@@ -235,7 +235,18 @@ gint TextAttribute::CompareWith (Attribute *with)
 {
   if (with)
   {
-    return (strcmp ((const gchar *) GetStrValue (), (const gchar *) with->GetStrValue ()));
+    return CompareWith (with->GetStrValue ());
+  }
+
+  return -1;
+}
+
+// --------------------------------------------------------------------------------
+gint TextAttribute::CompareWith (const gchar *with)
+{
+  if (with)
+  {
+    return (strcmp ((const gchar *) GetStrValue (), with));
   }
 
   return -1;
@@ -338,6 +349,17 @@ gint BooleanAttribute::CompareWith (Attribute *with)
 }
 
 // --------------------------------------------------------------------------------
+gint BooleanAttribute::CompareWith (const gchar *with)
+{
+  if (with)
+  {
+    return (GetUIntValue () - atoi (with));
+  }
+
+  return -1;
+}
+
+// --------------------------------------------------------------------------------
 Attribute *BooleanAttribute::Duplicate ()
 {
   BooleanAttribute *attr = new BooleanAttribute (_desc);
@@ -434,6 +456,17 @@ gint IntAttribute::CompareWith (Attribute *with)
   if (with)
   {
     return (GetUIntValue () - with->GetUIntValue ());
+  }
+
+  return G_MININT;
+}
+
+// --------------------------------------------------------------------------------
+gint IntAttribute::CompareWith (const gchar *with)
+{
+  if (with)
+  {
+    return (GetUIntValue () - atoi (with));
   }
 
   return G_MININT;
