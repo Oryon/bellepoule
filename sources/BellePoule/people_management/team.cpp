@@ -28,8 +28,8 @@ Team::Team ()
   _member_list = NULL;
 
   _default_classification = 0;
-  _minimum_size           = 3;
-  _manual_classification  = TRUE;
+  _minimum_size           = NULL;
+  _manual_classification  = NULL;
   _enable_member_saving   = TRUE;
 }
 
@@ -48,54 +48,57 @@ Player *Team::Clone ()
 // --------------------------------------------------------------------------------
 void Team::SetAttendingFromMembers ()
 {
-  Player::AttributeId attending_attr_id ("attending");
-  Player::AttributeId ranking_attr_id   ("ranking");
-  GSList *current;
-  guint   present_count = 0;
-  guint   team_rank     = 0;
-
-  if (_manual_classification == FALSE)
+  if (_manual_classification && _minimum_size)
   {
-    _member_list = g_slist_sort_with_data (_member_list,
-                                           (GCompareDataFunc) Player::Compare,
-                                           &ranking_attr_id);
+    Player::AttributeId attending_attr_id ("attending");
+    Player::AttributeId ranking_attr_id   ("ranking");
+    GSList *current;
+    guint   present_count = 0;
+    guint   team_rank     = 0;
 
-    SetAttributeValue (&ranking_attr_id,
-                       (guint) 0);
-  }
-
-  current = _member_list;
-  while (current)
-  {
-    Player    *player    = (Player *) current->data;
-    Attribute *attending = player->GetAttribute (&attending_attr_id);
-    Attribute *rank      = player->GetAttribute (&ranking_attr_id);
-
-    if (attending && attending->GetUIntValue ())
+    if (_manual_classification->_value == FALSE)
     {
-      present_count++;
+      _member_list = g_slist_sort_with_data (_member_list,
+                                             (GCompareDataFunc) Player::Compare,
+                                             &ranking_attr_id);
 
-      if (present_count <= _minimum_size)
-      {
-        guint value = rank->GetUIntValue ();
-
-        if (value == 0)
-        {
-          value = _default_classification;
-        }
-        team_rank += value;
-      }
+      SetAttributeValue (&ranking_attr_id,
+                         (guint) 0);
     }
-    current = g_slist_next (current);
-  }
 
-  SetAttributeValue (&attending_attr_id,
-                     (present_count >= _minimum_size));
+    current = _member_list;
+    while (current)
+    {
+      Player    *player    = (Player *) current->data;
+      Attribute *attending = player->GetAttribute (&attending_attr_id);
+      Attribute *rank      = player->GetAttribute (&ranking_attr_id);
 
-  if (_manual_classification == FALSE)
-  {
-    SetAttributeValue (&ranking_attr_id,
-                       team_rank);
+      if (attending && attending->GetUIntValue ())
+      {
+        present_count++;
+
+        if (present_count <= _minimum_size->_value)
+        {
+          guint value = rank->GetUIntValue ();
+
+          if (value == 0)
+          {
+            value = _default_classification;
+          }
+          team_rank += value;
+        }
+      }
+      current = g_slist_next (current);
+    }
+
+    SetAttributeValue (&attending_attr_id,
+                       (present_count >= _minimum_size->_value));
+
+    if (_manual_classification->_value == FALSE)
+    {
+      SetAttributeValue (&ranking_attr_id,
+                         team_rank);
+    }
   }
 }
 
@@ -147,17 +150,18 @@ void Team::SetAttributesFromMembers ()
 void Team::SetDefaultClassification (guint default_classification)
 {
   _default_classification = default_classification;
+  SetAttendingFromMembers ();
 }
 
 // --------------------------------------------------------------------------------
-void Team::SetMinimumSize (guint size)
+void Team::SetMinimumSize (Data *size)
 {
   _minimum_size = size;
   SetAttendingFromMembers ();
 }
 
 // --------------------------------------------------------------------------------
-void Team::SetManualClassification (gboolean manual)
+void Team::SetManualClassification (Data *manual)
 {
   _manual_classification = manual;
   SetAttendingFromMembers ();

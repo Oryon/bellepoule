@@ -40,8 +40,7 @@ typedef enum
 // --------------------------------------------------------------------------------
 Schedule::Schedule (Contest *contest,
                     Data    *minimum_team_size,
-                    Data    *manual_classification,
-                    Data    *default_classification)
+                    Data    *manual_classification)
   : Module ("schedule.glade",
             "schedule_notebook")
 {
@@ -51,7 +50,6 @@ Schedule::Schedule (Contest *contest,
 
   _minimum_team_size      = minimum_team_size;
   _manual_classification  = manual_classification;
-  _default_classification = default_classification;
   _score_stuffing_allowed = FALSE;
 
   {
@@ -138,8 +136,7 @@ Stage *Schedule::CreateStage (const gchar *class_name)
       People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (stage);
 
       checkin->SetTeamData (_minimum_team_size,
-                            _manual_classification,
-                            _default_classification);
+                            _manual_classification);
     }
   }
 
@@ -1398,8 +1395,8 @@ gint Schedule::GetNotebookPageNum (Stage *stage)
 // --------------------------------------------------------------------------------
 void Schedule::on_previous_stage_toolbutton_clicked ()
 {
-  GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                          GTK_DIALOG_MODAL,
+  GtkWidget *dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                                           GTK_MESSAGE_QUESTION,
                                                           GTK_BUTTONS_OK_CANCEL,
                                                           gettext ("<b><big>Do you really want to cancel the current round?</big></b>"));
@@ -1462,8 +1459,8 @@ void Schedule::on_next_stage_toolbutton_clicked ()
 
   if (stage->GetQuotaExceedance ())
   {
-    GtkWidget *dialog = gtk_message_dialog_new_with_markup (NULL,
-                                                            GTK_DIALOG_MODAL,
+    GtkWidget *dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                            GTK_DIALOG_DESTROY_WITH_PARENT,
                                                             GTK_MESSAGE_QUESTION,
                                                             GTK_BUTTONS_YES_NO,
                                                             gettext ("<b><big>Because of ties, the quota is exceeded.\nDo you wish to add a barrage round?</big></b>"));

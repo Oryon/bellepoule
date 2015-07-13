@@ -45,9 +45,9 @@ namespace People
   {
     _checksum_list = NULL;
 
-    _manual_classification  = NULL;
-    _default_classification = NULL;
-    _minimum_team_size      = NULL;
+    _manual_classification = NULL;
+    _minimum_team_size     = NULL;
+    _worst_classification  = 1;
 
     // Sensitive widgets
     {
@@ -59,6 +59,7 @@ namespace People
       AddSensitiveWidget (_glade->GetWidget ("all_absent_button"));
       AddSensitiveWidget (_glade->GetWidget ("team_table"));
       AddSensitiveWidget (_glade->GetWidget ("teamsize_entry"));
+      AddSensitiveWidget (_glade->GetWidget ("team_classification_table"));
     }
 
     // Fencer
@@ -132,7 +133,6 @@ namespace People
     {
       _null_team = new NullTeam ();
       _null_team->SetName (gettext ("** Without team **"));
-      RegisterNewTeam (_null_team);
       Add (_null_team);
     }
 
@@ -169,14 +169,10 @@ namespace People
 
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::SetTeamData (Data *minimum_team_size,
-                                       Data *manual_classification,
-                                       Data *default_classification)
+                                       Data *manual_classification)
   {
-    _minimum_team_size      = minimum_team_size;
-    _default_classification = default_classification;
-    _manual_classification  = manual_classification;
-    FillInConfig ();
-    ApplyConfig ();
+    _minimum_team_size     = minimum_team_size;
+    _manual_classification = manual_classification;
   }
 
   // --------------------------------------------------------------------------------
@@ -403,7 +399,6 @@ namespace People
           Team *team = (Team *) player;
 
           team->SetAttendingFromMembers  ();
-          team->SetAttributesFromMembers ();
           Update (team);
         }
         current = g_slist_next (current);
@@ -576,7 +571,29 @@ namespace People
   {
     Stage::ApplyConfig ();
 
-    ApplyConfig (NULL);
+    OnListChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::OnConfigChanged ()
+  {
+    if (IsPlugged ())
+    {
+      {
+        _manual_classification->_value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton")));
+
+        {
+          GtkAdjustment *w = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (_glade->GetWidget ("teamsize_entry")));
+
+          if (w)
+          {
+            _minimum_team_size->_value = gtk_adjustment_get_value (w);
+          }
+        }
+      }
+
+      OnListChanged ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -598,15 +615,6 @@ namespace People
       }
     }
 
-    if (_default_classification)
-    {
-      gchar *text = g_strdup_printf ("%d", _default_classification->_value);
-
-      gtk_entry_set_text (GTK_ENTRY (_glade->GetWidget ("default_classification_entry")),
-                          text);
-      g_free (text);
-    }
-
     if (_minimum_team_size)
     {
       GtkAdjustment *adj = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (_glade->GetWidget ("teamsize_entry")));
@@ -622,43 +630,11 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::ApplyConfig (Team *team)
   {
-    if (_manual_classification && _minimum_team_size && _default_classification)
+    if (_manual_classification && _minimum_team_size)
     {
-      _manual_classification->_value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (_glade->GetWidget ("manual_radiobutton")));
-
-      {
-        GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("default_classification_entry"));
-
-        if (w)
-        {
-          gchar *value = (gchar *) gtk_entry_get_text (w);
-
-          if (value)
-          {
-            _default_classification->_value = atoi (value);
-          }
-        }
-      }
-
-      {
-        GtkEntry *w = GTK_ENTRY (_glade->GetWidget ("teamsize_entry"));
-
-        if (w)
-        {
-          gchar *value = (gchar *) gtk_entry_get_text (w);
-
-          if (value)
-          {
-            _minimum_team_size->_value = atoi (value);
-          }
-        }
-      }
-
       if (team)
       {
-        team->SetDefaultClassification (_default_classification->_value);
-        team->SetMinimumSize           (_minimum_team_size->_value);
-        team->SetManualClassification  (_manual_classification->_value);
+        team->SetDefaultClassification (_worst_classification);
         Update (team);
       }
       else
@@ -673,10 +649,7 @@ namespace People
           {
             Team *current_team = (Team *) player;
 
-            current_team->SetDefaultClassification (_default_classification->_value);
-            current_team->SetMinimumSize           (_minimum_team_size->_value);
-            current_team->SetManualClassification  (_manual_classification->_value);
-            Update (current_team);
+            ApplyConfig (current_team);
           }
           current = g_slist_next (current);
         }
@@ -715,10 +688,7 @@ namespace People
     {
       SelectTreeMode ();
       _form->ShowPage ("Team");
-      gtk_widget_show (_glade->GetWidget ("team_classification_label"));
-      gtk_widget_show (_glade->GetWidget ("team_classification_viewport"));
-      gtk_widget_show (_glade->GetWidget ("teamsize_label"));
-      gtk_widget_show (_glade->GetWidget ("teamsize_viewport"));
+      gtk_widget_show (_glade->GetWidget ("team_hbox"));
       gtk_widget_show (_glade->GetWidget ("tree_control_hbox"));
 
       if (Locked () == FALSE)
@@ -730,10 +700,7 @@ namespace People
     {
       SelectFlatMode ();
       _form->HidePage ("Team");
-      gtk_widget_hide (_glade->GetWidget ("team_classification_label"));
-      gtk_widget_hide (_glade->GetWidget ("team_classification_viewport"));
-      gtk_widget_hide (_glade->GetWidget ("teamsize_label"));
-      gtk_widget_hide (_glade->GetWidget ("teamsize_viewport"));
+      gtk_widget_hide (_glade->GetWidget ("team_hbox"));
       gtk_widget_hide (_glade->GetWidget ("tree_control_hbox"));
 
       DisableDragAndDrop ();
@@ -852,6 +819,9 @@ namespace People
                                     NULL);
     }
 
+    team->SetMinimumSize          (_minimum_team_size);
+    team->SetManualClassification (_manual_classification);
+
     ApplyConfig (team);
   }
 
@@ -904,8 +874,6 @@ namespace People
       if (team)
       {
         fencer->SetTeam (_null_team);
-        team->SetAttendingFromMembers ();
-        Update (team);
       }
     }
 
@@ -919,23 +887,13 @@ namespace People
 
     if (player->Is ("Team"))
     {
-      player->SetChangeCbk ("attending",
-                            (Player::OnChange) OnAttrAttendingChanged,
-                            this);
       player->SetChangeCbk ("name",
                             (Player::OnChange) OnAttrTeamRenamed,
-                            this,
-                            Player::AFTER_CHANGE);
+                            this);
     }
 
     if (player->Is ("Fencer"))
     {
-      player->SetChangeCbk ("attending",
-                            (Player::OnChange) OnAttrAttendingChanged,
-                            this);
-      player->SetChangeCbk ("ranking",
-                            (Player::OnChange) OnAttrAttendingChanged,
-                            this);
       player->SetChangeCbk ("team",
                             (Player::OnChange) OnAttrTeamChanged,
                             this,
@@ -947,39 +905,106 @@ namespace People
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::TogglePlayerAttr (Player              *player,
                                             Player::AttributeId *attr_id,
-                                            gboolean             new_value)
+                                            gboolean             new_value,
+                                            gboolean             popup_on_error)
   {
     // Teams can't be toggled
     if (player && (player->Is ("Team") == FALSE))
     {
       Checkin::TogglePlayerAttr (player,
                                  attr_id,
-                                 new_value);
+                                 new_value,
+                                 popup_on_error);
+    }
+    else if (popup_on_error)
+    {
+      GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                  GTK_MESSAGE_INFO,
+                                                  GTK_BUTTONS_CLOSE,
+                                                  "Cochez les tireurs présents de l'équipe.\n"
+                                                  "Décochez les tireurs absents de l'équipe.\n\n"
+                                                  "Vous avez configuré la taille des équipes à %d tireurs minimum.",
+                                                  3);
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
     }
   }
 
   // --------------------------------------------------------------------------------
-  void CheckinSupervisor::OnAttrAttendingChanged (Player    *player,
-                                                  Attribute *attr,
-                                                  Object    *owner,
-                                                  guint      step)
+  void CheckinSupervisor::OnListChanged ()
   {
-    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
+    Checkin::OnListChanged ();
 
-    if (player->Is ("Fencer"))
+    UpdateWorstClassification ();
+    ApplyConfig (NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::UpdateWorstClassification ()
+  {
+    // Team attending.
+    // Needed to evaluate _worst_classification.
     {
-      Fencer *fencer = (Fencer *) player;
-      Team   *team   = fencer->GetTeam ();
+      GSList *current = _player_list;
 
-      if (team)
+      while (current)
       {
-        team->SetAttendingFromMembers ();
-        supervisor->Update (team);
+        Player *player = (Player *) current->data;
+
+        if (player->Is ("Team"))
+        {
+          Team *current_team = (Team *) player;
+
+          current_team->SetAttendingFromMembers ();
+        }
+        current = g_slist_next (current);
       }
     }
-    else if (player->Is ("Team"))
+
+    // _worst_classification
     {
-      supervisor->Update (player);
+      Player::AttributeId  ranking_attr_id  ("ranking");
+      GSList              *current = _player_list;
+
+      _worst_classification = 0;
+      while (current)
+      {
+        Player *player = (Player *) current->data;
+
+        if (player->Is ("fencer"))
+        {
+          Fencer *fencer = (Fencer *) player;
+          Team   *team   = fencer->GetTeam ();
+
+          if (team
+              && Checkin::PresentPlayerFilter (team,   this)
+              && Checkin::PresentPlayerFilter (fencer, this))
+          {
+            Attribute *attr = fencer->GetAttribute (&ranking_attr_id);
+            guint      rank = attr->GetUIntValue ();
+
+            if (rank > _worst_classification)
+            {
+              _worst_classification = rank;
+            }
+          }
+        }
+
+        current = g_slist_next (current);
+      }
+    }
+
+    _worst_classification++;
+
+    // Display
+    {
+      GtkLabel *w    = GTK_LABEL (_glade->GetWidget ("worst_label"));
+      gchar    *text = g_strdup_printf ("(<b>%d</b> %s)", _worst_classification, gettext ("when unknown"));
+
+      gtk_label_set_markup (w,
+                            text);
+      g_free (text);
     }
   }
 
@@ -1011,6 +1036,17 @@ namespace People
     }
 
     supervisor->RegisterNewTeam (team);
+  }
+
+  // --------------------------------------------------------------------------------
+  void CheckinSupervisor::Add (Player *player)
+  {
+    if (player->Is ("Team"))
+    {
+      RegisterNewTeam ((Team *) player);
+    }
+
+    Checkin::Add (player);
   }
 
   // --------------------------------------------------------------------------------
@@ -1062,7 +1098,6 @@ namespace People
             team = (Team *) PlayerFactory::CreatePlayer ("Team");
 
             team->SetName (team_name);
-            supervisor->RegisterNewTeam (team);
             supervisor->Add (team);
           }
         }
@@ -1114,9 +1149,6 @@ namespace People
       }
     }
 
-    Checkin::OnPlayerEventFromForm (player,
-                                    event);
-
     if (player->Is ("Fencer"))
     {
       Fencer *fencer = (Fencer *) player;
@@ -1125,9 +1157,11 @@ namespace People
       if (team)
       {
         team->SetAttributesFromMembers ();
-        Update (team);
       }
     }
+
+    Checkin::OnPlayerEventFromForm (player,
+                                    event);
   }
 
   // --------------------------------------------------------------------------------
@@ -1152,20 +1186,6 @@ namespace People
     importer->Release ();
 
     OnListChanged ();
-  }
-
-  // --------------------------------------------------------------------------------
-  void CheckinSupervisor::OnManualRadioButtonToggled (GtkToggleButton *button)
-  {
-    if (gtk_toggle_button_get_active (button))
-    {
-      gtk_widget_hide (GTK_WIDGET (_glade->GetWidget ("derived_table")));
-    }
-    else
-    {
-      gtk_widget_show         (GTK_WIDGET (_glade->GetWidget ("derived_table")));
-      gtk_widget_queue_resize (GTK_WIDGET (_glade->GetWidget ("team_table")));
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1380,20 +1400,29 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
-  extern "C" G_MODULE_EXPORT void on_manual_radiobutton_toggled (GtkWidget *widget,
-                                                                 Object    *owner)
-  {
-    CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
-
-    supervisor->OnManualRadioButtonToggled (GTK_TOGGLE_BUTTON (widget));
-  }
-
-  // --------------------------------------------------------------------------------
   extern "C" G_MODULE_EXPORT void on_ranking_toolbutton_clicked (GtkWidget *widget,
                                                                  Object    *owner)
   {
     CheckinSupervisor *supervisor = dynamic_cast <CheckinSupervisor *> (owner);
 
     supervisor->OnImportRanking ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_teamsize_entry_value_changed (GtkSpinButton *spin_button,
+                                                                   Object        *owner)
+  {
+    CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
+
+    c->OnConfigChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_manual_radiobutton_toggled (GtkToggleButton *spin_button,
+                                                                 Object          *owner)
+  {
+    CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
+
+    c->OnConfigChanged ();
   }
 }

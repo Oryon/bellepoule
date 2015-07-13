@@ -408,7 +408,7 @@ void Player::SetAttributeValue (AttributeId *attr_id,
   {
     return;
   }
-  else if (attr->GetStrValue () && value && strcmp (attr->GetStrValue (), value) == 0)
+  else if (attr->CompareWith (value) == 0)
   {
     return;
   }

@@ -401,7 +401,8 @@ namespace People
   // --------------------------------------------------------------------------------
   void PlayersList::TogglePlayerAttr (Player              *player,
                                       Player::AttributeId *attr_id,
-                                      gboolean             new_value)
+                                      gboolean             new_value,
+                                      gboolean             popup_on_error)
   {
     if (player)
     {
@@ -449,7 +450,8 @@ namespace People
 
       TogglePlayerAttr (p,
                         attr_id,
-                        !is_active);
+                        !is_active,
+                        TRUE);
     }
     attr_id->Release ();
     gtk_tree_path_free (toggeled_path);
@@ -1199,50 +1201,52 @@ namespace People
                                       gint               page_nr)
   {
     guint       players_count = 0;
+    gboolean    print_full_list = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"));
     GtkTreeIter iter;
-    gboolean    iter_is_valid;
 
-    iter_is_valid = gtk_tree_model_get_iter_first (gtk_tree_view_get_model (_tree_view),
-                                                   &iter);
-
-    if (iter_is_valid)
+    if (gtk_tree_model_get_iter_first (gtk_tree_view_get_model (_tree_view),
+                                       &iter))
     {
+      Player *player = GetPlayer (gtk_tree_view_get_model (_tree_view), &iter);
+
+      if ((print_full_list == FALSE) && (PlayerIsPrintable (player) == FALSE))
+      {
+        player = GetNextPrintablePlayer (gtk_tree_view_get_model (_tree_view),
+                                         &iter,
+                                         print_full_list);
+      }
       if (page_nr != -1)
       {
         for (guint i = 0; i < page_nr*_nb_player_per_page; i++)
         {
-          iter_is_valid = IterNextNode (gtk_tree_view_get_model (_tree_view),
-                                        &iter);
+          player = GetNextPrintablePlayer (gtk_tree_view_get_model (_tree_view),
+                                           &iter,
+                                           print_full_list);
         }
       }
 
-      while (iter_is_valid)
+      while (player)
       {
-        Player *current_player = GetPlayer (gtk_tree_view_get_model (_tree_view), &iter);
+        GtkTreePath *path = gtk_tree_model_get_path (gtk_tree_view_get_model (_tree_view),
+                                                     &iter);
 
-        if (   (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"))
-            || PlayerIsPrintable (current_player))
+        PrintPlayer (goo_canvas_get_root_item (canvas),
+                     context,
+                     path,
+                     player,
+                     players_count+1,
+                     (page_nr == -1));
+        gtk_tree_path_free (path);
+        players_count++;
+
+        if ((page_nr != -1) && (players_count >= _nb_player_per_page))
         {
-          GtkTreePath *path = gtk_tree_model_get_path (gtk_tree_view_get_model (_tree_view),
-                                                       &iter);
-
-          PrintPlayer (goo_canvas_get_root_item (canvas),
-                       context,
-                       path,
-                       current_player,
-                       players_count+1,
-                       (page_nr == -1));
-          gtk_tree_path_free (path);
-          players_count++;
-
-          if ((page_nr != -1) && (players_count >= _nb_player_per_page))
-          {
-            break;
-          }
+          break;
         }
 
-        iter_is_valid = IterNextNode (gtk_tree_view_get_model (_tree_view),
-                                      &iter);
+        player = GetNextPrintablePlayer (gtk_tree_view_get_model (_tree_view),
+                                         &iter,
+                                         print_full_list);
       }
     }
 
@@ -1390,6 +1394,32 @@ namespace People
       }
       cairo_restore (cr);
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  Player *PlayersList::GetNextPrintablePlayer (GtkTreeModel *model,
+                                               GtkTreeIter  *iter,
+                                               gboolean      print_full_list)
+  {
+    while (1)
+    {
+      if (IterNextNode (model,
+                        iter) == FALSE)
+      {
+        return NULL;
+      }
+
+      {
+        Player *player = GetPlayer (gtk_tree_view_get_model (_tree_view), iter);
+
+        if (print_full_list || PlayerIsPrintable (player))
+        {
+          return player;
+        }
+      }
+    }
+
+    return NULL;
   }
 
   // --------------------------------------------------------------------------------
