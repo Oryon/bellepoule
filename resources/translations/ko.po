@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-16 13:46+0200\n"
+"POT-Creation-Date: 2015-07-13 17:22+0200\n"
 "PO-Revision-Date: 2013-04-11 00:53+0000\n"
 "Last-Translator: betonniere <Unknown>\n"
 "Language-Team: Korean <ko@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-06-26 04:38+0000\n"
-"X-Generator: Launchpad (build 17578)\n"
+"X-Launchpad-Export-Date: 2015-07-14 05:18+0000\n"
+"X-Generator: Launchpad (build 17628)\n"
 "Language: ko\n"
 
 msgid "Classification"
@@ -324,6 +324,19 @@ msgstr ""
 msgid "Team size"
 msgstr ""
 
+#, c-format
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr ""
+
+msgid "Tick the present players of the team."
+msgstr ""
+
+msgid "Untick the absent players of the team."
+msgstr ""
+
+msgid "when unknown"
+msgstr ""
+
 msgid "<b>Smartpoule</b> configuration code"
 msgstr ""
 
@@ -513,21 +526,6 @@ msgstr ""
 msgid "Eliminated"
 msgstr ""
 
-msgid "Team classification"
-msgstr ""
-
-msgid "Manually assigned"
-msgstr ""
-
-msgid "Derived from fencer classification"
-msgstr ""
-
-msgid "when unknown"
-msgstr ""
-
-msgid "Minimum team size"
-msgstr ""
-
 msgid "Fencer list printing"
 msgstr "선수 리스트 인쇄"
 
@@ -553,6 +551,18 @@ msgid "Import fencers"
 msgstr ""
 
 msgid "Import ranking"
+msgstr ""
+
+msgid "Minimum team size"
+msgstr ""
+
+msgid "Team classification"
+msgstr ""
+
+msgid "Manually assigned"
+msgstr ""
+
+msgid "Derived from fencer classification"
 msgstr ""
 
 msgid "Date of competition"
@@ -788,6 +798,9 @@ msgstr ""
 "펜싱 토너먼트 관리 소프트웨어.\n"
 "\n"
 "\n"
+
+msgid "WPA"
+msgstr ""
 
 msgid "Security"
 msgstr ""

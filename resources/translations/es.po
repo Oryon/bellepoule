@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bellepoule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-16 13:46+0200\n"
-"PO-Revision-Date: 2013-04-11 00:52+0000\n"
-"Last-Translator: betonniere <Unknown>\n"
+"POT-Creation-Date: 2015-07-13 17:22+0200\n"
+"PO-Revision-Date: 2015-07-13 08:42+0000\n"
+"Last-Translator: Ignacio Gil <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-06-26 04:38+0000\n"
-"X-Generator: Launchpad (build 17578)\n"
+"X-Launchpad-Export-Date: 2015-07-14 05:18+0000\n"
+"X-Generator: Launchpad (build 17628)\n"
 "Language: \n"
 
 msgid "Fenced places"
@@ -90,7 +90,7 @@ msgid "All files"
 msgstr "Todos los ficheros"
 
 msgid "Close without saving"
-msgstr ""
+msgstr "Cerrar sin guardar cambios"
 
 msgid "ref"
 msgstr "ref"
@@ -99,7 +99,7 @@ msgid "place"
 msgstr "lugar"
 
 msgid "team"
-msgstr ""
+msgstr "equipo"
 
 msgid "last name"
 msgstr "apellido"
@@ -126,7 +126,7 @@ msgid "licence"
 msgstr "licencia"
 
 msgid "IP address"
-msgstr ""
+msgstr "Dirección IP"
 
 msgid "rate"
 msgstr "tasa"
@@ -171,7 +171,7 @@ msgid "Victories"
 msgstr "Victorias"
 
 msgid "Bouts"
-msgstr ""
+msgstr "Asaltos"
 
 msgid "Vict./Bouts (‰)"
 msgstr "Vict./Asaltos (‰)"
@@ -201,19 +201,19 @@ msgid "Free"
 msgstr "Libre"
 
 msgid "connection"
-msgstr ""
+msgstr "conexión"
 
 msgid "Broken"
-msgstr ""
+msgstr "Defectuosos"
 
 msgid "Waiting"
-msgstr ""
+msgstr "En espera"
 
 msgid "OK"
-msgstr ""
+msgstr "Aceptar"
 
 msgid "Manual"
-msgstr ""
+msgstr "Manual"
 
 #, c-format
 msgid "Round #%d"
@@ -235,21 +235,23 @@ msgid ""
 "<b><big>Because of ties, the quota is exceeded.\n"
 "Do you wish to add a barrage round?</big></b>"
 msgstr ""
+"<b><big>Se ha excedido la cuota debido a un empate.\n"
+"¿Desea añadir una ronda de desempate?</big></b>"
 
 msgid "Barrage"
-msgstr ""
+msgstr "Desempate"
 
 msgid "Meal"
-msgstr ""
+msgstr "Comida"
 
 msgid "Drink"
-msgstr ""
+msgstr "Bebida"
 
 msgid "Dessert"
-msgstr ""
+msgstr "Postre"
 
 msgid "Coffee"
-msgstr ""
+msgstr "Café"
 
 msgid "Payment book"
 msgstr "Libro de pagos"
@@ -315,7 +317,7 @@ msgid "Check-in"
 msgstr "Registro"
 
 msgid "** Without team **"
-msgstr ""
+msgstr "**Sin equipo**"
 
 msgid "Expected fencers"
 msgstr ""
@@ -324,10 +326,23 @@ msgid "Expected teams"
 msgstr ""
 
 msgid "Team size"
+msgstr "Tamaño del equipo"
+
+#, c-format
+msgid "You have configured the minimum team size to <b>%d</b> fencers."
+msgstr ""
+
+msgid "Tick the present players of the team."
+msgstr ""
+
+msgid "Untick the absent players of the team."
+msgstr ""
+
+msgid "when unknown"
 msgstr ""
 
 msgid "<b>Smartpoule</b> configuration code"
-msgstr ""
+msgstr "Código de configuración <b>Smartpoule</b>"
 
 msgid ""
 "Uncheck this box to quicken the data input. The corresponding field will be "
@@ -349,16 +364,16 @@ msgid "All PDF files (.PDF)"
 msgstr "Todos los archivos PDF (.pdf)"
 
 msgid "All HTML files (.HTML)"
-msgstr ""
+msgstr "Todos los ficheros HTML (.HTML)"
 
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 msgid "Paste"
-msgstr ""
+msgstr "Pegar"
 
 msgid "Choose a rank file to apply..."
-msgstr ""
+msgstr "Escoja un fichero de ranking a aplicar"
 
 msgid "Rank files: cotcot, xml, txt (France)"
 msgstr ""
@@ -373,10 +388,10 @@ msgid "Pools arrangement"
 msgstr "Arreglo de pools"
 
 msgid "or"
-msgstr ""
+msgstr "o"
 
 msgid "Swapping failed"
-msgstr ""
+msgstr "Intercambio fallido"
 
 msgid "Wrong fencers count!"
 msgstr ""
@@ -461,7 +476,7 @@ msgid "Match %s"
 msgstr "Asalto %s"
 
 msgid "No winner!"
-msgstr ""
+msgstr "¡No hay un vencedor!"
 
 msgid "Table classification"
 msgstr "Tabla de clasificaciones"
@@ -482,13 +497,13 @@ msgid "Short text"
 msgstr ""
 
 msgid "Graphic"
-msgstr ""
+msgstr "Gráfico"
 
 msgid "Data to display"
 msgstr "Datos a mostrar"
 
 msgid "Visibility"
-msgstr ""
+msgstr "Visibilidad"
 
 msgid "Data"
 msgstr "Datos"
@@ -512,22 +527,7 @@ msgid "Promoted"
 msgstr ""
 
 msgid "Eliminated"
-msgstr ""
-
-msgid "Team classification"
-msgstr ""
-
-msgid "Manually assigned"
-msgstr ""
-
-msgid "Derived from fencer classification"
-msgstr ""
-
-msgid "when unknown"
-msgstr ""
-
-msgid "Minimum team size"
-msgstr ""
+msgstr "Eliminado"
 
 msgid "Fencer list printing"
 msgstr "Imprimiendo la lista de esgrimistas"
@@ -551,9 +551,21 @@ msgid "all"
 msgstr "todos"
 
 msgid "Import fencers"
-msgstr ""
+msgstr "Importar tiradores"
 
 msgid "Import ranking"
+msgstr "Importar ranking"
+
+msgid "Minimum team size"
+msgstr ""
+
+msgid "Team classification"
+msgstr ""
+
+msgid "Manually assigned"
+msgstr ""
+
+msgid "Derived from fencer classification"
 msgstr ""
 
 msgid "Date of competition"
@@ -572,10 +584,10 @@ msgid "Category"
 msgstr "Categoría"
 
 msgid "Individual"
-msgstr ""
+msgstr "Individual"
 
 msgid "Team"
-msgstr ""
+msgstr "Equipo"
 
 msgid "<b>Type</b>"
 msgstr "<b>Tipo</b>"
@@ -644,13 +656,13 @@ msgid "Form"
 msgstr ""
 
 msgid "Export to <b>HTML</b>"
-msgstr ""
+msgstr "Exportar a <b>HTML</b>"
 
 msgid "Export to <b>FFF</b>"
-msgstr ""
+msgstr "Exportar a <b>FFF</b>"
 
 msgid "Export to <b>PDF</b>"
-msgstr ""
+msgstr "Exportar a <b>PDF</b>"
 
 msgid "Mask or unmask some data type as well as define their display order."
 msgstr "Mostrar o ocultar ciertos tipos de datos, así que definir su órden."
@@ -791,11 +803,14 @@ msgstr ""
 "\n"
 "\n"
 
-msgid "Security"
+msgid "WPA"
 msgstr ""
 
+msgid "Security"
+msgstr "Seguridad"
+
 msgid "Passphrase"
-msgstr ""
+msgstr "Contraseña"
 
 msgid ""
 "Enter your WIFI network settings here.\n"
@@ -813,10 +828,10 @@ msgid "FTP server"
 msgstr "Servidor FTP"
 
 msgid "<b>Web site</b>"
-msgstr ""
+msgstr "<b>Sitio Web</b>"
 
 msgid "<b>Video server</b>"
-msgstr ""
+msgstr "<b>Servidor de video</b>"
 
 msgid "BellePoule - Fencing tournament"
 msgstr "BellePoule - Torneo de esgrima"
@@ -849,13 +864,13 @@ msgid "Ecosystem"
 msgstr ""
 
 msgid "WIFI"
-msgstr ""
+msgstr "WiFi"
 
 msgid "Score sheet scanner"
 msgstr ""
 
 msgid "Publication"
-msgstr ""
+msgstr "Publicación"
 
 msgid "New version!"
 msgstr "¡Versión nueva!"
