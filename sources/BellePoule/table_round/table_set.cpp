@@ -712,9 +712,9 @@ namespace Table
       _supervisor->RefreshMatchRate (-_nb_matchs);
     }
 
-    g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
-                                          (void *) on_from_to_table_combobox_changed,
-                                          (Object *) this);
+    __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("from_table_combobox"),
+                                                            (void *) on_from_to_table_combobox_changed,
+                                                            (Object *) this);
 
     if (_tree_root)
     {
@@ -2744,29 +2744,32 @@ namespace Table
 
       // E-scoresheet
       {
-        GSList     *current_match    = _match_to_print;
         GHashTable *match_list_table = g_hash_table_new (NULL, NULL);
 
-        while (current_match)
         {
-          Match  *match           = (Match *) current_match->data;
-          GSList *current_referee = match->GetRefereeList ();
+          GSList *current_match = _match_to_print;
 
-          while (current_referee)
+          while (current_match)
           {
-            GSList *match_list = (GSList *) g_hash_table_lookup (match_list_table,
-                                                                 (gconstpointer) current_referee->data);
+            Match  *match           = (Match *) current_match->data;
+            GSList *current_referee = match->GetRefereeList ();
 
-            match_list = g_slist_append (match_list,
-                                         match);
-            g_hash_table_insert (match_list_table,
-                                 (gpointer) current_referee->data,
-                                 match_list);
+            while (current_referee)
+            {
+              GSList *match_list = (GSList *) g_hash_table_lookup (match_list_table,
+                                                                   (gconstpointer) current_referee->data);
 
-            current_referee = g_slist_next (current_referee);
+              match_list = g_slist_append (match_list,
+                                           match);
+              g_hash_table_insert (match_list_table,
+                                   (gpointer) current_referee->data,
+                                   match_list);
+
+              current_referee = g_slist_next (current_referee);
+            }
+
+            current_match = g_slist_next (current_match);
           }
-
-          current_match = g_slist_next (current_match);
         }
 
         {
@@ -2964,8 +2967,6 @@ namespace Table
 
     // Remove previous drawing layout from the ScrolledWindow
     {
-      GtkWidget *scrolled_window = _glade->GetWidget ("preview_scrolledwindow");
-
       drawing_layout = gtk_bin_get_child (GTK_BIN (scrolled_window));
       if (drawing_layout)
       {
@@ -3042,9 +3043,9 @@ namespace Table
       gtk_container_remove (GTK_CONTAINER (scrolled_window), preview_layout);
     }
 
-    g_signal_handlers_disconnect_by_func (_glade->GetWidget ("cutting_count_combobox"),
-                                          (void *) on_cutting_count_combobox_changed,
-                                          (Object *) this);
+    __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("cutting_count_combobox"),
+                                                            (void *) on_cutting_count_combobox_changed,
+                                                            (Object *) this);
 
     gtk_print_operation_preview_end_preview (preview);
     gtk_widget_hide (preview_dialog);
@@ -3515,10 +3516,10 @@ namespace Table
 
     if (gtk_dialog_run (GTK_DIALOG (print_dialog)) == GTK_RESPONSE_OK)
     {
-      GtkWidget *w          = _glade->GetWidget ("table_radiobutton");
+      GtkWidget *table_w    = _glade->GetWidget ("table_radiobutton");
       gchar     *print_name = GetPrintName ();
 
-      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w)))
+      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (table_w)))
       {
         _print_session._full_table = TRUE;
 
@@ -3526,8 +3527,8 @@ namespace Table
       }
       else
       {
-        GtkWidget *w         = _glade->GetWidget ("all_radiobutton");
-        gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (w));
+        GtkWidget *all_w     = _glade->GetWidget ("all_radiobutton");
+        gboolean   all_sheet = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (all_w));
 
         LookForMatchToPrint (NULL,
                              all_sheet);

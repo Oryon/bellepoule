@@ -853,18 +853,18 @@ namespace People
 
         while (current_player)
         {
-          Player              *p           = (Player *) current_player->data;
-          GtkTreeRowReference *current_ref = _store->GetTreeRowRef (model, p);
+          Player              *player     = (Player *) current_player->data;
+          GtkTreeRowReference *player_ref = _store->GetTreeRowRef (model, player);
 
-          if (current_ref)
+          if (player_ref)
           {
             GtkTreePath *current_path;
 
-            current_path = gtk_tree_row_reference_get_path (current_ref);
+            current_path = gtk_tree_row_reference_get_path (player_ref);
             if (gtk_tree_path_compare (selected_path,
                                        current_path) == 0)
             {
-              Remove (p);
+              Remove (player);
               gtk_tree_path_free (current_path);
               break;
             }
@@ -874,6 +874,7 @@ namespace People
 
           current_player = g_slist_next (current_player);
         }
+
         gtk_tree_path_free (selected_path);
         current_ref = g_list_next (current_ref);
       }
@@ -1200,7 +1201,7 @@ namespace People
                                       GtkPrintContext   *context,
                                       gint               page_nr)
   {
-    guint       players_count = 0;
+    guint       players_count   = 0;
     gboolean    print_full_list = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (operation), "PRINT_STAGE_VIEW"));
     GtkTreeIter iter;
 
@@ -1215,6 +1216,7 @@ namespace People
                                          &iter,
                                          print_full_list);
       }
+
       if (page_nr != -1)
       {
         for (guint i = 0; i < page_nr*_nb_player_per_page; i++)

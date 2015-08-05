@@ -77,12 +77,12 @@ void CanvasModule::FreezeZoomer ()
 {
   if (_zoomer && _scrolled_window)
   {
-    g_signal_handlers_disconnect_by_func (_zoomer,
-                                          (void *) on_zoom_changed, this);
-    g_signal_handlers_disconnect_by_func (gtk_scrolled_window_get_hadjustment (_scrolled_window),
-                                          (void *) on_hadjustment_changed, this);
-    g_signal_handlers_disconnect_by_func (gtk_scrolled_window_get_vadjustment (_scrolled_window),
-                                          (void *) on_vadjustment_changed, this);
+    __gcc_extension__ g_signal_handlers_disconnect_by_func (_zoomer,
+                                                            (void *) on_zoom_changed, this);
+    __gcc_extension__ g_signal_handlers_disconnect_by_func (gtk_scrolled_window_get_hadjustment (_scrolled_window),
+                                                            (void *) on_hadjustment_changed, this);
+    __gcc_extension__ g_signal_handlers_disconnect_by_func (gtk_scrolled_window_get_vadjustment (_scrolled_window),
+                                                            (void *) on_vadjustment_changed, this);
   }
 }
 

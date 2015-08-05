@@ -57,6 +57,12 @@
 #define GTK_ANCHOR_WEST   GOO_CANVAS_ANCHOR_WEST
 #endif
 
+#ifdef __GNUC__
+#define __gcc_extension__ __extension__
+#else
+#define __gcc_extension__
+#endif
+
 class FlashCode;
 
 class Object

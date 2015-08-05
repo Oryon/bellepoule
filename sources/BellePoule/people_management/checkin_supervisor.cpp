@@ -361,28 +361,30 @@ namespace People
     // Two different file formats are used. One for preparation one for result.
     // Both are almost similar except that they use a same keyword ("classement")
     // for a different meanning.
-    GSList *current = _player_list;
-
-    while (current)
     {
-      Player *p = (Player *) current->data;
+      GSList *current = _player_list;
 
-      if (p)
+      while (current)
       {
-        Player::AttributeId  place_attr_id ("final_rank");
-        Attribute           *final_rank  = p->GetAttribute (&place_attr_id);
+        Player *p = (Player *) current->data;
 
-        if (final_rank)
+        if (p)
         {
-          Player::AttributeId ranking_attr_id ("ranking");
+          Player::AttributeId  place_attr_id ("final_rank");
+          Attribute           *final_rank  = p->GetAttribute (&place_attr_id);
 
-          p->SetAttributeValue (&ranking_attr_id,
-                                final_rank->GetUIntValue ());
-          p->RemoveAttribute (&place_attr_id);
-          Update (p);
+          if (final_rank)
+          {
+            Player::AttributeId ranking_attr_id ("ranking");
+
+            p->SetAttributeValue (&ranking_attr_id,
+                                  final_rank->GetUIntValue ());
+            p->RemoveAttribute (&place_attr_id);
+            Update (p);
+          }
         }
+        current = g_slist_next (current);
       }
-      current = g_slist_next (current);
     }
 
     // FFE xml files may have teams with attending attribute set!
@@ -859,9 +861,9 @@ namespace People
 
       while (current)
       {
-        Player *player = (Player *) current->data;
+        Player *member = (Player *) current->data;
 
-        Remove (player);
+        Remove (member);
         current = g_slist_next (current);
       }
       g_slist_free (members);
@@ -918,14 +920,25 @@ namespace People
     }
     else if (popup_on_error)
     {
-      GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
-                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                  GTK_MESSAGE_INFO,
-                                                  GTK_BUTTONS_CLOSE,
-                                                  "Cochez les tireurs présents de l'équipe.\n"
-                                                  "Décochez les tireurs absents de l'équipe.\n\n"
-                                                  "Vous avez configuré la taille des équipes à %d tireurs minimum.",
-                                                  3);
+      GtkWidget *dialog;
+      gchar *size_msg = g_strdup_printf (gettext ("You have configured the minimum team size to <b>%d</b> fencers."),
+                                         _minimum_team_size->_value);
+      gchar *full_msg = g_strdup_printf ("%s\n%s\n\n%s",
+                                        gettext ("Tick the present players of the team."),
+                                        gettext ("Untick the absent players of the team."),
+                                        size_msg);
+
+      dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_toplevel (GetRootWidget ())),
+                                       GTK_DIALOG_DESTROY_WITH_PARENT,
+                                       GTK_MESSAGE_INFO,
+                                       GTK_BUTTONS_CLOSE,
+                                       NULL);
+      gtk_message_dialog_set_markup (GTK_MESSAGE_DIALOG (dialog),
+                                     full_msg);
+
+      g_free (size_msg);
+      g_free (full_msg);
+
       gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
     }
@@ -1329,9 +1342,9 @@ namespace People
 
         if (dest->Is ("Fencer"))
         {
-          Fencer *fencer = (Fencer *) dest;
+          Fencer *dest_fencer = (Fencer *) dest;
 
-          dest = fencer->GetTeam ();
+          dest = dest_fencer->GetTeam ();
         }
 
         fencer->SetAttributeValue (&attr_id,

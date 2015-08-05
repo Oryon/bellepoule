@@ -72,9 +72,9 @@ namespace Table
   // --------------------------------------------------------------------------------
   void TableSetBorder::MuteCallbacks ()
   {
-    g_signal_handlers_disconnect_by_func (_widget,
-                                          (void *) _callback,
-                                          _owner);
+    __gcc_extension__ g_signal_handlers_disconnect_by_func (_widget,
+                                                            (void *) _callback,
+                                                            _owner);
     gtk_list_store_clear (_liststore);
   }
 
