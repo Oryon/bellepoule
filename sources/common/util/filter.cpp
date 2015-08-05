@@ -22,7 +22,7 @@
 
 #include "filter.hpp"
 
-static const gchar *look_image[AttributeDesc::NB_LOOK] =
+static const gchar *look_images[AttributeDesc::NB_LOOK] =
 {
   N_ ("Long text"),
   N_ ("Short text"),
@@ -50,7 +50,7 @@ Filter::Filter (GSList *attr_list,
     {
       gtk_list_store_append (_look_store, &iter);
       gtk_list_store_set (_look_store, &iter,
-                          LOOK_IMAGE_str,  gettext (look_image[i]),
+                          LOOK_IMAGE_str,  gettext (look_images[i]),
                           LOOK_VALUE_uint, i,
                           -1);
     }
@@ -76,7 +76,7 @@ Filter::Filter (GSList *attr_list,
                           ATTR_USER_NAME_str,   desc->_user_name,
                           ATTR_XML_NAME_ptr,    desc->_code_name,
                           ATTR_VISIBILITY_bool, FALSE,
-                          ATTR_LOOK_IMAGE_str,  gettext (look_image[desc->_favorite_look]),
+                          ATTR_LOOK_IMAGE_str,  gettext (look_images[desc->_favorite_look]),
                           ATTR_LOOK_VALUE_uint, desc->_favorite_look,
                           -1);
       current = g_slist_next (current);

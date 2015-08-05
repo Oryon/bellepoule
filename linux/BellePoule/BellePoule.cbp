@@ -35,6 +35,7 @@
 			<Add alias="Debug" targets="Lib_Debug;HallManager_Debug;BellePoule_Debug;" />
 		</VirtualTargets>
 		<Compiler>
+			<Add option="-Wshadow" />
 			<Add option="-Winit-self" />
 			<Add option="-Wredundant-decls" />
 			<Add option="-Wcast-align" />
@@ -43,22 +44,22 @@
 			<Add option="-Wmissing-include-dirs" />
 			<Add option="-Wswitch-enum" />
 			<Add option="-Wswitch-default" />
+			<Add option="-pedantic" />
 			<Add option="-std=c++98" />
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-g" />
+			<Add option="-fPIC" />
+			<Add option="-Wno-deprecated-declarations" />
 			<Add option="-Wno-int-to-pointer-cast" />
 			<Add option="-Wno-long-long" />
 			<Add option="-Wno-unused-parameter" />
-			<Add option="-Wno-shadow" />
-			<Add option="-Wno-vla" />
 			<Add option="-Wno-variadic-macros" />
-			<Add option="-pthread -D_REENTRANT" />
-			<Add option="-fPIC" />
-			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
+			<Add option="-Wno-vla" />
 			<Add option="-DGDK_DISABLE_DEPRECATED" />
+			<Add option="-DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGSEAL_ENABLE" />
-			<Add option="-DDEBUG=1" />
+			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
 			<Add directory="../../sources/BellePoule" />
 			<Add directory="../../sources/common" />
 			<Add directory="/usr/include/gtk-2.0" />

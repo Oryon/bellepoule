@@ -8,9 +8,20 @@ RELEASE = $(EXEC)_$(VERSION)
 UBUNTU  = precise
 V       = 1
 
-CC = gcc
+ifeq ($(UBUNTU), windows)
+CC = i586-mingw32msvc-g++
+else
+CC                = gcc
+prepare_ubuntu    = prepare_ubuntu
+prepare_www       = prepare_www
+prepare_examples  = prepare_examples
+prepare_resources = prepare_resources
+endif
+
 ifeq ($(TARGET), Debug)
 CC += -g
+else
+CC += -O2
 endif
 
 MODULE  = common/network
@@ -21,34 +32,104 @@ MODULE += BellePoule/pool_round/smart_swapper
 MODULE += BellePoule/table_round
 
 CFLAGS  =
-CFLAGS += -Wshadow
-CFLAGS += -Winit-self
-CFLAGS += -Wredundant-decls
-CFLAGS += -Wcast-align
-CFLAGS += -Wundef
-CFLAGS += -Wunreachable-code
-CFLAGS += -Wmissing-include-dirs
-CFLAGS += -Wswitch-enum
-CFLAGS += -Wswitch-default
 CFLAGS += -pedantic
-CFLAGS += -std=c++98
-CFLAGS += -Wextra
+CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
+CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
+CFLAGS += -DGDK_DISABLE_DEPRECATED
+CFLAGS += -DGSEAL_ENABLE
 CFLAGS += -Wall
-CFLAGS += -Wno-int-to-pointer-cast
+CFLAGS += -Wcast-align
+CFLAGS += -Wextra
+CFLAGS += -Winit-self
+CFLAGS += -Wmissing-include-dirs
 CFLAGS += -Wno-long-long
 CFLAGS += -Wno-unused-parameter
-CFLAGS += -Wno-shadow
-CFLAGS += -Wno-vla
 CFLAGS += -Wno-variadic-macros
-CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
-CFLAGS += -Isources/common
-CFLAGS += -Isources/BellePoule
+CFLAGS += -Wshadow
+CFLAGS += -Wswitch-default
+CFLAGS += -Wswitch-enum
+CFLAGS += -Wundef
 ifeq ($(TARGET), Debug)
 CFLAGS += -DDEBUG=1
 endif
 
+ifeq ($(UBUNTU), windows)
+CFLAGS += -mms-bitfields
+CFLAGS += -D_FILE_OFFSET_BITS=32
+CFLAGS += -DWINDOWS_TEMPORARY_PATCH=1
+CFLAGS += -DWIN32
+CFLAGS += -DLIBXML2_STATIC
+else
+CFLAGS += -std=c++98
+CFLAGS += -Wno-int-to-pointer-cast
+CFLAGS += -Wno-vla
+CFLAGS += -Wno-deprecated-declarations
+CFLAGS += -Wredundant-decls
+CFLAGS += -Wunreachable-code
+CFLAGS += $(shell pkg-config --cflags gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
+endif
+
+ifeq ($(UBUNTU), windows)
+CFLAGS += -I/usr/i586-mingw32msvc/include
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/msys/1.0/include
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/gtk-2.0
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/cairo
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/gdk-pixbuf-2.0
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/glib-2.0
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/lib/glib-2.0/include
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/pango-1.0
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/lib/gtk-2.0/include
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/atk-1.0
+CFLAGS += -I/home/yannick/.wine/drive_c/MinGW/include/goocanvas-1.0.0/goocanvas
+endif
+
+CFLAGS += -Isources/common
+CFLAGS += -Isources/BellePoule
+
+
 LDFLAGS  = -lstdc++
+
+ifeq ($(UBUNTU), windows)
+LDFLAGS += -mwindows
+LDFLAGS += -lgtk-win32-2.0
+LDFLAGS += -lgobject-2.0
+LDFLAGS += -lglib-2.0
+LDFLAGS += -llibgthread-2.0
+LDFLAGS += -lgoocanvas
+LDFLAGS += -lgdk-win32-2.0
+LDFLAGS += -latk-1.0
+LDFLAGS += -lgio-2.0
+LDFLAGS += -lgdk_pixbuf-2.0
+LDFLAGS += -lpangowin32-1.0
+LDFLAGS += -lgdi32
+LDFLAGS += -lpangocairo-1.0
+LDFLAGS += -lpango-1.0
+LDFLAGS += -lcairo
+LDFLAGS += -lgmodule-2.0
+LDFLAGS += -lintl
+LDFLAGS += -lws2_32
+LDFLAGS += -lcurl
+LDFLAGS += -lcurldll
+LDFLAGS += -lz
+LDFLAGS += -lzdll
+LDFLAGS += -lssl
+LDFLAGS += -lcrypto
+LDFLAGS += -lmicrohttpd
+LDFLAGS += -lqrencode
+LDFLAGS += -liphlpapi
+LDFLAGS += -lpthreadGC2
+LDFLAGS += -lxml2
+LDFLAGS += -L/usr/i586-mingw32msvc/lib
+LDFLAGS += -L/home/yannick/.wine/drive_c/MinGW/lib
+LDFLAGS += -L/home/yannick/.wine/drive_c/MinGW/msys/1.0/lib
+else
 LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
+endif
+
+ifeq ($(TARGET), Release)
+LDFLAGS += -s
+endif
 
 SRC   = $(wildcard sources/*/*/*.cpp)
 SRC  += $(wildcard sources/*/*/*/*.cpp)
@@ -61,7 +142,7 @@ OBJ   = $(SRC:.cpp=.o)
 all: subdir $(TARGET)/$(EXEC)
 
 subdir:
-	mkdir -p $(TARGET)
+	@mkdir -p $(TARGET)
 
 $(TARGET)/$(EXEC): $(OBJ)
 	@echo "\033[1;31m" $@ "\033[0m"
@@ -78,14 +159,13 @@ valgrind:
 ##
 ## Packaging section
 ##
-package: prepare_packaging prepare_sources prepare_examples prepare_resources prepare_www
+package: prepare_staging $(prepare_ubuntu) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
 	rm -rf `find $(PACKAGE) -name ".*.swp"`
 	find $(PACKAGE)/$(RELEASE) -type f -exec chmod a-x {} \;
-	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
 
-prepare_packaging: prepare_staging prepare_changelog prepare_control prepare_rules prepare_copyright prepare_desktop
+prepare_ubuntu: prepare_debian prepare_changelog prepare_control prepare_rules prepare_copyright prepare_desktop
 
 prepare_examples:
 	mkdir -p $(PACKAGE)/$(RELEASE)/Exemples
@@ -144,6 +224,8 @@ prepare_staging:
 	rm -rf $(PACKAGE)/*
 	mkdir -p $(PACKAGE)/$(RELEASE)
 	cp Makefile $(PACKAGE)/$(RELEASE)
+
+prepare_debian:
 	cp -rf debian $(PACKAGE)/$(RELEASE)
 
 prepare_changelog:
@@ -163,6 +245,7 @@ endif
 
 prepare_rules:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/rules
+	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
 
 prepare_copyright:
 	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
@@ -215,12 +298,23 @@ clean_sources:
 	rm -rf $(TARGET)
 
 help:
+	@echo "\033[1;31m*****************\033[0m"
+	@echo "\033[1;31m**** Windows ****\033[0m"
+	@echo "make -s UBUNTU=windows V=$(V) package"
+	@echo "cd $(PACKAGE)/$(RELEASE)"
+	@echo "make -s UBUNTU=windows V=$(V)"
+	@echo "cp Release/bellepoule /media/usb0/BellePoule/bazaar/4.0/windows/BellePoule/Release/BellePoule.exe"
+	@echo ""
+	@echo "\033[1;34m****************\033[0m"
+	@echo "\033[1;34m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=precise V=$(V) package"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "make -s UBUNTU=utopic  V=$(V) package"
 	@echo "make -s UBUNTU=vivid   V=$(V) package"
+	@echo ""
 	@echo "cd $(PACKAGE)/$(RELEASE)"
+	@echo ""
 	@echo "debuild -us -uc --lintian-opts --color always"
 	@echo "debuild -S -sa -k"`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
-	@echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
+	@#echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
 	@echo "dput ppa:betonniere/bellepoule ../$(EXEC)*_source.changes"

@@ -231,7 +231,7 @@ Contest::Contest (gboolean for_duplication )
     time_t current_time;
 
     time (&current_time);
-    _id = g_strdup_printf ("%lx", current_time);
+    _id = g_strdup_printf ("%x", (GTime) current_time);
   }
 
    _read_only     = FALSE;

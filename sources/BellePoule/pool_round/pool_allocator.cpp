@@ -503,9 +503,9 @@ namespace Pool
               {
                 GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (siblings->data);
 
-                g_signal_handlers_disconnect_by_func (G_OBJECT (togglebutton),
-                                                      (void *) OnSwappingToggled,
-                                                      (Object *) this);
+                __gcc_extension__ g_signal_handlers_disconnect_by_func (G_OBJECT (togglebutton),
+                                                                        (void *) OnSwappingToggled,
+                                                                        (Object *) this);
                 gtk_toggle_button_set_active (togglebutton,
                                               FALSE);
                 g_signal_connect (G_OBJECT (togglebutton), "toggled",
@@ -1093,9 +1093,9 @@ namespace Pool
                                     _selected_config);
 
       w = _glade->GetWidget ("nb_pools_combobox");
-      g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                            (void *) on_nb_pools_combobox_changed,
-                                            (Object *) this);
+      __gcc_extension__ g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+                                                              (void *) on_nb_pools_combobox_changed,
+                                                              (Object *) this);
       gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                 config_index);
       g_signal_connect (G_OBJECT (w), "changed",
@@ -1103,9 +1103,9 @@ namespace Pool
                         (Object *) this);
 
       w = _glade->GetWidget ("pool_size_combobox");
-      g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                            (void *) on_pool_size_combobox_changed,
-                                            (Object *) this);
+      __gcc_extension__ g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+                                                              (void *) on_pool_size_combobox_changed,
+                                                              (Object *) this);
       gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                 config_index);
       g_signal_connect (G_OBJECT (w), "changed",
@@ -1466,12 +1466,12 @@ namespace Pool
     DeletePools ();
 
     {
-      g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_size_combobox"),
-                                            (void *) on_pool_size_combobox_changed,
-                                            (Object *) this);
-      g_signal_handlers_disconnect_by_func (_glade->GetWidget ("nb_pools_combobox"),
-                                            (void *) on_nb_pools_combobox_changed,
-                                            (Object *) this);
+      __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_size_combobox"),
+                                                              (void *) on_pool_size_combobox_changed,
+                                                              (Object *) this);
+      __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("nb_pools_combobox"),
+                                                              (void *) on_nb_pools_combobox_changed,
+                                                              (Object *) this);
 
       gtk_list_store_clear (_combobox_store);
 
@@ -1804,9 +1804,9 @@ namespace Pool
         GtkWidget *w;
 
         w = _glade->GetWidget ("nb_pools_combobox");
-        g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                              (void *) on_nb_pools_combobox_changed,
-                                              (Object *) this);
+        __gcc_extension__ g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+                                                                (void *) on_nb_pools_combobox_changed,
+                                                                (Object *) this);
         gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                   config_index);
         g_signal_connect (G_OBJECT (w), "changed",
@@ -1814,9 +1814,9 @@ namespace Pool
                           (Object *) this);
 
         w = _glade->GetWidget ("pool_size_combobox");
-        g_signal_handlers_disconnect_by_func (G_OBJECT (w),
-                                              (void *) on_pool_size_combobox_changed,
-                                              (Object *) this);
+        __gcc_extension__ g_signal_handlers_disconnect_by_func (G_OBJECT (w),
+                                                                (void *) on_pool_size_combobox_changed,
+                                                                (Object *) this);
         gtk_combo_box_set_active (GTK_COMBO_BOX (w),
                                   config_index);
         g_signal_connect (G_OBJECT (w), "changed",
@@ -1939,13 +1939,13 @@ namespace Pool
 
       while (siblings)
       {
-        GtkToggleButton *togglebutton = GTK_TOGGLE_BUTTON (siblings->data);
+        GtkToggleButton *sibling_togglebutton = GTK_TOGGLE_BUTTON (siblings->data);
 
-        if (gtk_toggle_button_get_active (togglebutton))
+        if (gtk_toggle_button_get_active (sibling_togglebutton))
         {
           AttributeDesc *desc;
 
-          desc = (AttributeDesc *) g_object_get_data (G_OBJECT (togglebutton), "criteria_attribute");
+          desc = (AttributeDesc *) g_object_get_data (G_OBJECT (sibling_togglebutton), "criteria_attribute");
 
           allocator->_swapping_criteria_list = g_slist_append (allocator->_swapping_criteria_list,
                                                                desc);

@@ -128,7 +128,7 @@ namespace Pool
         filter->ShowAttribute ("first_name");
         filter->ShowAttribute ("club");
         filter->ShowAttribute ("pool_nr");
-#if DEBUG
+#ifdef DEBUG
         filter->ShowAttribute ("victories_count");
         filter->ShowAttribute ("bouts_count");
 #endif
@@ -471,9 +471,9 @@ namespace Pool
     {
       OnPoolSelected (_allocator->GetPool (index));
 
-      g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_combobox"),
-                                            (void *) on_pool_combobox_changed,
-                                            (Object *) this);
+      __gcc_extension__ g_signal_handlers_disconnect_by_func (_glade->GetWidget ("pool_combobox"),
+                                                              (void *) on_pool_combobox_changed,
+                                                              (Object *) this);
       gtk_combo_box_set_active (GTK_COMBO_BOX (_glade->GetWidget ("pool_combobox")),
                                 index);
       g_signal_connect (_glade->GetWidget ("pool_combobox"), "changed",

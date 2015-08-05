@@ -443,10 +443,10 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
   }
   else
   {
-    gchar         *font = g_strdup_printf (BP_FONT "%fpx", 1.0*PRINT_FONT_HEIGHT);
+    gchar         *main_font = g_strdup_printf (BP_FONT "%fpx", 1.0*PRINT_FONT_HEIGHT);
     GooCanvasItem *header;
 
-    Canvas::NormalyzeDecimalNotation (font);
+    Canvas::NormalyzeDecimalNotation (main_font);
 
     current = g_slist_nth (_referee_list,
                            NB_REFEREE_PER_SHEET*page_nr);
@@ -520,7 +520,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
                                          c);
           Canvas::SetTableItemAttribute (item, "y-align", 0.5);
           g_object_set (G_OBJECT (item),
-                        "font", font,
+                        "font", main_font,
                         NULL);
           g_free (string);
           c++;
@@ -540,7 +540,7 @@ void Tournament::DrawPage (GtkPrintOperation *operation,
           Canvas::SetTableItemAttribute (item, "x-align", 0.5);
           Canvas::SetTableItemAttribute (item, "y-align", 0.5);
           g_object_set (G_OBJECT (item),
-                        "font", font,
+                        "font", main_font,
                         "fill-color", "grey",
                         NULL);
           c++;
