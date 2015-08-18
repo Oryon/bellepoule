@@ -41,7 +41,8 @@ class Schedule : public Module
   public:
     Schedule (Contest *contest,
               Data    *minimum_team_size,
-              Data    *manual_classification);
+              Data    *manual_classification,
+              Data    *default_classification);
 
     People::CheckinSupervisor *GetCheckinSupervisor ();
 
@@ -101,6 +102,7 @@ class Schedule : public Module
     gboolean            _score_stuffing_allowed;
     Contest            *_contest;
     Data               *_minimum_team_size;
+    Data               *_default_classification;
     Data               *_manual_classification;
 
     void SetCurrentStage (guint index);

@@ -27,7 +27,7 @@ Team::Team ()
 {
   _member_list = NULL;
 
-  _default_classification = 0;
+  _default_classification = NULL;
   _minimum_size           = NULL;
   _manual_classification  = NULL;
   _enable_member_saving   = TRUE;
@@ -48,7 +48,7 @@ Player *Team::Clone ()
 // --------------------------------------------------------------------------------
 void Team::SetAttendingFromMembers ()
 {
-  if (_manual_classification && _minimum_size)
+  if (_manual_classification && _minimum_size && _default_classification)
   {
     Player::AttributeId attending_attr_id ("attending");
     Player::AttributeId ranking_attr_id   ("ranking");
@@ -83,7 +83,7 @@ void Team::SetAttendingFromMembers ()
 
           if (value == 0)
           {
-            value = _default_classification;
+            value = _default_classification->_value;
           }
           team_rank += value;
         }
@@ -147,24 +147,21 @@ void Team::SetAttributesFromMembers ()
 }
 
 // --------------------------------------------------------------------------------
-void Team::SetDefaultClassification (guint default_classification)
+void Team::SetDefaultClassification (Data *default_classification)
 {
   _default_classification = default_classification;
-  SetAttendingFromMembers ();
 }
 
 // --------------------------------------------------------------------------------
 void Team::SetMinimumSize (Data *size)
 {
   _minimum_size = size;
-  SetAttendingFromMembers ();
 }
 
 // --------------------------------------------------------------------------------
 void Team::SetManualClassification (Data *manual)
 {
   _manual_classification = manual;
-  SetAttendingFromMembers ();
 }
 
 // --------------------------------------------------------------------------------

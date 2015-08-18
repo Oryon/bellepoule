@@ -41,7 +41,7 @@ class Team : public Player
 
     virtual void SetAttributesFromMembers ();
 
-    void SetDefaultClassification (guint default_classification);
+    void SetDefaultClassification (Data *default_classification);
 
     void SetMinimumSize (Data *size);
 
@@ -59,7 +59,7 @@ class Team : public Player
     static const gchar *_xml_tag;
 
     GSList   *_member_list;
-    guint     _default_classification;
+    Data     *_default_classification;
     Data     *_minimum_size;
     Data     *_manual_classification;
     gboolean  _enable_member_saving;

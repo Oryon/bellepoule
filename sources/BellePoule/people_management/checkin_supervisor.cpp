@@ -45,9 +45,9 @@ namespace People
   {
     _checksum_list = NULL;
 
-    _manual_classification = NULL;
-    _minimum_team_size     = NULL;
-    _worst_classification  = 1;
+    _manual_classification  = NULL;
+    _minimum_team_size      = NULL;
+    _default_classification = NULL;
 
     // Sensitive widgets
     {
@@ -169,10 +169,12 @@ namespace People
 
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::SetTeamData (Data *minimum_team_size,
+                                       Data *default_classification,
                                        Data *manual_classification)
   {
-    _minimum_team_size     = minimum_team_size;
-    _manual_classification = manual_classification;
+    _default_classification = default_classification;
+    _minimum_team_size      = minimum_team_size;
+    _manual_classification  = manual_classification;
   }
 
   // --------------------------------------------------------------------------------
@@ -592,6 +594,15 @@ namespace People
             _minimum_team_size->_value = gtk_adjustment_get_value (w);
           }
         }
+
+        {
+          GtkWidget *entry = _glade->GetWidget ("worst_entry");
+
+          _default_classification->_value = atoi (gtk_entry_get_text (GTK_ENTRY (entry)));
+
+          gtk_widget_modify_base (entry, GTK_STATE_NORMAL, NULL);
+          gtk_widget_modify_font (entry, NULL);
+        }
       }
 
       OnListChanged ();
@@ -627,16 +638,30 @@ namespace People
                                   _minimum_team_size->_value);
       }
     }
+
+    if (_default_classification)
+    {
+      GtkEntry *entry = GTK_ENTRY (_glade->GetWidget ("worst_entry"));
+
+      if (entry)
+      {
+        gchar *text = g_strdup_printf ("%d", _default_classification->_value);
+
+        gtk_entry_set_text (entry,
+                            text);
+        g_free (text);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------
   void CheckinSupervisor::ApplyConfig (Team *team)
   {
-    if (_manual_classification && _minimum_team_size)
+    if (_manual_classification && _minimum_team_size && _default_classification)
     {
       if (team)
       {
-        team->SetDefaultClassification (_worst_classification);
+        team->SetAttendingFromMembers ();
         Update (team);
       }
       else
@@ -821,8 +846,9 @@ namespace People
                                     NULL);
     }
 
-    team->SetMinimumSize          (_minimum_team_size);
-    team->SetManualClassification (_manual_classification);
+    team->SetDefaultClassification (_default_classification);
+    team->SetMinimumSize           (_minimum_team_size);
+    team->SetManualClassification  (_manual_classification);
 
     ApplyConfig (team);
   }
@@ -948,77 +974,7 @@ namespace People
   void CheckinSupervisor::OnListChanged ()
   {
     Checkin::OnListChanged ();
-
-    UpdateWorstClassification ();
     ApplyConfig (NULL);
-  }
-
-  // --------------------------------------------------------------------------------
-  void CheckinSupervisor::UpdateWorstClassification ()
-  {
-    // Team attending.
-    // Needed to evaluate _worst_classification.
-    {
-      GSList *current = _player_list;
-
-      while (current)
-      {
-        Player *player = (Player *) current->data;
-
-        if (player->Is ("Team"))
-        {
-          Team *current_team = (Team *) player;
-
-          current_team->SetAttendingFromMembers ();
-        }
-        current = g_slist_next (current);
-      }
-    }
-
-    // _worst_classification
-    {
-      Player::AttributeId  ranking_attr_id  ("ranking");
-      GSList              *current = _player_list;
-
-      _worst_classification = 0;
-      while (current)
-      {
-        Player *player = (Player *) current->data;
-
-        if (player->Is ("fencer"))
-        {
-          Fencer *fencer = (Fencer *) player;
-          Team   *team   = fencer->GetTeam ();
-
-          if (team
-              && Checkin::PresentPlayerFilter (team,   this)
-              && Checkin::PresentPlayerFilter (fencer, this))
-          {
-            Attribute *attr = fencer->GetAttribute (&ranking_attr_id);
-            guint      rank = attr->GetUIntValue ();
-
-            if (rank > _worst_classification)
-            {
-              _worst_classification = rank;
-            }
-          }
-        }
-
-        current = g_slist_next (current);
-      }
-    }
-
-    _worst_classification++;
-
-    // Display
-    {
-      GtkLabel *w    = GTK_LABEL (_glade->GetWidget ("worst_label"));
-      gchar    *text = g_strdup_printf ("(<b>%d</b> %s)", _worst_classification, gettext ("when unknown"));
-
-      gtk_label_set_markup (w,
-                            text);
-      g_free (text);
-    }
   }
 
   // --------------------------------------------------------------------------------
@@ -1428,6 +1384,54 @@ namespace People
     CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
 
     c->OnConfigChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_worst_entry_activate (GtkEntry *entry,
+                                                           Object   *owner)
+  {
+    CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
+
+    c->OnConfigChanged ();
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT gboolean on_worst_entry_focus_out_event (GtkWidget *widget,
+                                                                      GdkEvent  *event,
+                                                                      Object    *owner)
+  {
+    CheckinSupervisor *c = dynamic_cast <CheckinSupervisor *> (owner);
+
+    c->OnConfigChanged ();
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  extern "C" G_MODULE_EXPORT void on_worst_entry_changed (GtkEditable *editable,
+                                                          Object      *owner)
+  {
+    if (gtk_widget_has_focus (GTK_WIDGET (editable)))
+    {
+      {
+        GdkColor *color = g_new (GdkColor, 1);
+
+        gdk_color_parse ("#c5c5c5", color);
+
+        gtk_widget_modify_base (GTK_WIDGET (editable),
+                                GTK_STATE_NORMAL,
+                                color);
+        g_free (color);
+      }
+
+      {
+        PangoFontDescription *font_desc = pango_font_description_new ();
+
+        pango_font_description_set_style (font_desc,
+                                          PANGO_STYLE_ITALIC);
+        gtk_widget_modify_font (GTK_WIDGET (editable),
+                                font_desc);
+      }
+    }
   }
 
   // --------------------------------------------------------------------------------

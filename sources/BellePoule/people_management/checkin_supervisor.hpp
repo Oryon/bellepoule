@@ -39,6 +39,7 @@ namespace People
       void UpdateRanking ();
 
       void SetTeamData (Data *minimum_team_size,
+                        Data *default_classification,
                         Data *manual_classification);
 
       void ConvertFromBaseToResult ();
@@ -74,7 +75,7 @@ namespace People
       GSList   *_checksum_list;
       Data     *_manual_classification;
       Data     *_minimum_team_size;
-      guint     _worst_classification;
+      Data     *_default_classification;
       NullTeam *_null_team;
       guint32   _dnd_key;
 
@@ -119,8 +120,6 @@ namespace People
 
       void OnAttendingChanged (Player *player,
                                guint   value);
-
-      void UpdateWorstClassification ();
 
       void EnableDragAndDrop ();
 
