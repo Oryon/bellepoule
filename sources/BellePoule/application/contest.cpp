@@ -263,8 +263,9 @@ Contest::Contest (gboolean for_duplication )
                                      "default_location",
                                      NULL);
 
-  _manual_classification = new Data ("ClassementManuel",     (guint) (for_duplication == TRUE));
-  _minimum_team_size     = new Data ("TailleMinimaleEquipe", 3);
+  _manual_classification  = new Data ("ClassementManuel",       (guint) (for_duplication == TRUE));
+  _minimum_team_size      = new Data ("TailleMinimaleEquipe",   3);
+  _default_classification = new Data ("ClassementDefautEquipe", 9999);
 
   _state = OPERATIONAL;
 
@@ -300,7 +301,8 @@ Contest::Contest (gboolean for_duplication )
   {
     _schedule = new Schedule (this,
                               _minimum_team_size,
-                              _manual_classification);
+                              _manual_classification,
+                              _default_classification);
 
     Plug (_schedule,
           _glade->GetWidget ("schedule_viewport"),
@@ -743,8 +745,9 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
           xmlFree (attr);
         }
 
-        _minimum_team_size->Load     (xml_nodeset->nodeTab[0]);
-        _manual_classification->Load (xml_nodeset->nodeTab[0]);
+        _minimum_team_size->Load      (xml_nodeset->nodeTab[0]);
+        _default_classification->Load (xml_nodeset->nodeTab[0]);
+        _manual_classification->Load  (xml_nodeset->nodeTab[0]);
       }
       xmlXPathFreeObject  (xml_object);
 
@@ -805,6 +808,7 @@ Contest::~Contest ()
 
   Object::TryToRelease (_manual_classification);
   Object::TryToRelease (_minimum_team_size);
+  Object::TryToRelease (_default_classification);
 
   Object::TryToRelease (_checkin_time);
   Object::TryToRelease (_scratch_time);
@@ -1608,8 +1612,9 @@ void Contest::SaveHeader (xmlTextWriter *xml_writer)
                                        "%d", _schedule->ScoreStuffingIsAllowed ());
     // Team configuration
     {
-      _minimum_team_size->Save     (xml_writer);
-      _manual_classification->Save (xml_writer);
+      _minimum_team_size->Save      (xml_writer);
+      _default_classification->Save (xml_writer);
+      _manual_classification->Save  (xml_writer);
     }
 
     xmlTextWriterWriteAttribute (xml_writer,

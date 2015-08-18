@@ -153,6 +153,7 @@ class Contest : public Module
     gboolean         _team_event;
     Data            *_manual_classification;
     Data            *_minimum_team_size;
+    Data            *_default_classification;
     Time            *_checkin_time;
     Time            *_scratch_time;
     Time            *_start_time;

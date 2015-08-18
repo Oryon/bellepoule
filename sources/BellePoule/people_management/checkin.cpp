@@ -903,7 +903,10 @@ namespace People
                         gtk_tree_model_get_n_columns (model) - 1,
                         &player, -1);
 
-    _form->Show (player);
+    if (player && (player->IsSticky () == FALSE))
+    {
+      _form->Show (player);
+    }
   }
 
   // --------------------------------------------------------------------------------

@@ -40,7 +40,8 @@ typedef enum
 // --------------------------------------------------------------------------------
 Schedule::Schedule (Contest *contest,
                     Data    *minimum_team_size,
-                    Data    *manual_classification)
+                    Data    *manual_classification,
+                    Data    *default_classification)
   : Module ("schedule.glade",
             "schedule_notebook")
 {
@@ -50,6 +51,7 @@ Schedule::Schedule (Contest *contest,
 
   _minimum_team_size      = minimum_team_size;
   _manual_classification  = manual_classification;
+  _default_classification = default_classification;
   _score_stuffing_allowed = FALSE;
 
   {
@@ -136,6 +138,7 @@ Stage *Schedule::CreateStage (const gchar *class_name)
       People::CheckinSupervisor *checkin = dynamic_cast <People::CheckinSupervisor *> (stage);
 
       checkin->SetTeamData (_minimum_team_size,
+                            _default_classification,
                             _manual_classification);
     }
   }

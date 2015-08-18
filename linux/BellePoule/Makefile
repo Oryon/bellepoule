@@ -10,6 +10,7 @@ V       = 1
 
 ifeq ($(UBUNTU), windows)
 CC = i586-mingw32msvc-g++
+prepare_resources = prepare_windows_resources
 else
 CC                = gcc
 prepare_ubuntu    = prepare_ubuntu
@@ -133,7 +134,12 @@ endif
 
 SRC   = $(wildcard sources/*/*/*.cpp)
 SRC  += $(wildcard sources/*/*/*/*.cpp)
-OBJ   = $(SRC:.cpp=.o)
+ifeq ($(UBUNTU), windows)
+OBJ = sources/BellePoule/windows.o
+else
+OBJ =
+endif
+OBJ += $(SRC:.cpp=.o)
 #OBJ = $(subst sources,$(TARGET),$(SRC:.cpp=.o))
 
 ##
@@ -151,6 +157,13 @@ $(TARGET)/$(EXEC): $(OBJ)
 %.o: %.cpp
 	@echo "\033[1;34m" $@ "\033[0m"
 	@$(CC) -o $@ -c $< $(CFLAGS)
+
+%.o: %.rc
+	@echo "\033[1;33m" $@ "\033[0m"
+	i586-mingw32msvc-windres --output=$@ --input=$<
+
+cflags:
+	@echo $(CFLAGS)
 
 valgrind:
 	G_SLICE=always-malloc G_DEBUG=gc-friendly valgrind --log-file=memory_leak.log --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 $(TARGET)/$(EXEC)
@@ -191,6 +204,10 @@ prepare_www:
 	cp -f  ../../scripts/www*sh $(PACKAGE)/$(RELEASE)/scripts
 	sed -i 's/bellepouledebug/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstart.sh
 	sed -i 's/bellepouledebug/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
+
+prepare_windows_resources:
+	mkdir -p $(PACKAGE)/$(RELEASE)/resources
+	cp -f ../../resources/exe.ico $(PACKAGE)/$(RELEASE)/resources
 
 prepare_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources/translations
