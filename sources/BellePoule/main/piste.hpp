@@ -67,10 +67,10 @@ class Piste : public DropZone
                              gdouble *y);
 
   private:
-    static const gdouble _W          = 160.0;
-    static const gdouble _H          = 20.0;
-    static const gdouble _BORDER_W   = 0.5;
-    static const gdouble _RESOLUTION = 10.0;
+    static const gdouble _W;
+    static const gdouble _H;
+    static const gdouble _BORDER_W;
+    static const gdouble _RESOLUTION;
 
     Piste::Listener *_listener;
     GooCanvasItem   *_root_item;

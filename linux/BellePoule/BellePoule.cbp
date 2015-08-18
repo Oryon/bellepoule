@@ -60,6 +60,7 @@
 			<Add option="-DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGSEAL_ENABLE" />
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
+			<Add option="-DDEBUG" />
 			<Add directory="../../sources/BellePoule" />
 			<Add directory="../../sources/common" />
 			<Add directory="/usr/include/gtk-2.0" />

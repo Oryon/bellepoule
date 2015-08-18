@@ -200,9 +200,8 @@ void Hall::ManageJob (const gchar *data)
     xmlXPathInit ();
 
     {
-      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-      xmlXPathObject  *xml_object;
-      xmlNodeSet      *xml_nodeset;
+      xmlXPathObject *xml_object;
+      xmlNodeSet     *xml_nodeset;
 
       xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
       if (xml_object->nodesetval->nodeNr == 0)
@@ -239,7 +238,6 @@ void Hall::ManageJob (const gchar *data)
       }
 
       xmlXPathFreeObject  (xml_object);
-      xmlXPathFreeContext (xml_context);
     }
 
     xmlXPathFreeContext (xml_context);

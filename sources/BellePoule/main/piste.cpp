@@ -21,6 +21,11 @@
 
 #include "piste.hpp"
 
+const gdouble Piste::_W          = 160.0;
+const gdouble Piste::_H          = 20.0;
+const gdouble Piste::_BORDER_W   = 0.5;
+const gdouble Piste::_RESOLUTION = 10.0;
+
 // --------------------------------------------------------------------------------
 Piste::Piste (GooCanvasItem *parent,
               Module        *container)
