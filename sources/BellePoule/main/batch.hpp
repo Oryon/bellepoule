@@ -19,6 +19,7 @@
 
 #include <libxml/xpath.h>
 
+#include "network/message.hpp"
 #include "util/module.hpp"
 
 class Batch : public Module
@@ -33,7 +34,7 @@ class Batch : public Module
 
     guint GetId ();
 
-    void SetProperties (GKeyFile *key_file);
+    void SetProperties (Net::Message *message);
 
     GSList *GetCurrentSelection ();
 
@@ -47,8 +48,8 @@ class Batch : public Module
 
     virtual ~Batch ();
 
-    void SetProperty (GKeyFile    *key_file,
-                      const gchar *property);
+    void SetProperty (Net::Message *message,
+                      const gchar  *property);
 
     gboolean HasJob (GChecksum *sha1);
 

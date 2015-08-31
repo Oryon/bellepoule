@@ -25,7 +25,6 @@
 #include "pool_round/pool_supervisor.hpp"
 #include "table_round/table_supervisor.hpp"
 #include "util/wifi_code.hpp"
-#include "util/partner.hpp"
 #include "application/application.hpp"
 #include "application/contest.hpp"
 #include "application/tournament.hpp"
@@ -45,9 +44,7 @@ class BellPouleApp : public Application
 
     void Start (int argc, char **argv);
 
-    void OnNewPartner (Partner *partner);
-
-    gboolean OnHttpPost (const gchar *data);
+    gboolean OnHttpPost (Net::Message *message);
 
     gchar *OnHttpGet (const gchar *url);
 
@@ -105,8 +102,6 @@ void BellPouleApp::Start (int    argc,
   Application::Start (argc,
                       argv);
 
-  ListenToAnnouncement ();
-
   if (argc > 1)
   {
     _tournament->Start (g_strdup (argv[1]));
@@ -120,11 +115,14 @@ void BellPouleApp::Start (int    argc,
 }
 
 // --------------------------------------------------------------------------------
-gboolean BellPouleApp::OnHttpPost (const gchar *data)
+gboolean BellPouleApp::OnHttpPost (Net::Message *message)
 {
-  if (_tournament)
+  if (Application::OnHttpPost (message) == FALSE)
   {
-    return _tournament->OnHttpPost (data);
+    if (_tournament)
+    {
+      return _tournament->OnHttpPost (message->GetString ("content"));
+    }
   }
 
   return FALSE;
@@ -150,12 +148,6 @@ gchar *BellPouleApp::GetSecretKey (const gchar *authentication_scheme)
   }
 
   return NULL;
-}
-
-// --------------------------------------------------------------------------------
-void BellPouleApp::OnNewPartner (Partner *partner)
-{
-  _tournament->SetHallManager (partner);
 }
 
 // --------------------------------------------------------------------------------

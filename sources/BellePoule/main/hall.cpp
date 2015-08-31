@@ -143,49 +143,29 @@ void Hall::DropObject (Object   *object,
 }
 
 // --------------------------------------------------------------------------------
-void Hall::ManageContest (const gchar *data,
-                          GtkNotebook *notebook)
+void Hall::ManageContest (Net::Message *message,
+                          GtkNotebook  *notebook)
 {
-  GKeyFile *key_file = g_key_file_new ();
-  GError   *error    = NULL;
+  gchar *id = message->GetString ("id");
 
-  if (g_key_file_load_from_data (key_file,
-                                 data,
-                                 -1,
-                                 G_KEY_FILE_NONE,
-                                 &error) == FALSE)
+  if (id)
   {
-    g_warning ("g_key_file_load_from_data: %s", error->message);
-    g_clear_error (&error);
-  }
-  else
-  {
-    gchar *id = g_key_file_get_string (key_file,
-                                       "Contest",
-                                       "id",
-                                       NULL);
+    Batch *batch = GetBatch (id);
 
-    if (id)
+    if (batch == NULL)
     {
-      Batch *batch = GetBatch (id);
+      batch = new Batch (id);
 
-      if (batch == NULL)
-      {
-        batch = new Batch (id);
+      _batch_list = g_list_prepend (_batch_list,
+                                    batch);
 
-        _batch_list = g_list_prepend (_batch_list,
-                                      batch);
-
-        batch->AttachTo (notebook);
-      }
-
-      batch->SetProperties (key_file);
-
-      g_free (id);
+      batch->AttachTo (notebook);
     }
-  }
 
-  g_key_file_free (key_file);
+    batch->SetProperties (message);
+
+    g_free (id);
+  }
 }
 
 // --------------------------------------------------------------------------------

@@ -23,6 +23,7 @@
 #include "util/data.hpp"
 #include "util/module.hpp"
 #include "util/glade.hpp"
+#include "network/message.hpp"
 
 #include "schedule.hpp"
 
@@ -33,7 +34,6 @@ namespace People
 
 class Tournament;
 class Weapon;
-class Partner;
 
 class Contest : public Module
 {
@@ -80,10 +80,6 @@ class Contest : public Module
     gboolean OnHttpPost (const gchar *command,
                          const gchar **ressource,
                          const gchar *data);
-
-    void SetHallManager (Partner *partner);
-
-    Partner *GetHallManager ();
 
     gchar    *GetId              ();
     gchar    *GetOrganizer       ();
@@ -165,7 +161,7 @@ class Contest : public Module
     People::Checkin *_referees_list;
     State            _state;
     gboolean         _read_only;
-    Partner         *_hall_manager;
+    Net::Message    *_crew_message;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;

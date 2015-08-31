@@ -207,7 +207,7 @@ void Object::Release ()
 
   if (_ref_count == 0)
   {
-    g_print ("ERROR\n");
+    g_warning ("Object::Release ERROR\n");
     return;
   }
 

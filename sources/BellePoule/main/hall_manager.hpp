@@ -29,7 +29,7 @@ class HallManager : public Module
 
     void Start ();
 
-    void OnHttpPost (const gchar *data);
+    void OnHttpPost (Net::Message *message);
 
   private:
     Hall                 *_hall;

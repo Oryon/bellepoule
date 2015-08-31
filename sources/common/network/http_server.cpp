@@ -15,20 +15,8 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <sys/types.h>
-#ifdef WIN32
-  #include <winsock2.h>
-  #include <ws2tcpip.h>
-  #include <iphlpapi.h>
-#else
-  #include <ifaddrs.h>
-  #include <sys/socket.h>
-  #include <sys/ioctl.h>
-  #include <net/if.h>
-  #include <netdb.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
-#endif
 
+#include "message.hpp"
 #include "http_server.hpp"
 
 namespace Net
@@ -73,21 +61,36 @@ namespace Net
 namespace Net
 {
   // --------------------------------------------------------------------------------
-  HttpServer::DeferedData::DeferedData (HttpServer  *server,
-                                        RequestBody *request_body)
+  HttpServer::DeferedData::DeferedData (HttpServer     *server,
+                                        MHD_Connection *connection,
+                                        RequestBody    *request_body)
   {
     _server = server;
     _server->Retain ();
 
-    _content = g_strndup (request_body->_data,
-                          request_body->_length);
+    {
+      const MHD_ConnectionInfo *info;
+      gchar                    *content;
+
+      info     = MHD_get_connection_info (connection, MHD_CONNECTION_INFO_CONNECTION_FD);
+      content  = g_strndup (request_body->_data, request_body->_length);
+      _message = new Net::Message ((const guint8 *) content, (struct sockaddr_in *) info);
+
+      if (_message->IsValid () == FALSE)
+      {
+        _message->Set ("content",
+                       content);
+      }
+
+      g_free (content);
+    }
   }
 
   // --------------------------------------------------------------------------------
   HttpServer::DeferedData::~DeferedData ()
   {
-    g_free (_content);
-    _server->Release ();
+    _message->Release ();
+    _server->Release  ();
   }
 }
 
@@ -177,7 +180,7 @@ namespace Net
   gboolean HttpServer::DeferedPost (DeferedData *defered_data)
   {
     defered_data->_server->_http_POST_cbk (defered_data->_server->_client,
-                                           defered_data->_content);
+                                           defered_data->_message);
 
     delete (defered_data);
 
@@ -276,6 +279,7 @@ namespace Net
 
         {
           DeferedData *defered_data = new DeferedData (this,
+                                                       connection,
                                                        request_body);
 
           g_idle_add ((GSourceFunc) DeferedPost,

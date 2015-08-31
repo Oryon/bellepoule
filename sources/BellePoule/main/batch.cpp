@@ -66,17 +66,14 @@ guint32 Batch::GetId ()
 }
 
 // --------------------------------------------------------------------------------
-void Batch::SetProperty (GKeyFile    *key_file,
-                         const gchar *property)
+void Batch::SetProperty (Net::Message *message,
+                         const gchar  *property)
 {
   gchar    *property_widget = g_strdup_printf ("contest_%s_label", property);
   GtkLabel *label           = GTK_LABEL (_glade->GetGObject (property_widget));
   gchar    *value;
 
-  value = g_key_file_get_string (key_file,
-                                 "Contest",
-                                 property,
-                                 NULL);
+  value = message->GetString (property);
   gtk_label_set_text (label,
                       gettext (value));
 
@@ -85,18 +82,15 @@ void Batch::SetProperty (GKeyFile    *key_file,
 }
 
 // --------------------------------------------------------------------------------
-void Batch::SetProperties (GKeyFile *key_file)
+void Batch::SetProperties (Net::Message *message)
 {
-  SetProperty (key_file, "gender");
-  SetProperty (key_file, "weapon");
-  SetProperty (key_file, "category");
+  SetProperty (message, "gender");
+  SetProperty (message, "weapon");
+  SetProperty (message, "category");
 
   {
     GtkWidget *tab   = _glade->GetWidget ("notebook_title");
-    gchar     *color = g_key_file_get_string (key_file,
-                                              "Contest",
-                                              "color",
-                                              NULL);
+    gchar     *color = message->GetString ("color");
 
     _gdk_color = g_new (GdkColor, 1);
 
