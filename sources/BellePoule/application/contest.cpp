@@ -36,10 +36,10 @@
 
 #include "util/global.hpp"
 #include "util/canvas.hpp"
-#include "util/partner.hpp"
 #include "people_management/checkin.hpp"
 #include "people_management/referees_list.hpp"
 #include "people_management/checkin_supervisor.hpp"
+#include "network/crew.hpp"
 #include "network/uploader.hpp"
 
 #include "version.h"
@@ -234,17 +234,18 @@ Contest::Contest (gboolean for_duplication )
     _id = g_strdup_printf ("%x", (GTime) current_time);
   }
 
-   _read_only     = FALSE;
-   _notebook      = NULL;
-   _level         = NULL;
-   _filename      = NULL;
-   _tournament    = NULL;
-   _weapon        = Weapon::GetDefault ();
-   _category      = 0;
-   _gender        = 0;
-   _team_event    = FALSE;
-   _derived       = FALSE;
-   _hall_manager  = NULL;
+  _read_only  = FALSE;
+  _notebook   = NULL;
+  _level      = NULL;
+  _filename   = NULL;
+  _tournament = NULL;
+  _weapon     = Weapon::GetDefault ();
+  _category   = 0;
+  _gender     = 0;
+  _team_event = FALSE;
+  _derived    = FALSE;
+
+  _crew_message = new Net::Message ("/Competition");
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -806,6 +807,8 @@ Contest::~Contest ()
   g_free (_web_site);
   g_free (_location);
 
+  Object::TryToRelease (_crew_message);
+
   Object::TryToRelease (_manual_classification);
   Object::TryToRelease (_minimum_team_size);
   Object::TryToRelease (_default_classification);
@@ -832,69 +835,19 @@ Contest::~Contest ()
 }
 
 // --------------------------------------------------------------------------------
-Partner *Contest::GetHallManager ()
-{
-  return _hall_manager;
-}
-
-// --------------------------------------------------------------------------------
-void Contest::SetHallManager (Partner *partner)
-{
-  _hall_manager = partner;
-
-  UpdateHallManager ();
-}
-
-// --------------------------------------------------------------------------------
 void Contest::UpdateHallManager ()
 {
-  if (_hall_manager)
-  {
-    {
-      GKeyFile *key_file = g_key_file_new ();
-      gchar    *color    = gdk_color_to_string (_gdk_color);
+  gchar *color = gdk_color_to_string (_gdk_color);
 
-      g_key_file_set_string (key_file,
-                             "Contest",
-                             "id",
-                             _id);
-      g_key_file_set_string (key_file,
-                             "Contest",
-                             "color",
-                             color);
-      g_key_file_set_string (key_file,
-                             "Contest",
-                             "weapon",
-                             _weapon->GetImage ());
-      g_key_file_set_string (key_file,
-                             "Contest",
-                             "gender",
-                             gender_image[_gender]);
-      g_key_file_set_string (key_file,
-                             "Contest",
-                             "category",
-                             category_image[_category]);
+  _crew_message->Set ("id",       _id);
+  _crew_message->Set ("color",    color);
+  _crew_message->Set ("weapon",   _weapon->GetImage ());
+  _crew_message->Set ("gender",   gender_image[_gender]);
+  _crew_message->Set ("category", category_image[_category]);
 
-      _hall_manager->SendMessage ("/Competition",
-                                  key_file);
+  Net::Crew::SendMessage (_crew_message);
 
-      g_free (color);
-      g_key_file_free (key_file);
-    }
-
-    {
-      GSList *current = _referees_list->GetList ();
-
-      while (current)
-      {
-        Player *referee = (Player *) current->data;
-
-        referee->SetPartner (_hall_manager);
-
-        current = g_slist_next (current);
-      }
-    }
-  }
+  g_free (color);
 }
 
 // --------------------------------------------------------------------------------
@@ -1171,20 +1124,7 @@ void Contest::OnPlugged ()
 // --------------------------------------------------------------------------------
 void Contest::OnUnPlugged ()
 {
-  if (_hall_manager)
-  {
-    GKeyFile *key_file = g_key_file_new ();
-
-    g_key_file_set_string (key_file,
-                           "Contest",
-                           "id",
-                           _id);
-
-    _hall_manager->SendMessage ("/Competition",
-                                key_file);
-
-    g_key_file_free (key_file);
-  }
+  Net::Crew::DropMessage (_crew_message);
 }
 
 // --------------------------------------------------------------------------------
@@ -1346,7 +1286,6 @@ void Contest::ReadProperties ()
   }
 
   _schedule->ApplyNewConfig ();
-  UpdateHallManager ();
   DisplayProperties ();
 }
 
@@ -1406,6 +1345,8 @@ void Contest::DisplayProperties ()
                           GTK_STATE_ACTIVE,
                           _gdk_color);
   }
+
+  UpdateHallManager ();
 }
 
 // --------------------------------------------------------------------------------

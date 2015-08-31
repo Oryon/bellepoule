@@ -18,37 +18,30 @@
 #define partner_hpp
 
 #include "util/object.hpp"
-#include "network/uploader.hpp"
 
-class Partner : public Object, Net::Uploader::Listener
+namespace Net
 {
-  public:
-    Partner (const gchar        *who,
-             struct sockaddr_in *from);
+  class Message;
 
-    void Accept ();
+  class Partner : public Object
+  {
+    public:
+      Partner (Message *message);
 
-    gboolean Is (const gchar *role);
+      gboolean SendMessage (Message *message);
 
-    gboolean SendMessage (const gchar *where,
-                          GKeyFile    *keyfile);
+      gboolean HasSameRole (Partner *than);
 
-    gboolean SendMessage (const gchar *where,
-                          const gchar *message);
+      static gint CompareRole (Partner     *partner,
+                               const gchar *with);
 
-  private:
-    gchar *_ip;
-    gchar *_role;
-    guint  _port;
+    private:
+      gchar *_ip;
+      gchar *_role;
+      guint  _port;
 
-    ~Partner ();
-
-  private:
-    void OnUploadStatus (Net::Uploader::PeerStatus peer_status);
-
-    void Use ();
-
-    void Drop ();
-};
+      ~Partner ();
+  };
+}
 
 #endif

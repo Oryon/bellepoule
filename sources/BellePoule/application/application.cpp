@@ -17,15 +17,7 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 #include <unistd.h>
-#include <errno.h>
 #include <sys/types.h>
-#ifdef WIN32
-#include <winsock2.h>
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
 
 #ifdef WINDOWS_TEMPORARY_PATCH
 #define WIN32_LEAN_AND_MEAN
@@ -36,15 +28,14 @@
 #include "util/attribute.hpp"
 #include "util/global.hpp"
 #include "util/module.hpp"
-#include "util/partner.hpp"
+#include "network/crew.hpp"
+#include "network/message.hpp"
 #include "network/downloader.hpp"
 #include "language.hpp"
 #include "weapon.hpp"
 #include "version.h"
 
 #include "application.hpp"
-
-const gchar *Application::ANNOUNCE_GROUP = "225.0.0.35";
 
 // --------------------------------------------------------------------------------
 Application::Application (const gchar   *config_file,
@@ -54,7 +45,8 @@ Application::Application (const gchar   *config_file,
 {
   _language    = NULL;
   _main_module = NULL;
-  _granted     = FALSE;
+
+  _role = g_strdup (config_file);
 
   // g_mem_set_vtable (glib_mem_profiler_table);
 
@@ -136,6 +128,8 @@ Application::Application (const gchar   *config_file,
 // --------------------------------------------------------------------------------
 Application::~Application ()
 {
+  Net::Crew::Leave ();
+
   AttributeDesc::Cleanup ();
 
   _http_server->Release ();
@@ -149,6 +143,8 @@ Application::~Application ()
   }
 
   g_free (Global::_share_dir);
+
+  g_free (_role);
 
   Global::_user_config->Release ();
 
@@ -396,169 +392,10 @@ void Application::Start (int    argc,
   }
 
   gtk_widget_hide (GTK_WIDGET (_main_module->GetGObject ("update_menuitem")));
-}
 
-// --------------------------------------------------------------------------------
-gboolean Application::MulticastAvailability (Application *application)
-{
-  struct sockaddr_in  addr;
-  int                 fd;
-
-  if ((fd = socket (AF_INET,
-                    SOCK_DGRAM,
-                    0)) < 0)
-  {
-    g_warning ("socket: %s", strerror (errno));
-    return FALSE;
-  }
-
-  {
-    memset (&addr,
-            0,
-            sizeof(addr));
-
-    addr.sin_family      = AF_INET;
-    addr.sin_addr.s_addr = inet_addr (ANNOUNCE_GROUP);
-    addr.sin_port        = htons     (ANNOUNCE_PORT);
-  }
-
-  {
-    char *message = g_strdup_printf ("HallManager:%d", application->_http_server->GetPort ());
-
-    if (sendto (fd,
-                message,
-                strlen (message) + 1,
-                0,
-                (struct sockaddr *) &addr,
-                sizeof(addr)) < 0)
-    {
-      g_warning ("sendto: %s", strerror (errno));
-      g_free (message);
-      return FALSE;
-    }
-
-    g_free (message);
-  }
-
-  return (application->_granted == FALSE);
-}
-
-// --------------------------------------------------------------------------------
-void Application::AnnounceAvailability ()
-{
-  MulticastAvailability (this);
-
-  g_timeout_add_seconds (5,
-                         (GSourceFunc) MulticastAvailability,
-                         this);
-}
-
-// --------------------------------------------------------------------------------
-void Application::ListenToAnnouncement ()
-{
-  GError *error = NULL;
-
-  if (!g_thread_create ((GThreadFunc) AnnoucementListener,
-                        this,
-                        FALSE,
-                        &error))
-  {
-    g_warning ("Failed to create AnnoucementListener thread: %s\n", error->message);
-    g_error_free (error);
-  }
-}
-
-// -------------------------------------------------------------------------------
-gpointer Application::AnnoucementListener (Application *application)
-{
-  struct sockaddr_in addr;
-  int                fd;
-
-  if ((fd = socket (AF_INET,
-                    SOCK_DGRAM,
-                    0)) < 0)
-  {
-    g_warning ("socket: %s", strerror (errno));
-    return NULL;
-  }
-
-  // allow multiple sockets to use the same PORT number
-  {
-    guint yes = 1;
-
-    if (setsockopt (fd,
-                    SOL_SOCKET,
-                    SO_REUSEADDR,
-                    (const char *) &yes,
-                    sizeof (yes)) < 0)
-    {
-      g_warning ("setsockopt: %s", strerror (errno));
-      return NULL;
-    }
-  }
-
-  {
-    memset (&addr,
-            0,
-            sizeof(addr));
-
-    addr.sin_family      = AF_INET;
-    addr.sin_addr.s_addr = htonl (INADDR_ANY);
-    addr.sin_port        = htons (ANNOUNCE_PORT);
-  }
-
-  if (bind (fd,
-            (struct sockaddr *) &addr,
-            sizeof (addr)) < 0)
-  {
-    g_warning ("socket: %s", strerror (errno));
-    return NULL;
-  }
-
-  // use setsockopt() to request that the kernel join a multicast group
-  {
-    struct ip_mreq option;
-
-    option.imr_multiaddr.s_addr = inet_addr (ANNOUNCE_GROUP);
-    option.imr_interface.s_addr = htonl     (INADDR_ANY);
-    if (setsockopt (fd,
-                    IPPROTO_IP,
-                    IP_ADD_MEMBERSHIP,
-                    (const char *) &option,
-                    sizeof (option)) < 0)
-    {
-      g_warning ("setsockopt: %s", strerror (errno));
-      return NULL;
-    }
-  }
-
-  while (1)
-  {
-    struct sockaddr_in from;
-    socklen_t          addrlen = sizeof (from);
-    char               message[100];
-    ssize_t            size;
-
-    if ((size = recvfrom (fd,
-                          message,
-                          100,
-                          0,
-                          (struct sockaddr *) &from,
-                          &addrlen)) < 0)
-    {
-      g_warning ("recvfrom: %s", strerror (errno));
-    }
-
-    application->OnNewPartner (new Partner (message,
-                                            &from));
-  }
-
-  return NULL;
-}
-
-// --------------------------------------------------------------------------------
-void Application::OnNewPartner (Partner *partner)
-{
+  Net::Crew::Join (_role,
+                   _http_server->GetPort (),
+                   GTK_WIDGET (_main_module->GetGObject ("ring_menuitem")));
 }
 
 // --------------------------------------------------------------------------------
@@ -658,14 +495,13 @@ gboolean Application::OnLatestVersionReceived (Net::Downloader::CallbackData *cb
 }
 
 // --------------------------------------------------------------------------------
-gboolean Application::OnHttpPost (const gchar *data)
+gboolean Application::OnHttpPost (Net::Message *message)
 {
-  if (strcmp (data, "tagada soinsoin") == 0)
+  if (message->Is ("Handshake"))
   {
-    _granted = TRUE;
+    Net::Crew::Handshake (message);
     return TRUE;
   }
-
   return FALSE;
 }
 
@@ -683,11 +519,11 @@ gchar *Application::GetSecretKey (const gchar *authentication_scheme)
 
 // --------------------------------------------------------------------------------
 gboolean Application::HttpPostCbk (Net::HttpServer::Client *client,
-                                   const gchar             *data)
+                                   Net::Message            *message)
 {
   Application *app = (Application *) client;
 
-  return app->OnHttpPost (data);
+  return app->OnHttpPost (message);
 }
 
 // --------------------------------------------------------------------------------

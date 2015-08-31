@@ -17,10 +17,21 @@
 #ifndef http_server_hpp
 #define http_server_hpp
 
-#ifndef WIN32
-#include <stdint.h>
-#include <sys/socket.h>
+#ifdef WIN32
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #include <iphlpapi.h>
+#else
+  #include <ifaddrs.h>
+  #include <sys/socket.h>
+  #include <sys/ioctl.h>
+  #include <net/if.h>
+  #include <netdb.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
 #endif
+
+
 #include <glib.h>
 #include <microhttpd.h>
 
@@ -45,8 +56,8 @@ namespace Net
       };
 
     public:
-      typedef gboolean (*HttpPost) (Client      *client,
-                                    const gchar *data);
+      typedef gboolean (*HttpPost) (Client  *client,
+                                    Message *message);
       typedef gchar *(*HttpGet) (Client      *client,
                                  const gchar *url);
 
@@ -75,12 +86,13 @@ namespace Net
 
       struct DeferedData
       {
-        DeferedData (HttpServer  *server,
-                     RequestBody *request_body);
+        DeferedData (HttpServer           *server,
+                     MHD_Connection *connection,
+                     RequestBody          *request_body);
         ~DeferedData ();
 
         HttpServer *_server;
-        gchar      *_content;
+        Message    *_message;
       };
 
       struct MHD_Daemon *_daemon;

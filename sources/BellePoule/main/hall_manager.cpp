@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "network/message.hpp"
 #include "application/weapon.hpp"
 #include "hall.hpp"
 
@@ -70,30 +71,20 @@ void HallManager::Start ()
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::OnHttpPost (const gchar *data)
+void HallManager::OnHttpPost (Net::Message *message)
 {
-  gchar **lines = g_strsplit_set (data,
-                                  "\n",
-                                  0);
-  if (lines[0])
+  if (message->Is ("/Competition"))
   {
-    const gchar *body = data;
-
-    body = strstr (body, "\n"); if (body) body++;
-
-    if (strcmp (lines[0], "/Competition") == 0)
-    {
-      _hall->ManageContest (body,
-                            GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
-    }
-    else if (strcmp (lines[0], "/Job") == 0)
-    {
-      _hall->ManageJob (body);
-    }
-    else if (strcmp (lines[0], "/Referee") == 0)
-    {
-      ManageReferee (body);
-    }
+    _hall->ManageContest (message,
+                          GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
+  }
+  else if (message->Is ("/Job"))
+  {
+    // _hall->ManageJob (body);
+  }
+  else if (message->Is ("/Referee"))
+  {
+    // ManageReferee (body);
   }
 }
 

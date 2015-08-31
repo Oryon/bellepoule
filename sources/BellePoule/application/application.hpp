@@ -26,7 +26,6 @@ class AttributeDesc;
 class Application;
 class Module;
 class Language;
-class Partner;
 
 class Application : public Object, Net::HttpServer::Client
 {
@@ -45,24 +44,15 @@ class Application : public Object, Net::HttpServer::Client
 
     virtual ~Application ();
 
-    void AnnounceAvailability ();
-
-    void ListenToAnnouncement ();
-
-    virtual gboolean OnHttpPost (const gchar *data);
+    virtual gboolean OnHttpPost (Net::Message *message);
 
     virtual gchar *OnHttpGet (const gchar *url);
 
   private:
-    static const gchar *ANNOUNCE_GROUP;
-    static const guint  ANNOUNCE_PORT = 35000;
-
+    gchar           *_role;
     Language        *_language;
     Net::Downloader *_version_downloader;
     Net::HttpServer *_http_server;
-    gboolean         _granted;
-
-    virtual void OnNewPartner (Partner *partner);
 
     virtual gchar *GetSecretKey (const gchar *authentication_scheme);
 
@@ -85,12 +75,8 @@ class Application : public Object, Net::HttpServer::Client
 
     static gboolean OnLatestVersionReceived (Net::Downloader::CallbackData *cbk_data);
 
-    static gboolean MulticastAvailability (Application *application);
-
-    static gpointer AnnoucementListener (Application *application);
-
     static gboolean HttpPostCbk (Net::HttpServer::Client *client,
-                                 const gchar             *data);
+                                 Net::Message            *message);
 
     static gchar *HttpGetCbk (Net::HttpServer::Client *client,
                               const gchar             *url);

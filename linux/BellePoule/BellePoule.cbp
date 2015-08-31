@@ -60,6 +60,7 @@
 			<Add option="-DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES" />
 			<Add option="-DGSEAL_ENABLE" />
 			<Add option="-DGTK_DISABLE_SINGLE_INCLUDES" />
+			<Add option="-DDEBUG" />
 			<Add directory="../../sources/BellePoule" />
 			<Add directory="../../sources/common" />
 			<Add directory="/usr/include/gtk-2.0" />
@@ -466,6 +467,12 @@
 		<Unit filename="../../sources/BellePoule/table_round/table_zone.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
+		<Unit filename="../../sources/common/network/crew.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/crew.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/common/network/cryptor.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
@@ -482,6 +489,18 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/http_server.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/message.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/message.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/partner.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/partner.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/uploader.cpp">
@@ -584,12 +603,6 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/object.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/util/partner.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/common/util/partner.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/util/player.cpp">

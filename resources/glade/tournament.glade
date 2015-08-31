@@ -1154,7 +1154,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                           <packing>
                             <property name="top_attach">1</property>
                             <property name="bottom_attach">2</property>
-                            <property name="y_options"></property>
+                            <property name="y_options"/>
                           </packing>
                         </child>
                         <child>
@@ -1167,7 +1167,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                           <packing>
                             <property name="top_attach">2</property>
                             <property name="bottom_attach">3</property>
-                            <property name="y_options"></property>
+                            <property name="y_options"/>
                           </packing>
                         </child>
                         <child>
@@ -1186,7 +1186,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                             <property name="right_attach">2</property>
                             <property name="top_attach">1</property>
                             <property name="bottom_attach">2</property>
-                            <property name="y_options"></property>
+                            <property name="y_options"/>
                           </packing>
                         </child>
                         <child>
@@ -1206,7 +1206,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                             <property name="right_attach">2</property>
                             <property name="top_attach">2</property>
                             <property name="bottom_attach">3</property>
-                            <property name="y_options"></property>
+                            <property name="y_options"/>
                           </packing>
                         </child>
                         <child>
@@ -1232,7 +1232,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="right_attach">2</property>
-                            <property name="y_options"></property>
+                            <property name="y_options"/>
                           </packing>
                         </child>
                         <child>
@@ -1243,7 +1243,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                             <property name="label" translatable="yes">FTP server</property>
                           </object>
                           <packing>
-                            <property name="y_options"></property>
+                            <property name="y_options"/>
                           </packing>
                         </child>
                       </object>
@@ -1413,6 +1413,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                 <property name="use_action_appearance">False</property>
                 <property name="image">image9</property>
                 <property name="use_stock">False</property>
+                <property name="always_show_image">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
@@ -1426,6 +1427,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_new_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1438,6 +1440,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_open_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1467,6 +1470,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="image">image4</property>
                         <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
                         <child type="submenu">
                           <object class="GtkMenu" id="menu2">
                             <property name="visible">True</property>
@@ -1479,6 +1483,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                                 <property name="use_action_appearance">False</property>
                                 <property name="image">image5</property>
                                 <property name="use_stock">False</property>
+                                <property name="always_show_image">True</property>
                                 <signal name="activate" handler="on_backup_location_menuitem_activate" swapped="no"/>
                               </object>
                             </child>
@@ -1530,45 +1535,8 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
+                        <property name="always_show_image">True</property>
                         <signal name="button-press-event" handler="on_root_delete_event" swapped="no"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImageMenuItem" id="referee_menuitem">
-                <property name="label" translatable="yes">Referees</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
-                <property name="image">image14</property>
-                <property name="use_stock">False</property>
-                <child type="submenu">
-                  <object class="GtkMenu" id="menu5">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkImageMenuItem" id="tickets_menuitem">
-                        <property name="label" translatable="yes">Print meal tickets</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
-                        <property name="image">image12</property>
-                        <property name="use_stock">False</property>
-                        <signal name="activate" handler="on_tickets_menuitem_activate" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="payment_menuitem">
-                        <property name="label" translatable="yes">Print payment book</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
-                        <property name="image">image13</property>
-                        <property name="use_stock">False</property>
-                        <signal name="activate" handler="on_payment_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -1583,6 +1551,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                 <property name="use_action_appearance">False</property>
                 <property name="image">image7</property>
                 <property name="use_stock">False</property>
+                <property name="always_show_image">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu6">
                     <property name="visible">True</property>
@@ -1595,6 +1564,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="image">image16</property>
                         <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_network_config_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1606,6 +1576,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="image">image17</property>
                         <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_scanner_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1623,6 +1594,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="image">image10</property>
                         <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_ftp_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1637,6 +1609,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                 <property name="use_action_appearance">False</property>
                 <property name="image">image6</property>
                 <property name="use_stock">False</property>
+                <property name="always_show_image">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="locale_menu">
                     <property name="visible">True</property>
@@ -1670,6 +1643,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                 <property name="right_justified">True</property>
                 <property name="image">image8</property>
                 <property name="use_stock">False</property>
+                <property name="always_show_image">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu4">
                     <property name="visible">True</property>
@@ -1689,6 +1663,48 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
               </object>
             </child>
             <child>
+              <object class="GtkImageMenuItem" id="ring_menuitem">
+                <property name="label" translatable="yes">Referees</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">image14</property>
+                <property name="use_stock">False</property>
+                <property name="always_show_image">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu5">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="tickets_menuitem">
+                        <property name="label" translatable="yes">Print meal tickets</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="image">image12</property>
+                        <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="activate" handler="on_tickets_menuitem_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="payment_menuitem">
+                        <property name="label" translatable="yes">Print payment book</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="image">image13</property>
+                        <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="activate" handler="on_payment_menuitem_activate" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
               <object class="GtkImageMenuItem" id="help">
                 <property name="label">gtk-help</property>
                 <property name="visible">True</property>
@@ -1697,6 +1713,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                 <property name="right_justified">True</property>
                 <property name="use_underline">True</property>
                 <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">
                     <property name="visible">True</property>
@@ -1709,6 +1726,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="image">image1</property>
                         <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_example_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1720,6 +1738,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="image">image3</property>
                         <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_user_manual_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1737,6 +1756,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="image">image15</property>
                         <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_template_imagemenuitem_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1754,6 +1774,7 @@ the smarthphones running &lt;b&gt;SmartPoule&lt;/b&gt;</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                         <signal name="activate" handler="on_about_menuitem_activate" swapped="no"/>
                       </object>
                     </child>

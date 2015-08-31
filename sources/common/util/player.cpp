@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include "util/attribute.hpp"
-#include "util/partner.hpp"
 #include "network/cryptor.hpp"
 
 #include "people_management/player_factory.hpp" // !!
@@ -380,8 +379,8 @@ void Player::NotifyChangesToPartners ()
     {
       gchar *where = g_strdup_printf ("/%s", _player_class);
 
-      _partner->SendMessage (where,
-                             (const gchar *) xml_buffer->content);
+      //_partner->SendMessage (where,
+                             //(const gchar *) xml_buffer->content);
       g_free (where);
     }
 
@@ -501,7 +500,7 @@ void Player::SetWeapon (Weapon *weapon)
 }
 
 // --------------------------------------------------------------------------------
-void Player::SetPartner (Partner *partner)
+void Player::SetPartner (Net::Partner *partner)
 {
   _partner = partner;
   NotifyChangesToPartners ();

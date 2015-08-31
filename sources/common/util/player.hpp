@@ -23,11 +23,11 @@
 #include "util/attribute.hpp"
 #include "util/wifi_code.hpp"
 #include "util/object.hpp"
+#include "network/partner.hpp"
 #include "network/uploader.hpp"
 
 class WifiCode;
 class Weapon;
-class Partner;
 
 class Player : public Object, Net::Uploader::Listener
 {
@@ -112,7 +112,7 @@ class Player : public Object, Net::Uploader::Listener
     void Dump ();
     FlashCode *GetFlashCode ();
 
-    void SetPartner (Partner *partner);
+    void SetPartner (Net::Partner *partner);
 
     void NotifyChangesToPartners ();
 
@@ -177,13 +177,13 @@ class Player : public Object, Net::Uploader::Listener
     static guint   _next_ref;
     static GSList *_attributes_model;
 
-    guint        _dnd_ref;
-    guint        _ref;
-    guint        _nb_matchs;
-    Weapon      *_weapon;
-    const gchar *_player_class;
-    WifiCode    *_wifi_code;
-    Partner     *_partner;
+    guint         _dnd_ref;
+    guint         _ref;
+    guint         _nb_matchs;
+    Weapon       *_weapon;
+    const gchar  *_player_class;
+    WifiCode     *_wifi_code;
+    Net::Partner *_partner;
 
     void NotifyChange (Attribute *attr,
                        guint      step);

@@ -18,6 +18,7 @@
 #define hall_hpp
 
 #include "util/canvas_module.hpp"
+#include "network/message.hpp"
 #include "piste.hpp"
 
 class Batch;
@@ -40,8 +41,8 @@ class Hall : public CanvasModule, Piste::Listener
 
     void AlignSelectedOnGrid ();
 
-    void ManageContest (const gchar *data,
-                        GtkNotebook *notebook);
+    void ManageContest (Net::Message *message,
+                        GtkNotebook  *notebook);
 
     void ManageJob (const gchar *data);
 

@@ -33,7 +33,7 @@ class HallManagerApp : public Application
 
     void Start (int argc, char **argv);
 
-    gboolean OnHttpPost (const gchar *data);
+    gboolean OnHttpPost (Net::Message *message);
 };
 
 // --------------------------------------------------------------------------------
@@ -68,19 +68,17 @@ void HallManagerApp::Start (int    argc,
   Application::Start (argc,
                       argv);
 
-  AnnounceAvailability ();
-
   _hall_manager->Start ();
 
   gtk_main ();
 }
 
 // --------------------------------------------------------------------------------
-gboolean HallManagerApp::OnHttpPost (const gchar *data)
+gboolean HallManagerApp::OnHttpPost (Net::Message *message)
 {
-  if (Application::OnHttpPost (data) == FALSE)
+  if (Application::OnHttpPost (message) == FALSE)
   {
-    _hall_manager->OnHttpPost (data);
+    _hall_manager->OnHttpPost (message);
 
     return FALSE;
   }

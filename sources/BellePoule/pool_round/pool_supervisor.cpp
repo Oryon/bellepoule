@@ -18,7 +18,7 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "util/partner.hpp"
+#include "network/crew.hpp"
 #include "application/classification.hpp"
 #include "application/contest.hpp"
 #include "pool_allocator.hpp"
@@ -362,32 +362,27 @@ namespace Pool
   // --------------------------------------------------------------------------------
   void Supervisor::SendJob (Pool *pool)
   {
-    Partner *hall_manager = _contest->GetHallManager ();
+    xmlBuffer *xml_buffer = xmlBufferCreate ();
 
-    if (hall_manager)
     {
-      xmlBuffer *xml_buffer = xmlBufferCreate ();
+      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
 
-      {
-        xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+      _contest->SaveHeader (xml_writer);
+      _allocator->SaveHeader (xml_writer);
+      pool->Save (xml_writer);
 
-        _contest->SaveHeader (xml_writer);
-        _allocator->SaveHeader (xml_writer);
-        pool->Save (xml_writer);
+      xmlTextWriterEndElement (xml_writer);
+      xmlTextWriterEndElement (xml_writer);
 
-        xmlTextWriterEndElement (xml_writer);
-        xmlTextWriterEndElement (xml_writer);
+      xmlTextWriterEndDocument (xml_writer);
 
-        xmlTextWriterEndDocument (xml_writer);
-
-        xmlFreeTextWriter (xml_writer);
-      }
-
-      hall_manager->SendMessage ("/Job",
-                                 (const gchar *) xml_buffer->content);
-
-      xmlBufferFree (xml_buffer);
+      xmlFreeTextWriter (xml_writer);
     }
+
+    //Net::Crew::SendMessage ("/Job",
+                            //(const gchar *) xml_buffer->content);
+
+    xmlBufferFree (xml_buffer);
   }
 
   // --------------------------------------------------------------------------------
