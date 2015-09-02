@@ -75,8 +75,15 @@ void HallManager::OnHttpPost (Net::Message *message)
 {
   if (message->Is ("/Competition"))
   {
-    _hall->ManageContest (message,
-                          GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
+    if (message->GetInteger ("Ring::Validity") == 1)
+    {
+      _hall->ManageContest (message,
+                            GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
+    }
+    else
+    {
+      _hall->DropContest (message);
+    }
   }
   else if (message->Is ("/Job"))
   {

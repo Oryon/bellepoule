@@ -39,7 +39,6 @@
 #include "people_management/checkin.hpp"
 #include "people_management/referees_list.hpp"
 #include "people_management/checkin_supervisor.hpp"
-#include "network/crew.hpp"
 #include "network/uploader.hpp"
 
 #include "version.h"
@@ -235,7 +234,6 @@ Contest::Contest (gboolean for_duplication )
   }
 
   _read_only  = FALSE;
-  _notebook   = NULL;
   _level      = NULL;
   _filename   = NULL;
   _tournament = NULL;
@@ -245,7 +243,7 @@ Contest::Contest (gboolean for_duplication )
   _team_event = FALSE;
   _derived    = FALSE;
 
-  _crew_message = new Net::Message ("/Competition");
+  _ring_message = new Net::Message ("/Competition");
 
   _name = g_key_file_get_string (Global::_user_config->_key_file,
                                  "Competiton",
@@ -785,6 +783,12 @@ void Contest::LoadXmlDoc (xmlDoc *doc)
 // --------------------------------------------------------------------------------
 Contest::~Contest ()
 {
+  if (_ring_message)
+  {
+    _ring_message->Recall ();
+    _ring_message->Release ();
+  }
+
   _state = LEAVING;
 
   // www
@@ -806,8 +810,6 @@ Contest::~Contest ()
   g_free (_organizer);
   g_free (_web_site);
   g_free (_location);
-
-  Object::TryToRelease (_crew_message);
 
   Object::TryToRelease (_manual_classification);
   Object::TryToRelease (_minimum_team_size);
@@ -835,17 +837,17 @@ Contest::~Contest ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::UpdateHallManager ()
+void Contest::Spread ()
 {
   gchar *color = gdk_color_to_string (_gdk_color);
 
-  _crew_message->Set ("id",       _id);
-  _crew_message->Set ("color",    color);
-  _crew_message->Set ("weapon",   _weapon->GetImage ());
-  _crew_message->Set ("gender",   gender_image[_gender]);
-  _crew_message->Set ("category", category_image[_category]);
+  _ring_message->Set ("id",       _id);
+  _ring_message->Set ("color",    color);
+  _ring_message->Set ("weapon",   _weapon->GetImage ());
+  _ring_message->Set ("gender",   gender_image[_gender]);
+  _ring_message->Set ("category", category_image[_category]);
 
-  Net::Crew::SendMessage (_crew_message);
+  _ring_message->Spread ();
 
   g_free (color);
 }
@@ -1122,12 +1124,6 @@ void Contest::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-void Contest::OnUnPlugged ()
-{
-  Net::Crew::DropMessage (_crew_message);
-}
-
-// --------------------------------------------------------------------------------
 void Contest::FillInDate (guint day,
                           guint month,
                           guint year)
@@ -1346,25 +1342,23 @@ void Contest::DisplayProperties ()
                           _gdk_color);
   }
 
-  UpdateHallManager ();
+  Spread ();
 }
 
 // --------------------------------------------------------------------------------
 void Contest::AttachTo (GtkNotebook *to)
 {
-  _notebook = GTK_NOTEBOOK (to);
-
-  gtk_notebook_append_page (_notebook,
+  gtk_notebook_append_page (to,
                             GetRootWidget (),
                             _glade->GetWidget ("notebook_title"));
 
   if (_derived == FALSE)
   {
-    gtk_notebook_set_current_page (_notebook,
+    gtk_notebook_set_current_page (to,
                                    -1);
   }
 
-  gtk_notebook_set_tab_reorderable (_notebook,
+  gtk_notebook_set_tab_reorderable (to,
                                     GetRootWidget (),
                                     TRUE);
 

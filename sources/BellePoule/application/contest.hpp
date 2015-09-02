@@ -161,13 +161,12 @@ class Contest : public Module
     People::Checkin *_referees_list;
     State            _state;
     gboolean         _read_only;
-    Net::Message    *_crew_message;
+    Net::Message    *_ring_message;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;
     GtkWidget   *_gender_combo;
     GtkWidget   *_category_combo;
-    GtkNotebook *_notebook;
 
     void   ReadProperties       ();
     void   DisplayProperties    ();
@@ -200,9 +199,7 @@ class Contest : public Module
 
     void OnPlugged ();
 
-    void OnUnPlugged ();
-
-    void UpdateHallManager ();
+    void Spread ();
 
   private:
     void OnBeginPrint (GtkPrintOperation *operation,

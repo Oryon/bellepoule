@@ -28,30 +28,30 @@
 #include "util/object.hpp"
 #include "partner.hpp"
 #include "message.hpp"
-#include "crew.hpp"
+#include "ring.hpp"
 
 namespace Net
 {
-  const gchar *Crew::ANNOUNCE_GROUP = "225.0.0.35";
+  const gchar *Ring::ANNOUNCE_GROUP = "225.0.0.35";
 
-  gchar     *Crew::_role              = NULL;
-  guint      Crew::_unicast_port      = 0;
-  GList     *Crew::_partner_list      = NULL;
-  GList     *Crew::_message_list      = NULL;
-  GtkWidget *Crew::_partner_indicator = NULL;
+  gchar     *Ring::_role              = NULL;
+  guint      Ring::_unicast_port      = 0;
+  GList     *Ring::_partner_list      = NULL;
+  GList     *Ring::_message_list      = NULL;
+  GtkWidget *Ring::_partner_indicator = NULL;
 
   // --------------------------------------------------------------------------------
-  Crew::Crew ()
+  Ring::Ring ()
   {
   }
 
   // --------------------------------------------------------------------------------
-  Crew::~Crew ()
+  Ring::~Ring ()
   {
   }
 
   // --------------------------------------------------------------------------------
-  void Crew::Join (const gchar *role,
+  void Ring::Join (const gchar *role,
                    guint        unicast_port,
                    GtkWidget   *partner_indicator)
   {
@@ -86,7 +86,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Crew::Leave ()
+  void Ring::Leave ()
   {
     {
       Message *message = new Message ("Farewell");
@@ -110,14 +110,13 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Crew::Handshake (Message *message)
+  void Ring::Handshake (Message *message)
   {
-    printf ("Handshake\n");
     Add (new Partner (message));
   }
 
   // --------------------------------------------------------------------------------
-  void Crew::AnnounceAvailability ()
+  void Ring::AnnounceAvailability ()
   {
     Message *message = new Message ("Announcement");
 
@@ -129,7 +128,7 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  void Crew::Multicast (Message *message)
+  void Ring::Multicast (Message *message)
   {
     struct sockaddr_in  addr;
     int                 fd;
@@ -170,7 +169,7 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  gboolean Crew::OnMulticast (Message *message)
+  gboolean Ring::OnMulticast (Message *message)
   {
     gchar *role = message->GetString ("role");
 
@@ -206,7 +205,7 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  gpointer Crew::MulticastListener ()
+  gpointer Ring::MulticastListener ()
   {
     struct sockaddr_in addr;
     int                fd;
@@ -299,7 +298,7 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Crew::Add (Partner *partner)
+  void Ring::Add (Partner *partner)
   {
     {
       GList *current = _partner_list;
@@ -335,24 +334,35 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
-  void Crew::Synchronize (Partner *partner)
+  void Ring::Synchronize (Partner *partner)
   {
-    printf ("%s ==> %s\n", _role, __FUNCTION__);
-
     GList *current = _message_list;
 
     while (current)
     {
       Message *message = (Message *) current->data;
 
-      printf ("         SendMessage\n");
       partner->SendMessage (message);
       current = g_list_next (current);
     }
   }
 
   // -------------------------------------------------------------------------------
-  void Crew::SendMessage (Message *message)
+  void Ring::Send (Message *message)
+  {
+    GList *current = _partner_list;
+
+    while (current)
+    {
+      Partner *partner = (Partner *) current->data;
+
+      partner->SendMessage (message);
+      current = g_list_next (current);
+    }
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::SpreadMessage (Message *message)
   {
     if (g_list_find (_message_list,
                      message) == NULL)
@@ -361,29 +371,25 @@ namespace Net
                                       message);
     }
 
-    {
-      GList *current = _partner_list;
-
-      while (current)
-      {
-        Partner *partner = (Partner *) current->data;
-
-        partner->SendMessage (message);
-        current = g_list_next (current);
-      }
-    }
+    message->Set ("Ring::Validity", 1U);
+    Send (message);
   }
 
   // -------------------------------------------------------------------------------
-  void Crew::DropMessage (Message *message)
+  void Ring::RecallMessage (Message *message)
   {
-    GList *node = g_list_find (_message_list,
-                               message);
+    message->Set ("Ring::Validity", 0U);
+    Send (message);
 
-    if (node)
     {
-      _message_list = g_list_delete_link (_message_list,
-                                          node);
+      GList *node = g_list_find (_message_list,
+                                 message);
+
+      if (node)
+      {
+        _message_list = g_list_delete_link (_message_list,
+                                            node);
+      }
     }
   }
 }

@@ -14,8 +14,8 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef crew_hpp
-#define crew_hpp
+#ifndef ring_hpp
+#define ring_hpp
 
 #include <gtk/gtk.h>
 
@@ -25,7 +25,7 @@ namespace Net
 {
   class Message;
 
-  class Crew
+  class Ring
   {
     public:
       static void Join (const gchar *role,
@@ -34,15 +34,15 @@ namespace Net
 
       static void Leave ();
 
-      static void SendMessage (Message *message);
-
-      static void DropMessage (Message *message);
-
       static void Handshake (Message *message);
 
+      static void SpreadMessage (Message *message);
+
+      static void RecallMessage (Message *message);
+
     private:
-      Crew ();
-      virtual ~Crew ();
+      Ring ();
+      virtual ~Ring ();
 
     private:
       static const gchar *ANNOUNCE_GROUP;
@@ -63,6 +63,8 @@ namespace Net
       static void AnnounceAvailability ();
 
       static void Multicast (Message *message);
+
+      static void Send (Message *message);
 
       static gpointer MulticastListener ();
   };

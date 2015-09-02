@@ -43,6 +43,10 @@ namespace Net
 
       gchar *GetSenderIp ();
 
+      void Spread ();
+
+      void Recall ();
+
       void Set (const gchar *field,
                 const gchar *value);
 

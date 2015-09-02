@@ -44,6 +44,8 @@ class Hall : public CanvasModule, Piste::Listener
     void ManageContest (Net::Message *message,
                         GtkNotebook  *notebook);
 
+    void DropContest (Net::Message *message);
+
     void ManageJob (const gchar *data);
 
   private:

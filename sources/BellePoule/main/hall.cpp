@@ -169,6 +169,30 @@ void Hall::ManageContest (Net::Message *message,
 }
 
 // --------------------------------------------------------------------------------
+void Hall::DropContest (Net::Message *message)
+{
+  gchar *id = message->GetString ("id");
+
+  if (id)
+  {
+    Batch *batch = GetBatch (id);
+
+    if (batch)
+    {
+      GList *node = g_list_find (_batch_list,
+                                 batch);
+
+      _batch_list = g_list_delete_link (_batch_list,
+                                        node);
+
+      batch->Release ();
+    }
+
+    g_free (id);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Hall::ManageJob (const gchar *data)
 {
   xmlDocPtr doc = xmlParseMemory (data, strlen (data));

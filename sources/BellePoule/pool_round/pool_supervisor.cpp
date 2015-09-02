@@ -18,7 +18,7 @@
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "network/crew.hpp"
+#include "network/message.hpp"
 #include "application/classification.hpp"
 #include "application/contest.hpp"
 #include "pool_allocator.hpp"
@@ -379,7 +379,7 @@ namespace Pool
       xmlFreeTextWriter (xml_writer);
     }
 
-    //Net::Crew::SendMessage ("/Job",
+    //Net::Ring::SendMessage ("/Job",
                             //(const gchar *) xml_buffer->content);
 
     xmlBufferFree (xml_buffer);

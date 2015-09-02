@@ -28,7 +28,7 @@
 #include "util/attribute.hpp"
 #include "util/global.hpp"
 #include "util/module.hpp"
-#include "network/crew.hpp"
+#include "network/ring.hpp"
 #include "network/message.hpp"
 #include "network/downloader.hpp"
 #include "language.hpp"
@@ -96,7 +96,8 @@ Application::Application (const gchar   *config_file,
       gtk_init (argc, argv);
 
       g_type_class_unref (g_type_class_ref (GTK_TYPE_IMAGE_MENU_ITEM));
-      g_object_set (gtk_settings_get_default (), "gtk-menu-images", TRUE, NULL);
+      g_object_set (gtk_settings_get_default (), "gtk-menu-images",   TRUE, NULL);
+      g_object_set (gtk_settings_get_default (), "gtk-button-images", TRUE, NULL);
     }
 
     //Object::Track ("Player");
@@ -128,7 +129,7 @@ Application::Application (const gchar   *config_file,
 // --------------------------------------------------------------------------------
 Application::~Application ()
 {
-  Net::Crew::Leave ();
+  Net::Ring::Leave ();
 
   AttributeDesc::Cleanup ();
 
@@ -393,7 +394,7 @@ void Application::Start (int    argc,
 
   gtk_widget_hide (GTK_WIDGET (_main_module->GetGObject ("update_menuitem")));
 
-  Net::Crew::Join (_role,
+  Net::Ring::Join (_role,
                    _http_server->GetPort (),
                    GTK_WIDGET (_main_module->GetGObject ("ring_menuitem")));
 }
@@ -499,7 +500,7 @@ gboolean Application::OnHttpPost (Net::Message *message)
 {
   if (message->Is ("Handshake"))
   {
-    Net::Crew::Handshake (message);
+    Net::Ring::Handshake (message);
     return TRUE;
   }
   return FALSE;
