@@ -14,6 +14,7 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "ring.hpp"
 #include "message.hpp"
 
 namespace Net
@@ -102,6 +103,18 @@ namespace Net
                                   "Header",
                                   "from",
                                   NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::Spread ()
+  {
+    Ring::SpreadMessage (this);
+  }
+
+  // --------------------------------------------------------------------------------
+  void Message::Recall ()
+  {
+    Ring::RecallMessage (this);
   }
 
   // --------------------------------------------------------------------------------

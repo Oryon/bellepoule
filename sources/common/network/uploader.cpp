@@ -224,7 +224,7 @@ namespace Net
         curl_easy_setopt (curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t) uploader->_data_length);
         curl_easy_setopt (curl, CURLOPT_URL,              uploader->_full_url);
         curl_easy_setopt (curl, CURLOPT_HTTPHEADER,       header);
-#ifdef DEBUG
+#ifdef UPLOADER_DEBUG
         curl_easy_setopt (curl, CURLOPT_DEBUGFUNCTION,    OnUpLoadTrace);
         curl_easy_setopt (curl, CURLOPT_DEBUGDATA,        uploader);
         curl_easy_setopt (curl, CURLOPT_VERBOSE,          1L);
@@ -252,7 +252,9 @@ namespace Net
           else
           {
             uploader->_peer_status = CONN_OK;
-            g_print (YELLOW "[Uploader] " ESC "Done");
+#ifdef UPLOADER_DEBUG
+            g_print (YELLOW "[Uploader] " ESC "Done\n");
+#endif
           }
 
           if (uploader->_listener)

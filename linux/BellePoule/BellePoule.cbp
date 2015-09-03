@@ -107,46 +107,76 @@
 			<Add library="ssl" />
 			<Add library="crypto" />
 		</Linker>
+		<Unit filename="../../sources/BellePoule/actors/checkin.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/checkin.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/fencer.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/fencer.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/form.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/form.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/null_team.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/null_team.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/player_factory.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/player_factory.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/players_list.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/players_list.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/players_store.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/players_store.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/referee.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/referee.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/referees_list.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/referees_list.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/tally_counter.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/tally_counter.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/team.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/actors/team.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
 		<Unit filename="../../sources/BellePoule/application/application.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/application/application.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/attendees.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/attendees.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/book.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/book.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/chapter.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/chapter.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/classification.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/classification.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/contest.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/contest.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/ecosystem.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/ecosystem.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/application/language.cpp">
@@ -155,49 +185,7 @@
 		<Unit filename="../../sources/BellePoule/application/language.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/application/match.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/match.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/referee_zone.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/referee_zone.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/schedule.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/schedule.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/score.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/score.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/score_collector.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/score_collector.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/stage.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/stage.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/tournament.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/tournament.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/application/version.hpp">
+		<Unit filename="../../sources/BellePoule/application/version.h">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/BellePoule/application/weapon.cpp">
@@ -206,271 +194,277 @@
 		<Unit filename="../../sources/BellePoule/application/weapon.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/main/batch.cpp">
+		<Unit filename="../../sources/BellePoule/marshaller/batch.cpp">
 			<Option target="HallManager_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/main/batch.hpp">
+		<Unit filename="../../sources/BellePoule/marshaller/batch.hpp">
 			<Option target="HallManager_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/main/bellepoule_app.cpp">
+		<Unit filename="../../sources/BellePoule/marshaller/hall.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/hall.hpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/hall_manager.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/hall_manager.hpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/job.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/job.hpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/main.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/piste.cpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/marshaller/piste.hpp">
+			<Option target="HallManager_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/attendees.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/attendees.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/book/book.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/book/book.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/book/chapter.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/book/chapter.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/classification.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/classification.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/contest.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/contest.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/ecosystem.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/ecosystem.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/BellePoule/supervisor/main.cpp">
 			<Option target="BellePoule_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/main/hall.cpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/hall.hpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/hall_manager.cpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/hall_manager.hpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/hall_manager_app.cpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/job.cpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/job.hpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/piste.cpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/main/piste.hpp">
-			<Option target="HallManager_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/barrage.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/barrage.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/checkin.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/checkin.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/checkin_supervisor.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/checkin_supervisor.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/fencer.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/fencer.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/form.cpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/form.hpp">
-			<Option target="Lib_Debug" />
-		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/general_classification.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/match.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/general_classification.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/match.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/null_team.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/referee_zone.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/null_team.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/referee_zone.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/player_factory.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/barrage/barrage.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/player_factory.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/barrage/barrage.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/players_list.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/checkin/checkin_supervisor.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/players_list.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/checkin/checkin_supervisor.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/players_store.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/checkin/rank_importer.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/players_store.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/checkin/rank_importer.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/rank_importer.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/classification/general_classification.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/rank_importer.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/classification/general_classification.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/referee.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/default_order.data">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/referee.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/dispatcher.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/referees_list.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/dispatcher.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/referees_list.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/opponent.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/splitting.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/opponent.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/splitting.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/pair.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/tally_counter.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/pair.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/tally_counter.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/dispatcher/test.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/team.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/people_management/team.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/dispatcher/default_order.data">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool_allocator.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/dispatcher/dispatcher.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool_allocator.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/dispatcher/dispatcher.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool_supervisor.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/dispatcher/opponent.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool_supervisor.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/dispatcher/opponent.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool_zone.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/dispatcher/pair.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/pool_zone.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/dispatcher/pair.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/criteria_value.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/dispatcher/test.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/criteria_value.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/pool.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_data.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/pool.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_data.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/pool_allocator.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_fencer.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/pool_allocator.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_fencer.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/pool_supervisor.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_profiles.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/pool_supervisor.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/pool_profiles.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/pool_zone.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/smart_swapper.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/pool_zone.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/smart_swapper.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/criteria_value.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/snake.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/criteria_value.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/smart_swapper/snake.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/pool_data.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/poule/swapper.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/pool_data.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/splitting/splitting.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/pool_fencer.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/splitting/splitting.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/pool_fencer.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/html_table.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/pool_profiles.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/html_table.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/pool_profiles.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/smart_swapper.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/smart_swapper.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_print_session.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/snake.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_print_session.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/smart_swapper/snake.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/pool_round/swapper.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/html_table.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set_border.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/html_table.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_set_border.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_supervisor.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_supervisor.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_print_session.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_zone.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_print_session.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/rounds/tableau/table_zone.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_set.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/schedule.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_set.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/schedule.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_set_border.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/score.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_set_border.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/score.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_supervisor.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/score_collector.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_supervisor.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/score_collector.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_zone.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/stage.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/BellePoule/table_round/table_zone.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/stage.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/crew.cpp">
+		<Unit filename="../../sources/BellePoule/supervisor/tournament.cpp">
 			<Option target="Lib_Debug" />
 		</Unit>
-		<Unit filename="../../sources/common/network/crew.hpp">
+		<Unit filename="../../sources/BellePoule/supervisor/tournament.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/cryptor.cpp">
@@ -501,6 +495,12 @@
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/partner.hpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/ring.cpp">
+			<Option target="Lib_Debug" />
+		</Unit>
+		<Unit filename="../../sources/common/network/ring.hpp">
 			<Option target="Lib_Debug" />
 		</Unit>
 		<Unit filename="../../sources/common/network/uploader.cpp">

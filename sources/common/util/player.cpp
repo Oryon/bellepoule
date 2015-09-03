@@ -20,7 +20,7 @@
 #include "util/attribute.hpp"
 #include "network/cryptor.hpp"
 
-#include "people_management/player_factory.hpp" // !!
+#include "actors/player_factory.hpp" // !!
 
 #include "player.hpp"
 

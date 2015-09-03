@@ -288,7 +288,7 @@ namespace Net
 
         {
           struct MHD_Response *response;
-          static const gchar  *message  = "Reçu 5 sur 5";
+          static const gchar  *message  = GREEN "Reçu 5 sur 5\n" ESC;
 
           response = MHD_create_response_from_data (strlen (message),
                                                     (void *) message,
