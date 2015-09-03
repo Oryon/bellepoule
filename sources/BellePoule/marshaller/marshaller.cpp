@@ -18,10 +18,10 @@
 #include "application/weapon.hpp"
 #include "hall.hpp"
 
-#include "hall_manager.hpp"
+#include "marshaller.hpp"
 
 // --------------------------------------------------------------------------------
-HallManager::HallManager ()
+Marshaller::Marshaller ()
   : Module ("hall_manager.glade")
 {
   {
@@ -60,18 +60,18 @@ HallManager::HallManager ()
 }
 
 // --------------------------------------------------------------------------------
-HallManager::~HallManager ()
+Marshaller::~Marshaller ()
 {
   _hall->Release ();
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::Start ()
+void Marshaller::Start ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::OnHttpPost (Net::Message *message)
+void Marshaller::OnHttpPost (Net::Message *message)
 {
   if (message->Is ("/Competition"))
   {
@@ -96,7 +96,7 @@ void HallManager::OnHttpPost (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::ManageReferee (const gchar *data)
+void Marshaller::ManageReferee (const gchar *data)
 {
   xmlDocPtr doc = xmlParseMemory (data, strlen (data));
 

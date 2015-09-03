@@ -14,18 +14,18 @@
 //   You should have received a copy of the GNU General Public License
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef hall_manager_hpp
-#define hall_manager_hpp
+#ifndef marshaller_hpp
+#define marshaller_hpp
 
 #include "util/module.hpp"
 #include "actors/referees_list.hpp"
 
 class Hall;
 
-class HallManager : public Module
+class Marshaller : public Module
 {
   public:
-    HallManager ();
+    Marshaller ();
 
     void Start ();
 
@@ -35,7 +35,7 @@ class HallManager : public Module
     Hall                 *_hall;
     People::RefereesList *_referee_list;
 
-    virtual ~HallManager ();
+    virtual ~Marshaller ();
 
     void ManageReferee (const gchar *data);
 };

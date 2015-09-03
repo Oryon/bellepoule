@@ -16,18 +16,18 @@
 
 #include "application/application.hpp"
 #include "actors/referee.hpp"
-#include "hall_manager.hpp"
+#include "marshaller.hpp"
 
 // --------------------------------------------------------------------------------
-class HallManagerApp : public Application
+class MarshallerApp : public Application
 {
   public:
-    HallManagerApp (int *argc, char ***argv);
+    MarshallerApp (int *argc, char ***argv);
 
   private:
-    HallManager *_hall_manager;
+    Marshaller *_marshaller;
 
-    virtual ~HallManagerApp ();
+    virtual ~MarshallerApp ();
 
     void Prepare ();
 
@@ -37,20 +37,20 @@ class HallManagerApp : public Application
 };
 
 // --------------------------------------------------------------------------------
-HallManagerApp::HallManagerApp (int    *argc,
-                                char ***argv)
-  : Application ("HallManager", 35840, argc, argv)
+MarshallerApp::MarshallerApp (int    *argc,
+                              char ***argv)
+  : Application ("Marshaller", 35840, argc, argv)
 {
 }
 
 // --------------------------------------------------------------------------------
-HallManagerApp::~HallManagerApp ()
+MarshallerApp::~MarshallerApp ()
 {
   _main_module->Release ();
 }
 
 // --------------------------------------------------------------------------------
-void HallManagerApp::Prepare ()
+void MarshallerApp::Prepare ()
 {
   Referee::RegisterPlayerClass ();
 
@@ -58,27 +58,27 @@ void HallManagerApp::Prepare ()
 }
 
 // --------------------------------------------------------------------------------
-void HallManagerApp::Start (int    argc,
-                            char **argv)
+void MarshallerApp::Start (int    argc,
+                           char **argv)
 {
-  _hall_manager = new HallManager ();
+  _marshaller = new Marshaller ();
 
-  _main_module = _hall_manager;
+  _main_module = _marshaller;
 
   Application::Start (argc,
                       argv);
 
-  _hall_manager->Start ();
+  _marshaller->Start ();
 
   gtk_main ();
 }
 
 // --------------------------------------------------------------------------------
-gboolean HallManagerApp::OnHttpPost (Net::Message *message)
+gboolean MarshallerApp::OnHttpPost (Net::Message *message)
 {
   if (Application::OnHttpPost (message) == FALSE)
   {
-    _hall_manager->OnHttpPost (message);
+    _marshaller->OnHttpPost (message);
 
     return FALSE;
   }
@@ -89,7 +89,7 @@ gboolean HallManagerApp::OnHttpPost (Net::Message *message)
 // --------------------------------------------------------------------------------
 int main (int argc, char **argv)
 {
-  Application *application = new HallManagerApp (&argc, &argv);
+  Application *application = new MarshallerApp (&argc, &argv);
 
   application->Prepare ();
 
