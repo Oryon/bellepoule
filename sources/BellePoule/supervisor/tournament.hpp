@@ -44,8 +44,6 @@ class Tournament : public Module
 
     void OnOpenExample ();
 
-    void OnOpenUserManual ();
-
     void OnOpenTemplate ();
 
     void OnSave ();

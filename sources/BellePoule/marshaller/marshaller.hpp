@@ -37,7 +37,7 @@ class Marshaller : public Module
 
     virtual ~Marshaller ();
 
-    void ManageReferee (const gchar *data);
+    void ManageReferee (Net::Message *message);
 };
 
 #endif

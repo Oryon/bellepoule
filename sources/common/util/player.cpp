@@ -19,6 +19,7 @@
 
 #include "util/attribute.hpp"
 #include "network/cryptor.hpp"
+#include "network/message.hpp"
 
 #include "actors/player_factory.hpp" // !!
 
@@ -720,6 +721,34 @@ void Player::SetName (const gchar *name)
 
   SetAttributeValue (&attr_id,
                      name);
+}
+
+// --------------------------------------------------------------------------------
+void Player::FeedParcel (Net::Message *parcel)
+{
+  xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+  {
+    xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+    xmlTextWriterSetIndent     (xml_writer,
+                                TRUE);
+    xmlTextWriterStartDocument (xml_writer,
+                                NULL,
+                                "UTF-8",
+                                NULL);
+
+    Save (xml_writer);
+
+    xmlTextWriterEndDocument (xml_writer);
+
+    xmlFreeTextWriter (xml_writer);
+  }
+
+  parcel->Set ("xml",
+               (const gchar *) xml_buffer->content);
+
+  xmlBufferFree (xml_buffer);
 }
 
 // --------------------------------------------------------------------------------

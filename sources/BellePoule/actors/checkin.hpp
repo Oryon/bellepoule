@@ -43,6 +43,10 @@ namespace People
                      const gchar     *from_node,
                      const gchar     *player_class = NULL);
 
+      Player *LoadPlayer (xmlNode     *xml_node,
+                          const gchar *player_class,
+                          Player      *owner);
+
       void SaveList (xmlTextWriter *xml_writer,
                      const gchar   *player_class = NULL);
 
@@ -108,10 +112,6 @@ namespace People
                      const gchar *player_class_xml_tag,
                      const gchar *players_class_xml_tag,
                      Player      *owner = NULL);
-
-      Player *LoadPlayer (xmlNode     *xml_node,
-                          const gchar *player_class,
-                          Player      *owner);
 
       void RefreshAttendingDisplay ();
 

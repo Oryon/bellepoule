@@ -16,6 +16,8 @@
 
 #include <string.h>
 
+#include "network/message.hpp"
+
 #include "flash_code.hpp"
 #include "object.hpp"
 
@@ -38,6 +40,7 @@ Object::Object (const gchar *class_name)
   _ref_count = 1;
 
   _flash_code = NULL;
+  _parcel     = NULL;
 
 #ifdef DEBUG
   _nb_objects++;
@@ -94,6 +97,12 @@ Object::~Object ()
   }
 
   TryToRelease (_flash_code);
+
+  if (_parcel)
+  {
+    _parcel->Recall  ();
+    _parcel->Release ();
+  }
 
 #ifdef DEBUG
   _nb_objects--;
@@ -298,10 +307,34 @@ gint Object::GetIntData (Object      *owner,
 }
 
 // --------------------------------------------------------------------------------
+void Object::Disclose (const gchar *as)
+{
+  if (_parcel == NULL)
+  {
+    _parcel = new Net::Message (as);
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Object::Spread ()
+{
+  if (_parcel)
+  {
+    FeedParcel (_parcel);
+    _parcel->Spread ();
+  }
+}
+
+// --------------------------------------------------------------------------------
+void Object::FeedParcel (Net::Message *parcel)
+{
+}
+
+// --------------------------------------------------------------------------------
 void Object::Dump ()
 {
 #ifdef DEBUG
-  printf ("%p\n", this);
+  printf ("%p\n", (void *) this);
 #endif
 }
 

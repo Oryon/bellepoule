@@ -1559,6 +1559,36 @@ namespace People
   }
 
   // --------------------------------------------------------------------------------
+  void PlayersList::Spread ()
+  {
+    GSList *current = _player_list;
+
+    while (current)
+    {
+      Player *p = (Player *) current->data;
+
+      p->Spread ();
+
+      current = g_slist_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
+  void PlayersList::Disclose (const gchar *as)
+  {
+    GSList *current = _player_list;
+
+    while (current)
+    {
+      Player *p = (Player *) current->data;
+
+      p->Disclose (as);
+
+      current = g_slist_next (current);
+    }
+  }
+
+  // --------------------------------------------------------------------------------
   void PlayersList::DumpToHTML (FILE *file)
   {
     if (_filter && file)
