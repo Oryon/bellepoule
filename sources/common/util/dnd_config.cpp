@@ -20,8 +20,6 @@
 DndConfig::DndConfig ()
   : Object ("DndConfig")
 {
-  _count           = 0;
-  _target_table    = NULL;
   _floating_object = NULL;
   _target_list     = gtk_target_list_new (NULL, 0);
 }
@@ -29,15 +27,12 @@ DndConfig::DndConfig ()
 // --------------------------------------------------------------------------------
 DndConfig::~DndConfig ()
 {
-  gtk_target_table_free (_target_table,
-                         _count);
-
   gtk_target_list_unref (_target_list);
 }
 
 // --------------------------------------------------------------------------------
-guint32 DndConfig::CreateTarget (const gchar *target,
-                                 guint        flags)
+guint32 DndConfig::AddTarget (const gchar *target,
+                              guint        flags)
 {
   GdkAtom atom  = gdk_atom_intern (target, FALSE);
   GQuark  quark = g_quark_from_string (target);
@@ -51,32 +46,52 @@ guint32 DndConfig::CreateTarget (const gchar *target,
 }
 
 // --------------------------------------------------------------------------------
-void DndConfig::CreateTargetTable ()
+void DndConfig::SetOnAWidgetSrc (GtkWidget       *widget,
+                                 GdkModifierType  start_button_mask,
+                                 GdkDragAction    actions)
 {
-  _target_table = gtk_target_table_new_from_list (_target_list,
-                                                  &_count);
+  gtk_drag_source_set (widget,
+                       start_button_mask,
+                       NULL, 0,
+                       actions);
+  gtk_drag_source_set_target_list (widget,
+                                   _target_list);
 }
 
 // --------------------------------------------------------------------------------
-GtkTargetEntry *DndConfig::GetTargetTable ()
+void DndConfig::SetOnAWidgetDest (GtkWidget     *widget,
+                                  GdkDragAction  actions)
 {
-  if (_target_table == NULL)
-  {
-    CreateTargetTable ();
-  }
-
-  return _target_table;
+  gtk_drag_dest_set (widget,
+                     (GtkDestDefaults) 0,
+                     NULL, 0,
+                     actions);
+  gtk_drag_dest_set_target_list (widget,
+                                 _target_list);
 }
 
 // --------------------------------------------------------------------------------
-guint DndConfig::GetTargetTableSize ()
+void DndConfig::SetOnAWidgetSrc (GtkTreeView     *widget,
+                                 GdkModifierType  start_button_mask,
+                                 GdkDragAction    actions)
 {
-  if (_target_table == NULL)
-  {
-    CreateTargetTable ();
-  }
+  gtk_tree_view_enable_model_drag_source (widget,
+                                          start_button_mask,
+                                          NULL, 0,
+                                          actions);
+  gtk_drag_source_set_target_list (GTK_WIDGET (widget),
+                                   _target_list);
+}
 
-  return _count;
+// --------------------------------------------------------------------------------
+void DndConfig::SetOnAWidgetDest (GtkTreeView   *widget,
+                                  GdkDragAction  actions)
+{
+  gtk_tree_view_enable_model_drag_dest (widget,
+                                        NULL, 0,
+                                        actions);
+  gtk_drag_dest_set_target_list (GTK_WIDGET (widget),
+                                 _target_list);
 }
 
 // --------------------------------------------------------------------------------

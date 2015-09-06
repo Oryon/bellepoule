@@ -80,7 +80,7 @@ namespace Pool
       _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_criteria_hbox"));
     }
 
-    _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
     {
       GSList *attr_list;
@@ -226,14 +226,11 @@ namespace Pool
   {
     CanvasModule::OnPlugged ();
 
-    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
-                       (GtkDestDefaults) 0,
-                       _dnd_config->GetTargetTable (),
-                       _dnd_config->GetTargetTableSize (),
-                       GDK_ACTION_COPY);
+    _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
+                                   GDK_ACTION_COPY);
 
     ConnectDndDest (GTK_WIDGET (GetCanvas ()));
-    EnableDragAndDrop ();
+    EnableDndOnCanvas ();
 
     _owner->Plug (_fencer_list,
                   _glade->GetWidget ("fencer_list_hook"));

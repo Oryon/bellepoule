@@ -136,7 +136,7 @@ namespace Table
                                                 QUICK_MATCH_VISIBILITY_COLUMN_bool);
     }
 
-    _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
   }
 
   // --------------------------------------------------------------------------------
@@ -3488,14 +3488,11 @@ namespace Table
     _from_border->Plug ();
     _to_border->Plug   ();
 
-    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
-                       (GtkDestDefaults) 0,
-                       _dnd_config->GetTargetTable (),
-                       _dnd_config->GetTargetTableSize (),
-                       GDK_ACTION_COPY);
+    _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
+                                   GDK_ACTION_COPY);
 
     ConnectDndDest (GTK_WIDGET (GetCanvas ()));
-    EnableDragAndDrop ();
+    EnableDndOnCanvas ();
   }
 
   // --------------------------------------------------------------------------------

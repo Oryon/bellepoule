@@ -86,13 +86,11 @@ namespace People
     }
 
     {
-      _dnd_key = _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+      _dnd_key = _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
-      gtk_drag_source_set (GTK_WIDGET (_tree_view),
-                           GDK_MODIFIER_MASK,
-                           _dnd_config->GetTargetTable (),
-                           _dnd_config->GetTargetTableSize (),
-                           GDK_ACTION_COPY);
+      _dnd_config->SetOnAWidgetSrc (GTK_WIDGET (_tree_view),
+                                    GDK_MODIFIER_MASK,
+                                    GDK_ACTION_COPY);
 
       ConnectDndSource (GTK_WIDGET (_tree_view));
       gtk_drag_source_set_icon_name (GTK_WIDGET (_tree_view),

@@ -516,7 +516,7 @@ void CanvasModule::OnEndPrint (GtkPrintOperation *operation,
 }
 
 // --------------------------------------------------------------------------------
-void CanvasModule::EnableDragAndDrop ()
+void CanvasModule::EnableDndOnCanvas ()
 {
   GooCanvasItem *root = GetRootItem ();
 

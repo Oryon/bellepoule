@@ -137,7 +137,7 @@ namespace People
     }
 
     {
-      _dnd_key = _dnd_config->CreateTarget ("bellepoule/fencer", GTK_TARGET_SAME_WIDGET);
+      _dnd_key = _dnd_config->AddTarget ("bellepoule/fencer", GTK_TARGET_SAME_WIDGET);
 
       ConnectDndSource (GTK_WIDGET (_tree_view));
       ConnectDndDest   (GTK_WIDGET (_tree_view));
@@ -689,15 +689,11 @@ namespace People
   {
     if (_contest->IsTeamEvent ())
     {
-      gtk_tree_view_enable_model_drag_source (_tree_view,
-                                              GDK_BUTTON1_MASK,
-                                              _dnd_config->GetTargetTable (),
-                                              _dnd_config->GetTargetTableSize (),
-                                              GDK_ACTION_MOVE);
-      gtk_tree_view_enable_model_drag_dest (_tree_view,
-                                            _dnd_config->GetTargetTable (),
-                                            _dnd_config->GetTargetTableSize (),
-                                            GDK_ACTION_MOVE);
+      _dnd_config->SetOnAWidgetSrc (_tree_view,
+                                    GDK_BUTTON1_MASK,
+                                    GDK_ACTION_MOVE);
+      _dnd_config->SetOnAWidgetDest (_tree_view,
+                                     GDK_ACTION_MOVE);
     }
   }
 

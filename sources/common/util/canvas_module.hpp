@@ -73,7 +73,7 @@ class CanvasModule : public Module
     GSList *_drop_zones;
 
   public:
-    void EnableDragAndDrop ();
+    void EnableDndOnCanvas ();
 
     void SetObjectDropZone (Object        *object,
                             GooCanvasItem *item,

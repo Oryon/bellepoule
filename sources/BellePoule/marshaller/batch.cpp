@@ -41,13 +41,11 @@ Batch::Batch (const gchar *id)
   {
     GtkWidget *source = _glade->GetWidget ("treeview");
 
-    _dnd_key = _dnd_config->CreateTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_key = _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
-    gtk_drag_source_set (source,
-                         GDK_MODIFIER_MASK,
-                         _dnd_config->GetTargetTable (),
-                         _dnd_config->GetTargetTableSize (),
-                         GDK_ACTION_COPY);
+    _dnd_config->SetOnAWidgetSrc (source,
+                                  GDK_MODIFIER_MASK,
+                                  GDK_ACTION_COPY);
 
     ConnectDndSource (source);
   }

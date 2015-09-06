@@ -26,10 +26,22 @@ class DndConfig : public virtual Object
   public:
     DndConfig ();
 
-    guint32 CreateTarget (const gchar *target,
-                          guint        flags);
+    guint32 AddTarget (const gchar *target,
+                       guint        flags);
 
-    GtkTargetEntry *GetTargetTable ();
+    void SetOnAWidgetSrc (GtkWidget       *widget,
+                          GdkModifierType  start_button_mask,
+                          GdkDragAction    actions);
+
+    void SetOnAWidgetDest (GtkWidget     *widget,
+                           GdkDragAction  actions);
+
+    void SetOnAWidgetSrc (GtkTreeView     *widget,
+                          GdkModifierType  start_button_mask,
+                          GdkDragAction    actions);
+
+    void SetOnAWidgetDest (GtkTreeView   *widget,
+                           GdkDragAction  actions);
 
     guint GetTargetTableSize ();
 
@@ -39,14 +51,10 @@ class DndConfig : public virtual Object
 
 
   private:
-    GtkTargetList  *_target_list;
-    GtkTargetEntry *_target_table;
-    gint            _count;
-    Object         *_floating_object;
+    GtkTargetList *_target_list;
+    Object        *_floating_object;
 
     ~DndConfig ();
-
-    void CreateTargetTable ();
 };
 
 #endif

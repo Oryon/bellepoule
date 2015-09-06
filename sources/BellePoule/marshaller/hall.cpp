@@ -82,14 +82,11 @@ void Hall::OnPlugged ()
 
 
   {
-    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
-                       (GtkDestDefaults) 0,
-                       _dnd_config->GetTargetTable (),
-                       _dnd_config->GetTargetTableSize (),
-                       GDK_ACTION_COPY);
+    _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
+                                   GDK_ACTION_COPY);
 
     ConnectDndDest (GTK_WIDGET (GetCanvas ()));
-    EnableDragAndDrop ();
+    EnableDndOnCanvas ();
   }
 
   AddPiste ();
