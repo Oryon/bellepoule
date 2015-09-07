@@ -69,11 +69,6 @@ class Hall : public CanvasModule, Piste::Listener
 
     Batch *GetBatch (guint id);
 
-    gboolean DroppingIsForbidden (Object *object);
-
-    gboolean ObjectIsDropable (Object   *floating_object,
-                               DropZone *in_zone);
-
     Object *GetDropObjectFromRef (guint32 ref);
 
     void DropObject (Object   *object,

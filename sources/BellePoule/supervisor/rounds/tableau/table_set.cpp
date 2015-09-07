@@ -3795,7 +3795,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TableSet::DroppingIsForbidden (Object *object)
+  gboolean TableSet::DragingIsForbidden (Object *object)
   {
     Player *player = (Player *) object;
 
@@ -3850,10 +3850,11 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TableSet::ObjectIsDropable (Object   *floating_object,
-                                       DropZone *in_zone)
+  gboolean TableSet::DroppingIsAllowed (Object   *floating_object,
+                                        DropZone *in_zone)
   {
-    if (floating_object && in_zone)
+    if (CanvasModule::DroppingIsAllowed (floating_object,
+                                         in_zone))
     {
       TableZone *table_zone = (TableZone *) in_zone;
       GSList    *current    = table_zone->GetNodeList ();

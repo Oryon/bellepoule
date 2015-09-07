@@ -138,12 +138,6 @@ namespace People
                                guint             key,
                                guint             time);
 
-      gboolean OnDragDrop (GtkWidget      *widget,
-                           GdkDragContext *drag_context,
-                           gint            x,
-                           gint            y,
-                           guint           time);
-
       gboolean OnDragMotion (GtkWidget      *widget,
                              GdkDragContext *drag_context,
                              gint            x,

@@ -324,12 +324,12 @@ namespace Table
 
       Object *GetDropObjectFromRef (guint32 ref);
 
-      gboolean DroppingIsForbidden (Object *object);
+      gboolean DragingIsForbidden (Object *object);
 
       GString *GetFloatingImage (Object *floating_object);
 
-      gboolean ObjectIsDropable (Object   *floating_object,
-                                 DropZone *in_zone);
+      gboolean DroppingIsAllowed (Object   *floating_object,
+                                  DropZone *in_zone);
 
       void GetBounds (GNode           *top,
                       GNode           *bottom,

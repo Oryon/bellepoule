@@ -148,6 +148,19 @@ gboolean Module::OnDragDrop (GtkWidget      *widget,
                              gint            y,
                              guint           time)
 {
+  GdkAtom atom = gtk_drag_dest_find_target (widget,
+                                            drag_context,
+                                            NULL);
+
+  if (atom)
+  {
+    gtk_drag_get_data (widget,
+                       drag_context,
+                       atom,
+                       time);
+    return TRUE;
+  }
+
   return FALSE;
 }
 
@@ -173,24 +186,21 @@ gboolean Module::OnDragMotion (GtkWidget      *widget,
                                gint            y,
                                guint           time)
 {
-  // if (_dnd_config->GetFloatingObject () == NULL)
+  gtk_drag_highlight (widget);
+
   {
-    GList *target = gdk_drag_context_list_targets (drag_context);
+    GdkAtom atom = gtk_drag_dest_find_target (widget,
+                                              drag_context,
+                                              NULL);
 
-    while (target)
+    if (atom)
     {
-      gtk_drag_get_data (widget,
-                         drag_context,
-                         GDK_POINTER_TO_ATOM (target->data),
-                         time);
-
-      target = g_list_next (target);
+      gdk_drag_status (drag_context,
+                       gdk_drag_context_get_suggested_action (drag_context),
+                       time);
+      return TRUE;
     }
   }
-
-  gdk_drag_status  (drag_context,
-                    (GdkDragAction) 0,
-                    time);
 
   return FALSE;
 }
@@ -255,12 +265,12 @@ void Module::ConnectDndDest (GtkWidget *widget)
 {
   g_signal_connect (widget, "drag-motion",
                     G_CALLBACK (DragMotion), this);
-  g_signal_connect (widget, "drag-leave",
-                    G_CALLBACK (DragLeave), this);
   g_signal_connect (widget, "drag-drop",
                     G_CALLBACK (DragDrop), this);
   g_signal_connect (widget, "drag-data-received",
                     G_CALLBACK (DragDataReceived), this);
+  g_signal_connect (widget, "drag-leave",
+                    G_CALLBACK (DragLeave), this);
 }
 
 // --------------------------------------------------------------------------------

@@ -82,6 +82,8 @@ void Hall::OnPlugged ()
 
 
   {
+    _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+
     _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
                                    GDK_ACTION_COPY);
 
@@ -91,19 +93,6 @@ void Hall::OnPlugged ()
 
   AddPiste ();
   RestoreZoomFactor ();
-}
-
-// --------------------------------------------------------------------------------
-gboolean Hall::DroppingIsForbidden (Object *object)
-{
-  return FALSE;
-}
-
-// --------------------------------------------------------------------------------
-gboolean Hall::ObjectIsDropable (Object   *floating_object,
-                                 DropZone *in_zone)
-{
-  return (in_zone != NULL);
 }
 
 // --------------------------------------------------------------------------------

@@ -49,7 +49,6 @@ class DndConfig : public virtual Object
 
     Object *GetFloatingObject ();
 
-
   private:
     GtkTargetList *_target_list;
     Object        *_floating_object;

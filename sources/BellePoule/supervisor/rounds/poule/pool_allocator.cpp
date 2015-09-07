@@ -321,16 +321,16 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Allocator::DroppingIsForbidden (Object *object)
+  gboolean Allocator::DragingIsForbidden (Object *object)
   {
     Player *player = (Player *) object;
 
-    if (player && player->Is ("Referee"))
+    if (player && player->Is ("Fencer"))
     {
-      return FALSE;
+      return Locked ();
     }
 
-    return Locked ();
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -373,18 +373,6 @@ namespace Pool
     }
 
     return string;
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Allocator::ObjectIsDropable (Object   *floating_object,
-                                        DropZone *in_zone)
-  {
-    if (floating_object && in_zone)
-    {
-      return TRUE;
-    }
-
-    return FALSE;
   }
 
   // --------------------------------------------------------------------------------

@@ -156,12 +156,9 @@ namespace Pool
 
       Object *GetDropObjectFromRef (guint32 ref);
 
-      gboolean DroppingIsForbidden (Object *object);
+      gboolean DragingIsForbidden (Object *object);
 
       GString *GetFloatingImage (Object *floating_object);
-
-      gboolean ObjectIsDropable (Object   *floating_object,
-                                 DropZone *in_zone);
 
       void DumpToHTML (FILE *file);
 
