@@ -245,7 +245,8 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  Object *Allocator::GetDropObjectFromRef (guint32 ref)
+  Object *Allocator::GetDropObjectFromRef (guint32 ref,
+                                           guint   key)
   {
     return _contest->GetRefereeFromDndRef (ref);
   }

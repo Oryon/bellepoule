@@ -642,8 +642,8 @@ void CanvasModule::OnDragDataReceived (GtkWidget        *widget,
   {
     guint32 *ref = (guint32 *) gtk_selection_data_get_data (data);
 
-    _dnd_config->SetFloatingObject (GetDropObjectFromRef (*ref));
-    _dnd_config->SetFloatingObject (this);
+    _dnd_config->SetFloatingObject (GetDropObjectFromRef (*ref,
+                                                          key));
   }
 
   if (_target_drop_zone)
@@ -882,7 +882,8 @@ gboolean CanvasModule::OnMotionNotify (GooCanvasItem  *item,
 }
 
 // --------------------------------------------------------------------------------
-Object *CanvasModule::GetDropObjectFromRef (guint32 ref)
+Object *CanvasModule::GetDropObjectFromRef (guint32 ref,
+                                            guint   key)
 {
   return NULL;
 }

@@ -83,7 +83,8 @@ class CanvasModule : public Module
                             DropZone      *drop_zone);
 
   private:
-    virtual Object *GetDropObjectFromRef (guint32 ref);
+    virtual Object *GetDropObjectFromRef (guint32 ref,
+                                          guint   key);
 
     virtual void DragObject (Object   *object,
                              DropZone *from_zone);

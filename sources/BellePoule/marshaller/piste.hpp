@@ -22,6 +22,7 @@
 #include "util/drop_zone.hpp"
 
 class Module;
+class Referee;
 class Job;
 
 class Piste : public DropZone
@@ -44,13 +45,11 @@ class Piste : public DropZone
 
     void AddJob (Job *job);
 
+    void AddReferee (Referee *referee);
+
     void Select ();
 
     void UnSelect ();
-
-    void SetColor (const gchar *color);
-
-    void Translate (const gchar *color);
 
     void Translate (gdouble tx,
                     gdouble ty);
@@ -62,6 +61,8 @@ class Piste : public DropZone
     void SetId (guint id);
 
     void AlignOnGrid ();
+
+    void AnchorTo (Piste *piste);
 
     void GetHorizontalCoord (gdouble *x,
                              gdouble *y);
@@ -88,6 +89,8 @@ class Piste : public DropZone
     void Focus ();
 
     void Unfocus ();
+
+    void SetColor (const gchar *color);
 
     void MonitorEvent (GooCanvasItem *item);
 

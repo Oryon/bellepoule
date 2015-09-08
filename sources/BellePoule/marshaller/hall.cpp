@@ -27,9 +27,6 @@ Hall::Hall ()
   _piste_list    = NULL;
   _selected_list = NULL;
 
-  _new_x_location = 0.0;
-  _new_y_location = 0.0;
-
   _dragging = FALSE;
 
   SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")),
@@ -96,9 +93,20 @@ void Hall::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-Object *Hall::GetDropObjectFromRef (guint32 ref)
+Object *Hall::GetDropObjectFromRef (guint32 ref,
+                                    guint   key)
 {
-  return GetBatch (ref);
+  if (strcmp (g_quark_to_string (key), "bellepoule/referee") == 0)
+  {
+    printf ("====> %d\n", ref);
+    return this;
+  }
+  else if (strcmp (g_quark_to_string (key), "bellepoule/job") == 0)
+  {
+    return GetBatch (ref);
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -106,25 +114,33 @@ void Hall::DropObject (Object   *object,
                        DropZone *source_zone,
                        DropZone *target_zone)
 {
-  Batch *batch = dynamic_cast <Batch *> (object);
+  Piste *piste = dynamic_cast <Piste *> (target_zone);
 
-  if (batch)
   {
-    GSList *selection = batch->GetCurrentSelection ();
-    GSList *current   = selection;
-    Piste  *piste     = dynamic_cast <Piste *> (target_zone);
+    Batch *batch = dynamic_cast <Batch *> (object);
 
-    while (current)
+    if (batch)
     {
-      Job *job = (Job *) current->data;
+      GSList *selection = batch->GetCurrentSelection ();
+      GSList *current   = selection;
 
-      piste->AddJob (job);
+      while (current)
+      {
+        Job *job = (Job *) current->data;
 
-      current = g_slist_next (current);
+        piste->AddJob (job);
+
+        current = g_slist_next (current);
+      }
+
+      g_slist_free_full (selection,
+                         (GDestroyNotify) g_free);
+      return;
     }
+  }
 
-    g_slist_free_full (selection,
-                       (GDestroyNotify) g_free);
+  {
+    piste->AddReferee (NULL);
   }
 }
 
@@ -238,6 +254,7 @@ void Hall::ManageJob (const gchar *data)
 // --------------------------------------------------------------------------------
 void Hall::AddPiste ()
 {
+  GList *anchor = g_list_last (_piste_list);
   Piste *piste  = new Piste (_root, this);
 
   piste->SetListener (this);
@@ -278,11 +295,15 @@ void Hall::AddPiste ()
     }
   }
 
-  piste->Translate (_new_x_location,
-                    _new_y_location);
-
-  _new_x_location += 5.0;
-  _new_y_location += 5.0;
+  if (anchor)
+  {
+    piste->AnchorTo ((Piste *) anchor->data);
+  }
+  else
+  {
+    piste->Translate (0.5,
+                      0.5);
+  }
 }
 
 // --------------------------------------------------------------------------------

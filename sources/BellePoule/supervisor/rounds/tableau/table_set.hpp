@@ -322,7 +322,8 @@ namespace Table
                        DropZone *source_zone,
                        DropZone *target_zone);
 
-      Object *GetDropObjectFromRef (guint32 ref);
+      Object *GetDropObjectFromRef (guint32 ref,
+                                    guint   key);
 
       gboolean DragingIsForbidden (Object *object);
 

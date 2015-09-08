@@ -3225,12 +3225,10 @@ namespace Table
                                                pixbuf,
                                                0.0,
                                                offset - 6.0,
+                                               "width",         8.0,
+                                               "height",        8.0,
+                                               "scale-to-fit",  TRUE,
                                                NULL);
-            g_object_set (G_OBJECT (flash_item),
-                          "width",         8.0,
-                          "height",        8.0,
-                          "scale-to-fit",  TRUE,
-                          NULL);
             g_object_unref (pixbuf);
           }
 
@@ -3787,7 +3785,8 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Object *TableSet::GetDropObjectFromRef (guint32 ref)
+  Object *TableSet::GetDropObjectFromRef (guint32 ref,
+                                          guint   key)
   {
     Contest *contest = _supervisor->GetContest ();
 
