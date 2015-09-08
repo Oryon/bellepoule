@@ -22,10 +22,10 @@
 #include <libxml/xpath.h>
 
 #include "util/global.hpp"
-#include "../../contest.hpp"
 
 #include "smart_swapper/smart_swapper.hpp"
 #include "dispatcher/dispatcher.hpp"
+#include "../../contest.hpp"
 
 #include "pool_allocator.hpp"
 
@@ -683,7 +683,9 @@ namespace Pool
                                      number+1,
                                      GetXmlPlayerTag (),
                                      _rand_seed);
-            SetPoolFlashRef (current_pool);
+            current_pool->SetIdChain (_contest->GetId (),
+                                      GetName (),
+                                      GetId () + 1);
 
             {
               current_zone = new PoolZone (this,
@@ -923,18 +925,6 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::SetPoolFlashRef (Pool *pool)
-  {
-    gchar *ref = g_strdup_printf ("#%s/%d/%d",
-                                  _contest->GetId (),
-                                  GetId () + 1,
-                                  pool->GetNumber ());
-
-    pool->SetFlashRef (ref);
-    g_free (ref);
-  }
-
-  // --------------------------------------------------------------------------------
   void Allocator::CreatePools ()
   {
     GtkWidget *swapping_hbox = _glade->GetWidget ("swapping_hbox");
@@ -956,7 +946,10 @@ namespace Pool
                                   i+1,
                                   GetXmlPlayerTag (),
                                   _rand_seed);
-        SetPoolFlashRef (pool_table[i]);
+        pool_table[i]->SetIdChain (_contest->GetId (),
+                                   GetName (),
+                                   GetId () + 1);
+
 
         {
           PoolZone *zone = new PoolZone (this,

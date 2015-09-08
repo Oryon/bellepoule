@@ -80,6 +80,7 @@ void Hall::OnPlugged ()
 
   {
     _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_config->AddTarget ("bellepoule/job",     GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
     _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
                                    GDK_ACTION_COPY);
@@ -103,6 +104,7 @@ Object *Hall::GetDropObjectFromRef (guint32 ref,
   }
   else if (strcmp (g_quark_to_string (key), "bellepoule/job") == 0)
   {
+    printf ("====> %d\n", ref);
     return GetBatch (ref);
   }
 
@@ -195,60 +197,17 @@ void Hall::DropContest (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void Hall::ManageJob (const gchar *data)
+void Hall::ManageJob (Net::Message *message)
 {
-  xmlDocPtr doc = xmlParseMemory (data, strlen (data));
+  gchar *id    = message->GetString ("contest");
+  Batch *batch = GetBatch (id);
 
-  if (doc)
+  if (batch)
   {
-    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-
-    xmlXPathInit ();
-
-    {
-      xmlXPathObject *xml_object;
-      xmlNodeSet     *xml_nodeset;
-
-      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
-      if (xml_object->nodesetval->nodeNr == 0)
-      {
-        xmlXPathFreeObject (xml_object);
-        xml_object = xmlXPathEval (BAD_CAST "/CompetitionParEquipes", xml_context);
-      }
-
-      xml_nodeset = xml_object->nodesetval;
-      if (xml_object->nodesetval->nodeNr)
-      {
-        gchar *attr;
-
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
-        if (attr)
-        {
-          Batch *batch = GetBatch (attr);
-
-          if (batch)
-          {
-            GChecksum *sha1 = g_checksum_new (G_CHECKSUM_SHA1);
-
-            g_checksum_update (sha1,
-                               (const guchar *) data,
-                               -1);
-
-            batch->LoadJob (xml_nodeset->nodeTab[0],
-                            sha1);
-
-            g_checksum_free (sha1);
-          }
-          xmlFree (attr);
-        }
-      }
-
-      xmlXPathFreeObject  (xml_object);
-    }
-
-    xmlXPathFreeContext (xml_context);
-    xmlFreeDoc (doc);
+    batch->LoadJob (message);
   }
+
+  g_free (id);
 }
 
 // --------------------------------------------------------------------------------

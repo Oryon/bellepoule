@@ -146,8 +146,6 @@ namespace Pool
 
       void FillInConfig ();
 
-      void SetPoolFlashRef (Pool *pool);
-
       Pool *GetPoolOf (GSList *drop_zone);
 
       void DropObject (Object   *object,

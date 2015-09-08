@@ -741,7 +741,6 @@ void Player::FeedParcel (Net::Message *parcel)
     Save (xml_writer);
 
     xmlTextWriterEndDocument (xml_writer);
-
     xmlFreeTextWriter (xml_writer);
   }
 

@@ -21,6 +21,7 @@
 #include "util/canvas.hpp"
 #include "job.hpp"
 
+#include "batch.hpp"
 #include "piste.hpp"
 
 const gdouble Piste::_W          = 160.0;
@@ -123,14 +124,19 @@ Piste::Piste (GooCanvasItem *parent,
                              _RESOLUTION,
                              _RESOLUTION);
 
-  SetId    (1);
-  SetColor ("lightgrey");
+  SetId (1);
+
+  _focus_color = g_strdup ("grey");
+  _color       = g_strdup ("lightgrey");
+  SetColor (_color);
 }
 
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
   goo_canvas_item_remove (_root_item);
+  g_free (_color);
+  g_free (_focus_color);
 }
 
 // --------------------------------------------------------------------------------
@@ -142,10 +148,24 @@ void Piste::SetListener (Listener *listener)
 // --------------------------------------------------------------------------------
 void Piste::AddJob (Job *job)
 {
-  gchar *color = gdk_color_to_string (job->GetGdkColor ());
+  {
+    g_free (_color);
+    _color = gdk_color_to_string (job->GetGdkColor ());
 
-  SetColor (color);
-  g_free (color);
+    SetColor (_color);
+  }
+
+  {
+    Batch *batch = job->GetBatch ();
+
+    g_object_set (G_OBJECT (_title_item),
+                  "text", batch->GetName (),
+                  NULL);
+  }
+
+  g_object_set (G_OBJECT (_match_item),
+                "text", job->GetName (),
+                NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -177,7 +197,7 @@ void Piste::Unfocus ()
 {
   DropZone::Unfocus ();
 
-  SetColor ("lightgrey");
+  SetColor (_color);
 }
 
 // --------------------------------------------------------------------------------

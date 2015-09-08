@@ -20,7 +20,6 @@
 
 #include "network/message.hpp"
 #include "../../classification.hpp"
-#include "../../contest.hpp"
 
 #include "pool_allocator.hpp"
 #include "pool_supervisor.hpp"
@@ -184,6 +183,13 @@ namespace Pool
                               FALSE);
 
     RetrievePools ();
+
+    for (guint p = 0; p < _allocator->GetNbPools (); p++)
+    {
+      Pool *pool = _allocator->GetPool (p);
+
+      pool->Spread ();
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -194,7 +200,6 @@ namespace Pool
 
     if (_allocator)
     {
-
       for (guint p = 0; p < _allocator->GetNbPools (); p++)
       {
         Pool *pool = _allocator->GetPool (p);
@@ -356,34 +361,6 @@ namespace Pool
     pool->SetFilter (_filter);
     pool->SetStatusCbk ((Pool::StatusCbk) OnPoolStatusUpdated,
                         this);
-
-    SendJob (pool);
-  }
-
-  // --------------------------------------------------------------------------------
-  void Supervisor::SendJob (Pool *pool)
-  {
-    xmlBuffer *xml_buffer = xmlBufferCreate ();
-
-    {
-      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
-
-      _contest->SaveHeader (xml_writer);
-      _allocator->SaveHeader (xml_writer);
-      pool->Save (xml_writer);
-
-      xmlTextWriterEndElement (xml_writer);
-      xmlTextWriterEndElement (xml_writer);
-
-      xmlTextWriterEndDocument (xml_writer);
-
-      xmlFreeTextWriter (xml_writer);
-    }
-
-    //Net::Ring::SendMessage ("/Job",
-                            //(const gchar *) xml_buffer->content);
-
-    xmlBufferFree (xml_buffer);
   }
 
   // --------------------------------------------------------------------------------

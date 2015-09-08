@@ -83,6 +83,8 @@ class Piste : public DropZone
     GooCanvasItem   *_status_item;
     guint            _id;
     gboolean         _horizontal;
+    gchar           *_color;
+    gchar           *_focus_color;
 
     ~Piste ();
 

@@ -46,7 +46,7 @@ class Hall : public CanvasModule, Piste::Listener
 
     void DropContest (Net::Message *message);
 
-    void ManageJob (const gchar *data);
+    void ManageJob (Net::Message *message);
 
   private:
     GooCanvasItem *_root;

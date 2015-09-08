@@ -117,7 +117,8 @@ class Object
     static void Track (const gchar *klass);
 
   protected:
-    FlashCode *_flash_code;
+    FlashCode    *_flash_code;
+    Net::Message *_parcel;
 
     virtual ~Object ();
 
@@ -126,7 +127,6 @@ class Object
   private:
     GData        *_datalist;
     guint         _ref_count;
-    Net::Message *_parcel;
     const gchar  *_class_name;
 
 #ifdef DEBUG

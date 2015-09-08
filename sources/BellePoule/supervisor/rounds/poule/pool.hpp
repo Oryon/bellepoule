@@ -49,6 +49,7 @@ namespace Pool
             const gchar *xml_player_tag,
             guint32      rand_seed);
 
+      void  SetIdChain    (const gchar *contest, const gchar *stage_name, guint stage_id);
       void  AddFencer     (Player *player, Object *rank_owner);
       void  AddReferee    (Player *player);
       void  CreateMatchs  (GSList *affinity_criteria_list);
@@ -204,6 +205,8 @@ namespace Pool
       void RefreshAttribute (Player            *player,
                              const gchar       *name,
                              gchar             *value);
+
+      void FeedParcel (Net::Message *parcel);
 
       static gint CompareMatch (Match *a,
                                 Match *b,

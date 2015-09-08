@@ -82,7 +82,7 @@ void Marshaller::OnHttpPost (Net::Message *message)
     }
     else if (message->Is ("Job"))
     {
-      // _hall->ManageJob (message);
+      _hall->ManageJob (message);
     }
     else if (message->Is ("Referee"))
     {
