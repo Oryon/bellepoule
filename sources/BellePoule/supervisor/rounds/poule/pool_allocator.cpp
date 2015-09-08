@@ -22,10 +22,10 @@
 #include <libxml/xpath.h>
 
 #include "util/global.hpp"
-#include "../../contest.hpp"
 
 #include "smart_swapper/smart_swapper.hpp"
 #include "dispatcher/dispatcher.hpp"
+#include "../../contest.hpp"
 
 #include "pool_allocator.hpp"
 
@@ -80,7 +80,7 @@ namespace Pool
       _swapping_sensitivity_trigger.AddWidget (_glade->GetWidget ("swapping_criteria_hbox"));
     }
 
-    _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
     {
       GSList *attr_list;
@@ -226,14 +226,11 @@ namespace Pool
   {
     CanvasModule::OnPlugged ();
 
-    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
-                       (GtkDestDefaults) 0,
-                       _dnd_config->GetTargetTable (),
-                       _dnd_config->GetTargetTableSize (),
-                       GDK_ACTION_COPY);
+    _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
+                                   GDK_ACTION_COPY);
 
     ConnectDndDest (GTK_WIDGET (GetCanvas ()));
-    EnableDragAndDrop ();
+    EnableDndOnCanvas ();
 
     _owner->Plug (_fencer_list,
                   _glade->GetWidget ("fencer_list_hook"));
@@ -248,7 +245,8 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  Object *Allocator::GetDropObjectFromRef (guint32 ref)
+  Object *Allocator::GetDropObjectFromRef (guint32 ref,
+                                           guint   key)
   {
     return _contest->GetRefereeFromDndRef (ref);
   }
@@ -324,16 +322,16 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Allocator::DroppingIsForbidden (Object *object)
+  gboolean Allocator::DragingIsForbidden (Object *object)
   {
     Player *player = (Player *) object;
 
-    if (player && player->Is ("Referee"))
+    if (player && player->Is ("Fencer"))
     {
-      return FALSE;
+      return Locked ();
     }
 
-    return Locked ();
+    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -376,18 +374,6 @@ namespace Pool
     }
 
     return string;
-  }
-
-  // --------------------------------------------------------------------------------
-  gboolean Allocator::ObjectIsDropable (Object   *floating_object,
-                                        DropZone *in_zone)
-  {
-    if (floating_object && in_zone)
-    {
-      return TRUE;
-    }
-
-    return FALSE;
   }
 
   // --------------------------------------------------------------------------------
@@ -697,7 +683,9 @@ namespace Pool
                                      number+1,
                                      GetXmlPlayerTag (),
                                      _rand_seed);
-            SetPoolFlashRef (current_pool);
+            current_pool->SetIdChain (_contest->GetId (),
+                                      GetName (),
+                                      GetId () + 1);
 
             {
               current_zone = new PoolZone (this,
@@ -937,18 +925,6 @@ namespace Pool
   }
 
   // --------------------------------------------------------------------------------
-  void Allocator::SetPoolFlashRef (Pool *pool)
-  {
-    gchar *ref = g_strdup_printf ("#%s/%d/%d",
-                                  _contest->GetId (),
-                                  GetId () + 1,
-                                  pool->GetNumber ());
-
-    pool->SetFlashRef (ref);
-    g_free (ref);
-  }
-
-  // --------------------------------------------------------------------------------
   void Allocator::CreatePools ()
   {
     GtkWidget *swapping_hbox = _glade->GetWidget ("swapping_hbox");
@@ -970,7 +946,10 @@ namespace Pool
                                   i+1,
                                   GetXmlPlayerTag (),
                                   _rand_seed);
-        SetPoolFlashRef (pool_table[i]);
+        pool_table[i]->SetIdChain (_contest->GetId (),
+                                   GetName (),
+                                   GetId () + 1);
+
 
         {
           PoolZone *zone = new PoolZone (this,

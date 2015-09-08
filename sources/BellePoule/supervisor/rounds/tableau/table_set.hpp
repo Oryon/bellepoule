@@ -322,14 +322,15 @@ namespace Table
                        DropZone *source_zone,
                        DropZone *target_zone);
 
-      Object *GetDropObjectFromRef (guint32 ref);
+      Object *GetDropObjectFromRef (guint32 ref,
+                                    guint   key);
 
-      gboolean DroppingIsForbidden (Object *object);
+      gboolean DragingIsForbidden (Object *object);
 
       GString *GetFloatingImage (Object *floating_object);
 
-      gboolean ObjectIsDropable (Object   *floating_object,
-                                 DropZone *in_zone);
+      gboolean DroppingIsAllowed (Object   *floating_object,
+                                  DropZone *in_zone);
 
       void GetBounds (GNode           *top,
                       GNode           *bottom,

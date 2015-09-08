@@ -30,6 +30,8 @@ typedef enum
 Batch::Batch (const gchar *id)
   : Module ("batch.glade")
 {
+  _name = NULL;
+
   _id = (guint32) g_ascii_strtoull (id,
                                     NULL,
                                     16);
@@ -41,13 +43,11 @@ Batch::Batch (const gchar *id)
   {
     GtkWidget *source = _glade->GetWidget ("treeview");
 
-    _dnd_key = _dnd_config->CreateTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_key = _dnd_config->AddTarget ("bellepoule/job", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
 
-    gtk_drag_source_set (source,
-                         GDK_MODIFIER_MASK,
-                         _dnd_config->GetTargetTable (),
-                         _dnd_config->GetTargetTableSize (),
-                         GDK_ACTION_COPY);
+    _dnd_config->SetOnAWidgetSrc (source,
+                                  GDK_MODIFIER_MASK,
+                                  GDK_ACTION_COPY);
 
     ConnectDndSource (source);
   }
@@ -57,12 +57,19 @@ Batch::Batch (const gchar *id)
 Batch::~Batch ()
 {
   gdk_color_free (_gdk_color);
+  g_free (_name);
 }
 
 // --------------------------------------------------------------------------------
 guint32 Batch::GetId ()
 {
   return _id;
+}
+
+// --------------------------------------------------------------------------------
+const gchar *Batch::GetName ()
+{
+  return _name;
 }
 
 // --------------------------------------------------------------------------------
@@ -157,87 +164,87 @@ GSList *Batch::GetCurrentSelection ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Batch::HasJob (GChecksum *sha1)
+void Batch::LoadJob (Net::Message *message)
 {
-  GtkTreeIter iter;
-  gboolean    iter_is_valid;
+  gchar     *xml = message->GetString ("xml");
+  xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
 
-  iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_list_store),
-                                                 &iter);
-  while (iter_is_valid)
+  if (doc)
   {
-    Job *current_job;
+    xmlXPathInit ();
 
-    gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
-                        &iter,
-                        JOB_ptr, &current_job,
-                        -1);
-
-    if (current_job->Is (sha1))
     {
-      return TRUE;
-    }
+      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+      xmlXPathObject  *xml_object;
+      xmlNodeSet      *xml_nodeset;
 
-    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store),
-                                              &iter);
+      xml_object = xmlXPathEval (BAD_CAST "/Poule", xml_context);
+      xml_nodeset = xml_object->nodesetval;
+
+      if (xml_nodeset->nodeNr == 1)
+      {
+        LoadJob (xml_nodeset->nodeTab[0]);
+      }
+
+      xmlXPathFreeObject  (xml_object);
+      xmlXPathFreeContext (xml_context);
+    }
+    xmlFreeDoc (doc);
   }
 
-  return FALSE;
+  g_free (xml);
+
+  g_free (_name);
+  _name = message->GetString ("round");
 }
 
 // --------------------------------------------------------------------------------
-void Batch::LoadJob (xmlNode   *xml_node,
-                     GChecksum *sha1)
+void Batch::LoadJob (xmlNode *xml_node)
 {
-  if (HasJob (sha1) == FALSE)
+  for (xmlNode *n = xml_node; n != NULL; n = n->next)
   {
-    for (xmlNode *n = xml_node; n != NULL; n = n->next)
+    if (n->type == XML_ELEMENT_NODE)
     {
-      if (n->type == XML_ELEMENT_NODE)
+      if (strcmp ((char *) n->name, "TourDePoules") == 0)
       {
-        if (strcmp ((char *) n->name, "TourDePoules") == 0)
-        {
-          GtkLabel *label = GTK_LABEL (_glade->GetWidget ("batch_label"));
-          gchar    *name;
+        GtkLabel *label = GTK_LABEL (_glade->GetWidget ("batch_label"));
+        gchar    *name;
 
-          name = g_strdup_printf ("%s %s",
-                                  gettext ("Pool"),
-                                  (gchar *) xmlGetProp (n, BAD_CAST "ID"));
-          gtk_label_set_text (label, name);
-          g_free (name);
-        }
-        else if (strcmp ((char *) n->name, "Poule") == 0)
-        {
-          GtkTreeIter  iter;
-          gchar       *attr;
-          gchar       *name;
-          Job         *job = new Job (sha1,
-                                      _gdk_color);
-
-          attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
-          if (attr)
-          {
-            name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
-          }
-          else
-          {
-            name = g_strdup (gettext ("Pool"));
-          }
-
-          gtk_list_store_append (_list_store,
-                                 &iter);
-
-          job->SetName (name);
-          gtk_list_store_set (_list_store, &iter,
-                              NAME_str, name,
-                              JOB_ptr,  job,
-                              -1);
-          g_free (name);
-        }
-
-        LoadJob (n->children,
-                 sha1);
+        name = g_strdup_printf ("%s %s",
+                                gettext ("Pool"),
+                                (gchar *) xmlGetProp (n, BAD_CAST "ID"));
+        gtk_label_set_text (label, name);
+        g_free (name);
       }
+      else if (strcmp ((char *) n->name, "Poule") == 0)
+      {
+        GtkTreeIter  iter;
+        gchar       *attr;
+        gchar       *name;
+        Job         *job = new Job (this, _gdk_color);
+
+        attr = (gchar *) xmlGetProp (n, BAD_CAST "ID");
+        if (attr)
+        {
+          name = g_strdup_printf ("%s%s", gettext ("Pool #"), attr);
+        }
+        else
+        {
+          name = g_strdup (gettext ("Pool"));
+        }
+
+        gtk_list_store_append (_list_store,
+                               &iter);
+
+        job->SetName (name);
+        gtk_list_store_set (_list_store, &iter,
+                            NAME_str, name,
+                            JOB_ptr,  job,
+                            -1);
+        g_free (name);
+      }
+
+      LoadJob (n->children);
     }
   }
 }

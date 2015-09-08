@@ -27,9 +27,6 @@ Hall::Hall ()
   _piste_list    = NULL;
   _selected_list = NULL;
 
-  _new_x_location = 0.0;
-  _new_y_location = 0.0;
-
   _dragging = FALSE;
 
   SetZoomer (GTK_RANGE (_glade->GetWidget ("zoom_scale")),
@@ -82,14 +79,14 @@ void Hall::OnPlugged ()
 
 
   {
-    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
-                       (GtkDestDefaults) 0,
-                       _dnd_config->GetTargetTable (),
-                       _dnd_config->GetTargetTableSize (),
-                       GDK_ACTION_COPY);
+    _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_config->AddTarget ("bellepoule/job",     GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+
+    _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
+                                   GDK_ACTION_COPY);
 
     ConnectDndDest (GTK_WIDGET (GetCanvas ()));
-    EnableDragAndDrop ();
+    EnableDndOnCanvas ();
   }
 
   AddPiste ();
@@ -97,22 +94,21 @@ void Hall::OnPlugged ()
 }
 
 // --------------------------------------------------------------------------------
-gboolean Hall::DroppingIsForbidden (Object *object)
+Object *Hall::GetDropObjectFromRef (guint32 ref,
+                                    guint   key)
 {
-  return FALSE;
-}
+  if (strcmp (g_quark_to_string (key), "bellepoule/referee") == 0)
+  {
+    printf ("====> %d\n", ref);
+    return this;
+  }
+  else if (strcmp (g_quark_to_string (key), "bellepoule/job") == 0)
+  {
+    printf ("====> %d\n", ref);
+    return GetBatch (ref);
+  }
 
-// --------------------------------------------------------------------------------
-gboolean Hall::ObjectIsDropable (Object   *floating_object,
-                                 DropZone *in_zone)
-{
-  return (in_zone != NULL);
-}
-
-// --------------------------------------------------------------------------------
-Object *Hall::GetDropObjectFromRef (guint32 ref)
-{
-  return GetBatch (ref);
+  return NULL;
 }
 
 // --------------------------------------------------------------------------------
@@ -120,25 +116,33 @@ void Hall::DropObject (Object   *object,
                        DropZone *source_zone,
                        DropZone *target_zone)
 {
-  Batch *batch = dynamic_cast <Batch *> (object);
+  Piste *piste = dynamic_cast <Piste *> (target_zone);
 
-  if (batch)
   {
-    GSList *selection = batch->GetCurrentSelection ();
-    GSList *current   = selection;
-    Piste  *piste     = dynamic_cast <Piste *> (target_zone);
+    Batch *batch = dynamic_cast <Batch *> (object);
 
-    while (current)
+    if (batch)
     {
-      Job *job = (Job *) current->data;
+      GSList *selection = batch->GetCurrentSelection ();
+      GSList *current   = selection;
 
-      piste->AddJob (job);
+      while (current)
+      {
+        Job *job = (Job *) current->data;
 
-      current = g_slist_next (current);
+        piste->AddJob (job);
+
+        current = g_slist_next (current);
+      }
+
+      g_slist_free_full (selection,
+                         (GDestroyNotify) g_free);
+      return;
     }
+  }
 
-    g_slist_free_full (selection,
-                       (GDestroyNotify) g_free);
+  {
+    piste->AddReferee (NULL);
   }
 }
 
@@ -193,65 +197,23 @@ void Hall::DropContest (Net::Message *message)
 }
 
 // --------------------------------------------------------------------------------
-void Hall::ManageJob (const gchar *data)
+void Hall::ManageJob (Net::Message *message)
 {
-  xmlDocPtr doc = xmlParseMemory (data, strlen (data));
+  gchar *id    = message->GetString ("contest");
+  Batch *batch = GetBatch (id);
 
-  if (doc)
+  if (batch)
   {
-    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
-
-    xmlXPathInit ();
-
-    {
-      xmlXPathObject *xml_object;
-      xmlNodeSet     *xml_nodeset;
-
-      xml_object = xmlXPathEval (BAD_CAST "/CompetitionIndividuelle", xml_context);
-      if (xml_object->nodesetval->nodeNr == 0)
-      {
-        xmlXPathFreeObject (xml_object);
-        xml_object = xmlXPathEval (BAD_CAST "/CompetitionParEquipes", xml_context);
-      }
-
-      xml_nodeset = xml_object->nodesetval;
-      if (xml_object->nodesetval->nodeNr)
-      {
-        gchar *attr;
-
-        attr = (gchar *) xmlGetProp (xml_nodeset->nodeTab[0], BAD_CAST "ID");
-        if (attr)
-        {
-          Batch *batch = GetBatch (attr);
-
-          if (batch)
-          {
-            GChecksum *sha1 = g_checksum_new (G_CHECKSUM_SHA1);
-
-            g_checksum_update (sha1,
-                               (const guchar *) data,
-                               -1);
-
-            batch->LoadJob (xml_nodeset->nodeTab[0],
-                            sha1);
-
-            g_checksum_free (sha1);
-          }
-          xmlFree (attr);
-        }
-      }
-
-      xmlXPathFreeObject  (xml_object);
-    }
-
-    xmlXPathFreeContext (xml_context);
-    xmlFreeDoc (doc);
+    batch->LoadJob (message);
   }
+
+  g_free (id);
 }
 
 // --------------------------------------------------------------------------------
 void Hall::AddPiste ()
 {
+  GList *anchor = g_list_last (_piste_list);
   Piste *piste  = new Piste (_root, this);
 
   piste->SetListener (this);
@@ -292,11 +254,15 @@ void Hall::AddPiste ()
     }
   }
 
-  piste->Translate (_new_x_location,
-                    _new_y_location);
-
-  _new_x_location += 5.0;
-  _new_y_location += 5.0;
+  if (anchor)
+  {
+    piste->AnchorTo ((Piste *) anchor->data);
+  }
+  else
+  {
+    piste->Translate (0.5,
+                      0.5);
+  }
 }
 
 // --------------------------------------------------------------------------------

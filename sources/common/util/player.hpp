@@ -117,6 +117,8 @@ class Player : public Object, Net::Uploader::Listener
     void NotifyChangesToPartners ();
 
   public:
+    void FeedParcel (Net::Message *parcel);
+
     gboolean SendMessage (const gchar *where,
                           const gchar *message);
 

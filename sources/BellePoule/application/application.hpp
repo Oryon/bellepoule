@@ -34,6 +34,8 @@ class Application : public Object, Net::HttpServer::Client
 
     virtual void Start (int argc, char **argv);
 
+    void OnOpenUserManual ();
+
   protected:
     Module *_main_module;
 

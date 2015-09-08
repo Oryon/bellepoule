@@ -46,14 +46,12 @@ class Hall : public CanvasModule, Piste::Listener
 
     void DropContest (Net::Message *message);
 
-    void ManageJob (const gchar *data);
+    void ManageJob (Net::Message *message);
 
   private:
     GooCanvasItem *_root;
     GList         *_piste_list;
     GList         *_selected_list;
-    gdouble        _new_x_location;
-    gdouble        _new_y_location;
     gboolean       _dragging;
     gdouble        _drag_x;
     gdouble        _drag_y;
@@ -69,12 +67,8 @@ class Hall : public CanvasModule, Piste::Listener
 
     Batch *GetBatch (guint id);
 
-    gboolean DroppingIsForbidden (Object *object);
-
-    gboolean ObjectIsDropable (Object   *floating_object,
-                               DropZone *in_zone);
-
-    Object *GetDropObjectFromRef (guint32 ref);
+    Object *GetDropObjectFromRef (guint32 ref,
+                                  guint   key);
 
     void DropObject (Object   *object,
                      DropZone *source_zone,

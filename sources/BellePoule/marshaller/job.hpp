@@ -19,22 +19,26 @@
 
 #include "util/object.hpp"
 
+class Batch;
+
 class Job : public Object
 {
   public:
-    Job (GChecksum *sha1,
-         GdkColor  *gdk_color);
+    Job (Batch    *batch,
+         GdkColor *gdk_color);
 
     void SetName (const gchar *name);
 
-    gboolean Is (GChecksum *sha1);
+    const gchar *GetName ();
+
+    Batch *GetBatch ();
 
     GdkColor *GetGdkColor ();
 
   private:
-    GChecksum *_sha1;
-    gchar     *_name;
-    GdkColor  *_gdk_color;
+    gchar    *_name;
+    GdkColor *_gdk_color;
+    Batch    *_batch;
 
     ~Job ();
 };

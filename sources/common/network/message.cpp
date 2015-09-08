@@ -118,6 +118,25 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  void Message::SetFitness (const guint value)
+  {
+    g_key_file_set_integer (_key_file,
+                            "Header",
+                            "fitness",
+                            value);
+    _is_valid = TRUE;
+  }
+
+  // --------------------------------------------------------------------------------
+  guint Message::GetFitness ()
+  {
+    return g_key_file_get_integer (_key_file,
+                                   "Header",
+                                   "fitness",
+                                   NULL);
+  }
+
+  // --------------------------------------------------------------------------------
   void Message::Set (const gchar *field,
                      const gchar *value)
   {

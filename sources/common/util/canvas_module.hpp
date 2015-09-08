@@ -72,15 +72,19 @@ class CanvasModule : public Module
   protected:
     GSList *_drop_zones;
 
+    virtual gboolean DroppingIsAllowed (Object   *floating_object,
+                                        DropZone *in_zone);
+
   public:
-    void EnableDragAndDrop ();
+    void EnableDndOnCanvas ();
 
     void SetObjectDropZone (Object        *object,
                             GooCanvasItem *item,
                             DropZone      *drop_zone);
 
   private:
-    virtual Object *GetDropObjectFromRef (guint32 ref);
+    virtual Object *GetDropObjectFromRef (guint32 ref,
+                                          guint   key);
 
     virtual void DragObject (Object   *object,
                              DropZone *from_zone);
@@ -89,12 +93,9 @@ class CanvasModule : public Module
                              DropZone *source_zone,
                              DropZone *target_zone);
 
-    virtual gboolean DroppingIsForbidden (Object *object);
+    virtual gboolean DragingIsForbidden (Object *object);
 
     virtual GString *GetFloatingImage (Object *floating_object);
-
-    virtual gboolean ObjectIsDropable (Object   *floating_object,
-                                       DropZone *in_zone);
 
   private:
     GooCanvas         *_canvas;
@@ -124,12 +125,6 @@ class CanvasModule : public Module
     void OnDragLeave (GtkWidget      *widget,
                       GdkDragContext *drag_context,
                       guint           time);
-
-    gboolean OnDragDrop (GtkWidget      *widget,
-                         GdkDragContext *drag_context,
-                         gint            x,
-                         gint            y,
-                         guint           time);
 
     void OnDragDataReceived (GtkWidget        *widget,
                              GdkDragContext   *drag_context,

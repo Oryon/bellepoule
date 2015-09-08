@@ -146,22 +146,18 @@ namespace Pool
 
       void FillInConfig ();
 
-      void SetPoolFlashRef (Pool *pool);
-
       Pool *GetPoolOf (GSList *drop_zone);
 
       void DropObject (Object   *object,
                        DropZone *source_zone,
                        DropZone *target_zone);
 
-      Object *GetDropObjectFromRef (guint32 ref);
+      Object *GetDropObjectFromRef (guint32 ref,
+                                    guint   key);
 
-      gboolean DroppingIsForbidden (Object *object);
+      gboolean DragingIsForbidden (Object *object);
 
       GString *GetFloatingImage (Object *floating_object);
-
-      gboolean ObjectIsDropable (Object   *floating_object,
-                                 DropZone *in_zone);
 
       void DumpToHTML (FILE *file);
 

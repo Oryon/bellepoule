@@ -64,6 +64,10 @@ namespace People
 
       void CollapseAll ();
 
+      void Disclose (const gchar *as);
+
+      void Spread ();
+
       void DumpToHTML (FILE *file);
 
       static const guint NO_RIGHT   = 0x00000000;

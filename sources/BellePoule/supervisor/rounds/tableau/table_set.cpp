@@ -136,7 +136,7 @@ namespace Table
                                                 QUICK_MATCH_VISIBILITY_COLUMN_bool);
     }
 
-    _dnd_config->CreateTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
+    _dnd_config->AddTarget ("bellepoule/referee", GTK_TARGET_SAME_APP|GTK_TARGET_OTHER_WIDGET);
   }
 
   // --------------------------------------------------------------------------------
@@ -3225,12 +3225,10 @@ namespace Table
                                                pixbuf,
                                                0.0,
                                                offset - 6.0,
+                                               "width",         8.0,
+                                               "height",        8.0,
+                                               "scale-to-fit",  TRUE,
                                                NULL);
-            g_object_set (G_OBJECT (flash_item),
-                          "width",         8.0,
-                          "height",        8.0,
-                          "scale-to-fit",  TRUE,
-                          NULL);
             g_object_unref (pixbuf);
           }
 
@@ -3488,14 +3486,11 @@ namespace Table
     _from_border->Plug ();
     _to_border->Plug   ();
 
-    gtk_drag_dest_set (GTK_WIDGET (GetCanvas ()),
-                       (GtkDestDefaults) 0,
-                       _dnd_config->GetTargetTable (),
-                       _dnd_config->GetTargetTableSize (),
-                       GDK_ACTION_COPY);
+    _dnd_config->SetOnAWidgetDest (GTK_WIDGET (GetCanvas ()),
+                                   GDK_ACTION_COPY);
 
     ConnectDndDest (GTK_WIDGET (GetCanvas ()));
-    EnableDragAndDrop ();
+    EnableDndOnCanvas ();
   }
 
   // --------------------------------------------------------------------------------
@@ -3790,7 +3785,8 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  Object *TableSet::GetDropObjectFromRef (guint32 ref)
+  Object *TableSet::GetDropObjectFromRef (guint32 ref,
+                                          guint   key)
   {
     Contest *contest = _supervisor->GetContest ();
 
@@ -3798,7 +3794,7 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TableSet::DroppingIsForbidden (Object *object)
+  gboolean TableSet::DragingIsForbidden (Object *object)
   {
     Player *player = (Player *) object;
 
@@ -3853,10 +3849,11 @@ namespace Table
   }
 
   // --------------------------------------------------------------------------------
-  gboolean TableSet::ObjectIsDropable (Object   *floating_object,
-                                       DropZone *in_zone)
+  gboolean TableSet::DroppingIsAllowed (Object   *floating_object,
+                                        DropZone *in_zone)
   {
-    if (floating_object && in_zone)
+    if (CanvasModule::DroppingIsAllowed (floating_object,
+                                         in_zone))
     {
       TableZone *table_zone = (TableZone *) in_zone;
       GSList    *current    = table_zone->GetNodeList ();

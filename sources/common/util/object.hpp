@@ -65,6 +65,11 @@
 
 class FlashCode;
 
+namespace Net
+{
+  class Message;
+}
+
 class Object
 {
   public:
@@ -97,6 +102,12 @@ class Object
 
     FlashCode *GetFlashCode ();
 
+    virtual void Disclose (const gchar *as);
+
+    virtual void FeedParcel (Net::Message *parcel);
+
+    virtual void Spread ();
+
     virtual void Dump ();
 
     static void TryToRelease (Object *object);
@@ -106,16 +117,17 @@ class Object
     static void Track (const gchar *klass);
 
   protected:
-    FlashCode *_flash_code;
+    FlashCode    *_flash_code;
+    Net::Message *_parcel;
 
     virtual ~Object ();
 
     static gchar *GetUndivadableText (const gchar *text);
 
   private:
-    GData       *_datalist;
-    guint        _ref_count;
-    const gchar *_class_name;
+    GData        *_datalist;
+    guint         _ref_count;
+    const gchar  *_class_name;
 
 #ifdef DEBUG
     static GList       *_list;

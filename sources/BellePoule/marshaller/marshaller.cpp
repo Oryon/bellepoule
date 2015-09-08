@@ -18,11 +18,11 @@
 #include "application/weapon.hpp"
 #include "hall.hpp"
 
-#include "hall_manager.hpp"
+#include "marshaller.hpp"
 
 // --------------------------------------------------------------------------------
-HallManager::HallManager ()
-  : Module ("hall_manager.glade")
+Marshaller::Marshaller ()
+  : Module ("marshaller.glade")
 {
   {
     _hall = new Hall ();
@@ -60,54 +60,75 @@ HallManager::HallManager ()
 }
 
 // --------------------------------------------------------------------------------
-HallManager::~HallManager ()
+Marshaller::~Marshaller ()
 {
   _hall->Release ();
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::Start ()
+void Marshaller::Start ()
 {
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::OnHttpPost (Net::Message *message)
+void Marshaller::OnHttpPost (Net::Message *message)
 {
-  if (message->Is ("/Competition"))
+  if (message->GetFitness () > 0)
   {
-    if (message->GetInteger ("Ring::Validity") == 1)
+    if (message->Is ("Competition"))
     {
       _hall->ManageContest (message,
                             GTK_NOTEBOOK (_glade->GetWidget ("batch_notebook")));
     }
-    else
+    else if (message->Is ("Job"))
+    {
+      _hall->ManageJob (message);
+    }
+    else if (message->Is ("Referee"))
+    {
+      ManageReferee (message);
+    }
+  }
+  else
+  {
+    if (message->Is ("Competition"))
     {
       _hall->DropContest (message);
     }
   }
-  else if (message->Is ("/Job"))
-  {
-    // _hall->ManageJob (body);
-  }
-  else if (message->Is ("/Referee"))
-  {
-    // ManageReferee (body);
-  }
 }
 
 // --------------------------------------------------------------------------------
-void HallManager::ManageReferee (const gchar *data)
+void Marshaller::ManageReferee (Net::Message *message)
 {
-  xmlDocPtr doc = xmlParseMemory (data, strlen (data));
+  gchar     *xml = message->GetString ("xml");
+  xmlDocPtr  doc = xmlParseMemory (xml, strlen (xml));
 
   if (doc)
   {
-    xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+    xmlXPathInit ();
 
-    _referee_list->LoadList (xml_context,
-                             "");
+    {
+      xmlXPathContext *xml_context = xmlXPathNewContext (doc);
+      xmlXPathObject  *xml_object;
+      xmlNodeSet      *xml_nodeset;
 
-    xmlXPathFreeContext (xml_context);
+      xml_object = xmlXPathEval (BAD_CAST "/Arbitre", xml_context);
+      xml_nodeset = xml_object->nodesetval;
+
+      if (xml_nodeset->nodeNr == 1)
+      {
+        _referee_list->LoadPlayer (xml_nodeset->nodeTab[0],
+                                   "Referee",
+                                   NULL);
+        _referee_list->OnListChanged ();
+      }
+
+      xmlXPathFreeObject  (xml_object);
+      xmlXPathFreeContext (xml_context);
+    }
     xmlFreeDoc (doc);
   }
+
+  g_free (xml);
 }

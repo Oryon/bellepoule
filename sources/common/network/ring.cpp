@@ -371,14 +371,14 @@ namespace Net
                                       message);
     }
 
-    message->Set ("Ring::Validity", 1U);
+    message->SetFitness (1);
     Send (message);
   }
 
   // -------------------------------------------------------------------------------
   void Ring::RecallMessage (Message *message)
   {
-    message->Set ("Ring::Validity", 0U);
+    message->SetFitness (0);
     Send (message);
 
     {

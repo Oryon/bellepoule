@@ -210,6 +210,11 @@ class Module : public virtual Object
     virtual void OnDragLeave (GtkWidget      *widget,
                               GdkDragContext *drag_context,
                               guint           time);
+    virtual gboolean OnDragDrop (GtkWidget      *widget,
+                                 GdkDragContext *drag_context,
+                                 gint            x,
+                                 gint            y,
+                                 guint           time);
 
   private:
     static void DragDataGet (GtkWidget        *widget,
@@ -242,11 +247,6 @@ class Module : public virtual Object
                               gint            y,
                               guint           time,
                               Module         *owner);
-    virtual gboolean OnDragDrop (GtkWidget      *widget,
-                                 GdkDragContext *drag_context,
-                                 gint            x,
-                                 gint            y,
-                                 guint           time);
 
     static void DragDataReceived (GtkWidget        *widget,
                                   GdkDragContext   *drag_context,

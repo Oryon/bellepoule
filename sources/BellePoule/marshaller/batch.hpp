@@ -29,10 +29,11 @@ class Batch : public Module
 
     void AttachTo (GtkNotebook *to);
 
-    void LoadJob (xmlNode   *xml_node,
-                  GChecksum *sha1);
+    void LoadJob (Net::Message *message);
 
     guint GetId ();
+
+    const gchar *GetName ();
 
     void SetProperties (Net::Message *message);
 
@@ -45,13 +46,14 @@ class Batch : public Module
     GtkListStore *_list_store;
     guint32       _dnd_key;
     GdkColor     *_gdk_color;
+    gchar        *_name;
 
     virtual ~Batch ();
 
+    void LoadJob (xmlNode *xml_node);
+
     void SetProperty (Net::Message *message,
                       const gchar  *property);
-
-    gboolean HasJob (GChecksum *sha1);
 
     void OnDragDataGet (GtkWidget        *widget,
                         GdkDragContext   *drag_context,

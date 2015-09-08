@@ -17,21 +17,20 @@
 #include "job.hpp"
 
 // --------------------------------------------------------------------------------
-Job::Job (GChecksum *sha1,
-          GdkColor  *gdk_color)
+Job::Job (Batch    *batch,
+          GdkColor *gdk_color)
   : Object ("Job")
 {
-  _sha1      = g_checksum_copy (sha1);
   _gdk_color = gdk_color_copy  (gdk_color);
   _name      = NULL;
+  _batch     = batch;
 }
 
 // --------------------------------------------------------------------------------
 Job::~Job ()
 {
-  g_checksum_free (_sha1);
-  g_free          (_name);
-  gdk_color_free  (_gdk_color);
+  g_free         (_name);
+  gdk_color_free (_gdk_color);
 }
 
 // --------------------------------------------------------------------------------
@@ -41,10 +40,15 @@ void Job::SetName (const gchar *name)
 }
 
 // --------------------------------------------------------------------------------
-gboolean Job::Is (GChecksum *sha1)
+const gchar *Job::GetName ()
 {
-  return (strcmp (g_checksum_get_string (sha1),
-                  g_checksum_get_string (_sha1)) == 0);
+  return _name;
+}
+
+// --------------------------------------------------------------------------------
+Batch *Job::GetBatch ()
+{
+  return _batch;
 }
 
 // --------------------------------------------------------------------------------

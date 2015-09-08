@@ -161,7 +161,6 @@ class Contest : public Module
     People::Checkin *_referees_list;
     State            _state;
     gboolean         _read_only;
-    Net::Message    *_ring_message;
 
     GtkWidget   *_properties_dialog;
     GtkWidget   *_weapon_combo;
@@ -199,7 +198,7 @@ class Contest : public Module
 
     void OnPlugged ();
 
-    void Spread ();
+    void FeedParcel (Net::Message *parcel);
 
   private:
     void OnBeginPrint (GtkPrintOperation *operation,

@@ -16,7 +16,6 @@
 
 #include <unistd.h>
 #include <glib.h>
-#include <gdk/gdkkeysyms.h>
 #include <glib/gstdio.h>
 #include <locale.h>
 
@@ -964,57 +963,6 @@ void Tournament::OnSave ()
 }
 
 // --------------------------------------------------------------------------------
-void Tournament::OnOpenUserManual ()
-{
-  gchar *uri           = NULL;
-  gchar *language_code = g_key_file_get_string (Global::_user_config->_key_file,
-                                                "Tournament",
-                                                "interface_language",
-                                                NULL);
-
-  if (language_code)
-  {
-    uri = g_build_filename (Global::_share_dir, "resources", "translations", language_code, "user_manual.pdf", NULL);
-
-    if (g_file_test (uri,
-                     G_FILE_TEST_EXISTS) == FALSE)
-    {
-      g_free (uri);
-      uri = NULL;
-    }
-
-    g_free (language_code);
-  }
-
-  if (uri == NULL)
-  {
-    uri = g_build_filename (Global::_share_dir, "resources", "translations", "user_manual.pdf", NULL);
-  }
-
-
-#ifdef WINDOWS_TEMPORARY_PATCH
-  ShellExecute (NULL,
-                "open",
-                uri,
-                NULL,
-                NULL,
-                SW_SHOWNORMAL);
-#else
-  {
-    gchar *full_uri = g_build_filename ("file://", uri, NULL);
-
-    gtk_show_uri (NULL,
-                  full_uri,
-                  GDK_CURRENT_TIME,
-                  NULL);
-    g_free (full_uri);
-  }
-#endif
-
-  g_free (uri);
-}
-
-// --------------------------------------------------------------------------------
 void Tournament::OnOpenTemplate ()
 {
   GString *contents = g_string_new ("");
@@ -1395,50 +1343,12 @@ extern "C" G_MODULE_EXPORT void on_example_menuitem_activate (GtkWidget *w,
 }
 
 // --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT void on_user_manual_activate (GtkWidget *w,
-                                                         Object    *owner)
-{
-  Tournament *t = dynamic_cast <Tournament *> (owner);
-
-  t->OnOpenUserManual ();
-}
-
-// --------------------------------------------------------------------------------
 extern "C" G_MODULE_EXPORT void on_template_imagemenuitem_activate (GtkWidget *w,
                                                                     Object    *owner)
 {
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->OnOpenTemplate ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT gboolean on_root_delete_event (GtkWidget *w,
-                                                          GdkEvent  *event,
-                                                          Object    *owner)
-{
-  GtkWidget *dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gtk_widget_get_toplevel (w)),
-                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                          GTK_MESSAGE_QUESTION,
-                                                          GTK_BUTTONS_OK_CANCEL,
-                                                          gettext ("<b><big>Do you really want to quit BellePoule</big></b>"));
-
-  gtk_window_set_title (GTK_WINDOW (dialog),
-                        gettext ("Quit BellePoule?"));
-
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            gettext ("All the unsaved competions will be lost."));
-
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
-  {
-    gtk_main_quit ();
-  }
-  else
-  {
-    gtk_widget_destroy (dialog);
-  }
-
-  return TRUE;
 }
 
 // --------------------------------------------------------------------------------
@@ -1543,21 +1453,6 @@ extern "C" G_MODULE_EXPORT void on_payment_menuitem_activate (GtkMenuItem *menui
   Tournament *t = dynamic_cast <Tournament *> (owner);
 
   t->PrintPaymentBook ();
-}
-
-// --------------------------------------------------------------------------------
-extern "C" G_MODULE_EXPORT gboolean on_root_key_press_event (GtkWidget   *widget,
-                                                             GdkEventKey *event,
-                                                             Object      *owner)
-{
-#ifdef DEBUG
-  if (event->keyval == GDK_KEY_F11)
-  {
-    Object::DumpList ();
-  }
-#endif
-
-  return FALSE;
 }
 
 // --------------------------------------------------------------------------------

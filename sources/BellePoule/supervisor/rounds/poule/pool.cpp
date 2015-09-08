@@ -22,6 +22,7 @@
 #include <cairo-pdf.h>
 
 #include "util/global.hpp"
+#include "network/message.hpp"
 #include "../../match.hpp"
 
 #include "pool.hpp"
@@ -68,6 +69,8 @@ namespace Pool
     }
 
     _dispatcher = new Dispatcher (_name);
+
+    Disclose ("Job");
   }
 
   // --------------------------------------------------------------------------------
@@ -90,6 +93,25 @@ namespace Pool
     Object::TryToRelease (_score_collector);
 
     _dispatcher->Release ();
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::SetIdChain (const gchar *contest,
+                         const gchar *stage_name,
+                         guint        stage_id)
+  {
+    _parcel->Set ("contest", contest);
+    _parcel->Set ("round",   stage_name);
+
+    {
+      gchar *ref = g_strdup_printf ("#%s/%d/%d",
+                                    contest,
+                                    stage_id,
+                                    _number);
+
+      SetFlashRef (ref);
+      g_free (ref);
+    }
   }
 
   // --------------------------------------------------------------------------------
@@ -2021,6 +2043,27 @@ namespace Pool
                            Pool  *pool)
   {
     return g_slist_index (pool->_sorted_fencer_list, a->GetOpponent (0)) - g_slist_index (pool->_sorted_fencer_list, b->GetOpponent (0));
+  }
+
+  // --------------------------------------------------------------------------------
+  void Pool::FeedParcel (Net::Message *parcel)
+  {
+    xmlBuffer *xml_buffer = xmlBufferCreate ();
+
+    {
+      xmlTextWriter *xml_writer = xmlNewTextWriterMemory (xml_buffer, 0);
+
+      xmlTextWriterStartDocument (xml_writer,
+                                  NULL,
+                                  "UTF-8",
+                                  NULL);
+      Save (xml_writer);
+      xmlTextWriterEndDocument (xml_writer);
+      xmlFreeTextWriter (xml_writer);
+    }
+
+    parcel->Set ("xml", (const gchar *) xml_buffer->content);
+    xmlBufferFree (xml_buffer);
   }
 
   // --------------------------------------------------------------------------------

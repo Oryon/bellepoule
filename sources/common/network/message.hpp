@@ -47,6 +47,10 @@ namespace Net
 
       void Recall ();
 
+      void SetFitness (const guint value);
+
+      guint GetFitness ();
+
       void Set (const gchar *field,
                 const gchar *value);
 

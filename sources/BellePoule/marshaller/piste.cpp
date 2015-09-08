@@ -16,9 +16,12 @@
 
 #include <math.h>
 
+#include "util/global.hpp"
 #include "util/module.hpp"
+#include "util/canvas.hpp"
 #include "job.hpp"
 
+#include "batch.hpp"
 #include "piste.hpp"
 
 const gdouble Piste::_W          = 160.0;
@@ -43,7 +46,6 @@ Piste::Piste (GooCanvasItem *parent,
                                       _W, _H,
                                       //"line-width",   _BORDER_W,
                                       //"stroke-color", "black",
-                                      "fill-color",   "#CCCCCC",
                                       NULL);
     MonitorEvent (_drop_rect);
   }
@@ -97,34 +99,44 @@ Piste::Piste (GooCanvasItem *parent,
   }
 
   {
-    GdkPixbuf *pixbuf = container->GetPixbuf (GTK_STOCK_DIALOG_AUTHENTICATION);
+    gchar     *icon_file = g_build_filename (Global::_share_dir, "resources", "glade", "referee.png", NULL);
+    GdkPixbuf *pixbuf    = container->GetPixbuf (icon_file);
 
     _status_item = goo_canvas_image_new (_root_item,
                                          pixbuf,
                                          (_W - 10.0) * 2.0,
-                                         1.0,
+                                         5.0,
                                          NULL);
     MonitorEvent (_status_item);
 
     goo_canvas_item_scale (_status_item,
                            0.5,
                            0.5);
+    g_object_set (G_OBJECT (_status_item),
+                  "visibility", GOO_CANVAS_ITEM_INVISIBLE,
+                  NULL);
 
     g_object_unref (pixbuf);
+    g_free (icon_file);
   }
 
   goo_canvas_item_translate (_root_item,
                              _RESOLUTION,
                              _RESOLUTION);
 
-  SetId    (1);
-  SetColor ("#CCCCCC");
+  SetId (1);
+
+  _focus_color = g_strdup ("grey");
+  _color       = g_strdup ("lightgrey");
+  SetColor (_color);
 }
 
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
   goo_canvas_item_remove (_root_item);
+  g_free (_color);
+  g_free (_focus_color);
 }
 
 // --------------------------------------------------------------------------------
@@ -136,12 +148,32 @@ void Piste::SetListener (Listener *listener)
 // --------------------------------------------------------------------------------
 void Piste::AddJob (Job *job)
 {
-  gchar *color = gdk_color_to_string (job->GetGdkColor ());
+  {
+    g_free (_color);
+    _color = gdk_color_to_string (job->GetGdkColor ());
 
-  g_object_set (_drop_rect,
-                "fill-color", color,
+    SetColor (_color);
+  }
+
+  {
+    Batch *batch = job->GetBatch ();
+
+    g_object_set (G_OBJECT (_title_item),
+                  "text", batch->GetName (),
+                  NULL);
+  }
+
+  g_object_set (G_OBJECT (_match_item),
+                "text", job->GetName (),
                 NULL);
-  g_free (color);
+}
+
+// --------------------------------------------------------------------------------
+void Piste::AddReferee (Referee *referee)
+{
+  g_object_set (G_OBJECT (_status_item),
+                "visibility", GOO_CANVAS_ITEM_VISIBLE,
+                NULL);
 }
 
 // --------------------------------------------------------------------------------
@@ -157,9 +189,7 @@ void Piste::Focus ()
 {
   DropZone::Focus ();
 
-  g_object_set (G_OBJECT (_drop_rect),
-                "fill-color", "pink",
-                NULL);
+  SetColor ("grey");
 }
 
 // --------------------------------------------------------------------------------
@@ -167,9 +197,7 @@ void Piste::Unfocus ()
 {
   DropZone::Unfocus ();
 
-  g_object_set (G_OBJECT (_drop_rect),
-                "fill-color", "orange",
-                NULL);
+  SetColor (_color);
 }
 
 // --------------------------------------------------------------------------------
@@ -340,6 +368,22 @@ void Piste::AlignOnGrid ()
   goo_canvas_item_translate (_root_item,
                              GetGridAdjustment (bounds.x1),
                              GetGridAdjustment (bounds.y1));
+}
+
+// --------------------------------------------------------------------------------
+void Piste::AnchorTo (Piste *piste)
+{
+  GooCanvasBounds to_bounds;
+  GooCanvasBounds bounds;
+
+  goo_canvas_item_get_bounds (piste->_root_item,
+                              &to_bounds);
+  goo_canvas_item_get_bounds (_root_item,
+                              &bounds);
+
+  goo_canvas_item_translate (_root_item,
+                             to_bounds.x1 - bounds.x1,
+                             (to_bounds.y1 + _H*1.5) - bounds.y1);
 }
 
 // --------------------------------------------------------------------------------
