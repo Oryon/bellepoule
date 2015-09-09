@@ -101,6 +101,8 @@ class Piste : public DropZone, Object::Listener
 
     void OnObjectDeleted (Object *object);
 
+    void RefreshDecoration ();
+
     static gboolean OnButtonPress (GooCanvasItem  *item,
                                    GooCanvasItem  *target,
                                    GdkEventButton *event,
@@ -115,6 +117,9 @@ class Piste : public DropZone, Object::Listener
                                     GooCanvasItem  *target,
                                     GdkEventMotion *event,
                                     Piste          *piste);
+
+    static gint CompareJob (Job *a,
+                            Job *b);
 };
 
 #endif

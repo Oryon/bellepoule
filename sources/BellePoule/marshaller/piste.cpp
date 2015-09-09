@@ -165,30 +165,20 @@ void Piste::SetListener (Listener *listener)
 // --------------------------------------------------------------------------------
 void Piste::AddJob (Job *job)
 {
-  {
-    g_free (_color);
-    _color = gdk_color_to_string (job->GetGdkColor ());
+  _job_list = g_list_insert_sorted (_job_list,
+                                    job,
+                                    (GCompareFunc) CompareJob);
 
-    SetColor (_color);
-  }
+  job->AddObjectListener (this);
 
   {
     Batch *batch = job->GetBatch ();
 
-    g_object_set (G_OBJECT (_title_item),
-                  "text", batch->GetName (),
-                  NULL);
     batch->SetVisibility (job,
                           FALSE);;
   }
 
-  g_object_set (G_OBJECT (_match_item),
-                "text", job->GetName (),
-                NULL);
-
-  _job_list = g_list_prepend (_job_list,
-                              job);
-  job->AddObjectListener (this);
+  RefreshDecoration ();
 }
 
 // --------------------------------------------------------------------------------
@@ -207,10 +197,62 @@ void Piste::OnObjectDeleted (Object *object)
                                       node);
     }
 
-    g_object_set (G_OBJECT (_match_item),
-                  "text", "DEAD",
-                  NULL);
+    RefreshDecoration ();
   }
+}
+
+// --------------------------------------------------------------------------------
+void Piste::RefreshDecoration ()
+{
+  GString     *match_name = g_string_new ("");
+  GList       *current    = _job_list;
+  const gchar *last_name  = NULL;
+
+  for (guint i = 0; current != NULL; i++)
+  {
+    Job *job = (Job *) current->data;
+
+    if (i == 0)
+    {
+      {
+        g_free (_color);
+        _color = gdk_color_to_string (job->GetGdkColor ());
+
+        SetColor (_color);
+      }
+
+      {
+        Batch *batch = job->GetBatch ();
+
+        g_object_set (G_OBJECT (_title_item),
+                      "text", batch->GetName (),
+                      NULL);
+      }
+
+      g_string_append (match_name, job->GetName ());
+    }
+    else
+    {
+      if (i == 1)
+      {
+        g_string_append (match_name, " ... ");
+      }
+
+      last_name = job->GetName ();
+    }
+
+    current = g_list_next (current);
+  }
+
+  if (last_name)
+  {
+    g_string_append (match_name, last_name);
+  }
+
+  g_object_set (G_OBJECT (_match_item),
+                "text", match_name->str,
+                NULL);
+  g_string_free (match_name, TRUE);
 }
 
 // --------------------------------------------------------------------------------
@@ -448,4 +490,11 @@ void Piste::MonitorEvent (GooCanvasItem *item)
                     "button_release_event",
                     G_CALLBACK (OnButtonRelease),
                     this);
+}
+
+// --------------------------------------------------------------------------------
+gint Piste::CompareJob (Job *a,
+                        Job *b)
+{
+  return strcmp (a->GetName (), b->GetName ());
 }
