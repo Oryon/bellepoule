@@ -33,7 +33,8 @@ class Batch : public Module
 
     void LoadJob (Net::Message *message);
 
-    void RemoveJob (Job *job);
+    void SetVisibility (Job      *job,
+                        gboolean  visibility);
 
     guint GetId ();
 
@@ -47,7 +48,7 @@ class Batch : public Module
 
   private:
     guint32       _id;
-    GtkListStore *_list_store;
+    GtkListStore *_job_store;
     guint32       _dnd_key;
     GdkColor     *_gdk_color;
     gchar        *_name;

@@ -73,6 +73,13 @@ namespace Net
 class Object
 {
   public:
+    class Listener
+    {
+      public:
+        virtual void OnObjectDeleted (Object *object) = 0;
+    };
+
+  public:
     Object (const gchar *class_name = NULL);
 
     void SetData (Object         *owner,
@@ -102,6 +109,10 @@ class Object
 
     FlashCode *GetFlashCode ();
 
+    void AddObjectListener (Listener *listener);
+
+    void RemoveObjectListener (Listener *listener);
+
     virtual void Disclose (const gchar *as);
 
     virtual void FeedParcel (Net::Message *parcel);
@@ -125,9 +136,10 @@ class Object
     static gchar *GetUndivadableText (const gchar *text);
 
   private:
-    GData        *_datalist;
-    guint         _ref_count;
-    const gchar  *_class_name;
+    GData       *_datalist;
+    guint        _ref_count;
+    const gchar *_class_name;
+    GList       *_listener_list;
 
 #ifdef DEBUG
     static GList       *_list;

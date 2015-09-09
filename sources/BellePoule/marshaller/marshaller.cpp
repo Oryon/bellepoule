@@ -95,6 +95,10 @@ void Marshaller::OnHttpPost (Net::Message *message)
     {
       _hall->DropContest (message);
     }
+    else if (message->Is ("Job"))
+    {
+      //_hall->ManageJob (message);
+    }
   }
 }
 

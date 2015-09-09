@@ -39,8 +39,9 @@ Object::Object (const gchar *class_name)
   g_datalist_init (&_datalist);
   _ref_count = 1;
 
-  _flash_code = NULL;
-  _parcel     = NULL;
+  _flash_code    = NULL;
+  _parcel        = NULL;
+  _listener_list = NULL;
 
 #ifdef DEBUG
   _nb_objects++;
@@ -91,6 +92,20 @@ Object::Object (const gchar *class_name)
 // --------------------------------------------------------------------------------
 Object::~Object ()
 {
+  {
+    GList *current = _listener_list;
+
+    while (current)
+    {
+      Listener *listener = (Listener *) current->data;
+
+      listener->OnObjectDeleted (this);
+
+      current = g_list_next (current);
+    }
+    g_list_free (_listener_list);
+  }
+
   if (_datalist)
   {
     g_datalist_clear (&_datalist);
@@ -188,6 +203,26 @@ void Object::SetFlashRef (const gchar *ref)
 FlashCode *Object::GetFlashCode ()
 {
   return _flash_code;
+}
+
+// --------------------------------------------------------------------------------
+void Object::AddObjectListener (Listener *listener)
+{
+  _listener_list = g_list_prepend (_listener_list,
+                                   listener);
+}
+
+// --------------------------------------------------------------------------------
+void Object::RemoveObjectListener (Listener *listener)
+{
+  GList *node = g_list_find (_listener_list,
+                             listener);
+
+  if (node)
+  {
+    _listener_list = g_list_remove_link (_listener_list,
+                                         node);
+  }
 }
 
 // --------------------------------------------------------------------------------

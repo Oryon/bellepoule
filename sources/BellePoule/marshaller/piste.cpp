@@ -36,6 +36,7 @@ Piste::Piste (GooCanvasItem *parent,
 {
   _horizontal = TRUE;
   _listener   = NULL;
+  _job_list   = NULL;
 
   _root_item = goo_canvas_group_new (parent,
                                      NULL);
@@ -134,6 +135,22 @@ Piste::Piste (GooCanvasItem *parent,
 // --------------------------------------------------------------------------------
 Piste::~Piste ()
 {
+  {
+    GList *current = _job_list;
+
+    while (current)
+    {
+      Job   *job   = (Job *) current->data;
+      Batch *batch = job->GetBatch ();
+
+      batch->SetVisibility (job,
+                            TRUE);
+      job->RemoveObjectListener (this);
+
+      current = g_list_next (current);
+    }
+  }
+
   goo_canvas_item_remove (_root_item);
   g_free (_color);
   g_free (_focus_color);
@@ -161,11 +178,39 @@ void Piste::AddJob (Job *job)
     g_object_set (G_OBJECT (_title_item),
                   "text", batch->GetName (),
                   NULL);
+    batch->SetVisibility (job,
+                          FALSE);;
   }
 
   g_object_set (G_OBJECT (_match_item),
                 "text", job->GetName (),
                 NULL);
+
+  _job_list = g_list_prepend (_job_list,
+                              job);
+  job->AddObjectListener (this);
+}
+
+// --------------------------------------------------------------------------------
+void Piste::OnObjectDeleted (Object *object)
+{
+  Job *job = (Job *) object;
+
+  if (job)
+  {
+    GList *node = g_list_find (_job_list,
+                               job);
+
+    if (node)
+    {
+      _job_list = g_list_delete_link (_job_list,
+                                      node);
+    }
+
+    g_object_set (G_OBJECT (_match_item),
+                  "text", "DEAD",
+                  NULL);
+  }
 }
 
 // --------------------------------------------------------------------------------
