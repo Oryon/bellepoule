@@ -29,7 +29,8 @@ namespace Net
     _ip   = message->GetSenderIp ();
     _port = message->GetInteger  ("unicast_port");
 
-    _role = message->GetString ("role");
+    _role       = message->GetString  ("role");
+    _time_stamp = message->GetInteger ("time_stamp");
   }
 
   // --------------------------------------------------------------------------------
@@ -40,21 +41,33 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gint Partner::CompareRole (Partner     *partner,
-                             const gchar *with)
+  gboolean Partner::HasRole (const gchar *role)
   {
-    return (strcmp (partner->_role, with));
+    if (_role && role)
+    {
+      return (strcmp (_role, _role) == 0);
+    }
+
+    return (_role == _role);
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Partner::HasSameRole (Partner *than)
+  gboolean Partner::Is (gchar *role,
+                        guint  time_stamp)
   {
-    if (_role && than->_role)
+    if (_time_stamp == _time_stamp)
     {
-      return (strcmp (_role, than->_role) == 0);
+      return HasRole (role);
     }
 
-    return (_role == than->_role);
+    return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  gboolean Partner::Is (Partner *partner)
+  {
+    return Is (partner->_role,
+               partner->_time_stamp);
   }
 
   // --------------------------------------------------------------------------------

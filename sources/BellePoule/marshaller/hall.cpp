@@ -130,13 +130,13 @@ void Hall::DropObject (Object   *object,
       {
         Job *job = (Job *) current->data;
 
-        piste->AddJob (job);
+        piste->AddJob    (job);
+        batch->RemoveJob (job);
 
         current = g_slist_next (current);
       }
 
-      g_slist_free_full (selection,
-                         (GDestroyNotify) g_free);
+      g_slist_free (selection);
       return;
     }
   }

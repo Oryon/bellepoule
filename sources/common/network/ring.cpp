@@ -118,9 +118,13 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::AnnounceAvailability ()
   {
-    Message *message = new Message ("Announcement");
+    GTimeVal  time_val;
+    Message  *message  = new Message ("Announcement");
+
+    g_get_current_time (&time_val);
 
     message->Set ("role",         _role);
+    message->Set ("time_stamp",   time_val.tv_sec);
     message->Set ("unicast_port", _unicast_port);
 
     Multicast (message);
@@ -173,28 +177,55 @@ namespace Net
   {
     gchar *role = message->GetString ("role");
 
-    if (message->Is ("Announcement"))
+    if (strcmp (role, _role) != 0)
     {
-      if (strcmp (role, _role) != 0)
+      if (message->Is ("Announcement"))
       {
-        Add (new Partner (message));
-      }
-    }
-    else if (message->Is ("Farewell"))
-    {
-      GList *node = g_list_find_custom (_partner_list,
-                                        role,
-                                        (GCompareFunc) Partner::CompareRole);
-
-      if (node)
-      {
-        if (_partner_indicator)
+        // Recover from partner crash
         {
-          gtk_widget_set_sensitive (_partner_indicator, FALSE);
+          guint  time_stamp = message->GetInteger ("time_stamp");
+          GList *current    = _partner_list;
+
+          while (current)
+          {
+            Partner *partner = (Partner *) current->data;
+
+            if (partner->Is (role,
+                             time_stamp))
+            {
+              _partner_list = g_list_delete_link (_partner_list,
+                                                  current);
+              break;
+            }
+
+            current = g_list_next (current);
+          }
         }
 
-        _partner_list = g_list_delete_link (_partner_list,
-                                            node);
+        Add (new Partner (message));
+      }
+      else if (message->Is ("Farewell"))
+      {
+        GList *current = _partner_list;
+
+        while (current)
+        {
+          Partner *partner = (Partner *) current->data;
+
+          if (partner->HasRole (role))
+          {
+            if (_partner_indicator)
+            {
+              gtk_widget_set_sensitive (_partner_indicator, FALSE);
+            }
+
+            _partner_list = g_list_delete_link (_partner_list,
+                                                current);
+            break;
+          }
+
+          current = g_list_next (current);
+        }
       }
     }
 
@@ -305,7 +336,7 @@ namespace Net
 
       while (current)
       {
-        if (partner->HasSameRole ((Partner *) current->data))
+        if (partner->Is ((Partner *) current->data))
         {
           return;
         }

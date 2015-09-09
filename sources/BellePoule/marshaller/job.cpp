@@ -21,7 +21,7 @@ Job::Job (Batch    *batch,
           GdkColor *gdk_color)
   : Object ("Job")
 {
-  _gdk_color = gdk_color_copy  (gdk_color);
+  _gdk_color = gdk_color_copy (gdk_color);
   _name      = NULL;
   _batch     = batch;
 }

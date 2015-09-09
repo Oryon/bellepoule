@@ -30,15 +30,18 @@ namespace Net
 
       gboolean SendMessage (Message *message);
 
-      gboolean HasSameRole (Partner *than);
+      gboolean Is (Partner *partner);
 
-      static gint CompareRole (Partner     *partner,
-                               const gchar *with);
+      gboolean HasRole (const gchar *role);
+
+      gboolean Is (gchar *role,
+                   guint  time_stamp);
 
     private:
       gchar *_ip;
       gchar *_role;
       guint  _port;
+      guint  _time_stamp;
 
       ~Partner ();
   };

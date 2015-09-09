@@ -22,6 +22,8 @@
 #include "network/message.hpp"
 #include "util/module.hpp"
 
+class Job;
+
 class Batch : public Module
 {
   public:
@@ -30,6 +32,8 @@ class Batch : public Module
     void AttachTo (GtkNotebook *to);
 
     void LoadJob (Net::Message *message);
+
+    void RemoveJob (Job *job);
 
     guint GetId ();
 

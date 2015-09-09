@@ -164,6 +164,34 @@ GSList *Batch::GetCurrentSelection ()
 }
 
 // --------------------------------------------------------------------------------
+void Batch::RemoveJob (Job *job)
+{
+  GtkTreeIter iter;
+  gboolean    iter_is_valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (_list_store),
+                                                             &iter);
+
+  while (iter_is_valid)
+  {
+    Job *current_job;
+
+    gtk_tree_model_get (GTK_TREE_MODEL (_list_store),
+                        &iter,
+                        JOB_ptr, &current_job,
+                        -1);
+
+    if (current_job == job)
+    {
+      gtk_list_store_remove (_list_store,
+                             &iter);
+      break;
+    }
+
+    iter_is_valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (_list_store),
+                                              &iter);
+  }
+}
+
+// --------------------------------------------------------------------------------
 void Batch::LoadJob (Net::Message *message)
 {
   gchar     *xml = message->GetString ("xml");

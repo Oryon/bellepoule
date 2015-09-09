@@ -58,6 +58,8 @@ namespace Net
 
       static void Add (Partner *partner);
 
+      static void Remove (Partner *partner);
+
       static void Synchronize (Partner *partner);
 
       static void AnnounceAvailability ();
