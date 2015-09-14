@@ -34,14 +34,13 @@ namespace Net
 
       gboolean HasRole (const gchar *role);
 
-      gboolean Is (gchar *role,
-                   guint  time_stamp);
+      void Store (Message *message);
 
     private:
       gchar *_ip;
       gchar *_role;
       guint  _port;
-      guint  _time_stamp;
+      GList *_message_list;
 
       ~Partner ();
   };

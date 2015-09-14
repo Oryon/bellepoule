@@ -30,6 +30,16 @@ namespace Net
                            "name",
                            name);
 
+    g_key_file_set_string (_key_file,
+                           "Header",
+                           "sender",
+                           Ring::GetRole ());
+
+    g_key_file_set_integer (_key_file,
+                            "Header",
+                            "uuid",
+                            g_random_int ());
+
     _is_valid = TRUE;
   }
 
@@ -102,6 +112,15 @@ namespace Net
     return g_key_file_get_string (_key_file,
                                   "Header",
                                   "from",
+                                  NULL);
+  }
+
+  // --------------------------------------------------------------------------------
+  gchar *Message::GetSender ()
+  {
+    return g_key_file_get_string (_key_file,
+                                  "Header",
+                                  "sender",
                                   NULL);
   }
 

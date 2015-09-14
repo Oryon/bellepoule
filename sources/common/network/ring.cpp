@@ -51,6 +51,12 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
+  const gchar *Ring::GetRole ()
+  {
+    return _role;
+  }
+
+  // --------------------------------------------------------------------------------
   void Ring::Join (const gchar *role,
                    guint        unicast_port,
                    GtkWidget   *partner_indicator)
@@ -118,13 +124,9 @@ namespace Net
   // --------------------------------------------------------------------------------
   void Ring::AnnounceAvailability ()
   {
-    GTimeVal  time_val;
-    Message  *message  = new Message ("Announcement");
-
-    g_get_current_time (&time_val);
+    Message *message = new Message ("Announcement");
 
     message->Set ("role",         _role);
-    message->Set ("time_stamp",   time_val.tv_sec);
     message->Set ("unicast_port", _unicast_port);
 
     Multicast (message);
@@ -181,51 +183,12 @@ namespace Net
     {
       if (message->Is ("Announcement"))
       {
-        // Recover from partner crash
-        {
-          guint  time_stamp = message->GetInteger ("time_stamp");
-          GList *current    = _partner_list;
-
-          while (current)
-          {
-            Partner *partner = (Partner *) current->data;
-
-            if (partner->Is (role,
-                             time_stamp))
-            {
-              _partner_list = g_list_delete_link (_partner_list,
-                                                  current);
-              break;
-            }
-
-            current = g_list_next (current);
-          }
-        }
-
+        Remove (role);
         Add (new Partner (message));
       }
       else if (message->Is ("Farewell"))
       {
-        GList *current = _partner_list;
-
-        while (current)
-        {
-          Partner *partner = (Partner *) current->data;
-
-          if (partner->HasRole (role))
-          {
-            if (_partner_indicator)
-            {
-              gtk_widget_set_sensitive (_partner_indicator, FALSE);
-            }
-
-            _partner_list = g_list_delete_link (_partner_list,
-                                                current);
-            break;
-          }
-
-          current = g_list_next (current);
-        }
+        Remove (role);
       }
     }
 
@@ -365,6 +328,32 @@ namespace Net
   }
 
   // -------------------------------------------------------------------------------
+  void Ring::Remove (const gchar *role)
+  {
+    GList *current = _partner_list;
+
+    while (current)
+    {
+      Partner *partner = (Partner *) current->data;
+
+      if (partner->HasRole (role))
+      {
+        if (_partner_indicator)
+        {
+          gtk_widget_set_sensitive (_partner_indicator, FALSE);
+        }
+
+        _partner_list = g_list_delete_link (_partner_list,
+                                            current);
+        partner->Release ();
+        break;
+      }
+
+      current = g_list_next (current);
+    }
+  }
+
+  // -------------------------------------------------------------------------------
   void Ring::Synchronize (Partner *partner)
   {
     GList *current = _message_list;
@@ -421,6 +410,26 @@ namespace Net
         _message_list = g_list_delete_link (_message_list,
                                             node);
       }
+    }
+  }
+
+  // -------------------------------------------------------------------------------
+  void Ring::Store (Message *message)
+  {
+    GList *current = _partner_list;
+    gchar *role    = message->GetSender ();
+
+    while (current)
+    {
+      Partner *partner = (Partner *) current->data;
+
+      if (partner->HasRole (role))
+      {
+        partner->Store (message);
+        break;
+      }
+
+      current = g_list_next (current);
     }
   }
 }

@@ -15,6 +15,7 @@
 //   along with BellePoule.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/message.hpp"
+#include "network/ring.hpp"
 #include "application/weapon.hpp"
 #include "hall.hpp"
 
@@ -73,6 +74,8 @@ void Marshaller::Start ()
 // --------------------------------------------------------------------------------
 void Marshaller::OnHttpPost (Net::Message *message)
 {
+  Net::Ring::Store (message);
+
   if (message->GetFitness () > 0)
   {
     if (message->Is ("Competition"))

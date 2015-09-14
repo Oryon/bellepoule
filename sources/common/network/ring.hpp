@@ -40,6 +40,10 @@ namespace Net
 
       static void RecallMessage (Message *message);
 
+      static void Store (Message *message);
+
+      static const gchar *GetRole ();
+
     private:
       Ring ();
       virtual ~Ring ();
@@ -58,7 +62,7 @@ namespace Net
 
       static void Add (Partner *partner);
 
-      static void Remove (Partner *partner);
+      static void Remove (const gchar *role);
 
       static void Synchronize (Partner *partner);
 

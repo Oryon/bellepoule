@@ -43,6 +43,8 @@ namespace Net
 
       gchar *GetSenderIp ();
 
+      gchar *GetSender ();
+
       void Spread ();
 
       void Recall ();

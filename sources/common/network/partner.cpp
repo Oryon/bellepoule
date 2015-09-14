@@ -26,11 +26,12 @@ namespace Net
   Partner::Partner (Message *message)
     : Object ("Partner")
   {
+    _message_list = NULL;
+
     _ip   = message->GetSenderIp ();
     _port = message->GetInteger  ("unicast_port");
 
-    _role       = message->GetString  ("role");
-    _time_stamp = message->GetInteger ("time_stamp");
+    _role = message->GetString ("role");
   }
 
   // --------------------------------------------------------------------------------
@@ -38,6 +39,22 @@ namespace Net
   {
     g_free (_ip);
     g_free (_role);
+
+    {
+      GList *current = _message_list;
+
+      while (current)
+      {
+        Net::Message *message = (Net::Message *) current->data;
+
+        message->Dump ();
+
+        current = g_list_next (current);
+      }
+    }
+
+    g_list_free_full (_message_list,
+                      (GDestroyNotify) Object::TryToRelease);
   }
 
   // --------------------------------------------------------------------------------
@@ -52,22 +69,9 @@ namespace Net
   }
 
   // --------------------------------------------------------------------------------
-  gboolean Partner::Is (gchar *role,
-                        guint  time_stamp)
-  {
-    if (_time_stamp == _time_stamp)
-    {
-      return HasRole (role);
-    }
-
-    return FALSE;
-  }
-
-  // --------------------------------------------------------------------------------
   gboolean Partner::Is (Partner *partner)
   {
-    return Is (partner->_role,
-               partner->_time_stamp);
+    return HasRole (partner->_role);
   }
 
   // --------------------------------------------------------------------------------
@@ -102,5 +106,13 @@ namespace Net
     }
 
     return FALSE;
+  }
+
+  // --------------------------------------------------------------------------------
+  void Partner::Store (Message *message)
+  {
+    _message_list = g_list_prepend (_message_list,
+                                    message);
+    message->Retain ();
   }
 }
