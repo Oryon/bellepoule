@@ -1,43 +1,43 @@
-EXEC    = bellepoulebeta
-#EXEC    = bellepoule
-TARGET  = Release
-PACKAGE = $(HOME)/PPA/$(EXEC)
+#----------------------------------------------------
+#-- Variables ---------------------------------------
+#----------------------------------------------------
+PRODUCT = bellepoulebeta
+#PRODUCT = bellepoule
+OUTPUT  = Release
+PACKAGE = $(HOME)/PPA/$(PRODUCT)
 VERSION = 5.0
 STEP    = ubuntu1
-RELEASE = $(EXEC)_$(VERSION)
+RELEASE = $(PRODUCT)_$(VERSION)
 UBUNTU  = precise
 V       = 1
+DATE    = $(shell date -R)
 
+#----------------------------------------------------
+#-- Compilers ---------------------------------------
+#----------------------------------------------------
 ifeq ($(UBUNTU), windows)
 CC = i586-mingw32msvc-g++
-prepare_resources = prepare_windows_resources
 else
-CC                = gcc
-prepare_ubuntu    = prepare_ubuntu
-prepare_www       = prepare_www
-prepare_examples  = prepare_examples
-prepare_resources = prepare_resources
+CC = g++
+LD = g++
 endif
 
-ifeq ($(TARGET), Debug)
+ifeq ($(OUTPUT), Debug)
 CC += -g
 else
 CC += -O2
 endif
 
-MODULE  = common/network
-MODULE += common/util
-MODULE += BellePoule/people_management
-MODULE += BellePoule/pool_round
-MODULE += BellePoule/pool_round/smart_swapper
-MODULE += BellePoule/table_round
-
+#----------------------------------------------------
+#-- CFLAGS ------------------------------------------
+#----------------------------------------------------
 CFLAGS  =
 CFLAGS += -pedantic
 CFLAGS += -DGTK_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES
 CFLAGS += -DGDK_DISABLE_DEPRECATED
 CFLAGS += -DGSEAL_ENABLE
+CFLAGS += -fPIC
 CFLAGS += -Wall
 CFLAGS += -Wcast-align
 CFLAGS += -Wextra
@@ -50,7 +50,7 @@ CFLAGS += -Wshadow
 CFLAGS += -Wswitch-default
 CFLAGS += -Wswitch-enum
 CFLAGS += -Wundef
-ifeq ($(TARGET), Debug)
+ifeq ($(OUTPUT), Debug)
 CFLAGS += -DDEBUG=1
 endif
 
@@ -88,8 +88,11 @@ endif
 CFLAGS += -Isources/common
 CFLAGS += -Isources/BellePoule
 
-
+#----------------------------------------------------
+#-- LDFLAGS -----------------------------------------
+#----------------------------------------------------
 LDFLAGS  = -lstdc++
+LDFLAGS += -L$(OUTPUT)
 
 ifeq ($(UBUNTU), windows)
 LDFLAGS += -mwindows
@@ -128,10 +131,13 @@ else
 LDFLAGS += $(shell pkg-config --libs gtk+-2.0 gthread-2.0 gmodule-2.0 libxml-2.0 goocanvas libcurl libmicrohttpd libqrencode libssl)
 endif
 
-ifeq ($(TARGET), Release)
+ifeq ($(OUTPUT), Release)
 LDFLAGS += -s
 endif
 
+#----------------------------------------------------
+#-- Sources -----------------------------------------
+#----------------------------------------------------
 SRC   = $(wildcard sources/*/*/*.cpp)
 SRC  += $(wildcard sources/*/*/*/*.cpp)
 ifeq ($(UBUNTU), windows)
@@ -140,19 +146,45 @@ else
 OBJ =
 endif
 OBJ += $(SRC:.cpp=.o)
-#OBJ = $(subst sources,$(TARGET),$(SRC:.cpp=.o))
 
-##
-## Compilation section
-##
-all: subdir $(TARGET)/$(EXEC)
+SRC  = $(wildcard sources/common/network/*.cpp)
+SRC += $(wildcard sources/common/util/*.cpp)
+SRC += $(wildcard sources/BellePoule/actors/*.cpp)
+SRC += $(wildcard sources/BellePoule/application/*.cpp)
+OBJ_LIB += $(SRC:.cpp=.o)
 
-subdir:
-	@mkdir -p $(TARGET)
+SRC_MARSHALLER = $(wildcard sources/BellePoule/marshaller/*.cpp)
+OBJ_MARSHALLER = $(SRC_MARSHALLER:.cpp=.o)
 
-$(TARGET)/$(EXEC): $(OBJ)
+SRC_SUPERVISOR  = $(wildcard sources/BellePoule/supervisor/*.cpp)
+SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*.cpp)
+SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*/*.cpp)
+SRC_SUPERVISOR += $(wildcard sources/BellePoule/supervisor/*/*/*/*.cpp)
+OBJ_SUPERVISOR = $(SRC_SUPERVISOR:.cpp=.o)
+
+#----------------------------------------------------
+#-- Targets -----------------------------------------
+#----------------------------------------------------
+all: output $(OUTPUT)/$(PRODUCT)-marshaller $(OUTPUT)/$(PRODUCT)-supervisor
+
+output:
+	@mkdir -p $(OUTPUT)
+
+#--
+
+$(OUTPUT)/lib$(PRODUCT).so: $(OBJ_LIB)
 	@echo "\033[1;31m" $@ "\033[0m"
-	@$(CC) -o $@ $^ $(LDFLAGS)
+	@$(LD) -shared -o $@ -Wl,-soname,lib$(PRODUCT).so $^ $(LDFLAGS)
+
+$(OUTPUT)/$(PRODUCT)-supervisor: $(OUTPUT)/lib$(PRODUCT).so $(OBJ_SUPERVISOR)
+	@echo "\033[1;31m" $@ "\033[0m"
+	@$(CC) -o $@ $(OBJ_SUPERVISOR) -l$(PRODUCT) $(LDFLAGS)
+
+$(OUTPUT)/$(PRODUCT)-marshaller: $(OUTPUT)/lib$(PRODUCT).so $(OBJ_MARSHALLER)
+	@echo "\033[1;31m" $@ "\033[0m"
+	@$(CC) -o $@ $(OBJ_MARSHALLER) -l$(PRODUCT) $(LDFLAGS)
+
+#--
 
 %.o: %.cpp
 	@echo "\033[1;34m" $@ "\033[0m"
@@ -162,16 +194,27 @@ $(TARGET)/$(EXEC): $(OBJ)
 	@echo "\033[1;33m" $@ "\033[0m"
 	i586-mingw32msvc-windres --output=$@ --input=$<
 
+#--
+
 cflags:
 	@echo $(CFLAGS)
 
 valgrind:
-	G_SLICE=always-malloc G_DEBUG=gc-friendly valgrind --log-file=memory_leak.log --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 $(TARGET)/$(EXEC)
-	#G_SLICE=always-malloc G_DEBUG=gc-friendly valkyrie $(TARGET)/$(EXEC)
+	G_SLICE=always-malloc G_DEBUG=gc-friendly valgrind --log-file=memory_leak.log --tool=memcheck --leak-check=full --leak-resolution=high --num-callers=20 $(OUTPUT)/$(PRODUCT)
+	#G_SLICE=always-malloc G_DEBUG=gc-friendly valkyrie $(OUTPUT)/$(PRODUCT)
 
-##
-## Packaging section
-##
+#----------------------------------------------------
+#-- Packaging ---------------------------------------
+#----------------------------------------------------
+ifeq ($(UBUNTU), windows)
+prepare_resources = prepare_windows_resources
+else
+prepare_ubuntu    = prepare_ubuntu
+prepare_www       = prepare_www
+prepare_examples  = prepare_examples
+prepare_resources = prepare_resources
+endif
+
 package: prepare_staging $(prepare_ubuntu) prepare_sources $(prepare_examples) $(prepare_resources) $(prepare_www)
 	rm -rf `find $(PACKAGE) -name "*~*"`
 	rm -rf `find $(PACKAGE) -name "*.swp"`
@@ -198,12 +241,12 @@ prepare_examples:
 prepare_www:
 	cp -rf ../../webserver/LightTPD/www $(PACKAGE)/$(RELEASE)
 	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
-	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(EXEC).conf
-	sed -i 's/bellepoule/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/99-$(EXEC).conf
+	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
+	sed -i 's/bellepoule/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
 	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
 	cp -f  ../../scripts/www*sh $(PACKAGE)/$(RELEASE)/scripts
-	sed -i 's/bellepouledebug/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstart.sh
-	sed -i 's/bellepouledebug/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
+	sed -i 's/bellepouledebug/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstart.sh
+	sed -i 's/bellepouledebug/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/scripts/wwwstop.sh
 
 prepare_windows_resources:
 	mkdir -p $(PACKAGE)/$(RELEASE)/resources
@@ -247,83 +290,93 @@ prepare_debian:
 
 prepare_changelog:
 	rm -f $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo "$(EXEC) ($(VERSION)$(STEP)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo "$(PRODUCT) ($(VERSION)$(STEP)~$(UBUNTU)$(V)) $(UBUNTU); urgency=low" > $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "  * Miscellaneous improvments" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 	@echo "" >> $(PACKAGE)/$(RELEASE)/debian/changelog
-	@echo " -- betonniere <bellepoule.dev@free.fr>  Fri, 29 May 2013 11:42:10 +0100" >> $(PACKAGE)/$(RELEASE)/debian/changelog
+	@echo " -- betonniere <bellepoule.dev@free.fr>  $(DATE)" >> $(PACKAGE)/$(RELEASE)/debian/changelog
 
 prepare_control:
-	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/control
+	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/control
 	chmod a-x $(PACKAGE)/$(RELEASE)/debian/control
-ifeq ($(EXEC), bellepoulebeta)
+ifeq ($(PRODUCT), bellepoulebeta)
 	sed -i 's/Replaces/#Replaces/' $(PACKAGE)/$(RELEASE)/debian/control
 endif
 
 prepare_rules:
-	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/rules
+	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/rules
 	chmod a+x $(PACKAGE)/$(RELEASE)/debian/rules
 
 prepare_copyright:
-	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
+	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/copyright
 	chmod a-x $(PACKAGE)/$(RELEASE)/debian/copyright
 
 prepare_desktop:
-	mv -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(EXEC).desktop
-	sed -i 's/__EXEC__/$(EXEC)/g' $(PACKAGE)/$(RELEASE)/debian/$(EXEC).desktop
+	cp -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
+	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
+	sed -i 's/__EXE__/marshaller/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-marshaller.desktop
+	cp -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
+	sed -i 's/__PRODUCT__/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
+	sed -i 's/__EXE__/supervisor/g'     $(PACKAGE)/$(RELEASE)/debian/$(PRODUCT)-supervisor.desktop
+	rm -f $(PACKAGE)/$(RELEASE)/debian/*.desktop.template
 
-##
-## debuild section
-##
+#----------------------------------------------------
+#-- debuild -----------------------------------------
+#----------------------------------------------------
 .PHONY: install clean_sources
 
 install:
 	mkdir -p $(DESTDIR)/usr/bin
-	install $(TARGET)/$(EXEC) $(DESTDIR)/usr/bin/$(EXEC)
+	mkdir -p $(DESTDIR)/usr/lib
+	install $(OUTPUT)/$(PRODUCT)-supervisor $(DESTDIR)/usr/bin/$(PRODUCT)-supervisor
+	install $(OUTPUT)/$(PRODUCT)-marshaller $(DESTDIR)/usr/bin/$(PRODUCT)-marshaller
+	install $(OUTPUT)/lib$(PRODUCT).so      $(DESTDIR)/usr/lib/lib$(PRODUCT).so
 	mkdir -p $(DESTDIR)/usr/share/applications
-	install --mode=644 debian/$(EXEC).desktop $(DESTDIR)/usr/share/applications/$(EXEC).desktop
-	mkdir -p $(DESTDIR)/usr/share/$(EXEC)
+	install --mode=644 debian/$(PRODUCT)-marshaller.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-marshaller.desktop
+	install --mode=644 debian/$(PRODUCT)-supervisor.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-supervisor.desktop
+	mkdir -p $(DESTDIR)/usr/share/$(PRODUCT)
 	#Examples
-	mkdir -p `find Exemples -type d | sed 's?Exemples?$(DESTDIR)/usr/share/$(EXEC)/&?'`
+	mkdir -p `find Exemples -type d | sed 's?Exemples?$(DESTDIR)/usr/share/$(PRODUCT)/&?'`
 	find Exemples -type f  | while read file;\
 		do \
-		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
+		install --mode=644 $$file '$(DESTDIR)/usr/share/$(PRODUCT)/'$$file ;\
 		done
 	#Resources
-	mkdir -p `find resources -type d | sed 's?resources?$(DESTDIR)/usr/share/$(EXEC)/&?'`
+	mkdir -p `find resources -type d | sed 's?resources?$(DESTDIR)/usr/share/$(PRODUCT)/&?'`
 	find resources -type f  | while read file;\
 		do \
-		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
+		install --mode=644 $$file '$(DESTDIR)/usr/share/$(PRODUCT)/'$$file ;\
 		done
 	#Lighttpd
 	mkdir -p $(DESTDIR)/etc/lighttpd/conf-available
-	install --mode=644 99-$(EXEC).conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-$(EXEC).conf ;
-	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(EXEC)/webserver/LightTPD/&?'`
+	install --mode=644 99-$(PRODUCT).conf '$(DESTDIR)/etc/lighttpd/conf-available/'99-$(PRODUCT).conf ;
+	mkdir -p `find www -type d | sed 's?www?$(DESTDIR)/usr/share/$(PRODUCT)/webserver/LightTPD/&?'`
 	find www -type f  | while read file;\
 		do \
-		install --mode=644 $$file '$(DESTDIR)/usr/share/$(EXEC)/webserver/LightTPD/'$$file ;\
+		install --mode=644 $$file '$(DESTDIR)/usr/share/$(PRODUCT)/webserver/LightTPD/'$$file ;\
 		done
-	mkdir -p `find scripts -type d | sed 's?scripts?$(DESTDIR)/usr/share/$(EXEC)/&?'`
+	mkdir -p `find scripts -type d | sed 's?scripts?$(DESTDIR)/usr/share/$(PRODUCT)/&?'`
 	find scripts -type f  | while read file;\
 		do \
-		install --mode=755 $$file '$(DESTDIR)/usr/share/$(EXEC)/'$$file ;\
+		install --mode=755 $$file '$(DESTDIR)/usr/share/$(PRODUCT)/'$$file ;\
 		done
-	install --mode=1777 -d $(DESTDIR)/usr/share/$(EXEC)/webserver/LightTPD/www/cotcot
+	install --mode=1777 -d $(DESTDIR)/usr/share/$(PRODUCT)/webserver/LightTPD/www/cotcot
 
 clean_sources:
 	rm -f `find ../../sources -name "*.o"`
-	rm -rf $(TARGET)
+	rm -rf $(OUTPUT)
 
+#----------------------------------------------------
+#-- Help --------------------------------------------
+#----------------------------------------------------
 help:
-	@echo "\033[1;31m*****************\033[0m"
-	@echo "\033[1;31m**** Windows ****\033[0m"
+	@echo "\033[1;42m**** Windows ****\033[0m"
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make -s UBUNTU=windows V=$(V)"
 	@echo "cp Release/bellepoule /media/usb0/BellePoule/bazaar/4.0/windows/BellePoule/Release/BellePoule.exe"
 	@echo ""
-	@echo "\033[1;34m****************\033[0m"
-	@echo "\033[1;34m**** Ubuntu ****\033[0m"
+	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=precise V=$(V) package"
 	@echo "make -s UBUNTU=trusty  V=$(V) package"
 	@echo "make -s UBUNTU=vivid   V=$(V) package"
@@ -334,4 +387,5 @@ help:
 	@echo "debuild -us -uc --lintian-opts --color always"
 	@echo "debuild -S -sa -k"`gpg -K | grep "sec " | sed 's/.*\///' | sed 's/ .*//'`
 	@#echo "ftp /~betonniere/bellepoule/ubuntu packagename_version.tar.gz, packagename_version_source.changes, packagename_version.dsc"
-	@echo "dput ppa:betonniere/bellepoule ../$(EXEC)*_source.changes"
+	@echo "dput ppa:betonniere/bellepoule ../$(PRODUCT)*_source.changes"
+	@echo ""

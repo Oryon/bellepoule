@@ -722,7 +722,7 @@ Public License instead of this License.  But first, please read
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">exe.png</property>
+    <property name="pixbuf">bellepoulebeta.png</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
