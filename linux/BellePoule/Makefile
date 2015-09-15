@@ -174,15 +174,15 @@ output:
 
 $(OUTPUT)/lib$(PRODUCT).so: $(OBJ_LIB)
 	@echo "\033[1;31m" $@ "\033[0m"
-	@$(LD) -shared -o $@ -Wl,-soname,lib$(PRODUCT).so $^ $(LDFLAGS)
+	@$(LD) -shared -o $@ $^ $(LDFLAGS)
 
 $(OUTPUT)/$(PRODUCT)-supervisor: $(OUTPUT)/lib$(PRODUCT).so $(OBJ_SUPERVISOR)
 	@echo "\033[1;31m" $@ "\033[0m"
-	@$(CC) -o $@ $(OBJ_SUPERVISOR) -l$(PRODUCT) $(LDFLAGS)
+	@$(CC) -o $@ $(OBJ_SUPERVISOR) -Wl,--rpath,/usr/lib/$(PRODUCT) -l$(PRODUCT) $(LDFLAGS)
 
 $(OUTPUT)/$(PRODUCT)-marshaller: $(OUTPUT)/lib$(PRODUCT).so $(OBJ_MARSHALLER)
 	@echo "\033[1;31m" $@ "\033[0m"
-	@$(CC) -o $@ $(OBJ_MARSHALLER) -l$(PRODUCT) $(LDFLAGS)
+	@$(CC) -o $@ $(OBJ_MARSHALLER) -Wl,--rpath,/usr/lib/$(PRODUCT) -l$(PRODUCT) $(LDFLAGS)
 
 #--
 
@@ -327,10 +327,10 @@ prepare_desktop:
 
 install:
 	mkdir -p $(DESTDIR)/usr/bin
-	mkdir -p $(DESTDIR)/usr/lib
+	mkdir -p $(DESTDIR)/usr/lib/$(PRODUCT)
 	install $(OUTPUT)/$(PRODUCT)-supervisor $(DESTDIR)/usr/bin/$(PRODUCT)-supervisor
 	install $(OUTPUT)/$(PRODUCT)-marshaller $(DESTDIR)/usr/bin/$(PRODUCT)-marshaller
-	install $(OUTPUT)/lib$(PRODUCT).so      $(DESTDIR)/usr/lib/lib$(PRODUCT).so
+	install $(OUTPUT)/lib$(PRODUCT).so  $(DESTDIR)/usr/lib/$(PRODUCT)/lib$(PRODUCT).so
 	mkdir -p $(DESTDIR)/usr/share/applications
 	install --mode=644 debian/$(PRODUCT)-marshaller.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-marshaller.desktop
 	install --mode=644 debian/$(PRODUCT)-supervisor.desktop $(DESTDIR)/usr/share/applications/$(PRODUCT)-supervisor.desktop
