@@ -88,8 +88,8 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#PRODUCT}-marshal
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#PRODUCT}-supervisor"; Filename: "{app}\bin\{#PRODUCT}-supervisor.exe"; Tasks: quicklaunchicon; IconFilename: "{app}\bin\{#PRODUCT}-supervisor.exe"
 
 [Files]
-Source: "..\Release\bellepoulebeta-marshaller.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\Release\bellepoulebeta-supervisor.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "exe\bellepoulebeta-marshaller.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "exe\bellepoulebeta-supervisor.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\..\resources\gtkrc"; DestDir: "{app}\share\{#PRODUCT}\resources"; Flags: ignoreversion
 Source: "path_dependent_files\gtk.immodules"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gtk.immodules'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)
 Source: "path_dependent_files\gdk-pixbuf.loaders"; DestDir: "{app}\etc\gtk-2.0"; Flags: ignoreversion; AfterInstall: UpdatePath(ExpandConstant('{app}\etc\gtk-2.0\gdk-pixbuf.loaders'), 'INSTALL_DIR', ExpandConstant('{app}'), 0)

@@ -253,7 +253,7 @@ prepare_examples:
 prepare_www:
 	cp -rf ../../webserver/LightTPD/www $(PACKAGE)/$(RELEASE)
 	rm -rf $(PACKAGE)/$(RELEASE)/www/cotcot
-	cp -f  99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
+	cp -f  debian/99-bellepoule.conf $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
 	sed -i 's/bellepoule/$(PRODUCT)/g' $(PACKAGE)/$(RELEASE)/99-$(PRODUCT).conf
 	mkdir -p $(PACKAGE)/$(RELEASE)/scripts
 	cp -f  ../../scripts/www*sh $(PACKAGE)/$(RELEASE)/scripts
@@ -386,8 +386,8 @@ help:
 	@echo "make -s UBUNTU=windows V=$(V) package"
 	@echo "cd $(PACKAGE)/$(RELEASE)"
 	@echo "make -s UBUNTU=windows V=$(V)"
-	@echo "cp Release/$(PRODUCT)-marshaller /media/usb0/BellePoule/bazaar/trunk/windows/BellePoule/Release/$(PRODUCT)-marshaller.exe"
-	@echo "cp Release/$(PRODUCT)-supervisor /media/usb0/BellePoule/bazaar/trunk/windows/BellePoule/Release/$(PRODUCT)-supervisor.exe"
+	@echo "cp Release/$(PRODUCT)-marshaller /media/usb0/BellePoule/bazaar/trunk/build/BellePoule/windows/exe/$(PRODUCT)-marshaller.exe"
+	@echo "cp Release/$(PRODUCT)-supervisor /media/usb0/BellePoule/bazaar/trunk/build/BellePoule/windows/exe/$(PRODUCT)-supervisor.exe"
 	@echo ""
 	@echo "\033[1;44m**** Ubuntu ****\033[0m"
 	@echo "make -s UBUNTU=precise V=$(V) package"

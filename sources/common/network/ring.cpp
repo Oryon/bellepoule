@@ -267,7 +267,7 @@ namespace Net
     {
       struct sockaddr_in from;
       socklen_t          addrlen = sizeof (from);
-      guint8             buffer[100];
+      guint8             buffer[500];
       ssize_t            size;
 
       if ((size = recvfrom (fd,
@@ -276,7 +276,7 @@ namespace Net
 #else
                             buffer,
 #endif
-                            100,
+                            sizeof (buffer),
                             0,
                             (struct sockaddr *) &from,
                             &addrlen)) < 0)
